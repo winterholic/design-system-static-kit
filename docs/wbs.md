@@ -22,7 +22,9 @@ PMS 프로젝트: `a2211a70-7dc5-4a23-9dd8-3be6aa72ad34` · design-system-static
 | 7 | 카탈로그 확장 | 6 | 테마 40(동료 38 이상)·팔레트 160(테마당 4, Coolors 렌더 출처)·셸 10·부품 55·템플릿 61·페이지 유형 16·아이콘 87·축 15 | 완료 |
 | 8 | 컴파일러·검증·강제 확장 | 7 | 규칙 19·축 조합 금지 11·테마 금지·페이지 유형 계약, 대비 모든 팔레트×모드×역할 쌍, 번들 동일성, 반전·auto 토큰 | 완료 |
 | 9 | 시각 조립기·단일 파일 갤러리·Chromium 검사 | 8 | 템플릿·테마·13축·자동 수정, 휴대폰 갤러리(오프라인), 61 템플릿 3폭·구조 접근성·키보드·auto·갤러리 | 완료 |
-| 10 | 문서·WBS·설계서, commit/push, CI, 산출물 | 9 | `docs/design.*`, `docs/gap-analysis.*`, ADR 0002, verification, 로컬 verify·Chromium 통과 후 main push와 Actions 확인 | 아래 기록 참조 |
+| 10 | 문서·WBS·설계서, commit/push, CI, 산출물 | 9 | `docs/design.*`, `docs/gap-analysis.*`, ADR 0002, verification, 로컬 verify·Chromium 통과 후 main push와 Actions 확인 | 완료 · [Actions 39126816403](https://github.com/winterholic/design-system-static-kit/actions/runs/39126816403) |
+
+2026-10-18 최종 수용(v2): 계약 50/50, 감사(대비 33,600쌍·템플릿×테마 2,440·쌍별 4,867쌍), 생성 540파일 재현, Chromium 14/14(로컬·CI). 검증 리비전 `26c13fc`.
 
 날짜를 임의로 확약하지 않는다. 실행 상태·증거는 `docs/verification.md`와 PMS의 실제 상태를 기준으로 갱신한다. 후속 기능과 미검증은 완료에 포함하지 않는다.
 

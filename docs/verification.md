@@ -54,4 +54,4 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 
 ## CI
 
-푸시 후 Actions 실행을 확인해 기록한다.
+[Actions 39126816403](https://github.com/winterholic/design-system-static-kit/actions/runs/39126816403) · 검증 리비전 `26c13fcc5afc0091998efd7ddd5223b6c1c6862b` · Ubuntu/Node 22/Chromium. 모든 단계 성공: `npm ci`, `npm run verify`(원시 로그의 `# tests 50`, `# pass 50`, `# fail 0`, 대비 33600쌍, `REPRODUCIBLE: 540 generated files`), `git diff --exit-code -- site docs`, `npx playwright install --with-deps chromium`, `npm run test:browser`(`14 passed (2.0m)`). macOS에서 만든 생성물이 Ubuntu 재생성과 바이트 단위로 같았다는 뜻이다. 스크린샷과 보고서는 이 실행의 `browser-evidence` artifact에 보존했다.
