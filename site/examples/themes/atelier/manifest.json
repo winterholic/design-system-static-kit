@@ -1,0 +1,292 @@
+{
+  "blueprintVersion": "1.0",
+  "catalogVersion": "1.0.0",
+  "theme": "atelier",
+  "palette": "pastel",
+  "mode": "light",
+  "axes": {
+    "shell": "topbar",
+    "typography": "sans",
+    "density": "spacious",
+    "radius": "round"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/cdb4db-ffc8dd-ffafcc-bde0fe-a2d2ff",
+      "discovery": "https://coolors.co/palettes/trending",
+      "observed": "2026-10-18",
+      "method": "configured browser, rendered trending palette swatches",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#CDB4DB",
+      "#FFC8DD",
+      "#FFAFCC",
+      "#BDE0FE",
+      "#A2D2FF"
+    ],
+    "brandSeed": "#CDB4DB",
+    "action": "#7D6E86",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "name": "text/canvas",
+      "foreground": "#182029",
+      "background": "#F6FBFF",
+      "ratio": 15.782419025069336,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/surface",
+      "foreground": "#182029",
+      "background": "#FFFFFF",
+      "ratio": 16.43884712883201,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/soft",
+      "foreground": "#182029",
+      "background": "#FCFAFC",
+      "ratio": 15.827468571082758,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/canvas",
+      "foreground": "#586476",
+      "background": "#F6FBFF",
+      "ratio": 5.7613802095040585,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/surface",
+      "foreground": "#586476",
+      "background": "#FFFFFF",
+      "ratio": 6.001009627527568,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/soft",
+      "foreground": "#586476",
+      "background": "#FCFAFC",
+      "ratio": 5.777825569523748,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/canvas",
+      "foreground": "#7D6E86",
+      "background": "#F6FBFF",
+      "ratio": 4.534111254881216,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/surface",
+      "foreground": "#7D6E86",
+      "background": "#FFFFFF",
+      "ratio": 4.7226956568390515,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/soft",
+      "foreground": "#7D6E86",
+      "background": "#FCFAFC",
+      "ratio": 4.547053482133091,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#F6FBFF",
+      "ratio": 5.751784076143478,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.991014368303245,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#FCFAFC",
+      "ratio": 5.768202044832936,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#F6FBFF",
+      "ratio": 5.127099342139614,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751997709,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#FCFAFC",
+      "ratio": 5.141734202446024,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#F6FBFF",
+      "ratio": 5.556625367810196,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.787738548097536,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#FCFAFC",
+      "ratio": 5.572486272896349,
+      "minimum": 4.5
+    },
+    {
+      "name": "focus/canvas",
+      "foreground": "#9E8BA9",
+      "background": "#F6FBFF",
+      "ratio": 3.0003112443969795,
+      "minimum": 3
+    },
+    {
+      "name": "focus/surface",
+      "foreground": "#9E8BA9",
+      "background": "#FFFFFF",
+      "ratio": 3.125101279291436,
+      "minimum": 3
+    },
+    {
+      "name": "focus/soft",
+      "foreground": "#9E8BA9",
+      "background": "#FCFAFC",
+      "ratio": 3.008875372573044,
+      "minimum": 3
+    },
+    {
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#6E6176",
+      "ratio": 5.777995915495648,
+      "minimum": 4.5
+    },
+    {
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#7D6E86",
+      "ratio": 4.7226956568390515,
+      "minimum": 4.5
+    },
+    {
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#F6FBFF",
+      "ratio": 3.7831196448759554,
+      "minimum": 3
+    },
+    {
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.9404685310542154,
+      "minimum": 3
+    }
+  ],
+  "blueprint": {
+    "version": "1.0",
+    "catalogVersion": "1.0.0",
+    "name": "서비스 소개",
+    "theme": "atelier",
+    "palette": "pastel",
+    "mode": "light",
+    "shell": "topbar",
+    "typography": "sans",
+    "density": "spacious",
+    "radius": "round",
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "좋은 도구는, 생각할 틈을 만듭니다.",
+          "description": "복잡한 일상에서 중요한 것에 집중할 수 있도록."
+        },
+        {
+          "type": "hero",
+          "variant": "split",
+          "title": "작은 선택이 모여\n당신다운 작업으로.",
+          "body": "검토한 재료를 조립해 나만의 흐름을 만드세요. 시작은 가볍게, 쌓이는 가치는 오래도록.",
+          "action": {
+            "label": "자세히 알아보기",
+            "href": "#main",
+            "variant": "primary"
+          }
+        },
+        {
+          "type": "grid",
+          "columns": "three",
+          "children": [
+            {
+              "type": "card",
+              "title": "시작은 명확하게",
+              "body": "흩어진 정보를 한곳에 모아 방향을 정합니다.",
+              "meta": "01 · 정리"
+            },
+            {
+              "type": "card",
+              "title": "과정은 유연하게",
+              "body": "상황에 맞는 방식을 골라 작업을 이어갑니다.",
+              "meta": "02 · 연결"
+            },
+            {
+              "type": "card",
+              "title": "결과는 오래도록",
+              "body": "다음 작업에서도 쓸 수 있게 남깁니다.",
+              "meta": "03 · 축적"
+            }
+          ]
+        },
+        {
+          "type": "notice",
+          "tone": "info",
+          "title": "당신의 방식으로 시작하세요.",
+          "body": "완성된 틀 안에서도 다양한 선택이 가능합니다."
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "9bdfedff67ff5d3d654e2261759dd0c679f366217937714229e2d9f434a1c48c",
+      "tokens.css": "b04ffd71a7728d20db4541eb30eb3dd7dc957caedcf60aebd90275c4ab1c3a36",
+      "tokens.json": "59a778c97866d1823ee4adf394d720d867ed47ecd85bc972e328a841f4d33e24",
+      "blueprint.json": "9ce25c0904574110f1cd471d35b953d4cda82a9a9c21c622ecc243e699ff329b"
+    }
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "blueprintVersion": "1.0",
+  "catalogVersion": "1.0.0",
+  "theme": "workspace",
+  "palette": "ocean",
+  "mode": "light",
+  "axes": {
+    "shell": "sidebar",
+    "typography": "sans",
+    "density": "comfortable",
+    "radius": "soft"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/03045e-023e8a-0077b6-0096c7-00b4d8-48cae4-90e0ef-ade8f4-caf0f8",
+      "discovery": "https://coolors.co/palettes/trending",
+      "observed": "2026-10-18",
+      "method": "configured browser, rendered trending palette swatches",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#03045E",
+      "#023E8A",
+      "#0077B6",
+      "#0096C7",
+      "#00B4D8",
+      "#48CAE4",
+      "#90E0EF",
+      "#ADE8F4",
+      "#CAF0F8"
+    ],
+    "brandSeed": "#0077B6",
+    "action": "#0075B2",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "name": "text/canvas",
+      "foreground": "#182029",
+      "background": "#F8FDFE",
+      "ratio": 16.025962012901555,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/surface",
+      "foreground": "#182029",
+      "background": "#FFFFFF",
+      "ratio": 16.43884712883201,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/soft",
+      "foreground": "#182029",
+      "background": "#EDF5FA",
+      "ratio": 14.90635017924352,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/canvas",
+      "foreground": "#586476",
+      "background": "#F8FDFE",
+      "ratio": 5.850285702890797,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/surface",
+      "foreground": "#586476",
+      "background": "#FFFFFF",
+      "ratio": 6.001009627527568,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/soft",
+      "foreground": "#586476",
+      "background": "#EDF5FA",
+      "ratio": 5.441570825246391,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/canvas",
+      "foreground": "#0075B2",
+      "background": "#F8FDFE",
+      "ratio": 4.889100964040604,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/surface",
+      "foreground": "#0075B2",
+      "background": "#FFFFFF",
+      "ratio": 5.0150613910470145,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/soft",
+      "foreground": "#0075B2",
+      "background": "#EDF5FA",
+      "ratio": 4.547536739011114,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#F8FDFE",
+      "ratio": 5.840541488872456,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.991014368303245,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#EDF5FA",
+      "ratio": 5.432507365201875,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#F8FDFE",
+      "ratio": 5.206217067420755,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751997709,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#EDF5FA",
+      "ratio": 4.842498356956811,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#F8FDFE",
+      "ratio": 5.642371231114877,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.787738548097536,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#EDF5FA",
+      "ratio": 5.248181753118972,
+      "minimum": 4.5
+    },
+    {
+      "name": "focus/canvas",
+      "foreground": "#0077B6",
+      "background": "#F8FDFE",
+      "ratio": 4.745377353976087,
+      "minimum": 3
+    },
+    {
+      "name": "focus/surface",
+      "foreground": "#0077B6",
+      "background": "#FFFFFF",
+      "ratio": 4.867634955569854,
+      "minimum": 3
+    },
+    {
+      "name": "focus/soft",
+      "foreground": "#0077B6",
+      "background": "#EDF5FA",
+      "ratio": 4.4138540022791775,
+      "minimum": 3
+    },
+    {
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#00679D",
+      "ratio": 6.127874010539931,
+      "minimum": 4.5
+    },
+    {
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#0075B2",
+      "ratio": 5.0150613910470145,
+      "minimum": 4.5
+    },
+    {
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#F8FDFE",
+      "ratio": 3.8414980379585586,
+      "minimum": 3
+    },
+    {
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.9404685310542154,
+      "minimum": 3
+    }
+  ],
+  "blueprint": {
+    "version": "1.0",
+    "catalogVersion": "1.0.0",
+    "name": "프로젝트 현황",
+    "theme": "workspace",
+    "palette": "ocean",
+    "mode": "light",
+    "shell": "sidebar",
+    "typography": "sans",
+    "density": "comfortable",
+    "radius": "soft",
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "다음 결정을 위한 한눈.",
+          "description": "오늘의 흐름을 읽고, 중요한 일에 집중하세요."
+        },
+        {
+          "type": "grid",
+          "columns": "three",
+          "children": [
+            {
+              "type": "metric",
+              "label": "진행 중 프로젝트",
+              "value": "12",
+              "detail": "이번 주 시작한 프로젝트 3개"
+            },
+            {
+              "type": "metric",
+              "label": "완료한 작업",
+              "value": "84",
+              "detail": "지난주보다 12개 더 완료"
+            },
+            {
+              "type": "metric",
+              "label": "다음 마일스톤",
+              "value": "10. 24.",
+              "detail": "디자인 리뷰 · 오후 2시"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "지금 집중할 일",
+          "children": [
+            {
+              "type": "grid",
+              "columns": "two",
+              "children": [
+                {
+                  "type": "card",
+                  "title": "브랜드의 새로운 언어",
+                  "body": "제품의 성격을 살리는 표현과 규칙을 함께 정리합니다.",
+                  "meta": "디자인 · 진행 중"
+                },
+                {
+                  "type": "card",
+                  "title": "작은 개선의 기록",
+                  "body": "사용자가 망설이는 순간을 찾아 하나씩 다듬습니다.",
+                  "meta": "리서치 · 이번 주"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "최근 작업",
+          "caption": "프로젝트별 최근 변경과 담당 현황",
+          "columns": [
+            "작업",
+            "담당",
+            "상태"
+          ],
+          "rows": [
+            [
+              "조립 규약 정리",
+              "김다선",
+              "완료"
+            ],
+            [
+              "팔레트 후보 검토",
+              "디자인팀",
+              "진행"
+            ],
+            [
+              "다음 릴리스 준비",
+              "개발팀",
+              "대기"
+            ]
+          ],
+          "state": "ready"
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "1e8af1f188f13eb8f125518659322728a3b26e98dd4cfae94fa064013da912c6",
+      "tokens.css": "db7fa7d88c494a56af89b2b13cd50712a5f04a3d1b39c82f0cbf2ba2b3d358b8",
+      "tokens.json": "6ea77521cf456f3afeaeadbeb56a4ccd965bd86bf721834340dcea8dca3a389a",
+      "blueprint.json": "554a6e611ef90b49583a8c5926b761b10188c0f44fa576af026f6c96d3f60331"
+    }
+  }
+}

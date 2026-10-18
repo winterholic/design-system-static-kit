@@ -1,0 +1,327 @@
+{
+  "blueprintVersion": "1.0",
+  "catalogVersion": "1.0.0",
+  "theme": "signal",
+  "palette": "fiery",
+  "mode": "light",
+  "axes": {
+    "shell": "split",
+    "typography": "sans",
+    "density": "compact",
+    "radius": "square"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/780000-c1121f-fdf0d5-003049-669bbc",
+      "discovery": "https://coolors.co/palettes/trending",
+      "observed": "2026-10-18",
+      "method": "configured browser, rendered trending palette swatches",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#780000",
+      "#C1121F",
+      "#FDF0D5",
+      "#003049",
+      "#669BBC"
+    ],
+    "brandSeed": "#C1121F",
+    "action": "#C1121F",
+    "adjusted": false,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "name": "text/canvas",
+      "foreground": "#182029",
+      "background": "#FFFDFA",
+      "ratio": 16.190336688440595,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/surface",
+      "foreground": "#182029",
+      "background": "#FFFFFF",
+      "ratio": 16.43884712883201,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/soft",
+      "foreground": "#182029",
+      "background": "#FBEEEF",
+      "ratio": 14.542946442154012,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/canvas",
+      "foreground": "#586476",
+      "background": "#FFFDFA",
+      "ratio": 5.9102907630206785,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/surface",
+      "foreground": "#586476",
+      "background": "#FFFFFF",
+      "ratio": 6.001009627527568,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/soft",
+      "foreground": "#586476",
+      "background": "#FBEEEF",
+      "ratio": 5.308910103490012,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/canvas",
+      "foreground": "#C1121F",
+      "background": "#FFFDFA",
+      "ratio": 6.130339657393194,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/surface",
+      "foreground": "#C1121F",
+      "background": "#FFFFFF",
+      "ratio": 6.224436119827816,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/soft",
+      "foreground": "#C1121F",
+      "background": "#FBEEEF",
+      "ratio": 5.506568703622739,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FFFDFA",
+      "ratio": 5.90044660479828,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.991014368303245,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#FBEEEF",
+      "ratio": 5.3000676026482205,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#FFFDFA",
+      "ratio": 5.259616060913575,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751997709,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#FBEEEF",
+      "ratio": 4.724442496292922,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FFFDFA",
+      "ratio": 5.700243759431036,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.787738548097536,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#FBEEEF",
+      "ratio": 5.120235687242691,
+      "minimum": 4.5
+    },
+    {
+      "name": "focus/canvas",
+      "foreground": "#C1121F",
+      "background": "#FFFDFA",
+      "ratio": 6.130339657393194,
+      "minimum": 3
+    },
+    {
+      "name": "focus/surface",
+      "foreground": "#C1121F",
+      "background": "#FFFFFF",
+      "ratio": 6.224436119827816,
+      "minimum": 3
+    },
+    {
+      "name": "focus/soft",
+      "foreground": "#C1121F",
+      "background": "#FBEEEF",
+      "ratio": 5.506568703622739,
+      "minimum": 3
+    },
+    {
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#AA101B",
+      "ratio": 7.502271284492198,
+      "minimum": 4.5
+    },
+    {
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#C1121F",
+      "ratio": 6.224436119827816,
+      "minimum": 4.5
+    },
+    {
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FFFDFA",
+      "ratio": 3.8808994163634845,
+      "minimum": 3
+    },
+    {
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.9404685310542154,
+      "minimum": 3
+    }
+  ],
+  "blueprint": {
+    "version": "1.0",
+    "catalogVersion": "1.0.0",
+    "name": "프로젝트 현황",
+    "theme": "signal",
+    "palette": "fiery",
+    "mode": "light",
+    "shell": "split",
+    "typography": "sans",
+    "density": "compact",
+    "radius": "square",
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "다음 결정을 위한 한눈.",
+          "description": "오늘의 흐름을 읽고, 중요한 일에 집중하세요."
+        },
+        {
+          "type": "grid",
+          "columns": "three",
+          "children": [
+            {
+              "type": "metric",
+              "label": "진행 중 프로젝트",
+              "value": "12",
+              "detail": "이번 주 시작한 프로젝트 3개"
+            },
+            {
+              "type": "metric",
+              "label": "완료한 작업",
+              "value": "84",
+              "detail": "지난주보다 12개 더 완료"
+            },
+            {
+              "type": "metric",
+              "label": "다음 마일스톤",
+              "value": "10. 24.",
+              "detail": "디자인 리뷰 · 오후 2시"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "지금 집중할 일",
+          "children": [
+            {
+              "type": "grid",
+              "columns": "two",
+              "children": [
+                {
+                  "type": "card",
+                  "title": "브랜드의 새로운 언어",
+                  "body": "제품의 성격을 살리는 표현과 규칙을 함께 정리합니다.",
+                  "meta": "디자인 · 진행 중"
+                },
+                {
+                  "type": "card",
+                  "title": "작은 개선의 기록",
+                  "body": "사용자가 망설이는 순간을 찾아 하나씩 다듬습니다.",
+                  "meta": "리서치 · 이번 주"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "최근 작업",
+          "caption": "프로젝트별 최근 변경과 담당 현황",
+          "columns": [
+            "작업",
+            "담당",
+            "상태"
+          ],
+          "rows": [
+            [
+              "조립 규약 정리",
+              "김다선",
+              "완료"
+            ],
+            [
+              "팔레트 후보 검토",
+              "디자인팀",
+              "진행"
+            ],
+            [
+              "다음 릴리스 준비",
+              "개발팀",
+              "대기"
+            ]
+          ],
+          "state": "ready"
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "e3dfb47f1a9542e8628b924822362866730dde68234262fabe76ad3629d6c3bb",
+      "tokens.css": "268ac3cec54a78d35d3aa6a14f49b55e266d14eb0debfd81b3155fe60b778aa2",
+      "tokens.json": "e9a82149f781704514034b4e08a7e8f8510c06b7d8ff8aee1a28b03aed980845",
+      "blueprint.json": "bb2f9da723aed5ff26fb45191bcb261997bc8db87c621fdabf4b921b363e97e5"
+    }
+  }
+}

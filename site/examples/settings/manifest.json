@@ -1,0 +1,296 @@
+{
+  "blueprintVersion": "1.0",
+  "catalogVersion": "1.0.0",
+  "theme": "workspace",
+  "palette": "ocean",
+  "mode": "light",
+  "axes": {
+    "shell": "sidebar",
+    "typography": "sans",
+    "density": "comfortable",
+    "radius": "soft"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/03045e-023e8a-0077b6-0096c7-00b4d8-48cae4-90e0ef-ade8f4-caf0f8",
+      "discovery": "https://coolors.co/palettes/trending",
+      "observed": "2026-10-18",
+      "method": "configured browser, rendered trending palette swatches",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#03045E",
+      "#023E8A",
+      "#0077B6",
+      "#0096C7",
+      "#00B4D8",
+      "#48CAE4",
+      "#90E0EF",
+      "#ADE8F4",
+      "#CAF0F8"
+    ],
+    "brandSeed": "#0077B6",
+    "action": "#0075B2",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "name": "text/canvas",
+      "foreground": "#182029",
+      "background": "#F8FDFE",
+      "ratio": 16.025962012901555,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/surface",
+      "foreground": "#182029",
+      "background": "#FFFFFF",
+      "ratio": 16.43884712883201,
+      "minimum": 4.5
+    },
+    {
+      "name": "text/soft",
+      "foreground": "#182029",
+      "background": "#EDF5FA",
+      "ratio": 14.90635017924352,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/canvas",
+      "foreground": "#586476",
+      "background": "#F8FDFE",
+      "ratio": 5.850285702890797,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/surface",
+      "foreground": "#586476",
+      "background": "#FFFFFF",
+      "ratio": 6.001009627527568,
+      "minimum": 4.5
+    },
+    {
+      "name": "muted/soft",
+      "foreground": "#586476",
+      "background": "#EDF5FA",
+      "ratio": 5.441570825246391,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/canvas",
+      "foreground": "#0075B2",
+      "background": "#F8FDFE",
+      "ratio": 4.889100964040604,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/surface",
+      "foreground": "#0075B2",
+      "background": "#FFFFFF",
+      "ratio": 5.0150613910470145,
+      "minimum": 4.5
+    },
+    {
+      "name": "link/soft",
+      "foreground": "#0075B2",
+      "background": "#EDF5FA",
+      "ratio": 4.547536739011114,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#F8FDFE",
+      "ratio": 5.840541488872456,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.991014368303245,
+      "minimum": 4.5
+    },
+    {
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#EDF5FA",
+      "ratio": 5.432507365201875,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#F8FDFE",
+      "ratio": 5.206217067420755,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751997709,
+      "minimum": 4.5
+    },
+    {
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#EDF5FA",
+      "ratio": 4.842498356956811,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#F8FDFE",
+      "ratio": 5.642371231114877,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.787738548097536,
+      "minimum": 4.5
+    },
+    {
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#EDF5FA",
+      "ratio": 5.248181753118972,
+      "minimum": 4.5
+    },
+    {
+      "name": "focus/canvas",
+      "foreground": "#0077B6",
+      "background": "#F8FDFE",
+      "ratio": 4.745377353976087,
+      "minimum": 3
+    },
+    {
+      "name": "focus/surface",
+      "foreground": "#0077B6",
+      "background": "#FFFFFF",
+      "ratio": 4.867634955569854,
+      "minimum": 3
+    },
+    {
+      "name": "focus/soft",
+      "foreground": "#0077B6",
+      "background": "#EDF5FA",
+      "ratio": 4.4138540022791775,
+      "minimum": 3
+    },
+    {
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#00679D",
+      "ratio": 6.127874010539931,
+      "minimum": 4.5
+    },
+    {
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#0075B2",
+      "ratio": 5.0150613910470145,
+      "minimum": 4.5
+    },
+    {
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#F8FDFE",
+      "ratio": 3.8414980379585586,
+      "minimum": 3
+    },
+    {
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.9404685310542154,
+      "minimum": 3
+    }
+  ],
+  "blueprint": {
+    "version": "1.0",
+    "catalogVersion": "1.0.0",
+    "name": "설정과 입력",
+    "theme": "workspace",
+    "palette": "ocean",
+    "mode": "light",
+    "shell": "sidebar",
+    "typography": "sans",
+    "density": "comfortable",
+    "radius": "soft",
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "작업 환경을 나답게.",
+          "description": "설정은 언제든 바꿀 수 있습니다."
+        },
+        {
+          "type": "form",
+          "title": "프로필 설정",
+          "fields": [
+            {
+              "id": "name",
+              "label": "이름",
+              "type": "text",
+              "placeholder": "이름을 입력하세요"
+            },
+            {
+              "id": "email",
+              "label": "이메일",
+              "type": "email",
+              "placeholder": "name@example.com"
+            },
+            {
+              "id": "role",
+              "label": "주로 하는 일",
+              "type": "select",
+              "options": [
+                "디자인",
+                "개발",
+                "기획"
+              ]
+            },
+            {
+              "id": "intro",
+              "label": "소개",
+              "type": "textarea",
+              "placeholder": "어떤 일을 하고 있나요?"
+            }
+          ],
+          "submitLabel": "입력 확인"
+        },
+        {
+          "type": "notice",
+          "tone": "info",
+          "title": "이 화면은 데모입니다.",
+          "body": "입력 형식만 브라우저에서 확인하며 서버에 저장하지 않습니다."
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "42731db9ee718914fed09441d6b07848c0a069acc405634c56bceca7758874a0",
+      "tokens.css": "db7fa7d88c494a56af89b2b13cd50712a5f04a3d1b39c82f0cbf2ba2b3d358b8",
+      "tokens.json": "6ea77521cf456f3afeaeadbeb56a4ccd965bd86bf721834340dcea8dca3a389a",
+      "blueprint.json": "4d8bdb939b695fc1f4f72ac4b632891228c6f3f675ac61d7915b62f203ac27be"
+    }
+  }
+}

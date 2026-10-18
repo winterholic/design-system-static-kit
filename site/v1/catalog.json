@@ -1,0 +1,1010 @@
+{
+  "version": "1.0.0",
+  "themes": {
+    "workspace": {
+      "id": "workspace",
+      "name": "워크스페이스",
+      "description": "업무·개발·운영. 빠르게 읽고 판단하는 도구.",
+      "palettes": [
+        "ocean",
+        "pearl",
+        "deep-sea"
+      ],
+      "defaults": {
+        "shell": "sidebar",
+        "typography": "sans",
+        "density": "comfortable",
+        "radius": "soft"
+      }
+    },
+    "editorial": {
+      "id": "editorial",
+      "name": "에디토리얼",
+      "description": "출판·리서치·기록. 긴 문장의 읽기 리듬.",
+      "palettes": [
+        "lavender",
+        "earth",
+        "harvest"
+      ],
+      "defaults": {
+        "shell": "editorial",
+        "typography": "serif",
+        "density": "spacious",
+        "radius": "square"
+      }
+    },
+    "botanical": {
+      "id": "botanical",
+      "name": "보태니컬",
+      "description": "자연·생활·웰니스. 차분한 정보와 재료감.",
+      "palettes": [
+        "forest",
+        "verdigris",
+        "olive"
+      ],
+      "defaults": {
+        "shell": "topbar",
+        "typography": "sans",
+        "density": "comfortable",
+        "radius": "soft"
+      }
+    },
+    "signal": {
+      "id": "signal",
+      "name": "시그널",
+      "description": "캠페인·관제·발표. 높은 대비와 분명한 액션.",
+      "palettes": [
+        "fiery",
+        "coastal",
+        "twilight"
+      ],
+      "defaults": {
+        "shell": "split",
+        "typography": "sans",
+        "density": "compact",
+        "radius": "square"
+      }
+    },
+    "atelier": {
+      "id": "atelier",
+      "name": "아틀리에",
+      "description": "교육·창작·커뮤니티. 친근한 색면과 여유.",
+      "palettes": [
+        "pastel",
+        "peach",
+        "sorbet"
+      ],
+      "defaults": {
+        "shell": "topbar",
+        "typography": "sans",
+        "density": "spacious",
+        "radius": "round"
+      }
+    },
+    "precision": {
+      "id": "precision",
+      "name": "프리시전",
+      "description": "데이터·규격·포트폴리오. 구조를 드러내는 절제.",
+      "palettes": [
+        "steel",
+        "rustic",
+        "gold"
+      ],
+      "defaults": {
+        "shell": "sidebar",
+        "typography": "mono",
+        "density": "compact",
+        "radius": "square"
+      }
+    }
+  },
+  "palettes": {
+    "ocean": {
+      "id": "ocean",
+      "name": "오션 블루",
+      "colors": [
+        "#03045E",
+        "#023E8A",
+        "#0077B6",
+        "#0096C7",
+        "#00B4D8",
+        "#48CAE4",
+        "#90E0EF",
+        "#ADE8F4",
+        "#CAF0F8"
+      ],
+      "brand": 2,
+      "reason": "업무 도구의 명확한 파란 행동색",
+      "source": {
+        "url": "https://coolors.co/palette/03045e-023e8a-0077b6-0096c7-00b4d8-48cae4-90e0ef-ade8f4-caf0f8",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "pearl": {
+      "id": "pearl",
+      "name": "오션 펄",
+      "colors": [
+        "#006D77",
+        "#83C5BE",
+        "#EDF6F9",
+        "#FFDDD2",
+        "#E29578"
+      ],
+      "brand": 0,
+      "reason": "차분한 청록과 따뜻한 보조색",
+      "source": {
+        "url": "https://coolors.co/palette/006d77-83c5be-edf6f9-ffddd2-e29578",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "deep-sea": {
+      "id": "deep-sea",
+      "name": "딥 시",
+      "colors": [
+        "#0D1B2A",
+        "#1B263B",
+        "#415A77",
+        "#778DA9",
+        "#E0E1DD"
+      ],
+      "brand": 2,
+      "reason": "낮은 채도의 전문 도구",
+      "source": {
+        "url": "https://coolors.co/palette/0d1b2a-1b263b-415a77-778da9-e0e1dd",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "lavender": {
+      "id": "lavender",
+      "name": "라벤더 잉크",
+      "colors": [
+        "#22223B",
+        "#4A4E69",
+        "#9A8C98",
+        "#C9ADA7",
+        "#F2E9E4"
+      ],
+      "brand": 1,
+      "reason": "긴 글을 받치는 보랏빛 잉크",
+      "source": {
+        "url": "https://coolors.co/palette/22223b-4a4e69-9a8c98-c9ada7-f2e9e4",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "earth": {
+      "id": "earth",
+      "name": "어스 페이퍼",
+      "colors": [
+        "#0A0908",
+        "#22333B",
+        "#EAE0D5",
+        "#C6AC8F",
+        "#5E503F"
+      ],
+      "brand": 4,
+      "reason": "문서와 기록을 위한 담백한 종이",
+      "source": {
+        "url": "https://coolors.co/palette/0a0908-22333b-eae0d5-c6ac8f-5e503f",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "harvest": {
+      "id": "harvest",
+      "name": "하베스트",
+      "colors": [
+        "#6F1D1B",
+        "#BB9457",
+        "#432818",
+        "#99582A",
+        "#FFE6A7"
+      ],
+      "brand": 0,
+      "reason": "문화·출판을 위한 짙은 적갈색",
+      "source": {
+        "url": "https://coolors.co/palette/6f1d1b-bb9457-432818-99582a-ffe6a7",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "forest": {
+      "id": "forest",
+      "name": "포레스트",
+      "colors": [
+        "#DAD7CD",
+        "#A3B18A",
+        "#588157",
+        "#3A5A40",
+        "#344E41"
+      ],
+      "brand": 3,
+      "reason": "웰니스와 자연 소재",
+      "source": {
+        "url": "https://coolors.co/palette/dad7cd-a3b18a-588157-3a5a40-344e41",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "verdigris": {
+      "id": "verdigris",
+      "name": "버디그리스",
+      "colors": [
+        "#CAD2C5",
+        "#84A98C",
+        "#52796F",
+        "#354F52",
+        "#2F3E46"
+      ],
+      "brand": 2,
+      "reason": "지식·아카이브의 녹청색",
+      "source": {
+        "url": "https://coolors.co/palette/cad2c5-84a98c-52796f-354f52-2f3e46",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "olive": {
+      "id": "olive",
+      "name": "올리브 가든",
+      "colors": [
+        "#606C38",
+        "#283618",
+        "#FEFAE0",
+        "#DDA15E",
+        "#BC6C25"
+      ],
+      "brand": 0,
+      "reason": "유기적 제품과 생활 서비스",
+      "source": {
+        "url": "https://coolors.co/palette/606c38-283618-fefae0-dda15e-bc6c25",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "fiery": {
+      "id": "fiery",
+      "name": "파이어리 오션",
+      "colors": [
+        "#780000",
+        "#C1121F",
+        "#FDF0D5",
+        "#003049",
+        "#669BBC"
+      ],
+      "brand": 1,
+      "reason": "또렷한 편집·캠페인",
+      "source": {
+        "url": "https://coolors.co/palette/780000-c1121f-fdf0d5-003049-669bbc",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "coastal": {
+      "id": "coastal",
+      "name": "코스털 레드",
+      "colors": [
+        "#2B2D42",
+        "#8D99AE",
+        "#EDF2F4",
+        "#EF233C",
+        "#D90429"
+      ],
+      "brand": 4,
+      "reason": "정확한 경고와 결단",
+      "source": {
+        "url": "https://coolors.co/palette/2b2d42-8d99ae-edf2f4-ef233c-d90429",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "twilight": {
+      "id": "twilight",
+      "name": "골든 트와일라잇",
+      "colors": [
+        "#000814",
+        "#001D3D",
+        "#003566",
+        "#FFC300",
+        "#FFD60A"
+      ],
+      "brand": 3,
+      "reason": "산업·관제의 강한 신호색",
+      "source": {
+        "url": "https://coolors.co/palette/000814-001d3d-003566-ffc300-ffd60a",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "pastel": {
+      "id": "pastel",
+      "name": "파스텔 드림",
+      "colors": [
+        "#CDB4DB",
+        "#FFC8DD",
+        "#FFAFCC",
+        "#BDE0FE",
+        "#A2D2FF"
+      ],
+      "brand": 0,
+      "reason": "창작·커뮤니티의 부드러운 색면",
+      "source": {
+        "url": "https://coolors.co/palette/cdb4db-ffc8dd-ffafcc-bde0fe-a2d2ff",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "peach": {
+      "id": "peach",
+      "name": "피치 딜라이트",
+      "colors": [
+        "#D8E2DC",
+        "#FFE5D9",
+        "#FFCAD4",
+        "#F4ACB7",
+        "#9D8189"
+      ],
+      "brand": 4,
+      "reason": "생활·창작의 절제된 분홍",
+      "source": {
+        "url": "https://coolors.co/palette/d8e2dc-ffe5d9-ffcad4-f4acb7-9d8189",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "sorbet": {
+      "id": "sorbet",
+      "name": "워터멜론 소르베",
+      "colors": [
+        "#EF476F",
+        "#FFD166",
+        "#06D6A0",
+        "#118AB2",
+        "#073B4C"
+      ],
+      "brand": 0,
+      "reason": "친근한 교육·행사의 리듬",
+      "source": {
+        "url": "https://coolors.co/palette/ef476f-ffd166-06d6a0-118ab2-073b4c",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "steel": {
+      "id": "steel",
+      "name": "라이트 스틸",
+      "colors": [
+        "#F8F9FA",
+        "#E9ECEF",
+        "#DEE2E6",
+        "#CED4DA",
+        "#ADB5BD",
+        "#6C757D",
+        "#495057",
+        "#343A40",
+        "#212529"
+      ],
+      "brand": 6,
+      "reason": "수치·규격 중심의 중립 표면",
+      "source": {
+        "url": "https://coolors.co/palette/f8f9fa-e9ecef-dee2e6-ced4da-adb5bd-6c757d-495057-343a40-212529",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "rustic": {
+      "id": "rustic",
+      "name": "러스틱 그래파이트",
+      "colors": [
+        "#FFFCF2",
+        "#CCC5B9",
+        "#403D39",
+        "#252422",
+        "#EB5E28"
+      ],
+      "brand": 4,
+      "reason": "제품·포트폴리오의 한 점 강조",
+      "source": {
+        "url": "https://coolors.co/palette/fffcf2-ccc5b9-403d39-252422-eb5e28",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    },
+    "gold": {
+      "id": "gold",
+      "name": "블랙 앤 골드",
+      "colors": [
+        "#000000",
+        "#14213D",
+        "#FCA311",
+        "#E5E5E5",
+        "#FFFFFF"
+      ],
+      "brand": 2,
+      "reason": "전시·브랜드의 절제된 대비",
+      "source": {
+        "url": "https://coolors.co/palette/000000-14213d-fca311-e5e5e5-ffffff",
+        "discovery": "https://coolors.co/palettes/trending",
+        "observed": "2026-10-18",
+        "method": "configured browser, rendered trending palette swatches",
+        "evidence": "docs/evidence/coolors-palettes.json"
+      }
+    }
+  },
+  "axes": {
+    "shell": [
+      "sidebar",
+      "topbar",
+      "editorial",
+      "split"
+    ],
+    "typography": [
+      "sans",
+      "serif",
+      "mono"
+    ],
+    "density": [
+      "compact",
+      "comfortable",
+      "spacious"
+    ],
+    "radius": [
+      "square",
+      "soft",
+      "round"
+    ],
+    "mode": [
+      "light",
+      "dark"
+    ]
+  },
+  "nodeSpecs": {
+    "page": {
+      "label": "페이지",
+      "fields": {},
+      "children": [
+        "page-header",
+        "section",
+        "grid",
+        "card",
+        "table",
+        "list",
+        "form",
+        "prose",
+        "hero",
+        "notice",
+        "actions"
+      ],
+      "min": 2,
+      "max": 12
+    },
+    "page-header": {
+      "label": "페이지 제목",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "section": {
+      "label": "섹션",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      },
+      "children": [
+        "section",
+        "grid",
+        "card",
+        "table",
+        "list",
+        "form",
+        "prose",
+        "notice",
+        "actions"
+      ],
+      "min": 1,
+      "max": 8
+    },
+    "grid": {
+      "label": "그리드",
+      "fields": {
+        "columns": {
+          "type": "string",
+          "enum": [
+            "two",
+            "three"
+          ]
+        }
+      },
+      "children": [
+        "card",
+        "metric",
+        "list",
+        "notice"
+      ],
+      "min": 2,
+      "max": 6
+    },
+    "card": {
+      "label": "카드",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "meta": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "href": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "primary",
+                "secondary"
+              ]
+            }
+          },
+          "required": [
+            "label",
+            "href",
+            "variant"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "title",
+        "body"
+      ]
+    },
+    "metric": {
+      "label": "지표",
+      "fields": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ]
+    },
+    "table": {
+      "label": "표",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "minItems": 2,
+          "maxItems": 6
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "minItems": 2,
+            "maxItems": 6
+          },
+          "minItems": 0,
+          "maxItems": 30
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "loading",
+            "empty",
+            "error",
+            "partial",
+            "forbidden"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "caption",
+        "columns",
+        "rows"
+      ]
+    },
+    "list": {
+      "label": "목록",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "진행",
+                  "완료",
+                  "대기"
+                ]
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0,
+          "maxItems": 12
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "loading",
+            "empty",
+            "error",
+            "partial",
+            "forbidden"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "items"
+      ]
+    },
+    "form": {
+      "label": "폼",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "email",
+                  "textarea",
+                  "select"
+                ]
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 60
+                },
+                "minItems": 2,
+                "maxItems": 12
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "submitLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        }
+      }
+    },
+    "prose": {
+      "label": "본문",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 6000
+        }
+      }
+    },
+    "hero": {
+      "label": "히어로",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 700
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "href": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "primary",
+                "secondary"
+              ]
+            }
+          },
+          "required": [
+            "label",
+            "href",
+            "variant"
+          ],
+          "additionalProperties": false
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "statement",
+            "split"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "body",
+        "variant"
+      ]
+    },
+    "notice": {
+      "label": "알림",
+      "fields": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "tone": {
+          "type": "string",
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      }
+    },
+    "actions": {
+      "label": "액션 그룹",
+      "fields": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "primary",
+                  "secondary"
+                ]
+              }
+            },
+            "required": [
+              "label",
+              "href",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 3
+        }
+      }
+    }
+  },
+  "rules": [
+    {
+      "id": "R01",
+      "intent": "허용된 속성·variant만. 알 수 없는 키는 실패.",
+      "source": "ADR 0001"
+    },
+    {
+      "id": "R02",
+      "intent": "허용 간선·자식 수·깊이·노드 수로 위계 유지.",
+      "source": "frontend-design / spacing-layout"
+    },
+    {
+      "id": "R03",
+      "intent": "페이지 첫 위치에 h1 하나, 이후 단계적 제목.",
+      "source": "winterholic-base/docs/12-page-patterns.md"
+    },
+    {
+      "id": "R04",
+      "intent": "한 액션 그룹에 주 액션 하나.",
+      "source": "frontend-design"
+    },
+    {
+      "id": "R05",
+      "intent": "본문·보조·링크·버튼 4.5:1, 구조선·포커스 3:1.",
+      "source": "WCAG 2.2 SC 1.4.3, 1.4.11"
+    },
+    {
+      "id": "R06",
+      "intent": "데이터 부품에 로딩·빈·오류·부분 성공·권한 없음 상태.",
+      "source": "ttakkari/docs/10-states-feedback.md (state philosophy)"
+    },
+    {
+      "id": "R07",
+      "intent": "텍스트 이스케이프·HTTPS 링크·고정 런타임, 임의 HTML/CSS 불가.",
+      "source": "compiler input boundary"
+    },
+    {
+      "id": "R08",
+      "intent": "입력·카탈로그·산출물 일치 검사, 버전 불일치 거부.",
+      "source": "winterholic-design-system token source governance"
+    }
+  ]
+}
