@@ -55,3 +55,18 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 ## CI
 
 [Actions 39126816403](https://github.com/winterholic/design-system-static-kit/actions/runs/39126816403) · 검증 리비전 `26c13fcc5afc0091998efd7ddd5223b6c1c6862b` · Ubuntu/Node 22/Chromium. 모든 단계 성공: `npm ci`, `npm run verify`(원시 로그의 `# tests 50`, `# pass 50`, `# fail 0`, 대비 33600쌍, `REPRODUCIBLE: 540 generated files`), `git diff --exit-code -- site docs`, `npx playwright install --with-deps chromium`, `npm run test:browser`(`14 passed (2.0m)`). macOS에서 만든 생성물이 Ubuntu 재생성과 바이트 단위로 같았다는 뜻이다. 스크린샷과 보고서는 이 실행의 `browser-evidence` artifact에 보존했다.
+
+## Test Lab · 넓은 조합 실측 (Muse 워커, 2026-10-18 심야)
+
+실행 환경: Mac Studio 호스트가 아닌 Muse 샌드박스(Node v26.9.0). 이 환경에서는 `browser_preflight` 명령이 없어 직접 브라우저 실행이 금지되었고, `ttakkari_browser` MCP도 없었다. 그래서 렌더·육안 영역은 실행하지 않고, 생성·정적검사·재현검증까지만 수행했다. 브라우저 실측은 `e2e/lab-pages.spec.mjs`로 CI에 위임했고, 이 기록 시점에는 CI 실행 전이다. 아래 수치는 이론적 조합 수가 아니라 실제 생성·실제 검사한 결과다.
+
+- 생성: `node scripts/test-lab/generate.mjs` (seed 20261018, mulberry32, 결정적·shard/재시작 가능).
+  - matrix 2,440(템플릿 61 × 테마 40 전수, 기존 컴파일 매트릭스를 실제 페이지로 보존) + palette-mode 428(팔레트 160 × light/dark/auto 회전, 12건은 THEME_FORBID로 규칙 거부되어 기록만) + pairwise 441(축 쌍별 커버링, 허용 쌍 4,867 전부 커버) + stress 71(상태 6종·비움 변형·한글/영문 경계값·긴 URL·긴 숫자·오류 페이지 dark·단일축 스위프·금지 경계 허용쌍) = 고유 HTML 3,380개. 바이트 동일 중복 72건은 별도 기록하고 파일로 쓰지 않았다.
+  - 거부 입력 14종은 전부 거부되고 기대 코드와 일치했다(STRING·URL·LINK_LABEL·ENUM·AXIS_BAN·DUPLICATE_ID·NESTED_TABS·TABLE_WIDTH·PRIMARY_ACTION·ANCHOR_MISSING·SINGLE_HERO·PALETTE_THEME·UNKNOWN_KEY·STATE_DATA). 규칙 구멍 0건.
+  - 축 커버리지: 테마 40·템플릿 61·팔레트 160·모드 3·페이지 유형 16·모든 축 값이 1개 이상 케이스에 등장. uncovered 없음.
+  - 재현: `node scripts/test-lab/generate.mjs --verify` → checked 3,452·불일치 0·거부 집합 일치·중복 집합 일치.
+- 정적검사: `node scripts/test-lab/check.mjs` → 3,380/3,380 통과. 검사 항목은 문서형식·CSP·color-scheme·h1 단일·제목 단계·앵커 해결·id 유일·이름/라벨(aria 포함)·폼 이름·표 캡션·svg 이름·스크립트 1개+내용 해시·인라인 핸들러·외부 URL·용량. 검사기는 정상/고장 입력 양쪽 대조로 검증했다(`tests/test-lab-check.test.mjs` 6개). 검사 과정에서 검사기 오탐 1건(aria-label 무시)을 찾아 고쳤다.
+- 탐색: `site/test-lab/index.html` + `viewer.html` (검색·필터·페이지네이션, 단일 iframe 뷰어, 이전/다음·직접 URL). 산출물은 결정적 재생산을 위해 커밋 SHA·시각을 포함하지 않는다. 커밋·시각은 이 문서와 CI 기록으로 확인한다.
+- `npm run verify` 전체 통과(계약 56/56 — 기존 50 + 검사기 6, 감사·문서·빌드, `REPRODUCIBLE: 3925 generated files`).
+- 브라우저 검사(`e2e/lab-pages.spec.mjs`: stress 전수 360/390/768/1280/1600 오버플로우·콘솔·구조 감사, 템플릿 × 회전 테마 2종 390px, 대표·경계 24종 × 390/1280 스크린샷 → `test-results/test-lab/`)는 로컬 미실행. CI 결과를 별도로 확인할 것.
+- 미검증(여전함): 실제 Safari/iOS·스크린리더, 허용 조합 전체의 육안 미감(3,380 중 육안 0), Coolors 재사용 조건, Katalog 원 발표.

@@ -26,6 +26,21 @@ PMS 프로젝트: `a2211a70-7dc5-4a23-9dd8-3be6aa72ad34` · design-system-static
 
 2026-10-18 최종 수용(v2): 계약 50/50, 감사(대비 33,600쌍·템플릿×테마 2,440·쌍별 4,867쌍), 생성 540파일 재현, Chromium 14/14(로컬·CI). 검증 리비전 `26c13fc`.
 
+## v3 Test Lab (2026-10-18 심야, Muse 워커 — 브라우저 실측은 CI 위임)
+
+목표: 이론적 조합 수가 아니라 실제 생성·실제 검사한 페이지를 대폭 늘리고 탐색·배포 가능하게 한다.
+
+| WBS | 산출물 | 수용 기준 | 상태 |
+|---|---|---|---|
+| 11 | 케이스 생성기 `scripts/test-lab/generate.mjs` | seed 고정·결정적·shard/재시작, `--verify` 재현검증 | 완료 |
+| 12 | 정적 검사기 `scripts/test-lab/check.mjs` + 계약 테스트 6 | 양/음성 대조(고장 입력마다 코드), 스캔 실적 기록 | 완료 · 검사기 오탐 1건 수정 |
+| 13 | 고유 HTML 3,380 + manifest/coverage/check-report | matrix 2,440 전수 보존, 중복 72 제거·거부 12 기록, uncovered 없음 | 완료 · 정적검사 3,380/3,380 |
+| 14 | 탐색 `site/test-lab/index.html` + `viewer.html` | 검색/필터·페이지네이션·이전/다음·직접 URL, 대량 iframe 없음 | 완료 |
+| 15 | CI 브라우저 스펙 `e2e/lab-pages.spec.mjs` | stress 전수 뷰포트·회전 테마·대표 스크린샷 | 작성, CI 실행 전 |
+| 16 | Vercel 배포 | 전용 static-kit 프로젝트, 기존 덮어쓰기 금지 | 미실행 (인증 없음, 아래 기록) |
+
+수용: 계약 56/56, `REPRODUCIBLE: 3925 files`. 육안검수·Safari/iOS·스크린리더는 미검증으로 남긴다. 완료 선언 없이 GPT/Claude 독립검증으로 넘긴다.
+
 날짜를 임의로 확약하지 않는다. 실행 상태·증거는 `docs/verification.md`와 PMS의 실제 상태를 기준으로 갱신한다. 후속 기능과 미검증은 완료에 포함하지 않는다.
 
 ## 범위 밖 (후속)

@@ -15,7 +15,9 @@
     "dev": "node scripts/serve.mjs",
     "verify": "npm test && node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs",
     "kit": "node scripts/kit.mjs",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:lab": "node scripts/test-lab/generate.mjs && node scripts/test-lab/check.mjs && node scripts/test-lab/index.mjs",
+    "test:lab-verify": "node scripts/test-lab/generate.mjs --verify"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1"

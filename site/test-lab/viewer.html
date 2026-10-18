@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="단일 케이스 확인"><title>Test Lab · 케이스 뷰어</title><style>
+:root{color-scheme:light dark}
+*{box-sizing:border-box}body{margin:0;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:0 16px 64px;max-width:1180px;margin-inline:auto}
+header.top{padding:28px 0 8px;border-bottom:2px solid currentColor}
+h1{font-size:24px;margin:0 0 4px}.sub{color:#666;font-size:13px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.badge{font-size:12px;border:1px solid #999;border-radius:20px;padding:2px 10px}
+.badge.ok{border-color:#1a7f37;color:#1a7f37}.badge.todo{border-color:#9a6700;color:#9a6700}
+.toolbar{position:sticky;top:0;background:inherit;padding:10px 0;border-bottom:1px solid #ccc;z-index:5}
+.toolbar input,.toolbar select{font:inherit;padding:6px 8px;margin:2px;border:1px solid #999;border-radius:6px;max-width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:12px}
+.card{border:1px solid #bbb;border-radius:10px;padding:10px 12px;font-size:13px;text-decoration:none;color:inherit}
+.card:hover{border-color:#000}.card code{font-size:12px;word-break:break-all}
+.card .meta{color:#555;font-size:12px;margin-top:4px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.pass{background:#1a7f37}.fail{background:#cf222e}
+.pager{display:flex;gap:8px;align-items:center;margin:16px 0;flex-wrap:wrap}
+.pager button{font:inherit;padding:6px 14px;border:1px solid #999;border-radius:6px;background:none}
+section.block{margin-top:28px}section.block h2{font-size:18px}
+ul.plain{padding-left:20px;font-size:14px}ul.plain code{font-size:12px}
+table.meta{border-collapse:collapse;font-size:13px;margin:12px 0}table.meta th,table.meta td{border:1px solid #bbb;padding:4px 10px;text-align:left}
+
+.viewer{display:grid;grid-template-columns:300px 1fr;gap:12px;margin-top:12px}
+.viewer iframe{width:100%;height:78vh;border:1px solid #999;border-radius:8px;background:#fff}
+@media(max-width:760px){.viewer{grid-template-columns:1fr}.viewer iframe{height:70vh}}
+.navrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.navrow a,.navrow button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid #999;border-radius:6px;background:none;color:inherit;text-decoration:none}
+.note{font-size:13px;color:#555}
+footer.site{margin-top:40px;border-top:1px solid #ccc;padding-top:12px;font-size:12px;color:#555}
+</style></head><body>
+<header class="top"><h1>케이스 뷰어</h1><p class="sub"><a href="index.html">인덱스로</a> · seed 20261018 · 카탈로그 2.0.0</p>
+<div class="badges"><span class="badge ok">정적검사 결과 아래 표시</span><span class="badge todo">시각검수 미실시</span></div></header>
+<div class="navrow"><a href="index.html">인덱스로</a><button id="prevCase">이전 케이스</button><button id="nextCase">다음 케이스</button><a id="openDirect" href="#">직접 URL로 열기 ↗</a></div>
+<table class="meta" id="meta"></table>
+<p class="note" id="findings"></p>
+<div class="viewer"><div><h2 style="font-size:15px">검사 메모</h2><p class="note" id="note"></p><p class="note">뷰포트별 확인은 브라우저에서 직접 URL을 열고 360/390/768/1280/1600px로 본다. 오버플로우·키보드·실제 렌더는 CI Chromium 검사가 담당한다.</p></div>
+<iframe id="frame" title="케이스 미리보기" sandbox="allow-scripts allow-forms"></iframe></div>
+<script>
+let MAN,CHK,order=[];
+async function boot(){
+  MAN=await (await fetch('manifest.json')).json();CHK=await (await fetch('check-report.json')).json();
+  order=MAN.cases.map(c=>c.id);
+  const id=new URLSearchParams(location.search).get('case')||order[0];
+  show(id);
+  document.getElementById('prevCase').onclick=()=>step(id,-1);
+  document.getElementById('nextCase').onclick=()=>step(id,1);
+}
+function step(id,d){const i=order.indexOf(id);location.search='?case='+order[(i+d+order.length)%order.length];}
+function show(id){
+  const c=MAN.cases.find(x=>x.id===id);if(!c){document.body.insertAdjacentHTML('beforeend','<p>없는 케이스</p>');return;}
+  const r=CHK.results.find(x=>x.id===id);
+  document.title='Test Lab · '+id;
+  document.getElementById('frame').src='cases/'+id+'/index.html';
+  document.getElementById('openDirect').href='cases/'+id+'/index.html';
+  const rows=[['id',c.id],['세트',c.set],['템플릿',c.template],['테마',c.theme],['팔레트',c.palette],['모드',c.mode],['페이지 유형',c.pageType],['셸',c.axes.shell],['축',Object.entries(c.axes).map(([k,v])=>k+'='+v).join(', ')],['권장 뷰포트',c.viewports.join(', ')],['메모',c.note],['sha256',c.sha256.slice(0,16)+'…'],['용량',(c.bytes/1024).toFixed(1)+'KB'],['정적검사',r?(r.pass?'통과':'실패 '+r.findings.map(f=>f.code+':'+f.detail).join(' / ')):'기록 없음']];
+  document.getElementById('meta').innerHTML=rows.map(([k,v])=>'<tr><th>'+k+'</th><td>'+String(v).replace(/</g,'&lt;')+'</td></tr>').join('');
+  document.getElementById('note').textContent=c.note;
+}
+boot();
+</script></body></html>

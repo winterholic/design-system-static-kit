@@ -31,4 +31,19 @@ for (const theme of Object.values(themes)) {
   for (const [file, text] of Object.entries(outputFiles(createBlueprint(representative(theme), theme.id)))) await writeFile(join(path, file), text);
 }
 await writeFile(join(out, '.nojekyll'), '');
-console.log(`BUILT static workbench, gallery, schema/catalog API, ${templateList.length} template examples, ${Object.keys(themes).length} theme showcases → ${out}`);
+// Test-lab: deterministic wide-combination pages. Built through the same CLI the docs prescribe,
+// so `npm run build` and check-generated.mjs always cover it.
+{
+  const {spawnSync} = await import('node:child_process');
+  const lab = join(out, 'test-lab');
+  const steps = [
+    ['scripts/test-lab/generate.mjs', '--out', lab],
+    ['scripts/test-lab/check.mjs', '--out', lab],
+    ['scripts/test-lab/index.mjs', '--out', lab],
+  ];
+  for (const s of steps) {
+    const r = spawnSync(process.execPath, s, {cwd: root, encoding: 'utf8'});
+    if (r.status !== 0) { console.error(r.stdout?.slice(-2000)); console.error(r.stderr?.slice(-2000)); throw new Error('test-lab build failed: ' + s[0]); }
+  }
+}
+console.log(`BUILT static workbench, gallery, schema/catalog API, ${templateList.length} template examples, ${Object.keys(themes).length} theme showcases, test-lab → ${out}`);

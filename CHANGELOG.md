@@ -1,5 +1,9 @@
 # 변경 기록
 
+## Unreleased
+
+- Test Lab: seed 고정 결정적 생성기·정적 검사기·탐색 UI(`scripts/test-lab/`, `site/test-lab/`). 고유 HTML 3,380개(matrix 2,440 전수·팔레트×모드 428·쌍별 441·스트레스 71), 거부 입력 14종 전수 거부, 정적검사 전수 통과, `--verify` 재현검증. `npm run build`가 test-lab을 함께 생성하고 `check-generated`가 3,925파일 재현을 확인한다. CI 브라우저 스펙 `e2e/lab-pages.spec.mjs` 추가. 카탈로그 버전은 2.0.0 그대로.
+
 ## 2.0.0 · 2026-10-18
 
 카탈로그를 대폭 확장했다. Blueprint 2.0·카탈로그 2.0.0이며 1.x 입력은 `kit migrate`로 변환한다.
