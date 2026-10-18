@@ -494,9 +494,40 @@
                   "refresh",
                   "logout",
                   "more",
+                  "more-v",
                   "trophy",
                   "droplet"
                 ]
+              },
+              "mega": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 30
+                    },
+                    "href": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "description": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 2,
+                "maxItems": 8
               }
             },
             "required": [
@@ -2358,6 +2389,7 @@
             "refresh",
             "logout",
             "more",
+            "more-v",
             "trophy",
             "droplet"
           ]
@@ -2637,6 +2669,7 @@
                   "refresh",
                   "logout",
                   "more",
+                  "more-v",
                   "trophy",
                   "droplet"
                 ]
@@ -3100,6 +3133,7 @@
                   "refresh",
                   "logout",
                   "more",
+                  "more-v",
                   "trophy",
                   "droplet"
                 ]
@@ -3689,6 +3723,7 @@
             "refresh",
             "logout",
             "more",
+            "more-v",
             "trophy",
             "droplet"
           ]
@@ -3767,6 +3802,11 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 160
+        },
+        "overlay": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
         }
       },
       "required": [

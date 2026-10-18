@@ -152,3 +152,24 @@ test('repairAxes resolves bans without leaving the catalog', () => {
   const b = createBlueprint('about-team'); Object.assign(b, {shell: 'dock', density: 'compact', width: 'narrow'});
   repairAxes(b); assert.equal(axisBans.some(x => x.bad(b)), false);
 });
+
+test('layout, content-structure and icon coverage maps reference real catalog parts and cover every peer entry', async () => {
+  const {layoutCoverage, contentCoverage, iconAliases} = await import('../src/catalog.mjs');
+  assert.deepEqual(Object.keys(layoutCoverage).sort(), [...peer.layouts].sort());
+  for (const [name, c] of Object.entries(layoutCoverage)) {
+    assert.ok(c.refs.length && ['full', 'partial'].includes(c.status), name);
+    for (const ref of c.refs) { const [kind, id] = ref.split(':'); const ok = kind === 'shell' ? axes.shell.includes(id) : kind === 'node' ? nodeSpecs[id] : kind === 'template' ? templates[id] : kind === 'axis' ? axes[id] : false; assert.ok(ok, `${name} → ${ref}`); }
+  }
+  assert.deepEqual(Object.keys(contentCoverage).sort(), peer.pages.map(p => p.id).sort());
+  for (const c of Object.values(contentCoverage)) assert.ok(templates[c.template]);
+  for (const name of peer.icons) assert.ok(icons[name] || icons[iconAliases[name]], 'peer icon without equivalent: ' + name);
+  assert.ok(Object.values(layoutCoverage).filter(c => c.status === 'full').length >= 33);
+});
+
+test('mega menus and media overlays are validated and rendered', () => {
+  const b = createBlueprint('product-listing'); const html = compile(b).html;
+  assert.match(html, /<details class="kit-mega">/); assert.match(html, /data-mega/);
+  const side = createBlueprint('product-listing'); side.shell = 'sidebar'; assert.ok(validateBlueprint(side).errors.some(e => e.code === 'NAV_MEGA'));
+  const three = createBlueprint('product-listing'); three.chrome.nav.forEach(n => { n.mega = [{label: 'a', href: '#main'}, {label: 'b', href: '#main'}]; }); assert.ok(validateBlueprint(three).errors.some(e => e.code === 'NAV_MEGA'));
+  assert.match(compile(createBlueprint('case-study')).html, /<span class="kit-overlay">8주 프로젝트<\/span>/);
+});

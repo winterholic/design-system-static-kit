@@ -15,19 +15,21 @@ function hue(h) {
 const hueDistance = (a, b) => { const d = Math.abs(hue(a).h - hue(b).h); return Math.min(d, 360 - d); };
 
 const INK = '#10151C';
+// Decisions keep a 1e-6 margin so last-bit Math.pow differences between platforms can never flip a chosen color.
+const EPS = 1e-6;
 /** Move `seed` toward black (light) or white (dark) until it passes `minimum` against every background. */
 function ensure(seed, bgs, minimum, dark) {
-  for (let i = 0; i <= 100; i++) { const color = mix(seed, dark ? '#FFFFFF' : '#000000', i / 100); if (bgs.every(bg => contrast(color, bg) >= minimum)) return color; }
+  for (let i = 0; i <= 100; i++) { const color = mix(seed, dark ? '#FFFFFF' : '#000000', i / 100); if (bgs.every(bg => contrast(color, bg) >= minimum + EPS)) return color; }
   throw new Error('No contrast-safe token mapping for ' + seed);
 }
 /** A fill that carries 4.5:1 text in white or ink: keep it if it already does, else take the smaller move. */
 function ensureFill(color) {
-  const ok = c => Math.max(contrast(c, '#FFFFFF'), contrast(c, INK)) >= 4.5;
+  const ok = c => Math.max(contrast(c, '#FFFFFF'), contrast(c, INK)) >= 4.5 + EPS;
   if (ok(color)) return color;
   for (let i = 1; i <= 100; i++) for (const target of ['#000000', '#FFFFFF']) { const c = mix(color, target, i / 100); if (ok(c)) return c; }
   throw new Error('No fill-safe mapping for ' + color);
 }
-const onFill = c => contrast('#FFFFFF', c) >= 4.5 ? '#FFFFFF' : INK;
+const onFill = c => contrast('#FFFFFF', c) >= 4.5 + EPS ? '#FFFFFF' : INK;
 const samples = (a, b) => Array.from({length: 11}, (_, i) => mix(a, b, i / 10));
 
 export function resolveTokens(b, modeOverride) {

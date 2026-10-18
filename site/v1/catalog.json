@@ -6707,6 +6707,7 @@
             "refresh",
             "logout",
             "more",
+            "more-v",
             "trophy",
             "droplet"
           ]
@@ -7011,6 +7012,7 @@
                   "refresh",
                   "logout",
                   "more",
+                  "more-v",
                   "trophy",
                   "droplet"
                 ]
@@ -7503,6 +7505,7 @@
                   "refresh",
                   "logout",
                   "more",
+                  "more-v",
                   "trophy",
                   "droplet"
                 ]
@@ -8145,6 +8148,7 @@
             "refresh",
             "logout",
             "more",
+            "more-v",
             "trophy",
             "droplet"
           ]
@@ -8226,10 +8230,16 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 160
+        },
+        "overlay": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
         }
       },
       "optional": [
-        "caption"
+        "caption",
+        "overlay"
       ],
       "example": {
         "type": "media",
@@ -9629,11 +9639,12 @@
     },
     {
       "id": "R12",
-      "intent": "내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 푸터 링크 조건.",
+      "intent": "내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 드롭다운 메뉴는 가로 셸에서 최대 2개, 푸터 링크 조건.",
       "codes": [
         "NAV_COUNT",
         "NAV_ICON",
-        "FOOTER_LINKS"
+        "FOOTER_LINKS",
+        "NAV_MEGA"
       ],
       "source": "Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨"
     },
@@ -10162,6 +10173,7 @@
     "refresh",
     "logout",
     "more",
+    "more-v",
     "trophy",
     "droplet"
   ]

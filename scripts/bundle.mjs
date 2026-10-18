@@ -35,7 +35,7 @@ export async function bundleSource(entry = 'compiler.mjs', extraEntries = ['cata
     for (const d of deps) await load(d);
   }
   for (const id of [entry, ...extraEntries]) await load(id);
-  const defs = [...modules.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([id, {code, exportsList}]) =>
+  const defs = [...modules.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([id, {code, exportsList}]) =>
     `__defs[${JSON.stringify(id)}] = function (exports, __m) {\n${code}\n${exportsList.map(([a, b]) => `exports.${b} = ${a};`).join('\n')}\n};`);
   return `(function () {
 'use strict';

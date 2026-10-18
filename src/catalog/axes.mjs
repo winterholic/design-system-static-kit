@@ -46,3 +46,6 @@ export const axisBans = [
 /** Navigation limits per shell (R12). Lives in the catalog so the renderer, validator and composer share one table. */
 export const navLimits = {sidebar: 8, topbar: 6, editorial: 5, split: 6, rail: 7, centered: 6, stacked: 8, dock: 5, minimal: 2, masthead: 6};
 export const iconShells = ['rail', 'dock'];
+/** Dropdown (mega) menus need a horizontal bar; vertical, rail and bottom-tab shells reject them. */
+export const megaShells = ['topbar', 'stacked', 'centered', 'editorial', 'masthead'];
+export const MEGA_MAX = 2;

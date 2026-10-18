@@ -1,4 +1,4 @@
-import {BLUEPRINT_VERSION, CATALOG_VERSION, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells} from './catalog.mjs';
+import {BLUEPRINT_VERSION, CATALOG_VERSION, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -72,7 +72,10 @@ export function validateBlueprint(input) {
   if (plain(input.chrome)) {
     const c = input.chrome;
     if (Array.isArray(c.nav)) {
-      c.nav.forEach((a, i) => { if (plain(a)) { checkLink(a.href, `$.chrome.nav[${i}].href`); checkLabel(a.label, `$.chrome.nav[${i}].label`); } });
+      c.nav.forEach((a, i) => { if (plain(a)) { checkLink(a.href, `$.chrome.nav[${i}].href`); checkLabel(a.label, `$.chrome.nav[${i}].label`); if (Array.isArray(a.mega)) a.mega.forEach((m, j) => { if (plain(m)) { checkLink(m.href, `$.chrome.nav[${i}].mega[${j}].href`); checkLabel(m.label, `$.chrome.nav[${i}].mega[${j}].label`); } }); } });
+      const megas = c.nav.filter(a => plain(a) && a.mega);
+      if (megas.length && !megaShells.includes(input.shell)) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 ${megaShells.join(', ')} 셸에서만 쓸 수 있습니다.`);
+      if (megas.length > MEGA_MAX) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 최대 ${MEGA_MAX}개입니다.`);
       const limit = navLimits[input.shell];
       if (limit && c.nav.length > limit) error('$.chrome.nav', 'NAV_COUNT', `${input.shell} 셸의 내비 항목은 최대 ${limit}개입니다.`);
       if (iconShells.includes(input.shell) && c.nav.some(a => plain(a) && !a.icon)) error('$.chrome.nav', 'NAV_ICON', `${input.shell} 셸은 모든 내비 항목에 icon이 필요합니다(아이콘+라벨).`);

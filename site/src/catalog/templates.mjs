@@ -332,7 +332,7 @@ add('product-listing', '상품 목록', 'commerce', 'commerce', '무드램프', 
     {type: 'form', title: '필터', variant: 'stacked', fields: [field('price', '가격대', 'select', {options: ['전체', '3만원 이하', '3~5만원', '5만원 이상'], requirement: 'optional'}), field('stock', '재고 있는 상품만', 'switch', {requirement: 'optional'}), field('color', '색상', 'radio', {options: ['전체', '화이트', '컬러'], requirement: 'optional'})], submitLabel: '적용'},
     {type: 'grid', columns: 'three', children: [card('무드램프 미니', '39,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '베스트'}), card('데스크 라이트', '59,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('캔들 워머', '45,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '신상'}), card('독서등', '29,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('플로어 램프', '129,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('센서 무드등', '19,000원', {variant: 'media', visual: 'photo', ratio: '1:1'})]}]},
   {type: 'pagination', pages: 4, current: 1},
-], {chrome: chrome(nav(['신상품', 'sparkles'], ['조명', 'sun'], ['이벤트', 'gift'], ['고객센터', 'message']), '장바구니', '© 2026 무드램프', FOOT)});
+], {chrome: chrome([{label: '신상품', href: '#main', icon: 'sparkles'}, {label: '조명', href: '#main', icon: 'sun', mega: [{label: '스탠드', href: '#main', description: '책상과 침대맡을 위한 조명'}, {label: '독서등', href: '#main', description: '눈이 편한 집중 조명'}, {label: '무드등', href: '#main', description: '분위기를 바꾸는 작은 램프'}, {label: '플로어', href: '#main', description: '공간을 채우는 큰 조명'}]}, {label: '이벤트', href: '#main', icon: 'gift'}, {label: '고객센터', href: '#main', icon: 'message'}], '장바구니', '© 2026 무드램프', FOOT)});
 
 add('checkout', '결제', 'commerce', 'commerce', '무드램프', [
   head('결제하기', '배송 정보를 입력하고 결제를 진행하세요.'),
@@ -397,7 +397,7 @@ add('portfolio-grid', '포트폴리오 모음', 'portfolio', 'gallery', '김다�
 
 add('case-study', '사례 연구', 'portfolio', 'studio', '스튜디오 오로', [
   head('동네 카페의 브랜드를 다시 쓰다', '아이덴티티 · 웹 · 패키지 · 2026', {eyebrow: '사례 연구'}),
-  media('photo', '21:9', '카페 매장 전경과 새 간판'),
+  {...media('photo', '21:9', '카페 매장 전경과 새 간판'), overlay: '8주 프로젝트'},
   grid('three', metric('기간', '8주'), metric('재방문율', '+31%', '리뉴얼 3개월 후', 'up', '+31%'), metric('SNS 언급', '2.4배')),
   {type: 'split', children: [prose('문제', '오래된 간판과 제각각인 메뉴판이 가게의 이야기를 전하지 못하고 있었습니다.'), prose('접근', '손글씨 질감을 살린 로고를 만들고, 메뉴판·컵·웹을 한 시스템으로 묶었습니다.')]},
   {type: 'gallery', title: '결과물', items: [{kind: 'photo', alt: '새 로고가 적용된 컵'}, {kind: 'pattern', alt: '메뉴판 패턴'}, {kind: 'device', alt: '모바일 웹'}]},

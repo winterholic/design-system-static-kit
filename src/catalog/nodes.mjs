@@ -112,7 +112,7 @@ export const nodeSpecs = {
     example: {type: 'empty-state', kind: 'first-use', title: '아직 프로젝트가 없어요', body: '첫 프로젝트를 만들어 시작해 보세요.', action: {label: '프로젝트 만들기', href: '#main', variant: 'primary'}}},
   skeleton: {label: '스켈레톤', group: 'feedback', fields: {label: str(60), variant: en('card', 'list', 'table', 'text')},
     example: {type: 'skeleton', label: '목록을 불러오는 중', variant: 'list'}},
-  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160)}, optional: ['caption'],
+  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160), overlay: str(60)}, optional: ['caption', 'overlay'],
     example: {type: 'media', kind: 'photo', ratio: '16:9', alt: '작업 공간의 전경', caption: '이미지는 자리 표시입니다.'}},
   gallery: {label: '갤러리', group: 'media', fields: {title: str(100), layout: en('grid', 'masonry'), items: arr(obj({kind: en(...mediaKinds), alt: str(160), caption: str(100)}, ['kind', 'alt']), 3, 12)}, optional: ['title', 'layout'],
     example: {type: 'gallery', title: '작업', items: [{kind: 'photo', alt: '작업 하나'}, {kind: 'diagram', alt: '작업 둘'}, {kind: 'pattern', alt: '작업 셋'}]}},
@@ -145,7 +145,8 @@ export const nodeTypes = Object.keys(nodeSpecs);
 export const requiredOf = spec => ['type', ...Object.keys(spec.fields).filter(k => !(spec.optional ?? []).includes(k)), ...(spec.children ? ['children'] : [])];
 
 // ---- chrome (navigation/footer content shared by every shell) ----
-const navItem = obj({label: str(24), href, icon: iconEnum}, ['label', 'href']);
+const megaLink = obj({label: str(30), href, description: str(80)}, ['label', 'href']);
+const navItem = obj({label: str(24), href, icon: iconEnum, mega: arr(megaLink, 2, 8)}, ['label', 'href']);
 export const chromeSpec = obj({
   nav: arr(navItem, 1, 8), action: obj({label: str(24), href}), brandMark: str(2),
   footerNote: str(120), footerLinks: arr(obj({label: str(30), href}), 1, 8),

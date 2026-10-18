@@ -18,7 +18,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
-      - run: git diff --exit-code -- site docs/evidence/contrast.json
+      - run: git diff --exit-code -- site docs
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - uses: actions/upload-artifact@v4

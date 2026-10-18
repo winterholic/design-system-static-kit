@@ -1,17 +1,19 @@
 {
   "name": "@winterholic/design-system-static-kit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "A catalog-constrained design compiler and visual assembly workbench",
+  "description": "A catalog-constrained design compiler, visual assembly workbench and phone-ready sample gallery",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "test": "node --test",
+    "audit": "node scripts/audit.mjs",
+    "docs": "node scripts/docs.mjs",
     "build": "node scripts/build.mjs",
     "dev": "node scripts/serve.mjs",
-    "verify": "npm test && node scripts/audit.mjs && npm run build && node scripts/check-generated.mjs",
+    "verify": "npm test && node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs",
     "kit": "node scripts/kit.mjs",
     "test:browser": "playwright test"
   },

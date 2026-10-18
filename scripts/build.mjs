@@ -1,4 +1,4 @@
-import {mkdir, readFile, writeFile, cp, readdir} from 'node:fs/promises';
+import {mkdir, writeFile, cp, readdir, rm} from 'node:fs/promises';
 import {resolve, join} from 'node:path';
 import {CATALOG_VERSION, themes, palettes, nodeSpecs, rules, axes, axisDefs, axisBans, pageTypes, templateList, createBlueprint, blueprintSchema, themeCategories, iconNames} from '../src/catalog.mjs';
 import {outputFiles, pretty} from './output.mjs';
@@ -8,6 +8,8 @@ const out = resolve(process.argv[2] ?? join(root, 'site'));
 const REP = {work: 'dashboard-overview', brand: 'saas-landing', read: 'article', life: 'product-landing', institution: 'civic-service', app: 'app-landing'};
 export const representative = theme => (templateList.find(t => t.theme === theme.id) ?? templateList.find(t => t.id === REP[theme.category])).id;
 
+// A stale file from an older build must never survive into the generated tree.
+if (out.startsWith(root + '/') || out.startsWith('/tmp') || out.includes('static-kit-build-')) await rm(out, {recursive: true, force: true});
 await mkdir(out, {recursive: true});
 await cp(join(root, 'src'), join(out, 'src'), {recursive: true});
 await cp(join(root, 'index.html'), join(out, 'index.html'));

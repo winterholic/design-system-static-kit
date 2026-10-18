@@ -1,73 +1,57 @@
-# 검증 기록 · 2026-10-18
+# 검증 기록 · 카탈로그 2.0 (2026-10-18)
 
-**최종 판정: 초기 구현의 로컬 검증 및 GitHub Actions 전체 통과.** 검증 코드 리비전 `4a10738bf9d28b57724ddfe74d6485a986b56731`. [성공한 CI](https://github.com/winterholic/design-system-static-kit/actions/runs/39120393780).
+환경을 구분한다. 아래 로컬 검사는 Mac Studio 호스트(macOS, Node v26.9.0, Playwright 1.64.1 + Chromium headless shell 156.0.8078.4)에서 실행했다. 이 호스트에서는 Playwright Chromium이 시작되고 coolors.co 렌더 페이지에도 접근된다. GitHub Actions(Ubuntu/Node 22/Chromium)는 별도 항목이다.
 
-환경을 구분한다. 아래 CLI 검사는 native Codex 명령 샌드박스의 Node v26.9.0에서 실행했다. 브라우저는 configured `ttakkari_browser` 경로다. GitHub Actions의 Ubuntu/Node22/Chromium 검증은 별도로 기록한다.
+## 테스트가 먼저 잡은 실제 결함
 
-## 먼저 실패시킨 계약
-
-- `node --test` · 구현 전 23건 중 22실패(미구현), 1건은 빈 팔레트 열거여서 독립 카탈로그 개수 검사와 함께 판정. 이후 실제 카탈로그 전수 검사로 보완.
-- `node --test tests/cli.test.mjs` · CLI 구현 전 5실패.
-- prototype-like ID 반례를 추가해 `__proto__`에서 TypeError가 나는 것을 재현하고 own-key 검증으로 수정.
-- 원색 전체 검증 중 pastel/dark 표면에서 본문7:1 미달을 실제 계산으로 발견하고, 어두운 표면의 원색 혼합 비율을 수정.
+- 브라우저 구조 감사가 템플릿 4개(saas-landing·agency-home·event-landing 등)의 **깨진 앵커**(`#features` → 실제 id는 `s-features`)를 찾아 링크 변환 규칙(`href()`)을 추가했다.
+- 작성기 전수 검사가 글로우+라이트(X05) 같은 **축 금지 조합이 모드 전환에서 거부**되는 것을 발견했다. 검사 자체를 "거부되는 조합은 규칙과 함께 거부되는지"로 바꿨다.
+- 페이지 유형 계약에서 글·문서에 후기(quote)와 CTA를 금지한 것이 실제 템플릿과 충돌해 금지 목록을 판단 근거에 맞게 좁혔다.
+- 푸터 링크가 `.kit-footer ul` 규칙에 덮여 세로로 쌓이는 CSS 결함을 스크린샷으로 발견해 수정했다.
+- 교차 플랫폼: 이전 CI에서 대비 비율의 마지막 비트 차이가 문제였다. 이번에는 색 선택 결정에 1e-6 여유를 두어 Math.pow 차이가 토큰 색을 바꾸지 못하게 했고, 번들러의 정렬에서 로케일 의존을 없앴다.
 
 ## 현재 로컬 실행 결과
 
 `npm run verify`
 
 ```text
-ℹ tests 31
-ℹ pass 31
+ℹ tests 50
+ℹ pass 50
 ℹ fail 0
-AUDIT: 18 palettes match rendered Coolors evidence; 36 color modes, 900 used contrast pairs pass; 3888 axis combinations compile.
-REPRODUCIBLE: 63 generated files match a fresh build byte for byte.
+AUDIT: 160 palettes match rendered Coolors evidence (814 observed); 320 color modes, 33600 used contrast pairs pass (tightest chart1/canvas 3.00:3 on orange-sunset-sky/light).
+CATALOG: 40 themes, 160 palettes, 61 templates, 55 node types (50 examples compile), 16 page types, 11 axis bans.
+MATRIX: 2440 template×theme pages + 468 palette×mode pages compile; 450 pairwise tuples cover 4867 allowed axis-value pairs; 4680/4800 palette×mode×shell compile ({"NAV_COUNT":468,"AXIS_BAN":936,"THEME_FORBID":120} rejected before repair).
+SPACE: 157,900,457,808 rule-allowed axis×palette combinations (factored count).
+DOCS: gap-analysis (38 systems, 38 layouts: 34 full / 4 partial) and design written.
+REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 ```
 
-이 명령은 contract/CLI → Coolors 관측값 대조와 실제 대비 쌍 → 축 조합 컴파일 → site 생성 → 새로운 디렉터리와 바이트 일치를 확인한다. 대비 통과는 WCAG 전체 준수나 모든 조합의 시각 품질을 뜻하지 않는다.
+이 명령은 계약·CLI → 증거 대조와 전 팔레트 대비 → 부품 예시 → 템플릿×테마 → 쌍별 커버링과 팔레트×모드×셸 전수 → 허용 공간 계수 → 문서 생성 → 사이트 생성 → 새 디렉터리와 바이트 비교를 확인한다. 대비 통과는 WCAG 전체 준수나 모든 조합의 시각 품질을 뜻하지 않는다. "허용 조합 수"는 규칙을 통과하는 조합의 이론적 크기이고, 이 가운데 컴파일해 본 것은 위 항목의 부분집합이다(쌍별 커버링 450개, 템플릿×테마 2,440개, 팔레트×모드 468개, 팔레트×모드×셸 4,680개).
 
-## configured browser 관측
+## Chromium 검사
 
-- 실제 작업대 렌더와 1600px bounding snapshot/스크린샷 확인. 지표의 기본 dl/dd margin, 좁은 셸의 브랜드 줄바꿈, 프리뷰 헤더 정렬을 수정.
-- 아틀리에 → 피치 딜라이트 → split → dark를 실제 선택. `트리 검증 통과`, 본문 최저4.51:1 표시 확인.
-- root 노드 JSON에 `style`을 넣고 적용. `$.tree.style [UNKNOWN_KEY]` 및 빈 트리/페이지 제목 오류 표시, JSON/HTML 다운로드 버튼 disabled, 마지막 유효 미리보기 유지 확인.
+`npm run test:browser` · 14흐름 통과(1.8분). 검사 항목:
 
-## CI 브라우저 게이트
+- 작성기: 40테마 × 160팔레트 × 라이트/다크 실제 computed color 대조(320건, 거부되는 조합은 규칙과 함께 거부 확인), 저장·복구, 노드 추가·이동·삭제·상태 편집·실제 다운로드 내용, 금지 조합 거부와 자동 수정, 24개 템플릿과 10개 셸의 넘침, 390/768/1600px 패널, 폼 로컬 검증과 네트워크 전송 없음, 카탈로그 탭(40 테마·55 부품).
+- 예제 61개 × 390/768/1280px 가로 넘침 없음과 페이지 오류 없음, 390px에서 구조 감사(언어·랜드마크·h1 하나·제목 단계·이름·라벨·타깃 24px·표 캡션·폼 이름·깨진 앵커). 40개 테마 쇼케이스 390px 넘침 없음.
+- 8개 페이지에서 Tab 70회: 모든 포커스 지점에 표시, ARIA 탭 화살표 키.
+- auto 모드가 `prefers-color-scheme`을 따름, reduced-motion에서 애니메이션 제거.
+- 단일 파일 갤러리: 외부 네트워크 차단 상태에서 390px 휴대폰으로 탐색·열기·테마 변경·X01 거부·자동 수정·부품 열람.
 
-[Actions 39120393780](https://github.com/winterholic/design-system-static-kit/actions/runs/39120393780) · Ubuntu/Node22/Chromium에서 전체 성공. 원시 로그의 `# tests 31`, `# pass 31`, `5 passed (10.5s)`와 생성 일치 검사 성공을 확인했다. 스크린샷과 보고서는 이 실행의 `browser-evidence` artifact로 보존했다.
+## 환경에서 확인한 사실
 
-검사 항목: 36팔레트/모드 실제 computed color, 키보드 radio 포커스/저장 복구, 음성 입력/출력 차단, 노드 추가/이동/삭제·상태 편집·실제 다운로드 내용, 네 가지 예제/셸·긴 한글·390/768/1600px overflow, 폼 로컬 검증과 네트워크 전송 없음, 카탈로그·설계서·standalone 예제.
-
-## 실행 환경에서 발생한 제한과 대안
-
-`npm install --save-dev @playwright/test`의 패키지 캐시 쓰기 단계에서 `/Users/winterholic/.npm/_cacache/tmp` EPERM이 발생했다. 이는 이 Codex 명령 샌드박스의 쓰기 범위 밖 캐시 실패이며 호스트나 npm 서비스 장애 증거가 아니다. 소유권/보안 설정을 바꾸지 않고 허용된 `/private/tmp/static-kit-npm-cache`를 `--cache`로 지정해 설치했고 `added 3 packages`, `0 vulnerabilities`를 받았다. 로컬 shell에서 브라우저를 시작하지 않았다.
+- 호스트에서 `npx playwright install chromium`이 성공했고(99MiB) Chromium·WebKit 모두 실행되었다. 샌드박스 제한으로 브라우저를 못 띄운 기록(1.0 시기 Codex 샌드박스)은 이 환경에는 해당하지 않는다.
+- coolors.co는 일반 fetch는 403이지만 Playwright로 렌더된 페이지의 텍스트에서 스워치·이름·좋아요 수를 읽을 수 있었다. 이 방식의 재사용 조건은 확인하지 않았다.
 
 ## 범위 밖/미확인
 
-실제 Safari/iOS·스크린리더, 전체 3,888조합의 육안 미감, 소비 앱의 바깥 CSS와 비즈니스 데이터 연결, GitHub 보호 브랜치 관리 설정, 카카오 Katalog 원 발표 상세는 미확인이다. 기존 winterholic-design-system 브랜드를 자동 수입/동기화한 기능은 없다.
+- 실제 Safari/iOS, 스크린리더(VoiceOver·NVDA), 실제 고대비·강제 색상 모드: 미실행(Chromium 에뮬레이션만).
+- 허용 조합 약 1.6×10^11개 전체의 육안 미감: 미검수. 테마 40개의 기본 프로필 화면과 일부 조합만 스크린샷으로 확인했다.
+- 팔레트-테마 배정은 점수화 후 수동 보정한 근사이며 미감 검증이 아니다. Coolors 이름·팔레트의 재사용 조건: 미확인.
+- 동료 레포 대응 표는 성격의 환산이다. 브랜드 일치를 뜻하지 않는다.
+- 카카오 Katalog 원 발표: 확인 필요.
+- GitHub Actions 결과: 아래 "CI" 절(푸시 후 기록).
 
-## 첫 CI에서 확인한 환경 차이
+## CI
 
-[Actions 39120125451](https://github.com/winterholic/design-system-static-kit/actions/runs/39120125451) · Ubuntu/Node22: npm ci와 contract/CLI/audit/build는 성공, 생성 파일 git diff 단계에서 실패했다. 원시 로그에서 대비 비율의 마지막 부동소수 비트 차이(`5.934475817361694` → `5.934475817361695`)를 확인했다. Chromium 설치/시험은 이 실행에서 건너뛰었다.
-
-대비 판정은 원시 값을 유지하고, manifest/대비 기록의 표시값만 소수8자리에서 **버림**으로 직렬화해 플랫폼 재현성을 확보했다. 반올림으로 미달을 합격시키지 않는다. 회귀 테스트를 먼저 실패시킨 뒤 수정했다.
-
-GH 로그 조회도 Codex 샌드박스에서 기본 `~/.cache/gh` 쓰기 EPERM이 났고, XDG_CACHE_HOME을 허용된 임시 경로로 지정해 실제 실패 로그를 확보했다. GitHub 실행 장애와 로컬 캐시 쓰기 제한을 구분했다.
-
-## 두 번째 CI의 실제 UI 검증
-
-[Actions 39120279715](https://github.com/winterholic/design-system-static-kit/actions/runs/39120279715) · Ubuntu/Node22/Chromium: 플랫폼 간 생성 일치 검사는 통과. 실제 브라우저 5흐름 중 4통과, iframe의 폼 확인 상태 갱신 1실패. standalone 폼은 configured browser에서 입력 후 ‘저장하지 않았습니다’ 피드백을 확인했지만, iframe에서는 sandbox에 allow-forms가 없어 native validation/submit이 막혔다. MDN의 allow-forms 설명과 실행 경로를 대조했다.
-
-iframe에 native 폼 검증용 allow-forms를 추가했다. allow-same-origin은 계속 생략하며, 생성 HTML의 CSP form-action none/connect-src none과 고정 런타임의 preventDefault로 네트워크 전송을 막는다. 후속 Actions 39120393780에서 같은 폼 행동과 실제 요청 없음 검사가 통과했다. configured browser에서도 iframe 안 입력 후 상태 문구 갱신을 별도로 확인했다.
-
-## 최종 수용 결과
-
-| 영역 | 실행 증거 | 결과 |
-|---|---|---|
-| contract/CLI | native Codex `npm run verify`, CI Node22의 동일 명령 | 31/31 |
-| 색상 | 독립 Coolors 관측값 대조, 팔레트별 light/dark 실제 사용색 | 후보18 · 모드36 · 대비900쌍 |
-| 조합 | 18×2×4×3×3×3 축 열거 컴파일 | 3,888개 |
-| 생성 재현 | 새 디렉터리와 비교 + CI git diff | 63파일 바이트 일치 |
-| 실제 브라우저 | Actions Chromium `npm run test:browser` | 5/5 흐름, 10.5초 |
-| 반영 | origin main의 검증 리비전 | 4a10738bf9d28b57724ddfe74d6485a986b56731 |
-
-실행 뒤의 문서/WBS 완료 표기 갱신은 코드 변경이 없는 별도 커밋이다. ‘완료’는 위 수용 범위이며, 범위 밖/미확인 항목까지 검사했다는 뜻이 아니다.
+푸시 후 Actions 실행을 확인해 기록한다.

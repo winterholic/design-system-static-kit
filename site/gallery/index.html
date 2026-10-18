@@ -80,6 +80,9 @@ const axisBans = [
 /** Navigation limits per shell (R12). Lives in the catalog so the renderer, validator and composer share one table. */
 const navLimits = {sidebar: 8, topbar: 6, editorial: 5, split: 6, rail: 7, centered: 6, stacked: 8, dock: 5, minimal: 2, masthead: 6};
 const iconShells = ['rail', 'dock'];
+/** Dropdown (mega) menus need a horizontal bar; vertical, rail and bottom-tab shells reject them. */
+const megaShells = ['topbar', 'stacked', 'centered', 'editorial', 'masthead'];
+const MEGA_MAX = 2;
 
 exports.axisDefs = axisDefs;
 exports.axisOrder = axisOrder;
@@ -88,6 +91,67 @@ exports.styleAxes = styleAxes;
 exports.axisBans = axisBans;
 exports.navLimits = navLimits;
 exports.iconShells = iconShells;
+exports.megaShells = megaShells;
+exports.MEGA_MAX = MEGA_MAX;
+};
+__defs["catalog/coverage.mjs"] = function (exports, __m) {
+/**
+ * Coverage map against the reference repository's axes (docs/evidence/peer-axes.json, names and counts only).
+ * Every `ref` is checked by tests/catalog.test.mjs against the real catalog, so this table cannot drift or overclaim.
+ * kind: shell | node | template | axis | combo (several refs). status: full | partial.
+ */
+const layoutCoverage = {
+  'Holy Grail (양쪽 사이드바 3단)': {kind: 'combo', refs: ['shell:sidebar', 'node:aside'], status: 'full', note: '사이드바 셸 + 본문·보조 영역'},
+  'Dashboard (관리자 화면)': {kind: 'template', refs: ['template:dashboard-overview'], status: 'full', note: '사이드바 셸, 지표·차트·표'},
+  'Landing Hero (첫 화면 크게)': {kind: 'node', refs: ['node:hero'], status: 'full', note: 'statement·split·centered·cover·product 5변형'},
+  'Split (화면 반반)': {kind: 'combo', refs: ['node:split', 'shell:split'], status: 'full', note: '2분할 부품과 분할 셸'},
+  'Modular Grid (지그재그 좌우교차)': {kind: 'node', refs: ['node:split'], status: 'full', note: 'reverse 값으로 좌우 교차'},
+  'Bento (도시락 칸 나누기)': {kind: 'node', refs: ['node:bento'], status: 'full', note: '3~6칸, 첫 칸 2×2'},
+  'List–Detail (목록 + 내용 · 메일함형)': {kind: 'node', refs: ['node:master-detail', 'template:inbox'], status: 'full', note: ''},
+  'Magazine (잡지형)': {kind: 'combo', refs: ['shell:masthead', 'template:blog-index'], status: 'full', note: '제호형 머리'},
+  'Centered (가운데 한 줄)': {kind: 'shell', refs: ['shell:centered'], status: 'full', note: ''},
+  'Stacked (위에서 아래로 쌓기)': {kind: 'combo', refs: ['node:section', 'shell:stacked'], status: 'full', note: '섹션 쌓기와 2단 내비'},
+  'Masonry (벽돌 쌓기 · 갤러리)': {kind: 'node', refs: ['node:gallery'], status: 'full', note: 'layout=masonry'},
+  'Sticky Sidebar (한쪽 고정 · 구매박스형)': {kind: 'combo', refs: ['node:aside', 'node:buy-box'], status: 'full', note: 'sticky=yes'},
+  'Anchor Long Page (앵커 탭 롱페이지)': {kind: 'combo', refs: ['node:section', 'node:toc', 'template:docs-reference'], status: 'full', note: 'section.anchor, 앵커 링크 검증, 자동 목차'},
+  'Full-bleed Scroll (풀화면 몰입형)': {kind: 'combo', refs: ['node:hero', 'axis:width'], status: 'partial', note: 'cover 히어로와 full 폭. 스크롤 연동 연출은 정적 범위 밖'},
+  'Card Feed (피드형 · SNS)': {kind: 'combo', refs: ['node:grid', 'node:card', 'template:blog-index'], status: 'full', note: ''},
+  'Tabbed (탭 전환형)': {kind: 'node', refs: ['node:tabs'], status: 'full', note: 'ARIA 탭 + 화살표 키'},
+  'Wizard Steps (단계별 진행)': {kind: 'combo', refs: ['node:stepper', 'template:onboarding-wizard'], status: 'full', note: ''},
+  'Pricing Compare (요금제 비교표)': {kind: 'combo', refs: ['node:pricing', 'template:pricing-page'], status: 'full', note: '추천 플랜은 하나만'},
+  'Grid Gallery (균일 격자 갤러리)': {kind: 'node', refs: ['node:gallery'], status: 'full', note: 'layout=grid'},
+  'Cluster (태그 뭉치)': {kind: 'node', refs: ['node:tags'], status: 'full', note: ''},
+  'Switcher (폭 따라 가로세로 전환)': {kind: 'node', refs: ['node:grid', 'node:feature-list'], status: 'full', note: '열 수가 폭에 따라 줄어듦'},
+  'Cover (세로 가운데 + 상하 고정)': {kind: 'node', refs: ['node:hero'], status: 'full', note: 'variant=cover'},
+  'Reel (가로 스크롤 줄)': {kind: 'node', refs: ['node:reel'], status: 'full', note: '키보드 스크롤 영역'},
+  'Imposter (겹쳐 띄우기)': {kind: 'node', refs: ['node:media'], status: 'full', note: 'media.overlay 칩(불투명 면, 대비 검증 대상)'},
+  'Frame (비율 고정 틀)': {kind: 'node', refs: ['node:media'], status: 'full', note: '16:9·4:3·1:1·3:4·21:9'},
+  'Supporting Pane (본문 + 보조 패널)': {kind: 'node', refs: ['node:aside'], status: 'full', note: ''},
+  'Kanban Board (칸반 · 상태별 세로 열)': {kind: 'combo', refs: ['node:kanban', 'template:project-board'], status: 'full', note: ''},
+  'Timeline (시간순 세로줄)': {kind: 'node', refs: ['node:timeline'], status: 'full', note: ''},
+  'Map + List (지도와 목록 나란히)': {kind: 'combo', refs: ['node:media', 'node:split', 'template:realty-detail'], status: 'partial', note: '지도는 자리 표시 일러스트(kind=map). 실제 지도 타일은 정적 코드 범위 밖'},
+  'Chat (대화 · 좌우 교차 말풍선)': {kind: 'combo', refs: ['node:chat', 'template:team-chat'], status: 'full', note: ''},
+  'Calendar Grid (달력 격자)': {kind: 'combo', refs: ['node:calendar', 'template:calendar-view'], status: 'full', note: '월 길이·요일 계산, 날짜 검증'},
+  'Settings (설정 · 왼쪽 메뉴 + 오른쪽 폼)': {kind: 'template', refs: ['template:settings'], status: 'full', note: '탭 + 폼'},
+  'Search Results (검색 결과 · 필터 + 목록)': {kind: 'combo', refs: ['node:filter-bar', 'node:pagination', 'template:product-listing'], status: 'full', note: ''},
+  'Mega Menu (대형 메뉴 펼침)': {kind: 'combo', refs: ['shell:topbar', 'template:product-listing'], status: 'full', note: 'chrome.nav[].mega, details 기반(JS 없이 동작), 가로 셸에서 최대 2개'},
+  'Menu 2단 (클래식 다이닝 메뉴판)': {kind: 'node', refs: ['node:menu'], status: 'full', note: 'layout=grid'},
+  'Menu 점선 리더 (가격 우측 정렬형)': {kind: 'node', refs: ['node:menu'], status: 'full', note: 'layout=leader'},
+  'Menu 사진 그리드 (카페·배달 메뉴)': {kind: 'combo', refs: ['node:menu', 'node:gallery', 'template:cafe-home'], status: 'partial', note: '메뉴 격자와 갤러리를 조합. 한 카드 안의 사진은 card variant=media로 대체'},
+  'Menu 시그니처 강조 (골든 트라이앵글)': {kind: 'node', refs: ['node:menu'], status: 'partial', note: 'tag 배지로 시그니처 표시. 지면 배치 이론(골든 트라이앵글)은 구현하지 않음'},
+};
+
+const contentCoverage = {
+  menu: {template: 'menu-dining'}, 'beauty-detail': {template: 'beauty-detail'}, 'saas-landing': {template: 'saas-landing'}, portfolio: {template: 'portfolio-grid'},
+  ecommerce: {template: 'product-detail'}, 'app-landing': {template: 'app-landing'}, clinic: {template: 'clinic-home'}, restaurant: {template: 'cafe-home'}, realestate: {template: 'realty-detail'},
+};
+
+/** Peer icon names that differ only by name from ours. */
+const iconAliases = {close: 'x', chevron: 'chevron-right', 'more-h': 'more', pin: 'map-pin', card: 'credit-card', alert: 'alert-triangle'};
+
+exports.layoutCoverage = layoutCoverage;
+exports.contentCoverage = contentCoverage;
+exports.iconAliases = iconAliases;
 };
 __defs["catalog/icons.mjs"] = function (exports, __m) {
 /**
@@ -180,6 +244,7 @@ const icons = {
   refresh: ['M20 11a8 8 0 0 0-14-4M4 5v4h4M4 13a8 8 0 0 0 14 4M20 19v-4h-4'],
   logout: ['M10 4H5v16h5M15 8l4 4-4 4M19 12H9'],
   more: [c(6, 12, 1.200), c(12, 12, 1.200), c(18, 12, 1.200)],
+  'more-v': [c(12, 6, 1.200), c(12, 12, 1.200), c(12, 18, 1.200)],
   trophy: ['M7 4h10v5a5 5 0 0 1-10 0Z', 'M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 20h8'],
   droplet: ['M12 3.500s6.500 6 6.500 11a6.500 6.500 0 0 1-13 0c0-5 6.500-11 6.500-11Z'],
 };
@@ -190,7 +255,7 @@ exports.iconNames = iconNames;
 };
 __defs["catalog/index.mjs"] = function (exports, __m) {
 /** Catalog 2.0: compiler, validator, UI, schema, and CLI all read this one contract. */
-const {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells} = __m("catalog/axes.mjs");
+const {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog/axes.mjs");
 const {themes, themeCategories} = __m("catalog/themes.mjs");
 const {palettes} = __m("catalog/palettes.mjs");
 const {icons, iconNames} = __m("catalog/icons.mjs");
@@ -215,7 +280,7 @@ const rules = [
   {id: 'R09', intent: '축 조합 금지(X01~X11): 접근성·가독성·구조상 함께 쓸 수 없는 값.', codes: ['AXIS_BAN'], source: 'docs/design.md §축 조합'},
   {id: 'R10', intent: '테마가 금지한 축 값(예: 시빅의 글로우·그라데이션) 거부.', codes: ['THEME_FORBID'], source: 'docs/design.md §테마'},
   {id: 'R11', intent: '페이지 유형 계약: 필수 부품·금지 부품·허용 셸/폭·최대 노드·상태 페이지 구성.', codes: ['PAGE_REQUIRE', 'PAGE_FORBID', 'PAGE_ALLOW', 'PAGE_MAX', 'PAGE_SHELL', 'PAGE_WIDTH', 'PAGE_SECOND'], source: 'winterholic-base/docs/12-page-patterns.md'},
-  {id: 'R12', intent: '내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 푸터 링크 조건.', codes: ['NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS'], source: 'Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨'},
+  {id: 'R12', intent: '내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 드롭다운 메뉴는 가로 셸에서 최대 2개, 푸터 링크 조건.', codes: ['NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS', 'NAV_MEGA'], source: 'Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨'},
   {id: 'R13', intent: '페이지당 히어로 하나, 요금제 추천 하나, 탭·칸반의 중첩 금지.', codes: ['SINGLE_HERO', 'FEATURED_PLAN', 'NESTED_TABS', 'HERO_POSITION'], source: 'frontend-design'},
   {id: 'R14', intent: '의미 있는 이미지 대체 텍스트 필수, 모호한 링크 라벨 금지.', codes: ['LINK_LABEL', 'STRING'], source: 'WCAG 2.2 SC 1.1.1, 2.4.4'},
   {id: 'R15', intent: '데이터 일관성: 표 열 폭, 차트 계열 길이·값, 달력 날짜, 지표 추세 쌍, 진행 목록 선택값.', codes: ['TABLE_WIDTH', 'CHART_SHAPE', 'CALENDAR_DAY', 'METRIC_TREND', 'SELECTED_RANGE', 'STEPPER_RANGE', 'PAGINATION_RANGE'], source: 'winterholic-base/docs/11-data-viz.md'},
@@ -258,6 +323,7 @@ function repairAxes(b) {
     if (!changed) break;
   }
   if (b.chrome?.nav && b.chrome.nav.length > navLimits[b.shell]) b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]);
+  if (b.chrome?.nav && !megaShells.includes(b.shell)) for (const item of b.chrome.nav) delete item.mega;
   return b;
 }
 
@@ -287,6 +353,8 @@ function migrateV1(old) {
   return repairAxes(b);
 }
 
+{ const __r = __m("catalog/coverage.mjs"); exports.layoutCoverage = __r.layoutCoverage; exports.contentCoverage = __r.contentCoverage; exports.iconAliases = __r.iconAliases; }
+
 exports.axes = axes;
 exports.axisDefs = axisDefs;
 exports.axisOrder = axisOrder;
@@ -294,6 +362,8 @@ exports.styleAxes = styleAxes;
 exports.axisBans = axisBans;
 exports.navLimits = navLimits;
 exports.iconShells = iconShells;
+exports.megaShells = megaShells;
+exports.MEGA_MAX = MEGA_MAX;
 exports.themes = themes;
 exports.themeCategories = themeCategories;
 exports.palettes = palettes;
@@ -433,7 +503,7 @@ const nodeSpecs = {
     example: {type: 'empty-state', kind: 'first-use', title: '아직 프로젝트가 없어요', body: '첫 프로젝트를 만들어 시작해 보세요.', action: {label: '프로젝트 만들기', href: '#main', variant: 'primary'}}},
   skeleton: {label: '스켈레톤', group: 'feedback', fields: {label: str(60), variant: en('card', 'list', 'table', 'text')},
     example: {type: 'skeleton', label: '목록을 불러오는 중', variant: 'list'}},
-  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160)}, optional: ['caption'],
+  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160), overlay: str(60)}, optional: ['caption', 'overlay'],
     example: {type: 'media', kind: 'photo', ratio: '16:9', alt: '작업 공간의 전경', caption: '이미지는 자리 표시입니다.'}},
   gallery: {label: '갤러리', group: 'media', fields: {title: str(100), layout: en('grid', 'masonry'), items: arr(obj({kind: en(...mediaKinds), alt: str(160), caption: str(100)}, ['kind', 'alt']), 3, 12)}, optional: ['title', 'layout'],
     example: {type: 'gallery', title: '작업', items: [{kind: 'photo', alt: '작업 하나'}, {kind: 'diagram', alt: '작업 둘'}, {kind: 'pattern', alt: '작업 셋'}]}},
@@ -466,7 +536,8 @@ const nodeTypes = Object.keys(nodeSpecs);
 const requiredOf = spec => ['type', ...Object.keys(spec.fields).filter(k => !(spec.optional ?? []).includes(k)), ...(spec.children ? ['children'] : [])];
 
 // ---- chrome (navigation/footer content shared by every shell) ----
-const navItem = obj({label: str(24), href, icon: iconEnum}, ['label', 'href']);
+const megaLink = obj({label: str(30), href, description: str(80)}, ['label', 'href']);
+const navItem = obj({label: str(24), href, icon: iconEnum, mega: arr(megaLink, 2, 8)}, ['label', 'href']);
 const chromeSpec = obj({
   nav: arr(navItem, 1, 8), action: obj({label: str(24), href}), brandMark: str(2),
   footerNote: str(120), footerLinks: arr(obj({label: str(30), href}), 1, 8),
@@ -1048,7 +1119,7 @@ add('product-listing', '상품 목록', 'commerce', 'commerce', '무드램프', 
     {type: 'form', title: '필터', variant: 'stacked', fields: [field('price', '가격대', 'select', {options: ['전체', '3만원 이하', '3~5만원', '5만원 이상'], requirement: 'optional'}), field('stock', '재고 있는 상품만', 'switch', {requirement: 'optional'}), field('color', '색상', 'radio', {options: ['전체', '화이트', '컬러'], requirement: 'optional'})], submitLabel: '적용'},
     {type: 'grid', columns: 'three', children: [card('무드램프 미니', '39,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '베스트'}), card('데스크 라이트', '59,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('캔들 워머', '45,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '신상'}), card('독서등', '29,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('플로어 램프', '129,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('센서 무드등', '19,000원', {variant: 'media', visual: 'photo', ratio: '1:1'})]}]},
   {type: 'pagination', pages: 4, current: 1},
-], {chrome: chrome(nav(['신상품', 'sparkles'], ['조명', 'sun'], ['이벤트', 'gift'], ['고객센터', 'message']), '장바구니', '© 2026 무드램프', FOOT)});
+], {chrome: chrome([{label: '신상품', href: '#main', icon: 'sparkles'}, {label: '조명', href: '#main', icon: 'sun', mega: [{label: '스탠드', href: '#main', description: '책상과 침대맡을 위한 조명'}, {label: '독서등', href: '#main', description: '눈이 편한 집중 조명'}, {label: '무드등', href: '#main', description: '분위기를 바꾸는 작은 램프'}, {label: '플로어', href: '#main', description: '공간을 채우는 큰 조명'}]}, {label: '이벤트', href: '#main', icon: 'gift'}, {label: '고객센터', href: '#main', icon: 'message'}], '장바구니', '© 2026 무드램프', FOOT)});
 
 add('checkout', '결제', 'commerce', 'commerce', '무드램프', [
   head('결제하기', '배송 정보를 입력하고 결제를 진행하세요.'),
@@ -1113,7 +1184,7 @@ add('portfolio-grid', '포트폴리오 모음', 'portfolio', 'gallery', '김다�
 
 add('case-study', '사례 연구', 'portfolio', 'studio', '스튜디오 오로', [
   head('동네 카페의 브랜드를 다시 쓰다', '아이덴티티 · 웹 · 패키지 · 2026', {eyebrow: '사례 연구'}),
-  media('photo', '21:9', '카페 매장 전경과 새 간판'),
+  {...media('photo', '21:9', '카페 매장 전경과 새 간판'), overlay: '8주 프로젝트'},
   grid('three', metric('기간', '8주'), metric('재방문율', '+31%', '리뉴얼 3개월 후', 'up', '+31%'), metric('SNS 언급', '2.4배')),
   {type: 'split', children: [prose('문제', '오래된 간판과 제각각인 메뉴판이 가게의 이야기를 전하지 못하고 있었습니다.'), prose('접근', '손글씨 질감을 살린 로고를 만들고, 메뉴판·컵·웹을 한 시스템으로 묶었습니다.')]},
   {type: 'gallery', title: '결과물', items: [{kind: 'photo', alt: '새 로고가 적용된 컵'}, {kind: 'pattern', alt: '메뉴판 패턴'}, {kind: 'device', alt: '모바일 웹'}]},
@@ -1480,6 +1551,7 @@ const formRuntime = [
   "document.querySelectorAll('.kit-form').forEach(function(form){form.addEventListener('submit',function(event){event.preventDefault();var s=form.querySelector('[role=status]');if(form.reportValidity()){s.textContent='입력 형식을 확인했습니다. 데모이므로 저장하지 않았습니다.';}else{s.textContent='';}});});",
   "document.querySelectorAll('[data-tabs]').forEach(function(root){var tabs=[].slice.call(root.querySelectorAll('[role=tab]')),panels=[].slice.call(root.querySelectorAll('[role=tabpanel]'));function pick(i,focus){tabs.forEach(function(t,j){var on=i===j;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;panels[j].hidden=!on;});if(focus)tabs[i].focus();}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(i,false);});t.addEventListener('keydown',function(e){var n=tabs.length,k=e.key;if(k==='ArrowRight')pick((i+1)%n,true);else if(k==='ArrowLeft')pick((i+n-1)%n,true);else if(k==='Home')pick(0,true);else if(k==='End')pick(n-1,true);else return;e.preventDefault();});});});",
   "document.querySelectorAll('.kit-chips').forEach(function(g){var bs=[].slice.call(g.querySelectorAll('button'));bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false');});});});});",
+  "var megas=[].slice.call(document.querySelectorAll('.kit-mega'));megas.forEach(function(d){d.addEventListener('toggle',function(){if(d.open)megas.forEach(function(o){if(o!==d)o.open=false;});});d.addEventListener('keydown',function(e){if(e.key==='Escape'){d.open=false;d.querySelector('summary').focus();}});});document.addEventListener('click',function(e){megas.forEach(function(d){if(d.open&&!d.contains(e.target))d.open=false;});});",
 ].join('');
 
 exports.renderTree = renderTree;
@@ -1585,7 +1657,7 @@ function makeRenderer(b) {
   R.progress = n => `<div class="kit-progress"><div class="kit-progress-head"><span id="pr-${ctx.seq}">${e(n.label)}</span><strong>${n.value}%</strong></div><div class="kit-track" role="progressbar" aria-labelledby="pr-${ctx.seq}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${n.value}"${n.detail ? ` aria-valuetext="${e(n.detail)}"` : ''}>${bar(n.value, n.tone)}</div>${n.detail ? `<p class="kit-muted">${e(n.detail)}</p>` : ''}</div>`;
   R['empty-state'] = (n, d, id) => `<section class="kit-empty" data-kind="${n.kind}"${['error', 'forbidden', 'offline', 'maintenance'].includes(n.kind) ? ' role="alert"' : ' role="status"'} aria-labelledby="${id}-title"><div class="kit-empty-art">${ornamentArt(o, 240, 160) || ''}<span class="kit-empty-icon">${icon(n.icon ?? EMPTY_ICON[n.kind])}</span></div>${heading(d, n.title, id)}<p>${e(n.body)}</p>${n.action ? button(n.action) : ''}</section>`;
   R.skeleton = n => `<div class="kit-skeleton" data-variant="${n.variant}" role="status" aria-busy="true" aria-label="${e(n.label)}">${n.variant === 'card' ? '<i class="sk-img"></i><i></i><i class="sk-short"></i>' : n.variant === 'table' ? '<i></i><i></i><i></i><i></i>' : n.variant === 'list' ? '<i></i><i class="sk-short"></i><i></i><i class="sk-short"></i>' : '<i></i><i></i><i class="sk-short"></i>'}</div>`;
-  R.media = n => `<figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(n.ratio)}">${mediaArt(n.kind, n.ratio, o, e(n.alt))}</div>${n.caption ? `<figcaption>${e(n.caption)}</figcaption>` : ''}</figure>`;
+  R.media = n => `<figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(n.ratio)}">${mediaArt(n.kind, n.ratio, o, e(n.alt))}${n.overlay ? `<span class="kit-overlay">${e(n.overlay)}</span>` : ''}</div>${n.caption ? `<figcaption>${e(n.caption)}</figcaption>` : ''}</figure>`;
   R.gallery = (n, d, id) => {
     const ratioAt = i => n.layout === 'masonry' ? ['4:3', '3:4', '1:1', '16:9'][i % 4] : '4:3';
     return `<section class="kit-gallery" data-layout="${n.layout ?? 'grid'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="갤러리"'}>${n.title ? heading(d, n.title, id) : ''}<ul>${n.items.map((x, i) => `<li><figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(ratioAt(i))}">${mediaArt(x.kind, ratioAt(i), o, e(x.alt))}</div>${x.caption ? `<figcaption>${e(x.caption)}</figcaption>` : ''}</figure></li>`).join('')}</ul></section>`;
@@ -1624,6 +1696,7 @@ const {e, icon, href} = __m("render/util.mjs");
 
 const DEFAULT_CHROME = {nav: [{label: '개요', href: '#main'}]};
 
+const mega = a => `<details class="kit-mega"><summary>${a.icon ? icon(a.icon) : ''}<span>${e(a.label)}</span>${icon('chevron-down')}</summary><div class="kit-mega-panel"><ul><li><a href="${href(a.href)}"><strong>${e(a.label)} 전체 보기</strong></a></li>${a.mega.map(m => `<li><a href="${href(m.href)}"${m.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}><strong>${e(m.label)}</strong>${m.description ? `<span>${e(m.description)}</span>` : ''}</a></li>`).join('')}</ul></div></details>`;
 const link = (a, current) => `<a href="${href(a.href)}"${a.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}${current ? ' aria-current="page"' : ''}>${a.icon ? icon(a.icon) : ''}<span>${e(a.label)}</span></a>`;
 
 function renderShell(b, body) {
@@ -1631,7 +1704,7 @@ function renderShell(b, body) {
   const firstCurrent = items.findIndex(x => x.href === '#main');
   const mark = e(chrome.brandMark ?? [...b.name.trim()][0] ?? 'W');
   const brand = `<a class="kit-brand" href="#main"><span class="kit-brand-mark" aria-hidden="true">${mark}</span><span class="kit-brand-name">${e(b.name)}</span></a>`;
-  const nav = `<nav class="kit-nav" aria-label="주요 메뉴"><ul>${items.map((a, i) => `<li>${link(a, i === firstCurrent)}</li>`).join('')}</ul></nav>`;
+  const nav = `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map((a, i) => `<li>${a.mega ? mega(a) : link(a, i === firstCurrent)}</li>`).join('')}</ul></nav>`;
   const act = chrome.action ? `<a class="kit-button kit-header-action" data-variant="primary" href="${href(chrome.action.href)}"${chrome.action.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(chrome.action.label)}</a>` : '';
   const masthead = b.shell === 'masthead' ? '<p class="kit-dateline">정적 데모 · Static Kit</p>' : '';
   const header = `<header class="kit-header">${masthead}${brand}${nav}${act}</header>`;
@@ -1921,7 +1994,7 @@ const chunks = {
   skeleton: `
 .kit-skeleton{display:flex;flex-direction:column;gap:12px;padding:var(--kit-inset);background:var(--kit-surface);border:var(--kit-card-border);border-radius:var(--kit-radius)}.kit-skeleton i{display:block;height:14px;border-radius:7px;background:var(--kit-border);animation:kit-pulse 1.4s ease-in-out infinite}.kit-skeleton i.sk-short{width:60%}.kit-skeleton i.sk-img{height:120px;border-radius:calc(var(--kit-radius) * .6)}.kit-skeleton[data-variant=table] i{height:32px}`,
   media: `
-.kit-media{margin:0;min-width:0}.kit-art-box{border-radius:var(--kit-radius);overflow:hidden;border:var(--kit-card-border);box-shadow:var(--kit-shadow)}.kit-media svg,.kit-art-box svg{display:block;width:100%;height:100%}.kit-media figcaption{margin-top:8px;font-size:var(--kit-small);color:var(--kit-muted)}`,
+.kit-media{margin:0;min-width:0}.kit-art-box{position:relative;border-radius:var(--kit-radius);overflow:hidden;border:var(--kit-card-border);box-shadow:var(--kit-shadow)}.kit-overlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:86%;text-align:center;padding:8px 16px;background:var(--kit-surface);color:var(--kit-text);border:1px solid var(--kit-rule);border-radius:var(--kit-r-tag);font-weight:700;font-size:var(--kit-small);box-shadow:var(--kit-shadow-hover)}.kit-media svg,.kit-art-box svg{display:block;width:100%;height:100%}.kit-media figcaption{margin-top:8px;font-size:var(--kit-small);color:var(--kit-muted)}`,
   gallery: `
 .kit-gallery ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--kit-gap);margin-top:var(--kit-gap)}.kit-gallery[data-layout=masonry] ul{display:block;column-width:220px;column-gap:var(--kit-gap)}.kit-gallery[data-layout=masonry] li{break-inside:avoid;margin-bottom:var(--kit-gap)}`,
   breadcrumb: `
@@ -2015,7 +2088,10 @@ const navBase = `
 .kit-footer{padding:24px 32px;color:var(--kit-muted);font-size:var(--kit-small);border-top:1px solid var(--kit-border);background:var(--kit-surface)}
 .kit-footer p+p{margin-top:0}.kit-footer a{color:var(--kit-muted)}.kit-footer-links{list-style:none;display:flex;flex-wrap:wrap;gap:16px;margin:0;padding:0}
 .kit-footer nav ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.kit-footer strong{color:var(--kit-text)}
+.kit-mega{position:relative}.kit-mega summary{display:flex;align-items:center;gap:8px;min-height:var(--kit-control);padding:0 12px;font-size:var(--kit-small);color:var(--kit-muted);border-radius:var(--kit-r-control);cursor:pointer;list-style:none;white-space:nowrap}.kit-mega summary::-webkit-details-marker{display:none}.kit-mega summary:hover,.kit-mega[open] summary{background:var(--kit-soft);color:var(--kit-link)}.kit-mega[open] summary .kit-icon:last-child{transform:rotate(180deg)}
+.kit-mega-panel{position:absolute;top:calc(100% + 6px);left:0;z-index:40;width:min(560px,92vw);padding:12px;background:var(--kit-surface);border:var(--kit-card-border);border-radius:var(--kit-radius);box-shadow:var(--kit-shadow-hover)}.kit-mega-panel ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.kit-mega-panel a{display:flex;flex-direction:column;gap:2px;padding:10px 12px;min-height:44px;color:var(--kit-text);text-decoration:none;border-radius:calc(var(--kit-radius) * .6);white-space:normal}.kit-mega-panel a:hover{background:var(--kit-soft)}.kit-mega-panel span{font-size:13px;color:var(--kit-muted)}
 @media(max-width:1000px){.kit-main{padding-inline:24px}}
+@media(max-width:640px){.kit-nav[data-mega] ul{flex-wrap:wrap;overflow:visible}.kit-mega-panel{position:static;width:100%;box-shadow:none}.kit-mega-panel ul{grid-template-columns:1fr}.kit-mega{width:100%}}
 @media(max-width:640px){.kit-main{padding:var(--kit-inset) 16px;gap:calc(var(--kit-section) * .75)}.kit-header{padding:12px 16px;flex-wrap:wrap;gap:8px}.kit-nav{max-width:100%}.kit-nav ul{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}.kit-brand{font-size:16px}.kit-footer{padding:16px}}
 `;
 
@@ -2095,19 +2171,21 @@ function hue(h) {
 const hueDistance = (a, b) => { const d = Math.abs(hue(a).h - hue(b).h); return Math.min(d, 360 - d); };
 
 const INK = '#10151C';
+// Decisions keep a 1e-6 margin so last-bit Math.pow differences between platforms can never flip a chosen color.
+const EPS = 1e-6;
 /** Move `seed` toward black (light) or white (dark) until it passes `minimum` against every background. */
 function ensure(seed, bgs, minimum, dark) {
-  for (let i = 0; i <= 100; i++) { const color = mix(seed, dark ? '#FFFFFF' : '#000000', i / 100); if (bgs.every(bg => contrast(color, bg) >= minimum)) return color; }
+  for (let i = 0; i <= 100; i++) { const color = mix(seed, dark ? '#FFFFFF' : '#000000', i / 100); if (bgs.every(bg => contrast(color, bg) >= minimum + EPS)) return color; }
   throw new Error('No contrast-safe token mapping for ' + seed);
 }
 /** A fill that carries 4.5:1 text in white or ink: keep it if it already does, else take the smaller move. */
 function ensureFill(color) {
-  const ok = c => Math.max(contrast(c, '#FFFFFF'), contrast(c, INK)) >= 4.5;
+  const ok = c => Math.max(contrast(c, '#FFFFFF'), contrast(c, INK)) >= 4.5 + EPS;
   if (ok(color)) return color;
   for (let i = 1; i <= 100; i++) for (const target of ['#000000', '#FFFFFF']) { const c = mix(color, target, i / 100); if (ok(c)) return c; }
   throw new Error('No fill-safe mapping for ' + color);
 }
-const onFill = c => contrast('#FFFFFF', c) >= 4.5 ? '#FFFFFF' : INK;
+const onFill = c => contrast('#FFFFFF', c) >= 4.5 + EPS ? '#FFFFFF' : INK;
 const samples = (a, b) => Array.from({length: 11}, (_, i) => mix(a, b, i / 10));
 
 function resolveTokens(b, modeOverride) {
@@ -2169,7 +2247,7 @@ exports.resolveAll = resolveAll;
 exports.serializableContrast = serializableContrast;
 };
 __defs["validate.mjs"] = function (exports, __m) {
-const {BLUEPRINT_VERSION, CATALOG_VERSION, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells} = __m("catalog.mjs");
+const {BLUEPRINT_VERSION, CATALOG_VERSION, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -2243,7 +2321,10 @@ function validateBlueprint(input) {
   if (plain(input.chrome)) {
     const c = input.chrome;
     if (Array.isArray(c.nav)) {
-      c.nav.forEach((a, i) => { if (plain(a)) { checkLink(a.href, `$.chrome.nav[${i}].href`); checkLabel(a.label, `$.chrome.nav[${i}].label`); } });
+      c.nav.forEach((a, i) => { if (plain(a)) { checkLink(a.href, `$.chrome.nav[${i}].href`); checkLabel(a.label, `$.chrome.nav[${i}].label`); if (Array.isArray(a.mega)) a.mega.forEach((m, j) => { if (plain(m)) { checkLink(m.href, `$.chrome.nav[${i}].mega[${j}].href`); checkLabel(m.label, `$.chrome.nav[${i}].mega[${j}].label`); } }); } });
+      const megas = c.nav.filter(a => plain(a) && a.mega);
+      if (megas.length && !megaShells.includes(input.shell)) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 ${megaShells.join(', ')} 셸에서만 쓸 수 있습니다.`);
+      if (megas.length > MEGA_MAX) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 최대 ${MEGA_MAX}개입니다.`);
       const limit = navLimits[input.shell];
       if (limit && c.nav.length > limit) error('$.chrome.nav', 'NAV_COUNT', `${input.shell} 셸의 내비 항목은 최대 ${limit}개입니다.`);
       if (iconShells.includes(input.shell) && c.nav.some(a => plain(a) && !a.icon)) error('$.chrome.nav', 'NAV_ICON', `${input.shell} 셸은 모든 내비 항목에 icon이 필요합니다(아이콘+라벨).`);
