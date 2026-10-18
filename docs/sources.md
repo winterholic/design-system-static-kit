@@ -11,7 +11,7 @@
 | 로컬 `html-report` 스킬 | 타입·셸·스킨의 직교와 기본값 수렴 방지 | 조립기의 방향·구조·밀도 축 분리; 계획서는 design/doc/blueprint로 작성 |
 | [Coolors trending](https://coolors.co/palettes/trending) | 일반 웹 fetch 403. 설정된 ttakkari_browser 경로로 실제 렌더된 48개 색상 그룹을 추출하고 그중 18개를 선택. `docs/evidence/coolors-palettes.json`의 관측 수치와 카탈로그 후보를 대조 | 6방향 × 후보3. 원본 hex/원본 팔레트 URL/선정 이유/관측일 저장. light/dark 의미색은 별도로 보정. 후보의 유행순위·저작자를 추정하지 않음 |
 | [WCAG 2.2 SC1.4.3](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), [SC1.4.11](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html) | 실제 명도 대비 기준과 반올림으로 합격시키지 않는 기준 | 본문4.5:1, 구조선/포커스3:1. 계산 결과 그대로 게이트 판정 |
-| [MDN iframe sandbox](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox) | sandbox 권한 분리 | 미리보기 allow-scripts만 허용, allow-same-origin 생략. 임의 HTML을 받지 않는 별도 입력 경계 유지 |
+| [MDN iframe sandbox](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox) | sandbox 권한 분리 | 미리보기 allow-scripts + 네이티브 폼 검증용 allow-forms, allow-same-origin 생략. 전송은 CSP로 차단. 임의 HTML을 받지 않는 별도 입력 경계 유지 |
 
 ## Katalog 조사 범위
 

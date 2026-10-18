@@ -33,7 +33,7 @@ list/table은 ready/loading/empty/error/partial/forbidden을 갖는다. 데이�
 
 ## 안전성과 수정 감지
 
-텍스트를 escape하고 input에서 HTML/CSS/JS를 받지 않는다. 고정 form runtime만 포함한다. 생성 HTML의 CSP는 외부 연결·폼 전송·기본 URL 변경을 막고, 신뢰한 고정 inline 스타일/스크립트만 사용한다. CSP 자체를 임의 HTML 허용에 대한 대안으로 쓰지 않는다. 미리보기 iframe에는 allow-same-origin을 주지 않는다.
+텍스트를 escape하고 input에서 HTML/CSS/JS를 받지 않는다. 고정 form runtime만 포함한다. 생성 HTML의 CSP는 외부 연결·폼 전송·기본 URL 변경을 막고, 신뢰한 고정 inline 스타일/스크립트만 사용한다. CSP 자체를 임의 HTML 허용에 대한 대안으로 쓰지 않는다. 미리보기 iframe에는 allow-scripts와 네이티브 폼 유효성 검사에 필요한 allow-forms만 주고, allow-same-origin을 주지 않는다. 폼 네트워크 전송은 생성 문서의 CSP form-action none으로 차단한다.
 
 `kit check`는 manifest만 믿지 않고 blueprint를 현재 카탈로그로 다시 컴파일한다. 모든 managed file을 비교하고 추가·누락·symlink도 거부한다. manifest SHA256은 재현/수정 감지용이고 서명 또는 공급망 보증은 아니다. **검사기를 같이 고칠 수 있는 권한을 막는 것은 저장소 관리 정책의 몫**이다.
 

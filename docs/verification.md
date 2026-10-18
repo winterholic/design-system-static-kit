@@ -50,3 +50,9 @@ REPRODUCIBLE: 63 generated files match a fresh build byte for byte.
 대비 판정은 원시 값을 유지하고, manifest/대비 기록의 표시값만 소수8자리에서 **버림**으로 직렬화해 플랫폼 재현성을 확보했다. 반올림으로 미달을 합격시키지 않는다. 회귀 테스트를 먼저 실패시킨 뒤 수정했다.
 
 GH 로그 조회도 Codex 샌드박스에서 기본 `~/.cache/gh` 쓰기 EPERM이 났고, XDG_CACHE_HOME을 허용된 임시 경로로 지정해 실제 실패 로그를 확보했다. GitHub 실행 장애와 로컬 캐시 쓰기 제한을 구분했다.
+
+## 두 번째 CI의 실제 UI 검증
+
+[Actions 39120279715](https://github.com/winterholic/design-system-static-kit/actions/runs/39120279715) · Ubuntu/Node22/Chromium: 플랫폼 간 생성 일치 검사는 통과. 실제 브라우저 5흐름 중 4통과, iframe의 폼 확인 상태 갱신 1실패. standalone 폼은 configured browser에서 입력 후 ‘저장하지 않았습니다’ 피드백을 확인했지만, iframe에서는 sandbox에 allow-forms가 없어 native validation/submit이 막혔다. MDN의 allow-forms 설명과 실행 경로를 대조했다.
+
+iframe에 native 폼 검증용 allow-forms를 추가했다. allow-same-origin은 계속 생략하며, 생성 HTML의 CSP form-action none/connect-src none과 고정 런타임의 preventDefault로 네트워크 전송을 막는다. 같은 행동 시험과 실제 요청 없음 검사를 다시 실행한다.
