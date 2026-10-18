@@ -1,5 +1,7 @@
 # 검증 기록 · 2026-10-18
 
+**최종 판정: 초기 구현의 로컬 검증 및 GitHub Actions 전체 통과.** 검증 코드 리비전 `4a10738bf9d28b57724ddfe74d6485a986b56731`. [성공한 CI](https://github.com/winterholic/design-system-static-kit/actions/runs/39120393780).
+
 환경을 구분한다. 아래 CLI 검사는 native Codex 명령 샌드박스의 Node v26.9.0에서 실행했다. 브라우저는 configured `ttakkari_browser` 경로다. GitHub Actions의 Ubuntu/Node22/Chromium 검증은 별도로 기록한다.
 
 ## 먼저 실패시킨 계약
@@ -31,7 +33,7 @@ REPRODUCIBLE: 63 generated files match a fresh build byte for byte.
 
 ## CI 브라우저 게이트
 
-`.github/workflows/verify.yml`과 `e2e/workbench.spec.mjs`에 자동 검사를 등록했다. 실제 GitHub 실행 URL·결과는 실행 후 갱신한다. 아직 등록만으로 통과를 주장하지 않는다.
+[Actions 39120393780](https://github.com/winterholic/design-system-static-kit/actions/runs/39120393780) · Ubuntu/Node22/Chromium에서 전체 성공. 원시 로그의 `# tests 31`, `# pass 31`, `5 passed (10.5s)`와 생성 일치 검사 성공을 확인했다. 스크린샷과 보고서는 이 실행의 `browser-evidence` artifact로 보존했다.
 
 검사 항목: 36팔레트/모드 실제 computed color, 키보드 radio 포커스/저장 복구, 음성 입력/출력 차단, 노드 추가/이동/삭제·상태 편집·실제 다운로드 내용, 네 가지 예제/셸·긴 한글·390/768/1600px overflow, 폼 로컬 검증과 네트워크 전송 없음, 카탈로그·설계서·standalone 예제.
 
@@ -55,4 +57,17 @@ GH 로그 조회도 Codex 샌드박스에서 기본 `~/.cache/gh` 쓰기 EPERM�
 
 [Actions 39120279715](https://github.com/winterholic/design-system-static-kit/actions/runs/39120279715) · Ubuntu/Node22/Chromium: 플랫폼 간 생성 일치 검사는 통과. 실제 브라우저 5흐름 중 4통과, iframe의 폼 확인 상태 갱신 1실패. standalone 폼은 configured browser에서 입력 후 ‘저장하지 않았습니다’ 피드백을 확인했지만, iframe에서는 sandbox에 allow-forms가 없어 native validation/submit이 막혔다. MDN의 allow-forms 설명과 실행 경로를 대조했다.
 
-iframe에 native 폼 검증용 allow-forms를 추가했다. allow-same-origin은 계속 생략하며, 생성 HTML의 CSP form-action none/connect-src none과 고정 런타임의 preventDefault로 네트워크 전송을 막는다. 같은 행동 시험과 실제 요청 없음 검사를 다시 실행한다.
+iframe에 native 폼 검증용 allow-forms를 추가했다. allow-same-origin은 계속 생략하며, 생성 HTML의 CSP form-action none/connect-src none과 고정 런타임의 preventDefault로 네트워크 전송을 막는다. 후속 Actions 39120393780에서 같은 폼 행동과 실제 요청 없음 검사가 통과했다. configured browser에서도 iframe 안 입력 후 상태 문구 갱신을 별도로 확인했다.
+
+## 최종 수용 결과
+
+| 영역 | 실행 증거 | 결과 |
+|---|---|---|
+| contract/CLI | native Codex `npm run verify`, CI Node22의 동일 명령 | 31/31 |
+| 색상 | 독립 Coolors 관측값 대조, 팔레트별 light/dark 실제 사용색 | 후보18 · 모드36 · 대비900쌍 |
+| 조합 | 18×2×4×3×3×3 축 열거 컴파일 | 3,888개 |
+| 생성 재현 | 새 디렉터리와 비교 + CI git diff | 63파일 바이트 일치 |
+| 실제 브라우저 | Actions Chromium `npm run test:browser` | 5/5 흐름, 10.5초 |
+| 반영 | origin main의 검증 리비전 | 4a10738bf9d28b57724ddfe74d6485a986b56731 |
+
+실행 뒤의 문서/WBS 완료 표기 갱신은 코드 변경이 없는 별도 커밋이다. ‘완료’는 위 수용 범위이며, 범위 밖/미확인 항목까지 검사했다는 뜻이 아니다.
