@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {themes,palettes,createBlueprint,axes,nodeSpecs,blueprintSchema} from '../src/catalog.mjs';
+import {serializableContrast} from '../src/tokens.mjs';
 import {compile} from '../src/compiler.mjs';
 const evidence=JSON.parse(await readFile(new URL('../docs/evidence/coolors-palettes.json',import.meta.url),'utf8'));
 const observed=new Set(evidence.palettes.map(p=>p.colors.join('-')));

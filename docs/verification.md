@@ -14,8 +14,8 @@
 `npm run verify`
 
 ```text
-ℹ tests 30
-ℹ pass 30
+ℹ tests 31
+ℹ pass 31
 ℹ fail 0
 AUDIT: 18 palettes match rendered Coolors evidence; 36 color modes, 900 used contrast pairs pass; 3888 axis combinations compile.
 REPRODUCIBLE: 63 generated files match a fresh build byte for byte.
@@ -42,3 +42,11 @@ REPRODUCIBLE: 63 generated files match a fresh build byte for byte.
 ## 범위 밖/미확인
 
 실제 Safari/iOS·스크린리더, 전체 3,888조합의 육안 미감, 소비 앱의 바깥 CSS와 비즈니스 데이터 연결, GitHub 보호 브랜치 관리 설정, 카카오 Katalog 원 발표 상세는 미확인이다. 기존 winterholic-design-system 브랜드를 자동 수입/동기화한 기능은 없다.
+
+## 첫 CI에서 확인한 환경 차이
+
+[Actions 39120125451](https://github.com/winterholic/design-system-static-kit/actions/runs/39120125451) · Ubuntu/Node22: npm ci와 contract/CLI/audit/build는 성공, 생성 파일 git diff 단계에서 실패했다. 원시 로그에서 대비 비율의 마지막 부동소수 비트 차이(`5.934475817361694` → `5.934475817361695`)를 확인했다. Chromium 설치/시험은 이 실행에서 건너뛰었다.
+
+대비 판정은 원시 값을 유지하고, manifest/대비 기록의 표시값만 소수8자리에서 **버림**으로 직렬화해 플랫폼 재현성을 확보했다. 반올림으로 미달을 합격시키지 않는다. 회귀 테스트를 먼저 실패시킨 뒤 수정했다.
+
+GH 로그 조회도 Codex 샌드박스에서 기본 `~/.cache/gh` 쓰기 EPERM이 났고, XDG_CACHE_HOME을 허용된 임시 경로로 지정해 실제 실패 로그를 확보했다. GitHub 실행 장애와 로컬 캐시 쓰기 제한을 구분했다.

@@ -29,3 +29,6 @@ export function resolveTokens(b){
   for(const bg of ['canvas','surface'])report.push({name:`rule/${bg}`,foreground:tokens.rule,background:tokens[bg],ratio:contrast(tokens.rule,tokens[bg]),minimum:3});
   return {tokens,report,provenance:{source:p.source,original:p.colors,brandSeed:seed,action,adjusted:seed!==action,method:'sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved'}};
 }
+
+// Conservative artifact precision avoids platform-level last-bit drift; never used for acceptance gates.
+export const serializableContrast = report => report.map(pair=>({...pair,ratio:Math.floor(pair.ratio*1e8)/1e8}));

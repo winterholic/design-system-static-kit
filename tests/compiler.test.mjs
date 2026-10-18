@@ -122,3 +122,8 @@ test('reject non JSON values and preserve unique page IDs',()=>{
   const b=base();b.tree.children[0].title=undefined;assert.equal(validateBlueprint(b).valid,false);
   const r=compile(createBlueprint('settings'));const ids=[...r.html.matchAll(/\sid="([^"]+)"/g)].map(x=>x[1]);assert.equal(ids.length,new Set(ids).size);
 });
+test('artifact contrast diagnostics use conservative eight-decimal serialization while gates use raw ratios',()=>{
+  const b=base();Object.assign(b,{mode:'dark',palette:'pearl'});const raw=resolveTokens(b).report,emitted=compile(b).manifest.contrast;
+  raw.forEach((pair,i)=>assert.equal(emitted[i].ratio,Math.floor(pair.ratio*1e8)/1e8));
+  assert.ok(emitted.every(p=>p.ratio>=p.minimum));
+});
