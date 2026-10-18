@@ -1,0 +1,147 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "느린 기록",
+  "theme": "journal",
+  "palette": "soft-pastels",
+  "mode": "light",
+  "pageType": "blog",
+  "shell": "centered",
+  "typography": "humanist",
+  "density": "spacious",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "글",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "주제",
+        "href": "#main",
+        "icon": "tag"
+      },
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "user"
+      }
+    ],
+    "action": {
+      "label": "구독",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 느린 기록",
+    "footerLinks": [
+      {
+        "label": "RSS",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "느린 기록",
+        "description": "천천히 쓰고 오래 남기는 글"
+      },
+      {
+        "type": "grid",
+        "columns": "two",
+        "children": [
+          {
+            "type": "card",
+            "title": "규칙이 자유를 만든다",
+            "body": "제약을 먼저 정하면 선택이 쉬워집니다.",
+            "variant": "media",
+            "visual": "photo",
+            "ratio": "16:9",
+            "meta": "10월 18일 · 6분",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "색은 의미를 따른다",
+            "body": "팔레트를 고르기 전에 역할을 정합니다.",
+            "variant": "media",
+            "visual": "pattern",
+            "ratio": "16:9",
+            "meta": "10월 11일 · 5분",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "상태를 먼저 그린다",
+            "body": "로딩, 빈 화면, 오류가 완성도를 만듭니다.",
+            "variant": "media",
+            "visual": "diagram",
+            "ratio": "16:9",
+            "meta": "10월 4일 · 7분",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "접근성은 기본값",
+            "body": "나중에 붙이지 않고 처음부터 둡니다.",
+            "variant": "media",
+            "visual": "photo",
+            "ratio": "16:9",
+            "meta": "9월 27일 · 4분",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          }
+        ]
+      },
+      {
+        "type": "tags",
+        "title": "주제",
+        "items": [
+          "디자인 시스템",
+          "접근성",
+          "타이포그래피",
+          "색",
+          "도구",
+          "회고"
+        ],
+        "variant": "chips"
+      },
+      {
+        "type": "pagination",
+        "pages": 5,
+        "current": 1
+      }
+    ]
+  }
+}

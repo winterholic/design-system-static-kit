@@ -1,0 +1,154 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "매뉴얼",
+  "theme": "manual",
+  "palette": "moonlit-mist",
+  "mode": "light",
+  "pageType": "docs",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "시작하기",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "가이드",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "레퍼런스",
+        "href": "#main",
+        "icon": "code"
+      },
+      {
+        "label": "변경 기록",
+        "href": "#main",
+        "icon": "clock"
+      }
+    ],
+    "footerNote": "매뉴얼 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "조립기 시작하기",
+        "description": "Blueprint를 작성하고 검증해 HTML을 만드는 방법",
+        "eyebrow": "가이드"
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "이 문서의 목차",
+        "sticky": "yes",
+        "children": [
+          {
+            "type": "section",
+            "title": "조립기 사용 가이드",
+            "children": [
+              {
+                "type": "section",
+                "title": "설치",
+                "children": [
+                  {
+                    "type": "prose",
+                    "title": "요구 사항",
+                    "body": "Node.js 22 이상이 필요합니다. 외부 런타임 의존성은 없습니다."
+                  },
+                  {
+                    "type": "code",
+                    "label": "설치와 검증",
+                    "language": "bash",
+                    "code": "npm ci\nnpm run verify"
+                  }
+                ],
+                "anchor": "install"
+              },
+              {
+                "type": "section",
+                "title": "Blueprint 작성",
+                "children": [
+                  {
+                    "type": "prose",
+                    "title": "규칙",
+                    "body": "Blueprint는 카탈로그에 정의된 값만 사용합니다. 알 수 없는 속성은 모두 오류입니다."
+                  },
+                  {
+                    "type": "code",
+                    "label": "blueprint.json",
+                    "language": "json",
+                    "code": "{\n  \"theme\": \"manual\",\n  \"palette\": \"deep-sea-blue\",\n  \"tree\": { \"type\": \"page\" }\n}"
+                  },
+                  {
+                    "type": "notice",
+                    "tone": "warning",
+                    "title": "생성물을 직접 고치지 마세요",
+                    "body": "수정은 Blueprint에서 하고 다시 빌드합니다."
+                  }
+                ],
+                "anchor": "blueprint"
+              },
+              {
+                "type": "section",
+                "title": "자주 묻는 질문",
+                "children": [
+                  {
+                    "type": "faq",
+                    "title": "문제 해결",
+                    "items": [
+                      {
+                        "question": "검증이 실패해요.",
+                        "answer": "오류 경로의 속성을 카탈로그와 비교하세요."
+                      },
+                      {
+                        "question": "새 색을 쓰고 싶어요.",
+                        "answer": "팔레트 후보를 카탈로그에 추가하는 개정이 필요합니다."
+                      }
+                    ]
+                  }
+                ],
+                "anchor": "faq"
+              }
+            ]
+          },
+          {
+            "type": "toc",
+            "title": "목차"
+          }
+        ]
+      }
+    ]
+  }
+}

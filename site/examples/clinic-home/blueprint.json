@@ -1,0 +1,177 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "맑은숨 내과의원",
+  "theme": "clinic",
+  "palette": "refreshing-aqua-tones",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "진료안내",
+        "href": "#main",
+        "icon": "clock"
+      },
+      {
+        "label": "진료과목",
+        "href": "#main",
+        "icon": "stethoscope"
+      },
+      {
+        "label": "의료진",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "오시는 길",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "진료 예약",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 맑은숨 내과의원 · 사업자번호 000-00-00000",
+    "footerLinks": [
+      {
+        "label": "비급여 안내",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "오시는 길",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "편안하게 진료받으세요",
+        "description": "평일 야간진료 · 예약 없이도 가능합니다."
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "내과 · 가정의학과",
+        "title": "우리 가족의\n건강 주치의.",
+        "body": "대기 시간을 줄이고, 충분히 설명해 드립니다.",
+        "action": {
+          "label": "진료 예약",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "전화 문의",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "photo"
+      },
+      {
+        "type": "properties",
+        "title": "진료 안내",
+        "layout": "inline",
+        "items": [
+          {
+            "label": "평일",
+            "value": "09:00~20:00"
+          },
+          {
+            "label": "토요일",
+            "value": "09:00~13:00"
+          },
+          {
+            "label": "점심",
+            "value": "13:00~14:00"
+          },
+          {
+            "label": "휴진",
+            "value": "일요일·공휴일"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "진료 과목",
+        "children": [
+          {
+            "type": "feature-list",
+            "layout": "grid",
+            "items": [
+              {
+                "icon": "stethoscope",
+                "title": "내과 진료",
+                "description": "감기부터 만성질환 관리까지."
+              },
+              {
+                "icon": "shield",
+                "title": "건강검진",
+                "description": "국가검진과 맞춤 검진."
+              },
+              {
+                "icon": "droplet",
+                "title": "수액·주사",
+                "description": "피로 회복과 영양 수액."
+              },
+              {
+                "icon": "heart",
+                "title": "만성질환",
+                "description": "혈압과 당뇨를 꾸준히 관리합니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "의료진",
+        "children": [
+          {
+            "type": "team",
+            "title": "의료진 소개",
+            "members": [
+              {
+                "name": "김서준 원장",
+                "role": "내과 전문의",
+                "bio": "순환기·소화기 진료"
+              },
+              {
+                "name": "이하은 원장",
+                "role": "가정의학과 전문의",
+                "bio": "건강검진·만성질환"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "warning",
+        "title": "비급여 항목 안내",
+        "body": "비급여 진료비는 접수처에 게시되어 있으며 방문 전 전화로도 안내해 드립니다."
+      }
+    ]
+  }
+}

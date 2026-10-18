@@ -1,0 +1,223 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "르네",
+  "theme": "beauty",
+  "palette": "rose-petal",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "centered",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "soft",
+  "control": "pill",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "스킨케어",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "메이크업",
+        "href": "#main",
+        "icon": "heart"
+      },
+      {
+        "label": "세트",
+        "href": "#main",
+        "icon": "gift"
+      },
+      {
+        "label": "리뷰",
+        "href": "#main",
+        "icon": "star"
+      }
+    ],
+    "action": {
+      "label": "장바구니",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 르네",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "수분 장벽 크림",
+        "description": "4주 후 97%가 윤광 개선을 경험했어요.",
+        "eyebrow": "스킨케어"
+      },
+      {
+        "type": "split",
+        "children": [
+          {
+            "type": "media",
+            "kind": "photo",
+            "ratio": "4:3",
+            "alt": "크림 제품과 질감 클로즈업"
+          },
+          {
+            "type": "buy-box",
+            "title": "수분 장벽 크림 50ml",
+            "price": "38,000원",
+            "note": "정기배송 시 10% 할인",
+            "options": [
+              {
+                "label": "구매 방식",
+                "choices": [
+                  "1회 구매",
+                  "정기배송"
+                ]
+              }
+            ],
+            "action": {
+              "label": "장바구니",
+              "href": "#main",
+              "variant": "primary"
+            }
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "수분 개선",
+            "value": "97%",
+            "detail": "4주 사용 후"
+          },
+          {
+            "type": "metric",
+            "label": "피부 장벽",
+            "value": "+42%",
+            "detail": "소비자 테스트"
+          },
+          {
+            "type": "metric",
+            "label": "재구매율",
+            "value": "68%"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "핵심 성분",
+        "children": [
+          {
+            "type": "feature-list",
+            "layout": "grid",
+            "items": [
+              {
+                "icon": "droplet",
+                "title": "세라마이드",
+                "description": "무너진 피부 장벽을 채웁니다."
+              },
+              {
+                "icon": "leaf",
+                "title": "병풀 추출물",
+                "description": "붉은 피부를 진정시킵니다."
+              },
+              {
+                "icon": "sparkles",
+                "title": "판테놀",
+                "description": "수분을 오래 머금게 합니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "사용법",
+        "children": [
+          {
+            "type": "steps",
+            "title": "아침·저녁 3단계",
+            "layout": "horizontal",
+            "items": [
+              {
+                "title": "세안",
+                "description": "미온수로 가볍게 씻습니다."
+              },
+              {
+                "title": "토너",
+                "description": "피부결을 정돈합니다."
+              },
+              {
+                "title": "크림",
+                "description": "콩알 크기를 얼굴 전체에 바릅니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "리뷰",
+        "children": [
+          {
+            "type": "reviews",
+            "title": "포토 리뷰",
+            "score": "4.9",
+            "count": "리뷰 842개",
+            "items": [
+              {
+                "author": "윤**",
+                "rating": 5,
+                "text": "건조한 피부에도 부담이 없어요.",
+                "date": "2026.10.05"
+              },
+              {
+                "author": "장**",
+                "rating": 5,
+                "text": "향이 은은해서 좋아요.",
+                "date": "2026.09.30"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "faq",
+        "title": "고지·배송·반품",
+        "items": [
+          {
+            "question": "전성분이 궁금해요.",
+            "answer": "정제수, 글리세린, 세라마이드NP, 판테놀, 병풀추출물 외."
+          },
+          {
+            "question": "교환·반품은 어떻게 하나요?",
+            "answer": "미개봉 제품은 7일 이내 반품할 수 있습니다."
+          }
+        ]
+      }
+    ]
+  }
+}

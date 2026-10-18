@@ -1,0 +1,134 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "콘솔",
+  "theme": "console",
+  "palette": "dark-night",
+  "mode": "dark",
+  "pageType": "data",
+  "shell": "sidebar",
+  "typography": "mono",
+  "density": "compact",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-square",
+  "ornament": "none",
+  "backdrop": "grid",
+  "width": "full",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "로그",
+        "href": "#main",
+        "icon": "terminal"
+      },
+      {
+        "label": "키",
+        "href": "#main",
+        "icon": "lock"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "콘솔 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "감사 로그",
+        "description": "최근 24시간 · 관리자 활동",
+        "actions": [
+          {
+            "label": "로그 내보내기",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "이벤트",
+            "value": "1,284",
+            "detail": "최근 24시간"
+          },
+          {
+            "type": "metric",
+            "label": "실패",
+            "value": "7",
+            "detail": "전일 대비",
+            "trend": "down",
+            "delta": "-3"
+          },
+          {
+            "type": "metric",
+            "label": "고유 사용자",
+            "value": "38"
+          }
+        ]
+      },
+      {
+        "type": "timeline",
+        "title": "최근 이벤트",
+        "items": [
+          {
+            "time": "14:02",
+            "title": "권한 변경",
+            "description": "kim.dasun이 팀 역할을 편집자로 변경",
+            "status": "완료"
+          },
+          {
+            "time": "13:41",
+            "title": "로그인 실패",
+            "description": "알 수 없는 IP에서 3회 실패",
+            "status": "진행"
+          },
+          {
+            "time": "12:10",
+            "title": "API 키 발급",
+            "description": "배포용 키가 발급됨",
+            "status": "완료"
+          }
+        ]
+      },
+      {
+        "type": "code",
+        "label": "이벤트 원본",
+        "language": "json",
+        "code": "{\n  \"event\": \"role.updated\",\n  \"actor\": \"kim.dasun\",\n  \"target\": \"team-design\",\n  \"role\": \"editor\"\n}"
+      }
+    ]
+  }
+}

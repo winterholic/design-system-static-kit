@@ -1,0 +1,112 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "디자인 노트",
+  "theme": "magazine",
+  "palette": "classic-red-palette",
+  "mode": "light",
+  "pageType": "article",
+  "shell": "masthead",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "square",
+  "control": "square",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "lines",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "글",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "아카이브",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "user"
+      }
+    ],
+    "footerNote": "© 2026 디자인 노트",
+    "footerLinks": [
+      {
+        "label": "RSS",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "일관성은 같은 모양을 뜻하지 않습니다.",
+        "description": "디자인 노트 · 2026년 10월 18일",
+        "eyebrow": "에세이"
+      },
+      {
+        "type": "prose",
+        "title": "선택을 위한 규칙",
+        "body": "규칙은 결정을 대신하는 것이 아니라, 결정에 필요한 맥락을 보존합니다.\n\n모든 화면을 하나의 정답으로 맞추기보다, 서로 다른 목적을 가진 화면이 같은 언어로 이야기하게 합니다.",
+        "variant": "lead"
+      },
+      {
+        "type": "section",
+        "title": "조립하는 세 가지 층위",
+        "children": [
+          {
+            "type": "prose",
+            "title": "재료와 역할",
+            "body": "색과 간격은 의미를 가진 토큰으로 연결합니다. 읽는 순서와 관계는 부품의 구조로 표현합니다."
+          },
+          {
+            "type": "quote",
+            "quote": "규칙은 자유를 줄이는 것이 아니라 선택의 비용을 줄입니다.",
+            "author": "디자인 노트"
+          },
+          {
+            "type": "list",
+            "title": "다음에 확인할 것",
+            "items": [
+              {
+                "title": "목적에 맞는 위계",
+                "description": "가장 중요한 정보가 먼저 읽히는가?"
+              },
+              {
+                "title": "관련된 것 사이의 거리",
+                "description": "한 그룹의 내부 간격이 그룹 사이보다 작은가?"
+              },
+              {
+                "title": "실패했을 때의 경험",
+                "description": "현재 상황과 다음 행동을 설명하는가?"
+              }
+            ],
+            "state": "ready",
+            "variant": "check"
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "warning",
+        "title": "규칙도 틀릴 수 있습니다.",
+        "body": "재현 가능한 반례와 근거를 남겨 카탈로그를 개정하세요."
+      }
+    ]
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "레저",
+  "theme": "ledger",
+  "palette": "dark-slate-whisper",
+  "mode": "light",
+  "pageType": "listing",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "compact",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line-square",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "full",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "주문",
+        "href": "#main",
+        "icon": "bag"
+      },
+      {
+        "label": "상품",
+        "href": "#main",
+        "icon": "tag"
+      },
+      {
+        "label": "고객",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "정산",
+        "href": "#main",
+        "icon": "dollar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "레저 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "주문 관리",
+        "description": "오늘 접수된 주문 128건",
+        "actions": [
+          {
+            "label": "주문 추가",
+            "href": "#main",
+            "variant": "primary"
+          },
+          {
+            "label": "내보내기",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "주문번호 또는 고객명",
+        "filters": [
+          "전체",
+          "결제 완료",
+          "배송 중",
+          "취소"
+        ],
+        "selected": 0
+      },
+      {
+        "type": "table",
+        "title": "주문 목록",
+        "caption": "최근 주문 목록",
+        "variant": "bordered",
+        "columns": [
+          "주문번호",
+          "고객",
+          "금액",
+          "상태",
+          "접수"
+        ],
+        "rows": [
+          [
+            "A-10231",
+            "김다선",
+            "39,000원",
+            "결제 완료",
+            "10:12"
+          ],
+          [
+            "A-10230",
+            "이지훈",
+            "128,000원",
+            "배송 중",
+            "09:48"
+          ],
+          [
+            "A-10229",
+            "박서연",
+            "56,500원",
+            "결제 완료",
+            "09:30"
+          ],
+          [
+            "A-10228",
+            "최민준",
+            "23,000원",
+            "취소",
+            "09:02"
+          ],
+          [
+            "A-10227",
+            "정하늘",
+            "71,000원",
+            "배송 중",
+            "08:55"
+          ]
+        ],
+        "state": "ready"
+      },
+      {
+        "type": "pagination",
+        "pages": 12,
+        "current": 1
+      }
+    ]
+  }
+}

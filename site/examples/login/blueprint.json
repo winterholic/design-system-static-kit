@@ -1,0 +1,92 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "플로우웍스",
+  "theme": "trust",
+  "palette": "serene-blue",
+  "mode": "light",
+  "pageType": "auth",
+  "shell": "centered",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 플로우웍스",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "다시 오셨네요",
+        "description": "계정으로 로그인하세요."
+      },
+      {
+        "type": "form",
+        "title": "로그인",
+        "fields": [
+          {
+            "id": "email",
+            "label": "이메일",
+            "type": "email",
+            "placeholder": "name@example.com"
+          },
+          {
+            "id": "password",
+            "label": "비밀번호",
+            "type": "password",
+            "help": "8자 이상"
+          }
+        ],
+        "submitLabel": "로그인"
+      },
+      {
+        "type": "links",
+        "title": "도움이 필요하신가요?",
+        "items": [
+          {
+            "label": "비밀번호를 잊으셨나요?",
+            "href": "#main",
+            "description": "이메일로 재설정 링크를 받아요."
+          },
+          {
+            "label": "계정이 없으신가요?",
+            "href": "#main",
+            "description": "30초면 가입할 수 있어요."
+          }
+        ]
+      }
+    ]
+  }
+}

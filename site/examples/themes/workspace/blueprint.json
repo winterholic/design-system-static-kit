@@ -1,67 +1,178 @@
 {
-  "version": "1.0",
-  "catalogVersion": "1.0.0",
-  "name": "프로젝트 현황",
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "워크스페이스",
   "theme": "workspace",
   "palette": "ocean",
   "mode": "light",
+  "pageType": "dashboard",
   "shell": "sidebar",
   "typography": "sans",
   "density": "comfortable",
   "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "action": {
+      "label": "새 프로젝트",
+      "href": "#main"
+    },
+    "footerNote": "워크스페이스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
   "tree": {
     "type": "page",
     "children": [
       {
         "type": "page-header",
         "title": "다음 결정을 위한 한눈.",
-        "description": "오늘의 흐름을 읽고, 중요한 일에 집중하세요."
+        "description": "오늘의 흐름을 읽고, 중요한 일에 집중하세요.",
+        "actions": [
+          {
+            "label": "새 프로젝트",
+            "href": "#main",
+            "variant": "primary"
+          },
+          {
+            "label": "내보내기",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
       },
       {
         "type": "grid",
-        "columns": "three",
+        "columns": "four",
         "children": [
           {
             "type": "metric",
             "label": "진행 중 프로젝트",
             "value": "12",
-            "detail": "이번 주 시작한 프로젝트 3개"
+            "detail": "이번 주 3개 시작",
+            "trend": "up",
+            "delta": "+3"
           },
           {
             "type": "metric",
             "label": "완료한 작업",
             "value": "84",
-            "detail": "지난주보다 12개 더 완료"
+            "detail": "지난주보다",
+            "trend": "up",
+            "delta": "+12"
+          },
+          {
+            "type": "metric",
+            "label": "지연",
+            "value": "2",
+            "detail": "지난주 5건",
+            "trend": "down",
+            "delta": "-3"
           },
           {
             "type": "metric",
             "label": "다음 마일스톤",
             "value": "10. 24.",
-            "detail": "디자인 리뷰 · 오후 2시"
+            "detail": "디자인 리뷰"
           }
         ]
       },
       {
-        "type": "section",
-        "title": "지금 집중할 일",
+        "type": "aside",
+        "side": "end",
+        "label": "활동 요약",
+        "size": "narrow",
         "children": [
           {
-            "type": "grid",
-            "columns": "two",
-            "children": [
+            "type": "chart",
+            "title": "주간 완료 작업",
+            "caption": "요일별 완료한 작업 수",
+            "kind": "bar",
+            "unit": "개",
+            "categories": [
+              "월",
+              "화",
+              "수",
+              "목",
+              "금"
+            ],
+            "series": [
               {
-                "type": "card",
-                "title": "브랜드의 새로운 언어",
-                "body": "제품의 성격을 살리는 표현과 규칙을 함께 정리합니다.",
-                "meta": "디자인 · 진행 중"
-              },
-              {
-                "type": "card",
-                "title": "작은 개선의 기록",
-                "body": "사용자가 망설이는 순간을 찾아 하나씩 다듬습니다.",
-                "meta": "리서치 · 이번 주"
+                "name": "완료",
+                "values": [
+                  8,
+                  14,
+                  11,
+                  17,
+                  12
+                ]
               }
             ]
+          },
+          {
+            "type": "list",
+            "title": "지금 집중할 일",
+            "variant": "card",
+            "items": [
+              {
+                "title": "브랜드의 새로운 언어",
+                "description": "디자인 · 이번 주",
+                "status": "진행"
+              },
+              {
+                "title": "작은 개선의 기록",
+                "description": "리서치 · 이번 주",
+                "status": "대기"
+              },
+              {
+                "title": "릴리스 준비",
+                "description": "개발 · 다음 주",
+                "status": "대기"
+              }
+            ],
+            "state": "ready"
           }
         ]
       },

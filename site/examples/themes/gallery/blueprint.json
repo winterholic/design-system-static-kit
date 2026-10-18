@@ -1,0 +1,119 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "김다선 포트폴리오",
+  "theme": "gallery",
+  "palette": "grayscale-harmony",
+  "mode": "light",
+  "pageType": "portfolio",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "square",
+  "control": "pill",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "작업",
+        "href": "#main",
+        "icon": "image"
+      },
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "user"
+      },
+      {
+        "label": "연락",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "footerNote": "© 2026 김다선",
+    "footerLinks": [
+      {
+        "label": "Instagram",
+        "href": "#main"
+      },
+      {
+        "label": "Email",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "선별한 작업",
+        "description": "2022–2026 · 아이덴티티, 웹, 모션"
+      },
+      {
+        "type": "tags",
+        "items": [
+          "전체",
+          "아이덴티티",
+          "웹",
+          "모션",
+          "포스터"
+        ],
+        "variant": "outline"
+      },
+      {
+        "type": "gallery",
+        "layout": "grid",
+        "items": [
+          {
+            "kind": "photo",
+            "alt": "카페 브랜딩",
+            "caption": "카페 · 아이덴티티"
+          },
+          {
+            "kind": "pattern",
+            "alt": "전시 포스터",
+            "caption": "전시 · 포스터"
+          },
+          {
+            "kind": "device",
+            "alt": "앱 화면",
+            "caption": "핀테크 · 앱"
+          },
+          {
+            "kind": "diagram",
+            "alt": "정보 구조",
+            "caption": "재단 · 웹"
+          },
+          {
+            "kind": "video",
+            "alt": "모션 영상",
+            "caption": "브랜드 · 모션"
+          },
+          {
+            "kind": "photo",
+            "alt": "패키지",
+            "caption": "식품 · 패키지"
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "title": "함께 작업해요",
+        "action": {
+          "label": "연락하기",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "워크스페이스",
+  "theme": "workspace",
+  "palette": "ocean",
+  "mode": "light",
+  "pageType": "community",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "워크스페이스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "10월 일정",
+        "description": "이번 달 일정 4건",
+        "actions": [
+          {
+            "label": "일정 추가",
+            "href": "#main",
+            "variant": "primary"
+          }
+        ]
+      },
+      {
+        "type": "calendar",
+        "title": "2026년 10월",
+        "year": 2026,
+        "month": 10,
+        "events": [
+          {
+            "day": 6,
+            "title": "스프린트 시작"
+          },
+          {
+            "day": 18,
+            "title": "디자인 리뷰"
+          },
+          {
+            "day": 24,
+            "title": "릴리스 점검"
+          },
+          {
+            "day": 30,
+            "title": "회고"
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "title": "다가오는 일정",
+        "items": [
+          {
+            "title": "디자인 리뷰",
+            "description": "10월 18일 · 14:00",
+            "status": "대기"
+          },
+          {
+            "title": "릴리스 점검",
+            "description": "10월 24일 · 11:00",
+            "status": "대기"
+          }
+        ],
+        "state": "ready"
+      }
+    ]
+  }
+}

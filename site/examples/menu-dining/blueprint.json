@@ -1,0 +1,141 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "소담 식당",
+  "theme": "dining",
+  "palette": "cinnamon-wine-harvest",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "centered",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "subtle",
+  "control": "square",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "lines",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "메뉴",
+        "href": "#main",
+        "icon": "utensils"
+      },
+      {
+        "label": "예약",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "오시는 길",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "예약하기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 소담 식당 · 매주 월요일 휴무",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "저녁 메뉴",
+        "description": "매일 오후 5시부터 10시까지",
+        "align": "center"
+      },
+      {
+        "type": "menu",
+        "title": "시그니처",
+        "layout": "leader",
+        "items": [
+          {
+            "name": "한우 갈비찜",
+            "description": "24시간 숙성한 갈비와 제철 채소",
+            "price": "38,000",
+            "tag": "시그니처"
+          },
+          {
+            "name": "들깨 칼국수",
+            "description": "직접 뽑은 면과 들깨 육수",
+            "price": "12,000"
+          },
+          {
+            "name": "모둠 전",
+            "description": "계절 재료로 부친 전 다섯 가지",
+            "price": "18,000"
+          }
+        ]
+      },
+      {
+        "type": "menu",
+        "title": "식사",
+        "layout": "plain",
+        "items": [
+          {
+            "name": "된장찌개 정식",
+            "price": "11,000"
+          },
+          {
+            "name": "불고기 정식",
+            "price": "14,000"
+          },
+          {
+            "name": "비빔밥",
+            "price": "10,000"
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "label": "코스"
+      },
+      {
+        "type": "menu",
+        "title": "코스 구성",
+        "layout": "grid",
+        "items": [
+          {
+            "name": "소담 코스",
+            "description": "전채 · 메인 · 식사 · 후식",
+            "price": "45,000"
+          },
+          {
+            "name": "가족 코스",
+            "description": "4인 기준 · 사이드 포함",
+            "price": "150,000"
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "info",
+        "title": "알레르기·원산지",
+        "body": "대두, 밀, 계란, 우유를 사용합니다. 쇠고기는 국내산 한우입니다."
+      }
+    ]
+  }
+}

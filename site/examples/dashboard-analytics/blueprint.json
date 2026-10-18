@@ -1,0 +1,235 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "인사이트",
+  "theme": "insight",
+  "palette": "vibrant-rainbow-burst",
+  "mode": "light",
+  "pageType": "data",
+  "shell": "rail",
+  "typography": "sans",
+  "density": "compact",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "tint",
+  "width": "full",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "요약",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "채널",
+        "href": "#main",
+        "icon": "globe"
+      },
+      {
+        "label": "페이지",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "인사이트 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "9월 성장 리포트",
+        "description": "지난 30일 기준 · 전체 채널",
+        "actions": [
+          {
+            "label": "기간 변경",
+            "href": "#main",
+            "variant": "secondary"
+          },
+          {
+            "label": "PDF로 내보내기",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "four",
+        "children": [
+          {
+            "type": "metric",
+            "label": "방문자",
+            "value": "128,400",
+            "detail": "전월 대비",
+            "trend": "up",
+            "delta": "+12.4%"
+          },
+          {
+            "type": "metric",
+            "label": "가입 전환",
+            "value": "3.8%",
+            "detail": "전월 대비",
+            "trend": "up",
+            "delta": "+0.4%p"
+          },
+          {
+            "type": "metric",
+            "label": "이탈률",
+            "value": "41%",
+            "detail": "전월 대비",
+            "trend": "down",
+            "delta": "-2%p"
+          },
+          {
+            "type": "metric",
+            "label": "평균 체류",
+            "value": "4분 12초",
+            "detail": "전월 대비",
+            "trend": "flat",
+            "delta": "0"
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "two",
+        "children": [
+          {
+            "type": "chart",
+            "title": "일별 방문자",
+            "caption": "최근 7일 방문자 수",
+            "kind": "line",
+            "unit": "명",
+            "categories": [
+              "월",
+              "화",
+              "수",
+              "목",
+              "금",
+              "토",
+              "일"
+            ],
+            "series": [
+              {
+                "name": "방문자",
+                "values": [
+                  3200,
+                  4100,
+                  3900,
+                  4600,
+                  5200,
+                  3800,
+                  3100
+                ]
+              }
+            ]
+          },
+          {
+            "type": "chart",
+            "title": "유입 채널",
+            "caption": "채널별 방문자 비율",
+            "kind": "donut",
+            "unit": "%",
+            "categories": [
+              "검색",
+              "직접",
+              "소셜",
+              "추천"
+            ],
+            "series": [
+              {
+                "name": "비율",
+                "values": [
+                  46,
+                  28,
+                  16,
+                  10
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "chart",
+        "title": "채널별 전환",
+        "caption": "채널별 전환율 비교",
+        "kind": "bars-h",
+        "unit": "%",
+        "categories": [
+          "검색",
+          "직접",
+          "소셜",
+          "추천"
+        ],
+        "series": [
+          {
+            "name": "전환율",
+            "values": [
+              4.2,
+              5.1,
+              2.1,
+              3.4
+            ]
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "title": "상위 페이지",
+        "caption": "방문이 많은 페이지",
+        "variant": "striped",
+        "columns": [
+          "페이지",
+          "방문",
+          "전환"
+        ],
+        "rows": [
+          [
+            "/pricing",
+            "18,204",
+            "5.2%"
+          ],
+          [
+            "/features",
+            "14,771",
+            "3.1%"
+          ],
+          [
+            "/blog/design-rules",
+            "9,402",
+            "1.8%"
+          ]
+        ],
+        "state": "ready"
+      }
+    ]
+  }
+}

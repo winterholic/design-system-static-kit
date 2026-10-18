@@ -1,0 +1,184 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "선루프",
+  "theme": "solar",
+  "palette": "sunny-meadow-shades",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "geometric",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "duotone",
+  "ornament": "geometric",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "방식",
+        "href": "#main",
+        "icon": "zap"
+      },
+      {
+        "label": "발전량",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "action": {
+      "label": "무료 진단",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 선루프",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "우리 집 지붕이 발전소가 됩니다",
+        "description": "설치부터 모니터링까지 한 번에."
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "title": "전기요금을\n절반으로.",
+        "body": "지붕 조건만 알려 주시면 예상 절감액과 설치 비용을 바로 알려 드립니다.",
+        "action": {
+          "label": "무료 진단",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "사례 보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "ornament"
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "평균 절감",
+            "value": "48%",
+            "detail": "1년 사용 기준",
+            "trend": "down",
+            "delta": "-48%"
+          },
+          {
+            "type": "metric",
+            "label": "설치 기간",
+            "value": "2일"
+          },
+          {
+            "type": "metric",
+            "label": "보증",
+            "value": "25년"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "작동 방식",
+        "children": [
+          {
+            "type": "steps",
+            "title": "네 단계로 끝",
+            "layout": "horizontal",
+            "items": [
+              {
+                "title": "진단",
+                "description": "지붕 방향과 면적을 확인합니다."
+              },
+              {
+                "title": "설계",
+                "description": "최적 용량을 제안합니다."
+              },
+              {
+                "title": "설치",
+                "description": "이틀 안에 설치합니다."
+              },
+              {
+                "title": "모니터링",
+                "description": "앱에서 발전량을 확인합니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "월간 발전량",
+        "children": [
+          {
+            "type": "chart",
+            "title": "3kW 설치 예시",
+            "caption": "월별 평균 발전량",
+            "kind": "area",
+            "unit": "kWh",
+            "categories": [
+              "1월",
+              "2월",
+              "3월",
+              "4월",
+              "5월",
+              "6월"
+            ],
+            "series": [
+              {
+                "name": "발전량",
+                "values": [
+                  180,
+                  240,
+                  330,
+                  410,
+                  460,
+                  440
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "title": "10분이면 진단이 끝납니다",
+        "action": {
+          "label": "무료 진단",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

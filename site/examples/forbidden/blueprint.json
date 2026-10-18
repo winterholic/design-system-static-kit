@@ -1,0 +1,84 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "시빅",
+  "theme": "civic",
+  "palette": "deep-blue-sea-2",
+  "mode": "light",
+  "pageType": "error",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "홈",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 시빅",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "접근 권한이 없어요",
+        "align": "center"
+      },
+      {
+        "type": "empty-state",
+        "kind": "forbidden",
+        "title": "접근 권한이 없어요",
+        "body": "이 페이지를 볼 수 있는 권한이 없습니다. 관리자에게 요청해 주세요.",
+        "action": {
+          "label": "권한 요청",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "actions",
+        "align": "center",
+        "items": [
+          {
+            "label": "이전 페이지",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

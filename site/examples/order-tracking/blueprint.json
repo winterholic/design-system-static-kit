@@ -1,0 +1,120 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "무드램프",
+  "theme": "commerce",
+  "palette": "sweet-summer-melody",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "주문",
+        "href": "#main",
+        "icon": "bag"
+      },
+      {
+        "label": "배송",
+        "href": "#main",
+        "icon": "truck"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "message"
+      }
+    ],
+    "footerNote": "© 2026 무드램프",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "주문 배송 조회",
+        "description": "주문번호 A-10231"
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "주문 정보",
+        "children": [
+          {
+            "type": "timeline",
+            "title": "배송 현황",
+            "items": [
+              {
+                "time": "10월 18일 09:12",
+                "title": "배송 중",
+                "description": "서울 성동 터미널 출발",
+                "status": "진행"
+              },
+              {
+                "time": "10월 17일 20:40",
+                "title": "상품 출고",
+                "description": "물류센터 출고",
+                "status": "완료"
+              },
+              {
+                "time": "10월 17일 10:12",
+                "title": "결제 완료",
+                "status": "완료"
+              },
+              {
+                "time": "10월 19일",
+                "title": "도착 예정",
+                "status": "예정"
+              }
+            ]
+          },
+          {
+            "type": "summary",
+            "title": "주문 내역",
+            "items": [
+              {
+                "label": "무드램프 미니",
+                "value": "39,000원"
+              },
+              {
+                "label": "배송비",
+                "value": "0원"
+              }
+            ],
+            "total": {
+              "label": "합계",
+              "value": "39,000원"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

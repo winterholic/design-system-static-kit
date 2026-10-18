@@ -1,0 +1,189 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "리프트 클럽",
+  "theme": "sport",
+  "palette": "toasty-campfire-glow",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "stacked",
+  "typography": "grotesk",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "square",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "프로그램",
+        "href": "#main",
+        "icon": "zap"
+      },
+      {
+        "label": "요금",
+        "href": "#main",
+        "icon": "tag"
+      },
+      {
+        "label": "오시는 길",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "무료 체험",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 리프트 클럽",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "오늘의 한계를 넘는 한 세트",
+        "description": "프리웨이트 · 그룹 클래스 · 1:1 코칭"
+      },
+      {
+        "type": "hero",
+        "variant": "cover",
+        "eyebrow": "첫 달 무료",
+        "title": "더 강해질\n시간.",
+        "body": "체계적인 프로그램과 코치가 함께합니다.",
+        "action": {
+          "label": "무료 체험",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "클래스 보기",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "회원",
+            "value": "2,400명"
+          },
+          {
+            "type": "metric",
+            "label": "주간 클래스",
+            "value": "48개"
+          },
+          {
+            "type": "metric",
+            "label": "평균 만족도",
+            "value": "4.9"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "프로그램",
+        "children": [
+          {
+            "type": "reel",
+            "title": "이번 주 클래스",
+            "children": [
+              {
+                "type": "card",
+                "title": "파워 리프팅",
+                "body": "기본 3종목 집중",
+                "badge": "인기",
+                "icon": "zap"
+              },
+              {
+                "type": "card",
+                "title": "HIIT 30",
+                "body": "30분 고강도",
+                "icon": "trending-up"
+              },
+              {
+                "type": "card",
+                "title": "모빌리티",
+                "body": "굳은 몸 풀기",
+                "icon": "leaf"
+              },
+              {
+                "type": "card",
+                "title": "코어 클래스",
+                "body": "복부와 허리 강화",
+                "icon": "shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "요금",
+        "children": [
+          {
+            "type": "pricing",
+            "children": [
+              {
+                "type": "plan",
+                "name": "자유 이용",
+                "price": "79,000원",
+                "period": "월",
+                "features": [
+                  "헬스장 무제한",
+                  "샤워실"
+                ],
+                "action": {
+                  "label": "선택",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              },
+              {
+                "type": "plan",
+                "name": "클래스 포함",
+                "price": "119,000원",
+                "period": "월",
+                "features": [
+                  "헬스장 무제한",
+                  "그룹 클래스",
+                  "체성분 측정"
+                ],
+                "action": {
+                  "label": "선택",
+                  "href": "#main",
+                  "variant": "primary"
+                },
+                "featured": "yes"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

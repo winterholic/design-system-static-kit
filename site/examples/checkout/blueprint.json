@@ -1,0 +1,142 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "무드램프",
+  "theme": "commerce",
+  "palette": "sweet-summer-melody",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "장바구니",
+        "href": "#main",
+        "icon": "cart"
+      },
+      {
+        "label": "주문",
+        "href": "#main",
+        "icon": "bag"
+      },
+      {
+        "label": "고객센터",
+        "href": "#main",
+        "icon": "message"
+      }
+    ],
+    "footerNote": "© 2026 무드램프",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "결제하기",
+        "description": "배송 정보를 입력하고 결제를 진행하세요."
+      },
+      {
+        "type": "stepper",
+        "steps": [
+          "장바구니",
+          "배송 정보",
+          "결제",
+          "완료"
+        ],
+        "current": 2
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "주문 요약",
+        "children": [
+          {
+            "type": "form",
+            "title": "배송 정보",
+            "variant": "two-column",
+            "fields": [
+              {
+                "id": "name",
+                "label": "받는 분",
+                "type": "text"
+              },
+              {
+                "id": "phone",
+                "label": "연락처",
+                "type": "tel",
+                "placeholder": "010-0000-0000"
+              },
+              {
+                "id": "address",
+                "label": "주소",
+                "type": "text"
+              },
+              {
+                "id": "memo",
+                "label": "배송 메모",
+                "type": "textarea",
+                "requirement": "optional"
+              },
+              {
+                "id": "save",
+                "label": "다음에도 이 주소 사용",
+                "type": "checkbox",
+                "requirement": "optional"
+              }
+            ],
+            "submitLabel": "결제 진행"
+          },
+          {
+            "type": "summary",
+            "title": "주문 요약",
+            "items": [
+              {
+                "label": "무드램프 미니 × 1",
+                "value": "39,000원"
+              },
+              {
+                "label": "배송비",
+                "value": "0원"
+              },
+              {
+                "label": "할인",
+                "value": "-3,000원"
+              }
+            ],
+            "total": {
+              "label": "총 결제 금액",
+              "value": "36,000원"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

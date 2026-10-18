@@ -1,0 +1,84 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "플레이",
+  "theme": "playful",
+  "palette": "candy-pop",
+  "mode": "light",
+  "pageType": "error",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "spacious",
+  "radius": "bubble",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "홈",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 플레이",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "페이지를 찾을 수 없어요",
+        "align": "center"
+      },
+      {
+        "type": "empty-state",
+        "kind": "not-found",
+        "title": "페이지를 찾을 수 없어요",
+        "body": "주소가 바뀌었거나 삭제되었을 수 있어요. 홈에서 다시 찾아보세요.",
+        "action": {
+          "label": "홈으로",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "actions",
+        "align": "center",
+        "items": [
+          {
+            "label": "이전 페이지",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

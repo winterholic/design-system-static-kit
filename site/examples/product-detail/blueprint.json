@@ -1,0 +1,207 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "무드램프",
+  "theme": "commerce",
+  "palette": "sweet-summer-melody",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "신상품",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "조명",
+        "href": "#main",
+        "icon": "sun"
+      },
+      {
+        "label": "이벤트",
+        "href": "#main",
+        "icon": "gift"
+      },
+      {
+        "label": "고객센터",
+        "href": "#main",
+        "icon": "message"
+      }
+    ],
+    "action": {
+      "label": "장바구니",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 무드램프",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "무드램프 미니",
+        "description": "열두 가지 분위기를 내는 휴대용 램프",
+        "eyebrow": "조명"
+      },
+      {
+        "type": "split",
+        "ratio": "wide-start",
+        "children": [
+          {
+            "type": "gallery",
+            "layout": "grid",
+            "items": [
+              {
+                "kind": "photo",
+                "alt": "램프 정면"
+              },
+              {
+                "kind": "photo",
+                "alt": "램프 측면"
+              },
+              {
+                "kind": "photo",
+                "alt": "책상 위에 놓은 모습"
+              }
+            ]
+          },
+          {
+            "type": "buy-box",
+            "title": "무드램프 미니",
+            "price": "39,000원",
+            "note": "3만원 이상 무료 배송",
+            "badge": "베스트",
+            "options": [
+              {
+                "label": "색상",
+                "choices": [
+                  "웜 화이트",
+                  "라벤더",
+                  "민트"
+                ]
+              },
+              {
+                "label": "충전기",
+                "choices": [
+                  "포함",
+                  "미포함"
+                ]
+              }
+            ],
+            "action": {
+              "label": "장바구니 담기",
+              "href": "#main",
+              "variant": "primary"
+            },
+            "secondaryAction": {
+              "label": "바로 구매",
+              "href": "#main",
+              "variant": "secondary"
+            }
+          }
+        ]
+      },
+      {
+        "type": "tabs",
+        "variant": "underline",
+        "children": [
+          {
+            "type": "tab",
+            "label": "상세 정보",
+            "children": [
+              {
+                "type": "prose",
+                "title": "제품 설명",
+                "body": "손바닥만 한 크기에 열두 가지 조명 모드를 담았습니다. 충전은 USB-C로 두 시간, 사용은 열 시간입니다."
+              },
+              {
+                "type": "properties",
+                "title": "사양",
+                "items": [
+                  {
+                    "label": "크기",
+                    "value": "지름 8cm"
+                  },
+                  {
+                    "label": "무게",
+                    "value": "180g"
+                  },
+                  {
+                    "label": "방수",
+                    "value": "IPX4"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "tab",
+            "label": "리뷰",
+            "children": [
+              {
+                "type": "reviews",
+                "title": "구매 후기",
+                "score": "4.8",
+                "count": "리뷰 1,204개",
+                "items": [
+                  {
+                    "author": "김**",
+                    "rating": 5,
+                    "text": "조명이 부드러워요.",
+                    "date": "2026.10.02"
+                  },
+                  {
+                    "author": "이**",
+                    "rating": 4,
+                    "text": "배터리가 오래갑니다.",
+                    "date": "2026.09.27"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "tab",
+            "label": "배송·교환",
+            "children": [
+              {
+                "type": "prose",
+                "title": "배송 안내",
+                "body": "평일 오후 2시 이전 주문은 당일 출고됩니다.\n\n수령 후 7일 이내 교환·환불이 가능합니다."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

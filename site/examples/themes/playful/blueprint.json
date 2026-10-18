@@ -1,0 +1,231 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "디자인 데이 2026",
+  "theme": "playful",
+  "palette": "candy-pop",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "spacious",
+  "radius": "bubble",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "프로그램",
+        "href": "#program",
+        "icon": "calendar"
+      },
+      {
+        "label": "티켓",
+        "href": "#ticket",
+        "icon": "tag"
+      },
+      {
+        "label": "장소",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "티켓 구매",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 디자인 데이",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "올해 가장 즐거운 디자인 하루",
+        "description": "11월 14일 토요일 · 성수 · 오프라인 + 온라인"
+      },
+      {
+        "type": "hero",
+        "variant": "centered",
+        "eyebrow": "얼리버드 마감 D-7",
+        "title": "디자인 데이\n2026",
+        "body": "연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.",
+        "action": {
+          "label": "티켓 구매",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "프로그램 보기",
+          "href": "#main",
+          "variant": "secondary"
+        }
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "연사",
+            "value": "12명"
+          },
+          {
+            "type": "metric",
+            "label": "워크숍",
+            "value": "6개"
+          },
+          {
+            "type": "metric",
+            "label": "남은 좌석",
+            "value": "84석",
+            "detail": "오늘 기준",
+            "trend": "down",
+            "delta": "-16"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "프로그램",
+        "children": [
+          {
+            "type": "timeline",
+            "title": "11월 14일",
+            "items": [
+              {
+                "time": "10:00",
+                "title": "오프닝",
+                "description": "올해의 주제를 소개합니다.",
+                "status": "예정"
+              },
+              {
+                "time": "11:00",
+                "title": "키노트: 규칙과 자유",
+                "description": "정해진 틀 안에서 다양함을 만드는 방법."
+              },
+              {
+                "time": "14:00",
+                "title": "워크숍 세션",
+                "description": "관심 주제를 골라 참여합니다."
+              },
+              {
+                "time": "17:00",
+                "title": "네트워킹",
+                "description": "가벼운 저녁과 함께합니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "program"
+      },
+      {
+        "type": "section",
+        "title": "연사",
+        "children": [
+          {
+            "type": "team",
+            "title": "함께하는 연사",
+            "members": [
+              {
+                "name": "김다선",
+                "role": "디자인 시스템 리드"
+              },
+              {
+                "name": "이지훈",
+                "role": "프런트엔드 엔지니어"
+              },
+              {
+                "name": "박서연",
+                "role": "모션 디자이너"
+              },
+              {
+                "name": "최민준",
+                "role": "리서처"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "티켓",
+        "children": [
+          {
+            "type": "pricing",
+            "children": [
+              {
+                "type": "plan",
+                "name": "일반",
+                "price": "49,000원",
+                "features": [
+                  "하루 입장",
+                  "점심 포함"
+                ],
+                "action": {
+                  "label": "구매",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              },
+              {
+                "type": "plan",
+                "name": "얼리버드",
+                "price": "39,000원",
+                "period": "11/7까지",
+                "features": [
+                  "하루 입장",
+                  "점심 포함",
+                  "굿즈 포함"
+                ],
+                "action": {
+                  "label": "구매",
+                  "href": "#main",
+                  "variant": "primary"
+                },
+                "featured": "yes"
+              }
+            ]
+          }
+        ],
+        "anchor": "ticket"
+      },
+      {
+        "type": "faq",
+        "title": "자주 묻는 질문",
+        "items": [
+          {
+            "question": "온라인으로도 볼 수 있나요?",
+            "answer": "네. 온라인 티켓은 라이브와 다시보기를 제공합니다."
+          },
+          {
+            "question": "환불은 가능한가요?",
+            "answer": "행사 7일 전까지 전액 환불됩니다."
+          }
+        ]
+      }
+    ]
+  }
+}

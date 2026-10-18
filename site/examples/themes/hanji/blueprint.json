@@ -1,0 +1,134 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "고운길",
+  "theme": "hanji",
+  "palette": "swatch-6d85a3",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "editorial",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "subtle",
+  "control": "square",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "lines",
+  "backdrop": "tint",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "숙소",
+        "href": "#main",
+        "icon": "bed"
+      },
+      {
+        "label": "체험",
+        "href": "#main",
+        "icon": "sparkles"
+      }
+    ],
+    "action": {
+      "label": "예약",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 고운길",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "걸음마다 이야기가 있는 길",
+        "description": "전통 마을과 고택을 잇는 3일"
+      },
+      {
+        "type": "hero",
+        "variant": "statement",
+        "eyebrow": "가을 한정",
+        "title": "한옥에서 맞는\n고요한 아침.",
+        "body": "고택 숙박과 전통 체험을 하나로 엮은 여행입니다.",
+        "action": {
+          "label": "일정 보기",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "section",
+        "title": "여행 일정",
+        "children": [
+          {
+            "type": "timeline",
+            "title": "3일의 흐름",
+            "items": [
+              {
+                "time": "1일차",
+                "title": "전주 한옥마을",
+                "description": "고택 체크인과 다도 체험."
+              },
+              {
+                "time": "2일차",
+                "title": "안동 하회마을",
+                "description": "탈춤 공연과 선비 음식."
+              },
+              {
+                "time": "3일차",
+                "title": "경주 월정교",
+                "description": "신라 유적을 걸으며 마무리."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "머무는 곳",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "two",
+            "children": [
+              {
+                "type": "card",
+                "title": "전주 청연재",
+                "body": "마당이 있는 한옥 독채",
+                "meta": "1박 · 2인"
+              },
+              {
+                "type": "card",
+                "title": "안동 하회고택",
+                "body": "고요한 종가 체험",
+                "meta": "1박 · 4인"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

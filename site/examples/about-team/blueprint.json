@@ -1,0 +1,135 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "아틀리에 모아",
+  "theme": "atelier",
+  "palette": "pastel",
+  "mode": "light",
+  "pageType": "general",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "round",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "duotone",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "클래스",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "후기",
+        "href": "#main",
+        "icon": "star"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "action": {
+      "label": "클래스 신청",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 아틀리에 모아",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "함께 배우고 만드는 공간",
+        "description": "2019년부터 여섯 명이 시작했습니다."
+      },
+      {
+        "type": "split",
+        "children": [
+          {
+            "type": "prose",
+            "title": "우리 이야기",
+            "body": "작은 동네 공방에서 시작해 이제는 매달 300명이 찾는 배움터가 되었습니다.\n\n정답을 알려 주기보다, 스스로 만들어 보는 경험을 소중히 합니다.",
+            "variant": "lead"
+          },
+          {
+            "type": "media",
+            "kind": "photo",
+            "ratio": "4:3",
+            "alt": "공방에서 함께 작업하는 모습"
+          }
+        ]
+      },
+      {
+        "type": "team",
+        "title": "함께하는 사람들",
+        "members": [
+          {
+            "name": "김다선",
+            "role": "대표 · 도예",
+            "bio": "흙의 감각을 가르칩니다."
+          },
+          {
+            "name": "이지훈",
+            "role": "목공",
+            "bio": "나무를 다루는 법."
+          },
+          {
+            "name": "박서연",
+            "role": "염색",
+            "bio": "천연 염료 수업."
+          }
+        ]
+      },
+      {
+        "type": "timeline",
+        "title": "지나온 길",
+        "items": [
+          {
+            "time": "2019",
+            "title": "공방 시작",
+            "status": "완료"
+          },
+          {
+            "time": "2022",
+            "title": "온라인 클래스 오픈",
+            "status": "완료"
+          },
+          {
+            "time": "2026",
+            "title": "두 번째 공간",
+            "status": "예정"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "한빛 박물관",
+  "theme": "heritage",
+  "palette": "golden-harvest-glow",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "masthead",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "square",
+  "control": "square",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "lines",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "전시",
+        "href": "#main",
+        "icon": "image"
+      },
+      {
+        "label": "교육",
+        "href": "#main",
+        "icon": "graduation"
+      },
+      {
+        "label": "관람 안내",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "소장품",
+        "href": "#main",
+        "icon": "book"
+      }
+    ],
+    "action": {
+      "label": "관람 예약",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 한빛 박물관",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "오래된 것에서 오늘의 이야기를",
+        "description": "상설전 · 기획전 · 교육 프로그램"
+      },
+      {
+        "type": "hero",
+        "variant": "statement",
+        "eyebrow": "기획전 · 11월 30일까지",
+        "title": "빛을 담은 그릇",
+        "body": "조선 백자 120점이 만든 한 줄기 빛의 이야기를 만나 보세요.",
+        "action": {
+          "label": "관람 예약",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "전시 소개",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "section",
+        "title": "지금 전시",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "two",
+            "children": [
+              {
+                "type": "card",
+                "title": "빛을 담은 그릇",
+                "body": "조선 백자 120점",
+                "variant": "horizontal",
+                "visual": "photo",
+                "ratio": "4:3",
+                "meta": "기획전시실 1 · 11/30까지"
+              },
+              {
+                "type": "card",
+                "title": "도시의 기억",
+                "body": "사진으로 보는 서울 100년",
+                "variant": "horizontal",
+                "visual": "photo",
+                "ratio": "4:3",
+                "meta": "상설전시실 2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "관람 안내",
+        "children": [
+          {
+            "type": "properties",
+            "title": "운영 정보",
+            "layout": "inline",
+            "items": [
+              {
+                "label": "관람 시간",
+                "value": "화~일 10:00~18:00"
+              },
+              {
+                "label": "휴관일",
+                "value": "매주 월요일"
+              },
+              {
+                "label": "관람료",
+                "value": "성인 5,000원 · 청소년 무료"
+              },
+              {
+                "label": "위치",
+                "value": "서울 종로구 예시로 12"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

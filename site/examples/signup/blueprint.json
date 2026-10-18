@@ -1,0 +1,91 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "모아",
+  "theme": "clarity",
+  "palette": "blue-gradient",
+  "mode": "light",
+  "pageType": "auth",
+  "shell": "minimal",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "로그인",
+        "href": "#main",
+        "icon": "user"
+      }
+    ],
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "계정을 만들어요",
+        "description": "이메일만 있으면 시작할 수 있어요."
+      },
+      {
+        "type": "form",
+        "title": "회원가입",
+        "fields": [
+          {
+            "id": "name",
+            "label": "이름",
+            "type": "text"
+          },
+          {
+            "id": "email",
+            "label": "이메일",
+            "type": "email",
+            "placeholder": "name@example.com"
+          },
+          {
+            "id": "password",
+            "label": "비밀번호",
+            "type": "password",
+            "help": "8자 이상, 숫자 포함"
+          },
+          {
+            "id": "terms",
+            "label": "이용약관과 개인정보 처리방침에 동의합니다",
+            "type": "checkbox"
+          }
+        ],
+        "submitLabel": "가입하기"
+      },
+      {
+        "type": "notice",
+        "tone": "info",
+        "title": "데모 안내",
+        "body": "입력은 저장되거나 전송되지 않습니다."
+      }
+    ]
+  }
+}

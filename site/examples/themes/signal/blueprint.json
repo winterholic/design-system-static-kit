@@ -1,21 +1,94 @@
 {
-  "version": "1.0",
-  "catalogVersion": "1.0.0",
-  "name": "프로젝트 현황",
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "숲을 지켜요",
   "theme": "signal",
   "palette": "fiery",
   "mode": "light",
+  "pageType": "landing",
   "shell": "split",
   "typography": "sans",
   "density": "compact",
   "radius": "square",
+  "control": "square",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-bold",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "현황",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "후원",
+        "href": "#main",
+        "icon": "heart"
+      }
+    ],
+    "action": {
+      "label": "후원하기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 숲을 지켜요 · 비영리",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
   "tree": {
     "type": "page",
     "children": [
       {
         "type": "page-header",
-        "title": "다음 결정을 위한 한눈.",
-        "description": "오늘의 흐름을 읽고, 중요한 일에 집중하세요."
+        "title": "한 그루가 숲이 되도록",
+        "description": "2026 시민 식목 캠페인"
+      },
+      {
+        "type": "hero",
+        "variant": "statement",
+        "eyebrow": "모금 진행 중",
+        "title": "올해 목표, 나무 10,000그루.",
+        "body": "지금까지 6,420그루가 심겼습니다. 한 번의 참여가 한 그루가 됩니다.",
+        "action": {
+          "label": "후원하기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "봉사 신청",
+          "href": "#main",
+          "variant": "secondary"
+        }
+      },
+      {
+        "type": "progress",
+        "label": "모금 현황",
+        "value": 64,
+        "detail": "6,420 / 10,000그루",
+        "tone": "brand"
       },
       {
         "type": "grid",
@@ -23,75 +96,59 @@
         "children": [
           {
             "type": "metric",
-            "label": "진행 중 프로젝트",
-            "value": "12",
-            "detail": "이번 주 시작한 프로젝트 3개"
+            "label": "참여자",
+            "value": "12,480명",
+            "detail": "지난달 대비",
+            "trend": "up",
+            "delta": "+1,204"
           },
           {
             "type": "metric",
-            "label": "완료한 작업",
-            "value": "84",
-            "detail": "지난주보다 12개 더 완료"
+            "label": "심은 나무",
+            "value": "6,420그루"
           },
           {
             "type": "metric",
-            "label": "다음 마일스톤",
-            "value": "10. 24.",
-            "detail": "디자인 리뷰 · 오후 2시"
+            "label": "숲 면적",
+            "value": "42ha"
           }
         ]
       },
       {
         "type": "section",
-        "title": "지금 집중할 일",
+        "title": "후원금은 이렇게 쓰여요",
         "children": [
           {
-            "type": "grid",
-            "columns": "two",
-            "children": [
+            "type": "chart",
+            "title": "사용 내역",
+            "caption": "후원금 사용 비율",
+            "kind": "donut",
+            "unit": "%",
+            "categories": [
+              "묘목",
+              "식재 인건비",
+              "관리",
+              "운영"
+            ],
+            "series": [
               {
-                "type": "card",
-                "title": "브랜드의 새로운 언어",
-                "body": "제품의 성격을 살리는 표현과 규칙을 함께 정리합니다.",
-                "meta": "디자인 · 진행 중"
-              },
-              {
-                "type": "card",
-                "title": "작은 개선의 기록",
-                "body": "사용자가 망설이는 순간을 찾아 하나씩 다듬습니다.",
-                "meta": "리서치 · 이번 주"
+                "name": "비율",
+                "values": [
+                  48,
+                  27,
+                  18,
+                  7
+                ]
               }
             ]
           }
         ]
       },
       {
-        "type": "table",
-        "title": "최근 작업",
-        "caption": "프로젝트별 최근 변경과 담당 현황",
-        "columns": [
-          "작업",
-          "담당",
-          "상태"
-        ],
-        "rows": [
-          [
-            "조립 규약 정리",
-            "김다선",
-            "완료"
-          ],
-          [
-            "팔레트 후보 검토",
-            "디자인팀",
-            "진행"
-          ],
-          [
-            "다음 릴리스 준비",
-            "개발팀",
-            "대기"
-          ]
-        ],
-        "state": "ready"
+        "type": "notice",
+        "tone": "info",
+        "title": "투명하게 공개합니다",
+        "body": "모든 사용 내역은 분기마다 홈페이지에 공개됩니다."
       }
     ]
   }

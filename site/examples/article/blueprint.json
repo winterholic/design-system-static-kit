@@ -1,26 +1,69 @@
 {
-  "version": "1.0",
-  "catalogVersion": "1.0.0",
-  "name": "읽는 문서",
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "디자인 노트",
   "theme": "editorial",
   "palette": "lavender",
   "mode": "light",
+  "pageType": "article",
   "shell": "editorial",
   "typography": "serif",
   "density": "spacious",
   "radius": "square",
+  "control": "match",
+  "elevation": "flat",
+  "motion": "none",
+  "icon": "line-fine",
+  "ornament": "lines",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "글",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "아카이브",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "user"
+      }
+    ],
+    "footerNote": "© 2026 디자인 노트",
+    "footerLinks": [
+      {
+        "label": "RSS",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
   "tree": {
     "type": "page",
     "children": [
       {
         "type": "page-header",
         "title": "일관성은 같은 모양을 뜻하지 않습니다.",
-        "description": "디자인 노트 · 2026년 10월 18일"
+        "description": "디자인 노트 · 2026년 10월 18일",
+        "eyebrow": "에세이"
       },
       {
         "type": "prose",
         "title": "선택을 위한 규칙",
-        "body": "규칙은 결정을 대신하는 것이 아니라, 결정에 필요한 맥락을 보존합니다.\n\n모든 화면을 하나의 정답으로 맞추기보다, 서로 다른 목적을 가진 화면이 같은 언어로 이야기하게 합니다."
+        "body": "규칙은 결정을 대신하는 것이 아니라, 결정에 필요한 맥락을 보존합니다.\n\n모든 화면을 하나의 정답으로 맞추기보다, 서로 다른 목적을 가진 화면이 같은 언어로 이야기하게 합니다.",
+        "variant": "lead"
       },
       {
         "type": "section",
@@ -30,6 +73,11 @@
             "type": "prose",
             "title": "재료와 역할",
             "body": "색과 간격은 의미를 가진 토큰으로 연결합니다. 읽는 순서와 관계는 부품의 구조로 표현합니다."
+          },
+          {
+            "type": "quote",
+            "quote": "규칙은 자유를 줄이는 것이 아니라 선택의 비용을 줄입니다.",
+            "author": "디자인 노트"
           },
           {
             "type": "list",
@@ -48,7 +96,8 @@
                 "description": "현재 상황과 다음 행동을 설명하는가?"
               }
             ],
-            "state": "ready"
+            "state": "ready",
+            "variant": "check"
           }
         ]
       },

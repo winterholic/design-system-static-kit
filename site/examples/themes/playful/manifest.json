@@ -1,0 +1,1149 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.0.0",
+  "theme": "playful",
+  "palette": "candy-pop",
+  "mode": "light",
+  "pageType": "landing",
+  "axes": {
+    "shell": "topbar",
+    "typography": "rounded",
+    "density": "spacious",
+    "radius": "bubble",
+    "control": "pill",
+    "elevation": "lifted",
+    "motion": "lively",
+    "icon": "solid",
+    "ornament": "organic",
+    "backdrop": "tint",
+    "width": "standard",
+    "scale": "dramatic",
+    "weight": "bold",
+    "footer": "columns"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/9b5de5-f15bb5-fee440-00bbf9-00f5d4",
+      "discovery": "https://coolors.co/palettes/popular",
+      "observed": "2026-10-18",
+      "method": "rendered Coolors palette listing (Playwright Chromium / ttakkari_browser), swatches read from page text",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#9B5DE5",
+      "#F15BB5",
+      "#FEE440",
+      "#00BBF9",
+      "#00F5D4"
+    ],
+    "brandSeed": "#00BBF9",
+    "accentSeed": "#FEE440",
+    "action": "#00769D",
+    "accent": "#FEE440",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "mode": "light",
+      "name": "text/canvas",
+      "foreground": "#182029",
+      "background": "#FFFBE6",
+      "ratio": 15.80752206,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/surface",
+      "foreground": "#182029",
+      "background": "#FFFFFF",
+      "ratio": 16.43884712,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/soft",
+      "foreground": "#182029",
+      "background": "#EDFAFF",
+      "ratio": 15.43619317,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/sunken",
+      "foreground": "#182029",
+      "background": "#F6F2DE",
+      "ratio": 14.61820851,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/accentSoft",
+      "foreground": "#182029",
+      "background": "#FFFCEC",
+      "ratio": 15.95929245,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/canvas",
+      "foreground": "#586476",
+      "background": "#FFFBE6",
+      "ratio": 5.77054408,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/surface",
+      "foreground": "#586476",
+      "background": "#FFFFFF",
+      "ratio": 6.00100962,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/soft",
+      "foreground": "#586476",
+      "background": "#EDFAFF",
+      "ratio": 5.63499028,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/sunken",
+      "foreground": "#586476",
+      "background": "#F6F2DE",
+      "ratio": 5.33638456,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/accentSoft",
+      "foreground": "#586476",
+      "background": "#FFFCEC",
+      "ratio": 5.82594794,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/canvas",
+      "foreground": "#00769D",
+      "background": "#FFFBE6",
+      "ratio": 4.95152765,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/surface",
+      "foreground": "#00769D",
+      "background": "#FFFFFF",
+      "ratio": 5.14928309,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/soft",
+      "foreground": "#00769D",
+      "background": "#EDFAFF",
+      "ratio": 4.83521307,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/sunken",
+      "foreground": "#00769D",
+      "background": "#F6F2DE",
+      "ratio": 4.57898862,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/accentSoft",
+      "foreground": "#00769D",
+      "background": "#FFFCEC",
+      "ratio": 4.99906801,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FFFBE6",
+      "ratio": 5.76093268,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.99101436,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#EDFAFF",
+      "ratio": 5.62560466,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/sunken",
+      "foreground": "#18714C",
+      "background": "#F6F2DE",
+      "ratio": 5.3274963,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/accentSoft",
+      "foreground": "#18714C",
+      "background": "#FFFCEC",
+      "ratio": 5.81624427,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#FFFBE6",
+      "ratio": 5.13525435,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#EDFAFF",
+      "ratio": 5.01462391,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/sunken",
+      "foreground": "#946000",
+      "background": "#F6F2DE",
+      "ratio": 4.74889224,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/accentSoft",
+      "foreground": "#946000",
+      "background": "#FFFCEC",
+      "ratio": 5.1845587,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FFFBE6",
+      "ratio": 5.56546356,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.78773854,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#EDFAFF",
+      "ratio": 5.43472723,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/sunken",
+      "foreground": "#B83543",
+      "background": "#F6F2DE",
+      "ratio": 5.14673372,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/accentSoft",
+      "foreground": "#B83543",
+      "background": "#FFFCEC",
+      "ratio": 5.61889842,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/canvas",
+      "foreground": "#2A63C9",
+      "background": "#FFFBE6",
+      "ratio": 5.41875756,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/surface",
+      "foreground": "#2A63C9",
+      "background": "#FFFFFF",
+      "ratio": 5.63517335,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/soft",
+      "foreground": "#2A63C9",
+      "background": "#EDFAFF",
+      "ratio": 5.29146745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/sunken",
+      "foreground": "#2A63C9",
+      "background": "#F6F2DE",
+      "ratio": 5.01106546,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/accentSoft",
+      "foreground": "#2A63C9",
+      "background": "#FFFCEC",
+      "ratio": 5.47078386,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/canvas",
+      "foreground": "#7A6D1F",
+      "background": "#FFFBE6",
+      "ratio": 5.00488847,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/surface",
+      "foreground": "#7A6D1F",
+      "background": "#FFFFFF",
+      "ratio": 5.20477505,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/soft",
+      "foreground": "#7A6D1F",
+      "background": "#EDFAFF",
+      "ratio": 4.88732041,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/sunken",
+      "foreground": "#7A6D1F",
+      "background": "#F6F2DE",
+      "ratio": 4.62833472,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/accentSoft",
+      "foreground": "#7A6D1F",
+      "background": "#FFFCEC",
+      "ratio": 5.05294116,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "focus/canvas",
+      "foreground": "#0096C7",
+      "background": "#FFFBE6",
+      "ratio": 3.26373264,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/surface",
+      "foreground": "#0096C7",
+      "background": "#FFFFFF",
+      "ratio": 3.39408048,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/soft",
+      "foreground": "#0096C7",
+      "background": "#EDFAFF",
+      "ratio": 3.18706546,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/sunken",
+      "foreground": "#0096C7",
+      "background": "#F6F2DE",
+      "ratio": 3.01817857,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/accentSoft",
+      "foreground": "#0096C7",
+      "background": "#FFFCEC",
+      "ratio": 3.29506823,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#00688A",
+      "ratio": 6.27404781,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#00769D",
+      "ratio": 5.14928309,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAccent/accent",
+      "foreground": "#10151C",
+      "background": "#FEE440",
+      "ratio": 14.2972216,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FFFBE6",
+      "ratio": 3.78913696,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.94046853,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/sunken",
+      "foreground": "#78818E",
+      "background": "#F6F2DE",
+      "ratio": 3.50405294,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/canvas",
+      "foreground": "#009BCF",
+      "background": "#FFFBE6",
+      "ratio": 3.06448042,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/surface",
+      "foreground": "#009BCF",
+      "background": "#FFFFFF",
+      "ratio": 3.18687047,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/canvas",
+      "foreground": "#A39229",
+      "background": "#FFFBE6",
+      "ratio": 3.01356086,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/surface",
+      "foreground": "#A39229",
+      "background": "#FFFFFF",
+      "ratio": 3.13391726,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/canvas",
+      "foreground": "#9B5DE5",
+      "background": "#FFFBE6",
+      "ratio": 3.9666032,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/surface",
+      "foreground": "#9B5DE5",
+      "background": "#FFFFFF",
+      "ratio": 4.12502247,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/canvas",
+      "foreground": "#EC59B1",
+      "background": "#FFFBE6",
+      "ratio": 3.04559867,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/surface",
+      "foreground": "#EC59B1",
+      "background": "#FFFFFF",
+      "ratio": 3.16723461,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/canvas",
+      "foreground": "#00A48E",
+      "background": "#FFFBE6",
+      "ratio": 3.01360416,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/surface",
+      "foreground": "#00A48E",
+      "background": "#FFFFFF",
+      "ratio": 3.13396229,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@0",
+      "foreground": "#182029",
+      "background": "#FFFBE6",
+      "ratio": 15.80752206,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@0",
+      "foreground": "#586476",
+      "background": "#FFFBE6",
+      "ratio": 5.77054408,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@1",
+      "foreground": "#182029",
+      "background": "#FDFBE9",
+      "ratio": 15.77506204,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@1",
+      "foreground": "#586476",
+      "background": "#FDFBE9",
+      "ratio": 5.75869453,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@2",
+      "foreground": "#182029",
+      "background": "#FBFBEB",
+      "ratio": 15.73459886,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@2",
+      "foreground": "#586476",
+      "background": "#FBFBEB",
+      "ratio": 5.74392343,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@3",
+      "foreground": "#182029",
+      "background": "#FAFBEE",
+      "ratio": 15.73297877,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@3",
+      "foreground": "#586476",
+      "background": "#FAFBEE",
+      "ratio": 5.74333202,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@4",
+      "foreground": "#182029",
+      "background": "#F8FBF0",
+      "ratio": 15.69394654,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@4",
+      "foreground": "#586476",
+      "background": "#F8FBF0",
+      "ratio": 5.72908328,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@5",
+      "foreground": "#182029",
+      "background": "#F6FBF3",
+      "ratio": 15.66516538,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@5",
+      "foreground": "#586476",
+      "background": "#F6FBF3",
+      "ratio": 5.7185767,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@6",
+      "foreground": "#182029",
+      "background": "#F4FAF5",
+      "ratio": 15.53030853,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@6",
+      "foreground": "#586476",
+      "background": "#F4FAF5",
+      "ratio": 5.66934714,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@7",
+      "foreground": "#182029",
+      "background": "#F2FAF8",
+      "ratio": 15.5035191,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@7",
+      "foreground": "#586476",
+      "background": "#F2FAF8",
+      "ratio": 5.65956764,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@8",
+      "foreground": "#182029",
+      "background": "#F1FAFA",
+      "ratio": 15.49543171,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@8",
+      "foreground": "#586476",
+      "background": "#F1FAFA",
+      "ratio": 5.65661534,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@9",
+      "foreground": "#182029",
+      "background": "#EFFAFD",
+      "ratio": 15.47033061,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@9",
+      "foreground": "#586476",
+      "background": "#EFFAFD",
+      "ratio": 5.64745217,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@10",
+      "foreground": "#182029",
+      "background": "#EDFAFF",
+      "ratio": 15.43619317,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@10",
+      "foreground": "#586476",
+      "background": "#EDFAFF",
+      "ratio": 5.63499028,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@0",
+      "foreground": "#182029",
+      "background": "#EDFAFF",
+      "ratio": 15.43619317,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@0",
+      "foreground": "#586476",
+      "background": "#EDFAFF",
+      "ratio": 5.63499028,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@1",
+      "foreground": "#182029",
+      "background": "#EFFAFD",
+      "ratio": 15.47033061,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@1",
+      "foreground": "#586476",
+      "background": "#EFFAFD",
+      "ratio": 5.64745217,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@2",
+      "foreground": "#182029",
+      "background": "#F1FAFB",
+      "ratio": 15.50528047,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@2",
+      "foreground": "#586476",
+      "background": "#F1FAFB",
+      "ratio": 5.66021063,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@3",
+      "foreground": "#182029",
+      "background": "#F2FBF9",
+      "ratio": 15.61082382,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@3",
+      "foreground": "#586476",
+      "background": "#F2FBF9",
+      "ratio": 5.69873929,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@4",
+      "foreground": "#182029",
+      "background": "#F4FBF7",
+      "ratio": 15.64709861,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@4",
+      "foreground": "#586476",
+      "background": "#F4FBF7",
+      "ratio": 5.71198142,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@5",
+      "foreground": "#182029",
+      "background": "#F6FBF6",
+      "ratio": 15.69377778,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@5",
+      "foreground": "#586476",
+      "background": "#F6FBF6",
+      "ratio": 5.72902167,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@6",
+      "foreground": "#182029",
+      "background": "#F8FBF4",
+      "ratio": 15.73158102,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@6",
+      "foreground": "#586476",
+      "background": "#F8FBF4",
+      "ratio": 5.74282177,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@7",
+      "foreground": "#182029",
+      "background": "#FAFBF2",
+      "ratio": 15.77020232,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@7",
+      "foreground": "#586476",
+      "background": "#FAFBF2",
+      "ratio": 5.75692049,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@8",
+      "foreground": "#182029",
+      "background": "#FBFCF0",
+      "ratio": 15.8785654,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@8",
+      "foreground": "#586476",
+      "background": "#FBFCF0",
+      "ratio": 5.79647849,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@9",
+      "foreground": "#182029",
+      "background": "#FDFCEE",
+      "ratio": 15.91851855,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@9",
+      "foreground": "#586476",
+      "background": "#FDFCEE",
+      "ratio": 5.81106341,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@10",
+      "foreground": "#182029",
+      "background": "#FFFCEC",
+      "ratio": 15.95929245,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@10",
+      "foreground": "#586476",
+      "background": "#FFFCEC",
+      "ratio": 5.82594794,
+      "minimum": 4.5
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.0.0",
+    "name": "디자인 데이 2026",
+    "theme": "playful",
+    "palette": "candy-pop",
+    "mode": "light",
+    "pageType": "landing",
+    "shell": "topbar",
+    "typography": "rounded",
+    "density": "spacious",
+    "radius": "bubble",
+    "control": "pill",
+    "elevation": "lifted",
+    "motion": "lively",
+    "icon": "solid",
+    "ornament": "organic",
+    "backdrop": "tint",
+    "width": "standard",
+    "scale": "dramatic",
+    "weight": "bold",
+    "footer": "columns",
+    "chrome": {
+      "nav": [
+        {
+          "label": "프로그램",
+          "href": "#program",
+          "icon": "calendar"
+        },
+        {
+          "label": "티켓",
+          "href": "#ticket",
+          "icon": "tag"
+        },
+        {
+          "label": "장소",
+          "href": "#main",
+          "icon": "map-pin"
+        }
+      ],
+      "action": {
+        "label": "티켓 구매",
+        "href": "#main"
+      },
+      "footerNote": "© 2026 디자인 데이",
+      "footerLinks": [
+        {
+          "label": "이용약관",
+          "href": "#main"
+        },
+        {
+          "label": "개인정보",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "올해 가장 즐거운 디자인 하루",
+          "description": "11월 14일 토요일 · 성수 · 오프라인 + 온라인"
+        },
+        {
+          "type": "hero",
+          "variant": "centered",
+          "eyebrow": "얼리버드 마감 D-7",
+          "title": "디자인 데이\n2026",
+          "body": "연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.",
+          "action": {
+            "label": "티켓 구매",
+            "href": "#main",
+            "variant": "primary"
+          },
+          "secondaryAction": {
+            "label": "프로그램 보기",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        },
+        {
+          "type": "grid",
+          "columns": "three",
+          "children": [
+            {
+              "type": "metric",
+              "label": "연사",
+              "value": "12명"
+            },
+            {
+              "type": "metric",
+              "label": "워크숍",
+              "value": "6개"
+            },
+            {
+              "type": "metric",
+              "label": "남은 좌석",
+              "value": "84석",
+              "detail": "오늘 기준",
+              "trend": "down",
+              "delta": "-16"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "프로그램",
+          "children": [
+            {
+              "type": "timeline",
+              "title": "11월 14일",
+              "items": [
+                {
+                  "time": "10:00",
+                  "title": "오프닝",
+                  "description": "올해의 주제를 소개합니다.",
+                  "status": "예정"
+                },
+                {
+                  "time": "11:00",
+                  "title": "키노트: 규칙과 자유",
+                  "description": "정해진 틀 안에서 다양함을 만드는 방법."
+                },
+                {
+                  "time": "14:00",
+                  "title": "워크숍 세션",
+                  "description": "관심 주제를 골라 참여합니다."
+                },
+                {
+                  "time": "17:00",
+                  "title": "네트워킹",
+                  "description": "가벼운 저녁과 함께합니다."
+                }
+              ]
+            }
+          ],
+          "anchor": "program"
+        },
+        {
+          "type": "section",
+          "title": "연사",
+          "children": [
+            {
+              "type": "team",
+              "title": "함께하는 연사",
+              "members": [
+                {
+                  "name": "김다선",
+                  "role": "디자인 시스템 리드"
+                },
+                {
+                  "name": "이지훈",
+                  "role": "프런트엔드 엔지니어"
+                },
+                {
+                  "name": "박서연",
+                  "role": "모션 디자이너"
+                },
+                {
+                  "name": "최민준",
+                  "role": "리서처"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "티켓",
+          "children": [
+            {
+              "type": "pricing",
+              "children": [
+                {
+                  "type": "plan",
+                  "name": "일반",
+                  "price": "49,000원",
+                  "features": [
+                    "하루 입장",
+                    "점심 포함"
+                  ],
+                  "action": {
+                    "label": "구매",
+                    "href": "#main",
+                    "variant": "secondary"
+                  }
+                },
+                {
+                  "type": "plan",
+                  "name": "얼리버드",
+                  "price": "39,000원",
+                  "period": "11/7까지",
+                  "features": [
+                    "하루 입장",
+                    "점심 포함",
+                    "굿즈 포함"
+                  ],
+                  "action": {
+                    "label": "구매",
+                    "href": "#main",
+                    "variant": "primary"
+                  },
+                  "featured": "yes"
+                }
+              ]
+            }
+          ],
+          "anchor": "ticket"
+        },
+        {
+          "type": "faq",
+          "title": "자주 묻는 질문",
+          "items": [
+            {
+              "question": "온라인으로도 볼 수 있나요?",
+              "answer": "네. 온라인 티켓은 라이브와 다시보기를 제공합니다."
+            },
+            {
+              "question": "환불은 가능한가요?",
+              "answer": "행사 7일 전까지 전액 환불됩니다."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "0582f17cc4bd692a34e6c4b80fb91ca1d08c684f10eb422cee0be27be8e6c71a",
+      "tokens.css": "efd0f67097aa6576b83b42ab5cf6ac1fc0bb646677791a70f3ba40b014bb6ea9",
+      "tokens.json": "5a192e2de05b9df533de82e350e25343ac64c4373b0192c245708c120b5de17c",
+      "blueprint.json": "15d4d1cb643c30f7ebf66119c551c8eea19de00b1a645f206a6eca8325358ec4"
+    }
+  }
+}

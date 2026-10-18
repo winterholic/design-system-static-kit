@@ -1,0 +1,110 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "러닝메이트",
+  "theme": "learning",
+  "palette": "neon-bright-sparks",
+  "mode": "light",
+  "pageType": "form",
+  "shell": "minimal",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "프로필을 만들어 볼까요?",
+        "description": "두 번째 단계 · 관심사를 알려 주세요."
+      },
+      {
+        "type": "stepper",
+        "steps": [
+          "계정",
+          "관심사",
+          "목표",
+          "완료"
+        ],
+        "current": 2
+      },
+      {
+        "type": "form",
+        "title": "관심사 선택",
+        "fields": [
+          {
+            "id": "level",
+            "label": "현재 수준",
+            "type": "radio",
+            "options": [
+              "처음이에요",
+              "조금 해 봤어요",
+              "꽤 익숙해요"
+            ]
+          },
+          {
+            "id": "topics",
+            "label": "관심 분야",
+            "type": "select",
+            "options": [
+              "웹",
+              "데이터",
+              "디자인",
+              "모바일"
+            ]
+          },
+          {
+            "id": "daily",
+            "label": "매일 알림 받기",
+            "type": "switch",
+            "requirement": "optional"
+          }
+        ],
+        "submitLabel": "다음"
+      },
+      {
+        "type": "actions",
+        "items": [
+          {
+            "label": "건너뛰기",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "오비트",
+  "theme": "neon",
+  "palette": "electric-neon-dreams",
+  "mode": "dark",
+  "pageType": "landing",
+  "shell": "minimal",
+  "typography": "geometric",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "glow",
+  "motion": "lively",
+  "icon": "duotone",
+  "ornament": "geometric",
+  "backdrop": "gradient",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "info"
+      }
+    ],
+    "action": {
+      "label": "로그인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 오비트",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "곧 열립니다",
+        "description": "가장 먼저 만나보세요."
+      },
+      {
+        "type": "hero",
+        "variant": "centered",
+        "eyebrow": "비공개 베타",
+        "title": "생각의 속도로\n움직이는 도구",
+        "body": "이메일을 남기면 베타 초대를 보내 드립니다.",
+        "action": {
+          "label": "자세히 보기",
+          "href": "#main",
+          "variant": "secondary"
+        }
+      },
+      {
+        "type": "form",
+        "title": "베타 대기자 등록",
+        "intro": "초대 순서는 등록 순입니다. 데모이므로 입력은 저장되지 않습니다.",
+        "variant": "inline",
+        "fields": [
+          {
+            "id": "email",
+            "label": "이메일",
+            "type": "email",
+            "placeholder": "name@example.com"
+          },
+          {
+            "id": "agree",
+            "label": "소식 받기에 동의합니다",
+            "type": "checkbox",
+            "requirement": "optional"
+          }
+        ],
+        "submitLabel": "등록하기"
+      },
+      {
+        "type": "feature-list",
+        "title": "미리 보는 기능",
+        "items": [
+          {
+            "icon": "zap",
+            "title": "즉시 반응",
+            "description": "입력과 동시에 결과가 보입니다."
+          },
+          {
+            "icon": "cloud",
+            "title": "어디서나",
+            "description": "브라우저만 있으면 됩니다."
+          },
+          {
+            "icon": "lock",
+            "title": "프라이버시",
+            "description": "기본값은 비공개입니다."
+          }
+        ]
+      }
+    ]
+  }
+}

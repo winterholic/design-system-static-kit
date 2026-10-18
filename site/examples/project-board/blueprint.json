@@ -1,0 +1,155 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "허브",
+  "theme": "hub",
+  "palette": "berrylicious-dream",
+  "mode": "light",
+  "pageType": "dashboard",
+  "shell": "sidebar",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "dots",
+  "backdrop": "tint",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "허브 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "릴리스 2.0 보드",
+        "description": "다음 릴리스까지 12일 남았습니다.",
+        "actions": [
+          {
+            "label": "작업 추가",
+            "href": "#main",
+            "variant": "primary"
+          }
+        ]
+      },
+      {
+        "type": "progress",
+        "label": "릴리스 진행률",
+        "value": 58,
+        "detail": "24개 중 14개 완료",
+        "tone": "brand"
+      },
+      {
+        "type": "kanban",
+        "children": [
+          {
+            "type": "lane",
+            "title": "할 일",
+            "children": [
+              {
+                "type": "task",
+                "title": "알림 설정 화면",
+                "label": "디자인",
+                "assignee": "김다선",
+                "priority": "보통"
+              },
+              {
+                "type": "task",
+                "title": "접근성 점검",
+                "label": "QA",
+                "priority": "높음"
+              }
+            ]
+          },
+          {
+            "type": "lane",
+            "title": "진행 중",
+            "children": [
+              {
+                "type": "task",
+                "title": "대시보드 차트",
+                "label": "개발",
+                "assignee": "이지훈",
+                "priority": "높음"
+              },
+              {
+                "type": "task",
+                "title": "온보딩 문구",
+                "label": "문서",
+                "assignee": "박서연",
+                "priority": "낮음"
+              }
+            ]
+          },
+          {
+            "type": "lane",
+            "title": "검토",
+            "children": [
+              {
+                "type": "task",
+                "title": "결제 흐름",
+                "label": "개발",
+                "assignee": "최민준",
+                "priority": "높음"
+              }
+            ]
+          },
+          {
+            "type": "lane",
+            "title": "완료",
+            "children": [
+              {
+                "type": "task",
+                "title": "로그인 개선",
+                "label": "개발",
+                "assignee": "정하늘"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

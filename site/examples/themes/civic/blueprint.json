@@ -1,0 +1,87 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "시빅",
+  "theme": "civic",
+  "palette": "deep-blue-sea-2",
+  "mode": "light",
+  "pageType": "article",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "처리방침",
+        "href": "#main",
+        "icon": "shield"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "footerNote": "© 2026 시빅 서비스",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "개인정보 처리방침",
+        "description": "시행일 2026년 10월 18일"
+      },
+      {
+        "type": "notice",
+        "tone": "info",
+        "title": "요약",
+        "body": "필요한 최소한의 정보만 수집하며 목적이 끝나면 지체 없이 파기합니다."
+      },
+      {
+        "type": "prose",
+        "title": "1. 수집하는 정보",
+        "body": "서비스 제공에 필요한 이메일과 이름을 수집합니다.\n\n수집한 정보는 동의 없이 제3자에게 제공하지 않습니다.",
+        "variant": "legal"
+      },
+      {
+        "type": "prose",
+        "title": "2. 보관 기간",
+        "body": "회원 탈퇴 시 즉시 파기합니다. 관계 법령에 따라 보관이 필요한 정보는 해당 기간 동안만 분리 보관합니다.",
+        "variant": "legal"
+      },
+      {
+        "type": "prose",
+        "title": "3. 이용자의 권리",
+        "body": "언제든 본인의 정보를 조회·정정·삭제할 수 있으며, 처리 정지를 요구할 수 있습니다.",
+        "variant": "legal"
+      }
+    ]
+  }
+}

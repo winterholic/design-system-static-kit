@@ -1,0 +1,188 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "스튜디오 오로",
+  "theme": "studio",
+  "palette": "white-elegance",
+  "mode": "light",
+  "pageType": "portfolio",
+  "shell": "minimal",
+  "typography": "grotesk",
+  "density": "spacious",
+  "radius": "square",
+  "control": "pill",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "작업",
+        "href": "#work",
+        "icon": "image"
+      },
+      {
+        "label": "서비스",
+        "href": "#main",
+        "icon": "sparkles"
+      }
+    ],
+    "action": {
+      "label": "문의",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 스튜디오 오로",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "우리는 브랜드가 오래 기억되는 방식을 만듭니다.",
+        "description": "서울 · 아이덴티티, 웹, 모션"
+      },
+      {
+        "type": "hero",
+        "variant": "cover",
+        "title": "오래 남는\n브랜드를 만든다.",
+        "body": "전략에서 제작까지, 작은 팀이 끝까지 함께합니다.",
+        "action": {
+          "label": "프로젝트 문의",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "작업 보기",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "section",
+        "title": "선별한 작업",
+        "children": [
+          {
+            "type": "gallery",
+            "layout": "masonry",
+            "items": [
+              {
+                "kind": "photo",
+                "alt": "카페 브랜딩",
+                "caption": "카페 · 아이덴티티"
+              },
+              {
+                "kind": "pattern",
+                "alt": "패턴 포스터",
+                "caption": "전시 · 그래픽"
+              },
+              {
+                "kind": "device",
+                "alt": "앱 화면",
+                "caption": "핀테크 · 앱"
+              },
+              {
+                "kind": "diagram",
+                "alt": "정보 구조",
+                "caption": "문화재단 · 웹"
+              },
+              {
+                "kind": "video",
+                "alt": "모션 영상",
+                "caption": "브랜드 · 모션"
+              },
+              {
+                "kind": "photo",
+                "alt": "패키지",
+                "caption": "식품 · 패키지"
+              }
+            ]
+          }
+        ],
+        "anchor": "work"
+      },
+      {
+        "type": "section",
+        "title": "서비스",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "card",
+                "title": "아이덴티티",
+                "body": "이름, 로고, 시스템까지 하나의 언어로.",
+                "icon": "sparkles"
+              },
+              {
+                "type": "card",
+                "title": "웹·앱",
+                "body": "빠르고 접근성 높은 화면을 만듭니다.",
+                "icon": "globe"
+              },
+              {
+                "type": "card",
+                "title": "모션",
+                "body": "브랜드가 움직이는 방식을 설계합니다.",
+                "icon": "play"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "이야기",
+        "children": [
+          {
+            "type": "split",
+            "reverse": "reverse",
+            "children": [
+              {
+                "type": "prose",
+                "title": "우리가 일하는 방식",
+                "body": "좋은 결과는 좋은 질문에서 나옵니다. 우리는 먼저 듣고, 작게 만들어 보여 드리고, 함께 다듬습니다.\n\n프로젝트마다 한 명의 책임자가 처음부터 끝까지 함께합니다."
+              },
+              {
+                "type": "media",
+                "kind": "photo",
+                "ratio": "4:3",
+                "alt": "작업실에서 회의하는 모습"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "tone": "inverse",
+        "title": "다음 프로젝트를 이야기해요",
+        "action": {
+          "label": "hello@example.com",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

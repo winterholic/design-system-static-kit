@@ -1,0 +1,85 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "시빅",
+  "theme": "civic",
+  "palette": "deep-blue-sea-2",
+  "mode": "light",
+  "pageType": "auth",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "로그인",
+        "href": "#main",
+        "icon": "user"
+      },
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 시빅 서비스",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "비밀번호 재설정",
+        "description": "가입한 이메일로 재설정 링크를 보내 드립니다."
+      },
+      {
+        "type": "form",
+        "title": "이메일 확인",
+        "fields": [
+          {
+            "id": "email",
+            "label": "이메일",
+            "type": "email",
+            "placeholder": "name@example.com"
+          }
+        ],
+        "submitLabel": "링크 보내기"
+      },
+      {
+        "type": "actions",
+        "items": [
+          {
+            "label": "로그인으로 돌아가기",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

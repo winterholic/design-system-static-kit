@@ -1,0 +1,201 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "플로우웍스",
+  "theme": "aurora",
+  "palette": "dreamy-twilight-shades",
+  "mode": "dark",
+  "pageType": "pricing",
+  "shell": "topbar",
+  "typography": "geometric",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "glow",
+  "motion": "lively",
+  "icon": "duotone",
+  "ornament": "organic",
+  "backdrop": "gradient",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "기능",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "요금",
+        "href": "#main",
+        "icon": "tag"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "action": {
+      "label": "로그인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 플로우웍스",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "팀에 맞는 요금제를 고르세요",
+        "description": "연간 결제 시 두 달 무료.",
+        "align": "center"
+      },
+      {
+        "type": "pricing",
+        "children": [
+          {
+            "type": "plan",
+            "name": "스타터",
+            "price": "0원",
+            "description": "시작은 가볍게.",
+            "features": [
+              "프로젝트 3개",
+              "사용자 3명",
+              "기본 템플릿"
+            ],
+            "action": {
+              "label": "시작하기",
+              "href": "#main",
+              "variant": "secondary"
+            }
+          },
+          {
+            "type": "plan",
+            "name": "팀",
+            "price": "9,900원",
+            "period": "사용자당 월",
+            "description": "성장하는 팀.",
+            "features": [
+              "무제한 프로젝트",
+              "자동화 규칙",
+              "우선 지원",
+              "고급 권한"
+            ],
+            "action": {
+              "label": "팀으로 시작",
+              "href": "#main",
+              "variant": "primary"
+            },
+            "featured": "yes"
+          },
+          {
+            "type": "plan",
+            "name": "비즈니스",
+            "price": "19,900원",
+            "period": "사용자당 월",
+            "description": "규모와 보안.",
+            "features": [
+              "SSO",
+              "감사 로그",
+              "전용 지원",
+              "맞춤 계약"
+            ],
+            "action": {
+              "label": "상담 요청",
+              "href": "#main",
+              "variant": "secondary"
+            }
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "기능 비교",
+        "children": [
+          {
+            "type": "table",
+            "title": "요금제별 기능",
+            "caption": "요금제별 포함 기능 비교",
+            "variant": "striped",
+            "columns": [
+              "기능",
+              "스타터",
+              "팀",
+              "비즈니스"
+            ],
+            "rows": [
+              [
+                "프로젝트",
+                "3개",
+                "무제한",
+                "무제한"
+              ],
+              [
+                "사용자",
+                "3명",
+                "무제한",
+                "무제한"
+              ],
+              [
+                "자동화 규칙",
+                "없음",
+                "포함",
+                "포함"
+              ],
+              [
+                "SSO",
+                "없음",
+                "없음",
+                "포함"
+              ],
+              [
+                "지원",
+                "커뮤니티",
+                "이메일",
+                "전용 매니저"
+              ]
+            ],
+            "state": "ready"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "자주 묻는 질문",
+        "children": [
+          {
+            "type": "faq",
+            "title": "결제 관련",
+            "items": [
+              {
+                "question": "언제든 요금제를 바꿀 수 있나요?",
+                "answer": "네. 변경 즉시 차액이 정산됩니다."
+              },
+              {
+                "question": "세금계산서를 받을 수 있나요?",
+                "answer": "결제 후 설정에서 발급합니다."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

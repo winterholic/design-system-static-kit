@@ -1,0 +1,199 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "모아",
+  "theme": "pocket",
+  "palette": "refreshing-spring-hues",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "spacious",
+  "radius": "bubble",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "기능",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "질문",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "action": {
+      "label": "앱 받기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 모아",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "하루를 가볍게 기록하는 앱",
+        "description": "3초 만에 남기고, 한 주를 돌아보세요."
+      },
+      {
+        "type": "hero",
+        "variant": "product",
+        "eyebrow": "iOS · Android",
+        "title": "기록은 짧게,\n기억은 길게.",
+        "body": "떠오른 생각을 바로 남기고, 주말에 자동으로 정리된 회고를 받아 보세요.",
+        "action": {
+          "label": "앱 받기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "미리 보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "device"
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "다운로드",
+            "value": "30만+",
+            "detail": "출시 6개월",
+            "trend": "up",
+            "delta": "+8%"
+          },
+          {
+            "type": "metric",
+            "label": "평균 평점",
+            "value": "4.8",
+            "detail": "리뷰 1.2만 개"
+          },
+          {
+            "type": "metric",
+            "label": "주간 활성",
+            "value": "68%",
+            "detail": "사용자 기준",
+            "trend": "up",
+            "delta": "+3%p"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "이렇게 써요",
+        "children": [
+          {
+            "type": "steps",
+            "title": "세 단계면 충분합니다",
+            "layout": "horizontal",
+            "items": [
+              {
+                "title": "남기기",
+                "description": "홈 화면 위젯에서 바로 입력합니다."
+              },
+              {
+                "title": "모아 보기",
+                "description": "태그와 날짜로 자동 분류됩니다."
+              },
+              {
+                "title": "돌아보기",
+                "description": "일요일 저녁에 한 주의 요약이 도착합니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "기능",
+        "children": [
+          {
+            "type": "feature-list",
+            "layout": "list",
+            "items": [
+              {
+                "icon": "zap",
+                "title": "위젯 입력",
+                "description": "앱을 열지 않고도 기록합니다."
+              },
+              {
+                "icon": "lock",
+                "title": "잠금과 암호화",
+                "description": "기록은 기기에서 암호화됩니다."
+              },
+              {
+                "icon": "cloud",
+                "title": "자동 백업",
+                "description": "기기를 바꿔도 이어집니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "자주 묻는 질문",
+        "children": [
+          {
+            "type": "faq",
+            "title": "궁금하신 점",
+            "items": [
+              {
+                "question": "무료인가요?",
+                "answer": "기본 기능은 무료입니다."
+              },
+              {
+                "question": "오프라인에서도 쓸 수 있나요?",
+                "answer": "네. 연결되면 자동으로 동기화합니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "tone": "inverse",
+        "title": "지금 바로 시작",
+        "action": {
+          "label": "앱 받기",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

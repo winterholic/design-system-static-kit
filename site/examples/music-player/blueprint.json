@@ -1,0 +1,132 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "녹턴",
+  "theme": "nocturne",
+  "palette": "dark-midnight-shades",
+  "mode": "dark",
+  "pageType": "general",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "glow",
+  "motion": "subtle",
+  "icon": "duotone",
+  "ornament": "dots",
+  "backdrop": "gradient",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "홈",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "검색",
+        "href": "#main",
+        "icon": "search"
+      },
+      {
+        "label": "보관함",
+        "href": "#main",
+        "icon": "bookmark"
+      }
+    ],
+    "footerNote": "녹턴 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "오늘의 믹스",
+        "description": "밤에 어울리는 조용한 곡들"
+      },
+      {
+        "type": "split",
+        "ratio": "wide-end",
+        "children": [
+          {
+            "type": "media",
+            "kind": "pattern",
+            "ratio": "1:1",
+            "alt": "앨범 아트 자리 표시",
+            "caption": "지금 재생 중: 새벽의 끝"
+          },
+          {
+            "type": "list",
+            "title": "재생 목록",
+            "variant": "card",
+            "items": [
+              {
+                "title": "새벽의 끝",
+                "description": "03:42",
+                "status": "진행",
+                "icon": "music"
+              },
+              {
+                "title": "불 꺼진 도시",
+                "description": "04:05",
+                "icon": "music"
+              },
+              {
+                "title": "창가의 비",
+                "description": "03:18",
+                "icon": "music"
+              }
+            ],
+            "state": "ready"
+          }
+        ]
+      },
+      {
+        "type": "progress",
+        "label": "재생 위치",
+        "value": 38,
+        "detail": "01:24 / 03:42",
+        "tone": "brand"
+      },
+      {
+        "type": "actions",
+        "align": "center",
+        "items": [
+          {
+            "label": "이전",
+            "href": "#main",
+            "variant": "ghost"
+          },
+          {
+            "label": "재생",
+            "href": "#main",
+            "variant": "primary"
+          },
+          {
+            "label": "다음",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

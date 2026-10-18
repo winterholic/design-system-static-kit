@@ -1,0 +1,106 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "허브",
+  "theme": "hub",
+  "palette": "berrylicious-dream",
+  "mode": "light",
+  "pageType": "community",
+  "shell": "sidebar",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "dots",
+  "backdrop": "tint",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "허브 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "받은 메시지",
+        "description": "읽지 않은 메시지 2개"
+      },
+      {
+        "type": "master-detail",
+        "title": "메시지 목록",
+        "items": [
+          {
+            "title": "디자인 리뷰 일정",
+            "meta": "김다선 · 10:20",
+            "preview": "내일 오후 2시에 만나요.",
+            "state": "unread"
+          },
+          {
+            "title": "배포 안내",
+            "meta": "이지훈 · 어제",
+            "preview": "배포가 완료되었습니다.",
+            "state": "unread"
+          },
+          {
+            "title": "회의록 공유",
+            "meta": "박서연 · 월요일",
+            "preview": "지난 회의록을 정리했어요."
+          },
+          {
+            "title": "다음 주 일정",
+            "meta": "최민준 · 지난주",
+            "preview": "일정 확인 부탁드립니다."
+          }
+        ],
+        "selected": 0,
+        "detail": {
+          "title": "디자인 리뷰 일정",
+          "meta": "김다선 · 오늘 10:20",
+          "body": "안녕하세요. 내일 오후 2시에 디자인 리뷰를 진행하려고 합니다.\n\n준비하실 자료는 현재 시안과 접근성 점검 결과입니다. 참석이 어려우시면 알려 주세요."
+        }
+      }
+    ]
+  }
+}

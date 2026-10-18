@@ -1,0 +1,1084 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.0.0",
+  "theme": "cafe",
+  "palette": "mocha-latte",
+  "mode": "light",
+  "pageType": "landing",
+  "axes": {
+    "shell": "topbar",
+    "typography": "humanist",
+    "density": "comfortable",
+    "radius": "round",
+    "control": "pill",
+    "elevation": "soft",
+    "motion": "subtle",
+    "icon": "solid",
+    "ornament": "dots",
+    "backdrop": "tint",
+    "width": "standard",
+    "scale": "balanced",
+    "weight": "medium",
+    "footer": "simple"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/0a0908-22333b-f2f4f3-a9927d-5e503f",
+      "discovery": "https://coolors.co/palettes/popular",
+      "observed": "2026-10-18",
+      "method": "rendered Coolors palette listing (Playwright Chromium / ttakkari_browser), swatches read from page text",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#0A0908",
+      "#22333B",
+      "#F2F4F3",
+      "#A9927D",
+      "#5E503F"
+    ],
+    "brandSeed": "#A9927D",
+    "accentSeed": "#22333B",
+    "action": "#766658",
+    "accent": "#22333B",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "mode": "light",
+      "name": "text/canvas",
+      "foreground": "#182029",
+      "background": "#FDFEFD",
+      "ratio": 16.26007351,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/surface",
+      "foreground": "#182029",
+      "background": "#FFFFFF",
+      "ratio": 16.43884712,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/soft",
+      "foreground": "#182029",
+      "background": "#F9F7F6",
+      "ratio": 15.39225408,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/sunken",
+      "foreground": "#182029",
+      "background": "#F4F5F4",
+      "ratio": 15.04069434,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/accentSoft",
+      "foreground": "#182029",
+      "background": "#E9EBEB",
+      "ratio": 13.7363724,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/canvas",
+      "foreground": "#586476",
+      "background": "#FDFEFD",
+      "ratio": 5.93574822,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/surface",
+      "foreground": "#586476",
+      "background": "#FFFFFF",
+      "ratio": 6.00100962,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/soft",
+      "foreground": "#586476",
+      "background": "#F9F7F6",
+      "ratio": 5.61895029,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/sunken",
+      "foreground": "#586476",
+      "background": "#F4F5F4",
+      "ratio": 5.49061323,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/accentSoft",
+      "foreground": "#586476",
+      "background": "#E9EBEB",
+      "ratio": 5.01446983,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/canvas",
+      "foreground": "#766658",
+      "background": "#FDFEFD",
+      "ratio": 5.449331,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/surface",
+      "foreground": "#766658",
+      "background": "#FFFFFF",
+      "ratio": 5.50924442,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/soft",
+      "foreground": "#766658",
+      "background": "#F9F7F6",
+      "ratio": 5.15849374,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/sunken",
+      "foreground": "#766658",
+      "background": "#F4F5F4",
+      "ratio": 5.04067352,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/accentSoft",
+      "foreground": "#766658",
+      "background": "#E9EBEB",
+      "ratio": 4.60354868,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FDFEFD",
+      "ratio": 5.92586166,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.99101436,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#F9F7F6",
+      "ratio": 5.60959139,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/sunken",
+      "foreground": "#18714C",
+      "background": "#F4F5F4",
+      "ratio": 5.48146808,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/accentSoft",
+      "foreground": "#18714C",
+      "background": "#E9EBEB",
+      "ratio": 5.00611775,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/canvas",
+      "foreground": "#935F00",
+      "background": "#FDFEFD",
+      "ratio": 5.35697338,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/surface",
+      "foreground": "#935F00",
+      "background": "#FFFFFF",
+      "ratio": 5.41587136,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/soft",
+      "foreground": "#935F00",
+      "background": "#F9F7F6",
+      "ratio": 5.07106535,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/sunken",
+      "foreground": "#935F00",
+      "background": "#F4F5F4",
+      "ratio": 4.955242,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/accentSoft",
+      "foreground": "#935F00",
+      "background": "#E9EBEB",
+      "ratio": 4.52552574,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FDFEFD",
+      "ratio": 5.72479648,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.78773854,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#F9F7F6",
+      "ratio": 5.41925729,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/sunken",
+      "foreground": "#B83543",
+      "background": "#F4F5F4",
+      "ratio": 5.29548123,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/accentSoft",
+      "foreground": "#B83543",
+      "background": "#E9EBEB",
+      "ratio": 4.83625958,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/canvas",
+      "foreground": "#2A63C9",
+      "background": "#FDFEFD",
+      "ratio": 5.57389045,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/surface",
+      "foreground": "#2A63C9",
+      "background": "#FFFFFF",
+      "ratio": 5.63517335,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/soft",
+      "foreground": "#2A63C9",
+      "background": "#F9F7F6",
+      "ratio": 5.2764053,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/sunken",
+      "foreground": "#2A63C9",
+      "background": "#F4F5F4",
+      "ratio": 5.15589198,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/accentSoft",
+      "foreground": "#2A63C9",
+      "background": "#E9EBEB",
+      "ratio": 4.70877545,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/canvas",
+      "foreground": "#22333B",
+      "background": "#FDFEFD",
+      "ratio": 12.94423936,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/surface",
+      "foreground": "#22333B",
+      "background": "#FFFFFF",
+      "ratio": 13.08655658,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/soft",
+      "foreground": "#22333B",
+      "background": "#F9F7F6",
+      "ratio": 12.25338993,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/sunken",
+      "foreground": "#22333B",
+      "background": "#F4F5F4",
+      "ratio": 11.97352199,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/accentSoft",
+      "foreground": "#22333B",
+      "background": "#E9EBEB",
+      "ratio": 10.93518379,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "focus/canvas",
+      "foreground": "#988371",
+      "background": "#FDFEFD",
+      "ratio": 3.56897635,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/surface",
+      "foreground": "#988371",
+      "background": "#FFFFFF",
+      "ratio": 3.60821595,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/soft",
+      "foreground": "#988371",
+      "background": "#F9F7F6",
+      "ratio": 3.37849584,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/sunken",
+      "foreground": "#988371",
+      "background": "#F4F5F4",
+      "ratio": 3.30133086,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/accentSoft",
+      "foreground": "#988371",
+      "background": "#E9EBEB",
+      "ratio": 3.015041,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#685A4D",
+      "ratio": 6.64927012,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#766658",
+      "ratio": 5.50924442,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAccent/accent",
+      "foreground": "#FFFFFF",
+      "background": "#22333B",
+      "ratio": 13.08655658,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FDFEFD",
+      "ratio": 3.89761566,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.94046853,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/sunken",
+      "foreground": "#78818E",
+      "background": "#F4F5F4",
+      "ratio": 3.60532477,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/canvas",
+      "foreground": "#A68F7B",
+      "background": "#FDFEFD",
+      "ratio": 3.03838863,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/surface",
+      "foreground": "#A68F7B",
+      "background": "#FFFFFF",
+      "ratio": 3.07179461,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/canvas",
+      "foreground": "#22333B",
+      "background": "#FDFEFD",
+      "ratio": 12.94423936,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/surface",
+      "foreground": "#22333B",
+      "background": "#FFFFFF",
+      "ratio": 13.08655658,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/canvas",
+      "foreground": "#5E503F",
+      "background": "#FDFEFD",
+      "ratio": 7.70696003,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/surface",
+      "foreground": "#5E503F",
+      "background": "#FFFFFF",
+      "ratio": 7.79169526,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/canvas",
+      "foreground": "#66635C",
+      "background": "#FDFEFD",
+      "ratio": 5.92757967,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/surface",
+      "foreground": "#66635C",
+      "background": "#FFFFFF",
+      "ratio": 5.99275126,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/canvas",
+      "foreground": "#6C6056",
+      "background": "#FDFEFD",
+      "ratio": 6.02922827,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/surface",
+      "foreground": "#6C6056",
+      "background": "#FFFFFF",
+      "ratio": 6.09551745,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@0",
+      "foreground": "#182029",
+      "background": "#FDFEFD",
+      "ratio": 16.26007351,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@0",
+      "foreground": "#586476",
+      "background": "#FDFEFD",
+      "ratio": 5.93574822,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@1",
+      "foreground": "#182029",
+      "background": "#FDFDFC",
+      "ratio": 16.15100777,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@1",
+      "foreground": "#586476",
+      "background": "#FDFDFC",
+      "ratio": 5.89593372,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@2",
+      "foreground": "#182029",
+      "background": "#FCFDFC",
+      "ratio": 16.12169968,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@2",
+      "foreground": "#586476",
+      "background": "#FCFDFC",
+      "ratio": 5.88523479,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@3",
+      "foreground": "#182029",
+      "background": "#FCFCFB",
+      "ratio": 16.01320447,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@3",
+      "foreground": "#586476",
+      "background": "#FCFCFB",
+      "ratio": 5.84562855,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@4",
+      "foreground": "#182029",
+      "background": "#FBFBFA",
+      "ratio": 15.87612467,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@4",
+      "foreground": "#586476",
+      "background": "#FBFBFA",
+      "ratio": 5.7955875,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@5",
+      "foreground": "#182029",
+      "background": "#FBFBFA",
+      "ratio": 15.87612467,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@5",
+      "foreground": "#586476",
+      "background": "#FBFBFA",
+      "ratio": 5.7955875,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@6",
+      "foreground": "#182029",
+      "background": "#FBFAF9",
+      "ratio": 15.76876794,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@6",
+      "foreground": "#586476",
+      "background": "#FBFAF9",
+      "ratio": 5.75639687,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@7",
+      "foreground": "#182029",
+      "background": "#FAF9F8",
+      "ratio": 15.63297851,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@7",
+      "foreground": "#586476",
+      "background": "#FAF9F8",
+      "ratio": 5.70682687,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@8",
+      "foreground": "#182029",
+      "background": "#FAF8F7",
+      "ratio": 15.52675682,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@8",
+      "foreground": "#586476",
+      "background": "#FAF8F7",
+      "ratio": 5.66805059,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@9",
+      "foreground": "#182029",
+      "background": "#F9F8F7",
+      "ratio": 15.49790954,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@9",
+      "foreground": "#586476",
+      "background": "#F9F8F7",
+      "ratio": 5.65751987,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@10",
+      "foreground": "#182029",
+      "background": "#F9F7F6",
+      "ratio": 15.39225408,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@10",
+      "foreground": "#586476",
+      "background": "#F9F7F6",
+      "ratio": 5.61895029,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@0",
+      "foreground": "#182029",
+      "background": "#F9F7F6",
+      "ratio": 15.39225408,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@0",
+      "foreground": "#586476",
+      "background": "#F9F7F6",
+      "ratio": 5.61895029,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@1",
+      "foreground": "#182029",
+      "background": "#F7F6F5",
+      "ratio": 15.22992859,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@1",
+      "foreground": "#586476",
+      "background": "#F7F6F5",
+      "ratio": 5.55969329,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@2",
+      "foreground": "#182029",
+      "background": "#F6F5F4",
+      "ratio": 15.09701441,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@2",
+      "foreground": "#586476",
+      "background": "#F6F5F4",
+      "ratio": 5.5111729,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@3",
+      "foreground": "#182029",
+      "background": "#F4F3F3",
+      "ratio": 14.84276743,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@3",
+      "foreground": "#586476",
+      "background": "#F4F3F3",
+      "ratio": 5.41835991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@4",
+      "foreground": "#182029",
+      "background": "#F3F2F2",
+      "ratio": 14.71194666,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@4",
+      "foreground": "#586476",
+      "background": "#F3F2F2",
+      "ratio": 5.37060372,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@5",
+      "foreground": "#182029",
+      "background": "#F1F1F1",
+      "ratio": 14.55420997,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@5",
+      "foreground": "#586476",
+      "background": "#F1F1F1",
+      "ratio": 5.31302186,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@6",
+      "foreground": "#182029",
+      "background": "#EFF0EF",
+      "ratio": 14.3883583,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@6",
+      "foreground": "#586476",
+      "background": "#EFF0EF",
+      "ratio": 5.25247762,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@7",
+      "foreground": "#182029",
+      "background": "#EEEFEE",
+      "ratio": 14.26002563,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@7",
+      "foreground": "#586476",
+      "background": "#EEEFEE",
+      "ratio": 5.20562971,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@8",
+      "foreground": "#182029",
+      "background": "#ECEDED",
+      "ratio": 14.01461272,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@8",
+      "foreground": "#586476",
+      "background": "#ECEDED",
+      "ratio": 5.1160416,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@9",
+      "foreground": "#182029",
+      "background": "#EBECEC",
+      "ratio": 13.88835244,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@9",
+      "foreground": "#586476",
+      "background": "#EBECEC",
+      "ratio": 5.06995022,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@10",
+      "foreground": "#182029",
+      "background": "#E9EBEB",
+      "ratio": 13.7363724,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@10",
+      "foreground": "#586476",
+      "background": "#E9EBEB",
+      "ratio": 5.01446983,
+      "minimum": 4.5
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.0.0",
+    "name": "오월 커피",
+    "theme": "cafe",
+    "palette": "mocha-latte",
+    "mode": "light",
+    "pageType": "landing",
+    "shell": "topbar",
+    "typography": "humanist",
+    "density": "comfortable",
+    "radius": "round",
+    "control": "pill",
+    "elevation": "soft",
+    "motion": "subtle",
+    "icon": "solid",
+    "ornament": "dots",
+    "backdrop": "tint",
+    "width": "standard",
+    "scale": "balanced",
+    "weight": "medium",
+    "footer": "simple",
+    "chrome": {
+      "nav": [
+        {
+          "label": "메뉴",
+          "href": "#main",
+          "icon": "coffee"
+        },
+        {
+          "label": "공간",
+          "href": "#main",
+          "icon": "image"
+        },
+        {
+          "label": "오시는 길",
+          "href": "#main",
+          "icon": "map-pin"
+        }
+      ],
+      "action": {
+        "label": "주문하기",
+        "href": "#main"
+      },
+      "footerNote": "© 2026 오월 커피",
+      "footerLinks": [
+        {
+          "label": "이용약관",
+          "href": "#main"
+        },
+        {
+          "label": "개인정보",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "오늘의 첫 잔을 천천히",
+          "description": "직접 볶은 원두와 매일 구운 빵"
+        },
+        {
+          "type": "hero",
+          "variant": "split",
+          "eyebrow": "성수 · 08:00~21:00",
+          "title": "향이 먼저\n인사하는 곳.",
+          "body": "매일 아침 볶은 원두와 갓 구운 빵을 만나 보세요.",
+          "action": {
+            "label": "메뉴 보기",
+            "href": "#main",
+            "variant": "primary"
+          },
+          "secondaryAction": {
+            "label": "오시는 길",
+            "href": "#main",
+            "variant": "secondary"
+          },
+          "visual": "photo"
+        },
+        {
+          "type": "section",
+          "title": "대표 메뉴",
+          "children": [
+            {
+              "type": "menu",
+              "title": "커피",
+              "layout": "grid",
+              "items": [
+                {
+                  "name": "오월 블렌드",
+                  "description": "고소함과 단맛의 균형",
+                  "price": "4,800",
+                  "tag": "시그니처"
+                },
+                {
+                  "name": "플랫 화이트",
+                  "description": "진한 우유 거품",
+                  "price": "5,500"
+                },
+                {
+                  "name": "콜드브루",
+                  "description": "16시간 저온 추출",
+                  "price": "5,800"
+                },
+                {
+                  "name": "단호박 라떼",
+                  "description": "계절 한정",
+                  "price": "6,200",
+                  "tag": "시즌"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "공간",
+          "children": [
+            {
+              "type": "gallery",
+              "items": [
+                {
+                  "kind": "photo",
+                  "alt": "카페 내부 창가 좌석"
+                },
+                {
+                  "kind": "photo",
+                  "alt": "바 테이블"
+                },
+                {
+                  "kind": "photo",
+                  "alt": "갓 구운 빵"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "properties",
+          "title": "매장 정보",
+          "layout": "inline",
+          "items": [
+            {
+              "label": "영업 시간",
+              "value": "매일 08:00~21:00"
+            },
+            {
+              "label": "주소",
+              "value": "서울 성동구 예시로 5"
+            },
+            {
+              "label": "전화",
+              "value": "02-000-0000"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "bba8c6f4a125dd7253a972b7ef34364c542e21e8442e986c4f387c9e40a39f67",
+      "tokens.css": "d490fd5bbf66fb5a8964786fb068d8c2abcde83984d1228d4d4ba0fbb40aefaa",
+      "tokens.json": "b21ffe5910dab6b6a75b6a096729bd6c6f9eaf2b070136f72bd55002954a9858",
+      "blueprint.json": "325fc7cdbd8d2d5af2beb0ef836f50edb7a8b14ea23af507466e1fe0966695f1"
+    }
+  }
+}

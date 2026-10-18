@@ -1,0 +1,105 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "의견 듣기",
+  "theme": "paper",
+  "palette": "soft-sand",
+  "mode": "light",
+  "pageType": "form",
+  "shell": "editorial",
+  "typography": "editorial",
+  "density": "spacious",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "lines",
+  "backdrop": "tint",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "설문",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "footerNote": "© 2026 의견 듣기",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "서비스 만족도 설문",
+        "description": "3분이면 끝나요. 응답은 익명으로 처리됩니다."
+      },
+      {
+        "type": "progress",
+        "label": "진행률",
+        "value": 40,
+        "detail": "5문항 중 2문항",
+        "tone": "brand"
+      },
+      {
+        "type": "form",
+        "title": "문항",
+        "fields": [
+          {
+            "id": "rate",
+            "label": "전반적인 만족도",
+            "type": "radio",
+            "options": [
+              "매우 만족",
+              "만족",
+              "보통",
+              "불만족"
+            ]
+          },
+          {
+            "id": "feature",
+            "label": "가장 유용한 기능",
+            "type": "select",
+            "options": [
+              "검색",
+              "알림",
+              "공유",
+              "자동화"
+            ]
+          },
+          {
+            "id": "comment",
+            "label": "개선했으면 하는 점",
+            "type": "textarea",
+            "requirement": "optional",
+            "placeholder": "자유롭게 적어 주세요"
+          }
+        ],
+        "submitLabel": "다음 문항"
+      }
+    ]
+  }
+}

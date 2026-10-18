@@ -1,0 +1,164 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "파도소리 여행사",
+  "theme": "ocean",
+  "palette": "ocean-serenity",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "humanist",
+  "density": "spacious",
+  "radius": "soft",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "organic",
+  "backdrop": "gradient",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "여행",
+        "href": "#main",
+        "icon": "map-pin"
+      },
+      {
+        "label": "후기",
+        "href": "#main",
+        "icon": "star"
+      },
+      {
+        "label": "예약",
+        "href": "#main",
+        "icon": "calendar"
+      }
+    ],
+    "action": {
+      "label": "예약 확인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 파도소리 여행사",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "바다가 가까운 곳으로",
+        "description": "제주·남해·동해의 작은 마을 여행"
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "가을 특가",
+        "title": "파도 소리로\n하루를 시작해요.",
+        "body": "작은 마을에서 천천히 머무는 2박 3일.",
+        "action": {
+          "label": "여행 찾기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "후기 보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "photo"
+      },
+      {
+        "type": "section",
+        "title": "인기 여행",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "card",
+                "title": "제주 서쪽 2박 3일",
+                "body": "일몰과 해안 도로를 따라 걷는 여행",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "4:3",
+                "meta": "2박 3일 · 389,000원",
+                "action": {
+                  "label": "자세히",
+                  "href": "#main",
+                  "variant": "ghost"
+                }
+              },
+              {
+                "type": "card",
+                "title": "남해 독일마을",
+                "body": "고요한 바다 마을의 아침",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "4:3",
+                "meta": "2박 3일 · 329,000원",
+                "action": {
+                  "label": "자세히",
+                  "href": "#main",
+                  "variant": "ghost"
+                }
+              },
+              {
+                "type": "card",
+                "title": "동해 묵호",
+                "body": "바다와 골목 사이를 걷기",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "4:3",
+                "meta": "1박 2일 · 219,000원",
+                "action": {
+                  "label": "자세히",
+                  "href": "#main",
+                  "variant": "ghost"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "feature-list",
+        "title": "여행의 방식",
+        "items": [
+          {
+            "icon": "leaf",
+            "title": "천천히",
+            "description": "하루 한두 곳만 깊이 봅니다."
+          },
+          {
+            "icon": "users",
+            "title": "소규모",
+            "description": "최대 8명이 함께합니다."
+          },
+          {
+            "icon": "shield",
+            "title": "안심 보장",
+            "description": "날씨로 인한 일정 변경은 전액 환불합니다."
+          }
+        ]
+      }
+    ]
+  }
+}

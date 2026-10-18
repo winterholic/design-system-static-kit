@@ -1,0 +1,161 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "파이썬 첫걸음",
+  "theme": "learning",
+  "palette": "neon-bright-sparks",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "커리큘럼",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "후기",
+        "href": "#main",
+        "icon": "star"
+      },
+      {
+        "label": "질문",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "action": {
+      "label": "수강 신청",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 파이썬 첫걸음",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "코딩이 처음이어도 괜찮아요",
+        "description": "8주 과정 · 하루 20분"
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "초급 · 온라인",
+        "title": "파이썬으로\n첫 프로그램 만들기",
+        "body": "짧은 영상과 바로 해 보는 문제로 8주 만에 작은 프로그램을 완성합니다.",
+        "action": {
+          "label": "수강 신청",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "맛보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "video"
+      },
+      {
+        "type": "stepper",
+        "steps": [
+          "기초",
+          "반복",
+          "함수",
+          "프로젝트"
+        ],
+        "current": 2
+      },
+      {
+        "type": "section",
+        "title": "커리큘럼",
+        "children": [
+          {
+            "type": "steps",
+            "title": "8주 로드맵",
+            "items": [
+              {
+                "title": "1~2주 · 기초",
+                "description": "변수와 조건문을 익힙니다."
+              },
+              {
+                "title": "3~4주 · 반복",
+                "description": "반복문으로 문제를 풀어 봅니다."
+              },
+              {
+                "title": "5~6주 · 함수",
+                "description": "코드를 나누고 재사용합니다."
+              },
+              {
+                "title": "7~8주 · 프로젝트",
+                "description": "나만의 작은 프로그램을 만듭니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "수강생 후기",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "two",
+            "children": [
+              {
+                "type": "quote",
+                "quote": "매일 20분이라 포기하지 않았어요.",
+                "author": "정하늘",
+                "role": "수강생"
+              },
+              {
+                "type": "quote",
+                "quote": "문제를 바로 풀어 보니 이해가 빨랐습니다.",
+                "author": "한유진",
+                "role": "수강생"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "tone": "brand",
+        "title": "이번 기수는 11월 3일 시작",
+        "action": {
+          "label": "수강 신청",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

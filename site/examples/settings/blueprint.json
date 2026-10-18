@@ -1,14 +1,64 @@
 {
-  "version": "1.0",
-  "catalogVersion": "1.0.0",
-  "name": "설정과 입력",
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "워크스페이스",
   "theme": "workspace",
   "palette": "ocean",
   "mode": "light",
+  "pageType": "settings",
   "shell": "sidebar",
   "typography": "sans",
   "density": "comfortable",
   "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "워크스페이스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
   "tree": {
     "type": "page",
     "children": [
@@ -18,39 +68,116 @@
         "description": "설정은 언제든 바꿀 수 있습니다."
       },
       {
-        "type": "form",
-        "title": "프로필 설정",
-        "fields": [
+        "type": "tabs",
+        "variant": "pill",
+        "children": [
           {
-            "id": "name",
-            "label": "이름",
-            "type": "text",
-            "placeholder": "이름을 입력하세요"
-          },
-          {
-            "id": "email",
-            "label": "이메일",
-            "type": "email",
-            "placeholder": "name@example.com"
-          },
-          {
-            "id": "role",
-            "label": "주로 하는 일",
-            "type": "select",
-            "options": [
-              "디자인",
-              "개발",
-              "기획"
+            "type": "tab",
+            "label": "프로필",
+            "children": [
+              {
+                "type": "form",
+                "title": "프로필 설정",
+                "fields": [
+                  {
+                    "id": "name",
+                    "label": "이름",
+                    "type": "text",
+                    "placeholder": "이름을 입력하세요"
+                  },
+                  {
+                    "id": "email",
+                    "label": "이메일",
+                    "type": "email",
+                    "placeholder": "name@example.com"
+                  },
+                  {
+                    "id": "role",
+                    "label": "주로 하는 일",
+                    "type": "select",
+                    "options": [
+                      "디자인",
+                      "개발",
+                      "기획"
+                    ]
+                  },
+                  {
+                    "id": "intro",
+                    "label": "소개",
+                    "type": "textarea",
+                    "placeholder": "어떤 일을 하고 있나요?",
+                    "requirement": "optional"
+                  }
+                ],
+                "submitLabel": "입력 확인"
+              }
             ]
           },
           {
-            "id": "intro",
-            "label": "소개",
-            "type": "textarea",
-            "placeholder": "어떤 일을 하고 있나요?"
+            "type": "tab",
+            "label": "알림",
+            "children": [
+              {
+                "type": "form",
+                "title": "알림 설정",
+                "fields": [
+                  {
+                    "id": "mail",
+                    "label": "이메일 알림",
+                    "type": "switch",
+                    "requirement": "optional"
+                  },
+                  {
+                    "id": "push",
+                    "label": "푸시 알림",
+                    "type": "switch",
+                    "requirement": "optional"
+                  },
+                  {
+                    "id": "digest",
+                    "label": "요약 주기",
+                    "type": "radio",
+                    "options": [
+                      "매일",
+                      "매주",
+                      "받지 않음"
+                    ]
+                  }
+                ],
+                "submitLabel": "저장"
+              }
+            ]
+          },
+          {
+            "type": "tab",
+            "label": "보안",
+            "children": [
+              {
+                "type": "list",
+                "title": "로그인 기록",
+                "items": [
+                  {
+                    "title": "맥북 · 서울",
+                    "description": "오늘 09:12",
+                    "status": "완료"
+                  },
+                  {
+                    "title": "아이폰 · 서울",
+                    "description": "어제 21:40",
+                    "status": "완료"
+                  }
+                ],
+                "state": "ready"
+              },
+              {
+                "type": "notice",
+                "tone": "warning",
+                "title": "위험 구역",
+                "body": "계정 삭제는 되돌릴 수 없습니다."
+              }
+            ]
           }
-        ],
-        "submitLabel": "입력 확인"
+        ]
       },
       {
         "type": "notice",

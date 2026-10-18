@@ -1,0 +1,113 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "매뉴얼",
+  "theme": "manual",
+  "palette": "moonlit-mist",
+  "mode": "light",
+  "pageType": "docs",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "시작하기",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "변경 기록",
+        "href": "#main",
+        "icon": "clock"
+      },
+      {
+        "label": "레퍼런스",
+        "href": "#main",
+        "icon": "code"
+      }
+    ],
+    "footerNote": "매뉴얼 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "변경 기록",
+        "description": "버전별 주요 변경"
+      },
+      {
+        "type": "timeline",
+        "title": "2.0.0 · 2026-10-18",
+        "items": [
+          {
+            "time": "2.0.0",
+            "title": "카탈로그 대규모 확장",
+            "description": "테마 40종, 팔레트 160개, 부품 55종, 템플릿 56종.",
+            "status": "완료"
+          },
+          {
+            "time": "1.0.0",
+            "title": "첫 공개",
+            "description": "테마 6종, 셸 4종, 부품 13종.",
+            "status": "완료"
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "title": "호환성",
+        "caption": "버전별 호환성",
+        "columns": [
+          "항목",
+          "1.0",
+          "2.0"
+        ],
+        "rows": [
+          [
+            "Blueprint 버전",
+            "1.0",
+            "2.0"
+          ],
+          [
+            "카탈로그",
+            "1.0.0",
+            "2.0.0"
+          ],
+          [
+            "이전 입력",
+            "지원",
+            "migrate 명령으로 변환"
+          ]
+        ],
+        "state": "ready"
+      }
+    ]
+  }
+}

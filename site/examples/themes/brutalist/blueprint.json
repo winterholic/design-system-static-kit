@@ -1,0 +1,273 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "플로우웍스",
+  "theme": "brutalist",
+  "palette": "vibrant-fusion",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "grotesk",
+  "density": "comfortable",
+  "radius": "square",
+  "control": "square",
+  "elevation": "hard",
+  "motion": "subtle",
+  "icon": "line-bold",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "기능",
+        "href": "#features",
+        "icon": "sparkles"
+      },
+      {
+        "label": "요금",
+        "href": "#pricing",
+        "icon": "tag"
+      },
+      {
+        "label": "질문",
+        "href": "#faq",
+        "icon": "help-circle"
+      }
+    ],
+    "action": {
+      "label": "로그인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 플로우웍스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "팀의 일이 흐르는 방향을 한눈에",
+        "description": "업무 도구를 하나로 모으고, 중요한 결정에 집중하세요."
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "새 버전 2.0",
+        "title": "흩어진 일을\n하나의 흐름으로.",
+        "body": "프로젝트, 일정, 문서를 한곳에서 연결합니다. 설정은 가볍게, 효과는 오래도록.",
+        "action": {
+          "label": "무료로 시작",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "데모 보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "chart"
+      },
+      {
+        "type": "logo-cloud",
+        "title": "1,200개 팀이 사용합니다",
+        "names": [
+          "가나다랩",
+          "라마바웍스",
+          "사아자스튜디오",
+          "차카타컴퍼니",
+          "파하노트"
+        ]
+      },
+      {
+        "type": "section",
+        "title": "팀이 바로 쓰는 핵심 기능",
+        "children": [
+          {
+            "type": "feature-list",
+            "layout": "grid",
+            "items": [
+              {
+                "icon": "zap",
+                "title": "빠른 시작",
+                "description": "템플릿을 고르면 몇 분 안에 첫 프로젝트가 만들어집니다."
+              },
+              {
+                "icon": "users",
+                "title": "함께 일하기",
+                "description": "댓글과 멘션으로 맥락을 잃지 않고 협업합니다."
+              },
+              {
+                "icon": "shield",
+                "title": "안전한 기본값",
+                "description": "권한과 기록이 기본으로 켜져 있습니다."
+              },
+              {
+                "icon": "chart",
+                "title": "한눈에 보는 현황",
+                "description": "진행률과 지연을 자동으로 모아 보여 줍니다."
+              },
+              {
+                "icon": "link",
+                "title": "연결된 도구",
+                "description": "쓰던 도구와 연결해 데이터를 옮기지 않아도 됩니다."
+              },
+              {
+                "icon": "refresh",
+                "title": "자동화",
+                "description": "반복 작업은 규칙 하나로 맡깁니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "features",
+        "eyebrow": "기능"
+      },
+      {
+        "type": "section",
+        "title": "고객의 이야기",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "two",
+            "children": [
+              {
+                "type": "quote",
+                "quote": "도입 한 달 만에 회의 시간이 절반으로 줄었습니다.",
+                "author": "김다선",
+                "role": "제품 팀장"
+              },
+              {
+                "type": "quote",
+                "quote": "무엇이 막혀 있는지 바로 보여서 아침이 편해졌어요.",
+                "author": "이지훈",
+                "role": "운영 매니저"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "요금제",
+        "children": [
+          {
+            "type": "pricing",
+            "children": [
+              {
+                "type": "plan",
+                "name": "스타터",
+                "price": "0원",
+                "description": "개인과 작은 팀의 시작.",
+                "features": [
+                  "프로젝트 3개",
+                  "기본 템플릿",
+                  "커뮤니티 지원"
+                ],
+                "action": {
+                  "label": "시작하기",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              },
+              {
+                "type": "plan",
+                "name": "팀",
+                "price": "9,900원",
+                "period": "사용자당 월",
+                "description": "성장하는 팀을 위한 전체 기능.",
+                "features": [
+                  "무제한 프로젝트",
+                  "자동화 규칙",
+                  "우선 지원",
+                  "고급 권한"
+                ],
+                "action": {
+                  "label": "팀으로 시작",
+                  "href": "#main",
+                  "variant": "primary"
+                },
+                "featured": "yes"
+              },
+              {
+                "type": "plan",
+                "name": "엔터프라이즈",
+                "price": "문의",
+                "description": "보안과 규모가 중요한 조직.",
+                "features": [
+                  "SSO",
+                  "감사 로그",
+                  "전담 매니저"
+                ],
+                "action": {
+                  "label": "상담 요청",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              }
+            ]
+          }
+        ],
+        "anchor": "pricing",
+        "eyebrow": "요금"
+      },
+      {
+        "type": "section",
+        "title": "자주 묻는 질문",
+        "children": [
+          {
+            "type": "faq",
+            "title": "시작하기 전에",
+            "items": [
+              {
+                "question": "카드 없이 시작할 수 있나요?",
+                "answer": "네. 스타터 요금제는 결제 정보 없이 시작합니다."
+              },
+              {
+                "question": "기존 데이터를 옮길 수 있나요?",
+                "answer": "CSV와 주요 도구의 내보내기 파일을 가져올 수 있습니다."
+              },
+              {
+                "question": "언제든 해지할 수 있나요?",
+                "answer": "설정에서 한 번에 해지하며 위약금이 없습니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "faq"
+      },
+      {
+        "type": "cta",
+        "tone": "brand",
+        "title": "오늘 첫 프로젝트를 만들어 보세요",
+        "body": "설정에 10분이면 충분합니다.",
+        "action": {
+          "label": "무료로 시작",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "영업팀과 이야기",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      }
+    ]
+  }
+}

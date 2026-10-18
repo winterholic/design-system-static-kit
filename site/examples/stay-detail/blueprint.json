@@ -1,0 +1,174 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "머무름",
+  "theme": "stay",
+  "palette": "tropical-sunset",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "organic",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "숙소",
+        "href": "#main",
+        "icon": "bed"
+      },
+      {
+        "label": "체험",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "지도",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "예약 확인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 머무름",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "바다가 보이는 독채 스테이",
+        "description": "제주 · 최대 4인 · 침실 2",
+        "eyebrow": "슈퍼호스트"
+      },
+      {
+        "type": "gallery",
+        "layout": "masonry",
+        "items": [
+          {
+            "kind": "photo",
+            "alt": "바다가 보이는 거실"
+          },
+          {
+            "kind": "photo",
+            "alt": "침실"
+          },
+          {
+            "kind": "photo",
+            "alt": "테라스"
+          },
+          {
+            "kind": "photo",
+            "alt": "욕실"
+          }
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "예약",
+        "children": [
+          {
+            "type": "section",
+            "title": "숙소 소개",
+            "children": [
+              {
+                "type": "prose",
+                "title": "이런 곳이에요",
+                "body": "창문 너머로 바다가 펼쳐지는 작은 독채입니다. 아침에는 파도 소리로 일어나고, 저녁에는 테라스에서 노을을 볼 수 있어요."
+              },
+              {
+                "type": "feature-list",
+                "layout": "grid",
+                "items": [
+                  {
+                    "icon": "bed",
+                    "title": "침실 2개",
+                    "description": "퀸 베드 2개"
+                  },
+                  {
+                    "icon": "coffee",
+                    "title": "주방",
+                    "description": "기본 조리도구와 커피머신"
+                  },
+                  {
+                    "icon": "wifi-off",
+                    "title": "디지털 디톡스",
+                    "description": "와이파이 없이 쉬어가요"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "buy-box",
+            "title": "1박 요금",
+            "price": "189,000원",
+            "note": "2박 이상 10% 할인",
+            "options": [
+              {
+                "label": "인원",
+                "choices": [
+                  "2명",
+                  "3명",
+                  "4명"
+                ]
+              }
+            ],
+            "action": {
+              "label": "예약하기",
+              "href": "#main",
+              "variant": "primary"
+            }
+          }
+        ]
+      },
+      {
+        "type": "reviews",
+        "title": "후기",
+        "score": "4.97",
+        "count": "후기 312개",
+        "items": [
+          {
+            "author": "민지",
+            "rating": 5,
+            "text": "조용하고 깨끗해서 완벽했어요.",
+            "date": "2026.10.01"
+          },
+          {
+            "author": "준호",
+            "rating": 5,
+            "text": "아침 바다가 정말 좋았습니다.",
+            "date": "2026.09.20"
+          }
+        ]
+      }
+    ]
+  }
+}

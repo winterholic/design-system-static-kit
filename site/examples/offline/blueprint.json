@@ -1,0 +1,84 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "모아",
+  "theme": "pocket",
+  "palette": "refreshing-spring-hues",
+  "mode": "light",
+  "pageType": "error",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "spacious",
+  "radius": "bubble",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "홈",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 모아",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "인터넷에 연결되지 않았어요",
+        "align": "center"
+      },
+      {
+        "type": "empty-state",
+        "kind": "offline",
+        "title": "인터넷에 연결되지 않았어요",
+        "body": "연결되면 자동으로 다시 시도합니다.",
+        "action": {
+          "label": "다시 시도",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "actions",
+        "align": "center",
+        "items": [
+          {
+            "label": "이전 페이지",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

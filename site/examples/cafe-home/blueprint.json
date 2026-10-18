@@ -1,0 +1,166 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "오월 커피",
+  "theme": "cafe",
+  "palette": "mocha-latte",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "humanist",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "solid",
+  "ornament": "dots",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "메뉴",
+        "href": "#main",
+        "icon": "coffee"
+      },
+      {
+        "label": "공간",
+        "href": "#main",
+        "icon": "image"
+      },
+      {
+        "label": "오시는 길",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "주문하기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 오월 커피",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "오늘의 첫 잔을 천천히",
+        "description": "직접 볶은 원두와 매일 구운 빵"
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "성수 · 08:00~21:00",
+        "title": "향이 먼저\n인사하는 곳.",
+        "body": "매일 아침 볶은 원두와 갓 구운 빵을 만나 보세요.",
+        "action": {
+          "label": "메뉴 보기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "오시는 길",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "photo"
+      },
+      {
+        "type": "section",
+        "title": "대표 메뉴",
+        "children": [
+          {
+            "type": "menu",
+            "title": "커피",
+            "layout": "grid",
+            "items": [
+              {
+                "name": "오월 블렌드",
+                "description": "고소함과 단맛의 균형",
+                "price": "4,800",
+                "tag": "시그니처"
+              },
+              {
+                "name": "플랫 화이트",
+                "description": "진한 우유 거품",
+                "price": "5,500"
+              },
+              {
+                "name": "콜드브루",
+                "description": "16시간 저온 추출",
+                "price": "5,800"
+              },
+              {
+                "name": "단호박 라떼",
+                "description": "계절 한정",
+                "price": "6,200",
+                "tag": "시즌"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "공간",
+        "children": [
+          {
+            "type": "gallery",
+            "items": [
+              {
+                "kind": "photo",
+                "alt": "카페 내부 창가 좌석"
+              },
+              {
+                "kind": "photo",
+                "alt": "바 테이블"
+              },
+              {
+                "kind": "photo",
+                "alt": "갓 구운 빵"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "properties",
+        "title": "매장 정보",
+        "layout": "inline",
+        "items": [
+          {
+            "label": "영업 시간",
+            "value": "매일 08:00~21:00"
+          },
+          {
+            "label": "주소",
+            "value": "서울 성동구 예시로 5"
+          },
+          {
+            "label": "전화",
+            "value": "02-000-0000"
+          }
+        ]
+      }
+    ]
+  }
+}

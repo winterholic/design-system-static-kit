@@ -1,0 +1,84 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "녹턴",
+  "theme": "nocturne",
+  "palette": "dark-midnight-shades",
+  "mode": "dark",
+  "pageType": "error",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "glow",
+  "motion": "subtle",
+  "icon": "duotone",
+  "ornament": "dots",
+  "backdrop": "gradient",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "홈",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 녹턴",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "점검 중이에요",
+        "align": "center"
+      },
+      {
+        "type": "empty-state",
+        "kind": "maintenance",
+        "title": "점검 중이에요",
+        "body": "더 나은 서비스를 위해 오전 2시부터 4시까지 점검합니다.",
+        "action": {
+          "label": "상태 확인",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "actions",
+        "align": "center",
+        "items": [
+          {
+            "label": "이전 페이지",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "집찾기",
+  "theme": "realty",
+  "palette": "deep-ocean-blue",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "매매",
+        "href": "#main",
+        "icon": "building"
+      },
+      {
+        "label": "전세",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "월세",
+        "href": "#main",
+        "icon": "dollar"
+      },
+      {
+        "label": "지도",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "문의",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 집찾기 · 중개사무소 등록번호 00000",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "성수동 신축 아파트 84㎡",
+        "description": "매매 12억 5,000만원",
+        "eyebrow": "매물 번호 2026-1018"
+      },
+      {
+        "type": "gallery",
+        "layout": "grid",
+        "items": [
+          {
+            "kind": "photo",
+            "alt": "거실"
+          },
+          {
+            "kind": "photo",
+            "alt": "주방"
+          },
+          {
+            "kind": "diagram",
+            "alt": "평면도"
+          },
+          {
+            "kind": "map",
+            "alt": "위치 지도"
+          }
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "문의",
+        "children": [
+          {
+            "type": "properties",
+            "title": "기본 정보",
+            "items": [
+              {
+                "label": "전용 면적",
+                "value": "84㎡ (25평)"
+              },
+              {
+                "label": "방/욕실",
+                "value": "3개 / 2개"
+              },
+              {
+                "label": "층",
+                "value": "12층 / 25층"
+              },
+              {
+                "label": "입주 가능",
+                "value": "즉시"
+              },
+              {
+                "label": "관리비",
+                "value": "월 28만원"
+              }
+            ]
+          },
+          {
+            "type": "buy-box",
+            "title": "방문 상담 예약",
+            "price": "12억 5,000만원",
+            "note": "실거래가 12억 2,000만원(9월)",
+            "action": {
+              "label": "상담 예약",
+              "href": "#main",
+              "variant": "primary"
+            },
+            "secondaryAction": {
+              "label": "전화 문의",
+              "href": "#main",
+              "variant": "secondary"
+            }
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "시세",
+        "children": [
+          {
+            "type": "chart",
+            "title": "최근 실거래가",
+            "caption": "월별 평균 실거래가(억원)",
+            "kind": "line",
+            "unit": "억",
+            "categories": [
+              "5월",
+              "6월",
+              "7월",
+              "8월",
+              "9월"
+            ],
+            "series": [
+              {
+                "name": "실거래가",
+                "values": [
+                  11.6,
+                  11.8,
+                  12,
+                  12.1,
+                  12.2
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "warning",
+        "title": "중개 정보",
+        "body": "중개사 등록번호와 매물 검증 결과는 상담 시 안내해 드립니다."
+      }
+    ]
+  }
+}

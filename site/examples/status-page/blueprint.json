@@ -1,0 +1,154 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "콘솔 상태",
+  "theme": "console",
+  "palette": "dark-night",
+  "mode": "dark",
+  "pageType": "data",
+  "shell": "topbar",
+  "typography": "mono",
+  "density": "compact",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-square",
+  "ornament": "none",
+  "backdrop": "grid",
+  "width": "full",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "현황",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "기록",
+        "href": "#main",
+        "icon": "clock"
+      },
+      {
+        "label": "구독",
+        "href": "#main",
+        "icon": "bell"
+      }
+    ],
+    "action": {
+      "label": "알림 구독",
+      "href": "#main"
+    },
+    "footerNote": "콘솔 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "서비스 상태",
+        "description": "마지막 확인 1분 전"
+      },
+      {
+        "type": "notice",
+        "tone": "warning",
+        "title": "일부 지연 발생",
+        "body": "파일 업로드 서비스에서 지연이 관측되어 조치 중입니다.",
+        "variant": "banner"
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "API",
+            "value": "정상",
+            "detail": "가동률 99.98%"
+          },
+          {
+            "type": "metric",
+            "label": "웹",
+            "value": "정상",
+            "detail": "가동률 99.99%"
+          },
+          {
+            "type": "metric",
+            "label": "업로드",
+            "value": "지연",
+            "detail": "가동률 98.2%",
+            "trend": "down",
+            "delta": "-1.7%p"
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "title": "구성 요소",
+        "caption": "구성 요소별 상태",
+        "columns": [
+          "구성 요소",
+          "상태",
+          "지연"
+        ],
+        "rows": [
+          [
+            "API",
+            "정상",
+            "82ms"
+          ],
+          [
+            "웹",
+            "정상",
+            "120ms"
+          ],
+          [
+            "업로드",
+            "지연",
+            "1.8s"
+          ],
+          [
+            "알림",
+            "정상",
+            "210ms"
+          ]
+        ],
+        "state": "ready"
+      },
+      {
+        "type": "timeline",
+        "title": "사건 기록",
+        "items": [
+          {
+            "time": "14:20",
+            "title": "업로드 지연 감지",
+            "description": "원인 분석 중",
+            "status": "진행"
+          },
+          {
+            "time": "09:03",
+            "title": "알림 지연 해소",
+            "status": "완료"
+          }
+        ]
+      }
+    ]
+  }
+}

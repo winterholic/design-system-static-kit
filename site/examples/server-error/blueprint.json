@@ -1,0 +1,84 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "콘솔",
+  "theme": "console",
+  "palette": "dark-night",
+  "mode": "dark",
+  "pageType": "error",
+  "shell": "topbar",
+  "typography": "mono",
+  "density": "compact",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-square",
+  "ornament": "none",
+  "backdrop": "grid",
+  "width": "full",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "홈",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "도움말",
+        "href": "#main",
+        "icon": "help-circle"
+      }
+    ],
+    "footerNote": "© 2026 콘솔",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "문제가 생겼어요",
+        "align": "center"
+      },
+      {
+        "type": "empty-state",
+        "kind": "error",
+        "title": "문제가 생겼어요",
+        "body": "잠시 후 다시 시도해 주세요. 계속되면 오류 ID와 함께 문의해 주세요.",
+        "action": {
+          "label": "다시 시도",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "actions",
+        "align": "center",
+        "items": [
+          {
+            "label": "이전 페이지",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      }
+    ]
+  }
+}

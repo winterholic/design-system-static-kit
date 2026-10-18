@@ -1,0 +1,155 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "숲을 지켜요",
+  "theme": "signal",
+  "palette": "fiery",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "split",
+  "typography": "sans",
+  "density": "compact",
+  "radius": "square",
+  "control": "square",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-bold",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "소개",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "현황",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "후원",
+        "href": "#main",
+        "icon": "heart"
+      }
+    ],
+    "action": {
+      "label": "후원하기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 숲을 지켜요 · 비영리",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "한 그루가 숲이 되도록",
+        "description": "2026 시민 식목 캠페인"
+      },
+      {
+        "type": "hero",
+        "variant": "statement",
+        "eyebrow": "모금 진행 중",
+        "title": "올해 목표, 나무 10,000그루.",
+        "body": "지금까지 6,420그루가 심겼습니다. 한 번의 참여가 한 그루가 됩니다.",
+        "action": {
+          "label": "후원하기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "봉사 신청",
+          "href": "#main",
+          "variant": "secondary"
+        }
+      },
+      {
+        "type": "progress",
+        "label": "모금 현황",
+        "value": 64,
+        "detail": "6,420 / 10,000그루",
+        "tone": "brand"
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "참여자",
+            "value": "12,480명",
+            "detail": "지난달 대비",
+            "trend": "up",
+            "delta": "+1,204"
+          },
+          {
+            "type": "metric",
+            "label": "심은 나무",
+            "value": "6,420그루"
+          },
+          {
+            "type": "metric",
+            "label": "숲 면적",
+            "value": "42ha"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "후원금은 이렇게 쓰여요",
+        "children": [
+          {
+            "type": "chart",
+            "title": "사용 내역",
+            "caption": "후원금 사용 비율",
+            "kind": "donut",
+            "unit": "%",
+            "categories": [
+              "묘목",
+              "식재 인건비",
+              "관리",
+              "운영"
+            ],
+            "series": [
+              {
+                "name": "비율",
+                "values": [
+                  48,
+                  27,
+                  18,
+                  7
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "info",
+        "title": "투명하게 공개합니다",
+        "body": "모든 사용 내역은 분기마다 홈페이지에 공개됩니다."
+      }
+    ]
+  }
+}

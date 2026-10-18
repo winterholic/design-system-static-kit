@@ -1,0 +1,128 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "맑은숨",
+  "theme": "clinic",
+  "palette": "refreshing-aqua-tones",
+  "mode": "light",
+  "pageType": "form",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "진료안내",
+        "href": "#main",
+        "icon": "clock"
+      },
+      {
+        "label": "예약",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "action": {
+      "label": "진료 예약",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 맑은숨 내과의원",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "문의하기",
+        "description": "영업일 기준 하루 안에 답변드립니다."
+      },
+      {
+        "type": "form",
+        "title": "문의 내용",
+        "intro": "데모이므로 입력은 저장되거나 전송되지 않습니다.",
+        "fields": [
+          {
+            "id": "name",
+            "label": "이름",
+            "type": "text",
+            "placeholder": "이름을 입력하세요"
+          },
+          {
+            "id": "email",
+            "label": "이메일",
+            "type": "email",
+            "placeholder": "name@example.com"
+          },
+          {
+            "id": "topic",
+            "label": "문의 유형",
+            "type": "select",
+            "options": [
+              "진료 문의",
+              "예약 변경",
+              "기타"
+            ]
+          },
+          {
+            "id": "body",
+            "label": "내용",
+            "type": "textarea",
+            "placeholder": "문의하실 내용을 적어 주세요",
+            "help": "개인정보는 적지 않아도 됩니다."
+          },
+          {
+            "id": "agree",
+            "label": "개인정보 수집에 동의합니다",
+            "type": "checkbox"
+          }
+        ],
+        "submitLabel": "입력 확인"
+      },
+      {
+        "type": "properties",
+        "title": "연락처",
+        "layout": "inline",
+        "items": [
+          {
+            "label": "전화",
+            "value": "02-000-0000"
+          },
+          {
+            "label": "운영",
+            "value": "평일 09:00~18:00"
+          }
+        ]
+      }
+    ]
+  }
+}

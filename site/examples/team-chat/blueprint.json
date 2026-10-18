@@ -1,0 +1,116 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "허브",
+  "theme": "hub",
+  "palette": "berrylicious-dream",
+  "mode": "light",
+  "pageType": "community",
+  "shell": "sidebar",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "dots",
+  "backdrop": "tint",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "허브 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "#디자인-시스템",
+        "description": "멤버 12명"
+      },
+      {
+        "type": "chat",
+        "title": "오늘의 대화",
+        "messages": [
+          {
+            "from": "them",
+            "name": "김다선",
+            "text": "새 팔레트 후보 올렸어요. 한번 봐 주세요.",
+            "time": "10:02"
+          },
+          {
+            "from": "me",
+            "name": "나",
+            "text": "확인했어요. 두 번째가 대비가 좋네요.",
+            "time": "10:05"
+          },
+          {
+            "from": "them",
+            "name": "이지훈",
+            "text": "다크 모드에서도 4.5:1 넘는지 확인할게요.",
+            "time": "10:08"
+          },
+          {
+            "from": "me",
+            "name": "나",
+            "text": "좋아요. 결과 공유 부탁해요.",
+            "time": "10:09"
+          }
+        ]
+      },
+      {
+        "type": "form",
+        "title": "메시지 보내기",
+        "variant": "inline",
+        "fields": [
+          {
+            "id": "message",
+            "label": "메시지",
+            "type": "text",
+            "placeholder": "메시지를 입력하세요"
+          }
+        ],
+        "submitLabel": "보내기"
+      }
+    ]
+  }
+}

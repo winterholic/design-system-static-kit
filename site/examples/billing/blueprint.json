@@ -1,0 +1,139 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "플로우웍스",
+  "theme": "trust",
+  "palette": "serene-blue",
+  "mode": "light",
+  "pageType": "settings",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "프로젝트",
+        "href": "#main",
+        "icon": "folder"
+      },
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "플로우웍스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "결제와 청구",
+        "description": "다음 결제일은 11월 3일입니다."
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "요약",
+        "children": [
+          {
+            "type": "table",
+            "title": "청구 내역",
+            "caption": "최근 청구 내역",
+            "columns": [
+              "날짜",
+              "내용",
+              "금액",
+              "상태"
+            ],
+            "rows": [
+              [
+                "10월 3일",
+                "팀 플랜 · 5명",
+                "49,500원",
+                "결제 완료"
+              ],
+              [
+                "9월 3일",
+                "팀 플랜 · 5명",
+                "49,500원",
+                "결제 완료"
+              ],
+              [
+                "8월 3일",
+                "팀 플랜 · 4명",
+                "39,600원",
+                "결제 완료"
+              ]
+            ],
+            "state": "ready"
+          },
+          {
+            "type": "properties",
+            "title": "현재 플랜",
+            "items": [
+              {
+                "label": "플랜",
+                "value": "팀"
+              },
+              {
+                "label": "사용자",
+                "value": "5명"
+              },
+              {
+                "label": "다음 결제",
+                "value": "49,500원"
+              },
+              {
+                "label": "결제 수단",
+                "value": "카드 ****1234"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "info",
+        "title": "세금계산서",
+        "body": "결제 후 3영업일 안에 이메일로 발송됩니다."
+      }
+    ]
+  }
+}

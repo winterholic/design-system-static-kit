@@ -1,0 +1,188 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.0.0",
+  "name": "무드램프",
+  "theme": "commerce",
+  "palette": "sweet-summer-melody",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "신상품",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "조명",
+        "href": "#main",
+        "icon": "sun"
+      },
+      {
+        "label": "이벤트",
+        "href": "#main",
+        "icon": "gift"
+      },
+      {
+        "label": "고객센터",
+        "href": "#main",
+        "icon": "message"
+      }
+    ],
+    "action": {
+      "label": "장바구니",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 무드램프",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "조명",
+        "description": "상품 24개",
+        "actions": [
+          {
+            "label": "정렬: 인기순",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "start",
+        "label": "필터",
+        "children": [
+          {
+            "type": "form",
+            "title": "필터",
+            "variant": "stacked",
+            "fields": [
+              {
+                "id": "price",
+                "label": "가격대",
+                "type": "select",
+                "options": [
+                  "전체",
+                  "3만원 이하",
+                  "3~5만원",
+                  "5만원 이상"
+                ],
+                "requirement": "optional"
+              },
+              {
+                "id": "stock",
+                "label": "재고 있는 상품만",
+                "type": "switch",
+                "requirement": "optional"
+              },
+              {
+                "id": "color",
+                "label": "색상",
+                "type": "radio",
+                "options": [
+                  "전체",
+                  "화이트",
+                  "컬러"
+                ],
+                "requirement": "optional"
+              }
+            ],
+            "submitLabel": "적용"
+          },
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "card",
+                "title": "무드램프 미니",
+                "body": "39,000원",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "1:1",
+                "badge": "베스트"
+              },
+              {
+                "type": "card",
+                "title": "데스크 라이트",
+                "body": "59,000원",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "1:1"
+              },
+              {
+                "type": "card",
+                "title": "캔들 워머",
+                "body": "45,000원",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "1:1",
+                "badge": "신상"
+              },
+              {
+                "type": "card",
+                "title": "독서등",
+                "body": "29,000원",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "1:1"
+              },
+              {
+                "type": "card",
+                "title": "플로어 램프",
+                "body": "129,000원",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "1:1"
+              },
+              {
+                "type": "card",
+                "title": "센서 무드등",
+                "body": "19,000원",
+                "variant": "media",
+                "visual": "photo",
+                "ratio": "1:1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "pagination",
+        "pages": 4,
+        "current": 1
+      }
+    ]
+  }
+}
