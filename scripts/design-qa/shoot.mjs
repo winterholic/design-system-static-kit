@@ -10,7 +10,8 @@ const label = args[0] ?? 'now';
 const opt = k => { const i = args.indexOf(k); return i > -1 ? args[i + 1] : null; };
 const base = opt('--base') ?? 'http://127.0.0.1:4173';
 const only = opt('--only')?.split(',');
-const SAMPLES = args.includes('--extra') ? EXTRA : BASE;
+// --ids a,b : site/examples/<id>/ 를 직접 지정 (SAMPLES에 없는 템플릿 점검용)
+const SAMPLES = opt('--ids') ? opt('--ids').split(',').map(id => ({id, path: `site/examples/${id}/index.html`})) : args.includes('--extra') ? EXTRA : BASE;
 const maxH = Number(opt('--maxh') ?? 2600);
 const out = resolve(import.meta.dirname, '../../.qa', label);
 await mkdir(out, {recursive: true});
@@ -19,7 +20,8 @@ for (const s of SAMPLES.filter(s => !only || only.includes(s.id))) {
   for (const w of [390, 1280]) {
     const ctx = await browser.newContext({viewport: {width: w, height: w === 390 ? 844 : 800}, deviceScaleFactor: 1, reducedMotion: 'reduce'});
     const page = await ctx.newPage();
-    await page.goto(`${base}/${s.path}`, {waitUntil: 'load'});
+    const rel = base.startsWith('https://') ? s.path.replace(/^site\//, '') : s.path; // 배포본은 site/가 루트
+    await page.goto(`${base}/${rel}`, {waitUntil: 'load'});
     await page.waitForTimeout(150);
     const h = await page.evaluate(() => document.documentElement.scrollHeight);
     const sw = await page.evaluate(() => document.documentElement.scrollWidth);

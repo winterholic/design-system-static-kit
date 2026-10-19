@@ -112,3 +112,21 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 - `flat` 깊이 + 흰 팔레트 조합은 카드 경계가 사라져 여전히 밋밋하다.
 - 타임라인 점, 문서의 중첩 제목 스택, 사이드바 셸의 100vh 배경은 개선 여지가 남았다.
 - 실제 Safari/iOS, 스크린리더, 고대비 모드: 미검증(Chromium만).
+
+## 시각 기반 재설계 검증 (2026-10-19)
+
+배경·진단·결정은 `docs/foundation.md`. 여기에는 실행한 검증만 적는다. macOS·Node 22·Chromium.
+
+- `npm run verify` → `ℹ tests 56 / pass 56 / fail 0`, `AUDIT: … 33600 used contrast pairs pass (tightest chart1/canvas 3.00:3 …)`, `REPRODUCIBLE: 3925 generated files match a fresh build byte for byte.`
+- `node scripts/test-lab/generate.mjs --verify` → `VERIFY: checked=3452 mismatches=0 skipped-set-match=true dups-match=true`
+- `node scripts/test-lab/check.mjs` → `CHECK: 3380 cases, 3380 pass, 0 fail, codes={}`
+- `npm run test:browser` → `17 passed (2.0m)`
+- `node scripts/design-qa/sweep.mjs` → `SWEEP: 3380 cases × 2 widths, overflow=0`
+
+**불변 조건.** 계약 테스트는 56개 그대로이고 추가·삭제·완화가 없다. 카탈로그 밖 값 거부, 금지 조합 11개, 대비 하한(본문 7:1, 보조 4.5:1, 비텍스트 3:1)은 손대지 않았다. 달라진 것은 토큰 값이다. 중립색(text·muted·border)이 팔레트 시드 색조를 섞게 되어 `docs/evidence/contrast.json`이 재생성됐고, 같은 하한으로 33,600쌍이 모두 통과했다. 전/후 `ratio` 값이 일부 달라지는 것은 의도된 변화다.
+
+**알려진 한계(이번 라운드).**
+
+- 육안 검토는 대표 표본(예제 27×2, 랜딩류 9×2, 극단 사례 16)이다. 3,380 전수 육안이 아니다. 전수로 확인한 것은 가로 넘침(sweep)과 정적 구조 검사다.
+- 앱 바탕 틴트(`soft`와 `canvas` 55:45 혼합), 히어로·CTA 방사형 틴트, 밴드 교대 면은 양 끝 토큰이 통과한 값이라는 근거만 있고 중간 보간 지점 대비는 직접 측정하지 않았다(확인 필요).
+- Windows·Android 실기기 폰트 렌더링, Safari/iOS, 스크린리더는 미검증.

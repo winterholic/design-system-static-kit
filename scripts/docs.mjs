@@ -167,6 +167,8 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 |---|---|---|
 ${axisRows}
 
+축 값이 가리키는 시각 기반(타입 스케일 비율, 전폭 밴드와 섹션 리듬, 열린 부품과 상자 부품, 앱 화면의 틴트 바탕)은 docs/foundation.md에 진단 수치와 함께 기록합니다. 같은 축 값이라도 페이지 유형(랜딩·앱·콘텐츠)에 따라 쓰이는 크기와 간격이 다릅니다.
+
 ## 4. 테마 ${stats.themes}종
 
 테마는 분류, 설명, 기본 축 프로필, 금지 값, Coolors 팔레트 후보 ${Math.min(...Object.values(themes).map(t => t.palettes.length))}개 이상으로 구성됩니다. 팔레트는 테마에 속해야 하며(\`PALETTE_THEME\`), 테마가 금지한 값은 거부됩니다(\`THEME_FORBID\`). 예를 들어 시빅은 글로우·그라데이션을, 네온은 라이트 모드를 금지합니다. 어떤 두 테마도 기본 축 프로필이 같지 않습니다.
@@ -258,6 +260,7 @@ ${Object.entries(pageTypes).map(([id, p]) => `| ${p.label} | ${templateList.filt
 - 실제 Safari/iOS, 스크린리더, 고대비 모드의 실기기 검증은 하지 않았습니다(Chromium 에뮬레이션만).
 - Coolors 이름·팔레트의 재사용 조건은 확인하지 않았습니다. 각 팔레트의 원본 URL을 남겼습니다.
 - 정확한 미감은 보증하지 않습니다. 규칙은 접근성·일관성·구조의 하한을 지킬 뿐입니다.
+- 서체는 시스템 폰트 스택입니다. 웹폰트를 싣지 않는 이유(CSP와 외부 요청 금지)와 결과는 docs/foundation.md에 있습니다.
 `;
 
 const footer = `Static Kit ${CATALOG_VERSION} · 생성: scripts/docs.mjs (수치는 카탈로그와 docs/evidence에서 계산)`;

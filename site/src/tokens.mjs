@@ -49,15 +49,16 @@ export function resolveTokens(b, modeOverride) {
   const action = ensure(seed, backgrounds, 4.5, dark);
   const actionHover = mix(action, dark ? '#FFFFFF' : '#000000', .12);
   const accent = ensureFill(accentRaw);
-  const text = ensure(dark ? '#F3F5F7' : '#182029', backgrounds, 7, dark);
-  const muted = ensure(dark ? '#ACB6C3' : '#586476', backgrounds, 4.5, dark);
+  // Neutrals lean toward the brand hue (winterholic-base: warm/cool paper and ink) instead of one fixed blue-gray for every palette.
+  const text = ensure(mix(dark ? '#F3F5F7' : '#182029', seed, dark ? .05 : .09), backgrounds, 7, dark);
+  const muted = ensure(mix(dark ? '#ACB6C3' : '#586476', seed, dark ? .08 : .14), backgrounds, 4.5, dark);
   // Chart colors: brand, accent, then the remaining swatches by hue distance, each 3:1 against surface and canvas.
   const rest = p.colors.filter(c => c !== seed && c !== accentRaw && hue(c).s > .15).sort((x, y) => (hueDistance(y, seed) + hueDistance(y, accentRaw)) - (hueDistance(x, seed) + hueDistance(x, accentRaw)));
   const chartSeeds = [seed, accentRaw, ...rest, mix(seed, accentRaw, .5), mix(seed, INK, .4), mix(accentRaw, INK, .4)].slice(0, 5);
   const chart = chartSeeds.map(c => ensure(c, [canvas, surface], 3, dark));
   const tokens = {
     canvas, surface, soft, sunken, accentSoft, text, muted, action, onAction: onFill(action), actionHover, onActionHover: onFill(actionHover), link: action,
-    focus: ensure(seed, backgrounds, 3, dark), rule: ensure(dark ? '#788798' : '#78818E', [canvas, surface, sunken], 3, dark), border: dark ? '#45505E' : '#DDE2E7',
+    focus: ensure(seed, backgrounds, 3, dark), rule: ensure(dark ? '#788798' : '#78818E', [canvas, surface, sunken], 3, dark), border: mix(dark ? '#45505E' : '#DDE2E7', seed, dark ? .1 : .12),
     success: ensure('#18714C', backgrounds, 4.5, dark), warning: ensure('#946000', backgrounds, 4.5, dark), danger: ensure('#B83543', backgrounds, 4.5, dark), info: ensure('#2A63C9', backgrounds, 4.5, dark),
     accent, onAccent: onFill(accent), accentInk: ensure(accentRaw, backgrounds, 4.5, dark),
     chart1: chart[0], chart2: chart[1], chart3: chart[2], chart4: chart[3], chart5: chart[4],

@@ -24,7 +24,7 @@ export function stylesheet(b, sets) {
   const baseMode = auto ? 'light' : b.mode;
   parts.push(`:root{${tokenDecls(sets[baseMode], baseMode)}${axisVars(b)}color-scheme:${auto ? 'light dark' : b.mode};}`);
   if (auto) parts.push(`@media(prefers-color-scheme:dark){:root{${tokenDecls(sets.dark, 'dark')}}}`);
-  const inverseSel = '.kit-section[data-surface=inverse]>.kit-section-inner,.kit-cta[data-tone=inverse]';
+  const inverseSel = '.kit-section[data-surface=inverse],.kit-cta[data-tone=inverse]';
   if (sets.inverse) {
     const opp = opposite(baseMode);
     parts.push(`${inverseSel}{${tokenDecls(sets.inverse[opp], opp)}}`);

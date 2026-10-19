@@ -22,5 +22,5 @@ export function renderShell(b, body) {
     ? `<footer class="kit-footer" id="kit-footer"><div><strong>${e(b.name)}</strong><p>${note}</p></div><nav aria-label="바로가기"><strong>바로가기</strong><ul>${items.map(a => `<li><a href="${href(a.href)}">${e(a.label)}</a></li>`).join('')}</ul></nav>${links.length ? `<nav aria-label="안내"><strong>안내</strong>${footerLinks}</nav>` : ''}</footer>`
     : b.footer === 'minimal' ? `<footer class="kit-footer" id="kit-footer"><p>${note}</p></footer>`
       : `<footer class="kit-footer" id="kit-footer"><p>${note}</p>${footerLinks}</footer>`;
-  return `<a class="kit-skip" href="#main">본문 바로가기</a><div class="kit-shell" data-shell="${b.shell}" data-footer="${b.footer}" data-page="${b.pageType ?? 'general'}">${header}<div class="kit-body"><main class="kit-main" id="main" tabindex="-1">${body}</main>${footer}</div></div>`;
+  return `<a class="kit-skip" href="#main">본문 바로가기</a><div class="kit-shell" data-shell="${b.shell}" data-footer="${b.footer}" data-backdrop="${b.backdrop}" data-page="${b.pageType ?? 'general'}">${header}<div class="kit-body"><main class="kit-main" id="main" tabindex="-1">${body}</main>${footer}</div></div>`;
 }

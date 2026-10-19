@@ -10,7 +10,7 @@ const bar = (n, c) => `<span class="kit-bar" style="width:${n}%"${c ? ` data-ton
 
 /** Each renderer: (node, depth, ctx, render) -> html. Heading level = min(depth, 6); only `section` raises depth. */
 export function makeRenderer(b) {
-  const ctx = {b, seq: 0, anchors: []};
+  const ctx = {b, seq: 0, art: 0, anchors: []};
   const collect = n => { if (n.type === 'section' && n.anchor) ctx.anchors.push({anchor: n.anchor, title: n.title}); n.children?.forEach(collect); };
   collect(b.tree);
   const o = b.ornament;
@@ -29,7 +29,8 @@ export function makeRenderer(b) {
   R.hero = (n, d, id) => {
     const art = ['split', 'product'].includes(n.variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, n.variant === 'product' ? '4:3' : '4:3', o, '')) : '';
     const decorative = art.replace(' role="img" aria-label=""', ' aria-hidden="true"');
-    return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</div>${decorative ? `<div class="kit-hero-visual">${decorative}</div>` : ''}</section>`;
+    const frame = ['chart', 'diagram'].includes(n.visual) ? ' data-frame="window"' : '';
+    return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}</section>`;
   };
   R.section = (n, d, id) => `<section class="kit-section" data-surface="${n.surface ?? 'plain'}"${n.anchor ? ` id="s-${n.anchor}"` : ''} aria-labelledby="${id}-title"><div class="kit-section-inner"><header class="kit-section-head">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}</header>${kids(n, d + 1)}</div></section>`;
   R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}">${kids(n, d)}</div>`;
@@ -63,7 +64,7 @@ export function makeRenderer(b) {
   };
   R.card = (n, d, id) => {
     const v = n.variant ?? 'basic';
-    const art = n.visual ? `<div class="kit-card-media" style="aspect-ratio:${ratioCss(n.ratio ?? '16:9')}">${mediaArt(n.visual, n.ratio ?? '16:9', o, '').replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : '';
+    const art = n.visual ? `<div class="kit-card-media" style="aspect-ratio:${ratioCss(n.ratio ?? '16:9')}">${mediaArt(n.visual, n.ratio ?? '16:9', o, '', ctx.art++).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : '';
     const link = v === 'link' ? `<a class="kit-stretch" href="${href(n.action.href)}"${n.action.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${heading(d, n.title, id)}</a>` : heading(d, n.title, id);
     return `<article class="kit-card" data-variant="${v}">${art}<div class="kit-card-body">${n.icon ? `<span class="kit-card-icon">${icon(n.icon)}</span>` : ''}${n.meta ? `<span class="kit-meta">${e(n.meta)}</span>` : ''}${n.badge ? `<span class="kit-badge" data-tone="brand">${e(n.badge)}</span>` : ''}${link}<p>${e(n.body)}</p>${n.action ? (v === 'link' ? `<span class="kit-link-label" aria-hidden="true">${e(n.action.label)} ${icon('arrow-right')}</span>` : button(n.action)) : ''}</div></article>`;
   };
@@ -100,10 +101,10 @@ export function makeRenderer(b) {
   R.progress = n => `<div class="kit-progress"><div class="kit-progress-head"><span id="pr-${ctx.seq}">${e(n.label)}</span><strong>${n.value}%</strong></div><div class="kit-track" role="progressbar" aria-labelledby="pr-${ctx.seq}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${n.value}"${n.detail ? ` aria-valuetext="${e(n.detail)}"` : ''}>${bar(n.value, n.tone)}</div>${n.detail ? `<p class="kit-muted">${e(n.detail)}</p>` : ''}</div>`;
   R['empty-state'] = (n, d, id) => `<section class="kit-empty" data-kind="${n.kind}"${['error', 'forbidden', 'offline', 'maintenance'].includes(n.kind) ? ' role="alert"' : ' role="status"'} aria-labelledby="${id}-title"><div class="kit-empty-art">${ornamentArt(o, 240, 160) || ''}<span class="kit-empty-icon">${icon(n.icon ?? EMPTY_ICON[n.kind])}</span></div>${heading(d, n.title, id)}<p>${e(n.body)}</p>${n.action ? button(n.action) : ''}</section>`;
   R.skeleton = n => `<div class="kit-skeleton" data-variant="${n.variant}" role="status" aria-busy="true" aria-label="${e(n.label)}">${n.variant === 'card' ? '<i class="sk-img"></i><i></i><i class="sk-short"></i>' : n.variant === 'table' ? '<i></i><i></i><i></i><i></i>' : n.variant === 'list' ? '<i></i><i class="sk-short"></i><i></i><i class="sk-short"></i>' : '<i></i><i></i><i class="sk-short"></i>'}</div>`;
-  R.media = n => `<figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(n.ratio)}">${mediaArt(n.kind, n.ratio, o, e(n.alt))}${n.overlay ? `<span class="kit-overlay">${e(n.overlay)}</span>` : ''}</div>${n.caption ? `<figcaption>${e(n.caption)}</figcaption>` : ''}</figure>`;
+  R.media = n => `<figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(n.ratio)}">${mediaArt(n.kind, n.ratio, o, e(n.alt), ctx.art++)}${n.overlay ? `<span class="kit-overlay">${e(n.overlay)}</span>` : ''}</div>${n.caption ? `<figcaption>${e(n.caption)}</figcaption>` : ''}</figure>`;
   R.gallery = (n, d, id) => {
     const ratioAt = i => n.layout === 'masonry' ? ['4:3', '3:4', '1:1', '16:9'][i % 4] : '4:3';
-    return `<section class="kit-gallery" data-layout="${n.layout ?? 'grid'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="갤러리"'}>${n.title ? heading(d, n.title, id) : ''}<ul>${n.items.map((x, i) => `<li><figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(ratioAt(i))}">${mediaArt(x.kind, ratioAt(i), o, e(x.alt))}</div>${x.caption ? `<figcaption>${e(x.caption)}</figcaption>` : ''}</figure></li>`).join('')}</ul></section>`;
+    return `<section class="kit-gallery" data-layout="${n.layout ?? 'grid'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="갤러리"'}>${n.title ? heading(d, n.title, id) : ''}<ul>${n.items.map((x, i) => `<li><figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(ratioAt(i))}">${mediaArt(x.kind, ratioAt(i), o, e(x.alt), ctx.art++)}</div>${x.caption ? `<figcaption>${e(x.caption)}</figcaption>` : ''}</figure></li>`).join('')}</ul></section>`;
   };
   R.breadcrumb = n => `<nav class="kit-breadcrumb" aria-label="현재 위치"><ol>${n.items.map((x, i) => i === n.items.length - 1 ? `<li><span aria-current="page">${e(x.label)}</span></li>` : `<li><a href="${href(x.href ?? '#main')}">${e(x.label)}</a>${icon('chevron-right')}</li>`).join('')}</ol></nav>`;
   R.pagination = n => {

@@ -18,7 +18,7 @@ export const axisDefs = {
   backdrop: {label: '배경', values: {plain: '단색', tint: '브랜드 틴트', gradient: '부드러운 그라데이션', grid: '옅은 격자'}},
   width: {label: '콘텐츠 폭', values: {narrow: '760px', standard: '1080px', wide: '1280px', full: '1600px'}},
   scale: {label: '타입 스케일', values: {tight: '촘촘한 제목', balanced: '균형', dramatic: '극적인 큰 제목'}},
-  weight: {label: '굵기', values: {regular: '제목 500·버튼 500', medium: '제목 650·버튼 600', bold: '제목 800·버튼 700'}},
+  weight: {label: '굵기', values: {regular: '제목 600·버튼 500', medium: '제목 700·버튼 600', bold: '제목 800·버튼 700'}},
   footer: {label: '푸터', values: {simple: '한 줄', columns: '브랜드와 링크 열', minimal: '저작 한 줄만'}},
 };
 export const axisOrder = Object.keys(axisDefs);
