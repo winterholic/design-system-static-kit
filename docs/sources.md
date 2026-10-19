@@ -12,6 +12,21 @@
 | [WCAG 2.2](https://www.w3.org/TR/WCAG22/) SC 1.4.3, 1.4.11, 2.5.8, 1.1.1, 2.4.4 | 텍스트·비텍스트 대비, 최소 타깃 24px, 대체 텍스트, 링크 목적 | 본문 4.5·7:1, 구조선·포커스·차트 3:1, 타깃 24px 검사, 대체 텍스트 필수, 모호한 링크 라벨 금지 |
 | [MDN iframe sandbox](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox) | sandbox 권한 분리 | 미리보기·갤러리 allow-scripts + allow-forms, allow-same-origin 생략. 전송은 CSP로 차단 |
 
+## UI 수준 상향 라운드의 레퍼런스 (2026-10-20)
+
+구도·밀도·타이포·이미지 처리·마이크로 디테일의 원리만 읽었다. 코드·이미지·문구는 가져오지 않았다. 사이트별 읽은 내용은 `docs/ui-level-up.md` 9절.
+
+| 사이트 | 확인한 것 |
+|---|---|
+| [Linear](https://linear.app), [Pricing](https://linear.app/pricing), [Login](https://linear.app/login) | 디스플레이 서체 수치, 제품 목업 밀도, 로고 줄, 카드 없는 요금 열, 체크 표시 비교표, 최소 로그인 |
+| [Vercel](https://vercel.com), [Docs](https://vercel.com/docs), [Blog](https://vercel.com/blog), [Pricing](https://vercel.com/pricing) | 디스플레이 서체, 로고 줄, 문서 카드, 블로그 목록 위계 |
+| [Stripe](https://stripe.com), [Blog](https://stripe.com/blog), [Docs](https://docs.stripe.com) | 이미지 비중, 디스플레이 서체(수치) |
+| [Aesop](https://www.aesop.com/kr/), [29CM](https://www.29cm.co.kr), [무신사](https://www.musinsa.com), [Apple Store](https://www.apple.com/kr/shop/buy-iphone) | 상품 컷 배경, 카드 정보 순서, 이미지 우선 격자, 타일형 카드 |
+| [Toss Tech](https://toss.tech), [Toss](https://toss.im) | 한국어 블로그 목록 위계, 한글 디스플레이 서체 |
+| [Tailwind Docs](https://tailwindcss.com/docs/installation), [shadcn/ui Dashboard](https://ui.shadcn.com/examples/dashboard) | 문서 본문 폭과 문단 길이, 대시보드 밀도(수치 중심) |
+| [Pentagram](https://www.pentagram.com/work), [GitHub 404](https://github.com/404) | 포트폴리오 격자 구조, 오류 화면의 상태 코드 |
+| [Vercel web-interface-guidelines](https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md) | `theme-color` 메타, 탭 하이라이트, 숫자 정렬, reduced-motion 등 점검 규칙 |
+
 ## 팔레트 선정 방법
 
 1. 렌더된 목록에서 4~10색 팔레트 814개를 수집했다.

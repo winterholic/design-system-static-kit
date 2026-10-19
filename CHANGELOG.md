@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- UI 수준 상향(카탈로그 2.0.0, 기존 계약 테스트 56개 그대로 + 7개 추가). 실제 서비스(Linear·Vercel·Aesop·29CM·Toss Tech 등)와 수치로 대조해 이미지 자리·목업·상품 카드·더미 문구를 올렸다. 카탈로그에 추가만 했다: `motif` 37종(상품 컷 20, 장면 10, 편집 7; `photo` 슬롯에서만), 카드 `price`·`listPrice`·`rating`·`reviews`·`author`, `section.description`, `gallery.layout=showcase`, `summary.thumb`. 렌더: 스튜디오 컷·앱 목업·초상·로고 마크·스파크라인·체크 표시 셀·상태 코드 숫자, `theme-color` 메타. 템플릿 61개의 문구를 현실적인 한국어로 교체. 일러스트는 토큰 클래스만 쓰며(하드코딩 색 0, 테스트가 강제) 신규 토큰은 없다. 대비 하한·금지 조합·카탈로그 밖 값 거부는 불변이고 `docs/evidence/contrast.json`은 바뀌지 않았다. 진단·원칙·반복·한계는 `docs/ui-level-up.md`. 점검 도구 `scripts/design-qa/`에 `quick`·`sheet`·`metrics`·`refshot`·`motif-lab`·`random10` 추가.
+
 - 시각 기반 재설계(카탈로그 2.0.0·계약 테스트 56개 그대로, 테스트 삭제·완화 없음). 땜질이 아니라 기반을 바꿨다: 타입 스케일 3역(히어로 display / 콘텐츠 title / 앱 apptitle)과 제목 굵기 하한 600, 마케팅 페이지의 전폭 밴드(`--kit-band`, soft 교대, 헤더·푸터도 본문 열에 정렬), 앱 화면 틴트 바탕, 상자 없는 기능·인용·FAQ(`--kit-open-*`, lifted·glow·hard 깊이만 상자 유지), 제품 UI 목업 히어로와 6구도 순환 이미지 자리, 브랜드 색조를 띤 중립색. **토큰 변경 때문에 `docs/evidence/contrast.json`이 재생성됐다**(text·muted·border가 시드 색조를 섞음, 대비 하한 7:1/4.5:1은 그대로이고 33,600쌍 전부 통과). 진단 수치·결정·이유·반복·남은 약점은 `docs/foundation.md`.
 
 - 시각 품질 개선 라운드(카탈로그 2.0.0 그대로, 계약 테스트 56개 그대로). 생성기·토큰·부품 CSS·렌더 수준에서 고쳤고 개별 HTML 수작업은 없다. 핵심: 페이지 제목+히어로(또는 상태 화면)의 이중 디스플레이 제목을 컴팩트 리드/시각 접기로 정리, 섹션 머리말 묶음, 히어로·CTA·지표·요금제·기능목록·FAQ·표·갤러리·팀 부품 재설계, 상품 목록·프로필 템플릿의 본문/보조 순서 오류 수정, 인증·오류 페이지 폭/정렬, 모바일 헤더·지표·상품 2열, `solid` 아이콘의 지워진 안쪽 선 복구, 부품 간 CSS 의존 누락(`kit-card-icon`·`kit-price`) 수정. 자세한 문제 목록과 전/후는 `docs/verification.md`의 "시각 품질 개선 라운드".

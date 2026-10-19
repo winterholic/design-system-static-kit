@@ -975,59 +975,74 @@
           "description": "영업일 기준 하루 안에 답변드립니다."
         },
         {
-          "type": "form",
-          "title": "문의 내용",
-          "intro": "데모이므로 입력은 저장되거나 전송되지 않습니다.",
-          "fields": [
+          "type": "aside",
+          "side": "end",
+          "label": "연락처",
+          "size": "narrow",
+          "children": [
             {
-              "id": "name",
-              "label": "이름",
-              "type": "text",
-              "placeholder": "이름을 입력하세요"
+              "type": "form",
+              "title": "문의 내용",
+              "intro": "데모이므로 입력은 저장되거나 전송되지 않습니다.",
+              "fields": [
+                {
+                  "id": "name",
+                  "label": "이름",
+                  "type": "text",
+                  "placeholder": "이름을 입력하세요"
+                },
+                {
+                  "id": "email",
+                  "label": "이메일",
+                  "type": "email",
+                  "placeholder": "name@example.com"
+                },
+                {
+                  "id": "topic",
+                  "label": "문의 유형",
+                  "type": "select",
+                  "options": [
+                    "진료 문의",
+                    "예약 변경",
+                    "기타"
+                  ]
+                },
+                {
+                  "id": "body",
+                  "label": "내용",
+                  "type": "textarea",
+                  "placeholder": "문의하실 내용을 적어 주세요",
+                  "help": "개인정보는 적지 않아도 됩니다."
+                },
+                {
+                  "id": "agree",
+                  "label": "개인정보 수집에 동의합니다",
+                  "type": "checkbox"
+                }
+              ],
+              "submitLabel": "입력 확인"
             },
             {
-              "id": "email",
-              "label": "이메일",
-              "type": "email",
-              "placeholder": "name@example.com"
-            },
-            {
-              "id": "topic",
-              "label": "문의 유형",
-              "type": "select",
-              "options": [
-                "진료 문의",
-                "예약 변경",
-                "기타"
+              "type": "properties",
+              "title": "연락처",
+              "items": [
+                {
+                  "label": "전화",
+                  "value": "02-000-0000"
+                },
+                {
+                  "label": "운영 시간",
+                  "value": "평일 09:00~18:00"
+                },
+                {
+                  "label": "점심시간",
+                  "value": "13:00~14:00"
+                },
+                {
+                  "label": "주소",
+                  "value": "서울 성동구 예시로 5, 2층"
+                }
               ]
-            },
-            {
-              "id": "body",
-              "label": "내용",
-              "type": "textarea",
-              "placeholder": "문의하실 내용을 적어 주세요",
-              "help": "개인정보는 적지 않아도 됩니다."
-            },
-            {
-              "id": "agree",
-              "label": "개인정보 수집에 동의합니다",
-              "type": "checkbox"
-            }
-          ],
-          "submitLabel": "입력 확인"
-        },
-        {
-          "type": "properties",
-          "title": "연락처",
-          "layout": "inline",
-          "items": [
-            {
-              "label": "전화",
-              "value": "02-000-0000"
-            },
-            {
-              "label": "운영",
-              "value": "평일 09:00~18:00"
             }
           ]
         }
@@ -1037,10 +1052,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "6d6ae1a4ae353946a53f112dec81420ce0705da1befe9dd80a99042552bd4656",
-      "tokens.css": "dc0b89655ea9b96edd0f5150b24384d7e3a142e60f0231a8ecbbfc5de4a3e818",
+      "index.html": "6c1423ae5980ac2d947a944735b3edbf72b35896bcf90f6e378ffcec411746d9",
+      "tokens.css": "6455caab920e0e7577c7a8a16aab59142872699bf8d11a0d1019737a99340fb6",
       "tokens.json": "aa039da04bc304dbfc69e5c6d47dbf9b2d240317ca4519698510724b5975ffe7",
-      "blueprint.json": "351fbaaa48741eecbcd47e4b765776365842330114641184b16da1590702c805"
+      "blueprint.json": "1c6cc17ca0c3a38a4afe0f781e3482e3e3fd45e29e9aadbb23a6fe79c92ba3ae"
     }
   }
 }

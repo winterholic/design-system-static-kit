@@ -29,15 +29,25 @@ function patternArt(w, h, ornament) {
 
 const kinds = {
   // `v` is the placement index of the art on the page: six scenes, so a product grid never repeats one picture six times.
-  photo: (w, h, o, v = 0) => {
+  photo: (w, h, o, v = 0, id = 'm0') => {
     const k = v % 6, sunX = [.72, .28, .5, .82, .18, .62][k], sunY = [.3, .27, .36, .24, .31, .28][k], sunR = [.13, .1, .16, .11, .14, .12][k], sh = [0, .12, -.1, .18, -.14, .07][k];
     const sun = k % 2 ? 'a-1' : 'a-2', hill = k % 2 ? 'a-2' : 'a-1', peaks = (o === 'geometric') !== (k % 3 === 2);
-    return [rect(0, 0, w, h, 'a-bg'), circle(w * sunX, h * sunY, h * sunR, sun),
-      peaks ? path(`M0 ${h * .78}L${w * (.3 + sh / 2)} ${h * .4}L${w * .55} ${h * .75}L${w * (.75 + sh / 3)} ${h * .5}L${w} ${h * .8}V${h}H0Z`, 'a-4', ' opacity=".35"') : path(`M0 ${h * .7}Q${w * (.25 + sh / 2)} ${h * (.35 + sh / 2)} ${w * .5} ${h * .65}T${w} ${h * (.6 - sh / 3)}V${h}H0Z`, 'a-4', ' opacity=".35"'),
-      peaks ? path(`M0 ${h * .92}L${w * (.22 + sh / 3)} ${h * .62}L${w * .45} ${h * .9}L${w * (.7 - sh / 3)} ${h * .66}L${w} ${h * .92}V${h}H0Z`, hill) : path(`M0 ${h * .86}Q${w * (.3 - sh / 2)} ${h * (.55 + sh / 3)} ${w * .6} ${h * .85}T${w} ${h * (.8 + sh / 4)}V${h}H0Z`, hill)].join('');
+    const defs = '<defs><linearGradient id="' + id + 'k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sa"/><stop offset=".7" class="sc"/><stop offset="1" class="ss"/></linearGradient><radialGradient id="' + id + 'g" cx=".5" cy=".5" r=".5"><stop offset="0" class="sx" stop-opacity=".95"/><stop offset="1" class="sx" stop-opacity="0"/></radialGradient></defs>';
+    return [defs, '<rect width="' + num(w) + '" height="' + num(h) + '" fill="url(#' + id + 'k)"/>', circle(w * sunX, h * sunY, h * sunR * 2.6, 'a-0', ' fill="url(#' + id + 'g)"'), circle(w * sunX, h * sunY, h * sunR, sun),
+      path('M0 ' + h * .62 + 'Q' + w * .2 + ' ' + h * .5 + ' ' + w * .42 + ' ' + h * .6 + 'T' + w * .8 + ' ' + h * .56 + 'T' + w + ' ' + h * .6 + 'V' + h + 'H0Z', 'a-4', ' opacity=".16"'),
+      peaks ? path('M0 ' + h * .78 + 'L' + w * (.3 + sh / 2) + ' ' + h * .4 + 'L' + w * .55 + ' ' + h * .75 + 'L' + w * (.75 + sh / 3) + ' ' + h * .5 + 'L' + w + ' ' + h * .8 + 'V' + h + 'H0Z', 'a-4', ' opacity=".35"') : path('M0 ' + h * .7 + 'Q' + w * (.25 + sh / 2) + ' ' + h * (.35 + sh / 2) + ' ' + w * .5 + ' ' + h * .65 + 'T' + w + ' ' + h * (.6 - sh / 3) + 'V' + h + 'H0Z', 'a-4', ' opacity=".35"'),
+      peaks ? path('M0 ' + h * .92 + 'L' + w * (.22 + sh / 3) + ' ' + h * .62 + 'L' + w * .45 + ' ' + h * .9 + 'L' + w * (.7 - sh / 3) + ' ' + h * .66 + 'L' + w + ' ' + h * .92 + 'V' + h + 'H0Z', hill) : path('M0 ' + h * .86 + 'Q' + w * (.3 - sh / 2) + ' ' + h * (.55 + sh / 3) + ' ' + w * .6 + ' ' + h * .85 + 'T' + w + ' ' + h * (.8 + sh / 4) + 'V' + h + 'H0Z', hill),
+      peaks ? '' : path('M0 ' + h * .86 + 'Q' + w * (.3 - sh / 2) + ' ' + h * (.55 + sh / 3) + ' ' + w * .6 + ' ' + h * .85 + 'T' + w + ' ' + h * (.8 + sh / 4), 'k5', ' stroke-width="1.5" opacity=".45"'),
+      path('M0 ' + h + 'V' + h * .96 + 'H' + w + 'V' + h + 'Z', 'a-sh', ' opacity=".5"')].join('');
   },
-  diagram: (w, h) => [rect(0, 0, w, h, 'a-bg'), rect(w * .06, h * .38, w * .24, h * .24, 'a-5', 6, ' stroke-width="2"'), rect(w * .38, h * .12, w * .24, h * .24, 'a-5', 6, ' stroke-width="2"'), rect(w * .38, h * .64, w * .24, h * .24, 'a-5', 6, ' stroke-width="2"'), rect(w * .7, h * .38, w * .24, h * .24, 'a-1', 6),
-    path(`M${w * .3} ${h * .5}H${w * .34}V${h * .24}H${w * .38}M${w * .34} ${h * .5}V${h * .76}H${w * .38}M${w * .62} ${h * .24}H${w * .66}V${h * .5}H${w * .7}M${w * .62} ${h * .76}H${w * .66}V${h * .5}`, 'a-line', ' stroke-width="2"')].join(''),
+  // A flow diagram: four nodes joined by elbow connectors, each node carries an icon dot and two caption bars so it reads as labelled.
+  diagram: (w, h) => {
+    const node = (x, y, bw, bh, c, hot) => [rect(x, y + 2, bw, bh, 'a-sh', 8), rect(x, y, bw, bh, c, 8, ' stroke-width="1.5"'), circle(x + bw * .2, y + bh * .5, bh * .16, hot ? 'a-5' : 'a-1'), rect(x + bw * .38, y + bh * .34, bw * .46, bh * .12, hot ? 'a-5' : 'a-3', bh * .06, ' opacity=".9"'), rect(x + bw * .38, y + bh * .56, bw * .3, bh * .1, hot ? 'a-5' : 'a-4', bh * .05, ' opacity=".5"')].join('');
+    const nw = w * .25, nh = h * .24;
+    return [rect(0, 0, w, h, 'a-bg'), path('M' + w * .31 + ' ' + h * .5 + 'H' + w * .345 + 'V' + h * .25 + 'H' + w * .375 + 'M' + w * .345 + ' ' + h * .5 + 'V' + h * .75 + 'H' + w * .375 + 'M' + w * .625 + ' ' + h * .25 + 'H' + w * .655 + 'V' + h * .5 + 'H' + w * .685 + 'M' + w * .625 + ' ' + h * .75 + 'H' + w * .655 + 'V' + h * .5, 'a-line', ' stroke-width="2"'),
+      path('M' + w * .372 + ' ' + h * .23 + 'L' + w * .38 + ' ' + h * .25 + 'L' + w * .372 + ' ' + h * .27 + 'M' + w * .372 + ' ' + h * .73 + 'L' + w * .38 + ' ' + h * .75 + 'L' + w * .372 + ' ' + h * .77 + 'M' + w * .68 + ' ' + h * .48 + 'L' + w * .688 + ' ' + h * .5 + 'L' + w * .68 + ' ' + h * .52, 'a-line', ' stroke-width="2"'),
+      node(w * .06, h * .38, nw, nh, 'a-5'), node(w * .38, h * .12, nw, nh, 'a-5'), node(w * .38, h * .64, nw, nh, 'a-5'), node(w * .69, h * .38, nw, nh, 'a-1', true)].join('');
+  },
   device: (w, h, o, v, id) => deviceMock(w, h, id ?? 'm0'),
   map: (w, h) => [rect(0, 0, w, h, 'a-6'), rect(w * .08, h * .12, w * .26, h * .28, 'a-bg', 4), rect(w * .42, h * .08, w * .2, h * .36, 'a-bg', 4), rect(w * .7, h * .14, w * .22, h * .24, 'a-bg', 4), rect(w * .1, h * .56, w * .3, h * .3, 'a-bg', 4), rect(w * .5, h * .58, w * .4, h * .28, 'a-bg', 4),
     path(`M0 ${h * .48}H${w}M${w * .38} 0V${h}M${w * .66} 0V${h}`, 'a-line', ' stroke-width="6" opacity=".6"'), path(`M${w * .5} ${h * .36}c-${w * .06} 0-${w * .06} -${h * .2} 0 -${h * .2}s${w * .06} ${h * .2} 0 ${h * .2}Z`, 'a-2'), circle(w * .5, h * .2, h * .05, 'a-5')].join(''),

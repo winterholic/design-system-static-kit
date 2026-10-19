@@ -199,24 +199,25 @@ add('admin-table', '관리자 목록', 'listing', 'ledger', '레저', [
 ], {chrome: chrome(nav(['주문', 'bag'], ['상품', 'tag'], ['고객', 'users'], ['정산', 'dollar'], ['설정', 'settings']), null, '레저 · 정적 데모', null)});
 
 add('project-board', '프로젝트 보드', 'dashboard', 'hub', '허브', [
-  head('릴리스 2.0 보드', '다음 릴리스까지 12일 남았습니다.', {actions: [A('작업 추가', 'primary')]}),
+  head('릴리스 2.4 보드', '다음 릴리스까지 12일 남았습니다. 접근성 점검이 가장 급해요.', {actions: [A('작업 추가', 'primary')]}),
+  grid('three', metric('남은 작업', '10개', '24개 중 14개 완료', 'down', '-4'), metric('이번 주 완료', '9개', '지난주보다', 'up', '+3'), metric('지연 위험', '2개', '접근성·결제 검수', 'up', '+1')),
   {type: 'progress', label: '릴리스 진행률', value: 58, detail: '24개 중 14개 완료', tone: 'brand'},
   {type: 'kanban', children: [
-    {type: 'lane', title: '할 일', children: [{type: 'task', title: '알림 설정 화면', label: '디자인', assignee: '김다선', priority: '보통'}, {type: 'task', title: '접근성 점검', label: 'QA', priority: '높음'}]},
-    {type: 'lane', title: '진행 중', children: [{type: 'task', title: '대시보드 차트', label: '개발', assignee: '이지훈', priority: '높음'}, {type: 'task', title: '온보딩 문구', label: '문서', assignee: '박서연', priority: '낮음'}]},
-    {type: 'lane', title: '검토', children: [{type: 'task', title: '결제 흐름', label: '개발', assignee: '최민준', priority: '높음'}]},
-    {type: 'lane', title: '완료', children: [{type: 'task', title: '로그인 개선', label: '개발', assignee: '정하늘'}]},
+    {type: 'lane', title: '할 일', children: [{type: 'task', title: '알림 설정 화면 시안', label: '디자인', assignee: '김다선', priority: '보통'}, {type: 'task', title: '접근성 점검 (스크린리더)', label: 'QA', assignee: '최민준', priority: '높음'}, {type: 'task', title: '릴리스 노트 초안', label: '문서', assignee: '박서연', priority: '낮음'}, {type: 'task', title: '다크 모드 아이콘 정리', label: '디자인', priority: '보통'}]},
+    {type: 'lane', title: '진행 중', children: [{type: 'task', title: '대시보드 차트 개선', label: '개발', assignee: '이지훈', priority: '높음'}, {type: 'task', title: '온보딩 문구 검수', label: '문서', assignee: '박서연', priority: '낮음'}, {type: 'task', title: '결제 오류 메시지 정리', label: '개발', assignee: '정하늘', priority: '보통'}]},
+    {type: 'lane', title: '검토', children: [{type: 'task', title: '결제 흐름 리팩터링', label: '개발', assignee: '최민준', priority: '높음'}, {type: 'task', title: '검색 필터 개선', label: '개발', assignee: '이지훈', priority: '보통'}]},
+    {type: 'lane', title: '완료', children: [{type: 'task', title: '로그인 개선', label: '개발', assignee: '정하늘'}, {type: 'task', title: '메일 템플릿 교체', label: '디자인', assignee: '김다선'}, {type: 'task', title: '알림 권한 안내 문구', label: '문서', assignee: '박서연'}]},
   ]},
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
 add('inbox', '메시지함', 'community', 'hub', '허브', [
   head('받은 메시지', '읽지 않은 메시지 2개'),
-  {type: 'master-detail', title: '메시지 목록', items: [{title: '디자인 리뷰 일정', meta: '김다선 · 10:20', preview: '내일 오후 2시에 만나요.', state: 'unread'}, {title: '배포 안내', meta: '이지훈 · 어제', preview: '배포가 완료되었습니다.', state: 'unread'}, {title: '회의록 공유', meta: '박서연 · 월요일', preview: '지난 회의록을 정리했어요.'}, {title: '다음 주 일정', meta: '최민준 · 지난주', preview: '일정 확인 부탁드립니다.'}], selected: 0, detail: {title: '디자인 리뷰 일정', meta: '김다선 · 오늘 10:20', body: '안녕하세요. 내일 오후 2시에 디자인 리뷰를 진행하려고 합니다.\n\n준비하실 자료는 현재 시안과 접근성 점검 결과입니다. 참석이 어려우시면 알려 주세요.'}},
+  {type: 'master-detail', title: '메시지 목록', items: [{title: '디자인 리뷰 일정', meta: '김다선 · 10:20', preview: '내일 오후 2시에 만나요. 시안과 점검 결과를 미리 봐 주세요.', state: 'unread'}, {title: '2.4 배포 안내', meta: '이지훈 · 어제', preview: '배포가 완료되었습니다. 모니터링은 오늘 저녁까지입니다.', state: 'unread'}, {title: '회의록 공유', meta: '박서연 · 월요일', preview: '지난 회의록을 정리했어요. 결정 사항에 표시해 두었습니다.'}, {title: '다음 주 일정 확인', meta: '최민준 · 지난주', preview: '일정 확인 부탁드립니다. 겹치는 회의가 두 건 있어요.'}, {title: '접근성 점검 결과', meta: '정하늘 · 지난주', preview: '스크린리더 점검에서 세 곳의 이름이 비어 있었습니다.'}, {title: '신규 입사자 안내', meta: '한유진 · 10월 12일', preview: '첫 주 일정과 계정 발급 방법을 정리해 두었어요.'}], selected: 0, detail: {title: '디자인 리뷰 일정', meta: '김다선 · 오늘 10:20', body: '안녕하세요. 내일 오후 2시에 디자인 리뷰를 진행하려고 합니다.\n\n준비하실 자료는 현재 시안과 접근성 점검 결과입니다. 참석이 어려우시면 알려 주세요.\n\n회의가 끝나면 결정 사항은 이 스레드에 정리해 두겠습니다.'}},
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
 add('team-chat', '팀 대화', 'community', 'hub', '허브', [
-  head('#디자인-시스템', '멤버 12명'),
-  {type: 'chat', title: '오늘의 대화', messages: [{from: 'them', name: '김다선', text: '새 팔레트 후보 올렸어요. 한번 봐 주세요.', time: '10:02'}, {from: 'me', name: '나', text: '확인했어요. 두 번째가 대비가 좋네요.', time: '10:05'}, {from: 'them', name: '이지훈', text: '다크 모드에서도 4.5:1 넘는지 확인할게요.', time: '10:08'}, {from: 'me', name: '나', text: '좋아요. 결과 공유 부탁해요.', time: '10:09'}]},
+  head('#디자인-시스템', '멤버 12명 · 오늘 메시지 24개'),
+  {type: 'chat', title: '오늘의 대화', messages: [{from: 'them', name: '김다선', text: '새 팔레트 후보 올렸어요. 한번 봐 주세요.', time: '10:02'}, {from: 'me', name: '나', text: '확인했어요. 두 번째가 대비가 좋네요.', time: '10:05'}, {from: 'them', name: '이지훈', text: '다크 모드에서도 4.5:1 넘는지 확인할게요. 점심 전까지 결과 올릴게요.', time: '10:08'}, {from: 'me', name: '나', text: '좋아요. 결과 공유 부탁해요.', time: '10:09'}, {from: 'them', name: '박서연', text: '버튼 hover 색도 같이 봐 주세요. 지금은 너무 옅어 보여요.', time: '10:14'}, {from: 'them', name: '김다선', text: '네, 오후 회의 전에 같이 정리해서 올릴게요.', time: '10:16'}]},
   {type: 'form', title: '메시지 보내기', variant: 'inline', fields: [field('message', '메시지', 'text', {placeholder: '메시지를 입력하세요'})], submitLabel: '보내기'},
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
@@ -263,9 +264,9 @@ add('docs-reference', '레퍼런스 문서', 'docs', 'manual', '매뉴얼', [
   head('API 시작하기', '인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.', {eyebrow: '가이드'}),
   {type: 'aside', side: 'end', label: '이 문서의 목차', sticky: 'yes', children: [
     section('시작하기', [
-      section('설치', [prose('요구 사항', 'Node.js 20 이상이 필요합니다. 패키지는 의존성이 없고, 브라우저와 서버에서 같은 코드로 동작합니다.'), {type: 'code', label: '터미널', language: 'bash', code: 'npm install @flowworks/sdk'}], {anchor: 'install'}),
+      section('설치', [prose('요구 사항', 'Node.js 20 이상이 필요합니다. 패키지는 의존성이 없고, 브라우저와 서버에서 같은 코드로 동작합니다.'), {type: 'tabs', variant: 'underline', children: [{type: 'tab', label: 'npm', children: [{type: 'code', label: '터미널', language: 'bash', code: 'npm install @flowworks/sdk'}]}, {type: 'tab', label: 'pnpm', children: [{type: 'code', label: '터미널', language: 'bash', code: 'pnpm add @flowworks/sdk'}]}, {type: 'tab', label: 'yarn', children: [{type: 'code', label: '터미널', language: 'bash', code: 'yarn add @flowworks/sdk'}]}]}], {anchor: 'install'}),
       section('인증', [prose('토큰 만들기', '설정 > 개발자 메뉴에서 토큰을 만들어 환경 변수에 저장하세요. 토큰은 한 번만 보여 드립니다.'), {type: 'notice', tone: 'warning', title: '토큰을 코드에 넣지 마세요', body: '저장소에 올라간 토큰은 즉시 폐기해야 합니다. 노출이 의심되면 설정에서 바로 재발급할 수 있어요.'}], {anchor: 'auth'}),
-      section('첫 요청', [prose('프로젝트 목록 불러오기', '아래 코드는 내 워크스페이스의 프로젝트를 최근 수정순으로 가져옵니다.'), {type: 'code', label: 'list-projects.js', language: 'js', code: 'import {Client} from "@flowworks/sdk";\n\nconst client = new Client({token: process.env.FLOW_TOKEN});\nconst {items} = await client.projects.list({limit: 20, sort: "-updatedAt"});\nconsole.log(items.map(p => p.name));'}, {type: 'table', title: '요청 매개변수', caption: 'projects.list 매개변수', columns: ['이름', '타입', '기본값', '설명'], rows: [['limit', '정수', '20', '한 번에 가져올 개수(최대 100)'], ['sort', '문자열', '-updatedAt', '정렬 기준. 앞에 -를 붙이면 내림차순'], ['cursor', '문자열', '없음', '다음 페이지를 가리키는 값']], state: 'ready'}], {anchor: 'first'}),
+      section('첫 요청', [prose('프로젝트 목록 불러오기', '아래 코드는 내 워크스페이스의 프로젝트를 최근 수정순으로 가져옵니다.'), {type: 'code', label: 'list-projects.js', language: 'js', code: 'import {Client} from "@flowworks/sdk";\n\nconst client = new Client({token: process.env.FLOW_TOKEN});\nconst {items} = await client.projects.list({limit: 20, sort: "-updatedAt"});\nconsole.log(items.map(p => p.name));'}, {...media('diagram', '16:9', '클라이언트, API 게이트웨이, 프로젝트 서비스로 이어지는 요청 흐름도', '그림 1. 요청은 게이트웨이에서 토큰을 확인한 뒤 프로젝트 서비스로 전달됩니다.')}, {type: 'table', title: '요청 매개변수', caption: 'projects.list 매개변수', columns: ['이름', '타입', '기본값', '설명'], rows: [['limit', '정수', '20', '한 번에 가져올 개수(최대 100)'], ['sort', '문자열', '-updatedAt', '정렬 기준. 앞에 -를 붙이면 내림차순'], ['cursor', '문자열', '없음', '다음 페이지를 가리키는 값']], state: 'ready'}], {anchor: 'first'}),
       section('오류 처리', [{type: 'table', title: '응답 코드', caption: '자주 만나는 응답 코드', columns: ['코드', '의미', '대응'], rows: [['401', '토큰이 없거나 만료됨', '토큰을 다시 발급하세요'], ['429', '요청이 너무 많음', 'Retry-After 헤더만큼 기다린 뒤 재시도'], ['503', '일시적인 서버 점검', '잠시 후 다시 시도하세요']], state: 'ready'}, {type: 'faq', title: '자주 묻는 질문', items: [{question: '요청 한도는 얼마인가요?', answer: '토큰당 분당 600회입니다. 한도를 넘으면 429 응답과 함께 기다려야 할 시간이 헤더로 내려와요.'}, {question: '브라우저에서 바로 호출해도 되나요?', answer: '읽기 전용 토큰에 한해 가능합니다. 쓰기 토큰은 서버에서만 사용하세요.'}]}], {anchor: 'errors'}),
     ]),
     {type: 'toc', title: '이 문서의 목차'}]},
@@ -289,6 +290,7 @@ add('article', '읽는 문서', 'article', 'editorial', '디자인 노트', [
 
 add('blog-index', '블로그 목록', 'blog', 'journal', '느린 기록', [
   head('느린 기록', '천천히 쓰고 오래 남기는 글'),
+  {type: 'filter-bar', placeholder: '글 검색', filters: ['전체', '디자인 시스템', '접근성', '색', '도구'], selected: 0},
   card('규칙이 자유를 만든다', '처음부터 모든 것이 열려 있으면 결정이 오래 걸립니다. 허용되는 값을 먼저 정하면 그 안에서 더 다양한 선택을 빠르게 할 수 있다는 이야기.', {variant: 'horizontal', visual: 'photo', motif: 'grid', ratio: '4:3', meta: '10월 18일 · 6분', badge: '디자인 시스템', author: '김다선', action: A('읽기', 'ghost')}),
   {type: 'grid', columns: 'three', children: [card('색은 의미를 따른다', '팔레트를 고르기 전에 역할을 먼저 정하는 방법.', {variant: 'media', visual: 'photo', motif: 'swatches', ratio: '16:9', meta: '10월 11일 · 5분', badge: '색', author: '이지훈', action: A('읽기', 'ghost')}), card('상태를 먼저 그린다', '로딩, 빈 화면, 오류가 제품의 완성도를 만듭니다.', {variant: 'media', visual: 'photo', motif: 'states', ratio: '16:9', meta: '10월 4일 · 7분', badge: '인터랙션', author: '박서연', action: A('읽기', 'ghost')}), card('접근성은 기본값', '나중에 붙이지 않고 처음부터 둘 때 드는 비용을 따져 봤어요.', {variant: 'media', visual: 'photo', motif: 'type', ratio: '16:9', meta: '9월 27일 · 4분', badge: '접근성', author: '최민준', action: A('읽기', 'ghost')})]},
   {type: 'tags', title: '주제', items: ['디자인 시스템', '접근성', '타이포그래피', '색', '도구', '회고'], variant: 'chips'},
@@ -442,8 +444,9 @@ add('music-player', '음악 플레이어', 'general', 'nocturne', '녹턴', [
 // ---------- form / settings ----------
 add('contact', '문의하기', 'form', 'clinic', '맑은숨', [
   head('문의하기', '영업일 기준 하루 안에 답변드립니다.'),
-  {type: 'form', title: '문의 내용', intro: '데모이므로 입력은 저장되거나 전송되지 않습니다.', fields: [field('name', '이름', 'text', {placeholder: '이름을 입력하세요'}), field('email', '이메일', 'email', {placeholder: 'name@example.com'}), field('topic', '문의 유형', 'select', {options: ['진료 문의', '예약 변경', '기타']}), field('body', '내용', 'textarea', {placeholder: '문의하실 내용을 적어 주세요', help: '개인정보는 적지 않아도 됩니다.'}), field('agree', '개인정보 수집에 동의합니다', 'checkbox')], submitLabel: '입력 확인'},
-  {type: 'properties', title: '연락처', layout: 'inline', items: [{label: '전화', value: '02-000-0000'}, {label: '운영', value: '평일 09:00~18:00'}]},
+  {type: 'aside', side: 'end', label: '연락처', size: 'narrow', children: [
+    {type: 'form', title: '문의 내용', intro: '데모이므로 입력은 저장되거나 전송되지 않습니다.', fields: [field('name', '이름', 'text', {placeholder: '이름을 입력하세요'}), field('email', '이메일', 'email', {placeholder: 'name@example.com'}), field('topic', '문의 유형', 'select', {options: ['진료 문의', '예약 변경', '기타']}), field('body', '내용', 'textarea', {placeholder: '문의하실 내용을 적어 주세요', help: '개인정보는 적지 않아도 됩니다.'}), field('agree', '개인정보 수집에 동의합니다', 'checkbox')], submitLabel: '입력 확인'},
+    {type: 'properties', title: '연락처', items: [{label: '전화', value: '02-000-0000'}, {label: '운영 시간', value: '평일 09:00~18:00'}, {label: '점심시간', value: '13:00~14:00'}, {label: '주소', value: '서울 성동구 예시로 5, 2층'}]}]},
 ], {chrome: chrome(nav(['진료안내', 'clock'], ['예약', 'calendar'], ['문의', 'mail']), '진료 예약', '© 2026 맑은숨 내과의원', FOOT)});
 
 add('onboarding-wizard', '온보딩 단계', 'form', 'learning', '러닝메이트', [

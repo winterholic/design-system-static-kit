@@ -996,10 +996,46 @@
                       "body": "Node.js 20 이상이 필요합니다. 패키지는 의존성이 없고, 브라우저와 서버에서 같은 코드로 동작합니다."
                     },
                     {
-                      "type": "code",
-                      "label": "터미널",
-                      "language": "bash",
-                      "code": "npm install @flowworks/sdk"
+                      "type": "tabs",
+                      "variant": "underline",
+                      "children": [
+                        {
+                          "type": "tab",
+                          "label": "npm",
+                          "children": [
+                            {
+                              "type": "code",
+                              "label": "터미널",
+                              "language": "bash",
+                              "code": "npm install @flowworks/sdk"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "tab",
+                          "label": "pnpm",
+                          "children": [
+                            {
+                              "type": "code",
+                              "label": "터미널",
+                              "language": "bash",
+                              "code": "pnpm add @flowworks/sdk"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "tab",
+                          "label": "yarn",
+                          "children": [
+                            {
+                              "type": "code",
+                              "label": "터미널",
+                              "language": "bash",
+                              "code": "yarn add @flowworks/sdk"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ],
                   "anchor": "install"
@@ -1036,6 +1072,13 @@
                       "label": "list-projects.js",
                       "language": "js",
                       "code": "import {Client} from \"@flowworks/sdk\";\n\nconst client = new Client({token: process.env.FLOW_TOKEN});\nconst {items} = await client.projects.list({limit: 20, sort: \"-updatedAt\"});\nconsole.log(items.map(p => p.name));"
+                    },
+                    {
+                      "type": "media",
+                      "kind": "diagram",
+                      "ratio": "16:9",
+                      "alt": "클라이언트, API 게이트웨이, 프로젝트 서비스로 이어지는 요청 흐름도",
+                      "caption": "그림 1. 요청은 게이트웨이에서 토큰을 확인한 뒤 프로젝트 서비스로 전달됩니다."
                     },
                     {
                       "type": "table",
@@ -1135,10 +1178,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "7e722d28651b31c9cc75e4f293e00675a2fb32918e9a9f2241eae2a2d3310bad",
-      "tokens.css": "b68112dbcfa40c6549b9d22f6c68de2cf772bf1020d52adfdc8601d867968bfd",
+      "index.html": "35d84f62febcbe9d52c8277da42ccb4e15d7a9caaeab419875829fd44c2622b2",
+      "tokens.css": "ffd8a0b002fbf314d583ff4dd0aa990499a82c24c1e15462745dbe0400c4f355",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
-      "blueprint.json": "24aca5a7b3a6adcec1f5652d95928c0afa3426cd3838c9116feff30e94e43505"
+      "blueprint.json": "3263b2a8a41d09ef721f7358c8b3553e94cf50e845fb222d615f5c6b00e7b190"
     }
   }
 }

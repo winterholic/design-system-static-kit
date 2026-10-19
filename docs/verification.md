@@ -138,3 +138,19 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 - 수정 커밋 `2005405`의 GitHub Actions Verify → success (run 39264277552, 2m43s). 첫 푸시 `9f4f990`은 위 워크벤치 넘침으로 실패했다.
 - 배포: 같은 Vercel 프로젝트 `design-system-static-kit`, 배포 `design-system-static-hj3k3wb6e`, 별칭 https://design-system-static-kit.vercel.app. 배포본에서 `/examples/saas-landing/`의 `.kit-hero h2`가 64px, 섹션 패딩이 `80px 132px`, `/test-lab/cases/a-saas-landing--brutalist/`·`/gallery/`가 새 CSS(`--kit-display`, `--kit-bleed`)로 내려오는 것을 확인했다.
 - 배포 중 실수: `vercel deploy site`를 저장소 루트에서 실행하면 CLI가 `site`라는 이름의 **새 프로젝트**를 만든다(루트 `.vercel` 링크를 쓰지 않음). 이번에 `site` 프로젝트가 생겼고(22:29, 내 배포 3건뿐) 확인 후 삭제했다. 다른 프로젝트는 건드리지 않았다. 올바른 방법은 링크된 디렉터리에서 배포하는 것이다: `site`를 `.qa/deploy/`로 복사하고 `.vercel/project.json`(프로젝트 `design-system-static-kit`)을 넣은 뒤 그 안에서 `vercel deploy --prod --yes --archive=tgz`. Hobby 플랜의 파일 수 업로드 한도(`api-upload-free`, 5000개)는 `--archive=tgz`로 피했다.
+
+## UI 수준 상향 검증 (2026-10-20)
+
+배경·진단·원칙은 `docs/ui-level-up.md`. 여기에는 실행한 검증만 적는다. macOS·Node 26·Chromium.
+
+- `npm run verify` → `ℹ tests 63 / pass 63 / fail 0`, `AUDIT: … 33600 used contrast pairs pass (tightest chart1/canvas 3.00:3 …)`, `REPRODUCIBLE: 3928 generated files match a fresh build byte for byte.`
+- `node scripts/test-lab/generate.mjs --verify` → `VERIFY: checked=3452 mismatches=0 skipped-set-match=true dups-match=true`
+- `node scripts/test-lab/check.mjs` → `CHECK: 3380 cases, 3380 pass, 0 fail, codes={}`
+- `npm run test:browser` → `17 passed`
+- `node scripts/design-qa/sweep.mjs`, `--font "Nanum Gothic"`, `--font "Verdana"` → 세 번 모두 `SWEEP: 3380 cases × 2 widths, overflow=0`
+- 계약 테스트: 기존 56개는 그대로(삭제·완화 없음). `tests/motifs.test.mjs` 7개 추가: motif 목록과 그림의 일치, 모든 motif×5비율이 토큰 클래스만 쓰고 하드코딩 색·외부 참조·NaN이 없음, 같은 motif 반복 시 gradient id 유일·결정적 출력, motif 오용 거부(`VARIANT_REQUIRES`·`ENUM`), 상품 카드 필드 규칙과 할인율 계산, 템플릿 61개의 SVG id 유일·이름 있는 그림, 요약 썸네일·쇼케이스 갤러리.
+- `docs/evidence/contrast.json`은 바뀌지 않았다(신규 토큰 0개, 대비 하한 불변).
+
+**테스트 범위 축소를 피한 일.** about-team의 이미지에 motif를 넣었더니 ornament 축에 반응하지 않는 그림이라 test-lab의 `d-axis-ornament-dots`가 중복으로 판정돼 사례가 3,379건으로 줄었다. ornament 축을 시험하는 사례가 사라지는 것이어서 about-team은 이전 그림으로 되돌렸고 3,380건이 복원됐다. solar-landing의 히어로도 ornament 그림을 유지한다(`tests/catalog.test.mjs`가 이 템플릿으로 ornament=none일 때 히어로 그림이 없어짐을 확인한다).
+
+**육안·계측 범위.** 배포본 30개 템플릿×2폭 전/후, 61개 템플릿 390px 전수, 극단 테마 7종(neon+dark·brutalist·retro·nocturne+dark·magazine·playful+dark), 시드 20261020 무작위 10종, 회색조 위계 확인 3종. ui-refine-loop T0(`quick.mjs`) 영수증은 product-listing으로 1회 받았다(보고서에 전문). 실제 Safari·iOS, 스크린리더는 미검증이다.
