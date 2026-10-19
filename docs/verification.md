@@ -70,3 +70,45 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 - `npm run verify` 전체 통과(계약 56/56 — 기존 50 + 검사기 6, 감사·문서·빌드, `REPRODUCIBLE: 3925 generated files`).
 - 브라우저 검사(`e2e/lab-pages.spec.mjs`: stress 전수 360/390/768/1280/1600 오버플로우·콘솔·구조 감사, 템플릿 × 회전 테마 2종 390px, 대표·경계 24종 × 390/1280 스크린샷 → `test-results/test-lab/`)는 로컬 미실행. CI 결과를 별도로 확인할 것.
 - 미검증(여전함): 실제 Safari/iOS·스크린리더, 허용 조합 전체의 육안 미감(3,380 중 육안 0), Coolors 재사용 조건, Katalog 원 발표.
+
+## 시각 품질 개선 라운드 (2026-10-19)
+
+피드백: "테스트 샘플로 나온 디자인 결과물 품질이 너무 심각하다." 구조·검증 체계는 그대로 두고 '보기 좋은 결과'만 올렸다. 모든 수정은 생성기·부품 CSS·렌더·템플릿 데이터에서 했고 생성 HTML은 손대지 않았다. 기준 자료는 winterholic-design-system(`ttakkari/`)의 타이포 스케일·간격 리듬·표면/경계/그림자 위계·컴포넌트 디테일이다. 코드·토큰은 복사하지 않았고 위계 원칙만 참고했다.
+
+**진단**: 예제 27개(대시보드·랜딩·문서·커머스·인증·오류, 라이트/다크, 밀도·라운드 상이) × 390/1280px = 54장을 Chromium으로 찍어 직접 봤다(`scripts/design-qa/shoot.mjs`). 이후 축 극단(hard·glow·dramatic·bubble·pill·solid 아이콘, 셸 6종) test-lab 사례 16개를 추가로 봤다.
+
+| # | 문제 | 원인 | 수정(위치) |
+|---|---|---|---|
+| 1 | 페이지 제목과 히어로(또는 상태 화면)에 같은 크기의 큰 제목이 연달아 나옴(랜딩·오류·행사 등 다수) | 템플릿이 `page-header`(h1) + `hero`/`empty-state`(h2)를 둘 다 큰 글씨로 렌더 | `render/nodes.mjs` `R.page`가 이웃을 보고 `data-lead` 부여, CSS가 컴팩트 리드로 낮추거나(제목 동일 시) 시각적으로 접음. h1은 DOM에 유지 |
+| 2 | 상품 목록 격자가 300px 열에 짜부라져 글자가 세로로 깨짐 | 템플릿의 `aside` 자식 순서가 반대(본문↔보조) | `templates.mjs` product-listing·profile 순서 교정 |
+| 3 | 갤러리가 폭을 못 채우고 오른쪽이 빔 | CSS columns 기반 마소너리 | 모자이크 그리드(첫 칸 2×2, 캡션은 이미지 위 칩), 일반 갤러리는 `auto-fit` |
+| 4 | 지표 카드: 위쪽 모서리에 깨진 액센트선, 높이 불균등, 모바일에서 1열 전부 차지 | `border-top` + radius | 액센트선 제거, 값·변화 칩·보조문구를 `metric-foot` 한 줄로, 모바일 2열 |
+| 5 | 요금제: 가격이 본문 크기, 추천 배지 때문에 카드 간 줄 어긋남 | 가격 스타일이 `buy-box` 청크에만 있었고 배지가 흐름 안에 있음 | 가격 40px 디스플레이, 배지 절대배치, 구분선·체크 칩, 추천 카드 틴트. `.kit-price`를 공용 CSS로 이동 |
+| 6 | 기능 목록 아이콘이 맨몸(스타일 없음) | `.kit-card-icon`이 `card` 청크에만 있어 카드 없는 페이지에서 누락 | 공용 CSS로 이동, 기능 항목을 카드화(`list` 레이아웃은 좌 제목/우 설명 행) |
+| 7 | 표: 헤더·본문 구분 없음, 상태가 평문, 다크 줄무늬가 탁함, 모바일에서 한글이 낱글자로 쪼개짐 | 단일 스타일, `overflow-wrap:anywhere` | 헤더 면·행 호버, `상태` 열을 점(dot) 배지로(글자색은 감사된 토큰 유지, 점만 색), 줄무늬는 `color-mix(text 4%)`, `break-word` |
+| 8 | 섹션 제목과 부품 사이 간격 이중, 중첩 제목이 같은 크기로 쌓임(문서) | 부품마다 `margin-top: gap` | `kit-section-head` 묶음, 직후 부품 margin 0, 중첩 소제목 강등, h4~h6 별도 크기 |
+| 9 | 인증 페이지: 제목은 왼쪽, 카드는 가운데, 폼이 넓게 퍼짐 | 페이지 유형별 규칙 없음 | `data-page` 속성 → 인증 560px·가운데 정렬, 오류 페이지 세로 가운데 |
+| 10 | `solid` 아이콘에서 원형 안쪽 선이 같은 색이라 덩어리로 보임 | 닫힌 도형 100% 채움 | 채움 58%(안쪽 선이 읽힘) |
+| 11 | 모바일 헤더가 3줄(로고·메뉴·버튼 각각). 수정 중 `minimal` 셸 로고가 세로로 깨지는 회귀가 생겨 스크린샷으로 잡아 고침 | flex-wrap 순서 | 브랜드+액션 1줄, 메뉴 2줄, `minimal`·`centered` 보정 |
+| 12 | 히어로·CTA·인용·팀·FAQ·로고 줄이 평면적, 고스트 버튼 들여쓰기 | 위계 부족 | 히어로 그라데이션·칩형 eyebrow·리드 글자 크기, CTA·인용·팀 카드·FAQ 폭 정리, 고스트 버튼 패딩 |
+| 13 | grid 배경 격자선이 시끄러움 | 선 100% | 45% 투명 |
+
+**반복**: 총 4회(`.qa/before` → `iter1`~`iter4` → `after`). 2회차에서 갤러리·지표 notch·다크 표 헤더(거의 검정)를 다시 고쳤고, 3~4회차에서 모바일 2열·minimal 셸 회귀를 고쳤다. 전/후 나란히 이미지는 outbox `compare/`에 있다.
+
+**검증(2026-10-19, macOS·Node 22, Chromium)**
+
+- `npm run verify` → `ℹ tests 56 / pass 56 / fail 0`, `AUDIT: … 33600 used contrast pairs pass`, `REPRODUCIBLE: 3925 generated files match a fresh build byte for byte.`
+- `node scripts/test-lab/generate.mjs --verify` → `VERIFY: checked=3452 mismatches=0 …`
+- `node scripts/test-lab/check.mjs` → `CHECK: 3380 cases, 3380 pass, 0 fail`
+- `npm run test:browser` → `17 passed`
+- `node scripts/design-qa/sweep.mjs`(신규) → 3,380 사례 × 390/1280px `overflow=0`
+- 계약 테스트 수는 56개 그대로(테스트 추가·삭제·완화 없음). 카탈로그 밖 값 거부·금지 조합·대비 검사는 손대지 않았다.
+
+**알려진 한계**
+
+- 육안으로 본 것은 대표 표본(예제 27×2 + 극단 사례 16)이다. 3,380 전수 육안이 아니다.
+- 히어로·CTA·추천 요금제 그라데이션 위 글자는 양 끝 토큰(soft, accentSoft·surface)이 감사를 통과한 값이라는 근거만 있고 중간 보간 지점 대비를 직접 측정하지는 않았다(확인 필요).
+- `상태` 열 점 배지는 열 이름(상태·status·결과)과 낱말 사전에 의존한 휴리스틱이다. 사전에 없는 말은 중립 점으로 나온다.
+- `flat` 깊이 + 흰 팔레트 조합은 카드 경계가 사라져 여전히 밋밋하다.
+- 타임라인 점, 문서의 중첩 제목 스택, 사이드바 셸의 100vh 배경은 개선 여지가 남았다.
+- 실제 Safari/iOS, 스크린리더, 고대비 모드: 미검증(Chromium만).

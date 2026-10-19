@@ -106,43 +106,6 @@
         "label": "필터",
         "children": [
           {
-            "type": "form",
-            "title": "필터",
-            "variant": "stacked",
-            "fields": [
-              {
-                "id": "price",
-                "label": "가격대",
-                "type": "select",
-                "options": [
-                  "전체",
-                  "3만원 이하",
-                  "3~5만원",
-                  "5만원 이상"
-                ],
-                "requirement": "optional"
-              },
-              {
-                "id": "stock",
-                "label": "재고 있는 상품만",
-                "type": "switch",
-                "requirement": "optional"
-              },
-              {
-                "id": "color",
-                "label": "색상",
-                "type": "radio",
-                "options": [
-                  "전체",
-                  "화이트",
-                  "컬러"
-                ],
-                "requirement": "optional"
-              }
-            ],
-            "submitLabel": "적용"
-          },
-          {
             "type": "grid",
             "columns": "three",
             "children": [
@@ -197,6 +160,43 @@
                 "ratio": "1:1"
               }
             ]
+          },
+          {
+            "type": "form",
+            "title": "필터",
+            "variant": "stacked",
+            "fields": [
+              {
+                "id": "price",
+                "label": "가격대",
+                "type": "select",
+                "options": [
+                  "전체",
+                  "3만원 이하",
+                  "3~5만원",
+                  "5만원 이상"
+                ],
+                "requirement": "optional"
+              },
+              {
+                "id": "stock",
+                "label": "재고 있는 상품만",
+                "type": "switch",
+                "requirement": "optional"
+              },
+              {
+                "id": "color",
+                "label": "색상",
+                "type": "radio",
+                "options": [
+                  "전체",
+                  "화이트",
+                  "컬러"
+                ],
+                "requirement": "optional"
+              }
+            ],
+            "submitLabel": "적용"
           }
         ]
       },

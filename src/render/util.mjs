@@ -16,6 +16,11 @@ export const button = a => `<a class="kit-button" data-variant="${a.variant}" hr
 export const initials = name => [...name.trim()][0] ?? '?';
 export const num = (n, digits = 2) => String(Math.round(n * 10 ** digits) / 10 ** digits);
 
+/** Status words → dot tone. Text color never changes (stays on the audited text tokens); only a 7px dot carries the tone. */
+const DOT_WORDS = [['danger', /취소|실패|오류|거절|반려|중단|지연|차단|환불/], ['success', /완료|성공|승인|정상|활성|도착|결제 ?완료/], ['warning', /대기|검토|예정|보류|확인 ?중|준비/], ['info', /진행|배송 ?중|처리 ?중|발송|운영/]];
+export const statusDot = text => DOT_WORDS.find(([, re]) => re.test(text))?.[0] ?? null;
+export const STATUS_HEADER = /^(상태|status|진행 ?상태|결과)$/i;
+
 export const stateMessages = {
   loading: ['불러오는 중입니다.', '잠시만 기다려 주세요.'],
   empty: ['아직 항목이 없습니다.', '새 항목을 추가하면 여기에 표시됩니다.'],

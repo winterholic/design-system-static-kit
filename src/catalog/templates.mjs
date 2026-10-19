@@ -329,8 +329,8 @@ add('product-detail', '상품 상세', 'commerce', 'commerce', '무드램프', [
 add('product-listing', '상품 목록', 'commerce', 'commerce', '무드램프', [
   head('조명', '상품 24개', {actions: [A('정렬: 인기순', 'secondary')]}),
   {type: 'aside', side: 'start', label: '필터', children: [
-    {type: 'form', title: '필터', variant: 'stacked', fields: [field('price', '가격대', 'select', {options: ['전체', '3만원 이하', '3~5만원', '5만원 이상'], requirement: 'optional'}), field('stock', '재고 있는 상품만', 'switch', {requirement: 'optional'}), field('color', '색상', 'radio', {options: ['전체', '화이트', '컬러'], requirement: 'optional'})], submitLabel: '적용'},
-    {type: 'grid', columns: 'three', children: [card('무드램프 미니', '39,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '베스트'}), card('데스크 라이트', '59,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('캔들 워머', '45,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '신상'}), card('독서등', '29,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('플로어 램프', '129,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('센서 무드등', '19,000원', {variant: 'media', visual: 'photo', ratio: '1:1'})]}]},
+    {type: 'grid', columns: 'three', children: [card('무드램프 미니', '39,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '베스트'}), card('데스크 라이트', '59,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('캔들 워머', '45,000원', {variant: 'media', visual: 'photo', ratio: '1:1', badge: '신상'}), card('독서등', '29,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('플로어 램프', '129,000원', {variant: 'media', visual: 'photo', ratio: '1:1'}), card('센서 무드등', '19,000원', {variant: 'media', visual: 'photo', ratio: '1:1'})]},
+    {type: 'form', title: '필터', variant: 'stacked', fields: [field('price', '가격대', 'select', {options: ['전체', '3만원 이하', '3~5만원', '5만원 이상'], requirement: 'optional'}), field('stock', '재고 있는 상품만', 'switch', {requirement: 'optional'}), field('color', '색상', 'radio', {options: ['전체', '화이트', '컬러'], requirement: 'optional'})], submitLabel: '적용'}]},
   {type: 'pagination', pages: 4, current: 1},
 ], {chrome: chrome([{label: '신상품', href: '#main', icon: 'sparkles'}, {label: '조명', href: '#main', icon: 'sun', mega: [{label: '스탠드', href: '#main', description: '책상과 침대맡을 위한 조명'}, {label: '독서등', href: '#main', description: '눈이 편한 집중 조명'}, {label: '무드등', href: '#main', description: '분위기를 바꾸는 작은 램프'}, {label: '플로어', href: '#main', description: '공간을 채우는 큰 조명'}]}, {label: '이벤트', href: '#main', icon: 'gift'}, {label: '고객센터', href: '#main', icon: 'message'}], '장바구니', '© 2026 무드램프', FOOT)});
 
@@ -451,8 +451,8 @@ add('settings', '설정', 'settings', 'workspace', '워크스페이스', [
 add('profile', '프로필', 'settings', 'hub', '허브', [
   head('김다선', '디자인 리드 · 서울'),
   {type: 'aside', side: 'start', label: '프로필 요약', size: 'narrow', children: [
-    {type: 'properties', title: '정보', items: [{label: '팀', value: '디자인 시스템'}, {label: '입사', value: '2022년 3월'}, {label: '시간대', value: '서울 (UTC+9)'}]},
-    {type: 'list', title: '최근 활동', variant: 'divided', items: [{title: '팔레트 후보를 추가했어요', description: '오늘 10:02', icon: 'sparkles'}, {title: '접근성 점검을 마쳤어요', description: '어제', icon: 'check-circle'}, {title: '리뷰에 댓글을 남겼어요', description: '월요일', icon: 'message'}], state: 'ready'}]},
+    {type: 'list', title: '최근 활동', variant: 'divided', items: [{title: '팔레트 후보를 추가했어요', description: '오늘 10:02', icon: 'sparkles'}, {title: '접근성 점검을 마쳤어요', description: '어제', icon: 'check-circle'}, {title: '리뷰에 댓글을 남겼어요', description: '월요일', icon: 'message'}], state: 'ready'},
+    {type: 'properties', title: '정보', items: [{label: '팀', value: '디자인 시스템'}, {label: '입사', value: '2022년 3월'}, {label: '시간대', value: '서울 (UTC+9)'}]}]},
   {type: 'tags', title: '관심사', items: ['디자인 시스템', '접근성', '타이포그래피', '모션']},
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 

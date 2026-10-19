@@ -1014,43 +1014,6 @@
           "label": "필터",
           "children": [
             {
-              "type": "form",
-              "title": "필터",
-              "variant": "stacked",
-              "fields": [
-                {
-                  "id": "price",
-                  "label": "가격대",
-                  "type": "select",
-                  "options": [
-                    "전체",
-                    "3만원 이하",
-                    "3~5만원",
-                    "5만원 이상"
-                  ],
-                  "requirement": "optional"
-                },
-                {
-                  "id": "stock",
-                  "label": "재고 있는 상품만",
-                  "type": "switch",
-                  "requirement": "optional"
-                },
-                {
-                  "id": "color",
-                  "label": "색상",
-                  "type": "radio",
-                  "options": [
-                    "전체",
-                    "화이트",
-                    "컬러"
-                  ],
-                  "requirement": "optional"
-                }
-              ],
-              "submitLabel": "적용"
-            },
-            {
               "type": "grid",
               "columns": "three",
               "children": [
@@ -1105,6 +1068,43 @@
                   "ratio": "1:1"
                 }
               ]
+            },
+            {
+              "type": "form",
+              "title": "필터",
+              "variant": "stacked",
+              "fields": [
+                {
+                  "id": "price",
+                  "label": "가격대",
+                  "type": "select",
+                  "options": [
+                    "전체",
+                    "3만원 이하",
+                    "3~5만원",
+                    "5만원 이상"
+                  ],
+                  "requirement": "optional"
+                },
+                {
+                  "id": "stock",
+                  "label": "재고 있는 상품만",
+                  "type": "switch",
+                  "requirement": "optional"
+                },
+                {
+                  "id": "color",
+                  "label": "색상",
+                  "type": "radio",
+                  "options": [
+                    "전체",
+                    "화이트",
+                    "컬러"
+                  ],
+                  "requirement": "optional"
+                }
+              ],
+              "submitLabel": "적용"
             }
           ]
         },
@@ -1119,10 +1119,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "3bb0b463c7360dc4c2e145c09c95e62cc2e9b0f81d3c6be63b276e34e25f5e10",
-      "tokens.css": "7a5e0911a3f6457cc1ffea984ea2a0a4b3f1bfe7c2d807b9a6f087a5c14a556d",
+      "index.html": "dfa5a255018664438d77a35f9c9780b0810387845450292251c11ce55ae50fd2",
+      "tokens.css": "f63de81389bbbd2a02fe77877ede4fc437b781a75b6b01bec24b4ac4e15ec0d6",
       "tokens.json": "6d20218977c9bdc7acb748925f9ea710b33fea4c373de3d71cbae8801055b82d",
-      "blueprint.json": "154bd900ff45a8c6551fc485c369f7a2d0a91636f59c7be0f912920e80796b80"
+      "blueprint.json": "a8e709e496daf9d701b1beb6ce652f2da88466d1e20ce8dfcc9ce778178cde47"
     }
   }
 }

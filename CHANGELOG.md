@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- 시각 품질 개선 라운드(카탈로그 2.0.0 그대로, 계약 테스트 56개 그대로). 생성기·토큰·부품 CSS·렌더 수준에서 고쳤고 개별 HTML 수작업은 없다. 핵심: 페이지 제목+히어로(또는 상태 화면)의 이중 디스플레이 제목을 컴팩트 리드/시각 접기로 정리, 섹션 머리말 묶음, 히어로·CTA·지표·요금제·기능목록·FAQ·표·갤러리·팀 부품 재설계, 상품 목록·프로필 템플릿의 본문/보조 순서 오류 수정, 인증·오류 페이지 폭/정렬, 모바일 헤더·지표·상품 2열, `solid` 아이콘의 지워진 안쪽 선 복구, 부품 간 CSS 의존 누락(`kit-card-icon`·`kit-price`) 수정. 자세한 문제 목록과 전/후는 `docs/verification.md`의 "시각 품질 개선 라운드".
+- 점검 도구 `scripts/design-qa/`(`shoot`·`compare`·`sweep`, 산출물은 `.qa/`로 gitignore).
+
 - Test Lab: seed 고정 결정적 생성기·정적 검사기·탐색 UI(`scripts/test-lab/`, `site/test-lab/`). 고유 HTML 3,380개(matrix 2,440 전수·팔레트×모드 428·쌍별 441·스트레스 71), 거부 입력 14종 전수 거부, 정적검사 전수 통과, `--verify` 재현검증. `npm run build`가 test-lab을 함께 생성하고 `check-generated`가 3,925파일 재현을 확인한다. CI 브라우저 스펙 `e2e/lab-pages.spec.mjs` 추가. 카탈로그 버전은 2.0.0 그대로.
 
 ## 2.0.0 · 2026-10-18
