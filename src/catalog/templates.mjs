@@ -72,9 +72,9 @@ add('agency-home', '에이전시 홈', 'portfolio', 'studio', '스튜디오 오�
 
 add('event-landing', '행사 안내', 'landing', 'playful', '디자인 데이 2026', [
   head('올해 가장 즐거운 디자인 하루', '11월 14일 토요일 · 성수 · 오프라인 + 온라인'),
-  {type: 'hero', variant: 'centered', eyebrow: '얼리버드 마감 D-7', title: '디자인 데이\n2026', body: '연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.', facts: [{value: '12', label: '연사'}, {value: '6', label: '워크숍'}, {value: '500', label: '참가 정원'}], action: A('티켓 구매', 'primary'), secondaryAction: A('프로그램 보기', 'secondary')},
+  {type: 'hero', variant: 'centered', eyebrow: '얼리버드 마감 D-7', title: '디자인 데이\n2026', body: '연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.', action: A('티켓 구매', 'primary'), secondaryAction: A('프로그램 보기', 'secondary')},
   grid('three', metric('연사', '12명'), metric('워크숍', '6개'), metric('남은 좌석', '84석', '오늘 기준', 'down', '-16')),
-  section('프로그램', [{type: 'timeline', title: '11월 14일', items: [{time: '10:00', title: '오프닝', description: '올해의 주제를 소개합니다.', status: '예정'}, {time: '11:00', title: '키노트: 규칙과 자유', description: '정해진 틀 안에서 다양함을 만드는 방법.'}, {time: '14:00', title: '워크숍 세션', description: '관심 주제를 골라 참여합니다.'}, {time: '17:00', title: '네트워킹', description: '가벼운 저녁과 함께합니다.'}]}], {anchor: 'program'}),
+  section('프로그램', [{type: 'timeline', title: '11월 14일', variant: 'rail', items: [{time: '10:00', title: '오프닝', description: '올해의 주제를 소개합니다.', status: '예정'}, {time: '11:00', title: '키노트: 규칙과 자유', description: '정해진 틀 안에서 다양함을 만드는 방법.'}, {time: '14:00', title: '워크숍 세션', description: '관심 주제를 골라 참여합니다.'}, {time: '17:00', title: '네트워킹', description: '가벼운 저녁과 함께합니다.'}]}], {anchor: 'program'}),
   section('연사', [{type: 'team', title: '함께하는 연사', members: [{name: '김다선', role: '디자인 시스템 리드'}, {name: '이지훈', role: '프런트엔드 엔지니어'}, {name: '박서연', role: '모션 디자이너'}, {name: '최민준', role: '리서처'}]}]),
   section('티켓', [{type: 'pricing', children: [{type: 'plan', name: '일반', price: '49,000원', features: ['하루 입장', '점심 포함'], action: A('구매', 'secondary')}, {type: 'plan', name: '얼리버드', price: '39,000원', period: '11/7까지', features: ['하루 입장', '점심 포함', '굿즈 포함'], action: A('구매', 'primary'), featured: 'yes'}]}], {anchor: 'ticket'}),
   {type: 'faq', title: '자주 묻는 질문', items: [{question: '온라인으로도 볼 수 있나요?', answer: '네. 온라인 티켓은 라이브와 다시보기를 제공합니다.'}, {question: '환불은 가능한가요?', answer: '행사 7일 전까지 전액 환불됩니다.'}]},
@@ -277,8 +277,9 @@ add('docs-reference', '레퍼런스 문서', 'docs', 'manual', '매뉴얼', [
 add('tutorial', '튜토리얼', 'docs', 'manual', '매뉴얼', [
   head('첫 화면 만들기', '15분 안에 Blueprint 하나로 완성합니다.', {eyebrow: '튜토리얼'}),
   {type: 'stepper', steps: ['준비', '작성', '검증', '빌드'], current: 2},
-  {type: 'steps', title: '따라 하기', items: [{title: '예제 복사', description: 'examples 폴더에서 가까운 예제를 복사합니다.'}, {title: '값 고르기', description: '테마, 팔레트, 셸을 카탈로그에서 고릅니다.'}, {title: '검증', description: 'validate 명령으로 오류를 확인합니다.'}, {title: '빌드', description: 'build 명령으로 HTML을 만듭니다.'}]},
-  {type: 'code', label: '검증과 빌드', language: 'bash', code: 'npm run kit -- validate my.json\nnpm run kit -- build my.json --out out/my'},
+  {type: 'aside', side: 'end', size: 'wide', sticky: 'yes', label: '이 단계의 명령어', children: [
+    {type: 'steps', title: '따라 하기', items: [{title: '예제 복사', description: 'examples 폴더에서 가까운 예제를 복사합니다.'}, {title: '값 고르기', description: '테마, 팔레트, 셸을 카탈로그에서 고릅니다.'}, {title: '검증', description: 'validate 명령으로 오류를 확인합니다. 오류 경로와 규칙 ID를 읽고 카탈로그 안의 값으로 고칩니다.'}, {title: '빌드', description: 'build 명령으로 HTML을 만들고 check 명령으로 산출물을 한 번 더 검사합니다.'}]},
+    {type: 'code', label: '검증과 빌드', language: 'bash', code: 'npm run kit -- validate my.json\nnpm run kit -- build my.json --out out/my\nnpm run kit -- check out/my'}]},
   {type: 'notice', tone: 'success', title: '여기까지 오셨다면', body: 'out/my/index.html을 브라우저로 열어 확인하세요.'},
 ], {axes: {shell: 'topbar'}, chrome: chrome(nav(['시작하기', 'book'], ['튜토리얼', 'play'], ['레퍼런스', 'code']), null, '매뉴얼 · 정적 데모', null)});
 
@@ -438,7 +439,7 @@ add('about-team', '팀 소개', 'general', 'atelier', '아틀리에 모아', [
   head('함께 배우고 만드는 공간', '2019년부터 여섯 명이 시작했습니다.'),
   {type: 'split', children: [prose('우리 이야기', '작은 동네 공방에서 시작해 이제는 매달 300명이 찾는 배움터가 되었습니다.\n\n정답을 알려 주기보다, 스스로 만들어 보는 경험을 소중히 합니다.', 'lead'), media('photo', '4:3', '공방에서 함께 작업하는 모습')]},
   {type: 'team', title: '함께하는 사람들', members: [{name: '김다선', role: '대표 · 도예', bio: '흙의 감각을 가르칩니다.'}, {name: '이지훈', role: '목공', bio: '나무를 다루는 법.'}, {name: '박서연', role: '염색', bio: '천연 염료 수업.'}]},
-  {type: 'timeline', title: '지나온 길', items: [{time: '2019', title: '공방 시작', status: '완료'}, {time: '2022', title: '온라인 클래스 오픈', status: '완료'}, {time: '2026', title: '두 번째 공간', status: '예정'}]},
+  {type: 'timeline', title: '지나온 길', variant: 'rail', items: [{time: '2019', title: '공방 시작', description: '동네 골목의 작은 공방에서 여섯 명이 시작했습니다.', status: '완료'}, {time: '2022', title: '온라인 클래스 오픈', description: '전국 어디서나 도예와 목공을 배울 수 있게 되었습니다.', status: '완료'}, {time: '2026', title: '두 번째 공간', description: '성수동에 더 큰 작업실을 열 준비를 하고 있습니다.', status: '예정'}]},
 ], {chrome: chrome(nav(['소개', 'info'], ['클래스', 'book'], ['후기', 'star'], ['문의', 'mail']), '클래스 신청', '© 2026 아틀리에 모아', FOOT)});
 
 add('music-player', '음악 플레이어', 'general', 'nocturne', '녹턴', [

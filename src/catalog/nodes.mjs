@@ -60,7 +60,7 @@ export const nodeSpecs = {
     example: {type: 'kanban', children: [{type: 'lane', title: '할 일', children: [{type: 'task', title: '문서 정리'}]}, {type: 'lane', title: '진행 중', children: [{type: 'task', title: '시안 검토', assignee: '김다선'}]}]}},
   lane: {label: '칸반 열', group: 'layout', fields: {title: str(60)}, children: ['task'], min: 0, max: 8, example: null},
   task: {label: '작업 카드', group: 'data', fields: {title: str(120), label: str(30), assignee: str(40), priority: en('높음', '보통', '낮음')}, optional: ['label', 'assignee', 'priority'], example: null},
-  timeline: {label: '타임라인', group: 'data', fields: {title: str(100), variant: en('line', 'release'), items: arr(obj({time: str(40), date: str(40), title: str(120), description: str(300), status: en('완료', '진행', '예정'), changes: arr(obj({kind: en('신규', '개선', '수정', '제거'), text: str(160)}), 1, 6)}, ['time', 'title']), 2, 12)}, optional: ['variant'],
+  timeline: {label: '타임라인', group: 'data', fields: {title: str(100), variant: en('line', 'release', 'rail'), items: arr(obj({time: str(40), date: str(40), title: str(120), description: str(300), status: en('완료', '진행', '예정'), changes: arr(obj({kind: en('신규', '개선', '수정', '제거'), text: str(160)}), 1, 6)}, ['time', 'title']), 2, 12)}, optional: ['variant'],
     example: {type: 'timeline', title: '진행 기록', items: [{time: '10월 1일', title: '시작', status: '완료'}, {time: '10월 18일', title: '검토', status: '진행'}]}},
   steps: {label: '단계 안내', group: 'content', fields: {title: str(100), layout: en('vertical', 'horizontal'), items: arr(obj({title: str(80), description: str(240)}, ['title']), 2, 6)}, optional: ['layout'],
     example: {type: 'steps', title: '시작하는 방법', items: [{title: '가입', description: '이메일로 가입합니다.'}, {title: '설정', description: '프로필을 채웁니다.'}]}},

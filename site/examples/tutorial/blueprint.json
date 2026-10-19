@@ -74,32 +74,41 @@
         "current": 2
       },
       {
-        "type": "steps",
-        "title": "따라 하기",
-        "items": [
+        "type": "aside",
+        "side": "end",
+        "size": "wide",
+        "sticky": "yes",
+        "label": "이 단계의 명령어",
+        "children": [
           {
-            "title": "예제 복사",
-            "description": "examples 폴더에서 가까운 예제를 복사합니다."
+            "type": "steps",
+            "title": "따라 하기",
+            "items": [
+              {
+                "title": "예제 복사",
+                "description": "examples 폴더에서 가까운 예제를 복사합니다."
+              },
+              {
+                "title": "값 고르기",
+                "description": "테마, 팔레트, 셸을 카탈로그에서 고릅니다."
+              },
+              {
+                "title": "검증",
+                "description": "validate 명령으로 오류를 확인합니다. 오류 경로와 규칙 ID를 읽고 카탈로그 안의 값으로 고칩니다."
+              },
+              {
+                "title": "빌드",
+                "description": "build 명령으로 HTML을 만들고 check 명령으로 산출물을 한 번 더 검사합니다."
+              }
+            ]
           },
           {
-            "title": "값 고르기",
-            "description": "테마, 팔레트, 셸을 카탈로그에서 고릅니다."
-          },
-          {
-            "title": "검증",
-            "description": "validate 명령으로 오류를 확인합니다."
-          },
-          {
-            "title": "빌드",
-            "description": "build 명령으로 HTML을 만듭니다."
+            "type": "code",
+            "label": "검증과 빌드",
+            "language": "bash",
+            "code": "npm run kit -- validate my.json\nnpm run kit -- build my.json --out out/my\nnpm run kit -- check out/my"
           }
         ]
-      },
-      {
-        "type": "code",
-        "label": "검증과 빌드",
-        "language": "bash",
-        "code": "npm run kit -- validate my.json\nnpm run kit -- build my.json --out out/my"
       },
       {
         "type": "notice",
