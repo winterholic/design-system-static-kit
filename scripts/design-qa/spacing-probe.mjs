@@ -27,9 +27,10 @@ export function spacingProbe(options) {
   /** 세로로 쌓인 자식들 사이의 간격 목록. 같은 줄에 놓인 자식이 있으면(가로 배치) null. */
   const stackGaps = el => {
     const kids = blockKids(el); if (kids.length < 2) return null;
-    const rs = kids.map(k => k.getBoundingClientRect()).sort((a, b) => a.top - b.top);
+    const items = kids.map(k => ({k, r: k.getBoundingClientRect()})).sort((a, b) => a.r.top - b.r.top);
     const gaps = [];
-    for (let i = 1; i < rs.length; i++) { if (isRow(rs[i - 1], rs[i])) return null; gaps.push(rs[i].top - rs[i - 1].bottom); }
+    // 카드 푸터는 `margin-top:auto`로 카드 바닥에 고정하는 것이 의도다. 옆 카드와 높이를 맞추느라 생기는 빈 공간은 묶음 간격이 아니다.
+    for (let i = 1; i < items.length; i++) { if (isRow(items[i - 1].r, items[i].r)) return null; if (!items[i].k.matches('.kit-card-foot')) gaps.push(items[i].r.top - items[i - 1].r.bottom); }
     return gaps;
   };
 
@@ -85,7 +86,7 @@ export function spacingProbe(options) {
     if (el === document.body || el.matches('.kit-art-box,.kit-media,.kit-card-media,.kit-bar,.kit-track,.kit-avatar,.kit-thumb,.kit-logo-mark')) return false;
     const s = getComputedStyle(el), r = el.getBoundingClientRect();
     if (r.width < 160 || r.height < 48 || s.display === 'inline') return false;
-    const hasBg = !clear(s.backgroundColor) && s.backgroundColor !== bgOf(el.parentElement), hasBorder = ['Top', 'Right', 'Bottom', 'Left'].filter(k => num(s['border' + k + 'Width']) > 0 && s['border' + k + 'Style'] !== 'none').length >= 3;
+    const hasBg = !clear(s.backgroundColor) && s.backgroundColor !== bgOf(el.parentElement), hasBorder = ['Top', 'Right', 'Bottom', 'Left'].filter(k => num(s['border' + k + 'Width']) > 0 && s['border' + k + 'Style'] !== 'none' && !clear(s['border' + k + 'Color'])).length >= 3;
     return hasBg || hasBorder;
   };
   const owners = new Map();

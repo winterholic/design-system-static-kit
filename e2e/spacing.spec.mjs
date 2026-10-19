@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {templateList, createBlueprint} from '../src/catalog.mjs';
+import {templateList, createBlueprint, themes} from '../src/catalog.mjs';
 import {compile, validateBlueprint} from '../src/compiler.mjs';
 import {spacingProbe, PROBE_OPTIONS} from '../scripts/design-qa/spacing-probe.mjs';
 
@@ -26,6 +26,24 @@ test('spacing contract: 61 templates × 3 densities × phone/desktop measure cle
   expect(skipped, `금지 조합으로 건너뛴 수 ${skipped}/${templateList.length * DENSITIES.length}`).toBeLessThan(templateList.length * DENSITIES.length * 0.2);
   // proof of scan: a check that measured nothing is not a pass
   for (const k of ['head', 'pair', 'proximity', 'edge', 'scale', 'ctrl']) expect(scanned[k], `check ${k} scanned something`).toBeGreaterThan(50);
+});
+
+test('spacing contract under other themes: every template wears 4 rotating themes (density, shell and radius come from the theme) and still measures clean', async ({page}) => {
+  test.setTimeout(600000);
+  const ids = Object.keys(themes), problems = [];
+  let pages = 0;
+  for (const [i, t] of templateList.entries()) for (const k of [0, 1, 2, 3]) {
+    const theme = ids[(i * 7 + k * 11 + 3) % ids.length], b = createBlueprint(t.id, theme);
+    if (!validateBlueprint(b).valid) continue;
+    const html = compile(b).html;
+    for (const width of [390, 1280]) {
+      await page.setViewportSize({width, height: 900}); await page.setContent(html, {waitUntil: 'load'});
+      const r = await page.evaluate(spacingProbe, PROBE_OPTIONS); pages++;
+      for (const f of r.findings.slice(0, 3)) problems.push(`${t.id}@${theme}@${width} ${f.code} ${f.at} ${f.detail}`);
+    }
+  }
+  expect(problems).toEqual([]);
+  expect(pages, 'pages measured').toBeGreaterThan(400);
 });
 
 test('spacing probe negative controls: every defect class is reported on a deliberately wrong page', async ({page}) => {

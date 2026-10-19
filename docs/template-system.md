@@ -65,6 +65,28 @@
 | 3 | survey, about-team, tutorial | 라디오 타일, 가로 타임라인, 좌우 배치. 촬영 후 발견: 이벤트 랜딩 팩트가 아래 지표 카드와 같은 숫자를 반복 → 팩트 삭제, `.kit-sr`가 가로 스크롤 영역 밖으로 문서 폭을 늘림(390px 464) → `position:relative` |
 | 4 | audit-log, fitness-landing, 무작위 표본 | 로그 타임라인, 피트니스 장면 3종 |
 
+## 3-1. 독립 표본: 무작위 테마 10개와 전수 실측
+
+`node scripts/design-qa/random10.mjs rand4f 20261021 10`(시드 20261021, 마지막 코드로 재촬영). 테마·템플릿·팔레트·모드가 모두 무작위다. 같은 10개에 간격 실측도 돌렸다.
+
+| 테마 | 템플릿 | 팔레트 | 모드 | 밀도 | 간격 실측 |
+|---|---|---|---|---|---|
+| studio | blog-post | white-elegance | light | spacious | 통과 |
+| ledger | saas-landing | deep-sea-2 | dark | compact | 통과 |
+| heritage | team-chat | golden-harvest | dark | spacious | 통과 |
+| realty | dashboard-overview | midnight-ocean-depths-2 | light | comfortable | 통과 |
+| beauty | calendar-view | blush-harmony | dark | spacious | 통과 |
+| clarity | audit-log | dreamy-blue-gradient | light | comfortable | 통과 |
+| commerce | case-study | orange-sunset-sky | light | comfortable | 통과 |
+| brutalist | help-center | midnight-fire | light | comfortable | 통과 |
+| pocket | fitness-landing | spring-blooms | light | spacious | 통과 |
+| precision | blog-index | steel | light | compact | 처음엔 근접 위반 1종(아래) → 예외 명시 후 통과 |
+
+- 이 무작위 표본이 **간격 실측의 허점을 하나 드러냈다**. 카드 푸터는 `margin-top:auto`로 카드 바닥에 고정되어, 옆 카드와 높이를 맞출 때 생기는 빈 공간(32px)이 "묶음 안 간격"으로 잡혔다. 의도된 동작이므로 실측에서 푸터 앞 간격을 제외하고 이유를 코드 주석과 이 문서에 남겼다. 근접 규칙을 약화한 것이 아니라 측정 대상을 정확히 한 것이다.
+- **전수 실측.** 템플릿 61 × 테마 40 × 폭 2 = 4,880쪽을 실측했다. 위반은 위 1종(4건)뿐이었다.
+- **글꼴 스트레스.** 같은 실측을 Nanum Gothic·Verdana·Courier New(아주 넓음)로 바꿔 돌렸다(344쪽씩). 위반 0.
+- **CI(Linux)가 macOS에서 안 보이던 오탐 2개를 잡았다.** (1) 위 카드 푸터, (2) 글자가 길어지면 폭이 160px을 넘는 ghost 버튼의 **투명 테두리**를 상자로 센 것. 둘 다 측정기 쪽 문제였고 CSS는 맞았다. 투명 테두리는 상자로 세지 않는다.
+
 ## 4. 읽은 자료
 
 | 자료 | 읽은 것(원리만) | 적용 |

@@ -11,7 +11,7 @@ const opt = k => { const i = args.indexOf(k); return i > -1 ? args[i + 1] : null
 const only = opt('--only')?.split(','), widths = (opt('--w') ?? '390,1280').split(',').map(Number), verbose = args.includes('--verbose');
 const densities = ['compact', 'comfortable', 'spacious'];
 
-export async function auditAll({only: ids, widths: ws = [390, 1280], dens = densities} = {}) {
+export async function auditAll({only: ids, widths: ws = [390, 1280], dens = densities, font = null} = {}) {
   const br = await chromium.launch(), rows = [];
   for (const t of templateList.filter(t => !ids || ids.includes(t.id))) for (const density of dens) {
     const b = createBlueprint(t.id); b.density = density;
@@ -19,6 +19,8 @@ export async function auditAll({only: ids, widths: ws = [390, 1280], dens = dens
     for (const w of ws) {
       const ctx = await br.newContext({viewport: {width: w, height: 900}, reducedMotion: 'reduce'}), page = await ctx.newPage();
       await page.setContent(html, {waitUntil: 'load'});
+      // 글꼴 폭에 따라 달라지는 위반(CI의 Linux 폰트 등)을 미리 잡으려고 더 넓은 폰트로 바꿔 잰다.
+      if (font) await page.addStyleTag({content: `*{font-family:'${font}' !important}`});
       const r = await page.evaluate(spacingProbe, PROBE_OPTIONS);
       rows.push({id: t.id, density, width: w, ...r}); await ctx.close();
     }
@@ -28,7 +30,7 @@ export async function auditAll({only: ids, widths: ws = [390, 1280], dens = dens
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const rows = await auditAll({only, widths});
+  const rows = await auditAll({only, widths, font: opt('--font')});
   const byCode = {}, byAt = {};
   for (const r of rows) for (const f of r.findings) { byCode[f.code] = (byCode[f.code] ?? 0) + 1; const k = `${f.code} ${f.at}`; (byAt[k] ??= {n: 0, ex: f.detail, tpl: new Set()}).n++; byAt[k].tpl.add(r.id); }
   console.log('SPACING AUDIT pages=' + rows.length, JSON.stringify(byCode));
