@@ -132,3 +132,9 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 - 육안 검토는 대표 표본(예제 27×2, 랜딩류 9×2, 극단 사례 16)이다. 3,380 전수 육안이 아니다. 전수로 확인한 것은 가로 넘침(sweep)과 정적 구조 검사다.
 - 앱 바탕 틴트(`soft`와 `canvas` 55:45 혼합), 히어로·CTA 방사형 틴트, 밴드 교대 면은 양 끝 토큰이 통과한 값이라는 근거만 있고 중간 보간 지점 대비는 직접 측정하지 않았다(확인 필요).
 - Windows·Android 실기기 폰트 렌더링, Safari/iOS, 스크린리더는 미검증.
+
+**CI와 배포(2026-10-19).**
+
+- 수정 커밋 `2005405`의 GitHub Actions Verify → success (run 39264277552, 2m43s). 첫 푸시 `9f4f990`은 위 워크벤치 넘침으로 실패했다.
+- 배포: 같은 Vercel 프로젝트 `design-system-static-kit`, 배포 `design-system-static-hj3k3wb6e`, 별칭 https://design-system-static-kit.vercel.app. 배포본에서 `/examples/saas-landing/`의 `.kit-hero h2`가 64px, 섹션 패딩이 `80px 132px`, `/test-lab/cases/a-saas-landing--brutalist/`·`/gallery/`가 새 CSS(`--kit-display`, `--kit-bleed`)로 내려오는 것을 확인했다.
+- 배포 중 실수: `vercel deploy site`를 저장소 루트에서 실행하면 CLI가 `site`라는 이름의 **새 프로젝트**를 만든다(루트 `.vercel` 링크를 쓰지 않음). 이번에 `site` 프로젝트가 생겼고(22:29, 내 배포 3건뿐) 확인 후 삭제했다. 다른 프로젝트는 건드리지 않았다. 올바른 방법은 링크된 디렉터리에서 배포하는 것이다: `site`를 `.qa/deploy/`로 복사하고 `.vercel/project.json`(프로젝트 `design-system-static-kit`)을 넣은 뒤 그 안에서 `vercel deploy --prod --yes --archive=tgz`. Hobby 플랜의 파일 수 업로드 한도(`api-upload-free`, 5000개)는 `--archive=tgz`로 피했다.

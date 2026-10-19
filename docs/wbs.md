@@ -45,7 +45,7 @@ PMS 프로젝트: `a2211a70-7dc5-4a23-9dd8-3be6aa72ad34` · design-system-static
 | 20 | 진단: 배포본 27×2 + 기준 저장소 12×2 촬영, 수치 측정 | 기반 요소별 수치 근거 | 완료 |
 | 21 | 기반 재설계: 토큰·셸·부품·렌더 | 카탈로그·계약 테스트·대비 하한 불변 | 완료 |
 | 22 | 반복 5회, 전/후 비교 | 같은 표본 재촬영, 극단 사례 포함 | 완료 |
-| 23 | 전체 재생성·검증·배포 | verify·lab verify/check·Chromium·sweep 통과, 같은 Vercel 프로젝트 재배포 | 아래 verification 참고 |
+| 23 | 전체 재생성·검증·배포 | verify·lab verify/check·Chromium·sweep 통과, 같은 Vercel 프로젝트 재배포 | 완료 · CI success(run 39264277552), 배포 `design-system-static-hj3k3wb6e` → [검증 기록](verification.md) |
 
 ## v3 Test Lab (2026-10-18 심야, Muse 워커 — 브라우저 실측은 CI 위임)
 
