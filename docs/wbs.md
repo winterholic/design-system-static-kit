@@ -37,7 +37,7 @@ PMS 프로젝트: `a2211a70-7dc5-4a23-9dd8-3be6aa72ad34` · design-system-static
 | 13 | 고유 HTML 3,380 + manifest/coverage/check-report | matrix 2,440 전수 보존, 중복 72 제거·거부 12 기록, uncovered 없음 | 완료 · 정적검사 3,380/3,380 |
 | 14 | 탐색 `site/test-lab/index.html` + `viewer.html` | 검색/필터·페이지네이션·이전/다음·직접 URL, 대량 iframe 없음 | 완료 |
 | 15 | CI 브라우저 스펙 `e2e/lab-pages.spec.mjs` | stress 전수 뷰포트·회전 테마·대표 스크린샷 | 작성, CI 실행 전 |
-| 16 | Vercel 배포 | 전용 static-kit 프로젝트, 기존 덮어쓰기 금지 | 미실행 (인증 없음, 아래 기록) |
+| 16 | Vercel 배포 | 전용 static-kit 프로젝트, 기존 덮어쓰기 금지 | 완료 2026-10-19 · 새 프로젝트 `design-system-static-kit`, https://design-system-static-kit.vercel.app (`vercel deploy site --prod`, 주요 경로 200 확인) |
 
 수용: 계약 56/56, `REPRODUCIBLE: 3925 files`. 육안검수·Safari/iOS·스크린리더는 미검증으로 남긴다. 완료 선언 없이 GPT/Claude 독립검증으로 넘긴다.
 
