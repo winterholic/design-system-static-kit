@@ -123,6 +123,8 @@ REPRODUCIBLE: 540 generated files match a fresh build byte for byte.
 - `npm run test:browser` → `17 passed (2.0m)`
 - `node scripts/design-qa/sweep.mjs` → `SWEEP: 3380 cases × 2 widths, overflow=0`
 
+**CI 1차 실패와 수정.** 푸시한 `9f4f990`의 CI가 `workbench.spec.mjs` 한 항목에서 실패했다(`Expected <= 339, Received 354`, saas-landing + masthead 셸의 390px 미리보기). 로컬 macOS 폰트에서는 통과했고, 원인은 내가 CTA 버튼 줄에 준 `flex:none`이 줄바꿈을 막은 것이었다(CI 폰트가 넓어 드러남). Nanum Gothic으로 로컬 재현 → `flex:0 1 auto;min-width:0`으로 수정 → 같은 조건에서 `scroll 338 / client 338`. 재발 방지로 `scripts/design-qa/sweep.mjs --font "Nanum Gothic"` 옵션을 추가했다. 아래 수치는 수정 후 값이고 CI 결과는 이 문서 아래 따로 적는다.
+
 **불변 조건.** 계약 테스트는 56개 그대로이고 추가·삭제·완화가 없다. 카탈로그 밖 값 거부, 금지 조합 11개, 대비 하한(본문 7:1, 보조 4.5:1, 비텍스트 3:1)은 손대지 않았다. 달라진 것은 토큰 값이다. 중립색(text·muted·border)이 팔레트 시드 색조를 섞게 되어 `docs/evidence/contrast.json`이 재생성됐고, 같은 하한으로 33,600쌍이 모두 통과했다. 전/후 `ratio` 값이 일부 달라지는 것은 의도된 변화다.
 
 **알려진 한계(이번 라운드).**
