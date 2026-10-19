@@ -108,7 +108,9 @@ export function validateBlueprint(input) {
     if (t === 'page-header' && A(n.actions)) group(n.actions, path + '.actions');
     if (t === 'actions' && A(n.items)) group(n.items, path + '.items');
     if (['hero', 'cta', 'buy-box'].includes(t)) group([n.action, n.secondaryAction].filter(plain), path);
-    if (t === 'hero') { heroCount++; if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); }
+    if (t === 'media' && n.motif && n.kind !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.');
+    if (t === 'gallery' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && x.motif && x.kind !== 'photo') error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.'); });
+    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); }
     if (t === 'pricing' && A(n.children)) {
       group(n.children.filter(plain).map(p => p.action).filter(plain), path);
       if (n.children.filter(p => plain(p) && p.featured === 'yes').length > 1) error(path, 'FEATURED_PLAN', '추천 요금제는 하나만 둘 수 있습니다.');
@@ -121,6 +123,9 @@ export function validateBlueprint(input) {
       n.items.slice(0, -1).forEach((x, i) => { if (plain(x) && !Object.hasOwn(x, 'href')) error(`${path}.items[${i}]`, 'VARIANT_REQUIRES', '마지막이 아닌 항목은 href가 필요합니다.'); });
     }
     if (t === 'card') {
+      if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.');
+      if (Object.hasOwn(n, 'listPrice') && !Object.hasOwn(n, 'price')) error(path + '.listPrice', 'VARIANT_REQUIRES', 'listPrice는 price와 함께 사용합니다.');
+      if (Object.hasOwn(n, 'reviews') && !Object.hasOwn(n, 'rating')) error(path + '.reviews', 'VARIANT_REQUIRES', 'reviews는 rating과 함께 사용합니다.');
       if (['media', 'horizontal'].includes(n.variant) && !n.visual) error(path + '.visual', 'VARIANT_REQUIRES', `${n.variant} 카드는 visual이 필요합니다.`);
       if (n.visual && !['media', 'horizontal'].includes(n.variant)) error(path + '.visual', 'VARIANT_REQUIRES', 'visual은 media·horizontal 카드에서만 사용합니다.');
       if (n.ratio && !n.visual) error(path + '.ratio', 'VARIANT_REQUIRES', 'ratio는 visual과 함께 사용합니다.');

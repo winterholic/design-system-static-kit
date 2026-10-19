@@ -165,7 +165,7 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 | 포트폴리오 | 에이전시 홈(`agency-home`), 포트폴리오 모음(`portfolio-grid`), 사례 연구(`case-study`) |
 | 요금제 | 요금 비교(`pricing-page`) |
 | 폼 | 문의하기(`contact`), 온보딩 단계(`onboarding-wizard`), 설문(`survey`) |
-| 설정 | 결제·청구(`billing`), 설정(`settings`), 프로필(`profile`) |
+| 설정 | 결제·구독 관리(`billing`), 설정(`settings`), 프로필(`profile`) |
 | 인증 | 로그인(`login`), 회원가입(`signup`), 비밀번호 재설정(`forgot-password`) |
 | 오류·상태 페이지 | 404 페이지(`not-found`), 500 오류(`server-error`), 403 권한 없음(`forbidden`), 점검 안내(`maintenance`), 오프라인(`offline`) |
 

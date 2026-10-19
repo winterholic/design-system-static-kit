@@ -10,6 +10,8 @@ export const obj = (properties, required = Object.keys(properties)) => ({type: '
 
 export const mediaKinds = ['photo', 'diagram', 'device', 'map', 'chart', 'video', 'pattern'];
 export const ratios = ['16:9', '4:3', '1:1', '3:4', '21:9'];
+/** Subject illustrations for `photo` slots (drawn in src/render/motifs.mjs; a test keeps both lists identical). */
+export const motifs = ['lamp', 'desklamp', 'floorlamp', 'orb', 'candle', 'mug', 'bottle', 'jar', 'bag', 'chair', 'plant', 'books', 'headphones', 'sneaker', 'watch', 'vase', 'shirt', 'speaker', 'camera', 'laptop', 'coast', 'solar', 'interior', 'building', 'food', 'coffee', 'fitness', 'care', 'museum', 'ticket', 'poster', 'package', 'brandmark', 'swatches', 'states', 'grid', 'type'];
 export const iconEnum = en(...iconNames);
 const href = str(2048);
 const action = obj({label: str(40), href, variant: en('primary', 'secondary', 'ghost')});
@@ -37,9 +39,9 @@ export const nodeSpecs = {
   page: {label: '페이지', group: 'structure', fields: {}, children: PAGE_CHILDREN, min: 2, max: 24, example: null},
   'page-header': {label: '페이지 제목', group: 'structure', fields: {eyebrow: str(60), title: str(160), description: str(500), align: en('start', 'center'), actions: arr(action, 1, 2)}, optional: ['eyebrow', 'description', 'align', 'actions'],
     example: {type: 'page-header', title: '페이지 제목', description: '한 문장으로 이 화면의 목적을 설명합니다.'}},
-  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video')}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual'],
+  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs)}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif'],
     example: {type: 'hero', variant: 'statement', title: '핵심 약속 한 줄', body: '이 서비스가 누구에게 어떤 변화를 주는지 두 문장으로.'}},
-  section: {label: '섹션', group: 'layout', fields: {eyebrow: str(60), title: str(100), surface: en('plain', 'tint', 'inverse'), anchor: {...str(30), pattern: '^[a-z][a-z0-9-]*$'}}, optional: ['eyebrow', 'surface', 'anchor'], children: without(BLOCKS, 'hero'), min: 1, max: 12,
+  section: {label: '섹션', group: 'layout', fields: {eyebrow: str(60), title: str(100), description: str(240), surface: en('plain', 'tint', 'inverse'), anchor: {...str(30), pattern: '^[a-z][a-z0-9-]*$'}}, optional: ['eyebrow', 'description', 'surface', 'anchor'], children: without(BLOCKS, 'hero'), min: 1, max: 12,
     example: {type: 'section', title: '섹션 제목', children: [{type: 'prose', title: '본문', body: '섹션 안의 본문입니다.'}]}},
   grid: {label: '그리드', group: 'layout', fields: {columns: en('two', 'three', 'four')}, children: ['card', 'metric', 'list', 'notice', 'quote', 'chart', 'progress', 'media', 'properties'], min: 2, max: 12,
     example: {type: 'grid', columns: 'two', children: [{type: 'metric', label: '지표 A', value: '12'}, {type: 'metric', label: '지표 B', value: '34'}]}},
@@ -70,7 +72,7 @@ export const nodeSpecs = {
     example: {type: 'chat', title: '팀 대화', messages: [{from: 'them', name: '다선', text: '시안 확인했어요.'}, {from: 'me', name: '나', text: '고마워요, 반영할게요.'}]}},
   calendar: {label: '월간 달력', group: 'data', fields: {title: str(100), year: int(2000, 2100), month: int(1, 12), events: arr(obj({day: int(1, 31), title: str(40)}), 0, 8)},
     example: {type: 'calendar', title: '이번 달 일정', year: 2026, month: 10, events: [{day: 18, title: '디자인 리뷰'}]}},
-  card: {label: '카드', group: 'content', fields: {title: str(100), body: str(500), meta: str(80), action, variant: en('basic', 'outline', 'filled', 'media', 'horizontal', 'link'), icon: iconEnum, badge: str(24), visual: en(...mediaKinds), ratio: en(...ratios)}, optional: ['meta', 'action', 'variant', 'icon', 'badge', 'visual', 'ratio'],
+  card: {label: '카드', group: 'content', fields: {title: str(100), body: str(500), meta: str(80), action, variant: en('basic', 'outline', 'filled', 'media', 'horizontal', 'link'), icon: iconEnum, badge: str(24), visual: en(...mediaKinds), ratio: en(...ratios), motif: en(...motifs), price: str(24), listPrice: str(24), rating: str(4), reviews: str(16), author: str(40)}, optional: ['meta', 'action', 'variant', 'icon', 'badge', 'visual', 'ratio', 'motif', 'price', 'listPrice', 'rating', 'reviews', 'author'],
     example: {type: 'card', title: '카드 제목', body: '카드가 전달할 핵심 한두 문장입니다.'}},
   metric: {label: '지표', group: 'data', fields: {label: str(80), value: str(40), detail: str(160), trend: en('up', 'down', 'flat'), delta: str(30)}, optional: ['detail', 'trend', 'delta'],
     example: {type: 'metric', label: '완료한 작업', value: '84', detail: '지난주보다 12개 더', trend: 'up', delta: '+12'}},
@@ -112,9 +114,9 @@ export const nodeSpecs = {
     example: {type: 'empty-state', kind: 'first-use', title: '아직 프로젝트가 없어요', body: '첫 프로젝트를 만들어 시작해 보세요.', action: {label: '프로젝트 만들기', href: '#main', variant: 'primary'}}},
   skeleton: {label: '스켈레톤', group: 'feedback', fields: {label: str(60), variant: en('card', 'list', 'table', 'text')},
     example: {type: 'skeleton', label: '목록을 불러오는 중', variant: 'list'}},
-  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160), overlay: str(60)}, optional: ['caption', 'overlay'],
+  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160), overlay: str(60), motif: en(...motifs)}, optional: ['caption', 'overlay', 'motif'],
     example: {type: 'media', kind: 'photo', ratio: '16:9', alt: '작업 공간의 전경', caption: '이미지는 자리 표시입니다.'}},
-  gallery: {label: '갤러리', group: 'media', fields: {title: str(100), layout: en('grid', 'masonry'), items: arr(obj({kind: en(...mediaKinds), alt: str(160), caption: str(100)}, ['kind', 'alt']), 3, 12)}, optional: ['title', 'layout'],
+  gallery: {label: '갤러리', group: 'media', fields: {title: str(100), layout: en('grid', 'masonry', 'showcase'), items: arr(obj({kind: en(...mediaKinds), alt: str(160), caption: str(100), motif: en(...motifs)}, ['kind', 'alt']), 3, 12)}, optional: ['title', 'layout'],
     example: {type: 'gallery', title: '작업', items: [{kind: 'photo', alt: '작업 하나'}, {kind: 'diagram', alt: '작업 둘'}, {kind: 'pattern', alt: '작업 셋'}]}},
   breadcrumb: {label: '브레드크럼', group: 'nav', fields: {items: arr(obj({label: str(40), href}, ['label']), 2, 5)},
     example: {type: 'breadcrumb', items: [{label: '홈', href: '#main'}, {label: '현재 화면'}]}},
@@ -124,7 +126,7 @@ export const nodeSpecs = {
     example: {type: 'filter-bar', placeholder: '검색', filters: ['전체', '진행', '완료'], selected: 0}},
   stepper: {label: '단계 표시', group: 'nav', fields: {steps: arr(str(30), 2, 6), current: int(1, 6)},
     example: {type: 'stepper', steps: ['정보', '결제', '완료'], current: 1}},
-  summary: {label: '주문·요약 박스', group: 'content', fields: {title: str(60), items: arr(obj({label: str(60), value: str(40)}), 1, 8), total: obj({label: str(40), value: str(40)}), action}, optional: ['action'],
+  summary: {label: '주문·요약 박스', group: 'content', fields: {title: str(60), items: arr(obj({label: str(60), value: str(40)}), 1, 8), total: obj({label: str(40), value: str(40)}), action, thumb: obj({motif: en(...motifs), name: str(60), detail: str(80)}, ['motif', 'name'])}, optional: ['action', 'thumb'],
     example: {type: 'summary', title: '주문 요약', items: [{label: '상품', value: '39,000원'}], total: {label: '합계', value: '39,000원'}}},
   'buy-box': {label: '구매 박스', group: 'content', fields: {title: str(100), price: str(40), note: str(160), badge: str(24), options: arr(obj({label: str(40), choices: arr(str(30), 2, 6)}), 1, 3), action, secondaryAction: action}, optional: ['note', 'badge', 'options', 'secondaryAction'],
     example: {type: 'buy-box', title: '상품 이름', price: '39,000원', options: [{label: '용량', choices: ['30ml', '50ml']}], action: {label: '장바구니', href: '#main', variant: 'primary'}}},

@@ -5581,13 +5581,56 @@
             "photo",
             "video"
           ]
+        },
+        "motif": {
+          "type": "string",
+          "enum": [
+            "lamp",
+            "desklamp",
+            "floorlamp",
+            "orb",
+            "candle",
+            "mug",
+            "bottle",
+            "jar",
+            "bag",
+            "chair",
+            "plant",
+            "books",
+            "headphones",
+            "sneaker",
+            "watch",
+            "vase",
+            "shirt",
+            "speaker",
+            "camera",
+            "laptop",
+            "coast",
+            "solar",
+            "interior",
+            "building",
+            "food",
+            "coffee",
+            "fitness",
+            "care",
+            "museum",
+            "ticket",
+            "poster",
+            "package",
+            "brandmark",
+            "swatches",
+            "states",
+            "grid",
+            "type"
+          ]
         }
       },
       "optional": [
         "eyebrow",
         "action",
         "secondaryAction",
-        "visual"
+        "visual",
+        "motif"
       ],
       "example": {
         "type": "hero",
@@ -5610,6 +5653,11 @@
           "minLength": 1,
           "maxLength": 100
         },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
         "surface": {
           "type": "string",
           "enum": [
@@ -5627,6 +5675,7 @@
       },
       "optional": [
         "eyebrow",
+        "description",
         "surface",
         "anchor"
       ],
@@ -6738,6 +6787,73 @@
             "3:4",
             "21:9"
           ]
+        },
+        "motif": {
+          "type": "string",
+          "enum": [
+            "lamp",
+            "desklamp",
+            "floorlamp",
+            "orb",
+            "candle",
+            "mug",
+            "bottle",
+            "jar",
+            "bag",
+            "chair",
+            "plant",
+            "books",
+            "headphones",
+            "sneaker",
+            "watch",
+            "vase",
+            "shirt",
+            "speaker",
+            "camera",
+            "laptop",
+            "coast",
+            "solar",
+            "interior",
+            "building",
+            "food",
+            "coffee",
+            "fitness",
+            "care",
+            "museum",
+            "ticket",
+            "poster",
+            "package",
+            "brandmark",
+            "swatches",
+            "states",
+            "grid",
+            "type"
+          ]
+        },
+        "price": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        },
+        "listPrice": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        },
+        "rating": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4
+        },
+        "reviews": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
         }
       },
       "optional": [
@@ -6747,7 +6863,13 @@
         "icon",
         "badge",
         "visual",
-        "ratio"
+        "ratio",
+        "motif",
+        "price",
+        "listPrice",
+        "rating",
+        "reviews",
+        "author"
       ],
       "example": {
         "type": "card",
@@ -8235,11 +8357,54 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 60
+        },
+        "motif": {
+          "type": "string",
+          "enum": [
+            "lamp",
+            "desklamp",
+            "floorlamp",
+            "orb",
+            "candle",
+            "mug",
+            "bottle",
+            "jar",
+            "bag",
+            "chair",
+            "plant",
+            "books",
+            "headphones",
+            "sneaker",
+            "watch",
+            "vase",
+            "shirt",
+            "speaker",
+            "camera",
+            "laptop",
+            "coast",
+            "solar",
+            "interior",
+            "building",
+            "food",
+            "coffee",
+            "fitness",
+            "care",
+            "museum",
+            "ticket",
+            "poster",
+            "package",
+            "brandmark",
+            "swatches",
+            "states",
+            "grid",
+            "type"
+          ]
         }
       },
       "optional": [
         "caption",
-        "overlay"
+        "overlay",
+        "motif"
       ],
       "example": {
         "type": "media",
@@ -8262,7 +8427,8 @@
           "type": "string",
           "enum": [
             "grid",
-            "masonry"
+            "masonry",
+            "showcase"
           ]
         },
         "items": {
@@ -8291,6 +8457,48 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 100
+              },
+              "motif": {
+                "type": "string",
+                "enum": [
+                  "lamp",
+                  "desklamp",
+                  "floorlamp",
+                  "orb",
+                  "candle",
+                  "mug",
+                  "bottle",
+                  "jar",
+                  "bag",
+                  "chair",
+                  "plant",
+                  "books",
+                  "headphones",
+                  "sneaker",
+                  "watch",
+                  "vase",
+                  "shirt",
+                  "speaker",
+                  "camera",
+                  "laptop",
+                  "coast",
+                  "solar",
+                  "interior",
+                  "building",
+                  "food",
+                  "coffee",
+                  "fitness",
+                  "care",
+                  "museum",
+                  "ticket",
+                  "poster",
+                  "package",
+                  "brandmark",
+                  "swatches",
+                  "states",
+                  "grid",
+                  "type"
+                ]
               }
             },
             "required": [
@@ -8537,10 +8745,73 @@
             "variant"
           ],
           "additionalProperties": false
+        },
+        "thumb": {
+          "type": "object",
+          "properties": {
+            "motif": {
+              "type": "string",
+              "enum": [
+                "lamp",
+                "desklamp",
+                "floorlamp",
+                "orb",
+                "candle",
+                "mug",
+                "bottle",
+                "jar",
+                "bag",
+                "chair",
+                "plant",
+                "books",
+                "headphones",
+                "sneaker",
+                "watch",
+                "vase",
+                "shirt",
+                "speaker",
+                "camera",
+                "laptop",
+                "coast",
+                "solar",
+                "interior",
+                "building",
+                "food",
+                "coffee",
+                "fitness",
+                "care",
+                "museum",
+                "ticket",
+                "poster",
+                "package",
+                "brandmark",
+                "swatches",
+                "states",
+                "grid",
+                "type"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          },
+          "required": [
+            "motif",
+            "name"
+          ],
+          "additionalProperties": false
         }
       },
       "optional": [
-        "action"
+        "action",
+        "thumb"
       ],
       "example": {
         "type": "summary",
@@ -9873,7 +10144,7 @@
     },
     {
       "id": "billing",
-      "label": "결제·청구",
+      "label": "결제·구독 관리",
       "pageType": "settings",
       "theme": "trust"
     },

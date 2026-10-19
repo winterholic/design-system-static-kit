@@ -941,9 +941,9 @@
           "icon": "folder"
         },
         {
-          "label": "일정",
+          "label": "청구",
           "href": "#main",
-          "icon": "calendar"
+          "icon": "credit-card"
         },
         {
           "label": "설정",
@@ -951,7 +951,7 @@
           "icon": "settings"
         }
       ],
-      "footerNote": "플로우웍스 · 정적 데모",
+      "footerNote": "© 2026 플로우웍스",
       "footerLinks": [
         {
           "label": "이용약관",
@@ -973,17 +973,50 @@
         {
           "type": "page-header",
           "title": "결제와 청구",
-          "description": "다음 결제일은 11월 3일입니다."
+          "description": "다음 결제일은 11월 19일입니다.",
+          "actions": [
+            {
+              "label": "결제 수단 변경",
+              "href": "#main",
+              "variant": "secondary"
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "columns": "three",
+          "children": [
+            {
+              "type": "metric",
+              "label": "이번 달 청구액",
+              "value": "49,500원",
+              "detail": "5명 × 9,900원",
+              "trend": "up",
+              "delta": "+9,900원"
+            },
+            {
+              "type": "metric",
+              "label": "남은 자동화 규칙",
+              "value": "62개",
+              "detail": "100개 중 38개 사용"
+            },
+            {
+              "type": "metric",
+              "label": "다음 결제일",
+              "value": "11. 19.",
+              "detail": "카드 ****1234"
+            }
+          ]
         },
         {
           "type": "aside",
           "side": "end",
-          "label": "요약",
+          "label": "현재 플랜",
           "children": [
             {
               "type": "table",
               "title": "청구 내역",
-              "caption": "최근 청구 내역",
+              "caption": "최근 3개월 결제 내역",
               "columns": [
                 "날짜",
                 "내용",
@@ -992,19 +1025,19 @@
               ],
               "rows": [
                 [
-                  "10월 3일",
+                  "10월 19일",
                   "팀 플랜 · 5명",
                   "49,500원",
                   "결제 완료"
                 ],
                 [
-                  "9월 3일",
-                  "팀 플랜 · 5명",
-                  "49,500원",
+                  "9월 19일",
+                  "팀 플랜 · 4명",
+                  "39,600원",
                   "결제 완료"
                 ],
                 [
-                  "8월 3일",
+                  "8월 19일",
                   "팀 플랜 · 4명",
                   "39,600원",
                   "결제 완료"
@@ -1025,22 +1058,29 @@
                   "value": "5명"
                 },
                 {
-                  "label": "다음 결제",
-                  "value": "49,500원"
+                  "label": "결제 수단",
+                  "value": "신한카드 ****1234"
                 },
                 {
-                  "label": "결제 수단",
-                  "value": "카드 ****1234"
+                  "label": "세금계산서",
+                  "value": "자동 발행"
                 }
               ]
             }
           ]
         },
         {
+          "type": "progress",
+          "label": "이번 달 저장 공간",
+          "value": 64,
+          "detail": "100GB 중 64GB 사용",
+          "tone": "brand"
+        },
+        {
           "type": "notice",
           "tone": "info",
           "title": "세금계산서",
-          "body": "결제 후 3영업일 안에 이메일로 발송됩니다."
+          "body": "결제 다음 날 등록한 이메일로 자동 발송됩니다. 사업자 정보는 설정에서 바꿀 수 있어요."
         }
       ]
     }
@@ -1048,10 +1088,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "b8b2ab338eb076c8f2746f9bae5ffb3436b302f39b51c5772f594b899bf43189",
-      "tokens.css": "607752ea86ed4e740fcd65c5378b9168313e18cba5604a6ff32fd1bad2190877",
+      "index.html": "1d44a559bab42a4b50205c05704e27773e4ebc32995c73615f4fbed5dd2bc879",
+      "tokens.css": "bbb3f79158f615beda949dab613223c6d31f9183238e9db86280b07ef79bffb4",
       "tokens.json": "8b8472a158b0de1b3a1fe60306d410e3a3749b4f62b6f2370233656102b67658",
-      "blueprint.json": "f3308d7480e2e77f67148fa9cd3509cd974cbd9292b4bd95e38c0699b2d74f67"
+      "blueprint.json": "8823d6533bdafa3108a1fbffa18cc189c70e06853d7bcf5801c0187759c5f8a8"
     }
   }
 }

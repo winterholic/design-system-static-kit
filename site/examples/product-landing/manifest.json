@@ -994,7 +994,8 @@
             "href": "#main",
             "variant": "ghost"
           },
-          "visual": "photo"
+          "visual": "photo",
+          "motif": "orb"
         },
         {
           "type": "section",
@@ -1004,10 +1005,12 @@
               "type": "bento",
               "children": [
                 {
-                  "type": "card",
-                  "title": "열두 가지 분위기",
-                  "body": "따뜻한 노랑부터 차분한 파랑까지 한 번의 터치로 바꿉니다.",
-                  "icon": "sun"
+                  "type": "media",
+                  "kind": "photo",
+                  "ratio": "1:1",
+                  "alt": "책상 위에 놓인 램프",
+                  "motif": "lamp",
+                  "caption": "책상 위에서는 은은한 스탠드로"
                 },
                 {
                   "type": "metric",
@@ -1016,10 +1019,10 @@
                   "detail": "완충 기준"
                 },
                 {
-                  "type": "media",
-                  "kind": "photo",
-                  "ratio": "1:1",
-                  "alt": "책상 위에 놓인 램프"
+                  "type": "card",
+                  "title": "열두 가지 분위기",
+                  "body": "따뜻한 노랑부터 차분한 파랑까지 한 번의 터치로 바꿉니다.",
+                  "icon": "sun"
                 },
                 {
                   "type": "quote",
@@ -1035,7 +1038,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "description": "작은 램프가 방의 분위기를 바꾸는 네 가지 이유."
         },
         {
           "type": "section",
@@ -1117,10 +1121,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "82aad2d635a41ecb91727aa111d7a2dfeebde585ea7810d9f806327c8b9e3342",
-      "tokens.css": "360db18dcee160d6b06ec713da0368ab1982f5ba78239503c68ddacf164b1749",
+      "index.html": "c59139f01391cd9f2aef301e2619f2fca08209e6a57b9a8191552f9b27342a7b",
+      "tokens.css": "a779a011d828357fb14efc47205b1d88903fe84e1812e0360dcd6ec0fd2b27ec",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
-      "blueprint.json": "46bac36df4d84430782603aaf3f88236ab720af14b6e89cddfdc17f329bda83c"
+      "blueprint.json": "492f0b58afaaf04a6295e2a52e0f462e5d22eeeb95839370ea5be0cf12d40e59"
     }
   }
 }

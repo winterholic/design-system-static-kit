@@ -3,14 +3,14 @@ import {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, m
 import {themes, themeCategories} from './themes.mjs';
 import {palettes} from './palettes.mjs';
 import {icons, iconNames} from './icons.mjs';
-import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios} from './nodes.mjs';
+import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios, motifs} from './nodes.mjs';
 import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
 
 export const CATALOG_VERSION = '2.0.0';
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
-export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios};
+export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
 export const rules = [
   {id: 'R01', intent: '허용된 속성·값(variant 포함)만. 알 수 없는 키와 범위 밖 값은 실패.', codes: ['UNKNOWN_KEY', 'ENUM', 'STRING', 'NUMBER'], source: 'ADR 0001'},

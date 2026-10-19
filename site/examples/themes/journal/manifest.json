@@ -971,31 +971,37 @@
           "description": "천천히 쓰고 오래 남기는 글"
         },
         {
+          "type": "card",
+          "title": "규칙이 자유를 만든다",
+          "body": "처음부터 모든 것이 열려 있으면 결정이 오래 걸립니다. 허용되는 값을 먼저 정하면 그 안에서 더 다양한 선택을 빠르게 할 수 있다는 이야기.",
+          "variant": "horizontal",
+          "visual": "photo",
+          "motif": "grid",
+          "ratio": "4:3",
+          "meta": "10월 18일 · 6분",
+          "badge": "디자인 시스템",
+          "author": "김다선",
+          "action": {
+            "label": "읽기",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        },
+        {
           "type": "grid",
-          "columns": "two",
+          "columns": "three",
           "children": [
             {
               "type": "card",
-              "title": "규칙이 자유를 만든다",
-              "body": "제약을 먼저 정하면 선택이 쉬워집니다.",
+              "title": "색은 의미를 따른다",
+              "body": "팔레트를 고르기 전에 역할을 먼저 정하는 방법.",
               "variant": "media",
               "visual": "photo",
-              "ratio": "16:9",
-              "meta": "10월 18일 · 6분",
-              "action": {
-                "label": "읽기",
-                "href": "#main",
-                "variant": "ghost"
-              }
-            },
-            {
-              "type": "card",
-              "title": "색은 의미를 따른다",
-              "body": "팔레트를 고르기 전에 역할을 정합니다.",
-              "variant": "media",
-              "visual": "pattern",
+              "motif": "swatches",
               "ratio": "16:9",
               "meta": "10월 11일 · 5분",
+              "badge": "색",
+              "author": "이지훈",
               "action": {
                 "label": "읽기",
                 "href": "#main",
@@ -1005,11 +1011,14 @@
             {
               "type": "card",
               "title": "상태를 먼저 그린다",
-              "body": "로딩, 빈 화면, 오류가 완성도를 만듭니다.",
+              "body": "로딩, 빈 화면, 오류가 제품의 완성도를 만듭니다.",
               "variant": "media",
-              "visual": "diagram",
+              "visual": "photo",
+              "motif": "states",
               "ratio": "16:9",
               "meta": "10월 4일 · 7분",
+              "badge": "인터랙션",
+              "author": "박서연",
               "action": {
                 "label": "읽기",
                 "href": "#main",
@@ -1019,11 +1028,14 @@
             {
               "type": "card",
               "title": "접근성은 기본값",
-              "body": "나중에 붙이지 않고 처음부터 둡니다.",
+              "body": "나중에 붙이지 않고 처음부터 둘 때 드는 비용을 따져 봤어요.",
               "variant": "media",
               "visual": "photo",
+              "motif": "type",
               "ratio": "16:9",
               "meta": "9월 27일 · 4분",
+              "badge": "접근성",
+              "author": "최민준",
               "action": {
                 "label": "읽기",
                 "href": "#main",
@@ -1056,10 +1068,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a158a8c7f392d0a53c6c71c97449acd9b439696deb5ed5327427ba0ad9d81e3b",
-      "tokens.css": "4836494394c5ef79d7c199f6f9dcf2e8175a50376f23503aed744b70ec4094e0",
+      "index.html": "e60edcb67a7dcda98782088a0bf0277d67503dcdc9f91b397e18811f1f1e8375",
+      "tokens.css": "057bcd447e4e189473103260851b9b6e62c7059d162ff8453bee53d62d990bb9",
       "tokens.json": "1ff23b8b8736afbd994fc64114a4e0eb65c91b36331a1d8b52323791b9ea44d8",
-      "blueprint.json": "2ff0aef8cdb0bc20f92c227aea0872348f1f7cb38516c69bf4e39c94ba7fba41"
+      "blueprint.json": "ff8fa9abd6936fa3c2aaaafa3d5064f92ba7abc3d4d3f9ed87b17a57a9dc29dc"
     }
   }
 }

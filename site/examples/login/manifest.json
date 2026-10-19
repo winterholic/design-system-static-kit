@@ -958,11 +958,11 @@
         {
           "type": "page-header",
           "title": "다시 오셨네요",
-          "description": "계정으로 로그인하세요."
+          "description": "계정으로 로그인하고 하던 일을 이어서 하세요."
         },
         {
           "type": "form",
-          "title": "로그인",
+          "title": "이메일로 로그인",
           "fields": [
             {
               "id": "email",
@@ -974,24 +974,32 @@
               "id": "password",
               "label": "비밀번호",
               "type": "password",
-              "help": "8자 이상"
+              "help": "8자 이상 · 비밀번호를 잊으셨다면 아래에서 재설정하세요."
             }
           ],
           "submitLabel": "로그인"
         },
         {
-          "type": "links",
-          "title": "도움이 필요하신가요?",
+          "type": "divider",
+          "label": "또는"
+        },
+        {
+          "type": "actions",
           "items": [
+            {
+              "label": "Google 계정으로 계속하기",
+              "href": "#main",
+              "variant": "secondary"
+            },
+            {
+              "label": "카카오 계정으로 계속하기",
+              "href": "#main",
+              "variant": "secondary"
+            },
             {
               "label": "비밀번호를 잊으셨나요?",
               "href": "#main",
-              "description": "이메일로 재설정 링크를 받아요."
-            },
-            {
-              "label": "계정이 없으신가요?",
-              "href": "#main",
-              "description": "30초면 가입할 수 있어요."
+              "variant": "ghost"
             }
           ]
         }
@@ -1001,10 +1009,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "065726c5693f99e42404ebb449feab84193af56dd11b77db0f71333b7fe49a48",
-      "tokens.css": "1ac350f3bf41385bae27a118666da1ddf57765bf8ab6196d98afe3111b6e7c16",
+      "index.html": "fa1bf4dfddaac6b7a352909f8e1611c41d38a30449a9503540458b3818860af9",
+      "tokens.css": "deb29cfde605a1b718b0b66f3f643d512e3f3e857445af98e95be802d6ba6924",
       "tokens.json": "8b8472a158b0de1b3a1fe60306d410e3a3749b4f62b6f2370233656102b67658",
-      "blueprint.json": "02abaaaaee87f4633efe8b397fb5899dddb817c678b6908209235d022caecca8"
+      "blueprint.json": "8d154e1a84051553b8ebfb07b01195ec4950639ea25ce209faa9af2a413a3bb1"
     }
   }
 }

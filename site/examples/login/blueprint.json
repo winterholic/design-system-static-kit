@@ -50,11 +50,11 @@
       {
         "type": "page-header",
         "title": "다시 오셨네요",
-        "description": "계정으로 로그인하세요."
+        "description": "계정으로 로그인하고 하던 일을 이어서 하세요."
       },
       {
         "type": "form",
-        "title": "로그인",
+        "title": "이메일로 로그인",
         "fields": [
           {
             "id": "email",
@@ -66,24 +66,32 @@
             "id": "password",
             "label": "비밀번호",
             "type": "password",
-            "help": "8자 이상"
+            "help": "8자 이상 · 비밀번호를 잊으셨다면 아래에서 재설정하세요."
           }
         ],
         "submitLabel": "로그인"
       },
       {
-        "type": "links",
-        "title": "도움이 필요하신가요?",
+        "type": "divider",
+        "label": "또는"
+      },
+      {
+        "type": "actions",
         "items": [
+          {
+            "label": "Google 계정으로 계속하기",
+            "href": "#main",
+            "variant": "secondary"
+          },
+          {
+            "label": "카카오 계정으로 계속하기",
+            "href": "#main",
+            "variant": "secondary"
+          },
           {
             "label": "비밀번호를 잊으셨나요?",
             "href": "#main",
-            "description": "이메일로 재설정 링크를 받아요."
-          },
-          {
-            "label": "계정이 없으신가요?",
-            "href": "#main",
-            "description": "30초면 가입할 수 있어요."
+            "variant": "ghost"
           }
         ]
       }

@@ -1,6 +1,7 @@
 import {axisVars, coreCSS, tailCSS} from './base.mjs';
 import {shellCSS} from './shells.mjs';
 import {chunks} from './chunks.mjs';
+import {polish, polishCore} from './polish.mjs';
 import {nodeTypes} from '../catalog.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
@@ -33,7 +34,8 @@ export function stylesheet(b, sets) {
   }
   parts.push(coreCSS.trim());
   parts.push(shellCSS(b).trim());
-  for (const type of nodeTypes) if (used.has(type) && chunks[type]) parts.push(chunks[type].trim());
+  for (const type of nodeTypes) if (used.has(type) && chunks[type]) parts.push(chunks[type].trim() + (polish[type] ?? ''));
+  parts.push(polishCore.trim());
   parts.push(tailCSS.trim());
   return parts.join('\n') + '\n';
 }

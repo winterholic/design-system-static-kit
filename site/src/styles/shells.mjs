@@ -64,6 +64,7 @@ const shells = {
 @media(max-width:720px){[data-shell=rail]{display:block;background:none}[data-shell=rail] .kit-header{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--kit-border);padding:8px 16px}[data-shell=rail] .kit-nav ul{flex-direction:row;overflow-x:auto}[data-shell=rail] .kit-brand-name{position:static;width:auto;height:auto;clip:auto;clip-path:none}[data-shell=rail] .kit-header-action{margin:0}}`,
   centered: `
 [data-shell=centered] .kit-header{flex-direction:column;justify-content:center;gap:12px;padding-block:24px}[data-shell=centered] .kit-header-action{margin-left:0;align-self:center}[data-shell=centered] .kit-brand{font-size:24px}[data-shell=centered] .kit-nav ul{justify-content:center}
+@media(min-width:900px){[data-shell=centered] .kit-header{position:relative}[data-shell=centered] .kit-header-action{position:absolute;right:var(--kit-bleed);top:24px;margin:0}}
 @media(max-width:640px){[data-shell=centered] .kit-nav ul{justify-content:flex-start}}`,
   stacked: `
 [data-shell=stacked] .kit-header{flex-wrap:wrap;padding-block:12px 0;gap:0 var(--kit-gap)}[data-shell=stacked] .kit-brand{order:1}[data-shell=stacked] .kit-header-action{order:2;margin-left:auto;margin-bottom:12px}
