@@ -106,7 +106,7 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 | 인증(`auth`) | form | 허용: page-header, form, notice, actions, links, divider, empty-state · 최상위 4개 이하 | centered, minimal, split, topbar, stacked / narrow, standard |
 | 오류·상태 페이지(`error`) | empty-state | 허용: page-header, empty-state, actions, links, notice · 최상위 4개 이하 | 모든 셸 |
 
-## 8. 규칙 19개와 금지 조합 11개
+## 8. 규칙 20개와 금지 조합 11개
 
 | 규칙 | 내용 | 오류 코드 |
 |---|---|---|
@@ -129,6 +129,7 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 | R17 | 앵커 링크는 같은 페이지에 선언된 anchor만, 목차는 anchor 있는 섹션 2개 이상. | ANCHOR_MISSING, ANCHOR_DUPLICATE, TOC_EMPTY |
 | R18 | 변형 조건: 미디어 카드는 visual, 링크 카드는 액션, 오류성 상태 화면은 액션 필수. | VARIANT_REQUIRES, HERO_VISUAL |
 | R19 | auto 모드는 밝은/어두운 두 토큰 세트를 모두 검증하고 prefers-contrast·forced-colors를 따름. | audit |
+| R20 | 간격 계약(S01~S10): 간격은 밀도 토큰과 4px 격자 값만 쓰고, 색 섹션 중첩·섹션 3단 중첩처럼 안쪽 여백이 겹치는 구성은 거부. | SURFACE_NEST, SECTION_DEPTH |
 
 축 조합 금지는 각각 근거와 대안 값을 가집니다. 대안은 작성기의 "자동 수정"과 `repairAxes`가 사용하며, 검증기는 값을 고치지 않고 거부만 합니다.
 

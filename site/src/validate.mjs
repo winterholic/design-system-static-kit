@@ -88,6 +88,7 @@ export function validateBlueprint(input) {
   // ---- tree ----
   let count = 0, heroCount = 0;
   const fieldIds = new Set(), types = new Set(), firstSeen = {};
+  const surfaceStack = [];
   function node(n, path, parent, depth, ancestors) {
     count++; if (count > limits.nodes) { if (count === limits.nodes + 1) error(path, 'NODE_LIMIT', `최대 ${limits.nodes}노드입니다.`); return; }
     if (depth > limits.depth) { error(path, 'DEPTH', `최대 깊이는 ${limits.depth}입니다.`); return; }
@@ -100,7 +101,10 @@ export function validateBlueprint(input) {
     if (spec.children) properties.children = {type: 'array', items: {}, minItems: spec.min, maxItems: spec.max};
     value(n, {type: 'object', properties, required: requiredOf(spec)}, path);
     checks(n, path, ancestors);
+    const surfaced = n.type === 'section' && ['tint', 'inverse'].includes(n.surface);
+    if (surfaced) surfaceStack.push(path);
     if (spec.children && Array.isArray(n.children)) for (let i = 0; i < n.children.length && count <= limits.nodes; i++) node(n.children[i], `${path}.children[${i}]`, n.type, depth + 1, [...ancestors, n.type]);
+    if (surfaced) surfaceStack.pop();
   }
   function checks(n, path, ancestors) {
     const t = n.type, A = Array.isArray;
@@ -115,6 +119,8 @@ export function validateBlueprint(input) {
       group(n.children.filter(plain).map(p => p.action).filter(plain), path);
       if (n.children.filter(p => plain(p) && p.featured === 'yes').length > 1) error(path, 'FEATURED_PLAN', '추천 요금제는 하나만 둘 수 있습니다.');
     }
+    if (t === 'section' && ancestors.filter(x => x === 'section').length >= 2) error(path, 'SECTION_DEPTH', '섹션은 두 단계까지만 중첩합니다(S05). 세 번째 단계는 부품 제목(h3)으로 표현하세요.');
+    if (t === 'section' && ['tint', 'inverse'].includes(n.surface) && surfaceStack.length) error(path + '.surface', 'SURFACE_NEST', `색을 입힌 섹션 안에 색을 입힌 섹션을 넣을 수 없습니다(바깥 ${surfaceStack.at(-1)}). 안쪽 여백이 겹쳐 간격이 두 배가 됩니다(S05).`);
     if (t === 'tabs' && ancestors.includes('tabs')) error(path, 'NESTED_TABS', '탭 안에 탭을 중첩할 수 없습니다.');
     if (t === 'links' && A(n.items)) n.items.forEach((l, i) => { if (plain(l)) { checkLink(l.href, `${path}.items[${i}].href`); checkLabel(l.label, `${path}.items[${i}].label`); } });
     if (t === 'breadcrumb' && A(n.items)) {

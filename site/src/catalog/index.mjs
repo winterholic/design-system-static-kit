@@ -32,6 +32,7 @@ export const rules = [
   {id: 'R17', intent: '앵커 링크는 같은 페이지에 선언된 anchor만, 목차는 anchor 있는 섹션 2개 이상.', codes: ['ANCHOR_MISSING', 'ANCHOR_DUPLICATE', 'TOC_EMPTY'], source: 'compiler input boundary'},
   {id: 'R18', intent: '변형 조건: 미디어 카드는 visual, 링크 카드는 액션, 오류성 상태 화면은 액션 필수.', codes: ['VARIANT_REQUIRES', 'HERO_VISUAL'], source: 'winterholic-base/docs/07-states-feedback.md'},
   {id: 'R19', intent: 'auto 모드는 밝은/어두운 두 토큰 세트를 모두 검증하고 prefers-contrast·forced-colors를 따름.', codes: ['audit'], source: 'winterholic-base/docs/09-dark-mode.md'},
+  {id: 'R20', intent: '간격 계약(S01~S10): 간격은 밀도 토큰과 4px 격자 값만 쓰고, 색 섹션 중첩·섹션 3단 중첩처럼 안쪽 여백이 겹치는 구성은 거부.', codes: ['SURFACE_NEST', 'SECTION_DEPTH'], source: 'docs/spacing.md'},
 ];
 
 const freeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };

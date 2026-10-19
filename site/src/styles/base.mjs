@@ -1,3 +1,5 @@
+import {SPACE, spaceVars} from '../spacing.mjs';
+
 /** Axis → concrete values. Every key of catalog `axes` has a row here (checked by tests/catalog.test.mjs). */
 export const FONT = {
   sans: 'system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif',
@@ -13,7 +15,7 @@ export const TYPO = {
   rounded: ['rounded', 'rounded'], geometric: ['geometric', 'geometric'], humanist: ['humanist', 'humanist'], grotesk: ['grotesk', 'grotesk'],
 };
 // `section` = gap between blocks on app/content pages; `band` = vertical padding of a full-bleed section band on marketing pages.
-export const DENSITY = {compact: {inset: 16, gap: 16, section: 28, control: 40, band: 56}, comfortable: {inset: 24, gap: 24, section: 40, control: 44, band: 80}, spacious: {inset: 32, gap: 32, section: 56, control: 48, band: 104}};
+export const DENSITY = SPACE;
 export const RADIUS = {square: 0, subtle: 4, soft: 10, round: 18, bubble: 28};
 export const WIDTH = {narrow: 760, standard: 1080, wide: 1280, full: 1600};
 // title = content-page h1, display = hero, app = h1 of app screens (heading-1 in winterholic-base).
@@ -53,7 +55,7 @@ export function axisVars(b) {
   const control = b.control === 'pill' ? '999px' : b.control === 'square' ? '0px' : `${r / 2}px`;
   return [
     `--kit-font:${FONT[body]}`, `--kit-heading:${FONT[head]}`, `--kit-mono:${FONT.mono}`,
-    `--kit-inset:${d.inset}px`, `--kit-gap:${d.gap}px`, `--kit-section:${d.section}px`, `--kit-band:${d.band}px`, `--kit-control:${d.control}px`, `--kit-gutter:32px`,
+    spaceVars(b.density), `--kit-gutter:32px`,
     // % resolves against the element's containing block, so a full-bleed band pads itself back into the content column.
     `--kit-bleed:max(var(--kit-gutter),calc((100% - var(--kit-max)) / 2 + var(--kit-gutter)))`, `--kit-bleedx:max(var(--kit-gutter),calc((100vw - var(--kit-max)) / 2 + var(--kit-gutter)))`,
     `--kit-radius:${r}px`, `--kit-r-control:${control}`, `--kit-r-field:${b.control === 'pill' ? '12px' : control}`, `--kit-r-tag:${b.control === 'square' ? '0px' : b.control === 'pill' ? '999px' : `${Math.max(r / 2, 4)}px`}`,
@@ -71,23 +73,23 @@ export const coreCSS = `
 *,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font:var(--kit-body)/var(--kit-line) var(--kit-font);word-break:keep-all;overflow-wrap:anywhere;line-break:strict;min-height:100vh}
 a{color:var(--kit-link);text-underline-offset:4px}button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button,a,input,textarea,select,summary{touch-action:manipulation}
-:focus-visible{outline:3px solid var(--kit-focus);outline-offset:3px}
+:focus-visible{outline:3px solid var(--kit-focus);outline-offset:3px}input[type=checkbox],input[type=radio]{margin:0}
 h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,ul,ol{margin:0}ul,ol{padding:0}
 h1,h2,h3,h4,h5,h6{font-family:var(--kit-heading);font-weight:var(--kit-hw);line-height:1.3;letter-spacing:-.02em;text-wrap:balance}
-h1{font-size:var(--kit-title);max-width:24ch;line-height:1.15;letter-spacing:-.035em}h2{font-size:var(--kit-h2);line-height:1.22;letter-spacing:-.03em}h3{font-size:var(--kit-h3);line-height:1.3;letter-spacing:-.02em}h4,h5,h6{font-size:calc(var(--kit-body) + 1px);line-height:1.4;letter-spacing:-.01em}p+p{margin-top:var(--kit-gap)}p{text-wrap:pretty}
+h1{font-size:var(--kit-title);max-width:24ch;line-height:1.15;letter-spacing:-.035em}h2{font-size:var(--kit-h2);line-height:1.22;letter-spacing:-.03em}h3{font-size:var(--kit-h3);line-height:1.3;letter-spacing:-.02em}h4,h5,h6{font-size:calc(var(--kit-body) + 1px);line-height:1.4;letter-spacing:-.01em}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}
 /* A part's own title is a component heading (h3 step) no matter which outline level it carries; only section heads and heroes use the h2 step. */
 :is(.kit-card,.kit-form,.kit-table-wrap,.kit-chart,.kit-list,.kit-summary,.kit-buybox,.kit-props,.kit-links,.kit-calendar,.kit-md-detail,.kit-progress,.kit-reviews,.kit-menu,.kit-plan,.kit-code,.kit-team,.kit-faq,.kit-steps,.kit-timeline,.kit-chat,.kit-lane,.kit-md,.kit-gallery,.kit-reel,.kit-features,.kit-notice,.kit-quote,.kit-metric) :is(h2,h3,h4){font-size:var(--kit-h3);line-height:1.3}
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .kit-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
-.kit-muted{color:var(--kit-muted);font-size:var(--kit-small)}.kit-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--kit-accentInk)}.kit-eyebrow::before{content:'';width:24px;height:2px;border-radius:2px;background:currentColor;flex:none}.kit-meta{font-size:var(--kit-small);color:var(--kit-muted)}.kit-quiet{font-size:var(--kit-small);font-weight:600;color:var(--kit-muted);letter-spacing:.02em}
+.kit-muted{color:var(--kit-muted);font-size:var(--kit-small)}.kit-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--kit-accentInk)}.kit-eyebrow::before{content:'';width:24px;height:2px;border-radius:2px;background:currentColor;flex:none}.kit-meta{font-size:var(--kit-small);color:var(--kit-muted)}.kit-quiet{font-size:var(--kit-small);font-weight:600;color:var(--kit-muted);letter-spacing:.02em}
 .kit-skip{position:fixed;top:-100px;left:16px;background:var(--kit-surface);color:var(--kit-text);padding:12px;z-index:50;border:2px solid var(--kit-focus)}.kit-skip:focus{top:12px}
 .kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}.kit-flip{transform:scaleX(-1)}
-.kit-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--kit-control);padding:8px 22px;border:1px solid var(--kit-rule);border-radius:var(--kit-r-control);background:var(--kit-surface);color:var(--kit-text);font-weight:var(--kit-bw);font-size:15px;line-height:1.3;letter-spacing:-.005em;text-decoration:none;text-align:center;cursor:pointer;transition:background var(--kit-dur) var(--kit-ease),color var(--kit-dur) var(--kit-ease),box-shadow var(--kit-dur) var(--kit-ease),transform var(--kit-dur) var(--kit-ease)}
+.kit-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--kit-control);padding:8px 24px;border:1px solid var(--kit-rule);border-radius:var(--kit-r-control);background:var(--kit-surface);color:var(--kit-text);font-weight:var(--kit-bw);font-size:15px;line-height:1.3;letter-spacing:-.005em;text-decoration:none;text-align:center;cursor:pointer;transition:background var(--kit-dur) var(--kit-ease),color var(--kit-dur) var(--kit-ease),box-shadow var(--kit-dur) var(--kit-ease),transform var(--kit-dur) var(--kit-ease)}
 .kit-button[data-variant=primary]{background:var(--kit-action);color:var(--kit-onAction);border-color:var(--kit-action);box-shadow:0 1px 2px var(--kit-shade)}.kit-button[data-variant=primary]:hover{background:var(--kit-actionHover);color:var(--kit-onActionHover);border-color:var(--kit-actionHover)}.kit-button[data-variant=ghost]{background:transparent;border-color:transparent;color:var(--kit-link);text-decoration:underline;text-underline-offset:4px;padding-inline:4px}.kit-button[data-variant=secondary]:hover{background:var(--kit-soft)}.kit-button:hover{transform:translateY(var(--kit-lift))}
-.kit-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}
+.kit-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 12px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}
 .kit-badge[data-dot]::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--kit-muted);flex:none}.kit-badge[data-dot=success]::before{background:var(--kit-success)}.kit-badge[data-dot=info]::before{background:var(--kit-info)}.kit-badge[data-dot=warning]::before{background:var(--kit-warning)}.kit-badge[data-dot=danger]::before{background:var(--kit-danger)}
 .kit-card-icon{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:calc(var(--kit-radius) * .6);background:var(--kit-accentSoft);color:var(--kit-accentInk);flex:none}.kit-card-icon .kit-icon{width:24px;height:24px}
-.kit-price{font:var(--kit-hw) clamp(30px,3.4vw,40px)/1.1 var(--kit-heading);letter-spacing:-.035em;margin-top:10px;font-variant-numeric:tabular-nums}.kit-price .kit-muted{font:500 var(--kit-small)/1.4 var(--kit-font);letter-spacing:0;display:inline-block;white-space:nowrap}
+.kit-price{font:var(--kit-hw) clamp(30px,3.4vw,40px)/1.1 var(--kit-heading);letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums}.kit-price .kit-muted{font:500 var(--kit-small)/1.4 var(--kit-font);letter-spacing:0;display:inline-block;white-space:nowrap}
 .kit-avatar{display:inline-grid;place-items:center;width:36px;height:36px;flex:none;border-radius:999px;background:var(--kit-accent);color:var(--kit-onAccent);font-weight:700;font-size:14px}
 .kit-card,.kit-metric,.kit-list,.kit-form,.kit-table-wrap,.kit-chart,.kit-summary,.kit-buybox,.kit-plan,.kit-quote,.kit-faq details,.kit-md-list,.kit-md-detail,.kit-code,.kit-progress,.kit-calendar,.kit-reviews,.kit-menu,.kit-props,.kit-links,.kit-team li{background:var(--kit-surface);border:var(--kit-card-border);border-radius:var(--kit-radius);box-shadow:var(--kit-shadow)}
 .kit-card,.kit-metric,.kit-list,.kit-form,.kit-table-wrap,.kit-chart,.kit-summary,.kit-buybox,.kit-quote,.kit-md-detail,.kit-progress,.kit-calendar,.kit-reviews,.kit-menu,.kit-props,.kit-links{min-width:0;padding:var(--kit-inset)}

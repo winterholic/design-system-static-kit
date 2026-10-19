@@ -2,6 +2,7 @@ import {readFile, writeFile} from 'node:fs/promises';
 import {themes, themeCategories, palettes, axes, axisDefs, axisOrder, styleAxes, axisBans, nodeSpecs, nodeTypes, pageTypes, templateList, rules, iconNames, layoutCoverage, contentCoverage, iconAliases, icons, CATALOG_VERSION, limits, navLimits} from '../src/catalog.mjs';
 import {page} from './md.mjs';
 import {RADIUS} from '../src/styles/base.mjs';
+import {SPACE, RELATIONS, spacingMarkdown} from '../src/spacing.mjs';
 
 const read = async p => JSON.parse(await readFile(new URL(p, import.meta.url), 'utf8'));
 const evidenceCount = (await read('../docs/evidence/coolors-palettes.json')).palettes.length;
@@ -269,3 +270,9 @@ await writeFile(new URL('../docs/gap-analysis.html', import.meta.url), page({tit
 await writeFile(new URL('../docs/design.md', import.meta.url), `# 설계서\n\n${design}`);
 await writeFile(new URL('../docs/design.html', import.meta.url), page({title: '설계서 · 카탈로그가 강제하는 디자인 조립기', subtitle: `Static Kit ${CATALOG_VERSION} · 테마 ${stats.themes} · 팔레트 ${stats.palettes} · 템플릿 ${stats.templates} · 부품 ${stats.nodes}`, md: design, footer}));
 console.log(`DOCS: gap-analysis (${profiles.length} systems, ${Object.keys(layoutCoverage).length} layouts: ${layoutFull} full / ${layoutPartial} partial) and design written.`);
+
+// ---------- spacing contract (generated from src/spacing.mjs) ----------
+const spacingMd = spacingMarkdown();
+await writeFile(new URL('../docs/spacing.md', import.meta.url), spacingMd);
+await writeFile(new URL('../docs/spacing.html', import.meta.url), page({title: '간격 규칙 · 관계별 패딩·마진 계약', subtitle: `Static Kit ${CATALOG_VERSION} · 단계 ${Object.keys(SPACE.comfortable).length} · 관계 규칙 ${RELATIONS.length}`, md: spacingMd.split('\n').slice(2).join('\n'), footer}));
+console.log(`DOCS: spacing contract written (${RELATIONS.length} relations).`);

@@ -3,6 +3,7 @@ import {shellCSS} from './shells.mjs';
 import {chunks} from './chunks.mjs';
 import {polish, polishCore} from './polish.mjs';
 import {nodeTypes} from '../catalog.mjs';
+import {contractCSS} from '../spacing.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -35,6 +36,7 @@ export function stylesheet(b, sets) {
   parts.push(coreCSS.trim());
   parts.push(shellCSS(b).trim());
   for (const type of nodeTypes) if (used.has(type) && chunks[type]) parts.push(chunks[type].trim() + (polish[type] ?? ''));
+  parts.push(contractCSS().trim());
   parts.push(polishCore.trim());
   parts.push(tailCSS.trim());
   return parts.join('\n') + '\n';
