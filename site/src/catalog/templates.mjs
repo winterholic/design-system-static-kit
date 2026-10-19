@@ -232,7 +232,7 @@ add('calendar-view', '월간 일정', 'community', 'workspace', '워크스페이
 add('audit-log', '감사 로그', 'data', 'console', '콘솔', [
   head('감사 로그', '최근 24시간 · 관리자 활동', {actions: [A('로그 내보내기', 'secondary')]}),
   grid('three', metric('이벤트', '1,284', '최근 24시간'), metric('실패', '7', '전일 대비', 'down', '-3'), metric('고유 사용자', '38')),
-  {type: 'timeline', title: '최근 이벤트', items: [{time: '14:02', title: '권한 변경', description: 'kim.dasun이 팀 역할을 편집자로 변경', status: '완료'}, {time: '13:41', title: '로그인 실패', description: '알 수 없는 IP에서 3회 실패', status: '진행'}, {time: '12:10', title: 'API 키 발급', description: '배포용 키가 발급됨', status: '완료'}]},
+  {type: 'timeline', title: '최근 이벤트', variant: 'log', items: [{time: '14:02', title: '권한 변경', description: 'kim.dasun이 팀 역할을 편집자로 변경', status: '완료'}, {time: '13:41', title: '로그인 실패', description: '알 수 없는 IP에서 3회 실패', status: '진행'}, {time: '12:10', title: 'API 키 발급', description: '배포용 키가 발급됨', status: '완료'}]},
   {type: 'code', label: '이벤트 원본', language: 'json', code: '{\n  "event": "role.updated",\n  "actor": "kim.dasun",\n  "target": "team-design",\n  "role": "editor"\n}'},
 ], {chrome: chrome(nav(['개요', 'home'], ['로그', 'terminal'], ['키', 'lock'], ['설정', 'settings']), null, '콘솔 · 정적 데모', null)});
 

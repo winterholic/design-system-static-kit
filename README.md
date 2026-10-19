@@ -8,7 +8,7 @@
 | Coolors 팔레트 | 160 (테마당 4) | | 페이지 유형 | 16 |
 | 페이지 템플릿 | 61 | | 스타일 축 | 15 (모드 포함) |
 | 레이아웃 셸 | 10 | | 아이콘 | 87 |
-| 규칙 | 19 + 축 조합 금지 11 | | 대비 검사 | 33,600쌍 |
+| 규칙 | 20 + 축 조합 금지 11 | | 대비 검사 | 33,600쌍 |
 
 수많은 조합이 곧 좋은 디자인 보증이라는 뜻은 아닙니다. 검토한 범위의 선택, 접근성의 하한, 개정 절차를 코드로 만듭니다.
 
@@ -16,7 +16,7 @@
 
 - **휴대폰용 단일 파일 갤러리**: `site/gallery/index.html` (컴파일러 포함, 오프라인). 템플릿·테마·부품·축을 열어 보고 테마·팔레트·모드·축을 바로 바꿔 봅니다. 금지 조합은 이유와 함께 거부되고 자동 수정 대안이 나옵니다.
 - **시각 조립기**: `npm run dev` 후 http://127.0.0.1:4173
-- 설계서 [docs/design.html](docs/design.html) · 격차 분석 [docs/gap-analysis.html](docs/gap-analysis.html)
+- 설계서 [docs/design.html](docs/design.html) · 격차 분석 [docs/gap-analysis.html](docs/gap-analysis.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html)
 
 ## 실행
 
@@ -71,7 +71,7 @@ npm run kit -- migrate old-v1.json new.json    # 1.x → 2.0
 ## 문서
 
 - [설계서](docs/design.md) · [격차 분석](docs/gap-analysis.md) · [아키텍처](docs/architecture.md) · [규칙 개정](docs/governance.md)
-- [ADR 0001 카탈로그 컴파일러](docs/adr/0001-catalog-compiler.md) · [ADR 0002 확장 설계](docs/adr/0002-axes-bans-page-types.md)
+- [ADR 0001 카탈로그 컴파일러](docs/adr/0001-catalog-compiler.md) · [ADR 0002 확장 설계](docs/adr/0002-axes-bans-page-types.md) · [ADR 0003 간격 계약](docs/adr/0003-spacing-contract.md) · [간격 규칙](docs/spacing.md) · [4차 템플릿·부품 레벨업](docs/template-system.md)
 - [PMS/WBS](docs/wbs.md) · [출처·라이선스](docs/sources.md) · [검증 기록](docs/verification.md)
 - 증거: [Coolors 관측](docs/evidence/coolors-palettes.json) · [대비 전수](docs/evidence/contrast.json) · [커버리지](docs/evidence/coverage.json) · [동료 레포 축](docs/evidence/peer-axes.json)
 

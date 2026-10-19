@@ -50,7 +50,7 @@ export function spacingProbe(options) {
   }
 
   // S01 라벨 ↔ 값: 붙여 읽는 한 쌍은 pairMax 이하
-  for (const sel of ['.kit-metric', '.kit-props dl>div', '.kit-summary dl>div', '.kit-timeline:not([data-variant=release]) li>div', '.kit-rel-meta', '.kit-md-list li', '.kit-reviews li', '.kit-menu-text', '.kit-list li>div', '.kit-team li>div', '.kit-features li>div']) {
+  for (const sel of ['.kit-metric', '.kit-props dl>div', '.kit-summary dl>div', '.kit-timeline:not([data-variant=release]) li>div', '.kit-timeline[data-variant=log] .kit-rel-body', '.kit-rel-meta', '.kit-md-list li', '.kit-reviews li', '.kit-menu-text', '.kit-list li>div', '.kit-team li>div', '.kit-features li>div']) {
     for (const box of main.querySelectorAll(sel)) {
       if (!visible(box)) continue;
       const gaps = stackGaps(box); if (!gaps) continue;

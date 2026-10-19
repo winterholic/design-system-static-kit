@@ -141,8 +141,18 @@ const scenes = {
   fitness: (w, h, id, v) => {
     const s = Math.min(w, h * 1.4) / 100, cx = w * .42, cy = h * .62, fl = h * .8;
     return [`<defs><linearGradient id="${id}k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sc"/><stop offset="1" class="ss"/></linearGradient><linearGradient id="${id}f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="su"/><stop offset="1" class="ss"/></linearGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/><rect y="${f(fl)}" width="${f(w)}" height="${f(h - fl)}" fill="url(#${id}f)"/>`, ell(cx, fl + 4 * s, 40 * s, 4.4 * s, SHADE),
-      `<g transform="translate(${f(cx)} ${f(cy)}) scale(${f(s)}) rotate(-8)">${rect(-30, -2.4, 60, 4.8, 'a-3', 2.4)}${rect(-36, -14, 9, 28, 'a-1', 3)}${rect(-27, -10, 6, 20, 'a-3', 2)}${rect(27, -14, 9, 28, 'a-1', 3)}${rect(21, -10, 6, 20, 'a-3', 2)}${rect(-44, -9, 6, 18, 'a-1', 3)}${rect(38, -9, 6, 18, 'a-1', 3)}${rect(-36, -14, 3, 28, LIGHT, 1.5, op(.4))}${rect(27, -14, 3, 28, LIGHT, 1.5, op(.4))}</g>`,
-      circ(w * .8, h * .8 - 8 * s, 13 * s, 'a-2'), path(`M${f(w * .8 - 8 * s)} ${f(h * .8 - 20 * s)}C${f(w * .8 - 8 * s)} ${f(h * .8 - 34 * s)} ${f(w * .8 + 8 * s)} ${f(h * .8 - 34 * s)} ${f(w * .8 + 8 * s)} ${f(h * .8 - 20 * s)}`, 'k3', `stroke-width="${f(4 * s)}"`), circ(w * .8 + 5 * s, h * .8 - 10 * s, 5 * s, SHADE), ell(w * .8, fl + 4 * s, 18 * s, 2.6 * s, SHADE)].join('');
+      ...[
+        // 0: barbell and kettlebell
+        [`<g transform="translate(${f(cx)} ${f(cy)}) scale(${f(s)}) rotate(-8)">${rect(-30, -2.4, 60, 4.8, 'a-3', 2.4)}${rect(-36, -14, 9, 28, 'a-1', 3)}${rect(-27, -10, 6, 20, 'a-3', 2)}${rect(27, -14, 9, 28, 'a-1', 3)}${rect(21, -10, 6, 20, 'a-3', 2)}${rect(-44, -9, 6, 18, 'a-1', 3)}${rect(38, -9, 6, 18, 'a-1', 3)}${rect(-36, -14, 3, 28, LIGHT, 1.5, op(.4))}${rect(27, -14, 3, 28, LIGHT, 1.5, op(.4))}</g>`,
+          circ(w * .8, h * .8 - 8 * s, 13 * s, 'a-2'), path(`M${f(w * .8 - 8 * s)} ${f(h * .8 - 20 * s)}C${f(w * .8 - 8 * s)} ${f(h * .8 - 34 * s)} ${f(w * .8 + 8 * s)} ${f(h * .8 - 34 * s)} ${f(w * .8 + 8 * s)} ${f(h * .8 - 20 * s)}`, 'k3', `stroke-width="${f(4 * s)}"`), circ(w * .8 + 5 * s, h * .8 - 10 * s, 5 * s, SHADE), ell(w * .8, fl + 4 * s, 18 * s, 2.6 * s, SHADE)],
+        // 1: rolled yoga mat and water bottle
+        [ell(cx, fl + 4 * s, 42 * s, 4.4 * s, SHADE), rect(cx - 36 * s, cy - 6 * s, 72 * s, 26 * s, 'a-gr', 13 * s), rect(cx - 36 * s, cy - 6 * s, 72 * s, 8 * s, LIGHT, 4 * s, 'opacity=".5"'), ell(cx + 36 * s, cy + 7 * s, 8 * s, 13 * s, 'a-1'), circ(cx + 36 * s, cy + 7 * s, 8 * s, 'kg', 'fill="none" stroke-width="' + f(1.6 * s) + '"'), rect(cx - 8 * s, cy - 8 * s, 8 * s, 30 * s, 'a-3', 2 * s),
+          rect(w * .8 - 8 * s, h * .8 - 42 * s, 16 * s, 44 * s, 'a-5', 6 * s), rect(w * .8 - 8 * s, h * .8 - 30 * s, 16 * s, 14 * s, 'a-c3'), rect(w * .8 - 5 * s, h * .8 - 50 * s, 10 * s, 8 * s, 'a-3', 2 * s), rect(w * .8 - 6 * s, h * .8 - 40 * s, 3 * s, 36 * s, LIGHT, 1.5 * s, 'opacity=".6"'), ell(w * .8, fl + 4 * s, 14 * s, 2.4 * s, SHADE)],
+        // 2: big kettlebell, plates and a jump rope
+        [ell(cx, fl + 4 * s, 34 * s, 4 * s, SHADE), circ(cx, cy + 6 * s, 26 * s, 'a-1'), path(`M${f(cx - 15 * s)} ${f(cy - 14 * s)}C${f(cx - 15 * s)} ${f(cy - 42 * s)} ${f(cx + 15 * s)} ${f(cy - 42 * s)} ${f(cx + 15 * s)} ${f(cy - 14 * s)}`, 'k3', `stroke-width="${f(7 * s)}"`), circ(cx + 9 * s, cy + 10 * s, 14 * s, SHADE, op(.25)), circ(cx - 10 * s, cy - 2 * s, 7 * s, LIGHT, 'opacity=".6"'),
+          rect(w * .78 - 22 * s, h * .8 - 8 * s, 44 * s, 8 * s, 'a-3', 2 * s), rect(w * .78 - 18 * s, h * .8 - 16 * s, 36 * s, 8 * s, 'a-c4', 2 * s), rect(w * .78 - 14 * s, h * .8 - 24 * s, 28 * s, 8 * s, 'a-2', 2 * s), ell(w * .78, fl + 4 * s, 24 * s, 3 * s, SHADE),
+          path(`M${f(w * .08)} ${f(fl + 2 * s)}C${f(w * .2)} ${f(fl - 18 * s)} ${f(w * .3)} ${f(fl + 14 * s)} ${f(w * .4)} ${f(fl)}`, 'k4', `stroke-width="${f(2.4 * s)}" opacity=".8"`)],
+      ][v % 3].flat()].join('');
   },
   care: (w, h, id, v) => {
     const cx = w * .5, cy = h * .5, r = Math.min(w, h) * .3;
