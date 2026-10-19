@@ -17,13 +17,12 @@ const checkById = new Map(check.results.map(r => [r.id, r]));
 const T = manifest.totals;
 
 // curated: one matrix case per page type (manifest order is deterministic)
+// Rotates through the matrix cases of each page type (deterministic) so the overview shows different themes, not one theme 16 times.
 const repByPageType = [];
 {
-  const seen = new Set();
-  for (const c of manifest.cases) {
-    if (c.set !== 'matrix' || seen.has(c.pageType)) continue;
-    seen.add(c.pageType); repByPageType.push(c.id);
-  }
+  const byType = new Map();
+  for (const c of manifest.cases) if (c.set === 'matrix') byType.set(c.pageType, [...(byType.get(c.pageType) ?? []), c.id]);
+  [...byType.values()].forEach((ids, i) => repByPageType.push(ids[(i * 11 + 3) % ids.length]));
 }
 const boundary = manifest.cases.filter(c => c.set === 'stress').map(c => c.id);
 const curated = {representative: repByPageType, boundary};
@@ -54,6 +53,7 @@ table.meta{border-collapse:collapse;font-size:13px;margin:12px 0}table.meta th,t
 @media(max-width:760px){.viewer{grid-template-columns:1fr}.viewer iframe{height:70vh}}
 .navrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.navrow a,.navrow button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid #999;border-radius:6px;background:none;color:inherit;text-decoration:none}
 .note{font-size:13px;color:#555}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:12px}.thumb{display:block;text-decoration:none;color:inherit;border:1px solid #bbb;border-radius:12px;overflow:hidden;background:#fff;transition:box-shadow .15s,border-color .15s}.thumb:hover,.thumb:focus-visible{border-color:#000;box-shadow:0 6px 20px #0002}.shot{display:block;aspect-ratio:4/3;overflow:hidden;position:relative;border-bottom:1px solid #ddd}.shot iframe{position:absolute;left:0;top:0;width:400%;height:400%;border:0;transform:scale(.25);transform-origin:0 0;pointer-events:none}.cap{display:block;padding:8px 12px 10px;font-size:12px;color:#555}.cap code{color:#111;word-break:break-all}
 footer.site{margin-top:40px;border-top:1px solid #ccc;padding-top:12px;font-size:12px;color:#555}
 </style></head><body>`;
 
@@ -65,11 +65,12 @@ const dupList = (manifest.duplicates ?? []).slice(0, 20).map(d => `<li><code>${d
 const indexHtml = head('Test Lab · 조합 검증 탐색', '생성된 케이스 탐색') + `
 <header class="top"><h1>Test Lab · 조합 검증 탐색</h1>
 <p class="sub">seed ${manifest.seed} · 카탈로그 ${manifest.catalogVersion} · 고유 페이지 ${T.cases} · 중복 제거 ${(manifest.duplicates ?? []).length} · 규칙 거부 ${(manifest.skipped ?? []).length} · 거부 입력 ${T.negativeRejected}/${(manifest.negatives ?? []).length}</p>
-<div class="badges"><span class="badge ok">정적검사 ${check.summary.passed}/${check.summary.cases} 통과</span><span class="badge todo">시각검수 미실시 (이 환경 브라우저 미실행·CI artifact 참조)</span><span class="badge">Safari/iOS·스크린리더 미검증</span></div></header>
+<div class="badges"><span class="badge ok">정적검사 ${check.summary.passed}/${check.summary.cases} 통과</span><span class="badge ok">Chromium 390/1280px 가로 넘침 전수 0 (육안은 대표 표본만)</span><span class="badge">Safari/iOS·스크린리더 미검증</span></div></header>
 <section class="block"><h2>범위와 정직한 한계</h2>
-<p class="note">정적검사(문서 구조·앵커·이름·라벨·표·스크립트·외부URL·용량)는 전수 통과. 시각 품질·오버플로우·키보드·실제 렌더는 브라우저 검사 영역이며 이 환경에서는 실행하지 않았다. CI(<code>e2e/lab-pages.spec.mjs</code>)가 Chromium 실측을 담당하고 결과는 Actions artifact에 보존된다. 커밋·검사시각은 <code>docs/verification.md</code>와 CI 실행 기록으로 확인한다. 산출물은 결정적 재생산을 위해 시각·커밋을 포함하지 않는다 (재생성: 아래 명령 참조).</p></section>
+<p class="note">정적검사(문서 구조·앵커·이름·라벨·표·스크립트·외부URL·용량)는 전수 통과. 시각 품질·오버플로우·키보드·실제 렌더는 브라우저 검사 영역이다. 전수로 확인한 것은 390/1280px 가로 넘침(<code>scripts/design-qa/sweep.mjs</code>)과 정적검사이고, 육안은 대표 표본만 봤다(전수 아님, Safari/iOS·스크린리더 미검증). CI(<code>e2e/lab-pages.spec.mjs</code>)가 Chromium 실측을 담당한다. 커밋·검사시각은 <code>docs/verification.md</code>와 CI 실행 기록으로 확인한다. 산출물은 결정적 재생산을 위해 시각·커밋을 포함하지 않는다 (재생성: 아래 명령 참조).</p></section>
 <section class="block"><h2>대표 케이스 (페이지 유형별)</h2>
-<ul class="plain">${curated.representative.map(id => `<li><a href="viewer.html?case=${id}"><code>${id}</code></a></li>`).join('')}</ul></section>
+<p class="note">작은 화면은 실제 생성 페이지를 축소해 보여 준다(스크립트 없음, 지연 로드). 카드를 열면 뷰어로 이동한다.</p>
+<div class="thumbs">${curated.representative.map(id => { const c = manifest.cases.find(x => x.id === id); return `<a class="thumb" href="viewer.html?case=${id}"><span class="shot"><iframe src="cases/${id}/index.html" title="${id} 미리보기" loading="lazy" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span><span class="cap"><code>${id}</code><br>${c.theme} · ${c.mode} · ${c.pageType}</span></a>`; }).join('')}</div></section>
 <section class="block"><h2>경계·스트레스 케이스 (${boundary.length})</h2>
 <ul class="plain">${boundary.map(id => `<li><a href="viewer.html?case=${id}"><code>${id}</code></a></li>`).join('')}</ul></section>
 <section class="block"><h2>거부된 입력 (${(manifest.negatives ?? []).length}) · 규칙 거부 (${(manifest.skipped ?? []).length}) · 중복 (${(manifest.duplicates ?? []).length})</h2>
@@ -132,7 +133,7 @@ boot();
 
 const viewerHtml = head('Test Lab · 케이스 뷰어', '단일 케이스 확인') + `
 <header class="top"><h1>케이스 뷰어</h1><p class="sub"><a href="index.html">인덱스로</a> · seed ${manifest.seed} · 카탈로그 ${manifest.catalogVersion}</p>
-<div class="badges"><span class="badge ok">정적검사 결과 아래 표시</span><span class="badge todo">시각검수 미실시</span></div></header>
+<div class="badges"><span class="badge ok">정적검사 결과 아래 표시</span><span class="badge todo">육안은 대표 표본만</span></div></header>
 <div class="navrow"><a href="index.html">인덱스로</a><button id="prevCase">이전 케이스</button><button id="nextCase">다음 케이스</button><a id="openDirect" href="#">직접 URL로 열기 ↗</a></div>
 <table class="meta" id="meta"></table>
 <p class="note" id="findings"></p>
