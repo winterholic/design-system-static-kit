@@ -978,48 +978,69 @@
         {
           "type": "page-header",
           "title": "저녁 메뉴",
-          "description": "매일 오후 5시부터 10시까지",
-          "align": "center"
+          "description": "매일 오후 5시부터 10시까지 · 매주 월요일 휴무",
+          "align": "center",
+          "eyebrow": "소담 식당"
+        },
+        {
+          "type": "filter-bar",
+          "placeholder": "메뉴 검색",
+          "filters": [
+            "전체",
+            "시그니처",
+            "식사",
+            "코스"
+          ],
+          "selected": 0
         },
         {
           "type": "menu",
           "title": "시그니처",
-          "layout": "leader",
+          "layout": "photo",
           "items": [
             {
               "name": "한우 갈비찜",
               "description": "24시간 숙성한 갈비와 제철 채소",
               "price": "38,000",
-              "tag": "시그니처"
+              "tag": "시그니처",
+              "motif": "food"
             },
             {
               "name": "들깨 칼국수",
               "description": "직접 뽑은 면과 들깨 육수",
-              "price": "12,000"
+              "price": "12,000",
+              "motif": "noodles"
             },
             {
               "name": "모둠 전",
               "description": "계절 재료로 부친 전 다섯 가지",
-              "price": "18,000"
+              "price": "18,000",
+              "motif": "pancakes"
             }
           ]
         },
         {
           "type": "menu",
           "title": "식사",
-          "layout": "plain",
+          "layout": "leader",
           "items": [
             {
               "name": "된장찌개 정식",
-              "price": "11,000"
+              "description": "두부와 호박, 직접 담근 된장",
+              "price": "11,000",
+              "motif": "stew"
             },
             {
               "name": "불고기 정식",
-              "price": "14,000"
+              "description": "달큰한 양념에 재운 소불고기",
+              "price": "14,000",
+              "motif": "food"
             },
             {
               "name": "비빔밥",
-              "price": "10,000"
+              "description": "일곱 가지 나물과 고추장",
+              "price": "10,000",
+              "motif": "bibimbap"
             }
           ]
         },
@@ -1056,10 +1077,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "9c3c24a2da8214ddcf135e528a7ac0566ec06746bb16277b6f116872729a6a5c",
-      "tokens.css": "6faec3ac079a5f1ca711ffb7f592cef1d3590f4c7dbb58e944609eb8a92e6509",
+      "index.html": "37f537d12d6d638829d379861a99913407787882850c2ef483ab3ffbc3a1bb88",
+      "tokens.css": "734b7849892bb14b5edd7897d96c0b0ec92ce378a46559d7bb67eed9acf71ba5",
       "tokens.json": "0da949f45072b0653b28c32aa65b602f4f47004200063b629961893fb5bbbda8",
-      "blueprint.json": "0d8070d382fad4f12981bd3bb772767807694999ca7f2726fb0acecc1f7cdd3f"
+      "blueprint.json": "4294c9440f480821d8645057fc7ebf247217626b4f70b61374670402fe5cdf48"
     }
   }
 }

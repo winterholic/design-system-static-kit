@@ -24,7 +24,7 @@ export const rules = [
   {id: 'R09', intent: '축 조합 금지(X01~X11): 접근성·가독성·구조상 함께 쓸 수 없는 값.', codes: ['AXIS_BAN'], source: 'docs/design.md §축 조합'},
   {id: 'R10', intent: '테마가 금지한 축 값(예: 시빅의 글로우·그라데이션) 거부.', codes: ['THEME_FORBID'], source: 'docs/design.md §테마'},
   {id: 'R11', intent: '페이지 유형 계약: 필수 부품·금지 부품·허용 셸/폭·최대 노드·상태 페이지 구성.', codes: ['PAGE_REQUIRE', 'PAGE_FORBID', 'PAGE_ALLOW', 'PAGE_MAX', 'PAGE_SHELL', 'PAGE_WIDTH', 'PAGE_SECOND'], source: 'winterholic-base/docs/12-page-patterns.md'},
-  {id: 'R12', intent: '내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 드롭다운 메뉴는 가로 셸에서 최대 2개, 푸터 링크 조건.', codes: ['NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS', 'NAV_MEGA'], source: 'Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨'},
+  {id: 'R12', intent: '내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 드롭다운 메뉴는 가로 셸에서 최대 2개, 푸터 링크 조건.', codes: ['NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS', 'NAV_MEGA', 'NAV_GROUP'], source: 'Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨'},
   {id: 'R13', intent: '페이지당 히어로 하나, 요금제 추천 하나, 탭·칸반의 중첩 금지.', codes: ['SINGLE_HERO', 'FEATURED_PLAN', 'NESTED_TABS', 'HERO_POSITION'], source: 'frontend-design'},
   {id: 'R14', intent: '의미 있는 이미지 대체 텍스트 필수, 모호한 링크 라벨 금지.', codes: ['LINK_LABEL', 'STRING'], source: 'WCAG 2.2 SC 1.1.1, 2.4.4'},
   {id: 'R15', intent: '데이터 일관성: 표 열 폭, 차트 계열 길이·값, 달력 날짜, 지표 추세 쌍, 진행 목록 선택값.', codes: ['TABLE_WIDTH', 'CHART_SHAPE', 'CALENDAR_DAY', 'METRIC_TREND', 'SELECTED_RANGE', 'STEPPER_RANGE', 'PAGINATION_RANGE'], source: 'winterholic-base/docs/11-data-viz.md'},
@@ -69,6 +69,8 @@ export function repairAxes(b) {
   }
   if (b.chrome?.nav && b.chrome.nav.length > navLimits[b.shell]) b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]);
   if (b.chrome?.nav && !megaShells.includes(b.shell)) for (const item of b.chrome.nav) delete item.mega;
+  // Group labels need a vertical list; a template worn by a horizontal-shell theme keeps its items and drops the labels.
+  if (b.chrome?.nav && !['sidebar', 'split'].includes(b.shell)) for (const item of b.chrome.nav) delete item.group;
   return b;
 }
 

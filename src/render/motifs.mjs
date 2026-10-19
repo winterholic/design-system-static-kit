@@ -73,6 +73,33 @@ const wash = (w, h, id) => `<defs><linearGradient id="${id}b" x1="0" y1="0" x2="
 
 /** Whole-frame scenes (no studio backdrop). `s` = unit of the shorter side / 100. */
 const sky = (w, h, id, top = 'sa', bot = 'sc') => `<defs><linearGradient id="${id}k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="${top}"/><stop offset="1" class="${bot}"/></linearGradient><radialGradient id="${id}g" cx=".5" cy=".5" r=".5"><stop offset="0" class="sx" stop-opacity=".95"/><stop offset="1" class="sx" stop-opacity="0"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`;
+
+/** Top-down dish on a table: 0 steak plate, 1 noodle bowl, 2 pan-fried platter, 3 bibimbap, 4 stew pot. Token classes only. */
+function dish(w, h, id, k) {
+  const cx = w * .5, cy = h * .52, r = Math.min(w, h) * .4;
+  const base = [`<defs><radialGradient id="${id}k" cx=".5" cy=".45" r=".7"><stop offset="0" class="sc"/><stop offset="1" class="su"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`, ell(cx + r * .06, cy + r * .1, r * 1.05, r * 1.05, SHADE, op(.6))];
+  const sticks = [0, 1].map(i => path(`M${f(cx + r * (1.05 + i * .1))} ${f(cy + r * .95)}L${f(cx + r * (1.6 + i * .12))} ${f(cy - r * .5)}`, 'k3', `stroke-width="${f(r * .05)}" opacity=".75"`));
+  const wedge = (a0, a1, rr, c, o = 1) => { const p = a => `${f(cx + Math.cos(a) * rr)} ${f(cy + Math.sin(a) * rr)}`; return path(`M${f(cx)} ${f(cy)}L${p(a0)}A${f(rr)} ${f(rr)} 0 0 1 ${p(a1)}Z`, c, `opacity="${o}"`); };
+  if (k === 1) {
+    const swirl = [.18, .34, .5, .64].map((q, i) => circ(cx - r * .04, cy + r * .02, r * q, 'kw', `fill="none" stroke-width="${f(r * .07)}" stroke-linecap="round" opacity="${f(.9 - i * .1)}" stroke-dasharray="${f(r * (1.1 + i * .35))} ${f(r * .16)}"`));
+    return [...base, circ(cx, cy, r * .96, 'a-3'), circ(cx, cy, r * .88, 'a-5'), circ(cx, cy, r * .72, 'a-wm', 'opacity=".55"'), ...swirl, circ(cx + r * .3, cy - r * .22, r * .2, 'a-5'), circ(cx + r * .3, cy - r * .22, r * .09, 'a-wm'), ...[[-.35, -.32], [-.1, -.5], [.05, .38], [-.4, .22], [.45, .16]].map(([x, y], i) => rect(cx + r * x, cy + r * y, r * .16, r * .05, 'a-gr', r * .025, `transform="rotate(${i * 37} ${f(cx + r * x)} ${f(cy + r * y)})"`)), ...sticks].join('');
+  }
+  if (k === 2) {
+    const discs = [[-.42, -.28], [.0, -.5], [.42, -.26], [-.38, .22], [.04, .02], [.44, .26], [-.02, .52]];
+    return [...base, circ(cx, cy, r, 'a-5'), circ(cx, cy, r * .86, 'a-6', 'opacity=".6"'), ...discs.flatMap(([x, y], i) => [circ(cx + r * x, cy + r * y + r * .03, r * .26, SHADE, op(.5)), circ(cx + r * x, cy + r * y, r * .26, i % 2 ? 'a-wm' : 'a-c4'), circ(cx + r * x, cy + r * y, r * .2, 'a-wm', 'opacity=".7"'), circ(cx + r * x - r * .06, cy + r * y - r * .06, r * .06, LIGHT, op(.5))]), circ(cx + r * 1.12, cy + r * .5, r * .26, 'a-3'), circ(cx + r * 1.12, cy + r * .5, r * .18, 'a-c5'), ...sticks].join('');
+  }
+  if (k === 3) {
+    const cols = ['a-gr', 'a-c4', 'a-wm', 'a-2', 'a-gr', 'a-c3'], n = cols.length;
+    return [...base, circ(cx, cy, r * .98, 'a-3'), circ(cx, cy, r * .9, 'a-5'), ...cols.map((c, i) => wedge(-Math.PI / 2 + i * 2 * Math.PI / n + .03, -Math.PI / 2 + (i + 1) * 2 * Math.PI / n - .03, r * .8, c, .85)), circ(cx, cy, r * .26, 'a-5'), circ(cx, cy, r * .13, 'a-wm'), circ(cx - r * .04, cy - r * .05, r * .04, LIGHT, op(.6)), ...sticks].join('');
+  }
+  if (k === 4) {
+    return [...base, circ(cx, cy, r * .98, 'a-3'), circ(cx, cy, r * .9, 'a-4'), circ(cx, cy, r * .8, 'a-2', 'opacity=".8"'), circ(cx, cy, r * .8, SHADE, op(.18)), ...[[-.3, -.26], [.1, -.36], [.34, .02], [-.12, .22], [.2, .38]].map(([x, y], i) => rect(cx + r * x, cy + r * y, r * .26, r * .22, 'a-5', r * .04, `transform="rotate(${i * 21} ${f(cx + r * x)} ${f(cy + r * y)})"`)), ...[[-.42, .14], [.46, -.22], [-.06, -.52], [.34, .44]].map(([x, y]) => circ(cx + r * x, cy + r * y, r * .1, 'a-gr')), circ(cx - r * .02, cy + r * .04, r * .08, 'a-wm'), ...sticks].join('');
+  }
+  return [...base, circ(cx, cy, r, 'a-5'), circ(cx, cy, r * .78, 'a-6'), circ(cx, cy, r * .74, 'a-5'),
+    circ(cx - r * .14, cy - r * .06, r * .38, 'a-c4'), circ(cx - r * .14, cy - r * .06, r * .3, 'a-wm', 'opacity=".75"'), circ(cx - r * .2, cy - r * .12, r * .1, LIGHT, op(.6)),
+    path(`M${f(cx + r * .08)} ${f(cy + r * .08)}C${f(cx + r * .3)} ${f(cy - r * .28)} ${f(cx + r * .52)} ${f(cy - r * .1)} ${f(cx + r * .4)} ${f(cy + r * .22)}C${f(cx + r * .3)} ${f(cy + r * .4)} ${f(cx + r * .1)} ${f(cy + r * .3)} ${f(cx + r * .08)} ${f(cy + r * .08)}Z`, 'a-gr', 'opacity=".85"'), circ(cx + r * .22, cy + r * .32, r * .13, 'a-2'), circ(cx - r * .3, cy + r * .3, r * .1, 'a-gr', 'opacity=".8"'), ...sticks].join('');
+}
+
 const scenes = {
   coast: (w, h, id, v) => {
     const sx = w * [.7, .3, .55][v % 3], sy = h * .3, hz = h * .56;
@@ -99,13 +126,12 @@ const scenes = {
     const win = (x, y, bw, bh, tone) => { const out = []; const cols = Math.max(2, Math.floor(bw / (w * .045))), rows = Math.max(3, Math.floor(bh / (h * .09))); for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const lit = (r * 3 + c * 5 + v) % 5 === 0; out.push(rect(x + bw * .12 + c * (bw * .76 / cols), y + bh * .08 + r * (bh * .86 / rows), bw * .76 / cols * .62, bh * .86 / rows * .56, lit ? 'a-wm' : tone === 'a-5' ? 'a-ac' : 'a-5', 1, lit ? 'opacity=".95"' : 'opacity=".8"')); } return out.join(''); };
     return [sky(w, h, id, 'sa', 'sc'), circ(w * .84, h * .2, h * .24, 'a-0', `fill="url(#${id}g)"`), circ(w * .84, h * .2, h * .06, 'a-wm', 'opacity=".9"'), ...bs.flatMap(([x, t, bw, bh, c]) => [rect(w * x, h * t, w * bw, g - h * t, c), rect(w * x + w * bw * .72, h * t, w * bw * .28, g - h * t, SHADE), win(w * x, h * t, w * bw, g - h * t, c)]), rect(0, g, w, h - g, 'a-4', 0, 'opacity=".55"'), rect(0, g, w, h * .014, 'a-3', 0, 'opacity=".5"')].join('');
   },
-  food: (w, h, id, v) => {
-    const cx = w * .5, cy = h * .52, r = Math.min(w, h) * .4;
-    return [`<defs><radialGradient id="${id}k" cx=".5" cy=".45" r=".7"><stop offset="0" class="sc"/><stop offset="1" class="su"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`, ell(cx + r * .06, cy + r * .1, r * 1.05, r * 1.05, SHADE, op(.6)), circ(cx, cy, r, 'a-5'), circ(cx, cy, r * .78, 'a-6'), circ(cx, cy, r * .74, 'a-5'),
-      circ(cx - r * .14, cy - r * .06, r * .38, 'a-c4'), circ(cx - r * .14, cy - r * .06, r * .3, 'a-wm', 'opacity=".75"'), circ(cx - r * .2, cy - r * .12, r * .1, LIGHT, op(.6)),
-      path(`M${f(cx + r * .08)} ${f(cy + r * .08)}C${f(cx + r * .3)} ${f(cy - r * .28)} ${f(cx + r * .52)} ${f(cy - r * .1)} ${f(cx + r * .4)} ${f(cy + r * .22)}C${f(cx + r * .3)} ${f(cy + r * .4)} ${f(cx + r * .1)} ${f(cy + r * .3)} ${f(cx + r * .08)} ${f(cy + r * .08)}Z`, 'a-gr', 'opacity=".85"'), circ(cx + r * .22, cy + r * .32, r * .13, 'a-2'), circ(cx - r * .3, cy + r * .3, r * .1, 'a-gr', 'opacity=".8"'),
-      rect(cx - r * 1.5, cy - r * .06, r * .26, r * .12, 'a-4', r * .06, `transform="rotate(-8 ${f(cx - r * 1.4)} ${f(cy)})"`), rect(cx + r * 1.2, cy - r * .06, r * .24, r * .12, 'a-4', r * .06, `transform="rotate(8 ${f(cx + r * 1.3)} ${f(cy)})"`)].join('');
-  },
+  // Dishes seen from above. `food` keeps the original steak plate; the others are separate catalog motifs so a menu can name the right dish.
+  food: (w, h, id) => dish(w, h, id, 0),
+  noodles: (w, h, id) => dish(w, h, id, 1),
+  pancakes: (w, h, id) => dish(w, h, id, 2),
+  bibimbap: (w, h, id) => dish(w, h, id, 3),
+  stew: (w, h, id) => dish(w, h, id, 4),
   coffee: (w, h, id, v) => {
     const cx = w * .5, cy = h * .5, r = Math.min(w, h) * .3;
     return [`<defs><radialGradient id="${id}k" cx=".5" cy=".45" r=".75"><stop offset="0" class="ss"/><stop offset="1" class="su"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`, ell(cx + r * .1, cy + r * .12, r * 1.34, r * 1.3, SHADE, op(.6)), circ(cx, cy, r * 1.3, 'a-5'), circ(cx, cy, r * 1.08, 'a-6', 'opacity=".5"'), circ(cx, cy, r * .86, 'a-5'), circ(cx, cy, r * .74, 'a-3'), circ(cx, cy, r * .66, 'a-c4', 'opacity=".95"'), path(`M${f(cx - r * .5)} ${f(cy + r * .1)}A${f(r * .55)} ${f(r * .55)} 0 0 1 ${f(cx + r * .2)} ${f(cy - r * .5)}`, 'k5', `stroke-width="${f(r * .06)}" opacity=".6"`),
@@ -179,13 +205,19 @@ const NAMES = [...Object.keys(studios), ...Object.keys(scenes)];
 export const motifNames = NAMES;
 
 /** Returns SVG inner markup for `motif`, or null when it is not a known motif. `id` must be unique on the page. */
+/** Window light and a soft vignette over the whole frame: flat vector art reads as a lit room, and a big tile is no longer one object on an empty field. Token classes only. */
+const ambient = (w, h, id, v) => {
+  const x = [[.52, .76, .18, .4], [.6, .74, .3, .52], [.4, .64, .1, .3]][v % 3];
+  return `<defs><radialGradient id="${id}v" cx=".5" cy=".5" r=".78"><stop offset=".5" class="sk" stop-opacity="0"/><stop offset="1" class="sk" stop-opacity=".2"/></radialGradient></defs><path d="M${f(w * x[0])} 0H${f(w * x[1])}L${f(w * x[3])} ${f(h)}H${f(w * x[2])}Z" class="${LIGHT}" opacity=".3"/><path d="M${f(w * (x[1] + .06))} 0H${f(w * (x[1] + .12))}L${f(w * (x[3] + .1))} ${f(h)}H${f(w * (x[3] + .04))}Z" class="${LIGHT}" opacity=".18"/><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}v)"/>`;
+};
+
 export function motifArt(motif, w, h, id, v = 0) {
   if (studios[motif]) {
     const fix = x => x.replace('url(#GL)', `url(#${id}s)`);
     const opt = {laptop: {fit: 1.05}, books: {fit: 1.1}, sneaker: {fit: 1.12, shadow: 1.2}, chair: {fit: 1.06}, floorlamp: {fit: 1.1, shadow: .7}, candle: {fit: 1.05}}[motif] ?? {};
     opt.rest = REST[motif];
-    return studio(w, h, id, v, c => fix(studios[motif](c)), opt);
+    return studio(w, h, id, v, c => fix(studios[motif](c)), opt) + ambient(w, h, id, v);
   }
-  if (scenes[motif]) return scenes[motif](w, h, id, v);
+  if (scenes[motif]) return scenes[motif](w, h, id, v) + ambient(w, h, id, v);
   return null;
 }

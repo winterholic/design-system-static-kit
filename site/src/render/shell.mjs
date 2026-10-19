@@ -8,10 +8,15 @@ const link = (a, current) => `<a href="${href(a.href)}"${a.href.startsWith('http
 
 export function renderShell(b, body) {
   const chrome = b.chrome ?? DEFAULT_CHROME, items = chrome.nav ?? DEFAULT_CHROME.nav;
-  const firstCurrent = items.findIndex(x => x.href === '#main');
+  const marked = items.findIndex(x => x.current), firstCurrent = marked > -1 ? marked : items.findIndex(x => x.href === '#main');
   const mark = e(chrome.brandMark ?? [...b.name.trim()][0] ?? 'W');
   const brand = `<a class="kit-brand" href="#main"><span class="kit-brand-mark" aria-hidden="true">${mark}</span><span class="kit-brand-name">${e(b.name)}</span></a>`;
-  const nav = `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map((a, i) => `<li>${a.mega ? mega(a) : link(a, i === firstCurrent)}</li>`).join('')}</ul></nav>`;
+  const li = (a, i) => `<li>${a.mega ? mega(a) : link(a, i === firstCurrent)}</li>`;
+  const grouped = items.some(a => a.group) && ['sidebar', 'split'].includes(b.shell);
+  const groups = grouped ? items.reduce((out, a, i) => { const last = out.at(-1); if (last && last.name === (a.group ?? '')) last.items.push([a, i]); else out.push({name: a.group ?? '', items: [[a, i]]}); return out; }, []) : [];
+  const nav = grouped
+    ? `<nav class="kit-nav" aria-label="주요 메뉴" data-grouped="yes">${groups.map((g, gi) => `<div class="kit-nav-group">${g.name ? `<p class="kit-nav-title" id="nav-g-${gi}">${e(g.name)}</p>` : ''}<ul${g.name ? ` aria-labelledby="nav-g-${gi}"` : ''}>${g.items.map(([a, i]) => li(a, i)).join('')}</ul></div>`).join('')}</nav>`
+    : `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map(li).join('')}</ul></nav>`;
   const act = chrome.action ? `<a class="kit-button kit-header-action" data-variant="primary" href="${href(chrome.action.href)}"${chrome.action.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(chrome.action.label)}</a>` : '';
   const masthead = b.shell === 'masthead' ? '<p class="kit-dateline">정적 데모 · Static Kit</p>' : '';
   const header = `<header class="kit-header">${masthead}${brand}${nav}${act}</header>`;

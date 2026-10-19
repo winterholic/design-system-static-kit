@@ -76,6 +76,10 @@ export function validateBlueprint(input) {
       const megas = c.nav.filter(a => plain(a) && a.mega);
       if (megas.length && !megaShells.includes(input.shell)) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 ${megaShells.join(', ')} 셸에서만 쓸 수 있습니다.`);
       if (megas.length > MEGA_MAX) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 최대 ${MEGA_MAX}개입니다.`);
+      if (c.nav.filter(a => plain(a) && a.current).length > 1) error('$.chrome.nav', 'NAV_GROUP', '현재 위치(current)는 한 항목에만 표시합니다.');
+      const grouped = c.nav.filter(a => plain(a) && a.group);
+      if (grouped.length && !['sidebar', 'split'].includes(input.shell)) error('$.chrome.nav', 'NAV_GROUP', '내비 그룹 라벨은 sidebar·split 셸에서만 쓸 수 있습니다(세로 목록이 있어야 라벨이 읽힙니다).');
+      const seenGroups = []; c.nav.forEach(a => { const g = plain(a) ? a.group ?? '' : ''; if (g && seenGroups.at(-1) !== g && seenGroups.includes(g)) error('$.chrome.nav', 'NAV_GROUP', `그룹 "${g}" 항목은 이어서 놓아야 합니다.`); if (seenGroups.at(-1) !== g) seenGroups.push(g); });
       const limit = navLimits[input.shell];
       if (limit && c.nav.length > limit) error('$.chrome.nav', 'NAV_COUNT', `${input.shell} 셸의 내비 항목은 최대 ${limit}개입니다.`);
       if (iconShells.includes(input.shell) && c.nav.some(a => plain(a) && !a.icon)) error('$.chrome.nav', 'NAV_ICON', `${input.shell} 셸은 모든 내비 항목에 icon이 필요합니다(아이콘+라벨).`);
@@ -114,7 +118,7 @@ export function validateBlueprint(input) {
     if (['hero', 'cta', 'buy-box'].includes(t)) group([n.action, n.secondaryAction].filter(plain), path);
     if (t === 'media' && n.motif && n.kind !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.');
     if (t === 'gallery' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && x.motif && x.kind !== 'photo') error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.'); });
-    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); }
+    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); if (n.facts && !['statement', 'cover', 'centered'].includes(n.variant)) error(path + '.facts', 'VARIANT_REQUIRES', 'facts는 statement·cover·centered 변형에서만 사용합니다(split·product는 그림이 근거 역할을 합니다).'); }
     if (t === 'pricing' && A(n.children)) {
       group(n.children.filter(plain).map(p => p.action).filter(plain), path);
       if (n.children.filter(p => plain(p) && p.featured === 'yes').length > 1) error(path, 'FEATURED_PLAN', '추천 요금제는 하나만 둘 수 있습니다.');
@@ -137,6 +141,9 @@ export function validateBlueprint(input) {
       if (n.ratio && !n.visual) error(path + '.ratio', 'VARIANT_REQUIRES', 'ratio는 visual과 함께 사용합니다.');
       if (n.variant === 'link' && !n.action) error(path + '.action', 'VARIANT_REQUIRES', 'link 카드는 action이 필요합니다.');
     }
+    if (t === 'timeline' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && n.variant !== 'release') for (const k of ['changes', 'date']) if (Object.hasOwn(x, k)) error(`${path}.items[${i}].${k}`, 'VARIANT_REQUIRES', `${k}는 variant가 release일 때만 사용합니다.`); });
+    if (t === 'menu' && n.layout === 'photo' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && !x.motif) error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'photo 레이아웃의 모든 항목에는 motif가 필요합니다.'); });
+    if (t === 'page-header' && Object.hasOwn(n, 'stats') && plain(n) && n.align === 'center') error(path + '.stats', 'VARIANT_REQUIRES', 'stats는 가운데 정렬 제목과 함께 쓰지 않습니다.');
     if (t === 'metric' && (Object.hasOwn(n, 'trend') !== Object.hasOwn(n, 'delta'))) error(path, 'METRIC_TREND', 'trend와 delta는 함께 있어야 합니다.');
     if (t === 'empty-state' && ['error', 'not-found', 'offline', 'forbidden', 'maintenance'].includes(n.kind) && !n.action) error(path + '.action', 'VARIANT_REQUIRES', `${n.kind} 상태 화면은 다음 행동(action)이 필요합니다.`);
     if (t === 'table' && A(n.rows) && A(n.columns)) {
@@ -155,6 +162,7 @@ export function validateBlueprint(input) {
       if (n.series.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
     }
     if (t === 'calendar' && A(n.events) && Number.isInteger(n.year) && Number.isInteger(n.month)) n.events.forEach((ev, i) => { if (plain(ev) && Number.isInteger(ev.day) && ev.day > DAYS(n.year, n.month)) error(`${path}.events[${i}].day`, 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${ev.day}일이 없습니다.`); });
+    if (t === 'calendar' && Number.isInteger(n.today) && Number.isInteger(n.year) && Number.isInteger(n.month) && n.today > DAYS(n.year, n.month)) error(path + '.today', 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${n.today}일이 없습니다.`);
     if (t === 'master-detail' && A(n.items) && Number.isInteger(n.selected) && n.selected >= n.items.length) error(path + '.selected', 'SELECTED_RANGE', 'selected가 items 범위를 벗어났습니다.');
     if (t === 'filter-bar' && A(n.filters) && Number.isInteger(n.selected) && n.selected >= n.filters.length) error(path + '.selected', 'SELECTED_RANGE', 'selected가 filters 범위를 벗어났습니다.');
     if (t === 'stepper' && A(n.steps) && Number.isInteger(n.current) && n.current > n.steps.length) error(path + '.current', 'STEPPER_RANGE', 'current가 steps 범위를 벗어났습니다.');

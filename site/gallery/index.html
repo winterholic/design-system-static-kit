@@ -280,7 +280,7 @@ const rules = [
   {id: 'R09', intent: '축 조합 금지(X01~X11): 접근성·가독성·구조상 함께 쓸 수 없는 값.', codes: ['AXIS_BAN'], source: 'docs/design.md §축 조합'},
   {id: 'R10', intent: '테마가 금지한 축 값(예: 시빅의 글로우·그라데이션) 거부.', codes: ['THEME_FORBID'], source: 'docs/design.md §테마'},
   {id: 'R11', intent: '페이지 유형 계약: 필수 부품·금지 부품·허용 셸/폭·최대 노드·상태 페이지 구성.', codes: ['PAGE_REQUIRE', 'PAGE_FORBID', 'PAGE_ALLOW', 'PAGE_MAX', 'PAGE_SHELL', 'PAGE_WIDTH', 'PAGE_SECOND'], source: 'winterholic-base/docs/12-page-patterns.md'},
-  {id: 'R12', intent: '내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 드롭다운 메뉴는 가로 셸에서 최대 2개, 푸터 링크 조건.', codes: ['NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS', 'NAV_MEGA'], source: 'Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨'},
+  {id: 'R12', intent: '내비 구조: 셸별 항목 수 상한과 아이콘 필수(레일·하단 탭), 드롭다운 메뉴는 가로 셸에서 최대 2개, 푸터 링크 조건.', codes: ['NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS', 'NAV_MEGA', 'NAV_GROUP'], source: 'Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨'},
   {id: 'R13', intent: '페이지당 히어로 하나, 요금제 추천 하나, 탭·칸반의 중첩 금지.', codes: ['SINGLE_HERO', 'FEATURED_PLAN', 'NESTED_TABS', 'HERO_POSITION'], source: 'frontend-design'},
   {id: 'R14', intent: '의미 있는 이미지 대체 텍스트 필수, 모호한 링크 라벨 금지.', codes: ['LINK_LABEL', 'STRING'], source: 'WCAG 2.2 SC 1.1.1, 2.4.4'},
   {id: 'R15', intent: '데이터 일관성: 표 열 폭, 차트 계열 길이·값, 달력 날짜, 지표 추세 쌍, 진행 목록 선택값.', codes: ['TABLE_WIDTH', 'CHART_SHAPE', 'CALENDAR_DAY', 'METRIC_TREND', 'SELECTED_RANGE', 'STEPPER_RANGE', 'PAGINATION_RANGE'], source: 'winterholic-base/docs/11-data-viz.md'},
@@ -325,6 +325,8 @@ function repairAxes(b) {
   }
   if (b.chrome?.nav && b.chrome.nav.length > navLimits[b.shell]) b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]);
   if (b.chrome?.nav && !megaShells.includes(b.shell)) for (const item of b.chrome.nav) delete item.mega;
+  // Group labels need a vertical list; a template worn by a horizontal-shell theme keeps its items and drops the labels.
+  if (b.chrome?.nav && !['sidebar', 'split'].includes(b.shell)) for (const item of b.chrome.nav) delete item.group;
   return b;
 }
 
@@ -404,7 +406,7 @@ const obj = (properties, required = Object.keys(properties)) => ({type: 'object'
 const mediaKinds = ['photo', 'diagram', 'device', 'map', 'chart', 'video', 'pattern'];
 const ratios = ['16:9', '4:3', '1:1', '3:4', '21:9'];
 /** Subject illustrations for `photo` slots (drawn in src/render/motifs.mjs; a test keeps both lists identical). */
-const motifs = ['lamp', 'desklamp', 'floorlamp', 'orb', 'candle', 'mug', 'bottle', 'jar', 'bag', 'chair', 'plant', 'books', 'headphones', 'sneaker', 'watch', 'vase', 'shirt', 'speaker', 'camera', 'laptop', 'coast', 'solar', 'interior', 'building', 'food', 'coffee', 'fitness', 'care', 'museum', 'ticket', 'poster', 'package', 'brandmark', 'swatches', 'states', 'grid', 'type'];
+const motifs = ['lamp', 'desklamp', 'floorlamp', 'orb', 'candle', 'mug', 'bottle', 'jar', 'bag', 'chair', 'plant', 'books', 'headphones', 'sneaker', 'watch', 'vase', 'shirt', 'speaker', 'camera', 'laptop', 'coast', 'solar', 'interior', 'building', 'food', 'noodles', 'pancakes', 'bibimbap', 'stew', 'coffee', 'fitness', 'care', 'museum', 'ticket', 'poster', 'package', 'brandmark', 'swatches', 'states', 'grid', 'type'];
 const iconEnum = en(...iconNames);
 const href = str(2048);
 const action = obj({label: str(40), href, variant: en('primary', 'secondary', 'ghost')});
@@ -430,9 +432,9 @@ const PAGE_CHILDREN = ['page-header', 'hero', ...BLOCKS];
 
 const nodeSpecs = {
   page: {label: '페이지', group: 'structure', fields: {}, children: PAGE_CHILDREN, min: 2, max: 24, example: null},
-  'page-header': {label: '페이지 제목', group: 'structure', fields: {eyebrow: str(60), title: str(160), description: str(500), align: en('start', 'center'), actions: arr(action, 1, 2)}, optional: ['eyebrow', 'description', 'align', 'actions'],
+  'page-header': {label: '페이지 제목', group: 'structure', fields: {eyebrow: str(60), title: str(160), description: str(500), align: en('start', 'center'), actions: arr(action, 1, 2), meta: arr(str(40), 1, 4), avatar: str(40), stats: arr(obj({label: str(30), value: str(24)}), 2, 4)}, optional: ['eyebrow', 'description', 'align', 'actions', 'meta', 'avatar', 'stats'],
     example: {type: 'page-header', title: '페이지 제목', description: '한 문장으로 이 화면의 목적을 설명합니다.'}},
-  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs)}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif'],
+  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs), facts: arr(obj({value: str(24), label: str(40)}), 2, 4)}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif', 'facts'],
     example: {type: 'hero', variant: 'statement', title: '핵심 약속 한 줄', body: '이 서비스가 누구에게 어떤 변화를 주는지 두 문장으로.'}},
   section: {label: '섹션', group: 'layout', fields: {eyebrow: str(60), title: str(100), description: str(240), surface: en('plain', 'tint', 'inverse'), anchor: {...str(30), pattern: '^[a-z][a-z0-9-]*$'}}, optional: ['eyebrow', 'description', 'surface', 'anchor'], children: without(BLOCKS, 'hero'), min: 1, max: 12,
     example: {type: 'section', title: '섹션 제목', children: [{type: 'prose', title: '본문', body: '섹션 안의 본문입니다.'}]}},
@@ -453,7 +455,7 @@ const nodeSpecs = {
     example: {type: 'kanban', children: [{type: 'lane', title: '할 일', children: [{type: 'task', title: '문서 정리'}]}, {type: 'lane', title: '진행 중', children: [{type: 'task', title: '시안 검토', assignee: '김다선'}]}]}},
   lane: {label: '칸반 열', group: 'layout', fields: {title: str(60)}, children: ['task'], min: 0, max: 8, example: null},
   task: {label: '작업 카드', group: 'data', fields: {title: str(120), label: str(30), assignee: str(40), priority: en('높음', '보통', '낮음')}, optional: ['label', 'assignee', 'priority'], example: null},
-  timeline: {label: '타임라인', group: 'data', fields: {title: str(100), items: arr(obj({time: str(40), title: str(120), description: str(300), status: en('완료', '진행', '예정')}, ['time', 'title']), 2, 12)},
+  timeline: {label: '타임라인', group: 'data', fields: {title: str(100), variant: en('line', 'release'), items: arr(obj({time: str(40), date: str(40), title: str(120), description: str(300), status: en('완료', '진행', '예정'), changes: arr(obj({kind: en('신규', '개선', '수정', '제거'), text: str(160)}), 1, 6)}, ['time', 'title']), 2, 12)}, optional: ['variant'],
     example: {type: 'timeline', title: '진행 기록', items: [{time: '10월 1일', title: '시작', status: '완료'}, {time: '10월 18일', title: '검토', status: '진행'}]}},
   steps: {label: '단계 안내', group: 'content', fields: {title: str(100), layout: en('vertical', 'horizontal'), items: arr(obj({title: str(80), description: str(240)}, ['title']), 2, 6)}, optional: ['layout'],
     example: {type: 'steps', title: '시작하는 방법', items: [{title: '가입', description: '이메일로 가입합니다.'}, {title: '설정', description: '프로필을 채웁니다.'}]}},
@@ -463,7 +465,7 @@ const nodeSpecs = {
     example: {type: 'master-detail', title: '받은 메시지', items: [{title: '디자인 리뷰', preview: '내일 오후 2시에 만나요.', state: 'unread'}, {title: '배포 안내', preview: '배포가 완료되었습니다.'}], selected: 0, detail: {title: '디자인 리뷰', meta: '김다선 · 오늘', body: '내일 오후 2시에 디자인 리뷰를 진행합니다.'}}},
   chat: {label: '대화', group: 'data', fields: {title: str(100), messages: arr(obj({from: en('me', 'them'), name: str(40), text: str(400), time: str(30)}, ['from', 'name', 'text']), 2, 12)},
     example: {type: 'chat', title: '팀 대화', messages: [{from: 'them', name: '다선', text: '시안 확인했어요.'}, {from: 'me', name: '나', text: '고마워요, 반영할게요.'}]}},
-  calendar: {label: '월간 달력', group: 'data', fields: {title: str(100), year: int(2000, 2100), month: int(1, 12), events: arr(obj({day: int(1, 31), title: str(40)}), 0, 8)},
+  calendar: {label: '월간 달력', group: 'data', fields: {title: str(100), year: int(2000, 2100), month: int(1, 12), today: int(1, 31), events: arr(obj({day: int(1, 31), title: str(40), time: str(16), tone: en('brand', 'accent', 'success', 'warning')}, ['day', 'title']), 0, 8)}, optional: ['today'],
     example: {type: 'calendar', title: '이번 달 일정', year: 2026, month: 10, events: [{day: 18, title: '디자인 리뷰'}]}},
   card: {label: '카드', group: 'content', fields: {title: str(100), body: str(500), meta: str(80), action, variant: en('basic', 'outline', 'filled', 'media', 'horizontal', 'link'), icon: iconEnum, badge: str(24), visual: en(...mediaKinds), ratio: en(...ratios), motif: en(...motifs), price: str(24), listPrice: str(24), rating: str(4), reviews: str(16), author: str(40)}, optional: ['meta', 'action', 'variant', 'icon', 'badge', 'visual', 'ratio', 'motif', 'price', 'listPrice', 'rating', 'reviews', 'author'],
     example: {type: 'card', title: '카드 제목', body: '카드가 전달할 핵심 한두 문장입니다.'}},
@@ -525,7 +527,7 @@ const nodeSpecs = {
     example: {type: 'buy-box', title: '상품 이름', price: '39,000원', options: [{label: '용량', choices: ['30ml', '50ml']}], action: {label: '장바구니', href: '#main', variant: 'primary'}}},
   reviews: {label: '리뷰', group: 'content', fields: {title: str(80), score: str(8), count: str(30), items: arr(obj({author: str(40), rating: int(1, 5), text: str(300), date: str(30)}, ['author', 'rating', 'text']), 1, 6)},
     example: {type: 'reviews', title: '리뷰', score: '4.8', count: '리뷰 128개', items: [{author: '김**', rating: 5, text: '촉촉하고 가볍습니다.'}]}},
-  menu: {label: '메뉴판', group: 'content', fields: {title: str(80), layout: en('leader', 'grid', 'plain'), items: arr(obj({name: str(60), description: str(160), price: str(24), tag: str(20)}, ['name', 'price']), 2, 12)},
+  menu: {label: '메뉴판', group: 'content', fields: {title: str(80), layout: en('leader', 'grid', 'plain', 'photo'), items: arr(obj({name: str(60), description: str(160), price: str(24), tag: str(20), motif: en(...motifs)}, ['name', 'price']), 2, 12)},
     example: {type: 'menu', title: '커피', layout: 'leader', items: [{name: '아메리카노', price: '4,500'}, {name: '카페라테', price: '5,000'}]}},
   links: {label: '링크 목록', group: 'nav', fields: {title: str(80), items: arr(obj({label: str(60), href, description: str(120)}, ['label', 'href']), 2, 8)},
     example: {type: 'links', title: '관련 문서', items: [{label: '시작하기', href: '#main'}, {label: 'API', href: '#main'}]}},
@@ -541,7 +543,7 @@ const requiredOf = spec => ['type', ...Object.keys(spec.fields).filter(k => !(sp
 
 // ---- chrome (navigation/footer content shared by every shell) ----
 const megaLink = obj({label: str(30), href, description: str(80)}, ['label', 'href']);
-const navItem = obj({label: str(24), href, icon: iconEnum, mega: arr(megaLink, 2, 8)}, ['label', 'href']);
+const navItem = obj({label: str(24), href, icon: iconEnum, mega: arr(megaLink, 2, 8), group: str(24), current: en('page')}, ['label', 'href']);
 const chromeSpec = obj({
   nav: arr(navItem, 1, 8), action: obj({label: str(24), href}), brandMark: str(2),
   footerNote: str(120), footerLinks: arr(obj({label: str(30), href}), 1, 8),
@@ -802,7 +804,7 @@ const notice = (tone, title, body, variant) => ({type: 'notice', tone, title, bo
 const feat = (icon, title, description) => ({icon, title, description});
 const field = (id, label, type, extra = {}) => ({id, label, type, ...extra});
 const media = (kind, ratio, alt, caption) => ({type: 'media', kind, ratio, alt, ...(caption ? {caption} : {})});
-const nav = (...items) => items.map(([label, icon, href = '#main']) => ({label, href, icon}));
+const nav = (...items) => items.map(([label, icon, href = '#main', group, current]) => ({label, href, icon, ...(group ? {group} : {}), ...(current ? {current: 'page'} : {})}));
 const FOOT = ['이용약관', '개인정보', '문의'];
 const chrome = (navItems, action, footerNote, footerLinks) => ({nav: navItems, ...(action ? {action: {label: action, href: '#main'}} : {}), ...(footerNote ? {footerNote} : {}), footerLinks: (footerLinks ?? FOOT).map(l => ({label: l, href: '#main'}))});
 const NAV_APP = nav(['개요', 'home'], ['프로젝트', 'folder'], ['일정', 'calendar'], ['설정', 'settings']);
@@ -855,7 +857,7 @@ add('product-landing', '제품 소개', 'landing', 'commerce', '무드램프', [
 
 add('agency-home', '에이전시 홈', 'portfolio', 'studio', '스튜디오 오로', [
   head('우리는 브랜드가 오래 기억되는 방식을 만듭니다.', '서울 · 아이덴티티, 웹, 모션'),
-  {type: 'hero', variant: 'cover', title: '오래 남는\n브랜드를 만든다.', body: '전략에서 제작까지, 작은 팀이 끝까지 함께합니다.', action: A('프로젝트 문의', 'primary'), secondaryAction: A('작업 보기', 'ghost')},
+  {type: 'hero', variant: 'cover', title: '오래 남는\n브랜드를 만든다.', body: '전략에서 제작까지, 작은 팀이 끝까지 함께합니다.', facts: [{value: '48', label: '함께한 브랜드'}, {value: '12년', label: '평균 협업 기간'}, {value: '96%', label: '재의뢰율'}], action: A('프로젝트 문의', 'primary'), secondaryAction: A('작업 보기', 'ghost')},
   section('선별한 작업', [{type: 'gallery', layout: 'masonry', items: [{kind: 'photo', motif: 'coffee', alt: '카페 브랜딩', caption: '오월 커피 · 아이덴티티'}, {kind: 'photo', motif: 'poster', alt: '전시 포스터', caption: '빛의 기록전 · 그래픽'}, {kind: 'device', alt: '앱 화면', caption: '모아 · 핀테크 앱'}, {kind: 'photo', motif: 'grid', alt: '정보 구조', caption: '한빛재단 · 웹'}, {kind: 'video', alt: '모션 영상', caption: '디자인 데이 · 모션'}, {kind: 'photo', motif: 'package', alt: '패키지', caption: '소담 · 패키지'}]}], {anchor: 'work'}),
   section('서비스', [grid('three', card('아이덴티티', '이름, 로고, 시스템까지 하나의 언어로.', {icon: 'sparkles'}), card('웹·앱', '빠르고 접근성 높은 화면을 만듭니다.', {icon: 'globe'}), card('모션', '브랜드가 움직이는 방식을 설계합니다.', {icon: 'play'}))]),
   section('이야기', [{type: 'split', reverse: 'reverse', children: [prose('우리가 일하는 방식', '좋은 결과는 좋은 질문에서 나옵니다. 우리는 먼저 듣고, 작게 만들어 보여 드리고, 함께 다듬습니다.\n\n프로젝트마다 한 명의 책임자가 처음부터 끝까지 함께합니다.'), {...media('photo', '4:3', '작업실에서 회의하는 모습'), motif: 'laptop'}]}]),
@@ -864,7 +866,7 @@ add('agency-home', '에이전시 홈', 'portfolio', 'studio', '스튜디오 오�
 
 add('event-landing', '행사 안내', 'landing', 'playful', '디자인 데이 2026', [
   head('올해 가장 즐거운 디자인 하루', '11월 14일 토요일 · 성수 · 오프라인 + 온라인'),
-  {type: 'hero', variant: 'centered', eyebrow: '얼리버드 마감 D-7', title: '디자인 데이\n2026', body: '연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.', action: A('티켓 구매', 'primary'), secondaryAction: A('프로그램 보기', 'secondary')},
+  {type: 'hero', variant: 'centered', eyebrow: '얼리버드 마감 D-7', title: '디자인 데이\n2026', body: '연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.', facts: [{value: '12', label: '연사'}, {value: '6', label: '워크숍'}, {value: '500', label: '참가 정원'}], action: A('티켓 구매', 'primary'), secondaryAction: A('프로그램 보기', 'secondary')},
   grid('three', metric('연사', '12명'), metric('워크숍', '6개'), metric('남은 좌석', '84석', '오늘 기준', 'down', '-16')),
   section('프로그램', [{type: 'timeline', title: '11월 14일', items: [{time: '10:00', title: '오프닝', description: '올해의 주제를 소개합니다.', status: '예정'}, {time: '11:00', title: '키노트: 규칙과 자유', description: '정해진 틀 안에서 다양함을 만드는 방법.'}, {time: '14:00', title: '워크숍 세션', description: '관심 주제를 골라 참여합니다.'}, {time: '17:00', title: '네트워킹', description: '가벼운 저녁과 함께합니다.'}]}], {anchor: 'program'}),
   section('연사', [{type: 'team', title: '함께하는 연사', members: [{name: '김다선', role: '디자인 시스템 리드'}, {name: '이지훈', role: '프런트엔드 엔지니어'}, {name: '박서연', role: '모션 디자이너'}, {name: '최민준', role: '리서처'}]}]),
@@ -874,14 +876,14 @@ add('event-landing', '행사 안내', 'landing', 'playful', '디자인 데이 20
 
 add('waitlist', '대기자 등록', 'landing', 'neon', '오비트', [
   head('곧 열립니다', '가장 먼저 만나보세요.'),
-  {type: 'hero', variant: 'centered', eyebrow: '비공개 베타', title: '생각의 속도로\n움직이는 도구', body: '이메일을 남기면 베타 초대를 보내 드립니다.', action: A('자세히 보기', 'secondary')},
+  {type: 'hero', variant: 'centered', eyebrow: '비공개 베타', title: '생각의 속도로\n움직이는 도구', body: '이메일을 남기면 베타 초대를 보내 드립니다.', facts: [{value: '2,418', label: '대기 중인 사람'}, {value: '3주', label: '평균 초대 시간'}, {value: '4.8', label: '베타 만족도'}], action: A('자세히 보기', 'secondary')},
   {type: 'form', title: '베타 대기자 등록', intro: '초대 순서는 등록 순입니다. 데모이므로 입력은 저장되지 않습니다.', variant: 'inline', fields: [field('email', '이메일', 'email', {placeholder: 'name@example.com'}), field('agree', '소식 받기에 동의합니다', 'checkbox', {requirement: 'optional'})], submitLabel: '등록하기'},
   {type: 'feature-list', title: '미리 보는 기능', items: [feat('zap', '즉시 반응', '입력과 동시에 결과가 보입니다.'), feat('cloud', '어디서나', '브라우저만 있으면 됩니다.'), feat('lock', '프라이버시', '기본값은 비공개입니다.')]},
 ], {axes: {shell: 'minimal'}, chrome: chrome(nav(['소개', 'info']), '로그인', '© 2026 오비트', null)});
 
 add('campaign-donate', '캠페인·후원', 'landing', 'signal', '숲을 지켜요', [
   head('한 그루가 숲이 되도록', '2026 시민 식목 캠페인'),
-  {type: 'hero', variant: 'statement', eyebrow: '모금 진행 중', title: '올해 목표, 나무 10,000그루.', body: '지금까지 6,420그루가 심겼습니다. 한 번의 참여가 한 그루가 됩니다.', action: A('후원하기', 'primary'), secondaryAction: A('봉사 신청', 'secondary')},
+  {type: 'hero', variant: 'statement', eyebrow: '모금 진행 중', title: '올해 목표, 나무 10,000그루.', body: '지금까지 6,420그루가 심겼습니다. 한 번의 참여가 한 그루가 됩니다.', facts: [{value: '6,420', label: '지금까지 심은 그루'}, {value: '10,000', label: '올해 목표'}, {value: '1,284', label: '함께한 후원자'}], action: A('후원하기', 'primary'), secondaryAction: A('봉사 신청', 'secondary')},
   {type: 'progress', label: '모금 현황', value: 64, detail: '6,420 / 10,000그루', tone: 'brand'},
   grid('three', metric('참여자', '12,480명', '지난달 대비', 'up', '+1,204'), metric('심은 나무', '6,420그루'), metric('숲 면적', '42ha')),
   section('후원금은 이렇게 쓰여요', [{type: 'chart', title: '사용 내역', caption: '후원금 사용 비율', kind: 'donut', unit: '%', categories: ['묘목', '식재 인건비', '관리', '운영'], series: [{name: '비율', values: [48, 27, 18, 7]}]}]),
@@ -924,14 +926,14 @@ add('travel-ocean', '여행 소개', 'landing', 'ocean', '파도소리 여행사
 
 add('museum-home', '박물관·재단', 'landing', 'heritage', '한빛 박물관', [
   head('오래된 것에서 오늘의 이야기를', '상설전 · 기획전 · 교육 프로그램'),
-  {type: 'hero', variant: 'statement', eyebrow: '기획전 · 11월 30일까지', title: '빛을 담은 그릇', body: '조선 백자 120점이 만든 한 줄기 빛의 이야기를 만나 보세요.', action: A('관람 예약', 'primary'), secondaryAction: A('전시 소개', 'ghost')},
+  {type: 'hero', variant: 'statement', eyebrow: '기획전 · 11월 30일까지', title: '빛을 담은 그릇', body: '조선 백자 120점이 만든 한 줄기 빛의 이야기를 만나 보세요.', facts: [{value: '120', label: '전시 백자'}, {value: '11.30', label: '전시 마감'}, {value: '무료', label: '매주 수요일 관람'}], action: A('관람 예약', 'primary'), secondaryAction: A('전시 소개', 'ghost')},
   section('지금 전시', [grid('two', card('빛을 담은 그릇', '조선 백자 120점', {variant: 'horizontal', visual: 'photo', motif: 'vase', ratio: '4:3', meta: '기획전시실 1 · 11/30까지'}), card('도시의 기억', '사진으로 보는 서울 100년', {variant: 'horizontal', visual: 'photo', motif: 'museum', ratio: '4:3', meta: '상설전시실 2'}))]),
   section('관람 안내', [{type: 'properties', title: '운영 정보', layout: 'inline', items: [{label: '관람 시간', value: '화~일 10:00~18:00'}, {label: '휴관일', value: '매주 월요일'}, {label: '관람료', value: '성인 5,000원 · 청소년 무료'}, {label: '위치', value: '서울 종로구 예시로 12'}]}]),
 ], {chrome: chrome(nav(['전시', 'image'], ['교육', 'graduation'], ['관람 안내', 'info'], ['소장품', 'book']), '관람 예약', '© 2026 한빛 박물관', FOOT)});
 
 add('hanji-journey', '전통 문화 여행', 'landing', 'hanji', '고운길', [
   head('걸음마다 이야기가 있는 길', '전통 마을과 고택을 잇는 3일'),
-  {type: 'hero', variant: 'statement', eyebrow: '가을 한정', title: '한옥에서 맞는\n고요한 아침.', body: '고택 숙박과 전통 체험을 하나로 엮은 여행입니다.', action: A('일정 보기', 'primary')},
+  {type: 'hero', variant: 'statement', eyebrow: '가을 한정', title: '한옥에서 맞는\n고요한 아침.', body: '고택 숙박과 전통 체험을 하나로 엮은 여행입니다.', facts: [{value: '3박 4일', label: '일정'}, {value: '12명', label: '소규모 출발'}, {value: '4.9', label: '참가자 평점'}], action: A('일정 보기', 'primary')},
   section('여행 일정', [{type: 'timeline', title: '3일의 흐름', items: [{time: '1일차', title: '전주 한옥마을', description: '고택 체크인과 다도 체험.'}, {time: '2일차', title: '안동 하회마을', description: '탈춤 공연과 선비 음식.'}, {time: '3일차', title: '경주 월정교', description: '신라 유적을 걸으며 마무리.'}]}]),
   section('머무는 곳', [grid('two', card('전주 청연재', '마당이 있는 한옥 독채', {meta: '1박 · 2인'}), card('안동 하회고택', '고요한 종가 체험', {meta: '1박 · 4인'}))]),
 ], {chrome: chrome(nav(['일정', 'calendar'], ['숙소', 'bed'], ['체험', 'sparkles']), '예약', '© 2026 고운길', FOOT)});
@@ -1014,9 +1016,11 @@ add('team-chat', '팀 대화', 'community', 'hub', '허브', [
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
 add('calendar-view', '월간 일정', 'community', 'workspace', '워크스페이스', [
-  head('10월 일정', '이번 달 일정 4건', {actions: [A('일정 추가', 'primary')]}),
-  {type: 'calendar', title: '2026년 10월', year: 2026, month: 10, events: [{day: 6, title: '스프린트 시작'}, {day: 18, title: '디자인 리뷰'}, {day: 24, title: '릴리스 점검'}, {day: 30, title: '회고'}]},
-  {type: 'list', title: '다가오는 일정', items: [{title: '디자인 리뷰', description: '10월 18일 · 14:00', status: '대기'}, {title: '릴리스 점검', description: '10월 24일 · 11:00', status: '대기'}], state: 'ready'},
+  head('10월 일정', '이번 달 일정과 다가오는 마감을 한눈에 봅니다.', {actions: [A('일정 추가', 'primary')]}),
+  grid('three', metric('이번 달 일정', '8건', '지난달보다 2건 많음', 'up', '+2'), metric('다음 일정', 'D-2', '10월 18일 · 디자인 리뷰'), metric('회의 시간', '12.5시간', '주 평균 3.1시간')),
+  {type: 'filter-bar', placeholder: '일정 검색', filters: ['월', '주', '일정 목록'], selected: 0},
+  {type: 'calendar', title: '2026년 10월', year: 2026, month: 10, today: 16, events: [{day: 6, title: '스프린트 시작', time: '10:00', tone: 'brand'}, {day: 6, title: '킥오프 점심', time: '12:30', tone: 'success'}, {day: 13, title: '디자인 크리틱', time: '15:00', tone: 'accent'}, {day: 18, title: '디자인 리뷰', time: '14:00', tone: 'accent'}, {day: 21, title: '고객 인터뷰', time: '11:00', tone: 'warning'}, {day: 24, title: '릴리스 점검', time: '11:00', tone: 'brand'}, {day: 29, title: '회고', time: '16:00', tone: 'success'}, {day: 30, title: '월간 보고', time: '10:00', tone: 'warning'}]},
+  {type: 'list', title: '다가오는 일정', items: [{title: '디자인 리뷰', description: '10월 18일 · 14:00 · 회의실 B', status: '대기', icon: 'calendar'}, {title: '고객 인터뷰', description: '10월 21일 · 11:00 · 온라인', status: '대기', icon: 'users'}, {title: '릴리스 점검', description: '10월 24일 · 11:00 · 회의실 A', status: '대기', icon: 'check-circle'}], state: 'ready'},
 ], {chrome: chrome(NAV_APP, null, '워크스페이스 · 정적 데모', null)});
 
 add('audit-log', '감사 로그', 'data', 'console', '콘솔', [
@@ -1053,7 +1057,7 @@ add('team-directory', '구성원 디렉터리', 'listing', 'hub', '허브', [
 
 // ---------- docs / article / blog ----------
 add('docs-reference', '레퍼런스 문서', 'docs', 'manual', '매뉴얼', [
-  head('API 시작하기', '인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.', {eyebrow: '가이드'}),
+  head('API 시작하기', '인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.', {eyebrow: '가이드', meta: ['2.4.0', '2026-10-14 갱신', '읽는 시간 5분']}),
   {type: 'aside', side: 'end', label: '이 문서의 목차', sticky: 'yes', children: [
     section('시작하기', [
       section('설치', [prose('요구 사항', 'Node.js 20 이상이 필요합니다. 패키지는 의존성이 없고, 브라우저와 서버에서 같은 코드로 동작합니다.'), {type: 'tabs', variant: 'underline', children: [{type: 'tab', label: 'npm', children: [{type: 'code', label: '터미널', language: 'bash', code: 'npm install @flowworks/sdk'}]}, {type: 'tab', label: 'pnpm', children: [{type: 'code', label: '터미널', language: 'bash', code: 'pnpm add @flowworks/sdk'}]}, {type: 'tab', label: 'yarn', children: [{type: 'code', label: '터미널', language: 'bash', code: 'yarn add @flowworks/sdk'}]}]}], {anchor: 'install'}),
@@ -1062,7 +1066,7 @@ add('docs-reference', '레퍼런스 문서', 'docs', 'manual', '매뉴얼', [
       section('오류 처리', [{type: 'table', title: '응답 코드', caption: '자주 만나는 응답 코드', columns: ['코드', '의미', '대응'], rows: [['401', '토큰이 없거나 만료됨', '토큰을 다시 발급하세요'], ['429', '요청이 너무 많음', 'Retry-After 헤더만큼 기다린 뒤 재시도'], ['503', '일시적인 서버 점검', '잠시 후 다시 시도하세요']], state: 'ready'}, {type: 'faq', title: '자주 묻는 질문', items: [{question: '요청 한도는 얼마인가요?', answer: '토큰당 분당 600회입니다. 한도를 넘으면 429 응답과 함께 기다려야 할 시간이 헤더로 내려와요.'}, {question: '브라우저에서 바로 호출해도 되나요?', answer: '읽기 전용 토큰에 한해 가능합니다. 쓰기 토큰은 서버에서만 사용하세요.'}]}], {anchor: 'errors'}),
     ]),
     {type: 'toc', title: '이 문서의 목차'}]},
-], {chrome: chrome(nav(['시작하기', 'book'], ['가이드', 'file'], ['레퍼런스', 'code'], ['변경 기록', 'clock']), null, '매뉴얼 · 정적 데모', null)});
+], {chrome: chrome(nav(['소개', 'book', '#main', '시작하기'], ['API 시작하기', 'play', '#main', '시작하기', true], ['인증', 'lock', '#main', '가이드'], ['오류 처리', 'alert-circle', '#main', '가이드'], ['클라이언트', 'code', '#main', '레퍼런스'], ['웹훅', 'zap', '#main', '레퍼런스'], ['변경 기록', 'clock', '#main', '릴리스']), null, '매뉴얼 · 정적 데모', null)});
 
 add('tutorial', '튜토리얼', 'docs', 'manual', '매뉴얼', [
   head('첫 화면 만들기', '15분 안에 Blueprint 하나로 완성합니다.', {eyebrow: '튜토리얼'}),
@@ -1098,11 +1102,15 @@ add('blog-post', '블로그 글', 'article', 'journal', '느린 기록', [
   {type: 'tags', title: '태그', items: ['디자인 시스템', '규칙', '회고'], variant: 'badges'},
 ], {chrome: chrome(nav(['글', 'file'], ['주제', 'tag'], ['소개', 'user']), '구독', '© 2026 느린 기록', ['RSS', '문의'])});
 
-add('changelog', '변경 기록', 'docs', 'manual', '매뉴얼', [
-  head('변경 기록', '버전별 주요 변경'),
-  {type: 'timeline', title: '2.0.0 · 2026-10-18', items: [{time: '2.0.0', title: '카탈로그 대규모 확장', description: '테마 40종, 팔레트 160개, 부품 55종, 템플릿 56종.', status: '완료'}, {time: '1.0.0', title: '첫 공개', description: '테마 6종, 셸 4종, 부품 13종.', status: '완료'}]},
-  {type: 'table', title: '호환성', caption: '버전별 호환성', columns: ['항목', '1.0', '2.0'], rows: [['Blueprint 버전', '1.0', '2.0'], ['카탈로그', '1.0.0', '2.0.0'], ['이전 입력', '지원', 'migrate 명령으로 변환']], state: 'ready'},
-], {chrome: chrome(nav(['시작하기', 'book'], ['변경 기록', 'clock'], ['레퍼런스', 'code']), null, '매뉴얼 · 정적 데모', null)});
+add('changelog', '변경 기록', 'docs', 'manual', 'FlowWorks 문서', [
+  head('변경 기록', 'FlowWorks SDK의 버전별 변경입니다. 호환되지 않는 변경은 이전 방법과 함께 적습니다.', {eyebrow: '릴리스 노트', meta: ['2.4.0', '2026-10-14 갱신', '릴리스 3개']}),
+  {type: 'timeline', title: '릴리스', variant: 'release', items: [
+    {time: '2.4.0', date: '2026-10-14', title: '목록 조회에 커서 페이지네이션', description: '프로젝트와 작업 목록을 끊김 없이 이어서 가져옵니다.', status: '완료', changes: [{kind: '신규', text: 'projects.list에 cursor와 limit(최대 100)을 추가했습니다.'}, {kind: '개선', text: '429 응답에서 Retry-After 값만큼 기다린 뒤 자동으로 다시 시도합니다.'}, {kind: '수정', text: '토큰이 만료된 직후 401이 두 번 보이던 문제를 고쳤습니다.'}]},
+    {time: '2.3.0', date: '2026-09-20', title: '웹훅 서명 검증 도우미', description: '받은 웹훅이 우리가 보낸 것인지 한 줄로 확인합니다.', status: '완료', changes: [{kind: '신규', text: 'verifyWebhook(payload, signature, secret) 함수를 추가했습니다.'}, {kind: '개선', text: '오류 메시지에 요청 ID를 포함해 문의할 때 바로 찾을 수 있습니다.'}, {kind: '제거', text: 'Node.js 16 지원을 종료했습니다. Node.js 20 이상을 사용하세요.'}]},
+    {time: '2.2.1', date: '2026-09-02', title: '타입 정의 보완', description: 'TypeScript 사용자를 위한 작은 수정입니다.', status: '완료', changes: [{kind: '수정', text: 'Project.members가 선택 값으로 잘못 표시되던 타입을 바로잡았습니다.'}, {kind: '수정', text: 'ESM 환경에서 기본 내보내기가 undefined가 되는 문제를 고쳤습니다.'}]},
+  ]},
+  {type: 'table', title: '지원 환경', caption: '버전별 지원하는 Node.js와 브라우저', columns: ['버전', 'Node.js', '브라우저', '지원 상태'], rows: [['2.4.x', '20 이상', '최신 2개 버전', '지원 중'], ['2.3.x', '20 이상', '최신 2개 버전', '보안 수정만'], ['2.2.x', '18 이상', '최신 2개 버전', '지원 종료']], state: 'ready'},
+], {chrome: chrome(nav(['소개', 'book', '#main', '시작하기'], ['설치', 'download', '#main', '시작하기'], ['API 레퍼런스', 'code', '#main', '레퍼런스'], ['오류 코드', 'alert-circle', '#main', '레퍼런스'], ['변경 기록', 'clock', '#main', '릴리스', true], ['마이그레이션', 'refresh', '#main', '릴리스']), null, 'FlowWorks 문서 · 정적 데모', null)});
 
 add('help-center', '도움말 센터', 'docs', 'clarity', '도움말', [
   head('무엇을 도와드릴까요?', '자주 찾는 질문과 안내를 모았습니다.', {align: 'center'}),
@@ -1175,9 +1183,10 @@ add('beauty-detail', '뷰티 상세', 'commerce', 'beauty', '르네', [
 ], {chrome: chrome(nav(['스킨케어', 'sparkles'], ['메이크업', 'heart'], ['세트', 'gift'], ['리뷰', 'star']), '장바구니', '© 2026 르네', FOOT)});
 
 add('menu-dining', '메뉴판', 'commerce', 'dining', '소담 식당', [
-  head('저녁 메뉴', '매일 오후 5시부터 10시까지', {align: 'center'}),
-  {type: 'menu', title: '시그니처', layout: 'leader', items: [{name: '한우 갈비찜', description: '24시간 숙성한 갈비와 제철 채소', price: '38,000', tag: '시그니처'}, {name: '들깨 칼국수', description: '직접 뽑은 면과 들깨 육수', price: '12,000'}, {name: '모둠 전', description: '계절 재료로 부친 전 다섯 가지', price: '18,000'}]},
-  {type: 'menu', title: '식사', layout: 'plain', items: [{name: '된장찌개 정식', price: '11,000'}, {name: '불고기 정식', price: '14,000'}, {name: '비빔밥', price: '10,000'}]},
+  head('저녁 메뉴', '매일 오후 5시부터 10시까지 · 매주 월요일 휴무', {align: 'center', eyebrow: '소담 식당'}),
+  {type: 'filter-bar', placeholder: '메뉴 검색', filters: ['전체', '시그니처', '식사', '코스'], selected: 0},
+  {type: 'menu', title: '시그니처', layout: 'photo', items: [{name: '한우 갈비찜', description: '24시간 숙성한 갈비와 제철 채소', price: '38,000', tag: '시그니처', motif: 'food'}, {name: '들깨 칼국수', description: '직접 뽑은 면과 들깨 육수', price: '12,000', motif: 'noodles'}, {name: '모둠 전', description: '계절 재료로 부친 전 다섯 가지', price: '18,000', motif: 'pancakes'}]},
+  {type: 'menu', title: '식사', layout: 'leader', items: [{name: '된장찌개 정식', description: '두부와 호박, 직접 담근 된장', price: '11,000', motif: 'stew'}, {name: '불고기 정식', description: '달큰한 양념에 재운 소불고기', price: '14,000', motif: 'food'}, {name: '비빔밥', description: '일곱 가지 나물과 고추장', price: '10,000', motif: 'bibimbap'}]},
   {type: 'divider', label: '코스'},
   {type: 'menu', title: '코스 구성', layout: 'grid', items: [{name: '소담 코스', description: '전채 · 메인 · 식사 · 후식', price: '45,000'}, {name: '가족 코스', description: '4인 기준 · 사이드 포함', price: '150,000'}]},
   {type: 'notice', tone: 'info', title: '알레르기·원산지', body: '대두, 밀, 계란, 우유를 사용합니다. 쇠고기는 국내산 한우입니다.'},
@@ -1265,11 +1274,14 @@ add('settings', '설정', 'settings', 'workspace', '워크스페이스', [
 ], {chrome: chrome(NAV_APP, null, '워크스페이스 · 정적 데모', null)});
 
 add('profile', '프로필', 'settings', 'hub', '허브', [
-  head('김다선', '디자인 리드 · 서울'),
-  {type: 'aside', side: 'start', label: '프로필 요약', size: 'narrow', children: [
-    {type: 'list', title: '최근 활동', variant: 'divided', items: [{title: '팔레트 후보를 추가했어요', description: '오늘 10:02', icon: 'sparkles'}, {title: '접근성 점검을 마쳤어요', description: '어제', icon: 'check-circle'}, {title: '리뷰에 댓글을 남겼어요', description: '월요일', icon: 'message'}], state: 'ready'},
-    {type: 'properties', title: '정보', items: [{label: '팀', value: '디자인 시스템'}, {label: '입사', value: '2022년 3월'}, {label: '시간대', value: '서울 (UTC+9)'}]}]},
-  {type: 'tags', title: '관심사', items: ['디자인 시스템', '접근성', '타이포그래피', '모션']},
+  head('김다선', '디자인 시스템팀 리드. 토큰과 컴포넌트가 팀의 공통 언어가 되도록 돕습니다.', {avatar: '김다선', meta: ['서울', '2022년 3월 입사', '한국어 · English'], actions: [A('메시지 보내기', 'primary'), A('프로필 공유', 'secondary')], stats: [{label: '참여 프로젝트', value: '24'}, {label: '작성한 리뷰', value: '318'}, {label: '정리한 토큰', value: '1,240'}, {label: '팔로워', value: '96'}]}),
+  {type: 'aside', side: 'end', label: '프로필 정보', size: 'narrow', children: [
+    section('활동', [
+      {type: 'chart', title: '최근 12주 기여', caption: '주별 리뷰와 병합 횟수', kind: 'area', unit: '건', categories: ['1주', '2주', '3주', '4주', '5주', '6주', '7주', '8주'], series: [{name: '기여', values: [6, 9, 7, 12, 10, 15, 13, 18]}]},
+      {type: 'list', title: '최근 활동', variant: 'divided', items: [{title: '팔레트 후보 12개를 추가했어요', description: '오늘 10:02', icon: 'sparkles'}, {title: '접근성 점검을 마쳤어요', description: '어제 · 대비 33,600쌍 통과', icon: 'check-circle'}, {title: '검색 필터 리뷰에 댓글을 남겼어요', description: '월요일', icon: 'message'}], state: 'ready'},
+    ]),
+    {type: 'properties', title: '정보', items: [{label: '팀', value: '디자인 시스템'}, {label: '역할', value: '리드 디자이너'}, {label: '근무 시간', value: '10:00~19:00 (UTC+9)'}, {label: '이메일', value: 'dasun@example.com'}, {label: '관심사', value: '접근성, 타이포그래피, 모션'}]}]},
+  section('참여 중인 프로젝트', [grid('three', card('토큰 이름 체계', '색과 간격 토큰의 이름 규칙을 하나로 통합합니다.', {variant: 'outline', badge: '진행', meta: '4명 · 마감 11월 3일'}), card('접근성 점검 도구', '모든 팔레트와 모드에서 대비를 자동으로 검사합니다.', {variant: 'outline', badge: '완료', meta: '3명 · 10월 18일 완료'}), card('문서 사이트 개편', '예제 코드를 복사하고 바로 실행해 볼 수 있게 합니다.', {variant: 'outline', badge: '검토', meta: '5명 · 마감 11월 20일'}))]),
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
 // ---------- auth ----------
@@ -1496,6 +1508,18 @@ function ornamentArt(ornament, w = 400, h = 320) {
   return `<svg class="kit-art" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">${patternArt(w, h, ornament)}</svg>`;
 }
 
+/** Decorative hero art for the text-led variants. `statement` = tree rings with one bright arc (a progress ring without data), `cover` = an abstract brand composition of arch, disc and stripe tiles. */
+function heroDeco(variant, ornament) {
+  if (variant === 'statement') {
+    const rings = [30, 58, 86, 114, 142, 170].map((r, i) => circle(200, 200, r, 'a-line', ` stroke-width="${i % 2 ? 1 : 2}" opacity="${num(.9 - i * .1)}"`)).join('');
+    const arc = path('M200 30A170 170 0 0 1 354 128', 'k1', ' stroke-width="10" fill="none"');
+    const dots = [[354, 128, 'a-1', 11], [62, 262, 'a-2', 9], [306, 330, 'a-c3', 7], [120, 60, 'a-4', 5]].map(([x, y, c, r]) => circle(x, y, r, c)).join('');
+    return `<svg class="kit-art" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" focusable="false">${circle(200, 200, 30, 'a-ac')}${rings}${arc}${dots}</svg>`;
+  }
+  const tile = (x, y, w, h, c, extra = '') => rect(x, y, w, h, c, 18, extra);
+  return `<svg class="kit-art" viewBox="0 0 440 460" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" focusable="false">${tile(40, 40, 220, 300, 'a-ac')}${path('M60 320V180A80 80 0 0 1 220 180V320Z', 'a-1')}${circle(310, 120, 70, 'a-2')}${tile(250, 220, 150, 190, 'a-5', ' stroke-width="1.5" class="a-5 bd"')}${rect(270, 250, 110, 12, 'a-3', 6)}${rect(270, 276, 78, 10, 'a-4', 5, ' opacity=".6"')}${[0, 1, 2, 3, 4].map(i => rect(60 + i * 28, 360, 14, 70, i % 2 ? 'a-c3' : 'a-c4', 7)).join('')}${circle(120, 120, 22, 'a-5')}${path('M290 400H410', 'a-line', ' stroke-width="4"')}</svg>`;
+}
+
 /** A flat, palette-colored portrait for team and quote slots. Deterministic per name, so the same person looks the same on every page. */
 function portrait(name) {
   const h = [...String(name)].reduce((a, ch) => (a * 31 + ch.codePointAt(0)) % 100003, 11);
@@ -1512,6 +1536,7 @@ function portrait(name) {
 exports.ratioCss = ratioCss;
 exports.mediaArt = mediaArt;
 exports.ornamentArt = ornamentArt;
+exports.heroDeco = heroDeco;
 exports.portrait = portrait;
 };
 __defs["render/chart.mjs"] = function (exports, __m) {
@@ -1601,6 +1626,39 @@ function renderChart(n, id) {
 
 exports.renderChart = renderChart;
 };
+__defs["render/highlight.mjs"] = function (exports, __m) {
+const {e} = __m("render/util.mjs");
+
+/** Small, dependency-free syntax coloring for the `code` part. Output is escaped text wrapped in <span class="tk-*">; colors are audited tokens (see styles: .tk-c/.tk-s/.tk-k/.tk-n). */
+const STR = String.raw`'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"`;
+const LANGS = {
+  js: {c: String.raw`\/\/[^\n]*|\/\*[\s\S]*?\*\/`, s: STR + String.raw`|` + '`(?:\\\\.|[^`\\\\])*`', k: String.raw`\b(?:const|let|var|function|return|import|from|export|default|await|async|new|if|else|for|of|in|class|throw|try|catch|true|false|null|undefined)\b`, n: String.raw`\b\d+(?:\.\d+)?\b`},
+  json: {key: String.raw`"(?:\\.|[^"\\\n])*"(?=\s*:)`, s: STR, k: String.raw`\b(?:true|false|null)\b`, n: String.raw`-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b`},
+  bash: {c: String.raw`(?:^|\s)#[^\n]*`, s: STR, k: String.raw`\b(?:npm|npx|pnpm|yarn|git|curl|cd|export|sudo|node|docker|brew|mkdir|cat|echo)\b|(?<=\s)--?[a-zA-Z][\w-]*`, n: String.raw`\b\d+(?:\.\d+)?\b`},
+  css: {c: String.raw`\/\*[\s\S]*?\*\/`, s: STR, k: String.raw`[\w-]+(?=\s*:)|@[\w-]+`, n: String.raw`-?\b\d+(?:\.\d+)?(?:px|rem|em|%|vw|vh|ms|s)?\b|#[0-9a-fA-F]{3,8}\b`},
+  html: {c: String.raw`<!--[\s\S]*?-->`, s: STR, k: String.raw`<\/?[a-zA-Z][\w-]*|\/?>`, n: ''},
+  python: {c: String.raw`#[^\n]*`, s: STR, k: String.raw`\b(?:def|return|import|from|as|if|elif|else|for|in|class|with|lambda|async|await|try|except|raise|True|False|None|print)\b`, n: String.raw`\b\d+(?:\.\d+)?\b`},
+};
+const CLASS = {c: 'tk-c', s: 'tk-s', key: 'tk-k', k: 'tk-k', n: 'tk-n'};
+
+function highlight(code, language) {
+  const spec = LANGS[language];
+  if (!spec) return e(code);
+  const parts = Object.entries(spec).filter(([, src]) => src);
+  const re = new RegExp(parts.map(([k, src]) => `(?<${k}>${src})`).join('|'), 'gm');
+  let out = '', last = 0;
+  for (const m of code.matchAll(re)) {
+    const key = parts.find(([k]) => m.groups[k] !== undefined)[0], text = m[0];
+    // bash comments match the whitespace before '#': keep the whitespace outside the span.
+    const lead = key === 'c' && /^\s/.test(text) ? text[0] : '', body = lead ? text.slice(1) : text;
+    out += e(code.slice(last, m.index)) + e(lead) + `<span class="${CLASS[key]}">${e(body)}</span>`;
+    last = m.index + text.length;
+  }
+  return out + e(code.slice(last));
+}
+
+exports.highlight = highlight;
+};
 __defs["render/index.mjs"] = function (exports, __m) {
 const {makeRenderer} = __m("render/nodes.mjs");
 const {renderShell} = __m("render/shell.mjs");
@@ -1616,6 +1674,7 @@ const formRuntime = [
   "document.querySelectorAll('.kit-form').forEach(function(form){form.addEventListener('submit',function(event){event.preventDefault();var s=form.querySelector('[role=status]');if(form.reportValidity()){s.textContent='입력 형식을 확인했습니다. 데모이므로 저장하지 않았습니다.';}else{s.textContent='';}});});",
   "document.querySelectorAll('[data-tabs]').forEach(function(root){var tabs=[].slice.call(root.querySelectorAll('[role=tab]')),panels=[].slice.call(root.querySelectorAll('[role=tabpanel]'));function pick(i,focus){tabs.forEach(function(t,j){var on=i===j;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;panels[j].hidden=!on;});if(focus)tabs[i].focus();}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(i,false);});t.addEventListener('keydown',function(e){var n=tabs.length,k=e.key;if(k==='ArrowRight')pick((i+1)%n,true);else if(k==='ArrowLeft')pick((i+n-1)%n,true);else if(k==='Home')pick(0,true);else if(k==='End')pick(n-1,true);else return;e.preventDefault();});});});",
   "document.querySelectorAll('.kit-chips').forEach(function(g){var bs=[].slice.call(g.querySelectorAll('button'));bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false');});});});});",
+  "document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){var box=b.closest('.kit-code'),pre=box.querySelector('pre'),text=pre.innerText,st=box.querySelector('[data-copy-status]');function done(){b.setAttribute('data-done','true');if(st)st.textContent='코드를 복사했습니다.';setTimeout(function(){b.removeAttribute('data-done');if(st)st.textContent='';},1800);}function fallback(){var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);try{if(document.execCommand('copy'))done();}catch(e){}s.removeAllRanges();}if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done,fallback);}else{fallback();}});});",
   "var megas=[].slice.call(document.querySelectorAll('.kit-mega'));megas.forEach(function(d){d.addEventListener('toggle',function(){if(d.open)megas.forEach(function(o){if(o!==d)o.open=false;});});d.addEventListener('keydown',function(e){if(e.key==='Escape'){d.open=false;d.querySelector('summary').focus();}});});document.addEventListener('click',function(e){megas.forEach(function(d){if(d.open&&!d.contains(e.target))d.open=false;});});",
 ].join('');
 
@@ -1787,6 +1846,33 @@ const wash = (w, h, id) => `<defs><linearGradient id="${id}b" x1="0" y1="0" x2="
 
 /** Whole-frame scenes (no studio backdrop). `s` = unit of the shorter side / 100. */
 const sky = (w, h, id, top = 'sa', bot = 'sc') => `<defs><linearGradient id="${id}k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="${top}"/><stop offset="1" class="${bot}"/></linearGradient><radialGradient id="${id}g" cx=".5" cy=".5" r=".5"><stop offset="0" class="sx" stop-opacity=".95"/><stop offset="1" class="sx" stop-opacity="0"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`;
+
+/** Top-down dish on a table: 0 steak plate, 1 noodle bowl, 2 pan-fried platter, 3 bibimbap, 4 stew pot. Token classes only. */
+function dish(w, h, id, k) {
+  const cx = w * .5, cy = h * .52, r = Math.min(w, h) * .4;
+  const base = [`<defs><radialGradient id="${id}k" cx=".5" cy=".45" r=".7"><stop offset="0" class="sc"/><stop offset="1" class="su"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`, ell(cx + r * .06, cy + r * .1, r * 1.05, r * 1.05, SHADE, op(.6))];
+  const sticks = [0, 1].map(i => path(`M${f(cx + r * (1.05 + i * .1))} ${f(cy + r * .95)}L${f(cx + r * (1.6 + i * .12))} ${f(cy - r * .5)}`, 'k3', `stroke-width="${f(r * .05)}" opacity=".75"`));
+  const wedge = (a0, a1, rr, c, o = 1) => { const p = a => `${f(cx + Math.cos(a) * rr)} ${f(cy + Math.sin(a) * rr)}`; return path(`M${f(cx)} ${f(cy)}L${p(a0)}A${f(rr)} ${f(rr)} 0 0 1 ${p(a1)}Z`, c, `opacity="${o}"`); };
+  if (k === 1) {
+    const swirl = [.18, .34, .5, .64].map((q, i) => circ(cx - r * .04, cy + r * .02, r * q, 'kw', `fill="none" stroke-width="${f(r * .07)}" stroke-linecap="round" opacity="${f(.9 - i * .1)}" stroke-dasharray="${f(r * (1.1 + i * .35))} ${f(r * .16)}"`));
+    return [...base, circ(cx, cy, r * .96, 'a-3'), circ(cx, cy, r * .88, 'a-5'), circ(cx, cy, r * .72, 'a-wm', 'opacity=".55"'), ...swirl, circ(cx + r * .3, cy - r * .22, r * .2, 'a-5'), circ(cx + r * .3, cy - r * .22, r * .09, 'a-wm'), ...[[-.35, -.32], [-.1, -.5], [.05, .38], [-.4, .22], [.45, .16]].map(([x, y], i) => rect(cx + r * x, cy + r * y, r * .16, r * .05, 'a-gr', r * .025, `transform="rotate(${i * 37} ${f(cx + r * x)} ${f(cy + r * y)})"`)), ...sticks].join('');
+  }
+  if (k === 2) {
+    const discs = [[-.42, -.28], [.0, -.5], [.42, -.26], [-.38, .22], [.04, .02], [.44, .26], [-.02, .52]];
+    return [...base, circ(cx, cy, r, 'a-5'), circ(cx, cy, r * .86, 'a-6', 'opacity=".6"'), ...discs.flatMap(([x, y], i) => [circ(cx + r * x, cy + r * y + r * .03, r * .26, SHADE, op(.5)), circ(cx + r * x, cy + r * y, r * .26, i % 2 ? 'a-wm' : 'a-c4'), circ(cx + r * x, cy + r * y, r * .2, 'a-wm', 'opacity=".7"'), circ(cx + r * x - r * .06, cy + r * y - r * .06, r * .06, LIGHT, op(.5))]), circ(cx + r * 1.12, cy + r * .5, r * .26, 'a-3'), circ(cx + r * 1.12, cy + r * .5, r * .18, 'a-c5'), ...sticks].join('');
+  }
+  if (k === 3) {
+    const cols = ['a-gr', 'a-c4', 'a-wm', 'a-2', 'a-gr', 'a-c3'], n = cols.length;
+    return [...base, circ(cx, cy, r * .98, 'a-3'), circ(cx, cy, r * .9, 'a-5'), ...cols.map((c, i) => wedge(-Math.PI / 2 + i * 2 * Math.PI / n + .03, -Math.PI / 2 + (i + 1) * 2 * Math.PI / n - .03, r * .8, c, .85)), circ(cx, cy, r * .26, 'a-5'), circ(cx, cy, r * .13, 'a-wm'), circ(cx - r * .04, cy - r * .05, r * .04, LIGHT, op(.6)), ...sticks].join('');
+  }
+  if (k === 4) {
+    return [...base, circ(cx, cy, r * .98, 'a-3'), circ(cx, cy, r * .9, 'a-4'), circ(cx, cy, r * .8, 'a-2', 'opacity=".8"'), circ(cx, cy, r * .8, SHADE, op(.18)), ...[[-.3, -.26], [.1, -.36], [.34, .02], [-.12, .22], [.2, .38]].map(([x, y], i) => rect(cx + r * x, cy + r * y, r * .26, r * .22, 'a-5', r * .04, `transform="rotate(${i * 21} ${f(cx + r * x)} ${f(cy + r * y)})"`)), ...[[-.42, .14], [.46, -.22], [-.06, -.52], [.34, .44]].map(([x, y]) => circ(cx + r * x, cy + r * y, r * .1, 'a-gr')), circ(cx - r * .02, cy + r * .04, r * .08, 'a-wm'), ...sticks].join('');
+  }
+  return [...base, circ(cx, cy, r, 'a-5'), circ(cx, cy, r * .78, 'a-6'), circ(cx, cy, r * .74, 'a-5'),
+    circ(cx - r * .14, cy - r * .06, r * .38, 'a-c4'), circ(cx - r * .14, cy - r * .06, r * .3, 'a-wm', 'opacity=".75"'), circ(cx - r * .2, cy - r * .12, r * .1, LIGHT, op(.6)),
+    path(`M${f(cx + r * .08)} ${f(cy + r * .08)}C${f(cx + r * .3)} ${f(cy - r * .28)} ${f(cx + r * .52)} ${f(cy - r * .1)} ${f(cx + r * .4)} ${f(cy + r * .22)}C${f(cx + r * .3)} ${f(cy + r * .4)} ${f(cx + r * .1)} ${f(cy + r * .3)} ${f(cx + r * .08)} ${f(cy + r * .08)}Z`, 'a-gr', 'opacity=".85"'), circ(cx + r * .22, cy + r * .32, r * .13, 'a-2'), circ(cx - r * .3, cy + r * .3, r * .1, 'a-gr', 'opacity=".8"'), ...sticks].join('');
+}
+
 const scenes = {
   coast: (w, h, id, v) => {
     const sx = w * [.7, .3, .55][v % 3], sy = h * .3, hz = h * .56;
@@ -1813,13 +1899,12 @@ const scenes = {
     const win = (x, y, bw, bh, tone) => { const out = []; const cols = Math.max(2, Math.floor(bw / (w * .045))), rows = Math.max(3, Math.floor(bh / (h * .09))); for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const lit = (r * 3 + c * 5 + v) % 5 === 0; out.push(rect(x + bw * .12 + c * (bw * .76 / cols), y + bh * .08 + r * (bh * .86 / rows), bw * .76 / cols * .62, bh * .86 / rows * .56, lit ? 'a-wm' : tone === 'a-5' ? 'a-ac' : 'a-5', 1, lit ? 'opacity=".95"' : 'opacity=".8"')); } return out.join(''); };
     return [sky(w, h, id, 'sa', 'sc'), circ(w * .84, h * .2, h * .24, 'a-0', `fill="url(#${id}g)"`), circ(w * .84, h * .2, h * .06, 'a-wm', 'opacity=".9"'), ...bs.flatMap(([x, t, bw, bh, c]) => [rect(w * x, h * t, w * bw, g - h * t, c), rect(w * x + w * bw * .72, h * t, w * bw * .28, g - h * t, SHADE), win(w * x, h * t, w * bw, g - h * t, c)]), rect(0, g, w, h - g, 'a-4', 0, 'opacity=".55"'), rect(0, g, w, h * .014, 'a-3', 0, 'opacity=".5"')].join('');
   },
-  food: (w, h, id, v) => {
-    const cx = w * .5, cy = h * .52, r = Math.min(w, h) * .4;
-    return [`<defs><radialGradient id="${id}k" cx=".5" cy=".45" r=".7"><stop offset="0" class="sc"/><stop offset="1" class="su"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`, ell(cx + r * .06, cy + r * .1, r * 1.05, r * 1.05, SHADE, op(.6)), circ(cx, cy, r, 'a-5'), circ(cx, cy, r * .78, 'a-6'), circ(cx, cy, r * .74, 'a-5'),
-      circ(cx - r * .14, cy - r * .06, r * .38, 'a-c4'), circ(cx - r * .14, cy - r * .06, r * .3, 'a-wm', 'opacity=".75"'), circ(cx - r * .2, cy - r * .12, r * .1, LIGHT, op(.6)),
-      path(`M${f(cx + r * .08)} ${f(cy + r * .08)}C${f(cx + r * .3)} ${f(cy - r * .28)} ${f(cx + r * .52)} ${f(cy - r * .1)} ${f(cx + r * .4)} ${f(cy + r * .22)}C${f(cx + r * .3)} ${f(cy + r * .4)} ${f(cx + r * .1)} ${f(cy + r * .3)} ${f(cx + r * .08)} ${f(cy + r * .08)}Z`, 'a-gr', 'opacity=".85"'), circ(cx + r * .22, cy + r * .32, r * .13, 'a-2'), circ(cx - r * .3, cy + r * .3, r * .1, 'a-gr', 'opacity=".8"'),
-      rect(cx - r * 1.5, cy - r * .06, r * .26, r * .12, 'a-4', r * .06, `transform="rotate(-8 ${f(cx - r * 1.4)} ${f(cy)})"`), rect(cx + r * 1.2, cy - r * .06, r * .24, r * .12, 'a-4', r * .06, `transform="rotate(8 ${f(cx + r * 1.3)} ${f(cy)})"`)].join('');
-  },
+  // Dishes seen from above. `food` keeps the original steak plate; the others are separate catalog motifs so a menu can name the right dish.
+  food: (w, h, id) => dish(w, h, id, 0),
+  noodles: (w, h, id) => dish(w, h, id, 1),
+  pancakes: (w, h, id) => dish(w, h, id, 2),
+  bibimbap: (w, h, id) => dish(w, h, id, 3),
+  stew: (w, h, id) => dish(w, h, id, 4),
   coffee: (w, h, id, v) => {
     const cx = w * .5, cy = h * .5, r = Math.min(w, h) * .3;
     return [`<defs><radialGradient id="${id}k" cx=".5" cy=".45" r=".75"><stop offset="0" class="ss"/><stop offset="1" class="su"/></radialGradient></defs><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}k)"/>`, ell(cx + r * .1, cy + r * .12, r * 1.34, r * 1.3, SHADE, op(.6)), circ(cx, cy, r * 1.3, 'a-5'), circ(cx, cy, r * 1.08, 'a-6', 'opacity=".5"'), circ(cx, cy, r * .86, 'a-5'), circ(cx, cy, r * .74, 'a-3'), circ(cx, cy, r * .66, 'a-c4', 'opacity=".95"'), path(`M${f(cx - r * .5)} ${f(cy + r * .1)}A${f(r * .55)} ${f(r * .55)} 0 0 1 ${f(cx + r * .2)} ${f(cy - r * .5)}`, 'k5', `stroke-width="${f(r * .06)}" opacity=".6"`),
@@ -1893,14 +1978,20 @@ const NAMES = [...Object.keys(studios), ...Object.keys(scenes)];
 const motifNames = NAMES;
 
 /** Returns SVG inner markup for `motif`, or null when it is not a known motif. `id` must be unique on the page. */
+/** Window light and a soft vignette over the whole frame: flat vector art reads as a lit room, and a big tile is no longer one object on an empty field. Token classes only. */
+const ambient = (w, h, id, v) => {
+  const x = [[.52, .76, .18, .4], [.6, .74, .3, .52], [.4, .64, .1, .3]][v % 3];
+  return `<defs><radialGradient id="${id}v" cx=".5" cy=".5" r=".78"><stop offset=".5" class="sk" stop-opacity="0"/><stop offset="1" class="sk" stop-opacity=".2"/></radialGradient></defs><path d="M${f(w * x[0])} 0H${f(w * x[1])}L${f(w * x[3])} ${f(h)}H${f(w * x[2])}Z" class="${LIGHT}" opacity=".3"/><path d="M${f(w * (x[1] + .06))} 0H${f(w * (x[1] + .12))}L${f(w * (x[3] + .1))} ${f(h)}H${f(w * (x[3] + .04))}Z" class="${LIGHT}" opacity=".18"/><rect width="${f(w)}" height="${f(h)}" fill="url(#${id}v)"/>`;
+};
+
 function motifArt(motif, w, h, id, v = 0) {
   if (studios[motif]) {
     const fix = x => x.replace('url(#GL)', `url(#${id}s)`);
     const opt = {laptop: {fit: 1.05}, books: {fit: 1.1}, sneaker: {fit: 1.12, shadow: 1.2}, chair: {fit: 1.06}, floorlamp: {fit: 1.1, shadow: .7}, candle: {fit: 1.05}}[motif] ?? {};
     opt.rest = REST[motif];
-    return studio(w, h, id, v, c => fix(studios[motif](c)), opt);
+    return studio(w, h, id, v, c => fix(studios[motif](c)), opt) + ambient(w, h, id, v);
   }
-  if (scenes[motif]) return scenes[motif](w, h, id, v);
+  if (scenes[motif]) return scenes[motif](w, h, id, v) + ambient(w, h, id, v);
   return null;
 }
 
@@ -1910,8 +2001,9 @@ exports.motifArt = motifArt;
 };
 __defs["render/nodes.mjs"] = function (exports, __m) {
 const {e, icon, button, href, initials, stateMarkup, num, statusDot, STATUS_HEADER} = __m("render/util.mjs");
-const {mediaArt, ornamentArt, ratioCss, portrait} = __m("render/art.mjs");
+const {mediaArt, ornamentArt, ratioCss, portrait, heroDeco} = __m("render/art.mjs");
 const {renderChart} = __m("render/chart.mjs");
+const {highlight} = __m("render/highlight.mjs");
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -1964,12 +2056,17 @@ function makeRenderer(b) {
   const norm = t => String(t ?? '').replace(/[\s.,!?·~…]/g, '');
   const leadOf = (h, next) => next?.type === 'hero' ? 'hero' : next?.type === 'empty-state' ? (norm(next.title) === norm(h.title) ? 'same' : 'state') : null;
   R.page = (n, d) => n.children.map((x, i) => { ctx.lead = x.type === 'page-header' ? leadOf(x, n.children[i + 1]) : null; return render(x, 2); }).join('');
-  R['page-header'] = n => `<header class="kit-page-header" data-align="${n.align ?? 'start'}"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}>${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${actionsRow(n.actions)}</header>`;
+  const metaRow = items => items?.length ? `<ul class="kit-doc-meta">${items.map((x, i) => `<li${i === 0 && /^v?\d+(\.\d+)+/.test(x) ? ' data-version="yes"' : ''}>${e(x)}</li>`).join('')}</ul>` : '';
+  R['page-header'] = n => n.avatar
+    ? `<header class="kit-page-header" data-profile="yes" data-align="start"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}><div class="kit-profile-banner" aria-hidden="true"></div><div class="kit-profile-main"><span class="kit-avatar kit-avatar-xl" data-art="portrait" aria-hidden="true">${portrait(n.avatar)}</span><div class="kit-profile-id">${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}</div>${actionsRow(n.actions)}</div>${n.stats ? `<dl class="kit-profile-stats">${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}</header>`
+    : `<header class="kit-page-header" data-align="${n.align ?? 'start'}"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}>${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}${n.stats ? `<dl class="kit-profile-stats">${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}${actionsRow(n.actions)}</header>`;
   R.hero = (n, d, id) => {
     const art = ['split', 'product'].includes(n.variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, '4:3', o, '', 0, {motif: n.motif, id: gid()})) : '';
     const decorative = art.replace(' role="img" aria-label=""', ' aria-hidden="true"');
+    const deco = !decorative && ['statement', 'cover'].includes(n.variant) ? `<div class="kit-hero-deco" aria-hidden="true">${heroDeco(n.variant, o)}</div>` : '';
+    const facts = n.facts ? `<dl class="kit-hero-facts">${n.facts.map(f => `<div><dt>${e(f.label)}</dt><dd>${e(f.value)}</dd></div>`).join('')}</dl>` : '';
     const frame = ['chart', 'diagram'].includes(n.visual) ? ' data-frame="window"' : '';
-    return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}</section>`;
+    return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
   };
   R.section = (n, d, id) => `<section class="kit-section" data-surface="${n.surface ?? 'plain'}"${n.anchor ? ` id="s-${n.anchor}"` : ''} aria-labelledby="${id}-title"><div class="kit-section-inner"><header class="kit-section-head">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}${n.description ? `<p class="kit-section-desc">${e(n.description)}</p>` : ''}</header>${kids(n, d + 1)}</div></section>`;
   R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}">${kids(n, d)}</div>`;
@@ -1987,15 +2084,15 @@ function makeRenderer(b) {
   R.kanban = (n, d) => `<div class="kit-kanban" role="group" aria-label="칸반 보드" tabindex="0">${n.children.map(x => render(x, d)).join('')}</div>`;
   R.lane = (n, d, id) => `<section class="kit-lane" aria-labelledby="${id}-title"><header>${heading(d, n.title, id)}<span class="kit-count" aria-label="${n.children.length}개">${n.children.length}</span></header>${n.children.length ? `<div class="kit-lane-cards">${kids(n, d + 1)}</div>` : '<p class="kit-muted">비어 있습니다.</p>'}</section>`;
   R.task = n => `<article class="kit-task">${n.label ? `<span class="kit-badge">${e(n.label)}</span>` : ''}<strong>${e(n.title)}</strong><footer>${n.assignee ? `<span class="kit-avatar" aria-hidden="true">${e(initials(n.assignee))}</span><span>${e(n.assignee)}</span>` : ''}${n.priority ? `<span class="kit-priority" data-priority="${n.priority}">${icon(n.priority === '높음' ? 'arrow-up' : n.priority === '낮음' ? 'arrow-down' : 'minus')}${n.priority}</span>` : ''}</footer></article>`;
-  R.timeline = (n, d, id) => `<section class="kit-timeline" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><span class="kit-dot" aria-hidden="true">${x.status === '완료' ? icon('check') : ''}</span><div><time>${e(x.time)}</time><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div></li>`).join('')}</ol></section>`;
+  R.timeline = (n, d, id) => n.variant === 'release' ? `<section class="kit-timeline" data-variant="release" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><div class="kit-rel-meta"><span class="kit-rel-ver">${e(x.time)}</span>${x.date ? `<time>${e(x.date)}</time>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div><div class="kit-rel-body"><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.changes ? `<ul class="kit-changes">${x.changes.map(c => `<li data-kind="${c.kind}"><span class="kit-change-kind">${c.kind}</span><span>${e(c.text)}</span></li>`).join('')}</ul>` : ''}</div></li>`).join('')}</ol></section>` : `<section class="kit-timeline" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><span class="kit-dot" aria-hidden="true">${x.status === '완료' ? icon('check') : ''}</span><div><time>${e(x.time)}</time><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div></li>`).join('')}</ol></section>`;
   R.steps = (n, d, id) => `<section class="kit-steps" data-layout="${n.layout ?? 'vertical'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</li>`).join('')}</ol></section>`;
   R.reel = (n, d, id) => `<section class="kit-reel"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="가로로 넘겨 보기"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-reel-track" role="region" aria-label="${e(n.title ?? '가로로 넘겨 보기')}" tabindex="0">${n.children.map(x => `<div class="kit-reel-item">${render(x, d + 1)}</div>`).join('')}</div></section>`;
   R['master-detail'] = (n, d, id) => `<section class="kit-md" aria-labelledby="${id}-title">${heading(d, n.title, id)}<div class="kit-md-grid"><ul class="kit-md-list">${n.items.map((x, i) => `<li${i === n.selected ? ' aria-current="true"' : ''} data-state="${x.state ?? 'read'}"><strong>${e(x.title)}</strong>${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}<p>${e(x.preview)}</p>${x.state === 'unread' ? '<span class="kit-badge">읽지 않음</span>' : ''}</li>`).join('')}</ul><article class="kit-md-detail"><h${Math.min(d + 1, 6)}>${e(n.detail.title)}</h${Math.min(d + 1, 6)}>${n.detail.meta ? `<p class="kit-muted">${e(n.detail.meta)}</p>` : ''}<div>${n.detail.body.split(/\n\n+/).map(p => `<p>${e(p)}</p>`).join('')}</div></article></div></section>`;
   R.chat = (n, d, id) => `<section class="kit-chat" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol class="kit-chat-log">${n.messages.map(m => `<li data-from="${m.from}"><span class="kit-avatar" aria-hidden="true">${e(initials(m.name))}</span><div><p class="kit-chat-meta"><strong>${e(m.name)}</strong>${m.time ? ` <time>${e(m.time)}</time>` : ''}</p><p class="kit-bubble">${e(m.text)}</p></div></li>`).join('')}</ol></section>`;
   R.calendar = (n, d, id) => {
     const first = new Date(Date.UTC(n.year, n.month - 1, 1)).getUTCDay(), days = new Date(Date.UTC(n.year, n.month, 0)).getUTCDate();
-    const byDay = new Map(); n.events.forEach(ev => byDay.set(ev.day, [...(byDay.get(ev.day) ?? []), ev.title]));
-    const cells = []; for (let i = 0; i < first; i++) cells.push('<td class="kit-off"></td>'); for (let day = 1; day <= days; day++) cells.push(`<td${byDay.has(day) ? ' data-event="yes"' : ''}><span class="kit-day">${day}</span>${byDay.has(day) ? `<ul>${byDay.get(day).map(t => `<li>${e(t)}</li>`).join('')}</ul>` : ''}</td>`);
+    const byDay = new Map(); n.events.forEach(ev => byDay.set(ev.day, [...(byDay.get(ev.day) ?? []), ev]));
+    const cells = []; for (let i = 0; i < first; i++) cells.push('<td class="kit-off"></td>'); for (let day = 1; day <= days; day++) cells.push(`<td${byDay.has(day) ? ' data-event="yes"' : ''}><span class="kit-day"${day === n.today ? ' aria-current="date"' : ''}>${day}${day === n.today ? '<span class="kit-sr"> 오늘</span>' : ''}</span>${byDay.has(day) ? `<ul>${byDay.get(day).map(ev => `<li${ev.tone ? ` data-tone="${ev.tone}"` : ''}>${ev.time ? `<time>${e(ev.time)}</time> ` : ''}${e(ev.title)}</li>`).join('')}</ul>` : ''}</td>`);
     while (cells.length % 7) cells.push('<td class="kit-off"></td>');
     const rows = []; for (let i = 0; i < cells.length; i += 7) rows.push(`<tr>${cells.slice(i, i + 7).join('')}</tr>`);
     const wd = ['일', '월', '화', '수', '목', '금', '토'];
@@ -2039,7 +2136,7 @@ function makeRenderer(b) {
   R.cta = (n, d, id) => `<section class="kit-cta" data-tone="${n.tone ?? 'plain'}" aria-labelledby="${id}-title"><div>${heading(d, n.title, id)}${n.body ? `<p>${e(n.body)}</p>` : ''}</div>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</section>`;
   R.tags = (n, d, id) => `<section class="kit-tags" data-variant="${n.variant ?? 'chips'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="태그"'}>${n.title ? heading(d, n.title, id, 'kit-quiet') : ''}<ul>${n.items.map(x => `<li>${e(x)}</li>`).join('')}</ul></section>`;
   R.team = (n, d, id) => `<section class="kit-team" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul>${n.members.map(m => `<li><span class="kit-avatar" data-art="portrait" aria-hidden="true">${portrait(m.name)}</span><div><strong>${e(m.name)}</strong><span class="kit-muted">${e(m.role)}</span>${m.bio ? `<p>${e(m.bio)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
-  R.code = n => `<figure class="kit-code"><figcaption>${e(n.label)} <span class="kit-muted">${n.language}</span></figcaption><pre tabindex="0"><code>${e(n.code)}</code></pre></figure>`;
+  R.code = n => `<figure class="kit-code"><figcaption><span>${e(n.label)} <span class="kit-muted">${n.language}</span></span><button class="kit-copy" type="button" data-copy aria-label="${e(n.label)} 코드 복사"><span class="kit-copy-idle">${icon('copy')}복사</span><span class="kit-copy-done">${icon('check')}복사됨</span></button><span class="kit-sr" role="status" aria-live="polite" data-copy-status></span></figcaption><pre tabindex="0"><code>${highlight(n.code, n.language)}</code></pre></figure>`;
   R.properties = (n, d, id) => `<section class="kit-props" data-layout="${n.layout ?? 'stacked'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<dl>${n.items.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl></section>`;
   R.chart = (n, d, id) => renderChart(n, id);
   R.progress = n => `<div class="kit-progress"><div class="kit-progress-head"><span id="pr-${ctx.seq}">${e(n.label)}</span><strong>${n.value}%</strong></div><div class="kit-track" role="progressbar" aria-labelledby="pr-${ctx.seq}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${n.value}"${n.detail ? ` aria-valuetext="${e(n.detail)}"` : ''}>${bar(n.value, n.tone)}</div>${n.detail ? `<p class="kit-muted">${e(n.detail)}</p>` : ''}</div>`;
@@ -2060,7 +2157,7 @@ function makeRenderer(b) {
   R.summary = (n, d, id) => `<section class="kit-summary" aria-labelledby="${id}-title">${heading(d, n.title, id)}${n.thumb ? `<div class="kit-summary-line"><div class="kit-thumb">${mediaArt('photo', '1:1', o, '', ctx.art++, {motif: n.thumb.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div><div><strong>${e(n.thumb.name)}</strong>${n.thumb.detail ? `<span class="kit-muted">${e(n.thumb.detail)}</span>` : ''}</div></div>` : ''}<dl>${n.items.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}<div class="kit-total"><dt>${e(n.total.label)}</dt><dd>${e(n.total.value)}</dd></div></dl>${n.action ? button(n.action) : ''}</section>`;
   R['buy-box'] = (n, d, id) => `<section class="kit-buybox" aria-labelledby="${id}-title">${n.badge ? `<span class="kit-badge" data-tone="brand">${e(n.badge)}</span>` : ''}${heading(d, n.title, id)}<p class="kit-price">${e(n.price)}</p>${n.note ? `<p class="kit-muted">${e(n.note)}</p>` : ''}${(n.options ?? []).map((opt, oi) => `<fieldset class="kit-options"><legend>${e(opt.label)}</legend>${opt.choices.map((c, ci) => `<label><input type="radio" name="${id}-opt-${oi}" value="${e(c)}"${ci === 0 ? ' checked' : ''}><span>${e(c)}</span></label>`).join('')}</fieldset>`).join('')}${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</section>`;
   R.reviews = (n, d, id) => `<section class="kit-reviews" aria-labelledby="${id}-title">${heading(d, n.title, id)}<p class="kit-score"><strong>${e(n.score)}</strong> <span aria-hidden="true">${STAR(Math.round(Number.parseFloat(n.score)) || 0)}</span> <span class="kit-muted">${e(n.count)}</span></p><ul>${n.items.map(x => `<li><p class="kit-stars" role="img" aria-label="5점 만점에 ${x.rating}점">${STAR(x.rating)}</p><p>${e(x.text)}</p><p class="kit-muted">${e(x.author)}${x.date ? ` · ${e(x.date)}` : ''}</p></li>`).join('')}</ul></section>`;
-  R.menu = (n, d, id) => `<section class="kit-menu" data-layout="${n.layout}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul>${n.items.map(x => `<li><div class="kit-menu-row"><strong>${e(x.name)}</strong>${n.layout === 'leader' ? '<i class="kit-leader" aria-hidden="true"></i>' : ''}<span class="kit-menu-price">${e(x.price)}</span></div>${x.tag ? `<span class="kit-badge" data-tone="brand">${e(x.tag)}</span>` : ''}${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</li>`).join('')}</ul></section>`;
+  R.menu = (n, d, id) => `<section class="kit-menu" data-layout="${n.layout}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul>${n.items.map(x => `<li${x.motif ? ' data-thumb="yes"' : ''}>${x.motif ? `<div class="kit-menu-thumb">${mediaArt('photo', n.layout === 'photo' ? '4:3' : '1:1', o, '', ctx.art++, {motif: x.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : ''}<div class="kit-menu-text"><div class="kit-menu-row"><strong>${e(x.name)}</strong>${n.layout === 'leader' ? '<i class="kit-leader" aria-hidden="true"></i>' : ''}<span class="kit-menu-price">${e(x.price)}</span></div>${x.tag ? `<span class="kit-badge" data-tone="brand">${e(x.tag)}</span>` : ''}${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
   R.links = (n, d, id) => `<section class="kit-links" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul>${n.items.map(x => `<li><a href="${href(x.href)}"${x.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(x.label)}${icon('arrow-right')}</a>${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</li>`).join('')}</ul></section>`;
   R.divider = n => n.label ? `<div class="kit-divider" role="separator"><span>${e(n.label)}</span></div>` : '<hr class="kit-hr">';
   R.pricing = (n, d, id) => `<section class="kit-pricing"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="요금제"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-plans" data-count="${n.children.length}">${n.children.map(x => render(x, n.title ? d + 1 : d)).join('')}</div></section>`;
@@ -2089,10 +2186,15 @@ const link = (a, current) => `<a href="${href(a.href)}"${a.href.startsWith('http
 
 function renderShell(b, body) {
   const chrome = b.chrome ?? DEFAULT_CHROME, items = chrome.nav ?? DEFAULT_CHROME.nav;
-  const firstCurrent = items.findIndex(x => x.href === '#main');
+  const marked = items.findIndex(x => x.current), firstCurrent = marked > -1 ? marked : items.findIndex(x => x.href === '#main');
   const mark = e(chrome.brandMark ?? [...b.name.trim()][0] ?? 'W');
   const brand = `<a class="kit-brand" href="#main"><span class="kit-brand-mark" aria-hidden="true">${mark}</span><span class="kit-brand-name">${e(b.name)}</span></a>`;
-  const nav = `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map((a, i) => `<li>${a.mega ? mega(a) : link(a, i === firstCurrent)}</li>`).join('')}</ul></nav>`;
+  const li = (a, i) => `<li>${a.mega ? mega(a) : link(a, i === firstCurrent)}</li>`;
+  const grouped = items.some(a => a.group) && ['sidebar', 'split'].includes(b.shell);
+  const groups = grouped ? items.reduce((out, a, i) => { const last = out.at(-1); if (last && last.name === (a.group ?? '')) last.items.push([a, i]); else out.push({name: a.group ?? '', items: [[a, i]]}); return out; }, []) : [];
+  const nav = grouped
+    ? `<nav class="kit-nav" aria-label="주요 메뉴" data-grouped="yes">${groups.map((g, gi) => `<div class="kit-nav-group">${g.name ? `<p class="kit-nav-title" id="nav-g-${gi}">${e(g.name)}</p>` : ''}<ul${g.name ? ` aria-labelledby="nav-g-${gi}"` : ''}>${g.items.map(([a, i]) => li(a, i)).join('')}</ul></div>`).join('')}</nav>`
+    : `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map(li).join('')}</ul></nav>`;
   const act = chrome.action ? `<a class="kit-button kit-header-action" data-variant="primary" href="${href(chrome.action.href)}"${chrome.action.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(chrome.action.label)}</a>` : '';
   const masthead = b.shell === 'masthead' ? '<p class="kit-dateline">정적 데모 · Static Kit</p>' : '';
   const header = `<header class="kit-header">${masthead}${brand}${nav}${act}</header>`;
@@ -2705,6 +2807,31 @@ __defs["styles/polish.mjs"] = function (exports, __m) {
  * where a box adds nothing, micro-detail only where it answers a state (hover, selected, trend).
  */
 const polish = {
+  'page-header': `
+.kit-doc-meta{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:var(--kit-sp-near) var(--kit-sp-item);font-size:var(--kit-small);color:var(--kit-muted)}.kit-doc-meta li{display:inline-flex;align-items:center;gap:var(--kit-sp-item)}.kit-doc-meta li+li::before{content:'';width:4px;height:4px;border-radius:99px;background:currentColor;opacity:.6}.kit-doc-meta li[data-version]{padding:2px 8px;border:1px solid var(--kit-border);border-radius:var(--kit-r-tag);background:var(--kit-soft);color:var(--kit-text);font-weight:700;font-variant-numeric:tabular-nums}.kit-doc-meta li[data-version]+li::before{display:none}
+.kit-profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:var(--kit-sp-near) 0 0;border-block:1px solid var(--kit-border)}.kit-profile-stats>div{display:flex;flex-direction:column-reverse;gap:var(--kit-sp-tight);padding:var(--kit-sp-item) var(--kit-sp-item) var(--kit-sp-item) var(--kit-gap);border-left:1px solid var(--kit-border)}.kit-profile-stats>div:first-child{padding-left:0;border-left:0}.kit-profile-stats dt{color:var(--kit-muted);font-size:var(--kit-small)}.kit-profile-stats dd{margin:0;font:var(--kit-hw) clamp(22px,2.4vw,28px)/1.1 var(--kit-heading);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kit-page-header[data-profile]{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;border-bottom:0}
+:is([data-page=dashboard],[data-page=data],[data-page=community],[data-page=settings],[data-page=listing],[data-page=commerce]) .kit-page-header[data-align=center]{display:flex;flex-direction:column;align-items:center;text-align:center}.kit-profile-banner{height:clamp(96px,13vw,160px);border-radius:var(--kit-radius);border:var(--kit-card-border);background:radial-gradient(60% 150% at 88% 0%,color-mix(in srgb,var(--kit-accent) 42%,transparent),transparent 70%),radial-gradient(50% 140% at 8% 100%,color-mix(in srgb,var(--kit-action) 30%,transparent),transparent 70%),linear-gradient(180deg,var(--kit-soft),var(--kit-accentSoft))}
+.kit-profile-main{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--kit-sp-item) var(--kit-gap);padding-inline:var(--kit-inset)}.kit-avatar-xl{width:104px;height:104px;margin-top:-56px;border:4px solid var(--kit-surface);box-shadow:var(--kit-shadow)}.kit-profile-id{display:flex;flex-direction:column;gap:var(--kit-sp-tight);flex:1 1 240px;min-width:0;padding-top:var(--kit-sp-item)}.kit-profile-id h1{max-width:none;font-size:var(--kit-apptitle)}.kit-profile-id p:not(.kit-eyebrow){color:var(--kit-muted)}.kit-profile-main .kit-actions{margin-left:auto;padding-top:var(--kit-sp-item)}
+.kit-page-header[data-profile] .kit-profile-stats{margin-top:var(--kit-gap)}
+@media(max-width:640px){.kit-profile-main{padding-inline:0}.kit-avatar-xl{width:88px;height:88px;margin-top:-44px}.kit-profile-main .kit-actions{margin-left:0;width:100%}.kit-profile-stats>div{padding-left:var(--kit-sp-item)}.kit-profile-stats>div:first-child{padding-left:0}}`,
+  timeline: `
+.kit-timeline[data-variant=release] ol{margin:0}.kit-timeline[data-variant=release]>ol>li{display:grid;grid-template-columns:minmax(120px,176px) minmax(0,1fr);gap:var(--kit-gap);padding:var(--kit-gap) 0;border-top:1px solid var(--kit-border)}.kit-timeline[data-variant=release]>ol>li::before{content:none}.kit-timeline[data-variant=release]>ol>li:last-child{padding-bottom:0}
+.kit-rel-meta{display:flex;flex-direction:column;align-items:flex-start;gap:var(--kit-sp-near);align-self:start;position:sticky;top:var(--kit-gap)}.kit-rel-ver{padding:4px 12px;border-radius:var(--kit-r-tag);background:var(--kit-soft);border:1px solid var(--kit-border);color:var(--kit-text);font:700 14px/1.4 var(--kit-mono);font-variant-numeric:tabular-nums}.kit-timeline[data-variant=release]>ol>li:first-child .kit-rel-ver{background:var(--kit-action);border-color:var(--kit-action);color:var(--kit-onAction)}.kit-rel-meta time{color:var(--kit-muted);font-size:var(--kit-small)}.kit-timeline .kit-rel-meta .kit-badge{margin-top:0}
+.kit-rel-body{display:flex;flex-direction:column;gap:var(--kit-sp-item);min-width:0}.kit-rel-body>strong{font:var(--kit-hw) var(--kit-h3)/1.3 var(--kit-heading);letter-spacing:-.02em}.kit-rel-body>p{margin:0;color:var(--kit-muted);max-width:60ch}
+.kit-changes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--kit-sp-near)}.kit-timeline .kit-changes li::before{content:none}.kit-timeline .kit-changes li{padding:0}.kit-changes li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:var(--kit-sp-item);align-items:baseline;font-size:var(--kit-small)}.kit-change-kind{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:2px 8px;border:1px solid var(--kit-border);border-radius:var(--kit-r-tag);background:var(--kit-soft);font-size:12px;font-weight:700;white-space:nowrap}.kit-change-kind::before{content:'';width:6px;height:6px;border-radius:99px;background:var(--kit-action);flex:none}.kit-changes li[data-kind="개선"] .kit-change-kind::before{background:var(--kit-info)}.kit-changes li[data-kind="수정"] .kit-change-kind::before{background:var(--kit-warning)}.kit-changes li[data-kind="제거"] .kit-change-kind::before{background:var(--kit-danger)}
+@media(max-width:640px){.kit-timeline[data-variant=release]>ol>li{grid-template-columns:1fr;gap:var(--kit-sp-head)}.kit-rel-meta{position:static;flex-direction:row;flex-wrap:wrap;align-items:center}}`,
+  menu: `
+.kit-menu li{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--kit-sp-item);align-items:start}.kit-menu li[data-thumb]{grid-template-columns:80px minmax(0,1fr)}.kit-menu-text{display:flex;flex-direction:column;gap:var(--kit-sp-tight);align-items:flex-start;min-width:0;width:100%}.kit-menu-thumb{width:80px;aspect-ratio:1;border-radius:calc(var(--kit-radius) * .6);overflow:hidden;border:1px solid var(--kit-border)}.kit-menu-thumb .kit-art{display:block;width:100%;height:100%}
+.kit-menu[data-layout=photo] ul{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--kit-gap)}.kit-menu[data-layout=photo] li{grid-template-columns:minmax(0,1fr);padding:0;background:transparent;gap:var(--kit-sp-item)}.kit-menu[data-layout=photo] .kit-menu-thumb{width:100%;aspect-ratio:4/3;border-radius:var(--kit-radius)}
+@media(max-width:480px){.kit-menu li[data-thumb]{grid-template-columns:64px minmax(0,1fr)}.kit-menu-thumb{width:64px}}`,
+  calendar: `
+.kit-calendar caption{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}.kit-day{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:99px;font-variant-numeric:tabular-nums}.kit-day[aria-current=date]{background:var(--kit-action);color:var(--kit-onAction)!important}
+.kit-calendar td:nth-child(7n+1),.kit-calendar td:nth-child(7n){background:color-mix(in srgb,var(--kit-sunken) 45%,transparent)}.kit-calendar td.kit-off{background:var(--kit-sunken)}.kit-calendar tbody tr:hover td:not(.kit-off){background:color-mix(in srgb,var(--kit-soft) 70%,transparent)}
+.kit-calendar li{border-left-color:var(--kit-accent);background:color-mix(in srgb,var(--kit-accent) 14%,var(--kit-surface));line-height:1.4}.kit-calendar li[data-tone=brand]{border-left-color:var(--kit-action);background:color-mix(in srgb,var(--kit-action) 14%,var(--kit-surface))}.kit-calendar li[data-tone=success]{border-left-color:var(--kit-success);background:color-mix(in srgb,var(--kit-success) 14%,var(--kit-surface))}.kit-calendar li[data-tone=warning]{border-left-color:var(--kit-warning);background:color-mix(in srgb,var(--kit-warning) 14%,var(--kit-surface))}.kit-calendar li time{font-weight:700;font-variant-numeric:tabular-nums}`,
+  code: `
+.kit-code figcaption{align-items:center;padding-block:8px}.kit-copy{display:inline-flex;align-items:center;min-height:32px;padding:0 var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-r-tag);background:var(--kit-surface);color:var(--kit-muted);font-size:13px;font-weight:600;transition:color var(--kit-dur) var(--kit-ease),background var(--kit-dur) var(--kit-ease)}.kit-copy:hover{color:var(--kit-text);background:var(--kit-soft)}.kit-copy-idle,.kit-copy-done{display:inline-flex;align-items:center;gap:var(--kit-sp-near)}.kit-copy-done{display:none;color:var(--kit-success)}.kit-copy[data-done] .kit-copy-idle{display:none}.kit-copy[data-done] .kit-copy-done{display:inline-flex}.kit-copy .kit-icon{width:16px;height:16px}
+.tk-c{color:var(--kit-muted);font-style:italic}.tk-s{color:var(--kit-success)}.tk-k{color:var(--kit-info);font-weight:600}.tk-n{color:var(--kit-warning)}`,
   section: `
 [data-page=docs] .kit-section-inner>.kit-section-head:has(+.kit-section){position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}[data-page=docs] .kit-section-inner>.kit-section-head:has(+.kit-section)+.kit-section{margin-top:0}[data-page=docs] .kit-section .kit-section{padding-top:var(--kit-gap);border-top:1px solid var(--kit-border)}[data-page=docs] .kit-section .kit-section:first-of-type{border-top:0;padding-top:0}[data-page=docs] .kit-section .kit-section .kit-section-head :is(h2,h3,h4){font-size:calc(var(--kit-h2) * .82);letter-spacing:-.03em}
 .kit-section-desc{max-width:58ch;color:var(--kit-muted);font-size:var(--kit-lead);line-height:1.6;text-wrap:pretty}
@@ -2714,7 +2841,10 @@ const polish = {
 .kit-hero-visual[data-frame] .kit-art text{font-synthesis:none}
 @media(min-width:1000px){.kit-hero[data-variant=split][data-visual]:has(.kit-hero-visual[data-frame]){grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr)}.kit-hero[data-variant=split] .kit-hero-visual[data-frame]{margin-right:calc(var(--kit-bleedx) * -1);border-right:0;border-radius:calc(var(--kit-radius) * 1.3) 0 0 calc(var(--kit-radius) * 1.3)}}
 .kit-hero-visual:not([data-frame]) .kit-art{max-height:480px}
-.kit-hero[data-variant=product][data-visual] .kit-hero-visual .kit-art{max-height:460px;border-radius:calc(var(--kit-radius) * 1.2)}`,
+.kit-hero[data-variant=product][data-visual] .kit-hero-visual .kit-art{max-height:460px;border-radius:calc(var(--kit-radius) * 1.2)}
+.kit-hero-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:var(--kit-gap);margin:var(--kit-section) 0 0;padding-top:var(--kit-gap);border-top:1px solid var(--kit-border)}.kit-hero-facts>div{display:flex;flex-direction:column-reverse;gap:var(--kit-sp-tight)}.kit-hero-facts dt{color:var(--kit-muted);font-size:var(--kit-small)}.kit-hero-facts dd{margin:0;font:var(--kit-hw) clamp(28px,3.6vw,44px)/1.05 var(--kit-heading);letter-spacing:-.035em;font-variant-numeric:tabular-nums}.kit-hero[data-variant=centered] .kit-hero-facts{width:100%;text-align:center}.kit-hero[data-variant=centered] .kit-hero-facts>div{align-items:center}
+.kit-hero-deco{display:none}
+@media(min-width:1000px){.kit-hero-deco{display:block;position:absolute;z-index:-1;inset:0 0 0 auto;width:42%;pointer-events:none}.kit-hero-deco .kit-art{display:block;width:100%;height:100%}.kit-hero[data-variant=statement]:has(.kit-hero-deco) .kit-hero-copy,.kit-hero[data-variant=cover]:has(.kit-hero-deco) .kit-hero-copy{max-width:56%}.kit-hero[data-variant=statement] .kit-hero-deco{opacity:.9;padding:var(--kit-inset)}.kit-hero[data-variant=cover] .kit-hero-deco{padding:var(--kit-gap) var(--kit-gap) var(--kit-gap) 0}}`,
   'logo-cloud': `
 .kit-logos li{display:inline-flex;align-items:center;gap:8px;opacity:.9}.kit-logo-mark{width:24px;height:24px;flex:none}.kit-logos li[data-t="1"]{font-weight:500;letter-spacing:.04em;font-size:clamp(15px,1.7vw,18px)}.kit-logos li[data-t="2"]{font-family:var(--kit-mono);font-weight:700;letter-spacing:-.05em}.kit-logos li[data-t="3"]{font-family:Georgia,"Noto Serif KR",serif;font-weight:600;letter-spacing:0}.kit-logos li[data-t="0"]{font-weight:800;letter-spacing:-.04em}`,
   metric: `
@@ -2770,6 +2900,7 @@ const navBase = `
 .kit-nav ul{list-style:none;margin:0;padding:0;display:flex;gap:4px;flex-wrap:wrap}
 .kit-nav a{display:flex;align-items:center;gap:8px;min-height:var(--kit-control);padding:0 12px;text-decoration:none;font-size:var(--kit-small);color:var(--kit-muted);border-radius:var(--kit-r-control);white-space:nowrap}
 .kit-nav a:hover{background:var(--kit-soft);color:var(--kit-link)}.kit-nav a[aria-current=page]{background:var(--kit-soft);color:var(--kit-text);font-weight:600}
+.kit-nav-group+.kit-nav-group{margin-top:var(--kit-sp-sub)}.kit-nav-title{margin:0 0 var(--kit-sp-near);padding-inline:var(--kit-sp-item);font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--kit-muted)}
 .kit-body{min-width:0;display:flex;flex-direction:column;min-height:100vh}
 .kit-main{--kit-cw:calc(var(--kit-max) - 2 * var(--kit-gutter));flex:1;min-width:0;width:100%;display:grid;grid-template-columns:[full-start] minmax(var(--kit-gutter),1fr) [content-start] minmax(0,var(--kit-cw)) [content-end] minmax(var(--kit-gutter),1fr) [full-end];grid-auto-rows:min-content;align-content:start;row-gap:var(--kit-section);padding-block:var(--kit-section)}
 .kit-main>*{grid-column:content;min-width:0}
@@ -2801,9 +2932,10 @@ const footers = {
 const shells = {
   sidebar: `
 [data-shell=sidebar]{--kit-side:240px;display:grid;grid-template-columns:var(--kit-side) minmax(0,1fr);align-items:start;background:linear-gradient(90deg,var(--kit-surface) var(--kit-side),transparent 0)}
-[data-shell=sidebar] .kit-header{position:sticky;top:0;height:100vh;flex-direction:column;align-items:stretch;gap:20px;padding:24px 16px;border-right:1px solid var(--kit-border);border-bottom:0;overflow-y:auto}
+[data-shell=sidebar] .kit-header{position:sticky;top:0;height:100vh;flex-direction:column;align-items:stretch;gap:var(--kit-gap);padding:24px 16px;border-right:1px solid var(--kit-border);border-bottom:0;overflow-y:auto}
 [data-shell=sidebar] .kit-nav ul{flex-direction:column;flex-wrap:nowrap}[data-shell=sidebar] .kit-header-action{margin-top:auto}
 @media(max-width:1000px){[data-shell=sidebar]{--kit-side:196px}}
+@media(max-width:720px){[data-shell=sidebar] .kit-nav[data-grouped]{display:flex;gap:var(--kit-sp-near);overflow-x:auto}[data-shell=sidebar] .kit-nav-group{display:contents}[data-shell=sidebar] .kit-nav-title{display:none}}
 @media(max-width:720px){[data-shell=sidebar]{display:block;background:none}[data-shell=sidebar] .kit-header{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--kit-border);padding:12px 16px}[data-shell=sidebar] .kit-nav ul{flex-direction:row;flex-wrap:nowrap;overflow-x:auto}[data-shell=sidebar] .kit-header-action{margin:0}}`,
   topbar: `
 [data-shell=topbar] .kit-header{position:sticky;top:0;z-index:20}[data-shell=topbar] .kit-nav{flex:1}[data-shell=topbar] .kit-header-action{margin-left:auto}
@@ -2817,6 +2949,7 @@ const shells = {
 [data-shell=split] .kit-header{position:sticky;top:0;height:100vh;flex-direction:column;align-items:flex-start;justify-content:center;gap:var(--kit-section);background:var(--kit-soft);border-right:1px solid var(--kit-rule);border-bottom:0;padding:32px 24px}
 [data-shell=split] .kit-brand{font-size:24px}[data-shell=split] .kit-nav ul{flex-direction:column;flex-wrap:nowrap}[data-shell=split] .kit-nav{width:100%}
 @media(max-width:1000px){[data-shell=split]{--kit-side:220px}}
+@media(max-width:720px){[data-shell=split] .kit-nav[data-grouped]{display:flex;gap:var(--kit-sp-near);overflow-x:auto}[data-shell=split] .kit-nav-group{display:contents}[data-shell=split] .kit-nav-title{display:none}}
 @media(max-width:720px){[data-shell=split]{display:block;background:none}[data-shell=split] .kit-header{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start;border-right:0;border-bottom:1px solid var(--kit-rule);padding:12px 16px;gap:8px}[data-shell=split] .kit-nav ul{flex-direction:row;flex-wrap:nowrap;overflow-x:auto}[data-shell=split] .kit-brand{font-size:18px}}`,
   rail: `
 [data-shell=rail]{display:grid;grid-template-columns:88px minmax(0,1fr);align-items:start;background:linear-gradient(90deg,var(--kit-surface) 88px,transparent 0)}
@@ -3024,6 +3157,10 @@ function validateBlueprint(input) {
       const megas = c.nav.filter(a => plain(a) && a.mega);
       if (megas.length && !megaShells.includes(input.shell)) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 ${megaShells.join(', ')} 셸에서만 쓸 수 있습니다.`);
       if (megas.length > MEGA_MAX) error('$.chrome.nav', 'NAV_MEGA', `드롭다운 메뉴는 최대 ${MEGA_MAX}개입니다.`);
+      if (c.nav.filter(a => plain(a) && a.current).length > 1) error('$.chrome.nav', 'NAV_GROUP', '현재 위치(current)는 한 항목에만 표시합니다.');
+      const grouped = c.nav.filter(a => plain(a) && a.group);
+      if (grouped.length && !['sidebar', 'split'].includes(input.shell)) error('$.chrome.nav', 'NAV_GROUP', '내비 그룹 라벨은 sidebar·split 셸에서만 쓸 수 있습니다(세로 목록이 있어야 라벨이 읽힙니다).');
+      const seenGroups = []; c.nav.forEach(a => { const g = plain(a) ? a.group ?? '' : ''; if (g && seenGroups.at(-1) !== g && seenGroups.includes(g)) error('$.chrome.nav', 'NAV_GROUP', `그룹 "${g}" 항목은 이어서 놓아야 합니다.`); if (seenGroups.at(-1) !== g) seenGroups.push(g); });
       const limit = navLimits[input.shell];
       if (limit && c.nav.length > limit) error('$.chrome.nav', 'NAV_COUNT', `${input.shell} 셸의 내비 항목은 최대 ${limit}개입니다.`);
       if (iconShells.includes(input.shell) && c.nav.some(a => plain(a) && !a.icon)) error('$.chrome.nav', 'NAV_ICON', `${input.shell} 셸은 모든 내비 항목에 icon이 필요합니다(아이콘+라벨).`);
@@ -3062,7 +3199,7 @@ function validateBlueprint(input) {
     if (['hero', 'cta', 'buy-box'].includes(t)) group([n.action, n.secondaryAction].filter(plain), path);
     if (t === 'media' && n.motif && n.kind !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.');
     if (t === 'gallery' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && x.motif && x.kind !== 'photo') error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.'); });
-    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); }
+    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); if (n.facts && !['statement', 'cover', 'centered'].includes(n.variant)) error(path + '.facts', 'VARIANT_REQUIRES', 'facts는 statement·cover·centered 변형에서만 사용합니다(split·product는 그림이 근거 역할을 합니다).'); }
     if (t === 'pricing' && A(n.children)) {
       group(n.children.filter(plain).map(p => p.action).filter(plain), path);
       if (n.children.filter(p => plain(p) && p.featured === 'yes').length > 1) error(path, 'FEATURED_PLAN', '추천 요금제는 하나만 둘 수 있습니다.');
@@ -3085,6 +3222,9 @@ function validateBlueprint(input) {
       if (n.ratio && !n.visual) error(path + '.ratio', 'VARIANT_REQUIRES', 'ratio는 visual과 함께 사용합니다.');
       if (n.variant === 'link' && !n.action) error(path + '.action', 'VARIANT_REQUIRES', 'link 카드는 action이 필요합니다.');
     }
+    if (t === 'timeline' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && n.variant !== 'release') for (const k of ['changes', 'date']) if (Object.hasOwn(x, k)) error(`${path}.items[${i}].${k}`, 'VARIANT_REQUIRES', `${k}는 variant가 release일 때만 사용합니다.`); });
+    if (t === 'menu' && n.layout === 'photo' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && !x.motif) error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'photo 레이아웃의 모든 항목에는 motif가 필요합니다.'); });
+    if (t === 'page-header' && Object.hasOwn(n, 'stats') && plain(n) && n.align === 'center') error(path + '.stats', 'VARIANT_REQUIRES', 'stats는 가운데 정렬 제목과 함께 쓰지 않습니다.');
     if (t === 'metric' && (Object.hasOwn(n, 'trend') !== Object.hasOwn(n, 'delta'))) error(path, 'METRIC_TREND', 'trend와 delta는 함께 있어야 합니다.');
     if (t === 'empty-state' && ['error', 'not-found', 'offline', 'forbidden', 'maintenance'].includes(n.kind) && !n.action) error(path + '.action', 'VARIANT_REQUIRES', `${n.kind} 상태 화면은 다음 행동(action)이 필요합니다.`);
     if (t === 'table' && A(n.rows) && A(n.columns)) {
@@ -3103,6 +3243,7 @@ function validateBlueprint(input) {
       if (n.series.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
     }
     if (t === 'calendar' && A(n.events) && Number.isInteger(n.year) && Number.isInteger(n.month)) n.events.forEach((ev, i) => { if (plain(ev) && Number.isInteger(ev.day) && ev.day > DAYS(n.year, n.month)) error(`${path}.events[${i}].day`, 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${ev.day}일이 없습니다.`); });
+    if (t === 'calendar' && Number.isInteger(n.today) && Number.isInteger(n.year) && Number.isInteger(n.month) && n.today > DAYS(n.year, n.month)) error(path + '.today', 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${n.today}일이 없습니다.`);
     if (t === 'master-detail' && A(n.items) && Number.isInteger(n.selected) && n.selected >= n.items.length) error(path + '.selected', 'SELECTED_RANGE', 'selected가 items 범위를 벗어났습니다.');
     if (t === 'filter-bar' && A(n.filters) && Number.isInteger(n.selected) && n.selected >= n.filters.length) error(path + '.selected', 'SELECTED_RANGE', 'selected가 filters 범위를 벗어났습니다.');
     if (t === 'stepper' && A(n.steps) && Number.isInteger(n.current) && n.current > n.steps.length) error(path + '.current', 'STEPPER_RANGE', 'current가 steps 범위를 벗어났습니다.');

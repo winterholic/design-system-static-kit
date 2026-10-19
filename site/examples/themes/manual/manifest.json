@@ -932,24 +932,47 @@
     "chrome": {
       "nav": [
         {
-          "label": "시작하기",
+          "label": "소개",
           "href": "#main",
-          "icon": "book"
+          "icon": "book",
+          "group": "시작하기"
         },
         {
-          "label": "가이드",
+          "label": "API 시작하기",
           "href": "#main",
-          "icon": "file"
+          "icon": "play",
+          "group": "시작하기",
+          "current": "page"
         },
         {
-          "label": "레퍼런스",
+          "label": "인증",
           "href": "#main",
-          "icon": "code"
+          "icon": "lock",
+          "group": "가이드"
+        },
+        {
+          "label": "오류 처리",
+          "href": "#main",
+          "icon": "alert-circle",
+          "group": "가이드"
+        },
+        {
+          "label": "클라이언트",
+          "href": "#main",
+          "icon": "code",
+          "group": "레퍼런스"
+        },
+        {
+          "label": "웹훅",
+          "href": "#main",
+          "icon": "zap",
+          "group": "레퍼런스"
         },
         {
           "label": "변경 기록",
           "href": "#main",
-          "icon": "clock"
+          "icon": "clock",
+          "group": "릴리스"
         }
       ],
       "footerNote": "매뉴얼 · 정적 데모",
@@ -975,7 +998,12 @@
           "type": "page-header",
           "title": "API 시작하기",
           "description": "인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.",
-          "eyebrow": "가이드"
+          "eyebrow": "가이드",
+          "meta": [
+            "2.4.0",
+            "2026-10-14 갱신",
+            "읽는 시간 5분"
+          ]
         },
         {
           "type": "aside",
@@ -1179,10 +1207,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c9f17c41bdbc9dfe876d5942d60f17850d9dad422764a16ca14e16d0f3153fb4",
-      "tokens.css": "299290ea87dfdc4b5170340de55229f581750946193fe137c9d8bba513bec838",
+      "index.html": "0cc2a595accef9912d78c18d62a573ea27543c7937d06a414afc6522076ea5ff",
+      "tokens.css": "83daeb6e7b84fa4e346dd28b430aa566307a9c95cb0e26162fc533ddf0d7fe6b",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
-      "blueprint.json": "3263b2a8a41d09ef721f7358c8b3553e94cf50e845fb222d615f5c6b00e7b190"
+      "blueprint.json": "4f7d3361bc2ddc16fea54cfead9dd63a178c667cfee3fa8cbca529c5c7b026c2"
     }
   }
 }

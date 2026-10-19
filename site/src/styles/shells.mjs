@@ -7,6 +7,7 @@ const navBase = `
 .kit-nav ul{list-style:none;margin:0;padding:0;display:flex;gap:4px;flex-wrap:wrap}
 .kit-nav a{display:flex;align-items:center;gap:8px;min-height:var(--kit-control);padding:0 12px;text-decoration:none;font-size:var(--kit-small);color:var(--kit-muted);border-radius:var(--kit-r-control);white-space:nowrap}
 .kit-nav a:hover{background:var(--kit-soft);color:var(--kit-link)}.kit-nav a[aria-current=page]{background:var(--kit-soft);color:var(--kit-text);font-weight:600}
+.kit-nav-group+.kit-nav-group{margin-top:var(--kit-sp-sub)}.kit-nav-title{margin:0 0 var(--kit-sp-near);padding-inline:var(--kit-sp-item);font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--kit-muted)}
 .kit-body{min-width:0;display:flex;flex-direction:column;min-height:100vh}
 .kit-main{--kit-cw:calc(var(--kit-max) - 2 * var(--kit-gutter));flex:1;min-width:0;width:100%;display:grid;grid-template-columns:[full-start] minmax(var(--kit-gutter),1fr) [content-start] minmax(0,var(--kit-cw)) [content-end] minmax(var(--kit-gutter),1fr) [full-end];grid-auto-rows:min-content;align-content:start;row-gap:var(--kit-section);padding-block:var(--kit-section)}
 .kit-main>*{grid-column:content;min-width:0}
@@ -38,9 +39,10 @@ const footers = {
 const shells = {
   sidebar: `
 [data-shell=sidebar]{--kit-side:240px;display:grid;grid-template-columns:var(--kit-side) minmax(0,1fr);align-items:start;background:linear-gradient(90deg,var(--kit-surface) var(--kit-side),transparent 0)}
-[data-shell=sidebar] .kit-header{position:sticky;top:0;height:100vh;flex-direction:column;align-items:stretch;gap:20px;padding:24px 16px;border-right:1px solid var(--kit-border);border-bottom:0;overflow-y:auto}
+[data-shell=sidebar] .kit-header{position:sticky;top:0;height:100vh;flex-direction:column;align-items:stretch;gap:var(--kit-gap);padding:24px 16px;border-right:1px solid var(--kit-border);border-bottom:0;overflow-y:auto}
 [data-shell=sidebar] .kit-nav ul{flex-direction:column;flex-wrap:nowrap}[data-shell=sidebar] .kit-header-action{margin-top:auto}
 @media(max-width:1000px){[data-shell=sidebar]{--kit-side:196px}}
+@media(max-width:720px){[data-shell=sidebar] .kit-nav[data-grouped]{display:flex;gap:var(--kit-sp-near);overflow-x:auto}[data-shell=sidebar] .kit-nav-group{display:contents}[data-shell=sidebar] .kit-nav-title{display:none}}
 @media(max-width:720px){[data-shell=sidebar]{display:block;background:none}[data-shell=sidebar] .kit-header{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--kit-border);padding:12px 16px}[data-shell=sidebar] .kit-nav ul{flex-direction:row;flex-wrap:nowrap;overflow-x:auto}[data-shell=sidebar] .kit-header-action{margin:0}}`,
   topbar: `
 [data-shell=topbar] .kit-header{position:sticky;top:0;z-index:20}[data-shell=topbar] .kit-nav{flex:1}[data-shell=topbar] .kit-header-action{margin-left:auto}
@@ -54,6 +56,7 @@ const shells = {
 [data-shell=split] .kit-header{position:sticky;top:0;height:100vh;flex-direction:column;align-items:flex-start;justify-content:center;gap:var(--kit-section);background:var(--kit-soft);border-right:1px solid var(--kit-rule);border-bottom:0;padding:32px 24px}
 [data-shell=split] .kit-brand{font-size:24px}[data-shell=split] .kit-nav ul{flex-direction:column;flex-wrap:nowrap}[data-shell=split] .kit-nav{width:100%}
 @media(max-width:1000px){[data-shell=split]{--kit-side:220px}}
+@media(max-width:720px){[data-shell=split] .kit-nav[data-grouped]{display:flex;gap:var(--kit-sp-near);overflow-x:auto}[data-shell=split] .kit-nav-group{display:contents}[data-shell=split] .kit-nav-title{display:none}}
 @media(max-width:720px){[data-shell=split]{display:block;background:none}[data-shell=split] .kit-header{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start;border-right:0;border-bottom:1px solid var(--kit-rule);padding:12px 16px;gap:8px}[data-shell=split] .kit-nav ul{flex-direction:row;flex-wrap:nowrap;overflow-x:auto}[data-shell=split] .kit-brand{font-size:18px}}`,
   rail: `
 [data-shell=rail]{display:grid;grid-template-columns:88px minmax(0,1fr);align-items:start;background:linear-gradient(90deg,var(--kit-surface) 88px,transparent 0)}

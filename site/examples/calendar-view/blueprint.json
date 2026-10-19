@@ -65,7 +65,7 @@
       {
         "type": "page-header",
         "title": "10월 일정",
-        "description": "이번 달 일정 4건",
+        "description": "이번 달 일정과 다가오는 마감을 한눈에 봅니다.",
         "actions": [
           {
             "label": "일정 추가",
@@ -75,26 +75,95 @@
         ]
       },
       {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "이번 달 일정",
+            "value": "8건",
+            "detail": "지난달보다 2건 많음",
+            "trend": "up",
+            "delta": "+2"
+          },
+          {
+            "type": "metric",
+            "label": "다음 일정",
+            "value": "D-2",
+            "detail": "10월 18일 · 디자인 리뷰"
+          },
+          {
+            "type": "metric",
+            "label": "회의 시간",
+            "value": "12.5시간",
+            "detail": "주 평균 3.1시간"
+          }
+        ]
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "일정 검색",
+        "filters": [
+          "월",
+          "주",
+          "일정 목록"
+        ],
+        "selected": 0
+      },
+      {
         "type": "calendar",
         "title": "2026년 10월",
         "year": 2026,
         "month": 10,
+        "today": 16,
         "events": [
           {
             "day": 6,
-            "title": "스프린트 시작"
+            "title": "스프린트 시작",
+            "time": "10:00",
+            "tone": "brand"
+          },
+          {
+            "day": 6,
+            "title": "킥오프 점심",
+            "time": "12:30",
+            "tone": "success"
+          },
+          {
+            "day": 13,
+            "title": "디자인 크리틱",
+            "time": "15:00",
+            "tone": "accent"
           },
           {
             "day": 18,
-            "title": "디자인 리뷰"
+            "title": "디자인 리뷰",
+            "time": "14:00",
+            "tone": "accent"
+          },
+          {
+            "day": 21,
+            "title": "고객 인터뷰",
+            "time": "11:00",
+            "tone": "warning"
           },
           {
             "day": 24,
-            "title": "릴리스 점검"
+            "title": "릴리스 점검",
+            "time": "11:00",
+            "tone": "brand"
+          },
+          {
+            "day": 29,
+            "title": "회고",
+            "time": "16:00",
+            "tone": "success"
           },
           {
             "day": 30,
-            "title": "회고"
+            "title": "월간 보고",
+            "time": "10:00",
+            "tone": "warning"
           }
         ]
       },
@@ -104,13 +173,21 @@
         "items": [
           {
             "title": "디자인 리뷰",
-            "description": "10월 18일 · 14:00",
-            "status": "대기"
+            "description": "10월 18일 · 14:00 · 회의실 B",
+            "status": "대기",
+            "icon": "calendar"
+          },
+          {
+            "title": "고객 인터뷰",
+            "description": "10월 21일 · 11:00 · 온라인",
+            "status": "대기",
+            "icon": "users"
           },
           {
             "title": "릴리스 점검",
-            "description": "10월 24일 · 11:00",
-            "status": "대기"
+            "description": "10월 24일 · 11:00 · 회의실 A",
+            "status": "대기",
+            "icon": "check-circle"
           }
         ],
         "state": "ready"

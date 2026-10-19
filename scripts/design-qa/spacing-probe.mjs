@@ -50,7 +50,7 @@ export function spacingProbe(options) {
   }
 
   // S01 라벨 ↔ 값: 붙여 읽는 한 쌍은 pairMax 이하
-  for (const sel of ['.kit-metric', '.kit-props dl>div', '.kit-summary dl>div', '.kit-timeline li>div', '.kit-md-list li', '.kit-reviews li', '.kit-menu li', '.kit-list li>div', '.kit-team li>div', '.kit-features li>div']) {
+  for (const sel of ['.kit-metric', '.kit-props dl>div', '.kit-summary dl>div', '.kit-timeline:not([data-variant=release]) li>div', '.kit-rel-meta', '.kit-md-list li', '.kit-reviews li', '.kit-menu-text', '.kit-list li>div', '.kit-team li>div', '.kit-features li>div']) {
     for (const box of main.querySelectorAll(sel)) {
       if (!visible(box)) continue;
       const gaps = stackGaps(box); if (!gaps) continue;
@@ -62,7 +62,7 @@ export function spacingProbe(options) {
 
   // S03 근접: 묶음 안 간격은 그 묶음과 이웃 사이 간격보다 크지 않다. 표면(배경·테두리·큰 안쪽 여백)이 있는 상자는 가장자리가 경계라서 제외한다.
   const surfacedEl = el => { const s = getComputedStyle(el); return (s.backgroundColor !== 'rgba(0, 0, 0, 0)' && s.backgroundColor !== getComputedStyle(el.parentElement).backgroundColor) || num(s.borderTopWidth) > 0 || num(s.paddingTop) >= 24; };
-  const titleLike = el => /^H[1-6]$/.test(el.tagName) || el.matches('.kit-section-head,.kit-page-header,.kit-eyebrow,.kit-tablist');
+  const titleLike = el => /^H[1-6]$/.test(el.tagName) || el.matches('.kit-section-head,.kit-page-header,.kit-eyebrow,.kit-tablist,.kit-profile-banner');
   for (const x of all) {
     if (x.matches('.kit-shell,.kit-body') || !stackGaps(x)) continue;
     const kids = blockKids(x).sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);

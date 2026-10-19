@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "catalogVersion": "2.0.0",
-  "name": "매뉴얼",
+  "name": "FlowWorks 문서",
   "theme": "manual",
   "palette": "moonlit-mist",
   "mode": "light",
@@ -23,22 +23,44 @@
   "chrome": {
     "nav": [
       {
-        "label": "시작하기",
+        "label": "소개",
         "href": "#main",
-        "icon": "book"
+        "icon": "book",
+        "group": "시작하기"
+      },
+      {
+        "label": "설치",
+        "href": "#main",
+        "icon": "download",
+        "group": "시작하기"
+      },
+      {
+        "label": "API 레퍼런스",
+        "href": "#main",
+        "icon": "code",
+        "group": "레퍼런스"
+      },
+      {
+        "label": "오류 코드",
+        "href": "#main",
+        "icon": "alert-circle",
+        "group": "레퍼런스"
       },
       {
         "label": "변경 기록",
         "href": "#main",
-        "icon": "clock"
+        "icon": "clock",
+        "group": "릴리스",
+        "current": "page"
       },
       {
-        "label": "레퍼런스",
+        "label": "마이그레이션",
         "href": "#main",
-        "icon": "code"
+        "icon": "refresh",
+        "group": "릴리스"
       }
     ],
-    "footerNote": "매뉴얼 · 정적 데모",
+    "footerNote": "FlowWorks 문서 · 정적 데모",
     "footerLinks": [
       {
         "label": "이용약관",
@@ -60,50 +82,108 @@
       {
         "type": "page-header",
         "title": "변경 기록",
-        "description": "버전별 주요 변경"
+        "description": "FlowWorks SDK의 버전별 변경입니다. 호환되지 않는 변경은 이전 방법과 함께 적습니다.",
+        "eyebrow": "릴리스 노트",
+        "meta": [
+          "2.4.0",
+          "2026-10-14 갱신",
+          "릴리스 3개"
+        ]
       },
       {
         "type": "timeline",
-        "title": "2.0.0 · 2026-10-18",
+        "title": "릴리스",
+        "variant": "release",
         "items": [
           {
-            "time": "2.0.0",
-            "title": "카탈로그 대규모 확장",
-            "description": "테마 40종, 팔레트 160개, 부품 55종, 템플릿 56종.",
-            "status": "완료"
+            "time": "2.4.0",
+            "date": "2026-10-14",
+            "title": "목록 조회에 커서 페이지네이션",
+            "description": "프로젝트와 작업 목록을 끊김 없이 이어서 가져옵니다.",
+            "status": "완료",
+            "changes": [
+              {
+                "kind": "신규",
+                "text": "projects.list에 cursor와 limit(최대 100)을 추가했습니다."
+              },
+              {
+                "kind": "개선",
+                "text": "429 응답에서 Retry-After 값만큼 기다린 뒤 자동으로 다시 시도합니다."
+              },
+              {
+                "kind": "수정",
+                "text": "토큰이 만료된 직후 401이 두 번 보이던 문제를 고쳤습니다."
+              }
+            ]
           },
           {
-            "time": "1.0.0",
-            "title": "첫 공개",
-            "description": "테마 6종, 셸 4종, 부품 13종.",
-            "status": "완료"
+            "time": "2.3.0",
+            "date": "2026-09-20",
+            "title": "웹훅 서명 검증 도우미",
+            "description": "받은 웹훅이 우리가 보낸 것인지 한 줄로 확인합니다.",
+            "status": "완료",
+            "changes": [
+              {
+                "kind": "신규",
+                "text": "verifyWebhook(payload, signature, secret) 함수를 추가했습니다."
+              },
+              {
+                "kind": "개선",
+                "text": "오류 메시지에 요청 ID를 포함해 문의할 때 바로 찾을 수 있습니다."
+              },
+              {
+                "kind": "제거",
+                "text": "Node.js 16 지원을 종료했습니다. Node.js 20 이상을 사용하세요."
+              }
+            ]
+          },
+          {
+            "time": "2.2.1",
+            "date": "2026-09-02",
+            "title": "타입 정의 보완",
+            "description": "TypeScript 사용자를 위한 작은 수정입니다.",
+            "status": "완료",
+            "changes": [
+              {
+                "kind": "수정",
+                "text": "Project.members가 선택 값으로 잘못 표시되던 타입을 바로잡았습니다."
+              },
+              {
+                "kind": "수정",
+                "text": "ESM 환경에서 기본 내보내기가 undefined가 되는 문제를 고쳤습니다."
+              }
+            ]
           }
         ]
       },
       {
         "type": "table",
-        "title": "호환성",
-        "caption": "버전별 호환성",
+        "title": "지원 환경",
+        "caption": "버전별 지원하는 Node.js와 브라우저",
         "columns": [
-          "항목",
-          "1.0",
-          "2.0"
+          "버전",
+          "Node.js",
+          "브라우저",
+          "지원 상태"
         ],
         "rows": [
           [
-            "Blueprint 버전",
-            "1.0",
-            "2.0"
+            "2.4.x",
+            "20 이상",
+            "최신 2개 버전",
+            "지원 중"
           ],
           [
-            "카탈로그",
-            "1.0.0",
-            "2.0.0"
+            "2.3.x",
+            "20 이상",
+            "최신 2개 버전",
+            "보안 수정만"
           ],
           [
-            "이전 입력",
-            "지원",
-            "migrate 명령으로 변환"
+            "2.2.x",
+            "18 이상",
+            "최신 2개 버전",
+            "지원 종료"
           ]
         ],
         "state": "ready"

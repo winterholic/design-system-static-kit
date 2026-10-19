@@ -10,7 +10,7 @@ const notice = (tone, title, body, variant) => ({type: 'notice', tone, title, bo
 const feat = (icon, title, description) => ({icon, title, description});
 const field = (id, label, type, extra = {}) => ({id, label, type, ...extra});
 const media = (kind, ratio, alt, caption) => ({type: 'media', kind, ratio, alt, ...(caption ? {caption} : {})});
-const nav = (...items) => items.map(([label, icon, href = '#main']) => ({label, href, icon}));
+const nav = (...items) => items.map(([label, icon, href = '#main', group, current]) => ({label, href, icon, ...(group ? {group} : {}), ...(current ? {current: 'page'} : {})}));
 const FOOT = ['이용약관', '개인정보', '문의'];
 const chrome = (navItems, action, footerNote, footerLinks) => ({nav: navItems, ...(action ? {action: {label: action, href: '#main'}} : {}), ...(footerNote ? {footerNote} : {}), footerLinks: (footerLinks ?? FOOT).map(l => ({label: l, href: '#main'}))});
 const NAV_APP = nav(['개요', 'home'], ['프로젝트', 'folder'], ['일정', 'calendar'], ['설정', 'settings']);
@@ -63,7 +63,7 @@ add('product-landing', '제품 소개', 'landing', 'commerce', '무드램프', [
 
 add('agency-home', '에이전시 홈', 'portfolio', 'studio', '스튜디오 오로', [
   head('우리는 브랜드가 오래 기억되는 방식을 만듭니다.', '서울 · 아이덴티티, 웹, 모션'),
-  {type: 'hero', variant: 'cover', title: '오래 남는\n브랜드를 만든다.', body: '전략에서 제작까지, 작은 팀이 끝까지 함께합니다.', action: A('프로젝트 문의', 'primary'), secondaryAction: A('작업 보기', 'ghost')},
+  {type: 'hero', variant: 'cover', title: '오래 남는\n브랜드를 만든다.', body: '전략에서 제작까지, 작은 팀이 끝까지 함께합니다.', facts: [{value: '48', label: '함께한 브랜드'}, {value: '12년', label: '평균 협업 기간'}, {value: '96%', label: '재의뢰율'}], action: A('프로젝트 문의', 'primary'), secondaryAction: A('작업 보기', 'ghost')},
   section('선별한 작업', [{type: 'gallery', layout: 'masonry', items: [{kind: 'photo', motif: 'coffee', alt: '카페 브랜딩', caption: '오월 커피 · 아이덴티티'}, {kind: 'photo', motif: 'poster', alt: '전시 포스터', caption: '빛의 기록전 · 그래픽'}, {kind: 'device', alt: '앱 화면', caption: '모아 · 핀테크 앱'}, {kind: 'photo', motif: 'grid', alt: '정보 구조', caption: '한빛재단 · 웹'}, {kind: 'video', alt: '모션 영상', caption: '디자인 데이 · 모션'}, {kind: 'photo', motif: 'package', alt: '패키지', caption: '소담 · 패키지'}]}], {anchor: 'work'}),
   section('서비스', [grid('three', card('아이덴티티', '이름, 로고, 시스템까지 하나의 언어로.', {icon: 'sparkles'}), card('웹·앱', '빠르고 접근성 높은 화면을 만듭니다.', {icon: 'globe'}), card('모션', '브랜드가 움직이는 방식을 설계합니다.', {icon: 'play'}))]),
   section('이야기', [{type: 'split', reverse: 'reverse', children: [prose('우리가 일하는 방식', '좋은 결과는 좋은 질문에서 나옵니다. 우리는 먼저 듣고, 작게 만들어 보여 드리고, 함께 다듬습니다.\n\n프로젝트마다 한 명의 책임자가 처음부터 끝까지 함께합니다.'), {...media('photo', '4:3', '작업실에서 회의하는 모습'), motif: 'laptop'}]}]),
@@ -72,7 +72,7 @@ add('agency-home', '에이전시 홈', 'portfolio', 'studio', '스튜디오 오�
 
 add('event-landing', '행사 안내', 'landing', 'playful', '디자인 데이 2026', [
   head('올해 가장 즐거운 디자인 하루', '11월 14일 토요일 · 성수 · 오프라인 + 온라인'),
-  {type: 'hero', variant: 'centered', eyebrow: '얼리버드 마감 D-7', title: '디자인 데이\n2026', body: '연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.', action: A('티켓 구매', 'primary'), secondaryAction: A('프로그램 보기', 'secondary')},
+  {type: 'hero', variant: 'centered', eyebrow: '얼리버드 마감 D-7', title: '디자인 데이\n2026', body: '연사 12명, 워크숍 6개, 그리고 하루 종일의 대화.', facts: [{value: '12', label: '연사'}, {value: '6', label: '워크숍'}, {value: '500', label: '참가 정원'}], action: A('티켓 구매', 'primary'), secondaryAction: A('프로그램 보기', 'secondary')},
   grid('three', metric('연사', '12명'), metric('워크숍', '6개'), metric('남은 좌석', '84석', '오늘 기준', 'down', '-16')),
   section('프로그램', [{type: 'timeline', title: '11월 14일', items: [{time: '10:00', title: '오프닝', description: '올해의 주제를 소개합니다.', status: '예정'}, {time: '11:00', title: '키노트: 규칙과 자유', description: '정해진 틀 안에서 다양함을 만드는 방법.'}, {time: '14:00', title: '워크숍 세션', description: '관심 주제를 골라 참여합니다.'}, {time: '17:00', title: '네트워킹', description: '가벼운 저녁과 함께합니다.'}]}], {anchor: 'program'}),
   section('연사', [{type: 'team', title: '함께하는 연사', members: [{name: '김다선', role: '디자인 시스템 리드'}, {name: '이지훈', role: '프런트엔드 엔지니어'}, {name: '박서연', role: '모션 디자이너'}, {name: '최민준', role: '리서처'}]}]),
@@ -82,14 +82,14 @@ add('event-landing', '행사 안내', 'landing', 'playful', '디자인 데이 20
 
 add('waitlist', '대기자 등록', 'landing', 'neon', '오비트', [
   head('곧 열립니다', '가장 먼저 만나보세요.'),
-  {type: 'hero', variant: 'centered', eyebrow: '비공개 베타', title: '생각의 속도로\n움직이는 도구', body: '이메일을 남기면 베타 초대를 보내 드립니다.', action: A('자세히 보기', 'secondary')},
+  {type: 'hero', variant: 'centered', eyebrow: '비공개 베타', title: '생각의 속도로\n움직이는 도구', body: '이메일을 남기면 베타 초대를 보내 드립니다.', facts: [{value: '2,418', label: '대기 중인 사람'}, {value: '3주', label: '평균 초대 시간'}, {value: '4.8', label: '베타 만족도'}], action: A('자세히 보기', 'secondary')},
   {type: 'form', title: '베타 대기자 등록', intro: '초대 순서는 등록 순입니다. 데모이므로 입력은 저장되지 않습니다.', variant: 'inline', fields: [field('email', '이메일', 'email', {placeholder: 'name@example.com'}), field('agree', '소식 받기에 동의합니다', 'checkbox', {requirement: 'optional'})], submitLabel: '등록하기'},
   {type: 'feature-list', title: '미리 보는 기능', items: [feat('zap', '즉시 반응', '입력과 동시에 결과가 보입니다.'), feat('cloud', '어디서나', '브라우저만 있으면 됩니다.'), feat('lock', '프라이버시', '기본값은 비공개입니다.')]},
 ], {axes: {shell: 'minimal'}, chrome: chrome(nav(['소개', 'info']), '로그인', '© 2026 오비트', null)});
 
 add('campaign-donate', '캠페인·후원', 'landing', 'signal', '숲을 지켜요', [
   head('한 그루가 숲이 되도록', '2026 시민 식목 캠페인'),
-  {type: 'hero', variant: 'statement', eyebrow: '모금 진행 중', title: '올해 목표, 나무 10,000그루.', body: '지금까지 6,420그루가 심겼습니다. 한 번의 참여가 한 그루가 됩니다.', action: A('후원하기', 'primary'), secondaryAction: A('봉사 신청', 'secondary')},
+  {type: 'hero', variant: 'statement', eyebrow: '모금 진행 중', title: '올해 목표, 나무 10,000그루.', body: '지금까지 6,420그루가 심겼습니다. 한 번의 참여가 한 그루가 됩니다.', facts: [{value: '6,420', label: '지금까지 심은 그루'}, {value: '10,000', label: '올해 목표'}, {value: '1,284', label: '함께한 후원자'}], action: A('후원하기', 'primary'), secondaryAction: A('봉사 신청', 'secondary')},
   {type: 'progress', label: '모금 현황', value: 64, detail: '6,420 / 10,000그루', tone: 'brand'},
   grid('three', metric('참여자', '12,480명', '지난달 대비', 'up', '+1,204'), metric('심은 나무', '6,420그루'), metric('숲 면적', '42ha')),
   section('후원금은 이렇게 쓰여요', [{type: 'chart', title: '사용 내역', caption: '후원금 사용 비율', kind: 'donut', unit: '%', categories: ['묘목', '식재 인건비', '관리', '운영'], series: [{name: '비율', values: [48, 27, 18, 7]}]}]),
@@ -132,14 +132,14 @@ add('travel-ocean', '여행 소개', 'landing', 'ocean', '파도소리 여행사
 
 add('museum-home', '박물관·재단', 'landing', 'heritage', '한빛 박물관', [
   head('오래된 것에서 오늘의 이야기를', '상설전 · 기획전 · 교육 프로그램'),
-  {type: 'hero', variant: 'statement', eyebrow: '기획전 · 11월 30일까지', title: '빛을 담은 그릇', body: '조선 백자 120점이 만든 한 줄기 빛의 이야기를 만나 보세요.', action: A('관람 예약', 'primary'), secondaryAction: A('전시 소개', 'ghost')},
+  {type: 'hero', variant: 'statement', eyebrow: '기획전 · 11월 30일까지', title: '빛을 담은 그릇', body: '조선 백자 120점이 만든 한 줄기 빛의 이야기를 만나 보세요.', facts: [{value: '120', label: '전시 백자'}, {value: '11.30', label: '전시 마감'}, {value: '무료', label: '매주 수요일 관람'}], action: A('관람 예약', 'primary'), secondaryAction: A('전시 소개', 'ghost')},
   section('지금 전시', [grid('two', card('빛을 담은 그릇', '조선 백자 120점', {variant: 'horizontal', visual: 'photo', motif: 'vase', ratio: '4:3', meta: '기획전시실 1 · 11/30까지'}), card('도시의 기억', '사진으로 보는 서울 100년', {variant: 'horizontal', visual: 'photo', motif: 'museum', ratio: '4:3', meta: '상설전시실 2'}))]),
   section('관람 안내', [{type: 'properties', title: '운영 정보', layout: 'inline', items: [{label: '관람 시간', value: '화~일 10:00~18:00'}, {label: '휴관일', value: '매주 월요일'}, {label: '관람료', value: '성인 5,000원 · 청소년 무료'}, {label: '위치', value: '서울 종로구 예시로 12'}]}]),
 ], {chrome: chrome(nav(['전시', 'image'], ['교육', 'graduation'], ['관람 안내', 'info'], ['소장품', 'book']), '관람 예약', '© 2026 한빛 박물관', FOOT)});
 
 add('hanji-journey', '전통 문화 여행', 'landing', 'hanji', '고운길', [
   head('걸음마다 이야기가 있는 길', '전통 마을과 고택을 잇는 3일'),
-  {type: 'hero', variant: 'statement', eyebrow: '가을 한정', title: '한옥에서 맞는\n고요한 아침.', body: '고택 숙박과 전통 체험을 하나로 엮은 여행입니다.', action: A('일정 보기', 'primary')},
+  {type: 'hero', variant: 'statement', eyebrow: '가을 한정', title: '한옥에서 맞는\n고요한 아침.', body: '고택 숙박과 전통 체험을 하나로 엮은 여행입니다.', facts: [{value: '3박 4일', label: '일정'}, {value: '12명', label: '소규모 출발'}, {value: '4.9', label: '참가자 평점'}], action: A('일정 보기', 'primary')},
   section('여행 일정', [{type: 'timeline', title: '3일의 흐름', items: [{time: '1일차', title: '전주 한옥마을', description: '고택 체크인과 다도 체험.'}, {time: '2일차', title: '안동 하회마을', description: '탈춤 공연과 선비 음식.'}, {time: '3일차', title: '경주 월정교', description: '신라 유적을 걸으며 마무리.'}]}]),
   section('머무는 곳', [grid('two', card('전주 청연재', '마당이 있는 한옥 독채', {meta: '1박 · 2인'}), card('안동 하회고택', '고요한 종가 체험', {meta: '1박 · 4인'}))]),
 ], {chrome: chrome(nav(['일정', 'calendar'], ['숙소', 'bed'], ['체험', 'sparkles']), '예약', '© 2026 고운길', FOOT)});
@@ -222,9 +222,11 @@ add('team-chat', '팀 대화', 'community', 'hub', '허브', [
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
 add('calendar-view', '월간 일정', 'community', 'workspace', '워크스페이스', [
-  head('10월 일정', '이번 달 일정 4건', {actions: [A('일정 추가', 'primary')]}),
-  {type: 'calendar', title: '2026년 10월', year: 2026, month: 10, events: [{day: 6, title: '스프린트 시작'}, {day: 18, title: '디자인 리뷰'}, {day: 24, title: '릴리스 점검'}, {day: 30, title: '회고'}]},
-  {type: 'list', title: '다가오는 일정', items: [{title: '디자인 리뷰', description: '10월 18일 · 14:00', status: '대기'}, {title: '릴리스 점검', description: '10월 24일 · 11:00', status: '대기'}], state: 'ready'},
+  head('10월 일정', '이번 달 일정과 다가오는 마감을 한눈에 봅니다.', {actions: [A('일정 추가', 'primary')]}),
+  grid('three', metric('이번 달 일정', '8건', '지난달보다 2건 많음', 'up', '+2'), metric('다음 일정', 'D-2', '10월 18일 · 디자인 리뷰'), metric('회의 시간', '12.5시간', '주 평균 3.1시간')),
+  {type: 'filter-bar', placeholder: '일정 검색', filters: ['월', '주', '일정 목록'], selected: 0},
+  {type: 'calendar', title: '2026년 10월', year: 2026, month: 10, today: 16, events: [{day: 6, title: '스프린트 시작', time: '10:00', tone: 'brand'}, {day: 6, title: '킥오프 점심', time: '12:30', tone: 'success'}, {day: 13, title: '디자인 크리틱', time: '15:00', tone: 'accent'}, {day: 18, title: '디자인 리뷰', time: '14:00', tone: 'accent'}, {day: 21, title: '고객 인터뷰', time: '11:00', tone: 'warning'}, {day: 24, title: '릴리스 점검', time: '11:00', tone: 'brand'}, {day: 29, title: '회고', time: '16:00', tone: 'success'}, {day: 30, title: '월간 보고', time: '10:00', tone: 'warning'}]},
+  {type: 'list', title: '다가오는 일정', items: [{title: '디자인 리뷰', description: '10월 18일 · 14:00 · 회의실 B', status: '대기', icon: 'calendar'}, {title: '고객 인터뷰', description: '10월 21일 · 11:00 · 온라인', status: '대기', icon: 'users'}, {title: '릴리스 점검', description: '10월 24일 · 11:00 · 회의실 A', status: '대기', icon: 'check-circle'}], state: 'ready'},
 ], {chrome: chrome(NAV_APP, null, '워크스페이스 · 정적 데모', null)});
 
 add('audit-log', '감사 로그', 'data', 'console', '콘솔', [
@@ -261,7 +263,7 @@ add('team-directory', '구성원 디렉터리', 'listing', 'hub', '허브', [
 
 // ---------- docs / article / blog ----------
 add('docs-reference', '레퍼런스 문서', 'docs', 'manual', '매뉴얼', [
-  head('API 시작하기', '인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.', {eyebrow: '가이드'}),
+  head('API 시작하기', '인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.', {eyebrow: '가이드', meta: ['2.4.0', '2026-10-14 갱신', '읽는 시간 5분']}),
   {type: 'aside', side: 'end', label: '이 문서의 목차', sticky: 'yes', children: [
     section('시작하기', [
       section('설치', [prose('요구 사항', 'Node.js 20 이상이 필요합니다. 패키지는 의존성이 없고, 브라우저와 서버에서 같은 코드로 동작합니다.'), {type: 'tabs', variant: 'underline', children: [{type: 'tab', label: 'npm', children: [{type: 'code', label: '터미널', language: 'bash', code: 'npm install @flowworks/sdk'}]}, {type: 'tab', label: 'pnpm', children: [{type: 'code', label: '터미널', language: 'bash', code: 'pnpm add @flowworks/sdk'}]}, {type: 'tab', label: 'yarn', children: [{type: 'code', label: '터미널', language: 'bash', code: 'yarn add @flowworks/sdk'}]}]}], {anchor: 'install'}),
@@ -270,7 +272,7 @@ add('docs-reference', '레퍼런스 문서', 'docs', 'manual', '매뉴얼', [
       section('오류 처리', [{type: 'table', title: '응답 코드', caption: '자주 만나는 응답 코드', columns: ['코드', '의미', '대응'], rows: [['401', '토큰이 없거나 만료됨', '토큰을 다시 발급하세요'], ['429', '요청이 너무 많음', 'Retry-After 헤더만큼 기다린 뒤 재시도'], ['503', '일시적인 서버 점검', '잠시 후 다시 시도하세요']], state: 'ready'}, {type: 'faq', title: '자주 묻는 질문', items: [{question: '요청 한도는 얼마인가요?', answer: '토큰당 분당 600회입니다. 한도를 넘으면 429 응답과 함께 기다려야 할 시간이 헤더로 내려와요.'}, {question: '브라우저에서 바로 호출해도 되나요?', answer: '읽기 전용 토큰에 한해 가능합니다. 쓰기 토큰은 서버에서만 사용하세요.'}]}], {anchor: 'errors'}),
     ]),
     {type: 'toc', title: '이 문서의 목차'}]},
-], {chrome: chrome(nav(['시작하기', 'book'], ['가이드', 'file'], ['레퍼런스', 'code'], ['변경 기록', 'clock']), null, '매뉴얼 · 정적 데모', null)});
+], {chrome: chrome(nav(['소개', 'book', '#main', '시작하기'], ['API 시작하기', 'play', '#main', '시작하기', true], ['인증', 'lock', '#main', '가이드'], ['오류 처리', 'alert-circle', '#main', '가이드'], ['클라이언트', 'code', '#main', '레퍼런스'], ['웹훅', 'zap', '#main', '레퍼런스'], ['변경 기록', 'clock', '#main', '릴리스']), null, '매뉴얼 · 정적 데모', null)});
 
 add('tutorial', '튜토리얼', 'docs', 'manual', '매뉴얼', [
   head('첫 화면 만들기', '15분 안에 Blueprint 하나로 완성합니다.', {eyebrow: '튜토리얼'}),
@@ -306,11 +308,15 @@ add('blog-post', '블로그 글', 'article', 'journal', '느린 기록', [
   {type: 'tags', title: '태그', items: ['디자인 시스템', '규칙', '회고'], variant: 'badges'},
 ], {chrome: chrome(nav(['글', 'file'], ['주제', 'tag'], ['소개', 'user']), '구독', '© 2026 느린 기록', ['RSS', '문의'])});
 
-add('changelog', '변경 기록', 'docs', 'manual', '매뉴얼', [
-  head('변경 기록', '버전별 주요 변경'),
-  {type: 'timeline', title: '2.0.0 · 2026-10-18', items: [{time: '2.0.0', title: '카탈로그 대규모 확장', description: '테마 40종, 팔레트 160개, 부품 55종, 템플릿 56종.', status: '완료'}, {time: '1.0.0', title: '첫 공개', description: '테마 6종, 셸 4종, 부품 13종.', status: '완료'}]},
-  {type: 'table', title: '호환성', caption: '버전별 호환성', columns: ['항목', '1.0', '2.0'], rows: [['Blueprint 버전', '1.0', '2.0'], ['카탈로그', '1.0.0', '2.0.0'], ['이전 입력', '지원', 'migrate 명령으로 변환']], state: 'ready'},
-], {chrome: chrome(nav(['시작하기', 'book'], ['변경 기록', 'clock'], ['레퍼런스', 'code']), null, '매뉴얼 · 정적 데모', null)});
+add('changelog', '변경 기록', 'docs', 'manual', 'FlowWorks 문서', [
+  head('변경 기록', 'FlowWorks SDK의 버전별 변경입니다. 호환되지 않는 변경은 이전 방법과 함께 적습니다.', {eyebrow: '릴리스 노트', meta: ['2.4.0', '2026-10-14 갱신', '릴리스 3개']}),
+  {type: 'timeline', title: '릴리스', variant: 'release', items: [
+    {time: '2.4.0', date: '2026-10-14', title: '목록 조회에 커서 페이지네이션', description: '프로젝트와 작업 목록을 끊김 없이 이어서 가져옵니다.', status: '완료', changes: [{kind: '신규', text: 'projects.list에 cursor와 limit(최대 100)을 추가했습니다.'}, {kind: '개선', text: '429 응답에서 Retry-After 값만큼 기다린 뒤 자동으로 다시 시도합니다.'}, {kind: '수정', text: '토큰이 만료된 직후 401이 두 번 보이던 문제를 고쳤습니다.'}]},
+    {time: '2.3.0', date: '2026-09-20', title: '웹훅 서명 검증 도우미', description: '받은 웹훅이 우리가 보낸 것인지 한 줄로 확인합니다.', status: '완료', changes: [{kind: '신규', text: 'verifyWebhook(payload, signature, secret) 함수를 추가했습니다.'}, {kind: '개선', text: '오류 메시지에 요청 ID를 포함해 문의할 때 바로 찾을 수 있습니다.'}, {kind: '제거', text: 'Node.js 16 지원을 종료했습니다. Node.js 20 이상을 사용하세요.'}]},
+    {time: '2.2.1', date: '2026-09-02', title: '타입 정의 보완', description: 'TypeScript 사용자를 위한 작은 수정입니다.', status: '완료', changes: [{kind: '수정', text: 'Project.members가 선택 값으로 잘못 표시되던 타입을 바로잡았습니다.'}, {kind: '수정', text: 'ESM 환경에서 기본 내보내기가 undefined가 되는 문제를 고쳤습니다.'}]},
+  ]},
+  {type: 'table', title: '지원 환경', caption: '버전별 지원하는 Node.js와 브라우저', columns: ['버전', 'Node.js', '브라우저', '지원 상태'], rows: [['2.4.x', '20 이상', '최신 2개 버전', '지원 중'], ['2.3.x', '20 이상', '최신 2개 버전', '보안 수정만'], ['2.2.x', '18 이상', '최신 2개 버전', '지원 종료']], state: 'ready'},
+], {chrome: chrome(nav(['소개', 'book', '#main', '시작하기'], ['설치', 'download', '#main', '시작하기'], ['API 레퍼런스', 'code', '#main', '레퍼런스'], ['오류 코드', 'alert-circle', '#main', '레퍼런스'], ['변경 기록', 'clock', '#main', '릴리스', true], ['마이그레이션', 'refresh', '#main', '릴리스']), null, 'FlowWorks 문서 · 정적 데모', null)});
 
 add('help-center', '도움말 센터', 'docs', 'clarity', '도움말', [
   head('무엇을 도와드릴까요?', '자주 찾는 질문과 안내를 모았습니다.', {align: 'center'}),
@@ -383,9 +389,10 @@ add('beauty-detail', '뷰티 상세', 'commerce', 'beauty', '르네', [
 ], {chrome: chrome(nav(['스킨케어', 'sparkles'], ['메이크업', 'heart'], ['세트', 'gift'], ['리뷰', 'star']), '장바구니', '© 2026 르네', FOOT)});
 
 add('menu-dining', '메뉴판', 'commerce', 'dining', '소담 식당', [
-  head('저녁 메뉴', '매일 오후 5시부터 10시까지', {align: 'center'}),
-  {type: 'menu', title: '시그니처', layout: 'leader', items: [{name: '한우 갈비찜', description: '24시간 숙성한 갈비와 제철 채소', price: '38,000', tag: '시그니처'}, {name: '들깨 칼국수', description: '직접 뽑은 면과 들깨 육수', price: '12,000'}, {name: '모둠 전', description: '계절 재료로 부친 전 다섯 가지', price: '18,000'}]},
-  {type: 'menu', title: '식사', layout: 'plain', items: [{name: '된장찌개 정식', price: '11,000'}, {name: '불고기 정식', price: '14,000'}, {name: '비빔밥', price: '10,000'}]},
+  head('저녁 메뉴', '매일 오후 5시부터 10시까지 · 매주 월요일 휴무', {align: 'center', eyebrow: '소담 식당'}),
+  {type: 'filter-bar', placeholder: '메뉴 검색', filters: ['전체', '시그니처', '식사', '코스'], selected: 0},
+  {type: 'menu', title: '시그니처', layout: 'photo', items: [{name: '한우 갈비찜', description: '24시간 숙성한 갈비와 제철 채소', price: '38,000', tag: '시그니처', motif: 'food'}, {name: '들깨 칼국수', description: '직접 뽑은 면과 들깨 육수', price: '12,000', motif: 'noodles'}, {name: '모둠 전', description: '계절 재료로 부친 전 다섯 가지', price: '18,000', motif: 'pancakes'}]},
+  {type: 'menu', title: '식사', layout: 'leader', items: [{name: '된장찌개 정식', description: '두부와 호박, 직접 담근 된장', price: '11,000', motif: 'stew'}, {name: '불고기 정식', description: '달큰한 양념에 재운 소불고기', price: '14,000', motif: 'food'}, {name: '비빔밥', description: '일곱 가지 나물과 고추장', price: '10,000', motif: 'bibimbap'}]},
   {type: 'divider', label: '코스'},
   {type: 'menu', title: '코스 구성', layout: 'grid', items: [{name: '소담 코스', description: '전채 · 메인 · 식사 · 후식', price: '45,000'}, {name: '가족 코스', description: '4인 기준 · 사이드 포함', price: '150,000'}]},
   {type: 'notice', tone: 'info', title: '알레르기·원산지', body: '대두, 밀, 계란, 우유를 사용합니다. 쇠고기는 국내산 한우입니다.'},
@@ -473,11 +480,14 @@ add('settings', '설정', 'settings', 'workspace', '워크스페이스', [
 ], {chrome: chrome(NAV_APP, null, '워크스페이스 · 정적 데모', null)});
 
 add('profile', '프로필', 'settings', 'hub', '허브', [
-  head('김다선', '디자인 리드 · 서울'),
-  {type: 'aside', side: 'start', label: '프로필 요약', size: 'narrow', children: [
-    {type: 'list', title: '최근 활동', variant: 'divided', items: [{title: '팔레트 후보를 추가했어요', description: '오늘 10:02', icon: 'sparkles'}, {title: '접근성 점검을 마쳤어요', description: '어제', icon: 'check-circle'}, {title: '리뷰에 댓글을 남겼어요', description: '월요일', icon: 'message'}], state: 'ready'},
-    {type: 'properties', title: '정보', items: [{label: '팀', value: '디자인 시스템'}, {label: '입사', value: '2022년 3월'}, {label: '시간대', value: '서울 (UTC+9)'}]}]},
-  {type: 'tags', title: '관심사', items: ['디자인 시스템', '접근성', '타이포그래피', '모션']},
+  head('김다선', '디자인 시스템팀 리드. 토큰과 컴포넌트가 팀의 공통 언어가 되도록 돕습니다.', {avatar: '김다선', meta: ['서울', '2022년 3월 입사', '한국어 · English'], actions: [A('메시지 보내기', 'primary'), A('프로필 공유', 'secondary')], stats: [{label: '참여 프로젝트', value: '24'}, {label: '작성한 리뷰', value: '318'}, {label: '정리한 토큰', value: '1,240'}, {label: '팔로워', value: '96'}]}),
+  {type: 'aside', side: 'end', label: '프로필 정보', size: 'narrow', children: [
+    section('활동', [
+      {type: 'chart', title: '최근 12주 기여', caption: '주별 리뷰와 병합 횟수', kind: 'area', unit: '건', categories: ['1주', '2주', '3주', '4주', '5주', '6주', '7주', '8주'], series: [{name: '기여', values: [6, 9, 7, 12, 10, 15, 13, 18]}]},
+      {type: 'list', title: '최근 활동', variant: 'divided', items: [{title: '팔레트 후보 12개를 추가했어요', description: '오늘 10:02', icon: 'sparkles'}, {title: '접근성 점검을 마쳤어요', description: '어제 · 대비 33,600쌍 통과', icon: 'check-circle'}, {title: '검색 필터 리뷰에 댓글을 남겼어요', description: '월요일', icon: 'message'}], state: 'ready'},
+    ]),
+    {type: 'properties', title: '정보', items: [{label: '팀', value: '디자인 시스템'}, {label: '역할', value: '리드 디자이너'}, {label: '근무 시간', value: '10:00~19:00 (UTC+9)'}, {label: '이메일', value: 'dasun@example.com'}, {label: '관심사', value: '접근성, 타이포그래피, 모션'}]}]},
+  section('참여 중인 프로젝트', [grid('three', card('토큰 이름 체계', '색과 간격 토큰의 이름 규칙을 하나로 통합합니다.', {variant: 'outline', badge: '진행', meta: '4명 · 마감 11월 3일'}), card('접근성 점검 도구', '모든 팔레트와 모드에서 대비를 자동으로 검사합니다.', {variant: 'outline', badge: '완료', meta: '3명 · 10월 18일 완료'}), card('문서 사이트 개편', '예제 코드를 복사하고 바로 실행해 볼 수 있게 합니다.', {variant: 'outline', badge: '검토', meta: '5명 · 마감 11월 20일'}))]),
 ], {chrome: chrome(NAV_APP, null, '허브 · 정적 데모', null)});
 
 // ---------- auth ----------

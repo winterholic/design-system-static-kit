@@ -5471,13 +5471,56 @@
           },
           "minItems": 1,
           "maxItems": 2
+        },
+        "meta": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "avatar": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "stats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              }
+            },
+            "required": [
+              "label",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 4
         }
       },
       "optional": [
         "eyebrow",
         "description",
         "align",
-        "actions"
+        "actions",
+        "meta",
+        "avatar",
+        "stats"
       ],
       "example": {
         "type": "page-header",
@@ -5610,6 +5653,10 @@
             "interior",
             "building",
             "food",
+            "noodles",
+            "pancakes",
+            "bibimbap",
+            "stew",
             "coffee",
             "fitness",
             "care",
@@ -5623,6 +5670,31 @@
             "grid",
             "type"
           ]
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "value",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 4
         }
       },
       "optional": [
@@ -5630,7 +5702,8 @@
         "action",
         "secondaryAction",
         "visual",
-        "motif"
+        "motif",
+        "facts"
       ],
       "example": {
         "type": "hero",
@@ -6233,12 +6306,24 @@
           "minLength": 1,
           "maxLength": 100
         },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "line",
+            "release"
+          ]
+        },
         "items": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "time": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "date": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 40
@@ -6260,6 +6345,35 @@
                   "진행",
                   "예정"
                 ]
+              },
+              "changes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "신규",
+                        "개선",
+                        "수정",
+                        "제거"
+                      ]
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 160
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1,
+                "maxItems": 6
               }
             },
             "required": [
@@ -6272,6 +6386,9 @@
           "maxItems": 12
         }
       },
+      "optional": [
+        "variant"
+      ],
       "example": {
         "type": "timeline",
         "title": "진행 기록",
@@ -6571,6 +6688,11 @@
           "minimum": 1,
           "maximum": 12
         },
+        "today": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 31
+        },
         "events": {
           "type": "array",
           "items": {
@@ -6585,6 +6707,20 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 40
+              },
+              "time": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 16
+              },
+              "tone": {
+                "type": "string",
+                "enum": [
+                  "brand",
+                  "accent",
+                  "success",
+                  "warning"
+                ]
               }
             },
             "required": [
@@ -6597,6 +6733,9 @@
           "maxItems": 8
         }
       },
+      "optional": [
+        "today"
+      ],
       "example": {
         "type": "calendar",
         "title": "이번 달 일정",
@@ -6816,6 +6955,10 @@
             "interior",
             "building",
             "food",
+            "noodles",
+            "pancakes",
+            "bibimbap",
+            "stew",
             "coffee",
             "fitness",
             "care",
@@ -8386,6 +8529,10 @@
             "interior",
             "building",
             "food",
+            "noodles",
+            "pancakes",
+            "bibimbap",
+            "stew",
             "coffee",
             "fitness",
             "care",
@@ -8486,6 +8633,10 @@
                   "interior",
                   "building",
                   "food",
+                  "noodles",
+                  "pancakes",
+                  "bibimbap",
+                  "stew",
                   "coffee",
                   "fitness",
                   "care",
@@ -8777,6 +8928,10 @@
                 "interior",
                 "building",
                 "food",
+                "noodles",
+                "pancakes",
+                "bibimbap",
+                "stew",
                 "coffee",
                 "fitness",
                 "care",
@@ -9051,7 +9206,8 @@
           "enum": [
             "leader",
             "grid",
-            "plain"
+            "plain",
+            "photo"
           ]
         },
         "items": {
@@ -9078,6 +9234,52 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 20
+              },
+              "motif": {
+                "type": "string",
+                "enum": [
+                  "lamp",
+                  "desklamp",
+                  "floorlamp",
+                  "orb",
+                  "candle",
+                  "mug",
+                  "bottle",
+                  "jar",
+                  "bag",
+                  "chair",
+                  "plant",
+                  "books",
+                  "headphones",
+                  "sneaker",
+                  "watch",
+                  "vase",
+                  "shirt",
+                  "speaker",
+                  "camera",
+                  "laptop",
+                  "coast",
+                  "solar",
+                  "interior",
+                  "building",
+                  "food",
+                  "noodles",
+                  "pancakes",
+                  "bibimbap",
+                  "stew",
+                  "coffee",
+                  "fitness",
+                  "care",
+                  "museum",
+                  "ticket",
+                  "poster",
+                  "package",
+                  "brandmark",
+                  "swatches",
+                  "states",
+                  "grid",
+                  "type"
+                ]
               }
             },
             "required": [
@@ -9915,7 +10117,8 @@
         "NAV_COUNT",
         "NAV_ICON",
         "FOOTER_LINKS",
-        "NAV_MEGA"
+        "NAV_MEGA",
+        "NAV_GROUP"
       ],
       "source": "Material/HIG 하단 탭 3~5개, 접근성 아이콘+라벨"
     },

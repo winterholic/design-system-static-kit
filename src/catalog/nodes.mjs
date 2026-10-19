@@ -11,7 +11,7 @@ export const obj = (properties, required = Object.keys(properties)) => ({type: '
 export const mediaKinds = ['photo', 'diagram', 'device', 'map', 'chart', 'video', 'pattern'];
 export const ratios = ['16:9', '4:3', '1:1', '3:4', '21:9'];
 /** Subject illustrations for `photo` slots (drawn in src/render/motifs.mjs; a test keeps both lists identical). */
-export const motifs = ['lamp', 'desklamp', 'floorlamp', 'orb', 'candle', 'mug', 'bottle', 'jar', 'bag', 'chair', 'plant', 'books', 'headphones', 'sneaker', 'watch', 'vase', 'shirt', 'speaker', 'camera', 'laptop', 'coast', 'solar', 'interior', 'building', 'food', 'coffee', 'fitness', 'care', 'museum', 'ticket', 'poster', 'package', 'brandmark', 'swatches', 'states', 'grid', 'type'];
+export const motifs = ['lamp', 'desklamp', 'floorlamp', 'orb', 'candle', 'mug', 'bottle', 'jar', 'bag', 'chair', 'plant', 'books', 'headphones', 'sneaker', 'watch', 'vase', 'shirt', 'speaker', 'camera', 'laptop', 'coast', 'solar', 'interior', 'building', 'food', 'noodles', 'pancakes', 'bibimbap', 'stew', 'coffee', 'fitness', 'care', 'museum', 'ticket', 'poster', 'package', 'brandmark', 'swatches', 'states', 'grid', 'type'];
 export const iconEnum = en(...iconNames);
 const href = str(2048);
 const action = obj({label: str(40), href, variant: en('primary', 'secondary', 'ghost')});
@@ -37,9 +37,9 @@ export const PAGE_CHILDREN = ['page-header', 'hero', ...BLOCKS];
 
 export const nodeSpecs = {
   page: {label: '페이지', group: 'structure', fields: {}, children: PAGE_CHILDREN, min: 2, max: 24, example: null},
-  'page-header': {label: '페이지 제목', group: 'structure', fields: {eyebrow: str(60), title: str(160), description: str(500), align: en('start', 'center'), actions: arr(action, 1, 2)}, optional: ['eyebrow', 'description', 'align', 'actions'],
+  'page-header': {label: '페이지 제목', group: 'structure', fields: {eyebrow: str(60), title: str(160), description: str(500), align: en('start', 'center'), actions: arr(action, 1, 2), meta: arr(str(40), 1, 4), avatar: str(40), stats: arr(obj({label: str(30), value: str(24)}), 2, 4)}, optional: ['eyebrow', 'description', 'align', 'actions', 'meta', 'avatar', 'stats'],
     example: {type: 'page-header', title: '페이지 제목', description: '한 문장으로 이 화면의 목적을 설명합니다.'}},
-  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs)}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif'],
+  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs), facts: arr(obj({value: str(24), label: str(40)}), 2, 4)}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif', 'facts'],
     example: {type: 'hero', variant: 'statement', title: '핵심 약속 한 줄', body: '이 서비스가 누구에게 어떤 변화를 주는지 두 문장으로.'}},
   section: {label: '섹션', group: 'layout', fields: {eyebrow: str(60), title: str(100), description: str(240), surface: en('plain', 'tint', 'inverse'), anchor: {...str(30), pattern: '^[a-z][a-z0-9-]*$'}}, optional: ['eyebrow', 'description', 'surface', 'anchor'], children: without(BLOCKS, 'hero'), min: 1, max: 12,
     example: {type: 'section', title: '섹션 제목', children: [{type: 'prose', title: '본문', body: '섹션 안의 본문입니다.'}]}},
@@ -60,7 +60,7 @@ export const nodeSpecs = {
     example: {type: 'kanban', children: [{type: 'lane', title: '할 일', children: [{type: 'task', title: '문서 정리'}]}, {type: 'lane', title: '진행 중', children: [{type: 'task', title: '시안 검토', assignee: '김다선'}]}]}},
   lane: {label: '칸반 열', group: 'layout', fields: {title: str(60)}, children: ['task'], min: 0, max: 8, example: null},
   task: {label: '작업 카드', group: 'data', fields: {title: str(120), label: str(30), assignee: str(40), priority: en('높음', '보통', '낮음')}, optional: ['label', 'assignee', 'priority'], example: null},
-  timeline: {label: '타임라인', group: 'data', fields: {title: str(100), items: arr(obj({time: str(40), title: str(120), description: str(300), status: en('완료', '진행', '예정')}, ['time', 'title']), 2, 12)},
+  timeline: {label: '타임라인', group: 'data', fields: {title: str(100), variant: en('line', 'release'), items: arr(obj({time: str(40), date: str(40), title: str(120), description: str(300), status: en('완료', '진행', '예정'), changes: arr(obj({kind: en('신규', '개선', '수정', '제거'), text: str(160)}), 1, 6)}, ['time', 'title']), 2, 12)}, optional: ['variant'],
     example: {type: 'timeline', title: '진행 기록', items: [{time: '10월 1일', title: '시작', status: '완료'}, {time: '10월 18일', title: '검토', status: '진행'}]}},
   steps: {label: '단계 안내', group: 'content', fields: {title: str(100), layout: en('vertical', 'horizontal'), items: arr(obj({title: str(80), description: str(240)}, ['title']), 2, 6)}, optional: ['layout'],
     example: {type: 'steps', title: '시작하는 방법', items: [{title: '가입', description: '이메일로 가입합니다.'}, {title: '설정', description: '프로필을 채웁니다.'}]}},
@@ -70,7 +70,7 @@ export const nodeSpecs = {
     example: {type: 'master-detail', title: '받은 메시지', items: [{title: '디자인 리뷰', preview: '내일 오후 2시에 만나요.', state: 'unread'}, {title: '배포 안내', preview: '배포가 완료되었습니다.'}], selected: 0, detail: {title: '디자인 리뷰', meta: '김다선 · 오늘', body: '내일 오후 2시에 디자인 리뷰를 진행합니다.'}}},
   chat: {label: '대화', group: 'data', fields: {title: str(100), messages: arr(obj({from: en('me', 'them'), name: str(40), text: str(400), time: str(30)}, ['from', 'name', 'text']), 2, 12)},
     example: {type: 'chat', title: '팀 대화', messages: [{from: 'them', name: '다선', text: '시안 확인했어요.'}, {from: 'me', name: '나', text: '고마워요, 반영할게요.'}]}},
-  calendar: {label: '월간 달력', group: 'data', fields: {title: str(100), year: int(2000, 2100), month: int(1, 12), events: arr(obj({day: int(1, 31), title: str(40)}), 0, 8)},
+  calendar: {label: '월간 달력', group: 'data', fields: {title: str(100), year: int(2000, 2100), month: int(1, 12), today: int(1, 31), events: arr(obj({day: int(1, 31), title: str(40), time: str(16), tone: en('brand', 'accent', 'success', 'warning')}, ['day', 'title']), 0, 8)}, optional: ['today'],
     example: {type: 'calendar', title: '이번 달 일정', year: 2026, month: 10, events: [{day: 18, title: '디자인 리뷰'}]}},
   card: {label: '카드', group: 'content', fields: {title: str(100), body: str(500), meta: str(80), action, variant: en('basic', 'outline', 'filled', 'media', 'horizontal', 'link'), icon: iconEnum, badge: str(24), visual: en(...mediaKinds), ratio: en(...ratios), motif: en(...motifs), price: str(24), listPrice: str(24), rating: str(4), reviews: str(16), author: str(40)}, optional: ['meta', 'action', 'variant', 'icon', 'badge', 'visual', 'ratio', 'motif', 'price', 'listPrice', 'rating', 'reviews', 'author'],
     example: {type: 'card', title: '카드 제목', body: '카드가 전달할 핵심 한두 문장입니다.'}},
@@ -132,7 +132,7 @@ export const nodeSpecs = {
     example: {type: 'buy-box', title: '상품 이름', price: '39,000원', options: [{label: '용량', choices: ['30ml', '50ml']}], action: {label: '장바구니', href: '#main', variant: 'primary'}}},
   reviews: {label: '리뷰', group: 'content', fields: {title: str(80), score: str(8), count: str(30), items: arr(obj({author: str(40), rating: int(1, 5), text: str(300), date: str(30)}, ['author', 'rating', 'text']), 1, 6)},
     example: {type: 'reviews', title: '리뷰', score: '4.8', count: '리뷰 128개', items: [{author: '김**', rating: 5, text: '촉촉하고 가볍습니다.'}]}},
-  menu: {label: '메뉴판', group: 'content', fields: {title: str(80), layout: en('leader', 'grid', 'plain'), items: arr(obj({name: str(60), description: str(160), price: str(24), tag: str(20)}, ['name', 'price']), 2, 12)},
+  menu: {label: '메뉴판', group: 'content', fields: {title: str(80), layout: en('leader', 'grid', 'plain', 'photo'), items: arr(obj({name: str(60), description: str(160), price: str(24), tag: str(20), motif: en(...motifs)}, ['name', 'price']), 2, 12)},
     example: {type: 'menu', title: '커피', layout: 'leader', items: [{name: '아메리카노', price: '4,500'}, {name: '카페라테', price: '5,000'}]}},
   links: {label: '링크 목록', group: 'nav', fields: {title: str(80), items: arr(obj({label: str(60), href, description: str(120)}, ['label', 'href']), 2, 8)},
     example: {type: 'links', title: '관련 문서', items: [{label: '시작하기', href: '#main'}, {label: 'API', href: '#main'}]}},
@@ -148,7 +148,7 @@ export const requiredOf = spec => ['type', ...Object.keys(spec.fields).filter(k 
 
 // ---- chrome (navigation/footer content shared by every shell) ----
 const megaLink = obj({label: str(30), href, description: str(80)}, ['label', 'href']);
-const navItem = obj({label: str(24), href, icon: iconEnum, mega: arr(megaLink, 2, 8)}, ['label', 'href']);
+const navItem = obj({label: str(24), href, icon: iconEnum, mega: arr(megaLink, 2, 8), group: str(24), current: en('page')}, ['label', 'href']);
 export const chromeSpec = obj({
   nav: arr(navItem, 1, 8), action: obj({label: str(24), href}), brandMark: str(2),
   footerNote: str(120), footerLinks: arr(obj({label: str(30), href}), 1, 8),

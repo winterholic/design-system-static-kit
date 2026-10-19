@@ -69,6 +69,18 @@ export function ornamentArt(ornament, w = 400, h = 320) {
   return `<svg class="kit-art" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">${patternArt(w, h, ornament)}</svg>`;
 }
 
+/** Decorative hero art for the text-led variants. `statement` = tree rings with one bright arc (a progress ring without data), `cover` = an abstract brand composition of arch, disc and stripe tiles. */
+export function heroDeco(variant, ornament) {
+  if (variant === 'statement') {
+    const rings = [30, 58, 86, 114, 142, 170].map((r, i) => circle(200, 200, r, 'a-line', ` stroke-width="${i % 2 ? 1 : 2}" opacity="${num(.9 - i * .1)}"`)).join('');
+    const arc = path('M200 30A170 170 0 0 1 354 128', 'k1', ' stroke-width="10" fill="none"');
+    const dots = [[354, 128, 'a-1', 11], [62, 262, 'a-2', 9], [306, 330, 'a-c3', 7], [120, 60, 'a-4', 5]].map(([x, y, c, r]) => circle(x, y, r, c)).join('');
+    return `<svg class="kit-art" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" focusable="false">${circle(200, 200, 30, 'a-ac')}${rings}${arc}${dots}</svg>`;
+  }
+  const tile = (x, y, w, h, c, extra = '') => rect(x, y, w, h, c, 18, extra);
+  return `<svg class="kit-art" viewBox="0 0 440 460" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" focusable="false">${tile(40, 40, 220, 300, 'a-ac')}${path('M60 320V180A80 80 0 0 1 220 180V320Z', 'a-1')}${circle(310, 120, 70, 'a-2')}${tile(250, 220, 150, 190, 'a-5', ' stroke-width="1.5" class="a-5 bd"')}${rect(270, 250, 110, 12, 'a-3', 6)}${rect(270, 276, 78, 10, 'a-4', 5, ' opacity=".6"')}${[0, 1, 2, 3, 4].map(i => rect(60 + i * 28, 360, 14, 70, i % 2 ? 'a-c3' : 'a-c4', 7)).join('')}${circle(120, 120, 22, 'a-5')}${path('M290 400H410', 'a-line', ' stroke-width="4"')}</svg>`;
+}
+
 /** A flat, palette-colored portrait for team and quote slots. Deterministic per name, so the same person looks the same on every page. */
 export function portrait(name) {
   const h = [...String(name)].reduce((a, ch) => (a * 31 + ch.codePointAt(0)) % 100003, 11);

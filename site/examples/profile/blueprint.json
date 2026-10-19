@@ -65,36 +65,110 @@
       {
         "type": "page-header",
         "title": "김다선",
-        "description": "디자인 리드 · 서울"
+        "description": "디자인 시스템팀 리드. 토큰과 컴포넌트가 팀의 공통 언어가 되도록 돕습니다.",
+        "avatar": "김다선",
+        "meta": [
+          "서울",
+          "2022년 3월 입사",
+          "한국어 · English"
+        ],
+        "actions": [
+          {
+            "label": "메시지 보내기",
+            "href": "#main",
+            "variant": "primary"
+          },
+          {
+            "label": "프로필 공유",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ],
+        "stats": [
+          {
+            "label": "참여 프로젝트",
+            "value": "24"
+          },
+          {
+            "label": "작성한 리뷰",
+            "value": "318"
+          },
+          {
+            "label": "정리한 토큰",
+            "value": "1,240"
+          },
+          {
+            "label": "팔로워",
+            "value": "96"
+          }
+        ]
       },
       {
         "type": "aside",
-        "side": "start",
-        "label": "프로필 요약",
+        "side": "end",
+        "label": "프로필 정보",
         "size": "narrow",
         "children": [
           {
-            "type": "list",
-            "title": "최근 활동",
-            "variant": "divided",
-            "items": [
+            "type": "section",
+            "title": "활동",
+            "children": [
               {
-                "title": "팔레트 후보를 추가했어요",
-                "description": "오늘 10:02",
-                "icon": "sparkles"
+                "type": "chart",
+                "title": "최근 12주 기여",
+                "caption": "주별 리뷰와 병합 횟수",
+                "kind": "area",
+                "unit": "건",
+                "categories": [
+                  "1주",
+                  "2주",
+                  "3주",
+                  "4주",
+                  "5주",
+                  "6주",
+                  "7주",
+                  "8주"
+                ],
+                "series": [
+                  {
+                    "name": "기여",
+                    "values": [
+                      6,
+                      9,
+                      7,
+                      12,
+                      10,
+                      15,
+                      13,
+                      18
+                    ]
+                  }
+                ]
               },
               {
-                "title": "접근성 점검을 마쳤어요",
-                "description": "어제",
-                "icon": "check-circle"
-              },
-              {
-                "title": "리뷰에 댓글을 남겼어요",
-                "description": "월요일",
-                "icon": "message"
+                "type": "list",
+                "title": "최근 활동",
+                "variant": "divided",
+                "items": [
+                  {
+                    "title": "팔레트 후보 12개를 추가했어요",
+                    "description": "오늘 10:02",
+                    "icon": "sparkles"
+                  },
+                  {
+                    "title": "접근성 점검을 마쳤어요",
+                    "description": "어제 · 대비 33,600쌍 통과",
+                    "icon": "check-circle"
+                  },
+                  {
+                    "title": "검색 필터 리뷰에 댓글을 남겼어요",
+                    "description": "월요일",
+                    "icon": "message"
+                  }
+                ],
+                "state": "ready"
               }
-            ],
-            "state": "ready"
+            ]
           },
           {
             "type": "properties",
@@ -105,25 +179,59 @@
                 "value": "디자인 시스템"
               },
               {
-                "label": "입사",
-                "value": "2022년 3월"
+                "label": "역할",
+                "value": "리드 디자이너"
               },
               {
-                "label": "시간대",
-                "value": "서울 (UTC+9)"
+                "label": "근무 시간",
+                "value": "10:00~19:00 (UTC+9)"
+              },
+              {
+                "label": "이메일",
+                "value": "dasun@example.com"
+              },
+              {
+                "label": "관심사",
+                "value": "접근성, 타이포그래피, 모션"
               }
             ]
           }
         ]
       },
       {
-        "type": "tags",
-        "title": "관심사",
-        "items": [
-          "디자인 시스템",
-          "접근성",
-          "타이포그래피",
-          "모션"
+        "type": "section",
+        "title": "참여 중인 프로젝트",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "card",
+                "title": "토큰 이름 체계",
+                "body": "색과 간격 토큰의 이름 규칙을 하나로 통합합니다.",
+                "variant": "outline",
+                "badge": "진행",
+                "meta": "4명 · 마감 11월 3일"
+              },
+              {
+                "type": "card",
+                "title": "접근성 점검 도구",
+                "body": "모든 팔레트와 모드에서 대비를 자동으로 검사합니다.",
+                "variant": "outline",
+                "badge": "완료",
+                "meta": "3명 · 10월 18일 완료"
+              },
+              {
+                "type": "card",
+                "title": "문서 사이트 개편",
+                "body": "예제 코드를 복사하고 바로 실행해 볼 수 있게 합니다.",
+                "variant": "outline",
+                "badge": "검토",
+                "meta": "5명 · 마감 11월 20일"
+              }
+            ]
+          }
         ]
       }
     ]

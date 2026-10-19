@@ -23,24 +23,47 @@
   "chrome": {
     "nav": [
       {
-        "label": "시작하기",
+        "label": "소개",
         "href": "#main",
-        "icon": "book"
+        "icon": "book",
+        "group": "시작하기"
       },
       {
-        "label": "가이드",
+        "label": "API 시작하기",
         "href": "#main",
-        "icon": "file"
+        "icon": "play",
+        "group": "시작하기",
+        "current": "page"
       },
       {
-        "label": "레퍼런스",
+        "label": "인증",
         "href": "#main",
-        "icon": "code"
+        "icon": "lock",
+        "group": "가이드"
+      },
+      {
+        "label": "오류 처리",
+        "href": "#main",
+        "icon": "alert-circle",
+        "group": "가이드"
+      },
+      {
+        "label": "클라이언트",
+        "href": "#main",
+        "icon": "code",
+        "group": "레퍼런스"
+      },
+      {
+        "label": "웹훅",
+        "href": "#main",
+        "icon": "zap",
+        "group": "레퍼런스"
       },
       {
         "label": "변경 기록",
         "href": "#main",
-        "icon": "clock"
+        "icon": "clock",
+        "group": "릴리스"
       }
     ],
     "footerNote": "매뉴얼 · 정적 데모",
@@ -66,7 +89,12 @@
         "type": "page-header",
         "title": "API 시작하기",
         "description": "인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.",
-        "eyebrow": "가이드"
+        "eyebrow": "가이드",
+        "meta": [
+          "2.4.0",
+          "2026-10-14 갱신",
+          "읽는 시간 5분"
+        ]
       },
       {
         "type": "aside",
