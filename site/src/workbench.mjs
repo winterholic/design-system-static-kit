@@ -270,5 +270,6 @@ function boot() {
   $('version').textContent = 'CATALOG ' + CATALOG_VERSION;
   if (note) status(note);
   viewports.forEach(v => v.apply());
+  if (location.hash === '#catalog') showPage('catalog');
 }
 try { boot(); } catch (error) { $('boot-error').hidden = false; $('boot-error').textContent = '조립기를 시작하지 못했습니다: ' + error.message; console.error(error); }

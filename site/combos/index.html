@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="템플릿 × 구성 변형 조합 전체를 한눈에 훑어보는 갤러리"><meta name="theme-color" content="#0F4C5C"><title>전체 조합 · Static Kit</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%230F4C5C%27/%3E%3Cpath d=%27M7 8h7v16H7zm11 0h7v7h-7zm0 10h7v6h-7z%27 fill=%27white%27/%3E%3C/svg%3E"><link rel="stylesheet" href="../src/workbench.css"><link rel="stylesheet" href="../src/combos.css"><script type="module" src="../src/combos/app.mjs"></script></head>
+<body>
+<a class="skip" href="#grid">조합 목록으로 바로가기</a>
+<header class="app-header">
+  <a class="wordmark" href="../"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span><span class="wordmark-text">Static Kit<small>디자인시스템 조립기</small></span></a>
+  <nav aria-label="주요 메뉴"><a class="nav-link" href="../">조립기</a><a class="nav-link" href="../#catalog">카탈로그</a><a class="nav-link active" href="./" aria-current="page">전체 조합</a><a class="nav-link" href="../gallery/index.html">샘플 갤러리</a><a class="nav-link" href="../docs/design.html" target="_blank" rel="noopener">설계서 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/palettes.html" target="_blank" rel="noopener">팔레트 근거 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/spacing.html" target="_blank" rel="noopener">간격 규칙 <span aria-hidden="true">↗</span></a></nav>
+  <span class="version" id="version">CATALOG</span>
+</header>
+<main class="combos">
+<div id="boot-error" class="boot-error" role="alert">조합 목록을 불러오는 중입니다. 오래 지속되면 HTTP 서버로 열었는지 확인하세요. <code>npm run dev</code></div>
+<section id="app" aria-label="전체 조합" hidden>
+  <div class="combo-head">
+    <div><h1>전체 조합 <span class="total-badge" id="total-count" aria-label="전체 조합 수">0</span></h1><p id="head-line"></p></div>
+    <div class="head-actions"><button type="button" class="button" id="open-flags" aria-haspopup="dialog">⚑ 이상함 표시 <span class="count-pill" id="flag-count">0</span></button><button type="button" class="button" id="random-any">무작위 조합 ⤮</button></div>
+  </div>
+  <div class="combo-tools">
+    <div class="tool-row">
+      <label class="tool grow"><span>검색</span><input id="q" type="search" placeholder="번호·이름·변형 (예: 0123, 히어로 가운데)" autocomplete="off" enterkeyhint="search"></label>
+      <label class="tool"><span>페이지 유형</span><select id="f-type"></select></label>
+      <label class="tool"><span>템플릿</span><select id="f-template"></select></label>
+      <label class="tool"><span>정렬</span><select id="f-sort"><option value="default">템플릿 순</option><option value="changed">바꾼 슬롯 많은 순</option><option value="shuffle">섞기</option></select></label>
+    </div>
+    <details class="tool-details" id="slot-details"><summary>구성 변형으로 거르기 <small id="slot-active"></small></summary><div class="slot-filters" id="slot-filters"></div></details>
+    <details class="tool-details" id="view-details"><summary>테마·팔레트 바꿔 보기 <small id="view-summary"></small></summary><div class="view-controls" id="view-gallery"></div><p class="hint">여기서 고른 테마·팔레트·모드가 모든 썸네일과 확대 보기에 적용됩니다. 비우면 각 템플릿의 기본 테마와 첫 팔레트로 보입니다.</p></details>
+    <div class="tool-row toggles">
+      <label class="check"><input type="checkbox" id="f-same"> 같은 화면 숨기기</label>
+      <label class="check"><input type="checkbox" id="f-flagged"> 이상함 표시한 것만</label>
+      <label class="check"><input type="checkbox" id="f-tall"> 썸네일 길게(페이지 아래까지)</label>
+      <button type="button" class="text-button" id="clear-filters">필터 초기화</button>
+      <span class="grow"></span>
+      <label class="tool inline"><span>쪽당</span><select id="f-size"><option>24</option><option selected>48</option><option>96</option></select></label>
+    </div>
+  </div>
+  <p class="result-line" id="result-line" role="status" aria-live="polite"></p>
+  <nav class="pager" id="pager-top" aria-label="쪽 이동(위)"></nav>
+  <div class="combo-grid" id="grid"></div>
+  <nav class="pager" id="pager-bottom" aria-label="쪽 이동(아래)"></nav>
+</section>
+</main>
+<dialog id="viewer" class="preview-modal viewer" aria-labelledby="viewer-title">
+  <div class="viewer-bar" id="viewer-bar">
+    <div class="viewer-nav"><button type="button" class="chip-button" id="v-prev" aria-label="이전 조합">◀ <span class="lbl">이전</span></button><span class="viewer-pos" id="v-pos" role="status" aria-live="polite"></span><button type="button" class="chip-button" id="v-next" aria-label="다음 조합"><span class="lbl">다음</span> ▶</button></div>
+    <strong id="viewer-title" class="viewer-title">조합</strong>
+    <div class="modal-actions">
+      <button type="button" class="chip-button flag-button" id="v-flag" aria-pressed="false">⚑ 이상함</button>
+      <button type="button" class="chip-button" id="v-copy-id">ID 복사</button>
+      <button type="button" class="chip-button" id="v-copy-link">링크 복사</button>
+      <button type="button" class="chip-button" id="v-window">새 창 <span aria-hidden="true">↗</span></button>
+      <button type="button" class="chip-button" id="v-random" aria-label="무작위 조합">⤮</button>
+      <button type="button" class="chip-button" id="v-settings" aria-pressed="false" aria-controls="viewer-tools">보기 설정</button>
+    </div>
+    <button type="button" class="chip-button strong viewer-close" id="v-close">닫기 <kbd>Esc</kbd></button>
+  </div>
+  <div class="viewer-tools" id="viewer-tools">
+    <div class="view-controls" id="view-viewer"></div>
+    <div class="seg-group" role="radiogroup" aria-label="미리보기 폭" id="v-devices"></div>
+    <label class="note-field" id="note-field" hidden><span class="sr-only">이상한 점 메모</span><input id="v-note" maxlength="200" placeholder="무엇이 이상한가요? (선택)" autocomplete="off"></label>
+  </div>
+  <div class="modal-stage" id="v-stage"><div class="frame-shell" id="v-shell"><iframe id="v-frame" title="조합 미리보기" sandbox="allow-scripts allow-forms"></iframe></div></div>
+  <p class="modal-status" id="v-status" role="status" aria-live="polite"></p>
+</dialog>
+<dialog id="flags-dialog" class="flags-dialog" aria-labelledby="flags-title">
+  <header><h2 id="flags-title">이상함 표시</h2><button type="button" class="chip-button strong" id="flags-close">닫기</button></header>
+  <p class="hint">이 브라우저(localStorage)에만 저장됩니다. 글로 복사해 다음 품질 개선 요청에 붙여 넣으세요.</p>
+  <div class="flags-actions"><button type="button" class="button primary" id="flags-copy">목록 복사</button><button type="button" class="button" id="flags-download">.txt 내려받기</button><button type="button" class="button" id="flags-filter">목록에서만 보기</button><button type="button" class="button danger" id="flags-clear">모두 지우기</button></div>
+  <ol class="flags-list" id="flags-list"></ol>
+</dialog>
+<div class="toast" id="toast" popover="manual" role="status" aria-live="polite"></div>
+<footer class="app-footer"><span>템플릿 × 구성 변형 전체를 브라우저에서 즉석 컴파일 · 미리 만든 파일 없음</span><a href="https://github.com/winterholic/design-system-static-kit" target="_blank" rel="noopener">GitHub ↗</a></footer>
+<noscript><p class="boot-error">이 목록은 JavaScript가 필요합니다.</p></noscript>
+</body></html>

@@ -13,6 +13,8 @@ if (out.startsWith(root + '/') || out.startsWith('/tmp') || out.includes('static
 await mkdir(out, {recursive: true});
 await cp(join(root, 'src'), join(out, 'src'), {recursive: true});
 await cp(join(root, 'index.html'), join(out, 'index.html'));
+// 전체 조합 갤러리·뷰어: 4,102개 조합을 파일로 만들지 않고 src/combos.mjs가 브라우저에서 그 자리에서 컴파일한다.
+await cp(join(root, 'combos'), join(out, 'combos'), {recursive: true});
 await mkdir(join(out, 'docs'), {recursive: true});
 for (const f of (await readdir(join(root, 'docs'))).filter(f => f.endsWith('.html'))) await cp(join(root, 'docs', f), join(out, 'docs', f));
 await mkdir(join(out, 'v1'), {recursive: true});
