@@ -1,4 +1,5 @@
 import {SPACE, spaceVars} from '../spacing.mjs';
+import {VL_BUCKETS} from '../render/util.mjs';
 
 /** Axis → concrete values. Every key of catalog `axes` has a row here (checked by tests/catalog.test.mjs). */
 export const FONT = {
@@ -71,12 +72,13 @@ export function axisVars(b) {
 
 export const coreCSS = `
 *,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font:var(--kit-body)/var(--kit-line) var(--kit-font);word-break:keep-all;overflow-wrap:anywhere;line-break:strict;min-height:100vh}
+body{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font:var(--kit-body)/var(--kit-line) var(--kit-font);word-break:keep-all;overflow-wrap:break-word;line-break:strict;min-height:100vh}
 a{color:var(--kit-link);text-underline-offset:4px}button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button,a,input,textarea,select,summary{touch-action:manipulation}
 :focus-visible{outline:3px solid var(--kit-focus);outline-offset:3px}input[type=checkbox],input[type=radio]{margin:0}
 h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,ul,ol{margin:0}ul,ol{padding:0}
 h1,h2,h3,h4,h5,h6{font-family:var(--kit-heading);font-weight:var(--kit-hw);line-height:1.3;letter-spacing:-.02em;text-wrap:balance}
-h1{font-size:var(--kit-title);max-width:24ch;line-height:1.15;letter-spacing:-.035em}h2{font-size:var(--kit-h2);line-height:1.22;letter-spacing:-.03em}h3{font-size:var(--kit-h3);line-height:1.3;letter-spacing:-.02em}h4,h5,h6{font-size:calc(var(--kit-body) + 1px);line-height:1.4;letter-spacing:-.01em}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}
+:where(p,li,dd,dt,blockquote,figcaption,summary){text-wrap:pretty}.kit-button,.kit-chip,.kit-tag,.kit-badge{text-wrap:balance}
+h1{font-size:var(--kit-title);max-width:22em;line-height:1.15;letter-spacing:-.035em}h2{font-size:var(--kit-h2);line-height:1.22;letter-spacing:-.03em}h3{font-size:var(--kit-h3);line-height:1.3;letter-spacing:-.02em}h4,h5,h6{font-size:calc(var(--kit-body) + 1px);line-height:1.4;letter-spacing:-.01em}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}
 /* A part's own title is a component heading (h3 step) no matter which outline level it carries; only section heads and heroes use the h2 step. */
 :is(.kit-card,.kit-form,.kit-table-wrap,.kit-chart,.kit-list,.kit-summary,.kit-buybox,.kit-props,.kit-links,.kit-calendar,.kit-md-detail,.kit-progress,.kit-reviews,.kit-menu,.kit-plan,.kit-code,.kit-team,.kit-faq,.kit-steps,.kit-timeline,.kit-chat,.kit-lane,.kit-md,.kit-gallery,.kit-reel,.kit-features,.kit-notice,.kit-quote,.kit-metric) :is(h2,h3,h4){font-size:var(--kit-h3);line-height:1.3}
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
@@ -89,7 +91,7 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .kit-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 12px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}
 .kit-badge[data-dot]::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--kit-muted);flex:none}.kit-badge[data-dot=success]::before{background:var(--kit-success)}.kit-badge[data-dot=info]::before{background:var(--kit-info)}.kit-badge[data-dot=warning]::before{background:var(--kit-warning)}.kit-badge[data-dot=danger]::before{background:var(--kit-danger)}
 .kit-card-icon{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:calc(var(--kit-radius) * .6);background:var(--kit-accentSoft);color:var(--kit-accentInk);flex:none}.kit-card-icon .kit-icon{width:24px;height:24px}
-.kit-price{font:var(--kit-hw) clamp(30px,3.4vw,40px)/1.1 var(--kit-heading);letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums}.kit-price .kit-muted{font:500 var(--kit-small)/1.4 var(--kit-font);letter-spacing:0;display:inline-block;white-space:nowrap}
+.kit-plan,.kit-buybox{container-type:inline-size}.kit-price{font:var(--kit-hw) clamp(30px,3.4vw,40px)/1.1 var(--kit-heading);font-size:min(clamp(30px,3.4vw,40px),calc(100cqw * var(--kit-vfit,1)));letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums;overflow-wrap:normal}${VL_BUCKETS.map(n => `.kit-price[data-vl="${n}"]{--kit-vfit:${(1 / (.98 * n)).toFixed(4)}}`).join('')}.kit-price .kit-muted{font:500 var(--kit-small)/1.4 var(--kit-font);letter-spacing:0;display:inline-block;white-space:nowrap}
 .kit-avatar{display:inline-grid;place-items:center;width:36px;height:36px;flex:none;border-radius:999px;background:var(--kit-accent);color:var(--kit-onAccent);font-weight:700;font-size:14px}
 .kit-card,.kit-metric,.kit-list,.kit-form,.kit-table-wrap,.kit-chart,.kit-summary,.kit-buybox,.kit-plan,.kit-quote,.kit-faq details,.kit-md-list,.kit-md-detail,.kit-code,.kit-progress,.kit-calendar,.kit-reviews,.kit-menu,.kit-props,.kit-links,.kit-team li{background:var(--kit-surface);border:var(--kit-card-border);border-radius:var(--kit-radius);box-shadow:var(--kit-shadow)}
 .kit-card,.kit-metric,.kit-list,.kit-form,.kit-table-wrap,.kit-chart,.kit-summary,.kit-buybox,.kit-quote,.kit-md-detail,.kit-progress,.kit-calendar,.kit-reviews,.kit-menu,.kit-props,.kit-links{min-width:0;padding:var(--kit-inset)}

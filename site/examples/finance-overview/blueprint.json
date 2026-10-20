@@ -1,0 +1,217 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "새봄은행",
+  "theme": "bank",
+  "palette": "pearl",
+  "mode": "light",
+  "pageType": "dashboard",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "자산",
+        "href": "#main",
+        "icon": "dollar"
+      },
+      {
+        "label": "거래",
+        "href": "#main",
+        "icon": "list"
+      },
+      {
+        "label": "예산",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "새봄은행 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "내 자산 한눈에",
+        "description": "총자산과 이번 달 움직임을 정리했습니다.",
+        "actions": [
+          {
+            "label": "이체하기",
+            "href": "#main",
+            "variant": "primary"
+          },
+          {
+            "label": "내역 내려받기",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "총자산",
+            "value": "38,420,000원",
+            "detail": "지난달 대비",
+            "trend": "up",
+            "delta": "+2.4%"
+          },
+          {
+            "type": "metric",
+            "label": "이번 달 지출",
+            "value": "1,284,000원",
+            "detail": "예산의 72%",
+            "trend": "down",
+            "delta": "-8%"
+          },
+          {
+            "type": "metric",
+            "label": "이번 달 저축",
+            "value": "700,000원",
+            "detail": "목표 100%",
+            "trend": "up",
+            "delta": "+0원"
+          }
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "이번 달 예산",
+        "size": "narrow",
+        "children": [
+          {
+            "type": "chart",
+            "title": "월별 지출",
+            "caption": "최근 6개월 지출(만 원)",
+            "kind": "line",
+            "unit": "만원",
+            "categories": [
+              "5월",
+              "6월",
+              "7월",
+              "8월",
+              "9월",
+              "10월"
+            ],
+            "series": [
+              {
+                "name": "지출",
+                "values": [
+                  142,
+                  128,
+                  165,
+                  134,
+                  139,
+                  128
+                ]
+              }
+            ]
+          },
+          {
+            "type": "list",
+            "title": "예산 현황",
+            "variant": "plain",
+            "items": [
+              {
+                "title": "식비",
+                "description": "48만 원 중 36만 원 사용",
+                "status": "진행"
+              },
+              {
+                "title": "교통",
+                "description": "15만 원 중 9만 원 사용",
+                "status": "진행"
+              },
+              {
+                "title": "문화·여가",
+                "description": "20만 원 중 21만 원 사용",
+                "status": "보류"
+              }
+            ],
+            "state": "ready"
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "title": "최근 거래",
+        "caption": "최근 5건의 거래 내역",
+        "columns": [
+          "날짜",
+          "내용",
+          "분류",
+          "금액"
+        ],
+        "rows": [
+          [
+            "10/19",
+            "성수 카페 로스터리",
+            "식비",
+            "-6,800원"
+          ],
+          [
+            "10/18",
+            "지하철 정기권",
+            "교통",
+            "-55,000원"
+          ],
+          [
+            "10/17",
+            "월급",
+            "수입",
+            "+3,200,000원"
+          ],
+          [
+            "10/16",
+            "영화 예매",
+            "문화",
+            "-28,000원"
+          ],
+          [
+            "10/15",
+            "관리비",
+            "주거",
+            "-142,000원"
+          ]
+        ],
+        "state": "ready"
+      }
+    ]
+  }
+}

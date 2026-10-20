@@ -45,7 +45,6 @@ export function validateBlueprint(input) {
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
   if (input.catalogVersion !== CATALOG_VERSION) error('$.catalogVersion', 'CATALOG_VERSION', '카탈로그를 명시적으로 업그레이드하세요: ' + CATALOG_VERSION);
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
-  if (theme && Object.hasOwn(palettes, input.palette) && !theme.palettes.includes(input.palette)) error('$.palette', 'PALETTE_THEME', '선택한 테마에 속하지 않는 팔레트입니다.');
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));
   if (theme) for (const [axis, banned] of Object.entries(theme.forbid)) if (banned.includes(input[axis])) error('$.' + axis, 'THEME_FORBID', `${theme.name} 테마는 ${axis}=${input[axis]}를 금지합니다. 금지 값: ${banned.join(', ')}`);
   if (axisOk) for (const ban of axisBans) if (ban.bad(input)) error('$.' + ban.uses[0], 'AXIS_BAN', `${ban.id} · ${ban.why} (사용 가능한 대안: ${Object.entries(ban.fix).map(([k, v]) => k + '=' + v).join(', ')})`);

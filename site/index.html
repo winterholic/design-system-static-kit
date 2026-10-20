@@ -1,31 +1,96 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="검토한 토큰과 부품을 코드 규약 안에서 조립하는 디자인시스템 워크벤치"><title>Static Kit · 디자인을 조립하는 규칙</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23185D71%27/%3E%3Cpath d=%27M7 8h7v16H7zm11 0h7v7h-7zm0 10h7v6h-7z%27 fill=%27white%27/%3E%3C/svg%3E"><link rel="stylesheet" href="src/workbench.css"><script type="module" src="src/workbench.mjs"></script></head>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="템플릿·테마·팔레트를 고르고 검증하며 조립하는 디자인시스템 조립기"><meta name="theme-color" content="#0F4C5C"><title>Static Kit · 디자인시스템 조립기</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%230F4C5C%27/%3E%3Cpath d=%27M7 8h7v16H7zm11 0h7v7h-7zm0 10h7v6h-7z%27 fill=%27white%27/%3E%3C/svg%3E"><link rel="stylesheet" href="src/workbench.css"><script type="module" src="src/workbench.mjs"></script></head>
 <body>
 <a class="skip" href="#workspace">조립기로 바로가기</a>
-<header class="app-header"><a class="wordmark" href="./"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span><span>Static Kit<small>by winterholic</small></span></a><nav aria-label="주요 메뉴"><button class="nav-link active" id="builder-tab" aria-pressed="true">조립기</button><button class="nav-link" id="catalog-tab" aria-pressed="false">카탈로그</button><a class="nav-link" href="gallery/index.html">샘플 갤러리</a><a class="nav-link" href="docs/design.html" target="_blank" rel="noopener">설계서 ↗</a><a class="nav-link" href="docs/gap-analysis.html" target="_blank" rel="noopener">격차 분석 ↗</a></nav><span class="version" id="version">CATALOG 2.0.0</span></header>
+<header class="app-header">
+  <a class="wordmark" href="./"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span><span class="wordmark-text">Static Kit<small>디자인시스템 조립기</small></span></a>
+  <nav aria-label="주요 메뉴"><button class="nav-link active" id="builder-tab" aria-pressed="true">조립기</button><button class="nav-link" id="catalog-tab" aria-pressed="false">카탈로그</button><a class="nav-link" href="gallery/index.html">샘플 갤러리</a><a class="nav-link" href="docs/design.html" target="_blank" rel="noopener">설계서 <span aria-hidden="true">↗</span></a><a class="nav-link" href="docs/palettes.html" target="_blank" rel="noopener">팔레트 근거 <span aria-hidden="true">↗</span></a><a class="nav-link" href="docs/spacing.html" target="_blank" rel="noopener">간격 규칙 <span aria-hidden="true">↗</span></a></nav>
+  <span class="version" id="version">CATALOG</span>
+</header>
 <main>
-<section class="intro"><div><p class="eyebrow">DESIGN AS CODE</p><h1>선택은 다양하게.<br class="mobile-break"> 규칙은 명확하게.</h1><p class="lead">테마 40 · 팔레트 160 · 템플릿 61 · 부품 55.<br>미리보기와 내보내기는 같은 컴파일러를 사용합니다.</p></div><div class="intro-note"><span class="rule-icon" aria-hidden="true">⌘</span><span>임의 스타일 대신<br><strong>검증 가능한 선택.</strong></span></div></section>
 <div id="boot-error" class="boot-error" role="alert">조립기를 불러오는 중입니다. 오래 지속되면 HTTP 서버로 열었는지 확인하세요. <code>npm run dev</code></div>
 <section id="workspace" aria-label="디자인 조립기" hidden>
-<div class="workspace-heading"><div><h2>작업대</h2><span id="selection-summary"></span></div><div class="toolbar-actions"><button id="reset" class="text-button">초기화</button><button id="download-json" class="button secondary">설계 JSON ↓</button><button id="download-html" class="button primary">HTML 내보내기 ↓</button></div></div>
-<div class="mobile-tabs" role="group" aria-label="작업 패널"><button data-panel="choices" aria-pressed="true">1. 선택</button><button data-panel="preview" aria-pressed="false">2. 미리보기</button><button data-panel="structure" aria-pressed="false">3. 트리·JSON</button></div>
-<div class="workbench" data-panel="choices">
-<aside class="choices pane" aria-label="카탈로그 선택">
-<div class="pane-heading"><span class="step">01</span><h3>재료 선택</h3></div>
-<div class="field"><label for="template">페이지 템플릿</label><select id="template"></select><p class="hint" id="page-type"></p></div>
-<div class="field"><label for="project-name">페이지 이름</label><input id="project-name" maxlength="80" autocomplete="off"></div>
-<div class="field"><label for="theme">시각 언어(테마)</label><select id="theme"></select><p class="hint" id="theme-description"></p></div>
-<fieldset class="palette-field"><legend>Coolors 팔레트 후보 <span id="palette-count"></span></legend><div id="palette-options"></div></fieldset>
-<fieldset class="mode-field"><legend>모드</legend><div id="mode-options" class="mode-options"></div></fieldset>
-<details class="composition-controls" open><summary>구조와 리듬 · 13개 축</summary><div id="axis-controls"></div></details>
-<p class="panel-footnote">금지 조합은 이유와 함께 거부되며, 자동 수정은 규칙이 정한 대안으로만 바꿉니다.</p>
-</aside>
-<section class="preview pane" aria-label="컴파일된 페이지 미리보기"><div class="pane-heading preview-heading"><span class="step">02</span><h3>실제 결과</h3><div class="preview-tools"><button id="viewport" class="chip-button" aria-pressed="false">390px 보기</button><button id="mode" class="chip-button" aria-pressed="false">다크 보기</button></div></div><div class="preview-stage"><iframe id="preview-frame" title="조립 결과 미리보기" sandbox="allow-scripts allow-forms"></iframe></div><div class="preview-status"><span id="valid-status" role="status" aria-live="polite"></span><span id="contrast-status"></span></div><p id="save-status" class="save-status" role="status" aria-live="polite"></p></section>
-<aside class="structure pane" aria-label="구조와 검증"><div class="pane-heading"><span class="step">03</span><h3>조립 트리</h3><span class="small-tag">STRICT</span></div><p class="panel-description">노드를 골라 내용을 편집하거나, 허용된 부품을 추가하세요.</p><div id="tree" class="tree" aria-label="페이지 구조"></div><div id="node-tools" class="node-tools"><span id="selected-node"></span><div><button id="move-up" class="icon-button" aria-label="선택 노드 위로">↑</button><button id="move-down" class="icon-button" aria-label="선택 노드 아래로">↓</button><button id="remove-node" class="icon-button" aria-label="선택 노드 삭제">−</button></div></div><div class="add-row"><label class="sr-only" for="add-node">추가할 부품</label><select id="add-node"></select><button id="add" class="button secondary">추가</button></div><label class="editor-label" for="node-editor">선택 노드 JSON</label><textarea id="node-editor" class="code-editor" rows="10" spellcheck="false"></textarea><button id="apply-node" class="button secondary full">노드 적용</button><div class="error-box" id="errors" role="alert" hidden><div id="errors-text" class="errors-text"></div><button id="auto-fix" class="button secondary full" hidden>규칙에 맞게 자동 수정</button></div><details class="raw-editor"><summary>전체 설계 JSON · 가져오기</summary><label for="blueprint-editor" class="editor-label">카탈로그 버전을 포함한 전체 계약</label><textarea id="blueprint-editor" class="code-editor" rows="14" spellcheck="false"></textarea><button id="apply-blueprint" class="button secondary full">전체 설계 적용</button></details><details class="token-details"><summary>의미 토큰 · 대비 · 출처</summary><a id="palette-source" target="_blank" rel="noopener">Coolors 원본 팔레트 ↗</a><p id="palette-adjustment"></p><div id="tokens"></div></details></aside>
-</div>
+  <div class="workspace-bar">
+    <div class="workspace-title"><h1>조립기</h1><p id="catalog-line" class="catalog-line"></p></div>
+    <div class="selection" aria-live="polite"><span class="selection-label">현재 조합</span><span id="selection-summary"></span></div>
+    <div class="toolbar-actions"><button id="reset" class="text-button" type="button">초기화</button><button id="download-json" class="button secondary" type="button">설계 JSON ↓</button><button id="download-html" class="button primary" type="button">HTML 내보내기 ↓</button></div>
+  </div>
+  <div class="mobile-tabs" role="group" aria-label="작업 패널"><button type="button" data-panel="choices" aria-pressed="true">선택</button><button type="button" data-panel="preview" aria-pressed="false">미리보기</button><button type="button" data-panel="structure" aria-pressed="false">구조·JSON</button></div>
+  <div class="workbench" data-panel="choices" data-structure="closed">
+    <aside class="choices pane" aria-label="카탈로그 선택">
+      <div class="pane-scroll" id="choices-scroll">
+        <section class="group" aria-labelledby="g-page">
+          <header class="group-head"><span class="step" aria-hidden="true">1</span><h2 id="g-page">페이지</h2></header>
+          <div class="field"><label for="template">템플릿</label><select id="template"></select><p class="hint" id="page-type"></p></div>
+          <div class="field" id="layout-field" hidden><span class="field-label" id="layout-label">구성 변형</span><div id="layout-slots" class="slots" aria-labelledby="layout-label"></div></div>
+          <div class="field"><label for="project-name">페이지 이름</label><input id="project-name" maxlength="80" autocomplete="off"></div>
+        </section>
+        <section class="group" aria-labelledby="g-theme">
+          <header class="group-head"><span class="step" aria-hidden="true">2</span><h2 id="g-theme">시각 언어</h2></header>
+          <div class="field"><label for="theme">테마</label><select id="theme"></select><p class="hint" id="theme-description"></p></div>
+          <div class="field" id="variant-field"><span class="field-label" id="variant-label">테마 변형</span><div id="theme-variants" class="chips" role="radiogroup" aria-labelledby="variant-label"></div></div>
+        </section>
+        <section class="group" aria-labelledby="g-color">
+          <header class="group-head"><span class="step" aria-hidden="true">3</span><h2 id="g-color">색</h2><span class="group-meta" id="palette-count"></span></header>
+          <div class="field"><span class="field-label" id="mode-label">모드</span><div id="mode-options" class="segmented" role="radiogroup" aria-labelledby="mode-label"></div></div>
+          <div class="palette-tools">
+            <label class="sr-only" for="palette-search">팔레트 이름 검색</label><input id="palette-search" type="search" placeholder="팔레트 이름 검색" autocomplete="off">
+            <div id="palette-families" class="chips" role="group" aria-label="색 계열"></div>
+          </div>
+          <div id="palette-options" class="palette-grid" role="radiogroup" aria-label="팔레트"></div>
+          <button id="palette-more" class="button secondary full-width" type="button" hidden>더 보기</button>
+        </section>
+        <section class="group" aria-labelledby="g-axes">
+          <header class="group-head"><span class="step" aria-hidden="true">4</span><h2 id="g-axes">구조와 리듬</h2><span class="group-meta" id="axis-count"></span></header>
+          <div id="axis-controls"></div>
+          <p class="panel-footnote">금지된 조합은 고를 수 없게 막고 이유를 보여 줍니다.</p>
+        </section>
+      </div>
+    </aside>
+    <section class="preview pane" aria-label="컴파일된 페이지 미리보기">
+      <div class="preview-bar">
+        <div class="seg-group" role="radiogroup" aria-label="미리보기 폭" id="device-options"></div>
+        <div class="preview-tools">
+          <button id="mode" class="chip-button" type="button" aria-pressed="false">다크 보기</button>
+          <button id="open-window" class="chip-button" type="button" title="새 창에서 크게 보기">새 창 <span aria-hidden="true">↗</span></button>
+          <button id="open-modal" class="chip-button strong" type="button" aria-haspopup="dialog" title="전체 화면으로 보기">전체 화면 <span aria-hidden="true">⤢</span></button>
+          <button id="toggle-structure" class="chip-button structure-toggle" type="button" aria-pressed="false" aria-controls="structure-pane">구조·JSON</button>
+        </div>
+      </div>
+      <div class="preview-stage" id="preview-stage"><div class="frame-shell" id="frame-shell"><iframe id="preview-frame" title="조립 결과 미리보기" sandbox="allow-scripts allow-forms"></iframe></div></div>
+      <div class="preview-status"><span id="valid-status" role="status" aria-live="polite"></span><span id="zoom-status"></span><span id="contrast-status"></span></div>
+      <p id="save-status" class="save-status" role="status" aria-live="polite"></p>
+    </section>
+    <aside class="structure pane" id="structure-pane" aria-label="구조와 검증">
+      <div class="pane-scroll">
+        <header class="group-head"><span class="step" aria-hidden="true">5</span><h2>조립 트리</h2><span class="small-tag">STRICT</span></header>
+        <p class="panel-description">노드를 골라 내용을 편집하거나 허용된 부품을 추가하세요.</p>
+        <div id="tree" class="tree" aria-label="페이지 구조"></div>
+        <div id="node-tools" class="node-tools"><span id="selected-node"></span><div><button id="move-up" class="icon-button" type="button" aria-label="선택 노드 위로">↑</button><button id="move-down" class="icon-button" type="button" aria-label="선택 노드 아래로">↓</button><button id="remove-node" class="icon-button" type="button" aria-label="선택 노드 삭제">−</button></div></div>
+        <div class="add-row"><label class="sr-only" for="add-node">추가할 부품</label><select id="add-node"></select><button id="add" class="button secondary" type="button">추가</button></div>
+        <label class="editor-label" for="node-editor">선택 노드 JSON</label><textarea id="node-editor" class="code-editor" rows="10" spellcheck="false"></textarea><button id="apply-node" class="button secondary full" type="button">노드 적용</button>
+        <div class="error-box" id="errors" role="alert" hidden><div id="errors-text" class="errors-text"></div><button id="auto-fix" class="button secondary full" type="button" hidden>규칙에 맞게 자동 수정</button></div>
+        <details class="raw-editor"><summary>전체 설계 JSON · 가져오기</summary><label for="blueprint-editor" class="editor-label">카탈로그 버전을 포함한 전체 계약</label><textarea id="blueprint-editor" class="code-editor" rows="14" spellcheck="false"></textarea><button id="apply-blueprint" class="button secondary full" type="button">전체 설계 적용</button></details>
+        <details class="token-details"><summary>의미 토큰 · 대비 · 출처</summary><a id="palette-source" target="_blank" rel="noopener">Coolors 원본 팔레트 ↗</a><p id="palette-adjustment"></p><div id="tokens"></div></details>
+      </div>
+    </aside>
+  </div>
 </section>
-<section id="catalog" class="catalog-section" aria-label="디자인 카탈로그" hidden><div class="catalog-header"><h2>조립 가능한 재료.</h2><p id="catalog-counts"></p></div><div id="catalog-grid" class="catalog-grid"></div><div class="catalog-lists"><section><h3>부품</h3><ul id="parts-grid" class="plain-list"></ul></section><section><h3>규칙과 금지 조합</h3><ul id="rules-list" class="plain-list"></ul></section></div><div class="catalog-rules"><h3>어디까지 강제하나요?</h3><p>입력 문법·허용 간선·임의 속성·축 조합 금지·페이지 유형 계약·대비·생성 파일 일치를 검사합니다. 카탈로그와 검사기 자체를 수정할 권한까지 차단하지는 않습니다. 새로운 표현이 필요하면 근거와 반례를 남겨 카탈로그를 개정하세요.</p></div></section>
+<section id="catalog" class="catalog-section" aria-label="디자인 카탈로그" hidden>
+  <div class="catalog-header"><div><h1>카탈로그</h1><p id="catalog-counts"></p></div>
+    <div class="catalog-tabs seg-group" role="tablist" aria-label="카탈로그 구분" id="catalog-tabs"></div></div>
+  <div id="catalog-body"></div>
+</section>
 </main>
+<dialog id="preview-modal" class="preview-modal" aria-labelledby="modal-title">
+  <div class="modal-bar">
+    <strong id="modal-title">미리보기</strong>
+    <div class="seg-group" role="radiogroup" aria-label="미리보기 폭" id="modal-devices"></div>
+    <div class="modal-actions"><button id="modal-mode" class="chip-button" type="button" aria-pressed="false">다크 보기</button><button id="modal-window" class="chip-button" type="button">새 창 <span aria-hidden="true">↗</span></button><button id="modal-close" class="chip-button strong" type="button">닫기 <kbd>Esc</kbd></button></div>
+  </div>
+  <div class="modal-stage" id="modal-stage"><div class="frame-shell" id="modal-shell"><iframe id="modal-frame" title="조립 결과 전체 화면 미리보기" sandbox="allow-scripts allow-forms"></iframe></div></div>
+  <p class="modal-status" id="modal-status" role="status" aria-live="polite"></p>
+</dialog>
 <footer class="app-footer"><span>사전 정의 → 트리 조립 → 검증 → 정적 코드</span><a href="https://github.com/winterholic/design-system-static-kit" target="_blank" rel="noopener">GitHub ↗</a></footer>
 <noscript><p class="boot-error">이 조립기는 JavaScript가 필요합니다. CLI는 <code>npm run kit -- --help</code>로 안내를 볼 수 있습니다.</p></noscript>
 </body></html>

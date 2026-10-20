@@ -27,6 +27,13 @@ const REP = {work: 'dashboard-overview', brand: 'saas-landing', read: 'article',
 const repOf = t => (tpls.find(x => x.theme === t.id) ?? tpls.find(x => x.id === REP[t.category])).id;
 const strip = p => '<i>' + K.palettes[p].colors.map(c => '<u style="background:' + c + '"></u>').join('') + '</i>';
 let bp = null, lastHtml = '', tplId = 'saas-landing';
+let tvar = '', lay = null;
+const make = (tid, themeId, paletteId) => K.createBlueprint(tid, themeId, paletteId, {themeVariant: tvar || undefined, layout: lay ? {[lay[0]]: lay[1]} : undefined});
+function palOptions() {
+  const th = K.themes[bp.theme], rec = th.palettes, fam = K.paletteFamilies, one = p => '<option value="' + p.id + '"' + (p.id === bp.palette ? ' selected' : '') + '>' + esc(p.name) + '</option>';
+  const rest = Object.values(K.palettes).filter(p => !rec.includes(p.id));
+  return '<optgroup label="이 테마 추천">' + rec.map(id => one(K.palettes[id])).join('') + '</optgroup>' + Object.keys(fam).map(f => '<optgroup label="' + esc(fam[f].label) + '">' + rest.filter(p => p.family === f).map(one).join('') + '</optgroup>').join('');
+}
 
 function preview(b) { const r = K.validateBlueprint(b); if (!r.valid) return {errors: r.errors}; return {html: K.compile(b).html}; }
 function thumb(el, tpl) {
@@ -82,27 +89,31 @@ function opt(list, cur, label) { return list.map(v => '<option value="' + v + '"
 function sync() {
   $('#f-tpl').innerHTML = opt(tpls.map(t => t.id), tplId, id => tpls.find(t => t.id === id).label);
   $('#f-theme').innerHTML = opt(themes.map(t => t.id), bp.theme, id => K.themes[id].name + ' · ' + K.themeCategories[K.themes[id].category]);
-  $('#f-pal').innerHTML = opt(K.themes[bp.theme].palettes, bp.palette, id => K.palettes[id].name);
+  $('#f-pal').innerHTML = palOptions();
+  $('#f-var').innerHTML = '<option value="">기본</option>' + K.themes[bp.theme].variants.map(v => '<option value="' + v.id + '"' + (v.id === tvar ? ' selected' : '') + '>' + esc(v.label) + '</option>').join('');
+  $('#f-lay').innerHTML = '<option value="">기본</option>' + K.layoutOptionsOf(tplId).map(sl => '<optgroup label="' + esc(sl.label) + '">' + sl.options.map(o => '<option value="' + sl.id + ':' + o.id + '"' + (lay && lay[0] === sl.id && lay[1] === o.id ? ' selected' : '') + '>' + esc(o.label) + '</option>').join('') + '</optgroup>').join('');
   document.querySelectorAll('#modes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === bp.mode)));
   $('#axgrid').innerHTML = K.styleAxes.map(k => '<div class="field"><label for="a-' + k + '">' + esc(K.axisDefs[k].label) + '</label><select id="a-' + k + '" data-k="' + k + '">' + opt(K.axes[k], bp[k], v => v + ' — ' + K.axisDefs[k].values[v]) + '</select></div>').join('');
   $('#axgrid').querySelectorAll('select').forEach(s => s.onchange = () => applyAxis(s.dataset.k, s.value));
   $('#vtitle').textContent = (tpls.find(t => t.id === tplId)?.label ?? bp.name) + ' · ' + K.themes[bp.theme].name;
 }
 function applyAxis(k, v) { bp[k] = v; sync(); show(bp); }
-function openViewer(tid, themeId, paletteId) { tplId = tid; bp = K.createBlueprint(tid, themeId, paletteId); sync(); show(bp); viewer.classList.add('open'); document.body.style.overflow = 'hidden'; fitWide(); }
+function openViewer(tid, themeId, paletteId) { tplId = tid; tvar = ''; lay = null; bp = K.createBlueprint(tid, themeId, paletteId); sync(); show(bp); viewer.classList.add('open'); document.body.style.overflow = 'hidden'; fitWide(); }
 function openPart(type) {
   const spec = K.nodeSpecs[type], base = K.createBlueprint('about-team'); base.pageType = 'general';
   const filler = {type: 'prose', title: '본문', body: '내용'}, ex = structuredClone(spec.example ?? (type === 'plan' ? K.nodeSpecs.pricing.example.children[0] : null));
   if (!ex) { const parent = K.nodeTypes.find(t => K.nodeSpecs[t].example && K.nodeSpecs[t].children?.includes(type)); return openPart(parent); }
   base.tree = {type: 'page', children: type === 'page-header' ? [ex, filler] : [{type: 'page-header', title: spec.label, description: '부품 예시 · ' + type}, ex]};
   if (type === 'toc') base.tree.children.push({type: 'section', title: '첫째', anchor: 'a', children: [filler]}, {type: 'section', title: '둘째', anchor: 'b', children: [filler]});
-  tplId = 'about-team'; bp = base; sync(); show(bp); $('#vtitle').textContent = spec.label + ' (' + type + ')'; viewer.classList.add('open'); document.body.style.overflow = 'hidden'; fitWide();
+  tplId = 'about-team'; tvar = ''; lay = null; bp = base; sync(); show(bp); $('#vtitle').textContent = spec.label + ' (' + type + ')'; viewer.classList.add('open'); document.body.style.overflow = 'hidden'; fitWide();
 }
 $('#close').onclick = () => { viewer.classList.remove('open'); document.body.style.overflow = ''; frame.srcdoc = ''; $('#panel').classList.remove('open'); };
 $('#opts').onclick = () => { const p = $('#panel'); p.classList.toggle('open'); $('#opts').setAttribute('aria-expanded', String(p.classList.contains('open'))); };
 $('#wide').onclick = () => { stage.classList.toggle('wide'); $('#wide').setAttribute('aria-pressed', String(stage.classList.contains('wide'))); fitWide(); };
-$('#f-tpl').onchange = e => { tplId = e.target.value; bp = K.createBlueprint(tplId, bp.theme); sync(); show(bp); };
-$('#f-theme').onchange = e => { bp = K.createBlueprint(tplId, e.target.value); sync(); show(bp); };
+$('#f-tpl').onchange = e => { tplId = e.target.value; lay = null; bp = make(tplId, bp.theme, bp.palette); sync(); show(bp); };
+$('#f-theme').onchange = e => { tvar = ''; bp = make(tplId, e.target.value, bp.palette); sync(); show(bp); };
+$('#f-var').onchange = e => { tvar = e.target.value; bp = make(tplId, bp.theme, bp.palette); sync(); show(bp); };
+$('#f-lay').onchange = e => { lay = e.target.value ? e.target.value.split(':') : null; bp = make(tplId, bp.theme, bp.palette); sync(); show(bp); };
 $('#f-pal').onchange = e => { bp.palette = e.target.value; show(bp); };
 document.querySelectorAll('#modes button').forEach(b => b.onclick = () => { bp.mode = b.dataset.m; sync(); show(bp); });
 $('#dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lastHtml], {type: 'text/html'})); a.download = (tplId || 'page') + '.html'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
@@ -122,7 +133,7 @@ export async function buildGallery() {
 <header class="top"><h1>Static Kit 샘플 갤러리</h1><p>카탈로그 안의 값으로만 조립한 화면입니다. 파일 하나로 열리며 오프라인에서 동작합니다. 컴파일러가 이 파일 안에 들어 있어 테마·팔레트·모드·축을 바로 바꿔 볼 수 있습니다.</p><ul class="counts" id="counts"></ul></header>
 <nav class="tabs" aria-label="갤러리 구역"><button type="button" aria-selected="true" data-tab="templates">템플릿</button><button type="button" aria-selected="false" data-tab="themes">테마·팔레트</button><button type="button" aria-selected="false" data-tab="parts">부품</button><button type="button" aria-selected="false" data-tab="axes">스타일 축</button><button type="button" aria-selected="false" data-tab="rules">규칙</button></nav>
 <main><section id="tab-templates"></section><section id="tab-themes" hidden></section><section id="tab-parts" hidden></section><section id="tab-axes" hidden></section><section id="tab-rules" hidden></section></main>
-<div id="viewer" role="dialog" aria-modal="true" aria-labelledby="vtitle"><div class="vbar"><button type="button" id="close" aria-label="닫기">←</button><b id="vtitle"></b><button type="button" id="wide" aria-pressed="false" aria-label="데스크톱 폭으로 보기">PC</button><button type="button" id="opts" aria-expanded="false" aria-controls="panel">설정</button></div><div class="stage" id="stage"><iframe id="frame" title="미리보기" sandbox="allow-scripts allow-forms"></iframe></div><div id="panel"><div id="errs" role="alert"></div><div class="field"><label for="f-tpl">템플릿</label><select id="f-tpl"></select></div><div class="two"><div class="field"><label for="f-theme">테마</label><select id="f-theme"></select></div><div class="field"><label for="f-pal">팔레트</label><select id="f-pal"></select></div></div><div class="field"><label id="ml">모드</label><div class="modes" id="modes" role="group" aria-labelledby="ml"><button type="button" data-m="light">밝게</button><button type="button" data-m="dark">어둡게</button><button type="button" data-m="auto">자동</button></div></div><div class="axgrid" id="axgrid"></div><div class="two"><button type="button" class="pill" id="dl">HTML 저장</button><button type="button" class="pill" id="dlj">Blueprint 저장</button></div></div></div>
+<div id="viewer" role="dialog" aria-modal="true" aria-labelledby="vtitle"><div class="vbar"><button type="button" id="close" aria-label="닫기">←</button><b id="vtitle"></b><button type="button" id="wide" aria-pressed="false" aria-label="데스크톱 폭으로 보기">PC</button><button type="button" id="opts" aria-expanded="false" aria-controls="panel">설정</button></div><div class="stage" id="stage"><iframe id="frame" title="미리보기" sandbox="allow-scripts allow-forms"></iframe></div><div id="panel"><div id="errs" role="alert"></div><div class="field"><label for="f-tpl">템플릿</label><select id="f-tpl"></select></div><div class="two"><div class="field"><label for="f-theme">테마</label><select id="f-theme"></select></div><div class="field"><label for="f-pal">팔레트</label><select id="f-pal"></select></div></div><div class="two"><div class="field"><label for="f-var">테마 변형</label><select id="f-var"></select></div><div class="field"><label for="f-lay">구성 변형</label><select id="f-lay"></select></div></div><div class="field"><label id="ml">모드</label><div class="modes" id="modes" role="group" aria-labelledby="ml"><button type="button" data-m="light">밝게</button><button type="button" data-m="dark">어둡게</button><button type="button" data-m="auto">자동</button></div></div><div class="axgrid" id="axgrid"></div><div class="two"><button type="button" class="pill" id="dl">HTML 저장</button><button type="button" class="pill" id="dlj">Blueprint 저장</button></div></div></div>
 <script>${bundle}</script><script>${js}</script></body></html>
 `;
 }

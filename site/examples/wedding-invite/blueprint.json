@@ -1,0 +1,239 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "민준 · 서연",
+  "theme": "wedding",
+  "palette": "pastel-dreams",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "centered",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "이야기",
+        "href": "#story",
+        "icon": "heart"
+      },
+      {
+        "label": "순서",
+        "href": "#schedule",
+        "icon": "clock"
+      },
+      {
+        "label": "오시는 길",
+        "href": "#place",
+        "icon": "map-pin"
+      }
+    ],
+    "footerNote": "민준 · 서연 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "민준과 서연이 결혼합니다",
+        "description": "2026년 11월 21일 토요일 오후 2시"
+      },
+      {
+        "type": "hero",
+        "variant": "centered",
+        "eyebrow": "WEDDING INVITATION",
+        "title": "서로의 계절이 되어\n함께 걷겠습니다.",
+        "body": "소중한 분들을 초대합니다. 따뜻한 마음으로 함께해 주세요.",
+        "facts": [
+          {
+            "value": "11.21",
+            "label": "토요일"
+          },
+          {
+            "value": "오후 2시",
+            "label": "예식 시작"
+          },
+          {
+            "value": "성수",
+            "label": "아틀리에홀"
+          }
+        ],
+        "action": {
+          "label": "참석 알리기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "오시는 길",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "section",
+        "title": "두 사람의 이야기",
+        "children": [
+          {
+            "type": "prose",
+            "title": "처음 만난 날",
+            "body": "도서관 책상에서 같은 책을 빌리려다 만났습니다. 책은 서연이 먼저 가져갔고, 민준은 반납일을 기다렸습니다. 그 기다림이 길어져 오늘에 이르렀습니다.\n\n앞으로의 시간도 서로의 속도에 맞춰 천천히 걸어가겠습니다.",
+            "variant": "lead"
+          }
+        ],
+        "anchor": "story"
+      },
+      {
+        "type": "section",
+        "title": "사진",
+        "children": [
+          {
+            "type": "gallery",
+            "layout": "masonry",
+            "items": [
+              {
+                "kind": "photo",
+                "motif": "coffee",
+                "alt": "카페에 마주 앉은 두 사람",
+                "caption": "첫 데이트"
+              },
+              {
+                "kind": "photo",
+                "motif": "plant",
+                "alt": "꽃 앞에서 웃는 두 사람",
+                "caption": "봄 소풍"
+              },
+              {
+                "kind": "photo",
+                "motif": "interior",
+                "alt": "새집 거실에서",
+                "caption": "새 집"
+              },
+              {
+                "kind": "photo",
+                "motif": "books",
+                "alt": "책장 앞에서",
+                "caption": "도서관 앞에서"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "예식 안내",
+        "children": [
+          {
+            "type": "timeline",
+            "title": "당일 순서",
+            "variant": "rail",
+            "items": [
+              {
+                "time": "13:00",
+                "title": "손님 맞이",
+                "description": "1층 로비에서 식권과 기념품을 받아 가세요."
+              },
+              {
+                "time": "14:00",
+                "title": "예식",
+                "description": "약 30분간 진행됩니다."
+              },
+              {
+                "time": "14:40",
+                "title": "사진 촬영",
+                "description": "가족과 친구 순서로 촬영합니다."
+              },
+              {
+                "time": "15:30",
+                "title": "피로연",
+                "description": "2층 식당에서 식사를 준비했습니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "schedule"
+      },
+      {
+        "type": "section",
+        "title": "오시는 길",
+        "children": [
+          {
+            "type": "properties",
+            "title": "아틀리에홀",
+            "layout": "inline",
+            "items": [
+              {
+                "label": "주소",
+                "value": "서울 성동구 아차산로 12, 3층"
+              },
+              {
+                "label": "지하철",
+                "value": "2호선 성수역 3번 출구 도보 5분"
+              },
+              {
+                "label": "주차",
+                "value": "건물 지하 주차장 2시간 무료"
+              },
+              {
+                "label": "연락",
+                "value": "신랑 010-0000-0000 · 신부 010-0000-0001"
+              }
+            ]
+          }
+        ],
+        "anchor": "place"
+      },
+      {
+        "type": "form",
+        "title": "참석 여부를 알려 주세요",
+        "intro": "준비에 도움이 됩니다. 데모이므로 입력은 저장되지 않습니다.",
+        "fields": [
+          {
+            "id": "guest-name",
+            "label": "성함",
+            "type": "text"
+          },
+          {
+            "id": "attend",
+            "label": "참석",
+            "type": "radio",
+            "options": [
+              "참석합니다",
+              "아쉽게 참석하지 못합니다"
+            ]
+          },
+          {
+            "id": "guests",
+            "label": "동행 인원",
+            "type": "number",
+            "requirement": "optional"
+          }
+        ],
+        "submitLabel": "보내기"
+      }
+    ]
+  }
+}

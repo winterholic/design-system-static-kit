@@ -78,7 +78,7 @@ const indexHtml = head('Test Lab · 조합 검증 탐색', '생성된 케이스 
 <p class="note">실패한 정적검사 케이스: ${failCases.length ? failCases.map(id => `<code>${id}</code>`).join(' ') : '없음 (check-report.json 참조)'}</p></section>
 <section class="block"><h2>전체 탐색</h2>
 <div class="toolbar" role="search"><input id="q" type="search" placeholder="검색: id·테마·팔레트·셸·템플릿" aria-label="케이스 검색">
-<select id="fset" aria-label="세트"><option value="">세트 전체</option><option value="matrix">matrix</option><option value="palette-mode">palette-mode</option><option value="pairwise">pairwise</option><option value="stress">stress</option></select>
+<select id="fset" aria-label="세트"><option value="">세트 전체</option><option value="matrix">matrix</option><option value="palette-mode">palette-mode</option><option value="pairwise">pairwise</option><option value="stress">stress</option><option value="variant">variant</option></select>
 <select id="fmode" aria-label="모드"><option value="">모드 전체</option><option value="light">light</option><option value="dark">dark</option><option value="auto">auto</option></select>
 <select id="fpt" aria-label="페이지 유형"><option value="">유형 전체</option></select>
 <select id="fshell" aria-label="셸"><option value="">셸 전체</option></select>

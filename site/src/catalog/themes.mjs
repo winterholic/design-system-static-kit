@@ -1,4 +1,5 @@
-import {paletteRows} from './palette-rows.mjs';
+import {themePalettes} from './theme-palettes.mjs';
+import {themeVariantRows} from './theme-variants.mjs';
 
 export const themeCategories = {
   work: '업무·제품', brand: '브랜드·마케팅', read: '읽기·문서', life: '생활·서비스', institution: '공공·기관', app: '모바일·앱',
@@ -49,9 +50,25 @@ const rows = [
   ['sport', '스포츠', 'app', '피트니스·스포츠. 굵은 그로테스크와 강한 대비.', D('stacked', 'grotesk', 'comfortable', 'subtle', 'square', 'lifted', 'lively', 'solid', 'geometric', 'plain', 'wide', 'dramatic', 'bold', 'columns'), {}, []],
   ['solar', '솔라', 'app', '에너지·태양. 밝은 노랑과 파랑, 또렷한 기하.', D('topbar', 'geometric', 'comfortable', 'round', 'pill', 'soft', 'lively', 'duotone', 'geometric', 'tint', 'standard', 'dramatic', 'bold', 'simple'), {elevation: ['hard']}, []],
   ['ocean', '오션', 'app', '여행·해양. 파도의 곡선과 깊은 청색.', D('topbar', 'humanist', 'spacious', 'soft', 'pill', 'soft', 'subtle', 'line', 'organic', 'gradient', 'wide', 'balanced', 'medium', 'columns'), {elevation: ['hard']}, []],
+  ['enterprise', '엔터프라이즈', 'work', '기업 포털·인트라넷. 낮은 채도, 안정적인 사이드바, 오래 보아도 피곤하지 않은 정보 화면.', D('sidebar', 'sans', 'comfortable', 'subtle', 'match', 'outline', 'subtle', 'line', 'none', 'plain', 'wide', 'balanced', 'medium', 'columns'), {elevation: ['glow', 'hard'], motion: ['lively'], radius: ['bubble']}, []],
+  ['devtool', '데브툴', 'work', '개발자 제품·API 문서. 각진 아이콘, 옅은 격자, 코드가 주인공인 화면.', D('topbar', 'sans', 'comfortable', 'soft', 'match', 'outline', 'subtle', 'line-square', 'lines', 'grid', 'wide', 'tight', 'medium', 'columns', 'auto'), {radius: ['bubble'], ornament: ['organic']}, []],
+  ['luxe', '럭셔리', 'brand', '검정과 금빛, 가는 선과 세리프. 여백으로 가치를 말하는 고급 브랜드.', D('centered', 'serif', 'spacious', 'square', 'square', 'flat', 'subtle', 'line-fine', 'lines', 'plain', 'wide', 'dramatic', 'regular', 'minimal', 'dark'), {elevation: ['glow', 'hard', 'lifted'], motion: ['lively']}, []],
+  ['swiss', '스위스', 'brand', '격자와 큰 타이포, 무채에 한 점의 강조색. 장식을 덜어 낸 스위스 스타일.', D('minimal', 'grotesk', 'comfortable', 'square', 'square', 'flat', 'none', 'line', 'none', 'plain', 'wide', 'dramatic', 'bold', 'simple'), {elevation: ['glow', 'soft', 'lifted', 'hard'], radius: ['round', 'bubble'], ornament: ['organic', 'dots'], backdrop: ['gradient'], motion: ['lively']}, []],
+  ['colorblock', '컬러블록', 'brand', '큰 색면과 두꺼운 윤곽. 포스터처럼 한눈에 읽히는 캠페인.', D('topbar', 'geometric', 'comfortable', 'soft', 'pill', 'hard', 'lively', 'line-bold', 'geometric', 'tint', 'wide', 'dramatic', 'bold', 'columns'), {backdrop: ['gradient', 'grid'], elevation: ['glow']}, []],
+  ['newsroom', '뉴스룸', 'read', '매체·뉴스. 촘촘한 머리기사, 세리프 제목, 구분선으로 짜는 지면.', D('masthead', 'serif', 'compact', 'square', 'square', 'flat', 'none', 'line', 'lines', 'plain', 'wide', 'tight', 'bold', 'columns'), {elevation: ['glow', 'hard', 'lifted', 'soft'], motion: ['lively'], radius: ['round', 'bubble']}, []],
+  ['academic', '아카데믹', 'read', '논문·리서치. 좁은 읽기 폭, 세리프 본문, 각주처럼 붙는 보조 정보.', D('editorial', 'editorial', 'spacious', 'square', 'match', 'flat', 'none', 'line', 'none', 'plain', 'narrow', 'balanced', 'regular', 'simple'), {elevation: ['glow', 'hard', 'lifted'], backdrop: ['gradient', 'grid'], motion: ['lively']}, []],
+  ['wedding', '웨딩', 'life', '청첩장·행사 초대. 옅은 색, 가는 세리프, 손으로 그린 듯한 곡선.', D('centered', 'serif', 'spacious', 'round', 'pill', 'soft', 'subtle', 'line-fine', 'organic', 'tint', 'narrow', 'balanced', 'regular', 'minimal'), {elevation: ['hard', 'glow']}, []],
+  ['kids', '키즈', 'life', '어린이 서비스. 큰 모서리와 선명한 색, 굵고 둥근 서체.', D('topbar', 'rounded', 'spacious', 'bubble', 'pill', 'lifted', 'lively', 'solid', 'dots', 'tint', 'standard', 'dramatic', 'bold', 'columns'), {elevation: ['glow']}, []],
+  ['wine', '와인바', 'life', '와인·바. 어두운 바탕에 버건디와 금빛, 세리프와 점선 가격.', D('centered', 'serif', 'spacious', 'subtle', 'square', 'flat', 'subtle', 'line-fine', 'lines', 'tint', 'standard', 'balanced', 'regular', 'columns', 'dark'), {elevation: ['glow', 'hard']}, []],
+  ['garden', '가든', 'life', '식물·정원 가게. 초록과 흙빛, 둥근 서체와 손으로 그린 곡선.', D('topbar', 'humanist', 'comfortable', 'round', 'pill', 'soft', 'subtle', 'line', 'organic', 'tint', 'standard', 'balanced', 'medium', 'columns'), {elevation: ['hard', 'glow']}, []],
+  ['school', '스쿨', 'institution', '학교·교육기관. 또렷한 안내, 큰 터치 영역, 장식 없는 정직함.', D('stacked', 'sans', 'spacious', 'soft', 'match', 'outline', 'none', 'line', 'none', 'plain', 'standard', 'balanced', 'bold', 'columns'), {motion: ['lively'], elevation: ['glow', 'hard'], backdrop: ['gradient']}, []],
+  ['bank', '뱅크', 'institution', '은행·보험. 차분한 청록과 네이비, 숫자가 먼저 읽히는 금융 화면.', D('topbar', 'sans', 'comfortable', 'soft', 'match', 'soft', 'subtle', 'line', 'none', 'plain', 'standard', 'balanced', 'medium', 'columns'), {elevation: ['glow', 'hard'], motion: ['lively'], ornament: ['organic', 'dots']}, []],
+  ['game', '게임', 'app', '게임·e스포츠. 어두운 면 위의 굵은 색과 윤곽, 빠른 움직임.', D('topbar', 'grotesk', 'comfortable', 'subtle', 'square', 'glow', 'lively', 'line-bold', 'geometric', 'gradient', 'wide', 'dramatic', 'bold', 'columns', 'dark'), {mode: ['light'], elevation: ['hard', 'flat']}, []],
 ];
 
+
 export const themes = Object.fromEntries(rows.map(([id, name, category, description, defaults, forbid, covers]) => {
-  const own = paletteRows.filter(r => r[0] === id).map(r => r[1]);
-  return [id, {id, name, category, description, palettes: own, defaults, forbid, covers}];
+  const own = themePalettes[id];
+  if (!own?.length) throw new Error('Theme without recommended palettes: ' + id);
+  return [id, {id, name, category, description, palettes: own, defaults, forbid, covers, variants: themeVariantRows[id] ?? []}];
 }));

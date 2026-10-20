@@ -4,7 +4,7 @@ import {mkdtempSync, readFileSync, writeFileSync, readdirSync, rmSync, mkdirSync
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {createBlueprint} from '../src/catalog.mjs';
+import {createBlueprint, themes} from '../src/catalog.mjs';
 import {compile} from '../src/compiler.mjs';
 import {bundleSource} from '../scripts/bundle.mjs';
 import {buildGallery} from '../scripts/gallery.mjs';
@@ -27,7 +27,7 @@ test('CLI init, templates, themes and catalog commands work and init refuses to 
   assert.equal(JSON.parse(readFileSync(file, 'utf8')).theme, 'civic'); assert.equal(cli('validate', file).status, 0);
   assert.notEqual(cli('init', 'login', file).status, 0);
   assert.match(cli('templates').stdout, /saas-landing/); assert.match(cli('themes').stdout, /nocturne/);
-  assert.match(cli('catalog').stdout, /"themes": 40/);
+  assert.equal(JSON.parse(cli('catalog').stdout).counts.themes, Object.keys(themes).length);
 });
 test('CLI migrate upgrades a v1 blueprint', () => {
   const v1 = join(dir, 'v1.json'), out = join(dir, 'v2.json');

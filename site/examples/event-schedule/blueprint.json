@@ -1,0 +1,146 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "가을 마켓 데이",
+  "theme": "atelier",
+  "palette": "candy-floss-dreams",
+  "mode": "light",
+  "pageType": "listing",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "round",
+  "control": "match",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "duotone",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "일정",
+        "href": "#main",
+        "icon": "calendar"
+      },
+      {
+        "label": "공방",
+        "href": "#main",
+        "icon": "map-pin"
+      },
+      {
+        "label": "안내",
+        "href": "#main",
+        "icon": "info"
+      }
+    ],
+    "action": {
+      "label": "일정 저장",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 가을 마켓 데이 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "가을 마켓 데이 일정",
+        "description": "10월 31일 · 성수 공방길 전체",
+        "actions": [
+          {
+            "label": "일정 저장",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "프로그램 검색",
+        "filters": [
+          "전체",
+          "체험",
+          "공연",
+          "먹거리",
+          "아이와 함께"
+        ],
+        "selected": 0
+      },
+      {
+        "type": "timeline",
+        "title": "시간표",
+        "variant": "rail",
+        "items": [
+          {
+            "time": "10:00",
+            "title": "개장과 오프닝",
+            "description": "입구에서 지도와 스탬프 카드를 받아 가세요."
+          },
+          {
+            "time": "11:00",
+            "title": "도자기 체험",
+            "description": "2번 공방 · 선착순 20명",
+            "status": "예정"
+          },
+          {
+            "time": "13:00",
+            "title": "골목 버스킹",
+            "description": "3번 마당 · 재즈 트리오"
+          },
+          {
+            "time": "15:00",
+            "title": "가죽 키링 만들기",
+            "description": "5번 공방 · 소요 40분"
+          },
+          {
+            "time": "17:00",
+            "title": "스탬프 추첨",
+            "description": "입구 앞 무대에서 진행합니다."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "title": "참여 공방",
+        "variant": "card",
+        "items": [
+          {
+            "title": "흙과 불",
+            "description": "도자기 · 2번 공방",
+            "status": "진행"
+          },
+          {
+            "title": "결 가죽",
+            "description": "가죽 공예 · 5번 공방",
+            "status": "진행"
+          },
+          {
+            "title": "작은 직조",
+            "description": "직조 · 7번 공방",
+            "status": "대기"
+          }
+        ],
+        "state": "ready"
+      }
+    ]
+  }
+}

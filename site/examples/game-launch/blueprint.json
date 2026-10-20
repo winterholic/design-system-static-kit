@@ -1,0 +1,218 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "노바 프론티어",
+  "theme": "game",
+  "palette": "midnight-fire",
+  "mode": "dark",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "grotesk",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "square",
+  "elevation": "glow",
+  "motion": "lively",
+  "icon": "line-bold",
+  "ornament": "geometric",
+  "backdrop": "gradient",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "영상",
+        "href": "#media",
+        "icon": "play"
+      },
+      {
+        "label": "로드맵",
+        "href": "#roadmap",
+        "icon": "clock"
+      },
+      {
+        "label": "에디션",
+        "href": "#edition",
+        "icon": "tag"
+      },
+      {
+        "label": "커뮤니티",
+        "href": "#main",
+        "icon": "users"
+      }
+    ],
+    "action": {
+      "label": "사전 예약",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 노바 프론티어 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "별 사이의 길을 여는 탐사 액션",
+        "description": "2026년 12월 5일 PC · 콘솔 동시 출시."
+      },
+      {
+        "type": "hero",
+        "variant": "cover",
+        "eyebrow": "LAUNCH 12.05",
+        "title": "미지의 항로,\n지금 열립니다.",
+        "body": "혼자서도, 세 명이 함께서도 즐기는 우주 탐사 액션. 얼리 액세스 참가자에게는 개발 일지를 먼저 공개합니다.",
+        "facts": [
+          {
+            "value": "12.05",
+            "label": "출시일"
+          },
+          {
+            "value": "1~3인",
+            "label": "협동 플레이"
+          },
+          {
+            "value": "40시간",
+            "label": "메인 스토리"
+          }
+        ],
+        "action": {
+          "label": "사전 예약",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "트레일러",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "section",
+        "title": "게임 속으로",
+        "children": [
+          {
+            "type": "gallery",
+            "layout": "showcase",
+            "items": [
+              {
+                "kind": "video",
+                "alt": "출시 트레일러",
+                "caption": "출시 트레일러 · 2분 10초"
+              },
+              {
+                "kind": "device",
+                "alt": "전투 화면",
+                "caption": "전술 전투"
+              },
+              {
+                "kind": "photo",
+                "motif": "laptop",
+                "alt": "함선 관리 화면",
+                "caption": "함선 개조"
+              },
+              {
+                "kind": "pattern",
+                "alt": "성운 배경",
+                "caption": "탐사 지도"
+              }
+            ]
+          }
+        ],
+        "anchor": "media"
+      },
+      {
+        "type": "section",
+        "title": "출시 로드맵",
+        "children": [
+          {
+            "type": "timeline",
+            "title": "출시까지",
+            "variant": "line",
+            "items": [
+              {
+                "time": "10월",
+                "title": "클로즈드 테스트",
+                "description": "선착순 5,000명이 먼저 플레이합니다.",
+                "status": "완료"
+              },
+              {
+                "time": "11월",
+                "title": "오픈 테스트",
+                "description": "전 지역 3일간 열립니다.",
+                "status": "진행"
+              },
+              {
+                "time": "12월 5일",
+                "title": "정식 출시",
+                "description": "스토어와 콘솔에서 동시에 열립니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "roadmap"
+      },
+      {
+        "type": "section",
+        "title": "에디션",
+        "children": [
+          {
+            "type": "pricing",
+            "children": [
+              {
+                "type": "plan",
+                "name": "스탠더드",
+                "price": "39,000원",
+                "description": "게임 본편.",
+                "features": [
+                  "본편 게임",
+                  "디지털 사운드트랙",
+                  "프로필 장식"
+                ],
+                "action": {
+                  "label": "사전 예약",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              },
+              {
+                "type": "plan",
+                "name": "디럭스",
+                "price": "52,000원",
+                "description": "추가 콘텐츠 포함.",
+                "features": [
+                  "본편 게임",
+                  "확장팩 1종",
+                  "함선 스킨 3종",
+                  "개발 일지 열람"
+                ],
+                "action": {
+                  "label": "사전 예약",
+                  "href": "#main",
+                  "variant": "primary"
+                },
+                "featured": "yes"
+              }
+            ]
+          }
+        ],
+        "anchor": "edition"
+      }
+    ]
+  }
+}

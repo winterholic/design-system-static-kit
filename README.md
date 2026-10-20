@@ -2,21 +2,23 @@
 
 **미리 정의한 디자인을 코드 규약 안에서 조립하는 도구.** 에이전트와 사람은 자유 CSS 대신 허용된 JSON 트리를 작성하고, 컴파일러는 조합·속성·버전·페이지 유형·접근성 대비를 검증해 정적 HTML을 만듭니다. 프롬프트가 아니라 **코드**가 강제합니다.
 
-| 카탈로그 2.0 | 수량 | | 카탈로그 2.0 | 수량 |
+| 카탈로그 2.1 | 수량 | | 카탈로그 2.1 | 수량 |
 |---|---|---|---|---|
-| 테마 | 40 (6분류) | | 부품 | 55종 |
-| Coolors 팔레트 | 160 (테마당 4) | | 페이지 유형 | 16 |
-| 페이지 템플릿 | 61 | | 스타일 축 | 15 (모드 포함) |
+| 템플릿 | 85 (구성 변형 405) | | 부품 | 55종 |
+| 테마 | 54 (6분류, 테마 변형 162) | | 페이지 유형 | 16 |
+| 팔레트 | 427 (색 계열 11, Coolors 인기 관측) | | 스타일 축 | 15 (모드 포함) |
 | 레이아웃 셸 | 10 | | 아이콘 | 87 |
-| 규칙 | 20 + 축 조합 금지 11 | | 대비 검사 | 33,600쌍 |
+| 규칙 | 20 + 축 조합 금지 11 | | 대비 검사 | 89,670쌍 |
+
+템플릿·테마·팔레트는 서로 독립이라 어느 조합도 고를 수 있고, 템플릿마다 구성 변형(히어로·기능 배열·카드 스타일·구역 리듬 등)이, 테마마다 변형 3개 이상이 얹힙니다.
 
 수많은 조합이 곧 좋은 디자인 보증이라는 뜻은 아닙니다. 검토한 범위의 선택, 접근성의 하한, 개정 절차를 코드로 만듭니다.
 
 ## 보기
 
+- **시각 조립기**: `npm run dev` 후 http://127.0.0.1:4173. 미리보기는 휴대폰·태블릿·데스크톱·맞춤 폭을 고정 폭으로 그려 영역에 맞춰 줄이므로 가로로 잘리지 않고, **새 창**과 **전체 화면 모달**로 크게 볼 수 있습니다. 카탈로그 탭에서 템플릿·테마·팔레트·부품의 실제 렌더를 보고 바로 조립을 시작합니다.
 - **휴대폰용 단일 파일 갤러리**: `site/gallery/index.html` (컴파일러 포함, 오프라인). 템플릿·테마·부품·축을 열어 보고 테마·팔레트·모드·축을 바로 바꿔 봅니다. 금지 조합은 이유와 함께 거부되고 자동 수정 대안이 나옵니다.
-- **시각 조립기**: `npm run dev` 후 http://127.0.0.1:4173
-- 설계서 [docs/design.html](docs/design.html) · 격차 분석 [docs/gap-analysis.html](docs/gap-analysis.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html)
+- 설계서 [docs/design.html](docs/design.html) · 팔레트 근거 [docs/palettes.html](docs/palettes.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html)
 
 ## 실행
 
@@ -32,8 +34,8 @@ npm run build      # site/ 생성 → GitHub Pages 등 정적 호스팅
 ## 에이전트 / CI
 
 ```sh
-npm run kit -- templates                       # 61개 템플릿
-npm run kit -- themes                          # 40개 테마와 팔레트 후보
+npm run kit -- templates                       # 85개 템플릿
+npm run kit -- themes                          # 54개 테마와 추천 팔레트
 npm run kit -- init saas-landing my.json trust # 템플릿 + 테마로 시작
 npm run kit -- validate my.json
 npm run kit -- build my.json --out artifacts/my-page
@@ -45,7 +47,7 @@ npm run kit -- migrate old-v1.json new.json    # 1.x → 2.0
 
 ```json
 {
-  "version": "2.0", "catalogVersion": "2.0.0", "name": "제품 소개",
+  "version": "2.0", "catalogVersion": "2.1.0", "name": "제품 소개",
   "theme": "botanical", "palette": "forest", "mode": "auto", "pageType": "article",
   "shell": "topbar", "typography": "sans", "density": "comfortable", "radius": "soft",
   "control": "match", "elevation": "soft", "motion": "subtle", "icon": "line", "ornament": "organic",
@@ -70,11 +72,12 @@ npm run kit -- migrate old-v1.json new.json    # 1.x → 2.0
 
 ## 문서
 
-- [설계서](docs/design.md) · [격차 분석](docs/gap-analysis.md) · [아키텍처](docs/architecture.md) · [규칙 개정](docs/governance.md)
+- [설계서](docs/design.md) · [팔레트 근거](docs/palettes.md) · [아키텍처](docs/architecture.md) · [규칙 개정](docs/governance.md)
 - [ADR 0001 카탈로그 컴파일러](docs/adr/0001-catalog-compiler.md) · [ADR 0002 확장 설계](docs/adr/0002-axes-bans-page-types.md) · [ADR 0003 간격 계약](docs/adr/0003-spacing-contract.md) · [간격 규칙](docs/spacing.md) · [4차 템플릿·부품 레벨업](docs/template-system.md)
 - [PMS/WBS](docs/wbs.md) · [출처·라이선스](docs/sources.md) · [검증 기록](docs/verification.md)
-- 증거: [Coolors 관측](docs/evidence/coolors-palettes.json) · [대비 전수](docs/evidence/contrast.json) · [커버리지](docs/evidence/coverage.json) · [동료 레포 축](docs/evidence/peer-axes.json)
+- 증거: [Coolors 관측 2026-10-18](docs/evidence/coolors-palettes.json) · [Coolors 인기 관측 2026-10-20(좋아요 수)](docs/evidence/coolors-popular-2026-10-20.json) · [대비 전수](docs/evidence/contrast.json) · [커버리지](docs/evidence/coverage.json)
+- 보관 기록(배포 사이트에는 싣지 않음): [격차 분석](docs/archive/gap-analysis.md) · [동료 레포 축](docs/evidence/peer-axes.json)
 
 ## 출처와 라이선스
 
-동료 [design-system-kit](https://github.com/yehsb123/design-system-kit)(AGPL-3.0)에서는 사전 정의 후 조립한다는 철학과 축의 이름·수량만 대조했고 **코드·토큰·CSS·문구·아이콘은 복사하지 않았습니다**. 이 저장소는 MIT로 독립 구현했습니다. 토큰·상태·접근성 원칙은 [winterholic-design-system](https://github.com/winterholic/winterholic-design-system)을, 색은 [Coolors](https://coolors.co) 렌더 페이지 관측(2026-10-18)을 따릅니다. 카카오 Katalog 원 발표의 구현 상세는 **확인 필요**입니다.
+동료 [design-system-kit](https://github.com/yehsb123/design-system-kit)(AGPL-3.0)에서는 사전 정의 후 조립한다는 철학과 축의 이름·수량만 대조했고 **코드·토큰·CSS·문구·아이콘은 복사하지 않았습니다**. 이 저장소는 MIT로 독립 구현했습니다. 토큰·상태·접근성 원칙은 [winterholic-design-system](https://github.com/winterholic/winterholic-design-system)을, 색은 [Coolors](https://coolors.co) 렌더 페이지 관측(2026-10-18, 2026-10-20)을 따릅니다. 카카오 Katalog 원 발표의 구현 상세는 **확인 필요**입니다.

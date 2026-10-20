@@ -1,0 +1,245 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "빌드플로",
+  "theme": "devtool",
+  "palette": "ocean-blue-adventure",
+  "mode": "auto",
+  "pageType": "docs",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-square",
+  "ornament": "lines",
+  "backdrop": "grid",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "시작하기",
+        "href": "#main",
+        "icon": "book",
+        "group": "문서"
+      },
+      {
+        "label": "인증",
+        "href": "#main",
+        "icon": "lock",
+        "group": "문서"
+      },
+      {
+        "label": "캐시 API",
+        "href": "#main",
+        "icon": "code",
+        "group": "레퍼런스",
+        "current": "page"
+      },
+      {
+        "label": "웹훅",
+        "href": "#main",
+        "icon": "zap",
+        "group": "레퍼런스"
+      },
+      {
+        "label": "변경 기록",
+        "href": "#main",
+        "icon": "clock",
+        "group": "릴리스"
+      }
+    ],
+    "footerNote": "빌드플로 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "캐시 API",
+        "description": "원격 캐시에 결과물을 저장하고 가져오는 REST 엔드포인트.",
+        "eyebrow": "REST",
+        "meta": [
+          "v3",
+          "인증 필요",
+          "분당 600회"
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "이 문서의 목차",
+        "sticky": "yes",
+        "children": [
+          {
+            "type": "section",
+            "title": "엔드포인트",
+            "children": [
+              {
+                "type": "section",
+                "title": "캐시 조회",
+                "children": [
+                  {
+                    "type": "prose",
+                    "title": "GET /v3/cache/{hash}",
+                    "body": "해시로 저장된 결과물을 가져옵니다. 존재하지 않으면 404를 돌려줍니다."
+                  },
+                  {
+                    "type": "table",
+                    "title": "경로·쿼리 매개변수",
+                    "caption": "GET /v3/cache/{hash}",
+                    "columns": [
+                      "이름",
+                      "위치",
+                      "타입",
+                      "설명"
+                    ],
+                    "rows": [
+                      [
+                        "hash",
+                        "경로",
+                        "문자열",
+                        "작업 입력의 SHA-256 해시"
+                      ],
+                      [
+                        "team",
+                        "쿼리",
+                        "문자열",
+                        "팀 ID. 생략하면 토큰의 기본 팀"
+                      ],
+                      [
+                        "download",
+                        "쿼리",
+                        "불리언",
+                        "true면 결과물 본문을 바로 내려받음"
+                      ]
+                    ],
+                    "state": "ready"
+                  },
+                  {
+                    "type": "tabs",
+                    "variant": "underline",
+                    "children": [
+                      {
+                        "type": "tab",
+                        "label": "curl",
+                        "children": [
+                          {
+                            "type": "code",
+                            "label": "요청",
+                            "language": "bash",
+                            "code": "curl -H \"Authorization: Bearer $BUILDFLOW_TOKEN\" \\\n  https://api.example.com/v3/cache/9f2c1a?team=web"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "tab",
+                        "label": "JavaScript",
+                        "children": [
+                          {
+                            "type": "code",
+                            "label": "요청",
+                            "language": "js",
+                            "code": "const res = await fetch(\"https://api.example.com/v3/cache/9f2c1a\", {\n  headers: {Authorization: `Bearer ${process.env.BUILDFLOW_TOKEN}`},\n});\nconst {size, createdAt} = await res.json();"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "anchor": "get"
+              },
+              {
+                "type": "section",
+                "title": "캐시 저장",
+                "children": [
+                  {
+                    "type": "prose",
+                    "title": "PUT /v3/cache/{hash}",
+                    "body": "작업 결과물을 올립니다. 같은 해시에 다시 올리면 기존 항목을 덮어쓰지 않고 성공으로 응답합니다."
+                  },
+                  {
+                    "type": "code",
+                    "label": "응답 예시",
+                    "language": "json",
+                    "code": "{\n  \"hash\": \"9f2c1a\",\n  \"size\": 482113,\n  \"createdAt\": \"2026-10-20T08:12:44Z\"\n}"
+                  },
+                  {
+                    "type": "notice",
+                    "tone": "warning",
+                    "title": "크기 제한",
+                    "body": "한 항목은 최대 200MB입니다. 더 큰 결과물은 나누어 올려야 합니다."
+                  }
+                ],
+                "anchor": "put"
+              },
+              {
+                "type": "section",
+                "title": "오류",
+                "children": [
+                  {
+                    "type": "table",
+                    "title": "응답 코드",
+                    "caption": "자주 만나는 응답",
+                    "columns": [
+                      "코드",
+                      "의미",
+                      "대응"
+                    ],
+                    "rows": [
+                      [
+                        "401",
+                        "토큰이 없거나 만료",
+                        "토큰을 다시 발급"
+                      ],
+                      [
+                        "404",
+                        "해당 해시가 없음",
+                        "새로 빌드한 뒤 저장"
+                      ],
+                      [
+                        "413",
+                        "항목이 너무 큼",
+                        "200MB 이하로 분할"
+                      ],
+                      [
+                        "429",
+                        "요청 한도 초과",
+                        "Retry-After 후 재시도"
+                      ]
+                    ],
+                    "state": "ready"
+                  }
+                ],
+                "anchor": "errors"
+              }
+            ]
+          },
+          {
+            "type": "toc",
+            "title": "이 문서의 목차"
+          }
+        ]
+      }
+    ]
+  }
+}

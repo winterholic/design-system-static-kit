@@ -1,0 +1,196 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "도시 텃밭 위크",
+  "theme": "colorblock",
+  "palette": "contrast-pop",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "geometric",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "pill",
+  "elevation": "hard",
+  "motion": "lively",
+  "icon": "line-bold",
+  "ornament": "geometric",
+  "backdrop": "tint",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "방식",
+        "href": "#how",
+        "icon": "leaf"
+      },
+      {
+        "label": "장소",
+        "href": "#places",
+        "icon": "map-pin"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "mail"
+      }
+    ],
+    "action": {
+      "label": "참여 신청",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 도시 텃밭 위크 · 비영리",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "우리 동네에 작은 밭을",
+        "description": "11월 한 달, 서울 열두 곳에서 열리는 도시 텃밭 위크."
+      },
+      {
+        "type": "hero",
+        "variant": "statement",
+        "eyebrow": "11.1 — 11.30",
+        "title": "흙 한 줌에서\n시작하는 동네.",
+        "body": "옥상, 골목, 공원 한 켠에서 이웃과 함께 상추를 심습니다. 호미와 씨앗은 저희가 준비할게요.",
+        "facts": [
+          {
+            "value": "12곳",
+            "label": "참여 장소"
+          },
+          {
+            "value": "800명",
+            "label": "참여 이웃"
+          },
+          {
+            "value": "0원",
+            "label": "참가비"
+          }
+        ],
+        "action": {
+          "label": "참여 신청",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "장소 보기",
+          "href": "#main",
+          "variant": "secondary"
+        }
+      },
+      {
+        "type": "section",
+        "title": "이렇게 진행해요",
+        "children": [
+          {
+            "type": "bento",
+            "children": [
+              {
+                "type": "card",
+                "title": "주말 오전 두 시간",
+                "body": "토요일 오전 10시에 모여 함께 심고 가꿉니다.",
+                "icon": "calendar"
+              },
+              {
+                "type": "metric",
+                "label": "심을 모종",
+                "value": "4,200포기",
+                "detail": "상추·쑥갓·방울토마토"
+              },
+              {
+                "type": "card",
+                "title": "도구와 씨앗은 무료",
+                "body": "호미, 장갑, 모종, 물뿌리개를 현장에서 빌려 드려요.",
+                "icon": "leaf"
+              },
+              {
+                "type": "progress",
+                "label": "참가 신청 현황",
+                "value": 72,
+                "detail": "800명 중 576명 신청",
+                "tone": "success"
+              },
+              {
+                "type": "quote",
+                "quote": "옥상이 이렇게 조용하고 푸를 줄 몰랐어요.",
+                "author": "한유진",
+                "role": "지난해 참가자"
+              }
+            ]
+          }
+        ],
+        "anchor": "how"
+      },
+      {
+        "type": "section",
+        "title": "참여 장소",
+        "children": [
+          {
+            "type": "table",
+            "title": "권역별 모임 장소",
+            "caption": "참여 장소와 일정",
+            "columns": [
+              "권역",
+              "장소",
+              "모임 시간"
+            ],
+            "rows": [
+              [
+                "성동",
+                "성수 옥상정원",
+                "토 10:00"
+              ],
+              [
+                "마포",
+                "연남 골목 텃밭",
+                "토 10:30"
+              ],
+              [
+                "관악",
+                "봉천 어린이공원",
+                "일 10:00"
+              ],
+              [
+                "은평",
+                "불광천 쉼터",
+                "일 14:00"
+              ]
+            ],
+            "state": "ready",
+            "variant": "striped"
+          }
+        ],
+        "anchor": "places"
+      },
+      {
+        "type": "cta",
+        "tone": "brand",
+        "title": "이번 주말, 이웃과 흙을 만져요",
+        "action": {
+          "label": "참여 신청",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

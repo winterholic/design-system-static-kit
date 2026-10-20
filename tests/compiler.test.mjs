@@ -68,7 +68,7 @@ test('reject arbitrary top-level override and node CSS or raw HTML', () => {
   for (const key of ['style', 'className', 'html', 'onClick']) reject(b => { b.tree.children[1][key] = 'evil'; }, 'UNKNOWN_KEY');
 });
 test('reject mismatched theme/palette, unknown enums, version locks, prototype ids', () => {
-  reject(b => { b.palette = 'forest'; }, 'PALETTE_THEME');
+  assert.ok(validateBlueprint({...createBlueprint('saas-landing'), palette: 'forest'}).valid, 'palettes are independent of themes');
   reject(b => { b.density = '17px'; }, 'ENUM'); reject(b => { b.catalogVersion = '0.0.0'; }, 'CATALOG_VERSION'); reject(b => { b.version = '1.0'; }, 'VERSION');
   for (const id of ['__proto__', 'constructor', 'toString']) { reject(b => { b.theme = id; }, 'ENUM'); reject(b => { b.palette = id; }, 'ENUM'); }
   reject(b => { b.pageType = 'bogus'; }, 'ENUM');

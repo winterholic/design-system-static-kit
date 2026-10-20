@@ -1,0 +1,205 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "꼬마 작업실",
+  "theme": "kids",
+  "palette": "bright-bold-colors",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "spacious",
+  "radius": "bubble",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "dots",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "dramatic",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "수업",
+        "href": "#class",
+        "icon": "sparkles"
+      },
+      {
+        "label": "후기",
+        "href": "#main",
+        "icon": "star"
+      },
+      {
+        "label": "위치",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "체험 신청",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 꼬마 작업실 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "만들고 그리고 뛰노는 토요일",
+        "description": "5~9세 어린이를 위한 주말 창작 클래스."
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "가을 학기 모집 중",
+        "title": "오늘은 무엇을\n만들어 볼까?",
+        "body": "선생님 한 명이 아이 네 명을 맡아 천천히 함께합니다. 결과보다 만드는 시간이 먼저인 클래스예요.",
+        "action": {
+          "label": "체험 수업 신청",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "수업 보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "photo",
+        "motif": "poster"
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "아이 네 명당",
+            "value": "선생님 1명"
+          },
+          {
+            "type": "metric",
+            "label": "한 번에",
+            "value": "90분"
+          },
+          {
+            "type": "metric",
+            "label": "작품 전시",
+            "value": "매 학기 1회"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "이번 학기 수업",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "card",
+                "title": "색깔 놀이터",
+                "body": "물감을 섞고 번지는 색을 보며 마음껏 그려요.",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "swatches",
+                "ratio": "4:3",
+                "meta": "토 10:00 · 5~7세",
+                "badge": "인기"
+              },
+              {
+                "type": "card",
+                "title": "종이 건축가",
+                "body": "종이 상자로 집과 도시를 만들어요.",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "building",
+                "ratio": "4:3",
+                "meta": "토 13:00 · 6~9세"
+              },
+              {
+                "type": "card",
+                "title": "흙으로 빚기",
+                "body": "점토로 그릇과 동물을 빚습니다.",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "vase",
+                "ratio": "4:3",
+                "meta": "일 10:00 · 5~9세"
+              }
+            ]
+          }
+        ],
+        "anchor": "class"
+      },
+      {
+        "type": "section",
+        "title": "수업은 이렇게 흘러가요",
+        "children": [
+          {
+            "type": "steps",
+            "title": "90분의 흐름",
+            "layout": "horizontal",
+            "items": [
+              {
+                "title": "인사와 몸 풀기",
+                "description": "노래를 부르며 긴장을 풀어요."
+              },
+              {
+                "title": "함께 만들기",
+                "description": "오늘의 재료를 만져 보고 자유롭게 만들어요."
+              },
+              {
+                "title": "이야기 나누기",
+                "description": "내가 만든 것을 친구들에게 소개해요."
+              }
+            ]
+          }
+        ],
+        "surface": "tint"
+      },
+      {
+        "type": "faq",
+        "title": "부모님이 자주 묻는 질문",
+        "items": [
+          {
+            "question": "처음이라 낯을 가려요.",
+            "answer": "체험 수업은 부모님이 함께 들어오실 수 있고, 아이가 편해질 때까지 선생님이 옆에서 천천히 맞춥니다."
+          },
+          {
+            "question": "준비물이 있나요?",
+            "answer": "앞치마만 챙겨 오세요. 재료와 도구는 모두 준비되어 있어요."
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "tone": "brand",
+        "title": "이번 토요일, 체험 수업에서 만나요",
+        "action": {
+          "label": "체험 수업 신청",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

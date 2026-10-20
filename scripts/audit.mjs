@@ -1,15 +1,21 @@
 import assert from 'node:assert/strict';
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
-import {themes, palettes, axes, styleAxes, axisBans, nodeTypes, nodeSpecs, templateList, createBlueprint, repairAxes, pageTypes, limits} from '../src/catalog.mjs';
+import {themes, palettes, axes, styleAxes, axisBans, nodeTypes, nodeSpecs, templateList, createBlueprint, repairAxes, pageTypes, limits, layoutSlots, layoutOptionsOf, CATALOG_VERSION, paletteFamilies} from '../src/catalog.mjs';
 import {compile, validateBlueprint, resolveTokens} from '../src/compiler.mjs';
 import {serializableContrast} from '../src/tokens.mjs';
 
 const t0 = Date.now();
 const evidence = JSON.parse(await readFile(new URL('../docs/evidence/coolors-palettes.json', import.meta.url), 'utf8'));
-const observed = new Set(evidence.palettes.map(p => p.colors.join('-')));
-for (const p of Object.values(palettes)) assert.ok(observed.has(p.colors.join('-')), 'Palette missing in rendered Coolors evidence: ' + p.id);
-for (const t of Object.values(themes)) assert.ok(t.palettes.length >= 3, 'Theme needs 3+ palette candidates: ' + t.id);
-assert.equal(new Set(Object.values(themes).flatMap(t => t.palettes)).size, Object.keys(palettes).length, 'Every palette belongs to exactly one theme');
+const popular = JSON.parse(await readFile(new URL('../docs/evidence/coolors-popular-2026-10-20.json', import.meta.url), 'utf8'));
+const observedOld = new Set(evidence.palettes.map(p => p.colors.join('-'))), observedNew = new Map(popular.palettes.map(p => [p.colors.join('-'), p]));
+for (const p of Object.values(palettes)) {
+  const key = p.colors.join('-');
+  if (p.source.observed === '2026-10-20') { const row = observedNew.get(key); assert.ok(row, 'Library palette missing in popularity evidence: ' + p.id); assert.equal(row.likes, p.likes, 'likes mismatch for ' + p.id); }
+  else assert.ok(observedOld.has(key), 'Palette missing in rendered Coolors evidence: ' + p.id);
+  assert.ok(paletteFamilies[p.family], 'family of ' + p.id);
+}
+for (const t of Object.values(themes)) { assert.ok(t.palettes.length >= 6, 'Theme needs 6+ recommended palettes: ' + t.id); for (const id of t.palettes) assert.ok(palettes[id], 'unknown recommended palette ' + id); assert.equal(new Set(t.palettes).size, t.palettes.length, 'duplicate recommendation in ' + t.id); }
+assert.equal(new Set(Object.values(themes).map(t => t.palettes[0])).size > Object.keys(themes).length * 0.8, true, 'theme defaults should rarely coincide');
 
 // ---- 1. contrast: every palette × mode × role pair ----
 let pairs = 0, modes = 0; const contrastRows = []; let tightest = {margin: Infinity};
@@ -37,12 +43,35 @@ for (const type of nodeTypes) {
   const r = validateBlueprint(b); assert.ok(r.valid, `example for ${type}: ` + JSON.stringify(r.errors)); compile(b); examples++;
 }
 
-// ---- 3. template × theme matrix with each theme's default palette, plus each palette on a rotating template ----
+// ---- 3. template × theme matrix with each theme's default palette, theme variants, layout variants, and each palette on a rotating theme/template ----
 let matrix = 0;
 for (const t of templateList) for (const th of Object.values(themes)) { const b = createBlueprint(t.id, th.id); const r = validateBlueprint(b); assert.ok(r.valid, `${t.id} × ${th.id}: ` + JSON.stringify(r.errors[0])); compile(b); matrix++; }
+let themeVariantPages = 0;
+const themeList = Object.values(themes);
+for (const [i, th] of themeList.entries()) for (const [k, v] of th.variants.entries()) {
+  assert.ok(th.variants.length >= 3, 'theme needs 3+ variants: ' + th.id);
+  for (const t of [templateList.find(x => x.theme === th.id) ?? templateList[i % templateList.length], templateList[(i * 7 + k * 13) % templateList.length], templateList[(i * 11 + k * 5 + 3) % templateList.length]]) {
+    const b = createBlueprint(t.id, th.id, undefined, {themeVariant: v.id}), r = validateBlueprint(b);
+    assert.ok(r.valid, `${t.id} × ${th.id}/${v.id}: ` + JSON.stringify(r.errors[0])); compile(b); themeVariantPages++;
+    for (const [axis, value] of Object.entries(v.set)) assert.ok(!(th.forbid[axis] ?? []).includes(value), `${th.id}/${v.id} uses forbidden ${axis}=${value}`);
+  }
+}
+let layoutOptions = 0, layoutPages = 0;
+for (const [i, t] of templateList.entries()) {
+  const slots = layoutOptionsOf(t.id);
+  for (const slot of slots) for (const o of slot.options) {
+    layoutOptions++;
+    const th = [t.theme, themeList[(i * 3 + layoutOptions) % themeList.length].id][layoutOptions % 2];
+    const b = createBlueprint(t.id, th, undefined, {layout: {[slot.id]: o.id}}), r = validateBlueprint(b);
+    assert.ok(r.valid, `${t.id} layout ${slot.id}=${o.id} on ${th}: ` + JSON.stringify(r.errors[0]));
+    assert.notDeepEqual(b.tree, createBlueprint(t.id, th).tree, `${t.id} ${slot.id}=${o.id} changes nothing`); compile(b); layoutPages++;
+  }
+  // a template with several slots must also survive them all together
+  if (slots.length) { const all = Object.fromEntries(slots.map(s => [s.id, s.options.at(-1).id])), b = createBlueprint(t.id, t.theme, undefined, {layout: all}), r = validateBlueprint(b); assert.ok(r.valid, `${t.id} all layout options: ` + JSON.stringify(r.errors[0])); compile(b); layoutPages++; }
+}
 let palettePages = 0;
 for (const [i, p] of Object.values(palettes).entries()) for (const mode of ['light', 'dark', 'auto']) {
-  const th = themes[p.theme], tpl = templateList[(i * 7) % templateList.length];
+  const th = themeList[(i * 5 + (mode === 'dark' ? 2 : mode === 'auto' ? 4 : 0)) % themeList.length], tpl = templateList[(i * 7) % templateList.length];
   const b = createBlueprint(tpl.id, th.id, p.id); b.mode = mode; repairAxes(b);
   const r = validateBlueprint(b); if (!r.valid) { assert.ok(r.errors.every(e => ['THEME_FORBID', 'AXIS_BAN'].includes(e.code)), JSON.stringify(r.errors)); continue; }
   compile(b); palettePages++;
@@ -93,7 +122,7 @@ while (covered.size < allowedPairs.size) {
 }
 let pairwiseCompiled = 0;
 for (const a of suite) {
-  const th = themes[a.theme], b = createBlueprint('about-team', th.id, pick(th.palettes));
+  const th = themes[a.theme], b = createBlueprint('about-team', th.id, pick(Object.keys(palettes)));
   Object.assign(b, Object.fromEntries(['mode', ...styleAxes].map(k => [k, a[k]])));
   b.chrome.nav = b.chrome.nav.slice(0, 2); // fits every shell; nav limits are a content rule, not an axis rule
   const r = validateBlueprint(b); assert.ok(r.valid, 'pairwise tuple rejected: ' + JSON.stringify(a) + JSON.stringify(r.errors[0]));
@@ -102,9 +131,9 @@ for (const a of suite) {
 
 // ---- 6. palette × mode × shell factorial (raw validation shows what the rules reject) ----
 let factorial = 0, factorialRejected = {}, factorialCompiled = 0;
-for (const p of Object.values(palettes)) for (const mode of axes.mode) for (const shell of axes.shell) {
+for (const [pi, p] of Object.values(palettes).entries()) for (const mode of axes.mode) for (const shell of axes.shell) {
   factorial++;
-  const b = createBlueprint('about-team', p.theme, p.id); Object.assign(b, {mode, shell});
+  const b = createBlueprint('about-team', themeList[(pi + axes.shell.indexOf(shell)) % themeList.length].id, p.id); Object.assign(b, {mode, shell});
   const raw = validateBlueprint(b);
   if (!raw.valid) for (const e of raw.errors) { assert.ok(['THEME_FORBID', 'AXIS_BAN', 'NAV_COUNT', 'NAV_ICON', 'FOOTER_LINKS'].includes(e.code), 'unexpected rejection ' + e.code); factorialRejected[e.code] = (factorialRejected[e.code] ?? 0) + 1; }
   repairAxes(b); if (b.shell !== shell) b.shell = shell; b.chrome.nav = b.chrome.nav.slice(0, 2); b.chrome.nav.forEach((n, i) => { n.icon ??= ['home', 'info'][i]; });
@@ -125,18 +154,22 @@ function countAllowed() {
       const rec = (i, cur) => { if (i === members.length) { if (!rules.some(b => b.bad(cur))) c++; return; } for (const v of vals[members[i]]) { cur[members[i]] = v; rec(i + 1, cur); } };
       rec(0, {}); n *= c;
     }
-    total += n * BigInt(th.palettes.length);
+    total += n * BigInt(Object.keys(palettes).length);
   }
   return total;
 }
 const allowed = countAllowed();
+let layoutCombos = 0n, slotCount = 0, optionCount = 0;
+for (const t of templateList) { let n = 1n; for (const slot of layoutOptionsOf(t.id)) { n *= BigInt(slot.options.length + 1); slotCount++; optionCount += slot.options.length; } layoutCombos += n; }
+const themeVariantCount = themeList.reduce((n, t) => n + t.variants.length, 0);
 
 await mkdir(new URL('../docs/evidence', import.meta.url), {recursive: true});
-const summary = {catalogVersion: '2.0.0', palettes: Object.keys(palettes).length, modes, pairs, tightest: {palette: tightest.palette, mode: tightest.mode, name: tightest.name, ratio: tightest.ratio, minimum: tightest.minimum}, results: contrastRows};
+const summary = {catalogVersion: CATALOG_VERSION, palettes: Object.keys(palettes).length, modes, pairs, tightest: {palette: tightest.palette, mode: tightest.mode, name: tightest.name, ratio: tightest.ratio, minimum: tightest.minimum}, results: contrastRows};
 await writeFile(new URL('../docs/evidence/contrast.json', import.meta.url), JSON.stringify(summary, null, 1) + '\n');
-const coverage = {themes: Object.keys(themes).length, templates: templateList.length, nodeTypes: nodeTypes.length, examples, matrixCompiled: matrix, palettePagesCompiled: palettePages, allowedPairs: allowedPairs.size, pairwiseSuite: suite.length, pairwiseCompiled, factorial, factorialCompiled, factorialRejected, allowedCombinations: allowed.toString(), limits};
+const coverage = {themes: Object.keys(themes).length, templates: templateList.length, nodeTypes: nodeTypes.length, examples, matrixCompiled: matrix, palettePagesCompiled: palettePages, allowedPairs: allowedPairs.size, pairwiseSuite: suite.length, pairwiseCompiled, factorial, factorialCompiled, factorialRejected, allowedCombinations: allowed.toString(), themeVariants: themeVariantCount, themeVariantPagesCompiled: themeVariantPages, layoutSlots: slotCount, layoutOptions: optionCount, layoutOptionPagesCompiled: layoutPages, templateLayoutCombinations: layoutCombos.toString(), paletteFamilies: Object.fromEntries(Object.keys(paletteFamilies).map(f => [f, Object.values(palettes).filter(p => p.family === f).length])), limits};
 await writeFile(new URL('../docs/evidence/coverage.json', import.meta.url), JSON.stringify(coverage, null, 1) + '\n');
-console.log(`AUDIT: ${Object.keys(palettes).length} palettes match rendered Coolors evidence (${evidence.palettes.length} observed); ${modes} color modes, ${pairs} used contrast pairs pass (tightest ${tightest.name} ${tightest.ratio.toFixed(2)}:${tightest.minimum} on ${tightest.palette}/${tightest.mode}).`);
+console.log(`AUDIT: ${Object.keys(palettes).length} palettes match rendered Coolors evidence (${evidence.palettes.length} observed on 10-18, ${popular.palettes.length} with likes on 10-20); ${modes} color modes, ${pairs} used contrast pairs pass (tightest ${tightest.name} ${tightest.ratio.toFixed(2)}:${tightest.minimum} on ${tightest.palette}/${tightest.mode}).`);
 console.log(`CATALOG: ${Object.keys(themes).length} themes, ${Object.keys(palettes).length} palettes, ${templateList.length} templates, ${nodeTypes.length} node types (${examples} examples compile), ${Object.keys(pageTypes).length} page types, ${axisBans.length} axis bans.`);
 console.log(`MATRIX: ${matrix} template×theme pages + ${palettePages} palette×mode pages compile; ${pairwiseCompiled} pairwise tuples cover ${allowedPairs.size} allowed axis-value pairs; ${factorialCompiled}/${factorial} palette×mode×shell compile (${JSON.stringify(factorialRejected)} rejected before repair).`);
+console.log(`VARIANTS: ${themeVariantCount} theme variants (${themeVariantPages} pages compile), ${optionCount} layout options over ${slotCount} template slots (${layoutPages} pages compile), ${layoutCombos.toLocaleString('en-US')} template×layout compositions.`);
 console.log(`SPACE: ${allowed.toLocaleString('en-US')} rule-allowed axis×palette combinations (factored count). ${((Date.now() - t0) / 1000).toFixed(1)}s`);

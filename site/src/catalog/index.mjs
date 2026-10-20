@@ -1,16 +1,18 @@
 /** Catalog 2.0: compiler, validator, UI, schema, and CLI all read this one contract. */
 import {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX} from './axes.mjs';
 import {themes, themeCategories} from './themes.mjs';
-import {palettes} from './palettes.mjs';
+import {palettes, paletteFamilies} from './palettes.mjs';
 import {icons, iconNames} from './icons.mjs';
 import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios, motifs} from './nodes.mjs';
 import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
+import {layoutSlots, applyLayout, layoutSlotIds} from './variants.mjs';
 
-export const CATALOG_VERSION = '2.0.0';
+export const CATALOG_VERSION = '2.1.0';
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
-export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
+export {layoutSlots, applyLayout, layoutSlotIds};
+export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
 export const rules = [
   {id: 'R01', intent: '허용된 속성·값(variant 포함)만. 알 수 없는 키와 범위 밖 값은 실패.', codes: ['UNKNOWN_KEY', 'ENUM', 'STRING', 'NUMBER'], source: 'ADR 0001'},
@@ -74,18 +76,26 @@ export function repairAxes(b) {
   return b;
 }
 
-/** Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair. */
-export function createBlueprint(templateId = 'dashboard-overview', themeId, paletteId) {
+/** 템플릿 하나에서 실제로 고를 수 있는 구성 변형(슬롯과 옵션). */
+export const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree);
+
+/**
+ * Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair.
+ * options.themeVariant: 테마 변형 id(축 값 묶음), options.layout: {슬롯: 옵션} 구성 변형. 둘 다 결과 Blueprint에는 흔적 없이 축·트리 값으로만 남는다.
+ */
+export function createBlueprint(templateId = 'dashboard-overview', themeId, paletteId, options = {}) {
   const t = templates[templateId];
   if (!Object.hasOwn(templates, templateId)) throw new Error('Unknown template: ' + templateId);
   const theme = themes[themeId ?? t.theme];
   if (!theme) throw new Error('Unknown theme: ' + themeId);
   const {mode, ...style} = theme.defaults;
-  const b = {version: BLUEPRINT_VERSION, catalogVersion: CATALOG_VERSION, name: t.name, theme: theme.id, palette: paletteId ?? theme.palettes[0], mode, pageType: t.pageType, ...style};
+  const variant = options.themeVariant ? theme.variants.find(v => v.id === options.themeVariant) : null;
+  if (options.themeVariant && !variant) throw new Error('Unknown theme variant: ' + theme.id + '/' + options.themeVariant);
+  const b = {version: BLUEPRINT_VERSION, catalogVersion: CATALOG_VERSION, name: t.name, theme: theme.id, palette: paletteId ?? theme.palettes[0], mode, pageType: t.pageType, ...style, ...(variant?.set ?? {})};
   const pt = pageTypes[t.pageType], own = theme.id === t.theme;
-  for (const [k, v] of Object.entries(t.axes)) if (own || (k === 'shell' && !pt.shells.includes(b.shell)) || (k === 'width' && pt.widths && !pt.widths.includes(b.width))) b[k] = v;
+  for (const [k, v] of Object.entries(t.axes)) if ((own && !(variant && k in variant.set)) || (k === 'shell' && !pt.shells.includes(b.shell)) || (k === 'width' && pt.widths && !pt.widths.includes(b.width))) b[k] = v;
   b.chrome = structuredClone(t.chrome);
-  b.tree = {type: 'page', children: structuredClone(t.tree)};
+  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout)};
   return repairAxes(b);
 }
 

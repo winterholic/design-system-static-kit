@@ -39,7 +39,7 @@ test('code blocks ship a copy button, a status region and colored tokens; the ru
 test('hero facts live in the copy column of statement/cover/centered heroes and are rejected elsewhere', () => {
   for (const id of ['campaign-donate', 'museum-home', 'hanji-journey', 'agency-home']) {
     const html = compile(createBlueprint(id)).html;
-    assert.match(html, /<div class="kit-hero-copy">[^]*<dl class="kit-hero-facts">[^]*<\/dl><\/div><div class="kit-hero-deco" aria-hidden="true">/, id);
+    assert.match(html, /<div class="kit-hero-copy" data-cpl="\d+">[^]*<dl class="kit-hero-facts">[^]*<\/dl><\/div><div class="kit-hero-deco" aria-hidden="true">/, id);
   }
   const split = withTree('saas-landing', b => { const hero = b.tree.children.find(n => n.type === 'hero'); hero.facts = [{value: '1', label: 'a'}, {value: '2', label: 'b'}]; });
   assert.ok(codes(split).includes('VARIANT_REQUIRES'));

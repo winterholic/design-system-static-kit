@@ -5,8 +5,11 @@
  *    node scripts/test-lab/generate.mjs [--out site/test-lab] [--shard k/n] [--only a|b|c|d] [--force] [--verify]
  *
  *  Sets (seed 20261018, mulberry32):
- *    A: every template x every theme (2440) — preserves the audit matrix as real pages.
- *    B: every palette x light/dark/auto on a rotating template (<=480 valid pages).
+ *    A: template x theme sample (<=~620): each template wears its own theme plus 5 rotating themes, and every theme
+ *       is worn by 8+ templates. The full cross product (every template x every theme, thousands of pages) is still
+ *       compiled and validated in process by scripts/audit.mjs; only the committed pages are sampled to keep the repository small.
+ *    B: every palette x one rotating mode on a rotating theme and template (<=430 valid pages).
+ *    E: theme variants (every variant) and layout variants (first/last option of every template slot, plus all slots together).
  *    C: pairwise axis tuples from the audit greedy suite (450) on about-team.
  *    D: boundary/stress: data states, max-length KO/EN, long URL/numbers, error pages in
  *       dark mode, single-axis sweeps, ban-adjacent allowed pairs, must-reject negatives.
@@ -19,7 +22,7 @@ import {createHash} from 'node:crypto';
 import {mkdir, readFile, writeFile, stat, rm} from 'node:fs/promises';
 import {dirname, join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {themes, palettes, axes, styleAxes, axisBans, templateList, templates, createBlueprint, repairAxes, pageTypes} from '../../src/catalog.mjs';
+import {themes, palettes, axes, styleAxes, axisBans, templateList, templates, createBlueprint, repairAxes, pageTypes, layoutOptionsOf, CATALOG_VERSION} from '../../src/catalog.mjs';
 import {compile, validateBlueprint} from '../../src/compiler.mjs';
 
 export const TEST_LAB_SEED = 20261018;
@@ -46,21 +49,24 @@ function commitSha() { try { return execSync('git rev-parse HEAD', {cwd: fileURL
 /** Full ordered case plan (no I/O). Each entry: {id, set, make() -> blueprint|null, note, viewports}. */
 export function planCases() {
   const cases = [];
-  // ---- A: template x theme ----
-  for (const t of templateList) for (const th of Object.values(themes)) {
-    cases.push({id: `a-${t.id}--${th.id}`, set: 'matrix', template: t.id, theme: th.id,
-      make: () => createBlueprint(t.id, th.id), note: 'template×theme 전수', viewports: [390, 768, 1280]});
+  // ---- A: template x theme sample ----
+  const themeIds = Object.keys(themes), pairs = new Set(), perTheme = Object.fromEntries(themeIds.map(id => [id, 0]));
+  const addPair = (t, th) => { const key = t.id + '--' + th; if (pairs.has(key)) return; pairs.add(key); perTheme[th]++; };
+  templateList.forEach((t, i) => { addPair(t, t.theme); for (let k = 0; k < 5; k++) addPair(t, themeIds[(i * 7 + k * 11 + 3) % themeIds.length]); });
+  themeIds.forEach((th, j) => { for (let k = 0; perTheme[th] < 8; k++) addPair(templateList[(j * 5 + k * 17 + 1) % templateList.length], th); });
+  for (const key of [...pairs].sort()) {
+    const [tid, th] = key.split('--');
+    cases.push({id: 'a-' + tid + '--' + th, set: 'matrix', template: tid, theme: th,
+      make: () => createBlueprint(tid, th), note: 'template×theme 표본(전수는 audit가 프로세스 안에서 컴파일)', viewports: [390, 768, 1280]});
   }
-  // ---- B: palette x mode on rotating template ----
-  const plist = Object.values(palettes);
+  // ---- B: palette x one rotating mode, theme and template ----
+  const plist = Object.values(palettes), modes = ['light', 'dark', 'auto'];
   plist.forEach((p, i) => {
-    for (const mode of ['light', 'dark', 'auto']) {
-      const tpl = templateList[(i * 7) % templateList.length];
-      cases.push({id: `b-${p.id}--${mode}`, set: 'palette-mode', template: tpl.id, theme: p.theme, palette: p.id, mode,
-        make: () => { const b = createBlueprint(tpl.id, themes[p.theme].id, p.id); b.mode = mode; repairAxes(b);
-          const r = validateBlueprint(b);
-          return r.valid ? b : {rejected: true, codes: r.errors.map(e => e.code)}; }, note: `팔레트×모드 (${tpl.id} 회전)`, viewports: [390, 1280]});
-    }
+    const mode = modes[i % 3], th = themeIds[(i * 5 + 1) % themeIds.length], tpl = templateList[(i * 7) % templateList.length];
+    cases.push({id: 'b-' + p.id + '--' + mode, set: 'palette-mode', template: tpl.id, theme: th, palette: p.id, mode,
+      make: () => { const b = createBlueprint(tpl.id, th, p.id); b.mode = mode; repairAxes(b);
+        const r = validateBlueprint(b);
+        return r.valid ? b : {rejected: true, codes: r.errors.map(e => e.code)}; }, note: '팔레트×모드 (' + th + ' · ' + tpl.id + ')', viewports: [390, 1280]});
   });
   // ---- C: pairwise suite (same greedy algorithm and seed as scripts/audit.mjs) ----
   for (const [i, a] of pairwiseSuite().entries()) {
@@ -70,6 +76,26 @@ export function planCases() {
         b.chrome.nav = b.chrome.nav.slice(0, 2);
         return validateBlueprint(b).valid ? b : null; }, note: '쌍별 커버링 튜플', viewports: [390, 1280], axes: a});
   }
+  // ---- E: theme variants and layout variants ----
+  themeIds.forEach((th, i) => themes[th].variants.forEach((v, k) => {
+    const tpl = templateList.find(t => t.theme === th) ?? templateList[(i * 7 + k * 13) % templateList.length];
+    cases.push({id: 'e-theme-' + th + '--' + v.id, set: 'variant', template: tpl.id, theme: th,
+      make: () => createBlueprint(tpl.id, th, undefined, {themeVariant: v.id}), note: '테마 변형 ' + th + '/' + v.id, viewports: [390, 1280]});
+  }));
+  templateList.forEach((t, i) => {
+    const slots = layoutOptionsOf(t.id), th = t.theme;
+    slots.forEach((slot, si) => {
+      const o = (i + si) % 2 ? slot.options.at(-1) : slot.options[0];
+      cases.push({id: 'e-layout-' + t.id + '--' + slot.id + '-' + o.id, set: 'variant', template: t.id, theme: th,
+        make: () => createBlueprint(t.id, th, undefined, {layout: {[slot.id]: o.id}}), note: '구성 변형 ' + slot.id + '=' + o.id, viewports: [390, 1280]});
+    });
+    if (slots.length > 1) {
+      const all = Object.fromEntries(slots.map((slot, si) => [slot.id, ((i + si) % 2 ? slot.options[0] : slot.options.at(-1)).id]));
+      const other = themeIds[(i * 3 + 2) % themeIds.length];
+      cases.push({id: 'e-layout-' + t.id + '--all', set: 'variant', template: t.id, theme: other,
+        make: () => createBlueprint(t.id, other, undefined, {layout: all}), note: '구성 변형 전부 (' + other + ')', viewports: [390, 1280]});
+    }
+  });
   // ---- D: boundary / stress ----
   for (const d of stressCases()) cases.push(d);
   return cases;
@@ -236,10 +262,7 @@ export function negativeCases() {
     const h = firstHero(createBlueprint('saas-landing'));
     b.tree.children.splice(1, 0, structuredClone(h), structuredClone(h));
   });
-  add('palette-mismatch', 'PALETTE_THEME', b => {
-    const other = Object.values(palettes).find(p => !themes[b.theme].palettes.includes(p.id));
-    b.palette = other.id;
-  });
+  add('unknown-palette', 'ENUM', b => { b.palette = 'no-such-palette'; });
   add('unknown-key', 'UNKNOWN_KEY', b => { firstHeader(b).style = 'color:red'; });
   add('empty-ready-table', 'STATE_DATA', b => {
     b.tree.children.push({type: 'table', title: '빈 표', caption: 'ready인데 행 없음', columns: ['A'], rows: [], state: 'ready'});
@@ -295,7 +318,7 @@ async function main() {
     if ((i + 1) % 500 === 0) console.log(`  ... ${i + 1}/${plan.length}`);
   }
   // pass 2: canonical choice per sha is order-independent: lowest set rank, then lowest id
-  const idRank = id => ({a: 0, b: 1, c: 2, d: 3}[id[0]] ?? 9);
+  const idRank = id => ({a: 0, b: 1, c: 2, e: 3, d: 4}[id[0]] ?? 9);
   const bySha = new Map();
   for (const b of built) { if (!bySha.has(b.hash)) bySha.set(b.hash, []); bySha.get(b.hash).push(b); }
   const canonical = [], duplicates = [];
@@ -371,11 +394,11 @@ async function main() {
   const dupList = duplicates;
   // NOTE: no commit SHA or timestamps in committed files — CI rebuilds and diffs byte-for-byte.
   // Run identity (commit, time) goes to stdout and the delivery report only.
-  const manifest = {generator: GENERATOR_VERSION, seed: TEST_LAB_SEED, catalogVersion: '2.0.0',
+  const manifest = {generator: GENERATOR_VERSION, seed: TEST_LAB_SEED, catalogVersion: CATALOG_VERSION,
     cases: allCases, duplicates: dupList, skipped: [...prevSkipped.values()].sort((a, b) => a.id < b.id ? -1 : 1), negatives, coverage, uncovered,
     totals: {cases: allCases.length, matrix: allCases.filter(e => e.set === 'matrix').length,
       paletteMode: allCases.filter(e => e.set === 'palette-mode').length, pairwise: allCases.filter(e => e.set === 'pairwise').length,
-      stress: allCases.filter(e => e.set === 'stress').length, negativeRejected: negatives.filter(n => n.rejected).length,
+      stress: allCases.filter(e => e.set === 'stress').length, variant: allCases.filter(e => e.set === 'variant').length, negativeRejected: negatives.filter(n => n.rejected).length,
       ruleHoles: holes.map(h => h.id)}};
   await writeFile(manifestPath, JSON.stringify(manifest, null, 1) + '\n');
   await writeFile(join(OUT, 'coverage.json'), JSON.stringify({generator: GENERATOR_VERSION, seed: TEST_LAB_SEED, coverage, uncovered, totals: manifest.totals}, null, 1) + '\n');

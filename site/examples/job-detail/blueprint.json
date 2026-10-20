@@ -1,0 +1,215 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "모두웍스",
+  "theme": "enterprise",
+  "palette": "cotton-candy-skies",
+  "mode": "light",
+  "pageType": "docs",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "공고",
+        "href": "#main",
+        "icon": "list"
+      },
+      {
+        "label": "팀 소개",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "복지",
+        "href": "#main",
+        "icon": "heart"
+      }
+    ],
+    "action": {
+      "label": "지원하기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 모두웍스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "프로덕트 디자이너",
+        "description": "디자인 시스템 팀 · 서울 / 원격 · 정규직",
+        "eyebrow": "채용 중",
+        "meta": [
+          "경력 무관",
+          "상시 채용",
+          "지원 128명"
+        ],
+        "actions": [
+          {
+            "label": "지원하기",
+            "href": "#main",
+            "variant": "primary"
+          },
+          {
+            "label": "링크 복사",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "공고 정보",
+        "sticky": "yes",
+        "children": [
+          {
+            "type": "section",
+            "title": "공고 내용",
+            "children": [
+              {
+                "type": "section",
+                "title": "하는 일",
+                "children": [
+                  {
+                    "type": "prose",
+                    "title": "이런 일을 맡아요",
+                    "body": "디자인 시스템을 사용하는 열두 개 제품 팀과 함께 부품과 규칙을 설계합니다.\n\n새 부품을 추가하기 전에 쓰임을 함께 정의하고, 만든 부품이 실제 화면에서 어떻게 쓰이는지 지켜봅니다."
+                  },
+                  {
+                    "type": "list",
+                    "title": "구체적으로는",
+                    "variant": "check",
+                    "items": [
+                      {
+                        "title": "컴포넌트와 토큰 설계",
+                        "description": "쓰임, 상태, 접근성 기준 정리"
+                      },
+                      {
+                        "title": "제품 팀 지원",
+                        "description": "화면 리뷰와 규칙 개정 논의"
+                      },
+                      {
+                        "title": "문서화",
+                        "description": "쓰는 방법과 쓰지 않는 경우를 함께 기록"
+                      }
+                    ],
+                    "state": "ready"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "title": "함께하면 좋은 분",
+                "children": [
+                  {
+                    "type": "list",
+                    "title": "자격 요건",
+                    "variant": "plain",
+                    "items": [
+                      {
+                        "title": "웹 제품 디자인 경험"
+                      },
+                      {
+                        "title": "Figma와 코드를 오가며 협업한 경험"
+                      },
+                      {
+                        "title": "접근성 기준에 대한 이해"
+                      }
+                    ],
+                    "state": "ready"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "title": "채용 과정",
+                "children": [
+                  {
+                    "type": "steps",
+                    "title": "네 번의 만남",
+                    "items": [
+                      {
+                        "title": "서류 검토",
+                        "description": "영업일 5일 안에 결과를 알려 드려요."
+                      },
+                      {
+                        "title": "과제 이야기",
+                        "description": "60분, 경험한 작업을 함께 이야기합니다."
+                      },
+                      {
+                        "title": "팀 면접",
+                        "description": "함께 일할 동료 세 명과 만납니다."
+                      },
+                      {
+                        "title": "처우 협의",
+                        "description": "조건을 투명하게 공유합니다."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "properties",
+            "title": "공고 정보",
+            "layout": "stacked",
+            "items": [
+              {
+                "label": "근무지",
+                "value": "서울 성동구 · 주 2일 원격"
+              },
+              {
+                "label": "고용 형태",
+                "value": "정규직 · 수습 3개월"
+              },
+              {
+                "label": "마감",
+                "value": "채용 시까지"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "tone": "brand",
+        "title": "이 자리가 마음에 드시나요?",
+        "body": "이력서 없이 포트폴리오 링크만으로도 지원할 수 있어요.",
+        "action": {
+          "label": "지원하기",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

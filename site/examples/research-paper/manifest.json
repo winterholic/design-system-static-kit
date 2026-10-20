@@ -1,0 +1,1087 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.1.0",
+  "theme": "academic",
+  "palette": "deep-sea-2",
+  "mode": "light",
+  "pageType": "article",
+  "axes": {
+    "shell": "editorial",
+    "typography": "editorial",
+    "density": "spacious",
+    "radius": "square",
+    "control": "match",
+    "elevation": "flat",
+    "motion": "none",
+    "icon": "line",
+    "ornament": "none",
+    "backdrop": "plain",
+    "width": "narrow",
+    "scale": "balanced",
+    "weight": "regular",
+    "footer": "simple"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/0d1321-1d2d44-3e5c76-748cab-f0ebd8",
+      "discovery": "https://coolors.co/palettes/popular",
+      "observed": "2026-10-18",
+      "method": "rendered Coolors palette listing (Playwright Chromium / ttakkari_browser), swatches read from page text",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#0D1321",
+      "#1D2D44",
+      "#3E5C76",
+      "#748CAB",
+      "#F0EBD8"
+    ],
+    "brandSeed": "#3E5C76",
+    "accentSeed": "#F0EBD8",
+    "action": "#3E5C76",
+    "accent": "#F0EBD8",
+    "adjusted": false,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "mode": "light",
+      "name": "text/canvas",
+      "foreground": "#1B2530",
+      "background": "#FDFCFA",
+      "ratio": 15.12738903,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/surface",
+      "foreground": "#1B2530",
+      "background": "#FFFFFF",
+      "ratio": 15.51063746,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/soft",
+      "foreground": "#1B2530",
+      "background": "#F1F4F5",
+      "ratio": 14.03265269,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/sunken",
+      "foreground": "#1B2530",
+      "background": "#F4F3F1",
+      "ratio": 13.9869248,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/accentSoft",
+      "foreground": "#1B2530",
+      "background": "#FEFDFB",
+      "ratio": 15.2575075,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/canvas",
+      "foreground": "#546376",
+      "background": "#FDFCFA",
+      "ratio": 5.98285616,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/surface",
+      "foreground": "#546376",
+      "background": "#FFFFFF",
+      "ratio": 6.13443025,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/soft",
+      "foreground": "#546376",
+      "background": "#F1F4F5",
+      "ratio": 5.54988983,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/sunken",
+      "foreground": "#546376",
+      "background": "#F4F3F1",
+      "ratio": 5.53180453,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/accentSoft",
+      "foreground": "#546376",
+      "background": "#FEFDFB",
+      "ratio": 6.03431779,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/canvas",
+      "foreground": "#3E5C76",
+      "background": "#FDFCFA",
+      "ratio": 6.83322002,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/surface",
+      "foreground": "#3E5C76",
+      "background": "#FFFFFF",
+      "ratio": 7.00633786,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/soft",
+      "foreground": "#3E5C76",
+      "background": "#F1F4F5",
+      "ratio": 6.33871471,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/sunken",
+      "foreground": "#3E5C76",
+      "background": "#F4F3F1",
+      "ratio": 6.31805888,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/accentSoft",
+      "foreground": "#3E5C76",
+      "background": "#FEFDFB",
+      "ratio": 6.89199607,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FDFCFA",
+      "ratio": 5.8429839,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.99101436,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#F1F4F5",
+      "ratio": 5.42013983,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/sunken",
+      "foreground": "#18714C",
+      "background": "#F4F3F1",
+      "ratio": 5.40247733,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/accentSoft",
+      "foreground": "#18714C",
+      "background": "#FEFDFB",
+      "ratio": 5.89324242,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#FDFCFA",
+      "ratio": 5.20839421,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#F1F4F5",
+      "ratio": 4.83147402,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/sunken",
+      "foreground": "#946000",
+      "background": "#F4F3F1",
+      "ratio": 4.8157298,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/accentSoft",
+      "foreground": "#946000",
+      "background": "#FEFDFB",
+      "ratio": 5.2531943,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FDFCFA",
+      "ratio": 5.64473077,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.78773854,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#F1F4F5",
+      "ratio": 5.23623385,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/sunken",
+      "foreground": "#B83543",
+      "background": "#F4F3F1",
+      "ratio": 5.21917064,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/accentSoft",
+      "foreground": "#B83543",
+      "background": "#FEFDFB",
+      "ratio": 5.69328401,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/canvas",
+      "foreground": "#2A63C9",
+      "background": "#FDFCFA",
+      "ratio": 5.49593528,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/surface",
+      "foreground": "#2A63C9",
+      "background": "#FFFFFF",
+      "ratio": 5.63517335,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/soft",
+      "foreground": "#2A63C9",
+      "background": "#F1F4F5",
+      "ratio": 5.09820636,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/sunken",
+      "foreground": "#2A63C9",
+      "background": "#F4F3F1",
+      "ratio": 5.08159295,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/accentSoft",
+      "foreground": "#2A63C9",
+      "background": "#FEFDFB",
+      "ratio": 5.54320865,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/canvas",
+      "foreground": "#716E66",
+      "background": "#FDFCFA",
+      "ratio": 4.9658702,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/surface",
+      "foreground": "#716E66",
+      "background": "#FFFFFF",
+      "ratio": 5.09167921,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/soft",
+      "foreground": "#716E66",
+      "background": "#F1F4F5",
+      "ratio": 4.60650094,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/sunken",
+      "foreground": "#716E66",
+      "background": "#F4F3F1",
+      "ratio": 4.59148983,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/accentSoft",
+      "foreground": "#716E66",
+      "background": "#FEFDFB",
+      "ratio": 5.0085842,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "focus/canvas",
+      "foreground": "#3E5C76",
+      "background": "#FDFCFA",
+      "ratio": 6.83322002,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/surface",
+      "foreground": "#3E5C76",
+      "background": "#FFFFFF",
+      "ratio": 7.00633786,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/soft",
+      "foreground": "#3E5C76",
+      "background": "#F1F4F5",
+      "ratio": 6.33871471,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/sunken",
+      "foreground": "#3E5C76",
+      "background": "#F4F3F1",
+      "ratio": 6.31805888,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/accentSoft",
+      "foreground": "#3E5C76",
+      "background": "#FEFDFB",
+      "ratio": 6.89199607,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#375168",
+      "ratio": 8.26995631,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#3E5C76",
+      "ratio": 7.00633786,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAccent/accent",
+      "foreground": "#10151C",
+      "background": "#F0EBD8",
+      "ratio": 15.33939424,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FDFCFA",
+      "ratio": 3.84310448,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.94046853,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/sunken",
+      "foreground": "#78818E",
+      "background": "#F4F3F1",
+      "ratio": 3.5533702,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/canvas",
+      "foreground": "#3E5C76",
+      "background": "#FDFCFA",
+      "ratio": 6.83322002,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/surface",
+      "foreground": "#3E5C76",
+      "background": "#FFFFFF",
+      "ratio": 7.00633786,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/canvas",
+      "foreground": "#959286",
+      "background": "#FDFCFA",
+      "ratio": 3.04157886,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/surface",
+      "foreground": "#959286",
+      "background": "#FFFFFF",
+      "ratio": 3.11863647,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/canvas",
+      "foreground": "#0D1321",
+      "background": "#FDFCFA",
+      "ratio": 18.08929318,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/surface",
+      "foreground": "#0D1321",
+      "background": "#FFFFFF",
+      "ratio": 18.54758067,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/canvas",
+      "foreground": "#1D2D44",
+      "background": "#FDFCFA",
+      "ratio": 13.55406993,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/surface",
+      "foreground": "#1D2D44",
+      "background": "#FFFFFF",
+      "ratio": 13.89745873,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/canvas",
+      "foreground": "#748CAB",
+      "background": "#FDFCFA",
+      "ratio": 3.36755836,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/surface",
+      "foreground": "#748CAB",
+      "background": "#FFFFFF",
+      "ratio": 3.45287457,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@0",
+      "foreground": "#1B2530",
+      "background": "#FDFCFA",
+      "ratio": 15.12738903,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@0",
+      "foreground": "#546376",
+      "background": "#FDFCFA",
+      "ratio": 5.98285616,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@1",
+      "foreground": "#1B2530",
+      "background": "#FCFBFA",
+      "ratio": 15.00719688,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@1",
+      "foreground": "#546376",
+      "background": "#FCFBFA",
+      "ratio": 5.93532037,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@2",
+      "foreground": "#1B2530",
+      "background": "#FBFAF9",
+      "ratio": 14.8783939,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@2",
+      "foreground": "#546376",
+      "background": "#FBFAF9",
+      "ratio": 5.88437902,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@3",
+      "foreground": "#1B2530",
+      "background": "#F9FAF9",
+      "ratio": 14.82381231,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@3",
+      "foreground": "#546376",
+      "background": "#F9FAF9",
+      "ratio": 5.86279209,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@4",
+      "foreground": "#1B2530",
+      "background": "#F8F9F8",
+      "ratio": 14.69597935,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@4",
+      "foreground": "#546376",
+      "background": "#F8F9F8",
+      "ratio": 5.81223438,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@5",
+      "foreground": "#1B2530",
+      "background": "#F7F8F8",
+      "ratio": 14.57797118,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@5",
+      "foreground": "#546376",
+      "background": "#F7F8F8",
+      "ratio": 5.76556235,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@6",
+      "foreground": "#1B2530",
+      "background": "#F6F7F7",
+      "ratio": 14.45144694,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@6",
+      "foreground": "#546376",
+      "background": "#F6F7F7",
+      "ratio": 5.71552223,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@7",
+      "foreground": "#1B2530",
+      "background": "#F5F6F7",
+      "ratio": 14.33469658,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@7",
+      "foreground": "#546376",
+      "background": "#F5F6F7",
+      "ratio": 5.66934767,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@8",
+      "foreground": "#1B2530",
+      "background": "#F3F6F6",
+      "ratio": 14.27274705,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@8",
+      "foreground": "#546376",
+      "background": "#F3F6F6",
+      "ratio": 5.64484674,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@9",
+      "foreground": "#1B2530",
+      "background": "#F2F5F6",
+      "ratio": 14.15691069,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@9",
+      "foreground": "#546376",
+      "background": "#F2F5F6",
+      "ratio": 5.59903366,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@10",
+      "foreground": "#1B2530",
+      "background": "#F1F4F5",
+      "ratio": 14.03265269,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@10",
+      "foreground": "#546376",
+      "background": "#F1F4F5",
+      "ratio": 5.54988983,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@0",
+      "foreground": "#1B2530",
+      "background": "#F1F4F5",
+      "ratio": 14.03265269,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@0",
+      "foreground": "#546376",
+      "background": "#F1F4F5",
+      "ratio": 5.54988983,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@1",
+      "foreground": "#1B2530",
+      "background": "#F2F5F6",
+      "ratio": 14.15691069,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@1",
+      "foreground": "#546376",
+      "background": "#F2F5F6",
+      "ratio": 5.59903366,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@2",
+      "foreground": "#1B2530",
+      "background": "#F4F6F6",
+      "ratio": 14.29910186,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@2",
+      "foreground": "#546376",
+      "background": "#F4F6F6",
+      "ratio": 5.65527002,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@3",
+      "foreground": "#1B2530",
+      "background": "#F5F7F7",
+      "ratio": 14.42480514,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@3",
+      "foreground": "#546376",
+      "background": "#F5F7F7",
+      "ratio": 5.70498545,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@4",
+      "foreground": "#1B2530",
+      "background": "#F6F8F7",
+      "ratio": 14.5420401,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@4",
+      "foreground": "#546376",
+      "background": "#F6F8F7",
+      "ratio": 5.75135167,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@5",
+      "foreground": "#1B2530",
+      "background": "#F8F9F8",
+      "ratio": 14.69597935,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@5",
+      "foreground": "#546376",
+      "background": "#F8F9F8",
+      "ratio": 5.81223438,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@6",
+      "foreground": "#1B2530",
+      "background": "#F9F9F9",
+      "ratio": 14.73224774,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@6",
+      "foreground": "#546376",
+      "background": "#F9F9F9",
+      "ratio": 5.82657846,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@7",
+      "foreground": "#1B2530",
+      "background": "#FAFAF9",
+      "ratio": 14.85103075,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@7",
+      "foreground": "#546376",
+      "background": "#FAFAF9",
+      "ratio": 5.87355694,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@8",
+      "foreground": "#1B2530",
+      "background": "#FBFBFA",
+      "ratio": 14.9796888,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@8",
+      "foreground": "#546376",
+      "background": "#FBFBFA",
+      "ratio": 5.92444097,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@9",
+      "foreground": "#1B2530",
+      "background": "#FDFCFA",
+      "ratio": 15.12738903,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@9",
+      "foreground": "#546376",
+      "background": "#FDFCFA",
+      "ratio": 5.98285616,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@10",
+      "foreground": "#1B2530",
+      "background": "#FEFDFB",
+      "ratio": 15.2575075,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@10",
+      "foreground": "#546376",
+      "background": "#FEFDFB",
+      "ratio": 6.03431779,
+      "minimum": 4.5
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.1.0",
+    "name": "도시 열섬 연구",
+    "theme": "academic",
+    "palette": "deep-sea-2",
+    "mode": "light",
+    "pageType": "article",
+    "shell": "editorial",
+    "typography": "editorial",
+    "density": "spacious",
+    "radius": "square",
+    "control": "match",
+    "elevation": "flat",
+    "motion": "none",
+    "icon": "line",
+    "ornament": "none",
+    "backdrop": "plain",
+    "width": "narrow",
+    "scale": "balanced",
+    "weight": "regular",
+    "footer": "simple",
+    "chrome": {
+      "nav": [
+        {
+          "label": "논문",
+          "href": "#main",
+          "icon": "file"
+        },
+        {
+          "label": "자료",
+          "href": "#main",
+          "icon": "download"
+        },
+        {
+          "label": "인용",
+          "href": "#main",
+          "icon": "copy"
+        }
+      ],
+      "footerNote": "© 2026 도시 열섬 연구실",
+      "footerLinks": [
+        {
+          "label": "이용 조건",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "도시 하천 복원이 여름철 야간 기온에 미친 영향",
+          "description": "서울 3개 하천 구간의 5년 관측 분석",
+          "eyebrow": "원저 논문",
+          "meta": [
+            "김다선 · 이지훈",
+            "2026.10.",
+            "DOI 10.0000/example"
+          ]
+        },
+        {
+          "type": "prose",
+          "title": "초록",
+          "body": "하천 복원 구간 인근의 여름철 야간 기온이 복원 전과 비교해 평균 1.4도 낮아졌다. 이 연구는 2021~2025년 세 개 하천 구간의 관측 자료를 비교해 복원 효과가 하천 중심에서 어느 거리까지 이어지는지 분석했다. 효과는 하천 중심에서 약 280m까지 유의했다.",
+          "variant": "lead"
+        },
+        {
+          "type": "properties",
+          "title": "연구 개요",
+          "layout": "inline",
+          "items": [
+            {
+              "label": "관측 지점",
+              "value": "42곳"
+            },
+            {
+              "label": "관측 기간",
+              "value": "2021.6 ~ 2025.9"
+            },
+            {
+              "label": "분석 방법",
+              "value": "이중 차분 회귀"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "방법",
+          "children": [
+            {
+              "type": "prose",
+              "title": "관측 설계",
+              "body": "복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다."
+            },
+            {
+              "type": "media",
+              "kind": "chart",
+              "ratio": "16:9",
+              "alt": "하천 중심에서의 거리에 따른 야간 기온 차이 그래프",
+              "caption": "그림 1. 하천 중심에서 멀어질수록 기온 감소 효과가 줄어든다."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "결과",
+          "children": [
+            {
+              "type": "table",
+              "title": "거리별 기온 차이",
+              "caption": "복원 구간과 대조 구간의 야간 평균 기온 차이",
+              "columns": [
+                "거리",
+                "차이(℃)",
+                "표준오차",
+                "유의성"
+              ],
+              "rows": [
+                [
+                  "0~100m",
+                  "-1.8",
+                  "0.21",
+                  "p<0.001"
+                ],
+                [
+                  "100~200m",
+                  "-1.4",
+                  "0.19",
+                  "p<0.001"
+                ],
+                [
+                  "200~300m",
+                  "-0.7",
+                  "0.24",
+                  "p<0.01"
+                ],
+                [
+                  "300m 이상",
+                  "-0.1",
+                  "0.22",
+                  "유의하지 않음"
+                ]
+              ],
+              "state": "ready",
+              "variant": "plain"
+            },
+            {
+              "type": "quote",
+              "quote": "하천 복원의 냉각 효과는 폭 약 280m의 띠로 나타났고, 그 바깥에서는 통계적으로 구분되지 않았다.",
+              "author": "연구진"
+            }
+          ]
+        },
+        {
+          "type": "notice",
+          "tone": "info",
+          "title": "한계",
+          "body": "센서 위치가 현장 접근성에 영향을 받았고, 기상 조건은 연도마다 달랐다. 일반화에는 추가 구간의 관측이 필요하다."
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "2f39b66edb36ce11a5cc626239f205701aae1841385edf2a71137e1401e65e20",
+      "tokens.css": "c537d4b7582221fcb43f4686c6c2949d673f291555edb7ffdf85b224fd3b46c2",
+      "tokens.json": "586bccc4203bfcfc8373c3896488323e6e6a0ec802aa3c1f839ee2ac200616e0",
+      "blueprint.json": "d79c24e768342653aac5c941991a129d86476b9b8bc94fca63397c9de475798f"
+    }
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "메종 아르카",
+  "theme": "luxe",
+  "palette": "gold",
+  "mode": "dark",
+  "pageType": "landing",
+  "shell": "centered",
+  "typography": "serif",
+  "density": "spacious",
+  "radius": "square",
+  "control": "square",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "lines",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "dramatic",
+  "weight": "regular",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "컬렉션",
+        "href": "#collection",
+        "icon": "bag"
+      },
+      {
+        "label": "공방",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "수선",
+        "href": "#main",
+        "icon": "refresh"
+      },
+      {
+        "label": "매장",
+        "href": "#main",
+        "icon": "map-pin"
+      }
+    ],
+    "action": {
+      "label": "방문 예약",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 메종 아르카 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "고객센터",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "시간이 만든 가죽, 손으로 이어 온 세 대",
+        "description": "1962년부터 이어 온 서울의 가죽 공방."
+      },
+      {
+        "type": "hero",
+        "variant": "cover",
+        "eyebrow": "Maison Arca · Seoul",
+        "title": "오래 쓸수록\n당신을 닮습니다.",
+        "body": "가죽 선별부터 마지막 바느질까지 모두 한 공방에서, 한 명의 장인이 맡습니다.",
+        "facts": [
+          {
+            "value": "62년",
+            "label": "이어 온 공방"
+          },
+          {
+            "value": "38시간",
+            "label": "가방 하나의 제작"
+          },
+          {
+            "value": "평생",
+            "label": "수선 보증"
+          }
+        ],
+        "action": {
+          "label": "컬렉션 보기",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "공방 예약",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "section",
+        "title": "이번 시즌 컬렉션",
+        "children": [
+          {
+            "type": "gallery",
+            "layout": "showcase",
+            "items": [
+              {
+                "kind": "photo",
+                "motif": "bag",
+                "alt": "검은 가죽 토트백",
+                "caption": "아르카 토트 · 2,480,000원"
+              },
+              {
+                "kind": "photo",
+                "motif": "watch",
+                "alt": "가죽 스트랩 시계",
+                "caption": "클래식 스트랩 · 420,000원"
+              },
+              {
+                "kind": "photo",
+                "motif": "bottle",
+                "alt": "가죽 케이스 향수",
+                "caption": "레더 오 드 퍼퓸 · 360,000원"
+              },
+              {
+                "kind": "photo",
+                "motif": "chair",
+                "alt": "가죽 라운지 체어",
+                "caption": "라운지 체어 · 5,800,000원"
+              }
+            ]
+          }
+        ],
+        "anchor": "collection"
+      },
+      {
+        "type": "section",
+        "title": "장인의 방식",
+        "children": [
+          {
+            "type": "split",
+            "children": [
+              {
+                "type": "prose",
+                "title": "가죽은 계절을 기다립니다",
+                "body": "이탈리아와 프랑스의 소규모 무두질 공방에서 한 해에 두 번만 가죽을 들여옵니다. 마음에 들지 않는 결은 쓰지 않기 때문에 한 장에서 나오는 가방은 많아야 세 개입니다.\n\n그렇게 고른 가죽을 사람의 손으로 재단하고, 사람의 손으로 꿰맵니다."
+              },
+              {
+                "type": "media",
+                "kind": "photo",
+                "ratio": "4:3",
+                "alt": "작업대 위에서 가죽을 재단하는 장인의 손",
+                "motif": "bag"
+              }
+            ]
+          }
+        ],
+        "description": "빠르게 만드는 방법을 알지만 그렇게 하지 않습니다."
+      },
+      {
+        "type": "quote",
+        "quote": "이십 년 전에 산 지갑이 지금은 제 손에 가장 잘 맞습니다.",
+        "author": "정서윤",
+        "role": "이십 년째 고객"
+      },
+      {
+        "type": "cta",
+        "tone": "inverse",
+        "title": "공방에서 직접 만나 보세요",
+        "body": "예약제로 운영합니다. 방문 한 시간 동안 장인이 함께합니다.",
+        "action": {
+          "label": "방문 예약",
+          "href": "#main",
+          "variant": "primary"
+        }
+      }
+    ]
+  }
+}

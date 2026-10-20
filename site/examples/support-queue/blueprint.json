@@ -1,0 +1,122 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "허브",
+  "theme": "hub",
+  "palette": "peachy-blossom-delight",
+  "mode": "light",
+  "pageType": "community",
+  "shell": "sidebar",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "dots",
+  "backdrop": "tint",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "대기열",
+        "href": "#main",
+        "icon": "message"
+      },
+      {
+        "label": "보고서",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "고객",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "허브 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "문의 대기열",
+        "description": "답변 대기 5건 · 평균 응답 18분"
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "문의 검색",
+        "filters": [
+          "전체",
+          "내 담당",
+          "긴급",
+          "해결됨"
+        ],
+        "selected": 1
+      },
+      {
+        "type": "master-detail",
+        "title": "문의 목록",
+        "items": [
+          {
+            "title": "결제가 두 번 됐어요",
+            "meta": "정민 · 8분 전 · 긴급",
+            "preview": "어제 저녁 결제가 두 건 승인됐습니다. 한 건을 취소하고 싶어요.",
+            "state": "unread"
+          },
+          {
+            "title": "비밀번호 재설정 메일이 오지 않아요",
+            "meta": "현우 · 25분 전",
+            "preview": "스팸함까지 확인했는데 메일이 없습니다.",
+            "state": "unread"
+          },
+          {
+            "title": "세금계산서 발행 문의",
+            "meta": "지윤 · 1시간 전",
+            "preview": "10월 이용분 세금계산서를 사업자 정보로 받고 싶어요."
+          },
+          {
+            "title": "팀원 초대 한도",
+            "meta": "도윤 · 2시간 전",
+            "preview": "스타터에서 팀원을 더 초대하려면 어떻게 하나요?"
+          },
+          {
+            "title": "다크 모드 지원 계획",
+            "meta": "서아 · 어제",
+            "preview": "야간에 보기가 힘들어요. 다크 모드 계획이 있을까요?"
+          }
+        ],
+        "selected": 0,
+        "detail": {
+          "title": "결제가 두 번 됐어요",
+          "meta": "정민 · 8분 전 · 긴급",
+          "body": "어제 저녁 8시쯤 결제를 했는데 같은 금액이 두 건 승인되었습니다. 한 건을 취소하고 싶어요.\n\n주문번호는 A-10231이고 카드는 신한카드입니다.\n\n[처리 메모] 중복 승인 확인 후 한 건 취소 요청 예정."
+        }
+      }
+    ]
+  }
+}

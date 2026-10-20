@@ -1,0 +1,168 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "도시 열섬 연구",
+  "theme": "academic",
+  "palette": "deep-sea-2",
+  "mode": "light",
+  "pageType": "article",
+  "shell": "editorial",
+  "typography": "editorial",
+  "density": "spacious",
+  "radius": "square",
+  "control": "match",
+  "elevation": "flat",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "narrow",
+  "scale": "balanced",
+  "weight": "regular",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "논문",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "자료",
+        "href": "#main",
+        "icon": "download"
+      },
+      {
+        "label": "인용",
+        "href": "#main",
+        "icon": "copy"
+      }
+    ],
+    "footerNote": "© 2026 도시 열섬 연구실",
+    "footerLinks": [
+      {
+        "label": "이용 조건",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "도시 하천 복원이 여름철 야간 기온에 미친 영향",
+        "description": "서울 3개 하천 구간의 5년 관측 분석",
+        "eyebrow": "원저 논문",
+        "meta": [
+          "김다선 · 이지훈",
+          "2026.10.",
+          "DOI 10.0000/example"
+        ]
+      },
+      {
+        "type": "prose",
+        "title": "초록",
+        "body": "하천 복원 구간 인근의 여름철 야간 기온이 복원 전과 비교해 평균 1.4도 낮아졌다. 이 연구는 2021~2025년 세 개 하천 구간의 관측 자료를 비교해 복원 효과가 하천 중심에서 어느 거리까지 이어지는지 분석했다. 효과는 하천 중심에서 약 280m까지 유의했다.",
+        "variant": "lead"
+      },
+      {
+        "type": "properties",
+        "title": "연구 개요",
+        "layout": "inline",
+        "items": [
+          {
+            "label": "관측 지점",
+            "value": "42곳"
+          },
+          {
+            "label": "관측 기간",
+            "value": "2021.6 ~ 2025.9"
+          },
+          {
+            "label": "분석 방법",
+            "value": "이중 차분 회귀"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "방법",
+        "children": [
+          {
+            "type": "prose",
+            "title": "관측 설계",
+            "body": "복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다."
+          },
+          {
+            "type": "media",
+            "kind": "chart",
+            "ratio": "16:9",
+            "alt": "하천 중심에서의 거리에 따른 야간 기온 차이 그래프",
+            "caption": "그림 1. 하천 중심에서 멀어질수록 기온 감소 효과가 줄어든다."
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "결과",
+        "children": [
+          {
+            "type": "table",
+            "title": "거리별 기온 차이",
+            "caption": "복원 구간과 대조 구간의 야간 평균 기온 차이",
+            "columns": [
+              "거리",
+              "차이(℃)",
+              "표준오차",
+              "유의성"
+            ],
+            "rows": [
+              [
+                "0~100m",
+                "-1.8",
+                "0.21",
+                "p<0.001"
+              ],
+              [
+                "100~200m",
+                "-1.4",
+                "0.19",
+                "p<0.001"
+              ],
+              [
+                "200~300m",
+                "-0.7",
+                "0.24",
+                "p<0.01"
+              ],
+              [
+                "300m 이상",
+                "-0.1",
+                "0.22",
+                "유의하지 않음"
+              ]
+            ],
+            "state": "ready",
+            "variant": "plain"
+          },
+          {
+            "type": "quote",
+            "quote": "하천 복원의 냉각 효과는 폭 약 280m의 띠로 나타났고, 그 바깥에서는 통계적으로 구분되지 않았다.",
+            "author": "연구진"
+          }
+        ]
+      },
+      {
+        "type": "notice",
+        "tone": "info",
+        "title": "한계",
+        "body": "센서 위치가 현장 접근성에 영향을 받았고, 기상 조건은 연도마다 달랐다. 일반화에는 추가 구간의 관측이 필요하다."
+      }
+    ]
+  }
+}

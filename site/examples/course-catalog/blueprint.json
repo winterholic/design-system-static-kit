@@ -1,0 +1,176 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "오늘 배움",
+  "theme": "learning",
+  "palette": "coral-reef",
+  "mode": "light",
+  "pageType": "listing",
+  "shell": "topbar",
+  "typography": "rounded",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "lifted",
+  "motion": "lively",
+  "icon": "solid",
+  "ornament": "geometric",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "강좌",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "로드맵",
+        "href": "#main",
+        "icon": "map-pin"
+      },
+      {
+        "label": "커뮤니티",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "내 학습",
+        "href": "#main",
+        "icon": "user"
+      }
+    ],
+    "action": {
+      "label": "로그인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 오늘 배움 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "지금 들을 수 있는 강좌",
+        "description": "신규 강좌 6개 · 무료 체험 가능",
+        "actions": [
+          {
+            "label": "내 학습",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "강좌 검색",
+        "filters": [
+          "전체",
+          "코딩",
+          "디자인",
+          "데이터",
+          "언어"
+        ],
+        "selected": 0
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "card",
+            "title": "파이썬 첫걸음",
+            "body": "8주 · 하루 20분으로 첫 프로그램 완성",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "laptop",
+            "ratio": "16:9",
+            "badge": "입문",
+            "meta": "4.9 · 수강생 2,300명",
+            "price": "무료"
+          },
+          {
+            "type": "card",
+            "title": "인터페이스 디자인 기초",
+            "body": "위계와 간격으로 화면을 정리하는 법",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "grid",
+            "ratio": "16:9",
+            "badge": "인기",
+            "meta": "4.8 · 수강생 1,840명",
+            "price": "49,000원"
+          },
+          {
+            "type": "card",
+            "title": "엑셀로 데이터 읽기",
+            "body": "피벗과 차트로 숫자의 이야기 읽기",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "swatches",
+            "ratio": "16:9",
+            "meta": "4.7 · 수강생 3,120명",
+            "price": "39,000원"
+          },
+          {
+            "type": "card",
+            "title": "영어 말하기 루틴",
+            "body": "하루 10분 쉐도잉 21일 챌린지",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "books",
+            "ratio": "16:9",
+            "badge": "신규",
+            "meta": "4.8 · 수강생 960명",
+            "price": "29,000원"
+          },
+          {
+            "type": "card",
+            "title": "사진 보정 입문",
+            "body": "스마트폰 사진을 정돈하는 법",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "camera",
+            "ratio": "16:9",
+            "meta": "4.6 · 수강생 740명",
+            "price": "35,000원"
+          },
+          {
+            "type": "card",
+            "title": "SQL 한 걸음씩",
+            "body": "질문을 쿼리로 바꾸는 연습",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "laptop",
+            "ratio": "16:9",
+            "badge": "신규",
+            "meta": "4.9 · 수강생 520명",
+            "price": "45,000원"
+          }
+        ]
+      },
+      {
+        "type": "pagination",
+        "pages": 6,
+        "current": 1
+      }
+    ]
+  }
+}

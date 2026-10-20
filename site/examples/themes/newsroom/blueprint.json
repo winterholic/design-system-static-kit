@@ -1,0 +1,208 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "한결일보",
+  "theme": "newsroom",
+  "palette": "summer-ocean-breeze",
+  "mode": "light",
+  "pageType": "blog",
+  "shell": "masthead",
+  "typography": "serif",
+  "density": "compact",
+  "radius": "square",
+  "control": "square",
+  "elevation": "flat",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "lines",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "정치",
+        "href": "#main",
+        "icon": "building"
+      },
+      {
+        "label": "경제",
+        "href": "#main",
+        "icon": "dollar"
+      },
+      {
+        "label": "사회",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "국제",
+        "href": "#main",
+        "icon": "globe"
+      },
+      {
+        "label": "문화",
+        "href": "#main",
+        "icon": "music"
+      }
+    ],
+    "action": {
+      "label": "구독",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 한결일보 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "기사 제보",
+        "href": "#main"
+      },
+      {
+        "label": "광고 문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "오늘의 뉴스",
+        "description": "2026년 10월 20일 화요일 · 오전 편집"
+      },
+      {
+        "type": "card",
+        "title": "시간제 일자리 늘었지만 임금은 제자리",
+        "body": "통계청이 발표한 3분기 고용 동향에 따르면 시간제 일자리가 늘었지만 월평균 임금 증가율은 1%대에 머물렀다. 전문가들은 \"일자리의 질을 함께 살펴야 한다\"고 지적했다.",
+        "variant": "horizontal",
+        "visual": "photo",
+        "motif": "building",
+        "ratio": "16:9",
+        "meta": "경제 · 오전 7:40",
+        "badge": "단독",
+        "author": "이서준 기자",
+        "action": {
+          "label": "기사 보기",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "card",
+            "title": "내년 예산안, 복지 분야 늘렸다",
+            "body": "정부가 발표한 내년 예산안에서 복지 분야 증가율이 평균을 웃돌았다.",
+            "meta": "정치 · 오전 8:10",
+            "author": "김하은 기자",
+            "action": {
+              "label": "기사 보기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "도심 자전거도로 12km 추가",
+            "body": "서울시가 내년까지 도심 자전거도로를 12km 늘리기로 했다.",
+            "meta": "사회 · 오전 8:32",
+            "author": "박도현 기자",
+            "action": {
+              "label": "기사 보기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "겨울 전력 수급 \"여유\"",
+            "body": "산업부는 올겨울 최대 전력 수요를 넉넉히 감당할 수 있다고 밝혔다.",
+            "meta": "산업 · 오전 9:05",
+            "author": "최유진 기자",
+            "action": {
+              "label": "기사 보기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          }
+        ]
+      },
+      {
+        "type": "reel",
+        "title": "많이 읽은 기사",
+        "children": [
+          {
+            "type": "card",
+            "title": "한 달 살기 해 보니",
+            "body": "지방 소도시 한 달 살기 후기.",
+            "meta": "라이프 · 조회 4.2만",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "편의점 도시락의 진화",
+            "body": "신선식품 비중이 늘었다.",
+            "meta": "소비 · 조회 3.8만",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "겨울 철새, 올해는 일찍",
+            "body": "한강에 첫 철새가 찾아왔다.",
+            "meta": "환경 · 조회 3.1만",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          },
+          {
+            "type": "card",
+            "title": "고령화와 지방 병원",
+            "body": "진료과목이 줄어드는 지역들.",
+            "meta": "사회 · 조회 2.9만",
+            "action": {
+              "label": "읽기",
+              "href": "#main",
+              "variant": "ghost"
+            }
+          }
+        ]
+      },
+      {
+        "type": "tags",
+        "title": "섹션",
+        "items": [
+          "정치",
+          "경제",
+          "사회",
+          "국제",
+          "문화",
+          "스포츠",
+          "오피니언"
+        ],
+        "variant": "outline"
+      }
+    ]
+  }
+}

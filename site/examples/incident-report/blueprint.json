@@ -1,0 +1,184 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "콘솔",
+  "theme": "console",
+  "palette": "midnight-ocean-depths",
+  "mode": "dark",
+  "pageType": "docs",
+  "shell": "sidebar",
+  "typography": "mono",
+  "density": "compact",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-square",
+  "ornament": "none",
+  "backdrop": "grid",
+  "width": "full",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "장애 기록",
+        "href": "#main",
+        "icon": "alert-triangle"
+      },
+      {
+        "label": "런북",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "콘솔 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "10월 14일 결제 지연 장애 회고",
+        "description": "영향 47분 · 결제 성공률 최저 62% · 재발 방지 항목 4건",
+        "eyebrow": "사후 분석",
+        "meta": [
+          "심각도 2",
+          "작성 10/16",
+          "비난 없는 회고"
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "영향 시간",
+            "value": "47분",
+            "detail": "14:12 ~ 14:59"
+          },
+          {
+            "type": "metric",
+            "label": "최저 결제 성공률",
+            "value": "62%",
+            "detail": "평소 99.2%",
+            "trend": "down",
+            "delta": "-37%p"
+          },
+          {
+            "type": "metric",
+            "label": "영향 받은 주문",
+            "value": "1,284건",
+            "detail": "전체의 3.1%"
+          }
+        ]
+      },
+      {
+        "type": "timeline",
+        "title": "타임라인",
+        "variant": "log",
+        "items": [
+          {
+            "time": "14:12",
+            "title": "결제 지연 알림 발생",
+            "description": "결제 승인 응답 시간이 평소의 6배로 증가"
+          },
+          {
+            "time": "14:19",
+            "title": "대응 시작",
+            "description": "온콜 엔지니어가 결제 서비스 로그를 확인"
+          },
+          {
+            "time": "14:31",
+            "title": "원인 후보 확인",
+            "description": "카드사 연동 커넥션 풀 고갈 확인"
+          },
+          {
+            "time": "14:44",
+            "title": "풀 크기 상향 배포",
+            "description": "임시 조치로 커넥션 수를 2배로 늘림"
+          },
+          {
+            "time": "14:59",
+            "title": "정상화",
+            "description": "성공률 99%대로 복귀",
+            "status": "완료"
+          }
+        ]
+      },
+      {
+        "type": "properties",
+        "title": "핵심 요약",
+        "layout": "stacked",
+        "items": [
+          {
+            "label": "근본 원인",
+            "value": "카드사 응답 지연 시 커넥션이 반환되지 않는 재시도 로직"
+          },
+          {
+            "label": "탐지",
+            "value": "알림 7분 후 사람이 확인(목표 5분)"
+          },
+          {
+            "label": "고객 안내",
+            "value": "상태 페이지 14:25 게시"
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "title": "재발 방지 항목",
+        "variant": "check",
+        "items": [
+          {
+            "title": "재시도 시 커넥션 반환 보장",
+            "description": "결제팀 · 10/25까지",
+            "status": "진행"
+          },
+          {
+            "title": "커넥션 풀 포화 알림 추가",
+            "description": "플랫폼팀 · 10/22까지",
+            "status": "대기"
+          },
+          {
+            "title": "카드사 장애 시 대체 승인 경로 검토",
+            "description": "결제팀 · 11/15까지",
+            "status": "대기"
+          },
+          {
+            "title": "상태 페이지 게시 자동화",
+            "description": "운영팀 · 완료",
+            "status": "완료"
+          }
+        ],
+        "state": "ready"
+      }
+    ]
+  }
+}

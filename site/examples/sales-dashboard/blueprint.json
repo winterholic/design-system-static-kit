@@ -1,0 +1,245 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "모두웍스",
+  "theme": "enterprise",
+  "palette": "cotton-candy-skies",
+  "mode": "light",
+  "pageType": "dashboard",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "개요",
+        "href": "#main",
+        "icon": "home"
+      },
+      {
+        "label": "고객",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "계약",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "리포트",
+        "href": "#main",
+        "icon": "chart"
+      },
+      {
+        "label": "설정",
+        "href": "#main",
+        "icon": "settings"
+      }
+    ],
+    "footerNote": "모두웍스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "4분기 영업 현황",
+        "description": "10월 20일 기준 · 전 지역",
+        "actions": [
+          {
+            "label": "리포트 내보내기",
+            "href": "#main",
+            "variant": "secondary"
+          },
+          {
+            "label": "목표 수정",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "four",
+        "children": [
+          {
+            "type": "metric",
+            "label": "누적 매출",
+            "value": "48.2억",
+            "detail": "목표 대비 82%",
+            "trend": "up",
+            "delta": "+6.1%"
+          },
+          {
+            "type": "metric",
+            "label": "신규 계약",
+            "value": "37건",
+            "detail": "지난달 대비",
+            "trend": "up",
+            "delta": "+9건"
+          },
+          {
+            "type": "metric",
+            "label": "평균 계약 금액",
+            "value": "1.3억",
+            "detail": "지난 분기 1.1억",
+            "trend": "up",
+            "delta": "+18%"
+          },
+          {
+            "type": "metric",
+            "label": "이탈 위험 고객",
+            "value": "5곳",
+            "detail": "재계약 60일 전",
+            "trend": "down",
+            "delta": "-2곳"
+          }
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "two",
+        "children": [
+          {
+            "type": "chart",
+            "title": "월별 매출",
+            "caption": "최근 6개월 매출(억 원)",
+            "kind": "bar",
+            "unit": "억",
+            "categories": [
+              "5월",
+              "6월",
+              "7월",
+              "8월",
+              "9월",
+              "10월"
+            ],
+            "series": [
+              {
+                "name": "매출",
+                "values": [
+                  6.8,
+                  7.4,
+                  8.1,
+                  7.7,
+                  9.2,
+                  9.6
+                ]
+              }
+            ]
+          },
+          {
+            "type": "chart",
+            "title": "지역별 비중",
+            "caption": "누적 매출 기준",
+            "kind": "donut",
+            "unit": "%",
+            "categories": [
+              "수도권",
+              "영남",
+              "호남",
+              "충청",
+              "기타"
+            ],
+            "series": [
+              {
+                "name": "비중",
+                "values": [
+                  46,
+                  22,
+                  12,
+                  14,
+                  6
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "progress",
+        "label": "분기 목표 달성률",
+        "value": 82,
+        "detail": "59억 중 48.2억",
+        "tone": "brand"
+      },
+      {
+        "type": "table",
+        "title": "진행 중인 큰 계약",
+        "caption": "예상 금액 상위 5건",
+        "columns": [
+          "고객",
+          "단계",
+          "예상 금액",
+          "담당",
+          "마감"
+        ],
+        "rows": [
+          [
+            "한결물산",
+            "최종 협상",
+            "4.2억",
+            "김다선",
+            "10/28"
+          ],
+          [
+            "대성정밀",
+            "제안 발표",
+            "3.1억",
+            "이지훈",
+            "11/04"
+          ],
+          [
+            "누리금융",
+            "보안 심사",
+            "2.8억",
+            "박서연",
+            "11/12"
+          ],
+          [
+            "푸른병원",
+            "견적 검토",
+            "1.9억",
+            "최민준",
+            "11/15"
+          ],
+          [
+            "새봄건설",
+            "초기 상담",
+            "1.4억",
+            "정하늘",
+            "11/30"
+          ]
+        ],
+        "state": "ready",
+        "variant": "striped"
+      }
+    ]
+  }
+}

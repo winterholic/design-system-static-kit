@@ -1,0 +1,124 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "시민 서비스",
+  "theme": "school",
+  "palette": "azure-skies",
+  "mode": "light",
+  "pageType": "docs",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "spacious",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "민원",
+        "href": "#main",
+        "icon": "file"
+      },
+      {
+        "label": "안내",
+        "href": "#main",
+        "icon": "info"
+      },
+      {
+        "label": "문의",
+        "href": "#main",
+        "icon": "phone"
+      }
+    ],
+    "action": {
+      "label": "민원 신청",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 시민 서비스 · 대표전화 000-0000",
+    "footerLinks": [
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "접근성 안내",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "전입신고 안내",
+        "description": "이사 후 14일 이내에 신고해야 합니다.",
+        "eyebrow": "주민 서비스"
+      },
+      {
+        "type": "notice",
+        "tone": "warning",
+        "title": "기한 안내",
+        "body": "기한을 넘기면 과태료가 부과될 수 있습니다."
+      },
+      {
+        "type": "steps",
+        "title": "신청 방법",
+        "items": [
+          {
+            "title": "준비물 확인",
+            "description": "신분증과 임대차계약서를 준비합니다."
+          },
+          {
+            "title": "온라인 신청",
+            "description": "본인 인증 후 신청서를 작성합니다."
+          },
+          {
+            "title": "처리 확인",
+            "description": "처리 결과는 문자로 안내합니다."
+          }
+        ]
+      },
+      {
+        "type": "properties",
+        "title": "처리 정보",
+        "items": [
+          {
+            "label": "처리 기간",
+            "value": "즉시 처리(영업일 기준)"
+          },
+          {
+            "label": "수수료",
+            "value": "없음"
+          },
+          {
+            "label": "담당 부서",
+            "value": "주민센터 민원실"
+          }
+        ]
+      },
+      {
+        "type": "faq",
+        "title": "자주 묻는 질문",
+        "items": [
+          {
+            "question": "대리인이 신청할 수 있나요?",
+            "answer": "위임장과 대리인 신분증을 지참하면 가능합니다."
+          },
+          {
+            "question": "해외에 있는데 신청할 수 있나요?",
+            "answer": "국내 거주지가 있어야 온라인 신청이 가능합니다."
+          }
+        ]
+      }
+    ]
+  }
+}

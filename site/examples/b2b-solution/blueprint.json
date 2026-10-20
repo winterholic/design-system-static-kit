@@ -1,0 +1,220 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "모두웍스",
+  "theme": "enterprise",
+  "palette": "cotton-candy-skies",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "기능",
+        "href": "#enterprise",
+        "icon": "sparkles"
+      },
+      {
+        "label": "도입",
+        "href": "#rollout",
+        "icon": "calendar"
+      },
+      {
+        "label": "보안",
+        "href": "#main",
+        "icon": "shield"
+      },
+      {
+        "label": "고객사",
+        "href": "#main",
+        "icon": "building"
+      }
+    ],
+    "action": {
+      "label": "도입 상담",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 모두웍스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "조직의 일하는 방식을 하나의 기준으로",
+        "description": "승인, 보안, 기록을 한곳에서 관리하는 업무 플랫폼."
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "엔터프라이즈 에디션",
+        "title": "규모가 커져도\n기준은 하나로.",
+        "body": "부서마다 달랐던 승인 절차와 권한 규칙을 한 번에 정리합니다. 도입 4주 안에 첫 부서가 쓰기 시작합니다.",
+        "action": {
+          "label": "도입 상담",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "보안 백서",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "chart"
+      },
+      {
+        "type": "logo-cloud",
+        "title": "업종별 선도 기업이 사용합니다",
+        "names": [
+          "한결물산",
+          "대성정밀",
+          "누리금융",
+          "푸른병원",
+          "새봄건설"
+        ]
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "승인 소요 시간",
+            "value": "1.8일",
+            "detail": "도입 전 5.2일",
+            "trend": "down",
+            "delta": "-65%"
+          },
+          {
+            "type": "metric",
+            "label": "권한 감사 준비",
+            "value": "2시간",
+            "detail": "분기마다",
+            "trend": "down",
+            "delta": "-90%"
+          },
+          {
+            "type": "metric",
+            "label": "동시 사용자",
+            "value": "48,000명",
+            "detail": "최대 규모 고객"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "엔터프라이즈가 요구하는 것",
+        "children": [
+          {
+            "type": "feature-list",
+            "layout": "grid",
+            "items": [
+              {
+                "icon": "shield",
+                "title": "권한과 감사",
+                "description": "역할별 권한을 한 화면에서 보고, 변경 이력을 2년간 보관합니다."
+              },
+              {
+                "icon": "lock",
+                "title": "데이터 주권",
+                "description": "국내 리전 저장과 고객 관리 키(CMK) 암호화를 지원합니다."
+              },
+              {
+                "icon": "users",
+                "title": "SSO와 계정 동기화",
+                "description": "SAML, SCIM으로 조직도와 계정을 자동으로 맞춥니다."
+              },
+              {
+                "icon": "clock",
+                "title": "99.95% 가용성",
+                "description": "서비스 수준 협약(SLA)과 장애 시 보상 기준을 계약에 명시합니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "enterprise",
+        "description": "구매 심사에서 반복해서 나오는 네 가지 질문에 먼저 답했습니다."
+      },
+      {
+        "type": "section",
+        "title": "도입은 이렇게 진행됩니다",
+        "children": [
+          {
+            "type": "steps",
+            "title": "4주 도입 일정",
+            "layout": "horizontal",
+            "items": [
+              {
+                "title": "1주 · 진단",
+                "description": "현재 승인 절차와 권한 구조를 함께 정리합니다."
+              },
+              {
+                "title": "2주 · 설정",
+                "description": "SSO 연동과 역할 모델을 구성합니다."
+              },
+              {
+                "title": "3주 · 시범",
+                "description": "한 부서가 실제 업무로 먼저 사용합니다."
+              },
+              {
+                "title": "4주 · 확산",
+                "description": "교육 자료와 함께 전사로 넓힙니다."
+              }
+            ]
+          }
+        ],
+        "anchor": "rollout",
+        "surface": "tint"
+      },
+      {
+        "type": "quote",
+        "quote": "감사 때마다 엑셀로 권한을 모으던 일주일이 사라졌습니다. 이제는 화면 하나를 출력해 가져갑니다.",
+        "author": "박정민",
+        "role": "누리금융 정보보호팀장"
+      },
+      {
+        "type": "cta",
+        "tone": "brand",
+        "title": "우리 조직에 맞는 도입 계획을 받아 보세요",
+        "body": "영업일 기준 이틀 안에 담당자가 연락드립니다.",
+        "action": {
+          "label": "도입 상담",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "요금 문의",
+          "href": "#main",
+          "variant": "ghost"
+        }
+      }
+    ]
+  }
+}

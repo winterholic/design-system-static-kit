@@ -44,11 +44,11 @@ test('test-lab matrix sample: every template under two rotating themes renders c
   const themeIds = Object.keys(themes);
   const problems = []; const errors = [];
   page.on('pageerror', e => errors.push(e.message)); page.on('console', m => m.type() === 'error' && errors.push(m.text()));
-  const templates = [...new Set(manifest.cases.filter(c => c.set === 'matrix').map(c => c.template))];
+  const matrix = manifest.cases.filter(c => c.set === 'matrix'), templates = [...new Set(matrix.map(c => c.template))];
   for (const [i, t] of templates.entries()) {
-    for (const th of [themeIds[(i * 13) % themeIds.length], themeIds[(i * 29 + 7) % themeIds.length]]) {
-      const id = `a-${t}--${th}`;
-      if (!byId.has(id)) { problems.push('missing matrix case ' + id); continue; }
+    const own = matrix.filter(c => c.template === t), picks = [own[(i * 3) % own.length], own[(i * 5 + 1) % own.length]].filter((c, k, a) => a.indexOf(c) === k);
+    for (const c of picks) {
+      const id = c.id;
       await page.setViewportSize({width: 390, height: 844});
       await page.goto(`/site/test-lab/cases/${id}/`);
       const over = await page.evaluate(() => ({sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth}));

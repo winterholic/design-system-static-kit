@@ -1,0 +1,187 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "초록방",
+  "theme": "garden",
+  "palette": "serene-nature-tones",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "topbar",
+  "typography": "humanist",
+  "density": "comfortable",
+  "radius": "round",
+  "control": "pill",
+  "elevation": "soft",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "organic",
+  "backdrop": "tint",
+  "width": "standard",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "신상품",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "식물",
+        "href": "#main",
+        "icon": "leaf"
+      },
+      {
+        "label": "화분·용품",
+        "href": "#main",
+        "icon": "bag"
+      },
+      {
+        "label": "관리 가이드",
+        "href": "#main",
+        "icon": "book"
+      }
+    ],
+    "action": {
+      "label": "장바구니",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 초록방 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "작은 식물 컬렉션",
+        "description": "이번 주 입고 18종 · 3만 원 이상 무료 배송",
+        "actions": [
+          {
+            "label": "정렬: 신상품순",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "식물 이름 검색",
+        "filters": [
+          "전체",
+          "초보 추천",
+          "반려동물 안전",
+          "그늘 가능",
+          "공기정화"
+        ],
+        "selected": 1
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "card",
+            "title": "몬스테라 델리시오사",
+            "body": "잎이 시원하게 갈라지는 큰 잎 식물",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "plant",
+            "ratio": "1:1",
+            "badge": "베스트",
+            "meta": "중형 · 햇빛 반그늘",
+            "price": "28,000원",
+            "rating": "4.9",
+            "reviews": "842"
+          },
+          {
+            "type": "card",
+            "title": "스투키 미니",
+            "body": "물을 한 달에 한 번만 줘도 되는 식물",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "plant",
+            "ratio": "1:1",
+            "meta": "소형 · 밝은 그늘",
+            "price": "12,000원",
+            "rating": "4.8",
+            "reviews": "1,203"
+          },
+          {
+            "type": "card",
+            "title": "유칼립투스 화분",
+            "body": "잎을 만지면 향이 퍼지는 허브",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "jar",
+            "ratio": "1:1",
+            "badge": "신상",
+            "meta": "소형 · 햇빛 필요",
+            "price": "16,500원",
+            "listPrice": "19,000원",
+            "rating": "4.6",
+            "reviews": "96"
+          },
+          {
+            "type": "card",
+            "title": "테이블야자",
+            "body": "반려동물에게도 안전한 잎",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "vase",
+            "ratio": "1:1",
+            "meta": "중형 · 그늘 가능",
+            "price": "22,000원",
+            "rating": "4.7",
+            "reviews": "318"
+          },
+          {
+            "type": "card",
+            "title": "토분 세트(3개)",
+            "body": "배수가 잘 되는 수제 토분",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "mug",
+            "ratio": "1:1",
+            "meta": "지름 10·13·16cm",
+            "price": "24,000원",
+            "rating": "4.8",
+            "reviews": "470"
+          },
+          {
+            "type": "card",
+            "title": "식물 영양제",
+            "body": "분갈이 후 한 달에 한 번",
+            "variant": "media",
+            "visual": "photo",
+            "motif": "bottle",
+            "ratio": "1:1",
+            "meta": "250ml",
+            "price": "8,500원",
+            "rating": "4.5",
+            "reviews": "201"
+          }
+        ]
+      },
+      {
+        "type": "pagination",
+        "pages": 3,
+        "current": 1
+      }
+    ]
+  }
+}

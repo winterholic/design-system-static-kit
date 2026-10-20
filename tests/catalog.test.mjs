@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {themes, themeCategories, palettes, axes, axisDefs, styleAxes, axisBans, nodeSpecs, nodeTypes, templateList, templates, pageTypes, icons, iconNames, rules, createBlueprint, blueprintSchema, repairAxes, migrateV1, CATALOG_VERSION} from '../src/catalog.mjs';
+import {themes, themeCategories, palettes, paletteFamilies, axes, axisDefs, styleAxes, axisBans, nodeSpecs, nodeTypes, templateList, templates, pageTypes, icons, iconNames, rules, createBlueprint, blueprintSchema, repairAxes, migrateV1, CATALOG_VERSION} from '../src/catalog.mjs';
 import {compile, validateBlueprint} from '../src/compiler.mjs';
 import {DENSITY, RADIUS, WIDTH, SCALE, WEIGHT, ICON, ELEVATION, MOTION, BACKDROP, TYPO} from '../src/styles/base.mjs';
 import {shellCSS} from '../src/styles/shells.mjs';
@@ -10,9 +10,10 @@ import {navLimits} from '../src/catalog.mjs';
 
 const peer = JSON.parse(readFileSync(new URL('../docs/evidence/peer-axes.json', import.meta.url), 'utf8'));
 const evidence = JSON.parse(readFileSync(new URL('../docs/evidence/coolors-palettes.json', import.meta.url), 'utf8'));
+const popular = JSON.parse(readFileSync(new URL('../docs/evidence/coolors-popular-2026-10-20.json', import.meta.url), 'utf8'));
 
 test('catalog scale: at least the peer repository on themes, layouts, page structures and icons', () => {
-  assert.equal(CATALOG_VERSION, '2.0.0');
+  assert.equal(CATALOG_VERSION, '2.1.0');
   assert.ok(Object.keys(themes).length >= peer.counts.systems, 'themes >= peer systems');
   assert.ok(templateList.length >= peer.counts.pages * 5, 'templates well above peer content structures');
   assert.ok(iconNames.length >= peer.counts.icons);
@@ -20,27 +21,67 @@ test('catalog scale: at least the peer repository on themes, layouts, page struc
   const layoutNodes = nodeTypes.filter(t => ['layout'].includes(nodeSpecs[t].group)).length;
   assert.ok(axes.shell.length + layoutNodes + templateList.length >= peer.counts.layouts * 2);
   assert.ok(nodeTypes.length >= 30);
-  assert.ok(Object.keys(palettes).length >= Object.keys(themes).length * 3);
+  assert.ok(Object.keys(palettes).length >= Object.keys(themes).length * 6, 'library is much larger than the per-theme recommendation lists');
 });
 
-test('every theme has 3+ distinct, sourced Coolors palette candidates', () => {
+test('every palette is sourced from rendered Coolors evidence, and every theme recommends 6+ of them', () => {
   const observed = new Set(evidence.palettes.map(p => p.colors.join('-')));
-  const seen = new Set();
+  const popularIds = new Map(popular.palettes.map(p => [p.colors.join('-'), p]));
+  for (const p of Object.values(palettes)) {
+    assert.match(p.source.url, /^https:\/\/coolors\.co\/palette\//);
+    assert.equal(p.source.url.split('/').at(-1), p.colors.map(c => c.slice(1).toLowerCase()).join('-'));
+    assert.ok(p.brand >= 0 && p.brand < p.colors.length);
+    assert.ok(p.colors.every(c => /^#[0-9A-F]{6}$/.test(c)));
+    assert.ok(new Set(p.colors).size >= 4, 'distinct swatches: ' + p.id);
+    assert.ok(paletteFamilies[p.family], p.id); assert.ok(['light', 'mid', 'dark'].includes(p.tone), p.id);
+    if (p.source.observed === '2026-10-20') { assert.equal(popularIds.get(p.colors.join('-'))?.likes, p.likes, 'popularity evidence: ' + p.id); assert.ok(p.likes > 0); }
+    else { assert.equal(p.source.observed, '2026-10-18'); assert.ok(observed.has(p.colors.join('-')), 'in rendered evidence: ' + p.id); }
+  }
   for (const theme of Object.values(themes)) {
-    assert.ok(theme.palettes.length >= 3, theme.id);
+    assert.ok(theme.palettes.length >= 6, theme.id);
     assert.ok(themeCategories[theme.category], theme.id);
-    for (const id of theme.palettes) {
-      const p = palettes[id]; assert.ok(p, id); assert.ok(!seen.has(id)); seen.add(id);
-      assert.equal(p.theme, theme.id);
-      assert.match(p.source.url, /^https:\/\/coolors\.co\/palette\//);
-      assert.equal(p.source.observed, '2026-10-18');
-      assert.equal(p.source.url.split('/').at(-1), p.colors.map(c => c.slice(1).toLowerCase()).join('-'));
-      assert.ok(p.brand >= 0 && p.brand < p.colors.length);
-      assert.ok(p.colors.every(c => /^#[0-9A-F]{6}$/.test(c)));
-      assert.ok(observed.has(p.colors.join('-')), 'in rendered evidence: ' + id);
+    assert.equal(new Set(theme.palettes).size, theme.palettes.length, 'no duplicate recommendation in ' + theme.id);
+    for (const id of theme.palettes) assert.ok(palettes[id], theme.id + ' recommends unknown ' + id);
+  }
+});
+
+test('palette library covers every colour family and is not dominated by violet-blue', () => {
+  const byFamily = {}; for (const p of Object.values(palettes)) byFamily[p.family] = (byFamily[p.family] ?? 0) + 1;
+  for (const f of Object.keys(paletteFamilies)) assert.ok(byFamily[f] >= 8, `family ${f} has ${byFamily[f]}`);
+  assert.ok(byFamily.purple / Object.keys(palettes).length < 0.06, 'purple share');
+  const lavender = Object.values(palettes).filter(p => { const [r, g, b] = [1, 3, 5].map(i => parseInt(p.colors[p.brand].slice(i, i + 2), 16)); return b > r && r > g && b - g > 60; });
+  assert.ok(lavender.length / Object.keys(palettes).length < 0.12, 'blue-violet brand share');
+  // The kit's own defaults must not be the generic violet-blue gradient: no theme opens on a violet/purple family palette except those meant for playful brands.
+  const allowed = new Set(['hub', 'atelier', 'playful', 'neon', 'kids', 'colorblock', 'nocturne', 'game', 'wedding']);
+  for (const t of Object.values(themes)) if (!allowed.has(t.id)) assert.notEqual(palettes[t.palettes[0]].family, 'purple', 'default palette of ' + t.id);
+});
+
+test('theme variants only use catalog values, respect the theme\'s own bans, and change something', () => {
+  for (const theme of Object.values(themes)) {
+    assert.ok(theme.variants.length >= 3, theme.id);
+    const ids = new Set();
+    for (const v of theme.variants) {
+      assert.ok(!ids.has(v.id), 'duplicate variant id ' + theme.id + '/' + v.id); ids.add(v.id);
+      assert.ok(v.label && v.description);
+      assert.ok(Object.keys(v.set).length >= 1);
+      for (const [axis, value] of Object.entries(v.set)) {
+        assert.ok(axes[axis]?.includes(value), `${theme.id}/${v.id}: ${axis}=${value} is not an axis value`);
+        assert.ok(!(theme.forbid[axis] ?? []).includes(value), `${theme.id}/${v.id}: ${axis}=${value} is forbidden by the theme`);
+      }
+      const b = createBlueprint('about-team', theme.id, undefined, {themeVariant: v.id}), base = createBlueprint('about-team', theme.id);
+      assert.ok(['mode', ...styleAxes].some(k => b[k] !== base[k]), `variant ${theme.id}/${v.id} changes nothing`);
+      assert.ok(validateBlueprint(b).valid, `${theme.id}/${v.id}`);
     }
   }
-  assert.equal(seen.size, Object.keys(palettes).length);
+  assert.throws(() => createBlueprint('about-team', 'workspace', undefined, {themeVariant: 'nope'}), /Unknown theme variant/);
+});
+
+test('any palette can be combined with any theme and template, so the 1:1 pairing is gone', () => {
+  for (const [theme, palette] of [['workspace', 'forest'], ['civic', 'gold'], ['neon', 'steel'], ['wedding', 'fiery']]) {
+    const b = createBlueprint('about-team', theme, palette); assert.equal(b.palette, palette);
+    const r = validateBlueprint(b); assert.ok(r.valid, JSON.stringify(r.errors)); compile(b);
+  }
+  assert.ok(Object.values(themes).every(t => Object.keys(palettes).length > t.palettes.length * 4));
 });
 
 test('every one of the peer repository\'s system archetypes is covered by a named theme', () => {

@@ -1,4 +1,5 @@
 /** Page templates: complete, valid blueprints that every theme can wear. Authored as data, validated like any user input. */
+import {registerMore} from './templates-more.mjs';
 const A = (label, variant = 'primary', href = '#main') => ({label, href, variant});
 const head = (title, description, extra = {}) => ({type: 'page-header', title, ...(description ? {description} : {}), ...extra});
 const prose = (title, body, variant) => ({type: 'prose', title, body, ...(variant ? {variant} : {})});
@@ -523,6 +524,8 @@ errPage('server-error', '500 오류', 'console', '콘솔', 'error', '문제가 �
 errPage('forbidden', '403 권한 없음', 'civic', '시빅', 'forbidden', '접근 권한이 없어요', '이 페이지를 볼 수 있는 권한이 없습니다. 관리자에게 요청해 주세요.', '권한 요청');
 errPage('maintenance', '점검 안내', 'nocturne', '녹턴', 'maintenance', '점검 중이에요', '더 나은 서비스를 위해 오전 2시부터 4시까지 점검합니다.', '상태 확인');
 errPage('offline', '오프라인', 'pocket', '모아', 'offline', '인터넷에 연결되지 않았어요', '연결되면 자동으로 다시 시도합니다.', '다시 시도');
+
+registerMore({add, A, head, prose, card, metric, grid, section, notice, feat, field, media, nav, chrome, FOOT});
 
 export const templateList = T;
 export const templates = Object.fromEntries(T.map(t => [t.id, t]));

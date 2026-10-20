@@ -1,17 +1,19 @@
-import {readFile, writeFile} from 'node:fs/promises';
-import {themes, themeCategories, palettes, axes, axisDefs, axisOrder, styleAxes, axisBans, nodeSpecs, nodeTypes, pageTypes, templateList, rules, iconNames, layoutCoverage, contentCoverage, iconAliases, icons, CATALOG_VERSION, limits, navLimits} from '../src/catalog.mjs';
+import {readFile, writeFile, mkdir} from 'node:fs/promises';
+import {themes, themeCategories, palettes, paletteFamilies, layoutOptionsOf, axes, axisDefs, axisOrder, styleAxes, axisBans, nodeSpecs, nodeTypes, pageTypes, templateList, rules, iconNames, layoutCoverage, contentCoverage, iconAliases, icons, CATALOG_VERSION, limits, navLimits} from '../src/catalog.mjs';
 import {page} from './md.mjs';
 import {RADIUS} from '../src/styles/base.mjs';
 import {SPACE, RELATIONS, spacingMarkdown} from '../src/spacing.mjs';
 
 const read = async p => JSON.parse(await readFile(new URL(p, import.meta.url), 'utf8'));
 const evidenceCount = (await read('../docs/evidence/coolors-palettes.json')).palettes.length;
+const popularEvidence = await read('../docs/evidence/coolors-popular-2026-10-20.json');
 const peer = await read('../docs/evidence/peer-axes.json'), cov = await read('../docs/evidence/coverage.json'), contrast = await read('../docs/evidence/contrast.json');
 const n = x => Number(x).toLocaleString('en-US');
 const px = s => parseFloat(String(s));
 const uniq = list => [...new Set(list)];
 const count = list => Object.entries(list.reduce((m, k) => (m[k] = (m[k] ?? 0) + 1, m), {}));
 const GROUP = {structure: '구조', layout: '레이아웃', content: '콘텐츠', data: '데이터', form: '폼', feedback: '피드백·상태', media: '미디어', nav: '내비게이션'};
+const variantStats = (() => { let slots = 0, options = 0, compositions = 0n; for (const t of templateList) { let c = 1n; for (const sl of layoutOptionsOf(t.id)) { slots++; options += sl.options.length; c *= BigInt(sl.options.length + 1); } compositions += c; } return {slots, options, compositions, themeVariants: Object.values(themes).reduce((a, t) => a + t.variants.length, 0)}; })();
 const stats = {themes: Object.keys(themes).length, palettes: Object.keys(palettes).length, templates: templateList.length, nodes: nodeTypes.length, pageTypes: Object.keys(pageTypes).length, icons: iconNames.length, shells: axes.shell.length, rules: rules.length, bans: axisBans.length, axes: axisOrder.length};
 
 // ---------- gap analysis ----------
@@ -145,7 +147,7 @@ const design = `## 1. 한 줄 요약
 
 이 저장소는 **사전에 정의한 카탈로그 안의 선택만 JSON 트리로 조립해 HTML/CSS를 만드는 컴파일러**입니다. 규칙은 프롬프트가 아니라 코드가 강제합니다. 카탈로그에 없는 값, 허용되지 않은 조합, 대비가 모자라는 색, 손으로 고친 산출물은 생성되거나 통과하지 못합니다.
 
-카탈로그 ${CATALOG_VERSION}은 테마 ${stats.themes}종, Coolors 팔레트 ${stats.palettes}개, 셸 ${stats.shells}종, 부품 ${stats.nodes}종, 페이지 유형 ${stats.pageTypes}종, 템플릿 ${stats.templates}종, 아이콘 ${stats.icons}개, 스타일 축 ${stats.axes}개입니다. 카카오 Katalog의 원 발표는 특정하지 못했으며(**확인 필요**) 이 구조는 "가능한 경우의 수를 미리 정의하고 트리로 조립한다"는 취지를 독립적으로 구현한 것입니다.
+카탈로그 ${CATALOG_VERSION}은 템플릿 ${stats.templates}종(구성 변형 ${n(variantStats.options)}개), 테마 ${stats.themes}종(테마 변형 ${variantStats.themeVariants}개), 팔레트 ${stats.palettes}개(${Object.keys(paletteFamilies).length}개 색 계열), 셸 ${stats.shells}종, 부품 ${stats.nodes}종, 페이지 유형 ${stats.pageTypes}종, 아이콘 ${stats.icons}개, 스타일 축 ${stats.axes}개입니다. 템플릿·테마·팔레트는 서로 독립이라 어느 조합도 고를 수 있고, 템플릿 구성 변형과 테마 변형이 그 위에 곱해집니다.
 
 ## 2. 파이프라인과 강제 경계
 
@@ -172,7 +174,7 @@ ${axisRows}
 
 ## 4. 테마 ${stats.themes}종
 
-테마는 분류, 설명, 기본 축 프로필, 금지 값, Coolors 팔레트 후보 ${Math.min(...Object.values(themes).map(t => t.palettes.length))}개 이상으로 구성됩니다. 팔레트는 테마에 속해야 하며(\`PALETTE_THEME\`), 테마가 금지한 값은 거부됩니다(\`THEME_FORBID\`). 예를 들어 시빅은 글로우·그라데이션을, 네온은 라이트 모드를 금지합니다. 어떤 두 테마도 기본 축 프로필이 같지 않습니다.
+테마는 분류, 설명, 기본 축 프로필, 금지 값, **추천 팔레트 순서**, **테마 변형**(축 값 묶음) 3개 이상으로 구성됩니다. 팔레트는 테마에 묶이지 않습니다. 추천은 조립기에서 먼저 보일 뿐이고, ${stats.palettes}개 어느 팔레트도 어느 테마와 쓸 수 있습니다. 테마가 금지한 값은 거부됩니다(\`THEME_FORBID\`). 예를 들어 시빅은 글로우·그라데이션을, 네온은 라이트 모드를 금지합니다. 테마 변형은 같은 시각 언어를 다른 결로 입는 방법이며(예: 워크스페이스의 촘촘한 운영·레일 집중·다크 워크스페이스), 금지 값과 축 조합 금지를 그대로 따릅니다.
 
 | 분류 | 테마 |
 |---|---|
@@ -232,16 +234,16 @@ ${Object.entries(pageTypes).map(([id, p]) => `| ${p.label} | ${templateList.filt
 
 | 층 | 명령 | 확인하는 것 | 최근 수치 |
 |---|---|---|---|
-| 계약·CLI | \`node --test\` | 스키마, 규칙별 거부, 카탈로그 무결성, 동료 레포 커버리지, 번들 동일성 | 테스트 50개 |
+| 계약·CLI | \`node --test\` | 스키마, 규칙별 거부, 카탈로그 무결성, 변형·팔레트 계약, 조립기 순수 함수, 번들 동일성 | 테스트 87개 |
 | 감사 | \`node scripts/audit.mjs\` | 증거 대조, 전 팔레트 대비, 부품 예시, 템플릿×테마, 쌍별 커버링, 축 요인분해 | 대비 ${n(contrast.pairs)}쌍, 컴파일 ${n(cov.matrixCompiled)}+${n(cov.palettePagesCompiled)}+${cov.pairwiseCompiled}+${n(cov.factorialCompiled)}개 |
 | 재현 | \`check-generated\` | 새 빌드와 저장소 산출물의 바이트 일치 | 생성 파일 수는 verification.md |
 | 브라우저 | \`npm run test:browser\` | 작성기, 템플릿 3폭 오버플로, 구조 접근성, 키보드 포커스, auto 모드, 갤러리(오프라인) | Chromium 13개 흐름 |
 
-가능한 조합 공간은 축 간 규칙으로 연결되는 묶음별로 나누어 세어 **${n(cov.allowedCombinations)}개**입니다(팔레트 포함, 규칙 필터 뒤). 이 가운데 쌍별 커버링 ${cov.pairwiseSuite}개 조합이 허용 가능한 축 값 쌍 ${n(cov.allowedPairs)}개를 모두 덮고 실제로 컴파일됩니다. 전체 공간의 육안 검수는 하지 않았습니다.
+가능한 조합 공간(축·팔레트만 센 값이며 템플릿·구성 변형은 곱하지 않았습니다)은 축 간 규칙으로 연결되는 묶음별로 나누어 세어 **${n(cov.allowedCombinations)}개**입니다(팔레트 포함, 규칙 필터 뒤). 이 가운데 쌍별 커버링 ${cov.pairwiseSuite}개 조합이 허용 가능한 축 값 쌍 ${n(cov.allowedPairs)}개를 모두 덮고 실제로 컴파일됩니다. 전체 공간의 육안 검수는 하지 않았습니다.
 
 ## 11. 산출물과 사용
 
-- 작성기(\`index.html\`): 템플릿·테마·팔레트·모드·13개 축을 고르고 트리를 편집합니다. 금지 조합은 규칙과 대안을 보이며 자동 수정할 수 있습니다.
+- 작성기(\`index.html\`): 템플릿과 구성 변형, 테마와 테마 변형, 팔레트(계열 필터·검색), 모드, 14개 축을 고르고 트리를 편집합니다. 미리보기는 휴대폰·태블릿·데스크톱·맞춤 폭을 고정 폭으로 그린 뒤 영역에 맞춰 줄여서 가로로 잘리지 않으며, **새 창**과 **전체 화면 모달**로 크게 볼 수 있습니다. 테마·페이지 유형이 막은 값은 고를 수 없게 하고, 다른 축과 부딪히는 값은 규칙의 대안으로 부딪힌 축을 함께 바꿉니다. 카탈로그 탭에서는 템플릿·테마·팔레트·부품의 실제 렌더를 보고 바로 조립을 시작합니다.
 - 갤러리(\`site/gallery/index.html\`): 컴파일러를 포함한 단일 파일. 휴대폰에서 템플릿·테마·부품·축을 열어 보고 저장합니다.
 - CLI: \`catalog | templates | themes | init | migrate | validate | build | check\`.
 - 예시: \`site/examples/<template>/\` ${stats.templates}개, \`site/examples/themes/<theme>/\` ${stats.themes}개.
@@ -249,11 +251,9 @@ ${Object.entries(pageTypes).map(([id, p]) => `| ${p.label} | ${templateList.filt
 
 ## 12. 출처와 라이선스
 
-- 동료분 레포 [yehsb123/design-system-kit](https://github.com/yehsb123/design-system-kit): AGPL-3.0. 축과 수량만 대조했고 코드는 복사하지 않았습니다.
 - 토큰·타이포·간격·상태 철학: winterholic-design-system의 winterholic-base 문서(04 모양·깊이, 05 모션, 07 상태, 08 접근성, 09 다크, 12 페이지 패턴)와 로컬 \`frontend-design\` 스킬.
-- 팔레트: [Coolors](https://coolors.co/palettes/trending) 렌더 페이지를 2026-10-18에 관측한 목록(\`docs/evidence/coolors-palettes.json\`). 각 팔레트에 원본 URL을 보존했습니다.
+- 팔레트: [Coolors](https://coolors.co/palettes/popular) 인기 목록을 렌더해 관측한 두 번의 기록. 2026-10-18 후보 목록(\`docs/evidence/coolors-palettes.json\`)과 2026-10-20 좋아요 수가 있는 인기 목록 73개 페이지(\`docs/evidence/coolors-popular-2026-10-20.json\`). 각 팔레트에 원본 URL을 보존했습니다. 선정 방법과 수치는 [팔레트 근거](palettes.html)에 있습니다.
 - 접근성 기준: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) SC 1.4.3, 1.4.11, 2.5.8, 1.1.1, 2.4.4.
-- 카카오 Katalog: 원 발표 **확인 필요**. 이 문서는 해당 발표의 구현·효과를 인용하지 않습니다.
 
 ## 13. 범위 밖과 알려진 한계
 
@@ -265,11 +265,53 @@ ${Object.entries(pageTypes).map(([id, p]) => `| ${p.label} | ${templateList.filt
 `;
 
 const footer = `Static Kit ${CATALOG_VERSION} · 생성: scripts/docs.mjs (수치는 카탈로그와 docs/evidence에서 계산)`;
-await writeFile(new URL('../docs/gap-analysis.md', import.meta.url), `# 격차 분석\n\n${gap}`);
-await writeFile(new URL('../docs/gap-analysis.html', import.meta.url), page({title: '격차 분석 · 동료분 레포 대비 커버리지', subtitle: `카탈로그 ${CATALOG_VERSION} · 동료분 레포 ${peer.observedCommit.slice(0, 7)}(${peer.license}) 대조`, md: gap, footer}));
+await mkdir(new URL('../docs/archive/', import.meta.url), {recursive: true});
+await writeFile(new URL('../docs/archive/gap-analysis.md', import.meta.url), `# 격차 분석 (보관 기록)\n\n> 4차까지의 비교 기록입니다. 배포 사이트와 조립기에는 싣지 않고 저장소 기록으로만 둡니다.\n\n${gap}`);
 await writeFile(new URL('../docs/design.md', import.meta.url), `# 설계서\n\n${design}`);
 await writeFile(new URL('../docs/design.html', import.meta.url), page({title: '설계서 · 카탈로그가 강제하는 디자인 조립기', subtitle: `Static Kit ${CATALOG_VERSION} · 테마 ${stats.themes} · 팔레트 ${stats.palettes} · 템플릿 ${stats.templates} · 부품 ${stats.nodes}`, md: design, footer}));
-console.log(`DOCS: gap-analysis (${profiles.length} systems, ${Object.keys(layoutCoverage).length} layouts: ${layoutFull} full / ${layoutPartial} partial) and design written.`);
+console.log(`DOCS: archive gap-analysis (${profiles.length} systems, ${Object.keys(layoutCoverage).length} layouts: ${layoutFull} full / ${layoutPartial} partial) and design written.`);
+
+
+// ---------- palette evidence page ----------
+const famCount = Object.fromEntries(Object.keys(paletteFamilies).map(f => [f, Object.values(palettes).filter(p => p.family === f).length]));
+const topLiked = Object.values(palettes).filter(p => p.likes).sort((a, b) => b.likes - a.likes).slice(0, 24);
+const tagPages = popularEvidence.pages.filter(x => x.found > 0).length;
+const palettesMd = `## 1. 무엇을 근거로 골랐나
+
+팔레트는 [Coolors](https://coolors.co/palettes/popular)의 인기 목록에서 가져왔습니다. 2026-10-20에 호스트의 Chromium으로 목록 페이지 ${tagPages}곳(trending·popular·색 계열·분위기 태그별)을 스크롤하며 스워치 hex, 팔레트 제목, **좋아요 수**를 읽었고 중복을 걸러 ${n(popularEvidence.palettes.length)}개를 \`docs/evidence/coolors-popular-2026-10-20.json\`에 남겼습니다. 앞선 2026-10-18 기록(\`docs/evidence/coolors-palettes.json\`, 814개 관측)에서 쓴 160개를 더해 라이브러리는 **${stats.palettes}개**입니다.
+
+- 인기 순위는 Coolors가 보여 준 좋아요 수일 뿐이며 디자인 품질의 증거가 아닙니다. 순위나 저작자는 추정하지 않았고, 팔레트 이름·색의 재사용 조건은 확인하지 못했습니다(**확인 필요**). 각 팔레트에 원본 URL을 둡니다.
+- 일부 페이지에서 제목 줄이 순번으로 읽힌 항목은 파싱 오류로 보고 버렸습니다(${popularEvidence.dropped?.count ?? 0}개).
+
+## 2. 어떻게 걸렀나
+
+1. 4~7색, 서로 다른 색 4개 이상, 명도 차이가 있는 팔레트만 후보로 둡니다. 크리스마스·핼러윈 같은 시즌 팔레트는 뺍니다.
+2. 계열(${Object.keys(paletteFamilies).length}개)은 브랜드 스워치의 색상·채도·명도와 스워치 전체의 퍼짐으로 코드가 계산합니다. 손으로 붙인 이름과 어긋나지 않습니다.
+3. 계열별 상한 안에서 좋아요 수가 높은 순으로 채웁니다. **보라-파랑이 대부분을 차지하는 팔레트**(흔한 인디고·바이올렛 그라데이션)와 **네온 무지개**는 상한을 두어 목록이 그 색으로 쏠리지 않게 했습니다. 퍼플 계열은 ${famCount.purple}개(${(famCount.purple / stats.palettes * 100).toFixed(1)}%)이고 어느 테마의 기본값도 아닙니다(허브·아틀리에·플레이풀·네온·키즈·컬러블록·녹턴·게임·웨딩 제외).
+4. 대비는 선정 기준이 아니라 토큰 해석이 보장합니다. 어떤 팔레트든 원색을 필요한 만큼만 어둡게·밝게 옮겨 모든 역할 쌍이 WCAG AA(본문 7:1, 보조 4.5:1, 구조선·포커스·차트 3:1)를 넘게 하고, 전수 결과는 \`docs/evidence/contrast.json\`입니다(${contrast.palettes}개 × 2모드 ${n(contrast.pairs)}쌍).
+5. 테마마다 추천 8개를 정합니다. 테마가 선호하는 계열·명도, 좋아요 수, 이미 다른 테마가 쓴 정도로 점수를 매기고, 점수만으로는 성격과 어긋나는 기본값(분석 대시보드에 파스텔 핑크, 학교에 분홍·시안)은 사람이 화면으로 읽고 고쳤습니다. 이 선정은 취향의 근사이며 미감을 보증하지 않습니다.
+
+## 3. 계열별 수
+
+| 계열 | 수 |
+|---|---|
+${Object.entries(paletteFamilies).map(([id, f]) => `| ${f.label} | ${famCount[id]} |`).join('\n')}
+
+## 4. 좋아요가 가장 많은 팔레트
+
+| 이름 | 계열 | 좋아요 | 스워치 |
+|---|---|---|---|
+${topLiked.map(p => `| [${p.name}](${p.source.url}) | ${paletteFamilies[p.family].label} | ${n(p.likes)} | ${p.colors.join(' ')} |`).join('\n')}
+
+## 5. 테마별 기본 팔레트
+
+| 테마 | 기본 | 추천 수 |
+|---|---|---|
+${Object.values(themes).map(t => `| ${t.name}(\`${t.id}\`) | ${palettes[t.palettes[0]].name} | ${t.palettes.length} |`).join('\n')}
+`;
+await writeFile(new URL('../docs/palettes.md', import.meta.url), '# 팔레트 근거\n\n' + palettesMd);
+await writeFile(new URL('../docs/palettes.html', import.meta.url), page({title: '팔레트 근거 · Coolors 인기 팔레트 관측과 선정 방법', subtitle: `Static Kit ${CATALOG_VERSION} · 팔레트 ${stats.palettes}개 · 색 계열 ${Object.keys(paletteFamilies).length}개`, md: palettesMd, footer}));
+console.log(`DOCS: palettes written (${stats.palettes} palettes, ${popularEvidence.palettes.length} observed with likes).`);
 
 // ---------- spacing contract (generated from src/spacing.mjs) ----------
 const spacingMd = spacingMarkdown();

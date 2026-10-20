@@ -1,0 +1,150 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "모두웍스",
+  "theme": "enterprise",
+  "palette": "cotton-candy-skies",
+  "mode": "light",
+  "pageType": "listing",
+  "shell": "sidebar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "공고",
+        "href": "#main",
+        "icon": "list"
+      },
+      {
+        "label": "팀 소개",
+        "href": "#main",
+        "icon": "users"
+      },
+      {
+        "label": "복지",
+        "href": "#main",
+        "icon": "heart"
+      },
+      {
+        "label": "채용 과정",
+        "href": "#main",
+        "icon": "check-circle"
+      }
+    ],
+    "action": {
+      "label": "인재 풀 등록",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 모두웍스 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "함께할 사람을 찾습니다",
+        "description": "열린 공고 14개",
+        "actions": [
+          {
+            "label": "인재 풀 등록",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "직무 또는 키워드",
+        "filters": [
+          "전체",
+          "개발",
+          "디자인",
+          "운영",
+          "영업"
+        ],
+        "selected": 0
+      },
+      {
+        "type": "list",
+        "title": "열린 공고",
+        "variant": "divided",
+        "items": [
+          {
+            "title": "백엔드 엔지니어",
+            "description": "결제 플랫폼 · 서울 · 경력 3년 이상",
+            "status": "진행",
+            "meta": "마감 11/10"
+          },
+          {
+            "title": "프로덕트 디자이너",
+            "description": "디자인 시스템 · 서울/원격 · 경력 무관",
+            "status": "진행",
+            "meta": "상시"
+          },
+          {
+            "title": "고객 성공 매니저",
+            "description": "엔터프라이즈 · 서울 · 경력 2년 이상",
+            "status": "진행",
+            "meta": "마감 11/05"
+          },
+          {
+            "title": "데이터 분석가",
+            "description": "성장 분석 · 서울 · 경력 2년 이상",
+            "status": "진행",
+            "meta": "마감 11/20"
+          },
+          {
+            "title": "인프라 엔지니어",
+            "description": "플랫폼 · 원격 · 경력 4년 이상",
+            "status": "대기",
+            "meta": "곧 마감"
+          }
+        ],
+        "state": "ready"
+      },
+      {
+        "type": "tags",
+        "title": "인기 키워드",
+        "items": [
+          "원격 가능",
+          "신입 가능",
+          "스톡옵션",
+          "유연 근무",
+          "해외 컨퍼런스"
+        ],
+        "variant": "chips"
+      },
+      {
+        "type": "pagination",
+        "pages": 3,
+        "current": 1
+      }
+    ]
+  }
+}

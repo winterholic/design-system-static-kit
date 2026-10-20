@@ -32,3 +32,23 @@ export function stateMarkup(state) {
   const m = stateMessages[state];
   return m ? `<div class="kit-state" data-state="${state}" role="${state === 'error' ? 'alert' : 'status'}"${state === 'loading' ? ' aria-busy="true"' : ''}><strong>${m[0]}</strong><p>${m[1]}</p></div>` : '';
 }
+
+/**
+ * 제목이 들어갈 칸에 맞는 글자 크기를 정하기 위한 "한 줄 글자 수" 구간.
+ * 한글·한자는 한 글자가 1em에 가깝고 영문·숫자는 절반 남짓이라, 길이를 글자 수가 아니라 폭 가중치로 센다.
+ * 줄바꿈(\n)이 있으면 가장 긴 줄이 한 줄에 들어가야 하고, 없으면 두 줄로 균형 있게 나뉜다고 보고 절반(여유 12%)을 기준으로 한다.
+ */
+export const CPL_BUCKETS = [5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 23, 26, 30];
+const weightOf = ch => /[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff\u3040-\u30ff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .6 : /\s/.test(ch) ? .28 : .35;
+export function cplOf(title) {
+  const lines = String(title).split('\n').map(l => [...l].reduce((sum, ch) => sum + weightOf(ch), 0));
+  const need = lines.length > 1 ? Math.max(...lines) : Math.ceil(lines[0] / 2 * 1.12);
+  return CPL_BUCKETS.find(b => b >= need) ?? CPL_BUCKETS.at(-1);
+}
+
+/** 한 줄에 들어가야 하는 짧은 값(지표 숫자·가격)의 폭 구간. 구간별 글자 크기 상한은 CSS(--kit-vfit)가 칸 폭에서 계산한다. */
+export const VL_BUCKETS = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 24];
+export function vlOf(text) {
+  const need = [...String(text)].reduce((sum, ch) => sum + (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .62 : /\s/.test(ch) ? .28 : .32), 0);
+  return VL_BUCKETS.find(b => b >= need) ?? VL_BUCKETS.at(-1);
+}

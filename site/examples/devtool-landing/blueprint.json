@@ -1,0 +1,267 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "빌드플로",
+  "theme": "devtool",
+  "palette": "ocean-blue-adventure",
+  "mode": "auto",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line-square",
+  "ornament": "lines",
+  "backdrop": "grid",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "특징",
+        "href": "#why",
+        "icon": "zap"
+      },
+      {
+        "label": "요금",
+        "href": "#pricing",
+        "icon": "tag"
+      },
+      {
+        "label": "문서",
+        "href": "#main",
+        "icon": "book"
+      },
+      {
+        "label": "변경 기록",
+        "href": "#main",
+        "icon": "clock"
+      }
+    ],
+    "action": {
+      "label": "시작하기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 빌드플로 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "배포까지 걸리는 시간을 줄이는 빌드 도구",
+        "description": "캐시와 병렬 실행으로 CI를 4배 빠르게."
+      },
+      {
+        "type": "hero",
+        "variant": "split",
+        "eyebrow": "v3.2 · 원격 캐시 정식 출시",
+        "title": "푸시하고\n커피 한 잔.",
+        "body": "변경된 패키지만 다시 빌드하고, 나머지는 팀원이 이미 만든 결과를 가져옵니다.",
+        "action": {
+          "label": "무료로 시작",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "문서 보기",
+          "href": "#main",
+          "variant": "secondary"
+        },
+        "visual": "device"
+      },
+      {
+        "type": "code",
+        "label": "설치와 첫 빌드",
+        "language": "bash",
+        "code": "npm install -g @buildflow/cli\nbuildflow init\nbuildflow run build --cache=remote"
+      },
+      {
+        "type": "grid",
+        "columns": "three",
+        "children": [
+          {
+            "type": "metric",
+            "label": "평균 빌드 시간",
+            "value": "2분 14초",
+            "detail": "도입 전 9분 40초",
+            "trend": "down",
+            "delta": "-77%"
+          },
+          {
+            "type": "metric",
+            "label": "캐시 적중률",
+            "value": "91%",
+            "detail": "최근 30일"
+          },
+          {
+            "type": "metric",
+            "label": "팀",
+            "value": "3,200개",
+            "detail": "활성 워크스페이스"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "개발자가 쓰는 이유",
+        "children": [
+          {
+            "type": "bento",
+            "children": [
+              {
+                "type": "card",
+                "title": "변경분만 다시 빌드",
+                "body": "의존 그래프를 읽어 영향받는 패키지만 실행합니다. 설정 파일은 한 줄이면 됩니다.",
+                "icon": "zap"
+              },
+              {
+                "type": "metric",
+                "label": "병렬 작업",
+                "value": "16개",
+                "detail": "코어에 맞춰 자동 분배"
+              },
+              {
+                "type": "card",
+                "title": "로컬과 CI가 같은 결과",
+                "body": "같은 입력은 같은 출력을 냅니다. 내 컴퓨터에서 통과하면 CI에서도 통과해요.",
+                "icon": "check-circle"
+              },
+              {
+                "type": "chart",
+                "title": "빌드 시간 추이",
+                "caption": "최근 6주 평균",
+                "kind": "line",
+                "unit": "분",
+                "categories": [
+                  "1주",
+                  "2주",
+                  "3주",
+                  "4주",
+                  "5주",
+                  "6주"
+                ],
+                "series": [
+                  {
+                    "name": "평균 빌드",
+                    "values": [
+                      9.6,
+                      7.1,
+                      4.8,
+                      3.2,
+                      2.5,
+                      2.2
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "quote",
+                "quote": "머지 대기 시간이 반으로 줄어서 리뷰 흐름이 끊기지 않습니다.",
+                "author": "윤서진",
+                "role": "플랫폼 엔지니어"
+              }
+            ]
+          }
+        ],
+        "anchor": "why"
+      },
+      {
+        "type": "section",
+        "title": "요금",
+        "children": [
+          {
+            "type": "pricing",
+            "children": [
+              {
+                "type": "plan",
+                "name": "개인",
+                "price": "0원",
+                "description": "사이드 프로젝트와 오픈소스.",
+                "features": [
+                  "원격 캐시 5GB",
+                  "팀원 1명",
+                  "커뮤니티 지원"
+                ],
+                "action": {
+                  "label": "시작",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              },
+              {
+                "type": "plan",
+                "name": "팀",
+                "price": "19달러",
+                "period": "사용자당 월",
+                "description": "캐시가 필요한 제품 팀.",
+                "features": [
+                  "원격 캐시 500GB",
+                  "무제한 팀원",
+                  "빌드 분석 대시보드",
+                  "이메일 지원"
+                ],
+                "action": {
+                  "label": "팀으로 시작",
+                  "href": "#main",
+                  "variant": "primary"
+                },
+                "featured": "yes"
+              },
+              {
+                "type": "plan",
+                "name": "엔터프라이즈",
+                "price": "문의",
+                "description": "자체 호스팅과 SSO.",
+                "features": [
+                  "온프레미스 캐시",
+                  "SSO · 감사 로그",
+                  "전담 엔지니어"
+                ],
+                "action": {
+                  "label": "문의",
+                  "href": "#main",
+                  "variant": "secondary"
+                }
+              }
+            ]
+          }
+        ],
+        "anchor": "pricing"
+      },
+      {
+        "type": "faq",
+        "title": "자주 묻는 질문",
+        "items": [
+          {
+            "question": "어떤 언어와 도구를 지원하나요?",
+            "answer": "JavaScript, TypeScript, Go, Rust, Python 작업을 지원하며 명령어를 감싸는 방식이라 다른 빌드 도구와도 함께 씁니다."
+          },
+          {
+            "question": "캐시에 소스 코드가 올라가나요?",
+            "answer": "결과물의 해시와 빌드 산출물만 저장하며 소스 코드는 올리지 않습니다. 저장 데이터는 암호화됩니다."
+          }
+        ]
+      }
+    ]
+  }
+}

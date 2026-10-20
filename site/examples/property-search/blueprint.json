@@ -1,0 +1,159 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.1.0",
+  "name": "집찾기",
+  "theme": "realty",
+  "palette": "midnight-ocean-depths-2",
+  "mode": "light",
+  "pageType": "listing",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "medium",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "전세",
+        "href": "#main",
+        "icon": "building"
+      },
+      {
+        "label": "월세",
+        "href": "#main",
+        "icon": "bed"
+      },
+      {
+        "label": "매매",
+        "href": "#main",
+        "icon": "dollar"
+      },
+      {
+        "label": "관심 매물",
+        "href": "#main",
+        "icon": "heart"
+      }
+    ],
+    "action": {
+      "label": "로그인",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 집찾기 · 정적 데모",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "성수동 아파트 전세",
+        "description": "조건에 맞는 매물 128건"
+      },
+      {
+        "type": "filter-bar",
+        "placeholder": "단지명·지하철역 검색",
+        "filters": [
+          "전체",
+          "신축",
+          "역세권",
+          "남향",
+          "주차 가능"
+        ],
+        "selected": 0
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "label": "지도",
+        "size": "wide",
+        "children": [
+          {
+            "type": "table",
+            "title": "매물 목록",
+            "caption": "최신 등록순 매물",
+            "variant": "striped",
+            "columns": [
+              "단지",
+              "전용",
+              "층",
+              "보증금",
+              "입주"
+            ],
+            "rows": [
+              [
+                "성수 리버뷰",
+                "59㎡",
+                "12/25",
+                "6.2억",
+                "즉시"
+              ],
+              [
+                "서울숲 힐스",
+                "84㎡",
+                "7/20",
+                "9.8억",
+                "11월 말"
+              ],
+              [
+                "뚝섬 파크",
+                "74㎡",
+                "18/30",
+                "8.1억",
+                "12월"
+              ],
+              [
+                "성수 아이파크",
+                "59㎡",
+                "5/15",
+                "5.8억",
+                "협의"
+              ],
+              [
+                "한강 센트럴",
+                "101㎡",
+                "22/33",
+                "12.5억",
+                "즉시"
+              ]
+            ],
+            "state": "ready"
+          },
+          {
+            "type": "media",
+            "kind": "map",
+            "ratio": "4:3",
+            "alt": "성수동 일대 지도에 매물 위치를 표시한 모습",
+            "caption": "지도는 자리 표시 일러스트입니다."
+          }
+        ]
+      },
+      {
+        "type": "pagination",
+        "pages": 8,
+        "current": 1
+      }
+    ]
+  }
+}

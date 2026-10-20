@@ -4,7 +4,7 @@
 
 이 저장소는 **사전에 정의한 카탈로그 안의 선택만 JSON 트리로 조립해 HTML/CSS를 만드는 컴파일러**입니다. 규칙은 프롬프트가 아니라 코드가 강제합니다. 카탈로그에 없는 값, 허용되지 않은 조합, 대비가 모자라는 색, 손으로 고친 산출물은 생성되거나 통과하지 못합니다.
 
-카탈로그 2.0.0은 테마 40종, Coolors 팔레트 160개, 셸 10종, 부품 55종, 페이지 유형 16종, 템플릿 61종, 아이콘 87개, 스타일 축 15개입니다. 카카오 Katalog의 원 발표는 특정하지 못했으며(**확인 필요**) 이 구조는 "가능한 경우의 수를 미리 정의하고 트리로 조립한다"는 취지를 독립적으로 구현한 것입니다.
+카탈로그 2.1.0은 템플릿 85종(구성 변형 405개), 테마 54종(테마 변형 162개), 팔레트 427개(11개 색 계열), 셸 10종, 부품 55종, 페이지 유형 16종, 아이콘 87개, 스타일 축 15개입니다. 템플릿·테마·팔레트는 서로 독립이라 어느 조합도 고를 수 있고, 템플릿 구성 변형과 테마 변형이 그 위에 곱해집니다.
 
 ## 2. 파이프라인과 강제 경계
 
@@ -17,7 +17,7 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 
 - **입력 경계.** 알 수 없는 속성은 모두 `UNKNOWN_KEY`입니다. 문자열은 항상 이스케이프되고, 링크는 HTTPS·`#main`·페이지에 선언된 앵커만 허용합니다. 생성 페이지의 스크립트는 고정 런타임(폼 확인, 탭, 필터 칩, 드롭다운) 하나뿐이고 CSP로 네트워크를 막습니다.
 - **한계.** 카탈로그와 검사기 자체를 고칠 권한은 막지 못합니다. 새 표현이 필요하면 근거와 반례를 남겨 카탈로그를 개정합니다. 사용자 승인이나 미감을 보증하는 기록은 만들지 않습니다.
-- **버전.** Blueprint 2.0과 카탈로그 2.0.0이 아니면 거부합니다. 1.x 입력은 `kit migrate`로 변환합니다.
+- **버전.** Blueprint 2.0과 카탈로그 2.1.0이 아니면 거부합니다. 1.x 입력은 `kit migrate`로 변환합니다.
 
 ## 3. 스타일 축 15개
 
@@ -43,18 +43,18 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 
 축 값이 가리키는 시각 기반(타입 스케일 비율, 전폭 밴드와 섹션 리듬, 열린 부품과 상자 부품, 앱 화면의 틴트 바탕)은 docs/foundation.md에 진단 수치와 함께 기록합니다. 같은 축 값이라도 페이지 유형(랜딩·앱·콘텐츠)에 따라 쓰이는 크기와 간격이 다릅니다. 이미지 자리의 주제 일러스트(motif 37종), 제품 목업, 상품 카드는 docs/ui-level-up.md에 레퍼런스 대비와 함께 기록합니다.
 
-## 4. 테마 40종
+## 4. 테마 54종
 
-테마는 분류, 설명, 기본 축 프로필, 금지 값, Coolors 팔레트 후보 4개 이상으로 구성됩니다. 팔레트는 테마에 속해야 하며(`PALETTE_THEME`), 테마가 금지한 값은 거부됩니다(`THEME_FORBID`). 예를 들어 시빅은 글로우·그라데이션을, 네온은 라이트 모드를 금지합니다. 어떤 두 테마도 기본 축 프로필이 같지 않습니다.
+테마는 분류, 설명, 기본 축 프로필, 금지 값, **추천 팔레트 순서**, **테마 변형**(축 값 묶음) 3개 이상으로 구성됩니다. 팔레트는 테마에 묶이지 않습니다. 추천은 조립기에서 먼저 보일 뿐이고, 427개 어느 팔레트도 어느 테마와 쓸 수 있습니다. 테마가 금지한 값은 거부됩니다(`THEME_FORBID`). 예를 들어 시빅은 글로우·그라데이션을, 네온은 라이트 모드를 금지합니다. 테마 변형은 같은 시각 언어를 다른 결로 입는 방법이며(예: 워크스페이스의 촘촘한 운영·레일 집중·다크 워크스페이스), 금지 값과 축 조합 금지를 그대로 따릅니다.
 
 | 분류 | 테마 |
 |---|---|
-| 업무·제품 | 워크스페이스(`workspace`), 레저(`ledger`), 콘솔(`console`), 오로라(`aurora`), 트러스트(`trust`), 인사이트(`insight`), 허브(`hub`), 프리시전(`precision`) |
-| 브랜드·마케팅 | 네온(`neon`), 플레이풀(`playful`), 스튜디오(`studio`), 갤러리(`gallery`), 브루탈(`brutalist`), 레트로(`retro`), 시그널(`signal`) |
-| 읽기·문서 | 에디토리얼(`editorial`), 페이퍼(`paper`), 매뉴얼(`manual`), 저널(`journal`), 매거진(`magazine`) |
-| 생활·서비스 | 보태니컬(`botanical`), 클라우드(`cloud`), 클리닉(`clinic`), 다이닝(`dining`), 카페(`cafe`), 스테이(`stay`), 커머스(`commerce`), 뷰티(`beauty`), 리얼티(`realty`), 아틀리에(`atelier`), 러닝(`learning`) |
-| 공공·기관 | 시빅(`civic`), 한지(`hanji`), 헤리티지(`heritage`) |
-| 모바일·앱 | 클래리티(`clarity`), 포켓(`pocket`), 녹턴(`nocturne`), 스포츠(`sport`), 솔라(`solar`), 오션(`ocean`) |
+| 업무·제품 | 워크스페이스(`workspace`), 레저(`ledger`), 콘솔(`console`), 오로라(`aurora`), 트러스트(`trust`), 인사이트(`insight`), 허브(`hub`), 프리시전(`precision`), 엔터프라이즈(`enterprise`), 데브툴(`devtool`) |
+| 브랜드·마케팅 | 네온(`neon`), 플레이풀(`playful`), 스튜디오(`studio`), 갤러리(`gallery`), 브루탈(`brutalist`), 레트로(`retro`), 시그널(`signal`), 럭셔리(`luxe`), 스위스(`swiss`), 컬러블록(`colorblock`) |
+| 읽기·문서 | 에디토리얼(`editorial`), 페이퍼(`paper`), 매뉴얼(`manual`), 저널(`journal`), 매거진(`magazine`), 뉴스룸(`newsroom`), 아카데믹(`academic`) |
+| 생활·서비스 | 보태니컬(`botanical`), 클라우드(`cloud`), 클리닉(`clinic`), 다이닝(`dining`), 카페(`cafe`), 스테이(`stay`), 커머스(`commerce`), 뷰티(`beauty`), 리얼티(`realty`), 아틀리에(`atelier`), 러닝(`learning`), 웨딩(`wedding`), 키즈(`kids`), 와인바(`wine`), 가든(`garden`) |
+| 공공·기관 | 시빅(`civic`), 한지(`hanji`), 헤리티지(`heritage`), 스쿨(`school`), 뱅크(`bank`) |
+| 모바일·앱 | 클래리티(`clarity`), 포켓(`pocket`), 녹턴(`nocturne`), 스포츠(`sport`), 솔라(`solar`), 오션(`ocean`), 게임(`game`) |
 
 ## 5. 토큰과 대비
 
@@ -68,7 +68,7 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 | 그라데이션 위 본문·보조 글자 | 7:1 / 4.5:1 | 두 그라데이션 각 11점 |
 | 채움 위 글자(행동·강조·호버) | 4.5:1 | 각 채움색 |
 
-전수 결과: **160개 팔레트 × 2모드 = 320모드, 33,600쌍 전부 통과**. 가장 빠듯한 쌍은 chart1/canvas(orange-sunset-sky/light) 3.00:3입니다. 반전 구역(`surface: inverse`, `tone: inverse`)은 반대 모드의 같은 검증을 통과한 토큰 세트를 씁니다. 통과는 WCAG 전체 준수나 시각 품질을 뜻하지 않습니다.
+전수 결과: **427개 팔레트 × 2모드 = 854모드, 89,670쌍 전부 통과**. 가장 빠듯한 쌍은 rule/canvas(creamy-pastel-summer/dark) 3.00:3입니다. 반전 구역(`surface: inverse`, `tone: inverse`)은 반대 모드의 같은 검증을 통과한 토큰 세트를 씁니다. 통과는 WCAG 전체 준수나 시각 품질을 뜻하지 않습니다.
 
 ## 6. 부품 55종
 
@@ -149,20 +149,20 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 
 내비 항목 수 상한은 셸마다 다릅니다: sidebar 8, topbar 6, editorial 5, split 6, rail 7, centered 6, stacked 8, dock 5, minimal 2, masthead 6. 레일과 하단 탭은 모든 항목에 아이콘이 필요합니다.
 
-## 9. 템플릿 61종
+## 9. 템플릿 85종
 
 | 페이지 유형 | 템플릿 |
 |---|---|
 | 일반 | 팀 소개(`about-team`), 음악 플레이어(`music-player`) |
-| 랜딩 | SaaS 서비스 소개(`saas-landing`), 앱 소개(`app-landing`), 제품 소개(`product-landing`), 행사 안내(`event-landing`), 대기자 등록(`waitlist`), 캠페인·후원(`campaign-donate`), 강의 소개(`learning-course`), 피트니스(`fitness-landing`), 에너지·태양광(`solar-landing`), 여행 소개(`travel-ocean`), 박물관·재단(`museum-home`), 전통 문화 여행(`hanji-journey`), 카페 홈(`cafe-home`), 병원 홈(`clinic-home`) |
-| 대시보드 | 프로젝트 현황 대시보드(`dashboard-overview`), 프로젝트 보드(`project-board`) |
+| 랜딩 | SaaS 서비스 소개(`saas-landing`), 앱 소개(`app-landing`), 제품 소개(`product-landing`), 행사 안내(`event-landing`), 대기자 등록(`waitlist`), 캠페인·후원(`campaign-donate`), 강의 소개(`learning-course`), 피트니스(`fitness-landing`), 에너지·태양광(`solar-landing`), 여행 소개(`travel-ocean`), 박물관·재단(`museum-home`), 전통 문화 여행(`hanji-journey`), 카페 홈(`cafe-home`), 병원 홈(`clinic-home`), 기업용 솔루션 소개(`b2b-solution`), 개발자 도구 소개(`devtool-landing`), 럭셔리 브랜드(`luxury-brand`), 캠페인 포스터형 소개(`campaign-poster`), 청첩장(`wedding-invite`), 어린이 클래스(`kids-class`), 금융 상품 안내(`bank-product`), 게임 출시 안내(`game-launch`) |
+| 대시보드 | 프로젝트 현황 대시보드(`dashboard-overview`), 프로젝트 보드(`project-board`), 영업 현황 대시보드(`sales-dashboard`), 재무 현황(`finance-overview`), 인사 현황(`hr-people`) |
 | 데이터 리포트 | 분석 리포트(`dashboard-analytics`), 감사 로그(`audit-log`), 서비스 상태(`status-page`) |
-| 목록·탐색 | 관리자 목록(`admin-table`), 구성원 디렉터리(`team-directory`) |
-| 협업·소통 | 메시지함(`inbox`), 팀 대화(`team-chat`), 월간 일정(`calendar-view`) |
-| 문서·레퍼런스 | 레퍼런스 문서(`docs-reference`), 튜토리얼(`tutorial`), 변경 기록(`changelog`), 도움말 센터(`help-center`), 민원 안내(`civic-service`) |
-| 글 | 읽는 문서(`article`), 블로그 글(`blog-post`), 정책 문서(`policy`) |
-| 블로그 목록 | 블로그 목록(`blog-index`) |
-| 커머스 | 상품 상세(`product-detail`), 상품 목록(`product-listing`), 결제(`checkout`), 주문 배송 조회(`order-tracking`), 뷰티 상세(`beauty-detail`), 메뉴판(`menu-dining`), 부동산 매물(`realty-detail`), 숙소 상세(`stay-detail`) |
+| 목록·탐색 | 관리자 목록(`admin-table`), 구성원 디렉터리(`team-directory`), 채용 공고 목록(`job-board`), 강좌 목록(`course-catalog`), 매물 검색(`property-search`), 행사 일정표(`event-schedule`) |
+| 협업·소통 | 메시지함(`inbox`), 팀 대화(`team-chat`), 월간 일정(`calendar-view`), 고객 문의 대기열(`support-queue`) |
+| 문서·레퍼런스 | 레퍼런스 문서(`docs-reference`), 튜토리얼(`tutorial`), 변경 기록(`changelog`), 도움말 센터(`help-center`), 민원 안내(`civic-service`), 장애 회고(`incident-report`), 채용 상세(`job-detail`), API 레퍼런스(`api-reference`) |
+| 글 | 읽는 문서(`article`), 블로그 글(`blog-post`), 정책 문서(`policy`), 레시피(`recipe-detail`), 연구 논문(`research-paper`) |
+| 블로그 목록 | 블로그 목록(`blog-index`), 뉴스 메인(`news-home`) |
+| 커머스 | 상품 상세(`product-detail`), 상품 목록(`product-listing`), 결제(`checkout`), 주문 배송 조회(`order-tracking`), 뷰티 상세(`beauty-detail`), 메뉴판(`menu-dining`), 부동산 매물(`realty-detail`), 숙소 상세(`stay-detail`), 식물 가게 상품 목록(`garden-shop`), 와인 리스트(`wine-list`) |
 | 포트폴리오 | 에이전시 홈(`agency-home`), 포트폴리오 모음(`portfolio-grid`), 사례 연구(`case-study`) |
 | 요금제 | 요금 비교(`pricing-page`) |
 | 폼 | 문의하기(`contact`), 온보딩 단계(`onboarding-wizard`), 설문(`survey`) |
@@ -176,28 +176,26 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 
 | 층 | 명령 | 확인하는 것 | 최근 수치 |
 |---|---|---|---|
-| 계약·CLI | `node --test` | 스키마, 규칙별 거부, 카탈로그 무결성, 동료 레포 커버리지, 번들 동일성 | 테스트 50개 |
-| 감사 | `node scripts/audit.mjs` | 증거 대조, 전 팔레트 대비, 부품 예시, 템플릿×테마, 쌍별 커버링, 축 요인분해 | 대비 33,600쌍, 컴파일 2,440+468+450+4,680개 |
+| 계약·CLI | `node --test` | 스키마, 규칙별 거부, 카탈로그 무결성, 변형·팔레트 계약, 조립기 순수 함수, 번들 동일성 | 테스트 87개 |
+| 감사 | `node scripts/audit.mjs` | 증거 대조, 전 팔레트 대비, 부품 예시, 템플릿×테마, 쌍별 커버링, 축 요인분해 | 대비 89,670쌍, 컴파일 4,590+1,249+609+12,496개 |
 | 재현 | `check-generated` | 새 빌드와 저장소 산출물의 바이트 일치 | 생성 파일 수는 verification.md |
 | 브라우저 | `npm run test:browser` | 작성기, 템플릿 3폭 오버플로, 구조 접근성, 키보드 포커스, auto 모드, 갤러리(오프라인) | Chromium 13개 흐름 |
 
-가능한 조합 공간은 축 간 규칙으로 연결되는 묶음별로 나누어 세어 **157,900,457,808개**입니다(팔레트 포함, 규칙 필터 뒤). 이 가운데 쌍별 커버링 450개 조합이 허용 가능한 축 값 쌍 4,867개를 모두 덮고 실제로 컴파일됩니다. 전체 공간의 육안 검수는 하지 않았습니다.
+가능한 조합 공간(축·팔레트만 센 값이며 템플릿·구성 변형은 곱하지 않았습니다)은 축 간 규칙으로 연결되는 묶음별로 나누어 세어 **20,568,992,522,652개**입니다(팔레트 포함, 규칙 필터 뒤). 이 가운데 쌍별 커버링 609개 조합이 허용 가능한 축 값 쌍 5,778개를 모두 덮고 실제로 컴파일됩니다. 전체 공간의 육안 검수는 하지 않았습니다.
 
 ## 11. 산출물과 사용
 
-- 작성기(`index.html`): 템플릿·테마·팔레트·모드·13개 축을 고르고 트리를 편집합니다. 금지 조합은 규칙과 대안을 보이며 자동 수정할 수 있습니다.
+- 작성기(`index.html`): 템플릿과 구성 변형, 테마와 테마 변형, 팔레트(계열 필터·검색), 모드, 14개 축을 고르고 트리를 편집합니다. 미리보기는 휴대폰·태블릿·데스크톱·맞춤 폭을 고정 폭으로 그린 뒤 영역에 맞춰 줄여서 가로로 잘리지 않으며, **새 창**과 **전체 화면 모달**로 크게 볼 수 있습니다. 테마·페이지 유형이 막은 값은 고를 수 없게 하고, 다른 축과 부딪히는 값은 규칙의 대안으로 부딪힌 축을 함께 바꿉니다. 카탈로그 탭에서는 템플릿·테마·팔레트·부품의 실제 렌더를 보고 바로 조립을 시작합니다.
 - 갤러리(`site/gallery/index.html`): 컴파일러를 포함한 단일 파일. 휴대폰에서 템플릿·테마·부품·축을 열어 보고 저장합니다.
 - CLI: `catalog | templates | themes | init | migrate | validate | build | check`.
-- 예시: `site/examples/<template>/` 61개, `site/examples/themes/<theme>/` 40개.
+- 예시: `site/examples/<template>/` 85개, `site/examples/themes/<theme>/` 54개.
 - 카탈로그 API: `site/v1/catalog.json`, `site/v1/blueprint.schema.json`.
 
 ## 12. 출처와 라이선스
 
-- 동료분 레포 [yehsb123/design-system-kit](https://github.com/yehsb123/design-system-kit): AGPL-3.0. 축과 수량만 대조했고 코드는 복사하지 않았습니다.
 - 토큰·타이포·간격·상태 철학: winterholic-design-system의 winterholic-base 문서(04 모양·깊이, 05 모션, 07 상태, 08 접근성, 09 다크, 12 페이지 패턴)와 로컬 `frontend-design` 스킬.
-- 팔레트: [Coolors](https://coolors.co/palettes/trending) 렌더 페이지를 2026-10-18에 관측한 목록(`docs/evidence/coolors-palettes.json`). 각 팔레트에 원본 URL을 보존했습니다.
+- 팔레트: [Coolors](https://coolors.co/palettes/popular) 인기 목록을 렌더해 관측한 두 번의 기록. 2026-10-18 후보 목록(`docs/evidence/coolors-palettes.json`)과 2026-10-20 좋아요 수가 있는 인기 목록 73개 페이지(`docs/evidence/coolors-popular-2026-10-20.json`). 각 팔레트에 원본 URL을 보존했습니다. 선정 방법과 수치는 [팔레트 근거](palettes.html)에 있습니다.
 - 접근성 기준: [WCAG 2.2](https://www.w3.org/TR/WCAG22/) SC 1.4.3, 1.4.11, 2.5.8, 1.1.1, 2.4.4.
-- 카카오 Katalog: 원 발표 **확인 필요**. 이 문서는 해당 발표의 구현·효과를 인용하지 않습니다.
 
 ## 13. 범위 밖과 알려진 한계
 

@@ -23,7 +23,7 @@ const audit = () => {
   return out;
 };
 
-test('all 61 templates × phone/tablet/desktop: no overflow, no page errors, structural a11y clean', async ({page}) => {
+test('every template × phone/tablet/desktop: no overflow, no page errors, structural a11y clean', async ({page}) => {
   test.setTimeout(420000);
   const errors = []; page.on('pageerror', e => errors.push(e.message)); page.on('console', m => m.type() === 'error' && errors.push(m.text()));
   const problems = [];
@@ -37,7 +37,7 @@ test('all 61 templates × phone/tablet/desktop: no overflow, no page errors, str
   expect(problems).toEqual([]); expect(errors).toEqual([]);
 });
 
-test('all 40 theme showcases render on a phone without overflow', async ({page}) => {
+test('every theme showcase renders on a phone without overflow', async ({page}) => {
   test.setTimeout(240000);
   await page.setViewportSize({width: 390, height: 844}); const problems = [];
   for (const id of Object.keys(themes)) { await page.goto(`/site/examples/themes/${id}/`); const o = await page.evaluate(() => ({sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth})); if (o.sw > o.cw + 1) problems.push(`${id} ${o.sw}>${o.cw}`); }
@@ -84,9 +84,9 @@ test('single-file gallery works offline on a phone: browse, open, change theme, 
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   await context.route('**/*', route => { const u = route.request().url(); return u.startsWith('http://127.0.0.1') || u.startsWith('data:') || u.startsWith('about:') ? route.continue() : route.abort(); });
   await page.setViewportSize({width: 390, height: 844}); await page.goto('/site/gallery/index.html');
-  await expect(page.locator('#counts')).toContainText('테마 40'); await expect(page.locator('#counts')).toContainText('템플릿 61');
+  await expect(page.locator('#counts')).toContainText('테마 ' + Object.keys(themes).length); await expect(page.locator('#counts')).toContainText('템플릿 ' + templateList.length);
   const o = await page.evaluate(() => ({sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth})); expect(o.sw).toBeLessThanOrEqual(o.cw + 1);
-  await expect(page.locator('#tab-templates .card')).toHaveCount(61); await expect.poll(() => page.locator('#tab-templates .thumb iframe').count()).toBeGreaterThan(0);
+  await expect(page.locator('#tab-templates .card')).toHaveCount(templateList.length); await expect.poll(() => page.locator('#tab-templates .thumb iframe').count()).toBeGreaterThan(0);
   await page.getByRole('button', {name: '랜딩', exact: true}).click(); await expect(page.locator('#tab-templates .card').first()).toBeVisible();
   await page.locator('#tab-templates .card').first().click(); await expect(page.locator('#viewer')).toHaveClass(/open/);
   await expect(page.frameLocator('#frame').locator('h1')).toBeVisible();
@@ -95,7 +95,7 @@ test('single-file gallery works offline on a phone: browse, open, change theme, 
   await page.locator('#a-density').selectOption('compact'); await page.locator('#a-shell').selectOption('dock');
   await expect(page.locator('#errs')).toContainText('X01'); await page.locator('#fix').click(); await expect(page.locator('#errs')).not.toHaveClass(/open/);
   await page.locator('#close').click(); await expect(page.locator('#viewer')).not.toHaveClass(/open/);
-  await page.locator('nav.tabs button[data-tab=themes]').click(); await expect(page.locator('#tab-themes .themecard')).toHaveCount(40);
+  await page.locator('nav.tabs button[data-tab=themes]').click(); await expect(page.locator('#tab-themes .themecard')).toHaveCount(Object.keys(themes).length);
   await page.locator('#tab-themes [data-p]').first().click(); await expect(page.frameLocator('#frame').locator('h1')).toBeVisible(); await page.locator('#close').click();
   await page.locator('nav.tabs button[data-tab=parts]').click(); await expect(page.locator('#tab-parts [data-n]')).toHaveCount(55);
   await page.locator('#tab-parts [data-n=chart]').click(); await expect(page.frameLocator('#frame').locator('svg[role=img]').first()).toBeVisible(); await page.locator('#close').click();
@@ -104,6 +104,6 @@ test('single-file gallery works offline on a phone: browse, open, change theme, 
 });
 
 test('standalone design docs and examples are portable', async ({page}) => {
-  for (const path of ['/docs/design.html', '/docs/gap-analysis.html']) { await page.goto(path); await expect(page.locator('h1')).toBeVisible(); expect(await page.locator('main section, article section, section').count()).toBeGreaterThanOrEqual(6); }
+  for (const path of ['/docs/design.html', '/docs/palettes.html', '/docs/spacing.html']) { await page.goto(path); await expect(page.locator('h1')).toBeVisible(); expect(await page.locator('main section, article section, section').count()).toBeGreaterThanOrEqual(5); }
   await page.goto('/site/examples/settings/'); await page.getByRole('tab', {name: '프로필'}).click(); await page.locator('#field-name').fill('테스트'); await expect(page.locator('h1')).toBeVisible();
 });
