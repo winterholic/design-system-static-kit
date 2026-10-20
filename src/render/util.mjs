@@ -49,6 +49,6 @@ export function cplOf(title) {
 /** 한 줄에 들어가야 하는 짧은 값(지표 숫자·가격)의 폭 구간. 구간별 글자 크기 상한은 CSS(--kit-vfit)가 칸 폭에서 계산한다. */
 export const VL_BUCKETS = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 24];
 export function vlOf(text) {
-  const need = [...String(text)].reduce((sum, ch) => sum + (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .62 : /\s/.test(ch) ? .28 : .32), 0);
+  const need = [...String(text)].reduce((sum, ch) => sum + (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .68 : /\s/.test(ch) ? .3 : .38), 0);
   return VL_BUCKETS.find(b => b >= need) ?? VL_BUCKETS.at(-1);
 }
