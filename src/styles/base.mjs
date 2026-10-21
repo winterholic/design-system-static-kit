@@ -1,31 +1,16 @@
 import {SPACE, spaceVars} from '../spacing.mjs';
 import {VL_BUCKETS} from '../render/util.mjs';
+import {TYPE, RATIO_SHIFT, typeVars} from '../typography.mjs';
 
 /** Axis → concrete values. Every key of catalog `axes` has a row here (checked by tests/catalog.test.mjs). */
-export const FONT = {
-  sans: 'system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif',
-  serif: '"Iowan Old Style","AppleMyungjo","Noto Serif KR","Batang",Georgia,serif',
-  mono: '"SFMono-Regular","Menlo",Consolas,"D2Coding",monospace',
-  rounded: 'ui-rounded,"Hiragino Maru Gothic ProN","Arial Rounded MT Bold","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif',
-  geometric: '"Avenir Next","Avenir","Century Gothic","Futura","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif',
-  humanist: '"Seravek","Gill Sans","Optima","Candara","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif',
-  grotesk: '"Helvetica Neue","Arial Nova","Arial","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif',
-};
-export const TYPO = {
-  sans: ['sans', 'sans'], serif: ['sans', 'serif'], mono: ['sans', 'mono'], editorial: ['serif', 'serif'],
-  rounded: ['rounded', 'rounded'], geometric: ['geometric', 'geometric'], humanist: ['humanist', 'humanist'], grotesk: ['grotesk', 'grotesk'],
-};
+// Typography (face pairing, scale ratio, tracking, leading, role sizes) lives in src/typography.mjs; the `typography` and `scale` rows are its tables.
+export const TYPO = TYPE;
+export const SCALE = RATIO_SHIFT;
 // `section` = gap between blocks on app/content pages; `band` = vertical padding of a full-bleed section band on marketing pages.
 export const DENSITY = SPACE;
 export const RADIUS = {square: 0, subtle: 4, soft: 10, round: 18, bubble: 28};
 export const WIDTH = {narrow: 760, standard: 1080, wide: 1280, full: 1600};
-// title = content-page h1, display = hero, app = h1 of app screens (heading-1 in winterholic-base).
-export const SCALE = {
-  tight: {title: 'clamp(30px,3.6vw,40px)', display: 'clamp(34px,4.6vw,52px)', app: '26px', h2: 'clamp(22px,2.2vw,26px)', h3: '18px'},
-  balanced: {title: 'clamp(32px,4.2vw,48px)', display: 'clamp(38px,5.6vw,64px)', app: 'clamp(26px,2.4vw,30px)', h2: 'clamp(25px,2.8vw,34px)', h3: '20px'},
-  dramatic: {title: 'clamp(38px,6.4vw,72px)', display: 'clamp(46px,8.6vw,96px)', app: 'clamp(30px,3vw,38px)', h2: 'clamp(30px,3.6vw,44px)', h3: '24px'},
-};
-// Heading weight floor is 600: 500 at display size reads thin against 16px body (measured on article and blog pages).
+// Heading weight floor is 600 for sans heads: 500 at display size reads thin against 16px body (measured on article and blog pages). Serif heads may go to 400 (typeVars).
 export const WEIGHT = {regular: {head: 600, btn: 500}, medium: {head: 700, btn: 600}, bold: {head: 800, btn: 700}};
 export const ICON = {
   'line-fine': {sw: 1.5, cap: 'round', join: 'round', fill: 'none'}, line: {sw: 2, cap: 'round', join: 'round', fill: 'none'},
@@ -49,13 +34,12 @@ export const BACKDROP = {
 };
 
 export function axisVars(b) {
-  const d = DENSITY[b.density], r = RADIUS[b.radius], el = ELEVATION[b.elevation], mo = MOTION[b.motion], ic = ICON[b.icon], sc = SCALE[b.scale], w = WEIGHT[b.weight];
-  const [head, body] = TYPO[b.typography];
+  const d = DENSITY[b.density], r = RADIUS[b.radius], el = ELEVATION[b.elevation], mo = MOTION[b.motion], ic = ICON[b.icon], w = WEIGHT[b.weight];
   // "Open" parts (feature items, quotes) draw no box unless the elevation axis is a character choice (lifted, glow, hard).
   const boxed = ['lifted', 'glow', 'hard'].includes(b.elevation);
   const control = b.control === 'pill' ? '999px' : b.control === 'square' ? '0px' : `${r / 2}px`;
   return [
-    `--kit-font:${FONT[body]}`, `--kit-heading:${FONT[head]}`, `--kit-mono:${FONT.mono}`,
+    ...typeVars(b, w.head),
     spaceVars(b.density), `--kit-gutter:32px`,
     // % resolves against the element's containing block, so a full-bleed band pads itself back into the content column.
     `--kit-bleed:max(var(--kit-gutter),calc((100% - var(--kit-max)) / 2 + var(--kit-gutter)))`, `--kit-bleedx:max(var(--kit-gutter),calc((100vw - var(--kit-max)) / 2 + var(--kit-gutter)))`,
@@ -63,36 +47,35 @@ export function axisVars(b) {
     `--kit-open-mr:${boxed ? '0px' : 'var(--kit-radius)'}`, `--kit-zoom:${{none: 0, subtle: .025, lively: .06}[b.motion]}`, `--kit-open-bg:${boxed ? 'var(--kit-surface)' : 'transparent'}`, `--kit-open-border:${boxed ? el.border : '0 solid transparent'}`, `--kit-open-shadow:${boxed ? el.shadow : 'none'}`, `--kit-open-pad:${boxed ? 'var(--kit-inset)' : '0px'}`, `--kit-open-radius:${boxed ? 'var(--kit-radius)' : '0px'}`,
     `--kit-card-border:${el.border}`, `--kit-shadow:${el.shadow}`, `--kit-shadow-hover:${el.hover}`,
     `--kit-dur:${mo.dur}`, `--kit-ease:cubic-bezier(.2,0,0,1)`, `--kit-lift:${mo.lift}`,
-    `--kit-title:${sc.title}`, `--kit-display:${sc.display}`, `--kit-apptitle:${sc.app}`, `--kit-h2:${sc.h2}`, `--kit-h3:${sc.h3}`, `--kit-hw:${w.head}`, `--kit-bw:${w.btn}`,
+    `--kit-bw:${w.btn}`,
     `--kit-max:${WIDTH[b.width]}px`, `--kit-page-bg:${BACKDROP[b.backdrop]}`,
     `--kit-icon-sw:${ic.sw}`, `--kit-icon-cap:${ic.cap}`, `--kit-icon-join:${ic.join}`, `--kit-icon-fill:${ic.fill}`,
-    `--kit-body:16px`, `--kit-small:14px`, `--kit-lead:clamp(18px,1.6vw,20px)`, `--kit-line:1.65`,
   ].join(';') + ';';
 }
 
 export const coreCSS = `
 *,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font:var(--kit-body)/var(--kit-line) var(--kit-font);word-break:keep-all;overflow-wrap:break-word;line-break:strict;min-height:100vh}
+body{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font-size:var(--kit-t-body);line-height:var(--kit-line);font-family:var(--kit-font);font-variant-numeric:var(--kit-nums);word-break:keep-all;overflow-wrap:break-word;line-break:strict;min-height:100vh}
 a{color:var(--kit-link);text-underline-offset:4px}button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button,a,input,textarea,select,summary{touch-action:manipulation}
 :focus-visible{outline:3px solid var(--kit-focus);outline-offset:3px}input[type=checkbox],input[type=radio]{margin:0}
 h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,ul,ol{margin:0}ul,ol{padding:0}
-h1,h2,h3,h4,h5,h6{font-family:var(--kit-heading);font-weight:var(--kit-hw);line-height:1.3;letter-spacing:-.02em;text-wrap:balance}
+h1,h2,h3,h4,h5,h6{font-family:var(--kit-heading);font-weight:var(--kit-hw);line-height:var(--kit-lh-sub);letter-spacing:var(--kit-tr-sub);text-wrap:balance}
 :where(p,li,dd,dt,blockquote,figcaption,summary){text-wrap:pretty}.kit-button,.kit-chip,.kit-tag,.kit-badge{text-wrap:balance}
-h1{font-size:var(--kit-title);max-width:22em;line-height:1.15;letter-spacing:-.035em}h2{font-size:var(--kit-h2);line-height:1.22;letter-spacing:-.03em}h3{font-size:var(--kit-h3);line-height:1.3;letter-spacing:-.02em}h4,h5,h6{font-size:calc(var(--kit-body) + 1px);line-height:1.4;letter-spacing:-.01em}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}
+h1{font-size:var(--kit-t-title);max-width:22em;line-height:var(--kit-lh-title);letter-spacing:var(--kit-tr-title)}h2{font-size:var(--kit-t-heading);line-height:var(--kit-lh-heading);letter-spacing:var(--kit-tr-heading)}h3{font-size:var(--kit-t-sub);line-height:var(--kit-lh-sub);letter-spacing:var(--kit-tr-sub)}h4,h5,h6{font-size:var(--kit-t-body-l);line-height:1.4;letter-spacing:var(--kit-tr-sub)}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}
 /* A part's own title is a component heading (h3 step) no matter which outline level it carries; only section heads and heroes use the h2 step. */
-:is(.kit-card,.kit-form,.kit-table-wrap,.kit-chart,.kit-list,.kit-summary,.kit-buybox,.kit-props,.kit-links,.kit-calendar,.kit-md-detail,.kit-progress,.kit-reviews,.kit-menu,.kit-plan,.kit-code,.kit-team,.kit-faq,.kit-steps,.kit-timeline,.kit-chat,.kit-lane,.kit-md,.kit-gallery,.kit-reel,.kit-features,.kit-notice,.kit-quote,.kit-metric) :is(h2,h3,h4){font-size:var(--kit-h3);line-height:1.3}
+:is(.kit-card,.kit-form,.kit-table-wrap,.kit-chart,.kit-list,.kit-summary,.kit-buybox,.kit-props,.kit-links,.kit-calendar,.kit-md-detail,.kit-progress,.kit-reviews,.kit-menu,.kit-plan,.kit-code,.kit-team,.kit-faq,.kit-steps,.kit-timeline,.kit-chat,.kit-lane,.kit-md,.kit-gallery,.kit-reel,.kit-features,.kit-notice,.kit-quote,.kit-metric) :is(h2,h3,h4){font-size:var(--kit-t-sub);line-height:1.3}
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .kit-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
-.kit-muted{color:var(--kit-muted);font-size:var(--kit-small)}.kit-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--kit-accentInk)}.kit-eyebrow::before{content:'';width:24px;height:2px;border-radius:2px;background:currentColor;flex:none}.kit-meta{font-size:var(--kit-small);color:var(--kit-muted)}.kit-quiet{font-size:var(--kit-small);font-weight:600;color:var(--kit-muted);letter-spacing:.02em}
+.kit-muted{color:var(--kit-muted);font-size:var(--kit-t-small)}.kit-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:var(--kit-t-label);font-weight:700;letter-spacing:var(--kit-tr-label);text-transform:var(--kit-case-label);color:var(--kit-accentInk)}.kit-eyebrow::before{content:'';width:24px;height:2px;border-radius:2px;background:currentColor;flex:none}.kit-meta{font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-quiet{font-size:var(--kit-t-small);font-weight:600;color:var(--kit-muted);letter-spacing:.02em}
 .kit-skip{position:fixed;top:-100px;left:16px;background:var(--kit-surface);color:var(--kit-text);padding:12px;z-index:50;border:2px solid var(--kit-focus)}.kit-skip:focus{top:12px}
 .kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}.kit-flip{transform:scaleX(-1)}
-.kit-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--kit-control);padding:8px 24px;border:1px solid var(--kit-rule);border-radius:var(--kit-r-control);background:var(--kit-surface);color:var(--kit-text);font-weight:var(--kit-bw);font-size:15px;line-height:1.3;letter-spacing:-.005em;text-decoration:none;text-align:center;cursor:pointer;transition:background var(--kit-dur) var(--kit-ease),color var(--kit-dur) var(--kit-ease),box-shadow var(--kit-dur) var(--kit-ease),transform var(--kit-dur) var(--kit-ease)}
+.kit-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--kit-control);padding:8px 24px;border:1px solid var(--kit-rule);border-radius:var(--kit-r-control);background:var(--kit-surface);color:var(--kit-text);font-weight:var(--kit-bw);font-size:var(--kit-t-ui);line-height:1.3;letter-spacing:-.005em;text-decoration:none;text-align:center;cursor:pointer;transition:background var(--kit-dur) var(--kit-ease),color var(--kit-dur) var(--kit-ease),box-shadow var(--kit-dur) var(--kit-ease),transform var(--kit-dur) var(--kit-ease)}
 .kit-button[data-variant=primary]{background:var(--kit-action);color:var(--kit-onAction);border-color:var(--kit-action);box-shadow:0 1px 2px var(--kit-shade)}.kit-button[data-variant=primary]:hover{background:var(--kit-actionHover);color:var(--kit-onActionHover);border-color:var(--kit-actionHover)}.kit-button[data-variant=ghost]{background:transparent;border-color:transparent;color:var(--kit-link);text-decoration:underline;text-underline-offset:4px;padding-inline:4px}.kit-button[data-variant=secondary]:hover{background:var(--kit-soft)}.kit-button:hover{transform:translateY(var(--kit-lift))}
-.kit-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 12px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}
+.kit-badge{display:inline-flex;align-items:center;gap:4px;font-size:var(--kit-t-caption);font-weight:600;padding:4px 12px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}
 .kit-badge[data-dot]::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--kit-muted);flex:none}.kit-badge[data-dot=success]::before{background:var(--kit-success)}.kit-badge[data-dot=info]::before{background:var(--kit-info)}.kit-badge[data-dot=warning]::before{background:var(--kit-warning)}.kit-badge[data-dot=danger]::before{background:var(--kit-danger)}
 .kit-card-icon{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:calc(var(--kit-radius) * .6);background:var(--kit-accentSoft);color:var(--kit-accentInk);flex:none}.kit-card-icon .kit-icon{width:24px;height:24px}
-.kit-plan,.kit-buybox{container-type:inline-size}.kit-price{font:var(--kit-hw) clamp(30px,3.4vw,40px)/1.1 var(--kit-heading);font-size:min(clamp(30px,3.4vw,40px),calc(100cqw * var(--kit-vfit,1)));letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums;overflow-wrap:normal}${VL_BUCKETS.map(n => `.kit-price[data-vl="${n}"]{--kit-vfit:${(1 / (1.04 * n)).toFixed(4)}}`).join('')}.kit-price .kit-muted{font:500 var(--kit-small)/1.4 var(--kit-font);letter-spacing:0;display:inline-block;white-space:nowrap}
-.kit-avatar{display:inline-grid;place-items:center;width:36px;height:36px;flex:none;border-radius:999px;background:var(--kit-accent);color:var(--kit-onAccent);font-weight:700;font-size:14px}
+.kit-plan,.kit-buybox{container-type:inline-size}.kit-price{font-weight:var(--kit-hw);font-size:var(--kit-t-price);line-height:1.1;font-family:var(--kit-heading);font-size:min(var(--kit-t-price),calc(100cqw * var(--kit-vfit,1)));letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums;overflow-wrap:normal}${VL_BUCKETS.map(n => `.kit-price[data-vl="${n}"]{--kit-vfit:${(1 / (1.04 * n)).toFixed(4)}}`).join('')}.kit-price .kit-muted{font-weight:500;font-size:var(--kit-t-small);line-height:1.4;font-family:var(--kit-font);letter-spacing:0;display:inline-block;white-space:nowrap}
+.kit-avatar{display:inline-grid;place-items:center;width:36px;height:36px;flex:none;border-radius:999px;background:var(--kit-accent);color:var(--kit-onAccent);font-weight:700;font-size:var(--kit-t-small)}
 .kit-card,.kit-metric,.kit-list,.kit-form,.kit-table-wrap,.kit-chart,.kit-summary,.kit-buybox,.kit-plan,.kit-quote,.kit-faq details,.kit-md-list,.kit-md-detail,.kit-code,.kit-progress,.kit-calendar,.kit-reviews,.kit-menu,.kit-props,.kit-links,.kit-team li{background:var(--kit-surface);border:var(--kit-card-border);border-radius:var(--kit-radius);box-shadow:var(--kit-shadow)}
 .kit-card,.kit-metric,.kit-list,.kit-form,.kit-table-wrap,.kit-chart,.kit-summary,.kit-buybox,.kit-quote,.kit-md-detail,.kit-progress,.kit-calendar,.kit-reviews,.kit-menu,.kit-props,.kit-links{min-width:0;padding:var(--kit-inset)}
 .kit-art .a-bg{fill:var(--kit-soft)}.kit-art .a-1{fill:var(--kit-action)}.kit-art .a-2{fill:var(--kit-accent)}.kit-art .a-3{fill:var(--kit-text)}.kit-art .a-4{fill:var(--kit-muted)}.kit-art .a-5{fill:var(--kit-surface)}.kit-art .a-6{fill:var(--kit-sunken)}.kit-art .a-cv{fill:var(--kit-canvas)}.kit-art .a-ac{fill:var(--kit-accentSoft)}.kit-art .a-gr{fill:var(--kit-success)}.kit-art .a-wm{fill:var(--kit-warning)}.kit-art .a-c1{fill:var(--kit-chart1)}.kit-art .a-c2{fill:var(--kit-chart2)}.kit-art .a-c3{fill:var(--kit-chart3)}.kit-art .a-c4{fill:var(--kit-chart4)}.kit-art .a-c5{fill:var(--kit-chart5)}.kit-art .a-sh{fill:var(--kit-shade)}.kit-art .a-hi{fill:#fff;fill-opacity:.4}

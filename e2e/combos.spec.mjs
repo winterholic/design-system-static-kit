@@ -4,15 +4,17 @@ import {enumerateCombos, filterCombos, shuffled} from '../src/combos.mjs';
 import {themes} from '../src/catalog.mjs';
 
 const all = enumerateCombos();
+const TOTAL = all.length, TOTAL_TXT = TOTAL.toLocaleString('en-US'), PAGES48 = Math.ceil(TOTAL / 48), PAGES96 = Math.ceil(TOTAL / 96);
 const watch = page => { const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => m.type() === 'error' && errors.push('console: ' + m.text() + ' @' + JSON.stringify(m.location()))); return errors; };
-const ready = async (page, url = '/combos/') => { await page.goto(url); await page.waitForSelector('html[data-ready=true]'); };
+// 갤러리는 진단에서 C 등급이었던 '실험' 조합을 기본으로 숨긴다. 이 시험들은 전체 목록을 모델과 대조하므로 실험 포함(exp=1)으로 연다. 기본 동작은 아래 전용 시험이 확인한다.
+const ready = async (page, url = '/combos/') => { const u = new URL(url, 'http://local'); if (!u.searchParams.has('exp')) u.searchParams.set('exp', '1'); await page.goto(u.pathname + u.search); await page.waitForSelector('html[data-ready=true]'); };
 const idsOnPage = page => page.locator('#grid .combo-card').evaluateAll(cards => cards.map(c => c.dataset.id));
 
-test('the gallery lists all 4,102 combinations with no console errors, and only a few iframes are alive', async ({page}) => {
+test('the gallery lists every combination with no console errors, and only a few iframes are alive', async ({page}) => {
   const errors = watch(page);
   await ready(page);
-  await expect(page.locator('#total-count')).toHaveText('4,102');
-  await expect(page.locator('#result-line')).toContainText('전체 4,102개 중 4,102개 · 1 / 86쪽');
+  await expect(page.locator('#total-count')).toHaveText(TOTAL_TXT);
+  await expect(page.locator('#result-line')).toContainText('전체 ' + TOTAL_TXT + '개 중 ' + TOTAL_TXT + '개 · 1 / ' + PAGES48 + '쪽');
   expect(await page.locator('#grid .combo-card').count()).toBe(48);
   await expect.poll(() => page.locator('#grid iframe').count(), {timeout: 15000}).toBeGreaterThan(3);
   // 끝까지 훑어도 살아 있는 iframe은 상한(데스크톱 24) 안이다.
@@ -22,16 +24,16 @@ test('the gallery lists all 4,102 combinations with no console errors, and only 
   expect(errors).toEqual([]);
 });
 
-test('every page of the list is reachable and together they cover all 4,102 ids exactly once', async ({page}) => {
+test('every page of the list is reachable and together they cover every id exactly once', async ({page}) => {
   await ready(page, '/combos/?ps=96');
   const seen = new Set();
-  for (let p = 1; p <= 43; p++) {
+  for (let p = 1; p <= PAGES96; p++) {
     for (const id of await idsOnPage(page)) seen.add(id);
-    if (p < 43) await page.locator('#pager-bottom [aria-label="다음 쪽"]').click();
+    if (p < PAGES96) await page.locator('#pager-bottom [aria-label="다음 쪽"]').click();
   }
-  expect(seen.size).toBe(4102);
+  expect(seen.size).toBe(TOTAL);
   expect([...seen].sort()).toEqual(all.map(c => c.id).sort());
-  await expect(page.locator('#result-line')).toContainText('43 / 43쪽');
+  await expect(page.locator('#result-line')).toContainText(PAGES96 + ' / ' + PAGES96 + '쪽');
 });
 
 test('filters: template, slot, search, same-screen, sort and reset agree with the model', async ({page}) => {
@@ -50,9 +52,9 @@ test('filters: template, slot, search, same-screen, sort and reset agree with th
   expect(await count()).toBeGreaterThan(0);
   for (const id of await idsOnPage(page)) expect(id).toContain('hero:product');
   await page.locator('#clear-filters').click();
-  expect(await count()).toBe(4102);
+  expect(await count()).toBe(TOTAL);
   await page.locator('#q').fill('#0123');
-  await expect(page.locator('#result-line')).toContainText('4,102개 중 1개');
+  await expect(page.locator('#result-line')).toContainText(TOTAL_TXT + '개 중 1개');
   expect(await idsOnPage(page)).toEqual([all[122].id]);
   await page.locator('#q').fill('');
   await page.locator('#f-same').check();
@@ -92,20 +94,20 @@ test('viewer: opens from a card with its own URL, steps with ← → and Esc, an
   await page.locator('.thumb-hit').nth(2).click();
   await expect(page.locator('#viewer')).toHaveAttribute('open', '');
   expect(page.url()).toContain('c=' + all[2].id);
-  await expect(page.locator('#v-pos')).toContainText('3 / 4,102');
+  await expect(page.locator('#v-pos')).toContainText('3 / ' + TOTAL_TXT);
   await expect(page.locator('#viewer-title')).toContainText('#0003');
   await expect.poll(() => page.frameLocator('#v-frame').locator('[class*="kit-"]').count()).toBeGreaterThan(5);
   await page.keyboard.press('ArrowRight');
-  await expect(page.locator('#v-pos')).toContainText('4 / 4,102');
+  await expect(page.locator('#v-pos')).toContainText('4 / ' + TOTAL_TXT);
   expect(page.url()).toContain('c=' + all[3].id);
   await page.keyboard.press('ArrowLeft'); await page.keyboard.press('ArrowLeft');
-  await expect(page.locator('#v-pos')).toContainText('2 / 4,102');
+  await expect(page.locator('#v-pos')).toContainText('2 / ' + TOTAL_TXT);
   // 키보드는 미리보기 안에 포커스가 있어도 먹는다
   await page.frameLocator('#v-frame').locator('body').click({position: {x: 5, y: 5}});
   await page.frameLocator('#v-frame').locator('body').press('ArrowRight');
-  await expect(page.locator('#v-pos')).toContainText('3 / 4,102');
+  await expect(page.locator('#v-pos')).toContainText('3 / ' + TOTAL_TXT);
   await page.locator('#v-next').click();
-  await expect(page.locator('#v-pos')).toContainText('4 / 4,102');
+  await expect(page.locator('#v-pos')).toContainText('4 / ' + TOTAL_TXT);
   await page.keyboard.press('Escape');
   await expect(page.locator('#viewer')).not.toHaveAttribute('open', '');
   await expect(page).not.toHaveURL(/[?&]c=/);
@@ -138,7 +140,7 @@ test('viewer: a shared link opens the combination with its theme, mode and palet
   expect(page.url()).not.toContain('mode=');
   await page.goBack();
   await expect(page.locator('#viewer')).not.toHaveAttribute('open', '');
-  await expect(page.locator('#total-count')).toHaveText('4,102');
+  await expect(page.locator('#total-count')).toHaveText(TOTAL_TXT);
   expect(errors).toEqual([]);
 });
 
@@ -221,12 +223,12 @@ test.describe('phone', () => {
       node.dispatchEvent(touch('touchstart', a)); node.dispatchEvent(touch('touchend', b));
     }, [from, to]);
     await swipe(page.frameLocator('#v-frame').locator('body'), 330, 40);
-    await expect(page.locator('#v-pos')).toContainText('2 / 4,102');
+    await expect(page.locator('#v-pos')).toContainText('2 / ' + TOTAL_TXT);
     await swipe(page.frameLocator('#v-frame').locator('body'), 40, 330);
-    await expect(page.locator('#v-pos')).toContainText('1 / 4,102');
+    await expect(page.locator('#v-pos')).toContainText('1 / ' + TOTAL_TXT);
     // 막대 위 스와이프
     await swipe(page.locator('#viewer-bar'), 330, 40);
-    await expect(page.locator('#v-pos')).toContainText('2 / 4,102');
+    await expect(page.locator('#v-pos')).toContainText('2 / ' + TOTAL_TXT);
     // 보기 설정은 접혀 있다가 열린다
     await expect(page.locator('#viewer-tools')).toBeHidden();
     await page.locator('#v-settings').tap();
@@ -234,4 +236,53 @@ test.describe('phone', () => {
     await page.keyboard.press('Escape');
     expect(errors).toEqual([]);
   });
+});
+
+
+test('by default the gallery hides experimental combinations, marks them, and shows them when asked', async ({page}) => {
+  const experimental = all.filter(c => c.experimental);
+  const shown = TOTAL - experimental.length;
+  await page.goto('/combos/'); await page.waitForSelector('html[data-ready=true]');
+  await expect(page.locator('#total-count')).toHaveText(TOTAL_TXT);
+  await expect(page.locator('#result-line')).toContainText('전체 ' + TOTAL_TXT + '개 중 ' + shown.toLocaleString('en-US') + '개');
+  await expect(page.locator('#f-exp')).not.toBeChecked();
+  for (const id of await idsOnPage(page)) expect(experimental.some(c => c.id === id), id).toBe(false);
+  await page.locator('#f-exp').check();
+  await expect(page.locator('#result-line')).toContainText('전체 ' + TOTAL_TXT + '개 중 ' + TOTAL_TXT + '개');
+  expect(new URL(page.url()).searchParams.get('exp')).toBe('1');
+  if (experimental.length) {
+    await page.locator('#f-template').selectOption(experimental[0].templateId);
+    const badge = page.locator('#grid .combo-card[data-id="' + experimental[0].id + '"] .badge.exp');
+    if (await badge.count()) await expect(badge).toHaveText('실험');
+  }
+});
+
+test('concepts: choosing a concept narrows the list to its templates and re-skins every thumbnail with its look and typography', async ({page}) => {
+  const errors = watch(page);
+  await ready(page);
+  const count = () => page.locator('#result-line').textContent().then(t => Number(t.match(/중 ([\d,]+)개/)[1].replace(/,/g, '')));
+  await page.locator('#f-concept').selectOption('devtool');
+  expect(await count()).toBe(filterCombos({concept: 'devtool'}).length);
+  expect(new URL(page.url()).searchParams.get('concept')).toBe('devtool');
+  await page.locator('#view-details > summary').click();
+  await expect(page.locator('#g-look')).toBeEnabled();
+  await page.locator('#g-look').selectOption('console');
+  expect(new URL(page.url()).searchParams.get('look')).toBe('console');
+  await page.locator('#g-type').selectOption('luxe');
+  expect(new URL(page.url()).searchParams.get('type')).toBe('luxe');
+  await expect(page.locator('#view-summary')).toContainText('개발자 도구 · 콘솔');
+  // 확대 보기도 같은 look과 서체로 그린다
+  const id = (await idsOnPage(page))[0];
+  await page.locator('#grid .combo-card[data-id="' + id + '"] .thumb-hit').click();
+  const html = await page.locator('#v-frame').evaluate(f => f.srcdoc);
+  expect(html).toContain('data-theme="dark"');
+  expect(html).toMatch(/--kit-heading:"Didot"/);
+  await page.keyboard.press('Escape');
+  await page.locator('#clear-filters').click();
+  await page.goto('/combos/?concept=cafe&look=wine&type=poster&exp=1'); await page.waitForSelector('html[data-ready=true]');
+  await expect(page.locator('#f-concept')).toHaveValue('cafe');
+  await page.locator('#view-details > summary').click();
+  await expect(page.locator('#g-look')).toHaveValue('wine');
+  await expect(page.locator('#g-type')).toHaveValue('poster');
+  expect(errors).toEqual([]);
 });

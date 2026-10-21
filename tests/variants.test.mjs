@@ -101,3 +101,22 @@ test('calendar renders a compact agenda for narrow containers and stepper labels
   assert.match(html, /class="kit-cal-agenda" aria-hidden="true"/); assert.match(html, /@container \(max-width:560px\)/);
   const s = compile(createBlueprint('onboarding-wizard')).html; assert.match(s, /class="kit-step-label"/);
 });
+
+test('6차 quality rules: options that the diagnosis found ugly are not offered where they do not belong', () => {
+  const offered = (id, slot) => layoutOptionsOf(id).find(s => s.id === slot)?.options.map(o => o.id) ?? [];
+  const gridsOf = tree => { const out = []; const walk = ns => ns.forEach(n => { if (n.type === 'grid') out.push(n); if (n.children) walk(n.children); }); walk(tree); return out; };
+  // 가운데 정렬 머리말은 본문이 왼쪽 정렬인 앱·문서·데이터 화면에 없다
+  for (const t of templateList) if (['dashboard', 'data', 'docs', 'listing', 'community', 'settings', 'commerce'].includes(t.pageType)) assert.deepEqual(offered(t.id, 'intro'), [], t.id + ' offers a centred intro');
+  assert.ok(templateList.some(t => offered(t.id, 'intro').includes('center')), 'centred intros still exist for landing/article pages');
+  // 항목 수와 맞지 않는 열 수는 고를 수 없다: 3개를 2열, 5개를 4열은 마지막 줄에 한 칸만 남긴다
+  for (const t of templateList) for (const o of offered(t.id, 'columns')) {
+    const cols = {two: 2, three: 3, four: 4}[o], before = gridsOf(t.tree), after = gridsOf(applyLayout(t.tree, {columns: o}, t.pageType));
+    after.forEach((g, i) => { if (g.columns === o && before[i].columns !== o) assert.ok(g.children.length >= cols && (g.children.length % cols === 0 || g.children.length % cols >= 2), `${t.id}: ${g.children.length} items in ${cols} columns leaves an orphan`); });
+  }
+  // 지표·인용이 섞인 벤토는 균등 격자로 바꿀 수 없다(같은 높이로 늘어나 칸 아래가 비는 EMPTY_CELL의 원인)
+  assert.ok(!offered('saas-landing', 'features').includes('grid'), 'saas-landing has a mixed bento');
+  // 새 구성: 섹션 머리말 가운데, 질문 좌우 분할, 단계 카드(마케팅 페이지에서만)
+  assert.deepEqual(offered('saas-landing', 'heads'), ['center']);
+  assert.ok(offered('saas-landing', 'faq').includes('split') && offered('saas-landing', 'steps').includes('cards'));
+  for (const t of templateList) if (!['landing', 'pricing', 'portfolio', 'general'].includes(t.pageType)) for (const [slot, opt] of [['heads', 'center'], ['faq', 'split'], ['steps', 'cards']]) assert.ok(!offered(t.id, slot).includes(opt), `${t.id} (${t.pageType}) offers ${slot}:${opt}`);
+});

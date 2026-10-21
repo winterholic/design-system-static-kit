@@ -559,7 +559,17 @@
         "rounded",
         "geometric",
         "humanist",
-        "grotesk"
+        "grotesk",
+        "swiss",
+        "newsroom",
+        "literary",
+        "luxe",
+        "poster",
+        "slab",
+        "tech",
+        "bookish",
+        "terminal",
+        "condensed"
       ]
     },
     "density": {
@@ -1407,6 +1417,13 @@
             "plain",
             "tint",
             "inverse"
+          ]
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center"
           ]
         },
         "anchor": {
@@ -2426,7 +2443,8 @@
           "type": "string",
           "enum": [
             "vertical",
-            "horizontal"
+            "horizontal",
+            "cards"
           ]
         },
         "items": {
@@ -3501,6 +3519,13 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 100
+        },
+        "layout": {
+          "type": "string",
+          "enum": [
+            "stack",
+            "split"
+          ]
         },
         "items": {
           "type": "array",

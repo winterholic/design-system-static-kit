@@ -7,11 +7,12 @@ import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, 
 import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
 import {layoutSlots, applyLayout, layoutSlotIds} from './variants.mjs';
+import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
 
 export const CATALOG_VERSION = '2.1.0';
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
-export {layoutSlots, applyLayout, layoutSlotIds};
+export {layoutSlots, applyLayout, layoutSlotIds, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
 export const rules = [
@@ -77,11 +78,11 @@ export function repairAxes(b) {
 }
 
 /** 템플릿 하나에서 실제로 고를 수 있는 구성 변형(슬롯과 옵션). */
-export const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree);
+export const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree, templates[templateId].pageType);
 
 /**
  * Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair.
- * options.themeVariant: 테마 변형 id(축 값 묶음), options.layout: {슬롯: 옵션} 구성 변형. 둘 다 결과 Blueprint에는 흔적 없이 축·트리 값으로만 남는다.
+ * options.typography: 서체 프리셋 id(테마 기본 서체를 덮어씀), options.themeVariant: 테마 변형 id(축 값 묶음), options.layout: {슬롯: 옵션} 구성 변형. 둘 다 결과 Blueprint에는 흔적 없이 축·트리 값으로만 남는다.
  */
 export function createBlueprint(templateId = 'dashboard-overview', themeId, paletteId, options = {}) {
   const t = templates[templateId];
@@ -94,8 +95,10 @@ export function createBlueprint(templateId = 'dashboard-overview', themeId, pale
   const b = {version: BLUEPRINT_VERSION, catalogVersion: CATALOG_VERSION, name: t.name, theme: theme.id, palette: paletteId ?? theme.palettes[0], mode, pageType: t.pageType, ...style, ...(variant?.set ?? {})};
   const pt = pageTypes[t.pageType], own = theme.id === t.theme;
   for (const [k, v] of Object.entries(t.axes)) if ((own && !(variant && k in variant.set)) || (k === 'shell' && !pt.shells.includes(b.shell)) || (k === 'width' && pt.widths && !pt.widths.includes(b.width))) b[k] = v;
+  // 서체 프리셋은 테마와 독립이다: 컨셉의 look이나 사용자가 고른 프리셋이 테마 기본값을 덮어쓴다.
+  if (options.typography) { if (!axes.typography.includes(options.typography)) throw new Error('Unknown typography: ' + options.typography); b.typography = options.typography; }
   b.chrome = structuredClone(t.chrome);
-  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout)};
+  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout, t.pageType)};
   return repairAxes(b);
 }
 

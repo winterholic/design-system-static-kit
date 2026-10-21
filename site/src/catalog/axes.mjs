@@ -1,3 +1,5 @@
+import {TYPE, TYPE_IDS} from '../typography.mjs';
+
 /** Style axes. Every value listed here is implemented in src/styles; nothing outside this table can be selected. */
 export const axisDefs = {
   mode: {label: '모드', values: {light: '밝은 화면', dark: '어두운 화면', auto: '시스템 설정을 따름(두 세트 모두 대비 검증)'}},
@@ -5,9 +7,7 @@ export const axisDefs = {
     sidebar: '왼쪽 고정 사이드바', topbar: '상단 가로 내비', editorial: '가운데 정렬 편집 내비', split: '넓은 왼쪽 패널과 본문',
     rail: '아이콘 레일(좁은 세로 내비)', centered: '가운데 정렬 브랜드와 내비', stacked: '유틸리티 줄과 탭 줄 2단',
     dock: '모바일 하단 탭바', minimal: '브랜드와 한 액션만', masthead: '신문 제호형 큰 머리'}},
-  typography: {label: '서체 조합', values: {
-    sans: '시스템 산세리프', serif: '세리프 제목 + 산세리프 본문', mono: '모노스페이스 제목', editorial: '세리프 제목 + 세리프 본문',
-    rounded: '둥근 서체', geometric: '기하학적 산세리프', humanist: '인문주의 산세리프', grotesk: '굵고 좁은 그로테스크'}},
+  typography: {label: '서체 조합', values: Object.fromEntries(TYPE_IDS.map(id => [id, TYPE[id].label + ' — ' + TYPE[id].concept]))},
   density: {label: '밀도', values: {compact: '촘촘함', comfortable: '보통', spacious: '여유로움'}},
   radius: {label: '모서리', values: {square: '직각 0', subtle: '4px', soft: '10px', round: '18px', bubble: '28px'}},
   control: {label: '컨트롤 모양', values: {match: '카드 반경의 절반', pill: '알약', square: '직각'}},
@@ -35,7 +35,7 @@ export const axisBans = [
   {id: 'X03', fix: {width: 'wide'}, uses: ['width', 'shell'], bad: a => a.width === 'full' && ['centered', 'minimal', 'editorial', 'masthead'].includes(a.shell), why: '읽기 중심 셸에 1600px 폭을 주면 한 줄이 읽기 한계(약 75자)를 넘습니다.', source: 'winterholic-base 03-spacing-layout'},
   {id: 'X04', fix: {backdrop: 'plain'}, uses: ['elevation', 'backdrop'], bad: a => a.elevation === 'hard' && a.backdrop === 'gradient', why: '굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다.', source: 'winterholic-base 04-shape-elevation'},
   {id: 'X05', fix: {elevation: 'soft'}, uses: ['elevation', 'mode'], bad: a => a.elevation === 'glow' && a.mode === 'light', why: '글로우는 밝은 바탕에서 보이지 않아 경계 신호가 사라집니다. dark 또는 auto에서만 허용합니다.', source: 'winterholic-base 09-dark-mode'},
-  {id: 'X06', fix: {scale: 'balanced'}, uses: ['typography', 'scale'], bad: a => a.typography === 'mono' && a.scale === 'dramatic', why: '모노스페이스 제목은 큰 크기에서 24ch를 넘어 모바일에서 넘칩니다.', source: 'winterholic-base 02-typography'},
+  {id: 'X06', fix: {scale: 'balanced'}, uses: ['typography', 'scale'], bad: a => ['mono', 'terminal'].includes(a.typography) && a.scale === 'dramatic', why: '모노스페이스 제목은 큰 크기에서 24ch를 넘어 모바일에서 넘칩니다.', source: 'winterholic-base 02-typography'},
   {id: 'X07', fix: {density: 'comfortable'}, uses: ['radius', 'density'], bad: a => a.radius === 'bubble' && a.density === 'compact', why: '28px 반경은 16px 안쪽 여백을 침범해 내용이 잘립니다.', source: 'winterholic-base 04-shape-elevation(부모 반경 − 패딩)'},
   {id: 'X08', fix: {footer: 'simple'}, uses: ['footer', 'shell'], bad: a => a.footer === 'columns' && ['minimal', 'dock'].includes(a.shell), why: '링크 열 푸터는 내비 구조가 있는 셸에서만 의미가 있습니다.', source: 'ADR 0002'},
   {id: 'X09', fix: {icon: 'line'}, uses: ['icon', 'density'], bad: a => a.icon === 'line-fine' && a.density === 'compact', why: '1.5px 선을 작은 아이콘에 쓰면 3:1 비텍스트 대비를 안정적으로 유지하기 어렵습니다.', source: 'WCAG 2.2 SC 1.4.11'},

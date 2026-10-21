@@ -58,6 +58,7 @@
 .combo-badges { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; }
 .badge { font: 10px var(--app-mono); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--app-border-strong); color: var(--app-muted); }
 .badge.hot { border-color: var(--app-primary); color: var(--app-primary); }
+.badge.exp { border-style: dashed; border-color: #b45309; color: #92400e; background: #fffbeb; }
 .combo-actions { margin-top: auto; padding-top: 8px; display: flex; gap: 6px; }
 .combo-actions .chip-button { min-height: 34px; padding: 0 10px; font-size: 12px; }
 .flag-button[aria-pressed=true] { background: var(--app-danger-soft); border-color: var(--app-danger); color: var(--app-danger); }

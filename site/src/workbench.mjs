@@ -47,7 +47,7 @@ function renderTemplate() {
   const byType = Object.entries(pageTypes).map(([id, p]) => `<optgroup label="${e(p.label)}">${templateList.filter(t => t.pageType === id).map(t => `<option value="${t.id}"${t.id === sel.templateId ? ' selected' : ''}>${e(t.label)}</option>`).join('')}</optgroup>`).join('');
   setHTML($('template'), byType);
   $('page-type').textContent = pageTypes[blueprint.pageType].label + ' · ' + pageTypes[blueprint.pageType].description;
-  const slots = layoutSlots(templates[sel.templateId].tree);
+  const slots = layoutSlots(templates[sel.templateId].tree, templates[sel.templateId].pageType);
   $('layout-field').hidden = !slots.length;
   setHTML($('layout-slots'), slots.map(slot => `<fieldset class="slot"><legend>${e(slot.label)}</legend><div class="chips" role="radiogroup" aria-label="${e(slot.label)}">${[{id: 'default', label: '기본', description: '템플릿 그대로'}, ...slot.options].map(o => `<button type="button" class="chip" role="radio" aria-checked="${(sel.layout[slot.id] ?? 'default') === o.id}" data-slot="${slot.id}" data-option="${o.id}" data-fk="slot:${slot.id}:${o.id}" title="${e(o.description ?? '')}">${e(o.label)}</button>`).join('')}</div></fieldset>`).join(''));
   $('project-name').value = blueprint.name;

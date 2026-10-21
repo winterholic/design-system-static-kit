@@ -4,7 +4,7 @@
 <a class="skip" href="#grid">조합 목록으로 바로가기</a>
 <header class="app-header">
   <a class="wordmark" href="../"><span class="logo" aria-hidden="true"><i></i><i></i><i></i></span><span class="wordmark-text">Static Kit<small>디자인시스템 조립기</small></span></a>
-  <nav aria-label="주요 메뉴"><a class="nav-link" href="../">조립기</a><a class="nav-link" href="../#catalog">카탈로그</a><a class="nav-link active" href="./" aria-current="page">전체 조합</a><a class="nav-link" href="../gallery/index.html">샘플 갤러리</a><a class="nav-link" href="../docs/design.html" target="_blank" rel="noopener">설계서 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/palettes.html" target="_blank" rel="noopener">팔레트 근거 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/spacing.html" target="_blank" rel="noopener">간격 규칙 <span aria-hidden="true">↗</span></a></nav>
+  <nav aria-label="주요 메뉴"><a class="nav-link" href="../">조립기</a><a class="nav-link" href="../#catalog">카탈로그</a><a class="nav-link active" href="./" aria-current="page">전체 조합</a><a class="nav-link" href="../gallery/index.html">샘플 갤러리</a><a class="nav-link" href="../docs/design.html" target="_blank" rel="noopener">설계서 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/palettes.html" target="_blank" rel="noopener">팔레트 근거 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/spacing.html" target="_blank" rel="noopener">간격 규칙 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/typography.html" target="_blank" rel="noopener">서체 규칙 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/layout.html" target="_blank" rel="noopener">배치 규칙 <span aria-hidden="true">↗</span></a><a class="nav-link" href="../docs/diagnosis-round6.html" target="_blank" rel="noopener">6차 진단 <span aria-hidden="true">↗</span></a></nav>
   <span class="version" id="version">CATALOG</span>
 </header>
 <main class="combos">
@@ -17,6 +17,7 @@
   <div class="combo-tools">
     <div class="tool-row">
       <label class="tool grow"><span>검색</span><input id="q" type="search" placeholder="번호·이름·변형 (예: 0123, 히어로 가운데)" autocomplete="off" enterkeyhint="search"></label>
+      <label class="tool"><span>컨셉</span><select id="f-concept"></select></label>
       <label class="tool"><span>페이지 유형</span><select id="f-type"></select></label>
       <label class="tool"><span>템플릿</span><select id="f-template"></select></label>
       <label class="tool"><span>정렬</span><select id="f-sort"><option value="default">템플릿 순</option><option value="changed">바꾼 슬롯 많은 순</option><option value="shuffle">섞기</option></select></label>
@@ -25,6 +26,7 @@
     <details class="tool-details" id="view-details"><summary>테마·팔레트 바꿔 보기 <small id="view-summary"></small></summary><div class="view-controls" id="view-gallery"></div><p class="hint">여기서 고른 테마·팔레트·모드가 모든 썸네일과 확대 보기에 적용됩니다. 비우면 각 템플릿의 기본 테마와 첫 팔레트로 보입니다.</p></details>
     <div class="tool-row toggles">
       <label class="check"><input type="checkbox" id="f-same"> 같은 화면 숨기기</label>
+      <label class="check"><input type="checkbox" id="f-exp"> 실험 구성 포함 <small id="exp-count"></small></label>
       <label class="check"><input type="checkbox" id="f-flagged"> 이상함 표시한 것만</label>
       <label class="check"><input type="checkbox" id="f-tall"> 썸네일 길게(페이지 아래까지)</label>
       <button type="button" class="text-button" id="clear-filters">필터 초기화</button>

@@ -1,13 +1,15 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {templateList, layoutOptionsOf, themes, palettes} from '../src/catalog.mjs';
-import {enumerateCombos, findCombo, comboId, renderCombo, facets, filterCombos, shuffled, normalizeView, viewQuery, viewFromQuery, flagsToText, comboTitle, EMPTY_VIEW} from '../src/combos.mjs';
+import {templateList, layoutOptionsOf, themes, palettes, concepts} from '../src/catalog.mjs';
+// 6차(품질 라운드): 4,102 → 아래 값. 줄인 것(항목 수와 맞지 않는 열 수, 섞인 벤토의 균등 격자, 앱·문서 화면의 가운데 정렬 머리말)과 늘린 것(섹션 머리말·질문 배치·단계 카드)의 차이다.
+export const COMBO_COUNT = 4955;
+import {enumerateCombos, findCombo, comboId, renderCombo, facets, filterCombos, shuffled, normalizeView, viewQuery, viewFromQuery, resolveView, flagsToText, comboTitle, EMPTY_VIEW} from '../src/combos.mjs';
 
-test('combos: the list is exactly the product of every template\'s layout slots (the audit\'s 4,102)', () => {
+test('combos: the list is exactly the product of every template\'s layout slots (the audit\'s count)', () => {
   const expected = templateList.reduce((sum, t) => sum + layoutOptionsOf(t.id).reduce((n, s) => n * (s.options.length + 1), 1), 0);
   const all = enumerateCombos();
   assert.equal(all.length, expected);
-  assert.equal(all.length, 4102, 'catalog 2.1.0 has 4,102 template×layout compositions; update docs/round6.md with the new count if this changes');
+  assert.equal(all.length, COMBO_COUNT, 'the catalog has ' + COMBO_COUNT + ' template×layout compositions; update docs/round6-quality.md and this pin if the catalog changes on purpose');
   assert.deepEqual(all.map(c => c.n), all.map((_, i) => i + 1));
   assert.equal(new Set(all.map(c => c.id)).size, all.length, 'ids are unique');
   assert.equal(enumerateCombos(), all, 'enumeration is cached');
@@ -25,11 +27,11 @@ test('combos: ids are stable text and round-trip', () => {
 
 test('combos: sameAs only points backwards at a combo of the same template', () => {
   const all = enumerateCombos(), same = all.filter(c => c.sameAs);
-  assert.ok(same.length > 0 && same.length < all.length / 10);
+  assert.ok(same.length < all.length / 10);
   for (const c of same) { const first = all[c.sameAs - 1]; assert.ok(c.sameAs < c.n && first.templateId === c.templateId && !first.sameAs, c.id); }
 });
 
-test('combos: every one of the 4,102 compiles and validates in its default view and under rotating theme, variant, palette and mode', () => {
+test('combos: every combo compiles and validates in its default view and under rotating theme, variant, palette and mode', () => {
   const themeIds = Object.keys(themes), paletteIds = Object.keys(palettes), failures = [];
   enumerateCombos().forEach((c, i) => {
     const theme = themes[themeIds[(i * 7) % themeIds.length]], variant = theme.variants[i % theme.variants.length];
@@ -50,12 +52,40 @@ test('combos: the view only changes theme, palette and mode — the layout choic
 });
 
 test('combos: view normalisation drops unknown or inconsistent values and round-trips through the URL', () => {
-  assert.deepEqual(normalizeView({theme: 'nope', tv: 'x', pal: 'nope', mode: 'blue'}), {theme: null, tv: null, pal: null, mode: null});
+  assert.deepEqual(normalizeView({theme: 'nope', tv: 'x', pal: 'nope', mode: 'blue', concept: 'nope', look: 'x', type: 'nope'}), {theme: null, tv: null, pal: null, mode: null, concept: null, look: null, type: null});
+  assert.equal(normalizeView({look: 'clean'}).look, null, 'a look needs its concept');
+  assert.equal(normalizeView({concept: 'saas', look: 'nope'}).look, null);
+  assert.deepEqual(normalizeView({concept: 'saas', look: 'clean', type: 'luxe'}), {theme: null, tv: null, pal: null, mode: null, concept: 'saas', look: 'clean', type: 'luxe'});
   assert.equal(normalizeView({tv: 'something'}).tv, null, 'a theme variant needs its theme');
   const theme = Object.values(themes).find(t => t.variants.length), pal = Object.keys(palettes)[3];
-  const view = {theme: theme.id, tv: theme.variants[0].id, pal, mode: 'dark'};
+  const view = {theme: theme.id, tv: theme.variants[0].id, pal, mode: 'dark', concept: 'cafe', look: 'wine', type: 'poster'};
   assert.deepEqual(viewFromQuery(new URLSearchParams(viewQuery('saas-landing', view))), view);
   assert.equal(viewQuery('saas-landing'), 'c=saas-landing');
+});
+
+test('combos: concepts restrict the list to their templates and look/typography resolve into the blueprint', () => {
+  const cafe = filterCombos({concept: 'cafe'});
+  assert.ok(cafe.length > 100 && cafe.every(c => concepts.cafe.templates.includes(c.templateId)));
+  assert.equal(filterCombos({concept: 'nope'}).length, enumerateCombos().length, 'an unknown concept filters nothing');
+  const c = findCombo('saas-landing');
+  assert.deepEqual(resolveView({concept: 'saas', look: 'clean'}), {theme: 'aurora', tv: 'clean-saas', pal: null, mode: null, type: 'geometric'});
+  assert.equal(resolveView({concept: 'saas'}).theme, 'trust', 'the first look is the default');
+  assert.deepEqual(resolveView({concept: 'saas', look: 'clean', theme: 'ocean', type: 'luxe'}), {theme: 'ocean', tv: null, pal: null, mode: null, type: 'luxe'}, 'an explicit theme/typography beats the look and drops its theme variant');
+  const r = renderCombo(c, {concept: 'devtool', look: 'console'});
+  assert.equal(r.ok, true); assert.equal(r.blueprint.theme, 'console'); assert.equal(r.blueprint.typography, 'terminal');
+  assert.equal(renderCombo(c, {type: 'luxe'}).blueprint.typography, 'luxe', 'typography is independent of the theme');
+  assert.match(viewQuery('saas-landing', {concept: 'cafe', look: 'wine', type: 'luxe'}), /^c=saas-landing&concept=cafe&look=wine&type=luxe$/);
+});
+
+test('combos: experimental combos are flagged and can be filtered out', () => {
+  const all = enumerateCombos(), exp = all.filter(c => c.experimental);
+  assert.equal(filterCombos({experimental: false}).length, all.length - exp.length);
+  assert.equal(filterCombos({experimental: true}).length, all.length);
+  for (const c of exp) assert.match(c.experimental, /^C /);
+  // 진단이 C 등급을 하나도 내지 않은 상태에서도 거르기 경로를 증명한다: 복사본 목록에 실험 표시를 직접 달아 본다.
+  const fake = all.slice(0, 6).map((c, i) => ({...c, experimental: i % 3 === 0 ? 'C EMPTY_CELL' : null}));
+  assert.deepEqual(filterCombos({experimental: false}, fake).map(c => c.id), fake.filter(c => !c.experimental).map(c => c.id));
+  assert.equal(filterCombos({experimental: true}, fake).length, 6);
 });
 
 test('combos: facets count every option, and slot filters partition the list', () => {
@@ -71,7 +101,7 @@ test('combos: search, type, template, same-screen and sort filters', () => {
   assert.equal(filterCombos({}).length, all.length);
   assert.equal(filterCombos({query: '#0001'}).length, 1);
   assert.equal(filterCombos({query: '0001'})[0].n, 1);
-  const found = new Set(filterCombos({query: '히어로 가운데'}).map(c => c.id));
+  const found = new Set(filterCombos({query: 'hero centered'}).map(c => c.id));
   assert.ok(filterCombos({slots: {hero: 'centered'}}).every(c => found.has(c.id)), 'every word may match any slot, so hero=centered combos are a subset of the result');
   assert.ok(found.size < all.length / 2);
   assert.ok(filterCombos({query: 'SAAS-LANDING'}).length > 0, 'case-insensitive id search');

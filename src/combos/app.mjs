@@ -1,4 +1,6 @@
-import {themes, themeCategories, palettes, paletteFamilies, pageTypes, templateList, CATALOG_VERSION} from '../catalog.mjs';
+import {themes, themeCategories, palettes, paletteFamilies, pageTypes, templateList, concepts, conceptIds, axes, CATALOG_VERSION} from '../catalog.mjs';
+import {TYPE} from '../typography.mjs';
+import {GRADES_META} from '../combo-grades.mjs';
 import {escapeHTML as e} from '../render.mjs';
 import {DEVICES, mountViewport} from '../workbench/viewport.mjs';
 import {enumerateCombos, findCombo, renderCombo, facets, filterCombos, normalizeView, viewQuery, prettyQuery, viewFromQuery, comboTitle, pad, flagsToText, EMPTY_VIEW} from '../combos.mjs';
@@ -10,7 +12,7 @@ const fmt = n => n.toLocaleString('en-US');
 
 const all = enumerateCombos();
 const slotFacets = facets(all);
-const state = {q: '', pt: '', t: '', slots: {}, sort: 'default', seed: 1, same: false, flagged: false, tall: false, page: 1, size: DEFAULT_SIZE, view: {...EMPTY_VIEW}, open: null, device: null};
+const state = {q: '', pt: '', t: '', slots: {}, sort: 'default', seed: 1, same: false, flagged: false, tall: false, exp: false, page: 1, size: DEFAULT_SIZE, view: {...EMPTY_VIEW}, open: null, device: null};
 let list = all;
 
 /* ---------- 이상함 표시(localStorage) ---------- */
@@ -50,7 +52,7 @@ function readUrl() {
   for (const part of (p.get('sl') ?? '').split(',')) { const [slot, option] = part.split(':'); const f = slotFacets.find(x => x.id === slot); if (f && (option === 'default' || f.options.some(o => o.id === option))) state.slots[slot] = option; }
   state.sort = ['changed', 'shuffle'].includes(p.get('sort')) ? p.get('sort') : 'default';
   state.seed = Number(p.get('seed')) || 1;
-  state.same = p.get('same') === '1'; state.flagged = p.get('flagged') === '1'; state.tall = p.get('tall') === '1';
+  state.same = p.get('same') === '1'; state.flagged = p.get('flagged') === '1'; state.tall = p.get('tall') === '1'; state.exp = p.get('exp') === '1';
   state.size = [24, 48, 96].includes(Number(p.get('ps'))) ? Number(p.get('ps')) : DEFAULT_SIZE;
   state.page = Math.max(1, Number(p.get('p')) || 1);
   state.view = viewFromQuery(p);
@@ -59,12 +61,12 @@ function readUrl() {
 function buildQuery({withViewer = true} = {}) {
   const p = new URLSearchParams();
   if (withViewer && state.open) p.set('c', state.open);
-  const v = normalizeView(state.view); for (const k of ['theme', 'tv', 'pal', 'mode']) if (v[k]) p.set(k, v[k]);
+  const v = normalizeView(state.view); for (const k of ['concept', 'look', 'theme', 'tv', 'pal', 'type', 'mode']) if (v[k]) p.set(k, v[k]);
   if (state.q.trim()) p.set('q', state.q.trim());
   if (state.pt) p.set('pt', state.pt); if (state.t) p.set('t', state.t);
   const sl = Object.entries(state.slots).filter(([, o]) => o).map(([s, o]) => `${s}:${o}`).join(','); if (sl) p.set('sl', sl);
   if (state.sort !== 'default') p.set('sort', state.sort); if (state.sort === 'shuffle') p.set('seed', String(state.seed));
-  if (state.same) p.set('same', '1'); if (state.flagged) p.set('flagged', '1'); if (state.tall) p.set('tall', '1');
+  if (state.same) p.set('same', '1'); if (state.flagged) p.set('flagged', '1'); if (state.tall) p.set('tall', '1'); if (state.exp) p.set('exp', '1');
   if (state.size !== DEFAULT_SIZE) p.set('ps', String(state.size)); if (state.page > 1) p.set('p', String(state.page));
   return prettyQuery(p.toString());
 }
@@ -77,7 +79,7 @@ const rawUrl = id => new URL(`render.html?${viewQuery(id, state.view)}`, locatio
 /* ---------- 필터 ---------- */
 function refilter({keepPage = false} = {}) {
   const only = state.flagged ? new Set(flags.map(f => f.c)) : null;
-  list = filterCombos({query: state.q, pageType: state.pt, template: state.t, slots: state.slots, hideSame: state.same, only, sort: state.sort, seed: state.seed}, all);
+  list = filterCombos({query: state.q, pageType: state.pt, template: state.t, slots: state.slots, hideSame: state.same, only, concept: state.view.concept ?? '', experimental: state.exp, sort: state.sort, seed: state.seed}, all);
   const pages = Math.max(1, Math.ceil(list.length / state.size));
   state.page = keepPage ? Math.min(state.page, pages) : 1;
 }
@@ -87,7 +89,9 @@ function drawFilters() {
   $('f-type').innerHTML = `<option value="">전체 (${Object.keys(pageTypes).length}종)</option>` + Object.entries(pageTypes).filter(([id]) => templateList.some(t => t.pageType === id)).map(([id, p]) => `<option value="${id}">${e(p.label)}</option>`).join('');
   drawTemplateOptions();
   $('f-type').value = state.pt; $('f-sort').value = state.sort; $('f-size').value = String(state.size);
-  $('f-same').checked = state.same; $('f-flagged').checked = state.flagged; $('f-tall').checked = state.tall;
+  $('f-same').checked = state.same; $('f-flagged').checked = state.flagged; $('f-tall').checked = state.tall; $('f-exp').checked = state.exp;
+  $('f-concept').innerHTML = '<option value="">전체 컨셉 (' + conceptIds.length + '개)</option>' + conceptIds.map(id => '<option value="' + id + '">' + e(concepts[id].label) + ' (' + concepts[id].templates.length + ')</option>').join('');
+  $('f-concept').value = normalizeView(state.view).concept ?? '';
   $('slot-filters').innerHTML = slotFacets.map(f => `<label class="tool"><span>${e(f.label)}</span><select data-slot="${f.id}"><option value="">전체</option><option value="default">기본(바꾸지 않음)</option>${f.options.map(o => `<option value="${o.id}">${e(o.label)} (${fmt(o.count)})</option>`).join('')}</select></label>`).join('');
   for (const s of $('slot-filters').querySelectorAll('select')) s.value = state.slots[s.dataset.slot] ?? '';
   syncSummaries();
@@ -102,13 +106,16 @@ function syncSummaries() {
   const n = Object.values(state.slots).filter(Boolean).length;
   $('slot-active').textContent = n ? `${n}개 적용 중` : '';
   const v = normalizeView(state.view);
-  $('view-summary').textContent = [v.theme && themes[v.theme].name, v.pal && palettes[v.pal].name, v.mode && (v.mode === 'dark' ? '다크' : '라이트')].filter(Boolean).join(' · ') || '템플릿 기본';
+  $('view-summary').textContent = [v.concept && concepts[v.concept].label + (v.look ? ' · ' + concepts[v.concept].looks.find(l => l.id === v.look).label : ''), v.type && TYPE[v.type].label, v.theme && themes[v.theme].name, v.pal && palettes[v.pal].name, v.mode && (v.mode === 'dark' ? '다크' : '라이트')].filter(Boolean).join(' · ') || '템플릿 기본';
 }
 
 /* ---------- 보기 설정(테마·변형·팔레트·모드): 갤러리와 확대 보기가 같은 상태를 공유 ---------- */
 function viewControlsHTML(p) {
   const cats = Object.entries(themeCategories).map(([id, label]) => `<optgroup label="${e(label)}">${Object.values(themes).filter(t => t.category === id).map(t => `<option value="${t.id}">${e(t.name)}</option>`).join('')}</optgroup>`).join('');
-  return `<label class="tool"><span>테마</span><select id="${p}-theme"><option value="">템플릿 기본</option>${cats}</select></label>
+  const types = axes.typography.map(id => `<option value="${id}">${e(TYPE[id].label)}</option>`).join('');
+  return `<label class="tool"><span>컨셉 look</span><select id="${p}-look"></select></label>
+<label class="tool"><span>서체</span><select id="${p}-type"><option value="">컨셉·테마 기본</option>${types}</select></label>
+<label class="tool"><span>테마</span><select id="${p}-theme"><option value="">템플릿 기본</option>${cats}</select></label>
 <label class="tool"><span>테마 변형</span><select id="${p}-tv"></select></label>
 <label class="tool"><span>팔레트</span><select id="${p}-pal"></select></label>
 <div class="tool"><span>모드</span><div class="seg-group" role="radiogroup" aria-label="모드" id="${p}-mode"><button type="button" role="radio" data-mode="">기본</button><button type="button" role="radio" data-mode="light">라이트</button><button type="button" role="radio" data-mode="dark">다크</button></div></div>
@@ -126,6 +133,9 @@ function syncViewControls() {
   const v = normalizeView(state.view);
   for (const p of ['g', 'v']) {
     $(p + '-theme').value = v.theme ?? '';
+    const lk = $(p + '-look'); lk.disabled = !v.concept;
+    lk.innerHTML = v.concept ? '<option value="">첫 번째 look</option>' + concepts[v.concept].looks.map(l => `<option value="${l.id}">${e(l.label)}</option>`).join('') : '<option value="">(컨셉을 먼저)</option>';
+    lk.value = v.look ?? ''; $(p + '-type').value = v.type ?? '';
     const tv = $(p + '-tv'); tv.disabled = !v.theme;
     tv.innerHTML = v.theme ? '<option value="">테마 기본 결</option>' + themes[v.theme].variants.map(x => `<option value="${x.id}">${e(x.label)}</option>`).join('') : '<option value="">(테마를 먼저)</option>';
     tv.value = v.tv ?? '';
@@ -138,6 +148,8 @@ function syncViewControls() {
 }
 function bindViewControls(p) {
   const set = patch => { state.view = normalizeView({...state.view, ...patch}); viewChanged(); };
+  $(p + '-look').addEventListener('change', ev => set({look: ev.target.value || null}));
+  $(p + '-type').addEventListener('change', ev => set({type: ev.target.value || null}));
   $(p + '-theme').addEventListener('change', ev => set({theme: ev.target.value || null, tv: null}));
   $(p + '-tv').addEventListener('change', ev => set({tv: ev.target.value || null}));
   $(p + '-pal').addEventListener('change', ev => set({pal: ev.target.value || null}));
@@ -145,7 +157,7 @@ function bindViewControls(p) {
   $(p + '-theme').closest('.view-controls').querySelector('[data-view-reset]').addEventListener('click', () => { state.view = {...EMPTY_VIEW}; viewChanged(); });
 }
 function viewChanged() {
-  syncViewControls(); writeUrl();
+  syncViewControls(); $('f-concept').value = normalizeView(state.view).concept ?? ''; refilter(); writeUrl();
   drawGrid({keepScroll: true});
   if (state.open) renderViewer();
 }
@@ -189,7 +201,7 @@ function setThumbScale() {
 }
 
 /* ---------- 목록 그리기 ---------- */
-const badges = c => [c.sameAs && `<span class="badge" title="앞 조합과 같은 화면입니다(앞 슬롯의 변경이 뒤 슬롯의 조건을 없앰)">#${pad(c.sameAs)}과 같은 화면</span>`, c.changed >= 3 && `<span class="badge hot">${c.changed}곳 변경</span>`].filter(Boolean).join('');
+const badges = c => [c.sameAs && `<span class="badge" title="앞 조합과 같은 화면입니다(앞 슬롯의 변경이 뒤 슬롯의 조건을 없앰)">#${pad(c.sameAs)}과 같은 화면</span>`, c.changed >= 3 && `<span class="badge hot">${c.changed}곳 변경</span>`, c.experimental && `<span class="badge exp" title="진단에서 A 등급이 아니었습니다: ${e(c.experimental)}">실험</span>`].filter(Boolean).join('');
 function cardHTML(c) {
   const flagged = !!findFlag(c.id);
   return `<article class="combo-card" data-id="${c.id}">
@@ -248,7 +260,7 @@ function renderViewer() {
   const flag = findFlag(combo.id);
   $('v-flag').setAttribute('aria-pressed', String(!!flag)); $('note-field').hidden = !flag; $('v-note').value = flag?.note ?? '';
   $('v-devices').innerHTML = deviceButtons();
-  const status = [result.ok ? null : '렌더 실패: ' + result.error, ...(result.notes ?? []), combo.sameAs ? `#${pad(combo.sameAs)}과 같은 화면` : null, combo.id].filter(Boolean);
+  const status = [result.ok ? null : '렌더 실패: ' + result.error, ...(result.notes ?? []), combo.sameAs ? `#${pad(combo.sameAs)}과 같은 화면` : null, combo.experimental ? '실험 구성: ' + combo.experimental : null, combo.id].filter(Boolean);
   $('v-status').dataset.base = status.join(' · '); $('v-status').textContent = status.join(' · ');
   viewerPort?.apply();
 }
@@ -345,9 +357,11 @@ function bindFilters() {
   $('f-size').addEventListener('change', ev => { state.size = Number(ev.target.value); applyFilters({keepPage: true}); });
   $('f-same').addEventListener('change', ev => { state.same = ev.target.checked; applyFilters(); });
   $('f-flagged').addEventListener('change', ev => { state.flagged = ev.target.checked; applyFilters(); });
+  $('f-exp').addEventListener('change', ev => { state.exp = ev.target.checked; applyFilters(); });
+  $('f-concept').addEventListener('change', ev => { state.view = normalizeView({...state.view, concept: ev.target.value || null, look: null}); viewChanged(); });
   $('f-tall').addEventListener('change', ev => { state.tall = ev.target.checked; writeUrl(); drawGrid({keepScroll: true}); });
   $('slot-filters').addEventListener('change', ev => { const s = ev.target.closest('select[data-slot]'); if (!s) return; if (s.value) state.slots[s.dataset.slot] = s.value; else delete state.slots[s.dataset.slot]; applyFilters(); });
-  $('clear-filters').addEventListener('click', () => { Object.assign(state, {q: '', pt: '', t: '', slots: {}, sort: 'default', same: false, flagged: false, tall: false}); drawFilters(); applyFilters(); });
+  $('clear-filters').addEventListener('click', () => { Object.assign(state, {q: '', pt: '', t: '', slots: {}, sort: 'default', same: false, flagged: false, tall: false}); state.view = normalizeView({...state.view, concept: null, look: null}); syncViewControls(); drawFilters(); applyFilters(); });
   $('random-any').addEventListener('click', () => openViewer(randomOf(list.length ? list : all).id));
   for (const id of ['pager-top', 'pager-bottom']) {
     $(id).addEventListener('click', ev => { const b = ev.target.closest('[data-page]'); if (b && !b.disabled) goPage(Number(b.dataset.page)); });
@@ -373,7 +387,9 @@ function boot() {
   state.device ??= innerWidth < 700 ? 'fit' : 'desktop';
   $('total-count').textContent = fmt(all.length);
   const slots = slotFacets.length, options = slotFacets.reduce((n, f) => n + f.options.length, 0), same = all.filter(c => c.sameAs).length;
-  $('head-line').textContent = `템플릿 ${templateList.length}개 × 구성 변형(${slots}종 슬롯, 선택지 ${options}개)의 모든 곱입니다. 파일로 만들어 두지 않고 브라우저에서 그 자리에서 컴파일합니다. 이 중 ${fmt(same)}개는 앞 조합과 결과 화면이 같습니다(“같은 화면” 표시).`;
+  const exp = all.filter(c => c.experimental).length;
+  $('head-line').textContent = `템플릿 ${templateList.length}개 × 구성 변형(${slots}종 슬롯, 선택지 ${options}개)의 곱이고, 컨셉 ${conceptIds.length}개가 템플릿과 시각 언어(테마·서체)를 묶습니다. 파일로 만들어 두지 않고 브라우저에서 그 자리에서 컴파일합니다. 진단에서 A 등급이 아니었던 ${fmt(exp)}개는 “실험”으로 표시하고 기본으로 숨깁니다(${GRADES_META.date ?? '진단 전'} 기준). ${same ? fmt(same) + '개는 앞 조합과 결과 화면이 같습니다.' : ''}`;
+  $('exp-count').textContent = '(' + fmt(exp) + ')';
   $('version').textContent = 'CATALOG ' + CATALOG_VERSION;
   $('view-gallery').innerHTML = viewControlsHTML('g'); $('view-viewer').innerHTML = viewControlsHTML('v');
   bindViewControls('g'); bindViewControls('v'); syncViewControls();

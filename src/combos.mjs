@@ -1,5 +1,7 @@
-import {templateList, templates, themes, palettes, pageTypes, layoutOptionsOf, applyLayout, layoutSlotIds, createBlueprint, repairAxes} from './catalog.mjs';
+import {templateList, templates, themes, palettes, pageTypes, layoutOptionsOf, applyLayout, layoutSlotIds, createBlueprint, repairAxes, concepts, axes} from './catalog.mjs';
 import {compile, validateBlueprint} from './compiler.mjs';
+import {EXPERIMENTAL} from './combo-grades.mjs';
+import {TYPE} from './typography.mjs';
 
 /**
  * 템플릿 × 구성 변형 조합 전체 목록. 파일로 미리 만들지 않고 카탈로그에서 그 자리에서 계산한다.
@@ -18,9 +20,11 @@ export function enumerateCombos() {
     for (const slot of slots) sets = sets.flatMap(c => [c, ...slot.options.map(o => ({...c, [slot.id]: o.id}))]);
     for (const layout of sets) {
       const picks = slots.filter(s => layout[s.id]).map(s => ({slot: s.id, slotLabel: s.label, option: layout[s.id], optionLabel: s.options.find(o => o.id === layout[s.id]).label}));
-      const combo = {n: list.length + 1, id: comboId(t.id, layout), templateId: t.id, template: t.label, pageType: t.pageType, layout, picks, changed: picks.length, sameAs: null};
+      const id = comboId(t.id, layout);
+      // 진단(scripts/design-qa/diagnose.mjs)에서 A 등급이 아니었던 조합은 '실험'이다. 갤러리는 기본으로 숨기고 표시를 붙인다.
+      const combo = {n: list.length + 1, id, templateId: t.id, template: t.label, pageType: t.pageType, layout, picks, changed: picks.length, sameAs: null, experimental: EXPERIMENTAL[id] ?? null};
       // 앞 슬롯의 변경이 뒤 슬롯의 조건을 없애면 서로 다른 선택이 같은 화면이 된다. 숨기지 않고 표시만 한다.
-      const signature = t.id + JSON.stringify(applyLayout(t.tree, layout));
+      const signature = t.id + JSON.stringify(applyLayout(t.tree, layout, t.pageType));
       if (firstOf.has(signature)) combo.sameAs = firstOf.get(signature); else firstOf.set(signature, combo.n);
       list.push(combo);
     }
@@ -40,24 +44,35 @@ export function findCombo(id) {
   return findCombo.index.get(id) ?? null;
 }
 
-/** 보기 설정: 모두 null이면 템플릿의 기본 테마·팔레트·모드 그대로다. */
-export const EMPTY_VIEW = Object.freeze({theme: null, tv: null, pal: null, mode: null});
+/** 보기 설정: 모두 null이면 템플릿의 기본 테마·팔레트·모드 그대로다. concept·look은 컨셉의 시각 언어(테마+서체), type은 서체 프리셋만 따로 고른 것이다. */
+export const EMPTY_VIEW = Object.freeze({theme: null, tv: null, pal: null, mode: null, concept: null, look: null, type: null});
 
 export function normalizeView(view = {}) {
   const theme = themes[view.theme] ? view.theme : null;
   const tv = theme && themes[theme].variants.some(v => v.id === view.tv) ? view.tv : null;
-  return {theme, tv, pal: palettes[view.pal] ? view.pal : null, mode: view.mode === 'light' || view.mode === 'dark' ? view.mode : null};
+  const concept = concepts[view.concept] ? view.concept : null;
+  const look = concept && concepts[concept].looks.some(l => l.id === view.look) ? view.look : null;
+  return {theme, tv, pal: palettes[view.pal] ? view.pal : null, mode: view.mode === 'light' || view.mode === 'dark' ? view.mode : null, concept, look, type: axes.typography.includes(view.type) ? view.type : null};
+}
+
+/** 컨셉의 look을 풀어 쓴 실제 보기. 사용자가 따로 고른 테마·서체는 look보다 우선한다(서체는 테마와 독립이다). */
+export function resolveView(view = EMPTY_VIEW) {
+  const v = normalizeView(view);
+  if (!v.concept) return {theme: v.theme, tv: v.tv, pal: v.pal, mode: v.mode, type: v.type};
+  const l = concepts[v.concept].looks.find(x => x.id === v.look) ?? concepts[v.concept].looks[0];
+  return {theme: v.theme ?? l.theme, tv: v.theme ? v.tv : (v.tv ?? l.themeVariant ?? null), pal: v.pal, mode: v.mode, type: v.type ?? l.typography};
 }
 
 /** 이 조합이 쓰는 테마가 모드를 금지하면(네온·녹턴·게임의 라이트) 덮어쓰지 않고 그 이유를 notes에 담는다. */
 export function comboBlueprint(combo, view = EMPTY_VIEW, notes = []) {
-  const v = normalizeView(view);
-  const b = createBlueprint(combo.templateId, v.theme ?? undefined, v.pal ?? undefined, {themeVariant: v.tv ?? undefined, layout: combo.layout});
+  const v = resolveView(view);
+  const b = createBlueprint(combo.templateId, v.theme ?? undefined, v.pal ?? undefined, {themeVariant: v.tv ?? undefined, layout: combo.layout, typography: v.type ?? undefined});
   if (v.mode && v.mode !== b.mode) {
     const theme = themes[b.theme];
     if (theme.forbid.mode?.includes(v.mode)) notes.push(theme.name + ' 테마는 ' + (v.mode === 'dark' ? '다크' : '라이트') + '를 쓰지 않아 기본 모드로 보입니다.');
     else { b.mode = v.mode; repairAxes(b); }
   }
+  if (v.type && b.typography !== v.type) notes.push((TYPE[v.type]?.label ?? v.type) + ' 서체는 이 조합의 다른 축과 부딪혀 ' + (TYPE[b.typography]?.label ?? b.typography) + '(으)로 보입니다.');
   return b;
 }
 
@@ -76,12 +91,12 @@ export const prettyQuery = q => q.replace(/%7E/g, '~').replace(/%3A/g, ':').repl
 export const viewQuery = (id, view = EMPTY_VIEW) => {
   const v = normalizeView(view), q = new URLSearchParams();
   if (id) q.set('c', id);
-  for (const k of ['theme', 'tv', 'pal', 'mode']) if (v[k]) q.set(k, v[k]);
+  for (const k of ['concept', 'look', 'theme', 'tv', 'pal', 'type', 'mode']) if (v[k]) q.set(k, v[k]);
   return prettyQuery(q.toString());
 };
 
 export function viewFromQuery(params) {
-  return normalizeView({theme: params.get('theme'), tv: params.get('tv'), pal: params.get('pal'), mode: params.get('mode')});
+  return normalizeView({theme: params.get('theme'), tv: params.get('tv'), pal: params.get('pal'), mode: params.get('mode'), concept: params.get('concept'), look: params.get('look'), type: params.get('type')});
 }
 
 /** 슬롯별 필터 선택지와 개수. 화면의 필터 UI가 쓴다. */
@@ -98,13 +113,15 @@ export function facets(list = enumerateCombos()) {
  * 필터·검색·정렬. query는 공백으로 나눈 모든 낱말이 번호·id·템플릿 이름·유형·슬롯/옵션 이름 어디에든 있어야 한다.
  * slots: {슬롯id: 옵션id | 'default'}('default'는 그 슬롯을 바꾸지 않은 조합).
  */
-export function filterCombos({query = '', pageType = '', template = '', slots = {}, hideSame = false, only = null, sort = 'default', seed = 1} = {}, list = enumerateCombos()) {
+export function filterCombos({query = '', pageType = '', template = '', slots = {}, hideSame = false, only = null, concept = '', experimental = true, sort = 'default', seed = 1} = {}, list = enumerateCombos()) {
   const words = query.toLowerCase().replace(/#/g, '').split(/\s+/).filter(Boolean);
   const wanted = Object.entries(slots).filter(([, v]) => v);
   let out = list.filter(c => {
     if (pageType && c.pageType !== pageType) return false;
     if (template && c.templateId !== template) return false;
     if (hideSame && c.sameAs) return false;
+    if (concept && concepts[concept] && !concepts[concept].templates.includes(c.templateId)) return false;
+    if (!experimental && c.experimental) return false;
     if (only && !only.has(c.id)) return false;
     for (const [slot, option] of wanted) if (option === 'default' ? c.layout[slot] : c.layout[slot] !== option) return false;
     if (words.length) {
@@ -134,7 +151,7 @@ export function flagsToText(entries, {origin = '', catalogVersion = ''} = {}) {
   const lines = [`# 이상한 조합 ${entries.length}건 (카탈로그 ${catalogVersion})`, ''];
   for (const f of entries) {
     const combo = findCombo(f.c), v = normalizeView(f);
-    const view = [v.theme && `테마 ${themes[v.theme].name}`, v.tv && `테마 변형 ${themes[v.theme].variants.find(x => x.id === v.tv).label}`, v.pal && `팔레트 ${palettes[v.pal].name}`, v.mode && (v.mode === 'dark' ? '다크' : '라이트')].filter(Boolean).join(' · ') || '기본 테마·팔레트';
+    const view = [v.concept && `컨셉 ${concepts[v.concept].label}${v.look ? ' · ' + concepts[v.concept].looks.find(l => l.id === v.look).label : ''}`, v.type && `서체 ${TYPE[v.type].label}`, v.theme && `테마 ${themes[v.theme].name}`, v.tv && `테마 변형 ${themes[v.theme].variants.find(x => x.id === v.tv).label}`, v.pal && `팔레트 ${palettes[v.pal].name}`, v.mode && (v.mode === 'dark' ? '다크' : '라이트')].filter(Boolean).join(' · ') || '기본 테마·팔레트';
     lines.push(`- #${combo ? pad(combo.n) : '????'} ${f.c}`, `  ${combo ? combo.template + ' · ' + comboTitle(combo) : '목록에 없는 id(카탈로그가 바뀌었을 수 있음)'} / ${view}`);
     if (f.note) lines.push(`  메모: ${f.note}`);
     lines.push(`  ${origin}combos/?${viewQuery(f.c, f)}`);

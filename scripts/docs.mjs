@@ -3,6 +3,8 @@ import {themes, themeCategories, palettes, paletteFamilies, layoutOptionsOf, axe
 import {page} from './md.mjs';
 import {RADIUS} from '../src/styles/base.mjs';
 import {SPACE, RELATIONS, spacingMarkdown} from '../src/spacing.mjs';
+import {TYPE_IDS, ROLES, typographyMarkdown} from '../src/typography.mjs';
+import {PRIMITIVES, layoutMarkdown} from '../src/layout.mjs';
 
 const read = async p => JSON.parse(await readFile(new URL(p, import.meta.url), 'utf8'));
 const evidenceCount = (await read('../docs/evidence/coolors-palettes.json')).palettes.length;
@@ -318,3 +320,16 @@ const spacingMd = spacingMarkdown();
 await writeFile(new URL('../docs/spacing.md', import.meta.url), spacingMd);
 await writeFile(new URL('../docs/spacing.html', import.meta.url), page({title: '간격 규칙 · 관계별 패딩·마진 계약', subtitle: `Static Kit ${CATALOG_VERSION} · 단계 ${Object.keys(SPACE.comfortable).length} · 관계 규칙 ${RELATIONS.length}`, md: spacingMd.split('\n').slice(2).join('\n'), footer}));
 console.log(`DOCS: spacing contract written (${RELATIONS.length} relations).`);
+
+// ---------- typography system and layout primitives (generated from src/typography.mjs and src/layout.mjs) ----------
+const typographyMd = typographyMarkdown();
+await writeFile(new URL('../docs/typography.md', import.meta.url), typographyMd);
+await writeFile(new URL('../docs/typography.html', import.meta.url), page({title: '서체 규칙 · 프리셋과 크기 역할', subtitle: `Static Kit ${CATALOG_VERSION} · 프리셋 ${TYPE_IDS.length} · 크기 역할 ${Object.keys(ROLES).length}`, md: typographyMd.split('\n').slice(2).join('\n'), footer}));
+const layoutMd = layoutMarkdown();
+await writeFile(new URL('../docs/layout.md', import.meta.url), layoutMd);
+await writeFile(new URL('../docs/layout.html', import.meta.url), page({title: '배치 규칙 · 레이아웃 원시 요소', subtitle: `Static Kit ${CATALOG_VERSION} · 원시 요소 ${PRIMITIVES.length}`, md: layoutMd.split('\n').slice(2).join('\n'), footer}));
+// 진단 문서는 scripts/design-qa/grades.mjs가 만든다(브라우저 실측이 필요하다). 있으면 같은 틀의 HTML로 내보낸다.
+let diagnosisMd = null;
+try { diagnosisMd = await readFile(new URL('../docs/diagnosis-round6.md', import.meta.url), 'utf8'); } catch { /* 진단 전 */ }
+if (diagnosisMd) await writeFile(new URL('../docs/diagnosis-round6.html', import.meta.url), page({title: '6차 전수 진단 · 레이아웃·간격·타이포 품질', subtitle: `Static Kit ${CATALOG_VERSION} · 조합 등급 A·B·C`, md: diagnosisMd.split('\n').slice(2).join('\n'), footer}));
+console.log(`DOCS: typography (${TYPE_IDS.length} presets), layout primitives${diagnosisMd ? ', diagnosis' : ''} written.`);

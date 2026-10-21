@@ -23,12 +23,13 @@ export function compile(input) {
     }
   }
   if (report.some(x => x.ratio < x.minimum)) throw new Error('Contrast gate failed');
-  const css = stylesheet(b, sets);
+  const body = renderTree(b);
+  const css = stylesheet(b, sets, body);
   const csp = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'";
   const scheme = b.mode === 'auto' ? 'light dark' : b.mode;
   // Browser chrome follows the page (Vercel web-interface-guidelines: theme-color matches the page background).
   const themeColor = b.mode === 'auto' ? `<meta name="theme-color" content="${tokens.light.canvas}" media="(prefers-color-scheme: light)"><meta name="theme-color" content="${tokens.dark.canvas}" media="(prefers-color-scheme: dark)">` : `<meta name="theme-color" content="${tokens[b.mode].canvas}">`;
-  const html = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="${scheme}">${themeColor}<meta name="generator" content="Static Kit ${CATALOG_VERSION}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style><noscript><style>.kit-tabpanel[hidden]{display:block}.kit-tablist{display:none}</style></noscript></head><body>${renderTree(b)}<script>${formRuntime}</script></body></html>\n`;
+  const html = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="${scheme}">${themeColor}<meta name="generator" content="Static Kit ${CATALOG_VERSION}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style><noscript><style>.kit-tabpanel[hidden]{display:block}.kit-tablist{display:none}</style></noscript></head><body>${body}<script>${formRuntime}</script></body></html>\n`;
   const primary = resolved[b.mode === 'auto' ? 'light' : b.mode];
   const manifest = {
     blueprintVersion: BLUEPRINT_VERSION, catalogVersion: CATALOG_VERSION, theme: b.theme, palette: b.palette, mode: b.mode, pageType: b.pageType,

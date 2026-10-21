@@ -172,4 +172,25 @@ console.log(`AUDIT: ${Object.keys(palettes).length} palettes match rendered Cool
 console.log(`CATALOG: ${Object.keys(themes).length} themes, ${Object.keys(palettes).length} palettes, ${templateList.length} templates, ${nodeTypes.length} node types (${examples} examples compile), ${Object.keys(pageTypes).length} page types, ${axisBans.length} axis bans.`);
 console.log(`MATRIX: ${matrix} template×theme pages + ${palettePages} palette×mode pages compile; ${pairwiseCompiled} pairwise tuples cover ${allowedPairs.size} allowed axis-value pairs; ${factorialCompiled}/${factorial} palette×mode×shell compile (${JSON.stringify(factorialRejected)} rejected before repair).`);
 console.log(`VARIANTS: ${themeVariantCount} theme variants (${themeVariantPages} pages compile), ${optionCount} layout options over ${slotCount} template slots (${layoutPages} pages compile), ${layoutCombos.toLocaleString('en-US')} template×layout compositions.`);
+// 6차: 서체 프리셋 × scale 축의 모든 값이 역할 순서를 지키고, 템플릿 85개 × 서체 프리셋이 컴파일되며 CSS에 린트 위반이 없다. 컨셉 × 템플릿 × look도 전부 검증을 통과한다.
+{
+  const {TYPE_IDS, ROLES, roleSizes, lintType} = await import('../src/typography.mjs');
+  const {lintLayout, flowOrphans, FLOW} = await import('../src/layout.mjs');
+  const {concepts} = await import('../src/catalog.mjs');
+  let typePages = 0, lintFound = 0;
+  for (const typography of TYPE_IDS) for (const scale of axes.scale) {
+    const z = roleSizes({typography, scale});
+    assert.ok(z.sub.max < z.heading.min && z.heading.min < z.title.min && z.title.max < z.display.max + 1, `type order ${typography}/${scale}`);
+  }
+  for (const [i, t] of templateList.entries()) {
+    const b = createBlueprint(t.id); b.typography = TYPE_IDS[i % TYPE_IDS.length]; repairAxes(b);
+    const css = compile(b).css; typePages++;
+    lintFound += lintType(css).length + lintLayout(css).length;
+  }
+  assert.equal(lintFound, 0, 'lintType/lintLayout findings in compiled pages');
+  for (let n = 2; n <= FLOW.maxItems; n++) for (const cap of [2, 3, 4]) assert.deepEqual(flowOrphans(n, cap, {span: true}), [], `flow orphan n=${n} cap=${cap}`);
+  let looks = 0;
+  for (const c of Object.values(concepts)) for (const tid of c.templates) for (const l of c.looks) { const b = createBlueprint(tid, l.theme, undefined, {themeVariant: l.themeVariant, typography: l.typography}); assert.ok(validateBlueprint(b).valid, `${tid}/${l.id}`); looks++; }
+  console.log(`TYPE: ${TYPE_IDS.length} presets × ${axes.scale.length} scales keep the role order (${Object.keys(ROLES).length} roles); ${typePages} templates compile under rotating presets with 0 lintType/lintLayout findings; flow columns leave no orphan for 2..${FLOW.maxItems} items; ${Object.keys(concepts).length} concepts × templates × looks = ${looks} compositions validate.`);
+}
 console.log(`SPACE: ${allowed.toLocaleString('en-US')} rule-allowed axis×palette combinations (factored count). ${((Date.now() - t0) / 1000).toFixed(1)}s`);

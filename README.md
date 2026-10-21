@@ -17,9 +17,9 @@
 ## 보기
 
 - **시각 조립기**: `npm run dev` 후 http://127.0.0.1:4173. 미리보기는 휴대폰·태블릿·데스크톱·맞춤 폭을 고정 폭으로 그려 영역에 맞춰 줄이므로 가로로 잘리지 않고, **새 창**과 **전체 화면 모달**로 크게 볼 수 있습니다. 카탈로그 탭에서 템플릿·테마·팔레트·부품의 실제 렌더를 보고 바로 조립을 시작합니다.
-- **전체 조합 갤러리** (`/combos/`): 템플릿 × 구성 변형 4,102가지를 번호·필터·검색과 함께 훑어보고, 확대해 ←→·스와이프로 넘기며, 테마·팔레트를 바꿔 보고, 이상한 조합을 표시해 글로 내보냅니다. 파일을 미리 만들지 않고 브라우저에서 즉석 컴파일합니다(`docs/round6.md`).
+- **전체 조합 갤러리** (`/combos/`): 템플릿 × 구성 변형 4,955가지를 번호·필터·검색과 함께 훑어보고, 확대해 ←→·스와이프로 넘기며, **컨셉 17개**(템플릿과 시각 언어 묶음)·테마·서체·팔레트를 바꿔 보고, 이상한 조합을 표시해 글로 내보냅니다. 전수 진단에서 심각한 결함이 나온 조합은 **실험**으로 표시하고 기본으로 숨깁니다. 파일을 미리 만들지 않고 브라우저에서 즉석 컴파일합니다(`docs/round6.md`, `docs/round6-quality.md`).
 - **휴대폰용 단일 파일 갤러리**: `site/gallery/index.html` (컴파일러 포함, 오프라인). 템플릿·테마·부품·축을 열어 보고 테마·팔레트·모드·축을 바로 바꿔 봅니다. 금지 조합은 이유와 함께 거부되고 자동 수정 대안이 나옵니다.
-- 설계서 [docs/design.html](docs/design.html) · 팔레트 근거 [docs/palettes.html](docs/palettes.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html)
+- 설계서 [docs/design.html](docs/design.html) · 팔레트 근거 [docs/palettes.html](docs/palettes.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html) · 서체 규칙 [docs/typography.html](docs/typography.html) · 배치 규칙 [docs/layout.html](docs/layout.html) · 6차 진단 [docs/diagnosis-round6.html](docs/diagnosis-round6.html)
 
 ## 실행
 
@@ -63,7 +63,7 @@ npm run kit -- migrate old-v1.json new.json    # 1.x → 2.0
 
 ## 무엇을 조립하나
 
-- **축 15개**: 모드(light·dark·auto), 셸 10, 서체 8, 밀도, 모서리 5, 컨트롤 모양, 깊이 6, 모션, 아이콘 6, 장식 5, 배경 4, 폭 4, 타입 스케일, 굵기, 푸터.
+- **축 15개**: 모드(light·dark·auto), 셸 10, 서체 프리셋 18(서체 조합·비율·자간·행간·본문 크기 한 벌), 밀도, 모서리 5, 컨트롤 모양, 깊이 6, 모션, 아이콘 6, 장식 5, 배경 4, 폭 4, 타입 스케일, 굵기, 푸터.
 - **부품 55종**: 구조(히어로·페이지 제목), 레이아웃(섹션·그리드·2분할·본문+보조·벤토·탭·칸반·가로 줄), 콘텐츠(카드·요금제·FAQ·후기·팀·코드·기능 목록…), 데이터(표·목록·차트 5종·타임라인·달력·대화·목록+상세), 폼(13가지 필드), 피드백(알림 3변형·진행률·상태 화면 9종·스켈레톤), 미디어(이미지 자리 7종·갤러리), 내비(브레드크럼·페이지네이션·필터 바·단계·목차).
 - **페이지 유형 16**: 랜딩·대시보드·데이터·목록·협업·문서·글·블로그·커머스·포트폴리오·요금제·폼·설정·인증·오류·일반. 유형마다 필수·금지 부품과 허용 셸·폭이 있습니다.
 
@@ -74,7 +74,7 @@ npm run kit -- migrate old-v1.json new.json    # 1.x → 2.0
 ## 문서
 
 - [설계서](docs/design.md) · [팔레트 근거](docs/palettes.md) · [아키텍처](docs/architecture.md) · [규칙 개정](docs/governance.md)
-- [ADR 0001 카탈로그 컴파일러](docs/adr/0001-catalog-compiler.md) · [ADR 0002 확장 설계](docs/adr/0002-axes-bans-page-types.md) · [ADR 0003 간격 계약](docs/adr/0003-spacing-contract.md) · [간격 규칙](docs/spacing.md) · [4차 템플릿·부품 레벨업](docs/template-system.md)
+- [ADR 0001 카탈로그 컴파일러](docs/adr/0001-catalog-compiler.md) · [ADR 0002 확장 설계](docs/adr/0002-axes-bans-page-types.md) · [ADR 0003 간격 계약](docs/adr/0003-spacing-contract.md) · [ADR 0004 타입 역할·배치 원시 요소·컨셉·품질 게이트](docs/adr/0004-type-roles-and-layout-primitives.md) · [간격 규칙](docs/spacing.md) · [4차 템플릿·부품 레벨업](docs/template-system.md)
 - [PMS/WBS](docs/wbs.md) · [출처·라이선스](docs/sources.md) · [검증 기록](docs/verification.md)
 - 증거: [Coolors 관측 2026-10-18](docs/evidence/coolors-palettes.json) · [Coolors 인기 관측 2026-10-20(좋아요 수)](docs/evidence/coolors-popular-2026-10-20.json) · [대비 전수](docs/evidence/contrast.json) · [커버리지](docs/evidence/coverage.json)
 - 보관 기록(배포 사이트에는 싣지 않음): [격차 분석](docs/archive/gap-analysis.md) · [동료 레포 축](docs/evidence/peer-axes.json)

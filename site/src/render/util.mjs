@@ -1,4 +1,5 @@
 import {icons} from '../catalog.mjs';
+import {FLOW} from '../layout.mjs';
 
 export const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 export const e = escapeHTML;
@@ -52,3 +53,7 @@ export function vlOf(text) {
   const need = [...String(text)].reduce((sum, ch) => sum + (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .68 : /\s/.test(ch) ? .3 : .38), 0);
   return VL_BUCKETS.find(b => b >= need) ?? VL_BUCKETS.at(-1);
 }
+
+/** 격자 흐름 표지(src/layout.mjs): 열 수는 컨테이너 폭과 항목 수로 CSS가 정한다.
+ *  kind: 'plain' | 'span'(2열 홀수 마지막 칸이 한 줄을 씀) | 'dense'(좁은 폭에서도 2열). 항목이 하나이거나 너무 많으면 표지를 달지 않는다. */
+export const flowAttrs = (n, cap = 3, kind = 'plain') => n >= 2 && n <= FLOW.maxItems ? ' data-flow data-n="' + n + '" data-cap="' + Math.min(cap ?? 3, 4) + '"' + (kind === 'dense' ? ' data-dense' : kind === 'span' ? ' data-span' : '') : '';

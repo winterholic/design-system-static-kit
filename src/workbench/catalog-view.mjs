@@ -55,7 +55,7 @@ export function renderCatalog({root, tabsEl, countsEl, state, actions}) {
   function drawTemplates() {
     const types = [['all', '전체'], ...Object.entries(pageTypes).filter(([id]) => templateList.some(t => t.pageType === id)).map(([id, p]) => [id, p.label])];
     root.innerHTML = filters(types, state.templateType, 'type') + `<div class="catalog-grid">${templateList.filter(t => state.templateType === 'all' || t.pageType === state.templateType).map(t => {
-      const slots = layoutSlots(t.tree), count = slots.reduce((n, s) => n + s.options.length, 0);
+      const slots = layoutSlots(t.tree, t.pageType), count = slots.reduce((n, s) => n + s.options.length, 0);
       return `<article class="catalog-card"><div class="thumb" data-template="${t.id}" role="img" aria-label="${e(t.label)} 미리보기"></div><div class="body"><h3>${e(t.label)}</h3><span class="meta">${e(pageTypes[t.pageType].label)} · 기본 테마 ${e(themes[t.theme].name)}</span><p>${count ? `구성 변형 ${slots.length}곳 · 선택지 ${count}개` : '구성 변형 없음'}</p><div class="actions"><button type="button" class="button primary" data-use-template="${t.id}">이 템플릿으로 조립</button></div></div></article>`;
     }).join('')}</div>`;
     root.querySelectorAll('.thumb').forEach(el => thumbs.observe(el, () => createBlueprint(el.dataset.template)));
