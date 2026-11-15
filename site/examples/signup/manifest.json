@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "clarity",
   "palette": "ocean-breeze",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "모아",
     "theme": "clarity",
     "palette": "ocean-breeze",
@@ -998,13 +998,82 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "form",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "clarity"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "form",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "clarity"
+        },
+        "values": {
+          "role": "form",
+          "inset": "insetL",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C11",
+          "inset": "C18",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11",
+          "C18"
+        ],
+        "container": {
+          "minField": 280,
+          "gap": 16
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "d7f79a9349a051ca753260c6505fa5506e2933e5ba818dc2af0b6247e5a1ebaa",
-      "tokens.css": "33df00c9dce62ffc3e8588e9b7559b21f5854f31e55380bfe8cfe924d8bb0829",
+      "index.html": "3fb606bcd8f60483f898f9346493fbd750557f44811d1da83dd5235a63ba568b",
+      "tokens.css": "a1e5e529619ca7eafcddff6f547fee835804940fd05047184654c87977978f7a",
       "tokens.json": "6a2aa0b8b567c959c5e28af739dd838cf3e1c260d78e70f244fece91780ee646",
-      "blueprint.json": "ed5900f3448e863818dca8113096f4b43946f515203c3f7f0494f0700dab654e"
+      "blueprint.json": "bbcb462a27cd56a7dc93f8f2fd0cd272c5c7da301da4875e44bbdc4ea222ae05"
     }
   }
 }

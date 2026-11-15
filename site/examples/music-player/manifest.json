@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "nocturne",
   "palette": "dark-midnight-shades",
   "mode": "dark",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "녹턴",
     "theme": "nocturne",
     "palette": "dark-midnight-shades",
@@ -1039,13 +1039,103 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "nocturne"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "nocturne"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "general",
+          "nested": false,
+          "parent": "split",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "nocturne"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "38a1e40df55dd30d08a1598715a1c18c6aee8a5ddb3157132d7ea6ef516ec6b4",
-      "tokens.css": "24c5c4ec3ad9e3f8129f828f9fcb76ab12c2bc31aa06e3cf88d0074a9f07620e",
+      "index.html": "1fd9e697dff1a2bdc1709f28c342d0027b1c29b72efb8e536ee9a984bfef2664",
+      "tokens.css": "60814893829baf34055c9777e7eb94f87fc55bc91cd2163c5ab145360ff08f84",
       "tokens.json": "0ae7f3ac0d3d0434b5c97632d86ffebde7b661508e89b5bde515ccf8aed5341f",
-      "blueprint.json": "df6731d4c4d1fe6996ec28d46f805611cdc6eef072759a29e3b8c5931e6d2d1e"
+      "blueprint.json": "ce295bab24c1b1f4263099a147fe10b0c1b75d489ab85f9792f5595db9f31b12"
     }
   }
 }

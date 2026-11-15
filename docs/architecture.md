@@ -21,6 +21,8 @@ flowchart LR
 | `src/render/` | `nodes`(부품 55), `shell`(셸 10·푸터 3), `chart`(SVG), `art`(미디어 일러스트), `util`(아이콘·링크) |
 | `src/styles/` | `base`(축→값 표), `shells`, `chunks`(부품별 CSS), `index`(사용 부품만 조립) |
 | `src/compiler.mjs` | 검증 → 토큰 → CSS → HTML → manifest. 대비 게이트 실패 시 예외 |
+| `src/catalog/composition.mjs` | 2.2의 버전 고정 맥락 결정표: 사실 조건·우선순위·기존 역할/간격 선택 |
+| `src/composition.mjs` | 사실 추출·필드별 충돌 판정·콘텐츠 폭 예산·파생 CSS·manifest 진단. 2.1 경로는 적용하지 않음 |
 | `scripts/` | `kit`(CLI), `output`(관리 파일·해시), `audit`, `build`, `gallery`/`bundle`(단일 HTML), `docs`/`md`(문서 생성) |
 
 ## 입력 트리

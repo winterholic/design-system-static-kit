@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "insight",
   "palette": "deep-blue-sea",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "인사이트",
     "theme": "insight",
     "palette": "deep-blue-sea",
@@ -1142,13 +1142,303 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 160,
+          "gap": 12,
+          "dense": false,
+          "span": true,
+          "summary": true,
+          "cap": 4
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 5,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 22.445146963000752,
+          "valueUnits": 5,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 22.445146963000752,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[2]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 22.445146963000752,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[3]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 5,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 22.445146963000752,
+          "valueUnits": 5,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 240,
+          "gap": 16,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 2
+        }
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "table",
+        "facts": {
+          "type": "table",
+          "semantic": "table",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "insight"
+        },
+        "values": {
+          "role": "table",
+          "cellSpace": "item"
+        },
+        "sources": {
+          "role": "C13",
+          "cellSpace": "C13"
+        },
+        "applied": [
+          "C13"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f6da29f9998b5c927bbfab73cd3d6bc2de90acb47581d63c823eada05f0008ae",
-      "tokens.css": "68eb3d600d118b2170a5adc3493ad95aae79d198e02710f13c5735d72cbc9a1f",
+      "index.html": "f584e2277883779f5c8e71c70ae8420b28ffe96d8920c3b23d00fc5f03ff485e",
+      "tokens.css": "e764cb1cb03db64fe263164927337954e55495debb959e91ad0e88d941f43f16",
       "tokens.json": "05c33f97ad6e6e28f46a580af587b62643f6ac98133d3bc657285cb74ffe49d8",
-      "blueprint.json": "98ca4616b922f76b5c23847e118e5de9ecedc41b56db599cb764b8cdcb8140df"
+      "blueprint.json": "bd335a73f96662c45765c02e86294ff30a5edf178d6f1634e477f5e091e95c67"
     }
   }
 }

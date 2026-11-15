@@ -44,8 +44,19 @@ export function flowOrphans(n, cap, opts = {}) {
 /** 렌더된 본문에서 실제로 쓰인 흐름 규칙의 키(`종류|상한|항목 수`)를 모은다. 쓰이지 않은 규칙까지 모든 페이지에 싣지 않기 위한 것이다(전체 규칙은 약 13KB). */
 export function flowUsage(html) {
   const used = new Set();
-  for (const [, n, cap, kind] of html.matchAll(/data-flow data-n="(\d+)" data-cap="(\d)"( data-dense| data-span)?/g)) used.add((kind ? kind.trim().slice(5) : 'plain') + '|' + cap + '|' + n);
+  for (const [tag] of html.matchAll(/<[a-z][^>]*\sdata-flow(?=[\s>])[^>]*>/g)) {
+    const n = tag.match(/data-n="(\d+)"/)?.[1], cap = tag.match(/data-cap="(\d)"/)?.[1];
+    if (!n || !cap) continue;
+    const kind = /\sdata-dense(?=[\s>])/.test(tag) ? 'dense' : /\sdata-span(?=[\s>])/.test(tag) ? 'span' : 'plain';
+    const min = tag.match(/data-flow-min="(\d+)"/)?.[1], gap = tag.match(/data-flow-gap="(\d+)"/)?.[1];
+    used.add(`${kind}|${cap}|${n}` + (min && gap ? `|${min}|${gap}` : ''));
+  }
   return used;
+}
+
+/** Content budgets change the bands, not the orphan-free column selection algorithm. */
+export function flowBreakpoints(minCell = FLOW.minCell, gap = FLOW.gap) {
+  return [0, 2 * minCell + gap, 3 * minCell + 2 * gap, 4 * minCell + 3 * gap];
 }
 
 /** used가 있으면 그 키의 규칙만 낸다(없으면 전부: 시험·문서용). */
@@ -67,6 +78,23 @@ export function flowCSS(used = null) {
       const rule = `${sel}{grid-template-columns:repeat(${c},minmax(0,1fr))}${extra}`;
       out.push(i === 0 ? rule : `@container kit (min-width:${FLOW.bands[i]}px){${rule}}`);
       prev = c; prevSpan = spans(c);
+    });
+  }
+  for (const key of used ?? []) {
+    const [kind, capText, nText, minText, gapText] = key.split('|');
+    if (!minText) continue;
+    const cap = Number(capText), n = Number(nText), minCell = Number(minText), gap = Number(gapText);
+    const [, opts, kindSel] = KINDS.find(([name]) => name === kind);
+    const cols = flowColumns(n, cap, opts), bands = flowBreakpoints(minCell, gap);
+    const sel = `[data-flow][data-n="${n}"][data-cap="${cap}"]${kindSel}[data-flow-min="${minCell}"][data-flow-gap="${gap}"]`;
+    let prev = null, prevSpan = false;
+    cols.forEach((c, i) => {
+      const span = opts.span && c === 2 && n % 2 === 1;
+      if (c === prev && span === prevSpan) return;
+      const extra = span ? `${sel}>:last-child{grid-column:1/-1}` : prevSpan ? `${sel}>:last-child{grid-column:auto}` : '';
+      const rule = `${sel}{grid-template-columns:repeat(${c},minmax(0,1fr))}${extra}`;
+      out.push(i === 0 ? rule : `@container kit (min-width:${bands[i]}px){${rule}}`);
+      prev = c; prevSpan = span;
     });
   }
   // 항목이 13개 이상인 흐름은 이 규칙의 대상 밖이라 표지를 달지 않는다.
@@ -98,6 +126,7 @@ export function bentoPlan(children) {
 export const EQUAL_COLUMNS_OK = [
   '.kit-grid', '.kit-plans', '.kit-features', '.kit-gallery', '.kit-steps[data-layout=horizontal]', '.kit-team', '.kit-menu', '.kit-bento', '.kit-split',
   '.kit-profile-stats', '.kit-hero-facts', '.kit-mega-panel', '.kit-form', '.kit-choice', '.kit-calendar', '.kit-cal-',
+  '.kit-hero[data-design-kind=hero]',
 ];
 /** CSS 텍스트에서 허용 목록 밖의 반복 격자 선언을 찾는다. [{selector, value}] */
 export function lintLayout(css) {

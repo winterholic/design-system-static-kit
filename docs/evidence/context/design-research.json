@@ -1,0 +1,198 @@
+{
+  "title": "Official design-system guidance mapped to the static kit",
+  "checked_at": "2026-11-16",
+  "scope": {
+    "kit_revision_context": "Catalog 2.2.0 composition policy 1.0.0; this is a comparison with the working tree, not a claim about every generated example.",
+    "kit_sources": [
+      "docs/context-audit.md",
+      "docs/context-design.md",
+      "src/catalog/composition.mjs"
+    ],
+    "principles": [
+      "Retain the kit's semantic roles, spacing relations, and container-aware layout rules.",
+      "Treat values in the kit as its own policies; do not present external-system measurements as universal requirements.",
+      "Use external guidance to identify applicability, exceptions, and validation gaps, not to import a whole system's visual language."
+    ],
+    "limitations": [
+      "No protected prior-Run outbox material was read or checked.",
+      "No browser or rendered-site verification was performed for this research artifact.",
+      "External numerical specifications were intentionally not copied into the kit."
+    ]
+  },
+  "systems": [
+    {
+      "name": "Carbon",
+      "official_sources": [
+        "https://www.carbondesignsystem.com/building-blocks/core/components/form/guidelines",
+        "https://www.carbondesignsystem.com/building-blocks/core/components/data-table/guidelines"
+      ],
+      "applicability": "Enterprise task interfaces with forms and dense, actionable data tables.",
+      "conditions": "Forms have context, input body, and submit/cancel actions; data tables belong in the main content area with enough width to avoid truncation. Table controls and states follow their own component conventions.",
+      "outcome": "Keep form purpose, input guidance, validation, and actions legible; give dense data priority in page width and make table interactions consistent.",
+      "exceptions": "Tables may share horizontal space if they retain sufficient display width; condensed gutters need visual separation. Expanded rows should move to a dedicated page or panel when cramped. Form layout details belong to the form pattern, not only the component page.",
+      "adoption_judgment": "Adopt the context and capacity tests for this kit's form, table, and content-region decisions. Do not import Carbon grid/gutter measurements or component styling as kit-wide defaults.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Material 3",
+      "official_sources": [
+        "https://m3.material.io/styles/typography/applying-type"
+      ],
+      "applicability": "Cross-device interfaces that need semantic type roles and implementation-aware text layout.",
+      "conditions": "Choose type by role and content; choose bounding-box/line-height methods for web and applicable iOS work, and baseline methods for Android or platform-agnostic specifications. Account for text resizing, density, and adaptive layout.",
+      "outcome": "Type hierarchy maps to purpose; line height, padding, and container dimensions jointly establish vertical spacing and readability.",
+      "exceptions": "Expressive display fonts are reserved for short, prominent material; body copy favors readable text faces. Platform typography metrics differ, and the guideline's contrast and scale details are Material-specific.",
+      "adoption_judgment": "Adopt semantic role mapping and the separation of font box, padding, and container geometry. Keep this kit's existing type roles and platform caveats; do not replace its scale with Material tokens.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Apple Human Interface Guidelines",
+      "official_sources": [
+        "https://developer.apple.com/design/human-interface-guidelines/layout"
+      ],
+      "applicability": "Native Apple-platform apps across device sizes, window sizes, orientations, multitasking, and text-size settings.",
+      "conditions": "Base decisions on available size classes and safe areas; test Dynamic Type, localization, and resized windows. Preserve reading order, alignment, and grouping as space changes.",
+      "outcome": "Keep interfaces recognizable while content reflows, expands, or changes visible density to fit actual available space.",
+      "exceptions": "This is platform guidance: safe areas, size classes, system behaviors, and platform-specific recommendations do not directly prescribe generic static-web breakpoints. Some platform recommendations differ by tvOS, visionOS, watchOS, macOS, and iOS.",
+      "adoption_judgment": "Adopt the available-container and text-expansion principles. The kit's container-query allocation and narrow-width stacking align conceptually; native Apple APIs and point values are out of scope.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Fluent 2",
+      "official_sources": [
+        "https://fluent2.microsoft.design/typography",
+        "https://fluent2.microsoft.design/layout"
+      ],
+      "applicability": "Microsoft-family cross-platform application interfaces using platform-aware typography and adaptive layouts.",
+      "conditions": "Use semantic type ramps and platform-native font behavior; organize space by proximity and hierarchy; reflow content based on available window dimensions.",
+      "outcome": "Clear text hierarchy and layout relationships persist while columns or visible content adapt to window size and orientation.",
+      "exceptions": "Type ramps vary by platform, and Fluent's Segoe/native font choices and design tokens are system-specific. Reflow or hide/show decisions depend on the task and information priority.",
+      "adoption_judgment": "Adopt reflow based on the actual region and preserve semantic hierarchy. Keep kit-owned roles, spacing tokens, and template intent instead of importing Fluent's platform ramps.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Spectrum",
+      "official_sources": [
+        "https://spectrum.adobe.com/page/body/",
+        "https://spectrum.adobe.com/foundations/typography/applying-the-type-system"
+      ],
+      "applicability": "Adobe product experiences that need shared semantic typography across web, iOS, Android, themes, and scripts.",
+      "conditions": "Choose text style by semantic function and platform; use body styles for sustained reading and component/detail styles for UI content. Check localized text metrics and theme contrast.",
+      "outcome": "Hierarchy is conveyed through type size, weight, and color; script- and platform-aware line metrics support readability.",
+      "exceptions": "Adobe Clean and Spectrum token values are proprietary system choices; iOS, Android, and web have distinct font and line-height behavior. Product branding can allow limited variants.",
+      "adoption_judgment": "Adopt semantic distinction between body, component, detail, and metric content, plus localization-aware checks. Do not import Spectrum font identity or line-height tables; retain kit presets and Korean fallback behavior.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Atlassian Design System",
+      "official_sources": [
+        "https://atlassian.design/foundations/typography/applying-typography/"
+      ],
+      "applicability": "Atlassian product UI and long-form product content using shared typography tokens and accessible semantic markup.",
+      "conditions": "Pair typography with spacing and color tokens; use real heading hierarchy and responsive relative text; reserve long-form body styles for reading and metric styles for short numeric emphasis.",
+      "outcome": "Text hierarchy remains consistent across components and assistive technologies, while metrics do not overwhelm labels or chart context.",
+      "exceptions": "Typography tokens and the minimum-size guidance belong to Atlassian's system. Metric style is limited to concise values; their examples explicitly distinguish billing totals and chart labels.",
+      "adoption_judgment": "Adopt semantic role separation and the rule that a prominent metric needs quieter supporting text. Keep the kit's own type tokens and decide role sizing from its content-width budgets.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Shopify Polaris",
+      "official_sources": [
+        "https://shopify.dev/docs/apps/design/visual-design",
+        "https://shopify.dev/docs/api/polaris",
+        "https://shopify.dev/docs/api/app-home/latest"
+      ],
+      "applicability": "Apps embedded in Shopify Admin and merchant workflows that cross Admin, App Home, and Admin UI extensions.",
+      "conditions": "For experiences inside Admin, follow Polaris visual cues and web components/tokens so adjacent workflows feel coherent; use the current App Home and Polaris developer documentation for the specific surface and version.",
+      "outcome": "Apps feel integrated with the surrounding Admin interface and share its visual conventions for colors, typography, spacing, borders, and shadows.",
+      "exceptions": "The recommendation is specifically for Shopify Admin integration, not a general mandate for independent storefronts or unrelated apps. App Home component documentation is versioned; release-candidate packages may change.",
+      "adoption_judgment": "Adopt the product-context rule: match a host system when the kit is intended to extend it. This static kit is host-agnostic, so Polaris tokens and components are not general defaults.",
+      "checked_at": "2026-11-16"
+    },
+    {
+      "name": "Ant Design",
+      "official_sources": [
+        "https://ant.design/docs/spec/research-form"
+      ],
+      "applicability": "Business applications with data-entry tasks, from short forms to complex grouped workflows and settings.",
+      "conditions": "Choose form layout from information amount, complexity, relevance, and task flow. Use one-column basic layout for a straightforward task; group or decompose complex forms when the content warrants it.",
+      "outcome": "A user can locate fields and understand consequences with less ambiguity; grouping and progression reflect task structure.",
+      "exceptions": "The page is form-specific, not a universal layout specification. The source labels editable-list guidance as in development; its grouping thresholds and templates are recommendations for Ant Design contexts, not universal cutoffs.",
+      "adoption_judgment": "Adopt the complexity-and-relevance decision rule and avoid forcing multiple columns into weakly grouped content. Keep the kit's own form capacity thresholds, which are derived from its input budgets and not these external recommendations.",
+      "checked_at": "2026-11-16"
+    }
+  ],
+  "local_assets": [
+    {
+      "name": "winterholic-skill public mirror",
+      "paths": [
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill"
+      ],
+      "review_scope": "Verified the directory and relevant published skill paths for biz UI, UX, design system, product design, and ui-refine-loop; used the local expert-skill descriptions and scope boundaries only for this comparison.",
+      "rights_status": "Unverified for any material not independently authored or explicitly licensed; no content copied into the kit research."
+    },
+    {
+      "name": "biz UI expert",
+      "paths": [
+        "/Users/winterholic/.claude/biz-experts-skills/biz-ui-designer/SKILL.md",
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill/biz-experts-skills/biz-ui-designer/SKILL.md"
+      ],
+      "review_scope": "Visual hierarchy, typography, color/contrast, spacing/alignment, component polish; UI visuals only, with UX flow, system tokens, and code implementation explicitly outside its boundary.",
+      "rights_status": "Unverified for third-party references quoted or incorporated in the skill."
+    },
+    {
+      "name": "biz UX expert",
+      "paths": [
+        "/Users/winterholic/.claude/biz-experts-skills/biz-ux-designer/SKILL.md",
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill/biz-experts-skills/biz-ux-designer/SKILL.md"
+      ],
+      "review_scope": "User flow, interaction, information architecture, usability, navigation, error prevention/recovery, and form/input flow; visual details and implementation excluded.",
+      "rights_status": "Unverified for third-party references quoted or incorporated in the skill."
+    },
+    {
+      "name": "biz design-system expert",
+      "paths": [
+        "/Users/winterholic/.claude/biz-experts-skills/biz-design-system/SKILL.md",
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill/biz-experts-skills/biz-design-system/SKILL.md"
+      ],
+      "review_scope": "Design tokens, component-system structure, naming, governance, design-development sync, accessibility foundations, and adoption; single-screen polish and implementation excluded.",
+      "rights_status": "Unverified for third-party references quoted or incorporated in the skill."
+    },
+    {
+      "name": "biz product-design expert",
+      "paths": [
+        "/Users/winterholic/.claude/biz-experts-skills/biz-product-designer/SKILL.md",
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill/biz-experts-skills/biz-product-designer/SKILL.md"
+      ],
+      "review_scope": "End-to-end product design from problem framing through flow, UI, prototype, handoff, and outcome measurement; detailed UX/UI and system construction are delegated boundaries.",
+      "rights_status": "Unverified for third-party references quoted or incorporated in the skill."
+    },
+    {
+      "name": "ui-refine-loop",
+      "paths": [
+        "/Users/winterholic/.claude/skills/ui-refine-loop/SKILL.md",
+        "/Users/winterholic/.claude/skills/ui-refine-loop/references/checklists.md",
+        "/Users/winterholic/.claude/skills/ui-refine-loop/references/research.md",
+        "/Users/winterholic/.claude/skills/ui-refine-loop/references/scale-extraction.md",
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill/skills/ui-refine-loop/SKILL.md"
+      ],
+      "review_scope": "Rendered UI measurement/review workflow, scope and capture contract, typography/spacing/layout diagnostics, and human review boundary; used as a verification lens, not as an external visual authority.",
+      "rights_status": "Unverified for third-party research or references within the skill; no excerpts reproduced."
+    },
+    {
+      "name": "Jakub",
+      "paths": [],
+      "review_scope": "No asset under this name was located in the searched project, public mirror, local expert-skill paths, or local design-system source directory; therefore no design rule was attributed to this name.",
+      "rights_status": "Unknown; source identity and asset location were not established."
+    },
+    {
+      "name": "Taste",
+      "paths": [
+        "/Users/winterholic/.claude/skills/diagram-design/references/pre-output-checklist.md",
+        "/Users/winterholic/development/projects/portfolio/opensource/winterholic-skill/skills/diagram-design/references/pre-output-checklist.md"
+      ],
+      "review_scope": "The located use is a diagram-design pre-output 'Taste Gate' checklist, not a standalone design system or identified external source; it was not used to infer kit-wide tokens.",
+      "rights_status": "Unknown for any upstream material behind the checklist; no provenance or license was verified."
+    }
+  ]
+}

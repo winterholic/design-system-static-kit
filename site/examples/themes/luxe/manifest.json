@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "luxe",
   "palette": "gold",
   "mode": "dark",
@@ -1749,7 +1749,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "메종 아르카",
     "theme": "luxe",
     "palette": "gold",
@@ -1932,13 +1932,168 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 10,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "luxe"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "luxe"
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 400
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "luxe"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "luxe"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "luxe"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 672
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "857fd4c84abb7bb22d52276b9866bd983244e19abcb76ce9e3245fe43ab012e8",
-      "tokens.css": "1077ee357bb4acdd767e8f0755f102d97c151ca5dcd011ed00a46f0ec32d1477",
+      "index.html": "0660c233e6f1cef2d4974e3cae8ad769326db7acf5ac0b51dc20ef96fc899c30",
+      "tokens.css": "a425f7250fe3a0551837d6e78df19647c0ccd2b23783bb8b21b42b879827c814",
       "tokens.json": "e462875202731f2111560d484bfdcc1ea6abe01179caee5b944270d4bef1b8df",
-      "blueprint.json": "6a7e0c965612ef7c20056b655f98362477b3979b68109870d25065321cb0407b"
+      "blueprint.json": "af51f4347475cba03490acccf737809f25b41420774b9d0760e087bd02976f02"
     }
   }
 }

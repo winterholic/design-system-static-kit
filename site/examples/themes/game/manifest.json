@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "game",
   "palette": "midnight-fire",
   "mode": "dark",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "노바 프론티어",
     "theme": "game",
     "palette": "midnight-fire",
@@ -1125,13 +1125,167 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "poster",
+          "theme": "game"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "poster",
+          "theme": "game"
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 360
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "poster",
+          "theme": "game"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "poster",
+          "theme": "game"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "poster",
+          "theme": "game"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a309ea79261c42a2d43158edf84247c9238bf3ebbfa6a70889b5df75a7fce039",
-      "tokens.css": "ce01f839b5740e1dcf306c7901bfc413e8ece5c76cbe184cfd3b698584813e9b",
+      "index.html": "aeebb4709fe43eb4762d3991db9b580e5f6867e57a997e9b8c01f56eefecd89f",
+      "tokens.css": "aa6f7191541fff107779bf855f00118f0a775401045c78e5e1e929a37c5e7f2c",
       "tokens.json": "a04b260225b1bc31f7384a83e6c3822be4f24a39f03a21a43936ac9d4e6f1386",
-      "blueprint.json": "3a77e9de41da3e96a4434b97aa574a39f46b29484a76fdb87b3aba0d11f98237"
+      "blueprint.json": "8d86acbabe48dec050c4166ba2e66e83d03f5562b6842c620b838559a55e7aa7"
     }
   }
 }

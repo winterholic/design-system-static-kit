@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "enterprise",
   "palette": "cotton-candy-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "모두웍스",
     "theme": "enterprise",
     "palette": "cotton-candy-skies",
@@ -1057,13 +1057,75 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "b0e9e30d261a0cc8d2ff3fa851894a59fb3928db5cd5d21d201bbaf8dea92c64",
-      "tokens.css": "c7f03bb52a44aae54670fcee31a8317437ebb2dc060ac79a272691bb94ebd7d2",
+      "index.html": "27998ea867371e92023e81b56bac76fb647f9f0d992b61794c5f66591cb7d9b0",
+      "tokens.css": "cac8b6db3f52e969fe39c3625985c9d27fcd19364704c8557c20ffa811c69ff2",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
-      "blueprint.json": "0204f8c824f4d02a50cdb50ea676595a1d6f5e7269edf909fe17d561238b3147"
+      "blueprint.json": "eafc49561a4afa9138fd4dee6522525b3e062e461c9792d4cae83a14a4a798f8"
     }
   }
 }

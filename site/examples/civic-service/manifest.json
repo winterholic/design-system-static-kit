@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "civic",
   "palette": "deep-blue-sea-2",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "시민 서비스",
     "theme": "civic",
     "palette": "deep-blue-sea-2",
@@ -1031,13 +1031,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "civic"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "4e3e2616f8e2d1062382d71f64e1fbe476afb8230ef52c9e72d8ffa31b68cd11",
-      "tokens.css": "8b200e76907ba34ad3419feb20d75a738a3e04a3b5dfefc10626d582dc4b69db",
+      "index.html": "88da6bf2dbef8f430049bd82bf21a044b8637c778b2da5581d231ee5b24de091",
+      "tokens.css": "07d1e4c6e2c2bf25ebdf603b65755539009a536bf266eb649e6abae90883fe26",
       "tokens.json": "db8277708e243846ca5df5d98c4ed042609baa231b4ef885d8c91e4764dbf08d",
-      "blueprint.json": "e79d32df1b4ed2c47531bb48153d4b5c7a90041ef3df4d570e9a56d5ed112c20"
+      "blueprint.json": "ba03b595a0551ec3dd273f58664fe2019fe2028f4d576233af33a7c103a899ba"
     }
   }
 }

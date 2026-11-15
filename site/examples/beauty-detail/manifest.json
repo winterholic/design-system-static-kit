@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "beauty",
   "palette": "rosy-blush-gradient",
   "mode": "light",
@@ -914,7 +914,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "르네",
     "theme": "beauty",
     "palette": "rosy-blush-gradient",
@@ -1136,13 +1136,317 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 672
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 200,
+          "gap": 16,
+          "dense": false,
+          "span": true,
+          "summary": true,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 30.799999999999997,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 30.799999999999997,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 30.799999999999997,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "beauty"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f5a112400eca2fc2c8dbad7979ca31e9622cb4e0eb648127075aa6c84c61c413",
-      "tokens.css": "8f7e68a2f418cf6f78d67e5dbda4b2b9190436a6b7fe2e0d4f79c3cd9a1c5fc1",
+      "index.html": "4581d542c00a894d408e2a7ea360ab23887170dce0ce45e86a9e3553a209652b",
+      "tokens.css": "c9dad4383a12beb83a665d9413f6f006cae2503eeaffc1e421fd885a563d471b",
       "tokens.json": "c03ddc7180a4c066548254a42d0019d3b1033c90e21e2f55106684ea431b3689",
-      "blueprint.json": "1bcc61c8f0afcc13f6781e6f4288b29187917e25086544824eba15e714fa0bda"
+      "blueprint.json": "b086744c51e31317ea5fbb7f38c97f4718ddd28eb4f8108671220ec481ea476f"
     }
   }
 }

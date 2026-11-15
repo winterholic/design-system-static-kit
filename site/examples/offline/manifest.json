@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "pocket",
   "palette": "earthy-green-tones",
   "mode": "light",
@@ -910,7 +910,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "모아",
     "theme": "pocket",
     "palette": "earthy-green-tones",
@@ -992,13 +992,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "status",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "rounded",
+          "theme": "pocket"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0b83cd37a658ea75cb17dc52af65da12c1e6cc7f6959e1f9387d86b832d1139f",
-      "tokens.css": "41133709aa2ac244aac9b799e5ef3d1e8edae55a64facc6c949f35b119dc441f",
+      "index.html": "6fc87b9675e3b0dfcb98b0c1231c388d44127a6bc4a823630cb333965576a821",
+      "tokens.css": "b5311140971ea1a8c7d9f9d124215a52a482008b1bad9637c64f51bb2627d394",
       "tokens.json": "782b098d2be84e4eb09e2f8ba4a88feac5fcd1277ba3d65e7b63952ec3bbc002",
-      "blueprint.json": "1fac4c00ead463fcef21b781067b349b8744a0920d4a7f981edf0f3c42509f76"
+      "blueprint.json": "70c71bd03b59495f593491fb5fd3758e89f0bf63d48079bcabb30bfc1e5bdb12"
     }
   }
 }

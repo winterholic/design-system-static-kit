@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "console",
   "palette": "midnight-ocean-depths",
   "mode": "dark",
@@ -911,7 +911,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "콘솔",
     "theme": "console",
     "palette": "midnight-ocean-depths",
@@ -1044,13 +1044,201 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "terminal",
+          "theme": "console"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "terminal",
+          "theme": "console"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 160,
+          "gap": 12,
+          "dense": false,
+          "span": true,
+          "summary": true,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "compact",
+          "typography": "terminal",
+          "theme": "console"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 18.713175271405486,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "compact",
+          "typography": "terminal",
+          "theme": "console"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 18.713175271405486,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[2]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "compact",
+          "typography": "terminal",
+          "theme": "console"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 18.713175271405486,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "00afa79538d7a6bd7de57d65b41d85c47a9838c7885d008890665160816a7707",
-      "tokens.css": "736d4c85d973e2d9f4e52e8fc0c03142dc2a3670a952e9be21f9a237b884e180",
+      "index.html": "687064861d2179d7196ce41d4f972fec36bde376652ade99f61a6714972e3695",
+      "tokens.css": "dbb62719f4ff33b51c324dbfc89038942608b1f28b9edd64011bb8ba46f61e2a",
       "tokens.json": "d99c1d0c9de4c2609111bc34ef8bd7cbaf2553ba942f264d8d7b4e23d6af2916",
-      "blueprint.json": "686b653bb6eb4f43ac73fbc41acf14251edfd68408d15cfecc6737b32e5fa77d"
+      "blueprint.json": "a45811b4094ddf83711bec24104725f8458ba0eb7b7c3737da71b2fc286b7a27"
     }
   }
 }

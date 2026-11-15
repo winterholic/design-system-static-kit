@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "enterprise",
   "palette": "cotton-candy-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "모두웍스",
     "theme": "enterprise",
     "palette": "cotton-candy-skies",
@@ -1127,13 +1127,293 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 10,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 320
+        }
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 200,
+          "gap": 12,
+          "dense": false,
+          "span": true,
+          "summary": true,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 28.591706516167626,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[3].children[1]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 160,
+        "budget": {
+          "valueTarget": 28.591706516167626,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[3].children[2]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 5,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 28.591706516167626,
+          "valueUnits": 5,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ee5896f416c729ca12a2e846aedc304fdf78fc8fab54b2d0b1aa6ce1c4da9da4",
-      "tokens.css": "090e7475ae3e97d409650f01728de078fcb58ef0c67473c7ff9d47677c2f59a3",
+      "index.html": "24b31ad24678daf8a45fa3e30f3e0665a99d2c730f2107c475a601d4f9357a14",
+      "tokens.css": "501de94e7cbbb510c385e9c13478dbe5323f039d1668a83da4728e34cf8cab1e",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
-      "blueprint.json": "0aace9553cb16ec020622cb7793abf3eef4f70b53830ef30076916f9cec02b81"
+      "blueprint.json": "1825732a3989727d917b7836d32f3ed34f8af320338407211a6ce827ddcd6fde"
     }
   }
 }

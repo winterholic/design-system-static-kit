@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "commerce",
   "palette": "sweet-summer-melody",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "무드램프",
     "theme": "commerce",
     "palette": "sweet-summer-melody",
@@ -1132,13 +1132,76 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "742de2ebd883026649d42771da7e44fb2ef7e23cf6f78d5f23322c8b2e833772",
-      "tokens.css": "e565822acf607f6e97446723d00c1885b8291b90dae97d11cbe95fa611f63d46",
+      "index.html": "805124a14abf051b9c96019c61612295a45b05b575a084c9d9ad556436f662b2",
+      "tokens.css": "bcf41967cbff54f982b7641065850aea14230d14748592c91ba6966aedfc272b",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
-      "blueprint.json": "83970997facf0ba1ec46677f7a00808fbd938c4eb8573dc9087734c802f17465"
+      "blueprint.json": "b0260fd8cfc4ee49d728c8731d0ecf7498b587d1867cd3de5279733e68a32532"
     }
   }
 }

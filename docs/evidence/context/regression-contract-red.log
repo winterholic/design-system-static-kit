@@ -1,0 +1,49 @@
+✖ commerce section headings remain subordinate to the compact commerce page title (5.628833ms)
+✖ summary leading and hero framing carry explicit policies for glyph room and contained media (1.325041ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.605
+
+✖ failing tests:
+
+test at tests/composition.test.mjs:123:1
+✖ commerce section headings remain subordinate to the compact commerce page title (5.628833ms)
+  AssertionError [ERR_ASSERTION]: beauty-detail
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:127:82)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/composition.test.mjs:131:1
+✖ summary leading and hero framing carry explicit policies for glyph room and contained media (1.325041ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  undefined !== 'sub'
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:133:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'sub',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

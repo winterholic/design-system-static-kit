@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "solar",
   "palette": "sunny-meadow-shades",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "선루프",
     "theme": "solar",
     "palette": "sunny-meadow-shades",
@@ -1116,13 +1116,350 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 320
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 200,
+          "gap": 12,
+          "dense": false,
+          "span": true,
+          "summary": true,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 30.799999999999997,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 30.799999999999997,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "metric",
+        "facts": {
+          "type": "metric",
+          "semantic": "metric",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 4,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "summary",
+          "valueRole": "stat",
+          "valueLeading": "sub",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C10",
+          "valueRole": "C10",
+          "valueLeading": "C10",
+          "inset": "C10"
+        },
+        "applied": [
+          "C10"
+        ],
+        "minCell": 200,
+        "budget": {
+          "valueTarget": 30.799999999999997,
+          "valueUnits": 4,
+          "labelCpl": 5,
+          "inset": "insetS",
+          "border": 2
+        }
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "solar"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "75c9bd889a075ece45337c8e3c422416a7f4d9d78f74f8f508336e7dc5c5f018",
-      "tokens.css": "d0426017df569c2087b8302244b0f52a6a8f9b065941558a59387c920195807c",
+      "index.html": "ec0e1d3690ab18397f11b6fd5037ee82679df73c9dcf4979110747a5b8431a1c",
+      "tokens.css": "97d153c0566c193f4a1f74bbdafff402d6a6e954b44e544f085e39b5e549e83e",
       "tokens.json": "a0a1d6c52ee2959bee3b9dda6ece0b3e4ef18881d705c94053b53b35f5fd9f5d",
-      "blueprint.json": "a3c06207f76e579a97fc6fbe0e0116336d080b8fd10a3b3d5dcb95eb6373fe6a"
+      "blueprint.json": "2b09b5a48789223b7309ddd117e355347b13b5f2e01a2e63819d4503a615551e"
     }
   }
 }

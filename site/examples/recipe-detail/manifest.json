@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "garden",
   "palette": "serene-nature-tones",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "초록식탁",
     "theme": "garden",
     "palette": "serene-nature-tones",
@@ -1076,13 +1076,74 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ddc7dc11b530dd0946fc96894cdd3cd1ffbecbc506c3a2e022bda419d3c94bdc",
-      "tokens.css": "1807377a5cbb4c3f8701efada5adab5c852224d1466500202ae544a4e3605e93",
+      "index.html": "be55a1cf312d60779a7c2facba69ff2bc9e5c84992fe2cc45907cb399a7c9142",
+      "tokens.css": "229dee25b1bf25784769e3f7ad7397523fdb8b5dc82bcbe9bd51d841d5928e9f",
       "tokens.json": "4bbf3a65905108d755652a9199f1290ea2339e4b4b8fab92ce9947abea0c0646",
-      "blueprint.json": "cee9636b7c5bb03c9c875bfa513e4befe8fafcc7af45af86d6db8d051c81ce3e"
+      "blueprint.json": "6b08b3d319d1a87bfc6857fdcf2a0c42ace78e8a3ffe3f3d392ee167f4afb8bc"
     }
   }
 }

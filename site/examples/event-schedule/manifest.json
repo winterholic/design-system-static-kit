@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "atelier",
   "palette": "candy-floss-dreams",
   "mode": "light",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "가을 마켓 데이",
     "theme": "atelier",
     "palette": "candy-floss-dreams",
@@ -1052,13 +1052,75 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "atelier"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "atelier"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f455a8c2583b92822ef788d259bee1de9aa51624ef523e4341bcb0bd77cac560",
-      "tokens.css": "c2de53d7c7eb8e5e83595485730adec855991fa1b6df94f579ce40bc265a5104",
+      "index.html": "396c42b56db31b348356b88f601ec0546f04d8019e49f5465c866f8ee402cfac",
+      "tokens.css": "f3f054316810a9687512e3dafdf939dc99f98a33f863b781c4479568d9fa45ba",
       "tokens.json": "2847948b38e5549b5f031d8937d514965172a707b851191f7cc1b73512300005",
-      "blueprint.json": "6f2e988a03f579113bc6e4a6ff5763e662e417d40d97436464b9c5e945dc346f"
+      "blueprint.json": "99307070875889cdee70c5fb51711caf488fde6745e8a5a67408a62edc03cc18"
     }
   }
 }

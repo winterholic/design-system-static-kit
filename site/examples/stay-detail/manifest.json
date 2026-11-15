@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "stay",
   "palette": "summer-sunset",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "머무름",
     "theme": "stay",
     "palette": "summer-sunset",
@@ -1083,13 +1083,76 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "stay"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "stay"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "18a225daa88dc3da091c5e94fa3e5cb1d5c9729be35379fbdf02c1d6ef15c493",
-      "tokens.css": "1d03adf26a0b91ce8f7a3aa4fa6f075b839e6e050d17a8e81af332b0f95574c2",
+      "index.html": "deaab802170f948a37db61497d0797d83af446d668b2f7417a5c8701c7dce63c",
+      "tokens.css": "c028f3cd4c7020e892141fe4de3c58f3374f0d0ce5d75400f75b835ee8755739",
       "tokens.json": "68473904ef499daa964b52e6df981b1aa2feb67dd1c278e84e913872db731fed",
-      "blueprint.json": "5fe47ce9b890a5ab87280d02aee2ae21721395f9d2e96f1ed371b23f66b4be46"
+      "blueprint.json": "54e37ecbd868102f49c3770236aaa7c479bb851e157e8b5fa8954ecc586e4ac9"
     }
   }
 }

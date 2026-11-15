@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "hub",
   "palette": "peachy-blossom-delight",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "허브",
     "theme": "hub",
     "palette": "peachy-blossom-delight",
@@ -1023,13 +1023,47 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "hub"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "e92b9b699ea09eb28b213b1f448d5bb32f68bf6d7d98abc8272d3a26a6e28cad",
-      "tokens.css": "41b44ad4d5935d6ce53ef482760462907e1d8a5ac9bddd6f7647e215c876bcca",
+      "index.html": "220037a68ebef425c6e537afa249438dcd5b2a0df5a6caee04da2470cf4bbad0",
+      "tokens.css": "cd2a13f18cc62f5d734f8fa9f4a8e728f799f7b782f619e0428f701f87696108",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
-      "blueprint.json": "b75068b989e00efff2c089f39b4ab4cb34c0d69a256488350db8e2922a840098"
+      "blueprint.json": "37db48759132f68e21c866f75f455d2497f7096a752e08dccce4d48afa39d5e7"
     }
   }
 }

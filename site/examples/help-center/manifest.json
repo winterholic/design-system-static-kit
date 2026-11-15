@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "clarity",
   "palette": "ocean-breeze",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "도움말",
     "theme": "clarity",
     "palette": "ocean-breeze",
@@ -1040,13 +1040,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "clarity"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c0333e4370a9216d032aa2657241ed647788f8839d48d4241800cf98eb460872",
-      "tokens.css": "0eba163dc582f42d60a31d0ff32258aa8b4b40f1cd59d7df6d8650494bb8895b",
+      "index.html": "27f08ce437b79dfe5cad66799b9d3565ead339116468b70067b89ef934da65e5",
+      "tokens.css": "b2bd80717057d89bf3c27e155fb8fee89261eb0a4def5aa87461ced3eb67dc93",
       "tokens.json": "6a2aa0b8b567c959c5e28af739dd838cf3e1c260d78e70f244fece91780ee646",
-      "blueprint.json": "0f403a028d2d644c9968e32d988d60daffe944cf987335b22f91fcc1c8917dd6"
+      "blueprint.json": "44732be8cbc385544f7c82a519925bb0f012a2274d63a7d0f85a0651bbcc08d1"
     }
   }
 }

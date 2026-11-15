@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "atelier",
   "palette": "candy-floss-dreams",
   "mode": "light",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "아틀리에 모아",
     "theme": "atelier",
     "palette": "candy-floss-dreams",
@@ -1045,13 +1045,75 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "atelier"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "atelier"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 672
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "aa785c108d265c664516d7be762a4ec1171cfe086bab98b48f5a4f4117debec1",
-      "tokens.css": "5e1f6334a19687f758a38f0cf75d90f1325cad044d9b915199376997690e1ecf",
+      "index.html": "950136b235d97ee63248c46a26bb6e459fb9e59ca2f6ae5a62fdb69893a4237d",
+      "tokens.css": "154cae33a97ba0e19ac1de3d523b886fedc7384229af20cd102e3a96b1b83af9",
       "tokens.json": "2847948b38e5549b5f031d8937d514965172a707b851191f7cc1b73512300005",
-      "blueprint.json": "73ce51e13abc63d419ff894744a528c009b3eb633471cbb689e3ef4e3fb2ccb9"
+      "blueprint.json": "08578274796868f6bf522fa9f3136c4826f0fc532452e8447b490ad1d20aa4ff"
     }
   }
 }

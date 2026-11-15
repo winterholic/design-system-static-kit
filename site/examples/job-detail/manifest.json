@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "enterprise",
   "palette": "cotton-candy-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "모두웍스",
     "theme": "enterprise",
     "palette": "cotton-candy-skies",
@@ -1122,13 +1122,227 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04",
+          "inset": "C05"
+        },
+        "applied": [
+          "C03",
+          "C04",
+          "C05"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[1]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[1]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04",
+          "inset": "C05"
+        },
+        "applied": [
+          "C03",
+          "C04",
+          "C05"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[1].children[0]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04",
+          "inset": "C05"
+        },
+        "applied": [
+          "C03",
+          "C04",
+          "C05"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "8539d559767ad0ac8b799f70f11a25776818d43438d44e3705ee1f5926843e12",
-      "tokens.css": "c70e4d9c14123577dda0168a1469a4a82e4b2d1d90e4366aee4daf77dd315e7d",
+      "index.html": "3962b60b921ab40a0754fc32e4a298c9dfbcf31ed30481df37e354a3d024596a",
+      "tokens.css": "088f0b7d381ee670630a9a39085b05f07724957ac090febc5d23b77848efbc4f",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
-      "blueprint.json": "5566a123a0a7e32d70cf0365248b9e4b0c1c6cd29777477d2310909cf8877bb1"
+      "blueprint.json": "9206e8b6190982ef1bbd59565f481cfa9f67a28f4426ecf74ba36c21cbed0e74"
     }
   }
 }

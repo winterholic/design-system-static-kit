@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "commerce",
   "palette": "sweet-summer-melody",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "무드램프",
     "theme": "commerce",
     "palette": "sweet-summer-melody",
@@ -1054,13 +1054,81 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "form",
+          "inset": "inset",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C11",
+          "inset": "C11",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "073f070d014e8d85863ad9a9c198635fb8812257cd1878744852239073070774",
-      "tokens.css": "0e232d3bd96ff19b7028a2a7290ab498623115b51e8938f910c5230d9c3135de",
+      "index.html": "84a73ab9ff76f2c4e4485301536af11c125dee3b8fada2ff6e5b482613df9106",
+      "tokens.css": "7bd00ed92a002871deef4c2b8e86bd0be38a04925b110dcca2cd6e33aea7cca4",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
-      "blueprint.json": "3ee24b56013e5c4ad6eff6e7392c455ab8e04c1bcea3f3f1f7173c99a080ac5e"
+      "blueprint.json": "a5916e8f545416644233db3367962fce065d760a70094dd0bd96e445a69f332a"
     }
   }
 }

@@ -94,6 +94,42 @@ exports.iconShells = iconShells;
 exports.megaShells = megaShells;
 exports.MEGA_MAX = MEGA_MAX;
 };
+__defs["catalog/composition.mjs"] = function (exports, __m) {
+/** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
+ * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
+const COMPOSITION_VERSION = '1.0.0';
+const PAGE_INTENT = {
+  dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
+  auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',
+  landing: 'marketing', pricing: 'marketing', portfolio: 'marketing', general: 'general', error: 'status',
+};
+const compositionRules = [
+  {id: 'C01', priority: 10, when: {type: 'page-header'}, set: {role: 'page-heading', titleRole: 'title'}, reason: 'The page title establishes the primary reading level.'},
+  {id: 'C02', priority: 20, when: {type: 'page-header', intent: ['operation', 'form', 'commerce']}, set: {titleRole: 'app'}, reason: 'Task pages reserve room for data and controls.'},
+  {id: 'C03', priority: 10, when: {type: 'section'}, set: {role: 'section-heading', titleRole: 'heading'}, reason: 'A section groups related content rather than promoting each child.'},
+  {id: 'C04', priority: 20, when: {type: 'section', intent: ['operation', 'reading', 'form', 'commerce']}, set: {titleRole: 'heading-s'}, reason: 'Section titles remain subordinate to a task, commerce or reading page title.'},
+  {id: 'C05', priority: 30, when: {type: 'section', nested: true}, set: {inset: 'insetS'}, reason: 'Nested surfaces use the existing smaller inset relation S05.'},
+  {id: 'C06', priority: 10, when: {type: 'card'}, set: {role: 'feature', titleRole: 'sub', inset: 'inset'}, reason: 'A feature card explains one concept; its title and copy form one group.'},
+  {id: 'C07', priority: 30, when: {type: 'card', semantic: 'product'}, set: {role: 'product', titleRole: 'body', inset: 'insetS'}, reason: 'Product identity and price take precedence over a promotional heading.'},
+  {id: 'C08', priority: 30, when: {type: 'card', semantic: 'editorial'}, set: {role: 'editorial', titleRole: 'sub'}, reason: 'Author and metadata identify reading content; preserve its editorial hierarchy.'},
+  {id: 'C09', priority: 20, when: {type: 'card', semantic: 'feature', intent: 'operation'}, set: {role: 'information', titleRole: 'body-l', inset: 'insetS'}, reason: 'Supporting information does not compete with task page headings.'},
+  {id: 'C10', priority: 10, when: {type: 'metric'}, set: {role: 'summary', valueRole: 'stat', valueLeading: 'sub', inset: 'insetS'}, reason: 'Give values and mixed-script glyphs sufficient room before reducing their font; decoration is secondary.'},
+  {id: 'C11', priority: 10, when: {type: 'form'}, set: {role: 'form', inset: 'inset', fieldGap: 'head'}, reason: 'Fields form a group; label/help proximity stays smaller than field separation.'},
+  {id: 'C12', priority: 20, when: {type: 'form', intent: 'operation'}, set: {role: 'settings'}, reason: 'Settings use the same field grammar as forms, within a task context.'},
+  {id: 'C13', priority: 10, when: {type: 'table'}, set: {role: 'table', cellSpace: 'item'}, reason: 'Repeated data rows follow density rather than a fixed cell padding.'},
+  {id: 'C14', priority: 10, when: {type: 'list'}, set: {role: 'list', itemSpace: 'item'}, reason: 'List items remain related within their enclosing component.'},
+  {id: 'C15', priority: 10, when: {type: 'hero'}, set: {role: 'hero', titleRole: 'display', copyGap: 'head', actionGap: 'gap', frameEdge: 'contained'}, reason: 'Hero copy is one group; the action is the next group. Media fits its content box instead of viewport-based negative bleed.'},
+  {id: 'C16', priority: 10, when: {type: 'split'}, set: {role: 'split'}, reason: 'Two columns require room in the containing region, independently of viewport width.'},
+  {id: 'C17', priority: 10, when: {type: 'grid'}, set: {role: 'flow'}, reason: 'The existing orphan-free flow owns column selection; content supplies its minimum cell width.'},
+  {id: 'C18', priority: 20, when: {type: 'form', intent: 'form'}, set: {inset: 'insetL'}, reason: 'A primary form uses the existing larger inset; a secondary form retains the component inset.'},
+];
+const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } return x; };
+freeze(PAGE_INTENT); freeze(compositionRules);
+
+exports.COMPOSITION_VERSION = COMPOSITION_VERSION;
+exports.PAGE_INTENT = PAGE_INTENT;
+exports.compositionRules = compositionRules;
+};
 __defs["catalog/concepts.mjs"] = function (exports, __m) {
 /**
  * 컨셉(주제): 하나의 주제가 여러 템플릿과 여러 시각 언어를 갖는다.
@@ -322,8 +358,10 @@ const {pageTypes, pageTypeIds} = __m("catalog/pagetypes.mjs");
 const {templates, templateList} = __m("catalog/templates.mjs");
 const {layoutSlots, applyLayout, layoutSlotIds} = __m("catalog/variants.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
+{ const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
-const CATALOG_VERSION = '2.1.0';
+const CATALOG_VERSION = '2.2.0';
+const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', CATALOG_VERSION]);
 const BLUEPRINT_VERSION = '2.0';
 const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 
@@ -366,7 +404,7 @@ function blueprintSchema() {
   return {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
-      version: {const: BLUEPRINT_VERSION}, catalogVersion: {const: CATALOG_VERSION}, name: str(80),
+      version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...SUPPORTED_CATALOG_VERSIONS), name: str(80),
       theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
@@ -427,6 +465,13 @@ function migrateV1(old) {
   return repairAxes(b);
 }
 
+/** Explicit adoption of the contextual policy. Content and selected axes are never repaired for 2.x input. */
+function migrateBlueprint(old) {
+  if (old.version === '1.0') return migrateV1(old);
+  if (old.version !== BLUEPRINT_VERSION || !SUPPORTED_CATALOG_VERSIONS.includes(old.catalogVersion)) throw new Error('Unsupported source blueprint/catalog version');
+  return {...structuredClone(old), catalogVersion: CATALOG_VERSION};
+}
+
 { const __r = __m("catalog/coverage.mjs"); exports.layoutCoverage = __r.layoutCoverage; exports.contentCoverage = __r.contentCoverage; exports.iconAliases = __r.iconAliases; }
 
 exports.layoutSlots = layoutSlots;
@@ -462,6 +507,7 @@ exports.mediaKinds = mediaKinds;
 exports.ratios = ratios;
 exports.motifs = motifs;
 exports.CATALOG_VERSION = CATALOG_VERSION;
+exports.SUPPORTED_CATALOG_VERSIONS = SUPPORTED_CATALOG_VERSIONS;
 exports.BLUEPRINT_VERSION = BLUEPRINT_VERSION;
 exports.limits = limits;
 exports.rules = rules;
@@ -470,6 +516,7 @@ exports.repairAxes = repairAxes;
 exports.layoutOptionsOf = layoutOptionsOf;
 exports.createBlueprint = createBlueprint;
 exports.migrateV1 = migrateV1;
+exports.migrateBlueprint = migrateBlueprint;
 };
 __defs["catalog/nodes.mjs"] = function (exports, __m) {
 const {iconNames} = __m("catalog/icons.mjs");
@@ -2372,6 +2419,7 @@ const {validateBlueprint} = __m("validate.mjs");
 const {resolveTokens, resolveAll, contrast, serializableContrast} = __m("tokens.mjs");
 const {stylesheet} = __m("styles.mjs");
 const {renderTree, escapeHTML, formRuntime} = __m("render.mjs");
+const {planComposition} = __m("composition.mjs");
 
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -2392,19 +2440,21 @@ function compile(input) {
     }
   }
   if (report.some(x => x.ratio < x.minimum)) throw new Error('Contrast gate failed');
-  const body = renderTree(b);
-  const css = stylesheet(b, sets, body);
+  const design = planComposition(b);
+  const body = renderTree(b, design);
+  const css = stylesheet(b, sets, body, design);
   const csp = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'";
   const scheme = b.mode === 'auto' ? 'light dark' : b.mode;
   // Browser chrome follows the page (Vercel web-interface-guidelines: theme-color matches the page background).
   const themeColor = b.mode === 'auto' ? `<meta name="theme-color" content="${tokens.light.canvas}" media="(prefers-color-scheme: light)"><meta name="theme-color" content="${tokens.dark.canvas}" media="(prefers-color-scheme: dark)">` : `<meta name="theme-color" content="${tokens[b.mode].canvas}">`;
-  const html = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="${scheme}">${themeColor}<meta name="generator" content="Static Kit ${CATALOG_VERSION}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style><noscript><style>.kit-tabpanel[hidden]{display:block}.kit-tablist{display:none}</style></noscript></head><body>${body}<script>${formRuntime}<\/script></body></html>\n`;
+  const html = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="${scheme}">${themeColor}<meta name="generator" content="Static Kit ${b.catalogVersion}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style><noscript><style>.kit-tabpanel[hidden]{display:block}.kit-tablist{display:none}</style></noscript></head><body>${body}<script>${formRuntime}<\/script></body></html>\n`;
   const primary = resolved[b.mode === 'auto' ? 'light' : b.mode];
   const manifest = {
-    blueprintVersion: BLUEPRINT_VERSION, catalogVersion: CATALOG_VERSION, theme: b.theme, palette: b.palette, mode: b.mode, pageType: b.pageType,
+    blueprintVersion: BLUEPRINT_VERSION, catalogVersion: b.catalogVersion, theme: b.theme, palette: b.palette, mode: b.mode, pageType: b.pageType,
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
+  if (design) manifest.design = {version: design.version, decisions: design.decisions};
   return {html, css, tokens, manifest};
 }
 
@@ -2412,6 +2462,138 @@ exports.validateBlueprint = validateBlueprint;
 exports.resolveTokens = resolveTokens;
 exports.contrast = contrast;
 exports.compile = compile;
+};
+__defs["composition.mjs"] = function (exports, __m) {
+const {compositionRules, COMPOSITION_VERSION, PAGE_INTENT} = __m("catalog/composition.mjs");
+const {SPACE, TOKEN} = __m("spacing.mjs");
+const {roleSizes} = __m("typography.mjs");
+const {cplOf, vlOf} = __m("render/util.mjs");
+
+/** Small ordered decision table over known facts, deliberately not a general expression/rule language. */
+function selectDesign(facts, rules = compositionRules) {
+  const values = {}, sources = {}, applied = [], priorities = {};
+  for (const rule of [...rules].sort((a, b) => a.priority - b.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
+    if (!Object.entries(rule.when).every(([k, v]) => Array.isArray(v) ? v.includes(facts[k]) : facts[k] === v)) continue;
+    applied.push(rule.id);
+    for (const [key, value] of Object.entries(rule.set)) {
+      if (priorities[key] === rule.priority && values[key] !== value) throw new Error(`Composition conflict: ${sources[key]} / ${rule.id} set ${key}`);
+      values[key] = value; sources[key] = rule.id; priorities[key] = rule.priority;
+    }
+  }
+  return {values, sources, applied};
+}
+
+const CELL_BUCKETS = [160, 200, 240, 280, 320, 360, 400, 480];
+const cellBucket = needed => CELL_BUCKETS.find(x => x >= needed) ?? CELL_BUCKETS.at(-1);
+const semantic = n => n.type === 'card' ? n.price ? 'product' : n.author ? 'editorial' : 'feature' : n.type;
+
+/** Compiler-time facts never claim to measure glyphs or know a runtime width. CSS container queries own those decisions. */
+function planComposition(b) {
+  if (b.catalogVersion === '2.1.0') return null;
+  const byNode = new WeakMap(), decisions = [], space = SPACE[b.density], sizes = roleSizes(b);
+  const visit = (node, path, ancestors = [], siblingCount = 1) => {
+    const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
+    const selected = selectDesign(facts), decision = {path, type: node.type, facts, ...selected};
+    byNode.set(node, decision);
+    if (selected.applied.length) decisions.push(decision);
+    node.children?.forEach((child, i) => visit(child, `${path}.children[${i}]`, [...ancestors, node], node.children.length));
+    if (node.type === 'metric') {
+      // Reuse the existing script-weighted value and title estimators. This is a conservative width budget, not font measurement.
+      const valueTarget = Math.max(sizes.sub.max, sizes.stat.min);
+      const valueWidth = facts.valueLength * valueTarget * 1.04;
+      const labelWidth = cplOf(node.label) * sizes.small.max;
+      decision.minCell = cellBucket(Math.max(valueWidth, labelWidth) + 2 * space.insetS + 2);
+      decision.budget = {valueTarget, valueUnits: facts.valueLength, labelCpl: cplOf(node.label), inset: 'insetS', border: 2};
+    }
+    if (node.type === 'grid') {
+      const children = node.children.map(x => byNode.get(x)), summary = node.children.every(x => x.type === 'metric');
+      const minimums = children.map(x => x.minCell ?? (x.values.role === 'product' ? 160 : x.values.role === 'editorial' ? 280 : 240));
+      decision.flow = {minCell: Math.max(...minimums), gap: summary ? space.item : space.gap, dense: false, span: true, summary, cap: {two: 2, three: 3, four: 4}[node.columns]};
+    }
+    if (node.type === 'form') {
+      const longLabel = node.fields.some(f => cplOf(f.label) > 10);
+      decision.container = {minField: longLabel ? 280 : 220, gap: space.head};
+    }
+    if (node.type === 'split') decision.container = {minWidth: 2 * 320 + space.gap};
+    if (node.type === 'hero') decision.container = {minCell: Math.max(320, cellBucket(cplOf(node.title) * Math.min(sizes.display.min, sizes.heading.max) * 1.04))};
+  };
+  visit(b.tree, '$.tree');
+  return {byNode, version: COMPOSITION_VERSION, decisions};
+}
+
+/** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
+function compositionAttrs(d) {
+  if (!d?.values.role) return '';
+  const attrs = [['design-kind', d.type], ['design-role', d.values.role]];
+  if (d.flow) attrs.push(['flow-min', d.flow.minCell], ['flow-gap', d.flow.gap]);
+  if (d.container?.minField) attrs.push(['field-min', d.container.minField]);
+  if (d.type === 'split') attrs.push(['layout-min', d.container.minWidth]);
+  if (d.type === 'hero') attrs.push(['hero-min', d.container.minCell]);
+  return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
+}
+
+function compositionCSS(plan) {
+  if (!plan) return '';
+  const out = [`/* Context composition ${plan.version}: compiler-owned decisions; catalog/composition.mjs */`,
+    '.kit-main,.kit-section-inner,.kit-split-cell,.kit-aside-main,.kit-aside-side,.kit-tabpanel,.kit-layout-region{container:kit compose/inline-size}.kit-layout-region{min-width:0}'];
+  const token = tier => `var(${TOKEN[tier]})`;
+  // Generate once per actual profile, in deterministic order; the finite role/spacing vocabularies stay the source of values.
+  const profiles = new Map();
+  for (const d of plan.decisions) {
+    const key = [d.type, d.values.role, d.values.titleRole, d.values.inset].join('|');
+    if (profiles.has(key)) continue; profiles.set(key, d);
+    const sel = `[data-design-kind="${d.type}"][data-design-role="${d.values.role}"]`;
+    if (d.values.titleRole && d.type === 'page-header') out.push(`${sel}:not([data-lead]) h1{font-size:var(--kit-t-${d.values.titleRole})}`);
+    if (d.values.titleRole && d.type === 'section') out.push(`${sel}>.kit-section-inner>.kit-section-head>:is(h2,h3,h4){font-size:var(--kit-t-${d.values.titleRole})}`);
+    if (d.type === 'card') {
+      out.push(`${sel} .kit-card-body>:is(h2,h3,h4,h5),${sel} .kit-card-body>.kit-stretch>:is(h2,h3,h4,h5){font-size:var(--kit-t-${d.values.titleRole})}`);
+      if (d.values.role !== 'product') out.push(`${sel} .kit-card-body{padding:${token(d.values.inset)}}`);
+    }
+    if (d.type === 'section' && d.values.inset) out.push(`${sel}[data-surface]:not([data-surface=plain]){padding:${token(d.values.inset)}}`);
+    if (d.type === 'form') out.push(`${sel}{padding:${token(d.values.inset)}}`);
+  }
+  if (plan.decisions.some(d => d.type === 'grid')) out.push('[data-design-kind=grid][data-flow-gap]{gap:var(--kit-design-gap)}', ...[...new Set(plan.decisions.filter(d => d.flow).map(d => d.flow.gap))].sort((a,b) => a-b).map(gap => `[data-design-kind=grid][data-flow-gap="${gap}"]{--kit-design-gap:${gap}px}`));
+  const metric = plan.decisions.find(d => d.type === 'metric');
+  if (metric) out.push(`
+.kit-metric[data-design-role=summary]{container:metric/inline-size;padding:${token('insetS')}}
+.kit-metric[data-design-role=summary] dt{padding-right:0}
+.kit-metric[data-design-role=summary]>dd:nth-of-type(1){font-size:min(var(--kit-t-${metric.values.valueRole}),calc(100cqw * var(--kit-vfit,1)));line-height:var(--kit-lh-${metric.values.valueLeading})}
+.kit-metric[data-design-role=summary] .kit-spark{display:none}
+@container metric (min-width:240px){.kit-metric[data-design-role=summary] dt{padding-right:68px}.kit-metric[data-design-role=summary] .kit-spark{display:block;right:${token('insetS')};top:${token('insetS')}}}`);
+  const form = plan.decisions.find(d => d.type === 'form');
+  if (form) {
+    out.push(`[data-design-kind=form]{container:form/inline-size}
+[data-design-kind=form] .kit-form-fields{gap:${token(form.values.fieldGap)};margin-block:${token(form.values.fieldGap)}}
+[data-design-kind=form][data-variant=two-column] .kit-form-fields{grid-template-columns:1fr}
+[data-design-kind=form][data-variant=inline] .kit-form-fields{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}`);
+    for (const min of [...new Set(plan.decisions.filter(d => d.type === 'form').map(d => d.container.minField))].sort()) {
+      const gap = plan.decisions.find(d => d.type === 'form').container.gap;
+      out.push(`@container form (min-width:${2 * min + gap}px){[data-design-kind=form][data-field-min="${min}"][data-variant=two-column] .kit-form-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}`);
+    }
+  }
+  if (plan.decisions.some(d => d.type === 'split')) {
+    const min = plan.decisions.find(d => d.type === 'split').container.minWidth;
+    out.push(`.kit-split[data-design-kind=split]{grid-template-columns:1fr;gap:${token('gap')}}
+.kit-split[data-design-kind=split][data-ratio]{grid-template-columns:1fr}
+.kit-split[data-design-kind=split][data-reverse=reverse]>:first-child{order:0}
+@container compose (min-width:${min}px){.kit-split[data-design-kind=split]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=even]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=wide-start]{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.kit-split[data-design-kind=split][data-ratio=wide-end]{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}.kit-split[data-design-kind=split][data-reverse=reverse]>:first-child{order:2}}`);
+  }
+  const table = plan.decisions.find(d => d.type === 'table');
+  if (table) out.push(`[data-design-kind=table] :is(th,td){padding:${token(table.values.cellSpace)}}[data-design-kind=table] .kit-table-scroll{overflow-x:auto}`);
+  const list = plan.decisions.find(d => d.type === 'list');
+  if (list) out.push(`[data-design-kind=list] li{padding-block:${token(list.values.itemSpace)}}`);
+  const hero = plan.decisions.find(d => d.type === 'hero');
+  if (hero) out.push(`[data-design-kind=hero] .kit-hero-copy>p:not(.kit-eyebrow){margin-block:${token(hero.values.copyGap)} ${token(hero.values.actionGap)}}
+.kit-hero[data-design-kind=hero][data-hero-min="${hero.container.minCell}"]{--kit-hero-min:${hero.container.minCell}px}
+.kit-hero[data-design-kind=hero][data-visual][data-hero-min][data-variant]{grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--kit-hero-min)),1fr));gap:${token('gap')}}`);
+  if (hero?.values.frameEdge === 'contained') out.push('[data-design-kind=hero][data-variant=split] .kit-hero-visual[data-frame]{margin-right:0;border-right:var(--kit-card-border);border-radius:calc(var(--kit-radius) * 1.3)}');
+  return out.join('\n');
+}
+
+exports.selectDesign = selectDesign;
+exports.planComposition = planComposition;
+exports.compositionAttrs = compositionAttrs;
+exports.compositionCSS = compositionCSS;
 };
 __defs["layout.mjs"] = function (exports, __m) {
 /** Layout primitives (6차). docs/layout.md is generated from this file.
@@ -2460,8 +2642,19 @@ function flowOrphans(n, cap, opts = {}) {
 /** 렌더된 본문에서 실제로 쓰인 흐름 규칙의 키(`종류|상한|항목 수`)를 모은다. 쓰이지 않은 규칙까지 모든 페이지에 싣지 않기 위한 것이다(전체 규칙은 약 13KB). */
 function flowUsage(html) {
   const used = new Set();
-  for (const [, n, cap, kind] of html.matchAll(/data-flow data-n="(\d+)" data-cap="(\d)"( data-dense| data-span)?/g)) used.add((kind ? kind.trim().slice(5) : 'plain') + '|' + cap + '|' + n);
+  for (const [tag] of html.matchAll(/<[a-z][^>]*\sdata-flow(?=[\s>])[^>]*>/g)) {
+    const n = tag.match(/data-n="(\d+)"/)?.[1], cap = tag.match(/data-cap="(\d)"/)?.[1];
+    if (!n || !cap) continue;
+    const kind = /\sdata-dense(?=[\s>])/.test(tag) ? 'dense' : /\sdata-span(?=[\s>])/.test(tag) ? 'span' : 'plain';
+    const min = tag.match(/data-flow-min="(\d+)"/)?.[1], gap = tag.match(/data-flow-gap="(\d+)"/)?.[1];
+    used.add(`${kind}|${cap}|${n}` + (min && gap ? `|${min}|${gap}` : ''));
+  }
   return used;
+}
+
+/** Content budgets change the bands, not the orphan-free column selection algorithm. */
+function flowBreakpoints(minCell = FLOW.minCell, gap = FLOW.gap) {
+  return [0, 2 * minCell + gap, 3 * minCell + 2 * gap, 4 * minCell + 3 * gap];
 }
 
 /** used가 있으면 그 키의 규칙만 낸다(없으면 전부: 시험·문서용). */
@@ -2483,6 +2676,23 @@ function flowCSS(used = null) {
       const rule = `${sel}{grid-template-columns:repeat(${c},minmax(0,1fr))}${extra}`;
       out.push(i === 0 ? rule : `@container kit (min-width:${FLOW.bands[i]}px){${rule}}`);
       prev = c; prevSpan = spans(c);
+    });
+  }
+  for (const key of used ?? []) {
+    const [kind, capText, nText, minText, gapText] = key.split('|');
+    if (!minText) continue;
+    const cap = Number(capText), n = Number(nText), minCell = Number(minText), gap = Number(gapText);
+    const [, opts, kindSel] = KINDS.find(([name]) => name === kind);
+    const cols = flowColumns(n, cap, opts), bands = flowBreakpoints(minCell, gap);
+    const sel = `[data-flow][data-n="${n}"][data-cap="${cap}"]${kindSel}[data-flow-min="${minCell}"][data-flow-gap="${gap}"]`;
+    let prev = null, prevSpan = false;
+    cols.forEach((c, i) => {
+      const span = opts.span && c === 2 && n % 2 === 1;
+      if (c === prev && span === prevSpan) return;
+      const extra = span ? `${sel}>:last-child{grid-column:1/-1}` : prevSpan ? `${sel}>:last-child{grid-column:auto}` : '';
+      const rule = `${sel}{grid-template-columns:repeat(${c},minmax(0,1fr))}${extra}`;
+      out.push(i === 0 ? rule : `@container kit (min-width:${bands[i]}px){${rule}}`);
+      prev = c; prevSpan = span;
     });
   }
   // 항목이 13개 이상인 흐름은 이 규칙의 대상 밖이라 표지를 달지 않는다.
@@ -2514,6 +2724,7 @@ function bentoPlan(children) {
 const EQUAL_COLUMNS_OK = [
   '.kit-grid', '.kit-plans', '.kit-features', '.kit-gallery', '.kit-steps[data-layout=horizontal]', '.kit-team', '.kit-menu', '.kit-bento', '.kit-split',
   '.kit-profile-stats', '.kit-hero-facts', '.kit-mega-panel', '.kit-form', '.kit-choice', '.kit-calendar', '.kit-cal-',
+  '.kit-hero[data-design-kind=hero]',
 ];
 /** CSS 텍스트에서 허용 목록 밖의 반복 격자 선언을 찾는다. [{selector, value}] */
 function lintLayout(css) {
@@ -2587,6 +2798,7 @@ exports.bestCols = bestCols;
 exports.flowColumns = flowColumns;
 exports.flowOrphans = flowOrphans;
 exports.flowUsage = flowUsage;
+exports.flowBreakpoints = flowBreakpoints;
 exports.flowCSS = flowCSS;
 exports.isVisualCell = isVisualCell;
 exports.bentoPlan = bentoPlan;
@@ -2828,8 +3040,8 @@ const {makeRenderer} = __m("render/nodes.mjs");
 const {renderShell} = __m("render/shell.mjs");
 { const __r = __m("render/util.mjs"); exports.escapeHTML = __r.escapeHTML; }
 
-function renderTree(b) {
-  const {render} = makeRenderer(b);
+function renderTree(b, design = null) {
+  const {render} = makeRenderer(b, design);
   return renderShell(b, render(b.tree));
 }
 
@@ -3179,6 +3391,7 @@ const {mediaArt, ornamentArt, ratioCss, portrait, heroDeco} = __m("render/art.mj
 const {renderChart} = __m("render/chart.mjs");
 const {highlight} = __m("render/highlight.mjs");
 const {bentoPlan} = __m("layout.mjs");
+const {compositionAttrs} = __m("composition.mjs");
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -3189,7 +3402,7 @@ const STAR = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 const bar = (n, c) => `<span class="kit-bar" style="width:${n}%"${c ? ` data-tone="${c}"` : ''}></span>`;
 
 /** Each renderer: (node, depth, ctx, render) -> html. Heading level = min(depth, 6); only `section` raises depth. */
-function makeRenderer(b) {
+function makeRenderer(b, design = null) {
   const ctx = {b, seq: 0, art: 0, gid: 0, anchors: []};
   const collect = n => { if (n.type === 'section' && n.anchor) ctx.anchors.push({anchor: n.anchor, title: n.title}); n.children?.forEach(collect); };
   collect(b.tree);
@@ -3244,7 +3457,7 @@ function makeRenderer(b) {
     return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
   };
   R.section = (n, d, id) => `<section class="kit-section" data-surface="${n.surface ?? 'plain'}"${n.align === 'center' ? ' data-align="center"' : ''}${n.anchor ? ` id="s-${n.anchor}"` : ''} aria-labelledby="${id}-title"><div class="kit-section-inner"><header class="kit-section-head">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}${n.description ? `<p class="kit-section-desc">${e(n.description)}</p>` : ''}</header>${kids(n, d + 1)}</div></section>`;
-  R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}"${flowAttrs(n.children.length, {two: 2, three: 3, four: 4}[n.columns], n.children.every(c => c.type === 'metric' || (c.type === 'card' && c.visual)) ? 'dense' : 'span')}>${kids(n, d)}</div>`;
+  R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}"${flowAttrs(n.children.length, {two: 2, three: 3, four: 4}[n.columns], design ? 'span' : n.children.every(c => c.type === 'metric' || (c.type === 'card' && c.visual)) ? 'dense' : 'span')}>${kids(n, d)}</div>`;
   R.split = (n, d) => `<div class="kit-split" data-reverse="${n.reverse ?? 'normal'}" data-align="${n.align ?? 'center'}" data-ratio="${n.ratio ?? 'even'}">${n.children.map(x => `<div class="kit-split-cell">${render(x, d)}</div>`).join('')}</div>`;
   R.aside = (n, d) => {
     const main = `<div class="kit-aside-main">${render(n.children[0], d)}</div>`, side = `<aside class="kit-aside-side" aria-label="${e(n.label)}">${render(n.children[1], d)}</aside>`;
@@ -3347,7 +3560,10 @@ function makeRenderer(b) {
     const id = 'block-' + (++ctx.seq);
     const fn = R[n.type];
     if (!fn) throw new Error('Unreachable renderer: ' + n.type);
-    return fn(n, depth, id);
+    const html = fn(n, depth, id), attrs = compositionAttrs(design?.byNode.get(n));
+    const decorated = attrs ? html.replace(/^(<[a-z][a-z-]*)(?=[\s>])/, '$1' + attrs) : html;
+    // A parent's container can include full-bleed tracks. Query the exact allocated region instead.
+    return design && ['grid', 'split'].includes(n.type) ? `<div class="kit-layout-region">${decorated}</div>` : decorated;
   }
   return {render, ctx, num};
 }
@@ -3959,6 +4175,7 @@ const {polish, polishCore} = __m("styles/polish.mjs");
 const {nodeTypes} = __m("catalog.mjs");
 const {contractCSS} = __m("spacing.mjs");
 const {flowCSS, flowUsage} = __m("layout.mjs");
+const {compositionCSS} = __m("composition.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -3973,7 +4190,7 @@ function usedTypes(tree) {
 }
 
 /** sets: {light?: tokens, dark?: tokens, inverse?: {light?, dark?}} — token objects only. */
-function stylesheet(b, sets, body = '') {
+function stylesheet(b, sets, body = '', design = null) {
   const used = usedTypes(b.tree);
   for (const t of [...used]) for (const d of DEPS[t] ?? []) used.add(d);
   const parts = [`/* Generated from catalog ${b.catalogVersion}. Edit the blueprint, then rebuild. */`];
@@ -3995,6 +4212,7 @@ function stylesheet(b, sets, body = '') {
   parts.push(contractCSS().trim());
   parts.push(polishCore.trim());
   parts.push(tailCSS.trim());
+  if (design) parts.push(compositionCSS(design).trim());
   return parts.join('\n') + '\n';
 }
 
@@ -4552,7 +4770,7 @@ exports.lintType = lintType;
 exports.typographyMarkdown = typographyMarkdown;
 };
 __defs["validate.mjs"] = function (exports, __m) {
-const {BLUEPRINT_VERSION, CATALOG_VERSION, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
+const {BLUEPRINT_VERSION, CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -4597,7 +4815,7 @@ function validateBlueprint(input) {
   const props = {...top.properties}; delete props.tree;
   value(Object.fromEntries(Object.entries(input).filter(([k]) => k !== 'tree')), {type: 'object', properties: props, required: top.required.filter(k => k !== 'tree')}, '$');
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
-  if (input.catalogVersion !== CATALOG_VERSION) error('$.catalogVersion', 'CATALOG_VERSION', '카탈로그를 명시적으로 업그레이드하세요: ' + CATALOG_VERSION);
+  if (!SUPPORTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + SUPPORTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));
   if (theme) for (const [axis, banned] of Object.entries(theme.forbid)) if (banned.includes(input[axis])) error('$.' + axis, 'THEME_FORBID', `${theme.name} 테마는 ${axis}=${input[axis]}를 금지합니다. 금지 값: ${banned.join(', ')}`);

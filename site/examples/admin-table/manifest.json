@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "ledger",
   "palette": "dark-slate-whisper",
   "mode": "light",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "레저",
     "theme": "ledger",
     "palette": "dark-slate-whisper",
@@ -1062,13 +1062,75 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "ledger"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "table",
+        "facts": {
+          "type": "table",
+          "semantic": "table",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "ledger"
+        },
+        "values": {
+          "role": "table",
+          "cellSpace": "item"
+        },
+        "sources": {
+          "role": "C13",
+          "cellSpace": "C13"
+        },
+        "applied": [
+          "C13"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "05fe8f8c7c34714320170cecc00ae44e74d622321a86080daa247e138f0a5619",
-      "tokens.css": "8d8a2c272bd51993001c3b3d2f29dd75a8d134a3bc68c899229c2565cf89b893",
+      "index.html": "5f901d7cad0c73b9e2fdfc6a86b295651e2237b2a3684f39020d24c9be4e49f9",
+      "tokens.css": "6742973bcd4aeab21d3bd13970c71b6d092383458d323373b82d45515cc5438e",
       "tokens.json": "8118a3fc8b6e0eed4e70f8c8a8e5dc955ced362e06b5f2163df962be8f3ed4b7",
-      "blueprint.json": "55a57c0e3991def5899cb67b0ed2a373d28cd6e0d1565d303ba15c45d69134e6"
+      "blueprint.json": "286d99486ec881044e951f53ad963052ae8d2fb37d884d9afa6271057253061f"
     }
   }
 }

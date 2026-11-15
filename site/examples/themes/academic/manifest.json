@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "academic",
   "palette": "deep-sea-2",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "도시 열섬 연구",
     "theme": "academic",
     "palette": "deep-sea-2",
@@ -1075,13 +1075,132 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 12,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[4].children[0]",
+        "type": "table",
+        "facts": {
+          "type": "table",
+          "semantic": "table",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "values": {
+          "role": "table",
+          "cellSpace": "item"
+        },
+        "sources": {
+          "role": "C13",
+          "cellSpace": "C13"
+        },
+        "applied": [
+          "C13"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "62b291346a337dcbc050bb59c8d9ec0c8e8ef3f78c625e5f9b9ede5154c2e618",
-      "tokens.css": "20300b6712c13daa7755ad3fc703aca962a79261ce04d1bdd9ff645038538ef0",
+      "index.html": "6097c45b66045d35df46aa1986c92cdb42c061e1b1566bef7c9559e5557f531f",
+      "tokens.css": "60012ae611d6e23fb5d9eb8b333fb8fa9255f49886d5364045c29221f5103e0b",
       "tokens.json": "586bccc4203bfcfc8373c3896488323e6e6a0ec802aa3c1f839ee2ac200616e0",
-      "blueprint.json": "9fe3c0b27dce3659c43224d4cdfefe579c26c3124fd5567b26441fb6db5623a7"
+      "blueprint.json": "96bb82c139c0f018f6453683fdaa261f8e609ec4776efb4c38dd34cfe2f96a10"
     }
   }
 }

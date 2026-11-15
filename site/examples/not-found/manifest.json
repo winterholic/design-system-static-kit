@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "playful",
   "palette": "bright-contrasts",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "플레이",
     "theme": "playful",
     "palette": "bright-contrasts",
@@ -991,13 +991,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "status",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a4c05408f753ce7925e30eb09d3adb1310d9f8250693d021b2723c6ea23a2793",
-      "tokens.css": "475a9f622fb9d25bb881c1a5b5b5b898fef8dfad91232ac4d07d48cdf355ccfa",
+      "index.html": "0dd6a38c37f6a2d6603a0f4f170e398e58d0921b7885c850abecaab60fcd5fc7",
+      "tokens.css": "c3ade51b947017594968777b4b49cf79a3438a3146ef7cad72194176eef0d9e6",
       "tokens.json": "312620e226b4ccdf81a1834b6f5945fdcdbeffb2cb0bcdfa234bb3a58592d249",
-      "blueprint.json": "0f3a7cf1d8a7a11bb40e33d721f71f542a8782bc46be4fa28e9953091545a009"
+      "blueprint.json": "8f78995c5be8c8e872ab162385385b62aac9761cd48c8032b069d05edc9fc8fe"
     }
   }
 }

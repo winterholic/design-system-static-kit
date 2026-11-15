@@ -2,7 +2,7 @@
 
 **미리 정의한 디자인을 코드 규약 안에서 조립하는 도구.** 에이전트와 사람은 자유 CSS 대신 허용된 JSON 트리를 작성하고, 컴파일러는 조합·속성·버전·페이지 유형·접근성 대비를 검증해 정적 HTML을 만듭니다. 프롬프트가 아니라 **코드**가 강제합니다.
 
-| 카탈로그 2.1 | 수량 | | 카탈로그 2.1 | 수량 |
+| 카탈로그 2.2 | 수량 | | 카탈로그 2.2 | 수량 |
 |---|---|---|---|---|
 | 템플릿 | 85 (구성 변형 405) | | 부품 | 55종 |
 | 테마 | 54 (6분류, 테마 변형 162) | | 페이지 유형 | 16 |
@@ -13,6 +13,8 @@
 템플릿·테마·팔레트는 서로 독립이라 어느 조합도 고를 수 있고, 템플릿마다 구성 변형(히어로·기능 배열·카드 스타일·구역 리듬 등)이, 테마마다 변형 3개 이상이 얹힙니다.
 
 수많은 조합이 곧 좋은 디자인 보증이라는 뜻은 아닙니다. 검토한 범위의 선택, 접근성의 하한, 개정 절차를 코드로 만듭니다.
+
+2.2는 역할·내용·밀도·주변 구조에서 디자인 결정을 추출하고, 실제 컨테이너 폭으로 배치합니다. `manifest.design`에 규칙 ID·승자·폭 예산을 기록합니다. 2.1 입력은 이전 출력 경로를 유지하며 `kit migrate`로 명시적으로 채택할 수 있습니다. [감사](docs/context-audit.md) · [규약](docs/context-design.md) · [검증](docs/context-verification.md).
 
 ## 보기
 
@@ -41,14 +43,14 @@ npm run kit -- init saas-landing my.json trust # 템플릿 + 테마로 시작
 npm run kit -- validate my.json
 npm run kit -- build my.json --out artifacts/my-page
 npm run kit -- check artifacts/my-page         # 수동 수정·추가·누락·symlink 거부
-npm run kit -- migrate old-v1.json new.json    # 1.x → 2.0
+npm run kit -- migrate old.json new.json       # 1.x 또는 catalog 2.1 → 2.2
 ```
 
 출력은 `index.html`, `tokens.css`, `tokens.json`, `blueprint.json`, `manifest.json`입니다. 알 수 없는 속성은 조용히 버리지 않고 오류입니다. `style`, `className`, `html`, 임의 토큰 값, 잘못된 부모-자식 조합, 금지된 축 조합은 거부됩니다.
 
 ```json
 {
-  "version": "2.0", "catalogVersion": "2.1.0", "name": "제품 소개",
+  "version": "2.0", "catalogVersion": "2.2.0", "name": "제품 소개",
   "theme": "botanical", "palette": "forest", "mode": "auto", "pageType": "article",
   "shell": "topbar", "typography": "sans", "density": "comfortable", "radius": "soft",
   "control": "match", "elevation": "soft", "motion": "subtle", "icon": "line", "ornament": "organic",

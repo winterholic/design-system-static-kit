@@ -7,7 +7,11 @@
       "const": "2.0"
     },
     "catalogVersion": {
-      "const": "2.1.0"
+      "type": "string",
+      "enum": [
+        "2.1.0",
+        "2.2.0"
+      ]
     },
     "name": {
       "type": "string",

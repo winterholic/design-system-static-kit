@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "civic",
   "palette": "deep-blue-sea-2",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "시빅",
     "theme": "civic",
     "palette": "deep-blue-sea-2",
@@ -992,13 +992,82 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "form",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "civic"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "form",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "civic"
+        },
+        "values": {
+          "role": "form",
+          "inset": "insetL",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C11",
+          "inset": "C18",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11",
+          "C18"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 20
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "950c1c0033a85c2194acc4decd56b40533dc7f38ce4abd45e317db0f211a1eae",
-      "tokens.css": "3e2c73a497d227a5044151133199be78c175ac057f626e60b91ba5f80e8dccd3",
+      "index.html": "673b9e9608f3a655a40e567757a14f50683218cdfde3c0b9dbf7b48d385c4aa5",
+      "tokens.css": "53230a5b737c3fab348a1b9bb3dba807cfa12cb53e94e451edf2de8f5098c3c8",
       "tokens.json": "db8277708e243846ca5df5d98c4ed042609baa231b4ef885d8c91e4764dbf08d",
-      "blueprint.json": "d8bac4ca64198f474fece532deae910a602ca607c77e61a09523577a16bbd436"
+      "blueprint.json": "dade6ed1bb49e157fc857f10e8e18927fad47bf4cf43f4e11128c25e9f38d319"
     }
   }
 }

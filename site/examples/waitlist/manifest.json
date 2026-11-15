@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "neon",
   "palette": "neon-glow-party",
   "mode": "dark",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "오비트",
     "theme": "neon",
     "palette": "neon-glow-party",
@@ -1036,13 +1036,117 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "neon"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "neon"
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 320
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "neon"
+        },
+        "values": {
+          "role": "form",
+          "inset": "inset",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C11",
+          "inset": "C11",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "5b2936d6437e74acb230b1c5545c9e5da5f9dfc7d86c7a1aa93fe8847524d9ba",
-      "tokens.css": "6247bb403b297367ddd51f8f0efbc64fe35f2072c72ddc539e890dcbc33d9439",
+      "index.html": "e40e6d454bf44a510bc17bacc543c4969f1381996241650d2628291f39b06e0c",
+      "tokens.css": "e71621be8f5e348b2157cc854d76f8a930d12a99331c981c3dc8afb4c8e98a3a",
       "tokens.json": "af0ace0b980fcacf5dcb7815f891edccbb76c5464b4220ef14291ac896baf828",
-      "blueprint.json": "24796f71aafe0a80f1c9dc3f8bd47a9c7cba977f9ff43236b98742a971db6edb"
+      "blueprint.json": "65694a43ba4b0bff0ba774e31d15d8df9848d946680ae0e3b082ab4ef353e30c"
     }
   }
 }

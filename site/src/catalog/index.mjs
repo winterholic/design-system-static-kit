@@ -8,8 +8,10 @@ import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
 import {layoutSlots, applyLayout, layoutSlotIds} from './variants.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
+export {compositionRules, COMPOSITION_VERSION} from './composition.mjs';
 
-export const CATALOG_VERSION = '2.1.0';
+export const CATALOG_VERSION = '2.2.0';
+export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', CATALOG_VERSION]);
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {layoutSlots, applyLayout, layoutSlotIds, concepts, conceptIds, conceptsOfTemplate};
@@ -52,7 +54,7 @@ export function blueprintSchema() {
   return {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
-      version: {const: BLUEPRINT_VERSION}, catalogVersion: {const: CATALOG_VERSION}, name: str(80),
+      version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...SUPPORTED_CATALOG_VERSIONS), name: str(80),
       theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
@@ -111,6 +113,13 @@ export function migrateV1(old) {
   b.mode = old.mode;
   b.tree = structuredClone(old.tree);
   return repairAxes(b);
+}
+
+/** Explicit adoption of the contextual policy. Content and selected axes are never repaired for 2.x input. */
+export function migrateBlueprint(old) {
+  if (old.version === '1.0') return migrateV1(old);
+  if (old.version !== BLUEPRINT_VERSION || !SUPPORTED_CATALOG_VERSIONS.includes(old.catalogVersion)) throw new Error('Unsupported source blueprint/catalog version');
+  return {...structuredClone(old), catalogVersion: CATALOG_VERSION};
 }
 
 export {layoutCoverage, contentCoverage, iconAliases} from './coverage.mjs';

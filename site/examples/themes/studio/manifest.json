@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "studio",
   "palette": "soft-whispering-snow",
   "mode": "light",
@@ -1749,7 +1749,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "스튜디오 오로",
     "theme": "studio",
     "palette": "soft-whispering-snow",
@@ -1954,13 +1954,320 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 14,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 400
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 240,
+          "gap": 32,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[4].children[0]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "grotesk",
+          "theme": "studio"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 672
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "4f6030afb51af432ae27576d5fdb5e240cd62f8d50ef17db340b187626952508",
-      "tokens.css": "010e228130f5e7805fada9fdedb5f312e2255a385b4794fa5e298be62fd69937",
+      "index.html": "5d61ef87828a7d077d78fdb2b5843cb6cffb68d5269c567f98f280946af368a1",
+      "tokens.css": "0a65cbf0f566bcd5295a432fc54c4fb6bd51fbcfc29fcb89ecea2c21fa63dae4",
       "tokens.json": "df216fa70968ca1f8debcf79d15aa2bbcfe50ded8c7c206c240a056cca5ea0c1",
-      "blueprint.json": "ef16cde35b666137a5490bb20f6d8962b04e47c55d2543796f4fccbcd7fd76e5"
+      "blueprint.json": "560ee5fde033a584179643638057f6478c05f6ca1efd5d71ca60d9349f4036d1"
     }
   }
 }

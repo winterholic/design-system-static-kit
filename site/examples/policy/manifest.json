@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "civic",
   "palette": "deep-blue-sea-2",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "시빅",
     "theme": "civic",
     "palette": "deep-blue-sea-2",
@@ -994,13 +994,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "civic"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "43191813b0f7ac69a35e33b4217e677a41815396eadcd641b31dc1f693793058",
-      "tokens.css": "fbe0adf16cc8764c492a8c979e1a293cc83685386a2d7f16b23e332f124b49a0",
+      "index.html": "b68d659bf24bc75f661fb656161f9b2eace80956da821c409841639f821beb87",
+      "tokens.css": "bf2d86b95b10fd8ec5b7f087a940d55ed00e4ba09a859ca43cb94d029a397122",
       "tokens.json": "db8277708e243846ca5df5d98c4ed042609baa231b4ef885d8c91e4764dbf08d",
-      "blueprint.json": "248d257dbc71bb5c316ce05604098e3e3a8e467d2d702c74b8c4fc9681b7cb1c"
+      "blueprint.json": "89a1ab6b1fb4f6ffcfa3a21a7bdb6ec163cad25d323b2782d242f45ef19b0442"
     }
   }
 }

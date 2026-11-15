@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "magazine",
   "palette": "classic-red-palette",
   "mode": "light",
@@ -914,7 +914,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "디자인 노트",
     "theme": "magazine",
     "palette": "classic-red-palette",
@@ -1032,13 +1032,103 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 10,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "newsroom",
+          "theme": "magazine"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "newsroom",
+          "theme": "magazine"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[2]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "newsroom",
+          "theme": "magazine"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "7aaa699c7fe67bff1ee1194d4999286c05e3f702afa705e732673a0e8f37d795",
-      "tokens.css": "cb230d359d5d529a5f5e4a65778431efa4811561cafabf19dcdf1abcced46834",
+      "index.html": "474e9e63ed2ae393b81760bb2463d1114f0b66949d7790f91be45ad1b0c9b5dc",
+      "tokens.css": "21315d6cbee8caeb4170e99d16358b835b167be1a99794b77701595bc5c46174",
       "tokens.json": "1ca88a63f4cf74704093f2ade03637205724dd94a06445a884eec8b194832804",
-      "blueprint.json": "c5d9df1c64c6ee156e0b4a4e0c63eb0cc4e656a89e80464bb3762ed12f9940e7"
+      "blueprint.json": "4b61daaa917fe95318d6a7948af0174b601011ea0fbeaaf8739bea28997c316d"
     }
   }
 }

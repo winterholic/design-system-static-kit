@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "newsroom",
   "palette": "summer-ocean-breeze",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "한결일보",
     "theme": "newsroom",
     "palette": "summer-ocean-breeze",
@@ -1115,13 +1115,324 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 10,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 280,
+          "gap": 16,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 8,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "general",
+          "nested": false,
+          "parent": "reel",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "general",
+          "nested": false,
+          "parent": "reel",
+          "siblingCount": 4,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "general",
+          "nested": false,
+          "parent": "reel",
+          "siblingCount": 4,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[3]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "feature",
+          "intent": "general",
+          "nested": false,
+          "parent": "reel",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "newsroom",
+          "theme": "newsroom"
+        },
+        "values": {
+          "role": "feature",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C06",
+          "titleRole": "C06",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f734c07b471ff18b8fd6bcdc556b9082198728f3a2c6eaa9956a19df3f8df1b7",
-      "tokens.css": "6a31498f0d7c8f903ee5703022c12b988aed63cdce9c0c5d4b4d7ea02357686d",
+      "index.html": "3fffb161c5efef12e5e119f03a95476b0d0e25fe41f0f69393c9185ddae6a570",
+      "tokens.css": "4bcd96925daf8225abde66707c8b7354cd8eef94b39db2d7ae16e1917ee3dd95",
       "tokens.json": "27f6717fee0f31cbe8b1eae212c57e00092f12dfc62d56c5076add648e96bff6",
-      "blueprint.json": "f90d409d5fe63b09eb9b0bdb4504348618b0a290be545c68b5622bb83a20ec17"
+      "blueprint.json": "6daec36133ded6586f19027eb97621ef68b18364bf3eb5602cdb32361d600b3f"
     }
   }
 }

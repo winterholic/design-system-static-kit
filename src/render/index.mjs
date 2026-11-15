@@ -2,8 +2,8 @@ import {makeRenderer} from './nodes.mjs';
 import {renderShell} from './shell.mjs';
 export {escapeHTML} from './util.mjs';
 
-export function renderTree(b) {
-  const {render} = makeRenderer(b);
+export function renderTree(b, design = null) {
+  const {render} = makeRenderer(b, design);
   return renderShell(b, render(b.tree));
 }
 

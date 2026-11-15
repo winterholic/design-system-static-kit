@@ -3,6 +3,7 @@ import {mediaArt, ornamentArt, ratioCss, portrait, heroDeco} from './art.mjs';
 import {renderChart} from './chart.mjs';
 import {highlight} from './highlight.mjs';
 import {bentoPlan} from '../layout.mjs';
+import {compositionAttrs} from '../composition.mjs';
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -13,7 +14,7 @@ const STAR = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 const bar = (n, c) => `<span class="kit-bar" style="width:${n}%"${c ? ` data-tone="${c}"` : ''}></span>`;
 
 /** Each renderer: (node, depth, ctx, render) -> html. Heading level = min(depth, 6); only `section` raises depth. */
-export function makeRenderer(b) {
+export function makeRenderer(b, design = null) {
   const ctx = {b, seq: 0, art: 0, gid: 0, anchors: []};
   const collect = n => { if (n.type === 'section' && n.anchor) ctx.anchors.push({anchor: n.anchor, title: n.title}); n.children?.forEach(collect); };
   collect(b.tree);
@@ -68,7 +69,7 @@ export function makeRenderer(b) {
     return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
   };
   R.section = (n, d, id) => `<section class="kit-section" data-surface="${n.surface ?? 'plain'}"${n.align === 'center' ? ' data-align="center"' : ''}${n.anchor ? ` id="s-${n.anchor}"` : ''} aria-labelledby="${id}-title"><div class="kit-section-inner"><header class="kit-section-head">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}${n.description ? `<p class="kit-section-desc">${e(n.description)}</p>` : ''}</header>${kids(n, d + 1)}</div></section>`;
-  R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}"${flowAttrs(n.children.length, {two: 2, three: 3, four: 4}[n.columns], n.children.every(c => c.type === 'metric' || (c.type === 'card' && c.visual)) ? 'dense' : 'span')}>${kids(n, d)}</div>`;
+  R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}"${flowAttrs(n.children.length, {two: 2, three: 3, four: 4}[n.columns], design ? 'span' : n.children.every(c => c.type === 'metric' || (c.type === 'card' && c.visual)) ? 'dense' : 'span')}>${kids(n, d)}</div>`;
   R.split = (n, d) => `<div class="kit-split" data-reverse="${n.reverse ?? 'normal'}" data-align="${n.align ?? 'center'}" data-ratio="${n.ratio ?? 'even'}">${n.children.map(x => `<div class="kit-split-cell">${render(x, d)}</div>`).join('')}</div>`;
   R.aside = (n, d) => {
     const main = `<div class="kit-aside-main">${render(n.children[0], d)}</div>`, side = `<aside class="kit-aside-side" aria-label="${e(n.label)}">${render(n.children[1], d)}</aside>`;
@@ -171,7 +172,10 @@ export function makeRenderer(b) {
     const id = 'block-' + (++ctx.seq);
     const fn = R[n.type];
     if (!fn) throw new Error('Unreachable renderer: ' + n.type);
-    return fn(n, depth, id);
+    const html = fn(n, depth, id), attrs = compositionAttrs(design?.byNode.get(n));
+    const decorated = attrs ? html.replace(/^(<[a-z][a-z-]*)(?=[\s>])/, '$1' + attrs) : html;
+    // A parent's container can include full-bleed tracks. Query the exact allocated region instead.
+    return design && ['grid', 'split'].includes(n.type) ? `<div class="kit-layout-region">${decorated}</div>` : decorated;
   }
   return {render, ctx, num};
 }

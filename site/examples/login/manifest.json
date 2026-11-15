@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "trust",
   "palette": "serene-blue",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "플로우웍스",
     "theme": "trust",
     "palette": "serene-blue",
@@ -1007,13 +1007,82 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "form",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "trust"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "form",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "trust"
+        },
+        "values": {
+          "role": "form",
+          "inset": "insetL",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C11",
+          "inset": "C18",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11",
+          "C18"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "148542f9448fe1267f53b61b3063512e10567f8d4b63a2467d26d0fab87531e6",
-      "tokens.css": "187792c5ac9560d03a0fe6dc46a1805643d6a039eb66c122841034c134e81beb",
+      "index.html": "930f07a9a7d2b62d3ec87f0f23610b4abacd692437d52f63f9d4b9d7868a77fd",
+      "tokens.css": "263d03b900dd208b1d30eb6fda16d365b1acbd53742881b2c14b10c336bee782",
       "tokens.json": "8b8472a158b0de1b3a1fe60306d410e3a3749b4f62b6f2370233656102b67658",
-      "blueprint.json": "70431cb0418ac1b7a89d3b428c990a9a3c05224c5b8959b75bff51e062067315"
+      "blueprint.json": "d0d5f25d17f7f1833198e71f34520fee8f6e61891043687cd6e7af3c978ab03d"
     }
   }
 }

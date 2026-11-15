@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "dining",
   "palette": "cherry-forest-oasis",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "소담 식당",
     "theme": "dining",
     "palette": "cherry-forest-oasis",
@@ -1069,13 +1069,47 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 7,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "dining"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "4d90836a67a0811b3871ecfecf182420b64610fffac0f54c8cad4fad93829e27",
-      "tokens.css": "5454b98563dd0bc9e60721171552c5e109b8662fb3aad9884450aa8bb6e22937",
+      "index.html": "ccb05fc40fea61e321a5a9f3ac91691dbc54953a24653fc2afba58a5be5aaa20",
+      "tokens.css": "c161b766b570181eb2dd060a73f9d8529bbadf77459a79303416b4ee0c15c47c",
       "tokens.json": "72197eac694ff406e1f6106ea13d546ef5685b9d9b2cb7fee55ba37d01bbe935",
-      "blueprint.json": "61d3d96e58a939e022fd9ebef97eb0462334eef0d638c3cbcc127feab92d4bc5"
+      "blueprint.json": "dd89aeb15f1c409dc9255e6dcc71d6892974d9b268b32836ea14da040a728949"
     }
   }
 }

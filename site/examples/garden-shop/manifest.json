@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "garden",
   "palette": "serene-nature-tones",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "초록방",
     "theme": "garden",
     "palette": "serene-nature-tones",
@@ -1094,13 +1094,267 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 160,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[3]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[4]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[5]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1f9ce7e18c9bb54be82709355d74851866f3d6567d9c464690571ff028908dae",
-      "tokens.css": "94c93d7133d8ce8aef41979a4edef5e8654a7183d7795951c2d334aa09314a99",
+      "index.html": "4e3ccdd5897abe50cd9dc6263f4de0da256ec865b282816ee7b28f32a2d6f323",
+      "tokens.css": "9e613b1813fd25fcfc3da81a9ead673aafd5cea8acaf5f7f4689726aa44291fd",
       "tokens.json": "4bbf3a65905108d755652a9199f1290ea2339e4b4b8fab92ce9947abea0c0646",
-      "blueprint.json": "0dd56b2390cfb482cbd506ece66a5f9a50beb8c4a8f50c8a6992a66d585c3bb6"
+      "blueprint.json": "35e84fd85156fe68875ae7c8760998927624fd5da73ada69a4153096c40ef2d9"
     }
   }
 }

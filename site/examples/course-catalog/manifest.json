@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "learning",
   "palette": "coral-reef",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "오늘 배움",
     "theme": "learning",
     "palette": "coral-reef",
@@ -1083,13 +1083,267 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 160,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[3]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[4]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[5]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "operation",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "learning"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "84edebf2137e34d667d71933d6b9ed1685ceee191edad25c3ae6f6cbb68e2d6c",
-      "tokens.css": "0ee6fc510a65b6264ab8635968aeae82f714df3f26b8751c328adea9a0b74c3f",
+      "index.html": "5e0007281957038f23e3d9164706276ccb582034b439c548ef597cbf44192b31",
+      "tokens.css": "aca617361ac3fcf4ccc6d25dcccb8cafd9896a510a5282c8eed13f1848145389",
       "tokens.json": "a4a082b5de2bcb73fa202e6c97343ffa749178e345d1c1fc717442a932c32ac0",
-      "blueprint.json": "9de98fe5c9441b422804f3a5798dfe6648cdbbfcc010f71d41ccb47dbaa6a6c6"
+      "blueprint.json": "17cd0a2c283ca972ff43c356b059d1978c66ef5d6373de2629f6a6689048ebe4"
     }
   }
 }

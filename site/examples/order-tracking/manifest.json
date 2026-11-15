@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "commerce",
   "palette": "sweet-summer-melody",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "무드램프",
     "theme": "commerce",
     "palette": "sweet-summer-melody",
@@ -1027,13 +1027,47 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "80fceb7ae364b6d5a7b52fadd5d22f911f1b2a75a6967878f5ca2461eda446ad",
-      "tokens.css": "152855b2b03d830dd2a73b666b17eb6e75b696af3dce2d9837ae17d42202bd36",
+      "index.html": "c03a131632ffc3fc1314497dcea15818a74490cea8b49593e7ae3cc7a258cf65",
+      "tokens.css": "19648ca6a002a7569283d0de0b18f70d7c02cc90107a16e2a6ec17e3adf54b89",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
-      "blueprint.json": "a4122c4dc8c7c00aed433dd499a3719dfcbaed1775c540c0066542d42a37eb12"
+      "blueprint.json": "7aff4ee277b0cad336e212c98b22ff260225dd3e00d7456259a362f120f85fe7"
     }
   }
 }

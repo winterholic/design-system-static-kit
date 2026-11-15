@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "realty",
   "palette": "midnight-ocean-depths-2",
   "mode": "light",
@@ -910,7 +910,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "집찾기",
     "theme": "realty",
     "palette": "midnight-ocean-depths-2",
@@ -1067,13 +1067,75 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "realty"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "table",
+        "facts": {
+          "type": "table",
+          "semantic": "table",
+          "intent": "operation",
+          "nested": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "realty"
+        },
+        "values": {
+          "role": "table",
+          "cellSpace": "item"
+        },
+        "sources": {
+          "role": "C13",
+          "cellSpace": "C13"
+        },
+        "applied": [
+          "C13"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "3b7fe674ce4fb411277fb8fb7c47814cbbb520356cdc14f960920d4b4dab177b",
-      "tokens.css": "1e05af773cbc12e9e63ea4d295fdc448fc2e9a101bd8387dd9f06674708b53cb",
+      "index.html": "7e0a3e6ed22d5b69cbfd657d8801b5ae0177a8ad98cedff53b3afa5d6381b83c",
+      "tokens.css": "a0a71e50bbc93b7f937b74b8682a8dbf039a9a43d23da989f5ed37d7ff4eb089",
       "tokens.json": "6a399704941625bdb6c69ae47024a922f05ad028cc71dc52a5a345014d99dd39",
-      "blueprint.json": "184ed78f1f7b19e471f8784b1a76e30b412fa510592fb9cfde52ca2f0aae4f36"
+      "blueprint.json": "e273a2dd36527de6d468e73e3a1a746acecca3142b21e582b9ee68abafbae7b3"
     }
   }
 }

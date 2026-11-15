@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "editorial",
   "palette": "earth",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "디자인 노트",
     "theme": "editorial",
     "palette": "earth",
@@ -1027,13 +1027,103 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 10,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "serif",
+          "theme": "editorial"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "serif",
+          "theme": "editorial"
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[2]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "reading",
+          "nested": true,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "serif",
+          "theme": "editorial"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "7b39f4e5efafbdb98c9116a6fe6e10de66f0c94cc2f93c9d02a0bb754b69ed88",
-      "tokens.css": "aea30d68ba71dd58eb28782250b4ee10413a13933301214de0aacc2bcdae8fa1",
+      "index.html": "927d3a3947ae678d118ca22dbed28b54a7825da4ebc500a0d4157fd0be0c68ec",
+      "tokens.css": "f461ba104b45f0be908c865f6543bccb421c4d88402ab3dc8363e507ad6f1adf",
       "tokens.json": "52303dc944c0566238e35a0f3f0feffb0712c3525b4cbf9d2d06b82b22ab1957",
-      "blueprint.json": "4d96f70f9dfe424eae1374e3dc59d9512d0e51f082534229f433fa324d02424c"
+      "blueprint.json": "666558a5e3ccb158dd6c9366ca7f17e45f58be1181b9db43012c2a60055634e8"
     }
   }
 }

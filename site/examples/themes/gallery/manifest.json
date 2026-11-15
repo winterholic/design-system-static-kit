@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "gallery",
   "palette": "peach",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "김다선 포트폴리오",
     "theme": "gallery",
     "palette": "peach",
@@ -1043,13 +1043,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "gallery"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "86ed2cbaf37343b8ccbcf94ec0a29f4629d8fefb6f2d5f6eb0487e26de797fac",
-      "tokens.css": "8b425e117a4f5cfbfb93727809993b458647417b6d1bc4cd126d21c19e18f574",
+      "index.html": "4d228e350bc1e07dabd116bc12bacdb570a200b64a7906afdce958f530267f1d",
+      "tokens.css": "9ff21cd840feab207257b575cd71f6755250cd80eed4215c25669435f6a0deca",
       "tokens.json": "a51bc3c01fa3fac5f18374b012300c46cd1748f5ef33462871dba379cee1c967",
-      "blueprint.json": "c51d4f8535c079baf1aadfdeb45988c047eb174d4549731392a6b78d6b488c0e"
+      "blueprint.json": "2611fee461e8d34ba75f5915c8e11418862c2ab5e78a3ade16d1bb6c981077c2"
     }
   }
 }

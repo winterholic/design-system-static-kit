@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "wine",
   "palette": "crimson-hues",
   "mode": "dark",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "카브 오월",
     "theme": "wine",
     "palette": "crimson-hues",
@@ -1067,13 +1067,76 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "wine"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "luxe",
+          "theme": "wine"
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 672
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "19d24e08aef9aea9362df7749599fa23fa1d1790d302293ff1233219a23e813b",
-      "tokens.css": "849bd833a95b181cdaf19aeea49b5ebf930cb1f9d4888633e5cc6acedfe613c8",
+      "index.html": "e0da7aa9145ec0e91ea1c852d935c0d50deeb6f646c60f073b0bf9c300c7d4a8",
+      "tokens.css": "a9fd100899a7c63f482396e8b7c9c88213c5b62a0cb062e71ea86318eb2b081a",
       "tokens.json": "7a8d8983adfb9571759aaaf24b28ae12d6405d0b4ea4dedf25798f821c0f0a6e",
-      "blueprint.json": "9c4aa7eb22e4faef452582d89f0864cfa0c34ba52dfd8939cf766e74a64dbd88"
+      "blueprint.json": "072b26eef8d901045ff9aab3db277734e9fc8b78a3afb74194f735cfa79555d7"
     }
   }
 }

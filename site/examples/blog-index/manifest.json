@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "journal",
   "palette": "soft-serenity-3",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "느린 기록",
     "theme": "journal",
     "palette": "soft-serenity-3",
@@ -1078,13 +1078,204 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "general",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 280,
+          "gap": 32,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "editorial",
+          "intent": "general",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "values": {
+          "role": "editorial",
+          "titleRole": "sub",
+          "inset": "inset"
+        },
+        "sources": {
+          "role": "C08",
+          "titleRole": "C08",
+          "inset": "C06"
+        },
+        "applied": [
+          "C06",
+          "C08"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "88b2bc9fa205dc0bec16d461710715bddbbc28c513b8c1ac2505ea755d66ca0d",
-      "tokens.css": "c6601026de606380798ca32bd261d50bd320fff0e0887539d6f9fc2e925775f8",
+      "index.html": "f5ac1b63107d4f89e2dded118657820bacd2a85f157813a376d303ae6d69dee7",
+      "tokens.css": "be2af746998e37429da6eeefe4ba5568ef380da7beb57ac4607218d75ad473e0",
       "tokens.json": "5ae678b9f79a9bbaf96c612dcb24f3795f3ff15d725640f8845419178485bec4",
-      "blueprint.json": "be392ceb886ef6294a7975ece09e2669965e63be21552d0c93a5a0c427268514"
+      "blueprint.json": "5c83b4f70f255cdb03c3b6e5bc00b8175a486731759bf45308824d1017886590"
     }
   }
 }

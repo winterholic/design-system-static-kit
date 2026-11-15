@@ -5,6 +5,7 @@ import {polish, polishCore} from './polish.mjs';
 import {nodeTypes} from '../catalog.mjs';
 import {contractCSS} from '../spacing.mjs';
 import {flowCSS, flowUsage} from '../layout.mjs';
+import {compositionCSS} from '../composition.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -19,7 +20,7 @@ export function usedTypes(tree) {
 }
 
 /** sets: {light?: tokens, dark?: tokens, inverse?: {light?, dark?}} — token objects only. */
-export function stylesheet(b, sets, body = '') {
+export function stylesheet(b, sets, body = '', design = null) {
   const used = usedTypes(b.tree);
   for (const t of [...used]) for (const d of DEPS[t] ?? []) used.add(d);
   const parts = [`/* Generated from catalog ${b.catalogVersion}. Edit the blueprint, then rebuild. */`];
@@ -41,5 +42,6 @@ export function stylesheet(b, sets, body = '') {
   parts.push(contractCSS().trim());
   parts.push(polishCore.trim());
   parts.push(tailCSS.trim());
+  if (design) parts.push(compositionCSS(design).trim());
   return parts.join('\n') + '\n';
 }

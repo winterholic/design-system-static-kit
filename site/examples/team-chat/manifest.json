@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "hub",
   "palette": "peachy-blossom-delight",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "허브",
     "theme": "hub",
     "palette": "peachy-blossom-delight",
@@ -1035,13 +1035,82 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "hub"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "hub"
+        },
+        "values": {
+          "role": "settings",
+          "inset": "inset",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C12",
+          "inset": "C11",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11",
+          "C12"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c94da1c9afe770d6329f9180c61fccbb10693b01e809fbc3ff1d4c53c3c64772",
-      "tokens.css": "aaca03751baaa7aacb5cdd4962806c260095260af58d73b35e2c86248223ca1c",
+      "index.html": "d04cf618fb183e00d90991504641a69e142606c1a40b62930508efdcc988b83c",
+      "tokens.css": "b3e08544d2b541e0bfa9889aa2000f012c144aa152e40c7304955282ae819c80",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
-      "blueprint.json": "1e89bb35be7f59eb6cdc1049b9f42eb78f4f3832aacb0463b4726b87db54bba8"
+      "blueprint.json": "04c45a1c99acdb6d2503264de94af56e9379e4fdc7f106d8d0b1aace89981661"
     }
   }
 }

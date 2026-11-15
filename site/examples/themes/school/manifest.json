@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "school",
   "palette": "azure-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "시민 서비스",
     "theme": "school",
     "palette": "azure-skies",
@@ -1031,13 +1031,46 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "reading",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "school"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "8a507ef8ecf5f08fc359847d8cd4ef47744caffe1f30a95ea63236c5bc7918ce",
-      "tokens.css": "48d1ff68588ae07d40870226a419603c431177f3efca67c74292f535884f5462",
+      "index.html": "5db3b42e33388f70dc86dab637eeb0721397375de03c7acd15c47e48fb94d32b",
+      "tokens.css": "7621e4b55e9cd1c080f272411a237b9c000f812b745e49206da5cf9b2ac017b6",
       "tokens.json": "29288f4e5a444ad26098da1f529d54c753d5136317a3408b59b756e381abebcd",
-      "blueprint.json": "5405c2f4a441918636949bc1e7a3c0e0dc90c3976760d2cfcd17236ea562cd62"
+      "blueprint.json": "7662bc8ed1027f0b065ecde7afffe41242798782b3ccebc12db99aab04eafb4e"
     }
   }
 }

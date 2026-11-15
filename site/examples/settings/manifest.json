@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "workspace",
   "palette": "ocean",
   "mode": "light",
@@ -913,7 +913,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "워크스페이스",
     "theme": "workspace",
     "palette": "ocean",
@@ -1101,13 +1101,145 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "workspace"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "operation",
+          "nested": false,
+          "parent": "tab",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "workspace"
+        },
+        "values": {
+          "role": "settings",
+          "inset": "inset",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C12",
+          "inset": "C11",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11",
+          "C12"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[1].children[0]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "operation",
+          "nested": false,
+          "parent": "tab",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "workspace"
+        },
+        "values": {
+          "role": "settings",
+          "inset": "inset",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C12",
+          "inset": "C11",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11",
+          "C12"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[2].children[0]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "operation",
+          "nested": false,
+          "parent": "tab",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "workspace"
+        },
+        "values": {
+          "role": "list",
+          "itemSpace": "item"
+        },
+        "sources": {
+          "role": "C14",
+          "itemSpace": "C14"
+        },
+        "applied": [
+          "C14"
+        ]
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "5d1c245495554faede3d267afb8979be900b537ffde2a0be8eb5ffbe3f87bbf8",
-      "tokens.css": "0922ab5c1366e9bf280c63032de4caac05b9b1fc2848e019b01e3941854a8ec3",
+      "index.html": "755360b884afb5c5d07d0f889a3c8b76220ae7a8fa337aa4e8c724d58b51ecb8",
+      "tokens.css": "03676b6bb463de8bbab7050cc60743c3838abd509c92b28a9f43031be2d27808",
       "tokens.json": "9e30877010973c078450bcc922918727514747bc5d0096625bbd5824191a7cca",
-      "blueprint.json": "49958ca23f9f4790209ea7240914d5fbd968e3b753646ff9c58374f724001ef4"
+      "blueprint.json": "84d1d3461bb80f79193e64bbf38e1e72bb3163c12ad4ac44d767968dff39e0e6"
     }
   }
 }

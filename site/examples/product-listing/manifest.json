@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.1.0",
+  "catalogVersion": "2.2.0",
   "theme": "commerce",
   "palette": "sweet-summer-melody",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.1.0",
+    "catalogVersion": "2.2.0",
     "name": "무드램프",
     "theme": "commerce",
     "palette": "sweet-summer-melody",
@@ -1150,13 +1150,301 @@
       ]
     }
   },
+  "design": {
+    "version": "1.0.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "grid",
+        "facts": {
+          "type": "grid",
+          "semantic": "grid",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "flow"
+        },
+        "sources": {
+          "role": "C17"
+        },
+        "applied": [
+          "C17"
+        ],
+        "flow": {
+          "minCell": 160,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "summary": false,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[1]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[2]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[3]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[4]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[5]",
+        "type": "card",
+        "facts": {
+          "type": "card",
+          "semantic": "product",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "grid",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "product",
+          "titleRole": "body",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C07",
+          "titleRole": "C07",
+          "inset": "C07"
+        },
+        "applied": [
+          "C06",
+          "C07"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "form",
+        "facts": {
+          "type": "form",
+          "semantic": "form",
+          "intent": "commerce",
+          "nested": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "values": {
+          "role": "form",
+          "inset": "inset",
+          "fieldGap": "head"
+        },
+        "sources": {
+          "role": "C11",
+          "inset": "C11",
+          "fieldGap": "C11"
+        },
+        "applied": [
+          "C11"
+        ],
+        "container": {
+          "minField": 220,
+          "gap": 16
+        }
+      }
+    ]
+  },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ad1c5918131a9564bc9093cf9d558e10445252f622f7375f8a741560a520d3e2",
-      "tokens.css": "a04ba18c407a6b88a6b553802d5d7d069cb9d9a9dd1542de6475ccd1e1a42101",
+      "index.html": "cb9c5e0cbeeef38f3953215dec58dfdda02cb01e3f4029cf997d88e7f5bc41d5",
+      "tokens.css": "c5b1a5b17d9a399b3af03d0da906b1bc0f0ec574b0326df3e9882b5a2d4a17d9",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
-      "blueprint.json": "c8cff113005e461fd3d1d0a88d43289657ba69f16aa665149972b68a373e4867"
+      "blueprint.json": "38194732be41f31bf2d3372a27005f282a38f74a2b21fc6a20e85090fc1f45cb"
     }
   }
 }

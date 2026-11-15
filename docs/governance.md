@@ -6,6 +6,8 @@
 4. 검증: `npm run verify`, `npm run test:browser`, 실제 색 쌍, 모바일·키보드·긴 텍스트. 판정한 범위와 미검증을 `docs/verification.md`에 기록한다.
 5. 배포: 카탈로그 버전과 CHANGELOG를 함께 올린다. 이전 Blueprint는 자동 변환하지 않는다. `kit migrate`(1.x→2.0처럼 새 필수 필드만 더하는 변환)나 명시적인 catalogVersion 변경과 재검증으로 옮긴다.
 
+카탈로그 2.2의 호환 창: 2.1.0 입력은 당시 출력 경로를 유지한다. 2.2.0 입력만 composition 1.0.0을 적용한다. `kit migrate`의 2.1→2.2 변환은 catalogVersion만 바꾸고 원본 tree·축을 보존한다. 기존 출력 전체를 변경 전 85개 템플릿 hash와 대조한다. 그 외 지원하지 않는 버전은 계속 거부한다. 상세 규약은 `context-design.md`.
+
 ## 팔레트·테마를 추가할 때
 
 - 팔레트는 Coolors 렌더 페이지에서 관측한 것만 쓴다. `docs/evidence/coolors-palettes.json`에 관측 항목을 더하고 `src/catalog/palette-rows.mjs`에 행을 추가한다. 감사가 증거 파일과 대조한다.
