@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "ledger",
   "palette": "dark-slate-whisper",
   "mode": "light",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "레저",
     "theme": "ledger",
     "palette": "dark-slate-whisper",
@@ -1224,15 +1224,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "6abe53ea2b508a11d2204c9c00096141b28eebb0fc556c787384a29dbb809683",
-      "tokens.css": "43436844725525cca09cca9ffae638853bbbd0a85bc9ead714cc3d07f557dfc1",
+      "index.html": "c167ee1c15cd87e578f4110bb6db042ee0fd0ad20aad00c3269086d11c9739de",
+      "tokens.css": "718aadfc86f691535198892f74f3ad10db791516c3189e276637ce4a6d9bb7a3",
       "tokens.json": "8118a3fc8b6e0eed4e70f8c8a8e5dc955ced362e06b5f2163df962be8f3ed4b7",
-      "blueprint.json": "286d99486ec881044e951f53ad963052ae8d2fb37d884d9afa6271057253061f"
+      "blueprint.json": "27d17c006ebf34e70bc393bc5ec73c42b4c40f56de2ab2df0352cc21a28ef1af"
     }
   }
 }

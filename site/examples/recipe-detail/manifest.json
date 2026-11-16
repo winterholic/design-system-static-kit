@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "garden",
   "palette": "serene-nature-tones",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "초록식탁",
     "theme": "garden",
     "palette": "serene-nature-tones",
@@ -1286,15 +1286,49 @@
         ],
         "reason": "Compact labels wrap without creating another heading level."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1c63ea53b01f497a07946502ab1dca725c5b2f0020ed9e295ae6bc5e6c322e45",
-      "tokens.css": "e0674e36426b07e4108e6442849b028bb33cdbe628cb3dc597b5bd6d8b5f302a",
+      "index.html": "b6543de1c92426c7d1c0082dc15ece3d605ae66dae2a02d480ba9e79d6025532",
+      "tokens.css": "d579daadfabd126e9b163f545054175dfee4d74d166b76530c3d1690240b0e41",
       "tokens.json": "4bbf3a65905108d755652a9199f1290ea2339e4b4b8fab92ce9947abea0c0646",
-      "blueprint.json": "6b08b3d319d1a87bfc6857fdcf2a0c42ace78e8a3ffe3f3d392ee167f4afb8bc"
+      "blueprint.json": "a28dbaf55d638c01eccc1e52dae516a0c5021a3778faa8d034259c7fbb7024de"
     }
   }
 }

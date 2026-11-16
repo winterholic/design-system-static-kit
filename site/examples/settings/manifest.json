@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "workspace",
   "palette": "ocean",
   "mode": "light",
@@ -913,7 +913,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "워크스페이스",
     "theme": "workspace",
     "palette": "ocean",
@@ -1343,15 +1343,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "cf9ef1d54272ae3944f575cadf8c6f90966561cf8a17e273d71448aedcda1d1d",
-      "tokens.css": "852ce8686324dd5571c6d62cb92c3c5feb019d9d5412dc03300becac1d818d15",
+      "index.html": "f59d5f5b523bf7603411b290fd6ff093f541ee6b153fd34b82689ffd2f59956c",
+      "tokens.css": "2d3d36d72cc650a2e386e83c2dd274de61a24c532eb4b0530a3ede42db39ee67",
       "tokens.json": "9e30877010973c078450bcc922918727514747bc5d0096625bbd5824191a7cca",
-      "blueprint.json": "84d1d3461bb80f79193e64bbf38e1e72bb3163c12ad4ac44d767968dff39e0e6"
+      "blueprint.json": "e3bb9744974a7abe905c4252a1a558790ca29cfb45b325715d0e5437f4d87b60"
     }
   }
 }

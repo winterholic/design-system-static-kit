@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "game",
   "palette": "midnight-fire",
   "mode": "dark",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "노바 프론티어",
     "theme": "game",
     "palette": "midnight-fire",
@@ -1207,7 +1207,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 360
+          "minCell": 320
         }
       },
       {
@@ -1519,15 +1519,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "cabc115527d5ea75fe2d66b4e23616cb4f82db020c8aa904178ffe88fb32aec8",
-      "tokens.css": "86ad1634e4c24df349bf9cae43fa4cf86ccd8555e5d26263c83c0d38fe9b8092",
+      "index.html": "315536eace9328be08b62aeb21c728ce16d7cabcab2845566df5a4736381a3a2",
+      "tokens.css": "da006255c40f24ba8bf2332158a09ce61377f55141a21f7c4ad2b7f6e1dd8b22",
       "tokens.json": "a04b260225b1bc31f7384a83e6c3822be4f24a39f03a21a43936ac9d4e6f1386",
-      "blueprint.json": "8d86acbabe48dec050c4166ba2e66e83d03f5562b6842c620b838559a55e7aa7"
+      "blueprint.json": "12f1e303268e4ec51a17aa89eb1ce75cb5447fe04af4ad3774b31c02520098ed"
     }
   }
 }

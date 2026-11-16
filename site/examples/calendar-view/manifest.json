@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "workspace",
   "palette": "ocean",
   "mode": "light",
@@ -913,7 +913,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "워크스페이스",
     "theme": "workspace",
     "palette": "ocean",
@@ -1427,15 +1427,49 @@
         ],
         "reason": "Existing intentional overflow preserves readable control and step labels."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "312e9d02627716bd423c4b26b3a53a9959c8735a18a73fe6460277b7d414780f",
-      "tokens.css": "cb4142c49890362c61b2ee5a1e24699ed232422750d47adb1da67c5f7267a7ef",
+      "index.html": "07e5801a517781ac841bf54e1f5e31025a8376f9002726c3eb6921ef9b5ae473",
+      "tokens.css": "0a3d791763b65cfd6e0f08c1d3182953aa886f26ff7f8d1ea0dc93fb6d0f418d",
       "tokens.json": "9e30877010973c078450bcc922918727514747bc5d0096625bbd5824191a7cca",
-      "blueprint.json": "52d0f6735e2c8503a19597bbbde0f0979224d0a88fa3bf650ff1c25583c8a390"
+      "blueprint.json": "c9b407b50bdfdd4e0f0ea5eab3cca6303ec6717c88554de4b80742d6f3cc80f6"
     }
   }
 }

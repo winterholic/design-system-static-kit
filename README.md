@@ -50,7 +50,7 @@ npm run kit -- migrate old.json new.json       # 1.x 또는 catalog 2.1 → 2.2
 
 ```json
 {
-  "version": "2.0", "catalogVersion": "2.2.0", "name": "제품 소개",
+  "version": "2.0", "catalogVersion": "2.3.0", "name": "제품 소개",
   "theme": "botanical", "palette": "forest", "mode": "auto", "pageType": "article",
   "shell": "topbar", "typography": "sans", "density": "comfortable", "radius": "soft",
   "control": "match", "elevation": "soft", "motion": "subtle", "icon": "line", "ornament": "organic",

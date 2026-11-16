@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "signal",
   "palette": "fiery",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "숲을 지켜요",
     "theme": "signal",
     "palette": "fiery",
@@ -1158,7 +1158,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 400
+          "minCell": 360
         }
       },
       {
@@ -1452,15 +1452,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "e85bc30950ca4d46bd02d8b2412aa99cb63052be53fdf79a2f4711c7da2ae98f",
-      "tokens.css": "4f785649ed8c239ede35f2bbabe40076d7f136633e0ca357bc37c083ff0c91b2",
+      "index.html": "85d9a7cbe8225a152c9d23e02dbf977a72b4b504541c70cd0f7391ba7156f7e3",
+      "tokens.css": "cea9fbc3232684e9c777c2a62de4c2f7fdef68fa2adaaaa7758f854fb7848afd",
       "tokens.json": "572fab10694ca72023ad37cdb6ccb1380e6ef0353ea4793f1d8c111bb8274f41",
-      "blueprint.json": "7536badba4ca46e51ba18eace1b9615d09a4fcac8c7508866fa644c6ca622c90"
+      "blueprint.json": "c84ad6fb98fb337c654bc081cb571c8b65bb058d6d7201f4f31e7c6928fbb504"
     }
   }
 }

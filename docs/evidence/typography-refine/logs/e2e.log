@@ -1,0 +1,59 @@
+
+Running 51 tests using 1 worker
+
+[1/51] [chromium] › e2e/combos.spec.mjs:13:1 › the gallery lists every combination with no console errors, and only a few iframes are alive
+[2/51] [chromium] › e2e/combos.spec.mjs:27:1 › every page of the list is reachable and together they cover every id exactly once
+[3/51] [chromium] › e2e/combos.spec.mjs:39:1 › filters: template, slot, search, same-screen, sort and reset agree with the model
+[4/51] [chromium] › e2e/combos.spec.mjs:75:1 › a random sample of 40 combinations renders as full pages through the shareable render URL
+[5/51] [chromium] › e2e/combos.spec.mjs:91:1 › viewer: opens from a card with its own URL, steps with ← → and Esc, and honours the filtered order
+[6/51] [chromium] › e2e/combos.spec.mjs:126:1 › viewer: a shared link opens the combination with its theme, mode and palette, and Back closes only the viewer
+[7/51] [chromium] › e2e/combos.spec.mjs:147:1 › viewer: a theme that forbids the chosen mode keeps its own mode and says why
+[8/51] [chromium] › e2e/combos.spec.mjs:152:1 › flags: mark, note, persist, filter, export as text, delete
+[9/51] [chromium] › e2e/combos.spec.mjs:185:1 › copy buttons put the stable id and the share link on the clipboard path (toast confirms)
+[10/51] [chromium] › e2e/combos.spec.mjs:196:1 › the main menu of the workbench links to the gallery and the gallery links back
+[11/51] [chromium] › e2e/combos.spec.mjs:207:3 › phone › 390px: one column, no horizontal overflow, viewer fits and swipes through the preview and the bar
+[12/51] [chromium] › e2e/combos.spec.mjs:242:1 › by default the gallery hides experimental combinations, marks them, and shows them when asked
+[13/51] [chromium] › e2e/combos.spec.mjs:260:1 › concepts: choosing a concept narrows the list to its templates and re-skins every thumbnail with its look and typography
+[14/51] [chromium] › e2e/composition.spec.mjs:10:1 › context probe detects legacy defects, then contextual policy removes them at identical viewport and content
+[15/51] [chromium] › e2e/composition.spec.mjs:22:1 › commerce hierarchy, mixed-script summary leading and hero frame containment regressions
+[16/51] [chromium] › e2e/composition.spec.mjs:31:1 › representative contexts keep content, hierarchy, width budgets and accessible controls across viewports
+[17/51] [chromium] › e2e/context-remediation.spec.mjs:5:1 › contextual centered chrome keeps identity and action on one row at phone and desktop widths
+[18/51] [chromium] › e2e/context-remediation.spec.mjs:20:1 › tables keep readable content, quantitative alignment, reachable last columns and keyboard focus
+[19/51] [chromium] › e2e/context-remediation.spec.mjs:35:1 › implicit short sequences use available width and explicit chronology stays in rows
+[20/51] [chromium] › e2e/lab-pages.spec.mjs:25:1 › test-lab stress cases across viewports: no overflow, no page errors, structural a11y clean
+[21/51] [chromium] › e2e/lab-pages.spec.mjs:42:1 › test-lab matrix sample: every template under two rotating themes renders clean on a phone
+[22/51] [chromium] › e2e/lab-pages.spec.mjs:61:1 › test-lab screenshots: representative and boundary cases at phone and desktop widths
+[23/51] [chromium] › e2e/pages.spec.mjs:26:1 › every template × phone/tablet/desktop: no overflow, no page errors, structural a11y clean
+[24/51] [chromium] › e2e/pages.spec.mjs:40:1 › every theme showcase renders on a phone without overflow
+[25/51] [chromium] › e2e/pages.spec.mjs:47:1 › keyboard: every focus stop shows an indicator, tabs work with arrow keys
+[26/51] [chromium] › e2e/pages.spec.mjs:68:1 › auto mode follows the system color scheme and both sets are real
+[27/51] [chromium] › e2e/pages.spec.mjs:76:1 › reduced motion removes animation; forced contrast keeps visible borders
+[28/51] [chromium] › e2e/pages.spec.mjs:82:1 › single-file gallery works offline on a phone: browse, open, change theme, hit a ban, auto-fix
+[29/51] [chromium] › e2e/pages.spec.mjs:106:1 › standalone design docs and examples are portable
+[30/51] [chromium] › e2e/quality.spec.mjs:12:1 › layout probe negative controls: every defect class is reported on a deliberately wrong page
+[31/51] [chromium] › e2e/quality.spec.mjs:30:1 › quality gate: a seeded sample of stable combinations has no severe layout finding at 1440 and 390 under two themes
+[32/51] [chromium] › e2e/rollout.spec.mjs:7:1 › long biographies keep readable cells in a desktop aside and on mobile
+[33/51] [chromium] › e2e/rollout.spec.mjs:15:1 › property stacking keeps the established proximity on mobile
+[34/51] [chromium] › e2e/rollout.spec.mjs:21:1 › gallery variants use their 300px supporting region at desktop viewport width
+[35/51] [chromium] › e2e/spacing.spec.mjs:8:1 › spacing contract: 61 templates × 3 densities × phone/desktop measure clean (no off-scale, title gaps, proximity, edge, control findings)
+[36/51] [chromium] › e2e/spacing.spec.mjs:31:1 › spacing contract under other themes: every template wears 4 rotating themes (density, shell and radius come from the theme) and still measures clean
+[37/51] [chromium] › e2e/spacing.spec.mjs:49:1 › spacing probe negative controls: every defect class is reported on a deliberately wrong page
+[38/51] [chromium] › e2e/text.spec.mjs:16:1 › text contract: every template under rotating themes keeps headings, controls, values and containers clean at 360/390/768/1280
+[chromium] › e2e/text.spec.mjs:16:1 › text contract: every template under rotating themes keeps headings, controls, values and containers clean at 360/390/768/1280
+text probe soft findings (not enforced): {"MEASURE_SHORT":6,"ORPHAN_LINE":30} pages 672
+
+[39/51] [chromium] › e2e/text.spec.mjs:42:1 › text probe negative controls: each defect class is reported on a deliberately wrong page
+[40/51] [chromium] › e2e/workbench.spec.mjs:11:1 › every theme × its first three recommended palettes × light/dark: real computed colors, no errors
+[41/51] [chromium] › e2e/workbench.spec.mjs:40:1 › palette picker: recommendations lead, family filters and search reach the whole library, any palette fits any theme
+[42/51] [chromium] › e2e/workbench.spec.mjs:61:1 › theme variants and layout variants reshape the page without leaving the catalog
+[43/51] [chromium] › e2e/workbench.spec.mjs:80:1 › keyboard selection and persistence survive reload
+[44/51] [chromium] › e2e/workbench.spec.mjs:88:1 › strict JSON errors block exports, keep valid preview, and recover
+[45/51] [chromium] › e2e/workbench.spec.mjs:100:1 › axis controls block theme-forbidden values, adjust rule conflicts for the user, and keep the chosen value
+[46/51] [chromium] › e2e/workbench.spec.mjs:114:1 › every template, every shell: workbench renders without overflow at desktop and phone widths
+[47/51] [chromium] › e2e/workbench.spec.mjs:142:1 › preview is never clipped: every device width scales into the stage at laptop, tablet and phone sizes
+[48/51] [chromium] › e2e/workbench.spec.mjs:161:1 › preview opens in a full-screen modal and in a new window
+[49/51] [chromium] › e2e/workbench.spec.mjs:181:1 › demo form validates locally and never sends user input over the network
+[50/51] [chromium] › e2e/workbench.spec.mjs:189:1 › catalog tab shows real renders of every template, theme, palette and part, and starting from a card returns to the builder
+[51/51] [chromium] › e2e/workbench.spec.mjs:209:1 › no comparison or retrospective pages are linked from the workbench
+  51 passed (4.3m)
+exit 0

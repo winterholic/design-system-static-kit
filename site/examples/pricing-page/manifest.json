@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "aurora",
   "palette": "turquoise-harmony",
   "mode": "dark",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "플로우웍스",
     "theme": "aurora",
     "palette": "turquoise-harmony",
@@ -1480,15 +1480,49 @@
         ],
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "688ba35ead4bb7c8b7c09c941b453714e8c3ece26dc8f79a9d7ec19735640573",
-      "tokens.css": "0fac4470f30b1038e1d31a1784bc0ac895f5a386a58f91e7e56c0f640ff8de5a",
+      "index.html": "3642210757029b0358abaacf2368cc4243bc7024f0337e7a6b2bb510b456f35c",
+      "tokens.css": "9b5029a746813753ec92b73b79d5732c735471c4dc8476bae0457e14a22fe09d",
       "tokens.json": "99d74e59139f6c8984997210b8477646266a21bac553cce1ec99bff74a33bcfb",
-      "blueprint.json": "b715f93ad68fbe1bbf1e5d602e9132ab20e73c6e0781aee646dcc6ad08ef3339"
+      "blueprint.json": "3c12e38a5e42d909dc11d126fcec96e4d26f99238b78f44dc64657d444b216b9"
     }
   }
 }

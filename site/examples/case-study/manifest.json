@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "studio",
   "palette": "soft-whispering-snow",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "스튜디오 오로",
     "theme": "studio",
     "palette": "soft-whispering-snow",
@@ -1432,15 +1432,49 @@
         ],
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ecdcdee0714499ab2511d00eea6effbd9e39868417046122ca724b6b59cb3324",
-      "tokens.css": "42790f5c0bcafa1cfa9baee7f4e96e961012bd76b69f7d2270dbdc61b37de72e",
+      "index.html": "4815f1649e3bf9230bf29e13597646e976cc58a93521abecdc32beb789457862",
+      "tokens.css": "5f01e7c111b3df428f46ba7bca1ef1e57c8b47234bf0743930053d5ae8999142",
       "tokens.json": "df216fa70968ca1f8debcf79d15aa2bbcfe50ded8c7c206c240a056cca5ea0c1",
-      "blueprint.json": "e8c979c7949aa9f914b0710775a6a74612c2386c1f19e41cab19b153a34e04e7"
+      "blueprint.json": "39b1aa774f57a3136e918256b4f9d19b67e8464b4f29287dc29ab380c4966259"
     }
   }
 }

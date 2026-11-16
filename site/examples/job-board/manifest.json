@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "enterprise",
   "palette": "cotton-candy-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "모두웍스",
     "theme": "enterprise",
     "palette": "cotton-candy-skies",
@@ -1178,15 +1178,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "8e5d84d02c345337a074e270545f5b9afd6e05c800b3eeab8e2549da3b0981ed",
-      "tokens.css": "9d7fd91fe3f6af93f2062a01a9c403fdcdbf6ade61ed42a842d542daa697a0b9",
+      "index.html": "4bb173e6cb298159fa351335a90d9551dd013321c5a29a5062c9032956385ab2",
+      "tokens.css": "2146c608c4140a5f72c5a92be1a7bbb360ce703fdb97cfd00f56cf693d54597a",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
-      "blueprint.json": "eafc49561a4afa9138fd4dee6522525b3e062e461c9792d4cae83a14a4a798f8"
+      "blueprint.json": "28b505911527daf3fd63ff74b16564169233028e126308b3880ec6270d5cdb3b"
     }
   }
 }

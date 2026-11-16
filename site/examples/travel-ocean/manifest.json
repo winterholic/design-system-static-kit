@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "ocean",
   "palette": "ocean-serenity",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "파도소리 여행사",
     "theme": "ocean",
     "palette": "ocean-serenity",
@@ -1416,15 +1416,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ea81d59651e89b3ae738aad73801ca5b8c04dec0fcd0a9a735a6536f030ba114",
-      "tokens.css": "9420d7937eaddc9ec973430e19b864dee12c69f6119dc3751dc86d2cde3e6e85",
+      "index.html": "bf9ca59650e5f6a71c3269a5c4bcac5df5e8644b707488dc6a0cc3085208cc8c",
+      "tokens.css": "4d8d5009219651f84a3c98150e3c72f3d7c45c4ac05305370e271b873ebd6096",
       "tokens.json": "9df2e2af448ae42b986b089978dae7ea69df3a8f5fa17da0a87d9f81772fdebc",
-      "blueprint.json": "32982ebf9c7f2de3389a84b8ce6d831c2ae172305a6e9d1ae21939a59b830f84"
+      "blueprint.json": "9c6b7f6b97cc28403bfd2d36e6c51d527f51bffd7cddf9506bf9d17b49b95dc5"
     }
   }
 }

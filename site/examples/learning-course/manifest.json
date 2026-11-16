@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "learning",
   "palette": "coral-reef",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "파이썬 첫걸음",
     "theme": "learning",
     "palette": "coral-reef",
@@ -1452,15 +1452,49 @@
         ],
         "reason": "Existing intentional overflow preserves readable control and step labels."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "93644daed89ea167ad8bd0108c394405bd6f845838e58f96e1576a36528e2a3c",
-      "tokens.css": "b99e7347c57f7beab436b128466de9c2d9cd14b4a8339963206ff687ba034eeb",
+      "index.html": "fd757624dbef8ae9eeee96d28bdfd5b922498f2484031bd5c2d95ffde7b0ed88",
+      "tokens.css": "bec6de332cc023b5677a041a662e5dadf3947058dc38ed537d0ea95d0331dbb5",
       "tokens.json": "a4a082b5de2bcb73fa202e6c97343ffa749178e345d1c1fc717442a932c32ac0",
-      "blueprint.json": "0d38a842adafb0ea9bf79b720c77ace14782b85e9553f9460546ad65f863533e"
+      "blueprint.json": "15bd184f23fb1e76fae57e7ff934a535032693d71fe0e2975a5d2bde3b389a3f"
     }
   }
 }

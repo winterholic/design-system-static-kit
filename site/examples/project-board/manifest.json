@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "hub",
   "palette": "peachy-blossom-delight",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "허브",
     "theme": "hub",
     "palette": "peachy-blossom-delight",
@@ -1568,15 +1568,49 @@
         ],
         "reason": "Boards intentionally scroll and use compact nested task surfaces."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c60da3d7f22882c2c2d8eee3d503327f2681df0b8978d04aa0f9ea3fc1179187",
-      "tokens.css": "738b79cd429df752e3659d6807258ee8f95371c0a845e5cb10e058ceca2c6f2f",
+      "index.html": "557ef4f04f1631cad432d0c23d2e2e8c38fe7ccb2cbd880adeb022c691d941de",
+      "tokens.css": "05df0a9788c9ce99c6f6af58eec794aef339d36a09fd7de4e7a331e7c052f5c5",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
-      "blueprint.json": "c2d37e7fed581b4fa402eec44af558906f7bfc8615adbcd5838ab2058c4d5cd6"
+      "blueprint.json": "09c89edb450c6bee38476238fed298103dbfe7348318e996a8e55ca8524475b7"
     }
   }
 }

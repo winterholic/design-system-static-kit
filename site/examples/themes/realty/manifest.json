@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "realty",
   "palette": "midnight-ocean-depths-2",
   "mode": "light",
@@ -910,7 +910,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "집찾기",
     "theme": "realty",
     "palette": "midnight-ocean-depths-2",
@@ -1362,15 +1362,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ba409aca407e3ece08c3e62bc00f7b2596cbc6eece8255ca21b66dbd974f7678",
-      "tokens.css": "d823544a542c81803c55854b1c5125743551b2c19edbc720994573a880f7e097",
+      "index.html": "5b1816b12269d793cf20f4277dcce3c0bf8c6b6c9848544703ae61f59caf0850",
+      "tokens.css": "99f1fd6102417c79c964e876160e2630b87e0ae4d6234578373449dcd6d0e096",
       "tokens.json": "6a399704941625bdb6c69ae47024a922f05ad028cc71dc52a5a345014d99dd39",
-      "blueprint.json": "1b607fc3cc9388a7f93642048807bf6144bf95e5246686df8aa6102178e4f90d"
+      "blueprint.json": "161d8f4643c4c002068d28000d26c19d44281d224eb22a6774524b435b14f57f"
     }
   }
 }

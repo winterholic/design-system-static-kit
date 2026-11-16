@@ -4,7 +4,7 @@
 
 ## 선택과 실행의 경계
 
-카탈로그 2.2.0에서 기본 적용한다. Blueprint 2.0의 필드·노드·축·토큰 권한은 그대로다. 2.1.0 입력은 새 정책을 거치지 않는다. `kit migrate old.json new.json`은 2.1→2.2에서 `catalogVersion`만 바꾸며 콘텐츠와 축을 고치지 않는다. 1.0 입력은 기존 migration을 이용한다. 소비 프로젝트는 버전을 명시적으로 pin한다.
+카탈로그 2.2.0에서 기본 적용한다(2.3.0은 같은 정책 1.2.0에 타이포그래피 리비전 2를 더한다. `typography.md` 참조). Blueprint 2.0의 필드·노드·축·토큰 권한은 그대로다. 2.1.0 입력은 새 정책을 거치지 않는다. `kit migrate old.json new.json`은 2.1→2.2에서 `catalogVersion`만 바꾸며 콘텐츠와 축을 고치지 않는다. 1.0 입력은 기존 migration을 이용한다. 소비 프로젝트는 버전을 명시적으로 pin한다.
 
 정본: `src/catalog/composition.mjs`의 `compositionRules`, `compositionCoverage`, `PAGE_INTENT`, `src/composition.mjs`의 파생 계산, 기존 `typography.mjs`/`spacing.mjs`/`layout.mjs`. `site/v1/catalog.json`은 정책 버전, 조건·결과 결정표, 부품별 적용 범위를 기계가 읽도록 노출한다. 자연어 `reason`은 설명용이며 선택 술어가 아니다.
 

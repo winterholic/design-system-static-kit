@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "hub",
   "palette": "peachy-blossom-delight",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "허브",
     "theme": "hub",
     "palette": "peachy-blossom-delight",
@@ -1126,15 +1126,49 @@
         ],
         "reason": "Existing intentional overflow preserves readable control and step labels."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1016a1faf5bb7ab6881c2bbd7b8a26de1d3ad420e53d846db3e08318ad2c0ff7",
-      "tokens.css": "09e878a04f80c1c9fd4868010f36ea0b8854f5d078e358d6d225d5a82925bb74",
+      "index.html": "022a00564b1643faeffecd7bb921c7c4711f4e61831b2626aad3947ecf5f58de",
+      "tokens.css": "9a132bad83a6ef43c5be9abb130602a6ffd7725cb9504b92b47c49fc4028b803",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
-      "blueprint.json": "cd99acb7b9d37878f7dba03f7f584a7cb0d06b5d4f534a42f138e0dab24ff9a1"
+      "blueprint.json": "a54cb55e89f9d3b142d733c0bcbbf3dec80d6676fd0ae04432cea42d1dc982ca"
     }
   }
 }

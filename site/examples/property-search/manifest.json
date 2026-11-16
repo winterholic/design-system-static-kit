@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "realty",
   "palette": "midnight-ocean-depths-2",
   "mode": "light",
@@ -910,7 +910,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "집찾기",
     "theme": "realty",
     "palette": "midnight-ocean-depths-2",
@@ -1277,15 +1277,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0501b3dd2b8d221954be030d78bbbc71f0bf1318a4cd9f758131e34124db1ccc",
-      "tokens.css": "a3dec241b964e437b1b06334c259f34286c383402073500c44c65d8310fd729f",
+      "index.html": "3eed91745b3d17d8d00ff8aeeb14b5fe3c4043a6a5a342c87a9dd3f08e7dab53",
+      "tokens.css": "bd16bafbe200ad9d8f247fca74db4b083298ed76595f831ae18cdd136a4c6223",
       "tokens.json": "6a399704941625bdb6c69ae47024a922f05ad028cc71dc52a5a345014d99dd39",
-      "blueprint.json": "e273a2dd36527de6d468e73e3a1a746acecca3142b21e582b9ee68abafbae7b3"
+      "blueprint.json": "fe7819784ecdb7766afd3ff49a43529f949ef9f6fd9972726941b867d9987222"
     }
   }
 }

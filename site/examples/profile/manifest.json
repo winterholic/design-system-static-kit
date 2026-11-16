@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "hub",
   "palette": "peachy-blossom-delight",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "허브",
     "theme": "hub",
     "palette": "peachy-blossom-delight",
@@ -1587,15 +1587,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "fe244888c0fe27e171681239a8e3950b7ecba3cbde0646da5f8c7b53ed9d06a6",
-      "tokens.css": "e9db382d79721b6d6c81be8f7af03509d79a89f870857c695e8e1224ca72e737",
+      "index.html": "bd057870f882f8c3b1497412ef7616db7223bf85e3d97f8f8e2ce8ed9fb2acb3",
+      "tokens.css": "4bf630e4dd7cb4e5c6961e5695a5fec124285122240570a736579f7f9d85ce4f",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
-      "blueprint.json": "e1cf6229f213827a9372e82950fa18b55b6002af878a2e51ffa9accf8b13f32a"
+      "blueprint.json": "cd04df3a724730f2f8fd754c31d76bb6cc671c2026d909fec683e6f9db0d62a5"
     }
   }
 }

@@ -13,7 +13,7 @@ const evidence = JSON.parse(readFileSync(new URL('../docs/evidence/coolors-palet
 const popular = JSON.parse(readFileSync(new URL('../docs/evidence/coolors-popular-2026-10-20.json', import.meta.url), 'utf8'));
 
 test('catalog scale: at least the peer repository on themes, layouts, page structures and icons', () => {
-  assert.equal(CATALOG_VERSION, '2.2.0');
+  assert.equal(CATALOG_VERSION, '2.3.0');
   assert.ok(Object.keys(themes).length >= peer.counts.systems, 'themes >= peer systems');
   assert.ok(templateList.length >= peer.counts.pages * 5, 'templates well above peer content structures');
   assert.ok(iconNames.length >= peer.counts.icons);

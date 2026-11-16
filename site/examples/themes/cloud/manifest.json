@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "cloud",
   "palette": "soft-pastel-shades",
   "mode": "light",
@@ -914,7 +914,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "무드램프",
     "theme": "cloud",
     "palette": "soft-pastel-shades",
@@ -1659,15 +1659,49 @@
         ],
         "reason": "Scores and review copy retain separate summary and reading levels."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "78bd3dfefdfd8b4e94c5a803b7b280674a5f323cf22df3ccd04b7ab0aa67cb27",
-      "tokens.css": "ed43e5f60475a3c867f8ca824eeed4b1ba894eb24aec33d9de4377f5b0be8db2",
+      "index.html": "a844351fdf3866b4d7cc8cf2fa629dd8b2431c16453dd2992dc589a5c5b16b77",
+      "tokens.css": "cace14dc79613cbc632880f72ef83740f3e5a9d13661c013021e079ea775add7",
       "tokens.json": "747dc5c87418faaeefc83e7bd381bf517cf48f8f8cf58688e56e22f2576101f3",
-      "blueprint.json": "6d99b040fb7750c9f215809e3f40b636cc5fa2e68f6e0918195ec0e106064799"
+      "blueprint.json": "6b3312a7d9e371114e24ddef656cdd3d0334ddd1b54e58e79f0fc1b16fe087de"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "nocturne",
   "palette": "dark-midnight-shades",
   "mode": "dark",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "녹턴",
     "theme": "nocturne",
     "palette": "dark-midnight-shades",
@@ -1194,15 +1194,49 @@
         ],
         "reason": "Actions wrap using the existing control size and group gap."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c5991ed01e071e0dd5807e070fca2ffd12d45760f80a3d86cea6454062491cb0",
-      "tokens.css": "c44f1c14ca4b061a83972990469dcad2110d19294aa6e1ada9f750649ff61281",
+      "index.html": "7cb745cc562afd3379aeb539da06448e90993aa270925a3034000df07afe33a6",
+      "tokens.css": "3b2271f6425b3b9f9197f47fd988625b873edb4f836e392de2442a1c918d7d80",
       "tokens.json": "0ae7f3ac0d3d0434b5c97632d86ffebde7b661508e89b5bde515ccf8aed5341f",
-      "blueprint.json": "ce295bab24c1b1f4263099a147fe10b0c1b75d489ab85f9792f5595db9f31b12"
+      "blueprint.json": "69271aee0c9a898322452d6f92d9d2e3b876fa75db3358a6a68252a837abd76a"
     }
   }
 }

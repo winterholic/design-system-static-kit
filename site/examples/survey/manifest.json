@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "paper",
   "palette": "soft-sand",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "의견 듣기",
     "theme": "paper",
     "palette": "soft-sand",
@@ -1120,15 +1120,49 @@
         ],
         "reason": "The value remains adjacent to its label with progress semantics."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "99676cbb72f0a3584cc64ac6ac68d1449125b9d5fb87b643ec6a97283d2b94d6",
-      "tokens.css": "65d187875c6b591ac48dc277aa69c8e11aaf9d80ac4ca1d36e50265710b30382",
+      "index.html": "46b5de143c4989b35dc70a40d4172ba4b3a0c5a53304be8b73f52133909e0c02",
+      "tokens.css": "326a4404935751f6e2cd5bb51c94afc74cf57674e92edd7b93bd76ac7dfee6aa",
       "tokens.json": "8f034f00a5a1a987db8933adbb84487d1247aa036577aeb6ac42e26412e11831",
-      "blueprint.json": "909f44c56cc5931869ef96517f50a0e0d1c8506dc0bc052f7da9130f055e220a"
+      "blueprint.json": "9090878cb44adc80e5f699006004d846398cb084b9c5c03d2b20a6e83904b3fd"
     }
   }
 }

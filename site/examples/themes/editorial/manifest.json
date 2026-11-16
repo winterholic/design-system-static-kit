@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "editorial",
   "palette": "earth",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "디자인 노트",
     "theme": "editorial",
     "palette": "earth",
@@ -1235,15 +1235,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0ac384da09c4d39dbe5ef240db5d8f715149abd4cf85b42b772a95f24df20080",
-      "tokens.css": "6d0d4b98942c9d2157ac64367cbe3b68e074762f9d5d23638b44d4655c5d6e8d",
+      "index.html": "3629accdeba215d4f6be66e707230db138738d507eb2dd5776c663be9b3526f3",
+      "tokens.css": "4f341b2c015bafe1e54195ace92ff4e67ffd6b8415570a737d760a98a94008f5",
       "tokens.json": "52303dc944c0566238e35a0f3f0feffb0712c3525b4cbf9d2d06b82b22ab1957",
-      "blueprint.json": "666558a5e3ccb158dd6c9366ca7f17e45f58be1181b9db43012c2a60055634e8"
+      "blueprint.json": "ce824b158faa9a21e4544f681ac7069f8e6b6dc9ec09f8edb3b0b9353d1273a5"
     }
   }
 }

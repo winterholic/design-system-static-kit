@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "clinic",
   "palette": "refreshing-aqua-tones",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "맑은숨",
     "theme": "clinic",
     "palette": "refreshing-aqua-tones",
@@ -1220,15 +1220,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "5c27fb4e6cef34dc32dadb0031d1881adda74f015028cbee07396036de5b7eda",
-      "tokens.css": "a7052c19e98191118b2e153d27dbd7fd4b14dfa43e1e180f16001156beb5f34e",
+      "index.html": "472462153df8a44e276e6c4ade6a580bd2f11de5c52234444eebb92f8eaa3ca6",
+      "tokens.css": "36c24638239d8ab2b434bf660f40574ef46a592b2e11ab58afb067c3cca273c1",
       "tokens.json": "aa039da04bc304dbfc69e5c6d47dbf9b2d240317ca4519698510724b5975ffe7",
-      "blueprint.json": "baffcda91cf406efc952893395b12e2d61f495895900a884eaf7d3aa24d36951"
+      "blueprint.json": "29fb0f9becb0a9c2198c091a2b5ba3c174962dcf6329d71c3e861baa22d490af"
     }
   }
 }

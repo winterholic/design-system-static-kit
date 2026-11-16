@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "bank",
   "palette": "pearl",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "새봄은행",
     "theme": "bank",
     "palette": "pearl",
@@ -1553,15 +1553,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a0b919de1bf41d8bc9c707313334fadbebd35142ff414689c3038ca8063d8846",
-      "tokens.css": "8b2178e7736243a86a2a3d9c43175ecb212ef19a635e6730c7289a45de16fadc",
+      "index.html": "77b9587a8901bdd408bcf6a7bd5f52adb9122fa903bb83c44d7ae1586314e15d",
+      "tokens.css": "6b05edbb619859c20f7d1863eab5bdf486e232bd300b74045044513ea99e283d",
       "tokens.json": "1ffaf578832def0a27b0ef497d9ce3835731c094f054a5b15fc4bce7fd7f38d6",
-      "blueprint.json": "5505a90a000804ce21610045adf2df998d25995567530ad69e3c0d757d6b3ea6"
+      "blueprint.json": "0369a82e6b5486525152ae8275cbddb305c524640f7dd2abfaa678841ec64167"
     }
   }
 }

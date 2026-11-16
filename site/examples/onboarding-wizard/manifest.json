@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "learning",
   "palette": "coral-reef",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "러닝메이트",
     "theme": "learning",
     "palette": "coral-reef",
@@ -1135,15 +1135,49 @@
         ],
         "reason": "Actions wrap using the existing control size and group gap."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0c4e55ccec9796e22a4b7b20833cf34dd9ad30688cd9abf370b78bb7994a301e",
-      "tokens.css": "5dd1df4db72a4da65a0ddbc001801b1eecfa446acee4db93587708fe402fc9ac",
+      "index.html": "d681025808c654129b7aa5de997f56c7ea73b4138ec3dd192de8f4a9a91d73d6",
+      "tokens.css": "a6d42b2accf0e89b7a79dc7ecca3a0dc4c9c18e56f3cc53bdcc60ac14c5fa0fc",
       "tokens.json": "a4a082b5de2bcb73fa202e6c97343ffa749178e345d1c1fc717442a932c32ac0",
-      "blueprint.json": "1b5cbf9c145b4e0fc5fecd2759bd06bef8f7554762df611636decdb9f5527a58"
+      "blueprint.json": "608711510d8afb7b6abc83533039484b92aac317452ee78554bddf639042f27e"
     }
   }
 }

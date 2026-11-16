@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "wine",
   "palette": "crimson-hues",
   "mode": "dark",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "카브 오월",
     "theme": "wine",
     "palette": "crimson-hues",
@@ -1287,15 +1287,49 @@
       "navigation": "separate-row",
       "wideContainer": 720,
       "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
     }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "69e6d9dfcf5b1c4b7841fb1437eac17984104ae210e763aadfebb406fb108a75",
-      "tokens.css": "a00188456aca0da51b56442bd0558491e1156dff011eccd31db02b1f4c4b7a1f",
+      "index.html": "2b6e5f7f3b4102f4c3ff51fc040494ee60f629197440e89d3e936d800ec9bea8",
+      "tokens.css": "2c085d742b35408c7e1f2aec4b3cda4b051dcb3333c68297cb131afcf779a0f0",
       "tokens.json": "7a8d8983adfb9571759aaaf24b28ae12d6405d0b4ea4dedf25798f821c0f0a6e",
-      "blueprint.json": "072b26eef8d901045ff9aab3db277734e9fc8b78a3afb74194f735cfa79555d7"
+      "blueprint.json": "10a142a71ae0f2e4a43841bb9d07ba25648434835ec31c4188269be54d5168e2"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "trust",
   "palette": "serene-blue",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "플로우웍스",
     "theme": "trust",
     "palette": "serene-blue",
@@ -1500,15 +1500,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "2d4f69902c3b5e859bc82955de4868812d3e4c897cff97439f31c221fd26534c",
-      "tokens.css": "c6b0a7cc286800f5a61c5b31589e5120e6b582cf717b5319fa9d7c506c2f6978",
+      "index.html": "98035d8d0127d3f5fcf0cd4b4a4ffa999c53f787463b24ef4b30d29d8e7cccdd",
+      "tokens.css": "b1472e6026f2daf5b5d5b0f4d1acb57898cedc7bc9263a079d3b3d89917cc557",
       "tokens.json": "8b8472a158b0de1b3a1fe60306d410e3a3749b4f62b6f2370233656102b67658",
-      "blueprint.json": "c3d4503eaabc015cf21401109ddfa84449f3aa3c62faee9b9e1c0610a053a8bc"
+      "blueprint.json": "90f28481f62c7ee5c56574228d2eef677fe7c28afb71161082bea3945957fceb"
     }
   }
 }

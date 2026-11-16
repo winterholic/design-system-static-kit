@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "hanji",
   "palette": "neutral-harmony-bliss",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "고운길",
     "theme": "hanji",
     "palette": "neutral-harmony-bliss",
@@ -1398,15 +1398,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0956906dec5f50ff76c21bfb6b74aed99082ad702ec0c1d078a0b6151a9e671e",
-      "tokens.css": "5e12f6de00dbccccb48a11314184897afa82b19750218675cf6528710c238fb2",
+      "index.html": "d639ecedae673fee0823726f62033139159f760078e3243518c67bcff824ce57",
+      "tokens.css": "d76fba38fa0fc0c6eafaf96a5619f635c3e464e6bf41a30d888d33343a260744",
       "tokens.json": "cfc5dc21b3447e71a7db5174344926a3a2b3e26655c9065718e92b6a4d075cc5",
-      "blueprint.json": "16f133fe99096b021edfcb793e8e56b2ebf9362718bf5a5e0d377bad36f4be84"
+      "blueprint.json": "0bd910a03efc7043ad41d3372e5d1102fc91dbd2392be08905e6c8b27c5e2e75"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "manual",
   "palette": "moonlit-mist",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "매뉴얼",
     "theme": "manual",
     "palette": "moonlit-mist",
@@ -1196,15 +1196,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "334afc387c7aceec88360aa1abdd6b67459f83fd4ce5da820e40cedd55c42825",
-      "tokens.css": "14bf0bb876de4eb2c8c13d0b850fb7dac4cf0150090a30c7580358e31355da28",
+      "index.html": "20e6188a23945f174ac77b785fcd5a142ca00bec2a8e77a4771e802fe1be95c0",
+      "tokens.css": "1ef1f217cb70fbdb3b6ee8f54e14828bf94835012c0e6541785b9bc5d66129d8",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
-      "blueprint.json": "6e8fdef1bd1558e0c66bd9c0b31143cf14526da10936b6dda7ef7d288b8ee8e0"
+      "blueprint.json": "af9297c0a7ce57d700f994ec575cff72bd97cfc38d395e2a295a54f89cebabaa"
     }
   }
 }

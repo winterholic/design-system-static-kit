@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "console",
   "palette": "midnight-ocean-depths",
   "mode": "dark",
@@ -911,7 +911,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "콘솔",
     "theme": "console",
     "palette": "midnight-ocean-depths",
@@ -1435,15 +1435,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1c3393ba20c6cc5ebd5a3872b8a62243bf757fd9a6aac6104335c53a36e6886f",
-      "tokens.css": "779438e2fae0593775de79e4189601cfd5d42130ed81bee3bf77f4d764251c58",
+      "index.html": "b347ce7ebe487d2153c70a640f352174760b63fb627b023c96c06e19bd0b5b44",
+      "tokens.css": "df8353fc325ce0a8554a4caea9960d08be32c9c0bf31ce60155a3d17dcddebb8",
       "tokens.json": "d99c1d0c9de4c2609111bc34ef8bd7cbaf2553ba942f264d8d7b4e23d6af2916",
-      "blueprint.json": "fe8b745c3c447100c75289d1c7e491ef60110ab6306a86bc87d5469e13ae9fd4"
+      "blueprint.json": "b0d57a9a35bc32ac63b50e1fb2097b0cb131f46577956c475964840d44c3c4d6"
     }
   }
 }

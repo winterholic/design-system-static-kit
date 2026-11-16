@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "playful",
   "palette": "bright-contrasts",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "디자인 데이 2026",
     "theme": "playful",
     "palette": "bright-contrasts",
@@ -1738,15 +1738,49 @@
         ],
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "94a6fb9f6cb943310a8f9a3a302c315914566194d3a7e817fd5271c57744d596",
-      "tokens.css": "0c7484d45e89d727bc891ea1d381518b6784921af5b506ac4bd4c981bf4a27fc",
+      "index.html": "5c8773fb91a3bd0db82f4a3a4cc9724fb235772e8acfe1b832931d28b2401099",
+      "tokens.css": "d2157aabcde2490b1e92c589687841fd8c58762c5e7a302d2ec60d98ee7a4297",
       "tokens.json": "312620e226b4ccdf81a1834b6f5945fdcdbeffb2cb0bcdfa234bb3a58592d249",
-      "blueprint.json": "010cf463bbb74f2271fafdc9d4396a3ec440a8dca0de690e0bd6ec70490016d1"
+      "blueprint.json": "55b5aee45e81cd1a5e5c452af1804df21a6b0ba1234ce2e26c40d416b68d9aa7"
     }
   }
 }

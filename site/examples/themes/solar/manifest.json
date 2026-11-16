@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "solar",
   "palette": "sunny-meadow-shades",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "선루프",
     "theme": "solar",
     "palette": "sunny-meadow-shades",
@@ -1679,15 +1679,49 @@
         ],
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "52028c7a1e1b0398fe54201c50db7ff614a2b51130fe61144f435433db0233ff",
-      "tokens.css": "a115d97e41cb840d94b5d439efad93d03065e0e84d590f7109ba32ae03d2b424",
+      "index.html": "e3223cf5b6eb2ff2787bbe5f5442e47dfcf903079573518d488efb4fb7b3ee51",
+      "tokens.css": "dee5a5d69730b0ed7889507f97c3bc642d99c6b20674cd160f9e3c5b1bc37ce1",
       "tokens.json": "a0a1d6c52ee2959bee3b9dda6ece0b3e4ef18881d705c94053b53b35f5fd9f5d",
-      "blueprint.json": "2b09b5a48789223b7309ddd117e355347b13b5f2e01a2e63819d4503a615551e"
+      "blueprint.json": "42a30122f72fdeaa16fef06f54c058e07fa8eb8ad99da31bebfb284ec4a2786e"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "cafe",
   "palette": "toasty-cinnamon-latte",
   "mode": "light",
@@ -910,7 +910,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "오월 커피",
     "theme": "cafe",
     "palette": "toasty-cinnamon-latte",
@@ -1370,15 +1370,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0f966c298cdf89222f656ae40215c4a8ca3d09f17d6913a4f423745f5a9127e3",
-      "tokens.css": "09a30adfde757a7a4a9087ee481a1c9b0b6854a50897ef122306b8e6e77cb337",
+      "index.html": "494e775663311809acde132c3e5b263ecf77332e262f9a620bd17a5cd46b107f",
+      "tokens.css": "fba9da2f0142a4e5d54f2e756cb32f749a150ebc5f360023a648b9df8eee0acf",
       "tokens.json": "8c1790a785fe00a25897c76f083696bd4f5468f59637cd84f75c3ea918738f66",
-      "blueprint.json": "9a7c4236b894c0b0fea0db24e3f9e421f8591cc24816262c32e717cd4d75110d"
+      "blueprint.json": "050f98be6d9c7d1ad479427a4a3bd23f7a8162cd2dfb954edd093e1681533502"
     }
   }
 }

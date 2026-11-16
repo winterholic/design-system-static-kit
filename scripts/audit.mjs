@@ -178,9 +178,9 @@ console.log(`VARIANTS: ${themeVariantCount} theme variants (${themeVariantPages}
   const {lintLayout, flowOrphans, FLOW} = await import('../src/layout.mjs');
   const {concepts} = await import('../src/catalog.mjs');
   let typePages = 0, lintFound = 0;
-  for (const typography of TYPE_IDS) for (const scale of axes.scale) {
-    const z = roleSizes({typography, scale});
-    assert.ok(z.sub.max < z.heading.min && z.heading.min < z.title.min && z.title.max < z.display.max + 1, `type order ${typography}/${scale}`);
+  for (const typography of TYPE_IDS) for (const scale of axes.scale) for (const catalogVersion of [undefined, '2.3.0']) {
+    const z = roleSizes({typography, scale, catalogVersion});
+    assert.ok(z.sub.max < z.heading.min && z.heading.min < z.title.min && z.title.max < z.display.max + 1, `type order ${typography}/${scale}/${catalogVersion ?? 'rev1'}`);
   }
   for (const [i, t] of templateList.entries()) {
     const b = createBlueprint(t.id); b.typography = TYPE_IDS[i % TYPE_IDS.length]; repairAxes(b);

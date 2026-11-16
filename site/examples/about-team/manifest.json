@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "atelier",
   "palette": "candy-floss-dreams",
   "mode": "light",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "아틀리에 모아",
     "theme": "atelier",
     "palette": "candy-floss-dreams",
@@ -1231,15 +1231,49 @@
         ],
         "reason": "The catalogue ratio and caption own media sizing."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "2c62f047e0e36db1b260cc55919754b3f106225490eb0b8907362c11b4d17ce4",
-      "tokens.css": "48b1d3444dfe8ccdf69073b515f5314aeca81a53e86c5e5de336fd14725ba9a1",
+      "index.html": "ffd9c3d0e5f0564a041720fe433c36cb4666ea71b3d57b850b90df35fd42f6fe",
+      "tokens.css": "ff5195016afd8dc7300595a17e2bdf0f5f69810f365b4da1cdadc2cf760bdccc",
       "tokens.json": "2847948b38e5549b5f031d8937d514965172a707b851191f7cc1b73512300005",
-      "blueprint.json": "08578274796868f6bf522fa9f3136c4826f0fc532452e8447b490ad1d20aa4ff"
+      "blueprint.json": "e981915f001ead6c8ea6df479537e010d2762910f1b29b46a83a6a49d62560da"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "wedding",
   "palette": "pastel-dreams",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "민준 · 서연",
     "theme": "wedding",
     "palette": "pastel-dreams",
@@ -1228,7 +1228,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 480
+          "minCell": 400
         }
       },
       {
@@ -1551,15 +1551,49 @@
         ],
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "fe60d641f1e17f59db0ca187adc00ec30f8be5ba318979ea4258839b3050be89",
-      "tokens.css": "115b84979cbc6129727ef1b49926120900e9b5e85cdb9cc4e7b05eed6f58f99f",
+      "index.html": "c304e8cc0fb68f23756fab89f72747c3c52faa8a4eb92a0918c9bf361c40adfa",
+      "tokens.css": "10c09bbd6260e59ff997635b541a2a82f0960a95e7039592205f28a2201e156b",
       "tokens.json": "08b6ebc9892518316e34de38c1c9f5cc51a23c78308fe185bbec1e094ec45e11",
-      "blueprint.json": "71de51db24047fafdd82ffb1c41e80236e946f27b3d738aeaaf8602ad5bdbe59"
+      "blueprint.json": "9f6122acfabae271380f41969f435733d63ac6e74bc5695312d24bc8df2fd37e"
     }
   }
 }

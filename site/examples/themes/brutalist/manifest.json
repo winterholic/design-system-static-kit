@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "brutalist",
   "palette": "sunset-glow",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "플로우웍스",
     "theme": "brutalist",
     "palette": "sunset-glow",
@@ -1297,7 +1297,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 400
+          "minCell": 360
         }
       },
       {
@@ -2059,15 +2059,49 @@
         ],
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "df0658e6f51aefe461aa11ef60c62cffcfd35cabd7496de8129e4e0e43daa726",
-      "tokens.css": "00f644e6ba95565897b89a8682ff0880b82e8b37b3f81fac5ab0a625084506a2",
+      "index.html": "f671ed95f81c44d0126fa75db496e45c7aea80c7e4502f0731b49d316b558923",
+      "tokens.css": "daea227d5c449a89f3cde238348d8c6d6313d468cef6acd8f46306857d070e7c",
       "tokens.json": "adf9b7a5bb5ecd13630d83d5e3b07de0edeca9b2896f23e9a7d788f60482e86e",
-      "blueprint.json": "eb7a7da7167bd80e41363df247e62fdda5a3085aa75e24aebe696630acbe07a4"
+      "blueprint.json": "1e68b248ac9095491a1fb3752da54a09d181df76fe7c036fbf8450cd68cc6958"
     }
   }
 }

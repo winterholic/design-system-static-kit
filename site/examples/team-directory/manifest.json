@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "hub",
   "palette": "peachy-blossom-delight",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "허브",
     "theme": "hub",
     "palette": "peachy-blossom-delight",
@@ -1148,15 +1148,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "9bd0e95b74157bca77f6fd8df40884e644124fffd59fc5d5e23b27e1c94be180",
-      "tokens.css": "50d49b1235f892afd8d906c5cb89f8862fd9a66c36b8045a64cc8d38b2442b65",
+      "index.html": "93354c9869d05bd1636c921ce700f15664abd214f1d61d1d9852dea44c049765",
+      "tokens.css": "c23eab15fec65c8c2ebbab5afc8ff1eb5f974101122d3bd53574adc9908fb5b0",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
-      "blueprint.json": "d1f6c7dc633d484001facd9fbdcb2aa51d1084f0be08a177ba3c0e4b3748897b"
+      "blueprint.json": "7a29c426319141e13d9df53f142ba70d728c36bb980ad77001f436997b6f68a2"
     }
   }
 }

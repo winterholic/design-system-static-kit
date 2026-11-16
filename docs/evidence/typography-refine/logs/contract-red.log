@@ -1,0 +1,174 @@
+✖ Hangul title tracking: syllables must not touch (display/title ≥ -0.02em, heading ≥ -0.015em, card title ≥ -0.01em) (5.952875ms)
+✖ Hangul has no case: label tracking stays at or below 0.06em so Korean eyebrows are not spaced apart (25.052916ms)
+✖ heading leading floors: a two-line Hangul title keeps a visible band (display ≥ 1.2, title ≥ 1.25, heading ≥ 1.3, card title ≥ 1.35), body 1.55 to 1.8 (1.140041ms)
+✖ size ceilings: a Hangul syllable fills about 0.91em, so display ≤ 80px, title ≤ 64px, heading ≤ 40px under every preset and scale (2.729166ms)
+✖ face pairing: the first Latin face of every stack in use has lining digits and a Hangul/x-height ratio within 1.95 (measured) (14.205709ms)
+✖ single-weight Hangul serif cannot be bolder than its synthetic bold: serif-Hangul heading weight stays ≤ 700 (2.966ms)
+✖ catalog 2.3.0 is the current version; 2.2.0 and 2.1.0 inputs keep their previous typography byte for byte (0.199375ms)
+✖ the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variables, nothing else (0.992375ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 0
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 145.7495
+
+✖ failing tests:
+
+test at tests/typography-refine.test.mjs:16:1
+✖ Hangul title tracking: syllables must not touch (display/title ≥ -0.02em, heading ≥ -0.015em, card title ≥ -0.01em) (5.952875ms)
+  AssertionError [ERR_ASSERTION]: sans/tight display -0.035
+      at file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:18:12
+      at eachPreset (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:14:102)
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:17:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:25:1
+✖ Hangul has no case: label tracking stays at or below 0.06em so Korean eyebrows are not spaced apart (25.052916ms)
+  AssertionError [ERR_ASSERTION]: swiss label 0.08
+      at file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:26:36
+      at eachPreset (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:14:102)
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:26:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:29:1
+✖ heading leading floors: a two-line Hangul title keeps a visible band (display ≥ 1.2, title ≥ 1.25, heading ≥ 1.3, card title ≥ 1.35), body 1.55 to 1.8 (1.140041ms)
+  AssertionError [ERR_ASSERTION]: sans display 1.1
+      at file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:31:12
+      at eachPreset (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:14:102)
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:30:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:39:1
+✖ size ceilings: a Hangul syllable fills about 0.91em, so display ≤ 80px, title ≤ 64px, heading ≤ 40px under every preset and scale (2.729166ms)
+  AssertionError [ERR_ASSERTION]: sans/dramatic display 96
+      at file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:41:12
+      at eachPreset (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:14:102)
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:40:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:47:1
+✖ face pairing: the first Latin face of every stack in use has lining digits and a Hangul/x-height ratio within 1.95 (measured) (14.205709ms)
+  AssertionError [ERR_ASSERTION]: Georgia,"Times New Roman","Noto Serif","AppleMyungjo","Noto Serif KR","Noto Serif CJK KR","Nanum Myeongjo","Batang",serif: Georgia digits are old-style (measured digit/cap 0.75, spread 19/100em) and clash with Hangul
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:53:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Georgia',
+    expected: 'Georgia',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:59:1
+✖ single-weight Hangul serif cannot be bolder than its synthetic bold: serif-Hangul heading weight stays ≤ 700 (2.966ms)
+  AssertionError [ERR_ASSERTION]: serif/bold heading weight 800 over a single-weight Hangul face
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:63:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:67:1
+✖ catalog 2.3.0 is the current version; 2.2.0 and 2.1.0 inputs keep their previous typography byte for byte (0.199375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '2.2.0' !== '2.3.0'
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:68:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2.2.0',
+    expected: '2.3.0',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/typography-refine.test.mjs:78:1
+✖ the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variables, nothing else (0.992375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '2.2.0' !== '2.3.0'
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/typography-refine.test.mjs:81:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2.2.0',
+    expected: '2.3.0',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

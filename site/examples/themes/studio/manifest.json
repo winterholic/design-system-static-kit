@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "studio",
   "palette": "soft-whispering-snow",
   "mode": "light",
@@ -1749,7 +1749,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "스튜디오 오로",
     "theme": "studio",
     "palette": "soft-whispering-snow",
@@ -2036,7 +2036,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 400
+          "minCell": 360
         }
       },
       {
@@ -2455,15 +2455,49 @@
         ],
         "reason": "The catalogue ratio and caption own media sizing."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "6b933ce0724ac051c977bdb8fc106c50617c25ce5b37fb62270268698c5f4c53",
-      "tokens.css": "36842288b2e4f3ce67b6a9c2bb913abe4c2f46d2a271f3487d48cdf1af957331",
+      "index.html": "6c1d0e09b7e48fc5138661c8f520604d60933d15d81d556fa2c810f73ed487df",
+      "tokens.css": "4e1c66fdc0f00133a2ddce5134c1ea45ff1c10d1ddceddece3cc2d823d17631d",
       "tokens.json": "df216fa70968ca1f8debcf79d15aa2bbcfe50ded8c7c206c240a056cca5ea0c1",
-      "blueprint.json": "560ee5fde033a584179643638057f6478c05f6ca1efd5d71ca60d9349f4036d1"
+      "blueprint.json": "f5d1dbe581ed7c39d45e577cd959c75d2e2c6f679b5a468a0755f9146c9d4a2f"
     }
   }
 }

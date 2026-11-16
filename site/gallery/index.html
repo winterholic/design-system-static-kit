@@ -408,8 +408,8 @@ const {layoutSlots, applyLayout, layoutSlotIds} = __m("catalog/variants.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
 { const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
-const CATALOG_VERSION = '2.2.0';
-const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', CATALOG_VERSION]);
+const CATALOG_VERSION = '2.3.0';
+const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', CATALOG_VERSION]);
 const BLUEPRINT_VERSION = '2.0';
 const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 
@@ -2468,6 +2468,7 @@ const {resolveTokens, resolveAll, contrast, serializableContrast} = __m("tokens.
 const {stylesheet} = __m("styles.mjs");
 const {renderTree, escapeHTML, formRuntime} = __m("render.mjs");
 const {planComposition} = __m("composition.mjs");
+const {typeRev, HANGUL} = __m("typography.mjs");
 
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -2504,6 +2505,8 @@ function compile(input) {
   };
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
+  // Typography revision 2 (catalog 2.3.0): recorded so a consumer can tell which Hangul limits shaped the page. Absent for 2.1/2.2 inputs, whose output is pinned.
+  if (design && typeRev(b) === 2) manifest.design.typography = {revision: 2, limits: HANGUL};
   return {html, css, tokens, manifest};
 }
 
@@ -4333,6 +4336,7 @@ exports.alwaysCSS = alwaysCSS;
 };
 __defs["styles/index.mjs"] = function (exports, __m) {
 const {axisVars, coreCSS, tailCSS} = __m("styles/base.mjs");
+const {typeRev, refineTracking} = __m("typography.mjs");
 const {shellCSS} = __m("styles/shells.mjs");
 const {chunks} = __m("styles/chunks.mjs");
 const {polish, polishCore} = __m("styles/polish.mjs");
@@ -4379,7 +4383,8 @@ function stylesheet(b, sets, body = '', design = null) {
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
-  return parts.join('\n') + '\n';
+  const css = parts.join('\n') + '\n';
+  return typeRev(b) === 2 ? refineTracking(css) : css;
 }
 
 exports.usedTypes = usedTypes;
@@ -4780,6 +4785,9 @@ const STACKS = {
   didone: `"Didot","Bodoni 72","Bodoni MT","Playfair Display","Hoefler Text",Georgia,${KO_SERIF}`,
   slab: `"Rockwell","Superclarendon","Roboto Slab","American Typewriter",Georgia,${KO_SERIF}`,
   mono: `"SFMono-Regular","SF Mono","Menlo",Consolas,${KO_MONO}`,
+  // Added with typography revision 2 (catalog 2.3.0). `georgia` and `baskerville` stay as they were for 2.1/2.2 blueprints; see HANGUL.stackSwap.
+  news: `"Times New Roman","Noto Serif",${KO_SERIF}`,
+  palatino: `"Palatino","Palatino Linotype","Book Antiqua","Noto Serif",${KO_SERIF}`,
 };
 
 /** `body` is the body size in px (16 or 17). `ratio` is the modular scale ratio at the balanced scale axis.
@@ -4809,6 +4817,36 @@ const TYPE = Object.fromEntries([
 ].map(p => [p.id, p]));
 
 const TYPE_IDS = Object.keys(TYPE);
+
+/** Typography revision. Catalog 2.1.0 and 2.2.0 blueprints keep revision 1 (the table above, byte for byte); 2.3.0 and later use revision 2.
+ *  A blueprint without a catalogVersion (internal callers that only carry typography and scale) also resolves to revision 1. */
+const LEGACY_TYPE_VERSIONS = Object.freeze(['2.1.0', '2.2.0']);
+const typeRev = b => (!b?.catalogVersion || LEGACY_TYPE_VERSIONS.includes(b.catalogVersion) ? 1 : 2);
+
+/** Revision 2 limits, all Hangul-first. Sources: docs/evidence/typography-refine/diagnosis.md.
+ *  track: lower bound of letter-spacing (em). A bold Apple SD Gothic Neo syllable pair touches in 18% of pairs at -0.035em and 27% at -0.05em, 2% at -0.02em, 0% at 0 (tracking-gap.json).
+ *  labelMax: Hangul has no case, so wide label tracking only separates syllables.  leading: floors per role; the Hangul ink box is 0.91em, so 1.1 leaves a 0.19em band between lines and 1.25 leaves 0.34em.
+ *  caps: role ceilings in px (a Hangul block fills the em; KRDS display tops at 60px, Fluent at 68px for Latin).  serifHangulWeightMax: AppleMyungjo, Batang and Nanum Myeongjo have one weight, so heavier than a synthetic bold is only Latin.
+ *  stackSwap: Georgia has old-style digits (digit/cap 0.75 against Hangul 1.0) and Baskerville's x-height pairs at 2.08 with a Hangul face. */
+const HANGUL = Object.freeze({
+  track: {display: -.02, title: -.02, heading: -.015, sub: -.01}, labelMax: .06,
+  leading: {display: 1.2, title: 1.25, heading: 1.3, sub: 1.35}, body: [1.55, 1.8],
+  caps: {display: 80, title: 64, heading: 40, app: 36}, ratioMax: 1.414, serifHangulWeightMax: 700,
+  stackSwap: {georgia: 'news', baskerville: 'palatino'},
+});
+
+const refine = p => {
+  const track = Object.fromEntries(Object.entries(p.track).map(([k, v]) => [k, k === 'label' ? Math.min(v, HANGUL.labelMax) : Math.max(v, HANGUL.track[k] ?? -Infinity)]));
+  const lh = {}; let prev = 0;
+  for (const k of ['display', 'title', 'heading', 'sub']) { lh[k] = Math.max(p.lh[k], HANGUL.leading[k], prev); prev = lh[k]; }
+  lh.body = Math.min(HANGUL.body[1], Math.max(HANGUL.body[0], p.lh.body, prev));
+  const swap = k => HANGUL.stackSwap[k] ?? k;
+  return {...p, head: swap(p.head), text: swap(p.text), ratio: Math.min(p.ratio, HANGUL.ratioMax), track, lh};
+};
+/** Revision 2 table: the same 18 presets, refined by HANGUL. */
+const TYPE_R2 = Object.fromEntries(Object.entries(TYPE).map(([id, p]) => [id, refine(p)]));
+/** The preset table a blueprint resolves to. */
+const typeSpec = b => (typeRev(b) === 2 ? TYPE_R2 : TYPE)[b.typography];
 
 /** scale 축은 비율을 옮긴다: tight 촘촘한 제목 -0.07, balanced, dramatic +0.10. */
 const RATIO_SHIFT = {tight: -.07, balanced: 0, dramatic: .10};
@@ -4853,7 +4891,7 @@ const clampCss = (lo, slope, hi) => `clamp(${Math.round(lo)}px,${px(slope)}vw,${
 
 /** 한 블루프린트(타이포그래피 프리셋 + scale 축)의 역할별 크기 값(CSS 문자열). */
 function roleSizes(b) {
-  const preset = TYPE[b.typography], bodyPx = preset.body, r = Math.max(1.12, preset.ratio + (RATIO_SHIFT[b.scale] ?? 0));
+  const preset = typeSpec(b), bodyPx = preset.body, rev = typeRev(b), r = Math.max(1.12, Math.min(rev === 2 ? HANGUL.ratioMax : Infinity, preset.ratio + (RATIO_SHIFT[b.scale] ?? 0)));
   const out = {};
   const fixedSize = n => ({css: Math.round(n) + 'px', max: n, min: n, fluid: false});
   const fluidSize = (lo, slope, hi) => ({css: clampCss(lo, slope, hi), max: hi, min: lo, fluid: true});
@@ -4868,7 +4906,7 @@ function roleSizes(b) {
     else if (role.fixed) v = fixedSize(role.fixed(bodyPx));
     else if (typeof role.fluid === 'function') { const [lo, slope, hi] = role.fluid(bodyPx); v = fluidSize(lo, slope, hi); }
     else {
-      const max = Math.min(role.cap, bodyPx * Math.pow(r, role.exp));
+      const max = Math.min(role.cap, rev === 2 ? HANGUL.caps[name] ?? Infinity : Infinity, bodyPx * Math.pow(r, role.exp));
       v = role.fluid ? fluidSize(Math.min(max, Math.max(bodyPx + 2, max * role.min, 0), role.minCap ?? Infinity), max / 12.8, max) : fixedSize(max);
     }
     // 좁은 화면에서도 위계가 뒤집히지 않게: 이 역할의 최솟값은 아래 단계의 값보다 gap px 크다(6차 진단 HIER_INVERT)
@@ -4886,10 +4924,11 @@ const roleVar = name => `--kit-t-${name}`;
 
 /** 서체·역할 크기·자간·행간·굵기 선언. axisVars가 :root에 넣는다. */
 function typeVars(b, weightHead) {
-  const preset = TYPE[b.typography], sizes = roleSizes(b);
+  const preset = typeSpec(b), sizes = roleSizes(b);
   // 산세리프 제목은 600 아래에서 본문(16px)에 비해 가늘어 보이므로(5차 실측) 바닥을 600으로 두고, 세리프·디돈·슬랩 제목은 400까지 내린다.
-  const floor = ['iowan', 'georgia', 'charter', 'baskerville', 'didone', 'slab'].includes(preset.head) ? 400 : 600;
-  const hw = Math.min(900, Math.max(floor, weightHead + preset.hw)), t = preset.track, lh = preset.lh;
+  const serifHead = STACKS[preset.head].includes('AppleMyungjo'), floor = serifHead ? 400 : 600;
+  const ceil = typeRev(b) === 2 && serifHead ? HANGUL.serifHangulWeightMax : 900;
+  const hw = Math.min(ceil, Math.max(floor, weightHead + preset.hw)), t = preset.track, lh = preset.lh;
   const decls = [
     `--kit-heading:${STACKS[preset.head]}`, `--kit-font:${STACKS[preset.text]}`, `--kit-mono:${STACKS.mono}`,
     `--kit-hw:${hw}`, `--kit-line:${lh.body}`,
@@ -4899,6 +4938,18 @@ function typeVars(b, weightHead) {
     `--kit-case-label:${preset.label_case === 'upper' ? 'uppercase' : 'none'}`, `--kit-nums:${preset.nums === 'tabular' ? 'tabular-nums' : 'normal'}`,
   ];
   return decls;
+}
+
+// ---------- revision 2: tracking literals in component CSS ----------
+/** Numerals, prices, logos and drawn text are Latin-metric on purpose; their tight tracking is not Hangul tracking. */
+const NUMERIC_RULE = /\.kit-(price|metric|hero-facts|profile-stats|empty-code|card-price|summary-line|logos|art|stars|score)|\[data-t=/;
+/** Revision 2 only. Component rules that carried their own letter-spacing literal (page header h1, CTA h2, quotes, masthead…) bypassed the preset;
+ *  clamp those literals to the same Hangul bounds so the preset is the only place a title's tracking is decided. */
+function refineTracking(css) {
+  return css.replace(/([^{}]+)\{([^{}]*)\}/g, (all, selector, body) => {
+    if (NUMERIC_RULE.test(selector)) return all;
+    return selector + '{' + body.replace(/letter-spacing:(-?\d*\.?\d+)em/g, (m, v) => `letter-spacing:${Math.min(HANGUL.labelMax, Math.max(HANGUL.track.display, +v))}em`.replace(/(-?)0\./, '$1.')) + '}';
+  });
 }
 
 // ---------- CSS lint ----------
@@ -4933,10 +4984,11 @@ function lintType(css) {
 // ---------- docs ----------
 const scaleNames = {tight: '촘촘한 제목', balanced: '균형', dramatic: '극적인 제목'};
 function typographyMarkdown() {
-  const sample = id => ['tight', 'balanced', 'dramatic'].map(s => { const z = roleSizes({typography: id, scale: s}); return [z.sub.max, z.heading.max, z.title.max, z.display.max].map(x => Math.round(x)).join('/'); });
-  const presetRows = TYPE_IDS.map(id => { const p = TYPE[id]; return `| \`${id}\` | ${p.label} | ${p.concept} | ${p.head} / ${p.text} | ${p.body} | ${p.ratio} | ${p.hw >= 0 ? '+' : ''}${p.hw} | ${p.track.display} | ${p.lh.display} / ${p.lh.body} | ${sample(id)[1]} |`; }).join('\n');
+  // the docs describe the current revision, so samples resolve as a 2.3.0 blueprint
+  const sample = id => ['tight', 'balanced', 'dramatic'].map(s => { const z = roleSizes({typography: id, scale: s, catalogVersion: '2.3.0'}); return [z.sub.max, z.heading.max, z.title.max, z.display.max].map(x => Math.round(x)).join('/'); });
+  const presetRows = TYPE_IDS.map(id => { const p = TYPE_R2[id]; return `| \`${id}\` | ${p.label} | ${p.concept} | ${p.head} / ${p.text} | ${p.body} | ${p.ratio} | ${p.hw >= 0 ? '+' : ''}${p.hw} | ${p.track.display} | ${p.lh.display} / ${p.lh.body} | ${sample(id)[1]} |`; }).join('\n');
   const roleRows = Object.entries(ROLES).map(([name, r]) => `| \`--kit-t-${name}\` | ${r.use} | ${r.slots.includes('*') ? '어디서나' : r.slots.map(s => '`' + s + '`').join(', ')} |`).join('\n');
-  const stackRows = Object.entries(STACKS).map(([id, s]) => `| \`${id}\` | ${s.split(',').slice(0, 5).join(', ').replace(/"/g, '')} … |`).join('\n');
+  const stackRows = Object.entries(STACKS).map(([id, s]) => `| \`${id}\` | ${s.split(',').slice(0, 5).join(', ').replace(/"/g, '')} …${HANGUL.stackSwap[id] ? ` (리비전 2는 \`${HANGUL.stackSwap[id]}\`로 대체)` : ''} |`).join('\n');
   return `# 타이포그래피 시스템
 
 > 이 문서는 \`src/typography.mjs\`에서 생성됩니다(\`npm run docs\`). 손으로 고치지 않습니다.
@@ -4955,11 +5007,22 @@ ${presetRows}
 
 ### 규칙
 
-1. **한글 자간.** 한글은 같은 크기의 라틴보다 획이 많아 −0.035em 이하로 조이면 뭉친다. 큰 제목도 −0.05em을 넘기지 않는다(\`swiss\`·\`grotesk\`·\`poster\`만 −0.04em 아래).
-2. **행간은 역할이 정한다.** 큰 제목일수록 좁게(0.98~1.2), 본문은 1.55~1.85. 문학·책 계열은 1.8 이상.
+1. **한글 자간.** 굵은 Apple SD Gothic Neo 음절은 −0.02em에서 이웃 음절과 닿는 쌍이 2%, −0.035em에서 18%, −0.05em에서 27%다(실측 \`docs/evidence/typography-refine/tracking-gap.json\`). 그래서 카탈로그 2.3.0은 큰 제목(display·title)을 −0.02em, 섹션 머리말을 −0.015em, 카드 제목을 −0.01em 아래로 조이지 않는다. 컴포넌트 CSS가 자기 자간 값을 갖고 있던 곳(페이지 머리말 h1, CTA, 인용, 신문 제호 등)도 같은 하한으로 맞춘다. 숫자·가격·로고는 라틴 기준이라 대상이 아니다.
+2. **행간은 역할이 정하고 하한이 있다.** 한글 음절의 잉크 높이는 약 0.91em이라 행간 1.1에서는 줄 사이 흰 띠가 0.19em뿐이다. 2.3.0의 하한은 display 1.2, title 1.25, heading 1.3, 카드 제목 1.35이고 본문은 1.55~1.8이다. KRDS는 모든 텍스트에 150% 이상을 요구하고 Fluent·Carbon 제목은 1.19~1.35다.
 3. **굵기.** 제목 굵기는 \`weight\` 축(600·700·800)에 프리셋 이동(−300~+200)을 더해 400~900으로 자른다. 가는 제목(\`luxe\`·\`literary\`)은 400까지 내려간다.
 4. **숫자.** \`swiss\`·\`newsroom\`·\`tech\`·\`terminal\`은 지표·표의 숫자를 고정폭(\`tabular-nums\`)으로 맞춘다.
-5. **눈썹글·라벨.** 대문자 변환(\`--kit-case-label\`)은 프리셋이 정한다.
+5. **눈썹글·라벨.** 대문자 변환(\`--kit-case-label\`)은 프리셋이 정한다. 한글에는 대문자가 없어 넓은 자간만 남으므로 2.3.0은 라벨 자간을 0.06em까지만 허용한다.
+6. **한글·라틴 짝.** 스택의 첫 라틴 서체는 숫자가 라이닝이어야 하고 한글 글자 높이/라틴 x-height가 1.95 이하여야 한다(실측 \`before/stacks.json\`). Georgia는 숫자 높이가 대문자의 0.75(숫자 사이 편차 0.19em)라 한글과 섞이면 숫자가 가라앉아서 신문 스택은 Times New Roman으로, 비율 2.08인 Baskerville은 Palatino(1.76)로 바꿨다. 한글 명조(AppleMyungjo·Batang)는 굵기가 하나뿐이라 서체 굵기 700을 넘기면 라틴만 더 굵어지므로 세리프 제목은 700까지만 올린다.
+7. **크기 상한.** 2.3.0은 비율을 1.414 이하로, display 80px·title 64px·섹션 머리말 40px·앱 제목 36px로 제한한다. 한글 블록은 em을 거의 채우기 때문에 같은 px의 라틴보다 커 보인다(KRDS display 최대 60px, Fluent 68px).
+
+## 리비전과 호환
+
+| 카탈로그 | 타이포그래피 리비전 | 설명 |
+|---|---|---|
+| 2.1.0 · 2.2.0 | 1 | 이전 표 그대로. 출력은 바이트 단위로 고정(\`docs/evidence/context/legacy-hashes.json\`, \`docs/evidence/typography-refine/legacy-2-2-hashes.json\`) |
+| 2.3.0 | 2 | 위 표와 규칙. \`manifest.design.typography\`에 리비전과 한계값이 남는다 |
+
+\`kit migrate\`는 catalogVersion만 2.3.0으로 바꾸고 tree와 축은 그대로 둔다. 같은 입력의 출력은 서체 변수(자간·행간·크기 상한·굵기 상한·서체 스택)와 이들이 바꾸는 간격 예산만 달라진다. 프리셋 표 위의 값은 리비전 2다. 리비전 1 값은 \`TYPE\`에 그대로 있다.
 
 ## 크기 역할(\`--kit-t-*\`)
 
@@ -5001,6 +5064,7 @@ ${stackRows}
 | 지점 | 무엇을 막나 | 파일 |
 |---|---|---|
 | 프리셋 표 | 서체 스택이 한글 대체 서체 없이 끝나는 것, 비율·자간 범위를 벗어난 값 | \`tests/typography.test.mjs\` |
+| 한글 기준 계약 | 자간 하한, 제목 행간 하한, 크기 상한, 라틴 짝(라이닝 숫자·x-height 비율), 세리프 굵기 상한, 2.1·2.2 출력 고정 | \`tests/typography-refine.test.mjs\` |
 | 역할 불변식 | sub < heading < title < display 순서가 어떤 프리셋·스케일에서도 뒤집힘 | \`tests/typography.test.mjs\` |
 | CSS 린트 | 역할이 아닌 크기, 자리 밖의 큰 역할, \`font\` 약식 | \`lintType\`, \`tests/typography.test.mjs\` |
 | 렌더 실측 | 실제 화면에서 위계가 뒤집히거나 큰 글자가 좁은 칸에 접히는 곳 | \`layout-probe.mjs\` \`HIER_INVERT\`·\`BIG_NARROW\` |
@@ -5010,11 +5074,17 @@ ${stackRows}
 exports.STACKS = STACKS;
 exports.TYPE = TYPE;
 exports.TYPE_IDS = TYPE_IDS;
+exports.LEGACY_TYPE_VERSIONS = LEGACY_TYPE_VERSIONS;
+exports.typeRev = typeRev;
+exports.HANGUL = HANGUL;
+exports.TYPE_R2 = TYPE_R2;
+exports.typeSpec = typeSpec;
 exports.RATIO_SHIFT = RATIO_SHIFT;
 exports.ROLES = ROLES;
 exports.roleSizes = roleSizes;
 exports.roleVar = roleVar;
 exports.typeVars = typeVars;
+exports.refineTracking = refineTracking;
 exports.lintType = lintType;
 exports.typographyMarkdown = typographyMarkdown;
 };

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "garden",
   "palette": "serene-nature-tones",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "초록방",
     "theme": "garden",
     "palette": "serene-nature-tones",
@@ -1462,15 +1462,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "853960cc1c4e761a0c0166816cd47904de2ac6e476842041e61d24b09359ec62",
-      "tokens.css": "a32d14743bf2575199046f2474d7fc2fd25c8fb29b2478c81910c3aa93505085",
+      "index.html": "ce5a1eeec7b1ea052a24356dea01135ec1a96d7a6683ce1cbce7381e41fa5fbd",
+      "tokens.css": "9503f32145fcceb754ba7209fc73fcbc41dfb3b24202fddfe12c7e5fdd8512ca",
       "tokens.json": "4bbf3a65905108d755652a9199f1290ea2339e4b4b8fab92ce9947abea0c0646",
-      "blueprint.json": "35e84fd85156fe68875ae7c8760998927624fd5da73ada69a4153096c40ef2d9"
+      "blueprint.json": "c44a80915dd62b0907d6b1a9481d297bd341ffe5724f720791056b2cc4c7dd9f"
     }
   }
 }

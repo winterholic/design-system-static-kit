@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "enterprise",
   "palette": "cotton-candy-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "모두웍스",
     "theme": "enterprise",
     "palette": "cotton-candy-skies",
@@ -1652,15 +1652,49 @@
         ],
         "reason": "Trust marks wrap with their quiet existing type role."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "3ea6206a50b9198e964da0310ff15536ef4f9aa673108ba16b434b76511eb425",
-      "tokens.css": "60ebcd56b089a17639d0a52b8b8fd73da9d1e6302dffa50de368fc3dc303d0c8",
+      "index.html": "7dbba54f244c45bf41e5cc83d45b7e6d90b3da9fa610d38d88e2b18174fdf47c",
+      "tokens.css": "69e51637770868fea297cdc5703391ac7a533cb25e132fd81dbd7843a0333a7a",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
-      "blueprint.json": "1825732a3989727d917b7836d32f3ed34f8af320338407211a6ce827ddcd6fde"
+      "blueprint.json": "2d2f68077efead0fca4fa22d747bb3f81059cc8f234d99168d8857203d9e46de"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "manual",
   "palette": "moonlit-mist",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "매뉴얼",
     "theme": "manual",
     "palette": "moonlit-mist",
@@ -1816,15 +1816,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "487d539258e6d8be056749435bfcd98d496e9b30d3c054d252dd5f089a13a6e7",
-      "tokens.css": "16d155677ce2dd76dcbc0116a398e9cafe5c56b450202e68a0f66424b533afa3",
+      "index.html": "bffad43cea49dabe06b238d654d1b75b9ee97e86be64caf0c3eef12d0d9541ad",
+      "tokens.css": "2f6b6353a29b9d96224932e468cb2627f6dc650e2bd632f53c6202325153fd4f",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
-      "blueprint.json": "c1905add1c5ccc539b420c195f9f444d2acd151ea8fb902030914ee8641ca7a0"
+      "blueprint.json": "f631d2819cbcffbedd009149edb8d7fa870c8cad7bd1deb231be87f9d741983b"
     }
   }
 }

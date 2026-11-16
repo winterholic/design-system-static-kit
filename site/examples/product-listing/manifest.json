@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "commerce",
   "palette": "sweet-summer-melody",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "무드램프",
     "theme": "commerce",
     "palette": "sweet-summer-melody",
@@ -1590,15 +1590,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "101d77a8309874568514779e44be13dd8583806cd240709a76765c2edfb1effd",
-      "tokens.css": "c40a74f3359d85f6a0ac7f429f23fd805c1e796344f6157f6430f40c9520ff91",
+      "index.html": "040229ab41c7524eef3eda9f920459e8726a809f75c38f14d4aea1184cf57793",
+      "tokens.css": "df99a700fb1dd4eeaf2961a2bd185508ce24fb72447b1e14b253f24593d4da89",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
-      "blueprint.json": "38194732be41f31bf2d3372a27005f282a38f74a2b21fc6a20e85090fc1f45cb"
+      "blueprint.json": "17abf54b8525605ff279c40dff6de325935ef1589fc17f1a1e61e75cb976c341"
     }
   }
 }

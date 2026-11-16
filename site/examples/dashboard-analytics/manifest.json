@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "insight",
   "palette": "deep-blue-sea",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "인사이트",
     "theme": "insight",
     "palette": "deep-blue-sea",
@@ -1649,15 +1649,49 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "3010b99ebeade5c1d0a9cbf16b087fffcdb8f9f8df76a13b8e50d6a6f986c6a2",
-      "tokens.css": "8ebb9124f3fbadbd7cb6a475d4de25b3a27deca1e2ea6288fb46fe345d36233a",
+      "index.html": "59e2e706b38db68d48ffedea34cc29735d973ad5fb984a42a50c72541f5bb483",
+      "tokens.css": "ab8bbf1d9a12538e4e6b0c037814825723c638f86376b43f94cef1716c5cb002",
       "tokens.json": "05c33f97ad6e6e28f46a580af587b62643f6ac98133d3bc657285cb74ffe49d8",
-      "blueprint.json": "bd335a73f96662c45765c02e86294ff30a5edf178d6f1634e477f5e091e95c67"
+      "blueprint.json": "19e601a66c948bbc9ff96d8a511060f57992944ebdc2af781688889dea94a4df"
     }
   }
 }

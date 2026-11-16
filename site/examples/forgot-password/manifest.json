@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "civic",
   "palette": "deep-blue-sea-2",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "시빅",
     "theme": "civic",
     "palette": "deep-blue-sea-2",
@@ -1100,15 +1100,49 @@
         ],
         "reason": "Actions wrap using the existing control size and group gap."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "7050279ca9ed08d7dbd032c8bad081e45c844c13b2ae63ca9562cc7f7e206c7e",
-      "tokens.css": "93d9dd8d54335d27fe37f543f04af9d4c35e619790a6ffb0b6ee6ac726fb757e",
+      "index.html": "02a51735d25f8e9f7ae12850f36ce84cd3392181f619d5d24f987e1bbd7a9311",
+      "tokens.css": "e8f3a89a6ce7d46054e83921fb86e7bacdf33da64b95ae7205b427726c349162",
       "tokens.json": "db8277708e243846ca5df5d98c4ed042609baa231b4ef885d8c91e4764dbf08d",
-      "blueprint.json": "dade6ed1bb49e157fc857f10e8e18927fad47bf4cf43f4e11128c25e9f38d319"
+      "blueprint.json": "03672d9e2758ec551ee9f17ba321ddc265800c815c63417fa83de62af409aab5"
     }
   }
 }

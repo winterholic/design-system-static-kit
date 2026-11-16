@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "dining",
   "palette": "cherry-forest-oasis",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "소담 식당",
     "theme": "dining",
     "palette": "cherry-forest-oasis",
@@ -1273,15 +1273,49 @@
       "navigation": "separate-row",
       "wideContainer": 720,
       "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
     }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "663c6c0e14828e35ad2c8f957c9cfa63c96a94542e87800c606dbc492a75907d",
-      "tokens.css": "bd7bf0b0230f084ff4a6d6c2fab773b50aea1e24a3e06345b6dd5e9b98249952",
+      "index.html": "169d896c0c358c7aac6dc313dca51820f6bc59a3e3e71f7d2415244ab7373d58",
+      "tokens.css": "7d955767612670b587b3e4102724b628fd624989d8bb404fddd8d05f811db8e4",
       "tokens.json": "72197eac694ff406e1f6106ea13d546ef5685b9d9b2cb7fee55ba37d01bbe935",
-      "blueprint.json": "dd89aeb15f1c409dc9255e6dcc71d6892974d9b268b32836ea14da040a728949"
+      "blueprint.json": "3d7fa99584134c5d7940692a29aa5bbd44af8ca9862d5f2a518fc6592eac5fb0"
     }
   }
 }

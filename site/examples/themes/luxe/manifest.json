@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "luxe",
   "palette": "gold",
   "mode": "dark",
@@ -1749,7 +1749,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "메종 아르카",
     "theme": "luxe",
     "palette": "gold",
@@ -2014,7 +2014,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 400
+          "minCell": 360
         }
       },
       {
@@ -2280,15 +2280,49 @@
       "navigation": "separate-row",
       "wideContainer": 720,
       "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
     }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f26260c247ea0f4dcaa0e1b402a725f36bb6247420010e3bc36c9f7390215132",
-      "tokens.css": "0b8a208d5887afbbd89e745ac0ff96a245baf618c6c196c4345984dac5fba80f",
+      "index.html": "08d75d99aac3896b35b4ea0679a1f9b7c3c0c5f36269032b9470f67607e9b47c",
+      "tokens.css": "680298cb92f091b989fb9f19908205a67315f23f79452b80b9993337969f475c",
       "tokens.json": "e462875202731f2111560d484bfdcc1ea6abe01179caee5b944270d4bef1b8df",
-      "blueprint.json": "af51f4347475cba03490acccf737809f25b41420774b9d0760e087bd02976f02"
+      "blueprint.json": "04d806008d8ec1c99ca75ad4af1b55c271729ecc8a2c4df72176332cf29accaa"
     }
   }
 }

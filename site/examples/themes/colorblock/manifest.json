@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "colorblock",
   "palette": "contrast-pop",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "도시 텃밭 위크",
     "theme": "colorblock",
     "palette": "contrast-pop",
@@ -1185,7 +1185,7 @@
           "C15"
         ],
         "container": {
-          "minCell": 360
+          "minCell": 320
         }
       },
       {
@@ -1575,15 +1575,49 @@
         ],
         "reason": "The value remains adjacent to its label with progress semantics."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "71a969b4ff2cd206d72700432b62d16354bcfe83006f7530887f96e2e58a215f",
-      "tokens.css": "0ef9e806c6c45db3687db51cd6aba17760904451e20ce9787330dbe3865e8d20",
+      "index.html": "16c7523ef061ce535d468e46681ee3a2e7033bf0407a83d7ce0eff47c57b772f",
+      "tokens.css": "1fa83bec30999239ed0ebce5e7af761f4ffd89081bfb75dc72c66f5b9696969f",
       "tokens.json": "e48aa02ee776987eaeef09a8a625884c1dc743c2ea35f5a4f7fd735ed00acf29",
-      "blueprint.json": "0c41707fdcac332eb28b9e65f58ccf2feff69f42c98481d6bcd0b4ef82fd34f9"
+      "blueprint.json": "3154107d8f3a003078998541a4cc2ebc5a41be7f07d516c66604701745a6b686"
     }
   }
 }

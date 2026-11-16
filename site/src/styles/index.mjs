@@ -1,4 +1,5 @@
 import {axisVars, coreCSS, tailCSS} from './base.mjs';
+import {typeRev, refineTracking} from '../typography.mjs';
 import {shellCSS} from './shells.mjs';
 import {chunks} from './chunks.mjs';
 import {polish, polishCore} from './polish.mjs';
@@ -45,5 +46,6 @@ export function stylesheet(b, sets, body = '', design = null) {
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
-  return parts.join('\n') + '\n';
+  const css = parts.join('\n') + '\n';
+  return typeRev(b) === 2 ? refineTracking(css) : css;
 }

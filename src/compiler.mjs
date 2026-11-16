@@ -4,6 +4,7 @@ import {resolveTokens, resolveAll, contrast, serializableContrast} from './token
 import {stylesheet} from './styles.mjs';
 import {renderTree, escapeHTML, formRuntime} from './render.mjs';
 import {planComposition} from './composition.mjs';
+import {typeRev, HANGUL} from './typography.mjs';
 export {validateBlueprint, resolveTokens, contrast};
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -40,5 +41,7 @@ export function compile(input) {
   };
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
+  // Typography revision 2 (catalog 2.3.0): recorded so a consumer can tell which Hangul limits shaped the page. Absent for 2.1/2.2 inputs, whose output is pinned.
+  if (design && typeRev(b) === 2) manifest.design.typography = {revision: 2, limits: HANGUL};
   return {html, css, tokens, manifest};
 }

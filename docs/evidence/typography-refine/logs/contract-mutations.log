@@ -1,0 +1,65 @@
+== M1 legacy leak: 2.2.0 resolves to revision 2
+✖ catalog 2.3.0 is the current version; 2.2.0 and 2.1.0 inputs keep their previous typography byte for byte (3.608167ms)
+✖ the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variabl
+✖ revision resolution: only 2.1.0, 2.2.0 and version-less callers get the original table; 2.3.0 gets the refined table o
+✖ the manifest names the typography revision for 2.3.0 pages and omits it for pinned versions (2.421667ms)
+ℹ fail 4
+✖ failing tests:
+✖ catalog 2.3.0 is the current version; 2.2.0 and 2.1.0 inputs keep their previous typography byte for byte (3.608167ms)
+✖ the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variabl
+✖ revision resolution: only 2.1.0, 2.2.0 and version-less callers get the original table; 2.3.0 gets the refined table o
+✖ the manifest names the typography revision for 2.3.0 pages and omits it for pinned versions (2.421667ms)
+== M2 display tracking floor back to -0.035
+ℹ fail 0
+== M3 stack swap removed
+✖ face pairing: the first Latin face of every stack in use has lining digits and a Hangul/x-height ratio within 1.95 (me
+✖ revision resolution: only 2.1.0, 2.2.0 and version-less callers get the original table; 2.3.0 gets the refined table o
+ℹ fail 2
+✖ failing tests:
+✖ face pairing: the first Latin face of every stack in use has lining digits and a Hangul/x-height ratio within 1.95 (me
+✖ revision resolution: only 2.1.0, 2.2.0 and version-less callers get the original table; 2.3.0 gets the refined table o
+== M4 title leading floor 1.0
+✖ heading leading floors: a two-line Hangul title keeps a visible band (display ≥ 1.2, title ≥ 1.25, heading ≥ 1.3, card
+ℹ fail 1
+✖ failing tests:
+✖ heading leading floors: a two-line Hangul title keeps a visible band (display ≥ 1.2, title ≥ 1.25, heading ≥ 1.3, card
+== M5 tracking literal clamp off
+✖ component rules that carried their own tracking literal are clamped in 2.3.0 and untouched for numerals (2.774291ms)
+ℹ fail 1
+✖ failing tests:
+✖ component rules that carried their own tracking literal are clamped in 2.3.0 and untouched for numerals (2.774291ms)
+== restored
+ℹ fail 0
+ M src/catalog/index.mjs
+ M src/compiler.mjs
+ M src/styles/index.mjs
+ M src/typography.mjs
+ M tests/catalog.test.mjs
+ M tests/composition.test.mjs
+?? docs/evidence/typography-refine/
+?? tests/typography-refine.test.mjs
+== M2 (redo, HANGUL.track display/title back to -0.035)
+✖ Hangul title tracking: syllables must not touch (display/title ≥ -0.02em, heading ≥ -0.015em, card title ≥ -0.01em) (6
+✖ the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variabl
+✖ component rules that carried their own tracking literal are clamped in 2.3.0 and untouched for numerals (2.688084ms)
+ℹ fail 3
+== restored
+ℹ pass 12
+ℹ fail 0
+== M6 caps back to 96/72/44 and serif weight ceiling 900
+✖ size ceilings: a Hangul syllable fills about 0.91em, so display ≤ 80px, title ≤ 64px, heading ≤ 40px under e
+✖ single-weight Hangul serif cannot be bolder than its synthetic bold: serif-Hangul heading weight stays ≤ 700
+ℹ fail 2
+✖ failing tests:
+✖ size ceilings: a Hangul syllable fills about 0.91em, so display ≤ 80px, title ≤ 64px, heading ≤ 40px under e
+== restored
+ℹ pass 12
+ℹ fail 0
+== M7 serif floor list (the regression found in the first after-measurement)
+✖ swapping a serif stack never raises the heading weight floor: refined weight equals the original, only capped at 700 for single-weight Han
+ℹ fail 1
+✖ failing tests:
+✖ swapping a serif stack never raises the heading weight floor: refined weight equals the original, only capped at 700 for single-weight Han
+== restored
+ℹ pass 13
+ℹ fail 0

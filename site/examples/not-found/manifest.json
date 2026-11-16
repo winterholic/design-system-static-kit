@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "playful",
   "palette": "bright-contrasts",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "플레이",
     "theme": "playful",
     "palette": "bright-contrasts",
@@ -1063,15 +1063,49 @@
         ],
         "reason": "Actions wrap using the existing control size and group gap."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a23c09202440ba099d2239fe6f98b2010c2ae34a73742b5eba86955859446ada",
-      "tokens.css": "e1b9c73e61ca5359e7b492e0083fc6ffd03dbf6ce1f68907f15521c037bbf15a",
+      "index.html": "0319932327bcc0c90d300f439091d39dc63ef078a88e368feca4537a0ead125d",
+      "tokens.css": "9508616f7da04184c129f9c9e358d121876a6171fd5de9be6f18f5d483ef4f87",
       "tokens.json": "312620e226b4ccdf81a1834b6f5945fdcdbeffb2cb0bcdfa234bb3a58592d249",
-      "blueprint.json": "8f78995c5be8c8e872ab162385385b62aac9761cd48c8032b069d05edc9fc8fe"
+      "blueprint.json": "ac2de6c5a310ffa996d67ab658de6e52e3475f3a956afd7c3ae2a87137d9f55d"
     }
   }
 }

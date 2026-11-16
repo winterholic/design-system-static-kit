@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "pocket",
   "palette": "earthy-green-tones",
   "mode": "light",
@@ -910,7 +910,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "모아",
     "theme": "pocket",
     "palette": "earthy-green-tones",
@@ -1064,15 +1064,49 @@
         ],
         "reason": "Actions wrap using the existing control size and group gap."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "caa226c77fcbdb535e0bf149913f22dab7d2ff63c71ff9668fb492d1c3cc5a2a",
-      "tokens.css": "e55369281852f94454b58addd5bc0ad19650b260e41995221e0ad6eda9e7b518",
+      "index.html": "0058835dd00112876e265a17167c9be1bf5642d0ff5eecf4a428f06b8464710f",
+      "tokens.css": "37c00f4228af7da1c423aabcdd94fbb2e435f82f4573fa743ca156443442aa2e",
       "tokens.json": "782b098d2be84e4eb09e2f8ba4a88feac5fcd1277ba3d65e7b63952ec3bbc002",
-      "blueprint.json": "70c71bd03b59495f593491fb5fd3758e89f0bf63d48079bcabb30bfc1e5bdb12"
+      "blueprint.json": "50ef5c75a189c39572b2d2c7d51fc5bb30093ab69959ac2e0ded41adfca069be"
     }
   }
 }

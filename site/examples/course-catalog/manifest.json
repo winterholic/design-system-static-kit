@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "learning",
   "palette": "coral-reef",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "오늘 배움",
     "theme": "learning",
     "palette": "coral-reef",
@@ -1451,15 +1451,49 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "122f89546bf8f2224ac94a0da3877474f5cc9c6b209ef784a814bebd75d2f3e9",
-      "tokens.css": "9f003ef78c6d6d99e0b71d514dabde9ee83ec44ea90161b476e0182af4bc5491",
+      "index.html": "981780b3e792d22749c41508164223b086794558c72c98db626d29f21709b191",
+      "tokens.css": "db837394691140bd493bce56f7ab345b29db14921a9dea17c92258c37544b79e",
       "tokens.json": "a4a082b5de2bcb73fa202e6c97343ffa749178e345d1c1fc717442a932c32ac0",
-      "blueprint.json": "17cd0a2c283ca972ff43c356b059d1978c66ef5d6373de2629f6a6689048ebe4"
+      "blueprint.json": "fde2096f6c96f2aa7879e6b3d5e86a8589f5b02ab0b225d4bbbd5f8be2c536d7"
     }
   }
 }

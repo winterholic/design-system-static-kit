@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "clarity",
   "palette": "ocean-breeze",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "모아",
     "theme": "clarity",
     "palette": "ocean-breeze",
@@ -1107,15 +1107,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "88299adf2de2db87145f71c68472f34ab852e39efc57af9d5d65afc93b6ea365",
-      "tokens.css": "67b6d3b16a8a36585ebdd9779db6ef07b8abeb4f86c5615e506e128d32d33941",
+      "index.html": "2e8f6f8081dfd4042168eff5367502d70199dd4992e7eecf16b89123dafca6fe",
+      "tokens.css": "8249b020673dc3d1ceefa315c3240b8e56d6bc84939b2c2353d27f898b296751",
       "tokens.json": "6a2aa0b8b567c959c5e28af739dd838cf3e1c260d78e70f244fece91780ee646",
-      "blueprint.json": "bbcb462a27cd56a7dc93f8f2fd0cd272c5c7da301da4875e44bbdc4ea222ae05"
+      "blueprint.json": "5e8213695ae6b6326e20dd94c80b8125acd19b010073b3ab0c0685a8b34560bf"
     }
   }
 }

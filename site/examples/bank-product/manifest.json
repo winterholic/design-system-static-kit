@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "bank",
   "palette": "pearl",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "새봄은행",
     "theme": "bank",
     "palette": "pearl",
@@ -1563,15 +1563,49 @@
         ],
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "50e30a782b0a447ea0918dc1a1b579b38cf8e8a222d16c7ed960803f10ecf3d0",
-      "tokens.css": "6ed1232856d6509f67b75c485fc04e088c928eb2df239cce6ea7fff3633004d6",
+      "index.html": "f0f8f0bcfdd99742b9f3145883b528fe21a425741f2edf5e2b3b8cb1b60ac537",
+      "tokens.css": "99c2588fc2c62e0e63798169f0b8e3729c2351ec009e094bf47f067a20c9ad83",
       "tokens.json": "1ffaf578832def0a27b0ef497d9ce3835731c094f054a5b15fc4bce7fd7f38d6",
-      "blueprint.json": "0b2a369f3955b6ea0cbaf2c616b5eaf9075f2bdbec5f9a5c8c75435a7b986317"
+      "blueprint.json": "fb4e6913d01f991a7e08347520ae7a54c3a3433b155a180ff02fd1c5aa307cc3"
     }
   }
 }

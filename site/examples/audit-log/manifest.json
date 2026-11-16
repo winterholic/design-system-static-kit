@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "console",
   "palette": "midnight-ocean-depths",
   "mode": "dark",
@@ -911,7 +911,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "콘솔",
     "theme": "console",
     "palette": "midnight-ocean-depths",
@@ -1328,15 +1328,49 @@
         ],
         "reason": "Code preserves whitespace in an intentional scroll region."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a52eac6b831514109e3b5851d6785a6abac05956308a32e447a9b6699c7a0f87",
-      "tokens.css": "6346fc8a72f737636e17a5f2f6f08bc6f943ad9973287471e49d30709a878ab8",
+      "index.html": "7efc64dce63df0c873f71722fd68ef00cf0553cf7dc25b716ddb259df19b4b92",
+      "tokens.css": "b94026c8dc2b44a30cea566ee4f7f2a3a5aab303cf12ae54e63bf18b7c9be911",
       "tokens.json": "d99c1d0c9de4c2609111bc34ef8bd7cbaf2553ba942f264d8d7b4e23d6af2916",
-      "blueprint.json": "a45811b4094ddf83711bec24104725f8458ba0eb7b7c3737da71b2fc286b7a27"
+      "blueprint.json": "9ad811cd638c007d33b103daf2a5b026fb14fe06e1becc502c39f952d9116a6d"
     }
   }
 }

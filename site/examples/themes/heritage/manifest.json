@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "heritage",
   "palette": "golden-harvest-glow",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "한빛 박물관",
     "theme": "heritage",
     "palette": "golden-harvest-glow",
@@ -1417,15 +1417,49 @@
       "navigation": "separate-row",
       "wideContainer": 720,
       "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
     }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "5ab2d65b6c0419d1bcddaf036ec667683ecff1d85143bcb74c3991d9bd6bcb46",
-      "tokens.css": "4eb37ac4abcaad8c6ff17500301eff548641582cd03038fc1bc2cd1e32dc4c86",
+      "index.html": "d5728dc0d291c68159ffec03f15cd69b17a7cc5cd7116514575d73d2e4758454",
+      "tokens.css": "4c5666cea029e6fc92f96cfde2a7a39cdc5b18f220a2b1a2cf91866f530215bb",
       "tokens.json": "e3ade6e4a4f5b65bead91c720245e371a43cb6d5a8d4a77c1a6929bf14c02d06",
-      "blueprint.json": "e699c0ab3337c0f8358ef8218a2a9ee6135717300641a6ba341ac46166a9122b"
+      "blueprint.json": "a893045e2b4a7c112c39bb6709fd83bf59e72d048cb7b9710b4b94ae7b910a86"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "newsroom",
   "palette": "summer-ocean-breeze",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "한결일보",
     "theme": "newsroom",
     "palette": "summer-ocean-breeze",
@@ -1573,15 +1573,49 @@
       "navigation": "separate-row",
       "wideContainer": 720,
       "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
     }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "77704cbe5afda2433a67e34a85db1a67f1acb614fc088eb27b74d57980455e28",
-      "tokens.css": "c60a8c26ac00219a2a8d6467a20cc7e958dd055e82332e02263eb0958c127053",
+      "index.html": "c3effaa096c2f7c2a04521e925a98185d5b1fdebdf9db97f05ccbb1faf93e6fc",
+      "tokens.css": "3420d08973146b39645d2afe12c6c933020e1f27be856588448d26a00b97fb7a",
       "tokens.json": "27f6717fee0f31cbe8b1eae212c57e00092f12dfc62d56c5076add648e96bff6",
-      "blueprint.json": "6daec36133ded6586f19027eb97621ef68b18364bf3eb5602cdb32361d600b3f"
+      "blueprint.json": "273e07e02de8bc55fc6d33ecb5fca268c11917ac9de2a2f3107a098e0bf0b263"
     }
   }
 }

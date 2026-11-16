@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "academic",
   "palette": "deep-sea-2",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "도시 열섬 연구",
     "theme": "academic",
     "palette": "deep-sea-2",
@@ -1443,15 +1443,49 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "07db414d2ebad99a0448bb0a2ae031aec0eeb72d9bb1b4311c559c2ca6e28a8e",
-      "tokens.css": "5c3dd76c21102ec7df18cfac74b9300151e4de0a68c0dfbccbabf70added7700",
+      "index.html": "a69aaa7830b22fe3d731c29623b30c85ee93e0395e354abdeb8f66459d83b1dd",
+      "tokens.css": "ab6fe733b935103d588aff0a55e70d08dc32d8b7787a8ff8d38f108d477b7256",
       "tokens.json": "586bccc4203bfcfc8373c3896488323e6e6a0ec802aa3c1f839ee2ac200616e0",
-      "blueprint.json": "9a4da2fafa28f48551cd261e99ced91d88c92471135faa475b06885f746622dc"
+      "blueprint.json": "447a65133803669670a710beccce063c0a3bf8f20c829e1bfed99f4d758eb294"
     }
   }
 }

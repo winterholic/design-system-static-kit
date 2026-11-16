@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "kids",
   "palette": "bright-bold-colors",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "꼬마 작업실",
     "theme": "kids",
     "palette": "bright-bold-colors",
@@ -1721,15 +1721,49 @@
         ],
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "d93c273ec46b340f7ec9fa6c6419f7df48e03878fe7e31ffebd53527d624dd13",
-      "tokens.css": "1400bfa1eceb187a10eb92a59615b386a5140a6bb37c37eb0580a67838dc22ea",
+      "index.html": "f192b74fb27b3d5c98f279bb7468dbc3a1bddceb68ef91d6f1535f4f5751c69d",
+      "tokens.css": "22cfbc7bc75159ae499f8d13ddfdceee282f231ae0c5a4ddffa3fcb0f9a89e1a",
       "tokens.json": "1d611c9cc5a6ff3b72d0062580a19cac972525fd7b7a10381550a101d7a82b6c",
-      "blueprint.json": "5e2f6a1d13b6525821baae720bc70aa481ac9076c7e2328bbbf16262a7ba9ba8"
+      "blueprint.json": "2ab37075cfa7df499e8a42ce565d3f2fd0ec3a6ad9a2533ebf97f8a651c1adc1"
     }
   }
 }

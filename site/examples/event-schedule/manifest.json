@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "atelier",
   "palette": "candy-floss-dreams",
   "mode": "light",
@@ -908,7 +908,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "가을 마켓 데이",
     "theme": "atelier",
     "palette": "candy-floss-dreams",
@@ -1185,15 +1185,49 @@
         ],
         "reason": "Existing intentional overflow preserves readable control and step labels."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "70d6b991a9c432a7712eeb217dcb4065b3834e3638ad038bad4740fca1aa5c6d",
-      "tokens.css": "c3dd214ae609ec01de4e5c0b5a713d1afa2391730b5e05dbe69ff01ea5cba973",
+      "index.html": "6829212f9e301cd96c60f8c03d189cc7a93dd86fe0c4f26855fec71b2bc2c12d",
+      "tokens.css": "a3f71db2d39ede8477b4aba58074fca176117b1a3fbd603c612c1e835eb67381",
       "tokens.json": "2847948b38e5549b5f031d8937d514965172a707b851191f7cc1b73512300005",
-      "blueprint.json": "99307070875889cdee70c5fb51711caf488fde6745e8a5a67408a62edc03cc18"
+      "blueprint.json": "ad62b3b1b4dda16924c366646b8e399f859818720d7dd071cab5bc116d9bdf2a"
     }
   }
 }

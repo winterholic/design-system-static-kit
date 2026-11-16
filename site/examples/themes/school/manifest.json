@@ -1,6 +1,6 @@
 {
   "blueprintVersion": "2.0",
-  "catalogVersion": "2.2.0",
+  "catalogVersion": "2.3.0",
   "theme": "school",
   "palette": "azure-skies",
   "mode": "light",
@@ -909,7 +909,7 @@
   ],
   "blueprint": {
     "version": "2.0",
-    "catalogVersion": "2.2.0",
+    "catalogVersion": "2.3.0",
     "name": "시민 서비스",
     "theme": "school",
     "palette": "azure-skies",
@@ -1184,15 +1184,49 @@
         ],
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
-    ]
+    ],
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "36f505e06904eeb0f2940cdd88002bc4c388237c7fdcdfa659f7fd8f2c26b190",
-      "tokens.css": "0a9177593f629e469ab4ddaa2bafd2685017890e439372bf6fe7f8125d186f4c",
+      "index.html": "0f50f6bd559a507195ba31cfc9b78cbd07e175b853d90e5d761ed546e58c6a8a",
+      "tokens.css": "ad54f2e70cd02d250e358f5902c93db0946c5d996f5e2ceee5d1457e2822c324",
       "tokens.json": "29288f4e5a444ad26098da1f529d54c753d5136317a3408b59b756e381abebcd",
-      "blueprint.json": "7662bc8ed1027f0b065ecde7afffe41242798782b3ccebc12db99aab04eafb4e"
+      "blueprint.json": "4ffae6f1e400ae69a5b67ceddc21f044efbe6cfd534eb3d9c610d26a25946438"
     }
   }
 }
