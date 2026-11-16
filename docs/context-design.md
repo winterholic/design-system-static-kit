@@ -1,5 +1,7 @@
 # 맥락 기반 디자인 규약 — composition 1.1.0
 
+현재 후속 규약: composition 1.2의 `table-content-1`, `chrome-row-1`, `sequence-content-1`과 콘텐츠 정정은 [R14-C](evidence/context-rollout/remediation-c.md)에 있다. 아래 초기 규약과 기존 결정표·토큰·흐름을 재사용하며 자연어 런타임을 추가하지 않는다.
+
 ## 선택과 실행의 경계
 
 카탈로그 2.2.0에서 기본 적용한다. Blueprint 2.0의 필드·노드·축·토큰 권한은 그대로다. 2.1.0 입력은 새 정책을 거치지 않는다. `kit migrate old.json new.json`은 2.1→2.2에서 `catalogVersion`만 바꾸며 콘텐츠와 축을 고치지 않는다. 1.0 입력은 기존 migration을 이용한다. 소비 프로젝트는 버전을 명시적으로 pin한다.

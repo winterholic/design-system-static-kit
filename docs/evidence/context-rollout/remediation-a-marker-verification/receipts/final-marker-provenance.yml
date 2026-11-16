@@ -1,0 +1,21 @@
+case: final-marker-source-and-input-provenance
+stage: final_independent_recheck
+head: 61d2e5e5c51a58aeb6a7f4ecc2fc6a7337bd6864
+source_sha256:
+  src/composition.mjs: cf8194033392c401aa10c22f937d8d47d162dde5dc138023ce9e238e13afd392
+  src/render/chart.mjs: 2088bfc9c2dd73201110e8477d565b4b66ff9ed97dc9eec37aca270813e40903
+  src/render/nodes.mjs: da1686ff21885f4e5922d3db4dce3ed087165b3f57c36fa0807a6ca6a1475f8b
+  tests/composition.test.mjs: 3a425c44afd97c25e59569b82b79abe239df661b78af81be1eeca07e645116cb
+source_hashes_match_current_files: true
+preview_builder_sha256: 934e0c64d861bd70cd1ef6d85afcafd5fd9b5e3f99c6efdeaba7cc3c21c0a6d8
+preview_manifest_sha256: c9990c68bc3ab8477fd1fe0a14c254fbef5f4b6706552b29d49d158e4107cbc9
+blueprint_inputs:
+  dashboard-analytics: 1771bfe896ca57414e0ef067b3d998101fb8d208c0a1a57ce9dd601994994994
+  aside-counterexample: 1f135e7c5436d095d5977000d48d132733cf7072ca33e004185dbfc87470ea5c
+compiled_pages:
+  - http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker-verification/preview/dashboard-analytics.html
+  - http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker-verification/preview/aside-counterexample.html
+state_separation:
+  historical_RED: {circle_bbox: '11.7x9.9', ratio: 1.18, basis: prior CSS-rule-removed preview, current_measurement: false}
+  historical_initial_GREEN: {circle_ratio: 1.00, basis: prior compiled preview, current_measurement: false}
+  current_final: {circle_square_diamond_ratio: 1.00, center_error_max_px: 0, basis: current source freshly compiled and served over HTTP}

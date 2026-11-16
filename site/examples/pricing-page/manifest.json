@@ -1109,7 +1109,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1372,7 +1372,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 88,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 88,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 320,
+          "readableWidth": 320,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       },
       {
         "path": "$.tree.children[3]",
@@ -1439,8 +1485,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "6e3c41715ed65ed6e7d2c1d4fd92b6ae29029f40d1cd5d1d4117e70b587d55ab",
-      "tokens.css": "78e3b7c670d47ac94d39ec17f30000a4d01b9e3fdf9bc61cc1a85d778f9e2f53",
+      "index.html": "688ba35ead4bb7c8b7c09c941b453714e8c3ece26dc8f79a9d7ec19735640573",
+      "tokens.css": "0fac4470f30b1038e1d31a1784bc0ac895f5a386a58f91e7e56c0f640ff8de5a",
       "tokens.json": "99d74e59139f6c8984997210b8477646266a21bac553cce1ec99bff74a33bcfb",
       "blueprint.json": "b715f93ad68fbe1bbf1e5d602e9132ab20e73c6e0781aee646dcc6ad08ef3339"
     }

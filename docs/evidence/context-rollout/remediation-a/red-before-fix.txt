@@ -1,0 +1,44 @@
+✔ new catalogs expose versioned, deterministic composition decisions without mutating the blueprint (7.144292ms)
+✔ all 2.1 templates preserve the original complete compiler output byte for byte (87.850834ms)
+✔ long summary content asks the existing flow primitive for more room instead of shrinking the KPI below its label (1.87475ms)
+✖ mobile horizontal cards with footers release their thumbnail width inside the assigned card (1.400833ms)
+✔ context charts let the SVG viewBox scale with the allocated width instead of letterboxing at a fixed height (2.68925ms)
+✔ narrow supporting aside charts retain asymmetric multi-series data and scale the full SVG width (1.188667ms)
+✔ semantic card roles override generic presentation but preserve catalog variants (0.8975ms)
+✔ contained forms and splits use declared container rules with traceable decisions (2.095958ms)
+✔ catalog upgrade is explicit, lossless and does not repair invalid content (0.2985ms)
+✔ declarative design rules are serializable and consumer input cannot replace them (0.23725ms)
+✔ priority is independent of table order and equal-priority conflicts fail explicitly (0.187708ms)
+✔ contextual CSS stays inside the existing type, spacing and layout contracts (17.353166ms)
+✔ content flow breakpoints include the actual chosen gap and allow only fitting columns (0.184083ms)
+✔ hero columns are intrinsic to their own content box and carry a content-derived minimum (1.3655ms)
+✔ commerce section headings remain subordinate to the compact commerce page title (2.158917ms)
+✔ summary leading and hero framing carry explicit policies for glyph room and contained media (1.264375ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 229.297375
+
+✖ failing tests:
+
+test at tests/composition.test.mjs:51:1
+✖ mobile horizontal cards with footers release their thumbnail width inside the assigned card (1.400833ms)
+  AssertionError [ERR_ASSERTION]: blog-index: shared mobile correction uses the same-node card selector
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:61:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

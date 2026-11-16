@@ -6,6 +6,7 @@ import {nodeTypes} from '../catalog.mjs';
 import {contractCSS} from '../spacing.mjs';
 import {flowCSS, flowUsage} from '../layout.mjs';
 import {compositionCSS} from '../composition.mjs';
+import {headerDesignCSS} from '../header-design.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -43,5 +44,6 @@ export function stylesheet(b, sets, body = '', design = null) {
   parts.push(polishCore.trim());
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
+  if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
   return parts.join('\n') + '\n';
 }

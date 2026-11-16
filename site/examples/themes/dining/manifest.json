@@ -1070,7 +1070,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1262,13 +1262,24 @@
         ],
         "reason": "Status tone and live-region meaning own notice presentation."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "centered",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1339ee236b624b44a4e7cb0fbce69b3ba588e0160924f75c35aee28f517a1166",
-      "tokens.css": "df9e68ace536ce54eb9aaec3a30daab8f58fdea3e16016fb369446e286db3c86",
+      "index.html": "663c6c0e14828e35ad2c8f957c9cfa63c96a94542e87800c606dbc492a75907d",
+      "tokens.css": "bd7bf0b0230f084ff4a6d6c2fab773b50aea1e24a3e06345b6dd5e9b98249952",
       "tokens.json": "72197eac694ff406e1f6106ea13d546ef5685b9d9b2cb7fee55ba37d01bbe935",
       "blueprint.json": "dd89aeb15f1c409dc9255e6dcc71d6892974d9b268b32836ea14da040a728949"
     }

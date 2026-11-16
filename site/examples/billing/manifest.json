@@ -1087,7 +1087,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1385,7 +1385,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 88,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 96,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 84,
+              "align": "end",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 76,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 344,
+          "readableWidth": 344,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       },
       {
         "path": "$.tree.children[2].children[1]",
@@ -1459,8 +1505,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1f8d78bbdf6a56d15044c5013f4dbd0e2237915c2424bbca0ea4d96675c57184",
-      "tokens.css": "878253d130d7dabf9f7a7c539ea76887fee3ce12d928497c6f2ca183f787182e",
+      "index.html": "2d4f69902c3b5e859bc82955de4868812d3e4c897cff97439f31c221fd26534c",
+      "tokens.css": "c6b0a7cc286800f5a61c5b31589e5120e6b582cf717b5319fa9d7c506c2f6978",
       "tokens.json": "8b8472a158b0de1b3a1fe60306d410e3a3749b4f62b6f2370233656102b67658",
       "blueprint.json": "c3d4503eaabc015cf21401109ddfa84449f3aa3c62faee9b9e1c0610a053a8bc"
     }

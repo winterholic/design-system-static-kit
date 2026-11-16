@@ -1,0 +1,3659 @@
+{
+  "createdAt": "2026-11-16 Asia/Seoul",
+  "head": "61d2e5e5c51a58aeb6a7f4ecc2fc6a7337bd6864",
+  "method": {
+    "browser": "configured ttakkari_browser MCP",
+    "serverCommand": "PORT=4174 node scripts/serve.mjs",
+    "serverURL": "http://127.0.0.1:4174",
+    "previewHTTP": "HTTP/1.1 200 OK",
+    "viewportHeights": {
+      "320": 800,
+      "390": 844,
+      "1440": 960
+    },
+    "targetTableSelection": {
+      "before": {
+        "docs_reference": 0,
+        "api_reference": 0,
+        "admin_table": 0,
+        "sales_dashboard": 2
+      },
+      "after": "table[data-table-min]"
+    }
+  },
+  "priorObservations": {
+    "codexShell4173": {
+      "result": "Connection refused",
+      "scope": "one planning Codex shell only; not generalized to host"
+    },
+    "pid75843": {
+      "previousEnvironment": "prior marker report says command environment; engine/sandbox identity not recorded",
+      "previousCommand": "kill -TERM 75843",
+      "observedError": "operation not permitted",
+      "retested": false,
+      "cleanup": "unverified"
+    }
+  },
+  "sources": {
+    "src/table-design.mjs": "7c097e2fdcb310c6d2c41f9d054aa37c6cd69923c9b0fff9683e989fae696e47",
+    "src/composition.mjs": "cf8194033392c401aa10c22f937d8d47d162dde5dc138023ce9e238e13afd392",
+    "src/render/nodes.mjs": "da1686ff21885f4e5922d3db4dce3ed087165b3f57c36fa0807a6ca6a1475f8b",
+    "src/compiler.mjs": "b56052d16b04c2b9cdc29c55a529ead7821e4f826ecbe0b1a2edba3435bd7b39",
+    "tests/table-integration.test.mjs": "8e9fa7a4403064de188444905d2272fdab0bf9c6f7150e8f9f1048f5ef958ad6",
+    "scripts/serve.mjs": "1034f2ec849d538fa03a9f260c080e6911b5b7fb20cb6c65858c47e5a7289258",
+    "docs/evidence/context-rollout/remediation-b-verification/preview.html": "47fe815313e7632d531bbca7a316d878f74d1304ad759dbd7d6b7cc3b7c6b4c2"
+  },
+  "examples": {
+    "docs-reference": {
+      "blueprintSha256": "c1905add1c5ccc539b420c195f9f444d2acd151ea8fb902030914ee8641ca7a0",
+      "sourceHtmlSha256": "dcc543ca84491f3e3ef2883ed81ebfc8a47ba52c03bcfef164204a44128723cc",
+      "currentHtmlSha256": "561cb1312c2ce32c87f8071e5a0cd472c454e02415693b792c587133c2f6eaca",
+      "blueprintEqual": true,
+      "sourceHtmlBytes": 67793,
+      "currentHtmlBytes": 70626,
+      "tableCountBefore": 2,
+      "tableCountAfter": 2,
+      "sourceHtml": "/site/examples/docs-reference/index.html",
+      "currentHtml": "/docs/evidence/context-rollout/remediation-b-verification/after/docs-reference.html",
+      "compilerInputSha256": "1502b9b7c76d1aff5a5ba52d5fab46fe5494a99ecaa3ad3fced974e9f07b413b"
+    },
+    "api-reference": {
+      "blueprintSha256": "5cfdb78a23b7fcb00bdfcfa78be485531495dfb43c54e0ce9d2d30610629a568",
+      "sourceHtmlSha256": "870d3329b9d8a2846a9992426bd5b2b993ee50c4b441b73cbc0036607c723709",
+      "currentHtmlSha256": "05bf42eb256851975129bcbd144cb6fae0d14aeebf2dbe153ef1c1823d3b867e",
+      "blueprintEqual": true,
+      "sourceHtmlBytes": 61884,
+      "currentHtmlBytes": 65008,
+      "tableCountBefore": 2,
+      "tableCountAfter": 2,
+      "sourceHtml": "/site/examples/api-reference/index.html",
+      "currentHtml": "/docs/evidence/context-rollout/remediation-b-verification/after/api-reference.html",
+      "compilerInputSha256": "d1c4fd5d44d22b450e043085aca0aebf25417cce0bb51667efa31e068293ab13"
+    },
+    "admin-table": {
+      "blueprintSha256": "286d99486ec881044e951f53ad963052ae8d2fb37d884d9afa6271057253061f",
+      "sourceHtmlSha256": "b7334bc57a8296662ce697202fbced2dac1aac36f1d6efc0a8dbac9aa718c39b",
+      "currentHtmlSha256": "74f2d167f35a42f78af01cce767c5b48b2b82d29e0e794777596180cc0c755cd",
+      "blueprintEqual": true,
+      "sourceHtmlBytes": 47007,
+      "currentHtmlBytes": 49905,
+      "tableCountBefore": 1,
+      "tableCountAfter": 1,
+      "sourceHtml": "/site/examples/admin-table/index.html",
+      "currentHtml": "/docs/evidence/context-rollout/remediation-b-verification/after/admin-table.html",
+      "compilerInputSha256": "3de2c87ec88a2d50f1b02c9eafaca1f43385a663535d59d45d88b8ebaf4ea574"
+    },
+    "sales-dashboard": {
+      "blueprintSha256": "4391b0047d982ca09811a07ea272a3c791954a78780dc076c29a4ce88f58d489",
+      "sourceHtmlSha256": "80ef9ee943b774dd74bacbb055a8900faab4005976a67d2ef0b3e7e769ec76ae",
+      "currentHtmlSha256": "0fbe59ed083864a8f9eda4eabd65c1c1e77df5e2de6590d4f237a6a10b8806c1",
+      "blueprintEqual": true,
+      "sourceHtmlBytes": 60856,
+      "currentHtmlBytes": 64872,
+      "tableCountBefore": 3,
+      "tableCountAfter": 3,
+      "sourceHtml": "/site/examples/sales-dashboard/index.html",
+      "currentHtml": "/docs/evidence/context-rollout/remediation-b-verification/after/sales-dashboard.html",
+      "compilerInputSha256": "d5bf8cf503d4c830d5f52b336ef5bb46b06cce6a6d864002e975014cb2937293"
+    }
+  },
+  "measurements": [
+    {
+      "example": "docs-reference",
+      "variant": "before",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/site/examples/docs-reference/index.html",
+      "tableCaption": "projects.list 매개변수",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 1821.4,
+          "width": 292.9,
+          "height": 472.7,
+          "right": 333.9
+        },
+        "scroll": {
+          "clientWidth": 238,
+          "scrollWidth": 293,
+          "maxScroll": 55
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 68.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 60.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "기본값",
+          "actualWidth": 91.4,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 72.5,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "한 번에 가져올 개수(최대 100)",
+          "height": 137,
+          "estimatedLines": 5
+        },
+        {
+          "text": "정렬 기준. 앞에 -를 붙이면 내림차순",
+          "height": 137,
+          "estimatedLines": 5
+        },
+        {
+          "text": "다음 페이지를 가리키는 값",
+          "height": 114.1,
+          "estimatedLines": 4
+        }
+      ]
+    },
+    {
+      "example": "docs-reference",
+      "variant": "after",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/docs-reference.html",
+      "tableCaption": "projects.list 매개변수",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 1821.4,
+          "width": 457.8,
+          "height": 216.8,
+          "right": 498.8
+        },
+        "scroll": {
+          "clientWidth": 238,
+          "scrollWidth": 458,
+          "maxScroll": 220
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "기본값",
+          "actualWidth": 97.8,
+          "minimumWidth": "96",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 216,
+          "minimumWidth": "216",
+          "align": "left",
+          "whiteSpace": "normal",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "한 번에 가져올 개수(최대 100)",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "정렬 기준. 앞에 -를 붙이면 내림차순",
+          "height": 61.8,
+          "estimatedLines": 2
+        },
+        {
+          "text": "다음 페이지를 가리키는 값",
+          "height": 38.9,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "api-reference",
+      "variant": "before",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/site/examples/api-reference/index.html",
+      "tableCaption": "GET /v3/cache/{hash}",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 589.7,
+          "width": 272.1,
+          "height": 472.7,
+          "right": 313.1
+        },
+        "scroll": {
+          "clientWidth": 238,
+          "scrollWidth": 272,
+          "maxScroll": 34
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 91.1,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "위치",
+          "actualWidth": 48.2,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 60.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 72.4,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "작업 입력의 SHA-256 해시",
+          "height": 137,
+          "estimatedLines": 5
+        },
+        {
+          "text": "팀 ID. 생략하면 토큰의 기본 팀",
+          "height": 114.6,
+          "estimatedLines": 4
+        },
+        {
+          "text": "true면 결과물 본문을 바로 내려받음",
+          "height": 136.5,
+          "estimatedLines": 5
+        }
+      ]
+    },
+    {
+      "example": "api-reference",
+      "variant": "after",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/api-reference.html",
+      "tableCaption": "GET /v3/cache/{hash}",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 589.7,
+          "width": 451.1,
+          "height": 216.8,
+          "right": 492.1
+        },
+        "scroll": {
+          "clientWidth": 238,
+          "scrollWidth": 451,
+          "maxScroll": 213
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 91.1,
+          "minimumWidth": "80",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "위치",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 216,
+          "minimumWidth": "216",
+          "align": "left",
+          "whiteSpace": "normal",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "작업 입력의 SHA-256 해시",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "팀 ID. 생략하면 토큰의 기본 팀",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "true면 결과물 본문을 바로 내려받음",
+          "height": 61.3,
+          "estimatedLines": 2
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "admin-table",
+      "variant": "before",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/site/examples/admin-table/index.html",
+      "tableCaption": "최근 주문 목록",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 33,
+          "y": 492.9,
+          "width": 433.1,
+          "height": 442.5,
+          "right": 466.1
+        },
+        "scroll": {
+          "clientWidth": 254,
+          "scrollWidth": 433,
+          "maxScroll": 179
+        }
+      },
+      "columns": [
+        {
+          "label": "주문번호",
+          "actualWidth": 71.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "고객",
+          "actualWidth": 97.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "금액",
+          "actualWidth": 93.1,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "상태",
+          "actualWidth": 106.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "접수",
+          "actualWidth": 63.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10:12",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "09:48",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "09:30",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "09:02",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "08:55",
+          "height": 71.2,
+          "estimatedLines": 2
+        }
+      ]
+    },
+    {
+      "example": "admin-table",
+      "variant": "after",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/admin-table.html",
+      "tableCaption": "최근 주문 목록",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 33,
+          "y": 492.9,
+          "width": 457.8,
+          "height": 303.5,
+          "right": 490.8
+        },
+        "scroll": {
+          "clientWidth": 254,
+          "scrollWidth": 458,
+          "maxScroll": 204
+        }
+      },
+      "columns": [
+        {
+          "label": "주문번호",
+          "actualWidth": 87.6,
+          "minimumWidth": "80",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "고객",
+          "actualWidth": 97.3,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "금액",
+          "actualWidth": 93.1,
+          "minimumWidth": "92",
+          "align": "end",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "상태",
+          "actualWidth": 106.7,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "접수",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10:12",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:48",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:30",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:02",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "08:55",
+          "height": 45,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "before",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/site/examples/sales-dashboard/index.html",
+      "tableCaption": "예상 금액 상위 5건",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 2062.8,
+          "width": 352.8,
+          "height": 441.5,
+          "right": 393.8
+        },
+        "scroll": {
+          "clientWidth": 238,
+          "scrollWidth": 353,
+          "maxScroll": 115
+        }
+      },
+      "columns": [
+        {
+          "label": "고객",
+          "actualWidth": 72.5,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "단계",
+          "actualWidth": 48.2,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "예상 금액",
+          "actualWidth": 73,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "담당",
+          "actualWidth": 96.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "마감",
+          "actualWidth": 62.8,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10/28",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/04",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/12",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/15",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/30",
+          "height": 70.7,
+          "estimatedLines": 2
+        }
+      ]
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "after",
+      "viewport": {
+        "width": 320,
+        "height": 800
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/sales-dashboard.html",
+      "tableCaption": "예상 금액 상위 5건",
+      "document": {
+        "clientWidth": 320,
+        "scrollWidth": 320,
+        "bodyScrollWidth": 320
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 2062.8,
+          "width": 393,
+          "height": 302.5,
+          "right": 434
+        },
+        "scroll": {
+          "clientWidth": 238,
+          "scrollWidth": 393,
+          "maxScroll": 155
+        }
+      },
+      "columns": [
+        {
+          "label": "고객",
+          "actualWidth": 72.5,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "단계",
+          "actualWidth": 76.2,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "예상 금액",
+          "actualWidth": 76,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "담당",
+          "actualWidth": 96.3,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "마감",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10/28",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/04",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/12",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/15",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/30",
+          "height": 44.5,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "docs-reference",
+      "variant": "before",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/site/examples/docs-reference/index.html",
+      "tableCaption": "projects.list 매개변수",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 1779.2,
+          "width": 308,
+          "height": 427.9,
+          "right": 349
+        },
+        "scroll": {
+          "clientWidth": 308,
+          "scrollWidth": 308,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 68.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 60.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "기본값",
+          "actualWidth": 92,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 86.9,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "한 번에 가져올 개수(최대 100)",
+          "height": 114.6,
+          "estimatedLines": 4
+        },
+        {
+          "text": "정렬 기준. 앞에 -를 붙이면 내림차순",
+          "height": 114.6,
+          "estimatedLines": 4
+        },
+        {
+          "text": "다음 페이지를 가리키는 값",
+          "height": 114.1,
+          "estimatedLines": 4
+        }
+      ]
+    },
+    {
+      "example": "docs-reference",
+      "variant": "after",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/docs-reference.html",
+      "tableCaption": "projects.list 매개변수",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 1779.2,
+          "width": 457.8,
+          "height": 216.8,
+          "right": 498.8
+        },
+        "scroll": {
+          "clientWidth": 308,
+          "scrollWidth": 458,
+          "maxScroll": 150
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "기본값",
+          "actualWidth": 97.8,
+          "minimumWidth": "96",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 216,
+          "minimumWidth": "216",
+          "align": "left",
+          "whiteSpace": "normal",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "한 번에 가져올 개수(최대 100)",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "정렬 기준. 앞에 -를 붙이면 내림차순",
+          "height": 61.8,
+          "estimatedLines": 2
+        },
+        {
+          "text": "다음 페이지를 가리키는 값",
+          "height": 38.9,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "api-reference",
+      "variant": "before",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/site/examples/api-reference/index.html",
+      "tableCaption": "GET /v3/cache/{hash}",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 589.7,
+          "width": 308,
+          "height": 360.7,
+          "right": 349
+        },
+        "scroll": {
+          "clientWidth": 308,
+          "scrollWidth": 308,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 91.1,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "위치",
+          "actualWidth": 48.2,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 60.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 108.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "작업 입력의 SHA-256 해시",
+          "height": 92.2,
+          "estimatedLines": 3
+        },
+        {
+          "text": "팀 ID. 생략하면 토큰의 기본 팀",
+          "height": 92.2,
+          "estimatedLines": 3
+        },
+        {
+          "text": "true면 결과물 본문을 바로 내려받음",
+          "height": 91.7,
+          "estimatedLines": 3
+        }
+      ]
+    },
+    {
+      "example": "api-reference",
+      "variant": "after",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/api-reference.html",
+      "tableCaption": "GET /v3/cache/{hash}",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 589.7,
+          "width": 451.1,
+          "height": 216.8,
+          "right": 492.1
+        },
+        "scroll": {
+          "clientWidth": 308,
+          "scrollWidth": 451,
+          "maxScroll": 143
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 91.1,
+          "minimumWidth": "80",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "위치",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 216,
+          "minimumWidth": "216",
+          "align": "left",
+          "whiteSpace": "normal",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "작업 입력의 SHA-256 해시",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "팀 ID. 생략하면 토큰의 기본 팀",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "true면 결과물 본문을 바로 내려받음",
+          "height": 61.3,
+          "estimatedLines": 2
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "admin-table",
+      "variant": "before",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/site/examples/admin-table/index.html",
+      "tableCaption": "최근 주문 목록",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 33,
+          "y": 448.9,
+          "width": 433.1,
+          "height": 442.5,
+          "right": 466.1
+        },
+        "scroll": {
+          "clientWidth": 324,
+          "scrollWidth": 433,
+          "maxScroll": 109
+        }
+      },
+      "columns": [
+        {
+          "label": "주문번호",
+          "actualWidth": 71.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "고객",
+          "actualWidth": 97.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "금액",
+          "actualWidth": 93.1,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "상태",
+          "actualWidth": 106.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "접수",
+          "actualWidth": 63.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10:12",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "09:48",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "09:30",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "09:02",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "08:55",
+          "height": 71.2,
+          "estimatedLines": 2
+        }
+      ]
+    },
+    {
+      "example": "admin-table",
+      "variant": "after",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/admin-table.html",
+      "tableCaption": "최근 주문 목록",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 33,
+          "y": 448.9,
+          "width": 457.8,
+          "height": 303.5,
+          "right": 490.8
+        },
+        "scroll": {
+          "clientWidth": 324,
+          "scrollWidth": 458,
+          "maxScroll": 134
+        }
+      },
+      "columns": [
+        {
+          "label": "주문번호",
+          "actualWidth": 87.6,
+          "minimumWidth": "80",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "고객",
+          "actualWidth": 97.3,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "금액",
+          "actualWidth": 93.1,
+          "minimumWidth": "92",
+          "align": "end",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "상태",
+          "actualWidth": 106.7,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "접수",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10:12",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:48",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:30",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:02",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "08:55",
+          "height": 45,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "before",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/site/examples/sales-dashboard/index.html",
+      "tableCaption": "예상 금액 상위 5건",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 1863.2,
+          "width": 352.8,
+          "height": 441.5,
+          "right": 393.8
+        },
+        "scroll": {
+          "clientWidth": 308,
+          "scrollWidth": 353,
+          "maxScroll": 45
+        }
+      },
+      "columns": [
+        {
+          "label": "고객",
+          "actualWidth": 72.5,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "단계",
+          "actualWidth": 48.2,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "예상 금액",
+          "actualWidth": 73,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "담당",
+          "actualWidth": 96.3,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "마감",
+          "actualWidth": 62.8,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10/28",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/04",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/12",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/15",
+          "height": 71.2,
+          "estimatedLines": 2
+        },
+        {
+          "text": "11/30",
+          "height": 70.7,
+          "estimatedLines": 2
+        }
+      ]
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "after",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/sales-dashboard.html",
+      "tableCaption": "예상 금액 상위 5건",
+      "document": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "bodyScrollWidth": 390
+      },
+      "table": {
+        "rect": {
+          "x": 41,
+          "y": 1863.2,
+          "width": 393,
+          "height": 302.5,
+          "right": 434
+        },
+        "scroll": {
+          "clientWidth": 308,
+          "scrollWidth": 393,
+          "maxScroll": 85
+        }
+      },
+      "columns": [
+        {
+          "label": "고객",
+          "actualWidth": 72.5,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "단계",
+          "actualWidth": 76.2,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "예상 금액",
+          "actualWidth": 76,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "담당",
+          "actualWidth": 96.3,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "마감",
+          "actualWidth": 72,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10/28",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/04",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/12",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/15",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/30",
+          "height": 44.5,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "docs-reference",
+      "variant": "before",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/site/examples/docs-reference/index.html",
+      "tableCaption": "projects.list 매개변수",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 297,
+          "y": 1773.1,
+          "width": 762,
+          "height": 226.4,
+          "right": 1059
+        },
+        "scroll": {
+          "clientWidth": 762,
+          "scrollWidth": 762,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 116.4,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 102.2,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "기본값",
+          "actualWidth": 165.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 377.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "한 번에 가져올 개수(최대 100)",
+          "height": 47.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "정렬 기준. 앞에 -를 붙이면 내림차순",
+          "height": 47.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "다음 페이지를 가리키는 값",
+          "height": 46.9,
+          "estimatedLines": 1
+        }
+      ]
+    },
+    {
+      "example": "docs-reference",
+      "variant": "after",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/docs-reference.html",
+      "tableCaption": "projects.list 매개변수",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 297,
+          "y": 1773.1,
+          "width": 762,
+          "height": 194.4,
+          "right": 1059
+        },
+        "scroll": {
+          "clientWidth": 762,
+          "scrollWidth": 762,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 118,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 118,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "기본값",
+          "actualWidth": 160.4,
+          "minimumWidth": "96",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 365.5,
+          "minimumWidth": "216",
+          "align": "left",
+          "whiteSpace": "normal",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "한 번에 가져올 개수(최대 100)",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "정렬 기준. 앞에 -를 붙이면 내림차순",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "다음 페이지를 가리키는 값",
+          "height": 38.9,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "api-reference",
+      "variant": "before",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/site/examples/api-reference/index.html",
+      "tableCaption": "GET /v3/cache/{hash}",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 297,
+          "y": 432.3,
+          "width": 762,
+          "height": 226.4,
+          "right": 1059
+        },
+        "scroll": {
+          "clientWidth": 762,
+          "scrollWidth": 762,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 164.4,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "위치",
+          "actualWidth": 87,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 108.9,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 401.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "작업 입력의 SHA-256 해시",
+          "height": 47.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "팀 ID. 생략하면 토큰의 기본 팀",
+          "height": 47.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "true면 결과물 본문을 바로 내려받음",
+          "height": 46.9,
+          "estimatedLines": 1
+        }
+      ]
+    },
+    {
+      "example": "api-reference",
+      "variant": "after",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/api-reference.html",
+      "tableCaption": "GET /v3/cache/{hash}",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 297,
+          "y": 432.3,
+          "width": 762,
+          "height": 194.4,
+          "right": 1059
+        },
+        "scroll": {
+          "clientWidth": 762,
+          "scrollWidth": 762,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "이름",
+          "actualWidth": 151.7,
+          "minimumWidth": "80",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "위치",
+          "actualWidth": 119.9,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "타입",
+          "actualWidth": 119.9,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "설명",
+          "actualWidth": 370.6,
+          "minimumWidth": "216",
+          "align": "left",
+          "whiteSpace": "normal",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "작업 입력의 SHA-256 해시",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "팀 ID. 생략하면 토큰의 기본 팀",
+          "height": 39.4,
+          "estimatedLines": 1
+        },
+        {
+          "text": "true면 결과물 본문을 바로 내려받음",
+          "height": 38.9,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "admin-table",
+      "variant": "before",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/site/examples/admin-table/index.html",
+      "tableCaption": "최근 주문 목록",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 289,
+          "y": 256.3,
+          "width": 1102,
+          "height": 351.5,
+          "right": 1391
+        },
+        "scroll": {
+          "clientWidth": 1102,
+          "scrollWidth": 1102,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "주문번호",
+          "actualWidth": 215.1,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "고객",
+          "actualWidth": 239,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "금액",
+          "actualWidth": 228.6,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "상태",
+          "actualWidth": 262,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "접수",
+          "actualWidth": 156.4,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10:12",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:48",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:30",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:02",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "08:55",
+          "height": 53,
+          "estimatedLines": 1
+        }
+      ]
+    },
+    {
+      "example": "admin-table",
+      "variant": "after",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/admin-table.html",
+      "tableCaption": "최근 주문 목록",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 289,
+          "y": 256.3,
+          "width": 1102,
+          "height": 303.5,
+          "right": 1391
+        },
+        "scroll": {
+          "clientWidth": 1102,
+          "scrollWidth": 1102,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "주문번호",
+          "actualWidth": 211.2,
+          "minimumWidth": "80",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "고객",
+          "actualWidth": 234.6,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "금액",
+          "actualWidth": 224.5,
+          "minimumWidth": "92",
+          "align": "end",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "상태",
+          "actualWidth": 257.2,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "접수",
+          "actualWidth": 173.6,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10:12",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:48",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:30",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "09:02",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "08:55",
+          "height": 45,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "before",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/site/examples/sales-dashboard/index.html",
+      "tableCaption": "예상 금액 상위 5건",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 297,
+          "y": 1139.2,
+          "width": 1086,
+          "height": 350.5,
+          "right": 1383
+        },
+        "scroll": {
+          "clientWidth": 1086,
+          "scrollWidth": 1086,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "고객",
+          "actualWidth": 206.6,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "단계",
+          "actualWidth": 217.4,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "예상 금액",
+          "actualWidth": 208.2,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "담당",
+          "actualWidth": 274.7,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        },
+        {
+          "label": "마감",
+          "actualWidth": 179.1,
+          "minimumWidth": null,
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "12px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10/28",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/04",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/12",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/15",
+          "height": 53,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/30",
+          "height": 52.5,
+          "estimatedLines": 1
+        }
+      ]
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "after",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "url": "/docs/evidence/context-rollout/remediation-b-verification/after/sales-dashboard.html",
+      "tableCaption": "예상 금액 상위 5건",
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "table": {
+        "rect": {
+          "x": 297,
+          "y": 1139.2,
+          "width": 1086,
+          "height": 302.5,
+          "right": 1383
+        },
+        "scroll": {
+          "clientWidth": 1086,
+          "scrollWidth": 1086,
+          "maxScroll": 0
+        }
+      },
+      "columns": [
+        {
+          "label": "고객",
+          "actualWidth": 200.2,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "단계",
+          "actualWidth": 210.6,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "예상 금액",
+          "actualWidth": 210,
+          "minimumWidth": "76",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "담당",
+          "actualWidth": 266.2,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        },
+        {
+          "label": "마감",
+          "actualWidth": 199,
+          "minimumWidth": "72",
+          "align": "left",
+          "whiteSpace": "nowrap",
+          "paddingInline": "12px",
+          "paddingBlock": "8px"
+        }
+      ],
+      "lastColumnCells": [
+        {
+          "text": "10/28",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/04",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/12",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/15",
+          "height": 45,
+          "estimatedLines": 1
+        },
+        {
+          "text": "11/30",
+          "height": 44.5,
+          "estimatedLines": 1
+        }
+      ],
+      "dataEqualToBefore": true
+    }
+  ],
+  "scrollEnd": [
+    {
+      "example": "docs-reference",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=docs-reference&variant=after",
+      "viewport": 320,
+      "initial": {
+        "scrollLeft": 0,
+        "maxScroll": 220
+      },
+      "end": {
+        "scrollLeft": 220,
+        "maxScroll": 220,
+        "lastColumnVisible": true,
+        "lastColumnRight": 278.8,
+        "regionRight": 279,
+        "focused": true,
+        "role": "region",
+        "tabIndex": 0
+      },
+      "headers": [
+        "이름",
+        "타입",
+        "기본값",
+        "설명"
+      ],
+      "dataPreserved": true
+    },
+    {
+      "example": "api-reference",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=api-reference&variant=after",
+      "viewport": 320,
+      "initial": {
+        "scrollLeft": 0,
+        "maxScroll": 213
+      },
+      "end": {
+        "scrollLeft": 213,
+        "maxScroll": 213,
+        "lastColumnVisible": true,
+        "lastColumnRight": 279.1,
+        "regionRight": 279,
+        "focused": true,
+        "role": "region",
+        "tabIndex": 0
+      },
+      "headers": [
+        "이름",
+        "위치",
+        "타입",
+        "설명"
+      ],
+      "dataPreserved": true
+    },
+    {
+      "example": "admin-table",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=admin-table&variant=after",
+      "viewport": 320,
+      "initial": {
+        "scrollLeft": 0,
+        "maxScroll": 204
+      },
+      "end": {
+        "scrollLeft": 204,
+        "maxScroll": 204,
+        "lastColumnVisible": true,
+        "lastColumnRight": 286.3,
+        "regionRight": 287,
+        "focused": true,
+        "role": "region",
+        "tabIndex": 0
+      },
+      "headers": [
+        "주문번호",
+        "고객",
+        "금액",
+        "상태",
+        "접수"
+      ],
+      "dataPreserved": true
+    },
+    {
+      "example": "sales-dashboard",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=sales-dashboard&variant=after",
+      "viewport": 320,
+      "initial": {
+        "scrollLeft": 0,
+        "maxScroll": 155
+      },
+      "end": {
+        "scrollLeft": 155,
+        "maxScroll": 155,
+        "lastColumnVisible": true,
+        "lastColumnRight": 279,
+        "regionRight": 279,
+        "focused": true,
+        "role": "region",
+        "tabIndex": 0
+      },
+      "headers": [
+        "고객",
+        "단계",
+        "예상 금액",
+        "담당",
+        "마감"
+      ],
+      "dataPreserved": true
+    }
+  ],
+  "dataCellMetrics": [
+    {
+      "example": "admin-table",
+      "variant": "before",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=admin-table&variant=before",
+      "viewport": 320,
+      "caption": "최근 주문 목록",
+      "columnOrder": [
+        "주문번호",
+        "고객",
+        "금액",
+        "상태",
+        "접수"
+      ],
+      "rows": [
+        [
+          {
+            "text": "A-10231",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 71.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "김\n김다선",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 97.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "39,000원",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 93.1,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "결제 완료",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 106.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "10:12",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 63.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "A-10230",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 71.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "이\n이지훈",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 97.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "128,000원",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 93.1,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "배송 중",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 106.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "09:48",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 63.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "A-10229",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 71.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "박\n박서연",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 97.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "56,500원",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 93.1,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "결제 완료",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 106.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "09:30",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 63.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "A-10228",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 71.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "최\n최민준",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 97.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "23,000원",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 93.1,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "취소",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 106.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "09:02",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 63.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "A-10227",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 71.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "정\n정하늘",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 97.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "71,000원",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 93.1,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "배송 중",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 106.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "08:55",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 63.7,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ]
+      ]
+    },
+    {
+      "example": "admin-table",
+      "variant": "after",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=admin-table&variant=after",
+      "viewport": 320,
+      "caption": "최근 주문 목록",
+      "columnOrder": [
+        "주문번호",
+        "고객",
+        "금액",
+        "상태",
+        "접수"
+      ],
+      "rows": [
+        [
+          {
+            "text": "A-10231",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 87.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "김\n김다선",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 97.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "39,000원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 93.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "결제 완료",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.7,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "10:12",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "A-10230",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 87.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "이\n이지훈",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 97.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "128,000원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 93.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "배송 중",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.7,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "09:48",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "A-10229",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 87.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "박\n박서연",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 97.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "56,500원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 93.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "결제 완료",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.7,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "09:30",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "A-10228",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 87.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "최\n최민준",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 97.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "23,000원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 93.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "취소",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.7,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "09:02",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "A-10227",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 87.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "정\n정하늘",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 97.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "71,000원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 93.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "배송 중",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.7,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "08:55",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ]
+      ]
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "before",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=sales-dashboard&variant=before",
+      "viewport": 320,
+      "caption": "예상 금액 상위 5건",
+      "columnOrder": [
+        "고객",
+        "단계",
+        "예상 금액",
+        "담당",
+        "마감"
+      ],
+      "rows": [
+        [
+          {
+            "text": "한결물산",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 72.5,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "최종 협상",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 48.2,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "4.2억",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 73,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "김\n김다선",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 96.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "10/28",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 62.8,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "대성정밀",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 72.5,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "제안 발표",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 48.2,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "3.1억",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 73,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "이\n이지훈",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 96.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "11/04",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 62.8,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "누리금융",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 72.5,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "보안 심사",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 48.2,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "2.8억",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 73,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "박\n박서연",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 96.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "11/12",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 62.8,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "푸른병원",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 72.5,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "견적 검토",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 48.2,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "1.9억",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 73,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "최\n최민준",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 96.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "11/15",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 62.8,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ],
+        [
+          {
+            "text": "새봄건설",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 72.5,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "초기 상담",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 48.2,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "1.4억",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 73,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "정\n정하늘",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 96.3,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          },
+          {
+            "text": "11/30",
+            "align": "left",
+            "whiteSpace": "normal",
+            "width": 62.8,
+            "estimatedLines": 2,
+            "paddingInline": "12px",
+            "paddingBlock": "12px"
+          }
+        ]
+      ]
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "after",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=sales-dashboard&variant=after",
+      "viewport": 320,
+      "caption": "예상 금액 상위 5건",
+      "columnOrder": [
+        "고객",
+        "단계",
+        "예상 금액",
+        "담당",
+        "마감"
+      ],
+      "rows": [
+        [
+          {
+            "text": "한결물산",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72.5,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "최종 협상",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76.2,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "4.2억",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "김\n김다선",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 96.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "10/28",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "대성정밀",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72.5,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "제안 발표",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76.2,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "3.1억",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "이\n이지훈",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 96.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "11/04",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "누리금융",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72.5,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "보안 심사",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76.2,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "2.8억",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "박\n박서연",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 96.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "11/12",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "푸른병원",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72.5,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "견적 검토",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76.2,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "1.9억",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "최\n최민준",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 96.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "11/15",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "새봄건설",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72.5,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "초기 상담",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76.2,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "1.4억",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 76,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "정\n정하늘",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 96.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "11/30",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ]
+      ]
+    },
+    {
+      "example": "ambiguous-values",
+      "variant": "probe",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?probe=ambiguous-values",
+      "viewport": 320,
+      "caption": "projects.list 매개변수",
+      "columnOrder": [
+        "전화번호",
+        "버전",
+        "날짜",
+        "혼합값",
+        "합계"
+      ],
+      "rows": [
+        [
+          {
+            "text": "010-1234-5678",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 139,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "2.4.0",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "2026-11-16",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "A-001 / 12",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 94.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "39,000원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 92.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ],
+        [
+          {
+            "text": "02-555-0100",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 139,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "v1.2",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 72,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "2025-09-01",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 106.3,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "12개 / N/A",
+            "align": "left",
+            "whiteSpace": "nowrap",
+            "width": 94.6,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          },
+          {
+            "text": "128,000원",
+            "align": "end",
+            "whiteSpace": "nowrap",
+            "width": 92.1,
+            "estimatedLines": 1,
+            "paddingInline": "12px",
+            "paddingBlock": "8px"
+          }
+        ]
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "example": "docs-reference",
+      "variant": "before",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/site/examples/docs-reference/index.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-58-954Z.png"
+    },
+    {
+      "example": "docs-reference",
+      "variant": "after",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/after/docs-reference.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-59-045Z.png"
+    },
+    {
+      "example": "api-reference",
+      "variant": "before",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/site/examples/api-reference/index.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-59-205Z.png"
+    },
+    {
+      "example": "api-reference",
+      "variant": "after",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/after/api-reference.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-59-295Z.png"
+    },
+    {
+      "example": "admin-table",
+      "variant": "before",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/site/examples/admin-table/index.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-59-478Z.png"
+    },
+    {
+      "example": "admin-table",
+      "variant": "after",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/after/admin-table.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-59-807Z.png"
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "before",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/site/examples/sales-dashboard/index.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-36-59-893Z.png"
+    },
+    {
+      "example": "sales-dashboard",
+      "variant": "after",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/after/sales-dashboard.html",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/page-2026-11-16T05-37-00-130Z.png"
+    },
+    {
+      "example": "docs-reference",
+      "variant": "after-at-scroll-end",
+      "viewport": "390x844",
+      "url": "http://127.0.0.1:4174/docs/evidence/context-rollout/remediation-b-verification/preview.html?example=docs-reference&variant=after",
+      "path": "/Volumes/Backup/ttakkari-data/outbox/7686f768-5223-4435-a1ce-d3aac2fddb50/browser/element-2026-11-16T05-38-33-173Z.png"
+    }
+  ],
+  "browserConsole": "### Result\nTotal messages: 0 (Errors: 0, Warnings: 0)\nReturning 1 messages for level \"info\"\n\n[ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:4174/favicon.ico:0",
+  "cleanup": {
+    "browser": "mcp__ttakkari_browser__browser_close => No open tabs",
+    "server": "original exec session 57418 received Ctrl-C and exited 130; follow-up curl returned exit 7 Couldn't connect to server",
+    "priorPid75843": "not retried"
+  },
+  "limits": {
+    "tests": "not rerun per task instruction",
+    "fullBuild": "not run",
+    "siteRegeneration": "not run",
+    "commitPushDeploy": "not run"
+  }
+}

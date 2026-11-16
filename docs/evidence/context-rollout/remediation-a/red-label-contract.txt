@@ -1,0 +1,44 @@
+✔ new catalogs expose versioned, deterministic composition decisions without mutating the blueprint (6.842917ms)
+✔ all 2.1 templates preserve the original complete compiler output byte for byte (85.666708ms)
+✔ long summary content asks the existing flow primitive for more room instead of shrinking the KPI below its label (1.758084ms)
+✔ mobile horizontal cards with footers release their thumbnail width inside the assigned card (1.719417ms)
+✖ context charts let the SVG viewBox scale with the allocated width instead of letterboxing at a fixed height (0.987875ms)
+✔ narrow supporting aside charts retain asymmetric multi-series data and scale the full SVG width (1.005ms)
+✔ semantic card roles override generic presentation but preserve catalog variants (0.847416ms)
+✔ contained forms and splits use declared container rules with traceable decisions (1.952959ms)
+✔ catalog upgrade is explicit, lossless and does not repair invalid content (0.255ms)
+✔ declarative design rules are serializable and consumer input cannot replace them (0.215583ms)
+✔ priority is independent of table order and equal-priority conflicts fail explicitly (0.1725ms)
+✔ contextual CSS stays inside the existing type, spacing and layout contracts (16.612208ms)
+✔ content flow breakpoints include the actual chosen gap and allow only fitting columns (0.176084ms)
+✔ hero columns are intrinsic to their own content box and carry a content-derived minimum (1.199584ms)
+✔ commerce section headings remain subordinate to the compact commerce page title (2.04425ms)
+✔ summary leading and hero framing carry explicit policies for glyph room and contained media (1.458958ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 221.333667
+
+✖ failing tests:
+
+test at tests/composition.test.mjs:67:1
+✖ context charts let the SVG viewBox scale with the allocated width instead of letterboxing at a fixed height (0.987875ms)
+  AssertionError [ERR_ASSERTION]: dashboard-analytics: chart labels compensate for horizontal SVG stretching
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:72:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

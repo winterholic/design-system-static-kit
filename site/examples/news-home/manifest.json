@@ -1116,7 +1116,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1562,13 +1562,24 @@
         ],
         "reason": "Compact labels wrap without creating another heading level."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "masthead",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "005ca7589ad14f4ec99b69e8fb948683f9926d97c4b0b44dac8204f5d7054e97",
-      "tokens.css": "d262a2e76f4fb3bbcd5486d9862a367b804bf5a8f243962a70c3ac13f09f7d83",
+      "index.html": "77704cbe5afda2433a67e34a85db1a67f1acb614fc088eb27b74d57980455e28",
+      "tokens.css": "c60a8c26ac00219a2a8d6467a20cc7e958dd055e82332e02263eb0958c127053",
       "tokens.json": "27f6717fee0f31cbe8b1eae212c57e00092f12dfc62d56c5076add648e96bff6",
       "blueprint.json": "6daec36133ded6586f19027eb97621ef68b18364bf3eb5602cdb32361d600b3f"
     }

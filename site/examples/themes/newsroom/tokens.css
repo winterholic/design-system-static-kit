@@ -126,12 +126,22 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 @media(prefers-contrast:more){:root{--kit-border:var(--kit-rule)}.kit-card,.kit-form,.kit-chart,.kit-table-wrap{border-width:2px}}
 @media(forced-colors:active){.kit-button,.kit-card,.kit-form,.kit-field input,.kit-field select,.kit-field textarea{border:1px solid CanvasText}.kit-bar{background:Highlight;forced-color-adjust:none}.kit-tablist [aria-selected=true]{outline:2px solid Highlight}.kit-switch i{border:1px solid CanvasText}}
 @media print{.kit-skip,.kit-header{display:none!important}.kit-shell{display:block!important}.kit-main{max-width:none;padding:0}.kit-card,.kit-form,.kit-notice,.kit-chart,.kit-plan{break-inside:avoid}}
-/* Context composition 1.1.0: compiler-owned decisions; catalog/composition.mjs */
+/* Context composition 1.2.0: compiler-owned decisions; catalog/composition.mjs */
 .kit-main,.kit-section-inner,.kit-split-cell,.kit-aside-main,.kit-aside-side,.kit-tabpanel,.kit-layout-region{container:kit compose/inline-size}.kit-layout-region{min-width:0}
 [data-design-kind="page-header"][data-design-role="page-heading"]:not([data-lead]) h1{font-size:var(--kit-t-title)}
 [data-design-kind="card"][data-design-role="editorial"] .kit-card-body>:is(h2,h3,h4,h5),[data-design-kind="card"][data-design-role="editorial"] .kit-card-body>.kit-stretch>:is(h2,h3,h4,h5){font-size:var(--kit-t-sub)}
 [data-design-kind="card"][data-design-role="editorial"] .kit-card-body{padding:var(--kit-inset)}
 [data-design-kind="card"][data-design-role="feature"] .kit-card-body>:is(h2,h3,h4,h5),[data-design-kind="card"][data-design-role="feature"] .kit-card-body>.kit-stretch>:is(h2,h3,h4,h5){font-size:var(--kit-t-sub)}
 [data-design-kind="card"][data-design-role="feature"] .kit-card-body{padding:var(--kit-inset)}
+@media(max-width:560px){[data-design-kind=card][data-variant=horizontal]:has(.kit-card-foot) .kit-card-media{width:100%}}
 [data-design-kind=grid][data-flow-gap]{gap:var(--kit-design-gap)}
 [data-design-kind=grid][data-flow-gap="16"]{--kit-design-gap:16px}
+/* chrome-row-1: source observation R13/header, relation S02; actual header content width owns centering. */
+[data-shell=masthead] .kit-header{container:chrome/inline-size;gap:var(--kit-sp-near)}
+[data-shell=masthead] .kit-header-primary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--kit-sp-head);width:100%;padding-block:0}
+[data-shell=masthead] .kit-header-primary>.kit-brand{grid-column:1;grid-row:1;justify-self:start;min-width:0;max-width:100%;padding:0}
+[data-shell=masthead] .kit-header-primary>.kit-brand .kit-brand-name{min-width:0;overflow-wrap:anywhere}
+[data-shell=masthead] .kit-header-primary>.kit-header-action{grid-column:2;grid-row:1;position:static;margin:0;align-self:center;justify-self:end;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+[data-shell=masthead] .kit-header>.kit-nav{width:100%;flex-basis:auto}
+[data-shell=masthead][data-shell=centered] .kit-header{padding-block:var(--kit-sp-near)}
+@container chrome (min-width:720px){[data-shell=masthead] .kit-header-primary{grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr)}[data-shell=masthead] .kit-header-primary>.kit-brand{grid-column:2;justify-self:center}[data-shell=masthead] .kit-header-primary>.kit-header-action{grid-column:3}}

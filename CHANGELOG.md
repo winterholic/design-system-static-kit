@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- composition 1.2.0: 콘텐츠 폭 예산을 표의 최소폭·내부 스크롤·수량 정렬에 연결하고, 카드 선택자와 Cartesian 차트 폭·마커 비율을 교정했다. 자유 스타일 입력이나 외부 런타임 의존은 추가하지 않는다.
+- centered/masthead 헤더는 로고와 주 액션을 같은 행에 묶고 실제 헤더 컨테이너 폭에서 중앙 정렬을 선택한다. 명시하지 않은 짧은 단계·일정은 기존 콘텐츠 흐름을 사용하며 명시한 세로·line/release/log 배치는 보존한다.
+- 램프·매물·연구·은행·개발도구 예시 5개의 목적과 다른 시각 자산을 정정했다. 연구 그래프는 기존 예시 표의 수치를 재사용한다. 실제 측정 자료라는 보증은 하지 않는다.
+- 이전 2.1의 정확한 입력 85개와 기존 출력 hash를 함께 고정했다. 템플릿 기본 데이터 정정과 이전 Blueprint 출력 호환성을 구분한다. 변경·반례·실측·한계는 `docs/evidence/context-rollout/remediation-{a,b,c}*.md`에 보존한다.
+
 ## 2.2.0 · 2026-11-16
 
 - composition 1.1.0 후속: 55종의 맥락 결정/기존 계약 재사용을 선언하고, team/pricing/plan/quote/chart/calendar/gallery/timeline/properties/aside/master-detail/CTA/기능·단계·메뉴의 공통 공간 처리를 확장했다. 팀 소개글의 dense 2열 강제와 보조 갤러리의 viewport 열 선택을 해소하고, KPI finite budget 포화를 원문 보존 진단으로 표시한다. 85개 예시·54개 쇼케이스·조립기·전체 조합은 동일한 2.2 컴파일 경로에서 생성한다.

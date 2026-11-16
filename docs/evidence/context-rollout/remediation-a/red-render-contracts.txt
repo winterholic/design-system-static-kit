@@ -1,0 +1,80 @@
+✔ new catalogs expose versioned, deterministic composition decisions without mutating the blueprint (6.863541ms)
+✔ all 2.1 templates preserve the original complete compiler output byte for byte (88.983333ms)
+✔ long summary content asks the existing flow primitive for more room instead of shrinking the KPI below its label (1.683667ms)
+✖ mobile horizontal cards with footers release their thumbnail width inside the assigned card (1.386042ms)
+✖ context charts let the SVG viewBox scale with the allocated width instead of letterboxing at a fixed height (0.793042ms)
+✖ narrow supporting aside charts retain asymmetric multi-series data and scale the full SVG width (0.971125ms)
+✔ semantic card roles override generic presentation but preserve catalog variants (1.027875ms)
+✔ contained forms and splits use declared container rules with traceable decisions (1.833708ms)
+✔ catalog upgrade is explicit, lossless and does not repair invalid content (0.278708ms)
+✔ declarative design rules are serializable and consumer input cannot replace them (0.375917ms)
+✔ priority is independent of table order and equal-priority conflicts fail explicitly (0.207ms)
+✔ contextual CSS stays inside the existing type, spacing and layout contracts (16.901917ms)
+✔ content flow breakpoints include the actual chosen gap and allow only fitting columns (0.158334ms)
+✔ hero columns are intrinsic to their own content box and carry a content-derived minimum (1.270333ms)
+✔ commerce section headings remain subordinate to the compact commerce page title (2.128458ms)
+✔ summary leading and hero framing carry explicit policies for glyph room and contained media (1.280375ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 13
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227.402292
+
+✖ failing tests:
+
+test at tests/composition.test.mjs:51:1
+✖ mobile horizontal cards with footers release their thumbnail width inside the assigned card (1.386042ms)
+  AssertionError [ERR_ASSERTION]: blog-index: shared mobile correction uses the same-node card selector
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:61:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/composition.test.mjs:65:1
+✖ context charts let the SVG viewBox scale with the allocated width instead of letterboxing at a fixed height (0.793042ms)
+  AssertionError [ERR_ASSERTION]: dashboard-analytics: chart cap remains 340px
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:68:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/composition.test.mjs:74:1
+✖ narrow supporting aside charts retain asymmetric multi-series data and scale the full SVG width (0.971125ms)
+  AssertionError [ERR_ASSERTION]: aside chart retains the bounded SVG height
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/composition.test.mjs:90:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

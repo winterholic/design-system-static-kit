@@ -1125,7 +1125,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1493,7 +1493,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 128,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 108,
+              "align": "end",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 380,
+          "readableWidth": 380,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       }
     ],
     "inherited": [
@@ -1512,8 +1558,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "853e532d4856b061a6fdf4bef3feea007e6a2acfe3a730825728f88d5de156f0",
-      "tokens.css": "284ed182e8a16742c9d54cae01dce2593ffba1d65b472fb07dbe75f12127c66d",
+      "index.html": "a0b919de1bf41d8bc9c707313334fadbebd35142ff414689c3038ca8063d8846",
+      "tokens.css": "8b2178e7736243a86a2a3d9c43175ecb212ef19a635e6730c7289a45de16fadc",
       "tokens.json": "1ffaf578832def0a27b0ef497d9ce3835731c094f054a5b15fc4bce7fd7f38d6",
       "blueprint.json": "5505a90a000804ce21610045adf2df998d25995567530ad69e3c0d757d6b3ea6"
     }

@@ -1,5 +1,7 @@
 # 전체 부품·예시 적용 — 2026-11-16
 
+**후속 재감사·composition 1.2 교정은 [remediation-c.md](evidence/context-rollout/remediation-c.md)에 있다.** 아래는 composition 1.1 구현·배포의 역사 기록이다. 새 교정은 카드·차트·표·헤더·암묵 단계와 목적에 맞지 않은 예시 자산을 다루며 전체 시각 관측의 해결이나 미감 승인을 뜻하지 않는다.
+
 기준 `8c3d37c69`의 대표 부품 적용을 catalog 2.2 / composition 1.1로 확장했다. 운영 배포와 코드·빌드 완료는 구별한다. 이 문서의 근거는 `evidence/context-rollout/`에 있다.
 
 ## 구현 범위

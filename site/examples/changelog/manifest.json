@@ -1101,7 +1101,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1208,7 +1208,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 100,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 88,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 332,
+          "readableWidth": 332,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       }
     ],
     "inherited": [
@@ -1227,8 +1273,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "315e87fb341833ec06b5d3b95c91c26eba360cf58c1f23edb4ef068b9de56b2c",
-      "tokens.css": "aad06b20f35969760a0e785270f78c39b223dd7a2afd369e94339bf1b5fa7cf6",
+      "index.html": "86df6bbd58cee6a548c1f404bac749706040979d6e4fcbd89d05b9280d13f354",
+      "tokens.css": "8efe241abb7757c5e1700a6e2286f5283ca6c8c201d1ff7347b6f2bb83aaad51",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
       "blueprint.json": "c4f66a6db43db07ec3183dcc0c8a7e709e1831adbde458a5d131fbcf34cdd196"
     }

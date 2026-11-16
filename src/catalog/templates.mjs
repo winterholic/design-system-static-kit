@@ -57,7 +57,7 @@ add('product-landing', '제품 소개', 'landing', 'commerce', '무드램프', [
   head('방 안의 빛을 바꾸는 작은 램프', '손바닥만 한 크기에 열두 가지 분위기.'),
   {type: 'hero', variant: 'product', title: '무드램프 미니', body: '충전은 한 번, 사용은 열 시간. 책상 위에서 침대맡까지 어디든.', action: A('39,000원에 담기', 'primary'), secondaryAction: A('스펙 보기', 'ghost'), visual: 'photo', motif: 'orb'},
   section('왜 이 램프인가요', [{type: 'bento', children: [{...media('photo', '1:1', '책상 위에 놓인 램프'), motif: 'lamp', caption: '책상 위에서는 은은한 스탠드로'}, metric('사용 시간', '10시간', '완충 기준'), card('열두 가지 분위기', '따뜻한 노랑부터 차분한 파랑까지 한 번의 터치로 바꿉니다.', {icon: 'sun'}), {type: 'quote', quote: '밤에 책 읽을 때 눈이 편해요.', author: '박서연', role: '구매 고객'}, metric('무게', '180g', '한 손에 쏙')]}], {description: '작은 램프가 방의 분위기를 바꾸는 네 가지 이유.'}),
-  section('사양', [{type: 'split', children: [{type: 'properties', title: '제품 정보', items: [{label: '크기', value: '지름 8cm · 높이 12cm'}, {label: '충전', value: 'USB-C · 2시간'}, {label: '방수', value: 'IPX4'}, {label: '보증', value: '1년'}]}, media('diagram', '4:3', '램프 크기를 보여 주는 도면')]}]),
+  section('사양', [{type: 'split', children: [{type: 'properties', title: '제품 정보', items: [{label: '크기', value: '지름 8cm · 높이 12cm'}, {label: '충전', value: 'USB-C · 2시간'}, {label: '방수', value: 'IPX4'}, {label: '보증', value: '1년'}]}, {...media('photo', '4:3', '무드램프 미니 제품 일러스트', '제품 일러스트 · 치수는 제품 정보 참조'), motif: 'orb'}]}]),
   section('리뷰', [{type: 'reviews', title: '구매 후기', score: '4.8', count: '리뷰 1,204개', items: [{author: '김**', rating: 5, text: '조명이 부드러워서 잠들기 전에 켜 둡니다.', date: '2026.10.02'}, {author: '이**', rating: 4, text: '배터리가 오래가요. 색 전환이 조금 느린 게 아쉬워요.', date: '2026.09.27'}]}]),
   {type: 'cta', title: '오늘 주문하면 모레 도착', action: A('장바구니 담기', 'primary')},
 ], {chrome: chrome(nav(['제품', 'bag'], ['사양', 'list'], ['후기', 'star'], ['문의', 'mail']), '장바구니', '© 2026 무드램프', FOOT)});
@@ -402,7 +402,7 @@ add('menu-dining', '메뉴판', 'commerce', 'dining', '소담 식당', [
 
 add('realty-detail', '부동산 매물', 'commerce', 'realty', '집찾기', [
   head('성수동 신축 아파트 84㎡', '매매 12억 5,000만원', {eyebrow: '매물 번호 2026-1018'}),
-  {type: 'gallery', layout: 'grid', items: [{kind: 'photo', motif: 'interior', alt: '거실', caption: '거실'}, {kind: 'photo', motif: 'building', alt: '단지 전경', caption: '단지 전경'}, {kind: 'diagram', alt: '평면도', caption: '평면도'}, {kind: 'map', alt: '위치 지도', caption: '위치'}]},
+  {type: 'gallery', layout: 'grid', items: [{kind: 'photo', motif: 'interior', alt: '거실', caption: '거실'}, {kind: 'photo', motif: 'building', alt: '단지 전경', caption: '단지 전경'}, {kind: 'photo', motif: 'interior', alt: '실내 공간 일러스트', caption: '실내 공간 예시 · 실제 평면도 미제공'}, {kind: 'map', alt: '위치 지도', caption: '위치'}]},
   {type: 'aside', side: 'end', label: '문의', children: [
     {type: 'properties', title: '기본 정보', items: [{label: '전용 면적', value: '84㎡ (25평)'}, {label: '방/욕실', value: '3개 / 2개'}, {label: '층', value: '12층 / 25층'}, {label: '입주 가능', value: '즉시'}, {label: '관리비', value: '월 28만원'}]},
     {type: 'buy-box', title: '방문 상담 예약', price: '12억 5,000만원', note: '실거래가 12억 2,000만원(9월)', action: A('상담 예약', 'primary'), secondaryAction: A('전화 문의', 'secondary')}]},

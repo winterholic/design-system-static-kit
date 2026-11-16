@@ -67,14 +67,15 @@ const summary = n => n.kind === 'donut'
   ? `${n.caption} ` + n.categories.map((c, i) => `${c} ${fmt(n.series[0].values[i], n.unit)}`).join(', ')
   : `${n.caption} ` + n.series.map(s => `${s.name}: ` + n.categories.map((c, i) => `${c} ${fmt(s.values[i], n.unit)}`).join(', ')).join(' / ');
 
-export function renderChart(n, id) {
+export function renderChart(n, id, {fillAssignedWidth = false} = {}) {
   let svg, legend = '';
   if (n.kind === 'donut') {
     svg = donut(n).svg.replaceAll('__ID__', id);
     const total = n.series[0].values.reduce((a, b) => a + b, 0) || 1;
     legend = `<ul class="kit-legend">${n.categories.map((c, i) => `<li><i style="background:var(--kit-chart${(i % 5) + 1})" aria-hidden="true"></i>${e(c)} <b>${fmt(n.series[0].values[i], n.unit)}</b> <span>(${Math.round((n.series[0].values[i] / total) * 100)}%)</span></li>`).join('')}</ul>`;
   } else {
-    svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${cartesian(n)}</svg>`;
+    svg = `<svg viewBox="0 0 ${W} ${H}"${fillAssignedWidth ? ' preserveAspectRatio="none"' : ''} role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${cartesian(n)}</svg>`;
+    if (fillAssignedWidth) svg = `<div class="kit-chart-plot">${svg}</div>`;
     if (n.series.length > 1) legend = `<ul class="kit-legend">${n.series.map((s, i) => `<li><i style="background:var(--kit-chart${i + 1})" aria-hidden="true"></i>${e(s.name)}</li>`).join('')}</ul>`;
   }
   const head = ['', ...(n.kind === 'donut' ? [n.series[0].name] : n.series.map(s => s.name))];

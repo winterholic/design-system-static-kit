@@ -1,0 +1,21 @@
+RED — actual rendered geometry before marker compensation
+Preview: http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker/preview-red/dashboard-analytics.html?bodyWidth=602
+Viewport/chart: 1460x1100 / 602x340
+Browser probe: circle 1.18, square 1.18, diamond 1.18; every sampled data center error 0px; document horizontal overflow false.
+Screenshot: /Volumes/Backup/ttakkari-data/outbox/2d006348-bb3a-4f53-a1f1-65d01ae64850/browser/page-2026-11-16T05-04-20-283Z.png
+
+RED — production geometry contract before correction
+$ node --test --test-name-pattern='context line markers compensate' tests/composition.test.mjs
+✖ context line markers compensate horizontal SVG stretch while retaining all three series shapes
+AssertionError: wide context charts reduce marker x geometry around each marker center
+
+GREEN — same contract after the shared SVG correction
+$ node --test --test-name-pattern='context line markers compensate' tests/composition.test.mjs
+✔ context line markers compensate horizontal SVG stretch while retaining all three series shapes
+tests 1, pass 1, fail 0
+
+GREEN — requested focused suite and compatibility contract
+$ node --test tests/composition.test.mjs tests/layout.test.mjs
+tests 24, pass 24, fail 0; includes all 85 pinned 2.1 complete-output hashes
+$ git diff --check
+exit 0

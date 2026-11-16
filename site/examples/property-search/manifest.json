@@ -1068,7 +1068,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1180,7 +1180,59 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 100,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 72,
+              "align": "end",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 4,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 388,
+          "readableWidth": 388,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       }
     ],
     "inherited": [
@@ -1230,8 +1282,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "9b773979db0157309a525e89b2dc1b6a8fbb605998ca4ea382e9bf2bfb068b21",
-      "tokens.css": "753b19008d40550d02a8cf10fd2c396c22712f6a43f7dad0aabbd2295d3b1c7a",
+      "index.html": "0501b3dd2b8d221954be030d78bbbc71f0bf1318a4cd9f758131e34124db1ccc",
+      "tokens.css": "a3dec241b964e437b1b06334c259f34286c383402073500c44c65d8310fd729f",
       "tokens.json": "6a399704941625bdb6c69ae47024a922f05ad028cc71dc52a5a345014d99dd39",
       "blueprint.json": "e273a2dd36527de6d468e73e3a1a746acecca3142b21e582b9ee68abafbae7b3"
     }

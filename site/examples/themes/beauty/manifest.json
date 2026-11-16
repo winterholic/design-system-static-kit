@@ -1137,7 +1137,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1653,13 +1653,24 @@
         ],
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "centered",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "d253ecc803864ec6147277a624543400907f027e9fd36a11f4fb0e19eed92573",
-      "tokens.css": "1a0b53edf06e748354599cf98afa480daa7e7f847b2fc38ca7074833169c0307",
+      "index.html": "5abeb45aad8aee2973bca3e042dabc821d62c47259393d0b2b94765f70399a59",
+      "tokens.css": "672a0c391d3c3c18885a637e62c967f91d62f768c2551a9f759bb9562d1d87ac",
       "tokens.json": "c03ddc7180a4c066548254a42d0019d3b1033c90e21e2f55106684ea431b3689",
       "blueprint.json": "b086744c51e31317ea5fbb7f38c97f4718ddd28eb4f8108671220ec481ea476f"
     }

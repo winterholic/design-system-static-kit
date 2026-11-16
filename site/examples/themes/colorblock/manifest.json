@@ -1104,7 +1104,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1467,7 +1467,47 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 112,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 80,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 264,
+          "readableWidth": 264,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       },
       {
         "path": "$.tree.children[4]",
@@ -1540,8 +1580,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "da69a17657306a5c51f644731c8b800cf6fa45d01ad8af085e8c10e84ea00845",
-      "tokens.css": "1ad238105f3a630a7ffbb7d42e97ae80c88cfb3345739bdcc8c0a491b41eee27",
+      "index.html": "71a969b4ff2cd206d72700432b62d16354bcfe83006f7530887f96e2e58a215f",
+      "tokens.css": "0ef9e806c6c45db3687db51cd6aba17760904451e20ce9787330dbe3865e8d20",
       "tokens.json": "e48aa02ee776987eaeef09a8a625884c1dc743c2ea35f5a4f7fd735ed00acf29",
       "blueprint.json": "0c41707fdcac332eb28b9e65f58ccf2feff69f42c98481d6bcd0b4ef82fd34f9"
     }

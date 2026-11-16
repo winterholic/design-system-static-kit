@@ -6,7 +6,7 @@ export const DEFAULT_CHROME = {nav: [{label: '개요', href: '#main'}]};
 const mega = a => `<details class="kit-mega"><summary>${a.icon ? icon(a.icon) : ''}<span>${e(a.label)}</span>${icon('chevron-down')}</summary><div class="kit-mega-panel"><ul><li><a href="${href(a.href)}"><strong>${e(a.label)} 전체 보기</strong></a></li>${a.mega.map(m => `<li><a href="${href(m.href)}"${m.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}><strong>${e(m.label)}</strong>${m.description ? `<span>${e(m.description)}</span>` : ''}</a></li>`).join('')}</ul></div></details>`;
 const link = (a, current) => `<a href="${href(a.href)}"${a.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}${current ? ' aria-current="page"' : ''}>${a.icon ? icon(a.icon) : ''}<span>${e(a.label)}</span></a>`;
 
-export function renderShell(b, body) {
+export function renderShell(b, body, headerDesign = null) {
   const chrome = b.chrome ?? DEFAULT_CHROME, items = chrome.nav ?? DEFAULT_CHROME.nav;
   const marked = items.findIndex(x => x.current), firstCurrent = marked > -1 ? marked : items.findIndex(x => x.href === '#main');
   const mark = e(chrome.brandMark ?? [...b.name.trim()][0] ?? 'W');
@@ -19,7 +19,7 @@ export function renderShell(b, body) {
     : `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map(li).join('')}</ul></nav>`;
   const act = chrome.action ? `<a class="kit-button kit-header-action" data-variant="primary" href="${href(chrome.action.href)}"${chrome.action.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(chrome.action.label)}</a>` : '';
   const masthead = b.shell === 'masthead' ? '<p class="kit-dateline">정적 데모 · Static Kit</p>' : '';
-  const header = `<header class="kit-header">${masthead}${brand}${nav}${act}</header>`;
+  const header = `<header class="kit-header">${masthead}${headerDesign ? `<div class="kit-header-primary">${brand}${act}</div>${nav}` : `${brand}${nav}${act}`}</header>`;
   const links = chrome.footerLinks ?? [];
   const footerLinks = links.length ? `<ul class="kit-footer-links">${links.map(l => `<li><a href="${href(l.href)}"${l.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(l.label)}</a></li>`).join('')}</ul>` : '';
   const note = e(chrome.footerNote ?? `${b.name} · Static Kit ${b.catalogVersion}`);

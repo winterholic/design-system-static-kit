@@ -1,0 +1,34 @@
+case: green-marker-breakpoints
+head: 61d2e5e5c51a58aeb6a7f4ecc2fc6a7337bd6864
+source_sha256:
+  src/composition.mjs: 837dec91297fdcd5a864c325d464b82524529d0da1c43043817e21b8969942e4
+  src/render/chart.mjs: 2088bfc9c2dd73201110e8477d565b4b66ff9ed97dc9eec37aca270813e40903
+  src/render/nodes.mjs: ce5d45c08107299103096526bfbcc5338aad73d1dba98c9040400f3bc86bc9fb
+  tests/composition.test.mjs: 3a425c44afd97c25e59569b82b79abe239df661b78af81be1eeca07e645116cb
+blueprint_input_sha256: 1771bfe896ca57414e0ef067b3d998101fb8d208c0a1a57ce9dd601994994994
+viewport: 1460x1100
+document_width: 1460
+horizontal_overflow: false
+cases:
+  - preview_url: http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker/preview/dashboard-analytics.html?bodyWidth=509
+    chart_area: 612
+    plot: 509x339.33
+    marker_ratios: {circle: 1, square: 1, diamond: 1}
+    center_error_max_px: 0
+    text_bbox_outside_svg: 1
+    svg_overflow: visible
+    screenshot: /Volumes/Backup/ttakkari-data/outbox/2d006348-bb3a-4f53-a1f1-65d01ae64850/browser/page-2026-11-16T05-10-23-637Z.png
+  - preview_url: http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker/preview/dashboard-analytics.html?bodyWidth=510
+    chart_area: 612
+    plot: 510x340
+    marker_ratios: {circle: 1, square: 1, diamond: 1}
+    center_error_max_px: 0
+    text_bbox_outside_svg: 1
+    svg_overflow: visible
+  - preview_url: http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker/preview/dashboard-analytics.html?bodyWidth=511
+    chart_area: 612
+    plot: 511x340
+    marker_ratios: {circle: 1, square: 1, diamond: 1}
+    center_error_max_px: 0
+    text_bbox_outside_svg: 1
+    svg_overflow: visible

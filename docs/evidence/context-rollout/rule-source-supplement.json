@@ -1,0 +1,371 @@
+{
+  "title": "R12 official source supplement: Material 3, Spectrum, Polaris",
+  "checked_at": "2026-11-16T13:46:00+09:00",
+  "scope": "Official evidence only for unextracted fields in the existing rule ledger; no verdict/coverage correction.",
+  "source_method": "Fetched public GitHub REST tree/commit metadata and raw files by pinned commit; opened current official Shopify developer documentation. Old failed URLs/JS-empty pages from the ledger were not repeated. No search-snippet numerical claim was accepted as data.",
+  "sources": {
+    "m3": {
+      "system": "Material 3 / Material Web token source",
+      "url": "https://github.com/material-components/material-web/tree/37aa14b843dcaeb3a46f898679fa6fcd109b1905/tokens/versions/latest/sass",
+      "version": "material-web main @ 37aa14b843dcaeb3a46f898679fa6fcd109b1905 (latest token snapshot at that commit)",
+      "platform": "Material Web, Sass token source; token values retain source units (rem or px)",
+      "checked_at": "2026-11-16T13:46:00+09:00",
+      "files": [
+        "_md-sys-typescale.scss",
+        "_md-comp-button.scss",
+        "_md-comp-outlined-text-field.scss",
+        "_md-comp-list.scss",
+        "_md-comp-navigation-bar.scss",
+        "_md-comp-navigation-rail.scss",
+        "_md-comp-navigation-drawer.scss"
+      ]
+    },
+    "spectrum1": {
+      "system": "Adobe Spectrum CSS tokens (Spectrum 1 generation)",
+      "url": "https://github.com/adobe/spectrum-css/blob/70d3660a992a98837d8177d8c25dc5a282e8f361/tokens/dist/json/tokens.json",
+      "version": "spectrum-css main @ 70d3660a992a98837d8177d8c25dc5a282e8f361",
+      "platform": "Web CSS token output; desktop/mobile token contexts where present",
+      "checked_at": "2026-11-16T13:46:00+09:00",
+      "files": [
+        "tokens/dist/json/tokens.json"
+      ]
+    },
+    "spectrum2": {
+      "system": "Adobe Spectrum 2 / spectrum-design-data",
+      "url": "https://github.com/adobe/spectrum-design-data/tree/6ae966d623508ee4d7031c6bafe93785a8c29468/docs",
+      "version": "spectrum-design-data main @ 6ae966d623508ee4d7031c6bafe93785a8c29468",
+      "platform": "Spectrum 2 design-data schemas and documentation; not assumed equivalent to Spectrum 1 values",
+      "checked_at": "2026-11-16T13:46:00+09:00",
+      "files": [
+        "markdown/components/button.md",
+        "markdown/components/text-field.md",
+        "markdown/components/table.md",
+        "markdown/components/cards.md",
+        "markdown/tokens/layout-component.md",
+        "markdown/tokens/typography.md"
+      ]
+    },
+    "pol-react": {
+      "system": "Shopify Polaris React + polaris-tokens (archived repository)",
+      "url": "https://github.com/Shopify/polaris-react-archive/tree/3f7954ae42fabf26d63cee68c23ceebfd7ef0972/polaris-tokens/src",
+      "version": "polaris-react-archive main @ 3f7954ae42fabf26d63cee68c23ceebfd7ef0972; repository archived/read-only 2026-09-11",
+      "platform": "Historical Polaris React token and CSS implementation; do not treat as current Web Components implementation",
+      "checked_at": "2026-11-16T13:46:00+09:00",
+      "files": [
+        "themes/base/breakpoints.ts",
+        "themes/base/space.ts",
+        "themes/base/height.ts",
+        "themes/base/font.ts",
+        "size.ts",
+        "../polaris-react/src/components/Button/Button.module.css",
+        "../polaris-react/src/components/DataTable/DataTable.module.css"
+      ]
+    },
+    "pol-web": {
+      "system": "Shopify Polaris Web Components documentation",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components",
+      "version": "App Home web components documentation v2.0 latest (page-selected version at retrieval)",
+      "platform": "Current Shopify app-home Web Components docs; public component guidance/API, not the archived React CSS/token package",
+      "checked_at": "2026-11-16T13:46:00+09:00",
+      "files": [
+        "actions/button",
+        "forms/text-field",
+        "layout-and-structure/table",
+        "layout-and-structure/section"
+      ]
+    }
+  },
+  "entries": [
+    {
+      "system": "Material 3",
+      "field": "타입 스케일 수치(크기·행간·자간)",
+      "status": "확보",
+      "rule_ids": [
+        "M3-01",
+        "M3-02"
+      ],
+      "value": "Material Web latest token Sass: body large 1rem / 1.5rem / 0.03125rem (size/line-height/tracking); body medium 0.875rem / 1.25rem / 0.015625rem; body small 0.75rem / 1rem / 0.025rem. Display large 3.5625rem / 4rem / -0.015625rem; display medium 2.8125rem / 3.25rem / 0rem; display small 2.25rem / 2.75rem / 0rem. Source tokens include headline/title/label roles as well.",
+      "conditions": "Sass values as declared by the checked Material Web token snapshot; rem remains rem (no assumed root font conversion); roles are separate semantic type styles.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "tokens/versions/latest/sass/_md-sys-typescale.scss"
+    },
+    {
+      "system": "Material 3",
+      "field": "버튼 높이·위계·패딩",
+      "status": "확보",
+      "rule_ids": [
+        "M3-03"
+      ],
+      "value": "Base button container height 40px. Filled button source also declares 40px but its token is marked deprecated. Component exposes filled, filled-tonal, outlined, elevated, and text button variants; selected token source establishes 40px container but does not by itself establish a universal padding value.",
+      "conditions": "Material Web token implementation; variant-specific style tokens apply. Deprecated filled-button token is identified as such.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "tokens/versions/latest/sass/_md-comp-button.scss; _md-comp-filled-button.scss"
+    },
+    {
+      "system": "Material 3",
+      "field": "텍스트 필드·폼 간격 수치",
+      "status": "부분 확보",
+      "rule_ids": [
+        "M3-03"
+      ],
+      "value": "Outlined text field container height token is 56px and is explicitly deprecated because multiline/text-area variants require dynamic height. Internal source defines input, label and supporting-text metrics via type-scale references. No general vertical gap between separate form fields was identified in these checked token files.",
+      "conditions": "56px is a deprecated fixed-height token, not a universal field rendered height; multiline field height is dynamic.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "tokens/versions/latest/sass/_md-comp-outlined-text-field.scss"
+    },
+    {
+      "system": "Material 3",
+      "field": "표/리스트 밀도",
+      "status": "부분 확보",
+      "rule_ids": [
+        "M3-01"
+      ],
+      "value": "List one-line item container 56px, two-line 72px, three-line 88px; list divider 1px. These are list item tokens, not data-table row heights.",
+      "conditions": "Material Web list component; three explicit line-count variants. No table density/row-height value is asserted from these list tokens.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "tokens/versions/latest/sass/_md-comp-list.scss"
+    },
+    {
+      "system": "Material 3",
+      "field": "카드 구성",
+      "status": "부분 확보",
+      "rule_ids": [
+        "M3-02"
+      ],
+      "value": "Card component token source exists for elevated/filled/outlined variants; checked token source defines style/component tokens but the task’s broad “card composition” (content slots, spacing/layout recipe) is not a single numeric rule established by those files.",
+      "conditions": "Web component card variants; no generalized card content-padding or card composition number claimed.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "tokens/versions/latest/sass/_md-comp-elevated-card.scss; _md-comp-filled-card.scss; _md-comp-outlined-card.scss"
+    },
+    {
+      "system": "Material 3",
+      "field": "내비게이션 바·레일·드로어 전환 기준",
+      "status": "부분 확보",
+      "rule_ids": [
+        "M3-01",
+        "M3-02"
+      ],
+      "value": "Navigation bar container token 80px; active indicator 64px wide × 32px high. Official Material 3 adaptive window classes in existing M3-01 are compact <600dp, medium 600–839dp, expanded 840–1199dp, large 1200–1599dp, extra-large ≥1600dp. Component-specific bar/rail/drawer switch thresholds are not derived from the component dimension tokens alone.",
+      "conditions": "80/64/32 are Material Web token dimensions; window classes are Android window-width classes in dp, and should not be conflated with CSS px.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "tokens/versions/latest/sass/_md-comp-navigation-bar.scss; official Android source already linked by M3-01"
+    },
+    {
+      "system": "Material 3",
+      "field": "마진·열·간격 8dp 격자",
+      "status": "미기재",
+      "rule_ids": [
+        "M3-01"
+      ],
+      "value": "The checked Material Web token paths do not state a universal 8dp page-margin / column / spacing grid. No value supplied.",
+      "conditions": "Specific component spacing tokens do not establish a universal layout grid.",
+      "source_ids": [
+        "m3"
+      ],
+      "source_file": "Material Web token snapshot listed above"
+    },
+    {
+      "system": "Spectrum",
+      "field": "컴포넌트 높이",
+      "status": "부분 확보",
+      "rule_ids": [
+        "SPE-06",
+        "SPE-09"
+      ],
+      "value": "Spectrum CSS (Spectrum 1) token output contains component-height and component-specific size tokens, with desktop/mobile contexts on some tokens. Spectrum 2 component schemas specify size options (e.g. button/text-field s, m, l, xl) but do not expose pixel heights in the checked component schema pages. No single universal component height is stated.",
+      "conditions": "Spectrum 1 web CSS tokens and Spectrum 2 schema options are different generations/sources; no cross-generation substitution.",
+      "source_ids": [
+        "spectrum1",
+        "spectrum2"
+      ],
+      "source_file": "tokens/dist/json/tokens.json; docs/markdown/components/button.md; text-field.md"
+    },
+    {
+      "system": "Spectrum",
+      "field": "표 행 높이·패딩",
+      "status": "부분 확보",
+      "rule_ids": [
+        "SPE-06"
+      ],
+      "value": "Spectrum 1 CSS token data: medium rows compact/regular/spacious = 32/40/48px desktop, 40/50/60px mobile; small = 24/32/40px desktop, 30/40/50px mobile; large = 40/48/56px desktop, 50/60/70px mobile; extra-large = 48/56/64px desktop, 60/70/80px mobile. For medium regular, top-to-text is 11px desktop/14px mobile and bottom-to-text is 12px/15px. Spectrum 2 Table schema independently defines size s/m/l (default m) and density compact/regular/spacious (default regular) but no pixel values.",
+      "conditions": "S2 semantic options are numeric-free; CSS output is Spectrum 1 web implementation.",
+      "source_ids": [
+        "spectrum1",
+        "spectrum2"
+      ],
+      "source_file": "docs/markdown/components/table.md; tokens/dist/json/tokens.json"
+    },
+    {
+      "system": "Spectrum",
+      "field": "버튼 위계·높이",
+      "status": "부분 확보",
+      "rule_ids": [
+        "SPE-06"
+      ],
+      "value": "Spectrum 2 Button schema: variant accent, negative, primary, secondary; default accent; size s/m/l/xl, default m. Spectrum 1 token output includes generic component-height scale: 20/24/32/40/48/56/64px desktop and 26/30/40/50/60/70/80px mobile for height scales 50/75/100/200/300/400/500. The checked token JSON does not give a button-size-to-height mapping, so no exact button height is asserted.",
+      "conditions": "S2 schema option/default values are distinct from S1 CSS token measurements; do not map size names across generations without a version-specific lookup.",
+      "source_ids": [
+        "spectrum1",
+        "spectrum2"
+      ],
+      "source_file": "docs/markdown/components/button.md; tokens/dist/json/tokens.json"
+    },
+    {
+      "system": "Spectrum",
+      "field": "카드 구성",
+      "status": "부분 확보",
+      "rule_ids": [
+        "SPE-06"
+      ],
+      "value": "Spectrum 2 Cards schema lists asset, collection, flex, gallery, horizontal, product variants (default asset). Spectrum 2 layout-component token table includes default card widths: extra-small 120px, small 180px, medium 240px, large 320px, extra-large 400px, and card minimum width 100px. These are width tokens, not a universal card anatomy/padding rule.",
+      "conditions": "Variant schema vs web implementation token values remain distinct.",
+      "source_ids": [
+        "spectrum1",
+        "spectrum2"
+      ],
+      "source_file": "docs/markdown/components/cards.md; tokens/dist/json/tokens.json"
+    },
+    {
+      "system": "Spectrum",
+      "field": "텍스트 필드 간격 수치",
+      "status": "부분 확보",
+      "rule_ids": [
+        "SPE-07",
+        "SPE-08"
+      ],
+      "value": "Spectrum 2 Text field schema: labelPosition top/side (default top); sizes s/m/l/xl default m; helpText and errorMessage properties exist. The checked Spectrum 1 token JSON exposes text-field-minimum-width-multiplier=1.5 but no general label/help/field-to-field gap token in the checked text-field-prefixed token names. No numeric general form gap is claimed.",
+      "conditions": "Do not assign an undocumented general form gap; component internal token values vary by size and platform context.",
+      "source_ids": [
+        "spectrum1",
+        "spectrum2"
+      ],
+      "source_file": "docs/markdown/components/text-field.md; tokens/dist/json/tokens.json"
+    },
+    {
+      "system": "Spectrum",
+      "field": "그리드 열·거터 수치",
+      "status": "미기재",
+      "rule_ids": [
+        "SPE-09"
+      ],
+      "value": "Checked Spectrum 2 component and token documentation paths do not establish a universal responsive grid column count/gutter rule for the former Spectrum web page’s claim. Previous search-snippet “12 columns” is not treated as verified evidence.",
+      "conditions": "No external search summary value copied into this supplement.",
+      "source_ids": [
+        "spectrum2"
+      ],
+      "source_file": "docs/markdown/components and docs/markdown/tokens checked"
+    },
+    {
+      "system": "Spectrum",
+      "field": "간격 토큰 값 표",
+      "status": "확보",
+      "rule_ids": [
+        "SPE-05",
+        "SPE-06"
+      ],
+      "value": "Spectrum 1 CSS token output exact spacing scale: spacing-50=2px, 75=4px, 100=8px, 200=12px, 300=16px, 400=24px, 500=32px, 600=40px, 700=48px, 800=64px, 900=80px, 1000=96px. Spectrum 2 layout-component table separately gives named component-specific desktop/mobile values and marks many entries deprecated/replaced; these are not a universal scale.",
+      "conditions": "Keep per-token value/context; many layout/component spacing tokens are deprecated or replaced. Not all are universal spacing scale values.",
+      "source_ids": [
+        "spectrum1",
+        "spectrum2"
+      ],
+      "source_file": "tokens/dist/json/tokens.json; docs/markdown/tokens/layout-component.md"
+    },
+    {
+      "system": "Polaris",
+      "field": "브레이크포인트 px",
+      "status": "확보",
+      "rule_ids": [
+        "POL-12"
+      ],
+      "value": "Archived Polaris React token values are xs 0px, sm 490px, md 768px, lg 1040px, xl 1440px.",
+      "conditions": "Historical React/token system, mobile-first aliases; the current Polaris Web Components documentation is v2.0 latest and is not this archived CSS token package.",
+      "source_ids": [
+        "pol-react",
+        "pol-web"
+      ],
+      "source_file": "polaris-tokens/src/themes/base/breakpoints.ts"
+    },
+    {
+      "system": "Polaris",
+      "field": "간격·크기 토큰 px",
+      "status": "확보",
+      "rule_ids": [
+        "POL-01",
+        "POL-02"
+      ],
+      "value": "Archived React polaris-tokens size scale: 0px, 0.66px, 1, 2, 4, 6, 8, 11, 12, 13, 14, 16, 18, 20, 22, 24, 28, 30, 32, 36, 40, 48, 64, 80, 96, 112, 128px. Space/height scales select named members of this size map; aliases include button-group-gap=space-200 (8px), card-gap/card-padding=space-400 (16px), table-cell-padding=space-150 (6px).",
+      "conditions": "Values are from historical React token source. It is not evidence that current Web Components expose the same CSS token contract.",
+      "source_ids": [
+        "pol-react",
+        "pol-web"
+      ],
+      "source_file": "polaris-tokens/src/size.ts; themes/base/space.ts; height.ts"
+    },
+    {
+      "system": "Polaris",
+      "field": "타입 스케일",
+      "status": "확보",
+      "rule_ids": [
+        "POL-12"
+      ],
+      "value": "Archived React font-size tokens resolve through shared size map: 275=11px, 300=12px, 325=13px, 350=14px, 400=16px, 450=18px, 500=20px, 550=22px, 600=24px, 750=30px, 800=32px, 900=36px, 1000=40px. Letter-spacing: densest -0.54px, denser -0.3px, dense -0.2px, normal 0px. Line-height tokens 300/400/500/600/700/800/1000/1200 resolve to same-numbered size-map values 12/16/20/24/28/32/40/48px.",
+      "conditions": "Archived React token declarations; type roles and font-weight mapping remain in source; not asserted as current Web Components computed typography.",
+      "source_ids": [
+        "pol-react",
+        "pol-web"
+      ],
+      "source_file": "polaris-tokens/src/themes/base/font.ts; size.ts"
+    },
+    {
+      "system": "Polaris",
+      "field": "표 밀도",
+      "status": "부분 확보",
+      "rule_ids": [
+        "POL-06",
+        "POL-07"
+      ],
+      "value": "Archived React DataTable CSS: default cells use vertical 8px / horizontal 6px padding (space-200 / space-150); IncreasedTableDensity uses 6px on all sides, with first/last cell horizontal padding still 12px; header cells use 12px top/bottom padding. Numeric cell class is right-aligned. CSS does not fix a universal row height; content/font can affect row box height. Current Web Components Table docs instead state auto table on wide screens/list on narrow screens; density/height px are not specified on that page.",
+      "conditions": "React pixel padding is resolved from the referenced scale map. Current web component docs are a separate platform, v2.0 latest.",
+      "source_ids": [
+        "pol-react",
+        "pol-web"
+      ],
+      "source_file": "polaris-react/src/components/DataTable/DataTable.module.css; current docs layout-and-structure/table"
+    },
+    {
+      "system": "Polaris",
+      "field": "버튼 높이",
+      "status": "부분 확보",
+      "rule_ids": [
+        "POL-11"
+      ],
+      "value": "Archived React Button CSS size mapping (min-height / vertical padding), mobile base → md-up desktop: micro 28px → 24px with 4px vertical padding; slim and medium 32px → 28px with 6px vertical padding; large 36px → 32px with 6px vertical padding. The mobile breakpoint is md-up=768px from the same archived React token source. Current v2.0 latest Web Components Button docs list variants/tones but no pixel height/padding.",
+      "conditions": "Legacy React web implementation vs current app-home Web Components API distinction; do not claim legacy measurements for current component.",
+      "source_ids": [
+        "pol-react",
+        "pol-web"
+      ],
+      "source_file": "polaris-react/src/components/Button/Button.module.css; current docs actions/button"
+    }
+  ],
+  "limitations": [
+    "Material Web is an implementation/token source for Material 3 on the web; it is not a claim that every M3 platform has identical component rendering.",
+    "Material values preserve source units and deprecated markers; CSS px, Android dp, and rem are not interchanged.",
+    "Spectrum 1 spectrum-css token output and Spectrum 2 spectrum-design-data are separately labelled. S2 schemas often expose options without pixel values.",
+    "Polaris React numeric data is historical and sourced from the now-archived polaris-react-archive repository. Current Shopify app-home Web Components docs are v2.0 latest and frequently specify semantics/responsive behavior without pixel measurements.",
+    "A “미기재” field means the checked official paths did not state the requested generalized rule; it does not claim no such data exists anywhere in the ecosystem."
+  ]
+}

@@ -1,0 +1,30 @@
+case: final-marker-valid-blueprint-supporting-aside
+stage: final_independent_recheck
+head: 61d2e5e5c51a58aeb6a7f4ecc2fc6a7337bd6864
+source_sha256:
+  src/composition.mjs: cf8194033392c401aa10c22f937d8d47d162dde5dc138023ce9e238e13afd392
+  src/render/chart.mjs: 2088bfc9c2dd73201110e8477d565b4b66ff9ed97dc9eec37aca270813e40903
+  src/render/nodes.mjs: da1686ff21885f4e5922d3db4dce3ed087165b3f57c36fa0807a6ca6a1475f8b
+  tests/composition.test.mjs: 3a425c44afd97c25e59569b82b79abe239df661b78af81be1eeca07e645116cb
+source_hashes_match_current_files: true
+blueprint_input_sha256: 1f135e7c5436d095d5977000d48d132733cf7072ca33e004185dbfc87470ea5c
+preview_builder_sha256: 934e0c64d861bd70cd1ef6d85afcafd5fd9b5e3f99c6efdeaba7cc3c21c0a6d8
+preview_url: http://127.0.0.1:4173/docs/evidence/context-rollout/remediation-a-marker-verification/preview/aside-counterexample.html?input=aside-counterexample
+blueprint: valid
+construction: docs-reference aside slot 2 contains a section with the existing toc plus a chart child; no compiled HTML relocation
+viewport: 320x1100
+aside_chart: true
+toc_links: 4
+toc_destinations: ['#s-install', '#s-auth', '#s-first', '#s-errors']
+chart_body: {width: 238}
+svg: {width: 238, height: 158.66}
+markers:
+  circle: {bbox: '4.63x4.63', ratio: 1.00, center_error_max_px: 0}
+  square: {bbox: '4.23x4.23', ratio: 1.00, center_error_max_px: 0}
+  diamond: {bbox: '5.82x5.82', ratio: 1.00, center_error_max_px: 0}
+chart_data_cells: 12
+document: {width: 320, height: 3787, horizontal_overflow: false}
+historical_stages:
+  red_preview: {circle_ratio: 1.18, evidence: remediation-a-marker.md, current_measurement: false}
+  initial_green: {circle_ratio: 1.00, evidence: remediation-a-marker.md, current_measurement: false}
+screenshot: /Volumes/Backup/ttakkari-data/outbox/7b321811-ac96-484e-b147-7d6d13b1e873/browser/page-2026-11-16T05-23-23-802Z.png

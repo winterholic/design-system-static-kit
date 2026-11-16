@@ -1008,11 +1008,28 @@
               "body": "복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다."
             },
             {
-              "type": "media",
-              "kind": "chart",
-              "ratio": "16:9",
-              "alt": "하천 중심에서의 거리에 따른 야간 기온 차이 그래프",
-              "caption": "그림 1. 하천 중심에서 멀어질수록 기온 감소 효과가 줄어든다."
+              "type": "chart",
+              "title": "거리별 야간 기온 차이",
+              "caption": "그림 1. 아래 예시 표와 동일한 수치 · 실제 연구 자료 아님",
+              "kind": "bar",
+              "unit": "℃",
+              "categories": [
+                "0~100m",
+                "100~200m",
+                "200~300m",
+                "300m 이상"
+              ],
+              "series": [
+                {
+                  "name": "기온 차이",
+                  "values": [
+                    -1.8,
+                    -1.4,
+                    -0.7,
+                    -0.1
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -1076,7 +1093,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1189,6 +1206,40 @@
         ]
       },
       {
+        "path": "$.tree.children[3].children[1]",
+        "type": "chart",
+        "facts": {
+          "type": "chart",
+          "semantic": "chart",
+          "intent": "reading",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 2,
+          "titleCpl": 6,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C26"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "visual-data"
+        },
+        "sources": {
+          "role": "C26"
+        },
+        "applied": [
+          "C26"
+        ]
+      },
+      {
         "path": "$.tree.children[4]",
         "type": "section",
         "facts": {
@@ -1261,7 +1312,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "spacious",
+          "padding": {
+            "inline": 16,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 116,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 96,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 96,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 136,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 444,
+          "readableWidth": 444,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       },
       {
         "path": "$.tree.children[4].children[1]",
@@ -1336,16 +1433,6 @@
         "reason": "Prose already has a bounded reading measure and semantic type role."
       },
       {
-        "path": "$.tree.children[3].children[1]",
-        "type": "media",
-        "mode": "inherited",
-        "contracts": [
-          "layout/ratio",
-          "type/caption"
-        ],
-        "reason": "The catalogue ratio and caption own media sizing."
-      },
-      {
         "path": "$.tree.children[5]",
         "type": "notice",
         "mode": "inherited",
@@ -1361,10 +1448,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f992619a07b454979d65845bf35b915e65fd8da4089b2b85ee2f69cc1fa20499",
-      "tokens.css": "574d33c40be717f85e07fd6427b68ddc3cc62012fcb7c61164a9664f7a9c87c2",
+      "index.html": "07db414d2ebad99a0448bb0a2ae031aec0eeb72d9bb1b4311c559c2ca6e28a8e",
+      "tokens.css": "5c3dd76c21102ec7df18cfac74b9300151e4de0a68c0dfbccbabf70added7700",
       "tokens.json": "586bccc4203bfcfc8373c3896488323e6e6a0ec802aa3c1f839ee2ac200616e0",
-      "blueprint.json": "96bb82c139c0f018f6453683fdaa261f8e609ec4776efb4c38dd34cfe2f96a10"
+      "blueprint.json": "9a4da2fafa28f48551cd261e99ced91d88c92471135faa475b06885f746622dc"
     }
   }
 }

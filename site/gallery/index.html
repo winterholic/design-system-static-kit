@@ -97,7 +97,7 @@ exports.MEGA_MAX = MEGA_MAX;
 __defs["catalog/composition.mjs"] = function (exports, __m) {
 /** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
  * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
-const COMPOSITION_VERSION = '1.1.0';
+const COMPOSITION_VERSION = '1.2.0';
 const PAGE_INTENT = {
   dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
   auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',
@@ -1308,7 +1308,7 @@ function registerMore({add, A, head, prose, card, metric, grid, section, notice,
 
   add('devtool-landing', '개발자 도구 소개', 'landing', 'devtool', '빌드플로', [
     head('배포까지 걸리는 시간을 줄이는 빌드 도구', '캐시와 병렬 실행으로 CI를 4배 빠르게.'),
-    {type: 'hero', variant: 'split', eyebrow: 'v3.2 · 원격 캐시 정식 출시', title: '푸시하고\n커피 한 잔.', body: '변경된 패키지만 다시 빌드하고, 나머지는 팀원이 이미 만든 결과를 가져옵니다.', action: A('무료로 시작', 'primary'), secondaryAction: A('문서 보기', 'secondary'), visual: 'device'},
+    {type: 'hero', variant: 'split', eyebrow: 'v3.2 · 원격 캐시 정식 출시', title: '푸시하고\n커피 한 잔.', body: '변경된 패키지만 다시 빌드하고, 나머지는 팀원이 이미 만든 결과를 가져옵니다.', action: A('무료로 시작', 'primary'), secondaryAction: A('문서 보기', 'secondary')},
     {type: 'code', label: '설치와 첫 빌드', language: 'bash', code: 'npm install -g @buildflow/cli\nbuildflow init\nbuildflow run build --cache=remote'},
     grid('three', metric('평균 빌드 시간', '2분 14초', '도입 전 9분 40초', 'down', '-77%'), metric('캐시 적중률', '91%', '최근 30일'), metric('팀', '3,200개', '활성 워크스페이스')),
     section('개발자가 쓰는 이유', [{type: 'bento', children: [card('변경분만 다시 빌드', '의존 그래프를 읽어 영향받는 패키지만 실행합니다. 설정 파일은 한 줄이면 됩니다.', {icon: 'zap'}), metric('병렬 작업', '16개', '코어에 맞춰 자동 분배'), card('로컬과 CI가 같은 결과', '같은 입력은 같은 출력을 냅니다. 내 컴퓨터에서 통과하면 CI에서도 통과해요.', {icon: 'check-circle'}), {type: 'chart', title: '빌드 시간 추이', caption: '최근 6주 평균', kind: 'line', unit: '분', categories: ['1주', '2주', '3주', '4주', '5주', '6주'], series: [{name: '평균 빌드', values: [9.6, 7.1, 4.8, 3.2, 2.5, 2.2]}]}, {type: 'quote', quote: '머지 대기 시간이 반으로 줄어서 리뷰 흐름이 끊기지 않습니다.', author: '윤서진', role: '플랫폼 엔지니어'}]}], {anchor: 'why'}),
@@ -1355,7 +1355,7 @@ function registerMore({add, A, head, prose, card, metric, grid, section, notice,
 
   add('bank-product', '금융 상품 안내', 'landing', 'bank', '새봄은행', [
     head('목돈을 천천히 키우는 정기예금', '가입 6개월 후 중도 해지해도 약정 이자의 80%를 드립니다.'),
-    {type: 'hero', variant: 'split', eyebrow: '새봄 정기예금', title: '연 3.65%,\n약속한 이자를 그대로.', body: '12개월 만기, 최소 100만 원부터. 만기 전 알림 문자를 보내 드려 갱신 시점을 놓치지 않게 해요.', action: A('모바일로 가입', 'primary'), secondaryAction: A('이자 계산', 'secondary'), visual: 'chart'},
+    {type: 'hero', variant: 'split', eyebrow: '새봄 정기예금', title: '연 3.65%,\n약속한 이자를 그대로.', body: '12개월 만기, 최소 100만 원부터. 만기 전 알림 문자를 보내 드려 갱신 시점을 놓치지 않게 해요.', action: A('모바일로 가입', 'primary'), secondaryAction: A('이자 계산', 'secondary')},
     grid('three', metric('기본 금리', '연 3.65%', '12개월 만기 · 세전'), metric('최소 가입 금액', '100만 원', '1원 단위로 추가 입금 불가'), metric('중도 해지 이자', '약정의 80%', '6개월 이상 유지 시')),
     section('이자 미리 보기', [{type: 'chart', title: '1,000만 원을 12개월 맡기면', caption: '월별 누적 이자(세전)', kind: 'area', unit: '원', categories: ['2개월', '4개월', '6개월', '8개월', '10개월', '12개월'], series: [{name: '누적 이자', values: [60800, 121700, 182500, 243300, 304200, 365000]}]}], {anchor: 'interest'}),
     section('가입 방법', [{type: 'steps', title: '세 단계로 가입', layout: 'horizontal', items: [{title: '본인 인증', description: '휴대폰 인증과 신분증 촬영이면 충분합니다.'}, {title: '금액과 만기 선택', description: '넣을 금액과 만기 방식을 고릅니다.'}, {title: '가입 완료', description: '약관을 확인하고 계약서를 받아 보세요.'}]}], {anchor: 'join'}),
@@ -1509,7 +1509,7 @@ function registerMore({add, A, head, prose, card, metric, grid, section, notice,
     head('도시 하천 복원이 여름철 야간 기온에 미친 영향', '서울 3개 하천 구간의 5년 관측 분석', {eyebrow: '원저 논문', meta: ['김다선 · 이지훈', '2026.10.', 'DOI 10.0000/example']}),
     prose('초록', '하천 복원 구간 인근의 여름철 야간 기온이 복원 전과 비교해 평균 1.4도 낮아졌다. 이 연구는 2021~2025년 세 개 하천 구간의 관측 자료를 비교해 복원 효과가 하천 중심에서 어느 거리까지 이어지는지 분석했다. 효과는 하천 중심에서 약 280m까지 유의했다.', 'lead'),
     {type: 'properties', title: '연구 개요', layout: 'inline', items: [{label: '관측 지점', value: '42곳'}, {label: '관측 기간', value: '2021.6 ~ 2025.9'}, {label: '분석 방법', value: '이중 차분 회귀'}]},
-    section('방법', [prose('관측 설계', '복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다.'), {...media('chart', '16:9', '하천 중심에서의 거리에 따른 야간 기온 차이 그래프', '그림 1. 하천 중심에서 멀어질수록 기온 감소 효과가 줄어든다.')}]),
+    section('방법', [prose('관측 설계', '복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다.'), {...{type: 'chart', title: '거리별 야간 기온 차이', caption: '그림 1. 아래 예시 표와 동일한 수치 · 실제 연구 자료 아님', kind: 'bar', unit: '℃', categories: ['0~100m', '100~200m', '200~300m', '300m 이상'], series: [{name: '기온 차이', values: [-1.8, -1.4, -0.7, -0.1]}]}}]),
     section('결과', [{type: 'table', title: '거리별 기온 차이', caption: '복원 구간과 대조 구간의 야간 평균 기온 차이', columns: ['거리', '차이(℃)', '표준오차', '유의성'], rows: [['0~100m', '-1.8', '0.21', 'p<0.001'], ['100~200m', '-1.4', '0.19', 'p<0.001'], ['200~300m', '-0.7', '0.24', 'p<0.01'], ['300m 이상', '-0.1', '0.22', '유의하지 않음']], state: 'ready', variant: 'plain'}, {type: 'quote', quote: '하천 복원의 냉각 효과는 폭 약 280m의 띠로 나타났고, 그 바깥에서는 통계적으로 구분되지 않았다.', author: '연구진'}]),
     {type: 'notice', tone: 'info', title: '한계', body: '센서 위치가 현장 접근성에 영향을 받았고, 기상 조건은 연도마다 달랐다. 일반화에는 추가 구간의 관측이 필요하다.'},
   ], {chrome: chrome(nav(['논문', 'file'], ['자료', 'download'], ['인용', 'copy']), null, '© 2026 도시 열섬 연구실', ['이용 조건', '문의'])});
@@ -1588,7 +1588,7 @@ add('product-landing', '제품 소개', 'landing', 'commerce', '무드램프', [
   head('방 안의 빛을 바꾸는 작은 램프', '손바닥만 한 크기에 열두 가지 분위기.'),
   {type: 'hero', variant: 'product', title: '무드램프 미니', body: '충전은 한 번, 사용은 열 시간. 책상 위에서 침대맡까지 어디든.', action: A('39,000원에 담기', 'primary'), secondaryAction: A('스펙 보기', 'ghost'), visual: 'photo', motif: 'orb'},
   section('왜 이 램프인가요', [{type: 'bento', children: [{...media('photo', '1:1', '책상 위에 놓인 램프'), motif: 'lamp', caption: '책상 위에서는 은은한 스탠드로'}, metric('사용 시간', '10시간', '완충 기준'), card('열두 가지 분위기', '따뜻한 노랑부터 차분한 파랑까지 한 번의 터치로 바꿉니다.', {icon: 'sun'}), {type: 'quote', quote: '밤에 책 읽을 때 눈이 편해요.', author: '박서연', role: '구매 고객'}, metric('무게', '180g', '한 손에 쏙')]}], {description: '작은 램프가 방의 분위기를 바꾸는 네 가지 이유.'}),
-  section('사양', [{type: 'split', children: [{type: 'properties', title: '제품 정보', items: [{label: '크기', value: '지름 8cm · 높이 12cm'}, {label: '충전', value: 'USB-C · 2시간'}, {label: '방수', value: 'IPX4'}, {label: '보증', value: '1년'}]}, media('diagram', '4:3', '램프 크기를 보여 주는 도면')]}]),
+  section('사양', [{type: 'split', children: [{type: 'properties', title: '제품 정보', items: [{label: '크기', value: '지름 8cm · 높이 12cm'}, {label: '충전', value: 'USB-C · 2시간'}, {label: '방수', value: 'IPX4'}, {label: '보증', value: '1년'}]}, {...media('photo', '4:3', '무드램프 미니 제품 일러스트', '제품 일러스트 · 치수는 제품 정보 참조'), motif: 'orb'}]}]),
   section('리뷰', [{type: 'reviews', title: '구매 후기', score: '4.8', count: '리뷰 1,204개', items: [{author: '김**', rating: 5, text: '조명이 부드러워서 잠들기 전에 켜 둡니다.', date: '2026.10.02'}, {author: '이**', rating: 4, text: '배터리가 오래가요. 색 전환이 조금 느린 게 아쉬워요.', date: '2026.09.27'}]}]),
   {type: 'cta', title: '오늘 주문하면 모레 도착', action: A('장바구니 담기', 'primary')},
 ], {chrome: chrome(nav(['제품', 'bag'], ['사양', 'list'], ['후기', 'star'], ['문의', 'mail']), '장바구니', '© 2026 무드램프', FOOT)});
@@ -1933,7 +1933,7 @@ add('menu-dining', '메뉴판', 'commerce', 'dining', '소담 식당', [
 
 add('realty-detail', '부동산 매물', 'commerce', 'realty', '집찾기', [
   head('성수동 신축 아파트 84㎡', '매매 12억 5,000만원', {eyebrow: '매물 번호 2026-1018'}),
-  {type: 'gallery', layout: 'grid', items: [{kind: 'photo', motif: 'interior', alt: '거실', caption: '거실'}, {kind: 'photo', motif: 'building', alt: '단지 전경', caption: '단지 전경'}, {kind: 'diagram', alt: '평면도', caption: '평면도'}, {kind: 'map', alt: '위치 지도', caption: '위치'}]},
+  {type: 'gallery', layout: 'grid', items: [{kind: 'photo', motif: 'interior', alt: '거실', caption: '거실'}, {kind: 'photo', motif: 'building', alt: '단지 전경', caption: '단지 전경'}, {kind: 'photo', motif: 'interior', alt: '실내 공간 일러스트', caption: '실내 공간 예시 · 실제 평면도 미제공'}, {kind: 'map', alt: '위치 지도', caption: '위치'}]},
   {type: 'aside', side: 'end', label: '문의', children: [
     {type: 'properties', title: '기본 정보', items: [{label: '전용 면적', value: '84㎡ (25평)'}, {label: '방/욕실', value: '3개 / 2개'}, {label: '층', value: '12층 / 25층'}, {label: '입주 가능', value: '즉시'}, {label: '관리비', value: '월 28만원'}]},
     {type: 'buy-box', title: '방문 상담 예약', price: '12억 5,000만원', note: '실거래가 12억 2,000만원(9월)', action: A('상담 예약', 'primary'), secondaryAction: A('전화 문의', 'secondary')}]},
@@ -2503,6 +2503,7 @@ function compile(input) {
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
+  if (design?.chrome) manifest.design.chrome = design.chrome;
   return {html, css, tokens, manifest};
 }
 
@@ -2516,6 +2517,8 @@ const {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT} 
 const {SPACE, TOKEN} = __m("spacing.mjs");
 const {roleSizes} = __m("typography.mjs");
 const {cplOf, vlOf, valueUnits} = __m("render/util.mjs");
+const {deriveTableDesign} = __m("table-design.mjs");
+const {deriveHeaderDesign} = __m("header-design.mjs");
 
 /** Small ordered decision table over known facts, deliberately not a general expression/rule language. */
 function selectDesign(facts, rules = compositionRules) {
@@ -2568,6 +2571,7 @@ function planComposition(b) {
       const longLabel = node.fields.some(f => cplOf(f.label) > 10);
       decision.container = {minField: longLabel ? 280 : 220, gap: space.head};
     }
+    if (node.type === 'table') decision.table = deriveTableDesign(node, decision);
     if (node.type === 'split') decision.container = {minWidth: 2 * 320 + space.gap};
     if (node.type === 'hero') decision.container = {minCell: Math.max(320, cellBucket(cplOf(node.title) * Math.min(sizes.display.min, sizes.heading.max) * 1.04))};
     if (node.type === 'aside') decision.container = {sideWidth: node.size === 'wide' ? 380 : 300, minWidth: 320 + (node.size === 'wide' ? 380 : 300) + space.gap};
@@ -2581,9 +2585,18 @@ function planComposition(b) {
       if (grid) decision.flow = {minCell: node.items.some(x => (x.description?.length ?? 0) > 100) ? 280 : 240, gap: space.gap, dense: false, span: true, cap: node.type === 'steps' && node.layout === 'horizontal' ? 4 : 3};
     }
     if (node.type === 'gallery' && (node.layout ?? 'grid') === 'grid') decision.flow = {minCell: 240, gap: space.gap, dense: false, span: true, cap: 4};
+    if (['steps','timeline'].includes(node.type)) {
+      const implicit = node.type === 'steps' ? !node.layout : !node.variant;
+      const short = node.items.length <= 4 && node.items.every(x => valueUnits(x.title) <= 40 && valueUnits(x.description ?? '') <= 80);
+      if (implicit && short) {
+        const cpl = Math.max(...node.items.map(x => Math.max(cplOf(x.title),cplOf(x.description ?? ''))));
+        decision.sequence = {policy:'sequence-content-1',mode:'adaptive',reason:'An implicit short sequence reuses the existing orphan-free flow; explicit chronology and long narratives retain rows.'};
+        decision.flow = {minCell:Math.max(200,cellBucket(cpl*sizes.small.max+space.head)),gap:space.gap,dense:false,span:true,cap:node.type==='timeline'?3:4};
+      }
+    }
   };
   visit(b.tree, '$.tree');
-  return {byNode, version: COMPOSITION_VERSION, decisions, inherited};
+  return {byNode, version: COMPOSITION_VERSION, decisions, inherited, chrome: deriveHeaderDesign(b)};
 }
 
 /** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
@@ -2596,6 +2609,7 @@ function compositionAttrs(d) {
   if (d.type === 'hero') attrs.push(['hero-min', d.container.minCell]);
   if (d.type === 'aside') attrs.push(['aside-min', d.container.minWidth]);
   if (d.type === 'plan') attrs.push(['supporting', d.facts.supporting]);
+  if (d.sequence) attrs.push(['sequence', d.sequence.mode]);
   return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
 }
 
@@ -2619,6 +2633,7 @@ function compositionCSS(plan) {
     if (d.type === 'section' && d.values.inset) out.push(`${sel}[data-surface]:not([data-surface=plain]){padding:${token(d.values.inset)}}`);
     if (d.type === 'form') out.push(`${sel}{padding:${token(d.values.inset)}}`);
   }
+  if (plan.decisions.some(d => d.type === 'card')) out.push('@media(max-width:560px){[data-design-kind=card][data-variant=horizontal]:has(.kit-card-foot) .kit-card-media{width:100%}}');
   if (plan.decisions.some(d => d.type === 'grid')) out.push('[data-design-kind=grid][data-flow-gap]{gap:var(--kit-design-gap)}', ...[...new Set(plan.decisions.filter(d => d.flow).map(d => d.flow.gap))].sort((a,b) => a-b).map(gap => `[data-design-kind=grid][data-flow-gap="${gap}"]{--kit-design-gap:${gap}px}`));
   const metric = plan.decisions.find(d => d.type === 'metric');
   if (metric) out.push(`
@@ -2646,7 +2661,12 @@ function compositionCSS(plan) {
 @container compose (min-width:${min}px){.kit-split[data-design-kind=split]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=even]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=wide-start]{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.kit-split[data-design-kind=split][data-ratio=wide-end]{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}.kit-split[data-design-kind=split][data-reverse=reverse]>:first-child{order:2}}`);
   }
   const table = plan.decisions.find(d => d.type === 'table');
-  if (table) out.push(`[data-design-kind=table] :is(th,td){padding:${token(table.values.cellSpace)}}[data-design-kind=table] .kit-table-scroll{overflow-x:auto}`);
+  if (table) {
+    out.push(`[data-design-kind=table] :is(th,td){padding-block:${token('near')};padding-inline:${token(table.values.cellSpace)}}[data-design-kind=table] .kit-table-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}[data-design-kind=table] table[data-table-min]{table-layout:auto}[data-design-kind=table] [data-column-align=end]{text-align:end}[data-design-kind=table] [data-column-wrap=nowrap]{white-space:nowrap}[data-design-kind=table] [data-column-wrap=words]{white-space:normal;word-break:keep-all;overflow-wrap:break-word}`);
+    const tables = plan.decisions.filter(d => d.type === 'table').map(d => d.table);
+    for (const width of [...new Set(tables.map(t => t.minimumWidth))].sort((a,b) => a-b)) out.push(`[data-table-min="${width}"]{min-width:${width}px}`);
+    for (const width of [...new Set(tables.flatMap(t => t.columns.map(c => c.minWidth)))].sort((a,b) => a-b)) out.push(`[data-design-kind=table] [data-column-min="${width}"]{min-width:${width}px}`);
+  }
   const list = plan.decisions.find(d => d.type === 'list');
   if (list) out.push(`[data-design-kind=list] li{padding-block:${token(list.values.itemSpace)}}`);
   const hero = plan.decisions.find(d => d.type === 'hero');
@@ -2661,9 +2681,16 @@ function compositionCSS(plan) {
   }
   if (plan.decisions.some(d => d.type === 'pricing')) out.push(`[data-design-kind=pricing]>.kit-plans{gap:${token('gap')}}[data-design-kind=pricing] .kit-plan-desc{min-height:0}[data-design-kind=pricing] .kit-plan ul{margin-block:${token('head')} ${token('gap')};padding-top:${token('head')}}`);
   if (plan.decisions.some(d => d.type === 'quote')) out.push(`[data-design-kind=quote][data-design-role=testimonial]{padding:${token('inset')}}[data-design-kind=quote] figcaption{flex-wrap:wrap;gap:${token('item')}}`);
-  if (plan.decisions.some(d => d.type === 'chart')) out.push('[data-design-kind=chart] .kit-chart-body{min-width:0}[data-design-kind=chart] .kit-chart-body>svg{min-width:0;max-width:100%}[data-design-kind=chart] .kit-chart-body>.ch-donut{flex-basis:min(200px,100%)}[data-design-kind=chart] .kit-legend{min-width:0;overflow-wrap:anywhere}[data-design-kind=chart] .kit-chart-data{max-width:100%;overflow-x:auto}');
+  if (plan.decisions.some(d => d.type === 'chart')) out.push('/* C26 selects visual-data semantics. Cartesian SVGs stretch plot x geometry into the allocated width while the shared 340px height cap bounds tall pages; container-scaled label and marker transforms preserve proportions, and donuts keep their circular geometry. */[data-design-kind=chart] .kit-chart-body{min-width:0;container:chart/inline-size}[data-design-kind=chart] .kit-chart-body>svg{min-width:0;max-width:100%;max-height:340px}[data-design-kind=chart] .kit-chart-body>.kit-chart-plot{min-width:0;max-width:100%;flex:1 1 280px;container:chart-svg/inline-size}[data-design-kind=chart] .kit-chart-body>.kit-chart-plot>svg{display:block;width:100%;max-width:100%;max-height:340px;flex:none}[data-design-kind=chart] .kit-chart-body>.ch-donut{flex-basis:min(200px,100%)}[data-design-kind=chart] .kit-legend{min-width:0;overflow-wrap:anywhere}[data-design-kind=chart] .kit-chart-data{max-width:100%;overflow-x:auto}@container chart (min-width:510px){[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) text{transform-box:fill-box;transform-origin:center;transform:scaleX(calc(510px / 100cqw))}[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) text[text-anchor=end]{transform-origin:right center}[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) text[text-anchor=start]{transform-origin:left center}}@container chart-svg (min-width:510px){[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) .ch-m{transform-box:fill-box;transform-origin:center;transform:scaleX(calc(510px / 100cqw))}}');
   if (plan.decisions.some(d => d.type === 'calendar')) out.push('[data-design-kind=calendar]{min-width:0}[data-design-kind=calendar] .kit-cal-agenda li{flex-wrap:wrap}');
-  if (plan.decisions.some(d => d.type === 'timeline')) out.push('[data-design-kind=timeline]{container:timeline/inline-size}[data-design-kind=timeline] .kit-changes{font-size:var(--kit-t-small);max-width:42em}[data-design-kind=timeline] .kit-rel-body>p{max-width:42em}@container timeline (max-width:560px){[data-design-kind=timeline]:is([data-variant=release],[data-variant=log])>ol>li{grid-template-columns:1fr}[data-design-kind=timeline] .kit-rel-meta{position:static}}');
+  if (plan.decisions.some(d => d.type === 'timeline')) out.push('[data-design-kind=timeline]{container:kit timeline/inline-size}[data-design-kind=timeline] .kit-changes{font-size:var(--kit-t-small);max-width:42em}[data-design-kind=timeline] .kit-rel-body>p{max-width:42em}@container timeline (max-width:560px){[data-design-kind=timeline]:is([data-variant=release],[data-variant=log])>ol>li{grid-template-columns:1fr}[data-design-kind=timeline] .kit-rel-meta{position:static}}');
+  if (plan.decisions.some(d=>d.sequence)) {
+    out.push('[data-sequence=adaptive]>ol{display:grid;gap:var(--kit-gap)}[data-sequence=adaptive]>ol>li{min-width:0}[data-design-kind=timeline][data-sequence=adaptive]>ol>li{padding-bottom:0}[data-design-kind=timeline][data-sequence=adaptive]>ol>li:not(:last-child)::before{bottom:calc(-1 * var(--kit-gap))}[data-sequence=adaptive] :is(strong,p){overflow-wrap:break-word}');
+    for (const min of [...new Set(plan.decisions.filter(d=>d.type==='timeline'&&d.sequence).map(d=>d.flow.minCell))].sort((a,b)=>a-b)) {
+      const gap=plan.decisions.find(d=>d.type==='timeline'&&d.sequence&&d.flow.minCell===min).flow.gap;
+      out.push(`@container kit (min-width:${2*min+gap}px){[data-design-kind=timeline][data-sequence=adaptive][data-flow-min="${min}"]>ol>li{grid-template-columns:minmax(0,1fr);padding-bottom:0}[data-design-kind=timeline][data-sequence=adaptive][data-flow-min="${min}"]>ol>li::before{display:none}}`);
+    }
+  }
   if (plan.decisions.some(d => d.type === 'properties')) out.push('[data-design-kind=properties]{container:properties/inline-size}@container properties (max-width:400px){[data-design-kind=properties][data-layout=inline] dl>div{flex-direction:column;gap:2px}[data-design-kind=properties][data-layout=inline] dt{flex-basis:auto}}');
   if (table || list) out.push('[data-design-kind=table] :is(td,tbody th),[data-design-kind=list] li>div>strong{text-wrap:pretty}');
   if (plan.decisions.some(d => d.type === 'master-detail')) out.push('[data-design-kind=master-detail]{container:detail/inline-size}[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:1fr}@container detail (min-width:760px){[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:minmax(220px,1fr) minmax(0,2fr)}}');
@@ -2690,6 +2717,38 @@ exports.selectDesign = selectDesign;
 exports.planComposition = planComposition;
 exports.compositionAttrs = compositionAttrs;
 exports.compositionCSS = compositionCSS;
+};
+__defs["header-design.mjs"] = function (exports, __m) {
+/** Chrome is compiler-owned. Consumer shell and action values retain their meaning. */
+function deriveHeaderDesign(b) {
+  if (b.catalogVersion === '2.1.0' || !['centered', 'masthead'].includes(b.shell) || !b.chrome?.action) return null;
+  return {
+    policy: 'chrome-row-1',
+    shell: b.shell,
+    primary: ['brand', 'action'],
+    navigation: 'separate-row',
+    wideContainer: 720,
+    reason: 'Keep identity and its primary action together; retain the navigation track and centered wide-screen identity.',
+  };
+}
+
+function headerDesignCSS(policy) {
+  if (!policy) return '';
+  const s=`[data-shell=${policy.shell}]`;
+  return `/* ${policy.policy}: source observation R13/header, relation S02; actual header content width owns centering. */
+${s} .kit-header{container:chrome/inline-size;gap:var(--kit-sp-near)}
+${s} .kit-header-primary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--kit-sp-head);width:100%;padding-block:0}
+${s} .kit-header-primary>.kit-brand{grid-column:1;grid-row:1;justify-self:start;min-width:0;max-width:100%;padding:0}
+${s} .kit-header-primary>.kit-brand .kit-brand-name{min-width:0;overflow-wrap:anywhere}
+${s} .kit-header-primary>.kit-header-action{grid-column:2;grid-row:1;position:static;margin:0;align-self:center;justify-self:end;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+${s} .kit-header>.kit-nav{width:100%;flex-basis:auto}
+${s}[data-shell=centered] .kit-header{padding-block:var(--kit-sp-near)}
+@container chrome (min-width:${policy.wideContainer}px){${s} .kit-header-primary{grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr)}${s} .kit-header-primary>.kit-brand{grid-column:2;justify-self:center}${s} .kit-header-primary>.kit-header-action{grid-column:3}}
+`;
+}
+
+exports.deriveHeaderDesign = deriveHeaderDesign;
+exports.headerDesignCSS = headerDesignCSS;
 };
 __defs["layout.mjs"] = function (exports, __m) {
 /** Layout primitives (6차). docs/layout.md is generated from this file.
@@ -3081,14 +3140,15 @@ const summary = n => n.kind === 'donut'
   ? `${n.caption} ` + n.categories.map((c, i) => `${c} ${fmt(n.series[0].values[i], n.unit)}`).join(', ')
   : `${n.caption} ` + n.series.map(s => `${s.name}: ` + n.categories.map((c, i) => `${c} ${fmt(s.values[i], n.unit)}`).join(', ')).join(' / ');
 
-function renderChart(n, id) {
+function renderChart(n, id, {fillAssignedWidth = false} = {}) {
   let svg, legend = '';
   if (n.kind === 'donut') {
     svg = donut(n).svg.replaceAll('__ID__', id);
     const total = n.series[0].values.reduce((a, b) => a + b, 0) || 1;
     legend = `<ul class="kit-legend">${n.categories.map((c, i) => `<li><i style="background:var(--kit-chart${(i % 5) + 1})" aria-hidden="true"></i>${e(c)} <b>${fmt(n.series[0].values[i], n.unit)}</b> <span>(${Math.round((n.series[0].values[i] / total) * 100)}%)</span></li>`).join('')}</ul>`;
   } else {
-    svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${cartesian(n)}</svg>`;
+    svg = `<svg viewBox="0 0 ${W} ${H}"${fillAssignedWidth ? ' preserveAspectRatio="none"' : ''} role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${cartesian(n)}</svg>`;
+    if (fillAssignedWidth) svg = `<div class="kit-chart-plot">${svg}</div>`;
     if (n.series.length > 1) legend = `<ul class="kit-legend">${n.series.map((s, i) => `<li><i style="background:var(--kit-chart${i + 1})" aria-hidden="true"></i>${e(s.name)}</li>`).join('')}</ul>`;
   }
   const head = ['', ...(n.kind === 'donut' ? [n.series[0].name] : n.series.map(s => s.name))];
@@ -3138,7 +3198,7 @@ const {renderShell} = __m("render/shell.mjs");
 
 function renderTree(b, design = null) {
   const {render} = makeRenderer(b, design);
-  return renderShell(b, render(b.tree));
+  return renderShell(b, render(b.tree), design?.chrome);
 }
 
 /** The only script a generated page runs. Fixed text, no user input, no network: demo form checks, ARIA tabs, filter chips. */
@@ -3578,8 +3638,8 @@ function makeRenderer(b, design = null) {
   R.kanban = (n, d) => `<div class="kit-kanban" role="group" aria-label="칸반 보드" tabindex="0">${n.children.map(x => render(x, d)).join('')}</div>`;
   R.lane = (n, d, id) => `<section class="kit-lane" aria-labelledby="${id}-title"><header>${heading(d, n.title, id)}<span class="kit-count" aria-label="${n.children.length}개">${n.children.length}</span></header>${n.children.length ? `<div class="kit-lane-cards">${kids(n, d + 1)}</div>` : '<p class="kit-muted">비어 있습니다.</p>'}</section>`;
   R.task = n => `<article class="kit-task">${n.label ? `<span class="kit-badge">${e(n.label)}</span>` : ''}<strong>${e(n.title)}</strong><footer>${n.assignee ? `<span class="kit-avatar" aria-hidden="true">${e(initials(n.assignee))}</span><span>${e(n.assignee)}</span>` : ''}${n.priority ? `<span class="kit-priority" data-priority="${n.priority}">${icon(n.priority === '높음' ? 'arrow-up' : n.priority === '낮음' ? 'arrow-down' : 'minus')}${n.priority}</span>` : ''}</footer></article>`;
-  R.timeline = (n, d, id) => ['release', 'log'].includes(n.variant) ? `<section class="kit-timeline" data-variant="${n.variant}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><div class="kit-rel-meta"><span class="kit-rel-ver">${e(x.time)}</span>${x.date ? `<time>${e(x.date)}</time>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div><div class="kit-rel-body"><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.changes ? `<ul class="kit-changes">${x.changes.map(c => `<li data-kind="${c.kind}"><span class="kit-change-kind">${c.kind}</span><span>${e(c.text)}</span></li>`).join('')}</ul>` : ''}</div></li>`).join('')}</ol></section>` : `<section class="kit-timeline" data-variant="${n.variant ?? 'line'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><span class="kit-dot" aria-hidden="true">${x.status === '완료' ? icon('check') : ''}</span><div><time>${e(x.time)}</time><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div></li>`).join('')}</ol></section>`;
-  R.steps = (n, d, id) => `<section class="kit-steps" data-layout="${n.layout ?? 'vertical'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol${n.layout === 'horizontal' ? contentFlow(n, n.items.length, 4) : n.layout === 'cards' ? contentFlow(n, n.items.length, 3) : ''}>${n.items.map(x => `<li><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</li>`).join('')}</ol></section>`;
+  R.timeline = (n, d, id) => ['release', 'log'].includes(n.variant) ? `<section class="kit-timeline" data-variant="${n.variant}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><div class="kit-rel-meta"><span class="kit-rel-ver">${e(x.time)}</span>${x.date ? `<time>${e(x.date)}</time>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div><div class="kit-rel-body"><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.changes ? `<ul class="kit-changes">${x.changes.map(c => `<li data-kind="${c.kind}"><span class="kit-change-kind">${c.kind}</span><span>${e(c.text)}</span></li>`).join('')}</ul>` : ''}</div></li>`).join('')}</ol></section>` : `<section class="kit-timeline" data-variant="${n.variant ?? 'line'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol${design?.byNode.get(n)?.sequence ? contentFlow(n, n.items.length, 3) : ''}>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><span class="kit-dot" aria-hidden="true">${x.status === '완료' ? icon('check') : ''}</span><div><time>${e(x.time)}</time><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div></li>`).join('')}</ol></section>`;
+  R.steps = (n, d, id) => `<section class="kit-steps" data-layout="${n.layout ?? 'vertical'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol${n.layout === 'horizontal' ? contentFlow(n, n.items.length, 4) : n.layout === 'cards' ? contentFlow(n, n.items.length, 3) : design?.byNode.get(n)?.sequence ? contentFlow(n, n.items.length, 4) : ''}>${n.items.map(x => `<li><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</li>`).join('')}</ol></section>`;
   R.reel = (n, d, id) => `<section class="kit-reel"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="가로로 넘겨 보기"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-reel-track" role="region" aria-label="${e(n.title ?? '가로로 넘겨 보기')}" tabindex="0">${n.children.map(x => `<div class="kit-reel-item">${render(x, d + 1)}</div>`).join('')}</div></section>`;
   R['master-detail'] = (n, d, id) => `<section class="kit-md" aria-labelledby="${id}-title">${heading(d, n.title, id)}<div class="kit-md-grid"><ul class="kit-md-list">${n.items.map((x, i) => `<li${i === n.selected ? ' aria-current="true"' : ''} data-state="${x.state ?? 'read'}"><strong>${e(x.title)}</strong>${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}<p>${e(x.preview)}</p>${x.state === 'unread' ? '<span class="kit-badge">읽지 않음</span>' : ''}</li>`).join('')}</ul><article class="kit-md-detail"><h${Math.min(d + 1, 6)}>${e(n.detail.title)}</h${Math.min(d + 1, 6)}>${n.detail.meta ? `<p class="kit-muted">${e(n.detail.meta)}</p>` : ''}<div>${n.detail.body.split(/\n\n+/).map(p => `<p>${e(p)}</p>`).join('')}</div></article></div></section>`;
   R.chat = (n, d, id) => `<section class="kit-chat" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol class="kit-chat-log">${n.messages.map(m => `<li data-from="${m.from}"><span class="kit-avatar" aria-hidden="true">${e(initials(m.name))}</span><div><p class="kit-chat-meta"><strong>${e(m.name)}</strong>${m.time ? ` <time>${e(m.time)}</time>` : ''}</p><p class="kit-bubble">${e(m.text)}</p></div></li>`).join('')}</ol></section>`;
@@ -3604,7 +3664,7 @@ function makeRenderer(b, design = null) {
     return `<article class="kit-card" data-variant="${v}"${n.price ? ' data-product="yes"' : ''}>${art}<div class="kit-card-body">${n.icon ? `<span class="kit-card-icon">${icon(n.icon)}</span>` : ''}${n.meta && !n.author ? `<span class="kit-meta">${e(n.meta)}</span>` : ''}${n.badge && !n.visual ? `<span class="kit-badge" data-tone="brand">${e(n.badge)}</span>` : ''}${link}<p>${e(n.body)}</p>${price}${rating}${n.action ? (v === 'link' ? `<span class="kit-link-label" aria-hidden="true">${e(n.action.label)} ${icon('arrow-right')}</span>` : button(n.action)) : ''}${foot}</div></article>`;
   };
   R.metric = n => `<dl class="kit-metric"${n.trend ? ' data-spark="yes"' : ''}>${n.trend ? spark(n) : ''}<dt>${e(n.label)}</dt><dd data-vl="${vlOf(n.value)}">${e(n.value)}</dd>${n.trend || n.detail ? `<dd class="kit-metric-foot">${n.trend ? `<span class="kit-trend" data-trend="${n.trend}">${icon(TREND[n.trend][0])}<span class="kit-sr">${TREND[n.trend][1]}</span>${e(n.delta)}</span>` : ''}${n.detail ? `<span class="kit-muted">${e(n.detail)}</span>` : ''}</dd>` : ''}</dl>`;
-  R.table = (n, d, id) => { const s = n.state ?? (n.rows.length ? 'ready' : 'empty'); return `<section class="kit-table-wrap" data-variant="${n.variant ?? 'plain'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="${e(n.caption)}"><table><caption>${e(n.caption)}</caption><thead><tr>${n.columns.map(c => `<th scope="col">${e(c)}</th>`).join('')}</tr></thead><tbody>${n.rows.map(r => `<tr>${r.map((c, i) => i === 0 ? `<th scope="row">${e(c)}</th>` : STATUS_HEADER.test(n.columns[i] ?? '') ? `<td><span class="kit-badge"${statusDot(c) ? ` data-dot="${statusDot(c)}"` : ''}>${e(c)}</span></td>` : YES.test(c.trim()) ? `<td><span class="kit-yes">${icon('check')}<span class="kit-sr">${e(c)}</span></span></td>` : NO.test(c.trim()) ? `<td><span class="kit-no"><span aria-hidden="true">—</span><span class="kit-sr">${e(c)}</span></span></td>` : PERSON.test((n.columns[i] ?? '').trim()) ? `<td><span class="kit-person"><span class="kit-avatar" aria-hidden="true">${e(initials(c))}</span>${e(c)}</span></td>` : `<td>${e(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`; };
+  R.table = (n, d, id) => { const tableDesign = design?.byNode.get(n)?.table; const cellAttrs = i => { const c = tableDesign?.columns[i]; return c ? ` data-column-min="${c.minWidth}" data-column-align="${c.align}" data-column-wrap="${c.wrap}"` : ''; }; const s = n.state ?? (n.rows.length ? 'ready' : 'empty'); return `<section class="kit-table-wrap" data-variant="${n.variant ?? 'plain'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="${e(n.caption)}"><table${tableDesign ? ` data-table-min="${tableDesign.minimumWidth}"` : ''}><caption>${e(n.caption)}</caption><thead><tr>${n.columns.map((c, i) => `<th scope="col"${cellAttrs(i)}>${e(c)}</th>`).join('')}</tr></thead><tbody>${n.rows.map(r => `<tr>${r.map((c, i) => i === 0 ? `<th scope="row"${cellAttrs(i)}>${e(c)}</th>` : STATUS_HEADER.test(n.columns[i] ?? '') ? `<td${cellAttrs(i)}><span class="kit-badge"${statusDot(c) ? ` data-dot="${statusDot(c)}"` : ''}>${e(c)}</span></td>` : YES.test(c.trim()) ? `<td${cellAttrs(i)}><span class="kit-yes">${icon('check')}<span class="kit-sr">${e(c)}</span></span></td>` : NO.test(c.trim()) ? `<td${cellAttrs(i)}><span class="kit-no"><span aria-hidden="true">—</span><span class="kit-sr">${e(c)}</span></span></td>` : PERSON.test((n.columns[i] ?? '').trim()) ? `<td${cellAttrs(i)}><span class="kit-person"><span class="kit-avatar" aria-hidden="true">${e(initials(c))}</span>${e(c)}</span></td>` : `<td${cellAttrs(i)}>${e(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`; };
   R.list = (n, d, id) => { const s = n.state ?? (n.items.length ? 'ready' : 'empty'), v = n.variant ?? 'divided'; return `<section class="kit-list" data-variant="${v}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<ul>${n.items.map(x => `<li>${v === 'check' ? `<span class="kit-check" aria-hidden="true">${icon('check')}</span>` : x.icon ? `<span class="kit-li-icon">${icon(x.icon)}</span>` : ''}<div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}</div>${x.status ? `<span class="kit-badge" data-status="${x.status}"${statusDot(x.status) ? ` data-dot="${statusDot(x.status)}"` : ''}>${e(x.status)}</span>` : ''}</li>`).join('')}</ul>` : ''}</section>`; };
   R.form = (n, d, id) => {
     const fieldHTML = f => {
@@ -3632,7 +3692,7 @@ function makeRenderer(b, design = null) {
   R.team = (n, d, id) => `<section class="kit-team" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${contentFlow(n, n.members.length, 4, 'dense')}>${n.members.map(m => `<li><span class="kit-avatar" data-art="portrait" aria-hidden="true">${portrait(m.name)}</span><div><strong>${e(m.name)}</strong><span class="kit-muted">${e(m.role)}</span>${m.bio ? `<p>${e(m.bio)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
   R.code = n => `<figure class="kit-code"><figcaption><span>${e(n.label)} <span class="kit-muted">${n.language}</span></span><button class="kit-copy" type="button" data-copy aria-label="${e(n.label)} 코드 복사"><span class="kit-copy-idle">${icon('copy')}복사</span><span class="kit-copy-done">${icon('check')}복사됨</span></button><span class="kit-sr" role="status" aria-live="polite" data-copy-status></span></figcaption><pre tabindex="0"><code>${highlight(n.code, n.language)}</code></pre></figure>`;
   R.properties = (n, d, id) => `<section class="kit-props" data-layout="${n.layout ?? 'stacked'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<dl>${n.items.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl></section>`;
-  R.chart = (n, d, id) => renderChart(n, id);
+  R.chart = (n, d, id) => renderChart(n, id, {fillAssignedWidth: Boolean(design)});
   R.progress = n => `<div class="kit-progress"><div class="kit-progress-head"><span id="pr-${ctx.seq}">${e(n.label)}</span><strong>${n.value}%</strong></div><div class="kit-track" role="progressbar" aria-labelledby="pr-${ctx.seq}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${n.value}"${n.detail ? ` aria-valuetext="${e(n.detail)}"` : ''}>${bar(n.value, n.tone)}</div>${n.detail ? `<p class="kit-muted">${e(n.detail)}</p>` : ''}</div>`;
   R['empty-state'] = (n, d, id) => `<section class="kit-empty" data-kind="${n.kind}"${['error', 'forbidden', 'offline', 'maintenance'].includes(n.kind) ? ' role="alert"' : ' role="status"'} aria-labelledby="${id}-title">${CODE[n.kind] ? `<p class="kit-empty-code" aria-hidden="true">${CODE[n.kind]}</p>` : `<div class="kit-empty-art">${ornamentArt(o, 240, 160) || ''}<span class="kit-empty-icon">${icon(n.icon ?? EMPTY_ICON[n.kind])}</span></div>`}${heading(d, n.title, id)}<p>${e(n.body)}</p>${n.action ? button(n.action) : ''}</section>`;
   R.skeleton = n => `<div class="kit-skeleton" data-variant="${n.variant}" role="status" aria-busy="true" aria-label="${e(n.label)}">${n.variant === 'card' ? '<i class="sk-img"></i><i></i><i class="sk-short"></i>' : n.variant === 'table' ? '<i></i><i></i><i></i><i></i>' : n.variant === 'list' ? '<i></i><i class="sk-short"></i><i></i><i class="sk-short"></i>' : '<i></i><i></i><i class="sk-short"></i>'}</div>`;
@@ -3681,7 +3741,7 @@ const DEFAULT_CHROME = {nav: [{label: '개요', href: '#main'}]};
 const mega = a => `<details class="kit-mega"><summary>${a.icon ? icon(a.icon) : ''}<span>${e(a.label)}</span>${icon('chevron-down')}</summary><div class="kit-mega-panel"><ul><li><a href="${href(a.href)}"><strong>${e(a.label)} 전체 보기</strong></a></li>${a.mega.map(m => `<li><a href="${href(m.href)}"${m.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}><strong>${e(m.label)}</strong>${m.description ? `<span>${e(m.description)}</span>` : ''}</a></li>`).join('')}</ul></div></details>`;
 const link = (a, current) => `<a href="${href(a.href)}"${a.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}${current ? ' aria-current="page"' : ''}>${a.icon ? icon(a.icon) : ''}<span>${e(a.label)}</span></a>`;
 
-function renderShell(b, body) {
+function renderShell(b, body, headerDesign = null) {
   const chrome = b.chrome ?? DEFAULT_CHROME, items = chrome.nav ?? DEFAULT_CHROME.nav;
   const marked = items.findIndex(x => x.current), firstCurrent = marked > -1 ? marked : items.findIndex(x => x.href === '#main');
   const mark = e(chrome.brandMark ?? [...b.name.trim()][0] ?? 'W');
@@ -3694,7 +3754,7 @@ function renderShell(b, body) {
     : `<nav class="kit-nav" aria-label="주요 메뉴"${items.some(a => a.mega) ? ' data-mega' : ''}><ul>${items.map(li).join('')}</ul></nav>`;
   const act = chrome.action ? `<a class="kit-button kit-header-action" data-variant="primary" href="${href(chrome.action.href)}"${chrome.action.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(chrome.action.label)}</a>` : '';
   const masthead = b.shell === 'masthead' ? '<p class="kit-dateline">정적 데모 · Static Kit</p>' : '';
-  const header = `<header class="kit-header">${masthead}${brand}${nav}${act}</header>`;
+  const header = `<header class="kit-header">${masthead}${headerDesign ? `<div class="kit-header-primary">${brand}${act}</div>${nav}` : `${brand}${nav}${act}`}</header>`;
   const links = chrome.footerLinks ?? [];
   const footerLinks = links.length ? `<ul class="kit-footer-links">${links.map(l => `<li><a href="${href(l.href)}"${l.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(l.label)}</a></li>`).join('')}</ul>` : '';
   const note = e(chrome.footerNote ?? `${b.name} · Static Kit ${b.catalogVersion}`);
@@ -4280,6 +4340,7 @@ const {nodeTypes} = __m("catalog.mjs");
 const {contractCSS} = __m("spacing.mjs");
 const {flowCSS, flowUsage} = __m("layout.mjs");
 const {compositionCSS} = __m("composition.mjs");
+const {headerDesignCSS} = __m("header-design.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -4317,6 +4378,7 @@ function stylesheet(b, sets, body = '', design = null) {
   parts.push(polishCore.trim());
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
+  if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
   return parts.join('\n') + '\n';
 }
 
@@ -4513,6 +4575,89 @@ const shells = {
 const shellCSS = b => navBase + shells[b.shell] + footers[b.footer];
 
 exports.shellCSS = shellCSS;
+};
+__defs["table-design.mjs"] = function (exports, __m) {
+const {SPACE} = __m("spacing.mjs");
+const {CPL_BUCKETS, VL_BUCKETS, valueUnits} = __m("render/util.mjs");
+
+const DENSITIES = new Set(Object.keys(SPACE));
+const PROSE_MIN = CPL_BUCKETS[7];
+const PROSE_MAX = CPL_BUCKETS[9];
+const ATOMIC_MAX = CPL_BUCKETS[11];
+const MIN_CELL_UNITS = VL_BUCKETS[0];
+const QUANTITY = /^[-+]?₩?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[천만억조](?:원)?|%|원|₩|달러|명|건|개|ms|s)?$/i;
+const HAS_NUMERIC_SIGNAL = /[,%]|[천만억조원₩]|달러|명|건|개|ms|s/i;
+const roundUp = n => Math.ceil(n / 4) * 4;
+
+function quantityColumn(values) {
+  const present = values.filter(value => value !== '');
+  return present.length > 0 && present.every(value => QUANTITY.test(value)) && present.some(value => HAS_NUMERIC_SIGNAL.test(value));
+}
+
+function columnPlan(label, values, index, density, paddingInline) {
+  const headerUnits = valueUnits(label);
+  const dataUnits = values.map(valueUnits);
+  const longest = Math.max(0, ...dataUnits);
+  const longText = values.some(value => valueUnits(value) > PROSE_MIN && /\s/.test(value));
+  const atomic = values.every(value => !/\s/.test(value));
+  const contentUnits = longText
+    ? Math.min(PROSE_MAX, Math.max(PROSE_MIN, headerUnits, longest))
+    : Math.min(ATOMIC_MAX, Math.max(MIN_CELL_UNITS, headerUnits, longest));
+  const cellSpace = SPACE[density].item;
+
+  return {
+    index,
+    minWidth: roundUp(contentUnits * cellSpace + 2 * paddingInline),
+    align: quantityColumn(values) ? 'end' : 'start',
+    wrap: longText && !atomic ? 'words' : 'nowrap',
+  };
+}
+
+/**
+ * Derive a closed table layout contract from the existing table node and its
+ * compiler decision metadata. Width units reuse valueUnits and the density
+ * item token; no Blueprint styling or header-name heuristics are accepted.
+ */
+function deriveTableDesign(node, decision, {availableWidth} = {}) {
+  if (node?.type !== 'table') throw new TypeError('Table design requires a table node');
+  if (!Array.isArray(node.columns) || node.columns.length < 2 || node.columns.length > 8) {
+    throw new RangeError('Table design requires 2–8 columns');
+  }
+  if (!Array.isArray(node.rows) || node.rows.some(row => !Array.isArray(row) || row.length !== node.columns.length)) {
+    throw new TypeError('Every table row must match the column count');
+  }
+  if (node.columns.some(column => typeof column !== 'string') || node.rows.flat().some(value => typeof value !== 'string')) {
+    throw new TypeError('Table labels and cells must be strings');
+  }
+
+  const density = DENSITIES.has(decision?.facts?.density) ? decision.facts.density : 'comfortable';
+  const paddingInline = SPACE[density][decision?.values?.cellSpace] ?? SPACE[density].item;
+  const paddingBlock = SPACE[density].near;
+  const columns = node.columns.map((label, index) => columnPlan(
+    label,
+    node.rows.map(row => row[index]),
+    index,
+    density,
+    paddingInline,
+  ));
+  const minimumWidth = columns.reduce((sum, column) => sum + column.minWidth, 0);
+
+  return {
+    policy: 'table-content-1',
+    sourceRules: ['CAR-12', 'ANT-11', 'POL-06', 'ANT-12'],
+    density,
+    padding: {inline: paddingInline, block: paddingBlock},
+    columns,
+    minimumWidth,
+    readableWidth: minimumWidth,
+    scroll: {
+      overflow: 'auto',
+      required: Number.isFinite(availableWidth) ? minimumWidth > availableWidth : null,
+    },
+  };
+}
+
+exports.deriveTableDesign = deriveTableDesign;
 };
 __defs["tokens.mjs"] = function (exports, __m) {
 const {palettes} = __m("catalog.mjs");

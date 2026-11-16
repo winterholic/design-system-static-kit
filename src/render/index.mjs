@@ -4,7 +4,7 @@ export {escapeHTML} from './util.mjs';
 
 export function renderTree(b, design = null) {
   const {render} = makeRenderer(b, design);
-  return renderShell(b, render(b.tree));
+  return renderShell(b, render(b.tree), design?.chrome);
 }
 
 /** The only script a generated page runs. Fixed text, no user input, no network: demo form checks, ARIA tabs, filter chips. */

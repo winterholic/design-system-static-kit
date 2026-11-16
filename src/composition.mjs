@@ -2,6 +2,8 @@ import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT}
 import {SPACE, TOKEN} from './spacing.mjs';
 import {roleSizes} from './typography.mjs';
 import {cplOf, vlOf, valueUnits} from './render/util.mjs';
+import {deriveTableDesign} from './table-design.mjs';
+import {deriveHeaderDesign} from './header-design.mjs';
 
 /** Small ordered decision table over known facts, deliberately not a general expression/rule language. */
 export function selectDesign(facts, rules = compositionRules) {
@@ -54,6 +56,7 @@ export function planComposition(b) {
       const longLabel = node.fields.some(f => cplOf(f.label) > 10);
       decision.container = {minField: longLabel ? 280 : 220, gap: space.head};
     }
+    if (node.type === 'table') decision.table = deriveTableDesign(node, decision);
     if (node.type === 'split') decision.container = {minWidth: 2 * 320 + space.gap};
     if (node.type === 'hero') decision.container = {minCell: Math.max(320, cellBucket(cplOf(node.title) * Math.min(sizes.display.min, sizes.heading.max) * 1.04))};
     if (node.type === 'aside') decision.container = {sideWidth: node.size === 'wide' ? 380 : 300, minWidth: 320 + (node.size === 'wide' ? 380 : 300) + space.gap};
@@ -67,9 +70,18 @@ export function planComposition(b) {
       if (grid) decision.flow = {minCell: node.items.some(x => (x.description?.length ?? 0) > 100) ? 280 : 240, gap: space.gap, dense: false, span: true, cap: node.type === 'steps' && node.layout === 'horizontal' ? 4 : 3};
     }
     if (node.type === 'gallery' && (node.layout ?? 'grid') === 'grid') decision.flow = {minCell: 240, gap: space.gap, dense: false, span: true, cap: 4};
+    if (['steps','timeline'].includes(node.type)) {
+      const implicit = node.type === 'steps' ? !node.layout : !node.variant;
+      const short = node.items.length <= 4 && node.items.every(x => valueUnits(x.title) <= 40 && valueUnits(x.description ?? '') <= 80);
+      if (implicit && short) {
+        const cpl = Math.max(...node.items.map(x => Math.max(cplOf(x.title),cplOf(x.description ?? ''))));
+        decision.sequence = {policy:'sequence-content-1',mode:'adaptive',reason:'An implicit short sequence reuses the existing orphan-free flow; explicit chronology and long narratives retain rows.'};
+        decision.flow = {minCell:Math.max(200,cellBucket(cpl*sizes.small.max+space.head)),gap:space.gap,dense:false,span:true,cap:node.type==='timeline'?3:4};
+      }
+    }
   };
   visit(b.tree, '$.tree');
-  return {byNode, version: COMPOSITION_VERSION, decisions, inherited};
+  return {byNode, version: COMPOSITION_VERSION, decisions, inherited, chrome: deriveHeaderDesign(b)};
 }
 
 /** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
@@ -82,6 +94,7 @@ export function compositionAttrs(d) {
   if (d.type === 'hero') attrs.push(['hero-min', d.container.minCell]);
   if (d.type === 'aside') attrs.push(['aside-min', d.container.minWidth]);
   if (d.type === 'plan') attrs.push(['supporting', d.facts.supporting]);
+  if (d.sequence) attrs.push(['sequence', d.sequence.mode]);
   return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
 }
 
@@ -105,6 +118,7 @@ export function compositionCSS(plan) {
     if (d.type === 'section' && d.values.inset) out.push(`${sel}[data-surface]:not([data-surface=plain]){padding:${token(d.values.inset)}}`);
     if (d.type === 'form') out.push(`${sel}{padding:${token(d.values.inset)}}`);
   }
+  if (plan.decisions.some(d => d.type === 'card')) out.push('@media(max-width:560px){[data-design-kind=card][data-variant=horizontal]:has(.kit-card-foot) .kit-card-media{width:100%}}');
   if (plan.decisions.some(d => d.type === 'grid')) out.push('[data-design-kind=grid][data-flow-gap]{gap:var(--kit-design-gap)}', ...[...new Set(plan.decisions.filter(d => d.flow).map(d => d.flow.gap))].sort((a,b) => a-b).map(gap => `[data-design-kind=grid][data-flow-gap="${gap}"]{--kit-design-gap:${gap}px}`));
   const metric = plan.decisions.find(d => d.type === 'metric');
   if (metric) out.push(`
@@ -132,7 +146,12 @@ export function compositionCSS(plan) {
 @container compose (min-width:${min}px){.kit-split[data-design-kind=split]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=even]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=wide-start]{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.kit-split[data-design-kind=split][data-ratio=wide-end]{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}.kit-split[data-design-kind=split][data-reverse=reverse]>:first-child{order:2}}`);
   }
   const table = plan.decisions.find(d => d.type === 'table');
-  if (table) out.push(`[data-design-kind=table] :is(th,td){padding:${token(table.values.cellSpace)}}[data-design-kind=table] .kit-table-scroll{overflow-x:auto}`);
+  if (table) {
+    out.push(`[data-design-kind=table] :is(th,td){padding-block:${token('near')};padding-inline:${token(table.values.cellSpace)}}[data-design-kind=table] .kit-table-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}[data-design-kind=table] table[data-table-min]{table-layout:auto}[data-design-kind=table] [data-column-align=end]{text-align:end}[data-design-kind=table] [data-column-wrap=nowrap]{white-space:nowrap}[data-design-kind=table] [data-column-wrap=words]{white-space:normal;word-break:keep-all;overflow-wrap:break-word}`);
+    const tables = plan.decisions.filter(d => d.type === 'table').map(d => d.table);
+    for (const width of [...new Set(tables.map(t => t.minimumWidth))].sort((a,b) => a-b)) out.push(`[data-table-min="${width}"]{min-width:${width}px}`);
+    for (const width of [...new Set(tables.flatMap(t => t.columns.map(c => c.minWidth)))].sort((a,b) => a-b)) out.push(`[data-design-kind=table] [data-column-min="${width}"]{min-width:${width}px}`);
+  }
   const list = plan.decisions.find(d => d.type === 'list');
   if (list) out.push(`[data-design-kind=list] li{padding-block:${token(list.values.itemSpace)}}`);
   const hero = plan.decisions.find(d => d.type === 'hero');
@@ -147,9 +166,16 @@ export function compositionCSS(plan) {
   }
   if (plan.decisions.some(d => d.type === 'pricing')) out.push(`[data-design-kind=pricing]>.kit-plans{gap:${token('gap')}}[data-design-kind=pricing] .kit-plan-desc{min-height:0}[data-design-kind=pricing] .kit-plan ul{margin-block:${token('head')} ${token('gap')};padding-top:${token('head')}}`);
   if (plan.decisions.some(d => d.type === 'quote')) out.push(`[data-design-kind=quote][data-design-role=testimonial]{padding:${token('inset')}}[data-design-kind=quote] figcaption{flex-wrap:wrap;gap:${token('item')}}`);
-  if (plan.decisions.some(d => d.type === 'chart')) out.push('[data-design-kind=chart] .kit-chart-body{min-width:0}[data-design-kind=chart] .kit-chart-body>svg{min-width:0;max-width:100%}[data-design-kind=chart] .kit-chart-body>.ch-donut{flex-basis:min(200px,100%)}[data-design-kind=chart] .kit-legend{min-width:0;overflow-wrap:anywhere}[data-design-kind=chart] .kit-chart-data{max-width:100%;overflow-x:auto}');
+  if (plan.decisions.some(d => d.type === 'chart')) out.push('/* C26 selects visual-data semantics. Cartesian SVGs stretch plot x geometry into the allocated width while the shared 340px height cap bounds tall pages; container-scaled label and marker transforms preserve proportions, and donuts keep their circular geometry. */[data-design-kind=chart] .kit-chart-body{min-width:0;container:chart/inline-size}[data-design-kind=chart] .kit-chart-body>svg{min-width:0;max-width:100%;max-height:340px}[data-design-kind=chart] .kit-chart-body>.kit-chart-plot{min-width:0;max-width:100%;flex:1 1 280px;container:chart-svg/inline-size}[data-design-kind=chart] .kit-chart-body>.kit-chart-plot>svg{display:block;width:100%;max-width:100%;max-height:340px;flex:none}[data-design-kind=chart] .kit-chart-body>.ch-donut{flex-basis:min(200px,100%)}[data-design-kind=chart] .kit-legend{min-width:0;overflow-wrap:anywhere}[data-design-kind=chart] .kit-chart-data{max-width:100%;overflow-x:auto}@container chart (min-width:510px){[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) text{transform-box:fill-box;transform-origin:center;transform:scaleX(calc(510px / 100cqw))}[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) text[text-anchor=end]{transform-origin:right center}[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) text[text-anchor=start]{transform-origin:left center}}@container chart-svg (min-width:510px){[data-design-kind=chart] .kit-chart-plot>svg:not(.ch-donut) .ch-m{transform-box:fill-box;transform-origin:center;transform:scaleX(calc(510px / 100cqw))}}');
   if (plan.decisions.some(d => d.type === 'calendar')) out.push('[data-design-kind=calendar]{min-width:0}[data-design-kind=calendar] .kit-cal-agenda li{flex-wrap:wrap}');
-  if (plan.decisions.some(d => d.type === 'timeline')) out.push('[data-design-kind=timeline]{container:timeline/inline-size}[data-design-kind=timeline] .kit-changes{font-size:var(--kit-t-small);max-width:42em}[data-design-kind=timeline] .kit-rel-body>p{max-width:42em}@container timeline (max-width:560px){[data-design-kind=timeline]:is([data-variant=release],[data-variant=log])>ol>li{grid-template-columns:1fr}[data-design-kind=timeline] .kit-rel-meta{position:static}}');
+  if (plan.decisions.some(d => d.type === 'timeline')) out.push('[data-design-kind=timeline]{container:kit timeline/inline-size}[data-design-kind=timeline] .kit-changes{font-size:var(--kit-t-small);max-width:42em}[data-design-kind=timeline] .kit-rel-body>p{max-width:42em}@container timeline (max-width:560px){[data-design-kind=timeline]:is([data-variant=release],[data-variant=log])>ol>li{grid-template-columns:1fr}[data-design-kind=timeline] .kit-rel-meta{position:static}}');
+  if (plan.decisions.some(d=>d.sequence)) {
+    out.push('[data-sequence=adaptive]>ol{display:grid;gap:var(--kit-gap)}[data-sequence=adaptive]>ol>li{min-width:0}[data-design-kind=timeline][data-sequence=adaptive]>ol>li{padding-bottom:0}[data-design-kind=timeline][data-sequence=adaptive]>ol>li:not(:last-child)::before{bottom:calc(-1 * var(--kit-gap))}[data-sequence=adaptive] :is(strong,p){overflow-wrap:break-word}');
+    for (const min of [...new Set(plan.decisions.filter(d=>d.type==='timeline'&&d.sequence).map(d=>d.flow.minCell))].sort((a,b)=>a-b)) {
+      const gap=plan.decisions.find(d=>d.type==='timeline'&&d.sequence&&d.flow.minCell===min).flow.gap;
+      out.push(`@container kit (min-width:${2*min+gap}px){[data-design-kind=timeline][data-sequence=adaptive][data-flow-min="${min}"]>ol>li{grid-template-columns:minmax(0,1fr);padding-bottom:0}[data-design-kind=timeline][data-sequence=adaptive][data-flow-min="${min}"]>ol>li::before{display:none}}`);
+    }
+  }
   if (plan.decisions.some(d => d.type === 'properties')) out.push('[data-design-kind=properties]{container:properties/inline-size}@container properties (max-width:400px){[data-design-kind=properties][data-layout=inline] dl>div{flex-direction:column;gap:2px}[data-design-kind=properties][data-layout=inline] dt{flex-basis:auto}}');
   if (table || list) out.push('[data-design-kind=table] :is(td,tbody th),[data-design-kind=list] li>div>strong{text-wrap:pretty}');
   if (plan.decisions.some(d => d.type === 'master-detail')) out.push('[data-design-kind=master-detail]{container:detail/inline-size}[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:1fr}@container detail (min-width:760px){[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:minmax(220px,1fr) minmax(0,2fr)}}');

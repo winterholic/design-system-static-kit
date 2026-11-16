@@ -1933,7 +1933,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -2269,13 +2269,24 @@
         ],
         "reason": "The catalogue ratio and caption own media sizing."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "centered",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1ad99fc23bc49127e624b5944a62ca82c4f2391701854f8b5ff8981228783c35",
-      "tokens.css": "81fe7fa319b7091c3553cc22b331b16e9f3a6a08266b5a37d12cd9a7c43d8cc1",
+      "index.html": "f26260c247ea0f4dcaa0e1b402a725f36bb6247420010e3bc36c9f7390215132",
+      "tokens.css": "0b8a208d5887afbbd89e745ac0ff96a245baf618c6c196c4345984dac5fba80f",
       "tokens.json": "e462875202731f2111560d484bfdcc1ea6abe01179caee5b944270d4bef1b8df",
       "blueprint.json": "af51f4347475cba03490acccf737809f25b41420774b9d0760e087bd02976f02"
     }

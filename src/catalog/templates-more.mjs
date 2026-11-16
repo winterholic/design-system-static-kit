@@ -14,7 +14,7 @@ export function registerMore({add, A, head, prose, card, metric, grid, section, 
 
   add('devtool-landing', '개발자 도구 소개', 'landing', 'devtool', '빌드플로', [
     head('배포까지 걸리는 시간을 줄이는 빌드 도구', '캐시와 병렬 실행으로 CI를 4배 빠르게.'),
-    {type: 'hero', variant: 'split', eyebrow: 'v3.2 · 원격 캐시 정식 출시', title: '푸시하고\n커피 한 잔.', body: '변경된 패키지만 다시 빌드하고, 나머지는 팀원이 이미 만든 결과를 가져옵니다.', action: A('무료로 시작', 'primary'), secondaryAction: A('문서 보기', 'secondary'), visual: 'device'},
+    {type: 'hero', variant: 'split', eyebrow: 'v3.2 · 원격 캐시 정식 출시', title: '푸시하고\n커피 한 잔.', body: '변경된 패키지만 다시 빌드하고, 나머지는 팀원이 이미 만든 결과를 가져옵니다.', action: A('무료로 시작', 'primary'), secondaryAction: A('문서 보기', 'secondary')},
     {type: 'code', label: '설치와 첫 빌드', language: 'bash', code: 'npm install -g @buildflow/cli\nbuildflow init\nbuildflow run build --cache=remote'},
     grid('three', metric('평균 빌드 시간', '2분 14초', '도입 전 9분 40초', 'down', '-77%'), metric('캐시 적중률', '91%', '최근 30일'), metric('팀', '3,200개', '활성 워크스페이스')),
     section('개발자가 쓰는 이유', [{type: 'bento', children: [card('변경분만 다시 빌드', '의존 그래프를 읽어 영향받는 패키지만 실행합니다. 설정 파일은 한 줄이면 됩니다.', {icon: 'zap'}), metric('병렬 작업', '16개', '코어에 맞춰 자동 분배'), card('로컬과 CI가 같은 결과', '같은 입력은 같은 출력을 냅니다. 내 컴퓨터에서 통과하면 CI에서도 통과해요.', {icon: 'check-circle'}), {type: 'chart', title: '빌드 시간 추이', caption: '최근 6주 평균', kind: 'line', unit: '분', categories: ['1주', '2주', '3주', '4주', '5주', '6주'], series: [{name: '평균 빌드', values: [9.6, 7.1, 4.8, 3.2, 2.5, 2.2]}]}, {type: 'quote', quote: '머지 대기 시간이 반으로 줄어서 리뷰 흐름이 끊기지 않습니다.', author: '윤서진', role: '플랫폼 엔지니어'}]}], {anchor: 'why'}),
@@ -61,7 +61,7 @@ export function registerMore({add, A, head, prose, card, metric, grid, section, 
 
   add('bank-product', '금융 상품 안내', 'landing', 'bank', '새봄은행', [
     head('목돈을 천천히 키우는 정기예금', '가입 6개월 후 중도 해지해도 약정 이자의 80%를 드립니다.'),
-    {type: 'hero', variant: 'split', eyebrow: '새봄 정기예금', title: '연 3.65%,\n약속한 이자를 그대로.', body: '12개월 만기, 최소 100만 원부터. 만기 전 알림 문자를 보내 드려 갱신 시점을 놓치지 않게 해요.', action: A('모바일로 가입', 'primary'), secondaryAction: A('이자 계산', 'secondary'), visual: 'chart'},
+    {type: 'hero', variant: 'split', eyebrow: '새봄 정기예금', title: '연 3.65%,\n약속한 이자를 그대로.', body: '12개월 만기, 최소 100만 원부터. 만기 전 알림 문자를 보내 드려 갱신 시점을 놓치지 않게 해요.', action: A('모바일로 가입', 'primary'), secondaryAction: A('이자 계산', 'secondary')},
     grid('three', metric('기본 금리', '연 3.65%', '12개월 만기 · 세전'), metric('최소 가입 금액', '100만 원', '1원 단위로 추가 입금 불가'), metric('중도 해지 이자', '약정의 80%', '6개월 이상 유지 시')),
     section('이자 미리 보기', [{type: 'chart', title: '1,000만 원을 12개월 맡기면', caption: '월별 누적 이자(세전)', kind: 'area', unit: '원', categories: ['2개월', '4개월', '6개월', '8개월', '10개월', '12개월'], series: [{name: '누적 이자', values: [60800, 121700, 182500, 243300, 304200, 365000]}]}], {anchor: 'interest'}),
     section('가입 방법', [{type: 'steps', title: '세 단계로 가입', layout: 'horizontal', items: [{title: '본인 인증', description: '휴대폰 인증과 신분증 촬영이면 충분합니다.'}, {title: '금액과 만기 선택', description: '넣을 금액과 만기 방식을 고릅니다.'}, {title: '가입 완료', description: '약관을 확인하고 계약서를 받아 보세요.'}]}], {anchor: 'join'}),
@@ -215,7 +215,7 @@ export function registerMore({add, A, head, prose, card, metric, grid, section, 
     head('도시 하천 복원이 여름철 야간 기온에 미친 영향', '서울 3개 하천 구간의 5년 관측 분석', {eyebrow: '원저 논문', meta: ['김다선 · 이지훈', '2026.10.', 'DOI 10.0000/example']}),
     prose('초록', '하천 복원 구간 인근의 여름철 야간 기온이 복원 전과 비교해 평균 1.4도 낮아졌다. 이 연구는 2021~2025년 세 개 하천 구간의 관측 자료를 비교해 복원 효과가 하천 중심에서 어느 거리까지 이어지는지 분석했다. 효과는 하천 중심에서 약 280m까지 유의했다.', 'lead'),
     {type: 'properties', title: '연구 개요', layout: 'inline', items: [{label: '관측 지점', value: '42곳'}, {label: '관측 기간', value: '2021.6 ~ 2025.9'}, {label: '분석 방법', value: '이중 차분 회귀'}]},
-    section('방법', [prose('관측 설계', '복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다.'), {...media('chart', '16:9', '하천 중심에서의 거리에 따른 야간 기온 차이 그래프', '그림 1. 하천 중심에서 멀어질수록 기온 감소 효과가 줄어든다.')}]),
+    section('방법', [prose('관측 설계', '복원 구간 21곳과 대조 구간 21곳에 온도 센서를 설치하고, 6~9월 밤 22시부터 새벽 5시까지 10분 간격으로 기온을 기록했다. 대조 구간은 하천과의 거리와 토지 이용 비율이 비슷한 곳으로 골랐다.'), {...{type: 'chart', title: '거리별 야간 기온 차이', caption: '그림 1. 아래 예시 표와 동일한 수치 · 실제 연구 자료 아님', kind: 'bar', unit: '℃', categories: ['0~100m', '100~200m', '200~300m', '300m 이상'], series: [{name: '기온 차이', values: [-1.8, -1.4, -0.7, -0.1]}]}}]),
     section('결과', [{type: 'table', title: '거리별 기온 차이', caption: '복원 구간과 대조 구간의 야간 평균 기온 차이', columns: ['거리', '차이(℃)', '표준오차', '유의성'], rows: [['0~100m', '-1.8', '0.21', 'p<0.001'], ['100~200m', '-1.4', '0.19', 'p<0.001'], ['200~300m', '-0.7', '0.24', 'p<0.01'], ['300m 이상', '-0.1', '0.22', '유의하지 않음']], state: 'ready', variant: 'plain'}, {type: 'quote', quote: '하천 복원의 냉각 효과는 폭 약 280m의 띠로 나타났고, 그 바깥에서는 통계적으로 구분되지 않았다.', author: '연구진'}]),
     {type: 'notice', tone: 'info', title: '한계', body: '센서 위치가 현장 접근성에 영향을 받았고, 기상 조건은 연도마다 달랐다. 일반화에는 추가 구간의 관측이 필요하다.'},
   ], {chrome: chrome(nav(['논문', 'file'], ['자료', 'download'], ['인용', 'copy']), null, '© 2026 도시 열섬 연구실', ['이용 조건', '문의'])});

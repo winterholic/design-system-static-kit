@@ -188,7 +188,7 @@ test('compiler emits skip link, landmarks, labelled controls and keyboard-reacha
   const r = compile(createBlueprint('settings'));
   assert.match(r.html, /href="#main"/); assert.match(r.html, /<main class="kit-main" id="main" tabindex="-1">/); assert.match(r.html, /<nav class="kit-nav" aria-label="주요 메뉴">/); assert.match(r.html, /<footer/);
   assert.match(r.html, /role="tablist"/); assert.match(r.html, /<label for="field-name">/); assert.match(r.html, /role="status"/);
-  const t = compile(createBlueprint('admin-table')).html; assert.match(t, /tabindex="0" role="region"/); assert.match(t, /<th scope="col">/);
+  const t = compile(createBlueprint('admin-table')).html; assert.match(t, /tabindex="0" role="region"/); assert.match(t, /<th scope="col"[^>]*>/);
   assert.match(compile(createBlueprint('project-board')).html, /role="group" aria-label="칸반 보드" tabindex="0"/);
 });
 test('charts expose text alternatives and a data table', () => {

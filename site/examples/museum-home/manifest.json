@@ -1076,7 +1076,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1406,13 +1406,24 @@
         ],
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "masthead",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "a027ac66c332232141d73a3581ca8a09fa629514b9329bfe6c94038bf8f6bbb9",
-      "tokens.css": "e7952519871af9b492c9a1ed977700d5d43083c4165e7426e7bb7a445f920bfb",
+      "index.html": "5ab2d65b6c0419d1bcddaf036ec667683ecff1d85143bcb74c3991d9bd6bcb46",
+      "tokens.css": "4eb37ac4abcaad8c6ff17500301eff548641582cd03038fc1bc2cd1e32dc4c86",
       "tokens.json": "e3ade6e4a4f5b65bead91c720245e371a43cb6d5a8d4a77c1a6929bf14c02d06",
       "blueprint.json": "e699c0ab3337c0f8358ef8218a2a9ee6135717300641a6ba341ac46166a9122b"
     }

@@ -1068,7 +1068,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1276,13 +1276,24 @@
         ],
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "centered",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c389acd399b78ded1e0a1e74d7489fcc9775282e6f1a0d1323100f1f25237cf5",
-      "tokens.css": "bd4405b695f45b2e8d163ae5e76c06dd6bea4101d8eed41f83861bf36c90e9e9",
+      "index.html": "69e6d9dfcf5b1c4b7841fb1437eac17984104ae210e763aadfebb406fb108a75",
+      "tokens.css": "a00188456aca0da51b56442bd0558491e1156dff011eccd31db02b1f4c4b7a1f",
       "tokens.json": "7a8d8983adfb9571759aaaf24b28ae12d6405d0b4ea4dedf25798f821c0f0a6e",
       "blueprint.json": "072b26eef8d901045ff9aab3db277734e9fc8b78a3afb74194f735cfa79555d7"
     }

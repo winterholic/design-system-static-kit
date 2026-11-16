@@ -1143,7 +1143,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1595,7 +1595,47 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "compact",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 144,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "end",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 72,
+              "align": "end",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 288,
+          "readableWidth": 288,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       }
     ],
     "inherited": [
@@ -1614,8 +1654,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "49bcbb94c0327f2f4eb219a98cbf004d0467d1cbdced23a7e985a686dd872258",
-      "tokens.css": "dc268f41d9b5a871ff7d60cedfac3cf753edbbf69856aa7fec1f08b09a19046c",
+      "index.html": "3010b99ebeade5c1d0a9cbf16b087fffcdb8f9f8df76a13b8e50d6a6f986c6a2",
+      "tokens.css": "8ebb9124f3fbadbd7cb6a475d4de25b3a27deca1e2ea6288fb46fe345d36233a",
       "tokens.json": "05c33f97ad6e6e28f46a580af587b62643f6ac98133d3bc657285cb74ffe49d8",
       "blueprint.json": "bd335a73f96662c45765c02e86294ff30a5edf178d6f1634e477f5e091e95c67"
     }

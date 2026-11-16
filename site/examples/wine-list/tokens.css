@@ -116,7 +116,7 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 @media(prefers-contrast:more){:root{--kit-border:var(--kit-rule)}.kit-card,.kit-form,.kit-chart,.kit-table-wrap{border-width:2px}}
 @media(forced-colors:active){.kit-button,.kit-card,.kit-form,.kit-field input,.kit-field select,.kit-field textarea{border:1px solid CanvasText}.kit-bar{background:Highlight;forced-color-adjust:none}.kit-tablist [aria-selected=true]{outline:2px solid Highlight}.kit-switch i{border:1px solid CanvasText}}
 @media print{.kit-skip,.kit-header{display:none!important}.kit-shell{display:block!important}.kit-main{max-width:none;padding:0}.kit-card,.kit-form,.kit-notice,.kit-chart,.kit-plan{break-inside:avoid}}
-/* Context composition 1.1.0: compiler-owned decisions; catalog/composition.mjs */
+/* Context composition 1.2.0: compiler-owned decisions; catalog/composition.mjs */
 .kit-main,.kit-section-inner,.kit-split-cell,.kit-aside-main,.kit-aside-side,.kit-tabpanel,.kit-layout-region{container:kit compose/inline-size}.kit-layout-region{min-width:0}
 [data-design-kind="page-header"][data-design-role="page-heading"]:not([data-lead]) h1{font-size:var(--kit-t-app)}
 .kit-split[data-design-kind=split]{grid-template-columns:1fr;gap:var(--kit-gap)}
@@ -124,3 +124,12 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 .kit-split[data-design-kind=split][data-reverse=reverse]>:first-child{order:0}
 @container compose (min-width:672px){.kit-split[data-design-kind=split]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=even]{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-split[data-design-kind=split][data-ratio=wide-start]{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.kit-split[data-design-kind=split][data-ratio=wide-end]{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}.kit-split[data-design-kind=split][data-reverse=reverse]>:first-child{order:2}}
 [data-design-kind=properties]{container:properties/inline-size}@container properties (max-width:400px){[data-design-kind=properties][data-layout=inline] dl>div{flex-direction:column;gap:2px}[data-design-kind=properties][data-layout=inline] dt{flex-basis:auto}}
+/* chrome-row-1: source observation R13/header, relation S02; actual header content width owns centering. */
+[data-shell=centered] .kit-header{container:chrome/inline-size;gap:var(--kit-sp-near)}
+[data-shell=centered] .kit-header-primary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--kit-sp-head);width:100%;padding-block:0}
+[data-shell=centered] .kit-header-primary>.kit-brand{grid-column:1;grid-row:1;justify-self:start;min-width:0;max-width:100%;padding:0}
+[data-shell=centered] .kit-header-primary>.kit-brand .kit-brand-name{min-width:0;overflow-wrap:anywhere}
+[data-shell=centered] .kit-header-primary>.kit-header-action{grid-column:2;grid-row:1;position:static;margin:0;align-self:center;justify-self:end;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+[data-shell=centered] .kit-header>.kit-nav{width:100%;flex-basis:auto}
+[data-shell=centered][data-shell=centered] .kit-header{padding-block:var(--kit-sp-near)}
+@container chrome (min-width:720px){[data-shell=centered] .kit-header-primary{grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr)}[data-shell=centered] .kit-header-primary>.kit-brand{grid-column:2;justify-self:center}[data-shell=centered] .kit-header-primary>.kit-header-action{grid-column:3}}

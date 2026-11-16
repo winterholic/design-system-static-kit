@@ -39,5 +39,6 @@ export function compile(input) {
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
+  if (design?.chrome) manifest.design.chrome = design.chrome;
   return {html, css, tokens, manifest};
 }

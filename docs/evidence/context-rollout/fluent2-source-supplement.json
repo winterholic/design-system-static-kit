@@ -1,0 +1,218 @@
+{
+  "title": "Fluent 2 official component source supplement (targeted R12 follow-up)",
+  "checked_at": "2026-11-16T14:22:26+09:00",
+  "scope": "Only the three open Fluent 2 fields in the integrated ledger: button/input heights, form Field spacing, and table density. This is not an exhaustive review of all Fluent 2 documentation, platforms, components, or product application.",
+  "method": "Opened official Fluent 2 Web React component guidance and fetched Microsoft/fluentui implementation files from a commit-pinned GitHub raw URL. Current official pages were checked for stated numeric values; where absent, numeric values are derived only from pinned React code if the rule identifies that derivation. No value was borrowed from iOS, Android, Windows, or another platform.",
+  "repository": {
+    "url": "https://github.com/microsoft/fluentui",
+    "commit": "8522f09fa0ea1128e7020f494116ca457538646b",
+    "commit_date_utc": "2026-11-15T19:28:04Z",
+    "platform": "Fluent UI React v9, Web",
+    "commit_metadata_url": "https://api.github.com/repos/microsoft/fluentui/commits/master",
+    "commit_metadata_checked_at": "2026-11-16T14:11:10+09:00"
+  },
+  "sources": {
+    "button-doc": {
+      "title": "React Button — Fluent 2 Design System",
+      "url": "https://fluent2.microsoft.design/components/web/react/core/button/usage",
+      "platform": "Fluent 2 Web React component guidance (Fluent UI React v9)",
+      "version": "Live official documentation page, retrieved 2026-11-16 14:11 KST; page identifies React storybook guidance",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "findings": "The page defines button roles/layout/accessibility but states no numeric size-to-height values."
+    },
+    "input-doc": {
+      "title": "React Input — Fluent 2 Design System",
+      "url": "https://fluent2.microsoft.design/components/web/react/core/input/usage/",
+      "platform": "Fluent 2 Web React component guidance (Fluent UI React v9)",
+      "version": "Live official documentation page, retrieved 2026-11-16 14:11 KST",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "findings": "The page gives usage and layout guidance; it states no numeric input height."
+    },
+    "field-doc": {
+      "title": "React Field — Fluent 2 Design System",
+      "url": "https://fluent2.microsoft.design/components/web/react/core/field/usage/",
+      "platform": "Fluent 2 Web React component guidance (Fluent UI React v9)",
+      "version": "Live official documentation page, retrieved 2026-11-16 14:11 KST",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "findings": "The page specifies top-aligned labels by default and optional horizontal labels; it states no general numeric gap between separate Field components."
+    },
+    "react-overview": {
+      "title": "React Overview — Fluent 2 Design System",
+      "url": "https://fluent2.microsoft.design/components/web/react",
+      "platform": "Fluent 2 Web / React",
+      "version": "Live official documentation page, retrieved 2026-11-16 14:11 KST",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "findings": "Identifies Fluent UI React v9 component storybook and Web React platform."
+    },
+    "button-code": {
+      "title": "Fluent UI React Button styles",
+      "url": "https://github.com/microsoft/fluentui/blob/8522f09fa0ea1128e7020f494116ca457538646b/packages/react-components/react-button/library/src/components/Button/useButtonStyles.styles.ts#L17-L21",
+      "platform": "Web / React implementation, CSS-in-JS styles",
+      "version": "microsoft/fluentui commit 8522f09fa0ea1128e7020f494116ca457538646b",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "path": "packages/react-components/react-button/library/src/components/Button/useButtonStyles.styles.ts",
+      "findings": "Button root declares vertical padding and typography, not a fixed height. Size-specific style also changes padding and type styles; small/medium/large natural box heights are derived from line-height plus vertical padding and 1px borders. Small/large icon variants use distinct vertical padding.",
+      "source_lines": {
+        "start": 17,
+        "end": 21,
+        "details": "Button base box sizing/border/medium vertical padding/line-height at lines 25-27, 63, 69; small size and icon padding at 290-303; large size and icon padding at 304-319."
+      }
+    },
+    "input-code": {
+      "title": "Fluent UI React Input styles",
+      "url": "https://github.com/microsoft/fluentui/blob/8522f09fa0ea1128e7020f494116ca457538646b/packages/react-components/react-input/library/src/components/Input/useInputStyles.styles.ts#L16-L20",
+      "platform": "Web / React implementation, CSS-in-JS styles",
+      "version": "microsoft/fluentui commit 8522f09fa0ea1128e7020f494116ca457538646b",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "path": "packages/react-components/react-input/library/src/components/Input/useInputStyles.styles.ts",
+      "findings": "Input fieldHeights explicitly declares small/medium/large min-heights 24/32/40px; medium is the default. CSS unit is px.",
+      "source_lines": {
+        "start": 16,
+        "end": 20,
+        "details": "Root default min-height at 52-54; small/large variants at 118-129."
+      }
+    },
+    "field-code": {
+      "title": "Fluent UI React Field styles",
+      "url": "https://github.com/microsoft/fluentui/blob/8522f09fa0ea1128e7020f494116ca457538646b/packages/react-components/react-field/library/src/components/Field/useFieldStyles.styles.ts#L48-L58",
+      "platform": "Web / React implementation, CSS-in-JS styles",
+      "version": "microsoft/fluentui commit 8522f09fa0ea1128e7020f494116ca457538646b",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "path": "packages/react-components/react-field/library/src/components/Field/useFieldStyles.styles.ts",
+      "findings": "Vertical label margin-bottom uses spacingVerticalXXS, large vertical labels use spacingVerticalXS; secondary helper/validation text margin-top uses spacingVerticalXXS. There is no parent/inter-Field spacing rule in this component file.",
+      "source_lines": {
+        "start": 48,
+        "end": 58,
+        "details": "Vertical/large label margins at 48-58; secondary text top margin at 80-83."
+      }
+    },
+    "table-doc": {
+      "title": "Fluent UI React Table implementation",
+      "url": "https://github.com/microsoft/fluentui/blob/8522f09fa0ea1128e7020f494116ca457538646b/packages/react-components/react-table/library/src/components/Table/Table.types.ts#L8-L16",
+      "platform": "Web / React implementation; semantic table and optional div/flex layout",
+      "version": "microsoft/fluentui commit 8522f09fa0ea1128e7020f494116ca457538646b",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "path": "packages/react-components/react-table/library/src/components/Table/Table.types.ts",
+      "findings": "Table size values are extra-small/small/medium; default is medium.",
+      "source_lines": {
+        "start": 8,
+        "end": 16,
+        "details": "Table size union and default medium documented at 8-16."
+      }
+    },
+    "table-cell-code": {
+      "title": "Fluent UI React TableCell styles",
+      "url": "https://github.com/microsoft/fluentui/blob/8522f09fa0ea1128e7020f494116ca457538646b/packages/react-components/react-table/library/src/components/TableCell/useTableCellStyles.styles.ts#L16-L51",
+      "platform": "Web / React implementation, CSS-in-JS styles",
+      "version": "microsoft/fluentui commit 8522f09fa0ea1128e7020f494116ca457538646b",
+      "checked_at": "2026-11-16T14:11:10+09:00",
+      "path": "packages/react-components/react-table/library/src/components/TableCell/useTableCellStyles.styles.ts",
+      "findings": "Native table-cell height declarations: medium 44px, small 34px, extra-small 24px. Div/flex mode uses corresponding min-height. Cell horizontal padding is spacingHorizontalS; no universal row height beyond the size-dependent cell rule is asserted.",
+      "source_lines": {
+        "start": 16,
+        "end": 51,
+        "details": "Native cell heights at 18-30; flex min-heights at 36-51."
+      }
+    },
+    "typography-doc": {
+      "title": "Typography — Fluent 2 Design System",
+      "url": "https://fluent2.microsoft.design/typography",
+      "platform": "Fluent Web type ramp; CSS px",
+      "version": "Live official documentation page, retrieved 2026-11-16 14:20 KST",
+      "checked_at": "2026-11-16T14:20:56+09:00",
+      "findings": "Web type-ramp rows state Caption 1 12px/16px, Body 1 14px/20px, Subtitle 2 16px/22px. These support the implementation line-height token values used in the Button height derivation; native platform rows were not substituted."
+    },
+    "spacing-code": {
+      "title": "Fluent UI React global spacing token definitions",
+      "url": "https://github.com/microsoft/fluentui/blob/8522f09fa0ea1128e7020f494116ca457538646b/packages/tokens/src/global/spacings.ts#L4-L47",
+      "platform": "Web / React CSS spacing tokens",
+      "version": "microsoft/fluentui commit 8522f09fa0ea1128e7020f494116ca457538646b",
+      "checked_at": "2026-11-16T14:22:26+09:00",
+      "path": "packages/tokens/src/global/spacings.ts",
+      "source_lines": {
+        "start": 4,
+        "end": 47,
+        "details": "Token scale values at 5-16; horizontal aliases at 19-31; vertical aliases at 34-46."
+      },
+      "findings": "The pinned token source maps XXS=2px, XS=4px, and S=8px to spacingVerticalXXS/XS and spacingHorizontalS respectively."
+    }
+  },
+  "entries": [
+    {
+      "system": "Fluent 2",
+      "field": "Button and Input height by size (Web React)",
+      "status": "partially specified",
+      "rule_ids": [
+        "FLU-07"
+      ],
+      "values": {
+        "button": "React Button has no explicit fixed height. From the pinned CSS and existing Fluent type-token scale: small without icon = 16px line-height + 2×3px vertical padding + 2×1px border = 24px; medium/default = 20 + 2×5 + 2 = 32px; large without icon = 22 + 2×8 + 2 = 40px. Small-with-icon = 20px; large-with-icon = 38px. These are derived natural CSS box heights, not a height token or documented universal contract.",
+        "input": "Input min-height small/medium/large = 24/32/40px; medium is default."
+      },
+      "conditions": "Web React / Fluent UI React v9 implementation only. Button arithmetic assumes pinned styles, normal content line box, 1px border, and no consumer style overrides; line heights are existing Fluent type-token values (small 16px, medium 20px, large 22px). Icon variants alter vertical padding. Input values are min-height and content may require more height. The public component pages themselves state no numeric heights. The line-height inputs are cross-checked against the Fluent Web typography page (Caption1 16px, Body1 20px, Subtitle2 22px); no native platform type scale is substituted.",
+      "units": "CSS px; button values are derived px, Input values are declared min-height px.",
+      "source_ids": [
+        "button-doc",
+        "input-doc",
+        "react-overview",
+        "button-code",
+        "input-code",
+        "typography-doc"
+      ],
+      "source_file": "microsoft/fluentui/packages/react-components/react-button/library/src/components/Button/useButtonStyles.styles.ts; react-input/library/src/components/Input/useInputStyles.styles.ts",
+      "kit_comparison": "Kit controls use min-height/control values 40/44/48px (src/spacing.mjs:7; src/styles/chunks.mjs:86,90). Values are not a one-to-one match with Fluent size variants. This is recorded as partial source-scope alignment; no product defect is asserted."
+    },
+    {
+      "system": "Fluent 2",
+      "field": "Vertical Field label/helper spacing and inter-Field gap",
+      "status": "partially specified; general inter-Field gap not stated",
+      "rule_ids": [
+        "FLU-08"
+      ],
+      "values": {
+        "vertical-label-to-control": "Default vertical label margin-bottom = 2px (spacingVerticalXXS); large vertical label margin-bottom = 4px (spacingVerticalXS).",
+        "control-to-helper-or-validation": "Secondary text margin-top = 2px (spacingVerticalXXS).",
+        "between-separate-fields": "No general numeric gap stated in checked guidance/implementation; no value asserted."
+      },
+      "conditions": "Web React Field component at the pinned Fluent UI React v9 commit; spacing aliases resolve to the pinned global token values (XXS 2px, XS 4px). The component file does not establish an enclosing form layout or sibling spacing.",
+      "units": "CSS px, expanded from pinned Fluent spacing tokens; inter-Field gap: not stated in checked paths.",
+      "source_ids": [
+        "field-doc",
+        "field-code",
+        "spacing-code"
+      ],
+      "source_file": "microsoft/fluentui/packages/react-components/react-field/library/src/components/Field/useFieldStyles.styles.ts; packages/tokens/src/global/spacings.ts",
+      "kit_comparison": "Kit form fields use an 8px label/control gap and 20px field-group gap by default (src/styles/chunks.mjs:89). Fluent’s local label margin is token-based, while a general sibling gap is not stated; this is scope-limited and not a defect assertion."
+    },
+    {
+      "system": "Fluent 2",
+      "field": "Table density / size variants (Web React)",
+      "status": "partially specified",
+      "rule_ids": [
+        "FLU-09"
+      ],
+      "values": {
+        "medium_default": "44px TableCell height",
+        "small": "34px TableCell height",
+        "extra_small": "24px TableCell height",
+        "non_native_layout": "Corresponding min-heights 44/34/24px in div/flex mode.",
+        "horizontal_padding": "8px per side (spacingHorizontalS)"
+      },
+      "conditions": "Web React Table size context (default medium); values are CSS cell height declarations, not a guaranteed final row height when content needs more space. The checked implementation has no separate row padding/density token; horizontal cell padding is a spacing token and is not translated here. The pinned global token source resolves spacingHorizontalS to 8px.",
+      "units": "CSS px for cell height/min-height and horizontal padding (8px per side); no vertical padding value asserted.",
+      "source_ids": [
+        "table-doc",
+        "table-cell-code",
+        "spacing-code"
+      ],
+      "source_file": "microsoft/fluentui/packages/react-components/react-table/library/src/components/Table/Table.types.ts; react-table/library/src/components/TableCell/useTableCellStyles.styles.ts; packages/tokens/src/global/spacings.ts",
+      "kit_comparison": "Kit table cells use 16px padding on desktop and 12px at the mobile breakpoint; row height is content-derived (src/styles/chunks.mjs:82-83). The sizing and padding contracts differ; this is a partial comparison, not an automatic product defect."
+    }
+  ],
+  "limits": [
+    "The component guidance pages do not state numeric button/Input heights; button heights are an explicitly marked implementation-based CSS derivation.",
+    "Field guidance and the pinned Field component do not define a general gap between separate Field components. Token numeric expansion was not asserted.",
+    "Table cell height declarations can expand for content; they are not a promise of fixed rendered row height.",
+    "No all-platform equivalence, all-document coverage, or kit defect is inferred."
+  ]
+}

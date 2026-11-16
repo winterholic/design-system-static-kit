@@ -1,6 +1,6 @@
 /** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
  * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
-export const COMPOSITION_VERSION = '1.1.0';
+export const COMPOSITION_VERSION = '1.2.0';
 export const PAGE_INTENT = {
   dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
   auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',

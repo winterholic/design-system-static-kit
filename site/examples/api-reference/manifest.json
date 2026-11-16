@@ -1993,7 +1993,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -2185,7 +2185,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 80,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 216,
+              "align": "start",
+              "wrap": "words"
+            }
+          ],
+          "minimumWidth": 440,
+          "readableWidth": 440,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       },
       {
         "path": "$.tree.children[1].children[0].children[1]",
@@ -2305,7 +2351,47 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 128,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 160,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 360,
+          "readableWidth": 360,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       }
     ],
     "inherited": [
@@ -2430,8 +2516,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "870d3329b9d8a2846a9992426bd5b2b993ee50c4b441b73cbc0036607c723709",
-      "tokens.css": "a30ff63b164a8e2feacbf13175b1f7bf98a0006a95354b53600dfcb52a8b9562",
+      "index.html": "6dcebe67def92e1b854536278566e7c0c79c94c8bf878996e4fb6ee5d8d7ed69",
+      "tokens.css": "dfdb526b0d6fa6eed6355faed74b00bbe77411c44905ec6bc9162a1d4dfaedfd",
       "tokens.json": "5dd7caef2b92ed42d8b9e9ce9040d5822216cf2eecee010d7cda72a90df8a31c",
       "blueprint.json": "5cfdb78a23b7fcb00bdfcfa78be485531495dfb43c54e0ce9d2d30610629a568"
     }

@@ -1205,7 +1205,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1481,7 +1481,53 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 96,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 216,
+              "align": "start",
+              "wrap": "words"
+            }
+          ],
+          "minimumWidth": 456,
+          "readableWidth": 456,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       },
       {
         "path": "$.tree.children[1].children[0].children[3]",
@@ -1559,7 +1605,47 @@
         },
         "applied": [
           "C13"
-        ]
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "comfortable",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 140,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 216,
+              "align": "start",
+              "wrap": "words"
+            }
+          ],
+          "minimumWidth": 428,
+          "readableWidth": 428,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
       }
     ],
     "inherited": [
@@ -1735,8 +1821,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "dcc543ca84491f3e3ef2883ed81ebfc8a47ba52c03bcfef164204a44128723cc",
-      "tokens.css": "60b0e8f4047afa743d3749484a9974f0bdb376a97b605f6c7f820323b2c6edc3",
+      "index.html": "487d539258e6d8be056749435bfcd98d496e9b30d3c054d252dd5f089a13a6e7",
+      "tokens.css": "16d155677ce2dd76dcbc0116a398e9cafe5c56b450202e68a0f66424b533afa3",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
       "blueprint.json": "c1905add1c5ccc539b420c195f9f444d2acd151ea8fb902030914ee8641ca7a0"
     }

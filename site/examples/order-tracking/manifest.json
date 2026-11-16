@@ -1028,7 +1028,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1138,7 +1138,19 @@
         },
         "applied": [
           "C29"
-        ]
+        ],
+        "sequence": {
+          "policy": "sequence-content-1",
+          "mode": "adaptive",
+          "reason": "An implicit short sequence reuses the existing orphan-free flow; explicit chronology and long narratives retain rows."
+        },
+        "flow": {
+          "minCell": 200,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "cap": 3
+        }
       }
     ],
     "inherited": [
@@ -1168,8 +1180,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "86e0e18ab9ddef838728b5c091e84a3818648392ef6719aba184d5103b3fba8c",
-      "tokens.css": "4b2bdf94c6c91b4798bb70bce3cb4720553b2fffc701dd9df420979c00eb6a0b",
+      "index.html": "d29843e9bdfed79e1ccd0e7ff5fe7674593d8000a66ab271580ed2c6b51bc82c",
+      "tokens.css": "04eb02d079ed5fbf590330475c7c98e4643361dbe5817d755409d8474ef649f2",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
       "blueprint.json": "7aff4ee277b0cad336e212c98b22ff260225dd3e00d7456259a362f120f85fe7"
     }

@@ -1079,7 +1079,7 @@
     }
   },
   "design": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1372,13 +1372,24 @@
         ],
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
-    ]
+    ],
+    "chrome": {
+      "policy": "chrome-row-1",
+      "shell": "centered",
+      "primary": [
+        "brand",
+        "action"
+      ],
+      "navigation": "separate-row",
+      "wideContainer": 720,
+      "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
+    }
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "193f648cf5d5d7a00e833754376e72bc7fe2dc07b9df77eecdc8e25517ed3b30",
-      "tokens.css": "6fc31e25d3eea3d774830a5d263f1158ddb0c89c7e18d4e00c42d96d9269c81b",
+      "index.html": "4e7fbfd0f28f8748f98e232c4a0806ebb1e600c4789a6031a7e1579f1ac8e1b0",
+      "tokens.css": "2b24e5b93434ed07c4939d95d7dfd4a1f89d5f21ae9d135db33907c83bf149f4",
       "tokens.json": "5ae678b9f79a9bbaf96c612dcb24f3795f3ff15d725640f8845419178485bec4",
       "blueprint.json": "5c83b4f70f255cdb03c3b6e5bc00b8175a486731759bf45308824d1017886590"
     }
