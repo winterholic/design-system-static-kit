@@ -1,0 +1,874 @@
+{
+  "observed_at": "2026-11-16T01:43:04.902079+00:00",
+  "source_revision": "06e5a6a7e900620b2fd8ceda6da638d9d9da01b6",
+  "ci": {
+    "run_id": 43785163452,
+    "status": "completed",
+    "conclusion": "success",
+    "browser_step": "success"
+  },
+  "production_url": "https://design-system-static-kit.vercel.app/",
+  "deployment_id": "dpl_GxdapgBsGo6LepmFBtxgL1Jn9rpN",
+  "deployment_url": "https://design-system-static-okn0hpk52-winterholics-projects.vercel.app",
+  "checks": [
+    {
+      "path": "v1/catalog.json",
+      "bytes": 706740,
+      "sha256": "a6c802df60ca0c4ed2231b3f0a1010aed17c30c45574ec72630e73d67a307b6a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": "1.1.0"
+    },
+    {
+      "path": "index.html",
+      "bytes": 11542,
+      "sha256": "15d981d4a7c9f085e3ae208776cd5a3c8cc1ae3a1fb38b46bcb612183741956e",
+      "matches_local": true
+    },
+    {
+      "path": "gallery/index.html",
+      "bytes": 721572,
+      "sha256": "c3d6ffc47c12ee46c6ca773cad7f4d1b07874d4cbcd3fa468051c46977313140",
+      "matches_local": true
+    },
+    {
+      "path": "combos/index.html",
+      "bytes": 8635,
+      "sha256": "9c87ed588bdafb0aa98fe20fd3700e4b676136952d6dfd67592199bd5c9b2a81",
+      "matches_local": true
+    },
+    {
+      "path": "src/catalog/composition.mjs",
+      "bytes": 10494,
+      "sha256": "b358860b376719c923ffc9393f40b7ab466e24075889adda18ee0e46c59b2144",
+      "matches_local": true
+    },
+    {
+      "path": "src/compiler.mjs",
+      "bytes": 3475,
+      "sha256": "b56052d16b04c2b9cdc29c55a529ead7821e4f826ecbe0b1a2edba3435bd7b39",
+      "matches_local": true
+    },
+    {
+      "path": "examples/about-team/manifest.json",
+      "bytes": 29021,
+      "sha256": "2e970eda49c5d5742c325b9ff3a2a08f39e0fc0bab63f774e30fa6c40d394fe9",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/admin-table/manifest.json",
+      "bytes": 26820,
+      "sha256": "ccffaa4591c81c0fe598d0474af13eb1b09af49f1f229478fb87967b80e29787",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/agency-home/manifest.json",
+      "bytes": 58878,
+      "sha256": "6135f37072b8085aa437dae6f14ad7ed79fc304ffef11836909a8bc6b88aeb10",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/api-reference/manifest.json",
+      "bytes": 58796,
+      "sha256": "dc1edfcf553e194870d39d3cfb228bef45d12627467e5808433ccfdd37368467",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/app-landing/manifest.json",
+      "bytes": 58844,
+      "sha256": "3495799db9adb7735a8ebbf61c4cf80405bfaef5396b3b55d7349af8f57fa6e5",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/article/manifest.json",
+      "bytes": 29611,
+      "sha256": "0fdbb863609665d2e0d0a0924c5cc15109a9937fea21008a637a93c423ce425a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/audit-log/manifest.json",
+      "bytes": 31178,
+      "sha256": "bd32ae0f27a1a37d3a43a062474e70fe38bee3256db3cc4d4643c6122baa8d35",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/b2b-solution/manifest.json",
+      "bytes": 40879,
+      "sha256": "85822fad7bf15ea9359ceadba2dde1380b247532c688c15f39e493064d6f1841",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/bank-product/manifest.json",
+      "bytes": 38198,
+      "sha256": "9674752d8a6c124e51c88099e912e0f832f0412fcd4b260b2e64a3d8f4f16bf1",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/beauty-detail/manifest.json",
+      "bytes": 39937,
+      "sha256": "fd1199da6cfa8395cf1d70bfccbf96df3b872910b4fd07b7102256c7093cbf76",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/billing/manifest.json",
+      "bytes": 34632,
+      "sha256": "5b1d4434c20a553772d554a9e10181518cbb6810bccbdfe349f1bda15b5c01c2",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/blog-index/manifest.json",
+      "bytes": 32689,
+      "sha256": "f7b434d4f6cc4da5142432a5b3304dbb82045dcebecdb87b3acce35237f13056",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/blog-post/manifest.json",
+      "bytes": 26730,
+      "sha256": "06d32714eb124e9d387197b248d8ef6e4bd338481261b94849a0e2b9c435da55",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/cafe-home/manifest.json",
+      "bytes": 32489,
+      "sha256": "72e61f1d36542a5684428697542caa3834d924ee6c29862e31d4acfe2624084d",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/calendar-view/manifest.json",
+      "bytes": 33844,
+      "sha256": "c114fa34a58e82bc1c21d65ca5610b85ff5584cd30354d5cf4b0476159eb9414",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/campaign-donate/manifest.json",
+      "bytes": 34539,
+      "sha256": "7a338405492d9189aafecdc74493a81bd6db94486b664533e1850e67c5542011",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/campaign-poster/manifest.json",
+      "bytes": 37268,
+      "sha256": "79213f6c8d6e9bb22ccd69939700cfdb98923c3220bf7d647aee2822188d2dea",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/case-study/manifest.json",
+      "bytes": 34077,
+      "sha256": "608415a000c3bde5087c75e5b34a14df5d00aed230a5b36bc5f728cfb0b7f04e",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/changelog/manifest.json",
+      "bytes": 29260,
+      "sha256": "096643eff17f7a674c5f904f5d976ff0078a059683323f2d1b5bc9f179eeee0a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/checkout/manifest.json",
+      "bytes": 28256,
+      "sha256": "6ffc3d98c84e5a73fb2e93195efda212249708950ac7c48708f744e7e0aa6581",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/civic-service/manifest.json",
+      "bytes": 27411,
+      "sha256": "9b37285c549ca6e8b424e62539d72b22430c1926f7ce6e50100ad5df0e2f2f5a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/clinic-home/manifest.json",
+      "bytes": 33120,
+      "sha256": "938488ae1d29bd906776f351b7c862a521050dab3b995cca82e82912bceb3b47",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/contact/manifest.json",
+      "bytes": 28645,
+      "sha256": "5edeab6375050997d09dfb332bb6572a88428f1d9551ab74e42beefda9df9ba9",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/course-catalog/manifest.json",
+      "bytes": 34815,
+      "sha256": "c2044c091082763403ecef70c3d5af07a56f47ad3f3160c798eea3181dcd1c27",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/dashboard-analytics/manifest.json",
+      "bytes": 38087,
+      "sha256": "a9c071e6339d15dd54ccac624ab4509b7686f509e4e27e8ce8e818226d47765c",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/dashboard-overview/manifest.json",
+      "bytes": 37243,
+      "sha256": "d6848376ba09eb418084ebdfeede5f48ee8636564ee421d4a1b5f1a346efc43f",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/devtool-landing/manifest.json",
+      "bytes": 66619,
+      "sha256": "ee29f9055158d4226bb933217b91ebf68bc0f2a8a39b74145ac6bcb041fb3c66",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/docs-reference/manifest.json",
+      "bytes": 45289,
+      "sha256": "f3b7743feb8669d8e60a73167ba34fa546120851857d71cf867fa250cb4d9a07",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/event-landing/manifest.json",
+      "bytes": 42388,
+      "sha256": "18f4d182ee4a7123d208d831c0987d49b88f8ed7c052e2feea50a5a97e2c8ed6",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/event-schedule/manifest.json",
+      "bytes": 27695,
+      "sha256": "ee4b35e525aea1605a1856fde2cd6f0099dead3cc68a2bab20787e83f95c8bf5",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/finance-overview/manifest.json",
+      "bytes": 35718,
+      "sha256": "398dfcada7f07e7bd2c97a961c326d8c68a69a79a649f9cc3614a948a70c58f3",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/fitness-landing/manifest.json",
+      "bytes": 43282,
+      "sha256": "ba5e401eeaa529048a254a61759acf6c3e0c7b2ef658e8a0befb5b4890e26051",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/forbidden/manifest.json",
+      "bytes": 24308,
+      "sha256": "4845456858f24898d3f388183b2ec12864b1656fa9277ed91650a652ea8add34",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/forgot-password/manifest.json",
+      "bytes": 25151,
+      "sha256": "f38b1e37eada97ef10fb48ad685caeada6b0e8ec20e25fa9aa7521cc142b1963",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/game-launch/manifest.json",
+      "bytes": 36728,
+      "sha256": "fefa4eaf086b679f4fdb81378ee600a39a6b5596902317c1b0b0208084fe35ea",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/garden-shop/manifest.json",
+      "bytes": 35072,
+      "sha256": "0e0c5c70d243df4a488157a52a54ab43fed3133499c08e27a0b8aa2e533047fd",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/hanji-journey/manifest.json",
+      "bytes": 32857,
+      "sha256": "96c6989fdf1f3c89370680de43118f96ca3a1dc4f19e111efceb9d27eb1e01c9",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/help-center/manifest.json",
+      "bytes": 26975,
+      "sha256": "d615dfb2a16aa117ba9a1381ac0b95c840105052c9f971721aefa39a2fe1e5d5",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/hr-people/manifest.json",
+      "bytes": 38436,
+      "sha256": "5158421c27145b9b0d6e4d7688d00c27c1e38f89d570f4ea6bcc9a8e24dd8472",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/inbox/manifest.json",
+      "bytes": 26377,
+      "sha256": "2e64ca142d4f7693ea67abcc831c524bd9ad86563a433e073c7a80502b357ead",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/incident-report/manifest.json",
+      "bytes": 34382,
+      "sha256": "aa8f86c3fb10431aaadf3d439d59b774d09a3f0c7b3989f4b405c02cb7c5aaae",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/job-board/manifest.json",
+      "bytes": 27554,
+      "sha256": "bf77beb8ab9b848170346c9875dcf560b715f9bbf51bfac6c09d90916e9c1e86",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/job-detail/manifest.json",
+      "bytes": 38806,
+      "sha256": "264e9c6b6460206d85f58f11ca60cfa7b319cbdb9c6ca37a7f6ac5b302164563",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/kids-class/manifest.json",
+      "bytes": 42222,
+      "sha256": "5e4307a6801967125ce03b51e1b0dee111273506d5fded3b9ad56e04993e0b0d",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/learning-course/manifest.json",
+      "bytes": 34515,
+      "sha256": "3cc50d37dcb0fff814474b424c5d23670b9d63ec5da7163ab25dc02d923c0e6a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/login/manifest.json",
+      "bytes": 25940,
+      "sha256": "880be293044c14b50cc8e29e3e701f91763ebdf840eca8f4008c33d8db2f333d",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/luxury-brand/manifest.json",
+      "bytes": 54214,
+      "sha256": "b247c43f4fec5f71ba85beab95f9be3a8880ca0914c3d95b720becadf5ed751c",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/maintenance/manifest.json",
+      "bytes": 24162,
+      "sha256": "7d46363cf5d8febfbfacc1ec0bc233610fc1ec25cd9b7281833c8a121af148c6",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/menu-dining/manifest.json",
+      "bytes": 29716,
+      "sha256": "0c674b18146275b0b2f626b636fac25cf3333dca2aaddc996eb52abef7f19bcc",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/museum-home/manifest.json",
+      "bytes": 33511,
+      "sha256": "82436eab70408ecd87faf446f8917248343da3701288af3aa074d59f14f09a98",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/music-player/manifest.json",
+      "bytes": 27580,
+      "sha256": "9b5c54a22a65338e0babe8b0238ea4d8727e9eed12f7bff24bf504b9c457fc1a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/news-home/manifest.json",
+      "bytes": 37995,
+      "sha256": "628154afe16c1069145c45bce62e84582814d7030602971d9d7530b6063343f0",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/not-found/manifest.json",
+      "bytes": 24324,
+      "sha256": "519203c772bf065ad67f1b102c4626a1fbe68f7552ecd5190c538d7dc024f39e",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/offline/manifest.json",
+      "bytes": 24360,
+      "sha256": "d5831c1976c8cf1c383162a4b4f9e3c6dc5bf0c1f49d76836c64ebeb11f27165",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/onboarding-wizard/manifest.json",
+      "bytes": 26104,
+      "sha256": "97457c7cf0f09ad6f4a3c76b6d97560ee4a2d71ed20a74be13c2934a9d833d6b",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/order-tracking/manifest.json",
+      "bytes": 27007,
+      "sha256": "ea52117237994bf1ce34a2f3ad1df0f0cfb0716934edf33f7097698c386436f2",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/policy/manifest.json",
+      "bytes": 25364,
+      "sha256": "d3f4f5784b3924dafdf4917808b07a69d01d0dce50eceaca430aa380cd2a442c",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/portfolio-grid/manifest.json",
+      "bytes": 27476,
+      "sha256": "0ad139e60d3923409665335ff5a9a8d7bb1067567e9adffce09792368fe1e3a7",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/pricing-page/manifest.json",
+      "bytes": 34169,
+      "sha256": "f7a31b478a3386ead37a6f5e0e9fb83d59120fd295c88d7157135d2ca241020e",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/product-detail/manifest.json",
+      "bytes": 33630,
+      "sha256": "f994234cd76f13adb6f6bd5b5b9f3c4e80141424d4e8012332a96e95c7ac5a2c",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/product-landing/manifest.json",
+      "bytes": 40420,
+      "sha256": "6e9be495f6bcabacdfa5c210aabe958eb6c9cdbc33c8b6f6c2df0370525bcc25",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/product-listing/manifest.json",
+      "bytes": 38940,
+      "sha256": "bc983da2c72fee6e225eee6956b4f3ae3796a1c53768f1d0b23996a28d09b3c1",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/profile/manifest.json",
+      "bytes": 38730,
+      "sha256": "384d627e885675ca1f5b568576d19ad7b566cb50d29407f078ae5d9cf5ed663c",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/project-board/manifest.json",
+      "bytes": 38474,
+      "sha256": "cac5fc5069ca5d87e48ebf95ad5ddf5d420f8de8b1e1c511a038cf06da47e1ea",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/property-search/manifest.json",
+      "bytes": 28519,
+      "sha256": "3d3dc2818f9d262506bc0efb71a3f34ac79e2711d59fb1e34b87aedcfdc50e95",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/realty-detail/manifest.json",
+      "bytes": 32140,
+      "sha256": "bd8b7fcc0a49db286876f12820dd7a5e6d25affdc07ff96b9af0e941f4b38c91",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/recipe-detail/manifest.json",
+      "bytes": 30191,
+      "sha256": "eb1a1d9f926f821e06d69e937bb6fba39dc1a8ebbf9cf524a5535f7b2a98ccbf",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/research-paper/manifest.json",
+      "bytes": 32903,
+      "sha256": "81014a88316cae5f4bd16d3401ca9032c4acc10676f98abdaa3022ad9977a349",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/saas-landing/manifest.json",
+      "bytes": 52980,
+      "sha256": "5d8a8196ef92524fc3f976193a9c9e66df7d367964184b9d04c5b2db6b05e10e",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/sales-dashboard/manifest.json",
+      "bytes": 38013,
+      "sha256": "6cfc91e7fc9a718010742da06efc7a6953a3b68fbb05656fba8a7a9556cd3d9e",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/server-error/manifest.json",
+      "bytes": 24248,
+      "sha256": "82cacae29a76112e32badd7e6fe485b60a7dc1e704c059e80ca7c4cd766130e6",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/settings/manifest.json",
+      "bytes": 32363,
+      "sha256": "5aa8c1924993472396d79756fe692429375b0f1a06a315dd6a40e7c69a8797fe",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/signup/manifest.json",
+      "bytes": 25435,
+      "sha256": "cac88d6250677cd662e1f9580a378d3350645e113ca652ad08d37b246a9af7cb",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/solar-landing/manifest.json",
+      "bytes": 40884,
+      "sha256": "f89f85446155822908c90b72fc54fa5b86993725f488b7380ac540578508b17f",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/status-page/manifest.json",
+      "bytes": 32324,
+      "sha256": "094f64a89848f729c24d92180c31b921f9c1b2209bb102602b50818a2ffabf9a",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/stay-detail/manifest.json",
+      "bytes": 31357,
+      "sha256": "150d7a7528d39c902e92e40fb3ab8ba5dd15a7b55a5d7aa4a1fd7372d544299f",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/support-queue/manifest.json",
+      "bytes": 26700,
+      "sha256": "16cab263f6e16d97d6f5d0a289e639324932128be2b9946419013d47d3590c5c",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/survey/manifest.json",
+      "bytes": 25755,
+      "sha256": "30f24f9a21ae38c8c862c2a5987e0c5963786969be82d4ff02178d5558355b83",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/team-chat/manifest.json",
+      "bytes": 26615,
+      "sha256": "58f1a9517514299ca9aef51fe4f5cbf411b356d4fde9aab894589148405c1f5d",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/team-directory/manifest.json",
+      "bytes": 26428,
+      "sha256": "26767da473d8105d5e6eb0083c8867c6a1b211d9cda2757b3dfce709d6d8e692",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/travel-ocean/manifest.json",
+      "bytes": 33985,
+      "sha256": "b20e3ee14f69497c2eef106ba4bbf56d2c705d7666e80a0c1b6268d26c9616e2",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/tutorial/manifest.json",
+      "bytes": 27840,
+      "sha256": "46f460d89c5bdd39be4e9b6ea0784aff089c81bdb4275eec0dafbb0cb161c640",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/waitlist/manifest.json",
+      "bytes": 28418,
+      "sha256": "42af58dbe05bd841b51c7c74fbe193bc7c2017734603040fd2af3d458c93a7a3",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/wedding-invite/manifest.json",
+      "bytes": 37934,
+      "sha256": "5745a1489675dd9754b767400137de572a054ed49a8aec0f9f050bc5ec1f3b95",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/wine-list/manifest.json",
+      "bytes": 30244,
+      "sha256": "907efd7d32b55578fbc67f93efb16788179636b7d8dbe2a5f7f0782bd0db0e60",
+      "matches_local": true,
+      "catalog": "2.2.0",
+      "composition": null
+    },
+    {
+      "path": "examples/app-landing/index.html",
+      "bytes": 70661,
+      "sha256": "6899559127156038cb616bb6c289baef3198cc5cbbec3e54ba9dd294cda0d8bf",
+      "matches_local": true
+    },
+    {
+      "path": "examples/admin-table/index.html",
+      "bytes": 47007,
+      "sha256": "b7334bc57a8296662ce697202fbced2dac1aac36f1d6efc0a8dbac9aa718c39b",
+      "matches_local": true
+    },
+    {
+      "path": "examples/product-detail/index.html",
+      "bytes": 64330,
+      "sha256": "d45df0d7db9d7d1f8d074d7da8fe6043a020b0c6189640ad0939dbd9da1c71d5",
+      "matches_local": true
+    },
+    {
+      "path": "examples/article/index.html",
+      "bytes": 54468,
+      "sha256": "b30976c3be63623860be52ebeca97d28baf333143c3e7d980ec4af7b797a1acc",
+      "matches_local": true
+    },
+    {
+      "path": "examples/settings/index.html",
+      "bytes": 54239,
+      "sha256": "3cb6ac2065f50e4ad47107e41ad1a5ac302829073ccb3a51f9dbbd635ba19f40",
+      "matches_local": true
+    },
+    {
+      "path": "examples/about-team/index.html",
+      "bytes": 54157,
+      "sha256": "136f9e19de4cb30a7f8fec416aa226d5633f59f6494a617c0dafd491b2d9bd2f",
+      "matches_local": true
+    },
+    {
+      "path": "examples/saas-landing/index.html",
+      "bytes": 103663,
+      "sha256": "b9d67288d245acd7e4fa10248e4ec2da4ed09f4304c05b7e13980637e20e4d1d",
+      "matches_local": true
+    },
+    {
+      "path": "examples/saas-landing/tokens.css",
+      "bytes": 64936,
+      "sha256": "09f79e97f1663542dbcbe4a65d6cbb8f78230aa5888670645d41b11f7f1677c4",
+      "matches_local": true
+    },
+    {
+      "path": "examples/admin-table/tokens.css",
+      "bytes": 38465,
+      "sha256": "10fd12841f67018f309698b952396f745729b494ac4ad7a5d273aa37bb47b769",
+      "matches_local": true
+    },
+    {
+      "path": "examples/dashboard-overview/index.html",
+      "bytes": 58693,
+      "sha256": "f32434782b04f588e21c402394597499ae84979cf74237d1916a8ddc6b68357c",
+      "matches_local": true
+    },
+    {
+      "path": "examples/dashboard-overview/tokens.css",
+      "bytes": 45519,
+      "sha256": "0fc4175303bd6403ee83dd9c6d2baff5c7b06118c2353f4412b7705eba69873d",
+      "matches_local": true
+    },
+    {
+      "path": "examples/product-detail/tokens.css",
+      "bytes": 44382,
+      "sha256": "372cfe67c619919741233b06fbcd937b78b43f0732c6144df41ccb16596436b6",
+      "matches_local": true
+    },
+    {
+      "path": "examples/article/tokens.css",
+      "bytes": 42543,
+      "sha256": "f0206a24031343fd8b9179a6013c7acd5ad60f0845b403ab019970d1f3b3cb55",
+      "matches_local": true
+    },
+    {
+      "path": "examples/settings/tokens.css",
+      "bytes": 43850,
+      "sha256": "c7e2f62bc83672c5225a7bd97fabe9103111ae1146b18a5336c93eeabcaa0e1c",
+      "matches_local": true
+    }
+  ],
+  "mismatch_count": 0,
+  "superseded_attempt": {
+    "deployment_id": "dpl_HA75VjB298t8mMGC48gSUZCMgyyG",
+    "reason": "Initial rsync used deployment cwd, failed before upload; CLI interrupted but remote deployment became ready. Correct synchronized deployment supersedes it."
+  },
+  "representative_templates": [
+    "saas-landing",
+    "admin-table",
+    "dashboard-overview",
+    "product-detail",
+    "article",
+    "settings"
+  ],
+  "browser_smoke": {
+    "engine": "configured ttakkari_browser Chromium",
+    "assembler": {
+      "catalog": "2.2.0",
+      "selected_template": "about-team",
+      "status": "트리 검증 통과"
+    },
+    "combos": {
+      "count": 4955
+    },
+    "gallery": {
+      "viewport": [
+        390,
+        844
+      ],
+      "dialog": "팀 소개 · 아틀리에",
+      "heading": "함께 배우고 만드는 공간"
+    },
+    "console": {
+      "errors": [
+        {
+          "resource": "favicon.ico",
+          "status": 404
+        }
+      ],
+      "application_errors": 0,
+      "warnings": 0
+    },
+    "closed": true,
+    "screenshots": [
+      {
+        "path": "production-assembler-desktop.png",
+        "sha256": "1d9465dab36316246df13497e47fe901a08c2c3e5f96426fe425eef8f82c5ba3"
+      },
+      {
+        "path": "production-gallery-mobile.png",
+        "sha256": "d5a77e9cff67d72af541155d18b3729f1ba99baed889083d4b4d214048685342"
+      }
+    ]
+  },
+  "limitations": [
+    "Native iOS/Android devices and assistive technologies not tested.",
+    "gh run view --log in Codex shell could not create /Users/winterholic/.cache/gh cache entry (operation not permitted); CI job/step success was read from GitHub metadata, not a test-count log."
+  ]
+}

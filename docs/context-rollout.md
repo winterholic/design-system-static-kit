@@ -37,10 +37,14 @@
 
 독립 검토에서 다중 이름 `container` shorthand를 무효로 본 지적은 실제 Chromium 157의 `CSS.supports`와 computed container-name으로 반증됐다. [W3C 문법](https://www.w3.org/TR/css-contain-3/#container-shorthand)은 `container-name`의 식별자 목록을 허용한다. 불필요하게 코드를 수정하지 않았고 분기 동작을 브라우저에서 확인했다. 검토 원문과 정정은 `independent-verification.md`에 남긴다.
 
-설정된 브라우저 MCP에서 갤러리의 팀 소개 viewer를 열어 렌더를 확인했고 해당 탐색의 콘솔 오류·경고는 0건이었다. 셸 Playwright runner는 기존 Codex 셸 preflight의 OS IPC 제한 때문에 실행하지 않았다. 새 `e2e/rollout.spec.mjs`는 runner 가능한 CI에서 실제 실행 결과를 별도로 확인해야 한다. iOS/Android 실기기와 보조기기는 이 환경에 없으며 Chromium 뷰포트 검사로 대체해 통과 처리하지 않는다.
+설정된 브라우저 MCP에서 갤러리의 팀 소개 viewer를 열어 렌더를 확인했고 해당 로컬 탐색의 콘솔 오류·경고는 0건이었다. 셸 Playwright runner는 기존 Codex 셸 preflight의 OS IPC 제한 때문에 실행하지 않았다. 이후 GitHub [Verify 43785163452](https://github.com/winterholic/design-system-static-kit/actions/runs/43785163452)가 revision `06e5a6a7e900620b2fd8ceda6da638d9d9da01b6`에서 전체 성공했다. `npm run verify`, 생성물 차이 검사와 `npm run test:browser`가 모두 성공했으며 브라우저 단계는 2026-11-16 01:23:56 UTC에 종료됐다. CI 실행과 로컬 셸의 실행 제한은 구분한다. iOS/Android 실기기와 보조기기는 이 환경에 없으며 Chromium 뷰포트 검사로 대체해 통과 처리하지 않는다.
 
 ## 운영 배포
 
-현재 Codex 셸에서 `/opt/homebrew/bin/vercel whoami --json --non-interactive`는 `loggedIn:false`였다. 운영 `https://design-system-static-kit.vercel.app/v1/catalog.json`은 네트워크 확인 시 catalog 2.1, 템플릿 85, 부품 55였다. 이는 해당 CLI 환경의 인증 상태이며 호스트 전체의 인증 부재를 뜻하지 않는다. 인증 파일이나 Keychain은 읽지 않았다. 인증이 복구되면 같은 프로젝트 링크를 보존한 `.qa/deploy`에서 `vercel deploy --prod --yes --archive=tgz`로 배포하고 운영 API·예시 CSS·갤러리를 확인한다. 새 Vercel 프로젝트를 만들지 않는다.
+초기 Codex 셸의 `vercel whoami --json --non-interactive`는 `loggedIn:false`였고 운영 catalog는 2.1이었다. 사용자의 로그인 복구 알림 후 같은 명령이 `winterholic` 계정을 반환했다. 인증 파일이나 Keychain은 읽지 않았다.
 
-운영 미반영 동안에는 새 compiler를 내장한 단일 HTML 갤러리를 공유한다. 이 파일은 운영 Vercel 배포 성공의 대체 증거가 아니다.
+기존 `.qa/deploy/.vercel` 프로젝트 연결을 보존하고 `site/`를 동기화한 뒤 `vercel deploy --prod --yes --archive=tgz`로 배포했다. 운영 별칭 [design-system-static-kit.vercel.app](https://design-system-static-kit.vercel.app/)은 deployment `dpl_GxdapgBsGo6LepmFBtxgL1Jn9rpN`을 가리키며 `vercel inspect` 결과는 `Ready`다. 첫 시도는 동기화 경로 오류로 이전 생성물이 배포됐으나 올바르게 동기화한 배포로 대체했다. 시도 이력은 `deployment.json`에 보존한다.
+
+운영 HTTP 확인에서 catalog 2.2.0 / composition 1.1.0을 확인했다. 기본 예시 85개 manifest, 조립기·갤러리·전체 조합 진입점과 compiler 소스, 6개 대표 유형의 HTML·CSS 등 105개 경로가 로컬 `site/`와 바이트 단위로 일치했다(불일치 0). 경로별 SHA-256은 [deployment.json](evidence/context-rollout/deployment.json)에 있다. 설정된 브라우저로 운영 조립기의 팀 소개 선택과 검증 통과 상태, 전체 조합 4,955개 표시, 390px 갤러리 팀 소개 viewer를 확인했다. 운영 탐색 전체의 콘솔 기록에는 `favicon.ico` 404 한 건이 있었고 애플리케이션 오류와 경고는 없었다. 운영 캡처는 `production-assembler-desktop.png`, `production-gallery-mobile.png`에 보존했다.
+
+앞서 공유한 단일 HTML 갤러리는 오프라인 비교 자료로 유지한다. 운영 배포 확인은 위 배포 ID와 HTTP·브라우저 근거를 사용한다.
