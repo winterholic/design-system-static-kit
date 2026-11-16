@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-11-16T14:55:52.963869+00:00",
+  "environment": "Codex command sandbox on Mac Studio; Vercel CLI 63.1.2",
+  "cwd": "/Users/winterholic/development/projects/design-system-static-kit/.qa/deploy",
+  "command": "vercel deploy --prod --yes --archive=tgz",
+  "exitCode": 1,
+  "stage": "Vercel deployment authorization; no new deployment ID returned",
+  "observedError": "Not authorized",
+  "followupReadOnlyChecks": [
+    {
+      "command": "vercel whoami",
+      "exitCode": 1,
+      "observedError": "The value of \"err\" is out of range. It must be a negative integer. Received 1"
+    },
+    {
+      "command": "vercel inspect https://design-system-static-kit.vercel.app --json",
+      "exitCode": 1,
+      "observedError": "The value of \"err\" is out of range. It must be a negative integer. Received 1"
+    }
+  ],
+  "sourceRevision": "d09d1d18d43b7dd0b9348b843beec20619820a74",
+  "status": "blocked",
+  "nextAction": "Restore Vercel authorization for this execution path, then deploy the unchanged verified source and verify production. Do not infer host-wide failure."
+}

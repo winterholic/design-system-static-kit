@@ -1,5 +1,7 @@
 # 타이포그래피 진단: "패딩은 좋아졌는데 타이포그래피가 안 맞는다"
 
+> 후속 기획 교차 검토: [review.md](review.md). 아래의 “닿는 쌍”은 실제 접촉이 아닌 간격 <0.01em 대용 지표이고, 원인 확정·타 플랫폼 서체 굵기·외부 수치의 해석은 교차 검토의 정정과 범위 제한을 우선한다. 작업 시점의 진단은 이력으로 보존한다.
+
 2026-11-16. 기준 revision `f22b9ae6902c2dad103bb36372bbd531dd40ffe1`(catalog 2.2.0, composition 1.2.0). 개선은 catalog 2.3.0의 타이포그래피 리비전 2다.
 
 측정 환경: 이 Mac Studio의 Chromium 156(Playwright 1.64.1), macOS 시스템 서체. 서체 실사용은 CDP `CSS.getPlatformFontsForNode`로 읽었다. **Windows·Android·Linux와 실기기 iOS는 측정하지 않았다(미검증).** 스택이 거기서는 다음 서체로 내려가므로 서체 짝 결과는 macOS 한정이다. 비율·자간·행간 수치는 서체와 무관하게 CSS 값이다.
