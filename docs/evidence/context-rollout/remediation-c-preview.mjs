@@ -1,6 +1,7 @@
 import {mkdir, writeFile, readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {isDeepStrictEqual} from 'node:util';
 import {createBlueprint, templateList} from '../../../src/catalog.mjs';
 import {compile} from '../../../src/compiler.mjs';
 
@@ -13,8 +14,11 @@ const hashes = [];
 for (const id of ids) {
   const b = createBlueprint(id), r = compile(b);
   await writeFile(new URL(`after/${id}.html`, root), r.html);
-  await writeFile(new URL(`before/${id}.html`, root), execFileSync('git',['show',`${baseline}:site/examples/${id}/index.html`]));
-  hashes.push({id, input:createHash('sha256').update(JSON.stringify(b)).digest('hex'), output:createHash('sha256').update(r.html).digest('hex')});
+  const beforeHTML=execFileSync('git',['show',`${baseline}:site/examples/${id}/index.html`]);
+  const beforeInput=JSON.parse(execFileSync('git',['show',`${baseline}:site/examples/${id}/blueprint.json`]).toString());
+  await writeFile(new URL(`before/${id}.html`, root),beforeHTML);
+  const sha=s=>createHash('sha256').update(s).digest('hex');
+  hashes.push({id,input:sha(JSON.stringify(b)),output:sha(r.html),beforeInput:sha(JSON.stringify(beforeInput)),beforeOutput:sha(beforeHTML),sameInput:isDeepStrictEqual(beforeInput,b)});
 }
 await writeFile(new URL('hashes.json', root), JSON.stringify(hashes,null,2)+'\n');
 await writeFile(new URL('probe.html', root), `<!doctype html><meta charset="utf-8"><title>Common layout measurements</title><style>body{margin:0}iframe{border:0;display:block}pre{white-space:pre-wrap;font:12px monospace}</style><pre id="report">measuring</pre><iframe id="frame"></iframe><script>

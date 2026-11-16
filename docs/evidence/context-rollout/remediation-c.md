@@ -45,3 +45,12 @@
 4. 공식 규칙 대장의 applied/partial/missing은 조사 시점 스냅샷이다. 121개를 모두 채택하거나 각 외부 수치를 모두 준수했다고 표시하지 않는다.
 5. iOS/Android 실기기·보조기기·모든 대체 서체의 미감은 미검증이다. 셸 Playwright runner의 이전 OS IPC 제한은 그 환경의 증거로만 유지하고 최신 커밋은 CI Chromium 결과로 별도 확인한다.
 6. chart의 긴 범주 라벨은 기존 유한 축약을 유지한다. 연구 표의 네 범주와 숫자 원문은 SVG의 desc와 데이터 표에 남지만 시각 라벨은 일부 줄임표다. 가용 폭에 따른 전체/축약 라벨 전환은 후속 공통 규약 대상으로 남긴다.
+
+## CI와 운영 반영 — 2026-11-16 최종
+
+- 소스 커밋: `5d2d1a6a76633ef16fc1680f1a35de6e39973158`. [GitHub Verify 43817797243](https://github.com/winterholic/design-system-static-kit/actions/runs/43817797243)는 전체 success다. Chromium 단계는 `2026-11-16T06:47:27Z`에 success로 종료했다. [단계별 메타데이터](remediation-c/ci.json)에 대상 SHA를 함께 보존했다.
+- Codex command sandbox에서 `gh run view 43817797243 --log`는 GitHub CLI가 `/Users/winterholic/.cache/gh/`에 캐시를 만드는 단계에서 `operation not permitted`였다. 같은 다운로드를 우회 재시도하지 않았고 빈 로그 파일은 증거에서 제외했다. 이는 CI 테스트 실패가 아니다. [범위 기록](remediation-c/ci-log-limit.json).
+- 기존 `.qa/deploy/.vercel` 연결을 보존하고 `site/`를 동기화한 뒤 `vercel deploy --prod --yes --archive=tgz`를 실행했다(exit 0). 배포 ID는 `dpl_FtZr3P4PsD7RNC3EXUuZcD9CBzZ5`, target은 production, readyState는 READY다. `vercel inspect https://design-system-static-kit.vercel.app --json`으로 운영 별칭이 같은 배포를 가리킴을 확인했다. [원문](remediation-c/deploy.log) · [inspect](remediation-c/deployment.json).
+- [운영 사이트](https://design-system-static-kit.vercel.app/)의 107경로는 local `site/`와 바이트 일치, 불일치 0이다. 85개 manifest와 catalog, 진입점, compiler 및 신규 table/header 모듈을 포함한다. [경로별 HTTP·SHA 영수증](remediation-c/production.json).
+- configured browser에서 운영 모바일 블로그 헤더(390×125px), 연구의 실제 데이터 chart, 조립기의 blog-index 선택과 `트리 검증 통과`, 전체 조합 진입을 확인했다. 관측한 조립기·조합 탐색의 console 오류 0 / 경고 0. [브라우저 영수증과 캡처 3장](remediation-c/production-browser.json). 브라우저는 `No open tabs`로 닫았다.
+- 이 배포는 검증한 공통 교정의 반영이다. 위에 남긴 실자산·범주 축약·일부 시각 관측의 한계는 계속 적용된다.
