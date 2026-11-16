@@ -1,0 +1,64 @@
+{
+  "observedAt": "2026-11-16T16:32:59.020414+00:00",
+  "browser": "configured ttakkari_browser MCP",
+  "deploymentID": "dpl_Ad5U37hHZuuQj3HxzkqVYU1jwMzU",
+  "sourceRevision": "d09d1d18d43b7dd0b9348b843beec20619820a74",
+  "checks": [
+    "390px production SaaS: document height6398 and header125 match the prior local2.3 capture; first screen inspected",
+    "1440px production news-home rendered; first screen inspected",
+    "1440px production assembler displayed CATALOG2.3.0; selecting saas-landing returned 트리 검증 통과",
+    "Production combos entry displayed 4955 combinations and CATALOG2.3.0",
+    "390px production gallery SaaS viewer opened and rendered; screenshot directly inspected",
+    "Browser closed: No open tabs"
+  ],
+  "captures": [
+    {
+      "file": "production/saas-390.png",
+      "url": "https://design-system-static-kit.vercel.app/examples/saas-landing/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "production/news-1440.png",
+      "url": "https://design-system-static-kit.vercel.app/examples/news-home/",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "file": "production/assembler-1440.png",
+      "url": "https://design-system-static-kit.vercel.app/",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "file": "production/gallery-viewer-390.png",
+      "url": "https://design-system-static-kit.vercel.app/gallery/index.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "console": {
+    "errors": 1,
+    "warnings": 0,
+    "details": [
+      "favicon.ico HTTP404 only; no application JavaScript error observed in this navigation scope"
+    ]
+  },
+  "automationNotes": [
+    "A stale reference after a partial snapshot was resolved by taking a full snapshot and repeating the click.",
+    "A dialog selector matched nothing because the gallery uses a full-screen viewer; the opened viewer was confirmed by its screenshot."
+  ],
+  "closed": true,
+  "limits": [
+    "Representative production smoke and 109-path byte comparison only, not a repeat of the full 170-view visual audit.",
+    "No Windows, Android or physical iOS device measurement."
+  ]
+}

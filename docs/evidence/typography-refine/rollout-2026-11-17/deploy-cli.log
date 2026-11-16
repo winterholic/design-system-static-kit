@@ -1,0 +1,67 @@
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_Ad5U37hHZuuQj3HxzkqVYU1jwMzU",
+    "url": "https://design-system-static-bjd8kugg2-winterholics-projects.vercel.app",
+    "productionUrl": "https://design-system-static-kit.vercel.app",
+    "inspectorUrl": "https://vercel.com/winterholics-projects/design-system-static-kit/Ad5U37hHZuuQj3HxzkqVYU1jwMzU",
+    "readyState": "READY",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_Ad5U37hHZuuQj3HxzkqVYU1jwMzU",
+    "buildMachine": {
+      "cores": 2,
+      "memory": 8192,
+      "machine": "basic",
+      "selectionType": "fixed",
+      "selectionSource": "plan-default"
+    },
+    "deploymentProtection": [
+      "vercel_authentication"
+    ]
+  },
+  "message": "Deployment design-system-static-bjd8kugg2-winterholics-projects.vercel.app ready. Production URL: https://design-system-static-kit.vercel.app",
+  "next": [
+    {
+      "command": "vercel git connect",
+      "when": "Automatically deploy changes on every push"
+    },
+    {
+      "command": "vercel curl https://design-system-static-kit.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect design-system-static-bjd8kugg2-winterholics-projects.vercel.app",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod",
+      "when": "Promote to production"
+    }
+  ]
+}
+
+Vercel CLI 63.1.2 (Node.js 26.9.0)
+Deploying design-system-static-kit
+Uploading [--------------------] (0.0B/36.4MB)
+Uploading [=====---------------] (9.1MB/36.4MB)
+Uploading [==========----------] (18.2MB/36.4MB)
+Uploading [===============-----] (27.3MB/36.4MB)
+Uploading [====================] (36.4MB/36.4MB)
+  Inspect         https://vercel.com/winterholics-projects/design-system-static-kit/Ad5U37hHZuuQj3HxzkqVYU1jwMzU
+  Production      https://design-system-static-bjd8kugg2-winterholics-projects.vercel.app
+Building…
+Building…
+Running build in Washington, D.C., USA (East) – iad1
+Build machine configuration: 2 cores, 7 GB
+Retrieving list of deployment files...
+Previous build caches not available.
+Concatenating deployment archive files...
+Extracting deployment files...
+Extracted 3300 deployment files...
+Running "vercel build"
+Vercel CLI 65.15.0
+[2K[1A[2K[G  Production      https://design-system-static-bjd8kugg2-winterholics-projects.vercel.app
+Completing…
+▲ Aliased         https://design-system-static-kit.vercel.app
+
+EXIT 0
