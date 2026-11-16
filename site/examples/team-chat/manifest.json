@@ -1036,7 +1036,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1046,6 +1046,7 @@
           "semantic": "page-header",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1053,6 +1054,14 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1075,6 +1084,7 @@
           "semantic": "form",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1082,6 +1092,15 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "settings",
@@ -1102,13 +1121,36 @@
           "gap": 16
         }
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "chat",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S05",
+          "type/body"
+        ],
+        "reason": "Message identity and copy retain proximity and nested insets."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "d04cf618fb183e00d90991504641a69e142606c1a40b62930508efdcc988b83c",
-      "tokens.css": "b3e08544d2b541e0bfa9889aa2000f012c144aa152e40c7304955282ae819c80",
+      "index.html": "cfb18fe898a8e15ca7d865e9341a89bdc72b009f43619d9193eece52b14bdddd",
+      "tokens.css": "3edf2045cdb9121d623ebd115ec713b77a6f9b91dbe0ffadef06c2c55881be08",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
       "blueprint.json": "04c45a1c99acdb6d2503264de94af56e9379e4fdc7f106d8d0b1aace89981661"
     }

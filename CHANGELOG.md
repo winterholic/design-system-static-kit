@@ -4,6 +4,7 @@
 
 ## 2.2.0 · 2026-11-16
 
+- composition 1.1.0 후속: 55종의 맥락 결정/기존 계약 재사용을 선언하고, team/pricing/plan/quote/chart/calendar/gallery/timeline/properties/aside/master-detail/CTA/기능·단계·메뉴의 공통 공간 처리를 확장했다. 팀 소개글의 dense 2열 강제와 보조 갤러리의 viewport 열 선택을 해소하고, KPI finite budget 포화를 원문 보존 진단으로 표시한다. 85개 예시·54개 쇼케이스·조립기·전체 조합은 동일한 2.2 컴파일 경로에서 생성한다.
 - composition 1.0.0: 페이지 목적·컴포넌트 의미·콘텐츠·밀도·부모 관계에서 기존 typography/spacing 역할을 선택하는 선언형 결정표와 필드별 우선순위·동순위 충돌 오류, `manifest.design` 진단을 추가했다. AI·자유 CSS·외부 런타임 의존은 없다.
 - KPI 폭 예산을 기존 orphan-free flow와 연결하고 실제 셀 gap으로 breakpoint를 유도한다. grid/split은 정확한 할당 영역을 query하며, 폼은 자기 content box, hero는 intrinsic grid를 사용한다. 역할별 카드 제목·패딩, 관계별 폼/hero 간격, 밀도별 표·목록 간격을 기존 토큰으로 구성한다.
 - 2.1.0 입력은 레거시 출력 경로를 유지한다. 기존 85개 전체 compiler 결과의 SHA-256으로 보존을 검증한다. `kit migrate`로 2.1→2.2에서 catalogVersion만 명시적으로 바꿀 수 있다.

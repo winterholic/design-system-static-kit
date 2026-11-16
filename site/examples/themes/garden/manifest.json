@@ -1077,7 +1077,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1087,6 +1087,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 8,
           "titleCpl": 5,
@@ -1094,6 +1095,14 @@
           "density": "comfortable",
           "typography": "humanist",
           "theme": "garden"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1108,13 +1117,14 @@
         ]
       },
       {
-        "path": "$.tree.children[4]",
-        "type": "list",
+        "path": "$.tree.children[3]",
+        "type": "properties",
         "facts": {
-          "type": "list",
-          "semantic": "list",
+          "type": "properties",
+          "semantic": "properties",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 8,
           "titleCpl": 5,
@@ -1122,6 +1132,47 @@
           "density": "comfortable",
           "typography": "humanist",
           "theme": "garden"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "list",
+        "facts": {
+          "type": "list",
+          "semantic": "list",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C14"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "list",
@@ -1134,14 +1185,102 @@
         "applied": [
           "C14"
         ]
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "steps",
+        "facts": {
+          "type": "steps",
+          "semantic": "steps",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 8,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "humanist",
+          "theme": "garden"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C35"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "procedure"
+        },
+        "sources": {
+          "role": "C35"
+        },
+        "applied": [
+          "C35"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[6]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
+      },
+      {
+        "path": "$.tree.children[7]",
+        "type": "tags",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "type/label",
+          "layout/wrap"
+        ],
+        "reason": "Compact labels wrap without creating another heading level."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "be55a1cf312d60779a7c2facba69ff2bc9e5c84992fe2cc45907cb399a7c9142",
-      "tokens.css": "229dee25b1bf25784769e3f7ad7397523fdb8b5dc82bcbe9bd51d841d5928e9f",
+      "index.html": "90470a0cab99bcaf7ce757f3772bc2b98c6f82816a230aa30d3321607cdc4e78",
+      "tokens.css": "b69a6ddfac6132974521dfa44a7f5ef061769d85245e15cc25dbcdad613ae6f9",
       "tokens.json": "4bbf3a65905108d755652a9199f1290ea2339e4b4b8fab92ce9947abea0c0646",
       "blueprint.json": "6b08b3d319d1a87bfc6857fdcf2a0c42ace78e8a3ffe3f3d392ee167f4afb8bc"
     }

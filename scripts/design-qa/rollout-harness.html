@@ -1,0 +1,19 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>Rollout measurement</title><h1>Rollout measurement</h1><pre id="progress">RUNNING</pre><pre id="result"></pre><div id="frames"></div><script type="module">
+import {compile} from '/src/compiler.mjs';
+import {layoutProbe,LAYOUT_OPTIONS} from '/scripts/design-qa/layout-probe.mjs';
+import {spacingProbe,PROBE_OPTIONS} from '/scripts/design-qa/spacing-probe.mjs';
+import {textProbe,TEXT_PROBE_OPTIONS} from '/scripts/design-qa/text-probe.mjs';
+import {contextProbe} from '/scripts/design-qa/context-probe.mjs';
+const params=new URLSearchParams(location.search),phase=params.get('phase')??'before';
+const records=await(await fetch('/docs/evidence/context-rollout/inputs.json')).json();
+const result={phase,revision:phase==='before'?'8c3d37c69':'working-tree',views:0,records:[],ua:navigator.userAgent,dpr:devicePixelRatio};
+async function check(r,width){
+ const frame=document.createElement('iframe'); frame.width=width;frame.height=900;frame.style.cssText='border:0;display:block';frame.title=r.id;
+ const html=phase==='before'?await(await fetch('/artifacts/rollout-before/'+r.id+'.html')).text():compile(r.blueprint).html;
+ const loaded=new Promise((ok,fail)=>{frame.onload=ok;frame.onerror=fail});frame.srcdoc=html;document.querySelector('#frames').append(frame);await loaded;await frame.contentDocument.fonts.ready;await new Promise(ok=>requestAnimationFrame(()=>requestAnimationFrame(ok)));
+ const script=frame.contentDocument.createElement('script');script.textContent='window.__probe={layout:('+layoutProbe+')('+JSON.stringify(LAYOUT_OPTIONS)+'),spacing:('+spacingProbe+')('+JSON.stringify(PROBE_OPTIONS)+'),text:('+textProbe+')('+JSON.stringify(TEXT_PROBE_OPTIONS)+'),context:('+contextProbe+')()};window.__probe.overflow=document.documentElement.scrollWidth>innerWidth+1;window.__probe.h1=document.querySelectorAll("h1").length;';frame.contentDocument.body.append(script);
+ const p=frame.contentWindow.__probe;if(!p)throw new Error('Probe missing '+r.id);
+ result.records.push({id:r.id,scope:r.scope,width,...p});result.views++;frame.remove();document.querySelector('#progress').textContent='RUNNING '+phase+' '+result.views+'/'+records.length*2;
+}
+try{for(const r of records)for(const width of [1440,390])await check(r,width); result.status='DONE';document.title='DONE '+phase+' '+result.views;document.querySelector('#progress').textContent=document.title;document.querySelector('#result').textContent=JSON.stringify(result)}catch(e){document.querySelector('#progress').textContent='ERROR '+e.stack}
+</script></html>

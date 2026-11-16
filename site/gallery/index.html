@@ -97,7 +97,7 @@ exports.MEGA_MAX = MEGA_MAX;
 __defs["catalog/composition.mjs"] = function (exports, __m) {
 /** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
  * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
-const COMPOSITION_VERSION = '1.0.0';
+const COMPOSITION_VERSION = '1.1.0';
 const PAGE_INTENT = {
   dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
   auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',
@@ -122,13 +122,61 @@ const compositionRules = [
   {id: 'C16', priority: 10, when: {type: 'split'}, set: {role: 'split'}, reason: 'Two columns require room in the containing region, independently of viewport width.'},
   {id: 'C17', priority: 10, when: {type: 'grid'}, set: {role: 'flow'}, reason: 'The existing orphan-free flow owns column selection; content supplies its minimum cell width.'},
   {id: 'C18', priority: 20, when: {type: 'form', intent: 'form'}, set: {inset: 'insetL'}, reason: 'A primary form uses the existing larger inset; a secondary form retains the component inset.'},
+  {id: 'C19', priority: 10, when: {type: 'aside'}, set: {role: 'supporting-layout'}, reason: 'Main and supporting content must fit their allocated region before taking two columns.'},
+  {id: 'C20', priority: 10, when: {type: 'team'}, set: {role: 'people', inset: 'insetS'}, reason: 'Names, roles and biographies determine the reading capacity of each person cell.'},
+  {id: 'C21', priority: 10, when: {type: 'pricing'}, set: {role: 'comparison'}, reason: 'Plan columns reuse orphan-free flow with room for the price and feature list.'},
+  {id: 'C22', priority: 10, when: {type: 'plan'}, set: {role: 'offer', inset: 'insetL'}, reason: 'A primary offer groups its identity, price, features and action.'},
+  {id: 'C23', priority: 20, when: {type: 'plan', supporting: true}, set: {inset: 'insetS'}, reason: 'An offer in a supporting region uses the smaller existing surface inset.'},
+  {id: 'C24', priority: 10, when: {type: 'quote'}, set: {role: 'testimonial', inset: 'inset', textRole: 'quote'}, reason: 'A testimonial fits its own box; attribution remains attached to the quotation.'},
+  {id: 'C25', priority: 20, when: {type: 'quote', intent: 'reading'}, set: {role: 'citation', textRole: 'quote-l'}, reason: 'A reading-page citation retains the existing editorial treatment.'},
+  {id: 'C26', priority: 10, when: {type: 'chart'}, set: {role: 'visual-data'}, reason: 'Chart and legend share the available box while full values remain in the data table.'},
+  {id: 'C27', priority: 10, when: {type: 'calendar'}, set: {role: 'schedule'}, reason: 'The existing calendar container switches to its full-text agenda when cells cannot fit events.'},
+  {id: 'C28', priority: 10, when: {type: 'gallery'}, set: {role: 'media-collection'}, reason: 'Media columns and thumbnail placement depend on the gallery region, not the viewport.'},
+  {id: 'C29', priority: 10, when: {type: 'timeline'}, set: {role: 'sequence'}, reason: 'Release metadata and descriptions use separate tracks with bounded reading measures.'},
+  {id: 'C30', priority: 10, when: {type: 'properties'}, set: {role: 'label-value'}, reason: 'Label and value keep proximity and stack when inline labels would consume the region.'},
+  {id: 'C31', priority: 10, when: {type: 'menu'}, set: {role: 'catalogue'}, reason: 'Menu text and prices retain separate roles inside a content-sized cell.'},
+  {id: 'C32', priority: 10, when: {type: 'master-detail'}, set: {role: 'selection-detail'}, reason: 'Selection and detail tracks stack inside a narrow allocated region.'},
+  {id: 'C33', priority: 10, when: {type: 'cta'}, set: {role: 'next-action'}, reason: 'Copy and action share one group and wrap in their own container.'},
+  {id: 'C34', priority: 10, when: {type: 'feature-list'}, set: {role: 'capabilities'}, reason: 'Feature descriptions supply the minimum readable flow cell.'},
+  {id: 'C35', priority: 10, when: {type: 'steps'}, set: {role: 'procedure'}, reason: 'Repeated steps reuse the same content-sized flow as other repeated information.'},
 ];
+// Mature contracts are reused explicitly; primitive components do not need cosmetic overrides.
+const inherited = [
+  ['page tab', ['layout/parent', 'S09'], 'Structural nodes inherit page and panel rhythm without adding a surface.'],
+  ['bento', ['layout/bentoPlan', 'S03'], 'Content-aware bento sizing and container bands already own placement.'],
+  ['tabs', ['S02', 'S06', 'runtime/ARIA-tabs'], 'Scrollable tabs retain keyboard navigation and token-sized controls.'],
+  ['kanban lane task', ['layout/scroll', 'S01', 'S05'], 'Boards intentionally scroll and use compact nested task surfaces.'],
+  ['reel', ['layout/scroll-snap', 'S02'], 'The explicit reel scrolls rather than squeezing card content.'],
+  ['chat', ['S01', 'S05', 'type/body'], 'Message identity and copy retain proximity and nested insets.'],
+  ['prose', ['type/measure', 'S02'], 'Prose already has a bounded reading measure and semantic type role.'],
+  ['notice', ['S01', 'S04', 'state/semantics'], 'Status tone and live-region meaning own notice presentation.'],
+  ['actions', ['S03', 'S06'], 'Actions wrap using the existing control size and group gap.'],
+  ['faq', ['layout/container-faq', 'S02'], 'FAQ already uses a container breakpoint and native disclosures.'],
+  ['logo-cloud', ['type/logo', 'S02', 'layout/wrap'], 'Trust marks wrap with their quiet existing type role.'],
+  ['tags', ['S01', 'type/label', 'layout/wrap'], 'Compact labels wrap without creating another heading level.'],
+  ['code', ['type/mono', 'layout/scroll', 'S04'], 'Code preserves whitespace in an intentional scroll region.'],
+  ['progress', ['S01', 'state/progressbar'], 'The value remains adjacent to its label with progress semantics.'],
+  ['empty-state skeleton', ['state/semantics', 'S04'], 'Feedback states retain hierarchy, reduced motion and live regions.'],
+  ['media', ['layout/ratio', 'type/caption'], 'The catalogue ratio and caption own media sizing.'],
+  ['breadcrumb pagination toc', ['navigation/semantics', 'S01', 'S06'], 'Navigation retains current location, wrapping and control dimensions.'],
+  ['filter-bar stepper', ['navigation/scroll', 'S06'], 'Existing intentional overflow preserves readable control and step labels.'],
+  ['summary buy-box', ['commerce/hierarchy', 'S01', 'S04'], 'Price, total, options and action already have distinct commerce roles.'],
+  ['reviews', ['type/stat-s', 'S01', 'S02'], 'Scores and review copy retain separate summary and reading levels.'],
+  ['links divider', ['S01', 'S02'], 'Links and separators preserve grouping and navigation affordances.'],
+];
+const compositionCoverage = Object.fromEntries(inherited.flatMap(([types, contracts, reason]) => types.split(' ').map(type => [type, {mode: 'inherited', contracts, reason}])));
+for (const rule of compositionRules) if (typeof rule.when.type === 'string') {
+  const type = rule.when.type;
+  compositionCoverage[type] ??= {mode: 'contextual', contracts: [], reason: 'Compiler-selected roles and container policies extend existing type, spacing and flow contracts.'};
+  compositionCoverage[type].contracts.push(rule.id);
+}
 const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } return x; };
-freeze(PAGE_INTENT); freeze(compositionRules);
+freeze(PAGE_INTENT); freeze(compositionRules); freeze(compositionCoverage);
 
 exports.COMPOSITION_VERSION = COMPOSITION_VERSION;
 exports.PAGE_INTENT = PAGE_INTENT;
 exports.compositionRules = compositionRules;
+exports.compositionCoverage = compositionCoverage;
 };
 __defs["catalog/concepts.mjs"] = function (exports, __m) {
 /**
@@ -358,7 +406,7 @@ const {pageTypes, pageTypeIds} = __m("catalog/pagetypes.mjs");
 const {templates, templateList} = __m("catalog/templates.mjs");
 const {layoutSlots, applyLayout, layoutSlotIds} = __m("catalog/variants.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
-{ const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
+{ const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
 const CATALOG_VERSION = '2.2.0';
 const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', CATALOG_VERSION]);
@@ -2454,7 +2502,7 @@ function compile(input) {
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
-  if (design) manifest.design = {version: design.version, decisions: design.decisions};
+  if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   return {html, css, tokens, manifest};
 }
 
@@ -2464,10 +2512,10 @@ exports.contrast = contrast;
 exports.compile = compile;
 };
 __defs["composition.mjs"] = function (exports, __m) {
-const {compositionRules, COMPOSITION_VERSION, PAGE_INTENT} = __m("catalog/composition.mjs");
+const {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT} = __m("catalog/composition.mjs");
 const {SPACE, TOKEN} = __m("spacing.mjs");
 const {roleSizes} = __m("typography.mjs");
-const {cplOf, vlOf} = __m("render/util.mjs");
+const {cplOf, vlOf, valueUnits} = __m("render/util.mjs");
 
 /** Small ordered decision table over known facts, deliberately not a general expression/rule language. */
 function selectDesign(facts, rules = compositionRules) {
@@ -2490,12 +2538,16 @@ const semantic = n => n.type === 'card' ? n.price ? 'product' : n.author ? 'edit
 /** Compiler-time facts never claim to measure glyphs or know a runtime width. CSS container queries own those decisions. */
 function planComposition(b) {
   if (b.catalogVersion === '2.1.0') return null;
-  const byNode = new WeakMap(), decisions = [], space = SPACE[b.density], sizes = roleSizes(b);
+  const byNode = new WeakMap(), decisions = [], inherited = [], space = SPACE[b.density], sizes = roleSizes(b);
   const visit = (node, path, ancestors = [], siblingCount = 1) => {
-    const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
-    const selected = selectDesign(facts), decision = {path, type: node.type, facts, ...selected};
+    const supporting = ancestors.some((a, i) => a.type === 'aside' && a.children[1] === (ancestors[i + 1] ?? node));
+    const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), supporting, parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
+    const coverage = compositionCoverage[node.type];
+    if (!coverage) throw new Error('Missing composition coverage: ' + node.type);
+    const selected = selectDesign(facts), decision = {path, type: node.type, facts, coverage, ...selected};
     byNode.set(node, decision);
     if (selected.applied.length) decisions.push(decision);
+    else inherited.push({path, type: node.type, ...coverage});
     node.children?.forEach((child, i) => visit(child, `${path}.children[${i}]`, [...ancestors, node], node.children.length));
     if (node.type === 'metric') {
       // Reuse the existing script-weighted value and title estimators. This is a conservative width budget, not font measurement.
@@ -2504,6 +2556,8 @@ function planComposition(b) {
       const labelWidth = cplOf(node.label) * sizes.small.max;
       decision.minCell = cellBucket(Math.max(valueWidth, labelWidth) + 2 * space.insetS + 2);
       decision.budget = {valueTarget, valueUnits: facts.valueLength, labelCpl: cplOf(node.label), inset: 'insetS', border: 2};
+      const required = valueUnits(node.value) * valueTarget * 1.04 + 2 * space.insetS + 2;
+      if (required > CELL_BUCKETS.at(-1)) decision.diagnostics = [{code: 'CONTENT_BUDGET_LIMIT', required: Math.ceil(required), maximum: CELL_BUCKETS.at(-1), alternative: 'single-column-summary', reason: 'The finite cell budget is saturated; preserve the value and review the single-column layout or use a table.'}];
     }
     if (node.type === 'grid') {
       const children = node.children.map(x => byNode.get(x)), summary = node.children.every(x => x.type === 'metric');
@@ -2516,9 +2570,20 @@ function planComposition(b) {
     }
     if (node.type === 'split') decision.container = {minWidth: 2 * 320 + space.gap};
     if (node.type === 'hero') decision.container = {minCell: Math.max(320, cellBucket(cplOf(node.title) * Math.min(sizes.display.min, sizes.heading.max) * 1.04))};
+    if (node.type === 'aside') decision.container = {sideWidth: node.size === 'wide' ? 380 : 300, minWidth: 320 + (node.size === 'wide' ? 380 : 300) + space.gap};
+    if (node.type === 'team') {
+      const hasBio = node.members.some(m => m.bio), longRole = node.members.some(m => cplOf(m.role) > 10);
+      decision.flow = {minCell: hasBio || longRole ? 280 : 200, gap: space.gap, dense: false, span: true, cap: 4};
+    }
+    if (node.type === 'pricing') decision.flow = {minCell: 280, gap: space.gap, dense: false, span: true, cap: 3};
+    if (['feature-list', 'steps', 'menu'].includes(node.type)) {
+      const grid = node.type === 'feature-list' ? node.layout !== 'list' : node.type === 'steps' ? ['horizontal', 'cards'].includes(node.layout) : node.layout === 'grid';
+      if (grid) decision.flow = {minCell: node.items.some(x => (x.description?.length ?? 0) > 100) ? 280 : 240, gap: space.gap, dense: false, span: true, cap: node.type === 'steps' && node.layout === 'horizontal' ? 4 : 3};
+    }
+    if (node.type === 'gallery' && (node.layout ?? 'grid') === 'grid') decision.flow = {minCell: 240, gap: space.gap, dense: false, span: true, cap: 4};
   };
   visit(b.tree, '$.tree');
-  return {byNode, version: COMPOSITION_VERSION, decisions};
+  return {byNode, version: COMPOSITION_VERSION, decisions, inherited};
 }
 
 /** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
@@ -2529,6 +2594,8 @@ function compositionAttrs(d) {
   if (d.container?.minField) attrs.push(['field-min', d.container.minField]);
   if (d.type === 'split') attrs.push(['layout-min', d.container.minWidth]);
   if (d.type === 'hero') attrs.push(['hero-min', d.container.minCell]);
+  if (d.type === 'aside') attrs.push(['aside-min', d.container.minWidth]);
+  if (d.type === 'plan') attrs.push(['supporting', d.facts.supporting]);
   return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
 }
 
@@ -2587,7 +2654,36 @@ function compositionCSS(plan) {
 .kit-hero[data-design-kind=hero][data-hero-min="${hero.container.minCell}"]{--kit-hero-min:${hero.container.minCell}px}
 .kit-hero[data-design-kind=hero][data-visual][data-hero-min][data-variant]{grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--kit-hero-min)),1fr));gap:${token('gap')}}`);
   if (hero?.values.frameEdge === 'contained') out.push('[data-design-kind=hero][data-variant=split] .kit-hero-visual[data-frame]{margin-right:0;border-right:var(--kit-card-border);border-radius:calc(var(--kit-radius) * 1.3)}');
-  return out.join('\n');
+  if (plan.decisions.some(d => d.type === 'team')) out.push(`[data-design-kind=team]>ul{gap:${token('gap')}}[data-design-kind=team]>ul>li{padding:${token('insetS')};gap:${token('item')}}[data-design-kind=team] :is(strong,.kit-muted,p){text-wrap:pretty}`);
+  for (const d of plan.decisions.filter(d => d.type === 'plan')) {
+    const supporting = d.facts.supporting ? 'true' : 'false';
+    out.push(`[data-design-kind=plan][data-supporting="${supporting}"]{padding:${token(d.values.inset)}}`);
+  }
+  if (plan.decisions.some(d => d.type === 'pricing')) out.push(`[data-design-kind=pricing]>.kit-plans{gap:${token('gap')}}[data-design-kind=pricing] .kit-plan-desc{min-height:0}[data-design-kind=pricing] .kit-plan ul{margin-block:${token('head')} ${token('gap')};padding-top:${token('head')}}`);
+  if (plan.decisions.some(d => d.type === 'quote')) out.push(`[data-design-kind=quote][data-design-role=testimonial]{padding:${token('inset')}}[data-design-kind=quote] figcaption{flex-wrap:wrap;gap:${token('item')}}`);
+  if (plan.decisions.some(d => d.type === 'chart')) out.push('[data-design-kind=chart] .kit-chart-body{min-width:0}[data-design-kind=chart] .kit-chart-body>svg{min-width:0;max-width:100%}[data-design-kind=chart] .kit-chart-body>.ch-donut{flex-basis:min(200px,100%)}[data-design-kind=chart] .kit-legend{min-width:0;overflow-wrap:anywhere}[data-design-kind=chart] .kit-chart-data{max-width:100%;overflow-x:auto}');
+  if (plan.decisions.some(d => d.type === 'calendar')) out.push('[data-design-kind=calendar]{min-width:0}[data-design-kind=calendar] .kit-cal-agenda li{flex-wrap:wrap}');
+  if (plan.decisions.some(d => d.type === 'timeline')) out.push('[data-design-kind=timeline]{container:timeline/inline-size}[data-design-kind=timeline] .kit-changes{font-size:var(--kit-t-small);max-width:42em}[data-design-kind=timeline] .kit-rel-body>p{max-width:42em}@container timeline (max-width:560px){[data-design-kind=timeline]:is([data-variant=release],[data-variant=log])>ol>li{grid-template-columns:1fr}[data-design-kind=timeline] .kit-rel-meta{position:static}}');
+  if (plan.decisions.some(d => d.type === 'properties')) out.push('[data-design-kind=properties]{container:properties/inline-size}@container properties (max-width:400px){[data-design-kind=properties][data-layout=inline] dl>div{flex-direction:column;gap:2px}[data-design-kind=properties][data-layout=inline] dt{flex-basis:auto}}');
+  if (table || list) out.push('[data-design-kind=table] :is(td,tbody th),[data-design-kind=list] li>div>strong{text-wrap:pretty}');
+  if (plan.decisions.some(d => d.type === 'master-detail')) out.push('[data-design-kind=master-detail]{container:detail/inline-size}[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:1fr}@container detail (min-width:760px){[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:minmax(220px,1fr) minmax(0,2fr)}}');
+  if (plan.decisions.some(d => d.type === 'cta')) out.push('[data-design-kind=cta]{flex-wrap:wrap}[data-design-kind=cta]>div{min-width:0}');
+  if (plan.decisions.some(d => d.type === 'gallery')) out.push(`
+.kit-gallery[data-design-kind=gallery]{container:kit gallery/inline-size}
+.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul{grid-template-columns:1fr;grid-auto-rows:auto}
+.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(n){grid-column:auto;grid-row:auto}
+.kit-gallery[data-design-kind=gallery][data-layout=masonry] .kit-art-box{aspect-ratio:4/3!important}
+@container gallery (min-width:480px){.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(5n+1){grid-column:span 2}}
+@container gallery (min-width:760px){.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:200px}.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(n){grid-column:auto;grid-row:auto}.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(6n+1){grid-column:span 2;grid-row:span 2}.kit-gallery[data-design-kind=gallery][data-layout=masonry] .kit-art-box{aspect-ratio:auto!important}}
+.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:first-child{grid-column:1/-1;grid-row:auto}
+.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:not(:first-child){grid-column:auto}
+@container gallery (min-width:560px){.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul{grid-template-columns:72px minmax(0,1fr)}.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:first-child{grid-column:2;grid-row:1/span 12}.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:not(:first-child){grid-column:1}}`);
+  for (const d of plan.decisions.filter(d => d.type === 'aside')) out.push(`
+.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"]{grid-template-columns:1fr;gap:${token('gap')}}
+.kit-aside[data-design-kind=aside][data-sticky=yes]>.kit-aside-side{position:static}
+@container compose (min-width:${d.container.minWidth}px){.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"]{grid-template-columns:minmax(0,1fr) ${d.container.sideWidth}px}.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"][data-side=start]{grid-template-columns:${d.container.sideWidth}px minmax(0,1fr)}.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"][data-sticky=yes]>.kit-aside-side{position:sticky}.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"][data-side=start]>.kit-aside-side{order:0}}`);
+  return [...new Set(out)].join('\n');
 }
 
 exports.selectDesign = selectDesign;
@@ -3409,6 +3505,12 @@ function makeRenderer(b, design = null) {
   const o = b.ornament;
   const R = {};
   const kids = (n, depth) => n.children.map(x => render(x, depth)).join('');
+  const contentFlow = (node, count, cap, kind = 'plain') => {
+    const flow = design?.byNode.get(node)?.flow;
+    if (!flow) return flowAttrs(count, cap, kind);
+    const attrs = flowAttrs(count, flow.cap, 'span');
+    return attrs ? `${attrs} data-flow-min="${flow.minCell}" data-flow-gap="${flow.gap}"` : '';
+  };
   const heading = (depth, text, id, cls = '') => `<h${Math.min(depth, 6)} id="${id}-title"${cls ? ` class="${cls}"` : ''}>${e(text)}</h${Math.min(depth, 6)}>`;
   const digits = x => Number(String(x).replace(/[^\d]/g, ''));
   const hashOf = text => [...String(text)].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) % 100003, 7);
@@ -3477,7 +3579,7 @@ function makeRenderer(b, design = null) {
   R.lane = (n, d, id) => `<section class="kit-lane" aria-labelledby="${id}-title"><header>${heading(d, n.title, id)}<span class="kit-count" aria-label="${n.children.length}개">${n.children.length}</span></header>${n.children.length ? `<div class="kit-lane-cards">${kids(n, d + 1)}</div>` : '<p class="kit-muted">비어 있습니다.</p>'}</section>`;
   R.task = n => `<article class="kit-task">${n.label ? `<span class="kit-badge">${e(n.label)}</span>` : ''}<strong>${e(n.title)}</strong><footer>${n.assignee ? `<span class="kit-avatar" aria-hidden="true">${e(initials(n.assignee))}</span><span>${e(n.assignee)}</span>` : ''}${n.priority ? `<span class="kit-priority" data-priority="${n.priority}">${icon(n.priority === '높음' ? 'arrow-up' : n.priority === '낮음' ? 'arrow-down' : 'minus')}${n.priority}</span>` : ''}</footer></article>`;
   R.timeline = (n, d, id) => ['release', 'log'].includes(n.variant) ? `<section class="kit-timeline" data-variant="${n.variant}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><div class="kit-rel-meta"><span class="kit-rel-ver">${e(x.time)}</span>${x.date ? `<time>${e(x.date)}</time>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div><div class="kit-rel-body"><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.changes ? `<ul class="kit-changes">${x.changes.map(c => `<li data-kind="${c.kind}"><span class="kit-change-kind">${c.kind}</span><span>${e(c.text)}</span></li>`).join('')}</ul>` : ''}</div></li>`).join('')}</ol></section>` : `<section class="kit-timeline" data-variant="${n.variant ?? 'line'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol>${n.items.map(x => `<li${x.status ? ` data-status="${x.status}"` : ''}><span class="kit-dot" aria-hidden="true">${x.status === '완료' ? icon('check') : ''}</span><div><time>${e(x.time)}</time><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.status ? `<span class="kit-badge">${x.status}</span>` : ''}</div></li>`).join('')}</ol></section>`;
-  R.steps = (n, d, id) => `<section class="kit-steps" data-layout="${n.layout ?? 'vertical'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol${n.layout === 'horizontal' ? flowAttrs(n.items.length, 4) : n.layout === 'cards' ? flowAttrs(n.items.length, 3) : ''}>${n.items.map(x => `<li><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</li>`).join('')}</ol></section>`;
+  R.steps = (n, d, id) => `<section class="kit-steps" data-layout="${n.layout ?? 'vertical'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol${n.layout === 'horizontal' ? contentFlow(n, n.items.length, 4) : n.layout === 'cards' ? contentFlow(n, n.items.length, 3) : ''}>${n.items.map(x => `<li><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</li>`).join('')}</ol></section>`;
   R.reel = (n, d, id) => `<section class="kit-reel"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="가로로 넘겨 보기"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-reel-track" role="region" aria-label="${e(n.title ?? '가로로 넘겨 보기')}" tabindex="0">${n.children.map(x => `<div class="kit-reel-item">${render(x, d + 1)}</div>`).join('')}</div></section>`;
   R['master-detail'] = (n, d, id) => `<section class="kit-md" aria-labelledby="${id}-title">${heading(d, n.title, id)}<div class="kit-md-grid"><ul class="kit-md-list">${n.items.map((x, i) => `<li${i === n.selected ? ' aria-current="true"' : ''} data-state="${x.state ?? 'read'}"><strong>${e(x.title)}</strong>${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}<p>${e(x.preview)}</p>${x.state === 'unread' ? '<span class="kit-badge">읽지 않음</span>' : ''}</li>`).join('')}</ul><article class="kit-md-detail"><h${Math.min(d + 1, 6)}>${e(n.detail.title)}</h${Math.min(d + 1, 6)}>${n.detail.meta ? `<p class="kit-muted">${e(n.detail.meta)}</p>` : ''}<div>${n.detail.body.split(/\n\n+/).map(p => `<p>${e(p)}</p>`).join('')}</div></article></div></section>`;
   R.chat = (n, d, id) => `<section class="kit-chat" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ol class="kit-chat-log">${n.messages.map(m => `<li data-from="${m.from}"><span class="kit-avatar" aria-hidden="true">${e(initials(m.name))}</span><div><p class="kit-chat-meta"><strong>${e(m.name)}</strong>${m.time ? ` <time>${e(m.time)}</time>` : ''}</p><p class="kit-bubble">${e(m.text)}</p></div></li>`).join('')}</ol></section>`;
@@ -3523,11 +3625,11 @@ function makeRenderer(b, design = null) {
   R.actions = n => `<div class="kit-actions" data-align="${n.align ?? 'start'}">${n.items.map(button).join('')}</div>`;
   R.faq = (n, d, id) => `<section class="kit-faq" data-layout="${n.layout ?? 'stack'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<div>${n.items.map(x => `<details><summary>${e(x.question)}${icon('chevron-down')}</summary><p>${e(x.answer)}</p></details>`).join('')}</div></section>`;
   R.quote = n => `<figure class="kit-quote"><blockquote><p>${e(n.quote)}</p></blockquote><figcaption><span class="kit-avatar" data-art="portrait" aria-hidden="true">${portrait(n.author)}</span><span><strong>${e(n.author)}</strong>${n.role ? ` <span class="kit-muted">${e(n.role)}</span>` : ''}</span></figcaption></figure>`;
-  R['feature-list'] = (n, d, id) => `<section class="kit-features" data-layout="${n.layout ?? 'grid'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="기능 목록"'}>${n.title ? heading(d, n.title, id) : ''}<ul${n.layout === 'list' ? '' : flowAttrs(n.items.length, 3, 'span')}>${n.items.map(x => `<li><span class="kit-card-icon">${icon(x.icon)}</span><div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
+  R['feature-list'] = (n, d, id) => `<section class="kit-features" data-layout="${n.layout ?? 'grid'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="기능 목록"'}>${n.title ? heading(d, n.title, id) : ''}<ul${n.layout === 'list' ? '' : contentFlow(n, n.items.length, 3, 'span')}>${n.items.map(x => `<li><span class="kit-card-icon">${icon(x.icon)}</span><div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
   R['logo-cloud'] = (n, d, id) => `<section class="kit-logos" aria-labelledby="${id}-title">${heading(d, n.title, id, 'kit-quiet')}<ul>${n.names.map(x => `<li data-t="${hashOf(x) % 4}">${logoMark(x)}<span>${e(x)}</span></li>`).join('')}</ul></section>`;
   R.cta = (n, d, id) => `<section class="kit-cta" data-tone="${n.tone ?? 'plain'}" aria-labelledby="${id}-title"><div>${heading(d, n.title, id)}${n.body ? `<p>${e(n.body)}</p>` : ''}</div>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</section>`;
   R.tags = (n, d, id) => `<section class="kit-tags" data-variant="${n.variant ?? 'chips'}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="태그"'}>${n.title ? heading(d, n.title, id, 'kit-quiet') : ''}<ul>${n.items.map(x => `<li>${e(x)}</li>`).join('')}</ul></section>`;
-  R.team = (n, d, id) => `<section class="kit-team" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${flowAttrs(n.members.length, 4, 'dense')}>${n.members.map(m => `<li><span class="kit-avatar" data-art="portrait" aria-hidden="true">${portrait(m.name)}</span><div><strong>${e(m.name)}</strong><span class="kit-muted">${e(m.role)}</span>${m.bio ? `<p>${e(m.bio)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
+  R.team = (n, d, id) => `<section class="kit-team" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${contentFlow(n, n.members.length, 4, 'dense')}>${n.members.map(m => `<li><span class="kit-avatar" data-art="portrait" aria-hidden="true">${portrait(m.name)}</span><div><strong>${e(m.name)}</strong><span class="kit-muted">${e(m.role)}</span>${m.bio ? `<p>${e(m.bio)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
   R.code = n => `<figure class="kit-code"><figcaption><span>${e(n.label)} <span class="kit-muted">${n.language}</span></span><button class="kit-copy" type="button" data-copy aria-label="${e(n.label)} 코드 복사"><span class="kit-copy-idle">${icon('copy')}복사</span><span class="kit-copy-done">${icon('check')}복사됨</span></button><span class="kit-sr" role="status" aria-live="polite" data-copy-status></span></figcaption><pre tabindex="0"><code>${highlight(n.code, n.language)}</code></pre></figure>`;
   R.properties = (n, d, id) => `<section class="kit-props" data-layout="${n.layout ?? 'stacked'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<dl>${n.items.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl></section>`;
   R.chart = (n, d, id) => renderChart(n, id);
@@ -3537,7 +3639,7 @@ function makeRenderer(b, design = null) {
   R.media = n => `<figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(n.ratio)}">${mediaArt(n.kind, n.ratio, o, e(n.alt), ctx.art++, {motif: n.motif, id: gid()})}${n.overlay ? `<span class="kit-overlay">${e(n.overlay)}</span>` : ''}</div>${n.caption ? `<figcaption>${e(n.caption)}</figcaption>` : ''}</figure>`;
   R.gallery = (n, d, id) => {
     const ratioAt = i => n.layout === 'masonry' ? ['4:3', '3:4', '1:1', '16:9'][i % 4] : n.layout === 'showcase' ? '1:1' : '4:3';
-    return `<section class="kit-gallery" data-layout="${n.layout ?? 'grid'}" data-count="${n.items.length}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="갤러리"'}>${n.title ? heading(d, n.title, id) : ''}<ul${(n.layout ?? 'grid') === 'grid' ? flowAttrs(n.items.length, 4) : ''}>${n.items.map((x, i) => `<li><figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(ratioAt(i))}">${mediaArt(x.kind, ratioAt(i), o, e(x.alt), ctx.art++, {motif: x.motif, id: gid()})}</div>${x.caption ? `<figcaption>${e(x.caption)}</figcaption>` : ''}</figure></li>`).join('')}</ul></section>`;
+    return `<section class="kit-gallery" data-layout="${n.layout ?? 'grid'}" data-count="${n.items.length}"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="갤러리"'}>${n.title ? heading(d, n.title, id) : ''}<ul${(n.layout ?? 'grid') === 'grid' ? contentFlow(n, n.items.length, 4) : ''}>${n.items.map((x, i) => `<li><figure class="kit-media"><div class="kit-art-box" style="aspect-ratio:${ratioCss(ratioAt(i))}">${mediaArt(x.kind, ratioAt(i), o, e(x.alt), ctx.art++, {motif: x.motif, id: gid()})}</div>${x.caption ? `<figcaption>${e(x.caption)}</figcaption>` : ''}</figure></li>`).join('')}</ul></section>`;
   };
   R.breadcrumb = n => `<nav class="kit-breadcrumb" aria-label="현재 위치"><ol>${n.items.map((x, i) => i === n.items.length - 1 ? `<li><span aria-current="page">${e(x.label)}</span></li>` : `<li><a href="${href(x.href ?? '#main')}">${e(x.label)}</a>${icon('chevron-right')}</li>`).join('')}</ol></nav>`;
   R.pagination = n => {
@@ -3549,10 +3651,10 @@ function makeRenderer(b, design = null) {
   R.summary = (n, d, id) => `<section class="kit-summary" aria-labelledby="${id}-title">${heading(d, n.title, id)}${n.thumb ? `<div class="kit-summary-line"><div class="kit-thumb">${mediaArt('photo', '1:1', o, '', ctx.art++, {motif: n.thumb.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div><div><strong>${e(n.thumb.name)}</strong>${n.thumb.detail ? `<span class="kit-muted">${e(n.thumb.detail)}</span>` : ''}</div></div>` : ''}<dl>${n.items.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}<div class="kit-total"><dt>${e(n.total.label)}</dt><dd>${e(n.total.value)}</dd></div></dl>${n.action ? button(n.action) : ''}</section>`;
   R['buy-box'] = (n, d, id) => `<section class="kit-buybox" aria-labelledby="${id}-title">${n.badge ? `<span class="kit-badge" data-tone="brand">${e(n.badge)}</span>` : ''}${heading(d, n.title, id)}<p class="kit-price" data-vl="${vlOf(n.price)}">${e(n.price)}</p>${n.note ? `<p class="kit-muted">${e(n.note)}</p>` : ''}${(n.options ?? []).map((opt, oi) => `<fieldset class="kit-options"><legend>${e(opt.label)}</legend>${opt.choices.map((c, ci) => `<label><input type="radio" name="${id}-opt-${oi}" value="${e(c)}"${ci === 0 ? ' checked' : ''}><span>${e(c)}</span></label>`).join('')}</fieldset>`).join('')}${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</section>`;
   R.reviews = (n, d, id) => `<section class="kit-reviews" aria-labelledby="${id}-title">${heading(d, n.title, id)}<p class="kit-score"><strong>${e(n.score)}</strong> <span aria-hidden="true">${STAR(Math.round(Number.parseFloat(n.score)) || 0)}</span> <span class="kit-muted">${e(n.count)}</span></p><ul>${n.items.map(x => `<li><p class="kit-stars" role="img" aria-label="5점 만점에 ${x.rating}점">${STAR(x.rating)}</p><p>${e(x.text)}</p><p class="kit-muted">${e(x.author)}${x.date ? ` · ${e(x.date)}` : ''}</p></li>`).join('')}</ul></section>`;
-  R.menu = (n, d, id) => `<section class="kit-menu" data-layout="${n.layout}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${n.layout === 'grid' ? flowAttrs(n.items.length, 3, 'span') : ''}>${n.items.map(x => `<li${x.motif ? ' data-thumb="yes"' : ''}>${x.motif ? `<div class="kit-menu-thumb">${mediaArt('photo', n.layout === 'photo' ? '4:3' : '1:1', o, '', ctx.art++, {motif: x.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : ''}<div class="kit-menu-text"><div class="kit-menu-row"><strong>${e(x.name)}</strong>${n.layout === 'leader' ? '<i class="kit-leader" aria-hidden="true"></i>' : ''}<span class="kit-menu-price">${e(x.price)}</span></div>${x.tag ? `<span class="kit-badge" data-tone="brand">${e(x.tag)}</span>` : ''}${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
+  R.menu = (n, d, id) => `<section class="kit-menu" data-layout="${n.layout}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${n.layout === 'grid' ? contentFlow(n, n.items.length, 3, 'span') : ''}>${n.items.map(x => `<li${x.motif ? ' data-thumb="yes"' : ''}>${x.motif ? `<div class="kit-menu-thumb">${mediaArt('photo', n.layout === 'photo' ? '4:3' : '1:1', o, '', ctx.art++, {motif: x.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : ''}<div class="kit-menu-text"><div class="kit-menu-row"><strong>${e(x.name)}</strong>${n.layout === 'leader' ? '<i class="kit-leader" aria-hidden="true"></i>' : ''}<span class="kit-menu-price">${e(x.price)}</span></div>${x.tag ? `<span class="kit-badge" data-tone="brand">${e(x.tag)}</span>` : ''}${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
   R.links = (n, d, id) => `<section class="kit-links" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul>${n.items.map(x => `<li><a href="${href(x.href)}"${x.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(x.label)}${icon('arrow-right')}</a>${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</li>`).join('')}</ul></section>`;
   R.divider = n => n.label ? `<div class="kit-divider" role="separator"><span>${e(n.label)}</span></div>` : '<hr class="kit-hr">';
-  R.pricing = (n, d, id) => `<section class="kit-pricing"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="요금제"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-plans" data-count="${n.children.length}"${flowAttrs(n.children.length, 3)}>${n.children.map(x => render(x, n.title ? d + 1 : d)).join('')}</div></section>`;
+  R.pricing = (n, d, id) => `<section class="kit-pricing"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="요금제"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-plans" data-count="${n.children.length}"${contentFlow(n, n.children.length, 3)}>${n.children.map(x => render(x, n.title ? d + 1 : d)).join('')}</div></section>`;
   R.plan = (n, d, id) => `<article class="kit-plan"${n.featured ? ' data-featured="yes"' : ''}>${n.featured ? '<span class="kit-badge" data-tone="brand">추천</span>' : ''}${heading(d, n.name, id)}<p class="kit-price" data-vl="${vlOf(n.price)}">${e(n.price)}${n.period ? ` <span class="kit-muted">/ ${e(n.period)}</span>` : ''}</p>${n.description ? `<p class="kit-plan-desc">${e(n.description)}</p>` : ''}<ul>${n.features.map(f => `<li>${icon('check')}${e(f)}</li>`).join('')}</ul>${button(n.action)}</article>`;
   R.toc = n => `<nav class="kit-toc" aria-label="${e(n.title ?? '목차')}"><strong>${e(n.title ?? '목차')}</strong><ol>${ctx.anchors.map(a => `<li><a href="#s-${a.anchor}">${e(a.title)}</a></li>`).join('')}</ol></nav>`;
 
@@ -3563,7 +3665,7 @@ function makeRenderer(b, design = null) {
     const html = fn(n, depth, id), attrs = compositionAttrs(design?.byNode.get(n));
     const decorated = attrs ? html.replace(/^(<[a-z][a-z-]*)(?=[\s>])/, '$1' + attrs) : html;
     // A parent's container can include full-bleed tracks. Query the exact allocated region instead.
-    return design && ['grid', 'split'].includes(n.type) ? `<div class="kit-layout-region">${decorated}</div>` : decorated;
+    return design && ['grid', 'split', 'aside'].includes(n.type) ? `<div class="kit-layout-region">${decorated}</div>` : decorated;
   }
   return {render, ctx, num};
 }
@@ -3659,9 +3761,10 @@ function cplOf(title) {
 /** 한 줄에 들어가야 하는 짧은 값(지표 숫자·가격)의 폭 구간. 구간별 글자 크기 상한은 CSS(--kit-vfit)가 칸 폭에서 계산한다. */
 const VL_BUCKETS = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 24];
 function vlOf(text) {
-  const need = [...String(text)].reduce((sum, ch) => sum + (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .68 : /\s/.test(ch) ? .3 : .38), 0);
+  const need = valueUnits(text);
   return VL_BUCKETS.find(b => b >= need) ?? VL_BUCKETS.at(-1);
 }
+const valueUnits = text => [...String(text)].reduce((sum, ch) => sum + (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff]/.test(ch) ? 1 : /[A-Z]/.test(ch) ? .72 : /[a-z]/.test(ch) ? .58 : /\d/.test(ch) ? .68 : /\s/.test(ch) ? .3 : .38), 0);
 
 /** 격자 흐름 표지(src/layout.mjs): 열 수는 컨테이너 폭과 항목 수로 CSS가 정한다.
  *  kind: 'plain' | 'span'(2열 홀수 마지막 칸이 한 줄을 씀) | 'dense'(좁은 폭에서도 2열). 항목이 하나이거나 너무 많으면 표지를 달지 않는다. */
@@ -3682,6 +3785,7 @@ exports.CPL_BUCKETS = CPL_BUCKETS;
 exports.cplOf = cplOf;
 exports.VL_BUCKETS = VL_BUCKETS;
 exports.vlOf = vlOf;
+exports.valueUnits = valueUnits;
 exports.flowAttrs = flowAttrs;
 };
 __defs["spacing.mjs"] = function (exports, __m) {

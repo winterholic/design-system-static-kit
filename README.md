@@ -14,7 +14,7 @@
 
 수많은 조합이 곧 좋은 디자인 보증이라는 뜻은 아닙니다. 검토한 범위의 선택, 접근성의 하한, 개정 절차를 코드로 만듭니다.
 
-2.2는 역할·내용·밀도·주변 구조에서 디자인 결정을 추출하고, 실제 컨테이너 폭으로 배치합니다. `manifest.design`에 규칙 ID·승자·폭 예산을 기록합니다. 2.1 입력은 이전 출력 경로를 유지하며 `kit migrate`로 명시적으로 채택할 수 있습니다. [감사](docs/context-audit.md) · [규약](docs/context-design.md) · [검증](docs/context-verification.md).
+2.2는 역할·내용·밀도·주변 구조에서 디자인 결정을 추출하고, 실제 컨테이너 폭으로 배치합니다. composition 1.1은 55종의 적용 근거를 명시합니다(25종 맥락 결정, 30종 기존 계약 재사용). `manifest.design`에 규칙 ID·승자·폭 예산·상한 진단을 기록합니다. 85개 예시, 테마 쇼케이스, 조립기와 조합 갤러리는 같은 생성 경로를 사용합니다. 2.1 입력은 이전 출력 경로를 유지하며 `kit migrate`로 명시적으로 채택할 수 있습니다. [감사](docs/context-audit.md) · [규약](docs/context-design.md) · [검증](docs/context-verification.md).
 
 ## 보기
 

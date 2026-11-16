@@ -1032,7 +1032,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1042,6 +1042,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 5,
           "titleCpl": 5,
@@ -1049,6 +1050,14 @@
           "density": "spacious",
           "typography": "sans",
           "theme": "school"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1061,14 +1070,115 @@
         "applied": [
           "C01"
         ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "steps",
+        "facts": {
+          "type": "steps",
+          "semantic": "steps",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "school"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C35"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "procedure"
+        },
+        "sources": {
+          "role": "C35"
+        },
+        "applied": [
+          "C35"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "properties",
+        "facts": {
+          "type": "properties",
+          "semantic": "properties",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "school"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "faq",
+        "mode": "inherited",
+        "contracts": [
+          "layout/container-faq",
+          "S02"
+        ],
+        "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "5db3b42e33388f70dc86dab637eeb0721397375de03c7acd15c47e48fb94d32b",
-      "tokens.css": "7621e4b55e9cd1c080f272411a237b9c000f812b745e49206da5cf9b2ac017b6",
+      "index.html": "cb2af1494496030fe61a6171446be1bb958ad68c5879cc0c67f0d4b71414f6c3",
+      "tokens.css": "6ca371ed65c3f688a9d1770a3f912204eef2d83259b7366651a5e4bbbf0c763d",
       "tokens.json": "29288f4e5a444ad26098da1f529d54c753d5136317a3408b59b756e381abebcd",
       "blueprint.json": "7662bc8ed1027f0b065ecde7afffe41242798782b3ccebc12db99aab04eafb4e"
     }

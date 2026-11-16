@@ -1030,7 +1030,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1040,6 +1040,7 @@
           "semantic": "page-header",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1047,6 +1048,14 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1060,14 +1069,70 @@
           "C01",
           "C02"
         ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "master-detail",
+        "facts": {
+          "type": "master-detail",
+          "semantic": "master-detail",
+          "intent": "operation",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C32"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "selection-detail"
+        },
+        "sources": {
+          "role": "C32"
+        },
+        "applied": [
+          "C32"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "filter-bar",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "7c6a677a1cebbdca99f47d734080e98cf0cd6bf6fd7f9d11a6bce62e9331e09f",
-      "tokens.css": "0f7bf66769cfeffe8d90d0ccbd03efdec57b1850df87318917944f653719817a",
+      "index.html": "47c72f4af7c4388ee06d78721d617486eaf2d362b76f089b85bff9d66aac20aa",
+      "tokens.css": "aa2f78606a01f691218da76bd4a2567110f29d0ff338df31aed22318f77f748d",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
       "blueprint.json": "cd99acb7b9d37878f7dba03f7f584a7cb0d06b5d4f534a42f138e0dab24ff9a1"
     }

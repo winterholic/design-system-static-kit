@@ -15,7 +15,7 @@ test('new catalogs expose versioned, deterministic composition decisions without
   const b = catalog.createBlueprint('dashboard-overview'), original = structuredClone(b);
   assert.equal(b.catalogVersion, '2.2.0');
   const result = compile(b);
-  assert.equal(result.manifest.design.version, '1.0.0');
+  assert.equal(result.manifest.design.version, '1.1.0');
   assert.ok(result.manifest.design.decisions.length > 4);
   for (const d of result.manifest.design.decisions) {
     assert.match(d.path, /^\$\.tree/);

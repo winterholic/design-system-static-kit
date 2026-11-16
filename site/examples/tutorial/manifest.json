@@ -1029,7 +1029,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1039,6 +1039,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1046,6 +1047,14 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "manual"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1058,14 +1067,130 @@
         "applied": [
           "C01"
         ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "aside",
+        "facts": {
+          "type": "aside",
+          "semantic": "aside",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "tech",
+          "theme": "manual"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C19"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "supporting-layout"
+        },
+        "sources": {
+          "role": "C19"
+        },
+        "applied": [
+          "C19"
+        ],
+        "container": {
+          "sideWidth": 380,
+          "minWidth": 724
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "steps",
+        "facts": {
+          "type": "steps",
+          "semantic": "steps",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "tech",
+          "theme": "manual"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C35"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "procedure"
+        },
+        "sources": {
+          "role": "C35"
+        },
+        "applied": [
+          "C35"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "stepper",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "code",
+        "mode": "inherited",
+        "contracts": [
+          "type/mono",
+          "layout/scroll",
+          "S04"
+        ],
+        "reason": "Code preserves whitespace in an intentional scroll region."
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0ee32850f425775cebfdb071070d176630ea77384af86a97fdbb7210cc4cf015",
-      "tokens.css": "19301e7c88ca92c29830dd9e07baee8293d4846c5131d1a221fbd492c0ee484f",
+      "index.html": "53036c83953a4e852795616a6244cba6fdf8d6de6e26b7c44cd91bf02b8168cf",
+      "tokens.css": "b92c27a0856c57838f78cc7efd3842f8e01f84b4d3b6b913ef930741dd60c53c",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
       "blueprint.json": "6e8fdef1bd1558e0c66bd9c0b31143cf14526da10936b6dda7ef7d288b8ee8e0"
     }

@@ -1993,7 +1993,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -2003,6 +2003,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -2010,6 +2011,14 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -2024,6 +2033,44 @@
         ]
       },
       {
+        "path": "$.tree.children[1]",
+        "type": "aside",
+        "facts": {
+          "type": "aside",
+          "semantic": "aside",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "tech",
+          "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C19"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "supporting-layout"
+        },
+        "sources": {
+          "role": "C19"
+        },
+        "applied": [
+          "C19"
+        ],
+        "container": {
+          "sideWidth": 300,
+          "minWidth": 644
+        }
+      },
+      {
         "path": "$.tree.children[1].children[0]",
         "type": "section",
         "facts": {
@@ -2031,6 +2078,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "aside",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -2038,6 +2086,15 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -2060,6 +2117,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -2067,6 +2125,15 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -2092,6 +2159,7 @@
           "semantic": "table",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -2099,6 +2167,13 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C13"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "table",
@@ -2120,6 +2195,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -2127,6 +2203,15 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -2152,6 +2237,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -2159,6 +2245,15 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -2184,6 +2279,7 @@
           "semantic": "table",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 1,
           "titleCpl": 5,
@@ -2191,6 +2287,13 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "devtool"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C13"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "table",
@@ -2204,13 +2307,131 @@
           "C13"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[0]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[2]",
+        "type": "tabs",
+        "mode": "inherited",
+        "contracts": [
+          "S02",
+          "S06",
+          "runtime/ARIA-tabs"
+        ],
+        "reason": "Scrollable tabs retain keyboard navigation and token-sized controls."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[2].children[0]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[2].children[0].children[0]",
+        "type": "code",
+        "mode": "inherited",
+        "contracts": [
+          "type/mono",
+          "layout/scroll",
+          "S04"
+        ],
+        "reason": "Code preserves whitespace in an intentional scroll region."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[2].children[1]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[2].children[1].children[0]",
+        "type": "code",
+        "mode": "inherited",
+        "contracts": [
+          "type/mono",
+          "layout/scroll",
+          "S04"
+        ],
+        "reason": "Code preserves whitespace in an intentional scroll region."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[1].children[0]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[1].children[1]",
+        "type": "code",
+        "mode": "inherited",
+        "contracts": [
+          "type/mono",
+          "layout/scroll",
+          "S04"
+        ],
+        "reason": "Code preserves whitespace in an intentional scroll region."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[1].children[2]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "toc",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/semantics",
+          "S01",
+          "S06"
+        ],
+        "reason": "Navigation retains current location, wrapping and control dimensions."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "23b330e64f94b9d1b114f8d94901a4f90fadcbfe955110f2dd12b05b952f789c",
-      "tokens.css": "8184efd84e72f90b9539ba0d1df719d8ca4b255635cc7dbbc101c624f638da3e",
+      "index.html": "870d3329b9d8a2846a9992426bd5b2b993ee50c4b441b73cbc0036607c723709",
+      "tokens.css": "a30ff63b164a8e2feacbf13175b1f7bf98a0006a95354b53600dfcb52a8b9562",
       "tokens.json": "5dd7caef2b92ed42d8b9e9ce9040d5822216cf2eecee010d7cda72a90df8a31c",
       "blueprint.json": "5cfdb78a23b7fcb00bdfcfa78be485531495dfb43c54e0ce9d2d30610629a568"
     }

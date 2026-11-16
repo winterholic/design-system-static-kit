@@ -1028,7 +1028,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1038,6 +1038,7 @@
           "semantic": "page-header",
           "intent": "commerce",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1045,6 +1046,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1058,14 +1067,109 @@
           "C01",
           "C02"
         ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "aside",
+        "facts": {
+          "type": "aside",
+          "semantic": "aside",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C19"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "supporting-layout"
+        },
+        "sources": {
+          "role": "C19"
+        },
+        "applied": [
+          "C19"
+        ],
+        "container": {
+          "sideWidth": 300,
+          "minWidth": 644
+        }
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "timeline",
+        "facts": {
+          "type": "timeline",
+          "semantic": "timeline",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C29"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "sequence"
+        },
+        "sources": {
+          "role": "C29"
+        },
+        "applied": [
+          "C29"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "summary",
+        "mode": "inherited",
+        "contracts": [
+          "commerce/hierarchy",
+          "S01",
+          "S04"
+        ],
+        "reason": "Price, total, options and action already have distinct commerce roles."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c03a131632ffc3fc1314497dcea15818a74490cea8b49593e7ae3cc7a258cf65",
-      "tokens.css": "19648ca6a002a7569283d0de0b18f70d7c02cc90107a16e2a6ec17e3adf54b89",
+      "index.html": "86e0e18ab9ddef838728b5c091e84a3818648392ef6719aba184d5103b3fba8c",
+      "tokens.css": "4b2bdf94c6c91b4798bb70bce3cb4720553b2fffc701dd9df420979c00eb6a0b",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
       "blueprint.json": "7aff4ee277b0cad336e212c98b22ff260225dd3e00d7456259a362f120f85fe7"
     }

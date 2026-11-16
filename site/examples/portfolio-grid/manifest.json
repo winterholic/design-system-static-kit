@@ -1044,7 +1044,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1054,6 +1054,7 @@
           "semantic": "page-header",
           "intent": "marketing",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1061,6 +1062,14 @@
           "density": "spacious",
           "typography": "sans",
           "theme": "gallery"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1073,14 +1082,112 @@
         "applied": [
           "C01"
         ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "gallery",
+        "facts": {
+          "type": "gallery",
+          "semantic": "gallery",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "gallery"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C28"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "media-collection"
+        },
+        "sources": {
+          "role": "C28"
+        },
+        "applied": [
+          "C28"
+        ],
+        "flow": {
+          "minCell": 240,
+          "gap": 32,
+          "dense": false,
+          "span": true,
+          "cap": 4
+        }
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "cta",
+        "facts": {
+          "type": "cta",
+          "semantic": "cta",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "gallery"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C33"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "next-action"
+        },
+        "sources": {
+          "role": "C33"
+        },
+        "applied": [
+          "C33"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "tags",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "type/label",
+          "layout/wrap"
+        ],
+        "reason": "Compact labels wrap without creating another heading level."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "4d228e350bc1e07dabd116bc12bacdb570a200b64a7906afdce958f530267f1d",
-      "tokens.css": "9ff21cd840feab207257b575cd71f6755250cd80eed4215c25669435f6a0deca",
+      "index.html": "c25331145447bf23367022e92fec698a55907d835d7b7ec6305d71cba1c1879d",
+      "tokens.css": "8204dff6dfc4e4776456b0400a8229af91ef635ef2cd9ceb2d6eedb129e0eb4b",
       "tokens.json": "a51bc3c01fa3fac5f18374b012300c46cd1748f5ef33462871dba379cee1c967",
       "blueprint.json": "2611fee461e8d34ba75f5915c8e11418862c2ab5e78a3ade16d1bb6c981077c2"
     }

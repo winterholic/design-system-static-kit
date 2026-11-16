@@ -994,7 +994,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1004,6 +1004,7 @@
           "semantic": "page-header",
           "intent": "status",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1011,6 +1012,14 @@
           "density": "compact",
           "typography": "terminal",
           "theme": "console"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1024,13 +1033,45 @@
           "C01"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "empty-state",
+        "mode": "inherited",
+        "contracts": [
+          "state/semantics",
+          "S04"
+        ],
+        "reason": "Feedback states retain hierarchy, reduced motion and live regions."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "actions",
+        "mode": "inherited",
+        "contracts": [
+          "S03",
+          "S06"
+        ],
+        "reason": "Actions wrap using the existing control size and group gap."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0708029b944baf55bb4638ac6a349d3c401d6b4bba3a123b641136ad095b584a",
-      "tokens.css": "4553bba265bcb6944b073e6a8faf08d2aacf39f0560fce4d2a6c072790b7071f",
+      "index.html": "d6a617a62ec460790f41af094edb9b351a7b9c23228f201816ca442626767c3c",
+      "tokens.css": "cbfd4832b4b89a89b0b4d4baacb944f14ec334db9524775568a278d818380be5",
       "tokens.json": "d99c1d0c9de4c2609111bc34ef8bd7cbaf2553ba942f264d8d7b4e23d6af2916",
       "blueprint.json": "98bd7c333a83fb01418cf023a95219f7ceaf4e0bb3f61643416fbd5ed9e04a57"
     }

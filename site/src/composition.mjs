@@ -1,7 +1,7 @@
-import {compositionRules, COMPOSITION_VERSION, PAGE_INTENT} from './catalog/composition.mjs';
+import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT} from './catalog/composition.mjs';
 import {SPACE, TOKEN} from './spacing.mjs';
 import {roleSizes} from './typography.mjs';
-import {cplOf, vlOf} from './render/util.mjs';
+import {cplOf, vlOf, valueUnits} from './render/util.mjs';
 
 /** Small ordered decision table over known facts, deliberately not a general expression/rule language. */
 export function selectDesign(facts, rules = compositionRules) {
@@ -24,12 +24,16 @@ const semantic = n => n.type === 'card' ? n.price ? 'product' : n.author ? 'edit
 /** Compiler-time facts never claim to measure glyphs or know a runtime width. CSS container queries own those decisions. */
 export function planComposition(b) {
   if (b.catalogVersion === '2.1.0') return null;
-  const byNode = new WeakMap(), decisions = [], space = SPACE[b.density], sizes = roleSizes(b);
+  const byNode = new WeakMap(), decisions = [], inherited = [], space = SPACE[b.density], sizes = roleSizes(b);
   const visit = (node, path, ancestors = [], siblingCount = 1) => {
-    const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
-    const selected = selectDesign(facts), decision = {path, type: node.type, facts, ...selected};
+    const supporting = ancestors.some((a, i) => a.type === 'aside' && a.children[1] === (ancestors[i + 1] ?? node));
+    const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), supporting, parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
+    const coverage = compositionCoverage[node.type];
+    if (!coverage) throw new Error('Missing composition coverage: ' + node.type);
+    const selected = selectDesign(facts), decision = {path, type: node.type, facts, coverage, ...selected};
     byNode.set(node, decision);
     if (selected.applied.length) decisions.push(decision);
+    else inherited.push({path, type: node.type, ...coverage});
     node.children?.forEach((child, i) => visit(child, `${path}.children[${i}]`, [...ancestors, node], node.children.length));
     if (node.type === 'metric') {
       // Reuse the existing script-weighted value and title estimators. This is a conservative width budget, not font measurement.
@@ -38,6 +42,8 @@ export function planComposition(b) {
       const labelWidth = cplOf(node.label) * sizes.small.max;
       decision.minCell = cellBucket(Math.max(valueWidth, labelWidth) + 2 * space.insetS + 2);
       decision.budget = {valueTarget, valueUnits: facts.valueLength, labelCpl: cplOf(node.label), inset: 'insetS', border: 2};
+      const required = valueUnits(node.value) * valueTarget * 1.04 + 2 * space.insetS + 2;
+      if (required > CELL_BUCKETS.at(-1)) decision.diagnostics = [{code: 'CONTENT_BUDGET_LIMIT', required: Math.ceil(required), maximum: CELL_BUCKETS.at(-1), alternative: 'single-column-summary', reason: 'The finite cell budget is saturated; preserve the value and review the single-column layout or use a table.'}];
     }
     if (node.type === 'grid') {
       const children = node.children.map(x => byNode.get(x)), summary = node.children.every(x => x.type === 'metric');
@@ -50,9 +56,20 @@ export function planComposition(b) {
     }
     if (node.type === 'split') decision.container = {minWidth: 2 * 320 + space.gap};
     if (node.type === 'hero') decision.container = {minCell: Math.max(320, cellBucket(cplOf(node.title) * Math.min(sizes.display.min, sizes.heading.max) * 1.04))};
+    if (node.type === 'aside') decision.container = {sideWidth: node.size === 'wide' ? 380 : 300, minWidth: 320 + (node.size === 'wide' ? 380 : 300) + space.gap};
+    if (node.type === 'team') {
+      const hasBio = node.members.some(m => m.bio), longRole = node.members.some(m => cplOf(m.role) > 10);
+      decision.flow = {minCell: hasBio || longRole ? 280 : 200, gap: space.gap, dense: false, span: true, cap: 4};
+    }
+    if (node.type === 'pricing') decision.flow = {minCell: 280, gap: space.gap, dense: false, span: true, cap: 3};
+    if (['feature-list', 'steps', 'menu'].includes(node.type)) {
+      const grid = node.type === 'feature-list' ? node.layout !== 'list' : node.type === 'steps' ? ['horizontal', 'cards'].includes(node.layout) : node.layout === 'grid';
+      if (grid) decision.flow = {minCell: node.items.some(x => (x.description?.length ?? 0) > 100) ? 280 : 240, gap: space.gap, dense: false, span: true, cap: node.type === 'steps' && node.layout === 'horizontal' ? 4 : 3};
+    }
+    if (node.type === 'gallery' && (node.layout ?? 'grid') === 'grid') decision.flow = {minCell: 240, gap: space.gap, dense: false, span: true, cap: 4};
   };
   visit(b.tree, '$.tree');
-  return {byNode, version: COMPOSITION_VERSION, decisions};
+  return {byNode, version: COMPOSITION_VERSION, decisions, inherited};
 }
 
 /** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
@@ -63,6 +80,8 @@ export function compositionAttrs(d) {
   if (d.container?.minField) attrs.push(['field-min', d.container.minField]);
   if (d.type === 'split') attrs.push(['layout-min', d.container.minWidth]);
   if (d.type === 'hero') attrs.push(['hero-min', d.container.minCell]);
+  if (d.type === 'aside') attrs.push(['aside-min', d.container.minWidth]);
+  if (d.type === 'plan') attrs.push(['supporting', d.facts.supporting]);
   return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
 }
 
@@ -121,5 +140,34 @@ export function compositionCSS(plan) {
 .kit-hero[data-design-kind=hero][data-hero-min="${hero.container.minCell}"]{--kit-hero-min:${hero.container.minCell}px}
 .kit-hero[data-design-kind=hero][data-visual][data-hero-min][data-variant]{grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--kit-hero-min)),1fr));gap:${token('gap')}}`);
   if (hero?.values.frameEdge === 'contained') out.push('[data-design-kind=hero][data-variant=split] .kit-hero-visual[data-frame]{margin-right:0;border-right:var(--kit-card-border);border-radius:calc(var(--kit-radius) * 1.3)}');
-  return out.join('\n');
+  if (plan.decisions.some(d => d.type === 'team')) out.push(`[data-design-kind=team]>ul{gap:${token('gap')}}[data-design-kind=team]>ul>li{padding:${token('insetS')};gap:${token('item')}}[data-design-kind=team] :is(strong,.kit-muted,p){text-wrap:pretty}`);
+  for (const d of plan.decisions.filter(d => d.type === 'plan')) {
+    const supporting = d.facts.supporting ? 'true' : 'false';
+    out.push(`[data-design-kind=plan][data-supporting="${supporting}"]{padding:${token(d.values.inset)}}`);
+  }
+  if (plan.decisions.some(d => d.type === 'pricing')) out.push(`[data-design-kind=pricing]>.kit-plans{gap:${token('gap')}}[data-design-kind=pricing] .kit-plan-desc{min-height:0}[data-design-kind=pricing] .kit-plan ul{margin-block:${token('head')} ${token('gap')};padding-top:${token('head')}}`);
+  if (plan.decisions.some(d => d.type === 'quote')) out.push(`[data-design-kind=quote][data-design-role=testimonial]{padding:${token('inset')}}[data-design-kind=quote] figcaption{flex-wrap:wrap;gap:${token('item')}}`);
+  if (plan.decisions.some(d => d.type === 'chart')) out.push('[data-design-kind=chart] .kit-chart-body{min-width:0}[data-design-kind=chart] .kit-chart-body>svg{min-width:0;max-width:100%}[data-design-kind=chart] .kit-chart-body>.ch-donut{flex-basis:min(200px,100%)}[data-design-kind=chart] .kit-legend{min-width:0;overflow-wrap:anywhere}[data-design-kind=chart] .kit-chart-data{max-width:100%;overflow-x:auto}');
+  if (plan.decisions.some(d => d.type === 'calendar')) out.push('[data-design-kind=calendar]{min-width:0}[data-design-kind=calendar] .kit-cal-agenda li{flex-wrap:wrap}');
+  if (plan.decisions.some(d => d.type === 'timeline')) out.push('[data-design-kind=timeline]{container:timeline/inline-size}[data-design-kind=timeline] .kit-changes{font-size:var(--kit-t-small);max-width:42em}[data-design-kind=timeline] .kit-rel-body>p{max-width:42em}@container timeline (max-width:560px){[data-design-kind=timeline]:is([data-variant=release],[data-variant=log])>ol>li{grid-template-columns:1fr}[data-design-kind=timeline] .kit-rel-meta{position:static}}');
+  if (plan.decisions.some(d => d.type === 'properties')) out.push('[data-design-kind=properties]{container:properties/inline-size}@container properties (max-width:400px){[data-design-kind=properties][data-layout=inline] dl>div{flex-direction:column;gap:2px}[data-design-kind=properties][data-layout=inline] dt{flex-basis:auto}}');
+  if (table || list) out.push('[data-design-kind=table] :is(td,tbody th),[data-design-kind=list] li>div>strong{text-wrap:pretty}');
+  if (plan.decisions.some(d => d.type === 'master-detail')) out.push('[data-design-kind=master-detail]{container:detail/inline-size}[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:1fr}@container detail (min-width:760px){[data-design-kind=master-detail]>.kit-md-grid{grid-template-columns:minmax(220px,1fr) minmax(0,2fr)}}');
+  if (plan.decisions.some(d => d.type === 'cta')) out.push('[data-design-kind=cta]{flex-wrap:wrap}[data-design-kind=cta]>div{min-width:0}');
+  if (plan.decisions.some(d => d.type === 'gallery')) out.push(`
+.kit-gallery[data-design-kind=gallery]{container:kit gallery/inline-size}
+.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul{grid-template-columns:1fr;grid-auto-rows:auto}
+.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(n){grid-column:auto;grid-row:auto}
+.kit-gallery[data-design-kind=gallery][data-layout=masonry] .kit-art-box{aspect-ratio:4/3!important}
+@container gallery (min-width:480px){.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul{grid-template-columns:repeat(2,minmax(0,1fr))}.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(5n+1){grid-column:span 2}}
+@container gallery (min-width:760px){.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:200px}.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(n){grid-column:auto;grid-row:auto}.kit-gallery[data-design-kind=gallery][data-layout=masonry]>ul>li:nth-child(6n+1){grid-column:span 2;grid-row:span 2}.kit-gallery[data-design-kind=gallery][data-layout=masonry] .kit-art-box{aspect-ratio:auto!important}}
+.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:first-child{grid-column:1/-1;grid-row:auto}
+.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:not(:first-child){grid-column:auto}
+@container gallery (min-width:560px){.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul{grid-template-columns:72px minmax(0,1fr)}.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:first-child{grid-column:2;grid-row:1/span 12}.kit-gallery[data-design-kind=gallery][data-layout=showcase]>ul>li:not(:first-child){grid-column:1}}`);
+  for (const d of plan.decisions.filter(d => d.type === 'aside')) out.push(`
+.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"]{grid-template-columns:1fr;gap:${token('gap')}}
+.kit-aside[data-design-kind=aside][data-sticky=yes]>.kit-aside-side{position:static}
+@container compose (min-width:${d.container.minWidth}px){.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"]{grid-template-columns:minmax(0,1fr) ${d.container.sideWidth}px}.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"][data-side=start]{grid-template-columns:${d.container.sideWidth}px minmax(0,1fr)}.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"][data-sticky=yes]>.kit-aside-side{position:sticky}.kit-aside[data-design-kind=aside][data-aside-min="${d.container.minWidth}"][data-side=start]>.kit-aside-side{order:0}}`);
+  return [...new Set(out)].join('\n');
 }

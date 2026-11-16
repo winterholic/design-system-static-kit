@@ -1009,7 +1009,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1019,6 +1019,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 6,
@@ -1026,6 +1027,14 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1038,14 +1047,107 @@
         "applied": [
           "C01"
         ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "quote",
+        "facts": {
+          "type": "quote",
+          "semantic": "quote",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "humanist",
+          "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C24",
+            "C25"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "citation",
+          "inset": "inset",
+          "textRole": "quote-l"
+        },
+        "sources": {
+          "role": "C25",
+          "inset": "C24",
+          "textRole": "C25"
+        },
+        "applied": [
+          "C24",
+          "C25"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "tags",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "type/label",
+          "layout/wrap"
+        ],
+        "reason": "Compact labels wrap without creating another heading level."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "637fd4d73ad930dba4be7faffd61689a94ab62bb84f6385631dd56150ffda76d",
-      "tokens.css": "3bfc9da8ca238fa7875f8d847488b000d452690f3deaa27be449ce1d94c174bc",
+      "index.html": "a0b712044b18e5620993b2ed85d076d702aa22ac1111501e070a3453cb5947b4",
+      "tokens.css": "d5c3e73fdd478eeb89cea9ca878507097d83bca8e136c9be367d8b5a37b827da",
       "tokens.json": "5ae678b9f79a9bbaf96c612dcb24f3795f3ff15d725640f8845419178485bec4",
       "blueprint.json": "c0a17199c6bffa916118e745bd2c8c3d5e7556288a41056c2996159e21a14197"
     }

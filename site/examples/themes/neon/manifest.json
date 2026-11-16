@@ -1037,7 +1037,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1047,6 +1047,7 @@
           "semantic": "page-header",
           "intent": "marketing",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1054,6 +1055,14 @@
           "density": "comfortable",
           "typography": "geometric",
           "theme": "neon"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1075,6 +1084,7 @@
           "semantic": "hero",
           "intent": "marketing",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 7,
@@ -1082,6 +1092,13 @@
           "density": "comfortable",
           "typography": "geometric",
           "theme": "neon"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C15"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "hero",
@@ -1112,6 +1129,7 @@
           "semantic": "form",
           "intent": "marketing",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1119,6 +1137,15 @@
           "density": "comfortable",
           "typography": "geometric",
           "theme": "neon"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "form",
@@ -1137,14 +1164,67 @@
           "minField": 220,
           "gap": 16
         }
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "feature-list",
+        "facts": {
+          "type": "feature-list",
+          "semantic": "feature-list",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "neon"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C34"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "capabilities"
+        },
+        "sources": {
+          "role": "C34"
+        },
+        "applied": [
+          "C34"
+        ],
+        "flow": {
+          "minCell": 240,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "cap": 3
+        }
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "e40e6d454bf44a510bc17bacc543c4969f1381996241650d2628291f39b06e0c",
-      "tokens.css": "e71621be8f5e348b2157cc854d76f8a930d12a99331c981c3dc8afb4c8e98a3a",
+      "index.html": "2c6cfa0556c51c053d22f7abf484e371b788f8f6ecdaf179c7158a3f4e3fb75a",
+      "tokens.css": "ee202048b9905f603be14938992fba9f0c8501ef1ef9d256d9b428a328af6f7b",
       "tokens.json": "af0ace0b980fcacf5dcb7815f891edccbb76c5464b4220ef14291ac896baf828",
       "blueprint.json": "65694a43ba4b0bff0ba774e31d15d8df9848d946680ae0e3b082ab4ef353e30c"
     }

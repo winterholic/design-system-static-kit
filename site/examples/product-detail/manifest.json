@@ -1133,7 +1133,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1143,6 +1143,7 @@
           "semantic": "page-header",
           "intent": "commerce",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1150,6 +1151,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1172,6 +1181,7 @@
           "semantic": "split",
           "intent": "commerce",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1179,6 +1189,13 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "split"
@@ -1192,14 +1209,177 @@
         "container": {
           "minWidth": 664
         }
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "gallery",
+        "facts": {
+          "type": "gallery",
+          "semantic": "gallery",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "split",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C28"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "media-collection"
+        },
+        "sources": {
+          "role": "C28"
+        },
+        "applied": [
+          "C28"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0].children[1]",
+        "type": "properties",
+        "facts": {
+          "type": "properties",
+          "semantic": "properties",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "tab",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "buy-box",
+        "mode": "inherited",
+        "contracts": [
+          "commerce/hierarchy",
+          "S01",
+          "S04"
+        ],
+        "reason": "Price, total, options and action already have distinct commerce roles."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "tabs",
+        "mode": "inherited",
+        "contracts": [
+          "S02",
+          "S06",
+          "runtime/ARIA-tabs"
+        ],
+        "reason": "Scrollable tabs retain keyboard navigation and token-sized controls."
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2].children[0].children[0]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2].children[1].children[0]",
+        "type": "reviews",
+        "mode": "inherited",
+        "contracts": [
+          "type/stat-s",
+          "S01",
+          "S02"
+        ],
+        "reason": "Scores and review copy retain separate summary and reading levels."
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2].children[2].children[0]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "805124a14abf051b9c96019c61612295a45b05b575a084c9d9ad556436f662b2",
-      "tokens.css": "bcf41967cbff54f982b7641065850aea14230d14748592c91ba6966aedfc272b",
+      "index.html": "d45df0d7db9d7d1f8d074d7da8fe6043a020b0c6189640ad0939dbd9da1c71d5",
+      "tokens.css": "372cfe67c619919741233b06fbcd937b78b43f0732c6144df41ccb16596436b6",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
       "blueprint.json": "b0260fd8cfc4ee49d728c8731d0ecf7498b587d1867cd3de5279733e68a32532"
     }

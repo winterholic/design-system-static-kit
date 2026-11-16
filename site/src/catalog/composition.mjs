@@ -1,6 +1,6 @@
 /** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
  * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
-export const COMPOSITION_VERSION = '1.0.0';
+export const COMPOSITION_VERSION = '1.1.0';
 export const PAGE_INTENT = {
   dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
   auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',
@@ -25,6 +25,53 @@ export const compositionRules = [
   {id: 'C16', priority: 10, when: {type: 'split'}, set: {role: 'split'}, reason: 'Two columns require room in the containing region, independently of viewport width.'},
   {id: 'C17', priority: 10, when: {type: 'grid'}, set: {role: 'flow'}, reason: 'The existing orphan-free flow owns column selection; content supplies its minimum cell width.'},
   {id: 'C18', priority: 20, when: {type: 'form', intent: 'form'}, set: {inset: 'insetL'}, reason: 'A primary form uses the existing larger inset; a secondary form retains the component inset.'},
+  {id: 'C19', priority: 10, when: {type: 'aside'}, set: {role: 'supporting-layout'}, reason: 'Main and supporting content must fit their allocated region before taking two columns.'},
+  {id: 'C20', priority: 10, when: {type: 'team'}, set: {role: 'people', inset: 'insetS'}, reason: 'Names, roles and biographies determine the reading capacity of each person cell.'},
+  {id: 'C21', priority: 10, when: {type: 'pricing'}, set: {role: 'comparison'}, reason: 'Plan columns reuse orphan-free flow with room for the price and feature list.'},
+  {id: 'C22', priority: 10, when: {type: 'plan'}, set: {role: 'offer', inset: 'insetL'}, reason: 'A primary offer groups its identity, price, features and action.'},
+  {id: 'C23', priority: 20, when: {type: 'plan', supporting: true}, set: {inset: 'insetS'}, reason: 'An offer in a supporting region uses the smaller existing surface inset.'},
+  {id: 'C24', priority: 10, when: {type: 'quote'}, set: {role: 'testimonial', inset: 'inset', textRole: 'quote'}, reason: 'A testimonial fits its own box; attribution remains attached to the quotation.'},
+  {id: 'C25', priority: 20, when: {type: 'quote', intent: 'reading'}, set: {role: 'citation', textRole: 'quote-l'}, reason: 'A reading-page citation retains the existing editorial treatment.'},
+  {id: 'C26', priority: 10, when: {type: 'chart'}, set: {role: 'visual-data'}, reason: 'Chart and legend share the available box while full values remain in the data table.'},
+  {id: 'C27', priority: 10, when: {type: 'calendar'}, set: {role: 'schedule'}, reason: 'The existing calendar container switches to its full-text agenda when cells cannot fit events.'},
+  {id: 'C28', priority: 10, when: {type: 'gallery'}, set: {role: 'media-collection'}, reason: 'Media columns and thumbnail placement depend on the gallery region, not the viewport.'},
+  {id: 'C29', priority: 10, when: {type: 'timeline'}, set: {role: 'sequence'}, reason: 'Release metadata and descriptions use separate tracks with bounded reading measures.'},
+  {id: 'C30', priority: 10, when: {type: 'properties'}, set: {role: 'label-value'}, reason: 'Label and value keep proximity and stack when inline labels would consume the region.'},
+  {id: 'C31', priority: 10, when: {type: 'menu'}, set: {role: 'catalogue'}, reason: 'Menu text and prices retain separate roles inside a content-sized cell.'},
+  {id: 'C32', priority: 10, when: {type: 'master-detail'}, set: {role: 'selection-detail'}, reason: 'Selection and detail tracks stack inside a narrow allocated region.'},
+  {id: 'C33', priority: 10, when: {type: 'cta'}, set: {role: 'next-action'}, reason: 'Copy and action share one group and wrap in their own container.'},
+  {id: 'C34', priority: 10, when: {type: 'feature-list'}, set: {role: 'capabilities'}, reason: 'Feature descriptions supply the minimum readable flow cell.'},
+  {id: 'C35', priority: 10, when: {type: 'steps'}, set: {role: 'procedure'}, reason: 'Repeated steps reuse the same content-sized flow as other repeated information.'},
 ];
+// Mature contracts are reused explicitly; primitive components do not need cosmetic overrides.
+const inherited = [
+  ['page tab', ['layout/parent', 'S09'], 'Structural nodes inherit page and panel rhythm without adding a surface.'],
+  ['bento', ['layout/bentoPlan', 'S03'], 'Content-aware bento sizing and container bands already own placement.'],
+  ['tabs', ['S02', 'S06', 'runtime/ARIA-tabs'], 'Scrollable tabs retain keyboard navigation and token-sized controls.'],
+  ['kanban lane task', ['layout/scroll', 'S01', 'S05'], 'Boards intentionally scroll and use compact nested task surfaces.'],
+  ['reel', ['layout/scroll-snap', 'S02'], 'The explicit reel scrolls rather than squeezing card content.'],
+  ['chat', ['S01', 'S05', 'type/body'], 'Message identity and copy retain proximity and nested insets.'],
+  ['prose', ['type/measure', 'S02'], 'Prose already has a bounded reading measure and semantic type role.'],
+  ['notice', ['S01', 'S04', 'state/semantics'], 'Status tone and live-region meaning own notice presentation.'],
+  ['actions', ['S03', 'S06'], 'Actions wrap using the existing control size and group gap.'],
+  ['faq', ['layout/container-faq', 'S02'], 'FAQ already uses a container breakpoint and native disclosures.'],
+  ['logo-cloud', ['type/logo', 'S02', 'layout/wrap'], 'Trust marks wrap with their quiet existing type role.'],
+  ['tags', ['S01', 'type/label', 'layout/wrap'], 'Compact labels wrap without creating another heading level.'],
+  ['code', ['type/mono', 'layout/scroll', 'S04'], 'Code preserves whitespace in an intentional scroll region.'],
+  ['progress', ['S01', 'state/progressbar'], 'The value remains adjacent to its label with progress semantics.'],
+  ['empty-state skeleton', ['state/semantics', 'S04'], 'Feedback states retain hierarchy, reduced motion and live regions.'],
+  ['media', ['layout/ratio', 'type/caption'], 'The catalogue ratio and caption own media sizing.'],
+  ['breadcrumb pagination toc', ['navigation/semantics', 'S01', 'S06'], 'Navigation retains current location, wrapping and control dimensions.'],
+  ['filter-bar stepper', ['navigation/scroll', 'S06'], 'Existing intentional overflow preserves readable control and step labels.'],
+  ['summary buy-box', ['commerce/hierarchy', 'S01', 'S04'], 'Price, total, options and action already have distinct commerce roles.'],
+  ['reviews', ['type/stat-s', 'S01', 'S02'], 'Scores and review copy retain separate summary and reading levels.'],
+  ['links divider', ['S01', 'S02'], 'Links and separators preserve grouping and navigation affordances.'],
+];
+export const compositionCoverage = Object.fromEntries(inherited.flatMap(([types, contracts, reason]) => types.split(' ').map(type => [type, {mode: 'inherited', contracts, reason}])));
+for (const rule of compositionRules) if (typeof rule.when.type === 'string') {
+  const type = rule.when.type;
+  compositionCoverage[type] ??= {mode: 'contextual', contracts: [], reason: 'Compiler-selected roles and container policies extend existing type, spacing and flow contracts.'};
+  compositionCoverage[type].contracts.push(rule.id);
+}
 const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } return x; };
-freeze(PAGE_INTENT); freeze(compositionRules);
+freeze(PAGE_INTENT); freeze(compositionRules); freeze(compositionCoverage);

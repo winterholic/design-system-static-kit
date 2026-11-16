@@ -8,7 +8,7 @@ import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
 import {layoutSlots, applyLayout, layoutSlotIds} from './variants.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
-export {compositionRules, COMPOSITION_VERSION} from './composition.mjs';
+export {compositionRules, compositionCoverage, COMPOSITION_VERSION} from './composition.mjs';
 
 export const CATALOG_VERSION = '2.2.0';
 export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', CATALOG_VERSION]);

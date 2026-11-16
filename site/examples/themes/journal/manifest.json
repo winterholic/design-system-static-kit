@@ -1079,7 +1079,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1089,6 +1089,7 @@
           "semantic": "page-header",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 5,
@@ -1096,6 +1097,14 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1117,6 +1126,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 6,
@@ -1124,6 +1134,16 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1148,6 +1168,7 @@
           "semantic": "grid",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 5,
@@ -1155,6 +1176,13 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C17"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "flow"
@@ -1182,6 +1210,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1189,6 +1218,16 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1213,6 +1252,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1220,6 +1260,16 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1244,6 +1294,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1251,6 +1302,16 @@
           "density": "spacious",
           "typography": "humanist",
           "theme": "journal"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1267,13 +1328,57 @@
           "C08"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "filter-bar",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "tags",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "type/label",
+          "layout/wrap"
+        ],
+        "reason": "Compact labels wrap without creating another heading level."
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "pagination",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/semantics",
+          "S01",
+          "S06"
+        ],
+        "reason": "Navigation retains current location, wrapping and control dimensions."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f5ac1b63107d4f89e2dded118657820bacd2a85f157813a376d303ae6d69dee7",
-      "tokens.css": "be2af746998e37429da6eeefe4ba5568ef380da7beb57ac4607218d75ad473e0",
+      "index.html": "193f648cf5d5d7a00e833754376e72bc7fe2dc07b9df77eecdc8e25517ed3b30",
+      "tokens.css": "6fc31e25d3eea3d774830a5d263f1158ddb0c89c7e18d4e00c42d96d9269c81b",
       "tokens.json": "5ae678b9f79a9bbaf96c612dcb24f3795f3ff15d725640f8845419178485bec4",
       "blueprint.json": "5c83b4f70f255cdb03c3b6e5bc00b8175a486731759bf45308824d1017886590"
     }

@@ -1008,7 +1008,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1018,6 +1018,7 @@
           "semantic": "page-header",
           "intent": "form",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1025,6 +1026,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "trust"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1047,6 +1056,7 @@
           "semantic": "form",
           "intent": "form",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1054,6 +1064,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "trust"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "form",
@@ -1074,13 +1093,45 @@
           "gap": 16
         }
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "divider",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S02"
+        ],
+        "reason": "Links and separators preserve grouping and navigation affordances."
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "actions",
+        "mode": "inherited",
+        "contracts": [
+          "S03",
+          "S06"
+        ],
+        "reason": "Actions wrap using the existing control size and group gap."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "930f07a9a7d2b62d3ec87f0f23610b4abacd692437d52f63f9d4b9d7868a77fd",
-      "tokens.css": "263d03b900dd208b1d30eb6fda16d365b1acbd53742881b2c14b10c336bee782",
+      "index.html": "a3ce5452bebd5047b676737b642cfa6f8fa8a9e3d460ca4dc2d414e582451831",
+      "tokens.css": "5f2ca54a6678c778a8b93e38fa8071452409a08dfc4d10048c1a76e0ebb5af87",
       "tokens.json": "8b8472a158b0de1b3a1fe60306d410e3a3749b4f62b6f2370233656102b67658",
       "blueprint.json": "d0d5f25d17f7f1833198e71f34520fee8f6e61891043687cd6e7af3c978ab03d"
     }

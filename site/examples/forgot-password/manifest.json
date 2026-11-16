@@ -993,7 +993,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1003,6 +1003,7 @@
           "semantic": "page-header",
           "intent": "form",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1010,6 +1011,14 @@
           "density": "spacious",
           "typography": "sans",
           "theme": "civic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1032,6 +1041,7 @@
           "semantic": "form",
           "intent": "form",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1039,6 +1049,15 @@
           "density": "spacious",
           "typography": "sans",
           "theme": "civic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "form",
@@ -1059,13 +1078,35 @@
           "gap": 20
         }
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "actions",
+        "mode": "inherited",
+        "contracts": [
+          "S03",
+          "S06"
+        ],
+        "reason": "Actions wrap using the existing control size and group gap."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "673b9e9608f3a655a40e567757a14f50683218cdfde3c0b9dbf7b48d385c4aa5",
-      "tokens.css": "53230a5b737c3fab348a1b9bb3dba807cfa12cb53e94e451edf2de8f5098c3c8",
+      "index.html": "0c39297220ec5e4a23bbeeae8d11b024f79b01e6da77a40bfa51c55f8855f181",
+      "tokens.css": "b3d00d95c55073c2368d5a541e1b0cb4ead597a31adcb6626ec9c984f6d75d11",
       "tokens.json": "db8277708e243846ca5df5d98c4ed042609baa231b4ef885d8c91e4764dbf08d",
       "blueprint.json": "dade6ed1bb49e157fc857f10e8e18927fad47bf4cf43f4e11128c25e9f38d319"
     }

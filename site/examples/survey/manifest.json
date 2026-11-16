@@ -1013,7 +1013,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1023,6 +1023,7 @@
           "semantic": "page-header",
           "intent": "form",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1030,6 +1031,14 @@
           "density": "spacious",
           "typography": "editorial",
           "theme": "paper"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1052,6 +1061,7 @@
           "semantic": "form",
           "intent": "form",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1059,6 +1069,15 @@
           "density": "spacious",
           "typography": "editorial",
           "theme": "paper"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "form",
@@ -1079,13 +1098,35 @@
           "gap": 20
         }
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "progress",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "state/progressbar"
+        ],
+        "reason": "The value remains adjacent to its label with progress semantics."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "0831af5cccfd043bd05adeae51e8b03908671622c1c58eeb7fc04ad9594ee4d5",
-      "tokens.css": "f0d9b9837290dff396dfbc03e245fa94afa0b0f33656496ea2cc84f37c49a2b6",
+      "index.html": "4c16ccecfb4061b49c1ff90a11e8dbc574869511bbb84704b3f22a29c48677dc",
+      "tokens.css": "81ba1ff17809f5ec8c370fdc028c8c91d909e6f674eea2bb7f6d7669457a7c76",
       "tokens.json": "8f034f00a5a1a987db8933adbb84487d1247aa036577aeb6ac42e26412e11831",
       "blueprint.json": "909f44c56cc5931869ef96517f50a0e0d1c8506dc0bc052f7da9130f055e220a"
     }

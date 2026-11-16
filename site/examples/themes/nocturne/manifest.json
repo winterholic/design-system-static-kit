@@ -1040,7 +1040,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1050,6 +1050,7 @@
           "semantic": "page-header",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1057,6 +1058,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1078,6 +1087,7 @@
           "semantic": "split",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1085,6 +1095,13 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "split"
@@ -1107,6 +1124,7 @@
           "semantic": "list",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "split",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1114,6 +1132,13 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C14"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "list",
@@ -1127,13 +1152,55 @@
           "C14"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "progress",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "state/progressbar"
+        ],
+        "reason": "The value remains adjacent to its label with progress semantics."
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "actions",
+        "mode": "inherited",
+        "contracts": [
+          "S03",
+          "S06"
+        ],
+        "reason": "Actions wrap using the existing control size and group gap."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "1fd9e697dff1a2bdc1709f28c342d0027b1c29b72efb8e536ee9a984bfef2664",
-      "tokens.css": "60814893829baf34055c9777e7eb94f87fc55bc91cd2163c5ab145360ff08f84",
+      "index.html": "bd600abe0fe40931be4d882aca16902a9f3dafa5e6f85ae5325006213f39c358",
+      "tokens.css": "2d42a7afc6aab53f232f2c03ecfdd5b2e9cdf0113c7f776ac05afbfa765b2b72",
       "tokens.json": "0ae7f3ac0d3d0434b5c97632d86ffebde7b661508e89b5bde515ccf8aed5341f",
       "blueprint.json": "ce295bab24c1b1f4263099a147fe10b0c1b75d489ab85f9792f5595db9f31b12"
     }

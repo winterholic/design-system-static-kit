@@ -1024,7 +1024,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1034,6 +1034,7 @@
           "semantic": "page-header",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1041,6 +1042,14 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1054,14 +1063,60 @@
           "C01",
           "C02"
         ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "master-detail",
+        "facts": {
+          "type": "master-detail",
+          "semantic": "master-detail",
+          "intent": "operation",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C32"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "selection-detail"
+        },
+        "sources": {
+          "role": "C32"
+        },
+        "applied": [
+          "C32"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "220037a68ebef425c6e537afa249438dcd5b2a0df5a6caee04da2470cf4bbad0",
-      "tokens.css": "cd2a13f18cc62f5d734f8fa9f4a8e728f799f7b782f619e0428f701f87696108",
+      "index.html": "234e0f056971f1d736a7985679dcdb7fd10d1558817706923b1950353cd1db44",
+      "tokens.css": "5099b9345b0edc929f75ac5dd8e6146b18d7cabcd98c3d7198f15631ee7be7b0",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
       "blueprint.json": "37db48759132f68e21c866f75f455d2497f7096a752e08dccce4d48afa39d5e7"
     }

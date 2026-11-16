@@ -5,7 +5,7 @@
     "2.2.0"
   ],
   "composition": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "rules": [
       {
         "id": "C01",
@@ -242,8 +242,644 @@
           "inset": "insetL"
         },
         "reason": "A primary form uses the existing larger inset; a secondary form retains the component inset."
+      },
+      {
+        "id": "C19",
+        "priority": 10,
+        "when": {
+          "type": "aside"
+        },
+        "set": {
+          "role": "supporting-layout"
+        },
+        "reason": "Main and supporting content must fit their allocated region before taking two columns."
+      },
+      {
+        "id": "C20",
+        "priority": 10,
+        "when": {
+          "type": "team"
+        },
+        "set": {
+          "role": "people",
+          "inset": "insetS"
+        },
+        "reason": "Names, roles and biographies determine the reading capacity of each person cell."
+      },
+      {
+        "id": "C21",
+        "priority": 10,
+        "when": {
+          "type": "pricing"
+        },
+        "set": {
+          "role": "comparison"
+        },
+        "reason": "Plan columns reuse orphan-free flow with room for the price and feature list."
+      },
+      {
+        "id": "C22",
+        "priority": 10,
+        "when": {
+          "type": "plan"
+        },
+        "set": {
+          "role": "offer",
+          "inset": "insetL"
+        },
+        "reason": "A primary offer groups its identity, price, features and action."
+      },
+      {
+        "id": "C23",
+        "priority": 20,
+        "when": {
+          "type": "plan",
+          "supporting": true
+        },
+        "set": {
+          "inset": "insetS"
+        },
+        "reason": "An offer in a supporting region uses the smaller existing surface inset."
+      },
+      {
+        "id": "C24",
+        "priority": 10,
+        "when": {
+          "type": "quote"
+        },
+        "set": {
+          "role": "testimonial",
+          "inset": "inset",
+          "textRole": "quote"
+        },
+        "reason": "A testimonial fits its own box; attribution remains attached to the quotation."
+      },
+      {
+        "id": "C25",
+        "priority": 20,
+        "when": {
+          "type": "quote",
+          "intent": "reading"
+        },
+        "set": {
+          "role": "citation",
+          "textRole": "quote-l"
+        },
+        "reason": "A reading-page citation retains the existing editorial treatment."
+      },
+      {
+        "id": "C26",
+        "priority": 10,
+        "when": {
+          "type": "chart"
+        },
+        "set": {
+          "role": "visual-data"
+        },
+        "reason": "Chart and legend share the available box while full values remain in the data table."
+      },
+      {
+        "id": "C27",
+        "priority": 10,
+        "when": {
+          "type": "calendar"
+        },
+        "set": {
+          "role": "schedule"
+        },
+        "reason": "The existing calendar container switches to its full-text agenda when cells cannot fit events."
+      },
+      {
+        "id": "C28",
+        "priority": 10,
+        "when": {
+          "type": "gallery"
+        },
+        "set": {
+          "role": "media-collection"
+        },
+        "reason": "Media columns and thumbnail placement depend on the gallery region, not the viewport."
+      },
+      {
+        "id": "C29",
+        "priority": 10,
+        "when": {
+          "type": "timeline"
+        },
+        "set": {
+          "role": "sequence"
+        },
+        "reason": "Release metadata and descriptions use separate tracks with bounded reading measures."
+      },
+      {
+        "id": "C30",
+        "priority": 10,
+        "when": {
+          "type": "properties"
+        },
+        "set": {
+          "role": "label-value"
+        },
+        "reason": "Label and value keep proximity and stack when inline labels would consume the region."
+      },
+      {
+        "id": "C31",
+        "priority": 10,
+        "when": {
+          "type": "menu"
+        },
+        "set": {
+          "role": "catalogue"
+        },
+        "reason": "Menu text and prices retain separate roles inside a content-sized cell."
+      },
+      {
+        "id": "C32",
+        "priority": 10,
+        "when": {
+          "type": "master-detail"
+        },
+        "set": {
+          "role": "selection-detail"
+        },
+        "reason": "Selection and detail tracks stack inside a narrow allocated region."
+      },
+      {
+        "id": "C33",
+        "priority": 10,
+        "when": {
+          "type": "cta"
+        },
+        "set": {
+          "role": "next-action"
+        },
+        "reason": "Copy and action share one group and wrap in their own container."
+      },
+      {
+        "id": "C34",
+        "priority": 10,
+        "when": {
+          "type": "feature-list"
+        },
+        "set": {
+          "role": "capabilities"
+        },
+        "reason": "Feature descriptions supply the minimum readable flow cell."
+      },
+      {
+        "id": "C35",
+        "priority": 10,
+        "when": {
+          "type": "steps"
+        },
+        "set": {
+          "role": "procedure"
+        },
+        "reason": "Repeated steps reuse the same content-sized flow as other repeated information."
       }
-    ]
+    ],
+    "coverage": {
+      "page": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      "tab": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      "bento": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/bentoPlan",
+          "S03"
+        ],
+        "reason": "Content-aware bento sizing and container bands already own placement."
+      },
+      "tabs": {
+        "mode": "inherited",
+        "contracts": [
+          "S02",
+          "S06",
+          "runtime/ARIA-tabs"
+        ],
+        "reason": "Scrollable tabs retain keyboard navigation and token-sized controls."
+      },
+      "kanban": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      "lane": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      "task": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      "reel": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll-snap",
+          "S02"
+        ],
+        "reason": "The explicit reel scrolls rather than squeezing card content."
+      },
+      "chat": {
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S05",
+          "type/body"
+        ],
+        "reason": "Message identity and copy retain proximity and nested insets."
+      },
+      "prose": {
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      "notice": {
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
+      },
+      "actions": {
+        "mode": "inherited",
+        "contracts": [
+          "S03",
+          "S06"
+        ],
+        "reason": "Actions wrap using the existing control size and group gap."
+      },
+      "faq": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/container-faq",
+          "S02"
+        ],
+        "reason": "FAQ already uses a container breakpoint and native disclosures."
+      },
+      "logo-cloud": {
+        "mode": "inherited",
+        "contracts": [
+          "type/logo",
+          "S02",
+          "layout/wrap"
+        ],
+        "reason": "Trust marks wrap with their quiet existing type role."
+      },
+      "tags": {
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "type/label",
+          "layout/wrap"
+        ],
+        "reason": "Compact labels wrap without creating another heading level."
+      },
+      "code": {
+        "mode": "inherited",
+        "contracts": [
+          "type/mono",
+          "layout/scroll",
+          "S04"
+        ],
+        "reason": "Code preserves whitespace in an intentional scroll region."
+      },
+      "progress": {
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "state/progressbar"
+        ],
+        "reason": "The value remains adjacent to its label with progress semantics."
+      },
+      "empty-state": {
+        "mode": "inherited",
+        "contracts": [
+          "state/semantics",
+          "S04"
+        ],
+        "reason": "Feedback states retain hierarchy, reduced motion and live regions."
+      },
+      "skeleton": {
+        "mode": "inherited",
+        "contracts": [
+          "state/semantics",
+          "S04"
+        ],
+        "reason": "Feedback states retain hierarchy, reduced motion and live regions."
+      },
+      "media": {
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      "breadcrumb": {
+        "mode": "inherited",
+        "contracts": [
+          "navigation/semantics",
+          "S01",
+          "S06"
+        ],
+        "reason": "Navigation retains current location, wrapping and control dimensions."
+      },
+      "pagination": {
+        "mode": "inherited",
+        "contracts": [
+          "navigation/semantics",
+          "S01",
+          "S06"
+        ],
+        "reason": "Navigation retains current location, wrapping and control dimensions."
+      },
+      "toc": {
+        "mode": "inherited",
+        "contracts": [
+          "navigation/semantics",
+          "S01",
+          "S06"
+        ],
+        "reason": "Navigation retains current location, wrapping and control dimensions."
+      },
+      "filter-bar": {
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
+      },
+      "stepper": {
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
+      },
+      "summary": {
+        "mode": "inherited",
+        "contracts": [
+          "commerce/hierarchy",
+          "S01",
+          "S04"
+        ],
+        "reason": "Price, total, options and action already have distinct commerce roles."
+      },
+      "buy-box": {
+        "mode": "inherited",
+        "contracts": [
+          "commerce/hierarchy",
+          "S01",
+          "S04"
+        ],
+        "reason": "Price, total, options and action already have distinct commerce roles."
+      },
+      "reviews": {
+        "mode": "inherited",
+        "contracts": [
+          "type/stat-s",
+          "S01",
+          "S02"
+        ],
+        "reason": "Scores and review copy retain separate summary and reading levels."
+      },
+      "links": {
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S02"
+        ],
+        "reason": "Links and separators preserve grouping and navigation affordances."
+      },
+      "divider": {
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S02"
+        ],
+        "reason": "Links and separators preserve grouping and navigation affordances."
+      },
+      "page-header": {
+        "mode": "contextual",
+        "contracts": [
+          "C01",
+          "C02"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "section": {
+        "mode": "contextual",
+        "contracts": [
+          "C03",
+          "C04",
+          "C05"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "card": {
+        "mode": "contextual",
+        "contracts": [
+          "C06",
+          "C07",
+          "C08",
+          "C09"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "metric": {
+        "mode": "contextual",
+        "contracts": [
+          "C10"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "form": {
+        "mode": "contextual",
+        "contracts": [
+          "C11",
+          "C12",
+          "C18"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "table": {
+        "mode": "contextual",
+        "contracts": [
+          "C13"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "list": {
+        "mode": "contextual",
+        "contracts": [
+          "C14"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "hero": {
+        "mode": "contextual",
+        "contracts": [
+          "C15"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "split": {
+        "mode": "contextual",
+        "contracts": [
+          "C16"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "grid": {
+        "mode": "contextual",
+        "contracts": [
+          "C17"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "aside": {
+        "mode": "contextual",
+        "contracts": [
+          "C19"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "team": {
+        "mode": "contextual",
+        "contracts": [
+          "C20"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "pricing": {
+        "mode": "contextual",
+        "contracts": [
+          "C21"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "plan": {
+        "mode": "contextual",
+        "contracts": [
+          "C22",
+          "C23"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "quote": {
+        "mode": "contextual",
+        "contracts": [
+          "C24",
+          "C25"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "chart": {
+        "mode": "contextual",
+        "contracts": [
+          "C26"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "calendar": {
+        "mode": "contextual",
+        "contracts": [
+          "C27"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "gallery": {
+        "mode": "contextual",
+        "contracts": [
+          "C28"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "timeline": {
+        "mode": "contextual",
+        "contracts": [
+          "C29"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "properties": {
+        "mode": "contextual",
+        "contracts": [
+          "C30"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "menu": {
+        "mode": "contextual",
+        "contracts": [
+          "C31"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "master-detail": {
+        "mode": "contextual",
+        "contracts": [
+          "C32"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "cta": {
+        "mode": "contextual",
+        "contracts": [
+          "C33"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "feature-list": {
+        "mode": "contextual",
+        "contracts": [
+          "C34"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      },
+      "steps": {
+        "mode": "contextual",
+        "contracts": [
+          "C35"
+        ],
+        "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+      }
+    }
   },
   "themeCategories": {
     "work": "업무·제품",

@@ -38,6 +38,6 @@ export function compile(input) {
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
-  if (design) manifest.design = {version: design.version, decisions: design.decisions};
+  if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   return {html, css, tokens, manifest};
 }

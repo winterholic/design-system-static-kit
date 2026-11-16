@@ -1076,7 +1076,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1086,6 +1086,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 12,
@@ -1093,6 +1094,14 @@
           "density": "spacious",
           "typography": "literary",
           "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1107,13 +1116,14 @@
         ]
       },
       {
-        "path": "$.tree.children[3]",
-        "type": "section",
+        "path": "$.tree.children[2]",
+        "type": "properties",
         "facts": {
-          "type": "section",
-          "semantic": "section",
+          "type": "properties",
+          "semantic": "properties",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 5,
@@ -1121,6 +1131,49 @@
           "density": "spacious",
           "typography": "literary",
           "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -1143,6 +1196,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 6,
           "titleCpl": 5,
@@ -1150,6 +1204,15 @@
           "density": "spacious",
           "typography": "literary",
           "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -1172,6 +1235,7 @@
           "semantic": "table",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1179,6 +1243,13 @@
           "density": "spacious",
           "typography": "literary",
           "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C13"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "table",
@@ -1191,14 +1262,107 @@
         "applied": [
           "C13"
         ]
+      },
+      {
+        "path": "$.tree.children[4].children[1]",
+        "type": "quote",
+        "facts": {
+          "type": "quote",
+          "semantic": "quote",
+          "intent": "reading",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "literary",
+          "theme": "academic"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C24",
+            "C25"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "citation",
+          "inset": "inset",
+          "textRole": "quote-l"
+        },
+        "sources": {
+          "role": "C25",
+          "inset": "C24",
+          "textRole": "C25"
+        },
+        "applied": [
+          "C24",
+          "C25"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[3].children[1]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "6097c45b66045d35df46aa1986c92cdb42c061e1b1566bef7c9559e5557f531f",
-      "tokens.css": "60012ae611d6e23fb5d9eb8b333fb8fa9255f49886d5364045c29221f5103e0b",
+      "index.html": "f992619a07b454979d65845bf35b915e65fd8da4089b2b85ee2f69cc1fa20499",
+      "tokens.css": "574d33c40be717f85e07fd6427b68ddc3cc62012fcb7c61164a9664f7a9c87c2",
       "tokens.json": "586bccc4203bfcfc8373c3896488323e6e6a0ec802aa3c1f839ee2ac200616e0",
       "blueprint.json": "96bb82c139c0f018f6453683fdaa261f8e609ec4776efb4c38dd34cfe2f96a10"
     }

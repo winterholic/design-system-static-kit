@@ -1116,7 +1116,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1126,6 +1126,7 @@
           "semantic": "page-header",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 5,
           "titleCpl": 5,
@@ -1133,6 +1134,14 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1154,6 +1163,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 5,
           "titleCpl": 10,
@@ -1161,6 +1171,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1185,6 +1205,7 @@
           "semantic": "grid",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 5,
           "titleCpl": 5,
@@ -1192,6 +1213,13 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C17"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "flow"
@@ -1219,6 +1247,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 8,
@@ -1226,6 +1255,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1250,6 +1289,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 7,
@@ -1257,6 +1297,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1281,6 +1331,7 @@
           "semantic": "editorial",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 6,
@@ -1288,6 +1339,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "editorial",
@@ -1312,6 +1373,7 @@
           "semantic": "feature",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "reel",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1319,6 +1381,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "feature",
@@ -1342,6 +1414,7 @@
           "semantic": "feature",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "reel",
           "siblingCount": 4,
           "titleCpl": 6,
@@ -1349,6 +1422,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "feature",
@@ -1372,6 +1455,7 @@
           "semantic": "feature",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "reel",
           "siblingCount": 4,
           "titleCpl": 6,
@@ -1379,6 +1463,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "feature",
@@ -1402,6 +1496,7 @@
           "semantic": "feature",
           "intent": "general",
           "nested": false,
+          "supporting": false,
           "parent": "reel",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1409,6 +1504,16 @@
           "density": "compact",
           "typography": "newsroom",
           "theme": "newsroom"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C06",
+            "C07",
+            "C08",
+            "C09"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "feature",
@@ -1424,13 +1529,46 @@
           "C06"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "reel",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll-snap",
+          "S02"
+        ],
+        "reason": "The explicit reel scrolls rather than squeezing card content."
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "tags",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "type/label",
+          "layout/wrap"
+        ],
+        "reason": "Compact labels wrap without creating another heading level."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "3fffb161c5efef12e5e119f03a95476b0d0e25fe41f0f69393c9185ddae6a570",
-      "tokens.css": "4bcd96925daf8225abde66707c8b7354cd8eef94b39db2d7ae16e1917ee3dd95",
+      "index.html": "005ca7589ad14f4ec99b69e8fb948683f9926d97c4b0b44dac8204f5d7054e97",
+      "tokens.css": "d262a2e76f4fb3bbcd5486d9862a367b804bf5a8f243962a70c3ac13f09f7d83",
       "tokens.json": "27f6717fee0f31cbe8b1eae212c57e00092f12dfc62d56c5076add648e96bff6",
       "blueprint.json": "6daec36133ded6586f19027eb97621ef68b18364bf3eb5602cdb32361d600b3f"
     }

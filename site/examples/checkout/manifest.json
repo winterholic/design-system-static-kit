@@ -1055,7 +1055,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1065,6 +1065,7 @@
           "semantic": "page-header",
           "intent": "commerce",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1072,6 +1073,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1087,6 +1096,44 @@
         ]
       },
       {
+        "path": "$.tree.children[2]",
+        "type": "aside",
+        "facts": {
+          "type": "aside",
+          "semantic": "aside",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C19"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "supporting-layout"
+        },
+        "sources": {
+          "role": "C19"
+        },
+        "applied": [
+          "C19"
+        ],
+        "container": {
+          "sideWidth": 300,
+          "minWidth": 644
+        }
+      },
+      {
         "path": "$.tree.children[2].children[0]",
         "type": "form",
         "facts": {
@@ -1094,6 +1141,7 @@
           "semantic": "form",
           "intent": "commerce",
           "nested": false,
+          "supporting": false,
           "parent": "aside",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1101,6 +1149,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "form",
@@ -1120,13 +1177,46 @@
           "gap": 16
         }
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "stepper",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "summary",
+        "mode": "inherited",
+        "contracts": [
+          "commerce/hierarchy",
+          "S01",
+          "S04"
+        ],
+        "reason": "Price, total, options and action already have distinct commerce roles."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "84a73ab9ff76f2c4e4485301536af11c125dee3b8fada2ff6e5b482613df9106",
-      "tokens.css": "7bd00ed92a002871deef4c2b8e86bd0be38a04925b110dcca2cd6e33aea7cca4",
+      "index.html": "7452765a4857f70cf893aff7f353d99b9e80c14ae044e2cc3f62245779e15d3f",
+      "tokens.css": "bf1af8395b81edaa46ec3bb1aa0a208edcf34de7aae119e707c625695e5efc14",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
       "blueprint.json": "a5916e8f545416644233db3367962fce065d760a70094dd0bd96e445a69f332a"
     }

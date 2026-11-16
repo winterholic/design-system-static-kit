@@ -131,7 +131,7 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 @media(prefers-contrast:more){:root{--kit-border:var(--kit-rule)}.kit-card,.kit-form,.kit-chart,.kit-table-wrap{border-width:2px}}
 @media(forced-colors:active){.kit-button,.kit-card,.kit-form,.kit-field input,.kit-field select,.kit-field textarea{border:1px solid CanvasText}.kit-bar{background:Highlight;forced-color-adjust:none}.kit-tablist [aria-selected=true]{outline:2px solid Highlight}.kit-switch i{border:1px solid CanvasText}}
 @media print{.kit-skip,.kit-header{display:none!important}.kit-shell{display:block!important}.kit-main{max-width:none;padding:0}.kit-card,.kit-form,.kit-notice,.kit-chart,.kit-plan{break-inside:avoid}}
-/* Context composition 1.0.0: compiler-owned decisions; catalog/composition.mjs */
+/* Context composition 1.1.0: compiler-owned decisions; catalog/composition.mjs */
 .kit-main,.kit-section-inner,.kit-split-cell,.kit-aside-main,.kit-aside-side,.kit-tabpanel,.kit-layout-region{container:kit compose/inline-size}.kit-layout-region{min-width:0}
 [data-design-kind="page-header"][data-design-role="page-heading"]:not([data-lead]) h1{font-size:var(--kit-t-app)}
 [data-design-kind="card"][data-design-role="product"] .kit-card-body>:is(h2,h3,h4,h5),[data-design-kind="card"][data-design-role="product"] .kit-card-body>.kit-stretch>:is(h2,h3,h4,h5){font-size:var(--kit-t-body)}
@@ -143,3 +143,7 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 [data-design-kind=form][data-variant=two-column] .kit-form-fields{grid-template-columns:1fr}
 [data-design-kind=form][data-variant=inline] .kit-form-fields{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
 @container form (min-width:456px){[data-design-kind=form][data-field-min="220"][data-variant=two-column] .kit-form-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.kit-aside[data-design-kind=aside][data-aside-min="644"]{grid-template-columns:1fr;gap:var(--kit-gap)}
+.kit-aside[data-design-kind=aside][data-sticky=yes]>.kit-aside-side{position:static}
+@container compose (min-width:644px){.kit-aside[data-design-kind=aside][data-aside-min="644"]{grid-template-columns:minmax(0,1fr) 300px}.kit-aside[data-design-kind=aside][data-aside-min="644"][data-side=start]{grid-template-columns:300px minmax(0,1fr)}.kit-aside[data-design-kind=aside][data-aside-min="644"][data-sticky=yes]>.kit-aside-side{position:sticky}.kit-aside[data-design-kind=aside][data-aside-min="644"][data-side=start]>.kit-aside-side{order:0}}

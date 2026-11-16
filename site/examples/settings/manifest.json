@@ -1102,7 +1102,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1112,6 +1112,7 @@
           "semantic": "page-header",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1119,6 +1120,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "workspace"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1141,6 +1150,7 @@
           "semantic": "form",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "tab",
           "siblingCount": 1,
           "titleCpl": 5,
@@ -1148,6 +1158,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "workspace"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "settings",
@@ -1176,6 +1195,7 @@
           "semantic": "form",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "tab",
           "siblingCount": 1,
           "titleCpl": 5,
@@ -1183,6 +1203,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "workspace"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C11",
+            "C12",
+            "C18"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "settings",
@@ -1211,6 +1240,7 @@
           "semantic": "list",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "tab",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1218,6 +1248,13 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "workspace"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C14"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "list",
@@ -1231,13 +1268,88 @@
           "C14"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "tabs",
+        "mode": "inherited",
+        "contracts": [
+          "S02",
+          "S06",
+          "runtime/ARIA-tabs"
+        ],
+        "reason": "Scrollable tabs retain keyboard navigation and token-sized controls."
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[2]",
+        "type": "tab",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[2].children[1]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "notice",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "S04",
+          "state/semantics"
+        ],
+        "reason": "Status tone and live-region meaning own notice presentation."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "755360b884afb5c5d07d0f889a3c8b76220ae7a8fa337aa4e8c724d58b51ecb8",
-      "tokens.css": "03676b6bb463de8bbab7050cc60743c3838abd509c92b28a9f43031be2d27808",
+      "index.html": "3cb6ac2065f50e4ad47107e41ad1a5ac302829073ccb3a51f9dbbd635ba19f40",
+      "tokens.css": "c7e2f62bc83672c5225a7bd97fabe9103111ae1146b18a5336c93eeabcaa0e1c",
       "tokens.json": "9e30877010973c078450bcc922918727514747bc5d0096625bbd5824191a7cca",
       "blueprint.json": "84d1d3461bb80f79193e64bbf38e1e72bb3163c12ad4ac44d767968dff39e0e6"
     }

@@ -1101,7 +1101,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1111,6 +1111,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1118,6 +1119,14 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "manual"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1132,13 +1141,14 @@
         ]
       },
       {
-        "path": "$.tree.children[2]",
-        "type": "table",
+        "path": "$.tree.children[1]",
+        "type": "timeline",
         "facts": {
-          "type": "table",
-          "semantic": "table",
+          "type": "timeline",
+          "semantic": "timeline",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1146,6 +1156,47 @@
           "density": "comfortable",
           "typography": "tech",
           "theme": "manual"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C29"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "sequence"
+        },
+        "sources": {
+          "role": "C29"
+        },
+        "applied": [
+          "C29"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "table",
+        "facts": {
+          "type": "table",
+          "semantic": "table",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "tech",
+          "theme": "manual"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C13"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "table",
@@ -1159,13 +1210,25 @@
           "C13"
         ]
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "e48293898a41bc3f7309e5dd1506c4ac2c31874a193521debf6b5d6591213c32",
-      "tokens.css": "f085db5bfe6c64c292d3be655816d413f8283e2c78d10eb972a7095cf11157c9",
+      "index.html": "315e87fb341833ec06b5d3b95c91c26eba360cf58c1f23edb4ef068b9de56b2c",
+      "tokens.css": "aad06b20f35969760a0e785270f78c39b223dd7a2afd369e94339bf1b5fa7cf6",
       "tokens.json": "01f10dc2d512ae3b30fab51f2b4c5d6e47bd4813cfd131815141c5dfb0a44a2c",
       "blueprint.json": "c4f66a6db43db07ec3183dcc0c8a7e709e1831adbde458a5d131fbcf34cdd196"
     }

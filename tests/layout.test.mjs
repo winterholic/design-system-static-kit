@@ -40,8 +40,10 @@ test('generated flow CSS is container-based, covers every count, and renders att
   assert.equal(flowAttrs(3, 3), ' data-flow data-n="3" data-cap="3"');
   assert.equal(flowAttrs(3, 2, 'dense'), ' data-flow data-n="3" data-cap="2" data-dense');
   assert.equal(flowAttrs(5, 3, 'span'), ' data-flow data-n="5" data-cap="3" data-span');
-  const page = compile(createBlueprint('saas-landing')).html;
+  const page = compile({...createBlueprint('saas-landing'), catalogVersion: '2.1.0'}).html;
   assert.match(page, /<div class="kit-plans" data-count="3" data-flow data-n="3" data-cap="3">/);
+  const contextual = compile(createBlueprint('saas-landing')).html;
+  assert.match(contextual, /<div class="kit-plans" data-count="3" data-flow data-n="3" data-cap="3" data-span data-flow-min="280" data-flow-gap="24">/);
 });
 
 test('bento: only cells with a picture grow to 2x2; every row fills the four columns', () => {

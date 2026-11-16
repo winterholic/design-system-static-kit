@@ -1133,7 +1133,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1143,6 +1143,7 @@
           "semantic": "page-header",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1150,6 +1151,14 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1172,6 +1181,7 @@
           "semantic": "grid",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 4,
           "titleCpl": 5,
@@ -1179,6 +1189,13 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C17"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "flow"
@@ -1206,6 +1223,7 @@
           "semantic": "metric",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1213,6 +1231,13 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C10"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "summary",
@@ -1246,6 +1271,7 @@
           "semantic": "metric",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1253,6 +1279,13 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C10"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "summary",
@@ -1286,6 +1319,7 @@
           "semantic": "metric",
           "intent": "operation",
           "nested": false,
+          "supporting": false,
           "parent": "grid",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1293,6 +1327,13 @@
           "density": "comfortable",
           "typography": "rounded",
           "theme": "hub"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C10"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "summary",
@@ -1318,13 +1359,222 @@
           "border": 2
         }
       }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "progress",
+        "mode": "inherited",
+        "contracts": [
+          "S01",
+          "state/progressbar"
+        ],
+        "reason": "The value remains adjacent to its label with progress semantics."
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "kanban",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "lane",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[0]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[1]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[2]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[0].children[3]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[1]",
+        "type": "lane",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[1].children[0]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[1].children[1]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[1].children[2]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[2]",
+        "type": "lane",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[2].children[0]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[2].children[1]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[3]",
+        "type": "lane",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[3].children[0]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[3].children[1]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      },
+      {
+        "path": "$.tree.children[3].children[3].children[2]",
+        "type": "task",
+        "mode": "inherited",
+        "contracts": [
+          "layout/scroll",
+          "S01",
+          "S05"
+        ],
+        "reason": "Boards intentionally scroll and use compact nested task surfaces."
+      }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "66f7a90dad02dea4d85d653f57d50f72ca7b1485cfc8d7c1f0c8fcf6ee9b30cc",
-      "tokens.css": "09cb19cb2230503eefc2319c9c6110e30eb8880a902f374042325667fefb1542",
+      "index.html": "e37cc8edda18509c0e07bd3dfa5d7b1bd9ee3dfedaa8a93e91844ed076af4d6f",
+      "tokens.css": "605504ffcea78cad9efcce4eb4479d918b66cf65523d9291ae5701d6725bc767",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
       "blueprint.json": "c2d37e7fed581b4fa402eec44af558906f7bfc8615adbcd5838ab2058c4d5cd6"
     }

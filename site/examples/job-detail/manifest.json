@@ -1123,7 +1123,7 @@
     }
   },
   "design": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1133,6 +1133,7 @@
           "semantic": "page-header",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "page",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1140,6 +1141,14 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "page-heading",
@@ -1154,6 +1163,44 @@
         ]
       },
       {
+        "path": "$.tree.children[1]",
+        "type": "aside",
+        "facts": {
+          "type": "aside",
+          "semantic": "aside",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C19"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "supporting-layout"
+        },
+        "sources": {
+          "role": "C19"
+        },
+        "applied": [
+          "C19"
+        ],
+        "container": {
+          "sideWidth": 300,
+          "minWidth": 644
+        }
+      },
+      {
         "path": "$.tree.children[1].children[0]",
         "type": "section",
         "facts": {
@@ -1161,6 +1208,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": false,
+          "supporting": false,
           "parent": "aside",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1168,6 +1216,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -1190,6 +1247,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1197,6 +1255,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -1222,6 +1289,7 @@
           "semantic": "list",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 2,
           "titleCpl": 5,
@@ -1229,6 +1297,13 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C14"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "list",
@@ -1250,6 +1325,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1257,6 +1333,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -1282,6 +1367,7 @@
           "semantic": "list",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 1,
           "titleCpl": 5,
@@ -1289,6 +1375,13 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C14"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "list",
@@ -1310,6 +1403,7 @@
           "semantic": "section",
           "intent": "reading",
           "nested": true,
+          "supporting": false,
           "parent": "section",
           "siblingCount": 3,
           "titleCpl": 5,
@@ -1317,6 +1411,15 @@
           "density": "comfortable",
           "typography": "sans",
           "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
         },
         "values": {
           "role": "section-heading",
@@ -1333,14 +1436,138 @@
           "C04",
           "C05"
         ]
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[2].children[0]",
+        "type": "steps",
+        "facts": {
+          "type": "steps",
+          "semantic": "steps",
+          "intent": "reading",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C35"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "procedure"
+        },
+        "sources": {
+          "role": "C35"
+        },
+        "applied": [
+          "C35"
+        ]
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "properties",
+        "facts": {
+          "type": "properties",
+          "semantic": "properties",
+          "intent": "reading",
+          "nested": false,
+          "supporting": true,
+          "parent": "aside",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "cta",
+        "facts": {
+          "type": "cta",
+          "semantic": "cta",
+          "intent": "reading",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 3,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "sans",
+          "theme": "enterprise"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C33"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "next-action"
+        },
+        "sources": {
+          "role": "C33"
+        },
+        "applied": [
+          "C33"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[0].children[0].children[0]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
       }
     ]
   },
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "3962b60b921ab40a0754fc32e4a298c9dfbcf31ed30481df37e354a3d024596a",
-      "tokens.css": "088f0b7d381ee670630a9a39085b05f07724957ac090febc5d23b77848efbc4f",
+      "index.html": "698fa1fb42c5b8832fc2d585c4c633c7c83538205b5b569289dee56be4e6fd13",
+      "tokens.css": "445aa42d10300794d51abcd5639ddf0138e068a1dc219949792f008a0a1788f1",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
       "blueprint.json": "9206e8b6190982ef1bbd59565f481cfa9f67a28f4426ecf74ba36c21cbed0e74"
     }

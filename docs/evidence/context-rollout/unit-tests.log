@@ -1,0 +1,202 @@
+
+> @winterholic/design-system-static-kit@2.0.0 test
+> node --test
+
+✔ catalog scale: at least the peer repository on themes, layouts, page structures and icons (0.420416ms)
+✔ every palette is sourced from rendered Coolors evidence, and every theme recommends 6+ of them (2.758709ms)
+✔ palette library covers every colour family and is not dominated by violet-blue (0.456416ms)
+✔ theme variants only use catalog values, respect the theme's own bans, and change something (33.941959ms)
+✔ any palette can be combined with any theme and template, so the 1:1 pairing is gone (10.902666ms)
+✔ every one of the peer repository's system archetypes is covered by a named theme (0.141291ms)
+✔ every value of every axis is implemented in CSS/render tables (16.77225ms)
+✔ node specs are internally consistent (0.266209ms)
+✔ every node example validates inside a page and compiles (65.057458ms)
+✔ all templates are valid on their own theme and carry accessible navigation (106.444875ms)
+✔ each template compiles under every theme with that theme's defaults (284.26375ms)
+✔ theme defaults satisfy every ban and forbid, and forbid values exist (0.364208ms)
+✔ themes differ: no two themes share the same default axis profile (0.09775ms)
+✔ every icon referenced by nodes and templates exists and is drawn (0.856084ms)
+✔ schema is generated from the catalog and covers all nodes, axes and palettes (0.088459ms)
+✔ every rule has an id, intent and enforcement codes; bans carry sources and fixes (0.049416ms)
+✔ migrateV1 upgrades a catalog-1.0 blueprint and refuses unknown themes (0.184292ms)
+✔ repairAxes resolves bans without leaving the catalog (0.06225ms)
+✔ layout, content-structure and icon coverage maps reference real catalog parts and cover every peer entry (0.218167ms)
+✔ mega menus and media overlays are validated and rendered (2.364167ms)
+✔ CLI validates and produces portable reproducible managed files (477.059708ms)
+✔ CLI init, templates, themes and catalog commands work and init refuses to overwrite (585.098208ms)
+✔ CLI migrate upgrades a v1 blueprint (274.787916ms)
+✔ checker rejects HTML/CSS edits, missing files and undeclared additions (774.959083ms)
+✔ invalid build does not touch output and unmanaged directories are refused (195.480042ms)
+✔ CLI size cap, syntax errors and unknown commands fail explicitly (372.224416ms)
+✔ checker refuses symbolic links to managed files (198.075625ms)
+✔ the single-file gallery bundle runs the very same compiler as Node (49.58075ms)
+✔ combos: the list is exactly the product of every template's layout slots (the audit's count) (421.798458ms)
+✔ combos: ids are stable text and round-trip (0.88ms)
+✔ combos: sameAs only points backwards at a combo of the same template (0.166709ms)
+✔ combos: every combo compiles and validates in its default view and under rotating theme, variant, palette and mode (12488.737917ms)
+✔ combos: the view only changes theme, palette and mode — the layout choice always survives (3.263459ms)
+✔ combos: view normalisation drops unknown or inconsistent values and round-trips through the URL (0.360875ms)
+✔ combos: concepts restrict the list to their templates and look/typography resolve into the blueprint (3.166458ms)
+✔ combos: experimental combos are flagged and can be filtered out (0.678625ms)
+✔ combos: facets count every option, and slot filters partition the list (2.789541ms)
+✔ combos: search, type, template, same-screen and sort filters (11.357583ms)
+✔ combos: shuffled is a permutation and never mutates the input (0.079084ms)
+✔ combos: the flag export names the combo, the view, the note and a re-openable URL (0.169ms)
+✔ all templates compile deterministically with manifest and CSP (233.184666ms)
+✔ unknown templates and themes fail clearly (0.242375ms)
+✔ contrast reference values (0.086667ms)
+✔ every palette in light and dark satisfies all used pairs (text, status, focus, chart, gradients, accent) (406.59375ms)
+✔ auto mode ships both token sets and verifies both (1.971ms)
+✔ inverse sections and CTAs use the opposite mode's verified token set (2.604125ms)
+✔ reject arbitrary top-level override and node CSS or raw HTML (1.484333ms)
+✔ reject mismatched theme/palette, unknown enums, version locks, prototype ids (2.310458ms)
+✔ reject unknown node type and illegal edges (0.905459ms)
+✔ require exactly one page header first (0.761541ms)
+✔ data shape rules: table, chart, calendar, trend, selected ranges (1.314958ms)
+✔ unsafe URLs, vague labels and missing anchors (1.928791ms)
+✔ escape text, never markup (1.693917ms)
+✔ forms: unique ids, option contracts, accessibility markup for every field type (1.716542ms)
+✔ state markup for data parts and ready-needs-data rule (3.594125ms)
+✔ only one primary action per group, across every group-bearing part (0.687875ms)
+✔ structure rules: single hero at position 2, one featured plan, nested tabs, variants (1.024458ms)
+✔ axis bans reject with ids and reasons; theme forbids reject their own values (0.869833ms)
+✔ page type contracts (1.001875ms)
+✔ navigation rules: counts, icons, footer links, per shell (0.821125ms)
+✔ reject excess depth, node count, missing and malformed inputs without crashing (1.082667ms)
+✔ artifact contrast diagnostics are conservative while gates use raw ratios (1.824458ms)
+✔ compiler emits skip link, landmarks, labelled controls and keyboard-reachable scrollers (2.129ms)
+✔ charts expose text alternatives and a data table (0.866708ms)
+✔ tabs, theme and mode attributes reach the document (7.953084ms)
+✔ nav group labels: vertical shells only, contiguous, one current page (12.822666ms)
+✔ code blocks ship a copy button, a status region and colored tokens; the runtime handles the click (3.706375ms)
+✔ hero facts live in the copy column of statement/cover/centered heroes and are rejected elsewhere (11.292125ms)
+✔ profile header, release timeline, photo menu and calendar tones render their parts (7.890625ms)
+✔ survey radios become selectable tiles, rail timelines run across, tutorial pairs steps with the command (2.95875ms)
+✔ every template still passes after the part upgrades (no template lost its page-type contract) (13.476541ms)
+✔ every catalog component has an explicit contextual or inherited contract and every visited node is traceable (15.226625ms)
+✔ team biographies request readable cells instead of the mobile dense two-column floor (4.406583ms)
+✔ aside layouts and media compositions query the allocated container (3.926041ms)
+✔ pricing inside a supporting region uses a smaller inset while primary pricing keeps its hierarchy (6.000167ms)
+✔ extreme summary content reports finite budget saturation without truncation or content mutation (2.698292ms)
+✔ rollout examples compile deterministically within the existing type, spacing and layout vocabularies (311.593458ms)
+✔ new catalogs expose versioned, deterministic composition decisions without mutating the blueprint (15.544125ms)
+✔ all 2.1 templates preserve the original complete compiler output byte for byte (134.378375ms)
+✔ long summary content asks the existing flow primitive for more room instead of shrinking the KPI below its label (3.250667ms)
+✔ semantic card roles override generic presentation but preserve catalog variants (1.209583ms)
+✔ contained forms and splits use declared container rules with traceable decisions (3.087834ms)
+✔ catalog upgrade is explicit, lossless and does not repair invalid content (0.388541ms)
+✔ declarative design rules are serializable and consumer input cannot replace them (0.323042ms)
+✔ priority is independent of table order and equal-priority conflicts fail explicitly (0.236667ms)
+✔ contextual CSS stays inside the existing type, spacing and layout contracts (21.990042ms)
+✔ content flow breakpoints include the actual chosen gap and allow only fitting columns (0.313791ms)
+✔ hero columns are intrinsic to their own content box and carry a content-derived minimum (1.844ms)
+✔ commerce section headings remain subordinate to the compact commerce page title (2.854333ms)
+✔ summary leading and hero framing carry explicit policies for glyph room and contained media (1.958708ms)
+✔ concepts: 17 subjects, each with several templates and several looks (0.500458ms)
+✔ concepts end the one-theme-one-template shape: every template is reachable from at least two concepts or is a domain template with its own theme (0.566041ms)
+✔ every concept × template × look compiles and validates (typography override included) (609.820541ms)
+✔ typography is independent of the theme: any preset can be applied to any theme (1.172834ms)
+✔ themes now carry typography variants next to their layout variants (1.537916ms)
+✔ grade rule: A is clean, B has only minor findings, C has any severe finding (0.454584ms)
+✔ the committed diagnosis covers exactly the current catalog and the experimental list is its C grades (402.427375ms)
+✔ quality floor: no severe finding survives in most of the catalog, and every experimental combo names why (0.371959ms)
+✔ no item count from 2 to 12 leaves a single orphan on the last row at any container width (plain, span and dense flows) (1.236667ms)
+✔ column counts never exceed the cap or what the container width allows, and never drop a cell below the minimum width (0.184292ms)
+✔ bestCols picks full rows first, and the well-known cases are what a designer would choose (0.098709ms)
+✖ generated flow CSS is container-based, covers every count, and renders attributes the CSS can match (8.174916ms)
+✔ bento: only cells with a picture grow to 2x2; every row fills the four columns (0.211791ms)
+✔ docs/layout.md is generated and names every primitive (0.112417ms)
+✔ lintLayout: equal-column grids are declared only by the flow primitive and the listed frames (7.425291ms)
+✔ catalog motif enum and drawn motifs are the same list (no value without a picture, no picture without a value) (0.716292ms)
+✔ every motif draws for every ratio from token classes only: no hard-coded colors, no external references (5.248708ms)
+✔ gradient ids stay unique on a page that repeats the same motif (11.374542ms)
+✔ motif is only valid on photo slots, and only with catalog values (3.404208ms)
+✔ product card fields: listPrice needs price, reviews need rating, discount is computed not authored (7.870375ms)
+✔ every template still ships alt text for each picture it draws and a unique id per svg gradient (112.513917ms)
+✔ summary thumbnail and gallery showcase render their parts (1.140125ms)
+✔ spacing scale keeps proximity order in every density and stays on the 4px grid (1.670042ms)
+✔ every margin/padding/gap in the style sources is a token or on the 4px grid (no 6/10/14px, no .9 multipliers) (5.402417ms)
+✔ spacing lint rejects off-scale values, odd multipliers, stray clamp (negative controls) (0.218166ms)
+✔ the generated contract layer gives every titled part the same title→content rule (13.834375ms)
+✔ docs/spacing.md source lists every relation, token and the fluid allow-list (0.174166ms)
+✔ structure rules S05: surfaced sections do not nest and sections nest at most two deep (18.330125ms)
+✔ axisVars emits the full token set for the chosen density only (0.233417ms)
+✔ checker passes a real compiled page with proof-of-scan stats (9.807792ms)
+✔ checker fails each defect class with its code (negative controls) (16.132292ms)
+✔ checker accepts aria-labelled icon-only controls (pagination) (2.298208ms)
+✔ checker flags wrong script content (2.140375ms)
+✔ checker vague-label set mirrors the validator (1.821083ms)
+✔ expected script hash matches the real form runtime (0.281125ms)
+✔ typography axis is exactly the preset table, with at least 16 presets (0.601417ms)
+✔ every preset is a complete voice: stacks end in a Korean fallback, ratio/tracking/leading stay in range (0.282041ms)
+✔ size roles keep their order under every preset and scale: micro < … < body < sub < heading < title < display (2.482333ms)
+✔ large roles (above 24px) are owned by a slot; small roles are free (0.303333ms)
+✔ the stylesheet sources contain no raw font-size and no font shorthand (lintType finds nothing) (7.038792ms)
+✔ lintType rejects raw sizes, unknown roles, shorthand, and a large role outside its slot (negative controls) (0.167625ms)
+✔ compiled pages emit every role and the preset voice; no page carries a raw size (19.7595ms)
+✔ every preset compiles on a template, and the axis bans that mention typography still hold (18.903417ms)
+✔ docs/typography.md is generated from the table (0.826375ms)
+✔ layout variants: every offered option changes the template, keeps it valid, and never mutates the source (137.714458ms)
+✔ layout variants: choices compose, "default" is a no-op, unknown choices are errors, and the hero swap respects hero rules (8.704917ms)
+✔ layout variants: the number of distinct template compositions is large and counted from the data (31.838792ms)
+✔ every template has an own theme that wears it, and 25 templates were added in round 5 (0.141042ms)
+✔ viewport: fixed device widths scale to fit instead of overflowing or clipping (0.198208ms)
+✔ axis controls: theme bans block, rule conflicts adjust the other axis, and the chosen value always wins (0.44275ms)
+✔ palette picker: recommendations lead, filters narrow, search finds, the selection is always shown (5.631917ms)
+✔ calendar renders a compact agenda for narrow containers and stepper labels can collapse (2.940125ms)
+✔ 6차 quality rules: options that the diagnosis found ugly are not offered where they do not belong (98.597291ms)
+ℹ tests 143
+ℹ suites 0
+ℹ pass 142
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13326.333458
+
+✖ failing tests:
+
+test at tests/layout.test.mjs:34:1
+✖ generated flow CSS is container-based, covers every count, and renders attributes the CSS can match (8.174916ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /<div class="kit-plans" data-count="3" data-flow data-n="3" data-cap="3">/. Input:
+  
+  '<!doctype html>\n' +
+    `<html lang="ko" data-theme="light" data-motion="subtle"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'"><meta name="color-scheme" content="light"><meta name="theme-color" content="#FCFDFD"><meta name="generator" content="Static Kit 2.2.0"><title>플로우웍스</title><style>\n` +
+    '/* Generated from catalog 2.2.0. Edit the blueprint, then rebuild. */\n' +
+    ':root{--kit-canvas:#FCFDFD;--kit-surface:#FFFFFF;--kit-soft:#F4F8FA;--kit-sunken:#F3F4F4;--kit-accentSoft:#E9EDF1;--kit-text:#1E2B36;--kit-muted:#596B80;--kit-action:#476F8A;--kit-onAction:#FFFFFF;--kit-actionHover:#3E6279;--kit-onActionHover:#FFFFFF;--kit-link:#476F8A;--kit-focus:#5A8DAF;--kit-rule:#78818E;--kit-border:#CED9E2;--kit-success:#18714C;--kit-warning:#946000;--kit-danger:#B83543;--kit-info:#2A63C9;--kit-accent:#274C77;--kit-onAccent:#FFFFFF;--kit-accentInk:#274C77;--kit-chart1:#6096BA;--kit-chart2:#274C77;--kit-chart3:#8F9294;--kit-chart4:#7796B0;--kit-chart5:#447199;--kit-shade:rgba(16,21,28,.14);--kit-heading:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic","Nanum Gothic",sans-serif;--kit-font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic","Nanum Gothic",sans-serif;--kit-mono:"SFMono-Regular","SF Mono","Menlo",Consolas,"Apple SD Gothic Neo","Noto Sans Mono CJK KR","D2Coding","Nanum Gothic Coding",monospace;--kit-hw:800;--kit-line:1.65;--kit-t-micro:11px;--kit-t-caption:12px;--kit-t-label:13px;--kit-t-small:14px;--kit-t-ui:15px;--kit-t-body:16px;--kit-t-body-l:17px;--kit-t-prose:18px;--kit-t-lead:clamp(18px,1.6vw,20px);--kit-t-sub:20px;--kit-t-sub-l:clamp(18px,1.7vw,22px);--kit-t-quote:clamp(18px,1.7vw,22px);--kit-t-quote-s:19px;--kit-t-quote-l:clamp(21px,2.2vw,29px);--kit-t-glyph:33px;--kit-t-app:clamp(24px,2.2vw,28px);--kit-t-heading:clamp(24px,2.6vw,33px);--kit-t-heading-s:clamp(21px,2vw,26px);--kit-t-cta:clamp(27px,2.8vw,36px);--kit-t-stat:clamp(29px,3.2vw,41px);--kit-t-stat-s:clamp(23px,2.3vw,29px);--kit-t-price:clamp(29px,3.1vw,39px);--kit-t-fact:clamp(28px,3.4vw,44px);--kit-t-logo:clamp(18px,1.5vw,20px);--kit-t-title:clamp(33px,3.8vw,49px);--kit-t-display:clamp(38px,5vw,64px);--kit-t-poster:clamp(42px,5.5vw,70px);--kit-t-mast:clamp(28px,6vw,56px);--kit-t-code:clamp(96px,19vw,176px);--kit-tr-display:-0.035em;--kit-tr-title:-0.035em;--kit-tr-heading:-0.03em;--kit-tr-sub:-0.02em;--kit-tr-label:0.04em;--kit-lh-display:1.1;--kit-lh-title:1.15;--kit-lh-heading:1.22;--kit-lh-sub:1.3;--kit-case-label:none;--kit-nums:normal;--kit-sp-tight:4px;--kit-sp-near:8px;--kit-sp-item:12px;--kit-sp-head:16px;--kit-sp-sub:16px;--kit-gap:24px;--kit-inset:24px;--kit-sp-inset-s:16px;--kit-sp-inset-l:36px;--kit-section:40px;--kit-sp-section-s:20px;--kit-sp-section-m:32px;--kit-sp-section-l:48px;--kit-band:80px;--kit-sp-band-s:32px;--kit-sp-band-m:48px;--kit-control:44px;--kit-gutter:32px;--kit-bleed:max(var(--kit-gutter),calc((100% - var(--kit-max)) / 2 + var(--kit-gutter)));--kit-bleedx:max(var(--kit-gutter),calc((100vw - var(--kit-max)) / 2 + var(--kit-gutter)));--kit-radius:10px;--kit-r-control:999px;--kit-r-field:12px;--kit-r-tag:999px;--kit-open-mr:var(--kit-radius);--kit-zoom:0.025;--kit-open-bg:transparent;--kit-open-border:0 solid transparent;--kit-open-shadow:none;--kit-open-pad:0px;--kit-open-radius:0px;--kit-card-border:1px solid var(--kit-border);--kit-shadow:0 1px 2px var(--kit-shade),0 6px 16px -8px var(--kit-shade);--kit-shadow-hover:0 2px 4px var(--kit-shade),0 12px 24px -10px var(--kit-shade);--kit-dur:150ms;--kit-ease:cubic-bezier(.2,0,0,1);--kit-lift:-1px;--kit-bw:700;--kit-max:1080px;--kit-page-bg:var(--kit-canvas);--kit-icon-sw:2;--kit-icon-cap:round;--kit-icon-join:round;--kit-icon-fill:none;color-scheme:light;}\n' +
+    '*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}\n' +
+    'body{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font-size:var(--kit-t-body);line-height:var(--kit-line);font-family:var(--kit-font);font-variant-numeric:var(--kit-nums);word-break:keep-all;overflow-wrap:break-word;line-break:strict;min-height:100vh}\n' +
+    'a{color:var(--kit-link);text-underline-offset:4px}button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button,a,input,textarea,select,summary{touch-action:manipulation}\n' +
+    ':focus-visible{outline:3px solid var(--kit-focus);outline-offset:3px}input[type=checkbox],input[type=radio]{margin:0}\n' +
+    'h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,ul,ol{margin:0}ul,ol{padding:0}\n' +
+    'h1,h2,h3,h4,h5,h6{font-family:var(--kit-heading);font-weight:var(--kit-hw);line-height:var(--kit-lh-sub);letter-spacing:var(--kit-tr-sub);text-wrap:balance}\n' +
+    ':where(p,li,dd,dt,blockquote,figcaption,summary){text-wrap:pretty}.kit-button,.kit-chip,.kit-tag,.kit-badge{text-wrap:balance}\n' +
+    'h1{font-size:var(--kit-t-title);max-width:22em;line-height:var(--kit-lh-title);letter-spacing:var(--kit-tr-title)}h2{font-size:var(--kit-t-heading);line-height:var(--kit-lh-heading);letter-spacing:var(--kit-tr-heading)}h3{font-size:var(--kit-t-sub);line-height:var(--kit-lh-sub);letter-spacing:var(--kit-tr-sub)}h4,h5,h6{font-size:var(--kit-t-body-l);line-height:1.4;letter-spacing:var(--kit-tr-sub)}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}\n' +
+    "/* A part's own title is a component heading (h3 step) no matter which outline level it carries; only section heads and heroes use the h2 step. */\n" +
+    ':is(.kit-card,.kit-form,.kit-table-wrap,.kit-chart,.kit-list,.kit-summary,.kit-buybox,.kit-props,.kit-links,.kit-calendar,.kit-md-detail,.kit-progress,.kit-reviews,.kit-menu,.kit-plan,.kit-code,.kit-team,.kit-faq,.kit-steps,.kit-timeline,.kit-chat,.kit-lane,.kit-md,.kit-gallery,.kit-reel,.kit-features,.kit-notice,.kit-quote,.kit-metric) :is(h2,h3,h4){font-size:var(--kit-t-sub);line-height:1.3}\n' +
+    'body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}\n' +
+    '.kit-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}\n' +
+    ".kit-muted{color:var(--kit-muted);font-size:var(--kit-t-small)}.kit-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:var(--kit-t-label);font-weight:700;letter-spacing:var(--kit-tr-label);text-transform:var(--kit-case-label);color:var(--kit-accentInk)}.kit-eyebrow::before{content:'';width:24px;height:2px;border-radius:2px;background:currentColor;flex:none}.kit-meta{font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-quiet{font-size:var(--kit-t-small);font-weight:600;color:var(--kit-muted);letter-spacing:.02em}\n" +
+    '.kit-skip{position:fixed;top:-100px;left:16px;background:var(--kit-surface);color:var(--kit-text);padding:12px;z-index:50;border:2px solid var(--kit-focus)}.kit-skip:focus{top:12px}\n' +
+    '.kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}.kit-flip{transform:scaleX(-1)}\n' +
+    '.kit-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--kit-control);padding:8px 24px;border:1px solid var(--kit-rule);border-radius:var(--kit-r-control);background:var(--kit-surface);color:var(--kit-text);font-weight:var(--kit-bw);font-size:var(--kit-t-ui);line-height:1.3;letter-spacing:-.005em;text-decoration:none;text-align:center;cursor:pointer;transition:background var(--kit-dur) var(--kit-ease),color var(--kit-dur) var(--kit-ease),box-shadow var(--kit-dur) var(--kit-ease),transform var(--kit-dur) var(--kit-ease)}\n' +
+    '.kit-button[data-variant=primary]{background:var(--kit-action);color:var(--kit-onAction);border-color:var(--kit-action);box-shadow:0 1px 2px var(--kit-shade)}.kit-button[data-variant=primary]:hover{background:var(--kit-actionHover);color:var(--kit-onActionHover);border-color:var(--kit-actionHover)}.kit-button[data-variant=ghost]{background:transparent;border-color:transparent;color:var(--kit-link);text-decoration:underline;text-underline-offset:4px;padding-inline:4px}.kit-button[data-variant=secondary]:hover{background:var(--kit-soft)}.kit-button:hover{transform:translateY(var(--kit-lift))}\n' +
+    '.kit-badge{display:inline-flex;align-items:center;gap:4px;font-size:var(--kit-t-caption);font-weight:600;padding:4px 12px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}\n' +
+    ".kit-badge[data-dot]::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--kit-muted);flex:none}.kit-badge[data-dot=success]::before{background:var(--kit-success)}.kit-badge[data-dot=info]::before{background:var(--kit-info)}.kit-badge[data-dot=warning]::before{background:var(--kit-warning)}.kit-badge[data-dot=danger]::before{background:var(--kit-danger)}\n" +
+    '.kit-card-icon{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:calc(var(--kit-radius) * .6);background:var(--kit-accentSoft);color:var(--kit-accentInk);flex:none}.kit-card-icon .kit-icon{width:24px;height:24px}\n' +
+    '.kit-plan,.kit-buybox{container-type:inline-size}.kit-price{font-weight:var(--kit-hw);font-size:var(--kit-t-price);line-height:1.1;font-family:var(--kit-heading);font-size:min(var(--kit-t-price),calc(100cqw * var(--kit-vfit,1)));letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums;overflow-wrap:normal}.kit-price[data-vl="4"]{--kit-vfit:0.2404}.kit-price[data-vl="5"]{--kit-vfit:0.1923}.kit-price[data-vl="6"]{--kit-vfit:0.1603}.kit-price[data-vl="7"]{--kit-vfit:0.1374}.kit-price[data-vl="8"]{--kit-vfit:0.1202}.kit-price[data-vl="9"]{--kit-vfit:0.1068}.'... 91265 more characters
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/design-system-static-kit/tests/layout.test.mjs:44:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `<!doctype html>\n<html lang="ko" data-theme="light" data-motion="subtle"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'"><meta name="color-scheme" content="light"><meta name="theme-color" content="#FCFDFD"><meta name="generator" content="Static Kit 2.2.0"><title>플로우웍스</title><style>\n/* Generated from catalog 2.2.0. Edit the blueprint, then rebuild. */\n:root{--kit-canvas:#FCFDFD;--kit-surface:#FFFFFF;--kit-soft:#F4F8FA;--kit-sunken:#F3F4F4;--kit-accentSoft:#E9EDF1;--kit-text:#1E2B36;--kit-muted:#596B80;--kit-action:#476F8A;--kit-onAction:#FFFFFF;--kit-actionHover:#3E6279;--kit-onActionHover:#FFFFFF;--kit-link:#476F8A;--kit-focus:#5A8DAF;--kit-rule:#78818E;--kit-border:#CED9E2;--kit-success:#18714C;--kit-warning:#946000;--kit-danger:#B83543;--kit-info:#2A63C9;--kit-accent:#274C77;--kit-onAccent:#FFFFFF;--kit-accentInk:#274C77;--kit-chart1:#6096BA;--kit-chart2:#274C77;--kit-chart3:#8F9294;--kit-chart4:#7796B0;--kit-chart5:#447199;--kit-shade:rgba(16,21,28,.14);--kit-heading:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic","Nanum Gothic",sans-serif;--kit-font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic","Nanum Gothic",sans-serif;--kit-mono:"SFMono-Regular","SF Mono","Menlo",Consolas,"Apple SD Gothic Neo","Noto Sans Mono CJK KR","D2Coding","Nanum Gothic Coding",monospace;--kit-hw:800;--kit-line:1.65;--kit-t-micro:11px;--kit-t-caption:12px;--kit-t-label:13px;--kit-t-small:14px;--kit-t-ui:15px;--kit-t-body:16px;--kit-t-body-l:17px;--kit-t-prose:18px;--kit-t-lead:clamp(18px,1.6vw,20px);--kit-t-sub:20px;--kit-t-sub-l:clamp(18px,1.7vw,22px);--kit-t-quote:clamp(18px,1.7vw,22px);--kit-t-quote-s:19px;--kit-t-quote-l:clamp(21px,2.2vw,29px);--kit-t-glyph:33px;--kit-t-app:clamp(24px,2.2vw,28px);--kit-t-heading:clamp(24px,2.6vw,33px);--kit-t-heading-s:clamp(21px,2vw,26px);--kit-t-cta:clamp(27px,2.8vw,36px);--kit-t-stat:clamp(29px,3.2vw,41px);--kit-t-stat-s:clamp(23px,2.3vw,29px);--kit-t-price:clamp(29px,3.1vw,39px);--kit-t-fact:clamp(28px,3.4vw,44px);--kit-t-logo:clamp(18px,1.5vw,20px);--kit-t-title:clamp(33px,3.8vw,49px);--kit-t-display:clamp(38px,5vw,64px);--kit-t-poster:clamp(42px,5.5vw,70px);--kit-t-mast:clamp(28px,6vw,56px);--kit-t-code:clamp(96px,19vw,176px);--kit-tr-display:-0.035em;--kit-tr-title:-0.035em;--kit-tr-heading:-0.03em;--kit-tr-sub:-0.02em;--kit-tr-label:0.04em;--kit-lh-display:1.1;--kit-lh-title:1.15;--kit-lh-heading:1.22;--kit-lh-sub:1.3;--kit-case-label:none;--kit-nums:normal;--kit-sp-tight:4px;--kit-sp-near:8px;--kit-sp-item:12px;--kit-sp-head:16px;--kit-sp-sub:16px;--kit-gap:24px;--kit-inset:24px;--kit-sp-inset-s:16px;--kit-sp-inset-l:36px;--kit-section:40px;--kit-sp-section-s:20px;--kit-sp-section-m:32px;--kit-sp-section-l:48px;--kit-band:80px;--kit-sp-band-s:32px;--kit-sp-band-m:48px;--kit-control:44px;--kit-gutter:32px;--kit-bleed:max(var(--kit-gutter),calc((100% - var(--kit-max)) / 2 + var(--kit-gutter)));--kit-bleedx:max(var(--kit-gutter),calc((100vw - var(--kit-max)) / 2 + var(--kit-gutter)));--kit-radius:10px;--kit-r-control:999px;--kit-r-field:12px;--kit-r-tag:999px;--kit-open-mr:var(--kit-radius);--kit-zoom:0.025;--kit-open-bg:transparent;--kit-open-border:0 solid transparent;--kit-open-shadow:none;--kit-open-pad:0px;--kit-open-radius:0px;--kit-card-border:1px solid var(--kit-border);--kit-shadow:0 1px 2px var(--kit-shade),0 6px 16px -8px var(--kit-shade);--kit-shadow-hover:0 2px 4px var(--kit-shade),0 12px 24px -10px var(--kit-shade);--kit-dur:150ms;--kit-ease:cubic-bezier(.2,0,0,1);--kit-lift:-1px;--kit-bw:700;--kit-max:1080px;--kit-page-bg:var(--kit-canvas);--kit-icon-sw:2;--kit-icon-cap:round;--kit-icon-join:round;--kit-icon-fill:none;color-scheme:light;}\n*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}\nbody{margin:0;background:var(--kit-page-bg);color:var(--kit-text);font-size:var(--kit-t-body);line-height:var(--kit-line);font-family:var(--kit-font);font-variant-numeric:var(--kit-nums);word-break:keep-all;overflow-wrap:break-word;line-break:strict;min-height:100vh}\na{color:var(--kit-link);text-underline-offset:4px}button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button,a,input,textarea,select,summary{touch-action:manipulation}\n:focus-visible{outline:3px solid var(--kit-focus);outline-offset:3px}input[type=checkbox],input[type=radio]{margin:0}\nh1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd,ul,ol{margin:0}ul,ol{padding:0}\nh1,h2,h3,h4,h5,h6{font-family:var(--kit-heading);font-weight:var(--kit-hw);line-height:var(--kit-lh-sub);letter-spacing:var(--kit-tr-sub);text-wrap:balance}\n:where(p,li,dd,dt,blockquote,figcaption,summary){text-wrap:pretty}.kit-button,.kit-chip,.kit-tag,.kit-badge{text-wrap:balance}\nh1{font-size:var(--kit-t-title);max-width:22em;line-height:var(--kit-lh-title);letter-spacing:var(--kit-tr-title)}h2{font-size:var(--kit-t-heading);line-height:var(--kit-lh-heading);letter-spacing:var(--kit-tr-heading)}h3{font-size:var(--kit-t-sub);line-height:var(--kit-lh-sub);letter-spacing:var(--kit-tr-sub)}h4,h5,h6{font-size:var(--kit-t-body-l);line-height:1.4;letter-spacing:var(--kit-tr-sub)}p+p{margin-top:var(--kit-sp-head)}p{text-wrap:pretty}\n/* A part's own title is a component heading (h3 step) no matter which outline level it carries; only section heads and heroes use the h2 step. */\n:is(.kit-card,.kit-form,.kit-table-wrap,.kit-chart,.kit-list,.kit-summary,.kit-buybox,.kit-props,.kit-links,.kit-calendar,.kit-md-detail,.kit-progress,.kit-reviews,.kit-menu,.kit-plan,.kit-code,.kit-team,.kit-faq,.kit-steps,.kit-timeline,.kit-chat,.kit-lane,.kit-md,.kit-gallery,.kit-reel,.kit-features,.kit-notice,.kit-quote,.kit-metric) :is(h2,h3,h4){font-size:var(--kit-t-sub);line-height:1.3}\nbody{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}\n.kit-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}\n.kit-muted{color:var(--kit-muted);font-size:var(--kit-t-small)}.kit-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:var(--kit-t-label);font-weight:700;letter-spacing:var(--kit-tr-label);text-transform:var(--kit-case-label);color:var(--kit-accentInk)}.kit-eyebrow::before{content:'';width:24px;height:2px;border-radius:2px;background:currentColor;flex:none}.kit-meta{font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-quiet{font-size:var(--kit-t-small);font-weight:600;color:var(--kit-muted);letter-spacing:.02em}\n.kit-skip{position:fixed;top:-100px;left:16px;background:var(--kit-surface);color:var(--kit-text);padding:12px;z-index:50;border:2px solid var(--kit-focus)}.kit-skip:focus{top:12px}\n.kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}.kit-flip{transform:scaleX(-1)}\n.kit-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--kit-control);padding:8px 24px;border:1px solid var(--kit-rule);border-radius:var(--kit-r-control);background:var(--kit-surface);color:var(--kit-text);font-weight:var(--kit-bw);font-size:var(--kit-t-ui);line-height:1.3;letter-spacing:-.005em;text-decoration:none;text-align:center;cursor:pointer;transition:background var(--kit-dur) var(--kit-ease),color var(--kit-dur) var(--kit-ease),box-shadow var(--kit-dur) var(--kit-ease),transform var(--kit-dur) var(--kit-ease)}\n.kit-button[data-variant=primary]{background:var(--kit-action);color:var(--kit-onAction);border-color:var(--kit-action);box-shadow:0 1px 2px var(--kit-shade)}.kit-button[data-variant=primary]:hover{background:var(--kit-actionHover);color:var(--kit-onActionHover);border-color:var(--kit-actionHover)}.kit-button[data-variant=ghost]{background:transparent;border-color:transparent;color:var(--kit-link);text-decoration:underline;text-underline-offset:4px;padding-inline:4px}.kit-button[data-variant=secondary]:hover{background:var(--kit-soft)}.kit-button:hover{transform:translateY(var(--kit-lift))}\n.kit-badge{display:inline-flex;align-items:center;gap:4px;font-size:var(--kit-t-caption);font-weight:600;padding:4px 12px;line-height:1.4;background:var(--kit-soft);color:var(--kit-text);border-radius:var(--kit-r-tag);border:1px solid var(--kit-border);white-space:nowrap}.kit-badge[data-tone=brand]{background:var(--kit-accentSoft)}\n.kit-badge[data-dot]::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--kit-muted);flex:none}.kit-badge[data-dot=success]::before{background:var(--kit-success)}.kit-badge[data-dot=info]::before{background:var(--kit-info)}.kit-badge[data-dot=warning]::before{background:var(--kit-warning)}.kit-badge[data-dot=danger]::before{background:var(--kit-danger)}\n.kit-card-icon{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:calc(var(--kit-radius) * .6);background:var(--kit-accentSoft);color:var(--kit-accentInk);flex:none}.kit-card-icon .kit-icon{width:24px;height:24px}\n.kit-plan,.kit-buybox{container-type:inline-size}.kit-price{font-weight:var(--kit-hw);font-size:var(--kit-t-price);line-height:1.1;font-family:var(--kit-heading);font-size:min(var(--kit-t-price),calc(100cqw * var(--kit-vfit,1)));letter-spacing:-.035em;margin-top:8px;font-variant-numeric:tabular-nums;overflow-wrap:normal}.kit-price[data-vl="4"]{--kit-vfit:0.2404}.kit-price[data-vl="5"]{--kit-vfit:0.1923}.kit-price[data-vl="6"]{--kit-vfit:0.1603}.kit-price[data-vl="7"]{--kit-vfit:0.1374}.kit-price[data-vl="8"]{--kit-vfit:0.1202}.kit-price[data-vl="9"]{--kit-vfit:0.1068}.`... 91265 more characters,
+    expected: /<div class="kit-plans" data-count="3" data-flow data-n="3" data-cap="3">/,
+    operator: 'match',
+    diff: 'simple'
+  }
