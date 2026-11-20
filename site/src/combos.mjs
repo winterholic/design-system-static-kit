@@ -2,6 +2,7 @@ import {templateList, templates, themes, palettes, pageTypes, layoutOptionsOf, a
 import {compile, validateBlueprint} from './compiler.mjs';
 import {EXPERIMENTAL} from './combo-grades.mjs';
 import {TYPE} from './typography.mjs';
+import {recipePicks} from './recipes.mjs';
 
 /**
  * 템플릿 × 구성 변형 조합 전체 목록. 파일로 미리 만들지 않고 카탈로그에서 그 자리에서 계산한다.
@@ -13,6 +14,8 @@ let cache = null;
 export function enumerateCombos() {
   if (cache) return cache;
   const list = [], firstOf = new Map();
+  // 레시피 추천(src/recipes.mjs): 조합을 지우지 않고 표시만 붙인다. 추천이 가리키는 조합 id → {레시피 id, 보기 설정, 지킨 규칙}.
+  const recipeOf = new Map(recipePicks().filter(p => p.satisfied).map(p => [comboId(p.templateId, p.layout), {id: p.recipeId, view: p.view, rules: p.applied.map(a => a.rule), satisfied: p.satisfied}]));
   for (const t of templateList) {
     const slots = layoutOptionsOf(t.id);
     let sets = [{}];
@@ -25,7 +28,7 @@ export function enumerateCombos() {
       const rules = slots.filter(s => layout[s.id]).flatMap(s => s.options.find(o => o.id === layout[s.id]).rules.map(r => ({slot: s.id, option: layout[s.id], rule: r.id, claim: r.claim, detail: r.detail})));
       // 진단(scripts/design-qa/diagnose.mjs)에서 A 등급이 아니었던 조합과 결과 계약을 어긴 조합은 '실험'이다. 갤러리는 기본으로 숨기고 표시를 붙인다.
       const experimental = [EXPERIMENTAL[id] ?? null, rules.length ? [...new Set(rules.map(r => r.rule))].join('+') : null].filter(Boolean).join(' · ') || null;
-      const combo = {n: list.length + 1, id, templateId: t.id, template: t.label, pageType: t.pageType, layout, picks, rules, changed: picks.length, sameAs: null, experimental};
+      const combo = {n: list.length + 1, id, templateId: t.id, template: t.label, pageType: t.pageType, layout, picks, rules, changed: picks.length, sameAs: null, experimental, recipe: recipeOf.get(id) ?? null};
       // 앞 슬롯의 변경이 뒤 슬롯의 조건을 없애면 서로 다른 선택이 같은 화면이 된다. 숨기지 않고 표시만 한다.
       const signature = t.id + JSON.stringify(applyLayout(t.tree, layout, t.pageType));
       if (firstOf.has(signature)) combo.sameAs = firstOf.get(signature); else firstOf.set(signature, combo.n);
@@ -39,6 +42,9 @@ export function comboId(templateId, layout = {}) {
   const order = layoutSlotIds.filter(s => layout[s] && layout[s] !== 'default');
   return [templateId, ...order.map(s => `${s}:${layout[s]}`)].join('~');
 }
+
+/** 레시피가 추천하는 조합 목록(레시피 id·템플릿 순). 보기 설정은 combo.recipe.view에 있다. */
+export const recipeCombos = () => enumerateCombos().filter(c => c.recipe);
 
 /** id 문자열을 조합으로 풀이한다. 목록에 없는 id는 null. */
 export function findCombo(id) {
@@ -114,9 +120,9 @@ export function facets(list = enumerateCombos()) {
 
 /**
  * 필터·검색·정렬. query는 공백으로 나눈 모든 낱말이 번호·id·템플릿 이름·유형·슬롯/옵션 이름 어디에든 있어야 한다.
- * slots: {슬롯id: 옵션id | 'default'}('default'는 그 슬롯을 바꾸지 않은 조합).
+ * slots: {슬롯id: 옵션id | 'default'}('default'는 그 슬롯을 바꾸지 않은 조합). recipeOnly: 레시피 추천 조합만.
  */
-export function filterCombos({query = '', pageType = '', template = '', slots = {}, hideSame = false, only = null, concept = '', experimental = true, sort = 'default', seed = 1} = {}, list = enumerateCombos()) {
+export function filterCombos({query = '', pageType = '', template = '', slots = {}, hideSame = false, only = null, concept = '', experimental = true, recipeOnly = false, sort = 'default', seed = 1} = {}, list = enumerateCombos()) {
   const words = query.toLowerCase().replace(/#/g, '').split(/\s+/).filter(Boolean);
   const wanted = Object.entries(slots).filter(([, v]) => v);
   let out = list.filter(c => {
@@ -125,6 +131,7 @@ export function filterCombos({query = '', pageType = '', template = '', slots = 
     if (hideSame && c.sameAs) return false;
     if (concept && concepts[concept] && !concepts[concept].templates.includes(c.templateId)) return false;
     if (!experimental && c.experimental) return false;
+    if (recipeOnly && !c.recipe) return false;
     if (only && !only.has(c.id)) return false;
     for (const [slot, option] of wanted) if (option === 'default' ? c.layout[slot] : c.layout[slot] !== option) return false;
     if (words.length) {
@@ -133,7 +140,9 @@ export function filterCombos({query = '', pageType = '', template = '', slots = 
     }
     return true;
   });
-  if (sort === 'changed') out = [...out].sort((a, b) => b.changed - a.changed || a.n - b.n);
+  // 기본 정렬은 레시피 추천이 앞(우선 선택), 나머지는 템플릿 순 그대로다. 추천이 아닌 조합도 목록에 모두 남는다. 'template'은 순수 템플릿 순.
+  if (sort === 'default') out = [...out.filter(c => c.recipe), ...out.filter(c => !c.recipe)];
+  else if (sort === 'changed') out = [...out].sort((a, b) => b.changed - a.changed || a.n - b.n);
   else if (sort === 'shuffle') out = shuffled(out, seed);
   return out;
 }

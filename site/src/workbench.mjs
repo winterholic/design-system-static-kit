@@ -1,5 +1,6 @@
-import {themes, themeCategories, palettes, paletteFamilies, nodeSpecs, nodeTypes, createBlueprint, repairAxes, templateList, templates, pageTypes, axes, axisDefs, layoutSlots, CATALOG_VERSION, limits} from './catalog.mjs';
+import {recipes, concepts, themes, themeCategories, palettes, paletteFamilies, nodeSpecs, nodeTypes, createBlueprint, repairAxes, templateList, templates, pageTypes, axes, axisDefs, layoutSlots, CATALOG_VERSION, limits} from './catalog.mjs';
 import {compile, validateBlueprint} from './compiler.mjs';
+import {recipePickOf} from './recipes.mjs';
 import {escapeHTML as e} from './render.mjs';
 import {DEVICES, mountViewport, openInWindow} from './workbench/viewport.mjs';
 import {AXIS_GROUPS, SHORT, isSegmented, valueLabel, optionState, chooseAxis} from './workbench/axes.mjs';
@@ -50,8 +51,35 @@ function renderTemplate() {
   const slots = layoutSlots(templates[sel.templateId].tree, templates[sel.templateId].pageType, {templateId: sel.templateId});
   $('layout-field').hidden = !slots.length;
   setHTML($('layout-slots'), slots.map(slot => `<fieldset class="slot"><legend>${e(slot.label)}</legend><div class="chips" role="radiogroup" aria-label="${e(slot.label)}">${[{id: 'default', label: '기본', description: '템플릿 그대로'}, ...slot.options].map(o => `<button type="button" class="chip" role="radio" aria-checked="${(sel.layout[slot.id] ?? 'default') === o.id}" data-slot="${slot.id}" data-option="${o.id}" data-fk="slot:${slot.id}:${o.id}"${o.recommended === false ? ' data-recommended="false"' : ''} title="${e(o.recommended === false ? (o.description ?? '') + ' · 실험(기본 추천 아님): ' + o.rules.map(r => r.id + ' ' + r.detail).join(' / ') : (o.description ?? ''))}">${e(o.label)}</button>`).join('')}</div></fieldset>`).join(''));
+  renderRecipe();
   $('project-name').value = blueprint.name;
 }
+/** 레시피 추천(src/recipes.mjs): 템플릿에 레시피가 있으면 근거와 함께 보여 주고 한 번에 맞춘다. 다른 선택은 그대로 열려 있다. */
+const lookOfPick = pick => pick?.view ? concepts[pick.view.concept].looks.find(l => l.id === pick.view.look) : null;
+function renderRecipe() {
+  const pick = recipePickOf(sel.templateId);
+  $('recipe-field').hidden = !pick;
+  if (!pick) return;
+  const r = recipes[pick.recipeId];
+  $('apply-recipe').hidden = !pick.satisfied;
+  if (!pick.satisfied) { // 규칙을 못 지키는 템플릿: 추천하지 않고 이유만 보인다. 이 템플릿은 그대로 쓸 수 있다.
+    $('recipe-text').textContent = `${r.label} · 이 템플릿은 레시피 규칙을 모두 지키지 못해 추천하지 않습니다. 직접 고른 구성은 그대로 쓸 수 있습니다.`;
+    $('recipe-rules').textContent = pick.unmet.map(u => `${u.rule} ${u.detail}`).join(' · ');
+    return;
+  }
+  const look = lookOfPick(pick), layout = Object.entries(pick.layout).map(([k, v]) => `${k}:${v}`).join(' ') || '기본 구성';
+  $('recipe-text').textContent = `${r.label} · ${r.purpose}. 추천: ${layout}${look ? ' · ' + concepts[pick.view.concept].label + ' ' + look.label + ' 보기' : ' · 템플릿 기본 테마'}`;
+  $('recipe-rules').textContent = `지킨 규칙 ${pick.applied.map(a => a.rule).join(' ')}` + (pick.avoided.length ? ` · 피한 규칙 ${[...new Set(pick.avoided.map(a => a.rule))].join(' ')}` : '');
+  $('apply-recipe').setAttribute('aria-pressed', String(isRecipeApplied(pick)));
+}
+const isRecipeApplied = pick => JSON.stringify(sel.layout) === JSON.stringify(pick.layout) && blueprint.theme === (lookOfPick(pick)?.theme ?? templates[sel.templateId].theme);
+/** 레시피 추천 그대로의 Blueprint. 카탈로그에서 템플릿으로 시작할 때도 같은 경로를 쓴다. */
+function recipeStart(templateId) {
+  const pick = recipePickOf(templateId), look = lookOfPick(pick);
+  if (!pick?.satisfied) return {blueprint: createBlueprint(templateId), layout: {}, themeVariant: null};
+  return {blueprint: createBlueprint(templateId, look?.theme, undefined, {themeVariant: look?.themeVariant, layout: pick.layout, typography: look?.typography}), layout: {...pick.layout}, themeVariant: look?.themeVariant ?? null};
+}
+function useRecipe() { const r = recipeStart(sel.templateId); selected = []; sel.layout = r.layout; sel.themeVariant = r.themeVariant; sel.paletteChosen = false; commit(r.blueprint); }
 function renderTheme() {
   const t = themes[blueprint.theme];
   setHTML($('theme'), Object.entries(themeCategories).map(([c, label]) => `<optgroup label="${e(label)}">${Object.values(themes).filter(x => x.category === c).map(x => `<option value="${x.id}"${x.id === blueprint.theme ? ' selected' : ''}>${e(x.name)}</option>`).join('')}</optgroup>`).join(''));
@@ -207,6 +235,7 @@ function bind() {
   $('template').addEventListener('change', event => useTemplate(event.target.value));
   $('theme').addEventListener('change', event => useTheme(event.target.value, null));
   $('theme-variants').addEventListener('click', event => { const b = event.target.closest('[data-variant]'); if (b) { selected = []; sel.themeVariant = b.dataset.variant || null; commit(compose(sel.templateId, blueprint.theme)); } });
+  $('apply-recipe').addEventListener('click', useRecipe);
   $('layout-slots').addEventListener('click', event => {
     const b = event.target.closest('[data-slot]'); if (!b) return;
     const layout = {...sel.layout}; if (b.dataset.option === 'default') delete layout[b.dataset.slot]; else layout[b.dataset.slot] = b.dataset.option;
@@ -257,7 +286,7 @@ function boot() {
   $('catalog-line').textContent = `테마 ${Object.keys(themes).length} · 팔레트 ${Object.keys(palettes).length} · 템플릿 ${templateList.length} · 부품 ${nodeTypes.length}`;
   $('palette-search').value = '';
   catalogView = renderCatalog({root: $('catalog-body'), tabsEl: $('catalog-tabs'), countsEl: $('catalog-counts'), state: catalogState, actions: {
-    useTemplate: id => { showPage('builder'); sel.paletteChosen = false; sel.themeVariant = null; selected = []; sel.templateId = id; sel.layout = {}; commit(createBlueprint(id)); },
+    useTemplate: id => { showPage('builder'); sel.paletteChosen = false; selected = []; sel.templateId = id; const r = recipeStart(id); sel.layout = r.layout; sel.themeVariant = r.themeVariant; commit(r.blueprint); },
     useTheme: (id, variant) => { showPage('builder'); selected = []; sel.themeVariant = variant || null; sel.paletteChosen = false; commit(createBlueprint(sel.templateId, id, undefined, {themeVariant: sel.themeVariant, layout: sel.layout})); },
     usePalette: id => { showPage('builder'); sel.paletteChosen = true; mutate(b => { b.palette = id; }); },
   }});

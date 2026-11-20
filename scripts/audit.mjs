@@ -172,6 +172,14 @@ console.log(`AUDIT: ${Object.keys(palettes).length} palettes match rendered Cool
 console.log(`CATALOG: ${Object.keys(themes).length} themes, ${Object.keys(palettes).length} palettes, ${templateList.length} templates, ${nodeTypes.length} node types (${examples} examples compile), ${Object.keys(pageTypes).length} page types, ${axisBans.length} axis bans.`);
 console.log(`MATRIX: ${matrix} template×theme pages + ${palettePages} palette×mode pages compile; ${pairwiseCompiled} pairwise tuples cover ${allowedPairs.size} allowed axis-value pairs; ${factorialCompiled}/${factorial} palette×mode×shell compile (${JSON.stringify(factorialRejected)} rejected before repair).`);
 console.log(`VARIANTS: ${themeVariantCount} theme variants (${themeVariantPages} pages compile), ${optionCount} layout options over ${slotCount} template slots (${layoutPages} pages compile), ${layoutCombos.toLocaleString('en-US')} template×layout compositions.`);
+{
+  // Design Recipe(ADR 0007): 레시피가 고르는 조합은 전부 규칙을 지키고 기본 추천(실험 아님)이어야 한다.
+  const {recipePicks} = await import('../src/recipes.mjs');
+  const {findCombo, comboId} = await import('../src/combos.mjs');
+  const picks = recipePicks(), bad = picks.filter(p => p.satisfied && findCombo(comboId(p.templateId, p.layout))?.experimental), unmet = picks.filter(p => !p.satisfied);
+  if (bad.length) throw new Error('RECIPES: satisfied picks that are experimental combos: ' + bad.map(p => p.templateId).join(', '));
+  console.log(`RECIPES: ${Object.keys((await import('../src/catalog.mjs')).recipes).length} recipes, ${picks.length} template picks, ${picks.length - unmet.length} satisfy every select rule and are default-recommended combos (${picks.filter(p => p.satisfied && (Object.keys(p.layout).length || p.view)).length} differ from the template default); not recommended: ${unmet.map(p => p.templateId + ' ' + p.unmet.map(u => u.rule).join('+')).join(', ') || 'none'}.`);
+}
 // 6차: 서체 프리셋 × scale 축의 모든 값이 역할 순서를 지키고, 템플릿 85개 × 서체 프리셋이 컴파일되며 CSS에 린트 위반이 없다. 컨셉 × 템플릿 × look도 전부 검증을 통과한다.
 {
   const {TYPE_IDS, ROLES, roleSizes, lintType} = await import('../src/typography.mjs');

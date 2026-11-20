@@ -52,6 +52,8 @@ test('every template pick satisfies all select rules, is a recommended combo, an
   const picks = recipePicks();
   assert.equal(picks.length, Object.values(recipes).reduce((n, r) => n + r.templates.length, 0));
   for (const p of picks) {
+    // hr-people는 페이지 바로 아래 전폭 막대 차트라 브라우저 Q08이 실패한다(종횡 2.13배). 레시피는 이를 추천하지 않고 이유(RC05)를 남긴다.
+    if (p.templateId === 'hr-people') { assert.equal(p.satisfied, false); assert.deepEqual(p.unmet.map(u => u.rule), ['RC05']); assert.equal(findCombo(comboId(p.templateId, p.layout)).recipe, null); continue; }
     assert.equal(p.satisfied, true, `${p.templateId}: ${JSON.stringify(p.unmet)}`);
     assert.deepEqual(p.unmet, []);
     assert.ok(recipes[p.recipeId] && p.applied.length > 0);
@@ -64,7 +66,7 @@ test('every template pick satisfies all select rules, is a recommended combo, an
     // 갤러리·조립기가 쓰는 Blueprint 경로와 선택 함수가 평가한 Blueprint가 같아야 추천이 화면에서 지켜진다.
     assert.deepEqual(recipeBlueprint(p.templateId, p.layout, p.view), comboBlueprint(combo, p.view ? {...EMPTY_VIEW, ...p.view} : EMPTY_VIEW), p.templateId);
   }
-  assert.equal(recipeCombos().length, picks.length);
+  assert.equal(recipeCombos().length, picks.length - 1, 'only satisfied picks are marked as recommended');
   assert.equal(recipeOfTemplate('devtool-landing'), 'saas-landing'); assert.equal(recipeOfTemplate('checkout'), null); assert.equal(recipePickOf('checkout'), null);
 });
 
@@ -103,6 +105,8 @@ test('rules reject what they claim: hero visual, title hierarchy, KPI row, chart
   // RC05: 차트 도메인(S15 dashboard-analytics 차트, 막대는 51%).
   assert.ok(fails('ops-dashboard', 'dashboard-analytics').includes('RC05'));
   assert.match(recipeCheck('ops-dashboard', 'RC05', recipeBlueprint('dashboard-analytics')), /일별 방문자.*52%/);
+  assert.match(recipeCheck('ops-dashboard', 'RC05', recipeBlueprint('hr-people')), /페이지 바로 아래에 혼자/);
+  assert.equal(recipeCheck('ops-dashboard', 'RC05', recipeBlueprint('sales-dashboard')), null, 'charts inside a grid are sized by their cell');
   // RC06: 가운데 정렬 머리말(help-center).
   assert.ok(fails('content-page', 'help-center').includes('RC06'));
   // RC03: 레시피 범위 밖 축.
@@ -135,7 +139,7 @@ test('recipes never delete or forbid a combination: all 4,955 combo ids stay, av
     const r = renderCombo(combo); assert.ok(r.ok, id + ' ' + r.error);
   }
   // 레시피가 피한 조합은 갤러리 기본 목록에서 빠지지도 않는다(레시피 표시와 계약 표시는 별개): 추천 조합만 표시가 붙는다.
-  assert.equal(enumerateCombos().filter(c => c.recipe).length, 15);
+  assert.equal(enumerateCombos().filter(c => c.recipe).length, 14);
   assert.equal(findCombo('devtool-landing').recipe, null);
   assert.equal(findCombo('devtool-landing~hero:product').recipe.id, 'saas-landing');
 });

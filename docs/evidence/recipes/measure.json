@@ -1,0 +1,2092 @@
+{
+ "meta": {
+  "date": "2026-11-20",
+  "catalogVersion": "2.4.0",
+  "widths": [
+   320,
+   390,
+   768,
+   1440
+  ],
+  "browser": "chromium 156.0.8078.4",
+  "platform": "darwin"
+ },
+ "cases": {
+  "R1": {
+   "recipe": {
+    "comboId": "devtool-landing~hero:product",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": "saas",
+     "look": "trust",
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 4778,
+      "scrollW": 320,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 38,
+       "titleLines": 2,
+       "vhRatio": 0.71,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 38,
+       "sectionPx": 24,
+       "ratio": 1.58
+      },
+      "file": "R1__recipe__w320.png",
+      "clipped": true
+     },
+     "390": {
+      "docH": 4830,
+      "scrollW": 390,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 38,
+       "titleLines": 2,
+       "vhRatio": 0.77,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q13": {
+        "values": {
+         "largeArts": 1,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 38,
+       "sectionPx": 24,
+       "ratio": 1.58
+      },
+      "file": "R1__recipe__w390.png",
+      "clipped": true
+     },
+     "768": {
+      "docH": 3546,
+      "scrollW": 768,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 38.4,
+       "titleLines": 2,
+       "vhRatio": 0.51,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 38.4,
+       "sectionPx": 24,
+       "ratio": 1.6
+      },
+      "file": "R1__recipe__w768.png",
+      "clipped": true
+     },
+     "1440": {
+      "docH": 3294,
+      "scrollW": 1440,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 64,
+       "titleLines": 2,
+       "vhRatio": 0.59,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q06": {
+        "values": {
+         "variant": "product",
+         "visual": true,
+         "titlePx": 64,
+         "textRight": 1186,
+         "mainWidth": 1440,
+         "emptyRightRatio": 0.18
+        },
+        "pass": true
+       },
+       "Q13": {
+        "values": {
+         "largeArts": 1,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 64,
+       "sectionPx": 33,
+       "ratio": 1.94
+      },
+      "file": "R1__recipe__w1440.png",
+      "clipped": true
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "devtool-landing",
+   "note": "S05 devtool-landing: 시각 요소 없는 split 히어로, tight 스케일(제목 34px). 기획 세션이 1440px 전후를 직접 본 표본",
+   "pick": {
+    "layout": {
+     "hero": "product"
+    },
+    "view": {
+     "concept": "saas",
+     "look": "trust"
+    },
+    "comboId": "devtool-landing~hero:product",
+    "applied": [
+     "RC01",
+     "RC02",
+     "RC03",
+     "V01",
+     "V04",
+     "P01",
+     "P02"
+    ],
+    "avoided": [
+     "V01",
+     "V01",
+     "V04",
+     "RC02",
+     "P02",
+     "RC01",
+     "RC03"
+    ],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": false,
+   "default": {
+    "comboId": "devtool-landing",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 4401,
+      "scrollW": 320,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 29,
+       "titleLines": 2,
+       "vhRatio": 0.42,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 29,
+       "sectionPx": 21,
+       "ratio": 1.38
+      },
+      "file": "R1__default__w320.png",
+      "clipped": true
+     },
+     "390": {
+      "docH": 4293,
+      "scrollW": 390,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 29,
+       "titleLines": 2,
+       "vhRatio": 0.42,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q13": {
+        "values": {
+         "largeArts": 0,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 29,
+       "sectionPx": 21,
+       "ratio": 1.38
+      },
+      "file": "R1__default__w390.png",
+      "clipped": true
+     },
+     "768": {
+      "docH": 3429,
+      "scrollW": 768,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 29,
+       "titleLines": 2,
+       "vhRatio": 0.46,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 29,
+       "sectionPx": 21,
+       "ratio": 1.38
+      },
+      "file": "R1__default__w768.png",
+      "clipped": true
+     },
+     "1440": {
+      "docH": 2684,
+      "scrollW": 1440,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 34,
+       "titleLines": 2,
+       "vhRatio": 0.47,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q06": {
+        "values": {
+         "variant": "centered",
+         "visual": false,
+         "titlePx": 34,
+         "textRight": 1023,
+         "mainWidth": 1440,
+         "emptyRightRatio": 0.29
+        },
+        "pass": true
+       },
+       "Q13": {
+        "values": {
+         "largeArts": 0,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 34,
+       "sectionPx": 24,
+       "ratio": 1.42
+      },
+      "file": "R1__default__w1440.png",
+      "clipped": true
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  },
+  "R2": {
+   "recipe": {
+    "comboId": "saas-landing",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 6635,
+      "scrollW": 320,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 34.6,
+       "titleLines": 2,
+       "vhRatio": 0.88,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 34.6176,
+       "sectionPx": 24,
+       "ratio": 1.44
+      },
+      "file": "R2__recipe__w320.png",
+      "clipped": true
+     },
+     "390": {
+      "docH": 6398,
+      "scrollW": 390,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 38,
+       "titleLines": 2,
+       "vhRatio": 0.84,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q13": {
+        "values": {
+         "largeArts": 2,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 38,
+       "sectionPx": 24,
+       "ratio": 1.58
+      },
+      "file": "R2__recipe__w390.png",
+      "clipped": true
+     },
+     "768": {
+      "docH": 5088,
+      "scrollW": 768,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 38.4,
+       "titleLines": 2,
+       "vhRatio": 0.55,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 38.4,
+       "sectionPx": 24,
+       "ratio": 1.6
+      },
+      "file": "R2__recipe__w768.png",
+      "clipped": true
+     },
+     "1440": {
+      "docH": 4823,
+      "scrollW": 1440,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 59.6,
+       "titleLines": 2,
+       "vhRatio": 0.63,
+       "visual": "yes"
+      },
+      "codes": {
+       "MEASURE_SHORT": 2
+      },
+      "severe": 0,
+      "grade": "B",
+      "findings": [
+       {
+        "code": "MEASURE_SHORT",
+        "at": "p.kit-section-desc",
+        "detail": "2줄 폭 418px (21em) < 부모 1016px, max-width 800px “도입 첫날부터 쓰는 기능만”"
+       },
+       {
+        "code": "MEASURE_SHORT",
+        "at": "p.kit-section-desc",
+        "detail": "2줄 폭 418px (21em) < 부모 1016px, max-width 800px “연간 결제 시 두 달 무료”"
+       }
+      ],
+      "claims": {
+       "Q06": {
+        "values": {
+         "variant": "split",
+         "visual": true,
+         "titlePx": 59.6192,
+         "textRight": 671,
+         "mainWidth": 1440,
+         "emptyRightRatio": 0.53
+        },
+        "pass": true
+       },
+       "Q13": {
+        "values": {
+         "largeArts": 2,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 59.6192,
+       "sectionPx": 33,
+       "ratio": 1.81
+      },
+      "file": "R2__recipe__w1440.png",
+      "clipped": true
+     }
+    },
+    "grade": "B",
+    "severeTotal": 0
+   },
+   "templateId": "saas-landing",
+   "note": "S01 saas-landing: 기본 구성이 이미 규칙을 지키는 대조 표본",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "saas-landing",
+    "applied": [
+     "RC01",
+     "RC02",
+     "RC03",
+     "V01",
+     "V04",
+     "P01",
+     "P02"
+    ],
+    "avoided": [
+     "V01",
+     "V01",
+     "V04"
+    ],
+    "pageRules": [
+     "P04"
+    ],
+    "satisfied": true
+   },
+   "identical": true,
+   "default": {
+    "comboId": "saas-landing",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 6635,
+      "scrollW": 320,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 34.6,
+       "titleLines": 2,
+       "vhRatio": 0.88,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 34.6176,
+       "sectionPx": 24,
+       "ratio": 1.44
+      },
+      "file": "R2__default__w320.png",
+      "clipped": true
+     },
+     "390": {
+      "docH": 6398,
+      "scrollW": 390,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 38,
+       "titleLines": 2,
+       "vhRatio": 0.84,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q13": {
+        "values": {
+         "largeArts": 2,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 38,
+       "sectionPx": 24,
+       "ratio": 1.58
+      },
+      "file": "R2__default__w390.png",
+      "clipped": true
+     },
+     "768": {
+      "docH": 5088,
+      "scrollW": 768,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 38.4,
+       "titleLines": 2,
+       "vhRatio": 0.55,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 38.4,
+       "sectionPx": 24,
+       "ratio": 1.6
+      },
+      "file": "R2__default__w768.png",
+      "clipped": true
+     },
+     "1440": {
+      "docH": 4823,
+      "scrollW": 1440,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "split",
+       "titlePx": 59.6,
+       "titleLines": 2,
+       "vhRatio": 0.63,
+       "visual": "yes"
+      },
+      "codes": {
+       "MEASURE_SHORT": 2
+      },
+      "severe": 0,
+      "grade": "B",
+      "findings": [
+       {
+        "code": "MEASURE_SHORT",
+        "at": "p.kit-section-desc",
+        "detail": "2줄 폭 418px (21em) < 부모 1016px, max-width 800px “도입 첫날부터 쓰는 기능만”"
+       },
+       {
+        "code": "MEASURE_SHORT",
+        "at": "p.kit-section-desc",
+        "detail": "2줄 폭 418px (21em) < 부모 1016px, max-width 800px “연간 결제 시 두 달 무료”"
+       }
+      ],
+      "claims": {
+       "Q06": {
+        "values": {
+         "variant": "split",
+         "visual": true,
+         "titlePx": 59.6192,
+         "textRight": 671,
+         "mainWidth": 1440,
+         "emptyRightRatio": 0.53
+        },
+        "pass": true
+       },
+       "Q13": {
+        "values": {
+         "largeArts": 2,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 59.6192,
+       "sectionPx": 33,
+       "ratio": 1.81
+      },
+      "file": "R2__default__w1440.png",
+      "clipped": true
+     }
+    },
+    "grade": "B",
+    "severeTotal": 0
+   }
+  },
+  "R3": {
+   "recipe": {
+    "comboId": "waitlist~hero:product",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 1701,
+      "scrollW": 320,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 39.6,
+       "titleLines": 2,
+       "vhRatio": 0.71,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 39.5712,
+       "sectionPx": null,
+       "ratio": null
+      }
+     },
+     "390": {
+      "docH": 1734,
+      "scrollW": 390,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 44,
+       "titleLines": 2,
+       "vhRatio": 0.75,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q13": {
+        "values": {
+         "largeArts": 1,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 44,
+       "sectionPx": null,
+       "ratio": null
+      }
+     },
+     "768": {
+      "docH": 1394,
+      "scrollW": 768,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 47.8,
+       "titleLines": 2,
+       "vhRatio": 0.51,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 47.8152,
+       "sectionPx": null,
+       "ratio": null
+      }
+     },
+     "1440": {
+      "docH": 1352,
+      "scrollW": 1440,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "product",
+       "titlePx": 80,
+       "titleLines": 2,
+       "vhRatio": 0.67,
+       "visual": "yes"
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q06": {
+        "values": {
+         "variant": "product",
+         "visual": true,
+         "titlePx": 80,
+         "textRight": 1156,
+         "mainWidth": 1440,
+         "emptyRightRatio": 0.2
+        },
+        "pass": true
+       },
+       "Q13": {
+        "values": {
+         "largeArts": 1,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 80,
+       "sectionPx": null,
+       "ratio": null
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "waitlist",
+   "note": "centered 히어로에 시각 요소 없음",
+   "pick": {
+    "layout": {
+     "hero": "product"
+    },
+    "view": null,
+    "comboId": "waitlist~hero:product",
+    "applied": [
+     "RC01",
+     "RC02",
+     "RC03",
+     "V01",
+     "V04",
+     "P01",
+     "P02"
+    ],
+    "avoided": [
+     "V01",
+     "V01",
+     "RC01"
+    ],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": false,
+   "default": {
+    "comboId": "waitlist",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 1575,
+      "scrollW": 320,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 39.6,
+       "titleLines": 2,
+       "vhRatio": 0.57,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 39.5712,
+       "sectionPx": null,
+       "ratio": null
+      }
+     },
+     "390": {
+      "docH": 1561,
+      "scrollW": 390,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 44,
+       "titleLines": 2,
+       "vhRatio": 0.56,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q13": {
+        "values": {
+         "largeArts": 0,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 44,
+       "sectionPx": null,
+       "ratio": null
+      }
+     },
+     "768": {
+      "docH": 1518,
+      "scrollW": 768,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 48.4,
+       "titleLines": 2,
+       "vhRatio": 0.64,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "heroRatio": {
+       "heroPx": 48.384,
+       "sectionPx": null,
+       "ratio": null
+      }
+     },
+     "1440": {
+      "docH": 1422,
+      "scrollW": 1440,
+      "h1Visible": 0,
+      "hero": {
+       "variant": "centered",
+       "titlePx": 80,
+       "titleLines": 2,
+       "vhRatio": 0.75,
+       "visual": null
+      },
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q06": {
+        "values": {
+         "variant": "centered",
+         "visual": false,
+         "titlePx": 80,
+         "textRight": 975,
+         "mainWidth": 1440,
+         "emptyRightRatio": 0.32
+        },
+        "pass": true
+       },
+       "Q13": {
+        "values": {
+         "largeArts": 0,
+         "duplicateGroups": 0,
+         "places": []
+        },
+        "pass": true
+       }
+      },
+      "heroRatio": {
+       "heroPx": 80,
+       "sectionPx": null,
+       "ratio": null
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  },
+  "R4": {
+   "recipe": {
+    "comboId": "sales-dashboard",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2937,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R4__recipe__w320.png",
+      "clipped": false
+     },
+     "390": {
+      "docH": 2734,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R4__recipe__w390.png",
+      "clipped": false
+     },
+     "768": {
+      "docH": 1941,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": {
+         "cards": 2,
+         "worstEmpty": 180,
+         "worstRatio": 0.35
+        },
+        "pass": true
+       }
+      },
+      "file": "R4__recipe__w768.png",
+      "clipped": false
+     },
+     "1440": {
+      "docH": 1800,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": {
+         "cards": 2,
+         "worstEmpty": 142,
+         "worstRatio": 0.28
+        },
+        "pass": true
+       },
+       "Q08": {
+        "values": null,
+        "pass": true
+       },
+       "Q11": {
+        "values": {
+         "items": 4,
+         "cols": 4,
+         "rows": 1,
+         "cellW": 275,
+         "firstChartTop": 367,
+         "docH": 1800
+        },
+        "pass": true
+       }
+      },
+      "file": "R4__recipe__w1440.png",
+      "clipped": false
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "sales-dashboard",
+   "note": "S12 sales-dashboard: 차트 카드 높이 균형(Q04)",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "sales-dashboard",
+    "applied": [
+     "RC03",
+     "RC04",
+     "RC05",
+     "V03",
+     "V05"
+    ],
+    "avoided": [
+     "V03"
+    ],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": true,
+   "default": {
+    "comboId": "sales-dashboard",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2937,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R4__default__w320.png",
+      "clipped": false
+     },
+     "390": {
+      "docH": 2734,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R4__default__w390.png",
+      "clipped": false
+     },
+     "768": {
+      "docH": 1941,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": {
+         "cards": 2,
+         "worstEmpty": 180,
+         "worstRatio": 0.35
+        },
+        "pass": true
+       }
+      },
+      "file": "R4__default__w768.png",
+      "clipped": false
+     },
+     "1440": {
+      "docH": 1800,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": {
+         "cards": 2,
+         "worstEmpty": 142,
+         "worstRatio": 0.28
+        },
+        "pass": true
+       },
+       "Q08": {
+        "values": null,
+        "pass": true
+       },
+       "Q11": {
+        "values": {
+         "items": 4,
+         "cols": 4,
+         "rows": 1,
+         "cellW": 275,
+         "firstChartTop": 367,
+         "docH": 1800
+        },
+        "pass": true
+       }
+      },
+      "file": "R4__default__w1440.png",
+      "clipped": false
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  },
+  "R5": {
+   "recipe": {
+    "comboId": "dashboard-overview",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2211,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 1901,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 1880,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {
+       "MEASURE_SHORT": 1
+      },
+      "severe": 0,
+      "grade": "B",
+      "findings": [
+       {
+        "code": "MEASURE_SHORT",
+        "at": "p",
+        "detail": "2줄 폭 268px (17em) < 부모 524px, max-width 672px “오늘의 흐름을 읽고, 중요”"
+       }
+      ],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       }
+      }
+     },
+     "1440": {
+      "docH": 1390,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       },
+       "Q08": {
+        "values": null,
+        "pass": true
+       },
+       "Q11": {
+        "values": {
+         "items": 4,
+         "cols": 4,
+         "rows": 1,
+         "cellW": 275,
+         "firstChartTop": 367,
+         "docH": 1390
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "B",
+    "severeTotal": 0
+   },
+   "templateId": "dashboard-overview",
+   "note": "S10 dashboard-overview: KPI 한 줄(Q11)",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "dashboard-overview",
+    "applied": [
+     "RC03",
+     "RC04",
+     "RC05",
+     "V03",
+     "V05"
+    ],
+    "avoided": [
+     "V03"
+    ],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": true,
+   "default": {
+    "comboId": "dashboard-overview",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2211,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 1901,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 1880,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {
+       "MEASURE_SHORT": 1
+      },
+      "severe": 0,
+      "grade": "B",
+      "findings": [
+       {
+        "code": "MEASURE_SHORT",
+        "at": "p",
+        "detail": "2줄 폭 268px (17em) < 부모 524px, max-width 672px “오늘의 흐름을 읽고, 중요”"
+       }
+      ],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       }
+      }
+     },
+     "1440": {
+      "docH": 1390,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       },
+       "Q08": {
+        "values": null,
+        "pass": true
+       },
+       "Q11": {
+        "values": {
+         "items": 4,
+         "cols": 4,
+         "rows": 1,
+         "cellW": 275,
+         "firstChartTop": 367,
+         "docH": 1390
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "B",
+    "severeTotal": 0
+   }
+  },
+  "R6": {
+   "recipe": {
+    "comboId": "hr-people",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2185,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 1987,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 1691,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       }
+      }
+     },
+     "1440": {
+      "docH": 1581,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       },
+       "Q08": {
+        "values": {
+         "aspectDistortion": 2.13,
+         "axisMax": 200,
+         "dataMax": 148,
+         "fill": 0.74
+        },
+        "pass": false
+       },
+       "Q11": {
+        "values": {
+         "items": 4,
+         "cols": 4,
+         "rows": 1,
+         "cellW": 275,
+         "firstChartTop": 367,
+         "docH": 1581
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "hr-people",
+   "note": "S29 hr-people",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "hr-people",
+    "applied": [
+     "RC03",
+     "RC04",
+     "V03",
+     "V05"
+    ],
+    "avoided": [
+     "V03",
+     "RC05",
+     "RC04"
+    ],
+    "pageRules": [],
+    "satisfied": false
+   },
+   "identical": true,
+   "default": {
+    "comboId": "hr-people",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2185,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 1987,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 1691,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       }
+      }
+     },
+     "1440": {
+      "docH": 1581,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q04": {
+        "values": null,
+        "pass": true
+       },
+       "Q08": {
+        "values": {
+         "aspectDistortion": 2.13,
+         "axisMax": 200,
+         "dataMax": 148,
+         "fill": 0.74
+        },
+        "pass": false
+       },
+       "Q11": {
+        "values": {
+         "items": 4,
+         "cols": 4,
+         "rows": 1,
+         "cellW": 275,
+         "firstChartTop": 367,
+         "docH": 1581
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  },
+  "R7": {
+   "recipe": {
+    "comboId": "article",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2060,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R7__recipe__w320.png",
+      "clipped": false
+     },
+     "390": {
+      "docH": 1941,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R7__recipe__w390.png",
+      "clipped": false
+     },
+     "768": {
+      "docH": 1915,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R7__recipe__w768.png",
+      "clipped": false
+     },
+     "1440": {
+      "docH": 2105,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q12": {
+        "values": {
+         "pairs": 2,
+         "mismatched": 0,
+         "sections": 0,
+         "intro": false
+        },
+        "pass": true
+       }
+      },
+      "file": "R7__recipe__w1440.png",
+      "clipped": false
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "article",
+   "note": "S34 article: 제목·본문 한 정렬선(Q12)",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "article",
+    "applied": [
+     "RC03",
+     "RC06",
+     "V04"
+    ],
+    "avoided": [
+     "V04"
+    ],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": true,
+   "default": {
+    "comboId": "article",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2060,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R7__default__w320.png",
+      "clipped": false
+     },
+     "390": {
+      "docH": 1941,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R7__default__w390.png",
+      "clipped": false
+     },
+     "768": {
+      "docH": 1915,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {},
+      "file": "R7__default__w768.png",
+      "clipped": false
+     },
+     "1440": {
+      "docH": 2105,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q12": {
+        "values": {
+         "pairs": 2,
+         "mismatched": 0,
+         "sections": 0,
+         "intro": false
+        },
+        "pass": true
+       }
+      },
+      "file": "R7__default__w1440.png",
+      "clipped": false
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  },
+  "R8": {
+   "recipe": {
+    "comboId": "docs-reference",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2958,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 2916,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 2801,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "1440": {
+      "docH": 2707,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q12": {
+        "values": {
+         "pairs": 2,
+         "mismatched": 0,
+         "sections": 0,
+         "intro": false
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "docs-reference",
+   "note": "S25 docs-reference",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "docs-reference",
+    "applied": [
+     "RC03",
+     "RC06",
+     "V04"
+    ],
+    "avoided": [],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": true,
+   "default": {
+    "comboId": "docs-reference",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 2958,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 2916,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 2801,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "1440": {
+      "docH": 2707,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q12": {
+        "values": {
+         "pairs": 2,
+         "mismatched": 0,
+         "sections": 0,
+         "intro": false
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  },
+  "R9": {
+   "recipe": {
+    "comboId": "blog-post",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 1341,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 1277,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 1461,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "1440": {
+      "docH": 1502,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q12": {
+        "values": {
+         "pairs": 1,
+         "mismatched": 0,
+         "sections": 0,
+         "intro": false
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   },
+   "templateId": "blog-post",
+   "note": "blog-post",
+   "pick": {
+    "layout": {},
+    "view": null,
+    "comboId": "blog-post",
+    "applied": [
+     "RC03",
+     "RC06",
+     "V04"
+    ],
+    "avoided": [
+     "V04"
+    ],
+    "pageRules": [],
+    "satisfied": true
+   },
+   "identical": true,
+   "default": {
+    "comboId": "blog-post",
+    "view": {
+     "theme": null,
+     "tv": null,
+     "pal": null,
+     "mode": null,
+     "concept": null,
+     "look": null,
+     "type": null
+    },
+    "widths": {
+     "320": {
+      "docH": 1341,
+      "scrollW": 320,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "390": {
+      "docH": 1277,
+      "scrollW": 390,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "768": {
+      "docH": 1461,
+      "scrollW": 768,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {}
+     },
+     "1440": {
+      "docH": 1502,
+      "scrollW": 1440,
+      "h1Visible": 1,
+      "hero": null,
+      "codes": {},
+      "severe": 0,
+      "grade": "A",
+      "findings": [],
+      "claims": {
+       "Q12": {
+        "values": {
+         "pairs": 1,
+         "mismatched": 0,
+         "sections": 0,
+         "intro": false
+        },
+        "pass": true
+       }
+      }
+     }
+    },
+    "grade": "A",
+    "severeTotal": 0
+   }
+  }
+ }
+}

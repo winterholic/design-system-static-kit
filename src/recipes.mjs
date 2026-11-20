@@ -45,12 +45,13 @@ const CHECKS = {
     const bad = find(blueprint.tree.children, 'grid').find(g => g.children.length >= 2 && g.children.length <= maxItems && g.children.every(c => c.type === 'metric') && COLS[g.columns] < g.children.length);
     return bad ? `지표 ${bad.children.length}개가 ${COLS[bad.columns]}열이라 두 줄로 꺾인다` : null;
   },
-  'chart-fill': ({min}, {blueprint}) => {
-    const bad = find(blueprint.tree.children, 'chart').filter(c => c.kind !== 'donut').map(c => {
-      const hi = Math.max(...c.series.flatMap(s => s.values), 0);
-      return {c, fill: hi / niceMax(hi)};
-    }).find(x => x.fill < min);
-    return bad ? `차트 "${bad.c.title}"의 데이터 최댓값이 축 최댓값의 ${Math.round(bad.fill * 100)}%다(< ${Math.round(min * 100)}%)` : null;
+  'chart-fill': ({min, soloWidths}, {blueprint}) => {
+    const charts = find(blueprint.tree.children, 'chart').filter(c => c.kind !== 'donut');
+    const low = charts.map(c => { const hi = Math.max(...c.series.flatMap(s => s.values), 0); return {c, fill: hi / niceMax(hi)}; }).find(x => x.fill < min);
+    if (low) return `차트 "${low.c.title}"의 데이터 최댓값이 축 최댓값의 ${Math.round(low.fill * 100)}%다(< ${Math.round(min * 100)}%)`;
+    // 페이지 바로 아래의 단독 차트는 넓은 폭 전체로 늘어난다(preserveAspectRatio none). 브라우저 측정 Q08이 hr-people 2.13배, dashboard-analytics 2.46배로 확인했다.
+    const solo = soloWidths.includes(blueprint.width) ? blueprint.tree.children.find(n => n.type === 'chart' && n.kind !== 'donut') : null;
+    return solo ? `차트 "${solo.title}"이 ${blueprint.width} 폭에서 페이지 바로 아래에 혼자 놓여 가로로 늘어난다` : null;
   },
   'left-axis': (_, {blueprint}) => {
     const top = blueprint.tree.children, bad = top.filter(n => ['page-header', 'section'].includes(n.type) && n.align === 'center');

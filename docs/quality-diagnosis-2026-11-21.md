@@ -366,3 +366,6 @@ Q10 S07@320은 `after/`에서 F로 바뀌었다(공통 규약 쪽 히어로 수�
 
 `tests/variant-contracts.test.mjs` 9개, `tests/page-rules.test.mjs` 9개. 수정 전 18개 모두 실패(`docs/evidence/variants/red.log`, 모두 단언 실패), 수정 후 통과. 변이 확인: 버전 게이트 제거 시 2.3.0 호환 시험, V01 검사 무력화 시 V01 시험 2개, P03 CSS 제거 시 P03 시험이 각각 실패한다.
 
+## 13. Design Recipe 3종 (2026-11-21)
+
+7절의 Recipe 입력(SaaS 랜딩·업무 대시보드·콘텐츠 페이지)을 `src/catalog/recipes.mjs`와 선택 함수로 구현했다. 설계·측정·한계는 `docs/recipes.md`, 결정은 `docs/adr/0007-design-recipes.md`. 요약: S05 `devtool-landing`은 Recipe 조립에서 히어로 제목이 34→64px(섹션 제목 대비 1.42→1.94배)이고 제품 시각 요소가 생긴다(직접 확인: 1440·390px). 선택 15개 모두 4개 폭 심각 프로브 0. 나머지 13개는 기본이 이미 규칙을 지켜 같은 조합이다. S29 `hr-people`은 선택 시 규칙이 놓쳤다가 브라우저 Q08(2.13배)로 드러나 RC05를 넓혔다.

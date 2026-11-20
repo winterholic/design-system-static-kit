@@ -4,7 +4,7 @@ import {e, num} from './util.mjs';
 const W = 360, H = 240, M = {l: 38, r: 12, t: 14, b: 28};
 const DASH = ['', '6 4', '2 3'];
 const short = (s, n) => [...s].length > n ? [...s].slice(0, n).join('') + '…' : s;
-function niceMax(v) { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+export function niceMax(v) { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
 const group = v => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const fmt = (v, unit) => `${Number.isInteger(v) ? group(v) : String(Math.round(v * 100) / 100)}${unit ?? ''}`;
 const fmtTick = v => Number.isInteger(v) ? group(v) : String(Math.round(v * 10) / 10);

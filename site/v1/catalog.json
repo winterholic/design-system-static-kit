@@ -1018,6 +1018,1176 @@
       "source": "docs/quality-diagnosis-2026-11-21.md 6절 원인 2 추가 후보"
     }
   ],
+  "recipes": {
+    "saas-landing": {
+      "label": "SaaS 랜딩",
+      "pageTypes": [
+        "landing"
+      ],
+      "purpose": "제품이 무엇인지 첫 화면에서 보여 주고 가입·문의로 잇는 제품 소개",
+      "content": {
+        "form": "히어로(제품 시각 요소 1개) → 기능 벤토 → 신뢰(로고·후기) → 요금·FAQ → CTA"
+      },
+      "templates": [
+        "saas-landing",
+        "b2b-solution",
+        "app-landing",
+        "devtool-landing",
+        "waitlist"
+      ],
+      "layout": {
+        "hero": [
+          "default",
+          "product",
+          "split"
+        ]
+      },
+      "looks": [
+        {
+          "concept": "saas",
+          "look": "trust"
+        },
+        {
+          "concept": "saas",
+          "look": "workspace"
+        },
+        {
+          "concept": "saas",
+          "look": "clean"
+        }
+      ],
+      "fit": {
+        "density": [
+          "comfortable",
+          "spacious"
+        ],
+        "scale": [
+          "balanced",
+          "dramatic"
+        ]
+      },
+      "emphasis": {
+        "nodes": [
+          "hero"
+        ],
+        "how": "히어로 제목은 섹션 제목의 1.6배 이상, 제품 시각 요소 1개, 행동 버튼 1개"
+      },
+      "support": {
+        "nodes": [
+          "bento",
+          "logo-cloud",
+          "quote",
+          "faq"
+        ],
+        "how": "벤토·신뢰 영역은 히어로와 같은 그림을 반복하지 않고 섹션 머리말과 본문이 한 정렬선"
+      },
+      "rules": [
+        "RC01",
+        "RC02",
+        "RC03",
+        "V01",
+        "V04",
+        "P01",
+        "P02"
+      ],
+      "avoid": [
+        {
+          "slot": "hero",
+          "option": "statement",
+          "rule": "V01",
+          "why": "큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "slot": "hero",
+          "option": "cover",
+          "rule": "V01",
+          "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "slot": "heads",
+          "option": "center",
+          "rule": "V04",
+          "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        },
+        {
+          "axis": "scale",
+          "value": "tight",
+          "rule": "RC02",
+          "why": "촘촘한 스케일은 히어로 제목과 섹션 제목의 차이를 1.6배 아래로 줄인다(C2, devtool 34px 대 24px)."
+        }
+      ]
+    },
+    "ops-dashboard": {
+      "label": "업무 대시보드",
+      "pageTypes": [
+        "dashboard"
+      ],
+      "purpose": "핵심 지표를 한눈에 읽고 차트·표로 이어 판단하는 운영 화면",
+      "content": {
+        "form": "KPI 한 줄 → 차트 행 → 표·목록"
+      },
+      "templates": [
+        "dashboard-overview",
+        "sales-dashboard",
+        "hr-people",
+        "finance-overview"
+      ],
+      "layout": {
+        "columns": [
+          "default",
+          "two",
+          "three",
+          "four"
+        ]
+      },
+      "looks": [
+        {
+          "concept": "ops",
+          "look": "workspace"
+        },
+        {
+          "concept": "ops",
+          "look": "enterprise"
+        },
+        {
+          "concept": "ops",
+          "look": "ledger"
+        }
+      ],
+      "fit": {
+        "density": [
+          "compact",
+          "comfortable"
+        ],
+        "scale": [
+          "tight",
+          "balanced"
+        ],
+        "shell": [
+          "sidebar",
+          "rail",
+          "topbar"
+        ]
+      },
+      "emphasis": {
+        "nodes": [
+          "metric",
+          "chart"
+        ],
+        "how": "KPI는 한 줄, 차트 도메인은 데이터로 채운다"
+      },
+      "support": {
+        "nodes": [
+          "table",
+          "list"
+        ],
+        "how": "같은 행의 카드는 높이를 맞추고 표·목록은 차트 아래에서 보조한다"
+      },
+      "rules": [
+        "RC03",
+        "RC04",
+        "RC05",
+        "RC07",
+        "V03",
+        "V05"
+      ],
+      "avoid": [
+        {
+          "slot": "columns",
+          "option": "two",
+          "rule": "V03",
+          "why": "KPI 4개를 2열로 바꾸면 2행이 되어 첫 차트가 46% 아래로 밀린다(B3)."
+        },
+        {
+          "axis": "shell",
+          "value": "minimal",
+          "rule": "RC03",
+          "why": "내비가 없는 셸은 대시보드의 화면 이동 구조를 없앤다(테마가 셸을 바꾸는 B6의 예)."
+        }
+      ]
+    },
+    "content-page": {
+      "label": "콘텐츠 페이지",
+      "pageTypes": [
+        "article",
+        "docs"
+      ],
+      "purpose": "긴 글·문서·레퍼런스를 한 정렬선에서 끝까지 읽게 하는 화면",
+      "content": {
+        "form": "제목 → 본문(문단·소제목·인용·코드) → 보조 정보(목차·알림·표)"
+      },
+      "templates": [
+        "article",
+        "blog-post",
+        "research-paper",
+        "policy",
+        "docs-reference",
+        "tutorial"
+      ],
+      "layout": {
+        "intro": [
+          "default",
+          "center"
+        ]
+      },
+      "looks": [
+        {
+          "concept": "editorial",
+          "look": "journal"
+        },
+        {
+          "concept": "editorial",
+          "look": "paper"
+        },
+        {
+          "concept": "editorial",
+          "look": "newsroom"
+        }
+      ],
+      "fit": {
+        "density": [
+          "comfortable",
+          "spacious"
+        ],
+        "typography": [
+          "serif",
+          "literary",
+          "bookish",
+          "editorial",
+          "humanist",
+          "sans",
+          "newsroom",
+          "tech"
+        ]
+      },
+      "emphasis": {
+        "nodes": [
+          "page-header",
+          "prose"
+        ],
+        "how": "제목과 본문이 한 정렬선, 인용·코드는 본문 폭 안"
+      },
+      "support": {
+        "nodes": [
+          "notice",
+          "table",
+          "tags"
+        ],
+        "how": "알림·표·태그는 본문을 끊지 않는 보조 위치"
+      },
+      "rules": [
+        "RC03",
+        "RC06",
+        "RC08",
+        "RC09",
+        "V04"
+      ],
+      "avoid": [
+        {
+          "slot": "intro",
+          "option": "center",
+          "rule": "V04",
+          "why": "페이지 제목만 가운데로 옮기면 본문 첫 문단은 왼쪽에 남는다(B4)."
+        },
+        {
+          "axis": "typography",
+          "value": "condensed",
+          "rule": "RC03",
+          "why": "압축 서체는 320px에서 제목이 칸 폭을 넘어 3줄이 된 적이 있다(A5, S28). 지금은 FIT이 막지만 읽기용 목록에는 넣지 않는다."
+        }
+      ]
+    }
+  },
+  "recipeRules": [
+    {
+      "id": "RC01",
+      "mode": "select",
+      "claim": "Q14",
+      "check": {
+        "kind": "hero-visual",
+        "visuals": [
+          "chart",
+          "device"
+        ]
+      },
+      "why": "랜딩의 첫 화면에는 제품이 무엇인지 보여 주는 시각 요소(제품 화면·차트) 1개가 있어야 한다. 없으면 빈 칸이 생기거나 SaaS와 무관한 장식이 그 자리를 채운다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B1·C2"
+    },
+    {
+      "id": "RC02",
+      "mode": "select",
+      "claim": "Q06",
+      "check": {
+        "kind": "title-hierarchy",
+        "ratio": 1.6,
+        "width": 1440
+      },
+      "why": "히어로 제목은 섹션 제목의 1.6배 이상이어야 첫 화면의 위계가 선다. 촘촘한(tight) 스케일은 두 제목 차이를 줄인다(devtool 34px 대 24px).",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 C2, 7절"
+    },
+    {
+      "id": "RC03",
+      "mode": "select",
+      "claim": null,
+      "check": {
+        "kind": "axis-fit"
+      },
+      "why": "테마·서체·밀도·타입 스케일·셸이 레시피가 적은 범위 안이어야 한다. 테마가 셸을 바꾸면 같은 화면의 구성이 달라진다(진단 B6).",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B6"
+    },
+    {
+      "id": "RC04",
+      "mode": "select",
+      "claim": "Q11",
+      "check": {
+        "kind": "kpi-one-row",
+        "maxItems": 4
+      },
+      "why": "핵심 지표 4개 이하는 넓은 화면에서 한 줄에 읽혀야 한다. 지표 격자의 열 수가 항목 수보다 적으면 첫 차트가 아래로 밀린다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B3"
+    },
+    {
+      "id": "RC05",
+      "mode": "select",
+      "claim": "Q08",
+      "check": {
+        "kind": "chart-fill",
+        "min": 0.6,
+        "soloWidths": [
+          "wide",
+          "full"
+        ]
+      },
+      "why": "막대·선 차트는 데이터 최댓값이 축 최댓값의 60% 이상이어야 하고, 넓은 콘텐츠 폭(wide·full)에서 페이지 바로 아래에 혼자 놓여 가로로 늘어나지 않아야 한다(종횡 왜곡 1.5배 이하). 격자·보조 영역 안의 차트는 칸 폭에 맞아 늘어나지 않는다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 C4"
+    },
+    {
+      "id": "RC06",
+      "mode": "select",
+      "claim": "Q12",
+      "check": {
+        "kind": "left-axis"
+      },
+      "why": "글 중심 페이지는 제목·섹션 머리말·본문이 한 정렬선(왼쪽)에 놓인다. 머리말만 가운데면 정렬선이 둘로 갈린다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B4"
+    },
+    {
+      "id": "RC07",
+      "mode": "measure",
+      "claim": "Q04",
+      "probe": null,
+      "why": "같은 행의 차트 카드는 아래가 비지 않아야 한다(빈 공간 96px 미만 또는 38% 미만). 렌더 결과라 브라우저로 잰다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 A4"
+    },
+    {
+      "id": "RC08",
+      "mode": "measure",
+      "claim": null,
+      "probe": "ORPHAN_LINE",
+      "why": "제목·본문의 끝줄에 한두 글자만 남지 않는다(줄바꿈 정책). 렌더 결과라 텍스트 프로브가 0건인지로 잰다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 A6"
+    },
+    {
+      "id": "RC09",
+      "mode": "measure",
+      "claim": "Q05",
+      "probe": "BIG_NARROW",
+      "why": "320px에서 페이지 제목이 칸 폭에 비해 커서 3줄 이상이 되지 않는다. 렌더 결과라 레이아웃 프로브 BIG_NARROW가 0건인지로 잰다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 A5"
+    }
+  ],
+  "recipePicks": [
+    {
+      "recipeId": "saas-landing",
+      "templateId": "saas-landing",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC01",
+          "claim": "Q14"
+        },
+        {
+          "rule": "RC02",
+          "claim": "Q06"
+        },
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "V01",
+          "claim": null
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "P01",
+          "claim": null
+        },
+        {
+          "rule": "P02",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V01",
+          "what": "hero:statement",
+          "why": "큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V01",
+          "what": "hero:cover",
+          "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V04",
+          "what": "heads:center",
+          "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [],
+      "pageRules": [
+        "P04"
+      ],
+      "trace": []
+    },
+    {
+      "recipeId": "saas-landing",
+      "templateId": "b2b-solution",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC01",
+          "claim": "Q14"
+        },
+        {
+          "rule": "RC02",
+          "claim": "Q06"
+        },
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "V01",
+          "claim": null
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "P01",
+          "claim": null
+        },
+        {
+          "rule": "P02",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V01",
+          "what": "hero:statement",
+          "why": "큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V01",
+          "what": "hero:cover",
+          "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V04",
+          "what": "heads:center",
+          "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "saas-landing",
+      "templateId": "app-landing",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC01",
+          "claim": "Q14"
+        },
+        {
+          "rule": "RC02",
+          "claim": "Q06"
+        },
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "V01",
+          "claim": null
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "P01",
+          "claim": null
+        },
+        {
+          "rule": "P02",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V01",
+          "what": "hero:statement",
+          "why": "큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V01",
+          "what": "hero:cover",
+          "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V04",
+          "what": "heads:center",
+          "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "saas-landing",
+      "templateId": "devtool-landing",
+      "layout": {
+        "hero": "product"
+      },
+      "view": {
+        "concept": "saas",
+        "look": "trust"
+      },
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC01",
+          "claim": "Q14"
+        },
+        {
+          "rule": "RC02",
+          "claim": "Q06"
+        },
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "V01",
+          "claim": null
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "P01",
+          "claim": null
+        },
+        {
+          "rule": "P02",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V01",
+          "what": "hero:statement",
+          "why": "큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V01",
+          "what": "hero:cover",
+          "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V04",
+          "what": "heads:center",
+          "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        },
+        {
+          "rule": "RC02",
+          "what": "scale=tight",
+          "why": "촘촘한 스케일은 히어로 제목과 섹션 제목의 차이를 1.6배 아래로 줄인다(C2, devtool 34px 대 24px)."
+        },
+        {
+          "rule": "P02",
+          "what": "탈락 후보",
+          "why": "A split or product hero without a visual leaves its second column empty; it reads as a text-led centred hero."
+        },
+        {
+          "rule": "RC01",
+          "what": "탈락 후보",
+          "why": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)"
+        },
+        {
+          "rule": "RC03",
+          "what": "탈락 후보",
+          "why": "레시피 범위 밖의 축 값: scale=tight"
+        }
+      ],
+      "unmet": [],
+      "measured": [],
+      "pageRules": [],
+      "trace": [
+        {
+          "layout": "기본 구성",
+          "look": "템플릿 기본",
+          "failed": [
+            "P02",
+            "RC01",
+            "RC02",
+            "RC03"
+          ]
+        },
+        {
+          "layout": "hero:product",
+          "look": "템플릿 기본",
+          "failed": [
+            "RC02",
+            "RC03"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "saas/trust",
+          "failed": [
+            "P02",
+            "RC01"
+          ]
+        }
+      ]
+    },
+    {
+      "recipeId": "saas-landing",
+      "templateId": "waitlist",
+      "layout": {
+        "hero": "product"
+      },
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC01",
+          "claim": "Q14"
+        },
+        {
+          "rule": "RC02",
+          "claim": "Q06"
+        },
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "V01",
+          "claim": null
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "P01",
+          "claim": null
+        },
+        {
+          "rule": "P02",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V01",
+          "what": "hero:statement",
+          "why": "큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "V01",
+          "what": "hero:cover",
+          "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
+        },
+        {
+          "rule": "RC01",
+          "what": "탈락 후보",
+          "why": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)"
+        }
+      ],
+      "unmet": [],
+      "measured": [],
+      "pageRules": [],
+      "trace": [
+        {
+          "layout": "기본 구성",
+          "look": "템플릿 기본",
+          "failed": [
+            "RC01"
+          ]
+        }
+      ]
+    },
+    {
+      "recipeId": "ops-dashboard",
+      "templateId": "dashboard-overview",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC04",
+          "claim": "Q11"
+        },
+        {
+          "rule": "RC05",
+          "claim": "Q08"
+        },
+        {
+          "rule": "V03",
+          "claim": null
+        },
+        {
+          "rule": "V05",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V03",
+          "what": "columns:two",
+          "why": "KPI 4개를 2열로 바꾸면 2행이 되어 첫 차트가 46% 아래로 밀린다(B3)."
+        }
+      ],
+      "unmet": [],
+      "measured": [
+        "RC07"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "ops-dashboard",
+      "templateId": "sales-dashboard",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC04",
+          "claim": "Q11"
+        },
+        {
+          "rule": "RC05",
+          "claim": "Q08"
+        },
+        {
+          "rule": "V03",
+          "claim": null
+        },
+        {
+          "rule": "V05",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V03",
+          "what": "columns:two",
+          "why": "KPI 4개를 2열로 바꾸면 2행이 되어 첫 차트가 46% 아래로 밀린다(B3)."
+        }
+      ],
+      "unmet": [],
+      "measured": [
+        "RC07"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "ops-dashboard",
+      "templateId": "hr-people",
+      "layout": {},
+      "view": null,
+      "satisfied": false,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC04",
+          "claim": "Q11"
+        },
+        {
+          "rule": "V03",
+          "claim": null
+        },
+        {
+          "rule": "V05",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V03",
+          "what": "columns:two",
+          "why": "KPI 4개를 2열로 바꾸면 2행이 되어 첫 차트가 46% 아래로 밀린다(B3)."
+        },
+        {
+          "rule": "RC05",
+          "what": "탈락 후보",
+          "why": "차트 \"직군별 인원\"이 wide 폭에서 페이지 바로 아래에 혼자 놓여 가로로 늘어난다"
+        },
+        {
+          "rule": "RC04",
+          "what": "탈락 후보",
+          "why": "지표 4개가 2열이라 두 줄로 꺾인다"
+        }
+      ],
+      "unmet": [
+        {
+          "rule": "RC05",
+          "detail": "차트 \"직군별 인원\"이 wide 폭에서 페이지 바로 아래에 혼자 놓여 가로로 늘어난다"
+        }
+      ],
+      "measured": [
+        "RC07"
+      ],
+      "pageRules": [],
+      "trace": [
+        {
+          "layout": "기본 구성",
+          "look": "템플릿 기본",
+          "failed": [
+            "RC05"
+          ]
+        },
+        {
+          "layout": "columns:two",
+          "look": "템플릿 기본",
+          "failed": [
+            "V03",
+            "RC04",
+            "RC05"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "ops/workspace",
+          "failed": [
+            "RC05"
+          ]
+        },
+        {
+          "layout": "columns:two",
+          "look": "ops/workspace",
+          "failed": [
+            "V03",
+            "RC04",
+            "RC05"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "ops/enterprise",
+          "failed": [
+            "RC05"
+          ]
+        },
+        {
+          "layout": "columns:two",
+          "look": "ops/enterprise",
+          "failed": [
+            "V03",
+            "RC04",
+            "RC05"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "ops/ledger",
+          "failed": [
+            "RC05"
+          ]
+        },
+        {
+          "layout": "columns:two",
+          "look": "ops/ledger",
+          "failed": [
+            "V03",
+            "RC04",
+            "RC05"
+          ]
+        }
+      ]
+    },
+    {
+      "recipeId": "ops-dashboard",
+      "templateId": "finance-overview",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC04",
+          "claim": "Q11"
+        },
+        {
+          "rule": "RC05",
+          "claim": "Q08"
+        },
+        {
+          "rule": "V03",
+          "claim": null
+        },
+        {
+          "rule": "V05",
+          "claim": null
+        }
+      ],
+      "avoided": [],
+      "unmet": [],
+      "measured": [
+        "RC07"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "content-page",
+      "templateId": "article",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC06",
+          "claim": "Q12"
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V04",
+          "what": "intro:center",
+          "why": "페이지 제목만 가운데로 옮기면 본문 첫 문단은 왼쪽에 남는다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [
+        "RC08",
+        "RC09"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "content-page",
+      "templateId": "blog-post",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC06",
+          "claim": "Q12"
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V04",
+          "what": "intro:center",
+          "why": "페이지 제목만 가운데로 옮기면 본문 첫 문단은 왼쪽에 남는다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [
+        "RC08",
+        "RC09"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "content-page",
+      "templateId": "research-paper",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC06",
+          "claim": "Q12"
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V04",
+          "what": "intro:center",
+          "why": "페이지 제목만 가운데로 옮기면 본문 첫 문단은 왼쪽에 남는다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [
+        "RC08",
+        "RC09"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "content-page",
+      "templateId": "policy",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC06",
+          "claim": "Q12"
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        }
+      ],
+      "avoided": [
+        {
+          "rule": "V04",
+          "what": "intro:center",
+          "why": "페이지 제목만 가운데로 옮기면 본문 첫 문단은 왼쪽에 남는다(B4)."
+        }
+      ],
+      "unmet": [],
+      "measured": [
+        "RC08",
+        "RC09"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "content-page",
+      "templateId": "docs-reference",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC06",
+          "claim": "Q12"
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        }
+      ],
+      "avoided": [],
+      "unmet": [],
+      "measured": [
+        "RC08",
+        "RC09"
+      ],
+      "pageRules": [],
+      "trace": []
+    },
+    {
+      "recipeId": "content-page",
+      "templateId": "tutorial",
+      "layout": {},
+      "view": null,
+      "satisfied": true,
+      "applied": [
+        {
+          "rule": "RC03",
+          "claim": null
+        },
+        {
+          "rule": "RC06",
+          "claim": "Q12"
+        },
+        {
+          "rule": "V04",
+          "claim": null
+        }
+      ],
+      "avoided": [],
+      "unmet": [],
+      "measured": [
+        "RC08",
+        "RC09"
+      ],
+      "pageRules": [],
+      "trace": []
+    }
+  ],
   "themeCategories": {
     "work": "업무·제품",
     "brand": "브랜드·마케팅",

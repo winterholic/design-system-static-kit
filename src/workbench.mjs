@@ -60,7 +60,14 @@ function renderRecipe() {
   const pick = recipePickOf(sel.templateId);
   $('recipe-field').hidden = !pick;
   if (!pick) return;
-  const r = recipes[pick.recipeId], look = lookOfPick(pick), layout = Object.entries(pick.layout).map(([k, v]) => `${k}:${v}`).join(' ') || '기본 구성';
+  const r = recipes[pick.recipeId];
+  $('apply-recipe').hidden = !pick.satisfied;
+  if (!pick.satisfied) { // 규칙을 못 지키는 템플릿: 추천하지 않고 이유만 보인다. 이 템플릿은 그대로 쓸 수 있다.
+    $('recipe-text').textContent = `${r.label} · 이 템플릿은 레시피 규칙을 모두 지키지 못해 추천하지 않습니다. 직접 고른 구성은 그대로 쓸 수 있습니다.`;
+    $('recipe-rules').textContent = pick.unmet.map(u => `${u.rule} ${u.detail}`).join(' · ');
+    return;
+  }
+  const look = lookOfPick(pick), layout = Object.entries(pick.layout).map(([k, v]) => `${k}:${v}`).join(' ') || '기본 구성';
   $('recipe-text').textContent = `${r.label} · ${r.purpose}. 추천: ${layout}${look ? ' · ' + concepts[pick.view.concept].label + ' ' + look.label + ' 보기' : ' · 템플릿 기본 테마'}`;
   $('recipe-rules').textContent = `지킨 규칙 ${pick.applied.map(a => a.rule).join(' ')}` + (pick.avoided.length ? ` · 피한 규칙 ${[...new Set(pick.avoided.map(a => a.rule))].join(' ')}` : '');
   $('apply-recipe').setAttribute('aria-pressed', String(isRecipeApplied(pick)));
@@ -69,7 +76,7 @@ const isRecipeApplied = pick => JSON.stringify(sel.layout) === JSON.stringify(pi
 /** 레시피 추천 그대로의 Blueprint. 카탈로그에서 템플릿으로 시작할 때도 같은 경로를 쓴다. */
 function recipeStart(templateId) {
   const pick = recipePickOf(templateId), look = lookOfPick(pick);
-  if (!pick) return {blueprint: createBlueprint(templateId), layout: {}, themeVariant: null};
+  if (!pick?.satisfied) return {blueprint: createBlueprint(templateId), layout: {}, themeVariant: null};
   return {blueprint: createBlueprint(templateId, look?.theme, undefined, {themeVariant: look?.themeVariant, layout: pick.layout, typography: look?.typography}), layout: {...pick.layout}, themeVariant: look?.themeVariant ?? null};
 }
 function useRecipe() { const r = recipeStart(sel.templateId); selected = []; sel.layout = r.layout; sel.themeVariant = r.themeVariant; sel.paletteChosen = false; commit(r.blueprint); }

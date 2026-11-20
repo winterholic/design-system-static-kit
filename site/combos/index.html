@@ -20,12 +20,13 @@
       <label class="tool"><span>컨셉</span><select id="f-concept"></select></label>
       <label class="tool"><span>페이지 유형</span><select id="f-type"></select></label>
       <label class="tool"><span>템플릿</span><select id="f-template"></select></label>
-      <label class="tool"><span>정렬</span><select id="f-sort"><option value="default">템플릿 순</option><option value="changed">바꾼 슬롯 많은 순</option><option value="shuffle">섞기</option></select></label>
+      <label class="tool"><span>정렬</span><select id="f-sort"><option value="default">레시피 추천 먼저</option><option value="template">템플릿 순</option><option value="changed">바꾼 슬롯 많은 순</option><option value="shuffle">섞기</option></select></label>
     </div>
     <details class="tool-details" id="slot-details"><summary>구성 변형으로 거르기 <small id="slot-active"></small></summary><div class="slot-filters" id="slot-filters"></div></details>
     <details class="tool-details" id="view-details"><summary>테마·팔레트 바꿔 보기 <small id="view-summary"></small></summary><div class="view-controls" id="view-gallery"></div><p class="hint">여기서 고른 테마·팔레트·모드가 모든 썸네일과 확대 보기에 적용됩니다. 비우면 각 템플릿의 기본 테마와 첫 팔레트로 보입니다.</p></details>
     <div class="tool-row toggles">
       <label class="check"><input type="checkbox" id="f-same"> 같은 화면 숨기기</label>
+      <label class="check"><input type="checkbox" id="f-rec"> 레시피 추천만 <small id="rec-count"></small></label>
       <label class="check"><input type="checkbox" id="f-exp"> 실험 구성 포함 <small id="exp-count"></small></label>
       <label class="check"><input type="checkbox" id="f-flagged"> 이상함 표시한 것만</label>
       <label class="check"><input type="checkbox" id="f-tall"> 썸네일 길게(페이지 아래까지)</label>
@@ -46,6 +47,7 @@
     <strong id="viewer-title" class="viewer-title">조합</strong>
     <div class="modal-actions">
       <button type="button" class="chip-button flag-button" id="v-flag" aria-pressed="false">⚑ 이상함</button>
+      <button type="button" class="chip-button" id="v-recipe" hidden>레시피 보기 적용</button>
       <button type="button" class="chip-button" id="v-copy-id">ID 복사</button>
       <button type="button" class="chip-button" id="v-copy-link">링크 복사</button>
       <button type="button" class="chip-button" id="v-window">새 창 <span aria-hidden="true">↗</span></button>

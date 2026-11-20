@@ -10,7 +10,7 @@ import {CLAIMS} from '../scripts/design-qa/quality-claims.mjs';
 
 // Design Recipe(docs/recipes.md). 선택 함수가 고른 조합이 실제 Chromium에서 4개 폭의 심각 프로브 지적 0, 레시피 측정 규칙(RC07~RC09)과 위계(RC02)를 지키는지 잰다.
 const WIDTHS = [320, 390, 768, 1440];
-const picks = recipePicks();
+const picks = recipePicks().filter(p => p.satisfied); // 규칙을 못 지키는 선택(hr-people RC05)은 추천이 아니다. 아래 시험이 따로 그 이유를 확인한다.
 const viewOf = p => p.view ? {...EMPTY_VIEW, ...p.view} : EMPTY_VIEW;
 const claim = id => CLAIMS.find(c => c.id === id);
 
@@ -38,6 +38,14 @@ test('every recipe pick has zero severe probe findings at 320, 390, 768 and 1440
   expect(problems).toEqual([]);
 });
 
+test('Q08: the template the recipe refuses (hr-people, full-width solo bar chart) really fails the browser measure; the ones it keeps pass or have no wide chart', async ({page}) => {
+  await page.setViewportSize({width: 1440, height: 900});
+  const verdict = async id => { await page.setContent(renderCombo(findCombo(id)).html, {waitUntil: 'load'}); const v = await page.evaluate(claim('Q08').fn); return v === null ? 'none' : claim('Q08').test(v); };
+  expect(await verdict('hr-people')).toBe(false);
+  expect(await verdict('dashboard-analytics')).toBe(false);
+  for (const id of ['dashboard-overview', 'sales-dashboard', 'finance-overview']) expect(['none', true], id).toContain(await verdict(id));
+});
+
 test('RC02: the SaaS pick has a hero title at least 1.6x the section title at 1440px and a product visual in the first view', async ({page}) => {
   await page.setViewportSize({width: 1440, height: 900});
   for (const p of picks.filter(x => x.recipeId === 'saas-landing' && templates[x.templateId].tree.some(n => n.type === 'section'))) {
@@ -59,13 +67,13 @@ test('gallery: recipe picks lead the default order, carry a badge with their rul
   await page.waitForSelector('html[data-ready]');
   const model = filterCombos({});
   const ids = await page.locator('#grid .combo-card').evaluateAll(cards => cards.map(c => c.dataset.id));
-  expect(ids.slice(0, 15)).toEqual(model.slice(0, 15).map(c => c.id));
-  expect(model.slice(0, 15).every(c => c.recipe)).toBe(true);
-  await expect(page.locator('#grid .combo-card .badge.rec')).toHaveCount(15);
+  expect(ids.slice(0, 14)).toEqual(model.slice(0, 14).map(c => c.id));
+  expect(model.slice(0, 14).every(c => c.recipe)).toBe(true);
+  await expect(page.locator('#grid .combo-card .badge.rec')).toHaveCount(14);
   expect(await page.locator('#grid .combo-card .badge.rec').first().getAttribute('title')).toMatch(/레시피 추천 · 지킨 규칙 .*RC0\d/);
   // 추천만 보기, 템플릿 순으로 되돌리기
   await page.locator('#f-rec').check();
-  await expect(page.locator('#result-line')).toContainText('개 중 15개');
+  await expect(page.locator('#result-line')).toContainText('개 중 14개');
   await page.locator('#f-rec').uncheck();
   await page.locator('#f-sort').selectOption('template');
   const byTemplate = await page.locator('#grid .combo-card').evaluateAll(cards => cards.map(c => c.dataset.id));
@@ -107,6 +115,12 @@ test('workbench: a template with a recipe shows it with its rules, and one click
   // 다른 선택은 열려 있다: 히어로를 직접 바꿀 수 있다.
   await page.locator('#layout-slots [data-slot=hero][data-option=statement]').click();
   await expect(page.locator('#preview-frame').contentFrame().locator('.kit-hero')).toHaveAttribute('data-variant', 'statement');
+  await expect(page.locator('#errors')).toBeHidden();
+  // 규칙을 못 지키는 템플릿은 추천하지 않고 이유만 보인다. 템플릿 자체는 그대로 고를 수 있다.
+  await page.locator('#template').selectOption('hr-people');
+  await expect(page.locator('#recipe-text')).toContainText('추천하지 않습니다');
+  await expect(page.locator('#recipe-rules')).toContainText('RC05');
+  await expect(page.locator('#apply-recipe')).toBeHidden();
   await expect(page.locator('#errors')).toBeHidden();
   await page.locator('#template').selectOption('checkout');
   await expect(page.locator('#recipe-field')).toBeHidden();
