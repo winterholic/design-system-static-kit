@@ -4,6 +4,8 @@
  *  from the preset. `lintType` rejects raw sizes in the stylesheet and keeps large roles in the slots that own them.
  *  No webfont is loaded: generated pages carry `default-src 'none'`, so every face here is a system face (see docs/typography.md, "서체 조달"). */
 
+import {layoutRev} from './layout.mjs';
+
 const KO_SANS = '"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic","Nanum Gothic",sans-serif';
 const KO_SERIF = '"AppleMyungjo","Noto Serif KR","Noto Serif CJK KR","Nanum Myeongjo","Batang",serif';
 const KO_MONO = '"Apple SD Gothic Neo","Noto Sans Mono CJK KR","D2Coding","Nanum Gothic Coding",monospace';
@@ -172,6 +174,8 @@ export function typeVars(b, weightHead) {
     `--kit-heading:${STACKS[preset.head]}`, `--kit-font:${STACKS[preset.text]}`, `--kit-mono:${STACKS.mono}`,
     `--kit-hw:${hw}`, `--kit-line:${lh.body}`,
     ...Object.keys(ROLES).map(name => `${roleVar(name)}:${sizes[name].css}`),
+    // 리비전 2(레이아웃): 칸 폭에 맞춰 줄이는 역할은 원래 값을 `-raw`로도 남긴다(FIT: 자기 자신을 참조하는 순환 var()를 피하려는 것).
+    ...(layoutRev(b) === 2 ? FIT_ROLES.map(name => `${roleVar(name)}-raw:${sizes[name].css}`) : []),
     ...Object.entries(t).map(([k, v]) => `--kit-tr-${k}:${v}em`),
     ...Object.entries(lh).filter(([k]) => k !== 'body').map(([k, v]) => `--kit-lh-${k}:${v}`),
     `--kit-case-label:${preset.label_case === 'upper' ? 'uppercase' : 'none'}`, `--kit-nums:${preset.nums === 'tabular' ? 'tabular-nums' : 'normal'}`,
@@ -190,6 +194,34 @@ export function refineTracking(css) {
     return selector + '{' + body.replace(/letter-spacing:(-?\d*\.?\d+)em/g, (m, v) => `letter-spacing:${Math.min(HANGUL.labelMax, Math.max(HANGUL.track.display, +v))}em`.replace(/(-?)0\./, '$1.')) + '}';
   });
 }
+
+// ---------- layout revision 2: 칸 폭과 줄바꿈 ----------
+/** 타입 역할의 px 하한(`minCap`)은 뷰포트로만 정해지므로 칸이 좁으면 제목이 3줄로 접힌다(진단 A5: 320px 상태 화면 제목 33px, 칸 224px = 6.8em).
+ *  리비전 2는 칸 폭을 따라 줄이는 상자(`boxes`)를 선언한다. 상자 안에서는 역할 값이 `min(원래 값, 칸 폭 / em)`이 되어 칸이 항상 `em`글자 이상이다(제목 9, 여러 줄 인용 12).
+ *  역할 값 자체를 상자 안에서 다시 정의하므로, 그 역할을 쓰는 규칙(부품 CSS·맥락 결정표)은 고칠 필요가 없고 더 큰 글자로 되돌아가지도 않는다.
+ *  칸 폭은 `100vw − 2×거터 − 상자의 좌우 안쪽 여백`이다. 상자를 컨테이너로 만들지 않는 이유: `.kit-empty`는 shrink-to-fit 격자 항목이라 inline-size 격리를 걸면 폭이 64px로 무너진다(실측).
+ *  이 근사는 상자가 한 열로 접힌 좁은 화면에서만 의미가 있고, 넓은 화면에서는 역할의 원래 상한(≤ 64px)이 항상 더 작아 조건이 닿지 않는다. */
+export const FIT = {
+  boxes: [
+    {box: '.kit-empty', inset: '2 * var(--kit-inset)', em: 9, roles: ['app', 'heading', 'title']},
+    {box: '.kit-page-header', inset: '0px', em: 9, roles: ['app', 'heading', 'title']},
+    // 여러 줄로 읽히는 큰 글자는 칸이 더 넓어야 한다: BIG_NARROW는 3줄이면 8em, 4줄 이상이면 12em 미만을 지적한다.
+    {box: '.kit-quote', inset: '2 * var(--kit-open-pad)', em: 12, roles: ['quote', 'quote-l']},
+  ],
+};
+/** `-raw` 별칭이 필요한 역할(상자 목록에 나온 모든 역할). */
+export const FIT_ROLES = [...new Set(FIT.boxes.flatMap(b => b.roles))];
+export function fitCSS() {
+  return FIT.boxes.map(({box, inset, em, roles}) => `${box}{${roles.map(r => `${roleVar(r)}:min(var(${roleVar(r)}-raw),calc((100vw - 2 * var(--kit-gutter) - ${inset}) / ${em}))`).join(';')}}`).join('\n');
+}
+
+/** 줄바꿈 정책은 태그가 아니라 역할이 정한다. 제목 역할(짧고 한두 줄로 끝나는 글)은 balance, 본문 역할은 pretty.
+ *  기본 규칙은 h1~h6에만 balance를 걸어 `strong`·브랜드 이름 같은 제목 역할이 본문 규칙을 물려받아 끝줄에 한두 글자가 남았다(진단 A6). */
+export const WRAP = {
+  balance: ['strong', '.kit-brand-name'],
+  pretty: ['p', 'li', 'dd', 'dt', 'blockquote', 'figcaption', 'summary'],
+};
+export const wrapCSS = () => `:where(${WRAP.balance.join(',')}){text-wrap:balance}`;
 
 // ---------- CSS lint ----------
 const SIZE_OK = /^(inherit|initial|unset|0|1em|100%)$/;

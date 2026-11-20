@@ -120,7 +120,7 @@ test('forms: unique ids, option contracts, accessibility markup for every field 
   const fields = types.map(t => f('f-' + t, t, ['select', 'radio'].includes(t) ? {options: ['가', '나']} : {help: '도움말'}));
   const html = compile(withBody([{type: 'form', title: '앞쪽', submitLabel: '확인', fields: fields.slice(0, 7)}, {type: 'form', title: '뒤쪽', submitLabel: '확인', fields: fields.slice(7)}], 'form')).html;
   for (const t of types) assert.match(html, new RegExp(`id="field-f-${t}"|name="f-${t}"`));
-  assert.match(html, /role="switch"/); assert.match(html, /<fieldset class="kit-field kit-choice"><legend>/); assert.match(html, /aria-describedby="field-f-text-help"/);
+  assert.match(html, /role="switch"/); assert.match(html, /<fieldset class="kit-field kit-choice"[^>]*><legend>/); assert.match(html, /aria-describedby="field-f-text-help"/);
 });
 test('state markup for data parts and ready-needs-data rule', () => {
   for (const state of ['loading', 'empty', 'error', 'partial', 'forbidden']) assert.match(compile(withBody([{type: 'list', title: '목록', state, items: [{title: '항목'}]}])).html, new RegExp(`data-state="${state}"`));

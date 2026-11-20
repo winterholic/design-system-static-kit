@@ -14,7 +14,7 @@ import {lintSpacing} from '../src/spacing.mjs';
 
 test('new catalogs expose versioned, deterministic composition decisions without mutating the blueprint', () => {
   const b = catalog.createBlueprint('dashboard-overview'), original = structuredClone(b);
-  assert.equal(b.catalogVersion, '2.3.0');
+  assert.equal(b.catalogVersion, '2.4.0');
   const result = compile(b);
   assert.equal(result.manifest.design.version, '1.2.0');
   assert.ok(result.manifest.design.decisions.length > 4);
@@ -140,7 +140,7 @@ test('catalog upgrade is explicit, lossless and does not repair invalid content'
   assert.equal(typeof catalog.migrateBlueprint, 'function');
   const b = catalog.createBlueprint('signup'); b.catalogVersion = '2.1.0';
   const upgraded = catalog.migrateBlueprint(b);
-  assert.equal(upgraded.catalogVersion, '2.3.0');
+  assert.equal(upgraded.catalogVersion, '2.4.0');
   assert.deepEqual({...upgraded, catalogVersion: '2.1.0'}, b);
   const invalid = structuredClone(b); invalid.tree.children[1].style = 'padding:0';
   assert.equal(validateBlueprint(catalog.migrateBlueprint(invalid)).valid, false);

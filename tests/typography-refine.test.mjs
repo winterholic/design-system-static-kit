@@ -67,8 +67,8 @@ test('single-weight Hangul serif cannot be bolder than its synthetic bold: serif
   }
 });
 
-test('catalog 2.3.0 is the current version; 2.2.0 and 2.1.0 inputs keep their previous typography byte for byte', () => {
-  assert.equal(CATALOG_VERSION, '2.3.0');
+test('catalog 2.4.0 is the current version; 2.2.0 and 2.1.0 inputs keep their previous typography byte for byte', () => {
+  assert.equal(CATALOG_VERSION, '2.4.0');
   const {hashes} = read('legacy-2-2-hashes.json'), {blueprints} = read('legacy-2-2-blueprints.json');
   assert.equal(Object.keys(hashes).length, templateList.length);
   for (const [id, hash] of Object.entries(hashes)) {
@@ -81,7 +81,7 @@ test('catalog 2.3.0 is the current version; 2.2.0 and 2.1.0 inputs keep their pr
 test('the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variables, nothing else', () => {
   const old = structuredClone(read('legacy-2-2-blueprints.json').blueprints['saas-landing']);
   const next = migrateBlueprint(old);
-  assert.equal(next.catalogVersion, '2.3.0');
+  assert.equal(next.catalogVersion, '2.4.0');
   assert.deepEqual({...next, catalogVersion: '2.2.0'}, old);
   assert.ok(validateBlueprint(next).valid);
   const a = compile(old).css, b = compile(next).css;

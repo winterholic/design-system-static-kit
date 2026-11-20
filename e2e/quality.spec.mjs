@@ -4,7 +4,7 @@ import {themes} from '../src/catalog.mjs';
 import {layoutProbe, LAYOUT_OPTIONS} from '../scripts/design-qa/layout-probe.mjs';
 import {SEVERE} from '../scripts/design-qa/diagnose-meta.mjs';
 
-// 품질 게이트(6차 E). 갤러리에서 '실험'이 아닌 조합은 배치 실측(layout-probe)의 심각한 지적이 0이어야 한다.
+// 품질 게이트(6차 E). 폭은 1440·390에 768·320을 더했다(진단 2026-11-21: 두 폭만 보면 320·768에서만 나오는 GRID_ORPHAN 1,152건을 놓친다). 갤러리에서 '실험'이 아닌 조합은 배치 실측(layout-probe)의 심각한 지적이 0이어야 한다.
 // 전수 진단은 scripts/design-qa/diagnose.mjs가 로컬에서 하고(수십 분), CI는 고정 시드 표본으로 같은 규칙을 다시 잰다.
 // macOS 폰트로 얻은 등급이 Linux 폰트에서도 유지되는지가 이 시험의 두 번째 목적이다(5차에서 줄바꿈 차이로 CI가 한 번 깨졌다).
 const LAYOUT_SEVERE = ['EMPTY_CELL', 'BIG_NARROW', 'HIER_INVERT', 'TIGHT_ROW', 'GRID_ORPHAN', 'EDGE_VIEW'];
@@ -27,7 +27,7 @@ test('layout probe negative controls: every defect class is reported on a delibe
   for (const k of ['grid', 'empty', 'row', 'measure', 'big', 'hier', 'band', 'edge']) expect(r.scanned[k], 'scanned ' + k).toBeGreaterThan(0);
 });
 
-test('quality gate: a seeded sample of stable combinations has no severe layout finding at 1440 and 390 under two themes', async ({page}) => {
+test('quality gate: a seeded sample of stable combinations has no severe layout finding at 1440, 768, 390 and 320 under two themes', async ({page}) => {
   test.setTimeout(600000);
   const all = enumerateCombos().filter(c => !c.sameAs && !c.experimental);
   const defaults = all.filter(c => !c.changed), rest = shuffled(all.filter(c => c.changed), 20261021).slice(0, 160);
@@ -36,7 +36,7 @@ test('quality gate: a seeded sample of stable combinations has no severe layout 
   for (const [i, c] of sample.entries()) for (const theme of [null, ids[(i * 7 + 3) % ids.length]]) {
     const r = renderCombo(c, theme ? {theme} : undefined);
     expect(r.ok, c.id + ' ' + r.error).toBe(true);
-    for (const width of [1440, 390]) {
+    for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({width, height: 900}); await page.setContent(r.html, {waitUntil: 'load'}); views++;
       const probe = await page.evaluate(layoutProbe, LAYOUT_OPTIONS);
       for (const [k, v] of Object.entries(probe.scanned)) scanned[k] = (scanned[k] ?? 0) + v;

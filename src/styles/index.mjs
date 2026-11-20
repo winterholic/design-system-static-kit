@@ -1,11 +1,11 @@
 import {axisVars, coreCSS, tailCSS} from './base.mjs';
-import {typeRev, refineTracking} from '../typography.mjs';
+import {typeRev, refineTracking, fitCSS, wrapCSS} from '../typography.mjs';
 import {shellCSS} from './shells.mjs';
 import {chunks} from './chunks.mjs';
 import {polish, polishCore} from './polish.mjs';
 import {nodeTypes} from '../catalog.mjs';
 import {contractCSS} from '../spacing.mjs';
-import {flowCSS, flowUsage} from '../layout.mjs';
+import {flowCSS, flowUsage, layoutRev, refineLayout, layoutContractCSS} from '../layout.mjs';
 import {compositionCSS} from '../composition.mjs';
 import {headerDesignCSS} from '../header-design.mjs';
 
@@ -46,6 +46,8 @@ export function stylesheet(b, sets, body = '', design = null) {
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
-  const css = parts.join('\n') + '\n';
+  const rev2 = layoutRev(b) === 2;
+  if (rev2) parts.push(layoutContractCSS().trim(), fitCSS(), wrapCSS());
+  const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
   return typeRev(b) === 2 ? refineTracking(css) : css;
 }
