@@ -58,6 +58,8 @@ Recipe가 기본과 같은 조합을 고르는 입력 7개를 숨기지 않고 �
 
 ## 5. 재현
 
+공개된 스크린샷과 눈가림 평가의 기준 렌더 코드는 `f1eb262d7`이다. 실험 자료를 포함한 `5638920fa`에서 아래 `verify`를 실행하면 91개가 모두 통과한다. 이후 `0ea13094c`의 waitlist 규칙 예외로 현재 I02 Recipe 선택은 기본 조립으로 바뀌었다. `238d0bcf4`에서 같은 명령을 실행하면 I02 Recipe Blueprint 한 건을 불일치로 보고하고 종료 코드 1을 반환한다. 기존 점수는 당시 화면에 연결된다. 새 실험 자료는 별도 사본에서 생성한다.
+
 ```
 node scripts/design-qa/ai-assembly.mjs build     # 세 팔 Blueprint 생성, 해시·기준 커밋 기록 (hashes.json, recipe-picks.json)
 node scripts/design-qa/ai-assembly.mjs verify    # default·recipe를 코드로 다시 만들고 ai는 저장 Blueprint를 다시 컴파일해 해시 대조(91개 검사)

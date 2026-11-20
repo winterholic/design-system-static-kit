@@ -1,7 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>전후 비교: 카탈로그 2.3.0 → 2.4.0</title>
 <style>
 body{font:15px/1.55 system-ui,-apple-system,'Apple SD Gothic Neo',sans-serif;margin:0;color:#1d2433;background:#f6f7f9}
-header,section,.good{max-width:1500px;margin:0 auto;padding:16px 20px}
+header,section,.good,details{max-width:1500px;margin:0 auto;padding:16px 20px}
 h1{font-size:22px;margin:8px 0}h2{font-size:18px;margin:6px 0;border-top:2px solid #d6dbe4;padding-top:14px}
 .note{background:#fff7e0;border:1px solid #e8d59a;padding:10px 14px;border-radius:8px}
 .kind,.q{color:#4a5468;margin:4px 0;font-size:13px}.imp{margin:6px 0}.rem{margin:6px 0;color:#7a2d1a}
@@ -14,15 +14,17 @@ figure{margin:0}figcaption{font-size:12.5px;font-weight:600;margin-bottom:4px}
 .same{color:#1a6b3a}.chg{color:#9a4b00}.seen{color:#0b4fb3}
 table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}td,th{border:1px solid #d6dbe4;padding:6px 8px;text-align:left}
 nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x:auto}
+summary{cursor:pointer;font-weight:600}
 @media (max-width:700px){.pair{grid-template-columns:1fr}.box{max-height:520px}}
 </style></head><body>
-<header><h1>전후 비교: 카탈로그 2.3.0(before) → 2.4.0(d72 기준)</h1>
-<p class="note">같은 표본 목록(34개)을 같은 도구로 캡처한 비교다. final 이미지는 기준 커밋 d72d78389에서 만들었다. 최신 origin/main 0ea13094c은 Recipe·문서·e2e를 바꿨고 이 기본 조합의 템플릿 렌더 경로는 바꾸지 않았다. 최신 커밋에서 캡처 계측을 재실행하지 못했으므로 이 페이지를 최신 main의 새 캡처 증거로 읽지 않는다. "직접 봄"이라고 표시한 폭만 이미지를 열어 비교했다. 그 밖은 문서 높이와 프로브 숫자, PNG 바이트 일치 여부만 근거다. 시각적 완성도는 자동 판정이 아니고 사람 레이블이 없다. Chromium·macOS 폰트 기준이며 긴 페이지는 위쪽만 저장했다.</p>
-<nav><a href="#S07">S07</a><a href="#S05">S05</a><a href="#S06">S06</a><a href="#S27">S27</a><a href="#S12">S12</a><a href="#S23">S23</a><a href="#S17">S17</a><a href="#S29">S29</a><a href="#S11">S11</a><a href="#S30">S30</a><a href="#S02">S02</a><a href="#S15">S15</a><a href="#good">완성도 높음 7</a></nav></header>
+<header><h1>카탈로그 2.3.0 → 2.4.0 전후 비교</h1>
+<p class="note">같은 조합 34개를 4개 폭에서 비교한다. 캡처 커밋은 2.3.0 <code>89573577f</code>와 2.4.0 <code>d72d78389</code>다. Chromium과 macOS 폰트를 사용했고, 긴 페이지는 폭별 상한까지 담았다. 직접 판독한 폭에는 «직접 봄»을 표시했다.</p>
+<nav><a href="#S07">S07</a><a href="#S05">S05</a><a href="#S06">S06</a><a href="#S27">S27</a><a href="#S12">S12</a><a href="#S23">S23</a><a href="#S17">S17</a><a href="#S29">S29</a><a href="#S11">S11</a><a href="#S30">S30</a><a href="#S02">S02</a><a href="#S15">S15</a><a href="#good">완성도 높음 7개</a><a href="#other" onclick="document.getElementById('other').open=true">나머지 15개</a></nav></header>
 <section id="S07"><h2>S07 · agency-home</h2>
 <p class="kind">분류: a-violation · 320px에서 히어로 수치 3개가 2열에 놓여 마지막 줄 1칸(GRID_ORPHAN)</p>
-<p class="q">측정 조건(Q): Q01@320 실패 → 통과 · Q01@390 통과 → 통과 · Q01@768 통과 → 통과 · Q01@1440 통과 → 통과 · Q10@320 통과 → 통과 · Q10@768 실패 → 통과 · Q10@1440 실패 → 통과</p>
-<p class="imp"><b>개선:</b> 320px: 히어로 수치 3개가 2+1에서 한 줄 3칸으로(Q01 통과). 수치와 다음 섹션 사이 간격이 줄었다(Q10 통과, 320px 130px). 문서 높이 4314→4250. 1440px도 수치 아래 간격이 눈에 띄게 줄었다(Q10 208→104px, 이 비교 페이지를 브라우저로 열어 확인).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 없음(이 표본에서 새로 본 것 없음).</p>
+<p class="q">측정 조건(Q) · Q01@320 실패 → 통과 · Q01@390 통과 → 통과 · Q01@768 통과 → 통과 · Q01@1440 통과 → 통과 · Q10@320 통과 → 통과 · Q10@768 실패 → 통과 · Q10@1440 실패 → 통과</p>
+<p class="imp"><b>개선</b> · 320px: 히어로 수치 3개가 2+1에서 한 줄 3칸으로(Q01 통과). 수치와 다음 섹션 사이 간격이 줄었다(Q10 통과, 320px 130px). 문서 높이 4314→4250. 1440px도 수치 아래 간격이 눈에 띄게 줄었다(Q10 208→104px, 이 비교 페이지를 브라우저로 열어 확인).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 없음(이 표본에서 새로 본 것 없음).</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 4314→4250px · 프로브 지적 GRID_ORPHAN → 없음 · <b class="chg">PNG 달라짐</b> · <b class="seen">직접 봄</b></div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S07__agency-home__w320.png" alt="S07 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S07__agency-home__w320.png" alt="S07 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 4561→4497px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -33,8 +35,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S07__agency-home__w1440.png" alt="S07 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S07__agency-home__w1440.png" alt="S07 final 1440"></div></figure></div></div></section>
 <section id="S05"><h2>S05 · devtool-landing</h2>
 <p class="kind">분류: awkward · 규칙은 통과하나 히어로가 작고 오른쪽 절반이 비어 첫 화면 위계가 약함</p>
-<p class="q">측정 조건(Q): Q06@1440 실패 → 통과</p>
-<p class="imp"><b>개선:</b> 1440px: 텍스트만 있는 split 히어로가 가운데 형태로 바뀌어 오른쪽 절반이 비는 모습은 없어졌다(Q06 0.50→0.29 통과).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 히어로 제목은 34px 그대로이고 제품 시각 요소도 없다. 첫 화면은 여전히 작은 제목 아래 빈 띠가 크다(보이는 대로). 제목 크기 대 섹션 제목 비(RC02 1.6)는 기본 조립에서 채워지지 않는다. Recipe 조립(`devtool-landing~hero:product`)만 64px·시각 요소를 갖는다.</p>
+<p class="q">측정 조건(Q) · Q06@1440 실패 → 통과</p>
+<p class="imp"><b>개선</b> · 1440px: 텍스트만 있는 split 히어로가 가운데 형태로 바뀌어 오른쪽 절반이 비는 모습은 없어졌다(Q06 0.50→0.29 통과).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 히어로 제목은 34px 그대로이고 제품 시각 요소도 없다. 첫 화면은 여전히 작은 제목 아래 빈 띠가 크다(보이는 대로). 제목 크기 대 섹션 제목 비(RC02 1.6)는 기본 조립에서 채워지지 않는다. Recipe 조립(`devtool-landing~hero:product`)만 64px·시각 요소를 갖는다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 4401→4401px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S05__devtool-landing__w320.png" alt="S05 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S05__devtool-landing__w320.png" alt="S05 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 4293→4293px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -45,8 +48,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S05__devtool-landing__w1440.png" alt="S05 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S05__devtool-landing__w1440.png" alt="S05 final 1440"></div></figure></div></div></section>
 <section id="S06"><h2>S06 · product-landing</h2>
 <p class="kind">분류: awkward · 규칙은 통과하나 벤토 칸의 높이가 맞지 않아 빈 면이 남고 히어로 제목이 작음</p>
-<p class="q">측정 조건(Q): Q07@1440 실패 → 통과 · Q13@1440 통과 → 통과</p>
-<p class="imp"><b>개선:</b> 1440px: 벤토가 촘촘해졌다. 지표 칸 4개 빈 비율 0.69→0.53(Q07 통과). 히어로와 첫 섹션 사이 빈 띠가 줄어 문서 높이 3357→3012.</p><p class="rem"><b>남은 문제·새로 본 것:</b> 벤토 큰 그림 칸이 362px 높이로 줄면서 램프 그림의 아래쪽(받침 타원)이 잘려 보인다(final에서 직접 확인, before에는 없던 모습). 그림 장면이 다른 장면으로 순환돼 램프 색이 갈색에서 분홍으로 바뀌었다(P01 순환의 결과). 이 잘림은 어떤 검사도 잡지 않는다.</p>
+<p class="q">측정 조건(Q) · Q07@1440 실패 → 통과 · Q13@1440 통과 → 통과</p>
+<p class="imp"><b>개선</b> · 1440px: 벤토가 촘촘해졌다. 지표 칸 4개 빈 비율 0.69→0.53(Q07 통과). 히어로와 첫 섹션 사이 빈 띠가 줄어 문서 높이 3357→3012.</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 벤토 큰 그림 칸이 362px 높이로 줄면서 램프 그림의 아래쪽(받침 타원)이 잘려 보인다(final에서 직접 확인, before에는 없던 모습). 그림 장면이 다른 장면으로 순환돼 램프 색이 갈색에서 분홍으로 바뀌었다(P01 순환의 결과). 이 잘림은 어떤 검사도 잡지 않는다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 3986→3938px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S06__product-landing__w320.png" alt="S06 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S06__product-landing__w320.png" alt="S06 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 4105→4057px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -57,8 +61,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S06__product-landing__w1440.png" alt="S06 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S06__product-landing__w1440.png" alt="S06 final 1440"></div></figure></div></div></section>
 <section id="S27"><h2>S27 · offline</h2>
 <p class="kind">분류: a-violation · 320px 상태 화면 제목이 3줄로 접힘(BIG_NARROW)</p>
-<p class="q">측정 조건(Q): Q05@320 실패 → 통과 · Q05@390 통과 → 통과</p>
-<p class="imp"><b>개선:</b> 320px: 제목이 3줄에서 2줄로(33px→24.9px, Q05 통과).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 일러스트의 언덕 도형이 사각 상자에서 직선으로 잘리는 모습(진단 C6)은 그대로다. 고치지 않았다.</p>
+<p class="q">측정 조건(Q) · Q05@320 실패 → 통과 · Q05@390 통과 → 통과</p>
+<p class="imp"><b>개선</b> · 320px: 제목이 3줄에서 2줄로(33px→24.9px, Q05 통과).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 일러스트의 언덕 도형이 사각 상자에서 직선으로 잘리는 모습(진단 C6)은 그대로다. 고치지 않았다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 977→977px · 프로브 지적 BIG_NARROW → 없음 · <b class="chg">PNG 달라짐</b> · <b class="seen">직접 봄</b></div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S27__offline__w320.png" alt="S27 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S27__offline__w320.png" alt="S27 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 977→977px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -69,8 +74,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S27__offline__w1440.png" alt="S27 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S27__offline__w1440.png" alt="S27 final 1440"></div></figure></div></div></section>
 <section id="S12"><h2>S12 · sales-dashboard</h2>
 <p class="kind">분류: a-violation · 768px에서 차트 카드가 이웃 카드 높이로 늘어나 아래가 빔(EMPTY_CELL)</p>
-<p class="q">측정 조건(Q): Q04@768 실패 → 통과 · Q04@1440 실패 → 통과</p>
-<p class="imp"><b>개선:</b> 768px: EMPTY_CELL 지적 해소, 도넛 링이 커짐. 1440px 카드 아래 빈 공간 210→77px(Q04 통과).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 768px에서 월별 매출 카드는 막대 차트가 작게(축 글자 약 7px) 가운데에 떠 있고 위아래가 크게 빈다(보이는 대로). Q04는 비율 조건(35%&lt;38%)으로 통과한다. 읽기 어려운 작은 글자는 어떤 검사도 잡지 않는다.</p>
+<p class="q">측정 조건(Q) · Q04@768 실패 → 통과 · Q04@1440 실패 → 통과</p>
+<p class="imp"><b>개선</b> · 768px: EMPTY_CELL 지적 해소, 도넛 링이 커짐. 1440px 카드 아래 빈 공간 210→77px(Q04 통과).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 768px에서 월별 매출 카드는 막대 차트가 작게(축 글자 약 7px) 가운데에 떠 있고 위아래가 크게 빈다(보이는 대로). Q04는 비율 조건(35%&lt;38%)으로 통과한다. 읽기 어려운 작은 글자는 어떤 검사도 잡지 않는다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2937→2937px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S12__sales-dashboard__w320.png" alt="S12 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S12__sales-dashboard__w320.png" alt="S12 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 2734→2734px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -81,8 +87,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S12__sales-dashboard__w1440.png" alt="S12 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S12__sales-dashboard__w1440.png" alt="S12 final 1440"></div></figure></div></div></section>
 <section id="S23"><h2>S23 · menu-dining</h2>
 <p class="kind">분류: a-violation · 320px 가격이 가장자리 밖(EDGE_VIEW), 768px 3개 2열 고아(GRID_ORPHAN)</p>
-<p class="q">측정 조건(Q): Q02@320 실패 → 통과 · Q02@390 통과 → 통과 · Q03@768 실패 → 통과 · Q03@1440 통과 → 통과</p>
-<p class="imp"><b>개선:</b> 320px: 메뉴 줄이 가로로 넘치지 않는다(Q02 maxOverflow 36→0). 768px 사진 메뉴 2+1 해소(Q03 통과, 이 폭은 직접 보지 않음).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 320px에서 같은 목록 안의 가격 위치가 줄마다 다르다(어떤 줄은 이름 옆 점선 뒤, 어떤 줄은 아래 줄 오른쪽). 줄바꿈 결과이고 결함으로 단정하지 않으나 일관성은 떨어진다.</p>
+<p class="q">측정 조건(Q) · Q02@320 실패 → 통과 · Q02@390 통과 → 통과 · Q03@768 실패 → 통과 · Q03@1440 통과 → 통과</p>
+<p class="imp"><b>개선</b> · 320px: 메뉴 줄이 가로로 넘치지 않는다(Q02 maxOverflow 36→0). 768px 사진 메뉴 2+1 해소(Q03 통과, 이 폭은 직접 보지 않음).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 320px에서 같은 목록 안의 가격 위치가 줄마다 다르다(어떤 줄은 이름 옆 점선 뒤, 어떤 줄은 아래 줄 오른쪽). 줄바꿈 결과이고 결함으로 단정하지 않으나 일관성은 떨어진다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2722→2765px · 프로브 지적 EDGE_VIEW,EDGE → 없음 · <b class="chg">PNG 달라짐</b> · <b class="seen">직접 봄</b></div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S23__menu-dining__w320.png" alt="S23 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S23__menu-dining__w320.png" alt="S23 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 2394→2396px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -93,8 +100,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S23__menu-dining__w1440.png" alt="S23 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S23__menu-dining__w1440.png" alt="S23 final 1440"></div></figure></div></div></section>
 <section id="S17"><h2>S17 · checkout</h2>
 <p class="kind">분류: awkward · 규칙은 통과하나 폼이 넓은 화면에서 왼쪽에 몰리고 아래가 비어 있음</p>
-<p class="q">측정 조건(Q): Q09@1440 실패 → 통과</p>
-<p class="imp"><b>개선:</b> 1440px 폼 2열에서 반폭 필드 혼자 한 줄이 없어졌다(Q09 loneHalfRows 1→0). 이 폭 PNG는 before와 바이트가 달라졌고 육안 비교는 하지 않았다.</p><p class="rem"><b>남은 문제·새로 본 것:</b> 이 표본의 나머지 3폭은 바이트 동일.</p>
+<p class="q">측정 조건(Q) · Q09@1440 실패 → 통과</p>
+<p class="imp"><b>개선</b> · 1440px 폼 2열에서 반폭 필드 혼자 한 줄이 없어졌다(Q09 loneHalfRows 1→0). 이 폭 PNG는 before와 바이트가 달라졌고 육안 비교는 하지 않았다.</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 이 표본의 나머지 3폭은 바이트 동일.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 1859→1859px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S17__checkout__w320.png" alt="S17 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S17__checkout__w320.png" alt="S17 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 1859→1859px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -106,7 +114,8 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <section id="S29"><h2>S29 · hr-people</h2>
 <p class="kind">분류: a-violation · 320~768px 카드 제목이 끝줄 2글자로 접힘(ORPHAN_LINE)</p>
 
-<p class="imp"><b>개선:</b> 제목 끝줄 고아(ORPHAN_LINE) 3개×3폭이 0(프로브). 육안 비교는 하지 않았다.</p><p class="rem"><b>남은 문제·새로 본 것:</b> Recipe는 이 템플릿을 추천하지 않는다(RC05, 차트 가로 왜곡 2.13배 Q08).</p>
+<p class="imp"><b>개선</b> · 제목 끝줄 고아(ORPHAN_LINE) 3개×3폭이 0(프로브). 육안 비교는 하지 않았다.</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · Recipe는 이 템플릿을 추천하지 않는다(RC05, 차트 가로 왜곡 2.13배 Q08).</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2185→2185px · 프로브 지적 ORPHAN_LINE,ORPHAN_LINE,ORPHAN_LINE → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S29__hr-people__w320.png" alt="S29 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S29__hr-people__w320.png" alt="S29 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 1987→1987px · 프로브 지적 ORPHAN_LINE,ORPHAN_LINE,ORPHAN_LINE → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -117,8 +126,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S29__hr-people__w1440.png" alt="S29 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S29__hr-people__w1440.png" alt="S29 final 1440"></div></figure></div></div></section>
 <section id="S11"><h2>S11 · dashboard-overview~columns:two</h2>
 <p class="kind">분류: variant-worse · KPI 4개를 2열로 바꾸면 핵심 지표가 아래로 밀리고 셀이 넓어짐</p>
-<p class="q">측정 조건(Q): Q11@1440 실패 → 실패(추천 제외 V03)</p>
-<p class="imp"><b>개선:</b> 4폭 모두 before와 바이트 동일. 렌더는 바뀌지 않았다. 갤러리 기본 추천에서만 빠진다(V03, `recommended:false`).</p><p class="rem"><b>남은 문제·새로 본 것:</b> KPI가 2행이 되는 렌더(Q11 실패)는 그대로 열 수 있다.</p>
+<p class="q">측정 조건(Q) · Q11@1440 실패 → 실패(추천 제외 V03)</p>
+<p class="imp"><b>개선</b> · 4폭 모두 before와 바이트 동일. 렌더는 바뀌지 않았다. 갤러리 기본 추천에서만 빠진다(V03, `recommended:false`).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · KPI가 2행이 되는 렌더(Q11 실패)는 그대로 열 수 있다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2211→2211px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S11__dashboard-overview+columns-two__w320.png" alt="S11 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S11__dashboard-overview+columns-two__w320.png" alt="S11 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 1901→1901px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -129,8 +139,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S11__dashboard-overview+columns-two__w1440.png" alt="S11 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S11__dashboard-overview+columns-two__w1440.png" alt="S11 final 1440"></div></figure></div></div></section>
 <section id="S30"><h2>S30 · saas-landing~heads:center</h2>
 <p class="kind">분류: variant-worse · 섹션 머리말만 가운데로 바꾸면 본문은 왼쪽 정렬이라 정렬선이 둘이 됨</p>
-<p class="q">측정 조건(Q): Q12@1440 실패 → 실패(추천 제외 V04)</p>
-<p class="imp"><b>개선:</b> 머리말만 가운데인 렌더(Q12 5/5 불일치)는 그대로. 갤러리 기본 추천에서만 빠진다(V04). 4폭 PNG는 S01의 벤토 변경 때문에 바이트가 달라졌다(육안 비교 안 함).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 렌더를 고치지 않았다.</p>
+<p class="q">측정 조건(Q) · Q12@1440 실패 → 실패(추천 제외 V04)</p>
+<p class="imp"><b>개선</b> · 머리말만 가운데인 렌더(Q12 5/5 불일치)는 그대로. 갤러리 기본 추천에서만 빠진다(V04). 4폭 PNG는 S01의 벤토 변경 때문에 바이트가 달라졌다(육안 비교 안 함).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 렌더를 고치지 않았다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6635→6635px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S30__saas-landing+heads-center__w320.png" alt="S30 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S30__saas-landing+heads-center__w320.png" alt="S30 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 6398→6398px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -141,8 +152,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S30__saas-landing+heads-center__w1440.png" alt="S30 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S30__saas-landing+heads-center__w1440.png" alt="S30 final 1440"></div></figure></div></div></section>
 <section id="S02"><h2>S02 · saas-landing~hero:statement</h2>
 <p class="kind">분류: variant-worse · 히어로를 큰 문장형으로 바꾸면 제품 목업이 사라지고 장식 원만 남음</p>
-<p class="q">측정 조건(Q): Q14 실패 → 실패(추천 제외 V01)</p>
-<p class="imp"><b>개선:</b> 히어로 제품 목업이 사라지는 렌더(Q14 실패)는 그대로. 기본 추천에서만 빠진다(V01). PNG는 S01 벤토 변경만큼 달라졌다(육안 비교 안 함).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 렌더를 고치지 않았다.</p>
+<p class="q">측정 조건(Q) · Q14 실패 → 실패(추천 제외 V01)</p>
+<p class="imp"><b>개선</b> · 히어로 제품 목업이 사라지는 렌더(Q14 실패)는 그대로. 기본 추천에서만 빠진다(V01). PNG는 S01 벤토 변경만큼 달라졌다(육안 비교 안 함).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 렌더를 고치지 않았다.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6358→6358px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S02__saas-landing+hero-statement__w320.png" alt="S02 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S02__saas-landing+hero-statement__w320.png" alt="S02 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 6069→6069px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -153,8 +165,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S02__saas-landing+hero-statement__w1440.png" alt="S02 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S02__saas-landing+hero-statement__w1440.png" alt="S02 final 1440"></div></figure></div></div></section>
 <section id="S15"><h2>S15 · dashboard-analytics</h2>
 <p class="kind">분류: awkward · 규칙은 통과하나 차트 카드 높이가 제각각이고 가로 막대가 넓은 폭에 늘어짐</p>
-<p class="q">측정 조건(Q): Q08@1440 실패 → 실패</p>
-<p class="imp"><b>개선:</b> 4폭 중 320·768이 바이트 동일이 아니라 2폭만 동일. 차트 도메인·가로 늘림(Q08 1440 실패)은 그대로.</p><p class="rem"><b>남은 문제·새로 본 것:</b> 이 단위에서 고치지 않았다(진단 C4).</p>
+<p class="q">측정 조건(Q) · Q08@1440 실패 → 실패</p>
+<p class="imp"><b>개선</b> · 4폭 중 320·768이 바이트 동일이 아니라 2폭만 동일. 차트 도메인·가로 늘림(Q08 1440 실패)은 그대로.</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 이 단위에서 고치지 않았다(진단 C4).</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2338→2338px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S15__dashboard-analytics__w320.png" alt="S15 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S15__dashboard-analytics__w320.png" alt="S15 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 2190→2190px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -174,8 +187,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <tr><td>S34</td><td>article</td><td>달라짐 / 동일 / 동일 / 동일</td><td>2064→2060 / 1941→1941 / 1915→1915 / 2105→2105</td></tr></table></div>
 <section id="S01"><h2>S01 · saas-landing</h2>
 <p class="kind">분류: good · 완성도 높은 기준 화면: 히어로-신뢰-기능-단계-후기-요금-FAQ-CTA가 한 흐름</p>
-<p class="q">측정 조건(Q): Q06@1440 통과 → 통과 · Q07@1440 실패 → 통과 · Q12@1440 통과 → 통과 · Q13@1440 실패 → 통과 · Q13@390 실패 → 통과 · Q14 통과 → 통과 · Q15 통과 → 통과 · Q16@1440 실패 → 실패</p>
-<p class="imp"><b>개선:</b> 390px: 히어로 목업과 같은 대시보드가 벤토에 또 나오던 중복이 없어졌다(Q13 통과). 1440px: 벤토 지표·진행률이 한 줄, 카드·인용이 한 줄로 묶였다(Q07 0.63→0.52).</p><p class="rem"><b>남은 문제·새로 본 것:</b> 완성도 높음으로 분류했던 표본이 바이트가 달라졌다. 1440px에서 벤토 첫 칸이 구체적인 제품 화면 대신 글자 없는 범용 흐름도(1016×881px, 약 585px 높이)로 바뀌어 크고 성기다. 중복은 없앴지만 이 칸이 제품을 설명하는 힘은 약해졌다고 본다(내 육안 판단, 사람 레이블 아님). 악화로 볼지는 확인 필요.</p>
+<p class="q">측정 조건(Q) · Q06@1440 통과 → 통과 · Q07@1440 실패 → 통과 · Q12@1440 통과 → 통과 · Q13@1440 실패 → 통과 · Q13@390 실패 → 통과 · Q14 통과 → 통과 · Q15 통과 → 통과 · Q16@1440 실패 → 실패</p>
+<p class="imp"><b>개선</b> · 390px: 히어로 목업과 같은 대시보드가 벤토에 또 나오던 중복이 없어졌다(Q13 통과). 1440px: 벤토 지표·진행률이 한 줄, 카드·인용이 한 줄로 묶였다(Q07 0.63→0.52).</p>
+<p class="rem"><b>남은 문제·새로 본 것</b> · 완성도 높음으로 분류했던 표본이 바이트가 달라졌다. 1440px에서 벤토 첫 칸이 구체적인 제품 화면 대신 글자 없는 범용 흐름도(1016×881px, 약 585px 높이)로 바뀌어 크고 성기다. 중복은 없앴지만 이 칸이 제품을 설명하는 힘은 약해졌다고 본다(내 육안 판단, 사람 레이블 아님). 악화로 볼지는 확인 필요.</p>
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6635→6635px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S01__saas-landing__w320.png" alt="S01 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S01__saas-landing__w320.png" alt="S01 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 6398→6398px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · <b class="seen">직접 봄</b></div>
@@ -186,8 +200,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S01__saas-landing__w1440.png" alt="S01 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S01__saas-landing__w1440.png" alt="S01 final 1440"></div></figure></div></div></section>
 <section id="S10"><h2>S10 · dashboard-overview</h2>
 <p class="kind">분류: good · 완성도 높은 기준 대시보드: KPI-차트-표 위계</p>
-<p class="q">측정 조건(Q): Q11@1440 통과 → 통과 · Q16@1440 실패 → 실패</p>
-<p class="imp"><b>개선:</b> </p><p class="rem"><b>남은 문제·새로 본 것:</b> </p>
+<p class="q">측정 조건(Q) · Q11@1440 통과 → 통과 · Q16@1440 실패 → 실패</p>
+
+
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2211→2211px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S10__dashboard-overview__w320.png" alt="S10 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S10__dashboard-overview__w320.png" alt="S10 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 1901→1901px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -199,7 +214,8 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <section id="S14"><h2>S14 · finance-overview</h2>
 <p class="kind">분류: good · 수치·추이·거래 표가 위계대로 놓인 데이터 화면</p>
 
-<p class="imp"><b>개선:</b> </p><p class="rem"><b>남은 문제·새로 본 것:</b> </p>
+
+
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2357→2357px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S14__finance-overview__w320.png" alt="S14 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S14__finance-overview__w320.png" alt="S14 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 2404→2404px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -211,7 +227,8 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <section id="S18"><h2>S18 · signup</h2>
 <p class="kind">분류: good · 인증 폼: 한 가지 입력에 집중한 기준 화면</p>
 
-<p class="imp"><b>개선:</b> </p><p class="rem"><b>남은 문제·새로 본 것:</b> </p>
+
+
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 1040→1040px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S18__signup__w320.png" alt="S18 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S18__signup__w320.png" alt="S18 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 1040→1040px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
@@ -222,8 +239,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S18__signup__w1440.png" alt="S18 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S18__signup__w1440.png" alt="S18 final 1440"></div></figure></div></div></section>
 <section id="S20"><h2>S20 · product-detail</h2>
 <p class="kind">분류: good · 갤러리-구매 박스-탭 위계가 분명한 상품 상세</p>
-<p class="q">측정 조건(Q): Q17@320 통과 → 통과</p>
-<p class="imp"><b>개선:</b> </p><p class="rem"><b>남은 문제·새로 본 것:</b> </p>
+<p class="q">측정 조건(Q) · Q17@320 통과 → 통과</p>
+
+
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2364→2364px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S20__product-detail__w320.png" alt="S20 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S20__product-detail__w320.png" alt="S20 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 2343→2343px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -235,7 +253,8 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <section id="S25"><h2>S25 · docs-reference</h2>
 <p class="kind">분류: good · 목차·본문·코드가 이어지는 문서 기준 화면</p>
 
-<p class="imp"><b>개선:</b> </p><p class="rem"><b>남은 문제·새로 본 것:</b> </p>
+
+
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2958→2958px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S25__docs-reference__w320.png" alt="S25 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S25__docs-reference__w320.png" alt="S25 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 2916→2916px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -246,8 +265,9 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S25__docs-reference__w1440.png" alt="S25 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S25__docs-reference__w1440.png" alt="S25 final 1440"></div></figure></div></div></section>
 <section id="S34"><h2>S34 · article</h2>
 <p class="kind">분류: good · 글 페이지 기준 표본: 제목·본문·인용·체크리스트가 한 정렬선</p>
-<p class="q">측정 조건(Q): Q12@1440 통과 → 통과</p>
-<p class="imp"><b>개선:</b> </p><p class="rem"><b>남은 문제·새로 본 것:</b> </p>
+<p class="q">측정 조건(Q) · Q12@1440 통과 → 통과</p>
+
+
 <div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2064→2060px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S34__article__w320.png" alt="S34 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S34__article__w320.png" alt="S34 final 320"></div></figure></div></div>
 <div class="w" data-w="390"><div class="meta">390px · 문서 높이 1941→1941px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
@@ -256,6 +276,202 @@ nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S34__article__w768.png" alt="S34 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S34__article__w768.png" alt="S34 final 768"></div></figure></div></div>
 <div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 2105→2105px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
 <div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S34__article__w1440.png" alt="S34 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S34__article__w1440.png" alt="S34 final 1440"></div></figure></div></div></section></div>
+<details id="other"><summary>나머지 표본 15개</summary>
+<section id="S03"><h2>S03 · saas-landing~hero:cover</h2>
+<p class="kind">분류: variant-worse · 히어로를 커버형으로 바꾸면 SaaS와 무관한 추상 도형이 들어감</p>
+<p class="q">측정 조건(Q) · Q14 실패 → 실패(추천 제외 V01)</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6493→6493px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S03__saas-landing+hero-cover__w320.png" alt="S03 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S03__saas-landing+hero-cover__w320.png" alt="S03 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 6290→6290px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S03__saas-landing+hero-cover__w390.png" alt="S03 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S03__saas-landing+hero-cover__w390.png" alt="S03 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 5244→5198px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S03__saas-landing+hero-cover__w768.png" alt="S03 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S03__saas-landing+hero-cover__w768.png" alt="S03 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 4903→4897px · 프로브 지적 MEASURE_SHORT,MEASURE_SHORT → MEASURE_SHORT,MEASURE_SHORT · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S03__saas-landing+hero-cover__w1440.png" alt="S03 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S03__saas-landing+hero-cover__w1440.png" alt="S03 final 1440"></div></figure></div></div></section>
+<section id="S04"><h2>S04 · saas-landing~cards:filled</h2>
+<p class="kind">분류: variant-worse · 카드 일괄 변경이 basic 카드에만 적용되어 한 벤토 안에서 카드 스타일이 섞임</p>
+<p class="q">측정 조건(Q) · Q15 실패 → 실패(추천 제외 V02)</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6635→6635px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S04__saas-landing+cards-filled__w320.png" alt="S04 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S04__saas-landing+cards-filled__w320.png" alt="S04 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 6398→6398px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S04__saas-landing+cards-filled__w390.png" alt="S04 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S04__saas-landing+cards-filled__w390.png" alt="S04 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 5088→5043px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S04__saas-landing+cards-filled__w768.png" alt="S04 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S04__saas-landing+cards-filled__w768.png" alt="S04 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 4823→4817px · 프로브 지적 MEASURE_SHORT,MEASURE_SHORT → MEASURE_SHORT,MEASURE_SHORT · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S04__saas-landing+cards-filled__w1440.png" alt="S04 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S04__saas-landing+cards-filled__w1440.png" alt="S04 final 1440"></div></figure></div></div></section>
+<section id="S08"><h2>S08 · saas-landing · {&quot;theme&quot;:&quot;brutalist&quot;}</h2>
+<p class="kind">분류: theme-type · 같은 Blueprint를 브루탈 테마로 바꾼 화면</p>
+<p class="q">측정 조건(Q) · Q16@1440 실패 → 실패</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6819→6819px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S08__saas-landing@th-brutalist__w320.png" alt="S08 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S08__saas-landing@th-brutalist__w320.png" alt="S08 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 6557→6557px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S08__saas-landing@th-brutalist__w390.png" alt="S08 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S08__saas-landing@th-brutalist__w390.png" alt="S08 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 5849→5800px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S08__saas-landing@th-brutalist__w768.png" alt="S08 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S08__saas-landing@th-brutalist__w768.png" alt="S08 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 4193→4031px · 프로브 지적 MEASURE_SHORT → MEASURE_SHORT · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S08__saas-landing@th-brutalist__w1440.png" alt="S08 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S08__saas-landing@th-brutalist__w1440.png" alt="S08 final 1440"></div></figure></div></div></section>
+<section id="S09"><h2>S09 · saas-landing · {&quot;type&quot;:&quot;terminal&quot;}</h2>
+<p class="kind">분류: theme-type · 같은 Blueprint에서 서체 프리셋만 terminal로 바꾼 화면</p>
+<p class="q">측정 조건(Q) · Q12@1440 통과 → 통과 · Q16@1440 실패 → 실패</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6668→6668px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S09__saas-landing@ty-terminal__w320.png" alt="S09 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S09__saas-landing@ty-terminal__w320.png" alt="S09 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 6487→6487px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S09__saas-landing@ty-terminal__w390.png" alt="S09 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S09__saas-landing@ty-terminal__w390.png" alt="S09 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 5135→5090px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S09__saas-landing@ty-terminal__w768.png" alt="S09 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S09__saas-landing@ty-terminal__w768.png" alt="S09 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 4817→4804px · 프로브 지적 MEASURE_SHORT,MEASURE_SHORT → MEASURE_SHORT,MEASURE_SHORT · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S09__saas-landing@ty-terminal__w1440.png" alt="S09 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S09__saas-landing@ty-terminal__w1440.png" alt="S09 final 1440"></div></figure></div></div></section>
+<section id="S13"><h2>S13 · dashboard-overview · {&quot;theme&quot;:&quot;neon&quot;}</h2>
+<p class="kind">분류: theme-type · 같은 대시보드를 네온(다크·글로우) 테마로 바꾼 화면</p>
+<p class="q">측정 조건(Q) · Q16@1440 실패 → 실패</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2587→2587px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S13__dashboard-overview@th-neon__w320.png" alt="S13 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S13__dashboard-overview@th-neon__w320.png" alt="S13 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 2585→2585px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S13__dashboard-overview@th-neon__w390.png" alt="S13 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S13__dashboard-overview@th-neon__w390.png" alt="S13 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1675→1675px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S13__dashboard-overview@th-neon__w768.png" alt="S13 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S13__dashboard-overview@th-neon__w768.png" alt="S13 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 1653→1653px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S13__dashboard-overview@th-neon__w1440.png" alt="S13 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S13__dashboard-overview@th-neon__w1440.png" alt="S13 final 1440"></div></figure></div></div></section>
+<section id="S16"><h2>S16 · finance-overview~data:bordered</h2>
+<p class="kind">분류: variant-neutral · 표·목록 일괄 변경이 표 구분 방식만 바꾸고 화면 위계는 그대로</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2449→2449px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S16__finance-overview+data-bordered__w320.png" alt="S16 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S16__finance-overview+data-bordered__w320.png" alt="S16 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 2427→2427px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S16__finance-overview+data-bordered__w390.png" alt="S16 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S16__finance-overview+data-bordered__w390.png" alt="S16 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1682→1682px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S16__finance-overview+data-bordered__w768.png" alt="S16 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S16__finance-overview+data-bordered__w768.png" alt="S16 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 1661→1661px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S16__finance-overview+data-bordered__w1440.png" alt="S16 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S16__finance-overview+data-bordered__w1440.png" alt="S16 final 1440"></div></figure></div></div></section>
+<section id="S19"><h2>S19 · signup~notice:toast</h2>
+<p class="kind">분류: variant-neutral · 알림을 떠 있는 카드로 바꾸면 인증 폼 위계가 달라짐</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 1042→1042px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S19__signup+notice-toast__w320.png" alt="S19 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S19__signup+notice-toast__w320.png" alt="S19 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 1042→1042px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S19__signup+notice-toast__w390.png" alt="S19 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S19__signup+notice-toast__w390.png" alt="S19 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1039→1039px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S19__signup+notice-toast__w768.png" alt="S19 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S19__signup+notice-toast__w768.png" alt="S19 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 1096→1096px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S19__signup+notice-toast__w1440.png" alt="S19 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S19__signup+notice-toast__w1440.png" alt="S19 final 1440"></div></figure></div></div></section>
+<section id="S21"><h2>S21 · product-detail~tabs:boxed</h2>
+<p class="kind">분류: variant-neutral · 320px에서 probe가 탭 줄 EDGE를 지적하나 가로 스크롤 영역이라 위반으로 확정하지 못한 표본(오탐 후보)</p>
+<p class="q">측정 조건(Q) · Q17@320 통과 → 통과</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2374→2374px · 프로브 지적 EDGE → EDGE · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S21__product-detail+tabs-boxed__w320.png" alt="S21 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S21__product-detail+tabs-boxed__w320.png" alt="S21 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 2353→2353px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S21__product-detail+tabs-boxed__w390.png" alt="S21 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S21__product-detail+tabs-boxed__w390.png" alt="S21 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1795→1795px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S21__product-detail+tabs-boxed__w768.png" alt="S21 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S21__product-detail+tabs-boxed__w768.png" alt="S21 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 1891→1891px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S21__product-detail+tabs-boxed__w1440.png" alt="S21 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S21__product-detail+tabs-boxed__w1440.png" alt="S21 final 1440"></div></figure></div></div></section>
+<section id="S22"><h2>S22 · product-detail~gallery:masonry</h2>
+<p class="kind">분류: variant-neutral · 갤러리 변형이 상품 상세에서 구매 박스와의 균형을 바꿈</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 3201→3201px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S22__product-detail+gallery-masonry__w320.png" alt="S22 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S22__product-detail+gallery-masonry__w320.png" alt="S22 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 3355→3355px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S22__product-detail+gallery-masonry__w390.png" alt="S22 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S22__product-detail+gallery-masonry__w390.png" alt="S22 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 2920→2920px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S22__product-detail+gallery-masonry__w768.png" alt="S22 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S22__product-detail+gallery-masonry__w768.png" alt="S22 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 2377→2377px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S22__product-detail+gallery-masonry__w1440.png" alt="S22 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S22__product-detail+gallery-masonry__w1440.png" alt="S22 final 1440"></div></figure></div></div></section>
+<section id="S24"><h2>S24 · product-detail · {&quot;theme&quot;:&quot;luxe&quot;}</h2>
+<p class="kind">분류: theme-type · 같은 상품 상세를 럭셔리 테마로 바꾼 화면</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2156→2156px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S24__product-detail@th-luxe__w320.png" alt="S24 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S24__product-detail@th-luxe__w320.png" alt="S24 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 2082→2082px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S24__product-detail@th-luxe__w390.png" alt="S24 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S24__product-detail@th-luxe__w390.png" alt="S24 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1770→1770px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S24__product-detail@th-luxe__w768.png" alt="S24 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S24__product-detail@th-luxe__w768.png" alt="S24 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 1825→1825px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S24__product-detail@th-luxe__w1440.png" alt="S24 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S24__product-detail@th-luxe__w1440.png" alt="S24 final 1440"></div></figure></div></div></section>
+<section id="S26"><h2>S26 · docs-reference~tabs:boxed</h2>
+<p class="kind">분류: variant-neutral · 탭 모양 변경이 문서 위계에 미치는 영향</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2968→2968px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S26__docs-reference+tabs-boxed__w320.png" alt="S26 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S26__docs-reference+tabs-boxed__w320.png" alt="S26 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 2926→2926px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S26__docs-reference+tabs-boxed__w390.png" alt="S26 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S26__docs-reference+tabs-boxed__w390.png" alt="S26 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 2811→2811px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S26__docs-reference+tabs-boxed__w768.png" alt="S26 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S26__docs-reference+tabs-boxed__w768.png" alt="S26 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 2717→2717px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S26__docs-reference+tabs-boxed__w1440.png" alt="S26 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S26__docs-reference+tabs-boxed__w1440.png" alt="S26 final 1440"></div></figure></div></div></section>
+<section id="S28"><h2>S28 · article · {&quot;type&quot;:&quot;condensed&quot;}</h2>
+<p class="kind">분류: theme-type · 글 페이지의 서체 프리셋을 condensed로 바꾼 화면(한글 본문 위계)</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2087→2024px · 프로브 지적 BIG_NARROW → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S28__article@ty-condensed__w320.png" alt="S28 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S28__article@ty-condensed__w320.png" alt="S28 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 1956→1956px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S28__article@ty-condensed__w390.png" alt="S28 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S28__article@ty-condensed__w390.png" alt="S28 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1923→1923px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S28__article@ty-condensed__w768.png" alt="S28 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S28__article@ty-condensed__w768.png" alt="S28 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 2133→2133px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S28__article@ty-condensed__w1440.png" alt="S28 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S28__article@ty-condensed__w1440.png" alt="S28 final 1440"></div></figure></div></div></section>
+<section id="S31"><h2>S31 · saas-landing~rhythm:banded</h2>
+<p class="kind">분류: variant-neutral · 구역 리듬을 띠 구분으로 바꾼 같은 Blueprint</p>
+
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 6635→6635px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S31__saas-landing+rhythm-banded__w320.png" alt="S31 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S31__saas-landing+rhythm-banded__w320.png" alt="S31 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 6398→6398px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S31__saas-landing+rhythm-banded__w390.png" alt="S31 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S31__saas-landing+rhythm-banded__w390.png" alt="S31 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 5088→5043px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S31__saas-landing+rhythm-banded__w768.png" alt="S31 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S31__saas-landing+rhythm-banded__w768.png" alt="S31 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 4823→4817px · 프로브 지적 MEASURE_SHORT,MEASURE_SHORT → MEASURE_SHORT,MEASURE_SHORT · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S31__saas-landing+rhythm-banded__w1440.png" alt="S31 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S31__saas-landing+rhythm-banded__w1440.png" alt="S31 final 1440"></div></figure></div></div></section>
+<section id="S32"><h2>S32 · article~intro:center</h2>
+<p class="kind">분류: variant-worse · 글 머리말만 가운데 정렬로 바꾼 화면</p>
+<p class="q">측정 조건(Q) · Q12@1440 실패 → 실패(추천 제외 V04)</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 2064→2060px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S32__article+intro-center__w320.png" alt="S32 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S32__article+intro-center__w320.png" alt="S32 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 1941→1941px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S32__article+intro-center__w390.png" alt="S32 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S32__article+intro-center__w390.png" alt="S32 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 1915→1915px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S32__article+intro-center__w768.png" alt="S32 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S32__article+intro-center__w768.png" alt="S32 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 2105→2105px · 프로브 지적 없음 → 없음 · <b class="same">PNG 바이트 동일</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S32__article+intro-center__w1440.png" alt="S32 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S32__article+intro-center__w1440.png" alt="S32 final 1440"></div></figure></div></div></section>
+<section id="S33"><h2>S33 · bank-product</h2>
+<p class="kind">분류: awkward · 텍스트 중심 히어로. S05(제목 34px)와 같은 구조인데 제목 64px라 위계가 서는 대조 표본</p>
+<p class="q">측정 조건(Q) · Q06@1440 통과 → 통과</p>
+
+
+<div class="tabs"><button data-w="320">320px</button><button data-w="390">390px</button><button data-w="768">768px</button><button data-w="1440">1440px</button></div><div class="w" data-w="320"><div class="meta">320px · 문서 높이 3062→3062px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S33__bank-product__w320.png" alt="S33 before 320"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S33__bank-product__w320.png" alt="S33 final 320"></div></figure></div></div>
+<div class="w" data-w="390"><div class="meta">390px · 문서 높이 3004→3004px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S33__bank-product__w390.png" alt="S33 before 390"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S33__bank-product__w390.png" alt="S33 final 390"></div></figure></div></div>
+<div class="w" data-w="768"><div class="meta">768px · 문서 높이 2713→2713px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S33__bank-product__w768.png" alt="S33 before 768"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S33__bank-product__w768.png" alt="S33 final 768"></div></figure></div></div>
+<div class="w" data-w="1440"><div class="meta">1440px · 문서 높이 2555→2555px · 프로브 지적 없음 → 없음 · <b class="chg">PNG 달라짐</b> · 육안 비교 안 함</div>
+<div class="pair"><figure><figcaption>before (2.3.0, 89573577f)</figcaption><div class="box"><img loading="lazy" src="before/S33__bank-product__w1440.png" alt="S33 before 1440"></div></figure><figure><figcaption>final (2.4.0, d72d78389)</figcaption><div class="box"><img loading="lazy" src="final/S33__bank-product__w1440.png" alt="S33 final 1440"></div></figure></div></div></section></details>
 <script>
 document.querySelectorAll('section').forEach(sec=>{const tabs=[...sec.querySelectorAll('.tabs button')];if(!tabs.length)return;
 const show=w=>{tabs.forEach(b=>b.classList.toggle('on',b.dataset.w==w));sec.querySelectorAll('.w').forEach(d=>d.classList.toggle('on',d.dataset.w==w))};

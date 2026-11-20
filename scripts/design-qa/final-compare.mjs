@@ -32,6 +32,7 @@ const NOTES = {
 };
 const ORDER = ['S07', 'S05', 'S06', 'S27', 'S12', 'S23', 'S17', 'S29', 'S11', 'S30', 'S02', 'S15'];
 const GOOD = Object.values(samples).filter(s => s.kind === 'good').map(s => s.key);
+const OTHER = Object.keys(samples).filter(k => !ORDER.includes(k) && !GOOD.includes(k));
 
 function claimLines(key) {
   const out = [];
@@ -57,8 +58,9 @@ function card(key) {
   const cl = claimLines(key);
   return `<section id="${key}"><h2>${key} · ${esc(s.combo)}${Object.keys(s.view ?? {}).length ? ' · ' + esc(JSON.stringify(s.view)) : ''}</h2>
 <p class="kind">분류: ${esc(s.kind)} · ${esc(s.note)}</p>
-${cl.length ? `<p class="q">측정 조건(Q): ${esc(cl.join(' · '))}</p>` : ''}
-<p class="imp"><b>개선:</b> ${esc(n.improved)}</p><p class="rem"><b>남은 문제·새로 본 것:</b> ${esc(n.remaining)}</p>
+${cl.length ? `<p class="q">측정 조건(Q) · ${esc(cl.join(' · '))}</p>` : ''}
+${n.improved ? `<p class="imp"><b>개선</b> · ${esc(n.improved)}</p>` : ''}
+${n.remaining ? `<p class="rem"><b>남은 문제·새로 본 것</b> · ${esc(n.remaining)}</p>` : ''}
 <div class="tabs">${WIDTHS.map(w => `<button data-w="${w}">${w}px</button>`).join('')}</div>${rows}</section>`;
 }
 
@@ -71,7 +73,7 @@ const goodRows = GOOD.map(k => {
 const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>전후 비교: 카탈로그 2.3.0 → 2.4.0</title>
 <style>
 body{font:15px/1.55 system-ui,-apple-system,'Apple SD Gothic Neo',sans-serif;margin:0;color:#1d2433;background:#f6f7f9}
-header,section,.good{max-width:1500px;margin:0 auto;padding:16px 20px}
+header,section,.good,details{max-width:1500px;margin:0 auto;padding:16px 20px}
 h1{font-size:22px;margin:8px 0}h2{font-size:18px;margin:6px 0;border-top:2px solid #d6dbe4;padding-top:14px}
 .note{background:#fff7e0;border:1px solid #e8d59a;padding:10px 14px;border-radius:8px}
 .kind,.q{color:#4a5468;margin:4px 0;font-size:13px}.imp{margin:6px 0}.rem{margin:6px 0;color:#7a2d1a}
@@ -84,20 +86,23 @@ figure{margin:0}figcaption{font-size:12.5px;font-weight:600;margin-bottom:4px}
 .same{color:#1a6b3a}.chg{color:#9a4b00}.seen{color:#0b4fb3}
 table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}td,th{border:1px solid #d6dbe4;padding:6px 8px;text-align:left}
 nav{display:flex;flex-wrap:wrap;gap:4px 12px}nav a{font-size:13px}.tw{overflow-x:auto}
+summary{cursor:pointer;font-weight:600}
 @media (max-width:700px){.pair{grid-template-columns:1fr}.box{max-height:520px}}
 </style></head><body>
-<header><h1>전후 비교: 카탈로그 2.3.0(before) → 2.4.0 최신 main(final)</h1>
-<p class="note">이 페이지는 같은 표본 목록(34개)을 같은 도구로 before와 final에 찍은 스크린샷을 나란히 둔다. "직접 봄"이라고 표시한 폭만 내가 이미지를 열어 비교했다. 표시가 없는 폭의 변화는 문서 높이와 프로브 숫자, PNG 바이트 일치 여부만 근거다. 시각적 완성도는 자동 판정이 아니고 사람 레이블이 없다. Chromium·macOS 폰트 기준이다. 이미지는 긴 페이지의 위쪽(폭별 상한 높이)만 저장했다.</p>
-<nav>${ORDER.map(k => `<a href="#${k}">${k}</a>`).join('')}<a href="#good">완성도 높음 7</a></nav></header>
+<header><h1>카탈로그 2.3.0 → 2.4.0 전후 비교</h1>
+<p class="note">같은 조합 ${Object.keys(samples).length}개를 4개 폭에서 비교한다. 캡처 커밋은 2.3.0 <code>89573577f</code>와 2.4.0 <code>d72d78389</code>다. Chromium과 macOS 폰트를 사용했고, 긴 페이지는 폭별 상한까지 담았다. 직접 판독한 폭에는 «직접 봄»을 표시했다.</p>
+<nav>${ORDER.map(k => `<a href="#${k}">${k}</a>`).join('')}<a href="#good">완성도 높음 ${GOOD.length}개</a><a href="#other" onclick="document.getElementById('other').open=true">나머지 ${OTHER.length}개</a></nav></header>
 ${ORDER.map(card).join('\n')}
 <div class="good" id="good"><h2>완성도 높음으로 분류한 표본 7개(회귀 확인)</h2>
 <p>폭 순서 320 / 390 / 768 / 1440. 바이트가 달라진 표본은 S01(벤토 변경), S18(푸터 버전 문구), S34(320px 제목 33→32px)다. 개별 판단은 보고서 4절.</p>
 <div class="tw"><table><tr><th>키</th><th>조합</th><th>PNG</th><th>문서 높이 before→final</th></tr>${goodRows}</table></div>
 ${GOOD.map(card).join('\n')}</div>
+<details id="other"><summary>나머지 표본 ${OTHER.length}개</summary>
+${OTHER.map(card).join('\n')}</details>
 <script>
 document.querySelectorAll('section').forEach(sec=>{const tabs=[...sec.querySelectorAll('.tabs button')];if(!tabs.length)return;
 const show=w=>{tabs.forEach(b=>b.classList.toggle('on',b.dataset.w==w));sec.querySelectorAll('.w').forEach(d=>d.classList.toggle('on',d.dataset.w==w))};
 tabs.forEach(b=>b.onclick=()=>show(b.dataset.w));show(innerWidth<700?390:1440)});
 </script></body></html>`;
 writeFileSync(resolve(base, 'compare.html'), html);
-console.log('compare.html', Math.round(html.length / 1024) + 'KB', 'samples', ORDER.length + GOOD.length);
+console.log('compare.html', Math.round(html.length / 1024) + 'KB', 'samples', ORDER.length + GOOD.length + OTHER.length);

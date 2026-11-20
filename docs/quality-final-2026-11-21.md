@@ -1,8 +1,8 @@
 # 최종 품질 보고: 카탈로그 2.4.0 독립 재검증 (2026-11-21)
 
-최신 코드 확인 대상은 origin/main `0ea13094c`(카탈로그 2.4.0)였고, 최종 보고서·증거 커밋 `c63da8777`은 문서·QA 스크립트만 추가해 `src/` 변경이 없다. 비교 산출물과 전체 QA 계측은 직전 기준 커밋 `d72d78389`에서 만들었다. `0ea13094c`에서는 Recipe waitlist 예외가 추가됐다. 기본 템플릿 조합 렌더링에 쓰이는 코드는 바뀌지 않았지만, 브라우저 기반 진단·스윕·Q 재계측은 이 실행 환경에서 Chromium이 기동하지 않아 최신 코드에서 완료하지 못했다. 그러므로 해당 수치는 d72 기준으로 분리해 표기하고 최신 main의 재검증 완료 수치로 취급하지 않는다. 내가 `src/`를 수정하지는 않았다. 찾은 결함은 5절 표에 재현 방법과 함께 적었고, 검사 기준·임계값은 바꾸지 않았다.
+제품 코드는 `0ea13094c`에서 waitlist Recipe 예외까지 반영됐다. 검증을 재개할 때의 main `238d0bcf4`는 이 커밋에 보고서와 QA 스크립트만 추가했다. 브라우저 캡처와 디자인 계측은 `d72d78389`에서 실행했다. 이후 `238d0bcf4`에서 같은 컴파일 입력을 대조해 캡처 표본과 계측 대상의 출력이 같은 것을 확인했다. Playwright 전체 결과는 GitHub Actions에서 확인했다. 실행 환경과 커밋은 4절에 기록했다.
 
-방법의 한계를 먼저 적는다. Chromium 156(`measure-final.json`의 `browser`), macOS 폰트에서만 쟀다. 스크린샷을 직접 본 범위는 4.3절과 `compare.html`의 "직접 봄" 표시가 전부다. 그 밖의 폭·표본의 변화는 문서 높이, 프로브 지적, 측정 조건(Q), PNG 바이트 일치 여부로만 말한다. "시각적으로 좋아졌다"는 판단은 직접 본 화면에 한정하고, 사람 레이블이 없으므로 모두 내 육안 판단이다.
+방법의 한계를 먼저 적는다. Chromium 156(`measure-final.json`의 `browser`), macOS 폰트에서만 쟀다. 스크린샷을 직접 본 범위는 3절과 `compare.html`의 "직접 봄" 표시가 전부다. 그 밖의 폭·표본의 변화는 문서 높이, 프로브 지적, 측정 조건(Q), PNG 바이트 일치 여부로만 말한다. "시각적으로 좋아졌다"는 판단은 직접 본 화면에 한정하고, 사람 레이블이 없으므로 모두 내 육안 판단이다.
 
 증거 위치: `docs/evidence/quality-2026-11-21/final/`(스크린샷 136장, `measure-final.json`, `claims-final.json`, `diagnose-final.json`, `sweep-320-768-final.json`, `logs/`). 전후 비교 페이지는 `docs/evidence/quality-2026-11-21/compare.html`.
 
@@ -41,7 +41,7 @@
 | 벤토 높이 균형 | `bentoPlan` 높이 등급 짝 짓기, `bentoFeatureCSS`, `donutFitCSS` | 먼저 실패 시험 `d300cb67e`, 구현 `28398483b`·`4514e2d87`, 정리 `15ad35827` | `d300cb67e` `28398483b` `4514e2d87` `15ad35827` |
 | Design Recipe 3종 | `src/catalog/recipes.mjs`, `src/recipes.mjs`, RC01~RC09 | `tests/recipes.test.mjs`, `e2e/recipes.spec.mjs` | `c06be8bed` `2f99f3078` `f67209adf` |
 | 콘텐츠 보존 계약 | V06(히어로 변형이 수치를 지우지 않음) | `tests/recipes.test.mjs`(전 템플릿×옵션), `d72d78389` | `d72d78389` |
-| waitlist Recipe 예외 | RC01이 기본 hero를 억지로 덮지 않도록 예외를 둠 | 관련 테스트·문서·저장된 평가 산출물 재생성은 최신 main에서도 정합성 미확인 | `0ea13094c` |
+| waitlist Recipe 예외 | 제품 화면이 없는 waitlist에 RC01 면제를 적용. 선택 결과에 규칙 ID와 사유를 기록 | 기본 HTML과 일치, 히어로 수치 3개 보존. 평가 스크린샷과 점수는 실험 시점에 고정 | `0ea13094c` |
 | AI 조립 실험 | 세 팔 비교, 눈가림 패키지, 평가 | `scripts/design-qa/ai-assembly.mjs`, `tests/ai-assembly.test.mjs` | `fee3a2c1d` `ddd0963dd` `b303f17c1` `5638920fa` |
 
 버전 정책: 출력이 바뀌므로 카탈로그를 2.4.0으로 올렸고 2.1.0~2.3.0 입력은 이전 출력을 유지한다(`layoutRev()`, `PAGE_RULE_LEGACY_VERSIONS`). 이 호환은 4.2절에서 독립적으로 다시 확인했다.
@@ -106,22 +106,24 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 
 ## 4. 검증 결과
 
-아래 결과는 기준 커밋 `d72d78389`에서 실행한 독립 QA와, 재개 후 최신 `origin/main` `0ea13094c`에서 직접 다시 실행한 확인을 구분한다. 현재 main은 `git fetch origin main`으로 확인했다. 로그는 `docs/evidence/quality-2026-11-21/final/logs/`에 커밋한다. 최신 실행 원본은 `latest/` 하위에 둔다.
+디자인 계측과 캡처는 `d72d78389`, 최초 재개 검증은 `0ea13094c`, 기획 세션의 직접 확인은 `238d0bcf4` 기준이다. 작업자의 실행 로그는 `docs/evidence/quality-2026-11-21/final/logs/`에 있다.
 
 ### 4.1 명령별 결과
 
 | # | 명령 | 결과(마지막 출력 줄 또는 요약) | 작업자 보고와 차이 |
 |---|---|---|---|
 | 1 | 최신 main `npm run verify` | 종료 0. `tests 226 / pass 226 / fail 0 / skipped 0`; 마지막 `REPRODUCIBLE: 3304 generated files match a fresh build byte for byte.` | 최신 커밋에서 직접 재실행 |
-| 2 | 최신 main `PW_PORT=4391 npx playwright test` | **67개 전부 실패.** 첫 테스트부터 Chromium headless가 시작 중 `bootstrap_check_in … Permission denied (1100)` 후 `SIGTRAP`. 앱 테스트 결과는 미확인. `tee` 파이프 사용으로 셸 종료 코드는 기록하지 못했고, Playwright 로그의 최종 요약은 `67 failed` | 이전 d72 실행의 `67 passed`는 그 당시 환경 결과로만 남김. 이번 환경의 실패와 혼합하지 않음 |
-| 3 | 최신 main `node scripts/design-qa/diagnose.mjs … --workers 8` 및 3a `grades-diff.mjs` | **미실행.** 앞선 `--help` 호출부터 진단 스크립트가 Chromium을 띄우려다 같은 권한 오류로 종료함. 아래 구조 등급과 등급 차이는 d72 기준 로그 | 최신 등급은 확인되지 않음 |
-| 4 | 최신 main `node scripts/design-qa/width-sweep.mjs --out …` | **미실행.** 브라우저 기동 제한 뒤 추가 브라우저 시도는 중단. 이전 d72 결과: 심각 조합 7(320px EDGE 6·NARROW_COL 1, 768px 0), 전체 지적 조합 23 | 최신 스윕은 확인되지 않음 |
-| 5 | 최신 main `node scripts/design-qa/quality-claims.mjs --phase final` | **미실행.** 브라우저 기동 제한. 이전 d72에서는 17개 청구 결과가 `after-bento`와 같았음 | 최신 Q 결과는 확인되지 않음 |
-| 6 | 최신 main `node scripts/design-qa/quality-shoot.mjs --phase final` | **미실행.** 기존 136장과 compare는 d72 기준. 원격 main의 Recipe 변경은 기본 조합 캡처 경로와 별개지만, 최신 캡처라고 단정하지 않음 | 최신 캡처는 없음 |
-| 7 | 최신 main `node scripts/design-qa/ai-assembly.mjs verify` | 출력 `불일치: I02/recipe 저장 Blueprint = 코드/선택에서 재생성`, `verify 실패 1/91`. 셸 종료 코드는 0이었음에도 내부 검사는 1개 불일치 보고 | 현 main에도 I02 저장 Blueprint(`hero:product`)가 최신 Recipe 선택과 맞지 않음(4.5절) |
+| 2 | 최신 main `PW_PORT=4391 npx playwright test` | **67개 전부 실패.** 첫 테스트부터 Chromium headless가 시작 중 `bootstrap_check_in … Permission denied (1100)` 후 `SIGTRAP`. 앱 테스트 결과는 미확인. `tee` 파이프 사용으로 셸 종료 코드는 기록하지 못했고, Playwright 로그의 최종 요약은 `67 failed` | 같은 제품 커밋 `0ea13094c`의 GitHub Actions Ubuntu Chromium에서 전체 67/67 통과 |
+| 3 | 최신 main `node scripts/design-qa/diagnose.mjs … --workers 8` 및 3a `grades-diff.mjs` | **미실행.** 앞선 `--help` 호출부터 진단 스크립트가 Chromium을 띄우려다 같은 권한 오류로 종료함. 아래 구조 등급과 등급 차이는 d72 기준 로그 | d72와 `238d0bcf4`의 기본·회전 테마 HTML 9,910개가 모두 동일 |
+| 4 | 최신 main `node scripts/design-qa/width-sweep.mjs --out …` | **미실행.** 브라우저 기동 제한 뒤 추가 브라우저 시도는 중단. 이전 d72 결과: 심각 조합 7(320px EDGE 6·NARROW_COL 1, 768px 0), 전체 지적 조합 23 | 스윕의 기본 HTML 4,955개가 모두 동일 |
+| 5 | 최신 main `node scripts/design-qa/quality-claims.mjs --phase final` | **미실행.** 브라우저 기동 제한. 이전 d72에서는 17개 청구 결과가 `after-bento`와 같았음 | 42개 Q 대상의 HTML 또는 Blueprint 계측값과 추천 정보가 모두 동일 |
+| 6 | 최신 main `node scripts/design-qa/quality-shoot.mjs --phase final` | **미실행.** 기존 136장과 compare는 d72 기준. 원격 main의 Recipe 변경은 기본 조합 캡처 경로와 별개지만, 최신 캡처라고 단정하지 않음 | 34개 캡처 입력의 HTML이 모두 동일. 재촬영은 미실행 |
+| 7 | 최신 main `node scripts/design-qa/ai-assembly.mjs verify` | 출력 `불일치: I02/recipe 저장 Blueprint = 코드/선택에서 재생성`, `verify 실패 1/91`. 기획 세션에서 직접 실행한 종료 코드는 1 | 현 main에도 I02 저장 Blueprint(`hero:product`)가 최신 Recipe 선택과 맞지 않음(4.5절) |
 | 8 | 최신 main `compat-diff.mjs check` + `control` | `TOTAL inputs 15290 mismatches 0`; 음성 대조 `differ 85/85` | 최신 main에서 직접 재실행 |
 
-최신 브라우저 실패는 macOS command worker의 `PW_PORT=4391 npx playwright test` 단계에서 발생했다. 로그는 Chromium이 포트를 열거나 테스트 코드를 실행하기 전에 `bootstrap_check_in … Permission denied (1100)`로 SIGTRAP 했음을 보인다. 비교 HTML은 설정된 Ttakkari browser로 열어 캡처 구조를 확인했다. 이때 브라우저 콘솔에는 `/favicon.ico` 404 하나가 있었고, 비교 페이지는 로드됐다. 이 확인은 e2e 테스트나 최신 품질 계측을 대체하지 않는다.
+최신 브라우저 실패는 macOS command worker의 `PW_PORT=4391 npx playwright test` 단계에서 발생했다. 로그는 Chromium이 포트를 열거나 테스트 코드를 실행하기 전에 `bootstrap_check_in … Permission denied (1100)`로 SIGTRAP 했음을 보인다. 비교 HTML은 설정된 Ttakkari browser로 열어 캡처 구조를 확인했다. 이때 브라우저 콘솔에는 `/favicon.ico` 404 하나가 있었고, 비교 페이지는 로드됐다. 별도로 GitHub Actions의 `npm run test:browser` 전체 로그를 확인했다. `0ea13094c`에서 67개 중 67개 통과, 실패·건너뜀 0이었다. `238d0bcf4`까지 제품 소스, 테스트, 생성 사이트, 패키지와 Playwright 설정에는 차이가 없다. [GitHub Actions Verify 44789298361](https://github.com/winterholic/design-system-static-kit/actions/runs/44789298361)
+
+**계측 입력 대조.** `d72d78389`의 `src/`를 별도로 추출해 `238d0bcf4`와 같은 입력에서 `renderCombo`를 호출했다. 진단과 같은 순서의 기본·회전 테마 HTML 9,910개, 캡처 입력 34개, Q01–Q17의 42개 입력에서 불일치가 없었다. Q의 Blueprint 기반 항목은 반환값을 비교했다. 프로브 및 계측 스크립트는 두 커밋에서 같다. 비교 페이지에서는 34개 표본의 네 폭 모두를 열 수 있고, 전후 이미지 참조 272개를 확인했다.
 
 ### 4.2 과거 카탈로그 호환의 독립 확인(완료 기준 2)
 
@@ -135,20 +137,20 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 
 ### 4.3 평가 체계: S(구조)와 V(시각 완성도)의 현재 상태(완료 기준 5)
 
-- **S(구조 등급)** 은 `diagnose.mjs`가 결정적으로 매긴다. d72 기준 A 4,538 · B 417 · C 0, 폭 스윕 심각 7이다. 최신 main에서는 브라우저 권한 오류로 재측정하지 못했다. 이 등급은 레이아웃 결함의 유무이지 디자인 완성도가 아니다. d72에서 좋은 화면 S01의 1440px 벤토가 성겨졌는데(R-03) 구조 등급과 프로브는 둘 다 변화가 없고, S06의 그림이 45% 잘렸는데(R-04) 어떤 검사도 지적하지 않았다.
-- **V(시각 완성도)** 는 자동 판정이 아니다. `docs/quality-grades-2.3.0.md` 7.1절의 기본값 "미평가"가 지금도 그대로다. 4,955개 조합 중 사람이 본 것은 없다(사람 레이블 0, `eval/human-labels.template.json`은 값이 빈 양식뿐이다).
+- **S(구조 등급)** 은 `diagnose.mjs`가 결정적으로 매긴다. d72 기준 A 4,538 · B 417 · C 0, 폭 스윕 심각 7이다. 이후 버전에서 동일한 브라우저·폰트 조건의 입력 HTML이 같은지 검증했다. Chromium 재계측은 미실행이다. 이 등급은 레이아웃 결함의 유무이지 디자인 완성도가 아니다. d72에서 좋은 화면 S01의 1440px 벤토가 성겨졌는데(R-03) 구조 등급과 프로브는 둘 다 변화가 없고, S06의 그림이 45% 잘렸는데(R-04) 어떤 검사도 지적하지 않았다.
+- **V(시각 완성도)** 는 자동 판정이 아니다. `docs/quality-grades-2.3.0.md` 7.1절의 기본값 "미평가"가 지금도 그대로다. 보정용 사람 레이블은 0개다. `eval/human-labels.template.json`에 평가 양식이 있다.
 - **현재 측정 가능한 V 후보 지표**: Q04(카드 아래 빈 공간), Q06(텍스트 히어로의 빈 비율), Q07(벤토 칸 빈 비율), Q08(차트 가로 왜곡·채움), Q10(히어로 뒤 간격), Q13(중복 그림). 이것들은 신호 후보이고 사람 판단과의 일치도는 확인되지 않았다. 일치하지 않는다는 반례가 이미 있다: AI 평가에서 I01·I02의 AI 팔은 Q06 실패인데 두 평가자 모두 1위로 매겼다(`eval/report.md` 4절). Q06은 동심원 장식을 시각 요소로 세지 않는 계측 특성이다. 반대로 이번에 본 S06 그림 잘림(45%)과 S12 작은 차트 글자는 지표 후보조차 없다.
 - **AI 시각 평가**는 사람 레이블 대비 정확도가 없어 인용할 수 없다(7.4절 원칙). 이 문서는 그 평가 점수를 품질 근거로 쓰지 않았다.
 
 ### 4.4 이 재검증의 한계
 
-- Chromium만, macOS 폰트만. Safari·실기기·Linux CI 폰트는 확인하지 못했다(5절 R-14).
-- 시험 통과는 디자인 완성도의 증거가 아니다. d72에서는 67개 e2e가 통과했으나 최신 main의 e2e는 Chromium 실행 권한 오류로 결과를 확인하지 못했다.
+- 디자인 계측과 캡처에는 macOS Chromium과 시스템 폰트를 썼다. Linux Chromium에서 브라우저 테스트를 실행했다. Safari, 실기기, Linux 전수 디자인 계측은 미확인이다.
+- 시험 통과는 디자인 완성도의 증거가 아니다. `d72d78389`와 `0ea13094c` 모두 실행 가능한 환경에서 e2e 67개가 통과했다. macOS 작업자 셸의 `0ea13094c` 실행은 Chromium 시작 권한 오류로 실패했다.
 - 스윕과 등급은 기본 테마 한 벌(등급은 회전 테마 1개 추가)이다. 54개 테마 전부는 재지 않았다.
 
 ### 4.5 AI 조립 증거의 정합성(실행 결과)
 
-최신 `0ea13094c`의 `recipePickOf('waitlist')`는 `layout:{}`, `satisfied:true`, `exempted:[RC01]`을 돌려준다. 그 Blueprint의 HTML은 기본 조립과 바이트까지 같다(기존 d72 비교 산출에서 확인). 저장된 I02 Recipe Blueprint는 아직 `layout:{hero:"product"}`(`recipe-picks.json`)이라 최신 선택과 다르다. 그래서 `ai-assembly.mjs verify`는 내부적으로 `verify 실패 1/91`을 보고한다. 이 명령은 실패 문구에도 프로세스 종료 코드 0을 돌려준다. 최신 선택은 잘못된 히어로를 피하지만, 저장된 눈가림 평가 화면은 옛 `hero:product`를 가리킨다.
+`238d0bcf4`에서 `selectRecipe({recipe:'saas-landing',templateId:'waitlist'})`를 실행했다. `layout:{}`, `satisfied:true`와 사유가 담긴 RC01 면제를 반환했고, 컴파일한 HTML이 기본 조립과 바이트까지 같았다. 히어로 수치는 `2,418`, `3주`, `4.8`이다. 저장된 I02 Recipe Blueprint는 아직 `layout:{hero:"product"}`(`recipe-picks.json`)이라 최신 선택과 다르다. 그래서 `ai-assembly.mjs verify`는 내부적으로 `verify 실패 1/91`을 보고한다. 기획 세션에서 `238d0bcf4`로 직접 실행했을 때 종료 코드는 1이었다. 평가 자료를 담은 `5638920fa`에서는 같은 명령이 91/91 통과했다. 최신 선택은 잘못된 히어로를 피하지만, 저장된 눈가림 평가 화면은 옛 `hero:product`를 가리킨다.
 
 ## 5. 잔여 문제
 
@@ -156,7 +158,7 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 
 | ID | 우선순위 | 문제 | 재현 방법 | 담당 코드 | 출처 |
 |---|---|---|---|---|---|
-| R-01 | P1 | AI 조립 증거가 현 Recipe 선택과 불일치. I02 저장 Blueprint는 `hero:product`지만 현 Recipe는 waitlist 예외로 기본을 고른다. 눈가림 평가는 옛 화면을 평가했다 | 최신 main `node scripts/design-qa/ai-assembly.mjs verify` → `불일치: I02/recipe`, `verify 실패 1/91`(프로세스 종료 코드는 0) | `scripts/design-qa/ai-assembly.mjs`(build·render·results·blind 순서), `docs/evidence/ai-assembly/`, `docs/ai-assembly-experiment.md` 3·7·10절, `eval/report.md` | 신규 |
+| R-01 | P1 | AI 조립 증거가 현 Recipe 선택과 불일치. I02 저장 Blueprint는 `hero:product`지만 현 Recipe는 waitlist 예외로 기본을 고른다. 눈가림 평가는 옛 화면을 평가했다 | `238d0bcf4`에서 `node scripts/design-qa/ai-assembly.mjs verify` → `불일치: I02/recipe`, `verify 실패 1/91`, 종료 1. `5638920fa`에서는 91/91 통과 | `scripts/design-qa/ai-assembly.mjs`(build·render·results·blind 순서), `docs/evidence/ai-assembly/`, `docs/ai-assembly-experiment.md` 3·7·10절, `eval/report.md` | 신규 |
 | R-02 | P1 | 사람 레이블이 없어 V(시각 완성도)가 전부 미평가. AI 평가는 사람과의 일치도 미확인이라 게이트·근거로 못 씀 | `docs/evidence/ai-assembly/eval/human-labels.template.json`의 값이 `null`/빈 문자열 | `quality-grades-2.3.0.md` 7.3절 절차, `eval/` | 기지(여러 문서) |
 | R-03 | P2 | S01(완성도 높음)의 1440px 벤토 첫 칸이 글자 없는 범용 흐름도로 바뀌어 크고 성김(렌더 1014×761px). 중복(Q13)은 없앴지만 제품 설명력이 약해짐. 악화로 볼지는 사람 확인 필요 | `final/S01__saas-landing__w1440.png`와 `before/`를 비교, `compare.html#S01` | `src/catalog/templates.mjs:29`(벤토 카드 `visual:'diagram'`, P01 결과), `src/layout.mjs` 2열 모드 큰 칸 | 신규(12.3절의 "성긴 흐름도"를 악화 후보로 격상) |
 | R-04 | P1 | S06 1440px 벤토 큰 칸의 그림이 `slice`로 약 45% 잘림(viewBox 1:1을 1.81:1 상자에 렌더, 받침 타원이 잘림). before에는 없던 모습. 어떤 검사도 이를 지적하지 않음 | 아래 "R-04 재현" 참고. 시각 확인 `final/S06__product-landing__w1440.png` | `src/layout.mjs` `bentoFeatureCSS`(`15ad35827`), `src/render/art.mjs:63` | 신규 |
@@ -169,7 +171,7 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 | R-11 | P3 | MEASURE_SHORT 399개 조합, MEASURE 27개(`saas-landing~faq:split`)는 한 번도 고치지 않음. 표본 프로브 지적 16건 중 15건이 이것 | `measure-final.json`의 S01·S02·S03·S04·S08·S09·S31 1440, S10·S11 768 | 글줄 폭 역할(`src/typography.mjs` max-width), 질문 분할 레이아웃 | 기지 |
 | R-12 | P3 | 콘텐츠와 목업 불일치: `setHero`가 시각 요소가 없던 히어로에 넣는 `device` 목업은 범용 휴대폰 화면이다. Recipe가 고른 devtool 페이지에 소비자 앱 목업이 들어간다. 구조 측정은 이를 못 본다 | `docs/evidence/recipes/R1__recipe__w1440.png` | `src/catalog/variants.mjs:24-31` `setHero`, 템플릿 데이터 | 기지(`recipes.md` 6·7절) |
 | R-13 | P3 | 테마가 셸·폭·스케일을 함께 바꿔 같은 Blueprint의 구성이 달라짐(S08 벤토 열 2→4, S13 사이드바→상단). 결함 단정 불가, 정책 미결 | Q16 `null`(판정 없음), `claims-final.json` | `src/catalog/themes.mjs`의 `D(...)` 기본값 | 기지(B6) |
-| R-14 | P2 | Linux CI 폰트에서의 줄바꿈 미확인. 이 문서의 모든 수치는 macOS 폰트다 | 확인 못 함(`미실행`: 이 호스트가 macOS) | 전 렌더 | 기지 |
+| R-14 | P2 | Linux CI 폰트에서의 줄바꿈 미확인. 이 문서의 전수 디자인 계측은 macOS 폰트 기준이다 | 확인 못 함(`미실행`: 이 호스트가 macOS) | 전 렌더 | 기지 |
 | R-15 | P3 | 상태 일러스트(언덕)가 상자에서 직선으로 잘림 | `final/S27__offline__w320.png` | 상태 화면 일러스트(`src/render/art.mjs` 계열, 정확한 위치 확인 필요) | 기지(C6) |
 | R-16 | P3 | S23 320px에서 같은 메뉴 안 가격 위치가 줄마다 다름(점선 뒤 / 다음 줄 오른쪽) | `final/S23__menu-dining__w320.png` | `src/styles/chunks.mjs:161` `.kit-menu-row` | 신규 |
 | R-17 | P3 | 브랜드 이름 ORPHAN_LINE 3건(768px, 196px 사이드바의 "FlowWorks 문서") | 스윕 JSON | 사이드바 폭, `WRAP` | 기지 |
@@ -184,22 +186,22 @@ node -e "import('./src/combos.mjs').then(async m=>{const {chromium}=await import
 ```
 관찰 값: `viewBox "0 0 320 320"`, `preserveAspectRatio "xMidYMid slice"`, 렌더 594×328px(상자 비율 1.81, 그림 비율 1). 잘리는 높이 비율은 `1 − 1/1.81 ≈ 0.45`. 85개 템플릿 기본 구성을 1440·768·390px로 훑었을 때 벤토 SVG는 9개이고 `slice` 잘림이 15%를 넘는 것은 이 1개뿐이다(`product-landing` 1440). 변형 조합까지는 훑지 않았다(확인 필요).
 
-이 범위 밖 발견은 고치지 않고 위 표에만 적었다.
+기획에서 S01과 S06의 1440px 전후 PNG를 다시 확인했다. S01의 대형 흐름도는 제품 보드의 구체적 정보를 덜 보여 준다. S06의 조명 받침과 그림자는 이미지 하단에서 잘린다. 두 결과는 위 표의 R-03·R-04에 남겼다.
 
 ## 6. AI 조립 비교
 
-`docs/ai-assembly-experiment.md`, `docs/evidence/ai-assembly/eval/report.md`를 읽고 다음을 직접 확인했다. 평가 점수는 재현하지 않았다(`analyze.py` 미실행, 평가 자체가 AI라 재실행의 의미가 작다).
+`docs/ai-assembly-experiment.md`, `docs/evidence/ai-assembly/eval/report.md`를 읽고 다음을 직접 확인했다. 기획 세션에서 `analyze.py`로 저장된 평가의 점수·부호 검정을 재계산했다.
 
 **결론(보고서 그대로, 직접 검증한 것과 못 한 것 구분)**
 
-- 보고서 결론은 "AI 선택이 기본·Recipe보다 낫다는 유의한 증거 없음, 도입하지 않음"이다. 1차 평가자(GPT 계열) 기준 AI 대 기본 승 4 무 1 패 4(p=1.0), 보조 평가자(Claude) 승 6 무 2 패 1(p=0.125). 이 수치는 `eval/report.md`에서 읽었고 `analysis.json`으로 다시 계산하지 않았다(확인 필요).
+- 보고서 결론은 "AI 선택이 기본·Recipe보다 낫다는 유의한 증거 없음, 도입하지 않음"이다. 1차 평가자(GPT 계열) 기준 AI 대 기본 승 4 무 1 패 4(p=1.0), 보조 평가자(Claude) 승 6 무 2 패 1(p=0.125). 저장된 평가를 재계산한 결과와 같다.
 - 이 결론은 표본 9개, 비무승부 4~8개라 검정력이 약해서 "차이 없음"이라기보다 "판단 불가에 가깝다"고 읽는 것이 정직하다. 보고서도 3.3절에서 같은 말을 한다.
 
 **이 재검증이 보탠 정합성 문제(R-01)**
 
 - 평가 시점의 I02 Recipe 팔은 `hero:product`(히어로 수치 3개를 지우고 범용 휴대폰 목업을 넣은 화면)였다. 평가에서 이 화면은 GPT 19점으로 27개 화면 중 최저였다. 이후 V06과 최신 main의 RC01 waitlist 예외가 이 선택을 제거해 현재 Recipe는 기본과 같은 화면을 낸다(선택값 직접 확인, 4.5절). 저장 Blueprint와 눈가림 평가 자료는 여전히 갱신되지 않았다.
 - 따라서 "Recipe 팔의 I02 평가"는 현재 Recipe의 평가가 아니다. 현재 기준으로 I02의 Recipe 팔을 기본 팔 점수로 대체하면(두 화면이 바이트까지 같으므로 이론상 허용되는 추정이며 재평가는 하지 않았다) GPT Recipe 합 평균은 23.00 → 23.22(=(207−19+21)/9)가 되고, I02에서 AI 대 Recipe는 여전히 AI 승이다. 즉 부호 검정의 방향은 바뀌지 않는다. 다만 이것은 내 산술이고 평가자가 다시 매긴 값이 아니다. 7개 입력이 이미 기본=Recipe였으므로 이제 8개가 되어 Recipe 대 기본 비교는 입력 1개(I01)만 남는다.
-- 이 정합 문제는 결론("도입하지 않음")을 뒤집지 않지만, `ai-assembly.mjs verify`가 통과한다는 문서 서술은 현재 사실이 아니다.
+- 당시 팔과 점수는 평가 커밋의 기록으로 유지한다. 현재 선택으로 새 비교를 하려면 같은 조건으로 세 팔을 렌더하고 별도로 눈가림 평가해야 한다. 이번 표본에서 우위의 근거가 부족하므로 AI 조립은 도입하지 않는다.
 
 **사람 레이블 없음(R-02)**: 사용자가 요청한 실제 목표(조립 결과의 디자인 완성도)에 대해 AI 평가는 게이트로 쓸 수 없고, 이 재검증에서 육안 비교도 내 한 번의 판단이다. "AI 조립이 더 낫다"도 "Recipe가 더 낫다"도 이 근거로는 주장할 수 없다.
 
