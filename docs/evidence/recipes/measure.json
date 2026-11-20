@@ -171,6 +171,7 @@
      "RC03",
      "V01",
      "V04",
+     "V06",
      "P01",
      "P02"
     ],
@@ -498,6 +499,7 @@
      "RC03",
      "V01",
      "V04",
+     "V06",
      "P01",
      "P02"
     ],
@@ -808,7 +810,7 @@
     "severeTotal": 0
    },
    "templateId": "waitlist",
-   "note": "centered 히어로에 시각 요소 없음. 이전 Recipe 선택 hero:product는 히어로 수치 3개를 지웠다(V06). 지금은 추천하지 않고 기본 그대로",
+   "note": "대기자 등록 페이지(제품 화면 없음). 이전 Recipe 선택 hero:product는 히어로 수치 3개를 지우고 범용 목업을 넣어 눈가림 평가 꼴찌였다. 지금은 RC01을 이 템플릿에서만 면제해 기본 그대로",
    "pick": {
     "layout": {},
     "view": null,
@@ -818,17 +820,16 @@
      "RC03",
      "V01",
      "V04",
+     "V06",
      "P01",
      "P02"
     ],
     "avoided": [
      "V01",
-     "V01",
-     "RC01",
-     "V06"
+     "V01"
     ],
     "pageRules": [],
-    "satisfied": false
+    "satisfied": true
    },
    "former": {
     "comboId": "waitlist~hero:product",

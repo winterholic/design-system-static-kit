@@ -50,6 +50,8 @@ export const recipeRules = [
  *  - layout: {슬롯: [옵션 선호 순서]}. 'default'는 슬롯을 바꾸지 않는 것. 여기 없는 슬롯은 건드리지 않는다.
  *  - looks: 템플릿 기본 테마가 규칙을 못 지킬 때 순서대로 시도하는 기존 컨셉 look. 템플릿 기본 테마가 언제나 먼저다.
  *  - fit: 어울리는 밀도·서체·스케일·셸. 규칙 RC03가 Blueprint 축 값으로 확인한다.
+ *  - exempt: {템플릿: {규칙 ID: 사유}}. 그 템플릿에서만 그 select 규칙을 면제한다(규칙 자체와 다른 템플릿은 그대로). 사유는 필수이고 결과의 `exempted`에 남는다.
+ *    면제는 "기본이 정당한데 규칙이 그 페이지 목적과 맞지 않을 때" 기본을 유지하기 위한 것이다(Recipe는 기본이 정당하면 바꾸지 않는다).
  *  - rules: 선택 결과가 지켜야 하는 규칙 ID. V·P·RC가 섞인다. select 규칙은 선택 함수가, measure 규칙은 브라우저 측정이 본다.
  *  - avoid: 피할 조합과 이유. `slot`·`option`은 구성 변형, `axis`·`value`는 Blueprint 축이다. 모두 `rule`이 그 조합을 왜 피하는지 설명한다
  *    (tests/recipes.test.mjs가 이 규칙이 실제로 그 조합을 걸러 내는지 대조한다).
@@ -65,12 +67,12 @@ export const recipes = {
     fit: {density: ['comfortable', 'spacious'], scale: ['balanced', 'dramatic']},
     emphasis: {nodes: ['hero'], how: '히어로 제목은 섹션 제목의 1.6배 이상, 제품 시각 요소 1개, 행동 버튼 1개'},
     support: {nodes: ['bento', 'logo-cloud', 'quote', 'faq'], how: '벤토·신뢰 영역은 히어로와 같은 그림을 반복하지 않고 섹션 머리말과 본문이 한 정렬선'},
+    exempt: {waitlist: {RC01: '제품 화면이 아직 없는 비공개 베타 대기자 등록 페이지다. RC01이 밀어 넣은 hero:product는 히어로 수치 3개를 지우고 맞지 않는 범용 목업을 넣어 눈가림 평가에서 두 평가자 모두 꼴찌였다(docs/recipes.md 5.4.1절).'}},
     rules: ['RC01', 'RC02', 'RC03', 'V01', 'V04', 'V06', 'P01', 'P02'],
     avoid: [
       {slot: 'hero', option: 'statement', rule: 'V01', why: '큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1).'},
       {slot: 'hero', option: 'cover', rule: 'V01', why: '커버 히어로는 제품 시각 요소(visual)를 지운다(B1).'},
       {slot: 'heads', option: 'center', rule: 'V04', why: '섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4).'},
-      {slot: 'hero', option: 'product', rule: 'V06', why: '히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다.'},
       {axis: 'scale', value: 'tight', rule: 'RC02', why: '촘촘한 스케일은 히어로 제목과 섹션 제목의 차이를 1.6배 아래로 줄인다(C2, devtool 34px 대 24px).'},
     ],
   },
@@ -84,6 +86,7 @@ export const recipes = {
     fit: {density: ['compact', 'comfortable'], scale: ['tight', 'balanced'], shell: ['sidebar', 'rail', 'topbar']},
     emphasis: {nodes: ['metric', 'chart'], how: 'KPI는 한 줄, 차트 도메인은 데이터로 채운다'},
     support: {nodes: ['table', 'list'], how: '같은 행의 카드는 높이를 맞추고 표·목록은 차트 아래에서 보조한다'},
+    exempt: {},
     rules: ['RC03', 'RC04', 'RC05', 'RC07', 'V03', 'V05'],
     avoid: [
       {slot: 'columns', option: 'two', rule: 'V03', why: 'KPI 4개를 2열로 바꾸면 2행이 되어 첫 차트가 46% 아래로 밀린다(B3).'},
@@ -100,6 +103,7 @@ export const recipes = {
     fit: {density: ['comfortable', 'spacious'], typography: ['serif', 'literary', 'bookish', 'editorial', 'humanist', 'sans', 'newsroom', 'tech']},
     emphasis: {nodes: ['page-header', 'prose'], how: '제목과 본문이 한 정렬선, 인용·코드는 본문 폭 안'},
     support: {nodes: ['notice', 'table', 'tags'], how: '알림·표·태그는 본문을 끊지 않는 보조 위치'},
+    exempt: {},
     rules: ['RC03', 'RC06', 'RC08', 'RC09', 'V04'],
     avoid: [
       {slot: 'intro', option: 'center', rule: 'V04', why: '페이지 제목만 가운데로 옮기면 본문 첫 문단은 왼쪽에 남는다(B4).'},

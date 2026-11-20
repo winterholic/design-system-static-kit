@@ -67,13 +67,13 @@ test('gallery: recipe picks lead the default order, carry a badge with their rul
   await page.waitForSelector('html[data-ready]');
   const model = filterCombos({});
   const ids = await page.locator('#grid .combo-card').evaluateAll(cards => cards.map(c => c.dataset.id));
-  expect(ids.slice(0, 13)).toEqual(model.slice(0, 13).map(c => c.id));
-  expect(model.slice(0, 13).every(c => c.recipe)).toBe(true);
-  await expect(page.locator('#grid .combo-card .badge.rec')).toHaveCount(13);
+  expect(ids.slice(0, 14)).toEqual(model.slice(0, 14).map(c => c.id));
+  expect(model.slice(0, 14).every(c => c.recipe)).toBe(true);
+  await expect(page.locator('#grid .combo-card .badge.rec')).toHaveCount(14);
   expect(await page.locator('#grid .combo-card .badge.rec').first().getAttribute('title')).toMatch(/레시피 추천 · 지킨 규칙 .*RC0\d/);
   // 추천만 보기, 템플릿 순으로 되돌리기
   await page.locator('#f-rec').check();
-  await expect(page.locator('#result-line')).toContainText('개 중 13개');
+  await expect(page.locator('#result-line')).toContainText('개 중 14개');
   await page.locator('#f-rec').uncheck();
   await page.locator('#f-sort').selectOption('template');
   const byTemplate = await page.locator('#grid .combo-card').evaluateAll(cards => cards.map(c => c.dataset.id));
@@ -122,11 +122,11 @@ test('workbench: a template with a recipe shows it with its rules, and one click
   await expect(page.locator('#recipe-rules')).toContainText('RC05');
   await expect(page.locator('#apply-recipe')).toBeHidden();
   await expect(page.locator('#errors')).toBeHidden();
-  // waitlist: 시각 요소를 얻는 hero:product는 히어로 수치 3개를 지우므로(V06) 추천하지 않는다.
+  // waitlist: 기본이 정당해 레시피 추천이 기본 그대로다(RC01 면제). 적용해도 히어로 수치 3개가 남는다.
   await page.locator('#template').selectOption('waitlist');
-  await expect(page.locator('#recipe-text')).toContainText('추천하지 않습니다');
-  await expect(page.locator('#recipe-rules')).toContainText('RC01');
-  await expect(page.locator('#apply-recipe')).toBeHidden();
+  await expect(page.locator('#recipe-text')).toContainText('기본 구성');
+  await page.locator('#apply-recipe').click();
+  await expect(page.locator('#preview-frame').contentFrame().locator('.kit-hero-facts > *')).toHaveCount(3);
   await page.locator('#template').selectOption('checkout');
   await expect(page.locator('#recipe-field')).toBeHidden();
 });

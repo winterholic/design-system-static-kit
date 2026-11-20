@@ -1096,6 +1096,11 @@
         ],
         "how": "벤토·신뢰 영역은 히어로와 같은 그림을 반복하지 않고 섹션 머리말과 본문이 한 정렬선"
       },
+      "exempt": {
+        "waitlist": {
+          "RC01": "제품 화면이 아직 없는 비공개 베타 대기자 등록 페이지다. RC01이 밀어 넣은 hero:product는 히어로 수치 3개를 지우고 맞지 않는 범용 목업을 넣어 눈가림 평가에서 두 평가자 모두 꼴찌였다(docs/recipes.md 5.4.1절)."
+        }
+      },
       "rules": [
         "RC01",
         "RC02",
@@ -1124,12 +1129,6 @@
           "option": "center",
           "rule": "V04",
           "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
-        },
-        {
-          "slot": "hero",
-          "option": "product",
-          "rule": "V06",
-          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
         },
         {
           "axis": "scale",
@@ -1205,6 +1204,7 @@
         ],
         "how": "같은 행의 카드는 높이를 맞추고 표·목록은 차트 아래에서 보조한다"
       },
+      "exempt": {},
       "rules": [
         "RC03",
         "RC04",
@@ -1297,6 +1297,7 @@
         ],
         "how": "알림·표·태그는 본문을 끊지 않는 보조 위치"
       },
+      "exempt": {},
       "rules": [
         "RC03",
         "RC06",
@@ -1474,14 +1475,10 @@
           "rule": "V04",
           "what": "heads:center",
           "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
-        },
-        {
-          "rule": "V06",
-          "what": "hero:product",
-          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [],
       "pageRules": [],
       "trace": []
@@ -1541,14 +1538,10 @@
           "rule": "V04",
           "what": "heads:center",
           "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
-        },
-        {
-          "rule": "V06",
-          "what": "hero:product",
-          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [],
       "pageRules": [],
       "trace": []
@@ -1611,6 +1604,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [],
       "pageRules": [],
       "trace": []
@@ -1698,6 +1692,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [],
       "pageRules": [
         "P04"
@@ -1736,7 +1731,7 @@
       "templateId": "waitlist",
       "layout": {},
       "view": null,
-      "satisfied": false,
+      "satisfied": true,
       "applied": [
         {
           "rule": "RC02",
@@ -1777,116 +1772,18 @@
           "rule": "V01",
           "what": "hero:cover",
           "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
-        },
-        {
-          "rule": "V06",
-          "what": "hero:product",
-          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
-        },
-        {
-          "rule": "RC01",
-          "what": "탈락 후보",
-          "why": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)"
         }
       ],
-      "unmet": [
+      "unmet": [],
+      "exempted": [
         {
           "rule": "RC01",
-          "detail": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)"
+          "reason": "제품 화면이 아직 없는 비공개 베타 대기자 등록 페이지다. RC01이 밀어 넣은 hero:product는 히어로 수치 3개를 지우고 맞지 않는 범용 목업을 넣어 눈가림 평가에서 두 평가자 모두 꼴찌였다(docs/recipes.md 5.4.1절)."
         }
       ],
       "measured": [],
       "pageRules": [],
-      "trace": [
-        {
-          "layout": "기본 구성",
-          "look": "템플릿 기본",
-          "failed": [
-            "RC01"
-          ]
-        },
-        {
-          "layout": "hero:product",
-          "look": "템플릿 기본",
-          "failed": [
-            "V06"
-          ]
-        },
-        {
-          "layout": "hero:split",
-          "look": "템플릿 기본",
-          "failed": [
-            "V06",
-            "RC01"
-          ]
-        },
-        {
-          "layout": "기본 구성",
-          "look": "saas/trust",
-          "failed": [
-            "RC01"
-          ]
-        },
-        {
-          "layout": "hero:product",
-          "look": "saas/trust",
-          "failed": [
-            "V06"
-          ]
-        },
-        {
-          "layout": "hero:split",
-          "look": "saas/trust",
-          "failed": [
-            "V06",
-            "RC01"
-          ]
-        },
-        {
-          "layout": "기본 구성",
-          "look": "saas/workspace",
-          "failed": [
-            "RC01"
-          ]
-        },
-        {
-          "layout": "hero:product",
-          "look": "saas/workspace",
-          "failed": [
-            "V06"
-          ]
-        },
-        {
-          "layout": "hero:split",
-          "look": "saas/workspace",
-          "failed": [
-            "V06",
-            "RC01"
-          ]
-        },
-        {
-          "layout": "기본 구성",
-          "look": "saas/clean",
-          "failed": [
-            "RC01"
-          ]
-        },
-        {
-          "layout": "hero:product",
-          "look": "saas/clean",
-          "failed": [
-            "V06"
-          ]
-        },
-        {
-          "layout": "hero:split",
-          "look": "saas/clean",
-          "failed": [
-            "V06",
-            "RC01"
-          ]
-        }
-      ]
+      "trace": []
     },
     {
       "recipeId": "ops-dashboard",
@@ -1924,6 +1821,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC07"
       ],
@@ -1966,6 +1864,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC07"
       ],
@@ -2019,6 +1918,7 @@
           "detail": "차트 \"직군별 인원\"이 wide 폭에서 페이지 바로 아래에 혼자 놓여 가로로 늘어난다"
         }
       ],
+      "exempted": [],
       "measured": [
         "RC07"
       ],
@@ -2120,6 +2020,7 @@
       ],
       "avoided": [],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC07"
       ],
@@ -2154,6 +2055,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC08",
         "RC09"
@@ -2189,6 +2091,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC08",
         "RC09"
@@ -2224,6 +2127,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC08",
         "RC09"
@@ -2259,6 +2163,7 @@
         }
       ],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC08",
         "RC09"
@@ -2288,6 +2193,7 @@
       ],
       "avoided": [],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC08",
         "RC09"
@@ -2317,6 +2223,7 @@
       ],
       "avoided": [],
       "unmet": [],
+      "exempted": [],
       "measured": [
         "RC08",
         "RC09"

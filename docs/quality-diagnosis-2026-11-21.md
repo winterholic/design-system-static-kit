@@ -421,3 +421,5 @@ Q10 S07@320은 `after/`에서 F로 바뀌었다(공통 규약 쪽 히어로 수�
 
 Recipe가 `waitlist`에서 고른 `hero:product`가 히어로 수치 3개(대기 중인 사람·평균 초대 시간·베타 만족도)를 지우는 것이 발견됐다. 원인은 `setHero`가 split·product로 바꾸며 `hero.facts`를 지우는 것이고, 변형 결과 계약(V01~V05)이 시각 요소만 보호해서 Recipe가 몰랐다. 이 원인으로 문구를 잃는 것은 `hero:split`·`hero:product`뿐이며 히어로 수치를 가진 9개 템플릿의 768개 조합이다(다른 옵션·필드의 손실은 없음). 계약 V06(히어로 변형이 수치를 지우지 않는다)을 더해 768개 조합을 기본 추천에서만 뺐다(조합 id·렌더는 그대로, 갤러리 기본 목록 3,466 → 3,714개가 빠짐). 결과: waitlist는 추천 없음(RC01), Recipe가 기본과 다른 추천을 하는 것은 devtool-landing 1개다. 직접 본 1440·390px 전후와 한계는 `docs/recipes.md` 5.4절.
 
+눈가림 평가(`docs/evidence/ai-assembly/eval/report.md`, b303f17c1)에서 두 평가자 모두 I02(waitlist)의 Recipe 팔(수치 삭제 + 범용 목업)을 꼴찌로 매겼다. 1440·390px 직접 비교에서도 기본이 낫다고 판단해 레시피 데이터에 템플릿별 면제(`exempt`)를 더하고 waitlist의 RC01만 면제했다(RC01은 제품 화면이 있는 소개 페이지의 규칙이고 대기자 등록 페이지에는 맞지 않았다). 레시피 선택은 기본 그대로가 되었고 기본과 다른 추천은 devtool-landing 1개다. 상세는 `docs/recipes.md` 5.4.1절.
+

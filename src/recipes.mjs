@@ -95,21 +95,24 @@ function evaluate(recipe, templateId, layout, look) {
       if (hit) fail(id, hit.reason ?? hit.code);
     }
   }
+  const exempted = [];
   for (const id of recipe.rules.filter(r => ruleById[r]?.mode === 'select')) {
+    const reason = recipe.exempt[templateId]?.[id];
+    if (reason) { exempted.push({rule: id, reason}); continue; }
     const rule = ruleById[id], {kind, ...params} = rule.check, detail = CHECKS[kind](params, {blueprint, recipe});
     if (detail) fail(id, detail);
   }
   const failed = new Set(failures.map(f => f.rule));
-  for (const id of recipe.rules) if (!failed.has(id)) passes.push(id);
-  return {blueprint, failures, passes, pageRules};
+  for (const id of recipe.rules) if (!failed.has(id) && !exempted.some(x => x.rule === id)) passes.push(id);
+  return {blueprint, failures, passes, pageRules, exempted};
 }
 
 /** 임의의 조합({구성 변형, look})이 레시피 규칙을 지키는지: 갤러리·시험이 "왜 이 조합은 레시피 추천이 아닌가"를 설명하는 데 쓴다. 조합을 막지 않는다. */
 export function evaluateRecipe(recipeId, templateId, layout = {}, look = null) {
   const recipe = recipes[recipeId];
   if (!recipe) throw new Error('Unknown recipe: ' + recipeId);
-  const {failures, passes, pageRules} = evaluate(recipe, templateId, layout, look);
-  return {failures, passes, pageRules};
+  const {failures, passes, pageRules, exempted} = evaluate(recipe, templateId, layout, look);
+  return {failures, passes, pageRules, exempted};
 }
 
 /** select 규칙 하나를 Blueprint에 대조한다(위반 사유 또는 null). 축 값을 직접 바꿔 본 시험과 "피할 조합" 근거 확인용. */
@@ -136,7 +139,8 @@ const cache = new Map();
  * 입력 {recipe, templateId?}에 대한 권장 조합. templateId가 없으면 레시피의 권장 템플릿 순서대로 규칙을 모두 지키는 첫 템플릿을 고른다.
  * 어떤 후보도 모든 규칙을 지키지 못하면 실패한 규칙이 가장 적은 후보(같으면 선호 순서가 앞선 것)를 돌려주고 `unmet`에 이유를 남긴다.
  *
- * 결과: {recipeId, templateId, layout, view, satisfied, applied, avoided, unmet, measured, pageRules, trace}
+ * 결과: {recipeId, templateId, layout, view, satisfied, applied, avoided, unmet, exempted, measured, pageRules, trace}
+ *  - exempted: 이 템플릿에서 사유와 함께 면제한 select 규칙 [{rule, reason}](데이터의 `exempt`).
  *  - view: null(템플릿 기본 테마) 또는 {concept, look}. 갤러리·조립기의 보기 설정에 그대로 넣는다.
  *  - applied: 선택이 지킨 규칙 [{rule, claim}], avoided: 피한 규칙 [{rule, what, why}], measured: 브라우저 측정이 판정하는 규칙 ID.
  *  - pageRules: 선택 결과에 페이지 규칙(P01~P04)이 낸 결정 ID. 레시피가 해소하지 못하고 보고만 하는 것(P04)도 여기 나온다.
@@ -176,7 +180,7 @@ export function selectRecipe({recipe: recipeId, templateId = null} = {}) {
     recipeId, templateId: id, layout: c.layout, view: c.look ? {concept: c.look.concept, look: c.look.look} : null,
     satisfied: best.satisfied,
     applied: r.passes.filter(p => !(ruleById[p]?.mode === 'measure')).map(p => ({rule: p, claim: ruleById[p]?.claim ?? null})),
-    avoided, unmet: r.failures,
+    avoided, unmet: r.failures, exempted: r.exempted,
     measured: recipe.rules.filter(p => ruleById[p]?.mode === 'measure'),
     pageRules: r.pageRules,
     trace: tried.map(x => ({layout: layoutLabel(x.layout), look: lookLabel(x.look), failed: x.failed})),

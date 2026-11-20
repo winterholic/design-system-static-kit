@@ -85,7 +85,8 @@ if (matrix) {
   const {cases} = JSON.parse(readFileSync(casesFile, 'utf8'));
   const result = {};
   for (const c of cases.filter(c => !only || only.includes(c.key))) {
-    const pick = selectRecipe({recipe: c.recipe, templateId: c.templateId});
+    // recipe가 null이면 레시피 대상이 아닌 템플릿(예: waitlist)이다. Recipe 조립 = 기본 조립이고 이전 선택(former)과만 비교한다.
+    const pick = c.recipe ? selectRecipe({recipe: c.recipe, templateId: c.templateId}) : {templateId: c.templateId, layout: {}, view: null, applied: [], avoided: [], pageRules: [], satisfied: null};
     // former: 이전 선택(예: V06 이전의 waitlist~hero:product)을 같은 폭에서 함께 재서 바뀐 선택과 나란히 본다.
     const formerV = c.former ? await measure({label: '이전 Recipe 선택', combo: findCombo(c.former), view: EMPTY_VIEW}, c.recipe, c.key, 'former', shots && c.shots !== false) : null;
     const base = await measure(defaultVariant(c.templateId), c.recipe, c.key, 'default', shots && c.shots !== false), rec = await measure(recipeVariant(pick), c.recipe, c.key, 'recipe', shots && c.shots !== false);

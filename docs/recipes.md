@@ -23,6 +23,7 @@ Recipe는 **기존** 템플릿·구성 변형·컨셉 look(테마+서체) 위에
 | `looks` | 템플릿 기본 테마가 규칙을 못 지킬 때 순서대로 시도하는 기존 컨셉 look |
 | `fit` | 어울리는 밀도·서체·스케일·셸(Blueprint 축 값, RC03) |
 | `emphasis`, `support` | 강조 요소와 보조 정보를 표현하는 방식(노드 종류와 문장) |
+| `exempt` | `{템플릿: {규칙 ID: 사유}}`. 그 템플릿에서만 그 select 규칙을 면제한다(규칙 자체·다른 템플릿은 그대로, 사유 필수, 결과의 `exempted`에 남음). 기본이 정당한데 규칙이 페이지 목적과 맞지 않을 때 기본을 유지하려는 것이다 |
 | `rules` | 선택 결과가 지켜야 하는 규칙 ID(V·P·RC 혼합) |
 | `avoid` | 피할 조합과 이유. `slot`·`option` 또는 `axis`·`value`와 `rule`, `why` |
 
@@ -46,7 +47,7 @@ Recipe는 **기존** 템플릿·구성 변형·컨셉 look(테마+서체) 위에
 
 | 레시피 | 유형·목적 | 권장 템플릿 | 선호하는 구성 변형 | 어울리는 축 | 피하는 것 |
 |---|---|---|---|---|---|
-| `saas-landing` SaaS 랜딩 | 랜딩. 제품을 첫 화면에서 보여 주고 가입으로 잇는다 | saas-landing, b2b-solution, app-landing, devtool-landing, waitlist | hero: default → product → split. 기본 템플릿 테마가 먼저, 안 되면 SaaS 컨셉 look(트러스트 → 워크스페이스 → 정돈된 SaaS) | 밀도 comfortable·spacious, 스케일 balanced·dramatic | hero:statement·cover(V01), heads:center(V04), 수치가 있는 템플릿의 hero:product·split(V06), 스케일 tight(RC02) |
+| `saas-landing` SaaS 랜딩 | 랜딩. 제품을 첫 화면에서 보여 주고 가입으로 잇는다 | saas-landing, b2b-solution, app-landing, devtool-landing, waitlist(RC01 면제) | hero: default → product → split. 기본 템플릿 테마가 먼저, 안 되면 SaaS 컨셉 look(트러스트 → 워크스페이스 → 정돈된 SaaS) | 밀도 comfortable·spacious, 스케일 balanced·dramatic | hero:statement·cover(V01), heads:center(V04), 스케일 tight(RC02). 수치가 있는 템플릿의 hero:product·split은 V06이 걸러 낸다. waitlist는 RC01을 면제한다(`exempt`, 5.4.1절) |
 | `ops-dashboard` 업무 대시보드 | 대시보드. KPI 한 줄, 차트 행, 표 | dashboard-overview, sales-dashboard, hr-people, finance-overview | columns: default만 통과(열 수 변경은 V03이 걸러 냄) | 밀도 compact·comfortable, 스케일 tight·balanced, 셸 sidebar·rail·topbar | columns:two(V03), 셸 minimal(RC03). hr-people은 RC05로 추천 제외 |
 | `content-page` 콘텐츠 페이지 | 글·문서. 제목·본문 한 정렬선 | article, blog-post, research-paper, policy, docs-reference, tutorial | intro: default만 통과 | 밀도 comfortable·spacious, 서체 serif·literary·bookish·editorial·humanist·sans·newsroom·tech | intro:center(V04), 서체 condensed(RC03) |
 
@@ -63,22 +64,22 @@ Recipe는 **기존** 템플릿·구성 변형·컨셉 look(테마+서체) 위에
 
 ## 4. 기본 추천 경로에서 우선
 
-- **갤러리**(`combos/`): 기본 정렬이 "레시피 추천 먼저"다. 추천 조합 13개가 앞에 오고 나머지는 템플릿 순 그대로다. "템플릿 순" 정렬로 되돌릴 수 있다. 조합 카드에 "레시피 추천" 배지(툴팁에 지킨 규칙 ID와 보기 설정), "레시피 추천만" 필터, 확대 보기에 레시피의 보기 설정을 적용하는 버튼이 있다. 추천이 아닌 조합은 모두 그대로 있다.
+- **갤러리**(`combos/`): 기본 정렬이 "레시피 추천 먼저"다. 추천 조합 14개가 앞에 오고 나머지는 템플릿 순 그대로다. "템플릿 순" 정렬로 되돌릴 수 있다. 조합 카드에 "레시피 추천" 배지(툴팁에 지킨 규칙 ID와 보기 설정), "레시피 추천만" 필터, 확대 보기에 레시피의 보기 설정을 적용하는 버튼이 있다. 추천이 아닌 조합은 모두 그대로 있다.
 - **조립기**(`index.html`): 템플릿에 레시피가 있으면 "레시피 추천으로 맞추기" 버튼과 근거 문장이 보인다. 규칙을 못 지키는 템플릿(hr-people)은 이유만 보이고 버튼이 숨는다. 카탈로그 탭의 "이 템플릿으로 시작"이 레시피 추천으로 시작한다(예전에는 템플릿 기본). 템플릿 선택 드롭다운과 슬롯 칩은 예전 그대로 동작한다.
 - `site/v1/catalog.json`에 `recipes`, `recipeRules`, `recipePicks`(선택 결과와 근거)가 들어간다. 다음 단계의 비교 실험(기본 자동 조립 대 Recipe 대 AI 재선택)이 읽는 입력이다.
 
 ## 5. 측정 결과 (Chromium, macOS 폰트, 320·390·768·1440px, `reducedMotion:'reduce'`)
 
-도구: `node scripts/design-qa/recipe-evidence.mjs`(비교와 스크린샷, `docs/evidence/recipes/measure.json`·PNG 32장), `--matrix`(선택 15개 전체, `picks-matrix.json`), `node scripts/design-qa/diagnose.mjs … --ids-file`(`diagnose-picks.json`). "기본 자동 조립"은 `createBlueprint(템플릿 id)`(템플릿 기본 테마, 구성 변형 없음)다.
+도구: `node scripts/design-qa/recipe-evidence.mjs`(비교와 스크린샷, `docs/evidence/recipes/measure.json`·PNG 44장), `--matrix`(선택 15개 전체, `picks-matrix.json`), `node scripts/design-qa/diagnose.mjs … --ids-file`(`diagnose-picks.json`). "기본 자동 조립"은 `createBlueprint(템플릿 id)`(템플릿 기본 테마, 구성 변형 없음)다.
 
 ### 5.1 Recipe가 기본과 달라진 곳과 같은 곳
 
-선택 15개의 결과: **기본과 다른 추천은 1개**(`devtool-landing`), **기본 그대로 추천 12개**(기본 조립이 이미 규칙을 지킴, 같은 조합 id, 렌더 바이트 동일), **추천하지 않는 것 2개**(`hr-people` RC05, `waitlist` RC01). 이는 한계이기도 하다(7절). `waitlist`는 처음에 `hero:product`를 골랐으나 히어로 수치를 지우는 것이 확인되어 V06으로 막았다(5.4절).
+레시피가 다루는 템플릿 15개의 결과: **기본과 다른 추천은 1개**(`devtool-landing`), **기본 그대로 추천 13개**(기본 조립이 이미 규칙을 지킴, 같은 조합 id, 렌더 바이트 동일. `waitlist`는 RC01 면제로 여기 든다), **추천하지 않는 것 1개**(`hr-people` RC05). `waitlist`는 처음에 `hero:product`를 골랐으나 히어로 수치를 지우고 맞지 않는 목업을 넣어 V06과 면제로 기본 유지로 바꿨다(5.4절). 이는 한계이기도 하다(7절).
 
 | 입력(같은 콘텐츠) | 기본 자동 조립 | Recipe 조립 |
 |---|---|---|
 | R1 `devtool-landing` (S05) | `devtool-landing`: P02가 시각 요소 없는 split을 가운데 텍스트형으로 바꿈. 히어로 제목 29(320·390·768px)·34(1440px)px, 섹션 제목 대비 1.38~1.42배. 문서 높이 4401/4293/3429/2618px | `devtool-landing~hero:product` + 컨셉 look SaaS·트러스트(`saas.trust`). 제목 38·38·38.4·**64px**, 섹션 제목 대비 1.58·1.58·1.6·**1.94배**, 제품 시각 요소(`device`) 있음. 문서 높이 4778/4830/3546/3294px |
-| R3 `waitlist` | centered 히어로, 시각 요소 없음, 히어로 수치 3개(2,418 대기 중인 사람 · 3주 평균 초대 시간 · 4.8 베타 만족도) 있음 | 추천하지 않음(RC01 미충족). 기본 그대로, 렌더 같음. 이전 선택 `waitlist~hero:product`는 수치 3개를 지웠다(5.4절) |
+| R3 `waitlist` | centered 히어로, 시각 요소 없음, 히어로 수치 3개(2,418 · 3주 · 4.8) 있음 | 기본 그대로(RC01 면제, 5.4.1절). 이전 Recipe 선택 `waitlist~hero:product`는 수치 3개를 지우고 범용 목업을 넣었다 |
 | R2 `saas-landing` (S01) | 제목 59.6px@1440, 비율 1.81배, 시각 요소 있음 | 같음(Recipe = 기본) |
 | R4 `sales-dashboard` (S12) | Q11 1440px 한 줄 통과, Q04 768px 180px/35%·1440px 142px/28% 통과 | 같음 |
 | R5 `dashboard-overview`, R8 `docs-reference`, R9 `blog-post`, R7 `article` (S34) | Q11 한 줄, Q12 불일치 0 | 같음 |
@@ -101,13 +102,22 @@ AI 조립 실험 작업자가 기록에서 발견했다: Recipe가 `waitlist`에
 - **원인(코드로 확인)**: `src/catalog/variants.mjs`의 `setHero`가 히어로 형태를 바꾸며 `if (!['statement','cover','centered'].includes(variant)) delete hero.facts`로 수치를 지운다. `split`·`product`는 수치 자리가 없어서다. 변형 결과 계약 V01~V05는 시각 요소(`visual`)만 지켰고 수치는 보지 않았다. Recipe는 후보를 계약에 대조할 뿐 계약에 없는 손실은 알지 못했다(RC01은 "시각 요소가 있는가"만 본다).
 - **같은 원인으로 콘텐츠를 잃는 조합 수**: 모든 구성 변형 옵션을 단독 적용해 문구(텍스트 잎 노드)를 비교하면 손실은 `hero:split`·`hero:product` 두 옵션뿐이고, 히어로 수치를 가진 9개 템플릿(agency-home, waitlist, campaign-donate, museum-home, hanji-journey, luxury-brand, campaign-poster, wedding-invite, game-launch)에서만 난다(18개 옵션). 그 옵션을 포함하는 조합은 **768개**(템플릿별 288·4·12·8·72·48·48·144·144)다. 다른 옵션·다른 필드의 문구 손실은 없다(`tests/recipes.test.mjs`가 전 템플릿×옵션으로 확인한다).
 - **해결(상위 규칙)**: 변형 결과 계약에 **V06**(`keeps-field`: 히어로 변형이 히어로 수치를 지우지 않는다)을 더했다. 기존 V계약과 같은 방식(`not-recommended`, 조합·옵션은 지우지 않음)이다. 768개 조합은 id·URL·렌더가 그대로이고 기본 추천 목록에서만 빠진다(그중 248개가 이번에 새로 빠짐, 520개는 V01·V02·V04 등으로 이미 빠져 있었음). 갤러리 기본 목록에서 빠진 조합은 3,466개 → 3,714개, 남은 조합은 1,489개 → 1,241개다. Recipe는 V규칙을 모두 대조하므로 별도 코드 없이 이 후보를 거른다.
-- **결과**: waitlist는 `hero:default`(RC01 위반: 제품 시각 요소 없음), `hero:product`·`hero:split`(V06 위반)이 모두 규칙을 어겨 지킬 수 있는 후보가 없다. Recipe는 추천하지 않고(`satisfied:false`, `unmet: RC01`) 기본을 돌려준다. 콘텐츠를 지우면서 시각 요소를 얻는 조합보다 콘텐츠를 지키는 쪽을 택한다. Recipe가 달라진 템플릿은 `devtool-landing` 1개(히어로 수치가 없다)다.
+- **결과(1차, V06)**: waitlist는 `hero:default`(RC01 위반), `hero:product`·`hero:split`(V06 위반)이 모두 규칙을 어겨 지킬 수 있는 후보가 없었다. Recipe는 기본을 돌려주되 추천은 하지 않았다. 이후 5.4.1절의 면제로 기본이 정당한 추천이 되었다.
 - **재현 시험**: `tests/recipes.test.mjs`의 "a recipe pick never drops text content…"와 "V06 is the only text-losing cause…". 수정 전에 두 시험 모두 실패했다(`AssertionError: waitlist {"hero":"product"} lost content`, `agency-home hero:split V06 matches actual text loss`). V06 검사 필드를 바꿔 무력화하면 5개 시험이 실패하고 복원하면 통과한다.
 - **직접 본 스크린샷**(`R3__former__w1440·w390`, `R3__recipe__w1440·w390`): 이전 선택은 휴대폰 목업(범용 "오늘의 기록")이 히어로 왼쪽(1440px) 또는 아래(390px)에 들어오고 수치 3개가 없다. 현재 선택(기본)은 가운데 히어로 아래에 2,418 / 3주 / 4.8과 라벨이 1440·390px 모두 보이고 바로 아래 등록 폼이 이어진다. 시각 요소는 없지만 텍스트 중심 히어로로 읽히고 위계가 흐트러지지 않는다. 이 판단은 두 폭의 본 화면에 한정하고, 320·768px은 보지 않았다.
 
+#### 5.4.1 눈가림 평가 결과와 waitlist의 RC01 면제
+
+눈가림 평가(`docs/evidence/ai-assembly/eval/report.md` 4절, b303f17c1)에서 GPT와 Claude 두 평가자 모두 I02(waitlist)의 Recipe 팔(그때의 `hero:product`: 수치 삭제 + 범용 휴대폰 목업)을 세 팔 중 꼴찌로 매겼다. 구조 지표(RC 실패 없음, Q지표 통과)는 깨끗했다. 평가 근거는 "제품 화면 자료가 없다는 brief와 맞지 않는 휴대폰 목업"이다. 이 파일은 수정하지 않았다.
+
+- **직접 비교(1440px, 390px)**: 이전 선택은 왼쪽에 "오늘의 기록 72%" 휴대폰 목업이 크게 들어오고 제목이 오른쪽에 선다. 이 페이지는 제품 화면이 아직 없는 비공개 베타 대기자 등록이고, 목업은 이 페이지가 파는 것과 무관하다. 히어로 수치 3개가 없다. 기본은 가운데 히어로 아래에 수치 3개가 보이고 바로 폼이 이어져 페이지 목적(등록)이 먼저 읽힌다. 1440·390px 둘 다 기본이 낫다고 판단한다(내 판단이고 평가자 결과와 같은 방향이다. 개선 정도를 수치로 재지는 않았다).
+- **원인은 규칙 범위였다**: RC01("랜딩 첫 화면에 제품 시각 요소 1개")은 제품 화면이 있는 SaaS 소개 페이지의 규칙이다. 대기자 등록 페이지에는 맞지 않는데 `waitlist`가 이 레시피의 권장 템플릿에 들어 있어서 기본(정당한 텍스트 중심 히어로)을 위반으로 보고 목업을 넣는 쪽으로 밀었다. 같은 문제가 다른 템플릿에도 있는지는 전수로 보지 않았다.
+- **조치**: 레시피 데이터에 템플릿별 면제(`exempt`)를 더하고 `saas-landing` 레시피의 `waitlist`에서 RC01만 사유와 함께 면제했다. 기본이 정당하면 Recipe는 바꾸지 않는다. 처음에는 `waitlist`를 레시피 대상에서 빼려 했으나, 실험 패키지(`tests/ai-assembly.test.mjs`)가 I02를 이 레시피의 입력으로 고정하고 있어 대상에서 빼면 그 재현 시험이 깨진다(`I02 template is covered by its recipe`). 면제는 규칙 자체(RC01)와 다른 템플릿에 영향이 없다: devtool-landing 기본은 여전히 RC01을 어긴다(시험이 확인). 규칙을 약하게 만든 것이 아니라 한 템플릿의 한 규칙을 근거와 함께 비껴가게 한 것이고, 이 면제가 타당한지는 눈가림 평가 1건(I02)과 내 직접 비교 1건에 기댄다(표본이 작다). 같은 HTML임을 확인했다(Recipe 선택 = 기본, SHA-256 앞 12자리 `ae66085720ac`, 이전 선택은 `f14fdf859b8f`). 갤러리에서 waitlist 기본 조합은 "레시피 추천"(기본 그대로) 배지가 붙고, `waitlist~hero:product` 같은 조합도 계속 선택할 수 있다(V06으로 기본 목록에서만 빠진다).
+- **남는 위험**: 같은 유형(제품 화면이 없는 랜딩)이 `saas-landing` 목록의 다른 템플릿에 더 있는지는 전수로 보지 않았다. 현재 목록 4개(saas-landing, b2b-solution, app-landing, devtool-landing)는 모두 제품 화면 성격이 있다고 보지만 devtool-landing의 선택(범용 목업 추가)도 같은 종류의 의문을 남긴다(6절). 이것은 평가에 없던 입력이라 판단을 유보한다.
+
 ## 6. 직접 본 것과 못 본 것
 
-- **직접 본 스크린샷**: R1 기본·Recipe 1440px, R1 기본·Recipe 390px, R3 이전 선택·현재 선택 1440px와 390px(5.4절), R4 Recipe 1440px, R7 Recipe 1440px. (R4·R7은 Recipe = 기본이라 한 장씩만 봤다.)
+- **직접 본 스크린샷**: R1 기본·Recipe 1440px, R1 기본·Recipe 390px, R3 이전 선택·기본 1440px와 390px(5.4절, 1440px은 이번에 다시 비교), R4 Recipe 1440px, R7 Recipe 1440px. (R4·R7은 Recipe = 기본이라 한 장씩만 봤다.)
   - R1 1440px: 기본은 가운데 정렬된 짧은 히어로(제목 34px, 시각 요소 없음)이고, Recipe는 제목이 크게(64px) 왼쪽에 서고 오른쪽에 제품 목업이 있어 섹션 제목과의 위계가 분명하다. 그러나 목업은 devtool과 무관한 범용 휴대폰 화면("오늘의 기록", 72%)이다. 시각 요소가 "있다"는 구조 조건은 채웠지만 제품 의미를 보증하지 않는다. 테마가 `devtool`에서 `trust`로 바뀌어 색과 콘텐츠 폭이 달라졌고 벤토가 큰 차트 한 칸 + 카드 2×2로 재배열되어 차트가 넓고 성기다(원인 5 영역, 해결하지 않음).
   - R1 390px: Recipe는 제목이 29→38px로 커지고 히어로가 왼쪽 정렬로 목업을 가진다. KPI 카드는 한 열로 쌓이고 문서가 4293→4830px로 길어진다.
   - R4 1440px: KPI 4개가 한 줄이고 막대 차트는 채워져 있다. 도넛 카드는 본문이 가운데에 떠서 위아래가 비어 있다(Q04는 28%로 통과이나 142px 빈 공간이 남는다, 진단 11.4절과 같다).
@@ -117,7 +127,7 @@ AI 조립 실험 작업자가 기록에서 발견했다: Recipe가 `waitlist`에
 
 ## 7. 한계
 
-- **Recipe가 하는 일은 대부분 "이미 좋은 기본을 그대로 고르는 것"이다.** 선택 15개 중 기본과 다른 추천은 1개(devtool-landing)이고 추천하지 못하는 템플릿이 2개(hr-people, waitlist)다. ops·content 레시피는 이번 표본에서 기본과 같은 조합을 고른다. 이 가치는 회귀 방지(나쁜 조합을 기본 추천에서 우선하지 않음)와 AI 재선택과의 비교 기준을 만든다는 데 있고, 이 화면들의 시각 품질 향상은 아니다.
+- **Recipe가 하는 일은 대부분 "이미 좋은 기본을 그대로 고르는 것"이다.** 레시피가 다루는 15개 템플릿 중 기본과 다른 추천은 1개(devtool-landing)이고 추천하지 못하는 템플릿이 1개(hr-people)다. waitlist는 RC01 면제로 기본을 유지한다. ops·content 레시피는 이번 표본에서 기본과 같은 조합을 고른다. 이 가치는 회귀 방지(나쁜 조합을 기본 추천에서 우선하지 않음)와 AI 재선택과의 비교 기준을 만든다는 데 있고, 이 화면들의 시각 품질 향상은 아니다.
 - **RC02는 1440px 기준이다.** 320·390px에서는 R1 Recipe가 1.58배(1.6 미만), saas-landing 기본이 1.44·1.58배로 같은 수준이다. 좁은 폭의 위계는 이 규칙이 보지 않는다.
 - **device 시각 요소는 범용 목업이다.** `setHero`가 시각 요소가 없던 히어로에 넣는 값이라 제품과 맞지 않을 수 있다. Recipe는 구조 조건만 확인한다. 의미 있는 제품 그림은 템플릿 데이터를 고쳐야 한다(범위 밖).
 - **테마를 바꾸는 선택은 화면 구성을 바꾼다**(진단 B6). devtool-landing의 Recipe 선택은 look이 `trust`라 devtool 테마의 어두운 결을 잃는다. 순서상 `trust`를 먼저 시도하는 선택은 규칙이 아니라 데이터 순서이고 `looks`를 바꾸면 달라진다(미감 판단을 포함).
