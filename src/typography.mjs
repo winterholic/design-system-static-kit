@@ -218,8 +218,8 @@ export function fitCSS() {
 /** 줄바꿈 정책은 태그가 아니라 역할이 정한다. 제목 역할(짧고 한두 줄로 끝나는 글)은 balance, 본문 역할은 pretty.
  *  기본 규칙은 h1~h6에만 balance를 걸어 `strong`·브랜드 이름 같은 제목 역할이 본문 규칙을 물려받아 끝줄에 한두 글자가 남았다(진단 A6). */
 export const WRAP = {
-  balance: ['strong', '.kit-brand-name'],
-  pretty: ['p', 'li', 'dd', 'dt', 'blockquote', 'figcaption', 'summary'],
+  balance: ['strong', 'dt', '.kit-brand-name'],
+  pretty: ['p', 'li', 'dd', 'blockquote', 'figcaption', 'summary'],
 };
 export const wrapCSS = () => `:where(${WRAP.balance.join(',')}){text-wrap:balance}`;
 

@@ -21,7 +21,7 @@ export const layoutRev = b => (!b?.catalogVersion || LEGACY_LAYOUT_VERSIONS.incl
  *  gap은 그 부품이 실제로 쓰는 간격 토큰 값이어야 한다: 밴드는 이 값으로 계산되고 CSS gap은 토큰이 정한다. */
 export const FLOW_BUDGETS = {
   fact: {minCell: 72, use: '히어로 수치(값 한 줄 + 라벨). 3개면 세 칸이 들어갈 때만 3열, 아니면 한 열이다(2+1 없음).'},
-  photo: {minCell: 200, use: '사진 메뉴 카드(4:3 사진 + 이름·가격).'},
+  photo: {minCell: 180, use: '사진 메뉴 카드(4:3 사진 + 이름·가격).'},
   stat: {minCell: 120, use: '프로필 수치(값 + 라벨, 칸마다 왼쪽 구분선).'},
   choice: {minCell: 200, use: '라디오 선택지 카드.'},
 };

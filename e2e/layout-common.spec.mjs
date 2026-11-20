@@ -77,11 +77,11 @@ test('cause 5: cards that share a row of a grid do not leave a blank lower half 
   expect(probe.findings.filter(f => f.code === 'EMPTY_CELL').map(f => f.at + ' ' + f.detail)).toEqual([]);
 });
 
-test('cause 6: a title-like line (strong) is balanced instead of leaving a one-word last line', async ({page}) => {
+test('cause 6: a title-like line (strong, dt label) is balanced instead of leaving a one-word last line', async ({page}) => {
   const bad = [];
-  for (const [id, widths] of [['hr-people', [320, 390, 768]], ['wine-list', [320]]]) for (const width of widths) {
+  for (const [id, widths] of [['hr-people', [320, 390, 768]], ['wine-list', [320]], ['campaign-donate', [320, 390]]]) for (const width of widths) {
     await load(page, id, undefined, width);
-    for (const f of (await page.evaluate(textProbe, TEXT_PROBE_OPTIONS)).findings) if (f.code === 'ORPHAN_LINE' && /^strong/.test(f.at)) bad.push(`${id}@${width} ${f.at} ${f.detail}`);
+    for (const f of (await page.evaluate(textProbe, TEXT_PROBE_OPTIONS)).findings) if (f.code === 'ORPHAN_LINE' && /^(strong|dt)/.test(f.at)) bad.push(`${id}@${width} ${f.at} ${f.detail}`);
   }
   expect(bad).toEqual([]);
 });

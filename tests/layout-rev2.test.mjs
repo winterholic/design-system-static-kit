@@ -107,7 +107,7 @@ test('flow budgets keep the orphan-free rule at their own breakpoints for 2 to 4
 
 test('hero facts, photo menu, profile stats and radio choices become flows only in revision 2', () => {
   const html = id => compile(createBlueprint(id)).html;
-  assert.match(html('menu-dining'), /<ul data-flow data-n="3" data-cap="3" data-flow-min="200" data-flow-gap="\d+"><li data-thumb/);
+  assert.match(html('menu-dining'), /<ul data-flow data-n="3" data-cap="3" data-flow-min="180" data-flow-gap="\d+"><li data-thumb/);
   assert.match(html('profile'), /<dl class="kit-profile-stats" data-flow data-n="4" data-cap="4" data-flow-min="120"/);
   const legacy = structuredClone(read('legacy-2-3-blueprints.json').blueprints['menu-dining']);
   assert.doesNotMatch(compile(legacy).html, /data-flow-min="200"/);
@@ -143,11 +143,11 @@ test('type roles fit their column: boxes cap the role at column / 9em, and only 
   for (const r of FIT_ROLES) assert.ok(!new RegExp(`${roleVar(r)}:min\\(var\\(${roleVar(r)}\\)`).test(fitCSS()), r);
 });
 
-test('wrap policy follows the role: title-like strong and brand names balance, prose stays pretty, revision 1 is untouched', () => {
-  assert.equal(wrapCSS(), ':where(strong,.kit-brand-name){text-wrap:balance}');
+test('wrap policy follows the role: title-like strong, dt labels and brand names balance, prose stays pretty, revision 1 is untouched', () => {
+  assert.equal(wrapCSS(), ':where(strong,dt,.kit-brand-name){text-wrap:balance}');
   assert.ok(WRAP.pretty.includes('p') && WRAP.balance.includes('strong'));
-  assert.match(compile(createBlueprint('hr-people')).css, /:where\(strong,\.kit-brand-name\)\{text-wrap:balance\}/);
-  assert.doesNotMatch(compile(structuredClone(read('legacy-2-3-blueprints.json').blueprints['hr-people'])).css, /:where\(strong,\.kit-brand-name\)/);
+  assert.match(compile(createBlueprint('hr-people')).css, /:where\(strong,dt,\.kit-brand-name\)\{text-wrap:balance\}/);
+  assert.doesNotMatch(compile(structuredClone(read('legacy-2-3-blueprints.json').blueprints['hr-people'])).css, /:where\(strong,dt,\.kit-brand-name\)/);
 });
 
 test('cards that share a grid row absorb extra height in the body, not below it (revision 2 contract CSS)', () => {
