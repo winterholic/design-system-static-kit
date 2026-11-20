@@ -5,6 +5,8 @@ import {chromium} from '@playwright/test';
 import {writeFileSync, readFileSync} from 'node:fs';
 import {enumerateCombos, renderCombo} from '../../src/combos.mjs';
 import {themes} from '../../src/catalog.mjs';
+import {CATALOG_VERSION} from '../../src/catalog/index.mjs';
+import {execSync} from 'node:child_process';
 import {layoutProbe, LAYOUT_OPTIONS} from './layout-probe.mjs';
 import {spacingProbe, PROBE_OPTIONS} from './spacing-probe.mjs';
 import {textProbe, TEXT_PROBE_OPTIONS} from './text-probe.mjs';
@@ -51,5 +53,5 @@ await br.close();
 for (const e of Object.values(result)) { e.grade = grade(e.codes); for (const k of Object.keys(e.where)) e.where[k] = e.where[k].slice(0, 140); }
 const summary = {A: 0, B: 0, C: 0};
 for (const e of Object.values(result)) summary[e.grade]++;
-writeFileSync(outFile, JSON.stringify({meta: {label: opt('--label', 'working tree'), date: new Date().toISOString().slice(0, 10), combos: Object.keys(result).length, views: Object.values(result).reduce((n, e) => n + e.views, 0), widths: WIDTHS, extraThemes, summary}, combos: result}));
+writeFileSync(outFile, JSON.stringify({meta: {label: opt('--label', 'working tree'), catalogVersion: CATALOG_VERSION, commit: (() => { try { return execSync('git rev-parse --short HEAD', {encoding: 'utf8'}).trim(); } catch { return null; } })(), date: new Date().toLocaleDateString('sv'), combos: Object.keys(result).length, views: Object.values(result).reduce((n, e) => n + e.views, 0), widths: WIDTHS, extraThemes, summary}, combos: result}));
 console.log('done', combos.length, 'combos', jobs.length * WIDTHS.length, 'views', JSON.stringify(summary));

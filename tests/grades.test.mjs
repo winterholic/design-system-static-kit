@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {enumerateCombos} from '../src/combos.mjs';
 import {EXPERIMENTAL, GRADES_META} from '../src/combo-grades.mjs';
+import {CATALOG_VERSION} from '../src/catalog/index.mjs';
 import {SEVERE, grade} from '../scripts/design-qa/diagnose-meta.mjs';
 
 // 등급 파일은 전수 진단(scripts/design-qa/diagnose.mjs → grades.mjs)이 만든 증거다. 카탈로그를 바꾸고 다시 재지 않으면 이 시험이 실패해 낡은 등급이 남지 않게 한다.
-const evidence = JSON.parse(await readFile(new URL('../docs/evidence/diagnosis-round6.json', import.meta.url), 'utf8'));
+// 증거 파일 이름은 측정한 카탈로그 버전이다(grades.mjs --evidence-only). 6차 기록(diagnosis-round6.json)은 비교 기준으로 남는다.
+const evidence = JSON.parse(await readFile(new URL(`../docs/evidence/diagnosis-${GRADES_META.catalogVersion}.json`, import.meta.url), 'utf8'));
 
 test('grade rule: A is clean, B has only minor findings, C has any severe finding', () => {
   assert.equal(grade({}), 'A');
@@ -14,6 +16,11 @@ test('grade rule: A is clean, B has only minor findings, C has any severe findin
   assert.equal(grade({MEASURE: 3, EMPTY_CELL: 1}), 'C');
   for (const code of ['EMPTY_CELL', 'BIG_NARROW', 'HIER_INVERT', 'TIGHT_ROW', 'GRID_ORPHAN']) assert.ok(SEVERE.has(code), code);
   assert.ok(!SEVERE.has('MEASURE') && !SEVERE.has('BAND_ASYM'));
+});
+
+test('the grades were measured on the current catalog version', () => {
+  assert.equal(GRADES_META.catalogVersion, CATALOG_VERSION, 'catalog version changed: re-measure with node scripts/design-qa/diagnose.mjs and grades.mjs --evidence-only');
+  assert.match(GRADES_META.date, /^\d{4}-\d{2}-\d{2}$/);
 });
 
 test('the committed diagnosis covers exactly the current catalog and the experimental list is its C grades', () => {

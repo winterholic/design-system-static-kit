@@ -1,5 +1,6 @@
 // 진단 결과(diagnose.mjs의 JSON)에서 (1) src/combo-grades.mjs(실험 조합 목록)와 (2) docs/diagnosis-round6.md(등급 분포·템플릿·구성 변형 표)를 만든다.
-// 사용: node scripts/design-qa/grades.mjs <after.json> [--before before.json] [--write]
+// 사용: node scripts/design-qa/grades.mjs <after.json> [--before before.json] [--write] [--evidence-only]
+// --evidence-only: 6차 기록(docs/diagnosis-round6.md, docs/evidence/diagnosis-round6*.json)은 그대로 두고, 재측정 증거 docs/evidence/diagnosis-<카탈로그 버전>.json과 src/combo-grades.mjs만 쓴다.
 // --write가 없으면 결과를 표준 출력에만 낸다. 증거 JSON은 docs/evidence/에 둔다(전체 조합 등급과 코드 수만 담은 작은 파일).
 import {readFileSync, writeFileSync} from 'node:fs';
 import {SEVERE} from './diagnose-meta.mjs';
@@ -87,15 +88,20 @@ ${[...new Set([...oA.keys(), ...oB.keys()])].sort().map(k => { const a = oA.get(
 const experimental = Object.fromEntries(Object.entries(after.combos).filter(([, e]) => e.grade === 'C').map(([id, e]) => [id, 'C ' + Object.keys(e.codes).filter(c => SEVERE.has(c)).join('+')]).sort(([a], [b]) => a.localeCompare(b)));
 const gradesFile = `/** 전수 진단(scripts/design-qa/diagnose.mjs)에서 C 등급이었던 조합: {조합 id: 등급과 심각한 지적 코드}. 생성 파일이므로 손으로 고치지 않는다(node scripts/design-qa/grades.mjs). */
 export const EXPERIMENTAL = ${JSON.stringify(experimental, null, 1).replace(/\n\s*/g, '\n ').replace(/^\{\n /, '{\n ')};
-export const GRADES_META = ${JSON.stringify({date: after.meta.date, combos: nA, summary: dA})};
+export const GRADES_META = ${JSON.stringify({date: after.meta.date, catalogVersion: after.meta.catalogVersion ?? null, commit: after.meta.commit ?? null, combos: nA, summary: dA})};
 `;
 const compact = {meta: after.meta, combos: Object.fromEntries(Object.entries(after.combos).map(([id, e]) => [id, e.grade === 'A' ? 'A' : {g: e.grade, c: e.codes}]))};
 const compactBefore = before ? {meta: before.meta, combos: Object.fromEntries(Object.entries(before.combos).map(([id, e]) => [id, e.grade === 'A' ? 'A' : {g: e.grade, c: e.codes}]))} : null;
 
 if (rest.includes('--write')) {
-  writeFileSync(root + 'docs/diagnosis-round6.md', md);
+  if (rest.includes('--evidence-only')) {
+    if (!after.meta.catalogVersion) throw new Error('measure with a diagnose.mjs that records meta.catalogVersion');
+    writeFileSync(root + `docs/evidence/diagnosis-${after.meta.catalogVersion}.json`, JSON.stringify(compact));
+  } else {
+    writeFileSync(root + 'docs/diagnosis-round6.md', md);
+    writeFileSync(root + 'docs/evidence/diagnosis-round6.json', JSON.stringify(compact));
+    if (compactBefore) writeFileSync(root + 'docs/evidence/diagnosis-round6-before.json', JSON.stringify(compactBefore));
+  }
   writeFileSync(root + 'src/combo-grades.mjs', gradesFile);
-  writeFileSync(root + 'docs/evidence/diagnosis-round6.json', JSON.stringify(compact));
-  if (compactBefore) writeFileSync(root + 'docs/evidence/diagnosis-round6-before.json', JSON.stringify(compactBefore));
   console.log('written', Object.keys(experimental).length, 'experimental combos', JSON.stringify(dA));
 } else console.log(md.slice(0, 3000));
