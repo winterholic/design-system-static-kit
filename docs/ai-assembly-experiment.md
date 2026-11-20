@@ -78,7 +78,7 @@ node --test tests/ai-assembly.test.mjs           # 입력·선택 제약·로그
 - AI 팔의 시도(선택과 육안 확인)는 origin/main `2f99f3078`(벤토 높이 균형 수정 전)에서 했다.
 - 작업 중 origin/main이 `f1eb262d7`(벤토 높이 균형·도넛 링 수정, `src/layout.mjs` 변경 포함)로 올라가 **rebase한 뒤 세 팔을 모두 다시 컴파일·렌더**했다. 저장된 스크린샷, 측정, 해시, 눈가림 패키지는 모두 이 커밋 기준이다(`measure.json`의 `originMain`).
 - 따라서 AI가 시도 중에 본 화면(`ai/attempts/`의 시트)과 평가용 스크린샷은 벤토·도넛 영역이 다를 수 있다. AI 선택은 다시 하지 않았다. 재선택을 다시 하면 AI 팔의 조건이 달라진다.
-- 마무리 직전에 다시 `git fetch`로 origin/main을 확인했다. 결과는 `results.md` 첫 줄과 커밋 메시지에 남겼다.
+- 렌더와 눈가림 패키지 생성을 마친 뒤, 커밋과 push 직전에 `git fetch`로 origin/main을 다시 확인했고 `f1eb262d7` 그대로였다(변경 없음, 추가 재렌더 불필요). 이 실험 커밋은 파일만 더하고 `src/`를 바꾸지 않아 측정 기준 커밋과 렌더 결과가 같다. 측정 기준은 `results.md` 첫 줄과 `hashes.json`에 있다.
 
 ## 7. 결과 표 (사실만, 판정 없음)
 
