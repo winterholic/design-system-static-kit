@@ -1147,7 +1147,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1267,7 +1267,11 @@
         },
         "applied": [
           "C03"
-        ]
+        ],
+        "page": {
+          "rule": "P03",
+          "afterHero": "none"
+        }
       },
       {
         "path": "$.tree.children[3]",
@@ -1552,6 +1556,30 @@
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "centered",
+        "heroVisual": false,
+        "heroArt": false,
+        "afterHero": "plain-section",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": [
+        {
+          "rule": "P03",
+          "path": "$.tree.children[2]",
+          "facts": {
+            "intent": "marketing",
+            "afterHero": "plain-section"
+          },
+          "applied": "none",
+          "reason": "The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes."
+        }
+      ]
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1590,8 +1618,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "93a67fd9bdf272da670d740184563e8d17ab3437a81a168959a6d314eb5e0281",
-      "tokens.css": "69b7bb8dacf29493792bcaa2a638c6ed9f771dc4f7d70d7a08b2ce1014ec455a",
+      "index.html": "7fca050a21a7bfa948a17a177eb8d772213f12d18a9b30b6ac0a699a3cdf8fa5",
+      "tokens.css": "201da16b8060f80b8c82f8e020618f600a08158dabbae01856695ce5e44d4eba",
       "tokens.json": "08b6ebc9892518316e34de38c1c9f5cc51a23c78308fe185bbec1e094ec45e11",
       "blueprint.json": "8ebcca7f5effd4c662bfda9fd26b58a91d9842581cbef4d9436624db7497a6ad"
     }

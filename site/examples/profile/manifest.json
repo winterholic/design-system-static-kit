@@ -1147,7 +1147,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1588,6 +1588,19 @@
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "operation",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1626,8 +1639,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "36c07ec74e117fa13d9ff891e5f67e0f2bd01d79e35142fe1d04f955f9716d8a",
-      "tokens.css": "43b9898780c6581b05e72df4c224e9eb45472a50e20a3d13497a8843a080831c",
+      "index.html": "d20ec569728a85b08a541dba392be6ff0448ebebc7c571e7c4c885d0faaf0886",
+      "tokens.css": "1dfac7296070a53704ff3abd7c3544bda6808886d5403f2ff6190e71f1ba2fb3",
       "tokens.json": "dd0eb887abe3e303e1507e545bf18752d525a96488802e063f10fa8b7240aa5a",
       "blueprint.json": "73015a80806a695e335cfc7ed3eda263f0b75555f97d7cbae8806ff96cf0d8af"
     }

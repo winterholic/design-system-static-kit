@@ -61,4 +61,4 @@ export const NEUTRAL_OPTIONS = {
  ]
  }
  };
-export const EFFECTS_META = {"date":"2026-11-21","catalogVersion":"2.4.0","commit":"bf76ff0fd","options":366,"widths":[1440,390]};
+export const EFFECTS_META = {"date":"2026-11-21","catalogVersion":"2.4.0","commit":"84599f05d","options":366,"widths":[1440,390]};

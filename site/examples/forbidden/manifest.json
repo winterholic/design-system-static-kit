@@ -992,7 +992,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1064,6 +1064,19 @@
         "reason": "Actions wrap using the existing control size and group gap."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "status",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1102,8 +1115,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "60989addb7e989e41c7d0ce9b472c20d72cec25fa95b11d45e1c650f5fd9eb49",
-      "tokens.css": "8fd02a4cdd46dc0f3749e4f2dbfa0ffdcf6dcf5cb4485615b8df28cbb840c4c4",
+      "index.html": "9ffb62432b426370e395183ba074527e2aa45a01ad340b2cdbcec3aa9fb09ef3",
+      "tokens.css": "45829e8ab0349018deda7c5fd8edf744ad9a729d1b44ef42d25b40e05c864006",
       "tokens.json": "db8277708e243846ca5df5d98c4ed042609baa231b4ef885d8c91e4764dbf08d",
       "blueprint.json": "2966c1a6e70def54d07b5b722bfd38bda5cf2027839f0f344ed09b948fa9b49a"
     }

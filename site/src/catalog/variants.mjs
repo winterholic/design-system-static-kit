@@ -4,6 +4,7 @@
  * 카탈로그가 이미 허용한 값(히어로 변형, 카드 변형, 섹션 표면 …)만 바꾸므로 결과는 평소와 같은 검증을 통과해야 한다.
  * 슬롯은 "바꿀 대상이 있고 바꾸면 달라지는 경우"에만 템플릿에 나타난다(layoutSlots).
  */
+import {assessOption} from './variant-contracts.mjs';
 /** n개를 cols열에 놓았을 때 마지막 줄이 가득 차거나 두 칸 이상이어야 한다. */
 const fitsColumns = (n, cols) => n >= cols && (n % cols === 0 || n % cols >= 2);
 const walk = (nodes, fn, parent = null) => { for (const n of nodes) { fn(n, parent); if (n.children) walk(n.children, fn, n); } };
@@ -132,9 +133,30 @@ function tryOption(tree, slot, option, pageType) {
   return option.apply(copy) ? copy : null;
 }
 
-/** 템플릿 트리에서 실제로 선택지가 있는 슬롯: [{id, label, options:[{id,label,description}]}] */
-export function layoutSlots(tree, pageType) {
-  return SLOTS.map(slot => ({id: slot.id, label: slot.label, options: slot.options.filter(o => tryOption(tree, slot, o, pageType)).map(({id, label, description}) => ({id, label, description}))})).filter(s => s.options.length);
+/**
+ * 템플릿 트리에서 실제로 선택지가 있는 슬롯: [{id, label, options:[{id,label,description,recommended,rules}]}].
+ * `rules`는 결과 계약(variant-contracts.mjs)을 어긴 사유 [{id, claim, detail}], `recommended`는 `rules`가 비었는지다. 옵션은 지우지 않는다.
+ * ctx.templateId가 있으면 렌더 지문 계약(V05)도 본다. ctx.neutral로 측정 데이터를 바꿔 끼울 수 있다(시험용).
+ */
+export function layoutSlots(tree, pageType, ctx = {}) {
+  return SLOTS.map(slot => ({id: slot.id, label: slot.label, options: slot.options.flatMap(o => {
+    const after = tryOption(tree, slot, o, pageType); if (!after) return [];
+    const rules = assessOption({before: tree, after, slotId: slot.id, optionId: o.id, templateId: ctx.templateId, ...(ctx.neutral ? {neutral: ctx.neutral} : {})});
+    return [{id: o.id, label: o.label, description: o.description, recommended: !rules.length, rules}];
+  })})).filter(s => s.options.length);
+}
+
+/** {slot: option} 선택의 추천 여부와 근거. 옵션마다 템플릿 기본 트리에 단독 적용한 결과를 계약에 대조한다. 적용되지 않는 선택은 건너뛴다. */
+export function assessLayout(tree, choice = {}, pageType, ctx = {}) {
+  const findings = [];
+  for (const [slotId, optionId] of Object.entries(choice)) {
+    if (!optionId || optionId === 'default') continue;
+    const slot = SLOTS.find(s => s.id === slotId), option = slot?.options.find(o => o.id === optionId);
+    if (!slot || !option) throw new Error('Unknown layout choice: ' + slotId + '=' + optionId);
+    const after = tryOption(tree, slot, option, pageType); if (!after) continue;
+    for (const r of assessOption({before: tree, after, slotId, optionId, templateId: ctx.templateId, ...(ctx.neutral ? {neutral: ctx.neutral} : {})})) findings.push({slot: slotId, option: optionId, rule: r.id, claim: r.claim, detail: r.detail});
+  }
+  return {recommended: findings.length === 0, findings};
 }
 
 /** {slot: option} 선택을 슬롯 순서대로 적용한다. 알 수 없는 선택은 오류, 바뀌지 않는 선택은 건너뛴다. */

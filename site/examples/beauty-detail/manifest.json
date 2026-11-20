@@ -1137,7 +1137,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1665,6 +1665,19 @@
       "wideContainer": 720,
       "reason": "Keep identity and its primary action together; retain the navigation track and centered wide-screen identity."
     },
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "commerce",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1703,8 +1716,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "10f20468312f02feed71e5659a80d76177431ce4646f8b14722ad8fabfbec8b8",
-      "tokens.css": "56fce45fa8e68dfd175760e2c9e15e869482b7520dee7b23173ea2d5c8e5652a",
+      "index.html": "b1cbfaecb3fc6086684f2ed203ae4191d3dd22cd3559aee93d739ef644dcdcf7",
+      "tokens.css": "b3b459197eb99c6a1b5d043b65b57323318722aded65c8cfaceeb0f6bcff6444",
       "tokens.json": "c03ddc7180a4c066548254a42d0019d3b1033c90e21e2f55106684ea431b3689",
       "blueprint.json": "dc1cafb0294aa835b47625e2bef2debf73c4d1a6ac3edb409a745601aac18263"
     }

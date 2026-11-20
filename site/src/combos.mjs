@@ -21,8 +21,11 @@ export function enumerateCombos() {
     for (const layout of sets) {
       const picks = slots.filter(s => layout[s.id]).map(s => ({slot: s.id, slotLabel: s.label, option: layout[s.id], optionLabel: s.options.find(o => o.id === layout[s.id]).label}));
       const id = comboId(t.id, layout);
-      // 진단(scripts/design-qa/diagnose.mjs)에서 A 등급이 아니었던 조합은 '실험'이다. 갤러리는 기본으로 숨기고 표시를 붙인다.
-      const combo = {n: list.length + 1, id, templateId: t.id, template: t.label, pageType: t.pageType, layout, picks, changed: picks.length, sameAs: null, experimental: EXPERIMENTAL[id] ?? null};
+      // 선택한 옵션마다 결과 계약(src/catalog/variant-contracts.mjs)을 어긴 사유를 모은다. 조합을 지우지 않고 추천에서만 뺀다.
+      const rules = slots.filter(s => layout[s.id]).flatMap(s => s.options.find(o => o.id === layout[s.id]).rules.map(r => ({slot: s.id, option: layout[s.id], rule: r.id, claim: r.claim, detail: r.detail})));
+      // 진단(scripts/design-qa/diagnose.mjs)에서 A 등급이 아니었던 조합과 결과 계약을 어긴 조합은 '실험'이다. 갤러리는 기본으로 숨기고 표시를 붙인다.
+      const experimental = [EXPERIMENTAL[id] ?? null, rules.length ? [...new Set(rules.map(r => r.rule))].join('+') : null].filter(Boolean).join(' · ') || null;
+      const combo = {n: list.length + 1, id, templateId: t.id, template: t.label, pageType: t.pageType, layout, picks, rules, changed: picks.length, sameAs: null, experimental};
       // 앞 슬롯의 변경이 뒤 슬롯의 조건을 없애면 서로 다른 선택이 같은 화면이 된다. 숨기지 않고 표시만 한다.
       const signature = t.id + JSON.stringify(applyLayout(t.tree, layout, t.pageType));
       if (firstOf.has(signature)) combo.sameAs = firstOf.get(signature); else firstOf.set(signature, combo.n);

@@ -3,7 +3,7 @@ import {validateBlueprint} from './validate.mjs';
 import {resolveTokens, resolveAll, contrast, serializableContrast} from './tokens.mjs';
 import {stylesheet} from './styles.mjs';
 import {renderTree, escapeHTML, formRuntime} from './render.mjs';
-import {planComposition} from './composition.mjs';
+import {planComposition, auditPage} from './composition.mjs';
 import {typeRev, HANGUL} from './typography.mjs';
 export {validateBlueprint, resolveTokens, contrast};
 
@@ -26,7 +26,8 @@ export function compile(input) {
   }
   if (report.some(x => x.ratio < x.minimum)) throw new Error('Contrast gate failed');
   const design = planComposition(b);
-  const body = renderTree(b, design);
+  const artLog = {}, body = renderTree(b, design, artLog);
+  auditPage(design, artLog.arts);
   const css = stylesheet(b, sets, body, design);
   const csp = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'";
   const scheme = b.mode === 'auto' ? 'light dark' : b.mode;
@@ -41,6 +42,8 @@ export function compile(input) {
   };
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
+  // Page rules (composition 1.3.0, catalog 2.4.0): facts and decisions about the whole page. Absent for 2.1–2.3 inputs, whose output is pinned.
+  if (design?.page) manifest.design.page = {version: design.page.version, facts: design.page.facts, decisions: design.page.decisions};
   // Typography revision 2 (catalog 2.3.0): recorded so a consumer can tell which Hangul limits shaped the page. Absent for 2.1/2.2 inputs, whose output is pinned.
   if (design && typeRev(b) === 2) manifest.design.typography = {revision: 2, limits: HANGUL};
   return {html, css, tokens, manifest};

@@ -1115,7 +1115,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1763,6 +1763,19 @@
         "reason": "The explicit reel scrolls rather than squeezing card content."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "split",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "other",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1801,8 +1814,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "72c0fe80c91563112cfe10b85c6d853a18b46a9b8fa3ffcb2448ea7cb691e6c0",
-      "tokens.css": "83bc3006157e0157bbaa872ecb37353508e7b550cc94ac09648668e1da4c8880",
+      "index.html": "d64cad4eb0000e9cbad6f98e03349234b9522591a95f27a4a2043023e5679479",
+      "tokens.css": "6ecd1e92be4e6d66e361a63634d497d0cd3c2d13a2f666fa2822543a50977f83",
       "tokens.json": "b0751bee62a0294274ad1e10f55404405f4d410829e284dc299bdd1c80489157",
       "blueprint.json": "85c8815e817431bf6eeaac173572541b7ad314482fd6626ade978ca2d4acb8d7"
     }

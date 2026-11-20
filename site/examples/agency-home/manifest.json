@@ -1955,7 +1955,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -2075,7 +2075,11 @@
         },
         "applied": [
           "C03"
-        ]
+        ],
+        "page": {
+          "rule": "P03",
+          "afterHero": "none"
+        }
       },
       {
         "path": "$.tree.children[2].children[0]",
@@ -2456,6 +2460,30 @@
         "reason": "The catalogue ratio and caption own media sizing."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "cover",
+        "heroVisual": false,
+        "heroArt": false,
+        "afterHero": "plain-section",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": [
+        {
+          "rule": "P03",
+          "path": "$.tree.children[2]",
+          "facts": {
+            "intent": "marketing",
+            "afterHero": "plain-section"
+          },
+          "applied": "none",
+          "reason": "The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes."
+        }
+      ]
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -2494,8 +2522,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "2df325a2a5ba5da6c39743d1e28ce3f2c3a86889531eeb4de9f9bcf01c8363d2",
-      "tokens.css": "6c10b44ae16ced8388bd57cfe0e49e247528caf1c5b66a52f5c3c8f71547a2df",
+      "index.html": "fd53c679650a72c7b7b64bd15fe7c70e0af984707c32020a354ec6cbbf3181ff",
+      "tokens.css": "961aedf0ede993697004c9c24bbc01e54d8773627b26a94e90a5ed15f4a30346",
       "tokens.json": "df216fa70968ca1f8debcf79d15aa2bbcfe50ded8c7c206c240a056cca5ea0c1",
       "blueprint.json": "8d4b2330c3d3cd50ff99cec729622aff5a183b67fb1ec93948a611fb9cc36bdc"
     }

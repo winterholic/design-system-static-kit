@@ -1127,7 +1127,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1247,7 +1247,11 @@
         },
         "applied": [
           "C03"
-        ]
+        ],
+        "page": {
+          "rule": "P03",
+          "afterHero": "none"
+        }
       },
       {
         "path": "$.tree.children[2].children[0].children[1]",
@@ -1660,6 +1664,43 @@
         "reason": "Scores and review copy retain separate summary and reading levels."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "product",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "plain-section",
+        "bentos": 1,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": [
+        {
+          "rule": "P03",
+          "path": "$.tree.children[2]",
+          "facts": {
+            "intent": "marketing",
+            "afterHero": "plain-section"
+          },
+          "applied": "none",
+          "reason": "The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes."
+        },
+        {
+          "rule": "P04",
+          "code": "PAGE_BENTO_SPARSE",
+          "path": "$.tree.children[2].children[0]",
+          "facts": {
+            "bentoSparse": true
+          },
+          "shortCells": [
+            "metric",
+            "metric"
+          ],
+          "reason": "Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content."
+        }
+      ]
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1698,8 +1739,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ec4051e7334ae8e69307bb76e939e7ad5495654f6d5ea4e65911caab6dbd40bf",
-      "tokens.css": "69ba2f6761eff59ce8d987be69cb0999ef7d6d938880a936ee2dfce12fd9373f",
+      "index.html": "85bfd271bcc057d9f7761c4b696e7706882057ccab3eda6052b67aadd314fad0",
+      "tokens.css": "bc933096365bfb756eeecdc63f45f65c70d9cb5eabe8ca67849508be0b0d2cdb",
       "tokens.json": "747dc5c87418faaeefc83e7bd381bf517cf48f8f8cf58688e56e22f2576101f3",
       "blueprint.json": "380124eae5d072127644e743e6d30288b69a00c7caa05112ea64924b7bcd4551"
     }

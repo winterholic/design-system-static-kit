@@ -1082,7 +1082,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1202,7 +1202,11 @@
         },
         "applied": [
           "C03"
-        ]
+        ],
+        "page": {
+          "rule": "P03",
+          "afterHero": "none"
+        }
       },
       {
         "path": "$.tree.children[2].children[0]",
@@ -1371,6 +1375,30 @@
         "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "split",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "plain-section",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": [
+        {
+          "rule": "P03",
+          "path": "$.tree.children[2]",
+          "facts": {
+            "intent": "marketing",
+            "afterHero": "plain-section"
+          },
+          "applied": "none",
+          "reason": "The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes."
+        }
+      ]
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1409,8 +1437,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "91dfdca72b974d512f8187d7f586bf59e4ed01b8fde734608ea3f7c021e42f76",
-      "tokens.css": "4a57f1b008cbf6904f9db3d124fae182333bbbcd60ff8d6c9f877ced26f05cb6",
+      "index.html": "abcef18727f256c39f858c05fd89e307eefa9cd8e129d4d98b19d346f041b53f",
+      "tokens.css": "0d000e62cb11800726269c4ab037801ee10a2b76c36e681ebdc6990cc506286a",
       "tokens.json": "8c1790a785fe00a25897c76f083696bd4f5468f59637cd84f75c3ea918738f66",
       "blueprint.json": "1edb891e8765a10d5c285f767f1c63e0861c0ca5b8ccd8e8a4f796c8abadf239"
     }

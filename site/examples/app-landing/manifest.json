@@ -1948,7 +1948,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -2464,6 +2464,19 @@
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "product",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "other",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -2502,8 +2515,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "228cc244997699d3d7113ce520d139dd99929a6773207e90970081b40eb1625d",
-      "tokens.css": "76295bb3ee56be2e26330f459ed92c3e183e402ba2b2eb160c96573d15f8dc95",
+      "index.html": "45aa58ae927451a26cafd9e3b60ce95b1c2fce55081dca134f0af6c307926d6c",
+      "tokens.css": "2b4f998046be0040aaf979aa2f2a3c68772ab926885d047333dfc5626677f1ab",
       "tokens.json": "782b098d2be84e4eb09e2f8ba4a88feac5fcd1277ba3d65e7b63952ec3bbc002",
       "blueprint.json": "6e9a8105cc538d7409140963c3e7cec94ede2bb16bebd445408ac0a674eee7a4"
     }

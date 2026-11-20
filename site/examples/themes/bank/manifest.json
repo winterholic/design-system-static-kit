@@ -1110,7 +1110,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1192,6 +1192,10 @@
         ],
         "container": {
           "minCell": 360
+        },
+        "page": {
+          "rule": "P02",
+          "heroForm": "centered"
         }
       },
       {
@@ -1564,6 +1568,31 @@
         "reason": "Prose already has a bounded reading measure and semantic type role."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "split",
+        "heroVisual": false,
+        "heroArt": false,
+        "afterHero": "other",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": [
+        {
+          "rule": "P02",
+          "path": "$.tree.children[1]",
+          "facts": {
+            "heroVariant": "split",
+            "heroVisual": false
+          },
+          "declared": "split",
+          "applied": "centered",
+          "reason": "A split or product hero without a visual leaves its second column empty; it reads as a text-led centred hero."
+        }
+      ]
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1602,8 +1631,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "14231e9a224f35accd02d0531dd52bb380c50062facc6596876a92b4874d086a",
-      "tokens.css": "fc8273c1d11d023f31adb7733b0e1039582ca5dcd536ca85b092e227ea2766f7",
+      "index.html": "126a800fdc908609f8420c55b16e8af4a11480debf668f96b3a38a49924be907",
+      "tokens.css": "f26c8c33b17a54e7ad7e6af9b6afbffeea11b2f400586fae70af0451c75c57f5",
       "tokens.json": "1ffaf578832def0a27b0ef497d9ce3835731c094f054a5b15fc4bce7fd7f38d6",
       "blueprint.json": "0b7356e31d0796d9b4cb6a50b5594c0970414b3f20eaf9f1dccdf593a46553e8"
     }

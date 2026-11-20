@@ -97,7 +97,7 @@ exports.MEGA_MAX = MEGA_MAX;
 __defs["catalog/composition.mjs"] = function (exports, __m) {
 /** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
  * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
-const COMPOSITION_VERSION = '1.2.0';
+const COMPOSITION_VERSION = '1.3.0';
 const PAGE_INTENT = {
   dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
   auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',
@@ -140,6 +140,24 @@ const compositionRules = [
   {id: 'C34', priority: 10, when: {type: 'feature-list'}, set: {role: 'capabilities'}, reason: 'Feature descriptions supply the minimum readable flow cell.'},
   {id: 'C35', priority: 10, when: {type: 'steps'}, set: {role: 'procedure'}, reason: 'Repeated steps reuse the same content-sized flow as other repeated information.'},
 ];
+/** Page-level decision table (composition 1.3.0, catalog 2.4.0+). Same shape and engine as compositionRules, but the facts describe the whole page
+ * (hero visual, the section that follows the hero, bento cell mix, repeated pictures) instead of one node. Still a closed table of plain values:
+ * no expressions, no consumer input. `claim` is the measured condition in scripts/design-qa/quality-claims.mjs. */
+const pageRules = [
+  {id: 'P01', priority: 10, claim: 'Q13', source: 'docs/quality-diagnosis-2026-11-21.md C1', when: {heroArt: true}, set: {artStart: 'after-hero'},
+    reason: 'The hero picture is placement 0 of the six-scene rotation, so the first picture in the body takes the next scene instead of repeating it; art that cannot rotate (chart, device) is reported when it repeats.'},
+  {id: 'P02', priority: 10, claim: 'Q06', source: 'docs/quality-diagnosis-2026-11-21.md C2', when: {heroVariant: ['split', 'product'], heroVisual: false}, set: {heroForm: 'centered'},
+    reason: 'A split or product hero without a visual leaves its second column empty; it reads as a text-led centred hero.'},
+  {id: 'P03', priority: 10, claim: 'Q10', source: 'docs/quality-diagnosis-2026-11-21.md C5', when: {intent: ['marketing', 'general'], afterHero: 'plain-section'}, set: {afterHeroStep: 'none'},
+    reason: 'The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes.'},
+  {id: 'P04', priority: 10, claim: 'Q07', source: 'docs/quality-diagnosis-2026-11-21.md C3', when: {bentoSparse: true}, set: {bentoFill: 'report'},
+    reason: 'Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content.'},
+];
+/** Catalog versions whose output predates the page rules and is pinned byte for byte (docs/evidence/variants/legacy-2-3-hashes.json). */
+const PAGE_RULE_LEGACY_VERSIONS = ['2.1.0', '2.2.0', '2.3.0'];
+/** The composition version those legacy inputs were compiled under; it is part of the pinned output (manifest.design.version, stylesheet comment). */
+const LEGACY_COMPOSITION_VERSION = '1.2.0';
+
 // Mature contracts are reused explicitly; primitive components do not need cosmetic overrides.
 const inherited = [
   ['page tab', ['layout/parent', 'S09'], 'Structural nodes inherit page and panel rhythm without adding a surface.'],
@@ -171,11 +189,14 @@ for (const rule of compositionRules) if (typeof rule.when.type === 'string') {
   compositionCoverage[type].contracts.push(rule.id);
 }
 const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } return x; };
-freeze(PAGE_INTENT); freeze(compositionRules); freeze(compositionCoverage);
+freeze(PAGE_INTENT); freeze(compositionRules); freeze(compositionCoverage); freeze(pageRules); freeze(PAGE_RULE_LEGACY_VERSIONS);
 
 exports.COMPOSITION_VERSION = COMPOSITION_VERSION;
 exports.PAGE_INTENT = PAGE_INTENT;
 exports.compositionRules = compositionRules;
+exports.pageRules = pageRules;
+exports.PAGE_RULE_LEGACY_VERSIONS = PAGE_RULE_LEGACY_VERSIONS;
+exports.LEGACY_COMPOSITION_VERSION = LEGACY_COMPOSITION_VERSION;
 exports.compositionCoverage = compositionCoverage;
 };
 __defs["catalog/concepts.mjs"] = function (exports, __m) {
@@ -404,9 +425,11 @@ const {icons, iconNames} = __m("catalog/icons.mjs");
 const {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios, motifs} = __m("catalog/nodes.mjs");
 const {pageTypes, pageTypeIds} = __m("catalog/pagetypes.mjs");
 const {templates, templateList} = __m("catalog/templates.mjs");
-const {layoutSlots, applyLayout, layoutSlotIds} = __m("catalog/variants.mjs");
+const {layoutSlots, applyLayout, assessLayout, layoutSlotIds} = __m("catalog/variants.mjs");
+const {variantContracts, variantCheckKinds} = __m("catalog/variant-contracts.mjs");
+const {NEUTRAL_OPTIONS: neutralOptions, EFFECTS_META: neutralMeta} = __m("catalog/variant-effects.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
-{ const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
+{ const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.pageRules = __r.pageRules; exports.PAGE_RULE_LEGACY_VERSIONS = __r.PAGE_RULE_LEGACY_VERSIONS; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
 const CATALOG_VERSION = '2.4.0';
 const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
@@ -478,7 +501,7 @@ function repairAxes(b) {
 }
 
 /** 템플릿 하나에서 실제로 고를 수 있는 구성 변형(슬롯과 옵션). */
-const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree, templates[templateId].pageType);
+const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree, templates[templateId].pageType, {templateId});
 
 /**
  * Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair.
@@ -524,7 +547,12 @@ function migrateBlueprint(old) {
 
 exports.layoutSlots = layoutSlots;
 exports.applyLayout = applyLayout;
+exports.assessLayout = assessLayout;
 exports.layoutSlotIds = layoutSlotIds;
+exports.variantContracts = variantContracts;
+exports.variantCheckKinds = variantCheckKinds;
+exports.neutralOptions = neutralOptions;
+exports.neutralMeta = neutralMeta;
 exports.concepts = concepts;
 exports.conceptIds = conceptIds;
 exports.conceptsOfTemplate = conceptsOfTemplate;
@@ -1557,7 +1585,7 @@ add('saas-landing', 'SaaS 서비스 소개', 'landing', 'trust', '플로우웍�
   {type: 'hero', variant: 'split', eyebrow: '새 버전 2.0 · 자동화 규칙 출시', title: '흩어진 일을\n하나의 흐름으로.', body: '프로젝트, 일정, 문서를 한곳에서 연결합니다. 지난주에 어떤 작업이 밀렸는지, 아침 회의 전에 이미 알고 있게 됩니다.', action: A('14일 무료로 시작', 'primary'), secondaryAction: A('2분 데모 보기', 'secondary'), visual: 'chart'},
   {type: 'logo-cloud', title: '1,200개 팀이 매일 사용합니다', names: ['모아랩', '블루웍스', '다온스튜디오', '한결컴퍼니', '오브제노트']},
   section('팀이 바로 쓰는 핵심 기능', [{type: 'bento', children: [
-    card('프로젝트 보드와 일정, 문서가 한 화면에', '카드를 옮기면 일정과 담당자가 같이 바뀝니다. 흩어진 링크를 찾는 시간이 사라져요.', {variant: 'media', visual: 'chart', ratio: '4:3'}),
+    card('프로젝트 보드와 일정, 문서가 한 화면에', '카드를 옮기면 일정과 담당자가 같이 바뀝니다. 흩어진 링크를 찾는 시간이 사라져요.', {variant: 'media', visual: 'diagram', ratio: '4:3'}),
     metric('주간 완료 작업', '1,284', '지난주보다 18% 많아요', 'up', '+18%'),
     card('반복 작업은 규칙 하나로', '“리뷰가 끝나면 담당자에게 알림”처럼 한 줄로 만듭니다.', {icon: 'zap'}),
     {type: 'quote', quote: '월요일 아침 상태 취합이 사라졌습니다. 그 시간에 고객 인터뷰를 한 건 더 해요.', author: '이지훈', role: '블루웍스 운영 매니저'},
@@ -2299,6 +2327,175 @@ const themes = Object.fromEntries(rows.map(([id, name, category, description, de
 exports.themeCategories = themeCategories;
 exports.themes = themes;
 };
+__defs["catalog/variant-contracts.mjs"] = function (exports, __m) {
+/**
+ * 구성 변형의 결과 계약. 변형 함수(variants.mjs)는 값을 치환할 뿐이라 바뀐 뒤 화면의 의미(시각 요소 유지, 형제 전체 변경, 한 줄 KPI,
+ * 한 정렬축)를 보지 못했다(docs/quality-diagnosis-2026-11-21.md 원인 2). 계약은 "옵션 적용 전후 트리"를 입력으로 받아 위반 사유를 돌려주는
+ * 작은 검사의 이름표와 인자다. 검사 종류는 아래 CHECKS 한 곳에 닫혀 있고 자유 표현식·사용자 입력은 받지 않는다.
+ *
+ * 효과는 하나뿐이다: `not-recommended`. 옵션을 지우지 않는다. 위반한 옵션은 목록에 남고(조합 id·URL·표본 보존), 기본 추천과 갤러리의 기본 목록에서만
+ * 빠진다(`recommended:false`, 조합은 `experimental`). 명시적으로 고르면 예전 그대로 적용된다.
+ */
+const {NEUTRAL_OPTIONS} = __m("catalog/variant-effects.mjs");
+
+const walk = (nodes, fn) => { for (const n of nodes ?? []) { fn(n); walk(n.children, fn); } };
+const find = (tree, type) => { const out = []; walk(tree, n => { if (n.type === type) out.push(n); }); return out; };
+const topSections = tree => tree.filter(n => n.type === 'section');
+const COLS = {two: 2, three: 3, four: 4};
+
+/** 스스로 가운데 정렬로 그려지는 부품(src/styles: .kit-logos·.kit-empty). 가운데 머리말 아래에서 정렬축이 갈리지 않는 유일한 본문이다. */
+const SELF_CENTERED = new Set(['logo-cloud', 'empty-state']);
+const centeredBody = node => (node.children ?? []).length > 0 && node.children.every(c => SELF_CENTERED.has(c.type) || (c.type === 'section' && c.align === 'center' && centeredBody(c)));
+
+/** 검사: (인자, 전후 트리, 맥락) → 위반이면 사유 문자열, 통과면 null. */
+const CHECKS = {
+  /** 전에 있던 필드가 후에도 있다. */
+  'keeps-field': ({node, field}, {before, after}) => {
+    const b = find(before, node)[0], a = find(after, node)[0];
+    return b?.[field] && !a?.[field] ? `${node}.${field}=${b[field]}가 사라진다` : null;
+  },
+  /** 같은 종류 노드 중 variant가 실제로 바뀐 비율이 min 이상이다(전체 변경을 기대하게 하는 옵션은 형제를 빠뜨리지 않는다). */
+  'changed-ratio': ({node, field, fallback, min}, {before, after}) => {
+    const a = find(before, node), b = find(after, node);
+    if (!a.length || a.length !== b.length) return null;
+    const changed = a.filter((n, i) => (n[field] ?? fallback) !== (b[i][field] ?? fallback)).length, ratio = changed / a.length;
+    return ratio < min ? `${node} ${a.length}개 중 ${changed}개만 바뀐다(${Math.round(ratio * 100)}% < ${Math.round(min * 100)}%)` : null;
+  },
+  /** 지표만 든 짧은 격자(maxItems 이하)는 한 줄에 놓인다. 열 수가 줄어 두 줄이 되면 위반이다. */
+  'single-row': ({maxItems}, {before, after}) => {
+    const a = find(before, 'grid'), b = find(after, 'grid');
+    if (a.length !== b.length) return null;
+    const hit = b.findIndex((g, i) => g.children.length >= 2 && g.children.length <= maxItems && g.children.every(c => c.type === 'metric') && g.columns !== a[i].columns && COLS[g.columns] < g.children.length);
+    return hit < 0 ? null : `지표 ${b[hit].children.length}개가 ${COLS[b[hit].columns]}열이 되어 ${Math.ceil(b[hit].children.length / COLS[b[hit].columns])}줄로 꺾인다`;
+  },
+  /** 새로 가운데가 된 머리말 아래 본문이 가운데 정렬로 따라오지 못하면 정렬축이 둘로 갈린다. */
+  'one-axis': (_, {before, after}) => {
+    const sectionsBefore = topSections(before), sectionsAfter = topSections(after);
+    const bad = sectionsAfter.filter((s, i) => s.align === 'center' && sectionsBefore[i]?.align !== 'center' && !centeredBody(s)).length;
+    if (bad) return `머리말 ${bad}곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다`;
+    const hb = before.find(n => n.type === 'page-header'), ha = after.find(n => n.type === 'page-header');
+    // 히어로·상태 화면 바로 위의 페이지 제목은 렌더러가 접어 숨긴다(src/render/nodes.mjs leadOf). 보이지 않는 정렬은 정렬선을 가르지 않는다.
+    const folded = ['hero', 'empty-state'].includes(after[after.indexOf(ha) + 1]?.type);
+    if (ha?.align === 'center' && hb?.align !== 'center' && !folded) {
+      const next = after.find(n => n !== ha);
+      const aligned = !next || (next.type === 'hero' && next.variant === 'centered') || SELF_CENTERED.has(next.type) || (next.type === 'section' && next.align === 'center' && centeredBody(next));
+      if (!aligned) return `페이지 제목만 가운데로 바뀌고 첫 본문(${next.type})은 왼쪽 정렬이다`;
+    }
+    return null;
+  },
+  /** 브라우저로 잰 렌더 지문이 적용 전후 같다(scripts/design-qa/variant-effects.mjs가 만든 src/catalog/variant-effects.mjs). */
+  'visible-effect': (_, {key, neutral}) => {
+    const m = neutral[key];
+    return m ? `렌더 결과가 ${m.widths.join('·')}px에서 기본 구성과 같다` : null;
+  },
+};
+const variantCheckKinds = Object.freeze(Object.keys(CHECKS));
+
+const variantContracts = [
+  {id: 'V01', claim: 'Q14', slots: ['hero'], check: {kind: 'keeps-field', node: 'hero', field: 'visual'}, effect: 'not-recommended',
+    why: '히어로 형태를 바꾸며 제품 시각 요소(visual)를 지우면 첫 화면에서 제품 증명이 사라지고 SaaS와 무관한 장식이 남는다(진단 B1, 1,314개 조합).',
+    source: 'docs/quality-diagnosis-2026-11-21.md 4절 B1'},
+  {id: 'V02', claim: 'Q15', slots: ['cards'], check: {kind: 'changed-ratio', node: 'card', field: 'variant', fallback: 'basic', min: 0.75}, effect: 'not-recommended',
+    why: '카드 스타일 일괄 변경이 카드의 75% 미만만 바꾸면 사용자가 기대한 "일괄"이 템플릿 데이터에 따라 반쪽만 적용된다(진단 B2, 488개 조합).',
+    source: 'docs/quality-diagnosis-2026-11-21.md 4절 B2'},
+  {id: 'V03', claim: 'Q11', slots: ['columns'], check: {kind: 'single-row', maxItems: 4}, effect: 'not-recommended',
+    why: '핵심 지표 4개 이하는 한 줄에 읽혀야 한다. 열 수 변형이 이를 두 줄로 꺾으면 첫 차트가 아래로 밀린다(진단 B3).',
+    source: 'docs/quality-diagnosis-2026-11-21.md 4절 B3'},
+  {id: 'V04', claim: 'Q12', slots: ['heads', 'intro'], check: {kind: 'one-axis'}, effect: 'not-recommended',
+    why: '머리말만 가운데로 옮기고 본문이 왼쪽에 남으면 한 페이지에 정렬선이 둘이 된다(진단 B4). 본문이 스스로 가운데 정렬인 부품만 든 구역은 통과한다.',
+    source: 'docs/quality-diagnosis-2026-11-21.md 4절 B4'},
+  {id: 'V05', claim: null, slots: '*', check: {kind: 'visible-effect'}, effect: 'not-recommended',
+    why: '적용 전후 렌더 지문(요소 위치·크기·색)이 같으면 사용자에게는 고를 이유가 없는 옵션이다. 지우지 않고 추천에서만 뺀다.',
+    source: 'docs/quality-diagnosis-2026-11-21.md 6절 원인 2 추가 후보'},
+];
+
+const covers = (contract, slotId) => contract.slots === '*' || contract.slots.includes(slotId);
+
+/** 옵션 하나를 적용한 결과(after)가 계약을 어기는지 본다. 위반 목록: [{id, claim, detail}]. */
+function assessOption({before, after, slotId, optionId, templateId = null, neutral = NEUTRAL_OPTIONS}) {
+  const key = templateId ? `${templateId}~${slotId}:${optionId}` : null;
+  const findings = [];
+  for (const c of variantContracts) {
+    if (!covers(c, slotId) || (c.check.kind === 'visible-effect' && !key)) continue;
+    const {kind, ...params} = c.check, detail = CHECKS[kind](params, {before, after, key, neutral});
+    if (detail) findings.push({id: c.id, claim: c.claim, detail});
+  }
+  return findings;
+}
+
+exports.variantCheckKinds = variantCheckKinds;
+exports.variantContracts = variantContracts;
+exports.assessOption = assessOption;
+};
+__defs["catalog/variant-effects.mjs"] = function (exports, __m) {
+/** 렌더 지문으로 잰 "적용 전후 차이 0" 옵션: {템플릿~슬롯:옵션: {widths}}. 생성 파일이므로 손으로 고치지 않는다(node scripts/design-qa/variant-effects.mjs --write). */
+const NEUTRAL_OPTIONS = {
+ "agency-home~rhythm:banded": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "bank-product~hero:centered": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "course-catalog~columns:four": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "devtool-landing~hero:centered": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "game-launch~rhythm:banded": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "garden-shop~columns:four": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "product-landing~rhythm:banded": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "product-listing~columns:four": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "settings~data:bordered": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ },
+ "wedding-invite~rhythm:banded": {
+ "widths": [
+ 1440,
+ 390
+ ]
+ }
+ };
+const EFFECTS_META = {"date":"2026-11-21","catalogVersion":"2.4.0","commit":"84599f05d","options":366,"widths":[1440,390]};
+
+exports.NEUTRAL_OPTIONS = NEUTRAL_OPTIONS;
+exports.EFFECTS_META = EFFECTS_META;
+};
 __defs["catalog/variants.mjs"] = function (exports, __m) {
 /**
  * 구성 변형(layout slots): 같은 템플릿을 다른 짜임으로 쓰는 선택지.
@@ -2306,6 +2503,7 @@ __defs["catalog/variants.mjs"] = function (exports, __m) {
  * 카탈로그가 이미 허용한 값(히어로 변형, 카드 변형, 섹션 표면 …)만 바꾸므로 결과는 평소와 같은 검증을 통과해야 한다.
  * 슬롯은 "바꿀 대상이 있고 바꾸면 달라지는 경우"에만 템플릿에 나타난다(layoutSlots).
  */
+const {assessOption} = __m("catalog/variant-contracts.mjs");
 /** n개를 cols열에 놓았을 때 마지막 줄이 가득 차거나 두 칸 이상이어야 한다. */
 const fitsColumns = (n, cols) => n >= cols && (n % cols === 0 || n % cols >= 2);
 const walk = (nodes, fn, parent = null) => { for (const n of nodes) { fn(n, parent); if (n.children) walk(n.children, fn, n); } };
@@ -2434,9 +2632,30 @@ function tryOption(tree, slot, option, pageType) {
   return option.apply(copy) ? copy : null;
 }
 
-/** 템플릿 트리에서 실제로 선택지가 있는 슬롯: [{id, label, options:[{id,label,description}]}] */
-function layoutSlots(tree, pageType) {
-  return SLOTS.map(slot => ({id: slot.id, label: slot.label, options: slot.options.filter(o => tryOption(tree, slot, o, pageType)).map(({id, label, description}) => ({id, label, description}))})).filter(s => s.options.length);
+/**
+ * 템플릿 트리에서 실제로 선택지가 있는 슬롯: [{id, label, options:[{id,label,description,recommended,rules}]}].
+ * `rules`는 결과 계약(variant-contracts.mjs)을 어긴 사유 [{id, claim, detail}], `recommended`는 `rules`가 비었는지다. 옵션은 지우지 않는다.
+ * ctx.templateId가 있으면 렌더 지문 계약(V05)도 본다. ctx.neutral로 측정 데이터를 바꿔 끼울 수 있다(시험용).
+ */
+function layoutSlots(tree, pageType, ctx = {}) {
+  return SLOTS.map(slot => ({id: slot.id, label: slot.label, options: slot.options.flatMap(o => {
+    const after = tryOption(tree, slot, o, pageType); if (!after) return [];
+    const rules = assessOption({before: tree, after, slotId: slot.id, optionId: o.id, templateId: ctx.templateId, ...(ctx.neutral ? {neutral: ctx.neutral} : {})});
+    return [{id: o.id, label: o.label, description: o.description, recommended: !rules.length, rules}];
+  })})).filter(s => s.options.length);
+}
+
+/** {slot: option} 선택의 추천 여부와 근거. 옵션마다 템플릿 기본 트리에 단독 적용한 결과를 계약에 대조한다. 적용되지 않는 선택은 건너뛴다. */
+function assessLayout(tree, choice = {}, pageType, ctx = {}) {
+  const findings = [];
+  for (const [slotId, optionId] of Object.entries(choice)) {
+    if (!optionId || optionId === 'default') continue;
+    const slot = SLOTS.find(s => s.id === slotId), option = slot?.options.find(o => o.id === optionId);
+    if (!slot || !option) throw new Error('Unknown layout choice: ' + slotId + '=' + optionId);
+    const after = tryOption(tree, slot, option, pageType); if (!after) continue;
+    for (const r of assessOption({before: tree, after, slotId, optionId, templateId: ctx.templateId, ...(ctx.neutral ? {neutral: ctx.neutral} : {})})) findings.push({slot: slotId, option: optionId, rule: r.id, claim: r.claim, detail: r.detail});
+  }
+  return {recommended: findings.length === 0, findings};
 }
 
 /** {slot: option} 선택을 슬롯 순서대로 적용한다. 알 수 없는 선택은 오류, 바뀌지 않는 선택은 건너뛴다. */
@@ -2458,6 +2677,7 @@ function applyLayout(tree, choice = {}, pageType) {
 const layoutSlotIds = SLOTS.map(s => s.id);
 
 exports.layoutSlots = layoutSlots;
+exports.assessLayout = assessLayout;
 exports.applyLayout = applyLayout;
 exports.layoutSlotIds = layoutSlotIds;
 };
@@ -2467,7 +2687,7 @@ const {validateBlueprint} = __m("validate.mjs");
 const {resolveTokens, resolveAll, contrast, serializableContrast} = __m("tokens.mjs");
 const {stylesheet} = __m("styles.mjs");
 const {renderTree, escapeHTML, formRuntime} = __m("render.mjs");
-const {planComposition} = __m("composition.mjs");
+const {planComposition, auditPage} = __m("composition.mjs");
 const {typeRev, HANGUL} = __m("typography.mjs");
 
 
@@ -2490,7 +2710,8 @@ function compile(input) {
   }
   if (report.some(x => x.ratio < x.minimum)) throw new Error('Contrast gate failed');
   const design = planComposition(b);
-  const body = renderTree(b, design);
+  const artLog = {}, body = renderTree(b, design, artLog);
+  auditPage(design, artLog.arts);
   const css = stylesheet(b, sets, body, design);
   const csp = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'";
   const scheme = b.mode === 'auto' ? 'light dark' : b.mode;
@@ -2505,6 +2726,8 @@ function compile(input) {
   };
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
+  // Page rules (composition 1.3.0, catalog 2.4.0): facts and decisions about the whole page. Absent for 2.1–2.3 inputs, whose output is pinned.
+  if (design?.page) manifest.design.page = {version: design.page.version, facts: design.page.facts, decisions: design.page.decisions};
   // Typography revision 2 (catalog 2.3.0): recorded so a consumer can tell which Hangul limits shaped the page. Absent for 2.1/2.2 inputs, whose output is pinned.
   if (design && typeRev(b) === 2) manifest.design.typography = {revision: 2, limits: HANGUL};
   return {html, css, tokens, manifest};
@@ -2516,7 +2739,8 @@ exports.contrast = contrast;
 exports.compile = compile;
 };
 __defs["composition.mjs"] = function (exports, __m) {
-const {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT} = __m("catalog/composition.mjs");
+const {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT, pageRules, PAGE_RULE_LEGACY_VERSIONS, LEGACY_COMPOSITION_VERSION} = __m("catalog/composition.mjs");
+const {bentoPlan} = __m("layout.mjs");
 const {SPACE, TOKEN} = __m("spacing.mjs");
 const {roleSizes} = __m("typography.mjs");
 const {cplOf, vlOf, valueUnits} = __m("render/util.mjs");
@@ -2535,6 +2759,64 @@ function selectDesign(facts, rules = compositionRules) {
     }
   }
   return {values, sources, applied};
+}
+
+/** Page rules apply to catalog 2.4.0+; older inputs keep their pinned output (docs/evidence/variants/legacy-2-3-hashes.json). */
+const pageRulesApply = b => !PAGE_RULE_LEGACY_VERSIONS.includes(b.catalogVersion);
+/** Cells whose content is one short number or bar: beside a 2x2 feature picture they stretch to the picture row and sit mostly empty (Q07). */
+const SHORT_CELLS = ['metric', 'progress'];
+
+/**
+ * Page-level planning (composition 1.3.0): facts about the whole page go through the same decision-table engine as node rules.
+ * Returns {version, facts, decisions, artStart}. Decisions are attached to the affected node's decision (`.page`) so the renderer
+ * and compositionAttrs read them; the Blueprint itself is never rewritten.
+ */
+function planPage(b, byNode) {
+  const intent = PAGE_INTENT[b.pageType] ?? 'general', children = b.tree.children ?? [];
+  const heroAt = children.findIndex(n => n.type === 'hero'), hero = heroAt >= 0 ? children[heroAt] : null, next = hero ? children[heroAt + 1] : null;
+  const heroPath = `$.tree.children[${heroAt}]`, nextPath = `$.tree.children[${heroAt + 1}]`;
+  const facts = {
+    intent, heroVariant: hero?.variant ?? null, heroVisual: hero ? !!hero.visual : null,
+    heroArt: !!hero && ['split', 'product'].includes(hero.variant) && !!hero.visual && hero.visual !== 'ornament',
+    // HERO_POSITION fixes the hero as the second child, so the section after it is the third (odd) child and src/styles/shells.mjs never paints it soft by position; only an explicit surface makes it a visible band.
+    afterHero: !hero ? null : next?.type === 'section' ? ((next.surface ?? 'plain') === 'plain' ? 'plain-section' : 'banded-section') : next ? 'other' : null,
+    bentos: 0,
+  };
+  const reasonOf = id => pageRules.find(r => r.id === id).reason;
+  const decisions = [], page = {version: COMPOSITION_VERSION, facts, decisions, artStart: null};
+  const picked = selectDesign(facts, pageRules);
+  if (picked.applied.includes('P01')) page.artStart = picked.values.artStart;
+  if (picked.applied.includes('P02')) {
+    byNode.get(hero).page = {...byNode.get(hero).page, rule: 'P02', heroForm: picked.values.heroForm};
+    decisions.push({rule: 'P02', path: heroPath, facts: {heroVariant: facts.heroVariant, heroVisual: false}, declared: hero.variant, applied: picked.values.heroForm, reason: reasonOf('P02')});
+  }
+  if (picked.applied.includes('P03')) {
+    byNode.get(next).page = {...byNode.get(next).page, rule: 'P03', afterHero: picked.values.afterHeroStep};
+    decisions.push({rule: 'P03', path: nextPath, facts: {intent, afterHero: facts.afterHero}, applied: picked.values.afterHeroStep, reason: reasonOf('P03')});
+  }
+  const walkBentos = (nodes, path) => nodes.forEach((n, i) => {
+    const at = `${path}.children[${i}]`;
+    if (n.type === 'bento') {
+      facts.bentos++;
+      const plan = bentoPlan(n.children), feature = plan[0].cell === 'feature';
+      const shortCells = feature ? n.children.filter((c, k) => k !== plan[0].index && SHORT_CELLS.includes(c.type)).map(c => c.type) : [];
+      if (selectDesign({bentoSparse: shortCells.length >= 2}, pageRules).applied.includes('P04')) decisions.push({rule: 'P04', code: 'PAGE_BENTO_SPARSE', path: at, facts: {bentoSparse: true}, shortCells, reason: reasonOf('P04')});
+    }
+    if (n.children) walkBentos(n.children, at);
+  });
+  walkBentos(children, '$.tree');
+  return page;
+}
+
+/** Residual part of P01 after rendering: a large picture whose content is identical to another on the page (chart and device art cannot rotate scenes). */
+function auditPage(plan, arts = []) {
+  if (!plan?.page) return plan;
+  const groups = new Map();
+  for (const a of arts) (groups.get(a.key) ?? groups.set(a.key, []).get(a.key)).push(a);
+  const rule = pageRules.find(r => r.id === 'P01');
+  for (const g of groups.values()) if (g.length > 1) plan.page.decisions.push({rule: 'P01', code: 'PAGE_DUP_VISUAL', path: '$.tree', facts: {duplicateVisual: true}, places: g.map(a => a.place), kind: g[0].kind, motif: g[0].motif, reason: rule.reason});
+  plan.page.facts.duplicateVisualGroups = [...groups.values()].filter(g => g.length > 1).length;
+  return plan;
 }
 
 const CELL_BUCKETS = [160, 200, 240, 280, 320, 360, 400, 480];
@@ -2599,7 +2881,9 @@ function planComposition(b) {
     }
   };
   visit(b.tree, '$.tree');
-  return {byNode, version: COMPOSITION_VERSION, decisions, inherited, chrome: deriveHeaderDesign(b)};
+  const plan = {byNode, version: pageRulesApply(b) ? COMPOSITION_VERSION : LEGACY_COMPOSITION_VERSION, decisions, inherited, chrome: deriveHeaderDesign(b)};
+  if (pageRulesApply(b)) plan.page = planPage(b, byNode);
+  return plan;
 }
 
 /** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
@@ -2613,6 +2897,8 @@ function compositionAttrs(d) {
   if (d.type === 'aside') attrs.push(['aside-min', d.container.minWidth]);
   if (d.type === 'plan') attrs.push(['supporting', d.facts.supporting]);
   if (d.sequence) attrs.push(['sequence', d.sequence.mode]);
+  if (d.page?.heroForm) attrs.push(['hero-form', d.page.heroForm]);
+  if (d.page?.afterHero) attrs.push(['after', 'hero']);
   return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
 }
 
@@ -2672,6 +2958,8 @@ function compositionCSS(plan) {
   }
   const list = plan.decisions.find(d => d.type === 'list');
   if (list) out.push(`[data-design-kind=list] li{padding-block:${token(list.values.itemSpace)}}`);
+  // P03: a transparent section right after the hero drops its own band step, because the hero already ends in one. Band pages only (src/styles/shells.mjs BAND).
+  if (plan.page?.decisions.some(d => d.rule === 'P03')) out.push(':is([data-page=landing],[data-page=pricing],[data-page=portfolio],[data-page=general]) .kit-main>.kit-section[data-after=hero][data-surface=plain]{padding-top:0}');
   const hero = plan.decisions.find(d => d.type === 'hero');
   if (hero) out.push(`[data-design-kind=hero] .kit-hero-copy>p:not(.kit-eyebrow){margin-block:${token(hero.values.copyGap)} ${token(hero.values.actionGap)}}
 .kit-hero[data-design-kind=hero][data-hero-min="${hero.container.minCell}"]{--kit-hero-min:${hero.container.minCell}px}
@@ -2717,6 +3005,8 @@ function compositionCSS(plan) {
 }
 
 exports.selectDesign = selectDesign;
+exports.pageRulesApply = pageRulesApply;
+exports.auditPage = auditPage;
 exports.planComposition = planComposition;
 exports.compositionAttrs = compositionAttrs;
 exports.compositionCSS = compositionCSS;
@@ -3306,9 +3596,12 @@ const {makeRenderer} = __m("render/nodes.mjs");
 const {renderShell} = __m("render/shell.mjs");
 { const __r = __m("render/util.mjs"); exports.escapeHTML = __r.escapeHTML; }
 
-function renderTree(b, design = null) {
-  const {render} = makeRenderer(b, design);
-  return renderShell(b, render(b.tree), design?.chrome);
+/** `report` (optional) receives the pictures placed on the page: [{place, kind, motif, key}] for the page rule P01. */
+function renderTree(b, design = null, report = null) {
+  const {render, ctx} = makeRenderer(b, design);
+  const html = renderShell(b, render(b.tree), design?.chrome);
+  if (report) report.arts = ctx.arts;
+  return html;
 }
 
 /** The only script a generated page runs. Fixed text, no user input, no network: demo form checks, ARIA tabs, filter chips. */
@@ -3653,7 +3946,7 @@ exports.motifArt = motifArt;
 };
 __defs["render/nodes.mjs"] = function (exports, __m) {
 const {e, icon, button, href, initials, stateMarkup, num, statusDot, STATUS_HEADER, cplOf, vlOf, flowAttrs} = __m("render/util.mjs");
-const {mediaArt, ornamentArt, ratioCss, portrait, heroDeco} = __m("render/art.mjs");
+const {mediaArt: rawMediaArt, ornamentArt: rawOrnamentArt, ratioCss, portrait, heroDeco} = __m("render/art.mjs");
 const {renderChart} = __m("render/chart.mjs");
 const {highlight} = __m("render/highlight.mjs");
 const {bentoPlan, layoutRev, FLOW_BUDGETS, loneFields} = __m("layout.mjs");
@@ -3670,7 +3963,13 @@ const bar = (n, c) => `<span class="kit-bar" style="width:${n}%"${c ? ` data-ton
 
 /** Each renderer: (node, depth, ctx, render) -> html. Heading level = min(depth, 6); only `section` raises depth. */
 function makeRenderer(b, design = null) {
-  const ctx = {b, seq: 0, art: 0, gid: 0, anchors: []};
+  const ctx = {b, seq: 0, art: 0, gid: 0, anchors: [], arts: [], place: null};
+  // Every picture placed on the page is logged with its content key (ids stripped) so the page rule P01 can report a repeated large picture. Thumbnails are small by design.
+  const SMALL_PLACES = new Set(['summary', 'menu']);
+  const artKey = svg => svg.replace(/^<svg[^>]*>|<\/svg>$/g, '').replace(/ id="[^"]*"/g, '').replace(/url\(#[^)]*\)/g, '').replace(/href="#[^"]*"/g, '');
+  const logArt = (svg, kind, motif) => { if (svg && !SMALL_PLACES.has(ctx.place)) ctx.arts.push({place: ctx.place, kind, motif: motif ?? null, key: artKey(svg)}); return svg; };
+  const mediaArt = (kind, ratio, ornament, label, variant, opts) => logArt(rawMediaArt(kind, ratio, ornament, label, variant, opts), kind, opts?.motif);
+  const ornamentArt = (...args) => logArt(rawOrnamentArt(...args), 'ornament', null);
   const collect = n => { if (n.type === 'section' && n.anchor) ctx.anchors.push({anchor: n.anchor, title: n.title}); n.children?.forEach(collect); };
   collect(b.tree);
   const o = b.ornament;
@@ -3728,12 +4027,14 @@ function makeRenderer(b, design = null) {
     ? `<header class="kit-page-header" data-profile="yes" data-align="start"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}><div class="kit-profile-banner" aria-hidden="true"></div><div class="kit-profile-main"><span class="kit-avatar kit-avatar-xl" data-art="portrait" aria-hidden="true">${portrait(n.avatar)}</span><div class="kit-profile-id">${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}</div>${actionsRow(n.actions)}</div>${n.stats ? `<dl class="kit-profile-stats"${rev2 ? budgetFlow(n.stats.length, Math.min(n.stats.length, 4), 'stat', 'gap') : ''}>${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}</header>`
     : `<header class="kit-page-header" data-align="${n.align ?? 'start'}"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}>${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}${n.stats ? `<dl class="kit-profile-stats">${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}${actionsRow(n.actions)}</header>`;
   R.hero = (n, d, id) => {
-    const art = ['split', 'product'].includes(n.variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, '4:3', o, '', 0, {motif: n.motif, id: gid()})) : '';
+    const variant = design?.byNode.get(n)?.page?.heroForm ?? n.variant;
+    const art = ['split', 'product'].includes(variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, '4:3', o, '', 0, {motif: n.motif, id: gid()})) : '';
+    if (art && n.visual !== 'ornament' && design?.page?.artStart === 'after-hero') ctx.art++;
     const decorative = art.replace(' role="img" aria-label=""', ' aria-hidden="true"');
-    const deco = !decorative && ['statement', 'cover'].includes(n.variant) ? `<div class="kit-hero-deco" aria-hidden="true">${heroDeco(n.variant, o)}</div>` : '';
+    const deco = !decorative && ['statement', 'cover'].includes(variant) ? `<div class="kit-hero-deco" aria-hidden="true">${heroDeco(variant, o)}</div>` : '';
     const facts = n.facts ? `<dl class="kit-hero-facts"${rev2 ? budgetFlow(n.facts.length, Math.min(n.facts.length, 4), 'fact', 'item') : ''}>${n.facts.map(f => `<div><dt>${e(f.label)}</dt><dd>${e(f.value)}</dd></div>`).join('')}</dl>` : '';
     const frame = ['chart', 'diagram'].includes(n.visual) ? ' data-frame="window"' : '';
-    return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
+    return `<section class="kit-hero" data-variant="${variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
   };
   R.section = (n, d, id) => `<section class="kit-section" data-surface="${n.surface ?? 'plain'}"${n.align === 'center' ? ' data-align="center"' : ''}${n.anchor ? ` id="s-${n.anchor}"` : ''} aria-labelledby="${id}-title"><div class="kit-section-inner"><header class="kit-section-head">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}${n.description ? `<p class="kit-section-desc">${e(n.description)}</p>` : ''}</header>${kids(n, d + 1)}</div></section>`;
   R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}"${flowAttrs(n.children.length, {two: 2, three: 3, four: 4}[n.columns], design ? 'span' : n.children.every(c => c.type === 'metric' || (c.type === 'card' && c.visual)) ? 'dense' : 'span')}>${kids(n, d)}</div>`;
@@ -3841,7 +4142,9 @@ function makeRenderer(b, design = null) {
     const id = 'block-' + (++ctx.seq);
     const fn = R[n.type];
     if (!fn) throw new Error('Unreachable renderer: ' + n.type);
+    const outer = ctx.place; ctx.place = n.type;
     const html = fn(n, depth, id), attrs = compositionAttrs(design?.byNode.get(n));
+    ctx.place = outer;
     const decorated = attrs ? html.replace(/^(<[a-z][a-z-]*)(?=[\s>])/, '$1' + attrs) : html;
     // A parent's container can include full-bleed tracks. Query the exact allocated region instead.
     return design && ['grid', 'split', 'aside'].includes(n.type) ? `<div class="kit-layout-region">${decorated}</div>` : decorated;

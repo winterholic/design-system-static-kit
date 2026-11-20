@@ -1,4 +1,5 @@
-import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT} from './catalog/composition.mjs';
+import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT, pageRules, PAGE_RULE_LEGACY_VERSIONS, LEGACY_COMPOSITION_VERSION} from './catalog/composition.mjs';
+import {bentoPlan} from './layout.mjs';
 import {SPACE, TOKEN} from './spacing.mjs';
 import {roleSizes} from './typography.mjs';
 import {cplOf, vlOf, valueUnits} from './render/util.mjs';
@@ -17,6 +18,64 @@ export function selectDesign(facts, rules = compositionRules) {
     }
   }
   return {values, sources, applied};
+}
+
+/** Page rules apply to catalog 2.4.0+; older inputs keep their pinned output (docs/evidence/variants/legacy-2-3-hashes.json). */
+export const pageRulesApply = b => !PAGE_RULE_LEGACY_VERSIONS.includes(b.catalogVersion);
+/** Cells whose content is one short number or bar: beside a 2x2 feature picture they stretch to the picture row and sit mostly empty (Q07). */
+const SHORT_CELLS = ['metric', 'progress'];
+
+/**
+ * Page-level planning (composition 1.3.0): facts about the whole page go through the same decision-table engine as node rules.
+ * Returns {version, facts, decisions, artStart}. Decisions are attached to the affected node's decision (`.page`) so the renderer
+ * and compositionAttrs read them; the Blueprint itself is never rewritten.
+ */
+function planPage(b, byNode) {
+  const intent = PAGE_INTENT[b.pageType] ?? 'general', children = b.tree.children ?? [];
+  const heroAt = children.findIndex(n => n.type === 'hero'), hero = heroAt >= 0 ? children[heroAt] : null, next = hero ? children[heroAt + 1] : null;
+  const heroPath = `$.tree.children[${heroAt}]`, nextPath = `$.tree.children[${heroAt + 1}]`;
+  const facts = {
+    intent, heroVariant: hero?.variant ?? null, heroVisual: hero ? !!hero.visual : null,
+    heroArt: !!hero && ['split', 'product'].includes(hero.variant) && !!hero.visual && hero.visual !== 'ornament',
+    // HERO_POSITION fixes the hero as the second child, so the section after it is the third (odd) child and src/styles/shells.mjs never paints it soft by position; only an explicit surface makes it a visible band.
+    afterHero: !hero ? null : next?.type === 'section' ? ((next.surface ?? 'plain') === 'plain' ? 'plain-section' : 'banded-section') : next ? 'other' : null,
+    bentos: 0,
+  };
+  const reasonOf = id => pageRules.find(r => r.id === id).reason;
+  const decisions = [], page = {version: COMPOSITION_VERSION, facts, decisions, artStart: null};
+  const picked = selectDesign(facts, pageRules);
+  if (picked.applied.includes('P01')) page.artStart = picked.values.artStart;
+  if (picked.applied.includes('P02')) {
+    byNode.get(hero).page = {...byNode.get(hero).page, rule: 'P02', heroForm: picked.values.heroForm};
+    decisions.push({rule: 'P02', path: heroPath, facts: {heroVariant: facts.heroVariant, heroVisual: false}, declared: hero.variant, applied: picked.values.heroForm, reason: reasonOf('P02')});
+  }
+  if (picked.applied.includes('P03')) {
+    byNode.get(next).page = {...byNode.get(next).page, rule: 'P03', afterHero: picked.values.afterHeroStep};
+    decisions.push({rule: 'P03', path: nextPath, facts: {intent, afterHero: facts.afterHero}, applied: picked.values.afterHeroStep, reason: reasonOf('P03')});
+  }
+  const walkBentos = (nodes, path) => nodes.forEach((n, i) => {
+    const at = `${path}.children[${i}]`;
+    if (n.type === 'bento') {
+      facts.bentos++;
+      const plan = bentoPlan(n.children), feature = plan[0].cell === 'feature';
+      const shortCells = feature ? n.children.filter((c, k) => k !== plan[0].index && SHORT_CELLS.includes(c.type)).map(c => c.type) : [];
+      if (selectDesign({bentoSparse: shortCells.length >= 2}, pageRules).applied.includes('P04')) decisions.push({rule: 'P04', code: 'PAGE_BENTO_SPARSE', path: at, facts: {bentoSparse: true}, shortCells, reason: reasonOf('P04')});
+    }
+    if (n.children) walkBentos(n.children, at);
+  });
+  walkBentos(children, '$.tree');
+  return page;
+}
+
+/** Residual part of P01 after rendering: a large picture whose content is identical to another on the page (chart and device art cannot rotate scenes). */
+export function auditPage(plan, arts = []) {
+  if (!plan?.page) return plan;
+  const groups = new Map();
+  for (const a of arts) (groups.get(a.key) ?? groups.set(a.key, []).get(a.key)).push(a);
+  const rule = pageRules.find(r => r.id === 'P01');
+  for (const g of groups.values()) if (g.length > 1) plan.page.decisions.push({rule: 'P01', code: 'PAGE_DUP_VISUAL', path: '$.tree', facts: {duplicateVisual: true}, places: g.map(a => a.place), kind: g[0].kind, motif: g[0].motif, reason: rule.reason});
+  plan.page.facts.duplicateVisualGroups = [...groups.values()].filter(g => g.length > 1).length;
+  return plan;
 }
 
 const CELL_BUCKETS = [160, 200, 240, 280, 320, 360, 400, 480];
@@ -81,7 +140,9 @@ export function planComposition(b) {
     }
   };
   visit(b.tree, '$.tree');
-  return {byNode, version: COMPOSITION_VERSION, decisions, inherited, chrome: deriveHeaderDesign(b)};
+  const plan = {byNode, version: pageRulesApply(b) ? COMPOSITION_VERSION : LEGACY_COMPOSITION_VERSION, decisions, inherited, chrome: deriveHeaderDesign(b)};
+  if (pageRulesApply(b)) plan.page = planPage(b, byNode);
+  return plan;
 }
 
 /** Only compiler-derived enum/numeric attributes cross into the renderer. No consumer override channel. */
@@ -95,6 +156,8 @@ export function compositionAttrs(d) {
   if (d.type === 'aside') attrs.push(['aside-min', d.container.minWidth]);
   if (d.type === 'plan') attrs.push(['supporting', d.facts.supporting]);
   if (d.sequence) attrs.push(['sequence', d.sequence.mode]);
+  if (d.page?.heroForm) attrs.push(['hero-form', d.page.heroForm]);
+  if (d.page?.afterHero) attrs.push(['after', 'hero']);
   return attrs.map(([k, v]) => ` data-${k}="${v}"`).join('');
 }
 
@@ -154,6 +217,8 @@ export function compositionCSS(plan) {
   }
   const list = plan.decisions.find(d => d.type === 'list');
   if (list) out.push(`[data-design-kind=list] li{padding-block:${token(list.values.itemSpace)}}`);
+  // P03: a transparent section right after the hero drops its own band step, because the hero already ends in one. Band pages only (src/styles/shells.mjs BAND).
+  if (plan.page?.decisions.some(d => d.rule === 'P03')) out.push(':is([data-page=landing],[data-page=pricing],[data-page=portfolio],[data-page=general]) .kit-main>.kit-section[data-after=hero][data-surface=plain]{padding-top:0}');
   const hero = plan.decisions.find(d => d.type === 'hero');
   if (hero) out.push(`[data-design-kind=hero] .kit-hero-copy>p:not(.kit-eyebrow){margin-block:${token(hero.values.copyGap)} ${token(hero.values.actionGap)}}
 .kit-hero[data-design-kind=hero][data-hero-min="${hero.container.minCell}"]{--kit-hero-min:${hero.container.minCell}px}

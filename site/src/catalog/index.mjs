@@ -6,15 +6,17 @@ import {icons, iconNames} from './icons.mjs';
 import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios, motifs} from './nodes.mjs';
 import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
-import {layoutSlots, applyLayout, layoutSlotIds} from './variants.mjs';
+import {layoutSlots, applyLayout, assessLayout, layoutSlotIds} from './variants.mjs';
+import {variantContracts, variantCheckKinds} from './variant-contracts.mjs';
+import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './variant-effects.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
-export {compositionRules, compositionCoverage, COMPOSITION_VERSION} from './composition.mjs';
+export {compositionRules, compositionCoverage, pageRules, PAGE_RULE_LEGACY_VERSIONS, COMPOSITION_VERSION} from './composition.mjs';
 
 export const CATALOG_VERSION = '2.4.0';
 export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
-export {layoutSlots, applyLayout, layoutSlotIds, concepts, conceptIds, conceptsOfTemplate};
+export {layoutSlots, applyLayout, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
 export const rules = [
@@ -80,7 +82,7 @@ export function repairAxes(b) {
 }
 
 /** 템플릿 하나에서 실제로 고를 수 있는 구성 변형(슬롯과 옵션). */
-export const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree, templates[templateId].pageType);
+export const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree, templates[templateId].pageType, {templateId});
 
 /**
  * Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair.

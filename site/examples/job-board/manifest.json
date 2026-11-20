@@ -1058,7 +1058,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1179,6 +1179,19 @@
         "reason": "Navigation retains current location, wrapping and control dimensions."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "operation",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1217,8 +1230,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "ed73d55751dda24bd71cf2fb0d57e6a52be39bfff2a680cab3080e181f8a8898",
-      "tokens.css": "98c822e030979c969b5a412f9d308f9497de5061e1d02cff02364cdbb46e67f9",
+      "index.html": "50d81d155cd6f26706ee3fa1c3fcd268e3696afdd0bc2e052e2ac08bc9100e7d",
+      "tokens.css": "7717c4b60c3d060686a7560a2d354b4a88c18a7fa98a8c47da06649f3ae02938",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
       "blueprint.json": "15d57c52b261cddc2fb1d1faf50f43684cf7704a027e7f38c4543ed7f07e3689"
     }

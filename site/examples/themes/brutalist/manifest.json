@@ -1016,7 +1016,7 @@
                   "title": "프로젝트 보드와 일정, 문서가 한 화면에",
                   "body": "카드를 옮기면 일정과 담당자가 같이 바뀝니다. 흩어진 링크를 찾는 시간이 사라져요.",
                   "variant": "media",
-                  "visual": "chart",
+                  "visual": "diagram",
                   "ratio": "4:3"
                 },
                 {
@@ -1216,7 +1216,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -2060,6 +2060,33 @@
         "reason": "FAQ already uses a container breakpoint and native disclosures."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "split",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "other",
+        "bentos": 1,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": [
+        {
+          "rule": "P04",
+          "code": "PAGE_BENTO_SPARSE",
+          "path": "$.tree.children[3].children[0]",
+          "facts": {
+            "bentoSparse": true
+          },
+          "shortCells": [
+            "metric",
+            "progress"
+          ],
+          "reason": "Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content."
+        }
+      ]
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -2098,10 +2125,10 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f3552fef6819e7c7d88d0b893a480ccd3917cfaf0928986f8d657b5008b220f5",
-      "tokens.css": "873f1417e064d653e0aaee66d232b78afa396ff2161ef1a6b94be99f0d0e5b67",
+      "index.html": "1934b7164fa21326c61395e39bd587c35bf936f58a7be2e892471ba08be08e07",
+      "tokens.css": "6dcd1547604d34fa9ff19aaac15cd93d966b8c43f942069c2820fb91a77556f3",
       "tokens.json": "adf9b7a5bb5ecd13630d83d5e3b07de0edeca9b2896f23e9a7d788f60482e86e",
-      "blueprint.json": "9a0e4c717ed7fccd559bf948fe0e3addcc1e16647d17f7178d43b351c4076d74"
+      "blueprint.json": "935edcbcb260cade038ea5d10772a0b8f3d002941e7e89cc2d7bcbcd337266f6"
     }
   }
 }

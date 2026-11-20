@@ -7,7 +7,7 @@
     "2.4.0"
   ],
   "composition": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "rules": [
       {
         "id": "C01",
@@ -438,6 +438,68 @@
           "role": "procedure"
         },
         "reason": "Repeated steps reuse the same content-sized flow as other repeated information."
+      }
+    ],
+    "pageRules": [
+      {
+        "id": "P01",
+        "priority": 10,
+        "claim": "Q13",
+        "source": "docs/quality-diagnosis-2026-11-21.md C1",
+        "when": {
+          "heroArt": true
+        },
+        "set": {
+          "artStart": "after-hero"
+        },
+        "reason": "The hero picture is placement 0 of the six-scene rotation, so the first picture in the body takes the next scene instead of repeating it; art that cannot rotate (chart, device) is reported when it repeats."
+      },
+      {
+        "id": "P02",
+        "priority": 10,
+        "claim": "Q06",
+        "source": "docs/quality-diagnosis-2026-11-21.md C2",
+        "when": {
+          "heroVariant": [
+            "split",
+            "product"
+          ],
+          "heroVisual": false
+        },
+        "set": {
+          "heroForm": "centered"
+        },
+        "reason": "A split or product hero without a visual leaves its second column empty; it reads as a text-led centred hero."
+      },
+      {
+        "id": "P03",
+        "priority": 10,
+        "claim": "Q10",
+        "source": "docs/quality-diagnosis-2026-11-21.md C5",
+        "when": {
+          "intent": [
+            "marketing",
+            "general"
+          ],
+          "afterHero": "plain-section"
+        },
+        "set": {
+          "afterHeroStep": "none"
+        },
+        "reason": "The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes."
+      },
+      {
+        "id": "P04",
+        "priority": 10,
+        "claim": "Q07",
+        "source": "docs/quality-diagnosis-2026-11-21.md C3",
+        "when": {
+          "bentoSparse": true
+        },
+        "set": {
+          "bentoFill": "report"
+        },
+        "reason": "Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content."
       }
     ],
     "coverage": {
@@ -883,6 +945,79 @@
       }
     }
   },
+  "variantContracts": [
+    {
+      "id": "V01",
+      "claim": "Q14",
+      "slots": [
+        "hero"
+      ],
+      "check": {
+        "kind": "keeps-field",
+        "node": "hero",
+        "field": "visual"
+      },
+      "effect": "not-recommended",
+      "why": "히어로 형태를 바꾸며 제품 시각 요소(visual)를 지우면 첫 화면에서 제품 증명이 사라지고 SaaS와 무관한 장식이 남는다(진단 B1, 1,314개 조합).",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B1"
+    },
+    {
+      "id": "V02",
+      "claim": "Q15",
+      "slots": [
+        "cards"
+      ],
+      "check": {
+        "kind": "changed-ratio",
+        "node": "card",
+        "field": "variant",
+        "fallback": "basic",
+        "min": 0.75
+      },
+      "effect": "not-recommended",
+      "why": "카드 스타일 일괄 변경이 카드의 75% 미만만 바꾸면 사용자가 기대한 \"일괄\"이 템플릿 데이터에 따라 반쪽만 적용된다(진단 B2, 488개 조합).",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B2"
+    },
+    {
+      "id": "V03",
+      "claim": "Q11",
+      "slots": [
+        "columns"
+      ],
+      "check": {
+        "kind": "single-row",
+        "maxItems": 4
+      },
+      "effect": "not-recommended",
+      "why": "핵심 지표 4개 이하는 한 줄에 읽혀야 한다. 열 수 변형이 이를 두 줄로 꺾으면 첫 차트가 아래로 밀린다(진단 B3).",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B3"
+    },
+    {
+      "id": "V04",
+      "claim": "Q12",
+      "slots": [
+        "heads",
+        "intro"
+      ],
+      "check": {
+        "kind": "one-axis"
+      },
+      "effect": "not-recommended",
+      "why": "머리말만 가운데로 옮기고 본문이 왼쪽에 남으면 한 페이지에 정렬선이 둘이 된다(진단 B4). 본문이 스스로 가운데 정렬인 부품만 든 구역은 통과한다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 4절 B4"
+    },
+    {
+      "id": "V05",
+      "claim": null,
+      "slots": "*",
+      "check": {
+        "kind": "visible-effect"
+      },
+      "effect": "not-recommended",
+      "why": "적용 전후 렌더 지문(요소 위치·크기·색)이 같으면 사용자에게는 고를 이유가 없는 옵션이다. 지우지 않고 추천에서만 뺀다.",
+      "source": "docs/quality-diagnosis-2026-11-21.md 6절 원인 2 추가 후보"
+    }
+  ],
   "themeCategories": {
     "work": "업무·제품",
     "brand": "브랜드·마케팅",
@@ -21141,22 +21276,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=chart가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=chart가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=chart가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -21167,7 +21328,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21178,12 +21341,28 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V02",
+                  "claim": "Q15",
+                  "detail": "card 2개 중 1개만 바뀐다(50% < 75%)"
+                }
+              ]
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V02",
+                  "claim": "Q15",
+                  "detail": "card 2개 중 1개만 바뀐다(50% < 75%)"
+                }
+              ]
             }
           ]
         },
@@ -21194,7 +21373,9 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21205,12 +21386,16 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21221,7 +21406,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 5곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -21232,7 +21425,9 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "제목은 왼쪽에 두고 질문 목록을 오른쪽에 둡니다"
+              "description": "제목은 왼쪽에 두고 질문 목록을 오른쪽에 둡니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -21251,22 +21446,48 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=device가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=device가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=device가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -21277,7 +21498,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21288,7 +21511,9 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21299,12 +21524,16 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21315,7 +21544,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 3곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -21326,7 +21563,9 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "제목은 왼쪽에 두고 질문 목록을 오른쪽에 둡니다"
+              "description": "제목은 왼쪽에 두고 질문 목록을 오른쪽에 둡니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -21345,22 +21584,48 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -21371,7 +21636,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21382,12 +21649,16 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21398,7 +21669,15 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         },
@@ -21409,7 +21688,9 @@
             {
               "id": "proof-first",
               "label": "신뢰 먼저",
-              "description": "후기·고객사를 앞으로 당깁니다"
+              "description": "후기·고객사를 앞으로 당깁니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21420,7 +21701,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21431,7 +21714,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 3곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -21450,22 +21741,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21476,7 +21775,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21487,12 +21788,16 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21503,7 +21808,15 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         },
@@ -21514,7 +21827,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21525,12 +21840,16 @@
             {
               "id": "grid",
               "label": "균일 격자",
-              "description": "같은 크기로 정렬"
+              "description": "같은 크기로 정렬",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21541,7 +21860,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 3곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -21560,22 +21887,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21586,7 +21921,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21597,7 +21934,9 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21608,12 +21947,16 @@
             {
               "id": "line",
               "label": "점과 선",
-              "description": "점을 잇는 세로선"
+              "description": "점을 잇는 세로선",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21624,7 +21967,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 3곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -21643,22 +21994,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21669,7 +22028,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -21688,22 +22049,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21714,7 +22083,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21725,12 +22096,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -21749,22 +22124,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -21775,7 +22176,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21786,7 +22189,9 @@
             {
               "id": "proof-first",
               "label": "신뢰 먼저",
-              "description": "후기·고객사를 앞으로 당깁니다"
+              "description": "후기·고객사를 앞으로 당깁니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21797,12 +22202,16 @@
             {
               "id": "horizontal",
               "label": "가로",
-              "description": "왼쪽에서 오른쪽으로 따라가기"
+              "description": "왼쪽에서 오른쪽으로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21813,7 +22222,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -21832,22 +22249,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -21858,7 +22301,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21869,7 +22314,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -21888,22 +22341,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=ornament가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=ornament가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=ornament가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -21914,7 +22393,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21925,7 +22406,9 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21936,7 +22419,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21947,12 +22432,16 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -21963,7 +22452,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 3곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -21982,22 +22479,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -22008,7 +22531,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22027,22 +22552,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22053,7 +22586,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22064,7 +22599,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -22083,22 +22626,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22109,7 +22660,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22120,12 +22673,16 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22136,12 +22693,16 @@
             {
               "id": "rail",
               "label": "넓은 레일",
-              "description": "왼쪽 레일에 날짜"
+              "description": "왼쪽 레일에 날짜",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22152,7 +22713,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -22171,22 +22740,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -22197,7 +22792,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22208,12 +22805,16 @@
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22224,12 +22825,16 @@
             {
               "id": "leader",
               "label": "점선 가격",
-              "description": "이름과 가격을 점선으로 잇기"
+              "description": "이름과 가격을 점선으로 잇기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "plain",
               "label": "단순 목록",
-              "description": "장식 없는 목록"
+              "description": "장식 없는 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22240,7 +22845,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -22259,22 +22872,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -22285,7 +22924,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22296,12 +22937,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22312,7 +22957,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -22331,7 +22984,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22342,7 +22997,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -22353,7 +23016,9 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "제목은 왼쪽에 두고 질문 목록을 오른쪽에 둡니다"
+              "description": "제목은 왼쪽에 두고 질문 목록을 오른쪽에 둡니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22372,7 +23037,15 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V03",
+                  "claim": "Q11",
+                  "detail": "지표 4개가 2열이 되어 2줄로 꺾인다"
+                }
+              ]
             }
           ]
         },
@@ -22383,12 +23056,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22399,7 +23076,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22418,7 +23097,15 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V03",
+                  "claim": "Q11",
+                  "detail": "지표 4개가 2열이 되어 2줄로 꺾인다"
+                }
+              ]
             }
           ]
         },
@@ -22429,7 +23116,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22448,7 +23137,9 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22488,7 +23179,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22507,12 +23200,16 @@
             {
               "id": "line",
               "label": "점과 선",
-              "description": "점을 잇는 세로선"
+              "description": "점을 잇는 세로선",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "rail",
               "label": "넓은 레일",
-              "description": "왼쪽 레일에 날짜"
+              "description": "왼쪽 레일에 날짜",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22531,12 +23228,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22547,12 +23248,16 @@
             {
               "id": "rail",
               "label": "넓은 레일",
-              "description": "왼쪽 레일에 날짜"
+              "description": "왼쪽 레일에 날짜",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22563,7 +23268,9 @@
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22582,12 +23289,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22598,7 +23309,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22609,12 +23322,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22640,12 +23357,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22656,7 +23377,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22667,12 +23390,16 @@
             {
               "id": "pill",
               "label": "알약",
-              "description": "채운 알약 탭"
+              "description": "채운 알약 탭",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "boxed",
               "label": "상자",
-              "description": "상자형 탭"
+              "description": "상자형 탭",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22683,12 +23410,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22707,7 +23438,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22718,7 +23451,9 @@
             {
               "id": "horizontal",
               "label": "가로",
-              "description": "왼쪽에서 오른쪽으로 따라가기"
+              "description": "왼쪽에서 오른쪽으로 따라가기",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22729,12 +23464,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22753,7 +23492,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(media)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -22764,12 +23511,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22780,7 +23531,9 @@
             {
               "id": "proof-first",
               "label": "신뢰 먼저",
-              "description": "후기·고객사를 앞으로 당깁니다"
+              "description": "후기·고객사를 앞으로 당깁니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22791,12 +23544,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22815,7 +23572,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(filter-bar)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -22826,12 +23591,16 @@
             {
               "id": "badges",
               "label": "배지",
-              "description": "작은 채움 배지"
+              "description": "작은 채움 배지",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "outline",
               "label": "윤곽",
-              "description": "테두리만 있는 태그"
+              "description": "테두리만 있는 태그",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22850,7 +23619,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(media)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -22861,7 +23638,9 @@
             {
               "id": "outline",
               "label": "윤곽",
-              "description": "테두리만 있는 태그"
+              "description": "테두리만 있는 태그",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22880,12 +23659,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22911,7 +23694,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(notice)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -22922,12 +23713,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22946,7 +23741,9 @@
             {
               "id": "horizontal",
               "label": "가로",
-              "description": "왼쪽에서 오른쪽으로 따라가기"
+              "description": "왼쪽에서 오른쪽으로 따라가기",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22957,12 +23754,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -22981,7 +23782,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -22992,12 +23795,16 @@
             {
               "id": "pill",
               "label": "알약",
-              "description": "채운 알약 탭"
+              "description": "채운 알약 탭",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "boxed",
               "label": "상자",
-              "description": "상자형 탭"
+              "description": "상자형 탭",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23008,12 +23815,16 @@
             {
               "id": "grid",
               "label": "균일 격자",
-              "description": "같은 크기로 정렬"
+              "description": "같은 크기로 정렬",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23032,12 +23843,22 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "four",
               "label": "4열",
-              "description": "촘촘하게"
+              "description": "촘촘하게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         },
@@ -23048,7 +23869,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23067,7 +23890,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23086,7 +23911,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23097,12 +23924,16 @@
             {
               "id": "rail",
               "label": "넓은 레일",
-              "description": "왼쪽 레일에 날짜"
+              "description": "왼쪽 레일에 날짜",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23121,7 +23952,9 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23132,7 +23965,9 @@
             {
               "id": "proof-first",
               "label": "신뢰 먼저",
-              "description": "후기·고객사를 앞으로 당깁니다"
+              "description": "후기·고객사를 앞으로 당깁니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23143,7 +23978,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23154,7 +23991,9 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23173,12 +24012,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23189,17 +24032,23 @@
             {
               "id": "leader",
               "label": "점선 가격",
-              "description": "이름과 가격을 점선으로 잇기"
+              "description": "이름과 가격을 점선으로 잇기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "grid",
               "label": "2열 격자",
-              "description": "카드처럼 나눈 2열"
+              "description": "카드처럼 나눈 2열",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "plain",
               "label": "단순 목록",
-              "description": "장식 없는 목록"
+              "description": "장식 없는 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23218,7 +24067,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23229,12 +24080,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23245,12 +24100,16 @@
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23269,7 +24128,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23280,12 +24141,16 @@
             {
               "id": "grid",
               "label": "균일 격자",
-              "description": "같은 크기로 정렬"
+              "description": "같은 크기로 정렬",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23304,7 +24169,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(tags)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -23315,7 +24188,9 @@
             {
               "id": "badges",
               "label": "배지",
-              "description": "작은 채움 배지"
+              "description": "작은 채움 배지",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23326,12 +24201,16 @@
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23350,7 +24229,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(media)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -23361,7 +24248,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23372,12 +24261,16 @@
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23396,7 +24289,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(split)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -23407,7 +24308,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23418,12 +24321,16 @@
             {
               "id": "line",
               "label": "점과 선",
-              "description": "점을 잇는 세로선"
+              "description": "점을 잇는 세로선",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23442,7 +24349,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(split)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -23453,7 +24368,9 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23464,7 +24381,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23483,7 +24402,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(aside)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -23494,7 +24421,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23513,7 +24442,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(stepper)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -23532,7 +24469,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(progress)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -23551,7 +24496,15 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         },
@@ -23562,12 +24515,16 @@
             {
               "id": "underline",
               "label": "밑줄",
-              "description": "가벼운 밑줄 탭"
+              "description": "가벼운 밑줄 탭",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "boxed",
               "label": "상자",
-              "description": "상자형 탭"
+              "description": "상자형 탭",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23578,12 +24535,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23602,7 +24563,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23613,7 +24576,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23639,12 +24604,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -23705,22 +24674,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=chart가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=chart가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=chart가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -23731,7 +24726,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23742,12 +24739,16 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23758,7 +24759,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -23777,22 +24786,36 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23803,7 +24826,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23814,12 +24839,16 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23830,7 +24859,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -23849,22 +24886,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23875,7 +24920,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23886,7 +24933,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23897,12 +24946,16 @@
             {
               "id": "grid",
               "label": "균일 격자",
-              "description": "같은 크기로 정렬"
+              "description": "같은 크기로 정렬",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23913,7 +24966,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -23932,22 +24993,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23958,7 +25027,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23969,12 +25040,16 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23985,7 +25060,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -23996,7 +25073,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -24015,22 +25100,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24041,7 +25134,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24052,7 +25147,15 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         },
@@ -24063,12 +25166,16 @@
             {
               "id": "line",
               "label": "점과 선",
-              "description": "점을 잇는 세로선"
+              "description": "점을 잇는 세로선",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24079,12 +25186,16 @@
             {
               "id": "grid",
               "label": "균일 격자",
-              "description": "같은 크기로 정렬"
+              "description": "같은 크기로 정렬",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "showcase",
               "label": "쇼케이스",
-              "description": "하나를 크게, 나머지를 작게"
+              "description": "하나를 크게, 나머지를 작게",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24095,7 +25206,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 4곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -24114,22 +25233,48 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V01",
+                  "claim": "Q14",
+                  "detail": "hero.visual=photo가 사라진다"
+                }
+              ]
             }
           ]
         },
@@ -24140,7 +25285,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24151,12 +25298,16 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24167,7 +25318,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -24186,22 +25345,36 @@
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cover",
               "label": "커버",
-              "description": "화면 폭을 채우는 표지형"
+              "description": "화면 폭을 채우는 표지형",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24212,7 +25385,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24223,12 +25398,16 @@
             {
               "id": "vertical",
               "label": "세로",
-              "description": "위에서 아래로 따라가기"
+              "description": "위에서 아래로 따라가기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "cards",
               "label": "카드",
-              "description": "단계마다 카드 한 장"
+              "description": "단계마다 카드 한 장",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24239,7 +25418,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 2곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -24258,22 +25445,30 @@
             {
               "id": "split",
               "label": "좌우 분할",
-              "description": "글과 시각 요소를 나란히"
+              "description": "글과 시각 요소를 나란히",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "product",
               "label": "제품 목업",
-              "description": "제품 화면을 크게 보여 주는 구도"
+              "description": "제품 화면을 크게 보여 주는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "centered",
               "label": "가운데 정렬",
-              "description": "한 줄 약속을 가운데에 모으는 구도"
+              "description": "한 줄 약속을 가운데에 모으는 구도",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "statement",
               "label": "큰 문장",
-              "description": "큰 제목 한 덩어리로 시작"
+              "description": "큰 제목 한 덩어리로 시작",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24284,7 +25479,9 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24295,7 +25492,15 @@
             {
               "id": "banded",
               "label": "띠 구분",
-              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다"
+              "description": "한 구역씩 건너 색을 입혀 리듬을 만듭니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         },
@@ -24306,12 +25511,16 @@
             {
               "id": "rail",
               "label": "넓은 레일",
-              "description": "왼쪽 레일에 날짜"
+              "description": "왼쪽 레일에 날짜",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24322,12 +25531,16 @@
             {
               "id": "grid",
               "label": "균일 격자",
-              "description": "같은 크기로 정렬"
+              "description": "같은 크기로 정렬",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "masonry",
               "label": "벽돌",
-              "description": "높이가 다른 벽돌 쌓기"
+              "description": "높이가 다른 벽돌 쌓기",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24338,7 +25551,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "섹션 제목과 설명을 가운데에 모읍니다"
+              "description": "섹션 제목과 설명을 가운데에 모읍니다",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "머리말 3곳만 가운데로 바뀌고 본문은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         }
@@ -24357,7 +25578,15 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V03",
+                  "claim": "Q11",
+                  "detail": "지표 4개가 2열이 되어 2줄로 꺾인다"
+                }
+              ]
             }
           ]
         },
@@ -24368,7 +25597,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24387,12 +25618,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24403,7 +25638,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24422,7 +25659,15 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V03",
+                  "claim": "Q11",
+                  "detail": "지표 4개가 2열이 되어 2줄로 꺾인다"
+                }
+              ]
             }
           ]
         }
@@ -24448,12 +25693,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24464,12 +25713,16 @@
             {
               "id": "line",
               "label": "점과 선",
-              "description": "점을 잇는 세로선"
+              "description": "점을 잇는 세로선",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "rail",
               "label": "넓은 레일",
-              "description": "왼쪽 레일에 날짜"
+              "description": "왼쪽 레일에 날짜",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24488,7 +25741,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24499,12 +25754,16 @@
             {
               "id": "badges",
               "label": "배지",
-              "description": "작은 채움 배지"
+              "description": "작은 채움 배지",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "outline",
               "label": "윤곽",
-              "description": "테두리만 있는 태그"
+              "description": "테두리만 있는 태그",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24523,12 +25782,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24539,7 +25802,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24550,7 +25815,9 @@
             {
               "id": "horizontal",
               "label": "가로",
-              "description": "왼쪽에서 오른쪽으로 따라가기"
+              "description": "왼쪽에서 오른쪽으로 따라가기",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24569,7 +25836,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(media)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -24580,12 +25855,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24596,7 +25875,9 @@
             {
               "id": "horizontal",
               "label": "가로",
-              "description": "왼쪽에서 오른쪽으로 따라가기"
+              "description": "왼쪽에서 오른쪽으로 따라가기",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24607,12 +25888,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24623,7 +25908,9 @@
             {
               "id": "outline",
               "label": "윤곽",
-              "description": "테두리만 있는 태그"
+              "description": "테두리만 있는 태그",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24642,12 +25929,22 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "four",
               "label": "4열",
-              "description": "촘촘하게"
+              "description": "촘촘하게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         }
@@ -24666,7 +25963,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24677,17 +25976,23 @@
             {
               "id": "leader",
               "label": "점선 가격",
-              "description": "이름과 가격을 점선으로 잇기"
+              "description": "이름과 가격을 점선으로 잇기",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "grid",
               "label": "2열 격자",
-              "description": "카드처럼 나눈 2열"
+              "description": "카드처럼 나눈 2열",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "plain",
               "label": "단순 목록",
-              "description": "장식 없는 목록"
+              "description": "장식 없는 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24706,12 +26011,22 @@
             {
               "id": "two",
               "label": "2열",
-              "description": "넓고 여유 있게"
+              "description": "넓고 여유 있게",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "four",
               "label": "4열",
-              "description": "촘촘하게"
+              "description": "촘촘하게",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V05",
+                  "claim": null,
+                  "detail": "렌더 결과가 1440·390px에서 기본 구성과 같다"
+                }
+              ]
             }
           ]
         }
@@ -24730,7 +26045,9 @@
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24741,7 +26058,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24760,7 +26079,9 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24771,12 +26092,16 @@
             {
               "id": "line",
               "label": "점과 선",
-              "description": "점을 잇는 세로선"
+              "description": "점을 잇는 세로선",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "log",
               "label": "로그",
-              "description": "시각이 앞에 오는 한 줄 기록"
+              "description": "시각이 앞에 오는 한 줄 기록",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24795,7 +26120,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(card)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -24806,12 +26139,16 @@
             {
               "id": "outline",
               "label": "굵은 테두리",
-              "description": "테두리로 구분하는 카드"
+              "description": "테두리로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "filled",
               "label": "색면",
-              "description": "바탕색으로 구분하는 카드"
+              "description": "바탕색으로 구분하는 카드",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24822,7 +26159,9 @@
             {
               "id": "badges",
               "label": "배지",
-              "description": "작은 채움 배지"
+              "description": "작은 채움 배지",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24841,7 +26180,15 @@
             {
               "id": "center",
               "label": "가운데 정렬",
-              "description": "제목을 가운데에 놓는 머리말"
+              "description": "제목을 가운데에 놓는 머리말",
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V04",
+                  "claim": "Q12",
+                  "detail": "페이지 제목만 가운데로 바뀌고 첫 본문(prose)은 왼쪽 정렬이다"
+                }
+              ]
             }
           ]
         },
@@ -24852,12 +26199,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24868,7 +26219,9 @@
             {
               "id": "proof-first",
               "label": "신뢰 먼저",
-              "description": "후기·고객사를 앞으로 당깁니다"
+              "description": "후기·고객사를 앞으로 당깁니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24879,12 +26232,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }
@@ -24903,12 +26260,16 @@
             {
               "id": "striped",
               "label": "줄무늬",
-              "description": "줄무늬 표와 구분선 목록"
+              "description": "줄무늬 표와 구분선 목록",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "bordered",
               "label": "칸 나눔",
-              "description": "칸이 보이는 표와 카드 목록"
+              "description": "칸이 보이는 표와 카드 목록",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24919,7 +26280,9 @@
             {
               "id": "mirror",
               "label": "좌우 바꿈",
-              "description": "2분할·보조 영역의 방향을 뒤집습니다"
+              "description": "2분할·보조 영역의 방향을 뒤집습니다",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24930,12 +26293,16 @@
             {
               "id": "pill",
               "label": "알약",
-              "description": "채운 알약 탭"
+              "description": "채운 알약 탭",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "boxed",
               "label": "상자",
-              "description": "상자형 탭"
+              "description": "상자형 탭",
+              "recommended": true,
+              "rules": []
             }
           ]
         },
@@ -24946,12 +26313,16 @@
             {
               "id": "banner",
               "label": "배너",
-              "description": "폭을 채우는 띠"
+              "description": "폭을 채우는 띠",
+              "recommended": true,
+              "rules": []
             },
             {
               "id": "toast",
               "label": "떠 있는 카드",
-              "description": "모서리에 띄운 알림"
+              "description": "모서리에 띄운 알림",
+              "recommended": true,
+              "rules": []
             }
           ]
         }

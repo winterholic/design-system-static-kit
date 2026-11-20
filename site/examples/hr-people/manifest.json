@@ -1130,7 +1130,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1583,6 +1583,19 @@
         "reason": "Boards intentionally scroll and use compact nested task surfaces."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "operation",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1621,8 +1634,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "6dfbe3ffc920046f48fa8eb151f66c720883da1ee4c6759a634cf0fc5c189c24",
-      "tokens.css": "5435c5d9b4dc261faca88424f6d0cb54127b5c9a3d948470336d08e68db176df",
+      "index.html": "ca2e2ea412a78b76ece90dd2e264809057bb7f941190ba66737c5ce0353425d2",
+      "tokens.css": "08d719294677b8a94fef7cd923823443f0ff5766ec44093aca5438ca54fb73c6",
       "tokens.json": "e42609d0c442f8c3fddecc7403c9e5e793b6db909be7a49e5cab6ea98e69f6b4",
       "blueprint.json": "05bebad7c4f1388594f6ac17744b19e96dd491cb4e0d99c5632b43e83af44356"
     }

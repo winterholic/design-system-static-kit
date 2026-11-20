@@ -1,5 +1,5 @@
 import {e, icon, button, href, initials, stateMarkup, num, statusDot, STATUS_HEADER, cplOf, vlOf, flowAttrs} from './util.mjs';
-import {mediaArt, ornamentArt, ratioCss, portrait, heroDeco} from './art.mjs';
+import {mediaArt as rawMediaArt, ornamentArt as rawOrnamentArt, ratioCss, portrait, heroDeco} from './art.mjs';
 import {renderChart} from './chart.mjs';
 import {highlight} from './highlight.mjs';
 import {bentoPlan, layoutRev, FLOW_BUDGETS, loneFields} from '../layout.mjs';
@@ -16,7 +16,13 @@ const bar = (n, c) => `<span class="kit-bar" style="width:${n}%"${c ? ` data-ton
 
 /** Each renderer: (node, depth, ctx, render) -> html. Heading level = min(depth, 6); only `section` raises depth. */
 export function makeRenderer(b, design = null) {
-  const ctx = {b, seq: 0, art: 0, gid: 0, anchors: []};
+  const ctx = {b, seq: 0, art: 0, gid: 0, anchors: [], arts: [], place: null};
+  // Every picture placed on the page is logged with its content key (ids stripped) so the page rule P01 can report a repeated large picture. Thumbnails are small by design.
+  const SMALL_PLACES = new Set(['summary', 'menu']);
+  const artKey = svg => svg.replace(/^<svg[^>]*>|<\/svg>$/g, '').replace(/ id="[^"]*"/g, '').replace(/url\(#[^)]*\)/g, '').replace(/href="#[^"]*"/g, '');
+  const logArt = (svg, kind, motif) => { if (svg && !SMALL_PLACES.has(ctx.place)) ctx.arts.push({place: ctx.place, kind, motif: motif ?? null, key: artKey(svg)}); return svg; };
+  const mediaArt = (kind, ratio, ornament, label, variant, opts) => logArt(rawMediaArt(kind, ratio, ornament, label, variant, opts), kind, opts?.motif);
+  const ornamentArt = (...args) => logArt(rawOrnamentArt(...args), 'ornament', null);
   const collect = n => { if (n.type === 'section' && n.anchor) ctx.anchors.push({anchor: n.anchor, title: n.title}); n.children?.forEach(collect); };
   collect(b.tree);
   const o = b.ornament;
@@ -74,12 +80,14 @@ export function makeRenderer(b, design = null) {
     ? `<header class="kit-page-header" data-profile="yes" data-align="start"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}><div class="kit-profile-banner" aria-hidden="true"></div><div class="kit-profile-main"><span class="kit-avatar kit-avatar-xl" data-art="portrait" aria-hidden="true">${portrait(n.avatar)}</span><div class="kit-profile-id">${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}</div>${actionsRow(n.actions)}</div>${n.stats ? `<dl class="kit-profile-stats"${rev2 ? budgetFlow(n.stats.length, Math.min(n.stats.length, 4), 'stat', 'gap') : ''}>${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}</header>`
     : `<header class="kit-page-header" data-align="${n.align ?? 'start'}"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}>${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}${n.stats ? `<dl class="kit-profile-stats">${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}${actionsRow(n.actions)}</header>`;
   R.hero = (n, d, id) => {
-    const art = ['split', 'product'].includes(n.variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, '4:3', o, '', 0, {motif: n.motif, id: gid()})) : '';
+    const variant = design?.byNode.get(n)?.page?.heroForm ?? n.variant;
+    const art = ['split', 'product'].includes(variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, '4:3', o, '', 0, {motif: n.motif, id: gid()})) : '';
+    if (art && n.visual !== 'ornament' && design?.page?.artStart === 'after-hero') ctx.art++;
     const decorative = art.replace(' role="img" aria-label=""', ' aria-hidden="true"');
-    const deco = !decorative && ['statement', 'cover'].includes(n.variant) ? `<div class="kit-hero-deco" aria-hidden="true">${heroDeco(n.variant, o)}</div>` : '';
+    const deco = !decorative && ['statement', 'cover'].includes(variant) ? `<div class="kit-hero-deco" aria-hidden="true">${heroDeco(variant, o)}</div>` : '';
     const facts = n.facts ? `<dl class="kit-hero-facts"${rev2 ? budgetFlow(n.facts.length, Math.min(n.facts.length, 4), 'fact', 'item') : ''}>${n.facts.map(f => `<div><dt>${e(f.label)}</dt><dd>${e(f.value)}</dd></div>`).join('')}</dl>` : '';
     const frame = ['chart', 'diagram'].includes(n.visual) ? ' data-frame="window"' : '';
-    return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
+    return `<section class="kit-hero" data-variant="${variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
   };
   R.section = (n, d, id) => `<section class="kit-section" data-surface="${n.surface ?? 'plain'}"${n.align === 'center' ? ' data-align="center"' : ''}${n.anchor ? ` id="s-${n.anchor}"` : ''} aria-labelledby="${id}-title"><div class="kit-section-inner"><header class="kit-section-head">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}${n.description ? `<p class="kit-section-desc">${e(n.description)}</p>` : ''}</header>${kids(n, d + 1)}</div></section>`;
   R.grid = (n, d) => `<div class="kit-grid" data-columns="${n.columns}"${flowAttrs(n.children.length, {two: 2, three: 3, four: 4}[n.columns], design ? 'span' : n.children.every(c => c.type === 'metric' || (c.type === 'card' && c.visual)) ? 'dense' : 'span')}>${kids(n, d)}</div>`;
@@ -187,7 +195,9 @@ export function makeRenderer(b, design = null) {
     const id = 'block-' + (++ctx.seq);
     const fn = R[n.type];
     if (!fn) throw new Error('Unreachable renderer: ' + n.type);
+    const outer = ctx.place; ctx.place = n.type;
     const html = fn(n, depth, id), attrs = compositionAttrs(design?.byNode.get(n));
+    ctx.place = outer;
     const decorated = attrs ? html.replace(/^(<[a-z][a-z-]*)(?=[\s>])/, '$1' + attrs) : html;
     // A parent's container can include full-bleed tracks. Query the exact allocated region instead.
     return design && ['grid', 'split', 'aside'].includes(n.type) ? `<div class="kit-layout-region">${decorated}</div>` : decorated;

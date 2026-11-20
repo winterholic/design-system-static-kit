@@ -1086,7 +1086,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1388,6 +1388,19 @@
         "reason": "Status tone and live-region meaning own notice presentation."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "split",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "other",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1426,8 +1439,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "148cfab31de086c0bb623b0cd3590bed137fdc0d5f9abb60866a17149afb40ea",
-      "tokens.css": "25a8819d07963a9c026bd6955bcf5b4d51cf7fbb3e93455111dc6a8386fb8037",
+      "index.html": "f101e1a46093f57c33dffafc43953e4442900bba924fd301ca0b5aa5889437ea",
+      "tokens.css": "492d62b9e3823ed18e8bd5415814e8380953302acbb4b333be45c56e2a62aaae",
       "tokens.json": "aa039da04bc304dbfc69e5c6d47dbf9b2d240317ca4519698510724b5975ffe7",
       "blueprint.json": "c04c5f20ed2d189e67ef75805bebfba8303f643e62bf18fb1a640a14b9184826"
     }

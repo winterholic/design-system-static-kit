@@ -1055,7 +1055,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1211,6 +1211,19 @@
         "reason": "Price, total, options and action already have distinct commerce roles."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "commerce",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1249,8 +1262,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "4439beccc3b1fa014cbe88a282a8abe739d00867563024acf098ba3beabb62f1",
-      "tokens.css": "dd8f8506031c5ed37c4005d01fde68b4828059a97d2589cb9fff201ac5d4c5dd",
+      "index.html": "faf2f03b4e63d5c7e833675bbe8425e904c4b610ff1889dbf29921dc0dc2483a",
+      "tokens.css": "c72f502136713b68182227504f7fa5f2bed18b88505712d9259f4e830c9de3a9",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
       "blueprint.json": "bf6624d54ed3ca92ab29a16ca218ee91a7dc828362e99280b2334f974defe811"
     }

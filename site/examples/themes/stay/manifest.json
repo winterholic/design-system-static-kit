@@ -1084,7 +1084,7 @@
     }
   },
   "design": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "decisions": [
       {
         "path": "$.tree.children[0]",
@@ -1321,6 +1321,19 @@
         "reason": "Scores and review copy retain separate summary and reading levels."
       }
     ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "commerce",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
     "typography": {
       "revision": 2,
       "limits": {
@@ -1359,8 +1372,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "e2db68f61724135f1c75c1436b0f5bde6397715941b12ef18f114ce9fd3a66ad",
-      "tokens.css": "c79e95e8d9d5880a558fc8d4c48b40b7d2cd5f0f40f57487ab42e5c3af88ddf2",
+      "index.html": "438b24ce276afff8ff096f8482d78cf70d32afbcfd7dc1d1a82326a600923aa9",
+      "tokens.css": "f0c1ce70f481a8c68706a3583ca1f5ca1e23157a0a2d474ce7a0aaf5b495a337",
       "tokens.json": "68473904ef499daa964b52e6df981b1aa2feb67dd1c278e84e913872db731fed",
       "blueprint.json": "92701fdefb9af3acbb30a31ef9200cc76a1cc9202beb22b43f692c2c93fd61fe"
     }
