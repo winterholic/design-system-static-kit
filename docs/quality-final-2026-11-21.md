@@ -144,6 +144,10 @@ waitlist의 RC01은 제품 화면이 없는 비공개 베타 대기자 등록 �
 
 **계측 입력 대조.** `d72d78389`의 `src/`를 별도로 추출해 `238d0bcf4`와 같은 입력에서 `renderCombo`를 호출했다. 진단과 같은 순서의 기본·회전 테마 HTML 9,910개, 캡처 입력 34개, Q01–Q17의 42개 입력에서 불일치가 없었다. Q의 Blueprint 기반 항목은 반환값을 비교했다. 프로브 및 계측 스크립트는 두 커밋에서 같다. 비교 페이지에서는 34개 표본의 네 폭 모두를 열 수 있고, 전후 이미지 참조 272개를 확인했다.
 
+### 4.1.2 RC01 면제 표시 변경 후 CI
+
+제품 커밋 `9faa8bca4`의 GitHub Actions에서 `npm run verify`는 226개 통과, 실패·건너뜀 0개, 재현 가능한 생성 파일 3,304개를 기록했다. `npm run test:browser`는 Chromium에서 67개 모두 통과했다. 감사 로그에는 `exemptions: waitlist RC01`이 기록됐다. [GitHub Actions Verify 44794103760](https://github.com/winterholic/design-system-static-kit/actions/runs/44794103760)
+
 ### 4.2 과거 카탈로그 호환의 독립 확인(완료 기준 2)
 
 고정 해시 파일(`legacy-*-hashes.json`)을 쓰지 않았다. 개선 전 커밋 `89573577f`를 별도 worktree로 꺼내 그 코드로 직접 컴파일한 출력과, 최신 main의 코드가 같은 입력에서 낸 출력을 비교했다(`scripts/design-qa/compat-diff.mjs`).
