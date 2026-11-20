@@ -298,3 +298,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   .slot legend { float: none; width: auto; padding: 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+.recipe-card { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--app-border-strong); border-radius: 8px; background: var(--app-surface); }
+.recipe-card p { margin: 0; font-size: 12px; line-height: 1.5; }
+.recipe-card .chip { justify-self: start; }

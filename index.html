@@ -22,6 +22,7 @@
         <section class="group" aria-labelledby="g-page">
           <header class="group-head"><span class="step" aria-hidden="true">1</span><h2 id="g-page">페이지</h2></header>
           <div class="field"><label for="template">템플릿</label><select id="template"></select><p class="hint" id="page-type"></p></div>
+          <div class="field" id="recipe-field" hidden><span class="field-label" id="recipe-label">레시피</span><div class="recipe-card" aria-labelledby="recipe-label"><p id="recipe-text"></p><button type="button" class="chip" id="apply-recipe">레시피 추천으로 맞추기</button><p class="hint" id="recipe-rules"></p></div></div>
           <div class="field" id="layout-field" hidden><span class="field-label" id="layout-label">구성 변형</span><div id="layout-slots" class="slots" aria-labelledby="layout-label"></div></div>
           <div class="field"><label for="project-name">페이지 이름</label><input id="project-name" maxlength="80" autocomplete="off"></div>
         </section>
