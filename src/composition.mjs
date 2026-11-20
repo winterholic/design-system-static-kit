@@ -1,5 +1,5 @@
 import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT, pageRules, PAGE_RULE_LEGACY_VERSIONS, LEGACY_COMPOSITION_VERSION} from './catalog/composition.mjs';
-import {bentoPlan} from './layout.mjs';
+import {bentoPlan, bentoMixedRows, isShortCell} from './layout.mjs';
 import {SPACE, TOKEN} from './spacing.mjs';
 import {roleSizes} from './typography.mjs';
 import {cplOf, vlOf, valueUnits} from './render/util.mjs';
@@ -22,8 +22,6 @@ export function selectDesign(facts, rules = compositionRules) {
 
 /** Page rules apply to catalog 2.4.0+; older inputs keep their pinned output (docs/evidence/variants/legacy-2-3-hashes.json). */
 export const pageRulesApply = b => !PAGE_RULE_LEGACY_VERSIONS.includes(b.catalogVersion);
-/** Cells whose content is one short number or bar: beside a 2x2 feature picture they stretch to the picture row and sit mostly empty (Q07). */
-const SHORT_CELLS = ['metric', 'progress'];
 
 /**
  * Page-level planning (composition 1.3.0): facts about the whole page go through the same decision-table engine as node rules.
@@ -57,9 +55,10 @@ function planPage(b, byNode) {
     const at = `${path}.children[${i}]`;
     if (n.type === 'bento') {
       facts.bentos++;
-      const plan = bentoPlan(n.children), feature = plan[0].cell === 'feature';
-      const shortCells = feature ? n.children.filter((c, k) => k !== plan[0].index && SHORT_CELLS.includes(c.type)).map(c => c.type) : [];
-      if (selectDesign({bentoSparse: shortCells.length >= 2}, pageRules).applied.includes('P04')) decisions.push({rule: 'P04', code: 'PAGE_BENTO_SPARSE', path: at, facts: {bentoSparse: true}, shortCells, reason: reasonOf('P04')});
+      // Page rules run only for catalog 2.4.0+ (layout revision 2), whose renderer pairs cells by height class; what is reported is what pairing could not remove.
+      const mixedRows = bentoMixedRows(n.children, bentoPlan(n.children, {pair: true}));
+      const shortCells = mixedRows ? n.children.filter(isShortCell).map(c => c.type) : [];
+      if (selectDesign({bentoSparse: mixedRows > 0}, pageRules).applied.includes('P04')) decisions.push({rule: 'P04', code: 'PAGE_BENTO_SPARSE', path: at, facts: {bentoSparse: true}, shortCells, mixedRows, reason: reasonOf('P04')});
     }
     if (n.children) walkBentos(n.children, at);
   });

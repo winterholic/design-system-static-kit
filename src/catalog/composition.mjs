@@ -54,7 +54,7 @@ export const pageRules = [
   {id: 'P03', priority: 10, claim: 'Q10', source: 'docs/quality-diagnosis-2026-11-21.md C5', when: {intent: ['marketing', 'general'], afterHero: 'plain-section'}, set: {afterHeroStep: 'none'},
     reason: 'The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes.'},
   {id: 'P04', priority: 10, claim: 'Q07', source: 'docs/quality-diagnosis-2026-11-21.md C3', when: {bentoSparse: true}, set: {bentoFill: 'report'},
-    reason: 'Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content.'},
+    reason: 'The bento plan seats short-number cells (metric, progress) in rows with each other and lets a 2x2 feature picture take the height of its two rows (src/layout.mjs bentoPlan, layout revision 2). When a short cell still shares a row with a taller card or quote because no pairing exists, its row height follows the taller cell and it sits partly empty; the page reports what is left.'},
 ];
 /** Catalog versions whose output predates the page rules and is pinned byte for byte (docs/evidence/variants/legacy-2-3-hashes.json). */
 export const PAGE_RULE_LEGACY_VERSIONS = ['2.1.0', '2.2.0', '2.3.0'];

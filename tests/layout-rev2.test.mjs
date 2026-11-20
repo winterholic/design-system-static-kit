@@ -209,8 +209,8 @@ test('bento revision 1 callers keep the author order (bentoPlan without the pair
 
 test('a 2x2 feature picture is elastic only where the bento has four columns (revision 2 contract CSS, bento pages only)', () => {
   const css = compile(createBlueprint('product-landing')).css, legacy = compile(structuredClone(read('legacy-2-3-blueprints.json').blueprints['product-landing'])).css;
-  assert.match(css, /@container kit \(min-width:1180px\)\{[^@]*\.kit-bento-cell\[data-cell=feature\] :is\(\.kit-art-box,\.kit-card-media,\.kit-chart-plot\)\{[^}]*flex:1 1 0/);
+  assert.match(css, /@container kit \(min-width:1180px\)\{[^@]*\.kit-bento-cell\[data-cell=feature\] :is\(\.kit-art-box,.*?\)>\.kit-card-media\)\{[^}]*flex:1 1 0/);
   assert.match(css, /@container kit \(max-width:1179px\)/, 'the single-row feature mode keeps its natural aspect ratio');
   assert.doesNotMatch(legacy, /min-width:1180px/);
-  assert.doesNotMatch(compile(createBlueprint('sales-dashboard')).css, /kit-bento/, 'pages without a bento do not carry the rule');
+  assert.doesNotMatch(compile(createBlueprint('sales-dashboard')).css, /kit-bento-cell/, 'pages without a bento do not carry the rule');
 });

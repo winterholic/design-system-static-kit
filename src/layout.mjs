@@ -119,11 +119,63 @@ export function flowCSS(used = null) {
 /** 시각 요소(그림·차트·미디어 카드)가 있는 칸. 이런 칸만 2×2로 키운다: 글만 있는 칸을 키우면 위가 텅 빈다(진단 EMPTY_CELL). */
 export const isVisualCell = c => c.type === 'media' || c.type === 'chart' || (c.type === 'card' && !!(c.visual || c.variant === 'media'));
 
+/** 짧은 칸: 내용이 숫자 하나나 막대 하나(지표·진행률)라 자연 높이가 125~155px 정도인 칸. 이 칸이 긴 칸(카드·인용)과 한 줄에 놓이면 줄 높이를 긴 칸이 정해 위아래가 빈다(진단 C3, Q07). */
+export const isShortCell = c => c.type === 'metric' || c.type === 'progress';
+
 /** 벤토 배치 표. 4열 격자에서 칸마다 가로 칸 수(span). 큰 칸(F)은 2×2이고 항상 첫 칸이다.
  *  F 뒤 m칸: 2→[2,2] · 3→[1,1,2] · 4→[1,1,1,1] · 5→[1,1,1,1,4]. 큰 칸이 없으면 3→[1,1,2] · 4→[2,2,2,2] · 5→[2,2,1,1,2] · 6→[2,2,1,1,1,1]. 모든 줄이 4열을 채운다. */
 const BENTO_AFTER_FEATURE = {2: [2, 2], 3: [1, 1, 2], 4: [1, 1, 1, 1], 5: [1, 1, 1, 1, 4]};
 const BENTO_FLAT = {3: [1, 1, 2], 4: [2, 2, 2, 2], 5: [2, 2, 1, 1, 2], 6: [2, 2, 1, 1, 1, 1]};
-export function bentoPlan(children) {
+const BENTO_SPAN = {feature: 2, two: 2, one: 1, full: 4};
+/** 4열 모드는 컨테이너가 이 폭 이상일 때다(`.kit-bento` 규칙의 1179px 경계). 큰 칸이 줄 높이를 따르는 규칙도 이 폭에서만 켜진다. */
+export const BENTO = {wide: 1180, minVisual: 180};
+
+/** 계획의 줄 묶음. cols=4: 4열 자동 배치(큰 칸은 첫 두 줄의 왼쪽 반을 쓴다, 큰 칸 자신은 줄에 넣지 않는다). cols=2: 한 칸짜리 둘이 한 줄, 나머지는 한 줄 전체. */
+export function bentoRows(plan, cols = 4) {
+  const rows = [];
+  if (cols === 4) {
+    const free = plan[0]?.cell === 'feature' ? [2, 2] : [];
+    let r = 0;
+    for (const p of plan) {
+      if (p.cell === 'feature') continue;
+      const span = BENTO_SPAN[p.cell];
+      while ((free[r] ??= 4) < span) r++;
+      free[r] -= span; (rows[r] ??= []).push(p);
+    }
+    return rows.filter(Boolean);
+  }
+  let open = null;
+  for (const p of plan) {
+    if (p.cell === 'feature') continue;
+    if (p.cell === 'one' && !p.tail) { if (open) { open.push(p); open = null; } else rows.push(open = [p]); }
+    else { rows.push([p]); open = null; }
+  }
+  return rows;
+}
+/** 짧은 칸과 긴 칸이 한 줄에 섞인 줄의 수. 그런 줄은 짧은 칸이 긴 칸 높이로 늘어난다. */
+export const bentoMixedRows = (children, plan, cols = 4) => bentoRows(plan, cols).filter(row => new Set(row.map(p => isShortCell(children[p.index]))).size > 1).length;
+
+/** 칸 크기는 표가 정하고, 어떤 내용이 어느 자리에 앉는지는 높이 등급이 정한다: 같은 줄에는 같은 등급(짧은 칸끼리, 긴 칸끼리)을 앉힌다.
+ *  섞인 줄이 가장 적은 순열 중 작성 순서에서 가장 덜 움직인 것을 고른다(4열·2열 줄을 모두 센다). 이미 섞인 줄이 없으면 그대로다.
+ *  이 규칙은 리비전 2부터다: 리비전 1 출력은 작성 순서를 유지한다(`pair` 옵션). */
+function pairByHeight(children, plan) {
+  const head = plan[0]?.cell === 'feature' ? 1 : 0, slots = plan.slice(head), rest = slots.map(p => p.index);
+  const cost = ord => { const placed = [...plan.slice(0, head), ...ord.map((index, i) => ({...slots[i], index}))]; return bentoMixedRows(children, placed, 4) + bentoMixedRows(children, placed, 2); };
+  if (rest.length < 2 || rest.length > 7 || cost(rest) === 0) return plan;
+  let best = rest, bestCost = cost(rest), bestMove = 0;
+  const walk = (left, ord) => {
+    if (!left.length) {
+      const c = cost(ord), move = ord.reduce((sum, index, k) => sum + Math.abs(rest.indexOf(index) - k), 0);
+      if (c < bestCost || (c === bestCost && move < bestMove)) { best = ord; bestCost = c; bestMove = move; }
+      return;
+    }
+    left.forEach((index, i) => walk(left.filter((_, k) => k !== i), [...ord, index]));
+  };
+  walk(rest, []);
+  return [...plan.slice(0, head), ...best.map((index, i) => ({...slots[i], index}))];
+}
+
+export function bentoPlan(children, {pair = false} = {}) {
   const f = children.findIndex(isVisualCell);
   const order = children.map((_, i) => i);
   if (f > 0) { order.splice(f, 1); order.unshift(f); }
@@ -131,7 +183,8 @@ export function bentoPlan(children) {
   // 2열 모드(컨테이너 720px 미만)에서 1칸짜리가 홀수 개면 마지막 1칸이 줄 전체를 쓴다.
   const ones = spans.map((x, i) => x === 1 ? i : -1).filter(i => i >= 0);
   const tail = ones.length % 2 === 1 ? ones.at(-1) : -1;
-  return order.map((index, i) => ({index, cell: spans[i] === 'F' ? 'feature' : spans[i] === 1 ? 'one' : spans[i] === 2 ? 'two' : 'full', tail: i === tail}));
+  const plan = order.map((index, i) => ({index, cell: spans[i] === 'F' ? 'feature' : spans[i] === 1 ? 'one' : spans[i] === 2 ? 'two' : 'full', tail: i === tail}));
+  return pair ? pairByHeight(children, plan) : plan;
 }
 
 // ---------- CSS lint ----------
@@ -208,13 +261,23 @@ export const STRETCH_ABSORB = [
   {cell: '.kit-chart', body: '.kit-chart-body', foot: '.kit-chart-data'},
 ];
 
-/** 리비전 2에서 스타일시트 끝에 더하는 레이아웃 규약 CSS. */
-export function layoutContractCSS() {
+/** 4열 벤토의 2×2 큰 칸: 시각 부분(그림 상자·카드 그림·차트 면)이 자기 비율로 높이를 만들지 않고, 작은 칸이 정한 두 줄 높이를 받아 채운다.
+ *  큰 칸의 고유 높이(그림 비율)가 줄 높이를 정하면 작은 칸이 그 높이로 늘어나 60% 넘게 비었다(진단 C3). 한 줄짜리 큰 칸(2열·1열)은 자기 비율을 그대로 쓴다. */
+export function bentoFeatureCSS() {
+  const f = '.kit-bento-cell[data-cell=feature]', fill = `:is(.kit-art-box,.kit-card:not([data-variant=horizontal])>.kit-card-media)`;
+  return `@container kit (min-width:${BENTO.wide}px){${f} .kit-media{display:flex;flex-direction:column}${f} .kit-card:not([data-variant=horizontal]) .kit-card-body{flex:none}${f} .kit-chart-body{flex:1 1 0;min-height:0}`
+    + `${f} ${fill}{flex:1 1 0;min-height:${BENTO.minVisual}px;position:relative;aspect-ratio:auto!important}${f} .kit-chart-plot{align-self:stretch;position:relative;min-height:${BENTO.minVisual}px}`
+    + `${f} :is(.kit-art-box,.kit-card-media,.kit-chart-plot)>svg{position:absolute;inset:0;width:100%;height:100%}}`;
+}
+
+/** 리비전 2에서 스타일시트 끝에 더하는 레이아웃 규약 CSS. used가 있으면 쓰는 부품의 규칙만 낸다(없으면 전부: 시험·문서용). */
+export function layoutContractCSS(used = null) {
   return [
     '/* layout contract rev 2 (src/layout.mjs) */',
     '.kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}',
     '.kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}',
     ...STRETCH_ABSORB.map(({cell, body, foot}) => `[data-flow]>${cell} ${body}{flex:1 1 auto;align-content:center}[data-flow]>${cell} ${foot}{margin-top:auto}`),
+    ...(!used || used.has('bento') ? [bentoFeatureCSS()] : []),
   ].join('\n');
 }
 
