@@ -106,7 +106,7 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 
 ## 4. 검증 결과
 
-디자인 계측과 캡처는 `d72d78389`, 최초 재개 검증은 `0ea13094c`, 기획 세션의 직접 확인은 `238d0bcf4` 기준이다. 작업자의 실행 로그는 `docs/evidence/quality-2026-11-21/final/logs/`에 있다.
+디자인 계측과 캡처는 `d72d78389`, 최초 재개 검증은 `0ea13094c`, 기획 세션의 직접 확인은 `238d0bcf4` 기준이다. 이번 기준 갱신 후 직접 재실행한 명령은 `origin/main` `238d0bcf46f059f773c3395346ff36129f4c137e`에서 돌렸다. 이 원격 커밋은 요청된 `0ea13094c97dcc9e14e0a95e86b2fae52feeec99`를 포함하고, 그 뒤 두 커밋은 보고서·QA 기록만 변경했다. `0ea13094c` 이후 `src/` 변경은 없으며, `d72d78389..0ea13094c`의 `src/` 변경은 Recipe 선택 로직 두 파일뿐이다. 이번 실행 로그는 `docs/evidence/quality-2026-11-21/final/latest-rerun/`에 남겼다.
 
 ### 4.1 명령별 결과
 
@@ -120,6 +120,25 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 | 6 | 최신 main `node scripts/design-qa/quality-shoot.mjs --phase final` | **미실행.** 기존 136장과 compare는 d72 기준. 원격 main의 Recipe 변경은 기본 조합 캡처 경로와 별개지만, 최신 캡처라고 단정하지 않음 | 34개 캡처 입력의 HTML이 모두 동일. 재촬영은 미실행 |
 | 7 | 최신 main `node scripts/design-qa/ai-assembly.mjs verify` | 출력 `불일치: I02/recipe 저장 Blueprint = 코드/선택에서 재생성`, `verify 실패 1/91`. 기획 세션에서 직접 실행한 종료 코드는 1 | 현 main에도 I02 저장 Blueprint(`hero:product`)가 최신 Recipe 선택과 맞지 않음(4.5절) |
 | 8 | 최신 main `compat-diff.mjs check` + `control` | `TOTAL inputs 15290 mismatches 0`; 음성 대조 `differ 85/85` | 최신 main에서 직접 재실행 |
+
+### 4.1.1 기준 갱신 후 직접 재실행 (238d0bcf4, 0ea13094c 포함)
+
+아래는 이번 대화에서 해당 SHA를 실행한 결과다. 이전 시도의 수치를 재사용하지 않았다.
+
+| 명령 | 실행 결과·마지막 핵심 출력 | 종료 코드 |
+|---|---|---:|
+| `npm run verify` | `ℹ tests 226`, `ℹ pass 226`, `ℹ fail 0`, `ℹ skipped 0`; 마지막 `REPRODUCIBLE: 3304 generated files match a fresh build byte for byte.` | 0 |
+| `PW_PORT=4391 npx playwright test` | `67 failed`. 첫 실패부터 Chromium 시작 시 `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer … Permission denied (1100)`, 프로세스 `SIGTRAP`; 테스트 본문은 실행되지 않음 | 1 |
+| `node scripts/design-qa/diagnose.mjs … --workers 8` | Chromium 시작 실패 전에는 등급 산출 없음. 같은 `Permission denied (1100)` / `SIGTRAP` | 1 |
+| `node scripts/design-qa/width-sweep.mjs --widths 320,768 --workers 8` | Chromium 시작 실패 전에는 폭 스윕 수치 없음. 같은 `Permission denied (1100)` / `SIGTRAP` | 1 |
+| `node scripts/design-qa/quality-claims.mjs --phase final` | Chromium 시작 실패 전에는 Q 측정값 없음. 같은 `Permission denied (1100)` / `SIGTRAP` | 1 |
+| `node scripts/design-qa/ai-assembly.mjs verify` | `불일치: I02/recipe 저장 Blueprint = 코드/선택에서 재생성`; `verify 실패 1/91` | 1 |
+| `node scripts/design-qa/compat-diff.mjs check …` + `control …` | `TOTAL inputs 15290 mismatches 0`; `control: same 85 templates labeled 2.4.0 -> differ 85/85` | 0 / 0 |
+| `node scripts/design-qa/quality-shoot.mjs --phase final` | 미실행: 앞서 세 개의 독립 계측 명령과 전체 브라우저 시험이 같은 Chromium 시작 제한으로 실패했다. `final/` 캡처는 `d72d78389`에서 나온 기존 136장으로 남아 있으며 최신 재촬영으로 표시하지 않는다 | — |
+
+로그별 SHA는 `latest-rerun/commit.txt`에 있다. `ai-assembly.mjs verify`는 이전 보고 일부에서 종료 코드 0으로 적혔으나 이번 실제 실행은 1이었다. 이 차이는 성공으로 덮지 않고 위 로그와 같이 정정한다. 기준 커밋을 확인하기 전의 `ps -Ao …` 명령은 command worker에서 `operation not permitted`로 거부됐다. 실행 중복 여부는 호스트 자원 스냅샷에서 Playwright 작업이 보이지 않은 것까지만 확인했으며, 전체 프로세스 목록은 검증하지 못했다.
+
+구성 정책 면제 검토: RC01 규칙 자체를 바꾸거나 다른 템플릿까지 느슨하게 하지 않고 `waitlist` 한 템플릿에 사유가 있는 면제 항목을 지정한 설계는 범위가 좁고 소스·평가 문서에서 추적 가능하다. 다만 현재 구현은 면제된 선택에도 `satisfied: true`를 내보낸다. `combos.mjs`는 추천 메타데이터를 만들 때 `exempted`를 버리고 `applied`만 복사하며, 조립기 화면은 `지킨 규칙`만 보여 RC01 면제와 사유를 드러내지 않는다. 이는 “규칙을 숨기거나 우회하지 않는다”는 원칙을 사용자 표면에서는 충족하지 못한다. 따라서 면제 방식은 현재 표현대로면 **조건부로만 정당**하다. 면제를 정식 예외 상태로 노출하고 자동 판정의 pass와 구분하기 전까지는 잔여 결함 R-22로 기록한다. 화면 확인은 현재 main 조립기에서 했으며, Chromium 기반 품질 지표와 샘플 전수 재촬영의 대체 근거로 보지 않는다.
 
 최신 브라우저 실패는 macOS command worker의 `PW_PORT=4391 npx playwright test` 단계에서 발생했다. 로그는 Chromium이 포트를 열거나 테스트 코드를 실행하기 전에 `bootstrap_check_in … Permission denied (1100)`로 SIGTRAP 했음을 보인다. 비교 HTML은 설정된 Ttakkari browser로 열어 캡처 구조를 확인했다. 이때 브라우저 콘솔에는 `/favicon.ico` 404 하나가 있었고, 비교 페이지는 로드됐다. 별도로 GitHub Actions의 `npm run test:browser` 전체 로그를 확인했다. `0ea13094c`에서 67개 중 67개 통과, 실패·건너뜀 0이었다. `238d0bcf4`까지 제품 소스, 테스트, 생성 사이트, 패키지와 Playwright 설정에는 차이가 없다. [GitHub Actions Verify 44789298361](https://github.com/winterholic/design-system-static-kit/actions/runs/44789298361)
 
@@ -179,6 +198,7 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 | R-19 | P3 | RC02(제목 ≥ 섹션 제목×1.6)는 1440px 기준만, 좁은 폭은 1.58배 | `docs/recipes.md` 7절 | `src/recipes.mjs` RC02 | 기지 |
 | R-20 | P3 | 문서 정합: `quality-diagnosis-2026-11-21.md`에서 13.1절이 14절 뒤에 놓여 있고, 12.1절의 "3,466개"와 11절 이후 수치가 V06 이후의 3,714개와 섞여 있다(각 문서가 주석으로 일부만 밝힘) | 파일을 열어 절 순서 확인, `enumerateCombos().filter(c=>c.experimental).length` → 3714 | `docs/quality-diagnosis-2026-11-21.md`, `docs/adr/0006-*` | 신규 |
 | R-21 | P3 | AI 팔은 입력마다 한 번만 만들어 변동 미측정. 입력 9개로 검정력 약함 | `eval/report.md` 3.3절 | `eval/` | 기지 |
+| R-22 | P1 | RC01의 waitlist 면제는 데이터에 이유와 함께 남지만 사용자에게 노출되는 추천 결과에서 숨는다. `satisfied:true`이고 조립기에는 지킨 규칙만 보여 면제된 규칙을 완전히 충족한 것처럼 읽힐 수 있다. 제한된 예외 정책 자체는 검토 가능하지만 현재 표시 방식은 규칙을 숨기지 않는 원칙에 맞지 않는다 | `node --input-type=module -e 'import {selectRecipe} from "./src/recipes.mjs"; import {findCombo} from "./src/combos.mjs"; const p=selectRecipe({recipe:"saas-landing",templateId:"waitlist"}); console.log(JSON.stringify({satisfied:p.satisfied,exempted:p.exempted,gallery:findCombo("waitlist").recipe},null,2))'`; 조립기에서 템플릿 `대기자 등록` 선택 → 면제 설명 없이 `레시피 추천으로 맞추기`, `지킨 규칙 RC02 RC03 V01 V04 V06 P01 P02` 표시 | `src/recipes.mjs` 결과 상태, `src/combos.mjs` 추천 투영, `src/workbench.mjs` 문구 | 신규, 면제 정책 검토 |
 
 **R-04 재현(측정)**: 
 ```
