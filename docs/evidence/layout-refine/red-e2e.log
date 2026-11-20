@@ -1,0 +1,269 @@
+
+Running 7 tests using 1 worker
+
+[1/7] [chromium] › e2e/layout-common.spec.mjs:28:1 › cause 1: fixed-count hero facts never leave a lone last cell, in every fact template at four widths (Q01)
+  1) [chromium] › e2e/layout-common.spec.mjs:28:1 › cause 1: fixed-count hero facts never leave a lone last cell, in every fact template at four widths (Q01) 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 20
+
+    - Array []
+    + Array [
+    +   "agency-home@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "agency-home@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "wedding-invite@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "wedding-invite@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "game-launch@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "game-launch@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "luxury-brand@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "luxury-brand@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "campaign-poster@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "campaign-poster@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "hanji-journey@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "hanji-journey@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "museum-home@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "museum-home@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "campaign-donate@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "campaign-donate@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    +   "waitlist@320 {\"items\":3,\"cols\":2,\"orphan\":true}",
+    +   "waitlist@320 GRID_ORPHAN dl.kit-hero-facts 3개 2열 마지막 줄 1개 (2+1)",
+    + ]
+
+      36 |     for (const f of probe.findings) if (f.code === 'GRID_ORPHAN') bad.push(`${id}@${width} ${f.code} ${f.at} ${f.detail}`);
+      37 |   }
+    > 38 |   expect(bad).toEqual([]);
+         |               ^
+      39 | });
+      40 |
+      41 | test('cause 1: hero facts stay inside the hero copy and keep every value on one line at 320px', async ({page}) => {
+        at /Users/winterholic/development/projects/dsk-wt-common/e2e/layout-common.spec.mjs:38:15
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-1-fixe-32eed-emplate-at-four-widths-Q01--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-1-fixe-32eed-emplate-at-four-widths-Q01--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-1-fixe-32eed-emplate-at-four-widths-Q01--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-1-fixe-32eed-emplate-at-four-widths-Q01--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/7] [chromium] › e2e/layout-common.spec.mjs:41:1 › cause 1: hero facts stay inside the hero copy and keep every value on one line at 320px
+[3/7] [chromium] › e2e/layout-common.spec.mjs:52:1 › cause 1: menu list grids follow the flow invariant and menu rows do not overflow (Q02, Q03)
+  2) [chromium] › e2e/layout-common.spec.mjs:52:1 › cause 1: menu list grids follow the flow invariant and menu rows do not overflow (Q02, Q03) 
+
+    Error: Q03@768
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pass": true,
+    +   "pass": false,
+      }
+
+      51 |
+      52 | test('cause 1: menu list grids follow the flow invariant and menu rows do not overflow (Q02, Q03)', async ({page}) => {
+    > 53 |   for (const width of [768, 1440]) expect(await measure(page, 'Q03', 'S23', width), 'Q03@' + width).toMatchObject({pass: true});
+         |                                                                                                     ^
+      54 |   for (const width of [320, 390]) expect(await measure(page, 'Q02', 'S23', width), 'Q02@' + width).toMatchObject({pass: true});
+      55 |   for (const width of [320, 768]) {
+      56 |     await load(page, 'menu-dining', undefined, width);
+        at /Users/winterholic/development/projects/dsk-wt-common/e2e/layout-common.spec.mjs:53:101
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-1-menu-5efd9-ws-do-not-overflow-Q02-Q03--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-1-menu-5efd9-ws-do-not-overflow-Q02-Q03--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-1-menu-5efd9-ws-do-not-overflow-Q02-Q03--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-1-menu-5efd9-ws-do-not-overflow-Q02-Q03--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[4/7] [chromium] › e2e/layout-common.spec.mjs:62:1 › cause 4: a role floor never folds a title into a narrow column; every type preset on a status page and an article at 320px (Q05)
+  3) [chromium] › e2e/layout-common.spec.mjs:62:1 › cause 4: a role floor never folds a title into a narrow column; every type preset on a status page and an article at 320px (Q05) 
+
+    Error: Q05@320
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pass": true,
+    +   "pass": false,
+      }
+
+      61 |
+      62 | test('cause 4: a role floor never folds a title into a narrow column; every type preset on a status page and an article at 320px (Q05)', async ({page}) => {
+    > 63 |   expect(await measure(page, 'Q05', 'S27', 320), 'Q05@320').toMatchObject({pass: true});
+         |                                                             ^
+      64 |   const bad = [];
+      65 |   for (const type of Object.keys(axes.typography)) for (const id of ['offline', 'article', 'not-found']) {
+      66 |     if (!findCombo(id)) continue;
+        at /Users/winterholic/development/projects/dsk-wt-common/e2e/layout-common.spec.mjs:63:61
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-4-a-ro-7d3d2-nd-an-article-at-320px-Q05--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-4-a-ro-7d3d2-nd-an-article-at-320px-Q05--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-4-a-ro-7d3d2-nd-an-article-at-320px-Q05--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-4-a-ro-7d3d2-nd-an-article-at-320px-Q05--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[5/7] [chromium] › e2e/layout-common.spec.mjs:73:1 › cause 5: cards that share a row of a grid do not leave a blank lower half (Q04)
+  4) [chromium] › e2e/layout-common.spec.mjs:73:1 › cause 5: cards that share a row of a grid do not leave a blank lower half (Q04) 
+
+    Error: Q04@768
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pass": true,
+    +   "pass": false,
+      }
+
+      72 |
+      73 | test('cause 5: cards that share a row of a grid do not leave a blank lower half (Q04)', async ({page}) => {
+    > 74 |   for (const width of [768, 1440]) expect(await measure(page, 'Q04', 'S12', width), 'Q04@' + width).toMatchObject({pass: true});
+         |                                                                                                     ^
+      75 |   await load(page, 'sales-dashboard', undefined, 768);
+      76 |   const probe = await page.evaluate(layoutProbe, LAYOUT_OPTIONS);
+      77 |   expect(probe.findings.filter(f => f.code === 'EMPTY_CELL').map(f => f.at + ' ' + f.detail)).toEqual([]);
+        at /Users/winterholic/development/projects/dsk-wt-common/e2e/layout-common.spec.mjs:74:101
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-card-17544-ave-a-blank-lower-half-Q04--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-5-card-17544-ave-a-blank-lower-half-Q04--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-card-17544-ave-a-blank-lower-half-Q04--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-5-card-17544-ave-a-blank-lower-half-Q04--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[6/7] [chromium] › e2e/layout-common.spec.mjs:80:1 › cause 6: a title-like line (strong, brand name) is balanced instead of leaving a one-word last line
+  5) [chromium] › e2e/layout-common.spec.mjs:80:1 › cause 6: a title-like line (strong, brand name) is balanced instead of leaving a one-word last line 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 13
+
+    - Array []
+    + Array [
+    +   "hr-people@320 strong 2줄, 끝줄 34px (2.1em) “지니어 · 지원 24명”",
+    +   "hr-people@320 strong 2줄, 끝줄 30px (1.8em) “자이너 · 지원 11명”",
+    +   "hr-people@320 strong 2줄, 끝줄 28px (1.7em) “니어 · 11/4 입사”",
+    +   "hr-people@390 strong 2줄, 끝줄 34px (2.1em) “지니어 · 지원 24명”",
+    +   "hr-people@390 strong 2줄, 끝줄 30px (1.8em) “자이너 · 지원 11명”",
+    +   "hr-people@390 strong 2줄, 끝줄 28px (1.7em) “니어 · 11/4 입사”",
+    +   "hr-people@768 strong 2줄, 끝줄 34px (2.1em) “지니어 · 지원 24명”",
+    +   "hr-people@768 strong 2줄, 끝줄 30px (1.8em) “자이너 · 지원 11명”",
+    +   "hr-people@768 strong 2줄, 끝줄 28px (1.7em) “니어 · 11/4 입사”",
+    +   "wine-list@320 strong 2줄, 끝줄 35px (2.1em) “롤로 클라시코 2018”",
+    +   "changelog@768 span.kit-brand-name 2줄, 끝줄 31px (1.7em) “FlowWorks 문서”",
+    + ]
+
+      84 |     for (const f of (await page.evaluate(textProbe, TEXT_PROBE_OPTIONS)).findings) if (f.code === 'ORPHAN_LINE' && /^(strong|span\.kit-brand-name)/.test(f.at)) bad.push(`${id}@${width} ${f.at} ${f.detail}`);
+      85 |   }
+    > 86 |   expect(bad).toEqual([]);
+         |               ^
+      87 | });
+      88 |
+      89 | test('cause 7: a half-width form field always has a partner in its row (Q09)', async ({page}) => {
+        at /Users/winterholic/development/projects/dsk-wt-common/e2e/layout-common.spec.mjs:86:15
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-6-a-ti-ab606-eaving-a-one-word-last-line-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-6-a-ti-ab606-eaving-a-one-word-last-line-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-6-a-ti-ab606-eaving-a-one-word-last-line-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-6-a-ti-ab606-eaving-a-one-word-last-line-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[7/7] [chromium] › e2e/layout-common.spec.mjs:89:1 › cause 7: a half-width form field always has a partner in its row (Q09)
+  6) [chromium] › e2e/layout-common.spec.mjs:89:1 › cause 7: a half-width form field always has a partner in its row (Q09) 
+
+    Error: Q09@1440
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "pass": true,
+    +   "pass": false,
+      }
+
+      88 |
+      89 | test('cause 7: a half-width form field always has a partner in its row (Q09)', async ({page}) => {
+    > 90 |   expect(await measure(page, 'Q09', 'S17', 1440), 'Q09@1440').toMatchObject({pass: true});
+         |                                                               ^
+      91 |   expect(await measure(page, 'Q09', 'S17', 768), 'Q09@768').toMatchObject({pass: true});
+      92 | });
+      93 |
+        at /Users/winterholic/development/projects/dsk-wt-common/e2e/layout-common.spec.mjs:90:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-7-a-ha-280c5-s-a-partner-in-its-row-Q09--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-7-a-ha-280c5-s-a-partner-in-its-row-Q09--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-7-a-ha-280c5-s-a-partner-in-its-row-Q09--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-7-a-ha-280c5-s-a-partner-in-its-row-Q09--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  6 failed
+    [chromium] › e2e/layout-common.spec.mjs:28:1 › cause 1: fixed-count hero facts never leave a lone last cell, in every fact template at four widths (Q01) 
+    [chromium] › e2e/layout-common.spec.mjs:52:1 › cause 1: menu list grids follow the flow invariant and menu rows do not overflow (Q02, Q03) 
+    [chromium] › e2e/layout-common.spec.mjs:62:1 › cause 4: a role floor never folds a title into a narrow column; every type preset on a status page and an article at 320px (Q05) 
+    [chromium] › e2e/layout-common.spec.mjs:73:1 › cause 5: cards that share a row of a grid do not leave a blank lower half (Q04) 
+    [chromium] › e2e/layout-common.spec.mjs:80:1 › cause 6: a title-like line (strong, brand name) is balanced instead of leaving a one-word last line 
+    [chromium] › e2e/layout-common.spec.mjs:89:1 › cause 7: a half-width form field always has a partner in its row (Q09) 
+  1 passed (6.3s)

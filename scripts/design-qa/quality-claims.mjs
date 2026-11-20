@@ -6,6 +6,7 @@
 import {chromium} from '@playwright/test';
 import {writeFileSync, readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {findCombo, renderCombo, comboBlueprint} from '../../src/combos.mjs';
 import {CATALOG_VERSION} from '../../src/catalog.mjs';
 
@@ -137,31 +138,35 @@ export const CLAIMS = [
   {id: 'Q17', what: '탭 목록의 마지막 탭이 가로 스크롤 없이 화면 가장자리에 8px 이내로 잘리지 않는다(EDGE 오탐 대조용)', fn: tabBar, targets: [{sample: 'S21', widths: [320]}, {sample: 'S20', widths: [320]}], test: v => v === null || !v.cutOffByViewport},
 ];
 
-const br = await chromium.launch();
-const out = {meta: {phase, date: new Date().toISOString().slice(0, 10), catalogVersion: CATALOG_VERSION, browser: 'chromium ' + br.version()}, claims: {}};
-for (const claim of CLAIMS.filter(c => !only || only.includes(c.id))) {
-  const rec = out.claims[claim.id] = {what: claim.what, results: []};
-  for (const t of claim.targets) {
-    const s = t.sample ? samples[t.sample] : {combo: t.combo, view: {}};
-    const combo = findCombo(s.combo); if (!combo) { rec.results.push({target: t.sample ?? t.combo, error: 'no combo'}); continue; }
-    const label = t.sample ?? t.combo;
-    if (claim.node) {
-      const v = claim.node(comboBlueprint(combo, s.view));
-      const baseKey = s.pair ?? null;
-      const baseline = baseKey ? claim.node(comboBlueprint(findCombo(samples[baseKey].combo), samples[baseKey].view)) : null;
-      rec.results.push({target: label, combo: s.combo, values: v, baseline, pass: claim.test(v, {baseline, isBaseline: !baseKey})});
-      continue;
-    }
-    const r = renderCombo(combo, s.view); if (!r.ok) { rec.results.push({target: label, error: r.error}); continue; }
-    for (const w of t.widths) {
-      const ctx = await br.newContext({viewport: {width: w, height: 900}, reducedMotion: 'reduce'}), page = await ctx.newPage();
-      await page.setContent(r.html, {waitUntil: 'load'});
-      const v = await page.evaluate(claim.fn);
-      rec.results.push({target: label, combo: s.combo, width: w, values: v, pass: claim.test(v)});
-      await ctx.close();
+// 이 파일은 e2e/layout-common.spec.mjs가 CLAIMS를 가져다 쓰므로, 직접 실행할 때만 브라우저를 띄운다.
+const main = async () => {
+  const br = await chromium.launch();
+  const out = {meta: {phase, date: new Date().toISOString().slice(0, 10), catalogVersion: CATALOG_VERSION, browser: 'chromium ' + br.version()}, claims: {}};
+  for (const claim of CLAIMS.filter(c => !only || only.includes(c.id))) {
+    const rec = out.claims[claim.id] = {what: claim.what, results: []};
+    for (const t of claim.targets) {
+      const s = t.sample ? samples[t.sample] : {combo: t.combo, view: {}};
+      const combo = findCombo(s.combo); if (!combo) { rec.results.push({target: t.sample ?? t.combo, error: 'no combo'}); continue; }
+      const label = t.sample ?? t.combo;
+      if (claim.node) {
+        const v = claim.node(comboBlueprint(combo, s.view));
+        const baseKey = s.pair ?? null;
+        const baseline = baseKey ? claim.node(comboBlueprint(findCombo(samples[baseKey].combo), samples[baseKey].view)) : null;
+        rec.results.push({target: label, combo: s.combo, values: v, baseline, pass: claim.test(v, {baseline, isBaseline: !baseKey})});
+        continue;
+      }
+      const r = renderCombo(combo, s.view); if (!r.ok) { rec.results.push({target: label, error: r.error}); continue; }
+      for (const w of t.widths) {
+        const ctx = await br.newContext({viewport: {width: w, height: 900}, reducedMotion: 'reduce'}), page = await ctx.newPage();
+        await page.setContent(r.html, {waitUntil: 'load'});
+        const v = await page.evaluate(claim.fn);
+        rec.results.push({target: label, combo: s.combo, width: w, values: v, pass: claim.test(v)});
+        await ctx.close();
+      }
     }
   }
-}
-await br.close();
-writeFileSync(resolve(base, `claims-${phase}.json`), JSON.stringify(out, null, 1));
-for (const [id, c] of Object.entries(out.claims)) console.log(id, c.results.map(r => `${r.target}${r.width ? '@' + r.width : ''}:${r.pass === undefined ? 'err' : r.pass}`).join(' '));
+  await br.close();
+  writeFileSync(resolve(base, `claims-${phase}.json`), JSON.stringify(out, null, 1));
+  for (const [id, c] of Object.entries(out.claims)) console.log(id, c.results.map(r => `${r.target}${r.width ? '@' + r.width : ''}:${r.pass === undefined ? 'err' : r.pass}`).join(' '));
+};
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) await main();
