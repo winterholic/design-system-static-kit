@@ -4,7 +4,7 @@
 // 사용: node scripts/design-qa/quality-claims.mjs [--phase before|after] [--only Q01,Q02]
 // 산출: docs/evidence/quality-2026-11-21/claims-<phase>.json
 import {chromium} from '@playwright/test';
-import {writeFileSync, readFileSync} from 'node:fs';
+import {writeFileSync, readFileSync, mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {findCombo, renderCombo, comboBlueprint} from '../../src/combos.mjs';
@@ -138,6 +138,9 @@ export const CLAIMS = [
   {id: 'Q17', what: '탭 목록의 마지막 탭이 가로 스크롤 없이 화면 가장자리에 8px 이내로 잘리지 않는다(EDGE 오탐 대조용)', fn: tabBar, targets: [{sample: 'S21', widths: [320]}, {sample: 'S20', widths: [320]}], test: v => v === null || !v.cutOffByViewport},
 ];
 
+/** 이 조합이 구성 변형 결과 계약(V01~V05)에서 기본 추천을 벗어났는지: 계약을 어긴 표본이 pass:false인 것은 "실험" 선택의 결과이지 추천 구성의 결함이 아니다. */
+const contractOf = combo => ({recommended: !combo.experimental, rules: [...new Set((combo.rules ?? []).map(r => r.rule))]});
+
 // 이 파일은 e2e/layout-common.spec.mjs가 CLAIMS를 가져다 쓰므로, 직접 실행할 때만 브라우저를 띄운다.
 const main = async () => {
   const br = await chromium.launch();
@@ -152,7 +155,7 @@ const main = async () => {
         const v = claim.node(comboBlueprint(combo, s.view));
         const baseKey = s.pair ?? null;
         const baseline = baseKey ? claim.node(comboBlueprint(findCombo(samples[baseKey].combo), samples[baseKey].view)) : null;
-        rec.results.push({target: label, combo: s.combo, values: v, baseline, pass: claim.test(v, {baseline, isBaseline: !baseKey})});
+        rec.results.push({target: label, combo: s.combo, values: v, baseline, pass: claim.test(v, {baseline, isBaseline: !baseKey}), ...contractOf(combo)});
         continue;
       }
       const r = renderCombo(combo, s.view); if (!r.ok) { rec.results.push({target: label, error: r.error}); continue; }
@@ -160,13 +163,15 @@ const main = async () => {
         const ctx = await br.newContext({viewport: {width: w, height: 900}, reducedMotion: 'reduce'}), page = await ctx.newPage();
         await page.setContent(r.html, {waitUntil: 'load'});
         const v = await page.evaluate(claim.fn);
-        rec.results.push({target: label, combo: s.combo, width: w, values: v, pass: claim.test(v)});
+        rec.results.push({target: label, combo: s.combo, width: w, values: v, pass: claim.test(v), ...contractOf(combo)});
         await ctx.close();
       }
     }
   }
   await br.close();
-  writeFileSync(resolve(base, `claims-${phase}.json`), JSON.stringify(out, null, 1));
+  const jsonDir = ['before', 'after'].includes(phase) ? base : resolve(base, phase);
+  mkdirSync(jsonDir, {recursive: true});
+  writeFileSync(resolve(jsonDir, `claims-${phase}.json`), JSON.stringify(out, null, 1));
   for (const [id, c] of Object.entries(out.claims)) console.log(id, c.results.map(r => `${r.target}${r.width ? '@' + r.width : ''}:${r.pass === undefined ? 'err' : r.pass}`).join(' '));
 };
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) await main();

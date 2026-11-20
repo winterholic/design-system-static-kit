@@ -78,7 +78,7 @@ test('catalog 2.4.0 is the current version; 2.2.0 and 2.1.0 inputs keep their pr
   }
 });
 
-test('the refinement is reachable only through the version: migrating 2.2 to 2.3 changes catalogVersion and the type variables, nothing else', () => {
+test('the refinement is reachable only through the version: migrating 2.2 to the current catalog changes catalogVersion and the type variables, nothing else in the Blueprint', () => {
   const old = structuredClone(read('legacy-2-2-blueprints.json').blueprints['saas-landing']);
   const next = migrateBlueprint(old);
   assert.equal(next.catalogVersion, '2.4.0');

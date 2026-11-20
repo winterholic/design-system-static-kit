@@ -2,9 +2,12 @@ import {makeRenderer} from './nodes.mjs';
 import {renderShell} from './shell.mjs';
 export {escapeHTML} from './util.mjs';
 
-export function renderTree(b, design = null) {
-  const {render} = makeRenderer(b, design);
-  return renderShell(b, render(b.tree), design?.chrome);
+/** `report` (optional) receives the pictures placed on the page: [{place, kind, motif, key}] for the page rule P01. */
+export function renderTree(b, design = null, report = null) {
+  const {render, ctx} = makeRenderer(b, design);
+  const html = renderShell(b, render(b.tree), design?.chrome);
+  if (report) report.arts = ctx.arts;
+  return html;
 }
 
 /** The only script a generated page runs. Fixed text, no user input, no network: demo form checks, ARIA tabs, filter chips. */

@@ -81,7 +81,8 @@ test('combos: experimental combos are flagged and can be filtered out', () => {
   const all = enumerateCombos(), exp = all.filter(c => c.experimental);
   assert.equal(filterCombos({experimental: false}).length, all.length - exp.length);
   assert.equal(filterCombos({experimental: true}).length, all.length);
-  for (const c of exp) assert.match(c.experimental, /^C /);
+  // 이유는 두 종류다: 진단 등급(C …)과 구성 변형 결과 계약(V01~V05, tests/variant-contracts.test.mjs). 둘 다 사유를 이름으로 적는다.
+  for (const c of exp) assert.match(c.experimental, /^(C [A-Z_+]+)?( · )?(V\d\d(\+V\d\d)*)?$/);
   // 진단이 C 등급을 하나도 내지 않은 상태에서도 거르기 경로를 증명한다: 복사본 목록에 실험 표시를 직접 달아 본다.
   const fake = all.slice(0, 6).map((c, i) => ({...c, experimental: i % 3 === 0 ? 'C EMPTY_CELL' : null}));
   assert.deepEqual(filterCombos({experimental: false}, fake).map(c => c.id), fake.filter(c => !c.experimental).map(c => c.id));

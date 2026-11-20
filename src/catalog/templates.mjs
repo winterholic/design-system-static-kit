@@ -26,7 +26,7 @@ add('saas-landing', 'SaaS 서비스 소개', 'landing', 'trust', '플로우웍�
   {type: 'hero', variant: 'split', eyebrow: '새 버전 2.0 · 자동화 규칙 출시', title: '흩어진 일을\n하나의 흐름으로.', body: '프로젝트, 일정, 문서를 한곳에서 연결합니다. 지난주에 어떤 작업이 밀렸는지, 아침 회의 전에 이미 알고 있게 됩니다.', action: A('14일 무료로 시작', 'primary'), secondaryAction: A('2분 데모 보기', 'secondary'), visual: 'chart'},
   {type: 'logo-cloud', title: '1,200개 팀이 매일 사용합니다', names: ['모아랩', '블루웍스', '다온스튜디오', '한결컴퍼니', '오브제노트']},
   section('팀이 바로 쓰는 핵심 기능', [{type: 'bento', children: [
-    card('프로젝트 보드와 일정, 문서가 한 화면에', '카드를 옮기면 일정과 담당자가 같이 바뀝니다. 흩어진 링크를 찾는 시간이 사라져요.', {variant: 'media', visual: 'chart', ratio: '4:3'}),
+    card('프로젝트 보드와 일정, 문서가 한 화면에', '카드를 옮기면 일정과 담당자가 같이 바뀝니다. 흩어진 링크를 찾는 시간이 사라져요.', {variant: 'media', visual: 'diagram', ratio: '4:3'}),
     metric('주간 완료 작업', '1,284', '지난주보다 18% 많아요', 'up', '+18%'),
     card('반복 작업은 규칙 하나로', '“리뷰가 끝나면 담당자에게 알림”처럼 한 줄로 만듭니다.', {icon: 'zap'}),
     {type: 'quote', quote: '월요일 아침 상태 취합이 사라졌습니다. 그 시간에 고객 인터뷰를 한 건 더 해요.', author: '이지훈', role: '블루웍스 운영 매니저'},

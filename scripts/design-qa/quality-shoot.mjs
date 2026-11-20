@@ -26,6 +26,8 @@ const probes = !args.includes('--no-probes');
 const CAP = {320: 3600, 390: 3600, 768: 3000, 1440: 2600};
 const outDir = resolve(base, phase);
 mkdirSync(outDir, {recursive: true});
+// before·after는 동시 작업자가 같은 파일명을 쓰므로 그대로 두고, 다른 이름의 단계(예: after-variants)는 자기 폴더 안에 측정 JSON도 둔다.
+const jsonDir = ['before', 'after'].includes(phase) ? base : outDir;
 
 const {samples} = JSON.parse(readFileSync(samplesFile, 'utf8'));
 const safe = s => s.replace(/~/g, '+').replace(/:/g, '-');
@@ -34,7 +36,7 @@ const TAGS = {concept: 'co', look: 'lk', theme: 'th', tv: 'tv', pal: 'pa', type:
 function viewTag(v = {}) { const t = Object.keys(TAGS).filter(k => v[k]).map(k => `${TAGS[k]}-${v[k]}`); return t.length ? '@' + t.join('@') : ''; }
 
 const br = await chromium.launch();
-const prior = only && existsSync(resolve(base, `measure-${phase}.json`)) ? JSON.parse(readFileSync(resolve(base, `measure-${phase}.json`), 'utf8')) : null;
+const prior = only && existsSync(resolve(jsonDir, `measure-${phase}.json`)) ? JSON.parse(readFileSync(resolve(jsonDir, `measure-${phase}.json`), 'utf8')) : null;
 const measure = {meta: {phase, date: new Date().toISOString().slice(0, 10), catalogVersion: CATALOG_VERSION, widths, cap: CAP, browser: 'chromium ' + br.version(), platform: process.platform}, samples: prior?.samples ?? {}};
 const chosen = samples.filter(s => !only || only.includes(s.key));
 for (const s of chosen) {
@@ -60,5 +62,5 @@ for (const s of chosen) {
   console.log(s.key, s.combo, Object.values(entry.widths).map(x => (x.findings?.length ?? '-') + (x.clipped ? '↧' : '')).join(' / '));
 }
 await br.close();
-writeFileSync(resolve(base, `measure-${phase}.json`), JSON.stringify(measure));
+writeFileSync(resolve(jsonDir, `measure-${phase}.json`), JSON.stringify(measure));
 console.log('done', chosen.length, 'samples ×', widths.length, 'widths →', outDir);

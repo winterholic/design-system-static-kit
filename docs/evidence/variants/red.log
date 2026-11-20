@@ -1,0 +1,401 @@
+✖ page rules are a small ordered table over page facts, with the composition version bumped for them (0.677583ms)
+✖ P02 / Q06: a split or product hero without a visual renders as a text-led centred hero, and says so (9.606916ms)
+✖ P02 property: after the rule no hero is rendered split/product without a visual (74.430875ms)
+✖ P03 / Q10: a plain section right after a hero on a marketing page takes the section step instead of a second band step (2.146833ms)
+✖ P01 / Q13: the same large picture twice on one page is reported, and no template in the catalog does it (1.381542ms)
+✖ P04 / Q07: a bento whose small cells are short numbers beside a feature picture is reported as sparse (1.365875ms)
+✖ every page decision names the rule, the path, the facts it read and the reason (3.138541ms)
+✖ 2.3.0 input: page rules do not run and the complete output is the pinned legacy output (118.097208ms)
+✖ kit migrate 2.3 → 2.4 changes catalogVersion only; the tree and axes are kept and page rules apply on the next compile (1.007666ms)
+✖ contracts are structured data: each names a measured claim, a closed check kind and why (0.57475ms)
+✖ V01 / Q14: a hero change that drops the product visual is not recommended, one that keeps it is (1.508917ms)
+✖ V01 property: over every template, an option is flagged exactly when the hero loses a visual it had (1.354334ms)
+✖ V02 / Q15: a card style that leaves a quarter or more of the cards untouched is not recommended (1.303458ms)
+✖ V03 / Q11: a column count that wraps a short KPI row is not recommended; other grids are not affected (0.818834ms)
+✖ V04 / Q12: a centred heading over left-aligned content is not recommended; a centred heading over centred content is (1.221375ms)
+✖ V05: an option measured to leave the rendered page unchanged is not recommended (neutral) (1.163208ms)
+✖ assessLayout explains a combination: which rule, which slot, which claim (0.127875ms)
+✖ combos keep every id (nothing is deleted) and carry the rule ids that moved them out of the default list (312.550875ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 0
+ℹ fail 18
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 425.601042
+
+✖ failing tests:
+
+test at tests/page-rules.test.mjs:18:1
+✖ page rules are a small ordered table over page facts, with the composition version bumped for them (0.677583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '1.2.0' !== '1.3.0'
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:19:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '1.2.0',
+    expected: '1.3.0',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:30:1
+✖ P02 / Q06: a split or product hero without a visual renders as a text-led centred hero, and says so (9.606916ms)
+  AssertionError [ERR_ASSERTION]: P02 decision recorded in manifest.design.page
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:36:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:48:1
+✖ P02 property: after the rule no hero is rendered split/product without a visual (74.430875ms)
+  AssertionError [ERR_ASSERTION]: devtool-landing: a split hero without a visual survived
+  
+  null !== 'yes'
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:52:120)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'yes',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:58:1
+✖ P03 / Q10: a plain section right after a hero on a marketing page takes the section step instead of a second band step (2.146833ms)
+  AssertionError [ERR_ASSERTION]: P03 decision recorded
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:60:45)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:74:1
+✖ P01 / Q13: the same large picture twice on one page is reported, and no template in the catalog does it (1.381542ms)
+  AssertionError [ERR_ASSERTION]: P01 fires on the constructed duplicate
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:80:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:88:1
+✖ P04 / Q07: a bento whose small cells are short numbers beside a feature picture is reported as sparse (1.365875ms)
+  AssertionError [ERR_ASSERTION]: product-landing bento: media feature + two metrics
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:90:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:97:1
+✖ every page decision names the rule, the path, the facts it read and the reason (3.138541ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(page(r))
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:99:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:106:1
+✖ 2.3.0 input: page rules do not run and the complete output is the pinned legacy output (118.097208ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(catalog.SUPPORTED_CATALOG_VERSIONS.includes('2.3.0') && catalog.CATALOG_VERSION === '2.4.0')
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:116:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-rules.test.mjs:119:1
+✖ kit migrate 2.3 → 2.4 changes catalogVersion only; the tree and axes are kept and page rules apply on the next compile (1.007666ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '2.3.0' !== '2.4.0'
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/page-rules.test.mjs:122:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2.3.0',
+    expected: '2.4.0',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:14:1
+✖ contracts are structured data: each names a measured claim, a closed check kind and why (0.57475ms)
+  AssertionError [ERR_ASSERTION]: catalog exports variantContracts
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:16:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:28:1
+✖ V01 / Q14: a hero change that drops the product visual is not recommended, one that keeps it is (1.508917ms)
+  AssertionError [ERR_ASSERTION]: statement
+  + actual - expected
+  
+  + undefined
+  - false
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:34:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:41:1
+✖ V01 property: over every template, an option is flagged exactly when the hero loses a visual it had (1.354334ms)
+  AssertionError [ERR_ASSERTION]: saas-landing hero:centered
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:47:14)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:54:1
+✖ V02 / Q15: a card style that leaves a quarter or more of the cards untouched is not recommended (1.303458ms)
+  AssertionError [ERR_ASSERTION]: outline
+  + actual - expected
+  
+  + []
+  - [
+  -   'V02'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:57:117)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'V02' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:65:1
+✖ V03 / Q11: a column count that wraps a short KPI row is not recommended; other grids are not affected (0.818834ms)
+  AssertionError [ERR_ASSERTION]: dashboard-overview
+  + actual - expected
+  
+  + []
+  - [
+  -   'V03'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:67:70)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'V03' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:78:1
+✖ V04 / Q12: a centred heading over left-aligned content is not recommended; a centred heading over centred content is (1.221375ms)
+  AssertionError [ERR_ASSERTION]: saas-landing
+  + actual - expected
+  
+  + []
+  - [
+  -   'V04'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:80:83)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'V04' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:94:1
+✖ V05: an option measured to leave the rendered page unchanged is not recommended (neutral) (1.163208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'V05'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:99:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'V05' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/variant-contracts.test.mjs:110:1
+✖ assessLayout explains a combination: which rule, which slot, which claim (0.127875ms)
+  TypeError [Error]: catalog.assessLayout is not a function
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:112:21)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/variant-contracts.test.mjs:120:1
+✖ combos keep every id (nothing is deleted) and carry the rule ids that moved them out of the default list (312.550875ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /V01/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///Users/winterholic/development/projects/dsk-wt-variants/tests/variant-contracts.test.mjs:124:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /V01/,
+    operator: 'match',
+    diff: 'simple'
+  }

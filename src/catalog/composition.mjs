@@ -1,6 +1,6 @@
 /** Versioned compiler policy, not Blueprint options. Conditions refer only to facts derived from validated content.
  * Higher priority wins per field. Conflicting values at the same priority are a catalog authoring error. */
-export const COMPOSITION_VERSION = '1.2.0';
+export const COMPOSITION_VERSION = '1.3.0';
 export const PAGE_INTENT = {
   dashboard: 'operation', data: 'operation', listing: 'operation', settings: 'operation', community: 'operation',
   auth: 'form', form: 'form', article: 'reading', docs: 'reading', commerce: 'commerce',
@@ -43,6 +43,24 @@ export const compositionRules = [
   {id: 'C34', priority: 10, when: {type: 'feature-list'}, set: {role: 'capabilities'}, reason: 'Feature descriptions supply the minimum readable flow cell.'},
   {id: 'C35', priority: 10, when: {type: 'steps'}, set: {role: 'procedure'}, reason: 'Repeated steps reuse the same content-sized flow as other repeated information.'},
 ];
+/** Page-level decision table (composition 1.3.0, catalog 2.4.0+). Same shape and engine as compositionRules, but the facts describe the whole page
+ * (hero visual, the section that follows the hero, bento cell mix, repeated pictures) instead of one node. Still a closed table of plain values:
+ * no expressions, no consumer input. `claim` is the measured condition in scripts/design-qa/quality-claims.mjs. */
+export const pageRules = [
+  {id: 'P01', priority: 10, claim: 'Q13', source: 'docs/quality-diagnosis-2026-11-21.md C1', when: {heroArt: true}, set: {artStart: 'after-hero'},
+    reason: 'The hero picture is placement 0 of the six-scene rotation, so the first picture in the body takes the next scene instead of repeating it; art that cannot rotate (chart, device) is reported when it repeats.'},
+  {id: 'P02', priority: 10, claim: 'Q06', source: 'docs/quality-diagnosis-2026-11-21.md C2', when: {heroVariant: ['split', 'product'], heroVisual: false}, set: {heroForm: 'centered'},
+    reason: 'A split or product hero without a visual leaves its second column empty; it reads as a text-led centred hero.'},
+  {id: 'P03', priority: 10, claim: 'Q10', source: 'docs/quality-diagnosis-2026-11-21.md C5', when: {intent: ['marketing', 'general'], afterHero: 'plain-section'}, set: {afterHeroStep: 'none'},
+    reason: 'The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes.'},
+  {id: 'P04', priority: 10, claim: 'Q07', source: 'docs/quality-diagnosis-2026-11-21.md C3', when: {bentoSparse: true}, set: {bentoFill: 'report'},
+    reason: 'Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content.'},
+];
+/** Catalog versions whose output predates the page rules and is pinned byte for byte (docs/evidence/variants/legacy-2-3-hashes.json). */
+export const PAGE_RULE_LEGACY_VERSIONS = ['2.1.0', '2.2.0', '2.3.0'];
+/** The composition version those legacy inputs were compiled under; it is part of the pinned output (manifest.design.version, stylesheet comment). */
+export const LEGACY_COMPOSITION_VERSION = '1.2.0';
+
 // Mature contracts are reused explicitly; primitive components do not need cosmetic overrides.
 const inherited = [
   ['page tab', ['layout/parent', 'S09'], 'Structural nodes inherit page and panel rhythm without adding a surface.'],
@@ -74,4 +92,4 @@ for (const rule of compositionRules) if (typeof rule.when.type === 'string') {
   compositionCoverage[type].contracts.push(rule.id);
 }
 const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } return x; };
-freeze(PAGE_INTENT); freeze(compositionRules); freeze(compositionCoverage);
+freeze(PAGE_INTENT); freeze(compositionRules); freeze(compositionCoverage); freeze(pageRules); freeze(PAGE_RULE_LEGACY_VERSIONS);

@@ -201,7 +201,9 @@ function setThumbScale() {
 }
 
 /* ---------- 목록 그리기 ---------- */
-const badges = c => [c.sameAs && `<span class="badge" title="앞 조합과 같은 화면입니다(앞 슬롯의 변경이 뒤 슬롯의 조건을 없앰)">#${pad(c.sameAs)}과 같은 화면</span>`, c.changed >= 3 && `<span class="badge hot">${c.changed}곳 변경</span>`, c.experimental && `<span class="badge exp" title="진단에서 A 등급이 아니었습니다: ${e(c.experimental)}">실험</span>`].filter(Boolean).join('');
+/** 실험 표시의 이유: 진단 등급(C …)과 구성 변형 결과 계약(V01~V05)의 규칙 ID·주장 번호·사유. */
+const experimentalWhy = c => [c.experimental.startsWith('C ') ? '진단에서 A 등급이 아니었습니다: ' + c.experimental.split(' · ')[0] : null, ...(c.rules ?? []).map(r => `${r.rule}(${r.claim ?? '측정'}) ${r.slot}:${r.option} — ${r.detail}`)].filter(Boolean).join('\n');
+const badges = c => [c.sameAs && `<span class="badge" title="앞 조합과 같은 화면입니다(앞 슬롯의 변경이 뒤 슬롯의 조건을 없앰)">#${pad(c.sameAs)}과 같은 화면</span>`, c.changed >= 3 && `<span class="badge hot">${c.changed}곳 변경</span>`, c.experimental && `<span class="badge exp" title="${e(experimentalWhy(c))}">실험</span>`].filter(Boolean).join('');
 function cardHTML(c) {
   const flagged = !!findFlag(c.id);
   return `<article class="combo-card" data-id="${c.id}">
@@ -260,7 +262,7 @@ function renderViewer() {
   const flag = findFlag(combo.id);
   $('v-flag').setAttribute('aria-pressed', String(!!flag)); $('note-field').hidden = !flag; $('v-note').value = flag?.note ?? '';
   $('v-devices').innerHTML = deviceButtons();
-  const status = [result.ok ? null : '렌더 실패: ' + result.error, ...(result.notes ?? []), combo.sameAs ? `#${pad(combo.sameAs)}과 같은 화면` : null, combo.experimental ? '실험 구성: ' + combo.experimental : null, combo.id].filter(Boolean);
+  const status = [result.ok ? null : '렌더 실패: ' + result.error, ...(result.notes ?? []), combo.sameAs ? `#${pad(combo.sameAs)}과 같은 화면` : null, combo.experimental ? '실험 구성(기본 추천 아님): ' + experimentalWhy(combo).replace(/\n/g, ' / ') : null, combo.id].filter(Boolean);
   $('v-status').dataset.base = status.join(' · '); $('v-status').textContent = status.join(' · ');
   viewerPort?.apply();
 }
@@ -388,7 +390,7 @@ function boot() {
   $('total-count').textContent = fmt(all.length);
   const slots = slotFacets.length, options = slotFacets.reduce((n, f) => n + f.options.length, 0), same = all.filter(c => c.sameAs).length;
   const exp = all.filter(c => c.experimental).length;
-  $('head-line').textContent = `템플릿 ${templateList.length}개 × 구성 변형(${slots}종 슬롯, 선택지 ${options}개)의 곱이고, 컨셉 ${conceptIds.length}개가 템플릿과 시각 언어(테마·서체)를 묶습니다. 파일로 만들어 두지 않고 브라우저에서 그 자리에서 컴파일합니다. 진단에서 A 등급이 아니었던 ${fmt(exp)}개는 “실험”으로 표시하고 기본으로 숨깁니다(${GRADES_META.date ?? '진단 전'} 기준). ${same ? fmt(same) + '개는 앞 조합과 결과 화면이 같습니다.' : ''}`;
+  $('head-line').textContent = `템플릿 ${templateList.length}개 × 구성 변형(${slots}종 슬롯, 선택지 ${options}개)의 곱이고, 컨셉 ${conceptIds.length}개가 템플릿과 시각 언어(테마·서체)를 묶습니다. 파일로 만들어 두지 않고 브라우저에서 그 자리에서 컴파일합니다. 진단에서 A 등급이 아니었거나 구성 변형 결과 계약(V01~V05: 히어로 시각 요소 유지·카드 일괄 변경·한 줄 KPI·한 정렬축·렌더 차이)을 어긴 ${fmt(exp)}개는 “실험”으로 표시하고 기본으로 숨깁니다. 지우지 않으며 켜면 그대로 고를 수 있습니다(${GRADES_META.date ?? '진단 전'} 기준). ${same ? fmt(same) + '개는 앞 조합과 결과 화면이 같습니다.' : ''}`;
   $('exp-count').textContent = '(' + fmt(exp) + ')';
   $('version').textContent = 'CATALOG ' + CATALOG_VERSION;
   $('view-gallery').innerHTML = viewControlsHTML('g'); $('view-viewer').innerHTML = viewControlsHTML('v');
