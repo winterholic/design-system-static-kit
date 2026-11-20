@@ -270,6 +270,12 @@ export function bentoFeatureCSS() {
     + `${f} :is(.kit-art-box,.kit-card-media,.kit-chart-plot)>svg{position:absolute;inset:0;width:100%;height:100%}}`;
 }
 
+/** 흐름 안 도넛 카드의 링 크기. 링은 범례 옆에 남는 폭을 쓴다(min~max px). 범례(기본 칸 160px)가 아래로 접히지 않는 범위라서, 카드가 넓을 때만 커진다.
+ *  이웃이 더 큰 카드 행에서 링이 200px에 머물러 카드 아래가 비던 것(진단 A4, Q04: 142px)을 줄인다. 좁은 카드(범례가 아래로 접히는 폭)는 그대로다. */
+export const DONUT = {min: 200, max: 340, legend: 160};
+export const donutFitCSS = () => '[data-flow]>.kit-chart[data-kind=donut] .kit-chart-body{container-type:inline-size}'
+  + `[data-flow]>.kit-chart[data-kind=donut] .ch-donut{flex:0 0 clamp(${DONUT.min}px,calc(100cqw - var(--kit-sp-head) - ${DONUT.legend}px),${DONUT.max}px);max-width:none}`;
+
 /** 리비전 2에서 스타일시트 끝에 더하는 레이아웃 규약 CSS. used가 있으면 쓰는 부품의 규칙만 낸다(없으면 전부: 시험·문서용). */
 export function layoutContractCSS(used = null) {
   return [
@@ -277,6 +283,7 @@ export function layoutContractCSS(used = null) {
     '.kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}',
     '.kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}',
     ...STRETCH_ABSORB.map(({cell, body, foot}) => `[data-flow]>${cell} ${body}{flex:1 1 auto;align-content:center}[data-flow]>${cell} ${foot}{margin-top:auto}`),
+    ...(!used || used.has('chart') ? [donutFitCSS()] : []),
     ...(!used || used.has('bento') ? [bentoFeatureCSS()] : []),
   ].join('\n');
 }
