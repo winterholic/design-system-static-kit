@@ -1,0 +1,628 @@
+{
+  "evaluator": {
+    "model": "gpt-6.2-sol",
+    "provider": "OpenAI",
+    "note": "AI 평가자. 눈가림 상태에서 허용된 스크린샷과 brief의 purpose, audience, tone, contentFit만 참고했다. 라벨의 조립 방식을 추측하지 않았으며, 시각적 완성도와 brief 적합성만 평가했다."
+  },
+  "criteria": [
+    {
+      "key": "hierarchy",
+      "label": "정보 위계"
+    },
+    {
+      "key": "balance",
+      "label": "레이아웃 균형"
+    },
+    {
+      "key": "consistency",
+      "label": "시각적 일관성"
+    },
+    {
+      "key": "rhythm",
+      "label": "여백 리듬"
+    },
+    {
+      "key": "typography",
+      "label": "타이포그래피 조화"
+    },
+    {
+      "key": "fit",
+      "label": "콘텐츠와 시각 요소의 적합성"
+    }
+  ],
+  "inputs": {
+    "I01": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 3
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 3
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 3,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "큰 제목과 설치 CTA가 상단에서 빠르게 읽힌다.",
+          "balance": "히어로 이미지와 본문 카드가 넓은 화면에서 균형을 이룬다.",
+          "consistency": "카드·색·버튼 규칙이 대체로 반복된다.",
+          "rhythm": "긴 페이지의 섹션 간 간격이 고르게 이어진다.",
+          "typography": "제목과 본문의 크기 차가 분명하고 읽기 쉽다.",
+          "fit": "차트와 설치 코드는 맞지만 휴대폰 목업은 CLI 도구와 거리가 있다."
+        },
+        "B": {
+          "hierarchy": "대비가 강해 제목과 CTA가 분명하다.",
+          "balance": "넓은 여백과 그리드가 안정적이나 어두운 면적이 크다.",
+          "consistency": "다크 팔레트와 선형 그리드가 일관된다.",
+          "rhythm": "그리드 배경과 카드가 길게 반복되어 변화가 적다.",
+          "typography": "굵은 제목과 코드 글꼴의 조합이 개발 도구에 어울린다.",
+          "fit": "설치 코드와 차트는 맞지만 궤도 그래픽은 제품 근거와 직접 연결되지 않는다."
+        },
+        "C": {
+          "hierarchy": "중앙 히어로와 CTA가 쉽게 눈에 들어온다.",
+          "balance": "중앙 정렬과 넓은 콘텐츠 열이 안정적이다.",
+          "consistency": "밝은 톤은 유지되지만 그리드와 카드 장식의 비중이 다소 높다.",
+          "rhythm": "배경 변화가 섹션을 구분하지만 반복 패턴이 이어진다.",
+          "typography": "간결한 제목과 본문이 잘 읽힌다.",
+          "fit": "코드·차트는 맞고 제품 화면을 과장하지 않아 내용과 잘 맞는다."
+        }
+      },
+      "rank": {
+        "A": 1,
+        "B": 3,
+        "C": 1
+      },
+      "confidence": "medium",
+      "identical_screens": [],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. 세 화면의 시각 방향 차이가 보여 순위는 매겼지만 제품 시각물의 목적 적합성은 판단에 일부 주관성이 있다."
+    },
+    "I02": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 3
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 5
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 3,
+          "consistency": 3,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 2
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "짧은 히어로와 가입 영역의 순서는 명료하다.",
+          "balance": "통계와 가입 폼이 연달아 이어져 상단이 다소 붐빈다.",
+          "consistency": "보라색과 네온 포인트가 일관되지만 강조가 강하다.",
+          "rhythm": "빛나는 테두리와 카드가 반복되어 리듬이 단조롭다.",
+          "typography": "큰 한글 제목과 폼 라벨이 분명하다.",
+          "fit": "가입 중심 목적은 전달되나 화면이 기대감보다 강한 게임풍에 가깝다."
+        },
+        "B": {
+          "hierarchy": "히어로 다음 통계와 이메일 폼으로 시선이 자연스럽게 이어진다.",
+          "balance": "넓은 간격과 정돈된 폼이 안정적이다.",
+          "consistency": "청록 팔레트와 단순한 아이콘 사용이 잘 맞춰져 있다.",
+          "rhythm": "구획 간 간격 변화가 적절하고 과한 반복이 없다.",
+          "typography": "제목·설명·입력 라벨의 위계가 또렷하다.",
+          "fit": "제품 자료가 없는 프리런치에 불필요한 목업 없이 이메일 전환을 중심에 둔다."
+        },
+        "C": {
+          "hierarchy": "제목과 폼은 보이지만 히어로 주목도가 가입 목적과 분산된다.",
+          "balance": "큰 시각물과 폼 카드가 세로 흐름을 무겁게 만든다.",
+          "consistency": "보라색 효과와 빛나는 카드가 전반적으로 이어진다.",
+          "rhythm": "유사한 빛 효과 카드가 반복된다.",
+          "typography": "굵은 제목과 읽기 쉬운 입력 글꼴은 명료하다.",
+          "fit": "제품 화면 자료가 없다는 브리프와 맞지 않게 대시보드형 목업을 노출한다."
+        }
+      },
+      "rank": {
+        "A": 2,
+        "B": 1,
+        "C": 3
+      },
+      "confidence": "medium",
+      "identical_screens": [],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. 사전 출시 랜딩의 간결성 및 제품 화면 자료가 없다는 brief를 fit 판단에 반영했다."
+    },
+    "I03": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "히어로 문구와 체험 CTA가 선명하다.",
+          "balance": "히어로 시각물과 기능 섹션이 고르게 배치된다.",
+          "consistency": "카드·색상·버튼 규칙이 페이지 전반에서 안정적이다.",
+          "rhythm": "기능·후기·요금제 간 간격이 무리 없이 반복된다.",
+          "typography": "제목과 본문 크기가 잘 구별되고 가독성이 좋다.",
+          "fit": "업무 흐름 대시보드 시각물과 기능·요금 콘텐츠가 목적에 맞다."
+        },
+        "B": {
+          "hierarchy": "히어로 문구와 체험 CTA가 선명하다.",
+          "balance": "히어로와 본문 카드가 화면 폭에 맞춰 정돈된다.",
+          "consistency": "색상과 컴포넌트 규칙이 일관된다.",
+          "rhythm": "섹션 간 여백이 안정적으로 반복된다.",
+          "typography": "제목과 본문이 쉽게 구별된다.",
+          "fit": "업무용 SaaS 소개와 대시보드 시각물이 잘 맞는다."
+        },
+        "C": {
+          "hierarchy": "히어로 문구와 체험 CTA가 선명하다.",
+          "balance": "히어로와 본문 카드가 화면 폭에 맞춰 정돈된다.",
+          "consistency": "색상과 컴포넌트 규칙이 일관된다.",
+          "rhythm": "섹션 간 여백이 안정적으로 반복된다.",
+          "typography": "제목과 본문이 쉽게 구별된다.",
+          "fit": "업무용 SaaS 소개와 대시보드 시각물이 잘 맞는다."
+        }
+      },
+      "rank": {
+        "A": 1,
+        "B": 1,
+        "C": 1
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "B",
+          "C"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. B와 C는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    },
+    "I04": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 4
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "보고서 제목과 KPI 값이 분명한 순서로 읽힌다.",
+          "balance": "KPI, 차트, 목표, 표가 한 열로 안정적으로 정렬된다.",
+          "consistency": "중립 팔레트와 카드 테두리가 고르게 반복된다.",
+          "rhythm": "카드 간 간격과 구분선이 일정해 빠르게 훑기 쉽다.",
+          "typography": "숫자와 표 머리글의 글자 크기 차가 적절하다.",
+          "fit": "매출·계약·이탈 지표와 시각화가 영업 현황 목적에 맞다."
+        },
+        "B": {
+          "hierarchy": "보고서 제목과 KPI 값이 분명한 순서로 읽힌다.",
+          "balance": "KPI, 차트, 목표, 표가 한 열로 안정적으로 정렬된다.",
+          "consistency": "중립 팔레트와 카드 테두리가 고르게 반복된다.",
+          "rhythm": "카드 간 간격과 구분선이 일정해 빠르게 훑기 쉽다.",
+          "typography": "숫자와 표 머리글의 글자 크기 차가 적절하다.",
+          "fit": "매출·계약·이탈 지표와 시각화가 영업 현황 목적에 맞다."
+        },
+        "C": {
+          "hierarchy": "KPI와 차트 제목은 잘 보이나 화면의 첫 초점이 약간 분산된다.",
+          "balance": "시각화와 표 면적이 커서 일부 구간이 무겁다.",
+          "consistency": "색상과 표 스타일은 통일되어 있다.",
+          "rhythm": "차트·목표·표 사이 간격이 다소 넓게 끊긴다.",
+          "typography": "표와 KPI 숫자는 읽기 쉽고 대비가 좋다.",
+          "fit": "핵심 수치와 계약표가 업무 목적에 부합한다."
+        }
+      },
+      "rank": {
+        "A": 1,
+        "B": 1,
+        "C": 3
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "A",
+          "B"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. A와 B는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    },
+    "I05": {
+      "scores": {
+        "A": {
+          "hierarchy": 3,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 4
+        },
+        "B": {
+          "hierarchy": 3,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 4
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "페이지 제목은 분명하나 네 KPI가 세로로 길게 이어져 핵심 요약이 약하다.",
+          "balance": "카드가 한 열에 쌓여 화면 공간 활용이 제한된다.",
+          "consistency": "색과 카드 규칙은 안정적으로 반복된다.",
+          "rhythm": "단일 열 카드 반복으로 세로 리듬이 단조롭다.",
+          "typography": "제목·수치·설명 간 글자 위계는 명료하다.",
+          "fit": "진행·지연·할 일 정보는 목적에 맞고 차트와 표도 포함한다."
+        },
+        "B": {
+          "hierarchy": "페이지 제목은 분명하나 네 KPI가 세로로 길게 이어져 핵심 요약이 약하다.",
+          "balance": "카드가 한 열에 쌓여 화면 공간 활용이 제한된다.",
+          "consistency": "색과 카드 규칙은 안정적으로 반복된다.",
+          "rhythm": "단일 열 카드 반복으로 세로 리듬이 단조롭다.",
+          "typography": "제목·수치·설명 간 글자 위계는 명료하다.",
+          "fit": "진행·지연·할 일 정보는 목적에 맞고 차트와 표도 포함한다."
+        },
+        "C": {
+          "hierarchy": "요약 제목 다음 네 KPI가 묶여 정보 우선순위가 빠르게 파악된다.",
+          "balance": "차트와 집중할 일 패널을 나눠 데스크톱 공간을 잘 쓴다.",
+          "consistency": "카드, 라벨, 표가 같은 시각 규칙을 따른다.",
+          "rhythm": "KPI·차트·할 일·최근 작업의 흐름에 적절한 간격 변화가 있다.",
+          "typography": "수치와 업무 항목의 크기 대비가 안정적이다.",
+          "fit": "지연과 우선 업무를 찾는 팀 리더 목적에 맞는 구성이 잘 드러난다."
+        }
+      },
+      "rank": {
+        "A": 2,
+        "B": 2,
+        "C": 1
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "A",
+          "B"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. A와 B는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    },
+    "I06": {
+      "scores": {
+        "A": {
+          "hierarchy": 3,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 4
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "C": {
+          "hierarchy": 3,
+          "balance": 3,
+          "consistency": 4,
+          "rhythm": 3,
+          "typography": 4,
+          "fit": 4
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "KPI 다음 직군 차트와 칸반이 이어지지만 칸반 일부가 가로로 잘린다.",
+          "balance": "모바일에서 칸반 열이 화면 밖으로 이어져 균형이 약해진다.",
+          "consistency": "중립색과 채용 카드 스타일은 일관된다.",
+          "rhythm": "KPI 카드 반복 뒤 칸반으로 넘어가는 간격이 무난하다.",
+          "typography": "수치·직군·지원자 카드의 글자 구분은 선명하다.",
+          "fit": "인원 지표와 채용 단계가 브리프에 맞지만 모바일 칸반 가시성이 아쉽다."
+        },
+        "B": {
+          "hierarchy": "제목·KPI·직군 차트·칸반 순서가 이해하기 쉽다.",
+          "balance": "카드 묶음과 단계별 칸반의 폭 배분이 균형적이다.",
+          "consistency": "차트, 카드, 상태 라벨의 색과 모서리가 통일되어 있다.",
+          "rhythm": "요약에서 차트, 칸반으로 자연스럽게 전환된다.",
+          "typography": "큰 수치와 지원자 이름의 위계가 명확하다.",
+          "fit": "직군별 인원과 채용 단계가 한 화면의 목적에 직접 대응한다."
+        },
+        "C": {
+          "hierarchy": "KPI 다음 차트와 칸반이 이어지지만 칸반 일부가 가로로 잘린다.",
+          "balance": "모바일에서 칸반 열이 화면 밖으로 이어져 균형이 약해진다.",
+          "consistency": "중립색과 채용 카드 스타일은 일관된다.",
+          "rhythm": "KPI 카드 반복 뒤 칸반으로 넘어가는 간격이 무난하다.",
+          "typography": "수치·직군·지원자 카드의 글자 구분은 선명하다.",
+          "fit": "인원 지표와 채용 단계가 브리프에 맞지만 모바일 칸반 가시성이 아쉽다."
+        }
+      },
+      "rank": {
+        "A": 2,
+        "B": 1,
+        "C": 2
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "A",
+          "C"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. A와 C는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    },
+    "I07": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 5,
+          "fit": 5
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 5,
+          "fit": 5
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "제목과 소제목, 인용이 읽기 순서를 잘 만든다.",
+          "balance": "본문 정렬선과 이미지 폭이 안정적으로 유지된다.",
+          "consistency": "종이빛 배경과 갈색 포인트가 한 톤으로 이어진다.",
+          "rhythm": "문단·인용·체크리스트 사이 간격이 읽는 리듬을 만든다.",
+          "typography": "세리프 본문과 제목이 에세이 톤에 잘 어울리고 편안하다.",
+          "fit": "이미지·인용·체크 항목이 규칙에 관한 에세이를 뒷받침한다."
+        },
+        "B": {
+          "hierarchy": "제목과 소제목, 인용이 읽기 순서를 잘 만든다.",
+          "balance": "본문 정렬선과 이미지 폭이 안정적으로 유지된다.",
+          "consistency": "종이빛 배경과 갈색 포인트가 한 톤으로 이어진다.",
+          "rhythm": "문단·인용·체크리스트 사이 간격이 읽는 리듬을 만든다.",
+          "typography": "세리프 본문과 제목이 에세이 톤에 잘 어울리고 편안하다.",
+          "fit": "이미지·인용·체크 항목이 규칙에 관한 에세이를 뒷받침한다."
+        },
+        "C": {
+          "hierarchy": "제목과 본문 구획이 명확하게 이어진다.",
+          "balance": "넓은 본문 열과 큰 이미지가 균형을 유지한다.",
+          "consistency": "차분한 배경과 포인트 컬러가 대체로 통일되어 있다.",
+          "rhythm": "섹션 간 공백이 넓어 읽는 속도가 느려지는 부분이 있다.",
+          "typography": "본문 글꼴은 읽기 쉽지만 에세이의 인쇄물 같은 인상은 상대적으로 약하다.",
+          "fit": "인용과 체크리스트가 내용에 맞지만 장식의 조화가 한 단계 덜 섬세하다."
+        }
+      },
+      "rank": {
+        "A": 1,
+        "B": 1,
+        "C": 3
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "A",
+          "B"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. A와 B는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    },
+    "I08": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 5
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 5
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "문서 제목과 단계 제목이 분명해 따라갈 순서가 보인다.",
+          "balance": "본문과 코드 블록이 안정적으로 정렬되어 있다.",
+          "consistency": "경고·코드·표의 공통 스타일이 이어진다.",
+          "rhythm": "단계 사이 구분선과 간격이 탐색을 돕는다.",
+          "typography": "코드와 표의 글자 크기가 읽기 편하다.",
+          "fit": "설치·인증·요청·오류 정보와 예제가 API 시작 목적에 맞다."
+        },
+        "B": {
+          "hierarchy": "제목, 섹션, 코드 예제가 위에서 아래로 자연스럽게 이어진다.",
+          "balance": "사이드 탐색과 본문 폭이 안정적으로 나뉜다.",
+          "consistency": "코드·경고·표가 통일된 구성요소로 보인다.",
+          "rhythm": "긴 설명 속에 적절한 구획과 여백이 반복된다.",
+          "typography": "코드 구문 색과 본문 위계가 가독성을 돕는다.",
+          "fit": "사이드 목차, 설치 명령, 매개변수와 오류 표가 참고 문서 목적에 매우 잘 맞는다."
+        },
+        "C": {
+          "hierarchy": "제목, 섹션, 코드 예제가 위에서 아래로 자연스럽게 이어진다.",
+          "balance": "사이드 탐색과 본문 폭이 안정적으로 나뉜다.",
+          "consistency": "코드·경고·표가 통일된 구성요소로 보인다.",
+          "rhythm": "긴 설명 속에 적절한 구획과 여백이 반복된다.",
+          "typography": "코드 구문 색과 본문 위계가 가독성을 돕는다.",
+          "fit": "사이드 목차, 설치 명령, 매개변수와 오류 표가 참고 문서 목적에 매우 잘 맞는다."
+        }
+      },
+      "rank": {
+        "A": 3,
+        "B": 1,
+        "C": 1
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "B",
+          "C"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. B와 C는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    },
+    "I09": {
+      "scores": {
+        "A": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "B": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 4
+        },
+        "C": {
+          "hierarchy": 4,
+          "balance": 4,
+          "consistency": 4,
+          "rhythm": 4,
+          "typography": 4,
+          "fit": 3
+        }
+      },
+      "rationale": {
+        "A": {
+          "hierarchy": "짧은 제목과 소제목, 인용이 글의 진행을 안내한다.",
+          "balance": "본문과 이미지가 한 중심축에 놓여 안정적이다.",
+          "consistency": "차분한 배경과 갈색 계열 강조가 유지된다.",
+          "rhythm": "짧은 글 길이에 맞게 섹션 간격이 과하지 않다.",
+          "typography": "세리프 제목과 단정한 본문이 조용한 읽기 톤과 맞는다.",
+          "fit": "이미지·인용·태그가 규칙에 관한 글을 보완한다."
+        },
+        "B": {
+          "hierarchy": "짧은 제목과 소제목, 인용이 글의 진행을 안내한다.",
+          "balance": "본문과 이미지가 한 중심축에 놓여 안정적이다.",
+          "consistency": "차분한 배경과 갈색 계열 강조가 유지된다.",
+          "rhythm": "짧은 글 길이에 맞게 섹션 간격이 과하지 않다.",
+          "typography": "세리프 제목과 단정한 본문이 조용한 읽기 톤과 맞는다.",
+          "fit": "이미지·인용·태그가 규칙에 관한 글을 보완한다."
+        },
+        "C": {
+          "hierarchy": "짧은 제목과 사진이 시선을 끌고 본문 흐름도 따라가기 쉽다.",
+          "balance": "넓은 글 열과 사진 배치가 무난하게 균형을 이룬다.",
+          "consistency": "색과 카드 스타일은 안정적이다.",
+          "rhythm": "문단과 태그 사이의 간격이 조금 넓게 느껴진다.",
+          "typography": "산세리프 위주 표현으로 읽기 쉽지만 요청된 조용한 글맛은 덜하다.",
+          "fit": "글과 사진은 맞으나 다음 글로 이어지는 시각 단서는 약하다."
+        }
+      },
+      "rank": {
+        "A": 1,
+        "B": 1,
+        "C": 3
+      },
+      "confidence": "high",
+      "identical_screens": [
+        [
+          "A",
+          "B"
+        ]
+      ],
+      "note": "A/B/C 각 라벨의 320·390·768·1440px 전체 페이지 스크린샷을 확인해 평가했다. A와 B는 네 폭 모두 화면이 동일해 같은 점수와 순위를 부여했다."
+    }
+  }
+}

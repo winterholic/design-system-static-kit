@@ -1,0 +1,611 @@
+{
+ "evaluator": {
+  "model": "Claude Sonnet 5.5 (claude-sonnet-5-5)",
+  "provider": "Anthropic",
+  "note": "생성자(Claude 계열)와 같은 제공사라 독립 평가자 조건을 충족하지 못한다. GPT 계열 평가(blind-verdicts-gpt.json)와 비교하는 보조 평가로만 쓴다. AI 평가이며 사람 레이블로 검증되지 않았다."
+ },
+ "protocol": "blind/ 이미지 108장과 inputs.json의 brief만 보았다. key.json 등 해제 가능 파일은 열지 않았다. 이 평가자는 byte-identical 이미지를 해시로 확인해 동점 판단에 썼다(blind/ 이미지만 사용).",
+ "criteria": [
+  "hierarchy",
+  "balance",
+  "consistency",
+  "rhythm",
+  "typography",
+  "fit"
+ ],
+ "inputs": {
+  "I01": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 2
+    },
+    "B": {
+     "hierarchy": 3,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "큰 제목과 CTA가 분명하다",
+     "balance": "좌 텍스트·우 시각 요소로 균형",
+     "consistency": "톤이 한 제품처럼 통일",
+     "rhythm": "섹션 간격이 고르다",
+     "typography": "제목·본문 대비 안정",
+     "fit": "소비자 앱 폰 목업은 CLI 빌드 도구 랜딩과 어긋난다"
+    },
+    "B": {
+     "hierarchy": "가운데 정렬 히어로가 작고 시각 닻이 없어 약하다",
+     "balance": "좌우 대칭으로 안정",
+     "consistency": "일관됨",
+     "rhythm": "간격 고르다",
+     "typography": "무난",
+     "fit": "시각 요소 없이 코드 블록이 바로 나와 개발자 도구에 맞다"
+    },
+    "C": {
+     "hierarchy": "큰 흰 제목과 대비 있는 CTA",
+     "balance": "히어로·벤토 모두 균형",
+     "consistency": "어두운 테마가 끝까지 일관",
+     "rhythm": "섹션 리듬 양호",
+     "typography": "제목 크기 대비 좋다",
+     "fit": "어두운 개발자 도구 톤, 추상 동심원은 장식이나 무해"
+    }
+   },
+   "rank": {
+    "A": 3,
+    "B": 2,
+    "C": 1
+   },
+   "confidence": "medium",
+   "identical_screens": [],
+   "note": "A의 결정적 약점은 제품과 맞지 않는 폰 목업."
+  },
+  "I02": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 3,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 3,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 2
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "큰 제목, 통계, 폼 순서가 읽힌다",
+     "balance": "가운데 정렬로 균형",
+     "consistency": "보라 네온 글로우와 노랑 배지가 다소 시끄럽다",
+     "rhythm": "섹션 간격 양호",
+     "typography": "굵은 제목과 본문 대비 좋다",
+     "fit": "출시 전 한 화면 랜딩에 시각 요소 없이 맞다"
+    },
+    "B": {
+     "hierarchy": "제목과 통계 위계 명확",
+     "balance": "좌 텍스트·우 궤도 장식으로 균형",
+     "consistency": "청록 계열로 차분하고 통일",
+     "rhythm": "리듬 양호",
+     "typography": "타이포 안정",
+     "fit": "추상 장식이라 제품 자료 없음과 충돌하지 않는다. 좁은 폭 헤더는 로그인 버튼이 로고 옆에 끼어 어색"
+    },
+    "C": {
+     "hierarchy": "제목이 보이지만 목업이 시선을 가져간다",
+     "balance": "좌 목업·우 텍스트로 균형",
+     "consistency": "A와 같은 네온 톤",
+     "rhythm": "리듬 양호",
+     "typography": "A와 같음",
+     "fit": "출시 전이라 제품 화면이 없는데 앱 목업이 있어 허구의 제품 화면처럼 보인다"
+    }
+   },
+   "rank": {
+    "A": 2,
+    "B": 1,
+    "C": 3
+   },
+   "confidence": "low",
+   "identical_screens": [],
+   "note": "A와 B 차이는 작다. C 꼴찌는 비교적 확실."
+  },
+  "I03": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "히어로·섹션 제목 위계 명확",
+     "balance": "좌우 균형",
+     "consistency": "일관",
+     "rhythm": "단계 섹션이 카드, 후기 띠 배경으로 구획",
+     "typography": "무난",
+     "fit": "차트형 히어로와 흐름도가 내용에 맞다"
+    },
+    "B": {
+     "hierarchy": "A와 같은 위계",
+     "balance": "같음",
+     "consistency": "같음",
+     "rhythm": "단계는 카드 없는 목록, 후기는 흰 배경",
+     "typography": "같음",
+     "fit": "같음"
+    },
+    "C": {
+     "hierarchy": "B와 같은 화면",
+     "balance": "B와 같은 화면",
+     "consistency": "B와 같은 화면",
+     "rhythm": "B와 같은 화면",
+     "typography": "B와 같은 화면",
+     "fit": "B와 같은 화면"
+    }
+   },
+   "rank": {
+    "A": 1,
+    "B": 1,
+    "C": 1
+   },
+   "confidence": "medium",
+   "identical_screens": [
+    [
+     "B",
+     "C"
+    ]
+   ],
+   "note": "A는 단계 카드와 후기 띠 배경, FAQ 2열 배치만 다르고 우열을 가를 근거가 없다. B와 C는 바이트 단위로 동일."
+  },
+  "I04": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 3,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 3,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "KPI 큰 숫자, 차트, 표 순서가 명확",
+     "balance": "KPI와 차트 두 칼럼 균형",
+     "consistency": "도넛에 탁한 분홍·회색이 섞여 파랑 계열과 어긋난다",
+     "rhythm": "섹션 간격 고름",
+     "typography": "숫자 대비 좋음",
+     "fit": "대시보드 차트 구성이 내용에 맞다"
+    },
+    "B": {
+     "hierarchy": "A와 같은 화면",
+     "balance": "A와 같은 화면",
+     "consistency": "A와 같은 화면",
+     "rhythm": "A와 같은 화면",
+     "typography": "A와 같은 화면",
+     "fit": "A와 같은 화면"
+    },
+    "C": {
+     "hierarchy": "A와 같은 위계",
+     "balance": "같음",
+     "consistency": "도넛이 파랑 계열로 통일되고 표에 담당자 아바타가 있다",
+     "rhythm": "같음",
+     "typography": "같음",
+     "fit": "같음. 좁은 폭에서 KPI 카드 높이가 조금 들쭉날쭉"
+    }
+   },
+   "rank": {
+    "A": 2,
+    "B": 2,
+    "C": 1
+   },
+   "confidence": "low",
+   "identical_screens": [
+    [
+     "A",
+     "B"
+    ]
+   ],
+   "note": "차이는 팔레트와 표 아바타뿐이라 작다."
+  },
+  "I05": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 3,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 3,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "KPI, 차트, 표 순서 명확",
+     "balance": "오른쪽 할 일 카드가 상자 안 상자라 무겁고 첫 항목이 세 줄로 줄바꿈된다",
+     "consistency": "일관",
+     "rhythm": "간격 고름",
+     "typography": "무난",
+     "fit": "현황 화면 구성에 맞다"
+    },
+    "B": {
+     "hierarchy": "A와 같은 화면",
+     "balance": "A와 같은 화면",
+     "consistency": "A와 같은 화면",
+     "rhythm": "A와 같은 화면",
+     "typography": "A와 같은 화면",
+     "fit": "A와 같은 화면"
+    },
+    "C": {
+     "hierarchy": "같음",
+     "balance": "할 일이 구분선 목록이라 가볍고 한 줄씩 읽힌다",
+     "consistency": "같음",
+     "rhythm": "같음",
+     "typography": "같음",
+     "fit": "같음"
+    }
+   },
+   "rank": {
+    "A": 2,
+    "B": 2,
+    "C": 1
+   },
+   "confidence": "low",
+   "identical_screens": [
+    [
+     "A",
+     "B"
+    ]
+   ],
+   "note": "차이는 할 일 목록 표현 하나."
+  },
+  "I06": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 3,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 3,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "KPI, 차트, 칸반 순서 명확",
+     "balance": "768px에서 사이드바가 폭을 먹어 칸반이 두 칸 반만 보이고 잘린다",
+     "consistency": "일관",
+     "rhythm": "간격 고름",
+     "typography": "안정",
+     "fit": "직군별 막대와 칸반이 내용에 맞다"
+    },
+    "B": {
+     "hierarchy": "같음",
+     "balance": "상단 내비 구조로 768px에서 칸반 세 칸이 보인다. 1440px에서는 카드 제목이 두 줄로 꺾인다",
+     "consistency": "같음",
+     "rhythm": "같음",
+     "typography": "같음",
+     "fit": "같음"
+    },
+    "C": {
+     "hierarchy": "A와 같은 화면",
+     "balance": "A와 같은 화면",
+     "consistency": "A와 같은 화면",
+     "rhythm": "A와 같은 화면",
+     "typography": "A와 같은 화면",
+     "fit": "A와 같은 화면"
+    }
+   },
+   "rank": {
+    "A": 2,
+    "B": 1,
+    "C": 2
+   },
+   "confidence": "low",
+   "identical_screens": [
+    [
+     "A",
+     "C"
+    ]
+   ],
+   "note": "셸 구조(사이드바 대 상단 내비) 차이이며 폭에 따라 장단이 갈린다."
+  },
+  "I07": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 3,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 3,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "굵은 명조 제목이 분명하다",
+     "balance": "한 정렬선에서 읽힌다",
+     "consistency": "일관",
+     "rhythm": "간격 양호",
+     "typography": "제목 명조, 본문 고딕 짝이 안정적",
+     "fit": "에세이에 사진·인용·목록이 맞다"
+    },
+    "B": {
+     "hierarchy": "A와 같은 화면",
+     "balance": "A와 같은 화면",
+     "consistency": "A와 같은 화면",
+     "rhythm": "A와 같은 화면",
+     "typography": "A와 같은 화면",
+     "fit": "A와 같은 화면"
+    },
+    "C": {
+     "hierarchy": "가는 명조에 연한 회색이라 제목과 본문 위계가 약하다",
+     "balance": "같음",
+     "consistency": "일관",
+     "rhythm": "양호",
+     "typography": "자간이 넓고 대비가 낮아 읽기 힘들다",
+     "fit": "인쇄물 톤에는 맞다"
+    }
+   },
+   "rank": {
+    "A": 1,
+    "B": 1,
+    "C": 3
+   },
+   "confidence": "low",
+   "identical_screens": [
+    [
+     "A",
+     "B"
+    ]
+   ],
+   "note": "C는 톤이 더 맞지만 대비가 낮다."
+  },
+  "I08": {
+   "scores": {
+    "A": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "B": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "제목, 섹션, 코드 순서 명확",
+     "balance": "본문과 목차 균형",
+     "consistency": "일관",
+     "rhythm": "'자주 묻는 질문' 제목이 앞 카드에 붙어 있다",
+     "typography": "안정",
+     "fit": "설치 탭, 코드, 표가 기술 문서에 맞다. 좁은 폭 상단 탭이 잘리는 결함은 세 라벨 공통"
+    },
+    "B": {
+     "hierarchy": "같음",
+     "balance": "같음",
+     "consistency": "같음",
+     "rhythm": "같음. 표에 세로선이 없다",
+     "typography": "같음",
+     "fit": "같음"
+    },
+    "C": {
+     "hierarchy": "B와 같은 화면",
+     "balance": "B와 같은 화면",
+     "consistency": "B와 같은 화면",
+     "rhythm": "B와 같은 화면",
+     "typography": "B와 같은 화면",
+     "fit": "B와 같은 화면"
+    }
+   },
+   "rank": {
+    "A": 1,
+    "B": 1,
+    "C": 1
+   },
+   "confidence": "medium",
+   "identical_screens": [
+    [
+     "B",
+     "C"
+    ]
+   ],
+   "note": "A는 표 세로선만 다르다. B와 C는 바이트 단위로 동일."
+  },
+  "I09": {
+   "scores": {
+    "A": {
+     "hierarchy": 3,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 3
+    },
+    "B": {
+     "hierarchy": 3,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 4,
+     "fit": 3
+    },
+    "C": {
+     "hierarchy": 4,
+     "balance": 4,
+     "consistency": 4,
+     "rhythm": 4,
+     "typography": 3,
+     "fit": 4
+    }
+   },
+   "rationale": {
+    "A": {
+     "hierarchy": "1440px에서 제목이 소제목과 크기 차이가 작다",
+     "balance": "균형",
+     "consistency": "일관",
+     "rhythm": "양호",
+     "typography": "고딕 본문이 읽기 쉽다",
+     "fit": "고딕이라 조용하고 개인적인 글 톤이 덜하다"
+    },
+    "B": {
+     "hierarchy": "A와 같은 화면",
+     "balance": "A와 같은 화면",
+     "consistency": "A와 같은 화면",
+     "rhythm": "A와 같은 화면",
+     "typography": "A와 같은 화면",
+     "fit": "A와 같은 화면"
+    },
+    "C": {
+     "hierarchy": "큰 명조 제목으로 위계가 선명하다",
+     "balance": "균형",
+     "consistency": "일관",
+     "rhythm": "양호",
+     "typography": "자간이 넓고 대비가 낮다. 구독 버튼 글자 대비도 낮다",
+     "fit": "명조 본문이 조용한 개인 글 톤에 맞다"
+    }
+   },
+   "rank": {
+    "A": 2,
+    "B": 2,
+    "C": 1
+   },
+   "confidence": "low",
+   "identical_screens": [
+    [
+     "A",
+     "B"
+    ]
+   ],
+   "note": "I07과 같은 서체 차이인데 결과가 반대로 나온다. 평가자 자신의 일관성 한계."
+  }
+ }
+}
