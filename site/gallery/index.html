@@ -408,8 +408,8 @@ const {layoutSlots, applyLayout, layoutSlotIds} = __m("catalog/variants.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
 { const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
-const CATALOG_VERSION = '2.3.0';
-const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', CATALOG_VERSION]);
+const CATALOG_VERSION = '2.4.0';
+const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
 const BLUEPRINT_VERSION = '2.0';
 const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 
@@ -2768,6 +2768,20 @@ const FLOW = {
   maxItems: 12,
 };
 
+/** Layout revision. Catalog 2.1.0–2.3.0 blueprints keep revision 1 byte for byte (pinned in docs/evidence/layout-refine/legacy-2-3-hashes.json);
+ *  2.4.0 and later use revision 2: fixed-count grids (hero facts, photo menu) are flows, titles fit their column, wrap follows the role, form fields pair up. */
+const LEGACY_LAYOUT_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0']);
+const layoutRev = b => (!b?.catalogVersion || LEGACY_LAYOUT_VERSIONS.includes(b.catalogVersion) ? 1 : 2);
+
+/** 칸이 작아 FLOW.minCell(240)을 쓸 수 없는 흐름의 예산. 열 수 선택 알고리즘은 그대로이고 밴드만 바뀐다(`flowBreakpoints`).
+ *  gap은 그 부품이 실제로 쓰는 간격 토큰 값이어야 한다: 밴드는 이 값으로 계산되고 CSS gap은 토큰이 정한다. */
+const FLOW_BUDGETS = {
+  fact: {minCell: 72, use: '히어로 수치(값 한 줄 + 라벨). 3개면 세 칸이 들어갈 때만 3열, 아니면 한 열이다(2+1 없음).'},
+  photo: {minCell: 180, use: '사진 메뉴 카드(4:3 사진 + 이름·가격).'},
+  stat: {minCell: 120, use: '프로필 수치(값 + 라벨, 칸마다 왼쪽 구분선).'},
+  choice: {minCell: 200, use: '라디오 선택지 카드.'},
+};
+
 /** n개 항목을 maxCols열 이하에서 놓을 때 고를 열 수. 마지막 줄이 가득 차면 0점, 한 칸만 남으면 100점, 두 칸 이상이면 1점이고, 열이 많을수록 조금 낫다(같은 점수면 더 많은 열).
  *  span이 켜진 흐름은 2열에서 마지막 한 칸이 줄 전체를 쓰는 것을 고아로 보지 않는다(글 카드의 의도한 마무리). */
 function bestCols(n, maxCols, {span = false} = {}) {
@@ -2877,15 +2891,31 @@ function bentoPlan(children) {
 }
 
 // ---------- CSS lint ----------
-/** `repeat(N,…)`·`repeat(auto-fit,…)`로 같은 크기 칸을 늘어놓는 격자는 흐름(flow) 원시 요소의 일이다. 아래 선택자만 직접 선언할 수 있고, 나머지 부품은 흐름 표지(data-flow)를 쓴다.
- *  앞쪽은 흐름의 기본값(CSS 미지원 환경의 대체값)이고, 뒤쪽은 항목 수가 정해져 있는 구조 틀(폼 필드·메가메뉴·히어로 수치·달력 …)이다. */
-const EQUAL_COLUMNS_OK = [
-  '.kit-grid', '.kit-plans', '.kit-features', '.kit-gallery', '.kit-steps[data-layout=horizontal]', '.kit-team', '.kit-menu', '.kit-bento', '.kit-split',
-  '.kit-profile-stats', '.kit-hero-facts', '.kit-mega-panel', '.kit-form', '.kit-choice', '.kit-calendar', '.kit-cal-',
-  '.kit-hero[data-design-kind=hero]',
+/** `repeat(N,…)`·`repeat(auto-fit,…)`로 같은 크기 칸을 늘어놓는 격자는 흐름(flow) 원시 요소의 일이다. 아래 선택자만 직접 선언할 수 있고, 나머지 부품은 흐름 표지(data-flow)를 쓴다. */
+
+/** 흐름의 기본값(CSS 미지원 환경의 대체값). 흐름 표지가 붙으면 `[data-flow][data-n=…]` 규칙이 이 선언을 덮는다. */
+const FLOW_FALLBACKS = [
+  '.kit-grid', '.kit-plans', '.kit-features', '.kit-gallery', '.kit-steps[data-layout=horizontal]', '.kit-team', '.kit-menu[data-layout=grid]', '.kit-bento',
 ];
-/** CSS 텍스트에서 허용 목록 밖의 반복 격자 선언을 찾는다. [{selector, value}] */
-function lintLayout(css) {
+
+/** 고정 개수 구조 틀. 항목 수가 구조로 정해져 있어 흐름을 쓰지 않는 격자다. 틀마다 `proof`(tests/layout.test.mjs의 FRAME_PROOFS 키)가 있어야 하고,
+ *  그 증명이 "어떤 폭에서도 마지막 줄에 한 칸만 남지 않는다"를 실제로 계산한다. 증명 없이 목록에 더하지 못한다(진단 공통 원인 1: `.kit-hero-facts`는 항목이 3개로 정해져 있어도 2+1이 났다). */
+const FIXED_FRAMES = [
+  {selector: '.kit-split', proof: 'two-cells', why: '글과 시각 요소 두 칸이 구조다(자식 노드 2개). 한 열 또는 2열이라 한 칸만 남는 줄이 없다.'},
+  {selector: '.kit-mega-panel', proof: 'mega-span', why: '드롭다운 패널은 항목이 3~9개(전체 보기 1 + 하위 2~8)라 홀수일 수 있다. 2열에서 홀수면 마지막 칸이 줄 전체를 쓴다(리비전 2).'},
+  {selector: '.kit-form', proof: 'form-pairs', why: '2열 폼은 렌더러가 짝 없는 반폭 필드를 전폭으로 올린다(`pairFields`).'},
+  {selector: '.kit-hero[data-design-kind=hero]', proof: 'two-cells', why: '히어로는 글 칸과 시각 칸 두 칸이다.'},
+];
+
+/** 리비전 1(카탈로그 2.1.0~2.3.0)의 출력에만 남은 직접 선언. 출력이 바이트 단위로 고정돼 있어 지울 수 없고, 리비전 2는 `refineLayout`이 이 선언을 제거한다. */
+const REV1_GRIDS = ['.kit-hero-facts', '.kit-menu[data-layout=photo]', '.kit-profile-stats', '.kit-choice'];
+
+/** 이 목록은 호환을 위한 이름이다(원시 소스 CSS를 린트할 때 쓰는 전체 허용 목록). */
+const EQUAL_COLUMNS_OK = [...FLOW_FALLBACKS, ...FIXED_FRAMES.map(f => f.selector), ...REV1_GRIDS];
+
+/** CSS 텍스트에서 허용 목록 밖의 반복 격자 선언을 찾는다. [{selector, value}]. strict면 리비전 1 전용 선언도 허용하지 않는다(리비전 2의 완성된 스타일시트용). */
+function lintLayout(css, {strict = false} = {}) {
+  const ok = strict ? [...FLOW_FALLBACKS, ...FIXED_FRAMES.map(f => f.selector)] : EQUAL_COLUMNS_OK;
   const out = [];
   for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     const sel = selector.trim().replace(/\s+/g, ' ');
@@ -2895,10 +2925,59 @@ function lintLayout(css) {
       if (decl.slice(0, i).trim() !== 'grid-template-columns') continue;
       const value = decl.slice(i + 1).replace(/!important/, '').trim();
       if (!/^repeat\(/.test(value)) continue;
-      if (/data-flow/.test(sel) || EQUAL_COLUMNS_OK.some(s => sel.includes(s))) continue;
+      if (/data-flow/.test(sel) || ok.some(s => sel.includes(s))) continue;
       out.push({selector: sel.slice(0, 80), value: value.slice(0, 60)});
     }
   }
+  return out;
+}
+
+/** 리비전 2 전용 CSS 편집. [원본 조각, 대체]. 원본 조각은 소스 CSS에 정확히 한 번 있어야 하고(시험이 확인한다), 없으면 조용히 건너뛰지 않고 오류다.
+ *  열 수를 직접 정하던 선언을 지우고(열 수는 흐름 표지가 정한다) 간격을 spacing 역할로 바꾸며, 텍스트 행을 나열(cluster) 원시 요소로 만든다. */
+const REV2_EDITS = [
+  ['.kit-hero-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:var(--kit-gap);', '.kit-hero-facts{display:grid;gap:var(--kit-sp-item);'],
+  ['.kit-menu[data-layout=photo] ul{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--kit-gap)}', '.kit-menu[data-layout=photo] ul{gap:var(--kit-gap)}'],
+  ['.kit-profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:', '.kit-profile-stats{display:grid;margin:'],
+  ['.kit-choice:has(input[type=radio]){display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--kit-sp-near)}', '.kit-choice:has(input[type=radio]){display:grid;gap:var(--kit-sp-near)}'],
+  ['.kit-menu-row{display:flex;align-items:baseline;gap:4px;width:100%}', '.kit-menu-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px;width:100%}'],
+];
+
+/** 2열 폼에서 한 줄 전체를 쓰는 필드 종류(CSS: textarea 필드와 선택 묶음). 그 밖의 필드는 반폭이다. */
+const FULL_WIDTH_FIELDS = ['textarea', 'radio', 'checkbox', 'switch'];
+/** 2열 폼에서 짝이 없는 반폭 필드의 인덱스 집합. 전폭 필드가 줄을 끊으므로, 반폭 필드가 홀수 개로 끝나는 구간의 마지막 필드가 혼자 남는다.
+ *  이런 필드는 전폭으로 올린다(진단 B5: 반폭 "주소"가 혼자 놓이고 오른쪽 절반이 빔). 필드 순서는 바꾸지 않는다. */
+function loneFields(fields) {
+  const lone = new Set();
+  let pending = -1;
+  fields.forEach((f, i) => {
+    if (FULL_WIDTH_FIELDS.includes(f.type)) { if (pending >= 0) lone.add(pending); pending = -1; }
+    else if (pending >= 0) pending = -1;
+    else pending = i;
+  });
+  if (pending >= 0) lone.add(pending);
+  return lone;
+}
+
+/** 같은 행의 이웃이 더 커서 늘어난 칸의 남는 높이를 어디서 흡수하는가(진단 A4: 도넛 카드가 막대 카드 높이로 늘어나 아래 42%가 빔).
+ *  본문(body)이 남는 높이를 받아 내용을 세로 가운데에 두고, 보조 줄(foot, 예: "데이터 표 보기")은 칸 아래에 붙는다. 칸 높이는 줄이지 않는다. */
+const STRETCH_ABSORB = [
+  {cell: '.kit-chart', body: '.kit-chart-body', foot: '.kit-chart-data'},
+];
+
+/** 리비전 2에서 스타일시트 끝에 더하는 레이아웃 규약 CSS. */
+function layoutContractCSS() {
+  return [
+    '/* layout contract rev 2 (src/layout.mjs) */',
+    '.kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}',
+    '.kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}',
+    ...STRETCH_ABSORB.map(({cell, body, foot}) => `[data-flow]>${cell} ${body}{flex:1 1 auto;align-content:center}[data-flow]>${cell} ${foot}{margin-top:auto}`),
+  ].join('\n');
+}
+
+/** 리비전 2의 스타일시트 변환. 사용된 부품의 CSS만 들어 있으므로 원본 조각이 없는 편집은 건너뛴다(전체 소스에서의 존재는 시험이 증명한다). */
+function refineLayout(css) {
+  let out = css;
+  for (const [from, to] of REV2_EDITS) out = out.split(from).join(to);
   return out;
 }
 
@@ -2941,6 +3020,22 @@ ${PRIMITIVES.map(p => `| ${p.name}(${p.id}) | ${p.use} | ${p.css} |`).join('\n')
 |---|---|---|
 ${rows.join('\n')}
 
+## 고정 개수 격자도 같은 규칙을 따른다(리비전 2, 카탈로그 2.4.0)
+
+진단(2026-11-21)에서 전 조합 4,955개 중 1,173개가 320·768px에서 심각 지적을 받았고 그중 1,152개가 히어로 수치 3개의 2+1이었다. 원인은 \`.kit-hero-facts\`가 "항목 수가 정해진 구조 틀"로 예외 목록에 있어 흐름 밖에서 \`auto-fit\`으로 열 수를 정했기 때문이다. 항목이 3개로 정해져 있어도 폭에 따라 2열이 되면 한 칸이 남는다.
+
+- 히어로 수치·사진 메뉴·프로필 수치·라디오 선택지는 흐름 표지를 단다. 열 수 선택은 그대로이고 칸 최소폭만 예산(\`FLOW_BUDGETS\`)으로 낮춘다: ${Object.entries(FLOW_BUDGETS).map(([k, v]) => `${k} ${v.minCell}px`).join(' · ')}. 간격은 그 부품이 쓰는 spacing 토큰의 실제 값을 밴드에 넘긴다.
+- 예외 목록(\`EQUAL_COLUMNS_OK\`)은 두 갈래로 나뉜다. 흐름의 대체값(\`FLOW_FALLBACKS\`), 그리고 고정 개수 구조 틀(\`FIXED_FRAMES\`)이다. 틀은 \`proof\`가 있어야 하고 시험이 "마지막 줄에 한 칸만 남지 않음"을 계산으로 증명한다. 증거 없이 더하지 못한다.
+- 리비전 1(2.1.0~2.3.0)의 출력은 바이트 단위로 고정이라 옛 선언이 남는다(\`REV1_GRIDS\`). 리비전 2는 \`refineLayout\`이 그 선언을 제거한다(\`REV2_EDITS\`).
+- 2열 폼은 짝 없는 반폭 필드를 전폭으로 올린다(\`loneFields\`). 같은 행의 칸이 늘어나면 본문이 남는 높이를 흡수한다(\`STRETCH_ABSORB\`). 메뉴 줄은 나열(cluster)이라 넘치지 않고 줄바꿈한다.
+- 품질 게이트(\`e2e/quality.spec.mjs\`)의 폭은 1440·768·390·320이다.
+
+FIXED_FRAMES:
+
+| 선택자 | 증명 | 이유 |
+|---|---|---|
+${FIXED_FRAMES.map(f => `| \`${f.selector}\` | ${f.proof} | ${f.why} |`).join('\n')}
+
 ## 강제 지점
 
 | 지점 | 무엇을 막나 | 파일 |
@@ -2952,6 +3047,9 @@ ${rows.join('\n')}
 }
 
 exports.FLOW = FLOW;
+exports.LEGACY_LAYOUT_VERSIONS = LEGACY_LAYOUT_VERSIONS;
+exports.layoutRev = layoutRev;
+exports.FLOW_BUDGETS = FLOW_BUDGETS;
 exports.bestCols = bestCols;
 exports.flowColumns = flowColumns;
 exports.flowOrphans = flowOrphans;
@@ -2960,8 +3058,17 @@ exports.flowBreakpoints = flowBreakpoints;
 exports.flowCSS = flowCSS;
 exports.isVisualCell = isVisualCell;
 exports.bentoPlan = bentoPlan;
+exports.FLOW_FALLBACKS = FLOW_FALLBACKS;
+exports.FIXED_FRAMES = FIXED_FRAMES;
+exports.REV1_GRIDS = REV1_GRIDS;
 exports.EQUAL_COLUMNS_OK = EQUAL_COLUMNS_OK;
 exports.lintLayout = lintLayout;
+exports.REV2_EDITS = REV2_EDITS;
+exports.FULL_WIDTH_FIELDS = FULL_WIDTH_FIELDS;
+exports.loneFields = loneFields;
+exports.STRETCH_ABSORB = STRETCH_ABSORB;
+exports.layoutContractCSS = layoutContractCSS;
+exports.refineLayout = refineLayout;
 exports.PRIMITIVES = PRIMITIVES;
 exports.layoutMarkdown = layoutMarkdown;
 };
@@ -3549,7 +3656,8 @@ const {e, icon, button, href, initials, stateMarkup, num, statusDot, STATUS_HEAD
 const {mediaArt, ornamentArt, ratioCss, portrait, heroDeco} = __m("render/art.mjs");
 const {renderChart} = __m("render/chart.mjs");
 const {highlight} = __m("render/highlight.mjs");
-const {bentoPlan} = __m("layout.mjs");
+const {bentoPlan, layoutRev, FLOW_BUDGETS, loneFields} = __m("layout.mjs");
+const {SPACE} = __m("spacing.mjs");
 const {compositionAttrs} = __m("composition.mjs");
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
@@ -3573,6 +3681,12 @@ function makeRenderer(b, design = null) {
     if (!flow) return flowAttrs(count, cap, kind);
     const attrs = flowAttrs(count, flow.cap, 'span');
     return attrs ? `${attrs} data-flow-min="${flow.minCell}" data-flow-gap="${flow.gap}"` : '';
+  };
+  const rev2 = layoutRev(b) === 2;
+  /** 칸이 작은 흐름(히어로 수치·사진 메뉴): 기본 알고리즘은 그대로 두고 칸 최소폭과 실제 gap 토큰 값만 밴드에 넘긴다. gap은 spacing 역할 이름이다. */
+  const budgetFlow = (count, cap, budget, gapRole) => {
+    const attrs = flowAttrs(count, cap, 'plain');
+    return attrs ? `${attrs} data-flow-min="${FLOW_BUDGETS[budget].minCell}" data-flow-gap="${SPACE[b.density][gapRole]}"` : '';
   };
   const heading = (depth, text, id, cls = '') => `<h${Math.min(depth, 6)} id="${id}-title"${cls ? ` class="${cls}"` : ''}>${e(text)}</h${Math.min(depth, 6)}>`;
   const digits = x => Number(String(x).replace(/[^\d]/g, ''));
@@ -3611,13 +3725,13 @@ function makeRenderer(b, design = null) {
   R.page = (n, d) => n.children.map((x, i) => { ctx.lead = x.type === 'page-header' ? leadOf(x, n.children[i + 1]) : null; return render(x, 2); }).join('');
   const metaRow = items => items?.length ? `<ul class="kit-doc-meta">${items.map((x, i) => `<li${i === 0 && /^v?\d+(\.\d+)+/.test(x) ? ' data-version="yes"' : ''}>${e(x)}</li>`).join('')}</ul>` : '';
   R['page-header'] = n => n.avatar
-    ? `<header class="kit-page-header" data-profile="yes" data-align="start"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}><div class="kit-profile-banner" aria-hidden="true"></div><div class="kit-profile-main"><span class="kit-avatar kit-avatar-xl" data-art="portrait" aria-hidden="true">${portrait(n.avatar)}</span><div class="kit-profile-id">${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}</div>${actionsRow(n.actions)}</div>${n.stats ? `<dl class="kit-profile-stats">${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}</header>`
+    ? `<header class="kit-page-header" data-profile="yes" data-align="start"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}><div class="kit-profile-banner" aria-hidden="true"></div><div class="kit-profile-main"><span class="kit-avatar kit-avatar-xl" data-art="portrait" aria-hidden="true">${portrait(n.avatar)}</span><div class="kit-profile-id">${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}</div>${actionsRow(n.actions)}</div>${n.stats ? `<dl class="kit-profile-stats"${rev2 ? budgetFlow(n.stats.length, Math.min(n.stats.length, 4), 'stat', 'gap') : ''}>${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}</header>`
     : `<header class="kit-page-header" data-align="${n.align ?? 'start'}"${ctx.lead ? ` data-lead="${ctx.lead}"` : ''}>${eyebrow(n.eyebrow)}<h1>${e(n.title)}</h1>${n.description ? `<p>${e(n.description)}</p>` : ''}${metaRow(n.meta)}${n.stats ? `<dl class="kit-profile-stats">${n.stats.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}</dl>` : ''}${actionsRow(n.actions)}</header>`;
   R.hero = (n, d, id) => {
     const art = ['split', 'product'].includes(n.variant) && n.visual ? (n.visual === 'ornament' ? ornamentArt(o) : mediaArt(n.visual, '4:3', o, '', 0, {motif: n.motif, id: gid()})) : '';
     const decorative = art.replace(' role="img" aria-label=""', ' aria-hidden="true"');
     const deco = !decorative && ['statement', 'cover'].includes(n.variant) ? `<div class="kit-hero-deco" aria-hidden="true">${heroDeco(n.variant, o)}</div>` : '';
-    const facts = n.facts ? `<dl class="kit-hero-facts">${n.facts.map(f => `<div><dt>${e(f.label)}</dt><dd>${e(f.value)}</dd></div>`).join('')}</dl>` : '';
+    const facts = n.facts ? `<dl class="kit-hero-facts"${rev2 ? budgetFlow(n.facts.length, Math.min(n.facts.length, 4), 'fact', 'item') : ''}>${n.facts.map(f => `<div><dt>${e(f.label)}</dt><dd>${e(f.value)}</dd></div>`).join('')}</dl>` : '';
     const frame = ['chart', 'diagram'].includes(n.visual) ? ' data-frame="window"' : '';
     return `<section class="kit-hero" data-variant="${n.variant}"${decorative ? ' data-visual="yes"' : ''} aria-labelledby="${id}-title"><div class="kit-hero-copy" data-cpl="${cplOf(n.title)}">${eyebrow(n.eyebrow)}${heading(d, n.title, id)}<p>${e(n.body)}</p>${actionsRow([n.action, n.secondaryAction].filter(Boolean))}${facts}</div>${decorative ? `<div class="kit-hero-visual"${frame}>${decorative}</div>` : ''}${deco}</section>`;
   };
@@ -3675,13 +3789,15 @@ function makeRenderer(b, design = null) {
       const tag = req ? '<span class="kit-muted">(필수)</span>' : '<span class="kit-muted">(선택)</span>', R_ = req ? ' required' : '', help = f.help ? `<p class="kit-help" id="${fid}-help">${e(f.help)}</p>` : '';
       if (f.type === 'textarea') return `<div class="kit-field"><label for="${fid}">${e(f.label)} ${tag}</label><textarea id="${fid}" name="${e(f.id)}"${R_} maxlength="2000" placeholder="${e(f.placeholder ?? '')}"${helpId}></textarea>${help}</div>`;
       if (f.type === 'select') return `<div class="kit-field"><label for="${fid}">${e(f.label)} ${tag}</label><select id="${fid}" name="${e(f.id)}"${R_}${helpId}><option value="">선택해 주세요</option>${f.options.map(x => `<option>${e(x)}</option>`).join('')}</select>${help}</div>`;
-      if (f.type === 'radio') return `<fieldset class="kit-field kit-choice"><legend>${e(f.label)} ${tag}</legend>${f.options.map((x, i) => `<label class="kit-check-row"><input type="radio" name="${e(f.id)}" value="${e(x)}"${R_ && i === 0 ? ' required' : ''}><span>${e(x)}</span></label>`).join('')}${help}</fieldset>`;
+      if (f.type === 'radio') return `<fieldset class="kit-field kit-choice"${rev2 ? budgetFlow(f.options.length, 3, 'choice', 'near') : ''}><legend>${e(f.label)} ${tag}</legend>${f.options.map((x, i) => `<label class="kit-check-row"><input type="radio" name="${e(f.id)}" value="${e(x)}"${R_ && i === 0 ? ' required' : ''}><span>${e(x)}</span></label>`).join('')}${help}</fieldset>`;
       if (f.type === 'checkbox') return `<div class="kit-field kit-choice"><label class="kit-check-row" for="${fid}"><input type="checkbox" id="${fid}" name="${e(f.id)}"${R_}${helpId}><span>${e(f.label)} ${tag}</span></label>${help}</div>`;
       if (f.type === 'switch') return `<div class="kit-field kit-choice"><label class="kit-switch" for="${fid}"><input type="checkbox" role="switch" id="${fid}" name="${e(f.id)}"${R_}${helpId}><i aria-hidden="true"></i><span>${e(f.label)} ${tag}</span></label>${help}</div>`;
       const ac = f.type === 'password' ? ' autocomplete="current-password"' : f.type === 'email' ? ' autocomplete="email"' : '';
       return `<div class="kit-field"><label for="${fid}">${e(f.label)} ${tag}</label><input id="${fid}" name="${e(f.id)}" type="${f.type}"${R_} maxlength="200" placeholder="${e(f.placeholder ?? '')}"${ac}${helpId}>${help}</div>`;
     };
-    return `<form class="kit-form" data-variant="${n.variant ?? 'stacked'}" aria-labelledby="${id}-title" novalidate>${heading(d, n.title, id)}<p class="kit-muted">${e(n.intro ?? '데모 · 입력 형식을 확인합니다. 서버에 저장하지 않습니다.')}</p><div class="kit-form-fields">${n.fields.map(fieldHTML).join('')}</div><button class="kit-button" data-variant="primary" type="submit">${e(n.submitLabel)}</button><p class="kit-form-status" role="status" aria-live="polite"></p><noscript>데모 입력 확인은 JavaScript가 필요합니다.</noscript></form>`;
+    // 리비전 2: 2열 폼에서 짝 없는 반폭 필드는 전폭이다(layout.mjs loneFields).
+    const pairing = rev2 && n.variant === 'two-column' ? loneFields(n.fields) : new Set();
+    return `<form class="kit-form" data-variant="${n.variant ?? 'stacked'}" aria-labelledby="${id}-title" novalidate>${heading(d, n.title, id)}<p class="kit-muted">${e(n.intro ?? '데모 · 입력 형식을 확인합니다. 서버에 저장하지 않습니다.')}</p><div class="kit-form-fields">${n.fields.map((f, i) => { const html = fieldHTML(f); return pairing.has(i) ? html.replace(/^<(div|fieldset) /, '<$1 data-span="full" ') : html; }).join('')}</div><button class="kit-button" data-variant="primary" type="submit">${e(n.submitLabel)}</button><p class="kit-form-status" role="status" aria-live="polite"></p><noscript>데모 입력 확인은 JavaScript가 필요합니다.</noscript></form>`;
   };
   R.prose = (n, d, id) => `<section class="kit-prose" data-variant="${n.variant ?? 'body'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<div>${n.body.split(/\n\n+/).map(p => `<p>${e(p)}</p>`).join('')}</div></section>`;
   R.notice = n => { const v = n.variant ?? 'inline'; return `<aside class="kit-notice" data-tone="${n.tone}" data-variant="${v}"${n.tone === 'danger' ? ' role="alert"' : v === 'toast' ? ' role="status"' : ''} aria-label="${e(n.title)}"><span class="kit-notice-icon">${icon(PRIMARY_ICON[n.tone])}</span><div><strong>${e(n.title)}</strong><p>${e(n.body)}</p></div></aside>`; };
@@ -3714,7 +3830,7 @@ function makeRenderer(b, design = null) {
   R.summary = (n, d, id) => `<section class="kit-summary" aria-labelledby="${id}-title">${heading(d, n.title, id)}${n.thumb ? `<div class="kit-summary-line"><div class="kit-thumb">${mediaArt('photo', '1:1', o, '', ctx.art++, {motif: n.thumb.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div><div><strong>${e(n.thumb.name)}</strong>${n.thumb.detail ? `<span class="kit-muted">${e(n.thumb.detail)}</span>` : ''}</div></div>` : ''}<dl>${n.items.map(x => `<div><dt>${e(x.label)}</dt><dd>${e(x.value)}</dd></div>`).join('')}<div class="kit-total"><dt>${e(n.total.label)}</dt><dd>${e(n.total.value)}</dd></div></dl>${n.action ? button(n.action) : ''}</section>`;
   R['buy-box'] = (n, d, id) => `<section class="kit-buybox" aria-labelledby="${id}-title">${n.badge ? `<span class="kit-badge" data-tone="brand">${e(n.badge)}</span>` : ''}${heading(d, n.title, id)}<p class="kit-price" data-vl="${vlOf(n.price)}">${e(n.price)}</p>${n.note ? `<p class="kit-muted">${e(n.note)}</p>` : ''}${(n.options ?? []).map((opt, oi) => `<fieldset class="kit-options"><legend>${e(opt.label)}</legend>${opt.choices.map((c, ci) => `<label><input type="radio" name="${id}-opt-${oi}" value="${e(c)}"${ci === 0 ? ' checked' : ''}><span>${e(c)}</span></label>`).join('')}</fieldset>`).join('')}${actionsRow([n.action, n.secondaryAction].filter(Boolean))}</section>`;
   R.reviews = (n, d, id) => `<section class="kit-reviews" aria-labelledby="${id}-title">${heading(d, n.title, id)}<p class="kit-score"><strong>${e(n.score)}</strong> <span aria-hidden="true">${STAR(Math.round(Number.parseFloat(n.score)) || 0)}</span> <span class="kit-muted">${e(n.count)}</span></p><ul>${n.items.map(x => `<li><p class="kit-stars" role="img" aria-label="5점 만점에 ${x.rating}점">${STAR(x.rating)}</p><p>${e(x.text)}</p><p class="kit-muted">${e(x.author)}${x.date ? ` · ${e(x.date)}` : ''}</p></li>`).join('')}</ul></section>`;
-  R.menu = (n, d, id) => `<section class="kit-menu" data-layout="${n.layout}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${n.layout === 'grid' ? contentFlow(n, n.items.length, 3, 'span') : ''}>${n.items.map(x => `<li${x.motif ? ' data-thumb="yes"' : ''}>${x.motif ? `<div class="kit-menu-thumb">${mediaArt('photo', n.layout === 'photo' ? '4:3' : '1:1', o, '', ctx.art++, {motif: x.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : ''}<div class="kit-menu-text"><div class="kit-menu-row"><strong>${e(x.name)}</strong>${n.layout === 'leader' ? '<i class="kit-leader" aria-hidden="true"></i>' : ''}<span class="kit-menu-price">${e(x.price)}</span></div>${x.tag ? `<span class="kit-badge" data-tone="brand">${e(x.tag)}</span>` : ''}${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
+  R.menu = (n, d, id) => `<section class="kit-menu" data-layout="${n.layout}" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul${n.layout === 'grid' ? contentFlow(n, n.items.length, 3, 'span') : rev2 && n.layout === 'photo' ? budgetFlow(n.items.length, 3, 'photo', 'gap') : ''}>${n.items.map(x => `<li${x.motif ? ' data-thumb="yes"' : ''}>${x.motif ? `<div class="kit-menu-thumb">${mediaArt('photo', n.layout === 'photo' ? '4:3' : '1:1', o, '', ctx.art++, {motif: x.motif, id: gid()}).replace(' role="img" aria-label=""', ' aria-hidden="true"')}</div>` : ''}<div class="kit-menu-text"><div class="kit-menu-row"><strong>${e(x.name)}</strong>${n.layout === 'leader' ? '<i class="kit-leader" aria-hidden="true"></i>' : ''}<span class="kit-menu-price">${e(x.price)}</span></div>${x.tag ? `<span class="kit-badge" data-tone="brand">${e(x.tag)}</span>` : ''}${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</div></li>`).join('')}</ul></section>`;
   R.links = (n, d, id) => `<section class="kit-links" aria-labelledby="${id}-title">${heading(d, n.title, id)}<ul>${n.items.map(x => `<li><a href="${href(x.href)}"${x.href.startsWith('https:') ? ' rel="noreferrer noopener"' : ''}>${e(x.label)}${icon('arrow-right')}</a>${x.description ? `<p class="kit-muted">${e(x.description)}</p>` : ''}</li>`).join('')}</ul></section>`;
   R.divider = n => n.label ? `<div class="kit-divider" role="separator"><span>${e(n.label)}</span></div>` : '<hr class="kit-hr">';
   R.pricing = (n, d, id) => `<section class="kit-pricing"${n.title ? ` aria-labelledby="${id}-title"` : ' aria-label="요금제"'}>${n.title ? heading(d, n.title, id) : ''}<div class="kit-plans" data-count="${n.children.length}"${contentFlow(n, n.children.length, 3)}>${n.children.map(x => render(x, n.title ? d + 1 : d)).join('')}</div></section>`;
@@ -4336,13 +4452,13 @@ exports.alwaysCSS = alwaysCSS;
 };
 __defs["styles/index.mjs"] = function (exports, __m) {
 const {axisVars, coreCSS, tailCSS} = __m("styles/base.mjs");
-const {typeRev, refineTracking} = __m("typography.mjs");
+const {typeRev, refineTracking, fitCSS, wrapCSS} = __m("typography.mjs");
 const {shellCSS} = __m("styles/shells.mjs");
 const {chunks} = __m("styles/chunks.mjs");
 const {polish, polishCore} = __m("styles/polish.mjs");
 const {nodeTypes} = __m("catalog.mjs");
 const {contractCSS} = __m("spacing.mjs");
-const {flowCSS, flowUsage} = __m("layout.mjs");
+const {flowCSS, flowUsage, layoutRev, refineLayout, layoutContractCSS} = __m("layout.mjs");
 const {compositionCSS} = __m("composition.mjs");
 const {headerDesignCSS} = __m("header-design.mjs");
 
@@ -4383,7 +4499,9 @@ function stylesheet(b, sets, body = '', design = null) {
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
-  const css = parts.join('\n') + '\n';
+  const rev2 = layoutRev(b) === 2;
+  if (rev2) parts.push(layoutContractCSS().trim(), fitCSS(), wrapCSS());
+  const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
   return typeRev(b) === 2 ? refineTracking(css) : css;
 }
 
@@ -4765,6 +4883,8 @@ __defs["typography.mjs"] = function (exports, __m) {
  *  from the preset. `lintType` rejects raw sizes in the stylesheet and keeps large roles in the slots that own them.
  *  No webfont is loaded: generated pages carry `default-src 'none'`, so every face here is a system face (see docs/typography.md, "서체 조달"). */
 
+const {layoutRev} = __m("layout.mjs");
+
 const KO_SANS = '"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic","Nanum Gothic",sans-serif';
 const KO_SERIF = '"AppleMyungjo","Noto Serif KR","Noto Serif CJK KR","Nanum Myeongjo","Batang",serif';
 const KO_MONO = '"Apple SD Gothic Neo","Noto Sans Mono CJK KR","D2Coding","Nanum Gothic Coding",monospace';
@@ -4933,6 +5053,8 @@ function typeVars(b, weightHead) {
     `--kit-heading:${STACKS[preset.head]}`, `--kit-font:${STACKS[preset.text]}`, `--kit-mono:${STACKS.mono}`,
     `--kit-hw:${hw}`, `--kit-line:${lh.body}`,
     ...Object.keys(ROLES).map(name => `${roleVar(name)}:${sizes[name].css}`),
+    // 리비전 2(레이아웃): 칸 폭에 맞춰 줄이는 역할은 원래 값을 `-raw`로도 남긴다(FIT: 자기 자신을 참조하는 순환 var()를 피하려는 것).
+    ...(layoutRev(b) === 2 ? FIT_ROLES.map(name => `${roleVar(name)}-raw:${sizes[name].css}`) : []),
     ...Object.entries(t).map(([k, v]) => `--kit-tr-${k}:${v}em`),
     ...Object.entries(lh).filter(([k]) => k !== 'body').map(([k, v]) => `--kit-lh-${k}:${v}`),
     `--kit-case-label:${preset.label_case === 'upper' ? 'uppercase' : 'none'}`, `--kit-nums:${preset.nums === 'tabular' ? 'tabular-nums' : 'normal'}`,
@@ -4951,6 +5073,34 @@ function refineTracking(css) {
     return selector + '{' + body.replace(/letter-spacing:(-?\d*\.?\d+)em/g, (m, v) => `letter-spacing:${Math.min(HANGUL.labelMax, Math.max(HANGUL.track.display, +v))}em`.replace(/(-?)0\./, '$1.')) + '}';
   });
 }
+
+// ---------- layout revision 2: 칸 폭과 줄바꿈 ----------
+/** 타입 역할의 px 하한(`minCap`)은 뷰포트로만 정해지므로 칸이 좁으면 제목이 3줄로 접힌다(진단 A5: 320px 상태 화면 제목 33px, 칸 224px = 6.8em).
+ *  리비전 2는 칸 폭을 따라 줄이는 상자(`boxes`)를 선언한다. 상자 안에서는 역할 값이 `min(원래 값, 칸 폭 / em)`이 되어 칸이 항상 `em`글자 이상이다(제목 9, 여러 줄 인용 12).
+ *  역할 값 자체를 상자 안에서 다시 정의하므로, 그 역할을 쓰는 규칙(부품 CSS·맥락 결정표)은 고칠 필요가 없고 더 큰 글자로 되돌아가지도 않는다.
+ *  칸 폭은 `100vw − 2×거터 − 상자의 좌우 안쪽 여백`이다. 상자를 컨테이너로 만들지 않는 이유: `.kit-empty`는 shrink-to-fit 격자 항목이라 inline-size 격리를 걸면 폭이 64px로 무너진다(실측).
+ *  이 근사는 상자가 한 열로 접힌 좁은 화면에서만 의미가 있고, 넓은 화면에서는 역할의 원래 상한(≤ 64px)이 항상 더 작아 조건이 닿지 않는다. */
+const FIT = {
+  boxes: [
+    {box: '.kit-empty', inset: '2 * var(--kit-inset)', em: 9, roles: ['app', 'heading', 'title']},
+    {box: '.kit-page-header', inset: '0px', em: 9, roles: ['app', 'heading', 'title']},
+    // 여러 줄로 읽히는 큰 글자는 칸이 더 넓어야 한다: BIG_NARROW는 3줄이면 8em, 4줄 이상이면 12em 미만을 지적한다.
+    {box: '.kit-quote', inset: '2 * var(--kit-open-pad)', em: 12, roles: ['quote', 'quote-l']},
+  ],
+};
+/** `-raw` 별칭이 필요한 역할(상자 목록에 나온 모든 역할). */
+const FIT_ROLES = [...new Set(FIT.boxes.flatMap(b => b.roles))];
+function fitCSS() {
+  return FIT.boxes.map(({box, inset, em, roles}) => `${box}{${roles.map(r => `${roleVar(r)}:min(var(${roleVar(r)}-raw),calc((100vw - 2 * var(--kit-gutter) - ${inset}) / ${em}))`).join(';')}}`).join('\n');
+}
+
+/** 줄바꿈 정책은 태그가 아니라 역할이 정한다. 제목 역할(짧고 한두 줄로 끝나는 글)은 balance, 본문 역할은 pretty.
+ *  기본 규칙은 h1~h6에만 balance를 걸어 `strong`·브랜드 이름 같은 제목 역할이 본문 규칙을 물려받아 끝줄에 한두 글자가 남았다(진단 A6). */
+const WRAP = {
+  balance: ['strong', 'dt', '.kit-brand-name'],
+  pretty: ['p', 'li', 'dd', 'blockquote', 'figcaption', 'summary'],
+};
+const wrapCSS = () => `:where(${WRAP.balance.join(',')}){text-wrap:balance}`;
 
 // ---------- CSS lint ----------
 const SIZE_OK = /^(inherit|initial|unset|0|1em|100%)$/;
@@ -5021,8 +5171,14 @@ ${presetRows}
 |---|---|---|
 | 2.1.0 · 2.2.0 | 1 | 이전 표 그대로. 출력은 바이트 단위로 고정(\`docs/evidence/context/legacy-hashes.json\`, \`docs/evidence/typography-refine/legacy-2-2-hashes.json\`) |
 | 2.3.0 | 2 | 위 표와 규칙. \`manifest.design.typography\`에 리비전과 한계값이 남는다 |
+| 2.4.0 | 2 + 레이아웃 리비전 2 | 타이포그래피는 2.3.0과 같다. 칸 폭 연동(\`FIT\`)과 역할 기준 줄바꿈(\`WRAP\`)이 더해진다(아래 "칸 폭과 줄바꿈"). 2.3.0 출력은 \`docs/evidence/layout-refine/legacy-2-3-hashes.json\`으로 고정 |
 
 \`kit migrate\`는 catalogVersion만 2.3.0으로 바꾸고 tree와 축은 그대로 둔다. 같은 입력의 출력은 서체 변수(자간·행간·크기 상한·굵기 상한·서체 스택)와 이들이 바꾸는 간격 예산만 달라진다. 프리셋 표 위의 값은 리비전 2다. 리비전 1 값은 \`TYPE\`에 그대로 있다.
+
+## 칸 폭과 줄바꿈(카탈로그 2.4.0)
+
+- **칸 폭 연동.** 역할의 px 하한은 뷰포트로만 정해져 칸이 좁으면 제목이 접힌다(진단 A5: 320px 상태 화면 제목 33px, 칸 224px = 6.8em). 2.4.0은 상자(${FIT.boxes.map(b => `\`${b.box}\` ${b.em}em`).join(' · ')}) 안에서 역할 값을 \`min(원래 값, 칸 폭 / em)\`으로 다시 정의한다. 칸 폭은 \`100vw − 2×거터 − 상자 안쪽 여백\`이다. 서체 프리셋 18종 × 상태 화면·글·인증 화면 × 320px에서 BIG_NARROW 0을 \`e2e/layout-common.spec.mjs\`가 고정한다.
+- **역할 기준 줄바꿈.** 제목 역할(\`h1~h6\`, ${WRAP.balance.map(x => `\`${x}\``).join(', ')})은 \`balance\`, 본문 역할(${WRAP.pretty.map(x => `\`${x}\``).join(', ')})은 \`pretty\`다. 전에는 태그만 보았기 때문에 목록 제목 \`strong\`이 본문 규칙을 물려받아 끝줄에 한두 글자가 남았다.
 
 ## 크기 역할(\`--kit-t-*\`)
 
@@ -5085,6 +5241,11 @@ exports.roleSizes = roleSizes;
 exports.roleVar = roleVar;
 exports.typeVars = typeVars;
 exports.refineTracking = refineTracking;
+exports.FIT = FIT;
+exports.FIT_ROLES = FIT_ROLES;
+exports.fitCSS = fitCSS;
+exports.WRAP = WRAP;
+exports.wrapCSS = wrapCSS;
 exports.lintType = lintType;
 exports.typographyMarkdown = typographyMarkdown;
 };

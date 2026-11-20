@@ -10,8 +10,8 @@ import {layoutSlots, applyLayout, layoutSlotIds} from './variants.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
 export {compositionRules, compositionCoverage, COMPOSITION_VERSION} from './composition.mjs';
 
-export const CATALOG_VERSION = '2.3.0';
-export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', CATALOG_VERSION]);
+export const CATALOG_VERSION = '2.4.0';
+export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {layoutSlots, applyLayout, layoutSlotIds, concepts, conceptIds, conceptsOfTemplate};

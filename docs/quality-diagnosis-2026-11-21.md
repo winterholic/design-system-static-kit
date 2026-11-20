@@ -268,3 +268,46 @@ S16(`finance-overview~data:bordered`), S19(`signup~notice:toast`), S21(`product-
 2. `node scripts/design-qa/quality-claims.mjs --phase after` → Q01~Q17의 `pass`가 개선 대상 표본에서 `true`로 바뀌는지 확인(Q16은 정보용).
 3. `node scripts/design-qa/width-sweep.mjs --out docs/evidence/quality-2026-11-21/sweep-320-768-after.json`로 심각 지적 조합 수(현재 1,173)를 다시 센다.
 4. 개선 효과가 없는 변형(표본 S16, S19, S21, S22, S26, S31)은 "기준 표본과 DOM·스크린샷 차이가 0"인지로 다시 판정한다.
+
+## 11. 수정 결과: 공통 원인 1·4·5·6·7 (카탈로그 2.4.0, 레이아웃 리비전 2)
+
+이 절은 6절 우선순위 표의 원인 1·4·5·6·7을 상위 규약(layout·typography·spacing 토큰·렌더러 짝 짓기)에서 고친 결과다. 원인 2·3(변형 결과 계약, 페이지 수준 규칙)과 8·9는 이번 범위가 아니라 고치지 않았고, `claims-after.json`에서 해당 청구(Q06~Q08, Q10~Q15)는 그대로 `pass:false`다. 컴포넌트별 일회성 CSS나 소비자 경로는 더하지 않았다. 진단 도구의 임계값은 바꾸지 않았다.
+
+### 11.1 원인별 수정과 증거
+
+재현 시험은 `e2e/layout-common.spec.mjs`(브라우저 실측)와 `tests/layout-rev2.test.mjs`(규약·호환)다. 수정 전 실패 출력은 `docs/evidence/layout-refine/red-e2e.log`(수정 전 커밋 `a0f28b279`에서 7개 중 6개 실패)에 있다. 스크린샷 접두사는 `docs/evidence/quality-2026-11-21/`이다.
+
+| 원인 | 상위 규칙으로 고친 것 | 측정(수정 전 → 후) | 전후 스크린샷 |
+|---|---|---|---|
+| 1 고정 개수 격자가 흐름 밖 | 히어로 수치·사진 메뉴·프로필 수치·라디오 선택지에 흐름 표지와 예산(`FLOW_BUDGETS`). 예외 목록을 `FLOW_FALLBACKS`·`FIXED_FRAMES`(증명 필수)·`REV1_GRIDS`로 나눔. 메뉴 줄은 나열(cluster)로 줄바꿈. 품질 게이트 폭에 768·320 추가 | Q01 S07@320 `cols 2, orphan true` → `cols 3, orphan false`(9개 템플릿 320px 전부 통과). Q02 `maxOverflow 36 → 0`. Q03 S23@768 `orphan true → false` | `before/S07__agency-home__w320.png` → `after/S07__agency-home__w320.png`, `before/S23__menu-dining__w320.png`·`w768` → `after/` |
+| 4 타입 하한 ≠ 칸 폭 | `FIT`: 상자(`.kit-empty`·`.kit-page-header` 9em, `.kit-quote` 12em) 안에서 역할 값을 `min(원래 값, 칸 폭/em)`으로 재정의 | Q05 S27@320 `33px 3줄 → 24.9px 2줄`. S28 condensed@320 BIG_NARROW 해소. 서체 프리셋 18종 × 상태 화면·글·인증 × 320px BIG_NARROW 27건 → 0 | `before/S27__offline__w320.png` → `after/`, `S28__article@ty-condensed__w320.png` |
+| 5 칸 높이 균형 | `STRETCH_ABSORB`: 같은 행에서 늘어난 차트 카드는 본문을 세로 가운데에 두고 "데이터 표 보기"를 아래에 붙임 | Q04 S12@768 `빈 공간 287px(56%) → 180px(35%)`, @1440 `210px(42%) → 142px(28%)`. EMPTY_CELL 해소. 여전히 140~180px는 비어 있다(아래 한계) | `before/S12__sales-dashboard__w768.png`·`w1440` → `after/` |
+| 6 줄바꿈이 태그 단위 | `WRAP`: 제목 역할(`strong`·`dt`·브랜드 이름)은 `balance`, 본문 역할은 `pretty` | S29 ORPHAN_LINE 3개 × 3폭 → 0. 스윕 ORPHAN_LINE 320px 8건(`strong`)·768px 5건 중 `strong` 2건 해소, 수정 중 새로 드러난 `dt`(히어로 수치 라벨, 3칸이 좁아져 생김)도 같은 규칙으로 해소. 768px의 `span.kit-brand-name` 3건만 남음 | `before/S29__hr-people__w390.png` → `after/` |
+| 7 폼 2열이 짝을 모름 | `loneFields`: 짝 없는 반폭 필드는 전폭. 순서는 그대로 | Q09 S17@1440 `loneHalfRows 1 → 0` | `before/S17__checkout__w1440.png` → `after/` |
+
+히어로 수치가 320px에서 한 줄 3칸(48 / 12년 / 96%)이 되었고, 3칸이 들어가지 않는 더 좁은 컨테이너(240px 미만)에서는 한 열이 된다. 2+1이 되는 폭은 없다(`flowColumns(3, 3) = [1, 1, 3, 3]`).
+
+### 11.2 전수 재측정
+
+| 측정 | 수정 전 | 수정 후 |
+|---|---|---|
+| 폭 스윕 320·768px 심각 지적 조합(`sweep-320-768-after.json`) | 1,173 (지적 있는 조합 1,197) | **7** (지적 있는 조합 23) |
+| 심각 지적 내역 | GRID_ORPHAN 1,152+3, EDGE 15, EDGE_VIEW 6, EMPTY_CELL 4, BIG_NARROW 1, NARROW_COL 1 | EDGE 6(탭 줄 가로 스크롤 영역, Q17로 오탐 판정), NARROW_COL 1(달력 일정 목록, 이번에 고치지 않음) |
+| 구조 등급(`docs/evidence/diagnosis-2.4.0.json`, 카탈로그 2.4.0) | A 4,515 · B 440 · C 0 (2.3.0) | A 4,538 · B 417 · C 0. 상승 23개(ORPHAN_LINE 해소: campaign-donate 17, event-landing 4, hr-people 2), **하락 0** |
+| 표본 34개 × 4폭 프로브 지적(`measure-after.json`) | 32건 | 16건(MEASURE_SHORT 15, EDGE 1). 악화한 표본·폭 0 |
+
+표본 34개 × 4폭 after 스크린샷 136장은 `after/`에 같은 파일명으로 있다. 완성도 높음으로 분류한 S01·S10·S33은 before와 after가 바이트 단위로 같고, S18은 푸터 버전 문구(2.3.0 → 2.4.0)만 다르고 화면 지표가 같다. S34는 320px에서 제목이 33px에서 32px로 줄어 높이가 4px 짧아졌다(직접 확인, 악화 없음).
+
+### 11.3 출력 호환과 카탈로그 버전
+
+출력이 바뀌므로 저장소의 버전 고정 규칙(`docs/governance.md`, 타이포그래피 리비전 2의 선례)에 따라 2.3.0 위에 얹지 않고 카탈로그를 2.4.0으로 올렸다. 2.1.0~2.3.0 입력은 `layoutRev() = 1`로 이전 출력을 유지한다. 2.3.0은 수정 전 코드(`a0f28b279`)에서 85개 템플릿의 입력과 출력 SHA-256을 `docs/evidence/layout-refine/legacy-2-3-{blueprints,hashes}.json`에 고정했고 `tests/layout-rev2.test.mjs`가 매번 같은 바이트인지 비교한다. 2.1.0·2.2.0 고정 시험(`legacy-hashes.json`, `legacy-2-2-hashes.json`)도 그대로 통과한다. `kit migrate`는 catalogVersion만 2.4.0으로 바꾼다.
+
+### 11.4 한계와 남은 범위
+
+- **Q04는 줄었지만 해소는 아니다.** 도넛 카드는 본문을 가운데에 둬 위아래로 각각 비는 면이 생겼다. Q04 통과는 비율 조건(< 38%)으로 이뤄졌고 절대값 96px 조건은 아직 아니다. 차트 높이를 이웃과 맞추는 쪽(원인 9, C4)은 하지 않았다.
+- **FIT의 칸 폭은 근사다.** `100vw − 2×거터 − 상자 안쪽 여백`이다. 상자가 한 열로 접힌 좁은 화면에서만 의미가 있다. 사이드바 셸이 좁은 화면에서 한 열로 접히지 않는 조합이 있다면 별도 확인이 필요하다(확인 필요). 컨테이너 쿼리로 못 한 이유는 `.kit-empty`가 shrink-to-fit 격자 항목이라 격리를 걸면 폭이 64px로 무너졌기 때문이다.
+- **브랜드 이름의 끝줄(ORPHAN_LINE `span.kit-brand-name`)은 고치지 않았다.** `changelog`계 768px에서 196px 사이드바 안의 두 단어("FlowWorks 문서")가 둘로 갈리는 것이라 `balance`로 해소되지 않고 사이드바 폭의 문제다(3개 조합).
+- **`MEASURE_SHORT` 399건, `MEASURE`(`saas-landing`의 `faq:split`) 27건은 건드리지 않았다.** 글줄 폭 역할(max-width)의 문제이고 이번 다섯 원인과 같은 규칙으로 풀리는지 확인하지 못했다. 768px의 MEASURE_SHORT 13건도 같다.
+- **`NARROW_COL`(달력 일정 목록 62px)과 `.kit-tablist`의 EDGE 오탐 6건은 그대로다.** 원인 1에서 말한 "탭 줄" 지적은 Q17이 오탐으로 판정했다.
+- **`src/catalog/variants.mjs`는 건드리지 않았다.** `src/catalog/index.mjs`에서 버전 상수만 바꿨다.
+- **환경.** Chromium·macOS 폰트만 확인했다. Linux CI 폰트에서의 줄바꿈은 확인하지 못했다.

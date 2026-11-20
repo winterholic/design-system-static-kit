@@ -47,8 +47,14 @@
 |---|---|---|
 | 2.1.0 · 2.2.0 | 1 | 이전 표 그대로. 출력은 바이트 단위로 고정(`docs/evidence/context/legacy-hashes.json`, `docs/evidence/typography-refine/legacy-2-2-hashes.json`) |
 | 2.3.0 | 2 | 위 표와 규칙. `manifest.design.typography`에 리비전과 한계값이 남는다 |
+| 2.4.0 | 2 + 레이아웃 리비전 2 | 타이포그래피는 2.3.0과 같다. 칸 폭 연동(`FIT`)과 역할 기준 줄바꿈(`WRAP`)이 더해진다(아래 "칸 폭과 줄바꿈"). 2.3.0 출력은 `docs/evidence/layout-refine/legacy-2-3-hashes.json`으로 고정 |
 
 `kit migrate`는 catalogVersion만 2.3.0으로 바꾸고 tree와 축은 그대로 둔다. 같은 입력의 출력은 서체 변수(자간·행간·크기 상한·굵기 상한·서체 스택)와 이들이 바꾸는 간격 예산만 달라진다. 프리셋 표 위의 값은 리비전 2다. 리비전 1 값은 `TYPE`에 그대로 있다.
+
+## 칸 폭과 줄바꿈(카탈로그 2.4.0)
+
+- **칸 폭 연동.** 역할의 px 하한은 뷰포트로만 정해져 칸이 좁으면 제목이 접힌다(진단 A5: 320px 상태 화면 제목 33px, 칸 224px = 6.8em). 2.4.0은 상자(`.kit-empty` 9em · `.kit-page-header` 9em · `.kit-quote` 12em) 안에서 역할 값을 `min(원래 값, 칸 폭 / em)`으로 다시 정의한다. 칸 폭은 `100vw − 2×거터 − 상자 안쪽 여백`이다. 서체 프리셋 18종 × 상태 화면·글·인증 화면 × 320px에서 BIG_NARROW 0을 `e2e/layout-common.spec.mjs`가 고정한다.
+- **역할 기준 줄바꿈.** 제목 역할(`h1~h6`, `strong`, `dt`, `.kit-brand-name`)은 `balance`, 본문 역할(`p`, `li`, `dd`, `blockquote`, `figcaption`, `summary`)은 `pretty`다. 전에는 태그만 보았기 때문에 목록 제목 `strong`이 본문 규칙을 물려받아 끝줄에 한두 글자가 남았다.
 
 ## 크기 역할(`--kit-t-*`)
 

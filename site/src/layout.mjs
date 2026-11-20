@@ -12,6 +12,20 @@ export const FLOW = {
   maxItems: 12,
 };
 
+/** Layout revision. Catalog 2.1.0–2.3.0 blueprints keep revision 1 byte for byte (pinned in docs/evidence/layout-refine/legacy-2-3-hashes.json);
+ *  2.4.0 and later use revision 2: fixed-count grids (hero facts, photo menu) are flows, titles fit their column, wrap follows the role, form fields pair up. */
+export const LEGACY_LAYOUT_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0']);
+export const layoutRev = b => (!b?.catalogVersion || LEGACY_LAYOUT_VERSIONS.includes(b.catalogVersion) ? 1 : 2);
+
+/** 칸이 작아 FLOW.minCell(240)을 쓸 수 없는 흐름의 예산. 열 수 선택 알고리즘은 그대로이고 밴드만 바뀐다(`flowBreakpoints`).
+ *  gap은 그 부품이 실제로 쓰는 간격 토큰 값이어야 한다: 밴드는 이 값으로 계산되고 CSS gap은 토큰이 정한다. */
+export const FLOW_BUDGETS = {
+  fact: {minCell: 72, use: '히어로 수치(값 한 줄 + 라벨). 3개면 세 칸이 들어갈 때만 3열, 아니면 한 열이다(2+1 없음).'},
+  photo: {minCell: 180, use: '사진 메뉴 카드(4:3 사진 + 이름·가격).'},
+  stat: {minCell: 120, use: '프로필 수치(값 + 라벨, 칸마다 왼쪽 구분선).'},
+  choice: {minCell: 200, use: '라디오 선택지 카드.'},
+};
+
 /** n개 항목을 maxCols열 이하에서 놓을 때 고를 열 수. 마지막 줄이 가득 차면 0점, 한 칸만 남으면 100점, 두 칸 이상이면 1점이고, 열이 많을수록 조금 낫다(같은 점수면 더 많은 열).
  *  span이 켜진 흐름은 2열에서 마지막 한 칸이 줄 전체를 쓰는 것을 고아로 보지 않는다(글 카드의 의도한 마무리). */
 export function bestCols(n, maxCols, {span = false} = {}) {
@@ -121,15 +135,31 @@ export function bentoPlan(children) {
 }
 
 // ---------- CSS lint ----------
-/** `repeat(N,…)`·`repeat(auto-fit,…)`로 같은 크기 칸을 늘어놓는 격자는 흐름(flow) 원시 요소의 일이다. 아래 선택자만 직접 선언할 수 있고, 나머지 부품은 흐름 표지(data-flow)를 쓴다.
- *  앞쪽은 흐름의 기본값(CSS 미지원 환경의 대체값)이고, 뒤쪽은 항목 수가 정해져 있는 구조 틀(폼 필드·메가메뉴·히어로 수치·달력 …)이다. */
-export const EQUAL_COLUMNS_OK = [
-  '.kit-grid', '.kit-plans', '.kit-features', '.kit-gallery', '.kit-steps[data-layout=horizontal]', '.kit-team', '.kit-menu', '.kit-bento', '.kit-split',
-  '.kit-profile-stats', '.kit-hero-facts', '.kit-mega-panel', '.kit-form', '.kit-choice', '.kit-calendar', '.kit-cal-',
-  '.kit-hero[data-design-kind=hero]',
+/** `repeat(N,…)`·`repeat(auto-fit,…)`로 같은 크기 칸을 늘어놓는 격자는 흐름(flow) 원시 요소의 일이다. 아래 선택자만 직접 선언할 수 있고, 나머지 부품은 흐름 표지(data-flow)를 쓴다. */
+
+/** 흐름의 기본값(CSS 미지원 환경의 대체값). 흐름 표지가 붙으면 `[data-flow][data-n=…]` 규칙이 이 선언을 덮는다. */
+export const FLOW_FALLBACKS = [
+  '.kit-grid', '.kit-plans', '.kit-features', '.kit-gallery', '.kit-steps[data-layout=horizontal]', '.kit-team', '.kit-menu[data-layout=grid]', '.kit-bento',
 ];
-/** CSS 텍스트에서 허용 목록 밖의 반복 격자 선언을 찾는다. [{selector, value}] */
-export function lintLayout(css) {
+
+/** 고정 개수 구조 틀. 항목 수가 구조로 정해져 있어 흐름을 쓰지 않는 격자다. 틀마다 `proof`(tests/layout.test.mjs의 FRAME_PROOFS 키)가 있어야 하고,
+ *  그 증명이 "어떤 폭에서도 마지막 줄에 한 칸만 남지 않는다"를 실제로 계산한다. 증명 없이 목록에 더하지 못한다(진단 공통 원인 1: `.kit-hero-facts`는 항목이 3개로 정해져 있어도 2+1이 났다). */
+export const FIXED_FRAMES = [
+  {selector: '.kit-split', proof: 'two-cells', why: '글과 시각 요소 두 칸이 구조다(자식 노드 2개). 한 열 또는 2열이라 한 칸만 남는 줄이 없다.'},
+  {selector: '.kit-mega-panel', proof: 'mega-span', why: '드롭다운 패널은 항목이 3~9개(전체 보기 1 + 하위 2~8)라 홀수일 수 있다. 2열에서 홀수면 마지막 칸이 줄 전체를 쓴다(리비전 2).'},
+  {selector: '.kit-form', proof: 'form-pairs', why: '2열 폼은 렌더러가 짝 없는 반폭 필드를 전폭으로 올린다(`pairFields`).'},
+  {selector: '.kit-hero[data-design-kind=hero]', proof: 'two-cells', why: '히어로는 글 칸과 시각 칸 두 칸이다.'},
+];
+
+/** 리비전 1(카탈로그 2.1.0~2.3.0)의 출력에만 남은 직접 선언. 출력이 바이트 단위로 고정돼 있어 지울 수 없고, 리비전 2는 `refineLayout`이 이 선언을 제거한다. */
+export const REV1_GRIDS = ['.kit-hero-facts', '.kit-menu[data-layout=photo]', '.kit-profile-stats', '.kit-choice'];
+
+/** 이 목록은 호환을 위한 이름이다(원시 소스 CSS를 린트할 때 쓰는 전체 허용 목록). */
+export const EQUAL_COLUMNS_OK = [...FLOW_FALLBACKS, ...FIXED_FRAMES.map(f => f.selector), ...REV1_GRIDS];
+
+/** CSS 텍스트에서 허용 목록 밖의 반복 격자 선언을 찾는다. [{selector, value}]. strict면 리비전 1 전용 선언도 허용하지 않는다(리비전 2의 완성된 스타일시트용). */
+export function lintLayout(css, {strict = false} = {}) {
+  const ok = strict ? [...FLOW_FALLBACKS, ...FIXED_FRAMES.map(f => f.selector)] : EQUAL_COLUMNS_OK;
   const out = [];
   for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     const sel = selector.trim().replace(/\s+/g, ' ');
@@ -139,10 +169,59 @@ export function lintLayout(css) {
       if (decl.slice(0, i).trim() !== 'grid-template-columns') continue;
       const value = decl.slice(i + 1).replace(/!important/, '').trim();
       if (!/^repeat\(/.test(value)) continue;
-      if (/data-flow/.test(sel) || EQUAL_COLUMNS_OK.some(s => sel.includes(s))) continue;
+      if (/data-flow/.test(sel) || ok.some(s => sel.includes(s))) continue;
       out.push({selector: sel.slice(0, 80), value: value.slice(0, 60)});
     }
   }
+  return out;
+}
+
+/** 리비전 2 전용 CSS 편집. [원본 조각, 대체]. 원본 조각은 소스 CSS에 정확히 한 번 있어야 하고(시험이 확인한다), 없으면 조용히 건너뛰지 않고 오류다.
+ *  열 수를 직접 정하던 선언을 지우고(열 수는 흐름 표지가 정한다) 간격을 spacing 역할로 바꾸며, 텍스트 행을 나열(cluster) 원시 요소로 만든다. */
+export const REV2_EDITS = [
+  ['.kit-hero-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:var(--kit-gap);', '.kit-hero-facts{display:grid;gap:var(--kit-sp-item);'],
+  ['.kit-menu[data-layout=photo] ul{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--kit-gap)}', '.kit-menu[data-layout=photo] ul{gap:var(--kit-gap)}'],
+  ['.kit-profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:', '.kit-profile-stats{display:grid;margin:'],
+  ['.kit-choice:has(input[type=radio]){display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--kit-sp-near)}', '.kit-choice:has(input[type=radio]){display:grid;gap:var(--kit-sp-near)}'],
+  ['.kit-menu-row{display:flex;align-items:baseline;gap:4px;width:100%}', '.kit-menu-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px;width:100%}'],
+];
+
+/** 2열 폼에서 한 줄 전체를 쓰는 필드 종류(CSS: textarea 필드와 선택 묶음). 그 밖의 필드는 반폭이다. */
+export const FULL_WIDTH_FIELDS = ['textarea', 'radio', 'checkbox', 'switch'];
+/** 2열 폼에서 짝이 없는 반폭 필드의 인덱스 집합. 전폭 필드가 줄을 끊으므로, 반폭 필드가 홀수 개로 끝나는 구간의 마지막 필드가 혼자 남는다.
+ *  이런 필드는 전폭으로 올린다(진단 B5: 반폭 "주소"가 혼자 놓이고 오른쪽 절반이 빔). 필드 순서는 바꾸지 않는다. */
+export function loneFields(fields) {
+  const lone = new Set();
+  let pending = -1;
+  fields.forEach((f, i) => {
+    if (FULL_WIDTH_FIELDS.includes(f.type)) { if (pending >= 0) lone.add(pending); pending = -1; }
+    else if (pending >= 0) pending = -1;
+    else pending = i;
+  });
+  if (pending >= 0) lone.add(pending);
+  return lone;
+}
+
+/** 같은 행의 이웃이 더 커서 늘어난 칸의 남는 높이를 어디서 흡수하는가(진단 A4: 도넛 카드가 막대 카드 높이로 늘어나 아래 42%가 빔).
+ *  본문(body)이 남는 높이를 받아 내용을 세로 가운데에 두고, 보조 줄(foot, 예: "데이터 표 보기")은 칸 아래에 붙는다. 칸 높이는 줄이지 않는다. */
+export const STRETCH_ABSORB = [
+  {cell: '.kit-chart', body: '.kit-chart-body', foot: '.kit-chart-data'},
+];
+
+/** 리비전 2에서 스타일시트 끝에 더하는 레이아웃 규약 CSS. */
+export function layoutContractCSS() {
+  return [
+    '/* layout contract rev 2 (src/layout.mjs) */',
+    '.kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}',
+    '.kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}',
+    ...STRETCH_ABSORB.map(({cell, body, foot}) => `[data-flow]>${cell} ${body}{flex:1 1 auto;align-content:center}[data-flow]>${cell} ${foot}{margin-top:auto}`),
+  ].join('\n');
+}
+
+/** 리비전 2의 스타일시트 변환. 사용된 부품의 CSS만 들어 있으므로 원본 조각이 없는 편집은 건너뛴다(전체 소스에서의 존재는 시험이 증명한다). */
+export function refineLayout(css) {
+  let out = css;
+  for (const [from, to] of REV2_EDITS) out = out.split(from).join(to);
   return out;
 }
 
@@ -184,6 +263,22 @@ ${PRIMITIVES.map(p => `| ${p.name}(${p.id}) | ${p.use} | ${p.css} |`).join('\n')
 | cap | n | 열 수 |
 |---|---|---|
 ${rows.join('\n')}
+
+## 고정 개수 격자도 같은 규칙을 따른다(리비전 2, 카탈로그 2.4.0)
+
+진단(2026-11-21)에서 전 조합 4,955개 중 1,173개가 320·768px에서 심각 지적을 받았고 그중 1,152개가 히어로 수치 3개의 2+1이었다. 원인은 \`.kit-hero-facts\`가 "항목 수가 정해진 구조 틀"로 예외 목록에 있어 흐름 밖에서 \`auto-fit\`으로 열 수를 정했기 때문이다. 항목이 3개로 정해져 있어도 폭에 따라 2열이 되면 한 칸이 남는다.
+
+- 히어로 수치·사진 메뉴·프로필 수치·라디오 선택지는 흐름 표지를 단다. 열 수 선택은 그대로이고 칸 최소폭만 예산(\`FLOW_BUDGETS\`)으로 낮춘다: ${Object.entries(FLOW_BUDGETS).map(([k, v]) => `${k} ${v.minCell}px`).join(' · ')}. 간격은 그 부품이 쓰는 spacing 토큰의 실제 값을 밴드에 넘긴다.
+- 예외 목록(\`EQUAL_COLUMNS_OK\`)은 두 갈래로 나뉜다. 흐름의 대체값(\`FLOW_FALLBACKS\`), 그리고 고정 개수 구조 틀(\`FIXED_FRAMES\`)이다. 틀은 \`proof\`가 있어야 하고 시험이 "마지막 줄에 한 칸만 남지 않음"을 계산으로 증명한다. 증거 없이 더하지 못한다.
+- 리비전 1(2.1.0~2.3.0)의 출력은 바이트 단위로 고정이라 옛 선언이 남는다(\`REV1_GRIDS\`). 리비전 2는 \`refineLayout\`이 그 선언을 제거한다(\`REV2_EDITS\`).
+- 2열 폼은 짝 없는 반폭 필드를 전폭으로 올린다(\`loneFields\`). 같은 행의 칸이 늘어나면 본문이 남는 높이를 흡수한다(\`STRETCH_ABSORB\`). 메뉴 줄은 나열(cluster)이라 넘치지 않고 줄바꿈한다.
+- 품질 게이트(\`e2e/quality.spec.mjs\`)의 폭은 1440·768·390·320이다.
+
+FIXED_FRAMES:
+
+| 선택자 | 증명 | 이유 |
+|---|---|---|
+${FIXED_FRAMES.map(f => `| \`${f.selector}\` | ${f.proof} | ${f.why} |`).join('\n')}
 
 ## 강제 지점
 
