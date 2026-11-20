@@ -1,0 +1,803 @@
+{
+ "gpt": {
+  "arm_mean_total_of_30": {
+   "default": 23.0,
+   "recipe": 23.0,
+   "ai": 23.67
+  },
+  "arm_mean_per_criterion": {
+   "default": {
+    "hierarchy": 3.78,
+    "balance": 3.56,
+    "consistency": 4.0,
+    "rhythm": 3.56,
+    "typography": 4.11,
+    "fit": 4.0
+   },
+   "recipe": {
+    "hierarchy": 3.78,
+    "balance": 3.67,
+    "consistency": 3.89,
+    "rhythm": 3.67,
+    "typography": 4.11,
+    "fit": 3.89
+   },
+   "ai": {
+    "hierarchy": 4.0,
+    "balance": 3.89,
+    "consistency": 3.89,
+    "rhythm": 3.89,
+    "typography": 4.0,
+    "fit": 4.0
+   }
+  },
+  "arm_mean_rank": {
+   "default": 1.56,
+   "recipe": 1.44,
+   "ai": 1.89
+  },
+  "pairs": {
+   "ai_vs_default": {
+    "rank": {
+     "W": 4,
+     "T": 1,
+     "L": 4,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.0078125,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "L",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "L",
+      "I09": "L"
+     }
+    },
+    "score": {
+     "W": 4,
+     "T": 1,
+     "L": 4,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.0078125,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "L",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "L",
+      "I09": "L"
+     }
+    },
+    "margin2": {
+     "W": 4,
+     "T": 3,
+     "L": 2,
+     "p_two_sided": 0.6875,
+     "min_possible_p": 0.03125,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "L",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "T",
+      "I09": "T"
+     }
+    }
+   },
+   "ai_vs_recipe": {
+    "rank": {
+     "W": 3,
+     "T": 2,
+     "L": 4,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.015625,
+     "per_input": {
+      "I01": "T",
+      "I02": "W",
+      "I03": "T",
+      "I04": "L",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "L",
+      "I09": "L"
+     }
+    },
+    "score": {
+     "W": 3,
+     "T": 2,
+     "L": 4,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.015625,
+     "per_input": {
+      "I01": "T",
+      "I02": "W",
+      "I03": "T",
+      "I04": "L",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "L",
+      "I09": "L"
+     }
+    },
+    "margin2": {
+     "W": 3,
+     "T": 4,
+     "L": 2,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.0625,
+     "per_input": {
+      "I01": "T",
+      "I02": "W",
+      "I03": "T",
+      "I04": "L",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "T",
+      "I09": "T"
+     }
+    }
+   },
+   "recipe_vs_default": {
+    "rank": {
+     "W": 1,
+     "T": 7,
+     "L": 1,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.5,
+     "per_input": {
+      "I01": "W",
+      "I02": "L",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "T",
+      "I08": "T",
+      "I09": "T"
+     }
+    },
+    "score": {
+     "W": 1,
+     "T": 7,
+     "L": 1,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.5,
+     "per_input": {
+      "I01": "W",
+      "I02": "L",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "T",
+      "I08": "T",
+      "I09": "T"
+     }
+    },
+    "margin2": {
+     "W": 1,
+     "T": 7,
+     "L": 1,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.5,
+     "per_input": {
+      "I01": "W",
+      "I02": "L",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "T",
+      "I08": "T",
+      "I09": "T"
+     }
+    }
+   }
+  },
+  "per_input": {
+   "I01": {
+    "default": {
+     "label": "B",
+     "rank": 3,
+     "total": 21
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 1,
+     "total": 23
+    },
+    "ai": {
+     "label": "C",
+     "rank": 1,
+     "total": 23
+    }
+   },
+   "I02": {
+    "default": {
+     "label": "A",
+     "rank": 2,
+     "total": 21
+    },
+    "recipe": {
+     "label": "C",
+     "rank": 3,
+     "total": 19
+    },
+    "ai": {
+     "label": "B",
+     "rank": 1,
+     "total": 25
+    }
+   },
+   "I03": {
+    "default": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    },
+    "recipe": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    },
+    "ai": {
+     "label": "A",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I04": {
+    "default": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 1,
+     "total": 24
+    },
+    "ai": {
+     "label": "C",
+     "rank": 3,
+     "total": 22
+    }
+   },
+   "I05": {
+    "default": {
+     "label": "B",
+     "rank": 2,
+     "total": 21
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 2,
+     "total": 21
+    },
+    "ai": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I06": {
+    "default": {
+     "label": "C",
+     "rank": 2,
+     "total": 21
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 2,
+     "total": 21
+    },
+    "ai": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I07": {
+    "default": {
+     "label": "A",
+     "rank": 1,
+     "total": 26
+    },
+    "recipe": {
+     "label": "B",
+     "rank": 1,
+     "total": 26
+    },
+    "ai": {
+     "label": "C",
+     "rank": 3,
+     "total": 24
+    }
+   },
+   "I08": {
+    "default": {
+     "label": "C",
+     "rank": 1,
+     "total": 25
+    },
+    "recipe": {
+     "label": "B",
+     "rank": 1,
+     "total": 25
+    },
+    "ai": {
+     "label": "A",
+     "rank": 3,
+     "total": 24
+    }
+   },
+   "I09": {
+    "default": {
+     "label": "A",
+     "rank": 1,
+     "total": 24
+    },
+    "recipe": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    },
+    "ai": {
+     "label": "C",
+     "rank": 3,
+     "total": 23
+    }
+   }
+  },
+  "paired_total_diff_ai_minus_default": {
+   "I01": 2,
+   "I02": 4,
+   "I03": 0,
+   "I04": -2,
+   "I05": 3,
+   "I06": 3,
+   "I07": -2,
+   "I08": -1,
+   "I09": -1
+  },
+  "paired_total_diff_mean": 0.67
+ },
+ "claude": {
+  "arm_mean_total_of_30": {
+   "default": 23.22,
+   "recipe": 22.89,
+   "ai": 23.67
+  },
+  "arm_mean_per_criterion": {
+   "default": {
+    "hierarchy": 3.78,
+    "balance": 3.78,
+    "consistency": 3.78,
+    "rhythm": 4.0,
+    "typography": 4.0,
+    "fit": 3.89
+   },
+   "recipe": {
+    "hierarchy": 3.89,
+    "balance": 3.78,
+    "consistency": 3.78,
+    "rhythm": 4.0,
+    "typography": 4.0,
+    "fit": 3.44
+   },
+   "ai": {
+    "hierarchy": 3.89,
+    "balance": 4.0,
+    "consistency": 4.0,
+    "rhythm": 4.0,
+    "typography": 3.78,
+    "fit": 4.0
+   }
+  },
+  "arm_mean_rank": {
+   "default": 1.67,
+   "recipe": 1.89,
+   "ai": 1.22
+  },
+  "pairs": {
+   "ai_vs_default": {
+    "rank": {
+     "W": 6,
+     "T": 2,
+     "L": 1,
+     "p_two_sided": 0.125,
+     "min_possible_p": 0.015625,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "W",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "T",
+      "I09": "W"
+     }
+    },
+    "score": {
+     "W": 6,
+     "T": 2,
+     "L": 1,
+     "p_two_sided": 0.125,
+     "min_possible_p": 0.015625,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "W",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "T",
+      "I09": "W"
+     }
+    },
+    "margin2": {
+     "W": 0,
+     "T": 8,
+     "L": 1,
+     "p_two_sided": 1.0,
+     "min_possible_p": 1.0,
+     "per_input": {
+      "I01": "T",
+      "I02": "T",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "L",
+      "I08": "T",
+      "I09": "T"
+     }
+    }
+   },
+   "ai_vs_recipe": {
+    "rank": {
+     "W": 6,
+     "T": 2,
+     "L": 1,
+     "p_two_sided": 0.125,
+     "min_possible_p": 0.015625,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "W",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "T",
+      "I09": "W"
+     }
+    },
+    "score": {
+     "W": 6,
+     "T": 2,
+     "L": 1,
+     "p_two_sided": 0.125,
+     "min_possible_p": 0.015625,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "W",
+      "I05": "W",
+      "I06": "W",
+      "I07": "L",
+      "I08": "T",
+      "I09": "W"
+     }
+    },
+    "margin2": {
+     "W": 2,
+     "T": 6,
+     "L": 1,
+     "p_two_sided": 1.0,
+     "min_possible_p": 0.25,
+     "per_input": {
+      "I01": "W",
+      "I02": "W",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "L",
+      "I08": "T",
+      "I09": "T"
+     }
+    }
+   },
+   "recipe_vs_default": {
+    "rank": {
+     "W": 0,
+     "T": 7,
+     "L": 2,
+     "p_two_sided": 0.5,
+     "min_possible_p": 0.5,
+     "per_input": {
+      "I01": "L",
+      "I02": "L",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "T",
+      "I08": "T",
+      "I09": "T"
+     }
+    },
+    "score": {
+     "W": 0,
+     "T": 7,
+     "L": 2,
+     "p_two_sided": 0.5,
+     "min_possible_p": 0.5,
+     "per_input": {
+      "I01": "L",
+      "I02": "L",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "T",
+      "I08": "T",
+      "I09": "T"
+     }
+    },
+    "margin2": {
+     "W": 0,
+     "T": 8,
+     "L": 1,
+     "p_two_sided": 1.0,
+     "min_possible_p": 1.0,
+     "per_input": {
+      "I01": "T",
+      "I02": "L",
+      "I03": "T",
+      "I04": "T",
+      "I05": "T",
+      "I06": "T",
+      "I07": "T",
+      "I08": "T",
+      "I09": "T"
+     }
+    }
+   }
+  },
+  "per_input": {
+   "I01": {
+    "default": {
+     "label": "B",
+     "rank": 2,
+     "total": 23
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 3,
+     "total": 22
+    },
+    "ai": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I02": {
+    "default": {
+     "label": "A",
+     "rank": 2,
+     "total": 23
+    },
+    "recipe": {
+     "label": "C",
+     "rank": 3,
+     "total": 21
+    },
+    "ai": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I03": {
+    "default": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    },
+    "recipe": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    },
+    "ai": {
+     "label": "A",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I04": {
+    "default": {
+     "label": "B",
+     "rank": 2,
+     "total": 23
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 2,
+     "total": 23
+    },
+    "ai": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I05": {
+    "default": {
+     "label": "B",
+     "rank": 2,
+     "total": 23
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 2,
+     "total": 23
+    },
+    "ai": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I06": {
+    "default": {
+     "label": "C",
+     "rank": 2,
+     "total": 23
+    },
+    "recipe": {
+     "label": "A",
+     "rank": 2,
+     "total": 23
+    },
+    "ai": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I07": {
+    "default": {
+     "label": "A",
+     "rank": 1,
+     "total": 24
+    },
+    "recipe": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    },
+    "ai": {
+     "label": "C",
+     "rank": 3,
+     "total": 22
+    }
+   },
+   "I08": {
+    "default": {
+     "label": "C",
+     "rank": 1,
+     "total": 24
+    },
+    "recipe": {
+     "label": "B",
+     "rank": 1,
+     "total": 24
+    },
+    "ai": {
+     "label": "A",
+     "rank": 1,
+     "total": 24
+    }
+   },
+   "I09": {
+    "default": {
+     "label": "A",
+     "rank": 2,
+     "total": 22
+    },
+    "recipe": {
+     "label": "B",
+     "rank": 2,
+     "total": 22
+    },
+    "ai": {
+     "label": "C",
+     "rank": 1,
+     "total": 23
+    }
+   }
+  },
+  "paired_total_diff_ai_minus_default": {
+   "I01": 1,
+   "I02": 1,
+   "I03": 0,
+   "I04": 1,
+   "I05": 1,
+   "I06": 1,
+   "I07": -2,
+   "I08": 0,
+   "I09": 1
+  },
+  "paired_total_diff_mean": 0.44
+ },
+ "identical_arm_pairs": {
+  "I01": [],
+  "I02": [],
+  "I03": [
+   [
+    "default",
+    "recipe"
+   ]
+  ],
+  "I04": [
+   [
+    "default",
+    "recipe"
+   ]
+  ],
+  "I05": [
+   [
+    "default",
+    "recipe"
+   ]
+  ],
+  "I06": [
+   [
+    "default",
+    "recipe"
+   ]
+  ],
+  "I07": [
+   [
+    "default",
+    "recipe"
+   ]
+  ],
+  "I08": [
+   [
+    "default",
+    "recipe"
+   ]
+  ],
+  "I09": [
+   [
+    "default",
+    "recipe"
+   ]
+  ]
+ },
+ "inter_rater_pair_direction_agreement": {
+  "agree": 19,
+  "of": 27,
+  "rate": 0.704
+ }
+}
