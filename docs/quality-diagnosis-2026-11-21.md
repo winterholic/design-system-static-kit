@@ -416,3 +416,8 @@ Q10 S07@320은 `after/`에서 F로 바뀌었다(공통 규약 쪽 히어로 수�
 ### 14.5 재현 테스트 (수정 전 실패 → 수정 후 통과)
 
 `e2e/layout-common.spec.mjs`(벤토 Q07 S06·S01과 템플릿 4종 × 폭 4개, 큰 칸이 줄 높이를 정하지 않음, 도넛 Q04), `tests/layout-rev2.test.mjs`(짝 짓기 속성 시험, 리비전 1 순서, CSS 범위), `tests/page-rules.test.mjs`(P04). 수정 전 실패 출력은 `docs/evidence/bento-fill/red-e2e.log`(Q07: S06 0.69·S01 0.63 외 8쪽 실패, 큰 칸이 줄을 정함 316.7px, Q04 180px)와 `red-unit.log`(5개 실패). 변이 확인: 짝 짓기 끄기 → Q07 e2e와 리비전 1 단위 시험 실패, 큰 칸 CSS 제거 → Q07과 큰 칸 시험 실패, 도넛 CSS 제거 → Q04 시험 실패. 원래 코드로 돌리면 모두 통과한다.
+
+### 13.1 후속: 콘텐츠 손실(waitlist hero:product)과 계약 V06
+
+Recipe가 `waitlist`에서 고른 `hero:product`가 히어로 수치 3개(대기 중인 사람·평균 초대 시간·베타 만족도)를 지우는 것이 발견됐다. 원인은 `setHero`가 split·product로 바꾸며 `hero.facts`를 지우는 것이고, 변형 결과 계약(V01~V05)이 시각 요소만 보호해서 Recipe가 몰랐다. 이 원인으로 문구를 잃는 것은 `hero:split`·`hero:product`뿐이며 히어로 수치를 가진 9개 템플릿의 768개 조합이다(다른 옵션·필드의 손실은 없음). 계약 V06(히어로 변형이 수치를 지우지 않는다)을 더해 768개 조합을 기본 추천에서만 뺐다(조합 id·렌더는 그대로, 갤러리 기본 목록 3,466 → 3,714개가 빠짐). 결과: waitlist는 추천 없음(RC01), Recipe가 기본과 다른 추천을 하는 것은 devtool-landing 1개다. 직접 본 1440·390px 전후와 한계는 `docs/recipes.md` 5.4절.
+

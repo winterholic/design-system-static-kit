@@ -1016,6 +1016,21 @@
       "effect": "not-recommended",
       "why": "적용 전후 렌더 지문(요소 위치·크기·색)이 같으면 사용자에게는 고를 이유가 없는 옵션이다. 지우지 않고 추천에서만 뺀다.",
       "source": "docs/quality-diagnosis-2026-11-21.md 6절 원인 2 추가 후보"
+    },
+    {
+      "id": "V06",
+      "claim": null,
+      "slots": [
+        "hero"
+      ],
+      "check": {
+        "kind": "keeps-field",
+        "node": "hero",
+        "field": "facts"
+      },
+      "effect": "not-recommended",
+      "why": "히어로 형태를 split·product로 바꾸면 setHero가 히어로 수치(facts)를 지워 사용자 문구가 사라진다(waitlist: 대기 중인 사람·평균 초대 시간·베타 만족도). 디자인 변경이 콘텐츠 손실이 되어서는 안 된다. 수치를 가질 수 있는 형태(statement·cover·centered)로의 변경은 통과한다.",
+      "source": "docs/recipes.md 5.4절"
     }
   ],
   "recipes": {
@@ -1087,6 +1102,7 @@
         "RC03",
         "V01",
         "V04",
+        "V06",
         "P01",
         "P02"
       ],
@@ -1108,6 +1124,12 @@
           "option": "center",
           "rule": "V04",
           "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        },
+        {
+          "slot": "hero",
+          "option": "product",
+          "rule": "V06",
+          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
         },
         {
           "axis": "scale",
@@ -1425,6 +1447,10 @@
           "claim": null
         },
         {
+          "rule": "V06",
+          "claim": null
+        },
+        {
           "rule": "P01",
           "claim": null
         },
@@ -1448,6 +1474,11 @@
           "rule": "V04",
           "what": "heads:center",
           "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        },
+        {
+          "rule": "V06",
+          "what": "hero:product",
+          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
         }
       ],
       "unmet": [],
@@ -1483,6 +1514,10 @@
           "claim": null
         },
         {
+          "rule": "V06",
+          "claim": null
+        },
+        {
           "rule": "P01",
           "claim": null
         },
@@ -1506,6 +1541,11 @@
           "rule": "V04",
           "what": "heads:center",
           "why": "섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4)."
+        },
+        {
+          "rule": "V06",
+          "what": "hero:product",
+          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
         }
       ],
       "unmet": [],
@@ -1538,6 +1578,10 @@
         },
         {
           "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "V06",
           "claim": null
         },
         {
@@ -1601,6 +1645,10 @@
         },
         {
           "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "V06",
           "claim": null
         },
         {
@@ -1686,16 +1734,10 @@
     {
       "recipeId": "saas-landing",
       "templateId": "waitlist",
-      "layout": {
-        "hero": "product"
-      },
+      "layout": {},
       "view": null,
-      "satisfied": true,
+      "satisfied": false,
       "applied": [
-        {
-          "rule": "RC01",
-          "claim": "Q14"
-        },
         {
           "rule": "RC02",
           "claim": "Q06"
@@ -1710,6 +1752,10 @@
         },
         {
           "rule": "V04",
+          "claim": null
+        },
+        {
+          "rule": "V06",
           "claim": null
         },
         {
@@ -1733,12 +1779,22 @@
           "why": "커버 히어로는 제품 시각 요소(visual)를 지운다(B1)."
         },
         {
+          "rule": "V06",
+          "what": "hero:product",
+          "why": "히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다."
+        },
+        {
           "rule": "RC01",
           "what": "탈락 후보",
           "why": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)"
         }
       ],
-      "unmet": [],
+      "unmet": [
+        {
+          "rule": "RC01",
+          "detail": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)"
+        }
+      ],
       "measured": [],
       "pageRules": [],
       "trace": [
@@ -1746,6 +1802,87 @@
           "layout": "기본 구성",
           "look": "템플릿 기본",
           "failed": [
+            "RC01"
+          ]
+        },
+        {
+          "layout": "hero:product",
+          "look": "템플릿 기본",
+          "failed": [
+            "V06"
+          ]
+        },
+        {
+          "layout": "hero:split",
+          "look": "템플릿 기본",
+          "failed": [
+            "V06",
+            "RC01"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "saas/trust",
+          "failed": [
+            "RC01"
+          ]
+        },
+        {
+          "layout": "hero:product",
+          "look": "saas/trust",
+          "failed": [
+            "V06"
+          ]
+        },
+        {
+          "layout": "hero:split",
+          "look": "saas/trust",
+          "failed": [
+            "V06",
+            "RC01"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "saas/workspace",
+          "failed": [
+            "RC01"
+          ]
+        },
+        {
+          "layout": "hero:product",
+          "look": "saas/workspace",
+          "failed": [
+            "V06"
+          ]
+        },
+        {
+          "layout": "hero:split",
+          "look": "saas/workspace",
+          "failed": [
+            "V06",
+            "RC01"
+          ]
+        },
+        {
+          "layout": "기본 구성",
+          "look": "saas/clean",
+          "failed": [
+            "RC01"
+          ]
+        },
+        {
+          "layout": "hero:product",
+          "look": "saas/clean",
+          "failed": [
+            "V06"
+          ]
+        },
+        {
+          "layout": "hero:split",
+          "look": "saas/clean",
+          "failed": [
+            "V06",
             "RC01"
           ]
         }
@@ -22912,15 +23049,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",
@@ -23165,15 +23314,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
@@ -23220,15 +23381,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",
@@ -23723,15 +23896,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",
@@ -23797,15 +23982,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",
@@ -26057,15 +26254,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",
@@ -26164,15 +26373,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",
@@ -26271,15 +26492,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "statement",
@@ -26616,15 +26849,27 @@
               "id": "split",
               "label": "좌우 분할",
               "description": "글과 시각 요소를 나란히",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "product",
               "label": "제품 목업",
               "description": "제품 화면을 크게 보여 주는 구도",
-              "recommended": true,
-              "rules": []
+              "recommended": false,
+              "rules": [
+                {
+                  "id": "V06",
+                  "claim": null,
+                  "detail": "hero.facts=3개 항목가 사라진다"
+                }
+              ]
             },
             {
               "id": "centered",

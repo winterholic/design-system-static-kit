@@ -31,6 +31,8 @@
 
    P03의 CSS는 결정에서 생성되는 한 줄(`compositionCSS`)이고 컴포넌트별 CSS·토큰 우회는 더하지 않았다.
 
+> 후속(ADR 0007, 2026-11-21): V06 "히어로 변형이 히어로 수치(facts)를 지우지 않는다"가 더해졌다(768개 조합이 기본 추천에서 빠짐). 위 표의 V01~V05와 같은 정책(`not-recommended`, 조합 삭제 없음)이다. 그래서 이 문서의 3,466개·1,489개는 V06 이전 수치다(이후 3,714개·1,241개).
+
 ## 호환 정책 (카탈로그 2.4.0)
 
 - 2.4.0에서 페이지 규칙이 켜진다. **2.1.0·2.2.0·2.3.0 입력은 출력을 바이트 단위로 유지한다**(`PAGE_RULE_LEGACY_VERSIONS`, 레거시 composition 버전 `1.2.0`을 manifest와 CSS 주석에 그대로 쓴다). 고정 증거는 변경 전 코드(`a0f28b279`)에서 만든 `docs/evidence/variants/legacy-2-3-{blueprints,hashes}.json`이고 `tests/page-rules.test.mjs`가 85개 전체를 대조한다. 기존 2.1·2.2 hash 시험은 그대로 통과한다.

@@ -166,7 +166,8 @@ export function selectRecipe({recipe: recipeId, templateId = null} = {}) {
   const t = templates[id], have = new Map(layoutOptionsOf(id).map(s => [s.id, new Set(s.options.map(o => o.id))]));
   const defaults = recipeBlueprint(id, {}, null);
   for (const a of recipe.avoid) {
-    const present = a.slot ? have.get(a.slot)?.has(a.option) : defaults[a.axis] === a.value;
+    // 선택한 옵션 자체는 피한 것이 아니다(같은 옵션이 수치 없는 템플릿에서는 선택되고 수치 있는 템플릿에서는 V06으로 걸러진다).
+    const present = a.slot ? have.get(a.slot)?.has(a.option) && c.layout[a.slot] !== a.option : defaults[a.axis] === a.value;
     const what = a.slot ? `${a.slot}:${a.option}` : `${a.axis}=${a.value}`;
     if (present) avoided.push({rule: a.rule, what, why: a.why});
   }

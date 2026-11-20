@@ -65,11 +65,12 @@ export const recipes = {
     fit: {density: ['comfortable', 'spacious'], scale: ['balanced', 'dramatic']},
     emphasis: {nodes: ['hero'], how: '히어로 제목은 섹션 제목의 1.6배 이상, 제품 시각 요소 1개, 행동 버튼 1개'},
     support: {nodes: ['bento', 'logo-cloud', 'quote', 'faq'], how: '벤토·신뢰 영역은 히어로와 같은 그림을 반복하지 않고 섹션 머리말과 본문이 한 정렬선'},
-    rules: ['RC01', 'RC02', 'RC03', 'V01', 'V04', 'P01', 'P02'],
+    rules: ['RC01', 'RC02', 'RC03', 'V01', 'V04', 'V06', 'P01', 'P02'],
     avoid: [
       {slot: 'hero', option: 'statement', rule: 'V01', why: '큰 문장 히어로는 제품 시각 요소(visual)를 지운다(B1).'},
       {slot: 'hero', option: 'cover', rule: 'V01', why: '커버 히어로는 제품 시각 요소(visual)를 지운다(B1).'},
       {slot: 'heads', option: 'center', rule: 'V04', why: '섹션 머리말만 가운데로 옮기면 본문은 왼쪽에 남아 정렬선이 둘이 된다(B4).'},
+      {slot: 'hero', option: 'product', rule: 'V06', why: '히어로 수치(facts)가 있는 템플릿에서는 제품 목업 히어로가 수치를 지워 사용자 문구가 사라진다(waitlist의 3개 수치). 수치가 없는 템플릿(devtool-landing)에서는 쓴다.'},
       {axis: 'scale', value: 'tight', rule: 'RC02', why: '촘촘한 스케일은 히어로 제목과 섹션 제목의 차이를 1.6배 아래로 줄인다(C2, devtool 34px 대 24px).'},
     ],
   },

@@ -86,8 +86,11 @@ if (matrix) {
   const result = {};
   for (const c of cases.filter(c => !only || only.includes(c.key))) {
     const pick = selectRecipe({recipe: c.recipe, templateId: c.templateId});
+    // former: 이전 선택(예: V06 이전의 waitlist~hero:product)을 같은 폭에서 함께 재서 바뀐 선택과 나란히 본다.
+    const formerV = c.former ? await measure({label: '이전 Recipe 선택', combo: findCombo(c.former), view: EMPTY_VIEW}, c.recipe, c.key, 'former', shots && c.shots !== false) : null;
     const base = await measure(defaultVariant(c.templateId), c.recipe, c.key, 'default', shots && c.shots !== false), rec = await measure(recipeVariant(pick), c.recipe, c.key, 'recipe', shots && c.shots !== false);
     result[c.key] = {recipe: c.recipe, templateId: c.templateId, note: c.note ?? null, pick: {layout: pick.layout, view: pick.view, comboId: rec.comboId, applied: pick.applied.map(a => a.rule), avoided: pick.avoided.map(a => a.rule), pageRules: pick.pageRules, satisfied: pick.satisfied},
+      former: formerV ? {...formerV} : undefined,
       identical: base.comboId === rec.comboId && JSON.stringify(base.view) === JSON.stringify(rec.view), default: base, recipe: rec};
     const line = v => `${v.comboId} grade ${v.grade} severe ${WIDTHS.map(w => v.widths[w].severe).join('/')} docH ${WIDTHS.map(w => v.widths[w].docH).join('/')}`;
     console.log(c.key, c.templateId, result[c.key].identical ? '(레시피 = 기본)' : '', '\n  기본  ', line(base), '\n  레시피', line(rec));

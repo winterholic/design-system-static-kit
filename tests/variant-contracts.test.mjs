@@ -14,7 +14,7 @@ const rulesOf = o => (o?.rules ?? []).map(r => r.id);
 test('contracts are structured data: each names a measured claim, a closed check kind and why', () => {
   const contracts = catalog.variantContracts;
   assert.ok(Array.isArray(contracts), 'catalog exports variantContracts');
-  assert.deepEqual(contracts.map(c => c.id), ['V01', 'V02', 'V03', 'V04', 'V05']);
+  assert.deepEqual(contracts.map(c => c.id), ['V01', 'V02', 'V03', 'V04', 'V05', 'V06']);
   for (const c of contracts) {
     assert.match(c.id, /^V\d\d$/);
     assert.ok(c.why.length > 20 && c.source && c.check?.kind, c.id);

@@ -22,7 +22,7 @@ const CHECKS = {
   /** 전에 있던 필드가 후에도 있다. */
   'keeps-field': ({node, field}, {before, after}) => {
     const b = find(before, node)[0], a = find(after, node)[0];
-    return b?.[field] && !a?.[field] ? `${node}.${field}=${b[field]}가 사라진다` : null;
+    return b?.[field] && !a?.[field] ? `${node}.${field}=${Array.isArray(b[field]) ? b[field].length + '개 항목' : b[field]}가 사라진다` : null;
   },
   /** 같은 종류 노드 중 variant가 실제로 바뀐 비율이 min 이상이다(전체 변경을 기대하게 하는 옵션은 형제를 빠뜨리지 않는다). */
   'changed-ratio': ({node, field, fallback, min}, {before, after}) => {
@@ -77,6 +77,9 @@ export const variantContracts = [
   {id: 'V05', claim: null, slots: '*', check: {kind: 'visible-effect'}, effect: 'not-recommended',
     why: '적용 전후 렌더 지문(요소 위치·크기·색)이 같으면 사용자에게는 고를 이유가 없는 옵션이다. 지우지 않고 추천에서만 뺀다.',
     source: 'docs/quality-diagnosis-2026-11-21.md 6절 원인 2 추가 후보'},
+  {id: 'V06', claim: null, slots: ['hero'], check: {kind: 'keeps-field', node: 'hero', field: 'facts'}, effect: 'not-recommended',
+    why: '히어로 형태를 split·product로 바꾸면 setHero가 히어로 수치(facts)를 지워 사용자 문구가 사라진다(waitlist: 대기 중인 사람·평균 초대 시간·베타 만족도). 디자인 변경이 콘텐츠 손실이 되어서는 안 된다. 수치를 가질 수 있는 형태(statement·cover·centered)로의 변경은 통과한다.',
+    source: 'docs/recipes.md 5.4절'},
 ];
 
 const covers = (contract, slotId) => contract.slots === '*' || contract.slots.includes(slotId);
