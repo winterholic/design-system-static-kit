@@ -71,6 +71,9 @@ test('gallery: recipe picks lead the default order, carry a badge with their rul
   expect(model.slice(0, 14).every(c => c.recipe)).toBe(true);
   await expect(page.locator('#grid .combo-card .badge.rec')).toHaveCount(14);
   expect(await page.locator('#grid .combo-card .badge.rec').first().getAttribute('title')).toMatch(/레시피 추천 · 지킨 규칙 .*RC0\d/);
+  const waitlistCard = page.locator('#grid .combo-card[data-id="waitlist"]');
+  await expect(waitlistCard).toContainText('RC01 면제');
+  await expect(waitlistCard).toContainText(recipePickOf('waitlist').exempted[0].reason);
   // 추천만 보기, 템플릿 순으로 되돌리기
   await page.locator('#f-rec').check();
   await expect(page.locator('#result-line')).toContainText('개 중 14개');
@@ -94,6 +97,14 @@ test('gallery viewer: a recipe pick with its own look offers to apply that look'
   await page.locator('#v-recipe').click();
   await expect.poll(() => page.url()).toMatch(/concept=saas/);
   expect(page.url()).toMatch(/look=trust/);
+  const exemptions = page.locator('#v-recipe-exemptions');
+  await expect(exemptions).toBeHidden();
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto('/combos/?c=waitlist');
+  await expect(exemptions).toBeVisible();
+  await expect(exemptions).toContainText('RC01 면제');
+  await expect(exemptions).toContainText(recipePickOf('waitlist').exempted[0].reason);
+  expect(await exemptions.evaluate(el => el.scrollHeight <= el.clientHeight && el.scrollWidth <= el.clientWidth)).toBe(true);
 });
 
 test('workbench: a template with a recipe shows it with its rules, and one click applies the pick while other choices stay open', async ({page}) => {
@@ -125,8 +136,12 @@ test('workbench: a template with a recipe shows it with its rules, and one click
   // waitlist: 기본이 정당해 레시피 추천이 기본 그대로다(RC01 면제). 적용해도 히어로 수치 3개가 남는다.
   await page.locator('#template').selectOption('waitlist');
   await expect(page.locator('#recipe-text')).toContainText('기본 구성');
+  await expect(page.locator('#recipe-rules')).toContainText('RC01 면제');
+  await expect(page.locator('#recipe-rules')).toContainText(recipePickOf('waitlist').exempted[0].reason);
   await page.locator('#apply-recipe').click();
   await expect(page.locator('#preview-frame').contentFrame().locator('.kit-hero-facts > *')).toHaveCount(3);
+  await page.locator('#template').selectOption('devtool-landing');
+  await expect(page.locator('#recipe-rules')).not.toContainText('RC01 면제');
   await page.locator('#template').selectOption('checkout');
   await expect(page.locator('#recipe-field')).toBeHidden();
 });

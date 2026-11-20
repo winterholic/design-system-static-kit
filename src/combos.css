@@ -80,6 +80,7 @@
 .note-field input { width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--app-danger); border-radius: 8px; background: var(--app-surface); font-size: 13px; }
 .viewer .modal-stage { overscroll-behavior: contain; }
 .viewer .modal-status { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; touch-action: pan-y; }
+.viewer .recipe-exemptions { white-space: normal; overflow-wrap: anywhere; flex-shrink: 0; }
 
 .flags-dialog { width: min(720px, 94vw); max-height: 88dvh; padding: 18px 20px 20px; border: 1px solid var(--app-border-strong); border-radius: 14px; background: var(--app-surface); color: var(--app-ink); }
 .flags-dialog[open] { display: flex; flex-direction: column; gap: 12px; }

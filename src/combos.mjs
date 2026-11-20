@@ -14,8 +14,10 @@ let cache = null;
 export function enumerateCombos() {
   if (cache) return cache;
   const list = [], firstOf = new Map();
-  // 레시피 추천(src/recipes.mjs): 조합을 지우지 않고 표시만 붙인다. 추천이 가리키는 조합 id → {레시피 id, 보기 설정, 지킨 규칙}.
-  const recipeOf = new Map(recipePicks().filter(p => p.satisfied).map(p => [comboId(p.templateId, p.layout), {id: p.recipeId, view: p.view, rules: p.applied.map(a => a.rule), satisfied: p.satisfied}]));
+  // 레시피 추천(src/recipes.mjs): 추천 조합 ID에 보기 설정과 지켰거나 면제된 규칙을 붙인다.
+  const recipeOf = new Map(recipePicks().filter(p => p.satisfied).map(p => [comboId(p.templateId, p.layout), {
+    id: p.recipeId, view: p.view, rules: p.applied.map(a => a.rule), satisfied: p.satisfied, exempted: p.exempted,
+  }]));
   for (const t of templateList) {
     const slots = layoutOptionsOf(t.id);
     let sets = [{}];

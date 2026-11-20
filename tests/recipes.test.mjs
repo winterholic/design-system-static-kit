@@ -68,7 +68,7 @@ test('every template pick satisfies all select rules, is a recommended combo, an
     const combo = findCombo(comboId(p.templateId, p.layout));
     assert.ok(combo, p.templateId + ' pick resolves to an existing combo id');
     assert.equal(combo.experimental, null, `${combo.id} is a default-recommended combo`);
-    assert.deepEqual(combo.recipe, {id: p.recipeId, view: p.view, rules: p.applied.map(a => a.rule), satisfied: true});
+    assert.deepEqual(combo.recipe, {id: p.recipeId, view: p.view, rules: p.applied.map(a => a.rule), satisfied: true, exempted: p.exempted});
     // 갤러리·조립기가 쓰는 Blueprint 경로와 선택 함수가 평가한 Blueprint가 같아야 추천이 화면에서 지켜진다.
     assert.deepEqual(recipeBlueprint(p.templateId, p.layout, p.view), comboBlueprint(combo, p.view ? {...EMPTY_VIEW, ...p.view} : EMPTY_VIEW), p.templateId);
   }
@@ -177,6 +177,8 @@ test('a recipe pick never drops text content the default assembly had (hero fact
   assert.deepEqual(w.exempted.map(x => x.rule), ['RC01']); assert.ok(w.exempted[0].reason.length > 30);
   assert.ok(!w.applied.some(a => a.rule === 'RC01'), 'an exempted rule is not reported as applied');
   assert.equal(findCombo('waitlist').recipe.id, 'saas-landing');
+  assert.deepEqual(findCombo('waitlist').recipe.exempted, w.exempted);
+  assert.ok(!findCombo('waitlist').recipe.rules.includes('RC01'));
   assert.equal(findCombo('waitlist~hero:product').recipe, null, 'the former pick is no longer the recommendation, and still selectable');
   // 면제는 그 템플릿의 그 규칙에만: 다른 템플릿에서는 같은 규칙이 그대로 걸린다. 면제 없이는 waitlist 기본이 RC01을 어긴다.
   assert.ok(evaluateRecipe('saas-landing', 'devtool-landing').failures.some(f => f.rule === 'RC01'));

@@ -61,15 +61,20 @@ function renderRecipe() {
   $('recipe-field').hidden = !pick;
   if (!pick) return;
   const r = recipes[pick.recipeId];
+  const exemptions = pick.exempted.map(({rule, reason}) => `${rule} 면제 · ${reason}`);
   $('apply-recipe').hidden = !pick.satisfied;
   if (!pick.satisfied) { // 규칙을 못 지키는 템플릿: 추천하지 않고 이유만 보인다. 이 템플릿은 그대로 쓸 수 있다.
     $('recipe-text').textContent = `${r.label} · 이 템플릿은 레시피 규칙을 모두 지키지 못해 추천하지 않습니다. 직접 고른 구성은 그대로 쓸 수 있습니다.`;
-    $('recipe-rules').textContent = pick.unmet.map(u => `${u.rule} ${u.detail}`).join(' · ');
+    $('recipe-rules').textContent = [...pick.unmet.map(u => `${u.rule} ${u.detail}`), ...exemptions].join(' · ');
     return;
   }
   const look = lookOfPick(pick), layout = Object.entries(pick.layout).map(([k, v]) => `${k}:${v}`).join(' ') || '기본 구성';
   $('recipe-text').textContent = `${r.label} · ${r.purpose}. 추천: ${layout}${look ? ' · ' + concepts[pick.view.concept].label + ' ' + look.label + ' 보기' : ' · 템플릿 기본 테마'}`;
-  $('recipe-rules').textContent = `지킨 규칙 ${pick.applied.map(a => a.rule).join(' ')}` + (pick.avoided.length ? ` · 피한 규칙 ${[...new Set(pick.avoided.map(a => a.rule))].join(' ')}` : '');
+  $('recipe-rules').textContent = [
+    `지킨 규칙 ${pick.applied.map(a => a.rule).join(' ')}`,
+    pick.avoided.length ? `피한 규칙 ${[...new Set(pick.avoided.map(a => a.rule))].join(' ')}` : null,
+    ...exemptions,
+  ].filter(Boolean).join(' · ');
   $('apply-recipe').setAttribute('aria-pressed', String(isRecipeApplied(pick)));
 }
 const isRecipeApplied = pick => JSON.stringify(sel.layout) === JSON.stringify(pick.layout) && blueprint.theme === (lookOfPick(pick)?.theme ?? templates[sel.templateId].theme);

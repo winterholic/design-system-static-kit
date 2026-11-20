@@ -140,6 +140,7 @@ const cache = new Map();
  * 어떤 후보도 모든 규칙을 지키지 못하면 실패한 규칙이 가장 적은 후보(같으면 선호 순서가 앞선 것)를 돌려주고 `unmet`에 이유를 남긴다.
  *
  * 결과: {recipeId, templateId, layout, view, satisfied, applied, avoided, unmet, exempted, measured, pageRules, trace}
+ *  - satisfied: 적용 대상 선택 규칙에 실패가 없다는 뜻이다.
  *  - exempted: 이 템플릿에서 사유와 함께 면제한 select 규칙 [{rule, reason}](데이터의 `exempt`).
  *  - view: null(템플릿 기본 테마) 또는 {concept, look}. 갤러리·조립기의 보기 설정에 그대로 넣는다.
  *  - applied: 선택이 지킨 규칙 [{rule, claim}], avoided: 피한 규칙 [{rule, what, why}], measured: 브라우저 측정이 판정하는 규칙 ID.

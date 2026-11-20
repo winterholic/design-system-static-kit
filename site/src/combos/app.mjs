@@ -203,8 +203,17 @@ function setThumbScale() {
 /* ---------- 목록 그리기 ---------- */
 /** 실험 표시의 이유: 진단 등급(C …)과 구성 변형 결과 계약(V01~V05)의 규칙 ID·주장 번호·사유. */
 const experimentalWhy = c => [c.experimental.startsWith('C ') ? '진단에서 A 등급이 아니었습니다: ' + c.experimental.split(' · ')[0] : null, ...(c.rules ?? []).map(r => `${r.rule}(${r.claim ?? '측정'}) ${r.slot}:${r.option} — ${r.detail}`)].filter(Boolean).join('\n');
-/** 레시피 추천의 근거: 레시피 이름, 지킨 규칙 ID, 템플릿 기본과 다른 보기 설정. 추천이 아닌 조합을 막지 않는다. */
-const recipeWhy = c => { const r = recipes[c.recipe.id], v = c.recipe.view; return `${r.label} 레시피 추천 · 지킨 규칙 ${c.recipe.rules.join(' ')}` + (v ? ` · 보기 설정: 컨셉 ${concepts[v.concept].label} · ${concepts[v.concept].looks.find(l => l.id === v.look).label}` : ''); };
+const recipeExemptions = recipe => recipe.exempted.map(({rule, reason}) => `${rule} 면제 · ${reason}`);
+/** 레시피 이름, 지킨 규칙, 템플릿 기본과 다른 보기 설정. */
+const recipeWhy = c => {
+  const {id, view, rules} = c.recipe;
+  const parts = [`${recipes[id].label} 레시피 추천`, `지킨 규칙 ${rules.join(' ')}`];
+  if (view) {
+    const concept = concepts[view.concept];
+    parts.push(`보기 설정: 컨셉 ${concept.label} · ${concept.looks.find(l => l.id === view.look).label}`);
+  }
+  return parts.join(' · ');
+};
 const badges = c => [c.recipe && `<span class="badge rec" title="${e(recipeWhy(c))}">레시피 추천</span>`, c.sameAs && `<span class="badge" title="앞 조합과 같은 화면입니다(앞 슬롯의 변경이 뒤 슬롯의 조건을 없앰)">#${pad(c.sameAs)}과 같은 화면</span>`, c.changed >= 3 && `<span class="badge hot">${c.changed}곳 변경</span>`, c.experimental && `<span class="badge exp" title="${e(experimentalWhy(c))}">실험</span>`].filter(Boolean).join('');
 function cardHTML(c) {
   const flagged = !!findFlag(c.id);
@@ -214,6 +223,7 @@ function cardHTML(c) {
     <div class="combo-line"><span class="num">#${pad(c.n)}</span><h3>${e(c.template)}</h3></div>
     <p class="combo-sub">${e(comboTitle(c))}</p>
     <div class="combo-badges">${badges(c)}</div>
+    ${c.recipe ? recipeExemptions(c.recipe).map(reason => `<p class="combo-sub">${e(reason)}</p>`).join('') : ''}
     <div class="combo-actions"><button type="button" class="chip-button" data-copy="${c.id}" title="${e(c.id)}">ID 복사</button><button type="button" class="chip-button flag-button" data-flag="${c.id}" aria-pressed="${flagged}">⚑ 이상함</button></div>
   </div></article>`;
 }
@@ -266,6 +276,9 @@ function renderViewer() {
   $('v-devices').innerHTML = deviceButtons();
   const status = [result.ok ? null : '렌더 실패: ' + result.error, ...(result.notes ?? []), combo.sameAs ? `#${pad(combo.sameAs)}과 같은 화면` : null, combo.experimental ? '실험 구성(기본 추천 아님): ' + experimentalWhy(combo).replace(/\n/g, ' / ') : null, combo.recipe ? recipeWhy(combo) : null, combo.id].filter(Boolean);
   $('v-recipe').hidden = !combo.recipe?.view;
+  const exemptions = $('v-recipe-exemptions');
+  exemptions.textContent = combo.recipe ? recipeExemptions(combo.recipe).join(' · ') : '';
+  exemptions.hidden = !exemptions.textContent;
   $('v-status').dataset.base = status.join(' · '); $('v-status').textContent = status.join(' · ');
   viewerPort?.apply();
 }

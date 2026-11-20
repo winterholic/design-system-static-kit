@@ -138,7 +138,7 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 
 로그별 SHA는 `latest-rerun/commit.txt`에 있다. `ai-assembly.mjs verify`는 이전 보고 일부에서 종료 코드 0으로 적혔으나 이번 실제 실행은 1이었다. 이 차이는 성공으로 덮지 않고 위 로그와 같이 정정한다. 기준 커밋을 확인하기 전의 `ps -Ao …` 명령은 command worker에서 `operation not permitted`로 거부됐다. 실행 중복 여부는 호스트 자원 스냅샷에서 Playwright 작업이 보이지 않은 것까지만 확인했으며, 전체 프로세스 목록은 검증하지 못했다.
 
-구성 정책 면제 검토: RC01 규칙 자체를 바꾸거나 다른 템플릿까지 느슨하게 하지 않고 `waitlist` 한 템플릿에 사유가 있는 면제 항목을 지정한 설계는 범위가 좁고 소스·평가 문서에서 추적 가능하다. 다만 현재 구현은 면제된 선택에도 `satisfied: true`를 내보낸다. `combos.mjs`는 추천 메타데이터를 만들 때 `exempted`를 버리고 `applied`만 복사하며, 조립기 화면은 `지킨 규칙`만 보여 RC01 면제와 사유를 드러내지 않는다. 이는 “규칙을 숨기거나 우회하지 않는다”는 원칙을 사용자 표면에서는 충족하지 못한다. 따라서 면제 방식은 현재 표현대로면 **조건부로만 정당**하다. 면제를 정식 예외 상태로 노출하고 자동 판정의 pass와 구분하기 전까지는 잔여 결함 R-22로 기록한다. 화면 확인은 현재 main 조립기에서 했으며, Chromium 기반 품질 지표와 샘플 전수 재촬영의 대체 근거로 보지 않는다.
+waitlist의 RC01은 제품 화면이 없는 비공개 베타 대기자 등록 페이지에 사유와 함께 면제한다. 독립 검증에서 조립기·갤러리에 이 사유가 빠진 문제를 확인했다(R-22). 이후 추천 메타데이터에 면제 정보를 전달하고 조립기, 갤러리 카드, 확대 보기에 규칙 ID와 사유를 표시했다. `satisfied`는 적용 대상 선택 규칙에 실패가 없음을 뜻한다. 면제 규칙은 지킨 규칙 목록에서 제외한다. 기본·회전 테마 조합의 렌더 출력 9,910개를 `67fd98b70`과 비교해 불일치 0개를 확인했다. 390px의 조립기와 갤러리에서 waitlist 면제 사유를 확인했고, 확대 보기에서는 히어로 수치 세 개가 보인다. devtool-landing에는 RC01이 지킨 규칙으로 표시된다.
 
 최신 브라우저 실패는 macOS command worker의 `PW_PORT=4391 npx playwright test` 단계에서 발생했다. 로그는 Chromium이 포트를 열거나 테스트 코드를 실행하기 전에 `bootstrap_check_in … Permission denied (1100)`로 SIGTRAP 했음을 보인다. 비교 HTML은 설정된 Ttakkari browser로 열어 캡처 구조를 확인했다. 이때 브라우저 콘솔에는 `/favicon.ico` 404 하나가 있었고, 비교 페이지는 로드됐다. 별도로 GitHub Actions의 `npm run test:browser` 전체 로그를 확인했다. `0ea13094c`에서 67개 중 67개 통과, 실패·건너뜀 0이었다. `238d0bcf4`까지 제품 소스, 테스트, 생성 사이트, 패키지와 Playwright 설정에는 차이가 없다. [GitHub Actions Verify 44789298361](https://github.com/winterholic/design-system-static-kit/actions/runs/44789298361)
 
@@ -198,7 +198,7 @@ before = 2.3.0(`89573577f`, `before/`), final = 2.4.0(`d72d78389`, `final/`). �
 | R-19 | P3 | RC02(제목 ≥ 섹션 제목×1.6)는 1440px 기준만, 좁은 폭은 1.58배 | `docs/recipes.md` 7절 | `src/recipes.mjs` RC02 | 기지 |
 | R-20 | P3 | 문서 정합: `quality-diagnosis-2026-11-21.md`에서 13.1절이 14절 뒤에 놓여 있고, 12.1절의 "3,466개"와 11절 이후 수치가 V06 이후의 3,714개와 섞여 있다(각 문서가 주석으로 일부만 밝힘) | 파일을 열어 절 순서 확인, `enumerateCombos().filter(c=>c.experimental).length` → 3714 | `docs/quality-diagnosis-2026-11-21.md`, `docs/adr/0006-*` | 신규 |
 | R-21 | P3 | AI 팔은 입력마다 한 번만 만들어 변동 미측정. 입력 9개로 검정력 약함 | `eval/report.md` 3.3절 | `eval/` | 기지 |
-| R-22 | P1 | RC01의 waitlist 면제는 데이터에 이유와 함께 남지만 사용자에게 노출되는 추천 결과에서 숨는다. `satisfied:true`이고 조립기에는 지킨 규칙만 보여 면제된 규칙을 완전히 충족한 것처럼 읽힐 수 있다. 제한된 예외 정책 자체는 검토 가능하지만 현재 표시 방식은 규칙을 숨기지 않는 원칙에 맞지 않는다 | `node --input-type=module -e 'import {selectRecipe} from "./src/recipes.mjs"; import {findCombo} from "./src/combos.mjs"; const p=selectRecipe({recipe:"saas-landing",templateId:"waitlist"}); console.log(JSON.stringify({satisfied:p.satisfied,exempted:p.exempted,gallery:findCombo("waitlist").recipe},null,2))'`; 조립기에서 템플릿 `대기자 등록` 선택 → 면제 설명 없이 `레시피 추천으로 맞추기`, `지킨 규칙 RC02 RC03 V01 V04 V06 P01 P02` 표시 | `src/recipes.mjs` 결과 상태, `src/combos.mjs` 추천 투영, `src/workbench.mjs` 문구 | 신규, 면제 정책 검토 |
+| R-22 | P1 | RC01의 waitlist 면제 사유가 조립기와 갤러리에서 빠졌음 | 대기자 등록 템플릿 선택, 조합 카드 및 확대 보기에서 `RC01 면제`와 사유를 확인. devtool-landing에는 RC01이 계속 적용됨 | `src/recipes.mjs`, `src/combos.mjs`, `src/workbench.mjs`, `src/combos/app.mjs`; `tests/recipes.test.mjs`, `e2e/recipes.spec.mjs` | 표시 수정 |
 
 **R-04 재현(측정)**: 
 ```
