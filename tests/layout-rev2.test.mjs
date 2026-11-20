@@ -11,6 +11,7 @@ import {shellCSS} from '../src/styles/shells.mjs';
 import {axes, createBlueprint, templateList, nodeSpecs, CATALOG_VERSION, migrateBlueprint, SUPPORTED_CATALOG_VERSIONS} from '../src/catalog.mjs';
 import {compile} from '../src/compiler.mjs';
 import {SPACE} from '../src/spacing.mjs';
+import * as layoutApi from '../src/layout.mjs';
 
 // 레이아웃 리비전 2(카탈로그 2.4.0): 진단 2026-11-21 공통 원인 1·4·5·6·7. 브라우저 실측은 e2e/layout-common.spec.mjs가 맡고, 여기서는 규약과 호환을 단위로 고정한다.
 const read = f => JSON.parse(readFileSync(new URL('../docs/evidence/layout-refine/' + f, import.meta.url), 'utf8'));
@@ -153,4 +154,63 @@ test('wrap policy follows the role: title-like strong, dt labels and brand names
 test('cards that share a grid row absorb extra height in the body, not below it (revision 2 contract CSS)', () => {
   const css = compile(createBlueprint('sales-dashboard')).css;
   assert.match(css, /\[data-flow\]>\.kit-chart \.kit-chart-body\{flex:1 1 auto;align-content:center\}\[data-flow\]>\.kit-chart \.kit-chart-data\{margin-top:auto\}/);
+});
+
+// ---- 벤토 높이 균형(진단 원인 5, Q07). 줄 짝 짓기와 큰 칸의 탄성은 리비전 2부터다. ----
+const cellOf = {
+  card: {type: 'card', title: 't', body: 'b'}, visualCard: {type: 'card', title: 't', body: 'b', visual: 'chart'}, metric: {type: 'metric', label: 'l', value: '1'},
+  progress: {type: 'progress', label: 'p', value: 40, max: 100}, quote: {type: 'quote', quote: 'q', author: 'a'}, media: {type: 'media', kind: 'photo', ratio: '4:3', alt: 'x'},
+};
+const typesOf = (children, plan) => plan.map(p => children[p.index].type + (layoutApi.isVisualCell(children[p.index]) ? '*' : ''));
+/** 같은 줄에 짧은 칸(지표·진행률)과 긴 칸이 섞인 줄의 수. 4열 줄과 2열 줄을 모두 센다. */
+const mixedRows = (children, plan) => [...layoutApi.bentoRows(plan, 4), ...layoutApi.bentoRows(plan, 2)].filter(row => new Set(row.map(p => layoutApi.isShortCell(children[p.index]))).size > 1).length;
+
+test('bento rows (rev 2): short-number cells share a row with each other, so no row is sized by a taller neighbour', () => {
+  const k = cellOf;
+  const cases = {
+    'product-landing': [k.media, k.metric, k.card, k.quote, k.metric],
+    'saas-landing': [k.visualCard, k.metric, k.card, k.quote, k.progress],
+    'campaign-poster (no picture)': [k.card, k.metric, k.card, k.progress, k.quote],
+  };
+  for (const [name, children] of Object.entries(cases)) {
+    const plan = layoutApi.bentoPlan(children, {pair: true});
+    assert.equal(mixedRows(children, plan), 0, `${name}: ${typesOf(children, plan)}`);
+  }
+  // 짝을 지을 수 없는 구성(짧은 칸 1개)은 섞인 줄이 남는다. 그래도 최소다.
+  const lone = [k.media, k.metric, k.card, k.quote, k.card];
+  assert.equal(mixedRows(lone, layoutApi.bentoPlan(lone, {pair: true})), 2, 'one short cell shares one row, counted once for the 4-column and once for the 2-column layout');
+});
+
+test('bento rows (rev 2): the plan is a permutation with the feature first, never worse than the author order, and already-paired input keeps its order', () => {
+  const kinds = ['card', 'metric', 'quote', 'progress', 'visualCard', 'media', 'card', 'metric'];
+  let checked = 0;
+  for (let mask = 0; mask < 8 ** 4; mask++) for (const n of [3, 4, 5, 6]) {
+    if (mask >= 8 ** Math.min(n, 4)) continue;
+    const children = Array.from({length: n}, (_, i) => cellOf[kinds[(mask >> (3 * (i % 4)) & 7)]] ?? cellOf.card).map((c, i) => ({...c, k: i}));
+    const plan = layoutApi.bentoPlan(children, {pair: true}), base = layoutApi.bentoPlan(children);
+    assert.deepEqual([...plan.map(p => p.index)].sort(), children.map((_, i) => i));
+    assert.equal(plan.filter(p => p.cell === 'feature').length, layoutApi.isVisualCell(children.find(layoutApi.isVisualCell) ?? {}) ? 1 : 0);
+    assert.deepEqual(plan.map(p => p.cell), base.map(p => p.cell), 'only the occupants of the slots change, not the slot sizes');
+    assert.ok(mixedRows(children, plan) <= mixedRows(children, base), `no worse than the author order: ${typesOf(children, plan)}`);
+    if (mixedRows(children, base) === 0) assert.deepEqual(plan.map(p => p.index), base.map(p => p.index), 'a plan that is already paired is left alone');
+    checked++;
+  }
+  assert.ok(checked > 1000);
+});
+
+test('bento revision 1 callers keep the author order (bentoPlan without the pair option is unchanged)', () => {
+  const children = [cellOf.media, cellOf.metric, cellOf.card, cellOf.quote, cellOf.metric];
+  assert.deepEqual(layoutApi.bentoPlan(children).map(p => p.index), [0, 1, 2, 3, 4]);
+  const old = structuredClone(read('legacy-2-3-blueprints.json').blueprints['product-landing']);
+  assert.deepEqual([...compile(old).html.matchAll(/kit-bento-cell" data-cell="(\w+)"[^>]*><(?:div|article|figure|dl|blockquote)[^>]* class="kit-(\w+)/g)].map(m => m[2]).slice(0, 5), ['media', 'metric', 'card', 'quote', 'metric']);
+  const next = compile(createBlueprint('product-landing')).html;
+  assert.deepEqual([...next.matchAll(/kit-bento-cell" data-cell="(\w+)"[^>]*><(?:div|article|figure|dl|blockquote)[^>]* class="kit-(\w+)/g)].map(m => m[2]).slice(0, 5), ['media', 'metric', 'metric', 'card', 'quote'], 'revision 2 puts the two metrics in one row');
+});
+
+test('a 2x2 feature picture is elastic only where the bento has four columns (revision 2 contract CSS, bento pages only)', () => {
+  const css = compile(createBlueprint('product-landing')).css, legacy = compile(structuredClone(read('legacy-2-3-blueprints.json').blueprints['product-landing'])).css;
+  assert.match(css, /@container kit \(min-width:1180px\)\{[^@]*\.kit-bento-cell\[data-cell=feature\] :is\(\.kit-art-box,\.kit-card-media,\.kit-chart-plot\)\{[^}]*flex:1 1 0/);
+  assert.match(css, /@container kit \(max-width:1179px\)/, 'the single-row feature mode keeps its natural aspect ratio');
+  assert.doesNotMatch(legacy, /min-width:1180px/);
+  assert.doesNotMatch(compile(createBlueprint('sales-dashboard')).css, /kit-bento/, 'pages without a bento do not carry the rule');
 });

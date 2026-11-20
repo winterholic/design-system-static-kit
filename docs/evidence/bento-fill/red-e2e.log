@@ -1,0 +1,122 @@
+
+Running 4 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/layout-common.spec.mjs:73:1 › cause 5: cards that share a row of a grid do not leave a blank lower half (Q04) (511ms)
+  ✘  2 [chromium] › e2e/layout-common.spec.mjs:80:1 › cause 5: bento rows follow the short cells, not the 2x2 feature or a tall neighbour: no small cell is more than 60% empty (Q07) (522ms)
+  ✘  3 [chromium] › e2e/layout-common.spec.mjs:92:1 › cause 5: a 2x2 feature picture takes the height its two rows give it instead of setting the row height (4-column bento) (471ms)
+  ✘  4 [chromium] › e2e/layout-common.spec.mjs:108:1 › cause 5: a donut card stretched by a taller neighbour scales its ring into the space instead of floating in it (Q04 absolute condition) (426ms)
+
+
+  1) [chromium] › e2e/layout-common.spec.mjs:80:1 › cause 5: bento rows follow the short cells, not the 2x2 feature or a tall neighbour: no small cell is more than 60% empty (Q07) 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 12
+
+    - Array []
+    + Array [
+    +   "S06@1440 {\"cols\":4,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.69,\"meanEmpty\":0.63}",
+    +   "S01@1440 {\"cols\":2,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.63,\"meanEmpty\":0.42}",
+    +   "saas-landing@1100 {\"cols\":2,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.61,\"meanEmpty\":0.42}",
+    +   "saas-landing@1440 {\"cols\":2,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.63,\"meanEmpty\":0.42}",
+    +   "saas-landing@1920 {\"cols\":2,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.63,\"meanEmpty\":0.42}",
+    +   "product-landing@1440 {\"cols\":4,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.69,\"meanEmpty\":0.63}",
+    +   "product-landing@1920 {\"cols\":4,\"cells\":5,\"smallCells\":4,\"worstEmpty\":0.69,\"meanEmpty\":0.63}",
+    +   "campaign-poster@768 {\"cols\":2,\"cells\":5,\"smallCells\":5,\"worstEmpty\":0.62,\"meanEmpty\":0.43}",
+    +   "campaign-poster@1440 {\"cols\":4,\"cells\":5,\"smallCells\":5,\"worstEmpty\":0.62,\"meanEmpty\":0.43}",
+    +   "campaign-poster@1920 {\"cols\":4,\"cells\":5,\"smallCells\":5,\"worstEmpty\":0.62,\"meanEmpty\":0.43}",
+    + ]
+
+      87 |     if (!claim('Q07').test(v)) bad.push(`${id}@${width} ${JSON.stringify(v)}`);
+      88 |   }
+    > 89 |   expect(bad).toEqual([]);
+         |               ^
+      90 | });
+      91 |
+      92 | test('cause 5: a 2x2 feature picture takes the height its two rows give it instead of setting the row height (4-column bento)', async ({page}) => {
+        at /Users/winterholic/development/projects/dsk-wt-bento/e2e/layout-common.spec.mjs:89:15
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-bent-a214a--is-more-than-60-empty-Q07--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-5-bent-a214a--is-more-than-60-empty-Q07--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-bent-a214a--is-more-than-60-empty-Q07--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-5-bent-a214a--is-more-than-60-empty-Q07--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e/layout-common.spec.mjs:92:1 › cause 5: a 2x2 feature picture takes the height its two rows give it instead of setting the row height (4-column bento) 
+
+    Error: product-landing rows 316.734,286.359
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 187
+    Received:    316.734
+
+      101 |     expect(r.cols, id).toBe(4);
+      102 |     // 줄 높이는 작은 칸 중 가장 큰 자연 높이를 넘어 늘어나지 않는다(큰 칸이 정하지 않는다).
+    > 103 |     for (const h of r.rows) expect(h, `${id} rows ${r.rows}`).toBeLessThanOrEqual(r.tallestSmall + 1);
+          |                                                               ^
+      104 |     expect(r.featureH, id).toBeCloseTo(r.rows[0] + r.gap + r.rows[1], 0);
+      105 |   }
+      106 | });
+        at /Users/winterholic/development/projects/dsk-wt-bento/e2e/layout-common.spec.mjs:103:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-a-2x-f31e7--row-height-4-column-bento--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-5-a-2x-f31e7--row-height-4-column-bento--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-a-2x-f31e7--row-height-4-column-bento--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-5-a-2x-f31e7--row-height-4-column-bento--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e/layout-common.spec.mjs:108:1 › cause 5: a donut card stretched by a taller neighbour scales its ring into the space instead of floating in it (Q04 absolute condition) 
+
+    Error: Q04@768 {"cards":2,"worstEmpty":180,"worstRatio":0.35}
+
+    expect(received).toBeLessThan(expected)
+
+    Expected: < 96
+    Received:   180
+
+      109 |   for (const width of [768, 1440]) {
+      110 |     const {v} = await measure(page, 'Q04', 'S12', width);
+    > 111 |     expect(v.worstEmpty, 'Q04@' + width + ' ' + JSON.stringify(v)).toBeLessThan(96);
+          |                                                                    ^
+      112 |   }
+      113 | });
+      114 |
+        at /Users/winterholic/development/projects/dsk-wt-bento/e2e/layout-common.spec.mjs:111:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-a-do-6fa0a--it-Q04-absolute-condition--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/layout-common-cause-5-a-do-6fa0a--it-Q04-absolute-condition--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/layout-common-cause-5-a-do-6fa0a--it-Q04-absolute-condition--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/layout-common-cause-5-a-do-6fa0a--it-Q04-absolute-condition--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e/layout-common.spec.mjs:80:1 › cause 5: bento rows follow the short cells, not the 2x2 feature or a tall neighbour: no small cell is more than 60% empty (Q07) 
+    [chromium] › e2e/layout-common.spec.mjs:92:1 › cause 5: a 2x2 feature picture takes the height its two rows give it instead of setting the row height (4-column bento) 
+    [chromium] › e2e/layout-common.spec.mjs:108:1 › cause 5: a donut card stretched by a taller neighbour scales its ring into the space instead of floating in it (Q04 absolute condition) 
+  1 passed (3.4s)

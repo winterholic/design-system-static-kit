@@ -85,13 +85,16 @@ test('P01 / Q13: the same large picture twice on one page is reported, and no te
   assert.deepEqual(offenders, [], 'template data must not repeat a large picture');
 });
 
-test('P04 / Q07: a bento whose small cells are short numbers beside a feature picture is reported as sparse', () => {
-  const sparse = decisionsOf(compile(catalog.createBlueprint('product-landing')), 'P04');
-  assert.equal(sparse.length, 1, 'product-landing bento: media feature + two metrics');
-  assert.equal(sparse[0].code, 'PAGE_BENTO_SPARSE'); assert.deepEqual(sparse[0].shortCells, ['metric', 'metric']);
-  const b = catalog.createBlueprint('saas-landing'), bento = find(b.tree.children, 'bento')[0];
-  bento.children = bento.children.filter(c => c.type !== 'metric' && c.type !== 'progress');
-  assert.deepEqual(decisionsOf(compile(b), 'P04'), [], 'a bento without short-number cells is not reported');
+test('P04 / Q07: the bento plan pairs short-number cells; the page reports only the rows it could not pair', () => {
+  assert.deepEqual(decisionsOf(compile(catalog.createBlueprint('product-landing')), 'P04'), [], 'two metrics pair in one row, so nothing is left to report');
+  const b = catalog.createBlueprint('product-landing'), bento = find(b.tree.children, 'bento')[0];
+  bento.children = bento.children.filter((c, i) => i !== 4);
+  const left = decisionsOf(compile(b), 'P04');
+  assert.equal(left.length, 1, 'one metric cannot be paired with another short cell');
+  assert.equal(left[0].code, 'PAGE_BENTO_SPARSE'); assert.deepEqual(left[0].shortCells, ['metric']); assert.equal(left[0].mixedRows, 1);
+  const c = catalog.createBlueprint('saas-landing'), bentoC = find(c.tree.children, 'bento')[0];
+  bentoC.children = bentoC.children.filter(x => x.type !== 'metric' && x.type !== 'progress');
+  assert.deepEqual(decisionsOf(compile(c), 'P04'), [], 'a bento without short-number cells is not reported');
 });
 
 test('every page decision names the rule, the path, the facts it read and the reason', () => {

@@ -77,6 +77,41 @@ test('cause 5: cards that share a row of a grid do not leave a blank lower half 
   expect(probe.findings.filter(f => f.code === 'EMPTY_CELL').map(f => f.at + ' ' + f.detail)).toEqual([]);
 });
 
+test('cause 5: bento rows follow the short cells, not the 2x2 feature or a tall neighbour: no small cell is more than 60% empty (Q07)', async ({page}) => {
+  const bad = [];
+  for (const key of ['S06', 'S01']) { const m = await measure(page, 'Q07', key, 1440); if (!m.pass) bad.push(`${key}@1440 ${JSON.stringify(m.v)}`); }
+  // 벤토를 가진 템플릿 전부, 2열(컨테이너 < 1180px)과 4열 모드 양쪽.
+  for (const id of ['saas-landing', 'product-landing', 'devtool-landing', 'campaign-poster']) for (const width of [768, 1100, 1440, 1920]) {
+    await load(page, id, undefined, width);
+    const v = await page.evaluate(claim('Q07').fn);
+    if (!claim('Q07').test(v)) bad.push(`${id}@${width} ${JSON.stringify(v)}`);
+  }
+  expect(bad).toEqual([]);
+});
+
+test('cause 5: a 2x2 feature picture takes the height its two rows give it instead of setting the row height (4-column bento)', async ({page}) => {
+  for (const id of ['product-landing', 'devtool-landing']) {
+    await load(page, id, undefined, 1440);
+    const r = await page.evaluate(() => {
+      const b = document.querySelector('.kit-bento'), cells = [...b.children], feature = cells.find(c => c.dataset.cell === 'feature');
+      const small = cells.filter(c => c !== feature), nat = c => { const k = c.firstElementChild, old = k.style.cssText; k.style.alignSelf = 'start'; const h = k.getBoundingClientRect().height; k.style.cssText = old; return h; };
+      const rows = getComputedStyle(b).gridTemplateRows.split(' ').map(parseFloat), gap = parseFloat(getComputedStyle(b).rowGap);
+      return {cols: getComputedStyle(b).gridTemplateColumns.split(' ').length, rows, featureH: feature.getBoundingClientRect().height, tallestSmall: Math.max(...small.map(nat)), gap};
+    });
+    expect(r.cols, id).toBe(4);
+    // 줄 높이는 작은 칸 중 가장 큰 자연 높이를 넘어 늘어나지 않는다(큰 칸이 정하지 않는다).
+    for (const h of r.rows) expect(h, `${id} rows ${r.rows}`).toBeLessThanOrEqual(r.tallestSmall + 1);
+    expect(r.featureH, id).toBeCloseTo(r.rows[0] + r.gap + r.rows[1], 0);
+  }
+});
+
+test('cause 5: a donut card stretched by a taller neighbour scales its ring into the space instead of floating in it (Q04 absolute condition)', async ({page}) => {
+  for (const width of [768, 1440]) {
+    const {v} = await measure(page, 'Q04', 'S12', width);
+    expect(v.worstEmpty, 'Q04@' + width + ' ' + JSON.stringify(v)).toBeLessThan(96);
+  }
+});
+
 test('cause 6: a title-like line (strong, dt label) is balanced instead of leaving a one-word last line', async ({page}) => {
   const bad = [];
   for (const [id, widths] of [['hr-people', [320, 390, 768]], ['wine-list', [320]], ['campaign-donate', [320, 390]]]) for (const width of widths) {
