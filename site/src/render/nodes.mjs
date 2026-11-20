@@ -97,7 +97,7 @@ export function makeRenderer(b, design = null) {
     return `<div class="kit-aside" data-side="${n.side}" data-sticky="${n.sticky ?? 'no'}" data-size="${n.size ?? 'narrow'}">${n.side === 'start' ? side + main : main + side}</div>`;
   };
   R.bento = (n, d) => {
-    const plan = bentoPlan(n.children);
+    const plan = bentoPlan(n.children, {pair: rev2});
     const cells = plan.map(p => `<div class="kit-bento-cell" data-cell="${p.cell}"${p.tail ? ' data-tail' : ''}>${render(n.children[p.index], d)}</div>`).join('');
     return `<div class="kit-bento" data-count="${n.children.length}" data-feature="${plan[0].cell === 'feature' ? 'yes' : 'no'}">${cells}</div>`;
   };

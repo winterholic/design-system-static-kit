@@ -1680,19 +1680,6 @@
           },
           "applied": "none",
           "reason": "The hero fades into the page canvas and already ends in a band step; a transparent section right after it adds a second band step on top (208px of dead space). Where the next section is a visible band (explicit tint or inverse surface) the edge stays and nothing changes."
-        },
-        {
-          "rule": "P04",
-          "code": "PAGE_BENTO_SPARSE",
-          "path": "$.tree.children[2].children[0]",
-          "facts": {
-            "bentoSparse": true
-          },
-          "shortCells": [
-            "metric",
-            "metric"
-          ],
-          "reason": "Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content."
         }
       ]
     },
@@ -1734,8 +1721,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "f53c7f020fa17c149539f2d5d34def48b382173e3f4383a8d5134fd7e186dcd0",
-      "tokens.css": "eb4a6950eaccfe4f4c188ebd10dfb79de3bbb07d74f372b7eb83f2e4eaaab32c",
+      "index.html": "30b6d264aad25af13a21fc228ba11432611463631633975e1f97abffce5b4f1e",
+      "tokens.css": "ef8c2872890ec5a6de3959d8bb2a553c39f35a392b892538ca222c18a3c8650e",
       "tokens.json": "36bd942917c3950ce889b763cb34571017f58bb79239b7f8f9f58d714966d71b",
       "blueprint.json": "aa1ac729770285d583da4270d695974b498b2d9227347484b6fafd6618f2055d"
     }

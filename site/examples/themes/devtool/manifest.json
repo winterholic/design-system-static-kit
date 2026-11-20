@@ -2785,6 +2785,19 @@
           "declared": "split",
           "applied": "centered",
           "reason": "A split or product hero without a visual leaves its second column empty; it reads as a text-led centred hero."
+        },
+        {
+          "rule": "P04",
+          "code": "PAGE_BENTO_SPARSE",
+          "path": "$.tree.children[4].children[0]",
+          "facts": {
+            "bentoSparse": true
+          },
+          "shortCells": [
+            "metric"
+          ],
+          "mixedRows": 1,
+          "reason": "The bento plan seats short-number cells (metric, progress) in rows with each other and lets a 2x2 feature picture take the height of its two rows (src/layout.mjs bentoPlan, layout revision 2). When a short cell still shares a row with a taller card or quote because no pairing exists, its row height follows the taller cell and it sits partly empty; the page reports what is left."
         }
       ]
     },
@@ -2826,8 +2839,8 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "index.html": "c8e58ac043c7813aa0eea72a04d7bf856d13d63820aa22b00d3f2ef96668b3f2",
-      "tokens.css": "e779f6edcf93c89877c2bf55483f18033aa4e79175d0499e68b37751318cfff5",
+      "index.html": "e1e6c2404e36d68a1093566490396ef64efc8b0a35d9076ff243461a07bb267e",
+      "tokens.css": "dad519fc551fd7877626c2f6cff6e0a9e3a8e645597964f0d8f995aeac98811f",
       "tokens.json": "5dd7caef2b92ed42d8b9e9ce9040d5822216cf2eecee010d7cda72a90df8a31c",
       "blueprint.json": "e1172cf8e8997a2b52a75dd7cd608ac91697c76afb7293d17ae6dd7a80d78750"
     }

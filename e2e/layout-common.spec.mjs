@@ -108,7 +108,7 @@ test('cause 5: a 2x2 feature picture takes the height its two rows give it inste
 test('cause 5: a donut ring uses the room beside its legend, so a stretched donut card is not blank below at 1440 (Q04 absolute condition)', async ({page}) => {
   const {v} = await measure(page, 'Q04', 'S12', 1440);
   expect(v.worstEmpty, 'Q04@1440 ' + JSON.stringify(v)).toBeLessThan(96);
-  // 좁은 카드(범례가 아래로 접히는 폭)는 이 규칙으로 커지지 않는다. 768px의 빈 공간은 이웃 막대 차트가 늘어난 것이라 이 단위에서 고치지 않았다(진단 문서 13절 한계).
+  // 좁은 카드(범례가 아래로 접히는 폭)는 이 규칙으로 커지지 않는다. 768px의 빈 공간은 이웃 막대 차트가 늘어난 것이라 이 단위에서 고치지 않았다(진단 문서 14절 한계).
   expect(await measure(page, 'Q04', 'S12', 768), 'Q04@768 keeps passing the ratio condition').toMatchObject({pass: true});
   await load(page, 'sales-dashboard', undefined, 1440);
   const ring = await page.evaluate(() => Math.round(document.querySelector('.ch-donut').getBoundingClientRect().width));

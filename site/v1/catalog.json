@@ -499,7 +499,7 @@
         "set": {
           "bentoFill": "report"
         },
-        "reason": "Short-number cells (metric, progress) next to a 2x2 feature picture stretch to the picture row height and sit mostly empty; the page reports it until the bento row sizing (src/layout.mjs bentoPlan) fits content."
+        "reason": "The bento plan seats short-number cells (metric, progress) in rows with each other and lets a 2x2 feature picture take the height of its two rows (src/layout.mjs bentoPlan, layout revision 2). When a short cell still shares a row with a taller card or quote because no pairing exists, its row height follows the taller cell and it sits partly empty; the page reports what is left."
       }
     ],
     "coverage": {
