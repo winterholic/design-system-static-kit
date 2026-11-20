@@ -8,6 +8,8 @@ const TOTAL = all.length, TOTAL_TXT = TOTAL.toLocaleString('en-US'), PAGES48 = M
 const watch = page => { const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => m.type() === 'error' && errors.push('console: ' + m.text() + ' @' + JSON.stringify(m.location()))); return errors; };
 // 갤러리는 진단에서 C 등급이었던 '실험' 조합을 기본으로 숨긴다. 이 시험들은 전체 목록을 모델과 대조하므로 실험 포함(exp=1)으로 연다. 기본 동작은 아래 전용 시험이 확인한다.
 const ready = async (page, url = '/combos/') => { const u = new URL(url, 'http://local'); if (!u.searchParams.has('exp')) u.searchParams.set('exp', '1'); await page.goto(u.pathname + u.search); await page.waitForSelector('html[data-ready=true]'); };
+// 기본 정렬은 레시피 추천이 앞이다(docs/recipes.md 4절). 아래 시험들은 "n번째 카드 = 열거 순서의 n번째 조합"을 가정하므로 정렬을 템플릿 순으로 명시한다. 검사는 그대로다.
+const TEMPLATE_ORDER = '/combos/?sort=template';
 const idsOnPage = page => page.locator('#grid .combo-card').evaluateAll(cards => cards.map(c => c.dataset.id));
 
 test('the gallery lists every combination with no console errors, and only a few iframes are alive', async ({page}) => {
@@ -90,7 +92,7 @@ test('a random sample of 40 combinations renders as full pages through the share
 
 test('viewer: opens from a card with its own URL, steps with ← → and Esc, and honours the filtered order', async ({page}) => {
   const errors = watch(page);
-  await ready(page);
+  await ready(page, TEMPLATE_ORDER);
   await page.locator('.thumb-hit').nth(2).click();
   await expect(page.locator('#viewer')).toHaveAttribute('open', '');
   expect(page.url()).toContain('c=' + all[2].id);
@@ -151,9 +153,9 @@ test('viewer: a theme that forbids the chosen mode keeps its own mode and says w
 
 test('flags: mark, note, persist, filter, export as text, delete', async ({page}) => {
   const errors = watch(page);
-  await ready(page);
+  await ready(page, TEMPLATE_ORDER);
   await page.evaluate(() => localStorage.removeItem('winterholic-static-kit.combo-flags.v1'));
-  await ready(page);
+  await ready(page, TEMPLATE_ORDER);
   await page.locator('.combo-card').nth(1).locator('[data-flag]').click();
   await expect(page.locator('#flag-count')).toHaveText('1');
   await page.locator('.thumb-hit').nth(4).click();
@@ -184,7 +186,7 @@ test('flags: mark, note, persist, filter, export as text, delete', async ({page}
 
 test('copy buttons put the stable id and the share link on the clipboard path (toast confirms)', async ({page, context}) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await ready(page);
+  await ready(page, TEMPLATE_ORDER);
   await page.locator('.combo-card').nth(3).locator('[data-copy]').click();
   await expect(page.locator('#toast')).toContainText('ID를 복사했습니다');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(all[3].id);
@@ -206,7 +208,7 @@ test.describe('phone', () => {
   test.use({viewport: {width: 390, height: 844}, hasTouch: true, isMobile: true});
   test('390px: one column, no horizontal overflow, viewer fits and swipes through the preview and the bar', async ({page}) => {
     const errors = watch(page);
-    await ready(page);
+    await ready(page, TEMPLATE_ORDER);
     const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(await overflow()).toBeLessThanOrEqual(0);
     const cols = await page.locator('#grid').evaluate(g => getComputedStyle(g).gridTemplateColumns.split(' ').length);
