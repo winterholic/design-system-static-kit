@@ -1,0 +1,455 @@
+{
+ "I01": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "theme": "devtool",
+     "mode": "dark",
+     "scale": "balanced",
+     "layout": {
+      "hero": "statement"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I01/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A).",
+    "choiceReason": "콘텐츠는 CLI·CI 빌드 도구이고 제품 화면 자료가 없다. 히어로 product는 범용 휴대폰 목업(device)을 넣으므로 쓰지 않고, 시각 요소 없이 큰 문장으로 여는 statement를 고른다. 개발자 도구라 테마는 devtool(기본), 모드는 dark, 서체 tech는 테마 기본을 따른다.",
+    "problems": [
+     "390px에서 히어로 제목 31px 대 섹션 제목 22px(1.41배)라 첫 화면 위계가 약하다. 1440px도 50px 대 29px(1.72배)로 제목이 설명 글에 비해 눈에 덜 띈다.",
+     "히어로 오른쪽의 동심원 장식(motif)은 콘텐츠와 무관한 추상 형태다(카탈로그 안에서 바꿀 수단 없음)."
+    ],
+    "changeReason": "위계 문제를 줄이기 위해 타입 스케일을 balanced에서 dramatic으로 올린다. 다른 축은 그대로 둔다."
+   },
+   {
+    "n": 2,
+    "selection": {
+     "theme": "devtool",
+     "mode": "dark",
+     "scale": "dramatic",
+     "layout": {
+      "hero": "statement"
+     }
+    },
+    "seen": "1440·390 스크린샷(a2__w*__sheet.png)을 직접 봤다. 프로브 심각 0. 히어로 제목 80px(1440)·44px(390), 섹션 제목 대비 2.16·1.63배.",
+    "problems": [
+     "동심원 장식은 그대로다(추상이라 내용과 충돌하지는 않음).",
+     "390px에서 벤토 카드와 지표가 한 열로 길게 쌓여 문서 높이가 4558px다."
+    ],
+    "changeReason": "더 고칠 카탈로그 선택지가 없어 여기서 확정한다(남은 문제는 선택이 아니라 렌더러·템플릿 데이터 영역)."
+   }
+  ],
+  "final": {
+   "attempt": 2,
+   "selection": {
+    "theme": "devtool",
+    "mode": "dark",
+    "scale": "dramatic",
+    "layout": {
+     "hero": "statement"
+    }
+   }
+  },
+  "improvements": [
+   "콘텐츠와 맞지 않는 범용 목업을 피하고(hero:statement) 시각 증거는 템플릿에 있는 코드 블록·빌드 시간 차트·지표에 맡겼다.",
+   "스케일 dramatic으로 히어로 제목이 80px(섹션 제목의 2.16배)로 커져 첫 화면 위계가 선다.",
+   "devtool 테마의 어두운 결을 유지했다."
+  ],
+  "remaining": [
+   "히어로 오른쪽 동심원 장식은 빌드 도구와 직접 관련이 없다.",
+   "벤토가 390px에서 한 열로 길어진다."
+  ]
+ },
+ "I02": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "theme": "aurora",
+     "layout": {
+      "hero": "statement"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I02/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0. 히어로 제목 64px(1440)·38px(390).",
+    "choiceReason": "출시 전 도구의 대기자 화면이고 제품 화면 자료가 없다. 히어로 split·product는 시각 요소 때문에 히어로 수치 facts(2,418·3주·4.8)를 지우므로 피하고, facts를 유지하면서 큰 문장으로 여는 statement를 골랐다. 차분하되 기대감이 있는 분위기로 aurora(어두운 그라데이션, 청록 팔레트)를 골랐다.",
+    "problems": [
+     "390px 상단바에서 브랜드·로그인 버튼·'소개' 내비가 한 줄에 어색하게 붙어 있다(렌더러 영역).",
+     "1440px에서 등록 폼이 히어로 아래 접힌 곳에 있어 주 행동이 첫 화면에 없다(템플릿 구조).",
+     "기능 3개 카드의 외곽 글로우가 강해 화면이 무겁다."
+    ],
+    "changeReason": "헤더 문제가 테마의 topbar 셸 때문인지 확인하려고 템플릿 기본 테마 neon(셸 minimal)로 바꿔 본다."
+   },
+   {
+    "n": 2,
+    "selection": {
+     "theme": "neon",
+     "layout": {
+      "hero": "statement"
+     }
+    },
+    "seen": "1440·390 스크린샷(a2__w*__sheet.png)을 직접 봤다. 프로브 심각 0. 히어로 제목 80px·44px.",
+    "problems": [
+     "minimal 셸도 390px에서 소개 내비가 다음 줄로 내려가 헤더 문제는 그대로다(셸이 원인이 아님).",
+     "보라·마젠타 네온 팔레트는 게임 느낌이 강해 생산성 도구의 신뢰감과 맞지 않는다."
+    ],
+    "changeReason": "테마는 aurora로 되돌리고, 글로우를 줄인 SaaS 컨셉 look(saas/clean = aurora + clean-saas 변형)으로 차분하게 만든다."
+   },
+   {
+    "n": 3,
+    "selection": {
+     "look": {
+      "concept": "saas",
+      "look": "clean"
+     },
+     "layout": {
+      "hero": "statement"
+     }
+    },
+    "seen": "1440·390 스크린샷(a3__w*__sheet.png)을 직접 봤다. 프로브 심각 0. 히어로 제목 64px·38px. 기능 목록이 카드 없이 평평하게 놓여 글로우가 사라졌다.",
+    "problems": [
+     "390px 헤더 줄 배치는 그대로(카탈로그 선택으로 해결할 수 없음)."
+    ],
+    "changeReason": "재선택 한도(2회)에 도달해 여기서 확정한다."
+   }
+  ],
+  "final": {
+   "attempt": 3,
+   "selection": {
+    "look": {
+     "concept": "saas",
+     "look": "clean"
+    },
+    "layout": {
+     "hero": "statement"
+    }
+   }
+  },
+  "improvements": [
+   "hero:statement로 히어로 수치 facts 3개를 유지했다(split·product는 이 수치를 지운다).",
+   "범용 제품 목업 없이 문장과 등록 폼이 주인공이다.",
+   "게임풍 네온 대신 차분한 청록 aurora/clean-saas로 신뢰감 있는 톤을 맞췄고 글로우 과다를 줄였다."
+  ],
+  "remaining": [
+   "390px 상단바에서 로그인 버튼과 내비가 어색하게 붙는다.",
+   "1440px에서 등록 폼이 첫 화면에 보이지 않는다(템플릿 구조)."
+  ]
+ },
+ "I03": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "theme": "trust"
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I03/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0, 등급 B(1440px 글줄 폭 경미). 히어로 제목 59.6px(섹션 제목 대비 1.81), 차트형 시각 요소(제품 목업)가 이미 히어로에 있다.",
+    "choiceReason": "B2B 팀 업무 SaaS에 신뢰감 있는 밝은 화면이 맞고, 히어로에 업무 흐름을 보여 주는 대시보드 목업이 콘텐츠와 맞아 템플릿 기본 테마 trust와 기본 구성을 그대로 고른다(기본과 같은 선택).",
+    "problems": [
+     "1440px 기능 벤토의 큰 흐름도 카드가 지나치게 크고 성기다(선택지로 바꿀 수 없음, features 슬롯 없음).",
+     "1440px 단계(steps)가 작은 글줄 세 개라 칸 폭을 못 채운다. 후기·요금·FAQ 구간이 모두 평평해 구간 구분이 약하다.",
+     "FAQ가 넓은 폭에서 좁은 한 열로 놓여 오른쪽이 빈다."
+    ],
+    "changeReason": "카탈로그의 안전한 구성 변형으로 구간 구분(rhythm:banded), 단계 카드(steps:cards), FAQ 좌우 분할(faq:split)을 켠다. 추천이 아닌 변형(cards, heads:center, hero statement 등)은 쓰지 않는다."
+   },
+   {
+    "n": 2,
+    "selection": {
+     "theme": "trust",
+     "layout": {
+      "rhythm": "banded",
+      "steps": "cards",
+      "faq": "split"
+     }
+    },
+    "seen": "1440·390 스크린샷(a2__w*__sheet.png)을 직접 봤다. 프로브 심각 0, 등급 B(1440px 글줄 폭 경미). 1440px에서 단계가 카드 3열로 칸을 채우고 FAQ는 제목 왼쪽·질문 오른쪽으로 폭을 쓴다. 띠 구분은 눈에 띄는 차이가 작다.",
+    "problems": [
+     "390px에서는 steps:cards가 단계를 세로 카드 3장으로 길게 만들어 문서가 6398→6596px로 늘었다(데스크톱 이득과 맞바꿈).",
+     "큰 흐름도 카드는 그대로다."
+    ],
+    "changeReason": "남은 문제는 템플릿 데이터·벤토 렌더 영역이라 선택으로 풀 수 없어 확정한다."
+   }
+  ],
+  "final": {
+   "attempt": 2,
+   "selection": {
+    "theme": "trust",
+    "layout": {
+     "rhythm": "banded",
+     "steps": "cards",
+     "faq": "split"
+    }
+   }
+  },
+  "improvements": [
+   "1440px에서 단계 카드와 FAQ 좌우 분할이 폭을 더 채운다.",
+   "히어로의 제품 목업·1.81배 위계는 이미 맞아 그대로 두었다(기본과 같은 테마)."
+  ],
+  "remaining": [
+   "벤토의 큰 흐름도 카드가 성기다(P04, 벤토 행 높이는 다른 작업 영역).",
+   "390px에서 steps:cards는 문서를 더 길게 만든다.",
+   "구간 띠 구분(rhythm:banded)의 시각 효과가 작다."
+  ]
+ },
+ "I04": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "look": {
+      "concept": "ops",
+      "look": "enterprise"
+     },
+     "layout": {
+      "data": "bordered"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I04/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A). KPI 4개 한 줄, 차트 행, 달성률, 표 순서가 읽힌다.",
+    "choiceReason": "영업 책임자용 숫자 화면이라 차분한 엔터프라이즈 사이드바 셸(템플릿 기본 테마 enterprise)을 쓴다. 계약 표는 칸 나눔(data:bordered)으로 숫자 열을 읽기 쉽게 한다. columns:two는 KPI 4개를 2행으로 꺾으므로(V03) 쓰지 않는다.",
+    "problems": [
+     "기본 팔레트(cotton-candy-skies)의 차트 색이 탁한 청회색·분홍 섞임이라 막대와 도넛 범례의 구분이 흐리다.",
+     "1440px 도넛 카드는 도넛이 카드 한가운데 떠서 위아래가 비어 있다(렌더 영역)."
+    ],
+    "changeReason": "숫자 비교가 목적이라 차트 색 구분이 또렷한 청색 계열 팔레트 serene-blue로 바꾼다."
+   },
+   {
+    "n": 2,
+    "selection": {
+     "look": {
+      "concept": "ops",
+      "look": "enterprise"
+     },
+     "palette": "serene-blue",
+     "layout": {
+      "data": "bordered"
+     }
+    },
+    "seen": "1440·390 스크린샷(a2__w*__sheet.png)을 직접 봤다. 프로브 심각 0. 막대와 도넛 색이 같은 청색 계열로 정돈되고 도넛 범례의 조각 구분이 더 분명하다. 담당자 아바타도 진한 청색으로 읽힌다.",
+    "problems": [
+     "도넛 카드의 위아래 빈 공간은 그대로(Q04는 통과).",
+     "390px에서 계약 표가 오른쪽으로 잘려 가로 스크롤이 필요하다."
+    ],
+    "changeReason": "남은 문제는 렌더러·표 구조 영역이라 선택으로 풀 수 없어 확정한다."
+   }
+  ],
+  "final": {
+   "attempt": 2,
+   "selection": {
+    "look": {
+     "concept": "ops",
+     "look": "enterprise"
+    },
+    "palette": "serene-blue",
+    "layout": {
+     "data": "bordered"
+    }
+   }
+  },
+  "improvements": [
+   "차트 팔레트를 탁한 분홍·회색 혼합에서 청색 계열로 바꿔 막대와 도넛의 구분과 대비가 좋아졌다.",
+   "표 칸 나눔으로 숫자 열이 칸에 맞춰 읽힌다."
+  ],
+  "remaining": [
+   "1440px 도넛 카드 위아래 빈 공간.",
+   "390px 계약 표 가로 잘림."
+  ]
+ },
+ "I05": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "look": {
+      "concept": "ops",
+      "look": "workspace"
+     },
+     "layout": {
+      "data": "striped"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I05/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A). KPI 4개가 한 줄이고 주간 완료 차트와 집중할 일 목록이 한 행에 놓이며 최근 작업 표가 아래에 온다.",
+    "choiceReason": "팀 리더의 가벼운 업무 현황이라 사이드바 셸의 워크스페이스 테마(템플릿 기본)가 맞다. 최근 작업 표는 줄무늬(data:striped)로 행을 따라 읽기 쉽게 한다. columns:two는 KPI를 2행으로 꺾으므로(V03) 쓰지 않았다.",
+    "problems": [
+     "눈에 띄는 구조 문제 없음. 1440px 차트 막대 색이 순청색으로 다소 강하지만 대비와 구분은 충분하다.",
+     "390px 헤더에서 브랜드와 '새 프로젝트' 버튼 아래로 내비가 한 줄 더 쌓인다(렌더 영역)."
+    ],
+    "changeReason": "재선택 없이 확정한다. 변경 후보(split:mirror, bordered)는 읽기 순서나 가독성을 바꿀 이유가 보이지 않았다."
+   }
+  ],
+  "final": {
+   "attempt": 1,
+   "selection": {
+    "look": {
+     "concept": "ops",
+     "look": "workspace"
+    },
+    "layout": {
+     "data": "striped"
+    }
+   }
+  },
+  "improvements": [
+   "기본 구성이 이미 규칙을 지켜 구조 개선 여지는 크지 않았다. 표만 줄무늬로 바꿔 최근 작업 행의 가독성을 높였다."
+  ],
+  "remaining": [
+   "390px 헤더 한 줄 추가 쌓임.",
+   "차트 막대 색이 강하다(팔레트 선택으로 줄일 수는 있으나 이 판단은 취향 범위)."
+  ]
+ },
+ "I06": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "look": {
+      "concept": "ops",
+      "look": "enterprise"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I06/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A). 그러나 1440px에서 직군별 가로 막대 차트가 콘텐츠 폭 전체(약 1130px)로 늘어나 막대가 길고 얇으며 글자가 넓게 퍼진다(브라우저 Q08 실패).",
+    "choiceReason": "인사 담당자용 차분한 업무 화면이라 사이드바 셸의 엔터프라이즈(템플릿 기본 테마)를 쓴다. 구성 변형은 columns:two만 있고 KPI 4개를 꺾으므로(V03) 쓰지 않는다.",
+    "problems": [
+     "KPI 아래 전폭 가로 막대 차트가 지나치게 넓게 늘어난다(Q08 실패).",
+     "차트 색이 탁한 청회색이다."
+    ],
+    "changeReason": "콘텐츠 폭이 더 좁은 테마(trust, 폭 standard 1080)로 바꿔 차트가 늘어나는 정도를 줄여 본다."
+   },
+   {
+    "n": 2,
+    "selection": {
+     "theme": "trust"
+    },
+    "seen": "1440·390 스크린샷(a2__w*__sheet.png)을 직접 봤다. 프로브 심각 0. 콘텐츠 폭이 1080으로 줄어 차트가 덜 늘어나 보이고 막대 색이 또렷해졌다. 그러나 Q08은 여전히 실패(브라우저 측정으로는 가로 왜곡이 남음).",
+    "problems": [
+     "전폭 단독 차트의 가로 왜곡은 선택지로 해결되지 않았다(렌더러 preserveAspectRatio none, 템플릿 구조).",
+     "390px 칸반이 오른쪽으로 잘려 가로로 넘겨 봐야 한다."
+    ],
+    "changeReason": "더 고칠 카탈로그 선택지가 없어 확정한다. 폭을 더 좁히는 선택(width 축)은 선택 스키마 밖이다."
+   }
+  ],
+  "final": {
+   "attempt": 2,
+   "selection": {
+    "theme": "trust"
+   }
+  },
+  "improvements": [
+   "콘텐츠 폭이 좁은 트러스트 테마로 차트가 덜 퍼져 보이고 색 대비가 나아졌다(육안). 상단 내비 구조라 칸반과 차트에 가로 여유는 줄었다."
+  ],
+  "remaining": [
+   "Q08 실패: 전폭 단독 가로 막대 차트의 가로 왜곡(1440px).",
+   "390px 칸반 가로 잘림."
+  ]
+ },
+ "I07": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "look": {
+      "concept": "editorial",
+      "look": "journal"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I07/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A), Q12(정렬 불일치) 0. 제목·사진·본문·인용·체크 목록·알림이 760px 한 열 정렬선에 놓인다. 문단 간격이 넉넉하고 세리프 제목이 인쇄물 같다.",
+    "choiceReason": "사색적인 에세이를 끝까지 읽게 하는 화면이라 좁은 읽기 폭(760px)과 문학적 세리프(literary), 넉넉한 밀도를 가진 저널 look을 골랐다. intro:center는 제목만 가운데로 옮겨 정렬선이 갈리므로(V04) 쓰지 않았다.",
+    "problems": [
+     "보조 글(체크 목록 설명, 캡션)의 색이 연해 대비가 낮아 보인다(프로브는 통과).",
+     "1440px에서 본문이 좁은 열이라 좌우 여백이 크다(의도한 읽기 폭)."
+    ],
+    "changeReason": "재선택하지 않고 확정한다. 대비 문제는 팔레트 변경으로 풀 수 있으나 톤을 해칠 만큼 크지 않다고 판단했다."
+   }
+  ],
+  "final": {
+   "attempt": 1,
+   "selection": {
+    "look": {
+     "concept": "editorial",
+     "look": "journal"
+    }
+   }
+  },
+  "improvements": [
+   "기본 테마(editorial)와 다른 look을 골랐다. 좁은 읽기 폭과 느슨한 행간으로 에세이 읽기에 맞췄다."
+  ],
+  "remaining": [
+   "보조 글 색이 연하다.",
+   "시각 요소(사진 자리)는 템플릿 자료 그대로다."
+  ]
+ },
+ "I08": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "look": {
+      "concept": "devtool",
+      "look": "manual"
+     },
+     "layout": {
+      "data": "bordered"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I08/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A), Q12 0. 사이드 목차와 오른쪽 문서 목차, 탭(npm·pnpm·yarn)과 코드 블록, 알림, 표 두 개가 한 열로 읽힌다.",
+    "choiceReason": "API를 붙이는 개발자가 빠르게 훑는 기술 문서라 사이드바 셸과 tech 서체의 매뉴얼 look(템플릿 기본 테마)을 쓴다. 매개변수·응답 코드 표는 칸 나눔(data:bordered)으로 열 구분을 분명히 한다.",
+    "problems": [
+     "390px 상단 내비 줄에서 마지막 항목('변경 기록')이 잘려 보인다.",
+     "390px에서 표가 오른쪽으로 잘려 가로 스크롤이 필요하다.",
+     "중간의 큰 흐름도 그림이 범용 자리 그림이라 내용에 비해 크다(템플릿 자료)."
+    ],
+    "changeReason": "재선택하지 않고 확정한다. 남은 문제는 렌더러와 템플릿 자료 영역이고, 알림·탭·좌우 배치 변형은 읽기 흐름을 개선할 이유가 보이지 않았다."
+   }
+  ],
+  "final": {
+   "attempt": 1,
+   "selection": {
+    "look": {
+     "concept": "devtool",
+     "look": "manual"
+    },
+    "layout": {
+     "data": "bordered"
+    }
+   }
+  },
+  "improvements": [
+   "기본 구성이 이미 규칙을 지켜 구조 개선 여지가 작았다. 표를 칸 나눔으로 바꿔 매개변수·응답 코드 열 구분을 분명히 했다."
+  ],
+  "remaining": [
+   "390px 내비·표 가로 잘림.",
+   "큰 범용 흐름도 그림."
+  ]
+ },
+ "I09": {
+  "attempts": [
+   {
+    "n": 1,
+    "selection": {
+     "look": {
+      "concept": "editorial",
+      "look": "paper"
+     }
+    },
+    "seen": "1440·390 스크린샷(ai/attempts/I09/a1__w*__sheet.png)을 직접 봤다. 프로브 심각 0(등급 A), Q12 0. 제목·사진·문단·인용·다음 글·태그가 760px 한 열에 놓이고 문서 높이가 1581px로 짧다. 책 본문 서체(bookish)와 따뜻한 종이색이 조용한 개인 글에 어울린다.",
+    "choiceReason": "조용하고 개인적인 짧은 글이라 종이 질감의 페이퍼 look(책 본문 서체, 좁은 폭, 넉넉한 밀도)을 골랐다. intro:center는 제목만 가운데로 옮겨 정렬선이 갈리므로(V04) 쓰지 않았다. I07에는 journal을 썼고 이 입력은 더 짧은 글이라 한 서체가 제목과 본문을 모두 맡는 paper로 구분했다.",
+    "problems": [
+     "1440px에서 상단 바가 본문 열 폭 안에만 있고 아래 선이 그 폭에서 끊겨 헤더가 화면 중앙에 작게 떠 보인다(렌더러 셸 동작).",
+     "'구독' 버튼 색이 탁한 갈색이라 주 행동으로는 약하다."
+    ],
+    "changeReason": "재선택하지 않고 확정한다. 남은 문제는 셸·팔레트 취향 범위이고 글 읽기 자체에는 영향이 작다."
+   }
+  ],
+  "final": {
+   "attempt": 1,
+   "selection": {
+    "look": {
+     "concept": "editorial",
+     "look": "paper"
+    }
+   }
+  },
+  "improvements": [
+   "서체와 폭을 글 읽기에 맞췄다. 기본 테마(journal)보다 헤더가 단순한 에디토리얼 셸이다."
+  ],
+  "remaining": [
+   "1440px 헤더가 본문 폭 안에 작게 놓인다.",
+   "구독 버튼 색이 약하다."
+  ]
+ }
+}

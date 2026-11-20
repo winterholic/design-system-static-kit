@@ -1,0 +1,3442 @@
+{
+ "meta": {
+  "originMain": "f1eb262d797008d5d68545071052c036031cca84",
+  "catalogVersion": "2.4.0",
+  "widths": [
+   320,
+   390,
+   768,
+   1440
+  ],
+  "browser": "chromium 156.0.8078.4",
+  "platform": "darwin",
+  "date": "2026-11-20"
+ },
+ "inputs": {
+  "I01": {
+   "recipe": "saas-landing",
+   "templateId": "devtool-landing",
+   "arms": {
+    "default": {
+     "htmlSha256": "e1e6c2404e36d68a1093566490396ef64efc8b0a35d9076ff243461a07bb267e",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 4401,
+       "scrollW": 320,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 29,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 29,
+        "sectionPx": 21,
+        "ratio": 1.38
+       },
+       "file": "shots/I01__default__w320.png",
+       "pngSha256": "2b508ff51b59682c39a16cc32c0368da4f229f1f493ec808d0881a587f14c97e"
+      },
+      "390": {
+       "docH": 4293,
+       "scrollW": 390,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 29,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 0,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 29,
+        "sectionPx": 21,
+        "ratio": 1.38
+       },
+       "file": "shots/I01__default__w390.png",
+       "pngSha256": "7641ab40b150fadd60ce9f7b430792b5157a60b6c5ec95aeb8193e1e4042870f"
+      },
+      "768": {
+       "docH": 3429,
+       "scrollW": 768,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 29,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 29,
+        "sectionPx": 21,
+        "ratio": 1.38
+       },
+       "file": "shots/I01__default__w768.png",
+       "pngSha256": "323016660a2a34c402ab78bc1fc701c4633944a0476b83ea88dc69b99ad244d0"
+      },
+      "1440": {
+       "docH": 2618,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 34,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "centered",
+          "visual": false,
+          "titlePx": 34,
+          "textRight": 1023,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.29
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": {
+          "cols": 4,
+          "cells": 5,
+          "smallCells": 4,
+          "worstEmpty": 0.53,
+          "meanEmpty": 0.4
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 0,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 34,
+        "sectionPx": 24,
+        "ratio": 1.42
+       },
+       "file": "shots/I01__default__w1440.png",
+       "pngSha256": "60c7f19a7c85cd698c010a2deea52608c5400ca37cbc5e158484e61eb58cea1a"
+      }
+     },
+     "recipeRules": {
+      "RC01": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)",
+      "RC02": "히어로 제목 34px 대 섹션 제목 24px = 1.42배(< 1.6배, 1440px 기준)",
+      "RC03": "레시피 범위 밖의 축 값: scale=tight"
+     },
+     "axes": {
+      "theme": "devtool",
+      "palette": "ocean-blue-adventure",
+      "mode": "auto",
+      "shell": "topbar",
+      "typography": "tech",
+      "density": "comfortable",
+      "scale": "tight",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "8bb3a7d90538def6e81357a235301e19702ea034bb313560c7da27027d3ee07c",
+     "layout": {
+      "hero": "product"
+     },
+     "widths": {
+      "320": {
+       "docH": 4778,
+       "scrollW": 320,
+       "hero": {
+        "variant": "product",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": 24,
+        "ratio": 1.58
+       },
+       "file": "shots/I01__recipe__w320.png",
+       "pngSha256": "7afa23bdadbaee533458a00b2801a17ce7812b71b5f50751c596f1d1c2117d3f"
+      },
+      "390": {
+       "docH": 4830,
+       "scrollW": 390,
+       "hero": {
+        "variant": "product",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 1,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": 24,
+        "ratio": 1.58
+       },
+       "file": "shots/I01__recipe__w390.png",
+       "pngSha256": "832acf4640ba10932b3b72cad20796752d62138191446dfc83ad04835fc75f16"
+      },
+      "768": {
+       "docH": 3546,
+       "scrollW": 768,
+       "hero": {
+        "variant": "product",
+        "titlePx": 38.4,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38.4,
+        "sectionPx": 24,
+        "ratio": 1.6
+       },
+       "file": "shots/I01__recipe__w768.png",
+       "pngSha256": "b07683e8558b8e3159fefd44f800777e1c3816173060e07d6d0bc33982df3804"
+      },
+      "1440": {
+       "docH": 3294,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "product",
+        "titlePx": 64,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "product",
+          "visual": true,
+          "titlePx": 64,
+          "textRight": 1186,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.18
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": {
+          "cols": 2,
+          "cells": 5,
+          "smallCells": 4,
+          "worstEmpty": 0.39,
+          "meanEmpty": 0.37
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 1,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 64,
+        "sectionPx": 33,
+        "ratio": 1.94
+       },
+       "file": "shots/I01__recipe__w1440.png",
+       "pngSha256": "7da1ceafeec2b62dba6cbb76eeebb0014304bbe389b0404e3f6ae4052683cdac"
+      }
+     },
+     "recipeRules": {
+      "RC01": null,
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "trust",
+      "palette": "serene-blue",
+      "mode": "light",
+      "shell": "topbar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "579aaadeeae0b332130867b1b08eea721d3a45b4fee30db36f1898b8f80ab54d",
+     "layout": {
+      "hero": "statement"
+     },
+     "widths": {
+      "320": {
+       "docH": 4559,
+       "scrollW": 320,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 44,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 44,
+        "sectionPx": 27,
+        "ratio": 1.63
+       },
+       "file": "shots/I01__ai__w320.png",
+       "pngSha256": "b0cfc71d50a69af3f39fb182a4eab8cda7b025d1f7c4e307dedb6f8d78dbc2ab"
+      },
+      "390": {
+       "docH": 4558,
+       "scrollW": 390,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 44,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 0,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 44,
+        "sectionPx": 27,
+        "ratio": 1.63
+       },
+       "file": "shots/I01__ai__w390.png",
+       "pngSha256": "358f7e29343c46a18e23a1881573257ae85ca73f2b43c08416b91eaae3f305ae"
+      },
+      "768": {
+       "docH": 3545,
+       "scrollW": 768,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 48.4,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 48.384,
+        "sectionPx": 27,
+        "ratio": 1.79
+       },
+       "file": "shots/I01__ai__w768.png",
+       "pngSha256": "43b4028cb3846bc933dc6c5466a2a704b0c73c1e02a53052826a0e8a36d18954"
+      },
+      "1440": {
+       "docH": 2815,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 80,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "statement",
+          "visual": false,
+          "titlePx": 80,
+          "textRight": 719,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.5
+         },
+         "pass": false
+        },
+        "Q07": {
+         "values": {
+          "cols": 4,
+          "cells": 5,
+          "smallCells": 4,
+          "worstEmpty": 0.44,
+          "meanEmpty": 0.37
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 1,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 80,
+        "sectionPx": 37,
+        "ratio": 2.16
+       },
+       "file": "shots/I01__ai__w1440.png",
+       "pngSha256": "fb0d90a417f22e8f88fbc57737ef3aa28036704539e121b904507028dadadcf4"
+      }
+     },
+     "recipeRules": {
+      "RC01": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)",
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "devtool",
+      "palette": "ocean-blue-adventure",
+      "mode": "dark",
+      "shell": "topbar",
+      "typography": "tech",
+      "density": "comfortable",
+      "scale": "dramatic",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I02": {
+   "recipe": "saas-landing",
+   "templateId": "waitlist",
+   "arms": {
+    "default": {
+     "htmlSha256": "ae66085720ac2d3efc987dfed14938cf6e5e2aab22c86434f31eb9b532cccbef",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 1575,
+       "scrollW": 320,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 39.6,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": {
+          "factsToNextHeading": 93
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 39.5712,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__default__w320.png",
+       "pngSha256": "3b8e75228d8716752c3a6dbb634a64a5549494db94bba8647edc77f2b277177b"
+      },
+      "390": {
+       "docH": 1561,
+       "scrollW": 390,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 44,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 0,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 44,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__default__w390.png",
+       "pngSha256": "6f42b5364d58cef35810c9966046bcb08a9d52a34043055aa7c018fcbedd540b"
+      },
+      "768": {
+       "docH": 1518,
+       "scrollW": 768,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 48.4,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": {
+          "factsToNextHeading": 125
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 48.384,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__default__w768.png",
+       "pngSha256": "6f9e619b0593c4a66a39c7e6015b6bf16d3b1d64ebf0bbc37c703efacc8fa8c6"
+      },
+      "1440": {
+       "docH": 1422,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "centered",
+        "titlePx": 80,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "centered",
+          "visual": false,
+          "titlePx": 80,
+          "textRight": 975,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.32
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": {
+          "factsToNextHeading": 125
+         },
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 0,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 80,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__default__w1440.png",
+       "pngSha256": "2634f148973dc5ceeaba2aa9cb89712ed719b2d06bae0979b9950a8a3ccd3a61"
+      }
+     },
+     "recipeRules": {
+      "RC01": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)",
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "neon",
+      "palette": "neon-glow-party",
+      "mode": "dark",
+      "shell": "minimal",
+      "typography": "geometric",
+      "density": "comfortable",
+      "scale": "dramatic",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "f14fdf859b8f3f6bcf642fa4aaf4b9008afdbbc7b214a7258d6b75005cf2f56d",
+     "layout": {
+      "hero": "product"
+     },
+     "widths": {
+      "320": {
+       "docH": 1701,
+       "scrollW": 320,
+       "hero": {
+        "variant": "product",
+        "titlePx": 39.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 39.5712,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__recipe__w320.png",
+       "pngSha256": "3337ecef03b74124c4ae0a41b378ad22a10ecac397ca8714358899ac61d98245"
+      },
+      "390": {
+       "docH": 1734,
+       "scrollW": 390,
+       "hero": {
+        "variant": "product",
+        "titlePx": 44,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 1,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 44,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__recipe__w390.png",
+       "pngSha256": "aafb9e23df17771ed11cfadf6b88a3efe45c0e3f80e3a1f986b896aca93191b2"
+      },
+      "768": {
+       "docH": 1394,
+       "scrollW": 768,
+       "hero": {
+        "variant": "product",
+        "titlePx": 47.8,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 47.8152,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__recipe__w768.png",
+       "pngSha256": "dca1fa349ae65b7dbec5ec629d99507cb5ed59d5c3af734b1165e229a480f812"
+      },
+      "1440": {
+       "docH": 1352,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "product",
+        "titlePx": 80,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "product",
+          "visual": true,
+          "titlePx": 80,
+          "textRight": 1156,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.2
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 1,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 80,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__recipe__w1440.png",
+       "pngSha256": "834239d42d669e1354f26ebd980ffcc0208f94631cf268cbddd5a928f7240fd2"
+      }
+     },
+     "recipeRules": {
+      "RC01": null,
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "neon",
+      "palette": "neon-glow-party",
+      "mode": "dark",
+      "shell": "minimal",
+      "typography": "geometric",
+      "density": "comfortable",
+      "scale": "dramatic",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "88d011a0650e9df1b2afc685ad1c4343687f06fa448d84011ef70c16dd8c0fde",
+     "layout": {
+      "hero": "statement"
+     },
+     "widths": {
+      "320": {
+       "docH": 1730,
+       "scrollW": 320,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": {
+          "factsToNextHeading": 93
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__ai__w320.png",
+       "pngSha256": "40d249b73b6ed526f1a5dc0db12099f4a5f3fd7590522b940da9504ba86909cd"
+      },
+      "390": {
+       "docH": 1654,
+       "scrollW": 390,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 0,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__ai__w390.png",
+       "pngSha256": "43dc418c84f30d41e98c5a9954022c649a7fd4059fda63983c901ddcfcff694c"
+      },
+      "768": {
+       "docH": 1530,
+       "scrollW": 768,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 38.4,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": {
+          "factsToNextHeading": 125
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38.4,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__ai__w768.png",
+       "pngSha256": "ef4a9aaf2f0826510fad7023492c8560ee7cb6974aea32db1977275382c3595c"
+      },
+      "1440": {
+       "docH": 1470,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "statement",
+        "titlePx": 64,
+        "titleLines": 2,
+        "visual": null
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": {
+          "items": 3,
+          "cols": 3,
+          "orphan": false
+         },
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "statement",
+          "visual": false,
+          "titlePx": 64,
+          "textRight": 647,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.55
+         },
+         "pass": false
+        },
+        "Q07": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": {
+          "factsToNextHeading": 125
+         },
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 1,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 64,
+        "sectionPx": null,
+        "ratio": null
+       },
+       "file": "shots/I02__ai__w1440.png",
+       "pngSha256": "fe1fdb5ac5a49a66f853d0a6e55f62f34cfafc40fe44174afa64fdf91d5dc104"
+      }
+     },
+     "recipeRules": {
+      "RC01": "히어로 시각 요소가 없음이다(제품 시각 요소: chart·device)",
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "aurora",
+      "palette": "turquoise-harmony",
+      "mode": "dark",
+      "shell": "topbar",
+      "typography": "geometric",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I03": {
+   "recipe": "saas-landing",
+   "templateId": "saas-landing",
+   "arms": {
+    "default": {
+     "htmlSha256": "9e2f1431724d135e9387601eae135cfb23cc25760fcb5fe4773c29abebd01664",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 6635,
+       "scrollW": 320,
+       "hero": {
+        "variant": "split",
+        "titlePx": 34.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 34.6176,
+        "sectionPx": 24,
+        "ratio": 1.44
+       },
+       "file": "shots/I03__default__w320.png",
+       "pngSha256": "434f9d7d5f17b06f46c53b2e6ee115ae2383bf366f0e0cdead9f0827d9675a76"
+      },
+      "390": {
+       "docH": 6398,
+       "scrollW": 390,
+       "hero": {
+        "variant": "split",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 2,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": 24,
+        "ratio": 1.58
+       },
+       "file": "shots/I03__default__w390.png",
+       "pngSha256": "5bded6cdca40d43e86c605fa064b238ba74dae338599c8657b57e0a290a312e3"
+      },
+      "768": {
+       "docH": 5043,
+       "scrollW": 768,
+       "hero": {
+        "variant": "split",
+        "titlePx": 38.4,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38.4,
+        "sectionPx": 24,
+        "ratio": 1.6
+       },
+       "file": "shots/I03__default__w768.png",
+       "pngSha256": "c93c7e658b280db339a2a095c8de49c7c191620c657cd0b80ad3bf8b20d41475"
+      },
+      "1440": {
+       "docH": 4817,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "split",
+        "titlePx": 59.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {
+        "MEASURE_SHORT": 2
+       },
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "B",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "split",
+          "visual": true,
+          "titlePx": 59.6192,
+          "textRight": 671,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.53
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": {
+          "cols": 2,
+          "cells": 5,
+          "smallCells": 4,
+          "worstEmpty": 0.52,
+          "meanEmpty": 0.41
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 2,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 59.6192,
+        "sectionPx": 33,
+        "ratio": 1.81
+       },
+       "file": "shots/I03__default__w1440.png",
+       "pngSha256": "6766f09b663e46a26d7d3f6612c75a9bbe756f12dc2b22cfee43da9f47769204"
+      }
+     },
+     "recipeRules": {
+      "RC01": null,
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "trust",
+      "palette": "serene-blue",
+      "mode": "light",
+      "shell": "topbar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "B",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "9e2f1431724d135e9387601eae135cfb23cc25760fcb5fe4773c29abebd01664",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 6635,
+       "scrollW": 320,
+       "hero": {
+        "variant": "split",
+        "titlePx": 34.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 34.6176,
+        "sectionPx": 24,
+        "ratio": 1.44
+       },
+       "file": "shots/I03__recipe__w320.png",
+       "pngSha256": "434f9d7d5f17b06f46c53b2e6ee115ae2383bf366f0e0cdead9f0827d9675a76"
+      },
+      "390": {
+       "docH": 6398,
+       "scrollW": 390,
+       "hero": {
+        "variant": "split",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 2,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": 24,
+        "ratio": 1.58
+       },
+       "file": "shots/I03__recipe__w390.png",
+       "pngSha256": "5bded6cdca40d43e86c605fa064b238ba74dae338599c8657b57e0a290a312e3"
+      },
+      "768": {
+       "docH": 5043,
+       "scrollW": 768,
+       "hero": {
+        "variant": "split",
+        "titlePx": 38.4,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38.4,
+        "sectionPx": 24,
+        "ratio": 1.6
+       },
+       "file": "shots/I03__recipe__w768.png",
+       "pngSha256": "c93c7e658b280db339a2a095c8de49c7c191620c657cd0b80ad3bf8b20d41475"
+      },
+      "1440": {
+       "docH": 4817,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "split",
+        "titlePx": 59.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {
+        "MEASURE_SHORT": 2
+       },
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "B",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "split",
+          "visual": true,
+          "titlePx": 59.6192,
+          "textRight": 671,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.53
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": {
+          "cols": 2,
+          "cells": 5,
+          "smallCells": 4,
+          "worstEmpty": 0.52,
+          "meanEmpty": 0.41
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 2,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 59.6192,
+        "sectionPx": 33,
+        "ratio": 1.81
+       },
+       "file": "shots/I03__recipe__w1440.png",
+       "pngSha256": "6766f09b663e46a26d7d3f6612c75a9bbe756f12dc2b22cfee43da9f47769204"
+      }
+     },
+     "recipeRules": {
+      "RC01": null,
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "trust",
+      "palette": "serene-blue",
+      "mode": "light",
+      "shell": "topbar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "B",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "199645c1e71b8178c94a4d3bf2fe6ff6adbe39f53419a5f272319510e255e76b",
+     "layout": {
+      "rhythm": "banded",
+      "steps": "cards",
+      "faq": "split"
+     },
+     "widths": {
+      "320": {
+       "docH": 6809,
+       "scrollW": 320,
+       "hero": {
+        "variant": "split",
+        "titlePx": 34.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 34.6176,
+        "sectionPx": 24,
+        "ratio": 1.44
+       },
+       "file": "shots/I03__ai__w320.png",
+       "pngSha256": "2cef1681bca6491699cf7ead62d480e4869349bc5d849f45054b9c856c61971c"
+      },
+      "390": {
+       "docH": 6596,
+       "scrollW": 390,
+       "hero": {
+        "variant": "split",
+        "titlePx": 38,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 2,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38,
+        "sectionPx": 24,
+        "ratio": 1.58
+       },
+       "file": "shots/I03__ai__w390.png",
+       "pngSha256": "23a5a8cc2b4110c53084947735f9130a953f559ed3ef94b44bd3869108250845"
+      },
+      "768": {
+       "docH": 5159,
+       "scrollW": 768,
+       "hero": {
+        "variant": "split",
+        "titlePx": 38.4,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 38.4,
+        "sectionPx": 24,
+        "ratio": 1.6
+       },
+       "file": "shots/I03__ai__w768.png",
+       "pngSha256": "93f42862bd966dfb63d68fce27811fab6bb76da7d55e1cfbcdaa4902d93b6501"
+      },
+      "1440": {
+       "docH": 4808,
+       "scrollW": 1440,
+       "hero": {
+        "variant": "split",
+        "titlePx": 59.6,
+        "titleLines": 2,
+        "visual": "yes"
+       },
+       "codes": {
+        "MEASURE_SHORT": 2
+       },
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "B",
+       "claims": {
+        "Q01": {
+         "values": null,
+         "pass": true
+        },
+        "Q06": {
+         "values": {
+          "variant": "split",
+          "visual": true,
+          "titlePx": 59.6192,
+          "textRight": 671,
+          "mainWidth": 1440,
+          "emptyRightRatio": 0.53
+         },
+         "pass": true
+        },
+        "Q07": {
+         "values": {
+          "cols": 2,
+          "cells": 5,
+          "smallCells": 4,
+          "worstEmpty": 0.52,
+          "meanEmpty": 0.41
+         },
+         "pass": true
+        },
+        "Q10": {
+         "values": null,
+         "pass": true
+        },
+        "Q13": {
+         "values": {
+          "largeArts": 2,
+          "duplicateGroups": 0,
+          "places": []
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": {
+        "heroPx": 59.6192,
+        "sectionPx": 33,
+        "ratio": 1.81
+       },
+       "file": "shots/I03__ai__w1440.png",
+       "pngSha256": "6bd6610c6ac9e3f38712bcd2f3853312268e308063795bd032c06b33b1b121a4"
+      }
+     },
+     "recipeRules": {
+      "RC01": null,
+      "RC02": null,
+      "RC03": null
+     },
+     "axes": {
+      "theme": "trust",
+      "palette": "serene-blue",
+      "mode": "light",
+      "shell": "topbar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "B",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I04": {
+   "recipe": "ops-dashboard",
+   "templateId": "sales-dashboard",
+   "arms": {
+    "default": {
+     "htmlSha256": "505fb5d2a8f8e37ca8e14f1f5ed246824014249334ca3dfa615678cf9e805b06",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2937,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I04__default__w320.png",
+       "pngSha256": "dfabe2620d7c4811af6d1aa16ecff3fb627e48edd38cbb7733e5479cb0ac519d"
+      },
+      "390": {
+       "docH": 2734,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I04__default__w390.png",
+       "pngSha256": "a945565bac03e8c709307953690158603ae72dc1096ced7dc4591570b34e0bac"
+      },
+      "768": {
+       "docH": 1941,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": {
+          "cards": 2,
+          "worstEmpty": 180,
+          "worstRatio": 0.35
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I04__default__w768.png",
+       "pngSha256": "b62191f57959b7462172c4dcabcff8670c723d6d325209cec8392f11df30156b"
+      },
+      "1440": {
+       "docH": 1800,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": {
+          "cards": 2,
+          "worstEmpty": 77,
+          "worstRatio": 0.15
+         },
+         "pass": true
+        },
+        "Q08": {
+         "values": null,
+         "pass": true
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1800
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I04__default__w1440.png",
+       "pngSha256": "934f46fb1cd7de531c6bb6f9616cd20626ca90b39d05ffb2b1dc39a419fb8cda"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "enterprise",
+      "palette": "cotton-candy-skies",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "505fb5d2a8f8e37ca8e14f1f5ed246824014249334ca3dfa615678cf9e805b06",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2937,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I04__recipe__w320.png",
+       "pngSha256": "dfabe2620d7c4811af6d1aa16ecff3fb627e48edd38cbb7733e5479cb0ac519d"
+      },
+      "390": {
+       "docH": 2734,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I04__recipe__w390.png",
+       "pngSha256": "a945565bac03e8c709307953690158603ae72dc1096ced7dc4591570b34e0bac"
+      },
+      "768": {
+       "docH": 1941,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": {
+          "cards": 2,
+          "worstEmpty": 180,
+          "worstRatio": 0.35
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I04__recipe__w768.png",
+       "pngSha256": "b62191f57959b7462172c4dcabcff8670c723d6d325209cec8392f11df30156b"
+      },
+      "1440": {
+       "docH": 1800,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": {
+          "cards": 2,
+          "worstEmpty": 77,
+          "worstRatio": 0.15
+         },
+         "pass": true
+        },
+        "Q08": {
+         "values": null,
+         "pass": true
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1800
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I04__recipe__w1440.png",
+       "pngSha256": "934f46fb1cd7de531c6bb6f9616cd20626ca90b39d05ffb2b1dc39a419fb8cda"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "enterprise",
+      "palette": "cotton-candy-skies",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "161eb682fb19c005d593b30ee5c4ee5353fb7013345a3cb379a7bf2e275ed688",
+     "layout": {
+      "data": "bordered"
+     },
+     "widths": {
+      "320": {
+       "docH": 2955,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I04__ai__w320.png",
+       "pngSha256": "d6e44e8ad64524d6a0a44c2dfba3731e2e70787c75efba13d690a5967ecddb68"
+      },
+      "390": {
+       "docH": 2761,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I04__ai__w390.png",
+       "pngSha256": "6af7e330c2f34f9fddde6eb9fab3aef4bb3dfa4268c7fd2ad9d545529d435b9d"
+      },
+      "768": {
+       "docH": 1956,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": {
+          "cards": 2,
+          "worstEmpty": 184,
+          "worstRatio": 0.35
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I04__ai__w768.png",
+       "pngSha256": "d10e9d99cb3209983b45d8347c86319bfdbf716f49c8d0803aa4eb02927c3ed7"
+      },
+      "1440": {
+       "docH": 1808,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": {
+          "cards": 2,
+          "worstEmpty": 77,
+          "worstRatio": 0.15
+         },
+         "pass": true
+        },
+        "Q08": {
+         "values": null,
+         "pass": true
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 359,
+          "docH": 1808
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I04__ai__w1440.png",
+       "pngSha256": "3aeb62bbaf7dd18d521971cafc1cf3f4a022b6ab4a5252e90b40eb0a084e7ca1"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "enterprise",
+      "palette": "serene-blue",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "humanist",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I05": {
+   "recipe": "ops-dashboard",
+   "templateId": "dashboard-overview",
+   "arms": {
+    "default": {
+     "htmlSha256": "42843d1ded28f4f8923d50281f74c625704e2f63aa0f0b80ecffe168b52632ab",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2211,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I05__default__w320.png",
+       "pngSha256": "1e4a1fa509d097e6bfbe5e7f3e252810ef61c5c31d29097ac9fcfa01cf0441e8"
+      },
+      "390": {
+       "docH": 1901,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I05__default__w390.png",
+       "pngSha256": "006b997a98f4754c8f9d3c2f1c0fb7a8e45e782f2e4c44a5a7f74cd5e879cdc0"
+      },
+      "768": {
+       "docH": 1880,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {
+        "MEASURE_SHORT": 1
+       },
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "B",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I05__default__w768.png",
+       "pngSha256": "6441bd8cb56ea34e8e2c83aff4cbb0802e41c19a4552e9d67a4783ecbdc65341"
+      },
+      "1440": {
+       "docH": 1390,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        },
+        "Q08": {
+         "values": null,
+         "pass": true
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1390
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I05__default__w1440.png",
+       "pngSha256": "ce58f8654bdccf4eb9cb4ef8157ac2ccd69485ba141d721eb8f3d9c72041095f"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "workspace",
+      "palette": "ocean",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "B",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "42843d1ded28f4f8923d50281f74c625704e2f63aa0f0b80ecffe168b52632ab",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2211,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I05__recipe__w320.png",
+       "pngSha256": "1e4a1fa509d097e6bfbe5e7f3e252810ef61c5c31d29097ac9fcfa01cf0441e8"
+      },
+      "390": {
+       "docH": 1901,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I05__recipe__w390.png",
+       "pngSha256": "006b997a98f4754c8f9d3c2f1c0fb7a8e45e782f2e4c44a5a7f74cd5e879cdc0"
+      },
+      "768": {
+       "docH": 1880,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {
+        "MEASURE_SHORT": 1
+       },
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "B",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I05__recipe__w768.png",
+       "pngSha256": "6441bd8cb56ea34e8e2c83aff4cbb0802e41c19a4552e9d67a4783ecbdc65341"
+      },
+      "1440": {
+       "docH": 1390,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        },
+        "Q08": {
+         "values": null,
+         "pass": true
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1390
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I05__recipe__w1440.png",
+       "pngSha256": "ce58f8654bdccf4eb9cb4ef8157ac2ccd69485ba141d721eb8f3d9c72041095f"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "workspace",
+      "palette": "ocean",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "B",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "66c3f6d9aa4aa6f655e9f534774a915394e8bafdfb8010c3cc37f6d9bb7ffe38",
+     "layout": {
+      "data": "striped"
+     },
+     "widths": {
+      "320": {
+       "docH": 2141,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I05__ai__w320.png",
+       "pngSha256": "f93f53c267a8b6309fd8ef965954dcf21cdc7c67c38fbda89f4e16ca8341ff8e"
+      },
+      "390": {
+       "docH": 1881,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I05__ai__w390.png",
+       "pngSha256": "9c7436dff5d4cd2bc8a33bf97dc715c1594a74f70b337a4429e1fae4f1d636e8"
+      },
+      "768": {
+       "docH": 1860,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {
+        "MEASURE_SHORT": 1
+       },
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "B",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I05__ai__w768.png",
+       "pngSha256": "2d076d078a1f7f629ec80de5a9c58086dff5fed9014d6cdc15b29920c54da0eb"
+      },
+      "1440": {
+       "docH": 1390,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        },
+        "Q08": {
+         "values": null,
+         "pass": true
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1390
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I05__ai__w1440.png",
+       "pngSha256": "8dfd646dbf102fdbe86a937213d83e19c51697b021da787d96c7368d182a8144"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "workspace",
+      "palette": "ocean",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "B",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I06": {
+   "recipe": "ops-dashboard",
+   "templateId": "hr-people",
+   "arms": {
+    "default": {
+     "htmlSha256": "84028204473c75461618284d48dbd526b451b715990ee67853cc82cc30643862",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2185,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I06__default__w320.png",
+       "pngSha256": "98c55055c30095f4a98cddc31bc2f8d923c4c88acca6b0b8daa6cb28d749be04"
+      },
+      "390": {
+       "docH": 1987,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I06__default__w390.png",
+       "pngSha256": "89fa0fb32019a2b695a474164e25f204eafb093eb1626acac2d0bebe8a2b11cd"
+      },
+      "768": {
+       "docH": 1691,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I06__default__w768.png",
+       "pngSha256": "f4687fad6b7bae6b5597d66748f934ad3158f381ee20b2b878ecbc29172cc12c"
+      },
+      "1440": {
+       "docH": 1581,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        },
+        "Q08": {
+         "values": {
+          "aspectDistortion": 2.13,
+          "axisMax": 200,
+          "dataMax": 148,
+          "fill": 0.74
+         },
+         "pass": false
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1581
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I06__default__w1440.png",
+       "pngSha256": "34971c3c2f68983271535492cc1ef5f3a79224a50ba56a5d05c20e033ca3a85f"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": "차트 \"직군별 인원\"이 wide 폭에서 페이지 바로 아래에 혼자 놓여 가로로 늘어난다"
+     },
+     "axes": {
+      "theme": "enterprise",
+      "palette": "cotton-candy-skies",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "84028204473c75461618284d48dbd526b451b715990ee67853cc82cc30643862",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2185,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I06__recipe__w320.png",
+       "pngSha256": "98c55055c30095f4a98cddc31bc2f8d923c4c88acca6b0b8daa6cb28d749be04"
+      },
+      "390": {
+       "docH": 1987,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I06__recipe__w390.png",
+       "pngSha256": "89fa0fb32019a2b695a474164e25f204eafb093eb1626acac2d0bebe8a2b11cd"
+      },
+      "768": {
+       "docH": 1691,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I06__recipe__w768.png",
+       "pngSha256": "f4687fad6b7bae6b5597d66748f934ad3158f381ee20b2b878ecbc29172cc12c"
+      },
+      "1440": {
+       "docH": 1581,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        },
+        "Q08": {
+         "values": {
+          "aspectDistortion": 2.13,
+          "axisMax": 200,
+          "dataMax": 148,
+          "fill": 0.74
+         },
+         "pass": false
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 275,
+          "firstChartTop": 367,
+          "docH": 1581
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I06__recipe__w1440.png",
+       "pngSha256": "34971c3c2f68983271535492cc1ef5f3a79224a50ba56a5d05c20e033ca3a85f"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": "차트 \"직군별 인원\"이 wide 폭에서 페이지 바로 아래에 혼자 놓여 가로로 늘어난다"
+     },
+     "axes": {
+      "theme": "enterprise",
+      "palette": "cotton-candy-skies",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "eae3c17297b44813c433867b7e665cda68e6eb0906d72e14faabf057f709771f",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2169,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I06__ai__w320.png",
+       "pngSha256": "6e42c1a57132ad976bca92137534c720bb038d373d97e7aba228f132d854e8ae"
+      },
+      "390": {
+       "docH": 1971,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I06__ai__w390.png",
+       "pngSha256": "ae123190b0b7d4add5695e828a35a10a3cc2849413c502738611aaa8f3176a2e"
+      },
+      "768": {
+       "docH": 1667,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I06__ai__w768.png",
+       "pngSha256": "67eb1379b058294a8c54d499b38d000e9c33b9245b28b731478a06d63fb58383"
+      },
+      "1440": {
+       "docH": 1661,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q04": {
+         "values": null,
+         "pass": true
+        },
+        "Q08": {
+         "values": {
+          "aspectDistortion": 1.89,
+          "axisMax": 200,
+          "dataMax": 148,
+          "fill": 0.74
+         },
+         "pass": false
+        },
+        "Q11": {
+         "values": {
+          "items": 4,
+          "cols": 4,
+          "rows": 1,
+          "cellW": 245,
+          "firstChartTop": 444,
+          "docH": 1661
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I06__ai__w1440.png",
+       "pngSha256": "7238f66fa0a67127c3a9d268190fcac93ca57b77b9141000ad42da971fda482e"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC04": null,
+      "RC05": null
+     },
+     "axes": {
+      "theme": "trust",
+      "palette": "serene-blue",
+      "mode": "light",
+      "shell": "topbar",
+      "typography": "sans",
+      "density": "comfortable",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I07": {
+   "recipe": "content-page",
+   "templateId": "article",
+   "arms": {
+    "default": {
+     "htmlSha256": "170bc91353ea819d2431b89d716504c38987b15329aa664a00ea7968d8666a68",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2060,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__default__w320.png",
+       "pngSha256": "36c9dad27d235977767a924020b366121bdc3c6da6438498a3ebfa0ace524aa0"
+      },
+      "390": {
+       "docH": 1941,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__default__w390.png",
+       "pngSha256": "b2e5566ed8da0e704afa0195ae55c551607b02df8ac2a54d6a16333438e3d402"
+      },
+      "768": {
+       "docH": 1915,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__default__w768.png",
+       "pngSha256": "a9c4d02eeea72432cfbe4416b0d2756920bea0dcaf90260d0edd576f76521bc3"
+      },
+      "1440": {
+       "docH": 2105,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 2,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I07__default__w1440.png",
+       "pngSha256": "e59bc7081bf0b0306c5d4829cb53377557a0aa0b62d493173fc5e57674888d5c"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "editorial",
+      "palette": "earth",
+      "mode": "light",
+      "shell": "editorial",
+      "typography": "serif",
+      "density": "spacious",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "170bc91353ea819d2431b89d716504c38987b15329aa664a00ea7968d8666a68",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2060,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__recipe__w320.png",
+       "pngSha256": "36c9dad27d235977767a924020b366121bdc3c6da6438498a3ebfa0ace524aa0"
+      },
+      "390": {
+       "docH": 1941,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__recipe__w390.png",
+       "pngSha256": "b2e5566ed8da0e704afa0195ae55c551607b02df8ac2a54d6a16333438e3d402"
+      },
+      "768": {
+       "docH": 1915,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__recipe__w768.png",
+       "pngSha256": "a9c4d02eeea72432cfbe4416b0d2756920bea0dcaf90260d0edd576f76521bc3"
+      },
+      "1440": {
+       "docH": 2105,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 2,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I07__recipe__w1440.png",
+       "pngSha256": "e59bc7081bf0b0306c5d4829cb53377557a0aa0b62d493173fc5e57674888d5c"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "editorial",
+      "palette": "earth",
+      "mode": "light",
+      "shell": "editorial",
+      "typography": "serif",
+      "density": "spacious",
+      "scale": "balanced",
+      "width": "standard"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "884594adf22eeec6ca1850fedbf2cdc7ca68941e996e486d1829122c9e14b6cd",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2130,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__ai__w320.png",
+       "pngSha256": "ac0cff06ceadb6ce75f128e1ec6f98323b174535eb2bb2bac0d6a47a07edd81f"
+      },
+      "390": {
+       "docH": 2007,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__ai__w390.png",
+       "pngSha256": "954656f0ecfba247d5370e798ca7dd941d3595868ca2f229c4e77c0129eb5fa9"
+      },
+      "768": {
+       "docH": 2027,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I07__ai__w768.png",
+       "pngSha256": "d233045d902462217fb03d01b544acc476be38e19a1823b04b2bd91347296c67"
+      },
+      "1440": {
+       "docH": 2164,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 2,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I07__ai__w1440.png",
+       "pngSha256": "a301d6dd67a1aa933b0a8fcf96917734bfa037c4fef7aad36e55a279e3269022"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "journal",
+      "palette": "soft-serenity-3",
+      "mode": "light",
+      "shell": "centered",
+      "typography": "literary",
+      "density": "spacious",
+      "scale": "balanced",
+      "width": "narrow"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I08": {
+   "recipe": "content-page",
+   "templateId": "docs-reference",
+   "arms": {
+    "default": {
+     "htmlSha256": "4d7cad88dc5e1d620c57d057e9a09bbfab3256f70a9d83b98be8a2cfbaad4493",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2958,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__default__w320.png",
+       "pngSha256": "3e53d8958a0110d328f70739ae58f3faa679ca34bfd25fd17e2559f5d0ec6dfe"
+      },
+      "390": {
+       "docH": 2916,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__default__w390.png",
+       "pngSha256": "c46eea972d9e512cfddae286a4550294be7d9a006600ef12f956810af0f067eb"
+      },
+      "768": {
+       "docH": 2801,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__default__w768.png",
+       "pngSha256": "ea29628b5c82cc28d6830b183d3de32fb60412687e5f6790f542d611ebffb13f"
+      },
+      "1440": {
+       "docH": 2707,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 2,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I08__default__w1440.png",
+       "pngSha256": "a81feebd2b5220a9e902f48a219cc8b8878b04640de06311f096452e1125338e"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "manual",
+      "palette": "moonlit-mist",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "tech",
+      "density": "comfortable",
+      "scale": "tight",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "4d7cad88dc5e1d620c57d057e9a09bbfab3256f70a9d83b98be8a2cfbaad4493",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 2958,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__recipe__w320.png",
+       "pngSha256": "3e53d8958a0110d328f70739ae58f3faa679ca34bfd25fd17e2559f5d0ec6dfe"
+      },
+      "390": {
+       "docH": 2916,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__recipe__w390.png",
+       "pngSha256": "c46eea972d9e512cfddae286a4550294be7d9a006600ef12f956810af0f067eb"
+      },
+      "768": {
+       "docH": 2801,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__recipe__w768.png",
+       "pngSha256": "ea29628b5c82cc28d6830b183d3de32fb60412687e5f6790f542d611ebffb13f"
+      },
+      "1440": {
+       "docH": 2707,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 2,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I08__recipe__w1440.png",
+       "pngSha256": "a81feebd2b5220a9e902f48a219cc8b8878b04640de06311f096452e1125338e"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "manual",
+      "palette": "moonlit-mist",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "tech",
+      "density": "comfortable",
+      "scale": "tight",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "2c053db9575ea21def3fa675b7618206486e4747121995ae69dc7dbed3a42a1c",
+     "layout": {
+      "data": "bordered"
+     },
+     "widths": {
+      "320": {
+       "docH": 2960,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__ai__w320.png",
+       "pngSha256": "61167bb9c61d48d1c09bc6cca14c97d6dfae70e92d2019e0d61240b6bfe750f5"
+      },
+      "390": {
+       "docH": 2918,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__ai__w390.png",
+       "pngSha256": "93fb29f9ef6ce2c8369d3ba26f7b3cf95153149a98f61afc38078bf0d3bcab62"
+      },
+      "768": {
+       "docH": 2803,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I08__ai__w768.png",
+       "pngSha256": "93cb880d9683b1f81ef7de6bd4f77c5581b9961367ac85818b8c34109fe97ca8"
+      },
+      "1440": {
+       "docH": 2709,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 2,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I08__ai__w1440.png",
+       "pngSha256": "4bae45b92bf721d8841a81abab7071814a4cd98d3dc6bbba730131e0e3079dab"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "manual",
+      "palette": "moonlit-mist",
+      "mode": "light",
+      "shell": "sidebar",
+      "typography": "tech",
+      "density": "comfortable",
+      "scale": "tight",
+      "width": "wide"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  },
+  "I09": {
+   "recipe": "content-page",
+   "templateId": "blog-post",
+   "arms": {
+    "default": {
+     "htmlSha256": "2215dc089359463a3b2a9965900bca01aca79fe2c9c3e2a05a3b539efc1badf3",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 1341,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__default__w320.png",
+       "pngSha256": "aa1b0901710e0c3f18740cae9076d44d8d6a94e4f41698b06cfce086abdb450f"
+      },
+      "390": {
+       "docH": 1277,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__default__w390.png",
+       "pngSha256": "3680be66540aaa1b701e43268526e670746ff5f3d8dd4229117de19fa8d41ba6"
+      },
+      "768": {
+       "docH": 1461,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__default__w768.png",
+       "pngSha256": "a668e99555b1926afe1bf3da66e061f56d9b7ee36a93b8a6e44a813f37b4ee26"
+      },
+      "1440": {
+       "docH": 1502,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 1,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I09__default__w1440.png",
+       "pngSha256": "38069f18e99c84b5f06e6b03a181e6ecd54bd40b3f41c9ad383b5c61b57e9191"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "journal",
+      "palette": "soft-serenity-3",
+      "mode": "light",
+      "shell": "centered",
+      "typography": "humanist",
+      "density": "spacious",
+      "scale": "balanced",
+      "width": "narrow"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "recipe": {
+     "htmlSha256": "2215dc089359463a3b2a9965900bca01aca79fe2c9c3e2a05a3b539efc1badf3",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 1341,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__recipe__w320.png",
+       "pngSha256": "aa1b0901710e0c3f18740cae9076d44d8d6a94e4f41698b06cfce086abdb450f"
+      },
+      "390": {
+       "docH": 1277,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__recipe__w390.png",
+       "pngSha256": "3680be66540aaa1b701e43268526e670746ff5f3d8dd4229117de19fa8d41ba6"
+      },
+      "768": {
+       "docH": 1461,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__recipe__w768.png",
+       "pngSha256": "a668e99555b1926afe1bf3da66e061f56d9b7ee36a93b8a6e44a813f37b4ee26"
+      },
+      "1440": {
+       "docH": 1502,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 1,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I09__recipe__w1440.png",
+       "pngSha256": "38069f18e99c84b5f06e6b03a181e6ecd54bd40b3f41c9ad383b5c61b57e9191"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "journal",
+      "palette": "soft-serenity-3",
+      "mode": "light",
+      "shell": "centered",
+      "typography": "humanist",
+      "density": "spacious",
+      "scale": "balanced",
+      "width": "narrow"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    },
+    "ai": {
+     "htmlSha256": "fea0210a328f9f92ed85d11d35e9fcc5c74fb1a9a96a556a50de5a490c228286",
+     "layout": {},
+     "widths": {
+      "320": {
+       "docH": 1625,
+       "scrollW": 320,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__ai__w320.png",
+       "pngSha256": "95c54fd2b18732fff4d51847710f488b4e9bf778bdec4b2ec8abb5942537e673"
+      },
+      "390": {
+       "docH": 1513,
+       "scrollW": 390,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__ai__w390.png",
+       "pngSha256": "535b3d753316bd3e9122f3f906fc9e9dc8b444beb9305d0994b0a4cb6f61cf4e"
+      },
+      "768": {
+       "docH": 1529,
+       "scrollW": 768,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {},
+       "heroRatio": null,
+       "file": "shots/I09__ai__w768.png",
+       "pngSha256": "0d2020003265bc9bfe8ecffec6c0d8babd2387d0bc98b76d2725f39f97087583"
+      },
+      "1440": {
+       "docH": 1581,
+       "scrollW": 1440,
+       "hero": null,
+       "codes": {},
+       "severe": 0,
+       "severeFindings": [],
+       "grade": "A",
+       "claims": {
+        "Q12": {
+         "values": {
+          "pairs": 1,
+          "mismatched": 0,
+          "sections": 0,
+          "intro": false
+         },
+         "pass": true
+        }
+       },
+       "heroRatio": null,
+       "file": "shots/I09__ai__w1440.png",
+       "pngSha256": "6cf5ee4c3704ed5a87371c2b09d51bc3e22d41bc91de9cb05edbc90b5d38cfaf"
+      }
+     },
+     "recipeRules": {
+      "RC03": null,
+      "RC06": null
+     },
+     "axes": {
+      "theme": "paper",
+      "palette": "soft-sand",
+      "mode": "light",
+      "shell": "editorial",
+      "typography": "bookish",
+      "density": "spacious",
+      "scale": "balanced",
+      "width": "narrow"
+     },
+     "grade": "A",
+     "severeTotal": 0
+    }
+   }
+  }
+ }
+}

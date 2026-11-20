@@ -1,0 +1,299 @@
+{
+ "version": "2.0",
+ "catalogVersion": "2.4.0",
+ "name": "매뉴얼",
+ "theme": "manual",
+ "palette": "moonlit-mist",
+ "mode": "light",
+ "pageType": "docs",
+ "shell": "sidebar",
+ "typography": "tech",
+ "density": "comfortable",
+ "radius": "subtle",
+ "control": "match",
+ "elevation": "outline",
+ "motion": "none",
+ "icon": "line",
+ "ornament": "none",
+ "backdrop": "plain",
+ "width": "wide",
+ "scale": "tight",
+ "weight": "medium",
+ "footer": "simple",
+ "chrome": {
+  "nav": [
+   {
+    "label": "소개",
+    "href": "#main",
+    "icon": "book",
+    "group": "시작하기"
+   },
+   {
+    "label": "API 시작하기",
+    "href": "#main",
+    "icon": "play",
+    "group": "시작하기",
+    "current": "page"
+   },
+   {
+    "label": "인증",
+    "href": "#main",
+    "icon": "lock",
+    "group": "가이드"
+   },
+   {
+    "label": "오류 처리",
+    "href": "#main",
+    "icon": "alert-circle",
+    "group": "가이드"
+   },
+   {
+    "label": "클라이언트",
+    "href": "#main",
+    "icon": "code",
+    "group": "레퍼런스"
+   },
+   {
+    "label": "웹훅",
+    "href": "#main",
+    "icon": "zap",
+    "group": "레퍼런스"
+   },
+   {
+    "label": "변경 기록",
+    "href": "#main",
+    "icon": "clock",
+    "group": "릴리스"
+   }
+  ],
+  "footerNote": "매뉴얼 · 정적 데모",
+  "footerLinks": [
+   {
+    "label": "이용약관",
+    "href": "#main"
+   },
+   {
+    "label": "개인정보",
+    "href": "#main"
+   },
+   {
+    "label": "문의",
+    "href": "#main"
+   }
+  ]
+ },
+ "tree": {
+  "type": "page",
+  "children": [
+   {
+    "type": "page-header",
+    "title": "API 시작하기",
+    "description": "인증 토큰을 만들고 첫 요청을 보내는 데 5분이면 충분합니다.",
+    "eyebrow": "가이드",
+    "meta": [
+     "2.4.0",
+     "2026-10-14 갱신",
+     "읽는 시간 5분"
+    ]
+   },
+   {
+    "type": "aside",
+    "side": "end",
+    "label": "이 문서의 목차",
+    "sticky": "yes",
+    "children": [
+     {
+      "type": "section",
+      "title": "시작하기",
+      "children": [
+       {
+        "type": "section",
+        "title": "설치",
+        "children": [
+         {
+          "type": "prose",
+          "title": "요구 사항",
+          "body": "Node.js 20 이상이 필요합니다. 패키지는 의존성이 없고, 브라우저와 서버에서 같은 코드로 동작합니다."
+         },
+         {
+          "type": "tabs",
+          "variant": "underline",
+          "children": [
+           {
+            "type": "tab",
+            "label": "npm",
+            "children": [
+             {
+              "type": "code",
+              "label": "터미널",
+              "language": "bash",
+              "code": "npm install @flowworks/sdk"
+             }
+            ]
+           },
+           {
+            "type": "tab",
+            "label": "pnpm",
+            "children": [
+             {
+              "type": "code",
+              "label": "터미널",
+              "language": "bash",
+              "code": "pnpm add @flowworks/sdk"
+             }
+            ]
+           },
+           {
+            "type": "tab",
+            "label": "yarn",
+            "children": [
+             {
+              "type": "code",
+              "label": "터미널",
+              "language": "bash",
+              "code": "yarn add @flowworks/sdk"
+             }
+            ]
+           }
+          ]
+         }
+        ],
+        "anchor": "install"
+       },
+       {
+        "type": "section",
+        "title": "인증",
+        "children": [
+         {
+          "type": "prose",
+          "title": "토큰 만들기",
+          "body": "설정 > 개발자 메뉴에서 토큰을 만들어 환경 변수에 저장하세요. 토큰은 한 번만 보여 드립니다."
+         },
+         {
+          "type": "notice",
+          "tone": "warning",
+          "title": "토큰을 코드에 넣지 마세요",
+          "body": "저장소에 올라간 토큰은 즉시 폐기해야 합니다. 노출이 의심되면 설정에서 바로 재발급할 수 있어요."
+         }
+        ],
+        "anchor": "auth"
+       },
+       {
+        "type": "section",
+        "title": "첫 요청",
+        "children": [
+         {
+          "type": "prose",
+          "title": "프로젝트 목록 불러오기",
+          "body": "아래 코드는 내 워크스페이스의 프로젝트를 최근 수정순으로 가져옵니다."
+         },
+         {
+          "type": "code",
+          "label": "list-projects.js",
+          "language": "js",
+          "code": "import {Client} from \"@flowworks/sdk\";\n\nconst client = new Client({token: process.env.FLOW_TOKEN});\nconst {items} = await client.projects.list({limit: 20, sort: \"-updatedAt\"});\nconsole.log(items.map(p => p.name));"
+         },
+         {
+          "type": "media",
+          "kind": "diagram",
+          "ratio": "16:9",
+          "alt": "클라이언트, API 게이트웨이, 프로젝트 서비스로 이어지는 요청 흐름도",
+          "caption": "그림 1. 요청은 게이트웨이에서 토큰을 확인한 뒤 프로젝트 서비스로 전달됩니다."
+         },
+         {
+          "type": "table",
+          "title": "요청 매개변수",
+          "caption": "projects.list 매개변수",
+          "columns": [
+           "이름",
+           "타입",
+           "기본값",
+           "설명"
+          ],
+          "rows": [
+           [
+            "limit",
+            "정수",
+            "20",
+            "한 번에 가져올 개수(최대 100)"
+           ],
+           [
+            "sort",
+            "문자열",
+            "-updatedAt",
+            "정렬 기준. 앞에 -를 붙이면 내림차순"
+           ],
+           [
+            "cursor",
+            "문자열",
+            "없음",
+            "다음 페이지를 가리키는 값"
+           ]
+          ],
+          "state": "ready",
+          "variant": "bordered"
+         }
+        ],
+        "anchor": "first"
+       },
+       {
+        "type": "section",
+        "title": "오류 처리",
+        "children": [
+         {
+          "type": "table",
+          "title": "응답 코드",
+          "caption": "자주 만나는 응답 코드",
+          "columns": [
+           "코드",
+           "의미",
+           "대응"
+          ],
+          "rows": [
+           [
+            "401",
+            "토큰이 없거나 만료됨",
+            "토큰을 다시 발급하세요"
+           ],
+           [
+            "429",
+            "요청이 너무 많음",
+            "Retry-After 헤더만큼 기다린 뒤 재시도"
+           ],
+           [
+            "503",
+            "일시적인 서버 점검",
+            "잠시 후 다시 시도하세요"
+           ]
+          ],
+          "state": "ready",
+          "variant": "bordered"
+         },
+         {
+          "type": "faq",
+          "title": "자주 묻는 질문",
+          "items": [
+           {
+            "question": "요청 한도는 얼마인가요?",
+            "answer": "토큰당 분당 600회입니다. 한도를 넘으면 429 응답과 함께 기다려야 할 시간이 헤더로 내려와요."
+           },
+           {
+            "question": "브라우저에서 바로 호출해도 되나요?",
+            "answer": "읽기 전용 토큰에 한해 가능합니다. 쓰기 토큰은 서버에서만 사용하세요."
+           }
+          ]
+         }
+        ],
+        "anchor": "errors"
+       }
+      ]
+     },
+     {
+      "type": "toc",
+      "title": "이 문서의 목차"
+     }
+    ]
+   }
+  ]
+ }
+}

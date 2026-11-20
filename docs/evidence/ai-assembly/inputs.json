@@ -1,0 +1,182 @@
+{
+ "description": "세 팔(기본 자동 조립·Recipe·AI 선택)이 공유하는 고정 입력. 콘텐츠는 카탈로그 템플릿의 tree·chrome(content.sha256으로 고정, ai-assembly.mjs verify가 대조)이고 어느 팔도 문구를 바꾸지 않는다. brief는 AI 팔만 읽는 페이지 목적·청중·톤이다.",
+ "catalogVersion": "2.4.0",
+ "recipes": {
+  "saas-landing": "SaaS 랜딩",
+  "ops-dashboard": "업무 대시보드",
+  "content-page": "콘텐츠 페이지"
+ },
+ "inputs": [
+  {
+   "id": "I01",
+   "recipe": "saas-landing",
+   "templateId": "devtool-landing",
+   "label": "빌드 도구 랜딩(빌드플로)",
+   "pageType": "landing",
+   "brief": {
+    "purpose": "모노레포 빌드 도구 v3.2(원격 캐시)를 소개하고 설치·가입으로 잇는 제품 랜딩",
+    "audience": "프런트엔드·플랫폼 엔지니어, 개발팀 리드",
+    "tone": "정확하고 담백한 개발자 도구. 과장 없이 수치(빌드 시간, 캐시 적중률)로 말한다",
+    "primaryAction": "설치 코드를 복사하고 요금제를 확인한다",
+    "contentFit": "제품은 CLI·CI에서 도는 빌드 도구다(소비자 앱이 아님). 이 페이지가 가진 증거는 설치 코드 블록, 빌드 시간 추이 차트, 지표 3개, 요금제, FAQ다."
+   },
+   "content": {
+    "template": "devtool-landing",
+    "name": "빌드플로",
+    "sha256": "d11ce98ccb47c48b6c3df2c686eb062c74982f89a8610f9b7142a848e7ec1267"
+   }
+  },
+  {
+   "id": "I02",
+   "recipe": "saas-landing",
+   "templateId": "waitlist",
+   "label": "비공개 베타 대기자 등록(오비트)",
+   "pageType": "landing",
+   "brief": {
+    "purpose": "출시 전 도구 오비트의 비공개 베타 대기자 이메일을 받는 한 화면 랜딩",
+    "audience": "새 생산성 도구를 먼저 써 보고 싶은 얼리어답터",
+    "tone": "짧고 기대감을 주는 프리런치. 가입 한 번이 전부인 화면",
+    "primaryAction": "이메일을 남긴다",
+    "contentFit": "콘텐츠는 히어로 문장, 이메일 입력 한 줄, 기능 목록 몇 개뿐이다. 출시 전이라 제품 화면 자료가 없다."
+   },
+   "content": {
+    "template": "waitlist",
+    "name": "오비트",
+    "sha256": "dd1eb93d8b5d08de73576bfa7c08e495e1adbe7ad70247dbba3329900ec47cf5"
+   }
+  },
+  {
+   "id": "I03",
+   "recipe": "saas-landing",
+   "templateId": "saas-landing",
+   "label": "팀 업무 SaaS 소개(플로우웍스)",
+   "pageType": "landing",
+   "brief": {
+    "purpose": "프로젝트·일정·문서를 연결하는 팀 업무 SaaS 2.0을 소개하고 14일 무료 체험으로 잇는 서비스 랜딩",
+    "audience": "소규모 팀 리더, 운영 담당자",
+    "tone": "신뢰감 있고 밝은 B2B SaaS",
+    "primaryAction": "무료 체험을 시작한다",
+    "contentFit": "기능 벤토, 고객 후기, 요금제, FAQ가 있는 긴 랜딩이다. 히어로에는 업무 흐름을 보여 주는 차트형 시각 요소가 이미 맞는 콘텐츠다."
+   },
+   "content": {
+    "template": "saas-landing",
+    "name": "플로우웍스",
+    "sha256": "868c01a74173c2d0dcd19551d969c918e9fb0fbc3af8b0d5ff9496be942e3171"
+   }
+  },
+  {
+   "id": "I04",
+   "recipe": "ops-dashboard",
+   "templateId": "sales-dashboard",
+   "label": "4분기 영업 현황 대시보드",
+   "pageType": "dashboard",
+   "brief": {
+    "purpose": "영업 책임자가 분기 누적 매출, 신규 계약, 이탈 위험을 한눈에 보고 큰 계약 진행을 확인하는 운영 대시보드",
+    "audience": "영업 책임자, 영업 운영 담당",
+    "tone": "차분하고 밀도 있는 업무 화면",
+    "primaryAction": "지표를 읽고 진행 중인 큰 계약 표로 내려간다",
+    "contentFit": "KPI 4개 → 월별 매출 막대 + 지역 비중 도넛 → 목표 달성률 → 계약 표. 숫자를 빠르게 훑는 화면이다."
+   },
+   "content": {
+    "template": "sales-dashboard",
+    "name": "모두웍스",
+    "sha256": "093bcba96d6e032e8d61fa50d36a53e9f5de492ec181c8ce53e52b41f9b97350"
+   }
+  },
+  {
+   "id": "I05",
+   "recipe": "ops-dashboard",
+   "templateId": "dashboard-overview",
+   "label": "프로젝트 현황 대시보드",
+   "pageType": "dashboard",
+   "brief": {
+    "purpose": "팀 리더가 진행 중 프로젝트, 지연, 다음 마일스톤을 확인하고 지금 집중할 일을 정하는 현황 화면",
+    "audience": "프로젝트 매니저, 팀 리더",
+    "tone": "가볍지만 업무용으로 정돈된 화면",
+    "primaryAction": "지연과 집중할 일을 확인한다",
+    "contentFit": "KPI 4개, 활동 요약(주간 완료 차트와 할 일 목록), 최근 작업 표로 이뤄진 현황 화면이다."
+   },
+   "content": {
+    "template": "dashboard-overview",
+    "name": "워크스페이스",
+    "sha256": "4939354ed2419d27ed175fa191c4be7e927a7c006e02b2b23eb4f57dc5a34375"
+   }
+  },
+  {
+   "id": "I06",
+   "recipe": "ops-dashboard",
+   "templateId": "hr-people",
+   "label": "채용과 인원 현황",
+   "pageType": "dashboard",
+   "brief": {
+    "purpose": "인사 담당자가 재직 인원, 열린 공고, 채용 소요 기간과 단계별 채용 진행을 한 화면에서 보는 인사 운영 화면",
+    "audience": "인사·채용 담당자",
+    "tone": "신뢰감 있고 차분한 업무 화면",
+    "primaryAction": "직군별 인원과 채용 칸반을 확인한다",
+    "contentFit": "KPI 4개, 직군별 가로 막대 차트 하나, 채용 단계 칸반(4개 단계)으로 이뤄져 있다."
+   },
+   "content": {
+    "template": "hr-people",
+    "name": "모두웍스",
+    "sha256": "5f733644cb69f9ca05a338886a3f7ef66d7f35ceb5bd87243a3c77091c1733e4"
+   }
+  },
+  {
+   "id": "I07",
+   "recipe": "content-page",
+   "templateId": "article",
+   "label": "디자인 노트 에세이",
+   "pageType": "article",
+   "brief": {
+    "purpose": "규칙과 일관성에 관한 짧은 에세이를 끝까지 읽게 하는 읽을거리",
+    "audience": "디자이너·개발자 독자",
+    "tone": "사색적이고 인쇄물 같은 읽는 화면",
+    "primaryAction": "끝까지 읽는다",
+    "contentFit": "제목, 사진, 도입 문단, 소제목 섹션, 인용, 체크 목록, 알림으로 이뤄진 에세이. 한 정렬선에서 읽혀야 한다."
+   },
+   "content": {
+    "template": "article",
+    "name": "디자인 노트",
+    "sha256": "5e4c6d04bfa520b55a2b945fd6c71effb9a9d56e353f340c0fc0a3a063d61a90"
+   }
+  },
+  {
+   "id": "I08",
+   "recipe": "content-page",
+   "templateId": "docs-reference",
+   "label": "API 시작하기 레퍼런스",
+   "pageType": "docs",
+   "brief": {
+    "purpose": "개발자가 API 설치, 인증, 첫 요청, 오류 처리를 순서대로 따라 하며 참고하는 문서",
+    "audience": "API를 처음 붙이는 개발자",
+    "tone": "정확하고 빠르게 훑을 수 있는 기술 문서",
+    "primaryAction": "코드를 복사해 따라 한다",
+    "contentFit": "사이드 목차, 설치 탭(npm·pnpm·yarn)과 코드, 인증 알림, 요청 매개변수·응답 코드 표, FAQ가 있는 기술 문서다."
+   },
+   "content": {
+    "template": "docs-reference",
+    "name": "매뉴얼",
+    "sha256": "75b2d5c7ffdcd33224eec6d73640f743ef3b2e6381a1f5bfae46429e75b0527c"
+   }
+  },
+  {
+   "id": "I09",
+   "recipe": "content-page",
+   "templateId": "blog-post",
+   "label": "블로그 글: 규칙이 자유를 만든다",
+   "pageType": "article",
+   "brief": {
+    "purpose": "디자인 시스템에서 규칙이 선택 속도를 높인다는 짧은 블로그 글",
+    "audience": "디자인 시스템에 관심 있는 실무자",
+    "tone": "조용하고 개인적인 글 읽기",
+    "primaryAction": "글을 읽고 다음 글로 이어간다",
+    "contentFit": "제목, 사진, 문단 두 개, 인용, 태그로 이뤄진 짧은 글이다."
+   },
+   "content": {
+    "template": "blog-post",
+    "name": "느린 기록",
+    "sha256": "ecab5ebb4fbf7ec8fddf7653cd9bafaf49908b6bb4cd6c6e50c88d533c272dca"
+   }
+  }
+ ]
+}

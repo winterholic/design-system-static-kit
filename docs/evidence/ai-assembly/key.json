@@ -1,0 +1,88 @@
+{
+ "description": "눈가림 라벨 대응표. 평가가 끝나기 전에는 평가자에게 보이지 않는다(blind/ 밖에 둔다).",
+ "seed": 20261121,
+ "originMain": "f1eb262d797008d5d68545071052c036031cca84",
+ "labels": {
+  "01": {
+   "inputId": "I01",
+   "templateId": "devtool-landing",
+   "arms": {
+    "A": "recipe",
+    "B": "default",
+    "C": "ai"
+   }
+  },
+  "02": {
+   "inputId": "I02",
+   "templateId": "waitlist",
+   "arms": {
+    "A": "default",
+    "B": "ai",
+    "C": "recipe"
+   }
+  },
+  "03": {
+   "inputId": "I03",
+   "templateId": "saas-landing",
+   "arms": {
+    "A": "ai",
+    "B": "default",
+    "C": "recipe"
+   }
+  },
+  "04": {
+   "inputId": "I04",
+   "templateId": "sales-dashboard",
+   "arms": {
+    "A": "recipe",
+    "B": "default",
+    "C": "ai"
+   }
+  },
+  "05": {
+   "inputId": "I05",
+   "templateId": "dashboard-overview",
+   "arms": {
+    "A": "recipe",
+    "B": "default",
+    "C": "ai"
+   }
+  },
+  "06": {
+   "inputId": "I06",
+   "templateId": "hr-people",
+   "arms": {
+    "A": "recipe",
+    "B": "ai",
+    "C": "default"
+   }
+  },
+  "07": {
+   "inputId": "I07",
+   "templateId": "article",
+   "arms": {
+    "A": "default",
+    "B": "recipe",
+    "C": "ai"
+   }
+  },
+  "08": {
+   "inputId": "I08",
+   "templateId": "docs-reference",
+   "arms": {
+    "A": "ai",
+    "B": "recipe",
+    "C": "default"
+   }
+  },
+  "09": {
+   "inputId": "I09",
+   "templateId": "blog-post",
+   "arms": {
+    "A": "default",
+    "B": "recipe",
+    "C": "ai"
+   }
+  }
+ }
+}
