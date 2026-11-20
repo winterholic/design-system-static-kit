@@ -1,0 +1,750 @@
+{
+ "meta": {
+  "phase": "before",
+  "date": "2026-11-20",
+  "catalogVersion": "2.3.0",
+  "browser": "chromium 156.0.8078.4"
+ },
+ "claims": {
+  "Q01": {
+   "what": "히어로 수치(dl.kit-hero-facts)가 3개 이상일 때 마지막 줄에 한 칸만 남지 않는다",
+   "results": [
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 390,
+     "values": {
+      "items": 3,
+      "cols": 3,
+      "orphan": false
+     },
+     "pass": true
+    },
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 768,
+     "values": {
+      "items": 3,
+      "cols": 5,
+      "orphan": false
+     },
+     "pass": true
+    },
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 1440,
+     "values": {
+      "items": 3,
+      "cols": 5,
+      "orphan": false
+     },
+     "pass": true
+    },
+    {
+     "target": "wedding-invite",
+     "combo": "wedding-invite",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "game-launch",
+     "combo": "game-launch",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "luxury-brand",
+     "combo": "luxury-brand",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "campaign-poster",
+     "combo": "campaign-poster",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "hanji-journey",
+     "combo": "hanji-journey",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "museum-home",
+     "combo": "museum-home",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "campaign-donate",
+     "combo": "campaign-donate",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "waitlist",
+     "combo": "waitlist",
+     "width": 320,
+     "values": {
+      "items": 3,
+      "cols": 2,
+      "orphan": true
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q02": {
+   "what": "메뉴 줄(.kit-menu-row)은 가로로 넘치지 않는다(scrollWidth ≤ clientWidth)",
+   "results": [
+    {
+     "target": "S23",
+     "combo": "menu-dining",
+     "width": 320,
+     "values": {
+      "rows": 8,
+      "maxOverflow": 36,
+      "maxRight": 307,
+      "vw": 320
+     },
+     "pass": false
+    },
+    {
+     "target": "S23",
+     "combo": "menu-dining",
+     "width": 390,
+     "values": {
+      "rows": 8,
+      "maxOverflow": 0,
+      "maxRight": 341,
+      "vw": 390
+     },
+     "pass": true
+    }
+   ]
+  },
+  "Q03": {
+   "what": "메뉴 목록 격자는 3개를 2열에 놓아 마지막 줄을 비우지 않는다",
+   "results": [
+    {
+     "target": "S23",
+     "combo": "menu-dining",
+     "width": 768,
+     "values": {
+      "lists": [
+       {
+        "items": 3,
+        "cols": 2,
+        "orphan": true
+       },
+       {
+        "items": 3,
+        "cols": 1,
+        "orphan": false
+       },
+       {
+        "items": 2,
+        "cols": 2,
+        "orphan": false
+       }
+      ],
+      "orphan": true
+     },
+     "pass": false
+    },
+    {
+     "target": "S23",
+     "combo": "menu-dining",
+     "width": 1440,
+     "values": {
+      "lists": [
+       {
+        "items": 3,
+        "cols": 3,
+        "orphan": false
+       },
+       {
+        "items": 3,
+        "cols": 1,
+        "orphan": false
+       },
+       {
+        "items": 2,
+        "cols": 2,
+        "orphan": false
+       }
+      ],
+      "orphan": false
+     },
+     "pass": true
+    }
+   ]
+  },
+  "Q04": {
+   "what": "같은 격자 안 차트 카드의 아래 빈 공간이 96px 미만이거나 상자 높이의 38% 미만",
+   "results": [
+    {
+     "target": "S12",
+     "combo": "sales-dashboard",
+     "width": 768,
+     "values": {
+      "cards": 2,
+      "worstEmpty": 287,
+      "worstRatio": 0.56
+     },
+     "pass": false
+    },
+    {
+     "target": "S12",
+     "combo": "sales-dashboard",
+     "width": 1440,
+     "values": {
+      "cards": 2,
+      "worstEmpty": 210,
+      "worstRatio": 0.42
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q05": {
+   "what": "상태 화면 제목(.kit-empty h2)은 320px에서 2줄 이하",
+   "results": [
+    {
+     "target": "S27",
+     "combo": "offline",
+     "width": 320,
+     "values": {
+      "px": 33,
+      "lines": 3,
+      "colWidth": 224
+     },
+     "pass": false
+    },
+    {
+     "target": "S27",
+     "combo": "offline",
+     "width": 390,
+     "values": {
+      "px": 33,
+      "lines": 2,
+      "colWidth": 294
+     },
+     "pass": true
+    }
+   ]
+  },
+  "Q06": {
+   "what": "시각 요소가 없는 split 히어로의 글줄 오른쪽 빈 영역이 콘텐츠 폭의 45% 미만",
+   "results": [
+    {
+     "target": "S05",
+     "combo": "devtool-landing",
+     "width": 1440,
+     "values": {
+      "variant": "split",
+      "visual": false,
+      "titlePx": 34,
+      "textRight": 719,
+      "mainWidth": 1440,
+      "emptyRightRatio": 0.5
+     },
+     "pass": false
+    },
+    {
+     "target": "S33",
+     "combo": "bank-product",
+     "width": 1440,
+     "values": {
+      "variant": "split",
+      "visual": false,
+      "titlePx": 64,
+      "textRight": 856,
+      "mainWidth": 1440,
+      "emptyRightRatio": 0.41
+     },
+     "pass": true
+    },
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "variant": "split",
+      "visual": true,
+      "titlePx": 59.6192,
+      "textRight": 671,
+      "mainWidth": 1440,
+      "emptyRightRatio": 0.53
+     },
+     "pass": true
+    }
+   ]
+  },
+  "Q07": {
+   "what": "벤토의 낮은 칸(높이 400px 이하) 중 내용 비율 40% 미만(빈 비율 60% 초과)인 칸이 없다",
+   "results": [
+    {
+     "target": "S06",
+     "combo": "product-landing",
+     "width": 1440,
+     "values": {
+      "cols": 4,
+      "cells": 5,
+      "smallCells": 4,
+      "worstEmpty": 0.69,
+      "meanEmpty": 0.63
+     },
+     "pass": false
+    },
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "cols": 2,
+      "cells": 5,
+      "smallCells": 4,
+      "worstEmpty": 0.63,
+      "meanEmpty": 0.42
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q08": {
+   "what": "막대 차트의 데이터 최댓값이 축 최댓값의 60% 이상이고 SVG 가로세로 왜곡이 1.5배 이하",
+   "results": [
+    {
+     "target": "S15",
+     "combo": "dashboard-analytics",
+     "width": 1440,
+     "values": {
+      "aspectDistortion": 2.46,
+      "axisMax": 10,
+      "dataMax": 5.1,
+      "fill": 0.51
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q09": {
+   "what": "폼 필드 격자에서 반폭 필드 혼자 한 줄을 차지하는 행이 없다",
+   "results": [
+    {
+     "target": "S17",
+     "combo": "checkout",
+     "width": 1440,
+     "values": {
+      "cols": 2,
+      "rows": 4,
+      "loneHalfRows": 1
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q10": {
+   "what": "히어로 수치 아래 다음 섹션 제목까지의 죽은 간격이 160px 이하",
+   "results": [
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 320,
+     "values": {
+      "factsToNextHeading": 154
+     },
+     "pass": true
+    },
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 768,
+     "values": {
+      "factsToNextHeading": 223
+     },
+     "pass": false
+    },
+    {
+     "target": "S07",
+     "combo": "agency-home",
+     "width": 1440,
+     "values": {
+      "factsToNextHeading": 208
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q11": {
+   "what": "KPI가 4개 이하이고 콘텐츠 폭이 1100px 이상이면 KPI 격자는 한 줄(rows=1)이다(열 수 변형이 핵심 지표를 아래로 밀지 않는다)",
+   "results": [
+    {
+     "target": "S10",
+     "combo": "dashboard-overview",
+     "width": 1440,
+     "values": {
+      "items": 4,
+      "cols": 4,
+      "rows": 1,
+      "cellW": 275,
+      "firstChartTop": 367,
+      "docH": 1390
+     },
+     "pass": true
+    },
+    {
+     "target": "S11",
+     "combo": "dashboard-overview~columns:two",
+     "width": 1440,
+     "values": {
+      "items": 4,
+      "cols": 2,
+      "rows": 2,
+      "cellW": 562,
+      "firstChartTop": 535,
+      "docH": 1558
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q12": {
+   "what": "섹션·머리말의 정렬 축이 하나(머리말 정렬 ≠ 본문 정렬인 쌍이 0)",
+   "results": [
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "pairs": 5,
+      "mismatched": 0,
+      "sections": 0,
+      "intro": null
+     },
+     "pass": true
+    },
+    {
+     "target": "S30",
+     "combo": "saas-landing~heads:center",
+     "width": 1440,
+     "values": {
+      "pairs": 5,
+      "mismatched": 5,
+      "sections": 5,
+      "intro": null
+     },
+     "pass": false
+    },
+    {
+     "target": "S32",
+     "combo": "article~intro:center",
+     "width": 1440,
+     "values": {
+      "pairs": 2,
+      "mismatched": 1,
+      "sections": 0,
+      "intro": true
+     },
+     "pass": false
+    },
+    {
+     "target": "S34",
+     "combo": "article",
+     "width": 1440,
+     "values": {
+      "pairs": 2,
+      "mismatched": 0,
+      "sections": 0,
+      "intro": false
+     },
+     "pass": true
+    },
+    {
+     "target": "S09",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "pairs": 5,
+      "mismatched": 0,
+      "sections": 0,
+      "intro": null
+     },
+     "pass": true
+    }
+   ]
+  },
+  "Q13": {
+   "what": "한 페이지에 같은 큰 일러스트(200×120px 이상)가 두 번 나오지 않는다",
+   "results": [
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "largeArts": 2,
+      "duplicateGroups": 1,
+      "places": [
+       "hero",
+       "bento"
+      ]
+     },
+     "pass": false
+    },
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "width": 390,
+     "values": {
+      "largeArts": 2,
+      "duplicateGroups": 1,
+      "places": [
+       "hero",
+       "bento"
+      ]
+     },
+     "pass": false
+    },
+    {
+     "target": "S06",
+     "combo": "product-landing",
+     "width": 1440,
+     "values": {
+      "largeArts": 3,
+      "duplicateGroups": 0,
+      "places": []
+     },
+     "pass": true
+    }
+   ]
+  },
+  "Q14": {
+   "what": "같은 Blueprint의 히어로 변형 전환 후에도 제품 시각 요소(visual)가 유지된다",
+   "results": [
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "values": {
+      "variant": "split",
+      "visual": "chart",
+      "motif": null
+     },
+     "baseline": null,
+     "pass": true
+    },
+    {
+     "target": "S02",
+     "combo": "saas-landing~hero:statement",
+     "values": {
+      "variant": "statement",
+      "visual": null,
+      "motif": null
+     },
+     "baseline": {
+      "variant": "split",
+      "visual": "chart",
+      "motif": null
+     },
+     "pass": false
+    },
+    {
+     "target": "S03",
+     "combo": "saas-landing~hero:cover",
+     "values": {
+      "variant": "cover",
+      "visual": null,
+      "motif": null
+     },
+     "baseline": {
+      "variant": "split",
+      "visual": "chart",
+      "motif": null
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q15": {
+   "what": "카드 스타일 일괄 변경이 페이지 카드의 75% 이상을 실제로 바꾼다(바뀐 카드 수 / 전체 카드 수)",
+   "results": [
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "values": {
+      "media": 1,
+      "basic": 1
+     },
+     "baseline": null,
+     "pass": true
+    },
+    {
+     "target": "S04",
+     "combo": "saas-landing~cards:filled",
+     "values": {
+      "media": 1,
+      "filled": 1
+     },
+     "baseline": {
+      "media": 1,
+      "basic": 1
+     },
+     "pass": false
+    }
+   ]
+  },
+  "Q16": {
+   "what": "같은 템플릿을 다른 테마로 바꿔도 히어로 제목이 같은 줄 수·내비 셸이 유지된다(또는 변화가 의도된 축으로 기록된다)",
+   "results": [
+    {
+     "target": "S01",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "shell": "topbar",
+      "mainWidth": 1440,
+      "heroTitlePx": 59.6192,
+      "heroLines": 2,
+      "bentoCols": 2,
+      "docH": 4823
+     },
+     "pass": null
+    },
+    {
+     "target": "S08",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "shell": "topbar",
+      "mainWidth": 1440,
+      "heroTitlePx": 71.6392,
+      "heroLines": 2,
+      "bentoCols": 4,
+      "docH": 4193
+     },
+     "pass": null
+    },
+    {
+     "target": "S09",
+     "combo": "saas-landing",
+     "width": 1440,
+     "values": {
+      "shell": "topbar",
+      "mainWidth": 1440,
+      "heroTitlePx": 50,
+      "heroLines": 2,
+      "bentoCols": 2,
+      "docH": 4817
+     },
+     "pass": null
+    },
+    {
+     "target": "S10",
+     "combo": "dashboard-overview",
+     "width": 1440,
+     "values": {
+      "shell": "sidebar",
+      "mainWidth": 1200,
+      "heroTitlePx": null,
+      "heroLines": null,
+      "bentoCols": null,
+      "docH": 1390
+     },
+     "pass": null
+    },
+    {
+     "target": "S13",
+     "combo": "dashboard-overview",
+     "width": 1440,
+     "values": {
+      "shell": "topbar",
+      "mainWidth": 1440,
+      "heroTitlePx": null,
+      "heroLines": null,
+      "bentoCols": null,
+      "docH": 1653
+     },
+     "pass": null
+    }
+   ]
+  },
+  "Q17": {
+   "what": "탭 목록의 마지막 탭이 가로 스크롤 없이 화면 가장자리에 8px 이내로 잘리지 않는다(EDGE 오탐 대조용)",
+   "results": [
+    {
+     "target": "S21",
+     "combo": "product-detail~tabs:boxed",
+     "width": 320,
+     "values": {
+      "scrollable": true,
+      "lastRight": 321,
+      "vw": 320,
+      "cutOffByViewport": false
+     },
+     "pass": true
+    },
+    {
+     "target": "S20",
+     "combo": "product-detail",
+     "width": 320,
+     "values": {
+      "scrollable": true,
+      "lastRight": 308,
+      "vw": 320,
+      "cutOffByViewport": false
+     },
+     "pass": true
+    }
+   ]
+  }
+ }
+}

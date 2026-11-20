@@ -1,0 +1,305 @@
+{
+ "catalogVersion": "2.3.0",
+ "description": "2026-11-21 품질 진단 대표 표본. node scripts/design-qa/quality-shoot.mjs --phase before|after 가 이 목록을 읽는다. kind: good 완성도 높음 · a-violation 규약 위반 · awkward 규칙은 통과하나 어색 · variant-worse 변형 적용 후 나빠짐(pair=같은 Blueprint의 기준 표본) · theme-type 테마·서체 변경 · variant-neutral 변형이 화면에 거의 영향이 없거나 중립. note는 선정 이유일 뿐 진단이 아니다.",
+ "samples": [
+  {
+   "key": "S01",
+   "combo": "saas-landing",
+   "view": {},
+   "group": "landing",
+   "kind": "good",
+   "note": "완성도 높은 기준 화면: 히어로-신뢰-기능-단계-후기-요금-FAQ-CTA가 한 흐름"
+  },
+  {
+   "key": "S02",
+   "combo": "saas-landing~hero:statement",
+   "view": {},
+   "group": "landing",
+   "kind": "variant-worse",
+   "pair": "S01",
+   "note": "히어로를 큰 문장형으로 바꾸면 제품 목업이 사라지고 장식 원만 남음"
+  },
+  {
+   "key": "S03",
+   "combo": "saas-landing~hero:cover",
+   "view": {},
+   "group": "landing",
+   "kind": "variant-worse",
+   "pair": "S01",
+   "note": "히어로를 커버형으로 바꾸면 SaaS와 무관한 추상 도형이 들어감"
+  },
+  {
+   "key": "S04",
+   "combo": "saas-landing~cards:filled",
+   "view": {},
+   "group": "landing",
+   "kind": "variant-worse",
+   "pair": "S01",
+   "note": "카드 일괄 변경이 basic 카드에만 적용되어 한 벤토 안에서 카드 스타일이 섞임"
+  },
+  {
+   "key": "S05",
+   "combo": "devtool-landing",
+   "view": {},
+   "group": "landing",
+   "kind": "awkward",
+   "note": "규칙은 통과하나 히어로가 작고 오른쪽 절반이 비어 첫 화면 위계가 약함"
+  },
+  {
+   "key": "S06",
+   "combo": "product-landing",
+   "view": {},
+   "group": "landing",
+   "kind": "awkward",
+   "note": "규칙은 통과하나 벤토 칸의 높이가 맞지 않아 빈 면이 남고 히어로 제목이 작음"
+  },
+  {
+   "key": "S07",
+   "combo": "agency-home",
+   "view": {},
+   "group": "landing",
+   "kind": "a-violation",
+   "note": "320px에서 히어로 수치 3개가 2열에 놓여 마지막 줄 1칸(GRID_ORPHAN)"
+  },
+  {
+   "key": "S08",
+   "combo": "saas-landing",
+   "view": {
+    "theme": "brutalist"
+   },
+   "group": "landing",
+   "kind": "theme-type",
+   "pair": "S01",
+   "note": "같은 Blueprint를 브루탈 테마로 바꾼 화면"
+  },
+  {
+   "key": "S09",
+   "combo": "saas-landing",
+   "view": {
+    "type": "terminal"
+   },
+   "group": "landing",
+   "kind": "theme-type",
+   "pair": "S01",
+   "note": "같은 Blueprint에서 서체 프리셋만 terminal로 바꾼 화면"
+  },
+  {
+   "key": "S10",
+   "combo": "dashboard-overview",
+   "view": {},
+   "group": "dashboard",
+   "kind": "good",
+   "note": "완성도 높은 기준 대시보드: KPI-차트-표 위계"
+  },
+  {
+   "key": "S11",
+   "combo": "dashboard-overview~columns:two",
+   "view": {},
+   "group": "dashboard",
+   "kind": "variant-worse",
+   "pair": "S10",
+   "note": "KPI 4개를 2열로 바꾸면 핵심 지표가 아래로 밀리고 셀이 넓어짐"
+  },
+  {
+   "key": "S12",
+   "combo": "sales-dashboard",
+   "view": {},
+   "group": "dashboard",
+   "kind": "a-violation",
+   "note": "768px에서 차트 카드가 이웃 카드 높이로 늘어나 아래가 빔(EMPTY_CELL)"
+  },
+  {
+   "key": "S13",
+   "combo": "dashboard-overview",
+   "view": {
+    "theme": "neon"
+   },
+   "group": "dashboard",
+   "kind": "theme-type",
+   "pair": "S10",
+   "note": "같은 대시보드를 네온(다크·글로우) 테마로 바꾼 화면"
+  },
+  {
+   "key": "S14",
+   "combo": "finance-overview",
+   "view": {},
+   "group": "data",
+   "kind": "good",
+   "note": "수치·추이·거래 표가 위계대로 놓인 데이터 화면"
+  },
+  {
+   "key": "S15",
+   "combo": "dashboard-analytics",
+   "view": {},
+   "group": "data",
+   "kind": "awkward",
+   "note": "규칙은 통과하나 차트 카드 높이가 제각각이고 가로 막대가 넓은 폭에 늘어짐"
+  },
+  {
+   "key": "S16",
+   "combo": "finance-overview~data:bordered",
+   "view": {},
+   "group": "data",
+   "kind": "variant-neutral",
+   "pair": "S14",
+   "note": "표·목록 일괄 변경이 표 구분 방식만 바꾸고 화면 위계는 그대로"
+  },
+  {
+   "key": "S17",
+   "combo": "checkout",
+   "view": {},
+   "group": "form",
+   "kind": "awkward",
+   "note": "규칙은 통과하나 폼이 넓은 화면에서 왼쪽에 몰리고 아래가 비어 있음"
+  },
+  {
+   "key": "S18",
+   "combo": "signup",
+   "view": {},
+   "group": "form",
+   "kind": "good",
+   "note": "인증 폼: 한 가지 입력에 집중한 기준 화면"
+  },
+  {
+   "key": "S19",
+   "combo": "signup~notice:toast",
+   "view": {},
+   "group": "form",
+   "kind": "variant-neutral",
+   "pair": "S18",
+   "note": "알림을 떠 있는 카드로 바꾸면 인증 폼 위계가 달라짐"
+  },
+  {
+   "key": "S20",
+   "combo": "product-detail",
+   "view": {},
+   "group": "commerce",
+   "kind": "good",
+   "note": "갤러리-구매 박스-탭 위계가 분명한 상품 상세"
+  },
+  {
+   "key": "S21",
+   "combo": "product-detail~tabs:boxed",
+   "view": {},
+   "group": "commerce",
+   "kind": "variant-neutral",
+   "pair": "S20",
+   "note": "320px에서 probe가 탭 줄 EDGE를 지적하나 가로 스크롤 영역이라 위반으로 확정하지 못한 표본(오탐 후보)"
+  },
+  {
+   "key": "S22",
+   "combo": "product-detail~gallery:masonry",
+   "view": {},
+   "group": "commerce",
+   "kind": "variant-neutral",
+   "pair": "S20",
+   "note": "갤러리 변형이 상품 상세에서 구매 박스와의 균형을 바꿈"
+  },
+  {
+   "key": "S23",
+   "combo": "menu-dining",
+   "view": {},
+   "group": "commerce",
+   "kind": "a-violation",
+   "note": "320px 가격이 가장자리 밖(EDGE_VIEW), 768px 3개 2열 고아(GRID_ORPHAN)"
+  },
+  {
+   "key": "S24",
+   "combo": "product-detail",
+   "view": {
+    "theme": "luxe"
+   },
+   "group": "commerce",
+   "kind": "theme-type",
+   "pair": "S20",
+   "note": "같은 상품 상세를 럭셔리 테마로 바꾼 화면"
+  },
+  {
+   "key": "S25",
+   "combo": "docs-reference",
+   "view": {},
+   "group": "docs",
+   "kind": "good",
+   "note": "목차·본문·코드가 이어지는 문서 기준 화면"
+  },
+  {
+   "key": "S26",
+   "combo": "docs-reference~tabs:boxed",
+   "view": {},
+   "group": "docs",
+   "kind": "variant-neutral",
+   "pair": "S25",
+   "note": "탭 모양 변경이 문서 위계에 미치는 영향"
+  },
+  {
+   "key": "S27",
+   "combo": "offline",
+   "view": {},
+   "group": "docs",
+   "kind": "a-violation",
+   "note": "320px 상태 화면 제목이 3줄로 접힘(BIG_NARROW)"
+  },
+  {
+   "key": "S28",
+   "combo": "article",
+   "view": {
+    "type": "condensed"
+   },
+   "group": "docs",
+   "kind": "theme-type",
+   "note": "글 페이지의 서체 프리셋을 condensed로 바꾼 화면(한글 본문 위계)",
+   "pair": "S34"
+  },
+  {
+   "key": "S29",
+   "combo": "hr-people",
+   "view": {},
+   "group": "dashboard",
+   "kind": "a-violation",
+   "note": "320~768px 카드 제목이 끝줄 2글자로 접힘(ORPHAN_LINE)"
+  },
+  {
+   "key": "S30",
+   "combo": "saas-landing~heads:center",
+   "view": {},
+   "group": "landing",
+   "kind": "variant-worse",
+   "pair": "S01",
+   "note": "섹션 머리말만 가운데로 바꾸면 본문은 왼쪽 정렬이라 정렬선이 둘이 됨"
+  },
+  {
+   "key": "S31",
+   "combo": "saas-landing~rhythm:banded",
+   "view": {},
+   "group": "landing",
+   "kind": "variant-neutral",
+   "pair": "S01",
+   "note": "구역 리듬을 띠 구분으로 바꾼 같은 Blueprint"
+  },
+  {
+   "key": "S32",
+   "combo": "article~intro:center",
+   "view": {},
+   "group": "docs",
+   "kind": "variant-worse",
+   "note": "글 머리말만 가운데 정렬로 바꾼 화면",
+   "pair": "S34"
+  },
+  {
+   "key": "S33",
+   "combo": "bank-product",
+   "view": {},
+   "group": "landing",
+   "kind": "awkward",
+   "note": "텍스트 중심 히어로. S05(제목 34px)와 같은 구조인데 제목 64px라 위계가 서는 대조 표본"
+  },
+  {
+   "key": "S34",
+   "combo": "article",
+   "view": {},
+   "group": "docs",
+   "kind": "good",
+   "note": "글 페이지 기준 표본: 제목·본문·인용·체크리스트가 한 정렬선"
+  }
+ ]
+}
