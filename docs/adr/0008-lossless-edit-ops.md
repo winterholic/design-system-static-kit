@@ -88,6 +88,8 @@
 
 "렌더에서만 숨기기"는 쓰지 않았다. 문서에 남기려면 검증기가 해당 필드를 받아야 하는데 그것은 규칙 완화다. 대신 콘텐츠는 문서의 다른 위치로 옮기거나 변형을 거부해 문서 안에 항상 보존한다.
 
+**V06과의 관계(origin/main 7b6e5770b 통합).** 이 브랜치와 별개로 `d72d78389`가 계약 V06("히어로 변형이 `hero.facts`를 지우지 않는다", `keeps-field`, `not-recommended`)을 더했다. 같은 문제의 다른 층이라 모순 없이 하나의 규칙으로 읽는다: **히어로 facts는 콘텐츠이므로 잃지 않는다.** 추천 층(`layoutSlots`·갤러리·Recipe)에서는 V06이 그 옵션을 기본 추천에서 뺀다(768개 조합, 조합은 지우지 않는다). 편집 층(`setLayoutVariant`)에서는 같은 옵션을 기본 거부(`LAYOUT_WOULD_DROP_CONTENT`)하고 `relocate`로 옮기면 허용한다. 따라서 V06이 걸린 옵션과 편집 층이 거부하는 옵션은 정확히 같고(템플릿 85개 전수 시험), 두 규칙이 갈라지는 지점은 하나뿐이다. `relocate`는 필드를 지우지 않고 지표 격자로 옮기므로 `keeps-field`는 필드 소멸로 오판한다. 그래서 `assessOption`에 `contentPreserved` 인자를 더했다. 호출자가 콘텐츠 지문으로 보존을 증명한 경우(`src/edit`의 `setLayoutVariant`·`checkDocument`)에만 콘텐츠 필드(`facts`) 계약을 건너뛰며, 기본값은 `false`라 V06의 데이터·추천 동작·Recipe 시험은 그대로다. 장식(`visual`, V01)은 이 예외에 넣지 않는다. V06 계약 정의와 origin 쪽 시험은 바꾸지 않았다.
+
 템플릿 합성 경로(`applyLayout`, 레거시)는 같은 삭제를 하되(출력 hash 보존) 이제 `{report}`로 `DECORATION_DROPPED`·`CONTENT_DROPPED`를 보고한다. 측정: 히어로 변형 옵션 51개 조합이 장식 또는 `facts`를 잃는다. 그중 `facts` 손실은 `cover/centered/statement → split/product` 조합이다(`tests/edit-lossless.test.mjs`가 이 옵션 전부를 거부·이동 경로로 증명).
 
 ### 6. 통합 계약 검사(`src/edit/contracts.mjs`)

@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {templates, composeBlueprint, variantContracts} from '../src/catalog.mjs';
+import {templates, composeBlueprint, variantContracts, layoutSlots} from '../src/catalog.mjs';
+import {assessOption} from '../src/catalog/variant-contracts.mjs';
 import {checkDocument, applySequence, checkSequence, GRADES, updateNode, setLayoutVariant} from '../src/edit/index.mjs';
 
 const doc = id => composeBlueprint(id, undefined, undefined, {lossless: true}).blueprint;
@@ -57,4 +58,27 @@ test('sequences: all-or-nothing, and the integrated check sees losses that a sin
   const drift = checkDocument(edited, {base});
   assert.equal(drift.ok, false); assert.ok(drift.errors.some(e => e.code === 'CONTENT_LOSS'));
   assert.equal(setLayoutVariant(edited, {slot: 'cards', option: 'filled'}).content.preserved, true);
+});
+
+test('V06 and the edit-layer hero facts policy are one rule: V06 flags exactly the options the edit layer refuses, and relocation (content kept) is not a V06 finding', () => {
+  let flagged = 0;
+  for (const id of Object.keys(templates)) {
+    const d = doc(id), hero = layoutSlots(d.tree.children, d.pageType).find(s => s.id === 'hero');
+    for (const o of hero?.options ?? []) {
+      const v06 = o.rules.some(r => r.id === 'V06'), plain = setLayoutVariant(d, {slot: 'hero', option: o.id});
+      assert.equal(v06, !plain.ok && plain.errors[0].code === 'LAYOUT_WOULD_DROP_CONTENT', `${id} hero=${o.id}`);
+      if (!v06) continue;
+      flagged++;
+      const moved = setLayoutVariant(d, {slot: 'hero', option: o.id, contentPolicy: 'relocate'});
+      assert.ok(moved.ok && moved.content.preserved);
+      assert.ok(!moved.warnings.some(w => w.ruleId === 'V06'), `${id} hero=${o.id}: facts were relocated, not lost`);
+      assert.equal(checkSequence(d, [{op: 'setLayoutVariant', args: {slot: 'hero', option: o.id, contentPolicy: 'relocate'}}]).warnings.some(w => w.ruleId === 'V06'), false);
+    }
+  }
+  assert.ok(flagged >= 10, 'V06 options exercised: ' + flagged);
+  // 카탈로그 계층의 동작은 그대로다: 지문 증명이 없으면 V06은 기존대로 걸린다.
+  const d = doc('agency-home'), tree = d.tree.children, after = structuredClone(tree); delete after[1].facts; after[1].variant = 'split';
+  assert.deepEqual(assessOption({before: tree, after, slotId: 'hero', optionId: 'split'}).map(f => f.id), ['V06']);
+  assert.deepEqual(assessOption({before: tree, after, slotId: 'hero', optionId: 'split', contentPreserved: true}).map(f => f.id), []);
+  assert.deepEqual(assessOption({before: tree, after, slotId: 'hero', optionId: 'split', contentPreserved: false}).map(f => f.id), ['V06']);
 });

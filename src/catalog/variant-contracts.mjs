@@ -84,12 +84,20 @@ export const variantContracts = [
 
 const covers = (contract, slotId) => contract.slots === '*' || contract.slots.includes(slotId);
 
-/** 옵션 하나를 적용한 결과(after)가 계약을 어기는지 본다. 위반 목록: [{id, claim, detail}]. */
-export function assessOption({before, after, slotId, optionId, templateId = null, neutral = NEUTRAL_OPTIONS}) {
+/** 사용자가 쓴 글·데이터라서 보존 여부로 판정하는 필드(V06). 장식(visual)은 여기 넣지 않는다. */
+const CONTENT_FIELDS = new Set(['facts']);
+
+/**
+ * 옵션 하나를 적용한 결과(after)가 계약을 어기는지 본다. 위반 목록: [{id, claim, detail}].
+ * contentPreserved:true는 호출자가 콘텐츠 지문으로 "글·데이터를 하나도 잃지 않았다"를 이미 증명했다는 뜻이다(src/edit의 relocate 경로).
+ * 그러면 콘텐츠 필드의 keeps-field 계약(V06)은 필드가 다른 자리로 옮겨졌을 뿐이므로 걸리지 않는다. 기본값 false는 기존 동작 그대로다.
+ */
+export function assessOption({before, after, slotId, optionId, templateId = null, neutral = NEUTRAL_OPTIONS, contentPreserved = false}) {
   const key = templateId ? `${templateId}~${slotId}:${optionId}` : null;
   const findings = [];
   for (const c of variantContracts) {
     if (!covers(c, slotId) || (c.check.kind === 'visible-effect' && !key)) continue;
+    if (contentPreserved && c.check.kind === 'keeps-field' && CONTENT_FIELDS.has(c.check.field)) continue;
     const {kind, ...params} = c.check, detail = CHECKS[kind](params, {before, after, key, neutral});
     if (detail) findings.push({id: c.id, claim: c.claim, detail});
   }

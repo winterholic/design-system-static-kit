@@ -286,8 +286,10 @@ export function setLayoutVariant(doc, args = {}) {
   }
   const draft = clone(doc); draft.tree.children = laid.tree;
   const warnings = laid.report.map(fromLayoutReport);
+  // 편집 경로는 콘텐츠 보존을 강한 계약으로 보장한다(기본 거부, relocate는 이동). 지문이 같으면 V06(템플릿 추천 계층의 같은 규칙)은 이미 충족된 것이다.
+  const contentPreserved = contentFingerprint({...doc, tree: {type: 'page', children: laid.tree}}).hash === contentFingerprint(doc).hash;
   for (const {slot, option} of laid.applied) {
-    for (const f of assessOption({before: tree, after: laid.tree, slotId: slot, optionId: option})) warnings.push(warn('VARIANT_CONTRACT', '$.layout.' + slot, `${f.id}: ${f.detail}`, {ruleId: f.id, claim: f.claim, slot, option, grade: 'quality', hint: '거부되지 않았습니다. 의도한 선택이면 그대로 두고, 아니면 Undo하세요.'}));
+    for (const f of assessOption({before: tree, after: laid.tree, slotId: slot, optionId: option, contentPreserved})) warnings.push(warn('VARIANT_CONTRACT', '$.layout.' + slot, `${f.id}: ${f.detail}`, {ruleId: f.id, claim: f.claim, slot, option, grade: 'quality', hint: '거부되지 않았습니다. 의도한 선택이면 그대로 두고, 아니면 Undo하세요.'}));
   }
   return finish(doc, draft, {warnings, keep: 'content'});
 }

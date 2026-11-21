@@ -47,7 +47,7 @@ export function checkDocument(doc, {base = null, layout = null, compile: runComp
     for (const m of diff.added.slice(0, 20)) errors.push(entry('strong', 'data', 'CONTENT_DRIFT', '$.tree', `시작 문서에 없던 콘텐츠가 생겼습니다: ${m}`, '모양 연산은 글·데이터를 만들지 않습니다.'));
     if (layout && Array.isArray(base.tree?.children) && Array.isArray(doc.tree?.children)) {
       for (const [slotId, optionId] of Object.entries(layout)) {
-        for (const f of assessOption({before: base.tree.children, after: doc.tree.children, slotId, optionId})) warnings.push(entry('quality', 'variant-contract', 'VARIANT_CONTRACT', '$.layout.' + slotId, `${f.id}: ${f.detail}`, '거부되지 않는 선택입니다. 의도한 것이 아니면 해당 변형을 빼세요.', {ruleId: f.id, claim: f.claim}));
+        for (const f of assessOption({before: base.tree.children, after: doc.tree.children, slotId, optionId, contentPreserved: content.preserved})) warnings.push(entry('quality', 'variant-contract', 'VARIANT_CONTRACT', '$.layout.' + slotId, `${f.id}: ${f.detail}`, '거부되지 않는 선택입니다. 의도한 것이 아니면 해당 변형을 빼세요.', {ruleId: f.id, claim: f.claim}));
       }
     }
   }
