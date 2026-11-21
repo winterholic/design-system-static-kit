@@ -68,7 +68,7 @@ test('Components는 2.6.0 재료 계약과 실제 변형 렌더를 제공한다'
   await expect(page.getByRole('heading', {name: '재료 계약'})).toBeVisible();
   await expect(page.getByText('multiple + async')).toBeVisible();
   await expect(page.getByText('--kit-action')).toBeVisible();
-  await expect(page.getByRole('group', {name: '변형'})).toBeVisible();
+  await expect(page.getByLabel('mode', {exact: true})).toBeVisible();
   await expect(page.getByRole('button', {name: '좁게 375px'})).toBeVisible();
   await expect(page.locator('iframe[title*="렌더 결과"]')).toHaveAttribute('src', /\/components\/select-control\/render/);
 

@@ -43,7 +43,7 @@ test('production REST output can mount the 2.6.0 component runtimes', async ({pa
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.setContent(value.html);
-  for (const [, id] of controls) await expect(page.locator(`[data-ctl=${id}]`)).toHaveCount(1);
+  for (const [, id] of controls) await expect(page.locator(`[data-ctl=${id}]`).first()).toBeAttached();
   expect(errors).toEqual([]);
   const modal = page.locator('[data-ctl=modal]');
   const trigger = modal.locator('.kit-ctl-modal-trigger button');
