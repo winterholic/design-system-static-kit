@@ -70,13 +70,19 @@ function NumberField(p: FieldProps) {
 }
 
 function EnumField({name, label, schema, value, optional, errors, onSet, onUnset}: FieldProps) {
+  const choices = schema.enum ?? [];
   const options = [
     ...(optional || typeof value !== 'string' ? [{value: '', label: '(없음)'}] : []),
-    ...(schema.enum ?? []).map(v => ({value: String(v), label: String(v)})),
+    ...choices.map(v => ({value: String(v), label: String(v)})),
   ];
+  const selected = choices.find(option => Object.is(option, value));
   return (
     <Select id={`f-${name}`} data-field={name} className={styles.field} label={label} required={!optional} error={errors.length ? errors.join(' ') : undefined}
-      value={typeof value === 'string' ? value : ''} options={options} onChange={next => (next === '' ? onUnset() : onSet(next))} />
+      value={selected === undefined ? '' : String(selected)} options={options} onChange={next => {
+        if (next === '') { onUnset(); return; }
+        const choice = choices.find(option => String(option) === next);
+        if (choice !== undefined) onSet(choice);
+      }} />
   );
 }
 

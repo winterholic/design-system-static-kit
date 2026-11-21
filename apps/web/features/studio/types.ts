@@ -26,7 +26,7 @@ export const DEVICES: readonly Device[] = [390, 768, 1280];
 export const SCHEMES: readonly PreviewScheme[] = ['document', 'light', 'dark'];
 
 /** axes: 스타일 축 값(radius:round …), colorPalette: 2.6.0 내부 색 팔레트 id. Materials 화면이 "Studio에서 사용하기"로 넘기는 값이다. */
-export type StartRequest = {template?: string; theme?: string; variant?: string; palette?: string; mode?: string; layout?: Record<string, string>; axes?: Record<string, string>; catalogVersion?: '2.6.0'; colorPalette?: string; typeRoles?: string; profile?: string};
+export type StartRequest = {template?: string; theme?: string; variant?: string; palette?: string; mode?: string; layout?: Record<string, string>; axes?: Record<string, string>; catalogVersion?: '2.6.0'; colorPalette?: string; typeRoles?: string; profile?: string; component?: string; componentAxes?: Record<string, string>};
 
 export type CatalogItem = {id: string; label: string; pageType: string; theme: string};
 export type ThemeVariant = {id: string; label: string; description: string; set: Record<string, string>};

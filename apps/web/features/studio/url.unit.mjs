@@ -25,6 +25,15 @@ test('Materials color and role type links explicitly request 2.6.0 document mate
   assert.deepEqual(parseUrl(studioForPreset('marketing', 'saas-landing').slice('/studio'.length)).start, {template: 'saas-landing', catalogVersion: '2.6.0', typeRoles: 'marketing'});
 });
 
+test('Components shares a registered node and selected variant axes through the Studio start query', () => {
+  const request = {catalogVersion: '2.6.0', component: 'select-control', componentAxes: {mode: 'multiple', search: 'local', maxMenuHeight: '288'}};
+  const parsed = parseUrl(startUrl(request).slice('/studio'.length));
+  assert.deepEqual(parsed.start, request);
+  assert.deepEqual(parsed.problems, []);
+  assert.equal(parseUrl('?catalogVersion=2.6.0&component=select-control&componentAxes=mode:multiple,mode:single').problems[0]?.path, '$url.componentAxes');
+  assert.equal(parseUrl('?component=evil%20code').problems[0]?.path, '$url.component');
+});
+
 test('Studio view state has a stable URL contract and rejects malformed layout input', () => {
   assert.equal(viewUrl({tab: 'design', pane: 'preview', device: 390}), '/studio?tab=design&pane=preview&device=390');
   const parsed = parseUrl('?layout=hero:split,bad');
