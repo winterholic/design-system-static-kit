@@ -14,7 +14,7 @@ test('2.6.0 is opt-in and does not change the creation default', () => {
   assert.equal(createBlueprint('saas-landing').catalogVersion, '2.4.0');
   assert.equal(blueprintSchema().properties.colorPalette.enum.join(','), 'static-kit');
   assert.equal(blueprintSchema().properties.colorPalette['x-since'], '2.6.0');
-  assert.deepEqual(TOP_LEVEL_SINCE_FIELDS, [{field:'colorPalette',values:['static-kit'],since:'2.6.0'}]);
+  assert.deepEqual(TOP_LEVEL_SINCE_FIELDS.filter(f => f.field === 'colorPalette'), [{field:'colorPalette',values:['static-kit'],since:'2.6.0'}]); // typeRoles joined the 2.6.0 gate (tests/wire-260.test.mjs)
   const old = {...migrateBlueprint(createBlueprint('saas-landing'), '2.5.0'), colorPalette: 'static-kit'};
   assert.ok(validateBlueprint(old).errors.some(e => e.path === '$.colorPalette' && e.code === 'VERSION_FIELD'));
 });

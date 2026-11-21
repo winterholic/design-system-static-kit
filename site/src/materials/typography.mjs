@@ -166,6 +166,36 @@ export function renderMaterialTypeCSS(id) {
   return `/* ${preset.label}: viewport-fluid role sizes; density changes scale and rhythm (floor roles and Hangul leading limits stay fixed). */\n${scope}{${declarations};--mt-density-factor:1;--mt-leading-factor:1;--mt-viewport-factor:1;font-variant-numeric:proportional-nums;min-width:0}\n${densityRules}\n${rules}\n@media (max-width:${n.max}px){${scope}{--mt-viewport-factor:${n.base}}${scope} .mt-role-display{--mt-viewport-factor:${n.display}}${scope} .mt-role-heading{--mt-viewport-factor:${n.heading}}}\n.mt-control{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:8px;background:transparent;color:inherit;white-space:nowrap}.mt-control-icon{flex:none;border:2px solid currentColor;border-radius:4px}\n${controlRules}\n.mt-code-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:12px;border:1px solid color-mix(in srgb,currentColor 16%,transparent);border-radius:8px}\n.mt-table{width:100%;table-layout:fixed;border-collapse:collapse}.mt-table td.numeric{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}\n`;
 }
 
+/** Blueprint 2.6.0 `typeRoles`가 컴파일된 페이지에 입히는 역할 → 엔진 변수 대응. 엔진 변수(`--kit-t-*`)는 부품 CSS가 이미 읽으므로 :root에서 값만 바꾼다.
+ *  display → 페이지 제목(title, app), heading → 섹션 머리말(heading)과 제목 서체·굵기, body → 본문 크기·행간·서체, label·caption → 같은 이름, numeric → 지표·가격(stat, price). */
+export const ROLE_TYPE_MAP = Object.freeze({display: ['title', 'app'], heading: ['heading'], body: ['body'], label: ['label'], caption: ['caption'], numeric: ['stat', 'price']});
+const scaled = (size, factor) => (factor === 1 ? size : `calc(${size} * ${+factor.toFixed(4)})`);
+
+/** 컴파일 산출 CSS용 :root 덮어쓰기. `fit`이 참이면(레이아웃 리비전 2) 칸 폭에 맞춰 줄이는 역할의 `-raw` 별칭도 같은 값으로 맞춘다. 사용자 입력은 id뿐이고 값은 전부 재료 표에서 온다. */
+export function renderRoleTypeCSS(id, {fit = false} = {}) {
+  const preset = MATERIAL_TYPE_PRESETS[id];
+  if (!preset) throw new RangeError(`unknown material type preset: ${id}`);
+  const f = scaleOf(preset.density), n = NARROW_VIEWPORT, r = preset.roles;
+  const sizeAt = (name, narrow) => {
+    if (FLOOR_ROLES.includes(name)) return r[name].size;
+    return scaled(r[name].size, f.size * (narrow ? (n[name] ?? n.base) : 1));
+  };
+  const sizeDecls = narrow => Object.entries(ROLE_TYPE_MAP).flatMap(([role, targets]) => targets.flatMap(target => [`--kit-t-${target}:${sizeAt(role, narrow)}`, ...(fit && !narrow && ['title', 'app', 'heading'].includes(target) ? [`--kit-t-${target}-raw:${sizeAt(role, false)}`] : [])]));
+  const lead = name => +effectiveLeading(name, r[name], preset.density).toFixed(4);
+  const base = [
+    `--kit-heading:${r.heading.fontFamily}`, `--kit-font:${r.body.fontFamily}`, `--kit-mono:${r.code.fontFamily}`, `--kit-hw:${r.heading.weight}`, `--kit-line:${lead('body')}`,
+    `--kit-lh-title:${lead('display')}`, `--kit-lh-heading:${lead('heading')}`,
+    `--kit-tr-title:${r.display.trackingEm}em`, `--kit-tr-heading:${r.heading.trackingEm}em`, `--kit-tr-label:${r.label.trackingEm}em`,
+    ...sizeDecls(false),
+  ];
+  return `/* Role typography (catalog 2.6.0 typeRoles: ${id}, ${preset.label}). Role values come from src/materials/typography.mjs; floor roles (body·label·caption) are not scaled. */\n:root{${base.join(';')}}\n@media (max-width:${n.max}px){:root{${sizeDecls(true).join(';')}}}`;
+}
+/** manifest.typeRoles: 어느 프리셋의 어떤 역할이 어떤 변수에 닿았는지 기록한다. */
+export function roleTypeUsage(id) {
+  const preset = MATERIAL_TYPE_PRESETS[id];
+  return {preset: id, label: preset.label, engine: preset.engine, density: preset.density, roles: Object.fromEntries(Object.entries(ROLE_TYPE_MAP).map(([role, targets]) => [role, {size: preset.roles[role].size, variables: targets.map(t => `--kit-t-${t}`)}])), module: 'src/materials/typography.mjs'};
+}
+
 export function registerMaterialType(registry) {
   registry.addKind(defineKind({id: 'type-role-preset', label: '역할형 타이포그래피', categories: ['typography'], presetCapable: true, ext: {roles: 'object', fonts: 'array', density: 'string', wrap: 'object', engine: 'string', controls: 'object'}}));
   for (const [id, preset] of Object.entries(MATERIAL_TYPE_PRESETS)) {

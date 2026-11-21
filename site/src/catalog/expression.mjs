@@ -29,6 +29,8 @@ export const SINCE_FIELDS = Object.freeze([
 /** 2.6.0 fields at Blueprint level; they use closed IDs and the same explicit version gate as node additions. */
 export const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
+  // 역할 타이포그래피 프리셋(src/materials/typography.mjs의 MATERIAL_TYPE_PRESETS 키와 같다. tests/wire-260.test.mjs가 비교한다).
+  Object.freeze({field: 'typeRoles', values: Object.freeze(['erp', 'dashboard', 'document', 'marketing']), since: '2.6.0'}),
 ]);
 
 /** 2.6.0 profile selection (src/profiles/data.mjs). Kept apart from TOP_LEVEL_SINCE_FIELDS, whose contents are pinned by the color-token contract. */

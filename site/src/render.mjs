@@ -1,1 +1,1 @@
-export {escapeHTML, renderTree, formRuntime} from './render/index.mjs';
+export {escapeHTML, renderTree, formRuntime, controlRuntime} from './render/index.mjs';

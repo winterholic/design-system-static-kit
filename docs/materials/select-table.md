@@ -1,6 +1,6 @@
 # Select · Table 컨트롤 재료 (2.6.0 후보)
 
-이 문서는 `component:select-control`과 `component:data-table`의 독립 렌더·상호작용 계약이다. 둘 다 `catalogRegistry()`에 등록되며 `since: 2.6.0`이다. 현재 Blueprint 검증기와 컴파일러는 계속 2.5.0까지만 받는다. 아래 함수들은 새 데이터 계약을 제공하지만 기존 컴파일 경로에 자동으로 연결되지는 않는다.
+이 문서는 `component:select-control`과 `component:data-table`의 독립 렌더·상호작용 계약이다. 둘 다 `catalogRegistry()`에 등록되며 `since: 2.6.0`이다. `catalogVersion: "2.6.0"` Blueprint는 노드 `select-control`·`data-table`로 이 재료를 고르고(아래 "Blueprint 노드"), 2.5.0 이하는 `VERSION_FIELD`로 거부한다. 렌더 함수는 컴파일러가 그대로 호출한다.
 
 ## Select
 
@@ -68,7 +68,34 @@ attachTable(root, {
 
 Select는 `--kit-action`, `--kit-surface`, `--kit-text`, `--kit-muted`, `--kit-border`, `--kit-focus`, `--kit-radius`, `--kit-control`을 읽는다. Table은 여기에 `--kit-soft`, `--kit-danger`를 더 읽는다. `selectStyles`와 `tableStyles`는 이 토큰만 참조하며, 호출 데이터로 CSS를 만들지 않는다.
 
-## 2.6.0 컴파일·Studio 연결 지점
+## Blueprint 노드 (2.6.0)
+
+`NODE_SPEC_EXTENSIONS['2.6.0']`(`src/catalog/node-extensions.mjs`)의 노드이고 `kit` 명령·서비스에서는 `getComponentSpec({type, catalogVersion: '2.6.0'})`로 조회한다. `page`·`section`·`split`·`aside`·`tab` 안에 놓을 수 있고 `grid`·`bento` 안에는 못 놓는다.
+
+```json
+{"type": "select-control", "id": "region", "label": "지역", "mode": "multiple", "search": "local", "size": "md", "shape": "soft", "state": "ready", "maxMenuHeight": 288, "values": ["kr"],
+ "options": [{"value": "kr", "label": "한국"}, {"value": "jp", "label": "일본", "group": "아시아"}]}
+{"type": "data-table", "id": "projects", "title": "프로젝트", "sortable": "yes", "selectable": "yes", "responsive": "priority",
+ "columns": [{"id": "name", "label": "프로젝트", "sortable": "yes"}, {"id": "owner", "label": "담당자", "hideBelow": "800px"}],
+ "rows": [{"id": "p-1", "name": "재료 플랫폼", "owner": "민지"}]}
+```
+
+- 필수: select-control은 `id`·`label`·`options`(2~50개), data-table은 `id`·`title`·`columns`(2~8개)·`rows`(0~40개). 나머지는 이 문서 위쪽 표의 축과 같고, 불리언은 `yes`·`no`다(`requirement: required|optional`).
+- 렌더: 재료의 `renderSelect`·`renderDataTable`이 만든 마크업 그대로다. DOM id는 `select-<id>`·`table-<id>`이고 표 제목은 `title`의 제목 요소다. CSS는 쓴 노드의 `selectStyles`·`tableStyles`만 나오고, 생성 페이지의 고정 스크립트 뒤에 `attachSelect`·`attachTable` 소스가 붙는다(provider 없음, 네트워크 없음).
+- 진단(코드, 구조화 오류 `{code, path, message, hint}`):
+
+| 코드 | 때 |
+|---|---|
+| `SELECT_COMBO` | `multiple + async`, 정적 페이지의 `async` 검색, `mode: multiple`에 `value`, `mode: single`에 `values` |
+| `SELECT_OPTIONS` | 옵션 value 중복·쉼표, 선택값이 옵션에 없음, 같은 group이 떨어져 있음 |
+| `TABLE_COLUMNS` | 열 id 중복, `hideBelow`가 `responsive: priority`가 아닌 표나 첫 열에 있음, `priority`인데 숨길 열이 없음, 열 `sortable`이 표 `sortable: no`에서 쓰임, 정렬 가능한 열이 하나도 없음 |
+| `TABLE_ROWS` | 행에 열 값이 없음·열이 아닌 키, 행 id 중복, `empty`에 행, `loading`·`error`에 보이지 않는 행 |
+| `STATE_DATA` | `ready`·`partial`에 행이 없음 |
+| `ENUM`·`ARRAY_LENGTH`·`PATTERN`·`ONE_OF` | 계약 밖의 크기·모양·메뉴 높이·밀도, 열 수·옵션 수, 열 id 형식, 객체·배열 셀 |
+
+`disabled + loading`·`disabled + error`는 `state`가 한 필드라 쓸 수 없다.
+
+## 2.6.0 컴파일·Studio 연결 지점 (처리 결과는 audit.md §7)
 
 1. 새 Blueprint 노드 `select-control`과 `data-table`의 필드·조합·행/열 입력 검사를 `src/validate.mjs`에 추가하고, 노드 명세는 `src/catalog/nodes.mjs`가 아니라 버전별 확장 표 `src/catalog/node-extensions.mjs`(`NODE_SPEC_EXTENSIONS['2.6.0']`)에 둔다. `nodes.mjs`를 바꾸면 `site/v1/catalog.json`의 2.4.0 snapshot 바이트가 바뀐다. 기본 `CATALOG_VERSION`은 바꾸지 않고 2.6.0 게이트 아래에서만 받는다.
 2. `src/catalog/expression.mjs`의 지원 버전을 여는 동일 커밋에서 `src/render/nodes.mjs`에 이 함수들을 연결하고, `src/render/index.mjs` 런타임에는 정적 이벤트 처리와 주입 provider 경계만 둔다.

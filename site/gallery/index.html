@@ -348,6 +348,8 @@ const SINCE_FIELDS = Object.freeze([
 /** 2.6.0 fields at Blueprint level; they use closed IDs and the same explicit version gate as node additions. */
 const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
+  // 역할 타이포그래피 프리셋(src/materials/typography.mjs의 MATERIAL_TYPE_PRESETS 키와 같다. tests/wire-260.test.mjs가 비교한다).
+  Object.freeze({field: 'typeRoles', values: Object.freeze(['erp', 'dashboard', 'document', 'marketing']), since: '2.6.0'}),
 ]);
 
 /** 2.6.0 profile selection (src/profiles/data.mjs). Kept apart from TOP_LEVEL_SINCE_FIELDS, whose contents are pinned by the color-token contract. */
@@ -508,6 +510,7 @@ const {NEUTRAL_OPTIONS: neutralOptions, EFFECTS_META: neutralMeta} = __m("catalo
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
 const {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} = __m("catalog/expression.mjs");
 const {recipes, recipeRules, recipeIds} = __m("catalog/recipes.mjs");
+const {NODE_SPEC_EXTENSIONS, nodeSpecAt} = __m("catalog/node-extensions.mjs");
 { const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.pageRules = __r.pageRules; exports.PAGE_RULE_LEGACY_VERSIONS = __r.PAGE_RULE_LEGACY_VERSIONS; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
 /** 기본 생성·조립 버전(템플릿·갤러리·조합이 만드는 Blueprint의 catalogVersion). 2.5.0은 명시적으로 고르는 버전이고 기본 승격은 ADR 0010이 미룬 결정이다. */
@@ -550,6 +553,28 @@ const rules = [
 const freeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 [axes, axisDefs, themes, palettes, icons, nodeSpecs, pageTypes, templates, rules].forEach(freeze);
 
+/**
+ * 버전별 노드 확장(NODE_SPEC_EXTENSIONS)의 스키마 투영. `$defs`는 2.4.0·2.5.0이 받는 문법이라 건드리지 않고, 확장은 `x-extensions[버전]`에 따로 둔다:
+ * `$defs`는 그 버전에서 새로 생기거나 넓어진 노드의 전체 정의(차트 새 형태·축 필드, select-control, data-table), `children`은 그 버전에서 새로 받는 자식 목록(부모 → 추가 type).
+ * 키는 JSON Schema 키워드가 아니라 주석이므로 표준 검증기는 무시하고, 검증기(src/validate.mjs)는 `nodeSpecAt(type, catalogVersion)`으로 같은 표를 직접 읽는다.
+ */
+function extensionSchemas() {
+  const out = {};
+  for (const [version, table] of Object.entries(NODE_SPEC_EXTENSIONS)) {
+    const defs = {}, children = {};
+    for (const type of Object.keys(table)) {
+      const spec = nodeSpecAt(type, version);
+      defs[type] = {...obj({type: {const: type}, ...spec.fields}, requiredOf(spec)), 'x-since': version, ...(nodeSpecs[type] ? {description: `${version}부터 넓어진 ${type} 정의. 2.4.0·2.5.0 문서는 $defs.${type}만 받습니다.`} : {description: `${version}부터 쓸 수 있는 부품: ${spec.label}. 2.5.0 이하 문서는 거부합니다.`})};
+    }
+    for (const type of Object.keys(nodeSpecs)) {
+      const gained = (nodeSpecAt(type, version)?.children ?? []).filter(c => !(nodeSpecs[type].children ?? []).includes(c));
+      if (gained.length) children[type] = gained;
+    }
+    out[version] = {'x-since': version, $defs: defs, children};
+  }
+  return out;
+}
+
 function blueprintSchema() {
   const defs = {};
   for (const [type, spec] of Object.entries(nodeSpecs)) {
@@ -562,10 +587,11 @@ function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), profile: since(en(...PROFILE_SINCE_FIELD.values), '2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.', PROFILE_SINCE_FIELD.since), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), typeRoles: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='typeRoles').values), '2.6.0부터 역할 타이포그래피 프리셋(erp·dashboard·document·marketing)을 고를 수 있습니다. 제목·본문·라벨·숫자 역할의 크기·행간·자간·서체가 컴파일 CSS의 --kit-t-* 변수에 반영됩니다. 기존 typography 축과 별개이며 고르지 않으면 출력은 그대로입니다.', '2.6.0'), profile: since(en(...PROFILE_SINCE_FIELD.values), '2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.', PROFILE_SINCE_FIELD.since), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,
+    'x-extensions': extensionSchemas(),
   };
 }
 
@@ -787,7 +813,7 @@ exports.migrateV1 = migrateV1;
 exports.migrateBlueprint = migrateBlueprint;
 };
 __defs["catalog/node-extensions.mjs"] = function (exports, __m) {
-const {nodeSpecs, str, en, arr, num, obj} = __m("catalog/nodes.mjs");
+const {nodeSpecs, nodeTypes, str, en, arr, num, obj} = __m("catalog/nodes.mjs");
 const {atLeast} = __m("catalog/expression.mjs");
 
 /**
@@ -795,10 +821,34 @@ const {atLeast} = __m("catalog/expression.mjs");
  * (site/v1/catalog.json)의 일부라서 여기서 넓히지 않는다. 아직 열리지 않은 카탈로그 버전의 문법은 이 표에만 둔다.
  * 항목의 필드는 같은 이름의 기본 필드를 덮어쓰고, `optional`은 기본 목록을 대체한다.
  * 켜짐 여부는 2.6.0 opt-in 게이트와 같은 `atLeast(catalogVersion, since)`(src/catalog/expression.mjs의 `VERSION_ORDER`)로 판단한다.
+ *
+ * 기본 명세에 없는 type(`select-control`, `data-table`)은 `label`을 가진 항목으로 이 표에 노드째 둔다. 이런 노드는 `placeLike`가 가리키는 부품을 받는 모든 부모
+ * (`table`을 받는 부모는 `data-table`도 받는다)에 들어갈 수 있고, 그 자리는 같은 버전 게이트 뒤에서만 열린다.
+ * 열거값은 재료 계약(src/materials/select.mjs, table.mjs)과 같아야 한다. 이 파일은 컴파일 경로 안이라 재료 모듈을 읽지 않으므로 tests/wire-260.test.mjs가 두 곳이 같음을 확인한다.
  */
 const N = num(-1000000, 1000000);
 const CHART_BASE_KINDS = Object.freeze([...nodeSpecs.chart.fields.kind.enum]);
 const CHART_EXTENDED_KINDS = Object.freeze(['stacked-bar', 'scatter', 'heatmap', 'sparkline']);
+
+const idField = {...str(40), pattern: '^[a-z][a-z0-9-]*$'};
+const yesNo = en('yes', 'no');
+const selectOption = obj({value: str(80), label: str(80), group: str(40), disabled: en('yes')}, ['value', 'label']);
+/** 표 셀은 문자열·숫자·불리언·null이다(재료 renderDataTable의 행 계약). 열 id가 키이므로 키 집합은 검증기가 열과 맞춘다(TABLE_ROWS). */
+const tableCell = {oneOf: [str(200, 0), N, {type: 'boolean'}, {type: 'null'}]};
+const tableRow = {type: 'object', properties: {id: idField}, required: [], additionalProperties: tableCell};
+const tableColumn = obj({id: idField, label: str(60), sortable: yesNo, hideBelow: en('640px', '800px', '900px')}, ['id', 'label']);
+
+const SELECT_FIELDS = {
+  id: idField, label: str(80), options: arr(selectOption, 2, 50),
+  mode: en('single', 'multiple'), search: en('none', 'local', 'async'), size: en('sm', 'md', 'lg'), shape: en('soft', 'square', 'pill'),
+  state: en('ready', 'loading', 'error', 'disabled'), maxMenuHeight: {type: 'integer', enum: [192, 240, 288, 360]},
+  value: str(80), values: arr(str(80), 1, 50), placeholder: str(60), requirement: en('required', 'optional'), message: str(160),
+};
+const TABLE_FIELDS = {
+  id: idField, title: str(100), columns: arr(tableColumn, 2, 8), rows: arr(tableRow, 0, 40),
+  density: en('compact', 'comfortable', 'spacious'), responsive: en('scroll', 'priority'), state: en('ready', 'empty', 'loading', 'error', 'partial'),
+  sortable: yesNo, selectable: yesNo, message: str(160),
+};
 
 const deepFreeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(deepFreeze); Object.freeze(value); } return value; };
 
@@ -814,24 +864,60 @@ const NODE_SPEC_EXTENSIONS = deepFreeze({
       },
       optional: ['unit', 'xLabel', 'yLabel', 'axis', 'categories', 'series'],
     },
+    'select-control': {
+      label: '선택 상자', group: 'form', placeLike: 'form', fields: SELECT_FIELDS,
+      coverage: {mode: 'inherited', contracts: [], reason: 'Select는 재료가 간격·글자 크기·컨트롤 높이를 이미 --kit-* 토큰 계약으로 가진다(docs/materials/select-table.md). 맥락 결정표를 더하지 않는다.'},
+      optional: ['mode', 'search', 'size', 'shape', 'state', 'maxMenuHeight', 'value', 'values', 'placeholder', 'requirement', 'message'],
+      example: {type: 'select-control', id: 'region', label: '지역', options: [{value: 'kr', label: '한국'}, {value: 'jp', label: '일본'}]},
+    },
+    'data-table': {
+      label: '데이터 표', group: 'data', placeLike: 'table', fields: TABLE_FIELDS,
+      coverage: {mode: 'inherited', contracts: [], reason: '열 폭·정렬·줄바꿈은 재료가 기존 deriveTableDesign 정책을 직접 호출한다(docs/materials/select-table.md). 맥락 결정표를 더하지 않는다.'},
+      optional: ['density', 'responsive', 'state', 'sortable', 'selectable', 'message'],
+      example: {type: 'data-table', id: 'projects', title: '프로젝트', columns: [{id: 'name', label: '프로젝트'}, {id: 'status', label: '상태'}], rows: [{name: '재료 플랫폼', status: '진행'}, {name: '차트 확장', status: '완료'}]},
+    },
   },
 });
 
+/** 확장 노드의 구성 적용 범위 선언. `compositionCoverage`는 2.4.0 snapshot의 일부라 넓히지 않고 여기서 따로 낸다. */
+const extensionCoverage = type => Object.values(NODE_SPEC_EXTENSIONS).map(table => table[type]?.coverage).find(Boolean) ?? null;
+
 const extensionsFor = version => Object.entries(NODE_SPEC_EXTENSIONS).filter(([since]) => atLeast(version, since)).sort(([x], [y]) => (atLeast(x, y) ? 1 : -1)).map(([, table]) => table);
-/** 그 카탈로그 버전에서 `type` 노드의 확장이 켜지는가. 2.5.0 이하는 항상 false다. */
+/** 그 카탈로그 버전에서 `type` 노드의 확장이 켜지는가. 2.5.0 이하는 항상 false다. 확장 표가 새로 만든 노드도 켜지면 true다. */
 const nodeExtended = (type, version) => extensionsFor(version).some(table => Object.hasOwn(table, type));
 
+/** 확장 표가 새로 만든 노드(기본 명세에 없는 type)의 도입 버전. 기본 부품이거나 모르는 type이면 null. */
+function nodeSince(type) {
+  if (Object.hasOwn(nodeSpecs, type)) return null;
+  const hit = Object.entries(NODE_SPEC_EXTENSIONS).find(([, table]) => Object.hasOwn(table, type) && table[type].label);
+  return hit ? hit[0] : null;
+}
+/** 그 카탈로그 버전이 받아들이는 노드 type인가. 기본 부품은 모든 버전에서, 확장 노드는 도입 버전부터 true다. */
+const nodeTypeKnown = (type, version) => typeof type === 'string' && (Object.hasOwn(nodeSpecs, type) || extensionsFor(version).some(table => Object.hasOwn(table, type) && table[type].label));
+/** 그 카탈로그 버전의 부품 type 목록. 기본 부품 순서 뒤에 확장 노드가 도입 순서로 붙는다. */
+const nodeTypesAt = version => [...nodeTypes, ...extensionsFor(version).flatMap(table => Object.entries(table).filter(([, spec]) => spec.label).map(([type]) => type))];
+
 const cache = new Map();
-/** 카탈로그 버전이 받아들이는 노드 명세. 확장이 없으면 `nodeSpecs[type]` 그 객체를 그대로 돌려준다. */
+/** 카탈로그 버전이 받아들이는 노드 명세. 확장이 없으면 `nodeSpecs[type]` 그 객체를 그대로 돌려준다. 그 버전에 없는 type이면 undefined. */
 function nodeSpecAt(type, version) {
   const base = nodeSpecs[type];
-  if (!base) return base;
-  const tables = extensionsFor(version).filter(table => Object.hasOwn(table, type));
-  if (!tables.length) return base;
-  const key = `${type}@${tables.length}`;
+  const tables = extensionsFor(version);
+  const own = tables.filter(table => Object.hasOwn(table, type));
+  const introduced = tables.flatMap(table => Object.entries(table).filter(([, spec]) => spec.label && spec.placeLike));
+  // 확장 노드를 새로 받을 수 있는 부모는 children 목록이 늘어난다(placeLike가 가리키는 부품을 받는 부모).
+  const gained = base?.children ? introduced.filter(([, spec]) => base.children.includes(spec.placeLike)).map(([name]) => name) : [];
+  if (!base) {
+    const added = own.find(table => table[type].label);
+    if (!added) return undefined;
+    const key = `${type}@new`;
+    if (!cache.has(key)) cache.set(key, Object.freeze({...added[type]}));
+    return cache.get(key);
+  }
+  if (!own.length && !gained.length) return base;
+  const key = `${type}@${own.length}+${gained.join(',')}`;
   if (!cache.has(key)) {
-    const merged = tables.reduce((spec, table) => ({...spec, fields: {...spec.fields, ...table[type].fields}, optional: table[type].optional ?? spec.optional}), base);
-    cache.set(key, Object.freeze(merged));
+    const merged = own.reduce((spec, table) => ({...spec, fields: {...spec.fields, ...table[type].fields}, optional: table[type].optional ?? spec.optional}), base);
+    cache.set(key, Object.freeze(gained.length ? {...merged, children: [...base.children, ...gained]} : merged));
   }
   return cache.get(key);
 }
@@ -839,7 +925,11 @@ function nodeSpecAt(type, version) {
 exports.CHART_BASE_KINDS = CHART_BASE_KINDS;
 exports.CHART_EXTENDED_KINDS = CHART_EXTENDED_KINDS;
 exports.NODE_SPEC_EXTENSIONS = NODE_SPEC_EXTENSIONS;
+exports.extensionCoverage = extensionCoverage;
 exports.nodeExtended = nodeExtended;
+exports.nodeSince = nodeSince;
+exports.nodeTypeKnown = nodeTypeKnown;
+exports.nodeTypesAt = nodeTypesAt;
 exports.nodeSpecAt = nodeSpecAt;
 };
 __defs["catalog/nodes.mjs"] = function (exports, __m) {
@@ -3386,8 +3476,8 @@ __defs["compiler.mjs"] = function (exports, __m) {
 const {CATALOG_VERSION, BLUEPRINT_VERSION, rules, axes, styleAxes} = __m("catalog.mjs");
 const {validateBlueprint} = __m("validate.mjs");
 const {resolveTokens, resolveAll, contrast, serializableContrast} = __m("tokens.mjs");
-const {stylesheet} = __m("styles.mjs");
-const {renderTree, escapeHTML, formRuntime} = __m("render.mjs");
+const {stylesheet, typeRolesManifest} = __m("styles.mjs");
+const {renderTree, escapeHTML, formRuntime, controlRuntime} = __m("render.mjs");
 const {planComposition, auditPage} = __m("composition.mjs");
 const {typeRev, HANGUL} = __m("typography.mjs");
 const {resolveColorTokens, colorTokenUsage} = __m("color-tokens.mjs");
@@ -3419,7 +3509,7 @@ function compile(input) {
   const scheme = b.mode === 'auto' ? 'light dark' : b.mode;
   // Browser chrome follows the page (Vercel web-interface-guidelines: theme-color matches the page background).
   const themeColor = b.mode === 'auto' ? `<meta name="theme-color" content="${tokens.light.canvas}" media="(prefers-color-scheme: light)"><meta name="theme-color" content="${tokens.dark.canvas}" media="(prefers-color-scheme: dark)">` : `<meta name="theme-color" content="${tokens[b.mode].canvas}">`;
-  const html = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="${scheme}">${themeColor}<meta name="generator" content="Static Kit ${b.catalogVersion}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style><noscript><style>.kit-tabpanel[hidden]{display:block}.kit-tablist{display:none}</style></noscript></head><body>${body}<script>${formRuntime}<\/script></body></html>\n`;
+  const html = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="${scheme}">${themeColor}<meta name="generator" content="Static Kit ${b.catalogVersion}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style><noscript><style>.kit-tabpanel[hidden]{display:block}.kit-tablist{display:none}</style></noscript></head><body>${body}<script>${formRuntime}${controlRuntime(b)}<\/script></body></html>\n`;
   const primary = resolved[b.mode === 'auto' ? 'light' : b.mode];
   const manifest = {
     blueprintVersion: BLUEPRINT_VERSION, catalogVersion: b.catalogVersion, theme: b.theme, palette: b.palette, mode: b.mode, pageType: b.pageType,
@@ -3430,6 +3520,8 @@ function compile(input) {
     const color = resolveColorTokens({palette: b.colorPalette, mode: b.mode});
     manifest.colorTokens = {palette: color.palette, layers: Object.keys(color.layers), references: color.references, contrast: serializableContrast(report.filter(x => !x.mode.includes('inverse'))), materialModules: ['src/color-tokens.mjs','src/materials/adapters.mjs'], usedTokens: colorTokenUsage()};
   }
+  const typeRoles = typeRolesManifest(b);
+  if (typeRoles) manifest.typeRoles = typeRoles;
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
   // Page rules (composition 1.3.0, catalog 2.4.0): facts and decisions about the whole page. Absent for 2.1–2.3 inputs, whose output is pinned.
@@ -3446,6 +3538,7 @@ exports.compile = compile;
 };
 __defs["composition.mjs"] = function (exports, __m) {
 const {expressionApplies} = __m("catalog/expression.mjs");
+const {extensionCoverage} = __m("catalog/node-extensions.mjs");
 const {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT, pageRules, PAGE_RULE_LEGACY_VERSIONS, LEGACY_COMPOSITION_VERSION} = __m("catalog/composition.mjs");
 const {bentoPlan, bentoMixedRows, isShortCell} = __m("layout.mjs");
 const {SPACE, TOKEN} = __m("spacing.mjs");
@@ -3544,7 +3637,7 @@ function planComposition(b) {
   const visit = (node, path, ancestors = [], siblingCount = 1) => {
     const supporting = ancestors.some((a, i) => a.type === 'aside' && a.children[1] === (ancestors[i + 1] ?? node));
     const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), supporting, parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
-    const coverage = compositionCoverage[node.type];
+    const coverage = compositionCoverage[node.type] ?? extensionCoverage(node.type);
     if (!coverage) throw new Error('Missing composition coverage: ' + node.type);
     const selected = selectDesign(facts), decision = {path, type: node.type, facts, coverage, ...selected};
     byNode.set(node, decision);
@@ -4220,6 +4313,611 @@ exports.refineLayout = refineLayout;
 exports.PRIMITIVES = PRIMITIVES;
 exports.layoutMarkdown = layoutMarkdown;
 };
+__defs["materials/contract.mjs"] = function (exports, __m) {
+/**
+ * 재료 계약(ADR 0011). 엔진이 조립하는 모든 디자인 재료가 같은 모양의 기록 하나를 가진다.
+ * AI·사용자는 재료 id·프리셋·콘텐츠·구조만 고르고, 엔진은 이 기록으로 조립·검증한다.
+ *
+ * 이 파일은 데이터만 둔다. 검사는 validate.mjs, 등록·조회는 registry.mjs, 기존 카탈로그 연결은 adapters.mjs.
+ * 새 종류(kind)는 defineKind + 레지스트리의 addKind로 더한다. 공통 필드는 바꾸지 않고 종류별 필드는 `ext`에 둔다.
+ */
+const {pageTypeIds} = __m("catalog/pagetypes.mjs");
+
+/** 계약 자체의 버전. 공통 필드를 바꾸면 올린다. 재료 하나의 버전(material.version)과 다르다. */
+const MATERIAL_CONTRACT_VERSION = '1.0.0';
+
+/** 재료 계약 출력의 도입 버전(ADR 0011). 현재 `2.6.0`은 opt-in으로 활성화되어 있다. */
+const MATERIAL_CATALOG_VERSION = '2.6.0';
+
+/** 감사(docs/materials/audit.md)의 10분류 + 페이지·프로필. */
+const CATEGORIES = Object.freeze([
+  'color', 'typography', 'spacing', 'shape', 'icon-media', 'layout-navigation',
+  'form-data-feedback', 'chart', 'section-recipe', 'interaction-state',
+  'page', 'profile',
+]);
+
+/** 사용 맥락 = 페이지 유형. 'any'는 모든 유형. */
+const CONTEXTS = Object.freeze(['any', ...pageTypeIds]);
+
+/**
+ * 품질 상태. 순서가 곧 등급이다.
+ *   missing     자리만 있다(render 없음). 조립에 쓰지 않는다.
+ *   enum-only   스키마·enum 값은 있으나 구분되는 구현이 없거나 확인되지 않았다.
+ *   implemented 렌더러·CSS 구현이 있다.
+ *   verified    구현 + 그 동작을 실패시킬 수 있는 테스트가 있다(evidence에 file:line).
+ */
+const QUALITY = Object.freeze(['missing', 'enum-only', 'implemented', 'verified']);
+const qualityRank = status => QUALITY.indexOf(status);
+
+/** 반응형 전략. unspecified는 아직 기록하지 않았다는 뜻이고 감사에서 결손으로 센다. */
+const RESPONSIVE = Object.freeze(['container', 'viewport', 'fluid', 'fixed', 'none', 'unspecified']);
+
+/** 출처 라이선스 판정. unverified는 의도한 재사용에 필요한 권리 허락이 확인되지 않은 외부 자료다. */
+const LICENSES = Object.freeze(['MIT', 'internal', 'facts-only', 'unverified']);
+
+/**
+ * 공통 필드. type은 validate.mjs의 작은 검사기가 읽는다: string·number·boolean·array·object·any, `?`는 null 허용.
+ * 모든 재료가 모든 필드를 가진다. 값이 없으면 null이나 빈 값으로 둔다(필드를 빼지 않는다).
+ */
+const FIELDS = Object.freeze({
+  id: 'string',            // `<kind>:<name>`
+  version: 'string',       // 재료 자체의 semver
+  kind: 'string',
+  category: 'string',
+  label: 'string',
+  since: 'string',         // 처음 쓸 수 있는 카탈로그 버전
+  contexts: 'array',       // CONTEXTS 부분집합
+  render: 'object?',       // {module, export, key}. 구현 진입점. missing이면 null
+  defaults: 'object',      // {속성: 기본값}
+  variants: 'object',      // {속성: [값…]}. 조합 수는 이 곱이다
+  tokens: 'array',         // 읽는 CSS 변수(--kit-*) 또는 토큰 이름
+  dependencies: 'array',   // 다른 재료 id
+  structure: 'object',     // {parents: [id], children: {allowed: [id], min, max} | null}
+  states: 'object',        // {values: [...], transitions: [{from, to, trigger}]}
+  responsive: 'object',    // {strategy, breakpoints?, note?}
+  a11y: 'object',          // {rules: [R##], role?, keyboard?, contrast?}
+  validation: 'object',    // {rules: [R##], codes: [오류 코드]}
+  examples: 'array',       // 그대로 조립 가능한 입력 조각
+  quality: 'object',       // {status, evidence: ['file:line']}
+  source: 'object',        // {origin, license, url?, observed?, evidence?, verdict?}
+  preset: 'boolean',       // 완성 프리셋인가(아래 isCompletePreset)
+  tags: 'array',
+  ext: 'object',           // 종류별 필드
+});
+
+/**
+ * 종류 정의. ext: {필드: type}. categories: 이 종류가 쓸 수 있는 분류(null이면 전부).
+ * presetCapable: 완성 프리셋이 될 수 있는 종류인가. 속성 조합만 가진 종류는 false다.
+ * 새 종류는 레지스트리의 addKind(defineKind({...}))로 더한다. 전역 상태를 바꾸지 않는다.
+ */
+function defineKind({id, label, ext = {}, categories = null, presetCapable = false}) {
+  if (!/^[a-z][a-z0-9-]*$/.test(id)) throw new Error('kind id: ' + id);
+  for (const c of categories ?? []) if (!CATEGORIES.includes(c)) throw new Error(`kind ${id}: unknown category ${c}`);
+  return Object.freeze({id, label, ext: Object.freeze({...ext}), categories: categories && Object.freeze([...categories]), presetCapable});
+}
+const BUILTIN_KINDS = Object.freeze([
+  defineKind({id: 'component', label: '부품', ext: {nodeType: 'string', group: 'string', fields: 'array', required: 'array'}}),
+  defineKind({id: 'palette', label: '팔레트(원색 묶음)', categories: ['color'], ext: {colors: 'array', brand: 'number', family: 'string', tone: 'string'}}),
+  defineKind({id: 'axis', label: '스타일 축', ext: {axis: 'string', table: 'object?', bans: 'array'}}),
+  defineKind({id: 'type-preset', label: '서체 프리셋', categories: ['typography'], presetCapable: true, ext: {head: 'string', text: 'string', ratio: 'number'}}),
+  defineKind({id: 'theme', label: '테마(디자인 프로필)', categories: ['profile'], presetCapable: true, ext: {palettes: 'array', forbid: 'object', variants: 'array', covers: 'array'}}),
+  defineKind({id: 'page-type', label: '페이지 유형', categories: ['page'], ext: {require: 'array', forbid: 'array', allow: 'array?', shells: 'array', widths: 'array?'}}),
+  defineKind({id: 'template', label: '페이지 템플릿', categories: ['page'], presetCapable: true, ext: {pageType: 'string', theme: 'string', nodeCount: 'number'}}),
+  defineKind({id: 'recipe', label: '디자인 레시피', categories: ['section-recipe'], ext: {pageTypes: 'array', templates: 'array', rules: 'array'}}),
+  defineKind({id: 'layout-primitive', label: '배치 원형', categories: ['layout-navigation'], ext: {css: 'string'}}),
+  defineKind({id: 'icon', label: '아이콘', categories: ['icon-media'], ext: {aliases: 'array'}}),
+  // 후속 단계용 종류. 지금은 재료가 없고 계약만 있다.
+  defineKind({id: 'color-token', label: '계층 색 토큰', categories: ['color', 'chart'], ext: {layer: 'string', role: 'string', light: 'string?', dark: 'string?'}}),
+  defineKind({id: 'chart-preset', label: '차트 프리셋', categories: ['chart'], presetCapable: true, ext: {chartKind: 'string', series: 'object', axes: 'object', unit: 'string', labels: 'object'}}),
+  defineKind({id: 'pattern', label: '레이아웃 패턴', categories: ['layout-navigation', 'section-recipe'], presetCapable: true, ext: {slots: 'array'}}),
+]);
+
+/** id는 `<kind>:<name>`. name은 소문자·숫자·하이픈·점. */
+const ID_PATTERN = /^([a-z][a-z0-9-]*):([a-z0-9][a-z0-9.-]*)$/;
+const SEMVER = /^\d+\.\d+\.\d+$/;
+const materialId = (kind, name) => `${kind}:${name}`;
+
+/** 조합 수 = 각 속성 값 개수의 곱. 속성이 없으면 1. 조합은 프리셋이 아니다. */
+const combinationsOf = m => Object.values(m.variants ?? {}).reduce((n, values) => n * Math.max(values.length, 1), 1);
+
+/**
+ * 완성 프리셋: 고르면 더 정할 것이 없는 재료.
+ * 프리셋 가능 종류 + preset:true + 모든 속성에 기본값 + 구현 이상 품질.
+ */
+function isCompletePreset(m, kind) {
+  if (!kind?.presetCapable || m.preset !== true) return false;
+  if (qualityRank(m.quality?.status) < qualityRank('implemented')) return false;
+  return Object.keys(m.variants ?? {}).every(k => Object.hasOwn(m.defaults ?? {}, k));
+}
+
+/** 빈 필드를 채운 재료 한 장. adapters와 후속 작업자가 같은 기본값을 쓰게 한다. */
+function defineMaterial(input) {
+  return {
+    version: '1.0.0', since: '2.1.0', contexts: ['any'], render: null, defaults: {}, variants: {}, tokens: [], dependencies: [],
+    structure: {parents: [], children: null}, states: {values: [], transitions: []}, responsive: {strategy: 'unspecified'},
+    a11y: {rules: []}, validation: {rules: [], codes: []}, examples: [], quality: {status: 'missing', evidence: []},
+    source: {origin: 'internal', license: 'MIT'}, preset: false, tags: [], ext: {},
+    ...input,
+  };
+}
+
+exports.MATERIAL_CONTRACT_VERSION = MATERIAL_CONTRACT_VERSION;
+exports.MATERIAL_CATALOG_VERSION = MATERIAL_CATALOG_VERSION;
+exports.CATEGORIES = CATEGORIES;
+exports.CONTEXTS = CONTEXTS;
+exports.QUALITY = QUALITY;
+exports.qualityRank = qualityRank;
+exports.RESPONSIVE = RESPONSIVE;
+exports.LICENSES = LICENSES;
+exports.FIELDS = FIELDS;
+exports.defineKind = defineKind;
+exports.BUILTIN_KINDS = BUILTIN_KINDS;
+exports.ID_PATTERN = ID_PATTERN;
+exports.SEMVER = SEMVER;
+exports.materialId = materialId;
+exports.combinationsOf = combinationsOf;
+exports.isCompletePreset = isCompletePreset;
+exports.defineMaterial = defineMaterial;
+};
+__defs["materials/select.mjs"] = function (exports, __m) {
+const {defineMaterial} = __m("materials/contract.mjs");
+const {escapeHTML: e} = __m("render/util.mjs");
+
+const selectContract = Object.freeze({
+  id: 'component:select-control', version: '1.0.0', since: '2.6.0',
+  variants: Object.freeze({mode: ['single', 'multiple'], search: ['none', 'local', 'async'], size: ['sm', 'md', 'lg'], shape: ['soft', 'square', 'pill'], state: ['ready', 'loading', 'error', 'disabled'], maxMenuHeight: [192, 240, 288, 360]}),
+  defaults: Object.freeze({mode: 'single', search: 'none', size: 'md', shape: 'soft', state: 'ready', maxMenuHeight: 288}),
+  states: Object.freeze(['idle', 'hover', 'focus', 'open', 'disabled', 'loading', 'error']),
+  forbidden: Object.freeze(['multiple + async', 'disabled + loading', 'disabled + error']),
+  tokens: Object.freeze(['--kit-action', '--kit-surface', '--kit-soft', '--kit-text', '--kit-muted', '--kit-border', '--kit-focus', '--kit-danger', '--kit-radius', '--kit-control', '--kit-shadow-hover', '--kit-t-small', '--kit-sp-tight', '--kit-sp-near', '--kit-sp-item']),
+  unsupported: Object.freeze(['virtualized options', 'tag creation', 'select-all']),
+});
+
+const selectMaterial = defineMaterial({
+  id: selectContract.id, kind: 'component', category: 'form-data-feedback', label: 'Select', since: '2.6.0',
+  render: {module: 'src/materials/select.mjs', export: 'renderSelect', key: 'select-control'},
+  variants: selectContract.variants,
+  defaults: selectContract.defaults, tokens: selectContract.tokens,
+  states: {values: selectContract.states, transitions: [
+    {from: 'idle', to: 'open', trigger: 'click | ArrowDown | Enter | Space'},
+    {from: 'open', to: 'idle', trigger: 'Escape | Tab | outside click | selection'},
+    {from: 'open', to: 'loading', trigger: 'async query'},
+    {from: 'loading', to: 'open', trigger: 'options resolved'},
+    {from: 'loading', to: 'error', trigger: 'options rejected'},
+  ]},
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: '좁은 화면에서 메뉴는 화면 너비 안에 제한되고 옵션 목록 높이는 계약값을 따른다.'},
+  a11y: {rules: ['R05', 'R16'], role: 'combobox + listbox', keyboard: 'ArrowUp/ArrowDown/Home/End/Enter/Space/Escape/Tab'},
+  validation: {rules: ['R16'], codes: ['SELECT_OPTIONS', 'SELECT_COMBO']},
+  examples: [{id: 'region', label: '지역', options: [{value: 'kr', label: '한국'}]}],
+  quality: {status: 'verified', evidence: ['tests/select-table.test.mjs:7']},
+  tags: ['form', 'select-control', ...selectContract.forbidden.map(x => `forbidden:${x}`), ...selectContract.unsupported.map(x => `unsupported:${x}`)],
+  ext: {nodeType: 'select-control', group: 'form', fields: ['mode', 'search', 'size', 'shape', 'state', 'maxMenuHeight'], required: ['id', 'label', 'options']},
+});
+
+const validOptions = options => Array.isArray(options) && options.every(o => o && typeof o.value === 'string' && typeof o.label === 'string' && (o.group === undefined || typeof o.group === 'string'));
+function optionsMarkup(options, selected, id) {
+  let output = '', activeGroup = null, grouped = false;
+  for (const [i, option] of options.entries()) {
+    if (option.group && option.group !== activeGroup) {
+      activeGroup = option.group; grouped = true;
+      output += `<li role="group" aria-label="${e(activeGroup)}"><span class="kit-select-group-label" aria-hidden="true">${e(activeGroup)}</span><ul role="presentation">`;
+    } else if (!option.group) activeGroup = null;
+    output += `<li id="${e(id)}-option-${i}" role="option" data-value="${e(option.value)}" aria-selected="${selected.includes(option.value)}" aria-disabled="${Boolean(option.disabled)}">${e(option.label)}</li>`;
+    const next = options[i + 1];
+    if (option.group && next?.group !== option.group) output += '</ul></li>';
+  }
+  return {html: output, grouped};
+}
+function renderSelect({id, label, options = [], value = null, values = [], mode = 'single', search = 'none', size = 'md', shape = 'soft', disabled = false, state = 'ready', required = false, placeholder = '선택해 주세요', maxMenuHeight = 288, message = ''}) {
+  if (!/^[a-z][a-z0-9-]*$/.test(id ?? '') || !validOptions(options)) throw new TypeError('Select requires a safe id and {value,label} options');
+  if (!['single', 'multiple'].includes(mode) || !['none', 'local', 'async'].includes(search)) throw new TypeError('Unsupported Select combination');
+  if (!selectContract.variants.size.includes(size) || !selectContract.variants.shape.includes(shape) || ![192, 240, 288, 360].includes(maxMenuHeight)) throw new TypeError('Invalid Select size, shape, or menu height');
+  if (mode === 'multiple' && search === 'async') throw new RangeError('multiple + async is not supported');
+  if (disabled && ['loading', 'error'].includes(state)) throw new RangeError('disabled + loading/error is not supported');
+  if (!['ready', 'loading', 'error'].includes(state)) throw new TypeError('Invalid Select state');
+  const selected = mode === 'multiple' ? values : value == null ? [] : [value];
+  const {html: optionsHTML, grouped} = optionsMarkup(options, selected, id);
+  const searchBox = search === 'none' ? '' : `<input class="kit-select-search" type="search" role="searchbox" aria-label="${e(label)} 검색" autocomplete="off"${search === 'async' ? ' data-async-search' : ''}>`;
+  const status = state === 'loading' ? '불러오는 중입니다.' : state === 'error' ? (message || '옵션을 불러오지 못했습니다.') : '';
+  return `<div class="kit-select" data-mode="${mode}" data-search="${search}" data-size="${size}" data-shape="${shape}" data-state="${disabled ? 'disabled' : state}" data-menu-height="${maxMenuHeight}"><span class="kit-select-label" id="${e(id)}-label">${e(label)}${required ? ' <span aria-hidden="true">*</span>' : ''}</span><button id="${e(id)}" class="kit-select-trigger" type="button" role="combobox" aria-labelledby="${e(id)}-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="${e(id)}-listbox" aria-activedescendant=""${required ? ' aria-required="true"' : ''}${disabled ? ' disabled aria-disabled="true"' : ''}>${e(selected.map(v => options.find(o => o.value === v)?.label).filter(Boolean).join(', ') || placeholder)}</button><div class="kit-select-menu" hidden>${searchBox}<ul id="${e(id)}-listbox" role="listbox" aria-labelledby="${e(id)}-label"${mode === 'multiple' ? ' aria-multiselectable="true"' : ''}${grouped ? ' data-grouped="true"' : ''} aria-busy="${state === 'loading'}">${optionsHTML}</ul><p role="status" aria-live="polite">${e(status)}</p></div><input type="hidden" name="${e(id)}" value="${e(selected.join(','))}"></div>`;
+}
+
+/** Attach behavior to a rendered Select. Async mode only calls the injected options provider. */
+function attachSelect(root, {onOptionsRequest} = {}) {
+  const trigger = root.querySelector('[role="combobox"]'), menu = root.querySelector('.kit-select-menu'), list = root.querySelector('[role="listbox"]'), status = root.querySelector('[role="status"]'), search = root.querySelector('[data-async-search]');
+  const validResult = value => Array.isArray(value) && value.every(o => o && typeof o.value === 'string' && typeof o.label === 'string' && (o.group === undefined || typeof o.group === 'string'));
+  if (!trigger || !menu || !list) throw new TypeError('Select root is incomplete');
+  const doc = root.ownerDocument; // Core는 DOM 전역을 읽지 않고, 붙일 root가 속한 문서를 쓴다.
+  const options = () => [...list.querySelectorAll('[role="option"]')].filter(o => o.getAttribute('aria-disabled') !== 'true' && !o.hidden);
+  const close = (returnFocus = true) => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); trigger.removeAttribute('aria-activedescendant'); root.dataset.state = 'idle'; if (returnFocus) trigger.focus(); };
+  const open = () => { if (trigger.disabled) return; menu.hidden = false; trigger.setAttribute('aria-expanded', 'true'); root.dataset.state = 'open'; if (search) search.focus(); else { trigger.focus(); activate(0); } };
+  const activate = item => { const items = options(); if (!items.length) return; const next = items[Math.max(0, Math.min(items.length - 1, item))]; trigger.setAttribute('aria-activedescendant', next.id); items.forEach(o => o.dataset.active = String(o === next)); next.scrollIntoView?.({block: 'nearest'}); };
+  let active = -1;
+  trigger.addEventListener('click', () => menu.hidden ? open() : close(false));
+  trigger.addEventListener('keydown', ev => { if (['ArrowDown', 'Enter', ' '].includes(ev.key)) { ev.preventDefault(); if (menu.hidden) open(); else activate(active = Math.min(active + 1, options().length - 1)); } });
+  root.addEventListener('keydown', ev => {
+    if (menu.hidden) return;
+    const items = options();
+    if (ev.key === 'Escape') { ev.preventDefault(); close(); }
+    else if (ev.key === 'Tab') close(false);
+    else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Home' || ev.key === 'End') { ev.preventDefault(); active = ev.key === 'Home' ? 0 : ev.key === 'End' ? items.length - 1 : Math.max(0, Math.min(items.length - 1, active + (ev.key === 'ArrowDown' ? 1 : -1))); activate(active); }
+    else if (ev.key === 'Enter' || ev.key === ' ') { const selected = items.find(o => o.id === trigger.getAttribute('aria-activedescendant')); if (selected) { selected.click(); ev.preventDefault(); } }
+  });
+  list.addEventListener('click', ev => { const option = ev.target.closest('[role="option"]'); if (!option || option.getAttribute('aria-disabled') === 'true') return; const multi = root.dataset.mode === 'multiple'; option.setAttribute('aria-selected', String(multi ? option.getAttribute('aria-selected') !== 'true' : true)); const chosen = [...list.querySelectorAll('[role="option"][aria-selected=true]')]; root.querySelector('input[type="hidden"]').value = chosen.map(o => o.dataset.value).join(','); if (!multi) { trigger.textContent = option.textContent; close(); } else { trigger.textContent = chosen.map(o => o.textContent).join(', ') || '선택해 주세요'; } });
+  if (root.dataset.search === 'local' && root.querySelector('[role="searchbox"]')) root.querySelector('[role="searchbox"]').addEventListener('input', ev => options().forEach(o => { o.hidden = !o.textContent.toLocaleLowerCase().includes(ev.target.value.toLocaleLowerCase()); }));
+  if (search && typeof onOptionsRequest === 'function') {
+    let seq = 0, controller;
+    search.addEventListener('input', async () => {
+      const current = ++seq; controller?.abort(); controller = new AbortController(); root.dataset.state = 'loading'; list.setAttribute('aria-busy', 'true'); status.textContent = '불러오는 중입니다.';
+      try { const result = await onOptionsRequest({query: search.value, signal: controller.signal}); if (current !== seq) return; if (!validResult(result)) throw new TypeError('onOptionsRequest must return {value,label,group?} options'); const fragment = doc.createDocumentFragment(); let group = null, listTarget = fragment; result.forEach((o, i) => { if (o.group && o.group !== group) { group = o.group; const wrapper = doc.createElement('li'), nested = doc.createElement('ul'); wrapper.setAttribute('role', 'group'); wrapper.setAttribute('aria-label', group); nested.setAttribute('role', 'presentation'); wrapper.append(nested); fragment.append(wrapper); listTarget = nested; } else if (!o.group) { group = null; listTarget = fragment; } const li = doc.createElement('li'); li.id = `${trigger.id}-option-${i}`; li.dataset.value = o.value; li.textContent = o.label; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false'); listTarget.append(li); }); list.replaceChildren(fragment); root.dataset.state = 'open'; status.textContent = result.length ? '' : '검색 결과가 없습니다.';
+      } catch (error) { if (current !== seq || error?.name === 'AbortError') return; root.dataset.state = 'error'; status.textContent = '옵션을 불러오지 못했습니다.'; }
+      finally { if (current === seq) list.setAttribute('aria-busy', 'false'); }
+    });
+  }
+  doc.addEventListener('pointerdown', ev => { if (!root.contains(ev.target) && !menu.hidden) close(false); });
+  return {open, close};
+}
+
+const selectRuntime = attachSelect.toString();
+const selectStyles = `.kit-select{position:relative;display:grid;gap:var(--kit-sp-near);min-width:0;color:var(--kit-text)}.kit-select-label{font-size:var(--kit-t-small);font-weight:600}.kit-select-trigger{display:flex;align-items:center;justify-content:space-between;min-height:var(--kit-control);width:100%;padding:var(--kit-sp-near) var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:inherit;text-align:left;font:inherit;cursor:pointer}.kit-select[data-size=sm] .kit-select-trigger{min-height:36px}.kit-select[data-size=lg] .kit-select-trigger{min-height:52px}.kit-select[data-shape=square] .kit-select-trigger,.kit-select[data-shape=square] .kit-select-menu{border-radius:0}.kit-select[data-shape=pill] .kit-select-trigger{border-radius:999px}.kit-select-trigger:hover{border-color:var(--kit-action)}.kit-select-trigger:focus-visible,.kit-select-search:focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.kit-select-trigger:disabled{opacity:.55;cursor:not-allowed}.kit-select-menu{position:absolute;z-index:20;inset:100% 0 auto;min-width:100%;max-width:100vw;margin-top:var(--kit-sp-tight);padding:6px;border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);box-shadow:var(--kit-shadow-hover)}.kit-select-menu[hidden]{display:none}.kit-select-menu ul{overflow:auto;list-style:none;margin:0;padding:0}.kit-select[data-menu-height="192"] .kit-select-menu ul{max-height:min(192px,45vh)}.kit-select[data-menu-height="240"] .kit-select-menu ul{max-height:min(240px,45vh)}.kit-select[data-menu-height="288"] .kit-select-menu ul{max-height:min(288px,45vh)}.kit-select[data-menu-height="360"] .kit-select-menu ul{max-height:min(360px,45vh)}.kit-select-menu [role=group]{margin:2px 0}.kit-select-group-label{display:block;padding:6px 10px;color:var(--kit-muted);font-size:var(--kit-t-small);font-weight:600}.kit-select-menu [role=option]{padding:var(--kit-sp-near) var(--kit-sp-tight);border-radius:calc(var(--kit-radius) * .6);cursor:pointer}.kit-select-menu [role=option][data-active=true],.kit-select-menu [role=option][aria-selected=true]{background:var(--kit-soft);color:var(--kit-action)}.kit-select-menu [role=option][aria-disabled=true]{opacity:.5;cursor:not-allowed}.kit-select[data-state=error] .kit-select-menu [role=status]{color:var(--kit-danger)}.kit-select-menu [role=status]:empty{display:none}.kit-select-search{width:100%;min-height:var(--kit-control);padding:var(--kit-sp-near);border:1px solid var(--kit-border);border-radius:calc(var(--kit-radius) * .6);background:var(--kit-surface);color:inherit;font:inherit}@media(max-width:640px){.kit-select-menu{max-width:100vw}}`;
+
+exports.selectContract = selectContract;
+exports.selectMaterial = selectMaterial;
+exports.renderSelect = renderSelect;
+exports.attachSelect = attachSelect;
+exports.selectRuntime = selectRuntime;
+exports.selectStyles = selectStyles;
+};
+__defs["materials/table.mjs"] = function (exports, __m) {
+const {defineMaterial} = __m("materials/contract.mjs");
+const {escapeHTML: e} = __m("render/util.mjs");
+const {deriveTableDesign} = __m("table-design.mjs");
+
+const tableContract = Object.freeze({
+  id: 'component:data-table', version: '1.0.0', since: '2.6.0',
+  variants: Object.freeze({density: ['compact', 'comfortable', 'spacious'], sortable: [false, true], selectable: [false, true], responsive: ['scroll', 'priority'], state: ['ready', 'empty', 'loading', 'error', 'partial']}),
+  defaults: Object.freeze({density: 'comfortable', state: 'ready', responsive: 'scroll', sortable: false, selectable: false}),
+  states: Object.freeze(['ready', 'empty', 'loading', 'error', 'partial']),
+  tokens: Object.freeze(['--kit-action', '--kit-surface', '--kit-text', '--kit-muted', '--kit-border', '--kit-focus', '--kit-soft', '--kit-danger', '--kit-radius', '--kit-t-small', '--kit-sp-tight', '--kit-sp-near', '--kit-sp-item']),
+  unsupported: Object.freeze(['pagination', 'virtual scrolling', 'column resizing', 'editable cells', 'server sorting']),
+});
+
+const tableMaterial = defineMaterial({
+  id: tableContract.id, kind: 'component', category: 'form-data-feedback', label: '데이터 테이블', since: '2.6.0',
+  render: {module: 'src/materials/table.mjs', export: 'renderDataTable', key: 'data-table'},
+  variants: tableContract.variants, defaults: tableContract.defaults, tokens: tableContract.tokens,
+  states: {values: tableContract.states, transitions: [
+    {from: 'loading', to: 'ready', trigger: 'rows received'}, {from: 'loading', to: 'empty', trigger: 'empty result'}, {from: 'loading', to: 'error', trigger: 'request rejected'},
+    {from: 'ready', to: 'partial', trigger: 'partial result'},
+  ]},
+  responsive: {strategy: 'container', breakpoints: ['640px'], note: 'scroll 모드는 기존 table-design 최소 읽기 폭을 유지하고 priority 모드는 열별 hideBelow 계약을 적용한다.'},
+  a11y: {rules: ['R05', 'R06', 'R15'], role: 'grid', keyboard: 'native buttons and checkboxes'},
+  validation: {rules: ['R06', 'R15'], codes: ['TABLE_COLUMNS', 'TABLE_ROWS']},
+  examples: [{id: 'projects', columns: [{id: 'name', label: '프로젝트'}, {id: 'status', label: '상태'}], rows: [{name: 'Materials', status: '진행'}]}],
+  quality: {status: 'verified', evidence: ['tests/select-table.test.mjs:28']},
+  tags: ['data', 'data-table', 'layout:table-content-1', ...tableContract.unsupported.map(x => `unsupported:${x}`)],
+  ext: {nodeType: 'data-table', group: 'data', fields: ['density', 'sortable', 'selectable', 'responsive', 'state'], required: ['id', 'columns', 'rows']},
+});
+
+function checkedColumns(columns) {
+  if (!Array.isArray(columns) || columns.length < 2 || columns.length > 8) throw new TypeError('Table requires 2–8 columns');
+  const ids = new Set();
+  for (const c of columns) {
+    if (!c || !/^[a-z][a-z0-9-]*$/.test(c.id ?? '') || typeof c.label !== 'string' || !c.label.trim() || ids.has(c.id)) throw new TypeError('Invalid or duplicate table column definition');
+    ids.add(c.id);
+    if (c.sortable !== undefined && typeof c.sortable !== 'boolean') throw new TypeError('Column sortable must be boolean');
+    if (c.hideBelow !== undefined && !['640px', '800px', '900px'].includes(c.hideBelow)) throw new TypeError('Unsupported hideBelow breakpoint');
+  }
+  return ids;
+}
+
+function renderDataTable({id, columns, rows, density = 'comfortable', state, message = '', selectable = false, sortable = false, responsive = 'scroll', selected = []}) {
+  if (!/^[a-z][a-z0-9-]*$/.test(id ?? '')) throw new TypeError('Table requires a safe id');
+  const ids = checkedColumns(columns);
+  if (!Array.isArray(rows) || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row) || [...ids].some(key => !Object.hasOwn(row, key)) || Object.keys(row).some(key => key !== 'id' && !ids.has(key)) || Object.values(row).some(v => v != null && !['string', 'number', 'boolean'].includes(typeof v)))) throw new TypeError('Every table row must provide only scalar values for defined columns');
+  if (!['compact', 'comfortable', 'spacious'].includes(density)) throw new TypeError('Invalid table density');
+  if (!['scroll', 'priority'].includes(responsive)) throw new TypeError('Invalid responsive column policy');
+  const resolvedState = state ?? (rows.length ? 'ready' : 'empty');
+  if (!tableContract.states.includes(resolvedState)) throw new TypeError('Invalid table state');
+  if (resolvedState === 'ready' && !rows.length) throw new TypeError('ready table requires rows');
+  if (resolvedState === 'empty' && rows.length) throw new TypeError('empty table cannot contain rows');
+  const design = deriveTableDesign({type: 'table', columns: columns.map(c => c.label), rows: rows.map(row => columns.map(c => String(row[c.id] ?? '')))}, {facts: {density}, values: {cellSpace: 'item'}});
+  const cells = (row, index) => columns.map((c, ci) => `<td data-column="${e(c.id)}" data-sort-value="${e(String(row[c.id] ?? ''))}" data-column-align="${design.columns[ci].align}" data-column-wrap="${design.columns[ci].wrap}"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''} data-label="${e(c.label)}">${e(row[c.id] ?? '')}</td>`).join('');
+  const selectHead = selectable ? `<th scope="col"><input type="checkbox" aria-label="모든 행 선택" data-select-all></th>` : '';
+  const headers = columns.map(c => `<th scope="col"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''}>${sortable && c.sortable !== false ? `<button type="button" data-sort="${e(c.id)}" aria-sort="none">${e(c.label)}</button>` : e(c.label)}</th>`).join('');
+  const body = rows.map((row, i) => `<tr data-row="${i}"${selected.includes(String(row.id ?? i)) ? ' aria-selected="true"' : ''}>${selectable ? `<td><input type="checkbox" aria-label="${e(String(row[columns[0].id] ?? `행 ${i + 1}`))} 선택" data-select-row="${e(String(row.id ?? i))}"${selected.includes(String(row.id ?? i)) ? ' checked' : ''}></td>` : ''}${cells(row, i)}</tr>`).join('');
+  const stateHTML = resolvedState === 'ready' || resolvedState === 'partial' ? '' : `<div class="kit-table-state" data-state="${resolvedState}" role="${resolvedState === 'error' ? 'alert' : 'status'}"${resolvedState === 'loading' ? ' aria-busy="true"' : ''}><strong>${resolvedState === 'loading' ? '불러오는 중입니다.' : resolvedState === 'empty' ? '표시할 항목이 없습니다.' : e(message || '데이터를 불러오지 못했습니다.')}</strong></div>`;
+  const tableHTML = ['ready', 'partial'].includes(resolvedState) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="데이터 표"><table role="grid" data-density="${density}" data-responsive="${responsive}" data-table-min="${design.minimumWidth}"><thead><tr>${selectHead}${headers}</tr></thead><tbody>${body}</tbody></table></div>` : '';
+  return `<section class="kit-data-table" id="${e(id)}" data-density="${density}" data-responsive="${responsive}">${stateHTML}${tableHTML}</section>`;
+}
+
+function attachTable(root, {sortChange, selectionChange} = {}) {
+  root.addEventListener('click', event => {
+    const button = event.target.closest('[data-sort]');
+    if (!button) return;
+    const next = button.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+    root.querySelectorAll('[data-sort]').forEach(b => b.setAttribute('aria-sort', b === button ? next : 'none'));
+    const headerRow = button.closest('tr');
+    if (!headerRow) return;
+    const index = [...headerRow.children].findIndex(th => th.contains(button)) - (root.querySelector('[data-select-all]') ? 1 : 0);
+    const rows = [...root.querySelectorAll('tbody tr')];
+    const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+    rows.sort((a, b) => collator.compare(a.children[index + (root.querySelector('[data-select-all]') ? 1 : 0)]?.dataset.sortValue ?? '', b.children[index + (root.querySelector('[data-select-all]') ? 1 : 0)]?.dataset.sortValue ?? '') * (next === 'ascending' ? 1 : -1));
+    rows.forEach(row => root.querySelector('tbody').append(row));
+    sortChange?.({column: button.dataset.sort, direction: next});
+  });
+  root.addEventListener('change', event => {
+    const all = event.target.matches('[data-select-all]'), row = event.target.matches('[data-select-row]');
+    if (all) root.querySelectorAll('[data-select-row]').forEach(box => { box.checked = event.target.checked; box.closest('tr').setAttribute('aria-selected', String(box.checked)); });
+    if (row) event.target.closest('tr').setAttribute('aria-selected', String(event.target.checked));
+    if (all || row) selectionChange?.({selected: [...root.querySelectorAll('[data-select-row]:checked')].map(box => box.dataset.selectRow)});
+  });
+}
+
+const tableRuntime = attachTable.toString();
+const tableStyles = `.kit-data-table{min-width:0;color:var(--kit-text)}.kit-table-scroll{max-width:100%;overflow:auto;overscroll-behavior-inline:contain;border:1px solid var(--kit-border);border-radius:var(--kit-radius)}.kit-data-table table{width:100%;border-collapse:collapse;table-layout:auto}.kit-data-table th,.kit-data-table td{padding:var(--kit-sp-near) var(--kit-sp-item);border-bottom:1px solid var(--kit-border);text-align:start}.kit-data-table thead th{position:sticky;top:0;background:var(--kit-surface);font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-data-table tbody tr:hover{background:var(--kit-soft)}.kit-data-table tbody tr[aria-selected=true]{background:var(--kit-soft)}.kit-data-table td[data-column-align=end]{text-align:end;font-variant-numeric:tabular-nums}.kit-data-table [data-sort]{border:0;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.kit-data-table [data-sort]:focus-visible,.kit-data-table input:focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.kit-data-table[data-density=compact] :is(th,td){padding-block:var(--kit-sp-tight)}.kit-data-table[data-density=spacious] :is(th,td){padding-block:var(--kit-sp-item)}.kit-table-state{padding:20px;color:var(--kit-muted)}.kit-table-state[data-state=error]{color:var(--kit-danger)}.kit-table-state[aria-busy=true]{opacity:.75}@media(max-width:640px){.kit-data-table[data-responsive=priority] [data-hide-below="640px"],.kit-data-table[data-responsive=priority] [data-hide-below="800px"],.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}.kit-data-table[data-responsive=priority] td:before{content:attr(data-label) ': ';font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-data-table[data-responsive=priority] td:has([data-select-row]):before{content:none}.kit-table-scroll{border-radius:calc(var(--kit-radius) * .7)}}@media(min-width:641px) and (max-width:800px){.kit-data-table[data-responsive=priority] [data-hide-below="800px"],.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}}@media(min-width:641px) and (max-width:900px){.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}}`;
+
+exports.tableContract = tableContract;
+exports.tableMaterial = tableMaterial;
+exports.renderDataTable = renderDataTable;
+exports.attachTable = attachTable;
+exports.tableRuntime = tableRuntime;
+exports.tableStyles = tableStyles;
+};
+__defs["materials/typography.mjs"] = function (exports, __m) {
+/** Role typography materials independent of the 2.5.0 compiler path.
+ *
+ *  Relation to src/typography.mjs (the 2.1~2.5 engine, ADR 0011 appendix "타이포그래피 재료와 기존 엔진"):
+ *  - Faces, display/heading tracking and leading, label tracking and the body px floor are read from the engine's revision 2 table (TYPE_R2) through
+ *    `engine`; this file holds no font stack and no Hangul limit of its own. The engine's HANGUL limits (leading floors, body leading band, role caps) are enforced here.
+ *  - What stays here because the engine has no equivalent: fluid clamp() slopes per context, weights, the numeric/code roles, the density and viewport factors and control sizes.
+ *  - body, label and caption are floor roles: the engine fixes them in px (body, round(body*.8125), round(body*.75)), so density and viewport factors never shrink them.
+ *  - numeric keeps tight tracking on purpose: the engine also leaves numerals, prices and metrics out of Hangul tracking (NUMERIC_RULE). */
+const {defineKind, defineMaterial, materialId} = __m("materials/contract.mjs");
+const {STACKS, TYPE_R2, HANGUL} = __m("typography.mjs");
+const {SPACE} = __m("spacing.mjs");
+
+/** Roles the engine fixes in px. Density and viewport factors are 1 for these. */
+const FLOOR_ROLES = Object.freeze(['body', 'label', 'caption']);
+/** Engine leading limits per role (HANGUL): [floor, ceiling]. Roles without an engine counterpart are unbounded. */
+const LEADING_BOUNDS = Object.freeze({display: [HANGUL.leading.display, Infinity], heading: [HANGUL.leading.heading, Infinity], body: HANGUL.body});
+/** `size` scales font size, `leading` scales line height. Leading is clamped to LEADING_BOUNDS after scaling, so compact density cannot go below the Hangul floors. */
+const DENSITY_FACTORS = Object.freeze({compact: Object.freeze({size: .94, leading: .94}), relaxed: Object.freeze({size: 1.02, leading: 1.04})});
+const NARROW_VIEWPORT = Object.freeze({max: 720, base: .96, display: .9, heading: .94});
+
+const rem = px => `${+(px / 16).toFixed(4)}rem`.replace(/^0\./, '.');
+const fluid = (lo, vw, hi) => `clamp(${rem(lo)},${vw}vw,${rem(hi)})`;
+const clampBounds = size => { const m = /^clamp\(([\d.]+)rem,[\d.]+vw,([\d.]+)rem\)$/.exec(size); return {min: +m[1] * 16, max: +m[2] * 16}; };
+const role = (size, weight, lineHeight, trackingEm, fontFamily, policy = 'wrap') => ({size, weight, lineHeight, trackingEm, fontFamily, policy});
+
+/** Engine fixed px for the floor roles at a body size (src/typography.mjs ROLES: caption .75, label .8125). */
+const floorPx = body => ({body, label: Math.round(body * .8125), caption: Math.round(body * .75)});
+
+/** `name`: display label. `engine`: TYPE_R2 preset the faces and Hangul-bound values come from. `ui`: stack name for label/caption/numeric (default: the engine text face).
+ *  display/heading/numeric/code: [minPx, vw slope, maxPx]. body/label/caption: [vw slope, px above the engine floor]. weights: display, heading, body, label, caption, numeric. */
+const SPEC = {
+  erp: {name: 'ERP', context: ['dashboard', 'data'], density: 'compact', space: 'compact', engine: 'tech',
+    display: [28, 3.6, 44], heading: [20, 2, 26], body: [1.1, 2], label: [.82, 1], caption: [.75, 1], numeric: [16, 1.25, 22], code: [13, .9, 15],
+    weight: [700, 650, 400, 650, 450, 650], bodyTracking: 0},
+  dashboard: {name: 'Dashboard', context: ['dashboard', 'data'], density: 'compact', space: 'compact', engine: 'sans',
+    display: [32, 4.2, 52], heading: [28, 3.1, 40], body: [1.05, 1], label: [.82, 1], caption: [.75, 1], numeric: [20, 2, 32], code: [13, .9, 15],
+    weight: [720, 700, 420, 650, 450, 700], bodyTracking: 0},
+  document: {name: 'Document', context: ['article', 'docs'], density: 'relaxed', space: 'comfortable', engine: 'editorial', ui: 'system',
+    display: [44, 6, 72], heading: [26, 2.8, 36], body: [1.2, 2], label: [.85, 1], caption: [.8, 1], numeric: [16, 1.2, 20], code: [13, .9, 15],
+    weight: [650, 650, 400, 650, 450, 600], bodyTracking: .005},
+  marketing: {name: 'Marketing', context: ['landing', 'pricing'], density: 'relaxed', space: 'comfortable', engine: 'geometric',
+    display: [48, 8, 80], heading: [28, 3.6, 40], body: [1.25, 3], label: [.85, 1], caption: [.75, 1], numeric: [20, 2.5, 36], code: [13, .9, 15],
+    weight: [750, 700, 420, 700, 450, 700], bodyTracking: 0},
+};
+
+/** Control text roles. `step` is the height offset from the density's `control` token (src/spacing.mjs SPACE), `pad` and `gap` are SPACE token names.
+ *  The size names are control sizes, not densities: `compact` here is the smallest button, the preset density `compact` is a page-level rhythm. */
+const CONTROL_SIZES = Object.freeze({
+  compact: Object.freeze({step: -12, pad: 'near', gap: 'tight', role: 'label', icon: 16}),
+  small: Object.freeze({step: -8, pad: 'item', gap: 'tight', role: 'label', icon: 16}),
+  medium: Object.freeze({step: 0, pad: 'inset', gap: 'near', role: 'label', icon: 18}),
+  large: Object.freeze({step: 8, pad: 'insetL', gap: 'near', role: 'body', icon: 20}),
+});
+const CONTROL_SIZE_NAMES = Object.freeze(Object.keys(CONTROL_SIZES));
+/** Vertical room kept above and below the line box, in px. */
+const CONTROL_MIN_INSET = 4;
+/** Icon edge relative to the control text's largest font size. */
+const CONTROL_ICON_RATIO = Object.freeze([1, 1.5]);
+
+function buildRoles(spec) {
+  const e = TYPE_R2[spec.engine], head = STACKS[e.head], text = STACKS[e.text], ui = STACKS[spec.ui ?? e.text], floor = floorPx(e.body);
+  const floorRole = (name, [vw, up]) => fluid(floor[name], vw, floor[name] + up);
+  const [wd, wh, wb, wl, wc, wn] = spec.weight;
+  return {
+    display: role(fluid(...spec.display), wd, e.lh.display, e.track.display, head),
+    heading: role(fluid(...spec.heading), wh, e.lh.heading, e.track.heading, head),
+    body: role(floorRole('body', spec.body), wb, e.lh.body, spec.bodyTracking, text),
+    label: role(floorRole('label', spec.label), wl, 1.35, e.track.label, ui),
+    caption: role(floorRole('caption', spec.caption), wc, 1.4, .01, ui),
+    numeric: role(fluid(...spec.numeric), wn, 1.15, -.02, ui, 'nowrap'),
+    code: role(fluid(...spec.code), 450, 1.55, 0, STACKS.mono, 'scroll'),
+  };
+}
+
+const freezeRoles = roles => Object.freeze(Object.fromEntries(Object.entries(roles).map(([k, v]) => [k, Object.freeze(v)])));
+const scaleOf = density => DENSITY_FACTORS[density];
+
+/** Line height after the density factor, bounded by the engine's Hangul limits. */
+function effectiveLeading(name, spec, density) {
+  const [lo, hi] = LEADING_BOUNDS[name] ?? [-Infinity, Infinity];
+  return Math.min(hi, Math.max(lo, spec.lineHeight * scaleOf(density).leading));
+}
+/** Largest rendered font size in px: clamp() maximum times the density factor (floor roles are not scaled). */
+const maxFontPx = (name, spec, density) => clampBounds(spec.size).max * (FLOOR_ROLES.includes(name) ? 1 : scaleOf(density).size);
+const lineBoxPx = (name, spec, density) => maxFontPx(name, spec, density) * effectiveLeading(name, spec, density);
+
+const resolveControls = (id, spec) => Object.freeze(Object.fromEntries(Object.entries(CONTROL_SIZES).map(([size, c]) => [size, Object.freeze({
+  height: SPACE[spec.space].control + c.step, padX: SPACE[spec.space][c.pad], gap: SPACE[spec.space][c.gap], labelRole: c.role, iconPx: c.icon,
+})])));
+
+/** Relations between control height, horizontal padding, label role and icon. Returns [] when they hold; each entry is {code, path, message}.
+ *  Takes the preset object so a test can pass a deliberately broken copy. */
+function controlViolations(preset) {
+  const out = [], err = (code, path, message) => out.push({code, path: `$.controls.${path}`, message});
+  const names = CONTROL_SIZE_NAMES, controls = preset.controls, density = preset.density;
+  let prev = null;
+  for (const name of names) {
+    const c = controls?.[name];
+    if (!c) { err('CT_MISSING', name, `${preset.id}: 컨트롤 크기 ${name}이 없습니다.`); continue; }
+    const spec = preset.roles[c.labelRole];
+    if (!spec || !['label', 'body'].includes(c.labelRole)) { err('CT_ROLE', `${name}.labelRole`, `${preset.id}/${name}: 라벨 역할은 label 또는 body여야 합니다(${c.labelRole}).`); continue; }
+    const line = lineBoxPx(c.labelRole, spec, density), fontMax = maxFontPx(c.labelRole, spec, density);
+    if (line + 2 * CONTROL_MIN_INSET > c.height) err('CT_LINE_BOX', `${name}.height`, `${preset.id}/${name}: 줄 높이 ${line.toFixed(1)}px + 위아래 여백 ${2 * CONTROL_MIN_INSET}px가 컨트롤 높이 ${c.height}px를 넘습니다.`);
+    if (c.height % 4 !== 0) err('CT_GRID', `${name}.height`, `${preset.id}/${name}: 높이 ${c.height}px가 4px 격자 밖입니다.`);
+    if (c.padX % 4 !== 0) err('CT_GRID', `${name}.padX`, `${preset.id}/${name}: 좌우 패딩 ${c.padX}px가 4px 격자 밖입니다.`);
+    if (c.iconPx < fontMax * CONTROL_ICON_RATIO[0] || c.iconPx > fontMax * CONTROL_ICON_RATIO[1]) err('CT_ICON_RATIO', `${name}.iconPx`, `${preset.id}/${name}: 아이콘 ${c.iconPx}px가 글자 최대 ${fontMax.toFixed(1)}px의 ${CONTROL_ICON_RATIO.join('~')}배 밖입니다.`);
+    if (c.iconPx + 2 * CONTROL_MIN_INSET > c.height) err('CT_ICON_FIT', `${name}.iconPx`, `${preset.id}/${name}: 아이콘 ${c.iconPx}px가 컨트롤 높이 ${c.height}px 안에 위아래 여백과 함께 들어가지 않습니다.`);
+    if (prev) {
+      if (!(c.height > prev.c.height)) err('CT_ORDER', `${name}.height`, `${preset.id}: ${prev.name} → ${name} 높이가 늘지 않습니다(${prev.c.height} → ${c.height}).`);
+      if (c.padX < prev.c.padX) err('CT_ORDER', `${name}.padX`, `${preset.id}: ${prev.name} → ${name} 좌우 패딩이 줄었습니다(${prev.c.padX} → ${c.padX}).`);
+      if (c.iconPx < prev.c.iconPx) err('CT_ORDER', `${name}.iconPx`, `${preset.id}: ${prev.name} → ${name} 아이콘이 줄었습니다(${prev.c.iconPx} → ${c.iconPx}).`);
+      if (fontMax < prev.fontMax) err('CT_ORDER', `${name}.labelRole`, `${preset.id}: ${prev.name} → ${name} 라벨 글자가 작아졌습니다(${prev.fontMax.toFixed(1)} → ${fontMax.toFixed(1)}px).`);
+    }
+    prev = {name, c, fontMax};
+  }
+  const medium = controls?.medium;
+  if (medium && medium.height !== SPACE[preset.space].control) err('CT_MEDIUM', 'medium.height', `${preset.id}: medium 높이 ${medium.height}px가 ${preset.space} 밀도의 control 토큰 ${SPACE[preset.space].control}px와 다릅니다.`);
+  return out;
+}
+
+const buildPreset = ([id, spec]) => Object.freeze({
+  id, label: spec.name, context: spec.context, density: spec.density, space: spec.space, engine: spec.engine,
+  roles: freezeRoles(buildRoles(spec)), controls: resolveControls(id, spec),
+});
+const MATERIAL_TYPE_PRESETS = Object.freeze(Object.fromEntries(Object.entries(SPEC).map(entry => [entry[0], buildPreset(entry)])));
+
+const MULTILINGUAL_TYPE_CORPUS = Object.freeze([
+  {id: 'pangram-ko', role: 'body', text: '다람쥐 헌 쳇바퀴에 타고파.', policy: 'wrap'},
+  {id: 'pangram-en', role: 'body', text: 'The quick brown fox jumps over the lazy dog.', policy: 'wrap'},
+  {id: 'heading-short', role: 'display', text: '현황 요약', policy: 'wrap'},
+  {id: 'heading-long', role: 'heading', text: '분기별 매출과 고객 유지율을 한 화면에서 확인하세요', policy: 'wrap'},
+  {id: 'label', role: 'label', text: '활성 계정 · 결제 완료', policy: 'wrap'},
+  {id: 'mixed-script', role: 'body', text: '이번 분기 Q3 매출은 YoY 18.4% 증가했습니다.', policy: 'wrap'},
+  {id: 'unspaced-hangul', role: 'body', text: '한글한국어무공백긴문자열넘침확인용가나다라마바사아자차카타파하', policy: 'wrap'},
+  {id: 'date', role: 'numeric', text: '2026-11-22 · 2026년 11월 22일', policy: 'nowrap'},
+  {id: 'currency', role: 'numeric', text: '₩1,234,500 · USD 1,234,567.89', policy: 'nowrap'},
+  {id: 'percent', role: 'numeric', text: '12.75% · −0.83%', policy: 'nowrap'},
+  {id: 'table-number', role: 'numeric', text: '₩98,765,432  |  1,234,567  |  99.95%', policy: 'nowrap'},
+  {id: 'code', role: 'code', text: 'const 합계 = rows.reduce((sum, row) => sum + row.amount, 0);', policy: 'scroll'},
+  {id: 'symbols', role: 'caption', text: '→ ⇧ ≤ ≥ ± × ÷ • — “한글” & English', policy: 'wrap'},
+]);
+
+const leadingCSS = name => {
+  const base = `calc(var(--mt-${name}-leading) * var(--mt-leading-factor))`, [lo, hi] = LEADING_BOUNDS[name] ?? [];
+  return lo === undefined ? base : hi === Infinity ? `max(${lo},${base})` : `clamp(${lo},${base},${hi})`;
+};
+const policyCSS = spec => (spec.policy === 'nowrap' ? 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' : spec.policy === 'scroll' ? 'white-space:pre;overflow-wrap:normal;' : 'word-break:keep-all;overflow-wrap:anywhere;');
+
+function renderMaterialTypeCSS(id) {
+  const preset = MATERIAL_TYPE_PRESETS[id];
+  if (!preset) throw new RangeError(`unknown material type preset: ${id}`);
+  const scope = `.mt-specimen[data-preset="${id}"]`;
+  const declarations = [
+    ...Object.entries(preset.roles).flatMap(([name, spec]) => [
+      `--mt-${name}:${spec.size}`, `--mt-${name}-weight:${spec.weight}`, `--mt-${name}-leading:${spec.lineHeight}`,
+      `--mt-${name}-tracking:${spec.trackingEm}em`, `--mt-${name}-font:${spec.fontFamily}`,
+    ]),
+    ...Object.entries(preset.controls).flatMap(([size, c]) => [`--mt-control-${size}-h:${c.height}px`, `--mt-control-${size}-pad:${c.padX}px`, `--mt-control-${size}-gap:${c.gap}px`, `--mt-control-${size}-icon:${c.iconPx}px`]),
+  ].join(';');
+  const rules = Object.entries(preset.roles).map(([name, spec]) =>
+    `.mt-role-${name}{font-family:var(--mt-${name}-font);${FLOOR_ROLES.includes(name) ? '--mt-density-factor:1;--mt-viewport-factor:1;' : ''}font-size:calc(var(--mt-${name}) * var(--mt-density-factor) * var(--mt-viewport-factor));font-weight:var(--mt-${name}-weight);line-height:${leadingCSS(name)};letter-spacing:var(--mt-${name}-tracking);${policyCSS(spec)}${name === 'numeric' ? 'font-variant-numeric:tabular-nums lining-nums;' : ''}}`
+  ).join('\n');
+  const densityRules = Object.entries(DENSITY_FACTORS).map(([d, f]) => `${scope}[data-density="${d}"]{--mt-density-factor:${f.size};--mt-leading-factor:${f.leading}}`).join('\n');
+  const controlRules = Object.entries(preset.controls).map(([size]) => `${scope} .mt-control[data-size="${size}"]{height:var(--mt-control-${size}-h);padding-inline:var(--mt-control-${size}-pad);gap:var(--mt-control-${size}-gap)}${scope} .mt-control[data-size="${size}"] .mt-control-icon{width:var(--mt-control-${size}-icon);height:var(--mt-control-${size}-icon)}`).join('\n');
+  const n = NARROW_VIEWPORT;
+  return `/* ${preset.label}: viewport-fluid role sizes; density changes scale and rhythm (floor roles and Hangul leading limits stay fixed). */\n${scope}{${declarations};--mt-density-factor:1;--mt-leading-factor:1;--mt-viewport-factor:1;font-variant-numeric:proportional-nums;min-width:0}\n${densityRules}\n${rules}\n@media (max-width:${n.max}px){${scope}{--mt-viewport-factor:${n.base}}${scope} .mt-role-display{--mt-viewport-factor:${n.display}}${scope} .mt-role-heading{--mt-viewport-factor:${n.heading}}}\n.mt-control{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:8px;background:transparent;color:inherit;white-space:nowrap}.mt-control-icon{flex:none;border:2px solid currentColor;border-radius:4px}\n${controlRules}\n.mt-code-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding:12px;border:1px solid color-mix(in srgb,currentColor 16%,transparent);border-radius:8px}\n.mt-table{width:100%;table-layout:fixed;border-collapse:collapse}.mt-table td.numeric{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}\n`;
+}
+
+/** Blueprint 2.6.0 `typeRoles`가 컴파일된 페이지에 입히는 역할 → 엔진 변수 대응. 엔진 변수(`--kit-t-*`)는 부품 CSS가 이미 읽으므로 :root에서 값만 바꾼다.
+ *  display → 페이지 제목(title, app), heading → 섹션 머리말(heading)과 제목 서체·굵기, body → 본문 크기·행간·서체, label·caption → 같은 이름, numeric → 지표·가격(stat, price). */
+const ROLE_TYPE_MAP = Object.freeze({display: ['title', 'app'], heading: ['heading'], body: ['body'], label: ['label'], caption: ['caption'], numeric: ['stat', 'price']});
+const scaled = (size, factor) => (factor === 1 ? size : `calc(${size} * ${+factor.toFixed(4)})`);
+
+/** 컴파일 산출 CSS용 :root 덮어쓰기. `fit`이 참이면(레이아웃 리비전 2) 칸 폭에 맞춰 줄이는 역할의 `-raw` 별칭도 같은 값으로 맞춘다. 사용자 입력은 id뿐이고 값은 전부 재료 표에서 온다. */
+function renderRoleTypeCSS(id, {fit = false} = {}) {
+  const preset = MATERIAL_TYPE_PRESETS[id];
+  if (!preset) throw new RangeError(`unknown material type preset: ${id}`);
+  const f = scaleOf(preset.density), n = NARROW_VIEWPORT, r = preset.roles;
+  const sizeAt = (name, narrow) => {
+    if (FLOOR_ROLES.includes(name)) return r[name].size;
+    return scaled(r[name].size, f.size * (narrow ? (n[name] ?? n.base) : 1));
+  };
+  const sizeDecls = narrow => Object.entries(ROLE_TYPE_MAP).flatMap(([role, targets]) => targets.flatMap(target => [`--kit-t-${target}:${sizeAt(role, narrow)}`, ...(fit && !narrow && ['title', 'app', 'heading'].includes(target) ? [`--kit-t-${target}-raw:${sizeAt(role, false)}`] : [])]));
+  const lead = name => +effectiveLeading(name, r[name], preset.density).toFixed(4);
+  const base = [
+    `--kit-heading:${r.heading.fontFamily}`, `--kit-font:${r.body.fontFamily}`, `--kit-mono:${r.code.fontFamily}`, `--kit-hw:${r.heading.weight}`, `--kit-line:${lead('body')}`,
+    `--kit-lh-title:${lead('display')}`, `--kit-lh-heading:${lead('heading')}`,
+    `--kit-tr-title:${r.display.trackingEm}em`, `--kit-tr-heading:${r.heading.trackingEm}em`, `--kit-tr-label:${r.label.trackingEm}em`,
+    ...sizeDecls(false),
+  ];
+  return `/* Role typography (catalog 2.6.0 typeRoles: ${id}, ${preset.label}). Role values come from src/materials/typography.mjs; floor roles (body·label·caption) are not scaled. */\n:root{${base.join(';')}}\n@media (max-width:${n.max}px){:root{${sizeDecls(true).join(';')}}}`;
+}
+/** manifest.typeRoles: 어느 프리셋의 어떤 역할이 어떤 변수에 닿았는지 기록한다. */
+function roleTypeUsage(id) {
+  const preset = MATERIAL_TYPE_PRESETS[id];
+  return {preset: id, label: preset.label, engine: preset.engine, density: preset.density, roles: Object.fromEntries(Object.entries(ROLE_TYPE_MAP).map(([role, targets]) => [role, {size: preset.roles[role].size, variables: targets.map(t => `--kit-t-${t}`)}])), module: 'src/materials/typography.mjs'};
+}
+
+function registerMaterialType(registry) {
+  registry.addKind(defineKind({id: 'type-role-preset', label: '역할형 타이포그래피', categories: ['typography'], presetCapable: true, ext: {roles: 'object', fonts: 'array', density: 'string', wrap: 'object', engine: 'string', controls: 'object'}}));
+  for (const [id, preset] of Object.entries(MATERIAL_TYPE_PRESETS)) {
+    const broken = controlViolations(preset);
+    if (broken.length) throw new Error(`type-role-preset ${id}: control relations broken\n${broken.map(e => `${e.path} [${e.code}] ${e.message}`).join('\n')}`);
+    const fonts = [...new Set(Object.values(preset.roles).map(r => r.fontFamily))];
+    const roles = Object.fromEntries(Object.entries(preset.roles).map(([name, spec]) => [name, {...spec}]));
+    const controls = Object.fromEntries(Object.entries(preset.controls).map(([size, c]) => [size, {...c}]));
+    registry.register(defineMaterial({
+      id: materialId('type-role-preset', id), kind: 'type-role-preset', category: 'typography', label: preset.label,
+      since: '2.6.0', contexts: preset.context, render: {module: 'src/materials/typography.mjs', export: 'renderMaterialTypeCSS', key: id},
+      defaults: {preset: id}, variants: {preset: [id]},
+      tokens: [...Object.keys(preset.roles).map(name => `--mt-${name}`), ...CONTROL_SIZE_NAMES.map(size => `--mt-control-${size}-h`)],
+      responsive: {strategy: 'fluid', breakpoints: [NARROW_VIEWPORT.max], note: 'role sizes use clamp(); display and heading reduce on compact viewports'},
+      examples: [{render: 'renderMaterialTypeCSS', key: id}],
+      quality: {status: 'verified', evidence: ['tests/material-type.test.mjs:14', 'tests/material-type.test.mjs:49', 'tests/material-type.test.mjs:126', 'tests/material-type.test.mjs:143']},
+      preset: true, tags: ['role-based', 'multilingual', 'responsive'],
+      ext: {roles, fonts, density: preset.density, engine: preset.engine, controls, wrap: {body: 'pretty with Korean-safe overflow fallback', title: 'balanced', numeric: 'nowrap', code: 'horizontal-scroll'}},
+    }));
+  }
+  return registry;
+}
+
+const escapeHTML = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+function renderMaterialTypeExample() {
+  const styles = Object.keys(MATERIAL_TYPE_PRESETS).map(renderMaterialTypeCSS).join('\n');
+  const specimens = Object.values(MATERIAL_TYPE_PRESETS).map(preset => {
+    const rows = MULTILINGUAL_TYPE_CORPUS.map(sample => `<div class="mt-sample" data-sample="${sample.id}" data-policy="${sample.policy}"><span class="mt-caption">${sample.id} · ${sample.policy}</span><p class="mt-role-${sample.role}">${escapeHTML(sample.text)}</p></div>`).join('\n');
+    const controls = Object.entries(preset.controls).map(([size, c]) => `<button type="button" class="mt-control mt-role-${c.labelRole}" data-size="${size}"><span class="mt-control-icon" aria-hidden="true"></span>${size} ${c.height}px</button>`).join('');
+    return `<section class="mt-specimen" data-preset="${preset.id}" data-density="${preset.density}"><h2 class="mt-role-heading">${preset.label} · 역할 타이포그래피</h2><div class="mt-grid">${rows}</div><div class="mt-code-scroll"><code class="mt-role-code">const 합계 = rows.reduce((sum, row) => sum + row.amount, 0);</code></div><table class="mt-table"><thead><tr><th>항목</th><th>합계</th></tr></thead><tbody><tr><td>구독 수익</td><td class="numeric mt-role-numeric">₩1,234,500</td></tr><tr><td>전환율</td><td class="numeric mt-role-numeric">12.75%</td></tr></tbody></table><div class="mt-controls">${controls}</div></section>`;
+  }).join('\n');
+  return `<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Material Type · 다국어 코퍼스</title><style>*{box-sizing:border-box}body{margin:0;padding:24px;background:#f5f6f8;color:#17191c;font:16px/1.5 ${STACKS.system};word-break:keep-all;overflow-wrap:anywhere}.mt-page{max-width:1200px;margin:auto}.mt-page>h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;letter-spacing:-.04em}.mt-specimen{margin:24px 0;padding:clamp(16px,3vw,28px);background:white;border:1px solid #d9dde3;border-radius:12px}.mt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}.mt-sample{min-width:0;padding:14px;border:1px solid #e3e6eb;border-radius:8px}.mt-caption{display:block;margin-bottom:8px;font:600 .7rem/1.4 ${STACKS.system};color:#626b78}.mt-role-display{font-family:var(--mt-display-font);font-size:var(--mt-display);font-weight:var(--mt-display-weight);line-height:var(--mt-display-leading);letter-spacing:var(--mt-display-tracking)}.mt-role-heading{font-family:var(--mt-heading-font);font-size:var(--mt-heading);font-weight:var(--mt-heading-weight);line-height:var(--mt-heading-leading);letter-spacing:var(--mt-heading-tracking)}.mt-role-body{font-family:var(--mt-body-font);font-size:var(--mt-body);font-weight:var(--mt-body-weight);line-height:var(--mt-body-leading);letter-spacing:var(--mt-body-tracking)}.mt-role-label{font:var(--mt-label-weight) var(--mt-label) / var(--mt-label-leading) var(--mt-label-font);letter-spacing:var(--mt-label-tracking)}.mt-role-caption{font:var(--mt-caption-weight) var(--mt-caption) / var(--mt-caption-leading) var(--mt-caption-font);letter-spacing:var(--mt-caption-tracking)}.mt-role-numeric{font-family:var(--mt-numeric-font);font-size:var(--mt-numeric);font-weight:var(--mt-numeric-weight);line-height:var(--mt-numeric-leading);font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}.mt-role-code{font-family:var(--mt-code-font);font-size:var(--mt-code);line-height:var(--mt-code-leading);white-space:pre}.mt-code-scroll{max-width:100%;overflow-x:auto;padding:12px;border:1px solid color-mix(in srgb,currentColor 16%,transparent);border-radius:8px}.mt-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px}.mt-table{width:100%;table-layout:fixed;border-collapse:collapse;margin-top:16px}.mt-table td,.mt-table th{padding:10px;border-bottom:1px solid #e3e6eb;text-align:left}.mt-table td.numeric{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}.mt-sample[data-policy=nowrap] p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mt-sample[data-policy=scroll] p{white-space:pre;overflow-x:auto}.mt-sample[data-policy=wrap] p{word-break:keep-all;overflow-wrap:anywhere}@media(max-width:720px){body{padding:14px}.mt-specimen{padding:16px}.mt-grid{grid-template-columns:minmax(0,1fr)}}\n${styles}</style><main class="mt-page"><h1>다국어 타이포그래피 코퍼스</h1><p>역할별 크기·굵기·행간·자간·실제 시스템 서체 폴백과 화면 폭·밀도 대응을 확인합니다.</p>${specimens}</main></html>`;
+}
+
+exports.FLOOR_ROLES = FLOOR_ROLES;
+exports.DENSITY_FACTORS = DENSITY_FACTORS;
+exports.NARROW_VIEWPORT = NARROW_VIEWPORT;
+exports.clampBounds = clampBounds;
+exports.CONTROL_SIZES = CONTROL_SIZES;
+exports.CONTROL_SIZE_NAMES = CONTROL_SIZE_NAMES;
+exports.CONTROL_MIN_INSET = CONTROL_MIN_INSET;
+exports.CONTROL_ICON_RATIO = CONTROL_ICON_RATIO;
+exports.effectiveLeading = effectiveLeading;
+exports.maxFontPx = maxFontPx;
+exports.lineBoxPx = lineBoxPx;
+exports.controlViolations = controlViolations;
+exports.MATERIAL_TYPE_PRESETS = MATERIAL_TYPE_PRESETS;
+exports.MULTILINGUAL_TYPE_CORPUS = MULTILINGUAL_TYPE_CORPUS;
+exports.renderMaterialTypeCSS = renderMaterialTypeCSS;
+exports.ROLE_TYPE_MAP = ROLE_TYPE_MAP;
+exports.renderRoleTypeCSS = renderRoleTypeCSS;
+exports.roleTypeUsage = roleTypeUsage;
+exports.registerMaterialType = registerMaterialType;
+exports.renderMaterialTypeExample = renderMaterialTypeExample;
+};
 __defs["profiles/check.mjs"] = function (exports, __m) {
 /**
  * 프로파일 정적 검사(품질 검사 A 수준). Blueprint 하나를 받아 프로파일이 허용하지 않는 재료·프리셋·밀도 조합을 진단으로 돌려준다.
@@ -4631,7 +5329,7 @@ exports.PATTERN_IDS = PATTERN_IDS;
 exports.defaultPattern = defaultPattern;
 };
 __defs["render.mjs"] = function (exports, __m) {
-{ const __r = __m("render/index.mjs"); exports.escapeHTML = __r.escapeHTML; exports.renderTree = __r.renderTree; exports.formRuntime = __r.formRuntime; }
+{ const __r = __m("render/index.mjs"); exports.escapeHTML = __r.escapeHTML; exports.renderTree = __r.renderTree; exports.formRuntime = __r.formRuntime; exports.controlRuntime = __r.controlRuntime; }
 
 
 };
@@ -5006,6 +5704,9 @@ exports.highlight = highlight;
 __defs["render/index.mjs"] = function (exports, __m) {
 const {makeRenderer} = __m("render/nodes.mjs");
 const {renderShell} = __m("render/shell.mjs");
+const {selectRuntime} = __m("materials/select.mjs");
+const {tableRuntime} = __m("materials/table.mjs");
+const {atLeast} = __m("catalog/expression.mjs");
 { const __r = __m("render/util.mjs"); exports.escapeHTML = __r.escapeHTML; }
 
 /** `report` (optional) receives the pictures placed on the page: [{place, kind, motif, key}] for the page rule P01. */
@@ -5025,8 +5726,22 @@ const formRuntime = [
   "var megas=[].slice.call(document.querySelectorAll('.kit-mega'));megas.forEach(function(d){d.addEventListener('toggle',function(){if(d.open)megas.forEach(function(o){if(o!==d)o.open=false;});});d.addEventListener('keydown',function(e){if(e.key==='Escape'){d.open=false;d.querySelector('summary').focus();}});});document.addEventListener('click',function(e){megas.forEach(function(d){if(d.open&&!d.contains(e.target))d.open=false;});});",
 ].join('');
 
+/**
+ * 카탈로그 2.6.0 컨트롤 재료의 고정 런타임(재료의 attachSelect·attachTable 소스 그대로). 쓴 노드가 있을 때만 formRuntime 뒤에 붙고,
+ * provider는 주입하지 않으므로 네트워크를 쓰지 않는다. 2.5.0 이하와 컨트롤이 없는 문서는 빈 문자열이라 출력이 같다.
+ */
+function controlRuntime(b) {
+  if (!atLeast(b?.catalogVersion, '2.6.0')) return '';
+  const used = new Set();
+  const walk = n => { used.add(n.type); n.children?.forEach(walk); };
+  walk(b.tree);
+  return (used.has('select-control') ? `;${selectRuntime};document.querySelectorAll('.kit-select').forEach(function(r){attachSelect(r);});` : '')
+    + (used.has('data-table') ? `;${tableRuntime};document.querySelectorAll('.kit-data-table').forEach(function(r){attachTable(r);});` : '');
+}
+
 exports.renderTree = renderTree;
 exports.formRuntime = formRuntime;
+exports.controlRuntime = controlRuntime;
 };
 __defs["render/mocks.mjs"] = function (exports, __m) {
 const {num} = __m("render/util.mjs");
@@ -5368,6 +6083,9 @@ const {bentoPlan, layoutRev, FLOW_BUDGETS, loneFields} = __m("layout.mjs");
 const {SPACE} = __m("spacing.mjs");
 const {compositionAttrs} = __m("composition.mjs");
 const {expressionApplies, FEATURED_COLUMNS} = __m("catalog/expression.mjs");
+// 2.6.0 재료 렌더 코드(select-table.md)를 그대로 쓴다. 이 두 파일만 컴파일 경로가 읽는 재료 모듈이다(tests/materials-registry.test.mjs).
+const {renderSelect} = __m("materials/select.mjs");
+const {renderDataTable} = __m("materials/table.mjs");
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -5503,6 +6221,21 @@ function makeRenderer(b, design = null) {
   };
   R.metric = n => `<dl class="kit-metric"${n.trend ? ' data-spark="yes"' : ''}>${n.trend ? spark(n) : ''}<dt>${e(n.label)}</dt><dd data-vl="${vlOf(n.value)}">${e(n.value)}</dd>${n.trend || n.detail ? `<dd class="kit-metric-foot">${n.trend ? `<span class="kit-trend" data-trend="${n.trend}">${icon(TREND[n.trend][0])}<span class="kit-sr">${TREND[n.trend][1]}</span>${e(n.delta)}</span>` : ''}${n.detail ? `<span class="kit-muted">${e(n.detail)}</span>` : ''}</dd>` : ''}</dl>`;
   R.table = (n, d, id) => { const tableDesign = design?.byNode.get(n)?.table; const cellAttrs = i => { const c = tableDesign?.columns[i]; return c ? ` data-column-min="${c.minWidth}" data-column-align="${c.align}" data-column-wrap="${c.wrap}"` : ''; }; const s = n.state ?? (n.rows.length ? 'ready' : 'empty'); return `<section class="kit-table-wrap" data-variant="${n.variant ?? 'plain'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="${e(n.caption)}"><table${tableDesign ? ` data-table-min="${tableDesign.minimumWidth}"` : ''}><caption>${e(n.caption)}</caption><thead><tr>${n.columns.map((c, i) => `<th scope="col"${cellAttrs(i)}>${e(c)}</th>`).join('')}</tr></thead><tbody>${n.rows.map(r => `<tr>${r.map((c, i) => i === 0 ? `<th scope="row"${cellAttrs(i)}>${e(c)}</th>` : STATUS_HEADER.test(n.columns[i] ?? '') ? `<td${cellAttrs(i)}><span class="kit-badge"${statusDot(c) ? ` data-dot="${statusDot(c)}"` : ''}>${e(c)}</span></td>` : YES.test(c.trim()) ? `<td${cellAttrs(i)}><span class="kit-yes">${icon('check')}<span class="kit-sr">${e(c)}</span></span></td>` : NO.test(c.trim()) ? `<td${cellAttrs(i)}><span class="kit-no"><span aria-hidden="true">—</span><span class="kit-sr">${e(c)}</span></span></td>` : PERSON.test((n.columns[i] ?? '').trim()) ? `<td${cellAttrs(i)}><span class="kit-person"><span class="kit-avatar" aria-hidden="true">${e(initials(c))}</span>${e(c)}</span></td>` : `<td${cellAttrs(i)}>${e(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`; };
+  // 2.6.0 select-control·data-table: Blueprint 값을 재료 렌더러 인자로 옮길 뿐 마크업은 재료가 만든다. DOM id는 "select-"·"table-" 접두를 붙여 생성 id(block-N, field-*)와 겹치지 않게 한다.
+  R['select-control'] = n => renderSelect({
+    id: 'select-' + n.id, label: n.label,
+    options: n.options.map(o => ({value: o.value, label: o.label, ...(o.group ? {group: o.group} : {}), ...(o.disabled === 'yes' ? {disabled: true} : {})})),
+    mode: n.mode, search: n.search, size: n.size, shape: n.shape, maxMenuHeight: n.maxMenuHeight,
+    ...(n.mode === 'multiple' ? {values: n.values ?? []} : {value: n.value ?? null}),
+    state: n.state === 'disabled' ? 'ready' : n.state, disabled: n.state === 'disabled',
+    required: n.requirement === 'required', placeholder: n.placeholder, message: n.message,
+  });
+  R['data-table'] = (n, d, id) => `<section class="kit-data-block" aria-labelledby="${id}-title">${heading(d, n.title, id)}${renderDataTable({
+    id: 'table-' + n.id,
+    columns: n.columns.map(c => ({id: c.id, label: c.label, ...(c.sortable ? {sortable: c.sortable === 'yes'} : {}), ...(c.hideBelow ? {hideBelow: c.hideBelow} : {})})),
+    rows: n.rows.map(row => ({...row})),
+    density: n.density, responsive: n.responsive, state: n.state, sortable: n.sortable === 'yes', selectable: n.selectable === 'yes', message: n.message,
+  })}</section>`;
   R.list = (n, d, id) => { const s = n.state ?? (n.items.length ? 'ready' : 'empty'), v = n.variant ?? 'divided'; return `<section class="kit-list" data-variant="${v}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<ul>${n.items.map(x => `<li>${v === 'check' ? `<span class="kit-check" aria-hidden="true">${icon('check')}</span>` : x.icon ? `<span class="kit-li-icon">${icon(x.icon)}</span>` : ''}<div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}</div>${x.status ? `<span class="kit-badge" data-status="${x.status}"${statusDot(x.status) ? ` data-dot="${statusDot(x.status)}"` : ''}>${e(x.status)}</span>` : ''}</li>`).join('')}</ul>` : ''}</section>`; };
   R.form = (n, d, id) => {
     const fieldHTML = f => {
@@ -5899,7 +6632,7 @@ exports.contractCSS = contractCSS;
 exports.spacingMarkdown = spacingMarkdown;
 };
 __defs["styles.mjs"] = function (exports, __m) {
-{ const __r = __m("styles/index.mjs"); exports.stylesheet = __r.stylesheet; exports.usedTypes = __r.usedTypes; }
+{ const __r = __m("styles/index.mjs"); exports.stylesheet = __r.stylesheet; exports.usedTypes = __r.usedTypes; exports.typeRolesManifest = __r.typeRolesManifest; }
 
 
 };
@@ -6300,6 +7033,9 @@ const {expressionApplies} = __m("catalog/expression.mjs");
 const {expressionCSS} = __m("styles/expression.mjs");
 const {colorTokenCSS} = __m("color-tokens.mjs");
 const {atLeast} = __m("catalog/expression.mjs");
+const {selectStyles} = __m("materials/select.mjs");
+const {tableStyles} = __m("materials/table.mjs");
+const {renderRoleTypeCSS, roleTypeUsage} = __m("materials/typography.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -6332,6 +7068,9 @@ function stylesheet(b, sets, body = '', design = null) {
   parts.push(coreCSS.trim());
   parts.push(shellCSS(b).trim());
   for (const type of nodeTypes) if (used.has(type) && chunks[type]) parts.push(chunks[type].trim() + (polish[type] ?? ''));
+  // 카탈로그 2.6.0: 쓴 컨트롤 재료의 CSS만 나온다(재료의 selectStyles·tableStyles 그대로). 2.5.0 이하는 이 노드를 쓸 수 없어 이 줄이 비어 있다.
+  if (used.has('select-control')) parts.push(selectStyles.trim());
+  if (used.has('data-table')) parts.push(tableStyles.trim() + '.kit-data-block{display:grid;gap:var(--kit-sp-near);min-width:0}');
   parts.push(flowCSS(flowUsage(body)).trim());
   parts.push(contractCSS().trim());
   parts.push(polishCore.trim());
@@ -6342,13 +7081,18 @@ function stylesheet(b, sets, body = '', design = null) {
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
   if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
   const rev2 = layoutRev(b) === 2;
+  if (b.typeRoles && atLeast(b.catalogVersion, '2.6.0')) parts.push(renderRoleTypeCSS(b.typeRoles, {fit: rev2}).trim());
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
   const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
   return typeRev(b) === 2 ? refineTracking(css) : css;
 }
 
+/** 컴파일 manifest용: 고른 역할 타이포 프리셋이 닿은 역할·변수. 고르지 않았으면 null. */
+const typeRolesManifest = b => (b.typeRoles && atLeast(b.catalogVersion, '2.6.0') ? roleTypeUsage(b.typeRoles) : null);
+
 exports.usedTypes = usedTypes;
 exports.stylesheet = stylesheet;
+exports.typeRolesManifest = typeRolesManifest;
 };
 __defs["styles/polish.mjs"] = function (exports, __m) {
 /**
@@ -7098,7 +7842,7 @@ exports.lintType = lintType;
 exports.typographyMarkdown = typographyMarkdown;
 };
 __defs["validate.mjs"] = function (exports, __m) {
-const {nodeSpecAt, nodeExtended} = __m("catalog/node-extensions.mjs");
+const {nodeSpecAt, nodeExtended, nodeSince, nodeTypeKnown} = __m("catalog/node-extensions.mjs");
 const {profileErrors} = __m("profiles/check.mjs");
 const {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} = __m("catalog/expression.mjs");
 const {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
@@ -7119,7 +7863,9 @@ function validateBlueprint(input) {
     if (s.const !== undefined) { if (v !== s.const) error(path, 'CONST', '고정된 값: ' + s.const); return; }
     if (s.type === 'object') {
       if (!plain(v)) { error(path, 'OBJECT', '객체가 필요합니다.'); return; }
-      for (const k of Object.keys(v)) if (!Object.hasOwn(s.properties, k)) error(path + '.' + k, 'UNKNOWN_KEY', '허용되지 않은 속성: ' + k);
+      // additionalProperties가 스키마이면 선언하지 않은 키의 값을 그 스키마로 검사한다(2.6.0 data-table 행: 열 id가 키다). 그 밖에는 닫힌 객체다.
+      const open = plain(s.additionalProperties) ? s.additionalProperties : null;
+      for (const k of Object.keys(v)) if (!Object.hasOwn(s.properties, k)) { if (open) value(v[k], open, path + '.' + k); else error(path + '.' + k, 'UNKNOWN_KEY', '허용되지 않은 속성: ' + k); }
       for (const k of s.required ?? []) if (!Object.hasOwn(v, k)) error(path + '.' + k, 'REQUIRED', '필수 속성입니다.');
       for (const [k, sub] of Object.entries(s.properties)) if (Object.hasOwn(v, k)) value(v[k], sub, path + '.' + k);
       return;
@@ -7129,6 +7875,13 @@ function validateBlueprint(input) {
       if (v.length < s.minItems || v.length > s.maxItems) error(path, 'ARRAY_LENGTH', `항목은 ${s.minItems}~${s.maxItems}개입니다.`);
       v.slice(0, Math.max(s.maxItems, 40)).forEach((x, i) => value(x, s.items, `${path}[${i}]`)); return;
     }
+    if (s.oneOf) {
+      const mark = errors.length;
+      for (const branch of s.oneOf) { value(v, branch, path); if (errors.length === mark) return; errors.length = mark; }
+      error(path, 'ONE_OF', '허용되는 형태(문자열·숫자·불리언·null) 중 하나여야 합니다.'); return;
+    }
+    if (s.type === 'boolean') { if (typeof v !== 'boolean') error(path, 'BOOLEAN', 'true 또는 false가 필요합니다.'); return; }
+    if (s.type === 'null') { if (v !== null) error(path, 'NULL', 'null이 필요합니다.'); return; }
     if (s.enum) { if (!s.enum.includes(v)) error(path, 'ENUM', '허용값: ' + s.enum.join(', ')); return; }
     if (s.type === 'integer' || s.type === 'number') {
       if (typeof v !== 'number' || !Number.isFinite(v) || (s.type === 'integer' && !Number.isInteger(v)) || v < s.minimum || v > s.maximum) error(path, 'NUMBER', `${s.type === 'integer' ? '정수' : '숫자'} ${s.minimum}~${s.maximum}가 필요합니다.`);
@@ -7198,15 +7951,23 @@ function validateBlueprint(input) {
 
   // ---- tree ----
   let count = 0, heroCount = 0;
-  const fieldIds = new Set(), types = new Set(), firstSeen = {};
+  const fieldIds = new Set(), controlIds = new Set(), types = new Set(), firstSeen = {};
   const surfaceStack = [];
   function node(n, path, parent, depth, ancestors) {
     count++; if (count > limits.nodes) { if (count === limits.nodes + 1) error(path, 'NODE_LIMIT', `최대 ${limits.nodes}노드입니다.`); return; }
     if (depth > limits.depth) { error(path, 'DEPTH', `최대 깊이는 ${limits.depth}입니다.`); return; }
     if (!plain(n)) { error(path, 'OBJECT', '노드 객체가 필요합니다.'); return; }
-    if (typeof n.type !== 'string' || !Object.hasOwn(nodeSpecs, n.type)) { error(path + '.type', 'NODE_TYPE', '알 수 없는 부품입니다.'); return; }
-    if (parent && !nodeSpecs[parent].children?.includes(n.type)) error(path + '.type', 'CHILD_TYPE', `${parent} 안에 ${n.type}을 넣을 수 없습니다.`);
+    if (!nodeTypeKnown(n.type, input.catalogVersion)) {
+      // 확장 표의 노드는 도입 버전 전에는 알 수 없는 부품이 아니라 "아직 열리지 않은 부품"이다. 올리는 방법을 알려 주려고 VERSION_FIELD로 낸다.
+      const introduced = typeof n.type === 'string' ? nodeSince(n.type) : null;
+      if (introduced) error(path + '.type', 'VERSION_FIELD', `${n.type}은 카탈로그 ${introduced}부터 쓸 수 있습니다(kit migrate <입력> <출력> --to ${introduced}).`);
+      else error(path + '.type', 'NODE_TYPE', '알 수 없는 부품입니다.');
+      return;
+    }
+    if (parent && !nodeSpecAt(parent, input.catalogVersion).children?.includes(n.type)) error(path + '.type', 'CHILD_TYPE', `${parent} 안에 ${n.type}을 넣을 수 없습니다.`);
     types.add(n.type); firstSeen[n.type] ??= path;
+    // 2.6.0 data-table은 페이지 유형 규칙에서 table과 같은 자리를 채운다(대시보드·데이터 페이지의 "표" 요구).
+    if (n.type === 'data-table') { types.add('table'); firstSeen.table ??= path; }
     const spec = nodeSpecAt(n.type, input.catalogVersion);
     const properties = {type: {const: n.type}, ...spec.fields};
     if (spec.children) properties.children = {type: 'array', items: {}, minItems: spec.min, maxItems: spec.max};
@@ -7339,6 +8100,62 @@ function validateBlueprint(input) {
           if (Number.isFinite(n.axis.max) && values.some(v => v > n.axis.max)) error(path + '.axis.max', 'CHART_AXIS', '축 최댓값이 데이터보다 작아 값이 잘립니다.');
         }
       }
+    }
+    // 2.6.0 Select·Table 재료(docs/materials/select-table.md). 필드 모양은 확장 명세가 닫아 두었고, 여기서는 재료 계약의 조합·데이터 규칙을 본다.
+    if (t === 'select-control') {
+      const key = 'select:' + n.id;
+      if (typeof n.id === 'string') { if (controlIds.has(key)) error(path + '.id', 'DUPLICATE_ID', '페이지의 select-control id는 중복될 수 없습니다.'); controlIds.add(key); }
+      const options = A(n.options) ? n.options.filter(plain) : [], seen = new Set(), groups = [];
+      options.forEach((o, i) => {
+        const p = `${path}.options[${i}]`;
+        if (typeof o.value === 'string') {
+          if (seen.has(o.value)) error(p + '.value', 'SELECT_OPTIONS', `옵션 value가 겹칩니다: ${o.value}`);
+          if (o.value.includes(',')) error(p + '.value', 'SELECT_OPTIONS', '옵션 value에는 쉼표를 쓸 수 없습니다(다중 선택 값은 쉼표로 이어 보냅니다).');
+          seen.add(o.value);
+        }
+        // 같은 group은 이어서 놓아야 한 묶음으로 읽힌다(재료는 연속한 같은 group만 하나의 접근 가능한 그룹으로 묶는다).
+        const g = typeof o.group === 'string' ? o.group : null;
+        if (g !== null && groups.at(-1) !== g) { if (groups.includes(g)) error(p + '.group', 'SELECT_OPTIONS', `그룹 "${g}" 옵션은 이어서 놓아야 합니다.`); groups.push(g); } else if (g === null) groups.push(null);
+      });
+      const multiple = n.mode === 'multiple';
+      if (multiple && n.search === 'async') error(path + '.search', 'SELECT_COMBO', 'multiple + async는 지원하지 않습니다. 비동기 검색은 단일 선택만 가능합니다(mode를 single로 하거나 search를 local·none으로).');
+      else if (n.search === 'async') error(path + '.search', 'SELECT_COMBO', 'async 검색은 앱이 주입하는 옵션 provider가 있어야 하는데 정적 페이지에는 provider와 네트워크가 없습니다(search를 local 또는 none으로).');
+      if (Object.hasOwn(n, 'value') && multiple) error(path + '.value', 'SELECT_COMBO', 'value는 mode가 single일 때만 씁니다. multiple은 values를 쓰세요.');
+      if (Object.hasOwn(n, 'values') && !multiple) error(path + '.values', 'SELECT_COMBO', 'values는 mode가 multiple일 때만 씁니다. single은 value를 쓰세요.');
+      for (const [field, picked] of [['value', Object.hasOwn(n, 'value') ? [n.value] : []], ['values', A(n.values) ? n.values : []]]) {
+        picked.forEach((v, i) => { if (typeof v === 'string' && !seen.has(v)) error(field === 'value' ? path + '.value' : `${path}.values[${i}]`, 'SELECT_OPTIONS', `선택값 ${v}이(가) options에 없습니다.`); });
+      }
+      if (A(n.values) && new Set(n.values).size !== n.values.length) error(path + '.values', 'SELECT_OPTIONS', 'values에 같은 값이 두 번 있습니다.');
+      if (Object.hasOwn(n, 'message') && n.state !== 'error') error(path + '.message', 'VARIANT_REQUIRES', 'message는 state가 error일 때만 사용합니다.');
+    }
+    if (t === 'data-table') {
+      const key = 'table:' + n.id;
+      if (typeof n.id === 'string') { if (controlIds.has(key)) error(path + '.id', 'DUPLICATE_ID', '페이지의 data-table id는 중복될 수 없습니다.'); controlIds.add(key); }
+      const columns = A(n.columns) ? n.columns : [], rows = A(n.rows) ? n.rows : [];
+      const ids = new Set(), priority = n.responsive === 'priority', sortable = n.sortable === 'yes';
+      columns.forEach((c, i) => {
+        if (!plain(c)) return;
+        const p = `${path}.columns[${i}]`;
+        if (typeof c.id === 'string') { if (ids.has(c.id)) error(p + '.id', 'TABLE_COLUMNS', `열 id가 겹칩니다: ${c.id}`); ids.add(c.id); }
+        if (c.hideBelow !== undefined && !priority) error(p + '.hideBelow', 'TABLE_COLUMNS', 'hideBelow는 responsive가 priority일 때만 씁니다(scroll은 모든 열을 가로 스크롤로 보여 줍니다).');
+        if (c.hideBelow !== undefined && i === 0) error(p + '.hideBelow', 'TABLE_COLUMNS', '첫 열은 행을 식별하는 열이라 숨길 수 없습니다.');
+        if (c.sortable !== undefined && !sortable) error(p + '.sortable', 'TABLE_COLUMNS', '열 sortable은 표의 sortable이 yes일 때만 씁니다.');
+      });
+      if (priority && columns.length && !columns.some(c => plain(c) && c.hideBelow !== undefined)) error(path + '.responsive', 'TABLE_COLUMNS', 'priority는 작은 화면에서 숨길 열(hideBelow)이 하나 이상 있어야 합니다. 없으면 scroll을 쓰세요.');
+      if (sortable && columns.length && columns.every(c => plain(c) && c.sortable === 'no')) error(path + '.sortable', 'TABLE_COLUMNS', '정렬 가능한 열이 하나도 없습니다. sortable을 끄거나 한 열 이상 켜세요.');
+      const rowIds = new Set();
+      rows.forEach((row, i) => {
+        if (!plain(row)) return;
+        const p = `${path}.rows[${i}]`;
+        for (const id of ids) if (!Object.hasOwn(row, id)) error(`${p}.${id}`, 'TABLE_ROWS', `행에 열 ${id}의 값이 없습니다. 비어 있으면 null이나 빈 문자열을 쓰세요.`);
+        for (const k of Object.keys(row)) if (k !== 'id' && !ids.has(k)) error(`${p}.${k}`, 'TABLE_ROWS', `열로 정의되지 않은 키입니다: ${k}`);
+        if (typeof row.id === 'string') { if (rowIds.has(row.id)) error(p + '.id', 'TABLE_ROWS', `행 id가 겹칩니다: ${row.id}`); rowIds.add(row.id); }
+      });
+      const state = n.state ?? (rows.length ? 'ready' : 'empty');
+      if (['ready', 'partial'].includes(state) && rows.length === 0) error(path + '.rows', 'STATE_DATA', `${state} 상태에는 행이 1개 이상 필요합니다.`);
+      if (state === 'empty' && rows.length) error(path + '.rows', 'TABLE_ROWS', 'empty 상태에는 행을 둘 수 없습니다. 행을 지우거나 state를 ready로 하세요.');
+      if (['loading', 'error'].includes(state) && rows.length) error(path + '.rows', 'TABLE_ROWS', `${state} 상태에서는 행이 화면에 나오지 않습니다. 보이지 않는 콘텐츠를 두지 마세요(행을 지우거나 state를 ready로).`);
+      if (Object.hasOwn(n, 'message') && state !== 'error') error(path + '.message', 'VARIANT_REQUIRES', 'message는 state가 error일 때만 사용합니다.');
     }
     if (t === 'calendar' && A(n.events) && Number.isInteger(n.year) && Number.isInteger(n.month)) n.events.forEach((ev, i) => { if (plain(ev) && Number.isInteger(ev.day) && ev.day > DAYS(n.year, n.month)) error(`${path}.events[${i}].day`, 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${ev.day}일이 없습니다.`); });
     if (t === 'calendar' && Number.isInteger(n.today) && Number.isInteger(n.year) && Number.isInteger(n.month) && n.today > DAYS(n.year, n.month)) error(path + '.today', 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${n.today}일이 없습니다.`);

@@ -91,10 +91,48 @@ Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 
 | 프리셋 재료 | `src/materials/chart-presets.mjs`(8개), `src/render/chart-presets.mjs` | 그대로 사용. 예시는 2.6.0으로 `compile()` 검증 |
 | 진단 힌트 | `src/service/errors.mjs`: `CHART_AXIS`, `CHART_VALUE`, `CHART_PRESET` | 있음 |
 
-남은 일(다른 작업자):
+남은 일(다른 작업자). 1·4·5번은 §7에서 처리했다:
 
 1. `site/v1/blueprint.schema.json`과 `blueprintSchema()`는 아직 기본 chart 명세만 보인다. 2.6.0 문서의 chart 확장을 스키마에 `x-since: 2.6.0`으로 드러낼지 정한다. 드러내면 스키마 파일만 바뀌어야 하고 `catalogSnapshot()`(2.4.0 snapshot)은 `nodeSpecs`만 읽으므로 그대로 둔다.
 2. `component:chart` 재료의 `variants`를 읽는 `src/materials/adapters.mjs`는 기존 5종만 보여준다. 새 형태를 재료 목록에 보일지 정한다.
 3. `renderChart`는 입력 모양(`axis`·`xLabel`·`yLabel`·새 kind)으로 경로를 고른다. 2.6.0 게이트로 바꿀지 정한다. 바꾸더라도 2.4.0·2.5.0 입력은 `renderLegacyChart`가 이전 바이트를 내야 한다.
 4. Select·Table 노드(`select-control`, `data-table`)를 같은 확장 표에 넣고 검증기·렌더러에 연결한다(`docs/materials/select-table.md`의 연결 지점).
 5. `TABLE_COLUMNS`·`TABLE_ROWS`는 Table 재료의 `validation.codes`에 적혀 있으나 현재 어디서도 내지 않아 힌트를 더하지 않았다. 내기 시작하는 작업이 힌트 표 항목을 함께 둔다.
+
+## 7. 2.6.0 조립 연결 결과(feat/wire-260)
+
+등록만 되고 Blueprint로 고를 수 없던 재료를 `catalogVersion: "2.6.0"` Blueprint에서 고르고 편집·컴파일하게 이었다. 2.4.0·2.5.0 입력·출력·`site/v1/catalog.json` 바이트·고정 해시는 그대로다(해시 파일을 다시 만들지 않았다).
+
+| 재료 | Blueprint에서 고르는 자리 | 구현 |
+|---|---|---|
+| Select(`component:select-control`) | 노드 `select-control` | `NODE_SPEC_EXTENSIONS['2.6.0']['select-control']`(필드·example), 검사는 `src/validate.mjs`(`SELECT_OPTIONS`·`SELECT_COMBO`), 렌더는 재료의 `renderSelect`와 `selectStyles`, 런타임은 재료의 `attachSelect` 소스 |
+| Table(`component:data-table`) | 노드 `data-table` | 같은 표의 `data-table`, 검사 `TABLE_COLUMNS`·`TABLE_ROWS`·`STATE_DATA`, 렌더 `renderDataTable`·`tableStyles`·`attachTable` |
+| 새 차트 형태·8프리셋 | 노드 `chart`(kind 4개·축 필드) | §6의 확장 표 그대로. 프리셋은 `resolveChartPreset`이 chart 노드를 만든다 |
+| 역할 타이포 4프리셋(`type-role-preset`) | 최상위 `typeRoles`: erp·dashboard·document·marketing | `renderRoleTypeCSS`가 `:root`의 `--kit-t-title·app·heading·body·label·caption·stat·price`, 제목·본문 서체와 굵기·행간·자간을 프리셋 값으로 덮는다. 좁은 화면(720px 이하)과 레이아웃 리비전 2의 `-raw` 별칭도 맞춘다. manifest에 `typeRoles` 기록 |
+| static-kit 색 토큰 257개 | 최상위 `colorPalette: "static-kit"`(이미 연결됨) | 컴파일 CSS 반영을 `tests/wire-260.test.mjs`가 light·dark·auto로 확인 |
+
+결정과 이유:
+
+- **노드를 확장 표에 노드째 둔다.** 기본 `nodeSpecs`·`nodeTypes`에 넣으면 2.4.0 snapshot이 바뀐다. 확장 표 항목에 `label`이 있으면 새 노드이고, `placeLike`가 가리키는 부품(`form`, `table`)을 받는 부모(page·section·split·aside·tab)가 같은 2.6.0 게이트 뒤에서 새 노드도 받는다. grid·bento 등은 받지 않는다. 2.5.0 이하에서 새 노드를 쓰면 `VERSION_FIELD`(올리는 방법을 안내)이고, 아예 모르는 type은 그대로 `NODE_TYPE`이다.
+- **Select의 async 검색은 정적 페이지에서 거부한다**(`SELECT_COMBO`). 생성 페이지에는 옵션 provider도 네트워크(`connect-src 'none'`)도 없어 동작하지 않는 검색 상자가 된다. `multiple + async`도 같은 코드다. `disabled + loading/error`는 `state` 한 필드(`ready|loading|error|disabled`)라 표현할 수 없다.
+- **표 행은 `{열 id: 값}` 객체다.** 검증기 `value()`에 `additionalProperties: 스키마`·`oneOf`·boolean·null 해석을 더했다(기존 스키마에는 영향이 없다). 셀은 문자열·숫자·불리언·null이고, 보이지 않는 행(`loading`·`error` 상태, `empty`)을 거부해 콘텐츠를 숨기지 않는다.
+- **DOM id 접두**: 노드 `id`는 렌더에서 `select-`·`table-` 접두가 붙어 생성 id(`block-N`, `field-*`)와 겹치지 않는다.
+- **페이지 유형**: `data-table`은 `table`이 요구·금지되는 규칙에서 `table`과 같게 센다. 허용 목록(`allow`)에는 `table`이 없으면 `data-table`도 없다.
+- **컴파일 경로의 재료 import는 `select`·`table`·`typography` 세 파일뿐이다**(렌더·스타일 코드 재사용). 레지스트리·어댑터는 `src/service/materials.mjs`만 읽는다(`tests/materials-registry.test.mjs`, `tests/wire-260.test.mjs`가 검사).
+- **스키마(`blueprintSchema()`)**: 기존 `$defs`(55개)와 `properties`는 줄 삭제 없이 그대로이고, `typeRoles` 속성(x-since 2.6.0)과 루트 주석 `x-extensions['2.6.0']`만 더했다. `x-extensions`에는 차트 확장·`select-control`·`data-table`의 전체 정의(각각 `x-since: 2.6.0`)와 새로 받는 자식 목록(`children`)이 있다. 기존 `$defs.chart`를 넓히지 않은 이유는 2.4.0·2.5.0 정의가 바뀌지 않아야 해서다. `site/v1/blueprint.schema.json`이 바뀌어 `apps/web/e2e/compat.spec.mjs`의 v1 고정 해시를 갱신했다(`catalog.json`은 그대로).
+- **서비스 읽기 질의**(`./service`로 내보냄, package exports는 그대로): `listMaterials`(종류·분류·맥락·등급·프리셋·since·검색·쪽 나누기, 각 재료가 Blueprint의 어디서 고르는지 `blueprint` 필드), `getMaterial`, `getColorTokens`(팔레트·모드·계층 또는 문서의 값으로 해석), `getTypePresets`(4프리셋과 컴파일 CSS). `getComponentSpec`·`getSchema({target:'component'})`·`listCatalog({kind:'components'})`는 `catalogVersion:"2.6.0"`을 주면 확장 부품과 넓어진 차트를 보인다(기본은 그대로).
+- **편집 연산**: `insertNode`는 검증기를 거치므로 그대로 새 노드를 받는다. `insertableParts`·`addPlacements`는 `doc.catalogVersion`으로 후보를 정해 2.6.0 문서에만 확장 부품을 낸다(`partTypesAt(version)`, `partExample(type, version)`). 대조 테스트(`tests/edit-applicability.test.mjs`)는 2.4.0·2.5.0·2.6.0 세 버전의 모든 컨테이너에서 실제 `insertNode` 결과와 후보를 비교한다.
+
+웹(다른 작업자)이 이어야 할 연결점. 이번 작업은 `apps/web`을 바꾸지 않았다.
+
+1. `apps/web/features/studio/components/StructurePanel.tsx:87`의 `api.core?.edit.partExample(type)`은 버전을 넘기지 않아 확장 부품의 기본 노드를 못 얻는다. `partExample(type, doc.catalogVersion)`으로 부르면 된다. `apps/web/features/studio/core.ts:16`의 타입 선언에도 `version?: string`을 더한다. 후보 목록(`addPlacements`)은 이미 버전을 따른다.
+2. Studio에 `typeRoles`(역할 타이포) 선택은 `getTypePresets()`, 색 토큰 미리보기는 `getColorTokens({blueprint})`, 재료 화면 목록·상세는 `listMaterials`·`getMaterial`을 쓴다. `updateNode`는 노드 필드만 바꾸므로 `typeRoles`·`colorPalette` 같은 최상위 필드를 바꾸는 편집 연산은 아직 없다(`migrateBlueprint` 또는 문서 교체로만 설정한다).
+3. 2.6.0 문서의 Select·Table 미리보기는 컴파일 산출물 안의 고정 런타임으로 동작한다. 앱이 `attachSelect`의 `onOptionsRequest` provider나 `attachTable`의 콜백을 주입하는 경로는 Blueprint 밖의 일이다.
+
+하지 않은 것(이유):
+
+- `renderChart`를 2.6.0 게이트로 바꾸지 않았다(§6의 3번). 입력 모양으로 경로를 고르는 현재 동작이 2.6.0 Blueprint에서 올바르게 동작하고, 게이트를 더 넣으면 `renderLegacyChart`와 이중 분기가 생긴다.
+- `component:chart` 재료의 `variants`는 기존 5종 그대로다(§6의 2번). 새 형태는 `chart-preset` 재료와 `getMaterial`의 `blueprint.kind`로 드러난다.
+- 표 선택 상태(`selected`)와 페이지네이션은 노드 필드로 열지 않았다(재료의 "미제공" 목록 그대로).
+- 표 열 라벨은 콘텐츠 지문(`PRESENTATION_FIELDS`의 `columns`)에서 빠진다. 기존 `table.columns`와 같은 처리이며, 구성 변형 연산이 data-table을 건드리지 않는다.
+

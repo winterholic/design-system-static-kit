@@ -12,6 +12,9 @@ import {expressionApplies} from '../catalog/expression.mjs';
 import {expressionCSS} from './expression.mjs';
 import {colorTokenCSS} from '../color-tokens.mjs';
 import {atLeast} from '../catalog/expression.mjs';
+import {selectStyles} from '../materials/select.mjs';
+import {tableStyles} from '../materials/table.mjs';
+import {renderRoleTypeCSS, roleTypeUsage} from '../materials/typography.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -44,6 +47,9 @@ export function stylesheet(b, sets, body = '', design = null) {
   parts.push(coreCSS.trim());
   parts.push(shellCSS(b).trim());
   for (const type of nodeTypes) if (used.has(type) && chunks[type]) parts.push(chunks[type].trim() + (polish[type] ?? ''));
+  // 카탈로그 2.6.0: 쓴 컨트롤 재료의 CSS만 나온다(재료의 selectStyles·tableStyles 그대로). 2.5.0 이하는 이 노드를 쓸 수 없어 이 줄이 비어 있다.
+  if (used.has('select-control')) parts.push(selectStyles.trim());
+  if (used.has('data-table')) parts.push(tableStyles.trim() + '.kit-data-block{display:grid;gap:var(--kit-sp-near);min-width:0}');
   parts.push(flowCSS(flowUsage(body)).trim());
   parts.push(contractCSS().trim());
   parts.push(polishCore.trim());
@@ -54,7 +60,11 @@ export function stylesheet(b, sets, body = '', design = null) {
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
   if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
   const rev2 = layoutRev(b) === 2;
+  if (b.typeRoles && atLeast(b.catalogVersion, '2.6.0')) parts.push(renderRoleTypeCSS(b.typeRoles, {fit: rev2}).trim());
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
   const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
   return typeRev(b) === 2 ? refineTracking(css) : css;
 }
+
+/** 컴파일 manifest용: 고른 역할 타이포 프리셋이 닿은 역할·변수. 고르지 않았으면 null. */
+export const typeRolesManifest = b => (b.typeRoles && atLeast(b.catalogVersion, '2.6.0') ? roleTypeUsage(b.typeRoles) : null);

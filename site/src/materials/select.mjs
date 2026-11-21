@@ -25,7 +25,7 @@ export const selectMaterial = defineMaterial({
   ]},
   responsive: {strategy: 'viewport', breakpoints: ['640px'], note: '좁은 화면에서 메뉴는 화면 너비 안에 제한되고 옵션 목록 높이는 계약값을 따른다.'},
   a11y: {rules: ['R05', 'R16'], role: 'combobox + listbox', keyboard: 'ArrowUp/ArrowDown/Home/End/Enter/Space/Escape/Tab'},
-  validation: {rules: ['R16'], codes: ['SELECT_OPTIONS']},
+  validation: {rules: ['R16'], codes: ['SELECT_OPTIONS', 'SELECT_COMBO']},
   examples: [{id: 'region', label: '지역', options: [{value: 'kr', label: '한국'}]}],
   quality: {status: 'verified', evidence: ['tests/select-table.test.mjs:7']},
   tags: ['form', 'select-control', ...selectContract.forbidden.map(x => `forbidden:${x}`), ...selectContract.unsupported.map(x => `unsupported:${x}`)],
