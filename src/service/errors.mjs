@@ -81,7 +81,7 @@ export const HINTS = {
   SELECT_OPTIONS: 'select·radio에는 options가 필요하고 그 밖의 필드에는 쓸 수 없습니다.',
   FIELD_OPTIONS: 'options는 select·radio 필드에서만 씁니다. 필드 종류를 바꾸거나 options를 지우세요.',
   // 2.6.0 디자인 프로파일 진단(src/profiles/check.mjs, PF01~PF13). fix에 프로파일 기본값이 있다.
-  PROFILE_PAGE_TYPE: '프로파일이 다루는 페이지 유형으로 바꾸거나 이 화면에 맞는 다른 프로파일을 고르세요(listProfiles).',
+  PROFILE_PAGE_TYPE: '프로파일이 다루는 페이지 유형으로 바꾸거나 이 화면에 맞는 다른 프로파일을 고르세요(assembleBlueprint의 대안 목록).',
   PROFILE_THEME: '프로파일이 허용하는 테마 중 하나를 고르세요. 메시지의 대안 목록과 fix의 기본 테마를 쓸 수 있습니다.',
   PROFILE_DENSITY: '프로파일의 정보 밀도에 맞는 density로 바꾸세요(fix가 기본값입니다).',
   PROFILE_TYPOGRAPHY: '프로파일의 역할형 타이포와 같은 계열의 서체 프리셋으로 바꾸세요.',
@@ -95,7 +95,7 @@ export const HINTS = {
   PROFILE_QUALITY: '최상위 구역이나 내비 항목을 줄이세요. 프로파일 품질 기준이 셸 한도보다 좁을 수 있습니다.',
   PROFILE_FIELD: '부품 변형 값을 프로파일 허용값으로 바꾸세요(fix가 기본값입니다).',
   // 조립(assemble) 진단. 조립은 지원하지 않는 요구를 다른 값으로 바꾸지 않고 이 코드로 돌려준다.
-  ASSEMBLE_UNSUPPORTED: '지원하지 않는 요구입니다. 대안 목록(alternatives)에 있는 값만 고를 수 있고, 모르는 키는 지원하지 않습니다.',
+  ASSEMBLE_UNSUPPORTED: '지원하지 않는 요구입니다. 메시지의 대안 목록에 있는 값만 고를 수 있고, 모르는 키는 지원하지 않습니다.',
   ASSEMBLE_PATTERN: '프로파일이 허용하는 레이아웃 패턴 중 하나를 고르세요.',
   ASSEMBLE_SLOT: '패턴에 있는 슬롯에만 내용을 넣고, 슬롯마다 개수 범위(min~max)를 지키세요.',
   ASSEMBLE_CONTENT: '슬롯이 받는 부품 type으로 내용을 바꾸세요. 대안 목록에 그 슬롯과 프로파일이 함께 허용하는 부품이 있습니다.',

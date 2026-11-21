@@ -11,5 +11,6 @@ export {listCatalog, getSchema, getComponentSpec, catalogSnapshot, CATALOG_KINDS
 export {validateBlueprint} from './validate.mjs';
 export {compileBlueprint} from './compile.mjs';
 export {explainDecisions} from './explain.mjs';
+export {assembleBlueprint} from './assemble.mjs';
 export {CONTRACT_VERSION} from './envelope.mjs';
 export {HINTS, DEFAULT_HINT, hintFor, withHint, diagnostic} from './errors.mjs';
