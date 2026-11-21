@@ -14,15 +14,17 @@ function walk(dir) {
 }
 test.describe('컷오버 전 옛 /combos/ → 새 경로 307', () => {
   const cases = [
-    ['/combos/', '/explore/combos'],
-    ['/combos', '/explore/combos'],
-    ['/combos/index.html', '/explore/combos'],
+    ['/combos/', '/dev/qa/combos'],
+    ['/combos', '/dev/qa/combos'],
+    ['/combos/index.html', '/dev/qa/combos'],
   ];
   for (const [from, to] of cases) {
     test(`${from} → ${to}`, async ({request}) => {
-      const res = await request.get(from, {maxRedirects: 0});
+      const res = await request.get(from + '?c=saas-landing&theme=aurora&q=한글%20검색%20%26%20기호%3D1', {maxRedirects: 0});
       expect(res.status()).toBe(307);
-      expect(res.headers().location).toBe(to);
+      const loc = new URL(res.headers().location, 'http://x');
+      expect(loc.pathname).toBe(to);
+      expect([...loc.searchParams.entries()]).toEqual([['c', 'saas-landing'], ['theme', 'aurora'], ['q', '한글 검색 & 기호=1']]);
     });
   }
 
@@ -35,17 +37,29 @@ test.describe('컷오버 전 옛 /combos/ → 새 경로 307', () => {
       ['rec', '1'], ['ps', '48'], ['p', '3'],
     ]);
     expect([...q.keys()]).toHaveLength(21);
-    const res = await request.get('/combos/?' + q, {maxRedirects: 0});
-    expect(res.status()).toBe(307);
-    const loc = new URL(res.headers().location, 'http://x');
-    expect(loc.pathname).toBe('/explore/combos');
-    expect([...loc.searchParams.entries()]).toEqual([...q.entries()]);
+    for (const [from] of cases) {
+      const res = await request.get(from + '?' + q, {maxRedirects: 0});
+      expect(res.status(), from).toBe(307);
+      const loc = new URL(res.headers().location, 'http://x');
+      expect(loc.pathname, from).toBe('/dev/qa/combos');
+      expect([...loc.searchParams.entries()], from).toEqual([...q.entries()]);
+    }
   });
 
   test('리다이렉트를 따라가면 새 화면이 열린다', async ({request}) => {
-    const res = await request.get('/combos/?c=saas-landing&theme=aurora');
+    const res = await request.get('/combos/?c=saas-landing&theme=aurora', {maxRedirects: 1});
     expect(res.status()).toBe(200);
-    expect(res.url()).toContain('/explore/combos?c=saas-landing&theme=aurora');
+    expect(res.url()).toContain('/dev/qa/combos?c=saas-landing&theme=aurora');
+  });
+
+  test('임시 Explore 호환 경로는 쿼리를 유지하며 열린다', async ({request}) => {
+    const res = await request.get('/explore/combos?c=saas-landing&theme=aurora', {maxRedirects: 0});
+    expect(res.status()).toBe(307);
+    expect(new URL(res.headers().location, 'http://x').pathname).toBe('/dev/qa/combos');
+    expect(new URL(res.headers().location, 'http://x').search).toBe('?c=saas-landing&theme=aurora');
+    const final = await request.get('/explore/combos?c=saas-landing&theme=aurora', {maxRedirects: 1});
+    expect(final.status()).toBe(200);
+    expect(final.url()).toContain('/dev/qa/combos?c=saas-landing&theme=aurora');
   });
 
   test('중복 슬래시는 Next 정규화 후 임시 리다이렉트, 대소문자 변형은 404다', async ({request}) => {
@@ -134,12 +148,12 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
 });
 
 // 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
-// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 baseline 이후 V06 계약이 카탈로그에 들어와 값이 바뀌었다(0af400ca2df23e24 → 아래 값).
+// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법) 갱신을 반영해 718d5df184940f7f 로 고정한다.
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
     {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
     {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
-    {sub: 'v1', count: 2, pinned: '1d39fd97e87c1bc4'},
+    {sub: 'v1', count: 2, pinned: '718d5df184940f7f'},
   ];
   for (const {sub, exclude, count, pinned} of parts) {
     test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {

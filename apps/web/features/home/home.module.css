@@ -1,0 +1,30 @@
+.hero { padding-bottom: var(--space-6); }
+.hero h1 { max-width: 20ch; }
+.stage { display: grid; grid-template-columns: 1fr; gap: var(--space-5); align-items: end; }
+@media (min-width: 900px) { .stage { grid-template-columns: minmax(0, 1fr) 232px; gap: var(--space-6); } }
+.shot { display: block; color: inherit; text-decoration: none; border-radius: var(--radius); }
+.shot:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.phone { display: none; }
+@media (min-width: 900px) { .phone { display: block; } }
+.cap { display: block; margin-top: var(--space-2); font-size: var(--text-sm); color: var(--color-muted); }
+.shot:hover .cap { color: var(--color-fg); }
+.strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); list-style: none; margin: var(--space-6) 0 0; padding: 0; }
+@media (min-width: 900px) { .strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.entries { display: grid; grid-template-columns: 1fr; gap: var(--space-5); margin: 0; }
+@media (min-width: 720px) { .entries { grid-template-columns: 1fr 1fr; gap: var(--space-7); } }
+.entries h3 { margin: 0 0 var(--space-2); font-size: var(--text-lg); }
+.entries p { margin: 0 0 var(--space-3); color: var(--color-muted); max-width: 44ch; }
+
+.rules { margin: 0; max-width: 760px; }
+.rules div { display: grid; grid-template-columns: 1fr; gap: var(--space-1); padding: var(--space-4) 0; border-top: 1px solid var(--color-line); }
+.rules div:last-child { border-bottom: 1px solid var(--color-line); }
+@media (min-width: 720px) { .rules div { grid-template-columns: 11rem 1fr; gap: var(--space-5); } }
+.rules dt { font-weight: var(--weight-strong); }
+.rules dd { margin: 0; color: var(--color-muted); }
+
+.use { display: grid; grid-template-columns: 1fr; gap: var(--space-5); }
+@media (min-width: 720px) { .use { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-7); } }
+.code { margin: 0; padding: var(--space-4); background: var(--color-surface); border-radius: var(--radius); font-size: var(--text-sm); line-height: 1.7; overflow-x: auto; }
+.use p { margin: 0 0 var(--space-3); max-width: 46ch; }
+.end { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); align-items: center; }

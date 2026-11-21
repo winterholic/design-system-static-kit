@@ -18,13 +18,15 @@ export function makeContext(web, overrides = {}) {
   const tsconfig = ts.readConfigFile(join(web, 'tsconfig.json'), ts.sys.readFile).config ?? {};
   const webPkg = JSON.parse(readFileSync(join(web, 'package.json'), 'utf8'));
   const rootPkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-  const allowedPackages = new Set([...Object.keys(webPkg.dependencies ?? {}), ...Object.keys(webPkg.devDependencies ?? {}), ...Object.keys(rootPkg.devDependencies ?? {})]);
+  const allowedPackages = new Set([...Object.keys(webPkg.dependencies ?? {}), ...Object.keys(webPkg.devDependencies ?? {}), ...Object.keys(rootPkg.devDependencies ?? {}), 'server-only']);
   allowedPackages.delete(PKG);
   return {
     web, root,
     paths: tsconfig.compilerOptions?.paths ?? {},
     pathsBase: tsconfig.compilerOptions?.baseUrl ? resolve(web, tsconfig.compilerOptions.baseUrl) : web,
     allowedPackages,
+    // QA만 읽는 단일 근거 파일. 다른 docs/ 파일이나 저장소 외부 경로는 계속 거부한다.
+    allowedExternalDataFiles: new Set([resolve(root, 'docs/evidence/diagnosis-2.4.0.json')]),
     exportsMap: rootPkg.exports ?? {},
     ...overrides,
   };
@@ -75,6 +77,7 @@ export function judgeSpecifier(spec, fromFile, ctx) {
   for (const c of candidates) {
     const forms = [c, real(c)];
     for (const p of forms) {
+      if (ctx.allowedExternalDataFiles?.has(resolve(p))) continue;
       if (inside(p, join(root, 'src'))) return `Core 내부 파일을 직접 가리킨다: ${spec} → ${relative(root, p)}`;
       if (inside(p, join(web, 'public'))) return `public/ 사본을 가리킨다: ${spec}`;
       if (inside(p, join(web, '.next')) || inside(p, join(web, 'node_modules'))) return `빌드 산출물·node_modules 를 직접 가리킨다: ${spec}`;
