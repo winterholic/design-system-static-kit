@@ -12,7 +12,8 @@
         "2.1.0",
         "2.2.0",
         "2.3.0",
-        "2.4.0"
+        "2.4.0",
+        "2.5.0"
       ]
     },
     "name": {
@@ -1386,6 +1387,16 @@
           },
           "minItems": 2,
           "maxItems": 4
+        },
+        "ratio": {
+          "type": "string",
+          "enum": [
+            "even",
+            "copy",
+            "visual"
+          ],
+          "description": "글 칸과 시각 칸의 폭 비율(2.5.0). even은 기존(약 1:1), copy는 글 60:시각 40, visual은 글 40:시각 60. visual이 있는 split·product 히어로에서만 쓴다. 1000px 아래에서는 한 열로 접힌다.",
+          "x-since": "2.5.0"
         }
       },
       "required": [
@@ -1422,8 +1433,11 @@
           "enum": [
             "plain",
             "tint",
-            "inverse"
-          ]
+            "inverse",
+            "flat"
+          ],
+          "description": "구역 바탕. plain·tint·inverse는 기존 값이다. flat(2.5.0)은 면을 쓰지 않는 구역으로, 마케팅 페이지가 짝수 번째 구역에 자동으로 칠하는 옅은 띠에서 제외된다. 2.5.0에서는 명시한 plain도 자동으로 칠하지 않는다.",
+          "x-since": "2.5.0"
         },
         "align": {
           "type": "string",
@@ -1437,6 +1451,16 @@
           "minLength": 1,
           "maxLength": 30,
           "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "space": {
+          "type": "string",
+          "enum": [
+            "tight",
+            "normal",
+            "loose"
+          ],
+          "description": "최상위 구역의 위아래 간격 단계(2.5.0). normal은 기존 값, tight는 한 단계 촘촘하게, loose는 한 단계 넓게(밀도 토큰 사다리 안의 값이며 숫자는 받지 않는다). 페이지 직속 section에서만 쓴다.",
+          "x-since": "2.5.0"
         },
         "children": {
           "type": "array",
@@ -1682,8 +1706,12 @@
           "enum": [
             "even",
             "wide-start",
-            "wide-end"
-          ]
+            "wide-end",
+            "dominant-start",
+            "dominant-end"
+          ],
+          "description": "두 칸의 폭 비율. even 1:1, wide-* 3:2. dominant-start·dominant-end(2.5.0)는 약 7:3으로 앞 칸 또는 뒤 칸이 지배한다(컨테이너 1000px 이상에서만, 아래에서는 wide-*, 더 좁으면 한 열). 좁은 칸에는 읽히는 부품(prose·card·quote·media·properties·notice·metric·progress·list·actions·cta·tags·links·summary·buy-box·steps·faq·empty-state·divider)만 둘 수 있다.",
+          "x-since": "2.5.0"
         },
         "children": {
           "type": "array",
@@ -2985,6 +3013,14 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 40
+        },
+        "featured": {
+          "type": "string",
+          "enum": [
+            "yes"
+          ],
+          "description": "강조 칸(2.5.0). columns가 three·four인 grid의 첫 카드 하나만 두 칸 폭을 쓴다(자식 3개 이상). 마지막 줄에 한 칸만 남지 않게 열 수가 정해진다. plan.featured와 같은 이름이다.",
+          "x-since": "2.5.0"
         }
       },
       "required": [
@@ -3586,6 +3622,15 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 80
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "box",
+            "pull"
+          ],
+          "description": "인용 모양(2.5.0). box는 기존의 상자형 후기, pull은 상자 없이 큰 글자로 그리는 풀쿼트(기존 quote-l 글자 역할). pull은 페이지 직속 또는 section 직속에서만 쓴다.",
+          "x-since": "2.5.0"
         }
       },
       "required": [
@@ -4425,6 +4470,14 @@
             "grid",
             "type"
           ]
+        },
+        "bleed": {
+          "type": "string",
+          "enum": [
+            "yes"
+          ],
+          "description": "전폭 띠(2.5.0). 페이지 직속 media가 콘텐츠 열 바깥까지 이어지는 가로 띠가 된다. ratio는 16:9·21:9만, alt는 기존대로 필수다. 390px 이하에서는 콘텐츠 폭과 같다.",
+          "x-since": "2.5.0"
         }
       },
       "required": [

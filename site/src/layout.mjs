@@ -116,6 +116,58 @@ export function flowCSS(used = null) {
   return out.join('\n');
 }
 
+// ---------- 강조 칸(카탈로그 2.5.0, EX-2) ----------
+/** 강조 카드가 있는 격자의 폭 구간별 열 수. 강조 칸은 첫 칸이고 2칸을 쓰므로 n개 항목은 n+1칸이다. 열이 하나뿐인 구간은 1(강조 칸도 한 칸 폭)이다. */
+export function featuredColumns(n, cap) {
+  return FLOW.bands.map((_, i) => bestCols(n + 1, Math.min(cap, Math.min(i + 1, 4))));
+}
+/** 강조 칸이 첫 칸일 때 자동 배치가 만드는 실제 줄들. 줄마다 [차지한 칸 수]. 구멍(빈칸)과 한 칸만 남은 마지막 줄을 시험이 센다. */
+export function featuredRows(n, cols) {
+  const rows = []; let free = 0;
+  for (let i = 0; i < n; i++) {
+    const span = i === 0 && cols >= 2 ? 2 : 1;
+    if (free < span) { rows.push([]); free = cols; }
+    rows.at(-1).push(span); free -= span;
+  }
+  return rows;
+}
+/** 강조 격자의 구간별 고아 검사(시험이 쓴다): 마지막 줄에 한 칸만 남거나 강조 칸이 줄을 못 채우면 목록에 든다. */
+export function featuredOrphans(n, cap) {
+  return featuredColumns(n, cap).flatMap((cols, i) => {
+    const rows = featuredRows(n, cols), last = rows.at(-1), used = last.reduce((a, b) => a + b, 0);
+    const bad = [];
+    if (cols >= 2 && rows.length > 1 && last.length === 1 && last[0] === 1 && used === 1) bad.push('lone-last-cell');
+    if (cols >= 2 && rows[0].reduce((a, b) => a + b, 0) !== cols && rows.length > 1) bad.push('first-row-hole');
+    return bad.map(kind => ({band: FLOW.bands[i], cols, kind}));
+  });
+}
+/** 렌더된 본문에서 강조 격자의 규칙 키(`상한|항목 수|칸 최소폭|gap`)를 모은다. */
+export function featuredUsage(html) {
+  const used = new Set();
+  for (const [tag] of html.matchAll(/<[a-z][^>]*\sdata-flow-featured(?=[\s>])[^>]*>/g)) {
+    const n = tag.match(/data-n="(\d+)"/)?.[1], cap = tag.match(/data-cap="(\d)"/)?.[1], min = tag.match(/data-flow-min="(\d+)"/)?.[1], gap = tag.match(/data-flow-gap="(\d+)"/)?.[1];
+    if (n && cap && min && gap) used.add(`${cap}|${n}|${min}|${gap}`);
+  }
+  return used;
+}
+/** 강조 격자 CSS. 흐름(`flowCSS`)과 같은 컨테이너 쿼리 구조다: 열 수는 컨테이너 폭과 항목 수가 정하고, 강조 칸은 열이 둘 이상인 구간에서만 두 칸을 쓴다.
+ *  뷰포트 641px 미만에서는 한 열이다(`.kit-grid:has(>.kit-card .kit-card-foot){…!important}` 같은 모바일 한 열 규칙과 어긋나 암시적 열이 생기지 않게 한다). */
+export function featuredCSS(used) {
+  const out = ['/* featured grids (src/layout.mjs featuredColumns): the first card takes two cells; columns come from the container width and n+1 cells */',
+    ':has(>[data-flow-featured]){container:kit/inline-size}', '.kit-grid[data-flow-featured]{display:grid;grid-template-columns:minmax(0,1fr)}[data-flow-featured]>*{min-width:0}'];
+  for (const key of [...used].sort()) {
+    const [cap, n, min, gap] = key.split('|').map(Number), cols = featuredColumns(n, cap), bands = flowBreakpoints(min, gap);
+    const sel = `[data-flow-featured][data-n="${n}"][data-cap="${cap}"][data-flow-min="${min}"][data-flow-gap="${gap}"]`;
+    let prev = 1;
+    cols.forEach((c, i) => {
+      if (i === 0 || c === prev) return;
+      out.push(`@media(min-width:641px){@container kit (min-width:${bands[i]}px){${sel}{grid-template-columns:repeat(${c},minmax(0,1fr))}${sel}>[data-featured]{grid-column:span 2}}}`);
+      prev = c;
+    });
+  }
+  return out.join('\n');
+}
+
 /** 시각 요소(그림·차트·미디어 카드)가 있는 칸. 이런 칸만 2×2로 키운다: 글만 있는 칸을 키우면 위가 텅 빈다(진단 EMPTY_CELL). */
 export const isVisualCell = c => c.type === 'media' || c.type === 'chart' || (c.type === 'card' && !!(c.visual || c.variant === 'media'));
 

@@ -1,0 +1,2460 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.5.0",
+  "theme": "nocturne",
+  "palette": "midnight-sky",
+  "mode": "dark",
+  "pageType": "landing",
+  "axes": {
+    "shell": "topbar",
+    "typography": "geometric",
+    "density": "comfortable",
+    "radius": "round",
+    "control": "pill",
+    "elevation": "glow",
+    "motion": "subtle",
+    "icon": "duotone",
+    "ornament": "geometric",
+    "backdrop": "gradient",
+    "width": "wide",
+    "scale": "dramatic",
+    "weight": "bold",
+    "footer": "simple"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/00296b-003f88-00509d-fdc500-ffd500",
+      "discovery": "https://coolors.co/palettes/popular",
+      "observed": "2026-10-20",
+      "method": "rendered Coolors popular listing with like counts (Playwright Chromium, 73 tag pages, infinite-scroll steps), swatches and likes read from page text",
+      "evidence": "docs/evidence/coolors-popular-2026-10-20.json"
+    },
+    "original": [
+      "#00296B",
+      "#003F88",
+      "#00509D",
+      "#FDC500",
+      "#FFD500"
+    ],
+    "brandSeed": "#FDC500",
+    "accentSeed": "#00296B",
+    "action": "#FDC500",
+    "accent": "#00296B",
+    "adjusted": false,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "mode": "dark",
+      "name": "text/canvas",
+      "foreground": "#F4F3EB",
+      "background": "#0E192C",
+      "ratio": 15.79982772,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "text/surface",
+      "foreground": "#F4F3EB",
+      "background": "#212B3A",
+      "ratio": 12.82287419,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "text/soft",
+      "foreground": "#F4F3EB",
+      "background": "#2E3437",
+      "ratio": 11.34804397,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "text/sunken",
+      "foreground": "#F4F3EB",
+      "background": "#0B1422",
+      "ratio": 16.58752066,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "text/accentSoft",
+      "foreground": "#F4F3EB",
+      "background": "#1E2B3F",
+      "ratio": 12.81228646,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/canvas",
+      "foreground": "#B2B7B3",
+      "background": "#0E192C",
+      "ratio": 8.64029138,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "muted/surface",
+      "foreground": "#B2B7B3",
+      "background": "#212B3A",
+      "ratio": 7.01231502,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "muted/soft",
+      "foreground": "#B2B7B3",
+      "background": "#2E3437",
+      "ratio": 6.2057896,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "muted/sunken",
+      "foreground": "#B2B7B3",
+      "background": "#0B1422",
+      "ratio": 9.07104902,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "muted/accentSoft",
+      "foreground": "#B2B7B3",
+      "background": "#1E2B3F",
+      "ratio": 7.00652502,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "link/canvas",
+      "foreground": "#FDC500",
+      "background": "#0E192C",
+      "ratio": 11.02344073,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "link/surface",
+      "foreground": "#FDC500",
+      "background": "#212B3A",
+      "ratio": 8.94643892,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "link/soft",
+      "foreground": "#FDC500",
+      "background": "#2E3437",
+      "ratio": 7.91745912,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "link/sunken",
+      "foreground": "#FDC500",
+      "background": "#0B1422",
+      "ratio": 11.57300916,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "link/accentSoft",
+      "foreground": "#FDC500",
+      "background": "#1E2B3F",
+      "ratio": 8.93905193,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "success/canvas",
+      "foreground": "#6DA68E",
+      "background": "#0E192C",
+      "ratio": 6.27699724,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "success/surface",
+      "foreground": "#6DA68E",
+      "background": "#212B3A",
+      "ratio": 5.09430529,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "success/soft",
+      "foreground": "#6DA68E",
+      "background": "#2E3437",
+      "ratio": 4.50838085,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "success/sunken",
+      "foreground": "#6DA68E",
+      "background": "#0B1422",
+      "ratio": 6.58993398,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "success/accentSoft",
+      "foreground": "#6DA68E",
+      "background": "#1E2B3F",
+      "ratio": 5.09009897,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "warning/canvas",
+      "foreground": "#B89657",
+      "background": "#0E192C",
+      "ratio": 6.31292728,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "warning/surface",
+      "foreground": "#B89657",
+      "background": "#212B3A",
+      "ratio": 5.12346551,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "warning/soft",
+      "foreground": "#B89657",
+      "background": "#2E3437",
+      "ratio": 4.53418719,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "warning/sunken",
+      "foreground": "#B89657",
+      "background": "#0B1422",
+      "ratio": 6.62765529,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "warning/accentSoft",
+      "foreground": "#B89657",
+      "background": "#1E2B3F",
+      "ratio": 5.11923511,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "danger/canvas",
+      "foreground": "#D4868E",
+      "background": "#0E192C",
+      "ratio": 6.36469495,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "danger/surface",
+      "foreground": "#D4868E",
+      "background": "#212B3A",
+      "ratio": 5.16547927,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "danger/soft",
+      "foreground": "#D4868E",
+      "background": "#2E3437",
+      "ratio": 4.57136872,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "danger/sunken",
+      "foreground": "#D4868E",
+      "background": "#0B1422",
+      "ratio": 6.68200381,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "danger/accentSoft",
+      "foreground": "#D4868E",
+      "background": "#1E2B3F",
+      "ratio": 5.16121419,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "info/canvas",
+      "foreground": "#779BDC",
+      "background": "#0E192C",
+      "ratio": 6.2862586,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "info/surface",
+      "foreground": "#779BDC",
+      "background": "#212B3A",
+      "ratio": 5.10182165,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "info/soft",
+      "foreground": "#779BDC",
+      "background": "#2E3437",
+      "ratio": 4.51503271,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "info/sunken",
+      "foreground": "#779BDC",
+      "background": "#0B1422",
+      "ratio": 6.59965705,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "info/accentSoft",
+      "foreground": "#779BDC",
+      "background": "#1E2B3F",
+      "ratio": 5.09760912,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "accentInk/canvas",
+      "foreground": "#8A9DBB",
+      "background": "#0E192C",
+      "ratio": 6.38225375,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "accentInk/surface",
+      "foreground": "#8A9DBB",
+      "background": "#212B3A",
+      "ratio": 5.1797297,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "accentInk/soft",
+      "foreground": "#8A9DBB",
+      "background": "#2E3437",
+      "ratio": 4.58398013,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "accentInk/sunken",
+      "foreground": "#8A9DBB",
+      "background": "#0B1422",
+      "ratio": 6.700438,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "accentInk/accentSoft",
+      "foreground": "#8A9DBB",
+      "background": "#1E2B3F",
+      "ratio": 5.17545285,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "focus/canvas",
+      "foreground": "#FDC500",
+      "background": "#0E192C",
+      "ratio": 11.02344073,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "focus/surface",
+      "foreground": "#FDC500",
+      "background": "#212B3A",
+      "ratio": 8.94643892,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "focus/soft",
+      "foreground": "#FDC500",
+      "background": "#2E3437",
+      "ratio": 7.91745912,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "focus/sunken",
+      "foreground": "#FDC500",
+      "background": "#0B1422",
+      "ratio": 11.57300916,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "focus/accentSoft",
+      "foreground": "#FDC500",
+      "background": "#1E2B3F",
+      "ratio": 8.93905193,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "onActionHover/actionHover",
+      "foreground": "#10151C",
+      "background": "#FDCC1F",
+      "ratio": 12.07038761,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "onAction/action",
+      "foreground": "#10151C",
+      "background": "#FDC500",
+      "ratio": 11.48540289,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "onAccent/accent",
+      "foreground": "#FFFFFF",
+      "background": "#00296B",
+      "ratio": 13.73013312,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "rule/canvas",
+      "foreground": "#788798",
+      "background": "#0E192C",
+      "ratio": 4.78823297,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "rule/surface",
+      "foreground": "#788798",
+      "background": "#212B3A",
+      "ratio": 3.88604927,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "rule/sunken",
+      "foreground": "#788798",
+      "background": "#0B1422",
+      "ratio": 5.02694806,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart1/canvas",
+      "foreground": "#FDC500",
+      "background": "#0E192C",
+      "ratio": 11.02344073,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart1/surface",
+      "foreground": "#FDC500",
+      "background": "#212B3A",
+      "ratio": 8.94643892,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart2/canvas",
+      "foreground": "#59749F",
+      "background": "#0E192C",
+      "ratio": 3.70453628,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart2/surface",
+      "foreground": "#59749F",
+      "background": "#212B3A",
+      "ratio": 3.00653928,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart3/canvas",
+      "foreground": "#4A77AB",
+      "background": "#0E192C",
+      "ratio": 3.78358183,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart3/surface",
+      "foreground": "#4A77AB",
+      "background": "#212B3A",
+      "ratio": 3.07069131,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart4/canvas",
+      "foreground": "#3877B3",
+      "background": "#0E192C",
+      "ratio": 3.73321832,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart4/surface",
+      "foreground": "#3877B3",
+      "background": "#212B3A",
+      "ratio": 3.02981714,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart5/canvas",
+      "foreground": "#FFD500",
+      "background": "#0E192C",
+      "ratio": 12.36895367,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "chart5/surface",
+      "foreground": "#FFD500",
+      "background": "#212B3A",
+      "ratio": 10.03843457,
+      "minimum": 3
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@0",
+      "foreground": "#F4F3EB",
+      "background": "#0E192C",
+      "ratio": 15.79982772,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@0",
+      "foreground": "#B2B7B3",
+      "background": "#0E192C",
+      "ratio": 8.64029138,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@1",
+      "foreground": "#F4F3EB",
+      "background": "#111C2D",
+      "ratio": 15.36574159,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@1",
+      "foreground": "#B2B7B3",
+      "background": "#111C2D",
+      "ratio": 8.40290711,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@2",
+      "foreground": "#F4F3EB",
+      "background": "#141E2E",
+      "ratio": 15.03419433,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@2",
+      "foreground": "#B2B7B3",
+      "background": "#141E2E",
+      "ratio": 8.22159722,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@3",
+      "foreground": "#F4F3EB",
+      "background": "#18212F",
+      "ratio": 14.5414548,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@3",
+      "foreground": "#B2B7B3",
+      "background": "#18212F",
+      "ratio": 7.95213775,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@4",
+      "foreground": "#F4F3EB",
+      "background": "#1B2430",
+      "ratio": 14.06233237,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@4",
+      "foreground": "#B2B7B3",
+      "background": "#1B2430",
+      "ratio": 7.69012494,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@5",
+      "foreground": "#F4F3EB",
+      "background": "#1E2732",
+      "ratio": 13.55868032,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@5",
+      "foreground": "#B2B7B3",
+      "background": "#1E2732",
+      "ratio": 7.41469785,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@6",
+      "foreground": "#F4F3EB",
+      "background": "#212933",
+      "ratio": 13.19662298,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@6",
+      "foreground": "#B2B7B3",
+      "background": "#212933",
+      "ratio": 7.21670323,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@7",
+      "foreground": "#F4F3EB",
+      "background": "#242C34",
+      "ratio": 12.70579128,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@7",
+      "foreground": "#B2B7B3",
+      "background": "#242C34",
+      "ratio": 6.94828708,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@8",
+      "foreground": "#F4F3EB",
+      "background": "#282F35",
+      "ratio": 12.18578327,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@8",
+      "foreground": "#B2B7B3",
+      "background": "#282F35",
+      "ratio": 6.66391558,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@9",
+      "foreground": "#F4F3EB",
+      "background": "#2B3136",
+      "ratio": 11.82620777,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@9",
+      "foreground": "#B2B7B3",
+      "background": "#2B3136",
+      "ratio": 6.46727818,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washA@10",
+      "foreground": "#F4F3EB",
+      "background": "#2E3437",
+      "ratio": 11.34804397,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washA@10",
+      "foreground": "#B2B7B3",
+      "background": "#2E3437",
+      "ratio": 6.2057896,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@0",
+      "foreground": "#F4F3EB",
+      "background": "#2E3437",
+      "ratio": 11.34804397,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@0",
+      "foreground": "#B2B7B3",
+      "background": "#2E3437",
+      "ratio": 6.2057896,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@1",
+      "foreground": "#F4F3EB",
+      "background": "#2C3338",
+      "ratio": 11.51990213,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@1",
+      "foreground": "#B2B7B3",
+      "background": "#2C3338",
+      "ratio": 6.29977192,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@2",
+      "foreground": "#F4F3EB",
+      "background": "#2B3239",
+      "ratio": 11.6600827,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@2",
+      "foreground": "#B2B7B3",
+      "background": "#2B3239",
+      "ratio": 6.37643105,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@3",
+      "foreground": "#F4F3EB",
+      "background": "#293139",
+      "ratio": 11.84567481,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@3",
+      "foreground": "#B2B7B3",
+      "background": "#293139",
+      "ratio": 6.47792392,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@4",
+      "foreground": "#F4F3EB",
+      "background": "#28303A",
+      "ratio": 11.98555711,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@4",
+      "foreground": "#B2B7B3",
+      "background": "#28303A",
+      "ratio": 6.55441993,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@5",
+      "foreground": "#F4F3EB",
+      "background": "#26303B",
+      "ratio": 12.02952798,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@5",
+      "foreground": "#B2B7B3",
+      "background": "#26303B",
+      "ratio": 6.57846584,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@6",
+      "foreground": "#F4F3EB",
+      "background": "#242F3C",
+      "ratio": 12.19656834,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@6",
+      "foreground": "#B2B7B3",
+      "background": "#242F3C",
+      "ratio": 6.6698135,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@7",
+      "foreground": "#F4F3EB",
+      "background": "#232E3D",
+      "ratio": 12.3338804,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@7",
+      "foreground": "#B2B7B3",
+      "background": "#232E3D",
+      "ratio": 6.74490395,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@8",
+      "foreground": "#F4F3EB",
+      "background": "#212D3D",
+      "ratio": 12.51586833,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@8",
+      "foreground": "#B2B7B3",
+      "background": "#212D3D",
+      "ratio": 6.84442585,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@9",
+      "foreground": "#F4F3EB",
+      "background": "#202C3E",
+      "ratio": 12.6514742,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@9",
+      "foreground": "#B2B7B3",
+      "background": "#202C3E",
+      "ratio": 6.91858325,
+      "minimum": 4.5
+    },
+    {
+      "mode": "dark",
+      "name": "text/washB@10",
+      "foreground": "#F4F3EB",
+      "background": "#1E2B3F",
+      "ratio": 12.81228646,
+      "minimum": 7
+    },
+    {
+      "mode": "dark",
+      "name": "muted/washB@10",
+      "foreground": "#B2B7B3",
+      "background": "#1E2B3F",
+      "ratio": 7.00652502,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/canvas",
+      "foreground": "#2D2F25",
+      "background": "#FFFADE",
+      "ratio": 12.93355764,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/surface",
+      "foreground": "#2D2F25",
+      "background": "#FFFFFF",
+      "ratio": 13.59312987,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/soft",
+      "foreground": "#2D2F25",
+      "background": "#FFFBED",
+      "ratio": 13.12303868,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/sunken",
+      "foreground": "#2D2F25",
+      "background": "#F6F1D6",
+      "ratio": 11.95657706,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/accentSoft",
+      "foreground": "#2D2F25",
+      "background": "#E6EAF0",
+      "ratio": 11.257688,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/canvas",
+      "foreground": "#686B5F",
+      "background": "#FFFADE",
+      "ratio": 5.18054717,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/surface",
+      "foreground": "#686B5F",
+      "background": "#FFFFFF",
+      "ratio": 5.44473937,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/soft",
+      "foreground": "#686B5F",
+      "background": "#FFFBED",
+      "ratio": 5.25644395,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/sunken",
+      "foreground": "#686B5F",
+      "background": "#F6F1D6",
+      "ratio": 4.78921679,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/accentSoft",
+      "foreground": "#686B5F",
+      "background": "#E6EAF0",
+      "ratio": 4.5092762,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "link/canvas",
+      "foreground": "#816400",
+      "background": "#FFFADE",
+      "ratio": 5.3193462,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "link/surface",
+      "foreground": "#816400",
+      "background": "#FFFFFF",
+      "ratio": 5.59061673,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "link/soft",
+      "foreground": "#816400",
+      "background": "#FFFBED",
+      "ratio": 5.39727644,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "link/sunken",
+      "foreground": "#816400",
+      "background": "#F6F1D6",
+      "ratio": 4.91753116,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "link/accentSoft",
+      "foreground": "#816400",
+      "background": "#E6EAF0",
+      "ratio": 4.63009031,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FFFADE",
+      "ratio": 5.70031556,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.99101436,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#FFFBED",
+      "ratio": 5.78382712,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "success/sunken",
+      "foreground": "#18714C",
+      "background": "#F6F1D6",
+      "ratio": 5.26972269,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "success/accentSoft",
+      "foreground": "#18714C",
+      "background": "#E6EAF0",
+      "ratio": 4.96169544,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "warning/canvas",
+      "foreground": "#915E00",
+      "background": "#FFFADE",
+      "ratio": 5.2512145,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "warning/surface",
+      "foreground": "#915E00",
+      "background": "#FFFFFF",
+      "ratio": 5.51901051,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "warning/soft",
+      "foreground": "#915E00",
+      "background": "#FFFBED",
+      "ratio": 5.32814658,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "warning/sunken",
+      "foreground": "#915E00",
+      "background": "#F6F1D6",
+      "ratio": 4.85454602,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "warning/accentSoft",
+      "foreground": "#915E00",
+      "background": "#E6EAF0",
+      "ratio": 4.57078679,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FFFADE",
+      "ratio": 5.50690318,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.78773854,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#FFFBED",
+      "ratio": 5.58758119,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "danger/sunken",
+      "foreground": "#B83543",
+      "background": "#F6F1D6",
+      "ratio": 5.09092038,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "danger/accentSoft",
+      "foreground": "#B83543",
+      "background": "#E6EAF0",
+      "ratio": 4.79334454,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "info/canvas",
+      "foreground": "#2A63C9",
+      "background": "#FFFADE",
+      "ratio": 5.36174083,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "info/surface",
+      "foreground": "#2A63C9",
+      "background": "#FFFFFF",
+      "ratio": 5.63517335,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "info/soft",
+      "foreground": "#2A63C9",
+      "background": "#FFFBED",
+      "ratio": 5.44029216,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "info/sunken",
+      "foreground": "#2A63C9",
+      "background": "#F6F1D6",
+      "ratio": 4.95672337,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "info/accentSoft",
+      "foreground": "#2A63C9",
+      "background": "#E6EAF0",
+      "ratio": 4.66699164,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "accentInk/canvas",
+      "foreground": "#00296B",
+      "background": "#FFFADE",
+      "ratio": 13.06391316,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "accentInk/surface",
+      "foreground": "#00296B",
+      "background": "#FFFFFF",
+      "ratio": 13.73013312,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "accentInk/soft",
+      "foreground": "#00296B",
+      "background": "#FFFBED",
+      "ratio": 13.25530395,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "accentInk/sunken",
+      "foreground": "#00296B",
+      "background": "#F6F1D6",
+      "ratio": 12.07708573,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "accentInk/accentSoft",
+      "foreground": "#00296B",
+      "background": "#E6EAF0",
+      "ratio": 11.37115267,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "focus/canvas",
+      "foreground": "#A48000",
+      "background": "#FFFADE",
+      "ratio": 3.52637211,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "focus/surface",
+      "foreground": "#A48000",
+      "background": "#FFFFFF",
+      "ratio": 3.70620639,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "focus/soft",
+      "foreground": "#A48000",
+      "background": "#FFFBED",
+      "ratio": 3.57803466,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "focus/sunken",
+      "foreground": "#A48000",
+      "background": "#F6F1D6",
+      "ratio": 3.25999551,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "focus/accentSoft",
+      "foreground": "#A48000",
+      "background": "#E6EAF0",
+      "ratio": 3.06944138,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#725800",
+      "ratio": 6.74943639,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#816400",
+      "ratio": 5.59061673,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "onAccent/accent",
+      "foreground": "#FFFFFF",
+      "background": "#00296B",
+      "ratio": 13.73013312,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FFFADE",
+      "ratio": 3.74926726,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.94046853,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "rule/sunken",
+      "foreground": "#78818E",
+      "background": "#F6F1D6",
+      "ratio": 3.46605352,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart1/canvas",
+      "foreground": "#B18A00",
+      "background": "#FFFADE",
+      "ratio": 3.07172942,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart1/surface",
+      "foreground": "#B18A00",
+      "background": "#FFFFFF",
+      "ratio": 3.22837831,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart2/canvas",
+      "foreground": "#00296B",
+      "background": "#FFFADE",
+      "ratio": 13.06391316,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart2/surface",
+      "foreground": "#00296B",
+      "background": "#FFFFFF",
+      "ratio": 13.73013312,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart3/canvas",
+      "foreground": "#003F88",
+      "background": "#FFFADE",
+      "ratio": 9.6689376,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart3/surface",
+      "foreground": "#003F88",
+      "background": "#FFFFFF",
+      "ratio": 10.1620241,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart4/canvas",
+      "foreground": "#00509D",
+      "background": "#FFFADE",
+      "ratio": 7.5848656,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart4/surface",
+      "foreground": "#00509D",
+      "background": "#FFFFFF",
+      "ratio": 7.97167074,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart5/canvas",
+      "foreground": "#A88D00",
+      "background": "#FFFADE",
+      "ratio": 3.08591275,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "chart5/surface",
+      "foreground": "#A88D00",
+      "background": "#FFFFFF",
+      "ratio": 3.24328494,
+      "minimum": 3
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@0",
+      "foreground": "#2D2F25",
+      "background": "#FFFADE",
+      "ratio": 12.93355764,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@0",
+      "foreground": "#686B5F",
+      "background": "#FFFADE",
+      "ratio": 5.18054717,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@1",
+      "foreground": "#2D2F25",
+      "background": "#FFFAE0",
+      "ratio": 12.94752515,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@1",
+      "foreground": "#686B5F",
+      "background": "#FFFAE0",
+      "ratio": 5.18614186,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@2",
+      "foreground": "#2D2F25",
+      "background": "#FFFAE1",
+      "ratio": 12.95457085,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@2",
+      "foreground": "#686B5F",
+      "background": "#FFFAE1",
+      "ratio": 5.18896402,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@3",
+      "foreground": "#2D2F25",
+      "background": "#FFFAE2",
+      "ratio": 12.96165793,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@3",
+      "foreground": "#686B5F",
+      "background": "#FFFAE2",
+      "ratio": 5.19180276,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@4",
+      "foreground": "#2D2F25",
+      "background": "#FFFAE4",
+      "ratio": 12.97595654,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@4",
+      "foreground": "#686B5F",
+      "background": "#FFFAE4",
+      "ratio": 5.19753008,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@5",
+      "foreground": "#2D2F25",
+      "background": "#FFFBE6",
+      "ratio": 13.07109304,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@5",
+      "foreground": "#686B5F",
+      "background": "#FFFBE6",
+      "ratio": 5.23563708,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@6",
+      "foreground": "#2D2F25",
+      "background": "#FFFBE7",
+      "ratio": 13.0783881,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@6",
+      "foreground": "#686B5F",
+      "background": "#FFFBE7",
+      "ratio": 5.23855913,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@7",
+      "foreground": "#2D2F25",
+      "background": "#FFFBE9",
+      "ratio": 13.0931037,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@7",
+      "foreground": "#686B5F",
+      "background": "#FFFBE9",
+      "ratio": 5.24445347,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@8",
+      "foreground": "#2D2F25",
+      "background": "#FFFBEA",
+      "ratio": 13.10052437,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@8",
+      "foreground": "#686B5F",
+      "background": "#FFFBEA",
+      "ratio": 5.24742583,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@9",
+      "foreground": "#2D2F25",
+      "background": "#FFFBEC",
+      "ratio": 13.11549179,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@9",
+      "foreground": "#686B5F",
+      "background": "#FFFBEC",
+      "ratio": 5.25342104,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washA@10",
+      "foreground": "#2D2F25",
+      "background": "#FFFBED",
+      "ratio": 13.12303868,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washA@10",
+      "foreground": "#686B5F",
+      "background": "#FFFBED",
+      "ratio": 5.25644395,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@0",
+      "foreground": "#2D2F25",
+      "background": "#FFFBED",
+      "ratio": 13.12303868,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@0",
+      "foreground": "#686B5F",
+      "background": "#FFFBED",
+      "ratio": 5.25644395,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@1",
+      "foreground": "#2D2F25",
+      "background": "#FDF9ED",
+      "ratio": 12.91327076,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@1",
+      "foreground": "#686B5F",
+      "background": "#FDF9ED",
+      "ratio": 5.17242124,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@2",
+      "foreground": "#2D2F25",
+      "background": "#FAF8EE",
+      "ratio": 12.76871863,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@2",
+      "foreground": "#686B5F",
+      "background": "#FAF8EE",
+      "ratio": 5.11452077,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@3",
+      "foreground": "#2D2F25",
+      "background": "#F8F6EE",
+      "ratio": 12.56277575,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@3",
+      "foreground": "#686B5F",
+      "background": "#F8F6EE",
+      "ratio": 5.03203017,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@4",
+      "foreground": "#2D2F25",
+      "background": "#F5F4EE",
+      "ratio": 12.33568653,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@4",
+      "foreground": "#686B5F",
+      "background": "#F5F4EE",
+      "ratio": 4.9410694,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@5",
+      "foreground": "#2D2F25",
+      "background": "#F3F3EF",
+      "ratio": 12.21930015,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@5",
+      "foreground": "#686B5F",
+      "background": "#F3F3EF",
+      "ratio": 4.89445074,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@6",
+      "foreground": "#2D2F25",
+      "background": "#F0F1EF",
+      "ratio": 11.99663021,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@6",
+      "foreground": "#686B5F",
+      "background": "#F0F1EF",
+      "ratio": 4.80526011,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@7",
+      "foreground": "#2D2F25",
+      "background": "#EEEFEF",
+      "ratio": 11.799114,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@7",
+      "foreground": "#686B5F",
+      "background": "#EEEFEF",
+      "ratio": 4.72614483,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@8",
+      "foreground": "#2D2F25",
+      "background": "#EBEDEF",
+      "ratio": 11.58167497,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@8",
+      "foreground": "#686B5F",
+      "background": "#EBEDEF",
+      "ratio": 4.63904945,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@9",
+      "foreground": "#2D2F25",
+      "background": "#E9ECF0",
+      "ratio": 11.47076512,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@9",
+      "foreground": "#686B5F",
+      "background": "#E9ECF0",
+      "ratio": 4.59462442,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "text/washB@10",
+      "foreground": "#2D2F25",
+      "background": "#E6EAF0",
+      "ratio": 11.257688,
+      "minimum": 7
+    },
+    {
+      "mode": "light (inverse)",
+      "name": "muted/washB@10",
+      "foreground": "#686B5F",
+      "background": "#E6EAF0",
+      "ratio": 4.5092762,
+      "minimum": 4.5
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.5.0",
+    "name": "Soma 수면 기록",
+    "theme": "nocturne",
+    "palette": "midnight-sky",
+    "mode": "dark",
+    "pageType": "landing",
+    "shell": "topbar",
+    "typography": "geometric",
+    "density": "comfortable",
+    "radius": "round",
+    "control": "pill",
+    "elevation": "glow",
+    "motion": "subtle",
+    "icon": "duotone",
+    "ornament": "geometric",
+    "backdrop": "gradient",
+    "width": "wide",
+    "scale": "dramatic",
+    "weight": "bold",
+    "footer": "simple",
+    "chrome": {
+      "nav": [
+        {
+          "label": "기능",
+          "href": "#features"
+        },
+        {
+          "label": "후기",
+          "href": "#reviews"
+        }
+      ],
+      "action": {
+        "label": "다운로드",
+        "href": "#download"
+      },
+      "footerNote": "© 2026 Soma",
+      "footerLinks": [
+        {
+          "label": "이용약관",
+          "href": "#main"
+        },
+        {
+          "label": "개인정보",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "Soma 수면 기록",
+          "description": "밤을 기록하고 아침을 바꾸는 앱"
+        },
+        {
+          "type": "hero",
+          "variant": "product",
+          "eyebrow": "수면 기록 앱",
+          "title": "어젯밤의 나를 읽는 아침",
+          "body": "잠든 시간, 깊은 잠, 뒤척임을 한 장으로 보여 드립니다.",
+          "visual": "device",
+          "action": {
+            "label": "App Store",
+            "href": "#main",
+            "variant": "primary"
+          },
+          "secondaryAction": {
+            "label": "Google Play",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        },
+        {
+          "type": "section",
+          "title": "기능",
+          "anchor": "features",
+          "children": [
+            {
+              "type": "split",
+              "ratio": "even",
+              "align": "center",
+              "children": [
+                {
+                  "type": "media",
+                  "kind": "device",
+                  "ratio": "3:4",
+                  "alt": "수면 단계 그래프 화면"
+                },
+                {
+                  "type": "prose",
+                  "title": "수면 단계 그래프",
+                  "body": "얕은 잠, 깊은 잠, 렘수면을 시간순으로 보여 줍니다."
+                }
+              ]
+            },
+            {
+              "type": "split",
+              "ratio": "even",
+              "align": "center",
+              "reverse": "reverse",
+              "children": [
+                {
+                  "type": "media",
+                  "kind": "device",
+                  "ratio": "3:4",
+                  "alt": "알람 설정 화면"
+                },
+                {
+                  "type": "prose",
+                  "title": "가벼운 알람",
+                  "body": "얕은 잠일 때 30분 안에서 부드럽게 깨웁니다."
+                }
+              ]
+            },
+            {
+              "type": "split",
+              "ratio": "even",
+              "align": "center",
+              "children": [
+                {
+                  "type": "media",
+                  "kind": "device",
+                  "ratio": "3:4",
+                  "alt": "주간 리포트 화면"
+                },
+                {
+                  "type": "prose",
+                  "title": "주간 리포트",
+                  "body": "일주일의 패턴과 개선 팁을 월요일 아침에 보냅니다."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "후기",
+          "anchor": "reviews",
+          "children": [
+            {
+              "type": "quote",
+              "quote": "알람 없이도 개운하게 일어나는 날이 늘었어요.",
+              "author": "정하린",
+              "role": "App Store 리뷰"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "다운로드",
+          "anchor": "download",
+          "children": [
+            {
+              "type": "cta",
+              "title": "오늘 밤부터 기록해 보세요",
+              "body": "무료로 시작하고 언제든 그만둘 수 있습니다.",
+              "action": {
+                "label": "App Store",
+                "href": "#main",
+                "variant": "primary"
+              },
+              "secondaryAction": {
+                "label": "Google Play",
+                "href": "#main",
+                "variant": "secondary"
+              },
+              "tone": "inverse"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "design": {
+    "version": "1.3.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C15"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 320
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[1]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[2]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "quote",
+        "facts": {
+          "type": "quote",
+          "semantic": "quote",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C24",
+            "C25"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "testimonial",
+          "inset": "inset",
+          "textRole": "quote"
+        },
+        "sources": {
+          "role": "C24",
+          "inset": "C24",
+          "textRole": "C24"
+        },
+        "applied": [
+          "C24"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 5,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[4].children[0]",
+        "type": "cta",
+        "facts": {
+          "type": "cta",
+          "semantic": "cta",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 7,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "geometric",
+          "theme": "nocturne"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C33"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "next-action"
+        },
+        "sources": {
+          "role": "C33"
+        },
+        "applied": [
+          "C33"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[2].children[0].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[2].children[0].children[1]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[2].children[1].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[2].children[1].children[1]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      },
+      {
+        "path": "$.tree.children[2].children[2].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[2].children[2].children[1]",
+        "type": "prose",
+        "mode": "inherited",
+        "contracts": [
+          "type/measure",
+          "S02"
+        ],
+        "reason": "Prose already has a bounded reading measure and semantic type role."
+      }
+    ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "product",
+        "heroVisual": true,
+        "heroArt": true,
+        "afterHero": "plain-section-visible-edge",
+        "bentos": 0,
+        "duplicateVisualGroups": 1
+      },
+      "decisions": [
+        {
+          "rule": "P01",
+          "code": "PAGE_DUP_VISUAL",
+          "path": "$.tree",
+          "facts": {
+            "duplicateVisual": true
+          },
+          "places": [
+            "media",
+            "media",
+            "media"
+          ],
+          "kind": "device",
+          "motif": null,
+          "reason": "The hero picture is placement 0 of the six-scene rotation, so the first picture in the body takes the next scene instead of repeating it; art that cannot rotate (chart, device) is reported when it repeats."
+        }
+      ]
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "fed0305c1036c7863a9e5a3d11c40e67e6abafa67a26a0c9dbbfea9ea3f3293c",
+      "tokens.css": "cca1ca793447cbf116a0941dd275414d213402ca1fe5c4b0a59211addbbf6c3e",
+      "tokens.json": "e0784e95301377f61fe9543439d1bf61c5070ab6296946f3906b38a21c34ad94",
+      "blueprint.json": "1bc964d4577b040ed8acbe54be5bb168811cbe20c023663027762070ac5dd46f"
+    }
+  }
+}

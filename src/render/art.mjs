@@ -48,7 +48,7 @@ const kinds = {
       path('M' + w * .372 + ' ' + h * .23 + 'L' + w * .38 + ' ' + h * .25 + 'L' + w * .372 + ' ' + h * .27 + 'M' + w * .372 + ' ' + h * .73 + 'L' + w * .38 + ' ' + h * .75 + 'L' + w * .372 + ' ' + h * .77 + 'M' + w * .68 + ' ' + h * .48 + 'L' + w * .688 + ' ' + h * .5 + 'L' + w * .68 + ' ' + h * .52, 'a-line', ' stroke-width="2"'),
       node(w * .06, h * .38, nw, nh, 'a-5'), node(w * .38, h * .12, nw, nh, 'a-5'), node(w * .38, h * .64, nw, nh, 'a-5'), node(w * .69, h * .38, nw, nh, 'a-1', true)].join('');
   },
-  device: (w, h, o, v, id) => deviceMock(w, h, id ?? 'm0'),
+  device: (w, h, o, v, id, fit) => deviceMock(w, h, id ?? 'm0', fit),
   map: (w, h) => [rect(0, 0, w, h, 'a-6'), rect(w * .08, h * .12, w * .26, h * .28, 'a-bg', 4), rect(w * .42, h * .08, w * .2, h * .36, 'a-bg', 4), rect(w * .7, h * .14, w * .22, h * .24, 'a-bg', 4), rect(w * .1, h * .56, w * .3, h * .3, 'a-bg', 4), rect(w * .5, h * .58, w * .4, h * .28, 'a-bg', 4),
     path(`M0 ${h * .48}H${w}M${w * .38} 0V${h}M${w * .66} 0V${h}`, 'a-line', ' stroke-width="6" opacity=".6"'), path(`M${w * .5} ${h * .36}c-${w * .06} 0-${w * .06} -${h * .2} 0 -${h * .2}s${w * .06} ${h * .2} 0 ${h * .2}Z`, 'a-2'), circle(w * .5, h * .2, h * .05, 'a-5')].join(''),
   chart: (w, h, o, v, id) => chartMock(w, h, id ?? 'm0'),
@@ -59,7 +59,7 @@ const kinds = {
 /** `opts.motif` swaps the generic landscape of a photo slot for a subject illustration; `opts.id` makes gradient ids unique per page. */
 export function mediaArt(kind, ratio, ornament, label, variant = 0, opts = {}) {
   const [w, h] = SIZE[ratio];
-  const inner = (kind === 'photo' && opts.motif && motifArt(opts.motif, w, h, opts.id ?? 'm0', variant)) || kinds[kind](w, h, ornament, variant, opts.id);
+  const inner = (kind === 'photo' && opts.motif && motifArt(opts.motif, w, h, opts.id ?? 'm0', variant)) || kinds[kind](w, h, ornament, variant, opts.id, opts.fit);
   return `<svg class="kit-art" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${label}" focusable="false">${inner}</svg>`;
 }
 

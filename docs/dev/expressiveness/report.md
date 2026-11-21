@@ -559,14 +559,15 @@ B(카탈로그)가 가장 많고 C(렌더러)가 그다음이다. A(작성자)�
 | 요금제 추천 비중 | 스키마가 아니라 렌더러 수정(EX-2 안의 별도 결정) |
 | 필수 필드 완화(`hero.body` 등) | 확장이 아니라 계약 완화. 5.3절에 근거를 두었고 별도 결정이 필요하다 |
 
-## 7. 하지 않은 것과 검증 못함
+## 7. 2.5.0 통합 결과와 남은 확인 범위
 
-- `src/**`, 기존 테스트, 레거시 웹 파일, 다른 `dsk-wt-*` worktree는 건드리지 않았다. `npm test`와 `npm run verify`는 실행하지 않았다(`미실행`: `src`를 바꾸지 않았고 `node_modules`는 메인 저장소 것을 symlink로 썼다).
-- 390px 캡처는 01·12·13만 눈으로 봤다. 나머지는 가로 넘침 0만 측정했다(전 사례 390·1280 모두 `none`).
-- X05·X08은 반사실에서 판정하지 못했다(5.1절). X03은 prose 외 부품의 줄 길이를 측정하지 않았다.
-- 제안은 구현·시험하지 않았다. 해시 영향과 영향 파일은 코드 읽기와 `styles/index.mjs`·`spacing.mjs`의 구조에서 추론한 것이며 `확인 필요` 표시 외에도 구현 단계에서 `tests/page-rules.test.mjs`, `tests/layout-rev2.test.mjs`로 실제 바이트 동일성을 확인해야 한다.
-- 사진이 일러스트라 이미지 중심 사례의 시각 품질 평가는 제한적이다. 모든 판정은 한 평가자(작성자)의 직접 확인이며 눈가림 평가가 아니다.
-- WCAG 2.5.8·2.5.5의 수치는 기억에 의존했다(`확인 필요`).
+- 초안의 변경을 보존하고 main `ce049dd2e`의 서비스 계층과 통합했다. `kit migrate`는 `--to 2.5.0`을 받을 때만 명시적으로 올리며, 새 문서·템플릿·기본 migrate는 2.4.0이다. 근거와 버전 경계는 [ADR 0010](../../adr/0010-expression-grammar-2-5.md)에 기록했다.
+- EX-1~EX-5 필드·enum·검증·서비스 진단·`blueprintSchema`, `getSchema`, `getComponentSpec`, 카탈로그 조회 노출을 같은 정의로 맞췄다. 임의 HTML·CSS·className 경로는 추가하지 않았다.
+- `docs/evidence/expression/legacy-2-4-hashes.json`의 100개 기준(85 템플릿 + 15 사례)과 대조했다. 2.5.0에서 기본 템플릿 85개는 오류 없이 검증·컴파일되며, 15개 사례는 모두 검증·컴파일·출력 check를 통과했다. 사례별 경고 2건, 오류 0건은 `cases-2-5-results.json`에 보존한다.
+- 검증 실행: `node --test tests/expression-2-5.test.mjs`는 20/20 통과, `npm run verify`는 334/334 테스트와 3,318개 생성 파일 byte-check 통과, `node docs/evidence/expression/verify-cases.mjs`는 15/15 통과했다. 서비스 계약 시험도 전체 검증에 포함했다. Playwright 명령은 시도했으나 nested worker sandbox의 Chromium 실행이 `bootstrap_check_in ... Permission denied (1100)`로 중단됐다. UI 전후 확인은 구성된 브라우저 MCP로 따로 수행했다.
+- R1~R4 전후 시각 증거는 `docs/evidence/expression/visual/before/`와 `visual/after/`에 둔다. before는 2.4.0 전체 페이지 캡처, after는 대표 사례 05·07·11·13의 390×900 및 1280×900 화면과 문제 부위 크롭이다. R1은 히어로와 다음 구역 사이 간격, R2는 plain 섹션의 불필요한 교차 배경, R3는 3:4 device 칩 잘림/폭, R4는 showcase 주 이미지 비율을 개선했다. 모든 화면을 모든 폭에서 눈으로 본 것은 아니며, 캡처는 단일 headless Chromium 환경이다.
+- X03·X06·X07은 측정 조건을 ADR 0010에 제한해 기록하고 유지했다. X03의 prose 외 카드·목록 줄 길이, X06의 긴 한글·다른 셸/브라우저, X07의 다른 부품·패딩·플랫폼은 미확인이다. X05·X08·X10과 사례의 사진은 이번 시각 검증 대상이 아니며, 일러스트 이미지로 실제 사진의 시각 품질을 보증하지 않는다.
+- 직접 판정은 단일 평가자의 관찰이며 눈가림 평가가 아니다. 전체 사례의 모든 조합·기기·브라우저를 보증하지 않는다.
 
 ## 8. 재현
 
@@ -577,6 +578,11 @@ node probe.mjs                     # DOM 측정
 node negative-probes.mjs           # 검증기 부정 탐침
 node counterfactual.mjs && node counterfactual2.mjs   # /tmp/expr/nb 필요(아래)
 node build-report.mjs              # report.md 재생성
+cd ../../..
+node --test tests/expression-2-5.test.mjs
+npm run verify
+node docs/evidence/expression/verify-cases.mjs
+PW_PORT=41937 npx playwright test e2e/expression-2-5.spec.mjs --project=chromium
 ```
 
 반사실 실험은 `src`를 `/tmp/expr/nb/src`로 복사하고 `src/catalog/axes.mjs`의 `axisBans`를 `[]`로 바꾼 사본을 쓴다. `node_modules`는 메인 저장소의 것을 worktree에 symlink했고 git은 무시한다.

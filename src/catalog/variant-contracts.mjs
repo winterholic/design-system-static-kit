@@ -103,3 +103,54 @@ export function assessOption({before, after, slotId, optionId, templateId = null
   }
   return findings;
 }
+
+/**
+ * 직접 작성한 Blueprint에 적용하는 계약(카탈로그 2.5.0, ADR 0010). 변형 계약(V01~V06)은 "적용 전후 트리"를 비교하므로 템플릿 조립 경로에만 닿았고
+ * 사람·AI가 쓴 Blueprint에는 하한이 없었다(표현력 실험 R5). 정적 Blueprint에서 다시 물을 수 있는 것만 옮긴다.
+ *
+ * 등급은 보고서 5.2절 분류를 따른다. 데이터 보존(V06)은 오류이고, 측정된 품질 결함(V03·V04)은 경고, 취향(V01·V02)은 진단(info)이다.
+ * V05(렌더 지문)는 추천 품질 메타라 정적 Blueprint에 의미가 없고, V02는 "카드의 75%를 바꾸는가"가 아니라 "한 격자의 카드 모양이 섞였는가"로만 옮겨진다.
+ * 경고는 거부하지 않는다: 의도한 선택일 수 있고, 출력은 그대로다.
+ */
+export const DIRECT_CONTRACTS = Object.freeze([
+  {id: 'V06', severity: 'error', via: 'VARIANT_REQUIRES', note: '히어로 수치(facts)는 split·product 히어로에 둘 수 없다. 이미 검증기가 거부한다(hero.facts). 2.5.0은 메시지에 계약 번호를 단다.'},
+  {id: 'V03', severity: 'warning', code: 'CONTRACT_V03', note: '지표 4개 이하만 든 격자가 열이 모자라 두 줄로 꺾인다.'},
+  {id: 'V04', severity: 'warning', code: 'CONTRACT_V04', note: '가운데 정렬 머리말 바로 아래 본문이 왼쪽 정렬의 글(prose·list·faq·steps)이다.'},
+  {id: 'V01', severity: 'info', code: 'CONTRACT_V01', note: 'split·product 히어로에 visual이 없어 컴파일러가 centered로 그린다(P02).'},
+  {id: 'V02', severity: 'info', code: 'CONTRACT_V02', note: '한 격자의 카드 variant가 섞여 있다(한 모양이 75% 미만).'},
+].map(Object.freeze));
+
+/** 가운데 머리말 아래에서 왼쪽 정렬로 읽히는 글 부품. 카드·지표 격자는 상자라 정렬선이 둘로 갈리지 않는다. */
+const TEXT_BODY = new Set(['prose', 'list', 'faq', 'steps']);
+
+/** 트리 전체를 훑어 [{id, severity, code, path, message}]를 돌려준다. 오류 등급은 여기서 내지 않는다(V06은 노드 검사가 이미 낸다). */
+export function assessBlueprintContracts(root) {
+  const out = [], push = (id, path, message) => { const c = DIRECT_CONTRACTS.find(x => x.id === id); out.push({id, severity: c.severity, code: c.code, path, message}); };
+  const A = Array.isArray, plain = x => x !== null && typeof x === 'object' && !A(x);
+  const kids = n => (plain(n) && A(n.children) ? n.children.filter(plain) : []);
+  (function walk(n, path) {
+    if (!plain(n)) return;
+    if (n.type === 'hero' && ['split', 'product'].includes(n.variant) && !n.visual) push('V01', path, `${n.variant} 히어로에 visual이 없어 centered 텍스트형으로 그려집니다. 의도한 모양이면 variant를 centered·statement로 선언하세요.`);
+    if (n.type === 'grid' && A(n.children) && n.children.length >= 2 && n.children.length <= 4 && n.children.every(c => plain(c) && c.type === 'metric') && COLS[n.columns] < n.children.length)
+      push('V03', path, `지표 ${n.children.length}개가 ${COLS[n.columns]}열이라 ${Math.ceil(n.children.length / COLS[n.columns])}줄로 꺾입니다. 4개 이하의 핵심 지표는 한 줄에 읽히게 columns를 ${n.children.length === 2 ? 'two' : n.children.length === 3 ? 'three' : 'four'}로 하세요.`);
+    if (n.type === 'grid' && A(n.children)) {
+      const cards = n.children.filter(c => plain(c) && c.type === 'card');
+      if (cards.length >= 3) {
+        const shares = {}; for (const c of cards) shares[c.variant ?? 'basic'] = (shares[c.variant ?? 'basic'] ?? 0) + 1;
+        if (Math.max(...Object.values(shares)) / cards.length < 0.75) push('V02', path, `카드 ${cards.length}개의 variant가 ${Object.keys(shares).join('·')}로 섞여 있습니다. 한 격자의 카드는 한 모양이 읽기 쉽습니다.`);
+      }
+    }
+    kids(n).forEach((c, i) => walk(c, `${path}.children[${n.children.indexOf(c)}]`));
+  })(root, '$.tree');
+  // V04: 가운데 머리말 아래 본문이 글이면 정렬선이 둘이다. 히어로·상태 화면 바로 위에서 접히는 페이지 제목은 보이지 않으므로 제외한다(렌더러 leadOf).
+  const top = kids(root);
+  top.forEach(n => {
+    const at = `$.tree.children[${root.children.indexOf(n)}]`;
+    if (n.type === 'section' && n.align === 'center') { const first = kids(n)[0]; if (first && TEXT_BODY.has(first.type)) push('V04', at, `머리말은 가운데인데 첫 본문(${first.type})은 왼쪽 정렬로 읽힙니다. 섹션 align을 start로 하거나 본문을 가운데로 읽히는 부품(logo-cloud·empty-state)으로 하세요.`); }
+    if (n.type === 'page-header' && n.align === 'center') {
+      const next = top[top.indexOf(n) + 1];
+      if (next && !['hero', 'empty-state'].includes(next.type) && (TEXT_BODY.has(next.type) || (next.type === 'section' && next.align !== 'center' && TEXT_BODY.has(kids(next)[0]?.type)))) push('V04', at, `페이지 제목은 가운데인데 첫 본문(${next.type})은 왼쪽 정렬로 읽힙니다.`);
+    }
+  });
+  return out;
+}

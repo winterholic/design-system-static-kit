@@ -13,6 +13,8 @@
 import {themes, palettes, axes, styleAxes, templates, CATALOG_VERSION, composeBlueprint, repairAxes, navConflicts, applyLayoutChecked, layoutSlots, layoutSlotIds, migrateBlueprint} from '../catalog.mjs';
 import {assessOption} from '../catalog/variant-contracts.mjs';
 import {validateBlueprint} from '../validate.mjs';
+// 검증기 오류 코드별 해결 방법(hint) 표는 서비스 계층의 한 모듈이 소유한다(ADR 0009, 결정 D1).
+import {withHint} from '../service/errors.mjs';
 import {contentFingerprint, contentDiff} from './fingerprint.mjs';
 
 // ---------------------------------------------------------------- 공통 도구
@@ -35,53 +37,6 @@ export function deepEqual(a, b) {
 
 /** 구조화 오류. 모든 오류는 코드·경로·메시지·해결 방법을 가진다. */
 const err = (code, path, message, hint) => ({code, path, message, hint});
-
-/** 검증기 오류 코드별 해결 방법. 검증기는 값을 고치지 않으므로 어떻게 고칠지는 이 표가 안내한다. */
-const HINTS = {
-  UNKNOWN_KEY: '카탈로그에 없는 속성입니다. 부품 스키마(blueprintSchema())의 필드만 쓸 수 있고 임의 CSS·HTML 속성은 지원하지 않습니다.',
-  REQUIRED: '필수 속성을 채우세요. 부품별 필수 필드는 blueprintSchema()에 있습니다.',
-  ENUM: '메시지에 적힌 허용값 중 하나를 고르세요.',
-  STRING: '글자 수 범위와 제어 문자 금지를 지켜 다시 쓰세요. 비울 수 없는 필드입니다.',
-  NUMBER: '허용 범위의 숫자로 고치세요.',
-  PATTERN: '형식(소문자·숫자·하이픈 등)에 맞게 고치세요.',
-  ARRAY_LENGTH: '항목 수를 허용 범위로 맞추세요(insertNode·removeNode).',
-  CHILD_TYPE: '그 부모에 넣을 수 없는 부품입니다. 허용 자식은 nodeSpecs[부모].children에 있습니다.',
-  NODE_TYPE: 'nodeTypes에 있는 부품 type만 쓸 수 있습니다.',
-  DEPTH: '중첩을 줄이세요(최대 깊이는 limits.depth).',
-  NODE_LIMIT: '노드를 줄이세요(최대 limits.nodes).',
-  SIZE: '문서가 너무 큽니다. 내용을 줄이세요(limits.bytes).',
-  THEME_FORBID: '테마가 금지한 값입니다. 허용되는 값을 고르거나 다른 테마를 쓰세요. setTheme의 axes:"theme"는 테마 기본값을 씁니다.',
-  AXIS_BAN: '메시지의 대안 값으로 바꾸거나, 연산에 repair:"auto"를 주어 대안 값을 적용하게 하세요.',
-  NAV_COUNT: '내비 항목을 줄이거나(removeNode) 더 많은 항목을 받는 셸을 고르세요(navLimits). setTheme은 navPolicy:"fit"으로 셸을 대신 고릅니다.',
-  NAV_MEGA: '드롭다운 메뉴(mega)는 topbar·stacked·centered·editorial·masthead 셸에서 최대 2개입니다. 셸을 바꾸거나 mega를 줄이세요.',
-  NAV_GROUP: '그룹 라벨은 sidebar·split 셸에서만 보입니다. 그 셸을 쓰거나 group을 정리하세요.',
-  NAV_ICON: 'rail·dock 셸은 모든 내비 항목에 icon이 필요합니다. icon을 채우거나 다른 셸을 쓰세요.',
-  FOOTER_LINKS: 'columns 푸터는 chrome.footerLinks가 1개 이상 필요합니다.',
-  PAGE_HEADER: '첫 노드는 page-header 하나여야 합니다. 그 노드를 옮기거나 지우지 마세요.',
-  PAGE_REQUIRE: '이 페이지 유형이 요구하는 부품을 추가하세요(insertNode). pageTypes[유형].require에 목록이 있습니다.',
-  PAGE_FORBID: '이 페이지 유형이 금지한 부품입니다. 지우거나 다른 페이지 유형의 문서를 쓰세요.',
-  PAGE_ALLOW: '이 페이지 유형이 허용하지 않는 최상위 부품입니다.',
-  PAGE_MAX: '최상위 노드를 줄이세요.',
-  PAGE_SECOND: '두 번째 노드가 페이지 유형의 요구와 다릅니다.',
-  PAGE_SHELL: '허용된 셸 중 하나를 고르세요.',
-  PAGE_WIDTH: '허용된 폭 중 하나를 고르세요.',
-  SINGLE_HERO: '히어로는 하나만 둘 수 있습니다.',
-  HERO_POSITION: '히어로는 page-header 바로 다음 위치에만 둘 수 있습니다.',
-  HERO_VISUAL: 'visual은 split·product 히어로에서만 씁니다. variant를 바꾸거나 visual을 지우세요.',
-  VARIANT_REQUIRES: '변형 조건을 맞추세요. 메시지의 필드를 함께 쓰거나 함께 지워야 합니다.',
-  LINK_LABEL: '링크·버튼 이름을 목적지를 설명하는 글로 바꾸세요.',
-  URL: 'HTTPS 주소, #main, 같은 페이지의 앵커만 쓸 수 있습니다.',
-  ANCHOR_MISSING: '그 앵커를 가진 section을 만들거나 링크를 고치세요.',
-  ANCHOR_DUPLICATE: 'section.anchor를 페이지에서 유일하게 만드세요.',
-  DUPLICATE_ID: '폼 필드 id를 페이지에서 유일하게 만드세요.',
-  PRIMARY_ACTION: '한 액션 그룹에는 주(primary) 액션이 하나만 있어야 합니다.',
-  SURFACE_NEST: '색을 입힌 섹션 안에 색 섹션을 넣지 마세요. 안쪽 섹션의 surface를 plain으로 하세요.',
-  SECTION_DEPTH: '섹션은 두 단계까지만 중첩합니다.',
-  CATALOG_VERSION: '지원하는 catalogVersion으로 바꾸거나 importBlueprint에 upgrade:true를 주세요.',
-  VERSION: '1.0 문서는 importBlueprint로 들여오면 변환됩니다.',
-};
-const DEFAULT_HINT = '메시지를 읽고 카탈로그가 허용하는 값으로 고치세요(npm run kit -- validate로 같은 오류를 재현할 수 있습니다).';
-const withHint = e => ({code: e.code, path: e.path, message: e.message, hint: e.hint ?? HINTS[e.code] ?? DEFAULT_HINT});
 
 /** JSON 경로 조각 → 문자열: ['tree','children',1] → "$.tree.children[1]". */
 export const pathString = segments => '$' + segments.map(s => (typeof s === 'number' ? `[${s}]` : '.' + s)).join('');

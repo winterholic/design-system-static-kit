@@ -1,4 +1,5 @@
 import {iconNames} from './icons.mjs';
+import {since, DOMINANT_MIN, NARROW_CELL_OK, SECTION_SPACES} from './expression.mjs';
 
 // ---- schema builders (JSON-Schema-compatible subset understood by src/validate.mjs) ----
 export const str = (max = 160, min = 1) => ({type: 'string', minLength: min, maxLength: max});
@@ -39,13 +40,13 @@ export const nodeSpecs = {
   page: {label: '페이지', group: 'structure', fields: {}, children: PAGE_CHILDREN, min: 2, max: 24, example: null},
   'page-header': {label: '페이지 제목', group: 'structure', fields: {eyebrow: str(60), title: str(160), description: str(500), align: en('start', 'center'), actions: arr(action, 1, 2), meta: arr(str(40), 1, 4), avatar: str(40), stats: arr(obj({label: str(30), value: str(24)}), 2, 4)}, optional: ['eyebrow', 'description', 'align', 'actions', 'meta', 'avatar', 'stats'],
     example: {type: 'page-header', title: '페이지 제목', description: '한 문장으로 이 화면의 목적을 설명합니다.'}},
-  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs), facts: arr(obj({value: str(24), label: str(40)}), 2, 4)}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif', 'facts'],
+  hero: {label: '히어로', group: 'structure', fields: {variant: en('statement', 'split', 'centered', 'cover', 'product'), eyebrow: str(60), title: str(160), body: str(700), action, secondaryAction: action, visual: en('ornament', 'device', 'chart', 'photo', 'video'), motif: en(...motifs), facts: arr(obj({value: str(24), label: str(40)}), 2, 4), ratio: since(en('even', 'copy', 'visual'), '글 칸과 시각 칸의 폭 비율(2.5.0). even은 기존(약 1:1), copy는 글 60:시각 40, visual은 글 40:시각 60. visual이 있는 split·product 히어로에서만 쓴다. 1000px 아래에서는 한 열로 접힌다.')}, optional: ['eyebrow', 'action', 'secondaryAction', 'visual', 'motif', 'facts', 'ratio'],
     example: {type: 'hero', variant: 'statement', title: '핵심 약속 한 줄', body: '이 서비스가 누구에게 어떤 변화를 주는지 두 문장으로.'}},
-  section: {label: '섹션', group: 'layout', fields: {eyebrow: str(60), title: str(100), description: str(240), surface: en('plain', 'tint', 'inverse'), align: en('start', 'center'), anchor: {...str(30), pattern: '^[a-z][a-z0-9-]*$'}}, optional: ['eyebrow', 'description', 'surface', 'align', 'anchor'], children: without(BLOCKS, 'hero'), min: 1, max: 12,
+  section: {label: '섹션', group: 'layout', fields: {eyebrow: str(60), title: str(100), description: str(240), surface: since(en('plain', 'tint', 'inverse', 'flat'), '구역 바탕. plain·tint·inverse는 기존 값이다. flat(2.5.0)은 면을 쓰지 않는 구역으로, 마케팅 페이지가 짝수 번째 구역에 자동으로 칠하는 옅은 띠에서 제외된다. 2.5.0에서는 명시한 plain도 자동으로 칠하지 않는다.'), align: en('start', 'center'), anchor: {...str(30), pattern: '^[a-z][a-z0-9-]*$'}, space: since(en(...SECTION_SPACES), '최상위 구역의 위아래 간격 단계(2.5.0). normal은 기존 값, tight는 한 단계 촘촘하게, loose는 한 단계 넓게(밀도 토큰 사다리 안의 값이며 숫자는 받지 않는다). 페이지 직속 section에서만 쓴다.')}, optional: ['eyebrow', 'description', 'surface', 'align', 'anchor', 'space'], children: without(BLOCKS, 'hero'), min: 1, max: 12,
     example: {type: 'section', title: '섹션 제목', children: [{type: 'prose', title: '본문', body: '섹션 안의 본문입니다.'}]}},
   grid: {label: '그리드', group: 'layout', fields: {columns: en('two', 'three', 'four')}, children: ['card', 'metric', 'list', 'notice', 'quote', 'chart', 'progress', 'media', 'properties'], min: 2, max: 12,
     example: {type: 'grid', columns: 'two', children: [{type: 'metric', label: '지표 A', value: '12'}, {type: 'metric', label: '지표 B', value: '34'}]}},
-  split: {label: '2분할', group: 'layout', fields: {reverse: en('normal', 'reverse'), align: en('start', 'center'), ratio: en('even', 'wide-start', 'wide-end')}, optional: ['reverse', 'align', 'ratio'],
+  split: {label: '2분할', group: 'layout', fields: {reverse: en('normal', 'reverse'), align: en('start', 'center'), ratio: since(en('even', 'wide-start', 'wide-end', 'dominant-start', 'dominant-end'), '두 칸의 폭 비율. even 1:1, wide-* 3:2. dominant-start·dominant-end(2.5.0)는 약 7:3으로 앞 칸 또는 뒤 칸이 지배한다(컨테이너 ' + DOMINANT_MIN + 'px 이상에서만, 아래에서는 wide-*, 더 좁으면 한 열). 좁은 칸에는 읽히는 부품(' + NARROW_CELL_OK.join('·') + ')만 둘 수 있다.')}, optional: ['reverse', 'align', 'ratio'],
     children: without(BLOCKS, 'section', 'split', 'aside', 'bento', 'kanban', 'master-detail', 'calendar', 'toc'), min: 2, max: 2,
     example: {type: 'split', children: [{type: 'prose', title: '설명', body: '왼쪽 설명입니다.'}, {type: 'media', kind: 'photo', ratio: '4:3', alt: '예시 이미지'}]}},
   aside: {label: '본문+보조 영역', group: 'layout', fields: {side: en('start', 'end'), sticky: en('yes', 'no'), size: en('narrow', 'wide'), label: str(60)}, optional: ['sticky', 'size'],
@@ -72,7 +73,7 @@ export const nodeSpecs = {
     example: {type: 'chat', title: '팀 대화', messages: [{from: 'them', name: '다선', text: '시안 확인했어요.'}, {from: 'me', name: '나', text: '고마워요, 반영할게요.'}]}},
   calendar: {label: '월간 달력', group: 'data', fields: {title: str(100), year: int(2000, 2100), month: int(1, 12), today: int(1, 31), events: arr(obj({day: int(1, 31), title: str(40), time: str(16), tone: en('brand', 'accent', 'success', 'warning')}, ['day', 'title']), 0, 8)}, optional: ['today'],
     example: {type: 'calendar', title: '이번 달 일정', year: 2026, month: 10, events: [{day: 18, title: '디자인 리뷰'}]}},
-  card: {label: '카드', group: 'content', fields: {title: str(100), body: str(500), meta: str(80), action, variant: en('basic', 'outline', 'filled', 'media', 'horizontal', 'link'), icon: iconEnum, badge: str(24), visual: en(...mediaKinds), ratio: en(...ratios), motif: en(...motifs), price: str(24), listPrice: str(24), rating: str(4), reviews: str(16), author: str(40)}, optional: ['meta', 'action', 'variant', 'icon', 'badge', 'visual', 'ratio', 'motif', 'price', 'listPrice', 'rating', 'reviews', 'author'],
+  card: {label: '카드', group: 'content', fields: {title: str(100), body: str(500), meta: str(80), action, variant: en('basic', 'outline', 'filled', 'media', 'horizontal', 'link'), icon: iconEnum, badge: str(24), visual: en(...mediaKinds), ratio: en(...ratios), motif: en(...motifs), price: str(24), listPrice: str(24), rating: str(4), reviews: str(16), author: str(40), featured: since(en('yes'), '강조 칸(2.5.0). columns가 three·four인 grid의 첫 카드 하나만 두 칸 폭을 쓴다(자식 3개 이상). 마지막 줄에 한 칸만 남지 않게 열 수가 정해진다. plan.featured와 같은 이름이다.')}, optional: ['meta', 'action', 'variant', 'icon', 'badge', 'visual', 'ratio', 'motif', 'price', 'listPrice', 'rating', 'reviews', 'author', 'featured'],
     example: {type: 'card', title: '카드 제목', body: '카드가 전달할 핵심 한두 문장입니다.'}},
   metric: {label: '지표', group: 'data', fields: {label: str(80), value: str(40), detail: str(160), trend: en('up', 'down', 'flat'), delta: str(30)}, optional: ['detail', 'trend', 'delta'],
     example: {type: 'metric', label: '완료한 작업', value: '84', detail: '지난주보다 12개 더', trend: 'up', delta: '+12'}},
@@ -90,7 +91,7 @@ export const nodeSpecs = {
     example: {type: 'actions', items: [{label: '시작하기', href: '#main', variant: 'primary'}]}},
   faq: {label: '자주 묻는 질문', group: 'content', fields: {title: str(100), layout: en('stack', 'split'), items: arr(obj({question: str(160), answer: str(600)}), 2, 10)}, optional: ['layout'],
     example: {type: 'faq', title: '자주 묻는 질문', items: [{question: '무료인가요?', answer: '기본 기능은 무료입니다.'}, {question: '데이터는 어디에 저장되나요?', answer: '이 데모는 저장하지 않습니다.'}]}},
-  quote: {label: '인용·후기', group: 'content', fields: {quote: str(400), author: str(60), role: str(80)}, optional: ['role'],
+  quote: {label: '인용·후기', group: 'content', fields: {quote: str(400), author: str(60), role: str(80), variant: since(en('box', 'pull'), '인용 모양(2.5.0). box는 기존의 상자형 후기, pull은 상자 없이 큰 글자로 그리는 풀쿼트(기존 quote-l 글자 역할). pull은 페이지 직속 또는 section 직속에서만 쓴다.')}, optional: ['role', 'variant'],
     example: {type: 'quote', quote: '규칙이 있어서 오히려 자유로웠어요.', author: '김다선', role: '디자이너'}},
   'feature-list': {label: '기능 목록', group: 'content', fields: {title: str(100), layout: en('grid', 'list'), items: arr(obj({icon: iconEnum, title: str(80), description: str(240)}, ['icon', 'title']), 2, 8)}, optional: ['title', 'layout'],
     example: {type: 'feature-list', title: '핵심 기능', items: [{icon: 'zap', title: '빠른 시작', description: '몇 분이면 충분합니다.'}, {icon: 'shield', title: '안전한 기본값', description: '규칙이 지켜집니다.'}]}},
@@ -114,7 +115,7 @@ export const nodeSpecs = {
     example: {type: 'empty-state', kind: 'first-use', title: '아직 프로젝트가 없어요', body: '첫 프로젝트를 만들어 시작해 보세요.', action: {label: '프로젝트 만들기', href: '#main', variant: 'primary'}}},
   skeleton: {label: '스켈레톤', group: 'feedback', fields: {label: str(60), variant: en('card', 'list', 'table', 'text')},
     example: {type: 'skeleton', label: '목록을 불러오는 중', variant: 'list'}},
-  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160), overlay: str(60), motif: en(...motifs)}, optional: ['caption', 'overlay', 'motif'],
+  media: {label: '이미지 자리', group: 'media', fields: {kind: en(...mediaKinds), ratio: en(...ratios), alt: str(160), caption: str(160), overlay: str(60), motif: en(...motifs), bleed: since(en('yes'), '전폭 띠(2.5.0). 페이지 직속 media가 콘텐츠 열 바깥까지 이어지는 가로 띠가 된다. ratio는 16:9·21:9만, alt는 기존대로 필수다. 390px 이하에서는 콘텐츠 폭과 같다.')}, optional: ['caption', 'overlay', 'motif', 'bleed'],
     example: {type: 'media', kind: 'photo', ratio: '16:9', alt: '작업 공간의 전경', caption: '이미지는 자리 표시입니다.'}},
   gallery: {label: '갤러리', group: 'media', fields: {title: str(100), layout: en('grid', 'masonry', 'showcase'), items: arr(obj({kind: en(...mediaKinds), alt: str(160), caption: str(100), motif: en(...motifs)}, ['kind', 'alt']), 3, 12)}, optional: ['title', 'layout'],
     example: {type: 'gallery', title: '작업', items: [{kind: 'photo', alt: '작업 하나'}, {kind: 'diagram', alt: '작업 둘'}, {kind: 'pattern', alt: '작업 셋'}]}},

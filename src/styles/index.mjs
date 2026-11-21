@@ -8,6 +8,8 @@ import {contractCSS} from '../spacing.mjs';
 import {flowCSS, flowUsage, layoutRev, refineLayout, layoutContractCSS} from '../layout.mjs';
 import {compositionCSS} from '../composition.mjs';
 import {headerDesignCSS} from '../header-design.mjs';
+import {expressionApplies} from '../catalog/expression.mjs';
+import {expressionCSS} from './expression.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -46,6 +48,8 @@ export function stylesheet(b, sets, body = '', design = null) {
   parts.push(tailCSS.trim());
   if (design) parts.push(compositionCSS(design).trim());
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
+  // 카탈로그 2.5.0: 사용한 표현력 값에만 CSS가 나온다. 2.4.0 이하는 이 줄을 지나지 않아 출력이 같다.
+  if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
   const rev2 = layoutRev(b) === 2;
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
   const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
