@@ -27,6 +27,7 @@ export interface Core {
     validateBlueprint(bp: unknown): Envelope<{valid: true}>;
     listCatalog(q: Record<string, unknown>): Envelope<{items: any[]; total: number; nextCursor: string | null}>;
     getComponentSpec(q: {type: string; catalogVersion?: string}): Envelope<ComponentSpec>;
+    getMaterial(q: {id: string}): Envelope<any>;
     getSchema(q: {target: 'blueprint'; fields?: string[]}): Envelope<{properties: Record<string, {enum?: string[]}>}>;
     getColorTokens(q?: Record<string, unknown>): Envelope<{options: {id: string; label: string}[]}>;
     getTypePresets(q?: Record<string, unknown>): Envelope<{presets: {id: string; label: string}[]}>;

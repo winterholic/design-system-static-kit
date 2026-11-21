@@ -126,6 +126,43 @@ function themeChange(ctx: Context, theme: string, variant: string | null, varian
 }
 
 function startRequest(ctx: Context, request: StartRequest): Outcome {
+  if (request.component) {
+    const materialResult = core().service.getMaterial({id: `component:${request.component}`});
+    if (!materialResult.ok) return {res: failed(ctx.doc, materialResult.errors), origin: null, picked: {}, selection: []};
+    const material = materialResult.value;
+    const slot = material.blueprint;
+    if (material.kind !== 'component' || material.since !== '2.6.0' || slot?.node !== request.component || slot?.since !== '2.6.0') {
+      return {res: failed(ctx.doc, [{code: 'MATERIAL_SLOT', path: '$.component', message: '이 재료는 2.6.0 등록 부품 노드가 아닙니다.', hint: 'Components에서 등록 부품을 다시 고르세요.'}]), origin: null, picked: {}, selection: []};
+    }
+    const specResult = core().service.getComponentSpec({type: request.component, catalogVersion: '2.6.0'});
+    if (!specResult.ok) return {res: failed(ctx.doc, specResult.errors), origin: null, picked: {}, selection: []};
+    const axes = request.componentAxes ?? {};
+    const values: Record<string, unknown> = {...material.defaults};
+    for (const [axis, asked] of Object.entries(axes)) {
+      const choices = material.variants?.[axis];
+      const value = choices?.find((candidate: unknown) => String(candidate) === asked);
+      if (!choices || value === undefined) {
+        return {res: failed(ctx.doc, [{code: 'MATERIAL_VARIANT', path: `$.componentAxes.${axis}`, message: `Core 재료 계약에 ${axis}=${asked} 선택이 없습니다.`, hint: `허용 축과 값: ${Object.entries(material.variants ?? {}).map(([name, options]: [string, any]) => `${name}=${options.map(String).join('|')}`).join(', ')}`}]), origin: null, picked: {}, selection: []};
+      }
+      values[axis] = value;
+    }
+    const template = DEFAULT_TEMPLATE;
+    const reset = op(ctx.doc, 'resetDocument', {template, discard: true});
+    if (!reset.ok) return {res: reset, origin: null, picked: {}, selection: []};
+    const upgraded = op(reset.doc, 'importBlueprint', {blueprint: {...reset.doc, catalogVersion: '2.6.0'}, upgrade: true, discard: true});
+    if (!upgraded.ok) return {res: upgraded, origin: null, picked: {}, selection: []};
+    const node: Record<string, unknown> = {...(specResult.value.example ?? core().edit.partExample(request.component, '2.6.0')), ...values};
+    // Core의 확장 노드 스키마는 yes/no 문자열로 불리언 선택을 표현한다.
+    for (const [name, value] of Object.entries(node)) {
+      const schema = specResult.value.fields[name] as {enum?: unknown[]} | undefined;
+      if (typeof value === 'boolean' && schema?.enum?.includes('yes') && schema.enum.includes('no')) node[name] = value ? 'yes' : 'no';
+    }
+    if (!node.type) return {res: failed(ctx.doc, [{code: 'MATERIAL_EXAMPLE', path: '$.component', message: 'Core가 이 등록 부품의 노드 예제를 제공하지 않았습니다.', hint: '부품 계약에 예제 노드를 등록하세요.'}]), origin: null, picked: {}, selection: []};
+    const inserted = op(upgraded.doc, 'insertNode', {parent: [], node, index: upgraded.doc.tree.children.length});
+    if (!inserted.ok) return {res: failed(ctx.doc, inserted.errors, [...reset.warnings, ...upgraded.warnings]), origin: null, picked: {}, selection: []};
+    // Components 구성은 템플릿 자체가 아니므로 출처 없는 작업으로 보호한다.
+    return {res: {...inserted, changes: [...reset.changes, ...upgraded.changes, ...inserted.changes], warnings: [...reset.warnings, ...upgraded.warnings, ...inserted.warnings]}, origin: null, picked: {}, selection: []};
+  }
   if (request.profile) {
     const assembled = core().service.assembleBlueprint({profile: request.profile, intent: {}, content: {}});
     if (!assembled.ok) return {res: failed(ctx.doc, assembled.errors), origin: null, picked: {}, selection: []};

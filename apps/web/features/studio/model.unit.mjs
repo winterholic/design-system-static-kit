@@ -219,6 +219,42 @@ test('Studio can explicitly start a 2.6.0 document or assemble a Design Profile 
   assert.equal(profiled.session.origin, null);
 });
 
+test('Components start inserts the registered 2.6.0 node with the selected material axes', async () => {
+  let state = reducer(initialState, {type: 'boot', state: {phase: 'start', doc: null, origin: null, picked: {}, selection: [], modified: false, view: {}, notices: [], recovery: null, storage: {status: 'idle'}}});
+  await loadCore();
+  state = reducer(state, {type: 'edit', intent: {kind: 'start', request: {catalogVersion: '2.6.0', component: 'select-control', componentAxes: {mode: 'multiple', search: 'local', maxMenuHeight: '192'}}}, at: 1});
+  const node = state.document.doc?.tree.children.find(child => child.type === 'select-control');
+  assert.deepEqual({type: node?.type, mode: node?.mode, search: node?.search, maxMenuHeight: node?.maxMenuHeight}, {type: 'select-control', mode: 'multiple', search: 'local', maxMenuHeight: 192});
+  const html = core().service.compileBlueprint(state.document.doc, {include: ['html']});
+  assert.equal(html.ok, true);
+  assert.match(html.value.html, /role="combobox"/);
+  assert.equal(state.session.error, null);
+  assert.equal(state.session.origin, null);
+  assert.equal((await import('./model.ts')).needsConfirm(state), true);
+});
+
+test('Components map registered data-table boolean axes to the Core yes/no node fields', async () => {
+  let state = reducer(initialState, {type: 'boot', state: {phase: 'start', doc: null, origin: null, picked: {}, selection: [], modified: false, view: {}, notices: [], recovery: null, storage: {status: 'idle'}}});
+  await loadCore();
+  state = reducer(state, {type: 'edit', intent: {kind: 'start', request: {catalogVersion: '2.6.0', component: 'data-table', componentAxes: {density: 'compact', sortable: 'true', selectable: 'true', responsive: 'scroll', state: 'ready'}}}, at: 1});
+  const node = state.document.doc?.tree.children.find(child => child.type === 'data-table');
+  assert.equal(node?.density, 'compact', JSON.stringify(state.session.error?.errors));
+  assert.equal(node?.sortable, 'yes');
+  assert.equal(node?.selectable, 'yes');
+  const html = core().service.compileBlueprint(state.document.doc, {include: ['html']});
+  assert.equal(html.ok, true);
+  assert.match(html.value.html, /data-density="compact"/);
+});
+
+test('Components reject a forbidden selected variant combination with Core diagnostics', async () => {
+  let state = reducer(initialState, {type: 'boot', state: {phase: 'start', doc: null, origin: null, picked: {}, selection: [], modified: false, view: {}, notices: [], recovery: null, storage: {status: 'idle'}}});
+  await loadCore();
+  state = reducer(state, {type: 'edit', intent: {kind: 'start', request: {catalogVersion: '2.6.0', component: 'select-control', componentAxes: {mode: 'multiple', search: 'async'}}}, at: 1});
+  assert.equal(state.document.doc, null);
+  assert.ok(state.session.error?.errors.length);
+  assert.match(state.session.error.errors[0].code, /SELECT|VARIANT|COMBO/);
+});
+
 test('applying a 2.6.0 material upgrades the document without replacing its authored work and is undoable', async () => {
   let state = await ready();
   state = reducer(state, {type: 'edit', intent: {kind: 'rename', name: '작성 중인 화면'}, at: 2});
