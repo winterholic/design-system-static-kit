@@ -6,8 +6,11 @@
 <script type="module">
 import {layoutProbe, LAYOUT_OPTIONS} from '../layout-quality/probe.mjs';
 
-const ids = ['erp', 'commerce', 'saas', 'analytics'];
-const widths = [390, 1280];
+const jobs = [
+  ...['erp', 'commerce', 'saas', 'analytics'].flatMap(id => [390, 1280].map(width => ({id, width, path: `/docs/evidence/material-platform/assembled/${id}/index.html`}))),
+  {id: 'legacy-s21', width: 320, path: '/docs/evidence/material-platform/legacy-controls/legacy-s21.html'},
+  {id: 'legacy-s06', width: 1440, path: '/docs/evidence/material-platform/legacy-controls/legacy-s06.html'},
+];
 const results = [];
 const status = document.querySelector('#status');
 const settle = async frame => {
@@ -21,13 +24,13 @@ const settle = async frame => {
     previous = signature;
   }
 };
-for (const id of ids) for (const width of widths) {
+for (const {id, width, path} of jobs) {
   status.textContent = `Checking ${id} at ${width}px`;
   const frame = document.createElement('iframe');
   frame.title = `${id} ${width}px`;
   frame.style.cssText = `position:absolute;left:-10000px;top:0;width:${width}px;height:900px;border:0`;
   document.body.append(frame);
-  const response = await fetch(`/docs/evidence/material-platform/assembled/${id}/index.html`);
+  const response = await fetch(path);
   if (!response.ok) throw new Error(`${id} HTML load ${response.status}`);
   frame.srcdoc = await response.text();
   await new Promise((resolve, reject) => { frame.onload = resolve; frame.onerror = reject; });
@@ -45,8 +48,8 @@ const report = {
   capturedAt: new Date().toISOString(),
   userAgent: navigator.userAgent,
   devicePixelRatio: window.devicePixelRatio,
-  viewports: widths,
-  screens: ids,
+  viewports: [390, 1280],
+  regressionControls: [{id: 'legacy-s21', width: 320}, {id: 'legacy-s06', width: 1440}],
   results,
 };
 const saved = await fetch('/__evidence/layout', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(report)});

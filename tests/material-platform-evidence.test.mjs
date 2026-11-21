@@ -23,3 +23,13 @@ test('public assembly builds four product contexts with selected materials and b
   }
   assert.ok(first.find(x => x.id === 'analytics').materials.chartPresets.length > 0);
 });
+
+test('legacy false-positive and miss controls are reproducible scanner inputs, with the known fixture signatures', async () => {
+  const {buildLegacyControlCases} = await import('../scripts/material-platform-evidence/legacy-controls.mjs');
+  const cases = buildLegacyControlCases();
+  assert.deepEqual(cases.map(x => x.id), ['legacy-s21', 'legacy-s06']);
+  assert.equal(cases[0].width, 320);
+  assert.equal(cases[1].width, 1440);
+  assert.ok(cases[0].html.includes('kit-tablist'));
+  assert.ok(cases[1].html.includes('preserveAspectRatio="xMidYMid slice"'));
+});

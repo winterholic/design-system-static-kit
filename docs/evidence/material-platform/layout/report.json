@@ -1,17 +1,21 @@
 {
   "method": "scripts/layout-quality/probe.mjs layoutProbe, run in configured Ttakkari Chromium browser",
-  "capturedAt": "2026-11-21T17:26:04.487Z",
+  "capturedAt": "2026-11-21T17:29:45.405Z",
   "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
   "devicePixelRatio": 1,
   "viewports": [
     390,
     1280
   ],
-  "screens": [
-    "erp",
-    "commerce",
-    "saas",
-    "analytics"
+  "regressionControls": [
+    {
+      "id": "legacy-s21",
+      "width": 320
+    },
+    {
+      "id": "legacy-s06",
+      "width": 1440
+    }
   ],
   "results": [
     {
@@ -662,6 +666,104 @@
         "BAR_MISALIGNED_Y": 1
       },
       "viewportWidth": 1280
+    },
+    {
+      "page": "legacy-s21",
+      "width": 320,
+      "findings": [
+        {
+          "code": "OVERFLOW_X",
+          "severity": "error",
+          "role": "element",
+          "locator": "div.kit-shell > header.kit-header > nav.kit-nav > ul > li:nth-of-type(4)",
+          "text": "고객센터",
+          "evidence": {
+            "elementRight": 371.4,
+            "viewportWidth": 320,
+            "overflowPx": 51.4
+          },
+          "suggestion": "문서·요소가 화면 오른쪽 밖으로 나간다. min-width: 0, overflow-wrap, 고정 폭 제거를 확인한다."
+        },
+        {
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "#main > div.kit-tabs:nth-of-type(2) > div.kit-tablist:nth-of-type(1)",
+          "text": "상세 정보리뷰 1,204배송·교환",
+          "evidence": {
+            "scrollWidth": 308,
+            "clientWidth": 286,
+            "hiddenPx": 22
+          },
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
+        },
+        {
+          "code": "BAR_MISALIGNED_X",
+          "severity": "error",
+          "role": "bar",
+          "locator": "body > div.kit-shell > header.kit-header",
+          "text": "무무드램프신상품조명이벤트고객센터장바구니",
+          "evidence": {
+            "barContentLeft": 16,
+            "pageContentLeft": 16,
+            "barContentRight": 371.4,
+            "pageContentRight": 304,
+            "leftDeltaPx": 0,
+            "rightDeltaPx": 67.4,
+            "tolerancePx": 1.5
+          },
+          "suggestion": "상단 바의 좌우 가장자리를 본문 컨테이너와 같은 max-width·padding으로 맞춘다."
+        }
+      ],
+      "scanned": {
+        "text": 49,
+        "wrap": 14,
+        "clip": 9,
+        "svg": 4,
+        "overflow": 2,
+        "smallText": 49,
+        "bar": 1
+      },
+      "roles": {
+        "label": 18,
+        "control": 11,
+        "heading": 4,
+        "lead": 1,
+        "value": 1,
+        "short": 2,
+        "body": 8,
+        "desc": 4
+      },
+      "counts": {
+        "OVERFLOW_X": 1,
+        "SCROLL_REGION": 1,
+        "BAR_MISALIGNED_X": 1
+      },
+      "viewportWidth": 320
+    },
+    {
+      "page": "legacy-s06",
+      "width": 1440,
+      "findings": [],
+      "scanned": {
+        "text": 61,
+        "wrap": 9,
+        "clip": 12,
+        "svg": 6,
+        "overflow": 1,
+        "smallText": 61,
+        "bar": 1
+      },
+      "roles": {
+        "label": 21,
+        "control": 8,
+        "heading": 8,
+        "body": 9,
+        "short": 9,
+        "desc": 6
+      },
+      "counts": {},
+      "viewportWidth": 1440
     }
   ]
 }
