@@ -1,6 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {createBlueprint, migrateBlueprint} from '../src/catalog.mjs';
 import {compile} from '../src/compiler.mjs';
+import {SPACE, SPACE_EXT} from '../src/spacing.mjs';
 
 // 카탈로그 2.5.0 표현력 확장(ADR 0010)의 브라우저 실측. R1~R4는 같은 입력을 2.4.0과 2.5.0으로 컴파일해 둘을 나란히 잰다(2.4.0에서 결함이 재현되고 2.5.0에서 사라진다).
 const hero = extra => ({type: 'hero', variant: 'split', title: '히어로 제목', body: '본문 한 줄', visual: 'photo', motif: 'coast', ...extra});
@@ -123,14 +124,12 @@ test('EX-3 a pull quote has no box and a larger type than the boxed quote', asyn
   expect(s[0].size).toBeGreaterThan(s[1].size);
 });
 
-// 랜딩은 hero 가 필수(PAGE_REQUIRE)라 hero 를 앞에 둔다. CI 실측(2026-11-21)에서 loose 구역이 보통보다 낮게 나와 실패한다:
-// src/styles/expression.mjs 의 NOT_BAND(`:not(:is([data-page=...]))` 뒤에 자손 결합자)가 data-page 가 없는 html·body 에도 맞아
-// 앱 페이지용 규칙(tight/loose 의 section 계열)이 띠 페이지에도 덮어쓰인다. Core 출력(src/**) 문제라 여기서 고치지 않고 보고한다.
+// 랜딩은 hero 가 필수(PAGE_REQUIRE)라 hero 를 앞에 둔다. 띠 여백은 위·아래 양쪽에 걸리므로 loose 구역은 보통 구역보다 2×(bandL−band)만큼 커야 한다.
 test('EX-4 section.space loose is roomier and tight is tighter than normal; flat is never painted', async ({page}) => {
   const heights = async patch => { await open(page, make([hero(), sec([prose()], patch.a), sec([prose()], patch.b), sec([prose()], patch.c)], {pageType: 'landing', density: 'spacious'})); return page.locator('.kit-main>.kit-section').evaluateAll(els => els.map(e => e.getBoundingClientRect().height)); };
   const h = await heights({a: {space: 'tight'}, b: {}, c: {space: 'loose'}});
   expect(h[0]).toBeLessThan(h[1]); expect(h[2]).toBeGreaterThan(h[1]);
-  expect(Math.round(h[2] - h[1])).toBe(52);
+  expect(Math.round(h[2] - h[1])).toBe(2 * (SPACE_EXT.spacious.bandL - SPACE.spacious.band));
   await open(page, make([hero(), sec([prose()]), sec([prose()], {surface: 'flat'})], {pageType: 'landing'}));
   expect(await page.locator('.kit-main>.kit-section').nth(1).evaluate(e => getComputedStyle(e).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 });
