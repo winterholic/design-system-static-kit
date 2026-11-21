@@ -9,12 +9,12 @@ export default function Page() {
       <article className="prose">
         <h2 className="section-title">카탈로그 탐색</h2>
         <p>한 종류씩 요청하고 필터, 필드, 페이지 크기로 응답을 좁힙니다. 다음 페이지가 있으면 <code>nextCursor</code>를 그대로 전달합니다.</p>
-        <pre><code>{`curl 'http://localhost:3000/api/v1/catalog?kind=templates&filter.pageType=landing&fields=id,theme&limit=3'
+        <pre tabIndex={0}><code>{`curl 'http://localhost:3000/api/v1/catalog?kind=templates&filter.pageType=landing&fields=id,theme&limit=3'
 curl 'http://localhost:3000/api/v1/schema?target=blueprint&fields=tree'
 curl 'http://localhost:3000/api/v1/components/hero?fields=required,children'`}</code></pre>
         <h2 className="section-title">검증과 컴파일</h2>
         <p>검증과 컴파일은 Blueprint 전체를 JSON으로 보냅니다. 컴파일 응답의 <code>include</code>와 <code>html</code> 옵션으로 큰 본문을 생략하거나 필요한 부분만 선택하세요.</p>
-        <pre><code>{`node -e "const fs=require('node:fs'); const blueprint=JSON.parse(fs.readFileSync('site/examples/saas-landing/blueprint.json')); fs.writeFileSync('request.json', JSON.stringify({blueprint}));"
+        <pre tabIndex={0}><code>{`node -e "const fs=require('node:fs'); const blueprint=JSON.parse(fs.readFileSync('site/examples/saas-landing/blueprint.json')); fs.writeFileSync('request.json', JSON.stringify({blueprint}));"
 curl -X POST 'http://localhost:3000/api/v1/validate' \\
   -H 'content-type: application/json' \\
   --data-binary @request.json

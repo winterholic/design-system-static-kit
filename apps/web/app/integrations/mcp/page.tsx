@@ -10,7 +10,7 @@ export default function Page() {
         <h2 className="section-title">연결</h2>
         <p>엔드포인트는 <code>http://localhost:3000/api/mcp</code>입니다. 클라이언트가 원격 Streamable HTTP 연결을 지원하면 이 URL을 서버 주소로 등록합니다. 클라이언트별 설정 파일 형식은 제품마다 다르므로 그 클라이언트의 HTTP MCP 설정란에 URL을 입력하세요.</p>
         <p>Node.js 22에서 공식 TypeScript 클라이언트를 실행하는 예입니다. 별도 프로젝트에서는 <code>npm install @modelcontextprotocol/client@2.4.0</code> 후 아래 코드를 <code>mcp-example.mjs</code>로 저장해 <code>node mcp-example.mjs</code>로 실행하세요. 이 저장소에서는 같은 패키지가 이미 설치되어 있습니다.</p>
-        <pre><code>{`import {Client, StreamableHTTPClientTransport} from '@modelcontextprotocol/client';
+        <pre tabIndex={0}><code>{`import {Client, StreamableHTTPClientTransport} from '@modelcontextprotocol/client';
 
 const client = new Client({name: 'static-kit-example', version: '1.0.0'});
 await client.connect(

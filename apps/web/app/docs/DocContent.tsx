@@ -3,7 +3,7 @@ import {catalogSnapshot, getComponentSpec, getSchema, listCatalog} from '@winter
 import type {ReactNode} from 'react';
 
 const hrefFor = (slug: string) => `/docs/${slug}`;
-const Code = ({children}: {children: ReactNode}) => <pre><code>{children}</code></pre>;
+const Code = ({children}: {children: ReactNode}) => <pre tabIndex={0}><code>{children}</code></pre>;
 const Note = ({children}: {children: ReactNode}) => <p className="note">{children}</p>;
 
 function GettingStarted() {

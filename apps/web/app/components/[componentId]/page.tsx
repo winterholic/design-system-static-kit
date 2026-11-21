@@ -45,7 +45,7 @@ export default async function ComponentPage({params}: Props) {
 
       <h2 className="section-title">허용 속성</h2>
       {view.fields.length ? (
-        <div className={styles.tableWrap}>
+        <div className={styles.tableWrap} tabIndex={0} role="region" aria-label="허용 속성 표">
           <table className={styles.table}>
             <thead><tr><th scope="col">이름</th><th scope="col">필수</th><th scope="col">형태</th><th scope="col">허용 값·제약</th></tr></thead>
             <tbody>

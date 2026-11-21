@@ -9,11 +9,11 @@ export default function Page() {
       <article className="prose">
         <h2 className="section-title">시작하기</h2>
         <p>저장소 루트에서 카탈로그를 살펴보고, 선택한 템플릿으로 입력 파일을 만듭니다.</p>
-        <pre><code>{`npm run kit -- templates
+        <pre tabIndex={0}><code>{`npm run kit -- templates
 npm run kit -- themes
 npm run kit -- init saas-landing my-blueprint.json civic`}</code></pre>
         <p>유효성을 확인한 다음 관리 디렉터리에 빌드합니다. 검증 오류가 있으면 경로와 규칙 코드, 수정 안내가 출력되며 파일은 생성되지 않습니다.</p>
-        <pre><code>{`npm run kit -- validate my-blueprint.json
+        <pre tabIndex={0}><code>{`npm run kit -- validate my-blueprint.json
 npm run kit -- build my-blueprint.json --out ./dist/my-site
 npm run kit -- check ./dist/my-site`}</code></pre>
         <h2 className="section-title">결과와 오류</h2>

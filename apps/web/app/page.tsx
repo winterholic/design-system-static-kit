@@ -46,7 +46,7 @@ export default function Home() {
 
       <h2 className="section-title">CLI · REST · MCP로 같은 검증을</h2>
       <div className={styles.use}>
-        <pre className={styles.code}><code>{`npm run kit -- init saas-landing my.json trust
+        <pre tabIndex={0} className={styles.code}><code>{`npm run kit -- init saas-landing my.json trust
 npm run kit -- validate my.json
 npm run kit -- build my.json --out out/my-page`}</code></pre>
         <div>

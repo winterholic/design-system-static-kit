@@ -9,7 +9,7 @@ const PAGES = [
   {name: 'Explore 상세', path: '/explore/saas-landing'},
   {name: 'Components 목록', path: '/components'},
   {name: 'Components hero', path: '/components/hero'},
-  {name: 'Studio', path: '/studio', ready: '[data-phase="ready"]'},
+  {name: 'Studio', path: '/studio?template=dashboard-overview', ready: '[data-phase="ready"]'},
   {name: 'Docs 시작하기', path: '/docs/getting-started'},
   {name: 'Integrations MCP', path: '/integrations/mcp'},
 ];
