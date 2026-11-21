@@ -6,7 +6,7 @@ import {icons, iconNames} from './icons.mjs';
 import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios, motifs} from './nodes.mjs';
 import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
-import {layoutSlots, applyLayout, assessLayout, layoutSlotIds} from './variants.mjs';
+import {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds} from './variants.mjs';
 import {variantContracts, variantCheckKinds} from './variant-contracts.mjs';
 import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './variant-effects.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
@@ -18,7 +18,7 @@ export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {recipes, recipeRules, recipeIds};
-export {layoutSlots, applyLayout, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
+export {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
 export const rules = [
@@ -66,20 +66,84 @@ export function blueprintSchema() {
   };
 }
 
-/** Fix axis values that a ban or page type rejects, using each ban's declared `fix`. Used by composer/workbench; the validator never repairs. */
-export function repairAxes(b) {
-  const pt = pageTypes[b.pageType];
+const NAV_GROUP_SHELLS = ['sidebar', 'split'];
+/** 같은 가로 막대를 쓰는 셸부터, 그다음 세로·특수 셸 순으로 대체 셸을 고른다. */
+const SHELL_PREFERENCE = ['topbar', 'stacked', 'centered', 'editorial', 'masthead', 'sidebar', 'split', 'rail', 'dock', 'minimal'];
+
+/**
+ * chrome.nav가 셸에 놓일 수 있는지 본다(검증기 NAV_COUNT·NAV_MEGA·NAV_GROUP·NAV_ICON과 같은 조건). 충돌 목록 [{code, fixableByShell, message}].
+ * fixableByShell:false는 어떤 셸로도 풀리지 않는 충돌(드롭다운 메뉴가 MEGA_MAX를 넘음)이다.
+ */
+export function navConflicts(b, shell = b.shell) {
+  const nav = Array.isArray(b.chrome?.nav) ? b.chrome.nav : [], out = [];
+  if (navLimits[shell] && nav.length > navLimits[shell]) out.push({code: 'NAV_COUNT', fixableByShell: true, message: `${shell} 셸의 내비 항목은 최대 ${navLimits[shell]}개인데 ${nav.length}개입니다.`});
+  const megas = nav.filter(i => i.mega);
+  if (megas.length && !megaShells.includes(shell)) out.push({code: 'NAV_MEGA', fixableByShell: true, message: `${shell} 셸은 드롭다운 메뉴(mega) ${megas.length}개를 보여 줄 수 없습니다.`});
+  if (megas.length > MEGA_MAX) out.push({code: 'NAV_MEGA', fixableByShell: false, message: `드롭다운 메뉴는 최대 ${MEGA_MAX}개인데 ${megas.length}개입니다.`});
+  if (nav.some(i => i.group) && !NAV_GROUP_SHELLS.includes(shell)) out.push({code: 'NAV_GROUP', fixableByShell: true, message: `${shell} 셸은 내비 그룹 라벨을 보여 줄 수 없습니다(sidebar·split 전용).`});
+  if (iconShells.includes(shell) && nav.some(i => !i.icon)) out.push({code: 'NAV_ICON', fixableByShell: true, message: `${shell} 셸은 모든 내비 항목에 icon이 필요합니다.`});
+  return out;
+}
+
+const axisProblems = b => {
+  const pt = pageTypes[b.pageType], out = [];
+  if (pt && !pt.shells.includes(b.shell)) out.push('shell');
+  if (pt?.widths && !pt.widths.includes(b.width)) out.push('width');
+  for (const ban of axisBans) if (ban.bad(b)) out.push(ban.id);
+  return out;
+};
+
+/** 축 값만 고친다(셸·폭·금지 조합). 바뀐 축은 note({code:'AXIS_REPAIRED', axis, from, to, rule})로 알린다. 내용은 건드리지 않는다. */
+function repairAxisValues(b, note) {
+  const pt = pageTypes[b.pageType], set = (axis, to, rule) => { if (b[axis] !== to) note({code: 'AXIS_REPAIRED', axis, from: b[axis], to, rule}); b[axis] = to; };
   for (let i = 0; i < 8; i++) {
     let changed = false;
-    if (pt && !pt.shells.includes(b.shell)) { b.shell = pt.shells.includes('topbar') ? 'topbar' : pt.shells[0]; changed = true; }
-    if (pt?.widths && !pt.widths.includes(b.width)) { b.width = pt.widths.at(-1); changed = true; }
-    for (const ban of axisBans) if (ban.bad(b)) { Object.assign(b, ban.fix); changed = true; }
+    if (pt && !pt.shells.includes(b.shell)) { set('shell', pt.shells.includes('topbar') ? 'topbar' : pt.shells[0], 'page-type'); changed = true; }
+    if (pt?.widths && !pt.widths.includes(b.width)) { set('width', pt.widths.at(-1), 'page-type'); changed = true; }
+    for (const ban of axisBans) if (ban.bad(b)) { for (const [axis, to] of Object.entries(ban.fix)) set(axis, to, ban.id); changed = true; }
     if (!changed) break;
   }
-  if (b.chrome?.nav && b.chrome.nav.length > navLimits[b.shell]) b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]);
-  if (b.chrome?.nav && !megaShells.includes(b.shell)) for (const item of b.chrome.nav) delete item.mega;
+}
+
+/**
+ * 내비가 놓이지 않는 셸이면 내비를 그대로 두고 놓이는 셸로 바꾼다(페이지 유형·테마 금지·축 금지를 지키는 후보 중 선호 순서).
+ * 고른 셸은 note({code:'SHELL_SUBSTITUTED'})로 알린다. 놓일 셸이 없으면 아무것도 바꾸지 않고 false를 돌려준다(검증기가 거부한다).
+ */
+function fitShellToNav(b, note) {
+  if (!navConflicts(b).length) return true;
+  const pt = pageTypes[b.pageType], theme = themes[b.theme];
+  const pool = SHELL_PREFERENCE.filter(s => axes.shell.includes(s) && (!pt || pt.shells.includes(s)) && !theme?.forbid?.shell?.includes(s));
+  for (const shell of pool) {
+    if (navConflicts(b, shell).length) continue;
+    const trial = {...b, shell}, trace = [];
+    repairAxisValues(trial, r => trace.push(r));
+    if (trial.shell !== shell || axisProblems(trial).length || navConflicts(trial).length) continue;
+    note({code: 'SHELL_SUBSTITUTED', axis: 'shell', from: b.shell, to: shell, rule: 'nav-fit'});
+    Object.assign(b, {shell});
+    repairAxisValues(b, note);
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Fix axis values that a ban or page type rejects, using each ban's declared `fix`. Used by composer/workbench; the validator never repairs.
+ * options.nav는 내비가 셸에 놓이지 않을 때의 정책이다.
+ *   'drop'(기본, 호환): 항목을 자르고 mega·group을 지운다. 템플릿을 다른 테마에 입히는 합성 경로와 2.x 출력 hash가 이 동작에 고정되어 있다.
+ *   'fit': 내비를 보존하고 놓이는 셸로 바꾼다. 놓일 셸이 없으면 내비를 그대로 두어 검증기가 NAV_* 오류로 거부한다.
+ *   'keep': 내비를 건드리지 않는다.
+ * options.report 배열을 주면 바뀐 축과 삭제한 항목이 구조화된 기록(code·path·dropped…)으로 쌓인다. 'drop'은 report 없이도 동작하지만 편집 연산(src/edit)은 쓰지 않는다.
+ */
+export function repairAxes(b, {nav = 'drop', report = null} = {}) {
+  const note = r => { report?.push(r); };
+  repairAxisValues(b, note);
+  if (!b.chrome?.nav) return b;
+  if (nav === 'fit') { fitShellToNav(b, note); return b; }
+  if (nav === 'keep') return b;
+  if (b.chrome.nav.length > navLimits[b.shell]) { const dropped = b.chrome.nav.slice(navLimits[b.shell]); b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]); note({code: 'NAV_TRUNCATED', path: '$.chrome.nav', limit: navLimits[b.shell], dropped}); }
+  if (!megaShells.includes(b.shell)) b.chrome.nav.forEach((item, i) => { if (item.mega) { note({code: 'NAV_MEGA_DROPPED', path: `$.chrome.nav[${i}].mega`, dropped: item.mega}); delete item.mega; } });
   // Group labels need a vertical list; a template worn by a horizontal-shell theme keeps its items and drops the labels.
-  if (b.chrome?.nav && !['sidebar', 'split'].includes(b.shell)) for (const item of b.chrome.nav) delete item.group;
+  if (!NAV_GROUP_SHELLS.includes(b.shell)) b.chrome.nav.forEach((item, i) => { if (item.group) { note({code: 'NAV_GROUP_DROPPED', path: `$.chrome.nav[${i}].group`, dropped: item.group}); delete item.group; } });
   return b;
 }
 
@@ -90,7 +154,14 @@ export const layoutOptionsOf = templateId => layoutSlots(templates[templateId].t
  * Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair.
  * options.typography: 서체 프리셋 id(테마 기본 서체를 덮어씀), options.themeVariant: 테마 변형 id(축 값 묶음), options.layout: {슬롯: 옵션} 구성 변형. 둘 다 결과 Blueprint에는 흔적 없이 축·트리 값으로만 남는다.
  */
-export function createBlueprint(templateId = 'dashboard-overview', themeId, paletteId, options = {}) {
+export function createBlueprint(...args) { return composeBlueprint(...args).blueprint; }
+
+/**
+ * createBlueprint와 같은 합성이되, 합성이 바꾸거나 지운 것(repairAxes·applyLayout 기록)을 함께 돌려준다: {blueprint, report, errors}.
+ * options.lossless:true는 아무것도 지우지 않는 합성이다(내비는 놓이는 셸로 옮기고, 히어로 facts는 options.contentPolicy에 따라 거부·이동).
+ * 지울 수밖에 없으면 blueprint가 null이고 errors에 이유가 담긴다. 기본(false)은 2.x 출력 hash가 고정된 합성이다.
+ */
+export function composeBlueprint(templateId = 'dashboard-overview', themeId, paletteId, options = {}) {
   const t = templates[templateId];
   if (!Object.hasOwn(templates, templateId)) throw new Error('Unknown template: ' + templateId);
   const theme = themes[themeId ?? t.theme];
@@ -104,8 +175,16 @@ export function createBlueprint(templateId = 'dashboard-overview', themeId, pale
   // 서체 프리셋은 테마와 독립이다: 컨셉의 look이나 사용자가 고른 프리셋이 테마 기본값을 덮어쓴다.
   if (options.typography) { if (!axes.typography.includes(options.typography)) throw new Error('Unknown typography: ' + options.typography); b.typography = options.typography; }
   b.chrome = structuredClone(t.chrome);
-  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout, t.pageType)};
-  return repairAxes(b);
+  const report = [];
+  if (options.lossless) {
+    const laid = applyLayoutChecked(t.tree, options.layout, t.pageType, {contentPolicy: options.contentPolicy});
+    if (laid.errors.length) return {blueprint: null, report, errors: laid.errors};
+    report.push(...laid.report);
+    b.tree = {type: 'page', children: laid.tree};
+    return {blueprint: repairAxes(b, {report, nav: 'fit'}), report, errors: []};
+  }
+  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout, t.pageType, {report})};
+  return {blueprint: repairAxes(b, {report}), report, errors: []};
 }
 
 /** v1 blueprints (catalog 1.x) get the new required fields with conservative defaults; nothing else is rewritten. */

@@ -5,6 +5,15 @@
  * 슬롯은 "바꿀 대상이 있고 바꾸면 달라지는 경우"에만 템플릿에 나타난다(layoutSlots).
  */
 import {assessOption} from './variant-contracts.mjs';
+
+/**
+ * 옵션이 값을 지울 수 있는지에 대한 맥락. 옵션 함수는 (tree, ctx)를 받는다.
+ *   LEGACY(기본): 템플릿 합성 경로. 변형이 허용하지 않는 히어로 필드를 지운다(2.x 출력 hash가 이 동작에 고정). 지운 것은 ctx.report에 기록된다.
+ *   편집 경로(applyLayoutChecked): 콘텐츠는 지우지 않는다. 히어로 facts는 거부하거나 지표 격자로 옮기고, 장식(visual·motif)만 지우며 기록한다.
+ */
+const LEGACY = Object.freeze({lossy: true});
+/** 옵션이 콘텐츠를 둘 곳이 없어 적용을 거부할 때 던진다(편집 경로에서만). */
+class LayoutRefusal extends Error { constructor(detail) { super(detail.message); this.detail = detail; } }
 /** n개를 cols열에 놓았을 때 마지막 줄이 가득 차거나 두 칸 이상이어야 한다. */
 const fitsColumns = (n, cols) => n >= cols && (n % cols === 0 || n % cols >= 2);
 const walk = (nodes, fn, parent = null) => { for (const n of nodes) { fn(n, parent); if (n.children) walk(n.children, fn, n); } };
@@ -21,13 +30,28 @@ const HERO_FEEL = {
   statement: {label: '큰 문장', description: '큰 제목 한 덩어리로 시작'},
   cover: {label: '커버', description: '화면 폭을 채우는 표지형'},
 };
-/** 히어로 변형을 바꾸되 그 변형이 허용하지 않는 필드(visual·motif·facts)는 정리한다. */
-const setHero = variant => tree => {
+const FACTS_VARIANTS = ['statement', 'cover', 'centered'], VISUAL_VARIANTS = ['split', 'product'];
+const COLUMN_WORD = {2: 'two', 3: 'three', 4: 'four'};
+/**
+ * 히어로 변형을 바꾼다. 변형이 허용하지 않는 필드는 성격이 다르다.
+ *   장식: visual·motif(그림 종류). 다른 변형에서는 그릴 곳이 없으므로 지우고 기록한다.
+ *   콘텐츠: facts(값과 라벨 글). 지우지 않는다. 편집 경로는 거부하거나(contentPolicy 'reject') 히어로 바로 아래 지표 격자로 옮긴다('relocate').
+ *     facts는 검증기가 split·product에서 거부하므로 문서에 그대로 둘 수 없다(검증 완화 없음).
+ */
+const setHero = variant => (tree, ctx = LEGACY) => {
   const [hero] = find(tree, 'hero'); if (!hero || hero.variant === variant) return false;
+  const at = tree.indexOf(hero), path = `$.tree.children[${at}]`, note = r => ctx.report?.push(r);
+  const keepsVisual = VISUAL_VARIANTS.includes(variant), keepsFacts = FACTS_VARIANTS.includes(variant);
+  if (hero.facts && !keepsFacts && !ctx.lossy) {
+    if (ctx.contentPolicy !== 'relocate' || at < 0) throw new LayoutRefusal({code: 'LAYOUT_WOULD_DROP_CONTENT', path: path + '.facts', message: `히어로를 ${variant}로 바꾸면 facts ${hero.facts.length}개(${hero.facts.map(f => f.value + ' ' + f.label).join(' · ')})를 둘 곳이 없습니다.`, hint: "contentPolicy:'relocate'로 facts를 히어로 아래 지표 격자로 옮기거나, updateNode로 facts를 먼저 정리하세요."});
+    tree.splice(at + 1, 0, {type: 'grid', columns: COLUMN_WORD[hero.facts.length], children: hero.facts.map(f => ({type: 'metric', label: f.label, value: f.value}))});
+    note({code: 'CONTENT_RELOCATED', path: path + '.facts', to: `$.tree.children[${at + 1}]`, count: hero.facts.length});
+    delete hero.facts;
+  }
   hero.variant = variant;
-  if (!['split', 'product'].includes(variant)) { delete hero.visual; delete hero.motif; }
-  else if (!hero.visual) hero.visual = variant === 'product' ? 'device' : 'ornament';
-  if (!['statement', 'cover', 'centered'].includes(variant)) delete hero.facts;
+  if (!keepsVisual) for (const field of ['visual', 'motif']) if (hero[field] !== undefined) { note({code: 'DECORATION_DROPPED', path: `${path}.${field}`, field, dropped: hero[field], kind: 'decoration'}); delete hero[field]; }
+  if (keepsVisual && !hero.visual) hero.visual = variant === 'product' ? 'device' : 'ornament';
+  if (!keepsFacts && hero.facts) { note({code: 'CONTENT_DROPPED', path: path + '.facts', field: 'facts', dropped: hero.facts, kind: 'content'}); delete hero.facts; }
   return true;
 };
 
@@ -124,13 +148,22 @@ function proofIndex(tree) {
 }
 
 /** 옵션 하나를 새 복사본에 적용해 바뀐 트리를 돌려준다. 바뀌지 않으면 null. */
-function tryOption(tree, slot, option, pageType) {
+function tryOption(tree, slot, option, pageType, ctx = LEGACY) {
   // 페이지 유형에 맞지 않는 구성은 만들지 않는다: 대시보드·문서·설정 화면의 가운데 정렬 머리말처럼, 6차 진단에서 조합 절반을 차지하던 어색한 구성을 없앤다.
   const pages = option.pages ?? slot.pages;
   if (pageType && pages && !pages.includes(pageType)) return null;
   const copy = structuredClone(tree);
   if (!slot.when(copy)) return null;
-  return option.apply(copy) ? copy : null;
+  return option.apply(copy, ctx) ? copy : null;
+}
+
+/** tryOption과 같되 null인 이유를 돌려준다: 'PAGE_TYPE'(이 페이지 유형에서 쓰지 않는 옵션) | 'NOT_PRESENT'(바꿀 대상이 없음) | 'NO_CHANGE'(이미 그 상태). */
+function tryOptionDetailed(tree, slot, option, pageType, ctx) {
+  const pages = option.pages ?? slot.pages;
+  if (pageType && pages && !pages.includes(pageType)) return {reason: 'PAGE_TYPE'};
+  const copy = structuredClone(tree);
+  if (!slot.when(copy)) return {reason: 'NOT_PRESENT'};
+  return option.apply(copy, ctx) ? {tree: copy} : {reason: 'NO_CHANGE'};
 }
 
 /**
@@ -159,20 +192,61 @@ export function assessLayout(tree, choice = {}, pageType, ctx = {}) {
   return {recommended: findings.length === 0, findings};
 }
 
-/** {slot: option} 선택을 슬롯 순서대로 적용한다. 알 수 없는 선택은 오류, 바뀌지 않는 선택은 건너뛴다. */
-export function applyLayout(tree, choice = {}, pageType) {
+const unknownChoice = (slotId, optionId) => !SLOTS.find(s => s.id === slotId)?.options.some(o => o.id === optionId);
+
+/**
+ * {slot: option} 선택을 슬롯 순서대로 적용한다. 알 수 없는 선택은 오류, 바뀌지 않는 선택은 건너뛴다.
+ * 템플릿 합성 경로(LEGACY)다: 히어로 변형이 허용하지 않는 필드는 지운다. options.report를 주면 지운 것이 기록된다.
+ * 이미 편집한 문서에는 applyLayoutChecked를 쓴다.
+ */
+export function applyLayout(tree, choice = {}, pageType, {report} = {}) {
   let out = structuredClone(tree);
   for (const [slotId, optionId] of Object.entries(choice)) {
     if (!optionId || optionId === 'default') continue;
-    const slot = SLOTS.find(s => s.id === slotId), option = slot?.options.find(o => o.id === optionId);
-    if (!slot || !option) throw new Error('Unknown layout choice: ' + slotId + '=' + optionId);
+    if (unknownChoice(slotId, optionId)) throw new Error('Unknown layout choice: ' + slotId + '=' + optionId);
   }
+  const ctx = report ? {lossy: true, report} : LEGACY;
   for (const slot of SLOTS) {
     const optionId = choice[slot.id]; if (!optionId || optionId === 'default') continue;
-    const next = tryOption(out, slot, slot.options.find(o => o.id === optionId), pageType);
+    const next = tryOption(out, slot, slot.options.find(o => o.id === optionId), pageType, ctx);
     if (next) out = next;
   }
   return out;
+}
+
+const REFUSAL_REASONS = {
+  PAGE_TYPE: (slot, option, pageType) => ({code: 'LAYOUT_NOT_APPLICABLE', message: `${pageType} 페이지에서는 ${slot}=${option} 구성을 쓰지 않습니다.`, hint: '이 페이지 유형에 허용된 구성은 layoutSlots(tree, pageType)로 확인하세요.'}),
+  NOT_PRESENT: (slot, option) => ({code: 'LAYOUT_NOT_APPLICABLE', message: `현재 문서에는 ${slot}=${option}을 적용할 대상이 없습니다.`, hint: '현재 트리에서 선택할 수 있는 구성은 layoutSlots(tree, pageType)로 확인하세요.'}),
+};
+
+/**
+ * 현재 문서 트리에 {slot: option} 선택을 적용한다(템플릿 원본을 다시 쓰지 않는다). 모두 적용되거나 하나도 적용되지 않는다.
+ * options.contentPolicy: 변형이 콘텐츠를 둘 곳이 없을 때 'reject'(기본) | 'relocate'.
+ * 결과: {tree, applied:[{slot, option}], unchanged:[{slot, option}], report:[{code, path, …}], errors:[{code, path, message, hint}]}. errors가 있으면 tree는 입력의 복사본이다.
+ */
+export function applyLayoutChecked(tree, choice = {}, pageType, {contentPolicy = 'reject'} = {}) {
+  const errors = [], applied = [], unchanged = [], report = [];
+  for (const [slotId, optionId] of Object.entries(choice)) {
+    if (!optionId || optionId === 'default') continue;
+    if (unknownChoice(slotId, optionId)) errors.push({code: 'LAYOUT_UNKNOWN', path: '$.layout.' + slotId, message: `알 수 없는 구성: ${slotId}=${optionId}`, hint: '허용된 슬롯: ' + layoutSlotIds.join(', ') + '. 옵션 id는 layoutSlots()가 돌려줍니다.'});
+  }
+  let out = structuredClone(tree);
+  if (errors.length) return {tree: out, applied, unchanged, report, errors};
+  const ctx = {lossy: false, contentPolicy, report};
+  for (const slot of SLOTS) {
+    const optionId = choice[slot.id]; if (!optionId || optionId === 'default') continue;
+    const option = slot.options.find(o => o.id === optionId);
+    try {
+      const r = tryOptionDetailed(out, slot, option, pageType, ctx);
+      if (r.tree) { out = r.tree; applied.push({slot: slot.id, option: optionId}); }
+      else if (r.reason === 'NO_CHANGE') unchanged.push({slot: slot.id, option: optionId});
+      else errors.push({path: '$.layout.' + slot.id, ...REFUSAL_REASONS[r.reason](slot.id, optionId, pageType)});
+    } catch (e) {
+      if (!(e instanceof LayoutRefusal)) throw e;
+      errors.push(e.detail);
+    }
+  }
+  return errors.length ? {tree: structuredClone(tree), applied: [], unchanged: [], report: [], errors} : {tree: out, applied, unchanged, report, errors};
 }
 
 export const layoutSlotIds = SLOTS.map(s => s.id);

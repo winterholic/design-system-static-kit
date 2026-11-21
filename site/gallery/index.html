@@ -425,7 +425,7 @@ const {icons, iconNames} = __m("catalog/icons.mjs");
 const {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, ratios, motifs} = __m("catalog/nodes.mjs");
 const {pageTypes, pageTypeIds} = __m("catalog/pagetypes.mjs");
 const {templates, templateList} = __m("catalog/templates.mjs");
-const {layoutSlots, applyLayout, assessLayout, layoutSlotIds} = __m("catalog/variants.mjs");
+const {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds} = __m("catalog/variants.mjs");
 const {variantContracts, variantCheckKinds} = __m("catalog/variant-contracts.mjs");
 const {NEUTRAL_OPTIONS: neutralOptions, EFFECTS_META: neutralMeta} = __m("catalog/variant-effects.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
@@ -485,20 +485,84 @@ function blueprintSchema() {
   };
 }
 
-/** Fix axis values that a ban or page type rejects, using each ban's declared `fix`. Used by composer/workbench; the validator never repairs. */
-function repairAxes(b) {
-  const pt = pageTypes[b.pageType];
+const NAV_GROUP_SHELLS = ['sidebar', 'split'];
+/** 같은 가로 막대를 쓰는 셸부터, 그다음 세로·특수 셸 순으로 대체 셸을 고른다. */
+const SHELL_PREFERENCE = ['topbar', 'stacked', 'centered', 'editorial', 'masthead', 'sidebar', 'split', 'rail', 'dock', 'minimal'];
+
+/**
+ * chrome.nav가 셸에 놓일 수 있는지 본다(검증기 NAV_COUNT·NAV_MEGA·NAV_GROUP·NAV_ICON과 같은 조건). 충돌 목록 [{code, fixableByShell, message}].
+ * fixableByShell:false는 어떤 셸로도 풀리지 않는 충돌(드롭다운 메뉴가 MEGA_MAX를 넘음)이다.
+ */
+function navConflicts(b, shell = b.shell) {
+  const nav = Array.isArray(b.chrome?.nav) ? b.chrome.nav : [], out = [];
+  if (navLimits[shell] && nav.length > navLimits[shell]) out.push({code: 'NAV_COUNT', fixableByShell: true, message: `${shell} 셸의 내비 항목은 최대 ${navLimits[shell]}개인데 ${nav.length}개입니다.`});
+  const megas = nav.filter(i => i.mega);
+  if (megas.length && !megaShells.includes(shell)) out.push({code: 'NAV_MEGA', fixableByShell: true, message: `${shell} 셸은 드롭다운 메뉴(mega) ${megas.length}개를 보여 줄 수 없습니다.`});
+  if (megas.length > MEGA_MAX) out.push({code: 'NAV_MEGA', fixableByShell: false, message: `드롭다운 메뉴는 최대 ${MEGA_MAX}개인데 ${megas.length}개입니다.`});
+  if (nav.some(i => i.group) && !NAV_GROUP_SHELLS.includes(shell)) out.push({code: 'NAV_GROUP', fixableByShell: true, message: `${shell} 셸은 내비 그룹 라벨을 보여 줄 수 없습니다(sidebar·split 전용).`});
+  if (iconShells.includes(shell) && nav.some(i => !i.icon)) out.push({code: 'NAV_ICON', fixableByShell: true, message: `${shell} 셸은 모든 내비 항목에 icon이 필요합니다.`});
+  return out;
+}
+
+const axisProblems = b => {
+  const pt = pageTypes[b.pageType], out = [];
+  if (pt && !pt.shells.includes(b.shell)) out.push('shell');
+  if (pt?.widths && !pt.widths.includes(b.width)) out.push('width');
+  for (const ban of axisBans) if (ban.bad(b)) out.push(ban.id);
+  return out;
+};
+
+/** 축 값만 고친다(셸·폭·금지 조합). 바뀐 축은 note({code:'AXIS_REPAIRED', axis, from, to, rule})로 알린다. 내용은 건드리지 않는다. */
+function repairAxisValues(b, note) {
+  const pt = pageTypes[b.pageType], set = (axis, to, rule) => { if (b[axis] !== to) note({code: 'AXIS_REPAIRED', axis, from: b[axis], to, rule}); b[axis] = to; };
   for (let i = 0; i < 8; i++) {
     let changed = false;
-    if (pt && !pt.shells.includes(b.shell)) { b.shell = pt.shells.includes('topbar') ? 'topbar' : pt.shells[0]; changed = true; }
-    if (pt?.widths && !pt.widths.includes(b.width)) { b.width = pt.widths.at(-1); changed = true; }
-    for (const ban of axisBans) if (ban.bad(b)) { Object.assign(b, ban.fix); changed = true; }
+    if (pt && !pt.shells.includes(b.shell)) { set('shell', pt.shells.includes('topbar') ? 'topbar' : pt.shells[0], 'page-type'); changed = true; }
+    if (pt?.widths && !pt.widths.includes(b.width)) { set('width', pt.widths.at(-1), 'page-type'); changed = true; }
+    for (const ban of axisBans) if (ban.bad(b)) { for (const [axis, to] of Object.entries(ban.fix)) set(axis, to, ban.id); changed = true; }
     if (!changed) break;
   }
-  if (b.chrome?.nav && b.chrome.nav.length > navLimits[b.shell]) b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]);
-  if (b.chrome?.nav && !megaShells.includes(b.shell)) for (const item of b.chrome.nav) delete item.mega;
+}
+
+/**
+ * 내비가 놓이지 않는 셸이면 내비를 그대로 두고 놓이는 셸로 바꾼다(페이지 유형·테마 금지·축 금지를 지키는 후보 중 선호 순서).
+ * 고른 셸은 note({code:'SHELL_SUBSTITUTED'})로 알린다. 놓일 셸이 없으면 아무것도 바꾸지 않고 false를 돌려준다(검증기가 거부한다).
+ */
+function fitShellToNav(b, note) {
+  if (!navConflicts(b).length) return true;
+  const pt = pageTypes[b.pageType], theme = themes[b.theme];
+  const pool = SHELL_PREFERENCE.filter(s => axes.shell.includes(s) && (!pt || pt.shells.includes(s)) && !theme?.forbid?.shell?.includes(s));
+  for (const shell of pool) {
+    if (navConflicts(b, shell).length) continue;
+    const trial = {...b, shell}, trace = [];
+    repairAxisValues(trial, r => trace.push(r));
+    if (trial.shell !== shell || axisProblems(trial).length || navConflicts(trial).length) continue;
+    note({code: 'SHELL_SUBSTITUTED', axis: 'shell', from: b.shell, to: shell, rule: 'nav-fit'});
+    Object.assign(b, {shell});
+    repairAxisValues(b, note);
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Fix axis values that a ban or page type rejects, using each ban's declared `fix`. Used by composer/workbench; the validator never repairs.
+ * options.nav는 내비가 셸에 놓이지 않을 때의 정책이다.
+ *   'drop'(기본, 호환): 항목을 자르고 mega·group을 지운다. 템플릿을 다른 테마에 입히는 합성 경로와 2.x 출력 hash가 이 동작에 고정되어 있다.
+ *   'fit': 내비를 보존하고 놓이는 셸로 바꾼다. 놓일 셸이 없으면 내비를 그대로 두어 검증기가 NAV_* 오류로 거부한다.
+ *   'keep': 내비를 건드리지 않는다.
+ * options.report 배열을 주면 바뀐 축과 삭제한 항목이 구조화된 기록(code·path·dropped…)으로 쌓인다. 'drop'은 report 없이도 동작하지만 편집 연산(src/edit)은 쓰지 않는다.
+ */
+function repairAxes(b, {nav = 'drop', report = null} = {}) {
+  const note = r => { report?.push(r); };
+  repairAxisValues(b, note);
+  if (!b.chrome?.nav) return b;
+  if (nav === 'fit') { fitShellToNav(b, note); return b; }
+  if (nav === 'keep') return b;
+  if (b.chrome.nav.length > navLimits[b.shell]) { const dropped = b.chrome.nav.slice(navLimits[b.shell]); b.chrome.nav = b.chrome.nav.slice(0, navLimits[b.shell]); note({code: 'NAV_TRUNCATED', path: '$.chrome.nav', limit: navLimits[b.shell], dropped}); }
+  if (!megaShells.includes(b.shell)) b.chrome.nav.forEach((item, i) => { if (item.mega) { note({code: 'NAV_MEGA_DROPPED', path: `$.chrome.nav[${i}].mega`, dropped: item.mega}); delete item.mega; } });
   // Group labels need a vertical list; a template worn by a horizontal-shell theme keeps its items and drops the labels.
-  if (b.chrome?.nav && !['sidebar', 'split'].includes(b.shell)) for (const item of b.chrome.nav) delete item.group;
+  if (!NAV_GROUP_SHELLS.includes(b.shell)) b.chrome.nav.forEach((item, i) => { if (item.group) { note({code: 'NAV_GROUP_DROPPED', path: `$.chrome.nav[${i}].group`, dropped: item.group}); delete item.group; } });
   return b;
 }
 
@@ -509,7 +573,14 @@ const layoutOptionsOf = templateId => layoutSlots(templates[templateId].tree, te
  * Compose a template with a theme: theme defaults, then the template's own axes (which win only when the page type needs them), then repair.
  * options.typography: 서체 프리셋 id(테마 기본 서체를 덮어씀), options.themeVariant: 테마 변형 id(축 값 묶음), options.layout: {슬롯: 옵션} 구성 변형. 둘 다 결과 Blueprint에는 흔적 없이 축·트리 값으로만 남는다.
  */
-function createBlueprint(templateId = 'dashboard-overview', themeId, paletteId, options = {}) {
+function createBlueprint(...args) { return composeBlueprint(...args).blueprint; }
+
+/**
+ * createBlueprint와 같은 합성이되, 합성이 바꾸거나 지운 것(repairAxes·applyLayout 기록)을 함께 돌려준다: {blueprint, report, errors}.
+ * options.lossless:true는 아무것도 지우지 않는 합성이다(내비는 놓이는 셸로 옮기고, 히어로 facts는 options.contentPolicy에 따라 거부·이동).
+ * 지울 수밖에 없으면 blueprint가 null이고 errors에 이유가 담긴다. 기본(false)은 2.x 출력 hash가 고정된 합성이다.
+ */
+function composeBlueprint(templateId = 'dashboard-overview', themeId, paletteId, options = {}) {
   const t = templates[templateId];
   if (!Object.hasOwn(templates, templateId)) throw new Error('Unknown template: ' + templateId);
   const theme = themes[themeId ?? t.theme];
@@ -523,8 +594,16 @@ function createBlueprint(templateId = 'dashboard-overview', themeId, paletteId, 
   // 서체 프리셋은 테마와 독립이다: 컨셉의 look이나 사용자가 고른 프리셋이 테마 기본값을 덮어쓴다.
   if (options.typography) { if (!axes.typography.includes(options.typography)) throw new Error('Unknown typography: ' + options.typography); b.typography = options.typography; }
   b.chrome = structuredClone(t.chrome);
-  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout, t.pageType)};
-  return repairAxes(b);
+  const report = [];
+  if (options.lossless) {
+    const laid = applyLayoutChecked(t.tree, options.layout, t.pageType, {contentPolicy: options.contentPolicy});
+    if (laid.errors.length) return {blueprint: null, report, errors: laid.errors};
+    report.push(...laid.report);
+    b.tree = {type: 'page', children: laid.tree};
+    return {blueprint: repairAxes(b, {report, nav: 'fit'}), report, errors: []};
+  }
+  b.tree = {type: 'page', children: applyLayout(t.tree, options.layout, t.pageType, {report})};
+  return {blueprint: repairAxes(b, {report}), report, errors: []};
 }
 
 /** v1 blueprints (catalog 1.x) get the new required fields with conservative defaults; nothing else is rewritten. */
@@ -552,6 +631,7 @@ exports.recipeRules = recipeRules;
 exports.recipeIds = recipeIds;
 exports.layoutSlots = layoutSlots;
 exports.applyLayout = applyLayout;
+exports.applyLayoutChecked = applyLayoutChecked;
 exports.assessLayout = assessLayout;
 exports.layoutSlotIds = layoutSlotIds;
 exports.variantContracts = variantContracts;
@@ -593,9 +673,11 @@ exports.BLUEPRINT_VERSION = BLUEPRINT_VERSION;
 exports.limits = limits;
 exports.rules = rules;
 exports.blueprintSchema = blueprintSchema;
+exports.navConflicts = navConflicts;
 exports.repairAxes = repairAxes;
 exports.layoutOptionsOf = layoutOptionsOf;
 exports.createBlueprint = createBlueprint;
+exports.composeBlueprint = composeBlueprint;
 exports.migrateV1 = migrateV1;
 exports.migrateBlueprint = migrateBlueprint;
 };
@@ -2633,6 +2715,15 @@ __defs["catalog/variants.mjs"] = function (exports, __m) {
  * 슬롯은 "바꿀 대상이 있고 바꾸면 달라지는 경우"에만 템플릿에 나타난다(layoutSlots).
  */
 const {assessOption} = __m("catalog/variant-contracts.mjs");
+
+/**
+ * 옵션이 값을 지울 수 있는지에 대한 맥락. 옵션 함수는 (tree, ctx)를 받는다.
+ *   LEGACY(기본): 템플릿 합성 경로. 변형이 허용하지 않는 히어로 필드를 지운다(2.x 출력 hash가 이 동작에 고정). 지운 것은 ctx.report에 기록된다.
+ *   편집 경로(applyLayoutChecked): 콘텐츠는 지우지 않는다. 히어로 facts는 거부하거나 지표 격자로 옮기고, 장식(visual·motif)만 지우며 기록한다.
+ */
+const LEGACY = Object.freeze({lossy: true});
+/** 옵션이 콘텐츠를 둘 곳이 없어 적용을 거부할 때 던진다(편집 경로에서만). */
+class LayoutRefusal extends Error { constructor(detail) { super(detail.message); this.detail = detail; } }
 /** n개를 cols열에 놓았을 때 마지막 줄이 가득 차거나 두 칸 이상이어야 한다. */
 const fitsColumns = (n, cols) => n >= cols && (n % cols === 0 || n % cols >= 2);
 const walk = (nodes, fn, parent = null) => { for (const n of nodes) { fn(n, parent); if (n.children) walk(n.children, fn, n); } };
@@ -2649,13 +2740,28 @@ const HERO_FEEL = {
   statement: {label: '큰 문장', description: '큰 제목 한 덩어리로 시작'},
   cover: {label: '커버', description: '화면 폭을 채우는 표지형'},
 };
-/** 히어로 변형을 바꾸되 그 변형이 허용하지 않는 필드(visual·motif·facts)는 정리한다. */
-const setHero = variant => tree => {
+const FACTS_VARIANTS = ['statement', 'cover', 'centered'], VISUAL_VARIANTS = ['split', 'product'];
+const COLUMN_WORD = {2: 'two', 3: 'three', 4: 'four'};
+/**
+ * 히어로 변형을 바꾼다. 변형이 허용하지 않는 필드는 성격이 다르다.
+ *   장식: visual·motif(그림 종류). 다른 변형에서는 그릴 곳이 없으므로 지우고 기록한다.
+ *   콘텐츠: facts(값과 라벨 글). 지우지 않는다. 편집 경로는 거부하거나(contentPolicy 'reject') 히어로 바로 아래 지표 격자로 옮긴다('relocate').
+ *     facts는 검증기가 split·product에서 거부하므로 문서에 그대로 둘 수 없다(검증 완화 없음).
+ */
+const setHero = variant => (tree, ctx = LEGACY) => {
   const [hero] = find(tree, 'hero'); if (!hero || hero.variant === variant) return false;
+  const at = tree.indexOf(hero), path = `$.tree.children[${at}]`, note = r => ctx.report?.push(r);
+  const keepsVisual = VISUAL_VARIANTS.includes(variant), keepsFacts = FACTS_VARIANTS.includes(variant);
+  if (hero.facts && !keepsFacts && !ctx.lossy) {
+    if (ctx.contentPolicy !== 'relocate' || at < 0) throw new LayoutRefusal({code: 'LAYOUT_WOULD_DROP_CONTENT', path: path + '.facts', message: `히어로를 ${variant}로 바꾸면 facts ${hero.facts.length}개(${hero.facts.map(f => f.value + ' ' + f.label).join(' · ')})를 둘 곳이 없습니다.`, hint: "contentPolicy:'relocate'로 facts를 히어로 아래 지표 격자로 옮기거나, updateNode로 facts를 먼저 정리하세요."});
+    tree.splice(at + 1, 0, {type: 'grid', columns: COLUMN_WORD[hero.facts.length], children: hero.facts.map(f => ({type: 'metric', label: f.label, value: f.value}))});
+    note({code: 'CONTENT_RELOCATED', path: path + '.facts', to: `$.tree.children[${at + 1}]`, count: hero.facts.length});
+    delete hero.facts;
+  }
   hero.variant = variant;
-  if (!['split', 'product'].includes(variant)) { delete hero.visual; delete hero.motif; }
-  else if (!hero.visual) hero.visual = variant === 'product' ? 'device' : 'ornament';
-  if (!['statement', 'cover', 'centered'].includes(variant)) delete hero.facts;
+  if (!keepsVisual) for (const field of ['visual', 'motif']) if (hero[field] !== undefined) { note({code: 'DECORATION_DROPPED', path: `${path}.${field}`, field, dropped: hero[field], kind: 'decoration'}); delete hero[field]; }
+  if (keepsVisual && !hero.visual) hero.visual = variant === 'product' ? 'device' : 'ornament';
+  if (!keepsFacts && hero.facts) { note({code: 'CONTENT_DROPPED', path: path + '.facts', field: 'facts', dropped: hero.facts, kind: 'content'}); delete hero.facts; }
   return true;
 };
 
@@ -2752,13 +2858,22 @@ function proofIndex(tree) {
 }
 
 /** 옵션 하나를 새 복사본에 적용해 바뀐 트리를 돌려준다. 바뀌지 않으면 null. */
-function tryOption(tree, slot, option, pageType) {
+function tryOption(tree, slot, option, pageType, ctx = LEGACY) {
   // 페이지 유형에 맞지 않는 구성은 만들지 않는다: 대시보드·문서·설정 화면의 가운데 정렬 머리말처럼, 6차 진단에서 조합 절반을 차지하던 어색한 구성을 없앤다.
   const pages = option.pages ?? slot.pages;
   if (pageType && pages && !pages.includes(pageType)) return null;
   const copy = structuredClone(tree);
   if (!slot.when(copy)) return null;
-  return option.apply(copy) ? copy : null;
+  return option.apply(copy, ctx) ? copy : null;
+}
+
+/** tryOption과 같되 null인 이유를 돌려준다: 'PAGE_TYPE'(이 페이지 유형에서 쓰지 않는 옵션) | 'NOT_PRESENT'(바꿀 대상이 없음) | 'NO_CHANGE'(이미 그 상태). */
+function tryOptionDetailed(tree, slot, option, pageType, ctx) {
+  const pages = option.pages ?? slot.pages;
+  if (pageType && pages && !pages.includes(pageType)) return {reason: 'PAGE_TYPE'};
+  const copy = structuredClone(tree);
+  if (!slot.when(copy)) return {reason: 'NOT_PRESENT'};
+  return option.apply(copy, ctx) ? {tree: copy} : {reason: 'NO_CHANGE'};
 }
 
 /**
@@ -2787,20 +2902,61 @@ function assessLayout(tree, choice = {}, pageType, ctx = {}) {
   return {recommended: findings.length === 0, findings};
 }
 
-/** {slot: option} 선택을 슬롯 순서대로 적용한다. 알 수 없는 선택은 오류, 바뀌지 않는 선택은 건너뛴다. */
-function applyLayout(tree, choice = {}, pageType) {
+const unknownChoice = (slotId, optionId) => !SLOTS.find(s => s.id === slotId)?.options.some(o => o.id === optionId);
+
+/**
+ * {slot: option} 선택을 슬롯 순서대로 적용한다. 알 수 없는 선택은 오류, 바뀌지 않는 선택은 건너뛴다.
+ * 템플릿 합성 경로(LEGACY)다: 히어로 변형이 허용하지 않는 필드는 지운다. options.report를 주면 지운 것이 기록된다.
+ * 이미 편집한 문서에는 applyLayoutChecked를 쓴다.
+ */
+function applyLayout(tree, choice = {}, pageType, {report} = {}) {
   let out = structuredClone(tree);
   for (const [slotId, optionId] of Object.entries(choice)) {
     if (!optionId || optionId === 'default') continue;
-    const slot = SLOTS.find(s => s.id === slotId), option = slot?.options.find(o => o.id === optionId);
-    if (!slot || !option) throw new Error('Unknown layout choice: ' + slotId + '=' + optionId);
+    if (unknownChoice(slotId, optionId)) throw new Error('Unknown layout choice: ' + slotId + '=' + optionId);
   }
+  const ctx = report ? {lossy: true, report} : LEGACY;
   for (const slot of SLOTS) {
     const optionId = choice[slot.id]; if (!optionId || optionId === 'default') continue;
-    const next = tryOption(out, slot, slot.options.find(o => o.id === optionId), pageType);
+    const next = tryOption(out, slot, slot.options.find(o => o.id === optionId), pageType, ctx);
     if (next) out = next;
   }
   return out;
+}
+
+const REFUSAL_REASONS = {
+  PAGE_TYPE: (slot, option, pageType) => ({code: 'LAYOUT_NOT_APPLICABLE', message: `${pageType} 페이지에서는 ${slot}=${option} 구성을 쓰지 않습니다.`, hint: '이 페이지 유형에 허용된 구성은 layoutSlots(tree, pageType)로 확인하세요.'}),
+  NOT_PRESENT: (slot, option) => ({code: 'LAYOUT_NOT_APPLICABLE', message: `현재 문서에는 ${slot}=${option}을 적용할 대상이 없습니다.`, hint: '현재 트리에서 선택할 수 있는 구성은 layoutSlots(tree, pageType)로 확인하세요.'}),
+};
+
+/**
+ * 현재 문서 트리에 {slot: option} 선택을 적용한다(템플릿 원본을 다시 쓰지 않는다). 모두 적용되거나 하나도 적용되지 않는다.
+ * options.contentPolicy: 변형이 콘텐츠를 둘 곳이 없을 때 'reject'(기본) | 'relocate'.
+ * 결과: {tree, applied:[{slot, option}], unchanged:[{slot, option}], report:[{code, path, …}], errors:[{code, path, message, hint}]}. errors가 있으면 tree는 입력의 복사본이다.
+ */
+function applyLayoutChecked(tree, choice = {}, pageType, {contentPolicy = 'reject'} = {}) {
+  const errors = [], applied = [], unchanged = [], report = [];
+  for (const [slotId, optionId] of Object.entries(choice)) {
+    if (!optionId || optionId === 'default') continue;
+    if (unknownChoice(slotId, optionId)) errors.push({code: 'LAYOUT_UNKNOWN', path: '$.layout.' + slotId, message: `알 수 없는 구성: ${slotId}=${optionId}`, hint: '허용된 슬롯: ' + layoutSlotIds.join(', ') + '. 옵션 id는 layoutSlots()가 돌려줍니다.'});
+  }
+  let out = structuredClone(tree);
+  if (errors.length) return {tree: out, applied, unchanged, report, errors};
+  const ctx = {lossy: false, contentPolicy, report};
+  for (const slot of SLOTS) {
+    const optionId = choice[slot.id]; if (!optionId || optionId === 'default') continue;
+    const option = slot.options.find(o => o.id === optionId);
+    try {
+      const r = tryOptionDetailed(out, slot, option, pageType, ctx);
+      if (r.tree) { out = r.tree; applied.push({slot: slot.id, option: optionId}); }
+      else if (r.reason === 'NO_CHANGE') unchanged.push({slot: slot.id, option: optionId});
+      else errors.push({path: '$.layout.' + slot.id, ...REFUSAL_REASONS[r.reason](slot.id, optionId, pageType)});
+    } catch (e) {
+      if (!(e instanceof LayoutRefusal)) throw e;
+      errors.push(e.detail);
+    }
+  }
+  return errors.length ? {tree: structuredClone(tree), applied: [], unchanged: [], report: [], errors} : {tree: out, applied, unchanged, report, errors};
 }
 
 const layoutSlotIds = SLOTS.map(s => s.id);
@@ -2808,6 +2964,7 @@ const layoutSlotIds = SLOTS.map(s => s.id);
 exports.layoutSlots = layoutSlots;
 exports.assessLayout = assessLayout;
 exports.applyLayout = applyLayout;
+exports.applyLayoutChecked = applyLayoutChecked;
 exports.layoutSlotIds = layoutSlotIds;
 };
 __defs["compiler.mjs"] = function (exports, __m) {
