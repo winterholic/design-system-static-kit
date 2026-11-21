@@ -59,6 +59,7 @@ npm run test:layout
 | `CLIP_TEXT` | error | `overflow:hidden` 칸에서 글이 잘림(line-clamp·말줄임·스크롤은 제외) |
 | `CLIP_ICON` | error | 아이콘·이미지·SVG가 상위 요소의 `overflow`에 1.5px 넘게 잘림(장식으로 모서리에 걸친 `aria-hidden`은 제외) |
 | `CLIP_SVG` | error | SVG 그림이 자기 `viewBox` 밖으로 나가 잘림(`overflow:visible`이면 제외) |
+| `SVG_SLICE_CROP` | warn | 접근 가능한 의미 있는 SVG가 `preserveAspectRatio="… slice"`로 표시 상자 비율을 채우며 viewBox의 한 축 20% 이상을 자름. 잘리는 축·전체 비율·정렬에 따른 시작/끝 쪽 크롭을 보고 |
 | `SMALL_TEXT` | error | 역할별 글자 크기 하한 미만. SVG 글자는 `font-size × viewBox 배율`로 실제 렌더 크기를 쟀다(하한 10px) |
 | `OVERLAP_SVG_TEXT` | error | 같은 SVG 안의 글(차트 눈금·값 라벨) 두 개가 글상자 면적의 15% 넘게 겹침 |
 | `OVERFLOW_X` | error | 문서 또는 요소가 화면 오른쪽 밖으로 나감(가로 스크롤 영역 제외) |
@@ -71,6 +72,8 @@ npm run test:layout
 
 임계값은 `probe.mjs`의 `LAYOUT_OPTIONS.thresholds` 한 곳에 있다. 페이지를 통과시키려고 낮추지 않는다. 페이지를 고치거나, 사유가 있는 면제를 둔다.
 
+`SVG_SLICE_CROP`의 20% 기준은 화면 상자와 viewBox의 종횡비에서 계산한 **잘린 축의 전체 비율**이다(`slice`가 표시 상자를 채울 때 보이지 않는 viewBox 범위). 이 값은 실제 SVG 경로·주 피사체가 잘린 비율이 아니다. 따라서 명시적인 `slice`는 작성자가 의도했을 수도 있어 오류가 아닌 경고로 제한한다. 경고는 보조기술에 노출된 `role="img"`, `aria-label` 또는 SVG 바로 아래 `<title>`이 있는 SVG에만 낸다. `aria-hidden="true"`와 `data-layout-decor` 표시는 새 경고 대상에서 제외한다. 기존 `.kit-art` 장식 예외는 유지하되, 그중 의미가 노출되고 20% 이상 크롭되는 `kit-art`에 한해 slice 위험을 따로 보고한다. 같은 계열의 viewBox 도형 넘침은 기존처럼 장식 예외로 둔다. 표시 비율이 같거나 `meet`·`none`을 쓰거나, 크롭이 20% 미만이거나, `overflow:visible`이면 이 경고를 내지 않는다.
+
 - 면제는 `{code, page?, locator?, width?, reason}`이고 `reason`이 없으면 검사기가 던진다.
 - 요소 단위 면제는 `data-layout-exempt="CODE[,CODE]: 사유"`다. 사유가 없으면 면제하지 않는다.
 - 면제된 발견은 통과 판정에서 빠지지만 보고에는 남고 `exempt` 수로 센다.
@@ -82,6 +85,7 @@ npm run test:layout
 ## 알려진 한계
 
 - Chromium 한 대, 한 글꼴 환경에서만 잰다. 줄 수에 의존하는 픽스처는 글꼴이 다르면 어긋날 수 있다.
+- SVG slice 크롭은 viewBox와 표시 상자의 비율로만 추정한다. 실제 그려진 path, 투명 여백, 피사체의 중요도는 해석하지 않으므로 경고가 있어도 잘린 내용이 중요하다는 뜻은 아니다. 특히 제품 일러스트의 의도된 구도는 사람이 확인해야 한다.
 - "읽기 좋은 줄바꿈"의 의미(예: `금지된 축 / 조합은`처럼 명사구가 갈라지는지)는 보지 못한다. 줄 수·폭·끝줄·잘림만 잰다. 그 판단은 C단계(사람)의 몫이다.
 - `text-wrap: pretty`는 끝줄 고아를 줄이지만 모두 막지 못한다. 360px 좁은 칸의 긴 목록 항목이 남는다(면제 목록 참조).
 - iframe 안(컴파일된 예제 미리보기)은 따로 `checkHtml`로 잰다. 바깥 페이지 검사는 iframe 안을 들여다보지 않는다.
