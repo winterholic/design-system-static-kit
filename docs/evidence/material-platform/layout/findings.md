@@ -3,6 +3,7 @@
 ## 실행 정보
 
 - 대상 입력: `docs/evidence/material-platform/assembled/{erp,commerce,saas,analytics}/index.html` 및 각 `styles.css`. 모두 통합 기준 `da7c86486c5f02509e5d80d4061b4aa0d1040a34`의 재료 카탈로그 2.6.0에서 조립했다.
+- 측정한 소스 revision: `509fdbc369d5e1ea931ba0209e9e7a5dec0e6e8f` (`feat/representative-layout-fix`). 원시 JSON에도 입력 revision과 소스 revision을 적었다.
 - 새 측정: 2026-11-21T17:53:41.284Z (KST 2026-11-22 02:53:41), 설정된 Ttakkari Chromium / HeadlessChrome 157, deviceScaleFactor 1. 화면 폭 390px·1280px, 재현 대조군 S21@320·S06@1440.
 - 정본 원시 결과: [report.json](report.json). 현재 캡처는 여덟 대표 화면과 여덟 전체 페이지 PNG이며, `*-390.png` / `*-1280.png`는 새 측정에 해당한다.
 - 직전 기준: [report-previous-2026-11-21T172945Z.json](report-previous-2026-11-21T172945Z.json), capturedAt 2026-11-21T17:29:45.405Z. 이후 변경 전 브라우저 재현(17:42:03.548Z)은 대표 화면 오류 29건과 정보 1건, 레거시 오류 2건과 정보 1건을 확인했다. 그 여덟 화면 캡처는 `baseline-2026-11-21T174203Z-*` 파일에 보존했다.
