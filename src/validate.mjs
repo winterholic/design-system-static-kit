@@ -181,15 +181,47 @@ export function validateBlueprint(input) {
       if (['ready', 'partial'].includes(n.state) && n.rows.length === 0) error(path + '.rows', 'STATE_DATA', `${n.state} 상태에는 행이 1개 이상 필요합니다.`);
     }
     if (t === 'list' && A(n.items) && ['ready', 'partial'].includes(n.state) && n.items.length === 0) error(path + '.items', 'STATE_DATA', `${n.state} 상태에는 항목이 1개 이상 필요합니다.`);
-    if (t === 'chart' && A(n.series) && A(n.categories)) {
-      n.series.forEach((s, i) => { if (plain(s) && A(s.values) && s.values.length !== n.categories.length) error(`${path}.series[${i}].values`, 'CHART_SHAPE', '값의 개수는 categories와 같아야 합니다.'); });
+    if (t === 'chart') {
+      const series = A(n.series) ? n.series : [], categories = A(n.categories) ? n.categories : [];
+      const pointKind = n.kind === 'scatter';
+      if (!series.length) error(path + '.series', 'CHART_SHAPE', '차트 계열이 하나 이상 필요합니다.');
+      if (!pointKind && categories.length < 2) error(path + '.categories', 'CHART_SHAPE', '이 차트는 범주 2개 이상이 필요합니다.');
+      series.forEach((s, i) => {
+        if (!plain(s)) return;
+        if (pointKind) {
+          if (!A(s.points) || s.points.length < 2) error(`${path}.series[${i}].points`, 'CHART_SHAPE', 'scatter 계열에는 좌표 점이 2개 이상 필요합니다.');
+          if (Object.hasOwn(s, 'values')) error(`${path}.series[${i}].values`, 'CHART_SHAPE', 'scatter는 values 대신 x·y points를 사용합니다.');
+        } else {
+          if (!A(s.values) || s.values.length !== categories.length) error(`${path}.series[${i}].values`, 'CHART_SHAPE', '계열 값의 개수는 categories와 같아야 합니다.');
+          if (Object.hasOwn(s, 'points')) error(`${path}.series[${i}].points`, 'CHART_SHAPE', '이 차트는 points를 받지 않습니다.');
+        }
+      });
+      if (n.kind === 'stacked-bar' && (series.length < 2 || series.some(s => A(s.values) && s.values.some(v => v < 0)))) error(path + '.series', 'CHART_SHAPE', 'stacked-bar는 음이 아닌 값의 계열 2개 이상이 필요합니다.');
+      if (n.kind === 'heatmap' && series.length < 2) error(path + '.series', 'CHART_SHAPE', 'heatmap은 행 2개 이상이 필요합니다.');
+      if (n.kind === 'sparkline' && series.length !== 1) error(path + '.series', 'CHART_SHAPE', 'sparkline은 계열 하나만 허용합니다.');
       if (n.kind === 'donut') {
-        const v = n.series[0]?.values;
-        if (n.series.length !== 1) error(path + '.series', 'CHART_SHAPE', 'donut은 계열 하나만 허용합니다.');
+        const v = series[0]?.values;
+        if (series.length !== 1) error(path + '.series', 'CHART_SHAPE', 'donut은 계열 하나만 허용합니다.');
         else if (A(v) && (v.some(x => typeof x !== 'number' || x < 0) || v.reduce((a, b) => a + b, 0) <= 0)) error(path + '.series[0].values', 'CHART_SHAPE', 'donut 값은 0 이상이며 합이 0보다 커야 합니다.');
-        if (n.categories.length > 5) error(path + '.categories', 'CHART_SHAPE', 'donut은 범주 5개 이하입니다(그 이상은 막대 차트).');
+        if (categories.length > 5) error(path + '.categories', 'CHART_SHAPE', 'donut은 범주 5개 이하입니다(그 이상은 막대 차트).');
       }
-      if (n.series.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
+      if (n.series?.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
+      const values = pointKind ? series.flatMap(s => (s.points ?? []).flatMap(p => [p.x, p.y]))
+        : n.kind === 'stacked-bar' ? categories.map((_, i) => series.reduce((sum, s) => sum + (s.values?.[i] ?? 0), 0))
+          : series.flatMap(s => s.values ?? []);
+      if (plain(n.axis)) {
+        if (Number.isFinite(n.axis.min) && Number.isFinite(n.axis.max) && n.axis.min >= n.axis.max) error(path + '.axis', 'CHART_AXIS', '축 범위는 min보다 max가 커야 합니다.');
+        if (pointKind) {
+          const xs = series.flatMap(s => (s.points ?? []).map(p => p.x)), ys = series.flatMap(s => (s.points ?? []).map(p => p.y));
+          if (Number.isFinite(n.axis.xMin) && Number.isFinite(n.axis.xMax) && n.axis.xMin >= n.axis.xMax) error(path + '.axis', 'CHART_AXIS', 'X축 범위는 xMin보다 xMax가 커야 합니다.');
+          if (Number.isFinite(n.axis.yMin) && Number.isFinite(n.axis.yMax) && n.axis.yMin >= n.axis.yMax) error(path + '.axis', 'CHART_AXIS', 'Y축 범위는 yMin보다 yMax가 커야 합니다.');
+          if (Number.isFinite(n.axis.xMin) && xs.some(v => v < n.axis.xMin) || Number.isFinite(n.axis.xMax) && xs.some(v => v > n.axis.xMax)) error(path + '.axis', 'CHART_AXIS', 'X축 범위가 데이터 점을 잘라냅니다.');
+          if (Number.isFinite(n.axis.yMin) && ys.some(v => v < n.axis.yMin) || Number.isFinite(n.axis.yMax) && ys.some(v => v > n.axis.yMax)) error(path + '.axis', 'CHART_AXIS', 'Y축 범위가 데이터 점을 잘라냅니다.');
+        } else {
+          if (Number.isFinite(n.axis.min) && values.some(v => v < n.axis.min)) error(path + '.axis.min', 'CHART_AXIS', '축 최솟값이 데이터보다 커서 값이 잘립니다.');
+          if (Number.isFinite(n.axis.max) && values.some(v => v > n.axis.max)) error(path + '.axis.max', 'CHART_AXIS', '축 최댓값이 데이터보다 작아 값이 잘립니다.');
+        }
+      }
     }
     if (t === 'calendar' && A(n.events) && Number.isInteger(n.year) && Number.isInteger(n.month)) n.events.forEach((ev, i) => { if (plain(ev) && Number.isInteger(ev.day) && ev.day > DAYS(n.year, n.month)) error(`${path}.events[${i}].day`, 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${ev.day}일이 없습니다.`); });
     if (t === 'calendar' && Number.isInteger(n.today) && Number.isInteger(n.year) && Number.isInteger(n.month) && n.today > DAYS(n.year, n.month)) error(path + '.today', 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${n.today}일이 없습니다.`);
