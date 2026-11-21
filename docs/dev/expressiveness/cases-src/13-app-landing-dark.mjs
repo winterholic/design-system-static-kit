@@ -1,0 +1,18 @@
+import {bp, act, footer} from '../lib.mjs';
+export default bp({
+  name: 'Soma 수면 기록', theme: 'nocturne', palette: 'midnight-sky', pageType: 'landing', mode: 'dark',
+  axes: {shell: 'topbar', typography: 'geometric', density: 'comfortable', radius: 'round', control: 'pill', elevation: 'glow', motion: 'subtle', icon: 'duotone', ornament: 'geometric', backdrop: 'gradient', width: 'wide', scale: 'dramatic', weight: 'bold', footer: 'simple'},
+  nav: [{label: '기능', href: '#features'}, {label: '후기', href: '#reviews'}], action: {label: '다운로드', href: '#download'},
+  foot: footer('© 2026 Soma'),
+  children: [
+    {type: 'page-header', title: 'Soma 수면 기록', description: '밤을 기록하고 아침을 바꾸는 앱'},
+    {type: 'hero', variant: 'product', eyebrow: '수면 기록 앱', title: '어젯밤의 나를 읽는 아침', body: '잠든 시간, 깊은 잠, 뒤척임을 한 장으로 보여 드립니다.', visual: 'device', action: act('App Store'), secondaryAction: act('Google Play', 'secondary')},
+    {type: 'section', title: '기능', anchor: 'features', children: [
+      {type: 'split', ratio: 'even', align: 'center', children: [{type: 'media', kind: 'device', ratio: '3:4', alt: '수면 단계 그래프 화면'}, {type: 'prose', title: '수면 단계 그래프', body: '얕은 잠, 깊은 잠, 렘수면을 시간순으로 보여 줍니다.'}]},
+      {type: 'split', ratio: 'even', align: 'center', reverse: 'reverse', children: [{type: 'media', kind: 'device', ratio: '3:4', alt: '알람 설정 화면'}, {type: 'prose', title: '가벼운 알람', body: '얕은 잠일 때 30분 안에서 부드럽게 깨웁니다.'}]},
+      {type: 'split', ratio: 'even', align: 'center', children: [{type: 'media', kind: 'device', ratio: '3:4', alt: '주간 리포트 화면'}, {type: 'prose', title: '주간 리포트', body: '일주일의 패턴과 개선 팁을 월요일 아침에 보냅니다.'}]},
+    ]},
+    {type: 'section', title: '후기', anchor: 'reviews', children: [{type: 'quote', quote: '알람 없이도 개운하게 일어나는 날이 늘었어요.', author: '정하린', role: 'App Store 리뷰'}]},
+    {type: 'section', title: '다운로드', anchor: 'download', children: [{type: 'cta', title: '오늘 밤부터 기록해 보세요', body: '무료로 시작하고 언제든 그만둘 수 있습니다.', action: act('App Store'), secondaryAction: act('Google Play', 'secondary'), tone: 'inverse'}]},
+  ],
+});

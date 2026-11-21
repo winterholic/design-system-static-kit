@@ -1,0 +1,303 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.4.0",
+  "name": "지표창 Metriq",
+  "theme": "insight",
+  "palette": "ocean-blue-adventure",
+  "mode": "light",
+  "pageType": "landing",
+  "shell": "topbar",
+  "typography": "sans",
+  "density": "compact",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "제품",
+        "href": "#product"
+      },
+      {
+        "label": "데이터",
+        "href": "#data"
+      },
+      {
+        "label": "활동",
+        "href": "#activity"
+      }
+    ],
+    "action": {
+      "label": "데모 보기",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 Metriq",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "매출 지표를 한 화면에서",
+        "description": "분석 SaaS Metriq"
+      },
+      {
+        "type": "hero",
+        "variant": "product",
+        "eyebrow": "실시간 매출 분석",
+        "title": "숫자가 먼저 말하는 팀 대시보드",
+        "body": "흩어진 매출·방문·전환 데이터를 한 화면으로 모아 팀이 같은 숫자를 봅니다.",
+        "visual": "chart",
+        "action": {
+          "label": "무료로 시작",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "secondaryAction": {
+          "label": "데모 보기",
+          "href": "#main",
+          "variant": "secondary"
+        }
+      },
+      {
+        "type": "section",
+        "title": "오늘의 숫자",
+        "anchor": "product",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "four",
+            "children": [
+              {
+                "type": "metric",
+                "label": "오늘 매출",
+                "value": "₩4,820만",
+                "trend": "up",
+                "delta": "+8.2%",
+                "detail": "어제 대비"
+              },
+              {
+                "type": "metric",
+                "label": "방문자",
+                "value": "12,480",
+                "trend": "up",
+                "delta": "+3.1%"
+              },
+              {
+                "type": "metric",
+                "label": "전환율",
+                "value": "3.4%",
+                "trend": "down",
+                "delta": "-0.2%p"
+              },
+              {
+                "type": "metric",
+                "label": "평균 주문액",
+                "value": "₩58,300",
+                "trend": "flat",
+                "delta": "0%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "추이와 상세",
+        "anchor": "data",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "chart",
+                "title": "주간 매출",
+                "caption": "요일별 매출(만원)",
+                "kind": "bar",
+                "unit": "만",
+                "categories": [
+                  "월",
+                  "화",
+                  "수",
+                  "목",
+                  "금"
+                ],
+                "series": [
+                  {
+                    "name": "매출",
+                    "values": [
+                      420,
+                      510,
+                      480,
+                      560,
+                      620
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "chart",
+                "title": "방문 추이",
+                "caption": "시간대별 방문자",
+                "kind": "line",
+                "categories": [
+                  "6시",
+                  "9시",
+                  "12시",
+                  "15시",
+                  "18시"
+                ],
+                "series": [
+                  {
+                    "name": "방문",
+                    "values": [
+                      120,
+                      480,
+                      760,
+                      640,
+                      910
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "chart",
+                "title": "채널 비중",
+                "caption": "유입 채널별 비중",
+                "kind": "donut",
+                "unit": "%",
+                "categories": [
+                  "검색",
+                  "광고",
+                  "직접",
+                  "추천"
+                ],
+                "series": [
+                  {
+                    "name": "비중",
+                    "values": [
+                      42,
+                      28,
+                      18,
+                      12
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "table",
+            "title": "상위 상품",
+            "caption": "오늘 매출 상위 4개",
+            "columns": [
+              "상품",
+              "매출",
+              "전환"
+            ],
+            "rows": [
+              [
+                "무선 이어폰",
+                "1,240만",
+                "4.1%"
+              ],
+              [
+                "보조 배터리",
+                "980만",
+                "3.8%"
+              ],
+              [
+                "스마트 워치",
+                "870만",
+                "2.9%"
+              ],
+              [
+                "케이블 세트",
+                "420만",
+                "5.2%"
+              ]
+            ],
+            "state": "ready",
+            "variant": "striped"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "팀 활동",
+        "anchor": "activity",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "two",
+            "children": [
+              {
+                "type": "list",
+                "title": "최근 활동",
+                "variant": "divided",
+                "items": [
+                  {
+                    "title": "주간 리포트 공유",
+                    "description": "김다선이 마케팅 채널에 공유",
+                    "meta": "3분 전"
+                  },
+                  {
+                    "title": "알림 규칙 추가",
+                    "description": "전환율 3% 미만 시 알림",
+                    "meta": "1시간 전"
+                  },
+                  {
+                    "title": "대시보드 복제",
+                    "description": "캠페인 비교 보기",
+                    "meta": "어제"
+                  }
+                ]
+              },
+              {
+                "type": "progress",
+                "label": "월 목표 달성",
+                "value": 72,
+                "detail": "목표 2억 원 중 1.44억 원",
+                "tone": "brand"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cta",
+        "title": "오늘 팀의 숫자를 모아 보세요",
+        "body": "14일 동안 모든 기능을 무료로 씁니다.",
+        "action": {
+          "label": "무료로 시작",
+          "href": "#main",
+          "variant": "primary"
+        },
+        "tone": "brand"
+      }
+    ]
+  }
+}

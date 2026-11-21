@@ -1,0 +1,206 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.4.0",
+  "name": "Kitcli 문서",
+  "theme": "manual",
+  "palette": "moonlit-mist",
+  "mode": "light",
+  "pageType": "docs",
+  "shell": "sidebar",
+  "typography": "tech",
+  "density": "comfortable",
+  "radius": "subtle",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "none",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "tight",
+  "weight": "medium",
+  "footer": "simple",
+  "chrome": {
+    "nav": [
+      {
+        "label": "시작하기",
+        "href": "#install",
+        "icon": "home"
+      },
+      {
+        "label": "설정",
+        "href": "#options",
+        "icon": "settings"
+      },
+      {
+        "label": "레퍼런스",
+        "href": "#reference",
+        "icon": "book"
+      },
+      {
+        "label": "변경 기록",
+        "href": "#main",
+        "icon": "clock"
+      }
+    ],
+    "action": {
+      "label": "GitHub",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 Kitcli",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "build 명령",
+        "description": "프로젝트를 정적 파일로 빌드합니다.",
+        "eyebrow": "레퍼런스 · CLI",
+        "meta": [
+          "v2.4",
+          "수정 11월 20일"
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "end",
+        "sticky": "yes",
+        "size": "narrow",
+        "label": "이 페이지",
+        "children": [
+          {
+            "type": "section",
+            "title": "사용법",
+            "anchor": "install",
+            "children": [
+              {
+                "type": "prose",
+                "title": "설치",
+                "body": "전역으로 설치하면 어느 폴더에서나 kit 명령을 쓸 수 있습니다."
+              },
+              {
+                "type": "code",
+                "label": "터미널",
+                "language": "bash",
+                "code": "npm install -g kitcli\nkit build ./site --out ./dist"
+              },
+              {
+                "type": "steps",
+                "title": "빌드 순서",
+                "layout": "vertical",
+                "items": [
+                  {
+                    "title": "입력 확인",
+                    "description": "입력 폴더의 설정 파일을 읽고 검증합니다."
+                  },
+                  {
+                    "title": "변환",
+                    "description": "문서를 HTML로 변환하고 링크를 확인합니다."
+                  },
+                  {
+                    "title": "출력",
+                    "description": "출력 폴더에 결과와 해시 목록을 씁니다."
+                  }
+                ]
+              },
+              {
+                "type": "notice",
+                "tone": "warning",
+                "title": "출력 폴더를 덮어씁니다",
+                "body": "출력 폴더에 직접 만든 파일이 있으면 먼저 옮기세요. 관리하지 않는 폴더는 거부합니다."
+              }
+            ]
+          },
+          {
+            "type": "toc",
+            "title": "이 페이지"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "옵션",
+        "anchor": "options",
+        "children": [
+          {
+            "type": "table",
+            "title": "매개변수",
+            "caption": "build 명령의 옵션",
+            "columns": [
+              "이름",
+              "타입",
+              "기본값",
+              "설명"
+            ],
+            "rows": [
+              [
+                "--out",
+                "string",
+                "./dist",
+                "출력 폴더"
+              ],
+              [
+                "--base",
+                "string",
+                "/",
+                "배포 경로 접두"
+              ],
+              [
+                "--strict",
+                "boolean",
+                "false",
+                "경고를 오류로 처리"
+              ],
+              [
+                "--cache",
+                "boolean",
+                "true",
+                "변환 결과 캐시 사용"
+              ]
+            ],
+            "state": "ready",
+            "variant": "plain"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "다음 문서",
+        "anchor": "reference",
+        "children": [
+          {
+            "type": "links",
+            "title": "이어 읽기",
+            "items": [
+              {
+                "label": "← 시작하기",
+                "href": "#install",
+                "description": "설치와 첫 프로젝트"
+              },
+              {
+                "label": "검사 명령 →",
+                "href": "#options",
+                "description": "check 명령 사용법"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

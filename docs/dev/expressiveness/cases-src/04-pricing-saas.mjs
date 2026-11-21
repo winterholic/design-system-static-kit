@@ -1,0 +1,33 @@
+import {bp, act, footer} from '../lib.mjs';
+const rows = [['사용자 수', '3명', '20명', '무제한'], ['프로젝트', '3개', '무제한', '무제한'], ['저장 공간', '5GB', '100GB', '1TB'], ['자동화 규칙', '—', '50개', '무제한'], ['권한 관리', '—', '기본', '세분화'], ['감사 로그', '—', '—', '포함'], ['SSO', '—', '—', '포함'], ['우선 지원', '—', '이메일', '전담 매니저'], ['API 호출', '1천/월', '10만/월', '무제한'], ['데이터 내보내기', 'CSV', 'CSV·JSON', '전체'], ['연동', '3개', '20개', '무제한'], ['보관 기간', '30일', '1년', '무제한']];
+export default bp({
+  name: 'Tidyflow 요금제', theme: 'trust', palette: 'ocean-blue-adventure', pageType: 'pricing', mode: 'light',
+  axes: {shell: 'topbar', typography: 'sans', density: 'comfortable', radius: 'soft', control: 'match', elevation: 'soft', motion: 'subtle', icon: 'line', ornament: 'none', backdrop: 'plain', width: 'standard', scale: 'balanced', weight: 'medium', footer: 'columns'},
+  nav: [{label: '비교', href: '#compare'}, {label: '질문', href: '#faq'}], action: {label: '시작하기', href: '#main'},
+  foot: footer('© 2026 Tidyflow'),
+  children: [
+    {type: 'page-header', title: '팀 규모에 맞는 요금제', description: '연 결제 시 두 달 무료 · 언제든 변경 가능', eyebrow: '요금제', actions: [act('연 결제 보기', 'secondary')]},
+    {type: 'tabs', variant: 'pill', children: [
+      {type: 'tab', label: '월 결제', children: [{type: 'pricing', children: [
+        {type: 'plan', name: '스타터', price: '0원', period: '월', description: '혼자 시작하는 팀', features: ['3명까지', '프로젝트 3개', '5GB 저장'], action: act('무료로 시작', 'secondary')},
+        {type: 'plan', name: '팀', price: '12,000원', period: '월', description: '성장하는 팀의 기본', features: ['20명까지', '무제한 프로젝트', '자동화 50개', '이메일 지원'], action: act('팀으로 시작'), featured: 'yes'},
+        {type: 'plan', name: '비즈니스', price: '39,000원', period: '월', description: '보안과 통제가 필요한 조직', features: ['무제한 사용자', 'SSO·감사 로그', '전담 매니저'], action: act('문의하기', 'secondary')},
+      ]}]},
+      {type: 'tab', label: '연 결제 · 2개월 무료', children: [{type: 'pricing', children: [
+        {type: 'plan', name: '스타터', price: '0원', period: '월', description: '혼자 시작하는 팀', features: ['3명까지', '프로젝트 3개', '5GB 저장'], action: act('무료로 시작', 'secondary')},
+        {type: 'plan', name: '팀', price: '10,000원', period: '월 · 연 120,000원', description: '성장하는 팀의 기본', features: ['20명까지', '무제한 프로젝트', '자동화 50개', '이메일 지원'], action: act('팀으로 시작'), featured: 'yes'},
+        {type: 'plan', name: '비즈니스', price: '32,500원', period: '월 · 연 390,000원', description: '보안과 통제가 필요한 조직', features: ['무제한 사용자', 'SSO·감사 로그', '전담 매니저'], action: act('문의하기', 'secondary')},
+      ]}]},
+    ]},
+    {type: 'section', title: '기능 비교', anchor: 'compare', children: [{type: 'table', title: '요금제별 기능', caption: '세 요금제의 기능 비교', columns: ['기능', '스타터', '팀', '비즈니스'], rows, state: 'ready', variant: 'bordered'}]},
+    {type: 'section', title: '함께하는 팀', children: [{type: 'logo-cloud', title: '이미 쓰는 팀', names: ['가나다랩', '라마바웍스', '사아자스튜디오', '차카타컴퍼니']}]},
+    {type: 'section', title: '자주 묻는 질문', anchor: 'faq', children: [{type: 'faq', title: '결제와 변경', layout: 'split', items: [
+      {question: '언제든 요금제를 바꿀 수 있나요?', answer: '네, 변경은 즉시 적용되고 차액은 일할 계산합니다.'},
+      {question: '연 결제는 어떻게 되나요?', answer: '12개월 가격에서 두 달이 빠집니다.'},
+      {question: '무료 체험이 있나요?', answer: '팀 요금제는 14일 동안 무료입니다.'},
+      {question: '환불이 가능한가요?', answer: '결제 후 14일 안에는 전액 환불합니다.'},
+      {question: '세금계산서를 받을 수 있나요?', answer: '결제 설정에서 사업자 정보를 등록하면 발행합니다.'},
+      {question: '데이터는 내보낼 수 있나요?', answer: '언제든 CSV와 JSON으로 내보낼 수 있습니다.'},
+    ]}]},
+  ],
+});

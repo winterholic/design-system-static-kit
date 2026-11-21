@@ -1,0 +1,31 @@
+import {bp, act, footer} from '../lib.mjs';
+export default bp({
+  name: '월간 결 · 표지 기사', theme: 'magazine', palette: 'classic-red-palette', pageType: 'blog', mode: 'light',
+  axes: {shell: 'masthead', typography: 'newsroom', density: 'spacious', radius: 'square', control: 'square', elevation: 'flat', motion: 'subtle', icon: 'line-fine', ornament: 'lines', backdrop: 'plain', width: 'wide', scale: 'dramatic', weight: 'bold', footer: 'columns'},
+  nav: [{label: '특집', href: '#features'}, {label: '인터뷰', href: '#main'}, {label: '목록', href: '#index'}],
+  action: {label: '구독', href: '#main'},
+  foot: footer('© 2026 월간 결'),
+  children: [
+    {type: 'page-header', title: '느리게 짓는 집', description: '2026년 11월호 · 표지 기사', eyebrow: '이달의 표지'},
+    {type: 'hero', variant: 'split', eyebrow: '표지 기사 · 건축', title: '벽이 먼저 말을 거는 집', body: '목수 윤세민은 도면보다 먼저 땅을 사흘 걷는다. 그가 지은 열두 채의 집을 따라가 보았다.', visual: 'photo', motif: 'interior', action: act('기사 읽기'), secondaryAction: act('작가 소개', 'ghost')},
+    {type: 'section', title: '이달의 특집', anchor: 'features', children: [
+      {type: 'bento', children: [
+        {type: 'card', variant: 'media', visual: 'photo', motif: 'coffee', ratio: '4:3', title: '골목 끝 로스터리', body: '하루 열두 잔만 내리는 가게의 오전.', meta: '생활 · 6분', author: '글 한유라'},
+        {type: 'card', title: '다시 읽는 절판본', body: '헌책방 주인이 권하는 여섯 권.', meta: '문화 · 9분', author: '글 오지헌'},
+        {type: 'card', title: '베란다의 계절', body: '화분 열 개로 만든 작은 정원.', meta: '생활 · 5분', author: '글 정하린'},
+      ]},
+    ]},
+    {type: 'section', title: '표지 인터뷰에서', surface: 'tint', children: [
+      {type: 'quote', quote: '집은 사는 사람의 속도로 완성된다. 서두르면 벽이 먼저 알아챈다.', author: '윤세민', role: '목수 · 표지 기사 주인공'},
+    ]},
+    {type: 'section', title: '이달의 목록', anchor: 'index', description: '지면에 다 싣지 못한 글', children: [
+      {type: 'list', title: '지면 밖의 글', variant: 'divided', items: [
+        {title: '옥상 텃밭 가꾸기 첫 달', description: '생활 · 4분', status: '완료', meta: '12쪽'},
+        {title: '낡은 극장을 고치는 사람들', description: '건축 · 7분', status: '완료', meta: '18쪽'},
+        {title: '겨울 이불 고르는 법', description: '생활 · 3분', status: '완료', meta: '26쪽'},
+        {title: '뒷골목 지도 그리기', description: '문화 · 8분', status: '완료', meta: '34쪽'},
+        {title: '목수의 연장통', description: '건축 · 5분', status: '완료', meta: '40쪽'},
+      ]},
+    ]},
+  ],
+});

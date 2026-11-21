@@ -1,0 +1,191 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.4.0",
+  "name": "서하준 건축사진",
+  "theme": "studio",
+  "palette": "warm-earthy-neutrals",
+  "mode": "light",
+  "pageType": "portfolio",
+  "shell": "topbar",
+  "typography": "grotesk",
+  "density": "spacious",
+  "radius": "square",
+  "control": "square",
+  "elevation": "flat",
+  "motion": "subtle",
+  "icon": "line-fine",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "full",
+  "scale": "dramatic",
+  "weight": "medium",
+  "footer": "minimal",
+  "chrome": {
+    "nav": [
+      {
+        "label": "작업",
+        "href": "#work"
+      }
+    ],
+    "action": {
+      "label": "연락",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 서하준",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "서하준 건축사진",
+        "description": "서울 · 건축 · 인테리어"
+      },
+      {
+        "type": "hero",
+        "variant": "statement",
+        "title": "빛이 지나간 자리를 찍습니다",
+        "body": "서울 · 건축 사진 · 2014 –",
+        "action": {
+          "label": "연락하기",
+          "href": "#main",
+          "variant": "primary"
+        }
+      },
+      {
+        "type": "media",
+        "kind": "photo",
+        "motif": "building",
+        "ratio": "21:9",
+        "alt": "오후의 빛이 들어오는 콘크리트 건물",
+        "caption": "한강 도서관 · 2025",
+        "overlay": "한강 도서관"
+      },
+      {
+        "type": "section",
+        "title": "작업",
+        "anchor": "work",
+        "children": [
+          {
+            "type": "split",
+            "ratio": "wide-start",
+            "reverse": "normal",
+            "align": "center",
+            "children": [
+              {
+                "type": "media",
+                "kind": "photo",
+                "motif": "museum",
+                "ratio": "4:3",
+                "alt": "한강 도서관 외관",
+                "caption": "01 · 2025"
+              },
+              {
+                "type": "prose",
+                "title": "한강 도서관",
+                "body": "노출 콘크리트와 오후 세 시의 빛."
+              }
+            ]
+          },
+          {
+            "type": "split",
+            "ratio": "wide-end",
+            "reverse": "reverse",
+            "align": "center",
+            "children": [
+              {
+                "type": "media",
+                "kind": "photo",
+                "motif": "interior",
+                "ratio": "4:3",
+                "alt": "북촌 주택 외관",
+                "caption": "02 · 2025"
+              },
+              {
+                "type": "prose",
+                "title": "북촌 주택",
+                "body": "마당을 둘러싼 세 개의 방."
+              }
+            ]
+          },
+          {
+            "type": "split",
+            "ratio": "wide-start",
+            "reverse": "normal",
+            "align": "center",
+            "children": [
+              {
+                "type": "media",
+                "kind": "photo",
+                "motif": "building",
+                "ratio": "4:3",
+                "alt": "성수 공장 외관",
+                "caption": "03 · 2024"
+              },
+              {
+                "type": "prose",
+                "title": "성수 공장",
+                "body": "벽돌 틈으로 들어온 아침."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "아카이브",
+        "children": [
+          {
+            "type": "gallery",
+            "layout": "masonry",
+            "items": [
+              {
+                "kind": "photo",
+                "motif": "building",
+                "alt": "계단실",
+                "caption": "계단실"
+              },
+              {
+                "kind": "photo",
+                "motif": "interior",
+                "alt": "거실",
+                "caption": "거실"
+              },
+              {
+                "kind": "photo",
+                "motif": "museum",
+                "alt": "전시실",
+                "caption": "전시실"
+              },
+              {
+                "kind": "photo",
+                "motif": "coast",
+                "alt": "해안 별장",
+                "caption": "해안"
+              },
+              {
+                "kind": "pattern",
+                "alt": "타일 패턴",
+                "caption": "타일"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

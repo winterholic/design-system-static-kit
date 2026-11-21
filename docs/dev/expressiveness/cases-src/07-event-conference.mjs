@@ -1,0 +1,27 @@
+import {bp, act, footer} from '../lib.mjs';
+export default bp({
+  name: '디자인 데이 2026', theme: 'playful', palette: 'tropical-bliss', pageType: 'landing', mode: 'light',
+  axes: {shell: 'topbar', typography: 'rounded', density: 'comfortable', radius: 'round', control: 'pill', elevation: 'lifted', motion: 'lively', icon: 'line-bold', ornament: 'geometric', backdrop: 'tint', width: 'wide', scale: 'dramatic', weight: 'bold', footer: 'columns'},
+  nav: [{label: '프로그램', href: '#program'}, {label: '연사', href: '#speakers'}, {label: '티켓', href: '#ticket'}, {label: '장소', href: '#venue'}], action: {label: '티켓 받기', href: '#ticket'},
+  foot: footer('© 2026 디자인 데이'),
+  children: [
+    {type: 'page-header', title: '디자인 데이 2026', description: '11월 14일 토요일 · 성수'},
+    {type: 'hero', variant: 'statement', eyebrow: 'D-7 · 11월 14일', title: '11.14\n성수', body: '연사 12명, 워크숍 6개, 그리고 하루. 오전 10시 시작.', facts: [{value: 'D-7', label: '남은 일수'}, {value: '12명', label: '연사'}, {value: '84석', label: '남은 좌석'}], action: act('티켓 받기'), secondaryAction: act('프로그램 보기', 'ghost')},
+    {type: 'section', title: '프로그램', anchor: 'program', children: [{type: 'split', ratio: 'even', align: 'start', children: [
+      {type: 'timeline', title: '메인 홀', variant: 'line', items: [{time: '10:00', title: '오프닝', status: '예정'}, {time: '11:00', title: '규칙이 만드는 자유', description: '김다선 · 시스템 디자인', status: '예정'}, {time: '13:30', title: '작은 팀의 큰 브랜드', description: '이지훈 · 브랜딩', status: '예정'}, {time: '16:00', title: '패널: AI와 디자이너', status: '예정'}]},
+      {type: 'timeline', title: '워크숍 룸', variant: 'line', items: [{time: '10:30', title: '타이포 워크숍', description: '정하린', status: '예정'}, {time: '13:00', title: '프로토타이핑 90분', description: '오지헌', status: '예정'}, {time: '15:30', title: '포트폴리오 리뷰', status: '예정'}]},
+    ]}]},
+    {type: 'section', title: '연사', anchor: 'speakers', children: [{type: 'team', title: '함께하는 연사', members: [
+      {name: '김다선', role: '시스템 디자인'}, {name: '이지훈', role: '브랜딩'}, {name: '정하린', role: '타이포그래피'}, {name: '오지헌', role: '프로토타이핑'}, {name: '한유라', role: '리서치'}, {name: '윤세민', role: '공간'},
+    ]}]},
+    {type: 'section', title: '티켓', anchor: 'ticket', children: [{type: 'pricing', children: [
+      {type: 'plan', name: '일반', price: '49,000원', features: ['전 프로그램', '점심 포함'], action: act('선택', 'secondary')},
+      {type: 'plan', name: '얼리버드', price: '39,000원', period: '11/7까지', features: ['전 프로그램', '점심 포함', '굿즈 증정'], action: act('선택'), featured: 'yes'},
+      {type: 'plan', name: '학생', price: '25,000원', features: ['전 프로그램', '학생증 필요'], action: act('선택', 'secondary')},
+    ]}]},
+    {type: 'section', title: '오시는 길', anchor: 'venue', children: [{type: 'split', ratio: 'even', align: 'center', children: [
+      {type: 'media', kind: 'map', ratio: '4:3', alt: '성수동 행사장 위치 지도'},
+      {type: 'properties', title: '안내', items: [{label: '장소', value: '성수 아트홀 2층'}, {label: '지하철', value: '성수역 3번 출구 도보 6분'}, {label: '주차', value: '건물 지하 (2시간 무료)'}]},
+    ]}]},
+  ],
+});
