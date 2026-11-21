@@ -30,7 +30,7 @@ export function loadCatalog(core: Core): Catalog {
     themes: all<ThemeItem>(core, {kind: 'themes', fields: ['id', 'name', 'palettes', 'variants', 'forbid']}),
     palettes: all<PaletteItem>(core, {kind: 'palettes', fields: ['id', 'label']}),
     axes: all<AxisItem>(core, {kind: 'axes', fields: ['axis', 'label', 'values', 'descriptions']}),
-    components: all<ComponentItem>(core, {kind: 'components', fields: ['type', 'label', 'group', 'childTypes']}),
+    components: all<ComponentItem>(core, {kind: 'components', filter: {catalogVersion: '2.6.0'}, fields: ['type', 'label', 'group', 'childTypes']}),
   };
   return cached;
 }
@@ -47,10 +47,11 @@ export function layoutSlotsOf(core: Core, template: string): LayoutSlot[] {
 }
 
 const specCache = new Map<string, ComponentSpec | null>();
-export function specOf(core: Core, type: string): ComponentSpec | null {
-  if (!specCache.has(type)) {
-    const r = core.service.getComponentSpec({type});
-    specCache.set(type, r.ok ? r.value : null);
+export function specOf(core: Core, type: string, catalogVersion?: string): ComponentSpec | null {
+  const key = `${type}@${catalogVersion ?? 'default'}`;
+  if (!specCache.has(key)) {
+    const r = core.service.getComponentSpec({type, ...(catalogVersion ? {catalogVersion} : {})});
+    specCache.set(key, r.ok ? r.value : null);
   }
-  return specCache.get(type) ?? null;
+  return specCache.get(key) ?? null;
 }

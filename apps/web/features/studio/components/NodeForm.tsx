@@ -105,7 +105,7 @@ export function NodeForm({path}: {path: NodePath}) {
   const {document: d, session, view} = api.state;
   const node = nodeAt(d.doc, path);
   const rootRef = useRef<HTMLDivElement>(null);
-  const spec = node && path.length && api.core ? specOf(api.core, node.type) : null;
+  const spec = node && path.length && api.core ? specOf(api.core, node.type, api.state.document.doc?.catalogVersion) : null;
 
   // 오류 목록에서 이동해 왔다면 해당 필드에 초점을 둔다.
   const req = view.focusRequest;

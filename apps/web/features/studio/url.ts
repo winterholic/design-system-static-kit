@@ -5,7 +5,7 @@ import {DEVICES, PANES, TABS} from './types';
 export type UrlView = {tab: Tab; pane: Pane; device: Device};
 export const DEFAULT_VIEW: UrlView = {tab: 'structure', pane: 'split', device: 1280};
 
-const START_KEYS = ['template', 'theme', 'variant', 'palette', 'mode', 'layout', 'axes', 'colorPalette'] as const;
+const START_KEYS = ['template', 'theme', 'variant', 'palette', 'mode', 'layout', 'axes', 'catalogVersion', 'colorPalette', 'typeRoles', 'profile'] as const;
 const PAIR_KEYS: ReadonlySet<string> = new Set(['layout', 'axes']);
 const ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
@@ -36,7 +36,8 @@ export function parseUrl(search: string): ParsedUrl {
       const parsed = parsePairs(key, value);
       if ('problem' in parsed) problems.push(parsed.problem);
       else start[key] = parsed.pairs;
-    } else if (!ID.test(value)) problems.push(problem(`$url.${key}`, `${key} 값이 올바르지 않습니다: ${value.slice(0, 40)}`, '영문 소문자·숫자·하이픈으로 된 카탈로그 id를 쓰세요.'));
+    } else if (key === 'catalogVersion' && value !== '2.6.0') problems.push(problem(`$url.${key}`, `시작 문서 버전은 2.6.0만 지정할 수 있습니다: ${value.slice(0, 40)}`, 'catalogVersion=2.6.0을 쓰거나 이 인자를 빼세요.'));
+    else if (!ID.test(value)) problems.push(problem(`$url.${key}`, `${key} 값이 올바르지 않습니다: ${value.slice(0, 40)}`, '영문 소문자·숫자·하이픈으로 된 카탈로그 id를 쓰세요.'));
     else (start as Record<string, string>)[key] = value;
   }
   const view: UrlView = {...DEFAULT_VIEW};
