@@ -14,6 +14,17 @@ import {defineMaterial, materialId} from './contract.mjs';
 import {chartPresetMaterials} from './chart-presets.mjs';
 import {selectMaterial} from './select.mjs';
 import {tableMaterial} from './table.mjs';
+import {buttonMaterial} from './button.mjs';
+import {inputMaterial} from './input.mjs';
+import {cardMaterial} from './card.mjs';
+import {navigationMaterial} from './navigation.mjs';
+import {modalMaterial} from './modal.mjs';
+import {tabsMaterial} from './tabs.mjs';
+import {tooltipMaterial} from './tooltip.mjs';
+import {feedbackMaterial} from './feedback.mjs';
+
+/** Select·Table 뒤에 등록한 컴포넌트 재료 8개(feat/material-components). 각 재료는 자기 파일에서 계약·렌더·런타임·CSS를 가진다. */
+export const controlMaterials = Object.freeze([buttonMaterial, inputMaterial, cardMaterial, navigationMaterial, modalMaterial, tabsMaterial, tooltipMaterial, feedbackMaterial]);
 import {colorTokenMaterials} from '../color-tokens.mjs';
 
 const C = id => materialId('component', id);
@@ -222,5 +233,5 @@ export function iconMaterials() {
 /** 기존 카탈로그 전체를 재료 목록으로. 순서: 의존 대상이 먼저 오도록(검사는 순서와 무관하다). */
 export const catalogMaterialList = () => [
   ...paletteMaterials(), ...colorTokenMaterials().map(defineMaterial), ...typePresetMaterials(), ...axisMaterials(), ...iconMaterials(), ...layoutPrimitiveMaterials(),
-  ...componentMaterials(), selectMaterial, tableMaterial, ...pageTypeMaterials(), ...themeMaterials(), ...templateMaterials(), ...recipeMaterials(), ...chartPresetMaterials,
+  ...componentMaterials(), selectMaterial, tableMaterial, ...controlMaterials, ...pageTypeMaterials(), ...themeMaterials(), ...templateMaterials(), ...recipeMaterials(), ...chartPresetMaterials,
 ];

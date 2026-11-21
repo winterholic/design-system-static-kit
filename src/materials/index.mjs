@@ -18,6 +18,15 @@ export * from './adapters.mjs';
 export {registerMaterialType, MATERIAL_TYPE_PRESETS, MULTILINGUAL_TYPE_CORPUS, CONTROL_SIZES, controlViolations, renderMaterialTypeCSS, renderMaterialTypeExample} from './typography.mjs';
 export {selectContract, selectMaterial, renderSelect, attachSelect, selectRuntime, selectStyles} from './select.mjs';
 export {tableContract, tableMaterial, renderDataTable, attachTable, tableRuntime, tableStyles} from './table.mjs';
+export {buttonContract, buttonMaterial, renderButton, attachButton, buttonRuntime, buttonStyles, buttonExamples} from './button.mjs';
+export {inputContract, inputMaterial, renderInput, attachInput, inputRuntime, inputStyles, inputExamples} from './input.mjs';
+export {cardContract, cardMaterial, renderCard, attachCard, cardRuntime, cardStyles, cardExamples} from './card.mjs';
+export {navigationContract, navigationMaterial, renderNavigation, attachNavigation, navigationRuntime, navigationStyles, navigationExamples} from './navigation.mjs';
+export {modalContract, modalMaterial, modalContentRules, renderModal, attachModal, modalRuntime, modalStyles, modalExamples} from './modal.mjs';
+export {tabsContract, tabsMaterial, renderTabs, attachTabs, tabsRuntime, tabsStyles, tabsExamples} from './tabs.mjs';
+export {tooltipContract, tooltipMaterial, tooltipContentRules, renderTooltip, attachTooltip, tooltipRuntime, tooltipStyles, tooltipExamples} from './tooltip.mjs';
+export {feedbackContract, feedbackMaterial, renderFeedback, attachFeedback, feedbackRuntime, feedbackStyles, feedbackExamples} from './feedback.mjs';
+export {ContractError, defineContract, resolveProps, violations, allCombinations, legalCombinations, combinationStats, sizeVars, sizeCSS} from './control-kit.mjs';
 
 /** 기존 카탈로그와 역할형 타이포그래피 재료를 모두 등록한 새 레지스트리. 참조가 끊기면 예외다(카탈로그와 재료가 어긋났다는 뜻). */
 export function catalogRegistry() {

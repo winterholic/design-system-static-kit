@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {
   catalogRegistry, createRegistry, defineMaterial, defineKind, MaterialError, BUILTIN_KINDS, FIELDS, CATEGORIES, QUALITY,
-  chartPresetMaterials, selectMaterial, tableMaterial,
+  chartPresetMaterials, selectMaterial, tableMaterial, controlMaterials,
   MATERIAL_CATALOG_VERSION, combinationsOf, validateMaterial, PALETTE_SOURCE_VERDICT, PALETTE_ROLES, MATERIAL_TYPE_PRESETS,
 } from '../src/materials/index.mjs';
 import {nodeTypes, nodeSpecs, themes, palettes, templates, pageTypeIds, recipeIds, iconNames, axes, styleAxes, ACCEPTED_CATALOG_VERSIONS, CATALOG_VERSION, VERSION_ORDER} from '../src/catalog.mjs';
@@ -31,7 +31,7 @@ const sample = (patch = {}) => defineMaterial({
 test('materials: every existing node, axis, type preset, theme, palette, page type, template, recipe, layout primitive and icon is registered', () => {
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
-    axis: 1 + styleAxes.length, 'chart-preset': chartPresetMaterials.length, component: nodeTypes.length + [selectMaterial, tableMaterial].length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
+    axis: 1 + styleAxes.length, 'chart-preset': chartPresetMaterials.length, component: nodeTypes.length + [selectMaterial, tableMaterial].length + controlMaterials.length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
     palette: Object.keys(palettes).length, 'color-token': registry.byKind('color-token').length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length, 'type-role-preset': Object.keys(MATERIAL_TYPE_PRESETS).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));

@@ -13,7 +13,7 @@
 | `src/materials/contract.mjs` | 공통 필드(`FIELDS`), 종류(`BUILTIN_KINDS`, `defineKind`), 분류·맥락·품질·반응형·라이선스 enum, `combinationsOf`, `isCompletePreset`, `defineMaterial` |
 | `src/materials/validate.mjs` | `validateMaterial(m, kind)`: 재료 한 장. `validateGraph(byId)`: 의존·부모·자식 참조 |
 | `src/materials/registry.mjs` | `register`·`get`·`search`·`filter({kind, category, context, minQuality, preset, tag})`·`counts()`·`check()`·`addKind` |
-| `src/materials/adapters.mjs` | 부품 57(노드 55 + Select·Table), 축 15, 서체 프리셋 18, 테마 54, 레거시 팔레트 427, 페이지 유형 16, 템플릿 85, 레시피 3, 배치 원형 6, 아이콘 87, 2.6.0 색 토큰 257, 차트 프리셋 8 |
+| `src/materials/adapters.mjs` | 부품 65(노드 55 + Select·Table + Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback), 축 15, 서체 프리셋 18, 테마 54, 레거시 팔레트 427, 페이지 유형 16, 템플릿 85, 레시피 3, 배치 원형 6, 아이콘 87, 2.6.0 색 토큰 257, 차트 프리셋 8 |
 | `src/materials/index.mjs` | 공개 진입점, `catalogRegistry()` |
 | `tests/materials-registry.test.mjs` | 계약·레지스트리·수량·고정 출력 검사 |
 
@@ -44,7 +44,13 @@
 
 ## 결과
 
-재료 1,037개, 속성 조합 764,002개, 완성 프리셋 169개(서체 18 + 역할형 서체 4 + 테마 54 + 템플릿 85 + 차트 8)다. 이 중 색 토큰은 257개이며 실행 시점 값은 `catalogRegistry().counts()`가 정본이다. 기존 공개 계약 `./service`와 `./edit`의 응답은 바뀌지 않았다. 색 토큰은 `./color-tokens`와 `./materials` 읽기 API로 공개한다. `src/materials/`는 Core 경계 검사(`tests/core-boundary.test.mjs`)를 받는다.
+재료 1,045개, 속성 조합 795,778개, 완성 프리셋 169개(서체 18 + 역할형 서체 4 + 테마 54 + 템플릿 85 + 차트 8)다. 이 중 색 토큰은 257개이며 실행 시점 값은 `catalogRegistry().counts()`가 정본이다. 기존 공개 계약 `./service`와 `./edit`의 응답은 바뀌지 않았다. 색 토큰은 `./color-tokens`와 `./materials` 읽기 API로 공개한다. `src/materials/`는 Core 경계 검사(`tests/core-boundary.test.mjs`)를 받는다.
+
+### 2.6.0 컨트롤 재료 8종
+
+Button, Input, Card, Navigation, Modal, Tabs, Tooltip, Feedback은 `src/materials/{button,input,card,navigation,modal,tabs,tooltip,feedback}.mjs`에서 외형·모양·크기·기능·상태·맥락 축, 렌더러, 동작 연결기와 스타일을 함께 정의한다. `CONTROL_SIZES`와 `SPACE` 크기 토큰, 컴포넌트 색 토큰을 재사용한다. 허용되지 않는 조합은 계약의 `forbidden` 규칙으로 선언하며 `resolveProps`가 알 수 없는 속성과 금지 조합을 거부한다.
+
+`tests/material-components.test.mjs`가 8개 레지스트리 등록, 모든 속성 조합의 허용·거부, 크기 계약과 재사용 색 토큰을 확인한다. 실제 동작 예시는 `scripts/materials/components-evidence.mjs`가 결정적으로 `docs/evidence/materials/components.html`을 만든다. `e2e/material-components.spec.mjs`는 390px 및 1280px에서 각 컴포넌트 키보드·포커스·상태 전이를 확인하고 섹션 스크린샷을 `docs/evidence/materials/screenshots/`에 둔다. 이 재료 8종은 프리셋이 아니므로 프리셋 수는 169개를 유지한다.
 
 ## 부록: 타이포그래피 재료와 기존 엔진
 
