@@ -1,5 +1,5 @@
 export type View = {concept: string | null; look: string | null; theme: string | null; tv: string | null; pal: string | null; mode: 'light' | 'dark' | null; type: string | null};
-export type ComboLite = {id: string; t: number; n: number; ch: number; x?: string; s?: number; r?: {l: string; k: string[]; e: string[]; v?: {concept: string; look: string}}};
+export type ComboLite = {id: string; t: number; n: number; ch: number; x?: string; exp?: boolean; grade?: 'A'|'B'|'C'; gradeReasons?: string[]; s?: number; r?: {l: string; k: string[]; e: string[]; v?: {concept: string; look: string}}};
 export type ComboIndex = {
   catalogVersion: string;
   templates: {id: string; label: string; pageType: string}[];

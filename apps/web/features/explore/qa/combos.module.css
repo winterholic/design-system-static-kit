@@ -8,6 +8,16 @@
 .checks {display:flex; flex-wrap:wrap; gap:12px; grid-column:1/-1}
 .checks label {display:flex; align-items:center; gap:6px; font-size:.85rem}
 .toolbar {display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:16px 0}
+.flagPanel {border:1px solid var(--border,#d9dce2); border-radius:12px; padding:14px 16px; margin:16px 0 22px}
+.flagHeader {display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.flagHeader h2 {font-size:1rem; margin:0 auto 0 0}
+.flagList {display:grid; gap:10px; list-style:none; margin:14px 0 0; padding:0}
+.flagList li {display:flex; justify-content:space-between; align-items:flex-start; gap:16px; border-top:1px solid var(--border,#e0e2e8); padding-top:12px}
+.flagList li > div:first-child {display:grid; gap:5px; min-width:0; flex:1}
+.flagList small {color:var(--text-muted,#68707d); overflow-wrap:anywhere}
+.flagActions {display:flex; gap:6px; flex-wrap:wrap}
+.note {display:grid; gap:4px; max-width:560px; font-size:.8rem}
+.note textarea {min-height:58px; resize:vertical; padding:7px; border:1px solid var(--border,#c8ccd4); border-radius:7px; font:inherit}
 .button {min-height:40px; padding:8px 13px; border:1px solid var(--border,#c8ccd4); border-radius:7px; background:var(--surface,#fff); color:inherit; cursor:pointer}
 .button:focus-visible,.field :focus-visible {outline:3px solid #526ee8; outline-offset:2px}
 .grid {display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; padding:0; list-style:none}
@@ -22,8 +32,10 @@
 .viewer {position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; background:Canvas; color:CanvasText}
 .viewer[hidden] {display:none}
 .viewbar {display:flex; align-items:center; gap:9px; padding:10px 14px; border-bottom:1px solid var(--border,#d9dce2)}
+.diagnosis {display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:8px 14px; border-bottom:1px solid var(--border,#d9dce2); font-size:.82rem}
+.diagnosis span {overflow-wrap:anywhere}
 .viewbar strong {margin-right:auto; overflow-wrap:anywhere}
 .frame {flex:1; width:100%; border:0; background:white}
 @media(max-width:1000px) {.filters{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.preview iframe{transform:scale(.17)}}
-@media(max-width:680px) {.page{padding:20px 14px 48px}.head{align-items:flex-start; flex-direction:column}.filters{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.card{padding:10px;min-height:88px}.preview{margin:-10px -10px 10px}.preview iframe{transform:scale(.12)}.viewbar{flex-wrap:wrap}.viewbar strong{flex-basis:100%;order:-1}.button{min-height:44px}}
+@media(max-width:680px) {.page{padding:20px 14px 48px}.head{align-items:flex-start; flex-direction:column}.filters{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.card{padding:10px;min-height:88px}.preview{margin:-10px -10px 10px}.preview iframe{transform:scale(.12)}.viewbar{flex-wrap:wrap}.viewbar strong{flex-basis:100%;order:-1}.flagList li{display:grid}.flagActions{width:100%}.button{min-height:44px}}
 @media(max-width:370px) {.grid,.filters{grid-template-columns:1fr}}

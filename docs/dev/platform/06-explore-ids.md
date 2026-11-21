@@ -46,3 +46,11 @@ dashboard-overview~theme_console~mode_dark
 - 목록·상세 폭 선택은 `device=mobile|desktop` 쿼리에 둔다. 기본 데스크톱은 `device`를 생략한다. 미리보기는 1280px 또는 390px 기준으로 컴파일된 문서를 축소해 보여 준다.
 
 구현 계약은 `apps/web/e2e/explore-components-home.spec.mjs`와 `apps/web/e2e/explore-fidelity.spec.mjs`에서 라우트 상태, HTTP 바이트, Studio 쿼리를 확인한다.
+
+## 내부 조합 QA 기록
+
+`/dev/qa/combos`의 이상함 표시는 `winterholic-static-kit.combo-flags.v1`에 조합 ID와 보기(`concept`, `look`, `theme`, `tv`, `pal`, `type`, `mode`), 메모, 기록 시각을 보관한다. 같은 ID라도 보기가 다르면 각각 별도 기록이다. 추가·삭제는 선택된 기록 하나만 바꾸며, 목록에서 기록 보기를 열면 그 보기 설정을 주소에 적용한다. 개별 기록 링크와 텍스트 복사·`.txt` 내보내기도 같은 조합·보기·메모·시각을 담는다.
+
+미리보기 주소에 직접 진입한 경우 닫기와 Escape는 `c`만 지우고 현재 필터·쪽을 유지한다. QA 목록에서 연 상세는 닫기 대신 브라우저 뒤로 가기를 사용해 열기 전 목록 URL로 돌아간다.
+
+조합 상세 등급은 카탈로그와 함께 저장된 `docs/evidence/diagnosis-2.4.0.json`에서 가져온 실제 진단 결과다. 증거에 없는 ID에는 등급을 붙이지 않는다. 실험 조합은 진단 등급이 A가 아니거나 적용된 구성 변형 규칙이 있는 항목이며, `실험 구성 포함`을 켜면 기본 목록에서 숨긴 실험 항목도 나타난다.

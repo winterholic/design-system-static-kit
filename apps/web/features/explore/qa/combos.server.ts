@@ -2,6 +2,7 @@ import 'server-only';
 import {catalogSnapshot, compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {checkDocument, resetDocument, setAppearance} from '@winterholic/design-system-static-kit/edit';
 import type {ComboIndex, ComboLite, View} from './combos-state';
+import diagnoses from '../../../../../docs/evidence/diagnosis-2.4.0.json';
 
 // 내부 QA 탐색기용 서버 모듈. 템플릿 × 구성 변형의 곱을 공개 진입점(./service)만으로 다시 만든다.
 // 조합 id 는 옛 갤러리의 id(`템플릿~슬롯:옵션~슬롯:옵션`)와 같아야 한다(이상함 표시가 저장한 id 를 그대로 읽는다).
@@ -77,6 +78,12 @@ function build() {
       const n = combos.length + 1;
       const lite: ComboLite = {id, t: ti, n, ch: picks.length};
       if (rules.length) lite.x = rules.join('\n');
+      const diagnosis = (diagnoses.combos as Record<string, string | {g: 'A'|'B'|'C'; c: Record<string, number>}>)[id];
+      if (diagnosis) {
+        lite.grade = typeof diagnosis === 'string' ? diagnosis as 'A'|'B'|'C' : diagnosis.g;
+        if (typeof diagnosis !== 'string') lite.gradeReasons = Object.entries(diagnosis.c).map(([code, count]) => `${code}${count > 1 ? ` ×${count}` : ''}`);
+      }
+      lite.exp = Boolean((lite.grade && lite.grade !== 'A') || rules.length);
       const rec = recipeOf.get(id); if (rec) lite.r = rec;
       if (firstOf.has(signature)) lite.s = firstOf.get(signature)!; else firstOf.set(signature, n);
       combos.push(lite);
