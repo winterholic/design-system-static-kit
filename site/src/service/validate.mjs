@@ -22,6 +22,8 @@ export function annotate(error, blueprint) {
     d.rule = rule;
     if (alt !== undefined && !(theme.forbid?.[axis] ?? []).includes(alt)) d.fix = {[axis]: alt};
   } else if (rule) d.rule = rule;
+  // 프로파일 진단(src/profiles/check.mjs)은 규칙 ID와 대안 값을 오류에 직접 싣는다.
+  else if (typeof error.rule === 'string') { d.rule = error.rule; if (error.fix) d.fix = {...error.fix}; }
   return d;
 }
 

@@ -1,5 +1,6 @@
+import {profileErrors} from './profiles/check.mjs';
 import {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} from './catalog/expression.mjs';
-import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
+import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -46,6 +47,9 @@ export function validateBlueprint(input) {
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
   if (!ACCEPTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + ACCEPTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
   for (const f of TOP_LEVEL_SINCE_FIELDS) if (Object.hasOwn(input, f.field) && !atLeast(input.catalogVersion, f.since)) error(`$.${f.field}`, 'VERSION_FIELD', `${f.field}는 ${f.since}부터 쓸 수 있습니다.`);
+  if (Object.hasOwn(input, PROFILE_SINCE_FIELD.field) && !atLeast(input.catalogVersion, PROFILE_SINCE_FIELD.since)) error('$.profile', 'VERSION_FIELD', `profile은 ${PROFILE_SINCE_FIELD.since}부터 쓸 수 있습니다.`);
+  // 프로파일 계약(PF01~PF13): 프로파일이 허용하지 않는 부품·프리셋·밀도 조합을 거부한다. 근거와 대안(fix)을 오류에 싣는다.
+  else if (PROFILE_SINCE_FIELD.values.includes(input.profile)) for (const e of profileErrors(input)) if (errors.length < 80) errors.push(e);
   const expr = expressionApplies(input), warnings = [];
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));
