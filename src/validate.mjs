@@ -1,4 +1,5 @@
 import {nodeSpecAt, nodeExtended, nodeSince, nodeTypeKnown} from './catalog/node-extensions.mjs';
+import {chartDiagnostics, levelsOf} from './catalog/chart-rules.mjs';
 import {profileErrors} from './profiles/check.mjs';
 import {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} from './catalog/expression.mjs';
 import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
@@ -217,11 +218,11 @@ export function validateBlueprint(input) {
     // 새 차트 형태(stacked-bar·scatter·heatmap·sparkline)와 축 필드는 확장 명세가 켜진 카탈로그 버전(node-extensions.mjs)에서만 검사한다.
     if (t === 'chart' && nodeExtended('chart', input.catalogVersion)) {
       const series = A(n.series) ? n.series : [], categories = A(n.categories) ? n.categories : [];
-      const pointKind = n.kind === 'scatter';
+      const pointKind = n.kind === 'scatter', ownShape = ['candlestick', 'ohlc', 'histogram'].includes(n.kind); // 자기 데이터 필드(candles·samples)의 모양은 chartDiagnostics가 본다
       if (!series.length) error(path + '.series', 'CHART_SHAPE', '차트 계열이 하나 이상 필요합니다.');
-      if (!pointKind && categories.length < 2) error(path + '.categories', 'CHART_SHAPE', '이 차트는 범주 2개 이상이 필요합니다.');
+      if (!pointKind && !ownShape && categories.length < 2) error(path + '.categories', 'CHART_SHAPE', '이 차트는 범주 2개 이상이 필요합니다.');
       series.forEach((s, i) => {
-        if (!plain(s)) return;
+        if (!plain(s) || ownShape) return;
         if (pointKind) {
           if (!A(s.points) || s.points.length < 2) error(`${path}.series[${i}].points`, 'CHART_SHAPE', 'scatter 계열에는 좌표 점이 2개 이상 필요합니다.');
           if (Object.hasOwn(s, 'values')) error(`${path}.series[${i}].values`, 'CHART_SHAPE', 'scatter는 values 대신 x·y points를 사용합니다.');
@@ -240,9 +241,7 @@ export function validateBlueprint(input) {
         if (categories.length > 5) error(path + '.categories', 'CHART_SHAPE', 'donut은 범주 5개 이하입니다(그 이상은 막대 차트).');
       }
       if (n.series?.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
-      const values = pointKind ? series.flatMap(s => (s.points ?? []).flatMap(p => [p.x, p.y]))
-        : n.kind === 'stacked-bar' ? categories.map((_, i) => series.reduce((sum, s) => sum + (s.values?.[i] ?? 0), 0))
-          : series.flatMap(s => s.values ?? []);
+      const values = levelsOf(n);
       if (plain(n.axis)) {
         if (Number.isFinite(n.axis.min) && Number.isFinite(n.axis.max) && n.axis.min >= n.axis.max) error(path + '.axis', 'CHART_AXIS', '축 범위는 min보다 max가 커야 합니다.');
         if (pointKind) {
@@ -256,6 +255,7 @@ export function validateBlueprint(input) {
           if (Number.isFinite(n.axis.max) && values.some(v => v > n.axis.max)) error(path + '.axis.max', 'CHART_AXIS', '축 최댓값이 데이터보다 작아 값이 잘립니다.');
         }
       }
+      for (const d of chartDiagnostics(n)) error(path + d.field, d.code, d.message);
     }
     // 2.6.0 Select·Table 재료(docs/materials/select-table.md). 필드 모양은 확장 명세가 닫아 두었고, 여기서는 재료 계약의 조합·데이터 규칙을 본다.
     if (t === 'select-control') {

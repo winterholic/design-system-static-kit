@@ -10,6 +10,7 @@ import {tableContract, renderDataTable} from '../src/materials/table.mjs';
 import {MATERIAL_TYPE_PRESETS, renderRoleTypeCSS, ROLE_TYPE_MAP} from '../src/materials/typography.mjs';
 import {resolveColorTokens} from '../src/color-tokens.mjs';
 import {catalogRegistry} from '../src/materials/index.mjs';
+import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
 import {HINTS, listMaterials, getMaterial, getColorTokens, getTypePresets, getComponentSpec, getSchema, listCatalog} from '../src/service/index.mjs';
 import {applyOp} from '../src/edit/index.mjs';
 
@@ -339,7 +340,8 @@ test('listMaterials filters, pages and tells the web where each material is chos
   assert.ok(all.ok && all.value.total === total && all.value.nextCursor === 'o1');
   assert.equal(Object.values(all.value.byKind).reduce((a, b) => a + b, 0), total);
   const charts = listMaterials({kind: 'chart-preset', fields: ['blueprint', 'quality']});
-  assert.equal(charts.value.total, 8);
+  assert.equal(charts.value.total, chartPresetMaterials.length);
+  assert.deepEqual(charts.value.items.map(item => item.id).sort(), chartPresetMaterials.map(material => material.id).sort());
   assert.ok(charts.value.items.every(i => i.blueprint.node === 'chart' && i.blueprint.since === '2.6.0' && i.quality === 'verified'));
   const since = listMaterials({since: '2.6.0', kind: 'component', fields: ['blueprint']});
   assert.deepEqual(since.value.items.map(i => i.id).sort(), ['component:data-table', 'component:select-control']);

@@ -5442,7 +5442,12 @@
                 "stacked-bar",
                 "scatter",
                 "heatmap",
-                "sparkline"
+                "sparkline",
+                "candlestick",
+                "ohlc",
+                "waterfall",
+                "funnel",
+                "histogram"
               ]
             },
             "unit": {
@@ -5458,7 +5463,7 @@
                 "maxLength": 64
               },
               "minItems": 2,
-              "maxItems": 8
+              "maxItems": 12
             },
             "series": {
               "type": "array",
@@ -5478,7 +5483,7 @@
                       "maximum": 1000000
                     },
                     "minItems": 2,
-                    "maxItems": 8
+                    "maxItems": 12
                   },
                   "points": {
                     "type": "array",
@@ -5503,7 +5508,66 @@
                       "additionalProperties": false
                     },
                     "minItems": 2,
-                    "maxItems": 8
+                    "maxItems": 12
+                  },
+                  "candles": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "open": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "high": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "low": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "close": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        }
+                      },
+                      "required": [
+                        "open",
+                        "high",
+                        "low",
+                        "close"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 2,
+                    "maxItems": 12
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "delta",
+                        "total"
+                      ]
+                    },
+                    "minItems": 2,
+                    "maxItems": 12
+                  },
+                  "samples": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": -1000000,
+                      "maximum": 1000000
+                    },
+                    "minItems": 5,
+                    "maxItems": 200
                   }
                 },
                 "required": [
@@ -5512,7 +5576,7 @@
                 "additionalProperties": false
               },
               "minItems": 1,
-              "maxItems": 3
+              "maxItems": 8
             },
             "xLabel": {
               "type": "string",
@@ -5574,6 +5638,63 @@
               },
               "required": [],
               "additionalProperties": false
+            },
+            "dataType": {
+              "type": "string",
+              "enum": [
+                "time",
+                "category",
+                "part-to-whole",
+                "process",
+                "distribution",
+                "relationship"
+              ]
+            },
+            "grid": {
+              "type": "string",
+              "enum": [
+                "horizontal",
+                "vertical",
+                "both",
+                "none"
+              ]
+            },
+            "labels": {
+              "type": "string",
+              "enum": [
+                "none",
+                "values",
+                "extremes",
+                "last"
+              ]
+            },
+            "legend": {
+              "type": "string",
+              "enum": [
+                "auto",
+                "bottom",
+                "right",
+                "none"
+              ]
+            },
+            "density": {
+              "type": "string",
+              "enum": [
+                "comfortable",
+                "compact"
+              ]
+            },
+            "responsive": {
+              "type": "string",
+              "enum": [
+                "fit",
+                "scroll"
+              ]
+            },
+            "bins": {
+              "type": "number",
+              "minimum": 3,
+              "maximum": 12
             }
           },
           "required": [

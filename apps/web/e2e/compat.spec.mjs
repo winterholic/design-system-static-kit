@@ -148,12 +148,13 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
 });
 
 // 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
-// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법) 갱신 뒤 2.6.0 opt-in(acceptedCatalogVersions에 2.6.0, 스키마 colorPalette x-since 2.6.0 추가)과 스키마 profile x-since 2.6.0 추가, feat/wire-260 의 typeRoles(x-since 2.6.0)와 x-extensions['2.6.0'](차트 확장·select-control·data-table, 줄 추가만 507줄·삭제 0)을 반영해 934490b0c0c7f851 로 고정한다. 2.4.0·2.5.0 내용은 그대로다.
+// examples·themes는 b303f17c1 기준이다. v1은 2.6.0의 profile·colorPalette·typeRoles와
+// x-extensions의 Select·Table·차트 명세를 포함한다. 새 차트 형태와 옵션은 2.6.0 확장에만 추가했다.
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
     {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
     {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
-    {sub: 'v1', count: 2, pinned: '934490b0c0c7f851'},
+    {sub: 'v1', count: 2, pinned: '451589edb650477b'},
   ];
   for (const {sub, exclude, count, pinned} of parts) {
     test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {

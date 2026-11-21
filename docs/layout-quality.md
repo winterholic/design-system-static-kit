@@ -60,6 +60,7 @@ npm run test:layout
 | `CLIP_ICON` | error | 아이콘·이미지·SVG가 상위 요소의 `overflow`에 1.5px 넘게 잘림(장식으로 모서리에 걸친 `aria-hidden`은 제외) |
 | `CLIP_SVG` | error | SVG 그림이 자기 `viewBox` 밖으로 나가 잘림(`overflow:visible`이면 제외) |
 | `SMALL_TEXT` | error | 역할별 글자 크기 하한 미만. SVG 글자는 `font-size × viewBox 배율`로 실제 렌더 크기를 쟀다(하한 10px) |
+| `OVERLAP_SVG_TEXT` | error | 같은 SVG 안의 글(차트 눈금·값 라벨) 두 개가 글상자 면적의 15% 넘게 겹침 |
 | `OVERFLOW_X` | error | 문서 또는 요소가 화면 오른쪽 밖으로 나감(가로 스크롤 영역 제외) |
 | `TRUNCATED` | warn·error | 말줄임으로 잘린 글(제목·리드는 error) |
 | `SCROLL_REGION` | info | 가로로 스크롤되는 영역(코드·표). 의도 확인용 |
