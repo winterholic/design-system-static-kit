@@ -8,7 +8,7 @@
 .facts div { display: grid; grid-template-columns: 7rem 1fr; gap: var(--space-4); padding: var(--space-3) 0; border-top: 1px solid var(--color-line); }
 .facts div:last-child { border-bottom: 1px solid var(--color-line); }
 .facts dt { color: var(--color-muted); font-size: var(--text-sm); padding-top: 2px; }
-.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; text-wrap: balance; }
 .facts small { color: var(--color-muted); font-size: var(--text-sm); }
 .swatches { display: flex; gap: 3px; margin-top: var(--space-2); }
 .swatch { width: 20px; height: 20px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, 0.12); }
