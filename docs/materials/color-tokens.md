@@ -12,7 +12,7 @@
 ## 계산 결과
 
 ```js
-import {resolveColorTokens} from '@winterholic/design-system-static-kit/color-tokens';
+import {resolveColorTokens} from './src/color-tokens.mjs'; // 공개 진입점은 ./service·./edit뿐이다. 외부 소비는 ./service 읽기 API로 제공한다.
 
 const light = resolveColorTokens({palette: 'static-kit', mode: 'light'});
 const auto = resolveColorTokens({palette: 'static-kit', mode: 'auto'});
