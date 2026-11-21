@@ -88,9 +88,9 @@ export function nodeSpecAt(type, version) {
   const base = nodeSpecs[type];
   const tables = extensionsFor(version);
   const own = tables.filter(table => Object.hasOwn(table, type));
-  const fresh = [...Object.values(tables)].flatMap(table => Object.entries(table).filter(([, spec]) => spec.label && spec.placeLike));
+  const introduced = tables.flatMap(table => Object.entries(table).filter(([, spec]) => spec.label && spec.placeLike));
   // 확장 노드를 새로 받을 수 있는 부모는 children 목록이 늘어난다(placeLike가 가리키는 부품을 받는 부모).
-  const gained = base?.children ? fresh.filter(([, spec]) => base.children.includes(spec.placeLike)).map(([name]) => name) : [];
+  const gained = base?.children ? introduced.filter(([, spec]) => base.children.includes(spec.placeLike)).map(([name]) => name) : [];
   if (!base) {
     const added = own.find(table => table[type].label);
     if (!added) return undefined;
