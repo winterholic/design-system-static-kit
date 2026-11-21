@@ -1,0 +1,342 @@
+{
+  "method": "scripts/layout-quality/probe.mjs layoutProbe, run in configured Ttakkari Chromium browser",
+  "capturedAt": "2026-11-21T17:53:41.284Z",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "devicePixelRatio": 1,
+  "viewports": [
+    390,
+    1280
+  ],
+  "regressionControls": [
+    {
+      "id": "legacy-s21",
+      "width": 320
+    },
+    {
+      "id": "legacy-s06",
+      "width": 1440
+    }
+  ],
+  "results": [
+    {
+      "page": "erp",
+      "width": 390,
+      "findings": [
+        {
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "body > div.kit-shell > header.kit-header > nav.kit-nav > ul",
+          "text": "주문상품고객정산설정",
+          "evidence": {
+            "scrollWidth": 413,
+            "clientWidth": 358,
+            "hiddenPx": 55
+          },
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
+        },
+        {
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "#main > section.kit-table-wrap > div.kit-table-scroll",
+          "text": "최근 주문 목록주문번호고객금액상태접수A-10231김김다선39,00…",
+          "evidence": {
+            "scrollWidth": 458,
+            "clientWidth": 324,
+            "hiddenPx": 134
+          },
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
+        }
+      ],
+      "scanned": {
+        "text": 58,
+        "wrap": 39,
+        "clip": 9,
+        "svg": 8,
+        "overflow": 1,
+        "smallText": 58,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 15,
+        "control": 19,
+        "heading": 2,
+        "lead": 1,
+        "cell": 20,
+        "short": 1
+      },
+      "counts": {
+        "SCROLL_REGION": 2
+      },
+      "viewportWidth": 390
+    },
+    {
+      "page": "erp",
+      "width": 1280,
+      "findings": [],
+      "scanned": {
+        "text": 58,
+        "wrap": 39,
+        "clip": 9,
+        "svg": 8,
+        "overflow": 1,
+        "smallText": 58,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 15,
+        "control": 19,
+        "heading": 2,
+        "lead": 1,
+        "cell": 20,
+        "short": 1
+      },
+      "counts": {},
+      "viewportWidth": 1280
+    },
+    {
+      "page": "commerce",
+      "width": 390,
+      "findings": [],
+      "scanned": {
+        "text": 86,
+        "wrap": 10,
+        "clip": 22,
+        "svg": 7,
+        "overflow": 1,
+        "smallText": 86,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 46,
+        "control": 9,
+        "heading": 8,
+        "lead": 1,
+        "body": 9,
+        "short": 13
+      },
+      "counts": {},
+      "viewportWidth": 390
+    },
+    {
+      "page": "commerce",
+      "width": 1280,
+      "findings": [],
+      "scanned": {
+        "text": 86,
+        "wrap": 10,
+        "clip": 22,
+        "svg": 7,
+        "overflow": 1,
+        "smallText": 86,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 46,
+        "control": 9,
+        "heading": 8,
+        "lead": 1,
+        "body": 9,
+        "short": 13
+      },
+      "counts": {},
+      "viewportWidth": 1280
+    },
+    {
+      "page": "saas",
+      "width": 390,
+      "findings": [],
+      "scanned": {
+        "text": 99,
+        "wrap": 28,
+        "clip": 38,
+        "svg": 29,
+        "overflow": 1,
+        "smallText": 99,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 32,
+        "control": 12,
+        "heading": 15,
+        "body": 23,
+        "desc": 1,
+        "short": 13,
+        "value": 3
+      },
+      "counts": {},
+      "viewportWidth": 390
+    },
+    {
+      "page": "saas",
+      "width": 1280,
+      "findings": [],
+      "scanned": {
+        "text": 99,
+        "wrap": 25,
+        "clip": 38,
+        "svg": 29,
+        "overflow": 1,
+        "smallText": 99,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 32,
+        "control": 12,
+        "heading": 15,
+        "body": 23,
+        "desc": 1,
+        "short": 13,
+        "value": 3
+      },
+      "counts": {},
+      "viewportWidth": 1280
+    },
+    {
+      "page": "analytics",
+      "width": 390,
+      "findings": [],
+      "scanned": {
+        "text": 72,
+        "wrap": 21,
+        "clip": 9,
+        "svg": 8,
+        "overflow": 1,
+        "smallText": 87,
+        "svgText": 15,
+        "bar": 1
+      },
+      "roles": {
+        "label": 32,
+        "control": 14,
+        "heading": 3,
+        "lead": 1,
+        "desc": 4,
+        "short": 4,
+        "cell": 7,
+        "body": 7
+      },
+      "counts": {},
+      "viewportWidth": 390
+    },
+    {
+      "page": "analytics",
+      "width": 1280,
+      "findings": [],
+      "scanned": {
+        "text": 72,
+        "wrap": 24,
+        "clip": 9,
+        "svg": 8,
+        "overflow": 1,
+        "smallText": 87,
+        "svgText": 15,
+        "bar": 1
+      },
+      "roles": {
+        "label": 32,
+        "control": 14,
+        "heading": 3,
+        "lead": 1,
+        "desc": 4,
+        "short": 4,
+        "cell": 7,
+        "body": 7
+      },
+      "counts": {},
+      "viewportWidth": 1280
+    },
+    {
+      "page": "legacy-s21",
+      "width": 320,
+      "findings": [
+        {
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "body > div.kit-shell > header.kit-header > nav.kit-nav > ul",
+          "text": "신상품조명이벤트고객센터",
+          "evidence": {
+            "scrollWidth": 383,
+            "clientWidth": 288,
+            "hiddenPx": 95
+          },
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
+        },
+        {
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "#main > div.kit-tabs:nth-of-type(2) > div.kit-tablist:nth-of-type(1)",
+          "text": "상세 정보리뷰 1,204배송·교환",
+          "evidence": {
+            "scrollWidth": 308,
+            "clientWidth": 286,
+            "hiddenPx": 22
+          },
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
+        }
+      ],
+      "scanned": {
+        "text": 49,
+        "wrap": 14,
+        "clip": 9,
+        "svg": 4,
+        "overflow": 1,
+        "smallText": 49,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 18,
+        "control": 11,
+        "heading": 4,
+        "lead": 1,
+        "value": 1,
+        "short": 2,
+        "body": 8,
+        "desc": 4
+      },
+      "counts": {
+        "SCROLL_REGION": 2
+      },
+      "viewportWidth": 320
+    },
+    {
+      "page": "legacy-s06",
+      "width": 1440,
+      "findings": [],
+      "scanned": {
+        "text": 61,
+        "wrap": 9,
+        "clip": 12,
+        "svg": 6,
+        "overflow": 1,
+        "smallText": 61,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 21,
+        "control": 8,
+        "heading": 8,
+        "body": 9,
+        "short": 9,
+        "desc": 6
+      },
+      "counts": {},
+      "viewportWidth": 1440
+    }
+  ],
+  "inputRevision": "da7c86486c5f02509e5d80d4061b4aa0d1040a34",
+  "sourceRevision": "509fdbc369d5e1ea931ba0209e9e7a5dec0e6e8f",
+  "branch": "feat/representative-layout-fix",
+  "assemblyCommand": "node scripts/material-platform-evidence/build.mjs"
+}

@@ -1,0 +1,331 @@
+{
+  "source": "public assembleBlueprint + compileBlueprint",
+  "cases": [
+    {
+      "id": "erp",
+      "label": "ERP 주문·재고 운영",
+      "profile": "erp",
+      "intent": {
+        "pattern": "erp-workspace",
+        "theme": "ledger"
+      },
+      "materials": {
+        "profile": "profile:erp",
+        "pattern": "pattern:erp-workspace",
+        "template": "template:admin-table",
+        "theme": "theme:ledger",
+        "typeRole": "type-role-preset:erp",
+        "controlSize": "small",
+        "tableRows": {
+          "density": [
+            "compact",
+            "comfortable"
+          ],
+          "variants": [
+            "plain",
+            "striped",
+            "bordered"
+          ],
+          "maxColumns": 8
+        },
+        "chartPresets": [],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "sidebar-to-header",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "table-scroll",
+          "chart": "chart-data-table"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        },
+        {
+          "axis": "typeRoles",
+          "from": null,
+          "to": "erp",
+          "source": "profile"
+        },
+        {
+          "axis": "controlSize",
+          "from": null,
+          "to": "small",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "d6df7791beb33ca182a5e131a56904d130e08a7445e95fd167b1b38541bc93d6",
+        "html": "6a64423e0cd4f6de9bd8de09164a65373378ef9e1957935522f3c99f1b148d80",
+        "css": "ad69dae4100f252459f728fdffd1c4de86ebdf861e9d0adb86ed309d8831a4c0"
+      },
+      "bytes": {
+        "blueprint": 1857,
+        "html": 64016,
+        "css": 53239
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/erp/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/erp/index.html",
+        "css": "docs/evidence/material-platform/assembled/erp/styles.css"
+      }
+    },
+    {
+      "id": "commerce",
+      "label": "커머스 상품 목록",
+      "profile": "commerce",
+      "intent": {
+        "pattern": "commerce-listing",
+        "theme": "commerce"
+      },
+      "materials": {
+        "profile": "profile:commerce",
+        "pattern": "pattern:commerce-listing",
+        "template": "template:product-listing",
+        "theme": "theme:commerce",
+        "typeRole": "type-role-preset:marketing",
+        "controlSize": "large",
+        "tableRows": {
+          "density": [
+            "comfortable"
+          ],
+          "variants": [
+            "plain",
+            "striped"
+          ],
+          "maxColumns": 5
+        },
+        "chartPresets": [],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "nav-scroll",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "table-scroll",
+          "chart": "none"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        },
+        {
+          "axis": "typeRoles",
+          "from": null,
+          "to": "marketing",
+          "source": "profile"
+        },
+        {
+          "axis": "controlSize",
+          "from": null,
+          "to": "large",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "d83d2ee95c1dbdbe158fb11304c424401f6fb41dee356a2e288f31a35e05bfd7",
+        "html": "8c3a38148a98e3732ec40e5f8b1fee0665f1dc32b95a15bec4bf8c7191b48ce1",
+        "css": "f2d3e3f7742b163cac2b9a24427d67f27b051ddca2e8633bcd6136ed6323150f"
+      },
+      "bytes": {
+        "blueprint": 3676,
+        "html": 85856,
+        "css": 61740
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/commerce/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/commerce/index.html",
+        "css": "docs/evidence/material-platform/assembled/commerce/styles.css"
+      }
+    },
+    {
+      "id": "saas",
+      "label": "SaaS 제품 소개·가입",
+      "profile": "saas-landing",
+      "intent": {
+        "pattern": "marketing-landing"
+      },
+      "materials": {
+        "profile": "profile:saas-landing",
+        "pattern": "pattern:marketing-landing",
+        "template": "template:saas-landing",
+        "theme": "theme:trust",
+        "typeRole": "type-role-preset:marketing",
+        "controlSize": "large",
+        "tableRows": {
+          "density": [],
+          "variants": [],
+          "maxColumns": 0
+        },
+        "chartPresets": [],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "nav-scroll",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "none",
+          "chart": "chart-data-table"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        },
+        {
+          "axis": "typeRoles",
+          "from": null,
+          "to": "marketing",
+          "source": "profile"
+        },
+        {
+          "axis": "controlSize",
+          "from": null,
+          "to": "large",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "934e96c2f43350bab985b441548d6fa282212573c8c35629ecef611ff77951ed",
+        "html": "feeec4ba2aed65adade5e8d59c160fc4ccf59bced2b28113e0a084a8aea00308",
+        "css": "7bdaca53e1ce9a0c030766fbb6596d8632d239970100b55f07f9400cf869b4b1"
+      },
+      "bytes": {
+        "blueprint": 6265,
+        "html": 112183,
+        "css": 80228
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/saas/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/saas/index.html",
+        "css": "docs/evidence/material-platform/assembled/saas/styles.css"
+      }
+    },
+    {
+      "id": "analytics",
+      "label": "데이터 분석·재무 대시보드",
+      "profile": "finance",
+      "intent": {
+        "pattern": "dashboard-grid",
+        "chartPresets": [
+          "finance-monthly-close"
+        ]
+      },
+      "materials": {
+        "profile": "profile:finance",
+        "pattern": "pattern:dashboard-grid",
+        "template": "template:dashboard-overview",
+        "theme": "theme:bank",
+        "typeRole": "type-role-preset:dashboard",
+        "controlSize": "medium",
+        "tableRows": {
+          "density": [
+            "comfortable",
+            "compact"
+          ],
+          "variants": [
+            "plain",
+            "striped",
+            "bordered"
+          ],
+          "maxColumns": 6
+        },
+        "chartPresets": [
+          "chart-preset:finance-monthly-close"
+        ],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "nav-scroll",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "table-scroll",
+          "chart": "chart-data-table"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        },
+        {
+          "axis": "typeRoles",
+          "from": null,
+          "to": "dashboard",
+          "source": "profile"
+        },
+        {
+          "axis": "controlSize",
+          "from": null,
+          "to": "medium",
+          "source": "profile"
+        },
+        {
+          "axis": "shell",
+          "from": "topbar",
+          "to": "sidebar",
+          "source": "profile"
+        },
+        {
+          "axis": "width",
+          "from": "standard",
+          "to": "wide",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "8bd54229038134d4df5ba635727fc2c963a3ed978e71c1b3389bedfe3a41756f",
+        "html": "2e9fcb1a2b3a7f72032731119b5b9ebbfaeea354597aff6d8ea7c509b9cfec78",
+        "css": "a0f98ba98cf3da3ad65d0b284c102f41216de8dc344b822a14f90be6da9a3008"
+      },
+      "bytes": {
+        "blueprint": 3011,
+        "html": 78546,
+        "css": 62815
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/analytics/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/analytics/index.html",
+        "css": "docs/evidence/material-platform/assembled/analytics/styles.css"
+      }
+    }
+  ]
+}

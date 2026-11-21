@@ -673,7 +673,9 @@
       ]
     },
     "profile": "erp",
-    "colorPalette": "static-kit"
+    "colorPalette": "static-kit",
+    "typeRoles": "erp",
+    "controlSize": "small"
   },
   "colorTokens": {
     "palette": "static-kit",
@@ -1711,6 +1713,53 @@
         ]
       }
     ]
+  },
+  "typeRoles": {
+    "preset": "erp",
+    "label": "ERP",
+    "engine": "tech",
+    "density": "compact",
+    "roles": {
+      "display": {
+        "size": "clamp(1.75rem,3.6vw,2.75rem)",
+        "variables": [
+          "--kit-t-title",
+          "--kit-t-app"
+        ]
+      },
+      "heading": {
+        "size": "clamp(1.25rem,2vw,1.625rem)",
+        "variables": [
+          "--kit-t-heading"
+        ]
+      },
+      "body": {
+        "size": "clamp(1rem,1.1vw,1.125rem)",
+        "variables": [
+          "--kit-t-body"
+        ]
+      },
+      "label": {
+        "size": "clamp(.8125rem,0.82vw,.875rem)",
+        "variables": [
+          "--kit-t-label"
+        ]
+      },
+      "caption": {
+        "size": "clamp(.75rem,0.75vw,.8125rem)",
+        "variables": [
+          "--kit-t-caption"
+        ]
+      },
+      "numeric": {
+        "size": "clamp(1rem,1.25vw,1.375rem)",
+        "variables": [
+          "--kit-t-stat",
+          "--kit-t-price"
+        ]
+      }
+    },
+    "module": "src/materials/typography.mjs"
   },
   "design": {
     "version": "1.3.0",
