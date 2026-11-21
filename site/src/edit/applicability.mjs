@@ -8,6 +8,7 @@
  * 돌려주는 errors는 연산이 거부할 때 내는 구조화 오류 그대로이고, 사용자가 고를 수 없는 이유를 보여 줄 때 쓴다.
  */
 import {nodeSpecs, themes, palettes, axes, styleAxes} from '../catalog.mjs';
+import {nodeSpecAt, nodeTypesAt, nodeTypeKnown} from '../catalog/node-extensions.mjs';
 import {insertNode, setTheme, setPalette, setAppearance, setLayoutVariant, parsePath} from './ops.mjs';
 
 const isObject = x => x !== null && typeof x === 'object' && !Array.isArray(x);
@@ -15,7 +16,10 @@ const verdict = r => ({ok: r.ok, errors: r.ok ? [] : r.errors});
 
 // ---------------------------------------------------------------- 부품 추가
 
-/** 부품 type 하나를 삽입할 때 쓰는 기본 노드. spec.example이 없는 부품(tab, lane, task, plan)은 다른 부품의 example 안에 든 같은 type의 첫 노드를 쓴다. */
+/**
+ * 부품 type 하나를 삽입할 때 쓰는 기본 노드. spec.example이 없는 부품(tab, lane, task, plan)은 다른 부품의 example 안에 든 같은 type의 첫 노드를 쓴다.
+ * version은 카탈로그 버전이다. 생략하면(2.5.0 이하와 같다) 기본 부품만 알고, 2.6.0에서만 열리는 확장 부품(select-control, data-table)은 version이 2.6.0 이상일 때 돌려준다.
+ */
 const examples = new Map();
 function findNested(node, type) {
   if (!isObject(node)) return null;
@@ -23,32 +27,36 @@ function findNested(node, type) {
   for (const child of node.children ?? []) { const hit = findNested(child, type); if (hit) return hit; }
   return null;
 }
-export function partExample(type) {
-  if (typeof type !== 'string' || type === 'page' || !Object.hasOwn(nodeSpecs, type)) return null;
-  if (!examples.has(type)) {
-    let found = nodeSpecs[type].example ?? null;
+export function partExample(type, version) {
+  if (typeof type !== 'string' || type === 'page' || !nodeTypeKnown(type, version)) return null;
+  const key = `${type}@${Object.hasOwn(nodeSpecs, type) ? '' : version}`;
+  if (!examples.has(key)) {
+    let found = nodeSpecAt(type, version).example ?? null;
     if (!found) for (const spec of Object.values(nodeSpecs)) { found = findNested(spec.example, type); if (found) break; }
-    examples.set(type, found);
+    examples.set(key, found);
   }
-  const found = examples.get(type);
+  const found = examples.get(key);
   return found ? structuredClone(found) : null;
 }
 
-/** 삽입 후보가 될 수 있는 부품 type 목록(카탈로그 순서). 페이지 루트는 후보가 아니다. */
+/** 삽입 후보가 될 수 있는 기본 부품 type 목록(카탈로그 순서, 2.5.0 이하와 같다). 페이지 루트는 후보가 아니다. 버전이 있는 문서의 후보는 `partTypesAt`. */
 export const partTypes = Object.freeze(Object.keys(nodeSpecs).filter(t => t !== 'page'));
+/** 카탈로그 버전이 받아들이는 삽입 후보. 2.6.0 문서에는 기본 부품 뒤에 확장 부품이 붙고, 2.4.0·2.5.0 문서는 `partTypes`와 같다. */
+export const partTypesAt = version => Object.freeze(nodeTypesAt(version).filter(t => t !== 'page'));
 
-/** 위치 하나(부모 경로, index)에 삽입할 수 있는 부품과 없는 부품. 경로 표기와 index 의미는 insertNode와 같다(index 생략은 끝). */
+/** 위치 하나(부모 경로, index)에 삽입할 수 있는 부품과 없는 부품. 경로 표기와 index 의미는 insertNode와 같다(index 생략은 끝). 후보는 doc.catalogVersion이 정한다. */
 export function insertableParts(doc, args = {}) {
   const {parent = [], index} = args;
   const parsed = parsePath(parent);
-  const none = reason => ({ok: false, parent, index: index ?? null, accepted: [], rejected: partTypes.map(type => ({type, errors: [reason]})), reason});
+  const version = isObject(doc) ? doc.catalogVersion : undefined, candidates = partTypesAt(version);
+  const none = reason => ({ok: false, parent, index: index ?? null, accepted: [], rejected: candidates.map(type => ({type, errors: [reason]})), reason});
   if (parsed.error || !isObject(doc)) return none({code: 'PATH_INVALID', path: '$args.parent', message: parsed.error ?? 'doc은 Blueprint 객체여야 합니다.', hint: '예: [] (페이지) 또는 [1] (최상위 두 번째 노드)'});
   const accepted = [], rejected = [];
-  for (const type of partTypes) {
-    const node = partExample(type);
+  for (const type of candidates) {
+    const node = partExample(type, version);
     if (!node) { rejected.push({type, errors: [{code: 'NO_EXAMPLE', path: '$args.node', message: `${type}에는 삽입할 기본 노드가 없습니다.`, hint: '이 부품은 부모 부품을 추가할 때 함께 들어갑니다.'}]}); continue; }
     const r = insertNode(doc, {parent, node, ...(index === undefined ? {} : {index})});
-    if (r.ok) accepted.push({type, label: nodeSpecs[type].label, group: nodeSpecs[type].group});
+    if (r.ok) { const spec = nodeSpecAt(type, version); accepted.push({type, label: spec.label, group: spec.group}); }
     else rejected.push({type, errors: r.errors});
   }
   return {ok: true, parent, index: index ?? null, accepted, rejected, reason: null};

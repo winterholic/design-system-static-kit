@@ -521,6 +521,17 @@
       "description": "2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.",
       "x-since": "2.6.0"
     },
+    "typeRoles": {
+      "type": "string",
+      "enum": [
+        "erp",
+        "dashboard",
+        "document",
+        "marketing"
+      ],
+      "description": "2.6.0부터 역할 타이포그래피 프리셋(erp·dashboard·document·marketing)을 고를 수 있습니다. 제목·본문·라벨·숫자 역할의 크기·행간·자간·서체가 컴파일 CSS의 --kit-t-* 변수에 반영됩니다. 기존 typography 축과 별개이며 고르지 않으면 출력은 그대로입니다.",
+      "x-since": "2.6.0"
+    },
     "mode": {
       "type": "string",
       "enum": [
@@ -5384,6 +5395,502 @@
         "type"
       ],
       "additionalProperties": false
+    }
+  },
+  "x-extensions": {
+    "2.6.0": {
+      "x-since": "2.6.0",
+      "$defs": {
+        "chart": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "chart"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "caption": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "bar",
+                "bars-h",
+                "line",
+                "area",
+                "donut",
+                "stacked-bar",
+                "scatter",
+                "heatmap",
+                "sparkline"
+              ]
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "minItems": 2,
+              "maxItems": 8
+            },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": -1000000,
+                      "maximum": 1000000
+                    },
+                    "minItems": 2,
+                    "maxItems": 8
+                  },
+                  "points": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "y": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 2,
+                    "maxItems": 8
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 3
+            },
+            "xLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "yLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "axis": {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "max": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "xMin": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "showX": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "showY": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "type",
+            "title",
+            "caption",
+            "kind"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 넓어진 chart 정의. 2.4.0·2.5.0 문서는 $defs.chart만 받습니다."
+        },
+        "select-control": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "select-control"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "group": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "disabled": {
+                    "type": "string",
+                    "enum": [
+                      "yes"
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 50
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "single",
+                "multiple"
+              ]
+            },
+            "search": {
+              "type": "string",
+              "enum": [
+                "none",
+                "local",
+                "async"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "soft",
+                "square",
+                "pill"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "loading",
+                "error",
+                "disabled"
+              ]
+            },
+            "maxMenuHeight": {
+              "type": "integer",
+              "enum": [
+                192,
+                240,
+                288,
+                360
+              ]
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "minItems": 1,
+              "maxItems": 50
+            },
+            "placeholder": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "requirement": {
+              "type": "string",
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "label",
+            "options"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: 선택 상자. 2.5.0 이하 문서는 거부합니다."
+        },
+        "data-table": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "data-table"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "sortable": {
+                    "type": "string",
+                    "enum": [
+                      "yes",
+                      "no"
+                    ]
+                  },
+                  "hideBelow": {
+                    "type": "string",
+                    "enum": [
+                      "640px",
+                      "800px",
+                      "900px"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 8
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  }
+                },
+                "required": [],
+                "additionalProperties": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "number",
+                      "minimum": -1000000,
+                      "maximum": 1000000
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "minItems": 0,
+              "maxItems": 40
+            },
+            "density": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "comfortable",
+                "spacious"
+              ]
+            },
+            "responsive": {
+              "type": "string",
+              "enum": [
+                "scroll",
+                "priority"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "empty",
+                "loading",
+                "error",
+                "partial"
+              ]
+            },
+            "sortable": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "selectable": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "title",
+            "columns",
+            "rows"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: 데이터 표. 2.5.0 이하 문서는 거부합니다."
+        }
+      },
+      "children": {
+        "page": [
+          "select-control",
+          "data-table"
+        ],
+        "section": [
+          "select-control",
+          "data-table"
+        ],
+        "split": [
+          "select-control",
+          "data-table"
+        ],
+        "aside": [
+          "select-control",
+          "data-table"
+        ],
+        "tab": [
+          "select-control",
+          "data-table"
+        ]
+      }
     }
   }
 }

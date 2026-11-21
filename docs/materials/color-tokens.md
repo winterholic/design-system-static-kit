@@ -49,3 +49,8 @@ const auto = resolveColorTokens({palette: 'static-kit', mode: 'auto'});
 대표 CSS 이름은 `--kit-action`, `--kit-action-hover`, `--kit-action-active`, `--kit-control-disabled-bg`, `--kit-control-error`, `--kit-focus`, `--kit-card-hover`, `--kit-table-selected`, `--kit-chart1`~`--kit-chart5`, `--kit-chart-grid`다. `src/color-tokens.mjs`의 2.6.0 CSS 계약은 이 값들을 실제 `:hover`, `:active`, `:disabled`, `[aria-invalid]`/`:user-invalid`, `:focus-visible`, 표 선택과 차트 격자에 연결한다.
 
 2.6.0 이전 입력에는 새 색 토큰 CSS를 추가하지 않는다. 기존 2.4.0 기본값과 2.4.0·2.5.0 고정 컴파일 해시는 회귀 계약이다.
+
+## 컴파일 반영과 읽기 질의
+
+`colorPalette: 'static-kit'`을 고른 2.6.0 Blueprint는 `colorTokenCSS()`와 그래프 토큰을 컴파일 CSS에 낸다. 라이트·다크·auto의 `--kit-action`·`--kit-surface`·`--kit-text`·`--kit-focus` 값과 `.kit-button:disabled` 같은 사용처가 `tests/wire-260.test.mjs`로 확인된다. 웹은 `./service`의 `getColorTokens({palette, mode, layer})` 또는 `getColorTokens({blueprint})`로 같은 해석 결과(시드·계층·참조·CSS 변수 맵·대비 보고서·부품별 계약)를 읽는다. 값 문자열은 받지 않는다(`UNKNOWN_COLOR_PALETTE`).
+

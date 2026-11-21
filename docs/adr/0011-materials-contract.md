@@ -23,7 +23,7 @@
 
 ## 카탈로그 버전 전략
 
-- 이번 단계는 Blueprint 문법·검증·렌더러를 바꾸지 않는다. 컴파일 경로(`compiler`, `validate`, `render`, `styles`, `service`, `edit`)는 `src/materials/`를 import하지 않는다. 그래서 `VERSION_ORDER`, `ACCEPTED_CATALOG_VERSIONS`, `src/service/versions.mjs`도 바꾸지 않았다. 2.1.0~2.5.0 출력은 그대로다. 2.4.0은 `docs/evidence/expression/legacy-2-4-*.json`, 2.5.0은 이번에 고정한 `docs/evidence/materials/pinned-2-5-*.json`(85개 템플릿)으로 확인한다.
+- 첫 단계는 Blueprint 문법·검증·렌더러를 바꾸지 않았고 컴파일 경로(`compiler`, `validate`, `render`, `styles`, `service`, `edit`)는 `src/materials/`를 import하지 않았다. 2.6.0 조립 연결(`docs/materials/audit.md` §7) 뒤의 규칙: 컴파일 경로가 읽는 재료 모듈은 렌더·스타일 코드를 재사용하는 `select`·`table`·`typography` 세 파일뿐이고, 레지스트리·어댑터는 `src/service/materials.mjs`(재료 읽기 질의)만 읽는다. `tests/materials-registry.test.mjs`와 `tests/wire-260.test.mjs`가 import를 검사한다. 그래서 `VERSION_ORDER`, `ACCEPTED_CATALOG_VERSIONS`, `src/service/versions.mjs`도 바꾸지 않았다. 2.1.0~2.5.0 출력은 그대로다. 2.4.0은 `docs/evidence/expression/legacy-2-4-*.json`, 2.5.0은 이번에 고정한 `docs/evidence/materials/pinned-2-5-*.json`(85개 템플릿)으로 확인한다.
 - `MATERIAL_CATALOG_VERSION = '2.6.0'`은 이제 활성화된 **opt-in** 버전이다. `colorPalette: 'static-kit'`은 `since: 2.6.0`의 닫힌 필드이며, 기본 생성 버전 `CATALOG_VERSION`은 2.4.0으로 유지한다.
 - 2.6.0 색 토큰 구현은 네 층(primitive → semantic → state → component)의 참조 그래프와 자체 시드·명도 램프를 사용한다. CSS 사용처와 라이트·다크·auto 대비 검사는 [색 토큰 읽기 API](../materials/color-tokens.md)에 기록한다.
 - 2.5.0 이하 Blueprint가 `colorPalette`를 쓰면 `VERSION_FIELD`로 거부한다. 미등록 팔레트 ID는 스키마의 닫힌 enum에서 거부하며 호출자 색값 입력은 없다.
@@ -73,3 +73,10 @@
 - `CT_GRID` 높이와 좌우 패딩은 4px 격자다. `CT_MEDIUM` medium 높이는 `SPACE` control 토큰과 같다. `CT_ROLE` 라벨 역할은 label 또는 body다. `CT_MISSING` 네 크기가 모두 있다.
 
 컨트롤 크기는 기존 `.kit-button`(`min-height: var(--kit-control)`, 좌우 24px)을 바꾸지 않는다. 재료는 출력 경로 밖에 있고, 부품 크기 축(sm/md/lg)과의 연결은 Blueprint 컴파일러 단계에서 정한다.
+
+## 부록: 2.6.0 조립 연결(재료를 Blueprint로 고르기)
+
+- Select·Table은 `NODE_SPEC_EXTENSIONS['2.6.0']`의 노드(`select-control`, `data-table`)다. 기본 `nodeSpecs`는 바꾸지 않는다(snapshot 바이트 보존). 노드의 필드 값은 재료 계약과 같아야 하고 `tests/wire-260.test.mjs`가 비교한다.
+- 역할형 타이포그래피는 최상위 `typeRoles`(erp·dashboard·document·marketing, `since: 2.6.0`)로 고른다. 위 부록이 미뤘던 엔진 역할 대응은 `ROLE_TYPE_MAP`이다: display→`title`·`app`, heading→`heading`(과 제목 서체·굵기), body→`body`·행간·본문 서체, label·caption→같은 이름, numeric→`stat`·`price`. 값은 `:root`의 `--kit-t-*`를 덮어쓰고 floor 역할(body·label·caption)에는 밀도 계수를 곱하지 않는다.
+- 스키마는 기존 `$defs`를 넓히지 않고 `x-extensions['2.6.0']` 주석에 확장 정의를 둔다. 검증기는 같은 확장 표를 `nodeSpecAt(type, catalogVersion)`으로 직접 읽는다.
+

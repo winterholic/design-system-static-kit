@@ -148,12 +148,14 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
 });
 
 // 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
-// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법) 갱신 뒤 2.6.0 opt-in(acceptedCatalogVersions에 2.6.0, 스키마 colorPalette x-since 2.6.0 추가, 2.4.0·2.5.0 내용은 그대로)을 반영해 60b066a5ed232d5d 로 고정한다.
+// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법) 갱신 뒤 2.6.0 opt-in(acceptedCatalogVersions에 2.6.0, 스키마 colorPalette x-since 2.6.0 추가, 2.4.0·2.5.0 내용은 그대로)을 반영해 60b066a5ed232d5d 로 고정했고,
+// 2.6.0 조립 연결(feat/wire-260)에서 blueprint.schema.json이 typeRoles 속성(x-since 2.6.0)과 x-extensions['2.6.0'](차트 확장·select-control·data-table 정의, 새 자식 목록)을 드러내 12c39fd733512324 로 갱신한다.
+// catalog.json 은 바이트가 그대로이고, 스키마의 기존 $defs·properties 는 줄 삭제 없이 추가만 있다(git diff로 확인한 값). 의도한 카탈로그 개정이 또 있으면 값을 갱신하고 이유를 기록한다.
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
     {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
     {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
-    {sub: 'v1', count: 2, pinned: '60b066a5ed232d5d'},
+    {sub: 'v1', count: 2, pinned: '12c39fd733512324'},
   ];
   for (const {sub, exclude, count, pinned} of parts) {
     test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {

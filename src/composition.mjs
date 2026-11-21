@@ -1,4 +1,5 @@
 import {expressionApplies} from './catalog/expression.mjs';
+import {extensionCoverage} from './catalog/node-extensions.mjs';
 import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT, pageRules, PAGE_RULE_LEGACY_VERSIONS, LEGACY_COMPOSITION_VERSION} from './catalog/composition.mjs';
 import {bentoPlan, bentoMixedRows, isShortCell} from './layout.mjs';
 import {SPACE, TOKEN} from './spacing.mjs';
@@ -97,7 +98,7 @@ export function planComposition(b) {
   const visit = (node, path, ancestors = [], siblingCount = 1) => {
     const supporting = ancestors.some((a, i) => a.type === 'aside' && a.children[1] === (ancestors[i + 1] ?? node));
     const facts = {type: node.type, semantic: semantic(node), intent: PAGE_INTENT[b.pageType] ?? 'general', nested: ancestors.some(x => x.type === 'section'), supporting, parent: ancestors.at(-1)?.type ?? null, siblingCount, titleCpl: cplOf(node.title ?? ''), valueLength: node.type === 'metric' ? vlOf(node.value) : 0, density: b.density, typography: b.typography, theme: b.theme};
-    const coverage = compositionCoverage[node.type];
+    const coverage = compositionCoverage[node.type] ?? extensionCoverage(node.type);
     if (!coverage) throw new Error('Missing composition coverage: ' + node.type);
     const selected = selectDesign(facts), decision = {path, type: node.type, facts, coverage, ...selected};
     byNode.set(node, decision);

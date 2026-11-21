@@ -187,8 +187,12 @@ test('materials: registering the catalog changes neither the catalog nor any 2.4
   const before = sha([nodeSpecs, themes, palettes, templates]);
   catalogRegistry();
   assert.equal(sha([nodeSpecs, themes, palettes, templates]), before);
-  // 컴파일 경로는 재료 모듈을 읽지 않는다.
-  for (const f of ['src/compiler.mjs', 'src/validate.mjs', 'src/render/nodes.mjs', 'src/styles/index.mjs', 'src/service/index.mjs', 'src/edit/index.mjs']) assert.ok(!/^\s*import .*from ['"][^'"]*materials\//m.test(read(f)), f);
+  // 컴파일 경로는 재료 레지스트리·어댑터를 읽지 않는다. 2.6.0 연결(tests/wire-260.test.mjs) 뒤에는 재료의 렌더·스타일 코드를 쓰는 세 파일만 예외다.
+  const RENDER_REUSE = ['select', 'table', 'typography'];
+  for (const f of ['src/compiler.mjs', 'src/validate.mjs', 'src/render/nodes.mjs', 'src/render/index.mjs', 'src/styles/index.mjs', 'src/service/index.mjs', 'src/edit/index.mjs']) {
+    const imported = [...read(f).matchAll(/^\s*import .*from ['"]([^'"]*materials\/[^'"]*)['"]/gm)].map(m => m[1].replace(/^.*materials\//, '').replace(/\.mjs$/, ''));
+    assert.ok(imported.every(name => RENDER_REUSE.includes(name)), `${f} imports ${imported.join(',')}`);
+  }
   const legacy = JSON.parse(read('docs/evidence/expression/legacy-2-4-hashes.json')), legacyIn = JSON.parse(read('docs/evidence/expression/legacy-2-4-blueprints.json'));
   for (const [id, h] of Object.entries(legacy.hashes)) assert.equal(sha(compile(structuredClone(legacyIn.blueprints[id]))), h, '2.4.0 ' + id);
   const pinned = JSON.parse(read('docs/evidence/materials/pinned-2-5-hashes.json')), pinnedIn = JSON.parse(read('docs/evidence/materials/pinned-2-5-blueprints.json'));

@@ -12,6 +12,7 @@ import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
 import {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} from './expression.mjs';
 import {recipes, recipeRules, recipeIds} from './recipes.mjs';
+import {NODE_SPEC_EXTENSIONS, nodeSpecAt} from './node-extensions.mjs';
 export {compositionRules, compositionCoverage, pageRules, PAGE_RULE_LEGACY_VERSIONS, COMPOSITION_VERSION} from './composition.mjs';
 
 /** 기본 생성·조립 버전(템플릿·갤러리·조합이 만드는 Blueprint의 catalogVersion). 2.5.0은 명시적으로 고르는 버전이고 기본 승격은 ADR 0010이 미룬 결정이다. */
@@ -54,6 +55,28 @@ export const rules = [
 const freeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 [axes, axisDefs, themes, palettes, icons, nodeSpecs, pageTypes, templates, rules].forEach(freeze);
 
+/**
+ * 버전별 노드 확장(NODE_SPEC_EXTENSIONS)의 스키마 투영. `$defs`는 2.4.0·2.5.0이 받는 문법이라 건드리지 않고, 확장은 `x-extensions[버전]`에 따로 둔다:
+ * `$defs`는 그 버전에서 새로 생기거나 넓어진 노드의 전체 정의(차트 새 형태·축 필드, select-control, data-table), `children`은 그 버전에서 새로 받는 자식 목록(부모 → 추가 type).
+ * 키는 JSON Schema 키워드가 아니라 주석이므로 표준 검증기는 무시하고, 검증기(src/validate.mjs)는 `nodeSpecAt(type, catalogVersion)`으로 같은 표를 직접 읽는다.
+ */
+function extensionSchemas() {
+  const out = {};
+  for (const [version, table] of Object.entries(NODE_SPEC_EXTENSIONS)) {
+    const defs = {}, children = {};
+    for (const type of Object.keys(table)) {
+      const spec = nodeSpecAt(type, version);
+      defs[type] = {...obj({type: {const: type}, ...spec.fields}, requiredOf(spec)), 'x-since': version, ...(nodeSpecs[type] ? {description: `${version}부터 넓어진 ${type} 정의. 2.4.0·2.5.0 문서는 $defs.${type}만 받습니다.`} : {description: `${version}부터 쓸 수 있는 부품: ${spec.label}. 2.5.0 이하 문서는 거부합니다.`})};
+    }
+    for (const type of Object.keys(nodeSpecs)) {
+      const gained = (nodeSpecAt(type, version)?.children ?? []).filter(c => !(nodeSpecs[type].children ?? []).includes(c));
+      if (gained.length) children[type] = gained;
+    }
+    out[version] = {'x-since': version, $defs: defs, children};
+  }
+  return out;
+}
+
 export function blueprintSchema() {
   const defs = {};
   for (const [type, spec] of Object.entries(nodeSpecs)) {
@@ -66,10 +89,11 @@ export function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), typeRoles: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='typeRoles').values), '2.6.0부터 역할 타이포그래피 프리셋(erp·dashboard·document·marketing)을 고를 수 있습니다. 제목·본문·라벨·숫자 역할의 크기·행간·자간·서체가 컴파일 CSS의 --kit-t-* 변수에 반영됩니다. 기존 typography 축과 별개이며 고르지 않으면 출력은 그대로입니다.', '2.6.0'), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,
+    'x-extensions': extensionSchemas(),
   };
 }
 

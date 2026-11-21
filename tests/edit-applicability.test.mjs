@@ -1,7 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {nodeSpecs, themes, palettes, axes, styleAxes, templates, layoutSlots} from '../src/catalog.mjs';
-import {applyOp, partExample, partTypes, insertableParts, addPlacements, themeChoices, themeVariantChoices, paletteChoices, modeChoices, axisChoices, layoutChoices, contentFingerprint} from '../src/edit/index.mjs';
+import {nodeSpecAt} from '../src/catalog/node-extensions.mjs';
+import {applyOp, partExample, partTypes, partTypesAt, insertableParts, addPlacements, themeChoices, themeVariantChoices, paletteChoices, modeChoices, axisChoices, layoutChoices, contentFingerprint} from '../src/edit/index.mjs';
 
 const fresh = template => { const r = applyOp(null, 'resetDocument', {template}); assert.ok(r.ok, template + JSON.stringify(r.errors)); return r.doc; };
 const nodeAt = (doc, path) => path.reduce((n, i) => n.children[i], doc.tree);
@@ -21,12 +22,18 @@ function oneOfEachType() {
   return seen;
 }
 
-/** 독립 판정: 도우미를 거치지 않고 실제 insertNode 연산을 직접 부른다. */
+/** 같은 템플릿 문서를 카탈로그 버전만 바꿔 쓴다(2.4.0 템플릿 문서는 2.5.0·2.6.0에서도 유효하다). */
+const atVersion = (doc, catalogVersion) => ({...doc, catalogVersion});
+const VERSIONS = ['2.4.0', '2.5.0', '2.6.0'];
+const EXTENSION_PARTS = ['select-control', 'data-table'];
+
+/** 독립 판정: 도우미를 거치지 않고 실제 insertNode 연산을 직접 부른다. 후보 목록도 도우미가 아니라 그 버전의 노드 명세 표에서 만든다. */
 function oracle(doc, parent, index) {
   const accepted = new Set();
-  for (const type of Object.keys(nodeSpecs)) {
+  const types = [...Object.keys(nodeSpecs), ...(doc.catalogVersion === '2.6.0' ? EXTENSION_PARTS : [])];
+  for (const type of types) {
     if (type === 'page') continue;
-    const node = partExample(type);
+    const node = partExample(type, doc.catalogVersion);
     if (!node) continue;
     const r = applyOp(doc, 'insertNode', {parent, node, ...(index === undefined ? {} : {index})});
     if (r.ok) accepted.add(type);
@@ -48,24 +55,63 @@ test('partExample: every insertable part has a node of its own type, and callers
   assert.notEqual(partExample('hero').title, 'mutated');
 });
 
-test('insertableParts agrees with the real insertNode operation for every node type, in every container, inside and after', () => {
+test('insertableParts agrees with the real insertNode operation for every node type, in every container, inside and after, for 2.4.0, 2.5.0 and 2.6.0 documents', () => {
   const seen = oneOfEachType();
   assert.ok(seen.size >= 50, 'every node type appears in at least one template: ' + seen.size);
-  let compared = 0;
-  for (const [type, {doc, path, template}] of seen) {
-    const where = `${template}:${type}@${JSON.stringify(path)}`;
-    const {inside, after} = addPlacements(doc, path);
-    const insideTypes = new Set(inside.accepted.map(a => a.type));
-    assert.deepEqual([...insideTypes].sort(), [...oracle(doc, path)].sort(), 'inside ' + where);
-    // 판정의 양쪽이 모두 한 부품도 빠짐없이 나뉜다: 받은 것 + 거절한 것 = 후보 전체
-    assert.equal(inside.accepted.length + inside.rejected.length, partTypes.length, where);
-    if (path.length) {
-      const parent = path.slice(0, -1), index = path.at(-1) + 1;
-      assert.deepEqual([...new Set(after.accepted.map(a => a.type))].sort(), [...oracle(doc, parent, index)].sort(), 'after ' + where);
-    } else assert.deepEqual(after.accepted, [], 'page root has no siblings');
-    compared++;
+  let compared = 0, extensionOffered = 0;
+  for (const version of VERSIONS) {
+    const candidates = partTypesAt(version);
+    assert.deepEqual(candidates, version === '2.6.0' ? [...partTypes, ...EXTENSION_PARTS] : [...partTypes], version);
+    for (const [type, {doc: base, path, template}] of seen) {
+      const doc = atVersion(base, version);
+      const where = `${version} ${template}:${type}@${JSON.stringify(path)}`;
+      const {inside, after} = addPlacements(doc, path);
+      const insideTypes = new Set(inside.accepted.map(a => a.type));
+      assert.deepEqual([...insideTypes].sort(), [...oracle(doc, path)].sort(), 'inside ' + where);
+      // 판정의 양쪽이 모두 한 부품도 빠짐없이 나뉜다: 받은 것 + 거절한 것 = 그 버전의 후보 전체
+      assert.equal(inside.accepted.length + inside.rejected.length, candidates.length, where);
+      if (version !== '2.6.0') for (const part of EXTENSION_PARTS) assert.ok(!insideTypes.has(part) && !inside.accepted.some(a => a.type === part) && !inside.rejected.some(r => r.type === part), `${part} must not even be a candidate: ${where}`);
+      else for (const part of EXTENSION_PARTS) { assert.ok(insideTypes.has(part) || inside.rejected.some(r => r.type === part), `${part} is judged: ${where}`); if (insideTypes.has(part)) extensionOffered++; }
+      if (path.length) {
+        const parent = path.slice(0, -1), index = path.at(-1) + 1;
+        assert.deepEqual([...new Set(after.accepted.map(a => a.type))].sort(), [...oracle(doc, parent, index)].sort(), 'after ' + where);
+      } else assert.deepEqual(after.accepted, [], 'page root has no siblings');
+      compared++;
+    }
   }
-  assert.ok(compared >= 50);
+  assert.ok(compared >= 150, 'three versions of every container: ' + compared);
+  assert.ok(extensionOffered >= 3, 'the extension parts are really offered somewhere in 2.6.0 (otherwise this proves nothing): ' + extensionOffered);
+});
+
+test('2.6.0 documents offer Select and Table where form/table fit, with labels from the node spec; 2.4.0 and 2.5.0 documents offer neither anywhere', () => {
+  const doc = fresh('dashboard-overview');
+  for (const version of ['2.4.0', '2.5.0']) {
+    for (const parent of [[], [1], [0]]) {
+      const res = insertableParts(atVersion(doc, version), {parent});
+      assert.ok(!res.accepted.some(a => EXTENSION_PARTS.includes(a.type)) && !res.rejected.some(r => EXTENSION_PARTS.includes(r.type)), `${version} ${JSON.stringify(parent)}`);
+    }
+  }
+  const page = insertableParts(atVersion(doc, '2.6.0'), {parent: []});
+  for (const part of EXTENSION_PARTS) {
+    const hit = page.accepted.find(a => a.type === part);
+    assert.ok(hit, `${part} is offered at the page level`);
+    assert.deepEqual({label: hit.label, group: hit.group}, {label: nodeSpecAt(part, '2.6.0').label, group: nodeSpecAt(part, '2.6.0').group});
+    const inserted = applyOp(atVersion(doc, '2.6.0'), 'insertNode', {parent: [], node: partExample(part, '2.6.0')});
+    assert.ok(inserted.ok, JSON.stringify(inserted.errors));
+  }
+  // 그리드·페이지 머리글 안에는 두 부품 모두 들어갈 수 없고, 거절 이유는 연산이 낸 구조화 오류다.
+  const grid = insertableParts(atVersion(doc, '2.6.0'), {parent: [1]});
+  for (const part of EXTENSION_PARTS) {
+    const hit = grid.rejected.find(r => r.type === part);
+    assert.ok(hit && hit.errors.some(e => e.code === 'CHILD_TYPE' && e.hint), `${part} in a grid: ${JSON.stringify(hit?.errors)}`);
+  }
+  // 예시를 한 번 넣은 뒤에는 같은 id가 겹치므로 두 번째 후보는 거절된다(DUPLICATE_ID).
+  const once = applyOp(atVersion(doc, '2.6.0'), 'insertNode', {parent: [], node: partExample('data-table', '2.6.0')});
+  const again = insertableParts(once.doc, {parent: []});
+  assert.ok(again.rejected.find(r => r.type === 'data-table').errors.some(e => e.code === 'DUPLICATE_ID'));
+  assert.equal(partExample('data-table'), null, 'without a version only the base parts are known');
+  assert.equal(partExample('data-table', '2.5.0'), null);
+  assert.equal(partExample('data-table', '2.6.0').type, 'data-table');
 });
 
 test('insertableParts: accepted parts really insert without errors, rejected ones carry the operation\'s own diagnostics, and the input is untouched', () => {

@@ -1,4 +1,4 @@
-import {nodeSpecAt, nodeExtended} from './catalog/node-extensions.mjs';
+import {nodeSpecAt, nodeExtended, nodeSince, nodeTypeKnown} from './catalog/node-extensions.mjs';
 import {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} from './catalog/expression.mjs';
 import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
 
@@ -18,7 +18,9 @@ export function validateBlueprint(input) {
     if (s.const !== undefined) { if (v !== s.const) error(path, 'CONST', '고정된 값: ' + s.const); return; }
     if (s.type === 'object') {
       if (!plain(v)) { error(path, 'OBJECT', '객체가 필요합니다.'); return; }
-      for (const k of Object.keys(v)) if (!Object.hasOwn(s.properties, k)) error(path + '.' + k, 'UNKNOWN_KEY', '허용되지 않은 속성: ' + k);
+      // additionalProperties가 스키마이면 선언하지 않은 키의 값을 그 스키마로 검사한다(2.6.0 data-table 행: 열 id가 키다). 그 밖에는 닫힌 객체다.
+      const open = plain(s.additionalProperties) ? s.additionalProperties : null;
+      for (const k of Object.keys(v)) if (!Object.hasOwn(s.properties, k)) { if (open) value(v[k], open, path + '.' + k); else error(path + '.' + k, 'UNKNOWN_KEY', '허용되지 않은 속성: ' + k); }
       for (const k of s.required ?? []) if (!Object.hasOwn(v, k)) error(path + '.' + k, 'REQUIRED', '필수 속성입니다.');
       for (const [k, sub] of Object.entries(s.properties)) if (Object.hasOwn(v, k)) value(v[k], sub, path + '.' + k);
       return;
@@ -28,6 +30,13 @@ export function validateBlueprint(input) {
       if (v.length < s.minItems || v.length > s.maxItems) error(path, 'ARRAY_LENGTH', `항목은 ${s.minItems}~${s.maxItems}개입니다.`);
       v.slice(0, Math.max(s.maxItems, 40)).forEach((x, i) => value(x, s.items, `${path}[${i}]`)); return;
     }
+    if (s.oneOf) {
+      const mark = errors.length;
+      for (const branch of s.oneOf) { value(v, branch, path); if (errors.length === mark) return; errors.length = mark; }
+      error(path, 'ONE_OF', '허용되는 형태(문자열·숫자·불리언·null) 중 하나여야 합니다.'); return;
+    }
+    if (s.type === 'boolean') { if (typeof v !== 'boolean') error(path, 'BOOLEAN', 'true 또는 false가 필요합니다.'); return; }
+    if (s.type === 'null') { if (v !== null) error(path, 'NULL', 'null이 필요합니다.'); return; }
     if (s.enum) { if (!s.enum.includes(v)) error(path, 'ENUM', '허용값: ' + s.enum.join(', ')); return; }
     if (s.type === 'integer' || s.type === 'number') {
       if (typeof v !== 'number' || !Number.isFinite(v) || (s.type === 'integer' && !Number.isInteger(v)) || v < s.minimum || v > s.maximum) error(path, 'NUMBER', `${s.type === 'integer' ? '정수' : '숫자'} ${s.minimum}~${s.maximum}가 필요합니다.`);
@@ -94,15 +103,23 @@ export function validateBlueprint(input) {
 
   // ---- tree ----
   let count = 0, heroCount = 0;
-  const fieldIds = new Set(), types = new Set(), firstSeen = {};
+  const fieldIds = new Set(), controlIds = new Set(), types = new Set(), firstSeen = {};
   const surfaceStack = [];
   function node(n, path, parent, depth, ancestors) {
     count++; if (count > limits.nodes) { if (count === limits.nodes + 1) error(path, 'NODE_LIMIT', `최대 ${limits.nodes}노드입니다.`); return; }
     if (depth > limits.depth) { error(path, 'DEPTH', `최대 깊이는 ${limits.depth}입니다.`); return; }
     if (!plain(n)) { error(path, 'OBJECT', '노드 객체가 필요합니다.'); return; }
-    if (typeof n.type !== 'string' || !Object.hasOwn(nodeSpecs, n.type)) { error(path + '.type', 'NODE_TYPE', '알 수 없는 부품입니다.'); return; }
-    if (parent && !nodeSpecs[parent].children?.includes(n.type)) error(path + '.type', 'CHILD_TYPE', `${parent} 안에 ${n.type}을 넣을 수 없습니다.`);
+    if (!nodeTypeKnown(n.type, input.catalogVersion)) {
+      // 확장 표의 노드는 도입 버전 전에는 알 수 없는 부품이 아니라 "아직 열리지 않은 부품"이다. 올리는 방법을 알려 주려고 VERSION_FIELD로 낸다.
+      const introduced = typeof n.type === 'string' ? nodeSince(n.type) : null;
+      if (introduced) error(path + '.type', 'VERSION_FIELD', `${n.type}은 카탈로그 ${introduced}부터 쓸 수 있습니다(kit migrate <입력> <출력> --to ${introduced}).`);
+      else error(path + '.type', 'NODE_TYPE', '알 수 없는 부품입니다.');
+      return;
+    }
+    if (parent && !nodeSpecAt(parent, input.catalogVersion).children?.includes(n.type)) error(path + '.type', 'CHILD_TYPE', `${parent} 안에 ${n.type}을 넣을 수 없습니다.`);
     types.add(n.type); firstSeen[n.type] ??= path;
+    // 2.6.0 data-table은 페이지 유형 규칙에서 table과 같은 자리를 채운다(대시보드·데이터 페이지의 "표" 요구).
+    if (n.type === 'data-table') { types.add('table'); firstSeen.table ??= path; }
     const spec = nodeSpecAt(n.type, input.catalogVersion);
     const properties = {type: {const: n.type}, ...spec.fields};
     if (spec.children) properties.children = {type: 'array', items: {}, minItems: spec.min, maxItems: spec.max};
@@ -235,6 +252,62 @@ export function validateBlueprint(input) {
           if (Number.isFinite(n.axis.max) && values.some(v => v > n.axis.max)) error(path + '.axis.max', 'CHART_AXIS', '축 최댓값이 데이터보다 작아 값이 잘립니다.');
         }
       }
+    }
+    // 2.6.0 Select·Table 재료(docs/materials/select-table.md). 필드 모양은 확장 명세가 닫아 두었고, 여기서는 재료 계약의 조합·데이터 규칙을 본다.
+    if (t === 'select-control') {
+      const key = 'select:' + n.id;
+      if (typeof n.id === 'string') { if (controlIds.has(key)) error(path + '.id', 'DUPLICATE_ID', '페이지의 select-control id는 중복될 수 없습니다.'); controlIds.add(key); }
+      const options = A(n.options) ? n.options.filter(plain) : [], seen = new Set(), groups = [];
+      options.forEach((o, i) => {
+        const p = `${path}.options[${i}]`;
+        if (typeof o.value === 'string') {
+          if (seen.has(o.value)) error(p + '.value', 'SELECT_OPTIONS', `옵션 value가 겹칩니다: ${o.value}`);
+          if (o.value.includes(',')) error(p + '.value', 'SELECT_OPTIONS', '옵션 value에는 쉼표를 쓸 수 없습니다(다중 선택 값은 쉼표로 이어 보냅니다).');
+          seen.add(o.value);
+        }
+        // 같은 group은 이어서 놓아야 한 묶음으로 읽힌다(재료는 연속한 같은 group만 하나의 접근 가능한 그룹으로 묶는다).
+        const g = typeof o.group === 'string' ? o.group : null;
+        if (g !== null && groups.at(-1) !== g) { if (groups.includes(g)) error(p + '.group', 'SELECT_OPTIONS', `그룹 "${g}" 옵션은 이어서 놓아야 합니다.`); groups.push(g); } else if (g === null) groups.push(null);
+      });
+      const multiple = n.mode === 'multiple';
+      if (multiple && n.search === 'async') error(path + '.search', 'SELECT_COMBO', 'multiple + async는 지원하지 않습니다. 비동기 검색은 단일 선택만 가능합니다(mode를 single로 하거나 search를 local·none으로).');
+      else if (n.search === 'async') error(path + '.search', 'SELECT_COMBO', 'async 검색은 앱이 주입하는 옵션 provider가 있어야 하는데 정적 페이지에는 provider와 네트워크가 없습니다(search를 local 또는 none으로).');
+      if (Object.hasOwn(n, 'value') && multiple) error(path + '.value', 'SELECT_COMBO', 'value는 mode가 single일 때만 씁니다. multiple은 values를 쓰세요.');
+      if (Object.hasOwn(n, 'values') && !multiple) error(path + '.values', 'SELECT_COMBO', 'values는 mode가 multiple일 때만 씁니다. single은 value를 쓰세요.');
+      for (const [field, picked] of [['value', Object.hasOwn(n, 'value') ? [n.value] : []], ['values', A(n.values) ? n.values : []]]) {
+        picked.forEach((v, i) => { if (typeof v === 'string' && !seen.has(v)) error(field === 'value' ? path + '.value' : `${path}.values[${i}]`, 'SELECT_OPTIONS', `선택값 ${v}이(가) options에 없습니다.`); });
+      }
+      if (A(n.values) && new Set(n.values).size !== n.values.length) error(path + '.values', 'SELECT_OPTIONS', 'values에 같은 값이 두 번 있습니다.');
+      if (Object.hasOwn(n, 'message') && n.state !== 'error') error(path + '.message', 'VARIANT_REQUIRES', 'message는 state가 error일 때만 사용합니다.');
+    }
+    if (t === 'data-table') {
+      const key = 'table:' + n.id;
+      if (typeof n.id === 'string') { if (controlIds.has(key)) error(path + '.id', 'DUPLICATE_ID', '페이지의 data-table id는 중복될 수 없습니다.'); controlIds.add(key); }
+      const columns = A(n.columns) ? n.columns : [], rows = A(n.rows) ? n.rows : [];
+      const ids = new Set(), priority = n.responsive === 'priority', sortable = n.sortable === 'yes';
+      columns.forEach((c, i) => {
+        if (!plain(c)) return;
+        const p = `${path}.columns[${i}]`;
+        if (typeof c.id === 'string') { if (ids.has(c.id)) error(p + '.id', 'TABLE_COLUMNS', `열 id가 겹칩니다: ${c.id}`); ids.add(c.id); }
+        if (c.hideBelow !== undefined && !priority) error(p + '.hideBelow', 'TABLE_COLUMNS', 'hideBelow는 responsive가 priority일 때만 씁니다(scroll은 모든 열을 가로 스크롤로 보여 줍니다).');
+        if (c.hideBelow !== undefined && i === 0) error(p + '.hideBelow', 'TABLE_COLUMNS', '첫 열은 행을 식별하는 열이라 숨길 수 없습니다.');
+        if (c.sortable !== undefined && !sortable) error(p + '.sortable', 'TABLE_COLUMNS', '열 sortable은 표의 sortable이 yes일 때만 씁니다.');
+      });
+      if (priority && columns.length && !columns.some(c => plain(c) && c.hideBelow !== undefined)) error(path + '.responsive', 'TABLE_COLUMNS', 'priority는 작은 화면에서 숨길 열(hideBelow)이 하나 이상 있어야 합니다. 없으면 scroll을 쓰세요.');
+      if (sortable && columns.length && columns.every(c => plain(c) && c.sortable === 'no')) error(path + '.sortable', 'TABLE_COLUMNS', '정렬 가능한 열이 하나도 없습니다. sortable을 끄거나 한 열 이상 켜세요.');
+      const rowIds = new Set();
+      rows.forEach((row, i) => {
+        if (!plain(row)) return;
+        const p = `${path}.rows[${i}]`;
+        for (const id of ids) if (!Object.hasOwn(row, id)) error(`${p}.${id}`, 'TABLE_ROWS', `행에 열 ${id}의 값이 없습니다. 비어 있으면 null이나 빈 문자열을 쓰세요.`);
+        for (const k of Object.keys(row)) if (k !== 'id' && !ids.has(k)) error(`${p}.${k}`, 'TABLE_ROWS', `열로 정의되지 않은 키입니다: ${k}`);
+        if (typeof row.id === 'string') { if (rowIds.has(row.id)) error(p + '.id', 'TABLE_ROWS', `행 id가 겹칩니다: ${row.id}`); rowIds.add(row.id); }
+      });
+      const state = n.state ?? (rows.length ? 'ready' : 'empty');
+      if (['ready', 'partial'].includes(state) && rows.length === 0) error(path + '.rows', 'STATE_DATA', `${state} 상태에는 행이 1개 이상 필요합니다.`);
+      if (state === 'empty' && rows.length) error(path + '.rows', 'TABLE_ROWS', 'empty 상태에는 행을 둘 수 없습니다. 행을 지우거나 state를 ready로 하세요.');
+      if (['loading', 'error'].includes(state) && rows.length) error(path + '.rows', 'TABLE_ROWS', `${state} 상태에서는 행이 화면에 나오지 않습니다. 보이지 않는 콘텐츠를 두지 마세요(행을 지우거나 state를 ready로).`);
+      if (Object.hasOwn(n, 'message') && state !== 'error') error(path + '.message', 'VARIANT_REQUIRES', 'message는 state가 error일 때만 사용합니다.');
     }
     if (t === 'calendar' && A(n.events) && Number.isInteger(n.year) && Number.isInteger(n.month)) n.events.forEach((ev, i) => { if (plain(ev) && Number.isInteger(ev.day) && ev.day > DAYS(n.year, n.month)) error(`${path}.events[${i}].day`, 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${ev.day}일이 없습니다.`); });
     if (t === 'calendar' && Number.isInteger(n.today) && Number.isInteger(n.year) && Number.isInteger(n.month) && n.today > DAYS(n.year, n.month)) error(path + '.today', 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${n.today}일이 없습니다.`);

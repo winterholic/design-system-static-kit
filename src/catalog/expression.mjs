@@ -28,6 +28,8 @@ export const SINCE_FIELDS = Object.freeze([
 /** 2.6.0 fields at Blueprint level; they use closed IDs and the same explicit version gate as node additions. */
 export const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
+  // 역할 타이포그래피 프리셋(src/materials/typography.mjs의 MATERIAL_TYPE_PRESETS 키와 같다. tests/wire-260.test.mjs가 비교한다).
+  Object.freeze({field: 'typeRoles', values: Object.freeze(['erp', 'dashboard', 'document', 'marketing']), since: '2.6.0'}),
 ]);
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */
