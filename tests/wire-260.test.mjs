@@ -9,7 +9,7 @@ import {selectContract, renderSelect} from '../src/materials/select.mjs';
 import {tableContract, renderDataTable} from '../src/materials/table.mjs';
 import {MATERIAL_TYPE_PRESETS, renderRoleTypeCSS, ROLE_TYPE_MAP} from '../src/materials/typography.mjs';
 import {resolveColorTokens} from '../src/color-tokens.mjs';
-import {catalogRegistry} from '../src/materials/index.mjs';
+import {catalogRegistry, controlMaterials} from '../src/materials/index.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
 import {HINTS, listMaterials, getMaterial, getColorTokens, getTypePresets, getComponentSpec, getSchema, listCatalog} from '../src/service/index.mjs';
 import {applyOp} from '../src/edit/index.mjs';
@@ -344,15 +344,19 @@ test('listMaterials filters, pages and tells the web where each material is chos
   assert.deepEqual(charts.value.items.map(item => item.id).sort(), chartPresetMaterials.map(material => material.id).sort());
   assert.ok(charts.value.items.every(i => i.blueprint.node === 'chart' && i.blueprint.since === '2.6.0' && i.quality === 'verified'));
   const since = listMaterials({since: '2.6.0', kind: 'component', fields: ['blueprint']});
-  assert.deepEqual(since.value.items.map(i => i.id).sort(), ['component:data-table', 'component:select-control']);
-  assert.deepEqual(since.value.items.map(i => i.blueprint).sort((a, b) => a.node.localeCompare(b.node)), [{node: 'data-table', since: '2.6.0'}, {node: 'select-control', since: '2.6.0'}]);
+  const components = [
+    {id: 'component:data-table', blueprint: {node: 'data-table', since: '2.6.0'}},
+    {id: 'component:select-control', blueprint: {node: 'select-control', since: '2.6.0'}},
+    ...controlMaterials.map(({id}) => ({id, blueprint: null})),
+  ];
+  assert.deepEqual(since.value.items, components.sort((a, b) => a.id.localeCompare(b.id)));
   assert.deepEqual(listMaterials({kind: 'type-role-preset', fields: ['blueprint']}).value.items.map(i => i.blueprint.value).sort(), ['dashboard', 'document', 'erp', 'marketing']);
   assert.equal(listMaterials({kind: 'color-token', limit: 1}).value.total, 257);
   assert.equal(listMaterials({query: 'select'}).value.items.some(i => i.id === 'component:select-control'), true);
   // 쪽 나누기는 겹치지 않고 빠지지 않는다.
   const seen = new Set(); let cursor;
   do { const page = listMaterials({kind: 'component', limit: 20, ...(cursor ? {cursor} : {})}); page.value.items.forEach(i => { assert.ok(!seen.has(i.id)); seen.add(i.id); }); cursor = page.value.nextCursor; } while (cursor);
-  assert.equal(seen.size, 57);
+  assert.equal(seen.size, catalogRegistry().counts().byKind.component);
   // 잘못된 인자는 구조화 진단이다.
   for (const [args, path] of [[{kind: 'nope'}, '$args.kind'], [{category: 'nope'}, '$args.category'], [{minQuality: 'great'}, '$args.minQuality'], [{limit: 0}, '$args.limit'], [{cursor: 'x'}, '$args.cursor'], [{fields: ['nope']}, '$args.fields[0]'], [{unknown: 1}, '$args.unknown'], [{preset: 'yes'}, '$args.preset']]) {
     const r = listMaterials(args);

@@ -8,8 +8,8 @@
 import {catalogRegistry, MATERIAL_TYPE_PRESETS, CATEGORIES, CONTEXTS, QUALITY} from '../materials/index.mjs';
 import {renderRoleTypeCSS, ROLE_TYPE_MAP} from '../materials/typography.mjs';
 import {resolveColorTokens, colorPaletteOptions, COLOR_PALETTE_IDS, COLOR_COMPONENT_CONTRACT, colorTokenUsage} from '../color-tokens.mjs';
-import {nodeSince} from '../catalog/node-extensions.mjs';
-import {atLeast} from '../catalog.mjs';
+import {nodeSince, nodeTypeKnown} from '../catalog/node-extensions.mjs';
+import {atLeast, CATALOG_VERSION} from '../catalog.mjs';
 import {diagnostic} from './errors.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 
@@ -26,12 +26,16 @@ const ALL = ['id', 'kind', 'category', 'label', 'version', 'since', 'contexts', 
  * 재료가 Blueprint의 어느 자리로 고르는지. 조립에 쓸 수 있는 재료인지 웹이 한눈에 알게 한다.
  *   {node, since}       부품 노드로 넣는다(since가 null이면 모든 카탈로그 버전).
  *   {field, value, since} 최상위 필드 값으로 고른다.
- *   null                Blueprint에서 직접 고르지 않는다(템플릿·레시피 등 합성 경로가 쓴다).
+ *   null                Blueprint에서 직접 고르는 자리가 없다.
  */
 function blueprintSlot(m) {
   const key = m.id.slice(m.kind.length + 1);
   switch (m.kind) {
-    case 'component': return {node: m.ext?.nodeType ?? key, since: nodeSince(m.ext?.nodeType ?? key)};
+    case 'component': {
+      const node = m.ext?.nodeType ?? key;
+      const since = nodeSince(node);
+      return nodeTypeKnown(node, since ?? CATALOG_VERSION) ? {node, since} : null;
+    }
     case 'chart-preset': return {node: 'chart', kind: m.ext?.chartKind ?? null, since: '2.6.0', resolver: 'resolveChartPreset'};
     case 'color-token': return {field: 'colorPalette', value: 'static-kit', since: '2.6.0'};
     case 'type-role-preset': return {field: 'typeRoles', value: key, since: '2.6.0'};

@@ -27,6 +27,21 @@
 
 `catalogRegistry()`로 등록한 부품 55개 중 50개가 `verified`다. 이 판정은 예시 한 개가 검증·컴파일된다는 뜻이다(`tests/catalog.test.mjs:116`). 모든 변형 값을 각각 검증했다는 뜻은 아니다. 예시가 없는 page·tab·lane·task·plan은 부모 예시로만 그려지므로 `implemented`로 둔다. 부품 28개는 CSS에서 반응형 전략을 읽을 수 없어 `responsive.strategy: unspecified`다. 그 목록은 `registry.filter({kind: 'component'})` 결과로 확인한다.
 
+## 1.1 2.6.0 컨트롤 재료 8종
+
+Button, Input, Card, Navigation, Modal, Tabs, Tooltip, Feedback을 개별 재료로 등록했다. 각 재료는 `verified`이며 렌더 진입점과 키보드·상태 동작을 갖는다. 계약은 외형·모양·크기·기능·상태·맥락을 서로 다른 축으로 두고, `CONTROL_SIZES`와 컴포넌트 색 토큰을 공유한다. 금지 조합은 `forbidden`으로 선언하며 모든 조합을 테스트에서 허용 또는 거부한다. 등록 시 알 수 없는 속성도 거부한다.
+
+| 수량 | 값 | 산출 |
+|---|---:|---|
+| 재료 수 | 1,066 | `catalogRegistry().counts().materials` |
+| 속성 조합 수 | 795,799 | `catalogRegistry().counts().attributeCombinations` (금지 조합 포함) |
+| 완성 프리셋 수 | 190 | `catalogRegistry().counts().completePresets` |
+| 컨트롤 재료 수 | 8 | Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback |
+| 컨트롤 속성 조합 | 31,776 | 8개 계약의 전체 조합 합계(금지 포함) |
+| 컨트롤 완성 프리셋 | 0 | 이번에 추가한 컨트롤 8종 기준 |
+
+`node scripts/materials/components-evidence.mjs`가 결정적 증거 페이지 `docs/evidence/materials/components.html`을 생성한다. `e2e/material-components.spec.mjs`는 390px과 1280px에서 동작을 확인하고 Playwright 결과 디렉터리에 섹션별 이미지를 기록한다. 수동 확인 이미지는 `docs/evidence/materials/screenshots/`에 있다. 계약과 조합 테스트는 `tests/material-components.test.mjs`에 있다.
+
 ## 2. winterholic-design-system 비교
 
 | 층 | winterholic (ttakkari·merrivoo) | Static Kit | 재사용할 일반 구조 | ttakkari 고유(가져오지 않음) |
