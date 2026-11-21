@@ -92,3 +92,8 @@ code { background: var(--color-surface); padding: 0.1em 0.35em; border-radius: 3
 .btn-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .note { border-left: 3px solid var(--color-line); padding: var(--space-1) var(--space-4); color: var(--color-muted); max-width: var(--measure); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.visually-hidden:focus, .visually-hidden:focus-visible {
+  position: fixed; inset-block-start: 8px; inset-inline-start: 8px; z-index: 100;
+  width: auto; height: auto; overflow: visible; clip: auto; padding: 8px 12px;
+  border-radius: var(--radius); background: var(--color-fg); color: var(--color-bg);
+}

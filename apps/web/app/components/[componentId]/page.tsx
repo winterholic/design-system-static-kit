@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import {notFound} from 'next/navigation';
+import {getComponentSpec} from '@winterholic/design-system-static-kit/service';
 import {PageShell} from '@/shell/PageShell';
 
 type Props = {params: Promise<{componentId: string}>};
@@ -10,6 +12,7 @@ export async function generateMetadata({params}: Props) {
 
 export default async function ComponentPage({params}: Props) {
   const {componentId} = await params;
+  if (!getComponentSpec({type: componentId}).ok) notFound();
   return (
     <PageShell eyebrow="Components" title={componentId} lead="이 부품의 속성과 허용 값이 여기에 표시됩니다.">
       <Link href="/components" className="btn btn-quiet">Components로 돌아가기</Link>

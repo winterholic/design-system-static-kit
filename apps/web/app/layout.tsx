@@ -17,7 +17,7 @@ export default function RootLayout({children}: {children: ReactNode}) {
       <body>
         <a href="#main" className="visually-hidden">본문으로 건너뛰기</a>
         <SiteHeader />
-        <main id="main">{children}</main>
+        <main id="main" tabIndex={-1}>{children}</main>
         <SiteFooter />
       </body>
     </html>

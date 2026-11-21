@@ -12,7 +12,7 @@ const siteFile = p => readFileSync(join(site, p));
 function walk(dir) {
   return readdirSync(dir, {withFileTypes: true}).flatMap(e => (e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]));
 }
-test.describe('옛 /combos/ → 새 경로 308', () => {
+test.describe('컷오버 전 옛 /combos/ → 새 경로 307', () => {
   const cases = [
     ['/combos/', '/explore/combos'],
     ['/combos', '/explore/combos'],
@@ -21,7 +21,7 @@ test.describe('옛 /combos/ → 새 경로 308', () => {
   for (const [from, to] of cases) {
     test(`${from} → ${to}`, async ({request}) => {
       const res = await request.get(from, {maxRedirects: 0});
-      expect(res.status()).toBe(308);
+      expect(res.status()).toBe(307);
       expect(res.headers().location).toBe(to);
     });
   }
@@ -36,7 +36,7 @@ test.describe('옛 /combos/ → 새 경로 308', () => {
     ]);
     expect([...q.keys()]).toHaveLength(21);
     const res = await request.get('/combos/?' + q, {maxRedirects: 0});
-    expect(res.status()).toBe(308);
+    expect(res.status()).toBe(307);
     const loc = new URL(res.headers().location, 'http://x');
     expect(loc.pathname).toBe('/explore/combos');
     expect([...loc.searchParams.entries()]).toEqual([...q.entries()]);
@@ -46,6 +46,22 @@ test.describe('옛 /combos/ → 새 경로 308', () => {
     const res = await request.get('/combos/?c=saas-landing&theme=aurora');
     expect(res.status()).toBe(200);
     expect(res.url()).toContain('/explore/combos?c=saas-landing&theme=aurora');
+  });
+
+  test('중복 슬래시는 Next 정규화 후 임시 리다이렉트, 대소문자 변형은 404다', async ({request}) => {
+    const doubled = await request.get('/combos//', {maxRedirects: 0});
+    expect(doubled.status()).toBe(308);
+    expect(doubled.headers().location).toBe('/combos/');
+    const canonical = await request.get(doubled.headers().location, {maxRedirects: 0});
+    expect(canonical.status()).toBe(307);
+    const uppercase = await request.get('/COMBOS/', {maxRedirects: 0});
+    expect(uppercase.status()).toBe(404);
+  });
+
+  test('render.html 끝 슬래시도 기존 정적 렌더 결과를 제공한다', async ({request}) => {
+    const res = await request.get('/combos/render.html/', {maxRedirects: 0});
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toContain('text/html');
   });
 });
 
@@ -82,6 +98,14 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
     }
   });
 
+  test('/gallery 와 /gallery/ 는 리다이렉트 없이 오프라인 갤러리 바이트를 낸다', async ({request}) => {
+    for (const p of ['/gallery', '/gallery/']) {
+      const res = await request.get(p, {maxRedirects: 0});
+      expect(res.status(), p).toBe(200);
+      expect(Buffer.compare(await res.body(), siteFile('gallery/index.html')), p).toBe(0);
+    }
+  });
+
   test('examples 전체(템플릿 85 + 테마 54)가 200과 같은 바이트로 제공된다', async ({request}) => {
     const targets = walk(join(site, 'examples')).map(f => relative(site, f));
     expect(targets).toHaveLength(695);
@@ -98,6 +122,13 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
   test('없는 예제와 파일은 404', async ({request}) => {
     for (const p of ['/examples/not-a-template/', '/examples/saas-landing/nope.css', '/v1/nope.json', '/test-lab/nope.html']) {
       expect((await request.get(p, {maxRedirects: 0})).status(), p).toBe(404);
+    }
+  });
+
+  test('잘못 인코딩된 URL, 없는 문서와 동적 ID는 400 또는 404', async ({request}) => {
+    for (const p of ['/%E0%A4%A', '/docs/not-a-document', '/explore/not-a-design', '/components/not-a-component']) {
+      const res = await request.get(p, {maxRedirects: 0});
+      expect([400, 404], p).toContain(res.status());
     }
   });
 });
@@ -138,6 +169,7 @@ test.describe('noindex와 공개 메뉴', () => {
     const text = await (await request.get('/robots.txt')).text();
     expect(text).toContain('Disallow: /test-lab/');
     expect(text).toContain('Disallow: /dev/');
+    expect(text).not.toContain('Disallow: /gallery');
   });
 
   test('/dev/qa 는 meta robots noindex', async ({request}) => {

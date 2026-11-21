@@ -2,48 +2,70 @@
 // 루트 패키지의 exports 진입점만 쓴다. 파일명이 .test.mjs 가 아니라서 루트 `node --test` 에는 걸리지 않는다.
 // 실행: npm --workspace apps/web run test:boundary
 import assert from 'node:assert/strict';
-import {readdirSync, readFileSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
 import {join, relative, resolve} from 'node:path';
 import test from 'node:test';
+import {analyzeCss, analyzeFile, analyzeSource, makeContext} from './scripts/boundary-lib.mjs';
 
 const web = import.meta.dirname;
 const root = resolve(web, '../..');
-const PKG = '@winterholic/design-system-static-kit';
 const PUBLIC_ENTRIES = new Set(['service', 'edit']);
-const SOURCE_DIRS = ['app', 'shell', 'lib'];
+const IGNORED_DIRS = new Set(['node_modules', '.next', 'public', 'test-results', 'playwright-report']);
 
 function walk(dir) {
   return readdirSync(dir, {withFileTypes: true}).flatMap(e => (e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]));
 }
-const sources = SOURCE_DIRS.flatMap(d => walk(join(web, d))).filter(f => /\.(tsx?|mjs|jsx?)$/.test(f));
-const IMPORT = /(?:\bfrom\s*|\bimport\s*\(\s*|\brequire\s*\(\s*|^\s*import\s+)(['"])([^'"]+)\1/gm;
-const specifiers = file => [...readFileSync(file, 'utf8').matchAll(IMPORT)].map(m => m[2]);
+function appSources(dir = web) {
+  return readdirSync(dir, {withFileTypes: true}).flatMap(e => {
+    if (e.isDirectory()) return IGNORED_DIRS.has(e.name) ? [] : appSources(join(dir, e.name));
+    return /\.(?:[cm]?[jt]sx?|css|scss|sass)$/.test(e.name) ? [join(dir, e.name)] : [];
+  });
+}
+const sources = appSources().filter(f => !['boundary.check.mjs', 'boundary-lib.mjs', 'next-env.d.ts'].includes(f.split('/').at(-1)) && !relative(web, f).startsWith('e2e/'));
 
 test('apps/web 소스를 찾았다', () => assert.ok(sources.length >= 20, `파일 ${sources.length}개`));
 
 test('루트 패키지는 지정한 진입점만 import 한다', () => {
-  const bad = [];
-  for (const f of sources) {
-    const rel = relative(web, f);
-    for (const s of specifiers(f)) {
-      if (s !== PKG && !s.startsWith(PKG + '/')) continue;
-      const entry = s.slice(PKG.length + 1);
-      if (!PUBLIC_ENTRIES.has(entry)) bad.push(`${rel}: ${s}`);
-    }
-  }
+  const ctx = makeContext(web);
+  const bad = sources.flatMap(f => analyzeSource(f, readFileSync(f, 'utf8'), ctx)).filter(line => line.includes('Core는 진입점'));
   assert.deepEqual(bad, []);
 });
 
+test('검사 범위가 앱 전체 소스와 CSS를 포함한다', () => {
+  const rels = sources.map(f => relative(web, f));
+  assert.ok(rels.some(f => f.startsWith('scripts/')));
+  assert.ok(rels.some(f => f.startsWith('app/')));
+  assert.ok(rels.some(f => f.endsWith('.css')));
+  assert.ok(!rels.some(f => f.startsWith('public/')));
+});
+
+test('상대 경로, 디렉터리 별칭, type import와 dynamic import를 같은 경계로 검사한다', () => {
+  const fixture = mkdtempSync(join(tmpdir(), 'web-boundary-'));
+  try {
+    const fixtureWeb = join(fixture, 'apps', 'web');
+    mkdirSync(join(fixtureWeb, 'app'), {recursive: true});
+    mkdirSync(join(fixture, 'src', 'service'), {recursive: true});
+    const ctx = {web: fixtureWeb, root: fixture, paths: {'@core/*': ['../../src/*']}, pathsBase: fixtureWeb, allowedPackages: new Set(), exportsMap: {'./service': './src/service/index.mjs', './edit': './src/edit/index.mjs'}};
+    const source = join(fixtureWeb, 'app', 'probe.ts');
+    const issues = analyzeSource(source, [
+      "import '../../../src/service/index.mjs';",
+      "type X = import('@core/service/types').Y;",
+      "void import(`../src/${name}.mjs`);",
+    ].join('\n'), ctx);
+    assert.equal(issues.length, 3, issues.join('\n'));
+  } finally { rmSync(fixture, {recursive: true, force: true}); }
+});
+
+test('CSS의 @import와 url() 의존성을 Core 경계에 맞춰 검사한다', () => {
+  const file = join(web, 'app', 'globals.css');
+  const issues = analyzeCss(file, '@import "../../../src/service/index.css";\n@use "../../../src/service/mixins";\n.x { background: url("../../../src/catalog/a.svg"); }', makeContext(web));
+  assert.equal(issues.length, 3, issues.join('\n'));
+});
+
 test('src/ 를 상대 경로나 패키지 내부 경로로 직접 가리키지 않는다', () => {
-  const bad = [];
-  for (const f of sources) {
-    for (const s of specifiers(f)) {
-      const rel = relative(web, f);
-      if (s.startsWith('.') && resolve(join(f, '..'), s).startsWith(root + '/') && !resolve(join(f, '..'), s).startsWith(web + '/')) bad.push(`${rel}: ${s} (apps/web 밖)`);
-      if (/(^|\/)src\//.test(s) && !s.startsWith('@/')) bad.push(`${rel}: ${s}`);
-      if (s.includes('/node_modules/') || /^@winterholic\/design-system-static-kit\/(src|scripts)/.test(s)) bad.push(`${rel}: ${s}`);
-    }
-  }
+  const ctx = makeContext(web);
+  const bad = sources.flatMap(f => analyzeFile(f, readFileSync(f, 'utf8'), ctx));
   assert.deepEqual(bad, []);
 });
 
@@ -56,6 +78,6 @@ test('루트 package.json exports 는 허용 진입점과 일치한다', () => {
 test('Core 를 부르는 코드에 React·Next 가 새어 들어가지 않는다(패키지 쪽 import 방향)', () => {
   // 반대 방향 검사: 루트 src/ 는 apps/web 을 모르고 react/next 를 import 하지 않는다.
   const srcFiles = walk(join(root, 'src')).filter(f => f.endsWith('.mjs'));
-  const bad = srcFiles.flatMap(f => specifiers(f).filter(s => /^(react|react-dom|next)(\/|$)/.test(s) || s.includes('apps/web')).map(s => `${relative(root, f)}: ${s}`));
+  const bad = srcFiles.flatMap(f => analyzeSource(f, readFileSync(f, 'utf8'), {web: root, root, paths: {}, pathsBase: root, allowedPackages: new Set(), exportsMap: {}}).filter(s => /React|Next|apps\/web/.test(s)));
   assert.deepEqual(bad, []);
 });
