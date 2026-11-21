@@ -1,0 +1,33 @@
+{
+  "run_date_local": "2026-11-22",
+  "branch": "feat/representative-layout-fix",
+  "input_revision": "da7c86486c5f02509e5d80d4061b4aa0d1040a34",
+  "source_revision": "509fdbc36331d2d2e335b2b087a1e425c0f7e7f0",
+  "assembly_command": "node scripts/material-platform-evidence/build.mjs",
+  "requested_cli": "npm run layout:check -- --file docs/evidence/material-platform/assembled/erp/index.html --widths 390,1280 --json docs/evidence/material-platform/layout/erp.json",
+  "requested_cli_status": "not run per task instruction; use configured Chromium MCP and do not retry local Playwright/Mach IPC path",
+  "measurement": "Configured Ttakkari Chromium browser, HeadlessChrome 157, DPR 1; executed scripts/layout-quality/probe.mjs layoutProbe against all four assembled HTML pages at 390px and 1280px. Also measured legacy S21@320 and S06@1440 controls.",
+  "browser_capture_utc": "2026-11-21T17:53:41.284Z",
+  "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "browser_device_pixel_ratio": 1,
+  "viewports": [
+    390,
+    1280
+  ],
+  "representative_findings": "0 errors across 8 screen/width combinations; ERP@390 has 2 intended SCROLL_REGION info findings.",
+  "regression_controls": "legacy-s21@320: 2 intended SCROLL_REGION info findings, 0 errors; legacy-s06@1440: 0 findings.",
+  "human_evaluation": "not evaluated",
+  "current_screenshots": [
+    "erp-390.png",
+    "erp-1280.png",
+    "commerce-390.png",
+    "commerce-1280.png",
+    "saas-390.png",
+    "saas-1280.png",
+    "analytics-390.png",
+    "analytics-1280.png"
+  ],
+  "preserved_previous_report": "report-previous-2026-11-21T172945Z.json",
+  "preserved_previous_browser_capture": "2026-11-21T17:42:03.548Z UTC; baseline-2026-11-21T174203Z-*.png",
+  "sourceRevision": "509fdbc369d5e1ea931ba0209e9e7a5dec0e6e8f"
+}

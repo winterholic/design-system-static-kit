@@ -1,6 +1,6 @@
 # 조립 API 제품 맥락 증거
 
-기준 소스 커밋은 `0bdbf96cd6cf3f1c016b9c216e24ce8a2c0346e6`이다. 이 디렉터리의 화면은 공개 서비스 API `assembleBlueprint`와 `compileBlueprint`에서 생성했다. HTML/CSS를 수작업으로 덧대지 않았다.
+현재 대표 화면 증거의 소스 기준 커밋은 `5b607d374bbc4f168818c96f40db6af7296187ce`이다. 이 디렉터리의 화면은 공개 서비스 API `assembleBlueprint`와 `compileBlueprint`에서 생성했다. HTML/CSS를 수작업으로 덧대지 않았다.
 
 ## 재생성
 
@@ -37,7 +37,7 @@ C단계는 브라우저 검사 결과와 별개인 사람의 시각 평가다. �
 
 [레이아웃 결과 요약](layout/findings.md), 원시 측정 [JSON](layout/report.json), 실행 환경·미실행 CLI 기록 [run.json](layout/run.json)을 확인한다. Chromium 전체 페이지 캡처는 다음과 같다.
 
-현재 결과는 2026-11-21T17:53:41.284Z UTC의 통합 기준 `da7c86486c5f02509e5d80d4061b4aa0d1040a34` 입력을 2.6.0에서 다시 조립해 측정했다. 직전 결과는 [2026-11-21T17:29:45Z JSON](layout/report-previous-2026-11-21T172945Z.json) 및 `previous-2026-11-21T172945Z-*`에, 작업 전 실제 재현 캡처는 `baseline-2026-11-21T174203Z-*`에 보존했다. 사람의 시각 평가는 **미평가**다.
+현재 결과는 소스 기준 `5b607d374bbc4f168818c96f40db6af7296187ce`에서 browser MCP Chromium (HeadlessChrome 157)으로 재측정했다. 상세 실행 정보는 [run.json](layout/run.json), 이전 결과 보존 목록은 [findings](layout/findings.md)에서 확인한다. 사람의 시각 평가는 **미평가**다.
 
 | 화면 | 390px | 1280px |
 |---|---|---|

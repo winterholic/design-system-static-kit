@@ -129,27 +129,44 @@
             "type": "chart",
             "title": "주간 완료 작업",
             "caption": "요일별 완료한 작업 수",
-            "kind": "bar",
-            "unit": "개",
+            "kind": "line",
+            "unit": "억 원",
             "categories": [
-              "월",
-              "화",
-              "수",
-              "목",
-              "금"
+              "1월",
+              "2월",
+              "3월",
+              "4월"
             ],
             "series": [
               {
-                "name": "완료",
+                "name": "예수금",
                 "values": [
-                  8,
-                  14,
-                  11,
-                  17,
-                  12
+                  32,
+                  35,
+                  33,
+                  39
+                ]
+              },
+              {
+                "name": "운용액",
+                "values": [
+                  20,
+                  22,
+                  24,
+                  27
                 ]
               }
-            ]
+            ],
+            "xLabel": "월",
+            "yLabel": "잔액",
+            "dataType": "time",
+            "axis": {
+              "showX": "yes",
+              "showY": "yes"
+            },
+            "grid": "both",
+            "labels": "last",
+            "legend": "bottom"
           },
           {
             "type": "list",
@@ -212,5 +229,7 @@
     ]
   },
   "profile": "finance",
-  "colorPalette": "static-kit"
+  "colorPalette": "static-kit",
+  "typeRoles": "dashboard",
+  "controlSize": "medium"
 }
