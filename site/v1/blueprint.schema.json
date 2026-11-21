@@ -13,7 +13,8 @@
         "2.2.0",
         "2.3.0",
         "2.4.0",
-        "2.5.0"
+        "2.5.0",
+        "2.6.0"
       ]
     },
     "name": {
@@ -511,6 +512,14 @@
         "seaside-mojito-escape",
         "sunshine-snorkel"
       ]
+    },
+    "colorPalette": {
+      "type": "string",
+      "enum": [
+        "static-kit"
+      ],
+      "description": "2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.",
+      "x-since": "2.6.0"
     },
     "mode": {
       "type": "string",

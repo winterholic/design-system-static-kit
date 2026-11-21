@@ -5,7 +5,7 @@
  */
 
 /** 카탈로그 버전 순서. 새 버전은 끝에 더한다. `atLeast`가 이 순서로 비교한다. */
-export const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0']);
+export const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0']);
 export const EXPRESSION_SINCE = '2.5.0';
 export const atLeast = (version, since) => VERSION_ORDER.includes(version) && VERSION_ORDER.indexOf(version) >= VERSION_ORDER.indexOf(since);
 /** 2.5.0부터 켜지는 표현력 문법과 렌더러 수정(R1~R4)의 게이트. 버전이 없는 내부 호출(타이포·간격만 가진 객체)은 켜지지 않는다. */
@@ -24,6 +24,11 @@ export const SINCE_FIELDS = Object.freeze([
   {node: 'section', field: 'space', proposal: 'EX-4'},
   {node: 'media', field: 'bleed', proposal: 'EX-5'},
 ].map(Object.freeze));
+
+/** 2.6.0 fields at Blueprint level; they use closed IDs and the same explicit version gate as node additions. */
+export const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
+  Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
+]);
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */
 export const HERO_RATIOS = Object.freeze({copy: [3, 2], visual: [2, 3]});

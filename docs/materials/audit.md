@@ -63,3 +63,11 @@
 6. **레이아웃 패턴**(`pattern` 종류)과 **디자인 프로필**: 템플릿 슬롯을 재료 id로 고르게 한다.
 7. **반응형 기록**: `responsive.strategy: unspecified`인 부품 28개를 실제 CSS 근거로 채운다.
 8. **모션 토큰**: duration·easing 이름 토큰, 상태 전이와 연결한다.
+
+## 5. 2.6.0 색 토큰 후속 결과 (2026-11-22)
+
+색 토큰은 `src/color-tokens.mjs`의 Static Kit 자체 팔레트만 선택한다. `colorPaletteOptions()` 공개 탐색 결과는 `static-kit` 하나이며, 기존 427개 Coolors 항목은 하위 호환 입력과 기존 테마 참조로 남아 있다. 새 외부 팔레트 수집·공개 탐색은 추가하지 않았다.
+
+팔레트는 brand·neutral·auxiliary·status·chart 시드로부터 50~950 램프를 만들고 primitive → semantic → state → component 참조 그래프로 계산한다. `color-token` 재료 257개가 그래프 토큰과 부품 소비 별칭을 등록한다. Button/Input/Select/Card/Table/Chart 사용 계약, CSS 변수 이름과 기본·hover·active·disabled·error·focus 사용 선택자는 [색 토큰 읽기 API](color-tokens.md)에 기록한다.
+
+라이트·다크 모드에서 본문/보조·링크·상태색과 표면, focus, 버튼 상태, disabled, 차트 대비를 검사한다. `auto`는 두 모드를 모두 검사한다. 팔레트 ID는 닫혀 있으며 색상 문자열은 입력받지 않는다. 2.6.0만 색 토큰 CSS를 출력하고 기본 2.4.0 및 2.4.0·2.5.0 고정 산출물은 그대로 유지한다.

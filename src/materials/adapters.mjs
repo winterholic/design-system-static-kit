@@ -11,6 +11,7 @@ import {RADIUS, WIDTH, WEIGHT, ICON, ELEVATION, MOTION, BACKDROP, DENSITY, SCALE
 import {TYPE} from '../typography.mjs';
 import {PRIMITIVES} from '../layout.mjs';
 import {defineMaterial, materialId} from './contract.mjs';
+import {colorTokenMaterials} from '../color-tokens.mjs';
 
 const C = id => materialId('component', id);
 
@@ -220,6 +221,6 @@ export function iconMaterials() {
 
 /** 기존 카탈로그 전체를 재료 목록으로. 순서: 의존 대상이 먼저 오도록(검사는 순서와 무관하다). */
 export const catalogMaterialList = () => [
-  ...paletteMaterials(), ...typePresetMaterials(), ...axisMaterials(), ...iconMaterials(), ...layoutPrimitiveMaterials(),
+  ...paletteMaterials(), ...colorTokenMaterials().map(defineMaterial), ...typePresetMaterials(), ...axisMaterials(), ...iconMaterials(), ...layoutPrimitiveMaterials(),
   ...componentMaterials(), ...pageTypeMaterials(), ...themeMaterials(), ...templateMaterials(), ...recipeMaterials(),
 ];
