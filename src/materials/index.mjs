@@ -16,6 +16,8 @@ export {validateMaterial, validateGraph, MATERIAL_VERSIONS} from './validate.mjs
 export {createRegistry, MaterialError} from './registry.mjs';
 export * from './adapters.mjs';
 export {registerMaterialType, MATERIAL_TYPE_PRESETS, MULTILINGUAL_TYPE_CORPUS, CONTROL_SIZES, controlViolations, renderMaterialTypeCSS, renderMaterialTypeExample} from './typography.mjs';
+export {selectContract, selectMaterial, renderSelect, attachSelect, selectRuntime, selectStyles} from './select.mjs';
+export {tableContract, tableMaterial, renderDataTable, attachTable, tableRuntime, tableStyles} from './table.mjs';
 
 /** 기존 카탈로그와 역할형 타이포그래피 재료를 모두 등록한 새 레지스트리. 참조가 끊기면 예외다(카탈로그와 재료가 어긋났다는 뜻). */
 export function catalogRegistry() {
