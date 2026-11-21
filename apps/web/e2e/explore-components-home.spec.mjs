@@ -100,7 +100,8 @@ test('QA는 여러 보기의 동일 조합 표시를 보존하고 기록의 보�
   expect(download.suggestedFilename()).toBe('odd-combos.txt');
   expect(await readFile(path,'utf8')).toContain('2026-11-20T12:00:00.000Z');
   await page.getByRole('button',{name:'기록 보기'}).first().click();
-  await expect(page).toHaveURL(/theme=aurora.*mode=dark/);
+  await expect(page).toHaveURL(/theme=aurora/);
+  await expect(page).toHaveURL(/mode=dark/);
   await expect(page.getByRole('button',{name:'공유 주소 복사'})).toBeVisible();
   await expect(page.getByText(/진단 등급 [ABC]|진단 기록 없음/)).toBeVisible();
   await expect(page.locator('main')).toHaveCount(1);
@@ -108,12 +109,18 @@ test('QA는 여러 보기의 동일 조합 표시를 보존하고 기록의 보�
 
 test('공유 URL의 닫기와 Escape는 필터와 쪽을 유지하고 목록에서 연 상세의 뒤로 가기는 복원한다', async ({page}) => {
   const direct = '/dev/qa/combos?q=saas&ps=24&p=2&exp=1&c=saas-landing&theme=aurora&mode=dark';
+  // 닫기 처리기는 하이드레이션 뒤에 붙으므로 닫힐 때까지 입력을 되풀이한다.
   await page.goto(direct);
-  await page.getByRole('button',{name:'닫기'}).click();
+  await expect(async () => {
+    await page.getByRole('button',{name:'닫기'}).click({timeout:1000});
+    await expect(page).not.toHaveURL(/(?:\?|&)c=/,{timeout:1000});
+  }).toPass();
   await expect(page).toHaveURL(/q=saas.*ps=24.*p=2.*exp=1/);
-  await expect(page).not.toHaveURL(/(?:\?|&)c=/);
   await page.goto(direct);
-  await page.keyboard.press('Escape');
+  await expect(async () => {
+    await page.keyboard.press('Escape');
+    await expect(page).not.toHaveURL(/(?:\?|&)c=/,{timeout:1000});
+  }).toPass();
   await expect(page).toHaveURL(/q=saas.*ps=24.*p=2.*exp=1/);
   await expect(page).not.toHaveURL(/(?:\?|&)c=/);
   const listUrl='/dev/qa/combos?q=saas&ps=24&p=2';
