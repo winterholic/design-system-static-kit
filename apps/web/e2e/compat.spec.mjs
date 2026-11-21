@@ -1,8 +1,8 @@
 // 기존 URL 호환 시험 (03-interfaces.md 5.2·5.4절). 상태 코드, Location, 바이트 동일성, noindex.
-import {createHash} from 'node:crypto';
-import {readdirSync, readFileSync, statSync} from 'node:fs';
+import {readdirSync, readFileSync} from 'node:fs';
 import {join, relative, resolve} from 'node:path';
 import {expect, test} from '@playwright/test';
+import {treeHash} from '../scripts/tree-hash.mjs';
 
 const root = resolve(import.meta.dirname, '../../..');
 const site = join(root, 'site');
@@ -12,14 +12,6 @@ const siteFile = p => readFileSync(join(site, p));
 function walk(dir) {
   return readdirSync(dir, {withFileTypes: true}).flatMap(e => (e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]));
 }
-// 00-baseline.md 4.2절의 계산 방식: `경로\0파일해시\n`을 경로순으로 이어 SHA-256. 경로는 site/ 기준이다.
-function treeHash(base, subdir, exclude = () => false) {
-  const files = walk(join(base, subdir)).map(f => relative(base, f)).filter(f => !exclude(f)).sort();
-  const h = createHash('sha256');
-  for (const f of files) h.update(`${f}\0${createHash('sha256').update(readFileSync(join(base, f))).digest('hex')}\n`);
-  return {count: files.length, hash: h.digest('hex')};
-}
-
 test.describe('옛 /combos/ → 새 경로 308', () => {
   const cases = [
     ['/combos/', '/explore/combos'],
@@ -110,22 +102,20 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
   });
 });
 
-// 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다(00-baseline.md 4.2절). site/ 와 public/ 이 같은지는 따로 본다.
+// 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
+// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 baseline 이후 V06 계약이 카탈로그에 들어와 값이 바뀌었다(0af400ca2df23e24 → 아래 값).
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
-    // 고정 해시(앞 16자)는 b303f17c1 과 f1d250cf2 에서 같음을 확인한 값이다. v1/ 은 카탈로그 개정마다 바뀌므로 고정하지 않는다.
-    // 00-baseline.md 4.2절 표의 값(eb438ecf…, 8b73787b…)은 위 계산식으로 재현되지 않아 04-web-spike.md 에 따로 적었다.
-    ['examples', 425, 'ba7fbfe407f651cd'],
-    ['examples/themes', 270, '2d0988bbf0beab89'],
-    ['v1', 2, null],
+    {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
+    {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
+    {sub: 'v1', count: 2, pinned: '1d39fd97e87c1bc4'},
   ];
-  for (const [sub, count, pinned] of parts) {
-    test(`public/${sub} 는 site/${sub} 와 트리 해시가 같다`, () => {
-      const excl = sub === 'examples' ? f => f.startsWith('examples/themes/') : () => false;
-      const a = treeHash(site, sub, excl), b = treeHash(publicDir, sub, excl);
+  for (const {sub, exclude, count, pinned} of parts) {
+    test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {
+      const a = treeHash(site, sub, exclude), b = treeHash(publicDir, sub, exclude);
       expect(a.count).toBe(count);
       expect(b).toEqual(a);
-      if (pinned) expect(a.hash.slice(0, 16), '의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록').toBe(pinned);
+      expect(a.hash.slice(0, 16), '의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록').toBe(pinned);
     });
   }
 });

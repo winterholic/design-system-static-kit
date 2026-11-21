@@ -9,7 +9,7 @@ async function sha256Hex(text: string) {
   return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// S2·S5: 컴파일러와 카탈로그는 버튼을 누를 때만 동적 import 되어 초기 JS 에 들어가지 않는다.
+// S2·S5: ./service(컴파일러·카탈로그 포함)는 버튼을 누를 때만 동적 import 되어 초기 JS 에 들어가지 않는다.
 export function SpikeClient({template}: {template: string}) {
   const [result, setResult] = useState<Result | null>(null);
   const [busy, setBusy] = useState(false);
@@ -18,11 +18,15 @@ export function SpikeClient({template}: {template: string}) {
     setBusy(true);
     const t0 = performance.now();
     try {
-      const [{compile}, {createBlueprint}] = await Promise.all([
-        import('@winterholic/design-system-static-kit/compiler'),
-        import('@winterholic/design-system-static-kit/catalog'),
+      const [{compileBlueprint}, {resetDocument}] = await Promise.all([
+        import('@winterholic/design-system-static-kit/service'),
+        import('@winterholic/design-system-static-kit/edit'),
       ]);
-      const html = compile(createBlueprint(template)).html;
+      const doc = resetDocument(null, {template});
+      if (!doc.ok) throw new Error('resetDocument: ' + JSON.stringify(doc.errors));
+      const r = compileBlueprint(doc.doc, {include: ['html']});
+      if (!r.ok) throw new Error('compileBlueprint: ' + JSON.stringify(r.errors));
+      const html = r.value.html as string;
       setResult({bytes: new TextEncoder().encode(html).length, sha256: await sha256Hex(html), ms: Math.round(performance.now() - t0)});
     } catch (e) {
       setResult({bytes: 0, sha256: '', ms: 0, error: String(e)});

@@ -72,7 +72,16 @@ node scripts/build.mjs /tmp/dsk-audit/build-a ; node scripts/build.mjs /tmp/dsk-
 diff -rq build-a build-b | wc -l   →  0
 ```
 
-파일 경로와 파일별 SHA-256을 정렬해 이어 붙인 트리 해시는 세 곳이 모두 같았다.
+파일 경로와 파일별 SHA-256을 이어 붙인 트리 해시는 세 곳이 모두 같았다. 계산식은 다음과 같고, 이 식으로 아래 모든 값을 다시 계산해 재현했다 (구현: `apps/web/scripts/tree-hash.mjs`, 2026-11-21 추가).
+
+```
+sha256( 파일마다  "<해시를 내는 하위 디렉터리 기준 상대 경로>\0<파일 내용 sha256 hex>\n"  을 이어 붙인 문자열 )
+```
+
+- 경로는 `site/` 기준이 아니라 대상 하위 디렉터리 기준이다. `examples/saas-landing/index.html`은 `saas-landing/index.html`로 적는다. `site/` 전체를 대상으로 할 때만 `site/` 기준과 같다.
+- 순서는 디렉터리를 깊이 우선으로 내려가며 각 디렉터리 안에서 이름을 코드 단위 순서로 정렬한 순서다. 전체 경로 문자열을 정렬한 순서와 다르다 (`catalog/` 폴더가 `catalog.mjs` 파일보다 앞에 온다). 이 차이는 `src/`, `test-lab/`, `site/` 전체에서만 값이 갈린다.
+- `examples/`는 `examples/themes/` 아래를 제외한다.
+- 재현 확인: `git archive b303f17c1 site`로 푼 트리에서 아래 표의 8개 값과 `site/` 전체 값이 모두 같았다.
 
 | 대상 | 파일 수 | 트리 해시 (sha256) |
 |---|---:|---|
@@ -80,7 +89,7 @@ diff -rq build-a build-b | wc -l   →  0
 | 새 빌드 A | 3304 | 같음 |
 | 새 빌드 B | 3304 | 같음 |
 
-후속 트랙이 호환성을 확인할 때 쓸 부분 트리 해시(앞 16자)도 남긴다. 계산 방식은 위와 같다 (`경로\0파일해시\n`을 경로순으로 이어 SHA-256).
+후속 트랙이 호환성을 확인할 때 쓸 부분 트리 해시(앞 16자)도 남긴다. 계산 방식은 위와 같다. 아래 표는 측정 시점(`b303f17c1`) 값이다. 그 뒤 값이 바뀐 것은 표 아래에 적었다.
 
 | `site/` 하위 | 파일 수 | 트리 해시 앞 16자 |
 |---|---:|---|
@@ -92,6 +101,8 @@ diff -rq build-a build-b | wc -l   →  0
 | `gallery/` | 1 | `b97e22883f8a8042` |
 | `src/` (소스 복사본) | 58 | `b8d623163f717ef1` |
 | `test-lab/` | 2538 | `388e4e95e2ae87b7` |
+
+**이후 변화 (2026-11-21 재계산, `next/c-service` 위의 `site/`).** 값이 바뀐 것은 `v1/` `1d39fd97e87c1bc4`(카탈로그에 V06 계약 추가: `d72d78389`, `0ea13094c`), `combos/` `3771c61d52861780`, `gallery/` `3a58377a96332956`, `src/` 70개 `e1885da0cc2b0cce`, `site/` 전체 3316개 `460f8430a85e9c4f`다. `examples/`(`eb438ecf14a38c35`), `examples/themes/`(`8b73787be3b4a7ff`), `docs/`, `test-lab/`은 그대로다. 호환 시험(`apps/web/e2e/compat.spec.mjs`)은 `examples/`, `examples/themes/`, `v1/`의 현재 값을 고정한다.
 
 개별 파일 해시(앞 16자): `site/v1/catalog.json` `910e5b7b3f8edea5`, `site/v1/blueprint.schema.json` `1bbb43a48cd1e591`, `site/gallery/index.html` `6360e5aff7cd1abf`, `site/index.html` `cddbf61db5a71611`, `site/examples/saas-landing/index.html` `9e2f1431724d135e`.
 

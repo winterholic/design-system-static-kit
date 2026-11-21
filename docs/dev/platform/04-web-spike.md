@@ -1,6 +1,6 @@
 # 04 웹 뼈대와 Core import 스파이크 결과
 
-작성 2026-11-21, 트랙 D (`next/d-web-shell`, 기준 `main` `f1d250cf2`). 실행 환경은 Node v26.9.0, npm 11.19.1, Playwright Chromium (`@playwright/test` 1.64.1)이다. CI와 배포 기준 Node는 22로 고정했으므로 Node 22에서의 결과는 **미실행**이다 (CI `web` job이 처음 돌 때 확인된다).
+작성 2026-11-21, 트랙 D (`next/d-web-shell`). 1차 작성은 `main` `f1d250cf2` 위에서, 2차 갱신은 `next/c-service`(`8543797cf`) 위로 rebase한 뒤 `./service` 기준으로 했다. 실행 환경은 Node v26.9.0, npm 11.19.1, Playwright Chromium (`@playwright/test` 1.64.1)이다. CI와 배포 기준 Node는 22로 고정했으므로 Node 22에서의 결과는 **미실행**이다 (CI `web` job이 처음 돌 때 확인된다).
 
 표시: **확정**은 이 세션에서 명령으로 확인한 것, **확인 필요**는 못 한 것이다.
 
@@ -19,7 +19,7 @@
 
 ## 2. 스파이크 S1~S5 (03-interfaces.md 3.2절)
 
-`src/service`는 이 worktree에 아직 없다. 그래서 S2·S4는 `./edit`과 컴파일러 공개 진입점으로 확인했고, **service 병합 뒤 재확인이 필요하다** (6절).
+**2차 갱신(`./service` 기준)**: `next/c-service` 위로 rebase하고 스파이크 전용 exports(`./compiler`, `./catalog`)를 지웠다. 이제 `apps/web`은 `./service`와 `./edit`만 쓴다. S1~S5를 아래 표 그대로 다시 실측했다. 1차(compiler·catalog 진입점) 결과와 달라진 수치는 5절에 같이 적었다.
 
 ### 구조 확정
 
@@ -33,34 +33,34 @@ static-kit-web -> ../../apps/web
 
 | 루트 exports | 대상 | 상태 |
 |---|---|---|
-| `./service` | `./src/service/index.mjs` | 파일이 아직 없다 (트랙 C). 병합 전에는 import하지 않는다 |
+| `./service` | `./src/service/index.mjs` | 있음 (트랙 C). `compileBlueprint`, `listCatalog` 등 |
 | `./edit` | `./src/edit/index.mjs` | 있음 |
-| `./compiler` | `./src/compiler.mjs` | **스파이크 전용.** service 병합 뒤 삭제 |
-| `./catalog` | `./src/catalog.mjs` | **스파이크 전용.** service 병합 뒤 삭제 |
+
+`service`에는 Blueprint를 만드는 함수가 없다(`createBlueprint`에 해당하는 것). 스파이크는 `./edit`의 `resetDocument(null, {template})`로 템플릿 기본 문서를 만들고 `./service`의 `compileBlueprint(doc, {include: ['files'], hash})`로 컴파일한다.
 
 `transpilePackages`는 쓰지 않았다. Core가 이미 평범한 ES 모듈(`.mjs`)이라 변환 없이 Turbopack과 webpack 모두 번들했다. `turbopack.root`와 `outputFileTracingRoot`를 저장소 루트로 명시했지만, 이를 지우고 빌드해도 성공했다 (`Compiled successfully`). 경고 억제와 추적 범위를 분명히 하려고 명시를 유지한다.
 
-### 결과
+### 결과 (`./service` 기준)
 
 | ID | 결과 | 실행한 명령과 출력 |
 |---|---|---|
-| S1 | **통과** | `npm --workspace apps/web run build` → `✓ Compiled successfully`, 경로 18개 생성. 서버 컴포넌트(`app/dev/spike/page.tsx`가 `compile`·`createBlueprint`·`resetDocument` 사용)와 클라이언트 컴포넌트(`SpikeClient.tsx`)와 서버 라우트(`app/dev/spike/html/route.ts`)가 모두 빌드된다. `--webpack`으로도 성공 |
-| S2 | **통과 (service 대신 compiler·catalog 진입점)** | 브라우저(Chromium)에서 `typeof Buffer`와 `process.versions.node`가 모두 `undefined`임을 확인한 뒤 버튼으로 컴파일. `data-error=""`, 콘솔·pageerror 0건. `e2e/spike.spec.mjs` › `S2·S4 브라우저` 통과 |
-| S3 | **통과** | `node apps/web/scripts/measure-bundles.mjs`. 서버 산출물(`.next/server/**`의 js·html·rsc·body 전부)에서 UI 모듈에만 있는 문자열 4개(`winterholic-static-kit.blueprint.v3`, `.combo-flags`, `.combos.device`, `.device`)를 찾았다: 각각 `files: []` (0건). 이 문자열은 `src/workbench.mjs`·`src/combos/app.mjs`에만 있다 (`grep -l`로 확인). 컴파일러·카탈로그 청크(`src_compiler_mjs`, `src_catalog_mjs`)는 서버 번들에 있다 |
+| S1 | **통과** | `npm --workspace apps/web run build` → `✓ Compiled successfully`, `✓ Generating static pages ... (16/16)`. 서버 컴포넌트(`app/dev/spike/page.tsx`가 `compileBlueprint`·`listCatalog`·`resetDocument` 사용), 서버 라우트(`app/dev/spike/html/route.ts`), 클라이언트 컴포넌트(`SpikeClient.tsx`의 동적 import)가 모두 빌드된다. 서버 페이지가 `listCatalog({kind: 'templates'})`로 템플릿 85개를 센다 (`data-template-count=85`) |
+| S2 | **통과** | 브라우저(Chromium)에서 `typeof Buffer`와 `process.versions.node`가 모두 `undefined`임을 확인한 뒤 버튼으로 `./service`·`./edit`를 불러 컴파일. `data-error=""`, pageerror 0건. `e2e/spike.spec.mjs` › `S2·S4 브라우저` 통과 |
+| S3 | **통과** | `node apps/web/scripts/measure-bundles.mjs`. 서버 산출물(`.next/server/**`의 js·html·rsc·body 전부)에서 UI 모듈에만 있는 문자열 4개(`winterholic-static-kit.blueprint.v3`, `.combo-flags`, `.combos.device`, `.device`)가 각각 0건이다. 이 문자열은 `src/workbench.mjs`·`src/combos/app.mjs`에만 있다 (`grep -l`). `src_service_index_mjs` 청크는 서버 번들에 있다 |
 | S4 | **통과, 바이트 동일** | 아래 |
 | S5 | **통과** | 5절 |
 
 ### S4 실측 (반드시 실측)
 
-기준 파일 `site/examples/saas-landing/index.html`의 SHA-256은 테스트가 읽은 파일에서 계산한다 (`e2e/spike.spec.mjs`).
+기준 파일은 `site/examples/saas-landing/`의 5개 파일이다. SHA-256은 테스트가 읽은 파일에서 계산한다 (`e2e/spike.spec.mjs`).
 
 | 경로 | 방법 | 결과 |
 |---|---|---|
-| 서버 | `GET /dev/spike/html` (서버가 `compile(createBlueprint('saas-landing')).html`을 낸 응답)의 본문 바이트를 파일과 `Buffer.compare` | 0 (동일) |
-| 서버, `./edit` 문서 | `resetDocument(null, {template: 'saas-landing'})`가 만든 문서를 컴파일한 HTML의 SHA-256 | 파일 SHA-256과 같음 |
-| 브라우저 | Chromium에서 `import()`로 `compiler`·`catalog`를 불러 컴파일, `TextEncoder` 바이트의 `crypto.subtle` SHA-256 | 파일 SHA-256과 같음 (`data-sha256`) |
+| 서버 응답 | `GET /dev/spike/html`(서버가 `compileBlueprint(...).value.files['index.html']`을 낸 응답)의 본문 바이트를 파일과 `Buffer.compare` | 0 (동일) |
+| 서버 관리 파일 5개 | `compileBlueprint(doc, {include: ['files'], hash: {algorithm: 'sha256', digest}})`의 `blueprint.json`, `index.html`, `manifest.json`, `tokens.css`, `tokens.json` 각각의 SHA-256 (digest는 서버의 `node:crypto`) | 5개 모두 파일과 같음. `manifest.json`의 `integrity`까지 같다 |
+| 브라우저 | Chromium에서 `import()`로 `./service`·`./edit`를 불러 `compileBlueprint(doc, {include: ['html']})`, `TextEncoder` 바이트의 `crypto.subtle` SHA-256 | `index.html` SHA-256이 파일과 같음 (`data-sha256`) |
 
-`e2e/spike.spec.mjs` 4개 시험이 모두 통과했다. 기준 대조(RED)로 `public/examples/saas-landing/index.html`에 1바이트를 붙이면 `/examples/saas-landing/index.html` 바이트 시험과 해시 게이트가 실패함을 확인했다 (7절).
+브라우저 쪽은 동기 `digest`를 넘기지 않으므로 `manifest.integrity`를 채우지 않고 `index.html`만 비교한다 (D6: 비동기 WebCrypto는 호출자가 `value.files`로 계산). `e2e/spike.spec.mjs` 5개 시험이 모두 통과했다. 기준 대조(RED)로 `public/v1/catalog.json`에 1바이트를 붙이면 바이트 시험과 해시 게이트가 실패함을 확인했다 (7절). 허용되지 않은 진입점(`/compiler`)을 import하면 `next build`의 타입 검사와 `test:boundary`가 모두 실패한다.
 
 ## 3. 공통 레이아웃과 토큰
 
@@ -100,20 +100,22 @@ width 390 / 768 / 1280  →  scrollWidth == clientWidth (가로 넘침 0), heade
 |---|---:|---:|---:|---:|
 | `/studio` 등 일반 화면 | 7 | 579,731 | 178,252 | 0 |
 | `/` (해시 리다이렉트 포함) | 8 | 580,053 | 178,518 | 0 |
-| `/dev/spike` (클릭 전) | 8 | 581,387 | 179,139 | 0 |
+| `/dev/spike` (클릭 전) | 8 | 581,588 | 179,221 | 0 |
 
-카탈로그·컴파일러는 `SpikeClient`가 버튼을 눌렀을 때만 `import()`로 불러온다. 별도 청크 두 개다: 252,057 byte(gzip 68,240) + 345,477 byte(gzip 118,684), 합계 597,534 byte(gzip 186,924). 카탈로그 투영 `site/v1/catalog.json`은 현재 783,915 byte다 (`00-baseline.md`는 778,937 byte).
+`./service`(와 `./edit`)는 `SpikeClient`가 버튼을 눌렀을 때만 `import()`로 불러온다. 별도 청크 두 개다: 27,179 byte(gzip 10,124) + 630,036 byte(gzip 197,348), 합계 657,215 byte(gzip 207,472). 카탈로그 투영 `site/v1/catalog.json`은 783,915 byte다 (`00-baseline.md`는 b303f17c1 시점의 778,937 byte).
+
+1차(compiler·catalog 진입점) 측정은 두 청크 합계 597,534 byte(gzip 186,924)였다. `./service`를 쓰면 약 60KB(gzip 약 20KB) 늘었다. 서비스 계층(오류 힌트 표, 조회·설명 함수)이 더해진 값이다. 초기 JS는 1차와 사실상 같다 (`/dev/spike` 581,387 → 581,588 byte).
 
 `e2e/spike.spec.mjs`의 S5 시험은 `/`, `/explore`, `/studio`, `/dev/spike`를 열어 받은 모든 JS 응답에서 카탈로그 본문에만 있는 식별자(`AXIS_BAN`)를 찾고, 클릭 전에는 0건, 클릭 뒤에는 청크가 내려옴을 단언한다.
 
-**후속 트랙에 주는 사실**: 클라이언트에서 컴파일하는 화면(Studio 미리보기)은 약 187KB(gzip)를 추가로 내려받는다. 이 비용을 쓰지 않으려면 컴파일을 서버(라우트 핸들러·서버 액션)에서 하고 HTML만 받는 구조도 가능하다. 어느 쪽을 쓸지는 Studio 트랙이 정한다. 초기 JS 약 178KB(gzip)는 Next·React 런타임 몫이며 이 뼈대가 더한 코드는 수 KB 수준이다 (정확한 분해는 측정하지 않았다).
+**후속 트랙에 주는 사실**: 클라이언트에서 컴파일하는 화면(Studio 미리보기)은 약 207KB(gzip)를 추가로 내려받는다. 이 비용을 쓰지 않으려면 컴파일을 서버(라우트 핸들러·서버 액션)에서 하고 HTML만 받는 구조도 가능하다. 어느 쪽을 쓸지는 Studio 트랙이 정한다. 초기 JS 약 178KB(gzip)는 Next·React 런타임 몫이다.
 
-## 6. service 병합 뒤 재확인 목록
+## 6. 남은 정리
 
-1. `lib/spike-core.ts`와 `SpikeClient.tsx`의 import를 `@winterholic/design-system-static-kit/service`로 바꾸고, 루트 `package.json`의 `./compiler`, `./catalog` 내보내기를 지운다. 같은 시점에 `apps/web/boundary.check.mjs`의 `SPIKE_ENTRIES`, `SPIKE_FILES`를 지운다 (스파이크 진입점을 쓰면 시험이 실패하므로 빠뜨릴 수 없다).
-2. `npm --workspace apps/web run build`와 `test:e2e`(spike 4개)를 다시 돌려 S1·S2·S4를 service 경로로 확인한다. S3·S5는 `measure-bundles.mjs`를 다시 돌린다.
-3. service는 서버·브라우저 양쪽에서 쓰이므로 `node:*` 없이 번들되는지가 S2의 핵심이다 (service 쪽 경계 시험은 C 트랙 소관).
-4. 스파이크가 끝나면 `app/dev/spike/**`, `lib/spike-core.ts`, `e2e/spike.spec.mjs`를 지우고 `/dev/qa` 목록에서 항목을 뺀다.
+service 병합 뒤 재확인(2차 갱신)은 끝났다. 남은 것은 스파이크 코드 자체의 삭제다.
+
+1. 스파이크가 필요 없어지면 `app/dev/spike/**`, `lib/spike-core.ts`, `e2e/spike.spec.mjs`를 지우고 `/dev/qa` 목록에서 항목을 뺀다. `measure-bundles.mjs`의 S5 단언은 Studio가 컴파일 방식을 정할 때 그 화면 기준으로 옮긴다.
+2. 스파이크용 허용 목록은 이미 없다. `boundary.check.mjs`는 `service`·`edit` 외 모든 진입점을 거부한다.
 
 ## 7. 기존 URL 호환 (5.2절)
 
@@ -132,9 +134,15 @@ width 390 / 768 / 1280  →  scrollWidth == clientWidth (가로 넘침 0), heade
 | `/#catalog` | `/`에서 클라이언트 `router.replace('/explore')` | Playwright로 `/studio` → `/#catalog`가 `/explore`가 되고, 뒤로 가기가 `/studio`로 감(history 미적재) |
 | 없는 경로 | 404 + not-found 화면 | |
 
-해시 게이트: `public/examples`(425), `public/examples/themes`(270), `public/v1`(2)의 트리 해시가 `site/`와 같다. 고정값은 `examples` `ba7fbfe407f651cd`, `examples/themes` `2d0988bbf0beab89` (앞 16자, 계산식은 `경로\0파일SHA256\n`을 경로순 연결, 경로는 `site/` 기준). 두 값은 `b303f17c1`과 `f1d250cf2`에서 같음을 `git cat-file`로 확인했다. 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다. `v1/`은 두 커밋 사이에 바뀌었으므로(`35d721f4…` → `ac35cffd…`) 고정하지 않았다.
+해시 게이트: `site/`의 `examples`(425), `examples/themes`(270), `v1`(2) 트리 해시가 고정값과 같고, `public/`의 복사본이 `site/`와 같다. 계산식은 `apps/web/scripts/tree-hash.mjs` 한 곳이고 호환 시험이 그 함수를 쓴다. 식은 `00-baseline.md` 4.2절에 적었다.
 
-**`00-baseline.md` 4.2절의 표(`eb438ecf14a38c35` 등)는 위 계산식으로 재현되지 않았다.** 같은 문서의 설명대로 경로 기준만 바꾼 변형 몇 가지를 시도했으나 일치하는 것을 찾지 못했다 (해시 계산 스크립트가 저장소에 없다, **확인 필요**). 그래서 이 문서가 쓰는 계산식과 값을 따로 적었다.
+| 하위 | 파일 수 | 고정 해시(앞 16자) | 비고 |
+|---|---:|---|---|
+| `examples/` (`themes/` 제외) | 425 | `eb438ecf14a38c35` | baseline 값 그대로 |
+| `examples/themes/` | 270 | `8b73787be3b4a7ff` | baseline 값 그대로 |
+| `v1/` | 2 | `1d39fd97e87c1bc4` | baseline 값 `0af400ca2df23e24`에서 바뀜. b303f17c1 이후 `catalog.json`에 V06 계약이 들어왔다 (`git log b303f17c1..HEAD -- site/v1`: `d72d78389`, `0ea13094c`) |
+
+**정정**: 1차 문서는 `00-baseline.md` 4.2절의 표가 재현되지 않는다고 적었다. 틀린 판단이었다. 원인은 내 계산식이 달랐던 것이다. baseline 식은 (1) 경로를 `site/`가 아니라 해시를 내는 하위 디렉터리 기준으로 적고 (2) 전체 경로 문자열 정렬이 아니라 디렉터리를 깊이 우선으로 내려가며 각 디렉터리 안에서 이름순으로 정렬한다. b303f17c1의 `site/`에서 이 식으로 baseline 표 8개와 전체 `site/` 값이 모두 재현된다(상세는 `00-baseline.md` 4.2절). 1차에 고정했던 `ba7fbfe407f651cd`, `2d0988bbf0beab89`는 잘못된 식의 값이라 폐기했다.
 
 ### 알려진 차이와 한계
 
@@ -163,4 +171,4 @@ npm --workspace apps/web run test:e2e            # 호환·내비·스파이크 
 node apps/web/scripts/measure-bundles.mjs        # S3·S5
 ```
 
-`apps/web/boundary.check.mjs`와 `apps/web/e2e/*.spec.mjs`는 루트 `node --test`의 탐색 패턴(`*.test.mjs` 등)에 걸리지 않는다. 루트 `npm test`는 `tests 258 / pass 258 / fail 0`이고 `apps/web` 파일은 하나도 실행하지 않았다 (출력에서 `apps/web` 0건).
+`apps/web/boundary.check.mjs`와 `apps/web/e2e/*.spec.mjs`는 루트 `node --test`의 탐색 패턴(`*.test.mjs` 등)에 걸리지 않는다. 루트 `npm test`는 `tests 305 / pass 305 / fail 0` (service 계층 시험 포함)이고 `apps/web` 파일은 하나도 실행하지 않았다 (출력에서 `apps/web` 0건).

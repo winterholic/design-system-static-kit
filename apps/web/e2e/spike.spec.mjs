@@ -14,14 +14,22 @@ test('S4 서버: 서버가 컴파일한 HTML이 site/examples/saas-landing/index
   expect(Buffer.compare(await res.body(), expectedHtml)).toBe(0);
 });
 
-test('S4 서버 페이지의 sha256 과 ./edit 문서로 만든 sha256 이 파일과 같다', async ({page}) => {
+test('S4 서버: ./service 가 낸 관리 파일 5개(manifest 포함)의 sha256 이 site/examples/saas-landing 과 같다', async ({page}) => {
   await page.goto('/dev/spike');
   const r = page.getByTestId('server-result');
+  const digests = JSON.parse(await r.getAttribute('data-files'));
+  const expected = Object.fromEntries(['blueprint.json', 'index.html', 'manifest.json', 'tokens.css', 'tokens.json']
+    .map(f => [f, createHash('sha256').update(readFileSync(join(site, 'examples/saas-landing', f))).digest('hex')]));
+  expect(digests).toEqual(expected);
   await expect(r).toHaveAttribute('data-sha256', expectedSha);
-  await expect(r).toHaveAttribute('data-edit-sha256', expectedSha);
 });
 
-test('S2·S4 브라우저: 클라이언트 번들이 Node 폴리필 없이 컴파일하고 바이트 동일', async ({page}) => {
+test('S1 서버 컴포넌트가 ./service 의 listCatalog 를 부른다 (템플릿 85개)', async ({page}) => {
+  await page.goto('/dev/spike');
+  await expect(page.getByTestId('server-result')).toHaveAttribute('data-template-count', '85');
+});
+
+test('S2·S4 브라우저: 클라이언트 번들이 ./service 로 Node 폴리필 없이 컴파일하고 바이트 동일', async ({page}) => {
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   await page.goto('/dev/spike');

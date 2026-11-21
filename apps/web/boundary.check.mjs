@@ -10,9 +10,6 @@ const web = import.meta.dirname;
 const root = resolve(web, '../..');
 const PKG = '@winterholic/design-system-static-kit';
 const PUBLIC_ENTRIES = new Set(['service', 'edit']);
-// 스파이크 전용 진입점. ./service 병합 뒤 이 줄과 루트 exports, 아래 SPIKE_FILES 를 함께 지운다(04-web-spike.md).
-const SPIKE_ENTRIES = new Set(['compiler', 'catalog']);
-const SPIKE_FILES = new Set(['lib/spike-core.ts', 'app/dev/spike/SpikeClient.tsx']);
 const SOURCE_DIRS = ['app', 'shell', 'lib'];
 
 function walk(dir) {
@@ -31,8 +28,7 @@ test('루트 패키지는 지정한 진입점만 import 한다', () => {
     for (const s of specifiers(f)) {
       if (s !== PKG && !s.startsWith(PKG + '/')) continue;
       const entry = s.slice(PKG.length + 1);
-      const ok = PUBLIC_ENTRIES.has(entry) || (SPIKE_ENTRIES.has(entry) && SPIKE_FILES.has(rel));
-      if (!ok) bad.push(`${rel}: ${s}`);
+      if (!PUBLIC_ENTRIES.has(entry)) bad.push(`${rel}: ${s}`);
     }
   }
   assert.deepEqual(bad, []);
@@ -53,7 +49,7 @@ test('src/ 를 상대 경로나 패키지 내부 경로로 직접 가리키지 �
 
 test('루트 package.json exports 는 허용 진입점과 일치한다', () => {
   const {exports: ex} = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-  assert.deepEqual(Object.keys(ex).sort(), [...PUBLIC_ENTRIES, ...SPIKE_ENTRIES].map(k => './' + k).sort());
+  assert.deepEqual(Object.keys(ex).sort(), [...PUBLIC_ENTRIES].map(k => './' + k).sort());
   for (const target of Object.values(ex)) assert.match(target, /^\.\/src\/.+\.mjs$/);
 });
 
