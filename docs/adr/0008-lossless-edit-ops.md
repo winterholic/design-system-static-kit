@@ -56,6 +56,7 @@
 | `NAV_NO_SHELL` | 내비(항목 수·mega·group·icon)를 놓을 수 있는 셸이 없음 | 내비를 정리한 뒤 재시도. 페이지 유형이 허용하는 셸만 후보 |
 | `DISCARD_REQUIRED` | 교체가 콘텐츠를 잃음 | 의도했다면 `discard:true` |
 | `IMPORT_INVALID`·`IMPORT_VERSION`·`IMPORT_LOSSY` | JSON·버전·변환 손실 | 원본을 고쳐 다시 들여온다 |
+| `REPAIR_NAV_POLICY` | `repairAxes`의 `nav` 옵션이 `'drop'`·`'fit'`·`'keep'`이 아님(예외의 `error.errors`로 전달, 내비는 건드리지 않음) | 오타를 고친다. 옵션을 생략하면 레거시 `'drop'` |
 | `CONTENT_LOSS` | 모양 연산이 콘텐츠를 바꿈(코어 불변 조건 위반, 방어선) | 재현 입력과 함께 이슈. 입력은 바뀌지 않았다 |
 
 경고(`warnings`)는 `AXIS_REPAIRED`, `SHELL_SUBSTITUTED`, `MODE_CHANGED`, `DECORATION_DROPPED`(grade `decoration`), `CONTENT_RELOCATED`, `CONTENT_REPLACED`, `CATALOG_LEGACY`, `VARIANT_CONTRACT`(grade `quality`), `NO_CHANGE`다.

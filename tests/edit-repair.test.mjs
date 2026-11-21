@@ -84,3 +84,22 @@ test('hero variants: decoration and content are separate; the legacy template pa
   assert.equal(applyLayoutChecked(saas.tree, {hero: 'split', tabs: 'pill'}, saas.pageType).errors[0].code, 'LAYOUT_NOT_APPLICABLE', 'one refused choice rejects the whole batch');
   const before = JSON.stringify(saas.tree); applyLayoutChecked(saas.tree, {hero: 'cover', cards: 'filled'}, saas.pageType); assert.equal(JSON.stringify(saas.tree), before, 'source tree untouched');
 });
+
+test('repairAxes rejects an unknown nav policy before touching anything (typo "fitt" must not fall into the lossy drop path)', () => {
+  const crowded = structuredClone(createBlueprint('saas-landing', 'neon'));
+  crowded.shell = 'minimal'; crowded.chrome.nav = structuredClone(templates['saas-landing'].chrome.nav);
+  assert.equal(crowded.chrome.nav.length, 3);
+  for (const nav of ['fitt', 'Fit', 'trim', '', null, 0, false, {}]) {
+    const b = structuredClone(crowded), report = [];
+    assert.throws(() => repairAxes(b, {nav, report}), e => e.errors?.[0]?.code === 'REPAIR_NAV_POLICY' && e.errors[0].path === '$args.nav' && /drop.*fit.*keep/.test(e.errors[0].hint), `nav=${JSON.stringify(nav)}`);
+    assert.deepEqual(b, crowded, `nav=${JSON.stringify(nav)}: the blueprint is untouched`);
+    assert.deepEqual(report, []);
+  }
+  // 옵션 생략과 명시된 허용 값은 그대로 동작한다.
+  assert.equal(repairAxes(structuredClone(crowded)).chrome.nav.length, 2, 'omitted option keeps the legacy drop');
+  assert.equal(repairAxes(structuredClone(crowded), {}).chrome.nav.length, 2);
+  assert.equal(repairAxes(structuredClone(crowded), {nav: 'drop'}).chrome.nav.length, 2);
+  assert.equal(repairAxes(structuredClone(crowded), {nav: 'keep'}).chrome.nav.length, 3);
+  assert.equal(repairAxes(structuredClone(crowded), {nav: 'fit'}).chrome.nav.length, 3);
+  assert.equal(repairAxes(structuredClone(crowded), {nav: undefined}).chrome.nav.length, 2, 'explicit undefined means "not given"');
+});

@@ -486,6 +486,7 @@ function blueprintSchema() {
 }
 
 const NAV_GROUP_SHELLS = ['sidebar', 'split'];
+const NAV_POLICIES = Object.freeze(['drop', 'fit', 'keep']);
 /** 같은 가로 막대를 쓰는 셸부터, 그다음 세로·특수 셸 순으로 대체 셸을 고른다. */
 const SHELL_PREFERENCE = ['topbar', 'stacked', 'centered', 'editorial', 'masthead', 'sidebar', 'split', 'rail', 'dock', 'minimal'];
 
@@ -551,9 +552,16 @@ function fitShellToNav(b, note) {
  *   'drop'(기본, 호환): 항목을 자르고 mega·group을 지운다. 템플릿을 다른 테마에 입히는 합성 경로와 2.x 출력 hash가 이 동작에 고정되어 있다.
  *   'fit': 내비를 보존하고 놓이는 셸로 바꾼다. 놓일 셸이 없으면 내비를 그대로 두어 검증기가 NAV_* 오류로 거부한다.
  *   'keep': 내비를 건드리지 않는다.
+ * 그 밖의 값은 b를 건드리기 전에 예외(`error.errors[0].code === 'REPAIR_NAV_POLICY'`)로 거부한다.
  * options.report 배열을 주면 바뀐 축과 삭제한 항목이 구조화된 기록(code·path·dropped…)으로 쌓인다. 'drop'은 report 없이도 동작하지만 편집 연산(src/edit)은 쓰지 않는다.
  */
 function repairAxes(b, {nav = 'drop', report = null} = {}) {
+  // 오타가 레거시 삭제 경로로 흘러 내비를 자르지 않도록, b를 건드리기 전에 정책 값을 닫힌 집합으로 검사한다.
+  if (!NAV_POLICIES.includes(nav)) {
+    const error = new Error(`repairAxes: unknown nav policy ${JSON.stringify(nav)}`);
+    error.errors = [{code: 'REPAIR_NAV_POLICY', path: '$args.nav', message: `알 수 없는 nav 정책: ${JSON.stringify(nav)}`, hint: `허용값: ${NAV_POLICIES.map(x => `'${x}'`).join(', ')} 또는 옵션 생략(= 'drop').`}];
+    throw error;
+  }
   const note = r => { report?.push(r); };
   repairAxisValues(b, note);
   if (!b.chrome?.nav) return b;
