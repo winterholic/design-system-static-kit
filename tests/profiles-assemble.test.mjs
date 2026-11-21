@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {assemble, designRegistry, PROFILES, PROFILE_IDS, PATTERNS, INTENT_KEYS} from '../src/profiles/index.mjs';
 import {catalogWithoutIntegrating, fakeChartPreset, fakeMaterial} from './profiles-support.mjs';
 import {validateBlueprint} from '../src/validate.mjs';
-import {validateBlueprint as serviceValidate, assembleBlueprint, getSchema, HINTS} from '../src/service/index.mjs';
+import {validateBlueprint as serviceValidate, assembleBlueprint, compileBlueprint, getSchema, HINTS} from '../src/service/index.mjs';
 import {compile} from '../src/compiler.mjs';
 
 const sha = x => createHash('sha256').update(JSON.stringify(x)).digest('hex');
@@ -43,6 +43,49 @@ test('assemble is deterministic: the same input gives the same bytes, also throu
   assert.equal(JSON.stringify(assemble(...input, {registry: designRegistry()})), a);
   assert.equal(sha(assemble('erp').blueprint), sha(assemble('erp', {}, {}).blueprint));
   assert.equal(sha(compile(assemble('erp').blueprint).html), sha(compile(assemble('erp').blueprint).html));
+});
+
+test('requested chart presets shape default chart targets and profile role typography reaches public compiled CSS and manifest', () => {
+  const request = {profile: 'finance', intent: {pattern: 'dashboard-grid', chartPresets: ['finance-monthly-close']}};
+  const assembled = assembleBlueprint(request);
+  assert.equal(assembled.ok, true, JSON.stringify(assembled.errors));
+  const {blueprint} = assembled.value;
+  const chart = blueprint.tree.children[2].children.find(node => node.type === 'chart');
+  assert.equal(chart.kind, 'line');
+  assert.equal(chart.unit, '억 원');
+  assert.deepEqual(chart.categories, ['1월', '2월', '3월', '4월']);
+  assert.deepEqual(chart.series.map(series => series.name), ['예수금', '운용액']);
+  assert.equal(chart.grid, 'both');
+  assert.equal(blueprint.typeRoles, 'dashboard');
+
+  const compiled = compileBlueprint(blueprint, {include: ['html', 'css', 'manifest']});
+  assert.equal(compiled.ok, true, JSON.stringify(compiled.errors));
+  assert.match(compiled.value.css, /Role typography \(catalog 2\.6\.0 typeRoles: dashboard/);
+  assert.equal(compiled.value.manifest.typeRoles.preset, 'dashboard');
+  assert.match(compiled.value.html, /data-chart="2\.6"/);
+
+  const plain = assembleBlueprint({profile: 'finance', intent: {pattern: 'dashboard-grid'}});
+  assert.equal(plain.ok, true);
+  assert.equal(plain.value.blueprint.tree.children[2].children.find(node => node.type === 'chart').kind, 'bar');
+  assert.equal(JSON.stringify(assembled), JSON.stringify(assembleBlueprint(request)));
+});
+
+test('chart presets do not overwrite user slot charts and reject ambiguous or over-capacity targets', () => {
+  const userChart = {type: 'chart', title: '내 잔액', caption: '직접 입력', kind: 'area', categories: ['1월', '2월'], series: [{name: '내 데이터', values: [5, 8]}]};
+  const request = {profile: 'finance', intent: {pattern: 'dashboard-grid', chartPresets: ['finance-monthly-close']}, content: {slots: {insights: [userChart]}}};
+  const userOnly = assemble('finance', {pattern: 'dashboard-grid'}, {slots: {insights: [userChart]}});
+  assert.equal(userOnly.ok, true, JSON.stringify(userOnly.diagnostics));
+  assert.deepEqual(userOnly.blueprint.tree.children[2], userChart);
+  const assembled = assembleBlueprint(request);
+  assert.equal(assembled.ok, false);
+  assert.ok(assembled.errors.some(error => error.code === 'ASSEMBLE_CHART_PRESET' && error.path === '$args.intent.chartPresets[0]'));
+  assert.deepEqual(request.content.slots.insights[0], userChart);
+
+  const three = assemble('finance', {pattern: 'dashboard-grid', chartPresets: ['finance-monthly-close', 'finance-monthly-close', 'finance-monthly-close']});
+  assert.equal(three.ok, false);
+  assert.ok(three.diagnostics.some(d => d.code === 'ASSEMBLE_CHART_PRESET'));
+  rejected(assemble('finance', {pattern: 'erp-workspace', chartPresets: ['finance-monthly-close']}), 'ASSEMBLE_CHART_PRESET', '$args.intent.chartPresets[0]');
+  rejected(assemble('erp', {pattern: 'dashboard-grid', chartPresets: ['erp-quarterly-revenue']}), 'ASSEMBLE_CHART_PRESET', '$args.intent.chartPresets[0]');
 });
 
 test('requests the profile does not support are not substituted: diagnostics with alternatives, no Blueprint', () => {
@@ -115,15 +158,19 @@ test('defaults the profile chooses are recorded as decisions; conflicts with a r
   rejected(assemble('saas-landing', {theme: 'neon', mode: 'light'}), 'ASSEMBLE_UNSUPPORTED', '$args.intent.mode');
 });
 
-test('materials registered later (chart presets, data table) widen what assemble accepts without code changes', () => {
+test('registered selections pass the pending gate but chart application still requires a compatible resolver target', () => {
   const pre = catalogWithoutIntegrating();
   pre.register(fakeChartPreset(pre, 'chart-preset:erp-quarterly-revenue'));
   pre.register(fakeMaterial(pre, 'component', 'component:data-table', 'form-data-feedback'));
   const registry = designRegistry({base: pre});
-  const r = assemble('erp', {chartPresets: ['erp-quarterly-revenue'], components: ['component:data-table']}, {}, {registry});
-  assert.equal(r.ok, true, JSON.stringify(r.diagnostics));
-  assert.deepEqual(r.materials.chartPresets, ['chart-preset:erp-quarterly-revenue']);
-  assert.ok(!r.materials.pending.includes('component:data-table'));
+  const r = assemble('erp', {pattern: 'dashboard-grid', chartPresets: ['erp-quarterly-revenue'], components: ['component:data-table']}, {}, {registry});
+  assert.equal(r.ok, false);
+  assert.ok(!codes(r).includes('ASSEMBLE_PENDING'));
+  assert.ok(codes(r).includes('ASSEMBLE_CHART_PRESET'), JSON.stringify(r.diagnostics));
+  const component = assemble('erp', {components: ['component:data-table']}, {}, {registry});
+  assert.equal(component.ok, true, JSON.stringify(component.diagnostics));
+  assert.ok(!component.materials.pending.includes('component:data-table'));
+  assert.ok(!JSON.stringify(component.blueprint.tree).includes('data-table'), 'component selection does not materialize a node');
   rejected(assemble('erp', {chartPresets: ['erp-quarterly-revenue', 'erp-quarterly-revenue', 'erp-quarterly-revenue', 'erp-quarterly-revenue', 'erp-quarterly-revenue']}, {}, {registry}), 'ASSEMBLE_UNSUPPORTED', '$args.intent.chartPresets');
 });
 

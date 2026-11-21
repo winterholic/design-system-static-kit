@@ -10,6 +10,7 @@ import {createBlueprint, axisBans, themes, pageTypes, templates} from '../catalo
 import {validateBlueprint} from '../validate.mjs';
 import {hintFor} from '../service/errors.mjs';
 import {materialId} from '../materials/contract.mjs';
+import {resolveChartPreset} from '../render/chart-presets.mjs';
 import {PROFILES, PROFILE_IDS, PATTERNS, PROFILE_AXES, PROFILE_SINCE} from './data.mjs';
 import {sharedDesignRegistry} from './registry.mjs';
 
@@ -84,7 +85,7 @@ export function assemble(profileId, intent = {}, content = {}, {registry = null}
     if (p.charts.presets.includes(id)) unsupported(path, `차트 프리셋 ${show(raw)}은 아직 등록되지 않았습니다.`, '통합 중인 차트 프리셋은 등록된 뒤에만 고를 수 있습니다. 지금은 chart 부품의 형태(kind)로 고르세요.', p.charts.kinds, 'ASSEMBLE_PENDING');
     else unsupported(path, `${profileId} 프로파일은 차트 프리셋 ${show(raw)}을 허용하지 않습니다.`, p.charts.kinds.length ? '프로파일이 고른 차트 프리셋만 씁니다.' : '이 프로파일은 차트를 쓰지 않습니다.', allowedPresets.length ? allowedPresets : p.charts.kinds);
   });
-  if (Array.isArray(intent.chartPresets) && allowedPresets.length && intent.chartPresets.length > p.charts.max) unsupported('$args.intent.chartPresets', `차트 프리셋은 ${p.charts.max}개까지입니다.`, '프로파일 품질 기준의 페이지당 차트 수 상한입니다.');
+  if (Array.isArray(intent.chartPresets) && intent.chartPresets.length > p.charts.max) unsupported('$args.intent.chartPresets', `차트 프리셋은 ${p.charts.max}개까지입니다.`, '프로파일 품질 기준의 페이지당 차트 수 상한입니다.');
 
   // ---- 내용 슬롯 ----
   const slots = content.slots ?? {};
@@ -111,6 +112,7 @@ export function assemble(profileId, intent = {}, content = {}, {registry = null}
   pick('mode', keepOr('mode', p.color.modes));
   pick('density', p.density.default);
   pick('typography', keepOr('typography', p.type.typography));
+  set('typeRoles', strip('type-role-preset', p.type.rolePreset), 'profile');
   pick('shell', shells[0]);
   pick('width', widths[0]);
   for (const axis of PROFILE_AXES.filter(a => a !== 'width')) set(axis, keepOr(axis, p.axes[axis]), 'profile');
@@ -137,10 +139,37 @@ export function assemble(profileId, intent = {}, content = {}, {registry = null}
   if (diagnostics.length) return fail();
 
   // ---- 트리와 내비 ----
-  const skeleton = b.tree.children, children = [];
-  for (const slot of pattern.slots) children.push(...structuredClone(Object.hasOwn(slots, slot.id) ? slots[slot.id] : slot.from.map(i => skeleton[i])));
+  const skeleton = b.tree.children, children = [], presetTargets = [];
+  const collectCharts = node => {
+    if (!plain(node)) return;
+    if (node.type === 'chart') presetTargets.push(node);
+    if (Array.isArray(node.children)) node.children.forEach(collectCharts);
+  };
+  for (const slot of pattern.slots) {
+    const supplied = Object.hasOwn(slots, slot.id);
+    const nodes = structuredClone(supplied ? slots[slot.id] : slot.from.map(i => skeleton[i]));
+    if (!supplied && slot.accepts.includes('chart')) nodes.forEach(collectCharts);
+    children.push(...nodes);
+  }
   if (children.length > pattern.maxTopLevel) { unsupported('$args.content.slots', `패턴 ${patternId}의 최상위 구역은 ${pattern.maxTopLevel}개까지입니다(${children.length}개).`, '패턴 제한 조건입니다.', [], 'ASSEMBLE_SLOT'); return fail(); }
   b.tree = {type: 'page', children};
+  const requestedPresets = Array.isArray(intent.chartPresets) ? intent.chartPresets : [];
+  requestedPresets.forEach((raw, i) => {
+    const id = raw.startsWith('chart-preset:') ? raw : materialId('chart-preset', raw);
+    const target = presetTargets[i];
+    if (!target) {
+      unsupported(`$args.intent.chartPresets[${i}]`, `차트 프리셋 ${id}을 적용할 기본 차트 위치가 없습니다.`, '현재 계약은 패턴이 제공한 기본 차트에만 프리셋을 적용합니다. 사용자가 전달한 슬롯 내용과 차트 데이터는 보존하며, 사용자 슬롯을 프리셋 대상으로 지정하는 기능은 없습니다.', [], 'ASSEMBLE_CHART_PRESET');
+      return;
+    }
+    const chart = resolveChartPreset(id);
+    if (chart.errors || !p.charts.kinds.includes(chart.kind)) {
+      unsupported(`$args.intent.chartPresets[${i}]`, `차트 프리셋 ${id}의 형태 ${chart.kind ?? 'unknown'}을 ${profileId}/${patternId}에 적용할 수 없습니다.`, chart.errors?.map(error => error.message).join(' ') || `프로파일의 허용 차트 형태: ${p.charts.kinds.join(', ') || '없음'}.`, p.charts.kinds, 'ASSEMBLE_CHART_PRESET');
+      return;
+    }
+    const title = target.title, caption = target.caption;
+    Object.assign(target, chart, {title, caption});
+  });
+  if (diagnostics.length) return fail();
   if (Object.hasOwn(content, 'name')) b.name = content.name;
   if (Object.hasOwn(content, 'nav')) b.chrome = {...b.chrome, nav: structuredClone(content.nav)};
 
@@ -154,7 +183,7 @@ export function assemble(profileId, intent = {}, content = {}, {registry = null}
   const materials = {
     profile: pm.id, pattern: materialId('pattern', patternId), template: materialId('template', pattern.template), theme: materialId('theme', themeId),
     typeRole: p.type.rolePreset, controlSize: intent.controlSize ?? p.controlSize.default, tableRows: structuredClone(p.tableRows),
-    chartPresets: Array.isArray(intent.chartPresets) ? intent.chartPresets.map(x => (x.startsWith('chart-preset:') ? x : materialId('chart-preset', x))) : [],
+    chartPresets: requestedPresets.map(x => (x.startsWith('chart-preset:') ? x : materialId('chart-preset', x))),
     narrow: {...p.narrow}, pending: [...pm.ext.pending],
   };
   return {ok: true, blueprint: b, diagnostics, decisions, materials};
