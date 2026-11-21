@@ -11,6 +11,8 @@ export * from './contract.mjs';
 export {validateMaterial, validateGraph, MATERIAL_VERSIONS} from './validate.mjs';
 export {createRegistry, MaterialError} from './registry.mjs';
 export * from './adapters.mjs';
+export {selectContract, selectMaterial, renderSelect, attachSelect, selectRuntime, selectStyles} from './select.mjs';
+export {tableContract, tableMaterial, renderDataTable, attachTable, tableRuntime, tableStyles} from './table.mjs';
 
 /** 기존 카탈로그를 모두 등록한 새 레지스트리. 참조가 끊기면 예외다(카탈로그와 재료가 어긋났다는 뜻). */
 export function catalogRegistry() {

@@ -30,7 +30,7 @@ const sample = (patch = {}) => defineMaterial({
 test('materials: every existing node, axis, type preset, theme, palette, page type, template, recipe, layout primitive and icon is registered', () => {
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
-    axis: 1 + styleAxes.length, component: nodeTypes.length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
+    axis: 1 + styleAxes.length, component: nodeTypes.length + 2, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
     palette: Object.keys(palettes).length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));
@@ -143,13 +143,20 @@ test('materials: adapters keep catalog facts (children, parents, enums, contexts
   assert.deepEqual(registry.get('component:chart').variants.kind, nodeSpecs.chart.fields.kind.enum);
   assert.deepEqual(registry.get('component:table').states.values, ['ready', 'loading', 'empty', 'error', 'partial', 'forbidden']);
   assert.ok(registry.get('component:table').tokens.every(t => t.startsWith('--kit-')) && registry.get('component:table').tokens.length > 0);
+  for (const id of ['component:select-control', 'component:data-table']) {
+    const material = registry.get(id);
+    assert.equal(material.since, '2.6.0');
+    assert.ok(material.tokens.every(t => t.startsWith('--kit-')) && material.tokens.length > 0);
+  }
   assert.deepEqual(registry.get('axis:radius').variants.value, axes.radius);
   assert.deepEqual(registry.get('palette:ocean').tokens, Object.keys(resolveTokens({palette: 'ocean', mode: 'light'}).tokens));
   assert.equal(PALETTE_ROLES.length, 27);
   assert.ok(registry.get('theme:workspace').dependencies.every(d => registry.has(d)));
   // 부품마다 렌더러에 같은 이름의 진입점이 있다.
   const renderer = read('src/render/nodes.mjs');
-  for (const m of registry.byKind('component')) assert.ok(renderer.includes(`R.${m.render.key} =`) || renderer.includes(`R['${m.render.key}'] =`), m.id);
+  for (const type of nodeTypes) { const key = type === 'tab' ? 'tabs' : type; assert.ok(renderer.includes(`R.${key} =`) || renderer.includes(`R['${key}'] =`), type); }
+  assert.match(read('src/materials/select.mjs'), /export function renderSelect/);
+  assert.match(read('src/materials/table.mjs'), /export function renderDataTable/);
 });
 
 test('materials: every evidence file:line points at a test() that exists', () => {
