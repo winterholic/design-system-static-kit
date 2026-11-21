@@ -123,12 +123,13 @@ test('EX-3 a pull quote has no box and a larger type than the boxed quote', asyn
   expect(s[0].size).toBeGreaterThan(s[1].size);
 });
 
+// 랜딩은 hero 가 필수(PAGE_REQUIRE)라 hero 없는 이 시험은 make()의 general 을 쓴다. 두 유형의 구역 스타일(BAND)은 같다.
 test('EX-4 section.space loose is roomier and tight is tighter than normal; flat is never painted', async ({page}) => {
-  const heights = async patch => { await open(page, make([sec([prose()], patch.a), sec([prose()], patch.b), sec([prose()], patch.c)], {pageType: 'landing', density: 'spacious'})); return page.locator('.kit-main>.kit-section').evaluateAll(els => els.map(e => e.getBoundingClientRect().height)); };
+  const heights = async patch => { await open(page, make([sec([prose()], patch.a), sec([prose()], patch.b), sec([prose()], patch.c)], {density: 'spacious'})); return page.locator('.kit-main>.kit-section').evaluateAll(els => els.map(e => e.getBoundingClientRect().height)); };
   const h = await heights({a: {space: 'tight'}, b: {}, c: {space: 'loose'}});
   expect(h[0]).toBeLessThan(h[1]); expect(h[2]).toBeGreaterThan(h[1]);
   expect(Math.round(h[2] - h[1])).toBe(52);
-  await open(page, make([sec([prose()]), sec([prose()], {surface: 'flat'})], {pageType: 'landing'}));
+  await open(page, make([sec([prose()]), sec([prose()], {surface: 'flat'})]));
   expect(await page.locator('.kit-main>.kit-section').nth(1).evaluate(e => getComputedStyle(e).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 });
 
