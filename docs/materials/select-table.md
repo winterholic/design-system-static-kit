@@ -73,3 +73,4 @@ Select는 `--kit-action`, `--kit-surface`, `--kit-text`, `--kit-muted`, `--kit-b
 3. 사용 노드에 맞춰 CSS 조각을 `src/styles/chunks.mjs`에서 선택한다. 토큰 변수는 현재 디자인 시스템 토큰의 소유 작업자가 제공하는 실제 변수 이름과 교차 확인한다.
 4. `src/materials/adapters.mjs`는 두 재료를 등록하고, 2.6.0 컴파일 예시와 Studio B 통합은 `since`·입력 계약을 기준으로 연결한다. 기존 `component:table`은 legacy 문자열 행 계약으로 보존한다.
 5. 기존 출력 고정 파일은 갱신하지 않는다. 2.4.0/2.5.0 해시 검사를 유지한 상태에서 신규 2.6.0 검증·렌더 테스트를 추가한다.
+6. Studio 부품 선택 가능성: `src/edit/applicability.mjs`의 `partTypes`와 `partExample`은 `nodeSpecs`에서 파생된다. 이 브랜치는 노드를 추가하지 않았으므로 두 컨트롤은 아직 삽입 후보에 나타나지 않는다. 1번에서 `select-control`·`data-table` 노드를 추가할 때 `nodeSpecs[type].example`을 반드시 채우고(없으면 `partExample`이 null), `insertableParts`가 실제 `insertNode` 진단과 일치하는지 `tests/`의 applicability 테스트로 확인한다.
