@@ -78,7 +78,9 @@ test('QA는 여러 보기의 동일 조합 표시를 보존하고 기록의 보�
   await expect(page.getByLabel(`${id} 메모`).nth(1)).toHaveValue('기존 메모 B');
   await page.getByLabel('모드').selectOption('light');
   // 이 조합은 진단 등급이 A가 아니라 실험 구성으로 분류돼 기본 목록에서 숨는다.
-  await page.getByLabel('실험 구성 포함').check();
+  // 상태가 URL 갱신 뒤에 반영되므로 check() 대신 클릭하고 반영을 기다린다.
+  await page.getByLabel('실험 구성 포함').click();
+  await expect(page.getByLabel('실험 구성 포함')).toBeChecked();
   await page.getByLabel('조합 검색').fill(id);
   await page.getByRole('button',{name:`${id} 이상함 표시`,exact:true}).click();
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('winterholic-static-kit.combo-flags.v1')));
