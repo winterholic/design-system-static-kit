@@ -3,8 +3,8 @@ import {resolve} from 'node:path';
 // Core(src/)는 apps/web 밖에 있으므로 추적·번들 루트를 저장소 루트로 둔다.
 const repoRoot = resolve(import.meta.dirname, '../..');
 
-// 컷오버 전에는 캐시되지 않는 307로 옛 URL을 새 화면에 잇는다. 컷오버 뒤 permanent:true(308)로 바꾼다.
-const legacyCombos = ['/combos', '/combos/index.html'].map(source => ({source, destination: '/explore/combos', permanent: false}));
+// /combos/의 쿼리를 보존해 내부 QA 경로로 한 번만 이동한다.
+const legacyCombos = ['/combos', '/combos/', '/combos/index.html'].map(source => ({source, destination: '/dev/qa/combos', permanent: false}));
 
 /** @type {import('next').NextConfig} */
 export default {
