@@ -3,7 +3,7 @@ import {expect, test} from '@playwright/test';
 
 const WIDTHS = [390, 768, 1280];
 const NAV = ['Explore', 'Components', 'Docs', 'Integrations', 'Studio'];
-const ROUTES = ['/', '/explore', '/explore/saas-landing', '/explore/combos', '/components', '/components/hero', '/studio', '/docs', '/docs/design',
+const ROUTES = ['/', '/explore', '/explore/saas-landing', '/explore/combos', '/components', '/components/hero', '/studio', '/docs', '/docs/getting-started',
   '/integrations', '/integrations/cli', '/integrations/rest-api', '/integrations/mcp', '/dev/qa'];
 
 const overflow = page => page.evaluate(() => ({scroll: document.documentElement.scrollWidth, width: document.documentElement.clientWidth}));
@@ -149,8 +149,9 @@ test.describe('/#catalog 호환', () => {
 
 test('홈의 미리보기는 컴파일된 예제(iframe)를 불러온다', async ({page}) => {
   await page.goto('/');
-  const frame = page.frameLocator('iframe[title*="saas-landing"]');
-  await expect(page.locator('iframe[title*="saas-landing"]')).toHaveAttribute('tabindex', '-1');
+  // 홈에는 같은 템플릿의 미리보기가 둘 이상 있으므로 첫 번째(즉시 로드)만 본다.
+  const frame = page.frameLocator('iframe[title*="saas-landing"]').first();
+  await expect(page.locator('iframe[title*="saas-landing"]').first()).toHaveAttribute('tabindex', '-1');
   await expect(frame.locator('body')).not.toBeEmpty();
   await expect(frame.locator('html')).toHaveAttribute('data-theme', /light|dark|auto/);
 });

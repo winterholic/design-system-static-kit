@@ -80,7 +80,7 @@ test('WB-04/WB-05: invalid JSON reports Core diagnostics without changing the do
 
   await page.getByRole('button', {name: 'JSON 가져오기'}).click();
   await page.locator('#import-text').fill('{}');
-  await page.getByRole('button', {name: '가져오기'}).click();
+  await page.getByRole('button', {name: '가져오기', exact: true}).click();
   const importErrors = page.getByTestId('import-errors');
   await expect(importErrors).toContainText('REQUIRED');
   await expect(importErrors).toContainText('$.version');
@@ -89,7 +89,7 @@ test('WB-04/WB-05: invalid JSON reports Core diagnostics without changing the do
     const saved = JSON.parse(localStorage.getItem(key));
     return {doc: saved.doc, origin: saved.origin, picked: saved.picked, selection: saved.selection, modified: saved.modified};
   }, STORAGE_KEY)).toEqual(beforeInvalidImport);
-  await page.getByRole('button', {name: '취소'}).click();
+  await page.getByRole('button', {name: '취소', exact: true}).click();
   await expect(page.getByRole('treeitem', {name: /페이지 제목 현재 문서 유지/})).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#f-title')).toHaveValue('현재 문서 유지');
 
@@ -102,7 +102,7 @@ test('WB-04/WB-05: invalid JSON reports Core diagnostics without changing the do
   }, STORAGE_KEY);
   await page.getByRole('button', {name: 'JSON 가져오기'}).click();
   await page.locator('#import-text').fill(importText);
-  await page.getByRole('button', {name: '가져오기'}).click();
+  await page.getByRole('button', {name: '가져오기', exact: true}).click();
   await expect(page.getByRole('dialog', {name: '가져온 JSON으로 바꿀까요?'})).toBeVisible();
   await page.getByRole('button', {name: '가져와서 바꾸기'}).click();
 
@@ -169,7 +169,7 @@ test('modified work is saved, restored, and protected by overwrite confirmation'
   await expect(page.locator('#f-title')).toHaveValue('저장 복원 왕복');
   await page.getByRole('button', {name: '초기화'}).click();
   await expect(page.getByRole('dialog', {name: '초기화할까요?'})).toBeVisible();
-  await page.getByRole('button', {name: '취소'}).click();
+  await page.getByRole('button', {name: '취소', exact: true}).click();
   await expect(page.locator('#f-title')).toHaveValue('저장 복원 왕복');
 });
 

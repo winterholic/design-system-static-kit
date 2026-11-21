@@ -52,7 +52,8 @@ test('S5 초기 JS에 카탈로그가 없고 컴파일 때만 청크가 내려�
     const body = await res.text().catch(() => '');
     seen.push({url: new URL(res.url()).pathname, bytes: Buffer.byteLength(body), catalog: body.includes(CATALOG_MARKER)});
   });
-  for (const path of ['/', '/explore', '/studio', '/dev/spike']) {
+  // /studio 는 브라우저 컴파일을 위해 카탈로그를 처음부터 싣는 것이 설계라 제외한다(04-web-spike.md 5절).
+  for (const path of ['/', '/explore', '/dev/spike']) {
     await page.goto(path, {waitUntil: 'networkidle'});
   }
   const initial = seen.filter(s => s.catalog);

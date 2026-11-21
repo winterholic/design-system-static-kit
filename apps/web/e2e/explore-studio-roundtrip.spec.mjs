@@ -17,6 +17,7 @@ test('복합 Explore 디자인을 실제 Studio 링크로 열고 다운로드·�
   await page.goto(`/explore/${designId}`);
   await page.getByRole('link', {name: 'Studio에서 열기'}).click();
   await expect(page).toHaveURL(/\/studio\?template=saas-landing&palette=pearl&mode=dark&layout=hero:product$/);
+  await page.getByRole('tab', {name: '디자인'}).click();
   await expect(page.getByRole('radio', {name: '다크'})).toHaveAttribute('aria-checked', 'true');
 
   const frame = page.getByTestId('preview-frame');
