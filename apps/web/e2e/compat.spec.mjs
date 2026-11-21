@@ -149,12 +149,12 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
 
 // 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
 // examples·themes는 b303f17c1 기준이다. v1은 2.6.0의 profile·colorPalette·typeRoles와
-// x-extensions의 Select·Table·차트 명세를 포함한다. 새 차트 형태와 옵션은 2.6.0 확장에만 추가했다.
+// x-extensions의 Select·Table·차트와 신규 컴포넌트 8종의 명세를 포함한다. 신규 명세는 2.6.0 확장에만 둔다.
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
     {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
     {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
-    {sub: 'v1', count: 2, pinned: '451589edb650477b'},
+    {sub: 'v1', count: 2, pinned: '13d345afe1b5523c'},
   ];
   for (const {sub, exclude, count, pinned} of parts) {
     test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {

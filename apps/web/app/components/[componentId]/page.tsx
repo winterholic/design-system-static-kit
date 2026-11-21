@@ -26,6 +26,7 @@ export default async function ComponentPage({params}: Props) {
   const {componentId} = await params;
   const view = componentView(componentId);
   if (!view) notFound();
+  const responsive = view.material?.responsive;
   const rendered = view.type === 'page' ? null : renderComponent(view.type);
   const note = rendered?.ok && rendered.mode === 'template'
     ? `이 부품은 단독 예제가 없어 ${templateLabel(rendered.template!)} 템플릿의 기본 출력으로 보여 줍니다.`
@@ -52,7 +53,7 @@ export default async function ComponentPage({params}: Props) {
             <div><dt>맥락 · 품질</dt><dd>{view.material.contexts.join(', ')} · {view.material.quality.status}{view.material.preset ? ' · 프리셋' : ''}</dd></div>
             <div><dt>상호작용 상태</dt><dd><div className={styles.values}>{view.material.states.values.map(value => <code key={value}>{value}</code>)}</div></dd></div>
             {view.material.states.transitions.length ? <div><dt>상태 전이</dt><dd><ul className={styles.transitions}>{view.material.states.transitions.map((transition, index) => <li key={`${transition.from}-${transition.to}-${index}`}><code>{transition.from} → {transition.to}</code> · {transition.trigger}</li>)}</ul></dd></div> : null}
-            <div><dt>반응형</dt><dd>{view.material.responsive.strategy} · {view.material.responsive.breakpoints.join(', ')} — {view.material.responsive.note}</dd></div>
+            {responsive ? <div><dt>반응형</dt><dd>{responsive.strategy}{responsive.breakpoints?.length ? ` · ${responsive.breakpoints.join(', ')}` : ''}{responsive.note ? ` — ${responsive.note}` : ''}</dd></div> : null}
             <div><dt>Blueprint 연결</dt><dd><code>{view.material.blueprint?.node ?? `${view.material.blueprint?.field}=${view.material.blueprint?.value ?? ''}`}</code>{view.material.blueprint?.since ? ` · ${view.material.blueprint.since}부터` : ''}</dd></div>
           </dl>
 

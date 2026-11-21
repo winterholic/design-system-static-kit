@@ -108,7 +108,7 @@ export function validateBlueprint(input) {
 
   // ---- tree ----
   let count = 0, heroCount = 0;
-  const fieldIds = new Set(), controlIds = new Set(), types = new Set(), firstSeen = {};
+  const fieldIds = new Set(), controlIds = new Set(), componentIds = new Set(), componentDomIds = new Set(), componentRefs = [], types = new Set(), firstSeen = {};
   const surfaceStack = [];
   function node(n, path, parent, depth, ancestors) {
     count++; if (count > limits.nodes) { if (count === limits.nodes + 1) error(path, 'NODE_LIMIT', `최대 ${limits.nodes}노드입니다.`); return; }
@@ -194,6 +194,87 @@ export function validateBlueprint(input) {
       if (n.visual && !['media', 'horizontal'].includes(n.variant)) error(path + '.visual', 'VARIANT_REQUIRES', 'visual은 media·horizontal 카드에서만 사용합니다.');
       if (n.ratio && !n.visual) error(path + '.ratio', 'VARIANT_REQUIRES', 'ratio는 visual과 함께 사용합니다.');
       if (n.variant === 'link' && !n.action) error(path + '.action', 'VARIANT_REQUIRES', 'link 카드는 action이 필요합니다.');
+    }
+    const componentTypes = ['button-control', 'input-control', 'card-surface', 'navigation-menu', 'modal-dialog', 'tabs-control', 'tooltip', 'feedback-message'];
+    if (componentTypes.includes(t)) {
+      const spec = nodeSpecAt(t, input.catalogVersion), controlId = typeof n.id === 'string' ? n.id : null;
+      const ruleHit = (spec.forbidden ?? []).find(rule => Object.entries(rule.when).every(([field, allowed]) => [allowed].flat().includes(n[field] ?? spec.defaults?.[field])));
+      if (ruleHit) errors.push({path, code: 'CONTROL_COMBO', rule: ruleHit.id, message: `${ruleHit.id}: ${ruleHit.why} (바꿀 필드: ${Object.keys(ruleHit.when).join(', ')})`, hint: `금지 규칙 ${ruleHit.id}을 피하도록 ${Object.keys(ruleHit.when).join(' 또는 ')} 값을 바꾸세요.`});
+      if (controlId) {
+        if (componentIds.has(controlId)) error(path + '.id', 'DUPLICATE_ID', `컴포넌트 id "${controlId}"는 페이지에서 유일해야 합니다.`);
+        componentIds.add(controlId);
+      }
+      const rootId = controlId ? `ctl-id-${controlId}` : null;
+      const addDomId = value => { if (!value) return; if (componentDomIds.has(value)) error(path + '.id', 'DUPLICATE_ID', `생성 DOM id "${value}"가 페이지에서 중복됩니다.`); componentDomIds.add(value); };
+      if (rootId) addDomId(rootId);
+      if (t === 'button-control') {
+        if (n.content === 'icon-only' && !String(n.ariaLabel ?? n.labelledBy ?? '').trim()) error(path + '.ariaLabel', 'ARIA_NAME', '아이콘만 있는 버튼에는 ariaLabel 또는 labelledBy가 필요합니다.');
+        for (const field of ['describedBy', 'labelledBy']) if (typeof n[field] === 'string') componentRefs.push({path: `${path}.${field}`, value: n[field], field});
+      }
+      if (t === 'input-control' && rootId) { if (n.hint) addDomId(`${rootId}-hint`); addDomId(`${rootId}-message`); }
+      if (t === 'input-control' && Object.hasOwn(n, 'message') && n.state !== 'error') error(path + '.message', 'VARIANT_REQUIRES', 'message는 state가 error일 때만 보입니다.');
+      if (t === 'card-surface') {
+        if (n.behavior === 'link' && n.href !== undefined) checkLink(n.href, path + '.href');
+        if (n.behavior !== 'link' && Object.hasOwn(n, 'href')) error(path + '.href', 'VARIANT_REQUIRES', 'href는 behavior=link일 때만 쓰입니다.');
+        if (n.state === 'error' && !n.message) error(path + '.message', 'COMPONENT_CONTENT', 'error 상태에는 사용자가 고칠 내용을 알려 주는 message가 필요합니다.');
+        if (n.footer === 'actions' && (!Array.isArray(n.actions) || n.actions.length < 1)) error(path + '.actions', 'COMPONENT_CONTENT', 'footer=actions에는 동작 버튼이 하나 이상 필요합니다.');
+      }
+      if (t === 'navigation-menu' && Array.isArray(n.items)) n.items.forEach((item, i) => {
+        const walk = (entry, itemPath) => {
+          if (!plain(entry)) return;
+          checkLabel(entry.label, itemPath + '.label');
+          if (entry.current && entry.disabled) error(itemPath + '.current', 'VARIANT_REQUIRES', '현재 페이지는 disabled 메뉴로 표시할 수 없습니다.');
+          if (entry.children && entry.href !== undefined) error(itemPath + '.href', 'VARIANT_REQUIRES', '하위 메뉴가 있는 항목은 링크 대신 disclosure 버튼으로 씁니다.');
+          if (!entry.disabled && !entry.children) { if (!Object.hasOwn(entry, 'href')) error(itemPath + '.href', 'COMPONENT_CONTENT', '활성 메뉴 항목에는 HTTPS·#main·선언한 section 앵커 링크가 필요합니다.'); else checkLink(entry.href, itemPath + '.href'); }
+          if (Array.isArray(entry.children)) entry.children.forEach((child, j) => walk(child, `${itemPath}.children[${j}]`));
+        };
+        walk(item, `${path}.items[${i}]`);
+        if (n.icons === 'start' && !item.icon) error(`${path}.items[${i}].icon`, 'COMPONENT_CONTENT', 'icons=start이면 모든 최상위 항목에 등록된 icon이 필요합니다.');
+        if (rootId && item.children) addDomId(`${rootId}-sub-${i}`);
+      });
+      if (t === 'navigation-menu' && Array.isArray(n.items)) {
+        const hasSub = n.items.some(item => plain(item) && item.children);
+        const currentCount = n.items.reduce((count, item) => count + (plain(item) && item.current ? 1 : 0) + (plain(item) && Array.isArray(item.children) ? item.children.filter(child => plain(child) && child.current).length : 0), 0);
+        if (currentCount > 1) error(path + '.items', 'COMPONENT_CONTENT', '현재 페이지는 내비게이션 한 곳에만 표시합니다.');
+        if (hasSub && n.submenu !== 'disclosure') error(path + '.submenu', 'VARIANT_REQUIRES', 'children가 있는 메뉴는 submenu=disclosure여야 합니다.');
+        if (!hasSub && n.submenu === 'disclosure') error(path + '.submenu', 'VARIANT_REQUIRES', 'submenu=disclosure에는 children가 있는 항목이 필요합니다.');
+      }
+      if (t === 'modal-dialog' && rootId) {
+        addDomId(`${rootId}-dialog`); addDomId(`${rootId}-title`); if (n.description) addDomId(`${rootId}-desc`);
+        if (n.role === 'alertdialog' && !(Array.isArray(n.actions) && n.actions.some(action => action.role === 'cancel'))) error(path + '.actions', 'COMPONENT_CONTENT', 'alertdialog에는 초기 포커스와 취소 경로를 제공하는 cancel 동작이 필요합니다.');
+        if (n.state === 'error' && !n.message) error(path + '.message', 'COMPONENT_CONTENT', 'error 상태에는 다시 시도하거나 고칠 내용을 알려 주는 message가 필요합니다.');
+        if (n.footer === 'actions' && (!Array.isArray(n.actions) || !n.actions.length)) error(path + '.actions', 'COMPONENT_CONTENT', 'footer=actions에는 동작이 하나 이상 필요합니다.');
+        const nestedIds = new Set();
+        (n.body ?? []).forEach((item, i) => {
+          if (item?.slot === 'text' && !Object.hasOwn(item, 'text')) error(`${path}.body[${i}].text`, 'COMPONENT_CONTENT', 'text 칸에는 출력할 text가 필요합니다.');
+          if (item?.slot === 'input') {
+            if (!item.id || !item.label?.trim()) error(`${path}.body[${i}]`, 'COMPONENT_CONTENT', 'input 칸에는 id와 label이 필요합니다.');
+            if (nestedIds.has(item.id)) error(`${path}.body[${i}].id`, 'DUPLICATE_ID', `모달 안 input id "${item.id}"가 중복됩니다.`);
+            nestedIds.add(item.id);
+            const fieldId = `${rootId}-${item.id}`; addDomId(fieldId); if (item.hint) addDomId(`${fieldId}-hint`); addDomId(`${fieldId}-message`);
+          }
+        });
+      }
+      if (t === 'tabs-control' && Array.isArray(n.tabs)) {
+        const ids = new Set();
+        n.tabs.forEach((tab, i) => {
+          const p = `${path}.tabs[${i}]`;
+          if (ids.has(tab.id)) error(p + '.id', 'ARIA_REFERENCE', `탭 id "${tab.id}"가 중복되어 tab-controls와 panel 참조가 모호합니다.`);
+          ids.add(tab.id);
+          if (rootId) { addDomId(`${rootId}-tab-${tab.id}`); addDomId(`${rootId}-panel-${tab.id}`); }
+          if (n.icons === 'start' && !tab.icon) error(p + '.icon', 'COMPONENT_CONTENT', 'icons=start이면 모든 탭에 등록된 icon이 필요합니다.');
+        });
+        if (n.selected && (!n.tabs.some(tab => tab.id === n.selected && !tab.disabled))) error(path + '.selected', 'ARIA_REFERENCE', 'selected는 존재하며 비활성화되지 않은 tab id여야 합니다.');
+      }
+      if (t === 'tooltip') {
+        if (!String(n.content ?? '').trim() || /[<>]|\]\(/.test(n.content ?? '') || [...String(n.content ?? '')].length > 120) error(path + '.content', 'COMPONENT_CONTENT', 'tooltip은 HTML·링크 문법이 없는 1~120자 일반 텍스트만 받습니다.');
+        if (n.shape === 'pill' && [...String(n.content ?? '')].length > 24) error(path + '.content', 'COMPONENT_CONTENT', 'pill tooltip은 24자 이하로 줄이세요.');
+        if (rootId) addDomId(`${rootId}-tip`);
+      }
+      if (t === 'feedback-message') {
+        if (n.state === 'error' && !n.message) error(path + '.message', 'COMPONENT_CONTENT', '오류 상태에는 원인과 해결을 안내하는 message가 필요합니다.');
+        if (n.action === 'button' && !String(n.actionLabel ?? '').trim()) error(path + '.actionLabel', 'COMPONENT_CONTENT', 'action=button이면 actionLabel이 필요합니다.');
+      }
     }
     if (t === 'timeline' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && n.variant !== 'release') for (const k of ['changes', 'date']) if (Object.hasOwn(x, k)) error(`${path}.items[${i}].${k}`, 'VARIANT_REQUIRES', `${k}는 variant가 release일 때만 사용합니다.`); });
     if (t === 'menu' && n.layout === 'photo' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && !x.motif) error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'photo 레이아웃의 모든 항목에는 motif가 필요합니다.'); });
@@ -332,6 +413,9 @@ export function validateBlueprint(input) {
   }
   if (plain(input.tree) && input.tree.type !== 'page') error('$.tree.type', 'ROOT', '루트는 page여야 합니다.');
   node(input.tree, '$.tree', null, 1, []);
+  for (const ref of componentRefs) for (const id of ref.value.trim().split(/\s+/).filter(Boolean)) {
+    if (!componentDomIds.has(`ctl-id-${id}`)) errors.push({path: ref.path, code: 'ARIA_REFERENCE', message: `ARIA ${ref.field}가 페이지에 없는 컴포넌트 id "${id}"를 가리킵니다.`, hint: '같은 Blueprint에 존재하는 컴포넌트 id를 참조하거나 해당 참조를 지우세요.'});
+  }
 
   if (plain(input.tree) && Array.isArray(input.tree.children)) {
     const c = input.tree.children;

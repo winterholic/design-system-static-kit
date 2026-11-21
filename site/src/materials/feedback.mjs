@@ -1,6 +1,6 @@
 import {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, componentMaterial, e, SIZES, SHAPES, SAFE_ID} from './control-kit.mjs';
 import {renderButton} from './button.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Feedback: 외형(표면 처리)·모양·크기·기능(배치·닫기·동작·자동 닫힘)·상태(표시·진행 중·닫힘)·맥락(의도 tone)을 따로 둔다.
  *  tone은 색만이 아니라 아이콘 모양·숨은 접두 글·live region 역할로도 구분한다. */

@@ -2,6 +2,14 @@ import {makeRenderer} from './nodes.mjs';
 import {renderShell} from './shell.mjs';
 import {selectRuntime} from '../materials/select.mjs';
 import {tableRuntime} from '../materials/table.mjs';
+import {buttonRuntime} from '../materials/button.mjs';
+import {inputRuntime} from '../materials/input.mjs';
+import {cardRuntime} from '../materials/card.mjs';
+import {navigationRuntime} from '../materials/navigation.mjs';
+import {modalRuntime} from '../materials/modal.mjs';
+import {tabsRuntime} from '../materials/tabs.mjs';
+import {tooltipRuntime} from '../materials/tooltip.mjs';
+import {feedbackRuntime} from '../materials/feedback.mjs';
 import {atLeast} from '../catalog/expression.mjs';
 export {escapeHTML} from './util.mjs';
 
@@ -28,7 +36,7 @@ function mountControl(selector, runtime) {
 }
 
 /**
- * 카탈로그 2.6.0 컨트롤 재료의 고정 런타임(재료의 attachSelect·attachTable 소스 그대로). 쓴 노드가 있을 때만 formRuntime 뒤에 붙고,
+ * 카탈로그 2.6.0 컨트롤 재료의 고정 런타임. 쓴 노드가 있을 때만 formRuntime 뒤에 붙고,
  * provider는 주입하지 않으므로 네트워크를 쓰지 않는다. 2.5.0 이하와 컨트롤이 없는 문서는 빈 문자열이라 출력이 같다.
  */
 export function controlRuntime(b) {
@@ -36,6 +44,18 @@ export function controlRuntime(b) {
   const used = new Set();
   const walk = n => { used.add(n.type); n.children?.forEach(walk); };
   walk(b.tree);
-  return (used.has('select-control') ? mountControl('.kit-select', selectRuntime) : '')
-    + (used.has('data-table') ? mountControl('.kit-data-table', tableRuntime) : '');
+  const runtimes = [
+    ['select-control', '.kit-select', selectRuntime],
+    ['data-table', '.kit-data-table', tableRuntime],
+    ['button-control', '[data-ctl=button]', buttonRuntime],
+    ['input-control', '[data-ctl=input]', inputRuntime],
+    ['card-surface', '[data-ctl=card]', cardRuntime],
+    ['navigation-menu', '[data-ctl=navigation]', navigationRuntime],
+    ['modal-dialog', '[data-ctl=modal]', modalRuntime],
+    ['tabs-control', '[data-ctl=tabs]', tabsRuntime],
+    ['tooltip', '[data-ctl=tooltip]', tooltipRuntime],
+    ['feedback-message', '[data-ctl=feedback]', feedbackRuntime],
+  ];
+  return runtimes.filter(([type]) => used.has(type))
+    .map(([, selector, runtime]) => mountControl(selector, runtime)).join('');
 }

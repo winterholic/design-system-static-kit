@@ -1200,9 +1200,17 @@ exports.migrateV1 = migrateV1;
 exports.migrateBlueprint = migrateBlueprint;
 };
 __defs["catalog/node-extensions.mjs"] = function (exports, __m) {
-const {nodeSpecs, nodeTypes, str, en, arr, num, obj} = __m("catalog/nodes.mjs");
+const {nodeSpecs, nodeTypes, str, en, arr, num, obj, iconEnum} = __m("catalog/nodes.mjs");
 const {atLeast} = __m("catalog/expression.mjs");
 const {CHART_FORM_KINDS, CHART_DATA_TYPES, CHART_GRIDS, CHART_LABELS, CHART_LEGENDS, CHART_DENSITIES, CHART_RESPONSIVE} = __m("catalog/chart-rules.mjs");
+const {buttonContract} = __m("materials/button.mjs");
+const {inputContract} = __m("materials/input.mjs");
+const {cardContract} = __m("materials/card.mjs");
+const {navigationContract} = __m("materials/navigation.mjs");
+const {modalContract} = __m("materials/modal.mjs");
+const {tabsContract} = __m("materials/tabs.mjs");
+const {tooltipContract} = __m("materials/tooltip.mjs");
+const {feedbackContract} = __m("materials/feedback.mjs");
 
 /**
  * 버전별 노드 명세 확장 표. `nodeSpecs`(src/catalog/nodes.mjs)는 2.1.0~2.5.0이 받아들이는 문법이고 snapshot 바이트
@@ -1225,6 +1233,38 @@ const selectOption = obj({value: str(80), label: str(80), group: str(40), disabl
 const tableCell = {oneOf: [str(200, 0), N, {type: 'boolean'}, {type: 'null'}]};
 const tableRow = {type: 'object', properties: {id: idField}, required: [], additionalProperties: tableCell};
 const tableColumn = obj({id: idField, label: str(60), sortable: yesNo, hideBelow: en('640px', '800px', '900px')}, ['id', 'label']);
+const safeId = idField;
+const bool = {type: 'boolean'};
+const iconName = iconEnum;
+const hrefField = str(2048, 1);
+const labelOnlyAction = obj({label: str(80)}, ['label']);
+const component = (contract, group, fields, required, example, placeLike) => ({
+  label: contract.label, group, placeLike,
+  fields: {...Object.fromEntries(Object.entries(contract.axes).map(([key, values]) => [key, en(...values)])), ...fields},
+  defaults: contract.defaults,
+  optional: Object.keys(contract.axes).filter(key => !required.includes(key)).concat(Object.keys(fields).filter(key => !required.includes(key))),
+  required, example, forbidden: contract.forbidden,
+  coverage: {mode: 'inherited', contracts: [], reason: `${contract.label}의 간격·크기·상태 계약은 등록 재료에서 그대로 가져옵니다.`},
+});
+
+const navLeaf = obj({label: str(80), href: hrefField, icon: iconName, current: bool, disabled: bool}, ['label', 'href']);
+const navItem = obj({label: str(80), href: hrefField, icon: iconName, current: bool, disabled: bool, children: arr(navLeaf, 1, 8)}, ['label']);
+const modalBodyItem = {oneOf: [
+  {type: 'object', properties: {slot: {const: 'text'}, text: str(500)}, required: ['slot', 'text']},
+  {type: 'object', properties: {slot: {const: 'input'}, id: idField, label: str(80), hint: str(160), placeholder: str(120), required: bool}, required: ['slot', 'id', 'label']},
+]};
+const tabItem = obj({id: idField, label: str(60), content: str(500), icon: iconName, disabled: bool}, ['id', 'label', 'content']);
+
+const COMPONENT_EXTENSIONS = {
+  'button-control': component(buttonContract, 'form', {label: str(80), id: idField, icon: iconName, ariaLabel: str(80), describedBy: str(240), labelledBy: str(240)}, ['label'], {type: 'button-control', id: 'save', label: '저장'}, 'form'),
+  'input-control': component(inputContract, 'form', {id: idField, label: str(80), hint: str(160), message: str(160), placeholder: str(120), value: str(500), required: bool, name: str(80), icon: iconName}, ['id', 'label'], {type: 'input-control', id: 'name', label: '이름', placeholder: '프로젝트 이름', hint: '프로젝트 이름을 입력하세요.'}, 'form'),
+  'card-surface': component(cardContract, 'content', {id: idField, title: str(100), body: str(500), meta: str(100), href: hrefField, mediaIcon: iconName, actions: arr(labelOnlyAction, 1, 2), message: str(160)}, ['id', 'title'], {type: 'card-surface', id: 'project', title: '프로젝트 개요', body: '진행 중인 작업을 한곳에서 확인합니다.'}, 'card'),
+  'navigation-menu': component(navigationContract, 'nav', {id: idField, label: str(80), items: arr(navItem, 2, 8)}, ['id', 'label', 'items'], {type: 'navigation-menu', id: 'primary-nav', label: '주요 메뉴', items: [{label: '개요', href: '#main', current: true}, {label: '문서', href: 'https://example.com/docs'}]}, 'breadcrumb'),
+  'modal-dialog': component(modalContract, 'feedback', {id: idField, title: str(100), description: str(200), body: arr(modalBodyItem, 0, 8), actions: arr(obj({label: str(80), role: en('cancel', 'confirm')}, ['label', 'role']), 0, 2), triggerLabel: str(80), message: str(160)}, ['id', 'title'], {type: 'modal-dialog', id: 'create-project', title: '새 프로젝트', description: '프로젝트 이름을 정합니다.', triggerLabel: '프로젝트 만들기', body: [{slot: 'input', id: 'project-name', label: '프로젝트 이름', placeholder: '예: 가을 캠페인'}], actions: [{label: '취소', role: 'cancel'}, {label: '만들기', role: 'confirm'}]}, 'notice'),
+  'tabs-control': component(tabsContract, 'layout', {id: idField, label: str(80), tabs: arr(tabItem, 2, 6), selected: idField}, ['id', 'label', 'tabs'], {type: 'tabs-control', id: 'project-tabs', label: '프로젝트 보기', selected: 'overview', tabs: [{id: 'overview', label: '개요', content: '목표와 현재 상태를 요약합니다.'}, {id: 'tasks', label: '작업', content: '이번 주 작업을 확인합니다.'}]}, 'tabs'),
+  tooltip: component(tooltipContract, 'feedback', {id: idField, triggerLabel: str(80), content: str(240), icon: iconName}, ['id', 'triggerLabel', 'content'], {type: 'tooltip', id: 'save-help', triggerLabel: '저장 위치', content: '내 문서 폴더에 저장됩니다.'}, 'notice'),
+  'feedback-message': component(feedbackContract, 'feedback', {id: idField, message: str(240), title: str(100), actionLabel: str(80), dismissLabel: str(40)}, ['id', 'message'], {type: 'feedback-message', id: 'saved', message: '변경 사항을 저장했습니다.', tone: 'success'}, 'notice'),
+};
 
 const SELECT_FIELDS = {
   id: idField, label: str(80), options: arr(selectOption, 2, 50),
@@ -1269,6 +1309,7 @@ const NODE_SPEC_EXTENSIONS = deepFreeze({
       optional: ['density', 'responsive', 'state', 'sortable', 'selectable', 'message'],
       example: {type: 'data-table', id: 'projects', title: '프로젝트', columns: [{id: 'name', label: '프로젝트'}, {id: 'status', label: '상태'}], rows: [{name: '재료 플랫폼', status: '진행'}, {name: '차트 확장', status: '완료'}]},
     },
+    ...COMPONENT_EXTENSIONS,
   },
 });
 
@@ -4211,6 +4252,12 @@ exports.planComposition = planComposition;
 exports.compositionAttrs = compositionAttrs;
 exports.compositionCSS = compositionCSS;
 };
+__defs["escape-html.mjs"] = function (exports, __m) {
+/** Escape text and attribute values at the HTML boundary. */
+const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+
+exports.escapeHTML = escapeHTML;
+};
 __defs["header-design.mjs"] = function (exports, __m) {
 /** Chrome is compiler-owned. Consumer shell and action values retain their meaning. */
 function deriveHeaderDesign(b) {
@@ -4706,6 +4753,271 @@ exports.refineLayout = refineLayout;
 exports.PRIMITIVES = PRIMITIVES;
 exports.layoutMarkdown = layoutMarkdown;
 };
+__defs["materials/button.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, violations, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Button: 외형(컨테이너 처리)·모양(모서리)·크기·기능(동작과 내용 배치)·상태·맥락(의도)을 따로 둔다. */
+const buttonContract = defineContract({
+  id: 'component:button-control', label: 'Button',
+  inputFields: ['label', 'id', 'icon', 'ariaLabel', 'force', 'describedBy', 'labelledBy'],
+  axes: {
+    appearance: ['solid', 'outline', 'soft', 'ghost', 'link'], shape: SHAPES, size: SIZES,
+    behavior: ['action', 'toggle'], content: ['text', 'icon-start', 'icon-end', 'icon-only'],
+    tone: ['action', 'neutral', 'danger'], state: ['default', 'pressed', 'loading', 'disabled'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['behavior', 'content'], state: ['state'], context: ['tone']},
+  defaults: {appearance: 'solid', shape: 'soft', size: 'medium', behavior: 'action', content: 'text', tone: 'action', state: 'default'},
+  states: ['default', 'hover', 'focus', 'active', 'pressed', 'loading', 'disabled'],
+  transitions: [
+    {from: 'default', to: 'hover', trigger: 'pointer enter'}, {from: 'hover', to: 'active', trigger: 'pointer down | Space/Enter down'},
+    {from: 'default', to: 'focus', trigger: 'Tab (focus-visible)'}, {from: 'default', to: 'pressed', trigger: 'click on toggle'},
+    {from: 'pressed', to: 'default', trigger: 'click on toggle'}, {from: 'default', to: 'loading', trigger: 'setLoading(true)'},
+    {from: 'loading', to: 'default', trigger: 'setLoading(false)'}, {from: 'default', to: 'disabled', trigger: 'setDisabled(true)'},
+  ],
+  forbidden: [
+    {id: 'BTN_LOADING_NO_SLOT', when: {appearance: ['ghost', 'link'], content: 'text', state: 'loading'}, why: 'ghost·link에는 스피너를 받을 컨테이너가 없어, 바꿔 넣을 아이콘이 없으면 글자 줄이 밀린다'},
+    {id: 'BTN_LINK_ICON_ONLY', when: {appearance: 'link', content: 'icon-only'}, why: 'link는 글줄 안에서 읽히는 모양이라 글자 없는 아이콘만으로는 버튼으로 보이지 않는다'},
+    {id: 'BTN_LINK_SHAPE', when: {appearance: 'link', shape: ['square', 'pill']}, why: 'link에는 컨테이너가 없어 모서리 모양이 보이지 않으므로 같은 그림이 중복된다'},
+    {id: 'BTN_PRESSED_ACTION', when: {behavior: 'action', state: 'pressed'}, why: 'pressed는 toggle만 가진다: 한 번 누르고 끝나는 버튼에는 눌림 상태가 없다'},
+    {id: 'BTN_TOGGLE_LOADING', when: {behavior: 'toggle', state: 'loading'}, why: 'toggle의 aria-pressed와 aria-busy가 동시에 의미를 가져 현재 값을 읽을 수 없다'},
+    {id: 'BTN_TOGGLE_LINK', when: {behavior: 'toggle', appearance: 'link'}, why: 'link는 눌림을 색으로만 구분하게 되어 상태를 색만으로 전달한다'},
+    {id: 'BTN_DISABLED_TONE', when: {state: 'disabled', tone: ['neutral', 'danger']}, why: 'disabled는 의도 색을 지우므로 tone마다 같은 그림이 중복된다: action 하나만 둔다'},
+    {id: 'BTN_DANGER_LINK', when: {tone: 'danger', appearance: 'link'}, why: '되돌리기 어려운 동작은 컨테이너 없는 글줄 링크처럼 보이면 안 된다'},
+  ],
+  unsupported: ['split button', 'button group', 'anchor navigation (use link nodes)'],
+  pairs: [
+    ['--kit-onAction', '--kit-action', 4.5, 'solid action'], ['--kit-onActionHover', '--kit-action-hover', 4.5, 'solid action hover'], ['--kit-surface', '--kit-text', 4.5, 'solid neutral'],
+    ['--kit-surface', '--kit-muted', 4.5, 'solid neutral hover'], ['--kit-surface', '--kit-danger', 4.5, 'solid danger'], ['--kit-link', '--kit-surface', 4.5, 'outline·ghost·link action'],
+    ['--kit-danger', '--kit-surface', 4.5, 'outline·ghost danger'], ['--kit-text', '--kit-surface', 4.5, 'outline·ghost neutral'], ['--kit-link', '--kit-soft', 4.5, 'soft action'],
+    ['--kit-danger', '--kit-danger-soft', 4.5, 'soft danger'], ['--kit-text', '--kit-card-active', 4.5, 'soft neutral'], ['--kit-control-disabled-fg', '--kit-control-disabled-bg', 3, 'disabled'], ['--kit-focus', '--kit-surface', 3, 'focus ring'],
+  ],
+});
+
+function renderButton(input) {
+  const {label = '', id = '', icon: iconName = 'arrow-right', ariaLabel = '', force = '', describedBy = '', labelledBy = ''} = input ?? {};
+  const p = resolveProps(buttonContract, input);
+  if (id && !SAFE_ID.test(id)) throw new TypeError('Button id must be lowercase kebab-case');
+  if (p.content === 'icon-only' ? !String(ariaLabel || labelledBy).trim() : !String(label).trim()) throw new TypeError(p.content === 'icon-only' ? 'BTN_ICON_NAME: an icon-only button needs ariaLabel or labelledBy' : 'Button requires a label');
+  for (const v of [describedBy, labelledBy]) if (v && !SAFE_ID.test(v)) throw new TypeError('Button aria references must be ids');
+  if (force && !['hover', 'focus', 'active'].includes(force)) throw new TypeError('Invalid force preview');
+  const spinner = '<span class="kit-ctl-spinner" aria-hidden="true"></span>';
+  const mark = icon(iconName), start = p.content === 'icon-start' || p.content === 'icon-only', end = p.content === 'icon-end';
+  const slot = (where, hasIcon) => `<span class="kit-ctl-slot" data-slot="${where}"${hasIcon ? '' : ' data-spinner-only'}>${hasIcon ? mark : ''}${spinner}</span>`;
+  const loadingAllowed = !violations(buttonContract, {...p, state: 'loading'}).length;
+  const attrs = [`class="kit-ctl-button"`, id && `id="${e(id)}"`, 'type="button"', ...Object.entries(p).map(([k, v]) => `data-${k}="${v}"`), `data-loading-allowed="${loadingAllowed}"`,
+    force && `data-force="${force}"`, p.behavior === 'toggle' && `aria-pressed="${p.state === 'pressed'}"`, p.state === 'loading' && 'aria-busy="true" aria-disabled="true"',
+    p.state === 'disabled' && 'disabled', p.content === 'icon-only' && ariaLabel && `aria-label="${e(ariaLabel)}"`, describedBy && `aria-describedby="${describedBy}"`, labelledBy && `aria-labelledby="${labelledBy}"`].filter(Boolean).join(' ');
+  const inner = p.content === 'icon-only' ? slot('start', true) : `${p.content === 'text' ? slot('start', false) : start ? slot('start', true) : ''}<span class="kit-ctl-label">${e(label)}</span>${end ? slot('end', true) : ''}`;
+  return `<span class="kit-ctl-button-host" data-ctl="button" data-state="${p.state}"><button ${attrs}>${inner}</button><span class="kit-ctl-sr" role="status" aria-live="polite">${p.state === 'loading' ? '처리 중입니다.' : ''}</span></span>`;
+}
+
+/** 브라우저에서 붙는 동작. loading은 disabled가 아니라 aria-disabled라 포커스를 유지하고 클릭만 막는다. */
+function attachButton(root, {onPress} = {}) {
+  const button = root.querySelector('button'), live = root.querySelector('[role="status"]');
+  if (!button) throw new TypeError('Button root is incomplete');
+  const refresh = () => {
+    const state = button.disabled ? 'disabled' : button.getAttribute('aria-busy') === 'true' ? 'loading' : button.getAttribute('aria-pressed') === 'true' ? 'pressed' : 'default';
+    root.dataset.state = state; button.dataset.state = state;
+  };
+  const setLoading = on => {
+    if (on && button.dataset.loadingAllowed === 'false') throw new RangeError('BTN_LOADING_NO_SLOT: this appearance has no icon slot for a spinner');
+    if (button.disabled) return;
+    button.setAttribute('aria-busy', String(on));
+    if (on) button.setAttribute('aria-disabled', 'true'); else button.removeAttribute('aria-disabled');
+    if (live) live.textContent = on ? '처리 중입니다.' : '';
+    refresh();
+  };
+  const setDisabled = on => { button.disabled = on; if (on) { button.removeAttribute('aria-busy'); button.removeAttribute('aria-disabled'); if (live) live.textContent = ''; } refresh(); };
+  const setPressed = on => { if (button.dataset.behavior !== 'toggle') throw new RangeError('BTN_PRESSED_ACTION: only a toggle has a pressed state'); button.setAttribute('aria-pressed', String(on)); refresh(); };
+  button.addEventListener('click', event => {
+    if (button.getAttribute('aria-disabled') === 'true') { event.preventDefault(); event.stopImmediatePropagation(); return; }
+    if (button.dataset.behavior === 'toggle') setPressed(button.getAttribute('aria-pressed') !== 'true');
+    if (typeof onPress === 'function') onPress({id: button.id, pressed: button.getAttribute('aria-pressed') === 'true'});
+  });
+  return {setLoading, setDisabled, setPressed};
+}
+const buttonRuntime = attachButton.toString();
+
+const solid = `.kit-ctl-button[data-appearance=solid]{background:var(--b-solid-bg);color:var(--b-solid-fg);border-color:var(--b-solid-bg)}`;
+const buttonStyles = `${baseStyles}${sizeCSS('.kit-ctl-button')}
+.kit-ctl-button-host{display:inline-flex;position:relative;max-width:100%}
+.kit-ctl-button[data-tone=action]{--b-solid-bg:var(--kit-action);--b-solid-fg:var(--kit-onAction);--b-solid-hover:var(--kit-action-hover);--b-solid-hover-fg:var(--kit-onActionHover);--b-ink:var(--kit-link);--b-edge:var(--kit-action);--b-tint:var(--kit-soft)}
+.kit-ctl-button[data-tone=neutral]{--b-solid-bg:var(--kit-text);--b-solid-fg:var(--kit-surface);--b-solid-hover:var(--kit-muted);--b-solid-hover-fg:var(--kit-surface);--b-ink:var(--kit-text);--b-edge:var(--kit-control-border);--b-tint:var(--kit-card-active)}
+.kit-ctl-button[data-tone=danger]{--b-solid-bg:var(--kit-danger);--b-solid-fg:var(--kit-surface);--b-solid-hover:var(--kit-danger);--b-solid-hover-fg:var(--kit-surface);--b-ink:var(--kit-danger);--b-edge:var(--kit-danger);--b-tint:var(--kit-danger-soft)}
+.kit-ctl-button{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:var(--ctl-h);padding-inline:var(--ctl-px);gap:var(--ctl-gap);max-width:100%;border:1px solid transparent;border-radius:var(--kit-radius);background:transparent;color:var(--b-ink);font:inherit;font-size:var(--ctl-font);font-weight:var(--kit-bw,600);line-height:1.2;word-break:keep-all;cursor:pointer;text-align:center;transition:box-shadow var(--kit-dur,150ms),transform var(--kit-dur,150ms),background-color var(--kit-dur,150ms)}
+.kit-ctl-button[data-shape=square]{border-radius:0}.kit-ctl-button[data-shape=pill]{border-radius:999px}
+.kit-ctl-button .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon);flex:none}
+.kit-ctl-slot{display:inline-flex;align-items:center;flex:none}.kit-ctl-slot .kit-ctl-spinner,.kit-ctl-button[data-state=loading] .kit-ctl-slot .kit-icon{display:none}.kit-ctl-button[data-state=loading] .kit-ctl-slot .kit-ctl-spinner{display:inline-block}.kit-ctl-slot[data-spinner-only]{display:none}.kit-ctl-button[data-state=loading] .kit-ctl-slot[data-spinner-only]{display:inline-flex}
+.kit-ctl-button[data-content=icon-only]{width:var(--ctl-h);padding-inline:0}
+${solid}
+.kit-ctl-button[data-appearance=outline]{border-color:var(--b-edge)}
+.kit-ctl-button[data-appearance=soft]{background:var(--b-tint)}
+.kit-ctl-button[data-appearance=link]{min-height:0;padding:0;border-radius:var(--kit-radius);text-decoration:underline;text-underline-offset:.2em}
+.kit-ctl-button[data-appearance=link][data-content=icon-start],.kit-ctl-button[data-appearance=link][data-content=icon-end]{width:auto}
+.kit-ctl-button${hover}:not(:disabled):not([aria-disabled=true]){transform:translateY(var(--kit-lift,0px))}
+.kit-ctl-button[data-appearance=solid]${hover}:not(:disabled):not([aria-disabled=true]){background:var(--b-solid-hover);color:var(--b-solid-hover-fg);box-shadow:inset 0 0 0 2px var(--kit-surface)}
+.kit-ctl-button:not([data-appearance=solid])${hover}:not(:disabled):not([aria-disabled=true]){box-shadow:inset 0 0 0 1px currentColor}
+.kit-ctl-button[data-appearance=outline]${hover}:not(:disabled):not([aria-disabled=true]){border-color:var(--kit-control-hover-border)}
+.kit-ctl-button${active}:not(:disabled):not([aria-disabled=true]){transform:translateY(1px)}
+.kit-ctl-button[data-appearance=solid]${active}:not(:disabled):not([aria-disabled=true]){background:var(--kit-action-active);box-shadow:inset 0 0 0 3px var(--kit-surface)}
+.kit-ctl-button[data-appearance=solid][data-tone=neutral]${active},.kit-ctl-button[data-appearance=solid][data-tone=danger]${active}{background:var(--b-solid-bg)}
+.kit-ctl-button:not([data-appearance=solid])${active}:not(:disabled):not([aria-disabled=true]){background:var(--b-tint);box-shadow:inset 0 0 0 2px currentColor}
+.kit-ctl-button[aria-pressed=true]{box-shadow:inset 0 0 0 2px currentColor}.kit-ctl-button[aria-pressed=true]:not([data-appearance=solid]){background:var(--b-tint)}.kit-ctl-button[aria-pressed=true][data-appearance=solid]{box-shadow:inset 0 0 0 3px var(--kit-surface)}
+${focusRing('.kit-ctl-button')}
+.kit-ctl-button[aria-disabled=true]{cursor:progress}
+.kit-ctl-button:disabled{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);border-color:var(--kit-control-disabled-bg);box-shadow:none;cursor:not-allowed}
+.kit-ctl-button[data-appearance=ghost]:disabled,.kit-ctl-button[data-appearance=link]:disabled{background:transparent;border-color:transparent}
+.kit-ctl-button[data-appearance=outline]:disabled{background:transparent;border-color:var(--kit-control-disabled-fg)}
+@media(max-width:640px){.kit-ctl-button{max-width:100%}}`.replace(/\n/g, '');
+
+const buttonExamples = Object.freeze([
+  {label: '저장'}, {label: '취소', appearance: 'outline', tone: 'neutral'}, {label: '삭제', appearance: 'soft', tone: 'danger'},
+  {label: '더 보기', appearance: 'ghost', content: 'icon-end', icon: 'chevron-right'}, {label: '자세히', appearance: 'link', content: 'icon-end', icon: 'arrow-right'},
+  {label: '즐겨찾기', behavior: 'toggle', appearance: 'outline', content: 'icon-start', icon: 'star'}, {ariaLabel: '검색', content: 'icon-only', icon: 'search', appearance: 'soft', tone: 'neutral'},
+]);
+
+const buttonMaterial = componentMaterial(buttonContract, {
+  module: 'src/materials/button.mjs', renderExport: 'renderButton', key: 'button-control', styles: buttonStyles, examples: buttonExamples.map(x => ({...x})),
+  responsive: {strategy: 'fluid', note: '글자는 줄바꿈하지 않고 max-width:100% 안에서 줄어든다. 크기별 높이는 밀도 토큰에서 나온다.'},
+  a11y: {rules: ['R05', 'R16'], role: 'button (aria-pressed for toggle, aria-busy + aria-disabled while loading)', keyboard: 'Enter/Space activate; loading keeps focus and ignores activation'},
+  validation: {rules: ['R05'], codes: ['BTN_LOADING_NO_SLOT', 'BTN_ICON_NAME', ...buttonContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:14'], ext: {group: 'form', required: ['label']},
+});
+
+exports.buttonContract = buttonContract;
+exports.renderButton = renderButton;
+exports.attachButton = attachButton;
+exports.buttonRuntime = buttonRuntime;
+exports.buttonStyles = buttonStyles;
+exports.buttonExamples = buttonExamples;
+exports.buttonMaterial = buttonMaterial;
+};
+__defs["materials/card.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {renderButton} = __m("materials/button.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Card: 외형(표면 처리)·모양·크기(안쪽 여백과 글자)·기능(전체가 누를 수 있는가, 미디어, 하단 동작)·상태를 따로 둔다. */
+const cardContract = defineContract({
+  id: 'component:card-surface', label: 'Card',
+  inputFields: ['id', 'title', 'body', 'meta', 'href', 'mediaIcon', 'actions', 'message', 'force'],
+  axes: {
+    appearance: ['outline', 'filled', 'elevated', 'flat'], shape: ['square', 'soft', 'round'], size: SIZES,
+    behavior: ['static', 'link', 'selectable'], media: ['none', 'top', 'start'], footer: ['none', 'actions'],
+    state: ['default', 'selected', 'loading', 'error', 'disabled'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['behavior', 'media', 'footer'], state: ['state']},
+  defaults: {appearance: 'outline', shape: 'soft', size: 'medium', behavior: 'static', media: 'none', footer: 'none', state: 'default'},
+  states: ['default', 'hover', 'focus', 'active', 'selected', 'loading', 'error', 'disabled'],
+  transitions: [
+    {from: 'default', to: 'hover', trigger: 'pointer enter (link, selectable)'}, {from: 'default', to: 'focus', trigger: 'Tab to the card hit target'},
+    {from: 'hover', to: 'active', trigger: 'pointer down'}, {from: 'default', to: 'selected', trigger: 'click | Space/Enter on selectable'}, {from: 'selected', to: 'default', trigger: 'click | Space/Enter on selectable'},
+  ],
+  forbidden: [
+    {id: 'CARD_SELECTED_NOT_SELECTABLE', when: {state: 'selected', behavior: ['static', 'link']}, why: 'selected는 selectable 카드만 가진다: 눌러도 바뀌지 않는 카드가 선택된 모양이면 안 된다'},
+    {id: 'CARD_FLAT_SELECTABLE', when: {appearance: 'flat', behavior: 'selectable'}, why: 'flat에는 표면이 없어 선택 테두리가 허공에 떠 보인다'},
+    {id: 'CARD_FLAT_SHAPE', when: {appearance: 'flat', shape: ['square', 'round']}, why: 'flat에는 표면이 없어 모서리 모양이 보이지 않으므로 기본 모양 하나만 둔다'},
+    {id: 'CARD_NESTED_INTERACTIVE', when: {behavior: ['link', 'selectable'], footer: 'actions'}, why: '카드 전체가 링크·버튼인데 안에 또 버튼을 두면 중첩 인터랙티브가 되어 키보드와 스크린 리더가 어느 쪽인지 가를 수 없다'},
+    {id: 'CARD_INERT_ACTIONS', when: {state: ['loading', 'disabled'], footer: 'actions'}, why: '로딩·비활성 카드의 하단 동작은 누를 수 없는데 보이기만 한다'},
+    {id: 'CARD_DISABLED_STATIC', when: {state: 'disabled', behavior: 'static'}, why: '누를 수 없는 카드에는 끌 동작이 없다: 비활성은 link·selectable에서만 뜻이 있다'},
+    {id: 'CARD_START_COMPACT', when: {media: 'start', size: 'compact'}, why: 'compact의 안쪽 여백에서는 가로 미디어 칸과 글 칸이 나란히 서지 못한다'},
+  ],
+  unsupported: ['drag handle', 'expandable body', 'image media (icon tile only)'],
+  pairs: [
+    ['--kit-text', '--kit-surface', 7, 'title'], ['--kit-muted', '--kit-surface', 4.5, 'body'], ['--kit-muted', '--kit-card-hover', 4.5, 'body hover'], ['--kit-muted', '--kit-card-active', 4.5, 'body active/filled'],
+    ['--kit-danger', '--kit-danger-soft', 4.5, 'error message'], ['--kit-link', '--kit-surface', 4.5, 'link title'], ['--kit-action', '--kit-surface', 3, 'selected ring'], ['--kit-focus', '--kit-surface', 3, 'focus ring'],
+    ['--kit-control-disabled-fg', '--kit-control-disabled-bg', 3, 'disabled'],
+  ],
+});
+
+function renderCard(input) {
+  const {id, title, body = '', meta = '', href = '#', mediaIcon = 'sparkles', actions = [], message = '', force = ''} = input ?? {};
+  const p = resolveProps(cardContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Card requires a lowercase kebab-case id');
+  if (!String(title ?? '').trim()) throw new TypeError('Card requires a title');
+  if (p.state === 'error' && !String(message).trim()) throw new TypeError('CARD_ERROR_MESSAGE: error state needs a message');
+  if (p.footer === 'actions' && !(Array.isArray(actions) && actions.length >= 1 && actions.length <= 2)) throw new TypeError('CARD_ACTIONS: footer actions need one or two actions');
+  if (p.footer === 'none' && actions.length) throw new TypeError('CARD_ACTIONS: actions need footer=actions');
+  if (force && !['hover', 'focus', 'active'].includes(force)) throw new TypeError('Invalid force preview');
+  const inert = p.state === 'loading' || p.state === 'disabled';
+  const label = e(title);
+  const hit = p.behavior === 'link' ? (inert ? `<span class="kit-ctl-card-hit" role="link" aria-disabled="true">${label}</span>` : `<a class="kit-ctl-card-hit" href="${e(href)}">${label}</a>`)
+    : p.behavior === 'selectable' ? `<button type="button" class="kit-ctl-card-hit" aria-pressed="${p.state === 'selected'}"${inert ? ' aria-disabled="true" disabled' : ''}>${label}</button>` : label;
+  const skeleton = '<span class="kit-ctl-skel" aria-hidden="true"></span><span class="kit-ctl-skel" data-short aria-hidden="true"></span>';
+  const text = p.state === 'loading' ? `${skeleton}<span class="kit-ctl-sr" role="status">불러오는 중입니다.</span>` : `${meta ? `<p class="kit-ctl-card-meta">${e(meta)}</p>` : ''}<h3 class="kit-ctl-card-title">${hit}</h3>${body ? `<p class="kit-ctl-card-text">${e(body)}</p>` : ''}${p.state === 'error' ? `<p class="kit-ctl-card-error">${icon('alert-circle')}<span>${e(message)}</span></p>` : ''}`;
+  const foot = p.footer === 'actions' ? `<div class="kit-ctl-card-footer">${actions.map((a, i) => renderButton({appearance: i ? 'ghost' : 'soft', tone: 'action', ...a, size: p.size, content: 'text', behavior: 'action', shape: 'soft', state: 'default'})).join('')}</div>` : '';
+  const mark = p.media === 'none' ? '' : `<div class="kit-ctl-card-media" aria-hidden="true">${icon(mediaIcon)}</div>`;
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  return `<article class="kit-ctl-card" data-ctl="card" id="${e(id)}" ${attrs}${force ? ` data-force="${force}"` : ''}${p.state === 'loading' ? ' aria-busy="true"' : ''}>${mark}<div class="kit-ctl-card-body">${text}${foot}</div>${p.behavior === 'selectable' ? `<span class="kit-ctl-card-check" aria-hidden="true">${icon('check')}</span>` : ''}</article>`;
+}
+
+/** selectable 카드의 선택 전환. 카드 전체를 덮는 단일 버튼이 aria-pressed를 갖고, Space·Enter는 네이티브 버튼이 처리한다. */
+function attachCard(root, {onSelect} = {}) {
+  const hit = root.querySelector('button.kit-ctl-card-hit');
+  if (!hit) return {toggle: () => {}};
+  const set = on => { hit.setAttribute('aria-pressed', String(on)); root.dataset.state = on ? 'selected' : 'default'; };
+  hit.addEventListener('click', () => { const on = hit.getAttribute('aria-pressed') !== 'true'; set(on); if (typeof onSelect === 'function') onSelect({id: root.id, selected: on}); });
+  return {toggle: () => hit.click()};
+}
+const cardRuntime = attachCard.toString();
+
+const cardStyles = `${baseStyles}${sizeCSS('.kit-ctl-card')}
+.kit-ctl-card{position:relative;display:flex;align-items:flex-start;gap:var(--ctl-px);box-sizing:border-box;min-width:0;padding:var(--ctl-px);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font-size:var(--ctl-font);transition:background-color var(--kit-dur,150ms),box-shadow var(--kit-dur,150ms),transform var(--kit-dur,150ms)}
+.kit-ctl-card[data-shape=square]{border-radius:0}.kit-ctl-card[data-shape=round]{border-radius:calc(var(--kit-radius) * 1.8)}
+.kit-ctl-card[data-media=top]{flex-direction:column}
+.kit-ctl-card[data-appearance=filled]{background:var(--kit-card-hover);border-color:transparent}
+.kit-ctl-card[data-appearance=elevated]{border-color:transparent;box-shadow:var(--kit-shadow-hover)}
+.kit-ctl-card[data-appearance=flat]{border-color:transparent;background:transparent}
+.kit-ctl-card-media{display:grid;place-items:center;flex:none;box-sizing:content-box;width:calc(var(--ctl-icon) * 2);height:calc(var(--ctl-icon) * 2);border-radius:calc(var(--kit-radius) * .6);background:var(--kit-soft);color:var(--kit-link)}
+.kit-ctl-card .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon);flex:none}
+.kit-ctl-card-body{display:grid;gap:var(--kit-sp-near);min-width:0;flex:1}
+.kit-ctl-card-title{margin:0;font-size:var(--kit-t-sub);line-height:1.3;font-weight:700;word-break:keep-all;overflow-wrap:anywhere}
+.kit-ctl-card-text{margin:0;color:var(--kit-muted);word-break:keep-all;overflow-wrap:anywhere}.kit-ctl-card-meta{margin:0;color:var(--kit-muted);font-size:var(--kit-t-caption)}
+.kit-ctl-card-footer{display:flex;flex-wrap:wrap;gap:var(--kit-sp-near);margin-top:var(--kit-sp-near)}
+.kit-ctl-card-hit{display:inline;padding:0;border:0;background:none;color:inherit;font:inherit;font-weight:inherit;text-align:start;text-decoration:none;cursor:pointer}
+.kit-ctl-card-hit::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.kit-ctl-card[data-behavior=link] .kit-ctl-card-hit{color:var(--kit-link)}
+.kit-ctl-card[data-behavior=link] .kit-ctl-card-hit:is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.2em}
+.kit-ctl-card:is([data-behavior=link],[data-behavior=selectable])${hover}:not([data-state=disabled]):not([data-state=loading]){background:var(--kit-card-hover);transform:translateY(var(--kit-lift,0px));box-shadow:inset 0 0 0 1px var(--kit-border)}
+.kit-ctl-card[data-appearance=elevated]:is([data-behavior=link],[data-behavior=selectable])${hover}{box-shadow:var(--kit-shadow-hover),inset 0 0 0 1px var(--kit-border)}
+.kit-ctl-card:is([data-behavior=link],[data-behavior=selectable])${active}:not([data-state=disabled]):not([data-state=loading]){background:var(--kit-card-active);transform:translateY(1px)}
+.kit-ctl-card:has(.kit-ctl-card-hit:focus-visible),.kit-ctl-card[data-force=focus]{outline:3px solid var(--kit-focus);outline-offset:2px}
+.kit-ctl-card .kit-ctl-card-hit:focus-visible{outline:0}
+.kit-ctl-card-check{display:none;position:absolute;inset:var(--kit-sp-near) var(--kit-sp-near) auto auto;place-items:center;width:calc(var(--ctl-icon) + 4px);height:calc(var(--ctl-icon) + 4px);border-radius:50%;background:var(--kit-action);color:var(--kit-onAction)}
+.kit-ctl-card[data-state=selected] .kit-ctl-card-check{display:grid}.kit-ctl-card[data-state=selected]{border-color:var(--kit-action);box-shadow:inset 0 0 0 1px var(--kit-action);background:var(--kit-card-active)}
+.kit-ctl-card[data-state=error]{background:var(--kit-danger-soft);border-color:var(--kit-danger)}
+.kit-ctl-card-error{display:flex;gap:var(--kit-sp-tight);margin:0;color:var(--kit-danger);font-weight:600;font-size:var(--kit-t-small)}.kit-ctl-card-error .kit-icon{margin-top:2px}
+.kit-ctl-card[data-state=loading]{background:var(--kit-surface)}
+.kit-ctl-skel{display:block;height:var(--kit-sp-item);border-radius:var(--kit-sp-tight);background:var(--kit-card-active);animation:kit-ctl-pulse 1.4s ease-in-out infinite}.kit-ctl-skel[data-short]{width:60%}.kit-ctl-card-body>.kit-ctl-skel{margin-block:var(--kit-sp-tight)}
+@keyframes kit-ctl-pulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.kit-ctl-skel{animation:none}}
+.kit-ctl-card[data-state=disabled]{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);border-color:var(--kit-control-disabled-bg);box-shadow:none;border-style:dashed}
+.kit-ctl-card[data-state=disabled] :is(.kit-ctl-card-text,.kit-ctl-card-meta,.kit-ctl-card-hit,.kit-ctl-card-media){color:var(--kit-control-disabled-fg)}.kit-ctl-card[data-state=disabled] .kit-ctl-card-media{background:transparent}.kit-ctl-card[data-state=disabled] .kit-ctl-card-hit{cursor:not-allowed}
+@media(max-width:640px){.kit-ctl-card[data-media=start]{flex-direction:column}}`.replace(/\n/g, '');
+
+const cardExamples = Object.freeze([
+  {id: 'ex-plain', title: '프로젝트 개요', body: '이번 분기에 진행하는 세 가지 일을 한곳에 모았습니다.', meta: '업데이트 2026-11-22'},
+  {id: 'ex-link', title: '디자인 시스템 문서', body: '재료 계약과 색 토큰 읽기 API를 확인하세요.', behavior: 'link', href: '#docs', media: 'start', mediaIcon: 'book', appearance: 'elevated'},
+  {id: 'ex-pick', title: '스타터 플랜', body: '개인과 작은 팀을 위한 기본 구성입니다.', behavior: 'selectable', media: 'top', mediaIcon: 'zap'},
+  {id: 'ex-act', title: '새 알림', body: '댓글 두 개가 도착했습니다.', footer: 'actions', actions: [{label: '열기'}, {label: '나중에'}], appearance: 'filled'},
+]);
+
+const cardMaterial = componentMaterial(cardContract, {
+  module: 'src/materials/card.mjs', renderExport: 'renderCard', key: 'card-surface', styles: cardStyles, examples: cardExamples.map(x => structuredClone(x)),
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: '640px 이하에서 가로 미디어 카드는 세로로 쌓인다. 글은 keep-all과 overflow-wrap으로 넘치지 않는다.'},
+  a11y: {rules: ['R05', 'R18'], role: 'article; link card = stretched link; selectable card = toggle button (aria-pressed)', keyboard: 'Tab to the single hit target; Enter follows the link; Space/Enter toggles a selectable card'},
+  validation: {rules: ['R18'], codes: ['CARD_ERROR_MESSAGE', 'CARD_ACTIONS', ...cardContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:22'], ext: {group: 'content', required: ['id', 'title']}, dependencies: ['component:button-control'],
+});
+
+exports.cardContract = cardContract;
+exports.renderCard = renderCard;
+exports.attachCard = attachCard;
+exports.cardRuntime = cardRuntime;
+exports.cardStyles = cardStyles;
+exports.cardExamples = cardExamples;
+exports.cardMaterial = cardMaterial;
+};
 __defs["materials/contract.mjs"] = function (exports, __m) {
 /**
  * 재료 계약(ADR 0011). 엔진이 조립하는 모든 디자인 재료가 같은 모양의 기록 하나를 가진다.
@@ -4851,6 +5163,790 @@ exports.materialId = materialId;
 exports.combinationsOf = combinationsOf;
 exports.isCompletePreset = isCompletePreset;
 exports.defineMaterial = defineMaterial;
+};
+__defs["materials/control-kit.mjs"] = function (exports, __m) {
+/** 2.6.0 컴포넌트 재료(Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback)가 함께 쓰는 계약 도구.
+ *
+ *  - 속성은 개념별로 나눠 둔다: 외형(appearance)·모양(shape)·크기(size)·기능(function)·상태(state)·맥락(context). 하나가 다른 하나를 대신하지 않는다.
+ *  - 금지 조합은 데이터(`forbidden`)로 선언하고, 렌더러·테스트·증거 페이지가 같은 목록을 읽는다.
+ *  - 크기별 높이·좌우 패딩·간격·글자 역할·아이콘은 `CONTROL_SIZES`(typography.mjs)와 `SPACE` 토큰 이름(spacing.mjs)에서 읽는다. 이 파일은 px 값을 새로 정하지 않는다.
+ *  - Core 파일이다: DOM 전역을 읽지 않는다(tests/core-boundary.test.mjs). 브라우저에서 도는 코드는 각 재료의 `attach*` 함수 하나이고, 문자열로 직렬화되므로 바깥 이름을 참조하지 않는다. */
+const {defineMaterial} = __m("materials/contract.mjs");
+const {CONTROL_SIZES, CONTROL_SIZE_NAMES} = __m("materials/typography.mjs");
+const {TOKEN} = __m("spacing.mjs");
+const {escapeHTML} = __m("escape-html.mjs");
+
+const e = escapeHTML;
+const SIZES = CONTROL_SIZE_NAMES;
+const SHAPES = Object.freeze(['square', 'soft', 'pill']);
+const CONCEPTS = Object.freeze(['appearance', 'shape', 'size', 'function', 'state', 'context']);
+const SAFE_ID = /^[a-z][a-z0-9-]*$/;
+
+class ContractError extends RangeError {
+  constructor(contract, rules) {
+    super(`${contract.id}: ${rules.map(r => `${r.id} (${r.why})`).join('; ')}`);
+    this.name = 'ContractError'; this.code = rules[0].id; this.rules = rules;
+  }
+}
+
+/** `axes`: 속성별 허용 값. `concepts`: 개념 → 속성 이름 목록(모든 속성이 정확히 한 개념에 속한다). `forbidden`: [{id, when: {속성: 값|값[]}, why}] — when의 모든 조건이 맞으면 거부. */
+function defineContract({id, label, axes, concepts, defaults, forbidden, states, transitions, inputFields = [], unsupported = [], pairs = [], tokenMap = {}}) {
+  const attrs = Object.keys(axes), claimed = Object.values(concepts).flat();
+  if (inputFields.some(f => typeof f !== 'string' || attrs.includes(f)) || new Set(inputFields).size !== inputFields.length) throw new Error(`${id}: inputFields must be unique names outside axes`);
+  for (const c of Object.keys(concepts)) if (!CONCEPTS.includes(c)) throw new Error(`${id}: unknown concept ${c}`);
+  for (const c of ['appearance', 'shape', 'size', 'function', 'state']) if (!concepts[c]?.length) throw new Error(`${id}: concept ${c} has no attribute`);
+  if (claimed.length !== new Set(claimed).size || claimed.length !== attrs.length || attrs.some(a => !claimed.includes(a))) throw new Error(`${id}: every attribute belongs to exactly one concept`);
+  for (const a of attrs) if (!Object.hasOwn(defaults, a) || !axes[a].includes(defaults[a])) throw new Error(`${id}: default for ${a}`);
+  const seen = new Set();
+  for (const r of forbidden) {
+    if (seen.has(r.id) || !r.why) throw new Error(`${id}: forbidden rule ${r.id} needs a unique id and a why`);
+    seen.add(r.id);
+    for (const [a, v] of Object.entries(r.when)) for (const x of [v].flat()) if (!axes[a]?.includes(x)) throw new Error(`${id}: ${r.id} names ${a}=${x}, which is not a variant`);
+  }
+  for (const s of states) if (!s) throw new Error(`${id}: empty state`);
+  return Object.freeze({
+    id, label, version: '1.0.0', since: '2.6.0',
+    axes: Object.freeze(Object.fromEntries(attrs.map(a => [a, Object.freeze([...axes[a]])]))),
+    concepts: Object.freeze(Object.fromEntries(Object.entries(concepts).map(([c, v]) => [c, Object.freeze([...v])]))),
+    defaults: Object.freeze({...defaults}), forbidden: Object.freeze(forbidden.map(r => Object.freeze({...r}))),
+    states: Object.freeze([...states]), transitions: Object.freeze(transitions.map(t => Object.freeze({...t}))), inputFields: Object.freeze([...inputFields]), unsupported: Object.freeze([...unsupported]),
+    pairs: Object.freeze(pairs.map(p => Object.freeze([...p]))), tokenMap: Object.freeze({...tokenMap}),
+  });
+}
+
+const matches = (rule, props) => Object.entries(rule.when).every(([a, v]) => [v].flat().includes(props[a]));
+const violations = (contract, props) => contract.forbidden.filter(r => matches(r, props));
+
+/** 속성 값 검사 + 기본값 채움. 모르는 속성·허용 밖의 값은 TypeError. 금지 조합은 ContractError. */
+function resolveProps(contract, input = {}) {
+  for (const key of Object.keys(input ?? {})) if (!Object.hasOwn(contract.axes, key) && !contract.inputFields.includes(key)) throw new TypeError(`${contract.id}: unknown attribute ${key}`);
+  const out = {};
+  for (const a of Object.keys(contract.axes)) {
+    const v = input[a] ?? contract.defaults[a];
+    if (!contract.axes[a].includes(v)) throw new TypeError(`${contract.id}: ${a}=${JSON.stringify(v)} is not one of ${contract.axes[a].join(', ')}`);
+    out[a] = v;
+  }
+  const hit = violations(contract, out);
+  if (hit.length) throw new ContractError(contract, hit);
+  return out;
+}
+
+/** 속성 값의 곱 전체(조합 수와 같은 집합). 금지 조합도 포함한다. */
+function* allCombinations(contract) {
+  const names = Object.keys(contract.axes), pick = {};
+  function* walk(i) {
+    if (i === names.length) { yield {...pick}; return; }
+    for (const v of contract.axes[names[i]]) { pick[names[i]] = v; yield* walk(i + 1); }
+  }
+  yield* walk(0);
+}
+const legalCombinations = contract => [...allCombinations(contract)].filter(p => !violations(contract, p).length);
+/** raw = `combinationsOf`가 세는 값, legal = 금지 조합을 뺀 값. 레지스트리의 속성 조합 수는 raw다. */
+function combinationStats(contract) {
+  const all = [...allCombinations(contract)], legal = all.filter(p => !violations(contract, p).length);
+  const perRule = Object.fromEntries(contract.forbidden.map(r => [r.id, all.filter(p => matches(r, p)).length]));
+  return {raw: all.length, legal: legal.length, rejected: all.length - legal.length, perRule};
+}
+/** 허용 값 중 `keep`만 빼고 전부: 금지 조건을 "keep이 아니면"으로 쓸 때. */
+const except = (contract, attr, ...keep) => contract.axes[attr].filter(v => !keep.includes(v));
+
+const px = n => (n < 0 ? `- ${-n}px` : `+ ${n}px`);
+/** 크기 이름 → 컨트롤 치수 변수. 값은 CONTROL_SIZES의 step·pad·gap·role·icon을 그대로 읽는다. */
+function sizeVars(name) {
+  const c = CONTROL_SIZES[name];
+  if (!c) throw new RangeError('unknown control size: ' + name);
+  return {height: c.step === 0 ? 'var(--kit-control)' : `calc(var(--kit-control) ${px(c.step)})`, padX: `var(${TOKEN[c.pad]})`, gap: `var(${TOKEN[c.gap]})`, font: `var(--kit-t-${c.role})`, icon: `${c.icon}px`};
+}
+const sizeCSS = scope => SIZES.map(n => { const v = sizeVars(n); return `${scope}[data-size=${n}]{--ctl-h:${v.height};--ctl-px:${v.padX};--ctl-gap:${v.gap};--ctl-font:${v.font};--ctl-icon:${v.icon}}`; }).join('');
+
+/** 모든 컴포넌트가 같은 방식으로 쓰는 조각: 스크린 리더 전용 글, 로딩 스피너, 포커스 링, 동작 줄이기. 스피너는 색이 아니라 회전과 부분 호(ring)로 진행을 보인다. */
+const baseStyles = `.kit-ctl-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.kit-ctl-spinner{display:inline-block;flex:none;width:var(--ctl-icon);height:var(--ctl-icon);border:2px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:kit-ctl-spin var(--kit-dur,150ms) linear infinite;animation-duration:900ms}@keyframes kit-ctl-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.kit-ctl-spinner{animation:none;border-inline-end-color:currentColor;border-style:dotted}}`;
+const focusRing = (selector, offset = '2px') => `${selector}:is(:focus-visible,[data-force=focus]){outline:3px solid var(--kit-focus);outline-offset:${offset}}`;
+/** 증거 페이지에서만 쓰는 미리보기: `data-force`는 :hover·:active·:focus-visible을 정지 화면에서 보이려는 속성이며 상태 변수가 아니다. */
+const hover = ':is(:hover,[data-force=hover])', active = ':is(:active,[data-force=active])';
+
+/** CSS 문자열이 읽는 `--kit-*` 변수 목록(재료의 tokens). */
+const varsOf = css => [...new Set([...css.matchAll(/var\((--kit-[A-Za-z0-9-]+)/g)].map(m => m[1]))].sort();
+
+/** 재료 한 장. 속성은 contract.axes가 그대로 variants다. */
+function componentMaterial(contract, {category = 'form-data-feedback', module, renderExport, key, styles, examples, a11y, responsive, validation, evidence, tags = [], ext, contexts = ['any'], dependencies = []}) {
+  return defineMaterial({
+    id: contract.id, kind: 'component', category, label: contract.label, since: contract.since, version: contract.version, contexts,
+    render: {module, export: renderExport, key},
+    variants: contract.axes, defaults: contract.defaults, tokens: varsOf(styles), dependencies,
+    states: {values: contract.states, transitions: contract.transitions},
+    responsive, a11y, validation, examples, quality: {status: 'verified', evidence},
+    tags: [...tags, ...Object.entries(contract.concepts).map(([c, attrs]) => `${c}:${attrs.join('+')}`), ...contract.forbidden.map(r => `forbidden:${r.id}`), ...contract.unsupported.map(x => `unsupported:${x}`)],
+    ext: {nodeType: contract.id.split(':')[1], group: ext.group, fields: Object.keys(contract.axes), required: ext.required},
+  });
+}
+
+/** 대비 계산. 재료의 `pairs`([전경 변수, 배경 변수 또는 mix(…), 최소 대비, 이름])를 라이트·다크 토큰 값으로 풀어 검사한다. */
+const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+const channel = v => { const s = v / 255; return s <= .04045 ? s / 12.92 : ((s + .055) / 1.055) ** 2.4; };
+const luminance = hex => { const [r, g, b] = rgb(hex).map(channel); return .2126 * r + .7152 * g + .0722 * b; };
+const contrastRatio = (a, b) => { const x = luminance(a), y = luminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+const mixHex = (a, pct, b) => '#' + rgb(a).map((v, i) => Math.round(v * pct / 100 + rgb(b)[i] * (100 - pct) / 100).toString(16).padStart(2, '0')).join('').toUpperCase();
+/** `tokens`는 resolveColorTokens().tokens(키는 --kit- 뒤 이름). ref는 `--kit-name` 또는 `mix(--kit-a 10%, --kit-b)`(CSS color-mix in srgb와 같은 식). */
+function colorOf(tokens, ref) {
+  const m = /^mix\((--kit-[A-Za-z-]+) (\d+)%, (--kit-[A-Za-z-]+)\)$/.exec(ref);
+  const get = name => { const v = tokens[name.replace(/^--kit-/, '')]; if (!/^#[0-9A-Fa-f]{6}$/.test(v ?? '')) throw new Error(`no hex token for ${name}`); return v; };
+  return m ? mixHex(get(m[1]), Number(m[2]), get(m[3])) : get(ref);
+}
+const pairRatio = (tokens, [fg, bg]) => contrastRatio(colorOf(tokens, fg), colorOf(tokens, bg));
+
+exports.e = e;
+exports.SIZES = SIZES;
+exports.SHAPES = SHAPES;
+exports.CONCEPTS = CONCEPTS;
+exports.SAFE_ID = SAFE_ID;
+exports.ContractError = ContractError;
+exports.defineContract = defineContract;
+exports.violations = violations;
+exports.resolveProps = resolveProps;
+exports.allCombinations = allCombinations;
+exports.legalCombinations = legalCombinations;
+exports.combinationStats = combinationStats;
+exports.except = except;
+exports.sizeVars = sizeVars;
+exports.sizeCSS = sizeCSS;
+exports.baseStyles = baseStyles;
+exports.focusRing = focusRing;
+exports.hover = hover;
+exports.varsOf = varsOf;
+exports.componentMaterial = componentMaterial;
+exports.contrastRatio = contrastRatio;
+exports.colorOf = colorOf;
+exports.pairRatio = pairRatio;
+};
+__defs["materials/feedback.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {renderButton} = __m("materials/button.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Feedback: 외형(표면 처리)·모양·크기·기능(배치·닫기·동작·자동 닫힘)·상태(표시·진행 중·닫힘)·맥락(의도 tone)을 따로 둔다.
+ *  tone은 색만이 아니라 아이콘 모양·숨은 접두 글·live region 역할로도 구분한다. */
+const feedbackContract = defineContract({
+  id: 'component:feedback-message', label: 'Feedback',
+  inputFields: ['id', 'message', 'title', 'actionLabel', 'dismissLabel'],
+  axes: {
+    appearance: ['soft', 'outline', 'solid', 'plain'], shape: SHAPES, size: SIZES,
+    placement: ['inline', 'banner', 'toast'], dismiss: ['none', 'button'], action: ['none', 'button'], autoDismiss: ['off', 'timed'],
+    tone: ['info', 'success', 'warning', 'danger'], state: ['visible', 'pending', 'dismissed'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['placement', 'dismiss', 'action', 'autoDismiss'], state: ['state'], context: ['tone']},
+  defaults: {appearance: 'soft', shape: 'soft', size: 'medium', placement: 'inline', dismiss: 'none', action: 'none', autoDismiss: 'off', tone: 'info', state: 'visible'},
+  states: ['visible', 'pending', 'dismissed', 'hover', 'focus', 'paused'],
+  transitions: [
+    {from: 'visible', to: 'dismissed', trigger: 'dismiss button | Escape while focused | timer (timed toast)'}, {from: 'visible', to: 'paused', trigger: 'pointer enter | focus within (timer pauses)'},
+    {from: 'paused', to: 'visible', trigger: 'pointer leave | focus leaves (timer restarts)'}, {from: 'pending', to: 'visible', trigger: 'app re-renders with the result tone'},
+  ],
+  forbidden: [
+    {id: 'FB_PLAIN_TOAST', when: {appearance: 'plain', placement: 'toast'}, why: 'toast는 페이지 위에 떠 있으므로 컨테이너가 없는 plain은 뒤 글자와 겹쳐 읽히지 않는다'},
+    {id: 'FB_BANNER_PILL', when: {placement: 'banner', shape: 'pill'}, why: '전폭 띠에 999px 모서리를 주면 양 끝이 글을 자르는 알약이 된다'},
+    {id: 'FB_TOAST_DANGER_TIMED', when: {placement: 'toast', tone: 'danger', autoDismiss: 'timed'}, why: '오류는 읽고 대응할 때까지 남아야 한다: 저절로 사라지는 오류는 놓친 사용자가 원인을 알 수 없다'},
+    {id: 'FB_TOAST_ACTION_TIMED', when: {placement: 'toast', action: 'button', autoDismiss: 'timed'}, why: '동작 버튼이 있는 toast가 사라지면 누를 기회를 잃는다(WCAG 2.2.1)'},
+    {id: 'FB_TOAST_STUCK', when: {placement: 'toast', dismiss: 'none', autoDismiss: 'off'}, why: '닫는 길이 없는 toast는 화면에 영원히 남는다'},
+    {id: 'FB_TIMED_NOT_TOAST', when: {placement: ['inline', 'banner'], autoDismiss: 'timed'}, why: '문서 흐름 안의 메시지가 저절로 사라지면 아래 내용이 끌려 올라와 읽던 자리가 밀린다'},
+    {id: 'FB_PENDING_DISMISS', when: {state: 'pending', dismiss: 'button'}, why: '진행 중인 일의 알림을 닫으면 결과를 알릴 곳이 없어진다'},
+    {id: 'FB_PENDING_TONE', when: {state: 'pending', tone: ['success', 'warning', 'danger']}, why: '진행 중에는 결과가 없다: 성공·주의·오류 의미를 미리 줄 수 없다'},
+    {id: 'FB_PENDING_TIMED', when: {state: 'pending', autoDismiss: 'timed'}, why: '끝나지 않은 일의 알림이 시간으로 사라지면 진행을 놓친다'},
+    {id: 'FB_DISMISSED_UNREACHABLE', when: {state: 'dismissed', dismiss: 'none', autoDismiss: 'off'}, why: '닫는 방법이 없는데 닫힌 상태가 되는 경로가 없다'},
+  ],
+  unsupported: ['toast queue and stacking manager', 'swipe to dismiss', 'progress percentage (use progress)'],
+  pairs: [
+    ['--kit-text', '--kit-soft', 7, 'soft info'], ['--kit-text', '--kit-danger-soft', 7, 'soft danger'], ['--kit-text', 'mix(--kit-success 10%, --kit-surface)', 7, 'soft success'],
+    ['--kit-text', 'mix(--kit-warning 10%, --kit-surface)', 7, 'soft warning'], ['--kit-surface', '--kit-info', 4.5, 'solid info'], ['--kit-surface', '--kit-success', 4.5, 'solid success'],
+    ['--kit-surface', '--kit-warning', 4.5, 'solid warning'], ['--kit-surface', '--kit-danger', 4.5, 'solid danger'], ['--kit-info', '--kit-surface', 4.5, 'plain·outline info'],
+    ['--kit-success', '--kit-surface', 4.5, 'plain·outline success'], ['--kit-warning', '--kit-surface', 4.5, 'plain·outline warning'], ['--kit-danger', '--kit-surface', 4.5, 'plain·outline danger'], ['--kit-focus', '--kit-surface', 3, 'focus ring'],
+  ],
+});
+
+const FEEDBACK_TONES = Object.freeze({info: {icon: 'info', word: '안내', role: 'status'}, success: {icon: 'check-circle', word: '성공', role: 'status'}, warning: {icon: 'alert-triangle', word: '주의', role: 'status'}, danger: {icon: 'alert-circle', word: '오류', role: 'alert'}});
+const FEEDBACK_DURATION_MS = 8000;
+
+function renderFeedback(input) {
+  const {id, message, title = '', actionLabel = '', dismissLabel = '닫기'} = input ?? {};
+  const p = resolveProps(feedbackContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Feedback requires a lowercase kebab-case id');
+  if (!String(message ?? '').trim()) throw new TypeError('FEEDBACK_MESSAGE: feedback needs message text');
+  if (p.action === 'button' && !String(actionLabel).trim()) throw new TypeError('FEEDBACK_ACTION: action=button needs actionLabel');
+  if (p.action === 'none' && actionLabel) throw new TypeError('FEEDBACK_ACTION: actionLabel needs action=button');
+  const tone = FEEDBACK_TONES[p.tone], pending = p.state === 'pending';
+  const lead = pending ? '<span class="kit-ctl-spinner" aria-hidden="true"></span>' : icon(tone.icon);
+  const word = pending ? '진행 중' : tone.word;
+  const act = p.action === 'button' ? `<span class="kit-ctl-feedback-action">${renderButton({label: actionLabel, appearance: 'outline', tone: 'neutral', size: p.size === 'large' ? 'small' : 'compact'})}</span>` : '';
+  const dismiss = p.dismiss === 'button' ? `<button type="button" class="kit-ctl-feedback-close" data-dismiss aria-label="${e(dismissLabel)}">${icon('x')}</button>` : '';
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  return `<div class="kit-ctl-feedback" data-ctl="feedback" id="${e(id)}" role="${tone.role}" ${attrs}${pending ? ' aria-busy="true"' : ''}${p.autoDismiss === 'timed' ? ` data-duration="${FEEDBACK_DURATION_MS}"` : ''}${p.state === 'dismissed' ? ' hidden' : ''}><span class="kit-ctl-feedback-icon">${lead}</span><div class="kit-ctl-feedback-body"><p class="kit-ctl-feedback-text">${title ? `<strong>${e(title)}</strong> ` : ''}<span class="kit-ctl-sr">${word}: </span>${e(message)}</p>${act}</div>${dismiss}</div>`;
+}
+
+/** 브라우저에서 붙는 동작. 닫기 버튼·Escape로 숨기며 포커스를 옮기고, timed toast는 포인터·포커스 중에 타이머를 멈췄다가 남은 시간으로 이어간다. */
+function attachFeedback(root, {onDismiss, onAction} = {}) {
+  const doc = root.ownerDocument, view = doc.defaultView, close = root.querySelector('[data-dismiss]'), action = root.querySelector('.kit-ctl-feedback-action button');
+  let remaining = Number(root.dataset.duration) || 0, started = 0, timer = 0;
+  const dismiss = () => {
+    view.clearTimeout(timer);
+    const hadFocus = root.contains(doc.activeElement);
+    root.hidden = true; root.dataset.state = 'dismissed';
+    if (hadFocus) {
+      const target = (root.dataset.returnFocus && doc.getElementById(root.dataset.returnFocus)) || root.parentElement;
+      if (target) { if (!target.matches('a,button,input,select,textarea,[tabindex]')) target.setAttribute('tabindex', '-1'); target.focus(); }
+    }
+    if (typeof onDismiss === 'function') onDismiss({id: root.id});
+  };
+  const run = () => { if (remaining > 0 && !root.hidden) { started = view.performance.now(); timer = view.setTimeout(dismiss, remaining); } };
+  const pause = () => { if (remaining > 0 && timer) { view.clearTimeout(timer); timer = 0; remaining = Math.max(0, remaining - (view.performance.now() - started)); root.dataset.paused = 'true'; } };
+  const resume = () => { if (remaining > 0 && !timer && !root.hidden) { root.removeAttribute('data-paused'); run(); } };
+  if (close) close.addEventListener('click', dismiss);
+  if (action) action.addEventListener('click', () => { if (typeof onAction === 'function') onAction({id: root.id}); });
+  root.addEventListener('keydown', event => { if (event.key === 'Escape' && (close || remaining > 0) && !root.hidden) { event.stopPropagation(); dismiss(); } });
+  if (remaining > 0) {
+    root.addEventListener('pointerenter', pause); root.addEventListener('pointerleave', () => { if (!root.contains(doc.activeElement)) resume(); });
+    root.addEventListener('focusin', pause); root.addEventListener('focusout', event => { if (!root.contains(event.relatedTarget)) resume(); });
+    run();
+  }
+  return {dismiss};
+}
+const feedbackRuntime = attachFeedback.toString();
+
+const feedbackStyles = `${baseStyles}${sizeCSS('.kit-ctl-feedback')}
+.kit-ctl-feedback{--f-ink:var(--kit-info);--f-bg:var(--kit-soft);position:relative;display:flex;align-items:flex-start;gap:var(--ctl-gap);box-sizing:border-box;min-width:0;max-width:100%;padding:var(--ctl-gap) var(--ctl-px);border-radius:var(--kit-radius);background:var(--f-bg);color:var(--kit-text);font-size:var(--ctl-font);line-height:1.45}
+.kit-ctl-feedback[hidden]{display:none}
+.kit-ctl-feedback[data-tone=info]{--f-ink:var(--kit-info);--f-bg:var(--kit-soft)}
+.kit-ctl-feedback[data-tone=success]{--f-ink:var(--kit-success);--f-bg:color-mix(in srgb,var(--kit-success) 10%,var(--kit-surface))}
+.kit-ctl-feedback[data-tone=warning]{--f-ink:var(--kit-warning);--f-bg:color-mix(in srgb,var(--kit-warning) 10%,var(--kit-surface))}
+.kit-ctl-feedback[data-tone=danger]{--f-ink:var(--kit-danger);--f-bg:var(--kit-danger-soft)}
+.kit-ctl-feedback[data-shape=square]{border-radius:0}.kit-ctl-feedback[data-shape=pill]{border-radius:999px}
+.kit-ctl-feedback[data-appearance=soft]{border-inline-start:var(--kit-sp-tight) solid var(--f-ink)}
+.kit-ctl-feedback[data-appearance=outline]{background:var(--kit-surface);border:1px solid var(--f-ink)}
+.kit-ctl-feedback[data-appearance=solid]{background:var(--f-ink);color:var(--kit-surface)}
+.kit-ctl-feedback[data-appearance=plain]{background:transparent;padding-inline:0}
+.kit-ctl-feedback-icon{display:inline-flex;flex:none;align-items:center;min-height:calc(var(--ctl-font) * 1.45);color:var(--f-ink)}.kit-ctl-feedback[data-appearance=solid] .kit-ctl-feedback-icon{color:inherit}
+.kit-ctl-feedback .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon)}
+.kit-ctl-feedback-body{display:flex;flex:1;flex-wrap:wrap;align-items:center;gap:var(--ctl-gap);min-width:0}
+.kit-ctl-feedback-text{flex:1 1 12ch;margin:0;word-break:keep-all;overflow-wrap:anywhere}
+.kit-ctl-feedback-close{display:inline-grid;place-items:center;flex:none;width:calc(var(--ctl-icon) + var(--kit-sp-near));height:calc(var(--ctl-icon) + var(--kit-sp-near));margin-block:calc(var(--kit-sp-tight) * -1);padding:0;border:0;border-radius:var(--kit-radius);background:transparent;color:inherit;cursor:pointer}
+.kit-ctl-feedback-close:hover{box-shadow:inset 0 0 0 1px currentColor}${focusRing('.kit-ctl-feedback-close', '0')}
+.kit-ctl-feedback[data-appearance=solid] .kit-ctl-button{background:var(--kit-surface);color:var(--kit-text);border-color:var(--kit-surface)}
+.kit-ctl-feedback[data-placement=banner]{border-radius:0;width:100%}
+.kit-ctl-feedback[data-placement=toast]{max-width:min(calc(var(--kit-control) * 9),100%);box-shadow:var(--kit-shadow-hover)}
+.kit-ctl-feedback[data-paused=true]{outline:2px dashed var(--f-ink);outline-offset:2px}
+.kit-ctl-feedback[data-state=pending] .kit-ctl-spinner{width:var(--ctl-icon);height:var(--ctl-icon)}
+@media(max-width:640px){.kit-ctl-feedback[data-placement=toast]{max-width:100%}.kit-ctl-feedback-body{flex-direction:column;align-items:flex-start}}`.replace(/\n/g, '');
+
+const feedbackExamples = Object.freeze([
+  {id: 'ex-fb-info', message: '새 버전이 준비되었습니다. 다음 접속부터 적용됩니다.', title: '업데이트'},
+  {id: 'ex-fb-ok', tone: 'success', appearance: 'outline', message: '변경 사항을 저장했습니다.', dismiss: 'button'},
+  {id: 'ex-fb-warn', tone: 'warning', appearance: 'solid', placement: 'banner', message: '결제 수단이 곧 만료됩니다.', action: 'button', actionLabel: '수정'},
+  {id: 'ex-fb-err', tone: 'danger', message: '연결이 끊겼습니다. 네트워크를 확인하세요.', dismiss: 'button', action: 'button', actionLabel: '다시 시도'},
+  {id: 'ex-fb-wait', state: 'pending', appearance: 'plain', message: '파일을 올리는 중입니다.'},
+  {id: 'ex-fb-toast', tone: 'success', placement: 'toast', autoDismiss: 'timed', dismiss: 'button', message: '링크를 복사했습니다.'},
+]);
+
+const feedbackMaterial = componentMaterial(feedbackContract, {
+  module: 'src/materials/feedback.mjs', renderExport: 'renderFeedback', key: 'feedback-message', styles: feedbackStyles, examples: feedbackExamples.map(x => ({...x})),
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: 'toast는 min(컨트롤 높이 × 9, 100%) 폭이고 640px 이하에서 전폭이 된다. 글은 keep-all과 overflow-wrap으로 줄바꿈한다.'},
+  a11y: {rules: ['R05', 'R18'], role: 'status (info, success, warning) | alert (danger); aria-busy while pending; tone also carried by icon shape and hidden prefix text', keyboard: 'Escape dismisses a dismissible or timed message that has focus; focus moves to returnFocus or the container when the focused message disappears'},
+  validation: {rules: ['R18'], codes: ['FEEDBACK_MESSAGE', 'FEEDBACK_ACTION', ...feedbackContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:42'], ext: {group: 'feedback', required: ['id', 'message']}, dependencies: ['component:button-control'],
+});
+
+exports.feedbackContract = feedbackContract;
+exports.FEEDBACK_TONES = FEEDBACK_TONES;
+exports.FEEDBACK_DURATION_MS = FEEDBACK_DURATION_MS;
+exports.renderFeedback = renderFeedback;
+exports.attachFeedback = attachFeedback;
+exports.feedbackRuntime = feedbackRuntime;
+exports.feedbackStyles = feedbackStyles;
+exports.feedbackExamples = feedbackExamples;
+exports.feedbackMaterial = feedbackMaterial;
+};
+__defs["materials/input.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Input: 외형(경계 처리)·모양·크기·기능(종류와 접두 아이콘)·상태를 따로 둔다. 상태는 색 외에 아이콘·메시지·점선·aria로도 구분한다. */
+const inputContract = defineContract({
+  id: 'component:input-control', label: 'Input',
+  inputFields: ['id', 'label', 'hint', 'message', 'placeholder', 'value', 'required', 'name', 'icon', 'force'],
+  axes: {
+    appearance: ['outline', 'filled', 'underline', 'ghost'], shape: SHAPES, size: SIZES,
+    kind: ['text', 'email', 'password', 'search', 'number', 'multiline'], affix: ['none', 'icon'],
+    state: ['default', 'error', 'readonly', 'disabled'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['kind', 'affix'], state: ['state']},
+  defaults: {appearance: 'outline', shape: 'soft', size: 'medium', kind: 'text', affix: 'none', state: 'default'},
+  states: ['default', 'hover', 'focus', 'active', 'error', 'readonly', 'disabled'],
+  transitions: [
+    {from: 'default', to: 'hover', trigger: 'pointer enter'}, {from: 'default', to: 'focus', trigger: 'Tab | click (focus-visible)'}, {from: 'focus', to: 'active', trigger: 'typing'},
+    {from: 'active', to: 'error', trigger: 'blur or input with checkValidity() false'}, {from: 'error', to: 'default', trigger: 'input with checkValidity() true'},
+  ],
+  forbidden: [
+    {id: 'INPUT_UNDERLINE_SHAPE', when: {appearance: 'underline', shape: ['square', 'pill']}, why: 'underline에는 상자가 없어 모서리 모양이 보이지 않으므로 기본 모양 하나만 둔다'},
+    {id: 'INPUT_MULTILINE_PILL', when: {kind: 'multiline', shape: 'pill'}, why: '여러 줄 칸에 999px 모서리를 주면 긴 글이 곡선 모서리에 잘린다'},
+    {id: 'INPUT_MULTILINE_COMPACT', when: {kind: 'multiline', size: 'compact'}, why: 'compact 높이는 한 줄 기준이라 여러 줄 칸의 최소 두 줄을 담지 못한다'},
+    {id: 'INPUT_MULTILINE_AFFIX', when: {kind: 'multiline', affix: 'icon'}, why: '접두 아이콘이 여러 줄 칸의 세로 중간에 떠 첫 줄과 어긋난다'},
+    {id: 'INPUT_PASSWORD_READONLY', when: {kind: 'password', state: 'readonly'}, why: '읽기 전용 비밀번호는 표시 전환이 값을 노출하는 통로가 되고 얻는 것이 없다'},
+    {id: 'INPUT_SEARCH_READONLY', when: {kind: 'search', state: 'readonly'}, why: '읽기 전용 검색에는 지우기 동작이 없어 칸이 아무 일도 하지 못한다'},
+    {id: 'INPUT_SEARCH_AFFIX', when: {kind: 'search', affix: 'icon'}, why: 'search는 돋보기 아이콘을 이미 접두 자리에 갖는다'},
+  ],
+  unsupported: ['masked input', 'input groups with attached buttons', 'tag input'],
+  pairs: [
+    ['--kit-control-fg', '--kit-control-bg', 4.5, 'text on outline'], ['--kit-control-fg', '--kit-card-active', 4.5, 'text on filled'], ['--kit-muted', '--kit-control-bg', 4.5, 'label·hint·placeholder'],
+    ['--kit-muted', '--kit-card-active', 4.5, 'placeholder on filled'], ['--kit-danger', '--kit-surface', 4.5, 'error message'], ['--kit-control-error', '--kit-surface', 3, 'error border'],
+    ['--kit-control-hover-border', '--kit-surface', 3, 'hover border'], ['--kit-control-active-border', '--kit-surface', 3, 'focus border'], ['--kit-control-disabled-fg', '--kit-control-disabled-bg', 3, 'disabled'], ['--kit-focus', '--kit-surface', 3, 'focus ring'],
+  ],
+});
+
+const TYPE = {text: 'text', email: 'email', password: 'password', search: 'search', number: 'number'};
+function renderInput(input) {
+  const {id, label, hint = '', message = '', placeholder = '', value = '', required = false, name = id, icon: iconName = 'search', force = ''} = input ?? {};
+  const p = resolveProps(inputContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Input requires a lowercase kebab-case id');
+  if (!String(label ?? '').trim()) throw new TypeError('INPUT_LABEL: a placeholder never replaces the label');
+  if (p.state === 'error' && !String(message).trim()) throw new TypeError('INPUT_ERROR_MESSAGE: error state needs a message that says what to fix');
+  if (force && !['hover', 'focus'].includes(force)) throw new TypeError('Invalid force preview');
+  const describedBy = [hint && `${id}-hint`, `${id}-message`].filter(Boolean).join(' ');
+  const common = `id="${e(id)}" name="${e(name)}" placeholder="${e(placeholder)}" aria-describedby="${describedBy}"${required ? ' required aria-required="true"' : ''}${p.state === 'error' ? ' aria-invalid="true"' : ''}${p.state === 'readonly' ? ' readonly' : ''}${p.state === 'disabled' ? ' disabled' : ''}`;
+  const control = p.kind === 'multiline' ? `<textarea ${common} rows="3">${e(value)}</textarea>` : `<input ${common} type="${TYPE[p.kind]}"${p.kind === 'number' ? ' inputmode="decimal"' : ''}${p.kind === 'search' ? ' enterkeyhint="search"' : ''} value="${e(value)}">`;
+  const lead = p.kind === 'search' ? icon('search') : p.affix === 'icon' ? icon(iconName) : '';
+  const tail = p.kind === 'password' ? `<button type="button" class="kit-ctl-input-action" data-reveal aria-pressed="false" aria-label="비밀번호 표시"${p.state === 'disabled' ? ' disabled' : ''}>${icon('eye')}</button>`
+    : p.kind === 'search' ? `<button type="button" class="kit-ctl-input-action" data-clear aria-label="검색어 지우기"${value ? '' : ' hidden'}${p.state === 'disabled' ? ' disabled' : ''}>${icon('x')}</button>` : '';
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  return `<div class="kit-ctl-input" data-ctl="input" ${attrs}${force ? ` data-force="${force}"` : ''}><label class="kit-ctl-input-label" for="${e(id)}">${e(label)}${required ? ' <span aria-hidden="true">*</span>' : ''}</label><div class="kit-ctl-input-box">${lead ? `<span class="kit-ctl-input-lead">${lead}</span>` : ''}${control}${tail}</div>${hint ? `<p class="kit-ctl-input-hint" id="${e(id)}-hint">${e(hint)}</p>` : ''}<p class="kit-ctl-input-message" id="${e(id)}-message" aria-live="polite">${p.state === 'error' ? `${icon('alert-circle')}<span>${e(message)}</span>` : ''}</p></div>`;
+}
+
+/** 브라우저에서 붙는 동작: 비밀번호 표시 전환(aria-pressed), 검색 지우기와 포커스 복귀, 네이티브 제약 검사로 error 전환, 여러 줄 자동 높이. */
+function attachInput(root, {onChange} = {}) {
+  const field = root.querySelector('input,textarea'), message = root.querySelector('.kit-ctl-input-message'), clear = root.querySelector('[data-clear]'), reveal = root.querySelector('[data-reveal]');
+  if (!field || !message) throw new TypeError('Input root is incomplete');
+  const doc = root.ownerDocument;
+  let touched = root.dataset.state === 'error';
+  const fit = () => { if (root.dataset.kind === 'multiline') { field.style.height = 'auto'; field.style.height = field.scrollHeight + 'px'; } };
+  const sync = () => { if (clear) clear.hidden = !field.value; };
+  const validate = () => {
+    if (field.readOnly || field.disabled) return;
+    const ok = field.checkValidity(), text = field.dataset.errorMessage || field.validationMessage;
+    root.dataset.state = ok ? 'default' : 'error';
+    if (ok) field.removeAttribute('aria-invalid'); else field.setAttribute('aria-invalid', 'true');
+    message.replaceChildren();
+    if (!ok) { const span = doc.createElement('span'); span.textContent = text; message.append(span); }
+  };
+  field.addEventListener('input', () => { sync(); fit(); if (touched) validate(); if (typeof onChange === 'function') onChange({id: field.id, value: field.value}); });
+  field.addEventListener('blur', () => { touched = true; validate(); });
+  field.addEventListener('keydown', event => { if (event.key === 'Escape' && clear && field.value) { event.preventDefault(); field.value = ''; sync(); field.dispatchEvent(new doc.defaultView.Event('input', {bubbles: true})); } });
+  if (clear) clear.addEventListener('click', () => { field.value = ''; sync(); field.dispatchEvent(new doc.defaultView.Event('input', {bubbles: true})); field.focus(); });
+  if (reveal) reveal.addEventListener('click', () => {
+    const on = reveal.getAttribute('aria-pressed') !== 'true';
+    reveal.setAttribute('aria-pressed', String(on)); reveal.setAttribute('aria-label', on ? '비밀번호 숨기기' : '비밀번호 표시'); field.type = on ? 'text' : 'password';
+  });
+  sync(); fit();
+  return {validate, focus: () => field.focus()};
+}
+const inputRuntime = attachInput.toString();
+
+const inputStyles = `${baseStyles}${sizeCSS('.kit-ctl-input')}
+.kit-ctl-input{display:grid;gap:var(--kit-sp-tight);min-width:0;color:var(--kit-control-fg);font-size:var(--ctl-font)}
+.kit-ctl-input-label{color:var(--kit-muted);font-size:var(--kit-t-label);font-weight:600}
+.kit-ctl-input-box{display:flex;align-items:center;gap:var(--ctl-gap);box-sizing:border-box;min-height:var(--ctl-h);padding-inline:var(--ctl-px);border:1px solid var(--kit-control-border);border-radius:var(--kit-radius);background:var(--kit-control-bg);transition:border-color var(--kit-dur,150ms),box-shadow var(--kit-dur,150ms)}
+.kit-ctl-input[data-shape=square] .kit-ctl-input-box{border-radius:0}.kit-ctl-input[data-shape=pill] .kit-ctl-input-box{border-radius:999px}
+.kit-ctl-input :is(input,textarea){flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:var(--ctl-font);padding:0;min-height:calc(var(--ctl-h) - 2px)}
+.kit-ctl-input textarea{min-height:calc(var(--ctl-h) * 2);padding-block:var(--kit-sp-near);resize:vertical;max-height:calc(var(--ctl-h) * 6);line-height:1.5}
+.kit-ctl-input[data-kind=multiline] .kit-ctl-input-box{align-items:stretch}
+.kit-ctl-input ::placeholder{color:var(--kit-muted);opacity:1}
+.kit-ctl-input .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon);flex:none}.kit-ctl-input-lead{display:inline-flex;color:var(--kit-muted)}
+.kit-ctl-input-action{display:inline-grid;place-items:center;flex:none;width:var(--ctl-icon);height:var(--ctl-icon);padding:0;box-sizing:content-box;border:0;border-radius:var(--kit-radius);background:transparent;color:var(--kit-muted);cursor:pointer}
+.kit-ctl-input-action[hidden]{display:none}
+.kit-ctl-input[data-appearance=filled] .kit-ctl-input-box{background:var(--kit-card-active);border-color:transparent;border-bottom-color:var(--kit-control-border)}
+.kit-ctl-input[data-appearance=underline] .kit-ctl-input-box{padding-inline:0;border-width:0 0 2px;border-radius:0;background:transparent;border-color:var(--kit-control-border)}
+.kit-ctl-input[data-appearance=ghost] .kit-ctl-input-box{border-color:transparent;background:transparent}
+.kit-ctl-input[data-appearance=ghost] .kit-ctl-input-box:hover{border-color:var(--kit-control-border)}
+.kit-ctl-input .kit-ctl-input-box${hover}:not(:has(:disabled)){border-color:var(--kit-control-hover-border)}
+.kit-ctl-input[data-appearance=filled] .kit-ctl-input-box${hover}:not(:has(:disabled)){border-color:transparent;border-bottom-color:var(--kit-control-hover-border)}
+.kit-ctl-input .kit-ctl-input-box:focus-within{border-color:var(--kit-control-active-border);outline:3px solid var(--kit-focus);outline-offset:2px}
+.kit-ctl-input[data-force=focus] .kit-ctl-input-box{border-color:var(--kit-control-active-border);outline:3px solid var(--kit-focus);outline-offset:2px}
+.kit-ctl-input[data-force=hover] .kit-ctl-input-box{border-color:var(--kit-control-hover-border)}
+.kit-ctl-input-hint,.kit-ctl-input-message{margin:0;font-size:var(--kit-t-small);color:var(--kit-muted)}
+.kit-ctl-input-message:empty{display:none}.kit-ctl-input-message{display:flex;align-items:flex-start;gap:var(--kit-sp-tight);color:var(--kit-danger);font-weight:600}.kit-ctl-input-message .kit-icon{width:1.1em;height:1.1em;margin-top:2px}
+.kit-ctl-input[data-state=error] .kit-ctl-input-box,.kit-ctl-input[data-state=error][data-appearance] .kit-ctl-input-box{border-color:var(--kit-control-error);box-shadow:inset 0 0 0 1px var(--kit-control-error)}
+.kit-ctl-input[data-state=error][data-appearance=underline] .kit-ctl-input-box{box-shadow:0 2px 0 0 var(--kit-control-error)}
+.kit-ctl-input[data-state=readonly] .kit-ctl-input-box{border-style:dashed;background:var(--kit-card-hover)}
+.kit-ctl-input[data-state=readonly][data-appearance=underline] .kit-ctl-input-box{background:transparent}
+.kit-ctl-input[data-state=disabled] .kit-ctl-input-box{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);border-color:var(--kit-control-disabled-bg);cursor:not-allowed}
+.kit-ctl-input[data-state=disabled] :is(input,textarea,.kit-ctl-input-lead,.kit-ctl-input-action){color:var(--kit-control-disabled-fg);cursor:not-allowed}
+.kit-ctl-input[data-state=disabled][data-appearance=underline] .kit-ctl-input-box,.kit-ctl-input[data-state=disabled][data-appearance=ghost] .kit-ctl-input-box{background:transparent}
+${focusRing('.kit-ctl-input-action', '0')}`.replace(/\n/g, '');
+
+const inputExamples = Object.freeze([
+  {id: 'ex-name', label: '이름', placeholder: '홍길동', hint: '실명을 입력하세요.', required: true}, {id: 'ex-mail', label: '이메일', kind: 'email', appearance: 'filled', placeholder: 'name@example.com'},
+  {id: 'ex-pass', label: '비밀번호', kind: 'password', appearance: 'underline', value: 'secret-pass'}, {id: 'ex-find', label: '검색', kind: 'search', shape: 'pill', placeholder: '검색어', value: '디자인'},
+  {id: 'ex-note', label: '메모', kind: 'multiline', appearance: 'ghost', placeholder: '여러 줄 입력'}, {id: 'ex-bad', label: '전화번호', state: 'error', message: '숫자만 입력하세요.', value: '010-abc'},
+]);
+
+const inputMaterial = componentMaterial(inputContract, {
+  module: 'src/materials/input.mjs', renderExport: 'renderInput', key: 'input-control', styles: inputStyles, examples: inputExamples.map(x => ({...x})),
+  responsive: {strategy: 'fluid', note: '칸은 컨테이너 폭을 채우고 min-width:0이라 좁은 화면에서도 가로 넘침이 없다.'},
+  a11y: {rules: ['R05', 'R16'], role: 'textbox | searchbox, label for/id, aria-describedby, aria-invalid', keyboard: 'Escape clears search; password reveal and search clear are buttons'},
+  validation: {rules: ['R16'], codes: ['INPUT_LABEL', 'INPUT_ERROR_MESSAGE', ...inputContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:18'], ext: {group: 'form', required: ['id', 'label']},
+});
+
+exports.inputContract = inputContract;
+exports.renderInput = renderInput;
+exports.attachInput = attachInput;
+exports.inputRuntime = inputRuntime;
+exports.inputStyles = inputStyles;
+exports.inputExamples = inputExamples;
+exports.inputMaterial = inputMaterial;
+};
+__defs["materials/modal.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, ContractError, sizeCSS, baseStyles, focusRing, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {renderButton} = __m("materials/button.mjs");
+const {renderInput} = __m("materials/input.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Modal: 외형(패널 표면)·모양·크기(폭과 안쪽 여백)·기능(역할·배치·하단 동작)·상태(닫힘·열림·처리 중·오류)를 따로 둔다. 네이티브 `<dialog>`와 showModal을 쓴다. */
+const modalContract = defineContract({
+  id: 'component:modal-dialog', label: 'Modal',
+  inputFields: ['id', 'title', 'description', 'body', 'actions', 'triggerLabel', 'message', 'preview'],
+  axes: {
+    appearance: ['elevated', 'outline', 'filled'], shape: ['square', 'soft', 'round'], size: SIZES,
+    role: ['dialog', 'alertdialog'], placement: ['center', 'bottom'], footer: ['actions', 'none'],
+    state: ['closed', 'open', 'busy', 'error'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['role', 'placement', 'footer'], state: ['state']},
+  defaults: {appearance: 'elevated', shape: 'soft', size: 'medium', role: 'dialog', placement: 'center', footer: 'actions', state: 'closed'},
+  states: ['closed', 'open', 'busy', 'error', 'focus'],
+  transitions: [
+    {from: 'closed', to: 'open', trigger: 'trigger click (showModal; focus moves into the dialog; the page behind becomes inert)'},
+    {from: 'open', to: 'closed', trigger: 'Escape | close button | cancel action | backdrop click (dialog only); focus returns to the trigger'},
+    {from: 'open', to: 'busy', trigger: 'setBusy(true): confirm aria-busy; Escape and backdrop are ignored'}, {from: 'busy', to: 'open', trigger: 'setBusy(false)'},
+    {from: 'busy', to: 'error', trigger: 'setError(message)'}, {from: 'error', to: 'open', trigger: 'setError(null) | retry'},
+  ],
+  forbidden: [
+    {id: 'MODAL_ALERT_NO_ACTIONS', when: {role: 'alertdialog', footer: 'none'}, why: 'alertdialog는 사용자가 명시적으로 고르게 하는 대화상자라 선택 동작(확인·취소)이 반드시 있어야 한다'},
+    {id: 'MODAL_STATE_NO_FOOTER', when: {state: ['busy', 'error'], footer: 'none'}, why: '처리 중 표시와 다시 시도는 하단 동작 버튼에 붙는다: 동작이 없으면 busy·error를 보일 곳이 없다'},
+    {id: 'MODAL_SHEET_SIZE', when: {placement: 'bottom', size: ['compact', 'small', 'large']}, why: '아래 시트는 화면 폭을 채우므로 크기가 폭에 영향을 주지 못해 같은 그림이 중복된다: medium 하나만 둔다'},
+  ],
+  unsupported: ['modal inside modal', 'non-modal (popover) dialogs', 'free-form HTML body (typed text and input slots only)', 'side drawer'],
+  pairs: [
+    ['--kit-text', '--kit-surface', 7, 'title and body on panel'], ['--kit-muted', '--kit-surface', 4.5, 'description'], ['--kit-text', '--kit-card-hover', 7, 'filled panel'], ['--kit-muted', '--kit-card-hover', 4.5, 'filled description'],
+    ['--kit-danger', '--kit-surface', 4.5, 'error message'], ['--kit-focus', '--kit-surface', 3, 'focus ring'],
+  ],
+});
+
+/** 내용 계약: Modal의 본문은 정해진 칸(text·input)뿐이다. 다른 대화상자를 본문에 넣는 모양은 축 조합이 아니라 내용이라 별도로 거부한다. */
+const modalContentRules = Object.freeze([
+  {id: 'MODAL_NESTED', why: '모달 안에 모달을 둘 수 없다: 두 번째 showModal이 첫 번째의 포커스 복귀 지점을 깨고 Escape가 어느 쪽을 닫는지 모호하다'},
+  {id: 'MODAL_CONTENT', why: '본문 칸(slot)은 text와 input뿐이다: 자유 HTML은 포커스 순서와 중첩 검사를 우회한다'},
+]);
+/** 폭은 컨트롤 높이 토큰의 배수라 밀도와 함께 변한다. 안쪽 여백은 CONTROL_SIZES의 pad 토큰에 항목 간격(item)을 더한다. */
+const MODAL_WIDTH = Object.freeze({compact: 8, small: 10, medium: 12, large: 16});
+
+function renderModal(input) {
+  const {id, title, description = '', body = [], actions = [], triggerLabel = '열기', message = '', preview = false} = input ?? {};
+  const p = resolveProps(modalContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Modal requires a lowercase kebab-case id');
+  if (!String(title ?? '').trim()) throw new TypeError('MODAL_TITLE: a dialog needs a title (aria-labelledby)');
+  if (!Array.isArray(body)) throw new TypeError('MODAL_CONTENT: body is a list of text and input slots');
+  for (const item of body) {
+    if (item?.slot === 'modal' || item?.slot === 'dialog') throw new ContractError(modalContract, [modalContentRules[0]]);
+    if (!item || !['text', 'input'].includes(item.slot)) throw new ContractError(modalContract, [modalContentRules[1]]);
+  }
+  if (p.footer === 'actions' && !(Array.isArray(actions) && actions.length >= 1 && actions.length <= 3)) throw new TypeError('MODAL_ACTIONS: footer actions need one to three actions');
+  if (p.footer === 'none' && actions.length) throw new TypeError('MODAL_ACTIONS: actions need footer=actions');
+  if (p.role === 'alertdialog' && !actions.some(a => a.role === 'cancel')) throw new TypeError('MODAL_ALERT_CANCEL: an alertdialog needs a cancel action that takes initial focus');
+  if (p.state === 'error' && !String(message).trim()) throw new TypeError('MODAL_ERROR_MESSAGE: error state needs a message');
+  const busy = p.state === 'busy';
+  const act = (a, i) => {
+    if (!a || !String(a.label ?? '').trim() || !['confirm', 'cancel', 'other'].includes(a.role ?? 'other')) throw new TypeError('MODAL_ACTIONS: an action needs a label and a role of confirm, cancel or other');
+    const confirm = a.role === 'confirm';
+    const button = renderButton({label: a.label, size: p.size, appearance: confirm ? 'solid' : a.role === 'cancel' ? 'outline' : 'ghost', tone: confirm && p.role === 'alertdialog' ? 'danger' : confirm ? 'action' : 'neutral', state: confirm && busy ? 'loading' : 'default'});
+    const marked = button.replace('<button ', `<button data-modal-action="${a.role ?? 'other'}"${a.role === 'cancel' && p.role === 'alertdialog' ? ' autofocus' : ''} `);
+    return marked;
+  };
+  const fields = body.map(({slot, ...item}) => slot === 'text' ? `<p class="kit-ctl-modal-text">${e(item.text)}</p>` : renderInput({...item, size: p.size})).join('');
+  const hasField = body.some(item => item.slot === 'input');
+  const heading = `<h2 class="kit-ctl-modal-title" id="${e(id)}-title" tabindex="-1"${!hasField && p.role === 'dialog' ? ' autofocus' : ''}>${e(title)}</h2>`;
+  const close = p.role === 'dialog' ? `<button type="button" class="kit-ctl-modal-close" data-close aria-label="닫기">${icon('x')}</button>` : '';
+  const footer = p.footer === 'actions' ? `<footer class="kit-ctl-modal-footer">${actions.map(act).join('')}</footer>` : '';
+  const err = p.state === 'error' ? `<p class="kit-ctl-modal-error" role="alert">${icon('alert-circle')}<span>${e(message)}</span></p>` : '';
+  const dialogAttrs = `id="${e(id)}-dialog" class="kit-ctl-modal-dialog" aria-labelledby="${e(id)}-title"${description ? ` aria-describedby="${e(id)}-desc"` : ''}${p.role === 'alertdialog' ? ' role="alertdialog"' : ''}${busy ? ' aria-busy="true"' : ''}${preview ? ' open' : ''}`;
+  const panel = `<div class="kit-ctl-modal-panel"><header class="kit-ctl-modal-head">${heading}${close}</header>${description ? `<p class="kit-ctl-modal-text" id="${e(id)}-desc">${e(description)}</p>` : ''}${fields}${err}${footer}</div>`;
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  const trigger = preview ? '' : `<span class="kit-ctl-modal-trigger">${renderButton({label: triggerLabel, size: p.size, appearance: p.role === 'alertdialog' ? 'soft' : 'solid', tone: p.role === 'alertdialog' ? 'danger' : 'action'})}</span>`;
+  return `<div class="kit-ctl-modal" data-ctl="modal" id="${e(id)}" ${attrs}${preview ? ' data-preview' : ''}>${trigger}<dialog ${dialogAttrs}>${panel}</dialog></div>`;
+}
+
+/** 브라우저에서 붙는 동작. 열면 showModal로 뒤 페이지를 inert로 만들고 포커스를 넣으며, 닫으면 연 요소로 되돌린다. busy 동안은 Escape·배경 클릭이 닫지 못한다. */
+function attachModal(root, {onConfirm, onClose} = {}) {
+  const doc = root.ownerDocument, dialog = root.querySelector('dialog'), trigger = root.querySelector('.kit-ctl-modal-trigger button');
+  if (!dialog) throw new TypeError('Modal root is incomplete');
+  if (root.parentElement && root.parentElement.closest('dialog')) throw new RangeError('MODAL_NESTED: a modal cannot open inside another modal');
+  let opener = trigger, prevOverflow = '';
+  const confirmButton = () => dialog.querySelector('[data-modal-action="confirm"]');
+  const setState = state => { root.dataset.state = state; };
+  const open = () => {
+    if (dialog.open) return;
+    opener = doc.activeElement || trigger;
+    prevOverflow = doc.documentElement.style.overflow; doc.documentElement.style.overflow = 'hidden';
+    dialog.showModal(); setState(root.dataset.state === 'busy' || root.dataset.state === 'error' ? root.dataset.state : 'open');
+    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    // 첫 포커스: alertdialog는 취소 버튼(autofocus), 입력이 있으면 첫 입력, 없으면 제목. 닫기 버튼이 먼저 잡히는 것을 막는다.
+    if (dialog.getAttribute('role') !== 'alertdialog') { const first = dialog.querySelector('input,textarea,select') || dialog.querySelector('.kit-ctl-modal-title'); if (first) first.focus(); }
+  };
+  const close = () => { if (dialog.open) dialog.close(); };
+  const setBusy = on => {
+    const button = confirmButton();
+    dialog.setAttribute('aria-busy', String(on)); setState(on ? 'busy' : 'open');
+    if (button) { button.setAttribute('aria-busy', String(on)); if (on) button.setAttribute('aria-disabled', 'true'); else button.removeAttribute('aria-disabled'); button.dataset.state = on ? 'loading' : 'default'; if (button.parentElement) button.parentElement.dataset.state = button.dataset.state; }
+  };
+  const setError = text => {
+    const old = dialog.querySelector('.kit-ctl-modal-error'); if (old) old.remove();
+    if (text == null) { setState('open'); return; }
+    const p = doc.createElement('p'), span = doc.createElement('span');
+    p.className = 'kit-ctl-modal-error'; p.setAttribute('role', 'alert'); span.textContent = text; p.append(span);
+    const footer = dialog.querySelector('.kit-ctl-modal-footer'); footer.parentElement.insertBefore(p, footer);
+    setBusy(false); setState('error');
+  };
+  if (trigger) { trigger.setAttribute('aria-haspopup', 'dialog'); trigger.setAttribute('aria-controls', dialog.id); trigger.setAttribute('aria-expanded', 'false'); trigger.addEventListener('click', open); }
+  dialog.addEventListener('cancel', event => { if (dialog.getAttribute('aria-busy') === 'true') event.preventDefault(); });
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog && dialog.getAttribute('aria-busy') !== 'true' && dialog.getAttribute('role') !== 'alertdialog') close();
+    const control = event.target.closest('[data-close],[data-modal-action]');
+    if (!control || control.getAttribute('aria-disabled') === 'true') return;
+    if (control.dataset.modalAction === 'confirm') { if (typeof onConfirm === 'function') onConfirm({setBusy, setError, close}); else close(); }
+    else if (control.dataset.close !== undefined || control.dataset.modalAction === 'cancel') close();
+  });
+  dialog.addEventListener('close', () => {
+    doc.documentElement.style.overflow = prevOverflow; setState('closed');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (opener && opener.focus) opener.focus();
+    if (typeof onClose === 'function') onClose({id: root.id});
+  });
+  if (root.dataset.state === 'open') open();
+  return {open, close, setBusy, setError};
+}
+const modalRuntime = attachModal.toString();
+
+const modalStyles = `${baseStyles}${sizeCSS('.kit-ctl-modal')}
+.kit-ctl-modal{display:inline-block;font-size:var(--ctl-font)}
+.kit-ctl-modal-dialog{box-sizing:border-box;width:min(calc(100vw - 2 * var(--kit-sp-item)),calc(var(--kit-control) * var(--m-w,12)));max-width:none;max-height:calc(100dvh - 2 * var(--kit-sp-item));margin:auto;padding:0;border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);overflow:auto;overscroll-behavior:contain}
+.kit-ctl-modal[data-size=compact]{--m-w:${MODAL_WIDTH.compact}}.kit-ctl-modal[data-size=small]{--m-w:${MODAL_WIDTH.small}}.kit-ctl-modal[data-size=medium]{--m-w:${MODAL_WIDTH.medium}}.kit-ctl-modal[data-size=large]{--m-w:${MODAL_WIDTH.large}}
+.kit-ctl-modal-dialog::backdrop{background:var(--kit-shade)}
+.kit-ctl-modal[data-shape=square] .kit-ctl-modal-dialog{border-radius:0}.kit-ctl-modal[data-shape=round] .kit-ctl-modal-dialog{border-radius:calc(var(--kit-radius) * 1.8)}
+.kit-ctl-modal[data-appearance=elevated] .kit-ctl-modal-dialog{border-color:transparent;box-shadow:var(--kit-shadow-hover)}
+.kit-ctl-modal[data-appearance=filled] .kit-ctl-modal-dialog{background:var(--kit-card-hover)}
+.kit-ctl-modal[data-placement=bottom] .kit-ctl-modal-dialog{width:100%;margin:auto 0 0;max-height:85dvh;border-end-start-radius:0;border-end-end-radius:0}
+.kit-ctl-modal-panel{display:grid;gap:var(--kit-sp-item);padding:calc(var(--ctl-px) + var(--kit-sp-item))}
+.kit-ctl-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ctl-gap)}
+.kit-ctl-modal-title{margin:0;font-size:var(--kit-t-sub);line-height:1.3;font-weight:700;word-break:keep-all;overflow-wrap:anywhere}.kit-ctl-modal-title:focus{outline:0}
+.kit-ctl-modal-text{margin:0;color:var(--kit-muted);word-break:keep-all;overflow-wrap:anywhere}
+.kit-ctl-modal-close{display:inline-grid;place-items:center;flex:none;width:calc(var(--ctl-icon) + var(--kit-sp-near));height:calc(var(--ctl-icon) + var(--kit-sp-near));padding:0;border:0;border-radius:var(--kit-radius);background:transparent;color:var(--kit-muted);cursor:pointer}
+.kit-ctl-modal-close:hover{background:var(--kit-card-active);color:var(--kit-text)}${focusRing('.kit-ctl-modal-close', '0')}
+.kit-ctl-modal .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon);flex:none}
+.kit-ctl-modal-footer{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:var(--kit-sp-near);margin-top:var(--kit-sp-near)}
+.kit-ctl-modal-error{display:flex;gap:var(--kit-sp-tight);margin:0;color:var(--kit-danger);font-weight:600;font-size:var(--kit-t-small)}
+.kit-ctl-modal[data-state=busy] .kit-ctl-modal-footer button:not([data-modal-action=confirm]){opacity:1}
+.kit-ctl-modal[data-preview]{display:grid;padding:var(--kit-sp-item);background:var(--kit-shade);border-radius:var(--kit-radius)}.kit-ctl-modal[data-preview] .kit-ctl-modal-dialog{position:static;display:block;width:min(100%,calc(var(--kit-control) * var(--m-w,12)));margin:0 auto;max-height:none}.kit-ctl-modal[data-preview][data-placement=bottom] .kit-ctl-modal-dialog{margin:0}
+@media(max-width:640px){.kit-ctl-modal-footer{flex-direction:column-reverse}.kit-ctl-modal-footer .kit-ctl-button-host,.kit-ctl-modal-footer .kit-ctl-button{width:100%}}`.replace(/\n/g, '');
+
+const modalExamples = Object.freeze([
+  {id: 'ex-modal-form', title: '새 프로젝트', description: '이름을 정하면 바로 시작합니다.', triggerLabel: '새 프로젝트', body: [{slot: 'input', id: 'ex-modal-name', label: '프로젝트 이름', placeholder: '예: 가을 캠페인', required: true}], actions: [{label: '취소', role: 'cancel'}, {label: '만들기', role: 'confirm'}]},
+  {id: 'ex-modal-alert', title: '프로젝트를 삭제할까요?', description: '삭제하면 복구할 수 없습니다.', triggerLabel: '삭제', role: 'alertdialog', size: 'small', appearance: 'outline', actions: [{label: '취소', role: 'cancel'}, {label: '삭제', role: 'confirm'}]},
+  {id: 'ex-modal-sheet', title: '필터', description: '결과를 좁힙니다.', triggerLabel: '필터 열기', placement: 'bottom', body: [{slot: 'text', text: '기간과 상태를 고를 수 있습니다.'}], actions: [{label: '닫기', role: 'cancel'}, {label: '적용', role: 'confirm'}]},
+]);
+
+const modalMaterial = componentMaterial(modalContract, {
+  category: 'layout-navigation', module: 'src/materials/modal.mjs', renderExport: 'renderModal', key: 'modal-dialog', styles: modalStyles, examples: modalExamples.map(x => structuredClone(x)),
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: '폭은 min(100vw − 여백, 컨트롤 높이 × 배수)다. 640px 이하에서는 하단 동작이 세로로 쌓여 전폭이 된다. bottom 배치는 화면 폭을 채운다.'},
+  a11y: {rules: ['R05', 'R19'], role: 'dialog | alertdialog (aria-labelledby, aria-describedby, native modal inertness)', keyboard: 'Escape closes (ignored while busy); focus enters the dialog and returns to the opener; alertdialog starts on the cancel action'},
+  validation: {rules: ['R05'], codes: ['MODAL_TITLE', 'MODAL_CONTENT', 'MODAL_ACTIONS', 'MODAL_ALERT_CANCEL', 'MODAL_ERROR_MESSAGE', ...modalContentRules.map(r => r.id), ...modalContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:30'], ext: {group: 'feedback', required: ['id', 'title']}, dependencies: ['component:button-control', 'component:input-control'],
+  tags: ['forbidden:MODAL_NESTED'],
+});
+
+exports.modalContract = modalContract;
+exports.modalContentRules = modalContentRules;
+exports.MODAL_WIDTH = MODAL_WIDTH;
+exports.renderModal = renderModal;
+exports.attachModal = attachModal;
+exports.modalRuntime = modalRuntime;
+exports.modalStyles = modalStyles;
+exports.modalExamples = modalExamples;
+exports.modalMaterial = modalMaterial;
+};
+__defs["materials/navigation.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Navigation: 외형(현재 위치 표시 방식)·모양·크기·기능(방향·좁은 화면 처리·하위 메뉴·아이콘)·상태(메뉴 열림)를 따로 둔다. */
+const navigationContract = defineContract({
+  id: 'component:navigation-menu', label: 'Navigation',
+  inputFields: ['id', 'label', 'items', 'force'],
+  axes: {
+    appearance: ['underline', 'pill', 'block'], shape: SHAPES, size: SIZES,
+    orientation: ['horizontal', 'vertical'], overflow: ['none', 'scroll', 'collapse'], submenu: ['none', 'disclosure'], icons: ['none', 'start'],
+    state: ['closed', 'open'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['orientation', 'overflow', 'submenu', 'icons'], state: ['state']},
+  defaults: {appearance: 'underline', shape: 'soft', size: 'medium', orientation: 'horizontal', overflow: 'none', submenu: 'none', icons: 'none', state: 'closed'},
+  states: ['closed', 'open', 'hover', 'focus', 'active', 'current', 'disabled'],
+  transitions: [
+    {from: 'closed', to: 'open', trigger: 'toggle click | Enter/Space | ArrowDown on submenu toggle'}, {from: 'open', to: 'closed', trigger: 'Escape (focus returns to toggle) | outside pointerdown | Tab out | link click'},
+    {from: 'closed', to: 'current', trigger: 'in-page link click sets aria-current=page'}, {from: 'closed', to: 'focus', trigger: 'Tab'}, {from: 'closed', to: 'hover', trigger: 'pointer enter'}, {from: 'hover', to: 'active', trigger: 'pointer down'},
+  ],
+  forbidden: [
+    {id: 'NAV_UNDERLINE_SHAPE', when: {appearance: 'underline', shape: ['square', 'pill']}, why: 'underline에는 상자가 없어 모서리 모양이 보이지 않으므로 기본 모양 하나만 둔다'},
+    {id: 'NAV_VERTICAL_OVERFLOW', when: {orientation: 'vertical', overflow: ['scroll', 'collapse']}, why: '세로 목록은 줄이 아래로 늘어나므로 가로 스크롤·접기가 풀어 줄 문제가 없다'},
+    {id: 'NAV_SCROLL_SUBMENU', when: {overflow: 'scroll', submenu: 'disclosure'}, why: '가로 스크롤 상자가 펼친 하위 메뉴를 잘라 내 항목을 누를 수 없게 된다'},
+    {id: 'NAV_OPEN_WITHOUT_COLLAPSE', when: {state: 'open', overflow: ['none', 'scroll']}, why: '열림은 접힌 메뉴(collapse)의 상태다: 접히지 않는 메뉴에는 열 것이 없다'},
+    {id: 'NAV_BLOCK_SCROLL', when: {appearance: 'block', overflow: 'scroll'}, why: 'block은 칸 전체를 채우는 채움이라 스크롤 끝에서 잘린 칸이 현재 위치로 읽힌다'},
+  ],
+  unsupported: ['mega menu panels', 'nested submenus deeper than one level', 'breadcrumb (use component:breadcrumb)'],
+  pairs: [
+    ['--kit-muted', '--kit-surface', 4.5, 'item'], ['--kit-text', '--kit-card-hover', 7, 'item hover'], ['--kit-link', '--kit-surface', 4.5, 'current (underline)'], ['--kit-link', '--kit-soft', 4.5, 'current (pill)'],
+    ['--kit-onAction', '--kit-action', 4.5, 'current (block)'], ['--kit-action', '--kit-surface', 3, 'indicator'], ['--kit-focus', '--kit-surface', 3, 'focus ring'], ['--kit-muted', '--kit-card-hover', 4.5, 'item hover (muted)'],
+  ],
+});
+
+const checkItems = items => {
+  if (!Array.isArray(items) || items.length < 2 || items.length > 8) throw new TypeError('NAV_ITEMS: navigation needs 2–8 items');
+  let current = 0;
+  for (const it of items) {
+    if (!it || !String(it.label ?? '').trim()) throw new TypeError('NAV_ITEMS: every item needs a label');
+    if (it.children) for (const c of it.children) { if (!c || !String(c.label ?? '').trim() || typeof c.href !== 'string' || c.children) throw new TypeError('NAV_SUBMENU: submenu items need label and href and cannot nest further'); if (c.current) current++; }
+    else if (typeof it.href !== 'string' && !it.disabled) throw new TypeError('NAV_ITEMS: a link item needs href');
+    if (it.current && it.disabled) throw new TypeError('NAV_CURRENT_DISABLED: the current page cannot be disabled');
+    if (it.current) current++;
+  }
+  if (current > 1) throw new TypeError('NAV_CURRENT: at most one item is the current page');
+};
+
+function renderNavigation(input) {
+  const {id, label, items, force = ''} = input ?? {};
+  const p = resolveProps(navigationContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Navigation requires a lowercase kebab-case id');
+  if (!String(label ?? '').trim()) throw new TypeError('Navigation requires an accessible label');
+  if (force && !['hover', 'focus', 'active'].includes(force)) throw new TypeError('Invalid force preview');
+  checkItems(items);
+  const hasSub = items.some(it => it.children);
+  if (hasSub && p.submenu !== 'disclosure') throw new TypeError('NAV_SUBMENU: items with children need submenu=disclosure');
+  if (!hasSub && p.submenu === 'disclosure') throw new TypeError('NAV_SUBMENU: submenu=disclosure needs an item with children');
+  const lead = it => (p.icons === 'start' && it.icon ? icon(it.icon) : '');
+  if (p.icons === 'start' && items.some(it => !it.icon)) throw new TypeError('NAV_ICONS: icons=start needs an icon on every top-level item');
+  // force는 증거 페이지용 미리보기다: 현재 위치도 비활성도 아닌 첫 링크에 hover·focus 모양을 입힌다.
+  let forced = force ? false : true;
+  const forceAttr = it => (!forced && !it.current && !it.disabled && !it.children ? (forced = true, ` data-force="${force}"`) : '');
+  const link = (it, extra = '') => it.disabled ? `<span class="kit-ctl-nav-link" role="link" aria-disabled="true"${extra}>${lead(it)}<span>${e(it.label)}</span></span>`
+    : `<a class="kit-ctl-nav-link" href="${e(it.href)}"${it.current ? ' aria-current="page"' : ''}${extra}${forceAttr(it)}>${lead(it)}<span>${e(it.label)}</span></a>`;
+  const li = (it, i) => {
+    if (!it.children) return `<li class="kit-ctl-nav-item">${link(it)}</li>`;
+    const within = it.children.some(c => c.current);
+    return `<li class="kit-ctl-nav-item" data-sub${within ? ' data-current-within' : ''}><button type="button" class="kit-ctl-nav-link kit-ctl-nav-sub-toggle" aria-expanded="false" aria-controls="${e(id)}-sub-${i}">${lead(it)}<span>${e(it.label)}</span>${icon('chevron-down')}</button><ul class="kit-ctl-nav-sub" id="${e(id)}-sub-${i}" hidden>${it.children.map(c => `<li>${link(c)}</li>`).join('')}</ul></li>`;
+  };
+  const collapse = p.overflow === 'collapse';
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  const toggle = collapse ? `<button type="button" class="kit-ctl-nav-toggle" aria-expanded="${p.state === 'open'}" aria-controls="${e(id)}-list">${icon('menu')}<span>메뉴</span></button>` : '';
+  return `<nav class="kit-ctl-nav" data-ctl="navigation" id="${e(id)}" aria-label="${e(label)}" ${attrs}>${toggle}<ul class="kit-ctl-nav-list" id="${e(id)}-list">${items.map(li).join('')}</ul></nav>`;
+}
+
+/** 브라우저에서 붙는 동작: 접힘 토글(aria-expanded), 하위 메뉴 disclosure, Escape·바깥 클릭·Tab 이탈로 닫고 포커스를 되돌린다, 쪽 안 링크의 aria-current. */
+function attachNavigation(root, {onNavigate} = {}) {
+  const doc = root.ownerDocument, toggle = root.querySelector('.kit-ctl-nav-toggle');
+  const subs = [...root.querySelectorAll('.kit-ctl-nav-sub-toggle')];
+  const setMenu = on => { if (!toggle) return; toggle.setAttribute('aria-expanded', String(on)); root.dataset.state = on ? 'open' : 'closed'; };
+  const setSub = (button, on) => { button.setAttribute('aria-expanded', String(on)); button.parentElement.querySelector('.kit-ctl-nav-sub').hidden = !on; };
+  const closeSubs = except => subs.forEach(b => { if (b !== except) setSub(b, false); });
+  if (toggle) toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  subs.forEach(button => {
+    const panel = button.parentElement.querySelector('.kit-ctl-nav-sub'), links = () => [...panel.querySelectorAll('a.kit-ctl-nav-link')];
+    button.addEventListener('click', () => { const on = button.getAttribute('aria-expanded') !== 'true'; closeSubs(button); setSub(button, on); });
+    button.addEventListener('keydown', event => { if (event.key === 'ArrowDown') { event.preventDefault(); closeSubs(button); setSub(button, true); const first = links()[0]; if (first) first.focus(); } });
+    panel.addEventListener('keydown', event => {
+      const items = links(), at = items.indexOf(doc.activeElement);
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); items[(at + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus(); }
+      else if (event.key === 'Home') { event.preventDefault(); items[0].focus(); } else if (event.key === 'End') { event.preventDefault(); items[items.length - 1].focus(); }
+    });
+  });
+  root.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    const openSub = subs.find(b => b.getAttribute('aria-expanded') === 'true');
+    if (openSub) { event.preventDefault(); setSub(openSub, false); openSub.focus(); }
+    else if (toggle && toggle.getAttribute('aria-expanded') === 'true') { event.preventDefault(); setMenu(false); toggle.focus(); }
+  });
+  root.addEventListener('focusout', event => { if (event.relatedTarget && !root.contains(event.relatedTarget)) { closeSubs(null); setMenu(false); } });
+  doc.addEventListener('pointerdown', event => { if (!root.contains(event.target)) { closeSubs(null); setMenu(false); } });
+  root.addEventListener('click', event => {
+    const link = event.target.closest('a.kit-ctl-nav-link');
+    if (!link) return;
+    if ((link.getAttribute('href') || '').startsWith('#')) {
+      root.querySelectorAll('[aria-current]').forEach(x => x.removeAttribute('aria-current'));
+      link.setAttribute('aria-current', 'page');
+      root.querySelectorAll('[data-current-within]').forEach(x => x.removeAttribute('data-current-within'));
+      const owner = link.closest('li[data-sub]'); if (owner) owner.setAttribute('data-current-within', '');
+    }
+    closeSubs(null); setMenu(false);
+    if (typeof onNavigate === 'function') onNavigate({href: link.getAttribute('href')});
+  });
+  return {setMenu};
+}
+const navigationRuntime = attachNavigation.toString();
+
+const navigationStyles = `${baseStyles}${sizeCSS('.kit-ctl-nav')}
+.kit-ctl-nav{position:relative;min-width:0;color:var(--kit-muted);font-size:var(--ctl-font)}
+.kit-ctl-nav-list,.kit-ctl-nav-sub{display:flex;gap:var(--kit-sp-tight);margin:0;padding:0;list-style:none}
+.kit-ctl-nav[data-orientation=vertical] .kit-ctl-nav-list{flex-direction:column}
+.kit-ctl-nav[data-orientation=horizontal][data-overflow=none] .kit-ctl-nav-list{flex-wrap:wrap}
+.kit-ctl-nav[data-overflow=scroll] .kit-ctl-nav-list{overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin;flex-wrap:nowrap}
+.kit-ctl-nav-item{position:relative;flex:none}
+.kit-ctl-nav-link{display:flex;align-items:center;gap:var(--ctl-gap);box-sizing:border-box;min-height:var(--ctl-h);padding-inline:var(--ctl-px);border:0 solid transparent;border-radius:var(--kit-radius);background:transparent;color:inherit;font:inherit;font-size:var(--ctl-font);font-weight:var(--kit-bw,600);text-decoration:none;white-space:nowrap;word-break:keep-all;cursor:pointer;width:100%}
+.kit-ctl-nav[data-shape=square] .kit-ctl-nav-link{border-radius:0}.kit-ctl-nav[data-shape=pill] .kit-ctl-nav-link{border-radius:999px}
+.kit-ctl-nav .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon);flex:none}
+.kit-ctl-nav-sub-toggle .kit-icon:last-child{margin-inline-start:auto;transition:transform var(--kit-dur,150ms)}.kit-ctl-nav-sub-toggle[aria-expanded=true] .kit-icon:last-child{transform:rotate(180deg)}
+.kit-ctl-nav[data-appearance=underline] .kit-ctl-nav-link{border-bottom-width:2px;border-radius:0}
+.kit-ctl-nav[data-appearance=underline][data-orientation=vertical] .kit-ctl-nav-link{border-bottom-width:0;border-inline-start-width:3px}
+.kit-ctl-nav-link:is([aria-current=page]):not(.kit-ctl-nav-sub-toggle),.kit-ctl-nav-item[data-current-within]>.kit-ctl-nav-link{color:var(--kit-link)}
+.kit-ctl-nav[data-appearance=underline] .kit-ctl-nav-link:is([aria-current=page],.kit-ctl-nav-item[data-current-within]>*){border-color:var(--kit-action);font-weight:700}
+.kit-ctl-nav[data-appearance=pill] .kit-ctl-nav-link:is([aria-current=page],.kit-ctl-nav-item[data-current-within]>*){background:var(--kit-soft);box-shadow:inset 0 0 0 1px currentColor}
+.kit-ctl-nav[data-appearance=block] .kit-ctl-nav-link:is([aria-current=page],.kit-ctl-nav-item[data-current-within]>*){background:var(--kit-action);color:var(--kit-onAction);box-shadow:inset 0 0 0 2px var(--kit-surface)}
+.kit-ctl-nav-link:not([aria-disabled=true])${hover}{color:var(--kit-text);background:var(--kit-card-hover);transform:translateY(var(--kit-lift,0px))}
+.kit-ctl-nav[data-appearance=underline] .kit-ctl-nav-link:not([aria-disabled=true])${hover}{border-color:var(--kit-control-border)}
+.kit-ctl-nav[data-appearance=underline] .kit-ctl-nav-link[aria-current=page]${hover}{border-color:var(--kit-action)}
+.kit-ctl-nav[data-appearance=block] .kit-ctl-nav-link[aria-current=page]${hover}{background:var(--kit-action-hover);color:var(--kit-onActionHover)}
+.kit-ctl-nav-link:not([aria-disabled=true])${active}{background:var(--kit-card-active);transform:translateY(1px)}
+.kit-ctl-nav[data-appearance=block] .kit-ctl-nav-link[aria-current=page]${active}{background:var(--kit-action-active)}
+${focusRing('.kit-ctl-nav-link', '-3px')}${focusRing('.kit-ctl-nav-toggle', '2px')}
+.kit-ctl-nav-link[aria-disabled=true]{color:var(--kit-control-disabled-fg);cursor:not-allowed}
+.kit-ctl-nav-sub{position:absolute;z-index:10;inset:100% auto auto 0;flex-direction:column;min-width:100%;margin-top:var(--kit-sp-tight);padding:var(--kit-sp-tight);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);box-shadow:var(--kit-shadow-hover)}
+.kit-ctl-nav-sub[hidden]{display:none}.kit-ctl-nav[data-orientation=vertical] .kit-ctl-nav-sub{position:static;margin:var(--kit-sp-tight) 0 0 var(--ctl-px);padding:0;border:0;box-shadow:none;background:transparent}
+.kit-ctl-nav-toggle{display:none;align-items:center;gap:var(--ctl-gap);min-height:var(--ctl-h);padding-inline:var(--ctl-px);border:1px solid var(--kit-control-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font:inherit;font-size:var(--ctl-font);font-weight:var(--kit-bw,600);cursor:pointer}
+.kit-ctl-nav[data-shape=pill] .kit-ctl-nav-toggle{border-radius:999px}.kit-ctl-nav[data-shape=square] .kit-ctl-nav-toggle{border-radius:0}
+@media(max-width:640px){.kit-ctl-nav[data-overflow=collapse] .kit-ctl-nav-toggle{display:inline-flex}.kit-ctl-nav[data-overflow=collapse][data-state=closed] .kit-ctl-nav-list{display:none}.kit-ctl-nav[data-overflow=collapse] .kit-ctl-nav-list{flex-direction:column;margin-top:var(--kit-sp-near)}.kit-ctl-nav[data-overflow=collapse] .kit-ctl-nav-sub{position:static;margin:var(--kit-sp-tight) 0 0 var(--ctl-px);padding:0;border:0;box-shadow:none;background:transparent}}`.replace(/\n/g, '');
+
+const navigationExamples = Object.freeze([
+  {id: 'ex-nav-top', label: '주요 메뉴', items: [{label: '개요', href: '#overview', current: true}, {label: '문서', href: '#docs'}, {label: '가격', href: '#pricing'}, {label: '지원 종료', disabled: true}]},
+  {id: 'ex-nav-pill', label: '설정 메뉴', appearance: 'pill', icons: 'start', items: [{label: '계정', href: '#account', icon: 'user', current: true}, {label: '알림', href: '#alerts', icon: 'bell'}, {label: '보안', href: '#security', icon: 'shield'}]},
+  {id: 'ex-nav-side', label: '사이드 메뉴', appearance: 'block', orientation: 'vertical', submenu: 'disclosure', items: [{label: '홈', href: '#home', current: true}, {label: '리포트', children: [{label: '월간', href: '#monthly'}, {label: '분기', href: '#quarterly'}]}, {label: '설정', href: '#prefs'}]},
+  {id: 'ex-nav-fold', label: '접히는 메뉴', overflow: 'collapse', items: [{label: '개요', href: '#f-overview', current: true}, {label: '기능', href: '#f-features'}, {label: '후기', href: '#f-reviews'}, {label: '문의', href: '#f-contact'}]},
+]);
+
+const navigationMaterial = componentMaterial(navigationContract, {
+  category: 'layout-navigation', module: 'src/materials/navigation.mjs', renderExport: 'renderNavigation', key: 'navigation-menu', styles: navigationStyles, examples: navigationExamples.map(x => structuredClone(x)),
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: 'overflow=collapse는 640px 이하에서 토글 버튼 뒤로 접히고, scroll은 가로 스크롤 상자 안에서 항목 폭을 유지한다.'},
+  a11y: {rules: ['R05', 'R12', 'R14'], role: 'navigation > list of links; disclosure buttons use aria-expanded/aria-controls', keyboard: 'Tab through links; Enter/Space on toggles; ArrowDown/Up/Home/End inside a submenu; Escape closes and returns focus to its toggle'},
+  validation: {rules: ['R12', 'R14'], codes: ['NAV_ITEMS', 'NAV_SUBMENU', 'NAV_ICONS', 'NAV_CURRENT', 'NAV_CURRENT_DISABLED', ...navigationContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:26'], ext: {group: 'nav', required: ['id', 'label', 'items']},
+});
+
+exports.navigationContract = navigationContract;
+exports.renderNavigation = renderNavigation;
+exports.attachNavigation = attachNavigation;
+exports.navigationRuntime = navigationRuntime;
+exports.navigationStyles = navigationStyles;
+exports.navigationExamples = navigationExamples;
+exports.navigationMaterial = navigationMaterial;
 };
 __defs["materials/select.mjs"] = function (exports, __m) {
 const {defineMaterial} = __m("materials/contract.mjs");
@@ -5088,6 +6184,280 @@ exports.renderDataTable = renderDataTable;
 exports.attachTable = attachTable;
 exports.tableRuntime = tableRuntime;
 exports.tableStyles = tableStyles;
+};
+__defs["materials/tabs.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {icon} = __m("render/icon.mjs");
+
+/** Tabs: 외형(선택 표시 방식)·모양·크기·기능(방향·활성화 방식·넘침·아이콘)·상태(패널 로딩)를 따로 둔다. 키보드 규칙은 WAI-ARIA tabs 패턴을 따른다. */
+const tabsContract = defineContract({
+  id: 'component:tabs-control', label: 'Tabs',
+  inputFields: ['id', 'label', 'tabs', 'selected', 'force'],
+  axes: {
+    appearance: ['underline', 'pill', 'segmented'], shape: SHAPES, size: SIZES,
+    orientation: ['horizontal', 'vertical'], activation: ['automatic', 'manual'], overflow: ['none', 'scroll'], icons: ['none', 'start'],
+    state: ['ready', 'loading'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['orientation', 'activation', 'overflow', 'icons'], state: ['state']},
+  defaults: {appearance: 'underline', shape: 'soft', size: 'medium', orientation: 'horizontal', activation: 'automatic', overflow: 'none', icons: 'none', state: 'ready'},
+  states: ['ready', 'loading', 'selected', 'unselected', 'hover', 'focus', 'active', 'disabled'],
+  transitions: [
+    {from: 'unselected', to: 'selected', trigger: 'click | Enter/Space (manual) | Arrow/Home/End (automatic)'}, {from: 'selected', to: 'unselected', trigger: 'another tab selected'},
+    {from: 'unselected', to: 'focus', trigger: 'Arrow/Home/End moves focus (roving tabindex)'}, {from: 'ready', to: 'loading', trigger: 'app sets panel aria-busy'}, {from: 'loading', to: 'ready', trigger: 'app clears panel aria-busy'},
+    {from: 'unselected', to: 'hover', trigger: 'pointer enter'}, {from: 'hover', to: 'active', trigger: 'pointer down'},
+  ],
+  forbidden: [
+    {id: 'TABS_UNDERLINE_SHAPE', when: {appearance: 'underline', shape: ['square', 'pill']}, why: 'underline에는 상자가 없어 모서리 모양이 보이지 않으므로 기본 모양 하나만 둔다'},
+    {id: 'TABS_SEGMENTED_VERTICAL', when: {appearance: 'segmented', orientation: 'vertical'}, why: 'segmented는 가로 한 줄 트랙 안의 선택 표시라 세로로 세우면 트랙이 칸 목록처럼 읽힌다'},
+    {id: 'TABS_SEGMENTED_SCROLL', when: {appearance: 'segmented', overflow: 'scroll'}, why: 'segmented 트랙을 스크롤하면 잘린 칸이 선택 칸으로 오해된다: 칸 수를 줄이거나 underline을 쓴다'},
+    {id: 'TABS_VERTICAL_SCROLL', when: {orientation: 'vertical', overflow: 'scroll'}, why: '스크롤 넘침은 가로 목록용이다: 세로 탭은 줄이 아래로 늘어난다'},
+  ],
+  unsupported: ['closable tabs', 'draggable reordering', 'lazy panel fetch (app injects aria-busy)'],
+  pairs: [
+    ['--kit-muted', '--kit-surface', 4.5, 'tab'], ['--kit-text', '--kit-card-hover', 7, 'tab hover'], ['--kit-link', '--kit-surface', 4.5, 'selected (underline)'], ['--kit-link', '--kit-soft', 4.5, 'selected (pill)'],
+    ['--kit-text', '--kit-surface', 7, 'selected (segmented)'], ['--kit-action', '--kit-surface', 3, 'indicator'], ['--kit-focus', '--kit-surface', 3, 'focus ring'], ['--kit-muted', '--kit-card-hover', 4.5, 'tab hover (muted)'],
+  ],
+});
+
+function renderTabs(input) {
+  const {id, label, tabs, selected, force = ''} = input ?? {};
+  const p = resolveProps(tabsContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Tabs requires a lowercase kebab-case id');
+  if (!String(label ?? '').trim()) throw new TypeError('Tabs requires an accessible label');
+  if (force && !['hover', 'focus', 'active'].includes(force)) throw new TypeError('Invalid force preview');
+  if (!Array.isArray(tabs) || tabs.length < 2 || tabs.length > 6) throw new TypeError('TABS_COUNT: tabs need 2–6 entries');
+  const ids = new Set();
+  for (const t of tabs) {
+    if (!t || !SAFE_ID.test(t.id ?? '') || ids.has(t.id) || !String(t.label ?? '').trim() || typeof t.content !== 'string') throw new TypeError('TABS_ENTRY: each tab needs a unique kebab-case id, a label and text content');
+    ids.add(t.id);
+    if (p.icons === 'start' && !t.icon) throw new TypeError('TABS_ICONS: icons=start needs an icon on every tab');
+  }
+  const current = selected ?? tabs.find(t => !t.disabled)?.id;
+  const chosen = tabs.find(t => t.id === current);
+  if (!chosen || chosen.disabled) throw new TypeError('TABS_SELECTED: the selected tab must exist and be enabled');
+  const roving = chosen.id;
+  let forced = force ? false : true; // 증거 페이지용: 선택도 비활성도 아닌 첫 탭에 hover·focus 모양을 입힌다.
+  const forceAttr = t => (!forced && t.id !== current && !t.disabled ? (forced = true, ` data-force="${force}"`) : '');
+  const tab = t => `<button type="button" role="tab" class="kit-ctl-tab" id="${e(id)}-tab-${t.id}" aria-controls="${e(id)}-panel-${t.id}" aria-selected="${t.id === current}" tabindex="${t.id === roving ? 0 : -1}"${t.disabled ? ' disabled' : ''} data-tab="${t.id}"${forceAttr(t)}>${p.icons === 'start' ? icon(t.icon) : ''}<span>${e(t.label)}</span></button>`;
+  const loading = p.state === 'loading';
+  const panel = t => `<div role="tabpanel" class="kit-ctl-panel" id="${e(id)}-panel-${t.id}" aria-labelledby="${e(id)}-tab-${t.id}" tabindex="0"${t.id === current ? '' : ' hidden'}${loading && t.id === current ? ' aria-busy="true"' : ''}>${loading && t.id === current ? '<span class="kit-ctl-skel" aria-hidden="true"></span><span class="kit-ctl-skel" data-short aria-hidden="true"></span><span class="kit-ctl-sr" role="status">불러오는 중입니다.</span>' : `<p>${e(t.content)}</p>`}</div>`;
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  return `<div class="kit-ctl-tabs" data-ctl="tabs" id="${e(id)}" ${attrs}><div class="kit-ctl-tablist" role="tablist" aria-label="${e(label)}" aria-orientation="${p.orientation}">${tabs.map(tab).join('')}</div><div class="kit-ctl-panels">${tabs.map(panel).join('')}</div></div>`;
+}
+
+/** 브라우저에서 붙는 동작: roving tabindex, 방향키·Home·End, automatic은 포커스가 곧 선택, manual은 Enter·Space로 선택. 비활성 탭은 건너뛴다. */
+function attachTabs(root, {onChange} = {}) {
+  const doc = root.ownerDocument, list = root.querySelector('[role="tablist"]');
+  const tabs = [...root.querySelectorAll('[role="tab"]')], panels = [...root.querySelectorAll('[role="tabpanel"]')];
+  if (!list || !tabs.length || tabs.length !== panels.length) throw new TypeError('Tabs root is incomplete');
+  const enabled = () => tabs.filter(t => !t.disabled);
+  const select = (tab, focus) => {
+    tabs.forEach((t, i) => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; panels[i].hidden = !on; });
+    if (focus) tab.focus();
+    if (tab.scrollIntoView) tab.scrollIntoView({block: 'nearest', inline: 'nearest'});
+    if (typeof onChange === 'function') onChange({id: tab.dataset.tab});
+  };
+  const move = (tab, auto) => { tabs.forEach(t => { t.tabIndex = -1; }); tab.tabIndex = 0; tab.focus(); if (auto) select(tab, false); };
+  tabs.forEach(tab => tab.addEventListener('click', () => select(tab, false)));
+  list.addEventListener('keydown', event => {
+    const items = enabled(), at = items.indexOf(doc.activeElement);
+    if (at < 0) return;
+    const vertical = root.dataset.orientation === 'vertical', auto = root.dataset.activation === 'automatic';
+    const next = vertical ? 'ArrowDown' : 'ArrowRight', prev = vertical ? 'ArrowUp' : 'ArrowLeft';
+    let target = null;
+    if (event.key === next) target = items[(at + 1) % items.length]; else if (event.key === prev) target = items[(at - 1 + items.length) % items.length];
+    else if (event.key === 'Home') target = items[0]; else if (event.key === 'End') target = items[items.length - 1];
+    else if (!auto && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); select(items[at], false); return; }
+    if (target) { event.preventDefault(); move(target, auto); }
+  });
+  return {select: id => { const t = tabs.find(x => x.dataset.tab === id && !x.disabled); if (t) select(t, false); }};
+}
+const tabsRuntime = attachTabs.toString();
+
+const tabsStyles = `${baseStyles}${sizeCSS('.kit-ctl-tabs')}
+.kit-ctl-tabs{display:grid;gap:var(--kit-sp-item);min-width:0;font-size:var(--ctl-font);color:var(--kit-muted)}
+.kit-ctl-tabs[data-orientation=vertical]{grid-template-columns:auto minmax(0,1fr);align-items:start}
+.kit-ctl-tablist{display:flex;gap:var(--kit-sp-tight);min-width:0}
+.kit-ctl-tabs[data-orientation=vertical] .kit-ctl-tablist{flex-direction:column}
+.kit-ctl-tabs[data-overflow=scroll] .kit-ctl-tablist{overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin}
+.kit-ctl-tabs[data-appearance=underline][data-orientation=horizontal] .kit-ctl-tablist{border-bottom:1px solid var(--kit-border)}
+.kit-ctl-tabs[data-appearance=underline][data-orientation=vertical] .kit-ctl-tablist{border-inline-end:1px solid var(--kit-border)}
+.kit-ctl-tabs[data-appearance=segmented] .kit-ctl-tablist{display:inline-flex;justify-self:start;max-width:100%;padding:var(--kit-sp-tight);border-radius:var(--kit-radius);background:var(--kit-card-active)}
+.kit-ctl-tabs[data-appearance=segmented][data-shape=square] .kit-ctl-tablist{border-radius:0}.kit-ctl-tabs[data-appearance=segmented][data-shape=pill] .kit-ctl-tablist{border-radius:999px}
+.kit-ctl-tab{display:inline-flex;align-items:center;gap:var(--ctl-gap);flex:none;box-sizing:border-box;min-height:var(--ctl-h);padding-inline:var(--ctl-px);border:0 solid transparent;border-radius:var(--kit-radius);background:transparent;color:inherit;font:inherit;font-size:var(--ctl-font);font-weight:var(--kit-bw,600);white-space:nowrap;word-break:keep-all;cursor:pointer}
+.kit-ctl-tabs[data-shape=square] .kit-ctl-tab{border-radius:0}.kit-ctl-tabs[data-shape=pill] .kit-ctl-tab{border-radius:999px}
+.kit-ctl-tabs .kit-icon{width:var(--ctl-icon);height:var(--ctl-icon);flex:none}
+.kit-ctl-tabs[data-appearance=underline] .kit-ctl-tab{border-radius:0;margin-bottom:-1px}
+.kit-ctl-tabs[data-appearance=underline][data-orientation=horizontal] .kit-ctl-tab{border-bottom-width:3px}
+.kit-ctl-tabs[data-appearance=underline][data-orientation=vertical] .kit-ctl-tab{border-inline-end-width:3px;margin:0 -1px 0 0;justify-content:flex-start}
+.kit-ctl-tab[aria-selected=true]{color:var(--kit-link)}
+.kit-ctl-tabs[data-appearance=underline] .kit-ctl-tab[aria-selected=true]{border-color:var(--kit-action)}
+.kit-ctl-tabs[data-appearance=pill] .kit-ctl-tab[aria-selected=true]{background:var(--kit-soft);box-shadow:inset 0 0 0 1px currentColor}
+.kit-ctl-tabs[data-appearance=segmented] .kit-ctl-tab[aria-selected=true]{background:var(--kit-surface);color:var(--kit-text);box-shadow:var(--kit-shadow-hover),inset 0 0 0 1px var(--kit-control-border)}
+.kit-ctl-tab[aria-selected=false]:not(:disabled)${hover}{color:var(--kit-text);background:var(--kit-card-hover);transform:translateY(var(--kit-lift,0px))}
+.kit-ctl-tabs[data-appearance=underline] .kit-ctl-tab[aria-selected=false]:not(:disabled)${hover}{border-color:var(--kit-control-border)}
+.kit-ctl-tab:not(:disabled)${active}{background:var(--kit-card-active);transform:translateY(1px)}
+${focusRing('.kit-ctl-tab', '-3px')}${focusRing('.kit-ctl-panel', '2px')}
+.kit-ctl-tab:disabled{color:var(--kit-control-disabled-fg);cursor:not-allowed}
+.kit-ctl-panel{min-width:0;color:var(--kit-text);border-radius:var(--kit-radius)}.kit-ctl-panel p{margin:0;word-break:keep-all;overflow-wrap:anywhere}.kit-ctl-panel[hidden]{display:none}
+.kit-ctl-panel[aria-busy=true]{display:grid;gap:var(--kit-sp-near)}.kit-ctl-panel .kit-ctl-skel{display:block;height:var(--kit-sp-item);border-radius:var(--kit-sp-tight);background:var(--kit-card-active);animation:kit-ctl-pulse 1.4s ease-in-out infinite}.kit-ctl-panel .kit-ctl-skel[data-short]{width:60%}
+@keyframes kit-ctl-pulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.kit-ctl-panel .kit-ctl-skel{animation:none}}
+@media(max-width:640px){.kit-ctl-tabs[data-orientation=vertical]{grid-template-columns:minmax(0,1fr)}.kit-ctl-tabs[data-orientation=vertical] .kit-ctl-tablist{flex-direction:row;overflow-x:auto;border-inline-end:0;border-bottom:1px solid var(--kit-border)}}`.replace(/\n/g, '');
+
+const tabsExamples = Object.freeze([
+  {id: 'ex-tabs-line', label: '프로젝트 보기', selected: 'overview', tabs: [{id: 'overview', label: '개요', content: '프로젝트의 목표와 현재 상태를 요약합니다.'}, {id: 'tasks', label: '작업', content: '이번 주에 끝낼 작업 목록입니다.'}, {id: 'files', label: '파일', content: '공유된 파일 열두 개가 있습니다.'}, {id: 'archive', label: '보관', content: '보관된 항목입니다.', disabled: true}]},
+  {id: 'ex-tabs-seg', label: '기간', appearance: 'segmented', shape: 'pill', activation: 'manual', tabs: [{id: 'day', label: '일', content: '오늘 기준 지표입니다.'}, {id: 'week', label: '주', content: '이번 주 기준 지표입니다.'}, {id: 'month', label: '월', content: '이번 달 기준 지표입니다.'}]},
+  {id: 'ex-tabs-side', label: '설정 구역', appearance: 'pill', orientation: 'vertical', icons: 'start', tabs: [{id: 'profile', label: '프로필', icon: 'user', content: '이름과 소개를 바꿉니다.'}, {id: 'notify', label: '알림', icon: 'bell', content: '알림 수신 방식을 고릅니다.'}, {id: 'safe', label: '보안', icon: 'shield', content: '비밀번호와 로그인 기기를 관리합니다.'}]},
+]);
+
+const tabsMaterial = componentMaterial(tabsContract, {
+  category: 'layout-navigation', module: 'src/materials/tabs.mjs', renderExport: 'renderTabs', key: 'tabs-control', styles: tabsStyles, examples: tabsExamples.map(x => structuredClone(x)),
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: '세로 탭은 640px 이하에서 가로 줄로 눕는다. scroll 넘침은 목록 안에서만 스크롤한다.'},
+  a11y: {rules: ['R05', 'R13'], role: 'tablist > tab + tabpanel (aria-selected, aria-controls, aria-labelledby, roving tabindex)', keyboard: 'Arrow keys by orientation, Home/End; automatic activation follows focus, manual needs Enter/Space; disabled tabs are skipped'},
+  validation: {rules: ['R13'], codes: ['TABS_COUNT', 'TABS_ENTRY', 'TABS_ICONS', 'TABS_SELECTED', ...tabsContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:34'], ext: {group: 'layout', required: ['id', 'label', 'tabs']},
+});
+
+exports.tabsContract = tabsContract;
+exports.renderTabs = renderTabs;
+exports.attachTabs = attachTabs;
+exports.tabsRuntime = tabsRuntime;
+exports.tabsStyles = tabsStyles;
+exports.tabsExamples = tabsExamples;
+exports.tabsMaterial = tabsMaterial;
+};
+__defs["materials/tooltip.mjs"] = function (exports, __m) {
+const {defineContract, resolveProps, ContractError, sizeCSS, baseStyles, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
+const {renderButton} = __m("materials/button.mjs");
+
+/** Tooltip: 외형(반전·표면)·모양·크기(글자와 안쪽 여백·최대 폭)·기능(트리거 종류·역할·배치·지연)·상태(숨김·표시)를 따로 둔다.
+ *  WCAG 1.4.13: Escape로 닫히고(dismissible), 포인터를 말풍선 위로 옮겨도 유지되며(hoverable), 닫기 전까지 유지된다(persistent). */
+const tooltipContract = defineContract({
+  id: 'component:tooltip', label: 'Tooltip',
+  inputFields: ['id', 'triggerLabel', 'content', 'icon', 'triggerDisabled', 'href', 'actions', 'html', 'force'],
+  axes: {
+    appearance: ['inverse', 'surface'], shape: SHAPES, size: SIZES,
+    trigger: ['text', 'icon'], purpose: ['description', 'name'], placement: ['top', 'bottom', 'start', 'end'], delay: ['none', 'short'],
+    state: ['hidden', 'visible'],
+  },
+  concepts: {appearance: ['appearance'], shape: ['shape'], size: ['size'], function: ['trigger', 'purpose', 'placement', 'delay'], state: ['state']},
+  defaults: {appearance: 'inverse', shape: 'soft', size: 'medium', trigger: 'text', purpose: 'description', placement: 'top', delay: 'short', state: 'hidden'},
+  states: ['hidden', 'visible', 'hover', 'focus'],
+  transitions: [
+    {from: 'hidden', to: 'visible', trigger: 'trigger focus (immediate) | pointer enter (after delay)'}, {from: 'visible', to: 'hidden', trigger: 'Escape | blur | pointer leave after a short grace'},
+    {from: 'visible', to: 'hover', trigger: 'pointer moves onto the tooltip (stays visible)'}, {from: 'hidden', to: 'focus', trigger: 'Tab to the trigger'},
+  ],
+  forbidden: [
+    {id: 'TOOLTIP_NAME_TEXT_TRIGGER', when: {purpose: 'name', trigger: 'text'}, why: '글자가 있는 트리거는 이미 이름이 있다: 툴팁이 이름이 되는 것은 글자 없는 아이콘 트리거뿐이다'},
+    {id: 'TOOLTIP_NAME_DELAY', when: {purpose: 'name', delay: 'short'}, why: '아이콘의 이름을 알려 주는 툴팁이 지연되면 마우스 사용자는 그동안 이름 없는 버튼을 본다'},
+  ],
+  unsupported: ['interactive content (links, buttons, forms)', 'rich HTML', 'tooltip on non-focusable or disabled elements', 'click-to-open popover (use a dialog or disclosure)'],
+  pairs: [
+    ['--kit-surface', '--kit-text', 7, 'inverse'], ['--kit-text', '--kit-surface', 7, 'surface'], ['--kit-focus', '--kit-surface', 3, 'trigger focus ring'],
+  ],
+});
+
+/** 내용 계약: 툴팁은 짧은 일반 글만 담는다. 이 규칙들은 축이 아니라 내용에 대한 것이다. */
+const tooltipContentRules = Object.freeze([
+  {id: 'TOOLTIP_INTERACTIVE', why: '툴팁은 포인터를 옮기면 사라지고 터치에서 열리지 않으므로 링크·버튼·입력 같은 상호작용 내용을 담을 수 없다'},
+  {id: 'TOOLTIP_LENGTH', why: '툴팁은 한두 줄 보조 설명이다: 120자를 넘으면 문서나 대화상자에 둔다'},
+  {id: 'TOOLTIP_PILL_LONG', why: 'pill 모양은 한 줄 라벨용이다: 24자를 넘으면 모서리가 글을 자른다'},
+  {id: 'TOOLTIP_DISABLED_TRIGGER', why: '비활성 트리거는 포커스를 받지 못해 키보드 사용자에게 툴팁이 나오지 않는다'},
+]);
+const TOOLTIP_MAX = Object.freeze({compact: 5, small: 6, medium: 7, large: 8});
+const TOOLTIP_DELAY_MS = 400;
+
+function renderTooltip(input) {
+  const {id, triggerLabel, content, icon: iconName = 'help-circle', triggerDisabled = false, href, actions, html, force = ''} = input ?? {};
+  const p = resolveProps(tooltipContract, input);
+  if (!SAFE_ID.test(id ?? '')) throw new TypeError('Tooltip requires a lowercase kebab-case id');
+  if (typeof content !== 'string' || !content.trim()) throw new TypeError('Tooltip requires text content');
+  if (href !== undefined || actions !== undefined || html !== undefined || /[<>]|\]\(/.test(content)) throw new ContractError(tooltipContract, [tooltipContentRules[0]]);
+  if ([...content].length > 120) throw new ContractError(tooltipContract, [tooltipContentRules[1]]);
+  if (p.shape === 'pill' && [...content].length > 24) throw new ContractError(tooltipContract, [tooltipContentRules[2]]);
+  if (triggerDisabled) throw new ContractError(tooltipContract, [tooltipContentRules[3]]);
+  if (!String(triggerLabel ?? '').trim()) throw new TypeError('Tooltip requires a triggerLabel');
+  if (force && !['hover', 'focus'].includes(force)) throw new TypeError('Invalid force preview (trigger button)');
+  const tip = `${id}-tip`, naming = p.purpose === 'name';
+  const trigger = p.trigger === 'icon'
+    ? renderButton({content: 'icon-only', icon: iconName, appearance: 'ghost', tone: 'neutral', size: 'medium', force, ...(naming ? {labelledBy: tip} : {ariaLabel: triggerLabel, describedBy: tip})})
+    : renderButton({label: triggerLabel, appearance: 'outline', tone: 'neutral', size: 'medium', force, describedBy: tip});
+  const visible = p.state === 'visible';
+  const attrs = Object.entries(p).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+  return `<span class="kit-ctl-tooltip" data-ctl="tooltip" id="${e(id)}" ${attrs}><span class="kit-ctl-tooltip-anchor">${trigger}<span role="tooltip" class="kit-ctl-tooltip-bubble" id="${tip}"${visible ? '' : ' hidden'}>${e(content)}</span></span></span>`;
+}
+
+/** 브라우저에서 붙는 동작. 열림은 포커스 즉시·호버는 지연 후이고, 닫힘은 Escape·포커스 이탈·포인터 이탈(짧은 유예 안에 말풍선으로 옮기면 유지)이다. 화면을 벗어나면 반대편으로 뒤집고 가로로 밀어 넣는다. */
+function attachTooltip(root, {delayMs = 400} = {}) {
+  const doc = root.ownerDocument, view = doc.defaultView, trigger = root.querySelector('button'), bubble = root.querySelector('[role="tooltip"]');
+  if (!trigger || !bubble) throw new TypeError('Tooltip root is incomplete');
+  const home = root.dataset.placement, wait = root.dataset.delay === 'short' ? delayMs : 0, opposite = {top: 'bottom', bottom: 'top', start: 'end', end: 'start'};
+  let showTimer = 0, hideTimer = 0;
+  const fits = (side, r) => (side === 'top' ? r.top >= 0 : side === 'bottom' ? r.bottom <= view.innerHeight : side === 'start' ? r.left >= 0 : r.right <= view.innerWidth);
+  const place = () => {
+    root.style.setProperty('--tip-shift', '0px');
+    const order = [home, opposite[home], 'top', 'bottom'].filter((side, i, all) => all.indexOf(side) === i);
+    let chosen = home;
+    for (const side of order) { root.dataset.placement = side; chosen = side; if (fits(side, bubble.getBoundingClientRect())) break; }
+    const after = bubble.getBoundingClientRect(), w = view.innerWidth, pad = 8;
+    if (chosen === 'top' || chosen === 'bottom') root.style.setProperty('--tip-shift', (after.left < pad ? pad - after.left : after.right > w - pad ? w - pad - after.right : 0) + 'px');
+  };
+  const reveal = () => { bubble.hidden = false; root.dataset.state = 'visible'; place(); };
+  const hide = () => { view.clearTimeout(showTimer); view.clearTimeout(hideTimer); bubble.hidden = true; root.dataset.state = 'hidden'; };
+  const show = immediate => { view.clearTimeout(hideTimer); view.clearTimeout(showTimer); if (immediate || !wait) reveal(); else showTimer = view.setTimeout(reveal, wait); };
+  trigger.addEventListener('focus', () => show(true));
+  root.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') show(false); });
+  root.addEventListener('pointerleave', () => { view.clearTimeout(showTimer); view.clearTimeout(hideTimer); hideTimer = view.setTimeout(hide, 150); });
+  root.addEventListener('focusout', event => { if (!event.relatedTarget || !root.contains(event.relatedTarget)) hide(); });
+  root.addEventListener('keydown', event => { if (event.key === 'Escape' && !bubble.hidden) { event.stopPropagation(); hide(); } });
+  if (!bubble.hidden) place();
+  return {show: () => show(true), hide};
+}
+const tooltipRuntime = attachTooltip.toString();
+
+const tooltipStyles = `${baseStyles}${sizeCSS('.kit-ctl-tooltip')}
+.kit-ctl-tooltip{display:inline-block;font-size:var(--ctl-font)}
+.kit-ctl-tooltip-anchor{position:relative;display:inline-flex}
+.kit-ctl-tooltip-bubble{position:absolute;z-index:30;box-sizing:border-box;width:max-content;max-width:min(calc(var(--kit-control) * var(--t-max,7)),calc(100vw - 2 * var(--kit-sp-near)));padding:var(--ctl-gap) calc(var(--ctl-gap) * 2);border-radius:var(--kit-radius);font-size:var(--ctl-font);font-weight:500;line-height:1.4;text-align:start;word-break:keep-all;overflow-wrap:anywhere;pointer-events:auto}
+.kit-ctl-tooltip[data-size=compact]{--t-max:${TOOLTIP_MAX.compact}}.kit-ctl-tooltip[data-size=small]{--t-max:${TOOLTIP_MAX.small}}.kit-ctl-tooltip[data-size=medium]{--t-max:${TOOLTIP_MAX.medium}}.kit-ctl-tooltip[data-size=large]{--t-max:${TOOLTIP_MAX.large}}
+.kit-ctl-tooltip-bubble[hidden]{display:none}
+.kit-ctl-tooltip[data-shape=square] .kit-ctl-tooltip-bubble{border-radius:0}.kit-ctl-tooltip[data-shape=pill] .kit-ctl-tooltip-bubble{border-radius:999px;white-space:nowrap}
+.kit-ctl-tooltip[data-appearance=inverse] .kit-ctl-tooltip-bubble{background:var(--kit-text);color:var(--kit-surface)}
+.kit-ctl-tooltip[data-appearance=surface] .kit-ctl-tooltip-bubble{background:var(--kit-surface);color:var(--kit-text);border:1px solid var(--kit-border);box-shadow:var(--kit-shadow-hover)}
+.kit-ctl-tooltip-bubble::before{content:"";position:absolute}
+.kit-ctl-tooltip[data-placement=top] .kit-ctl-tooltip-bubble{inset-block-end:calc(100% + var(--kit-sp-near));inset-inline-start:50%;transform:translateX(calc(-50% + var(--tip-shift,0px)))}
+.kit-ctl-tooltip[data-placement=bottom] .kit-ctl-tooltip-bubble{inset-block-start:calc(100% + var(--kit-sp-near));inset-inline-start:50%;transform:translateX(calc(-50% + var(--tip-shift,0px)))}
+.kit-ctl-tooltip[data-placement=start] .kit-ctl-tooltip-bubble{inset-inline-end:calc(100% + var(--kit-sp-near));inset-block-start:50%;transform:translateY(-50%)}
+.kit-ctl-tooltip[data-placement=end] .kit-ctl-tooltip-bubble{inset-inline-start:calc(100% + var(--kit-sp-near));inset-block-start:50%;transform:translateY(-50%)}
+.kit-ctl-tooltip[data-placement=top] .kit-ctl-tooltip-bubble::before{inset:100% 0 auto;height:var(--kit-sp-near)}.kit-ctl-tooltip[data-placement=bottom] .kit-ctl-tooltip-bubble::before{inset:auto 0 100%;height:var(--kit-sp-near)}
+.kit-ctl-tooltip[data-placement=start] .kit-ctl-tooltip-bubble::before{inset:0 auto 0 100%;width:var(--kit-sp-near)}.kit-ctl-tooltip[data-placement=end] .kit-ctl-tooltip-bubble::before{inset:0 100% 0 auto;width:var(--kit-sp-near)}
+@media(prefers-reduced-motion:no-preference){.kit-ctl-tooltip-bubble:not([hidden]){animation:kit-ctl-tip var(--kit-dur,150ms) ease-out}@keyframes kit-ctl-tip{from{opacity:0}}}`.replace(/\n/g, '');
+
+const tooltipExamples = Object.freeze([
+  {id: 'ex-tip-text', triggerLabel: '저장 위치', content: '내 문서 폴더에 저장됩니다.'},
+  {id: 'ex-tip-name', triggerLabel: '도움말', trigger: 'icon', purpose: 'name', delay: 'none', placement: 'bottom', appearance: 'surface', content: '도움말 열기'},
+  {id: 'ex-tip-pill', triggerLabel: '단축키', shape: 'pill', placement: 'end', content: '⌘ + S'},
+]);
+
+const tooltipMaterial = componentMaterial(tooltipContract, {
+  category: 'interaction-state', module: 'src/materials/tooltip.mjs', renderExport: 'renderTooltip', key: 'tooltip', styles: tooltipStyles, examples: tooltipExamples.map(x => ({...x})),
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], note: '말풍선 폭은 min(컨트롤 높이 × 배수, 100vw − 여백)이다. 화면 밖으로 나가면 반대편으로 뒤집히고 가로로 밀려 들어온다.'},
+  a11y: {rules: ['R05'], role: 'tooltip + aria-describedby (purpose=name uses aria-labelledby on an icon-only trigger)', keyboard: 'focus shows immediately, Escape dismisses, blur hides; the tooltip stays while the pointer is over it'},
+  validation: {rules: ['R05'], codes: [...tooltipContentRules.map(r => r.id), ...tooltipContract.forbidden.map(r => r.id)]},
+  evidence: ['tests/material-components.test.mjs:38'], ext: {group: 'feedback', required: ['id', 'triggerLabel', 'content']}, dependencies: ['component:button-control'],
+  tags: ['forbidden:TOOLTIP_INTERACTIVE', 'forbidden:TOOLTIP_DISABLED_TRIGGER'],
+});
+
+exports.tooltipContract = tooltipContract;
+exports.tooltipContentRules = tooltipContentRules;
+exports.TOOLTIP_MAX = TOOLTIP_MAX;
+exports.TOOLTIP_DELAY_MS = TOOLTIP_DELAY_MS;
+exports.renderTooltip = renderTooltip;
+exports.attachTooltip = attachTooltip;
+exports.tooltipRuntime = tooltipRuntime;
+exports.tooltipStyles = tooltipStyles;
+exports.tooltipExamples = tooltipExamples;
+exports.tooltipMaterial = tooltipMaterial;
 };
 __defs["materials/typography.mjs"] = function (exports, __m) {
 /** Role typography materials independent of the 2.5.0 compiler path.
@@ -6343,11 +7713,31 @@ function highlight(code, language) {
 
 exports.highlight = highlight;
 };
+__defs["render/icon.mjs"] = function (exports, __m) {
+const {icons} = __m("catalog/icons.mjs");
+
+/** Icon markup is style-agnostic; the `icon` axis only changes CSS variables (stroke width, caps, fill). */
+function icon(name, extra = '') {
+  const shapes = icons[name];
+  if (!shapes) throw new Error('Unknown icon: ' + name);
+  return `<svg class="kit-icon${extra ? ' ' + extra : ''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${shapes.map(d => `<path${d.endsWith('Z') ? ' class="c"' : ''} d="${d}"/>`).join('')}</svg>`;
+}
+
+exports.icon = icon;
+};
 __defs["render/index.mjs"] = function (exports, __m) {
 const {makeRenderer} = __m("render/nodes.mjs");
 const {renderShell} = __m("render/shell.mjs");
 const {selectRuntime} = __m("materials/select.mjs");
 const {tableRuntime} = __m("materials/table.mjs");
+const {buttonRuntime} = __m("materials/button.mjs");
+const {inputRuntime} = __m("materials/input.mjs");
+const {cardRuntime} = __m("materials/card.mjs");
+const {navigationRuntime} = __m("materials/navigation.mjs");
+const {modalRuntime} = __m("materials/modal.mjs");
+const {tabsRuntime} = __m("materials/tabs.mjs");
+const {tooltipRuntime} = __m("materials/tooltip.mjs");
+const {feedbackRuntime} = __m("materials/feedback.mjs");
 const {atLeast} = __m("catalog/expression.mjs");
 { const __r = __m("render/util.mjs"); exports.escapeHTML = __r.escapeHTML; }
 
@@ -6374,7 +7764,7 @@ function mountControl(selector, runtime) {
 }
 
 /**
- * 카탈로그 2.6.0 컨트롤 재료의 고정 런타임(재료의 attachSelect·attachTable 소스 그대로). 쓴 노드가 있을 때만 formRuntime 뒤에 붙고,
+ * 카탈로그 2.6.0 컨트롤 재료의 고정 런타임. 쓴 노드가 있을 때만 formRuntime 뒤에 붙고,
  * provider는 주입하지 않으므로 네트워크를 쓰지 않는다. 2.5.0 이하와 컨트롤이 없는 문서는 빈 문자열이라 출력이 같다.
  */
 function controlRuntime(b) {
@@ -6382,8 +7772,20 @@ function controlRuntime(b) {
   const used = new Set();
   const walk = n => { used.add(n.type); n.children?.forEach(walk); };
   walk(b.tree);
-  return (used.has('select-control') ? mountControl('.kit-select', selectRuntime) : '')
-    + (used.has('data-table') ? mountControl('.kit-data-table', tableRuntime) : '');
+  const runtimes = [
+    ['select-control', '.kit-select', selectRuntime],
+    ['data-table', '.kit-data-table', tableRuntime],
+    ['button-control', '[data-ctl=button]', buttonRuntime],
+    ['input-control', '[data-ctl=input]', inputRuntime],
+    ['card-surface', '[data-ctl=card]', cardRuntime],
+    ['navigation-menu', '[data-ctl=navigation]', navigationRuntime],
+    ['modal-dialog', '[data-ctl=modal]', modalRuntime],
+    ['tabs-control', '[data-ctl=tabs]', tabsRuntime],
+    ['tooltip', '[data-ctl=tooltip]', tooltipRuntime],
+    ['feedback-message', '[data-ctl=feedback]', feedbackRuntime],
+  ];
+  return runtimes.filter(([type]) => used.has(type))
+    .map(([, selector, runtime]) => mountControl(selector, runtime)).join('');
 }
 
 exports.renderTree = renderTree;
@@ -6733,6 +8135,14 @@ const {expressionApplies, FEATURED_COLUMNS} = __m("catalog/expression.mjs");
 // 2.6.0 재료 렌더 코드(select-table.md)를 그대로 쓴다. 이 두 파일만 컴파일 경로가 읽는 재료 모듈이다(tests/materials-registry.test.mjs).
 const {renderSelect} = __m("materials/select.mjs");
 const {renderDataTable} = __m("materials/table.mjs");
+const {renderButton} = __m("materials/button.mjs");
+const {renderInput} = __m("materials/input.mjs");
+const {renderCard} = __m("materials/card.mjs");
+const {renderNavigation} = __m("materials/navigation.mjs");
+const {renderModal} = __m("materials/modal.mjs");
+const {renderTabs} = __m("materials/tabs.mjs");
+const {renderTooltip} = __m("materials/tooltip.mjs");
+const {renderFeedback} = __m("materials/feedback.mjs");
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -6883,6 +8293,18 @@ function makeRenderer(b, design = null) {
     rows: n.rows.map(row => ({...row})),
     density: n.density, responsive: n.responsive, state: n.state, sortable: n.sortable === 'yes', selectable: n.selectable === 'yes', message: n.message,
   })}</section>`;
+
+  const ctlId = (n, id) => n.id ? `ctl-id-${n.id}` : `ctl-generated-${id}`;
+  const controlInput = n => { const {type, ...input} = n; return input; };
+  const refIds = value => typeof value === 'string' ? value.trim().split(/\s+/).filter(Boolean).map(x => `ctl-id-${x}`).join(' ') : '';
+  R['button-control'] = (n, d, id) => { const v = controlInput(n); return renderButton({...v, id: ctlId(n, id), ...(n.describedBy ? {describedBy: refIds(n.describedBy)} : {}), ...(n.labelledBy ? {labelledBy: refIds(n.labelledBy)} : {})}); };
+  R['input-control'] = (n, d, id) => { const v = controlInput(n); return renderInput({...v, id: ctlId(n, id), name: n.name ?? ctlId(n, id)}); };
+  R['card-surface'] = (n, d, id) => renderCard({...controlInput(n), id: ctlId(n, id), href: n.href ?? '#main'});
+  R['navigation-menu'] = (n, d, id) => renderNavigation({...controlInput(n), id: ctlId(n, id)});
+  R['modal-dialog'] = (n, d, id) => renderModal({...controlInput(n), id: ctlId(n, id), body: (n.body ?? []).map((item, i) => item.slot === 'input' ? {...item, id: `${ctlId(n, id)}-${item.id ?? `field-${i + 1}`}`} : item)});
+  R['tabs-control'] = (n, d, id) => renderTabs({...controlInput(n), id: ctlId(n, id)});
+  R.tooltip = (n, d, id) => renderTooltip({...controlInput(n), id: ctlId(n, id)});
+  R['feedback-message'] = (n, d, id) => renderFeedback({...controlInput(n), id: ctlId(n, id)});
   R.list = (n, d, id) => { const s = n.state ?? (n.items.length ? 'ready' : 'empty'), v = n.variant ?? 'divided'; return `<section class="kit-list" data-variant="${v}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<ul>${n.items.map(x => `<li>${v === 'check' ? `<span class="kit-check" aria-hidden="true">${icon('check')}</span>` : x.icon ? `<span class="kit-li-icon">${icon(x.icon)}</span>` : ''}<div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}</div>${x.status ? `<span class="kit-badge" data-status="${x.status}"${statusDot(x.status) ? ` data-dot="${statusDot(x.status)}"` : ''}>${e(x.status)}</span>` : ''}</li>`).join('')}</ul>` : ''}</section>`; };
   R.form = (n, d, id) => {
     const fieldHTML = f => {
@@ -6992,18 +8414,13 @@ exports.DEFAULT_CHROME = DEFAULT_CHROME;
 exports.renderShell = renderShell;
 };
 __defs["render/util.mjs"] = function (exports, __m) {
-const {icons} = __m("catalog.mjs");
 const {FLOW} = __m("layout.mjs");
+const {escapeHTML} = __m("escape-html.mjs");
+const {icon} = __m("render/icon.mjs");
 
-const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+
+
 const e = escapeHTML;
-
-/** Icon markup is style-agnostic; the `icon` axis only changes CSS variables (stroke width, caps, fill). */
-function icon(name, extra = '') {
-  const shapes = icons[name];
-  if (!shapes) throw new Error('Unknown icon: ' + name);
-  return `<svg class="kit-icon${extra ? ' ' + extra : ''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${shapes.map(d => `<path${d.endsWith('Z') ? ' class="c"' : ''} d="${d}"/>`).join('')}</svg>`;
-}
 
 /** Author anchors (`#features`) point at section ids (`s-features`); `#main` and https links pass through. */
 const href = h => e(/^#[a-z]/.test(h) && h !== '#main' ? '#s-' + h.slice(1) : h);
@@ -7054,8 +8471,8 @@ const valueUnits = text => [...String(text)].reduce((sum, ch) => sum + (/[\u1100
 const flowAttrs = (n, cap = 3, kind = 'plain') => n >= 2 && n <= FLOW.maxItems ? ' data-flow data-n="' + n + '" data-cap="' + Math.min(cap ?? 3, 4) + '"' + (kind === 'dense' ? ' data-dense' : kind === 'span' ? ' data-span' : '') : '';
 
 exports.escapeHTML = escapeHTML;
-exports.e = e;
 exports.icon = icon;
+exports.e = e;
 exports.href = href;
 exports.button = button;
 exports.initials = initials;
@@ -7706,6 +9123,14 @@ const {chartExtensionCSS} = __m("styles/chart-extension.mjs");
 const {atLeast} = __m("catalog/expression.mjs");
 const {selectStyles} = __m("materials/select.mjs");
 const {tableStyles} = __m("materials/table.mjs");
+const {buttonStyles} = __m("materials/button.mjs");
+const {inputStyles} = __m("materials/input.mjs");
+const {cardStyles} = __m("materials/card.mjs");
+const {navigationStyles} = __m("materials/navigation.mjs");
+const {modalStyles} = __m("materials/modal.mjs");
+const {tabsStyles} = __m("materials/tabs.mjs");
+const {tooltipStyles} = __m("materials/tooltip.mjs");
+const {feedbackStyles} = __m("materials/feedback.mjs");
 const {renderRoleTypeCSS, roleTypeUsage} = __m("materials/typography.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
@@ -7742,6 +9167,11 @@ function stylesheet(b, sets, body = '', design = null) {
   // 카탈로그 2.6.0: 쓴 컨트롤 재료의 CSS만 나온다(재료의 selectStyles·tableStyles 그대로). 2.5.0 이하는 이 노드를 쓸 수 없어 이 줄이 비어 있다.
   if (used.has('select-control')) parts.push(selectStyles.trim());
   if (used.has('data-table')) parts.push(tableStyles.trim() + '.kit-data-block{display:grid;gap:var(--kit-sp-near);min-width:0}');
+  const componentStyles = {
+    'button-control': buttonStyles, 'input-control': inputStyles, 'card-surface': cardStyles, 'navigation-menu': navigationStyles,
+    'modal-dialog': modalStyles, 'tabs-control': tabsStyles, tooltip: tooltipStyles, 'feedback-message': feedbackStyles,
+  };
+  for (const type of Object.keys(componentStyles)) if (used.has(type)) parts.push(componentStyles[type].trim());
   parts.push(flowCSS(flowUsage(body)).trim());
   parts.push(contractCSS().trim());
   parts.push(polishCore.trim());
@@ -8624,7 +10054,7 @@ function validateBlueprint(input) {
 
   // ---- tree ----
   let count = 0, heroCount = 0;
-  const fieldIds = new Set(), controlIds = new Set(), types = new Set(), firstSeen = {};
+  const fieldIds = new Set(), controlIds = new Set(), componentIds = new Set(), componentDomIds = new Set(), componentRefs = [], types = new Set(), firstSeen = {};
   const surfaceStack = [];
   function node(n, path, parent, depth, ancestors) {
     count++; if (count > limits.nodes) { if (count === limits.nodes + 1) error(path, 'NODE_LIMIT', `최대 ${limits.nodes}노드입니다.`); return; }
@@ -8710,6 +10140,87 @@ function validateBlueprint(input) {
       if (n.visual && !['media', 'horizontal'].includes(n.variant)) error(path + '.visual', 'VARIANT_REQUIRES', 'visual은 media·horizontal 카드에서만 사용합니다.');
       if (n.ratio && !n.visual) error(path + '.ratio', 'VARIANT_REQUIRES', 'ratio는 visual과 함께 사용합니다.');
       if (n.variant === 'link' && !n.action) error(path + '.action', 'VARIANT_REQUIRES', 'link 카드는 action이 필요합니다.');
+    }
+    const componentTypes = ['button-control', 'input-control', 'card-surface', 'navigation-menu', 'modal-dialog', 'tabs-control', 'tooltip', 'feedback-message'];
+    if (componentTypes.includes(t)) {
+      const spec = nodeSpecAt(t, input.catalogVersion), controlId = typeof n.id === 'string' ? n.id : null;
+      const ruleHit = (spec.forbidden ?? []).find(rule => Object.entries(rule.when).every(([field, allowed]) => [allowed].flat().includes(n[field] ?? spec.defaults?.[field])));
+      if (ruleHit) errors.push({path, code: 'CONTROL_COMBO', rule: ruleHit.id, message: `${ruleHit.id}: ${ruleHit.why} (바꿀 필드: ${Object.keys(ruleHit.when).join(', ')})`, hint: `금지 규칙 ${ruleHit.id}을 피하도록 ${Object.keys(ruleHit.when).join(' 또는 ')} 값을 바꾸세요.`});
+      if (controlId) {
+        if (componentIds.has(controlId)) error(path + '.id', 'DUPLICATE_ID', `컴포넌트 id "${controlId}"는 페이지에서 유일해야 합니다.`);
+        componentIds.add(controlId);
+      }
+      const rootId = controlId ? `ctl-id-${controlId}` : null;
+      const addDomId = value => { if (!value) return; if (componentDomIds.has(value)) error(path + '.id', 'DUPLICATE_ID', `생성 DOM id "${value}"가 페이지에서 중복됩니다.`); componentDomIds.add(value); };
+      if (rootId) addDomId(rootId);
+      if (t === 'button-control') {
+        if (n.content === 'icon-only' && !String(n.ariaLabel ?? n.labelledBy ?? '').trim()) error(path + '.ariaLabel', 'ARIA_NAME', '아이콘만 있는 버튼에는 ariaLabel 또는 labelledBy가 필요합니다.');
+        for (const field of ['describedBy', 'labelledBy']) if (typeof n[field] === 'string') componentRefs.push({path: `${path}.${field}`, value: n[field], field});
+      }
+      if (t === 'input-control' && rootId) { if (n.hint) addDomId(`${rootId}-hint`); addDomId(`${rootId}-message`); }
+      if (t === 'input-control' && Object.hasOwn(n, 'message') && n.state !== 'error') error(path + '.message', 'VARIANT_REQUIRES', 'message는 state가 error일 때만 보입니다.');
+      if (t === 'card-surface') {
+        if (n.behavior === 'link' && n.href !== undefined) checkLink(n.href, path + '.href');
+        if (n.behavior !== 'link' && Object.hasOwn(n, 'href')) error(path + '.href', 'VARIANT_REQUIRES', 'href는 behavior=link일 때만 쓰입니다.');
+        if (n.state === 'error' && !n.message) error(path + '.message', 'COMPONENT_CONTENT', 'error 상태에는 사용자가 고칠 내용을 알려 주는 message가 필요합니다.');
+        if (n.footer === 'actions' && (!Array.isArray(n.actions) || n.actions.length < 1)) error(path + '.actions', 'COMPONENT_CONTENT', 'footer=actions에는 동작 버튼이 하나 이상 필요합니다.');
+      }
+      if (t === 'navigation-menu' && Array.isArray(n.items)) n.items.forEach((item, i) => {
+        const walk = (entry, itemPath) => {
+          if (!plain(entry)) return;
+          checkLabel(entry.label, itemPath + '.label');
+          if (entry.current && entry.disabled) error(itemPath + '.current', 'VARIANT_REQUIRES', '현재 페이지는 disabled 메뉴로 표시할 수 없습니다.');
+          if (entry.children && entry.href !== undefined) error(itemPath + '.href', 'VARIANT_REQUIRES', '하위 메뉴가 있는 항목은 링크 대신 disclosure 버튼으로 씁니다.');
+          if (!entry.disabled && !entry.children) { if (!Object.hasOwn(entry, 'href')) error(itemPath + '.href', 'COMPONENT_CONTENT', '활성 메뉴 항목에는 HTTPS·#main·선언한 section 앵커 링크가 필요합니다.'); else checkLink(entry.href, itemPath + '.href'); }
+          if (Array.isArray(entry.children)) entry.children.forEach((child, j) => walk(child, `${itemPath}.children[${j}]`));
+        };
+        walk(item, `${path}.items[${i}]`);
+        if (n.icons === 'start' && !item.icon) error(`${path}.items[${i}].icon`, 'COMPONENT_CONTENT', 'icons=start이면 모든 최상위 항목에 등록된 icon이 필요합니다.');
+        if (rootId && item.children) addDomId(`${rootId}-sub-${i}`);
+      });
+      if (t === 'navigation-menu' && Array.isArray(n.items)) {
+        const hasSub = n.items.some(item => plain(item) && item.children);
+        const currentCount = n.items.reduce((count, item) => count + (plain(item) && item.current ? 1 : 0) + (plain(item) && Array.isArray(item.children) ? item.children.filter(child => plain(child) && child.current).length : 0), 0);
+        if (currentCount > 1) error(path + '.items', 'COMPONENT_CONTENT', '현재 페이지는 내비게이션 한 곳에만 표시합니다.');
+        if (hasSub && n.submenu !== 'disclosure') error(path + '.submenu', 'VARIANT_REQUIRES', 'children가 있는 메뉴는 submenu=disclosure여야 합니다.');
+        if (!hasSub && n.submenu === 'disclosure') error(path + '.submenu', 'VARIANT_REQUIRES', 'submenu=disclosure에는 children가 있는 항목이 필요합니다.');
+      }
+      if (t === 'modal-dialog' && rootId) {
+        addDomId(`${rootId}-dialog`); addDomId(`${rootId}-title`); if (n.description) addDomId(`${rootId}-desc`);
+        if (n.role === 'alertdialog' && !(Array.isArray(n.actions) && n.actions.some(action => action.role === 'cancel'))) error(path + '.actions', 'COMPONENT_CONTENT', 'alertdialog에는 초기 포커스와 취소 경로를 제공하는 cancel 동작이 필요합니다.');
+        if (n.state === 'error' && !n.message) error(path + '.message', 'COMPONENT_CONTENT', 'error 상태에는 다시 시도하거나 고칠 내용을 알려 주는 message가 필요합니다.');
+        if (n.footer === 'actions' && (!Array.isArray(n.actions) || !n.actions.length)) error(path + '.actions', 'COMPONENT_CONTENT', 'footer=actions에는 동작이 하나 이상 필요합니다.');
+        const nestedIds = new Set();
+        (n.body ?? []).forEach((item, i) => {
+          if (item?.slot === 'text' && !Object.hasOwn(item, 'text')) error(`${path}.body[${i}].text`, 'COMPONENT_CONTENT', 'text 칸에는 출력할 text가 필요합니다.');
+          if (item?.slot === 'input') {
+            if (!item.id || !item.label?.trim()) error(`${path}.body[${i}]`, 'COMPONENT_CONTENT', 'input 칸에는 id와 label이 필요합니다.');
+            if (nestedIds.has(item.id)) error(`${path}.body[${i}].id`, 'DUPLICATE_ID', `모달 안 input id "${item.id}"가 중복됩니다.`);
+            nestedIds.add(item.id);
+            const fieldId = `${rootId}-${item.id}`; addDomId(fieldId); if (item.hint) addDomId(`${fieldId}-hint`); addDomId(`${fieldId}-message`);
+          }
+        });
+      }
+      if (t === 'tabs-control' && Array.isArray(n.tabs)) {
+        const ids = new Set();
+        n.tabs.forEach((tab, i) => {
+          const p = `${path}.tabs[${i}]`;
+          if (ids.has(tab.id)) error(p + '.id', 'ARIA_REFERENCE', `탭 id "${tab.id}"가 중복되어 tab-controls와 panel 참조가 모호합니다.`);
+          ids.add(tab.id);
+          if (rootId) { addDomId(`${rootId}-tab-${tab.id}`); addDomId(`${rootId}-panel-${tab.id}`); }
+          if (n.icons === 'start' && !tab.icon) error(p + '.icon', 'COMPONENT_CONTENT', 'icons=start이면 모든 탭에 등록된 icon이 필요합니다.');
+        });
+        if (n.selected && (!n.tabs.some(tab => tab.id === n.selected && !tab.disabled))) error(path + '.selected', 'ARIA_REFERENCE', 'selected는 존재하며 비활성화되지 않은 tab id여야 합니다.');
+      }
+      if (t === 'tooltip') {
+        if (!String(n.content ?? '').trim() || /[<>]|\]\(/.test(n.content ?? '') || [...String(n.content ?? '')].length > 120) error(path + '.content', 'COMPONENT_CONTENT', 'tooltip은 HTML·링크 문법이 없는 1~120자 일반 텍스트만 받습니다.');
+        if (n.shape === 'pill' && [...String(n.content ?? '')].length > 24) error(path + '.content', 'COMPONENT_CONTENT', 'pill tooltip은 24자 이하로 줄이세요.');
+        if (rootId) addDomId(`${rootId}-tip`);
+      }
+      if (t === 'feedback-message') {
+        if (n.state === 'error' && !n.message) error(path + '.message', 'COMPONENT_CONTENT', '오류 상태에는 원인과 해결을 안내하는 message가 필요합니다.');
+        if (n.action === 'button' && !String(n.actionLabel ?? '').trim()) error(path + '.actionLabel', 'COMPONENT_CONTENT', 'action=button이면 actionLabel이 필요합니다.');
+      }
     }
     if (t === 'timeline' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && n.variant !== 'release') for (const k of ['changes', 'date']) if (Object.hasOwn(x, k)) error(`${path}.items[${i}].${k}`, 'VARIANT_REQUIRES', `${k}는 variant가 release일 때만 사용합니다.`); });
     if (t === 'menu' && n.layout === 'photo' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && !x.motif) error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'photo 레이아웃의 모든 항목에는 motif가 필요합니다.'); });
@@ -8848,6 +10359,9 @@ function validateBlueprint(input) {
   }
   if (plain(input.tree) && input.tree.type !== 'page') error('$.tree.type', 'ROOT', '루트는 page여야 합니다.');
   node(input.tree, '$.tree', null, 1, []);
+  for (const ref of componentRefs) for (const id of ref.value.trim().split(/\s+/).filter(Boolean)) {
+    if (!componentDomIds.has(`ctl-id-${id}`)) errors.push({path: ref.path, code: 'ARIA_REFERENCE', message: `ARIA ${ref.field}가 페이지에 없는 컴포넌트 id "${id}"를 가리킵니다.`, hint: '같은 Blueprint에 존재하는 컴포넌트 id를 참조하거나 해당 참조를 지우세요.'});
+  }
 
   if (plain(input.tree) && Array.isArray(input.tree.children)) {
     const c = input.tree.children;

@@ -1,6 +1,14 @@
-import {nodeSpecs, nodeTypes, str, en, arr, num, obj} from './nodes.mjs';
+import {nodeSpecs, nodeTypes, str, en, arr, num, obj, iconEnum} from './nodes.mjs';
 import {atLeast} from './expression.mjs';
 import {CHART_FORM_KINDS, CHART_DATA_TYPES, CHART_GRIDS, CHART_LABELS, CHART_LEGENDS, CHART_DENSITIES, CHART_RESPONSIVE} from './chart-rules.mjs';
+import {buttonContract} from '../materials/button.mjs';
+import {inputContract} from '../materials/input.mjs';
+import {cardContract} from '../materials/card.mjs';
+import {navigationContract} from '../materials/navigation.mjs';
+import {modalContract} from '../materials/modal.mjs';
+import {tabsContract} from '../materials/tabs.mjs';
+import {tooltipContract} from '../materials/tooltip.mjs';
+import {feedbackContract} from '../materials/feedback.mjs';
 
 /**
  * 버전별 노드 명세 확장 표. `nodeSpecs`(src/catalog/nodes.mjs)는 2.1.0~2.5.0이 받아들이는 문법이고 snapshot 바이트
@@ -23,6 +31,38 @@ const selectOption = obj({value: str(80), label: str(80), group: str(40), disabl
 const tableCell = {oneOf: [str(200, 0), N, {type: 'boolean'}, {type: 'null'}]};
 const tableRow = {type: 'object', properties: {id: idField}, required: [], additionalProperties: tableCell};
 const tableColumn = obj({id: idField, label: str(60), sortable: yesNo, hideBelow: en('640px', '800px', '900px')}, ['id', 'label']);
+const safeId = idField;
+const bool = {type: 'boolean'};
+const iconName = iconEnum;
+const hrefField = str(2048, 1);
+const labelOnlyAction = obj({label: str(80)}, ['label']);
+const component = (contract, group, fields, required, example, placeLike) => ({
+  label: contract.label, group, placeLike,
+  fields: {...Object.fromEntries(Object.entries(contract.axes).map(([key, values]) => [key, en(...values)])), ...fields},
+  defaults: contract.defaults,
+  optional: Object.keys(contract.axes).filter(key => !required.includes(key)).concat(Object.keys(fields).filter(key => !required.includes(key))),
+  required, example, forbidden: contract.forbidden,
+  coverage: {mode: 'inherited', contracts: [], reason: `${contract.label}의 간격·크기·상태 계약은 등록 재료에서 그대로 가져옵니다.`},
+});
+
+const navLeaf = obj({label: str(80), href: hrefField, icon: iconName, current: bool, disabled: bool}, ['label', 'href']);
+const navItem = obj({label: str(80), href: hrefField, icon: iconName, current: bool, disabled: bool, children: arr(navLeaf, 1, 8)}, ['label']);
+const modalBodyItem = {oneOf: [
+  {type: 'object', properties: {slot: {const: 'text'}, text: str(500)}, required: ['slot', 'text']},
+  {type: 'object', properties: {slot: {const: 'input'}, id: idField, label: str(80), hint: str(160), placeholder: str(120), required: bool}, required: ['slot', 'id', 'label']},
+]};
+const tabItem = obj({id: idField, label: str(60), content: str(500), icon: iconName, disabled: bool}, ['id', 'label', 'content']);
+
+const COMPONENT_EXTENSIONS = {
+  'button-control': component(buttonContract, 'form', {label: str(80), id: idField, icon: iconName, ariaLabel: str(80), describedBy: str(240), labelledBy: str(240)}, ['label'], {type: 'button-control', id: 'save', label: '저장'}, 'form'),
+  'input-control': component(inputContract, 'form', {id: idField, label: str(80), hint: str(160), message: str(160), placeholder: str(120), value: str(500), required: bool, name: str(80), icon: iconName}, ['id', 'label'], {type: 'input-control', id: 'name', label: '이름', placeholder: '프로젝트 이름', hint: '프로젝트 이름을 입력하세요.'}, 'form'),
+  'card-surface': component(cardContract, 'content', {id: idField, title: str(100), body: str(500), meta: str(100), href: hrefField, mediaIcon: iconName, actions: arr(labelOnlyAction, 1, 2), message: str(160)}, ['id', 'title'], {type: 'card-surface', id: 'project', title: '프로젝트 개요', body: '진행 중인 작업을 한곳에서 확인합니다.'}, 'card'),
+  'navigation-menu': component(navigationContract, 'nav', {id: idField, label: str(80), items: arr(navItem, 2, 8)}, ['id', 'label', 'items'], {type: 'navigation-menu', id: 'primary-nav', label: '주요 메뉴', items: [{label: '개요', href: '#main', current: true}, {label: '문서', href: 'https://example.com/docs'}]}, 'breadcrumb'),
+  'modal-dialog': component(modalContract, 'feedback', {id: idField, title: str(100), description: str(200), body: arr(modalBodyItem, 0, 8), actions: arr(obj({label: str(80), role: en('cancel', 'confirm')}, ['label', 'role']), 0, 2), triggerLabel: str(80), message: str(160)}, ['id', 'title'], {type: 'modal-dialog', id: 'create-project', title: '새 프로젝트', description: '프로젝트 이름을 정합니다.', triggerLabel: '프로젝트 만들기', body: [{slot: 'input', id: 'project-name', label: '프로젝트 이름', placeholder: '예: 가을 캠페인'}], actions: [{label: '취소', role: 'cancel'}, {label: '만들기', role: 'confirm'}]}, 'notice'),
+  'tabs-control': component(tabsContract, 'layout', {id: idField, label: str(80), tabs: arr(tabItem, 2, 6), selected: idField}, ['id', 'label', 'tabs'], {type: 'tabs-control', id: 'project-tabs', label: '프로젝트 보기', selected: 'overview', tabs: [{id: 'overview', label: '개요', content: '목표와 현재 상태를 요약합니다.'}, {id: 'tasks', label: '작업', content: '이번 주 작업을 확인합니다.'}]}, 'tabs'),
+  tooltip: component(tooltipContract, 'feedback', {id: idField, triggerLabel: str(80), content: str(240), icon: iconName}, ['id', 'triggerLabel', 'content'], {type: 'tooltip', id: 'save-help', triggerLabel: '저장 위치', content: '내 문서 폴더에 저장됩니다.'}, 'notice'),
+  'feedback-message': component(feedbackContract, 'feedback', {id: idField, message: str(240), title: str(100), actionLabel: str(80), dismissLabel: str(40)}, ['id', 'message'], {type: 'feedback-message', id: 'saved', message: '변경 사항을 저장했습니다.', tone: 'success'}, 'notice'),
+};
 
 const SELECT_FIELDS = {
   id: idField, label: str(80), options: arr(selectOption, 2, 50),
@@ -67,6 +107,7 @@ export const NODE_SPEC_EXTENSIONS = deepFreeze({
       optional: ['density', 'responsive', 'state', 'sortable', 'selectable', 'message'],
       example: {type: 'data-table', id: 'projects', title: '프로젝트', columns: [{id: 'name', label: '프로젝트'}, {id: 'status', label: '상태'}], rows: [{name: '재료 플랫폼', status: '진행'}, {name: '차트 확장', status: '완료'}]},
     },
+    ...COMPONENT_EXTENSIONS,
   },
 });
 

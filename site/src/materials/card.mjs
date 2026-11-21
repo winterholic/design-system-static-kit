@@ -1,6 +1,6 @@
 import {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SAFE_ID} from './control-kit.mjs';
 import {renderButton} from './button.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Card: 외형(표면 처리)·모양·크기(안쪽 여백과 글자)·기능(전체가 누를 수 있는가, 미디어, 하단 동작)·상태를 따로 둔다. */
 export const cardContract = defineContract({

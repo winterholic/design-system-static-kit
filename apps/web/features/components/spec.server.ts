@@ -28,7 +28,7 @@ export function componentRows(): ComponentRow[] {
 type MaterialView = {
   id: string; kind: string; category: string; version: string; since: string; contexts: string[]; quality: {status: string; evidence: string[]}; preset: boolean;
   defaults: Row; variants: Record<string, (string | number | boolean)[]>;
-  states: {values: string[]; transitions: Row[]}; responsive: {strategy: string; breakpoints: string[]; note: string};
+  states: {values: string[]; transitions: Row[]}; responsive: {strategy: string; breakpoints?: string[]; note?: string};
   tokens: string[]; tags: string[]; blueprint: {node?: string; field?: string; value?: string | null; since: string | null} | null;
 };
 const materialView = (id: string): MaterialView | null => {

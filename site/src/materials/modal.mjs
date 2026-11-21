@@ -1,7 +1,7 @@
 import {defineContract, resolveProps, ContractError, sizeCSS, baseStyles, focusRing, componentMaterial, e, SIZES, SHAPES, SAFE_ID} from './control-kit.mjs';
 import {renderButton} from './button.mjs';
 import {renderInput} from './input.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Modal: 외형(패널 표면)·모양·크기(폭과 안쪽 여백)·기능(역할·배치·하단 동작)·상태(닫힘·열림·처리 중·오류)를 따로 둔다. 네이티브 `<dialog>`와 showModal을 쓴다. */
 export const modalContract = defineContract({
@@ -122,6 +122,7 @@ export function attachModal(root, {onConfirm, onClose} = {}) {
     if (opener && opener.focus) opener.focus();
     if (typeof onClose === 'function') onClose({id: root.id});
   });
+  if (root.dataset.state === 'open') open();
   return {open, close, setBusy, setError};
 }
 export const modalRuntime = attachModal.toString();

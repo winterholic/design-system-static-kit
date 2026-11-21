@@ -25,7 +25,7 @@ function oneOfEachType() {
 /** 같은 템플릿 문서를 카탈로그 버전만 바꿔 쓴다(2.4.0 템플릿 문서는 2.5.0·2.6.0에서도 유효하다). */
 const atVersion = (doc, catalogVersion) => ({...doc, catalogVersion});
 const VERSIONS = ['2.4.0', '2.5.0', '2.6.0'];
-const EXTENSION_PARTS = ['select-control', 'data-table'];
+const EXTENSION_PARTS = ['select-control', 'data-table', 'button-control', 'input-control', 'card-surface', 'navigation-menu', 'modal-dialog', 'tabs-control', 'tooltip', 'feedback-message'];
 
 /** 독립 판정: 도우미를 거치지 않고 실제 insertNode 연산을 직접 부른다. 후보 목록도 도우미가 아니라 그 버전의 노드 명세 표에서 만든다. */
 function oracle(doc, parent, index) {
@@ -83,7 +83,7 @@ test('insertableParts agrees with the real insertNode operation for every node t
   assert.ok(extensionOffered >= 3, 'the extension parts are really offered somewhere in 2.6.0 (otherwise this proves nothing): ' + extensionOffered);
 });
 
-test('2.6.0 documents offer Select and Table where form/table fit, with labels from the node spec; 2.4.0 and 2.5.0 documents offer neither anywhere', () => {
+test('2.6.0 documents offer each extension node where its role fits; 2.4.0 and 2.5.0 documents offer none', () => {
   const doc = fresh('dashboard-overview');
   for (const version of ['2.4.0', '2.5.0']) {
     for (const parent of [[], [1], [0]]) {
@@ -99,9 +99,9 @@ test('2.6.0 documents offer Select and Table where form/table fit, with labels f
     const inserted = applyOp(atVersion(doc, '2.6.0'), 'insertNode', {parent: [], node: partExample(part, '2.6.0')});
     assert.ok(inserted.ok, JSON.stringify(inserted.errors));
   }
-  // 그리드·페이지 머리글 안에는 두 부품 모두 들어갈 수 없고, 거절 이유는 연산이 낸 구조화 오류다.
+  // Select·Table은 그리드에 들어갈 수 없고, 거절 이유는 연산이 낸 구조화 오류다.
   const grid = insertableParts(atVersion(doc, '2.6.0'), {parent: [1]});
-  for (const part of EXTENSION_PARTS) {
+  for (const part of ['select-control', 'data-table']) {
     const hit = grid.rejected.find(r => r.type === part);
     assert.ok(hit && hit.errors.some(e => e.code === 'CHILD_TYPE' && e.hint), `${part} in a grid: ${JSON.stringify(hit?.errors)}`);
   }

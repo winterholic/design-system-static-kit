@@ -3,7 +3,7 @@ import {resolve, dirname, relative, join} from 'node:path';
 
 /**
  * Tiny ESM→IIFE bundler for the kit's own modules. It understands exactly the import/export forms this repository
- * uses (single-line static imports, `export const|function|class`, `export {a,b}`, `export {a} from`, `export * from`),
+ * uses (single-line static imports, `export const|function|function*|class`, `export {a,b}`, `export {a} from`, `export * from`),
  * so the single-file gallery runs the same compiler as Node without adding a dependency.
  */
 const srcRoot = resolve(import.meta.dirname, '../src');
@@ -28,7 +28,7 @@ export async function bundleSource(entry = 'compiler.mjs', extraEntries = ['cata
       .replace(/^export\s+\*\s+from\s+'([^']+)';?[ \t]*$/gm, (_, spec) => `Object.assign(exports, __m(${dep(spec)}));`)
       .replace(/^export\s+\{([^}]*)\}\s+from\s+'([^']+)';?[ \t]*$/gm, (_, names, spec) => `{ const __r = __m(${dep(spec)}); ${names.split(',').map(s => s.trim()).filter(Boolean).map(s => { const [a, b = a] = s.split(/\s+as\s+/); return `exports.${b} = __r.${a};`; }).join(' ')} }`)
       .replace(/^export\s+\{([^}]*)\};?[ \t]*$/gm, (_, names) => { names.split(',').map(s => s.trim()).filter(Boolean).forEach(s => { const [a, b = a] = s.split(/\s+as\s+/); exportsList.push([a, b]); }); return ''; })
-      .replace(/^export\s+(const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/gm, (_, kind, name) => { exportsList.push([name, name]); return `${kind} ${name}`; });
+      .replace(/^export\s+(const|let|var|function\*?|class)\s+([A-Za-z_$][\w$]*)/gm, (_, kind, name) => { exportsList.push([name, name]); return `${kind} ${name}`; });
     if (/^\s*(import|export)\s/m.test(code.replace(/`[^`]*`/gs, ''))) { const m = code.match(/^\s*(import|export)\s.*$/m); throw new Error(`Unsupported module syntax in ${id}: ${m?.[0]}`); }
     if (code.includes('import.meta')) throw new Error(`import.meta in bundled module ${id}`);
     modules.set(id, {code, exportsList});
