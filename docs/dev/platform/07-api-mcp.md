@@ -14,7 +14,7 @@
 
 ## 공통 서비스 계약
 
-서비스는 성공·실패 모두 JSON 직렬화 가능한 결과 봉투를 돌려준다. `catalogVersion`은 현재 `2.4.0`, `contractVersion`은 `1.0.0`이다.
+서비스는 성공·실패 모두 JSON 직렬화 가능한 결과 봉투를 돌려준다. 결과 봉투와 OpenAPI의 `catalogVersion`은 서버의 기본 카탈로그인 `2.4.0`이다. 명시적으로 `2.5.0`을 쓰려면 Blueprint의 `catalogVersion`을 올린다. REST의 검증·컴파일 요청과 MCP의 같은 도구 호출에 별도 `catalogVersion`을 넣는 경우 Blueprint 버전과 같아야 한다. 조회에서는 기본 카탈로그에 대한 기대값이므로 `2.4.0`을 쓰거나 생략한다. `contractVersion`은 서비스 결과 계약 버전이다.
 
 ```json
 {"ok":false,"errors":[{"code":"BAD_REQUEST","path":"$args.fields","message":"잘못된 인자","hint":"허용 인자: ..."}],"warnings":[],"catalogVersion":"2.4.0","contractVersion":"1.0.0"}

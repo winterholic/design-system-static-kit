@@ -16,7 +16,11 @@ import {rejectUnexpectedVersion} from './versions.mjs';
 const catalogVersion = z.string().optional().describe('기대하는 catalogVersion. 지원 범위 밖이거나 서버가 쓰는 값과 다르면 구조화된 오류로 거부한다.');
 const loose = shape => z.looseObject(shape); // 알 수 없는 인자는 서비스가 path·hint 가 있는 BAD_REQUEST 로 거부하게 통과시킨다.
 
-const diagnostic = z.looseObject({code: z.string(), path: z.string(), message: z.string(), hint: z.string(), rule: z.string().optional(), fix: z.record(z.string(), z.unknown()).optional()});
+const diagnostic = z.looseObject({
+  code: z.string(), path: z.string(), message: z.string(), hint: z.string(),
+  rule: z.string().optional(), fix: z.record(z.string(), z.unknown()).optional(),
+  severity: z.enum(['info', 'warning']).optional(), contract: z.string().optional(),
+});
 /** 서비스 봉투 그대로. 성공이면 value, 실패면 errors. */
 const envelopeOf = value => z.looseObject({ok: z.boolean(), value: value.optional(), errors: z.array(diagnostic).optional(), warnings: z.array(diagnostic), catalogVersion: z.string(), contractVersion: z.string()});
 const anyObject = z.record(z.string(), z.unknown());
