@@ -23,7 +23,7 @@ const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.i
 test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
   assert.deepEqual(fns, ['catalogSnapshot', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getComponentSpec', 'getSchema', 'hintFor', 'listCatalog', 'validateBlueprint', 'withHint']);
-  assert.equal(CONTRACT_VERSION, '1.0.0');
+  assert.equal(CONTRACT_VERSION, '1.1.0');
 });
 
 test('every function returns the same envelope for success and for failure, carrying catalogVersion and contractVersion', () => {
@@ -95,7 +95,9 @@ test('getSchema: blueprint, component, chrome, diagnostic and edit-ops, with par
   const full = getSchema({target: 'blueprint'}).value;
   const {$defs, properties, required, ...rest} = blueprintSchema();
   assert.deepEqual({...full, 'x-runtimeRules': undefined}, {...rest, $defs, properties, required, 'x-runtimeRules': undefined}, 'blueprint = blueprintSchema()');
-  assert.ok(full['x-runtimeRules'].some(x => /^R09: AXIS_BAN/.test(x)) && full['x-runtimeRules'].length === rules.length);
+  assert.ok(full['x-runtimeRules'].some(x => /^R09: AXIS_BAN/.test(x)));
+  assert.ok(full['x-runtimeRules'].some(x => /^R21:/.test(x)) && full['x-runtimeRules'].some(x => /^R22:/.test(x)));
+  assert.equal(full['x-runtimeRules'].length, rules.length + 2);
   const part = getSchema({target: 'blueprint', fields: ['theme', 'mode']}).value;
   assert.deepEqual(Object.keys(part.properties), ['theme', 'mode']); assert.deepEqual(part.required, ['theme', 'mode']); assert.equal(part.$defs, undefined);
   assert.ok(JSON.stringify(part).length < 5_000 && JSON.stringify(full).length > 50_000);

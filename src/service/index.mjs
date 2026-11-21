@@ -4,7 +4,7 @@
  *
  * 모든 함수는 던지지 않고 같은 봉투를 돌려준다.
  *   {ok: true,  value, warnings, catalogVersion, contractVersion}
- *   {ok: false, errors, warnings, catalogVersion, contractVersion}   errors[i] = {code, path, message, hint}
+ *   {ok: false, errors, warnings, catalogVersion, contractVersion}   Diagnostic = {code, path, message, hint} + optional rule, fix, severity, contract
  * 순수 ES 모듈이다. node:*, DOM, React, Next.js, import.meta를 쓰지 않아 브라우저와 Node에서 같게 동작한다.
  */
 export {listCatalog, getSchema, getComponentSpec, catalogSnapshot, CATALOG_KINDS} from './query.mjs';

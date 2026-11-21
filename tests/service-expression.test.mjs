@@ -14,6 +14,8 @@ test('the service exposes the same accepted 2.5.0 grammar as the catalog and val
   const {['x-runtimeRules']: runtimeRules, ...serviceSchemaValue} = serviceSchema.value;
   assert.equal(JSON.stringify(serviceSchemaValue), JSON.stringify(schema));
   assert.ok(runtimeRules.some(x => x.startsWith('R09:')));
+  assert.ok(runtimeRules.some(x => x.startsWith('R21:')));
+  assert.ok(runtimeRules.some(x => x.startsWith('R22:')));
   assert.ok(serviceSchema.value.properties.catalogVersion.enum.includes('2.5.0'));
   assert.ok(catalogSnapshot().acceptedCatalogVersions.includes('2.5.0'));
   assert.ok(catalogSnapshot().expressionRules.some(x => x.id === 'R21'));
@@ -25,6 +27,46 @@ test('the service exposes the same accepted 2.5.0 grammar as the catalog and val
     assert.equal(spec.value.fields[field]['x-since'], '2.5.0');
     assert.ok(spec.value.rules.includes('R21'), `${type} exposes its expression runtime rule`);
     assert.ok(nodeSpecs[type].fields[field]);
+  }
+});
+
+test('Core diagnostic schema describes the 2.5.0 Dashboard CONTRACT_V03 warning exactly', () => {
+  const schema = getSchema({target: 'diagnostic'});
+  assert.equal(schema.ok, true);
+  const props = schema.value.properties;
+  assert.equal(schema.value.additionalProperties, false);
+  assert.deepEqual(Object.keys(props).sort(), ['code', 'contract', 'fix', 'hint', 'message', 'path', 'rule', 'severity']);
+  assert.equal(props.severity.type, 'string');
+  assert.deepEqual(props.severity.enum, ['info', 'warning']);
+  assert.equal(props.contract.type, 'string');
+  assert.deepEqual(schema.value.required, ['code', 'path', 'message', 'hint']);
+
+  const b = migrateBlueprint(createBlueprint('dashboard-overview'), '2.5.0');
+  const findGrid = n => n?.type === 'grid' ? n : n?.children?.map(findGrid).find(Boolean);
+  const grid = findGrid(b.tree);
+  assert.ok(grid, 'Dashboard fixture includes a grid');
+  grid.columns = 'two';
+  grid.children = Array.from({length: 4}, (_, i) => ({type: 'metric', label: `지표 ${i + 1}`, value: String(i + 1)}));
+
+  const r = validateBlueprint(b);
+  assert.equal(r.ok, true);
+  assert.equal(r.contractVersion, '1.1.0');
+  const warning = r.warnings.find(w => w.code === 'CONTRACT_V03');
+  assert.ok(warning);
+  assert.deepEqual(Object.keys(warning).sort(), ['code', 'contract', 'hint', 'message', 'path', 'rule', 'severity']);
+  assert.equal(warning.severity, 'warning');
+  assert.equal(warning.contract, 'V03');
+  assert.equal(warning.rule, 'R22');
+  for (const [key, value] of Object.entries(warning)) {
+    const property = props[key];
+    assert.ok(property, `Core diagnostic schema declares ${key}`);
+    if (key === 'fix') assert.equal(typeof value, 'object');
+    else {
+      assert.equal(typeof value, property.type, `${key} type`);
+      if (property.minLength) assert.ok(value.length >= property.minLength, `${key} minLength`);
+      if (property.enum) assert.ok(property.enum.includes(value), `${key} enum`);
+      if (property.pattern) assert.match(value, new RegExp(property.pattern), `${key} pattern`);
+    }
   }
 });
 

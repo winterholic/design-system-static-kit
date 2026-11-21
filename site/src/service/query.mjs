@@ -191,12 +191,14 @@ const DIAGNOSTIC_SCHEMA = {
     code: {...str, pattern: '^[A-Z][A-Z0-9_]*$', description: '등록된 UPPER_SNAKE 코드'}, path: {...str, pattern: '^\\$', description: '문서 안 위치($.tree.children[1]) 또는 요청 인자($args.kind)'},
     message: {...str, description: '무엇이 틀렸는가'}, hint: {...str, description: '어떻게 고치는가. 비어 있지 않다'},
     rule: {type: 'string', description: '규칙 ID(예 R09, X05)'}, fix: {type: 'object', description: '기계가 읽는 대안 값(예 {elevation: "soft"})'},
+    severity: {type: 'string', enum: ['info', 'warning'], description: '직접 적용한 품질 계약의 진단 수준'},
+    contract: {...str, pattern: '^V[0-9]{2}$', description: '직접 적용한 변형 결과 계약 ID(예 V03)'},
   },
   required: ['code', 'path', 'message', 'hint'],
 };
 
 /** 스키마가 말하지 않는 교차 필드 규칙을 알린다. 스키마만으로 충분하다고 오해하지 않게 응답에 붙인다. */
-const runtimeRules = () => rules.map(r => `${r.id}: ${r.codes.join(', ')}`);
+const runtimeRules = () => [...rules, ...expressionRules].map(r => `${r.id}: ${r.codes.join(', ')}`);
 
 const refsOf = schema => [...JSON.stringify(schema).matchAll(/"\$ref":"#\/\$defs\/([^"]+)"/g)].map(m => m[1]);
 /** 남긴 부분이 가리키는 $defs만 남긴다. */

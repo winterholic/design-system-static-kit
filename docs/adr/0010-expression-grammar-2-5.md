@@ -22,6 +22,8 @@
 
 이 필드와 의미는 `blueprintSchema()`, `getSchema({target:'blueprint'|'component'})`, `getComponentSpec({type})`, 서비스 규칙 조회 및 `catalogSnapshot()`에서 같은 `nodeSpecs`·규칙 정의를 노출한다. 서비스의 `catalogVersion` 검사는 2.5.0도 받지만 기본 버전은 2.4.0이다. 편집 연산은 Blueprint의 새 필드를 보존한다(ADR 0008).
 
+Core `getSchema({target:'blueprint'})`의 `x-runtimeRules`는 R21·R22를 포함한다. 직접 적용한 변형 결과 계약 경고는 Core `diagnostic` 스키마가 선택 속성 `severity`(`info` 또는 `warning`)와 `contract`(V## 문자열)로 설명한다. 이 추가 선택 속성에 따라 서비스 계약만 1.1.0으로 올리고 카탈로그 기본 버전 2.4.0은 유지한다.
+
 EX-1~EX-5의 필드 위치·enum·오류 코드를 검증한다. 직접 작성 Blueprint의 정적 품질 검사는 재현 가능한 V03·V04를 경고, V01·V02를 정보 진단으로 내고 문서를 거부하지 않는다. 데이터 손실 V06은 기존 검증기 오류로 유지한다. 템플릿 85개는 2.5.0으로 검사해도 오류 없이 컴파일돼야 한다.
 
 ## 렌더러 품질 결함
