@@ -52,6 +52,12 @@ for (const {file, widths} of FIXTURES) {
         expect(aligned).toMatchObject({severity: 'warn', evidence: {cropAxis: 'y', cropPercent: 44.7, cropFromStartPercent: 0, cropFromEndPercent: 44.7}});
       }
     });
+    if (file === 'clip-cases.html') test('kit-art의 slice 경고는 기존 장식 면제를 유지한다', () => {
+      for (const w of widths) {
+        const codes = run.findings.filter(x => x.width === w && x.locator.startsWith('#bad-svg-slice-art >')).map(x => x.code);
+        expect(codes, `${w}px kit-art`).toEqual(['SVG_SLICE_CROP']);
+      }
+    });
   });
 }
 

@@ -28,6 +28,9 @@
 <section class="case" id="bad-svg-slice-crop-aligned" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 위쪽에 맞춘 slice는 아래쪽에서 44.7% 잘라 냄</small>
 <svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMin slice" role="img" aria-label="위에 맞춘 램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
 
+<section class="case" id="bad-svg-slice-art" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 의미 있는 장식 그림의 slice 크롭만 경고</small>
+<svg class="kit-art" style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="가장자리가 잘린 그림"><rect x="-40" y="0" width="360" height="320" fill="#2742c8"/></svg></section>
+
 <section class="case" id="good-svg-slice-same-ratio" data-expect="none"><small class="tag">good: slice여도 표시 상자와 viewBox 비율이 같아 잘리지 않음</small>
 <svg style="width:320px;height:320px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="정사각형"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
 

@@ -316,29 +316,36 @@ export function layoutProbe(options) {
     if (!visible(el) && el.tagName.toLowerCase() === 'svg') continue;
     scanned.clip++;
     const r = el.getBoundingClientRect(), isSvg = el.tagName.toLowerCase() === 'svg';
-    const meaningfulSvg = isSvg && !el.closest('[aria-hidden="true"]') && (el.getAttribute('role') === 'img' || !!el.getAttribute('aria-label')?.trim() || !!el.querySelector(':scope > title'));
-    const svgBox = isSvg ? el.getBoundingClientRect() : null, vb = isSvg ? el.viewBox?.baseVal : null;
-    const par = isSvg ? (el.getAttribute('preserveAspectRatio') || '').trim().split(/\s+/).filter(x => x && x !== 'defer') : [];
-    const align = par[0] || 'xMidYMid', mode = par[1] || 'meet';
-    let sliceGeometry = null;
-    if (meaningfulSvg && mode === 'slice' && vb?.width > 0 && vb.height > 0 && svgBox.width > 0 && svgBox.height > 0) {
-      const boxRatio = svgBox.width / svgBox.height, viewRatio = vb.width / vb.height;
-      if (boxRatio > viewRatio) {
-        const crop = Math.max(0, 1 - viewRatio / boxRatio), token = align.match(/Y(Min|Mid|Max)$/)?.[1] || 'Mid';
-        const leading = crop * (token === 'Min' ? 0 : token === 'Max' ? 1 : 0.5);
-        sliceGeometry = {axis: 'y', crop, leading, trailing: crop - leading, boxRatio, viewRatio};
-      } else if (boxRatio < viewRatio) {
-        const crop = Math.max(0, 1 - boxRatio / viewRatio), token = align.match(/^x(Min|Mid|Max)/)?.[1] || 'Mid';
-        const leading = crop * (token === 'Min' ? 0 : token === 'Max' ? 1 : 0.5);
-        sliceGeometry = {axis: 'x', crop, leading, trailing: crop - leading, boxRatio, viewRatio};
+    const decor = el.closest(SEL.decor);
+    const vb = isSvg ? el.viewBox?.baseVal : null;
+    const clippedViewport = isSvg && !['visible', 'auto', 'scroll'].includes(getComputedStyle(el).overflow);
+    // 의미가 있는 kit-art는 slice 경고의 대상이며 기존 장식 면제를 유지한다.
+    if (clippedViewport && (!decor || el.classList.contains('kit-art')) &&
+        !el.closest('[aria-hidden="true"],[data-layout-decor]') &&
+        (el.getAttribute('role') === 'img' || el.getAttribute('aria-label')?.trim() || el.querySelector(':scope > title'))) {
+      const align = el.getAttribute('preserveAspectRatio')?.trim().match(/^(?:defer\s+)?x(Min|Mid|Max)Y(Min|Mid|Max)\s+slice$/);
+      if (align && vb?.width > 0 && vb.height > 0 && r.width > 0 && r.height > 0) {
+        if (decor) scanned.svg++;
+        const boxRatio = r.width / r.height, viewRatio = vb.width / vb.height;
+        const cropAxis = boxRatio > viewRatio ? 'y' : 'x';
+        const percent = 100 * (1 - Math.min(boxRatio / viewRatio, viewRatio / boxRatio));
+        const minPercent = T.sliceCropPercent ?? 20;
+        if (percent >= minPercent) {
+          const [, xAlign, yAlign] = align;
+          const edge = cropAxis === 'y' ? yAlign : xAlign;
+          const leading = percent * (edge === 'Min' ? 0 : edge === 'Max' ? 1 : 0.5);
+          flag('SVG_SLICE_CROP', 'warn', el, 'svg', {
+            preserveAspectRatio: `x${xAlign}Y${yAlign} slice`,
+            viewBox: `${r1(vb.x)} ${r1(vb.y)} ${r1(vb.width)} ${r1(vb.height)}`,
+            renderedSize: `${r1(r.width)}x${r1(r.height)}`,
+            viewBoxRatio: r1(viewRatio), renderedRatio: r1(boxRatio),
+            cropAxis, cropPercent: r1(percent), cropFromStartPercent: r1(leading), cropFromEndPercent: r1(percent - leading),
+            thresholdPercent: minPercent,
+          });
+        }
       }
     }
-    const explicitDecor = el.closest('[data-layout-decor]') || (el.closest('[aria-hidden="true"]') && el.closest('.kit-art'));
-    const inDecorSelector = el.closest(SEL.decor);
-    // .kit-art 계열의 명시적으로 크롭된 의미 이미지 한정으로 새 slice 검사를 허용한다.
-    // 같은 계열의 기존 viewBox CLIP_SVG 판정은 계속 장식 면제 상태로 둔다.
-    const meaningfulArtSlice = sliceGeometry && sliceGeometry.crop * 100 >= (T.sliceCropPercent ?? 20) && el.classList.contains('kit-art') && !['visible', 'auto', 'scroll'].includes(getComputedStyle(el).overflow);
-    if (explicitDecor || (inDecorSelector && !meaningfulArtSlice)) continue;
+    if (decor) continue;
     // 1) 상위 요소의 overflow가 이 아이콘을 자름
     for (const c of clippers(el)) {
       const cr = c.el.getBoundingClientRect(), cs2 = getComputedStyle(c.el);
@@ -354,22 +361,7 @@ export function layoutProbe(options) {
     // 2) SVG 안쪽 그림이 자기 viewBox 밖으로 나가 잘림(svg 기본 overflow: hidden)
     if (isSvg) {
       scanned.svg++;
-      const ovf = getComputedStyle(el).overflow;
-      const vb = el.viewBox?.baseVal;
-      // slice는 상자의 종횡비를 채우려고 viewBox의 한 축을 잘라 낸다. 의미가 노출된 그림만
-      // 위험(warn)으로 보고, aria-hidden/data-layout-decor 장식은 선택자에서 이미 제외한다.
-      if (meaningfulSvg && sliceGeometry && !['visible', 'auto', 'scroll'].includes(ovf)) {
-        const percent = sliceGeometry.crop * 100, minPercent = T.sliceCropPercent ?? 20;
-        if (percent >= minPercent) flag('SVG_SLICE_CROP', 'warn', el, 'svg', {
-          preserveAspectRatio: `${align} slice`,
-          viewBox: `${r1(vb.x)} ${r1(vb.y)} ${r1(vb.width)} ${r1(vb.height)}`,
-          renderedSize: `${r1(r.width)}x${r1(r.height)}`,
-          viewBoxRatio: r1(sliceGeometry.viewRatio), renderedRatio: r1(sliceGeometry.boxRatio),
-          cropAxis: sliceGeometry.axis, cropPercent: r1(percent), cropFromStartPercent: r1(sliceGeometry.leading * 100), cropFromEndPercent: r1(sliceGeometry.trailing * 100),
-          thresholdPercent: minPercent,
-        });
-      }
-      if (vb && vb.width > 0 && !['visible', 'auto', 'scroll'].includes(ovf)) {
+      if (vb && vb.width > 0 && clippedViewport) {
         let bb; try { bb = el.getBBox(); } catch { bb = null; }
         if (bb && bb.width > 0) {
           const sw = Math.max(0, ...[...el.querySelectorAll('[stroke]')].map(n => parseFloat(n.getAttribute('stroke-width') || '1') / 2));
