@@ -521,6 +521,20 @@
       "description": "2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.",
       "x-since": "2.6.0"
     },
+    "profile": {
+      "type": "string",
+      "enum": [
+        "erp",
+        "finance",
+        "commerce",
+        "saas-landing",
+        "editorial",
+        "docs",
+        "mobile-app"
+      ],
+      "description": "2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.",
+      "x-since": "2.6.0"
+    },
     "mode": {
       "type": "string",
       "enum": [

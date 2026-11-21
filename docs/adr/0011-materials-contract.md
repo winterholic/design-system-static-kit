@@ -36,7 +36,8 @@
 
 - 새 재료는 `defineMaterial({...})`로 만들고, 공통 필드를 빼지 않는다. 값이 없으면 null이나 빈 값으로 둔다.
 - 새 종류는 `defineKind({id, label, categories, ext, presetCapable})`와 `registry.addKind`로 더한다. `FIELDS`를 바꾸려면 `MATERIAL_CONTRACT_VERSION`을 올리고 이 ADR을 개정한다.
-- 미리 만든 종류 중 `color-token`에는 이번에 257개가 등록됐다. `chart-preset`에는 차트 프리셋 8개가 등록됐고 `pattern`은 종류만 있고 재료는 아직 없다.
+- 미리 만든 종류 중 `color-token`에는 이번에 257개가 등록됐다. `chart-preset`에는 차트 프리셋 8개가 등록됐고 `pattern`에는 레이아웃 패턴 11개가 아래 `designRegistry()`에 등록된다.
+- 디자인 프로파일(`profile` 종류)과 레이아웃 패턴(`pattern` 재료 11개)은 `src/profiles/registry.mjs`의 `designRegistry()`에 등록한다. `catalogRegistry()`의 수량은 바꾸지 않는다. Blueprint의 `profile` 필드(2.6.0)와 조립은 [디자인 프로파일](../materials/profiles.md)에 적는다.
 - 등록 후 `registry.check()`가 비어야 한다. `catalogRegistry()`는 비지 않으면 예외를 낸다.
 - 품질을 `verified`로 올릴 때는 그 재료를 실패시킬 수 있는 테스트의 file:line을 적는다.
 - 외부 자료는 새로 수집하지 않는다. 기존 팔레트 판정은 `docs/materials/audit.md` §3을 따른다.
