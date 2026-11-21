@@ -48,6 +48,8 @@ studio_href=/studio?template=saas-landing&theme=aurora&variant=clean-saas&layout
 
 Explore에서도 유형을 `landing`으로 고르고 검색어 `오로라`, 정렬 `이름순`을 적용한 뒤 URL을 새로 열어 검색어가 입력란에 복원되고 결과가 1개로 필터링되는 것을 확인했다. URL은 `?q=%EC%98%A4%EB%A1%9C%EB%9D%BC&type=landing&sort=name`이었다. Components의 `hero` 상세에서는 실제 컴파일 미리보기, 5개 변형, 명세 표와 배치 제약을 확인했다.
 
+홈은 실제 빌드 서버에서 열어 컴파일러 소개, Explore·Studio 진입, Showcase의 Explore 링크, 규약 섹션, CLI·REST·MCP 안내, 시작 가이드와 GitHub 링크를 확인했다.
+
 ## 자동 E2E
 
 추가한 스펙:
