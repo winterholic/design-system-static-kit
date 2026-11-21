@@ -59,12 +59,15 @@ export function chartMock(w, h, id) {
   return out.join('');
 }
 
-export function deviceMock(w, h, id) {
+/** 카탈로그 2.5.0(R3): 3:4 같은 좁은 캔버스(w<300)에서는 옆 카드와 떠 있는 칩을 캔버스 안으로 옮긴다. 옛 좌표는 폭 320 기준이라 칩이 오른쪽에서 잘렸다.
+ *  `fit`이 꺼져 있거나 폭이 320이면 출력은 이전과 같다(고정 출력). */
+export function deviceMock(w, h, id, fit = false) {
+  const narrow = fit && w < 300, tr = (dx, dy, body) => narrow ? `<g transform="translate(${f(dx)} ${f(dy)})">${body}</g>` : body;
   const pw = 100, ph = 208, x = (w - pw) / 2, y = (h - ph) / 2 + 2, cx = x + pw / 2;
   const out = [`<defs><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="sa"/><stop offset="1" class="ss"/></linearGradient></defs>`, rect(0, 0, w, h, 'a-bg', 0, `fill="url(#${id}g)"`), circ(cx, h / 2, 104, 'a-5', 'opacity=".5"')];
   // side cards behind the phone
-  out.push(card(18, 64, 74, 54, 8), text(28, 80, '이번 주 평균', 5.2, 't4'), text(28, 96, '4.6시간', 11.4, 't3', 800), path('M28 108L38 102L48 105L58 97L68 99L80 90', 'k1', 'stroke-width="1.8" fill="none"'));
-  out.push(card(232, 128, 72, 56, 8), circ(250, 148, 8, 'a-ac'), path('M246 148L249 151L254.4 145', 'k1', 'stroke-width="1.8" fill="none"'), text(264, 147, '연속 12일', 5.6, 't3', 700), text(264, 155, '목표 달성 중', 4.6, 't4'), bar(242, 170, 52, 'a-6', 3.4), bar(242, 170, 36, 'a-1', 3.4));
+  out.push(tr(6 - 18, 0, [card(18, 64, 74, 54, 8), text(28, 80, '이번 주 평균', 5.2, 't4'), text(28, 96, '4.6시간', 11.4, 't3', 800), path('M28 108L38 102L48 105L58 97L68 99L80 90', 'k1', 'stroke-width="1.8" fill="none"')].join('')));
+  out.push(tr(w - 80 - 232, 0, [card(232, 128, 72, 56, 8), circ(250, 148, 8, 'a-ac'), path('M246 148L249 151L254.4 145', 'k1', 'stroke-width="1.8" fill="none"'), text(264, 147, '연속 12일', 5.6, 't3', 700), text(264, 155, '목표 달성 중', 4.6, 't4'), bar(242, 170, 52, 'a-6', 3.4), bar(242, 170, 36, 'a-1', 3.4)].join('')));
   // phone
   out.push(rect(x - 3, y - 3, pw + 6, ph + 6, 'a-sh', 17, 'fill-opacity=".7"'), rect(x - 2, y - 2, pw + 4, ph + 4, 'a-3', 16), rect(x, y, pw, ph, 'a-5', 14));
   out.push(rect(cx - 15, y + 5, 30, 8, 'a-3', 4), text(x + 12, y + 12, '9:41', 5, 't3', 700), rect(x + pw - 28, y + 8, 14, 5, 'a-3', 1.6, 'opacity=".8"'), circ(x + pw - 9, y + 10.6, 2.2, 'a-3'));
@@ -79,6 +82,6 @@ export function deviceMock(w, h, id) {
   });
   out.push(rect(x + 14, y + ph - 14, pw - 28, 4, 'a-3', 2, 'opacity=".85"'));
   // floating chip
-  out.push(rect(206, 52 + 2, 94, 30, 'a-sh', 10, 'fill-opacity=".6"'), rect(204, 50, 94, 30, 'a-5 bd', 10), circ(218, 65, 7, 'a-2'), text(229, 63.6, '회고가 도착했어요', 5.4, 't3', 700), text(229, 71.6, '지난 한 주 12개 기록', 4.6, 't4'));
+  out.push(tr(w - 94 - 6 - 204, 18 - 50, [rect(206, 52 + 2, 94, 30, 'a-sh', 10, 'fill-opacity=".6"'), rect(204, 50, 94, 30, 'a-5 bd', 10), circ(218, 65, 7, 'a-2'), text(229, 63.6, '회고가 도착했어요', 5.4, 't3', 700), text(229, 71.6, '지난 한 주 12개 기록', 4.6, 't4')].join('')));
   return out.join('');
 }

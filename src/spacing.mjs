@@ -9,6 +9,25 @@ export const SPACE = {
   spacious:    {tight: 4, near: 8, item: 16, head: 20, sub: 24, gap: 32, inset: 32, insetS: 20, insetL: 48, section: 56, sectionS: 28, sectionM: 40, sectionL: 64, band: 104, bandS: 44, bandM: 64, control: 48},
 };
 
+/** 카탈로그 2.5.0의 섹션 간격 단계 `loose`(EX-4)가 쓰는 확장 토큰. `SPACE`에 넣지 않은 이유: `spaceVars`가 SPACE의 모든 항목을 모든 출력의 `:root`에 내므로
+ *  넣으면 2.1~2.4 고정 출력이 바뀐다. 이 값은 `loose` 구역이 쓰일 때만 변수가 나온다(src/styles/expression.mjs). 순서는 band < bandL이고 4px 격자 값이다. */
+export const SPACE_EXT = {
+  compact:     {bandL: 84},
+  comfortable: {bandL: 120},
+  spacious:    {bandL: 156},
+};
+export const TOKEN_EXT = {bandL: '--kit-sp-band-l'};
+/** SPACE와 SPACE_EXT를 합친 순서 위반 검사(S09: gap < section < band < bandL, 4px 격자). */
+export function extOrderViolations(space = SPACE, ext = SPACE_EXT) {
+  const out = [];
+  for (const [density, s] of Object.entries(space)) {
+    const e = ext[density];
+    if (!(s.band < e.bandL)) out.push(`${density}: band(${s.band}) < bandL(${e.bandL}) 이어야 합니다`);
+    if (e.bandL % 4 !== 0) out.push(`${density}.bandL=${e.bandL}은 4px 격자 밖입니다`);
+  }
+  return out;
+}
+
 /** CSS custom property for each scale step. `gap`, `inset`, `section`, `band`, `control` keep their short historical names. */
 export const TOKEN = {
   tight: '--kit-sp-tight', near: '--kit-sp-near', item: '--kit-sp-item', head: '--kit-sp-head', sub: '--kit-sp-sub', gap: '--kit-gap',

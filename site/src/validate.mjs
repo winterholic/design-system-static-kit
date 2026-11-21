@@ -1,4 +1,5 @@
-import {BLUEPRINT_VERSION, CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
+import {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} from './catalog/expression.mjs';
+import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -43,7 +44,8 @@ export function validateBlueprint(input) {
   const props = {...top.properties}; delete props.tree;
   value(Object.fromEntries(Object.entries(input).filter(([k]) => k !== 'tree')), {type: 'object', properties: props, required: top.required.filter(k => k !== 'tree')}, '$');
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
-  if (!SUPPORTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + SUPPORTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
+  if (!ACCEPTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + ACCEPTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
+  const expr = expressionApplies(input), warnings = [];
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));
   if (theme) for (const [axis, banned] of Object.entries(theme.forbid)) if (banned.includes(input[axis])) error('$.' + axis, 'THEME_FORBID', `${theme.name} 테마는 ${axis}=${input[axis]}를 금지합니다. 금지 값: ${banned.join(', ')}`);
@@ -109,15 +111,44 @@ export function validateBlueprint(input) {
     if (spec.children && Array.isArray(n.children)) for (let i = 0; i < n.children.length && count <= limits.nodes; i++) node(n.children[i], `${path}.children[${i}]`, n.type, depth + 1, [...ancestors, n.type]);
     if (surfaced) surfaceStack.pop();
   }
+  /** 2.5.0 필드의 위치·조합 규칙. 필드마다 하나의 오류 코드와 고치는 방법을 메시지에 싣는다. */
+  function expressionChecks(n, t, path, parent) {
+    if (t === 'hero' && Object.hasOwn(n, 'ratio') && (!n.visual || !['split', 'product'].includes(n.variant))) error(path + '.ratio', 'VARIANT_REQUIRES', 'ratio는 visual이 있는 split·product 히어로에서만 사용합니다(비율을 나눌 시각 칸이 있어야 합니다).');
+    if (t === 'split' && ['dominant-start', 'dominant-end'].includes(n.ratio) && A_(n.children)) {
+      // 비율은 열의 것이다(wide-start와 같다): reverse이면 첫 자식이 둘째 열에 앉으므로 좁은 칸이 바뀐다.
+      const narrow = n.children[(n.ratio === 'dominant-start') !== (n.reverse === 'reverse') ? 1 : 0];
+      if (plain(narrow) && !NARROW_CELL_OK.includes(narrow.type)) error(`${path}.ratio`, 'VARIANT_REQUIRES', `${n.ratio}의 좁은 칸(약 30%)에는 ${narrow.type}을 둘 수 없습니다. 좁은 칸에 둘 수 있는 부품: ${NARROW_CELL_OK.join(', ')}.`);
+    }
+    if (t === 'card' && n.featured === 'yes' && parent !== 'grid') error(path + '.featured', 'FEATURED_CARD', 'featured 카드는 columns가 three·four인 grid 안에서만 쓸 수 있습니다(bento의 큰 칸은 시각 칸에 자동으로 주어집니다).');
+    if (t === 'grid' && A_(n.children)) {
+      const featured = n.children.map((c, i) => plain(c) && c.type === 'card' && c.featured === 'yes' ? i : -1).filter(i => i >= 0);
+      if (featured.length > 1) error(path, 'FEATURED_CARD', '강조 카드는 grid마다 하나만 둘 수 있습니다.');
+      if (featured.length) {
+        if (!FEATURED_COLUMNS.includes(n.columns)) error(path + '.columns', 'FEATURED_CARD', `강조 카드가 있는 grid는 columns가 ${FEATURED_COLUMNS.join('·')}이어야 합니다(두 칸 폭이 한 줄을 다 쓰지 않도록).`);
+        if (n.children.length < FEATURED_MIN_CHILDREN) error(path, 'FEATURED_CARD', `강조 카드가 있는 grid는 자식이 ${FEATURED_MIN_CHILDREN}개 이상이어야 합니다.`);
+        if (featured[0] !== 0) error(`${path}.children[${featured[0]}].featured`, 'FEATURED_CARD', '강조 카드는 grid의 첫 칸이어야 합니다(줄 중간에 두 칸 폭이 놓이면 앞 줄에 빈칸이 생깁니다).');
+      }
+    }
+    if (t === 'quote' && n.variant === 'pull' && !PULL_PARENTS.includes(parent)) error(path + '.variant', 'PULL_POSITION', `풀쿼트(pull)는 ${PULL_PARENTS.join(' 또는 ')} 직속에서만 쓸 수 있습니다(칸 안에서는 큰 글자가 칸 폭에 눌립니다).`);
+    if (t === 'section' && Object.hasOwn(n, 'space') && parent !== 'page') error(path + '.space', 'SPACE_POSITION', 'space는 페이지 직속 section에서만 쓸 수 있습니다(안쪽 section의 간격은 바깥 section이 정합니다).');
+    if (t === 'media' && n.bleed === 'yes') {
+      if (parent !== 'page') error(path + '.bleed', 'BLEED_POSITION', 'bleed 미디어는 페이지 직속 자식이어야 합니다(콘텐츠 열 바깥으로 이어지려면 열이 하나뿐인 자리여야 합니다).');
+      if (!BLEED_RATIOS.includes(n.ratio)) error(path + '.ratio', 'VARIANT_REQUIRES', `bleed 미디어의 ratio는 ${BLEED_RATIOS.join('·')}만 허용합니다.`);
+    }
+  }
+  const A_ = Array.isArray;
   function checks(n, path, ancestors) {
-    const t = n.type, A = Array.isArray;
+    const t = n.type, A = Array.isArray, parent = ancestors.at(-1);
+    // 2.5.0 표현력 문법(ADR 0010): 출력이 고정된 2.4.0 이하는 문법을 넓히지 않는다. 새 필드·새 enum 값은 거부한다.
+    if (!expr) for (const f of SINCE_FIELDS) if (f.node === t && Object.hasOwn(n, f.field) && (!f.values || f.values.includes(n[f.field]))) error(`${path}.${f.field}`, f.values ? 'ENUM' : 'UNKNOWN_KEY', `${t}.${f.field}${f.values ? '=' + n[f.field] : ''}는 카탈로그 2.5.0부터 쓸 수 있습니다(kit migrate <입력> <출력> --to 2.5.0).`);
+    if (expr) expressionChecks(n, t, path, parent);
     if (plain(n.action)) group([n.action], path + '.action');
     if (t === 'page-header' && A(n.actions)) group(n.actions, path + '.actions');
     if (t === 'actions' && A(n.items)) group(n.items, path + '.items');
     if (['hero', 'cta', 'buy-box'].includes(t)) group([n.action, n.secondaryAction].filter(plain), path);
     if (t === 'media' && n.motif && n.kind !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.');
     if (t === 'gallery' && A(n.items)) n.items.forEach((x, i) => { if (plain(x) && x.motif && x.kind !== 'photo') error(`${path}.items[${i}].motif`, 'VARIANT_REQUIRES', 'motif는 kind가 photo일 때만 사용합니다.'); });
-    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); if (n.facts && !['statement', 'cover', 'centered'].includes(n.variant)) error(path + '.facts', 'VARIANT_REQUIRES', 'facts는 statement·cover·centered 변형에서만 사용합니다(split·product는 그림이 근거 역할을 합니다).'); }
+    if (t === 'hero') { heroCount++; if (n.motif && n.visual !== 'photo') error(path + '.motif', 'VARIANT_REQUIRES', 'motif는 visual이 photo일 때만 사용합니다.'); if (n.visual && !['split', 'product'].includes(n.variant)) error(path + '.visual', 'HERO_VISUAL', 'visual은 split·product 변형에서만 사용합니다.'); if (n.facts && !['statement', 'cover', 'centered'].includes(n.variant)) error(path + '.facts', 'VARIANT_REQUIRES', 'facts는 statement·cover·centered 변형에서만 사용합니다(split·product는 그림이 근거 역할을 합니다).' + (expr ? ' [계약 V06: 히어로 형태가 수치를 지우지 못한다]' : '')); }
     if (t === 'pricing' && A(n.children)) {
       group(n.children.filter(plain).map(p => p.action).filter(plain), path);
       if (n.children.filter(p => plain(p) && p.featured === 'yes').length > 1) error(path, 'FEATURED_PLAN', '추천 요금제는 하나만 둘 수 있습니다.');
@@ -197,5 +228,7 @@ export function validateBlueprint(input) {
       if (pt.widths && axes.width.includes(input.width) && !pt.widths.includes(input.width)) error('$.width', 'PAGE_WIDTH', `${pt.label} 페이지의 허용 폭: ${pt.widths.join(', ')}`);
     }
   }
-  return {valid: errors.length === 0, errors};
+  // 2.5.0: 직접 작성한 Blueprint에도 변형 결과 계약을 적용한다. 오류 등급(V06)은 노드 검사가 이미 냈고, 여기서는 경고·진단(info)만 모은다. 거부하지 않는다.
+  if (expr && plain(input.tree)) for (const w of assessBlueprintContracts(input.tree)) if (w.severity !== 'error') warnings.push({path: w.path, code: w.code, severity: w.severity, contract: w.id, message: `${w.id} · ${w.message}`});
+  return {valid: errors.length === 0, errors, warnings};
 }

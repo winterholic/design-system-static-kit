@@ -4,7 +4,7 @@
  * 반환값은 모두 JSON으로 직렬화되는 새 객체다(카탈로그 객체는 얼어 있어 그대로 내보내지 않는다).
  */
 import {
-  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules,
+  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules, expressionRules, SINCE_FIELDS,
   themes, palettes, paletteFamilies, themeCategories, layoutOptionsOf, nodeSpecs, nodeTypes, requiredOf, chromeSpec, rules, axes, axisDefs, axisBans, pageTypes,
   templateList, templates, concepts, conceptsOfTemplate, iconNames, icons, blueprintSchema,
 } from '../catalog.mjs';
@@ -168,9 +168,9 @@ export function listCatalog(q) {
  */
 export function catalogSnapshot() {
   return jsonClone({
-    version: CATALOG_VERSION, supportedCatalogVersions: SUPPORTED_CATALOG_VERSIONS,
+    version: CATALOG_VERSION, supportedCatalogVersions: SUPPORTED_CATALOG_VERSIONS, acceptedCatalogVersions: ACCEPTED_CATALOG_VERSIONS,
     composition: {version: COMPOSITION_VERSION, rules: compositionRules, pageRules, coverage: compositionCoverage},
-    variantContracts, recipes, recipeRules, recipePicks: recipePicks(), themeCategories,
+    variantContracts, recipes, recipeRules, expressionRules, recipePicks: recipePicks(), themeCategories,
     themes: Object.fromEntries(Object.entries(themes).map(([id, {covers, ...theme}]) => [id, theme])),
     palettes, paletteFamilies, axes, axisDefs,
     axisBans: axisBans.map(({id, uses, fix, why, source}) => ({id, uses, fix, why, source})),
@@ -259,7 +259,11 @@ export function getSchema(q) {
 const SPEC_FIELDS = ['label', 'group', 'fields', 'required', 'optional', 'children', 'example', 'pageTypes', 'rules'];
 
 /** 부품에 걸린다고 규칙 표 자체가 선언한 규칙 ID: 맥락 결정표(C##)의 when.type, 변형 결과 계약(V##)의 check.node. */
-const rulesOfComponent = type => [...compositionRules.filter(r => r.when.type === type).map(r => r.id), ...variantContracts.filter(v => v.check?.node === type).map(v => v.id)];
+const expressionRulesOfComponent = type => [
+  ...(SINCE_FIELDS.some(f => f.node === type) ? ['R21'] : []),
+  ...(['hero', 'grid', 'section', 'page-header'].includes(type) ? ['R22'] : []),
+];
+const rulesOfComponent = type => [...compositionRules.filter(r => r.when.type === type).map(r => r.id), ...variantContracts.filter(v => v.check?.node === type).map(v => v.id), ...expressionRulesOfComponent(type)];
 
 /**
  * 부품 명세. q.fields로 가져올 항목을 고른다(type은 항상 나간다). 허용 항목: label, group, fields(필드 스키마), required, optional,

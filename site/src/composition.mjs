@@ -1,3 +1,4 @@
+import {expressionApplies} from './catalog/expression.mjs';
 import {compositionRules, compositionCoverage, COMPOSITION_VERSION, PAGE_INTENT, pageRules, PAGE_RULE_LEGACY_VERSIONS, LEGACY_COMPOSITION_VERSION} from './catalog/composition.mjs';
 import {bentoPlan, bentoMixedRows, isShortCell} from './layout.mjs';
 import {SPACE, TOKEN} from './spacing.mjs';
@@ -23,6 +24,14 @@ export function selectDesign(facts, rules = compositionRules) {
 /** Page rules apply to catalog 2.4.0+; older inputs keep their pinned output (docs/evidence/variants/legacy-2-3-hashes.json). */
 export const pageRulesApply = b => !PAGE_RULE_LEGACY_VERSIONS.includes(b.catalogVersion);
 
+/** 히어로 바로 뒤의 투명 섹션이 P03(위쪽 띠 여백 0)의 대상인가. 2.4.0까지는 페이지 배경을 보지 않았다.
+ *  R1(카탈로그 2.5.0): 히어로는 캔버스 색으로 끝나는데 페이지 `backdrop`이 plain이 아니면 캔버스와 배경 사이에 경계가 보여 머리말이 그 경계에 붙는다. 그때는 P03을 걸지 않는다.
+ *  `space`를 직접 고른 섹션도 작성자의 간격 선택을 지킨다. */
+function afterHeroPlain(b, next) {
+  if (!expressionApplies(b)) return 'plain-section';
+  return b.backdrop !== 'plain' || (next.space && next.space !== 'normal') ? 'plain-section-visible-edge' : 'plain-section';
+}
+
 /**
  * Page-level planning (composition 1.3.0): facts about the whole page go through the same decision-table engine as node rules.
  * Returns {version, facts, decisions, artStart}. Decisions are attached to the affected node's decision (`.page`) so the renderer
@@ -36,7 +45,7 @@ function planPage(b, byNode) {
     intent, heroVariant: hero?.variant ?? null, heroVisual: hero ? !!hero.visual : null,
     heroArt: !!hero && ['split', 'product'].includes(hero.variant) && !!hero.visual && hero.visual !== 'ornament',
     // HERO_POSITION fixes the hero as the second child, so the section after it is the third (odd) child and src/styles/shells.mjs never paints it soft by position; only an explicit surface makes it a visible band.
-    afterHero: !hero ? null : next?.type === 'section' ? ((next.surface ?? 'plain') === 'plain' ? 'plain-section' : 'banded-section') : next ? 'other' : null,
+    afterHero: !hero ? null : next?.type === 'section' ? (['plain', 'flat'].includes(next.surface ?? 'plain') ? afterHeroPlain(b, next) : 'banded-section') : next ? 'other' : null,
     bentos: 0,
   };
   const reasonOf = id => pageRules.find(r => r.id === id).reason;

@@ -1,0 +1,233 @@
+{
+  "catalogVersion": "2.5.0",
+  "baseline": "53aa1dcc8",
+  "count": 15,
+  "cases": [
+    {
+      "id": "01-magazine",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "a6a886ee763b7a83ecdb12a94a9034e3ea428946af826380d70bfde135482b55",
+        "css": "d441264e4b1465cf20ded24196a0577f9d6e9fe13f152e7bf7cc64f8baf3dc0d",
+        "manifest": "377a18105c3c5f608d608cd957eccaf3743da69bad543d17948da0a6aa59c15d"
+      }
+    },
+    {
+      "id": "02-asym-portfolio",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "bfdb928a7147293554b5d594d9602c88262000a93d1f0d77ea808b9570d887e1",
+        "css": "6c60e867a62b8677511b3fe218344753f2d1a51aab52de856d78914b0765b6ca",
+        "manifest": "e3f6310afbad498a91bf464887b046d7c1ce5dc1a3dfb9a3bcc987f59e7b923b"
+      }
+    },
+    {
+      "id": "03-dense-dashboard-landing",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "c5c2435c68cf86659869b1dfac9532377b157463b3c410cae334a4544f2d03fc",
+        "css": "58a40545c68de39902f4d1b0e455f40681084805b22a5925344b842e000ec5e6",
+        "manifest": "5a444421c3109ecea9fbd17344b1976a10abe8a3af2fee178dce0d0e909e31ca"
+      }
+    },
+    {
+      "id": "04-pricing-saas",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "9df9b0034febcc4de3dddd2435a587f0482921f5764426a4ef76b3d4b4e00638",
+        "css": "28c055e0818633ee483dda540777ea3381826583bb021ed6023ec53daee05d1b",
+        "manifest": "257feda5c01aa5acfca4a6de35beecccef1e3ccf859b7baca09eec700c35b0c4"
+      }
+    },
+    {
+      "id": "05-image-product",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "a1a685eac4863b5939b0853f7ca95b47eac6f1484cab1d10143728195e139d8f",
+        "css": "a4140cd656223896635acf6c6826f7e87d85f9f6fd9c8df5f916663e3f50c388",
+        "manifest": "f65dda5d06948f2fc2e1f394f4f33150100294169ae1e324d4276639ffb73023"
+      }
+    },
+    {
+      "id": "06-docs-reference",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "a6dc7fae77f7b830b65379fa166b832ea8771f21502fd4a97300bcf5086726a7",
+        "css": "9b5c2fa82767d0ac3da305ec27342a66763fb66ddc581539afd1112a802f3294",
+        "manifest": "e4148240128ffd0a0001135fe67441cc2a78d06fb942c8dcb1c7ae63878c55d0"
+      }
+    },
+    {
+      "id": "07-event-conference",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "dbc6eb237edc5f3597c172c13cdfe9ceb47c7d57d9cb64bd0884a64408958016",
+        "css": "94d63507a0c56049a38b7d65e4a110216ebf4dab5bbe41a9ce3bbec43da34d5a",
+        "manifest": "a0a55f6ac44e83144a30ee77ee4883326215f259e355e0e2e97f978f567cef65"
+      }
+    },
+    {
+      "id": "08-restaurant",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "e0fbae352feac500e87d697260ccb61db13c1b5c6f568b1317dbd8640c6d8ba0",
+        "css": "7b9f277736ac60ee173cbd7d32fb8418966150568963475958d7dd831b1b8e4c",
+        "manifest": "ba8b9f0cb01c9bc2fa2b4ece3356fec89c4fe90e3a50f3f65383482a7a04154c"
+      }
+    },
+    {
+      "id": "09-brutalist-zine",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [
+        {
+          "path": "$.tree.children[3].children[0]",
+          "code": "CONTRACT_V02",
+          "severity": "info",
+          "contract": "V02",
+          "message": "V02 · 카드 3개의 variant가 outline·filled로 섞여 있습니다. 한 격자의 카드는 한 모양이 읽기 쉽습니다."
+        }
+      ],
+      "hashes": {
+        "html": "e72901219c718d77d6e8e783115a278a421a722f177cb9a21369003dfaa74e0e",
+        "css": "d03ff80cdfda7cf1e22dccabfa99db4a13636ef78b7164124e021725aeb25d24",
+        "manifest": "e203e91d507de13b4bc11d21299899a402e53175be2c916af212af21a2cd0139"
+      }
+    },
+    {
+      "id": "10-swiss-type",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "0a93c3570bcbd0d02c7f2149fb1ff361547fcd7984412dbadbb960d7008d0f7d",
+        "css": "cff8f10076c60d91c94265aefcaa12193a02e69218378920aedf6d187a228787",
+        "manifest": "dd06d55cfbe3a16105dd17d3f47d5a50307b5b227212eba104aa02fca5a94bac"
+      }
+    },
+    {
+      "id": "11-luxe-brand",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [
+        {
+          "path": "$.tree.children[3]",
+          "code": "CONTRACT_V04",
+          "severity": "warning",
+          "contract": "V04",
+          "message": "V04 · 머리말은 가운데인데 첫 본문(prose)은 왼쪽 정렬로 읽힙니다. 섹션 align을 start로 하거나 본문을 가운데로 읽히는 부품(logo-cloud·empty-state)으로 하세요."
+        }
+      ],
+      "hashes": {
+        "html": "0396307fcebbb7ddfa47320342b3db0f528f2c3458d620d3694c7ffe5166cddf",
+        "css": "cafd58c08e3a947d09861656150013f522b9b5be1b3ec686ff492676bdbe5971",
+        "manifest": "b45304b653080c61f44f566fb0564c15ddf2bab5a9ffcb30d115e41171a4077f"
+      }
+    },
+    {
+      "id": "12-news-home",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "61287627936cd670d726cd851904c01a0a8218de116d1b6727ef9d9511676f26",
+        "css": "40f2af8951818f8c95f3db2770b5ce6d62429cd5ab4e88b7d4a9d26bcaffef56",
+        "manifest": "f4954330eef1e3557a109bcae1269ec7bfe2ff47a971c8ae027e54e6a220fe4c"
+      }
+    },
+    {
+      "id": "13-app-landing-dark",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "fed0305c1036c7863a9e5a3d11c40e67e6abafa67a26a0c9dbbfea9ea3f3293c",
+        "css": "cca1ca793447cbf116a0941dd275414d213402ca1fe5c4b0a59211addbbf6c3e",
+        "manifest": "27c6381fd52b657ab8d7791826fadd325dc5c9ccacf64c6ecc0a8ce2a1ae78f3"
+      }
+    },
+    {
+      "id": "14-campaign-poster",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "d5af3359c23980481dcd9e93168d2f1e38768ff64e5baada7951751af6b4a6a2",
+        "css": "d94e57d9ee1cb7f81ddecb60ca3204a7a796f614bf5ae89d988a8b75f85a62c2",
+        "manifest": "b50a730b6d15de6f88f7ec937839f3bbdd3775b47316ac6d2e279aeccf1cd961"
+      }
+    },
+    {
+      "id": "15-devtool-terminal",
+      "catalogVersion": "2.5.0",
+      "validate": "VALID",
+      "compile": "ok",
+      "outputCheck": "VERIFIED",
+      "errors": [],
+      "warnings": [],
+      "hashes": {
+        "html": "51712337fff8cf4b7a40b0c5adab3639fa8178c94faa4f3cf905333f4ebdc63d",
+        "css": "a7635b2d7dad4f36440cf3174bbad1840b6356a145060ec6fc08e51ffd0e97e6",
+        "manifest": "a9f3b06f6fcbf318e106059e33aa85e5856125ff8f35c1a9b7ba61fc9b3d85d4"
+      }
+    }
+  ]
+}

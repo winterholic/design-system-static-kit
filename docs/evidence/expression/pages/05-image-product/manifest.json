@@ -1,0 +1,1561 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.5.0",
+  "theme": "commerce",
+  "palette": "warm-earthy-neutrals",
+  "mode": "light",
+  "pageType": "commerce",
+  "axes": {
+    "shell": "topbar",
+    "typography": "sans",
+    "density": "spacious",
+    "radius": "subtle",
+    "control": "match",
+    "elevation": "flat",
+    "motion": "subtle",
+    "icon": "line-fine",
+    "ornament": "none",
+    "backdrop": "plain",
+    "width": "wide",
+    "scale": "balanced",
+    "weight": "medium",
+    "footer": "simple"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/f5f4ef-f1dbce-686763-b8b5b0-e5e2d9",
+      "discovery": "https://coolors.co/palettes/popular",
+      "observed": "2026-10-18",
+      "method": "rendered Coolors palette listing (Playwright Chromium / ttakkari_browser), swatches read from page text",
+      "evidence": "docs/evidence/coolors-palettes.json"
+    },
+    "original": [
+      "#F5F4EF",
+      "#F1DBCE",
+      "#686763",
+      "#B8B5B0",
+      "#E5E2D9"
+    ],
+    "brandSeed": "#F1DBCE",
+    "accentSeed": "#F5F4EF",
+    "action": "#796E67",
+    "accent": "#F5F4EF",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "mode": "light",
+      "name": "text/canvas",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/surface",
+      "foreground": "#2C3138",
+      "background": "#FFFFFF",
+      "ratio": 13.09615253,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/soft",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/sunken",
+      "foreground": "#2C3138",
+      "background": "#F5F5F4",
+      "ratio": 12.0046751,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/accentSoft",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/canvas",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/surface",
+      "foreground": "#6A717E",
+      "background": "#FFFFFF",
+      "ratio": 4.9109518,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/soft",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/sunken",
+      "foreground": "#6A717E",
+      "background": "#F5F5F4",
+      "ratio": 4.50165655,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/accentSoft",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/canvas",
+      "foreground": "#796E67",
+      "background": "#FEFEFD",
+      "ratio": 4.90875181,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/surface",
+      "foreground": "#796E67",
+      "background": "#FFFFFF",
+      "ratio": 4.9537459,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/soft",
+      "foreground": "#796E67",
+      "background": "#FEFCFC",
+      "ratio": 4.84617473,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/sunken",
+      "foreground": "#796E67",
+      "background": "#F5F5F4",
+      "ratio": 4.54088405,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/accentSoft",
+      "foreground": "#796E67",
+      "background": "#FEFEFD",
+      "ratio": 4.90875181,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FEFEFD",
+      "ratio": 5.93659892,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.99101436,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#FEFCFC",
+      "ratio": 5.86091879,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/sunken",
+      "foreground": "#18714C",
+      "background": "#F5F5F4",
+      "ratio": 5.49170306,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/accentSoft",
+      "foreground": "#18714C",
+      "background": "#FEFEFD",
+      "ratio": 5.93659892,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#FEFEFD",
+      "ratio": 5.29184198,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#FEFCFC",
+      "ratio": 5.22438125,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/sunken",
+      "foreground": "#946000",
+      "background": "#F5F5F4",
+      "ratio": 4.89526498,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/accentSoft",
+      "foreground": "#946000",
+      "background": "#FEFEFD",
+      "ratio": 5.29184198,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FEFEFD",
+      "ratio": 5.73516943,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.78773854,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#FEFCFC",
+      "ratio": 5.66205713,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/sunken",
+      "foreground": "#B83543",
+      "background": "#F5F5F4",
+      "ratio": 5.30536893,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/accentSoft",
+      "foreground": "#B83543",
+      "background": "#FEFEFD",
+      "ratio": 5.73516943,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/canvas",
+      "foreground": "#2A63C9",
+      "background": "#FEFEFD",
+      "ratio": 5.58398996,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/surface",
+      "foreground": "#2A63C9",
+      "background": "#FFFFFF",
+      "ratio": 5.63517335,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/soft",
+      "foreground": "#2A63C9",
+      "background": "#FEFCFC",
+      "ratio": 5.51280491,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/sunken",
+      "foreground": "#2A63C9",
+      "background": "#F5F5F4",
+      "ratio": 5.16551904,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/accentSoft",
+      "foreground": "#2A63C9",
+      "background": "#FEFEFD",
+      "ratio": 5.58398996,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/canvas",
+      "foreground": "#71706E",
+      "background": "#FEFEFD",
+      "ratio": 4.90210052,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/surface",
+      "foreground": "#71706E",
+      "background": "#FFFFFF",
+      "ratio": 4.94703364,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/soft",
+      "foreground": "#71706E",
+      "background": "#FEFCFC",
+      "ratio": 4.83960823,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/sunken",
+      "foreground": "#71706E",
+      "background": "#F5F5F4",
+      "ratio": 4.53473121,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/accentSoft",
+      "foreground": "#71706E",
+      "background": "#FEFEFD",
+      "ratio": 4.90210052,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "focus/canvas",
+      "foreground": "#988A82",
+      "background": "#FEFEFD",
+      "ratio": 3.30682974,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/surface",
+      "foreground": "#988A82",
+      "background": "#FFFFFF",
+      "ratio": 3.33714046,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/soft",
+      "foreground": "#988A82",
+      "background": "#FEFCFC",
+      "ratio": 3.26467406,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/sunken",
+      "foreground": "#988A82",
+      "background": "#F5F5F4",
+      "ratio": 3.05901194,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/accentSoft",
+      "foreground": "#988A82",
+      "background": "#FEFEFD",
+      "ratio": 3.30682974,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#6A615B",
+      "ratio": 6.04529108,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#796E67",
+      "ratio": 4.9537459,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAccent/accent",
+      "foreground": "#10151C",
+      "background": "#F5F4EF",
+      "ratio": 16.63880366,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FEFEFD",
+      "ratio": 3.90467787,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.94046853,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/sunken",
+      "foreground": "#78818E",
+      "background": "#F5F5F4",
+      "ratio": 3.61205662,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/canvas",
+      "foreground": "#9F9188",
+      "background": "#FEFEFD",
+      "ratio": 3.02466336,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/surface",
+      "foreground": "#9F9188",
+      "background": "#FFFFFF",
+      "ratio": 3.05238771,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/canvas",
+      "foreground": "#93928F",
+      "background": "#FEFEFD",
+      "ratio": 3.08340309,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/surface",
+      "foreground": "#93928F",
+      "background": "#FFFFFF",
+      "ratio": 3.11166587,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/canvas",
+      "foreground": "#95938D",
+      "background": "#FEFEFD",
+      "ratio": 3.04406206,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/surface",
+      "foreground": "#95938D",
+      "background": "#FFFFFF",
+      "ratio": 3.07196423,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/canvas",
+      "foreground": "#99928C",
+      "background": "#FEFEFD",
+      "ratio": 3.04019845,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/surface",
+      "foreground": "#99928C",
+      "background": "#FFFFFF",
+      "ratio": 3.0680652,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/canvas",
+      "foreground": "#978C87",
+      "background": "#FEFEFD",
+      "ratio": 3.24285881,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/surface",
+      "foreground": "#978C87",
+      "background": "#FFFFFF",
+      "ratio": 3.27258317,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@0",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@0",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@1",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@1",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@2",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@2",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@3",
+      "foreground": "#2C3138",
+      "background": "#FEFDFD",
+      "ratio": 12.89824333,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@3",
+      "foreground": "#6A717E",
+      "background": "#FEFDFD",
+      "ratio": 4.83673745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@4",
+      "foreground": "#2C3138",
+      "background": "#FEFDFD",
+      "ratio": 12.89824333,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@4",
+      "foreground": "#6A717E",
+      "background": "#FEFDFD",
+      "ratio": 4.83673745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@5",
+      "foreground": "#2C3138",
+      "background": "#FEFDFD",
+      "ratio": 12.89824333,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@5",
+      "foreground": "#6A717E",
+      "background": "#FEFDFD",
+      "ratio": 4.83673745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@6",
+      "foreground": "#2C3138",
+      "background": "#FEFDFC",
+      "ratio": 12.89031405,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@6",
+      "foreground": "#6A717E",
+      "background": "#FEFDFC",
+      "ratio": 4.83376403,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@7",
+      "foreground": "#2C3138",
+      "background": "#FEFDFC",
+      "ratio": 12.89031405,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@7",
+      "foreground": "#6A717E",
+      "background": "#FEFDFC",
+      "ratio": 4.83376403,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@8",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@8",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@9",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@9",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@10",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@10",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@0",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@0",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@1",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@1",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@2",
+      "foreground": "#2C3138",
+      "background": "#FEFCFC",
+      "ratio": 12.81176805,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@2",
+      "foreground": "#6A717E",
+      "background": "#FEFCFC",
+      "ratio": 4.80430991,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@3",
+      "foreground": "#2C3138",
+      "background": "#FEFDFC",
+      "ratio": 12.89031405,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@3",
+      "foreground": "#6A717E",
+      "background": "#FEFDFC",
+      "ratio": 4.83376403,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@4",
+      "foreground": "#2C3138",
+      "background": "#FEFDFC",
+      "ratio": 12.89031405,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@4",
+      "foreground": "#6A717E",
+      "background": "#FEFDFC",
+      "ratio": 4.83376403,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@5",
+      "foreground": "#2C3138",
+      "background": "#FEFDFD",
+      "ratio": 12.89824333,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@5",
+      "foreground": "#6A717E",
+      "background": "#FEFDFD",
+      "ratio": 4.83673745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@6",
+      "foreground": "#2C3138",
+      "background": "#FEFDFD",
+      "ratio": 12.89824333,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@6",
+      "foreground": "#6A717E",
+      "background": "#FEFDFD",
+      "ratio": 4.83673745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@7",
+      "foreground": "#2C3138",
+      "background": "#FEFDFD",
+      "ratio": 12.89824333,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@7",
+      "foreground": "#6A717E",
+      "background": "#FEFDFD",
+      "ratio": 4.83673745,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@8",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@8",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@9",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@9",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@10",
+      "foreground": "#2C3138",
+      "background": "#FEFEFD",
+      "ratio": 12.97720224,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@10",
+      "foreground": "#6A717E",
+      "background": "#FEFEFD",
+      "ratio": 4.8663464,
+      "minimum": 4.5
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.5.0",
+    "name": "온결 조명",
+    "theme": "commerce",
+    "palette": "warm-earthy-neutrals",
+    "mode": "light",
+    "pageType": "commerce",
+    "shell": "topbar",
+    "typography": "sans",
+    "density": "spacious",
+    "radius": "subtle",
+    "control": "match",
+    "elevation": "flat",
+    "motion": "subtle",
+    "icon": "line-fine",
+    "ornament": "none",
+    "backdrop": "plain",
+    "width": "wide",
+    "scale": "balanced",
+    "weight": "medium",
+    "footer": "simple",
+    "chrome": {
+      "nav": [
+        {
+          "label": "조명",
+          "href": "#main"
+        },
+        {
+          "label": "소재",
+          "href": "#specs"
+        },
+        {
+          "label": "후기",
+          "href": "#reviews"
+        }
+      ],
+      "action": {
+        "label": "장바구니",
+        "href": "#main"
+      },
+      "footerNote": "© 2026 온결",
+      "footerLinks": [
+        {
+          "label": "이용약관",
+          "href": "#main"
+        },
+        {
+          "label": "개인정보",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "결 테이블 램프",
+          "description": "손으로 불어 만든 유리 갓과 참나무 받침"
+        },
+        {
+          "type": "aside",
+          "side": "end",
+          "sticky": "yes",
+          "size": "wide",
+          "label": "구매",
+          "children": [
+            {
+              "type": "media",
+              "kind": "photo",
+              "motif": "desklamp",
+              "ratio": "1:1",
+              "alt": "참나무 받침 위의 유리 갓 테이블 램프",
+              "caption": "결 테이블 램프 · 오크"
+            },
+            {
+              "type": "buy-box",
+              "title": "결 테이블 램프",
+              "price": "189,000원",
+              "note": "3~5일 이내 출고 · 무료 배송",
+              "badge": "신제품",
+              "options": [
+                {
+                  "label": "색",
+                  "choices": [
+                    "오크",
+                    "월넛",
+                    "화이트"
+                  ]
+                },
+                {
+                  "label": "전구",
+                  "choices": [
+                    "전구색",
+                    "주백색"
+                  ]
+                }
+              ],
+              "action": {
+                "label": "장바구니 담기",
+                "href": "#main",
+                "variant": "primary"
+              },
+              "secondaryAction": {
+                "label": "선물하기",
+                "href": "#main",
+                "variant": "secondary"
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "사진",
+          "children": [
+            {
+              "type": "gallery",
+              "layout": "showcase",
+              "items": [
+                {
+                  "kind": "photo",
+                  "motif": "desklamp",
+                  "alt": "램프 정면",
+                  "caption": "정면"
+                },
+                {
+                  "kind": "photo",
+                  "motif": "lamp",
+                  "alt": "불을 켠 모습",
+                  "caption": "점등"
+                },
+                {
+                  "kind": "photo",
+                  "motif": "floorlamp",
+                  "alt": "거실에 놓은 모습",
+                  "caption": "거실"
+                },
+                {
+                  "kind": "photo",
+                  "motif": "orb",
+                  "alt": "유리 갓 확대",
+                  "caption": "유리 갓"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "소재와 치수",
+          "anchor": "specs",
+          "children": [
+            {
+              "type": "properties",
+              "title": "사양",
+              "layout": "inline",
+              "items": [
+                {
+                  "label": "갓",
+                  "value": "수제 유리 · 유백색"
+                },
+                {
+                  "label": "받침",
+                  "value": "참나무 원목 · 오일 마감"
+                },
+                {
+                  "label": "크기",
+                  "value": "지름 18cm · 높이 36cm"
+                },
+                {
+                  "label": "무게",
+                  "value": "1.4kg"
+                },
+                {
+                  "label": "전원",
+                  "value": "코드 2m · 스위치형"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "이렇게 놓여 있어요",
+          "children": [
+            {
+              "type": "media",
+              "kind": "photo",
+              "motif": "interior",
+              "ratio": "21:9",
+              "alt": "창가 책상 위에 놓인 램프",
+              "caption": "창가 책상"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "후기",
+          "anchor": "reviews",
+          "children": [
+            {
+              "type": "reviews",
+              "title": "구매 후기",
+              "score": "4.9",
+              "count": "후기 214개",
+              "items": [
+                {
+                  "author": "이**",
+                  "rating": 5,
+                  "text": "빛이 부드러워서 밤에 책 읽기 좋아요.",
+                  "date": "10월 12일"
+                },
+                {
+                  "author": "박**",
+                  "rating": 5,
+                  "text": "유리 갓의 질감이 사진보다 좋습니다.",
+                  "date": "10월 3일"
+                },
+                {
+                  "author": "최**",
+                  "rating": 4,
+                  "text": "받침이 묵직해 안정적이에요. 포장도 꼼꼼했어요.",
+                  "date": "9월 28일"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "design": {
+    "version": "1.3.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "aside",
+        "facts": {
+          "type": "aside",
+          "semantic": "aside",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C19"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "supporting-layout"
+        },
+        "sources": {
+          "role": "C19"
+        },
+        "applied": [
+          "C19"
+        ],
+        "container": {
+          "sideWidth": 380,
+          "minWidth": 732
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "gallery",
+        "facts": {
+          "type": "gallery",
+          "semantic": "gallery",
+          "intent": "commerce",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C28"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "media-collection"
+        },
+        "sources": {
+          "role": "C28"
+        },
+        "applied": [
+          "C28"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "properties",
+        "facts": {
+          "type": "properties",
+          "semantic": "properties",
+          "intent": "commerce",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "commerce",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "spacious",
+          "typography": "sans",
+          "theme": "commerce"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading-s"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C04"
+        },
+        "applied": [
+          "C03",
+          "C04"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[1].children[1]",
+        "type": "buy-box",
+        "mode": "inherited",
+        "contracts": [
+          "commerce/hierarchy",
+          "S01",
+          "S04"
+        ],
+        "reason": "Price, total, options and action already have distinct commerce roles."
+      },
+      {
+        "path": "$.tree.children[4].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      },
+      {
+        "path": "$.tree.children[5].children[0]",
+        "type": "reviews",
+        "mode": "inherited",
+        "contracts": [
+          "type/stat-s",
+          "S01",
+          "S02"
+        ],
+        "reason": "Scores and review copy retain separate summary and reading levels."
+      }
+    ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "commerce",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "a1a685eac4863b5939b0853f7ca95b47eac6f1484cab1d10143728195e139d8f",
+      "tokens.css": "a4140cd656223896635acf6c6826f7e87d85f9f6fd9c8df5f916663e3f50c388",
+      "tokens.json": "a5095f55fbd8a3922df5019180b6d42945a517ed1800834496b9368729314c99",
+      "blueprint.json": "f7a25ef3aacb428ccf9abaf72caf9dcbe7b6419f8d8c560e81b0654a145906da"
+    }
+  }
+}

@@ -1,10 +1,10 @@
-import {rules, axisBans, themes} from '../catalog.mjs';
+import {rules, expressionRules, axisBans, themes} from '../catalog.mjs';
 import {validateBlueprint as coreValidate} from '../validate.mjs';
 import {withHint} from './errors.mjs';
 import {ok, fail, guard, isPlain, checkKeys, badRequest} from './envelope.mjs';
 import {checkExpectedVersion} from './versions.mjs';
 
-const ruleOfCode = code => rules.find(r => r.codes.includes(code))?.id;
+const ruleOfCode = code => [...rules, ...expressionRules].find(r => r.codes.includes(code))?.id;
 
 /**
  * 검증기 오류 하나를 Diagnostic으로 바꾼다. 코드·경로·메시지는 그대로 두고 hint와 규칙 ID를 붙인다.
@@ -38,6 +38,7 @@ export function validateBlueprint(blueprint, opts) {
     const [, bad] = readOpts(opts, ['catalogVersion'], blueprint);
     if (bad) return fail([bad]);
     const verdict = coreValidate(blueprint);
-    return verdict.valid ? ok({valid: true}) : fail(verdict.errors.map(e => annotate(e, blueprint)));
+    const warnings = (verdict.warnings ?? []).map(w => ({...annotate(w, blueprint), severity: w.severity, contract: w.contract}));
+    return verdict.valid ? ok({valid: true}, warnings) : fail(verdict.errors.map(e => annotate(e, blueprint)), warnings);
   });
 }

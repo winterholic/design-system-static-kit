@@ -1,0 +1,1900 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.5.0",
+  "theme": "playful",
+  "palette": "tropical-bliss",
+  "mode": "light",
+  "pageType": "landing",
+  "axes": {
+    "shell": "topbar",
+    "typography": "rounded",
+    "density": "comfortable",
+    "radius": "round",
+    "control": "pill",
+    "elevation": "lifted",
+    "motion": "lively",
+    "icon": "line-bold",
+    "ornament": "geometric",
+    "backdrop": "tint",
+    "width": "wide",
+    "scale": "dramatic",
+    "weight": "bold",
+    "footer": "columns"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+  ],
+  "paletteProvenance": {
+    "source": {
+      "url": "https://coolors.co/palette/227c9d-17c3b2-ffcb77-fef9ef-fe6d73",
+      "discovery": "https://coolors.co/palettes/popular",
+      "observed": "2026-10-20",
+      "method": "rendered Coolors popular listing with like counts (Playwright Chromium, 73 tag pages, infinite-scroll steps), swatches and likes read from page text",
+      "evidence": "docs/evidence/coolors-popular-2026-10-20.json"
+    },
+    "original": [
+      "#227C9D",
+      "#17C3B2",
+      "#FFCB77",
+      "#FEF9EF",
+      "#FE6D73"
+    ],
+    "brandSeed": "#17C3B2",
+    "accentSeed": "#FE6D73",
+    "action": "#0F7D72",
+    "accent": "#FE6D73",
+    "adjusted": true,
+    "method": "sRGB mixing toward white (dark mode) or black (light mode) until every used background passes; original swatches preserved"
+  },
+  "contrast": [
+    {
+      "mode": "light",
+      "name": "text/canvas",
+      "foreground": "#182F35",
+      "background": "#FFFEFD",
+      "ratio": 13.92728795,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/surface",
+      "foreground": "#182F35",
+      "background": "#FFFFFF",
+      "ratio": 14.02943951,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/soft",
+      "foreground": "#182F35",
+      "background": "#EFFBFA",
+      "ratio": 13.26078795,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/sunken",
+      "foreground": "#182F35",
+      "background": "#F6F5F4",
+      "ratio": 12.88427642,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/accentSoft",
+      "foreground": "#182F35",
+      "background": "#FFF0F1",
+      "ratio": 12.68408976,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/canvas",
+      "foreground": "#4F717E",
+      "background": "#FFFEFD",
+      "ratio": 5.21728369,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/surface",
+      "foreground": "#4F717E",
+      "background": "#FFFFFF",
+      "ratio": 5.25555056,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/soft",
+      "foreground": "#4F717E",
+      "background": "#EFFBFA",
+      "ratio": 4.96760697,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/sunken",
+      "foreground": "#4F717E",
+      "background": "#F6F5F4",
+      "ratio": 4.82656246,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/accentSoft",
+      "foreground": "#4F717E",
+      "background": "#FFF0F1",
+      "ratio": 4.75157079,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/canvas",
+      "foreground": "#0F7D72",
+      "background": "#FFFEFD",
+      "ratio": 4.96745088,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/surface",
+      "foreground": "#0F7D72",
+      "background": "#FFFFFF",
+      "ratio": 5.00388531,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/soft",
+      "foreground": "#0F7D72",
+      "background": "#EFFBFA",
+      "ratio": 4.72973008,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/sunken",
+      "foreground": "#0F7D72",
+      "background": "#F6F5F4",
+      "ratio": 4.59543958,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/accentSoft",
+      "foreground": "#0F7D72",
+      "background": "#FFF0F1",
+      "ratio": 4.52403893,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/canvas",
+      "foreground": "#18714C",
+      "background": "#FFFEFD",
+      "ratio": 5.94739242,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/surface",
+      "foreground": "#18714C",
+      "background": "#FFFFFF",
+      "ratio": 5.99101436,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/soft",
+      "foreground": "#18714C",
+      "background": "#EFFBFA",
+      "ratio": 5.66277584,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/sunken",
+      "foreground": "#18714C",
+      "background": "#F6F5F4",
+      "ratio": 5.50199351,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/accentSoft",
+      "foreground": "#18714C",
+      "background": "#FFF0F1",
+      "ratio": 5.41650747,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/canvas",
+      "foreground": "#946000",
+      "background": "#FFFEFD",
+      "ratio": 5.30146322,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/surface",
+      "foreground": "#946000",
+      "background": "#FFFFFF",
+      "ratio": 5.34034751,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/soft",
+      "foreground": "#946000",
+      "background": "#EFFBFA",
+      "ratio": 5.04775803,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/sunken",
+      "foreground": "#946000",
+      "background": "#F6F5F4",
+      "ratio": 4.90443781,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/accentSoft",
+      "foreground": "#946000",
+      "background": "#FFF0F1",
+      "ratio": 4.82823616,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/canvas",
+      "foreground": "#B83543",
+      "background": "#FFFEFD",
+      "ratio": 5.74559669,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/surface",
+      "foreground": "#B83543",
+      "background": "#FFFFFF",
+      "ratio": 5.78773854,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/soft",
+      "foreground": "#B83543",
+      "background": "#EFFBFA",
+      "ratio": 5.47063719,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/sunken",
+      "foreground": "#B83543",
+      "background": "#F6F5F4",
+      "ratio": 5.31531022,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/accentSoft",
+      "foreground": "#B83543",
+      "background": "#FFF0F1",
+      "ratio": 5.23272474,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/canvas",
+      "foreground": "#2A63C9",
+      "background": "#FFFEFD",
+      "ratio": 5.59414237,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/surface",
+      "foreground": "#2A63C9",
+      "background": "#FFFFFF",
+      "ratio": 5.63517335,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/soft",
+      "foreground": "#2A63C9",
+      "background": "#EFFBFA",
+      "ratio": 5.32643082,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/sunken",
+      "foreground": "#2A63C9",
+      "background": "#F6F5F4",
+      "ratio": 5.17519828,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/accentSoft",
+      "foreground": "#2A63C9",
+      "background": "#FFF0F1",
+      "ratio": 5.09478975,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/canvas",
+      "foreground": "#B44D52",
+      "background": "#FFFEFD",
+      "ratio": 5.05500544,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/surface",
+      "foreground": "#B44D52",
+      "background": "#FFFFFF",
+      "ratio": 5.09208205,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/soft",
+      "foreground": "#B44D52",
+      "background": "#EFFBFA",
+      "ratio": 4.81309466,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/sunken",
+      "foreground": "#B44D52",
+      "background": "#F6F5F4",
+      "ratio": 4.67643719,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "accentInk/accentSoft",
+      "foreground": "#B44D52",
+      "background": "#FFF0F1",
+      "ratio": 4.60377806,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "focus/canvas",
+      "foreground": "#139E90",
+      "background": "#FFFEFD",
+      "ratio": 3.29798726,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/surface",
+      "foreground": "#139E90",
+      "background": "#FFFFFF",
+      "ratio": 3.32217679,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/soft",
+      "foreground": "#139E90",
+      "background": "#EFFBFA",
+      "ratio": 3.1401598,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/sunken",
+      "foreground": "#139E90",
+      "background": "#F6F5F4",
+      "ratio": 3.05100172,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/accentSoft",
+      "foreground": "#139E90",
+      "background": "#FFF0F1",
+      "ratio": 3.00359744,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "onActionHover/actionHover",
+      "foreground": "#FFFFFF",
+      "background": "#0D6E64",
+      "ratio": 6.11976334,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAction/action",
+      "foreground": "#FFFFFF",
+      "background": "#0F7D72",
+      "ratio": 5.00388531,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "onAccent/accent",
+      "foreground": "#10151C",
+      "background": "#FE6D73",
+      "ratio": 6.67429488,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "rule/canvas",
+      "foreground": "#78818E",
+      "background": "#FFFEFD",
+      "ratio": 3.91177707,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/surface",
+      "foreground": "#78818E",
+      "background": "#FFFFFF",
+      "ratio": 3.94046853,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "rule/sunken",
+      "foreground": "#78818E",
+      "background": "#F6F5F4",
+      "ratio": 3.61882495,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/canvas",
+      "foreground": "#14A697",
+      "background": "#FFFEFD",
+      "ratio": 3.00775916,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/surface",
+      "foreground": "#14A697",
+      "background": "#FFFFFF",
+      "ratio": 3.02981997,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/canvas",
+      "foreground": "#F1686D",
+      "background": "#FFFEFD",
+      "ratio": 3.00342558,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/surface",
+      "foreground": "#F1686D",
+      "background": "#FFFFFF",
+      "ratio": 3.02545461,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/canvas",
+      "foreground": "#227C9D",
+      "background": "#FFFEFD",
+      "ratio": 4.69746972,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/surface",
+      "foreground": "#227C9D",
+      "background": "#FFFFFF",
+      "ratio": 4.73192394,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/canvas",
+      "foreground": "#B38E53",
+      "background": "#FFFEFD",
+      "ratio": 3.01657532,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/surface",
+      "foreground": "#B38E53",
+      "background": "#FFFFFF",
+      "ratio": 3.03870079,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/canvas",
+      "foreground": "#96938D",
+      "background": "#FFFEFD",
+      "ratio": 3.04119111,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/surface",
+      "foreground": "#96938D",
+      "background": "#FFFFFF",
+      "ratio": 3.06349713,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@0",
+      "foreground": "#182F35",
+      "background": "#FFFEFD",
+      "ratio": 13.92728795,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@0",
+      "foreground": "#4F717E",
+      "background": "#FFFEFD",
+      "ratio": 5.21728369,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@1",
+      "foreground": "#182F35",
+      "background": "#FDFEFD",
+      "ratio": 13.87686837,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@1",
+      "foreground": "#4F717E",
+      "background": "#FDFEFD",
+      "ratio": 5.19839608,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@2",
+      "foreground": "#182F35",
+      "background": "#FCFDFC",
+      "ratio": 13.75877571,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@2",
+      "foreground": "#4F717E",
+      "background": "#FCFDFC",
+      "ratio": 5.15415753,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@3",
+      "foreground": "#182F35",
+      "background": "#FAFDFC",
+      "ratio": 13.70914444,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@3",
+      "foreground": "#4F717E",
+      "background": "#FAFDFC",
+      "ratio": 5.13556523,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@4",
+      "foreground": "#182F35",
+      "background": "#F9FDFC",
+      "ratio": 13.68452525,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@4",
+      "foreground": "#4F717E",
+      "background": "#F9FDFC",
+      "ratio": 5.12634266,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@5",
+      "foreground": "#182F35",
+      "background": "#F7FDFC",
+      "ratio": 13.63567873,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@5",
+      "foreground": "#4F717E",
+      "background": "#F7FDFC",
+      "ratio": 5.10804433,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@6",
+      "foreground": "#182F35",
+      "background": "#F5FCFB",
+      "ratio": 13.49476009,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@6",
+      "foreground": "#4F717E",
+      "background": "#F5FCFB",
+      "ratio": 5.05525498,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@7",
+      "foreground": "#182F35",
+      "background": "#F4FCFB",
+      "ratio": 13.47079236,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@7",
+      "foreground": "#4F717E",
+      "background": "#F4FCFB",
+      "ratio": 5.04627646,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@8",
+      "foreground": "#182F35",
+      "background": "#F2FCFB",
+      "ratio": 13.42324578,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@8",
+      "foreground": "#4F717E",
+      "background": "#F2FCFB",
+      "ratio": 5.02846509,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@9",
+      "foreground": "#182F35",
+      "background": "#F1FBFA",
+      "ratio": 13.3075594,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@9",
+      "foreground": "#4F717E",
+      "background": "#F1FBFA",
+      "ratio": 4.98512796,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washA@10",
+      "foreground": "#182F35",
+      "background": "#EFFBFA",
+      "ratio": 13.26078795,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washA@10",
+      "foreground": "#4F717E",
+      "background": "#EFFBFA",
+      "ratio": 4.96760697,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@0",
+      "foreground": "#182F35",
+      "background": "#EFFBFA",
+      "ratio": 13.26078795,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@0",
+      "foreground": "#4F717E",
+      "background": "#EFFBFA",
+      "ratio": 4.96760697,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@1",
+      "foreground": "#182F35",
+      "background": "#F1FAF9",
+      "ratio": 13.21593772,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@1",
+      "foreground": "#4F717E",
+      "background": "#F1FAF9",
+      "ratio": 4.95080568,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@2",
+      "foreground": "#182F35",
+      "background": "#F2F9F8",
+      "ratio": 13.14838001,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@2",
+      "foreground": "#4F717E",
+      "background": "#F2F9F8",
+      "ratio": 4.92549797,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@3",
+      "foreground": "#182F35",
+      "background": "#F4F8F7",
+      "ratio": 13.1052736,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@3",
+      "foreground": "#4F717E",
+      "background": "#F4F8F7",
+      "ratio": 4.90934993,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@4",
+      "foreground": "#182F35",
+      "background": "#F5F7F6",
+      "ratio": 13.03907157,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@4",
+      "foreground": "#4F717E",
+      "background": "#F5F7F6",
+      "ratio": 4.88455008,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@5",
+      "foreground": "#182F35",
+      "background": "#F7F6F6",
+      "ratio": 13.00589332,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@5",
+      "foreground": "#4F717E",
+      "background": "#F7F6F6",
+      "ratio": 4.87212121,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@6",
+      "foreground": "#182F35",
+      "background": "#F9F4F5",
+      "ratio": 12.88486124,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@6",
+      "foreground": "#4F717E",
+      "background": "#F9F4F5",
+      "ratio": 4.82678154,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@7",
+      "foreground": "#182F35",
+      "background": "#FAF3F4",
+      "ratio": 12.82114819,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@7",
+      "foreground": "#4F717E",
+      "background": "#FAF3F4",
+      "ratio": 4.80291408,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@8",
+      "foreground": "#182F35",
+      "background": "#FCF2F3",
+      "ratio": 12.78292688,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@8",
+      "foreground": "#4F717E",
+      "background": "#FCF2F3",
+      "ratio": 4.78859604,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@9",
+      "foreground": "#182F35",
+      "background": "#FDF1F2",
+      "ratio": 12.72056568,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@9",
+      "foreground": "#4F717E",
+      "background": "#FDF1F2",
+      "ratio": 4.76523499,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "text/washB@10",
+      "foreground": "#182F35",
+      "background": "#FFF0F1",
+      "ratio": 12.68408976,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/washB@10",
+      "foreground": "#4F717E",
+      "background": "#FFF0F1",
+      "ratio": 4.75157079,
+      "minimum": 4.5
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.5.0",
+    "name": "디자인 데이 2026",
+    "theme": "playful",
+    "palette": "tropical-bliss",
+    "mode": "light",
+    "pageType": "landing",
+    "shell": "topbar",
+    "typography": "rounded",
+    "density": "comfortable",
+    "radius": "round",
+    "control": "pill",
+    "elevation": "lifted",
+    "motion": "lively",
+    "icon": "line-bold",
+    "ornament": "geometric",
+    "backdrop": "tint",
+    "width": "wide",
+    "scale": "dramatic",
+    "weight": "bold",
+    "footer": "columns",
+    "chrome": {
+      "nav": [
+        {
+          "label": "프로그램",
+          "href": "#program"
+        },
+        {
+          "label": "연사",
+          "href": "#speakers"
+        },
+        {
+          "label": "티켓",
+          "href": "#ticket"
+        },
+        {
+          "label": "장소",
+          "href": "#venue"
+        }
+      ],
+      "action": {
+        "label": "티켓 받기",
+        "href": "#ticket"
+      },
+      "footerNote": "© 2026 디자인 데이",
+      "footerLinks": [
+        {
+          "label": "이용약관",
+          "href": "#main"
+        },
+        {
+          "label": "개인정보",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "디자인 데이 2026",
+          "description": "11월 14일 토요일 · 성수"
+        },
+        {
+          "type": "hero",
+          "variant": "statement",
+          "eyebrow": "D-7 · 11월 14일",
+          "title": "11.14\n성수",
+          "body": "연사 12명, 워크숍 6개, 그리고 하루. 오전 10시 시작.",
+          "facts": [
+            {
+              "value": "D-7",
+              "label": "남은 일수"
+            },
+            {
+              "value": "12명",
+              "label": "연사"
+            },
+            {
+              "value": "84석",
+              "label": "남은 좌석"
+            }
+          ],
+          "action": {
+            "label": "티켓 받기",
+            "href": "#main",
+            "variant": "primary"
+          },
+          "secondaryAction": {
+            "label": "프로그램 보기",
+            "href": "#main",
+            "variant": "ghost"
+          }
+        },
+        {
+          "type": "section",
+          "title": "프로그램",
+          "anchor": "program",
+          "children": [
+            {
+              "type": "split",
+              "ratio": "even",
+              "align": "start",
+              "children": [
+                {
+                  "type": "timeline",
+                  "title": "메인 홀",
+                  "variant": "line",
+                  "items": [
+                    {
+                      "time": "10:00",
+                      "title": "오프닝",
+                      "status": "예정"
+                    },
+                    {
+                      "time": "11:00",
+                      "title": "규칙이 만드는 자유",
+                      "description": "김다선 · 시스템 디자인",
+                      "status": "예정"
+                    },
+                    {
+                      "time": "13:30",
+                      "title": "작은 팀의 큰 브랜드",
+                      "description": "이지훈 · 브랜딩",
+                      "status": "예정"
+                    },
+                    {
+                      "time": "16:00",
+                      "title": "패널: AI와 디자이너",
+                      "status": "예정"
+                    }
+                  ]
+                },
+                {
+                  "type": "timeline",
+                  "title": "워크숍 룸",
+                  "variant": "line",
+                  "items": [
+                    {
+                      "time": "10:30",
+                      "title": "타이포 워크숍",
+                      "description": "정하린",
+                      "status": "예정"
+                    },
+                    {
+                      "time": "13:00",
+                      "title": "프로토타이핑 90분",
+                      "description": "오지헌",
+                      "status": "예정"
+                    },
+                    {
+                      "time": "15:30",
+                      "title": "포트폴리오 리뷰",
+                      "status": "예정"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "연사",
+          "anchor": "speakers",
+          "children": [
+            {
+              "type": "team",
+              "title": "함께하는 연사",
+              "members": [
+                {
+                  "name": "김다선",
+                  "role": "시스템 디자인"
+                },
+                {
+                  "name": "이지훈",
+                  "role": "브랜딩"
+                },
+                {
+                  "name": "정하린",
+                  "role": "타이포그래피"
+                },
+                {
+                  "name": "오지헌",
+                  "role": "프로토타이핑"
+                },
+                {
+                  "name": "한유라",
+                  "role": "리서치"
+                },
+                {
+                  "name": "윤세민",
+                  "role": "공간"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "티켓",
+          "anchor": "ticket",
+          "children": [
+            {
+              "type": "pricing",
+              "children": [
+                {
+                  "type": "plan",
+                  "name": "일반",
+                  "price": "49,000원",
+                  "features": [
+                    "전 프로그램",
+                    "점심 포함"
+                  ],
+                  "action": {
+                    "label": "선택",
+                    "href": "#main",
+                    "variant": "secondary"
+                  }
+                },
+                {
+                  "type": "plan",
+                  "name": "얼리버드",
+                  "price": "39,000원",
+                  "period": "11/7까지",
+                  "features": [
+                    "전 프로그램",
+                    "점심 포함",
+                    "굿즈 증정"
+                  ],
+                  "action": {
+                    "label": "선택",
+                    "href": "#main",
+                    "variant": "primary"
+                  },
+                  "featured": "yes"
+                },
+                {
+                  "type": "plan",
+                  "name": "학생",
+                  "price": "25,000원",
+                  "features": [
+                    "전 프로그램",
+                    "학생증 필요"
+                  ],
+                  "action": {
+                    "label": "선택",
+                    "href": "#main",
+                    "variant": "secondary"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "오시는 길",
+          "anchor": "venue",
+          "children": [
+            {
+              "type": "split",
+              "ratio": "even",
+              "align": "center",
+              "children": [
+                {
+                  "type": "media",
+                  "kind": "map",
+                  "ratio": "4:3",
+                  "alt": "성수동 행사장 위치 지도"
+                },
+                {
+                  "type": "properties",
+                  "title": "안내",
+                  "items": [
+                    {
+                      "label": "장소",
+                      "value": "성수 아트홀 2층"
+                    },
+                    {
+                      "label": "지하철",
+                      "value": "성수역 3번 출구 도보 6분"
+                    },
+                    {
+                      "label": "주차",
+                      "value": "건물 지하 (2시간 무료)"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "design": {
+    "version": "1.3.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "title"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C01"
+        },
+        "applied": [
+          "C01"
+        ]
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "hero",
+        "facts": {
+          "type": "hero",
+          "semantic": "hero",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C15"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "hero",
+          "titleRole": "display",
+          "copyGap": "head",
+          "actionGap": "gap",
+          "frameEdge": "contained"
+        },
+        "sources": {
+          "role": "C15",
+          "titleRole": "C15",
+          "copyGap": "C15",
+          "actionGap": "C15",
+          "frameEdge": "C15"
+        },
+        "applied": [
+          "C15"
+        ],
+        "container": {
+          "minCell": 320
+        }
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[2].children[0].children[0]",
+        "type": "timeline",
+        "facts": {
+          "type": "timeline",
+          "semantic": "timeline",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "split",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C29"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "sequence"
+        },
+        "sources": {
+          "role": "C29"
+        },
+        "applied": [
+          "C29"
+        ]
+      },
+      {
+        "path": "$.tree.children[2].children[0].children[1]",
+        "type": "timeline",
+        "facts": {
+          "type": "timeline",
+          "semantic": "timeline",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "split",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C29"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "sequence"
+        },
+        "sources": {
+          "role": "C29"
+        },
+        "applied": [
+          "C29"
+        ]
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[3].children[0]",
+        "type": "team",
+        "facts": {
+          "type": "team",
+          "semantic": "team",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C20"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "people",
+          "inset": "insetS"
+        },
+        "sources": {
+          "role": "C20",
+          "inset": "C20"
+        },
+        "applied": [
+          "C20"
+        ],
+        "flow": {
+          "minCell": 200,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "cap": 4
+        }
+      },
+      {
+        "path": "$.tree.children[4]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[4].children[0]",
+        "type": "pricing",
+        "facts": {
+          "type": "pricing",
+          "semantic": "pricing",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C21"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "comparison"
+        },
+        "sources": {
+          "role": "C21"
+        },
+        "applied": [
+          "C21"
+        ],
+        "flow": {
+          "minCell": 280,
+          "gap": 24,
+          "dense": false,
+          "span": true,
+          "cap": 3
+        }
+      },
+      {
+        "path": "$.tree.children[4].children[0].children[0]",
+        "type": "plan",
+        "facts": {
+          "type": "plan",
+          "semantic": "plan",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "pricing",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C22",
+            "C23"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "offer",
+          "inset": "insetL"
+        },
+        "sources": {
+          "role": "C22",
+          "inset": "C22"
+        },
+        "applied": [
+          "C22"
+        ]
+      },
+      {
+        "path": "$.tree.children[4].children[0].children[1]",
+        "type": "plan",
+        "facts": {
+          "type": "plan",
+          "semantic": "plan",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "pricing",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C22",
+            "C23"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "offer",
+          "inset": "insetL"
+        },
+        "sources": {
+          "role": "C22",
+          "inset": "C22"
+        },
+        "applied": [
+          "C22"
+        ]
+      },
+      {
+        "path": "$.tree.children[4].children[0].children[2]",
+        "type": "plan",
+        "facts": {
+          "type": "plan",
+          "semantic": "plan",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "pricing",
+          "siblingCount": 3,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C22",
+            "C23"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "offer",
+          "inset": "insetL"
+        },
+        "sources": {
+          "role": "C22",
+          "inset": "C22"
+        },
+        "applied": [
+          "C22"
+        ]
+      },
+      {
+        "path": "$.tree.children[5]",
+        "type": "section",
+        "facts": {
+          "type": "section",
+          "semantic": "section",
+          "intent": "marketing",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 6,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "section-heading",
+          "titleRole": "heading"
+        },
+        "sources": {
+          "role": "C03",
+          "titleRole": "C03"
+        },
+        "applied": [
+          "C03"
+        ]
+      },
+      {
+        "path": "$.tree.children[5].children[0]",
+        "type": "split",
+        "facts": {
+          "type": "split",
+          "semantic": "split",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "section",
+          "siblingCount": 1,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C16"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "split"
+        },
+        "sources": {
+          "role": "C16"
+        },
+        "applied": [
+          "C16"
+        ],
+        "container": {
+          "minWidth": 664
+        }
+      },
+      {
+        "path": "$.tree.children[5].children[0].children[1]",
+        "type": "properties",
+        "facts": {
+          "type": "properties",
+          "semantic": "properties",
+          "intent": "marketing",
+          "nested": true,
+          "supporting": false,
+          "parent": "split",
+          "siblingCount": 2,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "comfortable",
+          "typography": "rounded",
+          "theme": "playful"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C30"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "label-value"
+        },
+        "sources": {
+          "role": "C30"
+        },
+        "applied": [
+          "C30"
+        ]
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[5].children[0].children[0]",
+        "type": "media",
+        "mode": "inherited",
+        "contracts": [
+          "layout/ratio",
+          "type/caption"
+        ],
+        "reason": "The catalogue ratio and caption own media sizing."
+      }
+    ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "marketing",
+        "heroVariant": "statement",
+        "heroVisual": false,
+        "heroArt": false,
+        "afterHero": "plain-section-visible-edge",
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "index.html": "dbc6eb237edc5f3597c172c13cdfe9ceb47c7d57d9cb64bd0884a64408958016",
+      "tokens.css": "94d63507a0c56049a38b7d65e4a110216ebf4dab5bbe41a9ce3bbec43da34d5a",
+      "tokens.json": "34b1fb12d1bb4bf9591993d2ee377705eb8a09adc42828c53c97a86327f335ae",
+      "blueprint.json": "db047158bbacd3075c47b45c8ff8c99219b87124752d05ec7387cdef5779120e"
+    }
+  }
+}
