@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Material evidence layout probe</title>
+<link rel="icon" href="data:,">
+<pre id="status">Starting…</pre>
+<script type="module">
+import {layoutProbe, LAYOUT_OPTIONS} from '../layout-quality/probe.mjs';
+
+const ids = ['erp', 'commerce', 'saas', 'analytics'];
+const widths = [390, 1280];
+const results = [];
+const status = document.querySelector('#status');
+const settle = async frame => {
+  await frame.contentDocument.fonts?.ready;
+  let previous = '', same = 0;
+  while (same < 2) {
+    await new Promise(requestAnimationFrame);
+    const doc = frame.contentDocument;
+    const signature = `${doc.documentElement.scrollWidth}:${doc.documentElement.scrollHeight}:${doc.body.getBoundingClientRect().height}`;
+    same = signature === previous ? same + 1 : 0;
+    previous = signature;
+  }
+};
+for (const id of ids) for (const width of widths) {
+  status.textContent = `Checking ${id} at ${width}px`;
+  const frame = document.createElement('iframe');
+  frame.title = `${id} ${width}px`;
+  frame.style.cssText = `position:absolute;left:-10000px;top:0;width:${width}px;height:900px;border:0`;
+  document.body.append(frame);
+  const response = await fetch(`/docs/evidence/material-platform/assembled/${id}/index.html`);
+  if (!response.ok) throw new Error(`${id} HTML load ${response.status}`);
+  frame.srcdoc = await response.text();
+  await new Promise((resolve, reject) => { frame.onload = resolve; frame.onerror = reject; });
+  await settle(frame);
+  const options = LAYOUT_OPTIONS;
+  const injected = frame.contentDocument.createElement('script');
+  injected.textContent = `window.__layoutProbeResult = (${layoutProbe.toString()})(${JSON.stringify(options)})`;
+  frame.contentDocument.body.append(injected);
+  const measured = frame.contentWindow.__layoutProbeResult;
+  results.push({page: id, width, ...measured});
+  frame.remove();
+}
+const report = {
+  method: 'scripts/layout-quality/probe.mjs layoutProbe, run in configured Ttakkari Chromium browser',
+  capturedAt: new Date().toISOString(),
+  userAgent: navigator.userAgent,
+  devicePixelRatio: window.devicePixelRatio,
+  viewports: widths,
+  screens: ids,
+  results,
+};
+const saved = await fetch('/__evidence/layout', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(report)});
+if (!saved.ok) throw new Error(`save report ${saved.status}`);
+status.textContent = JSON.stringify({saved: await saved.text(), results: results.map(r => ({page: r.page, width: r.width, findings: r.findings.length, scanned: r.scanned, counts: r.counts}))}, null, 2);
+</script>
