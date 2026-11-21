@@ -21,7 +21,7 @@
 | 아이콘·미디어 | 아이콘 87(`src/catalog/icons.mjs:6`; `tests/catalog.test.mjs:162`), media 7종·비율 5(`src/catalog/nodes.mjs:12`), 모티프 일러스트(`tests/motifs.test.mjs`) | 장식 ornament 5(`src/render/art.mjs:67`), 인물 이니셜(`src/render/art.mjs:85`) | icon 축 6값(`src/styles/base.mjs:15`)은 선 굵기 변화뿐 | 아바타 부품, 실제 이미지 자산 계약 |
 | 레이아웃·내비 | 셸 10·폭 4·푸터 3(`src/catalog/axes.mjs:6`, `:19`, `:22`), 내비 한도(`src/catalog/axes.mjs:47`; `tests/compiler.test.mjs:168`), flow·bento(`src/layout.mjs:7`, `:230`; `tests/layout.test.mjs:13`, `:49`), 페이지 유형 16(`src/catalog/pagetypes.mjs:11`; `tests/compiler.test.mjs:158`) | stack·cluster·container·split 원형(`src/layout.mjs:350`) | breadcrumb·pagination·links 부품은 정적 링크 | 드로어·시트·모달 내비, 경로(Path) |
 | 폼·데이터·피드백 | 필드 13종과 id·선택지 계약(`src/catalog/nodes.mjs:20`; `tests/compiler.test.mjs:113`), 데이터 상태 6종(`src/render/util.mjs:25`; `tests/compiler.test.mjs:125`), 표 폭·정렬(`src/table-design.mjs`; `tests/table-design.test.mjs:13`) | 폼 입력 확인 런타임(`src/render/index.mjs:15`) | select는 네이티브 `<select>`(`src/render/nodes.mjs:150`), notice `toast` 변형은 정적 배치, 표 정렬·선택 없음 | 커스텀 Select·Combobox, 날짜 선택, 다이얼로그, 툴팁, 토스트 큐, 배지·칩 독립 부품 |
-| 차트 | 막대·가로막대·선·면적·도넛 SVG(`src/render/chart.mjs:70`), 모양 검증(`src/validate.mjs:185`; `tests/compiler.test.mjs:86`), 대체 텍스트·데이터 표(`tests/compiler.test.mjs:194`) | 차트 채움 레시피 규칙(`src/catalog/recipes.mjs:17`) | 계열 3·범주 8 한도 안의 kind 5값뿐, 프리셋 없음 | 차트 프리셋 라이브러리(축·범례·단위·주석 묶음), 순차 색 |
+| 차트 | 기존 막대·가로막대·선·면적·도넛 + 누적 막대·산점도·히트맵·스파크라인 SVG(`src/render/chart.mjs`), 값 형태·축 절단 검증(`src/validate.mjs`; `tests/chart-presets.test.mjs`), 제목·요약·데이터 표(`src/render/chart-legacy.mjs`, `tests/compiler.test.mjs:194`); chart-preset 재료 8개는 실제 컴파일·렌더 검증 | — | chart-preset은 `2.6.0` 재료 접점만 제공하며 공통 Blueprint 문법은 아직 받지 않음 | 캔들·OHLC(별도 O/H/L/C 모델), 순차·발산 토큰 색상 |
 | 구역·레시피 | 템플릿 85(`src/catalog/templates.mjs:530`; `tests/catalog.test.mjs:131`), 레시피 3(`src/catalog/recipes.mjs:59`; `tests/recipes.test.mjs:12`), 구성 변형(`src/catalog/variants.mjs:174`; `tests/variants.test.mjs:9`) | 컨셉 17(`src/catalog/concepts.mjs:13`) | — | 레이아웃 패턴(슬롯 단위 구역 조합)을 재료로 고르는 경로 |
 | 상호작용·모션·상태 | reduced-motion 차단(`src/styles/base.mjs:94`), 포커스 링(`src/styles/base.mjs:60`), 탭 키보드(`src/render/index.mjs:16`; `tests/compiler.test.mjs:198`) | motion 3값과 이징 1개(`src/styles/base.mjs:28`, `:49`), 칩 토글(`src/render/index.mjs:17`) | elevation `hover` 그림자만 상태 표현 | disabled·loading 버튼, 상태 전이 표, 지속시간·이징 토큰 세트 |
 
@@ -78,3 +78,23 @@ Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 
 팔레트는 brand·neutral·auxiliary·status·chart 시드로부터 50~950 램프를 만들고 primitive → semantic → state → component 참조 그래프로 계산한다. `color-token` 재료 257개가 그래프 토큰과 부품 소비 별칭을 등록한다. Button/Input/Select/Card/Table/Chart 사용 계약, CSS 변수 이름과 기본·hover·active·disabled·error·focus 사용 선택자는 [색 토큰 읽기 API](color-tokens.md)에 기록한다.
 
 라이트·다크 모드에서 본문/보조·링크·상태색과 표면, focus, 버튼 상태, disabled, 차트 대비를 검사한다. `auto`는 두 모드를 모두 검사한다. 팔레트 ID는 닫혀 있으며 색상 문자열은 입력받지 않는다. 2.6.0만 색 토큰 CSS를 출력하고 기본 2.4.0 및 2.4.0·2.5.0 고정 산출물은 그대로 유지한다.
+
+## 6. 차트 확장의 2.6.0 연결(통합 브랜치 보정)
+
+통합 브랜치에서 차트 작업이 `nodeSpecs.chart`를 직접 넓혀 2.4.0 카탈로그 계약(`site/v1/catalog.json`, 2.4.0·2.5.0 노드 명세)이 바뀌었다. 호환성 위반이므로 `src/catalog/nodes.mjs`의 chart 명세는 되돌렸고 `catalogSnapshot()`은 고정 snapshot 바이트와 같다. 새 형태와 필드는 **버전별 노드 명세 확장 표**로 옮겨 2.6.0 opt-in 게이트(`atLeast(catalogVersion, '2.6.0')`)에 붙였다. `catalogVersion: "2.6.0"`을 고른 Blueprint만 새 형태를 받는다.
+
+| 항목 | 위치 | 상태 |
+|---|---|---|
+| 확장 표 | `src/catalog/node-extensions.mjs`: `NODE_SPEC_EXTENSIONS['2.6.0'].chart`(kind enum 4개 `stacked-bar`·`scatter`·`heatmap`·`sparkline`, `xLabel`, `yLabel`, `axis`, `series.points`, `unit` 20자, `categories` 64자, 계열 이름 40자). `nodeSpecAt(type, version)`·`nodeExtended(type, version)` | 연결됨 |
+| 검증 | `src/validate.mjs`: 노드 명세는 `nodeSpecAt(n.type, input.catalogVersion)`. chart 값 검사는 `nodeExtended('chart', ...)`가 참일 때만 새 규칙(`CHART_SHAPE`·`CHART_AXIS`), 아니면 이전 검사 그대로 | 연결됨. 2.4.0·2.5.0은 새 kind를 `ENUM`, 새 필드를 `UNKNOWN_KEY`로 거부한다(`tests/chart-presets.test.mjs`) |
+| 렌더러 | `src/render/chart.mjs`(새 형태), `src/render/chart-legacy.mjs`(기존 5종·확장 필드 없는 입력은 이전 바이트 유지) | 그대로 사용. 2.6.0 Blueprint를 `compile()`하면 새 형태가 렌더된다 |
+| 프리셋 재료 | `src/materials/chart-presets.mjs`(8개), `src/render/chart-presets.mjs` | 그대로 사용. 예시는 2.6.0으로 `compile()` 검증 |
+| 진단 힌트 | `src/service/errors.mjs`: `CHART_AXIS`, `CHART_VALUE`, `CHART_PRESET` | 있음 |
+
+남은 일(다른 작업자):
+
+1. `site/v1/blueprint.schema.json`과 `blueprintSchema()`는 아직 기본 chart 명세만 보인다. 2.6.0 문서의 chart 확장을 스키마에 `x-since: 2.6.0`으로 드러낼지 정한다. 드러내면 스키마 파일만 바뀌어야 하고 `catalogSnapshot()`(2.4.0 snapshot)은 `nodeSpecs`만 읽으므로 그대로 둔다.
+2. `component:chart` 재료의 `variants`를 읽는 `src/materials/adapters.mjs`는 기존 5종만 보여준다. 새 형태를 재료 목록에 보일지 정한다.
+3. `renderChart`는 입력 모양(`axis`·`xLabel`·`yLabel`·새 kind)으로 경로를 고른다. 2.6.0 게이트로 바꿀지 정한다. 바꾸더라도 2.4.0·2.5.0 입력은 `renderLegacyChart`가 이전 바이트를 내야 한다.
+4. Select·Table 노드(`select-control`, `data-table`)를 같은 확장 표에 넣고 검증기·렌더러에 연결한다(`docs/materials/select-table.md`의 연결 지점).
+5. `TABLE_COLUMNS`·`TABLE_ROWS`는 Table 재료의 `validation.codes`에 적혀 있으나 현재 어디서도 내지 않아 힌트를 더하지 않았다. 내기 시작하는 작업이 힌트 표 항목을 함께 둔다.
