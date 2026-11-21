@@ -15,13 +15,13 @@
 | 분류 | verified | implemented | enum-only | missing |
 |---|---|---|---|---|
 | 색 | 팔레트 427 × light/dark 역할 토큰 27개와 대비 게이트(`src/tokens.mjs:35`, `:68`; `tests/compiler.test.mjs:42`), auto 모드 두 세트(`tests/compiler.test.mjs:52`) | 상태색 4종 고정 시드(`src/tokens.mjs:62`), 차트 5색(`src/tokens.mjs:64`) | backdrop 축 4값(`src/styles/base.mjs:29`) | 원시 램프(50~950), 계층 토큰(primitive→semantic→component), hover·pressed·selected·disabled 상호작용 색, 순차·발산 차트 스케일 |
-| 서체 | 프리셋 18(`src/typography.mjs:39`), 역할 크기 순서(`src/typography.mjs:98`; `tests/typography.test.mjs:41`), 한글 한도(`src/typography.mjs:72`), 원시 크기 금지 lint(`src/typography.mjs:234`; `tests/typography.test.mjs:63`) | scale·weight 축(`src/styles/base.mjs:8`, `:14`) | — | 웹폰트 로딩 계약(시스템 스택만), 숫자 표기 역할(가격·지표) 별도 토큰 |
+| 서체 | 프리셋 18(`src/typography.mjs:39`), 역할 크기 순서(`src/typography.mjs:98`; `tests/typography.test.mjs:41`), 한글 한도(`src/typography.mjs:72`), 원시 크기 금지 lint(`src/typography.mjs:234`; `tests/typography.test.mjs:63`); 역할 서체 4종은 §7 | scale·weight 축(`src/styles/base.mjs:8`, `:14`) | — | 웹폰트 로딩 계약(현재 시스템 스택), 부품 크기 sm/md/lg 축 |
 | 간격·밀도 | 밀도 3 × 간격 사다리, 4px 격자와 근접 순서(`src/spacing.mjs:6`, `:46`; `tests/spacing.test.mjs:17`, `:26`), 섹션 중첩 금지(`tests/spacing.test.mjs:70`) | 2.5.0 구역 간격(`src/catalog/expression.mjs:42`) | — | 부품별 크기(size sm/md/lg) 축 |
 | 반경·테두리·그림자 | radius 5·elevation 6 값 표(`src/styles/base.mjs:11`, `:20`; `tests/catalog.test.mjs:93`), 금지 조합 X07(`src/catalog/axes.mjs:39`) | control 축 3값(`src/catalog/axes.mjs:13`) | — | 테두리 폭 토큰, 다크 전용 그림자 |
 | 아이콘·미디어 | 아이콘 87(`src/catalog/icons.mjs:6`; `tests/catalog.test.mjs:162`), media 7종·비율 5(`src/catalog/nodes.mjs:12`), 모티프 일러스트(`tests/motifs.test.mjs`) | 장식 ornament 5(`src/render/art.mjs:67`), 인물 이니셜(`src/render/art.mjs:85`) | icon 축 6값(`src/styles/base.mjs:15`)은 선 굵기 변화뿐 | 아바타 부품, 실제 이미지 자산 계약 |
 | 레이아웃·내비 | 셸 10·폭 4·푸터 3(`src/catalog/axes.mjs:6`, `:19`, `:22`), 내비 한도(`src/catalog/axes.mjs:47`; `tests/compiler.test.mjs:168`), flow·bento(`src/layout.mjs:7`, `:230`; `tests/layout.test.mjs:13`, `:49`), 페이지 유형 16(`src/catalog/pagetypes.mjs:11`; `tests/compiler.test.mjs:158`) | stack·cluster·container·split 원형(`src/layout.mjs:350`) | breadcrumb·pagination·links 부품은 정적 링크 | 드로어·시트·모달 내비, 경로(Path) |
 | 폼·데이터·피드백 | 기존 필드·표·상태 계약과 2.6.0 Select·Table 및 Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback 노드(`src/catalog/node-extensions.mjs`; `tests/wire-260.test.mjs`) | 폼 확인과 2.6.0 재료의 입력·탭·내비·모달·툴팁·피드백 고정 런타임(`src/render/index.mjs`) | 정적 산출물은 네트워크·호출자 콜백을 받지 않으며 async Select, 자유 HTML, 중첩 팝오버는 거부 | 날짜 선택, 토스트 큐, 배지·칩 독립 부품 |
-| 차트 | 기존 막대·가로막대·선·면적·도넛 + 누적 막대·산점도·히트맵·스파크라인 SVG(`src/render/chart.mjs`), 값 형태·축 절단 검증(`src/validate.mjs`; `tests/chart-presets.test.mjs`), 제목·요약·데이터 표(`src/render/chart-legacy.mjs`, `tests/compiler.test.mjs:194`); chart-preset 재료 8개는 실제 컴파일·렌더 검증 | — | chart-preset은 `2.6.0` 재료 접점만 제공하며 공통 Blueprint 문법은 아직 받지 않음 | 캔들·OHLC(별도 O/H/L/C 모델), 순차·발산 토큰 색상 |
+| 차트 | 기존 막대·가로막대·선·면적·도넛 + 누적 막대·산점도·히트맵·스파크라인·캔들·OHLC SVG(`src/render/chart.mjs`), 값 형태·축 절단 검증(`src/validate.mjs`; `tests/chart-presets.test.mjs`), 제목·요약·데이터 표(`src/render/chart-legacy.mjs`, `tests/compiler.test.mjs:194`); chart-preset 재료는 실제 컴파일·렌더 검증 | — | chart-preset은 `2.6.0` 재료 접점이며 공통 Blueprint 문법은 버전 확장 표에 있음 | 순차·발산 토큰 색상 |
 | 구역·레시피 | 템플릿 85(`src/catalog/templates.mjs:530`; `tests/catalog.test.mjs:131`), 레시피 3(`src/catalog/recipes.mjs:59`; `tests/recipes.test.mjs:12`), 구성 변형(`src/catalog/variants.mjs:174`; `tests/variants.test.mjs:9`) | 컨셉 17(`src/catalog/concepts.mjs:13`) | — | 레이아웃 패턴(슬롯 단위 구역 조합)을 재료로 고르는 경로 |
 | 상호작용·모션·상태 | reduced-motion 차단(`src/styles/base.mjs:94`), 포커스 링(`src/styles/base.mjs:60`), 탭 키보드(`src/render/index.mjs:16`; `tests/compiler.test.mjs:198`) | motion 3값과 이징 1개(`src/styles/base.mjs:28`, `:49`), 칩 토글(`src/render/index.mjs:17`) | elevation `hover` 그림자만 상태 표현 | disabled·loading 버튼, 상태 전이 표, 지속시간·이징 토큰 세트 |
 
@@ -77,14 +77,18 @@ Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 
 
 ## 4. 구현 우선순위
 
-1. **계층 색 토큰**(`color-token` 종류): 팔레트 → 램프 → 의미(surface·text·border·action·status·interactive·chart) → 컴포넌트. 2.6.0에서만 켜고 기존 역할 27개는 의미 층 별칭으로 유지한다. 순차·발산 차트 스케일과 상호작용 색(hover·pressed·selected·disabled)을 포함한다.
-2. **상태 계약 채우기**: 버튼·필드의 disabled·loading·invalid와 전이 표. 지금 전이가 있는 부품은 tabs·form·filter-bar 셋뿐이다.
-3. **Select·Table 심화**: 커스텀 Select(키보드·listbox), 표 정렬·선택·빈/오류 상태와 페이지네이션 연결.
-4. **차트 프리셋**(`chart-preset` 종류): kind × 축·범례·단위 묶음을 완성 프리셋으로 등록한다.
-5. **서체 시스템**: 숫자 역할과 프리셋별 크기 표를 재료 ext로 노출한다.
-6. **레이아웃 패턴**(`pattern` 종류)과 **디자인 프로필**: 템플릿 슬롯을 재료 id로 고르게 한다. (2026-11-22 구현: 프로파일 7개, 패턴 11개, 정적 검사 PF01~PF13, 조립 `assemble`. [디자인 프로파일](profiles.md))
-7. **반응형 기록**: `responsive.strategy: unspecified`인 부품 28개를 실제 CSS 근거로 채운다.
-8. **모션 토큰**: duration·easing 이름 토큰, 상태 전이와 연결한다.
+이 목록은 최초 감사 때의 계획이다. 이후 구현을 반영한 현재 우선순위와 대상 경로·의존성은 [재료 확장 로드맵](roadmap.md)을 기준으로 한다.
+
+| 최초 계획 | 현재 판정 | 다음 단계 |
+|---|---|---|
+| 계층 색 토큰 | **구현됨** — 자체 팔레트 기반 257개 재료와 참조 그래프가 §5에 기록됨 | 외부 팔레트 427개의 기존 제품 경로 권리·노출 검토(P0) |
+| 상태 계약 | **진행 필요** | 의미 있는 상태 전이와 런타임 일치 검증(P1) |
+| Select·Table 심화 | **부분 구현** — 2.6.0 정적 컨트롤 연결, async Select와 일부 선택·페이지 동작은 미제공 | 입력·표 상호작용 범위 보강(P2) |
+| 차트 프리셋 | **구현됨** — 2.6.0 프리셋·확장 표·렌더 연결은 §6·§7에 기록됨 | 순차·발산 차트 토큰 색상(P5) |
+| 서체 역할 | **부분 구현** — 역할 프리셋이 재료로 연결됨 | 웹폰트 계약과 부품 크기 축(P6) |
+| 레이아웃 패턴·프로필 | **구현됨** — 프로필 7개·패턴 11개, 검사와 조립 경로 연결. [디자인 프로파일](profiles.md) | — |
+| 반응형 기록 | **진행 필요** — 현재 28개 재료가 `unspecified` | CSS 근거로 계약을 채움(P3) |
+| 모션 토큰 | **진행 필요** | 상태 전이 계약에 duration/easing을 연결(P5) |
 
 ## 5. 2.6.0 색 토큰 후속 결과 (2026-11-22)
 
