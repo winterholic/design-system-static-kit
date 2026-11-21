@@ -1,0 +1,17 @@
+name: DebugEx4
+on:
+  push:
+    paths: ['.github/workflows/debug-ex4.yml', 'e2e/zz-debug-ex4.spec.mjs']
+jobs:
+  dbg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test e2e/zz-debug-ex4.spec.mjs
