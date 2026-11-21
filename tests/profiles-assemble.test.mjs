@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {assemble, designRegistry, PROFILES, PROFILE_IDS, PATTERNS, INTENT_KEYS} from '../src/profiles/index.mjs';
 import {catalogWithoutIntegrating, fakeChartPreset, fakeMaterial} from './profiles-support.mjs';
 import {validateBlueprint} from '../src/validate.mjs';
-import {validateBlueprint as serviceValidate, HINTS} from '../src/service/index.mjs';
+import {validateBlueprint as serviceValidate, assembleBlueprint, getSchema, HINTS} from '../src/service/index.mjs';
 import {compile} from '../src/compiler.mjs';
 
 const sha = x => createHash('sha256').update(JSON.stringify(x)).digest('hex');
@@ -125,4 +125,34 @@ test('materials registered later (chart presets, data table) widen what assemble
   assert.deepEqual(r.materials.chartPresets, ['chart-preset:erp-quarterly-revenue']);
   assert.ok(!r.materials.pending.includes('component:data-table'));
   rejected(assemble('erp', {chartPresets: ['erp-quarterly-revenue', 'erp-quarterly-revenue', 'erp-quarterly-revenue', 'erp-quarterly-revenue', 'erp-quarterly-revenue']}, {}, {registry}), 'ASSEMBLE_UNSUPPORTED', '$args.intent.chartPresets');
+});
+
+test('the service exposes assembly as assembleBlueprint with the standard envelope and Diagnostic shape, and never throws', () => {
+  const props = Object.keys(getSchema({target: 'diagnostic'}).value.properties);
+  const shape = r => {
+    assert.deepEqual(Object.keys(r), r.ok ? ['ok', 'value', 'warnings', 'catalogVersion', 'contractVersion'] : ['ok', 'errors', 'warnings', 'catalogVersion', 'contractVersion']);
+    for (const d of [...(r.errors ?? []), ...r.warnings]) {
+      assert.ok(d.code && d.path.startsWith('$') && d.message && d.hint, JSON.stringify(d));
+      for (const k of Object.keys(d)) assert.ok(props.includes(k), k);
+      if (d.severity) assert.ok(['info', 'warning'].includes(d.severity));
+    }
+    return r;
+  };
+  const good = shape(assembleBlueprint({profile: 'commerce', intent: {pattern: 'commerce-detail'}}));
+  assert.equal(good.ok, true);
+  assert.deepEqual(Object.keys(good.value), ['blueprint', 'decisions', 'materials']);
+  assert.equal(JSON.stringify(good.value.blueprint), JSON.stringify(assemble('commerce', {pattern: 'commerce-detail'}).blueprint));
+  assert.equal(serviceValidate(good.value.blueprint).ok, true);
+  assert.equal(JSON.stringify(assembleBlueprint({profile: 'commerce', intent: {pattern: 'commerce-detail'}})), JSON.stringify(good));
+  const den = shape(assembleBlueprint({profile: 'mobile-app', intent: {density: 'compact'}}));
+  assert.equal(den.ok, false);
+  assert.ok(den.errors[0].code === 'ASSEMBLE_UNSUPPORTED' && den.errors[0].message.includes('대안: comfortable, spacious'));
+  const inv = shape(assembleBlueprint({profile: 'saas-landing', content: {slots: {closing: [{type: 'cta', title: '시작', action: {label: '무료로 시작', href: '#main', variant: 'primary'}, style: 'color:red'}]}}}));
+  assert.ok(inv.errors.some(e => e.code === 'UNKNOWN_KEY'));
+  assert.equal(shape(assembleBlueprint({profile: 'erp', css: 'x'})).errors[0].path, '$args.css');
+  const cyc = {}; cyc.self = cyc;
+  for (const input of [undefined, null, 0, 'erp', [], cyc, {profile: 5}, {profile: 'erp', intent: cyc}, {profile: 'erp', content: {slots: {work: [cyc]}}}, {profile: 'erp', intent: []}, 1n]) {
+    let r; assert.doesNotThrow(() => { r = assembleBlueprint(input); }, String(typeof input));
+    assert.equal(shape(r).ok, false);
+  }
 });

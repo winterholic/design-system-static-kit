@@ -89,6 +89,9 @@ catalogSnapshot(): object
 // `site/v1/catalog.json`과 바이트가 같은 JSON으로 직렬화되는 레거시 투영. scripts/build.mjs의 투영을 옮긴 것이다.
 // 호환 게이트(00-baseline.md 4.2절의 v1/ 트리 해시)가 이 함수를 통과해야 한다.
 
+assembleBlueprint(req: {profile: string, intent?: object, content?: object}): Result<{blueprint: object, decisions: object[], materials: object}>
+// 카탈로그 2.6.0 디자인 프로파일로 Blueprint를 조립한다(docs/materials/profiles.md). 지원하지 않는 요구는 다른 값으로 바꾸지 않고 ASSEMBLE_* 오류로 돌려준다.
+
 // 2) 스키마
 getSchema(q: {target: 'blueprint'|'component'|'chrome'|'diagnostic'|'edit-ops', type?: string}): Result<object /* JSON Schema 2020-12 */>
 // blueprint = blueprintSchema(), component = $defs[type]. 교차 필드 규칙은 스키마가 아니라 런타임 검증기가 판정한다
