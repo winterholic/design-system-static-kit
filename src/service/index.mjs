@@ -12,5 +12,6 @@ export {validateBlueprint} from './validate.mjs';
 export {compileBlueprint} from './compile.mjs';
 export {explainDecisions} from './explain.mjs';
 export {assembleBlueprint} from './assemble.mjs';
+export {queryMaterials, MATERIAL_VIEWS} from './materials.mjs';
 export {CONTRACT_VERSION} from './envelope.mjs';
 export {HINTS, DEFAULT_HINT, hintFor, withHint, diagnostic} from './errors.mjs';

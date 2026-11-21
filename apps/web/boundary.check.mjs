@@ -10,7 +10,7 @@ import {analyzeCss, analyzeFile, analyzeSource, makeContext} from './scripts/bou
 
 const web = import.meta.dirname;
 const root = resolve(web, '../..');
-const PUBLIC_ENTRIES = new Set(['service', 'edit', 'materials', 'color-tokens']);
+const PUBLIC_ENTRIES = new Set(['service', 'edit']);
 const IGNORED_DIRS = new Set(['node_modules', '.next', 'public', 'test-results', 'playwright-report']);
 
 function walk(dir) {

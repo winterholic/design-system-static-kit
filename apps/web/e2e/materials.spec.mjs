@@ -1,12 +1,13 @@
 // Materials 화면: 값은 Core에서 읽은 것과 같아야 하고(복제 금지), 재료에서 Studio로 이어져야 한다.
 import {expect, test} from '@playwright/test';
-import {STATIC_COLOR_PALETTE, resolveColorTokens} from '@winterholic/design-system-static-kit/color-tokens';
-import {MATERIAL_TYPE_PRESETS, MULTILINGUAL_TYPE_CORPUS, CONTROL_SIZES} from '@winterholic/design-system-static-kit/materials';
+import {queryMaterials} from '@winterholic/design-system-static-kit/service';
 import {optionStates, pick} from './helpers/select.mjs';
 
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
-const core = resolveColorTokens({palette: 'static-kit', mode: 'light'});
-const coreDark = resolveColorTokens({palette: 'static-kit', mode: 'dark'});
+// 화면이 읽는 것과 같은 ./service 질의에서 기대값을 얻는다. Core 계산과의 독립 대조는 tests/service-materials.test.mjs가 한다.
+const color = queryMaterials({view: 'color'}).value;
+const typo = queryMaterials({view: 'typography'}).value;
+const ACTION = {light: color.tokens.light['color-action'], dark: color.tokens.dark['color-action']};
 
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => { Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: async text => { window.__copied = text; }}}); });
@@ -28,12 +29,12 @@ test('상단 메뉴에 Materials가 있고 개요에서 세 화면으로 이어�
 test.describe('색', () => {
   test('시드와 50–950 램프가 Core 값 그대로 나온다', async ({page}) => {
     await page.goto('/materials/color');
-    const seeds = STATIC_COLOR_PALETTE.seeds;
+    const seeds = color.palette.seeds;
     const body = await page.locator('main').innerText();
     for (const hex of [seeds.brand, seeds.neutral, seeds.auxiliary, ...Object.values(seeds.status), ...seeds.chart]) expect(body, hex).toContain(hex);
     const brand = page.getByRole('region', {name: '브랜드'}).or(page.locator('section[aria-labelledby="ramp-brand"]'));
     const steps = await brand.locator('li').allInnerTexts();
-    expect(steps.map(t => t.replace(/\s+/g, ' ').replace(' (시드)', '').trim())).toEqual(Object.entries(core.ramps.brand).map(([step, hex]) => `${step} ${hex}`));
+    expect(steps.map(t => t.replace(/\s+/g, ' ').replace(' (시드)', '').trim())).toEqual(Object.entries(color.ramps.brand).map(([step, hex]) => `${step} ${hex}`));
     await expect(brand.locator('[data-seed="true"]')).toHaveCount(1);
   });
 
@@ -62,12 +63,12 @@ test.describe('색', () => {
     await page.goto('/materials/color');
     await page.getByLabel('토큰 검색').fill('--kit-color-action');
     const row = page.locator('li[data-token="color-token:semantic.action"]');
-    await expect(row).toContainText(core.layers.semantic['semantic.action']);
-    await expect(row).toContainText(coreDark.layers.semantic['semantic.action']);
-    expect(core.layers.semantic['semantic.action']).not.toBe(coreDark.layers.semantic['semantic.action']);
+    await expect(row).toContainText(ACTION.light);
+    await expect(row).toContainText(ACTION.dark);
+    expect(ACTION.light).not.toBe(ACTION.dark);
     await page.getByRole('radio', {name: '다크', exact: true}).click();
-    await expect(row).toContainText(coreDark.layers.semantic['semantic.action']);
-    await expect(row).not.toContainText(core.layers.semantic['semantic.action']);
+    await expect(row).toContainText(ACTION.dark);
+    await expect(row).not.toContainText(ACTION.light);
     await expect(page.locator('figure[data-mode="light"]')).toBeVisible();
     await expect(page.locator('figure[data-mode="dark"]')).toBeVisible();
   });
@@ -82,7 +83,7 @@ test.describe('색', () => {
     await row.getByRole('button', {name: 'var()'}).click();
     expect(await page.evaluate(() => window.__copied)).toBe('var(--kit-color-action)');
     await row.getByRole('button', {name: '다크 값'}).click();
-    expect(await page.evaluate(() => window.__copied)).toBe(coreDark.layers.semantic['semantic.action']);
+    expect(await page.evaluate(() => window.__copied)).toBe(ACTION.dark);
   });
 
   test('CSS와 JSON 내보내기는 현재 필터 결과를 Core 값으로 담는다', async ({page}) => {
@@ -90,15 +91,15 @@ test.describe('색', () => {
     await page.getByRole('button', {name: /^역할 색/}).click();
     const preview = page.getByTestId('export-preview');
     const css = await preview.innerText();
-    expect(css).toContain(`--kit-color-action: ${core.layers.semantic['semantic.action']};`);
+    expect(css).toContain(`--kit-color-action: ${ACTION.light};`);
     expect(css).toContain('@media (prefers-color-scheme: dark)');
-    expect(css).toContain(`--kit-color-action: ${coreDark.layers.semantic['semantic.action']};`);
+    expect(css).toContain(`--kit-color-action: ${ACTION.dark};`);
     expect(css).not.toContain('--kit-palette-brand-500');
     await page.getByRole('radio', {name: 'JSON'}).click();
     const json = JSON.parse(await preview.innerText());
     expect(json.palette).toBe('static-kit');
     expect(json.tokens).toHaveLength(26);
-    expect(json.tokens.find(t => t.cssName === '--kit-color-action')).toMatchObject({light: core.layers.semantic['semantic.action'], dark: coreDark.layers.semantic['semantic.action']});
+    expect(json.tokens.find(t => t.cssName === '--kit-color-action')).toMatchObject({light: ACTION.light, dark: ACTION.dark});
     await page.getByRole('button', {name: '복사', exact: true}).click();
     expect(JSON.parse(await page.evaluate(() => window.__copied)).tokens).toHaveLength(26);
     const pending = page.waitForEvent('download');
@@ -139,7 +140,7 @@ test.describe('색', () => {
 test.describe('타이포그래피', () => {
   test('프리셋 4종의 전체 역할·시험 문구·컨트롤 크기를 Core 그대로 보여 준다', async ({page}) => {
     await page.goto('/materials/typography');
-    const presets = Object.values(MATERIAL_TYPE_PRESETS);
+    const presets = typo.presets;
     expect(presets).toHaveLength(4);
     await expect(page.getByRole('navigation', {name: '프리셋'}).getByRole('link')).toHaveText(presets.map(p => p.label));
     for (const preset of presets) {
@@ -150,10 +151,10 @@ test.describe('타이포그래피', () => {
       await expect(roles).toHaveCount(Object.keys(preset.roles).length);
       await expect(page.locator('.mt-specimen')).toHaveAttribute('data-preset', preset.id);
       // 코퍼스는 전부 나온다.
-      for (const sample of MULTILINGUAL_TYPE_CORPUS) await expect(page.locator('.mt-specimen').getByText(sample.text, {exact: true}).first()).toBeVisible();
+      for (const sample of typo.corpus) await expect(page.locator('.mt-specimen').getByText(sample.text, {exact: true}).first()).toBeVisible();
       // 컨트롤 크기 4단계와 높이.
       const controls = page.locator('.mt-control');
-      await expect(controls).toHaveCount(Object.keys(CONTROL_SIZES).length);
+      await expect(controls).toHaveCount(typo.controlSizes.length);
       for (const [size, c] of Object.entries(preset.controls)) {
         const h = await page.locator(`.mt-control[data-size="${size}"]`).evaluate(el => Math.round(el.getBoundingClientRect().height));
         expect(h, `${preset.id}/${size}`).toBe(c.height);
@@ -168,7 +169,7 @@ test.describe('타이포그래피', () => {
     await page.getByRole('link', {name: 'Studio에서 사용하기'}).click();
     await expect(page.locator('[data-phase="ready"]')).toBeVisible();
     await expect(page.getByTestId('op-error')).toHaveCount(0);
-    const preset = MATERIAL_TYPE_PRESETS.marketing;
+    const preset = typo.presets.find(p => p.id === 'marketing');
     await expect.poll(async () => (await savedDoc(page))?.typography).toBe(preset.engine);
     expect((await savedDoc(page)).pageType).toBe(preset.context[0]);
   });

@@ -20,9 +20,9 @@ const envelope = r => {
 };
 const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.isFrozen(x) || Object.values(x).some(deepFrozenAnywhere));
 
-test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot and assembleBlueprint (2.6.0 profiles), and nothing else callable', () => {
+test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, assembleBlueprint (2.6.0 profiles) and the read-only queryMaterials, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
-  assert.deepEqual(fns, ['assembleBlueprint', 'catalogSnapshot', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getComponentSpec', 'getSchema', 'hintFor', 'listCatalog', 'validateBlueprint', 'withHint']);
+  assert.deepEqual(fns, ['assembleBlueprint', 'catalogSnapshot', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getComponentSpec', 'getSchema', 'hintFor', 'listCatalog', 'queryMaterials', 'validateBlueprint', 'withHint']);
   assert.equal(CONTRACT_VERSION, '1.1.0');
 });
 

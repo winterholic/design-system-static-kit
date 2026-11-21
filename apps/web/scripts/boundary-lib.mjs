@@ -1,5 +1,5 @@
 // Core import 경계 분석기 (03-interfaces.md 3.3절). apps/web 의 모든 소스가 Core(src/)를 루트 패키지의
-// exports 진입점(`service`, `edit`, `materials`, `color-tokens`)으로만 쓰는지 판정한다. 시험(boundary.check.mjs)과 빌드 후 검사가 같이 쓴다.
+// exports 진입점(`service`, `edit`)으로만 쓰는지 판정한다. 시험(boundary.check.mjs)과 빌드 후 검사가 같이 쓴다.
 //
 // 판정 방식: 문자열 매칭이 아니라 TypeScript 구문 트리로 import 위치를 모으고, 지정자를 실제 파일 경로로 풀어서 위치로 판단한다.
 //  - 상대 경로, tsconfig `paths` 별칭(`@/…`), 대소문자 변형, symlink, `public/` 사본은 모두 풀린 경로로 판정한다.
@@ -10,8 +10,7 @@ import {dirname, join, relative, resolve, sep} from 'node:path';
 import ts from 'typescript';
 
 export const PKG = '@winterholic/design-system-static-kit';
-// materials·color-tokens 는 읽기 전용 재료 조회 진입점이다(Materials 화면이 서버에서만 읽는다).
-export const PUBLIC_ENTRIES = ['service', 'edit', 'materials', 'color-tokens'];
+export const PUBLIC_ENTRIES = ['service', 'edit'];
 
 /** 판정에 쓰는 환경. 시험이 가상 파일을 분석할 수 있게 주입 가능하다. */
 export function makeContext(web, overrides = {}) {
