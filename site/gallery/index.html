@@ -705,9 +705,9 @@ exports.iconAliases = iconAliases;
 };
 __defs["catalog/expression.mjs"] = function (exports, __m) {
 /**
- * 카탈로그 2.5.0 표현력 확장(ADR 0010, docs/dev/expressiveness/report.md 6절 EX-1~EX-5).
- * 새 필드는 모두 범위가 닫힌 enum이고, 값은 기존 토큰·역할·간격 사다리로만 해석된다. 임의 CSS·숫자·className은 받지 않는다.
- * 이 파일은 "무엇이 2.5.0에서 생겼는가"의 단일 출처다: 스키마 설명, 버전 게이트(src/validate.mjs), 렌더러·스타일 게이트가 모두 읽는다.
+ * 카탈로그 표현력 확장(2.5.0 EX-1~EX-5 및 이후 버전의 필드).
+ * 새 필드는 범위가 닫힌 enum이고, 기존 토큰·역할·간격 사다리로만 해석된다. 임의 CSS·숫자·className은 받지 않는다.
+ * 스키마 설명, 버전 게이트(src/validate.mjs), 렌더러·스타일 게이트가 이 파일의 선언을 읽는다.
  */
 const {PROFILE_IDS} = __m("profiles/data.mjs");
 
@@ -737,9 +737,11 @@ const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
   // 역할 타이포그래피 프리셋(src/materials/typography.mjs의 MATERIAL_TYPE_PRESETS 키와 같다. tests/wire-260.test.mjs가 비교한다).
   Object.freeze({field: 'typeRoles', values: Object.freeze(['erp', 'dashboard', 'document', 'marketing']), since: '2.6.0'}),
+  // 프로파일 조립이 고른 기본 컨트롤 크기. 2.6.0 role/material control size 토큰만 받는다.
+  Object.freeze({field: 'controlSize', values: Object.freeze(['compact', 'small', 'medium', 'large']), since: '2.6.0'}),
 ]);
 
-/** 2.6.0 profile selection (src/profiles/data.mjs). Kept apart from TOP_LEVEL_SINCE_FIELDS, whose contents are pinned by the color-token contract. */
+/** 2.6.0 profile selection (src/profiles/data.mjs), separately gated from fields in TOP_LEVEL_SINCE_FIELDS. */
 const PROFILE_SINCE_FIELD = Object.freeze({field: 'profile', values: PROFILE_IDS, since: '2.6.0'});
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */
@@ -974,7 +976,7 @@ function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), typeRoles: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='typeRoles').values), '2.6.0부터 역할 타이포그래피 프리셋(erp·dashboard·document·marketing)을 고를 수 있습니다. 제목·본문·라벨·숫자 역할의 크기·행간·자간·서체가 컴파일 CSS의 --kit-t-* 변수에 반영됩니다. 기존 typography 축과 별개이며 고르지 않으면 출력은 그대로입니다.', '2.6.0'), profile: since(en(...PROFILE_SINCE_FIELD.values), '2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.', PROFILE_SINCE_FIELD.since), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), typeRoles: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='typeRoles').values), '2.6.0부터 역할 타이포그래피 프리셋(erp·dashboard·document·marketing)을 고를 수 있습니다. 제목·본문·라벨·숫자 역할의 크기·행간·자간·서체가 컴파일 CSS의 --kit-t-* 변수에 반영됩니다. 기존 typography 축과 별개이며 고르지 않으면 출력은 그대로입니다.', '2.6.0'), controlSize: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='controlSize').values), '2.6.0부터 프로파일 기본 컨트롤 크기를 선택합니다. 크기는 등록된 control token으로 해석되며 명시적 부품 크기는 유지됩니다.', '2.6.0'), profile: since(en(...PROFILE_SINCE_FIELD.values), '2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.', PROFILE_SINCE_FIELD.since), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,
@@ -5172,12 +5174,10 @@ __defs["materials/control-kit.mjs"] = function (exports, __m) {
  *  - 크기별 높이·좌우 패딩·간격·글자 역할·아이콘은 `CONTROL_SIZES`(typography.mjs)와 `SPACE` 토큰 이름(spacing.mjs)에서 읽는다. 이 파일은 px 값을 새로 정하지 않는다.
  *  - Core 파일이다: DOM 전역을 읽지 않는다(tests/core-boundary.test.mjs). 브라우저에서 도는 코드는 각 재료의 `attach*` 함수 하나이고, 문자열로 직렬화되므로 바깥 이름을 참조하지 않는다. */
 const {defineMaterial} = __m("materials/contract.mjs");
-const {CONTROL_SIZES, CONTROL_SIZE_NAMES} = __m("materials/typography.mjs");
-const {TOKEN} = __m("spacing.mjs");
 const {escapeHTML} = __m("escape-html.mjs");
+{ const __r = __m("materials/control-size.mjs"); exports.SIZES = __r.SIZES; exports.sizeVars = __r.sizeVars; exports.sizeCSS = __r.sizeCSS; exports.defaultControlSizeCSS = __r.defaultControlSizeCSS; }
 
 const e = escapeHTML;
-const SIZES = CONTROL_SIZE_NAMES;
 const SHAPES = Object.freeze(['square', 'soft', 'pill']);
 const CONCEPTS = Object.freeze(['appearance', 'shape', 'size', 'function', 'state', 'context']);
 const SAFE_ID = /^[a-z][a-z0-9-]*$/;
@@ -5250,15 +5250,6 @@ function combinationStats(contract) {
 /** 허용 값 중 `keep`만 빼고 전부: 금지 조건을 "keep이 아니면"으로 쓸 때. */
 const except = (contract, attr, ...keep) => contract.axes[attr].filter(v => !keep.includes(v));
 
-const px = n => (n < 0 ? `- ${-n}px` : `+ ${n}px`);
-/** 크기 이름 → 컨트롤 치수 변수. 값은 CONTROL_SIZES의 step·pad·gap·role·icon을 그대로 읽는다. */
-function sizeVars(name) {
-  const c = CONTROL_SIZES[name];
-  if (!c) throw new RangeError('unknown control size: ' + name);
-  return {height: c.step === 0 ? 'var(--kit-control)' : `calc(var(--kit-control) ${px(c.step)})`, padX: `var(${TOKEN[c.pad]})`, gap: `var(${TOKEN[c.gap]})`, font: `var(--kit-t-${c.role})`, icon: `${c.icon}px`};
-}
-const sizeCSS = scope => SIZES.map(n => { const v = sizeVars(n); return `${scope}[data-size=${n}]{--ctl-h:${v.height};--ctl-px:${v.padX};--ctl-gap:${v.gap};--ctl-font:${v.font};--ctl-icon:${v.icon}}`; }).join('');
-
 /** 모든 컴포넌트가 같은 방식으로 쓰는 조각: 스크린 리더 전용 글, 로딩 스피너, 포커스 링, 동작 줄이기. 스피너는 색이 아니라 회전과 부분 호(ring)로 진행을 보인다. */
 const baseStyles = `.kit-ctl-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.kit-ctl-spinner{display:inline-block;flex:none;width:var(--ctl-icon);height:var(--ctl-icon);border:2px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:kit-ctl-spin var(--kit-dur,150ms) linear infinite;animation-duration:900ms}@keyframes kit-ctl-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.kit-ctl-spinner{animation:none;border-inline-end-color:currentColor;border-style:dotted}}`;
 const focusRing = (selector, offset = '2px') => `${selector}:is(:focus-visible,[data-force=focus]){outline:3px solid var(--kit-focus);outline-offset:${offset}}`;
@@ -5296,7 +5287,6 @@ function colorOf(tokens, ref) {
 const pairRatio = (tokens, [fg, bg]) => contrastRatio(colorOf(tokens, fg), colorOf(tokens, bg));
 
 exports.e = e;
-exports.SIZES = SIZES;
 exports.SHAPES = SHAPES;
 exports.CONCEPTS = CONCEPTS;
 exports.SAFE_ID = SAFE_ID;
@@ -5308,8 +5298,6 @@ exports.allCombinations = allCombinations;
 exports.legalCombinations = legalCombinations;
 exports.combinationStats = combinationStats;
 exports.except = except;
-exports.sizeVars = sizeVars;
-exports.sizeCSS = sizeCSS;
 exports.baseStyles = baseStyles;
 exports.focusRing = focusRing;
 exports.hover = hover;
@@ -5318,6 +5306,36 @@ exports.componentMaterial = componentMaterial;
 exports.contrastRatio = contrastRatio;
 exports.colorOf = colorOf;
 exports.pairRatio = pairRatio;
+};
+__defs["materials/control-size.mjs"] = function (exports, __m) {
+const {CONTROL_SIZES, CONTROL_SIZE_NAMES} = __m("materials/typography.mjs");
+const {TOKEN} = __m("spacing.mjs");
+
+const SIZES = CONTROL_SIZE_NAMES;
+
+const px = n => (n < 0 ? `- ${-n}px` : `+ ${n}px`);
+
+/** 크기 이름 → CONTROL_SIZES와 기존 간격 토큰에서 읽은 컨트롤 치수 변수. */
+function sizeVars(name) {
+  const c = CONTROL_SIZES[name];
+  if (!c) throw new RangeError('unknown control size: ' + name);
+  return {height: c.step === 0 ? 'var(--kit-control)' : `calc(var(--kit-control) ${px(c.step)})`, padX: `var(${TOKEN[c.pad]})`, gap: `var(${TOKEN[c.gap]})`, font: `var(--kit-t-${c.role})`, icon: `${c.icon}px`};
+}
+
+const sizeCSS = scope => SIZES.map(n => { const v = sizeVars(n); return `${scope}[data-size=${n}]{--ctl-h:${v.height};--ctl-px:${v.padX};--ctl-gap:${v.gap};--ctl-font:${v.font};--ctl-icon:${v.icon}}`; }).join('');
+
+/** 프로파일 기본 크기. 명시적 data-size가 있는 재료 컨트롤은 기존 선택자로 유지한다. */
+function defaultControlSizeCSS(name) {
+  const v = sizeVars(name);
+  const legacyButton = '.kit-button:not([data-size]):not([data-variant=ghost])';
+  const legacyFields = '.kit-field :is(input,select,textarea):not([data-size])';
+  return `${legacyButton},${legacyFields}{--ctl-h:${v.height};--ctl-px:${v.padX};--ctl-gap:${v.gap};--ctl-font:${v.font};--ctl-icon:${v.icon}}${legacyButton}{min-height:var(--ctl-h);padding-inline:var(--ctl-px);gap:var(--ctl-gap);font-size:var(--ctl-font)}${legacyFields}{min-height:var(--ctl-h);padding-inline:var(--ctl-px);font-size:var(--ctl-font)}`;
+}
+
+exports.SIZES = SIZES;
+exports.sizeVars = sizeVars;
+exports.sizeCSS = sizeCSS;
+exports.defaultControlSizeCSS = defaultControlSizeCSS;
 };
 __defs["materials/feedback.mjs"] = function (exports, __m) {
 const {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, componentMaterial, e, SIZES, SHAPES, SAFE_ID} = __m("materials/control-kit.mjs");
@@ -9132,6 +9150,7 @@ const {tabsStyles} = __m("materials/tabs.mjs");
 const {tooltipStyles} = __m("materials/tooltip.mjs");
 const {feedbackStyles} = __m("materials/feedback.mjs");
 const {renderRoleTypeCSS, roleTypeUsage} = __m("materials/typography.mjs");
+const {defaultControlSizeCSS} = __m("materials/control-size.mjs");
 const {materialQualityCSS} = __m("styles/material-quality.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
@@ -9187,6 +9206,7 @@ function stylesheet(b, sets, body = '', design = null) {
   if (atLeast(b.catalogVersion, '2.6.0')) parts.push(materialQualityCSS(used));
   const rev2 = layoutRev(b) === 2;
   if (b.typeRoles && atLeast(b.catalogVersion, '2.6.0')) parts.push(renderRoleTypeCSS(b.typeRoles, {fit: rev2}).trim());
+  if (b.controlSize && atLeast(b.catalogVersion, '2.6.0')) parts.push(defaultControlSizeCSS(b.controlSize));
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
   const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
   return typeRev(b) === 2 ? refineTracking(css) : css;

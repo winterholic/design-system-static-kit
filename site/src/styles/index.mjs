@@ -24,6 +24,7 @@ import {tabsStyles} from '../materials/tabs.mjs';
 import {tooltipStyles} from '../materials/tooltip.mjs';
 import {feedbackStyles} from '../materials/feedback.mjs';
 import {renderRoleTypeCSS, roleTypeUsage} from '../materials/typography.mjs';
+import {defaultControlSizeCSS} from '../materials/control-size.mjs';
 import {materialQualityCSS} from './material-quality.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
@@ -79,6 +80,7 @@ export function stylesheet(b, sets, body = '', design = null) {
   if (atLeast(b.catalogVersion, '2.6.0')) parts.push(materialQualityCSS(used));
   const rev2 = layoutRev(b) === 2;
   if (b.typeRoles && atLeast(b.catalogVersion, '2.6.0')) parts.push(renderRoleTypeCSS(b.typeRoles, {fit: rev2}).trim());
+  if (b.controlSize && atLeast(b.catalogVersion, '2.6.0')) parts.push(defaultControlSizeCSS(b.controlSize));
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
   const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
   return typeRev(b) === 2 ? refineTracking(css) : css;
