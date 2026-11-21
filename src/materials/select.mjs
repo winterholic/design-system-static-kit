@@ -66,23 +66,55 @@ export function attachSelect(root, {onOptionsRequest} = {}) {
   const validResult = value => Array.isArray(value) && value.every(o => o && typeof o.value === 'string' && typeof o.label === 'string' && (o.group === undefined || typeof o.group === 'string'));
   if (!trigger || !menu || !list) throw new TypeError('Select root is incomplete');
   const doc = root.ownerDocument; // Core는 DOM 전역을 읽지 않고, 붙일 root가 속한 문서를 쓴다.
-  const options = () => [...list.querySelectorAll('[role="option"]')].filter(o => o.getAttribute('aria-disabled') !== 'true' && !o.hidden);
-  const close = (returnFocus = true) => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); trigger.removeAttribute('aria-activedescendant'); root.dataset.state = 'idle'; if (returnFocus) trigger.focus(); };
-  const open = () => { if (trigger.disabled) return; menu.hidden = false; trigger.setAttribute('aria-expanded', 'true'); root.dataset.state = 'open'; if (search) search.focus(); else { trigger.focus(); activate(0); } };
-  const activate = item => { const items = options(); if (!items.length) return; const next = items[Math.max(0, Math.min(items.length - 1, item))]; trigger.setAttribute('aria-activedescendant', next.id); items.forEach(o => o.dataset.active = String(o === next)); next.scrollIntoView?.({block: 'nearest'}); };
+  const allOptions = () => [...list.querySelectorAll('[role="option"]')];
+  const options = () => allOptions().filter(o => o.getAttribute('aria-disabled') !== 'true' && !o.hidden);
   let active = -1;
+  const activate = item => {
+    const items = options();
+    if (!items.length) {
+      active = -1;
+      trigger.removeAttribute('aria-activedescendant');
+      return;
+    }
+    active = Math.max(0, Math.min(items.length - 1, item));
+    const next = items[active];
+    trigger.setAttribute('aria-activedescendant', next.id);
+    items.forEach(o => o.dataset.active = String(o === next));
+    next.scrollIntoView?.({block: 'nearest'});
+  };
+  const close = (returnFocus = true) => { menu.hidden = true; active = -1; trigger.setAttribute('aria-expanded', 'false'); trigger.removeAttribute('aria-activedescendant'); root.dataset.state = 'idle'; if (returnFocus) trigger.focus(); };
+  const open = () => { if (trigger.disabled) return; menu.hidden = false; trigger.setAttribute('aria-expanded', 'true'); root.dataset.state = 'open'; if (search) search.focus(); else { trigger.focus(); activate(0); } };
   trigger.addEventListener('click', () => menu.hidden ? open() : close(false));
-  trigger.addEventListener('keydown', ev => { if (['ArrowDown', 'Enter', ' '].includes(ev.key)) { ev.preventDefault(); if (menu.hidden) open(); else activate(active = Math.min(active + 1, options().length - 1)); } });
+  trigger.addEventListener('keydown', ev => {
+    if (menu.hidden && ['ArrowDown', 'Enter', ' '].includes(ev.key)) {
+      ev.preventDefault();
+      open();
+    }
+  });
   root.addEventListener('keydown', ev => {
-    if (menu.hidden) return;
+    if (ev.defaultPrevented || menu.hidden) return;
     const items = options();
     if (ev.key === 'Escape') { ev.preventDefault(); close(); }
     else if (ev.key === 'Tab') close(false);
-    else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Home' || ev.key === 'End') { ev.preventDefault(); active = ev.key === 'Home' ? 0 : ev.key === 'End' ? items.length - 1 : Math.max(0, Math.min(items.length - 1, active + (ev.key === 'ArrowDown' ? 1 : -1))); activate(active); }
+    else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Home' || ev.key === 'End') { ev.preventDefault(); activate(ev.key === 'Home' ? 0 : ev.key === 'End' ? items.length - 1 : active + (ev.key === 'ArrowDown' ? 1 : -1)); }
     else if (ev.key === 'Enter' || ev.key === ' ') { const selected = items.find(o => o.id === trigger.getAttribute('aria-activedescendant')); if (selected) { selected.click(); ev.preventDefault(); } }
   });
-  list.addEventListener('click', ev => { const option = ev.target.closest('[role="option"]'); if (!option || option.getAttribute('aria-disabled') === 'true') return; const multi = root.dataset.mode === 'multiple'; option.setAttribute('aria-selected', String(multi ? option.getAttribute('aria-selected') !== 'true' : true)); const chosen = [...list.querySelectorAll('[role="option"][aria-selected=true]')]; root.querySelector('input[type="hidden"]').value = chosen.map(o => o.dataset.value).join(','); if (!multi) { trigger.textContent = option.textContent; close(); } else { trigger.textContent = chosen.map(o => o.textContent).join(', ') || '선택해 주세요'; } });
-  if (root.dataset.search === 'local' && root.querySelector('[role="searchbox"]')) root.querySelector('[role="searchbox"]').addEventListener('input', ev => options().forEach(o => { o.hidden = !o.textContent.toLocaleLowerCase().includes(ev.target.value.toLocaleLowerCase()); }));
+  list.addEventListener('click', ev => {
+    const option = ev.target.closest('[role="option"]');
+    if (!option || option.getAttribute('aria-disabled') === 'true') return;
+    const multi = root.dataset.mode === 'multiple';
+    if (!multi) allOptions().forEach(o => o.setAttribute('aria-selected', String(o === option)));
+    else option.setAttribute('aria-selected', String(option.getAttribute('aria-selected') !== 'true'));
+    const chosen = [...list.querySelectorAll('[role="option"][aria-selected=true]')];
+    root.querySelector('input[type="hidden"]').value = chosen.map(o => o.dataset.value).join(',');
+    trigger.textContent = chosen.map(o => o.textContent).join(', ') || '선택해 주세요';
+    if (!multi) close();
+  });
+  if (root.dataset.search === 'local') root.querySelector('[role="searchbox"]')?.addEventListener('input', ev => {
+    const query = ev.target.value.toLocaleLowerCase();
+    allOptions().forEach(o => { o.hidden = !o.textContent.toLocaleLowerCase().includes(query); });
+    activate(0);
+  });
   if (search && typeof onOptionsRequest === 'function') {
     let seq = 0, controller;
     search.addEventListener('input', async () => {

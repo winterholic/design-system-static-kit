@@ -57,6 +57,74 @@ test('Components는 실제 명세를 보여 주고 잘못된 부품 ID는 404', 
   expect((await request.get('/components/not-a-component')).status()).toBe(404);
 });
 
+test('Components는 2.6.0 재료 계약과 실제 변형 렌더를 제공한다', async ({page, request}) => {
+  await page.goto('/components');
+  await expect(page.getByRole('link', {name: /선택 상자/})).toHaveAttribute('href', '/components/select-control');
+  await expect(page.getByRole('link', {name: /데이터 표/})).toHaveAttribute('href', '/components/data-table');
+
+  await page.goto('/components/select-control');
+  await expect(page.getByRole('heading', {name: '선택 상자'})).toBeVisible();
+  await expect(page.getByText(/카탈로그 2\.6\.0/)).toBeVisible();
+  await expect(page.getByRole('heading', {name: '재료 계약'})).toBeVisible();
+  await expect(page.getByText('multiple + async')).toBeVisible();
+  await expect(page.getByText('--kit-action')).toBeVisible();
+  await expect(page.getByRole('group', {name: '변형'})).toBeVisible();
+  await expect(page.getByRole('button', {name: '좁게 375px'})).toBeVisible();
+  await expect(page.locator('iframe[title*="렌더 결과"]')).toHaveAttribute('src', /\/components\/select-control\/render/);
+
+  const multi = await request.get('/components/select-control/render/mode~multiple');
+  expect(multi.status()).toBe(200);
+  expect(await multi.text()).toContain('data-mode="multiple"');
+  const invalid = await request.get('/components/select-control/render/mode~multiple/search~async');
+  expect(invalid.status()).toBe(404);
+  expect(await invalid.text()).toContain('multiple + async');
+  expect((await request.get('/components/select-control/render/mode~%25')).status()).toBe(404);
+  expect((await request.get('/components/select-control/render/mode~single/mode~multiple')).status()).toBe(404);
+
+  await page.goto('/components/data-table');
+  await expect(page.getByRole('heading', {name: '데이터 표'})).toBeVisible();
+  await expect(page.getByText('pagination')).toBeVisible();
+  await expect(page.getByText('--kit-sp-item')).toBeVisible();
+  const compact = await request.get('/components/data-table/render/density~compact');
+  expect(compact.status()).toBe(200);
+  expect(await compact.text()).toContain('data-density="compact"');
+  expect((await request.get('/components/data-table/render/state~loading')).status()).toBe(200);
+});
+
+test('웹 번들의 2.6.0 부품 미리보기에서 선택과 정렬 런타임이 실행된다', async ({page}) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+
+  await page.goto('/components/select-control');
+  const select = page.frameLocator('iframe[title*="렌더 결과"]');
+  const region = select.getByRole('combobox', {name: '지역'});
+  await region.press('Enter');
+  await expect(region).toHaveAttribute('aria-expanded', 'true');
+  await select.getByRole('option', {name: '일본'}).click();
+  await expect(region).toHaveText('일본');
+  await region.press('Enter');
+  await region.press('Home');
+  await region.press('Enter');
+  await expect(region).toHaveText('한국');
+  await expect(select.locator('.kit-select input[type="hidden"]')).toHaveValue('kr');
+
+  await page.goto('/components/select-control/render/search~local');
+  await page.getByRole('combobox', {name: '지역'}).click();
+  const search = page.getByRole('searchbox', {name: '지역 검색'});
+  await search.fill('일본');
+  await expect(page.getByRole('option', {name: '한국'})).toBeHidden();
+  await search.fill('');
+  await expect(page.getByRole('option', {name: '한국'})).toBeVisible();
+
+  await page.goto('/components/data-table/render/sortable~true');
+  const sort = page.locator('[data-sort="status"]');
+  await sort.click();
+  await expect(sort).toHaveAttribute('aria-sort', 'ascending');
+  await sort.click();
+  await expect(sort).toHaveAttribute('aria-sort', 'descending');
+  expect(errors).toEqual([]);
+});
+
 test('내부 조합 탐색기는 유지되고 /combos 는 쿼리를 보존하는 307로 이동한다', async ({page, request}) => {
   const query = 'c=saas-landing&theme=aurora&q=%ED%95%9C%EA%B8%80&exp=1&ps=24&p=2';
   const redirect = await request.get(`/combos/?${query}`, {maxRedirects: 0});
