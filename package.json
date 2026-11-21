@@ -27,7 +27,7 @@
     "test:lab-verify": "node scripts/test-lab/generate.mjs --verify",
     "web:build": "npm --workspace apps/web run build",
     "web:dev": "npm --workspace apps/web run dev",
-    "web:test": "npm --workspace apps/web run test:boundary && npm --workspace apps/web run test:e2e"
+    "web:test": "npm --workspace apps/web run test:boundary && npm --workspace apps/web run test:unit && npm --workspace apps/web run test:e2e"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1"

@@ -15,6 +15,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:boundary": "node --test boundary.check.mjs",
+    "test:unit": "node --experimental-strip-types --experimental-loader ./features/studio/node-ts-loader.mjs --test features/studio/*.unit.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
