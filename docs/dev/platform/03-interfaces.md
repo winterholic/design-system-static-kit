@@ -310,7 +310,17 @@ POST /api/v1/edit
 | D2 | Studio의 `sel`(출처·구성·변형·팔레트 선택 여부)을 어디에 두는가 | F·B | 문서 밖 `origin` 상태, 가져오기는 `null` |
 | D3 | 옛 `repairAxes(b)` 호출자의 조용한 내비 절단은 옛 앱에서만 남는가 | B·D | 옛 앱은 건드리지 않고 새 앱만 연산 계층 사용 |
 | D4 | `/test-lab/**` 처리 | 오너 | 결정 보류 |
-| D5 | MCP를 Next 라우트로 둘지 별도 프로세스(`apps/mcp`)로 둘지 | H | 인증·스트리밍 요구가 정해진 뒤 결정 |
+| D5 | MCP를 Next 라우트로 둘지 별도 프로세스(`apps/mcp`)로 둘지 | H | **관찰: `next/api-mcp`에서 Next Route Handler `/api/mcp`를 선택했다.** 단일 Streamable HTTP 엔드포인트이며 상태를 서버에 저장하지 않는다. 외부 프로세스 분리는 선택하지 않았다. 자세한 근거·한계는 `07-api-mcp.md` 참조. |
 | D6 | `manifest.integrity`(SHA-256)를 서비스가 내는가, 호출자가 해시 함수를 주입하는가 | C | Node는 동기 `createHash`, 브라우저 WebCrypto는 비동기라 주입식이 필요. 이번 서비스 계약에서는 제외 |
 | D7 | Next.js 버전, React 버전, 렌더링 모드(SSG·ISR·동적) | D | 이 감사는 정하지 않았다. 호환 산출물(`/examples/**`)은 정적이어야 한다 |
 | D8 | 배포 대상 (현재 Vercel 프로젝트 `design-system-static-kit`를 이어 쓰는가) | 오너·D | `00-baseline.md` 5절. 운영 배포가 main보다 한 단계 뒤처져 있다(2.3.0 대 2.4.0) |
+
+## 7. H/I 구현 관찰 (2026-11-21)
+
+브랜치 `next/api-mcp`에서 REST v1 작업 표, OpenAPI 생성기, Streamable HTTP MCP Route Handler와 Integrations 사용 안내를 구현했다. 이는 아직 이 문서 기준선에 합쳐지지 않은 브랜치 관찰이다.
+
+- 구현 의존성은 Next.js 16.4.6, MCP TypeScript SDK `@modelcontextprotocol/server`·`client` 2.4.0, `mcp-handler` 2.4.0, Zod 4.6.7이다. `apps/web` workspace에 둬 루트 Core의 런타임 의존성은 유지하지 않는다.
+- REST와 MCP 어댑터 모두 `@winterholic/design-system-static-kit/service`의 여섯 함수를 호출한다. REST OpenAPI 3.1은 작업 표와 서비스 스키마로 생성한다.
+- `app/api/mcp/route.ts`는 Next의 기본 Node.js Route Handler이며 `maxDuration=30`을 선언한다. 자체 MCP 처리 상한은 10초다. 호출 제한 상태는 인스턴스 메모리라 서버리스 전체 제한은 아니다.
+- 정확한 상태 코드·봉투·크기·캐시·요청 제한 계약과 공식 SDK/Next 배포 근거는 `07-api-mcp.md`에 있다. 빌드와 채널 시험은 별도 실행 결과로 확인한다.
+- Vercel의 실제 프로젝트 연결이나 운영 배포 상태는 이 구현으로 확정하지 않는다. D8은 그대로 열어 둔다.
