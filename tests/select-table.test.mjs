@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {selectContract, renderSelect, selectRuntime} from '../src/materials/select.mjs';
+import {selectContract, renderSelect, selectRuntime, attachSelect} from '../src/materials/select.mjs';
 import {tableContract, renderDataTable, tableRuntime, attachTable, tableStyles} from '../src/materials/table.mjs';
 import {catalogRegistry} from '../src/materials/index.mjs';
 
@@ -77,4 +77,20 @@ test('Select and Table materials are registered with 2.6.0 contracts and compile
   assert.equal(registry.get('component:data-table').quality.status, 'verified');
   assert.ok(registry.get('component:select-control').tokens.length);
   assert.ok(registry.get('component:data-table').examples.length);
+});
+
+test('attachSelect reaches the document only through the root it is attached to, never a global', () => {
+  assert.equal(typeof globalThis.document, 'undefined');
+  const listeners = [];
+  const element = () => ({hidden: true, disabled: false, setAttribute() {}, removeAttribute() {}, addEventListener() {}, focus() {}, querySelectorAll: () => []});
+  const trigger = element(), menu = element(), list = element(), status = element();
+  const parts = {'[role="combobox"]': trigger, '.kit-select-menu': menu, '[role="listbox"]': list, '[role="status"]': status};
+  const root = {ownerDocument: {addEventListener: (name, listener) => listeners.push([name, listener])}, dataset: {mode: 'single', search: 'none'}, addEventListener() {}, contains: () => false, querySelector: selector => parts[selector] ?? null};
+  const control = attachSelect(root);
+  assert.deepEqual(listeners.map(([name]) => name), ['pointerdown']);
+  control.open();
+  assert.equal(menu.hidden, false);
+  listeners[0][1]({target: {}});
+  assert.equal(menu.hidden, true, 'a pointerdown outside the root closes the menu');
+  assert.doesNotMatch(selectRuntime, /(?<![.\w])document\b/);
 });

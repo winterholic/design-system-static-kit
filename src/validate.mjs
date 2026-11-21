@@ -1,3 +1,4 @@
+import {nodeSpecAt, nodeExtended} from './catalog/node-extensions.mjs';
 import {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} from './catalog/expression.mjs';
 import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
 
@@ -101,7 +102,7 @@ export function validateBlueprint(input) {
     if (typeof n.type !== 'string' || !Object.hasOwn(nodeSpecs, n.type)) { error(path + '.type', 'NODE_TYPE', '알 수 없는 부품입니다.'); return; }
     if (parent && !nodeSpecs[parent].children?.includes(n.type)) error(path + '.type', 'CHILD_TYPE', `${parent} 안에 ${n.type}을 넣을 수 없습니다.`);
     types.add(n.type); firstSeen[n.type] ??= path;
-    const spec = nodeSpecs[n.type];
+    const spec = nodeSpecAt(n.type, input.catalogVersion);
     const properties = {type: {const: n.type}, ...spec.fields};
     if (spec.children) properties.children = {type: 'array', items: {}, minItems: spec.min, maxItems: spec.max};
     value(n, {type: 'object', properties, required: requiredOf(spec)}, path);
@@ -181,7 +182,18 @@ export function validateBlueprint(input) {
       if (['ready', 'partial'].includes(n.state) && n.rows.length === 0) error(path + '.rows', 'STATE_DATA', `${n.state} 상태에는 행이 1개 이상 필요합니다.`);
     }
     if (t === 'list' && A(n.items) && ['ready', 'partial'].includes(n.state) && n.items.length === 0) error(path + '.items', 'STATE_DATA', `${n.state} 상태에는 항목이 1개 이상 필요합니다.`);
-    if (t === 'chart') {
+    if (t === 'chart' && !nodeExtended('chart', input.catalogVersion) && A(n.series) && A(n.categories)) {
+      n.series.forEach((s, i) => { if (plain(s) && A(s.values) && s.values.length !== n.categories.length) error(`${path}.series[${i}].values`, 'CHART_SHAPE', '값의 개수는 categories와 같아야 합니다.'); });
+      if (n.kind === 'donut') {
+        const v = n.series[0]?.values;
+        if (n.series.length !== 1) error(path + '.series', 'CHART_SHAPE', 'donut은 계열 하나만 허용합니다.');
+        else if (A(v) && (v.some(x => typeof x !== 'number' || x < 0) || v.reduce((a, b) => a + b, 0) <= 0)) error(path + '.series[0].values', 'CHART_SHAPE', 'donut 값은 0 이상이며 합이 0보다 커야 합니다.');
+        if (n.categories.length > 5) error(path + '.categories', 'CHART_SHAPE', 'donut은 범주 5개 이하입니다(그 이상은 막대 차트).');
+      }
+      if (n.series.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
+    }
+    // 새 차트 형태(stacked-bar·scatter·heatmap·sparkline)와 축 필드는 확장 명세가 켜진 카탈로그 버전(node-extensions.mjs)에서만 검사한다.
+    if (t === 'chart' && nodeExtended('chart', input.catalogVersion)) {
       const series = A(n.series) ? n.series : [], categories = A(n.categories) ? n.categories : [];
       const pointKind = n.kind === 'scatter';
       if (!series.length) error(path + '.series', 'CHART_SHAPE', '차트 계열이 하나 이상 필요합니다.');

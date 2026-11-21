@@ -14,7 +14,7 @@ const preset = ({name, label, context, chartKind, categories, series, unit, x, y
   a11y: {rules: ['R05', 'R15'], role: 'img with title, summary and expandable data table', keyboard: 'native details/summary', alternative: 'HTML table preserves complete labels and values'},
   validation: {rules: ['R15'], codes: ['CHART_SHAPE', 'CHART_AXIS', 'NUMBER']},
   examples: [{type: 'chart', title: label, caption: caption(chartKind, x, y), kind: chartKind, unit, xLabel: x, yLabel: y, axis: {showX: 'yes', showY: 'yes'}, ...(categories.length ? {categories} : {}), series}],
-  quality: {status: 'verified', evidence: ['tests/chart-presets.test.mjs:45']},
+  quality: {status: 'verified', evidence: ['tests/chart-presets.test.mjs:51']},
   source: {origin: 'internal', license: 'MIT'}, preset: true,
   tags: ['chart', context, chartKind],
   ext: {chartKind, series: {minimum: series.length, maximum: series.length, labels: series.map(item => item.name)}, axes: axis(['donut', 'sparkline'].includes(chartKind) ? 'omitted' : x, ['donut', 'sparkline'].includes(chartKind) ? 'omitted' : y, legend), unit, labels: labels(x, y)},

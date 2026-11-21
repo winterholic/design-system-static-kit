@@ -4,6 +4,8 @@
 
 ## Select
 
+`attachSelect`·`attachTable`은 Core(`src/`) 안에 있으므로 `document` 같은 DOM 전역을 읽지 않는다(`tests/core-boundary.test.mjs`). 두 함수는 받은 `root`만 만지고, 문서가 필요하면 `root.ownerDocument`를 쓴다(바깥 클릭 감지, 비동기 옵션 노드 생성).
+
 ```js
 renderSelect({
   id: 'region', label: '지역', mode: 'single', search: 'local',
@@ -68,7 +70,7 @@ Select는 `--kit-action`, `--kit-surface`, `--kit-text`, `--kit-muted`, `--kit-b
 
 ## 2.6.0 컴파일·Studio 연결 지점
 
-1. 새 Blueprint 노드 `select-control`과 `data-table`의 필드·조합·행/열 입력 검사를 `src/catalog/nodes.mjs`/`src/validate.mjs`에 추가한다. 기본 `CATALOG_VERSION`은 바꾸지 않고 2.6.0 게이트 아래에서만 받는다.
+1. 새 Blueprint 노드 `select-control`과 `data-table`의 필드·조합·행/열 입력 검사를 `src/validate.mjs`에 추가하고, 노드 명세는 `src/catalog/nodes.mjs`가 아니라 버전별 확장 표 `src/catalog/node-extensions.mjs`(`NODE_SPEC_EXTENSIONS['2.6.0']`)에 둔다. `nodes.mjs`를 바꾸면 `site/v1/catalog.json`의 2.4.0 snapshot 바이트가 바뀐다. 기본 `CATALOG_VERSION`은 바꾸지 않고 2.6.0 게이트 아래에서만 받는다.
 2. `src/catalog/expression.mjs`의 지원 버전을 여는 동일 커밋에서 `src/render/nodes.mjs`에 이 함수들을 연결하고, `src/render/index.mjs` 런타임에는 정적 이벤트 처리와 주입 provider 경계만 둔다.
 3. 사용 노드에 맞춰 CSS 조각을 `src/styles/chunks.mjs`에서 선택한다. 토큰 변수는 현재 디자인 시스템 토큰의 소유 작업자가 제공하는 실제 변수 이름과 교차 확인한다.
 4. `src/materials/adapters.mjs`는 두 재료를 등록하고, 2.6.0 컴파일 예시와 Studio B 통합은 `since`·입력 계약을 기준으로 연결한다. 기존 `component:table`은 legacy 문자열 행 계약으로 보존한다.

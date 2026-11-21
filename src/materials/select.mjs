@@ -65,6 +65,7 @@ export function attachSelect(root, {onOptionsRequest} = {}) {
   const trigger = root.querySelector('[role="combobox"]'), menu = root.querySelector('.kit-select-menu'), list = root.querySelector('[role="listbox"]'), status = root.querySelector('[role="status"]'), search = root.querySelector('[data-async-search]');
   const validResult = value => Array.isArray(value) && value.every(o => o && typeof o.value === 'string' && typeof o.label === 'string' && (o.group === undefined || typeof o.group === 'string'));
   if (!trigger || !menu || !list) throw new TypeError('Select root is incomplete');
+  const doc = root.ownerDocument; // Core는 DOM 전역을 읽지 않고, 붙일 root가 속한 문서를 쓴다.
   const options = () => [...list.querySelectorAll('[role="option"]')].filter(o => o.getAttribute('aria-disabled') !== 'true' && !o.hidden);
   const close = (returnFocus = true) => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); trigger.removeAttribute('aria-activedescendant'); root.dataset.state = 'idle'; if (returnFocus) trigger.focus(); };
   const open = () => { if (trigger.disabled) return; menu.hidden = false; trigger.setAttribute('aria-expanded', 'true'); root.dataset.state = 'open'; if (search) search.focus(); else { trigger.focus(); activate(0); } };
@@ -86,12 +87,12 @@ export function attachSelect(root, {onOptionsRequest} = {}) {
     let seq = 0, controller;
     search.addEventListener('input', async () => {
       const current = ++seq; controller?.abort(); controller = new AbortController(); root.dataset.state = 'loading'; list.setAttribute('aria-busy', 'true'); status.textContent = '불러오는 중입니다.';
-      try { const result = await onOptionsRequest({query: search.value, signal: controller.signal}); if (current !== seq) return; if (!validResult(result)) throw new TypeError('onOptionsRequest must return {value,label,group?} options'); const fragment = document.createDocumentFragment(); let group = null, listTarget = fragment; result.forEach((o, i) => { if (o.group && o.group !== group) { group = o.group; const wrapper = document.createElement('li'), nested = document.createElement('ul'); wrapper.setAttribute('role', 'group'); wrapper.setAttribute('aria-label', group); nested.setAttribute('role', 'presentation'); wrapper.append(nested); fragment.append(wrapper); listTarget = nested; } else if (!o.group) { group = null; listTarget = fragment; } const li = document.createElement('li'); li.id = `${trigger.id}-option-${i}`; li.dataset.value = o.value; li.textContent = o.label; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false'); listTarget.append(li); }); list.replaceChildren(fragment); root.dataset.state = 'open'; status.textContent = result.length ? '' : '검색 결과가 없습니다.';
+      try { const result = await onOptionsRequest({query: search.value, signal: controller.signal}); if (current !== seq) return; if (!validResult(result)) throw new TypeError('onOptionsRequest must return {value,label,group?} options'); const fragment = doc.createDocumentFragment(); let group = null, listTarget = fragment; result.forEach((o, i) => { if (o.group && o.group !== group) { group = o.group; const wrapper = doc.createElement('li'), nested = doc.createElement('ul'); wrapper.setAttribute('role', 'group'); wrapper.setAttribute('aria-label', group); nested.setAttribute('role', 'presentation'); wrapper.append(nested); fragment.append(wrapper); listTarget = nested; } else if (!o.group) { group = null; listTarget = fragment; } const li = doc.createElement('li'); li.id = `${trigger.id}-option-${i}`; li.dataset.value = o.value; li.textContent = o.label; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false'); listTarget.append(li); }); list.replaceChildren(fragment); root.dataset.state = 'open'; status.textContent = result.length ? '' : '검색 결과가 없습니다.';
       } catch (error) { if (current !== seq || error?.name === 'AbortError') return; root.dataset.state = 'error'; status.textContent = '옵션을 불러오지 못했습니다.'; }
       finally { if (current === seq) list.setAttribute('aria-busy', 'false'); }
     });
   }
-  document.addEventListener('pointerdown', ev => { if (!root.contains(ev.target) && !menu.hidden) close(false); });
+  doc.addEventListener('pointerdown', ev => { if (!root.contains(ev.target) && !menu.hidden) close(false); });
   return {open, close};
 }
 
