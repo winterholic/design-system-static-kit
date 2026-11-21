@@ -73,6 +73,8 @@ export type Intent =
   | {kind: 'setMode'; mode: string}
   | {kind: 'setAxis'; axis: string; value: string; repair?: 'auto'}
   | {kind: 'setPalette'; palette: string}
+  | {kind: 'setMaterial'; field: 'colorPalette' | 'typeRoles' | 'profile'; value: string | null}
+  | {kind: 'upgrade260'}
   | {kind: 'setLayout'; slot: string; option: string; relocate?: boolean}
   | {kind: 'setTheme'; theme: string}
   | {kind: 'setThemeVariant'; variant: string | null; variantSet?: Record<string, string>}
@@ -124,11 +126,17 @@ function themeChange(ctx: Context, theme: string, variant: string | null, varian
 }
 
 function startRequest(ctx: Context, request: StartRequest): Outcome {
+  if (request.profile) {
+    const assembled = core().service.assembleBlueprint({profile: request.profile, intent: {}, content: {}});
+    if (!assembled.ok) return {res: failed(ctx.doc, assembled.errors), origin: null, picked: {}, selection: []};
+    const res = op(ctx.doc, 'importBlueprint', {blueprint: assembled.value.blueprint, upgrade: true, discard: true});
+    return {res, origin: null, picked: {}, selection: []};
+  }
   const template = request.template ?? DEFAULT_TEMPLATE;
   const r1 = op(ctx.doc, 'resetDocument', {template, theme: request.theme, palette: request.palette, themeVariant: request.variant, layout: request.layout, discard: true});
   const origin: Origin = {template, layout: request.layout ?? {}, themeVariant: request.variant ?? null, palette: request.palette ?? null};
   const axes = request.axes ?? {};
-  if (!r1.ok || (!request.mode && !Object.keys(axes).length && !request.colorPalette)) return {res: r1, origin, picked: {}, selection: []};
+  if (!r1.ok || (!request.mode && !Object.keys(axes).length && !request.colorPalette && !request.typeRoles && !request.profile && request.catalogVersion !== '2.6.0')) return {res: r1, origin, picked: {}, selection: []};
   // 모드·스타일 축은 resetDocument 인자가 아니라서 이어서 한 번에 적용한다. 하나라도 거부되면 전체를 적용하지 않는다(원자성).
   let working = r1.doc;
   const changes = [...r1.changes], warnings = [...r1.warnings];
@@ -139,9 +147,10 @@ function startRequest(ctx: Context, request: StartRequest): Outcome {
     working = r2.doc; changes.push(...r2.changes); warnings.push(...r2.warnings);
     picked = {...axes};
   }
-  if (request.colorPalette) {
-    // colorPalette는 2.6.0부터 쓰는 필드라서 카탈로그 버전을 함께 올린 문서를 가져오기 연산으로 검증해 얻는다(JSON 가져오기와 같은 경로).
-    const r3 = op(working, 'importBlueprint', {blueprint: {...working, catalogVersion: '2.6.0', colorPalette: request.colorPalette}, discard: true});
+  if (request.colorPalette || request.typeRoles || request.profile || request.catalogVersion === '2.6.0') {
+    // 2.6.0 재료 필드는 importBlueprint 경로로 올려 Core가 버전·값·프로파일 호환을 함께 검증한다.
+    const blueprint = {...working, catalogVersion: '2.6.0', ...(request.colorPalette ? {colorPalette: request.colorPalette} : {}), ...(request.typeRoles ? {typeRoles: request.typeRoles} : {}), ...(request.profile ? {profile: request.profile} : {})};
+    const r3 = op(working, 'importBlueprint', {blueprint, upgrade: true, discard: true});
     if (!r3.ok) return {res: failed(ctx.doc, r3.errors, r1.warnings), origin, picked: {}, selection: []};
     working = r3.doc; changes.push(...r3.changes); warnings.push(...r3.warnings);
   }
@@ -177,6 +186,17 @@ export function perform(ctx: Context, intent: Intent): Outcome {
     }
     case 'setPalette':
       return keep(op(doc, 'setPalette', {palette: intent.palette}), {origin: origin ? {...origin, palette: intent.palette} : origin});
+    case 'setMaterial': {
+      if (!doc) return keep(failed(doc, [{code: 'ARGS_INVALID', path: '$', message: '문서가 없습니다.', hint: '먼저 템플릿으로 시작하세요.'}]));
+      const blueprint = {...doc, catalogVersion: '2.6.0'} as Blueprint & Record<string, unknown>;
+      if (intent.value === null) delete blueprint[intent.field];
+      else blueprint[intent.field] = intent.value;
+      return keep(op(doc, 'importBlueprint', {blueprint, upgrade: true}));
+    }
+    case 'upgrade260': {
+      if (!doc) return keep(failed(doc, [{code: 'ARGS_INVALID', path: '$', message: '문서가 없습니다.', hint: '먼저 템플릿으로 시작하세요.'}]));
+      return keep(op(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0'}, upgrade: true}));
+    }
     case 'setLayout': {
       const res = op(doc, 'setLayoutVariant', {slot: intent.slot, option: intent.option, contentPolicy: intent.relocate ? 'relocate' : 'reject'});
       return keep(res, {origin: origin ? {...origin, layout: {...origin.layout, [intent.slot]: intent.option}} : origin});

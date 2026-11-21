@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {initialState, reducer} from './model.ts';
-import {loadCore} from './core.ts';
+import {core, loadCore} from './core.ts';
 
 async function ready() {
   await loadCore();
@@ -204,4 +204,84 @@ test('start from Materials applies axes and the 2.6.0 color palette atomically, 
 
   const unknown = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {colorPalette: 'not-a-palette'}}, at: 1});
   assert.equal(unknown.document.doc, null);
+});
+
+test('Studio can explicitly start a 2.6.0 document or assemble a Design Profile through Core', async () => {
+  await loadCore();
+  const fresh = reducer(initialState, {type: 'boot', state: {phase: 'start', doc: null, origin: null, picked: {}, selection: [], modified: false, view: {}, notices: [], recovery: null, storage: {status: 'idle'}}});
+  const versioned = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {catalogVersion: '2.6.0'}}, at: 1});
+  assert.equal(versioned.document.doc.catalogVersion, '2.6.0');
+
+  const profiled = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {profile: 'erp'}}, at: 1});
+  assert.equal(profiled.document.doc.catalogVersion, '2.6.0');
+  assert.equal(profiled.document.doc.profile, 'erp');
+  assert.equal(profiled.document.validity.ok, true);
+  assert.equal(profiled.session.origin, null);
+});
+
+test('applying a 2.6.0 material upgrades the document without replacing its authored work and is undoable', async () => {
+  let state = await ready();
+  state = reducer(state, {type: 'edit', intent: {kind: 'rename', name: '작성 중인 화면'}, at: 2});
+  state = reducer(state, {type: 'select', path: [0]});
+  const authoredDoc = state.document.doc;
+  const authoredVersion = authoredDoc.catalogVersion;
+  const originBefore = state.session.origin;
+  const originalHtml = core().service.compileBlueprint(authoredDoc, {include: ['html']}).value.html;
+  state = reducer(state, {type: 'edit', intent: {kind: 'setMaterial', field: 'colorPalette', value: 'static-kit'}, at: 3});
+
+  assert.equal(state.document.doc.catalogVersion, '2.6.0');
+  assert.equal(state.document.doc.colorPalette, 'static-kit');
+  assert.equal(state.document.doc.name, '작성 중인 화면');
+  assert.deepEqual(state.document.doc.tree, authoredDoc.tree);
+  assert.equal(state.document.doc.name, authoredDoc.name);
+  assert.deepEqual(state.session.origin, originBefore);
+  assert.deepEqual(state.session.selection, [0]);
+  assert.equal(state.session.modified, true);
+  const colorHtml = core().service.compileBlueprint(state.document.doc, {include: ['html']}).value.html;
+  assert.notEqual(colorHtml, originalHtml, 'the selected color material reaches the compiled preview/export');
+
+  state = reducer(state, {type: 'edit', intent: {kind: 'setMaterial', field: 'typeRoles', value: 'marketing'}, at: 4});
+  assert.equal(state.document.doc.typeRoles, 'marketing');
+  const roleHtml = core().service.compileBlueprint(state.document.doc, {include: ['html']}).value.html;
+  assert.notEqual(roleHtml, colorHtml, 'the selected role typography reaches the compiled preview/export');
+
+  const applied = state.document.doc;
+  state = reducer(state, {type: 'undo'});
+  assert.equal(state.document.doc.colorPalette, 'static-kit');
+  assert.equal(state.document.doc.typeRoles, undefined);
+  state = reducer(state, {type: 'redo'});
+  assert.equal(state.document.doc, applied);
+});
+
+test('an incompatible 2.6.0 material is rejected with Core diagnostics and leaves the document unchanged', async () => {
+  const state = await ready();
+  const before = state.document.doc;
+
+  const next = reducer(state, {type: 'edit', intent: {kind: 'setMaterial', field: 'profile', value: 'erp'}, at: 2});
+
+  assert.equal(next.document.doc, before);
+  assert.equal(next.session.undo.length, state.session.undo.length);
+  assert.ok(next.session.error?.errors.length);
+});
+
+test('applying Materials after JSON import keeps the imported document protected through undo and redo', async () => {
+  let state = await ready();
+  const imported = {...state.document.doc, name: '가져온 화면', catalogVersion: '2.6.0', colorPalette: 'static-kit'};
+  state = reducer(state, {type: 'edit', intent: {kind: 'import', text: JSON.stringify(imported)}, at: 2});
+  const importedDoc = state.document.doc;
+  assert.equal(state.session.origin, null);
+
+  state = reducer(state, {type: 'edit', intent: {kind: 'setMaterial', field: 'typeRoles', value: 'marketing'}, at: 3});
+  const materialDoc = state.document.doc;
+  assert.equal(state.document.doc.name, '가져온 화면');
+  assert.deepEqual(state.document.doc.tree, importedDoc.tree);
+  assert.equal(state.session.origin, null);
+  assert.equal(needsConfirm(state), true);
+
+  state = reducer(state, {type: 'undo'});
+  assert.equal(state.document.doc, importedDoc);
+  assert.equal(state.session.origin, null);
+  state = reducer(state, {type: 'redo'});
+  assert.equal(state.document.doc, materialDoc);
+  assert.equal(needsConfirm(state), true);
 });

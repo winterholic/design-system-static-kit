@@ -13,7 +13,7 @@ export type Placement = {ok: boolean; accepted: PartChoice[]; rejected: {type: s
 export interface Core {
   edit: {
     applyOp(doc: Blueprint | null, name: string, args: Record<string, unknown>): OpResult;
-    partExample(type: string): Record<string, unknown> | null;
+    partExample(type: string, catalogVersion?: string): Record<string, unknown> | null;
     addPlacements(doc: Blueprint, path: number[]): {inside: Placement; after: Placement};
     themeChoices(doc: Blueprint, opts?: {palette?: string}): Choice[];
     themeVariantChoices(doc: Blueprint, opts?: {palette?: string}): Choice[];
@@ -26,7 +26,11 @@ export interface Core {
     compileBlueprint(bp: unknown, opts?: Record<string, unknown>): Envelope<{html?: string; sizes?: unknown}>;
     validateBlueprint(bp: unknown): Envelope<{valid: true}>;
     listCatalog(q: Record<string, unknown>): Envelope<{items: any[]; total: number; nextCursor: string | null}>;
-    getComponentSpec(q: {type: string}): Envelope<ComponentSpec>;
+    getComponentSpec(q: {type: string; catalogVersion?: string}): Envelope<ComponentSpec>;
+    getSchema(q: {target: 'blueprint'; fields?: string[]}): Envelope<{properties: Record<string, {enum?: string[]}>}>;
+    getColorTokens(q?: Record<string, unknown>): Envelope<{options: {id: string; label: string}[]}>;
+    getTypePresets(q?: Record<string, unknown>): Envelope<{presets: {id: string; label: string}[]}>;
+    assembleBlueprint(q: {profile: string; intent: Record<string, unknown>; content: Record<string, unknown>}): Envelope<{blueprint: Blueprint}>;
   };
 }
 

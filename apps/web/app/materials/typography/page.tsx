@@ -37,9 +37,9 @@ export default async function TypographyPage({searchParams}: Props) {
         {view.presets.map(p => <Link key={p.id} href={`/materials/typography?preset=${p.id}`} className={styles.presetLink} aria-current={p.id === preset.id ? 'page' : undefined} scroll={false}>{p.label}</Link>)}
       </nav>
       <div className={styles.actions}>
-        <ButtonLink href={studioForPreset(preset.engine, template)}>Studio에서 사용하기</ButtonLink>
+        <ButtonLink href={studioForPreset(preset.id, template)}>Studio에서 사용하기</ButtonLink>
       </div>
-      <p className={styles.muted}>Studio는 {preset.label}의 서체 계열 <code>{preset.engine}</code>을 서체 조합으로 적용합니다. 역할별 크기 체계는 아직 문서에 직접 담기지 않아 이 화면에서 확인합니다.</p>
+      <p className={styles.muted}>Studio 문서에 {preset.label} 역할 타이포그래피를 적용합니다. 글자 역할·컨트롤 크기가 미리보기와 내보내기에 반영됩니다.</p>
 
       <h2 className="section-title">{preset.label} 프리셋</h2>
       <p className={styles.presetFacts}>

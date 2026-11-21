@@ -3,7 +3,7 @@ import {useMemo} from 'react';
 import {layoutSlotsOf} from '../catalog';
 import {useStudio} from '../context';
 import type {Choice} from '../core';
-import {Chip, ChipGroup, Segmented, Select, type SelectOption} from '@/ui';
+import {Button, Chip, ChipGroup, Segmented, Select, type SelectOption} from '@/ui';
 import styles from '../studio.module.css';
 
 const MODES: {id: string; label: string}[] = [{id: 'light', label: '라이트'}, {id: 'dark', label: '다크'}, {id: 'auto', label: '시스템 설정 따름(auto)'}];
@@ -36,6 +36,33 @@ export function DesignPanel() {
       layout: Object.fromEntries(Object.entries(e.layoutChoices(doc, slotsForChoices)).map(([slot, list]) => [slot, new Map(list.map(c => [c.id, c]))])),
     };
   }, [core, doc, themePalette, slotsForChoices]);
+  const materialData = useMemo(() => {
+    if (!core) return null;
+    const color = core.service.getColorTokens();
+    const type = core.service.getTypePresets();
+    const schema = core.service.getSchema({target: 'blueprint', fields: ['profile']});
+    if (!color.ok || !type.ok || !schema.ok) return null;
+    const profiles = schema.value.properties.profile?.enum ?? [];
+    const trials = (field: 'colorPalette' | 'typeRoles' | 'profile', values: string[]) => values.map(id => {
+      const result = core.edit.applyOp(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0', [field]: id}, upgrade: true});
+      return {id, ok: result.ok, errors: result.ok ? [] : result.errors};
+    });
+    const without = (field: 'colorPalette' | 'typeRoles' | 'profile') => {
+      const draft = {...doc, catalogVersion: '2.6.0'} as Record<string, unknown>;
+      delete draft[field];
+      const result = core.edit.applyOp(doc, 'importBlueprint', {blueprint: draft, upgrade: true});
+      return {id: '', ok: result.ok, errors: result.ok ? [] : result.errors};
+    };
+    return {
+      colors: [without('colorPalette'), ...trials('colorPalette', color.value.options.map(x => x.id))],
+      types: [without('typeRoles'), ...trials('typeRoles', type.value.presets.map(x => x.id))],
+      profiles: [without('profile'), ...trials('profile', profiles)],
+      labels: {
+        colors: Object.fromEntries(color.value.options.map(x => [x.id, x.label])),
+        types: Object.fromEntries(type.value.presets.map(x => [x.id, x.label])),
+      },
+    };
+  }, [core, doc]);
   if (!catalog || !core || !choices) return <p className={styles.muted}>카탈로그를 불러오는 중입니다…</p>;
 
   const theme = catalog.themes.find(t => t.id === doc.theme);
@@ -89,6 +116,20 @@ export function DesignPanel() {
         </div>
       </section>
 
+      <section className={styles.section} aria-labelledby="d-materials" data-testid="material-choices">
+        <h3 id="d-materials" className={styles.sectionTitle}>2.6.0 Materials</h3>
+        <p className={styles.muted}>색 토큰, 역할 타이포그래피, Design Profile은 문서에 저장되어 미리보기와 내보내기에 반영됩니다. 선택 가능 여부와 이유는 Core 검증 결과입니다.</p>
+        {doc.catalogVersion !== '2.6.0' ? <Button size="sm" onClick={() => api.edit({kind: 'upgrade260'})}>현재 문서를 2.6.0으로 업그레이드</Button> : null}
+        {materialData ? <div className={styles.axisGrid}>
+          <MaterialSelect id="material-color" label="색 재료" value={doc.colorPalette ?? ''} items={materialData.colors} labelOf={id => materialData.labels.colors[id] ?? id}
+            onChange={value => api.edit({kind: 'setMaterial', field: 'colorPalette', value: value || null})} />
+          <MaterialSelect id="material-type-roles" label="역할 타이포그래피" value={doc.typeRoles ?? ''} items={materialData.types} labelOf={id => materialData.labels.types[id] ?? id}
+            onChange={value => api.edit({kind: 'setMaterial', field: 'typeRoles', value: value || null})} />
+          <MaterialSelect id="material-profile" label="Design Profile" value={doc.profile ?? ''} items={materialData.profiles} labelOf={id => id || '프로파일 없음'}
+            onChange={value => api.edit({kind: 'setMaterial', field: 'profile', value: value || null})} />
+        </div> : <p className={styles.muted}>2.6.0 재료를 불러오지 못했습니다.</p>}
+      </section>
+
       <section className={styles.section} aria-labelledby="d-layout">
         <h3 id="d-layout" className={styles.sectionTitle}>구성 변형</h3>
         {origin ? (
@@ -118,4 +159,9 @@ export function DesignPanel() {
       </section>
     </div>
   );
+}
+
+function MaterialSelect({id, label, value, items, labelOf, onChange}: {id: string; label: string; value: string; items: Choice[]; labelOf: (id: string) => string; onChange: (value: string) => void}) {
+  const options: SelectOption[] = items.map(c => ({value: c.id, label: c.id ? labelOf(c.id) : '(없음)', ...verdict(c)}));
+  return <Select id={id} className={styles.field} label={label} value={value} onChange={onChange} options={options} />;
 }

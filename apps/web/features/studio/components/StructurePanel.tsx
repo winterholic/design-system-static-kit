@@ -85,7 +85,7 @@ function AddNode({selection, act}: {selection: NodePath; act: (fn: () => void) =
   const placements = useMemo(() => (api.core ? api.core.edit.addPlacements(doc, selection) : null), [api.core, doc, selection]);
   const parentPath = selection.slice(0, -1), index = selection.at(-1);
   const add = (where: 'inside' | 'after', type: string) => {
-    const node = api.core?.edit.partExample(type);
+    const node = api.core?.edit.partExample(type, doc.catalogVersion);
     if (!node) return;
     if (where === 'inside') api.edit({kind: 'insert', parent: selection, node: node as Node});
     else api.edit({kind: 'insert', parent: parentPath, node: node as Node, index: (index ?? 0) + 1});

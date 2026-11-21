@@ -27,6 +27,14 @@ test('수정하지 않은 템플릿 문서는 URL 시작 인자가 바로 바꾼
   assert.equal(boot.origin?.template, 'saas-landing');
 });
 
+test('Materials가 요청한 2.6.0 재료 시작 상태도 작업 중인 문서를 덮지 않고 기존 확인을 거친다', async () => {
+  const {doc, loaded} = await stored({modified: true});
+  const parsed = parseUrl('?catalogVersion=2.6.0&colorPalette=static-kit&typeRoles=marketing');
+  const boot = computeBoot(parsed, loaded);
+  assert.deepEqual(boot.doc, doc);
+  assert.deepEqual(boot.view.dialog, {kind: 'confirm', action: {kind: 'start', request: {catalogVersion: '2.6.0', colorPalette: 'static-kit', typeRoles: 'marketing'}}});
+});
+
 for (const [name, patch] of [
   ['수정한 문서', {modified: true}],
   ['가져온 문서(출처 없음)', {origin: null}],
