@@ -8,7 +8,7 @@ import {
   checkProfile, designRegistry, pendingMaterials, profileIntegrity, assemble, PROFILE_KIND,
 } from '../src/profiles/index.mjs';
 import {PROFILE_EVIDENCE, PATTERN_EVIDENCE} from '../src/profiles/registry.mjs';
-import {createRegistry, defineMaterial, catalogRegistry} from '../src/materials/index.mjs';
+import {createRegistry, catalogRegistry} from '../src/materials/index.mjs';
 import {axes, nodeTypes, createBlueprint, migrateBlueprint, blueprintSchema, TOP_LEVEL_SINCE_FIELDS} from '../src/catalog.mjs';
 import {validateBlueprint} from '../src/validate.mjs';
 import {validateBlueprint as serviceValidate, HINTS, catalogSnapshot} from '../src/service/index.mjs';
@@ -98,7 +98,7 @@ test('pending materials (chart presets, Select, data table) stay out of the allo
   assert.ok(!without.get('profile:erp').ext.components.includes('component:data-table'));
   // 같은 id가 등록된 레지스트리에서는 허용 목록으로 옮겨 간다.
   const pre = catalogWithoutIntegrating();
-  pre.register(fakeChartPreset('chart-preset:erp-quarterly-revenue'));
+  pre.register(fakeChartPreset(pre, 'chart-preset:erp-quarterly-revenue'));
   const r = designRegistry({base: pre});
   assert.deepEqual(r.get('profile:erp').ext.charts.presets, ['chart-preset:erp-quarterly-revenue']);
   assert.ok(!r.get('profile:erp').ext.pending.includes('chart-preset:erp-quarterly-revenue'));

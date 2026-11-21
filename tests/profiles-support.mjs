@@ -7,4 +7,10 @@ export function catalogWithoutIntegrating() {
   for (const m of full.list()) if (!INTEGRATING(m.id)) r.register(structuredClone(m));
   return r;
 }
-export const fakeChartPreset = id => defineMaterial({id, kind: 'chart-preset', category: 'chart', label: 'fake', since: '2.6.0', render: {module: 'src/render/chart.mjs', export: 'renderChart'}, quality: {status: 'implemented', evidence: []}, ext: {chartKind: 'bar', series: {}, axes: null}});
+/** 종류 정의(registry.kind)의 ext 모양을 따르는 가짜 재료. 종류의 ext가 바뀌어도 "등록되면 허용 목록에 든다"만 검사한다. */
+const PLACEHOLDER = {string: 'x', number: 0, boolean: false, array: [], object: {}, any: null};
+export function fakeMaterial(registry, kind, id, category) {
+  const ext = Object.fromEntries(Object.entries(registry.kind(kind).ext).map(([k, t]) => [k, structuredClone(PLACEHOLDER[t.replace('?', '')])]));
+  return defineMaterial({id, kind, category, label: 'fake', since: '2.6.0', render: {module: 'src/render/chart.mjs', export: 'renderChart'}, quality: {status: 'implemented', evidence: []}, ext});
+}
+export const fakeChartPreset = (registry, id) => fakeMaterial(registry, 'chart-preset', id, 'chart');

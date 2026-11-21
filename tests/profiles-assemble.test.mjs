@@ -2,8 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {assemble, designRegistry, PROFILES, PROFILE_IDS, PATTERNS, INTENT_KEYS} from '../src/profiles/index.mjs';
-import {catalogWithoutIntegrating, fakeChartPreset} from './profiles-support.mjs';
-import {defineMaterial} from '../src/materials/index.mjs';
+import {catalogWithoutIntegrating, fakeChartPreset, fakeMaterial} from './profiles-support.mjs';
 import {validateBlueprint} from '../src/validate.mjs';
 import {validateBlueprint as serviceValidate, HINTS} from '../src/service/index.mjs';
 import {compile} from '../src/compiler.mjs';
@@ -118,8 +117,8 @@ test('defaults the profile chooses are recorded as decisions; conflicts with a r
 
 test('materials registered later (chart presets, data table) widen what assemble accepts without code changes', () => {
   const pre = catalogWithoutIntegrating();
-  pre.register(fakeChartPreset('chart-preset:erp-quarterly-revenue'));
-  pre.register(defineMaterial({id: 'component:data-table', kind: 'component', category: 'form-data-feedback', label: 'fake', since: '2.6.0', render: {module: 'src/render/nodes.mjs', export: 'makeRenderer'}, quality: {status: 'implemented', evidence: []}, ext: {nodeType: 'data-table', group: 'data', fields: [], required: []}}));
+  pre.register(fakeChartPreset(pre, 'chart-preset:erp-quarterly-revenue'));
+  pre.register(fakeMaterial(pre, 'component', 'component:data-table', 'form-data-feedback'));
   const registry = designRegistry({base: pre});
   const r = assemble('erp', {chartPresets: ['erp-quarterly-revenue'], components: ['component:data-table']}, {}, {registry});
   assert.equal(r.ok, true, JSON.stringify(r.diagnostics));

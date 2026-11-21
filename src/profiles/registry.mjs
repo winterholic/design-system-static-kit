@@ -18,7 +18,7 @@ export const PROFILE_KIND = defineKind({
 
 /** 품질 근거. 그 재료를 실패시킬 수 있는 테스트의 file:line이다. tests/profiles.test.mjs가 줄이 실제 test( 인지 확인한다. */
 export const PROFILE_EVIDENCE = Object.freeze(['tests/profiles.test.mjs:26', 'tests/profiles.test.mjs:173']);
-export const PATTERN_EVIDENCE = Object.freeze(['tests/profiles.test.mjs:51', 'tests/profiles-assemble.test.mjs:23']);
+export const PATTERN_EVIDENCE = Object.freeze(['tests/profiles.test.mjs:51', 'tests/profiles-assemble.test.mjs:22']);
 
 const C = type => materialId('component', type);
 
