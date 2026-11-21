@@ -9,6 +9,8 @@
 import {createRegistry} from './registry.mjs';
 import {catalogMaterialList} from './adapters.mjs';
 import {registerMaterialType} from './typography.mjs';
+export {chartPresetMaterials} from './chart-presets.mjs';
+export {resolveChartPreset} from '../render/chart-presets.mjs';
 export * from './contract.mjs';
 export {validateMaterial, validateGraph, MATERIAL_VERSIONS} from './validate.mjs';
 export {createRegistry, MaterialError} from './registry.mjs';

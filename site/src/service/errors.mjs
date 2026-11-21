@@ -69,6 +69,7 @@ export const HINTS = {
   STATE_DATA: '데이터 부품의 상태(ready·partial)에는 실제 데이터가 있어야 합니다. 데이터를 채우거나 state를 바꾸세요.',
   TABLE_WIDTH: '표의 열 폭 합계와 열 수가 맞지 않습니다. columns와 rows의 칸 수를 맞추세요.',
   CHART_SHAPE: '차트 계열의 길이와 값 범위를 labels와 맞추세요.',
+  CHART_AXIS: '축 최솟값·최댓값이 데이터를 자르지 않게 하고, 최솟값이 최댓값보다 작도록 고치세요.',
   CALENDAR_DAY: '달력의 날짜가 해당 월에 없는 날입니다. 존재하는 날짜로 고치세요.',
   METRIC_TREND: '지표의 trend와 값 쌍이 서로 맞지 않습니다. 둘을 함께 채우거나 함께 지우세요.',
   SELECTED_RANGE: '선택값이 항목 범위 밖입니다. 존재하는 항목 번호로 고치세요.',
