@@ -5,12 +5,11 @@
  *  - 크기별 높이·좌우 패딩·간격·글자 역할·아이콘은 `CONTROL_SIZES`(typography.mjs)와 `SPACE` 토큰 이름(spacing.mjs)에서 읽는다. 이 파일은 px 값을 새로 정하지 않는다.
  *  - Core 파일이다: DOM 전역을 읽지 않는다(tests/core-boundary.test.mjs). 브라우저에서 도는 코드는 각 재료의 `attach*` 함수 하나이고, 문자열로 직렬화되므로 바깥 이름을 참조하지 않는다. */
 import {defineMaterial} from './contract.mjs';
-import {CONTROL_SIZES, CONTROL_SIZE_NAMES} from './typography.mjs';
-import {TOKEN} from '../spacing.mjs';
 import {escapeHTML} from '../render/util.mjs';
+import {SIZES, sizeVars, sizeCSS, defaultControlSizeCSS} from './control-size.mjs';
+export {SIZES, sizeVars, sizeCSS, defaultControlSizeCSS} from './control-size.mjs';
 
 export const e = escapeHTML;
-export const SIZES = CONTROL_SIZE_NAMES;
 export const SHAPES = Object.freeze(['square', 'soft', 'pill']);
 export const CONCEPTS = Object.freeze(['appearance', 'shape', 'size', 'function', 'state', 'context']);
 export const SAFE_ID = /^[a-z][a-z0-9-]*$/;
@@ -82,15 +81,6 @@ export function combinationStats(contract) {
 }
 /** 허용 값 중 `keep`만 빼고 전부: 금지 조건을 "keep이 아니면"으로 쓸 때. */
 export const except = (contract, attr, ...keep) => contract.axes[attr].filter(v => !keep.includes(v));
-
-const px = n => (n < 0 ? `- ${-n}px` : `+ ${n}px`);
-/** 크기 이름 → 컨트롤 치수 변수. 값은 CONTROL_SIZES의 step·pad·gap·role·icon을 그대로 읽는다. */
-export function sizeVars(name) {
-  const c = CONTROL_SIZES[name];
-  if (!c) throw new RangeError('unknown control size: ' + name);
-  return {height: c.step === 0 ? 'var(--kit-control)' : `calc(var(--kit-control) ${px(c.step)})`, padX: `var(${TOKEN[c.pad]})`, gap: `var(${TOKEN[c.gap]})`, font: `var(--kit-t-${c.role})`, icon: `${c.icon}px`};
-}
-export const sizeCSS = scope => SIZES.map(n => { const v = sizeVars(n); return `${scope}[data-size=${n}]{--ctl-h:${v.height};--ctl-px:${v.padX};--ctl-gap:${v.gap};--ctl-font:${v.font};--ctl-icon:${v.icon}}`; }).join('');
 
 /** 모든 컴포넌트가 같은 방식으로 쓰는 조각: 스크린 리더 전용 글, 로딩 스피너, 포커스 링, 동작 줄이기. 스피너는 색이 아니라 회전과 부분 호(ring)로 진행을 보인다. */
 export const baseStyles = `.kit-ctl-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.kit-ctl-spinner{display:inline-block;flex:none;width:var(--ctl-icon);height:var(--ctl-icon);border:2px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:kit-ctl-spin var(--kit-dur,150ms) linear infinite;animation-duration:900ms}@keyframes kit-ctl-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.kit-ctl-spinner{animation:none;border-inline-end-color:currentColor;border-style:dotted}}`;

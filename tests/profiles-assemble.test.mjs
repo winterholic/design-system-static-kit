@@ -70,6 +70,45 @@ test('requested chart presets shape default chart targets and profile role typog
   assert.equal(JSON.stringify(assembled), JSON.stringify(assembleBlueprint(request)));
 });
 
+test('controlSize is a closed 2.6.0 Blueprint choice that changes compiled CSS consumed by default controls', () => {
+  const small = assemble('erp', {controlSize: 'small'});
+  const medium = assemble('erp', {controlSize: 'medium'});
+  assert.equal(small.ok, true, JSON.stringify(small.diagnostics));
+  assert.equal(medium.ok, true, JSON.stringify(medium.diagnostics));
+  assert.equal(small.blueprint.controlSize, 'small');
+  assert.equal(small.materials.controlSize, 'small');
+  assert.equal(assemble('erp').blueprint.controlSize, PROFILES.erp.controlSize.default);
+
+  const smallCompiled = compileBlueprint(small.blueprint, {include: ['html', 'css', 'manifest']});
+  const mediumCompiled = compileBlueprint(medium.blueprint, {include: ['html', 'css', 'manifest']});
+  assert.equal(smallCompiled.ok, true, JSON.stringify(smallCompiled.errors));
+  assert.equal(mediumCompiled.ok, true, JSON.stringify(mediumCompiled.errors));
+  assert.notEqual(smallCompiled.value.css, mediumCompiled.value.css);
+  assert.match(smallCompiled.value.html, /class="kit-button/);
+  assert.match(smallCompiled.value.css, /\.kit-button:not\(\[data-size\]\)/);
+  assert.match(smallCompiled.value.css, /--ctl-h:calc\(var\(--kit-control\) - 8px\)/);
+  assert.match(mediumCompiled.value.css, /--ctl-h:var\(--kit-control\)/);
+  assert.doesNotMatch(smallCompiled.value.css, /\.kit-button\[data-size=/, 'explicit component sizes stay on their own selector path');
+  assert.equal(JSON.stringify(assemble('erp', {controlSize: 'small'})), JSON.stringify(small));
+  assert.equal(compile(small.blueprint).css, compile(small.blueprint).css);
+});
+
+test('controlSize defaults remain optional in 2.6.0 and reject unknown or pre-2.6.0 values structurally', () => {
+  const base = assemble('erp').blueprint;
+  const withoutField = {...base}; delete withoutField.controlSize;
+  const legacyCSS = compile(withoutField).css;
+  assert.doesNotMatch(legacyCSS, /\.kit-button:not\(\[data-size\]\)/, 'omitting the optional field preserves the pre-feature control CSS path');
+  rejected(assemble('erp', {controlSize: 'xl'}), 'ASSEMBLE_UNSUPPORTED', '$args.intent.controlSize');
+  assert.ok(validateBlueprint({...base, controlSize: 'xl'}).errors.some(d => d.code === 'ENUM' && d.path === '$.controlSize'));
+  for (const version of ['2.4.0', '2.5.0']) {
+    assert.ok(validateBlueprint({...base, catalogVersion: version, controlSize: 'small'}).errors.some(d => d.code === 'VERSION_FIELD' && d.path === '$.controlSize'), version);
+  }
+  const injected = assemble('erp', {controlSize: 'small', css: '.kit-button{height:1px}'});
+  assert.equal(injected.ok, false);
+  assert.equal(injected.blueprint, null);
+  assert.ok(injected.diagnostics.some(d => d.code === 'ASSEMBLE_UNSUPPORTED' && d.path === '$args.intent.css'));
+});
+
 test('chart presets do not overwrite user slot charts and reject ambiguous or over-capacity targets', () => {
   const userChart = {type: 'chart', title: '내 잔액', caption: '직접 입력', kind: 'area', categories: ['1월', '2월'], series: [{name: '내 데이터', values: [5, 8]}]};
   const request = {profile: 'finance', intent: {pattern: 'dashboard-grid', chartPresets: ['finance-monthly-close']}, content: {slots: {insights: [userChart]}}};

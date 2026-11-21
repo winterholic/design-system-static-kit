@@ -12,7 +12,7 @@
 
 ## Blueprint
 
-- `profile`은 `since: 2.6.0`의 닫힌 enum이다. 2.5.0 이하에서 쓰면 `VERSION_FIELD`, 모르는 id는 `ENUM`으로 거부한다. 게이트는 `PROFILE_SINCE_FIELD`(`src/catalog/expression.mjs`)다. 색 토큰 계약이 고정한 `TOP_LEVEL_SINCE_FIELDS`는 건드리지 않았다.
+- `profile`은 `since: 2.6.0`의 닫힌 enum이다. 2.5.0 이하에서 쓰면 `VERSION_FIELD`, 모르는 id는 `ENUM`으로 거부한다. 게이트는 `PROFILE_SINCE_FIELD`(`src/catalog/expression.mjs`)다. `TOP_LEVEL_SINCE_FIELDS`에는 2.6.0 필드인 `colorPalette`, `typeRoles`, `controlSize`가 등록된다.
 - `profile`이 있으면 검증기(`src/validate.mjs`)가 `checkProfile`을 부른다. 위반은 `PROFILE_*` 오류다. 서비스 응답은 기존 Diagnostic 모양(`code, path, message, hint, rule, fix`)을 지킨다. 근거와 대안 목록은 message 뒤에 붙고 `fix`에는 프로파일 기본값이 담긴다. 심각도·근거·대안을 필드로 따로 받으려면 `checkProfile`을 직접 부른다.
 - 프로파일은 제약이고 스타일 출처가 아니다. 같은 Blueprint에서 `profile`을 빼고 컴파일해도 HTML·CSS가 같다(테스트). 프로파일 Blueprint는 `colorPalette: 'static-kit'`이 필요하다(PF08).
 - 프로파일 규칙은 카탈로그 `rules`·`expressionRules`에 넣지 않았다. 그래서 `catalogSnapshot()`과 2.4.0·2.5.0 출력이 그대로다. 테스트가 기준 커밋 14914b80d의 snapshot sha256으로 확인한다.
@@ -36,7 +36,7 @@
 - 슬롯 내용은 슬롯과 프로파일이 **함께** 허용하는 부품만 받는다(`ASSEMBLE_CONTENT`). 개수와 모르는 슬롯은 `ASSEMBLE_SLOT`이다. 결과는 검증기를 통과해야 `ok:true`다. 통과하지 못하면 `ASSEMBLE_INVALID`와 검증 진단을 함께 준다.
 - `chartPresets`는 패턴이 허용한 기본 슬롯 안의 기본 차트 노드에 순서대로 적용한다. 등록 재료의 kind·데이터·축·격자·라벨·범례 등 기존 옵션을 차트 노드로 복사하며, 기본 차트의 제목·설명과 다른 콘텐츠는 유지한다. 프로파일 차트 형태·차트 수 제한과 패턴 슬롯에 적용할 위치가 모두 맞아야 한다. 슬롯을 사용자가 제공한 내용으로 교체해 기본 차트 대상이 사라지거나 프리셋 수가 대상보다 많으면 `ASSEMBLE_CHART_PRESET` 진단으로 거부한다. 사용자 슬롯·차트 데이터는 프리셋으로 덮어쓰지 않는다.
 - 프로파일의 `type.rolePreset`은 Blueprint `typeRoles`로 기록한다. `2.6.0` 역할 서체 재료의 CSS와 manifest를 컴파일러가 생성한다. 기존 `typography` 축은 그대로 유지한다.
-- 명시적 재료 입력 중 `components`는 프로파일 허용 목록을 검증하는 선택 선언이다. 트리 부품을 자동 추가하지 않으며 실제 부품은 `content.slots`로 전달한다. `controlSize`는 성공 결과의 `materials.controlSize`에 보존되는 선택 메타데이터이고 Blueprint나 컴파일 CSS에는 적용되지 않는다. 컨트롤 부품별 크기 적용 계약은 별도 컴파일러/컨트롤 재료 의존으로 남는다.
+- 명시적 재료 입력 중 `components`는 프로파일 허용 목록을 검증하는 선택 선언이다. 트리 부품을 자동 추가하지 않으며 실제 부품은 `content.slots`로 전달한다. `controlSize`는 프로파일의 허용값 중 하나를 고르며, 생략하면 프로파일 기본값을 쓴다. 선택은 Blueprint의 2.6.0 전용 `controlSize`와 `materials.controlSize`에 기록되고, 컴파일 CSS가 `data-size`가 없는 기본 `.kit-button`(ghost 제외)과 `.kit-field` 안의 `input`·`select`·`textarea`에 적용한다. `data-size`가 있는 컨트롤은 기존 크기 재료 선택자를 유지한다. 필드를 생략한 기존 2.6.0 Blueprint는 계속 유효하며 이 기본 크기 규칙을 출력하지 않는다.
 - 시간·난수를 읽지 않는다. 같은 입력이면 JSON 바이트가 같다.
 
 ## 통합 중 재료

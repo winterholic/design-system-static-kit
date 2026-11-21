@@ -110,7 +110,7 @@ test('pending materials (chart presets, Select, data table) stay out of the allo
 test('Blueprint 2.6.0 accepts profile behind a version gate; older versions and unknown ids are rejected', () => {
   const s = blueprintSchema().properties.profile;
   assert.deepEqual(s.enum, PROFILE_IDS); assert.equal(s['x-since'], '2.6.0');
-  assert.deepEqual(TOP_LEVEL_SINCE_FIELDS.map(f => f.field), ['colorPalette', 'typeRoles'], 'profile stays out of the top-level since list'); // typeRoles 는 feat/wire-260 의 역할 타이포 필드
+  assert.deepEqual(TOP_LEVEL_SINCE_FIELDS.map(f => f.field), ['colorPalette', 'typeRoles', 'controlSize'], 'profile stays out of the top-level since list');
   const old = {...migrateBlueprint(createBlueprint('admin-table'), '2.5.0'), profile: 'erp'};
   assert.ok(validateBlueprint(old).errors.some(e => e.path === '$.profile' && e.code === 'VERSION_FIELD'));
   const unknown = {...base('erp'), profile: 'banking'};

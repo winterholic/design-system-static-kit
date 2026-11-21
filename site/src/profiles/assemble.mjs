@@ -113,6 +113,7 @@ export function assemble(profileId, intent = {}, content = {}, {registry = null}
   pick('density', p.density.default);
   pick('typography', keepOr('typography', p.type.typography));
   set('typeRoles', strip('type-role-preset', p.type.rolePreset), 'profile');
+  pick('controlSize', p.controlSize.default);
   pick('shell', shells[0]);
   pick('width', widths[0]);
   for (const axis of PROFILE_AXES.filter(a => a !== 'width')) set(axis, keepOr(axis, p.axes[axis]), 'profile');
@@ -182,7 +183,7 @@ export function assemble(profileId, intent = {}, content = {}, {registry = null}
   }
   const materials = {
     profile: pm.id, pattern: materialId('pattern', patternId), template: materialId('template', pattern.template), theme: materialId('theme', themeId),
-    typeRole: p.type.rolePreset, controlSize: intent.controlSize ?? p.controlSize.default, tableRows: structuredClone(p.tableRows),
+    typeRole: p.type.rolePreset, controlSize: b.controlSize, tableRows: structuredClone(p.tableRows),
     chartPresets: requestedPresets.map(x => (x.startsWith('chart-preset:') ? x : materialId('chart-preset', x))),
     narrow: {...p.narrow}, pending: [...pm.ext.pending],
   };

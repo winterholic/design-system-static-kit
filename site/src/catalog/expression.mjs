@@ -1,7 +1,7 @@
 /**
- * 카탈로그 2.5.0 표현력 확장(ADR 0010, docs/dev/expressiveness/report.md 6절 EX-1~EX-5).
- * 새 필드는 모두 범위가 닫힌 enum이고, 값은 기존 토큰·역할·간격 사다리로만 해석된다. 임의 CSS·숫자·className은 받지 않는다.
- * 이 파일은 "무엇이 2.5.0에서 생겼는가"의 단일 출처다: 스키마 설명, 버전 게이트(src/validate.mjs), 렌더러·스타일 게이트가 모두 읽는다.
+ * 카탈로그 표현력 확장(2.5.0 EX-1~EX-5 및 이후 버전의 필드).
+ * 새 필드는 범위가 닫힌 enum이고, 기존 토큰·역할·간격 사다리로만 해석된다. 임의 CSS·숫자·className은 받지 않는다.
+ * 스키마 설명, 버전 게이트(src/validate.mjs), 렌더러·스타일 게이트가 이 파일의 선언을 읽는다.
  */
 import {PROFILE_IDS} from '../profiles/data.mjs';
 
@@ -31,9 +31,11 @@ export const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
   // 역할 타이포그래피 프리셋(src/materials/typography.mjs의 MATERIAL_TYPE_PRESETS 키와 같다. tests/wire-260.test.mjs가 비교한다).
   Object.freeze({field: 'typeRoles', values: Object.freeze(['erp', 'dashboard', 'document', 'marketing']), since: '2.6.0'}),
+  // 프로파일 조립이 고른 기본 컨트롤 크기. 2.6.0 role/material control size 토큰만 받는다.
+  Object.freeze({field: 'controlSize', values: Object.freeze(['compact', 'small', 'medium', 'large']), since: '2.6.0'}),
 ]);
 
-/** 2.6.0 profile selection (src/profiles/data.mjs). Kept apart from TOP_LEVEL_SINCE_FIELDS, whose contents are pinned by the color-token contract. */
+/** 2.6.0 profile selection (src/profiles/data.mjs), separately gated from fields in TOP_LEVEL_SINCE_FIELDS. */
 export const PROFILE_SINCE_FIELD = Object.freeze({field: 'profile', values: PROFILE_IDS, since: '2.6.0'});
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */

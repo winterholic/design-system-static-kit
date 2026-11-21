@@ -449,7 +449,7 @@ test('component queries show the 2.6.0 parts only when asked for catalogVersion 
 test('the compile path reads only the material render/style modules; the registry is read by the service query file alone', () => {
   const importsOf = f => [...read(f).matchAll(/^\s*import .*from ['"]([^'"]*materials\/[^'"]*)['"]/gm)].map(m => m[1].replace(/^.*materials\//, ''));
   assert.deepEqual(importsOf('src/render/nodes.mjs').sort(), ['select.mjs', 'table.mjs']);
-  assert.deepEqual(importsOf('src/styles/index.mjs').sort(), ['select.mjs', 'table.mjs', 'typography.mjs']);
+  assert.deepEqual(importsOf('src/styles/index.mjs').sort(), ['control-size.mjs', 'select.mjs', 'table.mjs', 'typography.mjs']);
   assert.deepEqual(importsOf('src/render/index.mjs').sort(), ['select.mjs', 'table.mjs']);
   assert.deepEqual(importsOf('src/validate.mjs'), []);
   assert.deepEqual(importsOf('src/service/index.mjs'), []);
