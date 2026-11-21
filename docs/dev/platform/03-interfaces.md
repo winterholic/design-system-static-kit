@@ -282,6 +282,8 @@ POST /api/v1/edit
 | `/src/**/*.mjs`, `*.css` | 지원 약속 없음 | 현재 운영 사이트가 소스를 그대로 공개한다. 외부가 import하는지는 알 수 없다 (**확인 필요**). 옛 앱 제거 때 공지하고 함께 내린다 |
 | `/.nojekyll` | 폐기 가능 | GitHub Pages가 꺼져 있다 (`00-baseline.md` 5절) |
 
+`/studio`의 시작 상태·화면 상태 쿼리, 저장 복원, 편집 상태 및 Studio 전용 검증 연결은 [05-studio-contract.md](./05-studio-contract.md)를 따른다. Explore가 만든 시작 링크는 그 문서의 `template`, `theme`, `variant`, `palette`, `mode`, `layout` 키를 사용한다.
+
 ### 5.3 브라우저 저장소
 
 | 키 | 방침 |
