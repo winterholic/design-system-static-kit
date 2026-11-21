@@ -6,13 +6,23 @@ export const dynamic = 'force-static';
 export function generateStaticParams() {
   return componentRows().flatMap(r => {
     const view = componentView(r.type)!;
-    return [{componentId: r.type, variant: []}, ...view.variants.filter(v => v.ok).map(v => ({componentId: r.type, variant: [v.id]}))];
+    const materialVariants = view.variantGroups.flatMap(group => group.availability.filter(v => v.ok && String(v.value) !== String(group.defaultValue)).map(v => ({componentId: r.type, variant: [`${group.name}~${encodeURIComponent(String(v.value))}`]})));
+    return [{componentId: r.type, variant: []}, ...view.variants.filter(v => v.ok).map(v => ({componentId: r.type, variant: [v.id]})), ...materialVariants];
   });
 }
 
 export async function GET(_req: Request, {params}: {params: Promise<{componentId: string; variant?: string[]}>}) {
   const {componentId, variant} = await params;
-  const rendered = renderComponent(componentId, variant?.[0]);
+  const view = componentView(componentId);
+  const materialSelection = view?.material && variant?.length ? Object.fromEntries(variant.map(part => {
+    const at = part.indexOf('~');
+    if (at < 1) return ['', ''];
+    const group = part.slice(0, at), value = decodeURIComponent(part.slice(at + 1));
+    const schema = view.variantGroups.find(item => item.name === group);
+    const original = schema?.values.find(item => String(item) === value);
+    return [group, original ?? value];
+  })) : undefined;
+  const rendered = renderComponent(componentId, materialSelection ?? variant?.[0]);
   if (!rendered.ok) return new Response(rendered.reason, {status: 404, headers: {'content-type': 'text/plain; charset=utf-8'}});
   return new Response(rendered.html, {headers: {'content-type': 'text/html; charset=utf-8'}});
 }
