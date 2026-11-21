@@ -10,7 +10,7 @@ import {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotId
 import {variantContracts, variantCheckKinds, DIRECT_CONTRACTS, assessBlueprintContracts} from './variant-contracts.mjs';
 import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './variant-effects.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
-import {EXPRESSION_SINCE, SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules} from './expression.mjs';
+import {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} from './expression.mjs';
 import {recipes, recipeRules, recipeIds} from './recipes.mjs';
 export {compositionRules, compositionCoverage, pageRules, PAGE_RULE_LEGACY_VERSIONS, COMPOSITION_VERSION} from './composition.mjs';
 
@@ -19,12 +19,12 @@ export const CATALOG_VERSION = '2.4.0';
 export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
 /** 표현력 확장(2.5.0)을 더한 버전. 검증기·스키마는 이 목록을 받아들이고, `kit migrate --to 2.5.0`이 옮긴다. */
 export const EXPRESSION_CATALOG_VERSION = EXPRESSION_SINCE;
-export const ACCEPTED_CATALOG_VERSIONS = Object.freeze([...SUPPORTED_CATALOG_VERSIONS, EXPRESSION_CATALOG_VERSION]);
+export const ACCEPTED_CATALOG_VERSIONS = Object.freeze([...SUPPORTED_CATALOG_VERSIONS, EXPRESSION_CATALOG_VERSION, '2.6.0']);
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {recipes, recipeRules, recipeIds};
 export {DIRECT_CONTRACTS, assessBlueprintContracts};
-export {SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
+export {SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
 export {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
@@ -66,7 +66,7 @@ export function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,

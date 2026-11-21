@@ -5,6 +5,7 @@ import {stylesheet} from './styles.mjs';
 import {renderTree, escapeHTML, formRuntime} from './render.mjs';
 import {planComposition, auditPage} from './composition.mjs';
 import {typeRev, HANGUL} from './typography.mjs';
+import {resolveColorTokens, colorTokenUsage} from './color-tokens.mjs';
 export {validateBlueprint, resolveTokens, contrast};
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -40,6 +41,10 @@ export function compile(input) {
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
+  if (b.colorPalette) {
+    const color = resolveColorTokens({palette: b.colorPalette, mode: b.mode});
+    manifest.colorTokens = {palette: color.palette, layers: Object.keys(color.layers), references: color.references, contrast: serializableContrast(report.filter(x => !x.mode.includes('inverse'))), materialModules: ['src/color-tokens.mjs','src/materials/adapters.mjs'], usedTokens: colorTokenUsage()};
+  }
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
   // Page rules (composition 1.3.0, catalog 2.4.0): facts and decisions about the whole page. Absent for 2.1–2.3 inputs, whose output is pinned.
