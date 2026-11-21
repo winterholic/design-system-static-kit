@@ -1,0 +1,33 @@
+name: Web
+# apps/web(Next.js) 빌드·시험. 기존 Verify 워크플로(레거시 정적 사이트와 Core)는 그대로 두고 따로 돈다.
+on:
+  push:
+    branches: [main]
+    paths: ['apps/web/**', 'src/**', 'site/**', 'package.json', 'package-lock.json', 'vercel.json', '.github/workflows/web.yml']
+  pull_request:
+    paths: ['apps/web/**', 'src/**', 'site/**', 'package.json', 'package-lock.json', 'vercel.json', '.github/workflows/web.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm --workspace apps/web run test:boundary
+      - run: npm --workspace apps/web run build
+      - run: npm --workspace apps/web run typecheck
+      - run: npx playwright install --with-deps chromium
+      - run: npm --workspace apps/web run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: web-evidence
+          path: apps/web/test-results/
+          retention-days: 14
