@@ -1,0 +1,429 @@
+EXEMPT(정적 문서의 목차 링크는 섹션 제목 전문(40자 안팎)이다. 360px에서 두 줄이 되는 것이 의도이고, 줄이 늘어도 어색하지 않게 알약(999px) 대신 둥근 사각형(16px)으로 바꿨다. 제목을 줄이면 문서 내용이 바뀐다.) CONTROL_WRAP [control] http://127.0.0.1:4320/docs/layout.html @360px
+  at   body > nav.toc > a:nth-of-type(2)  “고정 개수 격자도 같은 규칙을 따른다(리비전 2, 카탈로그 2.4…”
+  evid @360px lines=2 containerWidth=302 fontSize=13
+  fix  컨트롤 글자는 한 줄이 원칙이다. 폭을 넓히거나 문구를 줄이고 white-space: nowrap을 둔다.
+EXEMPT(Studio는 편집 화면이라 본문이 뷰포트 전폭을 쓴다(상단 바만 1120px 컨테이너). 화면 소유는 features/studio 담당 작업이라 이 브랜치에서는 고치지 않는다. 바를 전폭으로 바꿀지는 Studio 쪽 결정.) BAR_MISALIGNED_X [bar] http://127.0.0.1:4320/studio @360/768/1280/1600px
+  at   body > header.TrhP_a_header  “Static Kit메뉴 열기ExploreComponentsDocs…”
+  evid @360px barContentLeft=16 pageContentLeft=0 barContentRight=344 pageContentRight=360 leftDeltaPx=16 rightDeltaPx=-16 tolerancePx=1.5
+  fix  상단 바의 좌우 가장자리를 본문 컨테이너와 같은 max-width·padding으로 맞춘다.
+EXEMPT(text-wrap: pretty를 켜도 360px 좁은 칸의 긴 목록 항목(6줄 안팎) 끝줄에 4자 미만의 한 단어가 남는다. 칸 폭이 정한 줄바꿈이고 경고 수준이다. text-wrap: balance는 긴 단락을 모두 고르게 깎아 데스크톱 가독성을 해치므로 쓰지 않는다.) BODY_ORPHAN [body] http://127.0.0.1:4320/docs/spacing.html @360px
+  at   #규칙 > ul:nth-of-type(4) > li:nth-of-type(2)  “적용 부품: 카드·폼·표·차트·알림·요약·구매 박스·칸반”
+  evid @360px lines=2 linesIfUnconstrained=2 containerWidth=288 availableWidth=288 chWidth=10.1 measureCh=28.6 availableCh=28.6 fontSize=16 boxToAvailable=1 lastLineWidth=59.8 lastLineEm=3.7
+  fix  text-wrap: pretty를 쓰거나 폭을 조정해 마지막 줄에 한두 단어만 남지 않게 한다.
+EXEMPT(text-wrap: pretty를 켜도 360px 좁은 칸의 긴 목록 항목(6줄 안팎) 끝줄에 4자 미만의 한 단어가 남는다. 칸 폭이 정한 줄바꿈이고 경고 수준이다. text-wrap: balance는 긴 단락을 모두 고르게 깎아 데스크톱 가독성을 해치므로 쓰지 않는다.) BODY_ORPHAN [body] http://127.0.0.1:4320/docs/tokens-themes @360px
+  at   #main > div.page > div.prose > ul:nth-of-type(1) > li:nth-of-type(29)  “리얼티 realty — 부동산·매물. 표와 지표가 신뢰를 만든다.…”
+  evid @360px lines=7 linesIfUnconstrained=7 containerWidth=288 availableWidth=288 chWidth=10.1 measureCh=28.6 availableCh=28.6 fontSize=16 boxToAvailable=1 lastLineWidth=63.8 lastLineEm=4
+  fix  text-wrap: pretty를 쓰거나 폭을 조정해 마지막 줄에 한두 단어만 남지 않게 한다.
+EXEMPT(text-wrap: pretty를 켜도 360px 좁은 칸의 긴 목록 항목(6줄 안팎) 끝줄에 4자 미만의 한 단어가 남는다. 칸 폭이 정한 줄바꿈이고 경고 수준이다. text-wrap: balance는 긴 단락을 모두 고르게 깎아 데스크톱 가독성을 해치므로 쓰지 않는다.) BODY_ORPHAN [body] http://127.0.0.1:4320/docs/tokens-themes @360px
+  at   #main > div.page > div.prose > ul:nth-of-type(1) > li:nth-of-type(40)  “오션 ocean — 여행·해양. 파도의 곡선과 깊은 청색. 팔레트…”
+  evid @360px lines=5 linesIfUnconstrained=5 containerWidth=288 availableWidth=288 chWidth=10.1 measureCh=28.6 availableCh=28.6 fontSize=16 boxToAvailable=1 lastLineWidth=42 lastLineEm=2.6
+  fix  text-wrap: pretty를 쓰거나 폭을 조정해 마지막 줄에 한두 단어만 남지 않게 한다.
+EXEMPT(text-wrap: pretty를 켜도 360px 좁은 칸의 긴 목록 항목(6줄 안팎) 끝줄에 4자 미만의 한 단어가 남는다. 칸 폭이 정한 줄바꿈이고 경고 수준이다. text-wrap: balance는 긴 단락을 모두 고르게 깎아 데스크톱 가독성을 해치므로 쓰지 않는다.) BODY_ORPHAN [body] http://127.0.0.1:4320/docs/tokens-themes @360px
+  at   #main > div.page > div.prose > ul:nth-of-type(1) > li:nth-of-type(43)  “럭셔리 luxe — 검정과 금빛, 가는 선과 세리프. 여백으로 가…”
+  evid @360px lines=7 linesIfUnconstrained=7 containerWidth=288 availableWidth=288 chWidth=10.1 measureCh=28.6 availableCh=28.6 fontSize=16 boxToAvailable=1 lastLineWidth=53.3 lastLineEm=3.3
+  fix  text-wrap: pretty를 쓰거나 폭을 조정해 마지막 줄에 한두 단어만 남지 않게 한다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/ @360/768px
+  at   #main > div.page > div.FysNKW_use:nth-of-type(4) > pre.FysNKW_code  “npm run kit -- init saas-landing my.…”
+  evid @360px scrollWidth=393 clientWidth=328 hiddenPx=65
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/actions @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약items필수목록항목 1~3개항목: lab…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/aside @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약side필수선택startendsticky선…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/bento @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(3) > pre.h4zNyW_pre  “{ "type": "bento", "children": [ { "…”
+  evid @360px scrollWidth=330 clientWidth=328 hiddenPx=2
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/breadcrumb @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약items필수목록항목 2~5개항목: lab…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/buy-box @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자price필수…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/calendar @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자year필수정…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/card @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자body필수문…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/card @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "card", "title": "카드 제목", …”
+  evid @360px scrollWidth=357 clientWidth=328 hiddenPx=29
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/chart @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자caption…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/chat @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자message…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/code @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약label필수문자열1~60자language…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/code @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "code", "label": "설치", "la…”
+  evid @360px scrollWidth=361 clientWidth=328 hiddenPx=33
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/cta @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~120자body선택문…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/divider @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약label선택문자열1~40자”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/empty-state @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약kind필수선택first-usesearch…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/empty-state @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "empty-state", "kind": "fi…”
+  evid @360px scrollWidth=365 clientWidth=328 hiddenPx=37
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/faq @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자layout선…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/faq @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "faq", "title": "자주 묻는 질문"…”
+  evid @360px scrollWidth=380 clientWidth=328 hiddenPx=52
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/feature-list @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title선택문자열1~100자layout선…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/feature-list @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "feature-list", "title": "…”
+  evid @360px scrollWidth=360 clientWidth=328 hiddenPx=32
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/filter-bar @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약placeholder필수문자열1~60자fi…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/form @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자intro선택…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/form @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "form", "title": "문의하기", "…”
+  evid @360px scrollWidth=361 clientWidth=328 hiddenPx=33
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/gallery @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title선택문자열1~100자layout선…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/grid @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약columns필수선택twothreefour”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/hero @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약variant필수선택statementspl…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/hero @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "hero", "variant": "statem…”
+  evid @360px scrollWidth=467 clientWidth=328 hiddenPx=139
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/lane @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~60자”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/links @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~80자items필수목…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/list @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자items필수…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/list @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "list", "title": "다음 확인", …”
+  evid @360px scrollWidth=413 clientWidth=328 hiddenPx=85
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/logo-cloud @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자names필수…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/master-detail @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자items필수…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/master-detail @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "master-detail", "title": …”
+  evid @360px scrollWidth=415 clientWidth=328 hiddenPx=87
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/media @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약kind필수선택photodiagramdev…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/menu @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~80자layout필수…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/metric @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약label필수문자열1~80자value필수문…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/notice @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~120자body필수문…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/page-header @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약eyebrow선택문자열1~60자title필…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/page-header @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "page-header", "title": "페…”
+  evid @360px scrollWidth=449 clientWidth=328 hiddenPx=121
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/pagination @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약pages필수정수2~50current필수정…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/plan @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약name필수문자열1~40자price필수문자…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/pricing @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title선택문자열1~100자”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/progress @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약label필수문자열1~80자value필수정…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/properties @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자layout선…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/prose @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~160자body필수문…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/prose @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "prose", "title": "본문 제목",…”
+  evid @360px scrollWidth=379 clientWidth=328 hiddenPx=51
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/quote @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약quote필수문자열1~400자author필…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/quote @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "quote", "quote": "규칙이 있어서…”
+  evid @360px scrollWidth=365 clientWidth=328 hiddenPx=37
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/reel @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title선택문자열1~100자”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/reviews @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~80자score필수문…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/section @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약eyebrow선택문자열1~60자title필…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/skeleton @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약label필수문자열1~60자variant필…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/split @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약reverse선택선택normalrevers…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/stepper @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약steps필수목록항목 2~6개항목: 문자열…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/steps @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자layout선…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/steps @360px
+  at   #main > div.page > div.h4zNyW_block:nth-of-type(4) > pre.h4zNyW_pre  “{ "type": "steps", "title": "시작하는 방법…”
+  evid @360px scrollWidth=352 clientWidth=328 hiddenPx=24
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/summary @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~60자items필수목…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/tab @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약label필수문자열1~40자”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/table @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자caption…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/tabs @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약variant선택선택underlinepil…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/tags @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title선택문자열1~60자items필수목…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/task @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~120자label선택…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/team @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자members…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/timeline @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title필수문자열1~100자variant…”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/components/toc @360px
+  at   #main > div.page > div.h4zNyW_tableWrap:nth-of-type(3)  “이름필수형태허용 값·제약title선택문자열1~40자”
+  evid @360px scrollWidth=560 clientWidth=328 hiddenPx=232
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/blueprint @360px
+  at   #main > div.page > div.prose > pre  “{ "catalogVersion": "2.4.0", "templa…”
+  evid @360px scrollWidth=359 clientWidth=328 hiddenPx=31
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/cli @360px
+  at   #main > div.page > div.prose > pre  “npm run kit -- templates npm run kit…”
+  evid @360px scrollWidth=465 clientWidth=328 hiddenPx=137
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\32 -파이프라인과-강제-경계 > pre  “Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 …”
+  evid @360px scrollWidth=487 clientWidth=310 hiddenPx=177
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\33 -스타일-축-15개 > div.table-scroll  “축이름값mode모드light dark autoshell셸(내비 구…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\34 -테마-54종 > div.table-scroll  “분류테마업무·제품워크스페이스(workspace), 레저(ledge…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\35 -토큰과-대비 > div.table-scroll  “검사기준범위본문 글자7:15개 배경보조·링크·상태·보조색 글자4.…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\36 -부품-55종 > div.table-scroll  “그룹수부품구조3페이지(page), 페이지 제목(page-heade…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360/768px
+  at   #\37 -페이지-유형-16종 > div.table-scroll  “유형필수금지·허용셸·폭 제한일반(general)——모든 셸랜딩(l…”
+  evid @360px scrollWidth=850 clientWidth=308 hiddenPx=542
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\38 -규칙-20개와-금지-조합-11개 > div.table-scroll:nth-of-type(1)  “규칙내용오류 코드R01허용된 속성·값(variant 포함)만. 알…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\38 -규칙-20개와-금지-조합-11개 > div.table-scroll:nth-of-type(2)  “번호조합이유대안X01density × shell하단 탭바는 44p…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360px
+  at   #\39 -템플릿-85종 > div.table-scroll  “페이지 유형템플릿일반팀 소개(about-team), 음악 플레이어…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/design.html @360/768px
+  at   #\31 0-검사-체계 > div.table-scroll  “층명령확인하는 것최근 수치계약·CLInode --test스키마, …”
+  evid @360px scrollWidth=732 clientWidth=308 hiddenPx=424
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/getting-started @360px
+  at   #main > div.page > div.prose > pre  “npm run kit -- templates npm run kit…”
+  evid @360px scrollWidth=465 clientWidth=328 hiddenPx=137
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/layout.html @360px
+  at   #content > div.table-scroll  “원시 요소하는 일쓰는 곳쌓기(stack)세로로 쌓는 묶음. 간격은…”
+  evid @360px scrollWidth=560 clientWidth=338 hiddenPx=222
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/layout.html @360px
+  at   #격자-흐름-마지막-줄에-한-칸만-남기지-않는다 > div.table-scroll  “capn열 수221 → 2 → 2 → 2231 → 1 → 1 → …”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/layout.html @360px
+  at   #벤토-높이-균형-리비전-2-카탈로그-2-4-0 > div.table-scroll  “선택자증명이유.kit-splittwo-cells글과 시각 요소 두…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/layout.html @360px
+  at   #강제-지점 > div.table-scroll  “지점무엇을 막나파일생성 CSS항목 수·폭 조합마다 한 칸만 남는 …”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/palettes.html @360px
+  at   #\33 -계열별-수 > div.table-scroll  “계열수뉴트럴23어스·베이지58레드46오렌지37옐로26그린51틸·민…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/palettes.html @360px
+  at   #\34 -좋아요가-가장-많은-팔레트 > div.table-scroll  “이름계열좋아요스워치Sunny Beach Day멀티124,400#2…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/palettes.html @360px
+  at   #\35 -테마별-기본-팔레트 > div.table-scroll  “테마기본추천 수워크스페이스(workspace)오션 블루8레저(le…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/spacing.html @360/768px
+  at   #단계-밀도별-px > div.table-scroll  “단계토큰쓰임compactcomfortablespacioustigh…”
+  evid @360px scrollWidth=692 clientWidth=308 hiddenPx=384
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/spacing.html @360px
+  at   #두-가지-경우-붙임-vs-같은-규격 > div.table-scroll  “경우예간격이유최대한 붙인다 (S01)속성 이름↔값, 지표 라벨↔숫…”
+  evid @360px scrollWidth=683 clientWidth=308 hiddenPx=375
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/spacing.html @360px
+  at   #강제-지점 > div.table-scroll  “지점무엇을 막나파일토큰밀도마다 한 벌의 값, 순서가 뒤집히면 시험…”
+  evid @360px scrollWidth=565 clientWidth=308 hiddenPx=257
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/typography.html @360/768/1280/1600px
+  at   #프리셋-18종 > div.table-scroll  “id이름컨셉제목/본문 서체본문 px비율굵기 이동큰 제목 자간(em…”
+  evid @360px scrollWidth=1264 clientWidth=308 hiddenPx=956
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/typography.html @360px
+  at   #리비전과-호환 > div.table-scroll  “카탈로그타이포그래피 리비전설명2.1.0 · 2.2.01이전 표 그…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/typography.html @360px
+  at   #크기-역할-kit-t > div.table-scroll  “역할쓰임허용된 자리--kit-t-micro차트 눈금·아바타 이니셜…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/typography.html @360px
+  at   #서체-스택-시스템-서체 > div.table-scroll  “스택앞의 서체systemsystem-ui, -apple-syste…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/typography.html @360px
+  at   #서체-조달-왜-웹폰트를-싣지-않았나 > div.table-scroll  “서체용도라이선스비고Pretendard한글+라틴 산세리프SIL OF…”
+  evid @360px scrollWidth=677 clientWidth=308 hiddenPx=369
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/docs/typography.html @360px
+  at   #강제-지점 > div.table-scroll  “지점무엇을 막나파일프리셋 표서체 스택이 한글 대체 서체 없이 끝나…”
+  evid @360px scrollWidth=560 clientWidth=308 hiddenPx=252
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/integrations/cli @360px
+  at   #main > div.page > article.prose > pre:nth-of-type(1)  “npm run kit -- templates npm run kit…”
+  evid @360px scrollWidth=461 clientWidth=328 hiddenPx=133
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/integrations/cli @360px
+  at   #main > div.page > article.prose > pre:nth-of-type(2)  “npm run kit -- validate my-blueprint…”
+  evid @360px scrollWidth=481 clientWidth=328 hiddenPx=153
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/integrations/mcp @360/768/1280/1600px
+  at   #main > div.page > article.prose > pre  “import {Client, StreamableHTTPClient…”
+  evid @360px scrollWidth=823 clientWidth=328 hiddenPx=495
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/integrations/rest-api @360/768/1280/1600px
+  at   #main > div.page > article.prose > pre:nth-of-type(1)  “curl 'http://localhost:3000/api/v1/c…”
+  evid @360px scrollWidth=869 clientWidth=328 hiddenPx=541
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+INFO SCROLL_REGION [scroll] http://127.0.0.1:4320/integrations/rest-api @360/768/1280/1600px
+  at   #main > div.page > article.prose > pre:nth-of-type(2)  “node -e "const fs=require('node:fs')…”
+  evid @360px scrollWidth=1989 clientWidth=328 hiddenPx=1661
+  fix  가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.
+{"pass":true,"failing":0,"bySeverity":{"info":117},"byCode":{"SCROLL_REGION":117},"exempt":9,"exemptByCode":{"BAR_MISALIGNED_X":4,"BODY_ORPHAN":4,"CONTROL_WRAP":1},"checked":524,"scanned":{"text":26002,"wrap":12639,"clip":256,"svg":0,"overflow":524,"smallText":26002,"bar":504}}

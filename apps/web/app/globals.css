@@ -64,6 +64,11 @@ body {
   flex-direction: column;
 }
 main { flex: 1 0 auto; }
+/* 줄바꿈 품질: 제목은 줄 길이를 고르게, 문장은 끝줄에 한 단어만 남지 않게 한다.
+ * 제목·리드에는 ch 단위 폭 상한을 두지 않는다. ch는 숫자 0의 폭이라 한글(약 1.6배 넓음)에서는 의도보다 훨씬 좁은 칸이 된다.
+ * 읽기 폭 상한은 문단(.prose, .note, .link-list)에만 --measure로 둔다. 근거: docs/layout-quality.md */
+h1, h2, h3, h4 { text-wrap: balance; }
+p, li, dd, blockquote, figcaption { text-wrap: pretty; }
 a { color: var(--color-accent); text-underline-offset: 0.18em; }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
@@ -74,7 +79,7 @@ pre { max-width: 100%; overflow-x: auto; }
 
 .page { width: 100%; max-width: var(--page-max); margin-inline: auto; padding: var(--space-7) var(--gutter) var(--space-8); }
 .page-title { font-size: var(--text-2xl); line-height: var(--leading-tight); font-weight: var(--weight-heading); margin: 0 0 var(--space-3); letter-spacing: -0.01em; }
-.page-lead { font-size: var(--text-lg); color: var(--color-muted); max-width: var(--measure); margin: 0 0 var(--space-6); }
+.page-lead { font-size: var(--text-lg); color: var(--color-muted); margin: 0 0 var(--space-6); }
 .section-title { font-size: var(--text-xl); line-height: var(--leading-tight); font-weight: var(--weight-heading); margin: var(--space-7) 0 var(--space-3); }
 .prose { max-width: var(--measure); }
 .prose p { margin: 0 0 var(--space-4); }
