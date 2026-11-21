@@ -115,10 +115,11 @@ test('QA는 여러 보기의 동일 조합 표시를 보존하고 기록의 보�
 
 test('공유 URL의 닫기와 Escape는 필터와 쪽을 유지하고 목록에서 연 상세의 뒤로 가기는 복원한다', async ({page}) => {
   const direct = '/dev/qa/combos?q=saas&ps=24&p=2&exp=1&c=saas-landing&theme=aurora&mode=dark';
-  // 닫기 처리기는 하이드레이션 뒤에 붙으므로 닫힐 때까지 입력을 되풀이한다.
+  // 닫기 처리기는 하이드레이션 뒤에 붙으므로 닫힐 때까지 입력을 되풀이한다. 이미 눌러 뷰어가 사라졌는데 주소 갱신만 늦은 재시도에서는 누르지 않고 주소만 다시 본다.
   await page.goto(direct);
   await expect(async () => {
-    await page.getByRole('button',{name:'닫기'}).click({timeout:1000});
+    const close = page.getByRole('button',{name:'닫기'});
+    if (await close.count()) await close.click({timeout:1000});
     await expect(page).not.toHaveURL(/(?:\?|&)c=/,{timeout:1000});
   }).toPass();
   await expect(page).toHaveURL(/q=saas.*ps=24.*p=2.*exp=1/);
