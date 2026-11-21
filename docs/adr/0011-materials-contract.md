@@ -45,4 +45,33 @@
 
 ## 결과
 
-재료 766개, 속성 조합 762,749개, 완성 프리셋 157개(서체 18 + 테마 54 + 템플릿 85)다. 실행 시점 값은 `catalogRegistry().counts()`가 정본이다. 기존 공개 계약 `./service`와 `./edit`는 바뀌지 않았다. `src/materials/`는 Core 경계 검사(`tests/core-boundary.test.mjs`)를 받는다.
+재료 770개, 속성 조합 762,753개, 완성 프리셋 161개(서체 18 + 역할형 서체 4 + 테마 54 + 템플릿 85)다. 실행 시점 값은 `catalogRegistry().counts()`가 정본이다. 기존 공개 계약 `./service`와 `./edit`는 바뀌지 않았다. `src/materials/`는 Core 경계 검사(`tests/core-boundary.test.mjs`)를 받는다.
+
+## 부록: 타이포그래피 재료와 기존 엔진
+
+역할형 타이포그래피 재료(`type-role-preset` 4종, `src/materials/typography.mjs`)는 `catalogRegistry()`에 서체 프리셋 18종(`type-preset`)과 같이 등록된다. 기존 엔진(`src/typography.mjs`)과 값을 두 벌 들지 않기 위해 아래처럼 나눈다.
+
+| 값 | 어디서 오나 |
+|---|---|
+| 서체 스택 | `STACKS`만 쓴다. 재료 파일에 서체 문자열이 없다(`tests/material-type.test.mjs`가 검사). 프리셋마다 `engine`으로 `TYPE_R2`(리비전 2) 프리셋 하나를 고른다: erp→tech, dashboard→sans, document→editorial, marketing→geometric. |
+| display·heading 자간과 행간, label 자간, body 행간 | 고른 엔진 프리셋의 `track`·`lh` |
+| body·label·caption의 최소 px | 엔진의 고정 크기(본문 px, 본문×.8125, 본문×.75). `clamp()`의 최솟값이다. |
+| Hangul 한계 | `HANGUL`을 그대로 읽는다: 행간 하한(display 1.2, heading 1.3), 본문 행간 1.55~1.8, label 자간 상한 .06, display·heading 최대 px(80·40), 세리프 한글 굵기 700 |
+
+재료에만 남는 값과 이유는 다음과 같다.
+
+- 화면 폭에 따른 `clamp()` 기울기, 굵기: 엔진은 모듈러 스케일로 크기를 계산하고 맥락별(ERP·문서·마케팅) 기울기를 갖지 않는다.
+- `numeric`·`code` 역할: 엔진에는 같은 이름의 역할이 없다. numeric의 촘촘한 자간은 엔진이 숫자·가격·지표를 한글 자간 규칙에서 빼는 것(`NUMERIC_RULE`)과 같은 이유다.
+- 밀도 계수와 좁은 화면 계수: 엔진 서체는 밀도로 크기가 변하지 않는다. 재료의 계수는 display·heading·numeric·code에만 적용한다. body·label·caption은 엔진이 px로 고정한 바닥이라 계수를 1로 둔다. 계수를 곱한 행간은 `max()`·`clamp()`로 엔진의 한글 한계 안에 머무른다.
+- 엔진 `ROLES`의 이름(`title`, `app`, `sub`…)은 가져오지 않았다. 재료 역할 7개(display·heading·body·label·caption·numeric·code)는 부품이 쓰는 이름이고 엔진 역할로의 대응은 일대일이 아니다. 대응을 정의하는 일은 Blueprint 연결 단계로 미룬다.
+
+### 컨트롤 크기와 타이포그래피
+
+프리셋마다 `controls`가 크기 4단(compact·small·medium·large)별로 높이·좌우 패딩·간격·라벨 역할·아이콘 크기를 가진다. 크기 이름은 컨트롤 크기이고 프리셋의 `density`(compact·relaxed)와 다르다. 값은 `src/spacing.mjs`의 `SPACE`에서 풀린다: medium 높이는 그 밀도의 `control` 토큰(compact 40, comfortable 44)이고 나머지는 −12·−8·+8px, 좌우 패딩은 `near`·`item`·`inset`·`insetL`이다. `controlViolations(preset)`이 아래를 검사하고 `registerMaterialType`은 위반이 있으면 등록하지 않는다.
+
+- `CT_LINE_BOX` 라벨의 줄 높이(최대 글자 크기 × 밀도 계수를 곱하고 엔진 한계로 묶은 행간) + 위아래 4px씩이 컨트롤 높이를 넘지 않는다.
+- `CT_ICON_RATIO`·`CT_ICON_FIT` 아이콘은 라벨 최대 글자 크기의 1~1.5배이고 위아래 4px 여백과 함께 높이 안에 들어간다.
+- `CT_ORDER` 크기가 커질 때 높이는 늘고 좌우 패딩·아이콘·라벨 글자는 줄지 않는다.
+- `CT_GRID` 높이와 좌우 패딩은 4px 격자다. `CT_MEDIUM` medium 높이는 `SPACE` control 토큰과 같다. `CT_ROLE` 라벨 역할은 label 또는 body다. `CT_MISSING` 네 크기가 모두 있다.
+
+컨트롤 크기는 기존 `.kit-button`(`min-height: var(--kit-control)`, 좌우 24px)을 바꾸지 않는다. 재료는 출력 경로 밖에 있고, 부품 크기 축(sm/md/lg)과의 연결은 Blueprint 컴파일러 단계에서 정한다.

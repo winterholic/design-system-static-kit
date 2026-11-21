@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {
   catalogRegistry, createRegistry, defineMaterial, defineKind, MaterialError, BUILTIN_KINDS, FIELDS, CATEGORIES, QUALITY,
-  MATERIAL_CATALOG_VERSION, combinationsOf, validateMaterial, PALETTE_SOURCE_VERDICT, PALETTE_ROLES,
+  MATERIAL_CATALOG_VERSION, combinationsOf, validateMaterial, PALETTE_SOURCE_VERDICT, PALETTE_ROLES, MATERIAL_TYPE_PRESETS,
 } from '../src/materials/index.mjs';
 import {nodeTypes, nodeSpecs, themes, palettes, templates, pageTypeIds, recipeIds, iconNames, axes, styleAxes, ACCEPTED_CATALOG_VERSIONS, CATALOG_VERSION, VERSION_ORDER} from '../src/catalog.mjs';
 import {TYPE} from '../src/typography.mjs';
@@ -31,7 +31,7 @@ test('materials: every existing node, axis, type preset, theme, palette, page ty
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
     axis: 1 + styleAxes.length, component: nodeTypes.length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
-    palette: Object.keys(palettes).length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length,
+    palette: Object.keys(palettes).length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length, 'type-role-preset': Object.keys(MATERIAL_TYPE_PRESETS).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));
   for (const type of nodeTypes) assert.ok(registry.has('component:' + type), type);
@@ -45,7 +45,7 @@ test('materials: material count, attribute combinations and complete presets are
   assert.equal(c.completePresets, registry.list().filter(m => registry.isPreset(m)).length);
   assert.ok(c.attributeCombinations > c.materials && c.materials > c.completePresets && c.completePresets > 0, JSON.stringify(c));
   // 완성 프리셋은 서체 프리셋·테마·템플릿뿐이다. 속성이 많은 부품(히어로·표…)은 조합을 늘려도 프리셋이 아니다.
-  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(themes).length + Object.keys(templates).length);
+  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(MATERIAL_TYPE_PRESETS).length + Object.keys(themes).length + Object.keys(templates).length);
   assert.equal(registry.filter({kind: 'component', preset: true}).length, 0);
   assert.ok(combinationsOf(registry.get('component:hero')) > 1);
 });
