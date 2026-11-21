@@ -188,7 +188,8 @@ Blueprint(JSON) → 검증기(스키마·간선·조합·페이지 유형·링�
 - 작성기(`index.html`): 템플릿과 구성 변형, 테마와 테마 변형, 팔레트(계열 필터·검색), 모드, 14개 축을 고르고 트리를 편집합니다. 미리보기는 휴대폰·태블릿·데스크톱·맞춤 폭을 고정 폭으로 그린 뒤 영역에 맞춰 줄여서 가로로 잘리지 않으며, **새 창**과 **전체 화면 모달**로 크게 볼 수 있습니다. 테마·페이지 유형이 막은 값은 고를 수 없게 하고, 다른 축과 부딪히는 값은 규칙의 대안으로 부딪힌 축을 함께 바꿉니다. 카탈로그 탭에서는 템플릿·테마·팔레트·부품의 실제 렌더를 보고 바로 조립을 시작합니다.
 - 갤러리(`site/gallery/index.html`): 컴파일러를 포함한 단일 파일. 휴대폰에서 템플릿·테마·부품·축을 열어 보고 저장합니다.
 - CLI: `catalog | templates | themes | init | migrate | validate | build | check`.
-- 예시: `site/examples/<template>/` 85개, `site/examples/themes/<theme>/` 54개.
+- 템플릿 예시 85개는 `site/examples/<template>/`에 있습니다.
+- 테마 예시 54개는 `site/examples/themes/<theme>/`에 있습니다.
 - 카탈로그 API: `site/v1/catalog.json`, `site/v1/blueprint.schema.json`.
 
 ## 12. 출처와 라이선스

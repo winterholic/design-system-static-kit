@@ -3,7 +3,7 @@
 <style>
 @import url("_base.css");
 .title-cap { font-size: 32px; line-height: 1.2; max-width: 20ch; }
-.title-half { font-size: 32px; line-height: 1.2; max-width: 52%; }
+.title-limited { font-size: 30px; line-height: 1.2; max-width: 72%; }
 .lead { font-size: 18px; color: #566070; }
 .eyebrow { font-size: 14px; color: #566070; }
 .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid #2742c8; border-radius: 6px; background: #2742c8; color: #fff; font: inherit; font-weight: 600; }
@@ -18,8 +18,8 @@ td, th { border: 1px solid #dfe3e9; padding: 6px 8px; text-align: left; }
 <section class="case" id="bad-heading-early-wrap" data-expect="HEADING_EARLY_WRAP"><small class="tag">bad: ch 상한(20ch) 때문에 한 줄이 들어갈 제목이 접힘</small>
 <h1 class="title-cap">고르면, 대비 검사를 통과한 HTML이 나오는 디자인 컴파일러</h1></section>
 
-<section class="case" id="bad-heading-narrow-box" data-expect="HEADING_NARROW_BOX"><small class="tag">bad: 두 줄은 어차피 필요하지만 상자가 사용 가능한 폭의 절반뿐</small>
-<h2 class="title-half" style="font-size:30px;max-width:72%">고르면, 대비 검사를 통과한 HTML이 나오는 디자인 컴파일러, 같은 입력에서 같은 결과를 내는 규약</h2></section>
+<section class="case" id="bad-heading-narrow-box" data-expect="HEADING_NARROW_BOX"><small class="tag">bad: 두 줄로 지정한 제목 상자가 사용 가능한 폭의 72%만 사용</small>
+<h2 class="title-limited">고르면 대비 검사를 통과한 HTML이 나옵니다<br>같은 입력에서 같은 결과를 내는 규약입니다</h2></section>
 
 <section class="case" id="bad-heading-orphan" data-expect="HEADING_ORPHAN"><small class="tag">bad: 제목 끝줄에 한 단어만 남음</small>
 <h2 style="font-size:32px;line-height:1.2">컴파일 결과를 그대로 보여 주는 화면의 구성과 사용법을 다룹니다<br>끝</h2></section>
