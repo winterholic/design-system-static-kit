@@ -36,6 +36,7 @@
 - 네 필드는 항상 비지 않은 문자열이다. `path`는 `$`로 시작한다(문서 안 `$.tree.children[1]`, 요청 인자 `$args.kind`).
 - 검증기의 코드는 이름을 바꾸지 않는다. `AXIS_BAN`과 `THEME_FORBID`는 메시지 문장에만 있던 대안을 `fix`(예 `{elevation: 'soft'}`)로도 준다. 값은 카탈로그의 `axisBans[].fix`와 `theme.defaults`에서 읽고 문장을 파싱하지 않는다.
 - `opts`와 질의 인자의 알 수 없는 키는 `BAD_REQUEST`다. 오타 하나가 조용히 무시되어 전체 카탈로그가 나가는 일을 막는다.
+- **null 규칙(전 함수 공통)**: 선택 인자를 생략(`undefined`)하면 기본값을 쓰고, `null`은 어떤 선택 인자(`filter`, `query`, `fields`, `limit`, `cursor`, `type`, `opts` 전체와 `opts.*`, `subject` 안의 `manifest`)에서든 `BAD_REQUEST`이며 그 인자의 `$args.…` 경로를 돌려준다. 기본값을 주려고 `??`를 쓰지 않고 `=== undefined`로 가른다. `listCatalog({filter: null})`이 필터 없이 전체를 돌려주는 일이 없다. 식별자 성격의 인자(`kind`)가 `null`이면 그 인자 전용 코드(`UNKNOWN_KIND`)가 우선한다. 예외는 문서 인자(`blueprint`)다. 문서는 옵션이 아니라 검증할 데이터이므로 `null`은 검증기의 `OBJECT` 오류(경로 `$`)다. `tests/service-hardening.test.mjs`가 모든 함수의 모든 선택 인자에 `null`을 넣어 이 규칙을 확인한다.
 - 반환값은 JSON으로 직렬화되는 새 객체다. 카탈로그 객체는 `freeze`되어 있어 그대로 내보내지 않는다.
 
 ### 3. code → hint 표는 `src/service/errors.mjs`가 소유한다 (D1)
@@ -67,13 +68,13 @@
 
 - 근거는 `manifest.design.decisions`(적용 규칙 `applied`, 필드별 값 `values`, 필드별 승자 `sources`, 사실 `facts`), `manifest.design.page`(페이지 사실과 결정), `manifest.axes`·`theme`(축 값, 이를 제약하는 `axisBans[].id`, 테마 금지값), `manifest.contrast`(쌍 수, 본문 최소값 `text/canvas`, 여유(비율÷기준)가 가장 작은 쌍)뿐이다.
 - `why`는 적용된 규칙 정의의 `reason`을 `C02: …` 꼴로 그대로 잇고, 적용 규칙이 없으면 manifest의 `coverage.reason`이다. `source`는 `src/catalog/composition.mjs#C02`, 페이지 규칙은 `pageRules[].source`다. 정의가 없으면 규칙 ID만 쓴다. 시험이 모든 템플릿의 모든 결정에서 `why`가 이 두 출처로만 만들어졌는지 문자열 일치로 확인하고, 손댄 manifest를 넘기면 답이 그것을 따르는지(재계산하지 않는지) 확인한다.
-- `{manifest}`를 넘기면 컴파일러가 낸 것으로 믿고 읽기만 한다. 진위는 검증하지 않는다(필수 필드 모양만 검사한다).
+- `{manifest}`를 넘기면 컴파일러가 낸 것으로 믿고 읽기만 한다. 진위는 검증하지 않지만 읽는 필드의 모양은 읽기 전에 모두 검사한다(`design.decisions[i].applied`는 문자열 배열, `contrast[i].ratio`는 유한한 숫자, 순환 참조 없음 등). 어긋나면 `BAD_REQUEST`와 어긋난 필드의 경로(`$args.subject.manifest.design.decisions[2].applied`)를 돌려주고, 읽는 중 예상 못한 예외가 나도 엔진 문장을 싣지 않고 같은 코드로 답한다. `opts.rule`은 규칙 ID와 정확히 일치할 때만 거른다(`C0`은 `C02`에 일치하지 않는다).
 - 결정의 의미는 설명하지 않는다. 규칙이 `reason`을 가진 만큼만 말한다. 규칙 이름이 아닌 계약 이름(`S09`, `layout/parent`)은 `inherited`(level `full`)에서 manifest의 문장으로만 나온다.
 
 ### 7. 호환 기준과 경계
 
 - `compileBlueprint(createBlueprint(id)).value.html`이 `site/examples/<id>/index.html`과 바이트가 같다(85개). `catalogSnapshot()`의 직렬화가 `site/v1/catalog.json`과 바이트가 같다.
-- Core 경계는 `tests/core-boundary.test.mjs`가 강제한다. UI 모듈 다섯 개(`workbench.mjs`, `workbench/catalog-view.mjs`, `workbench/viewport.mjs`, `combos/app.mjs`, `combos/render.mjs`)를 뺀 `src/**/*.mjs` 전부가 `react`·`next`·`node:*`·패키지를 import하지 않고, 상대 import는 `src` 안의 비UI `.mjs`만 가리킨다. `document`, `window`, `localStorage`, `sessionStorage`, `location`, `history`, `navigator`, `process`, `Buffer`, `require`, `__dirname`, `__filename`, `import.meta`를 쓰지 않는다. 검사는 주석과 문자열·정규식 리터럴의 내용을 비운 코드에만 적용하므로 `formRuntime` 문자열 속 `document.*`는 예외가 된다. 속성 이름(`o.history`)과 객체 키(`{location: 1}`)는 전역이 아니다. 검사기 자체의 시험(위반 예시를 잡고 정당한 예시를 놓아 줌, 모든 import·export 문장을 읽었는지)이 같은 파일에 있다.
+- Core 경계는 `tests/core-boundary.test.mjs`가 강제한다. UI 모듈 다섯 개(`workbench.mjs`, `workbench/catalog-view.mjs`, `workbench/viewport.mjs`, `combos/app.mjs`, `combos/render.mjs`)를 뺀 `src/**/*.mjs` 전부가 `react`·`next`·`node:*`·패키지를 import하지 않고, 상대 import는 `src` 안의 비UI `.mjs`만 가리킨다. import 형태는 공백 없는 `import{a}from'x'`, `export{…}from`, `export*from`, 큰따옴표, 여러 줄, 부수효과 import, 보간 없는 템플릿 리터럴 `import(`x`)`를 모두 읽고, 인자가 문자열이 아닌 동적 `import(변수)`·보간 템플릿은 정적으로 알 수 없어 위반이다. `src`에는 `.mjs`와 두 앱의 `.css`만 있어야 한다(`.js`·`.cjs`·`.ts` 소스는 검사기가 읽지 못하므로 금지). 금지 식별자는 `document`, `window`, `localStorage`, `sessionStorage`, `location`, `history`, `navigator`, `process`, `Buffer`, `require`, `__dirname`, `__filename`, `globalThis`, `self`, `eval`, `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `indexedDB`, `crypto`, `performance`이고, 금지 패턴은 `import.meta`, `Date.now`, `Math.random`, 인자 없는 `new Date()`, `Function(...)`이다(같은 입력이면 같은 출력이라는 Core 약속). 객체 키로 쓰인 이름(`{location: 1}`)과 속성 접근(`o.history`)만 예외이고, 삼항·`case` 안의 이름은 키로 보지 않는다. 검사는 주석과 문자열·정규식 리터럴의 내용을 비운 코드에만 적용하므로 `formRuntime` 문자열 속 `document.*`와 예제 코드 문자열 속 `import … from`은 예외가 된다. 별칭(`const g = globalThis`는 잡지만 `const D = Date; D.now()`는 못 잡는다)과 변수에 담은 `Function`은 정적 검사의 한계다. 검사기 자체의 시험(위반 예시를 잡고 정당한 예시를 놓아 줌, 모든 import·export 문장을 읽었는지)이 같은 파일에 있다.
 
 ### 8. CLI는 검증·컴파일을 서비스에서 거친다
 

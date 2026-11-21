@@ -33,9 +33,9 @@ export function compileErrors(e, blueprint, resolve) {
 function readCompileOpts(opts, blueprint) {
   const [o, bad] = readOpts(opts, OPT_KEYS, blueprint);
   if (bad) return [null, bad];
-  const include = o.include ?? DEFAULT_INCLUDE;
+  const include = o.include === undefined ? DEFAULT_INCLUDE : o.include;
   if (!Array.isArray(include) || include.some(x => !INCLUDE.includes(x))) return [null, badRequest('$args.opts.include', 'include는 허용된 이름의 배열이어야 합니다.', `허용값: ${INCLUDE.join(', ')}`)];
-  const html = o.html ?? 'full';
+  const html = o.html === undefined ? 'full' : o.html;
   if (!HTML_MODES.includes(html)) return [null, badRequest('$args.opts.html', `html 모드가 올바르지 않습니다: ${String(html)}`, `허용값: ${HTML_MODES.join(', ')}`)];
   if (o.maxBytes !== undefined && !(Number.isInteger(o.maxBytes) && o.maxBytes > 0)) return [null, badRequest('$args.opts.maxBytes', 'maxBytes는 양의 정수여야 합니다.', '본문 텍스트 하나당 허용할 UTF-8 바이트 수입니다.')];
   if (o.hash !== undefined && !(isPlain(o.hash) && typeof o.hash.algorithm === 'string' && o.hash.algorithm && typeof o.hash.digest === 'function')) {

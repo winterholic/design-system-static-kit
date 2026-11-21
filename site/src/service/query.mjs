@@ -117,7 +117,7 @@ export function listCatalog(q) {
     if (typeof q.kind !== 'string' || !has(KINDS, q.kind)) return fail([diagnostic('UNKNOWN_KIND', '$args.kind', `알 수 없는 종류: ${String(q.kind)}`, `kind는 ${list(CATALOG_KINDS)} 중 하나입니다.`)]);
     const spec = KINDS[q.kind];
 
-    const filter = q.filter ?? {};
+    const filter = q.filter === undefined ? {} : q.filter;
     if (!isPlain(filter)) return fail([badRequest('$args.filter', 'filter는 {이름: 문자열} 객체여야 합니다.')]);
     const active = [];
     for (const [name, value] of Object.entries(filter)) {
@@ -130,7 +130,7 @@ export function listCatalog(q) {
     if (spec.needs && !has(filter, spec.needs)) return fail([badRequest(`$args.filter.${spec.needs}`, `${q.kind} 조회에는 filter.${spec.needs}가 필요합니다.`, `예: {kind: "${q.kind}", filter: {${spec.needs}: "saas-landing"}}`)]);
 
     if (q.query !== undefined && typeof q.query !== 'string') return fail([badRequest('$args.query', 'query는 문자열이어야 합니다.')]);
-    const words = (q.query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
+    const words = (q.query === undefined ? '' : q.query).toLowerCase().split(/\s+/).filter(Boolean);
 
     let fields = spec.summary;
     if (q.fields !== undefined) {
@@ -140,7 +140,7 @@ export function listCatalog(q) {
       fields = [...new Set([spec.id, ...q.fields])];
     }
 
-    const limit = q.limit ?? LIMIT_DEFAULT;
+    const limit = q.limit === undefined ? LIMIT_DEFAULT : q.limit;
     if (!Number.isInteger(limit) || limit < 1 || limit > LIMIT_MAX) return fail([badRequest('$args.limit', `limit은 1~${LIMIT_MAX}의 정수입니다.`)]);
     let offset = 0;
     if (q.cursor !== undefined) {

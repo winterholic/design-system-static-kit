@@ -1,5 +1,6 @@
 import {CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS} from '../catalog.mjs';
 import {diagnostic} from './errors.mjs';
+import {badRequest} from './envelope.mjs';
 
 /**
  * 호출자가 기대하는 catalogVersion을 확인한다. 지원하지 않는 값이면 UNSUPPORTED_VERSION,
@@ -7,7 +8,8 @@ import {diagnostic} from './errors.mjs';
  */
 export function checkExpectedVersion(expected, blueprint) {
   if (expected === undefined) return null;
-  if (typeof expected !== 'string' || !SUPPORTED_CATALOG_VERSIONS.includes(expected)) {
+  if (typeof expected !== 'string') return badRequest('$args.opts.catalogVersion', 'catalogVersion은 문자열이어야 합니다.', `지원 버전: ${SUPPORTED_CATALOG_VERSIONS.join(', ')}`);
+  if (!SUPPORTED_CATALOG_VERSIONS.includes(expected)) {
     return diagnostic('UNSUPPORTED_VERSION', '$args.opts.catalogVersion', `지원하지 않는 catalogVersion: ${String(expected)}`, `지원 버전: ${SUPPORTED_CATALOG_VERSIONS.join(', ')} (현재 ${CATALOG_VERSION})`);
   }
   const declared = blueprint !== null && typeof blueprint === 'object' ? blueprint.catalogVersion : undefined;

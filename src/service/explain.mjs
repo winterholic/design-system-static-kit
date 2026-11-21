@@ -13,12 +13,68 @@ const COMPOSITION = byId(compositionRules), PAGE = byId(pageRules);
 
 const underPath = (path, root) => path === root || path.startsWith(root + '.') || path.startsWith(root + '[');
 
-function checkManifest(m) {
-  if (!isPlain(m)) return badRequest('$args.subject.manifest', 'manifest는 컴파일 결과의 manifest 객체여야 합니다.', 'compileBlueprint(...).value.manifest를 그대로 넘기세요.');
-  for (const [k, ok_] of [['catalogVersion', typeof m.catalogVersion === 'string'], ['theme', typeof m.theme === 'string'], ['axes', isPlain(m.axes)], ['contrast', Array.isArray(m.contrast)]]) {
-    if (!ok_) return badRequest(`$args.subject.manifest.${k}`, `manifest.${k}가 없거나 형식이 맞지 않습니다.`, 'compileBlueprint(...).value.manifest를 그대로 넘기세요.');
+const MANIFEST = '$args.subject.manifest';
+const isStr = x => typeof x === 'string';
+const isNum = x => typeof x === 'number' && Number.isFinite(x);
+const HINT_MANIFEST = 'compileBlueprint(...).value.manifest를 그대로 넘기세요.';
+
+/**
+ * 호출자가 준 manifest를 읽기 전에 모양을 확인한다. 모양이 틀리면 [경로, 이유]를 돌려주고, 아무 것도 읽지 않는다.
+ * 컴파일러가 낸 값이라고 믿되, 읽는 필드의 타입은 믿지 않는다(applied가 문자열이면 글자 단위로 쪼개져 없는 규칙이 생긴다).
+ */
+function manifestProblem(m) {
+  if (!isPlain(m)) return [MANIFEST, 'manifest는 컴파일 결과의 manifest 객체여야 합니다.'];
+  try { JSON.stringify(m); } catch { return [MANIFEST, 'manifest는 JSON으로 표현할 수 있어야 합니다(순환 참조 없음).']; }
+  const need = (path, ok_, why) => (ok_ ? null : [path, why]);
+  const optionalPlain = (v, path) => need(path, v === undefined || isPlain(v), '객체여야 합니다.');
+  const first = (...checks) => checks.find(Boolean) ?? null;
+  const top = first(
+    need(`${MANIFEST}.catalogVersion`, isStr(m.catalogVersion), '문자열이어야 합니다.'), need(`${MANIFEST}.theme`, isStr(m.theme), '문자열이어야 합니다.'),
+    need(`${MANIFEST}.mode`, isStr(m.mode), '문자열이어야 합니다.'), need(`${MANIFEST}.axes`, isPlain(m.axes), '객체여야 합니다.'),
+    need(`${MANIFEST}.contrast`, Array.isArray(m.contrast), '배열이어야 합니다.'),
+  );
+  if (top) return top;
+  for (const [i, p] of m.contrast.entries()) {
+    const at = `${MANIFEST}.contrast[${i}]`;
+    if (!isPlain(p)) return [at, '객체여야 합니다.'];
+    const bad = first(need(`${at}.name`, isStr(p.name), '문자열이어야 합니다.'), need(`${at}.ratio`, isNum(p.ratio), '유한한 숫자여야 합니다.'), need(`${at}.minimum`, isNum(p.minimum) && p.minimum > 0, '0보다 큰 숫자여야 합니다.'));
+    if (bad) return bad;
+  }
+  if (m.design === undefined) return null;
+  const d = `${MANIFEST}.design`;
+  if (!isPlain(m.design)) return [d, '객체여야 합니다.'];
+  const list = (v, path) => need(path, v === undefined || Array.isArray(v), '배열이어야 합니다.');
+  const listBad = first(list(m.design.decisions, `${d}.decisions`), list(m.design.inherited, `${d}.inherited`), optionalPlain(m.design.page, `${d}.page`));
+  if (listBad) return listBad;
+  for (const [i, x] of (m.design.decisions ?? []).entries()) {
+    const at = `${d}.decisions[${i}]`;
+    if (!isPlain(x)) return [at, '객체여야 합니다.'];
+    const bad = first(
+      need(`${at}.path`, isStr(x.path), '문자열이어야 합니다.'), need(`${at}.type`, isStr(x.type), '문자열이어야 합니다.'),
+      need(`${at}.applied`, Array.isArray(x.applied) && x.applied.every(isStr), '문자열 배열이어야 합니다.'),
+      optionalPlain(x.values, `${at}.values`), optionalPlain(x.sources, `${at}.sources`), optionalPlain(x.facts, `${at}.facts`), optionalPlain(x.coverage, `${at}.coverage`),
+      need(`${at}.coverage.reason`, x.coverage?.reason === undefined || isStr(x.coverage.reason), '문자열이어야 합니다.'),
+    );
+    if (bad) return bad;
+  }
+  for (const [i, x] of (m.design.inherited ?? []).entries()) if (!isPlain(x)) return [`${d}.inherited[${i}]`, '객체여야 합니다.'];
+  if (m.design.page) {
+    const pg = `${d}.page`;
+    const bad = first(optionalPlain(m.design.page.facts, `${pg}.facts`), list(m.design.page.decisions, `${pg}.decisions`));
+    if (bad) return bad;
+    for (const [i, x] of (m.design.page.decisions ?? []).entries()) {
+      const at = `${pg}.decisions[${i}]`;
+      if (!isPlain(x)) return [at, '객체여야 합니다.'];
+      const badDecision = first(need(`${at}.rule`, isStr(x.rule), '문자열이어야 합니다.'), need(`${at}.path`, x.path === undefined || isStr(x.path), '문자열이어야 합니다.'));
+      if (badDecision) return badDecision;
+    }
   }
   return null;
+}
+
+function checkManifest(m) {
+  const problem = manifestProblem(m);
+  return problem ? badRequest(problem[0], `manifest의 형식이 맞지 않습니다: ${problem[1]}`, HINT_MANIFEST) : null;
 }
 
 /** 규칙 ID마다 규칙 정의의 reason을 모은다. 정의가 없는 ID(간격·배치 계약 이름 등)는 manifest가 적은 coverage.reason으로 대신한다. */
@@ -54,13 +110,13 @@ export function explainDecisions(subject, opts) {
     const badKey = checkKeys(subject, ['blueprint', 'manifest'], '$args.subject');
     if (badKey) return fail([badKey]);
     if (given.length !== 1) return fail([badRequest('$args.subject', 'blueprint와 manifest 중 하나만 넘겨야 합니다.')]);
-    const o = opts ?? {};
+    const o = opts === undefined ? {} : opts;
     if (!isPlain(o)) return fail([badRequest('$args.opts', 'opts는 객체여야 합니다.')]);
     const badOpt = checkKeys(o, ['path', 'rule', 'level'], '$args.opts');
     if (badOpt) return fail([badOpt]);
     if (o.path !== undefined && (typeof o.path !== 'string' || !o.path.startsWith('$'))) return fail([badRequest('$args.opts.path', 'path는 "$"로 시작하는 문서 경로여야 합니다.', '예: $.tree.children[1]')]);
     if (o.rule !== undefined && (typeof o.rule !== 'string' || !o.rule)) return fail([badRequest('$args.opts.rule', 'rule은 규칙 ID 문자열이어야 합니다.', '예: C02, P01')]);
-    const level = o.level ?? 'summary';
+    const level = o.level === undefined ? 'summary' : o.level;
     if (!LEVELS.includes(level)) return fail([badRequest('$args.opts.level', `level이 올바르지 않습니다: ${String(level)}`, `허용값: ${LEVELS.join(', ')}`)]);
 
     let manifest, warnings = [];
@@ -74,21 +130,26 @@ export function explainDecisions(subject, opts) {
       manifest = subject.manifest;
     }
 
-    const keep = d => (o.path === undefined || underPath(d.path ?? '', o.path)) && (o.rule === undefined || (d.applied ?? []).includes(o.rule) || d.rule === o.rule);
-    const design = manifest.design ?? null;
-    const decisions = (design?.decisions ?? []).filter(keep).map(d => explainNode(d, level));
-    const page = design?.page ? {
-      facts: design.page.facts,
-      decisions: (design.page.decisions ?? []).filter(d => o.path === undefined || underPath(d.path ?? '', o.path)).filter(d => o.rule === undefined || d.rule === o.rule)
-        .map(d => ({...d, source: PAGE.get(d.rule)?.source ?? 'manifest.design.page'})),
-    } : null;
-    const theme = Object.hasOwn(themes, manifest.theme) ? themes[manifest.theme] : null;
-    const axisValues = {mode: manifest.mode, ...manifest.axes};
-    const axes = Object.entries(axisValues).map(([axis, value]) => ({
-      axis, value, bans: axisBans.filter(b => b.uses.includes(axis)).map(b => b.id), themeForbids: [...(theme?.forbid?.[axis] ?? [])],
-    }));
-    const value = {decisions, page, axes, contrast: contrastSummary(manifest.contrast)};
-    if (level === 'full') value.inherited = design?.inherited ?? [];
-    return ok(jsonClone(value), warnings);
+    const explain = () => {
+      const keep = d => (o.path === undefined || underPath(d.path ?? '', o.path)) && (o.rule === undefined || (d.applied ?? []).includes(o.rule) || d.rule === o.rule);
+      const design = manifest.design ?? null;
+      const decisions = (design?.decisions ?? []).filter(keep).map(d => explainNode(d, level));
+      const page = design?.page ? {
+        facts: design.page.facts,
+        decisions: (design.page.decisions ?? []).filter(d => o.path === undefined || underPath(d.path ?? '', o.path)).filter(d => o.rule === undefined || d.rule === o.rule)
+          .map(d => ({...d, source: PAGE.get(d.rule)?.source ?? 'manifest.design.page'})),
+      } : null;
+      const theme = Object.hasOwn(themes, manifest.theme) ? themes[manifest.theme] : null;
+      const axisValues = {mode: manifest.mode, ...manifest.axes};
+      const axes = Object.entries(axisValues).map(([axis, value]) => ({
+        axis, value, bans: axisBans.filter(b => b.uses.includes(axis)).map(b => b.id), themeForbids: theme && Object.hasOwn(theme.forbid, axis) ? [...theme.forbid[axis]] : [],
+      }));
+      const value = {decisions, page, axes, contrast: contrastSummary(manifest.contrast)};
+      if (level === 'full') value.inherited = design?.inherited ?? [];
+      return jsonClone(value);
+    };
+    // 모양 검사를 통과한 manifest에서 예상 못한 예외가 나도 엔진 문장을 내보내지 않는다.
+    if (given[0] === 'manifest') { let out; try { out = explain(); } catch { return fail([badRequest(MANIFEST, 'manifest를 읽는 중 형식 오류를 만났습니다.', HINT_MANIFEST)]); } return ok(out, warnings); }
+    return ok(explain(), warnings);
   });
 }
