@@ -1,0 +1,283 @@
+{
+  "source": "public assembleBlueprint + compileBlueprint",
+  "cases": [
+    {
+      "id": "erp",
+      "label": "ERP 주문·재고 운영",
+      "profile": "erp",
+      "intent": {
+        "pattern": "erp-workspace",
+        "theme": "ledger"
+      },
+      "materials": {
+        "profile": "profile:erp",
+        "pattern": "pattern:erp-workspace",
+        "template": "template:admin-table",
+        "theme": "theme:ledger",
+        "typeRole": "type-role-preset:erp",
+        "controlSize": "small",
+        "tableRows": {
+          "density": [
+            "compact",
+            "comfortable"
+          ],
+          "variants": [
+            "plain",
+            "striped",
+            "bordered"
+          ],
+          "maxColumns": 8
+        },
+        "chartPresets": [],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "sidebar-to-header",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "table-scroll",
+          "chart": "chart-data-table"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "8a8181eff4399a06b6e86b27fccbfe1f169921f8d0533334e85d56a8b7fd150b",
+        "html": "6d0c0f7e0aae28fc010419a199ffeccb7e917fde174b97f3367cb24c8dfd4d3a",
+        "css": "91130c2c6c337b99d656352ddd9f5ad64d68f4787a9414e9684d81a7a7ffdc85"
+      },
+      "bytes": {
+        "blueprint": 1817,
+        "html": 61594,
+        "css": 50817
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/erp/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/erp/index.html",
+        "css": "docs/evidence/material-platform/assembled/erp/styles.css"
+      }
+    },
+    {
+      "id": "commerce",
+      "label": "커머스 상품 목록",
+      "profile": "commerce",
+      "intent": {
+        "pattern": "commerce-listing",
+        "theme": "commerce"
+      },
+      "materials": {
+        "profile": "profile:commerce",
+        "pattern": "pattern:commerce-listing",
+        "template": "template:product-listing",
+        "theme": "theme:commerce",
+        "typeRole": "type-role-preset:marketing",
+        "controlSize": "large",
+        "tableRows": {
+          "density": [
+            "comfortable"
+          ],
+          "variants": [
+            "plain",
+            "striped"
+          ],
+          "maxColumns": 5
+        },
+        "chartPresets": [],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "nav-scroll",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "table-scroll",
+          "chart": "none"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "0145bc43710f7f19f70df0d0cfc639a3564339b084280f32639fa61fa4d995a4",
+        "html": "fca44a43e7a3dbf1919d607d7b65b163922f59740fc6ee6fbee7b14a947115ed",
+        "css": "6f35b93d8606a751c11b444ca26a8c9a4e396686f37ab8c7d8bd7a333b4039a2"
+      },
+      "bytes": {
+        "blueprint": 3630,
+        "html": 83340,
+        "css": 59224
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/commerce/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/commerce/index.html",
+        "css": "docs/evidence/material-platform/assembled/commerce/styles.css"
+      }
+    },
+    {
+      "id": "saas",
+      "label": "SaaS 제품 소개·가입",
+      "profile": "saas-landing",
+      "intent": {
+        "pattern": "marketing-landing"
+      },
+      "materials": {
+        "profile": "profile:saas-landing",
+        "pattern": "pattern:marketing-landing",
+        "template": "template:saas-landing",
+        "theme": "theme:trust",
+        "typeRole": "type-role-preset:marketing",
+        "controlSize": "large",
+        "tableRows": {
+          "density": [],
+          "variants": [],
+          "maxColumns": 0
+        },
+        "chartPresets": [],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "nav-scroll",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "none",
+          "chart": "chart-data-table"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "893de439eea3159aa167f023552ab3e18c719c117d404ce60d33a45fd5e9c81e",
+        "html": "6f22192343e095661904ddab9f720670ddb0d36958015e3a551137a1bc24445e",
+        "css": "d95c7bbd1ce05eb1ceaa84064d6928fc2f7fd9385b2e247f9161df00c6c3e265"
+      },
+      "bytes": {
+        "blueprint": 6219,
+        "html": 109589,
+        "css": 77634
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/saas/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/saas/index.html",
+        "css": "docs/evidence/material-platform/assembled/saas/styles.css"
+      }
+    },
+    {
+      "id": "analytics",
+      "label": "데이터 분석·재무 대시보드",
+      "profile": "finance",
+      "intent": {
+        "pattern": "dashboard-grid",
+        "chartPresets": [
+          "finance-monthly-close"
+        ]
+      },
+      "materials": {
+        "profile": "profile:finance",
+        "pattern": "pattern:dashboard-grid",
+        "template": "template:dashboard-overview",
+        "theme": "theme:bank",
+        "typeRole": "type-role-preset:dashboard",
+        "controlSize": "medium",
+        "tableRows": {
+          "density": [
+            "comfortable",
+            "compact"
+          ],
+          "variants": [
+            "plain",
+            "striped",
+            "bordered"
+          ],
+          "maxColumns": 6
+        },
+        "chartPresets": [
+          "chart-preset:finance-monthly-close"
+        ],
+        "narrow": {
+          "maxWidth": 720,
+          "navigation": "nav-scroll",
+          "aside": "aside-stack",
+          "grid": "grid-reflow",
+          "table": "table-scroll",
+          "chart": "chart-data-table"
+        },
+        "pending": []
+      },
+      "decisions": [
+        {
+          "axis": "catalogVersion",
+          "from": "2.4.0",
+          "to": "2.6.0",
+          "source": "profile"
+        },
+        {
+          "axis": "colorPalette",
+          "from": null,
+          "to": "static-kit",
+          "source": "profile"
+        },
+        {
+          "axis": "shell",
+          "from": "topbar",
+          "to": "sidebar",
+          "source": "profile"
+        },
+        {
+          "axis": "width",
+          "from": "standard",
+          "to": "wide",
+          "source": "profile"
+        }
+      ],
+      "hashes": {
+        "blueprint": "41d81bd972771bd3745fe260854fd23cd02c9b1d3dee9244649269f61ee97f9b",
+        "html": "cc144066e280f49038b3ebf224a5e0d97aa585e96c7b13ace2e83ab3c8e8a392",
+        "css": "7501ed2a25acf19ffd10b9170288435a4d1c1502cddb177dfb997d74028a7ee5"
+      },
+      "bytes": {
+        "blueprint": 2780,
+        "html": 74091,
+        "css": 59356
+      },
+      "paths": {
+        "blueprint": "docs/evidence/material-platform/assembled/analytics/blueprint.json",
+        "html": "docs/evidence/material-platform/assembled/analytics/index.html",
+        "css": "docs/evidence/material-platform/assembled/analytics/styles.css"
+      }
+    }
+  ]
+}

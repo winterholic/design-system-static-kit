@@ -1,0 +1,1926 @@
+{
+  "blueprintVersion": "2.0",
+  "catalogVersion": "2.6.0",
+  "theme": "ledger",
+  "palette": "dark-slate-whisper",
+  "mode": "light",
+  "pageType": "listing",
+  "axes": {
+    "shell": "sidebar",
+    "typography": "sans",
+    "density": "compact",
+    "radius": "subtle",
+    "control": "match",
+    "elevation": "outline",
+    "motion": "none",
+    "icon": "line-square",
+    "ornament": "none",
+    "backdrop": "plain",
+    "width": "full",
+    "scale": "tight",
+    "weight": "medium",
+    "footer": "minimal"
+  },
+  "rules": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+  ],
+  "paletteProvenance": {
+    "source": "internal",
+    "palette": "static-kit",
+    "seeds": {
+      "brand": "#3157D5",
+      "neutral": "#596579",
+      "auxiliary": "#087E8B",
+      "status": {
+        "success": "#18714C",
+        "warning": "#946000",
+        "danger": "#B83543",
+        "info": "#2A63C9"
+      },
+      "chart": [
+        "#3157D5",
+        "#087E8B",
+        "#A345B5",
+        "#C45A16",
+        "#218344",
+        "#B83543"
+      ]
+    },
+    "method": "closed four-layer token graph; 2.6.0 opt-in"
+  },
+  "contrast": [
+    {
+      "mode": "light",
+      "name": "text/canvas",
+      "foreground": "#181C21",
+      "background": "#E9EAED",
+      "ratio": 14.22832382,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/surface",
+      "foreground": "#181C21",
+      "background": "#FFFFFF",
+      "ratio": 17.11630007,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/raised",
+      "foreground": "#181C21",
+      "background": "#D9DBE0",
+      "ratio": 12.35577904,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/soft",
+      "foreground": "#181C21",
+      "background": "#E3E8F9",
+      "ratio": 14.00010193,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "text/sunken",
+      "foreground": "#181C21",
+      "background": "#D9DBE0",
+      "ratio": 12.35577904,
+      "minimum": 7
+    },
+    {
+      "mode": "light",
+      "name": "muted/canvas",
+      "foreground": "#3C4452",
+      "background": "#E9EAED",
+      "ratio": 8.15423114,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/surface",
+      "foreground": "#3C4452",
+      "background": "#FFFFFF",
+      "ratio": 9.80932602,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/raised",
+      "foreground": "#3C4452",
+      "background": "#D9DBE0",
+      "ratio": 7.08107852,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/soft",
+      "foreground": "#3C4452",
+      "background": "#E3E8F9",
+      "ratio": 8.02343751,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "muted/sunken",
+      "foreground": "#3C4452",
+      "background": "#D9DBE0",
+      "ratio": 7.08107852,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/canvas",
+      "foreground": "#213B90",
+      "background": "#E9EAED",
+      "ratio": 8.34063164,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/surface",
+      "foreground": "#213B90",
+      "background": "#FFFFFF",
+      "ratio": 10.03356093,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/raised",
+      "foreground": "#213B90",
+      "background": "#D9DBE0",
+      "ratio": 7.24294744,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/soft",
+      "foreground": "#213B90",
+      "background": "#E3E8F9",
+      "ratio": 8.20684815,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "link/sunken",
+      "foreground": "#213B90",
+      "background": "#D9DBE0",
+      "ratio": 7.24294744,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/canvas",
+      "foreground": "#104D33",
+      "background": "#E9EAED",
+      "ratio": 8.1903232,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/surface",
+      "foreground": "#104D33",
+      "background": "#FFFFFF",
+      "ratio": 9.85274382,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/raised",
+      "foreground": "#104D33",
+      "background": "#D9DBE0",
+      "ratio": 7.11242062,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/soft",
+      "foreground": "#104D33",
+      "background": "#E3E8F9",
+      "ratio": 8.05895066,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "success/sunken",
+      "foreground": "#104D33",
+      "background": "#D9DBE0",
+      "ratio": 7.11242062,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/canvas",
+      "foreground": "#4C3200",
+      "background": "#E9EAED",
+      "ratio": 9.89868809,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/surface",
+      "foreground": "#4C3200",
+      "background": "#FFFFFF",
+      "ratio": 11.90786195,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/raised",
+      "foreground": "#4C3200",
+      "background": "#D9DBE0",
+      "ratio": 8.59595301,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/soft",
+      "foreground": "#4C3200",
+      "background": "#E3E8F9",
+      "ratio": 9.73991344,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "warning/sunken",
+      "foreground": "#4C3200",
+      "background": "#D9DBE0",
+      "ratio": 8.59595301,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/canvas",
+      "foreground": "#7D242D",
+      "background": "#E9EAED",
+      "ratio": 8.07346046,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/surface",
+      "foreground": "#7D242D",
+      "background": "#FFFFFF",
+      "ratio": 9.71216101,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/raised",
+      "foreground": "#7D242D",
+      "background": "#D9DBE0",
+      "ratio": 7.01093781,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/soft",
+      "foreground": "#7D242D",
+      "background": "#E3E8F9",
+      "ratio": 7.94396239,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "danger/sunken",
+      "foreground": "#7D242D",
+      "background": "#D9DBE0",
+      "ratio": 7.01093781,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/canvas",
+      "foreground": "#1C4388",
+      "background": "#E9EAED",
+      "ratio": 7.90702069,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/surface",
+      "foreground": "#1C4388",
+      "background": "#FFFFFF",
+      "ratio": 9.51193834,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/raised",
+      "foreground": "#1C4388",
+      "background": "#D9DBE0",
+      "ratio": 6.86640266,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/soft",
+      "foreground": "#1C4388",
+      "background": "#E3E8F9",
+      "ratio": 7.78019232,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "info/sunken",
+      "foreground": "#1C4388",
+      "background": "#D9DBE0",
+      "ratio": 6.86640266,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "focus/canvas",
+      "foreground": "#213B90",
+      "background": "#E9EAED",
+      "ratio": 8.34063164,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/surface",
+      "foreground": "#213B90",
+      "background": "#FFFFFF",
+      "ratio": 10.03356093,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/raised",
+      "foreground": "#213B90",
+      "background": "#D9DBE0",
+      "ratio": 7.24294744,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/soft",
+      "foreground": "#213B90",
+      "background": "#E3E8F9",
+      "ratio": 8.20684815,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "focus/sunken",
+      "foreground": "#213B90",
+      "background": "#D9DBE0",
+      "ratio": 7.24294744,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "button/default",
+      "foreground": "#FFFFFF",
+      "background": "#213B90",
+      "ratio": 10.03356093,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "button/hover",
+      "foreground": "#FFFFFF",
+      "background": "#1D347F",
+      "ratio": 11.35196522,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "button/active",
+      "foreground": "#FFFFFF",
+      "background": "#1A2F73",
+      "ratio": 12.36683986,
+      "minimum": 4.5
+    },
+    {
+      "mode": "light",
+      "name": "disabled/text",
+      "foreground": "#657184",
+      "background": "#E7EBF0",
+      "ratio": 4.12829038,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/surface",
+      "foreground": "#213B90",
+      "background": "#FFFFFF",
+      "ratio": 10.03356093,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart1/canvas",
+      "foreground": "#213B90",
+      "background": "#E9EAED",
+      "ratio": 8.34063164,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/surface",
+      "foreground": "#05555E",
+      "background": "#FFFFFF",
+      "ratio": 8.51069608,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart2/canvas",
+      "foreground": "#05555E",
+      "background": "#E9EAED",
+      "ratio": 7.0747147,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/surface",
+      "foreground": "#6E2F7B",
+      "background": "#FFFFFF",
+      "ratio": 8.91485994,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart3/canvas",
+      "foreground": "#6E2F7B",
+      "background": "#E9EAED",
+      "ratio": 7.41068534,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/surface",
+      "foreground": "#853D0F",
+      "background": "#FFFFFF",
+      "ratio": 7.86015102,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart4/canvas",
+      "foreground": "#853D0F",
+      "background": "#E9EAED",
+      "ratio": 6.53393394,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/surface",
+      "foreground": "#16592E",
+      "background": "#FFFFFF",
+      "ratio": 8.39155006,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart5/canvas",
+      "foreground": "#16592E",
+      "background": "#E9EAED",
+      "ratio": 6.97567179,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart6/surface",
+      "foreground": "#7D242D",
+      "background": "#FFFFFF",
+      "ratio": 9.71216101,
+      "minimum": 3
+    },
+    {
+      "mode": "light",
+      "name": "chart6/canvas",
+      "foreground": "#7D242D",
+      "background": "#E9EAED",
+      "ratio": 8.07346046,
+      "minimum": 3
+    }
+  ],
+  "blueprint": {
+    "version": "2.0",
+    "catalogVersion": "2.6.0",
+    "name": "ERP 주문·재고 운영",
+    "theme": "ledger",
+    "palette": "dark-slate-whisper",
+    "mode": "light",
+    "pageType": "listing",
+    "shell": "sidebar",
+    "typography": "sans",
+    "density": "compact",
+    "radius": "subtle",
+    "control": "match",
+    "elevation": "outline",
+    "motion": "none",
+    "icon": "line-square",
+    "ornament": "none",
+    "backdrop": "plain",
+    "width": "full",
+    "scale": "tight",
+    "weight": "medium",
+    "footer": "minimal",
+    "chrome": {
+      "nav": [
+        {
+          "label": "주문",
+          "href": "#main",
+          "icon": "bag"
+        },
+        {
+          "label": "상품",
+          "href": "#main",
+          "icon": "tag"
+        },
+        {
+          "label": "고객",
+          "href": "#main",
+          "icon": "users"
+        },
+        {
+          "label": "정산",
+          "href": "#main",
+          "icon": "dollar"
+        },
+        {
+          "label": "설정",
+          "href": "#main",
+          "icon": "settings"
+        }
+      ],
+      "footerNote": "레저 · 정적 데모",
+      "footerLinks": [
+        {
+          "label": "이용약관",
+          "href": "#main"
+        },
+        {
+          "label": "개인정보",
+          "href": "#main"
+        },
+        {
+          "label": "문의",
+          "href": "#main"
+        }
+      ]
+    },
+    "tree": {
+      "type": "page",
+      "children": [
+        {
+          "type": "page-header",
+          "title": "주문 관리",
+          "description": "오늘 접수된 주문 128건",
+          "actions": [
+            {
+              "label": "주문 추가",
+              "href": "#main",
+              "variant": "primary"
+            },
+            {
+              "label": "내보내기",
+              "href": "#main",
+              "variant": "secondary"
+            }
+          ]
+        },
+        {
+          "type": "filter-bar",
+          "placeholder": "주문번호 또는 고객명",
+          "filters": [
+            "전체",
+            "결제 완료",
+            "배송 중",
+            "취소"
+          ],
+          "selected": 0
+        },
+        {
+          "type": "table",
+          "title": "주문 목록",
+          "caption": "최근 주문 목록",
+          "variant": "bordered",
+          "columns": [
+            "주문번호",
+            "고객",
+            "금액",
+            "상태",
+            "접수"
+          ],
+          "rows": [
+            [
+              "A-10231",
+              "김다선",
+              "39,000원",
+              "결제 완료",
+              "10:12"
+            ],
+            [
+              "A-10230",
+              "이지훈",
+              "128,000원",
+              "배송 중",
+              "09:48"
+            ],
+            [
+              "A-10229",
+              "박서연",
+              "56,500원",
+              "결제 완료",
+              "09:30"
+            ],
+            [
+              "A-10228",
+              "최민준",
+              "23,000원",
+              "취소",
+              "09:02"
+            ],
+            [
+              "A-10227",
+              "정하늘",
+              "71,000원",
+              "배송 중",
+              "08:55"
+            ]
+          ],
+          "state": "ready"
+        },
+        {
+          "type": "pagination",
+          "pages": 12,
+          "current": 1
+        }
+      ]
+    },
+    "profile": "erp",
+    "colorPalette": "static-kit"
+  },
+  "colorTokens": {
+    "palette": "static-kit",
+    "layers": [
+      "primitive",
+      "semantic",
+      "state",
+      "component"
+    ],
+    "references": {
+      "semantic.canvas": "palette.static-kit.neutral.50",
+      "semantic.surface": "palette.static-kit.neutral.50",
+      "semantic.raised": "palette.static-kit.neutral.100",
+      "semantic.neutral": "palette.static-kit.neutral.500",
+      "semantic.soft": "palette.static-kit.brand.50",
+      "semantic.sunken": "palette.static-kit.neutral.100",
+      "semantic.text": "palette.static-kit.neutral.950",
+      "semantic.muted": "palette.static-kit.neutral.700",
+      "semantic.border": "palette.static-kit.neutral.200",
+      "semantic.rule": "palette.static-kit.neutral.500",
+      "semantic.action": "palette.static-kit.brand.700",
+      "semantic.onAction": "palette.static-kit.neutral.50",
+      "semantic.link": "semantic.action",
+      "semantic.focus": "semantic.action",
+      "semantic.accent": "palette.static-kit.auxiliary.700",
+      "semantic.onAccent": "palette.static-kit.neutral.50",
+      "semantic.success": "palette.static-kit.status.success.700",
+      "semantic.warning": "palette.static-kit.status.warning.800",
+      "semantic.danger": "palette.static-kit.status.danger.700",
+      "semantic.info": "palette.static-kit.status.info.700",
+      "semantic.chart.0": "palette.static-kit.chart.0.700",
+      "semantic.chart.1": "palette.static-kit.chart.1.700",
+      "semantic.chart.2": "palette.static-kit.chart.2.700",
+      "semantic.chart.3": "palette.static-kit.chart.3.700",
+      "semantic.chart.4": "palette.static-kit.chart.4.700",
+      "semantic.chart.5": "palette.static-kit.chart.5.700",
+      "state.actionHover": "semantic.action",
+      "state.actionActive": "semantic.action",
+      "state.disabledBg": "semantic.neutral",
+      "state.disabledFg": "semantic.muted",
+      "state.error": "semantic.danger",
+      "state.focus": "semantic.focus",
+      "state.cardHover": "semantic.surface",
+      "state.cardActive": "semantic.surface",
+      "state.dangerSoft": "semantic.danger",
+      "state.tableHead": "semantic.surface",
+      "state.tableHover": "semantic.surface",
+      "state.tableSelected": "semantic.soft",
+      "state.chartGrid": "semantic.border",
+      "component.button.primary.default.bg": "semantic.action",
+      "component.button.primary.default.fg": "semantic.onAction",
+      "component.button.primary.hover.bg": "state.actionHover",
+      "component.button.primary.hover.fg": "semantic.onAction",
+      "component.button.primary.active.bg": "state.actionActive",
+      "component.button.primary.active.fg": "semantic.onAction",
+      "component.button.default.disabled.bg": "state.disabledBg",
+      "component.button.default.disabled.fg": "state.disabledFg",
+      "component.control.default.bg": "semantic.surface",
+      "component.control.default.fg": "semantic.text",
+      "component.control.default.border": "semantic.border",
+      "component.control.hover.border": "semantic.action",
+      "component.control.active.border": "state.focus",
+      "component.control.error.border": "state.error",
+      "component.control.focus.ring": "state.focus",
+      "component.control.disabled.bg": "state.disabledBg",
+      "component.control.disabled.fg": "state.disabledFg",
+      "component.card.default.bg": "semantic.surface",
+      "component.card.hover.bg": "state.cardHover",
+      "component.card.active.bg": "state.cardActive",
+      "component.card.error.bg": "state.dangerSoft",
+      "component.card.focus.ring": "state.focus",
+      "component.table.default.bg": "semantic.surface",
+      "component.table.hover.bg": "state.tableHover",
+      "component.table.active.bg": "state.tableSelected",
+      "component.table.error.bg": "state.dangerSoft",
+      "component.table.focus.ring": "state.focus",
+      "component.chart.default.series1": "semantic.chart.0",
+      "component.chart.default.series2": "semantic.chart.1",
+      "component.chart.default.series3": "semantic.chart.2",
+      "component.chart.default.series4": "semantic.chart.3",
+      "component.chart.default.series5": "semantic.chart.4",
+      "component.chart.default.series6": "semantic.chart.5"
+    },
+    "contrast": [
+      {
+        "mode": "light",
+        "name": "text/canvas",
+        "foreground": "#181C21",
+        "background": "#E9EAED",
+        "ratio": 14.22832382,
+        "minimum": 7
+      },
+      {
+        "mode": "light",
+        "name": "text/surface",
+        "foreground": "#181C21",
+        "background": "#FFFFFF",
+        "ratio": 17.11630007,
+        "minimum": 7
+      },
+      {
+        "mode": "light",
+        "name": "text/raised",
+        "foreground": "#181C21",
+        "background": "#D9DBE0",
+        "ratio": 12.35577904,
+        "minimum": 7
+      },
+      {
+        "mode": "light",
+        "name": "text/soft",
+        "foreground": "#181C21",
+        "background": "#E3E8F9",
+        "ratio": 14.00010193,
+        "minimum": 7
+      },
+      {
+        "mode": "light",
+        "name": "text/sunken",
+        "foreground": "#181C21",
+        "background": "#D9DBE0",
+        "ratio": 12.35577904,
+        "minimum": 7
+      },
+      {
+        "mode": "light",
+        "name": "muted/canvas",
+        "foreground": "#3C4452",
+        "background": "#E9EAED",
+        "ratio": 8.15423114,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "muted/surface",
+        "foreground": "#3C4452",
+        "background": "#FFFFFF",
+        "ratio": 9.80932602,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "muted/raised",
+        "foreground": "#3C4452",
+        "background": "#D9DBE0",
+        "ratio": 7.08107852,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "muted/soft",
+        "foreground": "#3C4452",
+        "background": "#E3E8F9",
+        "ratio": 8.02343751,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "muted/sunken",
+        "foreground": "#3C4452",
+        "background": "#D9DBE0",
+        "ratio": 7.08107852,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "link/canvas",
+        "foreground": "#213B90",
+        "background": "#E9EAED",
+        "ratio": 8.34063164,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "link/surface",
+        "foreground": "#213B90",
+        "background": "#FFFFFF",
+        "ratio": 10.03356093,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "link/raised",
+        "foreground": "#213B90",
+        "background": "#D9DBE0",
+        "ratio": 7.24294744,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "link/soft",
+        "foreground": "#213B90",
+        "background": "#E3E8F9",
+        "ratio": 8.20684815,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "link/sunken",
+        "foreground": "#213B90",
+        "background": "#D9DBE0",
+        "ratio": 7.24294744,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "success/canvas",
+        "foreground": "#104D33",
+        "background": "#E9EAED",
+        "ratio": 8.1903232,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "success/surface",
+        "foreground": "#104D33",
+        "background": "#FFFFFF",
+        "ratio": 9.85274382,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "success/raised",
+        "foreground": "#104D33",
+        "background": "#D9DBE0",
+        "ratio": 7.11242062,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "success/soft",
+        "foreground": "#104D33",
+        "background": "#E3E8F9",
+        "ratio": 8.05895066,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "success/sunken",
+        "foreground": "#104D33",
+        "background": "#D9DBE0",
+        "ratio": 7.11242062,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "warning/canvas",
+        "foreground": "#4C3200",
+        "background": "#E9EAED",
+        "ratio": 9.89868809,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "warning/surface",
+        "foreground": "#4C3200",
+        "background": "#FFFFFF",
+        "ratio": 11.90786195,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "warning/raised",
+        "foreground": "#4C3200",
+        "background": "#D9DBE0",
+        "ratio": 8.59595301,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "warning/soft",
+        "foreground": "#4C3200",
+        "background": "#E3E8F9",
+        "ratio": 9.73991344,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "warning/sunken",
+        "foreground": "#4C3200",
+        "background": "#D9DBE0",
+        "ratio": 8.59595301,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "danger/canvas",
+        "foreground": "#7D242D",
+        "background": "#E9EAED",
+        "ratio": 8.07346046,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "danger/surface",
+        "foreground": "#7D242D",
+        "background": "#FFFFFF",
+        "ratio": 9.71216101,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "danger/raised",
+        "foreground": "#7D242D",
+        "background": "#D9DBE0",
+        "ratio": 7.01093781,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "danger/soft",
+        "foreground": "#7D242D",
+        "background": "#E3E8F9",
+        "ratio": 7.94396239,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "danger/sunken",
+        "foreground": "#7D242D",
+        "background": "#D9DBE0",
+        "ratio": 7.01093781,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "info/canvas",
+        "foreground": "#1C4388",
+        "background": "#E9EAED",
+        "ratio": 7.90702069,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "info/surface",
+        "foreground": "#1C4388",
+        "background": "#FFFFFF",
+        "ratio": 9.51193834,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "info/raised",
+        "foreground": "#1C4388",
+        "background": "#D9DBE0",
+        "ratio": 6.86640266,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "info/soft",
+        "foreground": "#1C4388",
+        "background": "#E3E8F9",
+        "ratio": 7.78019232,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "info/sunken",
+        "foreground": "#1C4388",
+        "background": "#D9DBE0",
+        "ratio": 6.86640266,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "focus/canvas",
+        "foreground": "#213B90",
+        "background": "#E9EAED",
+        "ratio": 8.34063164,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "focus/surface",
+        "foreground": "#213B90",
+        "background": "#FFFFFF",
+        "ratio": 10.03356093,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "focus/raised",
+        "foreground": "#213B90",
+        "background": "#D9DBE0",
+        "ratio": 7.24294744,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "focus/soft",
+        "foreground": "#213B90",
+        "background": "#E3E8F9",
+        "ratio": 8.20684815,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "focus/sunken",
+        "foreground": "#213B90",
+        "background": "#D9DBE0",
+        "ratio": 7.24294744,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "button/default",
+        "foreground": "#FFFFFF",
+        "background": "#213B90",
+        "ratio": 10.03356093,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "button/hover",
+        "foreground": "#FFFFFF",
+        "background": "#1D347F",
+        "ratio": 11.35196522,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "button/active",
+        "foreground": "#FFFFFF",
+        "background": "#1A2F73",
+        "ratio": 12.36683986,
+        "minimum": 4.5
+      },
+      {
+        "mode": "light",
+        "name": "disabled/text",
+        "foreground": "#657184",
+        "background": "#E7EBF0",
+        "ratio": 4.12829038,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart1/surface",
+        "foreground": "#213B90",
+        "background": "#FFFFFF",
+        "ratio": 10.03356093,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart1/canvas",
+        "foreground": "#213B90",
+        "background": "#E9EAED",
+        "ratio": 8.34063164,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart2/surface",
+        "foreground": "#05555E",
+        "background": "#FFFFFF",
+        "ratio": 8.51069608,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart2/canvas",
+        "foreground": "#05555E",
+        "background": "#E9EAED",
+        "ratio": 7.0747147,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart3/surface",
+        "foreground": "#6E2F7B",
+        "background": "#FFFFFF",
+        "ratio": 8.91485994,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart3/canvas",
+        "foreground": "#6E2F7B",
+        "background": "#E9EAED",
+        "ratio": 7.41068534,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart4/surface",
+        "foreground": "#853D0F",
+        "background": "#FFFFFF",
+        "ratio": 7.86015102,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart4/canvas",
+        "foreground": "#853D0F",
+        "background": "#E9EAED",
+        "ratio": 6.53393394,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart5/surface",
+        "foreground": "#16592E",
+        "background": "#FFFFFF",
+        "ratio": 8.39155006,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart5/canvas",
+        "foreground": "#16592E",
+        "background": "#E9EAED",
+        "ratio": 6.97567179,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart6/surface",
+        "foreground": "#7D242D",
+        "background": "#FFFFFF",
+        "ratio": 9.71216101,
+        "minimum": 3
+      },
+      {
+        "mode": "light",
+        "name": "chart6/canvas",
+        "foreground": "#7D242D",
+        "background": "#E9EAED",
+        "ratio": 8.07346046,
+        "minimum": 3
+      }
+    ],
+    "materialModules": [
+      "src/color-tokens.mjs",
+      "src/materials/adapters.mjs"
+    ],
+    "usedTokens": [
+      {
+        "id": "color-token:component.button.action",
+        "component": "button",
+        "cssName": "--kit-action",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.button.on-action",
+        "component": "button",
+        "cssName": "--kit-onAction",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.button.action-hover",
+        "component": "button",
+        "cssName": "--kit-action-hover",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.button.action-active",
+        "component": "button",
+        "cssName": "--kit-action-active",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.button.control-disabled-bg",
+        "component": "button",
+        "cssName": "--kit-control-disabled-bg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.button.control-disabled-fg",
+        "component": "button",
+        "cssName": "--kit-control-disabled-fg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.button.focus",
+        "component": "button",
+        "cssName": "--kit-focus",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-bg",
+        "component": "input",
+        "cssName": "--kit-control-bg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-fg",
+        "component": "input",
+        "cssName": "--kit-control-fg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-border",
+        "component": "input",
+        "cssName": "--kit-control-border",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-hover-border",
+        "component": "input",
+        "cssName": "--kit-control-hover-border",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-active-border",
+        "component": "input",
+        "cssName": "--kit-control-active-border",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-error",
+        "component": "input",
+        "cssName": "--kit-control-error",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.focus",
+        "component": "input",
+        "cssName": "--kit-focus",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-disabled-bg",
+        "component": "input",
+        "cssName": "--kit-control-disabled-bg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.input.control-disabled-fg",
+        "component": "input",
+        "cssName": "--kit-control-disabled-fg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-bg",
+        "component": "select",
+        "cssName": "--kit-control-bg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-fg",
+        "component": "select",
+        "cssName": "--kit-control-fg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-border",
+        "component": "select",
+        "cssName": "--kit-control-border",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-hover-border",
+        "component": "select",
+        "cssName": "--kit-control-hover-border",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-active-border",
+        "component": "select",
+        "cssName": "--kit-control-active-border",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-error",
+        "component": "select",
+        "cssName": "--kit-control-error",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.focus",
+        "component": "select",
+        "cssName": "--kit-focus",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-disabled-bg",
+        "component": "select",
+        "cssName": "--kit-control-disabled-bg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.select.control-disabled-fg",
+        "component": "select",
+        "cssName": "--kit-control-disabled-fg",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "disabled",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.card.surface",
+        "component": "card",
+        "cssName": "--kit-surface",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.card.card-hover",
+        "component": "card",
+        "cssName": "--kit-card-hover",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.card.card-active",
+        "component": "card",
+        "cssName": "--kit-card-active",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.card.danger-soft",
+        "component": "card",
+        "cssName": "--kit-danger-soft",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.card.focus",
+        "component": "card",
+        "cssName": "--kit-focus",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.table.surface",
+        "component": "table",
+        "cssName": "--kit-surface",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.table.table-head",
+        "component": "table",
+        "cssName": "--kit-table-head",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.table.table-hover",
+        "component": "table",
+        "cssName": "--kit-table-hover",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.table.table-selected",
+        "component": "table",
+        "cssName": "--kit-table-selected",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.table.danger-soft",
+        "component": "table",
+        "cssName": "--kit-danger-soft",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.table.focus",
+        "component": "table",
+        "cssName": "--kit-focus",
+        "states": [
+          "default",
+          "hover",
+          "active",
+          "error",
+          "focus"
+        ]
+      },
+      {
+        "id": "color-token:component.chart.chart1",
+        "component": "chart",
+        "cssName": "--kit-chart1",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "color-token:component.chart.chart2",
+        "component": "chart",
+        "cssName": "--kit-chart2",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "color-token:component.chart.chart3",
+        "component": "chart",
+        "cssName": "--kit-chart3",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "color-token:component.chart.chart4",
+        "component": "chart",
+        "cssName": "--kit-chart4",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "color-token:component.chart.chart5",
+        "component": "chart",
+        "cssName": "--kit-chart5",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "color-token:component.chart.chart-grid",
+        "component": "chart",
+        "cssName": "--kit-chart-grid",
+        "states": [
+          "default"
+        ]
+      }
+    ]
+  },
+  "design": {
+    "version": "1.3.0",
+    "decisions": [
+      {
+        "path": "$.tree.children[0]",
+        "type": "page-header",
+        "facts": {
+          "type": "page-header",
+          "semantic": "page-header",
+          "intent": "operation",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "ledger"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C01",
+            "C02"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "page-heading",
+          "titleRole": "app"
+        },
+        "sources": {
+          "role": "C01",
+          "titleRole": "C02"
+        },
+        "applied": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "path": "$.tree.children[2]",
+        "type": "table",
+        "facts": {
+          "type": "table",
+          "semantic": "table",
+          "intent": "operation",
+          "nested": false,
+          "supporting": false,
+          "parent": "page",
+          "siblingCount": 4,
+          "titleCpl": 5,
+          "valueLength": 0,
+          "density": "compact",
+          "typography": "sans",
+          "theme": "ledger"
+        },
+        "coverage": {
+          "mode": "contextual",
+          "contracts": [
+            "C13"
+          ],
+          "reason": "Compiler-selected roles and container policies extend existing type, spacing and flow contracts."
+        },
+        "values": {
+          "role": "table",
+          "cellSpace": "item"
+        },
+        "sources": {
+          "role": "C13",
+          "cellSpace": "C13"
+        },
+        "applied": [
+          "C13"
+        ],
+        "table": {
+          "policy": "table-content-1",
+          "sourceRules": [
+            "CAR-12",
+            "ANT-11",
+            "POL-06",
+            "ANT-12"
+          ],
+          "density": "compact",
+          "padding": {
+            "inline": 12,
+            "block": 8
+          },
+          "columns": [
+            {
+              "index": 0,
+              "minWidth": 80,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 1,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 2,
+              "minWidth": 92,
+              "align": "end",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 3,
+              "minWidth": 76,
+              "align": "start",
+              "wrap": "nowrap"
+            },
+            {
+              "index": 4,
+              "minWidth": 72,
+              "align": "start",
+              "wrap": "nowrap"
+            }
+          ],
+          "minimumWidth": 392,
+          "readableWidth": 392,
+          "scroll": {
+            "overflow": "auto",
+            "required": null
+          }
+        }
+      }
+    ],
+    "inherited": [
+      {
+        "path": "$.tree",
+        "type": "page",
+        "mode": "inherited",
+        "contracts": [
+          "layout/parent",
+          "S09"
+        ],
+        "reason": "Structural nodes inherit page and panel rhythm without adding a surface."
+      },
+      {
+        "path": "$.tree.children[1]",
+        "type": "filter-bar",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/scroll",
+          "S06"
+        ],
+        "reason": "Existing intentional overflow preserves readable control and step labels."
+      },
+      {
+        "path": "$.tree.children[3]",
+        "type": "pagination",
+        "mode": "inherited",
+        "contracts": [
+          "navigation/semantics",
+          "S01",
+          "S06"
+        ],
+        "reason": "Navigation retains current location, wrapping and control dimensions."
+      }
+    ],
+    "page": {
+      "version": "1.3.0",
+      "facts": {
+        "intent": "operation",
+        "heroVariant": null,
+        "heroVisual": null,
+        "heroArt": false,
+        "afterHero": null,
+        "bentos": 0,
+        "duplicateVisualGroups": 0
+      },
+      "decisions": []
+    },
+    "typography": {
+      "revision": 2,
+      "limits": {
+        "track": {
+          "display": -0.02,
+          "title": -0.02,
+          "heading": -0.015,
+          "sub": -0.01
+        },
+        "labelMax": 0.06,
+        "leading": {
+          "display": 1.2,
+          "title": 1.25,
+          "heading": 1.3,
+          "sub": 1.35
+        },
+        "body": [
+          1.55,
+          1.8
+        ],
+        "caps": {
+          "display": 80,
+          "title": 64,
+          "heading": 40,
+          "app": 36
+        },
+        "ratioMax": 1.414,
+        "serifHangulWeightMax": 700,
+        "stackSwap": {
+          "georgia": "news",
+          "baskerville": "palatino"
+        }
+      }
+    }
+  }
+}
