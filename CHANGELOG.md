@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- 재료 계약 1.0.0(`docs/adr/0011-materials-contract.md`, `docs/materials/audit.md`): 모든 디자인 재료가 따를 공통 기록(id·version·kind·category·contexts·render·defaults/variants·tokens·dependencies·structure·states·responsive·a11y·validation·examples·quality·source·preset·ext)과 검증기·레지스트리(`src/materials/`)를 더했다. 기존 부품·축·서체·테마·팔레트·페이지 유형·템플릿·레시피·배치 원형·아이콘 766개를 읽기 전용으로 등록하고, 재료 수·속성 조합 수(762,749)·완성 프리셋 수(157)를 따로 센다. 컴파일 경로는 재료 모듈을 읽지 않는다. 2.4.0 고정 해시와 새로 고정한 2.5.0 템플릿 85개 해시(`docs/evidence/materials/pinned-2-5-*.json`)가 그대로다. 2.6.0은 계획 버전이고 아직 받지 않는다.
+
 - 카탈로그 2.4.0 · Design Recipe(`docs/adr/0007-design-recipes.md`, `docs/recipes.md`): SaaS 랜딩·업무 대시보드·콘텐츠 페이지 3종을 기존 템플릿·변형·컨셉 look 위의 구조화 데이터(`src/catalog/recipes.mjs`, 규칙 RC01~RC09)로 두고, 같은 입력이면 같은 조합과 근거(레시피 id, 지킨·피한 규칙 ID)를 돌려주는 선택 함수(`src/recipes.mjs`)를 더했다. 조합은 지우거나 금지하지 않는다(4,955개 그대로). 갤러리는 레시피 추천을 먼저 보이고(배지·"레시피 추천만" 필터·"템플릿 순" 복귀), 조립기는 "레시피 추천으로 맞추기"와 근거를 보이며 카탈로그 탭의 시작이 추천을 쓴다. 출력은 바꾸지 않아 2.3.0 이하 고정 시험이 그대로 통과한다. 선택 15개 중 기본과 다른 추천은 devtool-landing 1개(히어로 제목 34→64px·제품 시각 요소 추가)이고 15개 모두 4개 폭 심각 프로브 0, 구조 등급 A 13·B 2(MEASURE_SHORT). hr-people은 브라우저 Q08(가로 2.13배)에, 콘텐츠 보존 계약 V06(hero:product가 히어로 수치 3개를 지움, 같은 원인의 768개 조합)을 더했고, waitlist는 눈가림 평가(두 평가자 꼴찌)와 직접 비교 뒤 레시피 데이터의 템플릿별 면제(`exempt`)로 RC01을 면제해 기본을 유지한다.
 
 - 카탈로그 2.4.0 · 벤토 높이 균형(진단 2026-11-21 원인 5의 C3·Q07, `docs/quality-diagnosis-2026-11-21.md` 14절). 벤토는 짧은 칸(지표·진행률)끼리, 긴 칸끼리 한 줄에 앉히고(`bentoPlan`의 `pair`, 섞인 줄이 가장 적은 순열 중 작성 순서에서 가장 덜 움직인 것) 4열 모드의 2×2 큰 칸은 그림 비율이 아니라 두 줄 높이를 받아 채운다(`bentoFeatureCSS`). 흐름 안 도넛 링은 범례 옆 남는 폭을 쓴다(`donutFitCSS`). P04는 짝 짓기로 없앨 수 없는 섞인 줄만 보고한다. 2.3.0 이하 입력은 작성 순서와 옛 CSS 그대로(고정 hash 시험 통과). 검사 기준은 바꾸지 않았다.

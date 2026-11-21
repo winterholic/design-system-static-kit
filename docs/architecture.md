@@ -23,6 +23,7 @@ flowchart LR
 | `src/compiler.mjs` | 검증 → 토큰 → CSS → HTML → manifest. 대비 게이트 실패 시 예외 |
 | `src/catalog/composition.mjs` | 2.2의 버전 고정 맥락 결정표: 사실 조건·우선순위·기존 역할/간격 선택 |
 | `src/composition.mjs` | 사실 추출·필드별 충돌 판정·콘텐츠 폭 예산·파생 CSS·manifest 진단. 2.1 경로는 적용하지 않음 |
+| `src/materials/` | 재료 계약(ADR 0011): 공통 필드·종류·검증기·레지스트리와 기존 카탈로그 어댑터. 컴파일 경로는 읽지 않는다 |
 | `scripts/` | `kit`(CLI), `output`(관리 파일·해시), `audit`, `build`, `gallery`/`bundle`(단일 HTML), `docs`/`md`(문서 생성) |
 
 ## 입력 트리
