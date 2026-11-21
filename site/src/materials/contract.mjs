@@ -10,7 +10,7 @@ import {pageTypeIds} from '../catalog/pagetypes.mjs';
 /** 계약 자체의 버전. 공통 필드를 바꾸면 올린다. 재료 하나의 버전(material.version)과 다르다. */
 export const MATERIAL_CONTRACT_VERSION = '1.0.0';
 
-/** 재료 계약을 처음 출력에 반영할 카탈로그 버전(ADR 0011). 아직 ACCEPTED_CATALOG_VERSIONS에 없다: 문법이 생기기 전에는 받지 않는다. */
+/** 재료 계약 출력의 도입 버전(ADR 0011). 현재 `2.6.0`은 opt-in으로 활성화되어 있다. */
 export const MATERIAL_CATALOG_VERSION = '2.6.0';
 
 /** 감사(docs/materials/audit.md)의 10분류 + 페이지·프로필. */
@@ -91,7 +91,7 @@ export const BUILTIN_KINDS = Object.freeze([
   defineKind({id: 'layout-primitive', label: '배치 원형', categories: ['layout-navigation'], ext: {css: 'string'}}),
   defineKind({id: 'icon', label: '아이콘', categories: ['icon-media'], ext: {aliases: 'array'}}),
   // 후속 단계용 종류. 지금은 재료가 없고 계약만 있다.
-  defineKind({id: 'color-token', label: '계층 색 토큰', categories: ['color'], ext: {layer: 'string', role: 'string', light: 'string?', dark: 'string?'}}),
+  defineKind({id: 'color-token', label: '계층 색 토큰', categories: ['color', 'chart'], ext: {layer: 'string', role: 'string', light: 'string?', dark: 'string?'}}),
   defineKind({id: 'chart-preset', label: '차트 프리셋', categories: ['chart'], presetCapable: true, ext: {chartKind: 'string', series: 'object', axes: 'object', unit: 'string', labels: 'object'}}),
   defineKind({id: 'pattern', label: '레이아웃 패턴', categories: ['layout-navigation', 'section-recipe'], presetCapable: true, ext: {slots: 'array'}}),
 ]);

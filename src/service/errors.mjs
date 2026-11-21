@@ -11,6 +11,7 @@ export const HINTS = {
   UNKNOWN_KEY: '카탈로그에 없는 속성입니다. 부품 스키마(blueprintSchema())의 필드만 쓸 수 있고 임의 CSS·HTML 속성은 지원하지 않습니다.',
   REQUIRED: '필수 속성을 채우세요. 부품별 필수 필드는 blueprintSchema()에 있습니다.',
   ENUM: '메시지에 적힌 허용값 중 하나를 고르세요.',
+  VERSION_FIELD: '이 필드는 도입 버전 이후 Blueprint에서만 쓸 수 있습니다. catalogVersion을 명시적으로 올린 뒤 다시 검증하세요.',
   STRING: '글자 수 범위와 제어 문자 금지를 지켜 다시 쓰세요. 비울 수 없는 필드입니다.',
   NUMBER: '허용 범위의 숫자로 고치세요.',
   PATTERN: '형식(소문자·숫자·하이픈 등)에 맞게 고치세요.',

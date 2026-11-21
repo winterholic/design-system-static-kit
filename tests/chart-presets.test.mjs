@@ -3,9 +3,8 @@ import assert from 'node:assert/strict';
 import {createBlueprint} from '../src/catalog.mjs';
 import {nodeSpecs} from '../src/catalog/nodes.mjs';
 import {nodeSpecAt, NODE_SPEC_EXTENSIONS} from '../src/catalog/node-extensions.mjs';
-import {ACCEPTED_CATALOG_VERSIONS} from '../src/catalog.mjs';
+import {CATALOG_VERSION} from '../src/catalog.mjs';
 import {compile, validateBlueprint} from '../src/compiler.mjs';
-import {renderChart} from '../src/render/chart.mjs';
 import {catalogRegistry, resolveChartPreset} from '../src/materials/index.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
 import {renderChartPreset} from '../src/render/chart-presets.mjs';
@@ -19,8 +18,9 @@ const pageWithChart = (chart, catalogVersion = '2.4.0') => {
   blueprint.tree = {type: 'page', children: [{type: 'page-header', title: '차트'}, chart]};
   return blueprint;
 };
-// 2.6.0은 아직 받는 버전이 아니므로 2.6.0 문서는 버전 오류를 낸다. 그 오류만 빼면 확장 명세로 노드를 검사한 결과다.
-const extended = chart => validateBlueprint(pageWithChart(chart, '2.6.0')).errors.filter(error => error.path !== '$.catalogVersion');
+// 새 차트 형태와 필드는 catalogVersion 2.6.0을 고른 Blueprint에서만 받는다(src/catalog/node-extensions.mjs).
+const extended = chart => validateBlueprint(pageWithChart(chart, '2.6.0')).errors;
+const compiled = chart => compile(pageWithChart(chart, '2.6.0'));
 const sample = (kind, extra = {}) => ({
   type: 'chart', title: '월별 매출', caption: '월별 순매출, 백만 원', kind,
   unit: '백만 원', categories: ['1월', '2월', '3월'],
@@ -62,9 +62,9 @@ test('chart presets are complete verified materials with compile-ready examples'
     assert.ok(preset.examples.length > 0);
     for (const example of preset.examples) {
       assert.deepEqual(extended(example), [], preset.id);
-      const html = renderChart(example, 'preset-example');
-      assert.match(html, /class="kit-chart"/);
-      assert.match(html, /<table>/);
+      const result = compiled(example);
+      assert.match(result.html, /class="kit-chart"/);
+      assert.match(result.html, /<table>/);
     }
   }
 });
@@ -78,7 +78,7 @@ test('2.6.0 preset seam resolves ids to the existing compiler chart-node shape',
   assert.equal(node.kind, 'stacked-bar');
   assert.deepEqual(node.axis, {showX: 'yes', showY: 'yes'});
   assert.deepEqual(extended(node), []);
-  assert.match(renderChart(node, 'seam'), /data-kind="stacked-bar"/);
+  assert.match(compiled(node).html, /data-kind="stacked-bar"/);
 });
 
 test('data domains reject incompatible forms, nonfinite points, zero spans and out of domain values', () => {
@@ -107,18 +107,18 @@ test('axis and label omission are explicit, while clipping and overlap stay visi
     title: '긴 범례 예시', categories: ['2026년 1분기 계획', '2026년 2분기 계획', '2026년 3분기 계획'],
     series: [{name: '매출 목표', values: [20, 22, 24]}, {name: '실제 달성', values: [18, 25, 21]}],
   });
-  const html = renderChart(chart, 'stacked');
-  assert.match(html, /role="img"/);
-  assert.match(html, /<table>/);
-  assert.match(html, /stacked-bar/);
-  assert.match(html, /class="ch-bar"/);
-  assert.match(compile(pageWithChart(sample('bar'))).css, /overflow-wrap|overflow-x/);
+  const result = compiled(chart);
+  assert.match(result.html, /role="img"/);
+  assert.match(result.html, /<table>/);
+  assert.match(result.html, /stacked-bar/);
+  assert.match(result.html, /class="ch-bar"/);
+  assert.match(result.css, /overflow-wrap|overflow-x/);
 
   const denseLabels = Array.from({length: 8}, (_, i) => `2026년 ${i + 1}분기 사업계획 항목`);
-  const dense = renderChart(sample('bar', {
+  const dense = compiled(sample('bar', {
     axis: {showX: 'yes', showY: 'yes'}, categories: denseLabels,
     series: [{name: '계획', values: [1, 2, 3, 4, 5, 6, 7, 8]}],
-  }), 'dense');
+  })).html;
   assert.match(dense, />202…<\/text>/, 'visual tick labels shorten to the plot width');
   assert.ok(dense.includes(`<th scope="row">${denseLabels[0]}</th>`), 'the table keeps full category labels');
 });
@@ -157,12 +157,16 @@ test('the base chart node spec keeps its 2.4.0 and 2.5.0 contract; the new shape
   const extension = nodeSpecAt('chart', '2.6.0');
   assert.deepEqual(Object.keys(extension.fields).sort(), [...Object.keys(base.fields), 'xLabel', 'yLabel', 'axis'].sort());
   assert.ok(Object.hasOwn(extension.fields.series.items.properties, 'points'));
-  assert.strictEqual(nodeSpecAt('chart', '2.6.1'), extension);
 });
 
-test('2.6.0 stays inactive: the validator still refuses a 2.6.0 document and the accepted version list is unchanged', () => {
-  assert.deepEqual([...ACCEPTED_CATALOG_VERSIONS], ['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0']);
-  const result = validateBlueprint(pageWithChart(sample('stacked-bar', {series: [{name: '제품', values: [1, 2, 3]}, {name: '서비스', values: [3, 2, 1]}]}), '2.6.0'));
-  assert.ok(result.errors.some(error => error.code === 'CATALOG_VERSION'));
-  assert.deepEqual(result.errors.filter(error => error.path !== '$.catalogVersion'), [], 'only the version gate blocks the extended chart');
+test('only a Blueprint that selects catalogVersion 2.6.0 gets the new chart shapes, and the default creation version stays 2.4.0', () => {
+  assert.equal(CATALOG_VERSION, '2.4.0');
+  assert.equal(createBlueprint('dashboard-overview').catalogVersion, '2.4.0');
+  const stacked = sample('stacked-bar', {series: [{name: '제품', values: [1, 2, 3]}, {name: '서비스', values: [3, 2, 1]}], xLabel: '월', yLabel: '매출', axis: {showX: 'yes', showY: 'yes'}});
+  for (const version of ['2.4.0', '2.5.0']) assert.equal(validateBlueprint(pageWithChart(stacked, version)).valid, false, version);
+  assert.equal(validateBlueprint(pageWithChart(stacked, '2.6.0')).valid, true);
+  assert.match(compile(pageWithChart(stacked, '2.6.0')).html, /data-kind="stacked-bar"/);
+  // a 2.6.0 document that uses none of the new shapes is judged by the old chart rules plus the new data checks, never looser
+  assert.equal(validateBlueprint(pageWithChart(sample('bar'), '2.6.0')).valid, true);
+  assert.equal(validateBlueprint(pageWithChart(sample('donut', {series: [{name: 'A', values: [1, -2, 3]}]}), '2.6.0')).valid, false);
 });

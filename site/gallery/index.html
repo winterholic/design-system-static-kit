@@ -324,7 +324,7 @@ __defs["catalog/expression.mjs"] = function (exports, __m) {
  */
 
 /** 카탈로그 버전 순서. 새 버전은 끝에 더한다. `atLeast`가 이 순서로 비교한다. */
-const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0']);
+const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0']);
 const EXPRESSION_SINCE = '2.5.0';
 const atLeast = (version, since) => VERSION_ORDER.includes(version) && VERSION_ORDER.indexOf(version) >= VERSION_ORDER.indexOf(since);
 /** 2.5.0부터 켜지는 표현력 문법과 렌더러 수정(R1~R4)의 게이트. 버전이 없는 내부 호출(타이포·간격만 가진 객체)은 켜지지 않는다. */
@@ -343,6 +343,11 @@ const SINCE_FIELDS = Object.freeze([
   {node: 'section', field: 'space', proposal: 'EX-4'},
   {node: 'media', field: 'bleed', proposal: 'EX-5'},
 ].map(Object.freeze));
+
+/** 2.6.0 fields at Blueprint level; they use closed IDs and the same explicit version gate as node additions. */
+const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
+  Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
+]);
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */
 const HERO_RATIOS = Object.freeze({copy: [3, 2], visual: [2, 3]});
@@ -372,6 +377,7 @@ exports.atLeast = atLeast;
 exports.expressionApplies = expressionApplies;
 exports.since = since;
 exports.SINCE_FIELDS = SINCE_FIELDS;
+exports.TOP_LEVEL_SINCE_FIELDS = TOP_LEVEL_SINCE_FIELDS;
 exports.HERO_RATIOS = HERO_RATIOS;
 exports.DOMINANT_MIN = DOMINANT_MIN;
 exports.NARROW_CELL_OK = NARROW_CELL_OK;
@@ -495,7 +501,7 @@ const {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds
 const {variantContracts, variantCheckKinds, DIRECT_CONTRACTS, assessBlueprintContracts} = __m("catalog/variant-contracts.mjs");
 const {NEUTRAL_OPTIONS: neutralOptions, EFFECTS_META: neutralMeta} = __m("catalog/variant-effects.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
-const {EXPRESSION_SINCE, SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules} = __m("catalog/expression.mjs");
+const {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} = __m("catalog/expression.mjs");
 const {recipes, recipeRules, recipeIds} = __m("catalog/recipes.mjs");
 { const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.pageRules = __r.pageRules; exports.PAGE_RULE_LEGACY_VERSIONS = __r.PAGE_RULE_LEGACY_VERSIONS; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
@@ -504,7 +510,7 @@ const CATALOG_VERSION = '2.4.0';
 const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
 /** 표현력 확장(2.5.0)을 더한 버전. 검증기·스키마는 이 목록을 받아들이고, `kit migrate --to 2.5.0`이 옮긴다. */
 const EXPRESSION_CATALOG_VERSION = EXPRESSION_SINCE;
-const ACCEPTED_CATALOG_VERSIONS = Object.freeze([...SUPPORTED_CATALOG_VERSIONS, EXPRESSION_CATALOG_VERSION]);
+const ACCEPTED_CATALOG_VERSIONS = Object.freeze([...SUPPORTED_CATALOG_VERSIONS, EXPRESSION_CATALOG_VERSION, '2.6.0']);
 const BLUEPRINT_VERSION = '2.0';
 const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 
@@ -551,7 +557,7 @@ function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,
@@ -715,6 +721,7 @@ exports.recipeIds = recipeIds;
 exports.DIRECT_CONTRACTS = DIRECT_CONTRACTS;
 exports.assessBlueprintContracts = assessBlueprintContracts;
 exports.SINCE_FIELDS = SINCE_FIELDS;
+exports.TOP_LEVEL_SINCE_FIELDS = TOP_LEVEL_SINCE_FIELDS;
 exports.atLeast = atLeast;
 exports.expressionApplies = expressionApplies;
 exports.VERSION_ORDER = VERSION_ORDER;
@@ -775,12 +782,13 @@ exports.migrateBlueprint = migrateBlueprint;
 };
 __defs["catalog/node-extensions.mjs"] = function (exports, __m) {
 const {nodeSpecs, str, en, arr, num, obj} = __m("catalog/nodes.mjs");
+const {atLeast} = __m("catalog/expression.mjs");
 
 /**
  * 버전별 노드 명세 확장 표. `nodeSpecs`(src/catalog/nodes.mjs)는 2.1.0~2.5.0이 받아들이는 문법이고 snapshot 바이트
  * (site/v1/catalog.json)의 일부라서 여기서 넓히지 않는다. 아직 열리지 않은 카탈로그 버전의 문법은 이 표에만 둔다.
  * 항목의 필드는 같은 이름의 기본 필드를 덮어쓰고, `optional`은 기본 목록을 대체한다.
- * 2.6.0을 여는 작업은 `VERSION_ORDER`·`ACCEPTED_CATALOG_VERSIONS`에 버전을 더하는 것만으로 `nodeSpecAt`이 확장을 돌려준다(ADR 0011).
+ * 켜짐 여부는 2.6.0 opt-in 게이트와 같은 `atLeast(catalogVersion, since)`(src/catalog/expression.mjs의 `VERSION_ORDER`)로 판단한다.
  */
 const N = num(-1000000, 1000000);
 const CHART_BASE_KINDS = Object.freeze([...nodeSpecs.chart.fields.kind.enum]);
@@ -803,16 +811,7 @@ const NODE_SPEC_EXTENSIONS = deepFreeze({
   },
 });
 
-const parts = version => (typeof version === 'string' && /^\d+\.\d+\.\d+$/.test(version) ? version.split('.').map(Number) : null);
-/** 의미 있는 버전(x.y.z)끼리만 비교한다. 형식이 틀린 값은 어떤 확장도 켜지 않는다. */
-function versionAtLeast(version, since) {
-  const a = parts(version), b = parts(since);
-  if (!a || !b) return false;
-  for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] > b[i];
-  return true;
-}
-
-const extensionsFor = version => Object.entries(NODE_SPEC_EXTENSIONS).filter(([since]) => versionAtLeast(version, since)).sort(([x], [y]) => (versionAtLeast(x, y) ? 1 : -1)).map(([, table]) => table);
+const extensionsFor = version => Object.entries(NODE_SPEC_EXTENSIONS).filter(([since]) => atLeast(version, since)).sort(([x], [y]) => (atLeast(x, y) ? 1 : -1)).map(([, table]) => table);
 /** 그 카탈로그 버전에서 `type` 노드의 확장이 켜지는가. 2.5.0 이하는 항상 false다. */
 const nodeExtended = (type, version) => extensionsFor(version).some(table => Object.hasOwn(table, type));
 
@@ -834,7 +833,6 @@ function nodeSpecAt(type, version) {
 exports.CHART_BASE_KINDS = CHART_BASE_KINDS;
 exports.CHART_EXTENDED_KINDS = CHART_EXTENDED_KINDS;
 exports.NODE_SPEC_EXTENSIONS = NODE_SPEC_EXTENSIONS;
-exports.versionAtLeast = versionAtLeast;
 exports.nodeExtended = nodeExtended;
 exports.nodeSpecAt = nodeSpecAt;
 };
@@ -3186,6 +3184,198 @@ exports.applyLayout = applyLayout;
 exports.applyLayoutChecked = applyLayoutChecked;
 exports.layoutSlotIds = layoutSlotIds;
 };
+__defs["color-tokens.mjs"] = function (exports, __m) {
+/** Closed, project-owned palette and its 2.6.0 color-token graph. No caller-provided color values. */
+const STEPS = Object.freeze(['50','100','200','300','400','500','600','700','800','900','950']);
+const kebab = value => value.replace(/[A-Z]/g,m=>'-'+m.toLowerCase());
+const tokenId = value => 'color-token:'+kebab(value);
+const STATIC_COLOR_PALETTE = Object.freeze({
+  id: 'static-kit', version: '1.0.0',
+  seeds: Object.freeze({
+    brand: '#3157D5', neutral: '#596579', auxiliary: '#087E8B',
+    status: Object.freeze({success: '#18714C', warning: '#946000', danger: '#B83543', info: '#2A63C9'}),
+    chart: Object.freeze(['#3157D5', '#087E8B', '#A345B5', '#C45A16', '#218344', '#B83543']),
+  }),
+  usage: Object.freeze({brand: '주요 액션과 링크', neutral: '본문·표면·경계', auxiliary: '보조 강조', status: '성공·주의·오류·정보', chart: '범주형 데이터 계열'}),
+});
+const COLOR_PALETTE_IDS = Object.freeze(['static-kit']);
+const colorPaletteOptions = () => [{id: 'static-kit', label: 'Static Kit', usage: STATIC_COLOR_PALETTE.usage}];
+const COLOR_STATES = Object.freeze(['default', 'hover', 'active', 'disabled', 'error', 'focus']);
+const COLOR_COMPONENT_CONTRACT = Object.freeze({
+  button: Object.freeze({states: Object.freeze(['default','hover','active','disabled','focus']), tokens: Object.freeze(['--kit-action','--kit-onAction','--kit-action-hover','--kit-action-active','--kit-control-disabled-bg','--kit-control-disabled-fg','--kit-focus'])}),
+  input: Object.freeze({states: COLOR_STATES, tokens: Object.freeze(['--kit-control-bg','--kit-control-fg','--kit-control-border','--kit-control-hover-border','--kit-control-active-border','--kit-control-error','--kit-focus','--kit-control-disabled-bg','--kit-control-disabled-fg'])}),
+  select: Object.freeze({states: COLOR_STATES, tokens: Object.freeze(['--kit-control-bg','--kit-control-fg','--kit-control-border','--kit-control-hover-border','--kit-control-active-border','--kit-control-error','--kit-focus','--kit-control-disabled-bg','--kit-control-disabled-fg'])}),
+  card: Object.freeze({states: Object.freeze(['default','hover','active','error','focus']), tokens: Object.freeze(['--kit-surface','--kit-card-hover','--kit-card-active','--kit-danger-soft','--kit-focus'])}),
+  table: Object.freeze({states: Object.freeze(['default','hover','active','error','focus']), tokens: Object.freeze(['--kit-surface','--kit-table-head','--kit-table-hover','--kit-table-selected','--kit-danger-soft','--kit-focus'])}),
+  chart: Object.freeze({states: Object.freeze(['default']), tokens: Object.freeze(['--kit-chart1','--kit-chart2','--kit-chart3','--kit-chart4','--kit-chart5','--kit-chart-grid'])}),
+});
+
+const rgb = hex => { if (!/^#[\da-f]{6}$/i.test(hex)) throw new Error('COLOR_PALETTE: internal swatch is not six-digit hex'); return hex.slice(1).match(/../g).map(x => parseInt(x, 16)); };
+const hex = a => '#' + a.map(x => Math.round(x).toString(16).padStart(2, '0')).join('').toUpperCase();
+const mix = (a,b,t) => hex(rgb(a).map((x,i) => x * (1-t) + rgb(b)[i] * t));
+const luminance = h => rgb(h).map(v => v/255).map(v => v <= .04045 ? v/12.92 : ((v+.055)/1.055)**2.4).reduce((s,v,i) => s + v*[.2126,.7152,.0722][i],0);
+const contrast = (a,b) => { const x=luminance(a), y=luminance(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); };
+const ramp = seed => Object.fromEntries(STEPS.map((step,i) => {
+  const n = Number(step), color = n < 500 ? mix(seed,'#FFFFFF',(500-n)/520) : mix(seed,'#000000',(n-500)/620);
+  return [step,color];
+}));
+const readable = (seed, bg, min) => {
+  const bgs=Array.isArray(bg)?bg:[bg], passes=c=>bgs.every(x=>contrast(c,x)>=min);
+  if (passes(seed)) return seed;
+  for (let i=1;i<=100;i++) for (const target of ['#000000','#FFFFFF']) { const c=mix(seed,target,i/100); if (passes(c)) return c; }
+  throw new Error('COLOR_CONTRAST: no passing mapping for ' + seed);
+};
+const allRamps = () => ({
+  brand: ramp(STATIC_COLOR_PALETTE.seeds.brand), neutral: ramp(STATIC_COLOR_PALETTE.seeds.neutral),
+  auxiliary: ramp(STATIC_COLOR_PALETTE.seeds.auxiliary),
+  status: Object.fromEntries(Object.entries(STATIC_COLOR_PALETTE.seeds.status).map(([k,v]) => [k,ramp(v)])),
+  chart: STATIC_COLOR_PALETTE.seeds.chart.map(ramp),
+});
+const getMode = (ramps, mode) => {
+  const dark = mode === 'dark', r = ramps;
+  const canvas = dark ? '#111820' : r.neutral['50'], surface = dark ? '#1A232D' : '#FFFFFF', raised = dark ? '#252F3B' : r.neutral['100'];
+  const soft = dark ? mix(r.brand['900'],surface,.68) : r.brand['50'], sunken = dark ? '#0B1015' : r.neutral['100'];
+  const bgs=[canvas,surface,raised,soft,sunken];
+  const text = readable(dark ? r.neutral['50'] : r.neutral['950'], bgs, 7);
+  const muted = readable(dark ? r.neutral['300'] : r.neutral['700'], bgs, 4.5);
+  const action = readable(dark ? r.brand['400'] : r.brand['700'], bgs, 3);
+  const onAction = readable('#FFFFFF', action, 4.5);
+  const accent = dark ? r.auxiliary['300'] : r.auxiliary['700'];
+  const onAccent = readable('#FFFFFF', accent, 4.5);
+  const semantic = {
+    canvas, surface, raised, neutral: r.neutral['500'], soft, sunken,
+    text, muted, border: dark ? r.neutral['700'] : r.neutral['200'], rule: readable(dark ? r.neutral['500'] : r.neutral['500'],surface,3),
+    action, onAction, link: readable(action,bgs,4.5), focus: readable(dark ? r.brand['300']:r.brand['700'],bgs,3), accent, onAccent,
+    success: readable(dark ? r.status.success['300'] : r.status.success['700'],bgs,4.5),
+    warning: readable(dark ? r.status.warning['300'] : r.status.warning['800'],bgs,4.5),
+    danger: readable(dark ? r.status.danger['300'] : r.status.danger['700'],bgs,4.5),
+    info: readable(dark ? r.status.info['300'] : r.status.info['700'],bgs,4.5),
+    chart: r.chart.map(x => readable(dark ? x['300'] : x['700'],[surface,canvas],3)),
+  };
+  const state = {
+    actionHover: mix(action,dark ? '#FFFFFF':'#000000',.12), actionActive: mix(action,dark ? '#FFFFFF':'#000000',.2),
+    disabledBg: dark ? '#303A46' : '#E7EBF0', disabledFg: readable(dark ? '#AAB4C0':'#657184',dark ? '#303A46':'#E7EBF0',3),
+    error: semantic.danger, focus: semantic.focus,
+    cardHover: dark ? '#202B36' : '#F6F8FB', cardActive: dark ? '#2A3542' : '#EEF2F8', dangerSoft: dark ? '#47262E' : '#FCEBED',
+    tableHead: dark ? '#252F3B' : '#F1F4F8', tableHover: dark ? '#202B36' : '#F6F8FB', tableSelected: dark ? '#263855' : '#E8EEFC', chartGrid: dark ? '#526071' : '#D8DEE7',
+  };
+  const component = {
+    'button.primary.default': {bg: semantic.action, fg: semantic.onAction},
+    'button.primary.hover': {bg: state.actionHover, fg: readable(semantic.onAction,state.actionHover,4.5)},
+    'button.primary.active': {bg: state.actionActive, fg: readable(semantic.onAction,state.actionActive,4.5)},
+    'button.default.disabled': {bg: state.disabledBg, fg: state.disabledFg},
+    'control.default': {bg: semantic.surface, fg: semantic.text, border: semantic.border},
+    'control.hover': {border: readable(semantic.action,semantic.surface,3)},
+    'control.active': {border: state.focus}, 'control.error': {border: state.error}, 'control.focus': {ring: state.focus},
+    'control.disabled': {bg: state.disabledBg, fg: state.disabledFg},
+    'card.default': {bg: semantic.surface}, 'card.hover': {bg: state.cardHover}, 'card.active': {bg: state.cardActive}, 'card.error': {bg: state.dangerSoft}, 'card.focus': {ring: state.focus},
+    'table.default': {bg: semantic.surface}, 'table.hover': {bg: state.tableHover}, 'table.active': {bg: state.tableSelected}, 'table.error': {bg: state.dangerSoft}, 'table.focus': {ring: state.focus},
+    'chart.default': Object.fromEntries(semantic.chart.map((v,i) => ['series'+(i+1),v])),
+  };
+  return {semantic,state,component};
+};
+const cssKeys = Object.freeze({surface:'surface',soft:'soft',sunken:'sunken',canvas:'canvas',text:'text',muted:'muted',action:'action',onAction:'onAction',link:'link',focus:'focus',rule:'rule',border:'border',success:'success',warning:'warning',danger:'danger',info:'info',accent:'accent',onAccent:'onAccent',chart1:'chart[0]',chart2:'chart[1]',chart3:'chart[2]',chart4:'chart[3]',chart5:'chart[4]'});
+const cssTokens = (g) => {
+  const s=g.semantic, t=g.state, c=g.component, values={};
+  for(const [k,path] of Object.entries(cssKeys)) values[k]=path.startsWith('chart[') ? s.chart[Number(path.slice(6,-1))] : s[path];
+  Object.assign(values,{accentSoft:s.soft,accentInk:s.accent,actionHover:t.actionHover,actionActive:t.actionActive,onActionHover:c['button.primary.hover'].fg,
+    controlBg:s.surface,controlFg:s.text,controlBorder:s.border,controlHoverBorder:c['control.hover'].border,controlActiveBorder:c['control.active'].border,controlError:t.error,controlDisabledBg:t.disabledBg,controlDisabledFg:t.disabledFg,
+    cardHover:t.cardHover,cardActive:t.cardActive,dangerSoft:t.dangerSoft,tableHead:t.tableHead,tableHover:t.tableHover,tableSelected:t.tableSelected,chartGrid:t.chartGrid,chart6:s.chart[5]});
+  Object.assign(values,{'action-hover':t.actionHover,'action-active':t.actionActive,'control-bg':s.surface,'control-fg':s.text,'control-border':s.border,'control-hover-border':c['control.hover'].border,'control-active-border':c['control.active'].border,'control-error':t.error,'control-disabled-bg':t.disabledBg,'control-disabled-fg':t.disabledFg,'card-hover':t.cardHover,'card-active':t.cardActive,'danger-soft':t.dangerSoft,'table-head':t.tableHead,'table-hover':t.tableHover,'table-selected':t.tableSelected,'chart-grid':t.chartGrid});
+  return values;
+};
+const flatten = (graph, prefix, out={}) => { for(const [k,v] of Object.entries(graph)) { const id=prefix+'.'+k; if(v && typeof v==='object') flatten(v,id,out); else out[id]=v; } return out; };
+
+function resolveColorTokens({palette='static-kit', mode='light'} = {}) {
+  if (!COLOR_PALETTE_IDS.includes(palette)) throw new Error('COLOR_PALETTE: allowed ids: ' + COLOR_PALETTE_IDS.join(', '));
+  if (!['light','dark','auto'].includes(mode)) throw new Error('COLOR_MODE: allowed modes: light, dark, auto');
+  const ramps=allRamps(), modes=mode==='auto'?{light:getMode(ramps,'light'),dark:getMode(ramps,'dark')}:{[mode]:getMode(ramps,mode)};
+  const chosen=modes[mode==='dark'?'dark':'light'];
+  const layers={primitive:flatten(ramps,'palette.static-kit'),semantic:flatten(chosen.semantic,'semantic'),state:flatten(chosen.state,'state'),component:flatten(chosen.component,'component')};
+  const values={...layers.primitive,...layers.semantic,...layers.state,...layers.component}, references={};
+  const rampStep=(kind,step)=>`palette.static-kit.${kind}.${step}`;
+  const semanticSource={canvas:rampStep('neutral','50'),surface:rampStep('neutral','50'),raised:rampStep('neutral','100'),neutral:rampStep('neutral','500'),soft:rampStep('brand','50'),sunken:rampStep('neutral','100'),text:rampStep('neutral',mode==='dark'?'50':'950'),muted:rampStep('neutral',mode==='dark'?'300':'700'),border:rampStep('neutral',mode==='dark'?'700':'200'),rule:rampStep('neutral','500'),action:rampStep('brand',mode==='dark'?'400':'700'),onAction:rampStep('neutral','50'),link:'semantic.action',focus:'semantic.action',accent:rampStep('auxiliary',mode==='dark'?'300':'700'),onAccent:rampStep('neutral','50'),success:rampStep('status.success',mode==='dark'?'300':'700'),warning:rampStep('status.warning',mode==='dark'?'300':'800'),danger:rampStep('status.danger',mode==='dark'?'300':'700'),info:rampStep('status.info',mode==='dark'?'300':'700')};
+  for(let i=0;i<6;i++) semanticSource[`chart.${i}`]=rampStep(`chart.${i}`,mode==='dark'?'300':'700');
+  for(const [key,ref] of Object.entries(semanticSource)) { const id='semantic.'+key; if(id in values) references[id]=ref; }
+  const stateSource={actionHover:'semantic.action',actionActive:'semantic.action',disabledBg:'semantic.neutral',disabledFg:'semantic.muted',error:'semantic.danger',focus:'semantic.focus',cardHover:'semantic.surface',cardActive:'semantic.surface',dangerSoft:'semantic.danger',tableHead:'semantic.surface',tableHover:'semantic.surface',tableSelected:'semantic.soft',chartGrid:'semantic.border'};
+  for(const [key,ref] of Object.entries(stateSource)) references['state.'+key]=ref;
+  const componentSource={
+    'button.primary.default.bg':'semantic.action','button.primary.default.fg':'semantic.onAction','button.primary.hover.bg':'state.actionHover','button.primary.hover.fg':'semantic.onAction','button.primary.active.bg':'state.actionActive','button.primary.active.fg':'semantic.onAction','button.default.disabled.bg':'state.disabledBg','button.default.disabled.fg':'state.disabledFg',
+    'control.default.bg':'semantic.surface','control.default.fg':'semantic.text','control.default.border':'semantic.border','control.hover.border':'semantic.action','control.active.border':'state.focus','control.error.border':'state.error','control.focus.ring':'state.focus','control.disabled.bg':'state.disabledBg','control.disabled.fg':'state.disabledFg',
+    'card.default.bg':'semantic.surface','card.hover.bg':'state.cardHover','card.active.bg':'state.cardActive','card.error.bg':'state.dangerSoft','card.focus.ring':'state.focus','table.default.bg':'semantic.surface','table.hover.bg':'state.tableHover','table.active.bg':'state.tableSelected','table.error.bg':'state.dangerSoft','table.focus.ring':'state.focus',
+  };
+  for(let i=1;i<=6;i++) componentSource[`chart.default.series${i}`]=`semantic.chart.${i-1}`;
+  for(const [key,ref] of Object.entries(componentSource)) references['component.'+key]=ref;
+  for(const [id,ref] of Object.entries(references)) if(!(id in values)||!(ref in values)) throw new Error('COLOR_REFERENCE: '+id+' -> '+ref);
+  const tokens=cssTokens(chosen), report=contrastReport(chosen);
+  for(const [id,value] of Object.entries({...layers.primitive,...layers.semantic,...layers.state,...layers.component})) {
+    const [layer,...parts]=id.split('.');
+    const name=layer==='palette'?`palette-${parts.slice(1).map(kebab).join('-')}`:layer==='semantic'?`color-${parts.map(kebab).join('-')}`:layer==='state'?`state-${parts.map(kebab).join('-')}`:`component-${parts.map(kebab).join('-')}`;
+    tokens[name]=value;
+  }
+  const failed=report.filter(x=>x.ratio<x.minimum); if(failed.length) throw new Error('COLOR_CONTRAST: mapping gate failed: '+failed.map(x=>x.name+' '+x.ratio+'/'+x.minimum).join(', '));
+  const result={palette,mode,seeds:STATIC_COLOR_PALETTE.seeds,ramps,layers,values,references,tokens,report,modes:{}};
+  for(const [m,g] of Object.entries(modes)) result.modes[m]={layers:{primitive:layers.primitive,semantic:flatten(g.semantic,'semantic'),state:flatten(g.state,'state'),component:flatten(g.component,'component')},tokens:cssTokens(g),report:contrastReport(g)};
+  return result;
+}
+function contrastReport(g) { const out=[], p=(n,a,b,min)=>out.push({name:n,foreground:a,background:b,ratio:Math.floor(contrast(a,b)*1e8)/1e8,minimum:min});
+  const bg={canvas:g.semantic.canvas,surface:g.semantic.surface,raised:g.semantic.raised,soft:g.semantic.soft,sunken:g.semantic.sunken};
+  for(const [n,a] of [['text',g.semantic.text],['muted',g.semantic.muted],['link',g.semantic.link],['success',g.semantic.success],['warning',g.semantic.warning],['danger',g.semantic.danger],['info',g.semantic.info]]) for(const [bn,b] of Object.entries(bg)) p(n+'/'+bn,a,b,n==='text'?7:4.5);
+  for(const [n,a] of Object.entries(bg)) p('focus/'+n,g.state.focus,a,3);
+  for(const [n,k] of [['default','onAction'],['hover','onActionHover'],['active','onActionActive']]) {
+    const fill=n==='default'?g.semantic.action:n==='hover'?g.state.actionHover:g.state.actionActive;
+    const foreground=n==='default'?g.semantic.onAction:n==='hover'?g.component['button.primary.hover'].fg:g.component['button.primary.active'].fg;
+    p('button/'+n,foreground,fill,4.5);
+  }
+  p('disabled/text',g.state.disabledFg,g.state.disabledBg,3);
+  g.semantic.chart.forEach((a,i)=>{ p('chart'+(i+1)+'/surface',a,g.semantic.surface,3); p('chart'+(i+1)+'/canvas',a,g.semantic.canvas,3); }); return out;
+}
+
+function colorTokenCSS() { return `
+.kit-button[data-variant=primary]:active{background:var(--kit-action-active);border-color:var(--kit-action-active)}
+.kit-button:disabled,.kit-button[aria-disabled=true]{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);border-color:var(--kit-control-disabled-bg);cursor:not-allowed;transform:none}
+.kit-field :is(input,select,textarea){background:var(--kit-control-bg);color:var(--kit-control-fg);border-color:var(--kit-control-border)}
+.kit-field :is(input,select,textarea):hover:not(:disabled){border-color:var(--kit-control-hover-border)}
+.kit-field :is(input,select,textarea):focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px;border-color:var(--kit-control-active-border)}
+.kit-field :is(input,select,textarea)[aria-invalid=true],.kit-field :is(input,select,textarea):user-invalid{border-color:var(--kit-control-error);box-shadow:inset 0 0 0 1px var(--kit-control-error)}
+.kit-field :is(input,select,textarea):disabled{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);cursor:not-allowed}
+.kit-card:hover{background:var(--kit-card-hover)}.kit-card:active{background:var(--kit-card-active)}.kit-card[data-state=error]{background:var(--kit-danger-soft)}.kit-card:focus-within{outline:2px solid var(--kit-focus);outline-offset:2px}
+thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[aria-selected=true]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
+.kit-chart .ch-grid{stroke:var(--kit-chart-grid)}
+`; }
+
+function colorTokenMaterials() {
+  const out=[], light=resolveColorTokens({palette:'static-kit',mode:'light'}), dark=resolveColorTokens({palette:'static-kit',mode:'dark'});
+  const layerById={};
+  for(const [layer,graph] of Object.entries(light.layers)) for(const [id,value] of Object.entries(graph)) {
+    const [prefix,...parts]=id.split('.'), name=prefix==='palette'?`palette-${parts.slice(1).map(kebab).join('-')}`:prefix==='semantic'?`color-${parts.map(kebab).join('-')}`:prefix==='state'?`state-${parts.map(kebab).join('-')}`:`component-${parts.map(kebab).join('-')}`;
+    const counterpart=dark.layers[layer][id]; if(typeof value!=='string'||typeof counterpart!=='string') continue;
+    const refs=Object.entries(light.references).filter(([source])=>source===id).map(([,target])=>tokenId(target));
+    layerById[id]={id:tokenId(id),layer,role:parts.join('.'),cssName:'--kit-'+name,light:value,dark:counterpart,dependencies:refs};
+  }
+  for(const item of Object.values(layerById)) out.push({id:item.id,kind:'color-token',category:item.layer==='component'&&item.role.startsWith('chart.')?'chart':'color',label:item.role,since:'2.6.0',contexts:['any'],render:{module:'src/color-tokens.mjs',export:'resolveColorTokens',key:item.role},tokens:[item.cssName],dependencies:item.dependencies,structure:{parents:[],children:null},states:{values:['default'],transitions:[]},responsive:{strategy:'none'},a11y:{rules:['R05']},validation:{rules:['R05','R08'],codes:['COLOR_PALETTE','COLOR_REFERENCE']},examples:[],quality:{status:'verified',evidence:['tests/color-tokens.test.mjs:22']},source:{origin:'internal',license:'MIT'},preset:false,tags:['color-token',item.layer,...item.role.split('.')],ext:{layer:item.layer,role:item.role,light:item.light,dark:item.dark}});
+  for(const [component,contract] of Object.entries(COLOR_COMPONENT_CONTRACT)) for(const token of contract.tokens) {
+    const name=token.replace(/^--kit-/,'');
+  const safe=kebab(name).replace(/^-/, '');
+    out.push({id:'color-token:component.'+component+'.'+safe,kind:'color-token',category:component==='chart'?'chart':'color',label:`${component} ${name}`,since:'2.6.0',contexts:['any'],render:{module:'src/color-tokens.mjs',export:'resolveColorTokens',key:name},tokens:[token],dependencies:[],structure:{parents:[],children:null},states:{values:[...contract.states],transitions:[]},responsive:{strategy:'none'},a11y:{rules:token==='--kit-focus'?['R05','R19']:[]},validation:{rules:['R05','R08'],codes:['COLOR_PALETTE','COLOR_REFERENCE']},examples:[],quality:{status:'verified',evidence:['tests/color-tokens.test.mjs:22']},source:{origin:'internal',license:'MIT'},preset:false,tags:['color-token',component,name],ext:{layer:'component',role:component+'.'+name,light:null,dark:null}});
+  }
+  return out;
+}
+const colorTokenUsage = () => Object.entries(COLOR_COMPONENT_CONTRACT).flatMap(([component,c])=>c.tokens.map(cssName=>{
+  const safe=kebab(cssName.replace(/^--kit-/,'')).replace(/^-/, '');
+  return {id:'color-token:component.'+component+'.'+safe,component,cssName,states:[...c.states]};
+}));
+
+exports.STATIC_COLOR_PALETTE = STATIC_COLOR_PALETTE;
+exports.COLOR_PALETTE_IDS = COLOR_PALETTE_IDS;
+exports.colorPaletteOptions = colorPaletteOptions;
+exports.COLOR_STATES = COLOR_STATES;
+exports.COLOR_COMPONENT_CONTRACT = COLOR_COMPONENT_CONTRACT;
+exports.resolveColorTokens = resolveColorTokens;
+exports.colorTokenCSS = colorTokenCSS;
+exports.colorTokenMaterials = colorTokenMaterials;
+exports.colorTokenUsage = colorTokenUsage;
+};
 __defs["compiler.mjs"] = function (exports, __m) {
 const {CATALOG_VERSION, BLUEPRINT_VERSION, rules, axes, styleAxes} = __m("catalog.mjs");
 const {validateBlueprint} = __m("validate.mjs");
@@ -3194,6 +3384,7 @@ const {stylesheet} = __m("styles.mjs");
 const {renderTree, escapeHTML, formRuntime} = __m("render.mjs");
 const {planComposition, auditPage} = __m("composition.mjs");
 const {typeRev, HANGUL} = __m("typography.mjs");
+const {resolveColorTokens, colorTokenUsage} = __m("color-tokens.mjs");
 
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -3229,6 +3420,10 @@ function compile(input) {
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
+  if (b.colorPalette) {
+    const color = resolveColorTokens({palette: b.colorPalette, mode: b.mode});
+    manifest.colorTokens = {palette: color.palette, layers: Object.keys(color.layers), references: color.references, contrast: serializableContrast(report.filter(x => !x.mode.includes('inverse'))), materialModules: ['src/color-tokens.mjs','src/materials/adapters.mjs'], usedTokens: colorTokenUsage()};
+  }
   if (design) manifest.design = {version: design.version, decisions: design.decisions, inherited: design.inherited};
   if (design?.chrome) manifest.design.chrome = design.chrome;
   // Page rules (composition 1.3.0, catalog 2.4.0): facts and decisions about the whole page. Absent for 2.1–2.3 inputs, whose output is pinned.
@@ -5687,6 +5882,8 @@ const {compositionCSS} = __m("composition.mjs");
 const {headerDesignCSS} = __m("header-design.mjs");
 const {expressionApplies} = __m("catalog/expression.mjs");
 const {expressionCSS} = __m("styles/expression.mjs");
+const {colorTokenCSS} = __m("color-tokens.mjs");
+const {atLeast} = __m("catalog/expression.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -5727,6 +5924,7 @@ function stylesheet(b, sets, body = '', design = null) {
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
   // 카탈로그 2.5.0: 사용한 표현력 값에만 CSS가 나온다. 2.4.0 이하는 이 줄을 지나지 않아 출력이 같다.
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
+  if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
   const rev2 = layoutRev(b) === 2;
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
   const joined = parts.join('\n') + '\n', css = rev2 ? refineLayout(joined) : joined;
@@ -6012,6 +6210,8 @@ exports.deriveTableDesign = deriveTableDesign;
 };
 __defs["tokens.mjs"] = function (exports, __m) {
 const {palettes} = __m("catalog.mjs");
+const {atLeast} = __m("catalog/expression.mjs");
+const {resolveColorTokens} = __m("color-tokens.mjs");
 
 const rgb = hex => { if (!/^#[\da-f]{6}$/i.test(hex)) throw new Error('Expected six digit hex color'); return hex.slice(1).match(/../g).map(n => parseInt(n, 16)); };
 const hex = values => '#' + values.map(x => Math.round(x).toString(16).padStart(2, '0')).join('').toUpperCase();
@@ -6048,6 +6248,10 @@ const samples = (a, b) => Array.from({length: 11}, (_, i) => mix(a, b, i / 10));
 function resolveTokens(b, modeOverride) {
   const p = palettes[b.palette]; if (!p) throw new Error('Unknown palette');
   const mode = modeOverride ?? (b.mode === 'auto' ? 'light' : b.mode), dark = mode === 'dark';
+  if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) {
+    const color = resolveColorTokens({palette: b.colorPalette, mode});
+    return {tokens: color.tokens, report: color.report, provenance: {source: 'internal', palette: b.colorPalette, seeds: color.seeds, method: 'closed four-layer token graph; 2.6.0 opt-in'}};
+  }
   const ordered = [...p.colors].sort((x, y) => luminance(x) - luminance(y));
   const darkest = ordered[0], lightest = ordered.at(-1), seed = p.colors[p.brand];
   const canvas = dark ? mix(darkest, '#11151C', .8) : mix(lightest, '#FFFFFF', .87);
@@ -6480,7 +6684,7 @@ exports.typographyMarkdown = typographyMarkdown;
 __defs["validate.mjs"] = function (exports, __m) {
 const {nodeSpecAt, nodeExtended} = __m("catalog/node-extensions.mjs");
 const {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} = __m("catalog/expression.mjs");
-const {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
+const {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -6526,6 +6730,7 @@ function validateBlueprint(input) {
   value(Object.fromEntries(Object.entries(input).filter(([k]) => k !== 'tree')), {type: 'object', properties: props, required: top.required.filter(k => k !== 'tree')}, '$');
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
   if (!ACCEPTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + ACCEPTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
+  for (const f of TOP_LEVEL_SINCE_FIELDS) if (Object.hasOwn(input, f.field) && !atLeast(input.catalogVersion, f.since)) error(`$.${f.field}`, 'VERSION_FIELD', `${f.field}는 ${f.since}부터 쓸 수 있습니다.`);
   const expr = expressionApplies(input), warnings = [];
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));

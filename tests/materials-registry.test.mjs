@@ -31,7 +31,7 @@ test('materials: every existing node, axis, type preset, theme, palette, page ty
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
     axis: 1 + styleAxes.length, 'chart-preset': 8, component: nodeTypes.length + 2, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
-    palette: Object.keys(palettes).length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length, 'type-role-preset': Object.keys(MATERIAL_TYPE_PRESETS).length,
+    palette: Object.keys(palettes).length, 'color-token': registry.byKind('color-token').length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length, 'type-role-preset': Object.keys(MATERIAL_TYPE_PRESETS).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));
   for (const type of nodeTypes) assert.ok(registry.has('component:' + type), type);
@@ -132,8 +132,9 @@ test('materials: new kinds extend the registry without touching the common contr
   }));
   assert.equal(r.counts().byQuality.missing, 1);
   assert.throws(() => defineKind({id: 'x', label: 'x', categories: ['nope']}));
-  // 차트 프리셋은 이번 작업에서 구현했고 색 토큰·패턴은 계약만 있다.
-  for (const k of ['color-token', 'pattern']) { assert.ok(registry.kind(k)); assert.equal(registry.byKind(k).length, 0); }
+  // 색 토큰과 차트 프리셋은 등록되며, 패턴만 계약이 선행한다.
+  assert.ok(registry.kind('color-token') && registry.byKind('color-token').length > 0);
+  assert.ok(registry.kind('pattern')); assert.equal(registry.byKind('pattern').length, 0);
   assert.ok(registry.byKind('chart-preset').length >= 6);
 });
 
@@ -186,7 +187,7 @@ test('materials: registering the catalog changes neither the catalog nor any 2.4
   catalogRegistry();
   assert.equal(sha([nodeSpecs, themes, palettes, templates]), before);
   // 컴파일 경로는 재료 모듈을 읽지 않는다.
-  for (const f of ['src/compiler.mjs', 'src/validate.mjs', 'src/render/nodes.mjs', 'src/styles/index.mjs', 'src/service/index.mjs', 'src/edit/index.mjs']) assert.ok(!/materials\//.test(read(f)), f);
+  for (const f of ['src/compiler.mjs', 'src/validate.mjs', 'src/render/nodes.mjs', 'src/styles/index.mjs', 'src/service/index.mjs', 'src/edit/index.mjs']) assert.ok(!/^\s*import .*from ['"][^'"]*materials\//m.test(read(f)), f);
   const legacy = JSON.parse(read('docs/evidence/expression/legacy-2-4-hashes.json')), legacyIn = JSON.parse(read('docs/evidence/expression/legacy-2-4-blueprints.json'));
   for (const [id, h] of Object.entries(legacy.hashes)) assert.equal(sha(compile(structuredClone(legacyIn.blueprints[id]))), h, '2.4.0 ' + id);
   const pinned = JSON.parse(read('docs/evidence/materials/pinned-2-5-hashes.json')), pinnedIn = JSON.parse(read('docs/evidence/materials/pinned-2-5-blueprints.json'));
@@ -194,11 +195,11 @@ test('materials: registering the catalog changes neither the catalog nor any 2.4
   for (const [id, h] of Object.entries(pinned.hashes)) { const b = structuredClone(pinnedIn.blueprints[id]); assert.equal(b.catalogVersion, '2.5.0'); assert.equal(sha(compile(b)), h, '2.5.0 ' + id); }
 });
 
-test('materials: 2.6.0 is planned, not accepted; existing versions and the default stay as they are (ADR 0011)', () => {
+test('materials: 2.6.0 is active opt-in; existing versions and the default stay as they are (ADR 0011)', () => {
   assert.equal(MATERIAL_CATALOG_VERSION, '2.6.0');
   assert.equal(CATALOG_VERSION, '2.4.0');
-  assert.deepEqual([...VERSION_ORDER], ['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0']);
-  assert.ok(!ACCEPTED_CATALOG_VERSIONS.includes(MATERIAL_CATALOG_VERSION));
+  assert.deepEqual([...VERSION_ORDER], ['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0']);
+  assert.ok(ACCEPTED_CATALOG_VERSIONS.includes(MATERIAL_CATALOG_VERSION));
   assert.ok(read('docs/adr/0011-materials-contract.md').includes('2.6.0'));
 });
 

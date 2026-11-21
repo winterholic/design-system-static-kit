@@ -71,26 +71,30 @@ Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 
 7. **반응형 기록**: `responsive.strategy: unspecified`인 부품 28개를 실제 CSS 근거로 채운다.
 8. **모션 토큰**: duration·easing 이름 토큰, 상태 전이와 연결한다.
 
-## 5. 차트 확장의 2.6.0 연결 지점과 남은 일
+## 5. 2.6.0 색 토큰 후속 결과 (2026-11-22)
 
-통합 브랜치에서 차트 작업이 `nodeSpecs.chart`를 직접 넓혀 2.4.0 카탈로그 계약(`site/v1/catalog.json`, 2.4.0·2.5.0 노드 명세)이 바뀌었다. 호환성 위반이므로 `src/catalog/nodes.mjs`의 chart 명세는 `b443f754f` 상태로 되돌렸고, 새 형태와 필드는 **버전별 노드 명세 확장 표**로 옮겼다.
+색 토큰은 `src/color-tokens.mjs`의 Static Kit 자체 팔레트만 선택한다. `colorPaletteOptions()` 공개 탐색 결과는 `static-kit` 하나이며, 기존 427개 Coolors 항목은 하위 호환 입력과 기존 테마 참조로 남아 있다. 새 외부 팔레트 수집·공개 탐색은 추가하지 않았다.
+
+팔레트는 brand·neutral·auxiliary·status·chart 시드로부터 50~950 램프를 만들고 primitive → semantic → state → component 참조 그래프로 계산한다. `color-token` 재료 257개가 그래프 토큰과 부품 소비 별칭을 등록한다. Button/Input/Select/Card/Table/Chart 사용 계약, CSS 변수 이름과 기본·hover·active·disabled·error·focus 사용 선택자는 [색 토큰 읽기 API](color-tokens.md)에 기록한다.
+
+라이트·다크 모드에서 본문/보조·링크·상태색과 표면, focus, 버튼 상태, disabled, 차트 대비를 검사한다. `auto`는 두 모드를 모두 검사한다. 팔레트 ID는 닫혀 있으며 색상 문자열은 입력받지 않는다. 2.6.0만 색 토큰 CSS를 출력하고 기본 2.4.0 및 2.4.0·2.5.0 고정 산출물은 그대로 유지한다.
+
+## 6. 차트 확장의 2.6.0 연결(통합 브랜치 보정)
+
+통합 브랜치에서 차트 작업이 `nodeSpecs.chart`를 직접 넓혀 2.4.0 카탈로그 계약(`site/v1/catalog.json`, 2.4.0·2.5.0 노드 명세)이 바뀌었다. 호환성 위반이므로 `src/catalog/nodes.mjs`의 chart 명세는 되돌렸고 `catalogSnapshot()`은 고정 snapshot 바이트와 같다. 새 형태와 필드는 **버전별 노드 명세 확장 표**로 옮겨 2.6.0 opt-in 게이트(`atLeast(catalogVersion, '2.6.0')`)에 붙였다. `catalogVersion: "2.6.0"`을 고른 Blueprint만 새 형태를 받는다.
 
 | 항목 | 위치 | 상태 |
 |---|---|---|
-| 확장 표 | `src/catalog/node-extensions.mjs`: `NODE_SPEC_EXTENSIONS['2.6.0'].chart`(kind enum 4개 `stacked-bar`·`scatter`·`heatmap`·`sparkline`, `xLabel`, `yLabel`, `axis`, `series.points`, `unit` 20자, `categories` 64자, 계열 이름 40자) | 있음. 2.6.0 명세를 읽는 `nodeSpecAt(type, version)`과 `nodeExtended(type, version)` |
-| 검증 | `src/validate.mjs`: 노드 명세는 `nodeSpecAt(n.type, input.catalogVersion)`, chart 값 검사는 `nodeExtended('chart', ...)`가 참일 때만 새 규칙(`CHART_SHAPE`·`CHART_AXIS`), 아니면 이전 검사 그대로 | 있음. 2.4.0·2.5.0은 새 kind를 `ENUM`, 새 필드를 `UNKNOWN_KEY`로 거부한다(`tests/chart-presets.test.mjs`) |
-| 렌더러 | `src/render/chart.mjs`(새 형태), `src/render/chart-legacy.mjs`(기존 5종·확장 필드 없는 입력은 이 경로로 이전 바이트 유지) | 그대로 사용 가능 |
-| 프리셋 재료 | `src/materials/chart-presets.mjs`(8개), `src/render/chart-presets.mjs`(`resolveChartPreset`, `renderChartPreset`) | 그대로 사용 가능. 예시는 2.6.0 확장 명세로 검사한다 |
+| 확장 표 | `src/catalog/node-extensions.mjs`: `NODE_SPEC_EXTENSIONS['2.6.0'].chart`(kind enum 4개 `stacked-bar`·`scatter`·`heatmap`·`sparkline`, `xLabel`, `yLabel`, `axis`, `series.points`, `unit` 20자, `categories` 64자, 계열 이름 40자). `nodeSpecAt(type, version)`·`nodeExtended(type, version)` | 연결됨 |
+| 검증 | `src/validate.mjs`: 노드 명세는 `nodeSpecAt(n.type, input.catalogVersion)`. chart 값 검사는 `nodeExtended('chart', ...)`가 참일 때만 새 규칙(`CHART_SHAPE`·`CHART_AXIS`), 아니면 이전 검사 그대로 | 연결됨. 2.4.0·2.5.0은 새 kind를 `ENUM`, 새 필드를 `UNKNOWN_KEY`로 거부한다(`tests/chart-presets.test.mjs`) |
+| 렌더러 | `src/render/chart.mjs`(새 형태), `src/render/chart-legacy.mjs`(기존 5종·확장 필드 없는 입력은 이전 바이트 유지) | 그대로 사용. 2.6.0 Blueprint를 `compile()`하면 새 형태가 렌더된다 |
+| 프리셋 재료 | `src/materials/chart-presets.mjs`(8개), `src/render/chart-presets.mjs` | 그대로 사용. 예시는 2.6.0으로 `compile()` 검증 |
 | 진단 힌트 | `src/service/errors.mjs`: `CHART_AXIS`, `CHART_VALUE`, `CHART_PRESET` | 있음 |
 
-2.6.0을 여는 작업자가 할 일(ADR 0011의 5단계에 더해):
+남은 일(다른 작업자):
 
-1. `VERSION_ORDER`와 `ACCEPTED_CATALOG_VERSIONS`에 `'2.6.0'`을 더한다. `nodeSpecAt`은 `versionAtLeast`로 비교하므로 확장 표는 고칠 필요가 없고, 위 변경만으로 2.6.0 문서의 chart가 확장 명세로 검증된다. `tests/chart-presets.test.mjs`의 마지막 테스트('2.6.0 stays inactive')는 활성화와 같은 커밋에서 "2.6.0 문서가 통과한다"로 뒤집는다.
-2. 렌더러는 `renderChart`가 입력 모양(`axis`·`xLabel`·`yLabel`·새 kind)으로 경로를 고른다. 2.6.0 게이트(`atLeast(b.catalogVersion, '2.6.0')`)로 바꿀지는 활성화 작업이 정한다. 바꾸더라도 2.4.0·2.5.0 입력은 `renderLegacyChart`가 이전 바이트를 내야 한다.
-3. 활성화 후 chart 스키마가 `site/v1/blueprint.schema.json`과 `site/v1/catalog.json`에 나타나야 하는지 결정하고, 나타나게 하면 2.4.0 snapshot은 그대로 두고 2.6.0 snapshot을 따로 만든다(현재 `catalogSnapshot()`은 확장을 읽지 않는다).
-4. 프리셋 예시를 `compile()`로 컴파일하는 테스트를 복원한다. 지금은 2.6.0 문서를 `compile()`이 거부하므로 확장 검증(`validateBlueprint`에서 `$.catalogVersion` 오류만 제외)과 `renderChart` 직접 호출로 대신한다.
-5. `component:chart` 재료의 `variants`를 `nodeSpecs.chart`에서 읽는 `src/materials/adapters.mjs`가 새 형태를 보여줄지 결정한다(지금은 기존 5종).
-6. Select·Table 노드도 같은 확장 표에 넣는다(`docs/materials/select-table.md`의 연결 지점 1번).
-
-남은 일(범위 밖으로 둔 것): 위 1~6번 전부(2.6.0 활성화는 다른 작업자). `TABLE_COLUMNS`·`TABLE_ROWS`는 Table 재료의 `validation.codes`에 적혀 있으나 현재 어디서도 내지 않아 힌트를 더하지 않았다. 내기 시작하는 작업이 힌트 표 항목을 함께 둔다.
-
+1. `site/v1/blueprint.schema.json`과 `blueprintSchema()`는 아직 기본 chart 명세만 보인다. 2.6.0 문서의 chart 확장을 스키마에 `x-since: 2.6.0`으로 드러낼지 정한다. 드러내면 스키마 파일만 바뀌어야 하고 `catalogSnapshot()`(2.4.0 snapshot)은 `nodeSpecs`만 읽으므로 그대로 둔다.
+2. `component:chart` 재료의 `variants`를 읽는 `src/materials/adapters.mjs`는 기존 5종만 보여준다. 새 형태를 재료 목록에 보일지 정한다.
+3. `renderChart`는 입력 모양(`axis`·`xLabel`·`yLabel`·새 kind)으로 경로를 고른다. 2.6.0 게이트로 바꿀지 정한다. 바꾸더라도 2.4.0·2.5.0 입력은 `renderLegacyChart`가 이전 바이트를 내야 한다.
+4. Select·Table 노드(`select-control`, `data-table`)를 같은 확장 표에 넣고 검증기·렌더러에 연결한다(`docs/materials/select-table.md`의 연결 지점).
+5. `TABLE_COLUMNS`·`TABLE_ROWS`는 Table 재료의 `validation.codes`에 적혀 있으나 현재 어디서도 내지 않아 힌트를 더하지 않았다. 내기 시작하는 작업이 힌트 표 항목을 함께 둔다.
