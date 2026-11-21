@@ -69,6 +69,8 @@ a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
 code, kbd, pre { font-family: var(--font-mono); font-size: 0.92em; }
 code { background: var(--color-surface); padding: 0.1em 0.35em; border-radius: 3px; }
+/* 긴 명령줄이 페이지 가로 스크롤을 만들지 않게 코드 블록 안에서 스크롤한다. */
+pre { max-width: 100%; overflow-x: auto; }
 
 .page { width: 100%; max-width: var(--page-max); margin-inline: auto; padding: var(--space-7) var(--gutter) var(--space-8); }
 .page-title { font-size: var(--text-2xl); line-height: var(--leading-tight); font-weight: var(--weight-heading); margin: 0 0 var(--space-3); letter-spacing: -0.01em; }

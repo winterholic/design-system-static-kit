@@ -52,11 +52,16 @@ test('S5 초기 JS에 카탈로그가 없고 컴파일 때만 청크가 내려�
     const body = await res.text().catch(() => '');
     seen.push({url: new URL(res.url()).pathname, bytes: Buffer.byteLength(body), catalog: body.includes(CATALOG_MARKER)});
   });
-  // /studio 는 브라우저 컴파일을 위해 카탈로그를 처음부터 싣는 것이 설계라 제외한다(04-web-spike.md 5절).
+  // 초기 JS 는 각 화면 HTML 의 script 태그로 가린다. 링크 미리 가져오기(prefetch)로 받은 /studio 청크는 초기 JS 가 아니다.
+  const initial = [];
   for (const path of ['/', '/explore', '/dev/spike']) {
-    await page.goto(path, {waitUntil: 'networkidle'});
+    const res = await page.goto(path, {waitUntil: 'networkidle'});
+    const html = await res.text();
+    for (const [, src] of html.matchAll(/<script[^>]*\ssrc="([^"]+\.js[^"]*)"/g)) {
+      const body = await (await page.request.get(src)).text();
+      if (body.includes(CATALOG_MARKER)) initial.push({path, src});
+    }
   }
-  const initial = seen.filter(s => s.catalog);
   expect(initial, '클릭 전 JS 에 카탈로그가 실렸다').toEqual([]);
   expect(seen.length).toBeGreaterThan(0);
   await page.getByRole('button', {name: '브라우저에서 컴파일'}).click();
