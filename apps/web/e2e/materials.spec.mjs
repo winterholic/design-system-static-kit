@@ -162,7 +162,7 @@ test.describe('타이포그래피', () => {
     }
   });
 
-  test('Studio에서 사용하기: 서체 조합 축으로 열린다', async ({page}) => {
+  test('Studio에서 사용하기: 2.6.0 역할 프리셋과 페이지 문맥을 저장한다', async ({page}) => {
     await page.goto('/studio');
     await page.evaluate(() => localStorage.clear());
     await page.goto('/materials/typography?preset=marketing');
@@ -170,8 +170,12 @@ test.describe('타이포그래피', () => {
     await expect(page.locator('[data-phase="ready"]')).toBeVisible();
     await expect(page.getByTestId('op-error')).toHaveCount(0);
     const preset = typo.presets.find(p => p.id === 'marketing');
-    await expect.poll(async () => (await savedDoc(page))?.typography).toBe(preset.engine);
-    expect((await savedDoc(page)).pageType).toBe(preset.context[0]);
+    await expect.poll(async () => (await savedDoc(page))?.typeRoles).toBe(preset.id);
+    const doc = await savedDoc(page);
+    expect(doc.catalogVersion).toBe('2.6.0');
+    expect(doc.pageType).toBe(preset.context[0]);
+    // 2.4.0 서체 조합 축과 2.6.0 역할 프리셋은 별도 필드다.
+    expect(doc.typography).toBe('sans');
   });
 });
 
