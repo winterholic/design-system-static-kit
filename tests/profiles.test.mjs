@@ -13,6 +13,7 @@ import {axes, nodeTypes, createBlueprint, migrateBlueprint, blueprintSchema, TOP
 import {validateBlueprint} from '../src/validate.mjs';
 import {validateBlueprint as serviceValidate, HINTS, catalogSnapshot} from '../src/service/index.mjs';
 import {compile} from '../src/compiler.mjs';
+import {catalogWithoutIntegrating, fakeChartPreset} from './profiles-support.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const read = f => readFileSync(resolve(root, f), 'utf8');
@@ -91,16 +92,19 @@ test('narrow-screen strategies point at CSS or renderer code that exists', () =>
 });
 
 test('pending materials (chart presets, Select, data table) stay out of the allow list until they are registered', () => {
-  const pending = pendingMaterials(registry);
+  const without = designRegistry({base: catalogWithoutIntegrating()}), pending = pendingMaterials(without);
   assert.ok(pending.erp.includes('chart-preset:erp-quarterly-revenue') && pending.erp.includes('component:data-table'));
-  assert.deepEqual(registry.get('profile:erp').ext.charts.presets, []);
-  // 같은 id를 미리 등록한 레지스트리에서는 허용 목록으로 옮겨 간다.
-  const pre = catalogRegistry();
-  pre.register(defineMaterial({id: 'chart-preset:erp-quarterly-revenue', kind: 'chart-preset', category: 'chart', label: 'fake', since: '2.6.0', render: {module: 'src/render/chart.mjs', export: 'renderChart'}, quality: {status: 'implemented', evidence: []}, ext: {chartKind: 'bar', series: {}, axes: null}}));
+  assert.deepEqual(without.get('profile:erp').ext.charts.presets, []);
+  assert.ok(!without.get('profile:erp').ext.components.includes('component:data-table'));
+  // 같은 id가 등록된 레지스트리에서는 허용 목록으로 옮겨 간다.
+  const pre = catalogWithoutIntegrating();
+  pre.register(fakeChartPreset('chart-preset:erp-quarterly-revenue'));
   const r = designRegistry({base: pre});
   assert.deepEqual(r.get('profile:erp').ext.charts.presets, ['chart-preset:erp-quarterly-revenue']);
   assert.ok(!r.get('profile:erp').ext.pending.includes('chart-preset:erp-quarterly-revenue'));
   assert.ok(r.get('profile:erp').dependencies.includes('chart-preset:erp-quarterly-revenue'));
+  // 기본 레지스트리의 대기 목록은 실제로 없는 id만 담는다.
+  for (const ids of Object.values(pendingMaterials(registry))) for (const id of ids) assert.ok(!registry.has(id), id);
 });
 
 test('Blueprint 2.6.0 accepts profile behind a version gate; older versions and unknown ids are rejected', () => {

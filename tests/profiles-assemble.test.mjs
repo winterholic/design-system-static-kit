@@ -2,7 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {assemble, designRegistry, PROFILES, PROFILE_IDS, PATTERNS, INTENT_KEYS} from '../src/profiles/index.mjs';
-import {catalogRegistry, defineMaterial} from '../src/materials/index.mjs';
+import {catalogWithoutIntegrating, fakeChartPreset} from './profiles-support.mjs';
+import {defineMaterial} from '../src/materials/index.mjs';
 import {validateBlueprint} from '../src/validate.mjs';
 import {validateBlueprint as serviceValidate, HINTS} from '../src/service/index.mjs';
 import {compile} from '../src/compiler.mjs';
@@ -59,9 +60,10 @@ test('requests the profile does not support are not substituted: diagnostics wit
   assert.deepEqual(comp.alternatives, ['list']);
   rejected(assemble('nope'), 'ASSEMBLE_UNSUPPORTED', '$args.profile');
   // 통합 중인 재료는 "없다"가 아니라 "아직 등록되지 않았다"로 구분해 알린다.
-  const pend = rejected(assemble('erp', {chartPresets: ['erp-quarterly-revenue']}), 'ASSEMBLE_PENDING', '$args.intent.chartPresets[0]');
+  const without = {registry: designRegistry({base: catalogWithoutIntegrating()})};
+  const pend = rejected(assemble('erp', {chartPresets: ['erp-quarterly-revenue']}, {}, without), 'ASSEMBLE_PENDING', '$args.intent.chartPresets[0]');
   assert.deepEqual(pend.alternatives, PROFILES.erp.charts.kinds);
-  rejected(assemble('erp', {components: ['component:data-table']}), 'ASSEMBLE_PENDING', '$args.intent.components[0]');
+  rejected(assemble('erp', {components: ['component:data-table']}, {}, without), 'ASSEMBLE_PENDING', '$args.intent.components[0]');
   rejected(assemble('commerce', {chartPresets: ['erp-quarterly-revenue']}), 'ASSEMBLE_UNSUPPORTED', '$args.intent.chartPresets[0]');
   // 허용된 요구는 그대로 반영된다(오탐 없음).
   const ok = assemble('erp', {density: 'comfortable', shell: 'rail', controlSize: 'compact', components: ['table', 'kanban']});
@@ -115,8 +117,8 @@ test('defaults the profile chooses are recorded as decisions; conflicts with a r
 });
 
 test('materials registered later (chart presets, data table) widen what assemble accepts without code changes', () => {
-  const pre = catalogRegistry();
-  pre.register(defineMaterial({id: 'chart-preset:erp-quarterly-revenue', kind: 'chart-preset', category: 'chart', label: 'fake', since: '2.6.0', render: {module: 'src/render/chart.mjs', export: 'renderChart'}, quality: {status: 'implemented', evidence: []}, ext: {chartKind: 'bar', series: {}, axes: null}}));
+  const pre = catalogWithoutIntegrating();
+  pre.register(fakeChartPreset('chart-preset:erp-quarterly-revenue'));
   pre.register(defineMaterial({id: 'component:data-table', kind: 'component', category: 'form-data-feedback', label: 'fake', since: '2.6.0', render: {module: 'src/render/nodes.mjs', export: 'makeRenderer'}, quality: {status: 'implemented', evidence: []}, ext: {nodeType: 'data-table', group: 'data', fields: [], required: []}}));
   const registry = designRegistry({base: pre});
   const r = assemble('erp', {chartPresets: ['erp-quarterly-revenue'], components: ['component:data-table']}, {}, {registry});
