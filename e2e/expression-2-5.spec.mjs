@@ -123,13 +123,15 @@ test('EX-3 a pull quote has no box and a larger type than the boxed quote', asyn
   expect(s[0].size).toBeGreaterThan(s[1].size);
 });
 
-// 랜딩은 hero 가 필수(PAGE_REQUIRE)라 hero 없는 이 시험은 make()의 general 을 쓴다. 두 유형의 구역 스타일(BAND)은 같다. 구역마다 번갈아 깔리는 바탕색이 높이를 흔들지 않게 surface 를 plain 으로 고정한다.
+// 랜딩은 hero 가 필수(PAGE_REQUIRE)라 hero 를 앞에 둔다. CI 실측(2026-11-21)에서 loose 구역이 보통보다 낮게 나와 실패한다:
+// src/styles/expression.mjs 의 NOT_BAND(`:not(:is([data-page=...]))` 뒤에 자손 결합자)가 data-page 가 없는 html·body 에도 맞아
+// 앱 페이지용 규칙(tight/loose 의 section 계열)이 띠 페이지에도 덮어쓰인다. Core 출력(src/**) 문제라 여기서 고치지 않고 보고한다.
 test('EX-4 section.space loose is roomier and tight is tighter than normal; flat is never painted', async ({page}) => {
-  const heights = async patch => { await open(page, make([sec([prose()], {surface: 'plain', ...patch.a}), sec([prose()], {surface: 'plain', ...patch.b}), sec([prose()], {surface: 'plain', ...patch.c})], {density: 'spacious'})); return page.locator('.kit-main>.kit-section').evaluateAll(els => els.map(e => e.getBoundingClientRect().height)); };
+  const heights = async patch => { await open(page, make([hero(), sec([prose()], patch.a), sec([prose()], patch.b), sec([prose()], patch.c)], {pageType: 'landing', density: 'spacious'})); return page.locator('.kit-main>.kit-section').evaluateAll(els => els.map(e => e.getBoundingClientRect().height)); };
   const h = await heights({a: {space: 'tight'}, b: {}, c: {space: 'loose'}});
   expect(h[0]).toBeLessThan(h[1]); expect(h[2]).toBeGreaterThan(h[1]);
   expect(Math.round(h[2] - h[1])).toBe(52);
-  await open(page, make([sec([prose()]), sec([prose()], {surface: 'flat'})]));
+  await open(page, make([hero(), sec([prose()]), sec([prose()], {surface: 'flat'})], {pageType: 'landing'}));
   expect(await page.locator('.kit-main>.kit-section').nth(1).evaluate(e => getComputedStyle(e).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 });
 
