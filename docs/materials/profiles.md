@@ -34,6 +34,9 @@
 - `intent` 키: `pattern, theme, density, mode, shell, width, typography, controlSize, components, chartPresets`. `content` 키: `name, nav, slots`. 이 밖의 키(`css`, `style`, `className`, `html` 등)는 `ASSEMBLE_UNSUPPORTED`다.
 - 요구한 값이 허용 목록 밖이면 다른 값으로 바꾸지 않는다. `ok:false`, `blueprint:null`과 `alternatives`를 돌려준다. 요구하지 않은 축만 프로파일 기본값으로 정하고 `decisions`에 `source`(profile, theme-forbid, X05 같은 금지 조합 id)를 남긴다.
 - 슬롯 내용은 슬롯과 프로파일이 **함께** 허용하는 부품만 받는다(`ASSEMBLE_CONTENT`). 개수와 모르는 슬롯은 `ASSEMBLE_SLOT`이다. 결과는 검증기를 통과해야 `ok:true`다. 통과하지 못하면 `ASSEMBLE_INVALID`와 검증 진단을 함께 준다.
+- `chartPresets`는 패턴이 허용한 기본 슬롯 안의 기본 차트 노드에 순서대로 적용한다. 등록 재료의 kind·데이터·축·격자·라벨·범례 등 기존 옵션을 차트 노드로 복사하며, 기본 차트의 제목·설명과 다른 콘텐츠는 유지한다. 프로파일 차트 형태·차트 수 제한과 패턴 슬롯에 적용할 위치가 모두 맞아야 한다. 슬롯을 사용자가 제공한 내용으로 교체해 기본 차트 대상이 사라지거나 프리셋 수가 대상보다 많으면 `ASSEMBLE_CHART_PRESET` 진단으로 거부한다. 사용자 슬롯·차트 데이터는 프리셋으로 덮어쓰지 않는다.
+- 프로파일의 `type.rolePreset`은 Blueprint `typeRoles`로 기록한다. `2.6.0` 역할 서체 재료의 CSS와 manifest를 컴파일러가 생성한다. 기존 `typography` 축은 그대로 유지한다.
+- 명시적 재료 입력 중 `components`는 프로파일 허용 목록을 검증하는 선택 선언이다. 트리 부품을 자동 추가하지 않으며 실제 부품은 `content.slots`로 전달한다. `controlSize`는 성공 결과의 `materials.controlSize`에 보존되는 선택 메타데이터이고 Blueprint나 컴파일 CSS에는 적용되지 않는다. 컨트롤 부품별 크기 적용 계약은 별도 컴파일러/컨트롤 재료 의존으로 남는다.
 - 시간·난수를 읽지 않는다. 같은 입력이면 JSON 바이트가 같다.
 
 ## 통합 중 재료
