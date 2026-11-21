@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {
   catalogRegistry, createRegistry, defineMaterial, defineKind, MaterialError, BUILTIN_KINDS, FIELDS, CATEGORIES, QUALITY,
+  chartPresetMaterials, selectMaterial, tableMaterial,
   MATERIAL_CATALOG_VERSION, combinationsOf, validateMaterial, PALETTE_SOURCE_VERDICT, PALETTE_ROLES, MATERIAL_TYPE_PRESETS,
 } from '../src/materials/index.mjs';
 import {nodeTypes, nodeSpecs, themes, palettes, templates, pageTypeIds, recipeIds, iconNames, axes, styleAxes, ACCEPTED_CATALOG_VERSIONS, CATALOG_VERSION, VERSION_ORDER} from '../src/catalog.mjs';
@@ -30,7 +31,7 @@ const sample = (patch = {}) => defineMaterial({
 test('materials: every existing node, axis, type preset, theme, palette, page type, template, recipe, layout primitive and icon is registered', () => {
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
-    axis: 1 + styleAxes.length, component: nodeTypes.length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
+    axis: 1 + styleAxes.length, 'chart-preset': chartPresetMaterials.length, component: nodeTypes.length + [selectMaterial, tableMaterial].length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
     palette: Object.keys(palettes).length, 'color-token': registry.byKind('color-token').length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length, 'type-role-preset': Object.keys(MATERIAL_TYPE_PRESETS).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));
@@ -44,8 +45,8 @@ test('materials: material count, attribute combinations and complete presets are
   assert.equal(c.attributeCombinations, registry.list().reduce((n, m) => n + combinationsOf(m), 0));
   assert.equal(c.completePresets, registry.list().filter(m => registry.isPreset(m)).length);
   assert.ok(c.attributeCombinations > c.materials && c.materials > c.completePresets && c.completePresets > 0, JSON.stringify(c));
-  // 완성 프리셋은 서체 프리셋·테마·템플릿뿐이다. 속성이 많은 부품(히어로·표…)은 조합을 늘려도 프리셋이 아니다.
-  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(MATERIAL_TYPE_PRESETS).length + Object.keys(themes).length + Object.keys(templates).length);
+  // 완성 프리셋은 서체 프리셋·역할 서체·테마·템플릿·차트뿐이다. 속성이 많은 부품(히어로·표…)은 조합을 늘려도 프리셋이 아니다.
+  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(MATERIAL_TYPE_PRESETS).length + Object.keys(themes).length + Object.keys(templates).length + chartPresetMaterials.length);
   assert.equal(registry.filter({kind: 'component', preset: true}).length, 0);
   assert.ok(combinationsOf(registry.get('component:hero')) > 1);
 });
@@ -132,9 +133,10 @@ test('materials: new kinds extend the registry without touching the common contr
   }));
   assert.equal(r.counts().byQuality.missing, 1);
   assert.throws(() => defineKind({id: 'x', label: 'x', categories: ['nope']}));
-  // 색 토큰은 현재 단계에서 등록되며, 나머지 후속 종류만 계약이 선행한다.
+  // 색 토큰과 차트 프리셋은 등록되며, 패턴만 계약이 선행한다.
   assert.ok(registry.kind('color-token') && registry.byKind('color-token').length > 0);
-  for (const k of ['chart-preset', 'pattern']) { assert.ok(registry.kind(k)); assert.equal(registry.byKind(k).length, 0); }
+  assert.ok(registry.kind('pattern')); assert.equal(registry.byKind('pattern').length, 0);
+  assert.ok(registry.byKind('chart-preset').length >= 6);
 });
 
 test('materials: adapters keep catalog facts (children, parents, enums, contexts, CSS tokens)', () => {
@@ -144,13 +146,20 @@ test('materials: adapters keep catalog facts (children, parents, enums, contexts
   assert.deepEqual(registry.get('component:chart').variants.kind, nodeSpecs.chart.fields.kind.enum);
   assert.deepEqual(registry.get('component:table').states.values, ['ready', 'loading', 'empty', 'error', 'partial', 'forbidden']);
   assert.ok(registry.get('component:table').tokens.every(t => t.startsWith('--kit-')) && registry.get('component:table').tokens.length > 0);
+  for (const id of ['component:select-control', 'component:data-table']) {
+    const material = registry.get(id);
+    assert.equal(material.since, '2.6.0');
+    assert.ok(material.tokens.every(t => t.startsWith('--kit-')) && material.tokens.length > 0);
+  }
   assert.deepEqual(registry.get('axis:radius').variants.value, axes.radius);
   assert.deepEqual(registry.get('palette:ocean').tokens, Object.keys(resolveTokens({palette: 'ocean', mode: 'light'}).tokens));
   assert.equal(PALETTE_ROLES.length, 27);
   assert.ok(registry.get('theme:workspace').dependencies.every(d => registry.has(d)));
   // 부품마다 렌더러에 같은 이름의 진입점이 있다.
   const renderer = read('src/render/nodes.mjs');
-  for (const m of registry.byKind('component')) assert.ok(renderer.includes(`R.${m.render.key} =`) || renderer.includes(`R['${m.render.key}'] =`), m.id);
+  for (const type of nodeTypes) { const key = type === 'tab' ? 'tabs' : type; assert.ok(renderer.includes(`R.${key} =`) || renderer.includes(`R['${key}'] =`), type); }
+  assert.match(read('src/materials/select.mjs'), /export function renderSelect/);
+  assert.match(read('src/materials/table.mjs'), /export function renderDataTable/);
 });
 
 test('materials: every evidence file:line points at a test() that exists', () => {
