@@ -1,22 +1,23 @@
 import {PageShell} from '@/shell/PageShell';
+import Link from 'next/link';
+import {DOCS_PAGES} from '@/lib/docs.mjs';
 
-export const metadata = {title: 'Docs'};
+export const metadata = {title: 'Docs | 시작 가이드와 Core 레퍼런스'};
 
-// 아래 6개는 생성된 정적 문서(/docs/*.html). Docs 트랙이 같은 내용을 /docs/<slug> 로 옮기면 이 목록을 새 경로로 바꾼다.
-const GENERATED_DOCS = [
-  {file: 'design.html', title: '설계 개요', note: '카탈로그와 컴파일러의 설계'},
-  {file: 'layout.html', title: '레이아웃', note: '구성 규칙과 슬롯 변형'},
-  {file: 'typography.html', title: '타이포그래피', note: '서체와 글자 위계 규칙'},
-  {file: 'spacing.html', title: '간격', note: '간격 단위와 밀도'},
-  {file: 'palettes.html', title: '팔레트', note: '팔레트와 대비 검증'},
-] as const;
+const groups = [...new Set(DOCS_PAGES.map(page => page.group))];
 
 export default function DocsPage() {
   return (
-    <PageShell eyebrow="Docs" title="문서" lead="디자인 규약과 도구 사용법을 읽습니다.">
-      <ul className="link-list">
-        {GENERATED_DOCS.map(d => <li key={d.file}><a href={`/docs/${d.file}`}>{d.title}</a><span>{d.note}</span></li>)}
-      </ul>
+    <PageShell eyebrow="Docs" title="시작 가이드와 Core 레퍼런스" lead="예제를 실행하고 Blueprint를 검증한 뒤, Core가 제공하는 스키마와 규칙을 살펴보세요.">
+      {groups.map(group => <section key={group} aria-labelledby={`docs-${group}`}>
+        <h2 className="section-title" id={`docs-${group}`}>{group}</h2>
+        <ul className="link-list">
+          {DOCS_PAGES.filter(page => page.group === group).map(page => <li key={page.slug}>
+            <Link href={page.href}>{page.title}</Link><span>{page.description}</span>
+          </li>)}
+        </ul>
+      </section>)}
+      <p className="note">기존 정적 문서는 <Link href="/docs/design.html">설계 개요</Link>, <Link href="/docs/layout.html">레이아웃</Link>, <Link href="/docs/typography.html">타이포그래피</Link>, <Link href="/docs/spacing.html">간격</Link>, <Link href="/docs/palettes.html">팔레트</Link> 주소로 계속 열 수 있습니다.</p>
     </PageShell>
   );
 }

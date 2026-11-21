@@ -2,6 +2,21 @@
 
 **미리 정의한 디자인을 코드 규약 안에서 조립하는 도구.** 에이전트와 사람은 자유 CSS 대신 허용된 JSON 트리를 작성하고, 컴파일러는 조합·속성·버전·페이지 유형·접근성 대비를 검증해 정적 HTML을 만듭니다. 프롬프트가 아니라 **코드**가 강제합니다.
 
+## Next.js 공개 Docs에서 시작하기
+
+외부 개발자용 시작 가이드와 Core 기반 레퍼런스는 실행 중인 Next.js 앱의 [`/docs`](http://localhost:3000/docs)에서 제공합니다. Node.js 22를 준비한 뒤 저장소 루트에서 다음 명령을 실행하면 템플릿을 만들고, 검사하고, 빌드할 수 있습니다.
+
+```sh
+npm ci
+npm run kit -- templates
+npm run kit -- init saas-landing ./my-blueprint.json
+npm run kit -- validate ./my-blueprint.json
+npm run kit -- build ./my-blueprint.json --out ./my-output
+npm run kit -- check ./my-output
+```
+
+앱을 실행하려면 `npm run web:dev`를 실행하고 `/docs`를 여세요. Blueprint, Components, Composition, Tokens & Themes 레퍼런스는 Core 공개 `./service`에서 읽습니다. CLI와 REST·MCP별 상세 연결 안내도 같은 Docs 목차에서 찾을 수 있습니다. 기본 생성은 카탈로그 2.4.0을 사용하며, 2.5.0 표현력 필드는 Core가 지원할 때 명시적으로 선택합니다.
+
 | 카탈로그 2.2 | 수량 | | 카탈로그 2.2 | 수량 |
 |---|---|---|---|---|
 | 템플릿 | 85 (구성 변형 405) | | 부품 | 55종 |
@@ -21,7 +36,7 @@
 - **시각 조립기**: `npm run dev` 후 http://127.0.0.1:4173. 미리보기는 휴대폰·태블릿·데스크톱·맞춤 폭을 고정 폭으로 그려 영역에 맞춰 줄이므로 가로로 잘리지 않고, **새 창**과 **전체 화면 모달**로 크게 볼 수 있습니다. 카탈로그 탭에서 템플릿·테마·팔레트·부품의 실제 렌더를 보고 바로 조립을 시작합니다.
 - **전체 조합 갤러리** (`/combos/`): 템플릿 × 구성 변형 4,955가지를 번호·필터·검색과 함께 훑어보고, 확대해 ←→·스와이프로 넘기며, **컨셉 17개**(템플릿과 시각 언어 묶음)·테마·서체·팔레트를 바꿔 보고, 이상한 조합을 표시해 글로 내보냅니다. 전수 진단에서 심각한 결함이 나온 조합은 **실험**으로 표시하고 기본으로 숨깁니다. 파일을 미리 만들지 않고 브라우저에서 즉석 컴파일합니다(`docs/round6.md`, `docs/round6-quality.md`).
 - **휴대폰용 단일 파일 갤러리**: `site/gallery/index.html` (컴파일러 포함, 오프라인). 템플릿·테마·부품·축을 열어 보고 테마·팔레트·모드·축을 바로 바꿔 봅니다. 금지 조합은 이유와 함께 거부되고 자동 수정 대안이 나옵니다.
-- 설계서 [docs/design.html](docs/design.html) · 팔레트 근거 [docs/palettes.html](docs/palettes.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html) · 서체 규칙 [docs/typography.html](docs/typography.html) · 배치 규칙 [docs/layout.html](docs/layout.html) · 6차 진단 [docs/diagnosis-round6.html](docs/diagnosis-round6.html)
+- 설계서 [docs/design.html](docs/design.html) · 팔레트 근거 [docs/palettes.html](docs/palettes.html) · 간격 규칙 [docs/spacing.html](docs/spacing.html) · 서체 규칙 [docs/typography.html](docs/typography.html) · 배치 규칙 [docs/layout.html](docs/layout.html)
 
 ## 실행
 

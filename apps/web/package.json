@@ -14,6 +14,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "test:docs": "node --test docs-contract.test.mjs",
     "test:boundary": "node --test boundary.check.mjs",
     "test:e2e": "playwright test"
   },
