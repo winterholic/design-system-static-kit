@@ -36,6 +36,18 @@ export function Banners() {
           </div>
         </section>
       ) : null}
+      {storage.status === 'conflict' ? (
+        <section className={styles.banner} data-level="warning" role="alert" aria-labelledby="conflict-title">
+          <h3 id="conflict-title" className={styles.bannerTitle}>다른 탭에서 저장한 작업이 있어 자동 저장을 멈췄습니다</h3>
+          <p>{storage.message}</p>
+          <p>저장된 작업을 불러오면 이 탭의 변경은 버려지고, 덮어쓰면 다른 탭의 작업이 사라집니다. 먼저 JSON을 내려받아 두면 둘 다 지킬 수 있습니다.</p>
+          <div className="btn-row">
+            <button type="button" className={styles.tool} disabled={!api.state.document.doc} onClick={api.exportJson}>이 탭 JSON 내보내기</button>
+            <button type="button" className={styles.tool} onClick={api.reloadSaved}>저장된 작업 불러오기</button>
+            <button type="button" className={styles.tool} onClick={api.overwriteStorage}>이 탭 내용으로 덮어쓰기</button>
+          </div>
+        </section>
+      ) : null}
       {storage.status === 'error' || storage.status === 'unavailable' ? (
         <section className={styles.banner} data-level="warning" role="alert" aria-labelledby="storage-title">
           <h3 id="storage-title" className={styles.bannerTitle}>{storage.status === 'error' ? '작업을 저장하지 못했습니다' : '이 브라우저에는 저장할 수 없습니다'}</h3>

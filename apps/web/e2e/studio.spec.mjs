@@ -127,6 +127,8 @@ test('WB-04/WB-05: invalid JSON reports Core diagnostics without changing the do
   await page.getByRole('button', {name: '템플릿 바꾸기'}).click();
   await page.getByRole('radio', {name: /saas-landing/}).check();
   await page.getByRole('button', {name: '이 템플릿으로 바꾸기'}).click();
+  // 가져온 문서는 수정 전이어도 사용자의 작업이라 확인을 받고서야 바뀐다.
+  await page.getByRole('dialog', {name: '템플릿을 바꿀까요?'}).getByRole('button', {name: '템플릿 바꾸기'}).click();
   await expect(page.locator('[data-phase="ready"]')).toBeVisible();
   await expect(page.getByTestId('op-error')).toHaveCount(0);
 });
