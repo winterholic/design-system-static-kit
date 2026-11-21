@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {clearSaved, LEGACY_KEY, readStored, SCHEMA_VERSION, STORAGE_KEY, writeSaved} from './storage.ts';
+import {clearSaved, LEGACY_KEY, peekSaved, readStored, SCHEMA_VERSION, STORAGE_KEY, writeSaved} from './storage.ts';
 
 function storage(values = new Map(), overrides = {}) {
   return {
@@ -44,4 +44,21 @@ test('storage read preserves malformed saved text for recovery export', () => {
 
   assert.equal(loaded.kind, 'corrupt');
   assert.equal(loaded.raw, '{broken');
+});
+
+test('peekSaved summarises the stored record so autosave can see another tab\'s work before overwriting it', () => {
+  const values = new Map();
+  globalThis.window = {localStorage: storage(values)};
+  assert.equal(peekSaved(), null);
+
+  const origin = {template: 'dashboard-overview', layout: {}, themeVariant: null, palette: null};
+  const saved = writeSaved({doc: {version: '2.0'}, origin, picked: {}, selection: [], modified: true});
+  const peek = peekSaved();
+  assert.equal(peek.savedAt, saved.savedAt);
+  assert.deepEqual(peek.work, {doc: {version: '2.0'}, origin, picked: {}, modified: true});
+
+  values.set(STORAGE_KEY, '{broken');
+  assert.deepEqual(peekSaved(), {savedAt: null, work: null});
+  values.set(STORAGE_KEY, JSON.stringify({schema: 99, savedAt: 'x', doc: {}}));
+  assert.deepEqual(peekSaved(), {savedAt: 'x', work: null});
 });

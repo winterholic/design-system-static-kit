@@ -1,4 +1,5 @@
 // 브라우저 저장소(03-interfaces.md 5.3절). 새 키는 스키마 버전을 가지고, 옛 조립기 키는 처음 한 번 읽기만 한다.
+import type {Work} from './protect';
 import type {Blueprint, NodePath, Origin, Picks} from './types';
 
 export const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
@@ -68,6 +69,26 @@ export function writeSaved(state: Omit<Saved, 'schema' | 'savedAt'>): WriteResul
     const name = (e as Error).name;
     return {ok: false, message: name === 'QuotaExceededError' ? '저장 공간이 가득 찼습니다.' : '저장하지 못했습니다: ' + (e as Error).message};
   }
+}
+
+export type Stored = {savedAt: string | null; work: Work | null};
+
+/**
+ * 지금 저장소에 든 기록의 요약. 기록이 없으면 null이다. 읽을 수 없거나 모양이 어긋난 기록은 work가 null이라 보호 대상으로 다룬다.
+ * 자동 저장이 다른 탭이 쓴 작업을 모르고 덮어쓰지 않게, 쓰기 전에 이것으로 확인한다(protect.ts의 mayOverwriteStored).
+ */
+export function peekSaved(): Stored | null {
+  const s = store();
+  if (!s) return null;
+  let raw: string | null;
+  try { raw = s.getItem(STORAGE_KEY); } catch { return null; }
+  if (raw === null) return null;
+  let data: unknown;
+  try { data = JSON.parse(raw); } catch { return {savedAt: null, work: null}; }
+  const savedAt = isRecord(data) && isStr(data.savedAt) ? data.savedAt : null;
+  const parsed = parseSaved(data);
+  if ('error' in parsed) return {savedAt, work: null};
+  return {savedAt, work: {doc: parsed.doc as Blueprint, origin: parsed.origin, picked: parsed.picked, modified: parsed.modified}};
 }
 
 export function markLegacyImported() {

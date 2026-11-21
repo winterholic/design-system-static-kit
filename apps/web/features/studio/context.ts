@@ -30,6 +30,10 @@ export type StudioApi = {
   exportHtml(): void;
   exportRecovery(): void;
   resetStorage(): void;
+  /** 다른 탭의 저장 기록과 충돌했을 때: 이 탭의 내용으로 덮어쓴다. */
+  overwriteStorage(): void;
+  /** 다른 탭의 저장 기록과 충돌했을 때: 저장된 작업을 다시 읽는다. */
+  reloadSaved(): void;
   /** 시작 화면에서 코어를 불러오며 동작을 이어 실행한다. */
   withCore(then: (core: Core) => void): void;
   compileCount: number;

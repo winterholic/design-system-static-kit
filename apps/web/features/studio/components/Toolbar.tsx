@@ -18,7 +18,7 @@ export function Toolbar() {
   const effective: Pane = narrow && view.pane === 'split' ? 'edit' : view.pane;
   const close = (fn: () => void) => () => { setMore(false); fn(); };
 
-  const save = session.storage.status === 'saved' ? '브라우저에 저장됨' : session.storage.status === 'error' ? '저장 실패' : session.storage.status === 'unavailable' ? '저장되지 않음' : session.recovery ? '저장 중지됨' : '';
+  const save = session.storage.status === 'saved' ? '브라우저에 저장됨' : session.storage.status === 'error' ? '저장 실패' : session.storage.status === 'unavailable' ? '저장되지 않음' : session.storage.status === 'conflict' ? '저장 중지됨(다른 탭)' : session.recovery ? '저장 중지됨' : '';
   const secondary = (
     <>
       <button type="button" className={styles.tool} onClick={close(() => api.withCore(() => api.openDialog({kind: 'template'})))}>템플릿 바꾸기</button>

@@ -117,3 +117,73 @@ test('preview settings are independent of document edits, undo and redo', async 
   assert.equal(state.document.doc, doc);
   assert.equal(state.session.undo.length, undo);
 });
+
+// ---- 사용자 작업 보호: needsConfirm은 protect.ts의 한 규칙이다 -----------------------------------------
+import {needsConfirm} from './model.ts';
+
+async function imported(state) {
+  const text = JSON.stringify({...state.document.doc, name: '가져온 작업'});
+  return reducer(state, {type: 'edit', intent: {kind: 'import', text}, at: 10});
+}
+
+test('needsConfirm: 수정하지 않은 템플릿 문서는 확인 없이 바꾸고, 수정하면 확인을 받는다', async () => {
+  let state = await ready();
+  assert.equal(needsConfirm(state), false);
+  state = reducer(state, {type: 'edit', intent: {kind: 'rename', name: '내 이름'}, at: 2});
+  assert.equal(needsConfirm(state), true);
+});
+
+test('needsConfirm: 가져온 문서는 수정하기 전에도 사용자의 작업이라 확인을 받는다(템플릿 바꾸기·초기화·다시 가져오기·URL 시작)', async () => {
+  let state = await imported(await ready());
+  assert.equal(state.session.origin, null);
+  assert.equal(state.session.modified, false);
+  assert.equal(needsConfirm(state), true);
+  // 확인한 뒤 템플릿으로 바꾸면 다시 만들 수 있는 문서가 되어 확인이 필요 없다.
+  const replaced = reducer(state, {type: 'edit', intent: {kind: 'replaceTemplate', template: 'saas-landing', keepAppearance: false}, at: 11});
+  assert.equal(needsConfirm(replaced), false);
+  const reset = reducer(state, {type: 'edit', intent: {kind: 'reset'}, at: 11});
+  assert.equal(needsConfirm(reset), false);
+  const started = reducer(state, {type: 'edit', intent: {kind: 'start', request: {template: 'saas-landing'}}, at: 11});
+  assert.equal(needsConfirm(started), false);
+});
+
+test('needsConfirm: 실행 취소·다시 실행이 가져온 작업을 되살리면 다시 확인 대상이 된다', async () => {
+  let state = await imported(await ready());
+  state = reducer(state, {type: 'edit', intent: {kind: 'reset'}, at: 11});
+  assert.equal(needsConfirm(state), false);
+  state = reducer(state, {type: 'undo'});
+  assert.equal(state.session.origin, null);
+  assert.equal(needsConfirm(state), true);
+  state = reducer(state, {type: 'redo'});
+  assert.equal(needsConfirm(state), false);
+  // 템플릿 문서를 고치고 실행 취소로 수정 전으로 돌아가면 확인이 필요 없다. 다시 실행하면 필요하다.
+  state = reducer(state, {type: 'edit', intent: {kind: 'rename', name: '고친 이름'}, at: 12});
+  assert.equal(needsConfirm(state), true);
+  state = reducer(state, {type: 'undo'});
+  assert.equal(needsConfirm(state), false);
+  state = reducer(state, {type: 'redo'});
+  assert.equal(needsConfirm(state), true);
+});
+
+test('needsConfirm: 직접 고른 스타일 축이 있으면 확인 대상이다', async () => {
+  let state = await ready();
+  state = reducer(state, {type: 'edit', intent: {kind: 'setAxis', axis: 'density', value: 'compact'}, at: 2});
+  assert.equal(needsConfirm(state), true);
+  const wiped = {...state, session: {...state.session, modified: false}};
+  assert.equal(needsConfirm(wiped), true, 'modified 표시만 내려도 picked가 남아 있으면 보호한다');
+});
+
+test('needsConfirm: 미리보기 설정과 선택 이동은 판정을 바꾸지 않는다', async () => {
+  const base = await imported(await ready());
+  let state = reducer(base, {type: 'view', patch: {device: 390, scheme: 'dark', scaleMode: 'actual', pane: 'preview', tab: 'design'}});
+  state = reducer(state, {type: 'select', path: [0]});
+  assert.equal(needsConfirm(state), true);
+  const tmpl = await ready();
+  const viewed = reducer(reducer(tmpl, {type: 'view', patch: {scheme: 'dark', device: 390}}), {type: 'select', path: [0]});
+  assert.equal(needsConfirm(viewed), false);
+  assert.equal(viewed.document.doc, tmpl.document.doc);
+});
+
+test('needsConfirm: 시작 화면(문서 없음)은 확인이 필요 없다', () => {
+  assert.equal(needsConfirm(initialState), false);
+});

@@ -5,13 +5,14 @@
 // 리듀서는 순수하다. 연산은 (doc, args) → 새 doc 순수 함수라서 호출해도 부작용이 없다. 시간은 액션이 들고 온다.
 import {core} from './core';
 import {clampPath, nodeAt, pathExists} from './paths';
+import {isDisposable} from './protect';
 import type {Blueprint, Device, Diagnostic, Node, NodePath, OpResult, Origin, Pane, Picks, PreviewScheme, ScaleMode, StartRequest, Tab} from './types';
 
 // ---------------------------------------------------------------- 상태 타입
 
 export type OpFailure = {id: number; intent: Intent; errors: Diagnostic[]; warnings: Diagnostic[]};
 export type Notice = {id: number; level: 'info' | 'warning' | 'error'; text: string; details?: Diagnostic[]};
-export type StorageStatus = {status: 'idle' | 'saved' | 'error' | 'unavailable'; message?: string; savedAt?: string};
+export type StorageStatus = {status: 'idle' | 'saved' | 'error' | 'unavailable' | 'conflict'; message?: string; savedAt?: string};
 export type Recovery = {raw: string; reason: string};
 
 export type PendingAction =
@@ -324,5 +325,5 @@ export function reducer(s: StudioState, a: Action): StudioState {
   }
 }
 
-/** 수정된 작업이 있어 확인이 필요한가. 시작 화면(문서 없음)은 확인이 필요 없다. */
-export const needsConfirm = (s: StudioState) => s.phase === 'ready' && s.session.modified;
+/** 사용자 작업이 있어 교체 전에 확인이 필요한가. 판정은 protect.ts의 한 규칙이고, 시작 화면(문서 없음)은 확인이 필요 없다. */
+export const needsConfirm = (s: StudioState) => s.phase === 'ready' && !isDisposable({doc: s.document.doc, origin: s.session.origin, picked: s.session.picked, modified: s.session.modified});

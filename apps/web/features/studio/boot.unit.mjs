@@ -47,3 +47,14 @@ test('저장 문서가 없으면 URL 시작 인자를 확인 없이 연다', asy
   assert.equal(boot.view.dialog, null);
   assert.equal(boot.origin?.template, 'saas-landing');
 });
+
+test('주소 시작 인자와 확인 대화상자는 같은 규칙을 쓴다: 대화상자가 필요한 문서는 needsConfirm도 참이다', async () => {
+  const {needsConfirm} = await import('./model.ts');
+  for (const patch of [{}, {modified: true}, {origin: null}, {picked: {density: 'compact'}}]) {
+    const {loaded} = await stored(patch);
+    const unrelated = computeBoot(parseUrl(''), loaded);
+    const state = reducer(initialState, {type: 'boot', state: unrelated});
+    const asked = computeBoot(start, loaded).view.dialog !== null;
+    assert.equal(needsConfirm(state), asked, JSON.stringify(patch));
+  }
+});
