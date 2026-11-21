@@ -160,6 +160,8 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 .kit-card:hover{background:var(--kit-card-hover)}.kit-card:active{background:var(--kit-card-active)}.kit-card[data-state=error]{background:var(--kit-danger-soft)}.kit-card:focus-within{outline:2px solid var(--kit-focus);outline-offset:2px}
 thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[aria-selected=true]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
 .kit-chart .ch-grid{stroke:var(--kit-chart-grid)}
+/* 2.6.0 material layout corrections (docs/layout-quality.md) */
+.kit-chart :is(.ch-t,.ch-v,.ch-vh){font-size:13px}
 /* layout contract rev 2 (src/layout.mjs) */
 .kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}
 .kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}

@@ -37,6 +37,8 @@ C단계는 브라우저 검사 결과와 별개인 사람의 시각 평가다. �
 
 [레이아웃 결과 요약](layout/findings.md), 원시 측정 [JSON](layout/report.json), 실행 환경·미실행 CLI 기록 [run.json](layout/run.json)을 확인한다. Chromium 전체 페이지 캡처는 다음과 같다.
 
+현재 결과는 2026-11-21T17:53:41.284Z UTC의 통합 기준 `da7c86486c5f02509e5d80d4061b4aa0d1040a34` 입력을 2.6.0에서 다시 조립해 측정했다. 직전 결과는 [2026-11-21T17:29:45Z JSON](layout/report-previous-2026-11-21T172945Z.json) 및 `previous-2026-11-21T172945Z-*`에, 작업 전 실제 재현 캡처는 `baseline-2026-11-21T174203Z-*`에 보존했다. 사람의 시각 평가는 **미평가**다.
+
 | 화면 | 390px | 1280px |
 |---|---|---|
 | ERP | [캡처](layout/erp-390.png) | [캡처](layout/erp-1280.png) |

@@ -1,6 +1,6 @@
 {
   "method": "scripts/layout-quality/probe.mjs layoutProbe, run in configured Ttakkari Chromium browser",
-  "capturedAt": "2026-11-21T17:29:45.405Z",
+  "capturedAt": "2026-11-21T17:53:41.284Z",
   "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
   "devicePixelRatio": 1,
   "viewports": [
@@ -23,17 +23,17 @@
       "width": 390,
       "findings": [
         {
-          "code": "OVERFLOW_X",
-          "severity": "error",
-          "role": "element",
-          "locator": "div.kit-shell > header.kit-header > nav.kit-nav > ul > li:nth-of-type(5)",
-          "text": "설정",
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "body > div.kit-shell > header.kit-header > nav.kit-nav > ul",
+          "text": "주문상품고객정산설정",
           "evidence": {
-            "elementRight": 400.7,
-            "viewportWidth": 390,
-            "overflowPx": 10.7
+            "scrollWidth": 413,
+            "clientWidth": 358,
+            "hiddenPx": 55
           },
-          "suggestion": "문서·요소가 화면 오른쪽 밖으로 나간다. min-width: 0, overflow-wrap, 고정 폭 제거를 확인한다."
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
         },
         {
           "code": "SCROLL_REGION",
@@ -47,81 +47,6 @@
             "hiddenPx": 134
           },
           "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
-        },
-        {
-          "code": "BAR_MISALIGNED_X",
-          "severity": "error",
-          "role": "bar",
-          "locator": "body > div.kit-shell > header.kit-header",
-          "text": "EERP 주문·재고 운영주문상품고객정산설정",
-          "evidence": {
-            "barContentLeft": 16,
-            "pageContentLeft": 16,
-            "barContentRight": 400.7,
-            "pageContentRight": 374,
-            "leftDeltaPx": 0,
-            "rightDeltaPx": 26.7,
-            "tolerancePx": 1.5
-          },
-          "suggestion": "상단 바의 좌우 가장자리를 본문 컨테이너와 같은 max-width·padding으로 맞춘다."
-        },
-        {
-          "code": "BAR_MISALIGNED_Y",
-          "severity": "error",
-          "role": "bar",
-          "locator": "#main > header.kit-page-header",
-          "text": "주문 관리오늘 접수된 주문 128건주문 추가내보내기",
-          "evidence": {
-            "kind": "bar-center",
-            "rowCenter": 222.2,
-            "barCenter": 196.6,
-            "offsetPx": 25.6
-          },
-          "suggestion": "상단 바의 항목 세로 중심을 맞춘다(align-items: center, 같은 min-height)."
-        }
-      ],
-      "scanned": {
-        "text": 58,
-        "wrap": 39,
-        "clip": 9,
-        "svg": 8,
-        "overflow": 2,
-        "smallText": 58,
-        "bar": 2
-      },
-      "roles": {
-        "label": 15,
-        "control": 19,
-        "heading": 2,
-        "lead": 1,
-        "cell": 20,
-        "short": 1
-      },
-      "counts": {
-        "OVERFLOW_X": 1,
-        "SCROLL_REGION": 1,
-        "BAR_MISALIGNED_X": 1,
-        "BAR_MISALIGNED_Y": 1
-      },
-      "viewportWidth": 390
-    },
-    {
-      "page": "erp",
-      "width": 1280,
-      "findings": [
-        {
-          "code": "BAR_MISALIGNED_Y",
-          "severity": "error",
-          "role": "bar",
-          "locator": "#main > header.kit-page-header",
-          "text": "주문 관리오늘 접수된 주문 128건주문 추가내보내기",
-          "evidence": {
-            "kind": "bar-center",
-            "rowCenter": 58.8,
-            "barCenter": 66.8,
-            "offsetPx": 8
-          },
-          "suggestion": "상단 바의 항목 세로 중심을 맞춘다(align-items: center, 같은 min-height)."
         }
       ],
       "scanned": {
@@ -131,7 +56,8 @@
         "svg": 8,
         "overflow": 1,
         "smallText": 58,
-        "bar": 2
+        "svgText": 0,
+        "bar": 1
       },
       "roles": {
         "label": 15,
@@ -142,8 +68,33 @@
         "short": 1
       },
       "counts": {
-        "BAR_MISALIGNED_Y": 1
+        "SCROLL_REGION": 2
       },
+      "viewportWidth": 390
+    },
+    {
+      "page": "erp",
+      "width": 1280,
+      "findings": [],
+      "scanned": {
+        "text": 58,
+        "wrap": 39,
+        "clip": 9,
+        "svg": 8,
+        "overflow": 1,
+        "smallText": 58,
+        "svgText": 0,
+        "bar": 1
+      },
+      "roles": {
+        "label": 15,
+        "control": 19,
+        "heading": 2,
+        "lead": 1,
+        "cell": 20,
+        "short": 1
+      },
+      "counts": {},
       "viewportWidth": 1280
     },
     {
@@ -153,10 +104,11 @@
       "scanned": {
         "text": 86,
         "wrap": 10,
-        "clip": 28,
+        "clip": 22,
         "svg": 7,
         "overflow": 1,
         "smallText": 86,
+        "svgText": 0,
         "bar": 1
       },
       "roles": {
@@ -173,93 +125,15 @@
     {
       "page": "commerce",
       "width": 1280,
-      "findings": [
-        {
-          "code": "CLIP_TEXT",
-          "severity": "error",
-          "role": "text",
-          "locator": "div.kit-aside > div.kit-aside-main > div.kit-layout-region > div.kit-grid > article.kit-card:nth-of-type(1)",
-          "text": "베스트무드램프무드램프 미니손바닥만 한 크기에 12가지 분위기39,…",
-          "evidence": {
-            "axis": "y",
-            "outsidePx": 7.4,
-            "boxSize": "281.3x432.5"
-          },
-          "suggestion": "글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title)."
-        },
-        {
-          "code": "CLIP_TEXT",
-          "severity": "error",
-          "role": "text",
-          "locator": "div.kit-aside > div.kit-aside-main > div.kit-layout-region > div.kit-grid > article.kit-card:nth-of-type(2)",
-          "text": "노르딕 라이트데스크 라이트 프로각도를 자유롭게 바꾸는 암 조명59…",
-          "evidence": {
-            "axis": "y",
-            "outsidePx": 7.4,
-            "boxSize": "281.3x432.5"
-          },
-          "suggestion": "글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title)."
-        },
-        {
-          "code": "CLIP_TEXT",
-          "severity": "error",
-          "role": "text",
-          "locator": "div.kit-aside > div.kit-aside-main > div.kit-layout-region > div.kit-grid > article.kit-card:nth-of-type(3)",
-          "text": "신상무드램프캔들 워머 램프촛불 없이 향을 데우는 따뜻한 빛45,0…",
-          "evidence": {
-            "axis": "y",
-            "outsidePx": 7.4,
-            "boxSize": "281.3x432.5"
-          },
-          "suggestion": "글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title)."
-        },
-        {
-          "code": "CLIP_TEXT",
-          "severity": "error",
-          "role": "text",
-          "locator": "div.kit-aside > div.kit-aside-main > div.kit-layout-region > div.kit-grid > article.kit-card:nth-of-type(4)",
-          "text": "노르딕 라이트클래식 독서등눈이 편한 3단계 밝기 조절29,000원…",
-          "evidence": {
-            "axis": "y",
-            "outsidePx": 7.4,
-            "boxSize": "281.3x432.5"
-          },
-          "suggestion": "글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title)."
-        },
-        {
-          "code": "CLIP_TEXT",
-          "severity": "error",
-          "role": "text",
-          "locator": "div.kit-aside > div.kit-aside-main > div.kit-layout-region > div.kit-grid > article.kit-card:nth-of-type(5)",
-          "text": "하루 리빙플로어 램프 하루거실 한쪽을 채우는 스탠드 조명129,0…",
-          "evidence": {
-            "axis": "y",
-            "outsidePx": 7.4,
-            "boxSize": "281.3x432.5"
-          },
-          "suggestion": "글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title)."
-        },
-        {
-          "code": "CLIP_TEXT",
-          "severity": "error",
-          "role": "text",
-          "locator": "div.kit-aside > div.kit-aside-main > div.kit-layout-region > div.kit-grid > article.kit-card:nth-of-type(6)",
-          "text": "무드램프센서 무드등움직임을 감지해 켜지는 야간등19,000원24,…",
-          "evidence": {
-            "axis": "y",
-            "outsidePx": 7.4,
-            "boxSize": "281.3x432.5"
-          },
-          "suggestion": "글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title)."
-        }
-      ],
+      "findings": [],
       "scanned": {
         "text": 86,
         "wrap": 10,
-        "clip": 28,
+        "clip": 22,
         "svg": 7,
         "overflow": 1,
         "smallText": 86,
+        "svgText": 0,
         "bar": 1
       },
       "roles": {
@@ -270,66 +144,13 @@
         "body": 9,
         "short": 13
       },
-      "counts": {
-        "CLIP_TEXT": 6
-      },
+      "counts": {},
       "viewportWidth": 1280
     },
     {
       "page": "saas",
       "width": 390,
-      "findings": [
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "heading",
-          "locator": "#block-4-title",
-          "text": "1,200개 팀이 매일 사용합니다",
-          "evidence": {
-            "fontSize": 13,
-            "minFontSize": 16
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "BODY_NARROW_COLUMN",
-          "severity": "error",
-          "role": "body",
-          "locator": "div.kit-layout-region > div.kit-grid > figure.kit-quote:nth-of-type(1) > blockquote > p",
-          "text": "도입 한 달 만에 주간 회의가 60분에서 25분으로 줄었어요. 무…",
-          "evidence": {
-            "lines": 3,
-            "linesIfUnconstrained": 3,
-            "containerWidth": 310,
-            "availableWidth": 310,
-            "chWidth": 13.3,
-            "measureCh": 23.3,
-            "availableCh": 23.3,
-            "fontSize": 19,
-            "boxToAvailable": 1
-          },
-          "suggestion": "본문 칸을 넓히거나(열 수를 줄이거나) 글자 크기를 줄인다. 한 줄 28ch 미만의 칸에 3줄 이상 쌓인 본문은 읽기 어렵다."
-        },
-        {
-          "code": "BODY_NARROW_COLUMN",
-          "severity": "error",
-          "role": "body",
-          "locator": "div.kit-layout-region > div.kit-grid > figure.kit-quote:nth-of-type(2) > blockquote > p",
-          "text": "신규 입사자가 첫날 보드만 보고 일을 이해했습니다. 온보딩 문서를…",
-          "evidence": {
-            "lines": 3,
-            "linesIfUnconstrained": 3,
-            "containerWidth": 310,
-            "availableWidth": 310,
-            "chWidth": 13.3,
-            "measureCh": 23.3,
-            "availableCh": 23.3,
-            "fontSize": 19,
-            "boxToAvailable": 1
-          },
-          "suggestion": "본문 칸을 넓히거나(열 수를 줄이거나) 글자 크기를 줄인다. 한 줄 28ch 미만의 칸에 3줄 이상 쌓인 본문은 읽기 어렵다."
-        }
-      ],
+      "findings": [],
       "scanned": {
         "text": 99,
         "wrap": 28,
@@ -337,40 +158,25 @@
         "svg": 29,
         "overflow": 1,
         "smallText": 99,
+        "svgText": 0,
         "bar": 1
       },
       "roles": {
         "label": 32,
         "control": 12,
         "heading": 15,
-        "body": 26,
+        "body": 23,
         "desc": 1,
-        "short": 10,
+        "short": 13,
         "value": 3
       },
-      "counts": {
-        "SMALL_TEXT": 1,
-        "BODY_NARROW_COLUMN": 2
-      },
+      "counts": {},
       "viewportWidth": 390
     },
     {
       "page": "saas",
       "width": 1280,
-      "findings": [
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "heading",
-          "locator": "#block-4-title",
-          "text": "1,200개 팀이 매일 사용합니다",
-          "evidence": {
-            "fontSize": 13,
-            "minFontSize": 16
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        }
-      ],
+      "findings": [],
       "scanned": {
         "text": 99,
         "wrap": 25,
@@ -378,226 +184,25 @@
         "svg": 29,
         "overflow": 1,
         "smallText": 99,
+        "svgText": 0,
         "bar": 1
       },
       "roles": {
         "label": 32,
         "control": 12,
         "heading": 15,
-        "body": 26,
+        "body": 23,
         "desc": 1,
-        "short": 10,
+        "short": 13,
         "value": 3
       },
-      "counts": {
-        "SMALL_TEXT": 1
-      },
+      "counts": {},
       "viewportWidth": 1280
     },
     {
       "page": "analytics",
       "width": 390,
-      "findings": [
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(1)",
-          "text": "0",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(2)",
-          "text": "5",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(3)",
-          "text": "10",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(4)",
-          "text": "15",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(5)",
-          "text": "20",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(6)",
-          "text": "월",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(7)",
-          "text": "화",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(8)",
-          "text": "수",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(9)",
-          "text": "목",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-t:nth-of-type(10)",
-          "text": "금",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-v:nth-of-type(11)",
-          "text": "8",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "SMALL_TEXT",
-          "severity": "error",
-          "role": "svg-label",
-          "locator": "figure.kit-chart > div.kit-chart-body > div.kit-chart-plot > svg > text.ch-v:nth-of-type(12)",
-          "text": "14",
-          "evidence": {
-            "fontSize": 9.4,
-            "declaredFontSize": 11,
-            "svgScale": 0.9,
-            "minFontSize": 10
-          },
-          "suggestion": "글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다)."
-        },
-        {
-          "code": "BAR_MISALIGNED_X",
-          "severity": "error",
-          "role": "bar",
-          "locator": "body > div.kit-shell > header.kit-header",
-          "text": "데데이터 분석·재무 대시보드개요프로젝트일정설정새 프로젝트",
-          "evidence": {
-            "barContentLeft": 16,
-            "pageContentLeft": 16,
-            "barContentRight": 365.3,
-            "pageContentRight": 374,
-            "leftDeltaPx": 0,
-            "rightDeltaPx": -8.7,
-            "tolerancePx": 1.5
-          },
-          "suggestion": "상단 바의 좌우 가장자리를 본문 컨테이너와 같은 max-width·padding으로 맞춘다."
-        },
-        {
-          "code": "BAR_MISALIGNED_Y",
-          "severity": "error",
-          "role": "bar",
-          "locator": "#main > header.kit-page-header",
-          "text": "다음 결정을 위한 한눈.오늘의 흐름을 읽고, 중요한 일에 집중하세…",
-          "evidence": {
-            "kind": "bar-center",
-            "rowCenter": 256.6,
-            "barCenter": 233.8,
-            "offsetPx": 22.8
-          },
-          "suggestion": "상단 바의 항목 세로 중심을 맞춘다(align-items: center, 같은 min-height)."
-        }
-      ],
+      "findings": [],
       "scanned": {
         "text": 72,
         "wrap": 21,
@@ -605,7 +210,8 @@
         "svg": 8,
         "overflow": 1,
         "smallText": 87,
-        "bar": 2
+        "svgText": 15,
+        "bar": 1
       },
       "roles": {
         "label": 32,
@@ -617,32 +223,13 @@
         "cell": 7,
         "body": 7
       },
-      "counts": {
-        "SMALL_TEXT": 15,
-        "BAR_MISALIGNED_X": 1,
-        "BAR_MISALIGNED_Y": 1
-      },
+      "counts": {},
       "viewportWidth": 390
     },
     {
       "page": "analytics",
       "width": 1280,
-      "findings": [
-        {
-          "code": "BAR_MISALIGNED_Y",
-          "severity": "error",
-          "role": "bar",
-          "locator": "#main > header.kit-page-header",
-          "text": "다음 결정을 위한 한눈.오늘의 흐름을 읽고, 중요한 일에 집중하세…",
-          "evidence": {
-            "kind": "bar-center",
-            "rowCenter": 73.2,
-            "barCenter": 85.2,
-            "offsetPx": 12
-          },
-          "suggestion": "상단 바의 항목 세로 중심을 맞춘다(align-items: center, 같은 min-height)."
-        }
-      ],
+      "findings": [],
       "scanned": {
         "text": 72,
         "wrap": 24,
@@ -650,7 +237,8 @@
         "svg": 8,
         "overflow": 1,
         "smallText": 87,
-        "bar": 2
+        "svgText": 15,
+        "bar": 1
       },
       "roles": {
         "label": 32,
@@ -662,9 +250,7 @@
         "cell": 7,
         "body": 7
       },
-      "counts": {
-        "BAR_MISALIGNED_Y": 1
-      },
+      "counts": {},
       "viewportWidth": 1280
     },
     {
@@ -672,17 +258,17 @@
       "width": 320,
       "findings": [
         {
-          "code": "OVERFLOW_X",
-          "severity": "error",
-          "role": "element",
-          "locator": "div.kit-shell > header.kit-header > nav.kit-nav > ul > li:nth-of-type(4)",
-          "text": "고객센터",
+          "code": "SCROLL_REGION",
+          "severity": "info",
+          "role": "scroll",
+          "locator": "body > div.kit-shell > header.kit-header > nav.kit-nav > ul",
+          "text": "신상품조명이벤트고객센터",
           "evidence": {
-            "elementRight": 371.4,
-            "viewportWidth": 320,
-            "overflowPx": 51.4
+            "scrollWidth": 383,
+            "clientWidth": 288,
+            "hiddenPx": 95
           },
-          "suggestion": "문서·요소가 화면 오른쪽 밖으로 나간다. min-width: 0, overflow-wrap, 고정 폭 제거를 확인한다."
+          "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
         },
         {
           "code": "SCROLL_REGION",
@@ -696,23 +282,6 @@
             "hiddenPx": 22
           },
           "suggestion": "가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다."
-        },
-        {
-          "code": "BAR_MISALIGNED_X",
-          "severity": "error",
-          "role": "bar",
-          "locator": "body > div.kit-shell > header.kit-header",
-          "text": "무무드램프신상품조명이벤트고객센터장바구니",
-          "evidence": {
-            "barContentLeft": 16,
-            "pageContentLeft": 16,
-            "barContentRight": 371.4,
-            "pageContentRight": 304,
-            "leftDeltaPx": 0,
-            "rightDeltaPx": 67.4,
-            "tolerancePx": 1.5
-          },
-          "suggestion": "상단 바의 좌우 가장자리를 본문 컨테이너와 같은 max-width·padding으로 맞춘다."
         }
       ],
       "scanned": {
@@ -720,8 +289,9 @@
         "wrap": 14,
         "clip": 9,
         "svg": 4,
-        "overflow": 2,
+        "overflow": 1,
         "smallText": 49,
+        "svgText": 0,
         "bar": 1
       },
       "roles": {
@@ -735,9 +305,7 @@
         "desc": 4
       },
       "counts": {
-        "OVERFLOW_X": 1,
-        "SCROLL_REGION": 1,
-        "BAR_MISALIGNED_X": 1
+        "SCROLL_REGION": 2
       },
       "viewportWidth": 320
     },
@@ -752,6 +320,7 @@
         "svg": 6,
         "overflow": 1,
         "smallText": 61,
+        "svgText": 0,
         "bar": 1
       },
       "roles": {

@@ -50,3 +50,8 @@ test('옵션 병합은 기본 임계값을 보존하고 지정한 값만 덮는�
 test('기본 임계값은 카드의 읽기 폭 기준(45~80ch)을 그대로 담는다', () => {
   assert.deepEqual(LAYOUT_OPTIONS.thresholds.measure, {min: 45, max: 80});
 });
+
+test('상단바 검사는 실제 셸만 대상으로 하고 내비게이션 스크롤 목록은 의도 영역으로 분류한다', () => {
+  assert.equal(LAYOUT_OPTIONS.selectors.bar, '.kit-header,[role=banner],[data-layout-bar]');
+  assert.match(LAYOUT_OPTIONS.selectors.scroll, /\.kit-nav ul/);
+});
