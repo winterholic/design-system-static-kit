@@ -29,7 +29,17 @@ export default {
   },
   async headers() {
     const noindex = [{key: 'X-Robots-Tag', value: 'noindex, nofollow'}];
+    // 전 경로 공통. Explore 미리보기·썸네일·Studio 는 같은 출처 iframe(또는 srcDoc)이라 frame-ancestors 'self' 로 충분하다.
+    // script-src 를 가진 CSP 는 일부러 두지 않는다: Next 인라인 부트스트랩과 컴파일 결과의 인라인 스크립트가 nonce 없이는 막힌다.
+    const secure = [
+      {key: 'X-Content-Type-Options', value: 'nosniff'},
+      {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
+      {key: 'Content-Security-Policy', value: "frame-ancestors 'self'; object-src 'none'"},
+      {key: 'X-Frame-Options', value: 'SAMEORIGIN'},
+      {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()'},
+    ];
     return [
+      {source: '/:path*', headers: secure},
       {source: '/test-lab/:path*', headers: noindex},
       {source: '/dev/:path*', headers: noindex},
     ];

@@ -5389,7 +5389,8 @@ const {SPACE, SPACE_EXT, TOKEN_EXT} = __m("spacing.mjs");
 const {featuredUsage, featuredCSS} = __m("layout.mjs");
 
 const BAND = ':is([data-page=landing],[data-page=pricing],[data-page=portfolio],[data-page=general])';
-const NOT_BAND = ':not(:is([data-page=landing],[data-page=pricing],[data-page=portfolio],[data-page=general]))';
+// data-page 는 .kit-shell 에만 붙는다. 앞에 .kit-shell 이 없으면 `:not(:is(..))` 가 data-page 없는 html·body 에도 맞아 띠 페이지까지 덮어쓴다.
+const NOT_BAND = '.kit-shell:not(:is([data-page=landing],[data-page=pricing],[data-page=portfolio],[data-page=general]))';
 const has = (body, marker) => body.includes(marker);
 
 function expressionCSS(b, body, design) {
