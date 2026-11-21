@@ -6,6 +6,13 @@
     "2.3.0",
     "2.4.0"
   ],
+  "acceptedCatalogVersions": [
+    "2.1.0",
+    "2.2.0",
+    "2.3.0",
+    "2.4.0",
+    "2.5.0"
+  ],
   "composition": {
     "version": "1.3.0",
     "rules": [
@@ -1417,6 +1424,32 @@
       "probe": "BIG_NARROW",
       "why": "320px에서 페이지 제목이 칸 폭에 비해 커서 3줄 이상이 되지 않는다. 렌더 결과라 레이아웃 프로브 BIG_NARROW가 0건인지로 잰다.",
       "source": "docs/quality-diagnosis-2026-11-21.md 4절 A5"
+    }
+  ],
+  "expressionRules": [
+    {
+      "id": "R21",
+      "intent": "표현력 문법(2.5.0): 비율·강조 칸·풀쿼트·구역 간격·전폭 미디어는 범위가 닫힌 enum이고 놓일 위치가 제한된다. 2.4.0 이하 입력은 이 필드를 거부한다.",
+      "codes": [
+        "FEATURED_CARD",
+        "PULL_POSITION",
+        "SPACE_POSITION",
+        "BLEED_POSITION",
+        "VARIANT_REQUIRES"
+      ],
+      "source": "ADR 0010"
+    },
+    {
+      "id": "R22",
+      "intent": "변형 결과 계약의 직접 적용(2.5.0): 데이터 보존 계약 V06은 오류, 측정된 품질 계약 V03·V04는 경고, 취향 계약 V01·V02는 진단(info)이다. V05는 변경 전후 비교가 필요해 직접 작성 Blueprint에 해당하지 않는다.",
+      "codes": [
+        "VARIANT_REQUIRES",
+        "CONTRACT_V01",
+        "CONTRACT_V02",
+        "CONTRACT_V03",
+        "CONTRACT_V04"
+      ],
+      "source": "ADR 0010, ADR 0006"
     }
   ],
   "recipePicks": [
@@ -17947,6 +17980,16 @@
           },
           "minItems": 2,
           "maxItems": 4
+        },
+        "ratio": {
+          "type": "string",
+          "enum": [
+            "even",
+            "copy",
+            "visual"
+          ],
+          "description": "글 칸과 시각 칸의 폭 비율(2.5.0). even은 기존(약 1:1), copy는 글 60:시각 40, visual은 글 40:시각 60. visual이 있는 split·product 히어로에서만 쓴다. 1000px 아래에서는 한 열로 접힌다.",
+          "x-since": "2.5.0"
         }
       },
       "optional": [
@@ -17955,7 +17998,8 @@
         "secondaryAction",
         "visual",
         "motif",
-        "facts"
+        "facts",
+        "ratio"
       ],
       "example": {
         "type": "hero",
@@ -17988,8 +18032,11 @@
           "enum": [
             "plain",
             "tint",
-            "inverse"
-          ]
+            "inverse",
+            "flat"
+          ],
+          "description": "구역 바탕. plain·tint·inverse는 기존 값이다. flat(2.5.0)은 면을 쓰지 않는 구역으로, 마케팅 페이지가 짝수 번째 구역에 자동으로 칠하는 옅은 띠에서 제외된다. 2.5.0에서는 명시한 plain도 자동으로 칠하지 않는다.",
+          "x-since": "2.5.0"
         },
         "align": {
           "type": "string",
@@ -18003,6 +18050,16 @@
           "minLength": 1,
           "maxLength": 30,
           "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "space": {
+          "type": "string",
+          "enum": [
+            "tight",
+            "normal",
+            "loose"
+          ],
+          "description": "최상위 구역의 위아래 간격 단계(2.5.0). normal은 기존 값, tight는 한 단계 촘촘하게, loose는 한 단계 넓게(밀도 토큰 사다리 안의 값이며 숫자는 받지 않는다). 페이지 직속 section에서만 쓴다.",
+          "x-since": "2.5.0"
         }
       },
       "optional": [
@@ -18010,7 +18067,8 @@
         "description",
         "surface",
         "align",
-        "anchor"
+        "anchor",
+        "space"
       ],
       "children": [
         "section",
@@ -18142,8 +18200,12 @@
           "enum": [
             "even",
             "wide-start",
-            "wide-end"
-          ]
+            "wide-end",
+            "dominant-start",
+            "dominant-end"
+          ],
+          "description": "두 칸의 폭 비율. even 1:1, wide-* 3:2. dominant-start·dominant-end(2.5.0)는 약 7:3으로 앞 칸 또는 뒤 칸이 지배한다(컨테이너 1000px 이상에서만, 아래에서는 wide-*, 더 좁으면 한 열). 좁은 칸에는 읽히는 부품(prose·card·quote·media·properties·notice·metric·progress·list·actions·cta·tags·links·summary·buy-box·steps·faq·empty-state·divider)만 둘 수 있다.",
+          "x-since": "2.5.0"
         }
       },
       "optional": [
@@ -19260,6 +19322,14 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 40
+        },
+        "featured": {
+          "type": "string",
+          "enum": [
+            "yes"
+          ],
+          "description": "강조 칸(2.5.0). columns가 three·four인 grid의 첫 카드 하나만 두 칸 폭을 쓴다(자식 3개 이상). 마지막 줄에 한 칸만 남지 않게 열 수가 정해진다. plan.featured와 같은 이름이다.",
+          "x-since": "2.5.0"
         }
       },
       "optional": [
@@ -19275,7 +19345,8 @@
         "listPrice",
         "rating",
         "reviews",
-        "author"
+        "author",
+        "featured"
       ],
       "example": {
         "type": "card",
@@ -19923,10 +19994,20 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 80
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "box",
+            "pull"
+          ],
+          "description": "인용 모양(2.5.0). box는 기존의 상자형 후기, pull은 상자 없이 큰 글자로 그리는 풀쿼트(기존 quote-l 글자 역할). pull은 페이지 직속 또는 section 직속에서만 쓴다.",
+          "x-since": "2.5.0"
         }
       },
       "optional": [
-        "role"
+        "role",
+        "variant"
       ],
       "example": {
         "type": "quote",
@@ -20819,12 +20900,21 @@
             "grid",
             "type"
           ]
+        },
+        "bleed": {
+          "type": "string",
+          "enum": [
+            "yes"
+          ],
+          "description": "전폭 띠(2.5.0). 페이지 직속 media가 콘텐츠 열 바깥까지 이어지는 가로 띠가 된다. ratio는 16:9·21:9만, alt는 기존대로 필수다. 390px 이하에서는 콘텐츠 폭과 같다.",
+          "x-since": "2.5.0"
         }
       },
       "optional": [
         "caption",
         "overlay",
-        "motif"
+        "motif",
+        "bleed"
       ],
       "example": {
         "type": "media",

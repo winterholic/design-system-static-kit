@@ -1,0 +1,72 @@
+// 03-interfaces.md 3.2절 스파이크 S2~S5 실측. 결과는 docs/dev/platform/04-web-spike.md 에 기록한다.
+import {createHash} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {join, resolve} from 'node:path';
+import {expect, test} from '@playwright/test';
+
+const site = resolve(import.meta.dirname, '../../../site');
+const expectedHtml = readFileSync(join(site, 'examples/saas-landing/index.html'));
+const expectedSha = createHash('sha256').update(expectedHtml).digest('hex');
+
+test('S4 서버: 서버가 컴파일한 HTML이 site/examples/saas-landing/index.html 과 바이트 동일', async ({request}) => {
+  const res = await request.get('/dev/spike/html');
+  expect(res.status()).toBe(200);
+  expect(Buffer.compare(await res.body(), expectedHtml)).toBe(0);
+});
+
+test('S4 서버: ./service 가 낸 관리 파일 5개(manifest 포함)의 sha256 이 site/examples/saas-landing 과 같다', async ({page}) => {
+  await page.goto('/dev/spike');
+  const r = page.getByTestId('server-result');
+  const digests = JSON.parse(await r.getAttribute('data-files'));
+  const expected = Object.fromEntries(['blueprint.json', 'index.html', 'manifest.json', 'tokens.css', 'tokens.json']
+    .map(f => [f, createHash('sha256').update(readFileSync(join(site, 'examples/saas-landing', f))).digest('hex')]));
+  expect(digests).toEqual(expected);
+  await expect(r).toHaveAttribute('data-sha256', expectedSha);
+});
+
+test('S1 서버 컴포넌트가 ./service 의 listCatalog 를 부른다 (템플릿 85개)', async ({page}) => {
+  await page.goto('/dev/spike');
+  await expect(page.getByTestId('server-result')).toHaveAttribute('data-template-count', '85');
+});
+
+test('S2·S4 브라우저: 클라이언트 번들이 ./service 로 Node 폴리필 없이 컴파일하고 바이트 동일', async ({page}) => {
+  const errors = [];
+  page.on('pageerror', e => errors.push(String(e)));
+  await page.goto('/dev/spike');
+  // 폴리필 부재를 직접 확인: 브라우저에 Node 전역이 없다.
+  expect(await page.evaluate(() => [typeof Buffer, typeof process === 'undefined' ? 'undefined' : typeof process.versions?.node])).toEqual(['undefined', 'undefined']);
+  await page.getByRole('button', {name: '브라우저에서 컴파일'}).click();
+  const r = page.getByTestId('client-result');
+  await expect(r).toBeVisible();
+  await expect(r).toHaveAttribute('data-error', '');
+  await expect(r).toHaveAttribute('data-sha256', expectedSha);
+  expect(errors).toEqual([]);
+});
+
+// S5: 카탈로그·컴파일러는 클릭 전에는 내려받지 않는다. 카탈로그 본문에만 있는 식별자로 청크를 구분한다.
+const CATALOG_MARKER = 'AXIS_BAN';
+test('S5 초기 JS에 카탈로그가 없고 컴파일 때만 청크가 내려온다', async ({page}) => {
+  const seen = [];
+  page.on('response', async res => {
+    if (!res.url().endsWith('.js') && !res.url().includes('.js?')) return;
+    const body = await res.text().catch(() => '');
+    seen.push({url: new URL(res.url()).pathname, bytes: Buffer.byteLength(body), catalog: body.includes(CATALOG_MARKER)});
+  });
+  // 초기 JS 는 각 화면 HTML 의 script 태그로 가린다. 링크 미리 가져오기(prefetch)로 받은 /studio 청크는 초기 JS 가 아니다.
+  const initial = [];
+  for (const path of ['/', '/explore', '/dev/spike']) {
+    const res = await page.goto(path, {waitUntil: 'networkidle'});
+    const html = await res.text();
+    for (const [, src] of html.matchAll(/<script[^>]*\ssrc="([^"]+\.js[^"]*)"/g)) {
+      const body = await (await page.request.get(src)).text();
+      if (body.includes(CATALOG_MARKER)) initial.push({path, src});
+    }
+  }
+  expect(initial, '클릭 전 JS 에 카탈로그가 실렸다').toEqual([]);
+  expect(seen.length).toBeGreaterThan(0);
+  await page.getByRole('button', {name: '브라우저에서 컴파일'}).click();
+  await expect(page.getByTestId('client-result')).toBeVisible();
+  const lazy = seen.filter(s => s.catalog);
+  expect(lazy.length).toBeGreaterThan(0);
+  test.info().annotations.push({type: 'S5', description: JSON.stringify({initialJsBytes: seen.filter(s => !s.catalog).reduce((n, s) => n + s.bytes, 0), lazyCatalogChunks: lazy})});
+});

@@ -1,0 +1,40 @@
+{
+  "name": "@winterholic/static-kit-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static Kit 플랫폼 웹 앱 (Next.js App Router). Core는 루트 패키지의 exports 진입점으로만 쓴다.",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "sync-static": "node scripts/sync-static.mjs",
+    "predev": "npm run sync-static",
+    "dev": "next dev",
+    "prebuild": "npm run sync-static",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test:docs": "node --test docs-contract.test.mjs",
+    "test:boundary": "node --test boundary.check.mjs",
+    "test:unit": "node --experimental-strip-types --experimental-loader ./features/studio/node-ts-loader.mjs --test features/studio/*.unit.mjs",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
+    "@winterholic/design-system-static-kit": "file:../..",
+    "mcp-handler": "^2.4.0",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5.9.3"
+  }
+}

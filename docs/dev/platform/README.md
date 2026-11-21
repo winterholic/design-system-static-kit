@@ -1,6 +1,6 @@
 # docs/dev/platform
 
-Next.js 플랫폼 전환의 첫 단계(트랙 A, 감사)가 만든 문서와 증거다. 분석만 했고 `src/`와 기존 웹 파일은 수정하지 않았다. 기준은 `main` HEAD `b303f17c1`, 측정일 2026-11-21이다.
+Next.js 플랫폼 전환 문서와 증거다. 초기 기준선은 트랙 A 감사가 `main` HEAD `b303f17c1`에서 2026-11-21에 기록했고, 후속 브랜치의 구현 관찰은 해당 문서에 기준선과 구분해 적는다.
 
 | 문서 | 내용 |
 |---|---|
@@ -8,6 +8,7 @@ Next.js 플랫폼 전환의 첫 단계(트랙 A, 감사)가 만든 문서와 증
 | [01-ux-audit.md](01-ux-audit.md) | 조립기·조합 갤러리·단일 갤러리를 실제 Chromium으로 조작한 결함 목록과 판정 |
 | [02-core-map.md](02-core-map.md) | `src/` 모듈 지도, 공개 함수 시그니처, Node 의존, 번들 가능 여부, CLI |
 | [03-interfaces.md](03-interfaces.md) | 서비스 함수 계층, 편집 연산 접점, Next.js 앱 위치, 트랙별 경로, URL 호환 방침 |
+| [07-api-mcp.md](07-api-mcp.md) | REST v1·MCP 계약, 공식 SDK·Streamable HTTP 선택, 입력·출력 한도, 캐시·제한, 실행 예제 |
 
 | 디렉터리 | 내용 |
 |---|---|

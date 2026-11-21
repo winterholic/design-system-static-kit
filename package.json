@@ -7,6 +7,13 @@
   "engines": {
     "node": ">=22"
   },
+  "workspaces": [
+    "apps/*"
+  ],
+  "exports": {
+    "./service": "./src/service/index.mjs",
+    "./edit": "./src/edit/index.mjs"
+  },
   "scripts": {
     "test": "node --test",
     "audit": "node scripts/audit.mjs",
@@ -17,7 +24,10 @@
     "kit": "node scripts/kit.mjs",
     "test:browser": "playwright test",
     "test:lab": "node scripts/test-lab/generate.mjs && node scripts/test-lab/check.mjs && node scripts/test-lab/index.mjs",
-    "test:lab-verify": "node scripts/test-lab/generate.mjs --verify"
+    "test:lab-verify": "node scripts/test-lab/generate.mjs --verify",
+    "web:build": "npm --workspace apps/web run build",
+    "web:dev": "npm --workspace apps/web run dev",
+    "web:test": "npm --workspace apps/web run test:boundary && npm --workspace apps/web run test:unit && npm --workspace apps/web run test:e2e"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1"

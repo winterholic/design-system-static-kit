@@ -4,7 +4,7 @@
  * 반환값은 모두 JSON으로 직렬화되는 새 객체다(카탈로그 객체는 얼어 있어 그대로 내보내지 않는다).
  */
 import {
-  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules,
+  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules, expressionRules, SINCE_FIELDS,
   themes, palettes, paletteFamilies, themeCategories, layoutOptionsOf, nodeSpecs, nodeTypes, requiredOf, chromeSpec, rules, axes, axisDefs, axisBans, pageTypes,
   templateList, templates, concepts, conceptsOfTemplate, iconNames, icons, blueprintSchema,
 } from '../catalog.mjs';
@@ -168,9 +168,9 @@ export function listCatalog(q) {
  */
 export function catalogSnapshot() {
   return jsonClone({
-    version: CATALOG_VERSION, supportedCatalogVersions: SUPPORTED_CATALOG_VERSIONS,
+    version: CATALOG_VERSION, supportedCatalogVersions: SUPPORTED_CATALOG_VERSIONS, acceptedCatalogVersions: ACCEPTED_CATALOG_VERSIONS,
     composition: {version: COMPOSITION_VERSION, rules: compositionRules, pageRules, coverage: compositionCoverage},
-    variantContracts, recipes, recipeRules, recipePicks: recipePicks(), themeCategories,
+    variantContracts, recipes, recipeRules, expressionRules, recipePicks: recipePicks(), themeCategories,
     themes: Object.fromEntries(Object.entries(themes).map(([id, {covers, ...theme}]) => [id, theme])),
     palettes, paletteFamilies, axes, axisDefs,
     axisBans: axisBans.map(({id, uses, fix, why, source}) => ({id, uses, fix, why, source})),
@@ -191,12 +191,14 @@ const DIAGNOSTIC_SCHEMA = {
     code: {...str, pattern: '^[A-Z][A-Z0-9_]*$', description: '등록된 UPPER_SNAKE 코드'}, path: {...str, pattern: '^\\$', description: '문서 안 위치($.tree.children[1]) 또는 요청 인자($args.kind)'},
     message: {...str, description: '무엇이 틀렸는가'}, hint: {...str, description: '어떻게 고치는가. 비어 있지 않다'},
     rule: {type: 'string', description: '규칙 ID(예 R09, X05)'}, fix: {type: 'object', description: '기계가 읽는 대안 값(예 {elevation: "soft"})'},
+    severity: {type: 'string', enum: ['info', 'warning'], description: '직접 적용한 품질 계약의 진단 수준'},
+    contract: {...str, pattern: '^V[0-9]{2}$', description: '직접 적용한 변형 결과 계약 ID(예 V03)'},
   },
   required: ['code', 'path', 'message', 'hint'],
 };
 
 /** 스키마가 말하지 않는 교차 필드 규칙을 알린다. 스키마만으로 충분하다고 오해하지 않게 응답에 붙인다. */
-const runtimeRules = () => rules.map(r => `${r.id}: ${r.codes.join(', ')}`);
+const runtimeRules = () => [...rules, ...expressionRules].map(r => `${r.id}: ${r.codes.join(', ')}`);
 
 const refsOf = schema => [...JSON.stringify(schema).matchAll(/"\$ref":"#\/\$defs\/([^"]+)"/g)].map(m => m[1]);
 /** 남긴 부분이 가리키는 $defs만 남긴다. */
@@ -259,7 +261,11 @@ export function getSchema(q) {
 const SPEC_FIELDS = ['label', 'group', 'fields', 'required', 'optional', 'children', 'example', 'pageTypes', 'rules'];
 
 /** 부품에 걸린다고 규칙 표 자체가 선언한 규칙 ID: 맥락 결정표(C##)의 when.type, 변형 결과 계약(V##)의 check.node. */
-const rulesOfComponent = type => [...compositionRules.filter(r => r.when.type === type).map(r => r.id), ...variantContracts.filter(v => v.check?.node === type).map(v => v.id)];
+const expressionRulesOfComponent = type => [
+  ...(SINCE_FIELDS.some(f => f.node === type) ? ['R21'] : []),
+  ...(['hero', 'grid', 'section', 'page-header'].includes(type) ? ['R22'] : []),
+];
+const rulesOfComponent = type => [...compositionRules.filter(r => r.when.type === type).map(r => r.id), ...variantContracts.filter(v => v.check?.node === type).map(v => v.id), ...expressionRulesOfComponent(type)];
 
 /**
  * 부품 명세. q.fields로 가져올 항목을 고른다(type은 항상 나간다). 허용 항목: label, group, fields(필드 스키마), required, optional,

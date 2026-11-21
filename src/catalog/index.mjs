@@ -7,17 +7,24 @@ import {nodeSpecs, nodeTypes, requiredOf, chromeSpec, obj, en, str, mediaKinds, 
 import {pageTypes, pageTypeIds} from './pagetypes.mjs';
 import {templates, templateList} from './templates.mjs';
 import {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds} from './variants.mjs';
-import {variantContracts, variantCheckKinds} from './variant-contracts.mjs';
+import {variantContracts, variantCheckKinds, DIRECT_CONTRACTS, assessBlueprintContracts} from './variant-contracts.mjs';
 import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './variant-effects.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
+import {EXPRESSION_SINCE, SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules} from './expression.mjs';
 import {recipes, recipeRules, recipeIds} from './recipes.mjs';
 export {compositionRules, compositionCoverage, pageRules, PAGE_RULE_LEGACY_VERSIONS, COMPOSITION_VERSION} from './composition.mjs';
 
+/** 기본 생성·조립 버전(템플릿·갤러리·조합이 만드는 Blueprint의 catalogVersion). 2.5.0은 명시적으로 고르는 버전이고 기본 승격은 ADR 0010이 미룬 결정이다. */
 export const CATALOG_VERSION = '2.4.0';
 export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.0', CATALOG_VERSION]);
+/** 표현력 확장(2.5.0)을 더한 버전. 검증기·스키마는 이 목록을 받아들이고, `kit migrate --to 2.5.0`이 옮긴다. */
+export const EXPRESSION_CATALOG_VERSION = EXPRESSION_SINCE;
+export const ACCEPTED_CATALOG_VERSIONS = Object.freeze([...SUPPORTED_CATALOG_VERSIONS, EXPRESSION_CATALOG_VERSION]);
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {recipes, recipeRules, recipeIds};
+export {DIRECT_CONTRACTS, assessBlueprintContracts};
+export {SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
 export {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
@@ -58,7 +65,7 @@ export function blueprintSchema() {
   return {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
-      version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...SUPPORTED_CATALOG_VERSIONS), name: str(80),
+      version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
       theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
@@ -207,10 +214,12 @@ export function migrateV1(old) {
 }
 
 /** Explicit adoption of the contextual policy. Content and selected axes are never repaired for 2.x input. */
-export function migrateBlueprint(old) {
-  if (old.version === '1.0') return migrateV1(old);
-  if (old.version !== BLUEPRINT_VERSION || !SUPPORTED_CATALOG_VERSIONS.includes(old.catalogVersion)) throw new Error('Unsupported source blueprint/catalog version');
-  return {...structuredClone(old), catalogVersion: CATALOG_VERSION};
+export function migrateBlueprint(old, target = CATALOG_VERSION) {
+  if (!ACCEPTED_CATALOG_VERSIONS.includes(target)) throw new Error('Unsupported target catalog version: ' + target);
+  if (old.version === '1.0') { const b = migrateV1(old); return target === CATALOG_VERSION ? b : {...b, catalogVersion: target}; }
+  if (old.version !== BLUEPRINT_VERSION || !ACCEPTED_CATALOG_VERSIONS.includes(old.catalogVersion)) throw new Error('Unsupported source blueprint/catalog version');
+  // 내려 쓰지 않는다: 2.5.0 문서를 기본 버전(2.4.0)으로 "올리면" 새 필드가 거부되므로, 이미 목표 이상이면 그대로 둔다.
+  return {...structuredClone(old), catalogVersion: VERSION_ORDER.indexOf(old.catalogVersion) > VERSION_ORDER.indexOf(target) ? old.catalogVersion : target};
 }
 
 export {layoutCoverage, contentCoverage, iconAliases} from './coverage.mjs';

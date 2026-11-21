@@ -272,7 +272,7 @@ POST /api/v1/edit
 | 기존 URL | 방침 | 새 위치와 규칙 |
 |---|---|---|
 | `/` (조립기) | 대체 | 새 앱의 `/studio`. `/`는 플랫폼 첫 화면이 된다. `/#catalog`는 해시가 서버에 전달되지 않으므로 `/`의 클라이언트 코드가 `#catalog`를 읽어 `/explore`로 `router.replace`한다 (WB-07 해소) |
-| `/combos/?<쿼리>` | 308 리다이렉트 | `/explore/combos?<같은 쿼리>`. 파라미터 `c, concept, look, theme, tv, pal, type, mode, q, pt, t, sl, sort, seed, same, flagged, tall, exp, rec, ps, p`를 모두 보존 (`00-baseline.md` 6.1절). `c`가 있으면 확대 보기를 연다 |
+| `/combos`, `/combos/`, `/combos/index.html` + 쿼리 | 임시 307 리다이렉트 | `/dev/qa/combos?<같은 쿼리>`로 한 번 이동한다. 파라미터 `c, concept, look, theme, tv, pal, type, mode, q, pt, t, sl, sort, seed, same, flagged, tall, exp, rec, ps, p`를 모두 보존한다 (`00-baseline.md` 6.1절). `/explore/combos`도 같은 내부 QA 경로로 쿼리를 보존해 임시 307 리다이렉트한다 |
 | `/combos/render.html?c=...` | 유지 (같은 경로의 라우트 핸들러) | 래퍼 없는 전체 화면 HTML을 반환한다. 쿼리 `c, theme, tv, pal, mode, concept, look, type` 계약 유지. 새 창 열기·공유 링크가 쓰는 경로다. 현재는 클라이언트가 `document.write`한다. 새 구현은 서버가 `renderCombo`로 만든 HTML을 반환해도 된다. 검증: 샘플 조합 id 20개에서 옛 `renderCombo` 결과와 바이트 비교 |
 | `/gallery/index.html` | 유지 (정적 산출물) | 컴파일러를 내장한 오프라인 단일 파일은 "내려받아 쓰는 도구"라서 Next 앱으로 대체하지 않는다. Explore에서 링크한다. 빌드가 계속 생성한다 |
 | `/v1/catalog.json`, `/v1/blueprint.schema.json` | 유지 (정적, 바이트 동일) | `catalogSnapshot()`·`blueprintSchema()` 결과를 정적 파일로 낸다. 해시 게이트 대상 |
@@ -281,6 +281,8 @@ POST /api/v1/edit
 | `/test-lab/**` (2,538개) | **결정 필요** (D4) | 제품 URL이 아니라 시험 증거다. 배포 크기와 빌드 시간을 키운다. 옵션 (a) 그대로 정적 복사 (b) 별도 정적 호스트로 분리 (c) 호환 기간 후 제거. 이 감사는 선택하지 않는다 |
 | `/src/**/*.mjs`, `*.css` | 지원 약속 없음 | 현재 운영 사이트가 소스를 그대로 공개한다. 외부가 import하는지는 알 수 없다 (**확인 필요**). 옛 앱 제거 때 공지하고 함께 내린다 |
 | `/.nojekyll` | 폐기 가능 | GitHub Pages가 꺼져 있다 (`00-baseline.md` 5절) |
+
+`/studio`의 시작 상태·화면 상태 쿼리, 저장 복원, 편집 상태 및 Studio 전용 검증 연결은 [05-studio-contract.md](./05-studio-contract.md)를 따른다. Explore가 만든 시작 링크는 그 문서의 `template`, `theme`, `variant`, `palette`, `mode`, `layout` 키를 사용한다.
 
 ### 5.3 브라우저 저장소
 
@@ -296,7 +298,7 @@ POST /api/v1/edit
 | 시험 | 내용 |
 |---|---|
 | 해시 게이트 | `examples/` 425 · `examples/themes/` 270 · `v1/` 2의 트리 해시가 `00-baseline.md` 4.2절 값과 같다. 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다 |
-| 리다이렉트 표 시험 | 5.2절의 모든 행에 대해 대표 URL 1개 이상(`/combos/` 쿼리는 파라미터 전부)의 상태 코드와 `Location`을 검사한다 |
+| 리다이렉트 표 시험 | 세 `/combos` 경로 각각 307 및 쿼리 전체 보존, `/explore/combos` 임시 별칭의 307 및 쿼리 보존과 최종 200을 검사한다 |
 | `render.html` 동치 | 샘플 조합 id 20개에서 옛 `renderCombo` 결과와 새 라우트 응답이 바이트가 같다 |
 | 옛 앱 유지 | main에서 `npm run verify`와 `npm run test:browser`가 호환 기간 동안 계속 통과한다 (현재 224개와 67개, `00-baseline.md` 2-3절) |
 
@@ -308,7 +310,17 @@ POST /api/v1/edit
 | D2 | Studio의 `sel`(출처·구성·변형·팔레트 선택 여부)을 어디에 두는가 | F·B | 문서 밖 `origin` 상태, 가져오기는 `null` |
 | D3 | 옛 `repairAxes(b)` 호출자의 조용한 내비 절단은 옛 앱에서만 남는가 | B·D | 옛 앱은 건드리지 않고 새 앱만 연산 계층 사용 |
 | D4 | `/test-lab/**` 처리 | 오너 | 결정 보류 |
-| D5 | MCP를 Next 라우트로 둘지 별도 프로세스(`apps/mcp`)로 둘지 | H | 인증·스트리밍 요구가 정해진 뒤 결정 |
+| D5 | MCP를 Next 라우트로 둘지 별도 프로세스(`apps/mcp`)로 둘지 | H | **관찰: `next/api-mcp`에서 Next Route Handler `/api/mcp`를 선택했다.** 단일 Streamable HTTP 엔드포인트이며 상태를 서버에 저장하지 않는다. 외부 프로세스 분리는 선택하지 않았다. 자세한 근거·한계는 `07-api-mcp.md` 참조. |
 | D6 | `manifest.integrity`(SHA-256)를 서비스가 내는가, 호출자가 해시 함수를 주입하는가 | C | Node는 동기 `createHash`, 브라우저 WebCrypto는 비동기라 주입식이 필요. 이번 서비스 계약에서는 제외 |
 | D7 | Next.js 버전, React 버전, 렌더링 모드(SSG·ISR·동적) | D | 이 감사는 정하지 않았다. 호환 산출물(`/examples/**`)은 정적이어야 한다 |
 | D8 | 배포 대상 (현재 Vercel 프로젝트 `design-system-static-kit`를 이어 쓰는가) | 오너·D | `00-baseline.md` 5절. 운영 배포가 main보다 한 단계 뒤처져 있다(2.3.0 대 2.4.0) |
+
+## 7. H/I 구현 관찰 (2026-11-21)
+
+브랜치 `next/api-mcp`에서 REST v1 작업 표, OpenAPI 생성기, Streamable HTTP MCP Route Handler와 Integrations 사용 안내를 구현했다. 이는 아직 이 문서 기준선에 합쳐지지 않은 브랜치 관찰이다.
+
+- 구현 의존성은 Next.js 16.4.6, MCP TypeScript SDK `@modelcontextprotocol/server`·`client` 2.4.0, `mcp-handler` 2.4.0, Zod 4.6.7이다. `apps/web` workspace에 둬 루트 Core의 런타임 의존성은 유지하지 않는다.
+- REST와 MCP 어댑터 모두 `@winterholic/design-system-static-kit/service`의 여섯 함수를 호출한다. REST OpenAPI 3.1은 작업 표와 서비스 스키마로 생성한다.
+- `app/api/mcp/route.ts`는 Next의 기본 Node.js Route Handler이며 `maxDuration=30`을 선언한다. 자체 MCP 처리 상한은 10초다. 호출 제한 상태는 인스턴스 메모리라 서버리스 전체 제한은 아니다.
+- 정확한 상태 코드·봉투·크기·캐시·요청 제한 계약과 공식 SDK/Next 배포 근거는 `07-api-mcp.md`에 있다. 빌드와 채널 시험은 별도 실행 결과로 확인한다.
+- Vercel의 실제 프로젝트 연결이나 운영 배포 상태는 이 구현으로 확정하지 않는다. D8은 그대로 열어 둔다.

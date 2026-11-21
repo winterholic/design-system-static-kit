@@ -1,6 +1,6 @@
 import {mkdir, writeFile, cp, readdir, rm} from 'node:fs/promises';
 import {resolve, join} from 'node:path';
-import {CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, variantContracts, recipes, recipeRules, compositionCoverage, themes, palettes, paletteFamilies, layoutOptionsOf, nodeSpecs, rules, axes, axisDefs, axisBans, pageTypes, templateList, createBlueprint, blueprintSchema, themeCategories, iconNames} from '../src/catalog.mjs';
+import {CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, expressionRules, COMPOSITION_VERSION, compositionRules, pageRules, variantContracts, recipes, recipeRules, compositionCoverage, themes, palettes, paletteFamilies, layoutOptionsOf, nodeSpecs, rules, axes, axisDefs, axisBans, pageTypes, templateList, createBlueprint, blueprintSchema, themeCategories, iconNames} from '../src/catalog.mjs';
 import {outputFiles, pretty} from './output.mjs';
 import {buildGallery} from './gallery.mjs';
 import {recipePicks} from '../src/recipes.mjs';
@@ -19,7 +19,7 @@ await cp(join(root, 'combos'), join(out, 'combos'), {recursive: true});
 await mkdir(join(out, 'docs'), {recursive: true});
 for (const f of (await readdir(join(root, 'docs'))).filter(f => f.endsWith('.html'))) await cp(join(root, 'docs', f), join(out, 'docs', f));
 await mkdir(join(out, 'v1'), {recursive: true});
-await writeFile(join(out, 'v1/catalog.json'), pretty({version: CATALOG_VERSION, supportedCatalogVersions: SUPPORTED_CATALOG_VERSIONS, composition: {version: COMPOSITION_VERSION, rules: compositionRules, pageRules, coverage: compositionCoverage}, variantContracts, recipes, recipeRules, recipePicks: recipePicks(), themeCategories, themes: Object.fromEntries(Object.entries(themes).map(([id, {covers, ...theme}]) => [id, theme])), palettes, paletteFamilies, axes, axisDefs, axisBans: axisBans.map(({id, uses, fix, why, source}) => ({id, uses, fix, why, source})), nodeSpecs, pageTypes, rules, templates: templateList.map(({id, label, pageType, theme}) => ({id, label, pageType, theme, layoutSlots: layoutOptionsOf(id)})), icons: iconNames}));
+await writeFile(join(out, 'v1/catalog.json'), pretty({version: CATALOG_VERSION, supportedCatalogVersions: SUPPORTED_CATALOG_VERSIONS, acceptedCatalogVersions: ACCEPTED_CATALOG_VERSIONS, composition: {version: COMPOSITION_VERSION, rules: compositionRules, pageRules, coverage: compositionCoverage}, variantContracts, recipes, recipeRules, expressionRules, recipePicks: recipePicks(), themeCategories, themes: Object.fromEntries(Object.entries(themes).map(([id, {covers, ...theme}]) => [id, theme])), palettes, paletteFamilies, axes, axisDefs, axisBans: axisBans.map(({id, uses, fix, why, source}) => ({id, uses, fix, why, source})), nodeSpecs, pageTypes, rules, templates: templateList.map(({id, label, pageType, theme}) => ({id, label, pageType, theme, layoutSlots: layoutOptionsOf(id)})), icons: iconNames}));
 await writeFile(join(out, 'v1/blueprint.schema.json'), pretty(blueprintSchema()));
 await mkdir(join(out, 'gallery'), {recursive: true});
 await writeFile(join(out, 'gallery/index.html'), await buildGallery());

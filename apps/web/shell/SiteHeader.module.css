@@ -1,0 +1,32 @@
+.header { position: sticky; top: 0; z-index: 20; background: var(--color-bg); border-bottom: 1px solid var(--color-line); }
+.bar {
+  max-width: var(--page-max); margin-inline: auto; padding-inline: var(--gutter);
+  min-height: var(--header-height); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+}
+.brand { font-weight: var(--weight-heading); font-size: var(--text-md); color: var(--color-fg); text-decoration: none; letter-spacing: -0.01em; min-height: var(--tap-min); display: inline-flex; align-items: center; }
+.brand:hover { text-decoration: none; }
+.toggle {
+  display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-3);
+  background: transparent; color: var(--color-fg); border: 1px solid var(--color-line); border-radius: var(--radius);
+  font: inherit; font-size: var(--text-sm); font-weight: var(--weight-strong); cursor: pointer;
+}
+.bars { width: 16px; height: 12px; position: relative; display: inline-block; }
+.bars::before, .bars::after, .bars i { content: ""; position: absolute; left: 0; right: 0; height: 2px; background: currentColor; }
+.bars::before { top: 0; }
+.bars i { top: 5px; }
+.bars::after { bottom: 0; }
+.nav { display: none; }
+.nav[data-open="true"] {
+  display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--color-bg); border-bottom: 1px solid var(--color-line); padding: var(--space-2) var(--gutter) var(--space-4);
+}
+.link { display: flex; align-items: center; min-height: var(--tap-min); color: var(--color-fg); text-decoration: none; font-size: var(--text-md); font-weight: var(--weight-strong); }
+.link:hover { text-decoration: underline; text-underline-offset: 0.3em; }
+.link[aria-current="page"] { color: var(--color-accent); }
+
+@media (min-width: 720px) {
+  .toggle { display: none; }
+  .nav, .nav[data-open="true"] { display: flex; flex-direction: row; position: static; padding: 0; border: 0; gap: var(--space-5); }
+  .link { font-size: var(--text-sm); }
+  .link[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.5em; text-decoration-thickness: 2px; }
+}

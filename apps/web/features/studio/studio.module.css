@@ -1,0 +1,114 @@
+/* Studio 화면 스타일. 색·글자·간격은 app/globals.css 토큰만 쓴다. 테두리는 구분이 꼭 필요한 곳에만 둔다. */
+.studio { display: flex; flex-direction: column; width: 100%; max-width: 1760px; margin-inline: auto; min-height: calc(100dvh - var(--header-height)); }
+.loading { padding: var(--space-6) var(--gutter); color: var(--color-muted); }
+
+/* 도구 모음 */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); padding: var(--space-3) var(--gutter); border-bottom: 1px solid var(--color-line); }
+.docInfo { min-width: 0; flex: 1 1 14rem; }
+.docName { margin: 0; font-size: var(--text-md); font-weight: var(--weight-heading); line-height: var(--leading-tight); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.docStatus { margin: 0; font-size: var(--text-xs); color: var(--color-muted); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.more { position: relative; }
+.moreList { position: absolute; z-index: 15; right: 0; top: calc(100% + var(--space-1)); display: flex; flex-direction: column; gap: var(--space-1); min-width: 12rem; padding: var(--space-2); background: var(--color-bg); border: 1px solid var(--color-line); border-radius: var(--radius); }
+
+.tool, .toolStrong, .seg, .chip, .tab {
+  font: inherit; font-size: var(--text-sm); min-height: var(--tap-min); padding: 0 var(--space-3); cursor: pointer;
+  border-radius: var(--radius); border: 1px solid var(--color-line); background: var(--color-bg); color: var(--color-fg);
+}
+.tool:hover:not(:disabled), .seg:hover, .chip:hover, .tab:hover { background: var(--color-surface); }
+.tool:disabled, .toolStrong:disabled { color: var(--color-muted); cursor: not-allowed; opacity: 0.6; }
+.toolStrong { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-fg); font-weight: var(--weight-strong); }
+.group, .barGroup { display: inline-flex; flex-wrap: wrap; gap: var(--space-1); align-items: center; }
+.seg[aria-pressed="true"], .seg[aria-checked="true"], .chip[aria-pressed="true"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); }
+.link { background: none; border: 0; padding: var(--space-2) 0; color: var(--color-accent); font: inherit; font-size: var(--text-sm); text-decoration: underline; text-underline-offset: 0.18em; cursor: pointer; min-height: var(--tap-min); }
+
+/* 안내 */
+.banners { display: flex; flex-direction: column; gap: var(--space-2); padding: 0 var(--gutter); }
+.banner, .opError { border-left: 3px solid var(--color-line); padding: var(--space-3) var(--space-4); margin-block: var(--space-2); background: var(--color-surface); font-size: var(--text-sm); }
+.banner[data-level="error"], .opError { border-left-color: var(--color-fg); }
+.banner[data-level="warning"] { border-left-color: var(--color-accent); }
+.banner p, .opError p { margin: 0 0 var(--space-2); }
+.bannerTitle { margin: 0 0 var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); }
+.diagList { list-style: none; margin: 0 0 var(--space-2); padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.diagHead { font-size: var(--text-xs); color: var(--color-muted); overflow-wrap: anywhere; }
+.diagMsg { font-weight: var(--weight-strong); }
+.diagHint { color: var(--color-muted); }
+
+/* 시작 */
+.start { padding: var(--space-7) var(--gutter); max-width: 48rem; }
+.startTitle { margin: 0 0 var(--space-3); font-size: var(--text-xl); line-height: var(--leading-tight); }
+.startLead { margin: 0 0 var(--space-5); color: var(--color-muted); max-width: var(--measure); }
+
+/* 작업 영역: 넓으면 편집·미리보기를 나란히, 좁으면 하나만 */
+.workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr; }
+.editPane, .previewPane { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.editPane[hidden], .previewPane[hidden] { display: none; }
+.tabs { display: flex; gap: var(--space-1); padding: var(--space-2) var(--gutter) 0; border-bottom: 1px solid var(--color-line); overflow-x: auto; }
+.tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; white-space: nowrap; }
+.tab[aria-selected="true"] { border-bottom-color: var(--color-accent); font-weight: var(--weight-strong); }
+.opError { margin-inline: var(--gutter); }
+.panel { flex: 1; min-height: 0; padding: var(--space-4) var(--gutter) var(--space-6); outline: none; }
+.panelTitle { margin: 0 0 var(--space-3); font-size: var(--text-md); font-weight: var(--weight-heading); }
+.sectionTitle { margin: var(--space-5) 0 var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-heading); }
+.muted { color: var(--color-muted); font-size: var(--text-sm); margin: 0 0 var(--space-3); }
+.section { margin-bottom: var(--space-5); }
+.section > .sectionTitle:first-child { margin-top: 0; }
+
+/* 구조 트리 */
+.tree { max-height: 16rem; overflow: auto; border: 1px solid var(--color-line); border-radius: var(--radius); }
+.treeRow { display: flex; gap: var(--space-2); align-items: baseline; min-height: 36px; padding-block: var(--space-2); padding-inline-end: var(--space-3); cursor: pointer; font-size: var(--text-sm); }
+.treeRow:hover { background: var(--color-surface); }
+.treeRow[aria-selected="true"] { background: var(--color-surface); box-shadow: inset 3px 0 0 var(--color-accent); font-weight: var(--weight-strong); }
+.treeType { white-space: nowrap; }
+.treeText { color: var(--color-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-regular); }
+.nodeActions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block: var(--space-3); }
+.addNode { margin-bottom: var(--space-4); }
+.form { margin-top: var(--space-4); }
+
+/* 입력 */
+.field { display: flex; flex-direction: column; gap: var(--space-1); margin-bottom: var(--space-3); }
+.fieldLabel { font-size: var(--text-sm); font-weight: var(--weight-strong); }
+.input, .select { font: inherit; font-size: var(--text-md); width: 100%; min-height: var(--tap-min); padding: var(--space-2) var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius); background: var(--color-bg); color: var(--color-fg); }
+textarea.input { min-height: 0; }
+.input[aria-invalid="true"], .select[aria-invalid="true"] { border-color: var(--color-fg); border-width: 2px; }
+.mono { font-family: var(--font-mono); font-size: var(--text-sm); }
+.fieldError { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-strong); }
+.checkLabel { display: flex; gap: var(--space-2); align-items: center; font-size: var(--text-sm); min-height: var(--tap-min); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.axisGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: 0 var(--space-4); }
+.check ul { margin-top: 0; }
+
+/* 미리보기 */
+.previewPane { background: var(--color-surface); }
+.previewBar { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); padding: var(--space-3) var(--gutter); background: var(--color-bg); border-bottom: 1px solid var(--color-line); }
+.scaleText { font-size: var(--text-sm); color: var(--color-muted); min-width: 3.5em; padding-inline: var(--space-2); font-variant-numeric: tabular-nums; }
+.previewNote { margin: 0; padding: var(--space-2) var(--gutter); font-size: var(--text-sm); background: var(--color-bg); border-bottom: 1px solid var(--color-line); }
+.stage { flex: 1; min-height: 0; padding: var(--space-4) var(--gutter); overflow: auto; }
+.stage[data-scale-mode="fit"] { overflow-x: hidden; }
+.frameBox { position: relative; background: var(--color-bg); margin-inline: auto; }
+.frame { display: block; position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: var(--color-bg); }
+
+/* 대화상자 */
+.dialog { width: min(40rem, calc(100vw - 2 * var(--gutter))); max-height: calc(100dvh - 2 * var(--space-5)); padding: 0; border: 1px solid var(--color-line); border-radius: var(--radius); color: var(--color-fg); background: var(--color-bg); }
+.dialog::backdrop { background: rgb(20 22 26 / 0.45); }
+.dialogBody { padding: var(--space-5); }
+.dialogTitle { margin: 0 0 var(--space-3); font-size: var(--text-xl); line-height: var(--leading-tight); }
+.tplList { border: 1px solid var(--color-line); border-radius: var(--radius); max-height: 18rem; overflow: auto; margin: 0 0 var(--space-3); padding: 0; min-width: 0; }
+.tplRow { display: flex; gap: var(--space-3); align-items: center; min-height: var(--tap-min); padding: var(--space-1) var(--space-3); cursor: pointer; font-size: var(--text-sm); }
+.tplRow:hover { background: var(--color-surface); }
+
+@media (min-width: 900px) {
+  .studio { height: calc(100dvh - var(--header-height)); min-height: 0; }
+  .workspace { grid-template-columns: minmax(22rem, 26rem) 1fr; overflow: hidden; }
+  .workspace[data-pane="edit"] { grid-template-columns: 1fr; }
+  .workspace[data-pane="preview"] { grid-template-columns: 1fr; }
+  .editPane { border-right: 1px solid var(--color-line); overflow: hidden; }
+  .panel { overflow: auto; }
+  .previewPane { overflow: hidden; }
+  .tool, .toolStrong, .seg, .chip, .tab { min-height: 40px; }
+}
+@media (max-width: 899px) {
+  .stage { min-height: 70dvh; }
+  .frameBox { margin-inline: auto; }
+  .moreList { right: auto; left: 0; }
+}

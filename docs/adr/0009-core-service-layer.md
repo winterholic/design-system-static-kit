@@ -28,11 +28,11 @@
 ```js
 {ok: true,  value, warnings, catalogVersion, contractVersion}
 {ok: false, errors, warnings, catalogVersion, contractVersion}
-// errors[i], warnings[i] = {code, path, message, hint}  (+ 선택: rule, fix)
+// errors[i], warnings[i] = {code, path, message, hint}  (+ 선택: rule, fix, severity, contract)
 ```
 
 - 서비스 함수는 던지지 않는다. 예상하지 못한 예외는 `INTERNAL` 한 줄(메시지 첫 줄만, 스택 없음)로 감싼다. 어떤 입력(순환 참조, BigInt, `null`)에도 던지지 않는 것을 시험한다.
-- `contractVersion`(현재 `1.0.0`)은 봉투나 Diagnostic 모양이 바뀔 때 올린다. 카탈로그 버전과 따로 움직인다.
+- `contractVersion`(현재 `1.1.0`)은 봉투나 Diagnostic 모양이 바뀔 때 올린다. 카탈로그 버전과 따로 움직인다. 1.1.0은 기존 필수 필드와 봉투를 유지하고, 직접 적용한 결과 계약 경고에 선택 `severity`(`info` 또는 `warning`)와 `contract`(V## 문자열)를 공개한 추가 버전이다.
 - 네 필드는 항상 비지 않은 문자열이다. `path`는 `$`로 시작한다(문서 안 `$.tree.children[1]`, 요청 인자 `$args.kind`).
 - 검증기의 코드는 이름을 바꾸지 않는다. `AXIS_BAN`과 `THEME_FORBID`는 메시지 문장에만 있던 대안을 `fix`(예 `{elevation: 'soft'}`)로도 준다. 값은 카탈로그의 `axisBans[].fix`와 `theme.defaults`에서 읽고 문장을 파싱하지 않는다.
 - `opts`와 질의 인자의 알 수 없는 키는 `BAD_REQUEST`다. 오타 하나가 조용히 무시되어 전체 카탈로그가 나가는 일을 막는다.

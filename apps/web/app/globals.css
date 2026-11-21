@@ -1,0 +1,101 @@
+/*
+ * 사이트 디자인 토큰. 제품 화면은 이 변수만 참조한다(색·글자·간격을 화면마다 새로 정하지 않는다).
+ * 생성 결과물(/examples/** 등)은 컴파일러가 만든 자체 CSS를 쓰므로 이 토큰과 무관하다.
+ */
+:root {
+  color-scheme: light;
+
+  /* 색: 흰 바탕과 잉크색, 강조는 한 가지 */
+  --color-bg: #ffffff;
+  --color-surface: #f6f7f9;
+  --color-fg: #14161a;
+  --color-muted: #566070;
+  --color-line: #dfe3e9;
+  --color-accent: #2742c8;
+  --color-accent-fg: #ffffff;
+  --color-focus: #2742c8;
+
+  /* 글자 위계 */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --text-xs: 0.75rem;     /* 12 보조 표기 */
+  --text-sm: 0.875rem;    /* 14 메뉴·캡션 */
+  --text-md: 1rem;        /* 16 본문 */
+  --text-lg: 1.125rem;    /* 18 리드 문단 */
+  --text-xl: 1.5rem;      /* 24 섹션 제목 */
+  --text-2xl: clamp(1.75rem, 1.2rem + 2vw, 2.5rem); /* 페이지 제목 */
+  --leading-tight: 1.2;
+  --leading-body: 1.6;
+  --weight-regular: 400;
+  --weight-strong: 600;
+  --weight-heading: 700;
+
+  /* 폭 규칙: 페이지 최대 폭, 읽기 폭, 가장자리 여백 */
+  --page-max: 1120px;
+  --measure: 68ch;
+  --gutter: clamp(16px, 4vw, 32px);
+
+  /* 간격은 4px 단위 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  --radius: 6px;
+  --header-height: 56px;
+  --tap-min: 44px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font: var(--weight-regular) var(--text-md)/var(--leading-body) var(--font-sans);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+main { flex: 1 0 auto; }
+a { color: var(--color-accent); text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+code, kbd, pre { font-family: var(--font-mono); font-size: 0.92em; }
+code { background: var(--color-surface); padding: 0.1em 0.35em; border-radius: 3px; }
+/* 긴 명령줄이 페이지 가로 스크롤을 만들지 않게 코드 블록 안에서 스크롤한다. */
+pre { max-width: 100%; overflow-x: auto; }
+
+.page { width: 100%; max-width: var(--page-max); margin-inline: auto; padding: var(--space-7) var(--gutter) var(--space-8); }
+.page-title { font-size: var(--text-2xl); line-height: var(--leading-tight); font-weight: var(--weight-heading); margin: 0 0 var(--space-3); letter-spacing: -0.01em; }
+.page-lead { font-size: var(--text-lg); color: var(--color-muted); max-width: var(--measure); margin: 0 0 var(--space-6); }
+.section-title { font-size: var(--text-xl); line-height: var(--leading-tight); font-weight: var(--weight-heading); margin: var(--space-7) 0 var(--space-3); }
+.prose { max-width: var(--measure); }
+.prose p { margin: 0 0 var(--space-4); }
+.eyebrow { font-size: var(--text-sm); color: var(--color-muted); margin: 0 0 var(--space-2); }
+.link-list { list-style: none; margin: 0; padding: 0; max-width: var(--measure); }
+.link-list li { padding: var(--space-3) 0; border-top: 1px solid var(--color-line); }
+.link-list li:last-child { border-bottom: 1px solid var(--color-line); }
+.link-list a { font-weight: var(--weight-strong); }
+.link-list span { display: block; color: var(--color-muted); font-size: var(--text-sm); }
+.btn {
+  display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-5);
+  border-radius: var(--radius); font-weight: var(--weight-strong); text-decoration: none;
+  border: 1px solid var(--color-accent); background: var(--color-accent); color: var(--color-accent-fg);
+}
+.btn:hover { text-decoration: none; filter: brightness(1.08); }
+.btn-quiet { background: transparent; color: var(--color-accent); }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.note { border-left: 3px solid var(--color-line); padding: var(--space-1) var(--space-4); color: var(--color-muted); max-width: var(--measure); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.visually-hidden:focus, .visually-hidden:focus-visible {
+  position: fixed; inset-block-start: 8px; inset-inline-start: 8px; z-index: 100;
+  width: auto; height: auto; overflow: visible; clip: auto; padding: 8px 12px;
+  border-radius: var(--radius); background: var(--color-fg); color: var(--color-bg);
+}
