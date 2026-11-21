@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>wrap cases</title>
+<style>
+@import url("_base.css");
+.title-cap { font-size: 32px; line-height: 1.2; max-width: 20ch; }
+.title-half { font-size: 32px; line-height: 1.2; max-width: 52%; }
+.lead { font-size: 18px; color: #566070; }
+.eyebrow { font-size: 14px; color: #566070; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid #2742c8; border-radius: 6px; background: #2742c8; color: #fff; font: inherit; font-weight: 600; }
+.btn-narrow { width: 64px; }
+.price { font-size: 28px; font-weight: 700; }
+table { border-collapse: collapse; table-layout: fixed; }
+td, th { border: 1px solid #dfe3e9; padding: 6px 8px; text-align: left; }
+</style></head>
+<body><main><div class="stage">
+
+<!-- ============ BAD: 반드시 잡혀야 한다 ============ -->
+<section class="case" id="bad-heading-early-wrap" data-expect="HEADING_EARLY_WRAP"><small class="tag">bad: ch 상한(20ch) 때문에 한 줄이 들어갈 제목이 접힘</small>
+<h1 class="title-cap">고르면, 대비 검사를 통과한 HTML이 나오는 디자인 컴파일러</h1></section>
+
+<section class="case" id="bad-heading-narrow-box" data-expect="HEADING_NARROW_BOX"><small class="tag">bad: 두 줄은 어차피 필요하지만 상자가 사용 가능한 폭의 절반뿐</small>
+<h2 class="title-half" style="font-size:30px;max-width:72%">고르면, 대비 검사를 통과한 HTML이 나오는 디자인 컴파일러, 같은 입력에서 같은 결과를 내는 규약</h2></section>
+
+<section class="case" id="bad-heading-orphan" data-expect="HEADING_ORPHAN"><small class="tag">bad: 제목 끝줄에 한 단어만 남음</small>
+<h2 style="font-size:32px;line-height:1.2">컴파일 결과를 그대로 보여 주는 화면의 구성과 사용법을 다룹니다<br>끝</h2></section>
+
+<section class="case" id="bad-heading-many-lines" data-expect="HEADING_TOO_MANY_LINES"><small class="tag">bad: 제목이 5줄(폭 상한이 좁음)</small>
+<h2 style="font-size:32px;line-height:1.2;max-width:8em">설명이 아니라 코드가 규약을 지키는 방법과 그 이유를 한눈에</h2></section>
+
+<section class="case" id="bad-lead-early-wrap" data-expect="LEAD_EARLY_WRAP"><small class="tag">bad: 짧은 리드가 40ch 상한 때문에 불필요하게 접힘</small>
+<h1 style="font-size:28px">제목</h1><p class="lead" style="max-width:40ch">테마와 팔레트와 부품을 카탈로그가 허용한 값에서만 고르면 결과가 나옵니다.</p></section>
+
+<section class="case" id="bad-lead-orphan" data-expect="LEAD_ORPHAN"><small class="tag">bad: 리드 끝줄에 한 단어만 남음</small>
+<h1 style="font-size:28px">제목</h1><p class="lead">같은 입력에서 같은 바이트의 HTML과 CSS와 토큰을 만들어 냅니다 그래서 다시 만들어 비교할 수 있습니다<br>끝</p></section>
+
+<section class="case" id="bad-desc-narrow-box" data-expect="DESC_NARROW_BOX"><small class="tag">bad: 정의 목록의 고정 폭(400px) 때문에 설명이 좁은 칸에 갇힘</small>
+<dl style="max-width:600px"><dt style="font-weight:600">허용된 값만</dt><dd style="color:#566070">알 수 없는 속성, style·className, 임의 토큰 값, 잘못된 부모-자식 조합, 금지된 축 조합은 조용히 버려지지 않고 오류로 거부됩니다. 같은 입력은 언제나 같은 오류를 냅니다.</dd></dl></section>
+
+<section class="case" id="bad-short-text-wrap" data-expect="SHORT_TEXT_NARROW_BOX"><small class="tag">bad: 한 문장이 28ch 상한 때문에 불필요하게 두 줄</small>
+<p style="max-width:28ch">아래 화면은 컴파일러가 만든 결과물을 그대로 보여 줍니다.</p></section>
+
+<section class="case" id="bad-body-narrow-column" data-expect="BODY_NARROW_COLUMN"><small class="tag">bad: 본문이 한 줄 16ch짜리 좁은 칸에 6줄 이상 쌓임</small>
+<div style="width:150px"><p>카탈로그가 허용한 값만 고르면 규칙과 접근성 대비를 검사한 뒤 같은 입력에서 같은 바이트의 결과가 나옵니다. 조용히 버려지는 값은 없습니다.</p></div></section>
+
+<section class="case" id="bad-body-measure-long" data-expect="BODY_MEASURE_LONG"><small class="tag">bad: 본문 한 줄이 100ch가 넘음</small>
+<p style="font-size:13px">카탈로그가 허용한 값만 고르면 규칙과 접근성 대비를 검사한 뒤 같은 입력에서 같은 바이트의 HTML과 CSS와 토큰이 나옵니다. 조용히 버려지는 값은 없고 모든 거부에는 규칙 ID가 붙습니다. 오류의 경로와 규칙 ID를 읽고 카탈로그 안의 대안으로 고치면 됩니다. 생성된 HTML과 CSS를 손으로 고치지 않습니다.</p></section>
+
+<section class="case" id="bad-body-orphan" data-expect="BODY_ORPHAN"><small class="tag">bad: 본문 끝줄에 한 단어만 남음</small>
+<p style="max-width:68ch">카탈로그가 허용한 값만 고르면 규칙과 접근성 대비를 검사한 뒤 같은 입력에서 같은 바이트의 결과가 나옵니다. 조용히 버려지는 값은 없고 모든 거부에는 규칙 ID가 붙습니다 그래서 고치기 쉽습니다<br>확인</p></section>
+
+<section class="case" id="bad-label-wrap" data-expect="LABEL_WRAP"><small class="tag">bad: eyebrow가 6ch 상한 때문에 접힘</small>
+<span class="eyebrow" style="display:block;max-width:6ch">새 버전 출시 안내</span></section>
+
+<section class="case" id="bad-control-wrap" data-expect="CONTROL_WRAP"><small class="tag">bad: 버튼 글자가 두 줄</small>
+<button class="btn btn-narrow" type="button">장바구니 담기</button></section>
+
+<section class="case" id="bad-value-wrap" data-expect="VALUE_WRAP"><small class="tag">bad: 가격이 쪼개짐</small>
+<div class="price" data-layout-role="value" style="width:90px;overflow-wrap:anywhere">6,420,000원</div></section>
+
+<section class="case" id="bad-cell-token-break" data-expect="CELL_TOKEN_BREAK"><small class="tag">bad: 표 칸의 숫자가 중간에서 끊김</small>
+<table><tr><th style="width:120px">구분</th><td style="width:44px;overflow-wrap:anywhere">1,234,567</td></tr></table></section>
+
+<section class="case" id="bad-text-spill" data-expect="TEXT_SPILL"><small class="tag">bad: 긴 토큰이 칸 밖으로 나감</small>
+<div style="width:120px;white-space:nowrap;border:1px solid #c8ccd4">design-system-static-kit-compiler-output</div></section>
+
+<!-- ============ GOOD: 잡히면 안 된다 ============ -->
+<section class="case" id="good-heading-one-line" data-expect="none"><small class="tag">good: 제목 한 줄</small>
+<h1 style="font-size:32px;line-height:1.2">고르면 결과가 나옵니다</h1></section>
+
+<section class="case" id="good-heading-natural-two-lines" data-expect="none"><small class="tag">good: 제목이 칸 전체를 쓰고도 두 줄이 필요함(balance)</small>
+<h2 style="font-size:36px;line-height:1.2;text-wrap:balance">고르면, 대비 검사를 통과한 HTML이 나오는 디자인 컴파일러, 그리고 같은 입력에서 같은 바이트의 결과를 내는 규약을 설명합니다</h2></section>
+
+<section class="case" id="good-heading-narrow-column" data-expect="none"><small class="tag">good: 좁은 칸(240px)에 놓인 제목은 칸이 정한 폭이라 오류가 아님</small>
+<div style="width:240px"><h3 style="font-size:24px;line-height:1.2">컴파일 결과 그대로 보여 주는 화면</h3></div></section>
+
+<section class="case" id="good-lead-natural" data-expect="none"><small class="tag">good: 리드가 칸 전체를 쓰며 두 줄(자연스러운 줄바꿈)</small>
+<h1 style="font-size:28px">제목</h1><p class="lead">테마·팔레트·부품을 카탈로그가 허용한 값에서만 고릅니다. 규칙과 접근성 대비를 검사한 뒤, 같은 입력에서 같은 바이트의 HTML·CSS·토큰을 냅니다. 모든 거부에는 규칙 ID가 붙습니다.</p></section>
+
+<section class="case" id="good-body-sane-measure" data-expect="none"><small class="tag">good: 긴 본문이 68ch 읽는 폭에서 여러 줄(정상)</small>
+<p style="max-width:68ch">카탈로그가 허용한 값만 고르면 규칙과 접근성 대비를 검사한 뒤 같은 입력에서 같은 바이트의 HTML과 CSS와 토큰이 나옵니다. 조용히 버려지는 값은 없고 모든 거부에는 규칙 ID가 붙습니다. 오류의 경로와 규칙 ID를 읽고 카탈로그 안의 대안으로 고치면 됩니다. 생성된 HTML과 CSS를 손으로 고치지 않고, 모르는 속성을 더하지 않으며, 금지 조합을 다른 값으로 흉내 내서 우회하지 않습니다. 규칙이 잘못됐다면 재현 입력과 화면 근거를 남겨 카탈로그 개정으로 처리합니다.</p></section>
+
+<section class="case" id="good-body-two-columns" data-expect="none"><small class="tag">good: 두 단으로 나뉜 본문(칸 폭 약 460px = 45ch 이상)</small>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;text-wrap:pretty"><p>카탈로그가 허용한 값만 고르면 규칙과 접근성 대비를 검사한 뒤 같은 입력에서 같은 바이트의 HTML과 CSS와 토큰이 나옵니다. 조용히 버려지는 값은 없습니다.</p><p>오류의 경로와 규칙 ID를 읽고 카탈로그 안의 대안으로 고치면 됩니다. 생성된 HTML과 CSS를 손으로 고치지 않고 모르는 속성을 더하지 않습니다.</p></div></section>
+
+<section class="case" id="good-desc-full-width" data-expect="none"><small class="tag">good: 정의 목록이 부모 폭을 다 씀</small>
+<dl style="display:grid;grid-template-columns:11rem 1fr;gap:24px"><dt style="font-weight:600">허용된 값만</dt><dd style="color:#566070">알 수 없는 속성, style·className, 임의 토큰 값, 잘못된 부모-자식 조합, 금지된 축 조합은 조용히 버려지지 않고 오류로 거부됩니다. 같은 입력은 언제나 같은 오류를 냅니다. 이 설명은 길어서 두 줄이 필요합니다.</dd></dl></section>
+
+<section class="case" id="good-short-one-line" data-expect="none"><small class="tag">good: 짧은 문장이 한 줄</small>
+<p>아래 화면은 컴파일러가 만든 결과물을 그대로 보여 줍니다.</p></section>
+
+<section class="case" id="good-label-one-line" data-expect="none"><small class="tag">good: eyebrow 한 줄</small>
+<span class="eyebrow" style="display:block">새 버전 출시 안내</span></section>
+
+<section class="case" id="good-control-one-line" data-expect="none"><small class="tag">good: 버튼 한 줄</small>
+<button class="btn" type="button">장바구니 담기</button></section>
+
+<section class="case" id="good-value-one-line" data-expect="none"><small class="tag">good: 가격 한 덩어리</small>
+<div class="price" data-layout-role="value">6,420,000원</div></section>
+
+<section class="case" id="good-cell-table" data-expect="none"><small class="tag">good: 표 칸이 숫자를 한 줄로 보여 주고, 문장 칸은 자연스럽게 접힘</small>
+<table style="width:100%"><tr><th style="width:140px">구분</th><th style="width:140px">값</th><th>설명</th></tr>
+<tr><td>가격</td><td>1,234,567</td><td>월 단위로 청구되며 연간 결제 시 두 달 치를 할인해 드립니다. 해지는 언제든 가능합니다.</td></tr></table></section>
+
+<section class="case" id="good-intentional-ellipsis-none" data-expect="none"><small class="tag">good: 말줄임 없이 넘치지 않는 짧은 글 + 스크롤되는 코드 블록은 info만</small>
+<pre tabindex="0" style="max-width:300px;overflow-x:auto;margin:0">npm run kit -- build my.json --out out/my-page-with-a-long-name</pre></section>
+
+</div></main></body></html>
