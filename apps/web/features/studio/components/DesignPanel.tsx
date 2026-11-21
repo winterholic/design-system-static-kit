@@ -3,6 +3,7 @@ import {useMemo} from 'react';
 import {layoutSlotsOf} from '../catalog';
 import {useStudio} from '../context';
 import type {Choice} from '../core';
+import {Chip, ChipGroup, Segmented, Select, type SelectOption} from '@/ui';
 import styles from '../studio.module.css';
 
 const MODES: {id: string; label: string}[] = [{id: 'light', label: '라이트'}, {id: 'dark', label: '다크'}, {id: 'auto', label: '시스템 설정 따름(auto)'}];
@@ -10,6 +11,8 @@ const MODES: {id: string; label: string}[] = [{id: 'light', label: '라이트'},
 /** 고를 수 없는 선택지에 붙이는 이유. 코드는 연산이 거부할 때 내는 진단 코드 그대로다(JSON 가져오기와 같은 표기). */
 const why = (c: Choice | undefined) => (c && !c.ok ? ` (쓸 수 없음 · ${c.errors[0]?.code ?? '충돌'})` : '');
 const reason = (c: Choice | undefined) => (c && !c.ok ? c.errors.map(e => `${e.code}: ${e.message} ${e.hint}`).join('\n') : undefined);
+/** 선택 가능성 판정(Core 연산 결과)을 공용 Select의 비활성·이유로 그대로 옮긴다. 판정은 여기서 하지 않는다. */
+const verdict = (c: Choice | undefined): Pick<SelectOption, 'disabled' | 'reason' | 'reasonCode'> => (c && !c.ok ? {disabled: true, reason: reason(c), reasonCode: c.errors[0]?.code ?? '충돌'} : {});
 
 export function DesignPanel() {
   const api = useStudio();
@@ -41,63 +44,47 @@ export function DesignPanel() {
   const others = catalog.palettes.filter(p => !themePalettes.includes(p.id));
   const slots = slotsForChoices;
   const styleAxes = catalog.axes.filter(a => a.axis !== 'mode');
+  const currentPalette = String(doc.palette);
+  const paletteOptions: SelectOption[] = [
+    ...themePalettes.map(id => ({value: id, label: paletteLabel(id), group: '이 테마의 팔레트', ...verdict(choices.palettes.get(id))})),
+    ...(themePalettes.includes(currentPalette) ? [] : [{value: currentPalette, label: `${paletteLabel(currentPalette)} (현재)`, group: '현재 팔레트'}]),
+    ...others.filter(p => p.id !== currentPalette).map(p => ({value: p.id, label: p.label, group: '모든 팔레트', ...verdict(choices.palettes.get(p.id))})),
+  ];
 
   return (
     <div className={styles.design}>
       <section className={styles.section} aria-labelledby="d-theme">
         <h3 id="d-theme" className={styles.sectionTitle}>테마와 팔레트</h3>
         <p className={styles.muted}>바꿔도 글과 구조는 그대로입니다. 직접 고른 스타일 축은 새 테마가 허용하면 유지합니다.</p>
-        <div className={styles.field}>
-          <label className={styles.fieldLabel} htmlFor="d-theme-select">테마</label>
-          <select id="d-theme-select" className={styles.select} value={String(doc.theme)} onChange={e => api.edit({kind: 'setTheme', theme: e.target.value})}>
-            {catalog.themes.map(t => <option key={t.id} value={t.id} disabled={choices.themes.get(t.id)?.ok === false} title={reason(choices.themes.get(t.id))}>{t.name} ({t.id}){why(choices.themes.get(t.id))}</option>)}
-          </select>
-        </div>
+        <Select id="d-theme-select" className={styles.field} label="테마" value={String(doc.theme)} onChange={value => api.edit({kind: 'setTheme', theme: value})}
+          options={catalog.themes.map(t => ({value: t.id, label: `${t.name} (${t.id})`, ...verdict(choices.themes.get(t.id))}))} />
         {theme?.variants.length ? (
-          <div className={styles.field} role="group" aria-label="테마 변형">
+          <div className={styles.field}>
             <span className={styles.fieldLabel}>테마 변형</span>
-            <div className={styles.chips}>
-              <button type="button" className={styles.chip} aria-pressed={origin ? origin.themeVariant === null : false} disabled={choices.variants.get('null')?.ok === false} title={reason(choices.variants.get('null'))} onClick={() => api.edit({kind: 'setThemeVariant', variant: null})}>기본</button>
+            <ChipGroup label="테마 변형">
+              <Chip pressed={origin ? origin.themeVariant === null : false} disabled={choices.variants.get('null')?.ok === false} title={reason(choices.variants.get('null'))} onClick={() => api.edit({kind: 'setThemeVariant', variant: null})}>기본</Chip>
               {theme.variants.map(v => (
-                <button key={v.id} type="button" className={styles.chip} title={reason(choices.variants.get(v.id)) ?? v.description} disabled={choices.variants.get(v.id)?.ok === false} aria-pressed={origin?.themeVariant === v.id} onClick={() => api.edit({kind: 'setThemeVariant', variant: v.id, variantSet: v.set})}>{v.label}{why(choices.variants.get(v.id))}</button>
+                <Chip key={v.id} pressed={origin?.themeVariant === v.id} title={reason(choices.variants.get(v.id)) ?? v.description} disabled={choices.variants.get(v.id)?.ok === false} onClick={() => api.edit({kind: 'setThemeVariant', variant: v.id, variantSet: v.set})}>{v.label}{why(choices.variants.get(v.id))}</Chip>
               ))}
-            </div>
+            </ChipGroup>
           </div>
         ) : null}
-        <div className={styles.field}>
-          <label className={styles.fieldLabel} htmlFor="d-palette">팔레트</label>
-          <select id="d-palette" className={styles.select} value={String(doc.palette)} onChange={e => api.edit({kind: 'setPalette', palette: e.target.value})}>
-            <optgroup label="이 테마의 팔레트">
-              {themePalettes.map(id => <option key={id} value={id} disabled={choices.palettes.get(id)?.ok === false} title={reason(choices.palettes.get(id))}>{paletteLabel(id)}{why(choices.palettes.get(id))}</option>)}
-            </optgroup>
-            {themePalettes.includes(String(doc.palette)) ? null : <option value={String(doc.palette)}>{paletteLabel(String(doc.palette))} (현재)</option>}
-            <optgroup label="모든 팔레트">
-              {others.filter(p => p.id !== String(doc.palette)).map(p => <option key={p.id} value={p.id} disabled={choices.palettes.get(p.id)?.ok === false} title={reason(choices.palettes.get(p.id))}>{p.label}{why(choices.palettes.get(p.id))}</option>)}
-            </optgroup>
-          </select>
-        </div>
+        <Select id="d-palette" className={styles.field} label="팔레트" value={String(doc.palette)} onChange={value => api.edit({kind: 'setPalette', palette: value})} options={paletteOptions} />
       </section>
 
       <section className={styles.section} aria-labelledby="d-mode">
         <h3 id="d-mode" className={styles.sectionTitle}>문서 색 모드</h3>
         <p className={styles.muted}>문서에 저장되고 내보내기 결과에 반영됩니다. 미리보기에서만 어둡게 보는 설정은 미리보기 위쪽에 따로 있습니다.</p>
-        <div className={styles.group} role="radiogroup" aria-label="문서 색 모드">
-          {MODES.map(m => (
-            <button key={m.id} type="button" role="radio" aria-checked={doc.mode === m.id} className={styles.seg} aria-pressed={undefined} data-on={doc.mode === m.id} disabled={choices.modes.get(m.id)?.ok === false} title={reason(choices.modes.get(m.id))} onClick={() => api.edit({kind: 'setMode', mode: m.id})}>{m.label}{why(choices.modes.get(m.id))}</button>
-          ))}
-        </div>
+        <Segmented label="문서 색 모드" value={String(doc.mode)} onChange={mode => api.edit({kind: 'setMode', mode})}
+          options={MODES.map(m => ({value: m.id, label: `${m.label}${why(choices.modes.get(m.id))}`, disabled: choices.modes.get(m.id)?.ok === false, title: reason(choices.modes.get(m.id))}))} />
       </section>
 
       <section className={styles.section} aria-labelledby="d-axes">
         <h3 id="d-axes" className={styles.sectionTitle}>스타일 축</h3>
         <div className={styles.axisGrid}>
           {styleAxes.map(a => (
-            <div className={styles.field} key={a.axis}>
-              <label className={styles.fieldLabel} htmlFor={`d-axis-${a.axis}`}>{a.label}{picked[a.axis] ? ' (직접 고름)' : ''}</label>
-              <select id={`d-axis-${a.axis}`} className={styles.select} value={String(doc[a.axis])} onChange={e => api.edit({kind: 'setAxis', axis: a.axis, value: e.target.value})}>
-                {a.values.map(v => { const c = choices.axes[a.axis]?.get(v); return <option key={v} value={v} disabled={c?.ok === false} title={reason(c)}>{v}{why(c)}</option>; })}
-              </select>
-            </div>
+            <Select key={a.axis} id={`d-axis-${a.axis}`} className={styles.field} label={`${a.label}${picked[a.axis] ? ' (직접 고름)' : ''}`} value={String(doc[a.axis])} onChange={value => api.edit({kind: 'setAxis', axis: a.axis, value})}
+              options={a.values.map(v => ({value: v, label: v, ...verdict(choices.axes[a.axis]?.get(v))}))} />
           ))}
         </div>
       </section>
@@ -110,17 +97,19 @@ export function DesignPanel() {
               <p className={styles.muted}>현재 문서에 적용합니다. 쓴 내용은 그대로이고, 내용을 둘 곳이 없으면 거부하고 이유를 알려 줍니다.</p>
               <div className={styles.axisGrid}>
                 {slots.map(s => (
-                  <div className={styles.field} key={s.id}>
-                    <label className={styles.fieldLabel} htmlFor={`d-layout-${s.id}`}>{s.label}</label>
-                    <select id={`d-layout-${s.id}`} className={styles.select} value={origin.layout[s.id] ?? ''} onChange={e => e.target.value && api.edit({kind: 'setLayout', slot: s.id, option: e.target.value, ...(choices.layout[s.id]?.get(e.target.value)?.relocate ? {relocate: true} : {})})}>
-                      <option value="" disabled>현재 구성 유지</option>
-                      {s.options.map(o => {
-                        const c = choices.layout[s.id]?.get(o.id);
-                        const moves = !!c && !c.ok && c.relocate;
-                        return <option key={o.id} value={o.id} disabled={!!c && !c.ok && !c.relocate} title={moves ? '내용을 둘 곳이 없어 아래로 옮겨 적용합니다. 실행 취소로 되돌릴 수 있습니다.' : reason(c) ?? o.description}>{o.label}{o.recommended ? '' : ' (권장 아님)'}{moves ? ' (콘텐츠를 옮겨 적용)' : c && !c.ok ? why(c) : ''}</option>;
-                      })}
-                    </select>
-                  </div>
+                  <Select key={s.id} id={`d-layout-${s.id}`} className={styles.field} label={s.label} value={origin.layout[s.id] ?? ''} placeholder="현재 구성 유지"
+                    onChange={value => value && api.edit({kind: 'setLayout', slot: s.id, option: value, ...(choices.layout[s.id]?.get(value)?.relocate ? {relocate: true} : {})})}
+                    options={s.options.map(o => {
+                      const c = choices.layout[s.id]?.get(o.id);
+                      const moves = !!c && !c.ok && c.relocate;
+                      const blocked = !!c && !c.ok && !c.relocate;
+                      // 콘텐츠를 옮겨 적용할 수 있는 변형은 비활성이 아니다(실행 취소로 되돌린다).
+                      return {
+                        value: o.id, label: `${o.label}${o.recommended ? '' : ' (권장 아님)'}${moves ? ' (콘텐츠를 옮겨 적용)' : ''}`,
+                        disabled: blocked, reasonCode: blocked ? c.errors[0]?.code ?? '충돌' : undefined,
+                        reason: moves ? '내용을 둘 곳이 없어 아래로 옮겨 적용합니다. 실행 취소로 되돌릴 수 있습니다.' : reason(c) ?? o.description,
+                      };
+                    })} />
                 ))}
               </div>
             </>

@@ -4,6 +4,7 @@ import {useStudio} from '../context';
 import {DEVICES, SCHEMES, type Device, type PreviewScheme} from '../types';
 import {useNarrow} from '../useNarrow';
 import {DiagnosticList} from './Banners';
+import {Chip, ChipGroup} from '@/ui';
 import styles from '../studio.module.css';
 
 const DEVICE_LABEL: Record<Device, string> = {390: '모바일 390', 768: '태블릿 768', 1280: '데스크톱 1280'};
@@ -46,17 +47,17 @@ export function PreviewPane() {
   return (
     <section className={styles.previewPane} aria-label="미리보기" hidden={hidden} data-testid="preview" data-scale={scale.toFixed(4)} data-device={device} data-compiles={api.compileCount} data-swaps={swaps}>
       <div className={styles.previewBar}>
-        <div className={styles.barGroup} role="group" aria-label="미리보기 기기 폭">
-          {DEVICES.map(dv => <button key={dv} type="button" className={styles.seg} aria-pressed={device === dv} onClick={() => api.navigate({device: dv}, 'replace')}>{DEVICE_LABEL[dv]}</button>)}
-        </div>
-        <div className={styles.barGroup} role="group" aria-label="미리보기 배율">
-          <button type="button" className={styles.seg} aria-pressed={view.scaleMode === 'fit'} onClick={() => api.setView({scaleMode: 'fit'})}>맞춤</button>
-          <button type="button" className={styles.seg} aria-pressed={view.scaleMode === 'actual'} onClick={() => api.setView({scaleMode: 'actual'})}>100%</button>
+        <ChipGroup label="미리보기 기기 폭" className={styles.barGroup}>
+          {DEVICES.map(dv => <Chip key={dv} pressed={device === dv} onClick={() => api.navigate({device: dv}, 'replace')}>{DEVICE_LABEL[dv]}</Chip>)}
+        </ChipGroup>
+        <ChipGroup label="미리보기 배율" className={styles.barGroup}>
+          <Chip pressed={view.scaleMode === 'fit'} onClick={() => api.setView({scaleMode: 'fit'})}>맞춤</Chip>
+          <Chip pressed={view.scaleMode === 'actual'} onClick={() => api.setView({scaleMode: 'actual'})}>100%</Chip>
           <span className={styles.scaleText} data-testid="scale-text">{Math.round(scale * 100)}%</span>
-        </div>
-        <div className={styles.barGroup} role="group" aria-label="미리보기 색 보기 (문서 모드는 바뀌지 않음)">
-          {SCHEMES.map(sc => <button key={sc} type="button" className={styles.seg} aria-pressed={view.scheme === sc} onClick={() => api.setView({scheme: sc})}>{SCHEME_LABEL[sc]}</button>)}
-        </div>
+        </ChipGroup>
+        <ChipGroup label="미리보기 색 보기 (문서 모드는 바뀌지 않음)" className={styles.barGroup}>
+          {SCHEMES.map(sc => <Chip key={sc} pressed={view.scheme === sc} onClick={() => api.setView({scheme: sc})}>{SCHEME_LABEL[sc]}</Chip>)}
+        </ChipGroup>
       </div>
       {view.scheme !== 'document' ? <p className={styles.previewNote}>미리보기에서만 {view.scheme === 'dark' ? '다크' : '라이트'}로 보는 중입니다. 문서의 색 모드와 내보내기 결과는 그대로입니다.</p> : null}
       {session.compileErrors.length ? (

@@ -4,6 +4,7 @@ import {specOf} from '../catalog';
 import {useStudio} from '../context';
 import {nodeAt, parseDiagnosticPath, pathKey} from '../paths';
 import type {FieldSchema, NodePath} from '../types';
+import {Checkbox, Input, Select, Textarea} from '@/ui';
 import styles from '../studio.module.css';
 
 /**
@@ -53,57 +54,34 @@ function TextField({name, label, schema, value, optional, errors, onSet, onUnset
   const text = typeof value === 'string' ? value : '';
   const draft = useDraft(text, next => (next === '' && optional ? onUnset() : onSet(next)));
   const long = (schema.maxLength ?? 0) > 120;
-  const err = errors.length > 0;
-  const common = {id: `f-${name}`, 'data-field': name, className: styles.input, value: draft.value, 'aria-invalid': err || undefined, 'aria-describedby': err ? `f-${name}-err` : undefined, onFocus: draft.onFocus, onBlur: draft.onBlur};
-  return (
-    <div className={styles.field}>
-      <label className={styles.fieldLabel} htmlFor={`f-${name}`}>{label}{optional ? '' : ' *'}</label>
-      {long
-        ? <textarea {...common} rows={4} onChange={e => draft.onChange(e.target.value)} />
-        : <input {...common} type="text" onChange={e => draft.onChange(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') draft.flush(); }} />}
-      {err ? <p id={`f-${name}-err`} className={styles.fieldError}>{errors.join(' ')}</p> : null}
-    </div>
-  );
+  const common = {id: `f-${name}`, 'data-field': name, className: styles.field, label, required: !optional, error: errors.length ? errors.join(' ') : undefined, value: draft.value, onFocus: draft.onFocus, onBlur: draft.onBlur};
+  return long
+    ? <Textarea {...common} rows={4} onChange={e => draft.onChange(e.target.value)} />
+    : <Input {...common} type="text" onChange={e => draft.onChange(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') draft.flush(); }} />;
 }
 
 function NumberField(p: FieldProps) {
   const text = typeof p.value === 'number' ? String(p.value) : '';
   const draft = useDraft(text, next => (next === '' ? (p.optional ? p.onUnset() : p.onSet(null)) : p.onSet(Number(next))));
-  const err = p.errors.length > 0;
   return (
-    <div className={styles.field}>
-      <label className={styles.fieldLabel} htmlFor={`f-${p.name}`}>{p.label}{p.optional ? '' : ' *'}</label>
-      <input id={`f-${p.name}`} data-field={p.name} className={styles.input} type="number" value={draft.value} aria-invalid={err || undefined} aria-describedby={err ? `f-${p.name}-err` : undefined}
-        onFocus={draft.onFocus} onBlur={draft.onBlur} onChange={e => draft.onChange(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') draft.flush(); }} />
-      {err ? <p id={`f-${p.name}-err`} className={styles.fieldError}>{p.errors.join(' ')}</p> : null}
-    </div>
+    <Input id={`f-${p.name}`} data-field={p.name} className={styles.field} label={p.label} required={!p.optional} error={p.errors.length ? p.errors.join(' ') : undefined} type="number" value={draft.value}
+      onFocus={draft.onFocus} onBlur={draft.onBlur} onChange={e => draft.onChange(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') draft.flush(); }} />
   );
 }
 
 function EnumField({name, label, schema, value, optional, errors, onSet, onUnset}: FieldProps) {
-  const err = errors.length > 0;
+  const options = [
+    ...(optional || typeof value !== 'string' ? [{value: '', label: '(없음)'}] : []),
+    ...(schema.enum ?? []).map(v => ({value: String(v), label: String(v)})),
+  ];
   return (
-    <div className={styles.field}>
-      <label className={styles.fieldLabel} htmlFor={`f-${name}`}>{label}{optional ? '' : ' *'}</label>
-      <select id={`f-${name}`} data-field={name} className={styles.select} value={typeof value === 'string' ? value : ''} aria-invalid={err || undefined}
-        onChange={e => (e.target.value === '' ? onUnset() : onSet(e.target.value))}>
-        {optional || typeof value !== 'string' ? <option value="">(없음)</option> : null}
-        {(schema.enum ?? []).map(v => <option key={String(v)} value={String(v)}>{String(v)}</option>)}
-      </select>
-      {err ? <p className={styles.fieldError}>{errors.join(' ')}</p> : null}
-    </div>
+    <Select id={`f-${name}`} data-field={name} className={styles.field} label={label} required={!optional} error={errors.length ? errors.join(' ') : undefined}
+      value={typeof value === 'string' ? value : ''} options={options} onChange={next => (next === '' ? onUnset() : onSet(next))} />
   );
 }
 
 function BoolField({name, label, value, errors, onSet}: FieldProps) {
-  return (
-    <div className={styles.field}>
-      <label className={styles.checkLabel}>
-        <input type="checkbox" data-field={name} checked={value === true} onChange={e => onSet(e.target.checked)} /> {label}
-      </label>
-      {errors.length ? <p className={styles.fieldError}>{errors.join(' ')}</p> : null}
-    </div>
-  );
+  return <Checkbox data-field={name} className={styles.field} label={label} error={errors.length ? errors.join(' ') : undefined} checked={value === true} onChange={e => onSet(e.target.checked)} />;
 }
 
 // 객체·배열 필드는 JSON으로 고친다. 형식이 틀리면 연산을 부르지 않고 칸 아래에 알린다. 내용 규칙은 Core 검증이 판정한다.
@@ -118,11 +96,7 @@ function JsonField({name, label, value, optional, errors, onSet, onUnset}: Field
   };
   const all = local ? [local, ...errors] : errors;
   return (
-    <div className={styles.field}>
-      <label className={styles.fieldLabel} htmlFor={`f-${name}`}>{label} (JSON){optional ? '' : ' *'}</label>
-      <textarea id={`f-${name}`} data-field={name} className={`${styles.input} ${styles.mono}`} rows={5} value={text} aria-invalid={all.length > 0 || undefined} onChange={e => setText(e.target.value)} onBlur={apply} />
-      {all.length ? <p className={styles.fieldError}>{all.join(' ')}</p> : null}
-    </div>
+    <Textarea id={`f-${name}`} data-field={name} className={styles.field} mono label={`${label} (JSON)`} required={!optional} error={all.length ? all.join(' ') : undefined} rows={5} value={text} onChange={e => setText(e.target.value)} onBlur={apply} />
   );
 }
 

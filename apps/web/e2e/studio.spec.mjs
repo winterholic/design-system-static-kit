@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
+import {optionStates, pick} from './helpers/select.mjs';
 
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
 
@@ -24,11 +25,11 @@ test('WB-02/WB-03: theme and layout edits preserve authored content', async ({pa
   await expect(page.getByText('수정됨')).toBeVisible();
 
   await page.getByRole('tab', {name: '디자인'}).click();
-  await page.locator('#d-theme-select').selectOption('console');
-  const layout = page.locator('select[id^="d-layout-"]').first();
+  await pick(page, page.locator('#d-theme-select'), 'console');
+  const layout = page.locator('[role="combobox"][id^="d-layout-"]').first();
   if (await layout.count()) {
-    const options = await layout.locator('option').evaluateAll(nodes => nodes.map(node => node.value).filter(Boolean));
-    if (options.length) await layout.selectOption(options.at(-1));
+    const options = (await optionStates(page, layout)).filter(o => o.value && !o.disabled);
+    if (options.length) await pick(page, layout, options.at(-1).value);
   }
   await page.getByRole('tab', {name: '구조·내용'}).click();
   await page.getByRole('treeitem', {name: /페이지 제목/}).click();

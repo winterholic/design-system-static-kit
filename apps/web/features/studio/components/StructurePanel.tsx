@@ -5,6 +5,7 @@ import {flattenTree, nodeAt, nodeSummary, pathKey, samePath} from '../paths';
 import type {PartChoice} from '../core';
 import type {Node, NodePath} from '../types';
 import {NodeForm} from './NodeForm';
+import {Button, Select} from '@/ui';
 import styles from '../studio.module.css';
 
 export function StructurePanel() {
@@ -61,9 +62,9 @@ export function StructurePanel() {
       </div>
 
       <div className={styles.nodeActions} role="group" aria-label="선택한 노드 작업">
-        <button type="button" className={styles.tool} disabled={!selection.length || index === 0} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) - 1}))}>위로</button>
-        <button type="button" className={styles.tool} disabled={!selection.length || index === siblings.length - 1} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) + 1}))}>아래로</button>
-        <button type="button" className={styles.tool} disabled={!selection.length} onClick={act(() => api.edit({kind: 'remove', path: selection}))}>삭제</button>
+        <Button size="sm" disabled={!selection.length || index === 0} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) - 1}))}>위로</Button>
+        <Button size="sm" disabled={!selection.length || index === siblings.length - 1} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) + 1}))}>아래로</Button>
+        <Button size="sm" disabled={!selection.length} onClick={act(() => api.edit({kind: 'remove', path: selection}))}>삭제</Button>
       </div>
       <AddNode selection={selection} act={act} />
 
@@ -103,24 +104,16 @@ function AddGroup({where, title, button, parts, empty, onAdd}: {where: 'inside' 
   // 선택을 옮겨 후보가 바뀌면 이미 고른 부품이 더는 후보가 아닐 수 있다. 그때는 선택을 비운다.
   const type = parts.some(p => p.type === picked) ? picked : '';
   const id = `add-${where}-type`;
-  const groups = [...new Set(parts.map(p => p.group))];
   return (
     <div className={styles.addGroup} role="group" aria-label={title}>
       <h4 className={styles.addTitle}>{title}</h4>
       {parts.length ? (
         <>
-          <label className={styles.fieldLabel} htmlFor={id}>{where === 'inside' ? '안에 넣을 부품' : '뒤에 넣을 부품'} ({parts.length}개)</label>
-          <select id={id} className={styles.select} value={type} onChange={e => setPicked(e.target.value)}>
-            <option value="" disabled>부품 고르기</option>
-            {groups.map(g => (
-              <optgroup key={g} label={GROUP_LABEL[g] ?? g}>
-                {parts.filter(p => p.group === g).map(p => <option key={p.type} value={p.type}>{p.label}</option>)}
-              </optgroup>
-            ))}
-          </select>
+          <Select id={id} label={`${where === 'inside' ? '안에 넣을 부품' : '뒤에 넣을 부품'} (${parts.length}개)`} value={type} placeholder="부품 고르기" onChange={setPicked}
+            options={parts.map(p => ({value: p.type, label: p.label, group: GROUP_LABEL[p.group] ?? p.group}))} />
         </>
       ) : <p className={styles.muted}>{empty}</p>}
-      <button type="button" className={styles.tool} disabled={!type} onClick={() => onAdd(type)}>{button}</button>
+      <Button size="sm" disabled={!type} onClick={() => onAdd(type)}>{button}</Button>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import {expect, test} from '@playwright/test';
+import {optionStates, pick} from './helpers/select.mjs';
 
 // Studio 정상 조작 규약: 화면이 고르게 해 주는 선택은 오류 없이 적용되고, 사용자 작업은 확인 없이 교체되지 않는다.
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
@@ -53,12 +54,12 @@ test('부품 추가: 안에 추가와 뒤에 추가가 따로 있고, 목록의 
     await expect(add).not.toContainText('여기엔 불가');
     for (const [where, group] of [['inside', inside], ['after', after]]) {
       const select = group.getByRole('combobox');
-      const values = (await select.count()) ? await select.locator('option').evaluateAll(nodes => nodes.map(n => n.value).filter(Boolean)) : [];
+      const values = (await select.count()) ? (await optionStates(page, select)).map(o => o.value).filter(Boolean) : [];
       const disabled = await group.getByRole('button').first().isDisabled();
       if (!values.length) { expect(disabled, `${target} ${where}: 후보가 없으면 추가 버튼도 비활성`).toBe(true); continue; }
       // 후보마다 하나씩 실제로 넣어 보고 되돌린다(수가 많아도 전부 확인한다).
       for (const value of values) {
-        await select.selectOption(value);
+        await pick(page, select, value);
         await group.getByRole('button').first().click();
         await expect(page.getByTestId('op-error'), `${target} ${where} ${value}`).toHaveCount(0);
         await page.getByRole('button', {name: '실행 취소'}).click();
@@ -84,7 +85,7 @@ test('부품 추가: 선택한 노드가 받을 수 없는 자리에는 선택�
 
 async function designSelects(page) {
   await page.getByRole('tab', {name: '디자인'}).click();
-  return page.locator('[role="tabpanel"] select');
+  return page.locator('[role="tabpanel"] [role="combobox"]');
 }
 
 for (const template of ['dashboard-overview', 'agency-home']) {
@@ -97,15 +98,14 @@ for (const template of ['dashboard-overview', 'agency-home']) {
     let disabledSeen = 0;
     for (let i = 0; i < count; i++) {
       const id = await selects.nth(i).getAttribute('id');
-      const options = await selects.nth(i).locator('option').evaluateAll(nodes => nodes.map(n => ({value: n.value, disabled: n.disabled})));
+      const options = await optionStates(page, selects.nth(i));
       disabledSeen += options.filter(o => o.disabled).length;
       // 팔레트는 400개를 넘고 전부 같은 연산이라, 고르게 뽑은 몇 개만 눌러 본다. 나머지 선택지의 판정은 Core 단위 테스트가 전부 대조한다.
       const usable = options.filter(o => o.value && !o.disabled);
       const step = id === 'd-palette' ? Math.ceil(usable.length / 8) : 1;
       for (const option of usable.filter((_, k) => k % step === 0)) {
         // 앞서 고른 값 때문에 이 선택지가 지금은 충돌할 수 있다(선택지는 현재 조합 기준이다). 지금 활성인 것만 누른다.
-        if (await page.locator(`#${id} option[value="${option.value}"]`).evaluate(node => node.disabled)) continue;
-        await page.locator(`#${id}`).selectOption(option.value);
+        if (!await pick(page, page.locator(`#${id}`), option.value, {skipDisabled: true})) continue;
         await expect(page.getByTestId('op-error'), `${id}=${option.value}`).toHaveCount(0);
       }
     }
@@ -122,22 +122,23 @@ for (const template of ['dashboard-overview', 'agency-home']) {
 test('디자인: 금지 조합인 값은 선택지에서 이유와 함께 비활성으로 보인다', async ({page}) => {
   await openTemplate(page, 'dashboard-overview');
   await designSelects(page);
-  const editorial = page.locator('#d-axis-shell option[value="editorial"]');
-  await expect(editorial).toBeDisabled();
-  await expect(editorial).toContainText('PAGE_SHELL');
-  await expect(page.locator('#d-axis-shell option[value="sidebar"]')).toBeEnabled();
+  const shell = await optionStates(page, page.locator('#d-axis-shell'));
+  const editorial = shell.find(o => o.value === 'editorial');
+  expect(editorial.disabled).toBe(true);
+  expect(editorial.label).toContain('PAGE_SHELL');
+  expect(shell.find(o => o.value === 'sidebar').disabled).toBe(false);
 });
 
 test('디자인: 히어로 지표를 둘 곳이 없는 구성 변형은 콘텐츠를 옮긴다고 알리고, 고르면 오류 없이 적용된다', async ({page}) => {
   await openTemplate(page, 'agency-home');
   await designSelects(page);
   const hero = page.locator('#d-layout-hero');
-  const option = hero.locator('option[value="split"]');
-  await expect(option).toBeEnabled();
-  await expect(option).toContainText('옮겨');
-  await hero.selectOption('split');
+  const split = (await optionStates(page, hero)).find(o => o.value === 'split');
+  expect(split.disabled).toBe(false);
+  expect(split.label).toContain('옮겨');
+  await pick(page, hero, 'split');
   await expect(page.getByTestId('op-error')).toHaveCount(0);
-  await expect(hero).toHaveValue('split');
+  await expect(hero).toHaveAttribute('data-value', 'split');
 });
 
 test('JSON 직접 편집은 충돌하는 조합에 정확한 진단을 보여 주고 문서를 바꾸지 않는다', async ({page}) => {

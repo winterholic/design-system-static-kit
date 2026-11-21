@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
+import {optionStates, pick, valueOf} from './helpers/select.mjs';
 
 test('홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 복원된다', async ({page}) => {
   await page.goto('/');
@@ -7,9 +8,11 @@ test('홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 �
   await expect(page.getByRole('link', {name: 'Explore 둘러보기'})).toBeVisible();
   await expect(page.getByRole('link', {name: 'Studio에서 만들기'})).toBeVisible();
   await page.goto('/explore');
-  await page.getByLabel('페이지 유형').selectOption({index: 1});
+  const type = page.getByRole('combobox', {name: '페이지 유형'});
+  const first = (await optionStates(page, type)).find(o => o.value);
+  await pick(page, type, first.value);
   await expect(page).toHaveURL(/type=/);
-  const selected = await page.getByLabel('페이지 유형').inputValue();
+  const selected = await valueOf(type);
   const design = page.locator('a[href^="/explore/"]:not([href="/explore/combos"])').first();
   if (await design.count()) {
     // 클라이언트 이동이 끝나기 전에 뒤로 가면 history 의 앞 항목(홈)으로 가 버린다. 상세에 닿은 뒤에 돌아온다.
@@ -18,9 +21,9 @@ test('홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 �
     await page.goBack();
     await expect(page).toHaveURL(/\/explore\?.*type=/);
   }
-  await expect(page.getByLabel('페이지 유형')).toHaveValue(selected);
+  await expect(type).toHaveAttribute('data-value', selected);
   await page.reload();
-  await expect(page.getByLabel('페이지 유형')).toHaveValue(selected);
+  await expect(page.getByRole('combobox', {name: '페이지 유형'})).toHaveAttribute('data-value', selected);
   await page.getByRole('button', {name: '초기화'}).click();
   await expect(page).toHaveURL(/\/explore$/);
 });

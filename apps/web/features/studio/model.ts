@@ -127,11 +127,25 @@ function startRequest(ctx: Context, request: StartRequest): Outcome {
   const template = request.template ?? DEFAULT_TEMPLATE;
   const r1 = op(ctx.doc, 'resetDocument', {template, theme: request.theme, palette: request.palette, themeVariant: request.variant, layout: request.layout, discard: true});
   const origin: Origin = {template, layout: request.layout ?? {}, themeVariant: request.variant ?? null, palette: request.palette ?? null};
-  if (!r1.ok || !request.mode) return {res: r1, origin, picked: {}, selection: []};
-  // 모드는 resetDocument 인자가 아니라서 이어서 적용한다. 둘 중 하나라도 거부되면 전체를 적용하지 않는다(원자성).
-  const r2 = op(r1.doc, 'setAppearance', {mode: request.mode});
-  if (!r2.ok) return {res: failed(ctx.doc, r2.errors, r1.warnings), origin, picked: {}, selection: []};
-  return {res: {...r2, changes: [...r1.changes, ...r2.changes], warnings: [...r1.warnings, ...r2.warnings]}, origin, picked: {}, selection: []};
+  const axes = request.axes ?? {};
+  if (!r1.ok || (!request.mode && !Object.keys(axes).length && !request.colorPalette)) return {res: r1, origin, picked: {}, selection: []};
+  // 모드·스타일 축은 resetDocument 인자가 아니라서 이어서 한 번에 적용한다. 하나라도 거부되면 전체를 적용하지 않는다(원자성).
+  let working = r1.doc;
+  const changes = [...r1.changes], warnings = [...r1.warnings];
+  let picked: Picks = {};
+  if (request.mode || Object.keys(axes).length) {
+    const r2 = op(working, 'setAppearance', {...(request.mode ? {mode: request.mode} : {}), ...(Object.keys(axes).length ? {axes} : {})});
+    if (!r2.ok) return {res: failed(ctx.doc, r2.errors, r1.warnings), origin, picked: {}, selection: []};
+    working = r2.doc; changes.push(...r2.changes); warnings.push(...r2.warnings);
+    picked = {...axes};
+  }
+  if (request.colorPalette) {
+    // colorPalette는 2.6.0부터 쓰는 필드라서 카탈로그 버전을 함께 올린 문서를 가져오기 연산으로 검증해 얻는다(JSON 가져오기와 같은 경로).
+    const r3 = op(working, 'importBlueprint', {blueprint: {...working, catalogVersion: '2.6.0', colorPalette: request.colorPalette}, discard: true});
+    if (!r3.ok) return {res: failed(ctx.doc, r3.errors, r1.warnings), origin, picked: {}, selection: []};
+    working = r3.doc; changes.push(...r3.changes); warnings.push(...r3.warnings);
+  }
+  return {res: {ok: true, doc: working, changes, errors: [], warnings, content: r1.content}, origin, picked, selection: []};
 }
 
 /** 한 의도를 Core 연산으로 실행한다. 순수하다: 실패하면 입력 문맥은 어디에도 반영되지 않는다. */

@@ -148,12 +148,12 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
 });
 
 // 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
-// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법) 갱신을 반영해 718d5df184940f7f 로 고정한다.
+// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법)에서 718d5df184940f7f 였고, 2.6.0(정적 색 토큰 그래프, 14914b80d)의 카탈로그 개정이 site/v1 을 바꿔 60b066a5ed232d5d 로 갱신한다(feat/materials-site 에서 기준 브랜치의 미갱신 고정값을 바로잡음).
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
     {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
     {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
-    {sub: 'v1', count: 2, pinned: '718d5df184940f7f'},
+    {sub: 'v1', count: 2, pinned: '60b066a5ed232d5d'},
   ];
   for (const {sub, exclude, count, pinned} of parts) {
     test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {
@@ -167,14 +167,14 @@ test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
 
 test.describe('noindex와 공개 메뉴', () => {
   test('/test-lab/** 와 /dev/** 는 X-Robots-Tag noindex', async ({request}) => {
-    for (const p of ['/test-lab/', '/test-lab/viewer.html', '/test-lab/cases/c-294/', '/dev/qa']) {
+    for (const p of ['/test-lab/', '/test-lab/viewer.html', '/test-lab/cases/c-294/', '/dev/qa', '/dev/ui']) {
       const res = await request.get(p);
       expect(res.headers()['x-robots-tag'], p).toContain('noindex');
     }
   });
 
   test('공개 화면과 예제에는 noindex 헤더가 없다', async ({request}) => {
-    for (const p of ['/', '/explore', '/examples/saas-landing/', '/v1/catalog.json']) {
+    for (const p of ['/', '/explore', '/materials', '/materials/color', '/examples/saas-landing/', '/v1/catalog.json']) {
       expect((await request.get(p)).headers()['x-robots-tag'], p).toBeUndefined();
     }
   });

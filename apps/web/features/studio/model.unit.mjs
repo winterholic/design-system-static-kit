@@ -187,3 +187,21 @@ test('needsConfirm: 미리보기 설정과 선택 이동은 판정을 바꾸지 
 test('needsConfirm: 시작 화면(문서 없음)은 확인이 필요 없다', () => {
   assert.equal(needsConfirm(initialState), false);
 });
+
+test('start from Materials applies axes and the 2.6.0 color palette atomically, and a banned axis rejects the whole request', async () => {
+  await loadCore();
+  const fresh = reducer(initialState, {type: 'boot', state: {phase: 'start', doc: null, origin: null, picked: {}, selection: [], modified: false, view: {}, notices: [], recovery: null, storage: {status: 'idle'}}});
+
+  const ok = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {axes: {radius: 'round'}, colorPalette: 'static-kit'}}, at: 1});
+  assert.equal(ok.document.doc.radius, 'round');
+  assert.equal(ok.document.doc.colorPalette, 'static-kit');
+  assert.equal(ok.document.doc.catalogVersion, '2.6.0');
+  assert.equal(ok.session.picked.radius, 'round');
+
+  const bad = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {axes: {radius: 'no-such-value'}, colorPalette: 'static-kit'}}, at: 1});
+  assert.equal(bad.document.doc, null);
+  assert.equal(bad.session.error?.errors[0]?.code, 'ENUM');
+
+  const unknown = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {colorPalette: 'not-a-palette'}}, at: 1});
+  assert.equal(unknown.document.doc, null);
+});

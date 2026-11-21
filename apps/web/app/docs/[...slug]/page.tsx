@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation';
 import {PageShell} from '@/shell/PageShell';
 import {DocContent} from '../DocContent';
 import {DOCS_PAGES, resolveDocPage} from '@/lib/docs.mjs';
+import {ButtonLink} from '@/ui';
 
 type Props = {params: Promise<{slug: string[]}>};
 
@@ -23,7 +24,7 @@ export default async function DocPage({params}: Props) {
   return (
     <PageShell eyebrow="Docs" title={page.title} lead={page.description}>
       <DocContent slug={page.slug} />
-      <Link href="/docs" className="btn btn-quiet">Docs로 돌아가기</Link>
+      <ButtonLink href="/docs" variant="quiet">Docs로 돌아가기</ButtonLink>
     </PageShell>
   );
 }

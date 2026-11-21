@@ -7,6 +7,7 @@ import {PreviewFrame} from '@/features/explore/PreviewFrame';
 import {curatedDesigns, findDesign} from '@/features/explore/designs.server';
 import {studioHref} from '@/features/explore/id';
 import styles from '@/features/explore/detail.module.css';
+import {ButtonLink} from '@/ui';
 
 type Props = {params: Promise<{designId: string}>};
 
@@ -39,8 +40,8 @@ export default async function DesignPage({params}: Props) {
           <p className={styles.sub}>{design.themeName}{design.variantLabel ? ` · ${design.variantLabel}` : ''} · {design.pageTypeLabel}</p>
         </div>
         <div className={styles.actions}>
-          <a href={render} target="_blank" rel="noopener" className="btn btn-quiet">새 창으로 전체 화면<span className="visually-hidden"> (새 창)</span></a>
-          <Link href={studioHref(design)} className="btn">Studio에서 열기</Link>
+          <ButtonLink href={render} variant="secondary" newTab>새 창으로 전체 화면</ButtonLink>
+          <ButtonLink href={studioHref(design)}>Studio에서 열기</ButtonLink>
         </div>
       </div>
 
