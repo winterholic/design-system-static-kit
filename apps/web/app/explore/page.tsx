@@ -40,6 +40,7 @@ export default async function ExplorePage({searchParams}: Props) {
                 <Thumb src={`/explore/${d.id}/render`} title={`${d.label} (${d.themeName}) 미리보기`} />
                 <h2 className={styles.title}>{d.label}</h2>
                 <p className={styles.meta}>{d.pageTypeLabel} · {d.themeName}{d.variantLabel ? ` · ${d.variantLabel}` : ''}</p>
+                {d.curationLabel ? <p className={styles.meta}>{d.curationLabel} · 팔레트 {d.paletteId} · 모드 {d.resolvedMode} · {Object.entries(d.layout ?? {}).map(([slot, option]) => `${slot}:${option}`).join(', ')}</p> : null}
               </Link>
             </li>
           ))}

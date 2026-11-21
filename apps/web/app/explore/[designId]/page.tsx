@@ -60,7 +60,7 @@ export default async function DesignPage({params}: Props) {
             <div className={styles.swatches} aria-hidden="true">{design.paletteColors.map(c => <span key={c} className={styles.swatch} style={{background: c}} />)}</div>
           </dd>
         </div>
-        <div><dt>모드</dt><dd>{MODE_LABEL[design.resolvedMode] ?? design.resolvedMode}</dd></div>
+        <div><dt>모드</dt><dd>{MODE_LABEL[design.resolvedMode] ?? design.resolvedMode} <small>{design.resolvedMode}</small></dd></div>
         {layout.length ? <div><dt>구성 변형</dt><dd>{layout.map(([slot, option]) => `${slot}:${option}`).join(', ')}</dd></div> : null}
       </dl>
 

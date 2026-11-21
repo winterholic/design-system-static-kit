@@ -42,9 +42,9 @@ export function writeQuery(query: ExploreQuery): string {
   return p.toString();
 }
 
-export type Row = {id: string; label: string; pageType: string; pageTypeLabel: string; themeId: string; themeName: string; styleId: string; styleLabel: string; variantLabel: string | null; concept: string | null};
+export type Row = {id: string; label: string; pageType: string; pageTypeLabel: string; themeId: string; themeName: string; styleId: string; styleLabel: string; variantLabel: string | null; concept: string | null; curationLabel: string | null};
 
-const haystack = (d: Row) => [d.id, d.label, d.pageTypeLabel, d.themeId, d.themeName, d.styleLabel, d.variantLabel, d.concept].filter(Boolean).join(' ').toLowerCase();
+const haystack = (d: Row) => [d.id, d.label, d.pageTypeLabel, d.themeId, d.themeName, d.styleLabel, d.variantLabel, d.concept, d.curationLabel].filter(Boolean).join(' ').toLowerCase();
 
 export function filterRows<T extends Row>(rows: T[], query: ExploreQuery): T[] {
   const words = query.q.toLowerCase().split(/\s+/).filter(Boolean);

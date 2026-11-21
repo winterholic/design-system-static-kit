@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {HashRedirect} from './HashRedirect';
+import appStyles from './home.module.css';
 import {Showcase} from '@/features/home/Showcase';
 import {GITHUB_URL} from '@/lib/nav';
 import styles from '@/features/home/home.module.css';
@@ -17,8 +18,8 @@ export default function Home() {
 
       <h2 className="section-title">컴파일 결과 그대로</h2>
       <p className="prose">아래 화면은 이 사이트가 설명하는 컴파일러가 만든 결과물(<code>/examples/saas-landing/</code>)을 그대로 보여 줍니다.</p>
-      <div className={styles.frame}>
-        <iframe src="/examples/saas-landing/" title="saas-landing 템플릿의 컴파일 결과" loading="lazy" tabIndex={-1} className={styles.iframe} />
+      <div className={appStyles.frame}>
+        <iframe src="/examples/saas-landing/" title="saas-landing 템플릿의 컴파일 결과" loading="lazy" tabIndex={-1} className={appStyles.iframe} />
       </div>
 
       <h2 className="section-title">직접 열어 보기</h2>

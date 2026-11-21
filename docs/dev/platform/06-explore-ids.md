@@ -44,6 +44,8 @@ dashboard-overview~theme_console~mode_dark
 - `/explore/<id>/blueprint.json`은 같은 `buildDocument(ref)` 결과를 JSON으로 반환한다.
 - Studio 링크는 상세 ID에서 파싱한 선택값을 유지한다. 기본 템플릿이면 템플릿만 넘기고, 테마·변형·팔레트·모드·구성 슬롯이 있으면 해당 선택도 넘긴다.
 - 목록·상세 폭 선택은 `device=mobile|desktop` 쿼리에 둔다. 기본 데스크톱은 `device`를 생략한다. 미리보기는 1280px 또는 390px 기준으로 컴파일된 문서를 축소해 보여 준다.
+- 현재 큐레이션에는 전체 슬롯 조합을 전개하지 않는다. 기존 ID를 유지하고 복합 왕복 예시 `saas-landing~palette_pearl~mode_dark~hero_product` 한 건을 별도로 둔다. 이 항목은 Core가 허용하는 `hero:product`, 템플릿 기본 팔레트와 다른 `pearl`, `dark`를 같은 Blueprint에 담고 목록·상세에서 실제 값을 드러낸다.
+- `/combos`, `/combos/`, `/combos/index.html`은 쿼리를 유지해 `/dev/qa/combos`로 임시 307 한 번 이동한다. 과거 앱 주소 `/explore/combos`도 같은 목적지로 쿼리를 보존하는 임시 별칭이다.
 
 구현 계약은 `apps/web/e2e/explore-components-home.spec.mjs`와 `apps/web/e2e/explore-fidelity.spec.mjs`에서 라우트 상태, HTTP 바이트, Studio 쿼리를 확인한다.
 

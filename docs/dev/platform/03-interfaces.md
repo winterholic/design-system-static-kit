@@ -272,7 +272,7 @@ POST /api/v1/edit
 | 기존 URL | 방침 | 새 위치와 규칙 |
 |---|---|---|
 | `/` (조립기) | 대체 | 새 앱의 `/studio`. `/`는 플랫폼 첫 화면이 된다. `/#catalog`는 해시가 서버에 전달되지 않으므로 `/`의 클라이언트 코드가 `#catalog`를 읽어 `/explore`로 `router.replace`한다 (WB-07 해소) |
-| `/combos/?<쿼리>` | 308 리다이렉트 | `/explore/combos?<같은 쿼리>`. 파라미터 `c, concept, look, theme, tv, pal, type, mode, q, pt, t, sl, sort, seed, same, flagged, tall, exp, rec, ps, p`를 모두 보존 (`00-baseline.md` 6.1절). `c`가 있으면 확대 보기를 연다 |
+| `/combos`, `/combos/`, `/combos/index.html` + 쿼리 | 임시 307 리다이렉트 | `/dev/qa/combos?<같은 쿼리>`로 한 번 이동한다. 파라미터 `c, concept, look, theme, tv, pal, type, mode, q, pt, t, sl, sort, seed, same, flagged, tall, exp, rec, ps, p`를 모두 보존한다 (`00-baseline.md` 6.1절). `/explore/combos`도 같은 내부 QA 경로로 쿼리를 보존해 임시 307 리다이렉트한다 |
 | `/combos/render.html?c=...` | 유지 (같은 경로의 라우트 핸들러) | 래퍼 없는 전체 화면 HTML을 반환한다. 쿼리 `c, theme, tv, pal, mode, concept, look, type` 계약 유지. 새 창 열기·공유 링크가 쓰는 경로다. 현재는 클라이언트가 `document.write`한다. 새 구현은 서버가 `renderCombo`로 만든 HTML을 반환해도 된다. 검증: 샘플 조합 id 20개에서 옛 `renderCombo` 결과와 바이트 비교 |
 | `/gallery/index.html` | 유지 (정적 산출물) | 컴파일러를 내장한 오프라인 단일 파일은 "내려받아 쓰는 도구"라서 Next 앱으로 대체하지 않는다. Explore에서 링크한다. 빌드가 계속 생성한다 |
 | `/v1/catalog.json`, `/v1/blueprint.schema.json` | 유지 (정적, 바이트 동일) | `catalogSnapshot()`·`blueprintSchema()` 결과를 정적 파일로 낸다. 해시 게이트 대상 |
@@ -298,7 +298,7 @@ POST /api/v1/edit
 | 시험 | 내용 |
 |---|---|
 | 해시 게이트 | `examples/` 425 · `examples/themes/` 270 · `v1/` 2의 트리 해시가 `00-baseline.md` 4.2절 값과 같다. 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다 |
-| 리다이렉트 표 시험 | 5.2절의 모든 행에 대해 대표 URL 1개 이상(`/combos/` 쿼리는 파라미터 전부)의 상태 코드와 `Location`을 검사한다 |
+| 리다이렉트 표 시험 | 세 `/combos` 경로 각각 307 및 쿼리 전체 보존, `/explore/combos` 임시 별칭의 307 및 쿼리 보존과 최종 200을 검사한다 |
 | `render.html` 동치 | 샘플 조합 id 20개에서 옛 `renderCombo` 결과와 새 라우트 응답이 바이트가 같다 |
 | 옛 앱 유지 | main에서 `npm run verify`와 `npm run test:browser`가 호환 기간 동안 계속 통과한다 (현재 224개와 67개, `00-baseline.md` 2-3절) |
 

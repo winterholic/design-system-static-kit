@@ -26,6 +26,8 @@ export type Design = DesignRef & {
   resolvedMode: string;
   /** 이 조합을 고른 이유(컨셉 이름). 템플릿 기본이면 null */
   concept: string | null;
+  /** 한 건의 슬롯·팔레트·모드 왕복 예시를 목록에서 알아볼 이름 */
+  curationLabel: string | null;
 };
 
 type Rows = Record<string, any>[];
@@ -75,9 +77,9 @@ export function curatedDesigns(): Design[] {
   const palettes = Object.fromEntries(rows('palettes', ['id', 'name', 'colors', 'brand']).map(p => [p.id, p]));
   const concepts = rows('concepts', ['id', 'label', 'templates', 'looks']);
 
-  const refs: {ref: DesignRef; concept: string | null}[] = [];
+  const refs: {ref: DesignRef; concept: string | null; curationLabel: string | null}[] = [];
   for (const t of templates) {
-    refs.push({ref: {template: t.id}, concept: null});
+    refs.push({ref: {template: t.id}, concept: null, curationLabel: null});
     const mine = concepts.filter(c => c.templates.includes(t.id));
     const taken = new Set<string>([`${t.theme}|`]);
     let added = 0;
@@ -91,14 +93,22 @@ export function curatedDesigns(): Design[] {
         const key = `${look.theme}|${look.themeVariant ?? ''}`;
         if (taken.has(key) || added >= THEMED_PER_TEMPLATE) continue;
         taken.add(key); added++;
-        refs.push({ref: {template: t.id, theme: look.theme, ...(look.themeVariant ? {variant: look.themeVariant} : {})}, concept: c.label});
+        refs.push({ref: {template: t.id, theme: look.theme, ...(look.themeVariant ? {variant: look.themeVariant} : {})}, concept: c.label, curationLabel: null});
       }
       if (!progressed) break;
+    }
+    if (t.id === 'saas-landing') {
+      // 전체 조합을 전개하지 않는다. Studio 왕복에서 지원 슬롯·다른 팔레트·모드가 함께 보이는 한 건만 고정한다.
+      refs.push({
+        ref: {template: 'saas-landing', palette: 'pearl', mode: 'dark', layout: {hero: 'product'}},
+        concept: null,
+        curationLabel: '복합 대표 디자인',
+      });
     }
   }
 
   const byTemplate = Object.fromEntries(templates.map(t => [t.id, t]));
-  cache = refs.map(({ref, concept}) => {
+  cache = refs.map(({ref, concept, curationLabel}) => {
     const built = buildDocument(ref);
     if (!built.ok) throw new Error(`대표 디자인을 만들지 못했습니다: ${formatDesignId(ref)} ${built.errors[0]?.message}`);
     const doc = built.doc as {theme: string; palette: string; mode: string};
@@ -120,6 +130,7 @@ export function curatedDesigns(): Design[] {
       paletteColors: (palette.colors as string[]).slice(0, 9),
       resolvedMode: doc.mode,
       concept,
+      curationLabel,
     };
   });
   return cache;
