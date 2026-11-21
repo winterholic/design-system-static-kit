@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {
   catalogRegistry, createRegistry, defineMaterial, defineKind, MaterialError, BUILTIN_KINDS, FIELDS, CATEGORIES, QUALITY,
+  chartPresetMaterials, selectMaterial, tableMaterial,
   MATERIAL_CATALOG_VERSION, combinationsOf, validateMaterial, PALETTE_SOURCE_VERDICT, PALETTE_ROLES, MATERIAL_TYPE_PRESETS,
 } from '../src/materials/index.mjs';
 import {nodeTypes, nodeSpecs, themes, palettes, templates, pageTypeIds, recipeIds, iconNames, axes, styleAxes, ACCEPTED_CATALOG_VERSIONS, CATALOG_VERSION, VERSION_ORDER} from '../src/catalog.mjs';
@@ -30,7 +31,7 @@ const sample = (patch = {}) => defineMaterial({
 test('materials: every existing node, axis, type preset, theme, palette, page type, template, recipe, layout primitive and icon is registered', () => {
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
-    axis: 1 + styleAxes.length, 'chart-preset': 8, component: nodeTypes.length + 2, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
+    axis: 1 + styleAxes.length, 'chart-preset': chartPresetMaterials.length, component: nodeTypes.length + [selectMaterial, tableMaterial].length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
     palette: Object.keys(palettes).length, 'color-token': registry.byKind('color-token').length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length, 'type-role-preset': Object.keys(MATERIAL_TYPE_PRESETS).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));
@@ -45,7 +46,7 @@ test('materials: material count, attribute combinations and complete presets are
   assert.equal(c.completePresets, registry.list().filter(m => registry.isPreset(m)).length);
   assert.ok(c.attributeCombinations > c.materials && c.materials > c.completePresets && c.completePresets > 0, JSON.stringify(c));
   // 완성 프리셋은 서체 프리셋·역할 서체·테마·템플릿·차트뿐이다. 속성이 많은 부품(히어로·표…)은 조합을 늘려도 프리셋이 아니다.
-  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(MATERIAL_TYPE_PRESETS).length + Object.keys(themes).length + Object.keys(templates).length + 8);
+  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(MATERIAL_TYPE_PRESETS).length + Object.keys(themes).length + Object.keys(templates).length + chartPresetMaterials.length);
   assert.equal(registry.filter({kind: 'component', preset: true}).length, 0);
   assert.ok(combinationsOf(registry.get('component:hero')) > 1);
 });

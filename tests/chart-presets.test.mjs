@@ -2,8 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createBlueprint} from '../src/catalog.mjs';
 import {nodeSpecs} from '../src/catalog/nodes.mjs';
-import {nodeSpecAt, NODE_SPEC_EXTENSIONS} from '../src/catalog/node-extensions.mjs';
-import {CATALOG_VERSION} from '../src/catalog.mjs';
+import {nodeSpecAt, nodeExtended, NODE_SPEC_EXTENSIONS} from '../src/catalog/node-extensions.mjs';
+import {CATALOG_VERSION, VERSION_ORDER, TOP_LEVEL_SINCE_FIELDS, atLeast} from '../src/catalog.mjs';
 import {compile, validateBlueprint} from '../src/compiler.mjs';
 import {catalogRegistry, resolveChartPreset} from '../src/materials/index.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
@@ -169,4 +169,40 @@ test('only a Blueprint that selects catalogVersion 2.6.0 gets the new chart shap
   // a 2.6.0 document that uses none of the new shapes is judged by the old chart rules plus the new data checks, never looser
   assert.equal(validateBlueprint(pageWithChart(sample('bar'), '2.6.0')).valid, true);
   assert.equal(validateBlueprint(pageWithChart(sample('donut', {series: [{name: 'A', values: [1, -2, 3]}]}), '2.6.0')).valid, false);
+});
+
+test('the chart extension and the color-token 2.6.0 fields are judged by one gate: atLeast over VERSION_ORDER', () => {
+  for (const since of Object.keys(NODE_SPEC_EXTENSIONS)) assert.ok(VERSION_ORDER.includes(since), `${since} must be in VERSION_ORDER or its extension never turns on`);
+  const color = TOP_LEVEL_SINCE_FIELDS.find(field => field.field === 'colorPalette');
+  for (const version of [...VERSION_ORDER, '2.7.0', '2.6', undefined]) {
+    assert.equal(nodeExtended('chart', version), atLeast(version, '2.6.0'), `chart extension at ${version}`);
+    assert.equal(nodeExtended('chart', version), atLeast(version, color.since), `chart extension and colorPalette agree at ${version}`);
+    const blueprint = {...createBlueprint('saas-landing'), catalogVersion: version, colorPalette: 'static-kit'};
+    assert.equal(validateBlueprint(blueprint).errors.some(error => error.code === 'VERSION_FIELD'), !atLeast(version, color.since), `colorPalette gate at ${version}`);
+  }
+});
+
+test('catalogVersion 2.6.0 Blueprints validate and compile scatter, stacked-bar, heatmap and sparkline charts into deterministic HTML', () => {
+  const charts = {
+    scatter: sample('scatter', {categories: undefined, xLabel: '방문', yLabel: '전환', series: [{name: '표본', points: [{x: 1, y: 2}, {x: 3, y: 6}, {x: 5, y: 7}]}]}),
+    'stacked-bar': sample('stacked-bar', {series: [{name: '제품', values: [4, 6, 5]}, {name: '서비스', values: [2, 3, 4]}], axis: {showX: 'yes', showY: 'yes'}}),
+    heatmap: sample('heatmap', {series: [{name: '월', values: [1, 5, 3]}, {name: '화', values: [4, 2, 6]}]}),
+    sparkline: sample('sparkline', {series: [{name: '요청', values: [3, 8, 5]}]}),
+  };
+  delete charts.scatter.categories;
+  assert.deepEqual(Object.keys(charts).sort(), [...NEW_KINDS].sort());
+  for (const [kind, chart] of Object.entries(charts)) {
+    const blueprint = pageWithChart(chart, '2.6.0');
+    assert.deepEqual(validateBlueprint(blueprint).errors, [], kind);
+    const first = compile(blueprint), second = compile(structuredClone(blueprint));
+    assert.match(first.html, new RegExp(`<figure[^>]* class="kit-chart" data-kind="${kind}"`), kind);
+    assert.match(first.html, /<table>/, kind);
+    assert.equal(first.html, second.html, `${kind} html is deterministic`);
+    assert.equal(first.css, second.css, `${kind} css is deterministic`);
+    for (const version of ['2.4.0', '2.5.0']) {
+      const errors = validateBlueprint(pageWithChart(chart, version)).errors;
+      assert.ok(errors.some(error => error.code === 'ENUM' && error.path.endsWith('.kind')), `${version} ${kind}`);
+    }
+  }
+  assert.ok(validateBlueprint(pageWithChart(charts.scatter, '2.5.0')).errors.some(error => error.code === 'UNKNOWN_KEY'), 'points are an unknown key before 2.6.0');
 });
