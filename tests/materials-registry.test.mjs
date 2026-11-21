@@ -30,7 +30,7 @@ const sample = (patch = {}) => defineMaterial({
 test('materials: every existing node, axis, type preset, theme, palette, page type, template, recipe, layout primitive and icon is registered', () => {
   const c = registry.counts();
   assert.deepEqual(c.byKind, {
-    axis: 1 + styleAxes.length, component: nodeTypes.length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
+    axis: 1 + styleAxes.length, 'chart-preset': 8, component: nodeTypes.length, icon: iconNames.length, 'layout-primitive': PRIMITIVES.length, 'page-type': pageTypeIds.length,
     palette: Object.keys(palettes).length, recipe: recipeIds.length, template: Object.keys(templates).length, theme: Object.keys(themes).length, 'type-preset': Object.keys(TYPE).length,
   });
   assert.equal(c.materials, Object.values(c.byKind).reduce((a, b) => a + b, 0));
@@ -44,8 +44,8 @@ test('materials: material count, attribute combinations and complete presets are
   assert.equal(c.attributeCombinations, registry.list().reduce((n, m) => n + combinationsOf(m), 0));
   assert.equal(c.completePresets, registry.list().filter(m => registry.isPreset(m)).length);
   assert.ok(c.attributeCombinations > c.materials && c.materials > c.completePresets && c.completePresets > 0, JSON.stringify(c));
-  // 완성 프리셋은 서체 프리셋·테마·템플릿뿐이다. 속성이 많은 부품(히어로·표…)은 조합을 늘려도 프리셋이 아니다.
-  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(themes).length + Object.keys(templates).length);
+  // 완성 프리셋은 서체·테마·템플릿·차트다. 속성이 많은 부품(히어로·표…)은 프리셋이 아니다.
+  assert.equal(c.completePresets, Object.keys(TYPE).length + Object.keys(themes).length + Object.keys(templates).length + 8);
   assert.equal(registry.filter({kind: 'component', preset: true}).length, 0);
   assert.ok(combinationsOf(registry.get('component:hero')) > 1);
 });
@@ -132,8 +132,9 @@ test('materials: new kinds extend the registry without touching the common contr
   }));
   assert.equal(r.counts().byQuality.missing, 1);
   assert.throws(() => defineKind({id: 'x', label: 'x', categories: ['nope']}));
-  // 후속 단계 종류는 계약만 있고 아직 재료가 없다.
-  for (const k of ['color-token', 'chart-preset', 'pattern']) { assert.ok(registry.kind(k)); assert.equal(registry.byKind(k).length, 0); }
+  // 차트 프리셋은 이번 작업에서 구현했고 색 토큰·패턴은 계약만 있다.
+  for (const k of ['color-token', 'pattern']) { assert.ok(registry.kind(k)); assert.equal(registry.byKind(k).length, 0); }
+  assert.ok(registry.byKind('chart-preset').length >= 6);
 });
 
 test('materials: adapters keep catalog facts (children, parents, enums, contexts, CSS tokens)', () => {
