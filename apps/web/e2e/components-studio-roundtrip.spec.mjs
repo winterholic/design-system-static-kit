@@ -23,11 +23,11 @@ test('Components opens the selected registered material in Studio, preserves wor
   await page.getByRole('treeitem').filter({hasText: '선택 상자'}).click();
   await expect(page.getByRole('combobox', {name: 'maxMenuHeight'})).toContainText('192');
 
-  await page.getByLabel('id', {exact: true}).fill('region-edited');
+  await page.locator('[data-field="id"]').fill('region-edited');
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('winterholic-static-kit.studio.v1') || '{}').modified)).toBe(true);
   await page.goto(href);
   await expect(page.getByRole('dialog')).toContainText('작업 중인 문서가 있습니다');
-  await expect(page.getByRole('treeitem').filter({hasText: 'region-edited'})).toBeVisible();
+  await expect(page.locator('[data-field="id"]')).toHaveValue('region-edited');
   await page.getByRole('button', {name: '이어서 작업'}).click();
 
   const downloadPromise = page.waitForEvent('download');

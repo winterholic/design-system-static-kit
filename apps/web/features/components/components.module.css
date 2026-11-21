@@ -35,8 +35,11 @@
 .values { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
 
 .ctx { display: grid; grid-template-columns: 1fr; gap: var(--space-5); }
+.ctx > div, .ctx dd { max-width: none; min-width: 0; }
+.ctx > div:first-child dd { text-wrap: balance; }
 .ctx dt { color: var(--color-muted); font-size: var(--text-sm); margin-bottom: var(--space-1); }
 .ctx dd { margin: 0; }
+.table td code { white-space: nowrap; }
 .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
 .block { max-width: 720px; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
 .pre { width: 100%; margin: 0; padding: var(--space-4); max-height: 360px; overflow: auto; background: var(--color-surface); border-radius: var(--radius); font-size: var(--text-sm); line-height: 1.5; }

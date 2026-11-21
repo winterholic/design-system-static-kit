@@ -84,7 +84,7 @@ export default async function ComponentPage({params}: Props) {
                 <tr key={f.name}>
                   <th scope="row"><code>{f.name}</code></th>
                   <td>{f.required ? '필수' : '선택'}</td>
-                  <td>{f.kind}</td>
+                  <td><code>{f.kind}</code></td>
                   <td><div className={styles.values}>{f.detail.map(d => <code key={d}>{d}</code>)}</div></td>
                 </tr>
               ))}
