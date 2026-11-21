@@ -54,3 +54,9 @@ test('기본 임계값은 카드의 읽기 폭 기준(45~80ch)을 그대로 담�
 test('SVG slice 크롭은 실제 잘린 양이 20% 이상인 의미 있는 그림만 경고로 보고한다', () => {
   assert.equal(LAYOUT_OPTIONS.thresholds.sliceCropPercent, 20);
 });
+
+test('상단바 검사는 셸과 배너를 선택하고 내비게이션 스크롤 목록은 의도 영역으로 분류한다', () => {
+  assert.match(LAYOUT_OPTIONS.selectors.bar, /header:not\(/);
+  assert.match(LAYOUT_OPTIONS.selectors.bar, /\[role=banner\]/);
+  assert.match(LAYOUT_OPTIONS.selectors.scroll, /\.kit-nav ul/);
+});

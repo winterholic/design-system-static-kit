@@ -147,6 +147,8 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 .kit-chart-scroll{flex:1 1 280px;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
 .kit-chart-scroll:focus-visible{outline:2px solid var(--kit-link);outline-offset:2px}
 .kit-chart .kit-chart-scroll svg{width:600px;min-width:600px;max-width:none;max-height:none;flex:none}
+/* 2.6.0 material layout corrections (docs/layout-quality.md) */
+.kit-chart :is(.ch-t,.ch-v,.ch-vh){font-size:13px}
 /* layout contract rev 2 (src/layout.mjs) */
 .kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}
 .kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}

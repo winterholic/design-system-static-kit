@@ -9132,6 +9132,7 @@ const {tabsStyles} = __m("materials/tabs.mjs");
 const {tooltipStyles} = __m("materials/tooltip.mjs");
 const {feedbackStyles} = __m("materials/feedback.mjs");
 const {renderRoleTypeCSS, roleTypeUsage} = __m("materials/typography.mjs");
+const {materialQualityCSS} = __m("styles/material-quality.mjs");
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -9182,6 +9183,8 @@ function stylesheet(b, sets, body = '', design = null) {
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
   if (atLeast(b.catalogVersion, '2.6.0') && body.includes('data-chart="2.6"')) parts.push(chartExtensionCSS().trim());
   if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
+  // 2.6.0-only component corrections; older compiled output remains byte-for-byte pinned.
+  if (atLeast(b.catalogVersion, '2.6.0')) parts.push(materialQualityCSS(used));
   const rev2 = layoutRev(b) === 2;
   if (b.typeRoles && atLeast(b.catalogVersion, '2.6.0')) parts.push(renderRoleTypeCSS(b.typeRoles, {fit: rev2}).trim());
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
@@ -9195,6 +9198,18 @@ const typeRolesManifest = b => (b.typeRoles && atLeast(b.catalogVersion, '2.6.0'
 exports.usedTypes = usedTypes;
 exports.stylesheet = stylesheet;
 exports.typeRolesManifest = typeRolesManifest;
+};
+__defs["styles/material-quality.mjs"] = function (exports, __m) {
+/** Layout corrections for 2.6.0 material output. Older catalog outputs never include this layer. */
+function materialQualityCSS(used) {
+  const rules = ['/* 2.6.0 material layout corrections (docs/layout-quality.md) */'];
+  if (used.has('card')) rules.push('.kit-card[data-product=yes]{overflow:visible}', '.kit-card[data-product=yes] .kit-card-body{flex:1 0 auto}');
+  if (used.has('logo-cloud')) rules.push('.kit-logos :is(h2,h3,h4){font-size:var(--kit-t-body-l);color:var(--kit-text)}');
+  if (used.has('chart')) rules.push('.kit-chart :is(.ch-t,.ch-v,.ch-vh){font-size:13px}');
+  return rules.join('\n');
+}
+
+exports.materialQualityCSS = materialQualityCSS;
 };
 __defs["styles/polish.mjs"] = function (exports, __m) {
 /**

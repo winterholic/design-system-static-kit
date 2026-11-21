@@ -24,6 +24,7 @@ import {tabsStyles} from '../materials/tabs.mjs';
 import {tooltipStyles} from '../materials/tooltip.mjs';
 import {feedbackStyles} from '../materials/feedback.mjs';
 import {renderRoleTypeCSS, roleTypeUsage} from '../materials/typography.mjs';
+import {materialQualityCSS} from './material-quality.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
 const shade = mode => (mode === 'dark' ? 'rgba(0,0,0,.5)' : 'rgba(16,21,28,.14)');
@@ -74,6 +75,8 @@ export function stylesheet(b, sets, body = '', design = null) {
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
   if (atLeast(b.catalogVersion, '2.6.0') && body.includes('data-chart="2.6"')) parts.push(chartExtensionCSS().trim());
   if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
+  // 2.6.0-only component corrections; older compiled output remains byte-for-byte pinned.
+  if (atLeast(b.catalogVersion, '2.6.0')) parts.push(materialQualityCSS(used));
   const rev2 = layoutRev(b) === 2;
   if (b.typeRoles && atLeast(b.catalogVersion, '2.6.0')) parts.push(renderRoleTypeCSS(b.typeRoles, {fit: rev2}).trim());
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());

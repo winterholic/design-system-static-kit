@@ -24,6 +24,18 @@ test('public assembly builds four product contexts with selected materials and b
   assert.ok(first.find(x => x.id === 'analytics').materials.chartPresets.length > 0);
 });
 
+test('2.6.0 material layouts reserve card text, give proof headings hierarchy, and keep chart labels readable', () => {
+  const rows = buildEvidenceCases();
+  for (const row of rows) assert.equal(row.blueprint.catalogVersion, '2.6.0');
+  const commerce = rows.find(x => x.id === 'commerce').css;
+  const saas = rows.find(x => x.id === 'saas').css;
+  const analytics = rows.find(x => x.id === 'analytics').css;
+  assert.match(commerce, /\.kit-card\[data-product=yes\]\{overflow:visible\}/);
+  assert.match(commerce, /\.kit-card\[data-product=yes\] \.kit-card-body\{flex:1 0 auto\}/);
+  assert.match(saas, /\.kit-logos :is\(h2,h3,h4\)\{font-size:var\(--kit-t-body-l\);color:var\(--kit-text\)\}/);
+  assert.match(analytics, /\.kit-chart :is\(\.ch-t,\.ch-v,\.ch-vh\)\{font-size:13px\}/);
+});
+
 test('legacy false-positive and miss controls are reproducible scanner inputs, with the known fixture signatures', async () => {
   const {buildLegacyControlCases} = await import('../scripts/material-platform-evidence/legacy-controls.mjs');
   const cases = buildLegacyControlCases();

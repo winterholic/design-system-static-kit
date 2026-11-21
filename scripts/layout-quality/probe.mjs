@@ -137,6 +137,8 @@ export function layoutProbe(options) {
     const text = textOf(el);
     if (el.matches(SEL.value)) return 'value';
     if (el.matches(SEL.lead) || (tag === 'P' && el.previousElementSibling?.tagName === 'H1' && text.length <= T.lead.maxChars)) return 'lead';
+    // Testimonials are short quoted statements, not body paragraphs measured against the prose column floor.
+    if (tag === 'P' && el.closest('blockquote')) return 'short';
     if (el.matches(SEL.label) || tag === 'DT' || tag === 'LEGEND' || tag === 'LABEL' || tag === 'FIGCAPTION' || tag === 'CAPTION' || tag === 'SUMMARY') return 'label';
     if (tag === 'DD') return 'desc';
     if (text.length <= T.labelChars && !el.matches('p,li')) return 'label';
@@ -465,7 +467,9 @@ export function layoutProbe(options) {
     if (page) {
       const pr = page.getBoundingClientRect(), ps = getComputedStyle(page);
       const pl = pr.left + parseFloat(ps.paddingLeft), prr = pr.right - parseFloat(ps.paddingRight);
-      const left = Math.min(...infos.map(i => i.left)), right = Math.max(...infos.map(i => i.right));
+      const barStyle = getComputedStyle(bar), kitShell = bar.matches('.kit-header');
+      const left = kitShell ? barBox.left + (parseFloat(barStyle.paddingLeft) || 0) : Math.min(...infos.map(i => i.left));
+      const right = kitShell ? barBox.right - (parseFloat(barStyle.paddingRight) || 0) : Math.max(...infos.map(i => i.right));
       if (bar.getBoundingClientRect().width >= vw - 1 && (Math.abs(left - pl) > T.bar.edgeTolerance || Math.abs(prr - right) > T.bar.edgeTolerance)) {
         flag('BAR_MISALIGNED_X', 'error', bar, 'bar', {barContentLeft: r1(left), pageContentLeft: r1(pl), barContentRight: r1(right), pageContentRight: r1(prr), leftDeltaPx: r1(left - pl), rightDeltaPx: r1(right - prr), tolerancePx: T.bar.edgeTolerance});
       }
@@ -483,9 +487,9 @@ export const LAYOUT_OPTIONS = {
     value: '[data-layout-role=value],.kit-metric-value,.kit-plan-price,.kit-price,.kit-total,.kit-card-price,.kit-menu-price',
     lead: '.page-lead,.lead,[class*="lead" i],.subtitle,.standfirst',
     label: '.eyebrow,.kit-eyebrow,.caption,[class*="_cap"],[class*="_eyebrow"],small',
-    scroll: '[data-layout-scroll],.kit-table-scroll,.kit-reel,.kit-tablist,pre,[tabindex="0"]',
+    scroll: '[data-layout-scroll],.kit-table-scroll,.kit-reel,.kit-tablist,.kit-nav ul,pre,[tabindex="0"]',
     decor: '[data-layout-decor],.kit-art,.kit-art-box,.kit-mock',
-    bar: 'header,[role=banner],[data-layout-bar]',
+    bar: '.kit-header,header:not(:is(main,article,aside,nav,section) header),[role=banner],[data-layout-bar]',
     page: '[data-layout-page],main > .page,main > *',
   },
   thresholds: {
