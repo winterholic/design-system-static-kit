@@ -43,7 +43,11 @@ test('production REST output can mount the 2.6.0 component runtimes', async ({pa
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.setContent(value.html);
-  for (const [, id] of controls) await expect(page.locator(`[data-ctl=${id}]`).first()).toBeAttached();
+  // NOTE: Modal·Tooltip 예시는 내부에 Button·Input 컨트롤을 품으므로 다른 컨트롤 밖에 있는 루트만 센다.
+  const roots = await page.evaluate(ids => Object.fromEntries(ids.map(id => [id,
+    [...document.querySelectorAll(`[data-ctl=${id}]`)].filter(el => !el.parentElement?.closest('[data-ctl]')).length])),
+  controls.map(([, id]) => id));
+  for (const [, id] of controls) expect(roots[id], id).toBe(1);
   expect(errors).toEqual([]);
   const modal = page.locator('[data-ctl=modal]');
   const trigger = modal.locator('.kit-ctl-modal-trigger button');
