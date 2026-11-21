@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from 'react';
+import {Button} from '@/ui';
 
 type Result = {bytes: number; sha256: string; ms: number; error?: string};
 
@@ -37,7 +38,7 @@ export function SpikeClient({template}: {template: string}) {
 
   return (
     <div>
-      <button type="button" className="btn" onClick={run} disabled={busy}>브라우저에서 컴파일</button>
+      <Button variant="primary" onClick={run} disabled={busy}>브라우저에서 컴파일</Button>
       {result ? (
         <dl data-testid="client-result" data-sha256={result.sha256} data-error={result.error ?? ''}>
           <dt>바이트</dt><dd>{result.bytes}</dd>

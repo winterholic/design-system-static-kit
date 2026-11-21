@@ -7,6 +7,7 @@ import {DiagnosticList} from './Banners';
 import {CheckPanel} from './CheckPanel';
 import {DesignPanel} from './DesignPanel';
 import {StructurePanel} from './StructurePanel';
+import {Button} from '@/ui';
 import styles from '../studio.module.css';
 
 const TAB_LABEL: Record<Tab, string> = {structure: '구조·내용', design: '디자인', check: '검증'};
@@ -26,9 +27,9 @@ function OpError() {
       <h3 id="op-error-title" className={styles.bannerTitle}>변경하지 못했습니다. 문서는 그대로입니다</h3>
       <DiagnosticList items={errors} onJump={d => api.jumpTo(d)} />
       <div className="btn-row">
-        {autoFix ? <button type="button" className={styles.tool} onClick={() => api.edit({...(intent as Extract<typeof intent, {kind: 'setAxis'}>), repair: 'auto'})}>금지 조합을 자동 보정해 적용</button> : null}
-        {relocate ? <button type="button" className={styles.tool} onClick={() => api.edit({...(intent as Extract<typeof intent, {kind: 'setLayout'}>), relocate: true})}>콘텐츠를 옮기며 적용</button> : null}
-        <button type="button" className={styles.tool} onClick={api.dismissError}>닫기</button>
+        {autoFix ? <Button size="sm" onClick={() => api.edit({...(intent as Extract<typeof intent, {kind: 'setAxis'}>), repair: 'auto'})}>금지 조합을 자동 보정해 적용</Button> : null}
+        {relocate ? <Button size="sm" onClick={() => api.edit({...(intent as Extract<typeof intent, {kind: 'setLayout'}>), relocate: true})}>콘텐츠를 옮기며 적용</Button> : null}
+        <Button size="sm" onClick={api.dismissError}>닫기</Button>
       </div>
       <span className="visually-hidden">{first?.code}</span>
     </section>

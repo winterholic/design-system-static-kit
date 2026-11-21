@@ -4,6 +4,7 @@ export const GITHUB_URL = 'https://github.com/winterholic/design-system-static-k
 
 export const NAV_ITEMS = [
   {href: '/explore', label: 'Explore'},
+  {href: '/materials', label: 'Materials'},
   {href: '/components', label: 'Components'},
   {href: '/docs', label: 'Docs'},
   {href: '/integrations', label: 'Integrations'},

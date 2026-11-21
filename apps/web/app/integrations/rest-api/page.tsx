@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {PageShell} from '@/shell/PageShell';
+import {ButtonLink} from '@/ui';
 
 export const metadata = {title: 'REST API 연동'};
 
@@ -28,7 +29,7 @@ curl -X POST 'http://localhost:3000/api/v1/compile' \\
         <p><a href="/api/v1/openapi.json">OpenAPI 3.1 JSON</a>은 작업 목록과 서비스 JSON Schema에서 요청마다 결정적으로 생성됩니다. GET 성공 응답은 ETag와 캐시 지시자를 보내며, POST 응답과 실패 응답은 캐시하지 않습니다.</p>
         <p><Link href="/integrations/mcp">MCP</Link>는 같은 서비스 계약을 에이전트 도구로 제공합니다.</p>
       </article>
-      <p><Link href="/integrations" className="btn btn-quiet">연동 목록으로</Link></p>
+      <p><ButtonLink href="/integrations" variant="quiet">연동 목록으로</ButtonLink></p>
     </PageShell>
   );
 }

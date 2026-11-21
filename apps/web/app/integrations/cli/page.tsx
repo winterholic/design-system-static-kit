@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {PageShell} from '@/shell/PageShell';
+import {ButtonLink} from '@/ui';
 
 export const metadata = {title: 'CLI 연동'};
 
@@ -20,7 +21,7 @@ npm run kit -- check ./dist/my-site`}</code></pre>
         <p><code>build</code> 출력은 <code>index.html</code>, <code>tokens.css</code>, <code>tokens.json</code>, <code>blueprint.json</code>, <code>manifest.json</code>입니다. 다른 채널과 마찬가지로 검증 코드와 입력 경로를 보존합니다. 사람이 읽는 CLI 오류는 표준 오류로, 자동화 결과는 종료 코드로 판별하세요.</p>
         <p><Link href="/integrations/rest-api">HTTP 자동화에는 REST API</Link>, 에이전트 도구 연결에는 <Link href="/integrations/mcp">MCP</Link>를 사용하세요.</p>
       </article>
-      <p><Link href="/integrations" className="btn btn-quiet">연동 목록으로</Link></p>
+      <p><ButtonLink href="/integrations" variant="quiet">연동 목록으로</ButtonLink></p>
     </PageShell>
   );
 }

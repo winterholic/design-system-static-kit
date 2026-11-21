@@ -5,13 +5,14 @@
 // 리듀서는 순수하다. 연산은 (doc, args) → 새 doc 순수 함수라서 호출해도 부작용이 없다. 시간은 액션이 들고 온다.
 import {core} from './core';
 import {clampPath, nodeAt, pathExists} from './paths';
+import {isDisposable} from './protect';
 import type {Blueprint, Device, Diagnostic, Node, NodePath, OpResult, Origin, Pane, Picks, PreviewScheme, ScaleMode, StartRequest, Tab} from './types';
 
 // ---------------------------------------------------------------- 상태 타입
 
 export type OpFailure = {id: number; intent: Intent; errors: Diagnostic[]; warnings: Diagnostic[]};
 export type Notice = {id: number; level: 'info' | 'warning' | 'error'; text: string; details?: Diagnostic[]};
-export type StorageStatus = {status: 'idle' | 'saved' | 'error' | 'unavailable'; message?: string; savedAt?: string};
+export type StorageStatus = {status: 'idle' | 'saved' | 'error' | 'unavailable' | 'conflict'; message?: string; savedAt?: string};
 export type Recovery = {raw: string; reason: string};
 
 export type PendingAction =
@@ -72,6 +73,8 @@ export type Intent =
   | {kind: 'setMode'; mode: string}
   | {kind: 'setAxis'; axis: string; value: string; repair?: 'auto'}
   | {kind: 'setPalette'; palette: string}
+  | {kind: 'setMaterial'; field: 'colorPalette' | 'typeRoles' | 'profile'; value: string | null}
+  | {kind: 'upgrade260'}
   | {kind: 'setLayout'; slot: string; option: string; relocate?: boolean}
   | {kind: 'setTheme'; theme: string}
   | {kind: 'setThemeVariant'; variant: string | null; variantSet?: Record<string, string>}
@@ -123,14 +126,35 @@ function themeChange(ctx: Context, theme: string, variant: string | null, varian
 }
 
 function startRequest(ctx: Context, request: StartRequest): Outcome {
+  if (request.profile) {
+    const assembled = core().service.assembleBlueprint({profile: request.profile, intent: {}, content: {}});
+    if (!assembled.ok) return {res: failed(ctx.doc, assembled.errors), origin: null, picked: {}, selection: []};
+    const res = op(ctx.doc, 'importBlueprint', {blueprint: assembled.value.blueprint, upgrade: true, discard: true});
+    return {res, origin: null, picked: {}, selection: []};
+  }
   const template = request.template ?? DEFAULT_TEMPLATE;
   const r1 = op(ctx.doc, 'resetDocument', {template, theme: request.theme, palette: request.palette, themeVariant: request.variant, layout: request.layout, discard: true});
   const origin: Origin = {template, layout: request.layout ?? {}, themeVariant: request.variant ?? null, palette: request.palette ?? null};
-  if (!r1.ok || !request.mode) return {res: r1, origin, picked: {}, selection: []};
-  // 모드는 resetDocument 인자가 아니라서 이어서 적용한다. 둘 중 하나라도 거부되면 전체를 적용하지 않는다(원자성).
-  const r2 = op(r1.doc, 'setAppearance', {mode: request.mode});
-  if (!r2.ok) return {res: failed(ctx.doc, r2.errors, r1.warnings), origin, picked: {}, selection: []};
-  return {res: {...r2, changes: [...r1.changes, ...r2.changes], warnings: [...r1.warnings, ...r2.warnings]}, origin, picked: {}, selection: []};
+  const axes = request.axes ?? {};
+  if (!r1.ok || (!request.mode && !Object.keys(axes).length && !request.colorPalette && !request.typeRoles && !request.profile && request.catalogVersion !== '2.6.0')) return {res: r1, origin, picked: {}, selection: []};
+  // 모드·스타일 축은 resetDocument 인자가 아니라서 이어서 한 번에 적용한다. 하나라도 거부되면 전체를 적용하지 않는다(원자성).
+  let working = r1.doc;
+  const changes = [...r1.changes], warnings = [...r1.warnings];
+  let picked: Picks = {};
+  if (request.mode || Object.keys(axes).length) {
+    const r2 = op(working, 'setAppearance', {...(request.mode ? {mode: request.mode} : {}), ...(Object.keys(axes).length ? {axes} : {})});
+    if (!r2.ok) return {res: failed(ctx.doc, r2.errors, r1.warnings), origin, picked: {}, selection: []};
+    working = r2.doc; changes.push(...r2.changes); warnings.push(...r2.warnings);
+    picked = {...axes};
+  }
+  if (request.colorPalette || request.typeRoles || request.profile || request.catalogVersion === '2.6.0') {
+    // 2.6.0 재료 필드는 importBlueprint 경로로 올려 Core가 버전·값·프로파일 호환을 함께 검증한다.
+    const blueprint = {...working, catalogVersion: '2.6.0', ...(request.colorPalette ? {colorPalette: request.colorPalette} : {}), ...(request.typeRoles ? {typeRoles: request.typeRoles} : {}), ...(request.profile ? {profile: request.profile} : {})};
+    const r3 = op(working, 'importBlueprint', {blueprint, upgrade: true, discard: true});
+    if (!r3.ok) return {res: failed(ctx.doc, r3.errors, r1.warnings), origin, picked: {}, selection: []};
+    working = r3.doc; changes.push(...r3.changes); warnings.push(...r3.warnings);
+  }
+  return {res: {ok: true, doc: working, changes, errors: [], warnings, content: r1.content}, origin, picked, selection: []};
 }
 
 /** 한 의도를 Core 연산으로 실행한다. 순수하다: 실패하면 입력 문맥은 어디에도 반영되지 않는다. */
@@ -162,6 +186,17 @@ export function perform(ctx: Context, intent: Intent): Outcome {
     }
     case 'setPalette':
       return keep(op(doc, 'setPalette', {palette: intent.palette}), {origin: origin ? {...origin, palette: intent.palette} : origin});
+    case 'setMaterial': {
+      if (!doc) return keep(failed(doc, [{code: 'ARGS_INVALID', path: '$', message: '문서가 없습니다.', hint: '먼저 템플릿으로 시작하세요.'}]));
+      const blueprint = {...doc, catalogVersion: '2.6.0'} as Blueprint & Record<string, unknown>;
+      if (intent.value === null) delete blueprint[intent.field];
+      else blueprint[intent.field] = intent.value;
+      return keep(op(doc, 'importBlueprint', {blueprint, upgrade: true}));
+    }
+    case 'upgrade260': {
+      if (!doc) return keep(failed(doc, [{code: 'ARGS_INVALID', path: '$', message: '문서가 없습니다.', hint: '먼저 템플릿으로 시작하세요.'}]));
+      return keep(op(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0'}, upgrade: true}));
+    }
     case 'setLayout': {
       const res = op(doc, 'setLayoutVariant', {slot: intent.slot, option: intent.option, contentPolicy: intent.relocate ? 'relocate' : 'reject'});
       return keep(res, {origin: origin ? {...origin, layout: {...origin.layout, [intent.slot]: intent.option}} : origin});
@@ -324,5 +359,5 @@ export function reducer(s: StudioState, a: Action): StudioState {
   }
 }
 
-/** 수정된 작업이 있어 확인이 필요한가. 시작 화면(문서 없음)은 확인이 필요 없다. */
-export const needsConfirm = (s: StudioState) => s.phase === 'ready' && s.session.modified;
+/** 사용자 작업이 있어 교체 전에 확인이 필요한가. 판정은 protect.ts의 한 규칙이고, 시작 화면(문서 없음)은 확인이 필요 없다. */
+export const needsConfirm = (s: StudioState) => s.phase === 'ready' && !isDisposable({doc: s.document.doc, origin: s.session.origin, picked: s.session.picked, modified: s.session.modified});

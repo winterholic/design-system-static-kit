@@ -4,6 +4,7 @@ import {useStudio} from '../context';
 import type {PendingAction} from '../model';
 import type {Diagnostic} from '../types';
 import {DiagnosticList} from './Banners';
+import {Button, Checkbox, Input, Textarea} from '@/ui';
 import styles from '../studio.module.css';
 
 /** 네이티브 <dialog>(showModal): 뒤쪽을 비활성으로 만들고, 초점을 가두고, Esc로 닫는다. 닫으면 열기 전 초점으로 돌려 준다. */
@@ -53,8 +54,8 @@ function ConfirmDialog({action}: {action: PendingAction}) {
     <Modal title={copy.title} onClose={api.closeDialog}>
       <p>{copy.body}</p>
       <div className="btn-row">
-        <button type="button" className={styles.tool} autoFocus onClick={api.closeDialog}>{copy.cancel}</button>
-        <button type="button" className={styles.toolStrong} onClick={() => api.confirmAction(action)}>{copy.ok}</button>
+        <Button size="sm" autoFocus onClick={api.closeDialog}>{copy.cancel}</Button>
+        <Button size="sm" variant="primary" onClick={() => api.confirmAction(action)}>{copy.ok}</Button>
       </div>
     </Modal>
   );
@@ -90,15 +91,12 @@ function ImportDialog() {
         <input id="import-file" type="file" accept="application/json,.json" onChange={e => onFile(e.target.files?.[0])} />
         {fileNote ? <p className={styles.muted} role="status">{fileNote}</p> : null}
       </div>
-      <div className={styles.field}>
-        <label className={styles.fieldLabel} htmlFor="import-text">Blueprint JSON</label>
-        <textarea id="import-text" className={`${styles.input} ${styles.mono}`} rows={10} value={text} onChange={e => { setText(e.target.value); setErrors([]); }} aria-invalid={errors.length > 0 || undefined} />
-      </div>
-      <label className={styles.checkLabel}><input type="checkbox" checked={upgrade} onChange={e => setUpgrade(e.target.checked)} /> 옛 카탈로그 버전이면 현재 버전으로 올리기</label>
+      <Textarea id="import-text" className={styles.field} mono label="Blueprint JSON" rows={10} value={text} onChange={e => { setText(e.target.value); setErrors([]); }} aria-invalid={errors.length > 0 || undefined} />
+      <Checkbox label="옛 카탈로그 버전이면 현재 버전으로 올리기" checked={upgrade} onChange={e => setUpgrade(e.target.checked)} />
       {errors.length ? <div role="alert" data-testid="import-errors"><p className={styles.fieldError}>가져오지 못했습니다. 현재 문서는 그대로입니다.</p><DiagnosticList items={errors} /></div> : null}
       <div className="btn-row">
-        <button type="button" className={styles.tool} onClick={api.closeDialog}>취소</button>
-        <button type="button" className={styles.toolStrong} disabled={!text.trim()} onClick={apply}>가져오기</button>
+        <Button size="sm" onClick={api.closeDialog}>취소</Button>
+        <Button size="sm" variant="primary" disabled={!text.trim()} onClick={apply}>가져오기</Button>
       </div>
     </Modal>
   );
@@ -122,10 +120,7 @@ function TemplateDialog() {
     <Modal title={hasDoc ? '템플릿 바꾸기' : '템플릿 고르기'} onClose={api.closeDialog}>
       {!catalog ? <p className={styles.muted} role="status">카탈로그를 불러오는 중입니다…</p> : (
         <>
-          <div className={styles.field}>
-            <label className={styles.fieldLabel} htmlFor="tpl-q">템플릿 검색</label>
-            <input id="tpl-q" className={styles.input} type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="이름·id·페이지 유형" />
-          </div>
+          <Input id="tpl-q" className={styles.field} type="search" label="템플릿 검색" value={query} onChange={e => setQuery(e.target.value)} placeholder="이름·id·페이지 유형" />
           <fieldset className={styles.tplList}>
             <legend className="visually-hidden">템플릿 {items.length}개</legend>
             {items.map(t => (
@@ -136,12 +131,12 @@ function TemplateDialog() {
             ))}
             {items.length === 0 ? <p className={styles.muted}>검색 결과가 없습니다.</p> : null}
           </fieldset>
-          {hasDoc ? <label className={styles.checkLabel}><input type="checkbox" checked={keepAppearance} onChange={e => setKeep(e.target.checked)} /> 지금 테마·팔레트·모드를 유지</label> : null}
+          {hasDoc ? <Checkbox label="지금 테마·팔레트·모드를 유지" checked={keepAppearance} onChange={e => setKeep(e.target.checked)} /> : null}
         </>
       )}
       <div className="btn-row">
-        <button type="button" className={styles.tool} onClick={api.closeDialog}>취소</button>
-        <button type="button" className={styles.toolStrong} disabled={!picked || !catalog} onClick={choose}>{hasDoc ? '이 템플릿으로 바꾸기' : '이 템플릿으로 시작'}</button>
+        <Button size="sm" onClick={api.closeDialog}>취소</Button>
+        <Button size="sm" variant="primary" disabled={!picked || !catalog} onClick={choose}>{hasDoc ? '이 템플릿으로 바꾸기' : '이 템플릿으로 시작'}</Button>
       </div>
     </Modal>
   );

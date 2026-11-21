@@ -19,7 +19,7 @@ export const GRADES = Object.freeze({strong: 'error', quality: 'warning', diagno
 /** 검증기 오류 코드가 속한 강한 계약의 범주. 표에 없는 코드는 schema로 본다. */
 const CATEGORY = {
   a11y: ['LINK_LABEL', 'URL', 'ANCHOR_MISSING', 'ANCHOR_DUPLICATE', 'DUPLICATE_ID', 'SELECT_OPTIONS', 'FIELD_OPTIONS', 'NAV_ICON', 'TOC_EMPTY', 'PRIMARY_ACTION'],
-  structure: ['PAGE_HEADER', 'PAGE_REQUIRE', 'PAGE_FORBID', 'PAGE_ALLOW', 'PAGE_MAX', 'PAGE_SECOND', 'PAGE_SHELL', 'PAGE_WIDTH', 'SINGLE_HERO', 'HERO_POSITION', 'NESTED_TABS', 'SURFACE_NEST', 'SECTION_DEPTH', 'NAV_COUNT', 'NAV_MEGA', 'NAV_GROUP', 'FOOTER_LINKS', 'AXIS_BAN', 'THEME_FORBID', 'ROOT'],
+  structure: ['PAGE_HEADER', 'PAGE_REQUIRE', 'PAGE_FORBID', 'PAGE_ALLOW', 'PAGE_MAX', 'PAGE_SECOND', 'PAGE_SHELL', 'PAGE_WIDTH', 'SINGLE_HERO', 'HERO_POSITION', 'NESTED_TABS', 'SURFACE_NEST', 'SECTION_DEPTH', 'NAV_COUNT', 'NAV_MEGA', 'NAV_GROUP', 'FOOTER_LINKS', 'AXIS_BAN', 'THEME_FORBID', 'ROOT', 'SELECT_COMBO', 'TABLE_COLUMNS', 'TABLE_ROWS'],
 };
 const categoryOf = code => Object.entries(CATEGORY).find(([, codes]) => codes.includes(code))?.[0] ?? 'schema';
 

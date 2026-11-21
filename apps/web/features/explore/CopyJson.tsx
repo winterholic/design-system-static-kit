@@ -1,6 +1,7 @@
 'use client';
 
 import {useRef, useState} from 'react';
+import {Button} from '@/ui';
 import styles from './detail.module.css';
 
 type Status = 'idle' | 'loading' | 'copied' | 'failed';
@@ -30,7 +31,7 @@ export function CopyJson({src, label}: {src: string; label: string}) {
     <details className={styles.json} onToggle={e => { if ((e.currentTarget as HTMLDetailsElement).open) void load().catch(() => setStatus('failed')); }}>
       <summary>{label} 보기</summary>
       <div className={styles.jsonBar}>
-        <button type="button" className="btn btn-quiet" onClick={copy}>{status === 'copied' ? '복사했습니다' : status === 'failed' ? '복사하지 못했습니다' : '복사'}</button>
+        <Button variant="quiet" onClick={copy}>{status === 'copied' ? '복사했습니다' : status === 'failed' ? '복사하지 못했습니다' : '복사'}</Button>
         <span className={styles.size}>{text ? `${(new TextEncoder().encode(text).length / 1024).toFixed(1)}KB` : ''}</span>
       </div>
       <pre tabIndex={0} aria-label={label} className={styles.pre}>{text ?? '불러오는 중…'}</pre>

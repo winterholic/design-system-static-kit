@@ -40,10 +40,10 @@ test('legacy: catalog 2.4.0 output is byte-for-byte what it was before 2.5.0 (85
 
 test('versions: 2.5.0 is accepted, the default creation version stays 2.4.0 (ADR 0010), and the schema enumerates both', () => {
   assert.equal(CATALOG_VERSION, '2.4.0');
-  assert.deepEqual([...ACCEPTED_CATALOG_VERSIONS], [...SUPPORTED_CATALOG_VERSIONS, '2.5.0']);
+  assert.deepEqual([...ACCEPTED_CATALOG_VERSIONS], [...SUPPORTED_CATALOG_VERSIONS, '2.5.0', '2.6.0']);
   assert.deepEqual(blueprintSchema().properties.catalogVersion.enum, [...ACCEPTED_CATALOG_VERSIONS]);
   assert.equal(createBlueprint('saas-landing').catalogVersion, '2.4.0');
-  assert.ok(validateBlueprint({...createBlueprint('saas-landing'), catalogVersion: '2.6.0'}).errors.some(e => e.code === 'CATALOG_VERSION'));
+  assert.ok(validateBlueprint({...createBlueprint('saas-landing'), catalogVersion: '2.6.0'}).valid);
 });
 
 test('migrate 2.4.0 → 2.5.0 changes only catalogVersion; every template stays valid and compiles; it never downgrades', () => {

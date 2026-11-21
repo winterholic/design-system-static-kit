@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
+import {optionStates, pick} from './helpers/select.mjs';
 
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
 
@@ -24,11 +25,11 @@ test('WB-02/WB-03: theme and layout edits preserve authored content', async ({pa
   await expect(page.getByText('수정됨')).toBeVisible();
 
   await page.getByRole('tab', {name: '디자인'}).click();
-  await page.locator('#d-theme-select').selectOption('console');
-  const layout = page.locator('select[id^="d-layout-"]').first();
+  await pick(page, page.locator('#d-theme-select'), 'console');
+  const layout = page.locator('[role="combobox"][id^="d-layout-"]').first();
   if (await layout.count()) {
-    const options = await layout.locator('option').evaluateAll(nodes => nodes.map(node => node.value).filter(Boolean));
-    if (options.length) await layout.selectOption(options.at(-1));
+    const options = (await optionStates(page, layout)).filter(o => o.value && !o.disabled);
+    if (options.length) await pick(page, layout, options.at(-1).value);
   }
   await page.getByRole('tab', {name: '구조·내용'}).click();
   await page.getByRole('treeitem', {name: /페이지 제목/}).click();
@@ -127,6 +128,8 @@ test('WB-04/WB-05: invalid JSON reports Core diagnostics without changing the do
   await page.getByRole('button', {name: '템플릿 바꾸기'}).click();
   await page.getByRole('radio', {name: /saas-landing/}).check();
   await page.getByRole('button', {name: '이 템플릿으로 바꾸기'}).click();
+  // 가져온 문서는 수정 전이어도 사용자의 작업이라 확인을 받고서야 바뀐다.
+  await page.getByRole('dialog', {name: '템플릿을 바꿀까요?'}).getByRole('button', {name: '템플릿 바꾸기'}).click();
   await expect(page.locator('[data-phase="ready"]')).toBeVisible();
   await expect(page.getByTestId('op-error')).toHaveCount(0);
 });

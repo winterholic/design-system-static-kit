@@ -1,0 +1,25 @@
+{
+  "run_date_local": "2026-11-22",
+  "base_commit": "0bdbf96cd6cf3f1c016b9c216e24ce8a2c0346e6",
+  "requested_cli": "npm run layout:check -- --file docs/evidence/material-platform/assembled/erp/index.html --widths 390,1280 --json docs/evidence/material-platform/layout/erp.json",
+  "requested_cli_status": "blocked",
+  "requested_cli_environment": "macOS command worker",
+  "requested_cli_error": "Chromium launch: bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100); SIGTRAP before the probe ran",
+  "alternate_measurement": "Configured Ttakkari browser rendered all four assembled HTML files at 390px and 1280px and executed the unchanged layoutProbe from scripts/layout-quality/probe.mjs in same-origin frames. Full results are report.json.",
+  "screenshots": [
+    "erp-390.png",
+    "erp-1280.png",
+    "commerce-390.png",
+    "commerce-1280.png",
+    "saas-390.png",
+    "saas-1280.png",
+    "analytics-390.png",
+    "analytics-1280.png"
+  ],
+  "human_evaluation": "not evaluated",
+  "browser_capture_utc": "2026-11-21T17:26:04.487Z",
+  "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "browser_device_pixel_ratio": 1,
+  "browser_console_errors": 0,
+  "actual_probe_results": "10 Chromium probe runs: 8 representative screen/width combinations plus legacy S21@320 and S06@1440 controls; 33 findings (31 error, 2 info). S06 legacy control returned zero findings after scanning 12 clip candidates and 6 SVGs."
+}

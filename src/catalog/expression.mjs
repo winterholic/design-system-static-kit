@@ -3,9 +3,10 @@
  * 새 필드는 모두 범위가 닫힌 enum이고, 값은 기존 토큰·역할·간격 사다리로만 해석된다. 임의 CSS·숫자·className은 받지 않는다.
  * 이 파일은 "무엇이 2.5.0에서 생겼는가"의 단일 출처다: 스키마 설명, 버전 게이트(src/validate.mjs), 렌더러·스타일 게이트가 모두 읽는다.
  */
+import {PROFILE_IDS} from '../profiles/data.mjs';
 
 /** 카탈로그 버전 순서. 새 버전은 끝에 더한다. `atLeast`가 이 순서로 비교한다. */
-export const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0']);
+export const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0']);
 export const EXPRESSION_SINCE = '2.5.0';
 export const atLeast = (version, since) => VERSION_ORDER.includes(version) && VERSION_ORDER.indexOf(version) >= VERSION_ORDER.indexOf(since);
 /** 2.5.0부터 켜지는 표현력 문법과 렌더러 수정(R1~R4)의 게이트. 버전이 없는 내부 호출(타이포·간격만 가진 객체)은 켜지지 않는다. */
@@ -24,6 +25,16 @@ export const SINCE_FIELDS = Object.freeze([
   {node: 'section', field: 'space', proposal: 'EX-4'},
   {node: 'media', field: 'bleed', proposal: 'EX-5'},
 ].map(Object.freeze));
+
+/** 2.6.0 fields at Blueprint level; they use closed IDs and the same explicit version gate as node additions. */
+export const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
+  Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
+  // 역할 타이포그래피 프리셋(src/materials/typography.mjs의 MATERIAL_TYPE_PRESETS 키와 같다. tests/wire-260.test.mjs가 비교한다).
+  Object.freeze({field: 'typeRoles', values: Object.freeze(['erp', 'dashboard', 'document', 'marketing']), since: '2.6.0'}),
+]);
+
+/** 2.6.0 profile selection (src/profiles/data.mjs). Kept apart from TOP_LEVEL_SINCE_FIELDS, whose contents are pinned by the color-token contract. */
+export const PROFILE_SINCE_FIELD = Object.freeze({field: 'profile', values: PROFILE_IDS, since: '2.6.0'});
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */
 export const HERO_RATIOS = Object.freeze({copy: [3, 2], visual: [2, 3]});

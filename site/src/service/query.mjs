@@ -4,12 +4,13 @@
  * 반환값은 모두 JSON으로 직렬화되는 새 객체다(카탈로그 객체는 얼어 있어 그대로 내보내지 않는다).
  */
 import {
-  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules, expressionRules, SINCE_FIELDS,
+  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules, expressionRules, SINCE_FIELDS, atLeast,
   themes, palettes, paletteFamilies, themeCategories, layoutOptionsOf, nodeSpecs, nodeTypes, requiredOf, chromeSpec, rules, axes, axisDefs, axisBans, pageTypes,
   templateList, templates, concepts, conceptsOfTemplate, iconNames, icons, blueprintSchema,
 } from '../catalog.mjs';
 import {recipePicks, recipeOfTemplate} from '../recipes.mjs';
 import {opNames} from '../edit/index.mjs';
+import {nodeSpecAt, nodeTypesAt, nodeSince} from '../catalog/node-extensions.mjs';
 import {diagnostic} from './errors.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 
@@ -49,9 +50,10 @@ const KINDS = {
     },
   },
   components: {
-    id: 'type', summary: ['type', 'label', 'group'], all: ['type', 'label', 'group', 'required', 'optional', 'childTypes'],
-    rows: () => nodeTypes.map(type => ({type, label: nodeSpecs[type].label, group: nodeSpecs[type].group, required: requiredOf(nodeSpecs[type]), optional: nodeSpecs[type].optional ?? [], childTypes: nodeSpecs[type].children ?? []})),
-    filters: {group: (r, v) => r.group === v},
+    id: 'type', summary: ['type', 'label', 'group'], all: ['type', 'label', 'group', 'required', 'optional', 'childTypes', 'since'],
+    // filter.catalogVersion은 그 버전이 받아들이는 부품(2.6.0이면 select-control·data-table 포함)과 그 버전의 자식 목록을 보인다. 생략하면 기본 카탈로그(2.4.0·2.5.0과 같은 문법)다.
+    rows: filter => { const version = filter?.catalogVersion; return (version ? nodeTypesAt(version) : nodeTypes).map(type => { const spec = nodeSpecAt(type, version); return {type, label: spec.label, group: spec.group, required: requiredOf(spec), optional: spec.optional ?? [], childTypes: spec.children ?? [], since: nodeSince(type)}; }); },
+    filters: {group: (r, v) => r.group === v, catalogVersion: {match: () => true, known: v => ACCEPTED_CATALOG_VERSIONS.includes(v), code: 'UNSUPPORTED_VERSION'}},
   },
   pageTypes: {
     id: 'id', summary: ['id', 'label', 'description', 'shells'], all: ['id', 'label', 'description', 'require', 'forbid', 'allow', 'shells', 'widths', 'maxChildren'],
@@ -217,6 +219,8 @@ function pickFields(schema, fields, path, defs) {
   const properties = Object.fromEntries(fields.map(f => [f, schema.properties[f]]));
   const out = {...schema, properties, required: schema.required.filter(r => fields.includes(r))};
   if (defs) { const kept = pruneDefs(properties, defs); if (Object.keys(kept).length) out.$defs = kept; else delete out.$defs; }
+  // 버전 확장 표(x-extensions)는 트리 전체를 고를 때만 남긴다. 부분 조회가 수만 바이트를 끌고 가지 않게 한다.
+  if (!fields.includes('tree')) delete out['x-extensions'];
   return [out, null];
 }
 
@@ -230,10 +234,11 @@ function pickFields(schema, fields, path, defs) {
 export function getSchema(q) {
   return guard(() => {
     if (!isPlain(q)) return fail([badRequest('$args', '조회 인자는 객체여야 합니다.', `예: {target: "blueprint"}`)]);
-    const badKey = checkKeys(q, ['target', 'type', 'fields'], '$args');
+    const badKey = checkKeys(q, ['target', 'type', 'fields', 'catalogVersion'], '$args');
     if (badKey) return fail([badKey]);
     if (typeof q.target !== 'string' || !SCHEMA_TARGETS.includes(q.target)) return fail([badRequest('$args.target', `알 수 없는 target: ${String(q.target)}`, `허용값: ${list(SCHEMA_TARGETS)}`)]);
     if (q.target !== 'component' && q.type !== undefined) return fail([badRequest('$args.type', 'type은 target이 component일 때만 씁니다.')]);
+    if (q.catalogVersion !== undefined && (q.target !== 'component' || typeof q.catalogVersion !== 'string' || !ACCEPTED_CATALOG_VERSIONS.includes(q.catalogVersion))) return fail([badRequest('$args.catalogVersion', 'catalogVersion은 target이 component일 때만, 지원하는 카탈로그 버전으로 씁니다.', `허용값: ${list(ACCEPTED_CATALOG_VERSIONS)}`)]);
     if (q.target === 'diagnostic' || q.target === 'edit-ops') if (q.fields !== undefined) return fail([badRequest('$args.fields', `${q.target}에는 fields를 쓸 수 없습니다.`)]);
 
     if (q.target === 'diagnostic') return ok(jsonClone(DIAGNOSTIC_SCHEMA));
@@ -247,8 +252,11 @@ export function getSchema(q) {
     else if (q.target === 'chrome') schema = {$schema: DRAFT, title: 'Static Kit chrome', ...chromeSpec};
     else {
       if (typeof q.type !== 'string' || !q.type) return fail([badRequest('$args.type', 'component 스키마에는 type이 필요합니다.', 'listCatalog({kind: "components"})로 부품 type을 조회하세요.')]);
-      if (!has(full.$defs, q.type)) return fail([diagnostic('UNKNOWN_COMPONENT', '$args.type', `알 수 없는 부품: ${q.type}`)]);
-      schema = {$schema: DRAFT, title: 'Static Kit component ' + q.type, ...full.$defs[q.type]};
+      // catalogVersion을 주면 그 버전의 확장 정의(2.6.0 차트 새 형태, select-control, data-table)가 기본 정의를 대신한다.
+      const extended = q.catalogVersion ? Object.entries(full['x-extensions']).filter(([since]) => atLeast(q.catalogVersion, since)).map(([, table]) => table.$defs[q.type]).filter(Boolean).at(-1) : null;
+      const def = extended ?? full.$defs[q.type];
+      if (!def || !(has(full.$defs, q.type) || extended)) return fail([diagnostic('UNKNOWN_COMPONENT', '$args.type', `알 수 없는 부품: ${q.type}`, nodeSince(q.type) ? `${q.type}은 카탈로그 ${nodeSince(q.type)}부터 있습니다. catalogVersion:"${nodeSince(q.type)}"를 함께 주세요.` : undefined)]);
+      schema = {$schema: DRAFT, title: 'Static Kit component ' + q.type, ...def};
     }
     const [picked, bad] = pickFields(schema, q.fields, '$args.fields', defs);
     if (bad) return fail([bad]);
@@ -274,10 +282,13 @@ const rulesOfComponent = type => [...compositionRules.filter(r => r.when.type ==
 export function getComponentSpec(q) {
   return guard(() => {
     if (!isPlain(q)) return fail([badRequest('$args', '조회 인자는 객체여야 합니다.', `예: {type: "hero"}`)]);
-    const badKey = checkKeys(q, ['type', 'fields'], '$args');
+    const badKey = checkKeys(q, ['type', 'fields', 'catalogVersion'], '$args');
     if (badKey) return fail([badKey]);
+    if (q.catalogVersion !== undefined && (typeof q.catalogVersion !== 'string' || !ACCEPTED_CATALOG_VERSIONS.includes(q.catalogVersion))) return fail([badRequest('$args.catalogVersion', `지원하지 않는 카탈로그 버전: ${String(q.catalogVersion)}`, `허용값: ${list(ACCEPTED_CATALOG_VERSIONS)}`)]);
     if (typeof q.type !== 'string' || !q.type) return fail([badRequest('$args.type', 'type이 필요합니다.', 'listCatalog({kind: "components"})로 부품 type을 조회하세요.')]);
-    if (!has(nodeSpecs, q.type)) return fail([diagnostic('UNKNOWN_COMPONENT', '$args.type', `알 수 없는 부품: ${q.type}`)]);
+    // catalogVersion을 주면 그 버전이 받아들이는 명세(2.6.0은 차트 새 형태·select-control·data-table 포함)를 낸다. 생략하면 기본 카탈로그다.
+    const spec = nodeSpecAt(q.type, q.catalogVersion);
+    if (!spec) return fail([diagnostic('UNKNOWN_COMPONENT', '$args.type', `알 수 없는 부품: ${q.type}`, nodeSince(q.type) ? `${q.type}은 카탈로그 ${nodeSince(q.type)}부터 있습니다. catalogVersion:"${nodeSince(q.type)}"를 함께 주세요.` : undefined)]);
     let want = SPEC_FIELDS;
     if (q.fields !== undefined) {
       if (!Array.isArray(q.fields) || !q.fields.length) return fail([badRequest('$args.fields', 'fields는 비지 않은 문자열 배열이어야 합니다.', `허용 필드: ${list(SPEC_FIELDS)}`)]);
@@ -285,7 +296,7 @@ export function getComponentSpec(q) {
       if (bad >= 0) return fail([badRequest(`$args.fields[${bad}]`, `부품 명세에 없는 항목: ${String(q.fields[bad])}`, `허용 항목: ${list(SPEC_FIELDS)}`)]);
       want = SPEC_FIELDS.filter(f => q.fields.includes(f));
     }
-    const spec = nodeSpecs[q.type], type = q.type;
+    const type = q.type;
     const all = {
       label: () => spec.label, group: () => spec.group, fields: () => spec.fields, required: () => requiredOf(spec), optional: () => spec.optional ?? [],
       children: () => (spec.children ? {allowed: spec.children, min: spec.min, max: spec.max} : null),

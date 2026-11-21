@@ -3,6 +3,7 @@
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
 import {EMPTY_QUERY, SORTS, readQuery, writeQuery, type ExploreQuery} from './list-query';
+import {Button, Input, Select} from '@/ui';
 import styles from './controls.module.css';
 
 export type Options = {
@@ -46,40 +47,19 @@ export function ExploreControls({options, total}: {options: Options; total: numb
   const currentThemeStyle = options.themes.find(t => t.id === query.theme)?.styleId;
   const active = query.q || query.type || query.style || query.theme || query.sort !== EMPTY_QUERY.sort;
 
+  const typeOptions = [{value: '', label: '전체'}, ...options.types.map(t => ({value: t.id, label: t.label}))];
+  const styleOptions = [{value: '', label: '전체'}, ...options.styles.map(x => ({value: x.id, label: x.label}))];
+  const themeOptions = [{value: '', label: '전체'}, ...themes.map(t => ({value: t.id, label: t.name}))];
+  const sortOptions = SORTS.map(x => ({value: x.id, label: x.label}));
+
   return (
     <form className={styles.bar} role="search" aria-label="디자인 찾기" onSubmit={e => { e.preventDefault(); clearTimeout(timer.current); sent.current = text.trim(); change({q: text.trim()}); }}>
-      <label className={`${styles.field} ${styles.search}`}>
-        <span>검색</span>
-        <input type="search" name="q" value={text} onChange={e => onText(e.target.value)} placeholder="이름, 테마, 페이지 유형" autoComplete="off" enterKeyHint="search" />
-      </label>
-      <label className={styles.field}>
-        <span>페이지 유형</span>
-        <select value={query.type} onChange={e => change({type: e.target.value})}>
-          <option value="">전체</option>
-          {options.types.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-        </select>
-      </label>
-      <label className={styles.field}>
-        <span>스타일</span>
-        <select value={query.style} onChange={e => change({style: e.target.value, theme: !e.target.value || currentThemeStyle === e.target.value ? query.theme : ''})}>
-          <option value="">전체</option>
-          {options.styles.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
-        </select>
-      </label>
-      <label className={styles.field}>
-        <span>테마</span>
-        <select value={query.theme} onChange={e => change({theme: e.target.value})}>
-          <option value="">전체</option>
-          {themes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
-      </label>
-      <label className={styles.field}>
-        <span>정렬</span>
-        <select value={query.sort} onChange={e => change({sort: e.target.value as ExploreQuery['sort']})}>
-          {SORTS.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
-        </select>
-      </label>
-      <button type="button" className={styles.reset} onClick={() => { clearTimeout(timer.current); sent.current = ''; setText(''); router.replace(pathname, {scroll: false}); }} disabled={!active && !text}>초기화</button>
+      <Input className={styles.search} type="search" name="q" label="검색" value={text} onChange={e => onText(e.target.value)} placeholder="이름, 테마, 페이지 유형" autoComplete="off" enterKeyHint="search" />
+      <Select label="페이지 유형" value={query.type} options={typeOptions} onChange={value => change({type: value})} />
+      <Select label="스타일" value={query.style} options={styleOptions} onChange={value => change({style: value, theme: !value || currentThemeStyle === value ? query.theme : ''})} />
+      <Select label="테마" value={query.theme} options={themeOptions} onChange={value => change({theme: value})} />
+      <Select label="정렬" value={query.sort} options={sortOptions} onChange={value => change({sort: value as ExploreQuery['sort']})} />
+      <Button onClick={() => { clearTimeout(timer.current); sent.current = ''; setText(''); router.replace(pathname, {scroll: false}); }} disabled={!active && !text}>초기화</Button>
       <p className={styles.count} role="status" aria-live="polite">{total}개</p>
     </form>
   );

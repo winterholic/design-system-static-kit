@@ -39,9 +39,39 @@ export default async function ComponentPage({params}: Props) {
         <p className={styles.sub}><code>{view.type}</code></p>
       </div>
 
-      {rendered?.ok ? <ComponentPreview type={view.type} label={view.label} variants={rendered.mode === 'isolated' ? view.variants : []} note={note} /> : (
+      {rendered?.ok ? <ComponentPreview type={view.type} label={view.label} variants={rendered.mode === 'isolated' ? view.variants : []} variantGroups={view.material ? view.variantGroups : []} note={note} /> : (
         <p className="note">{view.type === 'page' ? '페이지는 모든 부품의 뿌리라서 단독 렌더가 없습니다. 아래 허용 자식이 페이지 바로 아래에 놓을 수 있는 부품입니다.' : rendered?.reason}</p>
       )}
+
+      {view.material ? (
+        <>
+          <h2 className="section-title">재료 계약</h2>
+          <dl className={styles.ctx}>
+            <div><dt>종류 · 분류</dt><dd><code>{view.material.kind}</code> · {view.material.category} · {view.groupLabel}</dd></div>
+            <div><dt>도입 · 재료 버전</dt><dd>카탈로그 {view.material.since} · 재료 {view.material.version}</dd></div>
+            <div><dt>맥락 · 품질</dt><dd>{view.material.contexts.join(', ')} · {view.material.quality.status}{view.material.preset ? ' · 프리셋' : ''}</dd></div>
+            <div><dt>상호작용 상태</dt><dd><div className={styles.values}>{view.material.states.values.map(value => <code key={value}>{value}</code>)}</div></dd></div>
+            {view.material.states.transitions.length ? <div><dt>상태 전이</dt><dd><ul className={styles.transitions}>{view.material.states.transitions.map((transition, index) => <li key={`${transition.from}-${transition.to}-${index}`}><code>{transition.from} → {transition.to}</code> · {transition.trigger}</li>)}</ul></dd></div> : null}
+            <div><dt>반응형</dt><dd>{view.material.responsive.strategy} · {view.material.responsive.breakpoints.join(', ')} — {view.material.responsive.note}</dd></div>
+            <div><dt>Blueprint 연결</dt><dd><code>{view.material.blueprint?.node ?? `${view.material.blueprint?.field}=${view.material.blueprint?.value ?? ''}`}</code>{view.material.blueprint?.since ? ` · ${view.material.blueprint.since}부터` : ''}</dd></div>
+          </dl>
+
+          <h3 className="section-title">변형과 기본값</h3>
+          <div className={styles.tableWrap} tabIndex={0} role="region" aria-label="재료 변형 표">
+            <table className={styles.table}>
+              <thead><tr><th scope="col">축</th><th scope="col">값</th><th scope="col">기본값</th><th scope="col">구현</th></tr></thead>
+              <tbody>{view.variantGroups.flatMap(group => group.values.map(value => {
+                const availability = group.availability.find(option => String(option.value) === String(value));
+                return <tr key={`${group.name}-${value}`}><th scope="row"><code>{group.name}</code></th><td><code>{String(value)}</code></td><td>{String(value) === String(group.defaultValue) ? '기본' : ''}</td><td>{availability?.ok ? '구현됨' : availability?.reason ?? '제한됨'}</td></tr>;
+              }))}</tbody>
+            </table>
+          </div>
+
+          <h3 className="section-title">적용 토큰</h3>
+          <ul className={styles.chips}>{view.material.tokens.map(token => <li key={token}><code>{token}</code></li>)}</ul>
+          {view.limitations.length ? <><h3 className="section-title">제약과 미지원</h3><ul className={styles.limits}>{view.material.tags.filter(tag => tag.startsWith('forbidden:') || tag.startsWith('unsupported:')).map(tag => <li key={tag}>{tag.startsWith('forbidden:') ? '조합 제한' : '미지원'} · <code>{tag.replace(/^(?:forbidden|unsupported):/, '')}</code></li>)}</ul></> : null}
+        </>
+      ) : null}
 
       <h2 className="section-title">허용 속성</h2>
       {view.fields.length ? (

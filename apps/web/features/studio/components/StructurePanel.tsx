@@ -1,10 +1,11 @@
 'use client';
-import {useEffect, useRef} from 'react';
-import {specOf} from '../catalog';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useStudio} from '../context';
 import {flattenTree, nodeAt, nodeSummary, pathKey, samePath} from '../paths';
+import type {PartChoice} from '../core';
 import type {Node, NodePath} from '../types';
 import {NodeForm} from './NodeForm';
+import {Button, Select} from '@/ui';
 import styles from '../studio.module.css';
 
 export function StructurePanel() {
@@ -16,7 +17,6 @@ export function StructurePanel() {
   const focusTree = useRef(false);
   const rows = flattenTree(doc);
   const labelOf = (type: string) => api.catalog?.components.find(c => c.type === type)?.label ?? type;
-  const node = nodeAt(doc, selection) as Node;
   const parentPath = selection.slice(0, -1), index = selection.at(-1);
   const siblings = selection.length ? ((nodeAt(doc, parentPath)?.children as Node[]) ?? []) : [];
 
@@ -42,12 +42,6 @@ export function StructurePanel() {
   };
 
   const act = (fn: () => void) => () => { focusTree.current = true; fn(); };
-  const spec = api.core ? specOf(api.core, node.type ?? 'page') : null;
-  const parentNode = selection.length ? nodeAt(doc, parentPath) : null;
-  const parentSpec = parentNode && api.core ? specOf(api.core, parentNode.type) : null;
-  const childAllowed = selection.length === 0 ? api.catalog?.components.find(c => c.type === 'page')?.childTypes ?? [] : spec?.children?.allowed ?? [];
-  const siblingAllowed = selection.length === 0 ? [] : parentNode?.type === 'page' ? api.catalog?.components.find(c => c.type === 'page')?.childTypes ?? [] : parentSpec?.children?.allowed ?? [];
-  const insertable = api.catalog?.components.filter(c => c.type !== 'page').map(c => c.type) ?? [];
 
   return (
     <div className={styles.structure}>
@@ -68,43 +62,58 @@ export function StructurePanel() {
       </div>
 
       <div className={styles.nodeActions} role="group" aria-label="선택한 노드 작업">
-        <button type="button" className={styles.tool} disabled={!selection.length || index === 0} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) - 1}))}>위로</button>
-        <button type="button" className={styles.tool} disabled={!selection.length || index === siblings.length - 1} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) + 1}))}>아래로</button>
-        <button type="button" className={styles.tool} disabled={!selection.length} onClick={act(() => api.edit({kind: 'remove', path: selection}))}>삭제</button>
+        <Button size="sm" disabled={!selection.length || index === 0} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) - 1}))}>위로</Button>
+        <Button size="sm" disabled={!selection.length || index === siblings.length - 1} onClick={act(() => api.edit({kind: 'move', path: selection, index: (index ?? 0) + 1}))}>아래로</Button>
+        <Button size="sm" disabled={!selection.length} onClick={act(() => api.edit({kind: 'remove', path: selection}))}>삭제</Button>
       </div>
-      <AddNode selection={selection} insertable={insertable} childAllowed={childAllowed} siblingAllowed={siblingAllowed} index={index} parentPath={parentPath} act={act} />
+      <AddNode selection={selection} act={act} />
 
       <NodeForm key={pathKey(selection)} path={selection} />
     </div>
   );
 }
 
-function AddNode({selection, insertable, childAllowed, siblingAllowed, index, parentPath, act}: {selection: NodePath; insertable: string[]; childAllowed: string[]; siblingAllowed: string[]; index: number | undefined; parentPath: NodePath; act: (fn: () => void) => () => void}) {
+const GROUP_LABEL: Record<string, string> = {structure: '구조', layout: '배치', data: '데이터', content: '콘텐츠', form: '폼', feedback: '상태', media: '미디어', nav: '이동'};
+
+/**
+ * 부품 추가. 후보는 Core가 실제 insertNode 연산으로 시험해 받아들인 부품뿐이다(src/edit의 addPlacements).
+ * 자식 수 한도, 부모·자식 계약, 페이지 규칙은 여기서 다시 계산하지 않는다. 받을 수 없는 자리에는 목록 대신 이유를 보인다.
+ */
+function AddNode({selection, act}: {selection: NodePath; act: (fn: () => void) => () => void}) {
   const api = useStudio();
-  const ref = useRef<HTMLSelectElement>(null);
-  const label = (t: string) => api.catalog?.components.find(c => c.type === t)?.label ?? t;
-  const build = (type: string) => {
-    const spec = api.core ? specOf(api.core, type) : null;
-    return spec?.example ? structuredClone(spec.example) : null;
-  };
-  const add = (where: 'child' | 'after') => {
-    const type = ref.current?.value ?? '';
-    const node = type ? build(type) : null;
+  const doc = api.state.document.doc!;
+  const placements = useMemo(() => (api.core ? api.core.edit.addPlacements(doc, selection) : null), [api.core, doc, selection]);
+  const parentPath = selection.slice(0, -1), index = selection.at(-1);
+  const add = (where: 'inside' | 'after', type: string) => {
+    const node = api.core?.edit.partExample(type, doc.catalogVersion);
     if (!node) return;
-    if (where === 'child') api.edit({kind: 'insert', parent: selection, node});
-    else api.edit({kind: 'insert', parent: parentPath, node, index: (index ?? 0) + 1});
+    if (where === 'inside') api.edit({kind: 'insert', parent: selection, node: node as Node});
+    else api.edit({kind: 'insert', parent: parentPath, node: node as Node, index: (index ?? 0) + 1});
   };
+  const isRoot = selection.length === 0;
   return (
     <div className={styles.addNode} role="group" aria-label="부품 추가">
-      <label className={styles.fieldLabel} htmlFor="add-type">추가할 부품</label>
-      <select id="add-type" ref={ref} className={styles.select} defaultValue="" onChange={() => undefined}>
-        <option value="" disabled>부품 고르기</option>
-        {insertable.map(t => <option key={t} value={t}>{label(t)}{childAllowed.includes(t) ? '' : siblingAllowed.includes(t) ? ' (뒤에만)' : ' (여기엔 불가)'}</option>)}
-      </select>
-      <div className={styles.nodeActions}>
-        <button type="button" className={styles.tool} onClick={act(() => add('child'))}>선택한 노드 안에 추가</button>
-        <button type="button" className={styles.tool} disabled={!selection.length} onClick={act(() => add('after'))}>선택한 노드 뒤에 추가</button>
-      </div>
+      <AddGroup where="inside" title="선택한 노드 안에 추가" button="안에 추가" parts={placements?.inside.accepted ?? []} empty="이 노드 안에는 추가할 수 있는 부품이 없습니다." onAdd={type => act(() => add('inside', type))()} />
+      <AddGroup where="after" title="선택한 노드 뒤에 추가" button="뒤에 추가" parts={placements?.after.accepted ?? []} empty={isRoot ? '페이지 루트는 형제가 없어 뒤에 추가할 자리가 없습니다.' : '이 자리 뒤에는 추가할 수 있는 부품이 없습니다.'} onAdd={type => act(() => add('after', type))()} />
+    </div>
+  );
+}
+
+function AddGroup({where, title, button, parts, empty, onAdd}: {where: 'inside' | 'after'; title: string; button: string; parts: PartChoice[]; empty: string; onAdd: (type: string) => void}) {
+  const [picked, setPicked] = useState('');
+  // 선택을 옮겨 후보가 바뀌면 이미 고른 부품이 더는 후보가 아닐 수 있다. 그때는 선택을 비운다.
+  const type = parts.some(p => p.type === picked) ? picked : '';
+  const id = `add-${where}-type`;
+  return (
+    <div className={styles.addGroup} role="group" aria-label={title}>
+      <h4 className={styles.addTitle}>{title}</h4>
+      {parts.length ? (
+        <>
+          <Select id={id} label={`${where === 'inside' ? '안에 넣을 부품' : '뒤에 넣을 부품'} (${parts.length}개)`} value={type} placeholder="부품 고르기" onChange={setPicked}
+            options={parts.map(p => ({value: p.type, label: p.label, group: GROUP_LABEL[p.group] ?? p.group}))} />
+        </>
+      ) : <p className={styles.muted}>{empty}</p>}
+      <Button size="sm" disabled={!type} onClick={() => onAdd(type)}>{button}</Button>
     </div>
   );
 }

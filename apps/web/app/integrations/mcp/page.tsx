@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {PageShell} from '@/shell/PageShell';
+import {ButtonLink} from '@/ui';
 
 export const metadata = {title: 'MCP 연동'};
 
@@ -40,7 +41,7 @@ try {
         <p>Streamable HTTP 서버는 상태 없는 단일 Next Route Handler입니다. MCP의 2026-07-28 stateless 흐름과 2025-era Streamable HTTP 클라이언트를 같은 엔드포인트가 받습니다. 배포 함수의 상한은 30초이며 도구 호출은 결과 반환 후 10초 상한을 확인합니다.</p>
         <p><Link href="/integrations/rest-api">REST API</Link>에는 같은 카탈로그와 OpenAPI 명세가 있습니다.</p>
       </article>
-      <p><Link href="/integrations" className="btn btn-quiet">연동 목록으로</Link></p>
+      <p><ButtonLink href="/integrations" variant="quiet">연동 목록으로</ButtonLink></p>
     </PageShell>
   );
 }
