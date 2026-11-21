@@ -11,7 +11,13 @@ test('홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 �
   await expect(page).toHaveURL(/type=/);
   const selected = await page.getByLabel('페이지 유형').inputValue();
   const design = page.locator('a[href^="/explore/"]:not([href="/explore/combos"])').first();
-  if (await design.count()) { await design.click(); await page.goBack(); }
+  if (await design.count()) {
+    // 클라이언트 이동이 끝나기 전에 뒤로 가면 history 의 앞 항목(홈)으로 가 버린다. 상세에 닿은 뒤에 돌아온다.
+    await design.click();
+    await expect(page).toHaveURL(/\/explore\/(?!combos)[^/?]+$/);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/explore\?.*type=/);
+  }
   await expect(page.getByLabel('페이지 유형')).toHaveValue(selected);
   await page.reload();
   await expect(page.getByLabel('페이지 유형')).toHaveValue(selected);

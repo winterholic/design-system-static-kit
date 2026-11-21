@@ -15,8 +15,13 @@ test('복합 Explore 디자인을 실제 Studio 링크로 열고 다운로드·�
   expect(blueprint.tree.children.find(node => node.type === 'hero')?.variant).toBe('product');
 
   await page.goto(`/explore/${designId}`);
-  await page.getByRole('link', {name: 'Studio에서 열기'}).click();
-  await expect(page).toHaveURL(/\/studio\?template=saas-landing&palette=pearl&mode=dark&layout=hero:product$/);
+  // 시작 상태는 링크의 주소 인자로 전달되고, Studio 는 이를 한 번 쓴 뒤 주소에서 지운다(features/studio/url.ts).
+  // 클릭 뒤 주소는 Core 로딩 속도에 따라 순간만 보이므로 경합이 생긴다. 인자는 클릭 전 href 로 확인하고, 클릭 뒤에는 적용된 상태와 소비된 주소를 확인한다.
+  const open = page.getByRole('link', {name: 'Studio에서 열기'});
+  await expect(open).toHaveAttribute('href', '/studio?template=saas-landing&palette=pearl&mode=dark&layout=hero:product');
+  await open.click();
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await expect(page).toHaveURL(/\/studio$/);
   await page.getByRole('tab', {name: '디자인'}).click();
   await expect(page.getByRole('radio', {name: '다크'})).toHaveAttribute('aria-checked', 'true');
 
