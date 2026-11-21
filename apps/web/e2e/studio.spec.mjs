@@ -205,3 +205,121 @@ test('mobile panel controls and keyboard tree selection stay usable at 390px', a
   await expect(page.getByRole('treeitem', {name: /페이지 제목/})).toHaveAttribute('aria-selected', 'true');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+// ---- 출시 감사: URL 시작 인자와 저장된 작업 -------------------------------------------------
+// 수정 여부(modified)만 보면 "가져온 문서"는 편집 전까지 false라서, 주소의 ?template= 가 사용자의 가져온 작업을 예고 없이 덮어썼다.
+const importedTitle = '가져온 작업 제목';
+const savedSummary = (page) => page.evaluate(key => {
+  const saved = JSON.parse(localStorage.getItem(key) ?? 'null');
+  return saved ? {origin: saved.origin, modified: saved.modified, title: saved.doc?.tree?.children?.[0]?.title} : null;
+}, STORAGE_KEY);
+
+async function seedImportedDocument(page) {
+  await page.goto('/studio?template=dashboard-overview');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await expect.poll(() => savedSummary(page)).not.toBeNull();
+  const text = await page.evaluate(([key, title]) => {
+    const doc = JSON.parse(localStorage.getItem(key)).doc;
+    doc.name = '가져온 작업 문서';
+    doc.tree.children[0].title = title;
+    return JSON.stringify(doc);
+  }, [STORAGE_KEY, importedTitle]);
+  await page.getByRole('button', {name: 'JSON 가져오기'}).click();
+  await page.locator('#import-text').fill(text);
+  await page.getByRole('button', {name: '가져오기', exact: true}).click();
+  await expect.poll(() => savedSummary(page)).toEqual({origin: null, modified: false, title: importedTitle});
+}
+
+test('URL 시작 인자는 가져온 문서(수정 전)를 확인 없이 덮어쓰지 않고, 이어서 작업하면 문서와 저장값이 그대로다', async ({page}) => {
+  await seedImportedDocument(page);
+
+  await page.goto('/studio?template=saas-landing');
+  const dialog = page.getByRole('dialog', {name: '작업 중인 문서가 있습니다'});
+  await expect(dialog).toBeVisible();
+  expect(page.url()).toContain('template=saas-landing');
+  await dialog.getByRole('button', {name: '이어서 작업'}).click();
+
+  await expect(dialog).toBeHidden();
+  await expect.poll(() => new URL(page.url()).search).toBe('');
+  await expect(page.getByRole('toolbar', {name: '문서 도구'}).getByRole('status')).toContainText('가져온 문서');
+  await page.getByRole('treeitem', {name: /페이지 제목/}).click();
+  await expect(page.locator('#f-title')).toHaveValue(importedTitle);
+  await page.waitForTimeout(600);
+  expect(await savedSummary(page)).toEqual({origin: null, modified: false, title: importedTitle});
+});
+
+test('URL 시작 인자를 확인하면 덮어쓰고, 실행 취소로 가져온 문서를 되살린다', async ({page}) => {
+  await seedImportedDocument(page);
+
+  await page.goto('/studio?template=saas-landing');
+  const dialog = page.getByRole('dialog', {name: '작업 중인 문서가 있습니다'});
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', {name: '새로 열기 (덮어쓰기)'}).click();
+  await expect.poll(() => savedSummary(page).then(s => s?.origin?.template)).toBe('saas-landing');
+
+  await page.getByRole('button', {name: '실행 취소'}).click();
+  await expect.poll(() => savedSummary(page)).toEqual({origin: null, modified: false, title: importedTitle});
+});
+
+test('수정하지 않은 템플릿 문서는 URL 시작 인자로 바로 바뀐다(주소 계약 유지)', async ({page}) => {
+  await page.goto('/studio?template=dashboard-overview');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await expect.poll(() => savedSummary(page).then(s => s?.origin?.template)).toBe('dashboard-overview');
+
+  await page.goto('/studio?template=saas-landing');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect.poll(() => savedSummary(page).then(s => s?.origin?.template)).toBe('saas-landing');
+  await expect.poll(() => new URL(page.url()).search).toBe('');
+});
+
+test('수정한 문서는 URL 시작 인자 앞에서 확인을 받는다', async ({page}) => {
+  await page.goto('/studio?template=dashboard-overview');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await page.getByRole('treeitem', {name: /페이지 제목/}).click();
+  await page.locator('#f-title').fill('수정한 제목');
+  await page.locator('#f-title').press('Tab');
+  await expect.poll(() => savedSummary(page).then(s => s?.title)).toBe('수정한 제목');
+
+  await page.goto('/studio?template=saas-landing');
+  await expect(page.getByRole('dialog', {name: '작업 중인 문서가 있습니다'})).toBeVisible();
+});
+
+test('수정한 문서의 템플릿 교체는 확인을 받고, 실행 취소·다시 실행이 작업과 미리보기 설정을 따로 다룬다', async ({page}) => {
+  await page.goto('/studio?template=dashboard-overview');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await page.getByRole('treeitem', {name: /페이지 제목/}).click();
+  await page.locator('#f-title').fill('내가 쓴 제목');
+  await page.locator('#f-title').press('Tab');
+  await expect.poll(() => savedSummary(page).then(s => s?.title)).toBe('내가 쓴 제목');
+
+  await page.getByRole('button', {name: '모바일 390'}).click();
+  await page.getByRole('button', {name: '다크로 보기'}).click();
+  const previewRoot = page.frameLocator('[data-testid="preview-frame"]').locator('html');
+  await expect(previewRoot).toHaveAttribute('data-theme', 'dark');
+
+  const pickSaas = async () => {
+    await page.getByRole('button', {name: '템플릿 바꾸기'}).click();
+    await page.getByRole('radio', {name: /saas-landing/}).check();
+    await page.getByRole('button', {name: '이 템플릿으로 바꾸기'}).click();
+  };
+  const confirm = page.getByRole('dialog', {name: '템플릿을 바꿀까요?'});
+  await pickSaas();
+  await expect(confirm).toBeVisible();
+  await confirm.getByRole('button', {name: '취소', exact: true}).click();
+  expect((await savedSummary(page)).title).toBe('내가 쓴 제목');
+
+  await pickSaas();
+  await confirm.getByRole('button', {name: '템플릿 바꾸기'}).click();
+  await expect.poll(() => savedSummary(page).then(s => s?.origin?.template)).toBe('saas-landing');
+
+  await page.getByRole('button', {name: '실행 취소'}).click();
+  await expect.poll(() => savedSummary(page)).toMatchObject({title: '내가 쓴 제목', modified: true});
+  await expect(previewRoot).toHaveAttribute('data-theme', 'dark');
+  await page.getByRole('button', {name: '다시 실행'}).click();
+  await expect.poll(() => savedSummary(page).then(s => s?.origin?.template)).toBe('saas-landing');
+  await expect(previewRoot).toHaveAttribute('data-theme', 'dark');
+  await page.keyboard.press('ControlOrMeta+z');
+  await expect.poll(() => savedSummary(page).then(s => s?.title)).toBe('내가 쓴 제목');
+  await expect(page.getByRole('button', {name: '모바일 390'})).toHaveAttribute('aria-pressed', 'true');
+});

@@ -72,3 +72,35 @@ test('MCP: 상한을 넘는 본문은 413 으로 거부한다', async ({request}
   expect(response.status()).toBe(413);
   expect(await response.json()).toMatchObject({error: {data: {code: 'PAYLOAD_TOO_LARGE'}}});
 });
+
+const INTERNALS = /\/Users\/|node_modules|\.next\/|file:\/\/|at \S+ \(|\.m?[jt]sx?:\d+/;
+
+test('REST·MCP 오류 응답은 구조화된 봉투이고 내부 경로·스택을 싣지 않는다', async ({request}) => {
+  const bad = [
+    ['GET', '/api/v1/components/..%2F..%2Fpackage.json'],
+    ['GET', '/api/v1/catalog?kind=../../etc/passwd'],
+    ['POST', '/api/v1/validate', '{bad'],
+    ['POST', '/api/v1/compile', '{"blueprint":' + '['.repeat(100_000) + ']'.repeat(100_000) + '}'],
+  ];
+  for (const [method, path, body] of bad) {
+    const response = await request.fetch(path, {method, headers: {'content-type': 'application/json'}, data: body === undefined ? undefined : Buffer.from(body), maxRedirects: 0});
+    const text = await response.text();
+    expect([400, 404, 422], `${method} ${path.slice(0, 40)}`).toContain(response.status());
+    expect(response.headers()['content-type'], path.slice(0, 40)).toContain('application/json');
+    expect(JSON.parse(text), path.slice(0, 40)).toMatchObject({ok: false, errors: [expect.objectContaining({code: expect.any(String), path: expect.any(String), hint: expect.any(String)})]});
+    expect(text, path.slice(0, 40)).not.toMatch(INTERNALS);
+  }
+  const mcp = await request.post('/api/mcp', {
+    headers: {'content-type': 'application/json', accept: 'application/json, text/event-stream'},
+    data: Buffer.from('{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"compile_design","arguments":{"blueprint":' + '{"a":'.repeat(40_000) + '1' + '}'.repeat(40_000) + '}}}'),
+  });
+  expect(await mcp.text()).not.toMatch(INTERNALS);
+});
+
+test('MCP: 다른 출처(Origin)의 호출은 403 으로 거부한다', async ({request}) => {
+  const response = await request.post('/api/mcp', {
+    headers: {'content-type': 'application/json', accept: 'application/json, text/event-stream', origin: 'https://evil.example'},
+    data: {jsonrpc: '2.0', id: 1, method: 'tools/call', params: {name: 'validate_blueprint', arguments: {blueprint: {}}}},
+  });
+  expect(response.status()).toBe(403);
+});
