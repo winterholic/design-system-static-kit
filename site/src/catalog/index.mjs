@@ -10,7 +10,7 @@ import {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotId
 import {variantContracts, variantCheckKinds, DIRECT_CONTRACTS, assessBlueprintContracts} from './variant-contracts.mjs';
 import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './variant-effects.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
-import {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} from './expression.mjs';
+import {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} from './expression.mjs';
 import {recipes, recipeRules, recipeIds} from './recipes.mjs';
 export {compositionRules, compositionCoverage, pageRules, PAGE_RULE_LEGACY_VERSIONS, COMPOSITION_VERSION} from './composition.mjs';
 
@@ -24,7 +24,7 @@ export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {recipes, recipeRules, recipeIds};
 export {DIRECT_CONTRACTS, assessBlueprintContracts};
-export {SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
+export {SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
 export {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 
@@ -66,7 +66,7 @@ export function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), profile: since(en(...PROFILE_SINCE_FIELD.values), '2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.', PROFILE_SINCE_FIELD.since), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,

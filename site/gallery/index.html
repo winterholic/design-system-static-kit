@@ -322,6 +322,7 @@ __defs["catalog/expression.mjs"] = function (exports, __m) {
  * 새 필드는 모두 범위가 닫힌 enum이고, 값은 기존 토큰·역할·간격 사다리로만 해석된다. 임의 CSS·숫자·className은 받지 않는다.
  * 이 파일은 "무엇이 2.5.0에서 생겼는가"의 단일 출처다: 스키마 설명, 버전 게이트(src/validate.mjs), 렌더러·스타일 게이트가 모두 읽는다.
  */
+const {PROFILE_IDS} = __m("profiles/data.mjs");
 
 /** 카탈로그 버전 순서. 새 버전은 끝에 더한다. `atLeast`가 이 순서로 비교한다. */
 const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0']);
@@ -348,6 +349,9 @@ const SINCE_FIELDS = Object.freeze([
 const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   Object.freeze({field: 'colorPalette', values: ['static-kit'], since: '2.6.0'}),
 ]);
+
+/** 2.6.0 profile selection (src/profiles/data.mjs). Kept apart from TOP_LEVEL_SINCE_FIELDS, whose contents are pinned by the color-token contract. */
+const PROFILE_SINCE_FIELD = Object.freeze({field: 'profile', values: PROFILE_IDS, since: '2.6.0'});
 
 /** EX-1 hero.ratio 해석. 열 순서는 DOM 순서가 아니라 화면 순서다(product 히어로는 시각 요소가 왼쪽). */
 const HERO_RATIOS = Object.freeze({copy: [3, 2], visual: [2, 3]});
@@ -378,6 +382,7 @@ exports.expressionApplies = expressionApplies;
 exports.since = since;
 exports.SINCE_FIELDS = SINCE_FIELDS;
 exports.TOP_LEVEL_SINCE_FIELDS = TOP_LEVEL_SINCE_FIELDS;
+exports.PROFILE_SINCE_FIELD = PROFILE_SINCE_FIELD;
 exports.HERO_RATIOS = HERO_RATIOS;
 exports.DOMINANT_MIN = DOMINANT_MIN;
 exports.NARROW_CELL_OK = NARROW_CELL_OK;
@@ -501,7 +506,7 @@ const {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds
 const {variantContracts, variantCheckKinds, DIRECT_CONTRACTS, assessBlueprintContracts} = __m("catalog/variant-contracts.mjs");
 const {NEUTRAL_OPTIONS: neutralOptions, EFFECTS_META: neutralMeta} = __m("catalog/variant-effects.mjs");
 const {concepts, conceptIds, conceptsOfTemplate} = __m("catalog/concepts.mjs");
-const {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} = __m("catalog/expression.mjs");
+const {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} = __m("catalog/expression.mjs");
 const {recipes, recipeRules, recipeIds} = __m("catalog/recipes.mjs");
 { const __r = __m("catalog/composition.mjs"); exports.compositionRules = __r.compositionRules; exports.compositionCoverage = __r.compositionCoverage; exports.pageRules = __r.pageRules; exports.PAGE_RULE_LEGACY_VERSIONS = __r.PAGE_RULE_LEGACY_VERSIONS; exports.COMPOSITION_VERSION = __r.COMPOSITION_VERSION; }
 
@@ -557,7 +562,7 @@ function blueprintSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'Static Kit Blueprint ' + BLUEPRINT_VERSION,
     ...obj({
       version: {const: BLUEPRINT_VERSION}, catalogVersion: en(...ACCEPTED_CATALOG_VERSIONS), name: str(80),
-      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), mode: en(...axes.mode), pageType: en(...pageTypeIds),
+      theme: en(...Object.keys(themes)), palette: en(...Object.keys(palettes)), colorPalette: since(en(...TOP_LEVEL_SINCE_FIELDS.find(x=>x.field==='colorPalette').values), '2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.', '2.6.0'), profile: since(en(...PROFILE_SINCE_FIELD.values), '2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.', PROFILE_SINCE_FIELD.since), mode: en(...axes.mode), pageType: en(...pageTypeIds),
       ...style, chrome: chromeSpec, tree: {$ref: '#/$defs/page'},
     }, ['version', 'catalogVersion', 'name', 'theme', 'palette', 'mode', 'pageType', ...styleAxes, 'tree']),
     $defs: defs,
@@ -722,6 +727,7 @@ exports.DIRECT_CONTRACTS = DIRECT_CONTRACTS;
 exports.assessBlueprintContracts = assessBlueprintContracts;
 exports.SINCE_FIELDS = SINCE_FIELDS;
 exports.TOP_LEVEL_SINCE_FIELDS = TOP_LEVEL_SINCE_FIELDS;
+exports.PROFILE_SINCE_FIELD = PROFILE_SINCE_FIELD;
 exports.atLeast = atLeast;
 exports.expressionApplies = expressionApplies;
 exports.VERSION_ORDER = VERSION_ORDER;
@@ -779,6 +785,62 @@ exports.createBlueprint = createBlueprint;
 exports.composeBlueprint = composeBlueprint;
 exports.migrateV1 = migrateV1;
 exports.migrateBlueprint = migrateBlueprint;
+};
+__defs["catalog/node-extensions.mjs"] = function (exports, __m) {
+const {nodeSpecs, str, en, arr, num, obj} = __m("catalog/nodes.mjs");
+const {atLeast} = __m("catalog/expression.mjs");
+
+/**
+ * 버전별 노드 명세 확장 표. `nodeSpecs`(src/catalog/nodes.mjs)는 2.1.0~2.5.0이 받아들이는 문법이고 snapshot 바이트
+ * (site/v1/catalog.json)의 일부라서 여기서 넓히지 않는다. 아직 열리지 않은 카탈로그 버전의 문법은 이 표에만 둔다.
+ * 항목의 필드는 같은 이름의 기본 필드를 덮어쓰고, `optional`은 기본 목록을 대체한다.
+ * 켜짐 여부는 2.6.0 opt-in 게이트와 같은 `atLeast(catalogVersion, since)`(src/catalog/expression.mjs의 `VERSION_ORDER`)로 판단한다.
+ */
+const N = num(-1000000, 1000000);
+const CHART_BASE_KINDS = Object.freeze([...nodeSpecs.chart.fields.kind.enum]);
+const CHART_EXTENDED_KINDS = Object.freeze(['stacked-bar', 'scatter', 'heatmap', 'sparkline']);
+
+const deepFreeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(deepFreeze); Object.freeze(value); } return value; };
+
+const NODE_SPEC_EXTENSIONS = deepFreeze({
+  '2.6.0': {
+    chart: {
+      fields: {
+        kind: en(...CHART_BASE_KINDS, ...CHART_EXTENDED_KINDS),
+        unit: str(20), xLabel: str(60), yLabel: str(60),
+        axis: obj({min: N, max: N, xMin: N, xMax: N, yMin: N, yMax: N, showX: en('yes', 'no'), showY: en('yes', 'no')}, []),
+        categories: arr(str(64), 2, 8),
+        series: arr(obj({name: str(40), values: arr(N, 2, 8), points: arr(obj({x: N, y: N}), 2, 8)}, ['name']), 1, 3),
+      },
+      optional: ['unit', 'xLabel', 'yLabel', 'axis', 'categories', 'series'],
+    },
+  },
+});
+
+const extensionsFor = version => Object.entries(NODE_SPEC_EXTENSIONS).filter(([since]) => atLeast(version, since)).sort(([x], [y]) => (atLeast(x, y) ? 1 : -1)).map(([, table]) => table);
+/** 그 카탈로그 버전에서 `type` 노드의 확장이 켜지는가. 2.5.0 이하는 항상 false다. */
+const nodeExtended = (type, version) => extensionsFor(version).some(table => Object.hasOwn(table, type));
+
+const cache = new Map();
+/** 카탈로그 버전이 받아들이는 노드 명세. 확장이 없으면 `nodeSpecs[type]` 그 객체를 그대로 돌려준다. */
+function nodeSpecAt(type, version) {
+  const base = nodeSpecs[type];
+  if (!base) return base;
+  const tables = extensionsFor(version).filter(table => Object.hasOwn(table, type));
+  if (!tables.length) return base;
+  const key = `${type}@${tables.length}`;
+  if (!cache.has(key)) {
+    const merged = tables.reduce((spec, table) => ({...spec, fields: {...spec.fields, ...table[type].fields}, optional: table[type].optional ?? spec.optional}), base);
+    cache.set(key, Object.freeze(merged));
+  }
+  return cache.get(key);
+}
+
+exports.CHART_BASE_KINDS = CHART_BASE_KINDS;
+exports.CHART_EXTENDED_KINDS = CHART_EXTENDED_KINDS;
+exports.NODE_SPEC_EXTENSIONS = NODE_SPEC_EXTENSIONS;
+exports.nodeExtended = nodeExtended;
+exports.nodeSpecAt = nodeSpecAt;
 };
 __defs["catalog/nodes.mjs"] = function (exports, __m) {
 const {iconNames} = __m("catalog/icons.mjs");
@@ -4158,6 +4220,416 @@ exports.refineLayout = refineLayout;
 exports.PRIMITIVES = PRIMITIVES;
 exports.layoutMarkdown = layoutMarkdown;
 };
+__defs["profiles/check.mjs"] = function (exports, __m) {
+/**
+ * 프로파일 정적 검사(품질 검사 A 수준). Blueprint 하나를 받아 프로파일이 허용하지 않는 재료·프리셋·밀도 조합을 진단으로 돌려준다.
+ * 값을 고치지 않는다. 진단마다 코드·경로·심각도·근거(reason)·대안(fix, alternatives)이 있다.
+ *
+ * 검증기(src/validate.mjs)가 `profile`이 있는 2.6.0 Blueprint에 이 함수를 부른다. 그래서 재료 레지스트리를 import하지 않는다
+ * (컴파일 경로는 src/materials/를 읽지 않는다, ADR 0011). 브라우저 레이아웃 검사(B 수준)는 scripts/layout-quality가 맡는다.
+ */
+const {PROFILES, PROFILE_RULES, PROFILE_AXES} = __m("profiles/data.mjs");
+
+const plain = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+const ruleOf = code => PROFILE_RULES.find(r => r.code === code).id;
+
+/** 진단 하나. severity는 지금 모두 error다(프로파일 위반은 Blueprint를 거부한다). */
+function diag(code, path, message, reason, fix = null, alternatives = []) {
+  return {code, path, severity: 'error', message, reason, fix, alternatives: [...alternatives], rule: ruleOf(code)};
+}
+
+/** 트리의 모든 노드를 [노드, 경로]로 펼친다. 모양이 틀린 노드는 건너뛴다(검증기가 따로 거부한다). */
+function walk(tree) {
+  const out = [];
+  (function visit(n, path) {
+    if (!plain(n)) return;
+    out.push([n, path]);
+    if (Array.isArray(n.children)) n.children.forEach((c, i) => visit(c, `${path}.children[${i}]`));
+  })(tree, '$.tree');
+  return out;
+}
+
+/**
+ * profileId를 생략하면 b.profile을 쓴다. 알 수 없는 프로파일이면 빈 배열이다(스키마 enum이 ENUM으로 거부한다).
+ * 반환: [{code, path, severity, message, reason, fix, alternatives, rule}]
+ */
+function checkProfile(b, profileId = b?.profile) {
+  if (!plain(b) || typeof profileId !== 'string' || !Object.hasOwn(PROFILES, profileId)) return [];
+  const p = PROFILES[profileId], out = [], name = `${p.label}(${profileId})`;
+  const notIn = (value, allowed) => !allowed.includes(value);
+
+  if (notIn(b.pageType, p.contexts)) out.push(diag('PROFILE_PAGE_TYPE', '$.pageType', `${name}는 페이지 유형 ${b.pageType}을 다루지 않습니다.`, `프로파일의 패턴·밀도·부품 규칙은 ${p.contexts.join(', ')} 화면을 기준으로 정했습니다.`, {pageType: p.contexts[0]}, p.contexts));
+  if (notIn(b.theme, p.themes)) out.push(diag('PROFILE_THEME', '$.theme', `${name}는 테마 ${b.theme}을 허용하지 않습니다.`, `허용 테마는 프로파일의 축 제한(${PROFILE_AXES.join('·')})과 기본값이 충돌하지 않는 프리셋입니다.`, {theme: p.themes[0]}, p.themes));
+  if (notIn(b.density, p.density.allowed)) out.push(diag('PROFILE_DENSITY', '$.density', `${name}에서 density=${b.density}는 쓸 수 없습니다.`, `정보 밀도 ${p.density.info}: 허용 density는 ${p.density.allowed.join(', ')}입니다.`, {density: p.density.default}, p.density.allowed));
+  if (notIn(b.typography, p.type.typography)) out.push(diag('PROFILE_TYPOGRAPHY', '$.typography', `${name}에서 서체 프리셋 ${b.typography}는 쓸 수 없습니다.`, `역할형 타이포 ${p.type.rolePreset}와 같은 계열의 서체 프리셋만 고릅니다.`, {typography: p.type.default}, p.type.typography));
+  if (notIn(b.shell, p.chrome.shells)) out.push(diag('PROFILE_SHELL', '$.shell', `${name}에서 셸 ${b.shell}은 쓸 수 없습니다.`, `머리 구조 ${p.chrome.header}, 사이드바 ${p.chrome.sidebar}에 맞는 셸만 허용합니다.`, {shell: p.chrome.shells[0]}, p.chrome.shells));
+  if (notIn(b.footer, p.chrome.footer)) out.push(diag('PROFILE_AXIS', '$.footer', `${name}에서 footer=${b.footer}는 쓸 수 없습니다.`, `프로파일의 푸터 허용값은 ${p.chrome.footer.join(', ')}입니다.`, {footer: p.chrome.footer[0]}, p.chrome.footer));
+  for (const axis of PROFILE_AXES) {
+    const allowed = p.axes[axis];
+    if (allowed && notIn(b[axis], allowed)) out.push(diag('PROFILE_AXIS', '$.' + axis, `${name}에서 ${axis}=${b[axis]}는 쓸 수 없습니다.`, `프로파일의 ${axis} 허용값은 ${allowed.join(', ')}입니다.`, {[axis]: allowed[0]}, allowed));
+  }
+  if (notIn(b.mode, p.color.modes)) out.push(diag('PROFILE_MODE', '$.mode', `${name}에서 mode=${b.mode}는 쓸 수 없습니다.`, `프로파일의 색 모드는 ${p.color.modes.join(', ')}입니다.`, {mode: p.color.modes[0]}, p.color.modes));
+  if (notIn(b.colorPalette, p.color.palettes)) out.push(diag('PROFILE_COLOR', '$.colorPalette', b.colorPalette === undefined ? `${name}는 colorPalette가 필요합니다.` : `${name}에서 colorPalette=${b.colorPalette}는 쓸 수 없습니다.`, '프로파일은 2.6.0 4계층 색 토큰으로만 칠합니다. 레거시 팔레트 단독 출력은 허용하지 않습니다.', {colorPalette: p.color.palettes[0]}, p.color.palettes));
+
+  const nodes = walk(b.tree);
+  const tables = nodes.filter(([n]) => n.type === 'table'), charts = nodes.filter(([n]) => n.type === 'chart');
+  for (const [n, path] of nodes) {
+    if (typeof n.type !== 'string' || p.components.includes(n.type)) continue;
+    const sub = p.substitutes[n.type];
+    out.push(diag('PROFILE_COMPONENT', path + '.type', `${name}는 부품 ${n.type}을 허용하지 않습니다.`, `허용 부품 목록 밖입니다. 프로파일은 ${p.contexts.join(', ')} 화면에 맞는 부품만 조립합니다.`, sub ? {type: sub} : null, sub ? [sub] : []));
+  }
+  if (tables.length && p.tableRows.maxColumns > 0 && notIn(b.density, p.tableRows.density)) out.push(diag('PROFILE_TABLE', '$.density', `${name}에서 표가 있는 화면은 density=${b.density}를 쓸 수 없습니다.`, `표 행 밀도는 ${p.tableRows.density.join(', ')}만 허용합니다.`, {density: p.tableRows.density[0]}, p.tableRows.density));
+  for (const [n, path] of tables) {
+    if (!p.components.includes('table')) continue;
+    if (n.variant !== undefined && notIn(n.variant, p.tableRows.variants)) out.push(diag('PROFILE_TABLE', path + '.variant', `${name}에서 표 변형 ${n.variant}는 쓸 수 없습니다.`, `표 변형 허용값은 ${p.tableRows.variants.join(', ')}입니다.`, {variant: p.tableRows.variants[0]}, p.tableRows.variants));
+    if (Array.isArray(n.columns) && n.columns.length > p.tableRows.maxColumns) out.push(diag('PROFILE_TABLE', path + '.columns', `${name}에서 표는 열 ${p.tableRows.maxColumns}개까지입니다(${n.columns.length}개).`, '프로파일 폭과 행 밀도에서 열이 더 많으면 좁은 화면 대체(가로 스크롤)에 기대게 됩니다.', null, []));
+  }
+  for (const [n, path] of charts) {
+    if (!p.components.includes('chart')) continue;
+    if (notIn(n.kind, p.charts.kinds)) out.push(diag('PROFILE_CHART', path + '.kind', `${name}에서 차트 형태 ${n.kind}는 쓸 수 없습니다.`, `프로파일의 차트 형태는 ${p.charts.kinds.join(', ')}입니다.`, p.charts.kinds.length ? {kind: p.charts.kinds[0]} : null, p.charts.kinds));
+  }
+  if (p.components.includes('chart') && charts.length > p.charts.max) out.push(diag('PROFILE_CHART', '$.tree', `${name}에서 차트는 페이지당 ${p.charts.max}개까지입니다(${charts.length}개).`, '차트가 많으면 판단할 지표가 흐려집니다. 나머지는 표나 지표로 옮기세요.', null, []));
+  for (const [n, path] of nodes) {
+    for (const [key, allowed] of Object.entries(p.fields)) {
+      const [type, field] = key.split('.');
+      if (n.type === type && Object.hasOwn(n, field) && notIn(n[field], allowed)) out.push(diag('PROFILE_FIELD', `${path}.${field}`, `${name}에서 ${type}.${field}=${n[field]}는 쓸 수 없습니다.`, `프로파일의 ${type}.${field} 허용값은 ${allowed.join(', ')}입니다.`, {[field]: allowed[0]}, allowed));
+    }
+  }
+  const top = plain(b.tree) && Array.isArray(b.tree.children) ? b.tree.children.length : 0;
+  if (top > p.quality.maxTopLevel) out.push(diag('PROFILE_QUALITY', '$.tree.children', `${name}에서 최상위 구역은 ${p.quality.maxTopLevel}개까지입니다(${top}개).`, '품질 기준: 한 화면의 최상위 구역 수 상한.', null, []));
+  const nav = Array.isArray(b.chrome?.nav) ? b.chrome.nav.length : 0;
+  if (nav > p.quality.maxNav) out.push(diag('PROFILE_QUALITY', '$.chrome.nav', `${name}에서 내비 항목은 ${p.quality.maxNav}개까지입니다(${nav}개).`, '품질 기준: 프로파일의 내비 항목 수 상한(셸 상한보다 좁을 수 있다).', null, []));
+  return out;
+}
+
+/** 검증기용: 서비스 Diagnostic 모양(code, path, message, rule, fix)으로 줄인다. 근거는 message 뒤에 붙인다. */
+const profileErrors = b => checkProfile(b).map(d => ({path: d.path, code: d.code, message: `${d.message} 근거: ${d.reason}${d.alternatives.length ? ` 대안: ${d.alternatives.join(', ')}` : ''}`, rule: d.rule, ...(d.fix ? {fix: d.fix} : {})}));
+
+exports.checkProfile = checkProfile;
+exports.profileErrors = profileErrors;
+};
+__defs["profiles/data.mjs"] = function (exports, __m) {
+/**
+ * 디자인 프로파일과 레이아웃 패턴(카탈로그 2.6.0). 데이터만 둔다: 검사는 check.mjs, 재료 등록은 registry.mjs, 조립은 assemble.mjs.
+ *
+ * 프로파일은 "어떤 재료·프리셋·밀도를 함께 쓸 수 있는가"를 정하는 닫힌 규칙 묶음이다. 값은 모두 기존 카탈로그의 id(부품 type, 축 값,
+ * 테마 id, 템플릿 id)와 재료 id 문자열이다. 임의 CSS·px·색 값은 어디에도 없다.
+ *
+ * 이 파일은 아무것도 import하지 않는다. 검증기(src/validate.mjs)와 스키마(src/catalog/index.mjs)가 읽어도 순환이 생기지 않게 하기 위해서다.
+ * 차트 프리셋·Select·데이터 테이블 재료는 다른 작업이 통합 중이라 id 문자열로만 적는다. 등록되지 않은 id는 registry.mjs가
+ * 허용 목록에서 빼고 `pending`으로 보고한다(조립·검사가 존재하지 않는 재료를 고르지 않는다).
+ */
+
+const PROFILE_SINCE = '2.6.0';
+
+/** 정보 밀도. 같은 화면 넓이에 놓는 정보의 양이고, 허용 density 축 값으로 풀린다. */
+const INFO_DENSITY = Object.freeze(['high', 'medium', 'low']);
+
+/**
+ * 좁은 화면(720px 이하) 대체 전략. 각 전략은 이미 있는 CSS·렌더러 동작이다. marker는 그 동작을 만드는 소스 조각이고
+ * tests/profiles.test.mjs가 module 안에 그대로 있는지 확인한다(근거 없는 반응형 주장을 막는다).
+ */
+const NARROW_STRATEGIES = Object.freeze({
+  'sidebar-to-header': Object.freeze({module: 'src/styles/shells.mjs', marker: '[data-shell=sidebar]{display:block;background:none}', what: '사이드바가 본문 위 머리 줄로 바뀐다'}),
+  'nav-scroll': Object.freeze({module: 'src/styles/shells.mjs', marker: '.kit-nav:not([data-mega]) ul{-webkit-mask-image', what: '가로 내비가 끝을 흐린 가로 스크롤이 된다'}),
+  'dock-tabs': Object.freeze({module: 'src/styles/shells.mjs', marker: '[data-shell=dock] .kit-body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}', what: '하단 탭바가 유지되고 본문이 탭바 높이만큼 비켜 선다'}),
+  'aside-stack': Object.freeze({module: 'src/styles/chunks.mjs', marker: '@media(max-width:900px){.kit-aside,.kit-aside[data-side=start]', what: '보조 칸이 본문 아래로 쌓인다'}),
+  'grid-reflow': Object.freeze({module: 'src/styles/chunks.mjs', marker: '@media(max-width:1000px){.kit-grid[data-columns=three],.kit-grid[data-columns=four]', what: '3·4열 격자가 2열, 다시 1열로 줄어든다'}),
+  'table-scroll': Object.freeze({module: 'src/render/nodes.mjs', marker: '<div class="kit-table-scroll" tabindex="0" role="region"', what: '표가 키보드로 닿는 가로 스크롤 영역 안에 남는다(열을 숨기지 않는다)'}),
+  'chart-data-table': Object.freeze({module: 'src/render/chart.mjs', marker: '<details', what: '차트 아래 펼칠 수 있는 데이터 표가 전체 값을 보존한다'}),
+  'none': Object.freeze({module: null, marker: null, what: '해당 부품을 쓰지 않는다'}),
+});
+
+/**
+ * 프로파일 규칙. 검사기(check.mjs)가 내는 코드마다 하나다. 카탈로그의 `rules`(R01~R20)·`expressionRules`(R21~R22)는
+ * manifest와 카탈로그 snapshot에 박혀 있어 늘리지 않고, 이 목록은 프로파일 모듈에만 있다.
+ */
+const PROFILE_RULES = Object.freeze([
+  {id: 'PF01', code: 'PROFILE_PAGE_TYPE', intent: '프로파일이 다루는 페이지 유형만 쓴다.'},
+  {id: 'PF02', code: 'PROFILE_THEME', intent: '프로파일이 고른 테마(완성 프리셋)만 쓴다.'},
+  {id: 'PF03', code: 'PROFILE_DENSITY', intent: '정보 밀도에 맞는 density 값만 쓴다.'},
+  {id: 'PF04', code: 'PROFILE_TYPOGRAPHY', intent: '역할형 타이포 프리셋과 같은 엔진 계열의 서체 프리셋만 쓴다.'},
+  {id: 'PF05', code: 'PROFILE_SHELL', intent: '머리·사이드바 구조가 프로파일의 셸 목록 안에 있다.'},
+  {id: 'PF06', code: 'PROFILE_AXIS', intent: '폭·모서리·깊이·모션·스케일·배경·장식 축이 프로파일 허용값 안에 있다.'},
+  {id: 'PF07', code: 'PROFILE_MODE', intent: '색 모드가 프로파일 허용값 안에 있다.'},
+  {id: 'PF08', code: 'PROFILE_COLOR', intent: '프로파일은 2.6.0 계층 색 토큰(colorPalette)으로만 칠한다.'},
+  {id: 'PF09', code: 'PROFILE_COMPONENT', intent: '허용 부품 목록 밖의 부품을 쓰지 않는다.'},
+  {id: 'PF10', code: 'PROFILE_TABLE', intent: '표 행 밀도·변형·열 수가 프로파일 표 규칙 안에 있다.'},
+  {id: 'PF11', code: 'PROFILE_CHART', intent: '차트 형태와 페이지당 차트 수가 프로파일 허용 범위 안에 있다.'},
+  {id: 'PF12', code: 'PROFILE_QUALITY', intent: '최상위 구역 수와 내비 항목 수가 품질 기준 안에 있다.'},
+  {id: 'PF13', code: 'PROFILE_FIELD', intent: '부품 변형 값(폼 배치·격자 열·히어로 변형·구역 바탕)이 프로파일 허용값 안에 있다.'},
+].map(Object.freeze));
+
+/** 모든 프로파일이 허용하는 페이지 골격 부품. 각 프로파일은 여기에 자기 부품을 더한다. */
+const BASE = ['page', 'page-header', 'section', 'actions', 'notice', 'divider', 'links', 'empty-state', 'skeleton', 'breadcrumb'];
+const list = (...xs) => Object.freeze([...new Set(xs.flat())].sort());
+
+/**
+ * 프로파일 7개. 필드:
+ *   contexts            다루는 페이지 유형
+ *   density             {info: INFO_DENSITY, allowed: density 축 값, default}
+ *   type                {rolePreset: type-role-preset id, typography: 허용 서체 프리셋, default}
+ *   controlSize         {allowed: 컨트롤 크기(src/materials/typography.mjs CONTROL_SIZES), default}
+ *   tableRows           {density: 표가 있을 때 허용 density, variants: table.variant, maxColumns}. 표를 쓰지 않으면 빈 목록과 0
+ *   chrome              {header, sidebar, shells: 허용 셸(첫 값이 기본), footer: 허용 푸터}
+ *   components          허용 부품 type(component:<type>로 등록 확인)
+ *   pendingComponents   통합 중인 부품 재료 id. 등록되어 있을 때만 허용 목록에 든다
+ *   substitutes         금지 부품 → 대신 쓸 허용 부품(진단의 대안)
+ *   patterns            허용 레이아웃 패턴 id(pattern:<id>)
+ *   charts              {kinds: chart.kind 허용값, max: 페이지당 차트 수, presets: chart-preset 재료 id}
+ *   themes              허용 테마 id(첫 값이 기본)
+ *   axes                그 밖의 축 허용값(첫 값이 기본)
+ *   color               {palettes: colorPalette 허용값, modes: 허용 모드(첫 값이 기본)}
+ *   fields              부품 필드 허용값 {'type.field': [값…]}
+ *   narrow              {maxWidth, navigation, aside, grid, table, chart}: NARROW_STRATEGIES 이름
+ *   quality             {minMaterial: 참조 재료의 최소 품질, maxTopLevel: 최상위 구역 수, maxNav: 내비 항목 수}
+ */
+const PROFILES = Object.freeze({
+  erp: {
+    label: 'ERP 업무 화면', contexts: ['listing', 'dashboard', 'data', 'settings'],
+    density: {info: 'high', allowed: ['compact', 'comfortable'], default: 'compact'},
+    type: {rolePreset: 'type-role-preset:erp', typography: ['sans', 'tech', 'mono'], default: 'sans'},
+    controlSize: {allowed: ['compact', 'small', 'medium'], default: 'small'},
+    tableRows: {density: ['compact', 'comfortable'], variants: ['plain', 'striped', 'bordered'], maxColumns: 8},
+    chrome: {header: 'utility-bar', sidebar: 'fixed-groups', shells: ['sidebar', 'rail', 'stacked'], footer: ['minimal', 'simple']},
+    components: list(BASE, 'filter-bar', 'table', 'pagination', 'list', 'master-detail', 'kanban', 'lane', 'task', 'grid', 'aside', 'metric', 'chart', 'progress', 'tabs', 'tab', 'form', 'properties', 'timeline', 'tags', 'stepper', 'code'),
+    pendingComponents: ['component:data-table', 'component:select-control'],
+    substitutes: {hero: 'page-header', pricing: 'table', gallery: 'table', 'logo-cloud': 'tags', quote: 'notice', cta: 'actions'},
+    patterns: ['pattern:erp-workspace', 'pattern:dashboard-grid', 'pattern:admin-settings'],
+    charts: {kinds: ['bar', 'bars-h', 'line', 'area'], max: 4, presets: ['chart-preset:erp-quarterly-revenue', 'chart-preset:operations-activity-heatmap', 'chart-preset:sales-pipeline-value']},
+    themes: ['ledger', 'workspace', 'enterprise', 'console', 'precision', 'insight'],
+    axes: {width: ['full', 'wide'], radius: ['subtle', 'square', 'soft'], elevation: ['outline', 'flat', 'soft'], motion: ['none', 'subtle'], scale: ['tight', 'balanced'], backdrop: ['plain', 'grid', 'tint'], ornament: ['none', 'lines', 'geometric']},
+    color: {palettes: ['static-kit'], modes: ['light', 'dark', 'auto']},
+    fields: {'form.variant': ['stacked', 'two-column', 'inline'], 'grid.columns': ['two', 'three', 'four'], 'section.surface': ['plain', 'flat']},
+    narrow: {maxWidth: 720, navigation: 'sidebar-to-header', aside: 'aside-stack', grid: 'grid-reflow', table: 'table-scroll', chart: 'chart-data-table'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 8, maxNav: 8},
+  },
+  finance: {
+    label: '금융 대시보드', contexts: ['dashboard', 'data', 'listing', 'settings'],
+    density: {info: 'high', allowed: ['comfortable', 'compact'], default: 'comfortable'},
+    type: {rolePreset: 'type-role-preset:dashboard', typography: ['sans', 'tech'], default: 'sans'},
+    controlSize: {allowed: ['small', 'medium'], default: 'medium'},
+    tableRows: {density: ['comfortable', 'compact'], variants: ['plain', 'striped', 'bordered'], maxColumns: 6},
+    chrome: {header: 'topbar', sidebar: 'none', shells: ['topbar', 'sidebar', 'stacked'], footer: ['columns', 'simple', 'minimal']},
+    components: list(BASE, 'grid', 'aside', 'metric', 'chart', 'table', 'list', 'progress', 'filter-bar', 'pagination', 'tabs', 'tab', 'form', 'properties', 'timeline'),
+    pendingComponents: ['component:data-table', 'component:select-control'],
+    substitutes: {hero: 'page-header', kanban: 'table', gallery: 'table', quote: 'notice', cta: 'actions', code: 'properties'},
+    patterns: ['pattern:dashboard-grid', 'pattern:erp-workspace', 'pattern:admin-settings'],
+    charts: {kinds: ['line', 'area', 'bar', 'bars-h', 'donut'], max: 3, presets: ['chart-preset:finance-monthly-close', 'chart-preset:sales-pipeline-value']},
+    themes: ['bank', 'trust', 'ledger', 'enterprise', 'workspace'],
+    axes: {width: ['standard', 'wide', 'full'], radius: ['soft', 'subtle', 'square'], elevation: ['soft', 'outline', 'flat'], motion: ['subtle', 'none'], scale: ['balanced', 'tight'], backdrop: ['plain'], ornament: ['none']},
+    color: {palettes: ['static-kit'], modes: ['light', 'auto']},
+    fields: {'form.variant': ['stacked', 'two-column'], 'grid.columns': ['two', 'three', 'four'], 'section.surface': ['plain', 'flat']},
+    narrow: {maxWidth: 720, navigation: 'nav-scroll', aside: 'aside-stack', grid: 'grid-reflow', table: 'table-scroll', chart: 'chart-data-table'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 7, maxNav: 6},
+  },
+  commerce: {
+    label: '커머스', contexts: ['commerce', 'listing'],
+    density: {info: 'medium', allowed: ['comfortable', 'spacious'], default: 'comfortable'},
+    type: {rolePreset: 'type-role-preset:marketing', typography: ['sans', 'humanist', 'geometric', 'rounded'], default: 'sans'},
+    controlSize: {allowed: ['medium', 'large'], default: 'large'},
+    tableRows: {density: ['comfortable'], variants: ['plain', 'striped'], maxColumns: 5},
+    chrome: {header: 'stacked-categories', sidebar: 'none', shells: ['stacked', 'topbar', 'centered'], footer: ['columns', 'simple']},
+    components: list(BASE, 'grid', 'aside', 'split', 'card', 'gallery', 'media', 'buy-box', 'summary', 'reviews', 'stepper', 'form', 'pagination', 'filter-bar', 'tabs', 'tab', 'faq', 'list', 'timeline', 'tags', 'reel', 'menu', 'properties', 'table', 'prose'),
+    pendingComponents: ['component:select-control'],
+    substitutes: {kanban: 'grid', chart: 'summary', code: 'properties', 'master-detail': 'split', hero: 'page-header'},
+    patterns: ['pattern:commerce-listing', 'pattern:commerce-detail', 'pattern:commerce-checkout'],
+    charts: {kinds: [], max: 0, presets: []},
+    themes: ['commerce', 'realty', 'stay', 'garden', 'cafe'],
+    axes: {width: ['wide', 'standard'], radius: ['soft', 'subtle', 'round'], elevation: ['outline', 'soft', 'lifted', 'flat'], motion: ['subtle', 'none'], scale: ['balanced'], backdrop: ['plain', 'tint'], ornament: ['none', 'organic', 'dots', 'geometric']},
+    color: {palettes: ['static-kit'], modes: ['light', 'dark', 'auto']},
+    fields: {'form.variant': ['stacked', 'two-column'], 'grid.columns': ['two', 'three', 'four'], 'section.surface': ['plain', 'tint', 'flat']},
+    narrow: {maxWidth: 720, navigation: 'nav-scroll', aside: 'aside-stack', grid: 'grid-reflow', table: 'table-scroll', chart: 'none'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 6, maxNav: 8},
+  },
+  'saas-landing': {
+    label: 'SaaS 랜딩', contexts: ['landing', 'pricing'],
+    density: {info: 'low', allowed: ['comfortable', 'spacious'], default: 'comfortable'},
+    type: {rolePreset: 'type-role-preset:marketing', typography: ['sans', 'geometric', 'grotesk', 'tech'], default: 'sans'},
+    controlSize: {allowed: ['medium', 'large'], default: 'large'},
+    tableRows: {density: [], variants: [], maxColumns: 0},
+    chrome: {header: 'topbar', sidebar: 'none', shells: ['topbar', 'stacked', 'centered'], footer: ['columns', 'simple']},
+    components: list(BASE, 'hero', 'logo-cloud', 'bento', 'steps', 'grid', 'card', 'metric', 'feature-list', 'quote', 'pricing', 'plan', 'faq', 'cta', 'media', 'chart', 'prose', 'progress'),
+    pendingComponents: [],
+    substitutes: {table: 'feature-list', kanban: 'steps', 'filter-bar': 'actions', pagination: 'actions', form: 'cta', code: 'feature-list'},
+    patterns: ['pattern:marketing-landing'],
+    charts: {kinds: ['bar', 'line', 'area'], max: 1, presets: ['chart-preset:campaign-weekly-growth', 'chart-preset:marketing-channel-share']},
+    themes: ['trust', 'devtool', 'aurora', 'solar', 'neon'],
+    axes: {width: ['standard', 'wide'], radius: ['soft', 'round', 'subtle'], elevation: ['soft', 'outline', 'lifted', 'glow', 'flat'], motion: ['subtle', 'lively', 'none'], scale: ['balanced', 'dramatic'], backdrop: ['plain', 'tint', 'gradient', 'grid'], ornament: ['geometric', 'none', 'organic', 'lines']},
+    color: {palettes: ['static-kit'], modes: ['light', 'dark', 'auto']},
+    fields: {'hero.variant': ['default', 'product', 'split'], 'grid.columns': ['two', 'three', 'four'], 'section.surface': ['plain', 'tint', 'flat', 'inverse']},
+    narrow: {maxWidth: 720, navigation: 'nav-scroll', aside: 'aside-stack', grid: 'grid-reflow', table: 'none', chart: 'chart-data-table'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 10, maxNav: 5},
+  },
+  editorial: {
+    label: '에디토리얼', contexts: ['article', 'blog'],
+    density: {info: 'low', allowed: ['spacious', 'comfortable'], default: 'spacious'},
+    type: {rolePreset: 'type-role-preset:document', typography: ['serif', 'editorial', 'literary', 'humanist', 'newsroom', 'bookish'], default: 'serif'},
+    controlSize: {allowed: ['small', 'medium'], default: 'medium'},
+    tableRows: {density: ['comfortable', 'spacious'], variants: ['plain'], maxColumns: 4},
+    chrome: {header: 'centered-masthead', sidebar: 'none', shells: ['editorial', 'centered', 'masthead', 'stacked'], footer: ['simple', 'minimal']},
+    components: list(BASE, 'prose', 'media', 'quote', 'list', 'card', 'grid', 'reel', 'toc', 'aside', 'properties', 'table', 'chart', 'tags', 'pagination', 'timeline'),
+    pendingComponents: [],
+    substitutes: {hero: 'media', kanban: 'list', 'filter-bar': 'tags', pricing: 'prose', cta: 'links', form: 'links'},
+    patterns: ['pattern:editorial-article'],
+    charts: {kinds: ['bar', 'line', 'bars-h'], max: 2, presets: []},
+    themes: ['editorial', 'paper', 'journal', 'academic'],
+    axes: {width: ['standard', 'narrow'], radius: ['square', 'subtle', 'soft'], elevation: ['flat', 'outline'], motion: ['none', 'subtle'], scale: ['balanced', 'dramatic'], backdrop: ['plain', 'tint'], ornament: ['lines', 'none', 'organic']},
+    color: {palettes: ['static-kit'], modes: ['light', 'dark', 'auto']},
+    fields: {'section.surface': ['plain', 'flat'], 'grid.columns': ['two', 'three']},
+    narrow: {maxWidth: 720, navigation: 'nav-scroll', aside: 'aside-stack', grid: 'grid-reflow', table: 'table-scroll', chart: 'chart-data-table'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 8, maxNav: 5},
+  },
+  docs: {
+    label: '문서·레퍼런스', contexts: ['docs'],
+    density: {info: 'medium', allowed: ['comfortable', 'compact'], default: 'comfortable'},
+    type: {rolePreset: 'type-role-preset:document', typography: ['tech', 'sans', 'editorial', 'mono'], default: 'tech'},
+    controlSize: {allowed: ['small', 'medium'], default: 'medium'},
+    tableRows: {density: ['comfortable', 'compact'], variants: ['plain', 'bordered', 'striped'], maxColumns: 6},
+    chrome: {header: 'utility-bar', sidebar: 'fixed-groups', shells: ['sidebar', 'stacked', 'topbar'], footer: ['simple', 'minimal', 'columns']},
+    components: list(BASE, 'aside', 'toc', 'prose', 'code', 'steps', 'faq', 'properties', 'table', 'timeline', 'list', 'tabs', 'tab', 'tags', 'pagination', 'card', 'grid', 'media'),
+    pendingComponents: ['component:data-table'],
+    substitutes: {hero: 'page-header', chart: 'table', kanban: 'list', pricing: 'table', gallery: 'list', cta: 'links', 'buy-box': 'links'},
+    patterns: ['pattern:docs-reference'],
+    charts: {kinds: [], max: 0, presets: []},
+    themes: ['manual', 'devtool', 'civic'],
+    axes: {width: ['wide', 'standard'], radius: ['subtle', 'square', 'soft'], elevation: ['outline', 'flat'], motion: ['none', 'subtle'], scale: ['tight', 'balanced'], backdrop: ['plain', 'grid'], ornament: ['none', 'lines']},
+    color: {palettes: ['static-kit'], modes: ['light', 'dark', 'auto']},
+    fields: {'section.surface': ['plain', 'flat'], 'grid.columns': ['two', 'three']},
+    narrow: {maxWidth: 720, navigation: 'sidebar-to-header', aside: 'aside-stack', grid: 'grid-reflow', table: 'table-scroll', chart: 'none'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 6, maxNav: 8},
+  },
+  'mobile-app': {
+    label: '모바일 앱', contexts: ['listing', 'settings', 'auth', 'form'],
+    density: {info: 'medium', allowed: ['comfortable', 'spacious'], default: 'comfortable'},
+    type: {rolePreset: 'type-role-preset:dashboard', typography: ['sans', 'rounded', 'humanist'], default: 'sans'},
+    controlSize: {allowed: ['large', 'medium'], default: 'large'},
+    tableRows: {density: [], variants: [], maxColumns: 0},
+    chrome: {header: 'compact-title', sidebar: 'none', shells: ['dock', 'minimal'], footer: ['minimal']},
+    components: list(BASE, 'filter-bar', 'list', 'timeline', 'faq', 'cta', 'card', 'form', 'stepper', 'tabs', 'tab', 'metric', 'chart', 'progress', 'properties', 'tags', 'media'),
+    pendingComponents: ['component:select-control'],
+    substitutes: {table: 'list', grid: 'list', aside: 'section', split: 'section', kanban: 'list', 'master-detail': 'list', bento: 'list', calendar: 'list', pagination: 'actions', toc: 'links'},
+    patterns: ['pattern:mobile-navigation', 'pattern:mobile-form'],
+    charts: {kinds: ['line', 'bar'], max: 1, presets: ['chart-preset:mobile-sparkline']},
+    themes: ['clarity', 'pocket'],
+    axes: {width: ['narrow', 'standard'], radius: ['round', 'soft', 'bubble'], elevation: ['soft', 'outline', 'flat'], motion: ['subtle', 'none', 'lively'], scale: ['balanced'], backdrop: ['plain', 'tint'], ornament: ['none', 'organic']},
+    color: {palettes: ['static-kit'], modes: ['light', 'dark', 'auto']},
+    fields: {'form.variant': ['stacked'], 'section.surface': ['plain', 'flat']},
+    narrow: {maxWidth: 720, navigation: 'dock-tabs', aside: 'none', grid: 'none', table: 'none', chart: 'chart-data-table'},
+    quality: {minMaterial: 'implemented', maxTopLevel: 6, maxNav: 5},
+  },
+});
+const PROFILE_IDS = Object.freeze(Object.keys(PROFILES));
+/** 프로파일이 제한하는 일반 축. 서체·밀도·셸·모드는 따로 검사한다. */
+const PROFILE_AXES = Object.freeze(['width', 'radius', 'elevation', 'motion', 'scale', 'backdrop', 'ornament']);
+
+/**
+ * 레이아웃 패턴 11개. 기존 템플릿 하나를 뼈대로 쓰고 최상위 구역을 슬롯으로 나눈다.
+ *   template   뼈대 템플릿(src/catalog/templates.mjs). pageType은 그 템플릿의 것이다
+ *   slots      [{id, accepts: 허용 부품 type, min, max, from: 템플릿 최상위 자식 번호(기본 내용)}]. 슬롯 순서가 곧 화면 순서다
+ *   shells     허용 셸(첫 값이 기본). widths: 허용 폭(첫 값이 기본)
+ *   primitives 재사용하는 배치 원형(layout-primitive), recipe: 재사용하는 디자인 레시피(없으면 null)
+ *   maxTopLevel 최상위 구역 수 상한
+ */
+const PATTERNS = Object.freeze({
+  'erp-workspace': {label: 'ERP 사이드바·상단바·작업 영역', template: 'admin-table', recipe: null, primitives: ['stack', 'cluster'],
+    shells: ['sidebar', 'rail', 'stacked'], widths: ['full', 'wide'], maxTopLevel: 5,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'toolbar', accepts: ['filter-bar', 'actions', 'tags'], min: 0, max: 1, from: [1]},
+      {id: 'work', accepts: ['table', 'list', 'master-detail', 'kanban', 'grid', 'aside'], min: 1, max: 2, from: [2]},
+      {id: 'footer', accepts: ['pagination', 'notice'], min: 0, max: 1, from: [3]},
+    ]},
+  'dashboard-grid': {label: '대시보드 그리드', template: 'dashboard-overview', recipe: 'ops-dashboard', primitives: ['flow', 'split'],
+    shells: ['sidebar', 'rail', 'topbar', 'stacked'], widths: ['wide', 'full', 'standard'], maxTopLevel: 6,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'kpis', accepts: ['grid'], min: 1, max: 1, from: [1]},
+      {id: 'insights', accepts: ['aside', 'grid', 'chart', 'split'], min: 0, max: 2, from: [2]},
+      {id: 'detail', accepts: ['table', 'list'], min: 0, max: 1, from: [3]},
+    ]},
+  'admin-settings': {label: '관리 화면(설정)', template: 'settings', recipe: null, primitives: ['stack', 'container'],
+    shells: ['sidebar', 'stacked', 'topbar', 'rail'], widths: ['wide', 'standard', 'full'], maxTopLevel: 4,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'panels', accepts: ['tabs', 'form', 'list', 'properties', 'section'], min: 1, max: 2, from: [1]},
+      {id: 'status', accepts: ['notice'], min: 0, max: 1, from: [2]},
+    ]},
+  'commerce-listing': {label: '커머스 목록', template: 'product-listing', recipe: null, primitives: ['flow', 'split'],
+    shells: ['stacked', 'topbar', 'centered'], widths: ['wide', 'standard'], maxTopLevel: 4,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'catalog', accepts: ['aside', 'grid', 'filter-bar'], min: 1, max: 2, from: [1]},
+      {id: 'footer', accepts: ['pagination'], min: 0, max: 1, from: [2]},
+    ]},
+  'commerce-detail': {label: '커머스 상세', template: 'product-detail', recipe: null, primitives: ['split', 'stack'],
+    shells: ['stacked', 'topbar', 'centered'], widths: ['wide', 'standard'], maxTopLevel: 4,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'purchase', accepts: ['split'], min: 1, max: 1, from: [1]},
+      {id: 'info', accepts: ['tabs', 'section', 'reviews', 'faq'], min: 0, max: 2, from: [2]},
+    ]},
+  'commerce-checkout': {label: '커머스 결제', template: 'checkout', recipe: null, primitives: ['split', 'stack'],
+    shells: ['stacked', 'topbar', 'centered'], widths: ['wide', 'standard'], maxTopLevel: 4,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'progress', accepts: ['stepper'], min: 0, max: 1, from: [1]},
+      {id: 'payment', accepts: ['aside'], min: 1, max: 1, from: [2]},
+    ]},
+  'marketing-landing': {label: '마케팅 히어로·섹션', template: 'saas-landing', recipe: 'saas-landing', primitives: ['bento', 'flow', 'container'],
+    shells: ['topbar', 'stacked', 'centered'], widths: ['standard', 'wide'], maxTopLevel: 10,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'hero', accepts: ['hero'], min: 1, max: 1, from: [1]},
+      {id: 'sections', accepts: ['section', 'logo-cloud', 'grid', 'quote', 'faq'], min: 1, max: 7, from: [2, 3, 4, 5, 6, 7]},
+      {id: 'closing', accepts: ['cta'], min: 0, max: 1, from: [8]},
+    ]},
+  'editorial-article': {label: '에디토리얼 글', template: 'article', recipe: 'content-page', primitives: ['stack', 'container'],
+    shells: ['editorial', 'centered', 'masthead', 'stacked'], widths: ['standard', 'narrow'], maxTopLevel: 8,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'lead', accepts: ['media'], min: 0, max: 1, from: [1]},
+      {id: 'body', accepts: ['prose', 'section', 'quote', 'list'], min: 1, max: 5, from: [2, 3]},
+      {id: 'aside', accepts: ['notice'], min: 0, max: 1, from: [4]},
+    ]},
+  'docs-reference': {label: '문서 레퍼런스', template: 'docs-reference', recipe: 'content-page', primitives: ['split', 'stack'],
+    shells: ['sidebar', 'stacked', 'topbar'], widths: ['wide', 'standard'], maxTopLevel: 4,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'body', accepts: ['aside', 'section', 'prose'], min: 1, max: 3, from: [1]},
+    ]},
+  'mobile-navigation': {label: '모바일 탐색', template: 'event-schedule', recipe: null, primitives: ['stack', 'cluster'],
+    shells: ['dock'], widths: ['narrow', 'standard'], maxTopLevel: 5,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'filter', accepts: ['filter-bar'], min: 0, max: 1, from: [1]},
+      {id: 'items', accepts: ['list', 'timeline', 'links', 'faq', 'card'], min: 1, max: 3, from: [2, 3]},
+      {id: 'action', accepts: ['actions'], min: 0, max: 1, from: []},
+    ]},
+  'mobile-form': {label: '모바일 폼', template: 'signup', recipe: null, primitives: ['stack', 'container'],
+    shells: ['minimal'], widths: ['narrow', 'standard'], maxTopLevel: 4,
+    slots: [
+      {id: 'header', accepts: ['page-header'], min: 1, max: 1, from: [0]},
+      {id: 'form', accepts: ['form'], min: 1, max: 1, from: [1]},
+      {id: 'help', accepts: ['notice', 'links', 'actions'], min: 0, max: 2, from: [2]},
+    ]},
+});
+const PATTERN_IDS = Object.freeze(Object.keys(PATTERNS));
+
+/** 프로파일 기본 패턴: 목록의 첫 값. */
+const defaultPattern = profileId => PROFILES[profileId].patterns[0].slice('pattern:'.length);
+
+exports.PROFILE_SINCE = PROFILE_SINCE;
+exports.INFO_DENSITY = INFO_DENSITY;
+exports.NARROW_STRATEGIES = NARROW_STRATEGIES;
+exports.PROFILE_RULES = PROFILE_RULES;
+exports.PROFILES = PROFILES;
+exports.PROFILE_IDS = PROFILE_IDS;
+exports.PROFILE_AXES = PROFILE_AXES;
+exports.PATTERNS = PATTERNS;
+exports.PATTERN_IDS = PATTERN_IDS;
+exports.defaultPattern = defaultPattern;
+};
 __defs["render.mjs"] = function (exports, __m) {
 { const __r = __m("render/index.mjs"); exports.escapeHTML = __r.escapeHTML; exports.renderTree = __r.renderTree; exports.formRuntime = __r.formRuntime; }
 
@@ -4266,7 +4738,7 @@ exports.ornamentArt = ornamentArt;
 exports.heroDeco = heroDeco;
 exports.portrait = portrait;
 };
-__defs["render/chart.mjs"] = function (exports, __m) {
+__defs["render/chart-legacy.mjs"] = function (exports, __m) {
 const {e, num} = __m("render/util.mjs");
 
 /** Charts are plain SVG built from numbers; colors are token variables, series are also told apart by dash style and marker shape. */
@@ -4336,7 +4808,7 @@ const summary = n => n.kind === 'donut'
   ? `${n.caption} ` + n.categories.map((c, i) => `${c} ${fmt(n.series[0].values[i], n.unit)}`).join(', ')
   : `${n.caption} ` + n.series.map(s => `${s.name}: ` + n.categories.map((c, i) => `${c} ${fmt(s.values[i], n.unit)}`).join(', ')).join(' / ');
 
-function renderChart(n, id, {fillAssignedWidth = false} = {}) {
+function renderLegacyChart(n, id, {fillAssignedWidth = false} = {}) {
   let svg, legend = '';
   if (n.kind === 'donut') {
     svg = donut(n).svg.replaceAll('__ID__', id);
@@ -4350,6 +4822,149 @@ function renderChart(n, id, {fillAssignedWidth = false} = {}) {
   const head = ['', ...(n.kind === 'donut' ? [n.series[0].name] : n.series.map(s => s.name))];
   const table = `<table><caption>${e(n.title)} 데이터</caption><thead><tr><th scope="col">구분</th>${head.slice(1).map(h => `<th scope="col">${e(h)}</th>`).join('')}</tr></thead><tbody>${n.categories.map((c, i) => `<tr><th scope="row">${e(c)}</th>${(n.kind === 'donut' ? [n.series[0]] : n.series).map(s => `<td>${fmt(s.values[i], n.unit)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   return `<figure class="kit-chart" data-kind="${n.kind}"><figcaption><strong>${e(n.title)}</strong><span>${e(n.caption)}</span></figcaption><div class="kit-chart-body">${svg}${legend}</div><details class="kit-chart-data"><summary>데이터 표 보기</summary>${table}</details></figure>`;
+}
+
+exports.niceMax = niceMax;
+exports.renderLegacyChart = renderLegacyChart;
+};
+__defs["render/chart.mjs"] = function (exports, __m) {
+const {e, num} = __m("render/util.mjs");
+const {renderLegacyChart} = __m("render/chart-legacy.mjs");
+
+/** SVG charts. Series use both color and shape/dash; every figure also ships an HTML data table. */
+const W = 360, H = 240, M = {l: 48, r: 14, t: 18, b: 38};
+const DASH = ['', '6 4', '2 3'];
+const short = (s, n) => [...s].length > n ? [...s].slice(0, n).join('') + '…' : s;
+function niceMax(v) { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+const group = v => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const fmt = (v, unit) => `${Number.isInteger(v) ? group(v) : String(Math.round(v * 100) / 100)}${unit ? ` ${unit}` : ''}`;
+const fmtTick = v => Number.isInteger(v) ? group(v) : String(Math.round(v * 10) / 10);
+const marker = (i, x, y, c) => i % 3 === 0 ? `<circle cx="${num(x)}" cy="${num(y)}" r="3.5" class="ch-m" style="fill:var(--kit-chart${c})"/>`
+  : i % 3 === 1 ? `<rect x="${num(x - 3.2)}" y="${num(y - 3.2)}" width="6.4" height="6.4" class="ch-m" style="fill:var(--kit-chart${c})"/>`
+    : `<path d="M${num(x)} ${num(y - 4.4)}L${num(x + 4.4)} ${num(y)}L${num(x)} ${num(y + 4.4)}L${num(x - 4.4)} ${num(y)}Z" class="ch-m" style="fill:var(--kit-chart${c})"/>`;
+
+const valuesOf = n => n.kind === 'scatter' ? (n.series ?? []).flatMap(s => (s.points ?? []).flatMap(p => [p.x, p.y]))
+  : n.kind === 'stacked-bar' ? (n.categories ?? []).map((_, i) => (n.series ?? []).reduce((sum, s) => sum + (s.values?.[i] ?? 0), 0))
+    : (n.series ?? []).flatMap(s => s.values ?? []);
+function scale(n) {
+  const values = valuesOf(n), lo = Number.isFinite(n.axis?.min) ? n.axis.min : Math.min(0, ...values);
+  const hi = Number.isFinite(n.axis?.max) ? n.axis.max : niceMax(Math.max(...values, 0));
+  return {lo, hi, span: hi - lo || 1};
+}
+function chartAxes(out, {left, top, pw, ph, lo, hi, showX, showY, horizontal = false}) {
+  const span = hi - lo || 1;
+  const X = v => left + ((v - lo) / span) * pw, Y = v => top + ph - ((v - lo) / span) * ph;
+  const ticks = [0, 1, 2, 3, 4].map(i => lo + (span * i) / 4);
+  if (showY) for (const tick of ticks) {
+    if (horizontal) out.push(`<path d="M${num(X(tick))} ${top}V${top + ph}" class="ch-grid"/><text x="${num(X(tick))}" y="${H - 8}" text-anchor="middle" class="ch-t">${fmtTick(tick)}</text>`);
+    else out.push(`<path d="M${left} ${num(Y(tick))}H${left + pw}" class="ch-grid"/><text x="${left - 7}" y="${num(Y(tick) + 4)}" text-anchor="end" class="ch-t">${fmtTick(tick)}</text>`);
+  }
+  return {X, Y};
+}
+function cartesian(n) {
+  const values = valuesOf(n), horizontal = n.kind === 'bars-h', scatter = n.kind === 'scatter';
+  const spark = n.kind === 'sparkline', heat = n.kind === 'heatmap';
+  const left = spark ? 8 : heat ? 68 : horizontal ? 90 : M.l, top = spark ? 14 : M.t;
+  const right = 8, bottom = spark ? 8 : heat ? 34 : M.b;
+  const pw = W - left - right, ph = H - top - bottom, out = [];
+  const bounds = scale(n), showX = !spark && n.axis?.showX !== 'no', showY = !spark && n.axis?.showY !== 'no';
+  const {lo, hi} = bounds;
+  const {X, Y} = scatter ? (() => {
+    const xs = n.series.flatMap(s => s.points.map(p => p.x)), ys = n.series.flatMap(s => s.points.map(p => p.y));
+    const xlo = Number.isFinite(n.axis?.xMin) ? n.axis.xMin : Math.min(...xs), xhi = Number.isFinite(n.axis?.xMax) ? n.axis.xMax : Math.max(...xs);
+    const ylo = Number.isFinite(n.axis?.yMin) ? n.axis.yMin : Math.min(...ys), yhi = Number.isFinite(n.axis?.yMax) ? n.axis.yMax : Math.max(...ys);
+    const xspan = xhi - xlo || 1, yspan = yhi - ylo || 1;
+    for (let i = 0; i <= 4; i++) {
+      const xv = xlo + (xspan * i) / 4, yv = ylo + (yspan * i) / 4;
+      if (showX) out.push(`<path d="M${num(left + (pw * i) / 4)} ${top}V${top + ph}" class="ch-grid"/><text x="${num(left + (pw * i) / 4)}" y="${H - 8}" text-anchor="middle" class="ch-t">${fmtTick(xv)}</text>`);
+      if (showY) out.push(`<path d="M${left} ${num(top + ph - (ph * i) / 4)}H${left + pw}" class="ch-grid"/><text x="${left - 7}" y="${num(top + ph - (ph * i) / 4 + 4)}" text-anchor="end" class="ch-t">${fmtTick(yv)}</text>`);
+    }
+    return {X: v => left + ((v - xlo) / xspan) * pw, Y: v => top + ph - ((v - ylo) / yspan) * ph};
+  })() : chartAxes(out, {...bounds, left, top, pw, ph, showX: showX && !heat, showY: showY && !heat, horizontal});
+  if (spark) {
+    const vals = n.series[0].values, min = Math.min(...vals), max = Math.max(...vals), range = max - min || 1;
+    const pts = vals.map((v, i) => [left + (pw * i) / (vals.length - 1), top + ph - ((v - min) / range) * ph]);
+    out.push(`<path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${num(p[0])} ${num(p[1])}`).join('')}" class="ch-line" style="stroke:var(--kit-chart1)"/>`);
+    out.push(`<circle cx="${num(pts.at(-1)[0])}" cy="${num(pts.at(-1)[1])}" r="4" class="ch-m" style="fill:var(--kit-chart1)"/>`);
+  } else if (heat) {
+    const rows = n.series.length, cols = n.categories.length, cellW = pw / cols, cellH = ph / rows;
+    const min = Math.min(...values), max = Math.max(...values), range = max - min || 1;
+    n.categories.forEach((category, col) => out.push(`<text x="${num(left + cellW * (col + .5))}" y="${H - 8}" text-anchor="middle" class="ch-t">${e(short(category, Math.min(6, Math.max(1, Math.floor(cellW / 11)))) )}</text>`));
+    n.series.forEach((series, row) => out.push(`<text x="${left - 6}" y="${num(top + cellH * (row + .5) + 4)}" text-anchor="end" class="ch-t">${e(short(series.name, 2))}</text>`));
+    n.series.forEach((series, row) => series.values.forEach((v, col) => {
+      const step = Math.min(4, Math.floor(((v - min) / range) * 5));
+      out.push(`<rect x="${num(left + col * cellW + 1)}" y="${num(top + row * cellH + 1)}" width="${num(Math.max(0, cellW - 2))}" height="${num(Math.max(0, cellH - 2))}" rx="3" style="fill:var(--kit-chart${step + 1})"><title>${e(series.name)} · ${e(n.categories[col])}: ${fmt(v, n.unit)}</title></rect>`);
+    }));
+  } else if (scatter) {
+    n.series.forEach((series, si) => series.points.forEach((p, i) => out.push(`<g class="ch-point" style="color:var(--kit-chart${si + 1})"><title>${e(series.name)} ${i + 1}: ${fmt(p.x, n.xLabel || '')}, ${fmt(p.y, n.unit)}</title>${marker(si, X(p.x), Y(p.y), si + 1)}</g>`)));
+  } else {
+    const cats = n.categories.length, step = pw / cats;
+    if (showX) n.categories.forEach((category, i) => out.push(`<text x="${num(left + step * (i + .5))}" y="${H - 8}" text-anchor="middle" class="ch-t">${e(short(category, horizontal ? 5 : Math.min(6, Math.max(1, Math.floor(step / 11)))))}</text>`));
+    if (n.kind === 'bar' || n.kind === 'stacked-bar' || horizontal) {
+      const row = ph / cats, bw = horizontal ? Math.min(22, (row * .68) / n.series.length) : Math.min(30, (step * .72) / n.series.length);
+      n.series.forEach((series, si) => series.values.forEach((v, i) => {
+        const stacked = n.kind === 'stacked-bar';
+        const before = stacked ? n.series.slice(0, si).reduce((sum, item) => sum + item.values[i], 0) : 0;
+        if (horizontal) {
+          const value = stacked ? before + v : v, start = stacked ? before : Math.min(0, value);
+          const y = top + row * (i + .5) - (bw * (stacked ? 1 : n.series.length)) / 2 + (stacked ? 0 : si * bw);
+          out.push(`<rect x="${num(X(start))}" y="${num(y)}" width="${num(Math.max(1, X(value) - X(start)))}" height="${num(bw - 1)}" rx="2" class="ch-bar" style="fill:var(--kit-chart${si + 1})"/>`);
+        } else {
+          const x = left + step * (i + .5) - (bw * (stacked ? 1 : n.series.length)) / 2 + (stacked ? 0 : si * bw);
+          const y0 = Y(stacked ? before + v : Math.max(v, 0)), baseline = Y(stacked ? before : 0);
+          out.push(`<rect x="${num(x)}" y="${num(y0)}" width="${num(Math.max(1, bw - 1))}" height="${num(Math.max(1, baseline - y0))}" rx="2" class="ch-bar" style="fill:var(--kit-chart${si + 1})"/>`);
+        }
+      }));
+    } else n.series.forEach((series, si) => {
+      const pts = series.values.map((v, i) => [left + step * (i + .5), Y(v)]);
+      if (n.kind === 'area') out.push(`<path d="M${num(pts[0][0])} ${num(Y(0))}${pts.map(p => `L${num(p[0])} ${num(p[1])}`).join('')}L${num(pts.at(-1)[0])} ${num(Y(0))}Z" class="ch-area" style="fill:var(--kit-chart${si + 1})"/>`);
+      out.push(`<path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${num(p[0])} ${num(p[1])}`).join('')}" class="ch-line" style="stroke:var(--kit-chart${si + 1})"${DASH[si] ? ` stroke-dasharray="${DASH[si]}"` : ''}/>`);
+      pts.forEach(p => out.push(marker(si, p[0], p[1], si + 1)));
+    });
+  }
+  return out.join('');
+}
+
+function donut(n) {
+  const vals = n.series[0].values, total = vals.reduce((a, b) => a + b, 0), cx = 120, cy = 120, r = 82, r2 = 50;
+  let a0 = -Math.PI / 2;
+  const slices = vals.map((v, i) => {
+    const a1 = a0 + (v / total) * Math.PI * 2 - (vals.length > 1 ? .02 : 0), large = a1 - a0 > Math.PI ? 1 : 0;
+    const p = (rad, ang) => `${num(cx + rad * Math.cos(ang))} ${num(cy + rad * Math.sin(ang))}`;
+    const d = v === total ? `M${cx} ${cy - r}A${r} ${r} 0 1 1 ${cx - .01} ${cy - r}L${cx - .01} ${cy - r2}A${r2} ${r2} 0 1 0 ${cx} ${cy - r2}Z` : `M${p(r, a0)}A${r} ${r} 0 ${large} 1 ${p(r, a1)}L${p(r2, a1)}A${r2} ${r2} 0 ${large} 0 ${p(r2, a0)}Z`;
+    a0 += (v / total) * Math.PI * 2;
+    return `<path d="${d}" class="ch-slice" style="fill:var(--kit-chart${(i % 5) + 1})"/>`;
+  });
+  return `<svg class="ch-donut" viewBox="0 0 240 240" role="img" aria-labelledby="__ID__-t __ID__-d" focusable="false"><title id="__ID__-t">${e(n.title)}</title><desc id="__ID__-d">${e(summary(n))}</desc>${slices.join('')}<text x="120" y="116" text-anchor="middle" class="ch-big">${fmtTick(total)}</text><text x="120" y="136" text-anchor="middle" class="ch-t">합계</text></svg>`;
+}
+
+function summary(n) {
+  if (n.kind === 'scatter') return `${n.caption} ` + n.series.map(s => `${s.name}: ` + s.points.map(p => `(${p.x}, ${p.y})`).join(', ')).join(' / ');
+  return `${n.caption} ` + n.series.map(s => `${s.name}: ` + n.categories.map((category, i) => `${category} ${fmt(s.values[i], n.unit)}`).join(', ')).join(' / ');
+}
+function tableFor(n) {
+  if (n.kind === 'scatter') return `<table><caption>${e(n.title)} 데이터</caption><thead><tr><th scope="col">계열</th><th scope="col">${e(n.xLabel || 'X')}</th><th scope="col">${e(n.yLabel || 'Y')}</th></tr></thead><tbody>${n.series.flatMap(s => s.points.map(p => `<tr><th scope="row">${e(s.name)}</th><td>${fmt(p.x, n.xLabel || '')}</td><td>${fmt(p.y, n.unit)}</td></tr>`)).join('')}</tbody></table>`;
+  return `<table><caption>${e(n.title)} 데이터</caption><thead><tr><th scope="col">구분</th>${n.series.map(s => `<th scope="col">${e(s.name)}</th>`).join('')}</tr></thead><tbody>${n.categories.map((category, i) => `<tr><th scope="row">${e(category)}</th>${n.series.map(s => `<td>${fmt(s.values[i], n.unit)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+function renderChart(n, id, {fillAssignedWidth = false} = {}) {
+  // Keep the established 2.4.0/2.5.0 SVG bytes unchanged unless a chart opts into the new axis contract.
+  if (['bar', 'bars-h', 'line', 'area', 'donut'].includes(n.kind) && !n.axis && !n.xLabel && !n.yLabel) return renderLegacyChart(n, id, {fillAssignedWidth});
+  let svg, legend = '';
+  const spark = n.kind === 'sparkline', axisOmitted = spark || n.axis?.showX === 'no' || n.axis?.showY === 'no';
+  if (n.kind === 'donut') {
+    svg = donut(n).replaceAll('__ID__', id);
+    const total = n.series[0].values.reduce((a, b) => a + b, 0);
+    legend = `<ul class="kit-legend">${n.categories.map((c, i) => `<li><i style="background:var(--kit-chart${(i % 5) + 1})" aria-hidden="true"></i>${e(c)} <b>${fmt(n.series[0].values[i], n.unit)}</b> <span>(${Math.round((n.series[0].values[i] / total) * 100)}%)</span></li>`).join('')}</ul>`;
+  } else {
+    svg = `<svg viewBox="0 0 ${W} ${H}"${fillAssignedWidth ? ' preserveAspectRatio="none"' : ''} data-axis="${axisOmitted ? 'omitted-intentionally' : 'shown'}" role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${cartesian(n)}</svg>`;
+    if (fillAssignedWidth) svg = `<div class="kit-chart-plot">${svg}</div>`;
+    if (n.kind === 'heatmap') {
+      const values = valuesOf(n), min = Math.min(...values), max = Math.max(...values);
+      legend = `<ul class="kit-legend" aria-label="색상 값 범위">${Array.from({length: 5}, (_, i) => `<li><i style="background:var(--kit-chart${i + 1})" aria-hidden="true"></i>${fmt(min + ((max - min) * i) / 4, n.unit)}</li>`).join('')}</ul>`;
+    } else if (!spark && n.kind !== 'heatmap' && n.series.length > 1) legend = `<ul class="kit-legend">${n.series.map((s, i) => `<li><i style="background:var(--kit-chart${i + 1})" aria-hidden="true"></i>${e(s.name)}</li>`).join('')}</ul>`;
+  }
+  return `<figure class="kit-chart" data-kind="${n.kind}"><figcaption><strong>${e(n.title)}</strong><span>${e(n.caption)}${n.unit ? ` · 단위 ${e(n.unit)}` : ''}</span></figcaption><div class="kit-chart-body">${svg}${legend}</div><details class="kit-chart-data"><summary>데이터 표 보기</summary>${tableFor(n)}</details></figure>`;
 }
 
 exports.niceMax = niceMax;
@@ -6483,8 +7098,10 @@ exports.lintType = lintType;
 exports.typographyMarkdown = typographyMarkdown;
 };
 __defs["validate.mjs"] = function (exports, __m) {
+const {nodeSpecAt, nodeExtended} = __m("catalog/node-extensions.mjs");
+const {profileErrors} = __m("profiles/check.mjs");
 const {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} = __m("catalog/expression.mjs");
-const {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
+const {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} = __m("catalog.mjs");
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -6531,6 +7148,9 @@ function validateBlueprint(input) {
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
   if (!ACCEPTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + ACCEPTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
   for (const f of TOP_LEVEL_SINCE_FIELDS) if (Object.hasOwn(input, f.field) && !atLeast(input.catalogVersion, f.since)) error(`$.${f.field}`, 'VERSION_FIELD', `${f.field}는 ${f.since}부터 쓸 수 있습니다.`);
+  if (Object.hasOwn(input, PROFILE_SINCE_FIELD.field) && !atLeast(input.catalogVersion, PROFILE_SINCE_FIELD.since)) error('$.profile', 'VERSION_FIELD', `profile은 ${PROFILE_SINCE_FIELD.since}부터 쓸 수 있습니다.`);
+  // 프로파일 계약(PF01~PF13): 프로파일이 허용하지 않는 부품·프리셋·밀도 조합을 거부한다. 근거와 대안(fix)을 오류에 싣는다.
+  else if (PROFILE_SINCE_FIELD.values.includes(input.profile)) for (const e of profileErrors(input)) if (errors.length < 80) errors.push(e);
   const expr = expressionApplies(input), warnings = [];
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));
@@ -6587,7 +7207,7 @@ function validateBlueprint(input) {
     if (typeof n.type !== 'string' || !Object.hasOwn(nodeSpecs, n.type)) { error(path + '.type', 'NODE_TYPE', '알 수 없는 부품입니다.'); return; }
     if (parent && !nodeSpecs[parent].children?.includes(n.type)) error(path + '.type', 'CHILD_TYPE', `${parent} 안에 ${n.type}을 넣을 수 없습니다.`);
     types.add(n.type); firstSeen[n.type] ??= path;
-    const spec = nodeSpecs[n.type];
+    const spec = nodeSpecAt(n.type, input.catalogVersion);
     const properties = {type: {const: n.type}, ...spec.fields};
     if (spec.children) properties.children = {type: 'array', items: {}, minItems: spec.min, maxItems: spec.max};
     value(n, {type: 'object', properties, required: requiredOf(spec)}, path);
@@ -6667,7 +7287,7 @@ function validateBlueprint(input) {
       if (['ready', 'partial'].includes(n.state) && n.rows.length === 0) error(path + '.rows', 'STATE_DATA', `${n.state} 상태에는 행이 1개 이상 필요합니다.`);
     }
     if (t === 'list' && A(n.items) && ['ready', 'partial'].includes(n.state) && n.items.length === 0) error(path + '.items', 'STATE_DATA', `${n.state} 상태에는 항목이 1개 이상 필요합니다.`);
-    if (t === 'chart' && A(n.series) && A(n.categories)) {
+    if (t === 'chart' && !nodeExtended('chart', input.catalogVersion) && A(n.series) && A(n.categories)) {
       n.series.forEach((s, i) => { if (plain(s) && A(s.values) && s.values.length !== n.categories.length) error(`${path}.series[${i}].values`, 'CHART_SHAPE', '값의 개수는 categories와 같아야 합니다.'); });
       if (n.kind === 'donut') {
         const v = n.series[0]?.values;
@@ -6676,6 +7296,49 @@ function validateBlueprint(input) {
         if (n.categories.length > 5) error(path + '.categories', 'CHART_SHAPE', 'donut은 범주 5개 이하입니다(그 이상은 막대 차트).');
       }
       if (n.series.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
+    }
+    // 새 차트 형태(stacked-bar·scatter·heatmap·sparkline)와 축 필드는 확장 명세가 켜진 카탈로그 버전(node-extensions.mjs)에서만 검사한다.
+    if (t === 'chart' && nodeExtended('chart', input.catalogVersion)) {
+      const series = A(n.series) ? n.series : [], categories = A(n.categories) ? n.categories : [];
+      const pointKind = n.kind === 'scatter';
+      if (!series.length) error(path + '.series', 'CHART_SHAPE', '차트 계열이 하나 이상 필요합니다.');
+      if (!pointKind && categories.length < 2) error(path + '.categories', 'CHART_SHAPE', '이 차트는 범주 2개 이상이 필요합니다.');
+      series.forEach((s, i) => {
+        if (!plain(s)) return;
+        if (pointKind) {
+          if (!A(s.points) || s.points.length < 2) error(`${path}.series[${i}].points`, 'CHART_SHAPE', 'scatter 계열에는 좌표 점이 2개 이상 필요합니다.');
+          if (Object.hasOwn(s, 'values')) error(`${path}.series[${i}].values`, 'CHART_SHAPE', 'scatter는 values 대신 x·y points를 사용합니다.');
+        } else {
+          if (!A(s.values) || s.values.length !== categories.length) error(`${path}.series[${i}].values`, 'CHART_SHAPE', '계열 값의 개수는 categories와 같아야 합니다.');
+          if (Object.hasOwn(s, 'points')) error(`${path}.series[${i}].points`, 'CHART_SHAPE', '이 차트는 points를 받지 않습니다.');
+        }
+      });
+      if (n.kind === 'stacked-bar' && (series.length < 2 || series.some(s => A(s.values) && s.values.some(v => v < 0)))) error(path + '.series', 'CHART_SHAPE', 'stacked-bar는 음이 아닌 값의 계열 2개 이상이 필요합니다.');
+      if (n.kind === 'heatmap' && series.length < 2) error(path + '.series', 'CHART_SHAPE', 'heatmap은 행 2개 이상이 필요합니다.');
+      if (n.kind === 'sparkline' && series.length !== 1) error(path + '.series', 'CHART_SHAPE', 'sparkline은 계열 하나만 허용합니다.');
+      if (n.kind === 'donut') {
+        const v = series[0]?.values;
+        if (series.length !== 1) error(path + '.series', 'CHART_SHAPE', 'donut은 계열 하나만 허용합니다.');
+        else if (A(v) && (v.some(x => typeof x !== 'number' || x < 0) || v.reduce((a, b) => a + b, 0) <= 0)) error(path + '.series[0].values', 'CHART_SHAPE', 'donut 값은 0 이상이며 합이 0보다 커야 합니다.');
+        if (categories.length > 5) error(path + '.categories', 'CHART_SHAPE', 'donut은 범주 5개 이하입니다(그 이상은 막대 차트).');
+      }
+      if (n.series?.length > 1 && n.kind === 'bars-h' && n.series.length > 3) error(path + '.series', 'CHART_SHAPE', '계열은 3개 이하입니다.');
+      const values = pointKind ? series.flatMap(s => (s.points ?? []).flatMap(p => [p.x, p.y]))
+        : n.kind === 'stacked-bar' ? categories.map((_, i) => series.reduce((sum, s) => sum + (s.values?.[i] ?? 0), 0))
+          : series.flatMap(s => s.values ?? []);
+      if (plain(n.axis)) {
+        if (Number.isFinite(n.axis.min) && Number.isFinite(n.axis.max) && n.axis.min >= n.axis.max) error(path + '.axis', 'CHART_AXIS', '축 범위는 min보다 max가 커야 합니다.');
+        if (pointKind) {
+          const xs = series.flatMap(s => (s.points ?? []).map(p => p.x)), ys = series.flatMap(s => (s.points ?? []).map(p => p.y));
+          if (Number.isFinite(n.axis.xMin) && Number.isFinite(n.axis.xMax) && n.axis.xMin >= n.axis.xMax) error(path + '.axis', 'CHART_AXIS', 'X축 범위는 xMin보다 xMax가 커야 합니다.');
+          if (Number.isFinite(n.axis.yMin) && Number.isFinite(n.axis.yMax) && n.axis.yMin >= n.axis.yMax) error(path + '.axis', 'CHART_AXIS', 'Y축 범위는 yMin보다 yMax가 커야 합니다.');
+          if (Number.isFinite(n.axis.xMin) && xs.some(v => v < n.axis.xMin) || Number.isFinite(n.axis.xMax) && xs.some(v => v > n.axis.xMax)) error(path + '.axis', 'CHART_AXIS', 'X축 범위가 데이터 점을 잘라냅니다.');
+          if (Number.isFinite(n.axis.yMin) && ys.some(v => v < n.axis.yMin) || Number.isFinite(n.axis.yMax) && ys.some(v => v > n.axis.yMax)) error(path + '.axis', 'CHART_AXIS', 'Y축 범위가 데이터 점을 잘라냅니다.');
+        } else {
+          if (Number.isFinite(n.axis.min) && values.some(v => v < n.axis.min)) error(path + '.axis.min', 'CHART_AXIS', '축 최솟값이 데이터보다 커서 값이 잘립니다.');
+          if (Number.isFinite(n.axis.max) && values.some(v => v > n.axis.max)) error(path + '.axis.max', 'CHART_AXIS', '축 최댓값이 데이터보다 작아 값이 잘립니다.');
+        }
+      }
     }
     if (t === 'calendar' && A(n.events) && Number.isInteger(n.year) && Number.isInteger(n.month)) n.events.forEach((ev, i) => { if (plain(ev) && Number.isInteger(ev.day) && ev.day > DAYS(n.year, n.month)) error(`${path}.events[${i}].day`, 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${ev.day}일이 없습니다.`); });
     if (t === 'calendar' && Number.isInteger(n.today) && Number.isInteger(n.year) && Number.isInteger(n.month) && n.today > DAYS(n.year, n.month)) error(path + '.today', 'CALENDAR_DAY', `${n.year}년 ${n.month}월에는 ${n.today}일이 없습니다.`);

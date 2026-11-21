@@ -13,7 +13,7 @@
 | `src/materials/contract.mjs` | 공통 필드(`FIELDS`), 종류(`BUILTIN_KINDS`, `defineKind`), 분류·맥락·품질·반응형·라이선스 enum, `combinationsOf`, `isCompletePreset`, `defineMaterial` |
 | `src/materials/validate.mjs` | `validateMaterial(m, kind)`: 재료 한 장. `validateGraph(byId)`: 의존·부모·자식 참조 |
 | `src/materials/registry.mjs` | `register`·`get`·`search`·`filter({kind, category, context, minQuality, preset, tag})`·`counts()`·`check()`·`addKind` |
-| `src/materials/adapters.mjs` | 부품 55, 축 15, 서체 프리셋 18, 테마 54, 레거시 팔레트 427, 페이지 유형 16, 템플릿 85, 레시피 3, 배치 원형 6, 아이콘 87, 2.6.0 색 토큰 257 |
+| `src/materials/adapters.mjs` | 부품 57(노드 55 + Select·Table), 축 15, 서체 프리셋 18, 테마 54, 레거시 팔레트 427, 페이지 유형 16, 템플릿 85, 레시피 3, 배치 원형 6, 아이콘 87, 2.6.0 색 토큰 257, 차트 프리셋 8 |
 | `src/materials/index.mjs` | 공개 진입점, `catalogRegistry()` |
 | `tests/materials-registry.test.mjs` | 계약·레지스트리·수량·고정 출력 검사 |
 
@@ -36,14 +36,15 @@
 
 - 새 재료는 `defineMaterial({...})`로 만들고, 공통 필드를 빼지 않는다. 값이 없으면 null이나 빈 값으로 둔다.
 - 새 종류는 `defineKind({id, label, categories, ext, presetCapable})`와 `registry.addKind`로 더한다. `FIELDS`를 바꾸려면 `MATERIAL_CONTRACT_VERSION`을 올리고 이 ADR을 개정한다.
-- 미리 만든 종류 중 `color-token`에는 이번에 257개가 등록됐다. `chart-preset`, `pattern`은 종류만 있고 재료는 아직 없다.
+- 미리 만든 종류 중 `color-token`에는 이번에 257개가 등록됐다. `chart-preset`에는 차트 프리셋 8개가 등록됐고 `pattern`에는 레이아웃 패턴 11개가 아래 `designRegistry()`에 등록된다.
+- 디자인 프로파일(`profile` 종류)과 레이아웃 패턴(`pattern` 재료 11개)은 `src/profiles/registry.mjs`의 `designRegistry()`에 등록한다. `catalogRegistry()`의 수량은 바꾸지 않는다. Blueprint의 `profile` 필드(2.6.0)와 조립은 [디자인 프로파일](../materials/profiles.md)에 적는다.
 - 등록 후 `registry.check()`가 비어야 한다. `catalogRegistry()`는 비지 않으면 예외를 낸다.
 - 품질을 `verified`로 올릴 때는 그 재료를 실패시킬 수 있는 테스트의 file:line을 적는다.
 - 외부 자료는 새로 수집하지 않는다. 기존 팔레트 판정은 `docs/materials/audit.md` §3을 따른다.
 
 ## 결과
 
-재료 1,027개, 속성 조합 763,010개, 완성 프리셋 161개(서체 18 + 역할형 서체 4 + 테마 54 + 템플릿 85)다. 이 중 색 토큰은 257개이며 실행 시점 값은 `catalogRegistry().counts()`가 정본이다. 기존 공개 계약 `./service`와 `./edit`의 응답은 바뀌지 않았다. 색 토큰은 `./color-tokens`와 `./materials` 읽기 API로 공개한다. `src/materials/`는 Core 경계 검사(`tests/core-boundary.test.mjs`)를 받는다.
+재료 1,037개, 속성 조합 764,002개, 완성 프리셋 169개(서체 18 + 역할형 서체 4 + 테마 54 + 템플릿 85 + 차트 8)다. 이 중 색 토큰은 257개이며 실행 시점 값은 `catalogRegistry().counts()`가 정본이다. 기존 공개 계약 `./service`와 `./edit`의 응답은 바뀌지 않았다. 색 토큰은 `./color-tokens`와 `./materials` 읽기 API로 공개한다. `src/materials/`는 Core 경계 검사(`tests/core-boundary.test.mjs`)를 받는다.
 
 ## 부록: 타이포그래피 재료와 기존 엔진
 
