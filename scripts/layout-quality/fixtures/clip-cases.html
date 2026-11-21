@@ -22,6 +22,27 @@
 <section class="case" id="bad-clip-svg" data-expect="CLIP_SVG"><small class="tag">bad: SVG 안쪽 그림이 viewBox 밖으로 나가 잘림</small>
 <svg width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="막대"><rect x="10" y="20" width="60" height="30" fill="#2742c8"/><rect x="100" y="10" width="60" height="40" fill="#2742c8"/></svg></section>
 
+<section class="case" id="bad-svg-slice-crop" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 의미 있는 그림을 xMidYMid slice로 44.7% 세로 잘라 냄</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="bad-svg-slice-crop-aligned" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 위쪽에 맞춘 slice는 아래쪽에서 44.7% 잘라 냄</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMin slice" role="img" aria-label="위에 맞춘 램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-same-ratio" data-expect="none"><small class="tag">good: slice여도 표시 상자와 viewBox 비율이 같아 잘리지 않음</small>
+<svg style="width:320px;height:320px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="정사각형"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-meet" data-expect="none"><small class="tag">good: 비율은 다르지만 meet로 전체 그림을 보임</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="램프 전체"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-decoration" data-expect="none"><small class="tag">good: aria-hidden으로 표시한 의도된 장식 크롭</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-visible" data-expect="none"><small class="tag">good: overflow visible이면 표시 상자에서 잘리지 않음</small>
+<svg style="width:594px;height:328.4px;overflow:visible" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="잘림 없는 램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-small" data-expect="none"><small class="tag">good: crop이 20% 미만인 작은 비율 편차</small>
+<svg style="width:220px;height:180px" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="작은 크롭"><rect x="0" y="0" width="200" height="200" fill="#2742c8"/></svg></section>
+
 <section class="case" id="bad-small-text-html" data-expect="SMALL_TEXT"><small class="tag">bad: 표 라벨이 9px</small>
 <table><tr><th class="small" style="width:80px">분기</th><td class="small" style="width:80px">1,200</td></tr></table></section>
 

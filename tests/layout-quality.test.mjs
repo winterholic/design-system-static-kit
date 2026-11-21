@@ -50,3 +50,7 @@ test('옵션 병합은 기본 임계값을 보존하고 지정한 값만 덮는�
 test('기본 임계값은 카드의 읽기 폭 기준(45~80ch)을 그대로 담는다', () => {
   assert.deepEqual(LAYOUT_OPTIONS.thresholds.measure, {min: 45, max: 80});
 });
+
+test('SVG slice 크롭은 실제 잘린 양이 20% 이상인 의미 있는 그림만 경고로 보고한다', () => {
+  assert.equal(LAYOUT_OPTIONS.thresholds.sliceCropPercent, 20);
+});

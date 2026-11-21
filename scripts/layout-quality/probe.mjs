@@ -47,6 +47,7 @@ export function layoutProbe(options) {
     CLIP_TEXT: '글이 잘린다. overflow를 풀거나 칸 높이·폭을 글에 맞춘다(말줄임이 의도면 text-overflow: ellipsis와 title).',
     CLIP_ICON: '아이콘·이미지가 상위 요소의 overflow에 잘린다. 안쪽 여백을 주거나 overflow: visible로 바꾼다.',
     CLIP_SVG: 'SVG 안쪽 그림이 viewBox 밖으로 나가 잘린다. viewBox를 넓히거나 svg에 overflow: visible을 준다.',
+    SVG_SLICE_CROP: 'preserveAspectRatio="slice"가 표시 상자를 채우면서 의미 있는 SVG 그림 일부를 자른다. 표시 상자와 viewBox 비율을 맞추거나 meet를 검토한다. 의도한 구도라면 크롭 비율과 잘리는 쪽을 확인한다.',
     OVERFLOW_X: '문서·요소가 화면 오른쪽 밖으로 나간다. min-width: 0, overflow-wrap, 고정 폭 제거를 확인한다.',
     OVERLAP_SVG_TEXT: 'SVG 차트의 눈금·값 라벨이 서로 겹친다. 범주를 줄이거나 눈금을 건너뛰고(라벨 모드 extremes), 긴 이름은 줄이거나 가로 스크롤(responsive: scroll)을 쓴다.',
     SMALL_TEXT: '글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다).',
@@ -315,7 +316,29 @@ export function layoutProbe(options) {
     if (!visible(el) && el.tagName.toLowerCase() === 'svg') continue;
     scanned.clip++;
     const r = el.getBoundingClientRect(), isSvg = el.tagName.toLowerCase() === 'svg';
-    if (el.closest(SEL.decor)) continue;
+    const meaningfulSvg = isSvg && !el.closest('[aria-hidden="true"]') && (el.getAttribute('role') === 'img' || !!el.getAttribute('aria-label')?.trim() || !!el.querySelector(':scope > title'));
+    const svgBox = isSvg ? el.getBoundingClientRect() : null, vb = isSvg ? el.viewBox?.baseVal : null;
+    const par = isSvg ? (el.getAttribute('preserveAspectRatio') || '').trim().split(/\s+/).filter(x => x && x !== 'defer') : [];
+    const align = par[0] || 'xMidYMid', mode = par[1] || 'meet';
+    let sliceGeometry = null;
+    if (meaningfulSvg && mode === 'slice' && vb?.width > 0 && vb.height > 0 && svgBox.width > 0 && svgBox.height > 0) {
+      const boxRatio = svgBox.width / svgBox.height, viewRatio = vb.width / vb.height;
+      if (boxRatio > viewRatio) {
+        const crop = Math.max(0, 1 - viewRatio / boxRatio), token = align.match(/Y(Min|Mid|Max)$/)?.[1] || 'Mid';
+        const leading = crop * (token === 'Min' ? 0 : token === 'Max' ? 1 : 0.5);
+        sliceGeometry = {axis: 'y', crop, leading, trailing: crop - leading, boxRatio, viewRatio};
+      } else if (boxRatio < viewRatio) {
+        const crop = Math.max(0, 1 - boxRatio / viewRatio), token = align.match(/^x(Min|Mid|Max)/)?.[1] || 'Mid';
+        const leading = crop * (token === 'Min' ? 0 : token === 'Max' ? 1 : 0.5);
+        sliceGeometry = {axis: 'x', crop, leading, trailing: crop - leading, boxRatio, viewRatio};
+      }
+    }
+    const explicitDecor = el.closest('[data-layout-decor]') || (el.closest('[aria-hidden="true"]') && el.closest('.kit-art'));
+    const inDecorSelector = el.closest(SEL.decor);
+    // .kit-art 계열의 명시적으로 크롭된 의미 이미지 한정으로 새 slice 검사를 허용한다.
+    // 같은 계열의 기존 viewBox CLIP_SVG 판정은 계속 장식 면제 상태로 둔다.
+    const meaningfulArtSlice = sliceGeometry && sliceGeometry.crop * 100 >= (T.sliceCropPercent ?? 20) && el.classList.contains('kit-art') && !['visible', 'auto', 'scroll'].includes(getComputedStyle(el).overflow);
+    if (explicitDecor || (inDecorSelector && !meaningfulArtSlice)) continue;
     // 1) 상위 요소의 overflow가 이 아이콘을 자름
     for (const c of clippers(el)) {
       const cr = c.el.getBoundingClientRect(), cs2 = getComputedStyle(c.el);
@@ -333,6 +356,19 @@ export function layoutProbe(options) {
       scanned.svg++;
       const ovf = getComputedStyle(el).overflow;
       const vb = el.viewBox?.baseVal;
+      // slice는 상자의 종횡비를 채우려고 viewBox의 한 축을 잘라 낸다. 의미가 노출된 그림만
+      // 위험(warn)으로 보고, aria-hidden/data-layout-decor 장식은 선택자에서 이미 제외한다.
+      if (meaningfulSvg && sliceGeometry && !['visible', 'auto', 'scroll'].includes(ovf)) {
+        const percent = sliceGeometry.crop * 100, minPercent = T.sliceCropPercent ?? 20;
+        if (percent >= minPercent) flag('SVG_SLICE_CROP', 'warn', el, 'svg', {
+          preserveAspectRatio: `${align} slice`,
+          viewBox: `${r1(vb.x)} ${r1(vb.y)} ${r1(vb.width)} ${r1(vb.height)}`,
+          renderedSize: `${r1(r.width)}x${r1(r.height)}`,
+          viewBoxRatio: r1(sliceGeometry.viewRatio), renderedRatio: r1(sliceGeometry.boxRatio),
+          cropAxis: sliceGeometry.axis, cropPercent: r1(percent), cropFromStartPercent: r1(sliceGeometry.leading * 100), cropFromEndPercent: r1(sliceGeometry.trailing * 100),
+          thresholdPercent: minPercent,
+        });
+      }
       if (vb && vb.width > 0 && !['visible', 'auto', 'scroll'].includes(ovf)) {
         let bb; try { bb = el.getBBox(); } catch { bb = null; }
         if (bb && bb.width > 0) {
@@ -462,6 +498,7 @@ export const LAYOUT_OPTIONS = {
   },
   thresholds: {
     ampleCh: 45, ampleEm: 16,
+    sliceCropPercent: 20,
     labelChars: 40, shortChars: 120,
     measure: {min: 45, max: 80},
     minFont: {heading: 16, lead: 14, desc: 12, short: 12, body: 12, label: 11, control: 12, value: 12, cell: 11, svg: 10},

@@ -42,6 +42,16 @@ for (const {file, widths} of FIXTURES) {
         }
       });
     }
+    if (file === 'clip-cases.html') test('xMidYMid slice는 실제 축·비율·잘림 위치를 보고한다', () => {
+      for (const w of widths) {
+        const centered = run.findings.find(x => x.width === w && x.code === 'SVG_SLICE_CROP' && x.locator.startsWith('#bad-svg-slice-crop >'));
+        const aligned = run.findings.find(x => x.width === w && x.code === 'SVG_SLICE_CROP' && x.locator.startsWith('#bad-svg-slice-crop-aligned >'));
+        expect(centered, `${w}px centered SVG_SLICE_CROP`).toBeTruthy();
+        expect(centered).toMatchObject({severity: 'warn', evidence: {cropAxis: 'y', cropPercent: 44.7, cropFromStartPercent: 22.4, cropFromEndPercent: 22.4}});
+        expect(aligned, `${w}px aligned SVG_SLICE_CROP`).toBeTruthy();
+        expect(aligned).toMatchObject({severity: 'warn', evidence: {cropAxis: 'y', cropPercent: 44.7, cropFromStartPercent: 0, cropFromEndPercent: 44.7}});
+      }
+    });
   });
 }
 
