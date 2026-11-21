@@ -1,0 +1,480 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "registry": "src/materials/index.mjs:catalogRegistry",
+    "contract": "src/materials/contract.mjs"
+  },
+  "countingRules": {
+    "attributeCombinations": "재료별 variants 값 개수의 곱을 합산한다. 재료 간 곱도, 완성 프리셋 수도 아니다.",
+    "completePresets": "isCompletePreset 기준으로 실제 등록된 프리셋만 센다.",
+    "stateAndVariantCoverage": "등록 재료에 선언된 variants와 states만 센다. 미선언 구현은 추정하지 않는다.",
+    "verifiedCombinations": "전수 계약 테스트가 순회하는 컨트롤의 허용·거부 조합만 집계한다.",
+    "qualityPassRate": "A/B 실행 결과가 범주별 분모를 제공할 때만 산출한다. 현재 범주별 값은 미확인이다."
+  },
+  "totals": {
+    "materials": 1066,
+    "attributeCombinations": 795799,
+    "completePresets": 190
+  },
+  "qualityEvidence": {
+    "static": {
+      "status": "unconfirmed",
+      "passRate": null,
+      "evidence": [
+        "scripts/audit.mjs (npm run verify에서 실행; 범주별 검사 분모 없음)"
+      ]
+    },
+    "browser": {
+      "status": "measured",
+      "cases": 8,
+      "passingCases": 8,
+      "passRate": 1,
+      "findingsBySeverity": {
+        "error": 0,
+        "warn": 0,
+        "info": 2
+      },
+      "evidence": [
+        "docs/evidence/material-platform/layout/report.json",
+        "docs/evidence/material-platform/layout/run.json"
+      ],
+      "sourceRevision": "5b607d374bbc4f168818c96f40db6af7296187ce",
+      "scope": "ERP·커머스·SaaS·분석 대표 화면 4종 × 390/1280px; legacy 대조군은 제외."
+    },
+    "human": {
+      "status": "not-evaluated",
+      "passRate": null,
+      "evidence": [
+        "docs/evidence/material-platform/layout/findings.md"
+      ]
+    }
+  },
+  "categories": [
+    {
+      "id": "color",
+      "materials": 674,
+      "attributeCombinations": 1106,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 674
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 429,
+        "variantAxes": 429,
+        "variantValues": 861
+      },
+      "stateCoverage": {
+        "materialsWithStates": 245,
+        "stateValues": 407,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "typography",
+      "materials": 25,
+      "attributeCombinations": 46,
+      "completePresets": 22,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 25
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 7,
+        "variantAxes": 7,
+        "variantValues": 28
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "spacing",
+      "materials": 1,
+      "attributeCombinations": 3,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 1
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 1,
+        "variantAxes": 1,
+        "variantValues": 3
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "shape",
+      "materials": 3,
+      "attributeCombinations": 14,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 3
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 3,
+        "variantAxes": 3,
+        "variantValues": 14
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "icon-media",
+      "materials": 91,
+      "attributeCombinations": 1536,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 91
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 4,
+        "variantAxes": 7,
+        "variantValues": 68
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "layout-navigation",
+      "materials": 29,
+      "attributeCombinations": 4125,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 7,
+        "verified": 22
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 11,
+        "variantAxes": 37,
+        "variantValues": 108
+      },
+      "stateCoverage": {
+        "materialsWithStates": 5,
+        "stateValues": 24,
+        "transitions": 21
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 3,
+        "allowedCombinations": 1410,
+        "rejectedCombinations": 2622,
+        "evidence": [
+          "tests/material-components.test.mjs:51"
+        ]
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "form-data-feedback",
+      "materials": 20,
+      "attributeCombinations": 28055,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 1,
+        "verified": 19
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 17,
+        "variantAxes": 55,
+        "variantValues": 277
+      },
+      "stateCoverage": {
+        "materialsWithStates": 9,
+        "stateValues": 55,
+        "transitions": 34
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 4,
+        "allowedCombinations": 8681,
+        "rejectedCombinations": 17527,
+        "evidence": [
+          "tests/material-components.test.mjs:51"
+        ]
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "chart",
+      "materials": 42,
+      "attributeCombinations": 46,
+      "completePresets": 29,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 42
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 30,
+        "variantAxes": 30,
+        "variantValues": 34
+      },
+      "stateCoverage": {
+        "materialsWithStates": 12,
+        "stateValues": 12,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "section-recipe",
+      "materials": 24,
+      "attributeCombinations": 752196,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 1,
+        "verified": 23
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 17,
+        "variantAxes": 25,
+        "variantValues": 245
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "interaction-state",
+      "materials": 2,
+      "attributeCombinations": 1539,
+      "completePresets": 0,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 2
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 2,
+        "variantAxes": 9,
+        "variantValues": 24
+      },
+      "stateCoverage": {
+        "materialsWithStates": 1,
+        "stateValues": 4,
+        "transitions": 4
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 1,
+        "allowedCombinations": 960,
+        "rejectedCombinations": 576,
+        "evidence": [
+          "tests/material-components.test.mjs:51"
+        ]
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "page",
+      "materials": 101,
+      "attributeCombinations": 101,
+      "completePresets": 85,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 101
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 0,
+        "variantAxes": 0,
+        "variantValues": 0
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    },
+    {
+      "id": "profile",
+      "materials": 54,
+      "attributeCombinations": 7032,
+      "completePresets": 54,
+      "qualityCounts": {
+        "missing": 0,
+        "enum-only": 0,
+        "implemented": 0,
+        "verified": 54
+      },
+      "variantCoverage": {
+        "materialsWithVariants": 54,
+        "variantAxes": 162,
+        "variantValues": 887
+      },
+      "stateCoverage": {
+        "materialsWithStates": 0,
+        "stateValues": 0,
+        "transitions": 0
+      },
+      "verifiedCombinationCoverage": {
+        "testedContracts": 0,
+        "allowedCombinations": null,
+        "rejectedCombinations": null,
+        "evidence": []
+      },
+      "qualityInspection": {
+        "passRate": null,
+        "status": "unconfirmed",
+        "evidence": [
+          "A/B 단계 결과를 재료 범주에 대응시키는 분모가 없어 범주별 비율을 산출하지 않음."
+        ]
+      }
+    }
+  ]
+}
