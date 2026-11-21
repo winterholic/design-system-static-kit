@@ -83,3 +83,19 @@ test('픽스처 목록이 디렉터리와 일치한다(시험에 안 걸린 픽�
   const files = readdirSync(FIXTURE_DIR).filter(f => f.endsWith('.html')).sort();
   expect(files).toEqual(FIXTURES.map(f => f.file).sort());
 });
+
+// 차트 프리셋 증거 페이지(docs/evidence/materials/chart-presets.html): 모든 프리셋이 360·1280px에서 검사기 오류 0이어야 한다.
+// 페이지는 scripts/materials/chart-presets-evidence.mjs가 결정적으로 만든다(tests/chart-presets-distinct.test.mjs가 재생성 결과와 바이트가 같음을 확인).
+test('차트 프리셋 증거 페이지는 360·1280px에서 오류 0이고 SVG 글자를 실제로 쟀다', async ({page}) => {
+  const {readFileSync} = await import('node:fs');
+  const html = readFileSync(new URL('../docs/evidence/materials/chart-presets.html', import.meta.url), 'utf8');
+  const results = await checkHtml(page, html, {widths: [360, 1280], label: 'chart-presets.html'});
+  const sum = summarize(results);
+  const errors = results.flatMap(r => r.findings).filter(f => !f.exempt && f.severity === 'error').map(f => `${f.width}px ${f.code} ${f.locator} ${JSON.stringify(f.evidence)}`);
+  expect(errors, errors.join('\n')).toEqual([]);
+  expect(sum.pass).toBe(true);
+  for (const r of results) {
+    expect(r.scanned.svg, `${r.width}px에서 훑은 SVG`).toBeGreaterThanOrEqual(25);
+    expect(r.scanned.svgText, `${r.width}px에서 훑은 SVG 글자`).toBeGreaterThan(200);
+  }
+});

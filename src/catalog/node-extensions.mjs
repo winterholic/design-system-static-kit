@@ -1,5 +1,6 @@
 import {nodeSpecs, str, en, arr, num, obj} from './nodes.mjs';
 import {atLeast} from './expression.mjs';
+import {CHART_FORM_KINDS, CHART_DATA_TYPES, CHART_GRIDS, CHART_LABELS, CHART_LEGENDS, CHART_DENSITIES, CHART_RESPONSIVE} from './chart-rules.mjs';
 
 /**
  * 버전별 노드 명세 확장 표. `nodeSpecs`(src/catalog/nodes.mjs)는 2.1.0~2.5.0이 받아들이는 문법이고 snapshot 바이트
@@ -9,7 +10,7 @@ import {atLeast} from './expression.mjs';
  */
 const N = num(-1000000, 1000000);
 export const CHART_BASE_KINDS = Object.freeze([...nodeSpecs.chart.fields.kind.enum]);
-export const CHART_EXTENDED_KINDS = Object.freeze(['stacked-bar', 'scatter', 'heatmap', 'sparkline']);
+export const CHART_EXTENDED_KINDS = Object.freeze(['stacked-bar', 'scatter', 'heatmap', 'sparkline', ...CHART_FORM_KINDS]);
 
 const deepFreeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(deepFreeze); Object.freeze(value); } return value; };
 
@@ -20,10 +21,15 @@ export const NODE_SPEC_EXTENSIONS = deepFreeze({
         kind: en(...CHART_BASE_KINDS, ...CHART_EXTENDED_KINDS),
         unit: str(20), xLabel: str(60), yLabel: str(60),
         axis: obj({min: N, max: N, xMin: N, xMax: N, yMin: N, yMax: N, showX: en('yes', 'no'), showY: en('yes', 'no')}, []),
-        categories: arr(str(64), 2, 8),
-        series: arr(obj({name: str(40), values: arr(N, 2, 8), points: arr(obj({x: N, y: N}), 2, 8)}, ['name']), 1, 3),
+        categories: arr(str(64), 2, 12),
+        series: arr(obj({
+          name: str(40), values: arr(N, 2, 12), points: arr(obj({x: N, y: N}), 2, 12),
+          candles: arr(obj({open: N, high: N, low: N, close: N}), 2, 12), roles: arr(en('delta', 'total'), 2, 12), samples: arr(N, 5, 200),
+        }, ['name']), 1, 8),
+        dataType: en(...CHART_DATA_TYPES), grid: en(...CHART_GRIDS), labels: en(...CHART_LABELS), legend: en(...CHART_LEGENDS),
+        density: en(...CHART_DENSITIES), responsive: en(...CHART_RESPONSIVE), bins: num(3, 12),
       },
-      optional: ['unit', 'xLabel', 'yLabel', 'axis', 'categories', 'series'],
+      optional: ['unit', 'xLabel', 'yLabel', 'axis', 'categories', 'series', 'dataType', 'grid', 'labels', 'legend', 'density', 'responsive', 'bins'],
     },
   },
 });

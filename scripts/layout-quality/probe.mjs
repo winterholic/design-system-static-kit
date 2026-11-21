@@ -17,7 +17,7 @@
  *  어떤 점검이 몇 개를 훑었는지(scanned)도 함께 준다. 훑은 것이 0이면 "통과"가 아니라 "대상 없음"이다. */
 export function layoutProbe(options) {
   const T = options.thresholds, SEL = options.selectors, MAX_PER_CODE = options.maxPerCode ?? 12;
-  const findings = [], counts = {}, scanned = {text: 0, wrap: 0, clip: 0, svg: 0, overflow: 0, smallText: 0, bar: 0}, roles = {};
+  const findings = [], counts = {}, scanned = {text: 0, wrap: 0, clip: 0, svg: 0, overflow: 0, smallText: 0, svgText: 0, bar: 0}, roles = {};
   const vw = document.documentElement.clientWidth;
   const r1 = n => Math.round(n * 10) / 10;
 
@@ -48,6 +48,7 @@ export function layoutProbe(options) {
     CLIP_ICON: '아이콘·이미지가 상위 요소의 overflow에 잘린다. 안쪽 여백을 주거나 overflow: visible로 바꾼다.',
     CLIP_SVG: 'SVG 안쪽 그림이 viewBox 밖으로 나가 잘린다. viewBox를 넓히거나 svg에 overflow: visible을 준다.',
     OVERFLOW_X: '문서·요소가 화면 오른쪽 밖으로 나간다. min-width: 0, overflow-wrap, 고정 폭 제거를 확인한다.',
+    OVERLAP_SVG_TEXT: 'SVG 차트의 눈금·값 라벨이 서로 겹친다. 범주를 줄이거나 눈금을 건너뛰고(라벨 모드 extremes), 긴 이름은 줄이거나 가로 스크롤(responsive: scroll)을 쓴다.',
     SMALL_TEXT: '글자 크기를 역할별 하한 이상으로 키운다(차트 라벨은 viewBox를 줄이거나 svg를 키운다).',
     TRUNCATED: '말줄임으로 잘린 글이다. 제목·리드라면 폭을 넓혀 전문이 보이게 한다.',
     SCROLL_REGION: '가로로 스크롤되는 영역이다. 의도(코드·표)인지 확인하고, 아니라면 칸 폭을 넓힌다.',
@@ -350,6 +351,13 @@ export function layoutProbe(options) {
         scanned.smallText++;
         const tfs = parseFloat(getComputedStyle(t).fontSize) || 16, eff = tfs * scale;
         if (eff < T.minFont.svg) flag('SMALL_TEXT', 'error', t, 'svg-label', {fontSize: r1(eff), declaredFontSize: r1(tfs), svgScale: r1(scale), minFontSize: T.minFont.svg});
+      }
+      // 4) SVG 글자끼리 겹침(차트 눈금·값 라벨). 글상자 면적의 15% 넘게 겹치면 읽을 수 없다.
+      const boxes = [...el.querySelectorAll('text')].filter(t => (t.textContent ?? '').trim()).map(t => ({t, r: t.getBoundingClientRect()})).filter(b => b.r.width > 0 && b.r.height > 0);
+      scanned.svgText += boxes.length;
+      for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+        const a = boxes[i].r, b = boxes[j].r, ow = Math.min(a.right, b.right) - Math.max(a.left, b.left), oh = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+        if (ow > 1 && oh > 1 && ow * oh > 0.15 * Math.min(a.width * a.height, b.width * b.height)) flag('OVERLAP_SVG_TEXT', 'error', boxes[i].t, 'svg-label', {other: clip(textOf(boxes[j].t)), overlapPx: `${r1(ow)}x${r1(oh)}`, svgScale: r1(scale)});
       }
     }
   }

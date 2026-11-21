@@ -114,13 +114,14 @@ test('axis and label omission are explicit, while clipping and overlap stay visi
   assert.match(result.html, /class="ch-bar"/);
   assert.match(result.css, /overflow-wrap|overflow-x/);
 
-  const denseLabels = Array.from({length: 8}, (_, i) => `2026년 ${i + 1}분기 사업계획 항목`);
-  const dense = compiled(sample('bar', {
-    axis: {showX: 'yes', showY: 'yes'}, categories: denseLabels,
-    series: [{name: '계획', values: [1, 2, 3, 4, 5, 6, 7, 8]}],
-  })).html;
-  assert.match(dense, />202…<\/text>/, 'visual tick labels shorten to the plot width');
-  assert.ok(dense.includes(`<th scope="row">${denseLabels[0]}</th>`), 'the table keeps full category labels');
+  // 앞부분이 같은 긴 이름은 눈금에서 잘리면 모두 같은 글자가 되므로 검증기가 거부한다(전체 이름은 표에 남는다).
+  const denseLabels = Array.from({length: 8}, (_, i) => `2026년 사업계획 ${i + 1}분기 항목`);
+  const denseChart = sample('bar', {axis: {showX: 'yes', showY: 'yes'}, categories: denseLabels, series: [{name: '계획', values: [1, 2, 3, 4, 5, 6, 7, 8]}]});
+  assert.ok(extended(denseChart).some(error => error.code === 'CHART_LABEL_OVERLAP' && error.path.endsWith('.categories')));
+  const shortLabels = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월'];
+  const dense = compiled({...denseChart, categories: shortLabels}).html;
+  assert.match(dense, />1월<\/text>/, 'tick labels that fit are shown whole');
+  assert.ok(dense.includes(`<th scope="row">${shortLabels[0]}</th>`), 'the table keeps full category labels');
 });
 
 test('catalog 2.4.0 and 2.5.0 reject the new chart kinds as unknown enum values and the new chart fields as unknown keys', () => {
@@ -155,7 +156,7 @@ test('the base chart node spec keeps its 2.4.0 and 2.5.0 contract; the new shape
   assert.strictEqual(nodeSpecAt('chart', '2.6'), base);
   assert.strictEqual(nodeSpecAt('hero', '2.6.0'), nodeSpecs.hero);
   const extension = nodeSpecAt('chart', '2.6.0');
-  assert.deepEqual(Object.keys(extension.fields).sort(), [...Object.keys(base.fields), 'xLabel', 'yLabel', 'axis'].sort());
+  assert.deepEqual(Object.keys(extension.fields).sort(), [...Object.keys(base.fields), 'xLabel', 'yLabel', 'axis', 'dataType', 'grid', 'labels', 'legend', 'density', 'responsive', 'bins'].sort());
   assert.ok(Object.hasOwn(extension.fields.series.items.properties, 'points'));
 });
 

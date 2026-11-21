@@ -92,7 +92,7 @@ export const BUILTIN_KINDS = Object.freeze([
   defineKind({id: 'icon', label: '아이콘', categories: ['icon-media'], ext: {aliases: 'array'}}),
   // 후속 단계용 종류. 지금은 재료가 없고 계약만 있다.
   defineKind({id: 'color-token', label: '계층 색 토큰', categories: ['color', 'chart'], ext: {layer: 'string', role: 'string', light: 'string?', dark: 'string?'}}),
-  defineKind({id: 'chart-preset', label: '차트 프리셋', categories: ['chart'], presetCapable: true, ext: {chartKind: 'string', series: 'object', axes: 'object', unit: 'string', labels: 'object'}}),
+  defineKind({id: 'chart-preset', label: '차트 프리셋', categories: ['chart'], presetCapable: true, ext: {chartKind: 'string', series: 'object', axes: 'object', unit: 'string', labels: 'object', domain: 'string', dataType: 'string', options: 'object', signature: 'object'}}),
   defineKind({id: 'pattern', label: '레이아웃 패턴', categories: ['layout-navigation', 'section-recipe'], presetCapable: true, ext: {slots: 'array'}}),
 ]);
 

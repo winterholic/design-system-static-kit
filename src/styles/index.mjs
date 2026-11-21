@@ -11,6 +11,7 @@ import {headerDesignCSS} from '../header-design.mjs';
 import {expressionApplies} from '../catalog/expression.mjs';
 import {expressionCSS} from './expression.mjs';
 import {colorTokenCSS} from '../color-tokens.mjs';
+import {chartExtensionCSS} from './chart-extension.mjs';
 import {atLeast} from '../catalog/expression.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
@@ -52,6 +53,7 @@ export function stylesheet(b, sets, body = '', design = null) {
   if (design?.chrome) parts.push(headerDesignCSS(design.chrome).trim());
   // 카탈로그 2.5.0: 사용한 표현력 값에만 CSS가 나온다. 2.4.0 이하는 이 줄을 지나지 않아 출력이 같다.
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
+  if (atLeast(b.catalogVersion, '2.6.0') && body.includes('data-chart="2.6"')) parts.push(chartExtensionCSS().trim());
   if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
   const rev2 = layoutRev(b) === 2;
   if (rev2) parts.push(layoutContractCSS(used).trim(), fitCSS(), wrapCSS());
