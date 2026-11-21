@@ -1,5 +1,5 @@
 import {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, componentMaterial, e, SIZES, SHAPES, SAFE_ID} from './control-kit.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Input: 외형(경계 처리)·모양·크기·기능(종류와 접두 아이콘)·상태를 따로 둔다. 상태는 색 외에 아이콘·메시지·점선·aria로도 구분한다. */
 export const inputContract = defineContract({

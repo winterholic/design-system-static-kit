@@ -1,5 +1,5 @@
 import {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SHAPES, SAFE_ID} from './control-kit.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Navigation: 외형(현재 위치 표시 방식)·모양·크기·기능(방향·좁은 화면 처리·하위 메뉴·아이콘)·상태(메뉴 열림)를 따로 둔다. */
 export const navigationContract = defineContract({

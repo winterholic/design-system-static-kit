@@ -23,7 +23,7 @@
 
 ## 카탈로그 버전 전략
 
-- 첫 단계는 Blueprint 문법·검증·렌더러를 바꾸지 않았고 컴파일 경로(`compiler`, `validate`, `render`, `styles`, `service`, `edit`)는 `src/materials/`를 import하지 않았다. 2.6.0 조립 연결(`docs/materials/audit.md` §7) 뒤의 규칙: 컴파일 경로가 읽는 재료 모듈은 렌더·스타일 코드를 재사용하는 `select`·`table`·`typography` 세 파일뿐이고, 레지스트리·어댑터는 `src/service/materials.mjs`(재료 읽기 질의)만 읽는다. `tests/materials-registry.test.mjs`와 `tests/wire-260.test.mjs`가 import를 검사한다. 그래서 `VERSION_ORDER`, `ACCEPTED_CATALOG_VERSIONS`, `src/service/versions.mjs`도 바꾸지 않았다. 2.1.0~2.5.0 출력은 그대로다. 2.4.0은 `docs/evidence/expression/legacy-2-4-*.json`, 2.5.0은 이번에 고정한 `docs/evidence/materials/pinned-2-5-*.json`(85개 템플릿)으로 확인한다.
+- 첫 단계는 Blueprint 문법·검증·렌더러를 바꾸지 않았고 컴파일 경로(`compiler`, `validate`, `render`, `styles`, `service`, `edit`)는 `src/materials/`를 import하지 않았다. 2.6.0 조립 연결(`docs/materials/audit.md` §7) 뒤에는 Select·Table·역할 타이포와 Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback 렌더·스타일 모듈만 필요한 경로에서 직접 읽는다. 컴파일 경로는 재료 레지스트리·어댑터를 읽지 않으며, 레지스트리·어댑터는 `src/service/materials.mjs`(재료 읽기 질의)만 읽는다. `tests/materials-registry.test.mjs`와 `tests/wire-260.test.mjs`가 이 경계를 검사한다. 그래서 `VERSION_ORDER`, `ACCEPTED_CATALOG_VERSIONS`, `src/service/versions.mjs`도 바꾸지 않았다. 2.1.0~2.5.0 출력은 그대로다. 2.4.0은 `docs/evidence/expression/legacy-2-4-*.json`, 2.5.0은 이번에 고정한 `docs/evidence/materials/pinned-2-5-*.json`(85개 템플릿)으로 확인한다.
 - `MATERIAL_CATALOG_VERSION = '2.6.0'`은 이제 활성화된 **opt-in** 버전이다. `colorPalette: 'static-kit'`은 `since: 2.6.0`의 닫힌 필드이며, 기본 생성 버전 `CATALOG_VERSION`은 2.4.0으로 유지한다.
 - 2.6.0 색 토큰 구현은 네 층(primitive → semantic → state → component)의 참조 그래프와 자체 시드·명도 램프를 사용한다. CSS 사용처와 라이트·다크·auto 대비 검사는 [색 토큰 읽기 API](../materials/color-tokens.md)에 기록한다.
 - 2.5.0 이하 Blueprint가 `colorPalette`를 쓰면 `VERSION_FIELD`로 거부한다. 미등록 팔레트 ID는 스키마의 닫힌 enum에서 거부하며 호출자 색값 입력은 없다.
@@ -51,6 +51,8 @@
 Button, Input, Card, Navigation, Modal, Tabs, Tooltip, Feedback은 `src/materials/{button,input,card,navigation,modal,tabs,tooltip,feedback}.mjs`에서 외형·모양·크기·기능·상태·맥락 축, 렌더러, 동작 연결기와 스타일을 함께 정의한다. `CONTROL_SIZES`와 `SPACE` 크기 토큰, 컴포넌트 색 토큰을 재사용한다. 허용되지 않는 조합은 계약의 `forbidden` 규칙으로 선언하며 `resolveProps`가 알 수 없는 속성과 금지 조합을 거부한다.
 
 `tests/material-components.test.mjs`가 8개 레지스트리 등록, 모든 속성 조합의 허용·거부, 크기 계약과 재사용 색 토큰을 확인한다. `scripts/materials/components-evidence.mjs`는 실제 동작 예시를 `docs/evidence/materials/components.html`에 결정적으로 생성한다. `e2e/material-components.spec.mjs`는 390px과 1280px에서 키보드·포커스·상태 전이를 확인하고 섹션 스크린샷을 Playwright 결과 디렉터리에 기록한다. 새 재료 8종의 완성 프리셋 수는 0개다.
+
+이 8종은 `NODE_SPEC_EXTENSIONS['2.6.0']`의 닫힌 노드로 연결한다. 축 열거값과 금지 조합은 각 재료 계약에서 읽고, 저장 가능한 텍스트·등록 아이콘·제한된 링크만 입력으로 연다. `force`, `preview`, HTML, 콜백은 Blueprint에 노출하지 않는다. `validateBlueprint`는 금지 조합·콘텐츠 조건·ARIA 참조·링크·중복 id를 구조 진단으로 반환하고, 컴파일은 재료 렌더러·CSS·정적 런타임을 해당 노드를 쓸 때만 연결한다. 기본 `nodeSpecs`는 바꾸지 않아 2.4.0·2.5.0과 기존 snapshot은 그대로다. 버전별 목록·명세·예제·삽입 후보는 공용 `getComponentSpec`, `listCatalog`, `partExample`, `addPlacements`가 제공한다.
 
 ## 부록: 타이포그래피 재료와 기존 엔진
 

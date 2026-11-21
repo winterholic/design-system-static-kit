@@ -1,5 +1,5 @@
 import {defineContract, resolveProps, violations, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SHAPES, SAFE_ID} from './control-kit.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Button: 외형(컨테이너 처리)·모양(모서리)·크기·기능(동작과 내용 배치)·상태·맥락(의도)을 따로 둔다. */
 export const buttonContract = defineContract({

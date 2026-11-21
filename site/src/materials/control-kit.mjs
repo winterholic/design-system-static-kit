@@ -7,7 +7,7 @@
 import {defineMaterial} from './contract.mjs';
 import {CONTROL_SIZES, CONTROL_SIZE_NAMES} from './typography.mjs';
 import {TOKEN} from '../spacing.mjs';
-import {escapeHTML} from '../render/util.mjs';
+import {escapeHTML} from '../escape-html.mjs';
 
 export const e = escapeHTML;
 export const SIZES = CONTROL_SIZE_NAMES;

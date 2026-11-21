@@ -20,7 +20,7 @@
 | 반경·테두리·그림자 | radius 5·elevation 6 값 표(`src/styles/base.mjs:11`, `:20`; `tests/catalog.test.mjs:93`), 금지 조합 X07(`src/catalog/axes.mjs:39`) | control 축 3값(`src/catalog/axes.mjs:13`) | — | 테두리 폭 토큰, 다크 전용 그림자 |
 | 아이콘·미디어 | 아이콘 87(`src/catalog/icons.mjs:6`; `tests/catalog.test.mjs:162`), media 7종·비율 5(`src/catalog/nodes.mjs:12`), 모티프 일러스트(`tests/motifs.test.mjs`) | 장식 ornament 5(`src/render/art.mjs:67`), 인물 이니셜(`src/render/art.mjs:85`) | icon 축 6값(`src/styles/base.mjs:15`)은 선 굵기 변화뿐 | 아바타 부품, 실제 이미지 자산 계약 |
 | 레이아웃·내비 | 셸 10·폭 4·푸터 3(`src/catalog/axes.mjs:6`, `:19`, `:22`), 내비 한도(`src/catalog/axes.mjs:47`; `tests/compiler.test.mjs:168`), flow·bento(`src/layout.mjs:7`, `:230`; `tests/layout.test.mjs:13`, `:49`), 페이지 유형 16(`src/catalog/pagetypes.mjs:11`; `tests/compiler.test.mjs:158`) | stack·cluster·container·split 원형(`src/layout.mjs:350`) | breadcrumb·pagination·links 부품은 정적 링크 | 드로어·시트·모달 내비, 경로(Path) |
-| 폼·데이터·피드백 | 필드 13종과 id·선택지 계약(`src/catalog/nodes.mjs:20`; `tests/compiler.test.mjs:113`), 데이터 상태 6종(`src/render/util.mjs:25`; `tests/compiler.test.mjs:125`), 표 폭·정렬(`src/table-design.mjs`; `tests/table-design.test.mjs:13`) | 폼 입력 확인 런타임(`src/render/index.mjs:15`) | select는 네이티브 `<select>`(`src/render/nodes.mjs:150`), notice `toast` 변형은 정적 배치, 표 정렬·선택 없음 | 커스텀 Select·Combobox, 날짜 선택, 다이얼로그, 툴팁, 토스트 큐, 배지·칩 독립 부품 |
+| 폼·데이터·피드백 | 기존 필드·표·상태 계약과 2.6.0 Select·Table 및 Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback 노드(`src/catalog/node-extensions.mjs`; `tests/wire-260.test.mjs`) | 폼 확인과 2.6.0 재료의 입력·탭·내비·모달·툴팁·피드백 고정 런타임(`src/render/index.mjs`) | 정적 산출물은 네트워크·호출자 콜백을 받지 않으며 async Select, 자유 HTML, 중첩 팝오버는 거부 | 날짜 선택, 토스트 큐, 배지·칩 독립 부품 |
 | 차트 | 기존 막대·가로막대·선·면적·도넛 + 누적 막대·산점도·히트맵·스파크라인 SVG(`src/render/chart.mjs`), 값 형태·축 절단 검증(`src/validate.mjs`; `tests/chart-presets.test.mjs`), 제목·요약·데이터 표(`src/render/chart-legacy.mjs`, `tests/compiler.test.mjs:194`); chart-preset 재료 8개는 실제 컴파일·렌더 검증 | — | chart-preset은 `2.6.0` 재료 접점만 제공하며 공통 Blueprint 문법은 아직 받지 않음 | 캔들·OHLC(별도 O/H/L/C 모델), 순차·발산 토큰 색상 |
 | 구역·레시피 | 템플릿 85(`src/catalog/templates.mjs:530`; `tests/catalog.test.mjs:131`), 레시피 3(`src/catalog/recipes.mjs:59`; `tests/recipes.test.mjs:12`), 구성 변형(`src/catalog/variants.mjs:174`; `tests/variants.test.mjs:9`) | 컨셉 17(`src/catalog/concepts.mjs:13`) | — | 레이아웃 패턴(슬롯 단위 구역 조합)을 재료로 고르는 경로 |
 | 상호작용·모션·상태 | reduced-motion 차단(`src/styles/base.mjs:94`), 포커스 링(`src/styles/base.mjs:60`), 탭 키보드(`src/render/index.mjs:16`; `tests/compiler.test.mjs:198`) | motion 3값과 이징 1개(`src/styles/base.mjs:28`, `:49`), 칩 토글(`src/render/index.mjs:17`) | elevation `hover` 그림자만 상태 표현 | disabled·loading 버튼, 상태 전이 표, 지속시간·이징 토큰 세트 |
@@ -114,7 +114,7 @@ Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 
 4. Select·Table 노드(`select-control`, `data-table`)를 같은 확장 표에 넣고 검증기·렌더러에 연결한다(`docs/materials/select-table.md`의 연결 지점).
 5. `TABLE_COLUMNS`·`TABLE_ROWS`는 Table 재료의 `validation.codes`에 적혀 있으나 현재 어디서도 내지 않아 힌트를 더하지 않았다. 내기 시작하는 작업이 힌트 표 항목을 함께 둔다.
 
-## 7. 2.6.0 조립 연결 결과(feat/wire-260)
+## 7. 2.6.0 조립 연결 결과(feat/wire-260, feat/wire-material-components)
 
 등록만 되고 Blueprint로 고를 수 없던 재료를 `catalogVersion: "2.6.0"` Blueprint에서 고르고 편집·컴파일하게 이었다. 2.4.0·2.5.0 입력·출력·`site/v1/catalog.json` 바이트·고정 해시는 그대로다(해시 파일을 다시 만들지 않았다).
 
@@ -122,19 +122,21 @@ Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 
 |---|---|---|
 | Select(`component:select-control`) | 노드 `select-control` | `NODE_SPEC_EXTENSIONS['2.6.0']['select-control']`(필드·example), 검사는 `src/validate.mjs`(`SELECT_OPTIONS`·`SELECT_COMBO`), 렌더는 재료의 `renderSelect`와 `selectStyles`, 런타임은 재료의 `attachSelect` 소스 |
 | Table(`component:data-table`) | 노드 `data-table` | 같은 표의 `data-table`, 검사 `TABLE_COLUMNS`·`TABLE_ROWS`·`STATE_DATA`, 렌더 `renderDataTable`·`tableStyles`·`attachTable` |
+| Button·Input·Card·Navigation·Modal·Tabs·Tooltip·Feedback | 각각 `button-control`, `input-control`, `card-surface`, `navigation-menu`, `modal-dialog`, `tabs-control`, `tooltip`, `feedback-message` | 계약의 닫힌 축·금지 조합·등록 렌더러·CSS·정적 런타임을 재사용. 표는 계약 axes에서 enum을 만들고 안전한 텍스트·아이콘·HTTPS/앵커 링크만 허용한다. `force`·`preview`·HTML·콜백 필드는 없다. |
 | 새 차트 형태·8프리셋 | 노드 `chart`(kind 4개·축 필드) | §6의 확장 표 그대로. 프리셋은 `resolveChartPreset`이 chart 노드를 만든다 |
 | 역할 타이포 4프리셋(`type-role-preset`) | 최상위 `typeRoles`: erp·dashboard·document·marketing | `renderRoleTypeCSS`가 `:root`의 `--kit-t-title·app·heading·body·label·caption·stat·price`, 제목·본문 서체와 굵기·행간·자간을 프리셋 값으로 덮는다. 좁은 화면(720px 이하)과 레이아웃 리비전 2의 `-raw` 별칭도 맞춘다. manifest에 `typeRoles` 기록 |
 | static-kit 색 토큰 257개 | 최상위 `colorPalette: "static-kit"`(이미 연결됨) | 컴파일 CSS 반영을 `tests/wire-260.test.mjs`가 light·dark·auto로 확인 |
 
 결정과 이유:
 
-- **노드를 확장 표에 노드째 둔다.** 기본 `nodeSpecs`·`nodeTypes`에 넣으면 2.4.0 snapshot이 바뀐다. 확장 표 항목에 `label`이 있으면 새 노드이고, `placeLike`가 가리키는 부품(`form`, `table`)을 받는 부모(page·section·split·aside·tab)가 같은 2.6.0 게이트 뒤에서 새 노드도 받는다. grid·bento 등은 받지 않는다. 2.5.0 이하에서 새 노드를 쓰면 `VERSION_FIELD`(올리는 방법을 안내)이고, 아예 모르는 type은 그대로 `NODE_TYPE`이다.
+- **노드를 확장 표에 노드째 둔다.** 기본 `nodeSpecs`·`nodeTypes`에 넣으면 2.4.0 snapshot이 바뀐다. 확장 표 항목에 `label`이 있으면 새 노드이고, `placeLike`가 가리키는 기존 부품 역할을 받는 부모가 같은 2.6.0 게이트 뒤에서 새 노드도 받는다. 배치 역할과 부모 자식 수 제한을 함께 적용한다. 2.5.0 이하에서 새 노드를 쓰면 `VERSION_FIELD`(올리는 방법을 안내)이고, 아예 모르는 type은 그대로 `NODE_TYPE`이다.
 - **Select의 async 검색은 정적 페이지에서 거부한다**(`SELECT_COMBO`). 생성 페이지에는 옵션 provider도 네트워크(`connect-src 'none'`)도 없어 동작하지 않는 검색 상자가 된다. `multiple + async`도 같은 코드다. `disabled + loading/error`는 `state` 한 필드(`ready|loading|error|disabled`)라 표현할 수 없다.
 - **표 행은 `{열 id: 값}` 객체다.** 검증기 `value()`에 `additionalProperties: 스키마`·`oneOf`·boolean·null 해석을 더했다(기존 스키마에는 영향이 없다). 셀은 문자열·숫자·불리언·null이고, 보이지 않는 행(`loading`·`error` 상태, `empty`)을 거부해 콘텐츠를 숨기지 않는다.
 - **DOM id 접두**: 노드 `id`는 렌더에서 `select-`·`table-` 접두가 붙어 생성 id(`block-N`, `field-*`)와 겹치지 않는다.
+- **컨트롤 DOM id**: 사용자 id는 `ctl-id-` 접두, 생성 id는 `ctl-generated-` 접두로 분리한다. ARIA IDREF 필드는 실제 페이지에 있는 컴포넌트 DOM id로만 해석하며 중복 id를 거부한다.
 - **페이지 유형**: `data-table`은 `table`이 요구·금지되는 규칙에서 `table`과 같게 센다. 허용 목록(`allow`)에는 `table`이 없으면 `data-table`도 없다.
-- **컴파일 경로의 재료 import는 `select`·`table`·`typography` 세 파일뿐이다**(렌더·스타일 코드 재사용). 레지스트리·어댑터는 `src/service/materials.mjs`만 읽는다(`tests/materials-registry.test.mjs`, `tests/wire-260.test.mjs`가 검사).
-- **스키마(`blueprintSchema()`)**: 기존 `$defs`(55개)와 `properties`는 줄 삭제 없이 그대로이고, `typeRoles` 속성(x-since 2.6.0)과 루트 주석 `x-extensions['2.6.0']`만 더했다. `x-extensions`에는 차트 확장·`select-control`·`data-table`의 전체 정의(각각 `x-since: 2.6.0`)와 새로 받는 자식 목록(`children`)이 있다. 기존 `$defs.chart`를 넓히지 않은 이유는 2.4.0·2.5.0 정의가 바뀌지 않아야 해서다. `site/v1/blueprint.schema.json`이 바뀌어 `apps/web/e2e/compat.spec.mjs`의 v1 고정 해시를 갱신했다(`catalog.json`은 그대로).
+- **컴파일 경로는 등록 재료 모듈을 직접 재사용한다.** 레지스트리·어댑터는 컴파일 경로에서 읽지 않고 `src/service/materials.mjs`의 서비스 조회만 사용한다(`tests/materials-registry.test.mjs`, `tests/wire-260.test.mjs`가 검사).
+- **스키마(`blueprintSchema()`)**: 기존 `$defs`(55개)·`properties`·`site/v1/catalog.json` 바이트는 그대로 두고 `typeRoles`와 루트 주석 `x-extensions['2.6.0']`에 차트·Select·Table·8개 컨트롤 명세 및 새 자식 목록을 더했다. `site/v1/blueprint.schema.json`을 재생성했다. 기존 `$defs.chart`는 넓히지 않아 2.4.0·2.5.0 정의가 그대로다.
 - **서비스 읽기 질의**(`./service`로 내보냄, package exports는 그대로): `listMaterials`(종류·분류·맥락·등급·프리셋·since·검색·쪽 나누기, 각 재료가 Blueprint의 어디서 고르는지 `blueprint` 필드), `getMaterial`, `getColorTokens`(팔레트·모드·계층 또는 문서의 값으로 해석), `getTypePresets`(4프리셋과 컴파일 CSS). `getComponentSpec`·`getSchema({target:'component'})`·`listCatalog({kind:'components'})`는 `catalogVersion:"2.6.0"`을 주면 확장 부품과 넓어진 차트를 보인다(기본은 그대로).
 - **편집 연산**: `insertNode`는 검증기를 거치므로 그대로 새 노드를 받는다. `insertableParts`·`addPlacements`는 `doc.catalogVersion`으로 후보를 정해 2.6.0 문서에만 확장 부품을 낸다(`partTypesAt(version)`, `partExample(type, version)`). 대조 테스트(`tests/edit-applicability.test.mjs`)는 2.4.0·2.5.0·2.6.0 세 버전의 모든 컨테이너에서 실제 `insertNode` 결과와 후보를 비교한다.
 

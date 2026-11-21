@@ -2,6 +2,14 @@ import {makeRenderer} from './nodes.mjs';
 import {renderShell} from './shell.mjs';
 import {selectRuntime} from '../materials/select.mjs';
 import {tableRuntime} from '../materials/table.mjs';
+import {buttonRuntime} from '../materials/button.mjs';
+import {inputRuntime} from '../materials/input.mjs';
+import {cardRuntime} from '../materials/card.mjs';
+import {navigationRuntime} from '../materials/navigation.mjs';
+import {modalRuntime} from '../materials/modal.mjs';
+import {tabsRuntime} from '../materials/tabs.mjs';
+import {tooltipRuntime} from '../materials/tooltip.mjs';
+import {feedbackRuntime} from '../materials/feedback.mjs';
 import {atLeast} from '../catalog/expression.mjs';
 export {escapeHTML} from './util.mjs';
 
@@ -31,6 +39,16 @@ export function controlRuntime(b) {
   const used = new Set();
   const walk = n => { used.add(n.type); n.children?.forEach(walk); };
   walk(b.tree);
+  const components = {
+    'button-control': [buttonRuntime, 'button'], 'input-control': [inputRuntime, 'input'], 'card-surface': [cardRuntime, 'card'],
+    'navigation-menu': [navigationRuntime, 'navigation'], 'modal-dialog': [modalRuntime, 'modal'], 'tabs-control': [tabsRuntime, 'tabs'],
+    tooltip: [tooltipRuntime, 'tooltip'], 'feedback-message': [feedbackRuntime, 'feedback'],
+  };
+  const componentCode = [...used].filter(type => components[type]).map(type => {
+    const [runtime, name] = components[type];
+    return `;${runtime};document.querySelectorAll('[data-ctl=${name}]').forEach(function(r){attach${name[0].toUpperCase()}${name.slice(1)}(r);});`;
+  }).join('');
   return (used.has('select-control') ? `;${selectRuntime};document.querySelectorAll('.kit-select').forEach(function(r){attachSelect(r);});` : '')
-    + (used.has('data-table') ? `;${tableRuntime};document.querySelectorAll('.kit-data-table').forEach(function(r){attachTable(r);});` : '');
+    + (used.has('data-table') ? `;${tableRuntime};document.querySelectorAll('.kit-data-table').forEach(function(r){attachTable(r);});` : '')
+    + componentCode;
 }

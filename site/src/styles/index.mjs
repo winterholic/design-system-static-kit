@@ -15,6 +15,14 @@ import {chartExtensionCSS} from './chart-extension.mjs';
 import {atLeast} from '../catalog/expression.mjs';
 import {selectStyles} from '../materials/select.mjs';
 import {tableStyles} from '../materials/table.mjs';
+import {buttonStyles} from '../materials/button.mjs';
+import {inputStyles} from '../materials/input.mjs';
+import {cardStyles} from '../materials/card.mjs';
+import {navigationStyles} from '../materials/navigation.mjs';
+import {modalStyles} from '../materials/modal.mjs';
+import {tabsStyles} from '../materials/tabs.mjs';
+import {tooltipStyles} from '../materials/tooltip.mjs';
+import {feedbackStyles} from '../materials/feedback.mjs';
 import {renderRoleTypeCSS, roleTypeUsage} from '../materials/typography.mjs';
 
 const DEPS = {gallery: ['media'], bento: ['media']};
@@ -51,6 +59,11 @@ export function stylesheet(b, sets, body = '', design = null) {
   // 카탈로그 2.6.0: 쓴 컨트롤 재료의 CSS만 나온다(재료의 selectStyles·tableStyles 그대로). 2.5.0 이하는 이 노드를 쓸 수 없어 이 줄이 비어 있다.
   if (used.has('select-control')) parts.push(selectStyles.trim());
   if (used.has('data-table')) parts.push(tableStyles.trim() + '.kit-data-block{display:grid;gap:var(--kit-sp-near);min-width:0}');
+  const componentStyles = {
+    'button-control': buttonStyles, 'input-control': inputStyles, 'card-surface': cardStyles, 'navigation-menu': navigationStyles,
+    'modal-dialog': modalStyles, 'tabs-control': tabsStyles, tooltip: tooltipStyles, 'feedback-message': feedbackStyles,
+  };
+  for (const type of Object.keys(componentStyles)) if (used.has(type)) parts.push(componentStyles[type].trim());
   parts.push(flowCSS(flowUsage(body)).trim());
   parts.push(contractCSS().trim());
   parts.push(polishCore.trim());

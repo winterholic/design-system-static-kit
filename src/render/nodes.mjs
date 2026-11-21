@@ -9,6 +9,14 @@ import {expressionApplies, FEATURED_COLUMNS} from '../catalog/expression.mjs';
 // 2.6.0 재료 렌더 코드(select-table.md)를 그대로 쓴다. 이 두 파일만 컴파일 경로가 읽는 재료 모듈이다(tests/materials-registry.test.mjs).
 import {renderSelect} from '../materials/select.mjs';
 import {renderDataTable} from '../materials/table.mjs';
+import {renderButton} from '../materials/button.mjs';
+import {renderInput} from '../materials/input.mjs';
+import {renderCard} from '../materials/card.mjs';
+import {renderNavigation} from '../materials/navigation.mjs';
+import {renderModal} from '../materials/modal.mjs';
+import {renderTabs} from '../materials/tabs.mjs';
+import {renderTooltip} from '../materials/tooltip.mjs';
+import {renderFeedback} from '../materials/feedback.mjs';
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -159,6 +167,18 @@ export function makeRenderer(b, design = null) {
     rows: n.rows.map(row => ({...row})),
     density: n.density, responsive: n.responsive, state: n.state, sortable: n.sortable === 'yes', selectable: n.selectable === 'yes', message: n.message,
   })}</section>`;
+
+  const ctlId = (n, id) => n.id ? `ctl-id-${n.id}` : `ctl-generated-${id}`;
+  const controlInput = n => { const {type, ...input} = n; return input; };
+  const refIds = value => typeof value === 'string' ? value.trim().split(/\s+/).filter(Boolean).map(x => `ctl-id-${x}`).join(' ') : '';
+  R['button-control'] = (n, d, id) => { const v = controlInput(n); return renderButton({...v, id: ctlId(n, id), ...(n.describedBy ? {describedBy: refIds(n.describedBy)} : {}), ...(n.labelledBy ? {labelledBy: refIds(n.labelledBy)} : {})}); };
+  R['input-control'] = (n, d, id) => { const v = controlInput(n); return renderInput({...v, id: ctlId(n, id), name: n.name ?? ctlId(n, id)}); };
+  R['card-surface'] = (n, d, id) => renderCard({...controlInput(n), id: ctlId(n, id), href: n.href ?? '#main'});
+  R['navigation-menu'] = (n, d, id) => renderNavigation({...controlInput(n), id: ctlId(n, id)});
+  R['modal-dialog'] = (n, d, id) => renderModal({...controlInput(n), id: ctlId(n, id), body: (n.body ?? []).map((item, i) => item.slot === 'input' ? {...item, id: `${ctlId(n, id)}-${item.id ?? `field-${i + 1}`}`} : item)});
+  R['tabs-control'] = (n, d, id) => renderTabs({...controlInput(n), id: ctlId(n, id)});
+  R.tooltip = (n, d, id) => renderTooltip({...controlInput(n), id: ctlId(n, id)});
+  R['feedback-message'] = (n, d, id) => renderFeedback({...controlInput(n), id: ctlId(n, id)});
   R.list = (n, d, id) => { const s = n.state ?? (n.items.length ? 'ready' : 'empty'), v = n.variant ?? 'divided'; return `<section class="kit-list" data-variant="${v}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<ul>${n.items.map(x => `<li>${v === 'check' ? `<span class="kit-check" aria-hidden="true">${icon('check')}</span>` : x.icon ? `<span class="kit-li-icon">${icon(x.icon)}</span>` : ''}<div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}</div>${x.status ? `<span class="kit-badge" data-status="${x.status}"${statusDot(x.status) ? ` data-dot="${statusDot(x.status)}"` : ''}>${e(x.status)}</span>` : ''}</li>`).join('')}</ul>` : ''}</section>`; };
   R.form = (n, d, id) => {
     const fieldHTML = f => {

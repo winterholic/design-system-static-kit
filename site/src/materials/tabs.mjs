@@ -1,5 +1,5 @@
 import {defineContract, resolveProps, sizeCSS, baseStyles, focusRing, hover, active, componentMaterial, e, SIZES, SHAPES, SAFE_ID} from './control-kit.mjs';
-import {icon} from '../render/util.mjs';
+import {icon} from '../render/icon.mjs';
 
 /** Tabs: 외형(선택 표시 방식)·모양·크기·기능(방향·활성화 방식·넘침·아이콘)·상태(패널 로딩)를 따로 둔다. 키보드 규칙은 WAI-ARIA tabs 패턴을 따른다. */
 export const tabsContract = defineContract({

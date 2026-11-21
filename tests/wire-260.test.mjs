@@ -16,6 +16,7 @@ import {applyOp} from '../src/edit/index.mjs';
 
 const read = f => readFileSync(new URL('../' + f, import.meta.url), 'utf8');
 const SELECT = nodeSpecAt('select-control', '2.6.0'), TABLE = nodeSpecAt('data-table', '2.6.0');
+const CONTROL_NODES = ['button-control', 'input-control', 'card-surface', 'navigation-menu', 'modal-dialog', 'tabs-control', 'tooltip', 'feedback-message'];
 
 /** dashboard 템플릿 문서에 노드를 덧붙인다. 버전은 호출자가 고른다. */
 function doc(version, ...nodes) {
@@ -32,7 +33,7 @@ const codesOf = b => errorsOf(b).map(e => `${e.code} ${e.path}`);
 // ---------------------------------------------------------------- 1. Select·Table 노드
 
 test('Select and Table are nodes of the 2.6.0 extension table with examples, and the base catalog does not contain them', () => {
-  assert.deepEqual(Object.keys(NODE_SPEC_EXTENSIONS['2.6.0']).sort(), ['chart', 'data-table', 'select-control']);
+  assert.deepEqual(Object.keys(NODE_SPEC_EXTENSIONS['2.6.0']).sort(), ['button-control', 'card-surface', 'chart', 'data-table', 'feedback-message', 'input-control', 'modal-dialog', 'navigation-menu', 'select-control', 'tabs-control', 'tooltip']);
   for (const type of ['select-control', 'data-table']) {
     assert.ok(!nodeSpecs[type] && !nodeTypes.includes(type), `${type} must stay out of the 2.4.0/2.5.0 base catalog`);
     const spec = nodeSpecAt(type, '2.6.0');
@@ -44,7 +45,71 @@ test('Select and Table are nodes of the 2.6.0 extension table with examples, and
     assert.equal(nodeExtended(type, '2.6.0'), true);
   }
   assert.deepEqual(nodeTypesAt('2.5.0'), nodeTypes);
-  assert.deepEqual(nodeTypesAt('2.6.0'), [...nodeTypes, 'select-control', 'data-table']);
+  assert.deepEqual(nodeTypesAt('2.6.0'), [...nodeTypes, 'select-control', 'data-table', ...CONTROL_NODES]);
+});
+
+test('the eight registered control materials become closed 2.6.0 nodes with safe examples and matching variants', () => {
+  assert.deepEqual(Object.keys(NODE_SPEC_EXTENSIONS['2.6.0']).filter(x => CONTROL_NODES.includes(x)).sort(), [...CONTROL_NODES].sort());
+  for (const type of CONTROL_NODES) {
+    const spec = nodeSpecAt(type, '2.6.0');
+    assert.ok(spec?.label && spec.group && spec.example?.type === type, type);
+    assert.equal(nodeSpecAt(type, '2.5.0'), undefined, `${type} in 2.5.0`);
+    assert.equal(nodeSpecAt(type, '2.4.0'), undefined, `${type} in 2.4.0`);
+    assert.equal(nodeTypeKnown(type, '2.5.0'), false, `${type} known in 2.5.0`);
+    assert.equal(nodeTypeKnown(type, '2.6.0'), true, `${type} known in 2.6.0`);
+    assert.ok(!Object.hasOwn(spec.fields, 'force') && !Object.hasOwn(spec.fields, 'preview') && !Object.hasOwn(spec.fields, 'html'), `${type} exposes no preview escape hatch`);
+    const material = controlMaterials.find(x => x.ext.nodeType === type);
+    assert.ok(material, `${type} material is registered`);
+    for (const [field, variants] of Object.entries(material.variants)) assert.deepEqual(spec.fields[field]?.enum, variants, `${type}.${field}`);
+    const errors = errorsOf(doc('2.6.0', spec.example));
+    assert.deepEqual(errors, [], `${type} example: ${JSON.stringify(errors)}`);
+    const first = compile(doc('2.6.0', spec.example));
+    const second = compile(doc('2.6.0', spec.example));
+    assert.deepEqual(second, first, `${type} compile is deterministic`);
+  }
+  for (const version of ['2.4.0', '2.5.0']) for (const type of CONTROL_NODES) {
+    const error = errorsOf(doc(version, {...nodeSpecAt(type, '2.6.0').example})).find(e => e.path.endsWith('.type') && e.code === 'VERSION_FIELD');
+    assert.ok(error && error.message.includes('2.6.0'), `${version} rejects ${type} with upgrade hint`);
+  }
+});
+
+test('component nodes reject closed-schema violations, unsafe links and broken cross-references with structural diagnostics', () => {
+  const cases = [
+    [ {type: 'button-control', label: '저장', onclick: 'alert(1)'}, 'UNKNOWN_KEY' ],
+    [ {type: 'input-control', id: 'name', label: ''}, 'STRING' ],
+    [ {type: 'navigation-menu', id: 'nav', label: '주요 메뉴', items: [{label: '문서', href: 'javascript:alert(1)'}]}, 'URL' ],
+    [ {type: 'button-control', id: 'save', label: '저장', describedBy: 'missing-help'}, 'ARIA_REFERENCE' ],
+  ];
+  for (const [node, code] of cases) assert.ok(errorsOf(doc('2.6.0', node)).some(e => e.code === code), `${node.type}: expected ${code}`);
+  const duplicate = doc('2.6.0', {type: 'input-control', id: 'name', label: '이름'}, {type: 'input-control', id: 'name', label: '다른 이름'});
+  assert.ok(errorsOf(duplicate).some(e => e.code === 'DUPLICATE_ID'));
+});
+
+test('every forbidden combination in the eight component contracts is rejected with its own rule id and hint', () => {
+  let checked = 0;
+  for (const type of CONTROL_NODES) {
+    const spec = nodeSpecAt(type, '2.6.0');
+    for (const rule of spec.forbidden) {
+      const node = {...spec.example, ...Object.fromEntries(Object.entries(rule.when).map(([field, allowed]) => [field, Array.isArray(allowed) ? allowed[0] : allowed]))};
+      const errors = errorsOf(doc('2.6.0', node));
+      const hit = errors.find(e => e.code === 'CONTROL_COMBO');
+      assert.ok(hit?.hint, `${type}.${rule.id}: ${JSON.stringify(errors)}`);
+      assert.equal(hit.path.startsWith('$.tree.children['), true, `${type}.${rule.id} path`);
+      checked++;
+    }
+  }
+  assert.equal(checked, 46);
+});
+
+test('component CSS and fixed runtimes are included only for component types used in the compiled document', () => {
+  const plain = compile(doc('2.6.0'));
+  assert.ok(!plain.css.includes('.kit-ctl-button') && !plain.css.includes('.kit-ctl-modal'));
+  for (const type of CONTROL_NODES) {
+    const artifact = compile(doc('2.6.0', nodeSpecAt(type, '2.6.0').example));
+    assert.ok(artifact.css.includes('.kit-ctl-'), `${type} stylesheet`);
+    const ctl = {'button-control': 'button', 'input-control': 'input', 'card-surface': 'card', 'navigation-menu': 'navigation', 'modal-dialog': 'modal', 'tabs-control': 'tabs', tooltip: 'tooltip', 'feedback-message': 'feedback'}[type];
+    assert.ok(artifact.html.includes(`data-ctl="${ctl}"`), `${type} markup`);
+  }
 });
 
 test('node field values are exactly the material contracts (one vocabulary, no second list)', () => {
@@ -102,14 +167,13 @@ test('2.4.0 and 2.5.0 reject both nodes as not-yet-open parts, and do not list t
   assert.ok(unknown.some(e => e.code === 'NODE_TYPE'));
 });
 
-test('children lists: parents that accept form/table also accept the new nodes in 2.6.0 only; grids still do not', () => {
+test('children lists: extension nodes follow their declared placement role and are gated to 2.6.0', () => {
   for (const parent of ['page', 'section', 'split', 'aside', 'tab']) {
     const base = nodeSpecs[parent].children, grown = nodeSpecAt(parent, '2.6.0').children;
-    assert.ok(base.includes('form') && base.includes('table'), parent);
-    assert.deepEqual(grown, [...base, 'select-control', 'data-table'], parent);
+    const additions = Object.entries(NODE_SPEC_EXTENSIONS['2.6.0']).filter(([, spec]) => spec.label && base.includes(spec.placeLike)).map(([type]) => type);
+    assert.deepEqual(grown, [...base, ...additions], parent);
     assert.strictEqual(nodeSpecAt(parent, '2.5.0'), nodeSpecs[parent], `${parent} is the very same base object before 2.6.0`);
   }
-  for (const parent of ['grid', 'bento', 'tabs', 'reel', 'kanban']) assert.strictEqual(nodeSpecAt(parent, '2.6.0'), nodeSpecs[parent], parent);
   const inGrid = doc('2.6.0', {type: 'grid', columns: 'two', children: [{type: 'metric', label: 'a', value: '1'}, select()]});
   assert.ok(codesOf(inGrid).some(c => c.startsWith('CHILD_TYPE ')), codesOf(inGrid).join());
   const inSection = doc('2.6.0', {type: 'section', title: '구역', children: [select(), table()]});
@@ -315,7 +379,7 @@ test('applyOp insertNode accepts the extension parts only in 2.6.0 documents', (
 test('the blueprint schema exposes the 2.6.0 extensions under x-since without changing the 2.4.0/2.5.0 definitions', () => {
   const schema = blueprintSchema(), ext = schema['x-extensions']['2.6.0'];
   assert.equal(ext['x-since'], '2.6.0');
-  assert.deepEqual(Object.keys(ext.$defs), ['chart', 'select-control', 'data-table']);
+  assert.deepEqual(Object.keys(ext.$defs).sort(), ['chart', 'select-control', 'data-table', ...CONTROL_NODES].sort());
   for (const def of Object.values(ext.$defs)) assert.equal(def['x-since'], '2.6.0');
   // 기본 $defs는 부품 55개 그대로이고 차트는 기존 5형태 그대로다.
   assert.deepEqual(Object.keys(schema.$defs), nodeTypes);
@@ -323,8 +387,8 @@ test('the blueprint schema exposes the 2.6.0 extensions under x-since without ch
   assert.ok(!Object.hasOwn(schema.$defs.chart.properties, 'axis') && !Object.hasOwn(schema.$defs, 'select-control'));
   assert.deepEqual(ext.$defs.chart.properties.kind.enum, nodeSpecAt('chart', '2.6.0').fields.kind.enum);
   assert.ok(ext.$defs.chart.properties.kind.enum.includes('scatter') && ext.$defs.chart.properties.axis);
-  assert.deepEqual(ext.children.page, ['select-control', 'data-table']);
-  assert.ok(!Object.hasOwn(ext.children, 'grid'));
+  assert.ok(ext.children.page.includes('select-control') && ext.children.page.includes('data-table'));
+  assert.deepEqual(ext.children.grid, ['card-surface', 'modal-dialog', 'tooltip', 'feedback-message']);
   // 열거값·필수 필드는 노드 명세와 같다.
   assert.deepEqual(ext.$defs['select-control'].required, ['type', 'id', 'label', 'options']);
   assert.deepEqual(ext.$defs['data-table'].required, ['type', 'id', 'title', 'columns', 'rows']);
@@ -345,9 +409,9 @@ test('listMaterials filters, pages and tells the web where each material is chos
   assert.ok(charts.value.items.every(i => i.blueprint.node === 'chart' && i.blueprint.since === '2.6.0' && i.quality === 'verified'));
   const since = listMaterials({since: '2.6.0', kind: 'component', fields: ['blueprint']});
   const components = [
+    ...controlMaterials.map(({id, ext}) => ({id, blueprint: {node: ext.nodeType, since: '2.6.0'}})),
     {id: 'component:data-table', blueprint: {node: 'data-table', since: '2.6.0'}},
     {id: 'component:select-control', blueprint: {node: 'select-control', since: '2.6.0'}},
-    ...controlMaterials.map(({id}) => ({id, blueprint: null})),
   ];
   assert.deepEqual(since.value.items, components.sort((a, b) => a.id.localeCompare(b.id)));
   assert.deepEqual(listMaterials({kind: 'type-role-preset', fields: ['blueprint']}).value.items.map(i => i.blueprint.value).sort(), ['dashboard', 'document', 'erp', 'marketing']);
@@ -427,14 +491,14 @@ test('component queries show the 2.6.0 parts only when asked for catalogVersion 
   assert.ok(spec.ok);
   assert.deepEqual(spec.value.required, ['type', 'id', 'title', 'columns', 'rows']);
   assert.equal(spec.value.example.type, 'data-table');
-  assert.deepEqual(getComponentSpec({type: 'page', catalogVersion: '2.6.0'}).value.children.allowed.slice(-2), ['select-control', 'data-table']);
+  assert.ok(getComponentSpec({type: 'page', catalogVersion: '2.6.0'}).value.children.allowed.includes('select-control'));
   assert.ok(!getComponentSpec({type: 'page'}).value.children.allowed.includes('select-control'));
   assert.ok(getComponentSpec({type: 'chart', catalogVersion: '2.6.0'}).value.fields.kind.enum.includes('heatmap'));
   assert.ok(!getComponentSpec({type: 'chart'}).value.fields.kind.enum.includes('heatmap'));
   assert.equal(getComponentSpec({type: 'card', catalogVersion: '2.9.9'}).ok, false);
   const listed = listCatalog({kind: 'components', filter: {catalogVersion: '2.6.0'}, fields: ['since', 'childTypes'], limit: 200});
-  assert.equal(listed.value.total, 57);
-  assert.deepEqual(listed.value.items.filter(i => i.since).map(i => i.type), ['select-control', 'data-table']);
+  assert.equal(listed.value.total, 65);
+  assert.deepEqual(listed.value.items.filter(i => i.since).map(i => i.type).sort(), ['select-control', 'data-table', ...CONTROL_NODES].sort());
   assert.equal(listCatalog({kind: 'components'}).value.total, nodeTypes.length);
   assert.equal(listCatalog({kind: 'components', filter: {catalogVersion: '9.9.9'}}).ok, false);
   const schemaDefault = getSchema({target: 'component', type: 'select-control'});
@@ -448,9 +512,10 @@ test('component queries show the 2.6.0 parts only when asked for catalogVersion 
 
 test('the compile path reads only the material render/style modules; the registry is read by the service query file alone', () => {
   const importsOf = f => [...read(f).matchAll(/^\s*import .*from ['"]([^'"]*materials\/[^'"]*)['"]/gm)].map(m => m[1].replace(/^.*materials\//, ''));
-  assert.deepEqual(importsOf('src/render/nodes.mjs').sort(), ['select.mjs', 'table.mjs']);
-  assert.deepEqual(importsOf('src/styles/index.mjs').sort(), ['select.mjs', 'table.mjs', 'typography.mjs']);
-  assert.deepEqual(importsOf('src/render/index.mjs').sort(), ['select.mjs', 'table.mjs']);
+  const components = ['button.mjs', 'card.mjs', 'feedback.mjs', 'input.mjs', 'modal.mjs', 'navigation.mjs', 'tabs.mjs', 'tooltip.mjs'];
+  assert.deepEqual(importsOf('src/render/nodes.mjs').sort(), [...components, 'select.mjs', 'table.mjs'].sort());
+  assert.deepEqual(importsOf('src/styles/index.mjs').sort(), [...components, 'select.mjs', 'table.mjs', 'typography.mjs'].sort());
+  assert.deepEqual(importsOf('src/render/index.mjs').sort(), [...components, 'select.mjs', 'table.mjs'].sort());
   assert.deepEqual(importsOf('src/validate.mjs'), []);
   assert.deepEqual(importsOf('src/service/index.mjs'), []);
   assert.deepEqual(importsOf('src/service/materials.mjs'), ['index.mjs', 'typography.mjs']);
