@@ -40,13 +40,15 @@ JSON은 현재 문서 객체를 직렬화한다. HTML은 같은 문서를 Core �
 
 | UX 감사 ID | 보장 | 검증 위치 |
 |---|---|---|
-| WB-01, WB-05 | 문서와 출처·선택이 복원에서 어긋나지 않음; 가져온 문서는 출처를 임의 추정하지 않음 | `storage.unit.mjs`, `studio.spec.mjs` 저장·복원 시나리오 |
+| WB-01 | 저장·복원 시 문서와 선택이 일치하고, 가져온 문서는 출처를 임의 추정하지 않음 | `storage.unit.mjs`, `studio.spec.mjs` 저장·복원 및 JSON 가져오기 시나리오 |
 | WB-02 | 테마 변경 후 작성 콘텐츠 보존 | `model.unit.mjs`, `studio.spec.mjs` 테마·구성 시나리오 |
 | WB-03 | 구성 변형은 템플릿 자식 트리 대신 현재 문서에 적용 | `studio.spec.mjs` 테마·구성 시나리오 |
-| WB-04, WB-08 | 거부된 편집에서 문서·선택을 원자적으로 보존 | `model.unit.mjs` Core 실패 시나리오 |
-| WB-06 | 보기 전용 색 모드와 문서 색 모드 분리; 내보내기는 문서 기준 | `model.unit.mjs`, `studio.spec.mjs` 색 모드·내보내기 시나리오 |
+| WB-04 | 실패한 JSON 가져오기는 Core 오류 코드·경로·도움말을 보이고 저장된 문서·출처·스타일 선택·노드 선택·수정 상태를 보존; 성공한 가져오기는 낡은 출처 없이 템플릿 교체가 가능 | `studio.spec.mjs` WB-04/WB-05 실패·유효 가져오기 시나리오 |
+| WB-05 | 유효 JSON 가져오기 뒤 출처 없음·루트 선택·문서 제목·내보내기 이름이 저장 및 새로고침 뒤에도 일치 | `studio.spec.mjs` WB-04/WB-05 실패·유효 가져오기 시나리오 |
+| WB-06 | iframe의 실제 `html[data-theme]`이 보기 전용 다크 전환과 문서 설정 복귀를 반영; 기기·배율과 무관하게 다운로드 바이트가 같고 문서 설정 보기의 `srcdoc`과 HTML 내보내기가 일치 | `model.unit.mjs`, `studio.spec.mjs` WB-06 색 모드·내보내기 시나리오 |
 | WB-07 | 시작 쿼리 소비와 URL 화면 상태 계약 | `url.unit.mjs`, `studio.spec.mjs` URL 시작 시나리오 |
+| WB-08 | 필수 노드 삭제 거부에서 Core 진단 코드·경로·도움말과 문서 바이트·선택 원자성 보장 | `model.unit.mjs`, `studio.spec.mjs` WB-08 실패 편집 시나리오 |
 | 저장·복구 | 버전 저장, 레거시 읽기, 손상 값 원본 보존, 초기화 실패에서 복구 유지 | `storage.unit.mjs`, `studio.spec.mjs` 복구 시나리오 |
 | 모바일·키보드 | 390px 패널 전환, 트리 방향키 조작, 가로 넘침 없음 | `studio.spec.mjs` 모바일 시나리오 |
 
-단위 검사는 `node --experimental-strip-types --experimental-loader ./apps/web/features/studio/node-ts-loader.mjs --test apps/web/features/studio/*.unit.mjs`로 실행한다. Studio 브라우저 여정은 `WEB_PORT=4310 npm --workspace apps/web run test:e2e -- --grep studio`로 실행한다. 4310은 기존 웹 Playwright 설정에서 선택한 전용 포트다.
+단위 검사는 `node --experimental-strip-types --experimental-loader ./apps/web/features/studio/node-ts-loader.mjs --test apps/web/features/studio/*.unit.mjs`로 실행한다. 브라우저 없이 Studio E2E 수집만 확인할 때는 `npm --workspace apps/web run test:e2e -- --list studio.spec.mjs`를 쓴다. 실제 여정은 `WEB_PORT=4310 npm --workspace apps/web run test:e2e -- --grep studio`로 실행하며, 4310은 기존 웹 Playwright 설정에서 선택한 전용 포트다.
