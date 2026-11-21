@@ -49,8 +49,9 @@ export function validateMaterial(m, kind) {
     else if (new Set(values.map(v => JSON.stringify(v))).size !== values.length) err('M_VARIANTS', `$.variants.${attr}`, '속성 값이 중복됩니다.');
   }
   for (const [attr, value] of Object.entries(m.defaults)) {
+    const values = m.variants[attr];
     if (!Object.hasOwn(m.variants, attr)) err('M_DEFAULT', `$.defaults.${attr}`, `기본값 ${attr}가 variants에 없습니다.`);
-    else if (!m.variants[attr].some(v => JSON.stringify(v) === JSON.stringify(value))) err('M_DEFAULT', `$.defaults.${attr}`, `기본값 ${JSON.stringify(value)}가 허용 값에 없습니다.`);
+    else if (Array.isArray(values) && !values.some(v => JSON.stringify(v) === JSON.stringify(value))) err('M_DEFAULT', `$.defaults.${attr}`, `기본값 ${JSON.stringify(value)}가 허용 값에 없습니다.`);
   }
 
   if (!Array.isArray(m.structure.parents)) err('M_STRUCTURE', '$.structure.parents', 'parents는 배열이어야 합니다.');
@@ -62,8 +63,13 @@ export function validateMaterial(m, kind) {
 
   if (!Array.isArray(m.states.values) || !Array.isArray(m.states.transitions)) err('M_STATES', '$.states', 'states는 {values: [], transitions: []}입니다.');
   else m.states.transitions.forEach((t, i) => {
-    if (!m.states.values.includes(t.from) || !m.states.values.includes(t.to)) err('M_STATES', `$.states.transitions[${i}]`, `전이 ${t.from}→${t.to}의 상태가 values에 없습니다.`);
-    if (typeof t.trigger !== 'string' || !t.trigger) err('M_STATES', `$.states.transitions[${i}].trigger`, '전이에는 trigger가 필요합니다.');
+    const path = `$.states.transitions[${i}]`;
+    if (!isObj(t)) {
+      err('M_STATES', path, '전이 항목은 {from, to, trigger} 객체여야 합니다.');
+      return;
+    }
+    if (!m.states.values.includes(t.from) || !m.states.values.includes(t.to)) err('M_STATES', path, `전이 ${t.from}→${t.to}의 상태가 values에 없습니다.`);
+    if (typeof t.trigger !== 'string' || !t.trigger) err('M_STATES', path + '.trigger', '전이에는 trigger가 필요합니다.');
   });
   if (!RESPONSIVE.includes(m.responsive.strategy)) err('M_ENUM', '$.responsive.strategy', `반응형 전략은 ${RESPONSIVE.join(', ')} 중 하나입니다.`);
   if (!Array.isArray(m.a11y.rules)) err('M_A11Y', '$.a11y.rules', 'a11y.rules는 배열입니다.');

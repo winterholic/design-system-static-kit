@@ -119,11 +119,8 @@ export function themeMaterials() {
   }));
 }
 
-/**
- * 팔레트 출처 판정(docs/materials/audit.md §팔레트 출처). Coolors 렌더 목록에서 읽은 색 값이고 재사용 조건은 확인하지 못했다.
- * 기존 사용은 유지하고 새 수집은 하지 않는다. 외부 배포 전에 이용 조건 확인이 필요하다.
- */
-export const PALETTE_SOURCE_VERDICT = 'keep-existing: Coolors 이용 조건 미확인(확인 필요). 신규 수집 금지, 외부 재배포 전 조건 확인. label·likes는 출처 표시용 메타데이터이고 품질 근거가 아니다.';
+/** Coolors 팔레트의 재사용 판정은 docs/materials/audit.md §3을 따른다. */
+export const PALETTE_SOURCE_VERDICT = 'Coolors 약관·라이선스는 팔레트 묶음 재배포와 디자인 템플릿 제작 앱 사용을 제한한다. 별도 권리 허락 미확인. 기존 데이터와 입출력은 호환성 검증용으로 보존하며 신규 노출·내보내기·수집에 부적합하다. label·likes는 출처 표시용 메타데이터다.';
 
 /** resolveTokens가 팔레트×모드마다 만드는 역할 토큰(src/tokens.mjs:59). 테스트가 실제 키와 같은지 본다. */
 export const PALETTE_ROLES = Object.freeze(['canvas', 'surface', 'soft', 'sunken', 'accentSoft', 'text', 'muted', 'action', 'onAction', 'actionHover', 'onActionHover', 'link', 'focus', 'rule', 'border', 'success', 'warning', 'danger', 'info', 'accent', 'onAccent', 'accentInk', 'chart1', 'chart2', 'chart3', 'chart4', 'chart5']);

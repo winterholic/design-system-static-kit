@@ -36,7 +36,7 @@ export const qualityRank = status => QUALITY.indexOf(status);
 /** 반응형 전략. unspecified는 아직 기록하지 않았다는 뜻이고 감사에서 결손으로 센다. */
 export const RESPONSIVE = Object.freeze(['container', 'viewport', 'fluid', 'fixed', 'none', 'unspecified']);
 
-/** 출처 라이선스 판정. unverified는 재사용 조건을 확인하지 못한 외부 자료다. */
+/** 출처 라이선스 판정. unverified는 의도한 재사용에 필요한 권리 허락이 확인되지 않은 외부 자료다. */
 export const LICENSES = Object.freeze(['MIT', 'internal', 'facts-only', 'unverified']);
 
 /**

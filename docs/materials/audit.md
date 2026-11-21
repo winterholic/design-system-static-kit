@@ -46,12 +46,19 @@
 
 | 출처 | 팔레트 수 | 근거 | 판정 |
 |---|---|---|---|
-| Coolors 렌더 목록 2026-10-18 (테마 배정분) | 160 | `docs/evidence/coolors-palettes.json`(관측 814개). 160개 모두 관측 목록에 있다 | **기존 사용 유지, 조건 미확인.** 색 값과 원본 URL, 관측일이 남아 있다. Coolors 이용 조건과 팔레트 이름 재사용 조건은 확인하지 못했다(확인 필요). 외부 재배포 전에 확인한다 |
-| Coolors 인기 목록 2026-10-20 (라이브러리) | 267 | `docs/evidence/coolors-popular-2026-10-20.json`(관측 1,288개). 267개 모두 관측 목록에 있다 | 위와 같다. 좋아요 수(77개는 미관측 null)는 출처 표시용이며 품질 근거로 쓰지 않는다 |
+| Coolors 렌더 목록 2026-10-18 (테마 배정분) | 160 | `docs/evidence/coolors-palettes.json`(관측 814개). 160개 모두 관측 목록에 있다 | **신규 노출·내보내기·수집에 부적합.** 아래 Coolors 공식 문언과 권리 확인 범위를 적용한다 |
+| Coolors 인기 목록 2026-10-20 (라이브러리) | 267 | `docs/evidence/coolors-popular-2026-10-20.json`(관측 1,288개). 267개 모두 관측 목록에 있다 | 같은 제한을 적용한다. 좋아요 수(77개는 미관측 null)는 출처 표시용이다 |
 | yehsb123/design-system-kit (AGPL-3.0) | 0 | `docs/sources.md` | 축 이름·수량 같은 사실만 기록하고 코드·토큰·CSS는 복사하지 않았다. 유지 |
 | winterholic-design-system | 0 | 본인 저장소, 라이선스 미지정 | 구조만 참고 |
 
-모든 팔레트 재료는 `source.license: 'unverified'`와 같은 판정 문구(`PALETTE_SOURCE_VERDICT`, `src/materials/adapters.mjs`)를 가진다. 이 상태는 `tests/materials-registry.test.mjs`가 강제한다. 이번 단계에서 새로 수집하지 않았다. 법률 판단이 아니다.
+2026-11-22에 Coolors 공식 문서 두 곳을 확인했다.
+
+- 이용약관의 *Content on Coolors* 절은 예외 목록을 전제로 자체 상업·비상업 작업과 인쇄·디지털 결과물에 팔레트를 쓸 수 있다고 설명한다. 제3자 제공, 단독 또는 묶음 형태의 재배포, 디자인 템플릿 및 템플릿 제작 도구·앱에 포함하는 행위를 제한한다. 파싱·비축·합리적 범위를 넘는 다운로드도 제한 목록에 있다. 페이지 표기 갱신일은 2023-06-14다. [Coolors 이용약관](https://www.coolors.app/terms-of-service)
+- 라이선스 요약도 상업·비상업 여부와 관계없이 단독 또는 묶음 재배포를 금지하고, 디자인 템플릿과 템플릿 제작 도구·앱에 팔레트를 넣는 것을 금지한다. 페이지 표기 갱신일은 2023-08-16이다. [Coolors 라이선스](https://www.coolors.app/license)
+
+Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 권리 허락은 확인되지 않았다**. 427개 모두에 `source.license: 'unverified'`를 유지하고 `src/materials/adapters.mjs`의 `PALETTE_SOURCE_VERDICT`에 신규 노출·내보내기·수집 부적합 판정을 기록한다. `tests/materials-registry.test.mjs`가 수량·출처·판정을 확인한다.
+
+원본 427개와 기존 2.4.0·2.5.0 입력·출력은 호환성을 위해 보존한다. 이번 감사에서는 공식 문언만 확인했고 새 팔레트는 수집하지 않았다. 기존 제품 경로의 조치는 후속 작업으로 남긴다.
 
 ## 4. 구현 우선순위
 

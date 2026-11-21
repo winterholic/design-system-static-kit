@@ -66,7 +66,7 @@ test('materials: combinations are not reported as presets (a 3×4 component adds
   assert.equal(t.counts().attributeCombinations, combinationsOf(theme));
 });
 
-test('materials: the validator rejects each broken contract with its own code', () => {
+test('materials: the validator rejects each broken contract with its own code', async t => {
   const reg = () => createRegistry();
   const {render, ...noRender} = sample();
   assert.deepEqual(codes(() => reg().register(noRender)), ['M_REQUIRED']);
@@ -78,9 +78,9 @@ test('materials: the validator rejects each broken contract with its own code', 
   assert.deepEqual(codes(() => reg().register(sample({category: 'palette'}))), ['M_ENUM']);
   assert.deepEqual(codes(() => reg().register(sample({contexts: ['kiosk']}))), ['M_CONTEXT']);
   assert.deepEqual(codes(() => reg().register(sample({variants: {tone: ['a']}, defaults: {tone: 'b'}}))), ['M_DEFAULT']);
-  assert.deepEqual(codes(() => reg().register(sample({variants: {tone: []}}))), ['M_VARIANTS']);
+  await t.test('variant sets are diagnosed before checking defaults', checkVariantSets);
   assert.deepEqual(codes(() => reg().register(sample({structure: {parents: [], children: {allowed: [], min: 3, max: 1}}}))), ['M_STRUCTURE']);
-  assert.deepEqual(codes(() => reg().register(sample({states: {values: ['a'], transitions: [{from: 'a', to: 'b', trigger: 'x'}]}}))), ['M_STATES']);
+  await t.test('malformed state transitions are diagnosed at the entry path', checkTransitions);
   assert.deepEqual(codes(() => reg().register(sample({quality: {status: 'verified', evidence: ['docs/x.md']}}))), ['M_QUALITY']);
   assert.deepEqual(codes(() => reg().register(sample({quality: {status: 'missing', evidence: []}}))), ['M_QUALITY']);
   assert.deepEqual(codes(() => reg().register(sample({render: null}))), ['M_QUALITY']);
@@ -163,7 +163,7 @@ test('materials: every evidence file:line points at a test() that exists', () =>
 
 test('materials: palette provenance is Coolors only, license unverified, with the audit verdict on every palette', () => {
   const list = registry.byKind('palette');
-  assert.equal(list.length, Object.keys(palettes).length);
+  assertPaletteAudit(list);
   for (const m of list) {
     assert.equal(new URL(m.source.url).host, 'coolors.co', m.id);
     assert.equal(m.source.license, 'unverified');
@@ -199,3 +199,44 @@ test('materials: the contract exposes the fields later workers must fill', () =>
   assert.equal(CATEGORIES.length, 12);
   assert.deepEqual([...QUALITY], ['missing', 'enum-only', 'implemented', 'verified']);
 });
+
+function checkVariantSets() {
+  assert.deepEqual(codes(() => createRegistry().register(sample({variants: {tone: []}}))), ['M_VARIANTS']);
+  // 기본값 조회가 잘못된 집합에서 .some을 호출하던 회귀를 확인한다.
+  for (const values of [3, null]) {
+    const material = sample({variants: {tone: values}, defaults: {tone: 'a'}});
+    assertRegistrationDiagnostic(material, 'M_VARIANTS', '$.variants.tone');
+  }
+}
+
+function checkTransitions() {
+  const invalidTarget = sample({states: {values: ['a'], transitions: [{from: 'a', to: 'b', trigger: 'x'}]}});
+  assert.deepEqual(codes(() => createRegistry().register(invalidTarget)), ['M_STATES']);
+  // null의 from을 읽던 회귀와 원시값의 항목 경로를 확인한다.
+  const material = sample({states: {values: ['a'], transitions: [null, 'a', 0, false]}});
+  assertRegistrationDiagnostic(material, 'M_STATES', ...material.states.transitions.map((_, i) => `$.states.transitions[${i}]`));
+}
+
+function assertRegistrationDiagnostic(material, code, ...paths) {
+  const r = createRegistry();
+  const expected = paths.map(path => [code, path]);
+  let diagnostics;
+  assert.doesNotThrow(() => { diagnostics = validateMaterial(material, r.kind(material.kind)); });
+  assert.deepEqual(diagnostics.map(e => [e.code, e.path]), expected);
+  assert.throws(() => r.register(material), error => {
+    assert.ok(error instanceof MaterialError);
+    assert.deepEqual(error.errors, diagnostics);
+    return true;
+  });
+  assert.ok(!r.has(material.id));
+}
+
+function assertPaletteAudit(list) {
+  assert.equal(Object.keys(palettes).length, 427);
+  assert.equal(list.length, Object.keys(palettes).length);
+  for (const m of list) {
+    assert.equal(m.source.origin, 'coolors', m.id);
+    assert.match(m.source.verdict, /별도 권리 허락 미확인/, m.id);
+    assert.match(m.source.verdict, /신규 노출·내보내기·수집에 부적합/, m.id);
+  }
+}
