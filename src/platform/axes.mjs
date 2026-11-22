@@ -65,12 +65,14 @@ export const axisIds = values => Object.entries(values).filter(([a, v]) => axes[
 const SHAPE_AXES = ['radius', 'elevation', 'motion'];
 
 /**
- * 재료가 가진 축 값 id. 패밀리는 모양(radius·elevation·motion), 타이포 시스템은 서체 짝의 typography 값이다.
+ * 재료가 가진 축 값 id(상태 패턴의 density는 어울리는 밀도의 힌트라 축 금지를 걸지 않는다: 순위에서만 읽는다).
+ *  패밀리는 모양(radius·elevation·motion), 타이포 시스템은 서체 짝의 typography 값이다.
  * 이 id들이 관계 평가에 함께 들어가므로 "패밀리 모양 × 요구한 배경"처럼 재료 밖의 조합도 forbids에 걸린다.
  */
 export function materialAxisIds(m) {
   if (!m) return [];
   if (m.kind === 'family') return axisIds(Object.fromEntries(SHAPE_AXES.filter(a => m.shape?.[a] !== undefined).map(a => [a, m.shape[a]])));
+  if (['surface', 'motion', 'background', 'media'].includes(m.kind)) return axisIds(m.axes ?? {});
   if (m.kind === 'type-system') { const face = /^type-preset:(.+)$/.exec(m.facePairing ?? '')?.[1]; return face ? axisIds({typography: face}) : []; }
   return [];
 }

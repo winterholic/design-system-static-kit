@@ -24,6 +24,9 @@ test('the platform section counts what really assembles, not what is registered'
   assert.ok(r.colorGateFailures.P_COLOR_CONTRAST >= 1 || Object.keys(r.colorGateFailures).length >= 1, 'the failing pair is reported by code');
   // the section is a pure function of the registry: same registry, same numbers
   assert.equal(JSON.stringify(platformSection({env: createFixturePlatform(), only: ['dashboard-grid']})), JSON.stringify(r));
+  const sm = r.distinct.styleMaterials;
+  assert.ok(sm.surface.verified > 0 && sm.surface.usedInOutput === sm.surface.verified, 'style materials are verified through real pages');
+  assert.equal(sm['state-pattern'].usedInOutput, sm['state-pattern'].verified);
   // a pattern with no purpose-matching material counts zero instead of a product of registered values
   const empty = platformSection({env, only: ['mobile-nope']});
   assert.equal(empty.assemblable.assemblable, 0);
@@ -84,4 +87,12 @@ test('the committed baseline carries the platform section, and it beats the lega
   assert.ok(pf.distinct.verifiedColorTokenSets.dark <= pf.distinct.colorTokenSets.dark && pf.distinct.verifiedColorTokenSets.dark > legacy.distinctColorTokenSets.dark);
   assert.ok(pf.distinct.verifiedFacePairs <= pf.distinct.facePairs && pf.distinct.verifiedFamilies <= pf.distinct.families);
   assert.ok(Object.values(pf.assemblable.perPattern).every(x => x.verified <= x.assemblable));
+  // style materials: every registered kind is exercised, and whatever verified is really in the output
+  const sm = pf.distinct.styleMaterials;
+  for (const kind of ['surface', 'motion', 'background', 'media', 'state-pattern']) {
+    assert.ok(sm[kind].registered >= 2 && sm[kind].verified > 0, kind);
+    assert.equal(sm[kind].usedInOutput, sm[kind].verified, `${kind}: a verified material appears in the page output`);
+    assert.ok(sm[kind].verified <= sm[kind].attempted, kind);
+  }
+  assert.ok(sm.distinctOutputs > 1);
 });

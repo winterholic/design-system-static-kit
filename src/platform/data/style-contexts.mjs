@@ -28,6 +28,8 @@ import {MOTIONS, validateMotion, motionCSS, renderMotionSample} from './motion.m
 import {BACKGROUNDS, validateBackground, backgroundCSS, renderBackgroundSample} from './backgrounds.mjs';
 import {MEDIA, validateMedia, mediaCSS, renderMedia} from './media.mjs';
 import {STATE_PATTERNS, STATE_KINDS, validateStatePattern, stateCSS, renderState} from './states.mjs';
+import {createPlatformRegistry} from '../registry.mjs';
+import {STYLE_VALIDATORS, checkStyleMaterials as checkRegistered, rankStyleMaterials as rankRegistered, assembleStyleMaterials as assembleRegistered} from '../style-materials.mjs';
 
 /** 54개 전부를 실패시킬 수 있는 테스트 줄: 이행·필드·관계·recommend 결과. */
 const EVIDENCE = ['tests/platform-style-contexts.test.mjs:14', 'tests/platform-style-contexts.test.mjs:31', 'tests/platform-style-contexts.test.mjs:52', 'tests/platform-style-contexts.test.mjs:74', 'tests/platform-style-contexts.test.mjs:94'];
@@ -416,108 +418,38 @@ const MATERIAL_BY_ID = new Map(Object.values(STYLE_MATERIALS).flat().map(m => [m
 export const listStyleMaterials = kind => [...(STYLE_MATERIALS[kind] ?? [])];
 export const styleMaterialById = id => MATERIAL_BY_ID.get(id) ?? null;
 
-/** 모든 스타일 재료의 종류별 검사와 id 중복. [{code, path, message}]. 빈 배열이면 통과. */
-export function checkStyleMaterials() {
-  const out = [], seen = new Set();
-  for (const [kind, list] of Object.entries(STYLE_MATERIALS)) for (const m of list) {
-    if (seen.has(m.id)) out.push({code: 'P_DUPLICATE', path: m.id, message: `이미 있는 id: ${m.id}`}); seen.add(m.id);
-    for (const e of VALIDATORS[kind](m)) out.push({...e, path: `${m.id}${e.path.slice(1)}`});
-    for (const [i, e] of m.relations.entries()) if (!BY_ID.has(e.to) && !MATERIAL_BY_ID.has(e.to)) out.push({code: 'P_EDGE_DANGLING', path: `${m.id}.relations[${i}].to`, message: `없는 대상: ${e.to}`});
-    for (const c of m.contexts) if (c !== 'any' && !pageTypeIds.includes(c)) out.push({code: 'P_CONTEXTS', path: `${m.id}.contexts`, message: `모르는 페이지 유형: ${c}`});
-  }
-  return out;
-}
+/**
+ * 순위·검사·조립은 레지스트리 위의 구현(src/platform/style-materials.mjs, 계약 0.5.0)이 한다. 아래 같은 이름의 함수는 그 구현을 부르는 감싸개이고,
+ * 레지스트리를 주지 않으면 이 파일의 54개 스타일 맥락과 재료만 담은 작은 레지스트리를 쓴다.
+ */
+let ownRegistry = null;
+const defaultRegistry = () => (ownRegistry ??= createPlatformRegistry({validators: STYLE_VALIDATORS}).registerAll([...STYLE_CONTEXTS, ...Object.values(STYLE_MATERIALS).flat()]));
+const registryOf = (given, wantsContext) => (given && given.kind('surface').list().length && (!wantsContext || given.has(wantsContext)) ? given : defaultRegistry());
 
+/** 모든 스타일 재료의 종류별 검사와 id 중복. [{code, path, message}]. 빈 배열이면 통과. */
+export function checkStyleMaterials(registry = null) {
+  const out = [], seen = new Set();
+  for (const list of Object.values(STYLE_MATERIALS)) for (const m of list) { if (seen.has(m.id)) out.push({code: 'P_DUPLICATE', path: m.id, message: `이미 있는 id: ${m.id}`}); seen.add(m.id); }
+  return [...out, ...checkRegistered(registryOf(registry))];
+}
 /** 스타일 맥락의 축 선호와 맞는 정도로 가산하는 가중치. 추천(src/platform/recommend.mjs)의 AXIS_PREFERENCE_WEIGHT와 같은 값이다. */
 export const STYLE_AXIS_WEIGHT = 10;
-/** 한 재료가 두 축을 구현할 때 더 크게 보이는 축의 배수. 배경은 페이지 바탕(backdrop)이 장식(ornament)보다 먼저 읽힌다. */
-const AXIS_MULTIPLIER = {backdrop: 2};
-
 /**
- * 스타일 맥락 하나에 대해 한 종류의 스타일 재료를 순위 매긴다. 결정적이다(동점은 id 순).
- * request: {kind, context?, state?: empty|loading|error|success (state-pattern만)}
- * 반환: {kind, ranked: [{id, score, reasons}], blocked: [{id, blocked: [{code, reason}]}], reasons: [빈 결과의 이유]}
- * 스타일 맥락이 금지한 축 값을 하나라도 쓰는 재료는 순위에서 빼고 blocked에 남긴다(다른 값으로 바꾸지 않는다).
+ * 스타일 맥락 하나에 대해 한 종류의 스타일 재료를 순위 매긴다(구현은 src/platform/style-materials.mjs). styleContext는 id 또는 기록이다.
+ * request: {kind, context?, state?}. opts.registry를 주면 그 레지스트리에서 찾는다.
  */
-export function rankStyleMaterials(styleContext, {kind, context, state} = {}) {
-  const sc = typeof styleContext === 'string' ? BY_ID.get(styleContext) : styleContext;
-  if (!sc) throw new RangeError(`unknown style context: ${styleContext}`);
-  if (!STYLE_MATERIALS[kind]) throw new RangeError(`unknown style material kind: ${kind}`);
-  const pool = STYLE_MATERIALS[kind].filter(m => (!context || m.contexts.includes('any') || m.contexts.includes(context)) && (!state || m.state === state));
-  const scored = pool.map(m => {
-    let score = 0; const reasons = [], blocked = [];
-    for (const [axis, v] of Object.entries(m.axes)) {
-      const pref = sc.axisPreferences[axis] ?? [], i = pref.indexOf(v);
-      if (i >= 0) { const priority = STYLE_AXIS_WEIGHT * (AXIS_MULTIPLIER[axis] ?? 1) * (pref.length - i); score += priority; reasons.push({from: sc.id, to: m.id, type: 'axis-preference', priority, reason: `${sc.label}는 ${axis}=${v}를 ${i + 1}순위로 선호한다`}); }
-    }
-    for (const [axis, values] of Object.entries(m.uses)) {
-      const hit = values.filter(v => (sc.forbid[axis] ?? []).includes(v));
-      if (hit.length) blocked.push({code: 'P_REL_STYLE_FORBID', with: sc.id, reason: `${sc.label}는 ${axis}=${hit.join('·')}를 금지한다(${m.label}가 쓴다)`});
-    }
-    return {id: m.id, score, reasons, blocked};
-  });
-  const ranked = scored.filter(s => !s.blocked.length).sort((a, b) => b.score - a.score || a.id.localeCompare(b.id)).map(({id, score, reasons}) => ({id, score, reasons}));
-  const blocked = scored.filter(s => s.blocked.length).map(({id, blocked: b}) => ({id, blocked: b}));
-  const reasons = [];
-  if (!ranked.length) {
-    for (const b of blocked) for (const x of b.blocked) reasons.push({code: x.code, id: b.id, reason: x.reason});
-    if (!blocked.length) reasons.push({code: 'P_RECOMMEND_NO_CANDIDATE', id: null, reason: `${context ?? '전체'} 맥락${state ? `의 ${state} 상태` : ''}에 등록된 ${kind} 재료가 없습니다`});
-  }
-  return {kind, ranked, blocked, reasons};
+export function rankStyleMaterials(styleContext, request = {}, {registry = null} = {}) {
+  const id = typeof styleContext === 'string' ? styleContext : styleContext?.id;
+  return rankRegistered(registryOf(registry, id), styleContext, request);
 }
 
-const SLOTS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media']];
-const STATE_SLOTS = STATE_KINDS;
-const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
-
-/**
- * 스타일 재료 조립. request: {styleContext, context, surface?, motion?, background?, media?, states?: {empty?, loading?, error?, success?}} (값은 재료 id).
- * 요구가 있으면 검사해 그대로 쓰고(없는 id·종류·맥락 불일치·스타일 금지는 거부), 없으면 rankStyleMaterials의 1순위를 쓴다.
- * 반환: {ok, selection, decisions, diagnostics, css}. css는 모션 키프레임 → 표면 → 배경 → 미디어 → 상태 패턴 순서로 한 번씩 붙인다(결정적).
- * opts.registry를 주면 스타일 맥락을 그 레지스트리에서 찾는다(통합 중 재료 시험).
- */
+/** 스타일 재료 조립(구현은 src/platform/style-materials.mjs). opts.registry를 주면 그 레지스트리를 쓴다(통합 중 재료 시험). */
 export function assembleStyleMaterials(request, {registry = null} = {}) {
-  const diagnostics = [], decisions = [], selection = {surface: null, motion: null, background: null, media: null, states: {}};
-  const fail = () => ({ok: false, selection, decisions, diagnostics, css: null});
-  if (request === null || typeof request !== 'object' || Array.isArray(request)) return {...fail(), diagnostics: [diag('P_REQUEST', '$', '요청은 객체여야 합니다')]};
-  const allowed = ['styleContext', 'context', 'surface', 'motion', 'background', 'media', 'states'];
-  for (const k of Object.keys(request)) if (!allowed.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.${k}`, `지원하지 않는 키: ${k}. 임의 CSS 경로는 없습니다`, {alternatives: allowed}));
-  const sc = typeof request.styleContext === 'string' ? (registry?.get(request.styleContext) ?? BY_ID.get(request.styleContext)) : null;
-  if (!sc || sc.kind !== 'style-context') diagnostics.push(diag('P_ATTR_UNKNOWN', '$.styleContext', `등록되지 않은 스타일 맥락: ${request.styleContext}`, {alternatives: [...BY_ID.keys()]}));
-  if (typeof request.context !== 'string') diagnostics.push(diag('P_REQUEST_CONTEXT', '$.context', 'context(페이지 유형)가 필요합니다'));
-  if (diagnostics.length) return fail();
-  const states = request.states ?? {};
-  for (const k of Object.keys(states)) if (!STATE_SLOTS.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.states.${k}`, `상태는 ${STATE_SLOTS.join('·')}입니다`, {alternatives: STATE_SLOTS}));
-  if (diagnostics.length) return fail();
-
-  const choose = (slot, kind, path, given, state) => {
-    if (given !== undefined && given !== null) {
-      const m = MATERIAL_BY_ID.get(given);
-      if (!m) { diagnostics.push(diag('P_ATTR_UNKNOWN', path, `등록되지 않은 재료: ${given}`, {alternatives: STYLE_MATERIALS[kind].map(x => x.id)})); return null; }
-      if (m.kind !== kind || (state && m.state !== state)) { diagnostics.push(diag('P_ATTR_KIND', path, `${given}는 ${state ? `${state} ` : ''}${kind}가 아니라 ${m.kind}${m.state ? `(${m.state})` : ''}입니다`)); return null; }
-      if (!m.contexts.includes('any') && !m.contexts.includes(request.context)) { diagnostics.push(diag('P_ATTR_CONTEXT', path, `${given}는 ${request.context} 맥락용이 아닙니다(${m.contexts.join(', ')})`)); return null; }
-      const hit = rankStyleMaterials(sc, {kind, context: request.context, state}).blocked.find(b => b.id === given);
-      if (hit) { diagnostics.push(diag('P_REL_STYLE_FORBID', path, `${given}: ${hit.blocked.map(x => x.reason).join('; ')}`)); return null; }
-      decisions.push({slot, id: given, source: 'request'});
-      return given;
-    }
-    const rec = rankStyleMaterials(sc, {kind, context: request.context, state});
-    if (!rec.ranked.length) { diagnostics.push(diag('P_SELECT_EMPTY', path, `${kind}${state ? `(${state})` : ''} 후보가 없습니다`, {blocked: rec.blocked, reasons: rec.reasons})); return null; }
-    decisions.push({slot, id: rec.ranked[0].id, source: 'recommend', score: rec.ranked[0].score, reasons: rec.ranked[0].reasons});
-    return rec.ranked[0].id;
-  };
-  for (const [slot, kind] of SLOTS) selection[slot] = choose(slot, kind, `$.${slot}`, request[slot]);
-  for (const st of STATE_SLOTS) selection.states[st] = choose(`state(${st})`, 'state-pattern', `$.states.${st}`, states[st], st);
-  if (diagnostics.length) return fail();
-
-  const parts = [];
-  const motion = MATERIAL_BY_ID.get(selection.motion);
-  parts.push(motionCSS(motion), surfaceCSS(MATERIAL_BY_ID.get(selection.surface)), backgroundCSS(MATERIAL_BY_ID.get(selection.background)), mediaCSS(MATERIAL_BY_ID.get(selection.media)));
-  for (const st of STATE_SLOTS) parts.push(stateCSS(MATERIAL_BY_ID.get(selection.states[st])));
-  return {ok: true, selection, decisions, diagnostics, css: parts.join('\n')};
+  return assembleRegistered(registryOf(registry, typeof request?.styleContext === 'string' ? request.styleContext : null), request);
 }
 
 /** 선택한 스타일 재료의 샘플 마크업(문서·갤러리용). 같은 입력은 같은 바이트다. */
+const STATE_SLOTS = STATE_KINDS;
 export function renderStyleMaterialSamples(selection) {
   const g = id => MATERIAL_BY_ID.get(id);
   return {

@@ -14,3 +14,4 @@ export {assemblePage, exploreCandidates, evaluateCombo, assembleCombo, compareCa
 export {normalizePageRequest, planPage, columnsFor, PURPOSES, PURPOSE_IDS, PAGE_REQUEST_KEYS, PAGE_CONTENT_KEYS, PAGE_COMPONENT_KEYS, TABLE_PAGE_ROWS, TABLE_TOOLBAR_ROWS, nodeTypeOfBase, baseIsPlaceable} from './page-content.mjs';
 export {buildAxisValues, banPairs, styleForbidRelations, withStyleForbids, axisIds, materialAxisIds} from './axes.mjs';
 export {createPlatform, MINIMAL_REQUEST, PLATFORM_CHECKS} from './examples/minimal.mjs';
+export {checkStyleMaterials, rankStyleMaterials, assembleStyleMaterials, styleMaterialsCSS, styleMaterialAttrs, surfaceScopeCSS, STYLE_VALIDATORS, STATE_KINDS} from './style-materials.mjs';

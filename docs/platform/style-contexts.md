@@ -446,6 +446,8 @@
 
 ### 6.1 조립 엔진 작업(W5)에 요청
 
+> 계약 0.5.0(조립 엔진 작업)에서 처리했다: 결과는 [ADR 0012 §9.5](../adr/0012-assembly-platform.md).
+
 1. **재료 종류 추가**: `PLATFORM_KINDS`와 `KIND_SPECS`에 `surface`, `motion`, `background`, `media`, `state-pattern`을 더한다. 필드는 `STYLE_MATERIAL_SPECS`(`data/surfaces.mjs`)가 그대로 쓸 수 있다. 등록되면 `to`가 이 재료를 가리키는 관계와 레지스트리 검사(`check`)를 쓸 수 있고, 지금의 `checkStyleMaterials`·`rankStyleMaterials`·`assembleStyleMaterials`는 레지스트리 위로 옮긴다. 옮기기 전까지 이 파일들이 소유한다.
 2. **스타일 맥락 필드 확장**: `KIND_SPECS['style-context']`에 `purpose`, `forbidCombos`, `tendencies`, `media`, `layout`을 더하면 `STYLE_CONTEXT_DETAILS`를 기록 안으로 옮길 수 있다.
 3. **`recommend()`의 빈 결과 이유**: 맥락 필터로 후보가 0개일 때 `blocked`에 `P_RECOMMEND_NO_CANDIDATE`를 남기게 한다. 지금은 `recommendWithReason`이 감싸고 있다.

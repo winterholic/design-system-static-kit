@@ -12,14 +12,27 @@ import {typeFit} from './type.mjs';
 /** 스타일 맥락의 축 선호(axisPreferences: {축: [선호 순서]})와 패밀리 모양이 맞으면 앞 순위일수록 큰 가산. */
 export const AXIS_PREFERENCE_WEIGHT = 10;
 
+/** 스타일 재료 5종 중 축 값(axes)을 가진 재료. 패밀리의 shape와 같은 방식으로 스타일 맥락의 축 선호를 읽는다. */
+const AXES_KINDS = ['surface', 'motion', 'background', 'media', 'state-pattern'];
+/** 한 재료가 두 축을 구현할 때 더 크게 보이는 축의 배수. 배경은 페이지 바탕(backdrop)이 장식(ornament)보다 먼저 읽힌다. */
+const AXIS_MULTIPLIER = {backdrop: 2};
+
 function styleAxisBonus(candidate, styleContext) {
-  if (!styleContext || candidate.kind !== 'family') return [];
+  const isFamily = candidate.kind === 'family';
+  if (!styleContext || !(isFamily || AXES_KINDS.includes(candidate.kind))) return [];
+  const shape = isFamily ? candidate.shape : candidate.axes;
   const out = [];
   for (const [axis, order] of Object.entries(styleContext.axisPreferences)) {
-    const v = candidate.shape?.[axis];
+    const v = shape?.[axis];
     const i = order.indexOf(v);
-    if (i >= 0) out.push({from: styleContext.id, to: candidate.id, type: 'axis-preference', priority: AXIS_PREFERENCE_WEIGHT * (order.length - i), reason: `${styleContext.label}는 ${axis}=${v}를 ${i + 1}순위로 선호한다`});
-    if (styleContext.forbid[axis]?.includes(v)) out.push({blocked: true, reason: `${styleContext.label}는 ${axis}=${v}를 금지한다`});
+    const weight = AXIS_PREFERENCE_WEIGHT * (isFamily ? 1 : AXIS_MULTIPLIER[axis] ?? 1);
+    if (i >= 0) out.push({from: styleContext.id, to: candidate.id, type: 'axis-preference', priority: weight * (order.length - i), reason: `${styleContext.label}는 ${axis}=${v}를 ${i + 1}순위로 선호한다`});
+    // 패밀리는 모양 값이 금지면 차단한다. 스타일 재료는 쓰는 값(uses) 전부를 본다(아래 usesBlock).
+    if (isFamily && styleContext.forbid[axis]?.includes(v)) out.push({blocked: true, reason: `${styleContext.label}는 ${axis}=${v}를 금지한다`});
+  }
+  if (!isFamily) for (const [axis, values] of Object.entries(candidate.uses ?? {})) {
+    const hit = values.filter(v => (styleContext.forbid[axis] ?? []).includes(v));
+    if (hit.length) out.push({blocked: true, reason: `${styleContext.label}는 ${axis}=${hit.join('·')}를 금지한다(${candidate.label}가 쓴다)`});
   }
   return out;
 }

@@ -21,12 +21,14 @@ const deepFreeze = v => { if (v && typeof v === 'object' && !Object.isFrozen(v))
  * KindRegistry: {kind, register(record), get(id), has(id), list(), filter({context, tag, minQuality}), implement?(id, impl), implementation?(id)}.
  * implement는 base-component 칸에만 있다. 구현은 함수라 얼리지 않고, 기록(데이터)과 따로 둔다.
  */
-function createKindRegistry(kind, byId) {
+function createKindRegistry(kind, byId, validators = {}) {
   const own = new Map(), impls = new Map();
   const kr = {
     kind,
     register(record) {
       const errors = record?.kind === kind ? validatePlatformMaterial(record) : [{code: 'P_KIND', path: '$.kind', message: `${kind} 칸에는 ${kind} 재료만 등록합니다`}];
+      // 종류별 의미 검사(스타일 재료의 반경·깊이 이름 등)는 호출자가 validators로 준다. 계약 검사와 겹치는 오류는 한 번만 적는다.
+      if (!errors.length && validators[kind]) for (const e of validators[kind](record)) if (!errors.some(x => x.code === e.code && x.path === e.path)) errors.push(e);
       if (record && byId.has(record.id)) errors.push({code: 'P_DUPLICATE', path: '$.id', message: `이미 등록된 id: ${record.id}`});
       if (errors.length) throw new PlatformError(`platform material rejected: ${record?.id ?? '(no id)'}\n` + errors.map(e => `${e.path} [${e.code}] ${e.message}`).join('\n'), errors);
       const frozen = deepFreeze(structuredClone(record));
@@ -58,9 +60,10 @@ function createKindRegistry(kind, byId) {
   return kr;
 }
 
-export function createPlatformRegistry() {
+/** validators: {종류: record → [{code, path, message}]}. 재료를 등록할 때 계약 검사 뒤에 돈다. */
+export function createPlatformRegistry({validators = {}} = {}) {
   const byId = new Map();
-  const kinds = new Map(PLATFORM_KINDS.map(k => [k, createKindRegistry(k, byId)]));
+  const kinds = new Map(PLATFORM_KINDS.map(k => [k, createKindRegistry(k, byId, validators)]));
   const reg = {
     kind(k) { const kr = kinds.get(k); if (!kr) throw new PlatformError(`unknown platform kind: ${k}`, [{code: 'P_KIND', path: '$.kind', message: k}]); return kr; },
     kinds: () => [...kinds.keys()],

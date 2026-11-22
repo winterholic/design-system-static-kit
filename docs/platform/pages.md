@@ -1,6 +1,6 @@
 # 페이지 단위 조립 파이프라인(W5-a)
 
-계약 0.3.0. 코드: `src/platform/page.mjs`(단계와 후보), `src/platform/page-content.mjs`(목적·콘텐츠 → 계획), `src/platform/axes.mjs`(기존 규칙 → 관계). 기준은 [ADR 0012](../adr/0012-assembly-platform.md) §5, §6, §9다.
+계약 0.5.0. 코드: `src/platform/page.mjs`(단계와 후보), `src/platform/page-content.mjs`(목적·콘텐츠 → 계획), `src/platform/axes.mjs`(기존 규칙 → 관계). 기준은 [ADR 0012](../adr/0012-assembly-platform.md) §5, §6, §9다.
 
 AI가 HTML이나 CSS를 만들지 않는다. 출력의 모든 마크업은 등록된 재료의 구현(구형 노드 렌더러, 기반 컴포넌트 렌더러)에서 나오고, CSS는 구형 스타일시트와 플랫폼 토큰 블록으로 이루어진다. 요청에는 HTML·CSS를 넣을 키가 없다(`P_REQUEST_KEY`).
 
@@ -106,3 +106,20 @@ REST(`POST /api/v1/assemble`)와 MCP(`assemble_design`)는 같은 함수를 부�
 - 목적 패밀리(`src/platform/families`, W3)는 아직 읽지 않는다. 슬롯에 놓는 것은 기반 컴포넌트와 패밀리 구성원이다.
 - 표를 쪽으로 나누면 1쪽 밖의 행은 출력에 없다(§3).
 - 스타일 맥락은 요청했을 때만 쓴다. 없으면 목적별 템플릿의 테마 기본값이 페이지 축을 정하고 스타일 맥락 선호는 순위에 들어가지 않는다.
+
+## 10. 스타일 재료(표면·모션·배경·미디어·상태 패턴)
+
+요청에 `surface`, `motion`, `background`, `media`(재료 id)와 `states: {empty?, loading?, error?, success?: 상태 패턴 id}`를 줄 수 있다. 주지 않으면 고른다.
+
+| 재료 | 선택 기준 | 페이지에 닿는 곳 |
+|---|---|---|
+| 표면 | 스타일 맥락의 축 선호(radius·elevation), 금지, 페이지 축 | 셸 `data-surface`, `--kit-radius`·`--kit-card-border`·`--kit-shadow`·`--kit-shadow-hover` |
+| 모션 | 스타일 맥락의 motion 선호, 페이지 맥락 | 셸 `data-motion`, `--kit-dur`·`--kit-ease` 등과 키프레임, `prefers-reduced-motion` |
+| 배경 | backdrop(×2)·ornament 선호와 페이지 축 | 셸 `data-bg`, 바탕과 장식 요소(`.kit-deco`) |
+| 미디어 | icon 선호 | 셸 `data-media`, 아이콘 선 굵기·끝·채움, 사진·타일 모양 |
+| 상태 패턴 | 상태, 자리의 배치, 페이지 밀도 | 상태 자리의 `<section class="kit-state" data-pattern>` |
+
+상태 화면을 놓는 곳: `content.table`·`content.list`·`content.charts[i]`의 `state`(`ready`·`empty`·`loading`·`error`)와 `stateText: {title?, body?, action?, details?}`, 그리고 `content.status: {state, title?, body?, action?}`. 데이터가 빈 표나 목록은 `empty`로 본다. 차트의 상태 화면은 차트 하나만 있고 목록이 없을 때만, 목록의 상태 화면은 차트가 없을 때만 둘 수 있다(격자·보조 영역 안에는 둘 수 없어 `P_PAGE_CONTENT`로 이유를 낸다).
+
+거부: 없는 id(`P_ATTR_UNKNOWN`), 종류·상태 불일치(`P_ATTR_KIND`), 맥락 불일치(`P_ATTR_CONTEXT`), 스타일 맥락이 금지한 값(`P_REL_STYLE_FORBID`), 축 금지(`P_REL_FORBIDS`, 예: light 모드의 글로우 표면은 X05), 자리에 맞지 않는 배치(`P_PAGE_STATE_LAYOUT`).
+

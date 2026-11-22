@@ -10,10 +10,10 @@
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-export const PLATFORM_CONTRACT_VERSION = '0.4.0';
+export const PLATFORM_CONTRACT_VERSION = '0.5.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
-export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'axis-value']);
+export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern']);
 
 /** 색 역할. 서브토큰 세트가 이 이름마다 값을 하나씩 만든다. css는 기존 컴파일 CSS가 읽는 변수 이름이다(부품 CSS를 고치지 않고 재사용하기 위해). */
 export const COLOR_ROLES = Object.freeze({
@@ -72,6 +72,7 @@ export const COMMON_FIELDS = Object.freeze({
  *   style-context  axisPreferences: {축: [선호 순서]}, forbid: {축: [값]}. 팔레트·서체를 소유하지 않고 추천 우선순위만 준다
  *   base-component contract: 기존 컴포넌트 계약 id, render·styles: 기존 구현 모듈 진입점. 동작·구조·접근성·상태를 소유한다
  *   family         members: {base-component id: FamilyMember}, shape: {radius, elevation}, density. 시각 언어를 소유한다
+ *   surface·motion·background·media·state-pattern   스타일 재료 5종(0.5.0). 반경·깊이 단계, 전이·키프레임, 페이지 바탕·장식, 아이콘·타일·사진, 상태 화면
  *   axis-value     axis: 스타일 축 이름, value: 그 축의 값. 페이지 축 값(셸·폭·밀도 등)이 관계(forbids)의 대상이 되게 하는 재료다(0.2.0, src/platform/axes.mjs)
  */
 export const KIND_SPECS = Object.freeze({
@@ -84,7 +85,16 @@ export const KIND_SPECS = Object.freeze({
   'base-component': Object.freeze({contract: 'string', render: 'object', styles: 'object', dependencies: 'array'}),
   family: Object.freeze({members: 'object', shape: 'object', density: 'string', states: 'array'}),
   'axis-value': Object.freeze({axis: 'string', value: 'string'}),
+  // 스타일 재료 5종(0.5.0, 스타일 작업의 요청). axes: 이 재료가 구현하는 축 값(순위·축 금지 평가), uses: 쓰는 축 값 전부(스타일 맥락이 금지한 값을 쓰면 차단).
+  // 종류별 의미 검사(반경·깊이 이름, 상태·배치 이름 등)는 data/*.mjs의 validate*가 하고 createPlatform이 등록할 때 레지스트리가 부른다.
+  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array'}),
+  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array'}),
+  background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
+  media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
+  'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
 });
+/** 스타일 재료 5종. 페이지 단계가 한 요청에 하나씩(상태 패턴은 상태마다) 고른다. */
+export const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern']);
 
 /** 축 값 재료 id. `axis-value:<축>.<값>`. 스타일 축 값은 기존 카탈로그(src/catalog/axes.mjs)의 값 이름 그대로다. */
 export const axisValueId = (axis, value) => `axis-value:${axis}.${value}`;

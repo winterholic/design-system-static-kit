@@ -29,6 +29,10 @@ import {attr, diag, typeErrorCode} from './pipeline.mjs';
 import {typeFit} from './type.mjs';
 import {axisIds, materialAxisIds} from './axes.mjs';
 import {normalizePageRequest, planPage, pageAxisIds, nodeTypeOfBase, PAGE_CATALOG_VERSION} from './page-content.mjs';
+import {styleMaterialsCSS, styleMaterialAttrs, STATE_KINDS} from './style-materials.mjs';
+import {renderState} from './data/states.mjs';
+import {themes} from '../catalog/themes.mjs';
+import {AXIS_PREFERENCE_WEIGHT} from './recommend.mjs';
 
 export const PAGE_STAGES = Object.freeze(['normalizePage', 'planPage', 'exploreCandidates', 'evaluateCandidates', 'assembleCandidates', 'verifyCandidates', 'compareCandidates']);
 /** 종류별로 조합에 넣는 후보 수(추천 순위 앞쪽). 조합 수는 이 값들의 곱을 넘지 않는다. */
@@ -50,6 +54,55 @@ function hash(text) {
 }
 const failed = diagnostics => diagnostics.some(d => d.severity === 'error');
 const COUNT_CODE = c => c.code;
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 스타일 재료 선택(표면·모션·배경·미디어·상태 패턴): 한 요청에 하나씩, 상태 화면은 자리마다 하나씩
+
+/** 상태 화면이 놓이는 자리의 배치 요건: 표·목록·차트 자리는 block·inline, 페이지 머리 아래 안내는 banner·toast·block. */
+export const STATE_LAYOUTS = Object.freeze({region: ['block', 'inline'], status: ['banner', 'toast', 'block']});
+const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media']];
+
+/**
+ * selectStyleMaterials(plan, intent, env) → {selection: {surface, motion, background, media, states: [{index, kind, usage, id}]}, decisions, blocked, diagnostics}
+ * 요구한 재료는 검사해 그대로 쓴다(없는 id·종류·맥락·스타일 금지는 거부). 요구가 없으면 추천 순위(스타일 맥락의 축 선호와 금지 포함)에서 고르되,
+ * 순위 안에서 페이지의 축(요청 > 스타일 맥락 > 테마 기본값)과 재료가 구현하는 축이 같을수록 앞에 둔다. 페이지 축 값과 금지 관계인 재료는 순위에서 빠진다.
+ */
+export function selectStyleMaterials(plan, intent, env) {
+  const diagnostics = [], decisions = [], blocked = [];
+  const selection = {surface: null, motion: null, background: null, media: null, states: []};
+  const ctx = {context: plan.context, mode: plan.axes.mode, density: plan.axes.density};
+  const anchors = [...(intent.styleContext ? [intent.styleContext] : []), ...pageAxisIds(plan)];
+  const target = {...themes[plan.theme].defaults, ...plan.axes};
+  const match = m => Object.entries(m.axes).filter(([a, v]) => target[a] === v).map(([a, v]) => ({from: plan.theme, to: m.id, type: 'page-axis', priority: AXIS_PREFERENCE_WEIGHT * (a === 'backdrop' ? 2 : 1), reason: `페이지의 ${a}=${v}와 같은 값을 구현한다`}));
+  const pick = (slot, kind, path, given, {state = null, layouts = null} = {}) => {
+    if (given) {
+      const d = attr(env, given, kind, path, plan.context);
+      if (d) { diagnostics.push(d); return null; }
+      const m = env.registry.get(given);
+      if (state && m.state !== state) { diagnostics.push(diag('P_ATTR_KIND', path, `${given}는 ${state} 상태 패턴이 아니라 ${m.state}입니다`)); return null; }
+      if (layouts && !layouts.includes(m.layout)) { diagnostics.push(diag('P_PAGE_STATE_LAYOUT', path, `${given}의 배치(${m.layout})는 이 자리에 맞지 않습니다(맞는 배치: ${layouts.join('·')})`, {alternatives: layouts})); return null; }
+      const s = env.graph.score(given, anchors, ctx);
+      if (s.blocked.length) { blocked.push({kind, id: given, blocked: s.blocked, source: 'intent'}); diagnostics.push(diag(s.blocked[0].code, path, `${given}: ${s.blocked.map(x => x.reason).join('; ')}`)); return null; }
+      if (intent.styleContext) { const rec = recommend(env.registry, env.graph, {kind, ...ctx, styleContext: intent.styleContext, selected: pageAxisIds(plan)}); const hit = rec.blocked.find(b => b.id === given); if (hit) { diagnostics.push(diag(hit.blocked[0].code, path, `${given}: ${hit.blocked.map(x => x.reason).join('; ')}`)); return null; } }
+      decisions.push({slot, id: given, source: 'intent', score: 0, reasons: []});
+      return given;
+    }
+    const rec = recommend(env.registry, env.graph, {kind, ...ctx, styleContext: intent.styleContext, selected: pageAxisIds(plan)});
+    for (const b of rec.blocked) if (b.id !== null && (!state || env.registry.get(b.id).state === state)) blocked.push({kind, id: b.id, blocked: b.blocked, source: 'recommend'});
+    const pool = rec.ranked.filter(r => (!state || env.registry.get(r.id).state === state) && (!layouts || layouts.includes(env.registry.get(r.id).layout)))
+      .map(r => { const extra = match(env.registry.get(r.id)); return {...r, score: r.score + extra.reduce((n, x) => n + x.priority, 0), reasons: [...r.reasons, ...extra]}; })
+      .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+    if (!pool.length) { diagnostics.push(diag('P_SELECT_EMPTY', path, `${plan.context} 맥락의 ${kind}${state ? `(${state}${layouts ? `, 배치 ${layouts.join('·')}` : ''})` : ''} 후보가 없습니다`, {blocked: rec.blocked})); return null; }
+    decisions.push({slot, id: pool[0].id, source: 'recommend', score: pool[0].score, reasons: pool[0].reasons});
+    return pool[0].id;
+  };
+  for (const [slot, kind] of STYLE_KINDS) selection[slot] = pick(`style.${slot}`, kind, `$.${slot}`, intent[slot]);
+  for (const st of plan.states) {
+    const id = pick(`style.state(${st.index}:${st.kind})`, 'state-pattern', `$.states.${st.kind}`, intent.states[st.kind], {state: st.kind, layouts: STATE_LAYOUTS[st.usage]});
+    selection.states.push({index: st.index, kind: st.kind, usage: st.usage, id});
+  }
+  return {selection, decisions, blocked: uniq(blocked), diagnostics: uniq(diagnostics)};
+}
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 3. 탐색
@@ -138,6 +191,9 @@ export function diversify(passing) {
   return out;
 }
 
+/** 선택한 스타일 재료의 id 목록(상태 패턴 포함, 중복 없음). */
+export const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, style?.background, style?.media, ...(style?.states ?? []).map(x => x.id)].filter(Boolean))];
+
 const selectionOf = (combo, intent) => ({styleContext: intent.styleContext, palette: combo.palette.id, subtokenSet: combo.subtokenSet.id, typeSystem: combo.typeSystem.id, families: Object.fromEntries(Object.entries(combo.families).map(([b, f]) => [b, f.id]))});
 
 /** 조합 전체의 관계 평가. 축 값(페이지 축·패밀리 모양·서체 짝)도 같이 평가되어 X01 등이 forbids로 걸린다. */
@@ -145,7 +201,7 @@ export function evaluateCombo(plan, intent, env, combo) {
   const sel = selectionOf(combo, intent), reg = env.registry;
   const ctx = {context: plan.context, mode: plan.axes.mode, density: plan.axes.density};
   const typeSystem = reg.get(sel.typeSystem);
-  const core = [sel.styleContext, sel.palette, sel.subtokenSet, sel.typeSystem, ...pageAxisIds(plan), ...materialAxisIds(typeSystem)].filter(Boolean);
+  const core = [sel.styleContext, sel.palette, sel.subtokenSet, sel.typeSystem, ...pageAxisIds(plan), ...materialAxisIds(typeSystem), ...styleMaterialIds(plan.style).flatMap(id => materialAxisIds(reg.get(id)))].filter(Boolean);
   const groups = Object.entries(sel.families).map(([base, f]) => [...core, f, base, ...materialAxisIds(reg.get(f))]);
   const runs = (groups.length ? groups : [core]).map(ids => env.graph.evaluate(ids, ctx));
   const relations = {ok: runs.every(r => r.ok), violations: uniq(runs.flatMap(r => r.violations)), applied: uniq(runs.flatMap(r => r.applied)), checks: uniq(runs.flatMap(r => r.checks))};
@@ -302,6 +358,19 @@ export function assembleCombo(plan, intent, env, combo, evaluated) {
   let design, body, artLog = {};
   try { design = planComposition(b); body = renderTree(b, design, artLog); auditPage(design, artLog.arts); }
   catch (e) { diagnostics.push(diag('P_RENDER', '$.tree', e.message)); return {ok: false, value: null, diagnostics, quality: {page}}; }
+  // 상태 화면 자리를 선택한 상태 패턴의 마크업으로 바꾼다(자리는 divider 노드 하나, 라벨이 번호다).
+  const style = plan.style, usedStateIds = [];
+  for (const st of style.states) {
+    const marker = `<div class="kit-divider" role="separator"><span>platform-state-${st.index}</span></div>`;
+    if (body.split(marker).length !== 2) { diagnostics.push(diag('P_RENDER', '$.tree', `상태 화면 자리(${st.index})를 렌더 결과에서 한 번 찾지 못했습니다`)); return {ok: false, value: null, diagnostics, quality: {page}}; }
+    try { body = body.replace(marker, () => renderState(reg.get(st.id), {...plan.states[st.index].input, level: 3})); }
+    catch (e) { diagnostics.push(diag('P_RENDER', plan.states[st.index].path, `상태 화면: ${e.message}`)); return {ok: false, value: null, diagnostics, quality: {page}}; }
+    usedStateIds.push(st.id);
+  }
+  // 선택한 표면·모션·배경·미디어는 쇼 셸에 범위 속성으로 달고(배경 장식 요소 포함) 재료 CSS를 붙인다.
+  const bg = style.background ? reg.get(style.background) : null;
+  body = body.replace('<div class="kit-shell"', `<div class="kit-shell" ${styleMaterialAttrs(style)}`);
+  if (bg && bg.deco.kind !== 'none') body = body.replace(/(<div class="kit-shell"[^>]*>)/, '$1<span class="kit-deco" aria-hidden="true"></span>');
   const tagged = tagFamilies(body, tagOrder);
   if (!tagged.ok) { diagnostics.push(diag('P_RENDER', '$.tree', '카드 구성원 수와 렌더된 카드 수가 다릅니다(패밀리 범위 표시를 달 수 없음)')); return {ok: false, value: null, diagnostics, quality: {page}}; }
 
@@ -317,7 +386,7 @@ export function assembleCombo(plan, intent, env, combo, evaluated) {
     declBlock(':root', type.vars ?? {}),
     ...families.map(id => declBlock(`[data-family="${id.slice('family:'.length)}"]`, familyShapeVars(reg.get(id)))),
   ].join('\n');
-  const css = stylesheet(b, sets, tagged.html, design) + platformCss + '\n';
+  const css = stylesheet(b, sets, tagged.html, design) + platformCss + '\n' + styleMaterialsCSS(reg, style, usedStateIds) + '\n';
   const script = formRuntime + controlRuntime(b);
 
   const defined = new Set([...css.matchAll(/(--[A-Za-z0-9-]+):/g)].map(m => m[1]));
@@ -328,9 +397,14 @@ export function assembleCombo(plan, intent, env, combo, evaluated) {
     for (const p of pairs.filter(x => !x.ok)) diagnostics.push(diag('P_CHECK_CONTRAST', c.auto ? '$.content' : `$.components[${c.requestIndex}]`, `${p.use}: ${p.fg} on ${p.bg} ${p.ratio}:1 < ${p.minimum}:1`));
     return {base: c.base, family: sel.families[c.base], pairs};
   });
+  const stylePairs = styleMaterialIds(style).flatMap(id => (reg.get(id).pairs ?? []).map(([fg, bg2, minimum]) => {
+    const a = color.roles[fg], b2 = color.roles[bg2], ratio = a && b2 ? Math.floor(colorContrast(a, b2) * 1e4) / 1e4 : null;
+    return {material: id, fg, bg: bg2, minimum, ratio, ok: ratio !== null && ratio >= minimum};
+  }));
+  for (const p of stylePairs.filter(x => !x.ok)) diagnostics.push(diag('P_CHECK_CONTRAST', `$.styleMaterials`, `${p.material}: ${p.fg} on ${p.bg} ${p.ratio}:1 < ${p.minimum}:1`));
   const derivedPairs = [['accentInk', 'accentSoft', 4.5], ['onActionHover', 'actionHover', 4.5], ['text', 'table-head', 7], ['text', 'table-hover', 7], ['text', 'table-selected', 7], ['control-fg', 'control-bg', 7]].map(([fg, bg, minimum]) => ({fg, bg, minimum, ratio: Math.floor(colorContrast(tokens[fg], tokens[bg]) * 1e4) / 1e4})).map(p => ({...p, ok: p.ratio >= p.minimum}));
   const quality = {
-    contrast: {ok: color.ok && components.every(c => c.pairs.every(p => p.ok)) && derivedPairs.every(p => p.ok), roles: color.report.length, failures: [...color.report.filter(r => r.ratio < r.minimum), ...derivedPairs.filter(p => !p.ok)], derived: derivedPairs},
+    contrast: {ok: color.ok && components.every(c => c.pairs.every(p => p.ok)) && derivedPairs.every(p => p.ok) && stylePairs.every(p => p.ok), roles: color.report.length, failures: [...color.report.filter(r => r.ratio < r.minimum), ...derivedPairs.filter(p => !p.ok)], derived: derivedPairs, styleMaterials: stylePairs},
     tokens: {ok: !missing.length, missing},
     type: {ok: type.ok, errors: type.errors ?? []},
     page,
@@ -345,7 +419,7 @@ export function assembleCombo(plan, intent, env, combo, evaluated) {
     request: {purpose: plan.purpose, pattern: plan.pattern, mode: plan.axes.mode},
     page: {pattern: plan.pattern, template: plan.template, pageType: plan.pageType, axes: plan.axes, axisSources: plan.axisSources, slots: plan.slots.map(s => ({id: s.id, source: s.source, nodes: s.nodes.length}))},
     selection: sel, relations: {applied: evaluated.relations.applied, checks: evaluated.relations.checks},
-    contrast: {roles: color.report, components, derived: derivedPairs}, derivedTokens: derived, reuses: [...reuses, `template:${plan.template}`, `theme:${plan.theme}`],
+    contrast: {roles: color.report, components, derived: derivedPairs, styleMaterials: stylePairs}, styleMaterials: style, derivedTokens: derived, reuses: [...reuses, `template:${plan.template}`, `theme:${plan.theme}`],
   };
   return {ok: quality.ok && !failed(diagnostics), colorVars: color.vars, value: {css, html: tagged.html, script, standalone, tokens: {...Object.fromEntries(Object.entries(tokens).map(([k, v]) => [LEGACY_PREFIX + k, v])), ...type.vars}, manifest}, quality, diagnostics};
 }
@@ -407,11 +481,17 @@ export function assemblePage(request, env) {
   intent.families.forEach((f, i) => { const d = attr(env, f, 'family', `$.families[${i}]`, plan.context); if (d) ctxDiag.push(d); });
   if (ctxDiag.length) return stageFail(PAGE_STAGES[1], ctxDiag, {plan: summarizePlan(plan), decisions: planned.decisions});
 
+  // 스타일 재료(표면·모션·배경·미디어·상태 패턴) 선택. 모든 후보가 같은 선택을 쓴다(후보는 색·서체·패밀리가 갈린다).
+  const style = selectStyleMaterials(plan, intent, env);
+  if (style.diagnostics.length) return stageFail(PAGE_STAGES[2], style.diagnostics, {plan: summarizePlan(plan), blocked: style.blocked, decisions: planned.decisions});
+  plan.style = style.selection;
+  planned.decisions.push(...style.decisions);
+
   const ex = exploreCandidates(plan, intent, env);
   if (!ex.combos.length) return stageFail(PAGE_STAGES[2], ex.diagnostics.length ? ex.diagnostics : [diag('P_SELECT_EMPTY', '$', '조합 후보가 없습니다')], {plan: summarizePlan(plan), blocked: ex.blocked, decisions: planned.decisions});
 
   const evaluated = ex.combos.map(combo => ({combo, ...evaluateCombo(plan, intent, env, combo)}));
-  const blocked = [...ex.blocked];
+  const blocked = [...ex.blocked, ...style.blocked];
   for (const e of evaluated.filter(x => !x.relations.ok)) blocked.push({combination: e.selection, blocked: e.relations.violations.map(v => ({code: v.code, reason: v.reason, with: v.to === v.from ? v.from : `${v.from} × ${v.to}`}))});
   const passing = diversify(evaluated.filter(x => x.relations.ok).sort((a, b) => b.score - a.score || key(a.selection).localeCompare(key(b.selection))));
   if (!passing.length) {
@@ -445,7 +525,7 @@ export function assemblePage(request, env) {
 /** 계획의 직렬화 가능한 요약(노드 트리는 싣지 않는다). */
 export function summarizePlan(plan) {
   return {purpose: plan.purpose, pattern: plan.pattern, template: plan.template, pageType: plan.pageType, context: plan.context, theme: plan.theme, axes: plan.axes, axisSources: plan.axisSources,
-    slots: plan.slots.map(s => ({id: s.id, source: s.source, nodes: s.nodes.map(n => n.type ?? 'component'), reasons: s.reasons})), layout: plan.layout,
+    slots: plan.slots.map(s => ({id: s.id, source: s.source, nodes: s.nodes.map(n => n.type ?? 'component'), reasons: s.reasons})), layout: plan.layout, style: plan.style ?? null, states: plan.states.map(({index, kind, usage, path}) => ({index, kind, usage, path})),
     components: plan.components.map(c => ({base: c.base, auto: c.auto, ...(c.requestIndex !== undefined ? {requestIndex: c.requestIndex} : {})}))};
 }
 void COUNT_CODE;

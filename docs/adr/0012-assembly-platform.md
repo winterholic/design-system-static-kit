@@ -1,6 +1,6 @@
 # ADR 0012: 재료 조립 플랫폼 계약
 
-- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0(§9, 2026-11-22).
+- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0, 0.5.0(§9, 2026-11-22).
 - 날짜: 2026-11-22
 - 관련: ADR 0001, 0009, 0011; [감사 2026-11](../platform/audit-2026-11.md)
 - 번호 메모: 작업 카드는 `0010-assembly-platform.md`를 지시했다. 그러나 0010은 이미 `0010-expression-grammar-2-5.md`가 쓰고 있어 0012로 둔다.
@@ -261,7 +261,7 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 | W2-2 오류 코드 | 처리. `P_TYPE_HANGUL_*`는 모두 `P_CHECK_TYPE_HANGUL`, `P_TYPE_HIERARCHY`는 그대로(`typeErrorCode`) |
 | W2-3 서체 짝·역할 체계를 종류로 | 승격하지 않는다. 지금 이 둘을 가리키는 관계가 없고 `type-system` 기록의 문자열 참조로 충분하다. 관계 대상이 되어야 하는 요구가 생기면 종류로 올린다 |
 | W2-5 기준선의 서체 짝 | 처리. 플랫폼 구간이 결합이 통과한 타이포 시스템의 고유 `(--kit-heading, --kit-font)` 쌍을 센다 |
-| W4-1 재료 종류 5개(surface, motion, background, media, state-pattern) | 하지 않음. 필드 명세(`STYLE_MATERIAL_SPECS`)가 main에 없어 추측으로 계약을 만들지 않는다. 그 파일이 main에 오면 종류와 필드를 그대로 받는다 |
+| W4-1 재료 종류 5개(surface, motion, background, media, state-pattern) | 0.5.0에서 처리(§9.5) |
 | W4-2 스타일 맥락 필드 | 처리. 선택 필드 `purpose`(string), `forbidCombos`(array), `tendencies`, `media`, `layout`(object) |
 | W4-3 빈 결과 이유 | 처리. 맥락 필터로 후보가 없으면 `recommend`가 `blocked`에 `{id: null, blocked: [{code: 'P_RECOMMEND_NO_CANDIDATE', …}]}`를 남긴다 |
 | W4-4 스타일 맥락을 앵커로 쓰는 동작 | 유지 |
@@ -283,4 +283,25 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 | 2 세트 기록 필드 | 처리. `states`(`hover`·`active` 0~1 비율, `control: {border: 역할, min}`), `components`(`table: {head, hover, selected}` 면 역할), `charts`(`categorical`·`sequential`·`diverging`)를 기록 필드로 올렸다. 7개 세트 기록이 `SUBTOKEN_SET_DESIGNS`의 원본 표를 싣고, `bindColor`는 기록에서 읽는다(`designOf`, 없는 부분은 `DEFAULT_DESIGN`). 필드 모양은 `P_SUBTOKEN_DESIGN`으로 검사한다 |
 | 3 `dashboard` 맥락 | 처리. 시험을 갱신(0.3.0)했고 `high-contrast`와 `data-dense`의 `contexts`에 `dashboard`를 더했다. 기본 순위는 표준이 1순위이고 틴트 다음이 데이터 밀집 등으로 바뀐다. 이 때문에 스타일 작업의 `sport` 선택 `['commerce-vivid', 'high-contrast']`가 dashboard에서 표준과 동점이 되어(`tests/platform-style-contexts.test.mjs`의 id 순 동점 금지) 두 번째 선택을 `standard`로 바꾸고 `docs/platform/style-contexts.md` 표를 다시 만들었다 |
 | 4 내보내기 | 처리. `src/platform/index.mjs`가 `colorMatrix`, `proposeSubtokenSets`, `assignSeeds`, `paletteRamps`, `SUBTOKEN_SET_DESIGNS`, `DEFAULT_DESIGN`, `designOf`를 내보낸다 |
+
+### 9.5 0.5.0: 스타일 재료 5종을 레지스트리로(W4 요청 1~4)
+
+`docs/platform/style-contexts.md` §6.1의 요청을 처리했다. 요청 2·3·4는 0.3.0에서 이미 처리했고(§9.2) 이번에 같은 요청의 나머지인 1을 하면서 4(페이지 단계가 스타일 맥락을 읽는다)를 재료의 사용까지 넓혔다.
+
+| 요청 | 결과 |
+|---|---|
+| 1 재료 종류 5개 | 처리. `PLATFORM_KINDS`에 `surface`, `motion`, `background`, `media`, `state-pattern`을 더하고 `KIND_SPECS`에 스타일 작업의 필드 명세를 그대로 옮겼다. `createPlatform`이 5종 재료 전부를 레지스트리에 등록한다. 종류별 의미 검사(반경·깊이 이름, 상태·배치 이름 등)는 `createPlatformRegistry({validators})`로 등록할 때 돈다 |
+| 1 검사·순위·조립을 레지스트리 위로 | 처리. `src/platform/style-materials.mjs`의 `checkStyleMaterials(registry)`, `rankStyleMaterials(registry, styleContext, request)`, `assembleStyleMaterials(registry, request)`가 구현이다. 순위는 `recommend`를 부른다: 스타일 맥락의 축 선호(배경은 backdrop 가중 ×2), 쓰는 값(`uses`) 금지, 축 금지(X01 등)가 한 곳에서 계산된다. 데이터 파일의 같은 이름 함수는 이 구현을 부르는 감싸개이고 시그니처와 결과가 같다 |
+| 2 스타일 맥락 필드 | 0.3.0에서 처리(선택 필드 `purpose`, `forbidCombos`, `tendencies`, `media`, `layout`) |
+| 3 빈 결과 이유 | 0.3.0에서 처리(`P_RECOMMEND_NO_CANDIDATE`). 스타일 재료 순위도 같은 문장을 쓴다 |
+| 4 페이지 단계가 읽는다 | 0.3.0에서 `axisPreferences.shell·width·density`와 `layout.navLimit`을 읽게 했고, 0.5.0에서 **스타일 재료가 실제 페이지 출력에 닿게 했다**(아래) |
+
+**페이지 출력에 닿는 방식**(`assemblePage`, `docs/platform/pages.md` §10):
+
+- 한 요청에 표면·모션·배경·미디어를 하나씩 고른다(요청한 id는 검사해 그대로 쓰고, 없으면 추천 순위에 페이지 축과 같은 축 값을 구현하는 재료를 앞세운다). 모든 후보가 같은 선택을 쓴다.
+- 표면은 구형 부품이 읽는 변수(`--kit-radius`, `--kit-card-border`, `--kit-shadow`, `--kit-shadow-hover`)를 `[data-surface]` 범위에서 바꾼다. 모션·배경·미디어는 각자의 CSS를 쇼 셸 범위로 붙이고(배경은 장식 요소 포함, 미디어는 아이콘 선 굵기와 모양), 셸에 `data-surface`·`data-motion`·`data-bg`·`data-media`를 단다.
+- 상태 패턴은 요소로 들어간다: 표·목록·차트의 `state`(empty·loading·error, 데이터가 비면 empty)는 그 자리를 상태 패턴으로 바꾸고, `content.status`는 페이지 머리 바로 아래(랜딩은 히어로 뒤)에 안내를 둔다. 자리에 맞는 배치(자리: block·inline, 안내: banner·toast·block)에서 고르며 쓰인 패턴의 CSS만 나간다.
+- 선택한 재료의 대비 쌍을 결합된 색으로 검사하고(`quality.contrast`), 재료가 읽는 변수가 정의되어 있는지(`P_TOKEN_MISSING`)도 후보마다 본다. 선택한 재료의 축 값은 관계 평가에 들어가 표면 × 배경 같은 조합이 축 금지(X04 등)에 걸린다.
+- 상태 패턴의 `axes.density`는 어울리는 밀도의 힌트라 축 금지를 걸지 않는다(순위에서만 읽는다).
+- 기준선의 플랫폼 구간이 재료마다 그 재료를 명시한 요청을 실제로 조립해, 검증된 재료가 출력에 나타나는지 센다(`distinct.styleMaterials`).
 

@@ -14,10 +14,11 @@ import {resolveChartPreset} from '../render/chart-presets.mjs';
 import {PATTERNS} from '../profiles/data.mjs';
 import {axisIds} from './axes.mjs';
 import {axisBans} from '../catalog/axes.mjs';
+import {STATE_KINDS} from './data/states.mjs';
 
-export const PAGE_REQUEST_KEYS = Object.freeze(['purpose', 'pattern', 'shell', 'width', 'density', 'mode', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'families', 'components', 'content', 'candidates']);
+export const PAGE_REQUEST_KEYS = Object.freeze(['purpose', 'pattern', 'shell', 'width', 'density', 'mode', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'families', 'components', 'content', 'candidates', 'surface', 'motion', 'background', 'media', 'states']);
 export const PAGE_COMPONENT_KEYS = Object.freeze(['base', 'family', 'props', 'content', 'slot']);
-export const PAGE_CONTENT_KEYS = Object.freeze(['name', 'nav', 'title', 'description', 'actions', 'kpis', 'charts', 'table', 'list', 'hero', 'features', 'featuresTitle', 'quotes', 'faq', 'cta', 'lead', 'sections', 'notice', 'products', 'productsTitle']);
+export const PAGE_CONTENT_KEYS = Object.freeze(['name', 'nav', 'title', 'description', 'actions', 'kpis', 'charts', 'table', 'list', 'hero', 'features', 'featuresTitle', 'quotes', 'faq', 'cta', 'lead', 'sections', 'notice', 'products', 'productsTitle', 'status']);
 export const MAX_CANDIDATES = 8;
 /** 표가 이 행 수를 넘으면 쪽 단위로 나눠 첫 쪽만 놓고 페이지네이션을 둔다(구형 table·data-table 노드는 최대 40행). */
 export const TABLE_PAGE_ROWS = 20;
@@ -71,6 +72,12 @@ export function normalizePageRequest(request) {
   });
   const families = request.families ?? [];
   if (!Array.isArray(families)) diagnostics.push(diag('P_REQUEST_FAMILIES', '$.families', 'families는 패밀리 id 배열입니다'));
+  const reqStates = request.states ?? {};
+  if (!plain(reqStates)) diagnostics.push(diag('P_REQUEST_STATES', '$.states', 'states는 {empty?, loading?, error?, success?: 상태 패턴 id} 객체입니다'));
+  else for (const [k, v] of Object.entries(reqStates)) {
+    if (!STATE_KINDS.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.states.${k}`, `상태는 ${STATE_KINDS.join('·')}입니다`, {alternatives: STATE_KINDS}));
+    else if (typeof v !== 'string') diagnostics.push(diag('P_REQUEST_STATES', `$.states.${k}`, '상태 패턴 id 문자열입니다'));
+  }
   const limit = request.candidates ?? 3;
   if (!Number.isInteger(limit) || limit < 1 || limit > MAX_CANDIDATES) diagnostics.push(diag('P_REQUEST_CANDIDATES', '$.candidates', `candidates는 1~${MAX_CANDIDATES} 정수입니다`));
   const mode = request.mode ?? 'light';
@@ -78,11 +85,11 @@ export function normalizePageRequest(request) {
   for (const [key, list] of [['shell', axes.shell], ['width', axes.width], ['density', axes.density]]) {
     if (request[key] !== undefined && !list.includes(request[key])) diagnostics.push(diag('P_ATTR_AXIS', `$.${key}`, `${key}는 ${list.join('·')} 중 하나입니다(받은 값: ${JSON.stringify(request[key])})`, {alternatives: list}));
   }
-  for (const key of ['pattern', 'styleContext', 'palette', 'subtokenSet', 'typeSystem']) if (request[key] !== undefined && typeof request[key] !== 'string') diagnostics.push(diag('P_REQUEST', `$.${key}`, `${key}는 문자열입니다`));
+  for (const key of ['pattern', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'surface', 'motion', 'background', 'media']) if (request[key] !== undefined && typeof request[key] !== 'string') diagnostics.push(diag('P_REQUEST', `$.${key}`, `${key}는 문자열입니다`));
   const intent = {
     purpose: request.purpose, pattern: request.pattern ?? null, shell: request.shell ?? null, width: request.width ?? null, density: request.density ?? null, mode,
     styleContext: request.styleContext ?? null, palette: request.palette ?? null, subtokenSet: request.subtokenSet ?? null, typeSystem: request.typeSystem ?? null,
-    families: Array.isArray(families) ? [...families] : [], components: Array.isArray(components) ? clone(components) : [], content: plain(content) ? clone(content) : {}, candidates: Number.isInteger(limit) ? limit : 3,
+    families: Array.isArray(families) ? [...families] : [], components: Array.isArray(components) ? clone(components) : [], surface: request.surface ?? null, motion: request.motion ?? null, background: request.background ?? null, media: request.media ?? null, states: plain(reqStates) ? {...reqStates} : {}, content: plain(content) ? clone(content) : {}, candidates: Number.isInteger(limit) ? limit : 3,
   };
   return {intent, diagnostics};
 }
@@ -103,6 +110,13 @@ function makeCtx(intent, patternId, skeleton, env) {
     fail: (code, path, message, alternatives = []) => diagnostics.push(diag(code, path, message, alternatives.length ? {alternatives} : {})),
     note: (rule, value, reason) => layout.push({rule, value, reason}),
     put(id, nodes, source, reason) { const s = ctx.slot(id); if (!s) return false; s.nodes.push(...nodes); s.source = s.source ?? source; if (reason) s.reasons.push(reason); return true; },
+    states: [],
+    /** 상태 화면 자리(계획 0.5.0): 구형 divider 노드가 렌더 뒤에 상태 패턴의 마크업으로 바뀐다. usage는 region(표·목록·차트 자리) 또는 status(페이지 머리 아래 안내). */
+    stateNode(kind, usage, input, path) {
+      const index = ctx.states.length;
+      ctx.states.push({index, kind, usage, input: {...input}, path});
+      return {type: 'divider', label: `platform-state-${index}`};
+    },
     /** 자동 승격 후보를 더하고 컴포넌트 번호(요청 컴포넌트 뒤)를 돌려준다. */
     addAuto: spec => intent.components.length + ctx.auto.push(spec) - 1,
     skeletonOf: id => pattern.slots.find(s => s.id === id).from.map(i => clone(skeleton[i])),
@@ -116,6 +130,23 @@ function pageHeader(ctx) {
   if (c.description !== undefined) base.description = c.description;
   if (c.actions !== undefined) base.actions = c.actions.map(action);
   return base;
+}
+
+const STATE_INPUT_KEYS = ['title', 'body', 'action', 'details'];
+/** 상태 화면의 글: stateText의 title·body·action({label, href?})·details만 받는다. 그 밖의 키는 거부한다. */
+function stateText(ctx, spec, path) {
+  const t = spec?.stateText ?? {};
+  if (!plain(t)) { ctx.fail('P_PAGE_CONTENT', `${path}.stateText`, 'stateText는 {title?, body?, action?, details?} 객체입니다'); return {}; }
+  for (const k of Object.keys(t)) if (!STATE_INPUT_KEYS.includes(k)) ctx.fail('P_PAGE_CONTENT', `${path}.stateText.${k}`, `지원하지 않는 키: ${k}`, STATE_INPUT_KEYS);
+  return t;
+}
+const REGION_STATES = ['empty', 'loading', 'error'];
+/** 표·목록·차트의 상태. 명시한 state가 없고 데이터가 비었으면 empty. ready면 null. */
+function regionState(ctx, spec, path, empty) {
+  const st = spec.state ?? (empty ? 'empty' : 'ready');
+  if (st === 'ready') return null;
+  if (!REGION_STATES.includes(st)) { ctx.fail('P_PAGE_CONTENT', `${path}.state`, `state는 ready·${REGION_STATES.join('·')}입니다(받은 값: ${JSON.stringify(st)})`, ['ready', ...REGION_STATES]); return null; }
+  return st;
 }
 
 const metricNode = k => ({type: 'metric', ...pick(k, ['label', 'value', 'detail', 'trend', 'delta'])});
@@ -164,7 +195,11 @@ function fillDashboard(ctx) {
   if (c.table !== undefined) {
     const t = c.table;
     if (!plain(t) || !Array.isArray(t.columns) || !Array.isArray(t.rows) || t.columns.length < 2 || t.columns.length > 8) ctx.fail('P_PAGE_CONTENT', '$.content.table', '표는 {title, columns: 2~8개, rows: [[…]]} 입니다');
-    else {
+    else if (regionState(ctx, t, '$.content.table', t.rows.length === 0)) {
+      const st = regionState(ctx, t, '$.content.table', t.rows.length === 0);
+      table = ctx.stateNode(st, 'region', stateText(ctx, t, '$.content.table'), '$.content.table');
+      ctx.note('table.state', st, `표가 ${st} 상태라 표 자리에 ${st} 상태 패턴을 둔다(툴바·페이지네이션은 두지 않는다)`);
+    } else {
       const n = t.rows.length, paged = n > TABLE_PAGE_ROWS, shown = paged ? t.rows.slice(0, TABLE_PAGE_ROWS) : t.rows, title = t.title ?? '표';
       table = {type: 'table', title, caption: t.caption ?? `${title} ${n}행${paged ? `(1쪽 ${shown.length}행 표시)` : ''}`, columns: t.columns.map(String), rows: shown.map(r => r.map(String)), variant: n <= TABLE_TOOLBAR_ROWS ? 'plain' : 'striped'};
       ctx.note('table.variant', table.variant, n <= TABLE_TOOLBAR_ROWS ? `표 ${n}행은 한눈에 읽히므로 plain` : `표 ${n}행은 줄을 따라 읽도록 striped`);
@@ -181,9 +216,17 @@ function fillDashboard(ctx) {
       }
     }
   }
-  const charts = (c.charts ?? []).map((s, i) => chartNode(ctx, s, i));
+  const charts = (c.charts ?? []).map((s, i) => {
+    const st = plain(s) && s.state !== undefined ? regionState(ctx, s, `$.content.charts[${i}]`, false) : null;
+    if (!st) return chartNode(ctx, s, i);
+    if (c.charts.length !== 1 || c.list !== undefined) { ctx.fail('P_PAGE_CONTENT', `$.content.charts[${i}].state`, '차트의 상태 화면은 차트가 하나이고 목록이 없을 때 단독 배치로만 둡니다(격자·보조 영역 안에는 상태 화면을 넣을 수 없습니다)'); return null; }
+    ctx.note('chart.state', st, `차트가 ${st} 상태라 차트 자리에 ${st} 상태 패턴을 둔다`);
+    return ctx.stateNode(st, 'region', stateText(ctx, s, `$.content.charts[${i}]`), `$.content.charts[${i}]`);
+  });
   if (c.charts !== undefined && !Array.isArray(c.charts)) ctx.fail('P_PAGE_CHART', '$.content.charts', 'charts는 배열입니다');
-  const list = c.list !== undefined ? {type: 'list', title: c.list.title ?? '목록', items: c.list.items, variant: 'card'} : null;
+  const listState = c.list !== undefined ? regionState(ctx, c.list, '$.content.list', !(c.list.items?.length)) : null;
+  if (listState && charts.filter(Boolean).length) ctx.fail('P_PAGE_CONTENT', '$.content.list.state', '목록의 상태 화면은 차트가 없을 때 단독 배치로만 둡니다(보조 영역 안에는 상태 화면을 넣을 수 없습니다)');
+  const list = c.list === undefined ? null : listState ? ctx.stateNode(listState, 'region', stateText(ctx, c.list, '$.content.list'), '$.content.list') : {type: 'list', title: c.list.title ?? '목록', items: c.list.items, variant: 'card'};
 
   if (!hasWork) {
     if (kpis) ctx.put('kpis', [kpis], 'content'); else fillSkeletonFor(ctx, ['kpis']);
@@ -211,6 +254,17 @@ function fillDashboard(ctx) {
     if (kpis && list && table) ctx.unplaced.push({what: '$.content.list', reason: '작업 칸이 KPI 격자와 표로 가득 찼습니다', alternatives: ['list 제거']});
   }
   fillSkeletonFor(ctx, ['header']);
+}
+
+/** 페이지 머리 아래 상태 안내(content.status: {state, title?, body?, action?}). 모든 목적이 같은 방식으로 받는다. */
+function fillStatus(ctx) {
+  const st = ctx.content.status;
+  if (st === undefined) return;
+  if (!plain(st) || !STATE_KINDS.includes(st.state)) { ctx.fail('P_PAGE_CONTENT', '$.content.status', `status는 {state: ${STATE_KINDS.join('·')}, title?, body?, action?} 입니다`, STATE_KINDS); return; }
+  for (const k of Object.keys(st)) if (k !== 'state' && !STATE_INPUT_KEYS.includes(k)) ctx.fail('P_PAGE_CONTENT', `$.content.status.${k}`, `지원하지 않는 키: ${k}`, STATE_INPUT_KEYS);
+  // 랜딩은 히어로가 page-header 바로 다음이어야 하므로(HERO_POSITION) 히어로 뒤에 둔다. 나머지는 페이지 머리 바로 아래다.
+  const host = ctx.slot(ctx.intent.purpose === 'saas-landing' ? 'hero' : 'header');
+  if (host) host.nodes.push(ctx.stateNode(st.state, 'status', pick(st, STATE_INPUT_KEYS), '$.content.status'));
 }
 
 // ---- SaaS 랜딩 -----------------------------------------------------------------------------------------------------
@@ -314,6 +368,7 @@ function fillCommerce(ctx) {
 }
 
 const FILLERS = {'work-dashboard': fillDashboard, 'saas-landing': fillLanding, 'editorial-docs': fillEditorial, commerce: fillCommerce};
+const fillContent = ctx => { FILLERS[ctx.intent.purpose](ctx); fillStatus(ctx); };
 
 /** 어떤 패턴이 이 콘텐츠에 맞는가: 선호 순서. 요청한 패턴이 있으면 그것만. */
 function patternOrder(intent) {
@@ -402,7 +457,7 @@ export function planPage(intent, env) {
     const themeId = (sc?.reuses ?? []).map(r => /^theme:(.+)$/.exec(r)?.[1]).find(t => t && themes[t]) ?? tpl.theme;
     const bp = createBlueprint(pattern.template, themeId);
     const ctx = makeCtx(intent, patternId, bp.tree.children, env);
-    FILLERS[intent.purpose](ctx);
+    fillContent(ctx);
     const req = intent.components.map((c, i) => ({...c, requestIndex: i}));
     const autoStart = req.length;
     placeComponents(ctx, req);
@@ -453,7 +508,7 @@ export function planPage(intent, env) {
   // 컴포넌트 목록: 요청 컴포넌트(번호 = 요청 순서)와 그 뒤의 자동 승격 후보
   const components = [...intent.components.map((c, i) => ({...c, auto: false, requestIndex: i})), ...ctx.auto.map(a => ({...a, auto: true}))];
   const slots = ctx.slots.map(s => ({id: s.id, source: s.source ?? 'empty', reasons: s.reasons, nodes: s.nodes}));
-  return {plan: {purpose: intent.purpose, pattern: patternId, template: pattern.template, pageType: tpl.pageType, context: tpl.pageType, theme: themeId, navLimit: Math.min(navLimits[axesOut.shell] ?? 6, sc?.layout?.navLimit ?? Infinity), blueprint: bp, axes: axesOut, axisSources: sources, slots, components, layout: ctx.layout, shells, widths}, diagnostics, decisions};
+  return {plan: {purpose: intent.purpose, pattern: patternId, template: pattern.template, pageType: tpl.pageType, context: tpl.pageType, theme: themeId, navLimit: Math.min(navLimits[axesOut.shell] ?? 6, sc?.layout?.navLimit ?? Infinity), blueprint: bp, states: ctx.states, axes: axesOut, axisSources: sources, slots, components, layout: ctx.layout, shells, widths}, diagnostics, decisions};
 }
 
 const ruleIdOf = reason => /^(X\d\d):/.exec(reason)?.[1] ?? null;

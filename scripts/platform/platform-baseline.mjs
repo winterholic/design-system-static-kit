@@ -124,6 +124,33 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
   }
   for (const k of Object.keys(perPattern)) perPattern[k].verified = verifiedPerPattern[k] ?? 0;
 
+  // ---- 스타일 재료: 재료마다 그것을 명시한 요청이 실제로 조립·검증되어 출력에 쓰이는가(light로 안 되면 dark로) ----
+  const styleKinds = ['surface', 'motion', 'background', 'media'], STATUS_LAYOUTS = ['banner', 'toast', 'block'];
+  const styleStats = Object.fromEntries([...styleKinds, 'state-pattern'].map(k => [k, {registered: list(k).length, attempted: 0, verified: 0, usedInOutput: 0}]));
+  const styleOutputs = new Set();
+  const usedIn = (kind, m, r) => (kind === 'state-pattern' ? r.value.html.includes(`data-pattern="${m.id.split(':')[1]}"`) : r.value.html.includes(`data-${{surface: 'surface', motion: 'motion', background: 'bg', media: 'media'}[kind]}="${m.id.split(':')[1]}"`));
+  for (const {pattern, purpose, content, components} of patternsOf(only)) {
+    const ctx = layoutAxes(pattern).pageType, open = m => m.contexts.includes('any') || m.contexts.includes(ctx);
+    const top = assemblePage({purpose, pattern, components, content, candidates: 1}, env);
+    if (!top.ok) continue;
+    const fixed = {purpose, pattern, ...selectionRequest(top.candidates[0].selection), candidates: 1, components};
+    const tryOne = (kind, m, request, extraContent = {}) => {
+      styleStats[kind].attempted++;
+      for (const mode of MODES) {
+        const r = assemblePage({...fixed, mode, ...request, content: {...content, ...extraContent}}, env);
+        if (!r.ok || !r.candidates[0].quality.ok) continue;
+        styleStats[kind].verified++; styleOutputs.add(r.candidates[0].fingerprint.output);
+        if (usedIn(kind, m, r)) styleStats[kind].usedInOutput++;
+        return;
+      }
+    };
+    for (const kind of styleKinds) for (const m of list(kind).filter(open)) tryOne(kind, m, {[kind]: m.id});
+    for (const m of list('state-pattern').filter(open)) {
+      if (STATUS_LAYOUTS.includes(m.layout)) tryOne('state-pattern', m, {states: {[m.state]: m.id}}, {status: {state: m.state}});
+      else if (purpose === 'work-dashboard' && m.state !== 'success') tryOne('state-pattern', m, {states: {[m.state]: m.id}}, {table: {...content.table, rows: m.state === 'empty' ? [] : content.table.rows, state: m.state}});
+    }
+  }
+
   const registered = {palette: palettes.length, subtokenSet: sets.length, typeSystem: types.length, baseComponent: list('base-component').length, family: families.length, styleContext: contexts.length, axisValue: list('axis-value').length};
   return {
     contractVersion: PLATFORM_CONTRACT_VERSION, registered,
@@ -131,6 +158,7 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
     verified: {attempted: verifyAttempted, verified, distinctOutputs: outputs.size, failures: sortObj(failures), note: '실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)'},
     distinct: {
       colorTokenSets: {light: colorSets.light.size, dark: colorSets.dark.size}, facePairs: facePairs.size, families: families.length,
+      styleMaterials: {...styleStats, distinctOutputs: styleOutputs.size},
       verifiedColorTokenSets: {light: verifiedColor.light.size, dark: verifiedColor.dark.size}, verifiedFacePairs: verifiedFaces.size, verifiedFamilies: verifiedFamilies.size,
     },
     colorGateFailures: sortObj(colorFailures),
