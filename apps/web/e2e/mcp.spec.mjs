@@ -2,7 +2,7 @@ import {expect, test} from '@playwright/test';
 import {Client, StreamableHTTPClientTransport} from '@modelcontextprotocol/client';
 import {getComponentSpec} from '@winterholic/design-system-static-kit/service';
 
-const tools = ['list_design_system', 'get_design_schema', 'get_component_spec', 'validate_blueprint', 'compile_design', 'explain_design_decisions', 'assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit'];
+const tools = ['list_design_system', 'get_design_schema', 'get_component_spec', 'validate_blueprint', 'compile_design', 'explain_design_decisions', 'assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'propose_subtoken_sets', 'assemble_components', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit'];
 
 test('REST Route Handlers serve OpenAPI, conditional reads, and validation diagnostics', async ({request}) => {
   const openapi = await request.get('/api/v1/openapi.json');

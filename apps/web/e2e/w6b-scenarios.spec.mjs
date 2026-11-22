@@ -8,15 +8,10 @@ import {pick} from './helpers/select.mjs';
 const bytes = text => Buffer.from(text, 'utf8');
 // 미리보기 iframe 은 화면 근처에 올 때만 만들어진다. 보이게 한 뒤 주소를 읽는다.
 const srcOf = async (locator) => { await locator.scrollIntoViewIfNeeded(); const frame = locator.locator('iframe').first(); await frame.waitFor({state: 'attached'}); return frame.getAttribute('src'); };
-// 런타임 스크립트는 Core 가 함수 본문(Function.toString)을 문서에 넣는다. 웹 서버 번들은 그 함수를 압축해 본문 글자가 네이티브 실행과 달라지므로,
-// 문서 비교에서는 <script> 안쪽만 제외하고 나머지(마크업·CSS·표식)는 바이트로 비교한다. html·css·manifest 내려받기는 통째로 비교한다.
-const noScript = text => text.replace(/<script>[\s\S]*?<\/script>/g, '<script></script>');
 const expectSameBytes = async (request, src, expected) => {
   const res = await request.get(src);
   expect(res.status(), src).toBe(200);
-  const doc = !/[?&]part=(html|css|manifest)\b/.test(src);
-  const got = await res.text();
-  expect(doc ? noScript(got) : got).toBe(doc ? noScript(expected) : expected);
+  expect(await res.body(), src).toEqual(bytes(expected));
 };
 const designOf = req => { const r = service.assembleDesign(req, {include: ['html', 'css', 'tokens', 'manifest', 'blueprint', 'script', 'standalone']}); if (!r.ok) throw new Error(r.errors[0].message); return r.value.candidates[0].value; };
 const componentsOf = req => { const r = service.assembleComponents(req); if (!r.ok) throw new Error(r.errors[0].message); return r.value; };
