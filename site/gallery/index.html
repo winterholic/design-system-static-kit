@@ -6170,15 +6170,22 @@ function renderDataTable({id, columns, rows, density = 'comfortable', state, mes
   if (!['scroll', 'priority'].includes(responsive)) throw new TypeError('Invalid responsive column policy');
   const resolvedState = state ?? (rows.length ? 'ready' : 'empty');
   if (!tableContract.states.includes(resolvedState)) throw new TypeError('Invalid table state');
-  if (resolvedState === 'ready' && !rows.length) throw new TypeError('ready table requires rows');
+  const showsRows = ['ready', 'partial'].includes(resolvedState);
+  if (showsRows && !rows.length) throw new TypeError(resolvedState + ' table requires rows');
   if (resolvedState === 'empty' && rows.length) throw new TypeError('empty table cannot contain rows');
   const design = deriveTableDesign({type: 'table', columns: columns.map(c => c.label), rows: rows.map(row => columns.map(c => String(row[c.id] ?? '')))}, {facts: {density}, values: {cellSpace: 'item'}});
   const cells = (row, index) => columns.map((c, ci) => `<td data-column="${e(c.id)}" data-sort-value="${e(String(row[c.id] ?? ''))}" data-column-align="${design.columns[ci].align}" data-column-wrap="${design.columns[ci].wrap}"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''} data-label="${e(c.label)}">${e(row[c.id] ?? '')}</td>`).join('');
   const selectHead = selectable ? `<th scope="col"><input type="checkbox" aria-label="모든 행 선택" data-select-all></th>` : '';
   const headers = columns.map(c => `<th scope="col"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''}>${sortable && c.sortable !== false ? `<button type="button" data-sort="${e(c.id)}">${e(c.label)}</button>` : e(c.label)}</th>`).join('');
   const body = rows.map((row, i) => `<tr data-row="${i}"${selected.includes(String(row.id ?? i)) ? ' data-selected' : ''}>${selectable ? `<td><input type="checkbox" aria-label="${e(String(row[columns[0].id] ?? `행 ${i + 1}`))} 선택" data-select-row="${e(String(row.id ?? i))}"${selected.includes(String(row.id ?? i)) ? ' checked' : ''}></td>` : ''}${cells(row, i)}</tr>`).join('');
-  const stateHTML = resolvedState === 'ready' || resolvedState === 'partial' ? '' : `<div class="kit-table-state" data-state="${resolvedState}" role="${resolvedState === 'error' ? 'alert' : 'status'}"${resolvedState === 'loading' ? ' aria-busy="true"' : ''}><strong>${resolvedState === 'loading' ? '불러오는 중입니다.' : resolvedState === 'empty' ? '표시할 항목이 없습니다.' : e(message || '데이터를 불러오지 못했습니다.')}</strong></div>`;
-  const tableHTML = ['ready', 'partial'].includes(resolvedState) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="데이터 표"><table data-density="${density}" data-responsive="${responsive}" data-table-min="${design.minimumWidth}"><thead><tr>${selectHead}${headers}</tr></thead><tbody>${body}</tbody></table></div>` : '';
+  const stateMessages = {
+    loading: '불러오는 중입니다.',
+    empty: '표시할 항목이 없습니다.',
+    error: '데이터를 불러오지 못했습니다.',
+    partial: '일부 항목만 표시합니다.',
+  };
+  const stateHTML = resolvedState === 'ready' ? '' : `<div class="kit-table-state" data-state="${resolvedState}" role="${resolvedState === 'error' ? 'alert' : 'status'}"${resolvedState === 'loading' ? ' aria-busy="true"' : ''}><strong>${e(message || stateMessages[resolvedState])}</strong></div>`;
+  const tableHTML = showsRows ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="데이터 표"><table data-density="${density}" data-responsive="${responsive}" data-table-min="${design.minimumWidth}"><thead><tr>${selectHead}${headers}</tr></thead><tbody>${body}</tbody></table></div>` : '';
   return `<section class="kit-data-table" id="${e(id)}" data-density="${density}" data-responsive="${responsive}">${stateHTML}${tableHTML}</section>`;
 }
 

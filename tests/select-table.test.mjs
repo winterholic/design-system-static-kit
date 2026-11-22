@@ -45,6 +45,14 @@ test('Table runtime toggles sort and row selection; both renderers represent asy
   assert.match(renderDataTable({id:'t',columns,rows:[],state:'error',message:'실패'}), /실패/);
 });
 
+test('partial Table renders available rows and announces that the result is incomplete', () => {
+  const columns = [{id: 'x', label: 'X'}, {id: 'y', label: 'Y'}];
+  const html = renderDataTable({id: 't', columns, rows: [{x: '일부 행', y: '2'}], state: 'partial'});
+  assert.match(html, /data-state="partial" role="status"/);
+  assert.match(html, /<td[^>]*>일부 행<\/td>/);
+  assert.throws(() => renderDataTable({id: 't', columns, rows: [], state: 'partial'}), /requires rows/);
+});
+
 test('select all updates row states without treating the header checkbox as a row', () => {
   const listeners = {}, selected = [];
   const rows = ['a', 'b'].map(id => ({checked: false, dataset: {selectRow: id}, closest: () => ({toggleAttribute: (name, value) => { rowsState[id] = value; }})}));
