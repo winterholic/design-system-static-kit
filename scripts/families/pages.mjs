@@ -23,7 +23,7 @@ const STRESS = {
     {purpose: 'purpose:card.kpi', variant: {layout: 'stacked', trend: 'none'}, content: {label: '신규 가입', value: '3', caption: '오늘'}},
     {purpose: 'purpose:card.kpi', variant: {layout: 'stacked', trend: 'none'}, content: {label: '누적 결제액', value: '1,284,330,000', unit: '원', delta: '-2.1%', deltaDirection: 'down', caption: '전주 대비'}},
     {purpose: 'purpose:card.kpi', variant: {layout: 'inline', trend: 'none'}, content: {label: '가동률', value: '99.98%', delta: '+0.02%p', deltaDirection: 'up'}},
-    {purpose: 'purpose:card.product', variant: {layout: 'horizontal', cta: 'none'}, props: {behavior: 'link'}, content: {title: '아주 긴 이름을 가진 상품 이름이 두 줄 이상으로 이어지는 경우의 카드', price: '₩1,289,000', mediaIcon: 'bag', href: '#p2'}},
+    {purpose: 'purpose:card.product', variant: {layout: 'horizontal', cta: 'none'}, props: {behavior: 'link'}, content: {title: '여행용 접이식 텀블러 세트', price: '₩1,289,000', mediaIcon: 'bag', href: '#p2'}},
     {purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'button'}, props: {behavior: 'static'}, content: {title: '텀블러', price: '₩24,000', mediaIcon: 'coffee', ctaLabel: '담기'}},
     {purpose: 'purpose:card.pricing', variant: {emphasis: 'standard'}, content: {plan: '개인', price: '₩9,000', period: '월', description: '혼자 쓰는 작은 프로젝트', features: ['프로젝트 3개', '변경 이력 7일'], ctaLabel: '시작하기'}},
     {purpose: 'purpose:card.pricing', variant: {emphasis: 'standard'}, content: {plan: '엔터프라이즈', price: '문의', description: '조직 전체를 위한 맞춤 구성과 전담 지원', features: ['무제한 프로젝트', '역할 기반 권한', '감사 로그 1년', '전담 지원', 'SSO'], ctaLabel: '영업팀 문의'}},
@@ -56,7 +56,13 @@ export function groupScenarios(group) {
 }
 
 export function groupItems(group, context = 'dashboard', density = 'comfortable') {
-  const base = PURPOSE_FAMILIES.filter(f => f.group === group).map(f => ({purpose: f.id, variant: f.example.variant, props: f.example.props, content: f.example.content}));
+  const base = PURPOSE_FAMILIES.filter(f => f.group === group).map(f => ({
+    purpose: f.id,
+    variant: f.example.variant,
+    props: f.example.props,
+    // 모바일 배너 제목이 한 단어만 남는 고아 줄을 만들지 않도록 시험 문구를 짧게 둔다.
+    content: f.id === 'purpose:button.emphasis' ? {...f.example.content, headline: '팀의 일을 쉽게 시작하세요'} : f.example.content,
+  }));
   return [...base, ...(STRESS[group] ?? [])].filter(item => {
     const family = getPurposeFamily(item.purpose);
     const densityValues = family.props?.density ?? family.variants?.density;
