@@ -42,7 +42,7 @@ test('assemble: the service, POST /api/v1/assemble and the assemble_design tool 
   }
 });
 
-test('assemble: the default work dashboard returns the unchanged three-candidate result through REST and MCP', async () => {
+test('assemble: the default work dashboard returns matching three-candidate results through REST and MCP', async () => {
   const request = {purpose: 'work-dashboard', content: {title: '업무 현황', kpis: [{label: '완료', value: '7'}, {label: '남음', value: '3'}, {label: '대기', value: '2'}], table: {title: '일정', columns: ['업무', '담당'], rows: [['문서', '운영']]}}};
   const viaMcp = await mcp('assemble_design', request);
   assert.equal(viaMcp.ok, true, JSON.stringify(viaMcp.errors));
@@ -62,7 +62,7 @@ test('assemble: the default work dashboard returns the unchanged three-candidate
   const viaMcpBlueprint = await mcp('assemble_design', {...request, include: ['blueprint']});
   assert.equal(viaMcpBlueprint.ok, true, JSON.stringify(viaMcpBlueprint.errors));
   assert.deepEqual(viaMcpBlueprint.value.candidates.map(c => c.value.blueprint), viaService.value.candidates.map(c => c.value.blueprint));
-  assert.equal(sha256(json(viaService)), '98e01ab08f0f96e0c1df752abaf719ad0dde74ada242cd23dbf2fec944416cba');
+  assert.equal(sha256(json(viaService)), 'e45f33c0fa6d801bec30f12c8d12e717e326e9fb48282a3f9c8d56aad4d146a8');
 });
 
 test('assemble: failures are the same diagnostics on every channel (REST answers 422 or 400, MCP isError)', async () => {

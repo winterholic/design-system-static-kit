@@ -1,4 +1,5 @@
 import {defineMaterial} from './contract.mjs';
+import {defineContract} from './control-kit.mjs';
 import {escapeHTML as e} from '../render/util.mjs';
 
 export const selectContract = Object.freeze({
@@ -9,6 +10,26 @@ export const selectContract = Object.freeze({
   forbidden: Object.freeze(['multiple + async', 'disabled + loading', 'disabled + error']),
   tokens: Object.freeze(['--kit-action', '--kit-surface', '--kit-soft', '--kit-text', '--kit-muted', '--kit-border', '--kit-focus', '--kit-danger', '--kit-radius', '--kit-control', '--kit-shadow-hover', '--kit-t-small', '--kit-sp-tight', '--kit-sp-near', '--kit-sp-item']),
   unsupported: Object.freeze(['virtualized options', 'tag creation', 'select-all']),
+});
+
+/**
+ * 같은 계약을 defineContract 방식으로 다시 쓴 것(감사 2.4 E). 위 selectContract(2.6.0 카탈로그에 실리는 값)는 바이트가 고정이라 건드리지 않고,
+ * 이 계약이 축·개념·금지 조합·대비 쌍을 데이터로 내서 플랫폼 기반 컴포넌트와 패밀리 검사가 읽는다. 두 계약의 일치는 tests/material-components.test.mjs가 본다.
+ * Select에는 외형(appearance) 축이 없어 필수 개념에서 뺀다. `disabled`는 계약에서 state 값이므로 disabled+loading·disabled+error는 축으로 표현될 수 없다(구조적 금지).
+ */
+export const selectControlContract = defineContract({
+  id: selectContract.id, label: 'Select', required: ['shape', 'size', 'function', 'state'],
+  axes: {mode: ['single', 'multiple'], search: ['none', 'local', 'async'], size: ['sm', 'md', 'lg'], shape: ['soft', 'square', 'pill'], state: ['ready', 'loading', 'error', 'disabled'], maxMenuHeight: [192, 240, 288, 360]},
+  concepts: {function: ['mode', 'search'], size: ['size', 'maxMenuHeight'], shape: ['shape'], state: ['state']},
+  defaults: {...selectContract.defaults},
+  forbidden: [{id: 'SELECT_MULTI_ASYNC', when: {mode: 'multiple', search: 'async'}, why: '비동기 검색은 단일 선택만 지원한다(선택값 목록과 요청 순서를 함께 맞출 수 없다)'}],
+  states: [...selectContract.states],
+  transitions: [
+    {from: 'idle', to: 'open', trigger: 'click | ArrowDown | Enter | Space'}, {from: 'open', to: 'idle', trigger: 'Escape | Tab | outside click | selection'},
+    {from: 'open', to: 'loading', trigger: 'async query'}, {from: 'loading', to: 'open', trigger: 'options resolved'}, {from: 'loading', to: 'error', trigger: 'options rejected'},
+  ],
+  inputFields: ['id', 'label', 'options', 'value', 'values', 'required', 'placeholder', 'message'], unsupported: [...selectContract.unsupported],
+  pairs: [['--kit-text', '--kit-surface', 4.5, 'trigger text'], ['--kit-muted', '--kit-surface', 4.5, 'group label'], ['--kit-text', '--kit-soft', 7, 'selected option (platform patch)'], ['--kit-danger', '--kit-surface', 4.5, 'error status'], ['--kit-focus', '--kit-surface', 3, 'focus ring']],
 });
 
 export const selectMaterial = defineMaterial({
@@ -130,3 +151,12 @@ export function attachSelect(root, {onOptionsRequest} = {}) {
 
 export const selectRuntime = attachSelect.toString();
 export const selectStyles = `.kit-select{position:relative;display:grid;gap:var(--kit-sp-near);min-width:0;color:var(--kit-text)}.kit-select-label{font-size:var(--kit-t-small);font-weight:600}.kit-select-trigger{display:flex;align-items:center;justify-content:space-between;min-height:var(--kit-control);width:100%;padding:var(--kit-sp-near) var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:inherit;text-align:left;font:inherit;cursor:pointer}.kit-select[data-size=sm] .kit-select-trigger{min-height:36px}.kit-select[data-size=lg] .kit-select-trigger{min-height:52px}.kit-select[data-shape=square] .kit-select-trigger,.kit-select[data-shape=square] .kit-select-menu{border-radius:0}.kit-select[data-shape=pill] .kit-select-trigger{border-radius:999px}.kit-select-trigger:hover{border-color:var(--kit-action)}.kit-select-trigger:focus-visible,.kit-select-search:focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.kit-select-trigger:disabled{opacity:.55;cursor:not-allowed}.kit-select-menu{position:absolute;z-index:20;inset:100% 0 auto;min-width:100%;max-width:100vw;margin-top:var(--kit-sp-tight);padding:6px;border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);box-shadow:var(--kit-shadow-hover)}.kit-select-menu[hidden]{display:none}.kit-select-menu ul{overflow:auto;list-style:none;margin:0;padding:0}.kit-select[data-menu-height="192"] .kit-select-menu ul{max-height:min(192px,45vh)}.kit-select[data-menu-height="240"] .kit-select-menu ul{max-height:min(240px,45vh)}.kit-select[data-menu-height="288"] .kit-select-menu ul{max-height:min(288px,45vh)}.kit-select[data-menu-height="360"] .kit-select-menu ul{max-height:min(360px,45vh)}.kit-select-menu [role=group]{margin:2px 0}.kit-select-group-label{display:block;padding:6px 10px;color:var(--kit-muted);font-size:var(--kit-t-small);font-weight:600}.kit-select-menu [role=option]{padding:var(--kit-sp-near) var(--kit-sp-tight);border-radius:calc(var(--kit-radius) * .6);cursor:pointer}.kit-select-menu [role=option][data-active=true],.kit-select-menu [role=option][aria-selected=true]{background:var(--kit-soft);color:var(--kit-action)}.kit-select-menu [role=option][aria-disabled=true]{opacity:.5;cursor:not-allowed}.kit-select[data-state=error] .kit-select-menu [role=status]{color:var(--kit-danger)}.kit-select-menu [role=status]:empty{display:none}.kit-select-search{width:100%;min-height:var(--kit-control);padding:var(--kit-sp-near);border:1px solid var(--kit-border);border-radius:calc(var(--kit-radius) * .6);background:var(--kit-surface);color:inherit;font:inherit}@media(max-width:640px){.kit-select-menu{max-width:100vw}}`;
+
+/**
+ * 플랫폼 조립 출력 전용 CSS 보정. selectStyles(2.6.0 고정 문자열)는 선택된 옵션을 --kit-action 글자 × --kit-soft 면으로 칠하는데,
+ * 어두운 모드의 기본 팔레트에서 4.39:1로 4.5:1에 못 미친다. 고정 문자열은 그대로 두고 플랫폼 출력에서만 글자를 text 역할로 덮고 굵기로 선택을 보강한다.
+ */
+export const selectPlatformPatch = '.kit-select-menu [role=option][data-active=true],.kit-select-menu [role=option][aria-selected=true]{color:var(--kit-text);font-weight:700}';
+
+/** 플랫폼 기반 컴포넌트용 진입점: 계약 축(state=disabled)을 렌더러 입력(disabled 불리언)으로 옮긴다. 렌더 출력은 renderSelect와 같다. */
+export const renderSelectControl = ({state = 'ready', ...input}) => renderSelect({...input, state: state === 'disabled' ? 'ready' : state, disabled: state === 'disabled'});

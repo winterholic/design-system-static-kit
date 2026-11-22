@@ -10,9 +10,10 @@ import {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotId
 import {variantContracts, variantCheckKinds, DIRECT_CONTRACTS, assessBlueprintContracts} from './variant-contracts.mjs';
 import {NEUTRAL_OPTIONS as neutralOptions, EFFECTS_META as neutralMeta} from './variant-effects.mjs';
 import {concepts, conceptIds, conceptsOfTemplate} from './concepts.mjs';
-import {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} from './expression.mjs';
+import {EXPRESSION_SINCE, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, MATERIALS_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules, since} from './expression.mjs';
 import {recipes, recipeRules, recipeIds} from './recipes.mjs';
 import {NODE_SPEC_EXTENSIONS, nodeSpecAt} from './node-extensions.mjs';
+import {PLATFORM_CATALOG_VERSION as PLATFORM_VERSION} from './expression.mjs';
 export {compositionRules, compositionCoverage, pageRules, PAGE_RULE_LEGACY_VERSIONS, COMPOSITION_VERSION} from './composition.mjs';
 
 /** 기본 생성·조립 버전(템플릿·갤러리·조합이 만드는 Blueprint의 catalogVersion). 2.5.0은 명시적으로 고르는 버전이고 기본 승격은 ADR 0010이 미룬 결정이다. */
@@ -21,11 +22,18 @@ export const SUPPORTED_CATALOG_VERSIONS = Object.freeze(['2.1.0', '2.2.0', '2.3.
 /** 표현력 확장(2.5.0)을 더한 버전. 검증기·스키마는 이 목록을 받아들이고, `kit migrate --to 2.5.0`이 옮긴다. */
 export const EXPRESSION_CATALOG_VERSION = EXPRESSION_SINCE;
 export const ACCEPTED_CATALOG_VERSIONS = Object.freeze([...SUPPORTED_CATALOG_VERSIONS, EXPRESSION_CATALOG_VERSION, '2.6.0']);
+/**
+ * 플랫폼 조립 opt-in 버전(2.7.0). 검증기·컴파일러·서비스가 이 버전도 받아들이지만 ACCEPTED_CATALOG_VERSIONS에는 더하지 않는다:
+ * 그 목록은 site/v1/catalog.json 스냅숏에 박혀 있어(고정 바이트) 2.6.0 이하의 공개 결과를 바꾸기 때문이다.
+ * 2.7.0은 getSchema({target: 'blueprint', catalogVersion: '2.7.0'})와 assembleDesign이 공개한다.
+ */
+export const PLATFORM_CATALOG_VERSION = PLATFORM_VERSION;
+export const BLUEPRINT_CATALOG_VERSIONS = Object.freeze([...ACCEPTED_CATALOG_VERSIONS, PLATFORM_CATALOG_VERSION]);
 export const BLUEPRINT_VERSION = '2.0';
 export const limits = Object.freeze({bytes: 196608, nodes: 200, depth: 7});
 export {recipes, recipeRules, recipeIds};
 export {DIRECT_CONTRACTS, assessBlueprintContracts};
-export {SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
+export {SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, MATERIALS_SINCE_FIELD, atLeast, expressionApplies, VERSION_ORDER, expressionRules};
 export {layoutSlots, applyLayout, applyLayoutChecked, assessLayout, layoutSlotIds, variantContracts, variantCheckKinds, neutralOptions, neutralMeta, concepts, conceptIds, conceptsOfTemplate};
 export {axes, axisDefs, axisOrder, styleAxes, axisBans, navLimits, iconShells, megaShells, MEGA_MAX, themes, themeCategories, palettes, paletteFamilies, icons, iconNames, nodeSpecs, nodeTypes, requiredOf, chromeSpec, pageTypes, pageTypeIds, templates, templateList, mediaKinds, ratios, motifs};
 

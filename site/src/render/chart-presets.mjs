@@ -51,11 +51,44 @@ function checkData(n) {
   return errors;
 }
 
-/** Render by preset id with supplied data. Invalid values are returned as explicit diagnostics. */
-export function renderChartPreset(id, data = {}) {
+/**
+ * 플랫폼 색 역할(src/platform/color.mjs의 차트 변수)을 읽게 바꾸는 형태와 필요한 변수. 렌더러가 내는 범주형 한 색(`--kit-chart1`)과 투명도 단계를
+ * 형태가 뜻하는 색 역할로 옮긴다: 히트맵은 순차 7단계, 폭포의 증가·감소는 발산 양 끝, 도넛은 범주형 6색(렌더러는 5색에서 되돌아간다).
+ * 변수가 없으면 쓰지 않는다(변수 없는 화면에서 색이 사라지지 않게 호출자가 `chartColorRoleVars`로 확인한다).
+ */
+export const CHART_COLOR_ROLE_VARS = Object.freeze({
+  heatmap: Object.freeze(Array.from({length: 7}, (_, i) => `--kit-seq${i + 1}`)),
+  waterfall: Object.freeze(['--kit-div2', '--kit-div6']),
+  donut: Object.freeze(['--kit-chart6']),
+});
+export const chartColorRoleVars = kind => CHART_COLOR_ROLE_VARS[kind] ?? [];
+
+/** 렌더러 출력의 색 참조만 바꾼다(구조·글·숫자는 그대로). 해당 형태가 아니면 입력을 그대로 돌려준다. */
+export function applyChartColorRoles(html, kind) {
+  if (kind === 'heatmap') {
+    // 셀과 범례 칸의 투명도 .16~1.00(렌더러의 ramp)을 순차 1~7단계로 옮긴다.
+    const step = op => Math.min(7, Math.max(1, Math.round(1 + 6 * ((Number(op) - .16) / .84))));
+    return html.replace(/fill:var\(--kit-chart1\);fill-opacity:([\d.]+)/g, (_, op) => `fill:var(--kit-seq${step(op)})`)
+      .replace(/background:var\(--kit-chart1\);opacity:([\d.]+)/g, (_, op) => `background:var(--kit-seq${step(op)})`);
+  }
+  if (kind === 'waterfall') return html.replaceAll('var(--kit-chart1)', 'var(--kit-div6)').replaceAll('var(--kit-chart3)', 'var(--kit-div2)');
+  if (kind === 'donut') {
+    let slice = 0, swatch = 0;
+    return html.replace(/(class="ch-slice" style="fill:var\(--kit-chart)\d\)/g, (_, a) => `${a}${(slice++ % 6) + 1})`)
+      .replace(/(<i style="background:var\(--kit-chart)\d\)/g, (_, a) => `${a}${(swatch++ % 6) + 1})`);
+  }
+  return html;
+}
+
+/**
+ * Render by preset id with supplied data. Invalid values are returned as explicit diagnostics.
+ * options.colorRoles: true이면 applyChartColorRoles를 적용한다. 기본(false)은 2.4.0~2.6.0 출력과 바이트가 같다.
+ */
+export function renderChartPreset(id, data = {}, {colorRoles = false} = {}) {
   const chart = resolveChartPreset(id, data);
   if (chart.errors) return chart;
   const errors = checkData(chart);
   if (errors.length) return {errors};
-  return renderChart(chart, `preset-${id.replace(/[^a-z0-9-]/gi, '-')}`);
+  const html = renderChart(chart, `preset-${id.replace(/[^a-z0-9-]/gi, '-')}`);
+  return colorRoles ? applyChartColorRoles(html, chart.kind) : html;
 }

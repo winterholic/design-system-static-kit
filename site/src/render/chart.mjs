@@ -1,10 +1,11 @@
 import {e, num, fmt, fmtTick, DASH, marker, seg, txt, xText, gridOf, legendOf, categoryAxis, valueAxisY, pickLabels, legendItems, swatch} from './chart-kit.mjs';
-import {renderLegacyChart} from './chart-legacy.mjs';
+import {renderLegacyChart, niceMax} from './chart-legacy.mjs';
 import {FORMS, formLegend, formSummary, formTable} from './chart-forms.mjs';
 import {geometry, valueScale, barWidth, tickPlan, fitText, levelsOf, CHART_FORM_KINDS} from '../catalog/chart-rules.mjs';
 
 /** SVG charts. Series use both color and shape/dash; every figure also ships an HTML data table. */
-export function niceMax(v) { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+/** niceMax는 구형 렌더러(chart-legacy.mjs)가 정의한 것을 그대로 쓴다. 같은 함수를 두 곳에 두면 한쪽만 고쳐져 두 렌더러의 눈금이 어긋난다. */
+export {niceMax};
 
 /** 2.6.0: 값 라벨. 위치만 정하고 겹침 여부는 chartDiagnostics가 같은 간격 계산으로 이미 걸렀다. */
 function valueLabels(out, n, items) {

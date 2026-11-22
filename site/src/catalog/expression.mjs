@@ -8,7 +8,9 @@ import {PROFILE_IDS} from '../profiles/data.mjs';
 /** 카탈로그 버전 순서. 새 버전은 끝에 더한다. `atLeast`가 이 순서로 비교한다. */
 export const VERSION_ORDER = Object.freeze(['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0']);
 export const EXPRESSION_SINCE = '2.5.0';
-export const atLeast = (version, since) => VERSION_ORDER.includes(version) && VERSION_ORDER.indexOf(version) >= VERSION_ORDER.indexOf(since);
+/** 비교용 전체 순서. VERSION_ORDER(스냅숏·시험이 고정한 2.6.0까지의 목록)에 opt-in 2.7.0(플랫폼 조립)을 더했다. */
+const ORDER_ALL = Object.freeze([...VERSION_ORDER, '2.7.0']);
+export const atLeast = (version, since) => ORDER_ALL.includes(version) && ORDER_ALL.indexOf(version) >= ORDER_ALL.indexOf(since);
 /** 2.5.0부터 켜지는 표현력 문법과 렌더러 수정(R1~R4)의 게이트. 버전이 없는 내부 호출(타이포·간격만 가진 객체)은 켜지지 않는다. */
 export const expressionApplies = b => atLeast(b?.catalogVersion, EXPRESSION_SINCE);
 /**
@@ -42,6 +44,13 @@ export const TOP_LEVEL_SINCE_FIELDS = Object.freeze([
   // 프로파일 조립이 고른 기본 컨트롤 크기. 2.6.0 role/material control size 토큰만 받는다.
   Object.freeze({field: 'controlSize', values: Object.freeze(['compact', 'small', 'medium', 'large']), since: '2.6.0'}),
 ]);
+
+/**
+ * 2.7.0(opt-in, 플랫폼 조립): 최상위 `materials`가 색·서체·패밀리·스타일 재료를 id로 고른다(src/platform). 2.6.0 이하에서 쓰면 VERSION_FIELD로 거부한다.
+ * materials가 있는 문서는 색을 materials.palette × materials.subtokenSet으로만, 서체를 materials.typeSystem으로만 정한다. 그래서 colorPalette·typeRoles·profile과 함께 쓸 수 없다.
+ */
+export const MATERIALS_SINCE_FIELD = Object.freeze({field: 'materials', since: '2.7.0'});
+export const PLATFORM_CATALOG_VERSION = '2.7.0';
 
 /** 2.6.0 profile selection (src/profiles/data.mjs), separately gated from fields in TOP_LEVEL_SINCE_FIELDS. */
 export const PROFILE_SINCE_FIELD = Object.freeze({field: 'profile', values: PROFILE_IDS, since: '2.6.0'});

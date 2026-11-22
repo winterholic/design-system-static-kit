@@ -7,12 +7,15 @@ import {planComposition, auditPage} from './composition.mjs';
 import {typeRev, HANGUL} from './typography.mjs';
 import {resolveColorTokens, colorTokenUsage} from './color-tokens.mjs';
 import {colorPaletteOf} from './catalog/expression.mjs';
+import {compilePlatformBlueprint} from './platform/compile.mjs';
 export {validateBlueprint, resolveTokens, contrast};
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
 const usesInverse = tree => /"surface":"inverse"|"tone":"inverse"/.test(JSON.stringify(tree));
 
 export function compile(input) {
+  // 2.7.0 게이트: materials(플랫폼 재료)를 고른 문서만 플랫폼 렌더를 지난다. 그 밖의 문서는 아래 기존 경로 그대로다(2.6.0 이하 출력과 고정 해시는 바뀌지 않는다).
+  if (input !== null && typeof input === 'object' && Object.hasOwn(input, 'materials') && input.catalogVersion === '2.7.0') return compilePlatformBlueprint(input);
   const result = validateBlueprint(input);
   if (!result.valid) { const error = new Error('Invalid blueprint:\n' + result.errors.map(x => `${x.path} [${x.code}] ${x.message}`).join('\n')); error.errors = result.errors; throw error; }
   const b = structuredClone(input);

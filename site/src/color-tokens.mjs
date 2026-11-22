@@ -178,3 +178,5 @@ export const colorTokenUsage = () => Object.entries(COLOR_COMPONENT_CONTRACT).fl
   const safe=kebab(cssName.replace(/^--kit-/,'')).replace(/^-/, '');
   return {id:'color-token:component.'+component+'.'+safe,component,cssName,states:[...c.states]};
 }));
+/** 플랫폼 색 결합(src/platform/color.mjs)이 같은 램프·대비 보정 규칙을 재사용하게 내보낸다. static-kit 출력에는 영향이 없다. */
+export {ramp as colorRamp, readable as readableColor, contrast as colorContrast, mix as colorMix, STEPS as COLOR_STEPS};

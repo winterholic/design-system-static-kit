@@ -119,6 +119,14 @@ export const HINTS = {
   ASSEMBLE_PENDING: '아직 등록되지 않은 재료입니다(통합 중). 대안 목록의 등록된 값을 쓰거나 재료가 등록된 뒤 다시 조립하세요.',
   ASSEMBLE_CHART_PRESET: '프로파일이 허용한 프리셋을 패턴의 기본 차트 위치에만 적용할 수 있습니다. 기본 차트 슬롯을 유지하거나, 사용자 차트 데이터를 보낼 때는 프리셋 요구를 생략하세요.',
   ASSEMBLE_INVALID: '조립 결과가 카탈로그 검증을 통과하지 못했습니다. 함께 돌려준 검증 진단을 고치세요(내용이 슬롯 규칙은 지켰지만 부품 규칙을 어긴 경우).',
+  // 2.7.0 플랫폼 재료(materials) 진단.
+  MATERIALS_CONFLICT: 'materials가 있는 문서는 색을 palette × subtokenSet, 서체를 typeSystem으로만 정합니다. colorPalette·typeRoles·profile을 지우세요.',
+  PALETTE_IGNORED: '이 palette 값은 색에 쓰이지 않습니다. 색을 바꾸려면 materials.palette·materials.subtokenSet(2.7.0)을 고르세요.',
+  PROFILE_NO_OUTPUT_EFFECT: 'profile은 검증에만 쓰입니다. 컴파일 출력을 바꾸려면 catalogVersion 2.7.0의 materials(palette·subtokenSet·typeSystem 등)를 고르세요.',
+  MATERIALS_UNKNOWN: 'materials의 id가 플랫폼 재료로 등록돼 있지 않습니다. listPlatformMaterials로 id를 조회하세요.',
+  MATERIALS_KIND: 'materials의 자리에 맞는 종류의 재료 id를 쓰세요(palette는 palette:*, subtokenSet은 subtoken-set:* …).',
+  MATERIALS_INCOMPATIBLE: '고른 재료의 조합이 호환되지 않습니다. checkCompatibility로 이유를 확인하고 다른 재료를 고르세요.',
+  MATERIALS_STATE: 'materials.states와 트리의 상태 화면 표지(divider platform-state-N)가 맞지 않습니다. assembleDesign 결과의 blueprint를 그대로 쓰세요.',
   // 서비스 계층이 내는 코드(요청 형식·조회·컴파일).
   BAD_REQUEST: '요청 인자의 형식이 맞지 않습니다. 메시지에 적힌 인자의 타입과 허용 범위를 확인하세요.',
   UNKNOWN_KIND: 'listCatalog의 kind는 listCatalog({kind:"…"})가 거부할 때 알려 주는 목록 중 하나여야 합니다.',
