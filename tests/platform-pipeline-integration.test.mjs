@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createPlatform, assemblePage, assembleFamilies, bindColor, bindType} from '../src/platform/index.mjs';
+import {createPlatform, assemblePage, assembleFamilies, bindColor, bindType, diversify} from '../src/platform/index.mjs';
 import {assembleChartPreset} from '../src/platform/data/charts.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
 import {combinationMatrix, getPurposeFamily, PURPOSE_FAMILY_IDS} from '../src/platform/families/index.mjs';
@@ -11,6 +11,24 @@ const env = createPlatform();
 const kpis = n => Array.from({length: n}, (_, i) => ({label: `지표 ${i + 1}`, value: String(10 + i)}));
 const CONTENT = {title: '운영 현황', kpis: kpis(4), table: {title: '작업', columns: ['작업', '담당', '상태'], rows: [['a', 'b', 'c'], ['d', 'e', 'f']]}, status: {state: 'success', title: '저장했습니다'}};
 const shellTag = html => html.match(/<div class="kit-shell"[^>]*>/)[0];
+
+test('candidate diversity computes each family signature once while preserving ranked selection', () => {
+  const serialized = new Map();
+  const candidate = (id, score, palette, family) => ({id, score, selection: {
+    palette, subtokenSet: 'set', typeSystem: 'type',
+    families: {card: {toJSON() { serialized.set(id, (serialized.get(id) ?? 0) + 1); return family; }}},
+  }});
+  const candidates = [
+    candidate('a', 100, 'p1', 'f1'),
+    candidate('b', 99, 'p1', 'f1'),
+    candidate('c', 90, 'p2', 'f2'),
+    candidate('d', 80, 'p3', 'f3'),
+  ];
+  const result = diversify(candidates);
+  assert.deepEqual(result.map(x => x.id), ['a', 'c', 'b', 'd']);
+  assert.deepEqual(result.map(x => x.adjusted), [100, 74, 67, 64]);
+  assert.deepEqual(Object.fromEntries(serialized), {a: 1, b: 1, c: 1, d: 1});
+});
 
 test('same request, only the style context changes: the CSS, the shell scope and the chosen visual materials change with it', () => {
   const run = styleContext => assemblePage({purpose: 'work-dashboard', mode: 'dark', candidates: 1, styleContext, content: CONTENT}, env);

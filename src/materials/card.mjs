@@ -64,7 +64,7 @@ export function attachCard(root, {onSelect} = {}) {
   hit.addEventListener('click', () => { const on = hit.getAttribute('aria-pressed') !== 'true'; set(on); if (typeof onSelect === 'function') onSelect({id: root.id, selected: on}); });
   return {toggle: () => hit.click()};
 }
-export const cardRuntime = attachCard.toString();
+export const cardRuntime = "function attachCard(root, {onSelect} = {}) {\n  const hit = root.querySelector('button.kit-ctl-card-hit');\n  if (!hit) return {toggle: () => {}};\n  const set = on => { hit.setAttribute('aria-pressed', String(on)); root.dataset.state = on ? 'selected' : 'default'; };\n  hit.addEventListener('click', () => { const on = hit.getAttribute('aria-pressed') !== 'true'; set(on); if (typeof onSelect === 'function') onSelect({id: root.id, selected: on}); });\n  return {toggle: () => hit.click()};\n}";
 
 export const cardStyles = `${baseStyles}${sizeCSS('.kit-ctl-card')}
 .kit-ctl-card{position:relative;display:flex;align-items:flex-start;gap:var(--ctl-px);box-sizing:border-box;min-width:0;padding:var(--ctl-px);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font-size:var(--ctl-font);transition:background-color var(--kit-dur,150ms),box-shadow var(--kit-dur,150ms),transform var(--kit-dur,150ms)}
