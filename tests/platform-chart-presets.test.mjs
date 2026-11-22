@@ -122,7 +122,7 @@ test('assembleChartPreset returns the renderer output as is, and says which toke
   const tokens = {...color.vars, ...bindType(env.registry.get('type-system:tech-erp')).vars, ...Object.fromEntries(spaceVars('comfortable').split(';').map(d => d.split(':')))};
   const withTokens = assembleChartPreset({preset: 'chart-preset:finance-price-candles', context: 'dashboard', tokens});
   assert.ok(withTokens.ok);
-  assert.ok(withTokens.missing.every(v => /^--kit-(chart\d|t-[a-z-]+)$/.test(v)), `color roles and spacing tokens are all provided; only chart colors and type-scale variables may be missing: ${withTokens.missing}`);
+  assert.ok(withTokens.missing.every(v => /^--kit-t-[a-z-]+$/.test(v)), `color roles, chart colors and spacing tokens are all provided by the platform; only type-scale variables may be missing: ${withTokens.missing}`);
   assert.ok(withTokens.missing.length <= withTokens.requires.length && withTokens.missing.every(v => withTokens.requires.includes(v)));
   const custom = assembleChartPreset({preset: 'chart-preset:erp-quarterly-revenue', context: 'data', data: {categories: ['1분기', '2분기'], series: [{name: '제품', values: [40, 50]}, {name: '서비스', values: [20, 30]}]}});
   assert.equal(custom.ok, true, JSON.stringify(custom.diagnostics));

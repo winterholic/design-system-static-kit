@@ -39,6 +39,7 @@ export function generateBlocks() {
   blocks.counts = [
     `- 스타일 맥락: ${STYLE_CONTEXTS.length}개(테마 ${ids.length}개 전부, \`styleContextFromTheme\`으로 등록)`,
     `- 선언 관계(스타일 맥락 → 팔레트·서브토큰 세트·타이포 시스템·패밀리): ${STYLE_CONTEXTS.reduce((n, s) => n + s.relations.length, 0)}개. prefers ${STYLE_CONTEXTS.reduce((n, s) => n + s.relations.filter(e => e.type === 'prefers').length, 0)}, avoids ${STYLE_CONTEXTS.reduce((n, s) => n + s.relations.filter(e => e.type === 'avoids').length, 0)}, forbids ${STYLE_CONTEXTS.reduce((n, s) => n + s.relations.filter(e => e.type === 'forbids').length, 0)}`,
+    `- 관계 대상(main에 등록된 재료): 팔레트 ${env.registry.list('palette').length} · 서브토큰 세트 ${env.registry.list('subtoken-set').length} · 타이포 시스템 ${env.registry.list('type-system').length} · 패밀리 ${env.registry.list('family').length}`,
     `- 스타일 재료 프리셋: ${Object.entries(STYLE_MATERIALS).map(([k, l]) => `${k} ${l.length}`).join(' · ')}`,
     `- 차트 프리셋 관계: ${CHART_PRESET_RELATIONS.length}개, 형태 ${Object.keys(FORM_CONTEXTS).length}종 × 페이지 유형 ${pageTypeIds.length}종`,
   ].join('\n');

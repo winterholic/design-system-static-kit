@@ -22,6 +22,7 @@ import {PALETTES} from './palettes.mjs';
 import {SUBTOKEN_SETS} from './subtoken-sets.mjs';
 import {TYPE_SYSTEMS} from './type-systems.mjs';
 import {FAMILIES} from './families.mjs';
+import {FACE_PAIRINGS} from './type-materials.mjs';
 import {SURFACES, validateSurface, surfaceCSS, renderSurfaceSample} from './surfaces.mjs';
 import {MOTIONS, validateMotion, motionCSS, renderMotionSample} from './motion.mjs';
 import {BACKGROUNDS, validateBackground, backgroundCSS, renderBackgroundSample} from './backgrounds.mjs';
@@ -143,15 +144,23 @@ const bandDistance = (h, bands) => Math.min(...bands.map(([lo, hi]) => (h >= lo 
 
 const FACE_GROUP = {sans: 'sans', tech: 'sans', grotesk: 'sans', swiss: 'sans', geometric: 'sans', condensed: 'sans', rounded: 'friendly', humanist: 'friendly', serif: 'serif', editorial: 'serif', literary: 'serif', bookish: 'serif', newsroom: 'serif', luxe: 'serif', mono: 'mono', terminal: 'mono', poster: 'display', slab: 'display'};
 const GROUP_NAME = {sans: '산세리프', friendly: '둥근·인문 서체', serif: '세리프', mono: '고정폭', display: '디스플레이'};
-/** 테마가 기대하는 역할 크기 체계 순서. 업무 중 밀도가 높은 테마는 erp가 첫째, 읽기는 document, 마케팅·생활은 marketing, 앱·그 밖의 업무는 dashboard. */
-function roleOrder(t) {
+/** 타이포 시스템의 용도 태그(타이포 작업이 `tags[0]`에 두는 값). */
+const PURPOSES = ['work', 'document', 'marketing', 'commerce', 'mobile'];
+/** 테마 분류가 기대하는 타이포 시스템 용도의 순서. 첫째는 prefers 25, 나머지는 10, 목록에 없으면 avoids 15. */
+function purposeOrder(t) {
   const c = t.category;
-  if (c === 'work') return t.defaults.density === 'compact' ? ['erp', 'dashboard'] : ['dashboard', 'erp'];
+  if (c === 'work') return ['work'];
   if (c === 'read') return ['document'];
   if (c === 'brand') return ['marketing'];
-  if (c === 'life') return t.defaults.density === 'spacious' ? ['marketing', 'document'] : ['marketing', 'dashboard'];
-  if (c === 'app') return ['dashboard', 'marketing'];
-  return t.id === 'bank' ? ['dashboard', 'document'] : ['document', 'dashboard'];
+  if (c === 'life') return ['commerce', 'marketing'];
+  if (c === 'app') return ['mobile', 'marketing'];
+  return t.id === 'bank' ? ['work', 'document'] : ['document', 'work'];
+}
+/** 서체 짝 id(`face-pairing:<id>` 또는 구형 `type-preset:<id>`) → 합쳐진 구형 프리셋 id 목록과 대표 이름. `-system` 변형은 같은 서체 군으로 본다. */
+function faceOf(id) {
+  const bare = id.replace(/^(type-preset|face-pairing):/, ''), base = bare.replace(/-system$/, '');
+  const merges = FACE_PAIRINGS[`face-pairing:${bare}`]?.merges ?? [];
+  return {ids: [...new Set([bare, base, ...merges])], base};
 }
 
 /** 관계 도출에 쓰는 재료 목록. 기본은 main에 등록된 data 배열이고, 시험에서 가짜 재료를 넣어 규칙을 직접 본다. */
@@ -164,18 +173,25 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
   const hue = SETUP[themeId][2];
 
   for (const p of pool.palettes) {
-    const h = hueOf(p.seeds.brand);
+    const h = hueOf(p.seeds.brand), fam = p.tags.find(x => x.startsWith('family:'))?.slice(7);
+    const neutral = h === null || ['neutral', 'mono'].includes(fam), quietCategory = ['work', 'read', 'institution'].includes(t.category);
     if (hue && h !== null) {
       const dist = bandDistance(h, hue);
       if (dist === 0) add('prefers', p.id, 40, `테마 설명의 색감(색상각 ${hue.map(b => b.join('~')).join('·')}°)에 ${p.label}의 브랜드 원색(${h}°)이 들어간다`);
       else if (dist > 60) add('avoids', p.id, 25, `테마 설명의 색감(${hue.map(b => b.join('~')).join('·')}°)에서 ${p.label}의 브랜드 원색(${h}°)이 ${dist}° 벗어난다`);
       else add('prefers', p.id, 10, `${p.label}의 브랜드 원색(${h}°)이 테마 색감(${hue.map(b => b.join('~')).join('·')}°)과 가깝다(${dist}° 차이)`);
     } else if (hue) add('avoids', p.id, 10, `테마는 색감(${hue.map(b => b.join('~')).join('·')}°)을 요구하는데 ${p.label}은 무채색 계열이다`);
-    else add('prefers', p.id, 10, `테마가 특정 색감을 요구하지 않아 범용 팔레트(${p.label})가 기본 후보다`);
+    else if (d.mode === 'dark' && p.tone === 'dark') add('prefers', p.id, 15, `테마 기본 모드가 어두운 화면이고 ${p.label}은 어두운 톤 팔레트다`);
+    else if (neutral) add('prefers', p.id, quietCategory ? 15 : 5, quietCategory ? `색 개성을 요구하지 않는 ${t.category} 맥락에는 중립 계열(${p.label})이 맞는다` : `테마가 특정 색감을 요구하지 않아 중립 계열(${p.label})은 선택지 중 하나다`);
+    else if (p.tone === 'bright') {
+      if (['brand', 'life', 'app'].includes(t.category)) add('prefers', p.id, 15, `색감을 정하지 않은 ${t.category} 맥락은 선명한 팔레트(${p.label})로 개성을 낼 수 있다`);
+      else add('avoids', p.id, 10, `선명한 팔레트(${p.label})는 ${t.category} 맥락의 절제된 화면에 강하다`);
+    } else add('prefers', p.id, 10, `테마가 특정 색감을 요구하지 않아 범용 팔레트(${p.label})가 기본 후보다`);
   }
 
   for (const s of pool.subtokenSets) {
     const tags = s.tags, brandBackdrop = ['tint', 'gradient'].includes(d.backdrop), before = out.length;
+    const pages = new Set(contexts), has = ctx => ctx.some(c => pages.has(c));
     if (tags.includes('brand-surface')) {
       if (brandBackdrop) add('prefers', s.id, 30, `테마의 바탕(${d.backdrop})이 브랜드 틴트라서 브랜드색 표면 분배가 맞는다`);
       else if (d.density === 'compact') add('avoids', s.id, 15, '밀도가 높은 화면은 표·목록 행 구분이 중립 바탕에서 가장 안정적이다');
@@ -184,29 +200,47 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
       if (!brandBackdrop) add('prefers', s.id, 30, `테마의 바탕(${d.backdrop})이 단색·격자라서 중립 표면 분배가 맞는다`);
       else add('prefers', s.id, 5, `테마의 바탕(${d.backdrop})은 브랜드 틴트라서 중립 표면 분배는 차선이다`);
     }
-    if (tags.includes('dark-surface') && d.mode === 'dark') add('prefers', s.id, 25, '테마 기본 모드가 어두운 화면이다');
+    if (tags.includes('dark-surface') || tags.includes('dark-first')) {
+      if (d.mode === 'dark') add('prefers', s.id, 25, '테마 기본 모드가 어두운 화면이라 어두운 면을 먼저 설계한 분배가 맞는다');
+      else add('avoids', s.id, 10, '테마 기본 모드가 밝은 화면인데 이 분배는 어두운 면을 먼저 설계했다');
+    }
     if (tags.includes('high-contrast') && (t.category === 'institution' || ['signal', 'civic', 'school'].includes(themeId))) add('prefers', s.id, 25, '고대비·큰 터치 영역을 요구하는 맥락이다');
+    if (tags.includes('editorial')) {
+      if (t.category === 'read') add('prefers', s.id, 25, '읽기 분류의 맥락이라 지면 톤(따뜻한 종이) 분배가 맞는다');
+      else if (has(['article', 'blog', 'docs'])) add('prefers', s.id, 10, '글·문서 페이지 유형을 가진 맥락이다');
+    }
+    if (tags.includes('commerce') && has(['commerce'])) add('prefers', s.id, 25, '커머스 페이지 유형을 가진 맥락이라 액센트가 이끄는 분배가 맞는다');
+    if (tags.includes('data')) {
+      if (has(['data']) && d.density === 'compact') add('prefers', s.id, 25, '데이터 페이지 유형과 고밀도 테마라 표·차트용 분배가 맞는다');
+      else if (has(['data', 'dashboard'])) add('prefers', s.id, 15, '데이터·대시보드 페이지 유형을 가진 맥락이다');
+    }
     if (out.length === before) add('prefers', s.id, 5, `${s.label}에 맞는 분배 선호가 없는 맥락이라 기본 후보로 둔다`);
   }
 
-  const order = roleOrder(t), group = FACE_GROUP[d.typography];
+  const order = purposeOrder(t), group = FACE_GROUP[d.typography];
   for (const ts of pool.typeSystems) {
-    const face = ts.facePairing.replace('type-preset:', ''), role = ts.roleScale.replace('type-role-preset:', '');
-    if (face === d.typography) add('prefers', ts.id, 40, `테마의 서체 축 기본값(${d.typography})이 이 시스템의 서체 짝이다`);
-    else if (FACE_GROUP[face] === group) add('prefers', ts.id, 15, `서체 짝(${face})이 테마 서체(${d.typography})와 같은 ${GROUP_NAME[group]} 계열이다`);
-    else if ((group === 'serif' && FACE_GROUP[face] === 'mono') || (group === 'mono' && FACE_GROUP[face] === 'serif')) add('avoids', ts.id, 25, `${GROUP_NAME[group]} 테마에 ${GROUP_NAME[FACE_GROUP[face]]} 서체(${face}) 제목은 어울리지 않는다`);
-    else if (group === 'friendly' && FACE_GROUP[face] === 'mono') add('avoids', ts.id, 15, '둥근 서체 테마에 고정폭 제목은 어울리지 않는다');
-    const at = order.indexOf(role);
-    if (at === 0) add('prefers', ts.id, 25, `${t.category} 맥락은 역할 크기 체계로 ${role}를 가장 먼저 기대한다`);
-    else if (at > 0) add('prefers', ts.id, 10, `역할 크기 체계 ${role}는 이 맥락의 차선이다(1순위 ${order[0]})`);
-    else add('avoids', ts.id, role === 'erp' ? 20 : 10, `${t.category} 맥락의 역할 크기 체계는 ${order.join('·')}이고 ${role}는 목록에 없다`);
+    const {ids, base} = faceOf(ts.facePairing), face = base, fg = FACE_GROUP[base];
+    if (ids.includes(d.typography)) add('prefers', ts.id, 40, `테마의 서체 축 기본값(${d.typography})이 이 시스템의 서체 짝(${ts.facePairing})이다`);
+    else if (fg && fg === group) add('prefers', ts.id, 15, `서체 짝(${face})이 테마 서체(${d.typography})와 같은 ${GROUP_NAME[group]} 계열이다`);
+    else if ((group === 'serif' && fg === 'mono') || (group === 'mono' && fg === 'serif')) add('avoids', ts.id, 25, `${GROUP_NAME[group]} 테마에 ${GROUP_NAME[fg]} 서체(${face}) 제목은 어울리지 않는다`);
+    else if (group === 'friendly' && fg === 'mono') add('avoids', ts.id, 15, '둥근 서체 테마에 고정폭 제목은 어울리지 않는다');
+    const usage = ts.tags.find(x => PURPOSES.includes(x));
+    if (!usage) continue;
+    const at = order.indexOf(usage);
+    if (at === 0) add('prefers', ts.id, 25, `${t.category} 맥락은 시스템 용도로 ${usage}를 가장 먼저 기대한다`);
+    else if (at > 0) add('prefers', ts.id, 10, `시스템 용도 ${usage}는 이 맥락의 차선이다(1순위 ${order[0]})`);
+    else add('avoids', ts.id, 15, `${t.category} 맥락의 시스템 용도는 ${order.join('·')}이고 ${usage}는 목록에 없다`);
   }
 
   const first = Object.fromEntries(SHAPE_AXES.map(a => [a, d[a]]));
   for (const f of pool.families) {
-    const same = SHAPE_AXES.filter(a => f.shape[a] === first[a]), diff = SHAPE_AXES.filter(a => f.shape[a] !== first[a]);
-    if (same.length >= 2) add('prefers', f.id, 10 * same.length, `패밀리 모양이 테마 기본값과 ${same.map(a => `${a}=${f.shape[a]}`).join('·')}에서 같다`);
-    else add('avoids', f.id, 10 * diff.length, `패밀리 모양이 테마 기본값과 ${diff.map(a => `${a}(${f.shape[a]}≠${first[a]})`).join('·')}에서 다르다`);
+    // 축마다 같으면 2점, 인접 값이면 1점, 아니면 0점. 합 6점 만점. 4점 이상이면 어울리고, 2점 이하면 피한다.
+    const marks = SHAPE_AXES.map(a => (f.shape[a] === first[a] ? 2 : (NEIGHBORS[a]?.[first[a]] ?? []).includes(f.shape[a]) ? 1 : 0));
+    const total = marks.reduce((x, y) => x + y, 0);
+    const detail = SHAPE_AXES.map((a, i) => `${a} ${f.shape[a]}${marks[i] === 2 ? '=' : marks[i] === 1 ? '≈' : '≠'}${first[a]}`).join(' · ');
+    if (total >= 4) add('prefers', f.id, 5 * total, `패밀리 모양이 테마 기본값에 가깝다(${detail}, ${total}/6점; = 같음, ≈ 인접)`);
+    else if (total === 3) add('prefers', f.id, 5, `패밀리 모양이 테마 기본값과 부분적으로만 맞는다(${detail}, 3/6점)`);
+    else add('avoids', f.id, 5 * (6 - total), `패밀리 모양이 테마 기본값에서 멀다(${detail}, ${total}/6점)`);
     if (!f.contexts.includes('any') && !contexts.includes('any') && !f.contexts.some(c => contexts.includes(c))) add('avoids', f.id, 20, `패밀리의 페이지 유형(${f.contexts.join('·')})과 이 맥락의 페이지 유형(${contexts.join('·')})이 겹치지 않는다`);
     if (f.density === d.density) add('prefers', f.id, 10, `패밀리가 전제한 밀도(${f.density})가 테마 밀도와 같다`);
     else if ([f.density, d.density].sort().join() === 'compact,spacious') add('avoids', f.id, 10, `패밀리 밀도(${f.density})와 테마 밀도(${d.density})가 정반대다`);

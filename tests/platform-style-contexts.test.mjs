@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {themes, pageTypeIds, axes} from '../src/catalog/index.mjs';
-import {createPlatform, recommend, assemblePlatform, MINIMAL_REQUEST, definePlatformMaterial, validateEdge} from '../src/platform/index.mjs';
+import {createPlatform, createPlatformRegistry, createRelationGraph, recommend, assemblePlatform, MINIMAL_REQUEST, definePlatformMaterial, validateEdge} from '../src/platform/index.mjs';
 import {
   STYLE_CONTEXT_DETAILS, STYLE_CHECKS, styleContextFromTheme, deriveStyleRelations, recommendWithReason, hueOf,
 } from '../src/platform/data/style-contexts.mjs';
@@ -66,20 +66,20 @@ test('relations from a style context to palette, subtoken set, type system and f
   assert.equal(rel('aurora', 'subtoken-set:tinted').priority, 30, 'gradient backdrop prefers the brand-surface distribution');
   assert.equal(rel('ledger', 'subtoken-set:standard').priority, 30);
   assert.equal(rel('ledger', 'subtoken-set:tinted', 'avoids').priority, 15, 'dense plain themes avoid the tinted distribution');
-  assert.equal(rel('editorial', 'type-system:tech-erp', 'avoids').priority, 20, 'reading context avoids the ERP role scale');
+  assert.equal(rel('editorial', 'type-system:tech-erp', 'avoids').priority, 15, 'a reading context avoids the work-purpose type system');
   assert.deepEqual(record('insight').relations.filter(e => e.to === 'type-system:tech-erp').map(e => e.priority).sort((a, b) => a - b), [15, 25], 'dense work context: same sans group (15) and the ERP role scale first (25)');
 });
 
 test('relation rules read the registered materials only, so later palettes, type systems and families are covered without editing this file', () => {
   const pool = {
     palettes: [definePlatformMaterial({id: 'palette:t-green', kind: 'palette', label: '숲', tone: 'mid', seeds: {brand: '#2F6B3A', neutral: '#5E6359'}})],
-    subtokenSets: [], typeSystems: [definePlatformMaterial({id: 'type-system:t-serif', kind: 'type-system', label: '세리프 문서', facePairing: 'type-preset:editorial', roleScale: 'type-role-preset:document', numerals: 'proportional'})],
+    subtokenSets: [], typeSystems: [definePlatformMaterial({id: 'type-system:t-serif', kind: 'type-system', label: '세리프 문서', tags: ['document'], facePairing: 'type-preset:editorial', roleScale: 'type-role-preset:document', numerals: 'proportional'})],
     families: [definePlatformMaterial({id: 'family:t-hard', kind: 'family', label: '굵은', members: {}, shape: {radius: 'square', elevation: 'hard', motion: 'subtle'}, density: 'comfortable', states: []})],
   };
   const get = (theme, to) => deriveStyleRelations(theme, ['landing'], pool).filter(e => e.to === to);
   assert.equal(get('garden', 'palette:t-green')[0].type, 'prefers', 'a green palette is preferred by the green context');
   assert.equal(get('trust', 'palette:t-green')[0].type, 'avoids', 'and avoided by the blue one');
-  assert.equal(get('paper', 'type-system:t-serif').map(e => e.priority).sort().join(), '25,40', 'same face (paper uses editorial) and the expected role scale both count');
+  assert.equal(get('paper', 'type-system:t-serif').map(e => e.priority).sort().join(), '25,40', 'same face (paper uses editorial) and the expected purpose both count');
   assert.equal(get('ledger', 'type-system:t-serif').some(e => e.type === 'avoids'), true);
   assert.ok(get('neon', 'family:t-hard').some(e => e.type === 'forbids' && e.priority === 100), 'neon bans elevation hard, so the hard family is forbidden');
   assert.ok(!get('brutalist', 'family:t-hard').some(e => e.type === 'forbids'), 'brutalist allows it');
@@ -108,24 +108,35 @@ test('recommend() returns at least one result for every style context, or a reas
 });
 
 test('an empty recommendation says why: no candidate for the context, or a ban from the style context', () => {
-  const none = recommendWithReason(env.registry, env.graph, {kind: 'family', context: 'landing', mode: 'dark', styleContext: 'style-context:neon'});
+  // 후보가 맥락에 하나도 맞지 않는 경우: 패밀리가 dashboard 전용인 작은 레지스트리로 만든다(main 재료가 늘어도 이 경우는 그대로 시험된다).
+  const reg = createPlatformRegistry().registerAll([
+    definePlatformMaterial({id: 'family:only-dashboard', kind: 'family', label: '대시보드 전용', contexts: ['dashboard'], members: {}, shape: {radius: 'soft', elevation: 'outline', motion: 'subtle'}, density: 'comfortable', states: []}),
+    definePlatformMaterial({id: 'style-context:t', kind: 'style-context', label: '시험', axisPreferences: {}, forbid: {}, mood: []}),
+  ]);
+  const small = {registry: reg, graph: createRelationGraph(reg, {checks: []})};
+  const none = recommendWithReason(small.registry, small.graph, {kind: 'family', context: 'landing', styleContext: 'style-context:t'});
   assert.equal(none.ok, false);
   assert.equal(none.reasons[0].code, 'P_RECOMMEND_NO_CANDIDATE');
   assert.match(none.reasons[0].reason, /landing/);
+  assert.match(none.reasons[0].reason, /dashboard/, 'the reason lists the contexts that do have candidates');
+  const empty = recommendWithReason(small.registry, small.graph, {kind: 'palette', context: 'landing'});
+  assert.match(empty.reasons[0].reason, /하나도 등록되지 않았습니다/);
   // 테마 금지 모드: neon은 light 금지라 모든 서브토큰 세트가 막힌다.
+  const sets = env.registry.kind('subtoken-set').filter({context: 'landing'}).length;
   const light = recommend(env.registry, env.graph, {kind: 'subtoken-set', context: 'landing', mode: 'light', styleContext: 'style-context:neon', selected: ['palette:static-kit']});
   assert.deepEqual(light.ranked, []);
-  assert.ok(light.blocked.length === 2 && light.blocked.every(b => b.blocked.some(x => x.code === 'P_CHECK_STYLE_MODE')));
+  assert.ok(sets >= 2 && light.blocked.length === sets && light.blocked.every(b => b.blocked.some(x => x.code === 'P_CHECK_STYLE_MODE')), 'every set for the context is blocked by the banned mode');
   assert.match(light.blocked[0].blocked.find(x => x.code === 'P_CHECK_STYLE_MODE').reason, /light/);
   const dark = recommend(env.registry, env.graph, {kind: 'subtoken-set', context: 'landing', mode: 'dark', styleContext: 'style-context:neon', selected: ['palette:static-kit']});
-  assert.equal(dark.ranked[0].id, 'subtoken-set:tinted', 'the gradient backdrop context ranks the brand-surface distribution first');
-  assert.ok(dark.ranked[0].reasons.some(r => r.from === 'style-context:neon'));
+  assert.ok(dark.ranked.length >= 2, 'the same sets rank in the allowed mode');
+  const tinted = dark.ranked.find(r => r.id === 'subtoken-set:tinted');
+  assert.ok(tinted.reasons.some(r => r.from === 'style-context:neon' && r.priority === 30), 'the gradient backdrop context credits the brand-surface distribution');
   // 스타일 맥락이 금지한 모양의 패밀리는 순위에서 빠진다(기존 recommend 규칙이 만든 이유를 보존).
   const strict = definePlatformMaterial({id: 'style-context:no-outline', kind: 'style-context', label: 'no outline', axisPreferences: {elevation: ['soft']}, forbid: {elevation: ['outline']}, mood: []});
   const e2 = createPlatform({records: [strict]});
   const blocked = recommendWithReason(e2.registry, e2.graph, {kind: 'family', context: 'dashboard', styleContext: 'style-context:no-outline'});
-  assert.equal(blocked.ok, false);
-  assert.equal(blocked.reasons[0].code, 'P_REL_STYLE_FORBID');
+  assert.ok(blocked.blocked.some(b => b.id === 'family:quiet' && b.blocked.some(x => x.code === 'P_REL_STYLE_FORBID')), 'the outline family is removed with a reason');
+  assert.ok(!blocked.ranked.some(r => r.id === 'family:quiet'));
 });
 
 test('the style-mode check stops a banned mode in assembly and leaves the allowed mode alone', () => {
