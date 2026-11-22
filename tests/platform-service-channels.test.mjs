@@ -1,7 +1,7 @@
 // 서비스·REST·MCP가 같은 요청에 같은 결과를 내는지 본다(ADR 0009, 0012 §9.6). 채널마다 조립 로직을 따로 두지 않는다.
 import {test, before, after} from 'node:test';
 import assert from 'node:assert/strict';
-import {existsSync} from 'node:fs';
+import {existsSync, readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {
@@ -180,6 +180,37 @@ test('user seed proposals and purpose-family assembly keep Core, REST and MCP by
   assert.equal(assembled.ok, true, json(assembled.errors));
   assert.equal((await rest('POST', '/api/v1/platform/assemble-components', {body: request})).text, json(assembled));
   assert.equal(json(await mcp('assemble_components', request)), json(assembled));
+});
+
+test('assembleComponents keeps the standalone script bytes identical across Core, REST and MCP', async () => {
+  const request = {
+    context: 'landing', mode: 'light',
+    items: [{
+      purpose: 'purpose:card.pricing', visual: 'family:bold', variant: {emphasis: 'standard'},
+      props: {size: 'medium', state: 'default'},
+      content: {
+        plan: '팀', price: '₩29,000', period: '월 / 사용자', description: '10명 이하 팀을 위한 협업 기능',
+        features: ['무제한 프로젝트', '역할 기반 권한', '변경 이력 90일', '우선 지원'], ctaLabel: '무료로 시작', badge: '추천',
+      },
+    }],
+  };
+  const extractScript = standalone => standalone.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  const viaCore = assembleComponents(request);
+  const viaRest = await rest('POST', '/api/v1/platform/assemble-components', {body: request});
+  const viaMcp = await mcp('assemble_components', request);
+  assert.equal(viaCore.ok, true, JSON.stringify(viaCore.errors));
+  assert.equal(viaRest.status, 200);
+  assert.equal(viaRest.json.ok, true, JSON.stringify(viaRest.json.errors));
+  for (const [channel, value] of [['REST', viaRest.json.value], ['MCP', viaMcp.value]]) {
+    assert.equal(value.script, viaCore.value.script, `${channel} script`);
+    assert.equal(extractScript(value.standalone), viaCore.value.script, `${channel} standalone script body`);
+  }
+  assert.equal(extractScript(viaCore.value.standalone), viaCore.value.script, 'Core standalone script body');
+
+  for (const module of ['select', 'table', 'button', 'input', 'card', 'navigation', 'modal', 'tabs', 'tooltip', 'feedback']) {
+    const source = readFileSync(new URL(`../src/materials/${module}.mjs`, import.meta.url), 'utf8');
+    assert.doesNotMatch(source, /export const \w+Runtime = \w+\.toString\(\)/, `${module} runtime must not derive bytes from Function.toString()`);
+  }
 });
 
 test('X01 keeps bottom navigation and compact density blocked in recommendations and compatibility', async () => {

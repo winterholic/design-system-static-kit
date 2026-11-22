@@ -193,7 +193,13 @@ const uniqBlocked = list => uniq(list).sort((a, b) => a.kind.localeCompare(b.kin
 /** 점수 순으로 하나씩 고르되, 이미 고른 후보와 같은 재료를 많이 공유하면 감점한다(결정적: 동점이면 앞선 쪽). */
 export function diversify(passing) {
   const out = [], rest = [...passing];
-  const shared = (a, b) => ['palette', 'subtokenSet', 'typeSystem'].filter(k => a.selection[k] === b.selection[k]).length + (key(a.selection.families) === key(b.selection.families) ? 1 : 0);
+  const signatures = new Map(rest.map(c => [c.selection, {
+    palette: c.selection.palette,
+    subtokenSet: c.selection.subtokenSet,
+    typeSystem: c.selection.typeSystem,
+    families: key(c.selection.families),
+  }]));
+  const shared = (a, b) => ['palette', 'subtokenSet', 'typeSystem'].filter(k => signatures.get(a.selection)[k] === signatures.get(b.selection)[k]).length + (signatures.get(a.selection).families === signatures.get(b.selection).families ? 1 : 0);
   while (rest.length) {
     let best = 0, bestAdj = -Infinity;
     rest.forEach((c, i) => { const adj = c.score - DIVERSITY_PENALTY * Math.max(0, ...out.map(o => shared(c, o))); if (adj > bestAdj) { bestAdj = adj; best = i; } });
