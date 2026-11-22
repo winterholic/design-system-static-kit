@@ -11,6 +11,14 @@ export const EXPRESSION_SINCE = '2.5.0';
 export const atLeast = (version, since) => VERSION_ORDER.includes(version) && VERSION_ORDER.indexOf(version) >= VERSION_ORDER.indexOf(since);
 /** 2.5.0부터 켜지는 표현력 문법과 렌더러 수정(R1~R4)의 게이트. 버전이 없는 내부 호출(타이포·간격만 가진 객체)은 켜지지 않는다. */
 export const expressionApplies = b => atLeast(b?.catalogVersion, EXPRESSION_SINCE);
+/**
+ * 2.6.0부터 색은 프로젝트가 정의한 내부 팔레트에서만 온다. colorPalette를 생략해도 같다.
+ * 외부(Coolors) 팔레트는 권리를 확인하지 못했으므로(docs/materials/audit.md §3) 2.6.0 출력에 쓰지 않는다. 2.5.0 이하는 undefined라 출력이 그대로다.
+ */
+export const colorPaletteOf = b => {
+  if (!atLeast(b?.catalogVersion, '2.6.0')) return undefined;
+  return b.colorPalette === undefined ? 'static-kit' : b.colorPalette;
+};
 
 /** 스키마 필드에 도입 버전과 설명을 단다. `description`·`x-since`는 JSON Schema 주석이라 검증기(src/validate.mjs)가 무시한다. */
 export const since = (schema, description, version = EXPRESSION_SINCE) => ({...schema, description, 'x-since': version});

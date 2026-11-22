@@ -118,10 +118,15 @@ test('웹 번들의 2.6.0 부품 미리보기에서 선택과 정렬 런타임�
 
   await page.goto('/components/data-table/render/sortable~true');
   const sort = page.locator('[data-sort="status"]');
-  await sort.click();
-  await expect(sort).toHaveAttribute('aria-sort', 'ascending');
-  await sort.click();
-  await expect(sort).toHaveAttribute('aria-sort', 'descending');
+  const status = page.locator('th').filter({has: sort});
+  await expect(page.locator('[aria-sort]')).toHaveCount(0);
+  await sort.press('Enter');
+  await expect(status).toHaveAttribute('aria-sort', 'ascending');
+  await sort.press('Space');
+  await expect(status).toHaveAttribute('aria-sort', 'descending');
+  await page.locator('[data-sort]').first().press('Enter');
+  await expect(status).not.toHaveAttribute('aria-sort', /./);
+  await expect(page.locator('th[aria-sort="ascending"]')).toHaveCount(1);
   expect(errors).toEqual([]);
 });
 

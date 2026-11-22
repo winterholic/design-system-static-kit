@@ -1,5 +1,5 @@
 import {palettes} from './catalog.mjs';
-import {atLeast} from './catalog/expression.mjs';
+import {colorPaletteOf} from './catalog/expression.mjs';
 import {resolveColorTokens} from './color-tokens.mjs';
 
 const rgb = hex => { if (!/^#[\da-f]{6}$/i.test(hex)) throw new Error('Expected six digit hex color'); return hex.slice(1).match(/../g).map(n => parseInt(n, 16)); };
@@ -35,12 +35,13 @@ const onFill = c => contrast('#FFFFFF', c) >= 4.5 + EPS ? '#FFFFFF' : INK;
 const samples = (a, b) => Array.from({length: 11}, (_, i) => mix(a, b, i / 10));
 
 export function resolveTokens(b, modeOverride) {
-  const p = palettes[b.palette]; if (!p) throw new Error('Unknown palette');
   const mode = modeOverride ?? (b.mode === 'auto' ? 'light' : b.mode), dark = mode === 'dark';
-  if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) {
-    const color = resolveColorTokens({palette: b.colorPalette, mode});
-    return {tokens: color.tokens, report: color.report, provenance: {source: 'internal', palette: b.colorPalette, seeds: color.seeds, method: 'closed four-layer token graph; 2.6.0 opt-in'}};
+  const internal = colorPaletteOf(b);
+  if (internal) {
+    const color = resolveColorTokens({palette: internal, mode});
+    return {tokens: color.tokens, report: color.report, provenance: {source: 'internal', palette: internal, seeds: color.seeds, method: 'closed four-layer token graph; 2.6.0 opt-in'}};
   }
+  const p = palettes[b.palette]; if (!p) throw new Error('Unknown palette');
   const ordered = [...p.colors].sort((x, y) => luminance(x) - luminance(y));
   const darkest = ordered[0], lightest = ordered.at(-1), seed = p.colors[p.brand];
   const canvas = dark ? mix(darkest, '#11151C', .8) : mix(lightest, '#FFFFFF', .87);

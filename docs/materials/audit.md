@@ -73,7 +73,7 @@ Button, Input, Card, Navigation, Modal, Tabs, Tooltip, Feedback을 개별 재료
 
 Static Kit의 팔레트 묶음과 템플릿 제작 기능에 적용할 **별도 권리 허락은 확인되지 않았다**. 427개 모두에 `source.license: 'unverified'`를 유지하고 `src/materials/adapters.mjs`의 `PALETTE_SOURCE_VERDICT`에 신규 노출·내보내기·수집 부적합 판정을 기록한다. `tests/materials-registry.test.mjs`가 수량·출처·판정을 확인한다.
 
-원본 427개와 기존 2.4.0·2.5.0 입력·출력은 호환성을 위해 보존한다. 이번 감사에서는 공식 문언만 확인했고 새 팔레트는 수집하지 않았다. 기존 제품 경로의 조치는 후속 작업으로 남긴다.
+원본 427개와 기존 2.4.0·2.5.0 입력·출력은 호환성을 위해 보존한다. 이번 감사에서는 공식 문언만 확인했고 새 팔레트는 수집하지 않았다. 2.6.0 Materials의 목록·상세와 조립 결과에는 자체 색 토큰을 쓴다. Studio에서 2.6.0을 선택하면 기존 팔레트 선택기가 숨겨지고, 미리보기·HTML/CSS·토큰 내보내기는 동일한 자체 팔레트를 사용한다. 2.6.0 Blueprint의 기존 `palette` ID는 호환용 입력으로 보존된다. 기존 Explore 디자인·QA 조합·정적 URL과 REST/MCP의 2.4.0 카탈로그 조회는 기존 계약을 유지한다. REST/MCP에서 2.6.0 Blueprint를 컴파일하면 자체 팔레트가 적용된다. [권리 경로와 호환성 회귀 시험](../../tests/palette-rights.test.mjs)
 
 ## 4. 구현 우선순위
 

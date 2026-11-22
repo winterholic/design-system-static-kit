@@ -83,6 +83,8 @@ export type Intent =
   | {kind: 'import'; text: string; upgrade?: boolean}
   | {kind: 'start'; request: StartRequest};
 
+/** 2.6.0 문서의 색은 내부 팔레트에서만 온다. 외부(Coolors) 팔레트는 권리를 확인하지 못해 2.6.0 경로에 쓰지 않는다(docs/materials/audit.md §3). */
+const INTERNAL_COLOR = 'static-kit';
 /** 문서 전체를 새로 세우는 의도. 수정 여부와 기준 문서(baseline)를 새로 잡는다. */
 const FRESH = new Set<Intent['kind']>(['replaceTemplate', 'reset', 'import', 'start']);
 export const DEFAULT_TEMPLATE = 'dashboard-overview';
@@ -149,7 +151,7 @@ function startRequest(ctx: Context, request: StartRequest): Outcome {
     const template = DEFAULT_TEMPLATE;
     const reset = op(ctx.doc, 'resetDocument', {template, discard: true});
     if (!reset.ok) return {res: reset, origin: null, picked: {}, selection: []};
-    const upgraded = op(reset.doc, 'importBlueprint', {blueprint: {...reset.doc, catalogVersion: '2.6.0'}, upgrade: true, discard: true});
+    const upgraded = op(reset.doc, 'importBlueprint', {blueprint: {...reset.doc, catalogVersion: '2.6.0', colorPalette: INTERNAL_COLOR}, upgrade: true, discard: true});
     if (!upgraded.ok) return {res: upgraded, origin: null, picked: {}, selection: []};
     const node: Record<string, unknown> = {...(specResult.value.example ?? core().edit.partExample(request.component, '2.6.0')), ...values};
     // Core의 확장 노드 스키마는 yes/no 문자열로 불리언 선택을 표현한다.
@@ -186,7 +188,7 @@ function startRequest(ctx: Context, request: StartRequest): Outcome {
   }
   if (request.colorPalette || request.typeRoles || request.profile || request.catalogVersion === '2.6.0') {
     // 2.6.0 재료 필드는 importBlueprint 경로로 올려 Core가 버전·값·프로파일 호환을 함께 검증한다.
-    const blueprint = {...working, catalogVersion: '2.6.0', ...(request.colorPalette ? {colorPalette: request.colorPalette} : {}), ...(request.typeRoles ? {typeRoles: request.typeRoles} : {}), ...(request.profile ? {profile: request.profile} : {})};
+    const blueprint = {...working, catalogVersion: '2.6.0', colorPalette: request.colorPalette ?? INTERNAL_COLOR, ...(request.typeRoles ? {typeRoles: request.typeRoles} : {}), ...(request.profile ? {profile: request.profile} : {})};
     const r3 = op(working, 'importBlueprint', {blueprint, upgrade: true, discard: true});
     if (!r3.ok) return {res: failed(ctx.doc, r3.errors, r1.warnings), origin, picked: {}, selection: []};
     working = r3.doc; changes.push(...r3.changes); warnings.push(...r3.warnings);
@@ -225,14 +227,15 @@ export function perform(ctx: Context, intent: Intent): Outcome {
       return keep(op(doc, 'setPalette', {palette: intent.palette}), {origin: origin ? {...origin, palette: intent.palette} : origin});
     case 'setMaterial': {
       if (!doc) return keep(failed(doc, [{code: 'ARGS_INVALID', path: '$', message: '문서가 없습니다.', hint: '먼저 템플릿으로 시작하세요.'}]));
-      const blueprint = {...doc, catalogVersion: '2.6.0'} as Blueprint & Record<string, unknown>;
-      if (intent.value === null) delete blueprint[intent.field];
-      else blueprint[intent.field] = intent.value;
+      const blueprint = {...doc, catalogVersion: '2.6.0', colorPalette: doc.colorPalette ?? INTERNAL_COLOR} as Blueprint & Record<string, unknown>;
+      // 색 재료는 비울 수 없다. 2.6.0 문서의 색은 항상 내부 팔레트에서 온다.
+      if (intent.value === null && intent.field !== 'colorPalette') delete blueprint[intent.field];
+      else blueprint[intent.field] = intent.value ?? INTERNAL_COLOR;
       return keep(op(doc, 'importBlueprint', {blueprint, upgrade: true}));
     }
     case 'upgrade260': {
       if (!doc) return keep(failed(doc, [{code: 'ARGS_INVALID', path: '$', message: '문서가 없습니다.', hint: '먼저 템플릿으로 시작하세요.'}]));
-      return keep(op(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0'}, upgrade: true}));
+      return keep(op(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0', colorPalette: doc.colorPalette ?? INTERNAL_COLOR}, upgrade: true}));
     }
     case 'setLayout': {
       const res = op(doc, 'setLayoutVariant', {slot: intent.slot, option: intent.option, contentPolicy: intent.relocate ? 'relocate' : 'reject'});

@@ -153,7 +153,7 @@ export function colorTokenCSS() { return `
 .kit-field :is(input,select,textarea)[aria-invalid=true],.kit-field :is(input,select,textarea):user-invalid{border-color:var(--kit-control-error);box-shadow:inset 0 0 0 1px var(--kit-control-error)}
 .kit-field :is(input,select,textarea):disabled{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);cursor:not-allowed}
 .kit-card:hover{background:var(--kit-card-hover)}.kit-card:active{background:var(--kit-card-active)}.kit-card[data-state=error]{background:var(--kit-danger-soft)}.kit-card:focus-within{outline:2px solid var(--kit-focus);outline-offset:2px}
-thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[aria-selected=true]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
+thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[data-selected]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
 .kit-chart .ch-grid{stroke:var(--kit-chart-grid)}
 `; }
 

@@ -54,7 +54,8 @@ export function DesignPanel() {
       return {id: '', ok: result.ok, errors: result.ok ? [] : result.errors};
     };
     return {
-      colors: [without('colorPalette'), ...trials('colorPalette', color.value.options.map(x => x.id))],
+      // 2.6.0 문서의 색은 항상 내부 팔레트다. "없음"은 2.6.0 이전 문서에서만 의미가 있다.
+      colors: [...(doc.catalogVersion === '2.6.0' ? [] : [without('colorPalette')]), ...trials('colorPalette', color.value.options.map(x => x.id))],
       types: [without('typeRoles'), ...trials('typeRoles', type.value.presets.map(x => x.id))],
       profiles: [without('profile'), ...trials('profile', profiles)],
       labels: {
@@ -96,7 +97,9 @@ export function DesignPanel() {
             </ChipGroup>
           </div>
         ) : null}
-        <Select id="d-palette" className={styles.field} label="팔레트" value={String(doc.palette)} onChange={value => api.edit({kind: 'setPalette', palette: value})} options={paletteOptions} />
+        {doc.catalogVersion === '2.6.0'
+          ? <p className={styles.muted} data-testid="palette-260-note">2.6.0 문서의 색은 아래 Materials의 내부 색 토큰에서만 옵니다. 외부 팔레트는 출처 권리를 확인하지 못해 2.6.0 문서에서는 선택하지 않습니다.</p>
+          : <Select id="d-palette" className={styles.field} label="팔레트" value={String(doc.palette)} onChange={value => api.edit({kind: 'setPalette', palette: value})} options={paletteOptions} />}
       </section>
 
       <section className={styles.section} aria-labelledby="d-mode">
@@ -118,10 +121,10 @@ export function DesignPanel() {
 
       <section className={styles.section} aria-labelledby="d-materials" data-testid="material-choices">
         <h3 id="d-materials" className={styles.sectionTitle}>2.6.0 Materials</h3>
-        <p className={styles.muted}>색 토큰, 역할 타이포그래피, Design Profile은 문서에 저장되어 미리보기와 내보내기에 반영됩니다. 선택 가능 여부와 이유는 Core 검증 결과입니다.</p>
+        <p className={styles.muted}>색 토큰과 역할 타이포그래피는 미리보기와 내보내기에 적용됩니다. Design Profile은 문서에 저장되며 호환성을 검사합니다. 기존 배치와 스타일은 프로파일 선택만으로 바뀌지 않습니다.</p>
         {doc.catalogVersion !== '2.6.0' ? <Button size="sm" onClick={() => api.edit({kind: 'upgrade260'})}>현재 문서를 2.6.0으로 업그레이드</Button> : null}
         {materialData ? <div className={styles.axisGrid}>
-          <MaterialSelect id="material-color" label="색 재료" value={doc.colorPalette ?? ''} items={materialData.colors} labelOf={id => materialData.labels.colors[id] ?? id}
+          <MaterialSelect id="material-color" label="색 재료" value={doc.colorPalette ?? (doc.catalogVersion === '2.6.0' ? 'static-kit' : '')} items={materialData.colors} labelOf={id => materialData.labels.colors[id] ?? id}
             onChange={value => api.edit({kind: 'setMaterial', field: 'colorPalette', value: value || null})} />
           <MaterialSelect id="material-type-roles" label="역할 타이포그래피" value={doc.typeRoles ?? ''} items={materialData.types} labelOf={id => materialData.labels.types[id] ?? id}
             onChange={value => api.edit({kind: 'setMaterial', field: 'typeRoles', value: value || null})} />

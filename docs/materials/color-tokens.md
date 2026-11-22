@@ -4,7 +4,7 @@
 
 ## 선택과 버전
 
-- Blueprint에는 `colorPalette: 'static-kit'`을 지정한다. 필드는 `since: 2.6.0`이며 허용 ID는 현재 `static-kit` 하나다.
+- 2.6.0 Blueprint는 `colorPalette`를 생략해도 `static-kit`으로 렌더링한다. 명시할 수 있는 값도 `static-kit`이다. 필드는 `since: 2.6.0`이며 허용 ID는 현재 `static-kit` 하나다.
 - `catalogVersion`을 2.6.0으로 올리는 것은 `migrateBlueprint(doc, '2.6.0')` 또는 `kit migrate --to 2.6.0`에서 명시적으로 선택한다. 마이그레이션은 버전만 올리고 기존 기본 생성 버전 2.4.0은 바꾸지 않는다.
 - `colorPaletteOptions()`는 색 재료 탐색용 목록을 반환한다. Coolors 427개는 기존 Blueprint·테마를 읽는 레거시 호환 입력이고 새 추천 목록에는 포함하지 않는다.
 - 임의 색상값, 존재하지 않는 팔레트 ID와 잘못된 내부 참조는 거부한다. Blueprint 오류는 `ENUM` 또는 `VERSION_FIELD`, 해석기 오류는 `COLOR_PALETTE` 또는 `COLOR_REFERENCE`다.
@@ -52,5 +52,5 @@ const auto = resolveColorTokens({palette: 'static-kit', mode: 'auto'});
 
 ## 컴파일 반영과 읽기 질의
 
-`colorPalette: 'static-kit'`을 고른 2.6.0 Blueprint는 `colorTokenCSS()`와 그래프 토큰을 컴파일 CSS에 낸다. 라이트·다크·auto의 `--kit-action`·`--kit-surface`·`--kit-text`·`--kit-focus` 값과 `.kit-button:disabled` 같은 사용처가 `tests/wire-260.test.mjs`로 확인된다. 웹은 `./service`의 `getColorTokens({palette, mode, layer})` 또는 `getColorTokens({blueprint})`로 같은 해석 결과(시드·계층·참조·CSS 변수 맵·대비 보고서·부품별 계약)를 읽는다. 값 문자열은 받지 않는다(`UNKNOWN_COLOR_PALETTE`).
+2.6.0 Blueprint는 `colorTokenCSS()`와 그래프 토큰을 컴파일 CSS에 낸다. 라이트·다크·auto의 `--kit-action`·`--kit-surface`·`--kit-text`·`--kit-focus` 값과 `.kit-button:disabled` 같은 사용처가 `tests/wire-260.test.mjs`로 확인된다. 웹은 `./service`의 `getColorTokens({palette, mode, layer})` 또는 `getColorTokens({blueprint})`로 같은 해석 결과(시드·계층·참조·CSS 변수 맵·대비 보고서·부품별 계약)를 읽는다. 값 문자열은 받지 않는다(`UNKNOWN_COLOR_PALETTE`).
 

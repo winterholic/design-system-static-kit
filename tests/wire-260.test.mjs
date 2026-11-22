@@ -348,7 +348,7 @@ test('the colorPalette static-kit token values reach the compiled CSS in light, 
     assert.ok(manifest.colorTokens.usedTokens.length > 20);
   }
   const plain = compile(withVersion('2.6.0', {})).css;
-  assert.ok(!plain.includes('--kit-action-active') && !plain.includes('.kit-button:disabled'), 'unselected: no color-token CSS');
+  assert.equal(plain, compile(withVersion('2.6.0', {colorPalette: 'static-kit'})).css, '2.6.0 uses the internal palette even if the field is omitted');
   assert.ok(errorsOf(withVersion('2.5.0', {colorPalette: 'static-kit'})).some(e => e.code === 'VERSION_FIELD'));
   assert.ok(errorsOf(withVersion('2.6.0', {colorPalette: '#ff0000'})).some(e => e.code === 'ENUM'), 'raw colors are never accepted');
 });
@@ -358,7 +358,7 @@ test('color tokens and role typography reach Select and Table: the 2.6.0 control
   const defined = new Set([...css.matchAll(/(--kit-[a-z0-9-]+):/g)].map(m => m[1]));
   for (const token of [...selectContract.tokens, ...tableContract.tokens]) assert.ok(defined.has(token), `${token} is defined for the controls`);
   const withColor = compile({...doc('2.6.0', select(), table()), colorPalette: 'static-kit'}).css;
-  assert.ok(withColor.includes('tbody tr[aria-selected=true]{background:var(--kit-table-selected)}'));
+  assert.ok(withColor.includes('tbody tr[data-selected]{background:var(--kit-table-selected)}'));
 });
 
 // ---------------------------------------------------------------- 4. 편집 연산이 같은 후보를 낸다
@@ -399,7 +399,8 @@ test('the blueprint schema exposes the 2.6.0 extensions under x-since without ch
 // ---------------------------------------------------------------- 6. 서비스 읽기 질의
 
 test('listMaterials filters, pages and tells the web where each material is chosen in a Blueprint', () => {
-  const total = catalogRegistry().counts().materials;
+  const counts = catalogRegistry().counts();
+  const total = counts.materials - counts.byKind.palette;
   const all = listMaterials({limit: 1});
   assert.ok(all.ok && all.value.total === total && all.value.nextCursor === 'o1');
   assert.equal(Object.values(all.value.byKind).reduce((a, b) => a + b, 0), total);
@@ -461,6 +462,8 @@ test('getColorTokens resolves the same values the compiler writes, for a mode, a
   // 문서의 값으로 해석하면 컴파일러가 쓴 값과 같다.
   const b = {...createBlueprint('saas-landing'), catalogVersion: '2.6.0', colorPalette: 'static-kit', mode: 'dark'};
   const fromDoc = getColorTokens({blueprint: b});
+  const {colorPalette, ...implicit} = b;
+  assert.deepEqual(getColorTokens({blueprint: implicit}), fromDoc);
   assert.equal(fromDoc.value.mode, 'dark');
   assert.ok(compile(b).css.includes(`--kit-action:${fromDoc.value.tokens.action};`));
   for (const args of [{blueprint: {...b, catalogVersion: '2.5.0'}}, {blueprint: createBlueprint('saas-landing')}]) { const r = getColorTokens(args); assert.equal(r.ok, false); assert.equal(r.errors[0].code, 'VERSION_FIELD'); }

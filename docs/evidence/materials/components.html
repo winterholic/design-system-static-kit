@@ -159,8 +159,10 @@ a,button,summary,label{-webkit-tap-highlight-color:color-mix(in srgb,var(--kit-a
 .kit-field :is(input,select,textarea)[aria-invalid=true],.kit-field :is(input,select,textarea):user-invalid{border-color:var(--kit-control-error);box-shadow:inset 0 0 0 1px var(--kit-control-error)}
 .kit-field :is(input,select,textarea):disabled{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);cursor:not-allowed}
 .kit-card:hover{background:var(--kit-card-hover)}.kit-card:active{background:var(--kit-card-active)}.kit-card[data-state=error]{background:var(--kit-danger-soft)}.kit-card:focus-within{outline:2px solid var(--kit-focus);outline-offset:2px}
-thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[aria-selected=true]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
+thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[data-selected]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
 .kit-chart .ch-grid{stroke:var(--kit-chart-grid)}
+/* 2.6.0 material layout corrections (docs/layout-quality.md) */
+.kit-chart :is(.ch-t,.ch-v,.ch-vh){font-size:13px}
 /* layout contract rev 2 (src/layout.mjs) */
 .kit-form[data-variant=two-column] .kit-field[data-span=full]{grid-column:1/-1}
 .kit-mega-panel li:last-child:nth-child(odd){grid-column:1/-1}
@@ -192,7 +194,7 @@ thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-ta
 .ev-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface)}.ev-table{width:100%;border-collapse:collapse;font-size:var(--kit-t-small)}.ev-table th,.ev-table td{padding:var(--kit-sp-near) var(--kit-sp-item);border-bottom:1px solid var(--kit-border);text-align:start;vertical-align:top;overflow-wrap:normal;word-break:keep-all}.ev-table thead th{background:var(--kit-table-head);color:var(--kit-muted);white-space:nowrap}.ev-table td:nth-child(3){min-width:240px}
 .ev-ok{font-weight:700;white-space:nowrap}.ev-ok[data-rejected=true]::before,.ev-ok[data-pass=true]::before{content:"✓ "}.ev-ok[data-rejected=false],.ev-ok[data-pass=false]{color:var(--kit-danger)}
 .ev-dark{color-scheme:dark;--kit-action:#5977DD;--kit-action-active:#7A92E4;--kit-action-hover:#6D87E1;--kit-border:#3C4452;--kit-card-active:#2A3542;--kit-card-hover:#202B36;--kit-control-active-border:#8098E5;--kit-control-bg:#1A232D;--kit-control-border:#3C4452;--kit-control-disabled-bg:#303A46;--kit-control-disabled-fg:#AAB4C0;--kit-control-error:#D3838B;--kit-control-fg:#E9EAED;--kit-control-hover-border:#5977DD;--kit-danger:#D3838B;--kit-danger-soft:#47262E;--kit-focus:#8098E5;--kit-info:#7C9FDE;--kit-link:#7991E3;--kit-muted:#99A0AD;--kit-onAction:#121212;--kit-onActionHover:#121212;--kit-soft:#172237;--kit-success:#71A891;--kit-surface:#1A232D;--kit-text:#E9EAED;--kit-warning:#BD9D62;--kit-canvas:#111820;--kit-shade:rgba(0,0,0,.5)}</style></head><body><main class="ev"><header><h1>컴포넌트 재료 8종 증거</h1><p class="ev-sum">Button · Input · Card · Navigation · Modal · Tabs · Tooltip · Feedback. 값은 <code>catalogRegistry()</code>와 각 재료 계약에서 이 페이지를 만들 때 읽었다. 모든 인스턴스에 실제 런타임이 붙어 있어 누르고 키보드로 움직일 수 있다.</p>
-<ul class="ev-counts"><li><b>1,045</b>재료 수(레지스트리 전체)</li><li><b>795,778</b>속성 조합 수(전체, 금지 포함)</li><li><b>169</b>완성 프리셋 수(컴포넌트는 프리셋이 아님)</li><li><b>8</b>이번 재료 수</li><li><b>31,776</b>이번 속성 조합 = 허용 11,051 + 금지 20,725</li></ul>
+<ul class="ev-counts"><li><b>1,066</b>재료 수(레지스트리 전체)</li><li><b>795,799</b>속성 조합 수(전체, 금지 포함)</li><li><b>190</b>완성 프리셋 수(컴포넌트는 프리셋이 아님)</li><li><b>8</b>이번 재료 수</li><li><b>31,776</b>이번 속성 조합 = 허용 11,051 + 금지 20,725</li></ul>
 <nav class="ev-top" aria-label="재료"><a href="#c-button">Button</a><a href="#c-input">Input</a><a href="#c-card">Card</a><a href="#c-navigation">Navigation</a><a href="#c-modal">Modal</a><a href="#c-tabs">Tabs</a><a href="#c-tooltip">Tooltip</a><a href="#c-feedback">Feedback</a><a href="#playground">동작 확인</a></nav></header><section class="ev-sec" id="c-button" data-component="component:button-control"><h2>Button <code>component:button-control</code></h2>
 <p class="ev-sum" data-stats="button">속성 조합 <b>5,760</b> = 허용 <b>2,704</b> + 금지 <b>3,056</b> · 금지 규칙 8개</p>
 <ul class="ev-concepts"><li><b>외형</b> <code>appearance</code>: solid · outline · soft · ghost · link</li><li><b>모양</b> <code>shape</code>: square · soft · pill</li><li><b>크기</b> <code>size</code>: compact · small · medium · large</li><li><b>기능</b> <code>behavior</code>: action · toggle / <code>content</code>: text · icon-start · icon-end · icon-only</li><li><b>상태</b> <code>state</code>: default · pressed · loading · disabled</li><li><b>맥락</b> <code>tone</code>: action · neutral · danger</li></ul>
@@ -409,6 +411,7 @@ thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-ta
     if (opener && opener.focus) opener.focus();
     if (typeof onClose === 'function') onClose({id: root.id});
   });
+  if (root.dataset.state === 'open') open();
   return {open, close, setBusy, setError};
 },tabs:function attachTabs(root, {onChange} = {}) {
   const doc = root.ownerDocument, list = root.querySelector('[role="tablist"]');

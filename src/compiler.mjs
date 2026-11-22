@@ -6,6 +6,7 @@ import {renderTree, escapeHTML, formRuntime, controlRuntime} from './render.mjs'
 import {planComposition, auditPage} from './composition.mjs';
 import {typeRev, HANGUL} from './typography.mjs';
 import {resolveColorTokens, colorTokenUsage} from './color-tokens.mjs';
+import {colorPaletteOf} from './catalog/expression.mjs';
 export {validateBlueprint, resolveTokens, contrast};
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -41,8 +42,9 @@ export function compile(input) {
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
-  if (b.colorPalette) {
-    const color = resolveColorTokens({palette: b.colorPalette, mode: b.mode});
+  const internalPalette = colorPaletteOf(b);
+  if (internalPalette) {
+    const color = resolveColorTokens({palette: internalPalette, mode: b.mode});
     manifest.colorTokens = {palette: color.palette, layers: Object.keys(color.layers), references: color.references, contrast: serializableContrast(report.filter(x => !x.mode.includes('inverse'))), materialModules: ['src/color-tokens.mjs','src/materials/adapters.mjs'], usedTokens: colorTokenUsage()};
   }
   const typeRoles = typeRolesManifest(b);

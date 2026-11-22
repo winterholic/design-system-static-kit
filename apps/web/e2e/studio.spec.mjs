@@ -326,3 +326,32 @@ test('수정한 문서의 템플릿 교체는 확인을 받고, 실행 취소·�
   await expect.poll(() => savedSummary(page).then(s => s?.title)).toBe('내가 쓴 제목');
   await expect(page.getByRole('button', {name: '모바일 390'})).toHaveAttribute('aria-pressed', 'true');
 });
+
+test('2.6.0 업그레이드는 작업 내용을 보존하고 재료를 미리보기와 내보내기에 적용한다', async ({page}) => {
+  await page.goto('/studio?template=dashboard-overview');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await page.getByRole('treeitem', {name: /페이지 제목/}).click();
+  const title = page.locator('#f-title');
+  await title.fill('업그레이드 뒤에도 남는 제목');
+  await title.press('Tab');
+
+  const before = JSON.parse((await downloadBytes(page, 'JSON 내보내기')).bytes);
+  expect(before.catalogVersion).toBe('2.4.0');
+  await page.getByRole('tab', {name: '디자인'}).click();
+  await expect(page.locator('#d-palette')).toBeVisible();
+  await page.getByRole('button', {name: '현재 문서를 2.6.0으로 업그레이드'}).click();
+  await expect(page.locator('#d-palette')).toHaveCount(0);
+  await expect(page.getByTestId('op-error')).toHaveCount(0);
+  await pick(page, page.locator('#material-type-roles'), 'dashboard');
+
+  const after = JSON.parse((await downloadBytes(page, 'JSON 내보내기')).bytes);
+  expect(after).toMatchObject({catalogVersion: '2.6.0', colorPalette: 'static-kit', typeRoles: 'dashboard'});
+  expect(after.tree).toEqual(before.tree);
+  const {bytes} = await downloadBytes(page, 'HTML 내보내기');
+  const html = bytes.toString('utf8');
+  expect(html).toContain('업그레이드 뒤에도 남는 제목');
+  expect(html).toContain('Role typography');
+  await expect(page.getByTestId('preview-frame')).toHaveAttribute('srcdoc', html);
+  await page.reload();
+  await expect(page.getByTestId('preview-frame')).toHaveAttribute('srcdoc', html);
+});

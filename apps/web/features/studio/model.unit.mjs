@@ -293,11 +293,12 @@ test('an incompatible 2.6.0 material is rejected with Core diagnostics and leave
   const state = await ready();
   const before = state.document.doc;
 
-  const next = reducer(state, {type: 'edit', intent: {kind: 'setMaterial', field: 'profile', value: 'erp'}, at: 2});
+  // commerce 프로파일은 dashboard 페이지 유형·테마와 맞지 않는다. 색 재료는 Studio가 내부 팔레트를 함께 넣으므로 PROFILE_COLOR가 아니라 실제 비호환으로 거부된다.
+  const next = reducer(state, {type: 'edit', intent: {kind: 'setMaterial', field: 'profile', value: 'commerce'}, at: 2});
 
   assert.equal(next.document.doc, before);
   assert.equal(next.session.undo.length, state.session.undo.length);
-  assert.ok(next.session.error?.errors.length);
+  assert.ok(next.session.error?.errors.some(e => e.code === 'PROFILE_PAGE_TYPE'));
 });
 
 test('applying Materials after JSON import keeps the imported document protected through undo and redo', async () => {
@@ -320,4 +321,18 @@ test('applying Materials after JSON import keeps the imported document protected
   state = reducer(state, {type: 'redo'});
   assert.equal(state.document.doc, materialDoc);
   assert.equal(needsConfirm(state), true);
+});
+
+test('2.6.0 documents always carry the internal color palette: start, upgrade and clearing the color material never leave the Coolors palette in charge', async () => {
+  await loadCore();
+  const fresh = reducer(initialState, {type: 'boot', state: {phase: 'start', doc: null, origin: null, picked: {}, selection: [], modified: false, view: {}, notices: [], recovery: null, storage: {status: 'idle'}}});
+  const started = reducer(fresh, {type: 'edit', intent: {kind: 'start', request: {catalogVersion: '2.6.0', typeRoles: 'marketing'}}, at: 1});
+  assert.equal(started.document.doc.catalogVersion, '2.6.0');
+  assert.equal(started.document.doc.colorPalette, 'static-kit');
+  const upgraded = reducer(await ready(), {type: 'edit', intent: {kind: 'upgrade260'}, at: 2});
+  assert.equal(upgraded.document.doc.colorPalette, 'static-kit');
+  const cleared = reducer(upgraded, {type: 'edit', intent: {kind: 'setMaterial', field: 'colorPalette', value: null}, at: 3});
+  assert.equal(cleared.document.doc.colorPalette, 'static-kit');
+  const html = core().service.compileBlueprint(cleared.document.doc, {include: ['manifest']}).value.manifest;
+  assert.equal(html.paletteProvenance.source, 'internal');
 });

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {selectContract, renderSelect, selectRuntime, attachSelect} from '../src/materials/select.mjs';
-import {tableContract, renderDataTable, tableRuntime, attachTable, tableStyles} from '../src/materials/table.mjs';
+import {tableContract, tableMaterial, renderDataTable, tableRuntime, attachTable, tableStyles} from '../src/materials/table.mjs';
 import {catalogRegistry} from '../src/materials/index.mjs';
 
 test('Select contract names legal variants, states, tokens, and unsupported combinations', () => {
@@ -29,8 +29,9 @@ test('Table contract and renderer preserve column, row, state, and responsive co
   assert.deepEqual(tableContract.variants.density, ['compact', 'comfortable', 'spacious']);
   assert.ok(tableContract.states.includes('empty') && tableContract.states.includes('error'));
   const html = renderDataTable({id:'people', columns:[{id:'name',label:'이름'}, {id:'team',label:'팀'}], rows:[{name:'민지',team:'디자인'}], selectable:true, sortable:true});
-  assert.match(html, /role="grid"/);
-  assert.match(html, /aria-sort=/);
+  assert.equal(tableMaterial.a11y.role, 'table');
+  assert.match(html, /<table\b/);
+  assert.doesNotMatch(html, /aria-sort=|role="grid"/);
   assert.match(html, /type="checkbox"/);
   assert.match(html, /민지/);
   assert.throws(() => renderDataTable({id:'x', columns:[{id:'bad id',label:'x'}, {id:'y',label:'Y'}], rows:[]}), /column/i);
@@ -38,7 +39,7 @@ test('Table contract and renderer preserve column, row, state, and responsive co
 });
 
 test('Table runtime toggles sort and row selection; both renderers represent async states', () => {
-  for (const token of ['aria-sort', 'aria-selected', 'sortChange', 'selectionChange']) assert.ok(tableRuntime.includes(token), token);
+  for (const token of ['aria-sort', 'sortChange', 'selectionChange']) assert.ok(tableRuntime.includes(token), token);
   const columns=[{id:'x',label:'X'}, {id:'y',label:'Y'}];
   assert.match(renderDataTable({id:'t',columns,rows:[],state:'loading'}), /aria-busy="true"/);
   assert.match(renderDataTable({id:'t',columns,rows:[],state:'error',message:'실패'}), /실패/);
@@ -46,13 +47,13 @@ test('Table runtime toggles sort and row selection; both renderers represent asy
 
 test('select all updates row states without treating the header checkbox as a row', () => {
   const listeners = {}, selected = [];
-  const rows = ['a', 'b'].map(id => ({checked: false, dataset: {selectRow: id}, closest: () => ({setAttribute: (name, value) => { rowsState[id] = value; }})}));
+  const rows = ['a', 'b'].map(id => ({checked: false, dataset: {selectRow: id}, closest: () => ({toggleAttribute: (name, value) => { rowsState[id] = value; }})}));
   const rowsState = {};
   const root = {addEventListener: (name, fn) => { listeners[name] = fn; }, querySelectorAll: selector => selector === '[data-select-row]' ? rows : selector === '[data-select-row]:checked' ? rows.filter(x => x.checked) : []};
   attachTable(root, {selectionChange: event => selected.push(event.selected)});
   listeners.change({target: {checked: true, matches: selector => selector === '[data-select-all]'}});
   assert.deepEqual(rows.map(row => row.checked), [true, true]);
-  assert.deepEqual(rowsState, {a: 'true', b: 'true'});
+  assert.deepEqual(rowsState, {a: true, b: true});
   assert.deepEqual(selected, [['a', 'b']]);
 });
 

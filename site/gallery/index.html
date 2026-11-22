@@ -717,6 +717,14 @@ const EXPRESSION_SINCE = '2.5.0';
 const atLeast = (version, since) => VERSION_ORDER.includes(version) && VERSION_ORDER.indexOf(version) >= VERSION_ORDER.indexOf(since);
 /** 2.5.0부터 켜지는 표현력 문법과 렌더러 수정(R1~R4)의 게이트. 버전이 없는 내부 호출(타이포·간격만 가진 객체)은 켜지지 않는다. */
 const expressionApplies = b => atLeast(b?.catalogVersion, EXPRESSION_SINCE);
+/**
+ * 2.6.0부터 색은 프로젝트가 정의한 내부 팔레트에서만 온다. colorPalette를 생략해도 같다.
+ * 외부(Coolors) 팔레트는 권리를 확인하지 못했으므로(docs/materials/audit.md §3) 2.6.0 출력에 쓰지 않는다. 2.5.0 이하는 undefined라 출력이 그대로다.
+ */
+const colorPaletteOf = b => {
+  if (!atLeast(b?.catalogVersion, '2.6.0')) return undefined;
+  return b.colorPalette === undefined ? 'static-kit' : b.colorPalette;
+};
 
 /** 스키마 필드에 도입 버전과 설명을 단다. `description`·`x-since`는 JSON Schema 주석이라 검증기(src/validate.mjs)가 무시한다. */
 const since = (schema, description, version = EXPRESSION_SINCE) => ({...schema, description, 'x-since': version});
@@ -770,6 +778,7 @@ exports.VERSION_ORDER = VERSION_ORDER;
 exports.EXPRESSION_SINCE = EXPRESSION_SINCE;
 exports.atLeast = atLeast;
 exports.expressionApplies = expressionApplies;
+exports.colorPaletteOf = colorPaletteOf;
 exports.since = since;
 exports.SINCE_FIELDS = SINCE_FIELDS;
 exports.TOP_LEVEL_SINCE_FIELDS = TOP_LEVEL_SINCE_FIELDS;
@@ -3872,7 +3881,7 @@ function colorTokenCSS() { return `
 .kit-field :is(input,select,textarea)[aria-invalid=true],.kit-field :is(input,select,textarea):user-invalid{border-color:var(--kit-control-error);box-shadow:inset 0 0 0 1px var(--kit-control-error)}
 .kit-field :is(input,select,textarea):disabled{background:var(--kit-control-disabled-bg);color:var(--kit-control-disabled-fg);cursor:not-allowed}
 .kit-card:hover{background:var(--kit-card-hover)}.kit-card:active{background:var(--kit-card-active)}.kit-card[data-state=error]{background:var(--kit-danger-soft)}.kit-card:focus-within{outline:2px solid var(--kit-focus);outline-offset:2px}
-thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[aria-selected=true]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
+thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-table-hover)}tbody tr[data-selected]{background:var(--kit-table-selected)}table [data-state=error]{color:var(--kit-danger)}table :focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
 .kit-chart .ch-grid{stroke:var(--kit-chart-grid)}
 `; }
 
@@ -3917,6 +3926,7 @@ const {renderTree, escapeHTML, formRuntime, controlRuntime} = __m("render.mjs");
 const {planComposition, auditPage} = __m("composition.mjs");
 const {typeRev, HANGUL} = __m("typography.mjs");
 const {resolveColorTokens, colorTokenUsage} = __m("color-tokens.mjs");
+const {colorPaletteOf} = __m("catalog/expression.mjs");
 
 
 const opposite = m => (m === 'dark' ? 'light' : 'dark');
@@ -3952,8 +3962,9 @@ function compile(input) {
     axes: Object.fromEntries(styleAxes.map(k => [k, b[k]])), rules: rules.map(x => x.id),
     paletteProvenance: primary.provenance, contrast: serializableContrast(report), blueprint: b,
   };
-  if (b.colorPalette) {
-    const color = resolveColorTokens({palette: b.colorPalette, mode: b.mode});
+  const internalPalette = colorPaletteOf(b);
+  if (internalPalette) {
+    const color = resolveColorTokens({palette: internalPalette, mode: b.mode});
     manifest.colorTokens = {palette: color.palette, layers: Object.keys(color.layers), references: color.references, contrast: serializableContrast(report.filter(x => !x.mode.includes('inverse'))), materialModules: ['src/color-tokens.mjs','src/materials/adapters.mjs'], usedTokens: colorTokenUsage()};
   }
   const typeRoles = typeRolesManifest(b);
@@ -6125,12 +6136,13 @@ const tableMaterial = defineMaterial({
   id: tableContract.id, kind: 'component', category: 'form-data-feedback', label: '데이터 테이블', since: '2.6.0',
   render: {module: 'src/materials/table.mjs', export: 'renderDataTable', key: 'data-table'},
   variants: tableContract.variants, defaults: tableContract.defaults, tokens: tableContract.tokens,
+  // The caller supplies state when rendering data; the runtime only handles sorting and selection.
   states: {values: tableContract.states, transitions: [
     {from: 'loading', to: 'ready', trigger: 'rows received'}, {from: 'loading', to: 'empty', trigger: 'empty result'}, {from: 'loading', to: 'error', trigger: 'request rejected'},
     {from: 'ready', to: 'partial', trigger: 'partial result'},
   ]},
-  responsive: {strategy: 'container', breakpoints: ['640px'], note: 'scroll 모드는 기존 table-design 최소 읽기 폭을 유지하고 priority 모드는 열별 hideBelow 계약을 적용한다.'},
-  a11y: {rules: ['R05', 'R06', 'R15'], role: 'grid', keyboard: 'native buttons and checkboxes'},
+  responsive: {strategy: 'container', breakpoints: ['640px', '800px', '900px'], note: 'scroll 모드는 기존 table-design 최소 읽기 폭을 유지하고 priority 모드는 열별 hideBelow 계약을 적용한다.'},
+  a11y: {rules: ['R05', 'R06', 'R15'], role: 'table', keyboard: 'Tab moves between controls, Enter or Space sorts, Space toggles checkboxes'},
   validation: {rules: ['R06', 'R15'], codes: ['TABLE_COLUMNS', 'TABLE_ROWS']},
   examples: [{id: 'projects', columns: [{id: 'name', label: '프로젝트'}, {id: 'status', label: '상태'}], rows: [{name: 'Materials', status: '진행'}]}],
   quality: {status: 'verified', evidence: ['tests/select-table.test.mjs:28']},
@@ -6163,38 +6175,41 @@ function renderDataTable({id, columns, rows, density = 'comfortable', state, mes
   const design = deriveTableDesign({type: 'table', columns: columns.map(c => c.label), rows: rows.map(row => columns.map(c => String(row[c.id] ?? '')))}, {facts: {density}, values: {cellSpace: 'item'}});
   const cells = (row, index) => columns.map((c, ci) => `<td data-column="${e(c.id)}" data-sort-value="${e(String(row[c.id] ?? ''))}" data-column-align="${design.columns[ci].align}" data-column-wrap="${design.columns[ci].wrap}"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''} data-label="${e(c.label)}">${e(row[c.id] ?? '')}</td>`).join('');
   const selectHead = selectable ? `<th scope="col"><input type="checkbox" aria-label="모든 행 선택" data-select-all></th>` : '';
-  const headers = columns.map(c => `<th scope="col"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''}>${sortable && c.sortable !== false ? `<button type="button" data-sort="${e(c.id)}" aria-sort="none">${e(c.label)}</button>` : e(c.label)}</th>`).join('');
-  const body = rows.map((row, i) => `<tr data-row="${i}"${selected.includes(String(row.id ?? i)) ? ' aria-selected="true"' : ''}>${selectable ? `<td><input type="checkbox" aria-label="${e(String(row[columns[0].id] ?? `행 ${i + 1}`))} 선택" data-select-row="${e(String(row.id ?? i))}"${selected.includes(String(row.id ?? i)) ? ' checked' : ''}></td>` : ''}${cells(row, i)}</tr>`).join('');
+  const headers = columns.map(c => `<th scope="col"${c.hideBelow ? ` data-hide-below="${c.hideBelow}"` : ''}>${sortable && c.sortable !== false ? `<button type="button" data-sort="${e(c.id)}">${e(c.label)}</button>` : e(c.label)}</th>`).join('');
+  const body = rows.map((row, i) => `<tr data-row="${i}"${selected.includes(String(row.id ?? i)) ? ' data-selected' : ''}>${selectable ? `<td><input type="checkbox" aria-label="${e(String(row[columns[0].id] ?? `행 ${i + 1}`))} 선택" data-select-row="${e(String(row.id ?? i))}"${selected.includes(String(row.id ?? i)) ? ' checked' : ''}></td>` : ''}${cells(row, i)}</tr>`).join('');
   const stateHTML = resolvedState === 'ready' || resolvedState === 'partial' ? '' : `<div class="kit-table-state" data-state="${resolvedState}" role="${resolvedState === 'error' ? 'alert' : 'status'}"${resolvedState === 'loading' ? ' aria-busy="true"' : ''}><strong>${resolvedState === 'loading' ? '불러오는 중입니다.' : resolvedState === 'empty' ? '표시할 항목이 없습니다.' : e(message || '데이터를 불러오지 못했습니다.')}</strong></div>`;
-  const tableHTML = ['ready', 'partial'].includes(resolvedState) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="데이터 표"><table role="grid" data-density="${density}" data-responsive="${responsive}" data-table-min="${design.minimumWidth}"><thead><tr>${selectHead}${headers}</tr></thead><tbody>${body}</tbody></table></div>` : '';
+  const tableHTML = ['ready', 'partial'].includes(resolvedState) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="데이터 표"><table data-density="${density}" data-responsive="${responsive}" data-table-min="${design.minimumWidth}"><thead><tr>${selectHead}${headers}</tr></thead><tbody>${body}</tbody></table></div>` : '';
   return `<section class="kit-data-table" id="${e(id)}" data-density="${density}" data-responsive="${responsive}">${stateHTML}${tableHTML}</section>`;
 }
 
 function attachTable(root, {sortChange, selectionChange} = {}) {
   root.addEventListener('click', event => {
     const button = event.target.closest('[data-sort]');
-    if (!button) return;
-    const next = button.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
-    root.querySelectorAll('[data-sort]').forEach(b => b.setAttribute('aria-sort', b === button ? next : 'none'));
-    const headerRow = button.closest('tr');
-    if (!headerRow) return;
-    const index = [...headerRow.children].findIndex(th => th.contains(button)) - (root.querySelector('[data-select-all]') ? 1 : 0);
-    const rows = [...root.querySelectorAll('tbody tr')];
+    const header = button?.closest('th');
+    if (!header) return;
+    const table = header.closest('table');
+    const body = table?.tBodies[0];
+    if (!body) return;
+    const next = header.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+    table.querySelector('th[aria-sort]')?.removeAttribute('aria-sort');
+    header.setAttribute('aria-sort', next);
+    const index = header.cellIndex;
+    const rows = [...body.rows];
     const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-    rows.sort((a, b) => collator.compare(a.children[index + (root.querySelector('[data-select-all]') ? 1 : 0)]?.dataset.sortValue ?? '', b.children[index + (root.querySelector('[data-select-all]') ? 1 : 0)]?.dataset.sortValue ?? '') * (next === 'ascending' ? 1 : -1));
-    rows.forEach(row => root.querySelector('tbody').append(row));
+    rows.sort((a, b) => collator.compare(a.cells[index]?.dataset.sortValue ?? '', b.cells[index]?.dataset.sortValue ?? '') * (next === 'ascending' ? 1 : -1));
+    rows.forEach(row => body.append(row));
     sortChange?.({column: button.dataset.sort, direction: next});
   });
   root.addEventListener('change', event => {
     const all = event.target.matches('[data-select-all]'), row = event.target.matches('[data-select-row]');
-    if (all) root.querySelectorAll('[data-select-row]').forEach(box => { box.checked = event.target.checked; box.closest('tr').setAttribute('aria-selected', String(box.checked)); });
-    if (row) event.target.closest('tr').setAttribute('aria-selected', String(event.target.checked));
+    if (all) root.querySelectorAll('[data-select-row]').forEach(box => { box.checked = event.target.checked; box.closest('tr').toggleAttribute('data-selected', box.checked); });
+    if (row) event.target.closest('tr').toggleAttribute('data-selected', event.target.checked);
     if (all || row) selectionChange?.({selected: [...root.querySelectorAll('[data-select-row]:checked')].map(box => box.dataset.selectRow)});
   });
 }
 
 const tableRuntime = attachTable.toString();
-const tableStyles = `.kit-data-table{min-width:0;color:var(--kit-text)}.kit-table-scroll{max-width:100%;overflow:auto;overscroll-behavior-inline:contain;border:1px solid var(--kit-border);border-radius:var(--kit-radius)}.kit-data-table table{width:100%;border-collapse:collapse;table-layout:auto}.kit-data-table th,.kit-data-table td{padding:var(--kit-sp-near) var(--kit-sp-item);border-bottom:1px solid var(--kit-border);text-align:start}.kit-data-table thead th{position:sticky;top:0;background:var(--kit-surface);font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-data-table tbody tr:hover{background:var(--kit-soft)}.kit-data-table tbody tr[aria-selected=true]{background:var(--kit-soft)}.kit-data-table td[data-column-align=end]{text-align:end;font-variant-numeric:tabular-nums}.kit-data-table [data-sort]{border:0;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.kit-data-table [data-sort]:focus-visible,.kit-data-table input:focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.kit-data-table[data-density=compact] :is(th,td){padding-block:var(--kit-sp-tight)}.kit-data-table[data-density=spacious] :is(th,td){padding-block:var(--kit-sp-item)}.kit-table-state{padding:20px;color:var(--kit-muted)}.kit-table-state[data-state=error]{color:var(--kit-danger)}.kit-table-state[aria-busy=true]{opacity:.75}@media(max-width:640px){.kit-data-table[data-responsive=priority] [data-hide-below="640px"],.kit-data-table[data-responsive=priority] [data-hide-below="800px"],.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}.kit-data-table[data-responsive=priority] td:before{content:attr(data-label) ': ';font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-data-table[data-responsive=priority] td:has([data-select-row]):before{content:none}.kit-table-scroll{border-radius:calc(var(--kit-radius) * .7)}}@media(min-width:641px) and (max-width:800px){.kit-data-table[data-responsive=priority] [data-hide-below="800px"],.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}}@media(min-width:641px) and (max-width:900px){.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}}`;
+const tableStyles = `.kit-data-table{min-width:0;color:var(--kit-text)}.kit-table-scroll{max-width:100%;overflow:auto;overscroll-behavior-inline:contain;border:1px solid var(--kit-border);border-radius:var(--kit-radius)}.kit-data-table table{width:100%;border-collapse:collapse;table-layout:auto}.kit-data-table th,.kit-data-table td{padding:var(--kit-sp-near) var(--kit-sp-item);border-bottom:1px solid var(--kit-border);text-align:start}.kit-data-table thead th{position:sticky;top:0;background:var(--kit-surface);font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-data-table tbody tr:hover{background:var(--kit-soft)}.kit-data-table tbody tr[data-selected]{background:var(--kit-table-selected,var(--kit-soft))}.kit-data-table td[data-column-align=end]{text-align:end;font-variant-numeric:tabular-nums}.kit-data-table [data-sort]{border:0;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.kit-data-table [data-sort]:focus-visible,.kit-data-table input:focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.kit-data-table[data-density=compact] :is(th,td){padding-block:var(--kit-sp-tight)}.kit-data-table[data-density=spacious] :is(th,td){padding-block:var(--kit-sp-item)}.kit-table-state{padding:20px;color:var(--kit-muted)}.kit-table-state[data-state=error]{color:var(--kit-danger)}.kit-table-state[aria-busy=true]{opacity:.75}@media(max-width:640px){.kit-data-table[data-responsive=priority] [data-hide-below="640px"],.kit-data-table[data-responsive=priority] [data-hide-below="800px"],.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}.kit-data-table[data-responsive=priority] td:before{content:attr(data-label) ': ';font-size:var(--kit-t-small);color:var(--kit-muted)}.kit-data-table[data-responsive=priority] td:has([data-select-row]):before{content:none}.kit-table-scroll{border-radius:calc(var(--kit-radius) * .7)}}@media(min-width:641px) and (max-width:800px){.kit-data-table[data-responsive=priority] [data-hide-below="800px"],.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}}@media(min-width:641px) and (max-width:900px){.kit-data-table[data-responsive=priority] [data-hide-below="900px"]{display:none}}`;
 
 exports.tableContract = tableContract;
 exports.tableMaterial = tableMaterial;
@@ -9138,7 +9153,7 @@ const {expressionApplies} = __m("catalog/expression.mjs");
 const {expressionCSS} = __m("styles/expression.mjs");
 const {colorTokenCSS} = __m("color-tokens.mjs");
 const {chartExtensionCSS} = __m("styles/chart-extension.mjs");
-const {atLeast} = __m("catalog/expression.mjs");
+const {atLeast, colorPaletteOf} = __m("catalog/expression.mjs");
 const {selectStyles} = __m("materials/select.mjs");
 const {tableStyles} = __m("materials/table.mjs");
 const {buttonStyles} = __m("materials/button.mjs");
@@ -9201,7 +9216,7 @@ function stylesheet(b, sets, body = '', design = null) {
   // 카탈로그 2.5.0: 사용한 표현력 값에만 CSS가 나온다. 2.4.0 이하는 이 줄을 지나지 않아 출력이 같다.
   if (expressionApplies(b)) { const css = expressionCSS(b, body, design); if (css) parts.push(css); }
   if (atLeast(b.catalogVersion, '2.6.0') && body.includes('data-chart="2.6"')) parts.push(chartExtensionCSS().trim());
-  if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) parts.push(colorTokenCSS().trim());
+  if (colorPaletteOf(b)) parts.push(colorTokenCSS().trim());
   // 2.6.0-only component corrections; older compiled output remains byte-for-byte pinned.
   if (atLeast(b.catalogVersion, '2.6.0')) parts.push(materialQualityCSS(used));
   const rev2 = layoutRev(b) === 2;
@@ -9507,7 +9522,7 @@ exports.deriveTableDesign = deriveTableDesign;
 };
 __defs["tokens.mjs"] = function (exports, __m) {
 const {palettes} = __m("catalog.mjs");
-const {atLeast} = __m("catalog/expression.mjs");
+const {colorPaletteOf} = __m("catalog/expression.mjs");
 const {resolveColorTokens} = __m("color-tokens.mjs");
 
 const rgb = hex => { if (!/^#[\da-f]{6}$/i.test(hex)) throw new Error('Expected six digit hex color'); return hex.slice(1).match(/../g).map(n => parseInt(n, 16)); };
@@ -9543,12 +9558,13 @@ const onFill = c => contrast('#FFFFFF', c) >= 4.5 + EPS ? '#FFFFFF' : INK;
 const samples = (a, b) => Array.from({length: 11}, (_, i) => mix(a, b, i / 10));
 
 function resolveTokens(b, modeOverride) {
-  const p = palettes[b.palette]; if (!p) throw new Error('Unknown palette');
   const mode = modeOverride ?? (b.mode === 'auto' ? 'light' : b.mode), dark = mode === 'dark';
-  if (b.colorPalette && atLeast(b.catalogVersion, '2.6.0')) {
-    const color = resolveColorTokens({palette: b.colorPalette, mode});
-    return {tokens: color.tokens, report: color.report, provenance: {source: 'internal', palette: b.colorPalette, seeds: color.seeds, method: 'closed four-layer token graph; 2.6.0 opt-in'}};
+  const internal = colorPaletteOf(b);
+  if (internal) {
+    const color = resolveColorTokens({palette: internal, mode});
+    return {tokens: color.tokens, report: color.report, provenance: {source: 'internal', palette: internal, seeds: color.seeds, method: 'closed four-layer token graph; 2.6.0 opt-in'}};
   }
+  const p = palettes[b.palette]; if (!p) throw new Error('Unknown palette');
   const ordered = [...p.colors].sort((x, y) => luminance(x) - luminance(y));
   const darkest = ordered[0], lightest = ordered.at(-1), seed = p.colors[p.brand];
   const canvas = dark ? mix(darkest, '#11151C', .8) : mix(lightest, '#FFFFFF', .87);

@@ -6,7 +6,7 @@ import {startUrl} from '../studio/url';
 export const studioForColor = (mode?: 'light' | 'dark') => startUrl({catalogVersion: '2.6.0', colorPalette: 'static-kit', ...(mode ? {mode} : {})});
 
 /** 스타일 축 값 하나를 적용한 문서로 시작한다. mode 축은 문서 색 모드다. */
-export const studioForAxis = (axis: string, value: string) => (axis === 'mode' ? startUrl({mode: value}) : startUrl({axes: {[axis]: value}}));
+export const studioForAxis = (axis: string, value: string) => (axis === 'mode' ? startUrl({catalogVersion: '2.6.0', mode: value}) : startUrl({catalogVersion: '2.6.0', axes: {[axis]: value}}));
 
 /** 타이포그래피 프리셋의 서체 엔진을 서체 조합 축으로 적용하고, 프리셋이 어울리는 첫 템플릿에서 시작한다. */
 export const studioForPreset = (preset: string, template: string | null) => startUrl({catalogVersion: '2.6.0', ...(template ? {template} : {}), typeRoles: preset});

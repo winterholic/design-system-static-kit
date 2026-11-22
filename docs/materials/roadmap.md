@@ -4,7 +4,7 @@
 
 ## 이미 연결된 기반
 
-- 계층 색 토큰 257개와 static-kit 팔레트는 `src/color-tokens.mjs`에 연결됨. 기존 Coolors 팔레트 427개는 남아 있지만 별도 권리 허락이 확인되지 않아 새 노출·내보내기·수집은 차단 상태다. 근거: `docs/materials/audit.md` §3·§5.
+- 계층 색 토큰 257개와 static-kit 팔레트는 `src/color-tokens.mjs`에 연결됨. 기존 Coolors 팔레트 427개는 기존 버전 호환 경로에 남아 있다. 2.6.0 재료 조회·미리보기·내보내기는 자체 팔레트를 사용한다. 근거: `docs/materials/audit.md` §3·§5.
 - 차트 프리셋은 2.6.0 확장 표·렌더러·재료에 연결됨. Select·Table 및 컨트롤 8종도 컴파일 경로에 연결됨. 근거: `docs/materials/audit.md` §6·§7.
 - 디자인 프로필 7개와 레이아웃 패턴 11개, 조립 경로가 연결됨. 서체 역할 프리셋도 별도 재료로 연결됨. 근거: `docs/materials/audit.md` §4·§7.
 

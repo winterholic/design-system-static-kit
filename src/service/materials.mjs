@@ -10,6 +10,7 @@ import {renderRoleTypeCSS, ROLE_TYPE_MAP} from '../materials/typography.mjs';
 import {resolveColorTokens, colorPaletteOptions, COLOR_PALETTE_IDS, COLOR_COMPONENT_CONTRACT, colorTokenUsage} from '../color-tokens.mjs';
 import {nodeSince, nodeTypeKnown} from '../catalog/node-extensions.mjs';
 import {atLeast, CATALOG_VERSION} from '../catalog.mjs';
+import {colorPaletteOf} from '../catalog/expression.mjs';
 import {diagnostic} from './errors.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 
@@ -17,6 +18,14 @@ const has = (obj, key) => Object.hasOwn(obj, key);
 const list = names => names.join(', ');
 let cached = null;
 const registry = () => (cached ??= catalogRegistry());
+
+/**
+ * 권리 미확인 재료 종류(docs/materials/audit.md §3). 레지스트리에는 2.4.0·2.5.0 호환 검증용으로 남아 있지만
+ * 2.6.0 재료 조회(목록·상세·의존 목록)에는 싣지 않는다. 색은 color-token 재료(내부 팔레트 static-kit)로만 고른다.
+ */
+const isPublicKind = kind => kind !== 'palette';
+const publicDependencies = dependencies => dependencies.filter(id => !id.startsWith('palette:'));
+const WITHHELD_HINT = '권리를 확인하지 못한 외부 팔레트는 2.6.0 재료로 제공하지 않습니다. 색은 kind "color-token" 재료(colorPalette: "static-kit")로 고르세요.';
 
 const LIMIT_DEFAULT = 50, LIMIT_MAX = 200;
 const SUMMARY = ['id', 'kind', 'category', 'label', 'since', 'quality', 'preset'];
@@ -41,7 +50,6 @@ function blueprintSlot(m) {
     case 'type-role-preset': return {field: 'typeRoles', value: key, since: '2.6.0'};
     case 'type-preset': return {field: 'typography', value: key, since: null};
     case 'theme': return {field: 'theme', value: key, since: null};
-    case 'palette': return {field: 'palette', value: key, since: null};
     case 'page-type': return {field: 'pageType', value: key, since: null};
     case 'axis': return {field: key, value: null, since: null};
     default: return null;
@@ -50,7 +58,7 @@ function blueprintSlot(m) {
 
 const row = m => ({
   id: m.id, kind: m.kind, category: m.category, label: m.label, version: m.version, since: m.since, contexts: m.contexts, quality: m.quality.status,
-  preset: registry().isPreset(m), tags: m.tags, dependencies: m.dependencies, combinations: registry().combinations(m), blueprint: blueprintSlot(m),
+  preset: registry().isPreset(m), tags: m.tags, dependencies: publicDependencies(m.dependencies), combinations: registry().combinations(m), blueprint: blueprintSlot(m),
 });
 
 /**
@@ -68,9 +76,10 @@ export function listMaterials(q = {}) {
     if (!isPlain(q)) return fail([badRequest('$args', '조회 인자는 객체여야 합니다.', '예: {kind: "chart-preset"}')]);
     const badKey = checkKeys(q, ['kind', 'category', 'context', 'minQuality', 'tag', 'preset', 'since', 'query', 'fields', 'limit', 'cursor'], '$args');
     if (badKey) return fail([badKey]);
-    const reg = registry(), kinds = reg.kinds().map(k => k.id);
+    const reg = registry(), kinds = reg.kinds().map(k => k.id).filter(isPublicKind);
     const enumCheck = (name, allowed) => (q[name] !== undefined && (typeof q[name] !== 'string' || !allowed.includes(q[name]))
       ? fail([diagnostic('BAD_REQUEST', `$args.${name}`, `알 수 없는 ${name}: ${String(q[name])}`, `허용값: ${list(allowed)}`)]) : null);
+    if (!isPublicKind(q.kind)) return fail([diagnostic('BAD_REQUEST', '$args.kind', `제공하지 않는 kind: ${q.kind}`, WITHHELD_HINT)]);
     const bad = enumCheck('kind', kinds) ?? enumCheck('category', CATEGORIES) ?? enumCheck('context', CONTEXTS) ?? enumCheck('minQuality', QUALITY);
     if (bad) return bad;
     if (q.tag !== undefined && (typeof q.tag !== 'string' || !q.tag)) return fail([badRequest('$args.tag', 'tag는 비지 않은 문자열이어야 합니다.')]);
@@ -93,7 +102,7 @@ export function listMaterials(q = {}) {
       offset = Number(m[1]);
     }
     const criteria = {...(q.kind && {kind: q.kind}), ...(q.category && {category: q.category}), ...(q.context && {context: q.context}), ...(q.minQuality && {minQuality: q.minQuality}), ...(q.tag && {tag: q.tag}), ...(q.preset !== undefined && {preset: q.preset})};
-    const matched = reg.search(q.query ?? '', criteria).filter(m => q.since === undefined || m.since === q.since);
+    const matched = reg.search(q.query ?? '', criteria).filter(m => isPublicKind(m.kind) && (q.since === undefined || m.since === q.since));
     const byKind = {};
     for (const m of matched) byKind[m.kind] = (byKind[m.kind] ?? 0) + 1;
     const page = matched.slice(offset, offset + limit);
@@ -110,7 +119,8 @@ export function getMaterial(q) {
     if (typeof q.id !== 'string' || !q.id) return fail([badRequest('$args.id', 'id가 필요합니다.', 'listMaterials로 재료 id를 조회하세요.')]);
     const m = registry().get(q.id);
     if (!m) return fail([diagnostic('UNKNOWN_MATERIAL', '$args.id', `등록되지 않은 재료: ${q.id}`)]);
-    return ok(jsonClone({...m, preset: registry().isPreset(m), combinations: registry().combinations(m), blueprint: blueprintSlot(m)}));
+    if (!isPublicKind(m.kind)) return fail([diagnostic('UNKNOWN_MATERIAL', '$args.id', `제공하지 않는 재료: ${q.id}`, WITHHELD_HINT)]);
+    return ok(jsonClone({...m, dependencies: publicDependencies(m.dependencies), preset: registry().isPreset(m), combinations: registry().combinations(m), blueprint: blueprintSlot(m)}));
   });
 }
 
@@ -118,7 +128,7 @@ const LAYERS = ['primitive', 'semantic', 'state', 'component'];
 /**
  * 색 토큰 해석 결과(src/color-tokens.mjs resolveColorTokens). 값은 모두 내부 팔레트에서 계산되고 호출자는 색 값을 넣지 못한다.
  *   q.palette(기본 "static-kit"), q.mode("light"|"dark"|"auto", 기본 "light")
- *   q.blueprint  문서를 주면 그 문서의 colorPalette와 mode를 쓴다(palette·mode와 함께 쓸 수 없다. colorPalette가 없거나 catalogVersion이 2.6.0 미만이면 거부).
+ *   q.blueprint  문서를 주면 그 문서의 colorPalette와 mode를 쓴다(palette·mode와 함께 쓸 수 없다. catalogVersion이 2.6.0 미만이면 거부).
  *   q.layer      계층 하나만(primitive|semantic|state|component). 계층의 값과 그 값에서 나가는 참조만 낸다.
  * 결과: {palette, mode, options, seeds, layers, references, tokens(CSS 변수 이름→값), report(대비), components(부품별 상태·변수 계약), usage}.
  */
@@ -132,8 +142,9 @@ export function getColorTokens(q = {}) {
       if (q.palette !== undefined || q.mode !== undefined) return fail([badRequest('$args.blueprint', 'blueprint는 palette·mode와 함께 쓸 수 없습니다.', '문서의 값을 쓰려면 blueprint만 주세요.')]);
       const b = q.blueprint;
       if (!isPlain(b)) return fail([badRequest('$args.blueprint', 'blueprint는 객체여야 합니다.')]);
-      if (!atLeast(b.catalogVersion, '2.6.0') || b.colorPalette === undefined) return fail([diagnostic('VERSION_FIELD', '$args.blueprint.colorPalette', '이 문서는 2.6.0 색 토큰(colorPalette)을 고르지 않았습니다.', 'catalogVersion을 2.6.0으로 올리고 colorPalette를 고른 뒤 다시 조회하세요.')]);
-      palette = b.colorPalette; mode = b.mode;
+      palette = colorPaletteOf(b);
+      if (palette === undefined) return fail([diagnostic('VERSION_FIELD', '$args.blueprint.colorPalette', '색 재료는 카탈로그 2.6.0부터 제공됩니다.', 'catalogVersion을 2.6.0으로 올린 뒤 다시 조회하세요.')]);
+      mode = b.mode;
     }
     if (typeof palette !== 'string' || !COLOR_PALETTE_IDS.includes(palette)) return fail([diagnostic('UNKNOWN_COLOR_PALETTE', '$args.palette', `알 수 없는 색 팔레트: ${String(palette)}`, `허용값: ${list(COLOR_PALETTE_IDS)}`)]);
     if (!['light', 'dark', 'auto'].includes(mode)) return fail([diagnostic('BAD_REQUEST', '$args.mode', `알 수 없는 모드: ${String(mode)}`, '허용값: light, dark, auto')]);
