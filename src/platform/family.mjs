@@ -73,34 +73,10 @@ export const familyRequiresCheck = defineCheck({
 /** 컴포넌트 패밀리 작업이 소유하는 계산 관계 목록. */
 export const FAMILY_CHECKS = Object.freeze([familyMemberCheck, familyRequiresCheck]);
 
-/**
- * 컨트롤 CSS가 읽지만 색 역할 목록(COLOR_ROLES)에 없는 변수를 역할에서 파생한다. 값은 CSS 식이라 모드(light·dark)와 팔레트를 따라간다.
- * 호버·눌림은 글자색 반대쪽(text)으로 섞는다: 액션 위 글자(onAction)와의 대비가 올라가는 방향이다.
- * 같은 식의 hex 값은 deriveControlColors가 계산해 contrastPairs가 검사한다.
- */
-export const CONTROL_ALIAS_VARS = Object.freeze({
-  '--kit-control-bg': 'var(--kit-surface)', '--kit-control-fg': 'var(--kit-text)', '--kit-control-border': 'var(--kit-rule)',
-  '--kit-control-hover-border': 'var(--kit-muted)', '--kit-control-active-border': 'var(--kit-action)', '--kit-control-error': 'var(--kit-danger)',
-  '--kit-action-hover': 'color-mix(in srgb,var(--kit-action) 88%,var(--kit-text))', '--kit-action-active': 'color-mix(in srgb,var(--kit-action) 76%,var(--kit-text))', '--kit-onActionHover': 'var(--kit-onAction)',
-});
-
-/** 패밀리 범위 변수 = 모양(기존 축 값 표) + 컨트롤 파생 색 + 시각 언어 변수(--pf-*). 모두 [data-family] 범위에만 놓인다. */
+/** 패밀리 범위 변수 = 모양(기존 축 값 표) + 시각 언어 변수(--pf-*). 모두 [data-family] 범위에만 놓인다. 컨트롤 파생 색(hover·active·control-*)은 색 작업의 bindColor가 :root에 낸다. */
 export function familyShapeVars(family) {
   const {radius, elevation, motion = 'subtle'} = family.shape;
-  return {'--kit-radius': `${RADIUS[radius]}px`, '--kit-shadow': ELEVATION[elevation].shadow, '--kit-shadow-hover': ELEVATION[elevation].hover, '--kit-dur': MOTION[motion].dur, '--kit-lift': MOTION[motion].lift, ...CONTROL_ALIAS_VARS, ...(VISUAL_LANGUAGES[family.id]?.vars ?? {})};
-}
-
-const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-const mixHex = (a, pct, b) => '#' + hexRgb(a).map((v, i) => Math.round(v * pct / 100 + hexRgb(b)[i] * (100 - pct) / 100).toString(16).padStart(2, '0')).join('').toUpperCase();
-/** CONTROL_ALIAS_VARS의 hex 값(역할 색 → 파생 색). 대비 검사용. */
-export function deriveControlColors(colorVars) {
-  const g = n => colorVars[n];
-  if (!g('--kit-surface') || !g('--kit-action') || !g('--kit-text')) return {};
-  return {
-    '--kit-control-bg': g('--kit-surface'), '--kit-control-fg': g('--kit-text'), '--kit-control-border': g('--kit-rule'), '--kit-control-hover-border': g('--kit-muted'),
-    '--kit-control-active-border': g('--kit-action'), '--kit-control-error': g('--kit-danger'),
-    '--kit-action-hover': mixHex(g('--kit-action'), 88, g('--kit-text')), '--kit-action-active': mixHex(g('--kit-action'), 76, g('--kit-text')), '--kit-onActionHover': g('--kit-onAction'),
-  };
+  return {'--kit-radius': `${RADIUS[radius]}px`, '--kit-shadow': ELEVATION[elevation].shadow, '--kit-shadow-hover': ELEVATION[elevation].hover, '--kit-dur': MOTION[motion].dur, '--kit-lift': MOTION[motion].lift, ...(VISUAL_LANGUAGES[family.id]?.vars ?? {})};
 }
 
 /**
@@ -139,8 +115,7 @@ export function renderMember(registry, family, baseId, {props = {}, content = {}
 
 /** 기반 계약의 대비 쌍(contract.pairs: [전경 변수, 배경 변수, 최소, 쓰임])을 결합된 색 값으로 검사한다. */
 export function contrastPairs(contract, colorVars) {
-  const all = {...colorVars, ...deriveControlColors(colorVars)};
-  const tokens = Object.fromEntries(Object.entries(all).map(([k, v]) => [k.replace(/^--kit-/, ''), v]));
+  const tokens = Object.fromEntries(Object.entries(colorVars).map(([k, v]) => [k.replace(/^--kit-/, ''), v]));
   // colorOf는 `--kit-name`과 `mix(--kit-a N%, --kit-b)`(CSS color-mix in srgb와 같은 식)를 풀고, 값이 없으면 던진다.
   const hex = ref => { try { return colorOf(tokens, ref); } catch { return null; } };
   return (contract.pairs ?? []).map(([fg, bg, minimum, use]) => {
