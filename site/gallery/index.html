@@ -12618,19 +12618,31 @@ const uniqBlocked = list => uniq(list).sort((a, b) => a.kind.localeCompare(b.kin
 
 /** 점수 순으로 하나씩 고르되, 이미 고른 후보와 같은 재료를 많이 공유하면 감점한다(결정적: 동점이면 앞선 쪽). */
 function diversify(passing) {
-  const out = [], rest = [...passing];
-  const signatures = new Map(rest.map(c => [c.selection, {
-    palette: c.selection.palette,
-    subtokenSet: c.selection.subtokenSet,
-    typeSystem: c.selection.typeSystem,
-    families: key(c.selection.families),
-  }]));
-  const shared = (a, b) => ['palette', 'subtokenSet', 'typeSystem'].filter(k => signatures.get(a.selection)[k] === signatures.get(b.selection)[k]).length + (signatures.get(a.selection).families === signatures.get(b.selection).families ? 1 : 0);
+  const out = [];
+  const rest = passing.map(candidate => ({
+    candidate,
+    shared: 0,
+    signature: {
+      palette: candidate.selection.palette,
+      subtokenSet: candidate.selection.subtokenSet,
+      typeSystem: candidate.selection.typeSystem,
+      families: key(candidate.selection.families),
+    },
+  }));
+  const shared = (a, b) =>
+    Number(a.palette === b.palette) +
+    Number(a.subtokenSet === b.subtokenSet) +
+    Number(a.typeSystem === b.typeSystem) +
+    Number(a.families === b.families);
   while (rest.length) {
     let best = 0, bestAdj = -Infinity;
-    rest.forEach((c, i) => { const adj = c.score - DIVERSITY_PENALTY * Math.max(0, ...out.map(o => shared(c, o))); if (adj > bestAdj) { bestAdj = adj; best = i; } });
-    const [c] = rest.splice(best, 1);
-    out.push({...c, adjusted: c.score - DIVERSITY_PENALTY * Math.max(0, ...out.map(o => shared(c, o)))});
+    rest.forEach(({candidate, shared: count}, i) => {
+      const adjusted = candidate.score - DIVERSITY_PENALTY * count;
+      if (adjusted > bestAdj) { bestAdj = adjusted; best = i; }
+    });
+    const [chosen] = rest.splice(best, 1);
+    out.push({...chosen.candidate, adjusted: chosen.candidate.score - DIVERSITY_PENALTY * chosen.shared});
+    for (const candidate of rest) candidate.shared = Math.max(candidate.shared, shared(candidate.signature, chosen.signature));
   }
   return out;
 }
@@ -13346,7 +13358,12 @@ function createRelationGraph(registry, {checks = []} = {}) {
   for (const e of all) {
     add(byFrom, e.from, e);
     add(byTo, e.to, e);
-    add(byPair, JSON.stringify([e.from, e.to].sort()), e);
+    const addPair = (a, b) => {
+      if (!byPair.has(a)) byPair.set(a, new Map());
+      add(byPair.get(a), b, e);
+    };
+    addPair(e.from, e.to);
+    if (e.from !== e.to) addPair(e.to, e.from);
   }
   const checkCache = new Map();
   const kindOf = id => registry.get(id)?.kind ?? null;
@@ -13358,7 +13375,7 @@ function createRelationGraph(registry, {checks = []} = {}) {
     /** id로 들어오는 관계. */
     to: (id, {type, ctx} = {}) => (byTo.get(id) ?? []).filter(e => (!type || e.type === type) && (!ctx || edgeApplies(e, ctx))),
     /** 두 재료 사이의 관계(양방향). ctx를 주면 조건이 맞는 것만. */
-    between: (a, b, ctx) => (byPair.get(JSON.stringify([a, b].sort())) ?? []).filter(e => !ctx || edgeApplies(e, ctx)),
+    between: (a, b, ctx) => (byPair.get(a)?.get(b) ?? []).filter(e => !ctx || edgeApplies(e, ctx)),
 
     /** 계산 관계 실행. 두 재료의 종류 쌍에 맞는 check만 돈다. [{check, a, b, ok, reason, detail}] */
     runChecks(a, b, ctx = {}) {
@@ -13499,11 +13516,18 @@ const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, st
 /** 페이지 축 값 재료 id(관계 평가용). axes는 {shell, width, density, mode, scale, backdrop, ornament, footer, icon}를 가진 객체(계획의 axes나 Blueprint)다. */
 const pageAxisIdsOf = axes => axisIds({shell: axes.shell, width: axes.width, density: axes.density, mode: axes.mode, scale: axes.scale, backdrop: axes.backdrop, ornament: axes.ornament, footer: axes.footer, icon: axes.icon});
 
+const MATERIAL_EVALUATION_CACHE_LIMIT = 4096;
+const materialEvaluationCaches = new WeakMap();
+
 /**
  * 재료 묶음의 관계 평가. selection: {styleContext, palette, subtokenSet, typeSystem, families}. 축 값(페이지 축·패밀리 모양·서체 짝·스타일 재료)도 같이 평가되어 X01 등이 forbids로 걸린다.
  * 반환: {ok, violations, applied, checks}. 한글 한도 같은 타이포 결합 오류도 violations에 들어간다.
  */
 function evaluateMaterials(env, {context, axes, selection: sel, styleIds = []}) {
+  let cache = materialEvaluationCaches.get(env);
+  if (!cache) { cache = new Map(); materialEvaluationCaches.set(env, cache); }
+  const cacheKey = key({context, axes, selection: sel, styleIds});
+  if (cache.has(cacheKey)) return structuredClone(cache.get(cacheKey));
   const reg = env.registry, ctx = {context, mode: axes.mode, density: axes.density};
   const typeSystem = reg.get(sel.typeSystem);
   const core = [sel.styleContext, sel.palette, sel.subtokenSet, sel.typeSystem, ...pageAxisIdsOf(axes), ...materialAxisIds(typeSystem), ...styleIds.flatMap(id => materialAxisIds(reg.get(id)))].filter(Boolean);
@@ -13513,6 +13537,8 @@ function evaluateMaterials(env, {context, axes, selection: sel, styleIds = []}) 
   const relations = {ok: runs.every(r => r.ok), violations: uniq(runs.flatMap(r => r.violations)), applied: uniq(runs.flatMap(r => r.applied)), checks: uniq(runs.flatMap(r => r.checks))};
   for (const e of bindType(typeSystem).errors ?? []) relations.violations.push({code: typeErrorCode(e.code), from: sel.typeSystem, to: sel.typeSystem, reason: e.message});
   relations.ok = relations.violations.length === 0;
+  if (cache.size >= MATERIAL_EVALUATION_CACHE_LIMIT) cache.delete(cache.keys().next().value);
+  cache.set(cacheKey, structuredClone(relations));
   return relations;
 }
 

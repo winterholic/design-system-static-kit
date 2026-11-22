@@ -70,11 +70,18 @@ export const styleMaterialIds = style => [...new Set([style?.surface, style?.mot
 /** 페이지 축 값 재료 id(관계 평가용). axes는 {shell, width, density, mode, scale, backdrop, ornament, footer, icon}를 가진 객체(계획의 axes나 Blueprint)다. */
 export const pageAxisIdsOf = axes => axisIds({shell: axes.shell, width: axes.width, density: axes.density, mode: axes.mode, scale: axes.scale, backdrop: axes.backdrop, ornament: axes.ornament, footer: axes.footer, icon: axes.icon});
 
+const MATERIAL_EVALUATION_CACHE_LIMIT = 4096;
+const materialEvaluationCaches = new WeakMap();
+
 /**
  * 재료 묶음의 관계 평가. selection: {styleContext, palette, subtokenSet, typeSystem, families}. 축 값(페이지 축·패밀리 모양·서체 짝·스타일 재료)도 같이 평가되어 X01 등이 forbids로 걸린다.
  * 반환: {ok, violations, applied, checks}. 한글 한도 같은 타이포 결합 오류도 violations에 들어간다.
  */
 export function evaluateMaterials(env, {context, axes, selection: sel, styleIds = []}) {
+  let cache = materialEvaluationCaches.get(env);
+  if (!cache) { cache = new Map(); materialEvaluationCaches.set(env, cache); }
+  const cacheKey = key({context, axes, selection: sel, styleIds});
+  if (cache.has(cacheKey)) return structuredClone(cache.get(cacheKey));
   const reg = env.registry, ctx = {context, mode: axes.mode, density: axes.density};
   const typeSystem = reg.get(sel.typeSystem);
   const core = [sel.styleContext, sel.palette, sel.subtokenSet, sel.typeSystem, ...pageAxisIdsOf(axes), ...materialAxisIds(typeSystem), ...styleIds.flatMap(id => materialAxisIds(reg.get(id)))].filter(Boolean);
@@ -84,6 +91,8 @@ export function evaluateMaterials(env, {context, axes, selection: sel, styleIds 
   const relations = {ok: runs.every(r => r.ok), violations: uniq(runs.flatMap(r => r.violations)), applied: uniq(runs.flatMap(r => r.applied)), checks: uniq(runs.flatMap(r => r.checks))};
   for (const e of bindType(typeSystem).errors ?? []) relations.violations.push({code: typeErrorCode(e.code), from: sel.typeSystem, to: sel.typeSystem, reason: e.message});
   relations.ok = relations.violations.length === 0;
+  if (cache.size >= MATERIAL_EVALUATION_CACHE_LIMIT) cache.delete(cache.keys().next().value);
+  cache.set(cacheKey, structuredClone(relations));
   return relations;
 }
 

@@ -31,7 +31,12 @@ export function createRelationGraph(registry, {checks = []} = {}) {
   for (const e of all) {
     add(byFrom, e.from, e);
     add(byTo, e.to, e);
-    add(byPair, JSON.stringify([e.from, e.to].sort()), e);
+    const addPair = (a, b) => {
+      if (!byPair.has(a)) byPair.set(a, new Map());
+      add(byPair.get(a), b, e);
+    };
+    addPair(e.from, e.to);
+    if (e.from !== e.to) addPair(e.to, e.from);
   }
   const checkCache = new Map();
   const kindOf = id => registry.get(id)?.kind ?? null;
@@ -43,7 +48,7 @@ export function createRelationGraph(registry, {checks = []} = {}) {
     /** id로 들어오는 관계. */
     to: (id, {type, ctx} = {}) => (byTo.get(id) ?? []).filter(e => (!type || e.type === type) && (!ctx || edgeApplies(e, ctx))),
     /** 두 재료 사이의 관계(양방향). ctx를 주면 조건이 맞는 것만. */
-    between: (a, b, ctx) => (byPair.get(JSON.stringify([a, b].sort())) ?? []).filter(e => !ctx || edgeApplies(e, ctx)),
+    between: (a, b, ctx) => (byPair.get(a)?.get(b) ?? []).filter(e => !ctx || edgeApplies(e, ctx)),
 
     /** 계산 관계 실행. 두 재료의 종류 쌍에 맞는 check만 돈다. [{check, a, b, ok, reason, detail}] */
     runChecks(a, b, ctx = {}) {
