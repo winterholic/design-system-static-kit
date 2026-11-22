@@ -26,8 +26,21 @@
 ### V1 — 공개 채널 바이트 일치
 
 - 재현: `node scripts/verify-assembly-review.mjs`
-- 입력: `saas-landing`, `work-dashboard`, `editorial-docs`, `commerce` 각각 자동 재료 선택 1건과, 해당 목적에서 고른 palette·subtoken-set·type-system·surface·motion·background·media를 요청에 직접 지정한 1건. 총 8건.
-- 관찰: 8/8에서 REST 상태는 200이었고, REST JSON 본문 및 MCP `content[0].text`가 서비스 `JSON.stringify`와 바이트 단위로 같았다. MCP `structuredContent` 직렬화도 같았다. 자동 선택은 목적별 3개 후보, 재료를 모두 지정한 요청은 각 1개 후보였다.
+- 실행 방식: 목적별 자동 요청을 먼저 서비스·REST·MCP 각각 한 번씩 실행했다. 서비스의 자동 선택 결과에서 palette·subtoken-set·type-system·families·surface·motion·background·media를 추출해 직접 지정 요청을 만들고, 이 요청도 세 경로를 각각 호출했다. 이 반복으로 총 8개 입력 × 3개 경로, 24회 호출했다.
+- 단언: 서비스 `ok === true`, REST HTTP 200, MCP `isError === false`와 MCP 봉투 `ok === true`를 확인했다. REST 본문, MCP `content[0].text`, MCP `structuredContent`의 JSON 바이트를 서비스 JSON 바이트와 각각 비교했다. 스크립트는 호출별 검사 실패를 `failures`에 반례 입력과 각 응답의 바이트 수·SHA-256·첫 바이트 차이로 기록하며, 모든 비교를 통과한 행만 `passedRows`에 기록한다. 네 직접 지정 요청은 표의 `직접 지정 재료`에 보인 값으로 실제 호출됐다.
+
+| 목적 | 선택 | 직접 지정 재료 | 상태(service / REST / MCP) | 서비스 응답 바이트 | 서비스·REST·MCP SHA-256 |
+|---|---|---|---|---:|---|
+| saas-landing | 자동 | — | true / 200 / false | 524,785 | `8e836fd3eb4b6ceaa99779d8cd65fa48082610949abe1913152d1bc771d6fdde` |
+| saas-landing | 직접 | palette `clay-earth`, set `editorial-warm`, type `mkt-launch`, family `bold`, surface `soft-layered`, motion `calm`, background `plain-canvas`, media `line-soft-frame` | true / 200 / false | 176,539 | `838fc281160945802f8b826cc17df087342e789db862b886c789e9fad5fa79af` |
+| work-dashboard | 자동 | — | true / 200 / false | 450,115 | `d8baa00a87e61dfaea6a16c0e9882efa2e7bf6d24991f229b75254294f538556` |
+| work-dashboard | 직접 | palette `graphite-mono`, set `high-contrast`, type `work-insight`, surface `hairline-panel`, motion `calm`, background `plain-canvas`, media `line-soft-frame` | true / 200 / false | 152,311 | `38ce89132f71f09ddaaf25db8e518d056d601dd70aa80b94a2caffde476e4e6f` |
+| editorial-docs | 자동 | — | true / 200 / false | 371,427 | `1c405759da932f46a42f64e79c2eeb953c736aab7932efecf7829b3818f81160` |
+| editorial-docs | 직접 | palette `clay-earth`, set `editorial-warm`, type `doc-essay`, surface `tonal-sheet`, motion `still`, background `plain-canvas`, media `fine-editorial` | true / 200 / false | 125,188 | `e9a119aebcebd9b6217f95c03c3ba2f73ce1e12e475b243ae234c4f8691587c1` |
+| commerce | 자동 | — | true / 200 / false | 448,026 | `abc62879bbee890db897089be08f286cf60db361f070604eee0fb39adf990c95` |
+| commerce | 직접 | palette `dusk-violet`, set `premium-dark`, type `shop-boutique`, surface `hairline-panel`, motion `calm`, background `plain-canvas`, media `line-soft-frame` | true / 200 / false | 150,291 | `f4f4a35b60a0e85f859a352680595f22075d6f425115c33e6efb70efb6a05e88` |
+
+- 관찰: 재실행 결과 `attempted: 8`, 자동 4건·직접 지정 4건, `passedRows: 8`, `failures: []`였다. 각 행에서 REST 본문, MCP text, MCP structured JSON의 바이트 길이와 SHA-256이 서비스 값과 일치했다.
 - 심각도: 없음(주장 확인).
 - 담당: `src/service/assemble-design.mjs`, `apps/web/lib/api/operations.mjs`, `apps/web/lib/api/rest.mjs`, `apps/web/lib/api/mcp.mjs`.
 - 한계: 실제 HTTP 서버·외부 클라이언트 연결은 검증하지 않았다.
