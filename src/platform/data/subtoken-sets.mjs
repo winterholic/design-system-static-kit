@@ -146,4 +146,3 @@ export const SUBTOKEN_SETS = Object.freeze([
   make('high-contrast', '고대비', highContrast, {tags: ['accessibility', 'high-contrast'], contexts: ['dashboard', 'general', 'landing', 'data', 'listing', 'community', 'docs', 'article', 'blog', 'commerce', 'portfolio', 'pricing', 'form', 'settings', 'auth', 'error']}),
   make('data-dense', '데이터 밀집(표·차트 중심)', dataDense, {tags: ['data', 'table-chart'], contexts: ['dashboard', 'data', 'listing', 'settings']}),
 ]);
-
