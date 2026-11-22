@@ -55,7 +55,9 @@ function bindRoles(palette, subtokenSet, mode) {
     if (rule.from !== undefined) {
       const base = ramps[rule.from][rule[mode]];
       const against = (rule.min?.against ?? []).map(a => roles[a]);
-      roles[role] = rule.min ? readableColor(base, against, rule.min.ratio) : base;
+      try { roles[role] = rule.min ? readableColor(base, against, rule.min.ratio) : base; } catch {
+        throw new Error(`COLOR_CONTRAST: ${role}는 ${rule.min.against.join('·')} 위에서 ${rule.min.ratio}:1을 동시에 맞출 수 없습니다(${rule.from} 램프를 밝게·어둡게 모두 보정해도 불가)`);
+      }
       for (const a of rule.min?.against ?? []) report.push({role, against: a, ratio: floor4(colorContrast(roles[role], roles[a])), minimum: rule.min.ratio});
     } else {
       const bg = roles[rule.on], ink = ramps.neutral['950'];
@@ -110,7 +112,7 @@ export const CATEGORICAL_COUNT = 6, SEQUENTIAL_STEPS = 7, DIVERGING_STEPS = 7;
 /** tone → [라이트 단계, 다크 단계]. 램프 단계에서 시작해 면 대비를 맞출 때까지 보정한다. */
 export const CHART_TONES = Object.freeze({standard: ['600', '300'], vivid: ['500', '400'], soft: ['400', '300'], deep: ['700', '400']});
 const SEQ_LIGHT = ['200', '300', '400', '500', '600', '700', '800'], SEQ_DARK = [...SEQ_LIGHT].reverse();
-const DIV_ARM = {light: ['700', '500', '300'], dark: ['300', '500', '600']}, DIV_MID = {light: '100', dark: '800'};
+const DIV_ARM = {light: ['700', '500', '300'], dark: ['300', '500', '600']}, DIV_MID = {light: '200', dark: '700'};
 /** 순차·발산 이웃 단계의 CIE76 색차 하한. 명암비는 어두운 쪽에서 단계 차이를 과소평가해 색차로 잰다. */
 const ADJACENT_MIN = 6;
 const stepDistance = colors => floor4(Math.min(...colors.slice(1).map((x, i) => deltaE(x, colors[i]))));
@@ -170,6 +172,7 @@ function deriveCharts(seeds, design, mode, roles, {contrast, raw}) {
   out.diverging = div.colors; out.divergingSources = {low: div.low, high: div.high};
   raw('chart-diverging', 'two hues ≥60° apart', floor4(hueGap(seeds[div.low], seeds[div.high])), 60, 'hue');
   for (const end of [div.colors[0], div.colors.at(-1)]) contrast('chart-diverging-end', 'surface', end, roles.surface, c.diverging.minContrast);
+  raw('chart-diverging-mid', 'surface ΔE76', floor4(deltaE(div.colors[3], roles.surface)), ADJACENT_MIN, 'step');
   const arms = [div.colors.slice(0, 4), div.colors.slice(3)];
   raw('chart-diverging-step', 'adjacent ΔE76', Math.min(...arms.map(stepDistance)), ADJACENT_MIN, 'step');
   return out;
@@ -305,7 +308,7 @@ export function assignSeeds(input) {
 export function proposeSubtokenSets(input, {sets = SUBTOKEN_SETS} = {}) {
   const a = assignSeeds(input);
   if (!a.ok) return {ok: false, errors: a.errors, palette: null, assignments: [], ignored: [], candidates: [], rejected: []};
-  const palette = Object.freeze({id: 'palette:user-seeds', kind: 'palette', seeds: a.seeds});
+  const palette = Object.freeze({id: 'palette:user-seeds', kind: 'palette', seeds: Object.freeze(a.seeds)});
   const candidates = [], rejected = [];
   for (const set of sets) {
     const modes = {}, reasons = [];

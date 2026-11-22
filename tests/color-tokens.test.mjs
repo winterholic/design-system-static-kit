@@ -85,3 +85,18 @@ test('2.6.0 color tokens are registered with CSS names and actual usage', () => 
   assert.ok(materials.some(m => m.id === 'color-token:state.action-hover'));
   assert.deepEqual(r.check(), []);
 });
+
+// W1(platform color): 플랫폼 색 작업이 src/color-tokens.mjs에 내보내기만 더했다. static-kit 출력은 작업 전(f1bcc2582)과 바이트가 같다.
+test('static-kit color output is byte-identical to the pre-platform baseline (f1bcc2582): resolved graphs, CSS, materials and a 2.6.0 compile', async () => {
+  const {createHash} = await import('node:crypto');
+  const {colorTokenCSS, colorTokenMaterials} = await import('../src/color-tokens.mjs');
+  const sha = x => createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(x)).digest('hex');
+  const compiled = compile(base());
+  assert.deepEqual({
+    light: sha(resolveColorTokens({palette: 'static-kit', mode: 'light'})), dark: sha(resolveColorTokens({palette: 'static-kit', mode: 'dark'})), auto: sha(resolveColorTokens({palette: 'static-kit', mode: 'auto'})),
+    css: sha(colorTokenCSS()), materials: sha(colorTokenMaterials()), compile: sha(typeof compiled === 'string' ? compiled : JSON.stringify(compiled)),
+  }, {
+    light: '6eb3dbb6a99db4f1ce0c027c18c955a5f1e7aa1a212416fc5e6d141cd44a97a5', dark: '3cf82f2619f50e52193841451d47bd44f6af38b365a2fa592894520ceebc4505', auto: '4f15573210064ed3169dad107e9a126fa5eb3a7dd470e47afcc2df75f82d371e',
+    css: '0c8c2528d062fe4984e5dc6f2774eea3c2b0352555314d14d940b81f67996736', materials: '971fbf4312e66b29e1dfb37c2aceaf68c2ab48f468c916d70423db9f2736895e', compile: 'f137f817bc75dcd49652884ecd67dd0893937fbaafa8d261a13d161fbf8c3717',
+  });
+});

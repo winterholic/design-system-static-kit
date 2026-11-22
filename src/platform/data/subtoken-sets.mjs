@@ -39,8 +39,8 @@ const tinted = variant({
 
 /** 따뜻한 에디토리얼: 종이 같은 바탕, 강조 띠는 보조색 틴트, 링크와 초점은 보조색. 액션은 브랜드를 아끼고 규칙선(rule)을 진하게 쓴다. 다크는 눈이 편한 읽기 면. */
 const editorialWarm = variant({
-  canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '900'), soft: r('accent', '100', '900'), sunken: r('neutral', '100', '950'),
-  cardHover: r('neutral', '100', '800'), cardActive: r('accent', '100', '800'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '100', '800'),
+  canvas: r('neutral', '100', '950'), surface: r('neutral', '50', '900'), soft: r('accent', '100', '900'), sunken: r('neutral', '200', '950'),
+  cardHover: r('neutral', '100', '800'), cardActive: r('accent', '100', '800'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '200', '800'),
   text: r('neutral', '950', '100', FG_BG, 7), muted: r('neutral', '700', '400', FG_BG, 4.5), border: r('neutral', '300', '800'), rule: r('neutral', '600', '500', ['surface'], 3),
   action: r('brand', '700', '300', ['canvas', 'surface'], 4.5), link: r('accent', '800', '300', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 4.5), focus: r('accent', '600', '300', FG_BG, 3),
   accent: r('accent', '700', '300', ['surface'], 4.5),
@@ -49,7 +49,7 @@ const editorialWarm = variant({
 
 /** 강조색이 선명한 커머스: 주 행동(action)을 보조색의 선명한 단계로 칠하고 브랜드는 링크·보조 행동으로 내린다. 면은 보조색 틴트로 프로모션 띠를 만든다. */
 const commerceVivid = variant({
-  canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '900'), soft: r('accent', '100', '900'), sunken: r('neutral', '100', '950'),
+  canvas: r('neutral', '100', '950'), surface: r('neutral', '50', '900'), soft: r('accent', '100', '900'), sunken: r('neutral', '200', '950'),
   cardHover: r('accent', '50', '900'), cardActive: r('accent', '100', '800'), dangerSoft: r('danger', '100', '900'), disabledBg: r('neutral', '200', '800'),
   border: r('neutral', '200', '700'), rule: r('neutral', '500', '500', ['surface'], 3),
   action: r('accent', '600', '300', ['canvas', 'surface'], 5), onAction: on('action', 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 4.5), focus: r('brand', '600', '300', FG_BG, 3),
@@ -57,13 +57,13 @@ const commerceVivid = variant({
   danger: r('danger', '700', '300', ['surface', 'dangerSoft'], 4.5),
 });
 
-/** 어두운 배경의 프리미엄: 다크가 주 모드. 검은 바탕에 낮은 대비 경계, 보조색의 밝은 단계를 주 행동으로 써 금속 같은 포인트를 만든다. 라이트는 아이보리 면에 깊은 브랜드. */
+/** 어두운 배경의 프리미엄: 다크가 주 모드. 검은 바탕 위에 한 단계 밝은 표면을 올리고 낮은 대비 경계로 나눈다. 주 행동은 중립 램프의 반전(다크는 밝은 알약, 라이트는 먹색)이고 브랜드색은 링크와 보조 행동에만 쓴다. */
 const premiumDark = variant({
-  canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '950'), soft: r('brand', '100', '900'), sunken: r('neutral', '100', '950'),
-  cardHover: r('neutral', '100', '900'), cardActive: r('neutral', '200', '800'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '100', '900'),
+  canvas: r('neutral', '100', '950'), surface: r('neutral', '50', '900'), soft: r('brand', '100', '900'), sunken: r('neutral', '200', '950'),
+  cardHover: r('neutral', '100', '800'), cardActive: r('neutral', '200', '700'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '200', '800'),
   text: r('neutral', '950', '100', FG_BG, 7), muted: r('neutral', '700', '400', FG_BG, 4.5), border: r('neutral', '300', '800'), rule: r('neutral', '600', '600', ['surface'], 3),
-  action: r('brand', '800', '300', ['canvas', 'surface'], 4.5), onAction: on('action', 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'cardHover', 'cardActive'], 4.5), focus: r('accent', '600', '200', FG_BG, 3),
-  accent: r('accent', '700', '300', ['surface'], 4.5), onAccent: on('accent', 4.5),
+  action: r('neutral', '900', '100', ['canvas', 'surface'], 7), onAction: on('action', 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'cardHover', 'cardActive'], 4.5), focus: r('accent', '600', '200', FG_BG, 3),
+  accent: r('brand', '700', '300', ['surface'], 4.5), onAccent: on('accent', 4.5),
   disabledFg: r('neutral', '500', '500', ['disabledBg'], 3),
 });
 
@@ -78,14 +78,14 @@ const highContrast = variant({
   disabledFg: r('neutral', '700', '300', ['disabledBg'], 4.5),
 });
 
-/** 데이터 밀집: 표와 차트가 주인공. 면은 중립 단계로만 나누고 경계를 진하게 둔다. 상태색은 작은 글자에서도 읽히도록 한 단계 어둡게 쓴다. */
+/** 데이터 밀집: 표와 차트가 주인공. 면은 중립 단계로만 나누고(다크는 표면을 바탕과 같게 눌러 격자선으로만 구분) 경계를 진하게 둔다. 상태색은 작은 글자에서도 읽히도록 라이트는 한 단계 어둡게, 다크는 한 단계 밝게 쓴다. */
 const dataDense = variant({
-  canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '900'), soft: r('neutral', '100', '900'), sunken: r('neutral', '100', '950'),
-  cardHover: r('neutral', '100', '800'), cardActive: r('neutral', '200', '700'), disabledBg: r('neutral', '200', '800'),
-  border: r('neutral', '300', '700'), rule: r('neutral', '500', '400', ['surface'], 3),
+  canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '950'), soft: r('neutral', '100', '900'), sunken: r('neutral', '100', '950'),
+  cardHover: r('neutral', '100', '900'), cardActive: r('neutral', '200', '800'), disabledBg: r('neutral', '200', '900'),
+  border: r('neutral', '300', '600'), rule: r('neutral', '500', '400', ['surface'], 3),
   action: r('brand', '700', '400', ['canvas', 'surface'], 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 4.5),
   accent: r('accent', '700', '300', ['surface'], 4.5),
-  success: r('success', '800', '300', ['surface', 'soft'], 4.5), warning: r('warning', '900', '300', ['surface', 'soft'], 4.5), danger: r('danger', '800', '300', ['surface', 'dangerSoft'], 4.5), info: r('info', '800', '300', ['surface', 'soft'], 4.5),
+  success: r('success', '800', '200', ['surface', 'soft'], 4.5), warning: r('warning', '900', '200', ['surface', 'soft'], 4.5), danger: r('danger', '800', '200', ['surface', 'dangerSoft'], 4.5), info: r('info', '800', '200', ['surface', 'soft'], 4.5),
 });
 
 /**
