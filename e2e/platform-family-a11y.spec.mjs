@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
-import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 import {buildPage, makeEnv, VISUALS} from '../scripts/families/pages.mjs';
+import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 
 // 목적 패밀리 접근성 계약의 브라우저 쪽(재료 검증 F1). 마크업의 role·aria·라벨 연결은 tests/platform-family-a11y.test.mjs가 본다.
 // 이 파일은 마크업만으로 볼 수 없는 것을 본다.
@@ -11,11 +11,29 @@ import {buildPage, makeEnv, VISUALS} from '../scripts/families/pages.mjs';
 const env = makeEnv();
 const QUIET = 'family:quiet';
 const GROUP_OF = id => PURPOSE_FAMILIES.find(f => f.id === id).group;
-const example = id => { const f = PURPOSE_FAMILIES.find(x => x.id === id); return {purpose: id, variant: f.example.variant, props: f.example.props, content: f.example.content}; };
+const example = id => {
+  const f = PURPOSE_FAMILIES.find(x => x.id === id);
+  const variant = {...f.example.variant};
+  // 미리보기용 modeless dialog는 Tab trap을 소유하지 않는다. 이 공통 순서 검사는
+  // 실제로 열 수 있는 trigger를 재고, 열린 modal 동작은 아래 별도 계약 시험에서 본다.
+  if (id === 'purpose:feedback.confirm') variant.display = 'trigger';
+  return {purpose: id, variant, props: f.example.props, content: f.example.content};
+};
 
 async function open(page, items, {width = 1280, visual = QUIET, group = null, mode = 'light'} = {}) {
   const list = Array.isArray(items) ? items : [items];
-  const built = buildPage(env, group ?? GROUP_OF(list[0].purpose), visual, {items: list, runtime: true, mode});
+  const contexts = list.map(item => PURPOSE_FAMILIES.find(f => f.id === item.purpose).contexts).filter(cs => !cs.includes('any'));
+  const sharedContexts = contexts.length ? contexts[0].filter(context => contexts.every(cs => cs.includes(context))) : ['dashboard'];
+  expect(sharedContexts.length, list.map(item => item.purpose).join(', ')).toBeGreaterThan(0);
+  const context = sharedContexts[0];
+  const globalDensities = ['comfortable', 'compact', 'spacious'];
+  const densityLimits = list.map(item => {
+    const family = PURPOSE_FAMILIES.find(f => f.id === item.purpose);
+    return family.props?.density ?? family.variants?.density;
+  }).filter(Boolean);
+  const sharedDensities = globalDensities.filter(density => densityLimits.every(values => values.includes(density)));
+  const density = sharedDensities.includes('comfortable') ? 'comfortable' : sharedDensities[0] ?? 'comfortable';
+  const built = buildPage(env, group ?? GROUP_OF(list[0].purpose), visual, {items: list, runtime: true, mode, context, density});
   expect(built.ok, JSON.stringify(built.diagnostics)).toBe(true);
   await page.setViewportSize({width, height: 900});
   // setContent만 다시 부르면 이전 문서의 전역(const wire 등)이 남아 런타임 스크립트가 조용히 실패한다. 새 문서로 시작한다.
@@ -42,7 +60,17 @@ const IN_PAGE = () => {
 
 /** 문서 맨 앞에서 Tab을 눌러 나온 순서와 포커스 표시를 모은다. */
 async function walkTab(page) {
-  await page.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+  if (await page.locator('dialog[open]').count()) {
+    // 모달 미리보기는 문서를 열 때 포커스를 안에 둔다. body로 강제 blur하면 모달의
+    // 브라우저 포커스 순환이 깨지므로 마지막 정지에서 Tab 순환을 시작한다.
+    await page.evaluate(`(() => {
+      const stops = (${IN_PAGE})().tabbables().filter(el => el.closest('dialog[open]'));
+      stops.at(-1)?.focus();
+      window.scrollTo(0, 0);
+    })()`);
+  } else {
+    await page.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+  }
   const expected = await page.evaluate(`(${IN_PAGE})().tabbables().map(el => ({name: (${IN_PAGE})().nameOf(el), tag: el.tagName.toLowerCase()}))`);
   const seen = [];
   for (let i = 0; i < expected.length; i += 1) {

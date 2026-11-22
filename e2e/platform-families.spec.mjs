@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 import {measureAll, summarize, familyMetrics, judge} from '../scripts/families/measure.mjs';
-import {buildPage, makeEnv, GROUPS, VISUALS} from '../scripts/families/pages.mjs';
+import {buildPage, makeEnv, GROUPS, VISUALS, groupScenarios} from '../scripts/families/pages.mjs';
 
 // 목적 패밀리의 브라우저 시험(ADR 0012 §4 확장, docs/platform/families.md).
 //  1) 묶음 × 시각 패밀리 × 모드 × (모바일 390, 데스크톱 1280) 전부에서 기존 layout-quality 검사기와 패밀리 측정이 통과한다.
@@ -13,9 +13,10 @@ test('every group × visual family × mode × viewport passes layout-quality and
   test.setTimeout(600000);
   const results = await measureAll({groups: GROUPS, modes: ['light', 'dark']});
   const summary = summarize(results);
-  const bad = results.filter(r => !r.ok && !r.viewport).map(r => `${r.group} ${r.visual} ${r.mode}: ${r.reason}`).concat(results.filter(r => r.viewport && !r.ok).map(r => `${r.group} ${r.visual} ${r.mode} ${r.viewport}: ${r.fail.join(', ')} ${r.probeErrors.map(e => e.code).join(',')}`));
+  const bad = results.filter(r => !r.ok && !r.viewport).map(r => `${r.group} ${r.context}/${r.density} ${r.visual} ${r.mode}: ${r.reason}`).concat(results.filter(r => r.viewport && !r.ok).map(r => `${r.group} ${r.context}/${r.density} ${r.visual} ${r.mode} ${r.viewport}: ${r.fail.join(', ')} ${r.probeErrors.map(e => e.code).join(',')}`));
   expect(bad, bad.join('\n')).toEqual([]);
-  expect(summary.pages).toBe(GROUPS.length * VISUALS.length * 2 * 2);
+  const scenarioCount = GROUPS.reduce((count, group) => count + groupScenarios(group).length, 0);
+  expect(summary.pages).toBe(scenarioCount * VISUALS.length * 2 * 2);
   expect(summary.overlap.checked).toBeGreaterThan(100);
   // 훑은 대상이 0이면 통과가 아니다
   expect(summary.cards.checked).toBeGreaterThan(100);
@@ -25,20 +26,20 @@ test('every group × visual family × mode × viewport passes layout-quality and
 });
 
 test.describe('the measurements fail on deliberately broken CSS', () => {
-  async function metricsWith(page, group, extraCss, items) {
-    const built = buildPage(env, group, QUIET, {items});
+  async function metricsWith(page, group, extraCss, items, context = 'dashboard') {
+    const built = buildPage(env, group, QUIET, {items, context});
     expect(built.ok, JSON.stringify(built.diagnostics)).toBe(true);
     await page.setViewportSize({width: 1280, height: 900});
     await page.setContent(built.html.replace('</style>', `${extraCss}</style>`));
     return page.evaluate(familyMetrics);
   }
   const twoCards = [
-    {purpose: 'purpose:card.kpi', variant: {layout: 'stacked', trend: 'none'}, content: {label: '짧은', value: '3'}},
-    {purpose: 'purpose:card.article', variant: {layout: 'text'}, props: {behavior: 'link'}, content: {title: '긴 글 제목이 길어서 여러 줄을 차지하는 경우', excerpt: '요약 문장이 이어서 세 줄까지 보입니다. 같은 줄의 카드는 높이가 같아야 합니다.', author: '민지', date: '2026-11-22', href: '#a'}},
+    {purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'none'}, props: {behavior: 'link'}, content: {title: '짧은 상품', price: '₩3', mediaIcon: 'bag', href: '#a'}},
+    {purpose: 'purpose:card.pricing', variant: {emphasis: 'standard'}, content: {plan: '긴 상품 이름', price: '₩24,000', period: '월', description: '같은 줄의 카드는 높이가 같아야 합니다.', features: ['배송 포함', '반품 가능'], ctaLabel: '시작하기'}},
   ];
   test('card height imbalance', async ({page}) => {
-    expect(judge(await metricsWith(page, 'card', '', twoCards))).toEqual([]);
-    const m = await metricsWith(page, 'card', '.kit-platform{align-items:start}.pf-card{height:auto}', twoCards);
+    expect(judge(await metricsWith(page, 'card', '', twoCards, 'commerce'))).toEqual([]);
+    const m = await metricsWith(page, 'card', '.kit-platform{align-items:start}.pf-card{height:auto}', twoCards, 'commerce');
     expect(m.cards.maxHeightSpread).toBeGreaterThan(1);
     expect(judge(m).join()).toMatch(/카드 높이 불균형/);
   });
@@ -52,7 +53,7 @@ test.describe('the measurements fail on deliberately broken CSS', () => {
     const m = await metricsWithLeftPad(page);
     expect(m.padding.issues.length).toBeGreaterThan(0);
   });
-  async function metricsWithLeftPad(page) { return metricsWith(page, 'card', '.pf-card{padding-left:2px!important}', twoCards); }
+  async function metricsWithLeftPad(page) { return metricsWith(page, 'card', '.pf-card{padding-left:2px!important}', twoCards, 'commerce'); }
   test('control overlap', async ({page}) => {
     const search = [{purpose: 'purpose:form.search', variant: {layout: 'inline', scope: 'none'}, content: {label: '검색', placeholder: '검색어를 입력하세요'}}];
     expect(judge(await metricsWith(page, 'form', '', search))).toEqual([]);
@@ -68,15 +69,15 @@ test.describe('the measurements fail on deliberately broken CSS', () => {
 });
 
 test.describe('interactions the families promise', () => {
-  async function open(page, group, items, width = 1280, visual = QUIET) {
-    const built = buildPage(env, group, visual, {items, runtime: true});
+  async function open(page, group, items, width = 1280, visual = QUIET, context = 'dashboard') {
+    const built = buildPage(env, group, visual, {items, runtime: true, context});
     expect(built.ok, JSON.stringify(built.diagnostics)).toBe(true);
     await page.setViewportSize({width, height: 900});
     await page.setContent(built.html);
     expect(await page.locator('[data-wire-error]').count(), 'every attach* runtime wired without error').toBe(0);
   }
   test('selectable product card toggles aria-pressed and shows the check', async ({page}) => {
-    await open(page, 'card', [{purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'none'}, props: {behavior: 'selectable'}, content: {title: '텀블러', price: '₩24,000', mediaIcon: 'coffee'}}]);
+    await open(page, 'card', [{purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'none'}, props: {behavior: 'selectable'}, content: {title: '텀블러', price: '₩24,000', mediaIcon: 'coffee'}}], 1280, QUIET, 'commerce');
     const hit = page.locator('.kit-ctl-card-hit');
     await expect(hit).toHaveAttribute('aria-pressed', 'false');
     await hit.click();
@@ -87,7 +88,7 @@ test.describe('interactions the families promise', () => {
     await expect(hit).toHaveAttribute('aria-pressed', 'false');
   });
   test('gallery tiles select with the native checkbox and show a check mark', async ({page}) => {
-    await open(page, 'card', [{purpose: 'purpose:card.gallery', variant: {layout: 'grid', tiles: 'select'}, content: {title: '앨범', items: [{label: '해변', icon: 'droplet'}, {label: '숲길', icon: 'leaf'}, {label: '노을', icon: 'sun'}]}}]);
+    await open(page, 'card', [{purpose: 'purpose:card.gallery', variant: {layout: 'grid', tiles: 'select'}, content: {title: '앨범', items: [{label: '해변', icon: 'droplet'}, {label: '숲길', icon: 'leaf'}, {label: '노을', icon: 'sun'}]}}], 1280, QUIET, 'listing');
     const box = page.getByRole('checkbox', {name: '숲길 선택'});
     await expect(box).not.toBeChecked();
     await box.check();
