@@ -4,6 +4,11 @@ import {MaterialsNav} from '@/features/materials/MaterialsNav';
 import {typeView} from '@/features/materials/materials.server';
 import {studioForPreset} from '@/features/materials/studio-link';
 import {ButtonLink} from '@/ui';
+import {TypeCompare} from '@/features/platform/TypeCompare';
+import {Unavailable} from '@/features/platform/Unavailable';
+import {platformReady} from '@/features/platform/platform.server';
+import {first} from '@/features/platform/labels';
+import {SAMPLES, type SampleId} from '@/features/platform/samples';
 import styles from '@/features/materials/materials.module.css';
 
 export const metadata = {title: '타이포그래피 · Materials', description: '역할형 타이포그래피 프리셋의 역할별 글자 스타일, 다국어 시험 문구, 컨트롤 크기를 확인합니다.'};
@@ -22,7 +27,15 @@ function Sample({role, policy, text}: {role: string; policy: string; text: strin
 
 export default async function TypographyPage({searchParams}: Props) {
   const view = typeView();
-  const asked = (await searchParams).preset;
+  const sp = await searchParams;
+  const asked = sp.preset;
+  const sampleAsked = first(sp.sample) as SampleId | null;
+  const compareQuery = {
+    with: (first(sp.with) ?? 'doc-essay,work-console,mkt-launch').split(',').filter(x => /^[a-z0-9-]+$/.test(x)).slice(0, 4),
+    sample: sampleAsked && sampleAsked in SAMPLES ? sampleAsked : 'doc' as SampleId,
+    width: first(sp.width) === '390' ? 390 as const : 1280 as const,
+    mode: first(sp.mode) === 'dark' ? 'dark' as const : 'light' as const,
+  };
   const preset = view.presets.find(p => p.id === (Array.isArray(asked) ? asked[0] : asked)) ?? view.presets[0];
   const sample = (role: string) => view.corpus.find(c => c.role === role)?.text ?? '';
   const roleNames = view.presets[0].roles.map(r => r.name);
@@ -31,6 +44,7 @@ export default async function TypographyPage({searchParams}: Props) {
   return (
     <PageShell eyebrow="Materials · 타이포그래피" title="역할로 나눈 글자 스타일" lead="프리셋마다 디스플레이부터 코드까지 일곱 역할의 크기와 굵기, 행간, 자간이 정해져 있습니다. 한글과 영문, 숫자가 섞인 문구로 줄바꿈까지 시험합니다.">
       <MaterialsNav current="typography" />
+      {platformReady() ? <TypeCompare query={compareQuery} /> : <Unavailable what="타이포 시스템 비교" />}
       <style>{preset.css}</style>
 
       <nav className={styles.presetNav} aria-label="프리셋">

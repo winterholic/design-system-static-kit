@@ -5,6 +5,8 @@ import {colorView, overview, typeView} from '@/features/materials/materials.serv
 import {studioForColor} from '@/features/materials/studio-link';
 import {ButtonLink} from '@/ui';
 import styles from '@/features/materials/materials.module.css';
+import {materials, platformReady} from '@/features/platform/platform.server';
+import {SEED_ROLES} from '@/features/platform/labels';
 
 export const metadata = {title: 'Materials', description: '색, 타이포그래피, 간격·반경·깊이 같은 기초 재료를 한곳에서 찾아보고 Studio에서 바로 씁니다.'};
 
@@ -15,9 +17,29 @@ export default function MaterialsPage() {
   return (
     <PageShell eyebrow="Materials" title="디자인을 이루는 재료 둘러보기" lead="화면은 코드로 정의한 재료만으로 조립됩니다. 색과 글자, 간격과 모서리 같은 기초 재료를 직접 확인하고, 마음에 드는 것을 Studio에서 바로 써 보세요.">
       <MaterialsNav current="overview" />
+      {platformReady() ? (
+        <ul className={styles.cards} data-testid="platform-materials">
+          <li className={styles.card}>
+            <h2>팔레트와 서브토큰 세트</h2>
+            <p>팔레트 {materials('palette').length}개를 고르면 어울리는 서브토큰 세트 {materials('subtoken-set').length}개를 같은 화면에 나란히 적용해 비교합니다. 내 색을 넣어 시험할 수도 있습니다.</p>
+            <div className={styles.strip} aria-hidden="true">{materials('palette').map(p => <span key={p.id} className={styles.stripChip} style={{background: p.seeds?.[SEED_ROLES[0][0]]}} />)}</div>
+            <div className={styles.cardLink}><ButtonLink href="/materials/palettes">팔레트 비교하기</ButtonLink></div>
+          </li>
+          <li className={styles.card}>
+            <h2>타이포 시스템</h2>
+            <p>시스템 {materials('type-system').length}개를 같은 한영 혼용 문서·대시보드 샘플로 나란히 놓고 모바일·데스크톱 크기를 바꿔 봅니다.</p>
+            <div className={styles.cardLink}><ButtonLink href="/materials/typography">글자 비교하기</ButtonLink></div>
+          </li>
+          <li className={styles.card}>
+            <h2>스타일 맥락</h2>
+            <p>표면, 모서리, 모션, 배경의 선호를 묶은 스타일 맥락 {materials('style-context').length}개를 같은 페이지에 적용해 비교합니다.</p>
+            <div className={styles.cardLink}><ButtonLink href="/materials/styles">스타일 비교하기</ButtonLink></div>
+          </li>
+        </ul>
+      ) : null}
       <ul className={styles.cards}>
         <li className={styles.card}>
-          <h2>색</h2>
+          <h2>색 토큰</h2>
           <p>원본 시드 {count.colorSeeds}개에서 계산한 50–950 램프와 역할·상태·부품 토큰 {count.colorTokens}개를 라이트와 다크로 비교합니다.</p>
           <div className={styles.strip} aria-hidden="true">{color.seeds.map(s => <span key={s.id} className={styles.stripChip} style={{background: s.hex}} />)}</div>
           <div className={styles.cardLink}><ButtonLink href="/materials/color" variant="secondary">색 보기</ButtonLink></div>

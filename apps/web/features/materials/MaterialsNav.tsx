@@ -3,8 +3,10 @@ import styles from './materials.module.css';
 
 const SECTIONS = [
   {id: 'overview', href: '/materials', label: '개요'},
-  {id: 'color', href: '/materials/color', label: '색'},
+  {id: 'palettes', href: '/materials/palettes', label: '팔레트'},
+  {id: 'color', href: '/materials/color', label: '색 토큰'},
   {id: 'typography', href: '/materials/typography', label: '타이포그래피'},
+  {id: 'styles', href: '/materials/styles', label: '표면·모션·상태'},
   {id: 'foundations', href: '/materials/foundations', label: '기초 재료'},
 ] as const;
 export type MaterialsSection = (typeof SECTIONS)[number]['id'];

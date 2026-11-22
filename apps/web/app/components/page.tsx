@@ -3,6 +3,12 @@ import {PageShell} from '@/shell/PageShell';
 import {Thumb} from '@/features/explore/Thumb';
 import {componentRows, componentView, groupLabel} from '@/features/components/spec.server';
 import styles from '@/features/components/components.module.css';
+import {Unavailable} from '@/features/platform/Unavailable';
+import {platformReady, purposeFamilies} from '@/features/platform/platform.server';
+import {renderSrc} from '@/features/platform/render-url';
+import {shortId} from '@/features/platform/labels';
+
+const GROUP_LABEL: Record<string, string> = {card: '카드', button: '버튼', navigation: '내비게이션', form: '입력 양식', table: '표', feedback: '피드백'};
 
 export const metadata = {title: 'Components'};
 
@@ -10,7 +16,9 @@ export default function ComponentsPage() {
   const rows = componentRows().filter(r => r.type !== 'page');
   const groups = [...new Set(rows.map(r => r.group))];
   return (
-    <PageShell eyebrow="Components" title="부품 카탈로그" lead="페이지를 이루는 부품입니다. 각 부품의 렌더 결과와 변형, 받는 속성, 놓을 수 있는 자리를 카탈로그에서 그대로 읽어 보여 줍니다.">
+    <PageShell eyebrow="Components" title="컴포넌트" lead="목적별 컴포넌트를 시각 패밀리로 바꿔 보고, 상태·크기·콘텐츠를 바꾸며 코드로 가져갑니다. 아래에는 페이지를 이루는 구조 부품 카탈로그가 이어집니다.">
+      {platformReady() ? <PurposeSection /> : <Unavailable what="목적별 컴포넌트" />}
+      <h2 className={styles.groupTitle} style={{marginTop: 'var(--space-8)'}}>페이지 구조 부품</h2>
       <div className={styles.groups}>
         {groups.map(group => (
           <section key={group} aria-labelledby={`g-${group}`}>
@@ -33,5 +41,33 @@ export default function ComponentsPage() {
         ))}
       </div>
     </PageShell>
+  );
+}
+
+function PurposeSection() {
+  const list = purposeFamilies();
+  if (!list.ok) return <Unavailable what="목적별 컴포넌트" />;
+  return (
+    <div className={styles.groups} data-testid="purpose-families">
+      {list.value.groups.map(group => (
+        <section key={group} aria-labelledby={`pf-${group}`}>
+          <h2 id={`pf-${group}`} className={styles.groupTitle}>{GROUP_LABEL[group] ?? group} {list.value.items.filter(f => f.group === group).length}종</h2>
+          <ul className={styles.grid}>
+            {list.value.items.filter(f => f.group === group).map(f => {
+              const request = {context: f.contexts[0] === 'any' ? 'general' : f.contexts[0], mode: 'light', items: [{purpose: f.id, visual: 'family:soft', variant: f.example.variant, props: f.example.props, content: f.example.content}]};
+              return (
+                <li key={f.id} className={styles.card} data-purpose={shortId(f.id)}>
+                  <Link href={`/components/purpose/${group}/${f.id.split('.')[1]}`} className={styles.link}>
+                    <Thumb src={renderSrc(request, {kind: 'components'})} title={`${f.label} 미리보기`} width={480} height={360} />
+                    <h3 className={styles.title}>{f.label}</h3>
+                    <p className={styles.meta}>{f.purpose.split('.')[0]}</p>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
   );
 }
