@@ -2,6 +2,7 @@
 import {test, before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {
   assembleDesign, assembleBlueprint, listMaterials, getMaterial, listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
@@ -17,6 +18,7 @@ before(async () => { client = await mcpConnect('modern'); });
 after(async () => { await client.close(); });
 
 const json = x => JSON.stringify(x);
+const sha256 = x => createHash('sha256').update(x).digest('hex');
 const mcp = async (name, args) => (await client.callTool({name, arguments: args})).structuredContent;
 const INCLUDE = ['html', 'css', 'tokens', 'manifest', 'blueprint'];
 const kpis = n => Array.from({length: n}, (_, i) => ({label: `지표 ${i + 1}`, value: String(10 + i)}));
@@ -38,6 +40,29 @@ test('assemble: the service, POST /api/v1/assemble and the assemble_design tool 
     assert.equal(viaRest.text, json(viaService), `${request.purpose}: REST`);
     assert.equal(json(viaMcp), json(viaService), `${request.purpose}: MCP`);
   }
+});
+
+test('assemble: the default work dashboard returns the unchanged three-candidate result through REST and MCP', async () => {
+  const request = {purpose: 'work-dashboard', content: {title: '업무 현황', kpis: [{label: '완료', value: '7'}, {label: '남음', value: '3'}, {label: '대기', value: '2'}], table: {title: '일정', columns: ['업무', '담당'], rows: [['문서', '운영']]}}};
+  const viaMcp = await mcp('assemble_design', request);
+  assert.equal(viaMcp.ok, true, JSON.stringify(viaMcp.errors));
+
+  const viaService = assembleDesign(request);
+  const viaRest = await rest('POST', '/api/v1/assemble', {body: request});
+  assert.equal(viaRest.status, 200);
+  assert.equal(viaService.value.candidates.length, 3);
+  assert.equal(viaRest.text, json(viaService));
+  assert.equal(viaMcp.value.candidates.length, 3);
+  assert.equal(viaMcp.value.selected, viaService.value.selected);
+  assert.deepEqual(viaMcp.value.candidates.map(({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint}) => ({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint})), viaService.value.candidates.map(({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint}) => ({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint})));
+  assert.deepEqual(viaMcp.value.blocked, viaService.value.blocked);
+  assert.deepEqual(viaMcp.value.comparison, viaService.value.comparison);
+  assert.deepEqual(viaMcp.value.plan, viaService.value.plan);
+  assert.deepEqual(viaMcp.value.decisions, viaService.value.decisions);
+  const viaMcpBlueprint = await mcp('assemble_design', {...request, include: ['blueprint']});
+  assert.equal(viaMcpBlueprint.ok, true, JSON.stringify(viaMcpBlueprint.errors));
+  assert.deepEqual(viaMcpBlueprint.value.candidates.map(c => c.value.blueprint), viaService.value.candidates.map(c => c.value.blueprint));
+  assert.equal(sha256(json(viaService)), '98e01ab08f0f96e0c1df752abaf719ad0dde74ada242cd23dbf2fec944416cba');
 });
 
 test('assemble: failures are the same diagnostics on every channel (REST answers 422 or 400, MCP isError)', async () => {
