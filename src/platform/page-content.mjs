@@ -15,9 +15,11 @@ import {PATTERNS} from '../profiles/data.mjs';
 import {axisIds} from './axes.mjs';
 import {axisBans} from '../catalog/axes.mjs';
 import {STATE_KINDS} from './data/states.mjs';
+import {getPurposeFamily, PURPOSE_FAMILY_IDS} from './families/index.mjs';
 
 export const PAGE_REQUEST_KEYS = Object.freeze(['purpose', 'pattern', 'shell', 'width', 'density', 'mode', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'families', 'components', 'content', 'candidates', 'surface', 'motion', 'background', 'media', 'states']);
-export const PAGE_COMPONENT_KEYS = Object.freeze(['base', 'family', 'props', 'content', 'slot']);
+/** 컴포넌트는 기반 컴포넌트(base) 또는 목적 패밀리(purpose, 예 purpose:card.kpi) 중 하나다. 목적 패밀리는 variant·id도 받는다. */
+export const PAGE_COMPONENT_KEYS = Object.freeze(['base', 'purpose', 'family', 'props', 'variant', 'content', 'slot', 'id']);
 export const PAGE_CONTENT_KEYS = Object.freeze(['name', 'nav', 'title', 'description', 'actions', 'kpis', 'charts', 'table', 'list', 'hero', 'features', 'featuresTitle', 'quotes', 'faq', 'cta', 'lead', 'sections', 'notice', 'products', 'productsTitle', 'status']);
 export const MAX_CANDIDATES = 8;
 /** 표가 이 행 수를 넘으면 쪽 단위로 나눠 첫 쪽만 놓고 페이지네이션을 둔다(구형 table·data-table 노드는 최대 40행). */
@@ -67,7 +69,8 @@ export function normalizePageRequest(request) {
   const components = request.components ?? [];
   if (!Array.isArray(components)) diagnostics.push(diag('P_REQUEST_COMPONENTS', '$.components', 'components는 배열입니다'));
   else components.forEach((c, i) => {
-    if (!plain(c) || typeof c.base !== 'string') { diagnostics.push(diag('P_REQUEST_COMPONENTS', `$.components[${i}]`, '{base, family?, props?, content, slot?} 객체여야 합니다')); return; }
+    if (!plain(c) || (typeof c.base !== 'string') === (typeof c.purpose !== 'string')) { diagnostics.push(diag('P_REQUEST_COMPONENTS', `$.components[${i}]`, '{base 또는 purpose 중 하나, family?, props?, variant?, content, slot?} 객체여야 합니다')); return; }
+    if (typeof c.purpose === 'string' && !getPurposeFamily(c.purpose)) diagnostics.push(diag('P_PAGE_COMPONENT', `$.components[${i}].purpose`, `등록되지 않은 목적 패밀리: ${c.purpose}`, {alternatives: PURPOSE_FAMILY_IDS}));
     for (const k of Object.keys(c)) if (!PAGE_COMPONENT_KEYS.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.components[${i}].${k}`, `지원하지 않는 키: ${k}`, {alternatives: PAGE_COMPONENT_KEYS}));
   });
   const families = request.families ?? [];
@@ -89,7 +92,7 @@ export function normalizePageRequest(request) {
   const intent = {
     purpose: request.purpose, pattern: request.pattern ?? null, shell: request.shell ?? null, width: request.width ?? null, density: request.density ?? null, mode,
     styleContext: request.styleContext ?? null, palette: request.palette ?? null, subtokenSet: request.subtokenSet ?? null, typeSystem: request.typeSystem ?? null,
-    families: Array.isArray(families) ? [...families] : [], components: Array.isArray(components) ? clone(components) : [], surface: request.surface ?? null, motion: request.motion ?? null, background: request.background ?? null, media: request.media ?? null, states: plain(reqStates) ? {...reqStates} : {}, content: plain(content) ? clone(content) : {}, candidates: Number.isInteger(limit) ? limit : 3,
+    families: Array.isArray(families) ? [...families] : [], components: Array.isArray(components) ? clone(components).map(c => (c.purpose && getPurposeFamily(c.purpose) ? {...c, base: getPurposeFamily(c.purpose).bases[0]} : c)) : [], surface: request.surface ?? null, motion: request.motion ?? null, background: request.background ?? null, media: request.media ?? null, states: plain(reqStates) ? {...reqStates} : {}, content: plain(content) ? clone(content) : {}, candidates: Number.isInteger(limit) ? limit : 3,
   };
   return {intent, diagnostics};
 }
@@ -397,8 +400,11 @@ function slotFit(slot, type) {
 function placeComponents(ctx, requested) {
   const items = requested.map((c, i) => ({c, i, path: `$.components[${i}]`}));
   const groups = new Map();
+  const pageType = templates[ctx.pattern.template].pageType;
   for (const it of items) {
     const type = nodeTypeOfBase(it.c.base);
+    const purpose = it.c.purpose ? getPurposeFamily(it.c.purpose) : null;
+    if (purpose && !purpose.contexts.includes('any') && !purpose.contexts.includes(pageType)) { ctx.fail('P_PAGE_COMPONENT', `${it.path}.purpose`, `${purpose.id}는 ${pageType} 페이지용이 아닙니다(어울리는 페이지 유형: ${purpose.contexts.join(', ')})`, purpose.contexts); continue; }
     if (!baseIsPlaceable(it.c.base)) { ctx.fail('P_PAGE_COMPONENT', `${it.path}.base`, `${it.c.base}는 페이지 노드로 놓을 수 없습니다(노드 문법에 없는 컴포넌트). 놓을 수 있는 컴포넌트: ${placeableBases(ctx).join(', ')}`, placeableBases(ctx)); continue; }
     const fits = ctx.slots.filter(s => s.id !== 'header' && slotFit(s, type));
     let slot;

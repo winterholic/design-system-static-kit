@@ -86,24 +86,30 @@ assemblePage({
 
 다른 작업자의 재료가 main에 들어오면 다시 측정해 `docs/evidence/platform/baseline.json`을 갱신한다.
 
-## 8. 서비스 함수 초안(W5-b에서 공개)
-
-공개는 다음 단계다. 지금은 내부 모듈이고 이 모양을 초안으로만 둔다.
+## 8. 서비스 함수(W5-b에서 공개, 계약 0.6.0)
 
 ```js
-// src/service/assemble-design.mjs (초안)
-assembleDesign(request)  // request는 assemblePage의 요청과 같다
+// src/service/assemble-design.mjs
+assembleDesign(request, opts?)   // request는 assemblePage의 요청과 같다. opts.include: html·css·tokens·manifest·blueprint(기본), script·standalone(선택)
 // → {ok, value | errors, warnings, catalogVersion, contractVersion}
 //   value: {selected, candidates: [...], blocked: [...], comparison, plan, decisions}
-//   candidates[].value는 {css, html, script, standalone, tokens, manifest}. 웹은 이것을 그대로 내보낸다.
+//   candidates[].value: {html, css, tokens, manifest, blueprint, sizes}  (+ script·standalone은 include로)
+//   candidates[].value.blueprint는 Blueprint 2.7.0(materials). compileBlueprint로 다시 컴파일하면 같은 html·css·tokens가 나온다.
+// src/service/platform-materials.mjs
+listPlatformMaterials({kind?, context?, tag?, query?, fields?, limit?, cursor?})
+getPlatformMaterial({id})                       // 재료 기록과 관계
+recommendMaterials({kind, context?, mode?, density?, styleContext?, selected?, fit?})
+checkCompatibility({ids, context?, mode?, density?})
+// src/service/edit.mjs
+listEditOps()   applyEdit({blueprint, steps: [{op, args?}]})
 ```
 
-REST(`POST /api/v1/assemble`)와 MCP(`assemble_design`)는 같은 함수를 부르고, 같은 요청에 같은 바이트를 낸다.
+REST(`POST /api/v1/assemble` 외)와 MCP(`assemble_design` 외)는 같은 함수를 부르고 같은 요청에 같은 바이트를 낸다(`tests/platform-service-channels.test.mjs`). 목록은 ADR 0012 §9.6.
 
 ## 9. 알려진 한계
 
 - 구형 노드 렌더러가 만드는 마크업이라 `data-family` 범위는 `card-surface`에만 붙는다. 다른 기반 컴포넌트(Button, Tabs 등)를 슬롯에 놓는 경로는 같은 규칙(`placeLike`)으로 열려 있지만, 후보마다의 렌더 확인은 카드만 했다.
-- 목적 패밀리(`src/platform/families`, W3)는 아직 읽지 않는다. 슬롯에 놓는 것은 기반 컴포넌트와 패밀리 구성원이다.
+- 목적 패밀리(`src/platform/families`, W3)는 슬롯의 `purpose` 키로 읽는다. 목적 슬롯과 상태 슬롯은 구형 노드에 표식(`platform-purpose-N`, `platform-state-N`)을 두고 렌더 뒤에 바꾼다.
 - 표를 쪽으로 나누면 1쪽 밖의 행은 출력에 없다(§3).
 - 스타일 맥락은 요청했을 때만 쓴다. 없으면 목적별 템플릿의 테마 기본값이 페이지 축을 정하고 스타일 맥락 선호는 순위에 들어가지 않는다.
 

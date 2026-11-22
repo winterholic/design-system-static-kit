@@ -10,7 +10,7 @@
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-export const PLATFORM_CONTRACT_VERSION = '0.5.0';
+export const PLATFORM_CONTRACT_VERSION = '0.6.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
 export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern']);

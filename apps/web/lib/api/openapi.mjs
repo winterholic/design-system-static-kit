@@ -37,13 +37,28 @@ const VALUE_SCHEMAS = {
   compileBlueprint: {type: 'object', properties: {sizes: {type: 'object', properties: {html: {type: 'integer'}, css: {type: 'integer'}}}, html: {type: 'string'}, htmlSummary: {type: 'object'}, css: {type: 'string'}, tokens: {type: 'object'}, manifest: {type: 'object'}, files: {type: 'object'}}},
   explainDecisions: {type: 'object', properties: {decisions: {type: 'array', items: {type: 'object'}}, page: {type: ['object', 'null']}, axes: {type: 'array', items: {type: 'object'}}, contrast: {type: 'object'}}},
 };
+Object.assign(VALUE_SCHEMAS, {
+  assembleDesign: {type: 'object', properties: {selected: {type: 'string'}, candidates: {type: 'array', items: {type: 'object', description: '{id, rank, score, selection, decisions[{slot, id, source, score, reasons}], relations, quality, warnings, reasons, fingerprint, value{sizes, html, css, tokens, manifest, blueprint}}'}}, blocked: {type: 'array', items: {type: 'object'}}, comparison: {type: 'object'}, plan: {type: 'object'}, decisions: {type: 'array', items: {type: 'object'}}}},
+  assembleBlueprint: {type: 'object', properties: {blueprint: {type: 'object'}, decisions: {type: 'array', items: {type: 'object'}}, materials: {type: 'object'}}},
+  listMaterials: {type: 'object', properties: {items: {type: 'array', items: {type: 'object'}}, total: {type: 'integer'}, nextCursor: {type: ['string', 'null']}, byKind: {type: 'object'}}},
+  getMaterial: {type: 'object', description: '재료 한 장의 전체 기록'},
+  listPlatformMaterials: {type: 'object', properties: {items: {type: 'array', items: {type: 'object'}}, total: {type: 'integer'}, nextCursor: {type: ['string', 'null']}, byKind: {type: 'object'}}},
+  getPlatformMaterial: {type: 'object', description: '재료 기록과 edges{from, to}'},
+  recommendMaterials: {type: 'object', properties: {kind: {type: 'string'}, ranked: {type: 'array', items: {type: 'object'}}, blocked: {type: 'array', items: {type: 'object'}}}},
+  checkCompatibility: {type: 'object', properties: {ok: {type: 'boolean'}, violations: {type: 'array', items: {type: 'object'}}, applied: {type: 'array', items: {type: 'object'}}, checks: {type: 'array', items: {type: 'object'}}}},
+  listEditOps: {type: 'object', properties: {ops: {type: 'array', items: {type: 'string'}}}},
+  applyEdit: {type: 'object', properties: {blueprint: {type: 'object'}, changes: {type: 'array', items: {}}, steps: {type: 'integer'}}},
+});
 VALUE_SCHEMAS.listThemes = VALUE_SCHEMAS.getCatalog;
 VALUE_SCHEMAS.listComponents = VALUE_SCHEMAS.getCatalog;
+
+const PLATFORM_OPS = new Set(['assembleDesign', 'assembleBlueprint', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'checkCompatibility']);
+const tagOf = op => (op.path.startsWith('/api/v1/components') ? 'components' : op.path.startsWith('/api/v1/edit') ? 'edit' : op.path.startsWith('/api/v1/materials') ? 'materials' : PLATFORM_OPS.has(op.id) ? 'assemble' : op.method === 'GET' ? 'read' : 'blueprint');
 
 function operationObject(op) {
   const get = op.method === 'GET';
   const out = {
-    operationId: op.id, summary: op.summary, tags: [op.path.startsWith('/api/v1/components') ? 'components' : get ? 'read' : 'blueprint'],
+    operationId: op.id, summary: op.summary, tags: [tagOf(op)],
     ...(op.description ? {description: op.description} : {}),
     ...(op.parameters ? {parameters: op.parameters} : {}),
   };
@@ -74,11 +89,11 @@ export function buildOpenApi() {
     openapi: '3.1.0',
     info: {
       title: 'Static Kit REST API', version: contractVersion,
-      description: `src/service 의 여섯 함수를 HTTP 로 낸 얇은 어댑터입니다. MCP(/api/mcp)와 CLI 가 같은 서비스를 씁니다. 카탈로그 버전 ${catalogVersion}.\n\n호출 제한은 서버 인스턴스 단위(${RATE_WINDOW_MS / 1000}초 창)이며 서버리스에서는 전역 제한이 아닙니다.`,
+      description: `src/service 의 함수를 HTTP 로 낸 얇은 어댑터입니다(조회·검증·컴파일·설명·조립·재료·추천·호환성·편집). MCP(/api/mcp)와 CLI 가 같은 서비스를 씁니다. 카탈로그 버전 ${catalogVersion}.\n\n호출 제한은 서버 인스턴스 단위(${RATE_WINDOW_MS / 1000}초 창)이며 서버리스에서는 전역 제한이 아닙니다.`,
     },
     'x-catalogVersion': catalogVersion,
     servers: [{url: '/'}],
-    tags: [{name: 'read', description: '카탈로그·스키마 조회(캐시 가능)'}, {name: 'components'}, {name: 'blueprint', description: 'Blueprint 검증·컴파일·설명'}],
+    tags: [{name: 'read', description: '카탈로그·스키마 조회(캐시 가능)'}, {name: 'components'}, {name: 'blueprint', description: 'Blueprint 검증·컴파일·설명'}, {name: 'assemble', description: '플랫폼 조립(복수 후보)과 플랫폼 재료 조회·추천·호환성'}, {name: 'materials', description: '2.6.0 카탈로그 재료 조회'}, {name: 'edit', description: 'Blueprint 편집 연산'}],
     paths,
     components: {schemas: {
       Diagnostic: diagnosticSchema,

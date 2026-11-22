@@ -3,7 +3,7 @@
  * 근거는 manifest.design(맥락 결정과 페이지 규칙 이력), manifest.axes·theme(축과 금지 표), manifest.contrast(대비 쌍)뿐이다.
  * 문장(why)은 규칙 정의의 reason이나 manifest가 적은 reason을 그대로 쓰고, 없으면 규칙 ID만 쓴다. 지어낸 설명은 없다.
  */
-import {compositionRules, pageRules, themes, axisBans} from '../catalog.mjs';
+import {compositionRules, pageRules, themes, axisBans, atLeast} from '../catalog.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 import {compileBlueprint} from './compile.mjs';
 
@@ -146,6 +146,12 @@ export function explainDecisions(subject, opts) {
       }));
       const value = {decisions, page, axes, contrast: contrastSummary(manifest.contrast)};
       if (level === 'full') value.inherited = design?.inherited ?? [];
+      // D1·D2(ADR 0012 §8): 출력에 영향이 없는 필드를 숨기지 않고 알린다.
+      const doc = isPlain(manifest.blueprint) ? manifest.blueprint : null, effects = [];
+      if (doc && Object.hasOwn(doc, 'profile') && !Object.hasOwn(doc, 'materials')) effects.push({field: 'profile', effect: 'validation', note: 'profile은 검증 제약(PF01~PF13)입니다. 컴파일 출력에는 영향이 없어 프로파일만 바꾼 두 문서는 같은 바이트를 냅니다. 출력을 바꾸는 선택은 2.7.0의 materials입니다.'});
+      if (doc && Object.hasOwn(doc, 'colorPalette') && atLeast(doc.catalogVersion, '2.6.0') && !Object.hasOwn(doc, 'materials')) effects.push({field: 'palette', effect: 'none', note: `colorPalette(${String(doc.colorPalette)})가 색을 정하므로 palette 필드는 색에 쓰이지 않습니다.`});
+      if (doc && isPlain(doc.materials)) effects.push({field: 'materials', effect: 'output', note: '색은 materials.palette × materials.subtokenSet, 서체는 materials.typeSystem이 정합니다.'}, {field: 'palette', effect: 'none', note: 'materials가 색을 정하므로 palette 필드는 색에 쓰이지 않습니다.'});
+      if (effects.length) value.effects = effects;
       return jsonClone(value);
     };
     // 모양 검사를 통과한 manifest에서 예상 못한 예외가 나도 엔진 문장을 내보내지 않는다.

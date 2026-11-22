@@ -31,7 +31,7 @@ export async function runOperation(id, request, params = {}) {
     }
     const parsed = op.parse({url: new URL(request.url), params, body});
     if (parsed.reject) return envelopeResponse(parsed.reject);
-    const versionReject = rejectUnexpectedVersion(parsed.catalogVersion);
+    const versionReject = rejectUnexpectedVersion(parsed.catalogVersion, {kind: parsed.args?.kind});
     if (versionReject) return envelopeResponse(versionReject);
     return envelopeResponse(op.call(parsed.args), {cache: op.method === 'GET', request});
   } catch {

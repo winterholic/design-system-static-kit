@@ -22,8 +22,8 @@ const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.i
 
 test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, assembleBlueprint (2.6.0 profiles) and the read-only queryMaterials, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
-  assert.deepEqual(fns, ['assembleBlueprint', 'catalogSnapshot', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getSchema', 'getTypePresets', 'hintFor', 'listCatalog', 'listMaterials', 'queryMaterials', 'validateBlueprint', 'withHint']); // getColorTokens·getMaterial·getTypePresets·listMaterials는 src/service/materials.mjs, queryMaterials는 Materials 화면용 src/service/materials-query.mjs
-  assert.equal(CONTRACT_VERSION, '1.1.0');
+  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleDesign', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'queryMaterials', 'recommendMaterials', 'validateBlueprint', 'withHint']); // assembleDesign·플랫폼 재료 질의 4개는 src/service/assemble-design.mjs·platform-materials.mjs(계약 1.2.0, 추가만), getColorTokens·getMaterial·getTypePresets·listMaterials는 src/service/materials.mjs, queryMaterials는 Materials 화면용 src/service/materials-query.mjs
+  assert.equal(CONTRACT_VERSION, '1.2.0');
 });
 
 test('every function returns the same envelope for success and for failure, carrying catalogVersion and contractVersion', () => {
