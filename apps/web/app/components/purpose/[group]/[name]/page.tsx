@@ -54,7 +54,8 @@ export default async function PurposeFamilyPage({params, searchParams}: Props) {
   const handoffHref = baseId ? writeState({purpose: 'saas-landing', component: shortId(baseId), cvisual: cq.visual, ctitle: fam.label, palette: cq.palette, set: cq.set, type: cq.type, mode: cq.mode, step: 'compare'}) : null;
 
   return (
-    <PageShell eyebrow={`Components · ${group}`} title={fam.label} lead={fam.purpose}>
+    <PageShell eyebrow={`Components · ${group}`} title={fam.label} lead={fam.purpose.split(/(?<=[.다])\s/)[0]}>
+      <p className={styles.meta}>{fam.purpose.split(/(?<=[.다])\s/).slice(1).join(' ')}</p>
       <p className={styles.meta}><Link href="/components">컴포넌트 목록</Link> · 맥락 {fam.contexts.join(', ')} · 기반 {fam.children.map(shortId).join(', ')}</p>
       {notes.length ? <div className="note" role="status" data-testid="auto-adjusted">{notes.map(n => <p key={n}>{n}</p>)}</div> : null}
 

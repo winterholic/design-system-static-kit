@@ -16,6 +16,7 @@ export type AssembleValue = {selected: string; candidates: Candidate[]; blocked:
 export type AssembleRequest = {
   purpose: string; pattern?: string; shell?: string; width?: string; density?: string; mode?: 'light' | 'dark';
   styleContext?: string; palette?: string; subtokenSet?: string; typeSystem?: string; families?: string[];
+  surface?: string; motion?: string; background?: string; media?: string; states?: Record<string, string>;
   components?: {base: string; family?: string; props?: Record<string, unknown>; content: Record<string, unknown>; slot?: string}[];
   content?: Record<string, unknown>; candidates?: number;
 };

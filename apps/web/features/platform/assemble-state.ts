@@ -8,6 +8,8 @@ export type AssembleState = {
   /** Components 에서 넘어온 기반 컴포넌트(짧은 id)와 시각 패밀리, 카드 제목. 페이지 슬롯에 3개로 놓는다(격자는 2칸 이상). */
   component: string | null; cvisual: string | null; ctitle: string | null;
   shell: string | null; width: string | null; density: string | null; device: 390 | 1280;
+  /** 표면·모션·배경·미디어 재료(짧은 id)와 상태 패턴(`슬롯.짧은id`). 스타일 맥락이 고르는 값을 직접 정한다. */
+  surface: string | null; motion: string | null; background: string | null; media: string | null; spat: string | null;
   /** 사용자가 고친 콘텐츠(이름·제목·소개). 요청의 content 로 들어간다. */
   content: Record<string, string>;
   /** 다른 페이지 유형으로 바꾸기 전 확인을 기다리는 값 */
@@ -29,6 +31,8 @@ export function readState(q: URLSearchParams): AssembleState {
     purpose: PURPOSES.some(p => p.id === purpose) ? purpose : null,
     style: pick(q, 'style'), palette: pick(q, 'palette'), set: pick(q, 'set'), type: pick(q, 'type'), family: pick(q, 'family'),
     mode: mode === 'dark' || mode === 'light' ? mode : null,
+    surface: pick(q, 'surface'), motion: pick(q, 'motion'), background: pick(q, 'background'), media: pick(q, 'media'),
+    spat: /^(empty|loading|error|success)\.[a-z0-9-]{1,40}$/.test(q.get('spat') ?? '') ? q.get('spat') : null,
     shell: pick(q, 'shell'), width: pick(q, 'width'), density: pick(q, 'density'), device: q.get('device') === '390' ? 390 : 1280,
     content: Object.fromEntries(CONTENT_FIELDS.flatMap(([f]) => { const v = q.get(`c_${f}`); return v && v.length <= 200 ? [[f, v]] : []; })),
     pending: PURPOSES.some(p => p.id === q.get('pending')) ? q.get('pending') : null,
@@ -39,7 +43,7 @@ export function readState(q: URLSearchParams): AssembleState {
 
 export function writeState(state: Partial<AssembleState>): string {
   const q = new URLSearchParams();
-  for (const key of ['purpose', 'style', 'palette', 'set', 'type', 'family', 'mode', 'component', 'cvisual', 'ctitle', 'shell', 'width', 'density', 'pending'] as const) if (state[key]) q.set(key, state[key]!);
+  for (const key of ['purpose', 'style', 'palette', 'set', 'type', 'family', 'mode', 'component', 'cvisual', 'ctitle', 'shell', 'width', 'density', 'pending', 'surface', 'motion', 'background', 'media', 'spat'] as const) if (state[key]) q.set(key, state[key]!);
   if (state.device === 390) q.set('device', '390');
   for (const [f, v] of Object.entries(state.content ?? {})) q.set(`c_${f}`, v);
   if (state.step && state.step !== 'purpose') q.set('step', state.step);
@@ -59,6 +63,9 @@ export function requestOf(state: AssembleState, candidates = 1): AssembleRequest
     ...(state.type ? {typeSystem: `type-system:${state.type}`} : {}),
     ...(state.family ? {families: [`family:${state.family}`]} : {}),
     ...(state.mode ? {mode: state.mode} : {}),
+    ...(state.surface ? {surface: `surface:${state.surface}`} : {}), ...(state.motion ? {motion: `motion:${state.motion}`} : {}),
+    ...(state.background ? {background: `background:${state.background}`} : {}), ...(state.media ? {media: `media:${state.media}`} : {}),
+    ...(state.spat ? {states: {[state.spat.split('.')[0]]: `state-pattern:${state.spat.slice(state.spat.indexOf('.') + 1)}`}} : {}),
     ...(state.shell ? {shell: state.shell} : {}), ...(state.width ? {width: state.width} : {}), ...(state.density ? {density: state.density} : {}),
     ...(state.component ? {components: [1, 2, 3].map(n => ({base: `base-component:${state.component}`, ...(state.cvisual ? {family: `family:${state.cvisual}`} : {}), content: {id: `c${n}`, title: `${state.ctitle ?? '카드'} ${n}`, body: `${state.ctitle ?? '카드'} ${n} 내용`}}))} : {}),
     ...(content && Object.keys(content).length ? {content} : {}),

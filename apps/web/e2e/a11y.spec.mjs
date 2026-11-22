@@ -10,6 +10,11 @@ const PAGES = [
   {name: 'Components 목록', path: '/components'},
   {name: 'Components hero', path: '/components/hero'},
   {name: 'Studio', path: '/studio?template=dashboard-overview', ready: '[data-phase="ready"]'},
+  {name: 'Materials 팔레트 상세', path: '/materials/palettes/ocean-cool'},
+  {name: 'Materials 스타일', path: '/materials/styles'},
+  {name: 'Components 목적 패밀리', path: '/components/purpose/card/pricing'},
+  {name: 'Studio 조립 재료 교체', path: '/studio/assemble?purpose=work-dashboard&step=swap'},
+  {name: 'Studio 조립 후보 비교', path: '/studio/assemble?purpose=saas-landing&step=compare'},
   {name: 'Docs 시작하기', path: '/docs/guide/getting-started'},
   {name: 'Integrations MCP', path: '/docs/integrations/mcp'},
 ];

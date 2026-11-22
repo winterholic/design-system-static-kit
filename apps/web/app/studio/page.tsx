@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {StudioApp} from '@/features/studio/StudioApp';
+import {platformReady} from '@/features/platform/platform.server';
 
 export const metadata: Metadata = {title: 'Studio', description: '디자인을 고르고, 고친 내용이 규칙을 통과하는지 바로 확인하며 내려받습니다.'};
 
@@ -9,7 +10,7 @@ export default function StudioPage() {
     <>
       <h1 className="visually-hidden">Studio</h1>
       <noscript><p className="note">Studio는 JavaScript가 필요합니다.</p></noscript>
-      <StudioApp />
+      <StudioApp assembleEnabled={platformReady()} />
     </>
   );
 }

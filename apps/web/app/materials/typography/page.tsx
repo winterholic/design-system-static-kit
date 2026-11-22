@@ -5,7 +5,6 @@ import {typeView} from '@/features/materials/materials.server';
 import {studioForPreset} from '@/features/materials/studio-link';
 import {ButtonLink} from '@/ui';
 import {TypeCompare} from '@/features/platform/TypeCompare';
-import {Unavailable} from '@/features/platform/Unavailable';
 import {platformReady} from '@/features/platform/platform.server';
 import {first} from '@/features/platform/labels';
 import {SAMPLES, type SampleId} from '@/features/platform/samples';
@@ -44,7 +43,7 @@ export default async function TypographyPage({searchParams}: Props) {
   return (
     <PageShell eyebrow="Materials · 타이포그래피" title="역할로 나눈 글자 스타일" lead="프리셋마다 디스플레이부터 코드까지 일곱 역할의 크기와 굵기, 행간, 자간이 정해져 있습니다. 한글과 영문, 숫자가 섞인 문구로 줄바꿈까지 시험합니다.">
       <MaterialsNav current="typography" />
-      {platformReady() ? <TypeCompare query={compareQuery} /> : <Unavailable what="타이포 시스템 비교" />}
+      {platformReady() ? <TypeCompare query={compareQuery} /> : null}
       <style>{preset.css}</style>
 
       <nav className={styles.presetNav} aria-label="프리셋">

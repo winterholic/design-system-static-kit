@@ -10,7 +10,7 @@ import {ButtonLink} from '@/ui';
 import {PLATFORM_CASES} from '@/features/platform/cases';
 import {assembleDesign, material, platformReady} from '@/features/platform/platform.server';
 import {renderSrc} from '@/features/platform/render-url';
-import {requestOf, writeState, type AssembleState} from '@/features/platform/assemble-state';
+import {readState, requestOf, writeState, type AssembleState} from '@/features/platform/assemble-state';
 import {purposeOf, shortId} from '@/features/platform/labels';
 
 export const metadata = {title: 'Explore'};
@@ -116,7 +116,7 @@ function PlatformCases() {
       <p className={styles.featuredLead}>SaaS 랜딩, 업무 대시보드, 에디토리얼, 커머스를 서로 다른 팔레트·서브토큰 세트·서체로 조립했습니다. 열어서 재료를 바꿔 볼 수 있습니다.</p>
       <ul className={styles.grid}>
         {PLATFORM_CASES.map(k => {
-          const state = {...k.state, mode: null, step: 'swap'} as unknown as AssembleState;
+          const state: AssembleState = readState(new URLSearchParams(writeState({...k.state, step: 'swap'}).split('?')[1]));
           const request = requestOf(state);
           if (!request || !assembleDesign({...request, candidates: 1}).ok) return null;
           const names = [k.state.palette && `palette:${k.state.palette}`, k.state.set && `subtoken-set:${k.state.set}`, k.state.type && `type-system:${k.state.type}`, k.state.family && `family:${k.state.family}`].filter(Boolean) as string[];

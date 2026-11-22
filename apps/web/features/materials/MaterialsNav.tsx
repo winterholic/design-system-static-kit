@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {platformReady} from '@/features/platform/platform.server';
 import styles from './materials.module.css';
 
 const SECTIONS = [
@@ -15,7 +16,7 @@ export type MaterialsSection = (typeof SECTIONS)[number]['id'];
 export function MaterialsNav({current}: {current: MaterialsSection}) {
   return (
     <nav className={styles.subnav} aria-label="재료 종류">
-      {SECTIONS.map(s => <Link key={s.id} href={s.href} className={styles.subLink} aria-current={s.id === current ? 'page' : undefined}>{s.label}</Link>)}
+      {SECTIONS.filter(s => platformReady() || (s.id !== 'palettes' && s.id !== 'styles')).map(s => <Link key={s.id} href={s.href} className={styles.subLink} aria-current={s.id === current ? 'page' : undefined}>{s.label}</Link>)}
     </nav>
   );
 }

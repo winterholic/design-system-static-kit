@@ -40,7 +40,7 @@
 .split { display: grid; grid-template-columns: 1fr; gap: var(--space-5); margin-top: var(--space-4); }
 @media (min-width: 1000px) { .split { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: var(--space-6); } }
 .controls { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
-.ctlTitle { margin: 0 0 var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--color-muted); }
+.ctlTitle { margin: 0 0 var(--space-2); font-size: var(--text-md); font-weight: var(--weight-strong); color: var(--color-muted); }
 .stage { min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .code { margin-top: var(--space-3); }
 .code summary { cursor: pointer; min-height: var(--tap-min); display: flex; align-items: center; font-weight: var(--weight-strong); }

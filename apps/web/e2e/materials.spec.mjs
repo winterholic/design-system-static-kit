@@ -3,6 +3,8 @@ import {expect, test} from '@playwright/test';
 import {queryMaterials} from '@winterholic/design-system-static-kit/service';
 import {optionStates, pick} from './helpers/select.mjs';
 
+import * as service from '@winterholic/design-system-static-kit/service';
+const PLATFORM_PALETTES = typeof service.listPlatformMaterials === 'function' ? service.listPlatformMaterials({kind: 'palette'}).value.items.map(i => i.id) : [];
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
 // 화면이 읽는 것과 같은 ./service 질의에서 기대값을 얻는다. Core 계산과의 독립 대조는 tests/service-materials.test.mjs가 한다.
 const color = queryMaterials({view: 'color'}).value;
@@ -113,7 +115,8 @@ test.describe('색', () => {
     for (const path of ['/materials', '/materials/color', '/materials/typography', '/materials/foundations', '/materials/foundations/backdrop']) {
       const html = await (await request.get(path)).text();
       expect(html.toLowerCase(), path).not.toContain('coolors');
-      expect(html, path).not.toMatch(/palette:[a-z0-9-]+/);
+      // 조립 플랫폼의 자체 팔레트(license: internal)는 Materials 에 나온다. 레거시 카탈로그의 팔레트 id 는 나오지 않는다.
+      for (const id of html.match(/palette:[a-z0-9-]+/g) ?? []) expect(PLATFORM_PALETTES, `${path} ${id}`).toContain(id);
     }
     await page.goto('/materials/color');
     // 토큰 목록은 static-kit 하나의 토큰만 담는다.

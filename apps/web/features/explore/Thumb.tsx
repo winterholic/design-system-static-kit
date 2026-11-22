@@ -28,7 +28,9 @@ export function Thumb({src, title, width = VIEW_W, height = VIEW_H, interactive 
   return (
     <div ref={box} className={styles.box} style={{aspectRatio: `${width} / ${height}`}} data-live={live && scale > 0}>
       {live && scale > 0 ? (
+        // key 가 src 이므로 주소가 바뀌면 iframe 요소를 새로 만든다. 열린 iframe 의 src 를 바꾸면 Chromium이 history 항목을 쌓아 뒤로 가기가 무반응이 된다(W6a B10과 같은 원인).
         <iframe
+          key={src}
           src={src}
           title={title}
           tabIndex={interactive ? 0 : -1}

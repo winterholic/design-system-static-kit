@@ -16,9 +16,9 @@ export default function ComponentsPage() {
   const rows = componentRows().filter(r => r.type !== 'page');
   const groups = [...new Set(rows.map(r => r.group))];
   return (
-    <PageShell eyebrow="Components" title="컴포넌트" lead="목적별 컴포넌트를 시각 패밀리로 바꿔 보고, 상태·크기·콘텐츠를 바꾸며 코드로 가져갑니다. 아래에는 페이지를 이루는 구조 부품 카탈로그가 이어집니다.">
-      {platformReady() ? <PurposeSection /> : <Unavailable what="목적별 컴포넌트" />}
-      <h2 className={styles.groupTitle} style={{marginTop: 'var(--space-8)'}}>페이지 구조 부품</h2>
+    <PageShell eyebrow="Components" title={platformReady() ? '컴포넌트' : '부품 카탈로그'} lead={platformReady() ? '목적별 컴포넌트를 시각 패밀리로 바꿔 보고, 상태·크기·콘텐츠를 바꾸며 코드로 가져갑니다. 아래에는 페이지를 이루는 구조 부품 카탈로그가 이어집니다.' : '페이지를 이루는 부품입니다. 각 부품의 렌더 결과와 변형, 받는 속성, 놓을 수 있는 자리를 카탈로그에서 그대로 읽어 보여 줍니다.'}>
+      {platformReady() ? <PurposeSection /> : null}
+      {platformReady() ? <h2 className={styles.groupTitle} style={{marginTop: 'var(--space-8)'}}>페이지 구조 부품</h2> : null}
       <div className={styles.groups}>
         {groups.map(group => (
           <section key={group} aria-labelledby={`g-${group}`}>

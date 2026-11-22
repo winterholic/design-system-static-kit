@@ -35,7 +35,8 @@ const isTextTarget = (t: EventTarget | null) => {
   return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
 };
 
-export function StudioApp() {
+/** assembleEnabled: 조립 서비스가 공개되어 /studio/assemble 이 동작할 때만 시작 화면에 조립 진입을 보인다. */
+export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [coreReady, setCoreReady] = useState(false);
   const [catalog, setCatalog] = useState<Catalog | null>(null);
@@ -334,7 +335,7 @@ export function StudioApp() {
           <>
             <Toolbar />
             <Banners />
-            {phase === 'start' ? <StartScreen /> : (
+            {phase === 'start' ? <StartScreen assembleEnabled={assembleEnabled} /> : (
               <div className={styles.workspace} data-pane={view.pane}>
                 <EditPane />
                 <PreviewPane />

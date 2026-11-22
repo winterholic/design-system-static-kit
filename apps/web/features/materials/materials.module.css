@@ -197,3 +197,7 @@
 .primitives code { background: none; padding: 0; color: var(--color-muted); font-size: var(--text-xs); overflow-wrap: anywhere; }
 @media (min-width: 720px) { .primitives li { grid-template-columns: 10rem minmax(0, 1fr); gap: var(--space-5); } }
 .crumb { margin: 0 0 var(--space-4); font-size: var(--text-sm); }
+
+/* 플랫폼 재료 카드는 문장이 길어 1000px 미만에서는 한 줄에 한두 장만 둔다. */
+@media (min-width: 720px) { .cardsWide { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .cardsWide { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

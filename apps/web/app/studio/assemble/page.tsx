@@ -140,7 +140,7 @@ function DirectionStep({state, here}: StepProps) {
               {probe.ok ? <Thumb src={renderSrc(request)} title={`${label(r.id)} 방향`} /> : <p className="note">{probe.reason}</p>}
               <h3>{label(r.id)}</h3>
               <p className={styles.meta}>{((material(r.id)?.mood as string[] | undefined) ?? []).join(' · ')}</p>
-              {text(r.reasons).length ? <ul className={styles.reasons}>{text(r.reasons).slice(0, 2).map(t => <li key={t}>{t}</li>)}</ul> : null}
+              <ul className={styles.reasons}>{(text(r.reasons).length ? text(r.reasons).slice(0, 2) : [`${purpose.label}의 맥락(${purpose.context})에 맞는 스타일입니다.`]).map(t => <li key={t}>{t}</li>)}</ul>
               {probe.ok ? <Link className={styles.chipLink} href={here({style: shortId(r.id), step: 'compare'})}>이 방향으로 계속</Link> : null}
             </li>
           );
@@ -202,6 +202,7 @@ function SwapStep({state, here}: StepProps) {
   const sets = blockedOf('subtoken-set', state.palette ? [`palette:${state.palette}`] : []);
   const types = blockedOf('type-system', anchors, {context: purpose.context, fit: true});
   const fams = blockedOf('family', anchors);
+  const others = Object.fromEntries(['surface', 'motion', 'background', 'media'].map(k => [k, blockedOf(k, anchors, {context: purpose.context})])) as Record<'surface' | 'motion' | 'background' | 'media', ReturnType<typeof blockedOf>>;
   const pals = blockedOf('palette', state.set ? [`subtoken-set:${state.set}`] : []);
   const axisOptions = (axis: 'shell' | 'width' | 'density') => materials('axis-value').filter(m => m.id.startsWith(`axis-value:${axis}.`)).map(m => {
     const value = m.id.slice(`axis-value:${axis}.`.length);
@@ -217,6 +218,10 @@ function SwapStep({state, here}: StepProps) {
           <SwapSelect id="s-set" label="서브토큰 세트" param="set" value={state.set ?? ''} placeholder="추천에 맡김" options={options('subtoken-set', materials('subtoken-set'), null, sets.blocked)} />
           <SwapSelect id="s-type" label="타이포 시스템" param="type" value={state.type ?? ''} placeholder="추천에 맡김" options={options('type-system', materials('type-system'), types.ranked, types.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-family" label="컴포넌트 패밀리" param="family" value={state.family ?? ''} placeholder="추천에 맡김" options={options('family', materials('family'), null, fams.blocked)} />
+          <SwapSelect id="s-surface" label="표면" param="surface" value={state.surface ?? ''} placeholder="방향에 맡김" options={options('surface', materials('surface'), others.surface.ranked, others.surface.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-motion" label="모션" param="motion" value={state.motion ?? ''} placeholder="방향에 맡김" options={options('motion', materials('motion'), others.motion.ranked, others.motion.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-background" label="배경" param="background" value={state.background ?? ''} placeholder="방향에 맡김" options={options('background', materials('background'), others.background.ranked, others.background.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-media" label="미디어" param="media" value={state.media ?? ''} placeholder="방향에 맡김" options={options('media', materials('media'), others.media.ranked, others.media.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-shell" label="셸" param="shell" value={state.shell ?? ''} placeholder="방향에 맡김" options={axisOptions('shell')} />
           <SwapSelect id="s-width" label="폭" param="width" value={state.width ?? ''} placeholder="방향에 맡김" options={axisOptions('width')} />
           <SwapSelect id="s-density" label="밀도" param="density" value={state.density ?? ''} placeholder="방향에 맡김" options={axisOptions('density')} />

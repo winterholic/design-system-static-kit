@@ -3,18 +3,63 @@ import {PageShell} from '@/shell/PageShell';
 import {MaterialsNav} from '@/features/materials/MaterialsNav';
 import {Thumb} from '@/features/explore/Thumb';
 import {Unavailable} from '@/features/platform/Unavailable';
-import {assembleDesign, material, materials, platformReady, recommend} from '@/features/platform/platform.server';
+import {assembleDesign, material, materials, platformReady, probeDesign, recommend} from '@/features/platform/platform.server';
 import {renderSrc} from '@/features/platform/render-url';
 import {writeState} from '@/features/platform/assemble-state';
 import {PURPOSES, first, purposeOf, shortId} from '@/features/platform/labels';
 import {SAMPLES} from '@/features/platform/samples';
 import styles from '@/features/platform/platform.module.css';
+import type {Material} from '@/features/platform/types';
+
+const OTHER_KINDS = [
+  {id: 'surface', label: '표면', key: 'surface'}, {id: 'motion', label: '모션', key: 'motion'}, {id: 'background', label: '배경', key: 'background'},
+  {id: 'media', label: '미디어', key: 'media'}, {id: 'state-pattern', label: '상태 패턴', key: 'states'},
+] as const;
+const STATE_SLOTS = ['empty', 'loading', 'error', 'success'];
+
+const studioPatch = (purpose: string, kind: string, m: Material) => ({
+  purpose, step: 'swap' as const,
+  ...(kind === 'state-pattern' ? {spat: `${(m.tags ?? []).find(t => STATE_SLOTS.includes(t)) ?? 'empty'}.${shortId(m.id)}`} : {[kind]: shortId(m.id)}),
+});
+
+/** 표면·모션·배경·미디어·상태 패턴 재료를 같은 페이지에 하나씩 적용한 결과. 조립 요청의 해당 키에 재료 id 를 그대로 넣는다. */
+function OtherMaterials({purposeId, kind, content, hrefFor}: {purposeId: string; kind: string; content?: Record<string, unknown>; hrefFor: (kind: string) => string}) {
+  const spec = OTHER_KINDS.find(k => k.id === kind)!;
+  const items = materials(kind);
+  const requestFor = (m: Material) => {
+    const extra = kind === 'state-pattern' ? {states: {[(m.tags ?? []).find(t => STATE_SLOTS.includes(t)) ?? 'empty']: m.id}} : {[spec.key]: m.id};
+    return {purpose: purposeId, ...extra, ...(content ? {content} : {}), candidates: 1};
+  };
+  return (
+    <section id="other" aria-labelledby="other-title" data-testid="other-materials">
+      <h2 className="section-title" id="other-title">표면·모션·배경·미디어·상태 패턴</h2>
+      <p className="prose">스타일 맥락이 고르는 값을 하나씩 직접 골라 같은 페이지에 적용한 결과입니다. 이 페이지 유형이나 맥락과 맞지 않는 재료는 이유와 함께 보입니다.</p>
+      <ul className={styles.chips} aria-label="재료 종류">{OTHER_KINDS.map(k => <li key={k.id}><Link href={hrefFor(k.id)} replace scroll={false} aria-current={k.id === kind ? 'true' : undefined}>{k.label}</Link></li>)}</ul>
+      <ul className={styles.grid} data-cols="3" style={{marginTop: 'var(--space-4)'}}>
+        {items.map(m => {
+          const request = requestFor(m);
+          const probe = probeDesign(request as never);
+          return (
+            <li key={m.id} className={styles.cell} data-material={shortId(m.id)}>
+              <h3>{m.label}</h3>
+              {probe.ok ? <Thumb src={renderSrc(request as never)} title={`${m.label} 적용`} /> : <p className="note" role="status">{probe.reason}</p>}
+              <p className={styles.meta}>맥락 {(m.contexts ?? []).join(', ')}</p>
+              {probe.ok ? <Link className={styles.chipLink} href={writeState(studioPatch(purposeId, kind, m))}>Studio에서 쓰기</Link> : null}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
 
 export const metadata = {title: '표면·모션·상태 | Materials', description: '스타일 맥락을 같은 페이지에 나란히 적용해 표면, 모션, 모서리, 배경의 차이를 실제 화면으로 비교합니다.'};
 type Props = {searchParams: Promise<Record<string, string | string[] | undefined>>};
 
 export default async function StylesPage({searchParams}: Props) {
   const sp = await searchParams;
+  const kindAsked = first(sp.kind);
+  const kind = (OTHER_KINDS.find(k => k.id === kindAsked) ?? OTHER_KINDS[0]).id;
   if (!platformReady()) return <PageShell eyebrow="Materials" title="표면·모션·상태"><MaterialsNav current="styles" /><Unavailable what="스타일 맥락 비교" /></PageShell>;
   const purpose = purposeOf(first(sp.purpose)) ?? PURPOSES[0];
   const all = materials('style-context');
@@ -65,9 +110,7 @@ export default async function StylesPage({searchParams}: Props) {
         })}
       </ul>
 
-      <h2 className="section-title">표면·모션·배경·상태 패턴</h2>
-      <p className="prose">표면 5, 모션 4, 배경 5, 미디어 6, 상태 패턴 8개 재료는 스타일 맥락이 고르는 값으로 위 화면에 이미 적용되어 있습니다. 재료 하나만 따로 렌더해 보는 화면은 조립 서비스가 재료 단위 조립을 공개하면 연결됩니다.</p>
-      <div className="note" data-testid="style-materials-pending"><p>서비스 대기: 표면·모션·배경·미디어·상태 패턴을 단독 조립하는 함수(<code>assembleStyleMaterials</code>)와 재료 목록이 Core 서비스에 없습니다. 웹은 이 재료의 마크업을 직접 만들지 않습니다.</p></div>
+      <OtherMaterials purposeId={purpose.id} kind={kind} content={content} hrefFor={k => `/materials/styles?${new URLSearchParams({...(purpose.id !== PURPOSES[0].id ? {purpose: purpose.id} : {}), ...(asked.length ? {with: asked.join(',')} : {}), kind: k})}#other`} />
     </PageShell>
   );
 }
