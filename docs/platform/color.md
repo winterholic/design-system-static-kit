@@ -191,6 +191,8 @@ const r = proposeSubtokenSets(['#D2501E', '#6F625A', '#0D6E8E']); // hex 3~6개
 
 ## 7. 제약과 W5에 요청
 
+> 1~4는 계약 0.4.0(조립 엔진 작업)에서 처리했다. 결과는 [ADR 0012 §9.4](../adr/0012-assembly-platform.md). `fixed`는 계산까지 되지만 세트의 `surface`·`canvas`는 그대로다.
+
 1. **`fixed` 규칙**(WBS ③): 흰 표면 같은 고정값이 없어 라이트 표면이 neutral 50이다. `RoleRule`에 `{fixed: '#FFFFFF' | 램프 자리 + 혼합비}` 같은 규칙을 더해 달라. 더하면 각 세트의 `surface`·`canvas`를 갱신하고 계약 버전을 올린다.
 2. **세트 기록 필드**: 상태·상호작용, 컴포넌트 의미, 차트 설계(`SUBTOKEN_SET_DESIGNS`)를 `subtoken-set` 기록의 필드로 올려 달라(`KIND_SPECS`에 `states`, `charts` 등). 지금은 `bindColor`가 세트 id로 같은 파일의 설계를 찾는다. 시험용으로 등록한 세트는 `DEFAULT_DESIGN`을 쓴다.
 3. **`dashboard` 컨텍스트**: 새 세트의 `contexts`에는 `dashboard`가 없다. `tests/platform-minimal.test.mjs`(W5 소유)가 dashboard·light·static-kit에서 세트 추천 순위를 `[standard, tinted]`로, no-accent 팔레트에서 후보 0개로 고정하기 때문이다. 시험을 갱신한 뒤 `high-contrast`와 `data-dense`에 `dashboard`를 더하면 된다(`subtoken-sets.mjs` 주석).

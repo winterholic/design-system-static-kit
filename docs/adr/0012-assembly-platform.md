@@ -1,6 +1,6 @@
 # ADR 0012: 재료 조립 플랫폼 계약
 
-- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0(§9, 2026-11-22).
+- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0(§9, 2026-11-22).
 - 날짜: 2026-11-22
 - 관련: ADR 0001, 0009, 0011; [감사 2026-11](../platform/audit-2026-11.md)
 - 번호 메모: 작업 카드는 `0010-assembly-platform.md`를 지시했다. 그러나 0010은 이미 `0010-expression-grammar-2-5.md`가 쓰고 있어 0012로 둔다.
@@ -253,10 +253,10 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 
 | 요청 | 결과 |
 |---|---|
-| W1-1 RoleRule `fixed` | 처리. `{fixed: '#RRGGBB' \| {from, step, mix?: {with, ratio}}, min?}`를 계약이 받는다(검증만). 값 계산은 `color.mjs`의 몫이라 색 작업이 `bindColor`에 더한다. 그 전에는 이 규칙을 쓴 세트가 `ok:false`로 보고된다 |
+| W1-1 RoleRule `fixed` | 처리. `{fixed: '#RRGGBB' \| {from, step, mix?: {with, ratio}}, min?}`를 계약이 받는다. 계산은 0.4.0에서 `bindColor`가 한다(§9.4) |
 | W1-2 세트 기록 필드 | 처리. `subtoken-set`에 선택 필드 `states`, `components`, `charts`(object). 없으면 결합 엔진의 기본 설계 |
 | W1-3 `dashboard` 맥락 시험 | 처리. `tests/platform-minimal.test.mjs`가 세트 순위 전체를 고정하지 않는다(표준이 1순위, 틴트가 그 뒤). 세트의 `contexts` 갱신은 색 작업 몫 |
-| W1-4 `index.mjs` 내보내기 | 하지 않음. `colorMatrix` 등은 main에 아직 없다. 그 코드가 main에 오면 한 줄로 더한다 |
+| W1-4 `index.mjs` 내보내기 | 0.4.0에서 처리(§9.4) |
 | W2-1 추천이 적합성 표를 읽는다 | 처리. `recommend({…, fit: true})`가 `typeFit` 점수와 이유를 더한다. 기본은 끈다: `tests/platform-type.test.mjs`가 기존 순위(workspace 1순위 tech-erp)를 고정하고 있어서다. 그 시험의 기대 순위가 옮겨지면 기본을 켠다. 페이지 파이프라인은 켠다 |
 | W2-2 오류 코드 | 처리. `P_TYPE_HANGUL_*`는 모두 `P_CHECK_TYPE_HANGUL`, `P_TYPE_HIERARCHY`는 그대로(`typeErrorCode`) |
 | W2-3 서체 짝·역할 체계를 종류로 | 승격하지 않는다. 지금 이 둘을 가리키는 관계가 없고 `type-system` 기록의 문자열 참조로 충분하다. 관계 대상이 되어야 하는 요구가 생기면 종류로 올린다 |
@@ -272,4 +272,15 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 ### 9.3 서비스 공개 초안(W5-b 예고)
 
 `assembleDesign(request)`의 요청은 `assemblePage`와 같고 응답은 같은 봉투 안의 `{selected, candidates, blocked, comparison, plan, decisions}`다(`pages.md` §8). 서비스·REST·MCP 공개, Blueprint 2.7.0 게이트, §8의 D1·D2·D3은 다음 단계이고 이 개정은 그 어느 것도 하지 않았다.
+
+### 9.4 0.4.0: 색 작업(W1)이 main에 들어온 뒤의 요청 1~4
+
+`docs/platform/color.md` §7의 요청 1~4를 처리했다. 색 작업이 끝나서 `color.mjs`와 `subtoken-sets.mjs`의 필요한 줄은 조립 엔진 작업이 고쳤다.
+
+| 요청 | 결과 |
+|---|---|
+| 1 `fixed` 규칙 | 처리. `bindColor`가 `fixed`를 계산한다: 리터럴이면 그 값, `{from, step}`이면 램프 단계, `mix`가 있으면 그 색과 비율로 섞은 값(`colorMix`). 보정하지 않는다(고정값은 대비에 못 미쳐도 바뀌지 않는다). `min`은 보고만 하고 못 미치면 쌍이 `ok:false`다. **표준 세트 등의 `surface`·`canvas`는 바꾸지 않았다**: 값을 바꾸면 색 토큰 집합 전체와 W1·W4 시험이 고정한 출력이 움직이므로 세트를 갱신하는 일은 색 작업의 결정으로 남긴다. 규칙은 이제 쓸 수 있다 |
+| 2 세트 기록 필드 | 처리. `states`(`hover`·`active` 0~1 비율, `control: {border: 역할, min}`), `components`(`table: {head, hover, selected}` 면 역할), `charts`(`categorical`·`sequential`·`diverging`)를 기록 필드로 올렸다. 7개 세트 기록이 `SUBTOKEN_SET_DESIGNS`의 원본 표를 싣고, `bindColor`는 기록에서 읽는다(`designOf`, 없는 부분은 `DEFAULT_DESIGN`). 필드 모양은 `P_SUBTOKEN_DESIGN`으로 검사한다 |
+| 3 `dashboard` 맥락 | 처리. 시험을 갱신(0.3.0)했고 `high-contrast`와 `data-dense`의 `contexts`에 `dashboard`를 더했다. 기본 순위는 표준이 1순위이고 틴트 다음이 데이터 밀집 등으로 바뀐다. 이 때문에 스타일 작업의 `sport` 선택 `['commerce-vivid', 'high-contrast']`가 dashboard에서 표준과 동점이 되어(`tests/platform-style-contexts.test.mjs`의 id 순 동점 금지) 두 번째 선택을 `standard`로 바꾸고 `docs/platform/style-contexts.md` 표를 다시 만들었다 |
+| 4 내보내기 | 처리. `src/platform/index.mjs`가 `colorMatrix`, `proposeSubtokenSets`, `assignSeeds`, `paletteRamps`, `SUBTOKEN_SET_DESIGNS`, `DEFAULT_DESIGN`, `designOf`를 내보낸다 |
 

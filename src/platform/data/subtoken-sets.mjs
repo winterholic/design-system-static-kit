@@ -2,12 +2,10 @@
  * 서브토큰 세트(색 작업 소유). 팔레트 원색 자리 → 색 역할의 분배 규칙이다. 원색 값을 갖지 않으므로 여러 팔레트에 재사용한다.
  * 역할 순서가 계산 순서다: 배경 역할을 먼저 두고, 글자 역할은 대비 기준(min.against)으로 앞의 배경을 가리킨다.
  *
- * 세트는 두 층으로 나뉜다.
- *   SUBTOKEN_SETS         계약(src/platform/contract.mjs)이 받는 기록. 색 역할 23개의 분배 규칙(라이트·다크 단계, 대비 하한)
- *   SUBTOKEN_SET_DESIGNS  세트 id별 파생 설계. 상호작용 상태(hover·active), 컴포넌트 의미 토큰이 읽는 역할, 차트 색 역할(범주형·순차·발산)
- * 파생 설계가 따로 있는 이유: 계약의 subtoken-set 기록은 needs·roles·modes만 받는다. 파생 설계를 기록 필드로 올리는 일은 조립 엔진 작업(W5)에
- * 계약 변경으로 요청한다(docs/platform/color.md). 그 전까지 src/platform/color.mjs의 bindColor가 id로 이 설계를 찾아 같은 결합 결과에 싣는다.
- * 설계가 없는 세트(시험용 등)는 DEFAULT_DESIGN을 쓴다.
+ * 세트 기록은 두 가지를 가진다(계약 0.4.0부터 둘 다 기록 필드다).
+ *   roles                 색 역할 23개의 분배 규칙(라이트·다크 단계, 대비 하한)
+ *   states·components·charts  파생 설계: 상호작용 상태, 컴포넌트 의미 토큰이 읽는 면, 차트 색 역할(아래 SUBTOKEN_SET_DESIGNS가 원본 표이고 기록에 실린다)
+ * 설계 필드가 없는 세트(시험용 등)는 DEFAULT_DESIGN을 쓴다.
  */
 import {definePlatformMaterial} from '../contract.mjs';
 
@@ -89,23 +87,6 @@ const dataDense = variant({
 });
 
 /**
- * 컨텍스트 메모: 새 세트는 'dashboard'를 contexts에 넣지 않는다. tests/platform-minimal.test.mjs(조립 엔진 작업 소유)가 dashboard·light·static-kit에서
- * 서브토큰 세트 추천 순위를 [standard, tinted]로 고정한다. 조립 엔진 작업이 그 시험을 갱신하면 'dashboard'(또는 'any')를 더한다(docs/platform/color.md).
- */
-const done = {status: 'implemented', evidence: []};
-const make = (id, label, roles, extra) => definePlatformMaterial({id: `subtoken-set:${id}`, kind: 'subtoken-set', label, needs: ALL, modes: ['light', 'dark'], roles, quality: done, ...extra});
-
-export const SUBTOKEN_SETS = Object.freeze([
-  make('standard', '표준 분배(차분한 제품 UI)', standard, {tags: ['neutral-surface', 'calm-product-ui'], reuses: ['color-token:semantic.action']}),
-  make('tinted', '틴트 분배', tinted, {tags: ['brand-surface']}),
-  make('editorial-warm', '따뜻한 에디토리얼', editorialWarm, {tags: ['editorial', 'warm-paper'], contexts: ['article', 'blog', 'docs', 'landing', 'portfolio', 'community', 'general']}),
-  make('commerce-vivid', '강조색이 선명한 커머스', commerceVivid, {tags: ['commerce', 'accent-led'], contexts: ['commerce', 'landing', 'listing', 'pricing', 'portfolio', 'general']}),
-  make('premium-dark', '어두운 배경의 프리미엄', premiumDark, {tags: ['premium', 'dark-first'], contexts: ['landing', 'portfolio', 'commerce', 'pricing', 'article', 'general']}),
-  make('high-contrast', '고대비', highContrast, {tags: ['accessibility', 'high-contrast'], contexts: ['general', 'landing', 'data', 'listing', 'community', 'docs', 'article', 'blog', 'commerce', 'portfolio', 'pricing', 'form', 'settings', 'auth', 'error']}),
-  make('data-dense', '데이터 밀집(표·차트 중심)', dataDense, {tags: ['data', 'table-chart'], contexts: ['data', 'listing', 'settings']}),
-]);
-
-/**
  * 세트별 파생 설계. 값은 모두 "어느 역할에서 가져오는가"와 "얼마나 움직이는가"뿐이다. 색값을 갖지 않는다.
  *   hover·active      주/보조 액션 채움을 라이트는 검정 쪽, 다크는 흰색 쪽으로 이동하는 비율
  *   control           입력 계열 경계의 출처 역할(border|rule)과 비텍스트 대비 하한
@@ -146,3 +127,23 @@ export const SUBTOKEN_SET_DESIGNS = Object.freeze({
   'subtoken-set:data-dense': design({hover: 0.08, active: 0.14, table: {head: 'sunken', hover: 'cardHover', selected: 'cardActive'},
     charts: {categorical: {tone: 'deep', chroma: 0.6, lead: ['brand', 'accent'], minDistinct: 18}, sequential: {from: 'brand'}, diverging: {low: ['danger', 'warning'], high: ['info', 'brand']}}}),
 });
+
+/**
+ * 컨텍스트 메모: 기본 추천 순위(표준 → 틴트)는 tests/platform-minimal.test.mjs가 세트 전체 순위를 고정하지 않으므로 high-contrast와 data-dense도
+ * dashboard를 연다(조립 엔진 작업이 시험을 갱신한 뒤). 새 세트가 업무 화면에서 쓸 만하면 'dashboard'를 contexts에 넣는다.
+ */
+const done = {status: 'implemented', evidence: []};
+/** 파생 설계(위의 SUBTOKEN_SET_DESIGNS)를 기록 필드로 싣는다(계약 0.4.0): states(액션 hover·active 이동 비율, 입력 경계), components(표 면 역할), charts. */
+const designFields = id => { const d = SUBTOKEN_SET_DESIGNS[`subtoken-set:${id}`]; return {states: {hover: d.hover, active: d.active, control: d.control}, components: {table: d.table}, charts: d.charts}; };
+const make = (id, label, roles, extra) => definePlatformMaterial({id: `subtoken-set:${id}`, kind: 'subtoken-set', label, needs: ALL, modes: ['light', 'dark'], roles, quality: done, ...designFields(id), ...extra});
+
+export const SUBTOKEN_SETS = Object.freeze([
+  make('standard', '표준 분배(차분한 제품 UI)', standard, {tags: ['neutral-surface', 'calm-product-ui'], reuses: ['color-token:semantic.action']}),
+  make('tinted', '틴트 분배', tinted, {tags: ['brand-surface']}),
+  make('editorial-warm', '따뜻한 에디토리얼', editorialWarm, {tags: ['editorial', 'warm-paper'], contexts: ['article', 'blog', 'docs', 'landing', 'portfolio', 'community', 'general']}),
+  make('commerce-vivid', '강조색이 선명한 커머스', commerceVivid, {tags: ['commerce', 'accent-led'], contexts: ['commerce', 'landing', 'listing', 'pricing', 'portfolio', 'general']}),
+  make('premium-dark', '어두운 배경의 프리미엄', premiumDark, {tags: ['premium', 'dark-first'], contexts: ['landing', 'portfolio', 'commerce', 'pricing', 'article', 'general']}),
+  make('high-contrast', '고대비', highContrast, {tags: ['accessibility', 'high-contrast'], contexts: ['dashboard', 'general', 'landing', 'data', 'listing', 'community', 'docs', 'article', 'blog', 'commerce', 'portfolio', 'pricing', 'form', 'settings', 'auth', 'error']}),
+  make('data-dense', '데이터 밀집(표·차트 중심)', dataDense, {tags: ['data', 'table-chart'], contexts: ['dashboard', 'data', 'listing', 'settings']}),
+]);
+

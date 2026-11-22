@@ -10,7 +10,7 @@
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-export const PLATFORM_CONTRACT_VERSION = '0.3.0';
+export const PLATFORM_CONTRACT_VERSION = '0.4.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
 export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'axis-value']);
@@ -180,6 +180,11 @@ export function validatePlatformMaterial(m) {
       } else err('P_SUBTOKEN_RULE', p, '역할 규칙은 from·on·fixed 중 하나입니다');
       defined.add(role);
     }
+    const st = m.states, tb = m.components?.table, ct = m.states?.control;
+    if (st) for (const k of ['hover', 'active']) if (st[k] !== undefined && !(typeof st[k] === 'number' && st[k] >= 0 && st[k] <= 1)) err('P_SUBTOKEN_DESIGN', `$.states.${k}`, `${k}는 0~1 비율입니다`);
+    if (ct) { if (ct.border !== undefined && !COLOR_ROLE_NAMES.includes(ct.border)) err('P_SUBTOKEN_DESIGN', '$.states.control.border', `입력 경계의 출처는 색 역할입니다: ${ct.border}`); if (ct.min !== undefined && typeof ct.min !== 'number') err('P_SUBTOKEN_DESIGN', '$.states.control.min', '대비 하한은 숫자입니다'); }
+    if (tb) for (const k of ['head', 'hover', 'selected']) if (tb[k] !== undefined && !COLOR_ROLE_NAMES.includes(tb[k])) err('P_SUBTOKEN_DESIGN', `$.components.table.${k}`, `표 면은 색 역할입니다: ${tb[k]}`);
+    if (m.charts) for (const k of ['categorical', 'sequential', 'diverging']) if (m.charts[k] !== undefined && TYPE_OF(m.charts[k]) !== 'object') err('P_SUBTOKEN_DESIGN', `$.charts.${k}`, `${k} 설계는 객체입니다`);
     for (const role of COLOR_ROLE_NAMES) if (!Object.hasOwn(m.roles, role)) err('P_SUBTOKEN_ROLE', `$.roles.${role}`, `색 역할 ${role}이 없습니다(세트는 모든 역할을 낸다)`);
   }
   if (m.kind === 'family') {

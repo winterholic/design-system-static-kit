@@ -13,7 +13,7 @@
 import {colorRamp, readableColor, colorContrast, colorMix} from '../color-tokens.mjs';
 import {COLOR_ROLES, PALETTE_SLOTS} from './contract.mjs';
 import {defineCheck} from './relations.mjs';
-import {SUBTOKEN_SETS, SUBTOKEN_SET_DESIGNS, DEFAULT_DESIGN} from './data/subtoken-sets.mjs';
+import {SUBTOKEN_SETS, DEFAULT_DESIGN} from './data/subtoken-sets.mjs';
 
 const WHITE = '#FFFFFF';
 const floor4 = x => Math.floor(x * 1e4) / 1e4;
@@ -47,12 +47,26 @@ function toLab(hex) {
 /** CIE76 색차. 범주형 차트 색이 서로 얼마나 다른지 잰다. */
 export const deltaE = (a, b) => Math.hypot(...toLab(a).map((v, i) => v - toLab(b)[i]));
 
+/** 세트 기록의 파생 설계 필드(states·components·charts)를 하나로. 없는 부분은 DEFAULT_DESIGN(계약 0.4.0: 기록 필드가 원본). */
+export function designOf(set) {
+  const st = set.states ?? {}, d = DEFAULT_DESIGN;
+  return {
+    hover: st.hover ?? d.hover, active: st.active ?? d.active, control: {...d.control, ...st.control}, table: {...d.table, ...set.components?.table},
+    charts: {categorical: {...d.charts.categorical, ...set.charts?.categorical}, sequential: {...d.charts.sequential, ...set.charts?.sequential}, diverging: {...d.charts.diverging, ...set.charts?.diverging}},
+  };
+}
+
 // ---- 역할 23개 결합 ----
 function bindRoles(palette, subtokenSet, mode) {
   const ramps = Object.fromEntries(subtokenSet.needs.map(s => [s, colorRamp(palette.seeds[s])]));
   const roles = {}, report = [];
   for (const [role, rule] of Object.entries(subtokenSet.roles)) {
-    if (rule.from !== undefined) {
+    if (rule.fixed !== undefined) {
+      // 고정 규칙(계약 0.3.0): 팔레트와 무관한 리터럴, 또는 램프 단계를 어떤 색과 비율로 섞은 값. 보정하지 않고 min만 보고한다.
+      const f = rule.fixed;
+      roles[role] = typeof f === 'string' ? f : f.mix ? colorMix(ramps[f.from][f.step], f.mix.with, f.mix.ratio) : ramps[f.from][f.step];
+      for (const a of rule.min?.against ?? []) report.push({role, against: a, ratio: floor4(colorContrast(roles[role], roles[a])), minimum: rule.min.ratio});
+    } else if (rule.from !== undefined) {
       const base = ramps[rule.from][rule[mode]];
       const against = (rule.min?.against ?? []).map(a => roles[a]);
       try { roles[role] = rule.min ? readableColor(base, against, rule.min.ratio) : base; } catch {
@@ -206,7 +220,7 @@ export function bindColor(palette, subtokenSet, mode = 'light') {
   try { ({roles, report} = bindRoles(palette, subtokenSet, mode)); } catch (e) {
     return {ok: false, roles: null, vars: null, report: [], error: {code: 'P_COLOR_CONTRAST', message: `${palette.id} × ${subtokenSet.id} (${mode}): ${e.message}`}};
   }
-  const design = SUBTOKEN_SET_DESIGNS[subtokenSet.id] ?? DEFAULT_DESIGN;
+  const design = designOf(subtokenSet);
   const gates = {
     contrast: (role, against, fg, bg, minimum) => report.push({role, against, ratio: floor4(colorContrast(fg, bg)), minimum}),
     raw: (role, against, ratio, minimum, kind) => report.push({role, against, ratio, minimum, kind}),

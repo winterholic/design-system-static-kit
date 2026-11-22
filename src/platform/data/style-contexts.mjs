@@ -182,7 +182,7 @@ const PICKS = {
   beauty: ['clay-earth', 'magenta-vivid', 'editorial-warm', 'premium-dark'], realty: ['slate-neutral', 'static-kit', 'standard', 'data-dense'], atelier: ['sunrise-warm', 'dusk-violet', 'tinted', 'commerce-vivid'],
   learning: ['static-kit', 'forest-green', 'standard', 'tinted'], civic: ['static-kit', 'graphite-mono', 'high-contrast', 'standard'], hanji: ['clay-earth', 'graphite-mono', 'editorial-warm', 'standard'],
   heritage: ['clay-earth', 'graphite-mono', 'editorial-warm', 'premium-dark'], clarity: ['static-kit', 'slate-neutral', 'standard', 'tinted'], pocket: ['forest-green', 'ocean-cool', 'tinted', 'standard'],
-  nocturne: ['dusk-violet', 'magenta-vivid', 'premium-dark', 'tinted'], sport: ['sunrise-warm', 'graphite-mono', 'commerce-vivid', 'high-contrast'], solar: ['sunrise-warm', 'static-kit', 'tinted', 'commerce-vivid'],
+  nocturne: ['dusk-violet', 'magenta-vivid', 'premium-dark', 'tinted'], sport: ['sunrise-warm', 'graphite-mono', 'commerce-vivid', 'standard'], solar: ['sunrise-warm', 'static-kit', 'tinted', 'commerce-vivid'],
   ocean: ['ocean-cool', 'static-kit', 'tinted', 'standard'], enterprise: ['slate-neutral', 'static-kit', 'standard', 'data-dense'], devtool: ['graphite-mono', 'static-kit', 'standard', 'data-dense'],
   luxe: ['graphite-mono', 'clay-earth', 'premium-dark', 'editorial-warm'], swiss: ['graphite-mono', 'sunrise-warm', 'standard', 'high-contrast'], colorblock: ['magenta-vivid', 'sunrise-warm', 'commerce-vivid', 'tinted'],
   newsroom: ['graphite-mono', 'slate-neutral', 'editorial-warm', 'high-contrast'], academic: ['slate-neutral', 'graphite-mono', 'editorial-warm', 'standard'], wedding: ['clay-earth', 'dusk-violet', 'editorial-warm', 'tinted'],

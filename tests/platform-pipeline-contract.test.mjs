@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {
   createPlatform, assemblePage, recommend, definePlatformMaterial, validatePlatformMaterial, PLATFORM_CONTRACT_VERSION, KIND_SPECS,
+  bindColor, designOf, DEFAULT_DESIGN, SUBTOKEN_SET_DESIGNS, colorMatrix, proposeSubtokenSets, assignSeeds, paletteRamps,
 } from '../src/platform/index.mjs';
 import {typeErrorCode} from '../src/platform/pipeline.mjs';
 import {rankTypeSystems, typeFit} from '../src/platform/type.mjs';
@@ -11,8 +12,8 @@ const clone = id => structuredClone(env.registry.get(id));
 const thaw = m => JSON.parse(JSON.stringify(m));
 const codes = errs => errs.map(e => e.code);
 
-test('the contract version moves with every contract change (0.3.0: optional fields, fixed rule, no-candidate reason, type fit, axis-value kind)', () => {
-  assert.equal(PLATFORM_CONTRACT_VERSION, '0.3.0');
+test('the contract version moves with every contract change (0.4.0: design fields on sets, fixed rule evaluated, color exports)', () => {
+  assert.equal(PLATFORM_CONTRACT_VERSION, '0.4.0');
   assert.ok(KIND_SPECS['axis-value']);
 });
 
@@ -117,4 +118,56 @@ test('the page stage reads the style context: axisPreferences shell·width·dens
   assert.equal(landing.ok, true, JSON.stringify(landing.diagnostics));
   const navLinks = [...landing.value.html.matchAll(/<nav class="kit-nav" aria-label="주요 메뉴">(.*?)<\/nav>/g)][0][1].match(/<li>/g).length;
   assert.ok(navLinks <= 2, `nav items ${navLinks}`);
+});
+
+test('set design is a record field: states, components and charts come from the record, and a set without them uses the default design', () => {
+  for (const id of Object.keys(SUBTOKEN_SET_DESIGNS)) {
+    const set = env.registry.get(id), d = SUBTOKEN_SET_DESIGNS[id];
+    assert.deepEqual(set.states, {hover: d.hover, active: d.active, control: d.control}, id);
+    assert.deepEqual(set.components, {table: d.table}, id);
+    assert.deepEqual(set.charts, d.charts, id);
+    assert.deepEqual(designOf(set), d, `${id}: the record reproduces the design table`);
+  }
+  const bare = thaw(clone('subtoken-set:standard')); for (const f of ['states', 'components', 'charts']) delete bare[f];
+  assert.deepEqual(designOf(bare), DEFAULT_DESIGN);
+  // the record, not a side table, drives the binding: a stronger hover on the record moves the action hover color
+  const palette = env.registry.get('palette:static-kit'), std = env.registry.get('subtoken-set:standard');
+  const strong = {...thaw(std), id: 'subtoken-set:strong-hover-test', states: {...thaw(std).states, hover: 0.4}};
+  assert.notEqual(bindColor(palette, strong, 'light').states.actionHover, bindColor(palette, std, 'light').states.actionHover);
+  // malformed design fields are rejected with their path
+  const bad = [[{states: {hover: 2}}, '$.states.hover'], [{states: {control: {border: 'nope'}}}, '$.states.control.border'], [{components: {table: {head: 'zzz'}}}, '$.components.table.head'], [{charts: {sequential: 3}}, '$.charts.sequential']];
+  for (const [patch, path] of bad) assert.ok(validatePlatformMaterial({...thaw(std), ...patch}).some(e => e.code === 'P_SUBTOKEN_DESIGN' && e.path === path), path);
+});
+
+test('fixed role rules are evaluated by bindColor: a literal white surface, a ramp step mixed toward white, and the contrast it reports', () => {
+  const palette = env.registry.get('palette:static-kit'), std = thaw(clone('subtoken-set:standard'));
+  const withRule = rule => ({...std, id: 'subtoken-set:fixed-test', roles: {...std.roles, surface: rule}});
+  const literal = bindColor(palette, withRule({fixed: '#FFFFFF'}), 'light');
+  assert.equal(literal.ok, true, JSON.stringify(literal.error));
+  assert.equal(literal.roles.surface, '#FFFFFF');
+  assert.equal(literal.vars['--kit-surface'], '#FFFFFF');
+  assert.notEqual(bindColor(palette, std, 'light').roles.surface, '#FFFFFF', 'the standard set has no pure white surface (the reason for the request)');
+  const mixed = bindColor(palette, withRule({fixed: {from: 'neutral', step: '50', mix: {with: '#FFFFFF', ratio: 0.5}}}), 'light');
+  assert.equal(mixed.ok, true);
+  const plain = bindColor(palette, withRule({fixed: {from: 'neutral', step: '50'}}), 'light');
+  assert.equal(plain.roles.surface, bindColor(palette, std, 'light').roles.surface, 'step without mix is the ramp value');
+  assert.notEqual(mixed.roles.surface, plain.roles.surface);
+  // text still keeps its contrast on the new surface, and a fixed role with min is reported, not adjusted
+  assert.ok(literal.report.filter(r => r.against === 'surface').every(r => r.ratio >= r.minimum));
+  const gated = bindColor(palette, withRule({fixed: '#FFFFFF', min: {against: ['canvas'], ratio: 21}}), 'light');
+  assert.equal(gated.ok, false);
+  assert.equal(gated.roles.surface, '#FFFFFF', 'a fixed value is never nudged to pass');
+  assert.ok(gated.report.some(r => r.role === 'surface' && r.against === 'canvas' && r.ratio < 21));
+});
+
+test('the color functions are exported from the platform entry point', () => {
+  for (const f of [colorMatrix, proposeSubtokenSets, assignSeeds, paletteRamps]) assert.equal(typeof f, 'function');
+  assert.equal(Object.keys(paletteRamps(env.registry.get('palette:static-kit'))).includes('brand'), true);
+});
+
+test('high-contrast and data-dense are dashboard sets, and the default set order still starts with standard', () => {
+  for (const id of ['subtoken-set:high-contrast', 'subtoken-set:data-dense']) assert.ok(env.registry.get(id).contexts.includes('dashboard'), id);
+  const order = recommend(env.registry, env.graph, {kind: 'subtoken-set', context: 'dashboard', mode: 'light', selected: ['palette:static-kit']}).ranked.map(r => r.id);
+  assert.equal(order[0], 'subtoken-set:standard');
+  for (const id of ['tinted', 'high-contrast', 'data-dense']) assert.ok(order.includes(`subtoken-set:${id}`), id);
 });
