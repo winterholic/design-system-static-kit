@@ -62,7 +62,8 @@ test('recommendation is the default assembly: rank, reasons and blocked candidat
   assert.ok(blocked.blocked.every(b => b.blocked[0].code === 'P_CHECK_PALETTE_SUBTOKEN'));
   assert.ok(codes(run({palette: 'palette:no-accent', subtokenSet: 'subtoken-set:standard'}, e2)).includes('P_CHECK_PALETTE_SUBTOKEN'));
 
-  const strict = definePlatformMaterial({id: 'style-context:no-soft', kind: 'style-context', label: 'no soft', axisPreferences: {radius: ['square']}, forbid: {radius: ['soft']}, mood: []});
+  // 패밀리가 둘 이상이 된 뒤에는 soft 하나만 금지하면 다른 모서리 패밀리가 남는다. 후보가 모두 걸러지는 경우를 보려고 패밀리가 가진 모서리 값을 전부 금지한다(대체하지 않고 비운다는 검사 의도는 그대로).
+  const strict = definePlatformMaterial({id: 'style-context:no-soft', kind: 'style-context', label: 'no soft', axisPreferences: {radius: ['square']}, forbid: {radius: ['soft', 'round', 'square', 'subtle']}, mood: []});
   const e3 = createPlatform({records: [strict]});
   const r = run({styleContext: 'style-context:no-soft'}, e3);
   assert.equal(r.ok, false);

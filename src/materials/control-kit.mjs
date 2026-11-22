@@ -21,11 +21,13 @@ export class ContractError extends RangeError {
 }
 
 /** `axes`: 속성별 허용 값. `concepts`: 개념 → 속성 이름 목록(모든 속성이 정확히 한 개념에 속한다). `forbidden`: [{id, when: {속성: 값|값[]}, why}] — when의 모든 조건이 맞으면 거부. */
-export function defineContract({id, label, axes, concepts, defaults, forbidden, states, transitions, inputFields = [], unsupported = [], pairs = [], tokenMap = {}}) {
+/** `required`: 비어 있으면 안 되는 개념. 기본은 다섯 개념 전부이고, 외형·모양이 없는 컨트롤(Select·Table)은 가진 개념만 적는다. */
+export const REQUIRED_CONCEPTS = Object.freeze(['appearance', 'shape', 'size', 'function', 'state']);
+export function defineContract({id, label, axes, concepts, defaults, forbidden, states, transitions, inputFields = [], unsupported = [], pairs = [], tokenMap = {}, required = REQUIRED_CONCEPTS}) {
   const attrs = Object.keys(axes), claimed = Object.values(concepts).flat();
   if (inputFields.some(f => typeof f !== 'string' || attrs.includes(f)) || new Set(inputFields).size !== inputFields.length) throw new Error(`${id}: inputFields must be unique names outside axes`);
   for (const c of Object.keys(concepts)) if (!CONCEPTS.includes(c)) throw new Error(`${id}: unknown concept ${c}`);
-  for (const c of ['appearance', 'shape', 'size', 'function', 'state']) if (!concepts[c]?.length) throw new Error(`${id}: concept ${c} has no attribute`);
+  for (const c of required) if (!concepts[c]?.length) throw new Error(`${id}: concept ${c} has no attribute`);
   if (claimed.length !== new Set(claimed).size || claimed.length !== attrs.length || attrs.some(a => !claimed.includes(a))) throw new Error(`${id}: every attribute belongs to exactly one concept`);
   for (const a of attrs) if (!Object.hasOwn(defaults, a) || !axes[a].includes(defaults[a])) throw new Error(`${id}: default for ${a}`);
   const seen = new Set();
