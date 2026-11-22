@@ -209,6 +209,18 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 5. **기존 프로파일 조립의 이행**: `assembleBlueprint`는 나중에 "프로파일 → 플랫폼 요청" 어댑터가 된다. 그 전환은 결과 바이트가 같다는 고정 테스트가 있을 때만 한다.
 6. **금지 사항**: 버전 태그, npm 발행, 정식 릴리스는 이 계약 범위 밖이다.
 
+## 8. 웹 감사가 확인한 Core 결함(2026-11-22)
+
+웹 감사(`docs/platform/web-audit.md` §2, §4, `docs/platform/web-ia.md`)가 Studio와 API에서 재현한 결함 중 원인이 Core에 있는 것은 세 가지다. 이 ADR에서 다시 실행해 확인했다(`assemble('erp')` 결과로 비교).
+
+| ID | 결함 | 원인(파일:줄) | 재현 | 결정 | 소유 |
+|---|---|---|---|---|---|
+| D1 | 프로필을 바꿔도 컴파일 출력이 같다 | `src/validate.mjs:61`에서 `:63`은 `profile`을 검증에만 쓴다. 컴파일러(`src/compiler.mjs`)와 스타일·렌더는 `b.profile`을 읽지 않고 manifest에도 남기지 않는다 | `profile`만 erp → finance로 바꾸면 HTML·CSS가 바이트까지 같다 | 2.6.0의 `profile`은 "검증 제약"으로 문서화하고 출력은 그대로 둔다(고정 해시). 2.7.0에서는 `materials` 필드가 출력의 유일한 근거다. 선택을 바꾸면 출력이 바뀌어야 하고, 그렇지 않으면 실패하는 테스트로 고정한다. 출력을 바꾸지 않는 필드는 진단과 서비스 설명(`explainDecisions`)에 "출력에 영향 없음"으로 드러낸다 | W5 |
+| D2 | 2.6.0 문서에서 테마를 바꾸면 `palette` 값은 바뀌지만 색 토큰은 그대로다 | `src/tokens.mjs:39`에서 `:43`: `colorPalette`가 있으면 `palettes[b.palette]`를 읽지 않는다. 2.6.0의 선택지는 `static-kit` 하나다(`src/color-tokens.mjs:14`) | `theme`·`palette`를 바꿔도 `tokens`가 같다 | 2.7.0에서는 색을 `materials.palette` × `materials.subtokenSet`으로만 정한다. 스타일 맥락(테마)은 팔레트를 소유하지 않는다(§3). 그래서 "필드는 바뀌는데 출력은 그대로"인 상태가 생기지 않는다. 2.6.0 출력은 바꾸지 않되, `colorPalette`가 있을 때 무시되는 `palette`를 경고 진단(`PALETTE_IGNORED`)으로 알린다. 경고 추가가 고정 결과(검증 응답 스냅샷)를 바꾸는지 먼저 확인하고, 바꾼다면 2.7.0 게이트 뒤로 미룬다 | W5(게이트·진단), W1(팔레트·세트 공급) |
+| D3 | REST·MCP 조회가 카탈로그 2.4.0만 지원하고, 재료 질의·조립·편집 연산이 API에 없다 | `apps/web/lib/api/versions.mjs:16`에서 `:18`: 조회 요청의 `catalogVersion`이 서버 기본값과 다르면 거부한다. 서비스는 이미 버전별 조회를 받는다(`src/service/query.mjs:56`, `:241`). `apps/web/lib/api/operations.mjs:3`은 `queryMaterials`·`listMaterials`·`getMaterial`·`assembleBlueprint`·`./edit`를 import하지 않는다 | `catalogVersion: "2.6.0"`으로 조회하면 `CATALOG_VERSION` 거부. MCP 도구 6개에 재료·조립·편집 없음 | 채널은 서비스가 받는 버전을 그대로 넘긴다(버전 목록을 채널이 따로 갖지 않는다는 ADR 0009 원칙 유지). 재료 질의(`listMaterials`, `getMaterial`, `queryMaterials`), 조립(`assembleBlueprint`, 이후 `assembleDesign`), 편집 연산(`./edit`의 연산 목록과 적용)을 REST와 MCP에 같은 서비스 함수로 노출한다. 서비스·REST·MCP 결과가 같은 바이트임을 채널 일관성 테스트로 고정한다 | W5 |
+
+공통 원칙: Blueprint 필드는 "출력을 바꾸는 필드"와 "검증만 하는 필드"를 구분해 스키마 주석(`x-effect: output | validation`)과 manifest에 남긴다. 2.7.0에서 새로 넣는 필드는 모두 출력을 바꾸는 필드여야 한다.
+
 ## 결과와 남은 일
 
 - 계약 코드는 `src/platform/`, 테스트는 `tests/platform-contract.test.mjs`와 `tests/platform-minimal.test.mjs`(11개)에 있다. 이 테스트를 포함한 전체 `npm test`(553개)를 통과한다. 기존 회귀 테스트는 고치지 않았다.
@@ -217,5 +229,5 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
   - 타이포: 모듈러 스케일 역할 체계, 18×4 관계.
   - 패밀리: 컨트롤 10종, 구형 중복 정리.
   - 테마: 54개 이행.
-  - 엔진: 페이지·슬롯 단계, 서비스·REST·MCP 공개, Blueprint 2.7.0.
+  - 엔진: 페이지·슬롯 단계, 서비스·REST·MCP 공개, Blueprint 2.7.0, §8의 D1·D2·D3.
   - 웹: 탐색·조립 UI.

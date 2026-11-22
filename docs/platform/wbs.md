@@ -45,7 +45,7 @@
 |---|---|
 | 목표 | 자체 팔레트를 여러 개 만들고, 서브토큰 세트로 다대다 결합한다. 색 다양성을 회복한다(현재 조립 경로는 light·dark 토큰 집합이 각 1개) |
 | 소유 파일 | `src/platform/color.mjs`, `src/platform/data/palettes.mjs`, `src/platform/data/subtoken-sets.mjs`, `src/color-tokens.mjs`, `tests/platform-color*.test.mjs`, `tests/color-tokens.test.mjs`(추가만), `docs/platform/color.md` |
-| 할 일 | ① 권리가 확인된 자체 팔레트를 추가한다(원색 시드, 출처 기록). ② 서브토큰 세트를 최소 3종으로 늘린다(standard, tinted, 고대비·어두운 표면 등). 각 세트가 2개 이상의 팔레트에서 대비 게이트를 통과해야 한다. ③ RoleRule `fixed`(흰 표면 등)가 필요하면 W5에 계약 변경을 요청한다. ④ 순차·발산 차트 색 역할을 설계한다(감사 2.1 F). ⑤ 구형 `resolveTokens`의 자동 분배를 `subtoken-set:derived`로 옮길지 결정한다. 옮기더라도 자체 팔레트에만 쓴다 |
+| 할 일 | ⓪ ADR 0012 §8 D2의 2.7.0 쪽 해법은 여러 팔레트 × 세트가 있어야 의미가 있다. W5의 `materials.palette` 게이트가 고를 재료를 공급한다. ① 권리가 확인된 자체 팔레트를 추가한다(원색 시드, 출처 기록). ② 서브토큰 세트를 최소 3종으로 늘린다(standard, tinted, 고대비·어두운 표면 등). 각 세트가 2개 이상의 팔레트에서 대비 게이트를 통과해야 한다. ③ RoleRule `fixed`(흰 표면 등)가 필요하면 W5에 계약 변경을 요청한다. ④ 순차·발산 차트 색 역할을 설계한다(감사 2.1 F). ⑤ 구형 `resolveTokens`의 자동 분배를 `subtoken-set:derived`로 옮길지 결정한다. 옮기더라도 자체 팔레트에만 쓴다 |
 | 완료 기준 | 팔레트 수 × 세트 수 중 계산 관계 `palette-subtoken`을 통과하는 쌍의 수와 실패 쌍의 이유를 표로 남긴다. 통과 쌍이 서로 다른 토큰 집합을 낸다는 것을 테스트로 고정한다. 기존 `src/color-tokens.mjs`의 static-kit 출력은 바이트 그대로다 |
 | 검증 | `node --test tests/platform-color*.test.mjs tests/color-tokens.test.mjs`, 공통 명령 |
 
@@ -86,8 +86,9 @@
 | 목표 | 파이프라인을 페이지 단위로 넓히고, 서비스 함수 하나로 공개한다. REST·MCP·Studio가 같은 조립을 쓰게 한다 |
 | 소유 파일 | `src/platform/contract.mjs`, `src/platform/registry.mjs`, `src/platform/relations.mjs`, `src/platform/recommend.mjs`, `src/platform/pipeline.mjs`, `src/platform/page.mjs`(신규), `src/platform/index.mjs`, `src/platform/examples/**`, `src/service/assemble-design.mjs`(신규), `src/service/index.mjs`(내보내기 한 줄 추가), `src/service/envelope.mjs`(CONTRACT_VERSION), `src/catalog/expression.mjs`·`src/catalog/index.mjs`·`src/validate.mjs`(2.7.0 게이트만), `scripts/platform/**`, `docs/evidence/platform/**`, `tests/platform-contract.test.mjs`, `tests/platform-minimal.test.mjs`, `tests/platform-pipeline*.test.mjs`, `tests/platform-service*.test.mjs`, `apps/web/lib/api/**`, `apps/web/app/api/**`, `docs/adr/0012-assembly-platform.md`, `docs/platform/audit-*.md`, `docs/platform/wbs.md` |
 | 할 일(W5-a, 1단계) | ① 페이지 단계(`page.mjs`): 레이아웃 패턴·슬롯에 컴포넌트를 배치한다. 구형 템플릿 뼈대를 재사용한다. ② 기존 규칙을 관계로 옮긴다(축 금지 X01 등, 테마 forbid → `forbids`). ③ 요청 키로 셸·폭·밀도를 받는다. ④ baseline에 플랫폼 구간을 더한다(실제 조립 가능, 검증된 조합, 고유 색·서체 짝 수) |
+| 할 일(W5-a, 웹 감사 결함) | ⑨ **D1**(ADR 0012 §8): 2.6.0 `profile`은 출력에 영향이 없다는 것을 진단·`explainDecisions`·스키마 주석에 드러낸다(출력은 그대로). 2.7.0 `materials` 선택이 바뀌면 출력이 바뀌는지 실패하는 테스트로 고정한다. ⑩ **D2**: 2.6.0 문서에서 `colorPalette` 때문에 무시되는 `palette`에 `PALETTE_IGNORED` 경고를 낸다. 이때 검증 응답 고정 결과가 바뀌면 2.7.0 게이트 뒤로 미룬다. 2.7.0에서는 색을 `materials.palette` × `materials.subtokenSet`으로만 정한다. ⑪ **D3**: `apps/web/lib/api/versions.mjs:16`에서 `:18`의 조회 버전 고정을 풀어 서비스가 받는 버전을 그대로 넘긴다. `listMaterials`·`getMaterial`·`queryMaterials`, `assembleBlueprint`, `./edit` 연산을 REST·MCP에 노출한다(OpenAPI 포함) |
 | 할 일(W5-b, 2단계) | ⑤ `assembleDesign(request)` 서비스 함수(같은 봉투). 서비스 `CONTRACT_VERSION`의 minor를 올린다. ⑥ `POST /api/v1/assemble`, MCP `assemble_design`(+OpenAPI). 채널 일관성 테스트(`tests/channel-*.test.mjs` 방식)를 둔다. ⑦ Blueprint 2.7.0 opt-in `materials` 필드와 `VERSION_FIELD` 거부 ⑧ `assembleBlueprint`를 플랫폼 어댑터로 옮기는 일은 기존 결과 바이트가 같다는 고정 테스트가 있을 때만 한다 |
-| 완료 기준 | 같은 요청에 대해 서비스, REST, MCP의 결과 바이트가 같다. 2.6.0 이하 고정 해시가 그대로다. 플랫폼 경로의 고유 색 토큰 집합과 서체 짝 수가 기존 경로(1, 3)보다 많다는 것을 baseline이 보인다 |
+| 완료 기준 | 같은 요청에 대해 서비스, REST, MCP의 결과 바이트가 같다. 2.6.0 이하 고정 해시가 그대로다. D1: 2.7.0에서 `materials` 값만 바꾼 두 문서의 출력이 다르다. D2: 2.6.0 문서의 무시되는 `palette`가 경고로 보인다(또는 2.7.0으로 미룬 이유를 기록). D3: `catalogVersion: "2.6.0"` 조회가 REST·MCP에서 서비스와 같은 결과를 내고, 재료 질의·조립·편집 연산이 두 채널에 있다. 플랫폼 경로의 고유 색 토큰 집합과 서체 짝 수가 기존 경로(1, 3)보다 많다는 것을 baseline이 보인다 |
 | 검증 | `node --test tests/platform-*.test.mjs tests/channel-*.test.mjs tests/profiles-assemble.test.mjs`, `npm run web:test`(API 경로를 바꾼 경우), 공통 명령, `node scripts/platform/baseline.mjs`(갱신 후 커밋) |
 
 ## W6 웹 개편
@@ -96,7 +97,7 @@
 |---|---|
 | 목표 | 재료를 탐색하고, 관계·추천 근거를 보여 주고, 조립 결과를 코드로 내보내는 화면을 만든다 |
 | 소유 파일 | `apps/web/**`에서 `apps/web/lib/api/**`와 `apps/web/app/api/**`(W5 소유)를 뺀 전부 |
-| 할 일 | ① Core 서비스 함수(`assembleDesign`, `listMaterials`, `getMaterial`)만 쓴다. `src/platform/`을 직접 import하지 않는다(`apps/web/boundary.check.mjs` 방식). ② 추천 순위, 근거(`decisions[].reasons`), 막힌 후보(`blocked`)를 그대로 보여 준다. ③ 내보내기는 `value.css`·`value.html`·manifest를 그대로 쓴다. 웹에서 CSS를 다시 만들지 않는다. ④ Studio의 기존 프로파일 조립은 W5-b 전까지 그대로 둔다 |
+| 할 일 | ⓪ 웹 감사 R1·R2(`docs/platform/web-audit.md` §2)는 Core 결함 D1·D2(ADR 0012 §8)가 원인이므로 W5 결과를 기다린다. 웹에서 우회 값을 만들지 않는다. ① Core 서비스 함수(`assembleDesign`, `listMaterials`, `getMaterial`)만 쓴다. `src/platform/`을 직접 import하지 않는다(`apps/web/boundary.check.mjs` 방식). ② 추천 순위, 근거(`decisions[].reasons`), 막힌 후보(`blocked`)를 그대로 보여 준다. ③ 내보내기는 `value.css`·`value.html`·manifest를 그대로 쓴다. 웹에서 CSS를 다시 만들지 않는다. ④ Studio의 기존 프로파일 조립은 W5-b 전까지 그대로 둔다 |
 | 완료 기준 | 웹의 조립 결과가 같은 요청의 서비스 결과와 바이트가 같다. Chromium에서 390px과 1280px으로 동작을 확인한다 |
 | 검증 | `npm run web:test`, `npm run test:browser`, 공통 명령 |
 
