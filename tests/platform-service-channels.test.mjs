@@ -5,7 +5,7 @@ import {existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {
-  assembleDesign, assembleBlueprint, listMaterials, getMaterial, listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
+  assembleDesign, assembleBlueprint, listMaterials, getMaterial, listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, proposeSubtokenSets, assembleComponents, listEditOps, applyEdit,
   listCatalog, getSchema, getComponentSpec, compileBlueprint, validateBlueprint,
 } from '../src/service/index.mjs';
 import {createBlueprint} from '../src/catalog/index.mjs';
@@ -165,6 +165,23 @@ test('purpose-family records are discoverable and recommendable through the serv
   assert.equal(ids.length, 32);
 });
 
+test('user seed proposals and purpose-family assembly keep Core, REST and MCP byte-identical', async () => {
+  const seeds = ['#D2501E', '#6F625A', '#0D6E8E'];
+  const proposal = proposeSubtokenSets({seeds});
+  assert.equal(proposal.ok, true);
+  assert.equal((await rest('POST', '/api/v1/platform/propose-subtoken-sets', {body: {seeds}})).text, json(proposal));
+  assert.equal(json(await mcp('propose_subtoken_sets', {seeds})), json(proposal));
+  const badSeeds = {seeds: ['#FFFFFF', '#FFFFFF', '#000000']};
+  assert.equal((await rest('POST', '/api/v1/platform/propose-subtoken-sets', {body: badSeeds})).text, json(proposeSubtokenSets(badSeeds)));
+  assert.equal(json(await mcp('propose_subtoken_sets', badSeeds)), json(proposeSubtokenSets(badSeeds)));
+
+  const request = {context: 'dashboard', mode: 'light', density: 'comfortable', seeds, subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:work-insight', items: [{purpose: 'purpose:button.toggle', visual: 'family:soft', variant: {layout: 'single'}, props: {state: 'pressed'}, content: {label: '알림'}}]};
+  const assembled = assembleComponents(request);
+  assert.equal(assembled.ok, true, json(assembled.errors));
+  assert.equal((await rest('POST', '/api/v1/platform/assemble-components', {body: request})).text, json(assembled));
+  assert.equal(json(await mcp('assemble_components', request)), json(assembled));
+});
+
 test('X01 keeps bottom navigation and compact density blocked in recommendations and compatibility', async () => {
   const purpose = 'purpose:navigation.bottom', density = 'axis-value:density.compact';
   const rec = recommendMaterials({kind: 'purpose-family', context: 'dashboard', density: 'compact', selected: [density]});
@@ -217,7 +234,7 @@ test('D3: every operation of the table has a route file and an OpenAPI entry, an
   }
   for (const id of ['assembleDesign', 'assembleBlueprint', 'listMaterials', 'getMaterial', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'checkCompatibility', 'listEditOps', 'applyEdit']) assert.ok(OPERATIONS.some(o => o.id === id), id);
   assert.equal(doc.paths['/api/v1/assemble'].post.requestBody.content['application/json'].schema.required[0], 'purpose');
-  assert.deepEqual(TOOLS.map(t => t.name).slice(6), ['assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit']);
+  assert.deepEqual(TOOLS.map(t => t.name).slice(6), ['assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'propose_subtoken_sets', 'assemble_components', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit']);
   for (const t of TOOLS) assert.ok(t.description.length > 40 && t.output && t.input, t.name);
 });
 

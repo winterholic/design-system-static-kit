@@ -22,7 +22,7 @@ const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.i
 
 test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, assembleBlueprint (2.6.0 profiles) and the read-only queryMaterials, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
-  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleDesign', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'queryMaterials', 'recommendMaterials', 'validateBlueprint', 'withHint']); // 플랫폼 서비스 계약 1.3.0에서 목적 패밀리를 플랫폼 재료 kind로 추가했다
+  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleComponents', 'assembleDesign', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'proposeSubtokenSets', 'queryMaterials', 'recommendMaterials', 'validateBlueprint', 'withHint']); // 플랫폼 서비스 계약 1.3.0에 사용자 색 제안·목적 패밀리 시연 공개를 더했다
   assert.equal(CONTRACT_VERSION, '1.3.0');
 });
 

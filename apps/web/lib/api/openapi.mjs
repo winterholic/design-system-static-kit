@@ -46,13 +46,15 @@ Object.assign(VALUE_SCHEMAS, {
   getPlatformMaterial: {type: 'object', description: '재료 기록과 edges{from, to}'},
   recommendMaterials: {type: 'object', properties: {kind: {type: 'string'}, ranked: {type: 'array', items: {type: 'object'}}, blocked: {type: 'array', items: {type: 'object'}}}},
   checkCompatibility: {type: 'object', properties: {ok: {type: 'boolean'}, violations: {type: 'array', items: {type: 'object'}}, applied: {type: 'array', items: {type: 'object'}}, checks: {type: 'array', items: {type: 'object'}}}},
+  proposeSubtokenSets: {type: 'object', properties: {palette: {type: 'object'}, assignments: {type: 'array', items: {type: 'object'}}, ignored: {type: 'array', items: {type: 'string'}}, candidates: {type: 'array', items: {type: 'object'}}, rejected: {type: 'array', items: {type: 'object'}}}},
+  assembleComponents: {type: 'object', properties: {html: {type: 'string'}, css: {type: 'string'}, script: {type: 'string'}, standalone: {type: 'string'}, manifest: {type: 'object'}}},
   listEditOps: {type: 'object', properties: {ops: {type: 'array', items: {type: 'string'}}}},
   applyEdit: {type: 'object', properties: {blueprint: {type: 'object'}, changes: {type: 'array', items: {}}, steps: {type: 'integer'}}},
 });
 VALUE_SCHEMAS.listThemes = VALUE_SCHEMAS.getCatalog;
 VALUE_SCHEMAS.listComponents = VALUE_SCHEMAS.getCatalog;
 
-const PLATFORM_OPS = new Set(['assembleDesign', 'assembleBlueprint', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'checkCompatibility']);
+const PLATFORM_OPS = new Set(['assembleDesign', 'assembleBlueprint', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'checkCompatibility', 'proposeSubtokenSets', 'assembleComponents']);
 const tagOf = op => (op.path.startsWith('/api/v1/components') ? 'components' : op.path.startsWith('/api/v1/edit') ? 'edit' : op.path.startsWith('/api/v1/materials') ? 'materials' : PLATFORM_OPS.has(op.id) ? 'assemble' : op.method === 'GET' ? 'read' : 'blueprint');
 
 function operationObject(op) {

@@ -322,6 +322,17 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 
 REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemble`·`assemble_design`, `POST /api/v1/assemble-blueprint`·`assemble_blueprint`, `GET /api/v1/materials[/{id}]`·`list_materials`·`get_material`, `GET /api/v1/platform/materials[/{id}]`·`list_platform_materials`·`get_platform_material`, `POST /api/v1/recommend`·`recommend_materials`, `POST /api/v1/compatibility`·`check_compatibility`, `GET /api/v1/edit/ops`·`list_edit_ops`, `POST /api/v1/edit`·`apply_edit`.
 
+### 9.8 1.3.0 서비스 추가 공개: 사용자 색 제안·목적 패밀리 시연(W5-d)
+
+| 항목 | 결정과 결과 |
+|---|---|
+| 색 시드 제안 | `proposeSubtokenSets({seeds})`는 기존 `src/platform/color.mjs`의 `proposeSubtokenSets`를 봉투로 공개한다. 3~6개 hex 입력을 요청 중에만 쓰며 `palette:user-seeds`를 영구 레지스트리나 파일에 저장하지 않는다. 후보마다 light·dark 값, 대비 거부 이유를 돌려준다 |
+| 목적 패밀리 시연 | `assembleComponents(request)`는 `assembleFamilies`와 기반 컴포넌트 런타임을 재사용해 `{html,css,script,manifest,standalone}`을 낸다. 선택된 변형·props(상태 포함)·콘텐츠를 manifest `purposeItems`에, 사용자 팔레트의 완성된 시드 슬롯은 `userPalette.seeds`에 보존한다. 새 마크업 렌더러를 두지 않으며 standalone은 응답의 동일 HTML·CSS·스크립트를 포함한다 |
+| 사용자 색 미리보기 | 요청의 `seeds`는 임시 레지스트리에 넣고, 같은 대비 검사에서 통과한 `subtokenSet`만 조립한다. 세트를 생략하면 첫 통과 후보를 고른다. 실패한 세트는 출력하지 않고 Core 진단으로 그 이유를 돌려준다 |
+| 재료 탐색 | 별도 목적 패밀리 목록 API를 추가하지 않는다. W5-c의 `listPlatformMaterials({kind:'purpose-family'})`·`getPlatformMaterial({id})`를 유지한다 |
+| 공개 경로 | REST `POST /api/v1/platform/propose-subtoken-sets`, `POST /api/v1/platform/assemble-components`; MCP `propose_subtoken_sets`, `assemble_components`. 서비스·REST·MCP 결과 바이트를 채널 테스트로 맞춘다 |
+| 버전·기준선 | 봉투 모양은 바뀌지 않아 서비스 계약 1.3.0과 플랫폼 계약 0.7.0을 유지한다. 플랫폼 레지스트리 데이터·조합 수는 바뀌지 않으므로 수치 기준선을 갱신하지 않고 `baseline --check`로 이전 기준과 일치함을 확인한다. Blueprint ≤2.6.0 및 Coolors 노출 제한은 그대로다 |
+
 ### 9.7 0.7.0: 목적 패밀리 재료와 기본 콘텐츠 슬롯(W5-c)
 
 | 항목 | 결정과 결과 |
