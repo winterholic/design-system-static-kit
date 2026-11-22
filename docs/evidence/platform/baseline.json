@@ -1,0 +1,350 @@
+{
+  "schema": "platform-baseline/1",
+  "generator": "scripts/platform/baseline.mjs",
+  "materials": {
+    "catalogRegistry": {
+      "registered": 1066,
+      "attributeCombinations": 795799,
+      "completePresets": 190,
+      "implemented": 382,
+      "derived": 257,
+      "rights": 427,
+      "metadata": 0,
+      "uniqueCompletePresets": 190
+    },
+    "designRegistry": {
+      "registered": 1084,
+      "completePresets": 208,
+      "implemented": 400,
+      "derived": 257,
+      "rights": 427,
+      "metadata": 0,
+      "uniqueCompletePresets": 208
+    },
+    "renderEntryPoints": 28,
+    "unresolvedRenderEntries": [],
+    "byKind": {
+      "axis": {
+        "registered": 15,
+        "implemented": 15,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/styles/base.mjs#axisVars",
+          "src/styles/shells.mjs#shellCSS",
+          "src/tokens.mjs#resolveAll"
+        ]
+      },
+      "chart-preset": {
+        "registered": 29,
+        "implemented": 29,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 29,
+        "uniqueCompletePresets": 29,
+        "renderEntries": [
+          "src/render/chart-presets.mjs#renderChartPreset"
+        ]
+      },
+      "color-token": {
+        "registered": 257,
+        "implemented": 0,
+        "derived": 257,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/color-tokens.mjs#resolveColorTokens"
+        ]
+      },
+      "component": {
+        "registered": 65,
+        "implemented": 65,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/materials/button.mjs#renderButton",
+          "src/materials/card.mjs#renderCard",
+          "src/materials/feedback.mjs#renderFeedback",
+          "src/materials/input.mjs#renderInput",
+          "src/materials/modal.mjs#renderModal",
+          "src/materials/navigation.mjs#renderNavigation",
+          "src/materials/select.mjs#renderSelect",
+          "src/materials/table.mjs#renderDataTable",
+          "src/materials/tabs.mjs#renderTabs",
+          "src/materials/tooltip.mjs#renderTooltip",
+          "src/render/nodes.mjs#makeRenderer"
+        ]
+      },
+      "icon": {
+        "registered": 87,
+        "implemented": 87,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/render/util.mjs#icon"
+        ]
+      },
+      "layout-primitive": {
+        "registered": 6,
+        "implemented": 6,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/layout.mjs#bentoPlan",
+          "src/layout.mjs#flowCSS",
+          "src/layout.mjs#layoutContractCSS"
+        ]
+      },
+      "page-type": {
+        "registered": 16,
+        "implemented": 16,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/validate.mjs#validateBlueprint"
+        ]
+      },
+      "palette": {
+        "registered": 427,
+        "implemented": 0,
+        "derived": 0,
+        "rights": 427,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/tokens.mjs#resolveTokens"
+        ]
+      },
+      "pattern": {
+        "registered": 11,
+        "implemented": 11,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 11,
+        "uniqueCompletePresets": 11,
+        "renderEntries": [
+          "src/profiles/assemble.mjs#assemble"
+        ]
+      },
+      "profile": {
+        "registered": 7,
+        "implemented": 7,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 7,
+        "uniqueCompletePresets": 7,
+        "renderEntries": [
+          "src/profiles/assemble.mjs#assemble"
+        ]
+      },
+      "recipe": {
+        "registered": 3,
+        "implemented": 3,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 0,
+        "uniqueCompletePresets": 0,
+        "renderEntries": [
+          "src/recipes.mjs#selectRecipe"
+        ]
+      },
+      "template": {
+        "registered": 85,
+        "implemented": 85,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 85,
+        "uniqueCompletePresets": 85,
+        "renderEntries": [
+          "src/catalog/index.mjs#createBlueprint"
+        ]
+      },
+      "theme": {
+        "registered": 54,
+        "implemented": 54,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 54,
+        "uniqueCompletePresets": 54,
+        "renderEntries": [
+          "src/catalog/index.mjs#composeBlueprint"
+        ]
+      },
+      "type-preset": {
+        "registered": 18,
+        "implemented": 18,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 18,
+        "uniqueCompletePresets": 18,
+        "renderEntries": [
+          "src/typography.mjs#typeVars"
+        ]
+      },
+      "type-role-preset": {
+        "registered": 4,
+        "implemented": 4,
+        "derived": 0,
+        "rights": 0,
+        "metadata": 0,
+        "completePresets": 4,
+        "uniqueCompletePresets": 4,
+        "renderEntries": [
+          "src/materials/typography.mjs#renderMaterialTypeCSS"
+        ]
+      }
+    }
+  },
+  "reach": {
+    "themes": {
+      "catalog": 54,
+      "reachable": 25,
+      "ids": [
+        "academic",
+        "aurora",
+        "bank",
+        "cafe",
+        "civic",
+        "clarity",
+        "commerce",
+        "console",
+        "devtool",
+        "editorial",
+        "enterprise",
+        "garden",
+        "insight",
+        "journal",
+        "ledger",
+        "manual",
+        "neon",
+        "paper",
+        "pocket",
+        "precision",
+        "realty",
+        "solar",
+        "stay",
+        "trust",
+        "workspace"
+      ]
+    },
+    "palettes": {
+      "catalogLegacy": 427,
+      "reachableLegacy": 0,
+      "internal": [
+        "static-kit"
+      ]
+    },
+    "typePresets": {
+      "catalog": 18,
+      "reachableAxisValues": 12,
+      "rolePresets": 4
+    },
+    "templates": {
+      "catalog": 85,
+      "reachableAsSkeleton": 11
+    },
+    "components": {
+      "skeletonNodeTypes": 37,
+      "slotTopLevelTypes": 30,
+      "profileAllowed": 52
+    },
+    "chartPresets": {
+      "listedInProfiles": 7
+    },
+    "patternFieldsNotApplied": {
+      "recipe": 4,
+      "primitives": 6,
+      "note": "PATTERNS[].recipe·primitives는 designRegistry 의존성으로만 등록되고 assemble()은 읽지 않는다"
+    }
+  },
+  "combinations": {
+    "attempted": 16808,
+    "assembled": 16360,
+    "uniqueBlueprints": 16360,
+    "compiled": 16360,
+    "distinctCompiledOutputs": 16360,
+    "distinctColorTokenSets": {
+      "light": 1,
+      "dark": 1
+    },
+    "distinctEffectiveFacePairs": 3,
+    "failures": {
+      "ASSEMBLE_INVALID": 256,
+      "ASSEMBLE_UNSUPPORTED": 192
+    },
+    "perProfile": {
+      "erp": {
+        "attempted": 5832,
+        "assembled": 5832,
+        "compiled": 5832,
+        "distinctOutputs": 5832
+      },
+      "finance": {
+        "attempted": 1760,
+        "assembled": 1760,
+        "compiled": 1760,
+        "distinctOutputs": 1760
+      },
+      "commerce": {
+        "attempted": 4320,
+        "assembled": 4320,
+        "compiled": 4320,
+        "distinctOutputs": 4320
+      },
+      "saas-landing": {
+        "attempted": 1440,
+        "assembled": 1344,
+        "compiled": 1344,
+        "distinctOutputs": 1344
+      },
+      "editorial": {
+        "attempted": 2304,
+        "assembled": 2304,
+        "compiled": 2304,
+        "distinctOutputs": 2304
+      },
+      "docs": {
+        "attempted": 864,
+        "assembled": 512,
+        "compiled": 512,
+        "distinctOutputs": 512
+      },
+      "mobile-app": {
+        "attempted": 288,
+        "assembled": 288,
+        "compiled": 288,
+        "distinctOutputs": 288
+      }
+    },
+    "axes": "pattern × theme × density × mode × typography × controlSize × shell × width (프로파일·패턴 허용값). components·chartPresets·content는 펼치지 않는다"
+  },
+  "legacyComparison": {
+    "themeDefaultPaletteTokenSetsLight": 54,
+    "note": "Coolors 팔레트(권리 미확인)를 쓰므로 신규 경로의 기준이 아니라 축소 폭 비교용이다"
+  }
+}

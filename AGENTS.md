@@ -11,4 +11,4 @@
 
 ## 시스템을 개발하는 에이전트
 
-`docs/adr/0001-catalog-compiler.md`, `docs/adr/0002-axes-bans-page-types.md`, `docs/architecture.md`, `docs/governance.md`를 먼저 읽는다. 문법은 `src/catalog/`에서 수정한다. 새 축 값은 구현표(`src/styles/base.mjs`)와 enum을 함께 둔다. 새 금지 조합은 `uses`·`why`·`source`·`fix`를 적는다. 신규 동작은 실패하는 계약 테스트부터 쓴다. UI는 Chromium에서 검사한다(`npm run test:browser`). `npm run verify`를 실행하고 산출물(`site/`, `docs/*.html`, `docs/evidence/`)을 재생성해 함께 커밋한다. 카탈로그/검사기의 권한 우회 방지 한계를 숨기지 않는다. 사용자 승인이나 미감을 보증했다는 기록을 만들지 않는다. 동료 저장소(AGPL-3.0)의 코드·토큰·CSS·문구·아이콘은 복사하지 않는다.
+`docs/adr/0001-catalog-compiler.md`, `docs/adr/0002-axes-bans-page-types.md`, `docs/architecture.md`, `docs/governance.md`를 먼저 읽는다. 문법은 `src/catalog/`에서 수정한다. 새 축 값은 구현표(`src/styles/base.mjs`)와 enum을 함께 둔다. 새 금지 조합은 `uses`·`why`·`source`·`fix`를 적는다. 신규 동작은 실패하는 계약 테스트부터 쓴다. 조립 플랫폼(`src/platform/`)을 다루면 `docs/adr/0012-assembly-platform.md`와 `docs/platform/wbs.md`의 파일 소유를 먼저 읽는다. UI는 Chromium에서 검사한다(`npm run test:browser`). `npm run verify`를 실행하고 산출물(`site/`, `docs/*.html`, `docs/evidence/`)을 재생성해 함께 커밋한다. 카탈로그/검사기의 권한 우회 방지 한계를 숨기지 않는다. 사용자 승인이나 미감을 보증했다는 기록을 만들지 않는다. 동료 저장소(AGPL-3.0)의 코드·토큰·CSS·문구·아이콘은 복사하지 않는다.

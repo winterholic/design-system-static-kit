@@ -1,0 +1,221 @@
+# ADR 0012: 재료 조립 플랫폼 계약
+
+- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다.
+- 날짜: 2026-11-22
+- 관련: ADR 0001, 0009, 0011; [감사 2026-11](../platform/audit-2026-11.md)
+- 번호 메모: 작업 카드는 `0010-assembly-platform.md`를 지시했다. 그러나 0010은 이미 `0010-expression-grammar-2-5.md`가 쓰고 있어 0012로 둔다.
+
+## 배경
+
+감사 결과 최신 조립 경로(`src/profiles/assemble.mjs`)에는 다섯 가지 문제가 있다.
+
+1. 색을 팔레트 하나로 고정한다.
+2. 역할형 서체 프리셋이 서체 짝을 덮어써, 실제로 적용되는 서체 짝이 셋뿐이다.
+3. 등록된 재료(2.6.0 컨트롤, 차트 프리셋, 레시피) 대부분이 출력에 닿지 않는다.
+4. 조합의 유효성은 마지막 Blueprint 검증에서야 드러난다.
+5. `intent.components`는 노드를 넣지 않는다.
+
+원인은 구조에 있다. 테마와 프로파일 같은 "값을 한꺼번에 정하는 묶음"이 색, 서체, 모양, 부품 선택을 모두 소유한다. 재료 사이의 관계는 허용 목록과 금지 규칙으로 흩어져 있다.
+
+이 ADR은 플랫폼의 정의를 이렇게 정한다. **미리 구현된 실제 코드 재료를 관계 그래프로 탐색·매칭하고, 규칙 기반 파이프라인으로 조립해 쓸 수 있는 코드로 내보낸다.**
+
+- AI가 HTML이나 CSS를 생성하지 않는다(2026-11-21 결정).
+- 등록 수량이나 속성 카테시안 곱을 성과 지표로 쓰지 않는다. 성과는 `scripts/platform/baseline.mjs`의 "실제 조립 가능"과 "검증된 조합"으로 잰다.
+
+## 결정 요약
+
+| 항목 | 결정 | 코드 |
+|---|---|---|
+| 재료 종류 | style-context, palette, subtoken-set, type-system, base-component, family. 종류마다 같은 KindRegistry 인터페이스 | `src/platform/contract.mjs` `KIND_SPECS`, `src/platform/registry.mjs` |
+| 색 | 팔레트(원색)와 서브토큰 세트(역할 분배)를 다대다로 둔다 | `src/platform/color.mjs`, `data/palettes.mjs`, `data/subtoken-sets.mjs` |
+| 타이포 | 타이포 시스템 = 서체 짝(구형 18) × 역할 크기 체계(역할형 4) | `src/platform/type.mjs`, `data/type-systems.mjs` |
+| 테마 | 스타일 맥락으로 바꾼다. 값을 정하지 않고 추천 순위만 정한다 | `data/style-contexts.mjs` |
+| 컴포넌트 | 기반 컴포넌트(동작·구조·접근성·상태)와 디자인 패밀리(시각 언어)로 나눈다 | `src/platform/family.mjs`, `data/base-components.mjs`, `data/families.mjs` |
+| 관계 | 선언 관계(edge)와 계산 관계(check)를 둔다 | `src/platform/relations.mjs` |
+| 조립 | 7단계 순수 함수 파이프라인. 추천 1순위가 기본 조립값이다 | `src/platform/pipeline.mjs`, `src/platform/recommend.mjs` |
+| 공개 | 지금은 내부 모듈이다. 서비스 함수 하나로 공개하고 REST·MCP·Studio가 그 함수를 함께 부른다 | §7 |
+
+## 1. 재료 종류와 레지스트리
+
+모든 플랫폼 재료는 공통 필드(`COMMON_FIELDS`)를 가진다: `id`, `kind`, `version`, `label`, `contexts`, `tags`, `relations`, `quality`, `source`, `reuses`. 종류별 필드는 `KIND_SPECS`에 있다.
+
+- `reuses`는 재사용하는 ADR 0011 재료의 id다(예: `type-preset:tech`, `component:card-surface`). 감사와 이행 추적에 쓴다.
+- `source.license`는 `internal`이나 `MIT`만 받는다. 권리를 확인하지 못한 자료는 등록 단계에서 거부한다(`P_LICENSE`). Coolors 팔레트 427개는 이 레지스트리에 들어오지 않는다.
+- `quality.status: verified`에는 `tests/<file>.test.mjs:<line>` 근거가 필요하다.
+
+레지스트리는 `createPlatformRegistry()`로 만든다. 전역 상태가 없다. 종류마다 칸이 하나씩 있고, 모든 칸은 같은 인터페이스를 가진다.
+
+```js
+reg.kind(k).register(record)   // 검사 실패 시 PlatformError, 레지스트리 불변
+reg.kind(k).get(id) / has(id) / list() / filter({context, tag, minQuality})
+reg.kind('base-component').implement(id, {contract, render, styles})   // 실제 구현 연결(기록과 계약 id가 같아야 함)
+reg.get(id) / reg.list(kind?) / reg.registerAll(records) / reg.check()  // check: 관계 대상·패밀리 구성원·구현 연결
+```
+
+ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 세는 목록이다. 그대로 둔다. 플랫폼 레지스트리는 "무엇을 무엇과 함께 조립할 수 있는가"를 다룬다. 기존 재료는 id로 참조하고, 구현은 import해서 재사용한다. 복사하지 않는다.
+
+### 1.1 팔레트와 서브토큰 세트(다대다)
+
+- **팔레트**(`palette`)는 원색만 가진다: `seeds: {brand, neutral, accent?, success?, warning?, danger?, info?}`(대문자 `#RRGGBB`). 어떤 원색이 배경이 되고 어떤 원색이 글자가 되는지는 정하지 않는다.
+- **서브토큰 세트**(`subtoken-set`)는 역할 분배 설계다. `needs`(쓰는 팔레트 자리), `modes`, `roles`를 가진다. `roles`는 색 역할(`COLOR_ROLES`, 23개)마다 규칙(RoleRule)을 하나씩 둔다. 원색 값은 갖지 않으므로 어떤 팔레트에도 다시 쓸 수 있다.
+  - `{from: 자리, light: 단계, dark: 단계, min?: {against: [앞 역할…], ratio}}`: 램프 단계에서 시작해 대비를 맞출 때까지 보정한다.
+  - `{on: 역할, min}`: 그 역할 위에 놓이는 글자. 흰색과 neutral 950 중 대비가 맞는 쪽을 쓴다.
+  - 키 순서가 곧 계산 순서다. `against`와 `on`은 앞에서 정의한 역할만 가리킨다(`P_SUBTOKEN_ORDER`).
+- **결합**: `bindColor(palette, set, mode)`. 램프와 대비 보정은 2.6.0 엔진(`src/color-tokens.mjs`)의 함수를 그대로 쓴다. 계산식을 새로 두지 않는다.
+- **호환**: 계산 관계 `palette-subtoken`이 판정한다. 세트의 모든 모드에서 필요한 원색이 있고 대비 게이트를 통과해야 호환이다. 선언 관계 `prefers`로 우선순위를 더한다.
+- **CSS 변수 이름**: 색 역할은 기존 컴파일 CSS가 읽는 변수 이름(`--kit-surface`, `--kit-card-hover` 등)으로 낸다. 그래서 기존 부품 CSS를 고치지 않고 재사용한다.
+- **이행**:
+  - static-kit의 `getMode`는 `subtoken-set:standard`가 같은 원칙으로 옮긴다.
+  - 구형 `resolveTokens`의 자동 분배는 이후 `subtoken-set:derived`로 옮길 수 있다. 다만 자체 팔레트에만 쓴다.
+- **남은 한계(색 작업)**:
+  - RoleRule에는 고정값(예: 흰 표면)이 없다. 그래서 표준 세트의 light 표면이 neutral 50(약 `#E9EAED`)이다.
+  - `fixed` 규칙을 더할지는 색 작업이 정한다. 계약을 바꾸면 `PLATFORM_CONTRACT_VERSION`을 올린다.
+
+## 2. 독립 타이포그래피 시스템
+
+**타이포 시스템**(`type-system`)은 `facePairing`(서체 짝)과 `roleScale`(역할 크기 체계)의 곱이다.
+
+| 구성 | 출처 | 소유하는 값 |
+|---|---|---|
+| 서체 짝 | 구형 서체 프리셋 18개(`type-preset:<id>`, `src/typography.mjs` `TYPE_R2`) | 제목·본문 서체 스택, 비율, 자간, 행간, 숫자 정렬 |
+| 역할 크기 체계 | 역할형 프리셋 4개(`type-role-preset:<id>`, `src/materials/typography.mjs`) | 역할별 크기(clamp), 굵기, 행간, 자간, 밀도·좁은 화면 계수 |
+
+- **결정**: 서체는 서체 짝에서만, 크기는 역할 체계에서만 온다. 현재 `renderRoleTypeCSS`는 역할형 프리셋 엔진의 서체로 `--kit-heading`을 덮는다. 그 결과 조립 출력의 서체 짝이 셋으로 줄었다(감사 Q2). 플랫폼의 `bindType`은 이 덮어쓰기를 하지 않는다.
+- **한글 한도**: 엔진의 `HANGUL`을 그대로 검사한다. 세리프 한글 서체는 굵기가 한 벌뿐이다. 그래서 서체 짝이 세리프이고 역할 체계의 제목 굵기가 `serifHangulWeightMax`(700)를 넘으면 조합을 거부한다(`P_CHECK_TYPE_HANGUL`). 예: editorial × marketing(display 750).
+- **통합 방안**:
+  1. 서체 짝 18개와 역할 체계 4개를 그대로 쓴다. 이름 붙인 조합(예: `type-system:tech-erp`)을 완성 프리셋으로 등록한다.
+  2. 조합이 가능한지는 계산 관계(한글 한도)와 선언 관계(맥락별 `prefers`·`avoids`)로 정한다. 18×4의 곱을 모두 등록하지 않는다.
+  3. 구형 18개가 암묵적으로 가진 모듈러 스케일(비율 × 역할 지수)도 역할 체계 하나로 옮긴다(`role-scale:modular`, 타이포 작업). 그러면 2.4.0 출력과 같은 크기 체계를 플랫폼에서도 고를 수 있다.
+  4. 2.6.0 `typeRoles`의 출력은 바꾸지 않는다. 고정 해시가 있기 때문이다. 플랫폼 경로는 새 카탈로그 버전(§7) 뒤에서만 Blueprint에 들어간다.
+
+## 3. 테마를 스타일 맥락으로
+
+**스타일 맥락**(`style-context`)은 값을 정하지 않는다. `axisPreferences`(축별 선호 순서), `forbid`(축별 금지 값), `mood`, `contexts`, 다른 재료로 가는 관계를 가진다. 추천 단계에서 순위와 차단으로만 작용한다.
+
+- **테마에서 옮기는 규칙**(`styleContextFromTheme`):
+  - 테마의 축 기본값은 첫 선호가 된다.
+  - 단일 축 금지(`forbid`)는 금지로 그대로 옮긴다.
+  - 테마의 팔레트 목록(Coolors)은 옮기지 않는다. 색은 팔레트·서브토큰 관계로 고른다.
+- **이유**: 테마가 값을 소유하면 테마 하나가 색, 서체, 모양을 한꺼번에 고정한다. 그러면 다양성은 테마 수에 묶인다. 맥락으로 두면 같은 맥락에서 여러 팔레트, 타이포 시스템, 패밀리를 근거와 함께 고를 수 있다.
+- **스타일 맥락이 금지한 모양을 가진 패밀리**는 추천에서 빠진다. 다른 값으로 바꾸지 않는다(`P_REL_STYLE_FORBID`, 후보가 없으면 `P_SELECT_EMPTY`).
+- **테마 54개 전부의 이행**은 테마·기타 재료 작업(W4)이 맡는다. 테마의 `defaults` 중 서체와 모양 외의 축(셸, 폭, 밀도)은 조립 엔진의 페이지 단계에서 선호로 읽는다.
+
+## 4. 기반 컴포넌트와 디자인 패밀리
+
+| | 기반 컴포넌트(`base-component`) | 디자인 패밀리(`family`) |
+|---|---|---|
+| 소유 | 동작, DOM 구조, 접근성, 상태 전이, 금지 조합, 렌더러, 기본 CSS | 시각 언어: 구성원별 고정 축, 모양(radius·elevation·motion), 전제 밀도 |
+| 출처 | 기존 2.6.0 컨트롤 계약(`defineContract`) + `render*` + `*Styles` | 신규. 여러 기반 컴포넌트를 묶는다 |
+| 바꾸는 방법 | 계약 버전을 올린다(ADR 0011) | 패밀리 버전을 올린다. 기반 구현은 건드리지 않는다 |
+
+**패밀리 계약 필드**
+
+- `members`: `{base-component id: {preset, open, needs?}}`
+  - `preset`: 패밀리가 고정하는 축 값.
+  - `open`: 호출자가 고를 수 있는 축. preset과 겹칠 수 없다.
+  - `needs.typeRoles`: 구성원이 읽는 타이포 역할.
+  - preset과 open은 기반 계약의 축이어야 한다. preset만으로 금지 조합에 걸리면 안 되고, open 축의 조합 중 허용되는 것이 하나 이상 있어야 한다(`memberErrors`, `memberCombinations`).
+- `shape`: `{radius, elevation, motion}`. 값은 `src/styles/base.mjs`의 축 값 표 이름이다. 패밀리는 px나 색을 새로 정하지 않는다.
+- `density`, `states`(구성원 전체가 보장하는 상태), 공통 필드.
+
+**그 밖의 규칙**
+
+- **닫힌 쌍**: family와 base-component는 호환 관계가 있어야만 함께 조립한다(`CLOSED_PAIRS`). 호환 근거는 계산 관계 `family-member`다. 그 기반 컴포넌트가 구성원이어야 하고, 고정·열린 축이 계약 안에 있어야 한다.
+- **렌더**: `renderMember`가 처리한다. 호출자가 고정 축을 바꾸려 하면 `P_ATTR_LOCKED`로 거부한다. 열린 축 조합이 계약에서 금지되면 `P_REL_CONTRACT`를 낸다. 기반 계약의 대비 쌍(`contract.pairs`)은 결합된 색으로 검사한다(`P_CHECK_CONTRAST`).
+- **범위**: 패밀리 모양 변수는 `[data-family="<name>"]` 범위에만 둔다. 한 화면에 패밀리가 여럿 있어도 서로 덮지 않는다.
+- **중복 정리(W3)**: 구형 노드(card, table, tabs, notice, chrome nav)와 2.6.0 컨트롤이 짝을 이루는 경우, 2.6.0 컨트롤을 기반 컴포넌트로 삼는다. 구형 노드의 `variant` 값은 패밀리 preset으로 옮긴다(예: `card.variant: outline` → `appearance: outline`). 구형 노드 자체는 2.4.0·2.5.0 호환을 위해 남긴다.
+
+## 5. 관계(edge) 모델
+
+선언 관계는 재료 기록의 `relations`에 둔다. **선언한 재료의 소유자가 관계를 소유한다.** 그래서 공유 관계 파일이 없고, 작업 사이에 파일 충돌도 없다.
+
+```js
+{type, to, priority, reason, when?, evidence?}   // from은 선언한 재료 id
+```
+
+| type | 뜻 | 평가 |
+|---|---|---|
+| `requires` | 고르면 상대도 있어야 한다(의존) | 없으면 `P_REL_REQUIRES` |
+| `forbids` | 함께 쓸 수 없다. 양방향으로 읽는다 | `P_REL_FORBIDS`. 추천에서는 차단 |
+| `prefers` | 함께 쓰면 좋다 | 추천 점수에 +priority |
+| `avoids` | 쓸 수 있으나 피한다 | 추천 점수에 −priority |
+| `compatible` | 호환을 명시한다 | 닫힌 쌍에서 필요 |
+
+**필드 규칙**
+
+- `priority`: 0에서 100 사이의 정수.
+- `reason`: 반드시 적는다. 진단과 추천 근거에 그대로 나온다.
+- `when`: 조건이다. 키는 `mode`, `context`, `density`. 키끼리는 AND, 한 키의 값 목록은 OR로 읽는다. 맥락에 그 키가 없으면 조건부 관계는 적용하지 않는다.
+
+**계산 관계**(`defineCheck({id, kinds: [A, B], reason, run})`)는 값을 계산해야 알 수 있는 호환성이다. 순수 함수여야 한다. 지금 있는 것은 `palette-subtoken`(대비 게이트)와 `family-member`(계약 적합성)다. 실패하면 `P_CHECK_<ID>`를 낸다.
+
+**조회 함수**(`createRelationGraph(registry, {checks})`)
+
+- `edges()`, `from(id, {type, ctx})`, `to(id, …)`, `between(a, b, ctx)`
+- `runChecks(a, b, ctx)`
+- `score(candidate, selectedIds, ctx)`: 추천용 점수.
+- `evaluate(ids, ctx)`: 묶음 전체의 조합 유효성.
+
+**개별 속성 유효성과 조합 유효성의 구분**
+
+- 개별: id가 등록됐는가, 종류가 맞는가, 맥락이 맞는가, 축 값이 계약 안인가. `P_ATTR_*`로 보고한다.
+- 조합: 관계와 계산 관계. `P_REL_*`와 `P_CHECK_*`로 보고한다.
+
+**기존 규칙의 이행**(조립 엔진 작업 W5)
+
+- 축 금지 X01 등과 테마 forbid는 `forbids`로 옮긴다.
+- 프로파일 허용 목록은 스타일 맥락의 선호와 패밀리 `contexts`로 옮긴다.
+- 컨트롤 계약 `forbidden`은 기반 컴포넌트 안에 그대로 둔다. 같은 재료 안의 규칙이기 때문이다.
+
+## 6. 조립 파이프라인
+
+각 단계는 `(state, env) → state'` 순수 함수다. error 진단이 생기면 다음 단계로 가지 않는다. 같은 입력은 같은 바이트를 낸다. `env = {registry, graph}`.
+
+| 단계 | 입력 | 출력 | 진단 |
+|---|---|---|---|
+| 1 `normalizeRequest(request)` | `{context, mode?, density?, styleContext?, palette?, subtokenSet?, typeSystem?, families?, components: [{base, family?, props?, content}]}` | `intent` | `P_REQUEST*`, `P_ATTR_MODE`·`P_ATTR_DENSITY` |
+| 2 `resolveStyleContext` | intent | `styleContext` | `P_ATTR_*` |
+| 3 `selectMaterials` | intent, styleContext | `selection: {styleContext, palette, subtokenSet, typeSystem, families: {base: family}}`, decisions | `P_ATTR_UNKNOWN`·`P_ATTR_KIND`·`P_ATTR_CONTEXT`, `P_SELECT_EMPTY` |
+| 4 `checkCombination` | selection | `relations: {ok, violations, applied, checks}` | `P_REL_*`, `P_CHECK_*` |
+| 5 `bindTokens` | selection | `bound: {color, type, families, root}` | `P_COLOR_*` |
+| 6 `composeComponents` | intent.components, bound | `items: [{base, family, props, html, contrast}]` | `P_ATTR_LOCKED`·`P_ATTR_AXIS`·`P_ATTR_VALUE`, `P_REL_CONTRACT`, `P_CHECK_CONTRAST`, `P_RENDER` |
+| 7 `emit` | 모두 | `output: {css, html, tokens, manifest}` | `P_TOKEN_MISSING`(CSS가 읽는 변수에 값이 없을 때) |
+
+- **실행**: `assemblePlatform(request, env)`는 `{ok, value, diagnostics, decisions, stage}`를 돌려준다. `stage`는 마지막으로 돈 단계이고, 실패하면 그 위치를 가리킨다.
+- **3단계의 선택 규칙**:
+  - 요구가 있으면 검사한 뒤 그대로 쓴다. 다른 값으로 바꾸지 않는다.
+  - 요구가 없으면 `recommend()`의 1순위를 쓴다. 고른 이유(관계, 축 선호)는 `decisions`에 남는다.
+  - 고르는 순서는 팔레트 → 서브토큰 세트(팔레트 기준) → 타이포 시스템 → 컴포넌트별 패밀리(서브토큰·타이포 기준)다.
+- **추천 시그니처**: `recommend(registry, graph, {kind, context?, mode?, density?, styleContext?, selected?: [id]})`. 반환은 `{kind, ranked: [{id, score, reasons}], blocked: [{id, blocked: [{code, reason, with}]}]}`이고, 동점은 id 순이다.
+- **출력**: 지금은 독립 HTML 조각과 CSS다. Blueprint 출력은 §7의 버전 게이트 뒤에 둔다.
+- **최소 예시**(`src/platform/examples/minimal.mjs`): 팔레트 1, 서브토큰 세트 2, 타이포 시스템 1, 스타일 맥락 1, Card 패밀리 1로 끝까지 돈다. 기존 Card 구현(`src/materials/card.mjs`)의 계약, 렌더러, CSS를 바이트 그대로 재사용한다. 이를 `tests/platform-minimal.test.mjs`가 검사한다.
+
+## 7. Blueprint와 공개 API 버전 정책
+
+1. **기존 출력은 고정한다.**
+   - 2.1.0에서 2.6.0까지의 Blueprint 문법, 검증, 컴파일 출력, `site/v1/catalog.json` 바이트, 고정 해시는 바꾸지 않는다.
+   - `assembleBlueprint`(프로파일 조립)도 응답 모양과 결과를 그대로 둔다.
+2. **플랫폼은 당분간 내부 모듈이다.**
+   - `src/platform/`은 패키지 공개 경로(`./service`, `./edit`)가 아니다. `package.json` exports를 바꾸지 않는다.
+   - 계약을 바꾸면 `PLATFORM_CONTRACT_VERSION`을 올린다. 0.x 동안은 minor에서도 깨지는 변경을 허용하되, 이 ADR을 함께 개정한다.
+3. **공개는 서비스 함수 하나로 한다.**
+   - 조립 엔진 작업(W5)이 `src/service/assemble-design.mjs`에 `assembleDesign(request)`을 만든다. 같은 봉투(`{ok, value|errors, warnings, catalogVersion, contractVersion}`)를 쓴다.
+   - `./service`의 `index.mjs`에 이름 하나를 더한다(추가만 하는 변경). 서비스 `CONTRACT_VERSION`은 minor를 올린다.
+   - REST(`POST /api/v1/assemble`), MCP(`assemble_design` 도구), Studio가 모두 이 함수를 부른다. 채널별 조립 로직은 두지 않는다(ADR 0009).
+4. **Blueprint 게이트**:
+   - 플랫폼 선택을 Blueprint에 저장할 때는 새 opt-in 카탈로그 버전 `2.7.0`의 최상위 필드 `materials: {styleContext, palette, subtokenSet, typeSystem, families}`로 둔다.
+   - 2.6.0 이하에서 이 필드를 쓰면 `VERSION_FIELD`로 거부한다.
+   - 기본 생성 버전(`CATALOG_VERSION = 2.4.0`)은 바꾸지 않는다. 승격은 별도 호환 검토로 한다(ADR 0010, 0011과 같은 방식).
+5. **기존 프로파일 조립의 이행**: `assembleBlueprint`는 나중에 "프로파일 → 플랫폼 요청" 어댑터가 된다. 그 전환은 결과 바이트가 같다는 고정 테스트가 있을 때만 한다.
+6. **금지 사항**: 버전 태그, npm 발행, 정식 릴리스는 이 계약 범위 밖이다.
+
+## 결과와 남은 일
+
+- 계약 코드는 `src/platform/`, 테스트는 `tests/platform-contract.test.mjs`와 `tests/platform-minimal.test.mjs`(11개)에 있다. 이 테스트를 포함한 전체 `npm test`(553개)를 통과한다. 기존 회귀 테스트는 고치지 않았다.
+- 남은 일과 소유 경계는 [wbs.md](../platform/wbs.md)에 있다.
+  - 색: 자체 팔레트 추가, `fixed` 규칙, 순차·발산 차트 색.
+  - 타이포: 모듈러 스케일 역할 체계, 18×4 관계.
+  - 패밀리: 컨트롤 10종, 구형 중복 정리.
+  - 테마: 54개 이행.
+  - 엔진: 페이지·슬롯 단계, 서비스·REST·MCP 공개, Blueprint 2.7.0.
+  - 웹: 탐색·조립 UI.
