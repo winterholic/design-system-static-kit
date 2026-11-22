@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
-import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 import {buildPage, makeEnv, VISUALS} from '../scripts/families/pages.mjs';
+import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 
 // 목적 패밀리 접근성 계약의 브라우저 쪽(재료 검증 F1). 마크업의 role·aria·라벨 연결은 tests/platform-family-a11y.test.mjs가 본다.
 // 이 파일은 마크업만으로 볼 수 없는 것을 본다.
@@ -15,7 +15,18 @@ const example = id => { const f = PURPOSE_FAMILIES.find(x => x.id === id); retur
 
 async function open(page, items, {width = 1280, visual = QUIET, group = null, mode = 'light'} = {}) {
   const list = Array.isArray(items) ? items : [items];
-  const built = buildPage(env, group ?? GROUP_OF(list[0].purpose), visual, {items: list, runtime: true, mode});
+  const contexts = list.map(item => PURPOSE_FAMILIES.find(f => f.id === item.purpose).contexts).filter(cs => !cs.includes('any'));
+  const sharedContexts = contexts.length ? contexts[0].filter(context => contexts.every(cs => cs.includes(context))) : ['dashboard'];
+  expect(sharedContexts.length, list.map(item => item.purpose).join(', ')).toBeGreaterThan(0);
+  const context = sharedContexts[0];
+  const globalDensities = ['comfortable', 'compact', 'spacious'];
+  const densityLimits = list.map(item => {
+    const family = PURPOSE_FAMILIES.find(f => f.id === item.purpose);
+    return family.props?.density ?? family.variants?.density;
+  }).filter(Boolean);
+  const sharedDensities = globalDensities.filter(density => densityLimits.every(values => values.includes(density)));
+  const density = sharedDensities.includes('comfortable') ? 'comfortable' : sharedDensities[0] ?? 'comfortable';
+  const built = buildPage(env, group ?? GROUP_OF(list[0].purpose), visual, {items: list, runtime: true, mode, context, density});
   expect(built.ok, JSON.stringify(built.diagnostics)).toBe(true);
   await page.setViewportSize({width, height: 900});
   // setContent만 다시 부르면 이전 문서의 전역(const wire 등)이 남아 런타임 스크립트가 조용히 실패한다. 새 문서로 시작한다.

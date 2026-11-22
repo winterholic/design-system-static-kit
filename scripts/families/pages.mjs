@@ -42,9 +42,13 @@ wire('[data-ctl=button]', attachButton); wire('[data-ctl=input]', attachInput); 
 wire('[data-ctl=tabs]', attachTabs); wire('[data-ctl=modal]', attachModal); wire('[data-ctl=feedback]', attachFeedback); wire('.kit-data-table', attachTable); wire('.kit-select', attachSelect);
 </script>`;
 
-export function groupItems(group) {
+export function groupItems(group, context = 'dashboard', density = 'comfortable') {
   const base = PURPOSE_FAMILIES.filter(f => f.group === group).map(f => ({purpose: f.id, variant: f.example.variant, props: f.example.props, content: f.example.content}));
-  return [...base, ...(STRESS[group] ?? [])];
+  return [...base, ...(STRESS[group] ?? [])].filter(item => {
+    const family = getPurposeFamily(item.purpose);
+    const densityValues = family.props?.density ?? family.variants?.density;
+    return (family.contexts.includes('any') || family.contexts.includes(context)) && (!densityValues || densityValues.includes(density));
+  });
 }
 
 const LAYOUT = {
@@ -57,12 +61,12 @@ const LAYOUT = {
 };
 
 /** 한 페이지. 반환 {ok, html, diagnostics, manifest}. 실패하면 html은 null. */
-export function buildPage(env, group, visual, {mode = 'light', runtime = false, items: given = null} = {}) {
+export function buildPage(env, group, visual, {mode = 'light', runtime = false, items: given = null, context = 'dashboard', density = 'comfortable'} = {}) {
   // 패밀리 단위로 거부되는 조합(예: 고밀도 표 × soft)은 그 시각 패밀리의 페이지에서 뺀다. 빠진 목록은 excluded로 돌려준다.
-  const wanted = given ?? groupItems(group);
+  const wanted = given ?? groupItems(group, context, density);
   const excluded = wanted.filter(it => !checkPurposeCombination(getPurposeFamily(it.purpose), {visual, variant: it.variant, props: it.props, content: it.content}).ok).map(it => it.purpose);
   const items = wanted.filter(it => !excluded.includes(it.purpose)).map((it, i) => ({id: `${it.purpose.slice('purpose:'.length).replace('.', '-')}-${i}`, ...it, visual}));
-  const r = assembleFamilies(env, {context: 'dashboard', mode, density: 'comfortable', items});
+  const r = assembleFamilies(env, {context, mode, density, items});
   if (!r.ok) return {ok: false, html: null, diagnostics: r.diagnostics, items};
   const css = `${r.value.css}\n${LAYOUT[group]}\nbody{margin:0}main{max-width:1280px;margin:0 auto}@media(max-width:640px){.pf{padding:var(--kit-sp-tight)}}`;
   const html = `<!doctype html><html lang="ko" data-mode="${mode}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${group} · ${visual}</title><style>${css}</style></head><body><main>${r.value.html}</main>${runtime ? RUNTIME_SCRIPT : ''}</body></html>`;

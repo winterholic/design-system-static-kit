@@ -25,20 +25,20 @@ test('every group × visual family × mode × viewport passes layout-quality and
 });
 
 test.describe('the measurements fail on deliberately broken CSS', () => {
-  async function metricsWith(page, group, extraCss, items) {
-    const built = buildPage(env, group, QUIET, {items});
+  async function metricsWith(page, group, extraCss, items, context = 'dashboard') {
+    const built = buildPage(env, group, QUIET, {items, context});
     expect(built.ok, JSON.stringify(built.diagnostics)).toBe(true);
     await page.setViewportSize({width: 1280, height: 900});
     await page.setContent(built.html.replace('</style>', `${extraCss}</style>`));
     return page.evaluate(familyMetrics);
   }
   const twoCards = [
-    {purpose: 'purpose:card.kpi', variant: {layout: 'stacked', trend: 'none'}, content: {label: '짧은', value: '3'}},
-    {purpose: 'purpose:card.article', variant: {layout: 'text'}, props: {behavior: 'link'}, content: {title: '긴 글 제목이 길어서 여러 줄을 차지하는 경우', excerpt: '요약 문장이 이어서 세 줄까지 보입니다. 같은 줄의 카드는 높이가 같아야 합니다.', author: '민지', date: '2026-11-22', href: '#a'}},
+    {purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'none'}, props: {behavior: 'link'}, content: {title: '짧은 상품', price: '₩3', mediaIcon: 'bag', href: '#a'}},
+    {purpose: 'purpose:card.pricing', variant: {emphasis: 'standard'}, content: {plan: '긴 상품 이름', price: '₩24,000', period: '월', description: '같은 줄의 카드는 높이가 같아야 합니다.', features: ['배송 포함', '반품 가능'], ctaLabel: '시작하기'}},
   ];
   test('card height imbalance', async ({page}) => {
-    expect(judge(await metricsWith(page, 'card', '', twoCards))).toEqual([]);
-    const m = await metricsWith(page, 'card', '.kit-platform{align-items:start}.pf-card{height:auto}', twoCards);
+    expect(judge(await metricsWith(page, 'card', '', twoCards, 'commerce'))).toEqual([]);
+    const m = await metricsWith(page, 'card', '.kit-platform{align-items:start}.pf-card{height:auto}', twoCards, 'commerce');
     expect(m.cards.maxHeightSpread).toBeGreaterThan(1);
     expect(judge(m).join()).toMatch(/카드 높이 불균형/);
   });
@@ -52,7 +52,7 @@ test.describe('the measurements fail on deliberately broken CSS', () => {
     const m = await metricsWithLeftPad(page);
     expect(m.padding.issues.length).toBeGreaterThan(0);
   });
-  async function metricsWithLeftPad(page) { return metricsWith(page, 'card', '.pf-card{padding-left:2px!important}', twoCards); }
+  async function metricsWithLeftPad(page) { return metricsWith(page, 'card', '.pf-card{padding-left:2px!important}', twoCards, 'commerce'); }
   test('control overlap', async ({page}) => {
     const search = [{purpose: 'purpose:form.search', variant: {layout: 'inline', scope: 'none'}, content: {label: '검색', placeholder: '검색어를 입력하세요'}}];
     expect(judge(await metricsWith(page, 'form', '', search))).toEqual([]);
@@ -68,15 +68,15 @@ test.describe('the measurements fail on deliberately broken CSS', () => {
 });
 
 test.describe('interactions the families promise', () => {
-  async function open(page, group, items, width = 1280, visual = QUIET) {
-    const built = buildPage(env, group, visual, {items, runtime: true});
+  async function open(page, group, items, width = 1280, visual = QUIET, context = 'dashboard') {
+    const built = buildPage(env, group, visual, {items, runtime: true, context});
     expect(built.ok, JSON.stringify(built.diagnostics)).toBe(true);
     await page.setViewportSize({width, height: 900});
     await page.setContent(built.html);
     expect(await page.locator('[data-wire-error]').count(), 'every attach* runtime wired without error').toBe(0);
   }
   test('selectable product card toggles aria-pressed and shows the check', async ({page}) => {
-    await open(page, 'card', [{purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'none'}, props: {behavior: 'selectable'}, content: {title: '텀블러', price: '₩24,000', mediaIcon: 'coffee'}}]);
+    await open(page, 'card', [{purpose: 'purpose:card.product', variant: {layout: 'vertical', cta: 'none'}, props: {behavior: 'selectable'}, content: {title: '텀블러', price: '₩24,000', mediaIcon: 'coffee'}}], 1280, QUIET, 'commerce');
     const hit = page.locator('.kit-ctl-card-hit');
     await expect(hit).toHaveAttribute('aria-pressed', 'false');
     await hit.click();
@@ -87,7 +87,7 @@ test.describe('interactions the families promise', () => {
     await expect(hit).toHaveAttribute('aria-pressed', 'false');
   });
   test('gallery tiles select with the native checkbox and show a check mark', async ({page}) => {
-    await open(page, 'card', [{purpose: 'purpose:card.gallery', variant: {layout: 'grid', tiles: 'select'}, content: {title: '앨범', items: [{label: '해변', icon: 'droplet'}, {label: '숲길', icon: 'leaf'}, {label: '노을', icon: 'sun'}]}}]);
+    await open(page, 'card', [{purpose: 'purpose:card.gallery', variant: {layout: 'grid', tiles: 'select'}, content: {title: '앨범', items: [{label: '해변', icon: 'droplet'}, {label: '숲길', icon: 'leaf'}, {label: '노을', icon: 'sun'}]}}], 1280, QUIET, 'listing');
     const box = page.getByRole('checkbox', {name: '숲길 선택'});
     await expect(box).not.toBeChecked();
     await box.check();
