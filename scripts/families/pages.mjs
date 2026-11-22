@@ -42,12 +42,26 @@ wire('[data-ctl=button]', attachButton); wire('[data-ctl=input]', attachInput); 
 wire('[data-ctl=tabs]', attachTabs); wire('[data-ctl=modal]', attachModal); wire('[data-ctl=feedback]', attachFeedback); wire('.kit-data-table', attachTable); wire('.kit-select', attachSelect);
 </script>`;
 
+export function groupScenarios(group) {
+  const densities = ['comfortable', 'compact', 'spacious'];
+  const scenarios = new Map();
+  for (const family of PURPOSE_FAMILIES.filter(f => f.group === group)) {
+    const context = family.contexts.find(value => value !== 'any') ?? 'dashboard';
+    const allowed = family.props?.density ?? family.variants?.density;
+    const available = densities.filter(value => !allowed || allowed.includes(value));
+    const density = available.includes('comfortable') ? 'comfortable' : available[0] ?? 'comfortable';
+    scenarios.set(`${context}/${density}`, {context, density});
+  }
+  return [...scenarios.values()];
+}
+
 export function groupItems(group, context = 'dashboard', density = 'comfortable') {
   const base = PURPOSE_FAMILIES.filter(f => f.group === group).map(f => ({purpose: f.id, variant: f.example.variant, props: f.example.props, content: f.example.content}));
   return [...base, ...(STRESS[group] ?? [])].filter(item => {
     const family = getPurposeFamily(item.purpose);
     const densityValues = family.props?.density ?? family.variants?.density;
-    return (family.contexts.includes('any') || family.contexts.includes(context)) && (!densityValues || densityValues.includes(density));
+    const compactBottomNavForbidden = family.id === 'purpose:navigation.bottom' && density === 'compact';
+    return !compactBottomNavForbidden && (family.contexts.includes('any') || family.contexts.includes(context)) && (!densityValues || densityValues.includes(density));
   });
 }
 

@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 import {measureAll, summarize, familyMetrics, judge} from '../scripts/families/measure.mjs';
-import {buildPage, makeEnv, GROUPS, VISUALS} from '../scripts/families/pages.mjs';
+import {buildPage, makeEnv, GROUPS, VISUALS, groupScenarios} from '../scripts/families/pages.mjs';
 
 // 목적 패밀리의 브라우저 시험(ADR 0012 §4 확장, docs/platform/families.md).
 //  1) 묶음 × 시각 패밀리 × 모드 × (모바일 390, 데스크톱 1280) 전부에서 기존 layout-quality 검사기와 패밀리 측정이 통과한다.
@@ -13,9 +13,10 @@ test('every group × visual family × mode × viewport passes layout-quality and
   test.setTimeout(600000);
   const results = await measureAll({groups: GROUPS, modes: ['light', 'dark']});
   const summary = summarize(results);
-  const bad = results.filter(r => !r.ok && !r.viewport).map(r => `${r.group} ${r.visual} ${r.mode}: ${r.reason}`).concat(results.filter(r => r.viewport && !r.ok).map(r => `${r.group} ${r.visual} ${r.mode} ${r.viewport}: ${r.fail.join(', ')} ${r.probeErrors.map(e => e.code).join(',')}`));
+  const bad = results.filter(r => !r.ok && !r.viewport).map(r => `${r.group} ${r.context}/${r.density} ${r.visual} ${r.mode}: ${r.reason}`).concat(results.filter(r => r.viewport && !r.ok).map(r => `${r.group} ${r.context}/${r.density} ${r.visual} ${r.mode} ${r.viewport}: ${r.fail.join(', ')} ${r.probeErrors.map(e => e.code).join(',')}`));
   expect(bad, bad.join('\n')).toEqual([]);
-  expect(summary.pages).toBe(GROUPS.length * VISUALS.length * 2 * 2);
+  const scenarioCount = GROUPS.reduce((count, group) => count + groupScenarios(group).length, 0);
+  expect(summary.pages).toBe(scenarioCount * VISUALS.length * 2 * 2);
   expect(summary.overlap.checked).toBeGreaterThan(100);
   // 훑은 대상이 0이면 통과가 아니다
   expect(summary.cards.checked).toBeGreaterThan(100);

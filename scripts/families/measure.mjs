@@ -9,7 +9,7 @@ import {resolve} from 'node:path';
 import {chromium} from '@playwright/test';
 import {layoutProbe} from '../layout-quality/probe.mjs';
 import {mergeOptions, settleLayout, applyExemptions} from '../layout-quality/run.mjs';
-import {buildPage, makeEnv, GROUPS, VISUALS} from './pages.mjs';
+import {buildPage, makeEnv, GROUPS, VISUALS, groupScenarios} from './pages.mjs';
 
 export const WIDTHS = {mobile: 390, desktop: 1280};
 
@@ -97,9 +97,9 @@ export async function measureAll({groups = GROUPS, modes = ['light'], shots = nu
   try {
     const ctx = await browser.newContext({locale: 'ko-KR', deviceScaleFactor: 1});
     const page = await ctx.newPage();
-    for (const group of groups) for (const visual of visuals) for (const mode of modes) {
-      const built = buildPage(env, group, visual, {mode});
-      if (!built.ok) { results.push({group, visual, mode, ok: false, reason: built.diagnostics.map(d => `${d.code}: ${d.message}`)}); log(`SKIP ${group} ${visual} ${mode}`); continue; }
+    for (const group of groups) for (const {context, density} of groupScenarios(group)) for (const visual of visuals) for (const mode of modes) {
+      const built = buildPage(env, group, visual, {mode, context, density});
+      if (!built.ok) { results.push({group, context, density, visual, mode, ok: false, reason: built.diagnostics.map(d => `${d.code}: ${d.message}`)}); log(`SKIP ${group} ${context}/${density} ${visual} ${mode}`); continue; }
       await page.setContent(built.html, {waitUntil: 'load'});
       for (const [name, width] of Object.entries(WIDTHS)) {
         await page.setViewportSize({width, height: 900});
@@ -111,8 +111,8 @@ export async function measureAll({groups = GROUPS, modes = ['light'], shots = nu
         const metrics = await page.evaluate(familyMetrics);
         const fail = judge(metrics);
         if (shots && mode === 'light') await page.screenshot({path: resolve(shots, `${group}-${visual.slice('family:'.length)}-${name}.png`), fullPage: true});
-        results.push({group, visual, mode, viewport: name, width, ok: !errors.length && !fail.length, probeErrors: errors.map(f => ({code: f.code, locator: f.locator, text: String(f.text ?? '').slice(0, 60), evidence: f.evidence})), probeCounts: probe.counts, scanned: probe.scanned, metrics, fail});
-        log(`${group} ${visual} ${mode} ${name}: ${errors.length || fail.length ? 'FAIL' : 'ok'}`);
+        results.push({group, context, density, visual, mode, viewport: name, width, ok: !errors.length && !fail.length, probeErrors: errors.map(f => ({code: f.code, locator: f.locator, text: String(f.text ?? '').slice(0, 60), evidence: f.evidence})), probeCounts: probe.counts, scanned: probe.scanned, metrics, fail});
+        log(`${group} ${context}/${density} ${visual} ${mode} ${name}: ${errors.length || fail.length ? 'FAIL' : 'ok'}`);
       }
     }
   } finally { await browser.close(); }

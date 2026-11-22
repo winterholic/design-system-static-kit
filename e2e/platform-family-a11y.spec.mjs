@@ -11,7 +11,14 @@ import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 const env = makeEnv();
 const QUIET = 'family:quiet';
 const GROUP_OF = id => PURPOSE_FAMILIES.find(f => f.id === id).group;
-const example = id => { const f = PURPOSE_FAMILIES.find(x => x.id === id); return {purpose: id, variant: f.example.variant, props: f.example.props, content: f.example.content}; };
+const example = id => {
+  const f = PURPOSE_FAMILIES.find(x => x.id === id);
+  const variant = {...f.example.variant};
+  // 미리보기용 modeless dialog는 Tab trap을 소유하지 않는다. 이 공통 순서 검사는
+  // 실제로 열 수 있는 trigger를 재고, 열린 modal 동작은 아래 별도 계약 시험에서 본다.
+  if (id === 'purpose:feedback.confirm') variant.display = 'trigger';
+  return {purpose: id, variant, props: f.example.props, content: f.example.content};
+};
 
 async function open(page, items, {width = 1280, visual = QUIET, group = null, mode = 'light'} = {}) {
   const list = Array.isArray(items) ? items : [items];
@@ -53,7 +60,17 @@ const IN_PAGE = () => {
 
 /** 문서 맨 앞에서 Tab을 눌러 나온 순서와 포커스 표시를 모은다. */
 async function walkTab(page) {
-  await page.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+  if (await page.locator('dialog[open]').count()) {
+    // 모달 미리보기는 문서를 열 때 포커스를 안에 둔다. body로 강제 blur하면 모달의
+    // 브라우저 포커스 순환이 깨지므로 마지막 정지에서 Tab 순환을 시작한다.
+    await page.evaluate(`(() => {
+      const stops = (${IN_PAGE})().tabbables().filter(el => el.closest('dialog[open]'));
+      stops.at(-1)?.focus();
+      window.scrollTo(0, 0);
+    })()`);
+  } else {
+    await page.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+  }
   const expected = await page.evaluate(`(${IN_PAGE})().tabbables().map(el => ({name: (${IN_PAGE})().nameOf(el), tag: el.tagName.toLowerCase()}))`);
   const seen = [];
   for (let i = 0; i < expected.length; i += 1) {
