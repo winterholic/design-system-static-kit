@@ -20,6 +20,9 @@ test('the platform section counts what really assembles, not what is registered'
   assert.deepEqual(Object.keys(r.verified.failures).filter(k => k.startsWith('QUALITY')), [], 'everything that assembled also passed the quality checks');
   // a palette no set can render and a Hangul-limit type system never reach the counts
   assert.equal(r.registered.palette, env.registry.list('palette').length);
+  assert.equal(r.registered.purposeFamily, env.registry.list('purpose-family').length);
+  assert.ok(r.distinct.purposeFamilies.verified > 0);
+  assert.deepEqual(r.distinct.purposeFamilies.ids, [...r.distinct.purposeFamilies.ids].sort());
   assert.ok(r.distinct.colorTokenSets.light < r.registered.palette * r.registered.subtokenSet, 'blocked pairs are not counted');
   assert.ok(r.colorGateFailures.P_COLOR_CONTRAST >= 1 || Object.keys(r.colorGateFailures).length >= 1, 'the failing pair is reported by code');
   // the section is a pure function of the registry: same registry, same numbers
@@ -82,6 +85,13 @@ test('the committed baseline carries the platform section, and it beats the lega
   assert.ok(pf.distinct.colorTokenSets.dark > legacy.distinctColorTokenSets.dark);
   assert.ok(pf.distinct.facePairs > legacy.distinctEffectiveFacePairs, `${pf.distinct.facePairs} face pairs vs ${legacy.distinctEffectiveFacePairs}`);
   assert.ok(pf.distinct.families >= 1);
+  assert.equal(pf.registered.family, 4, 'registered.family counts visual families only');
+  assert.equal(pf.registered.purposeFamily, 32, 'purpose-family registrations are a separate count');
+  assert.equal(pf.distinct.families, 4, 'distinct.families retains its visual-family meaning');
+  assert.deepEqual(pf.distinct.purposeFamilies, {
+    verified: 4,
+    ids: ['purpose:card.feature', 'purpose:card.kpi', 'purpose:card.product', 'purpose:table.business'],
+  }, 'only distinct purpose families present in quality-verified representative page Blueprints are counted');
   // verified outputs are a subset of the pairs the color gate passed (the page pipeline also rejects pairs whose derived tokens miss the floor)
   assert.ok(pf.distinct.verifiedColorTokenSets.light <= pf.distinct.colorTokenSets.light && pf.distinct.verifiedColorTokenSets.light > legacy.distinctColorTokenSets.light);
   assert.ok(pf.distinct.verifiedColorTokenSets.dark <= pf.distinct.colorTokenSets.dark && pf.distinct.verifiedColorTokenSets.dark > legacy.distinctColorTokenSets.dark);
@@ -94,5 +104,10 @@ test('the committed baseline carries the platform section, and it beats the lega
     assert.equal(sm[kind].usedInOutput, sm[kind].verified, `${kind}: a verified material appears in the page output`);
     assert.ok(sm[kind].verified <= sm[kind].attempted, kind);
   }
+  assert.equal(sm.motion.verified, 17);
+  assert.deepEqual(sm.motion.rejectedCases.map(({pattern, material, code}) => ({pattern, material, code})), [
+    {pattern: 'dashboard-grid', material: 'motion:expressive', code: 'X11'},
+    {pattern: 'erp-workspace', material: 'motion:expressive', code: 'X11'},
+  ]);
   assert.ok(sm.distinctOutputs > 1);
 });

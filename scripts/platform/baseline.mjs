@@ -180,7 +180,9 @@ const summary = [
   `effective face pairs        ${c.distinctEffectiveFacePairs}`,
   `platform assemblable        ${pf.assemblable.assemblable} (of ${pf.assemblable.attempted} tried)`,
   `platform verified           ${pf.verified.verified} assembled+checked, ${pf.verified.distinctOutputs} distinct outputs (${pf.verified.attempted} tried)`,
-  `platform color token sets   light ${pf.distinct.colorTokenSets.light}, dark ${pf.distinct.colorTokenSets.dark}; face pairs ${pf.distinct.facePairs}; families ${pf.distinct.families}`,
+  `platform colors / faces     light ${pf.distinct.colorTokenSets.light}, dark ${pf.distinct.colorTokenSets.dark}; face pairs ${pf.distinct.facePairs}`,
+  `platform families           visual ${pf.distinct.families}; purpose ${pf.registered.purposeFamily} registered, ${pf.distinct.purposeFamilies.verified} verified in page Blueprints`,
+  `platform motion              ${pf.distinct.styleMaterials.motion.verified}/${pf.distinct.styleMaterials.motion.attempted} verified; ${pf.distinct.styleMaterials.motion.rejectedCases.length} rejected (see X-codes in evidence)`,
 ];
 if (process.argv.includes('--check')) {
   const saved = readFileSync(OUT, 'utf8');
