@@ -1,4 +1,5 @@
 import {defineMaterial} from './contract.mjs';
+import {defineContract} from './control-kit.mjs';
 import {escapeHTML as e} from '../render/util.mjs';
 import {deriveTableDesign} from '../table-design.mjs';
 
@@ -9,6 +10,27 @@ export const tableContract = Object.freeze({
   states: Object.freeze(['ready', 'empty', 'loading', 'error', 'partial']),
   tokens: Object.freeze(['--kit-action', '--kit-surface', '--kit-text', '--kit-muted', '--kit-border', '--kit-focus', '--kit-soft', '--kit-danger', '--kit-radius', '--kit-t-small', '--kit-sp-tight', '--kit-sp-near', '--kit-sp-item']),
   unsupported: Object.freeze(['pagination', 'virtual scrolling', 'column resizing', 'editable cells', 'server sorting']),
+});
+
+/**
+ * 같은 계약을 defineContract 방식으로 다시 쓴 것(감사 2.4 E). tableContract(2.6.0 카탈로그 값)는 고정이라 건드리지 않는다.
+ * 외형·모양 축이 없어 필수 개념에서 뺀다. 행을 보이지 않는 상태(empty·loading·error)에서 정렬·선택은 의미가 없으므로 금지 조합으로 드러냈다(렌더 출력은 그대로).
+ */
+export const tableControlContract = defineContract({
+  id: tableContract.id, label: '데이터 테이블', required: ['size', 'function', 'state'],
+  axes: {density: ['compact', 'comfortable', 'spacious'], sortable: [false, true], selectable: [false, true], responsive: ['scroll', 'priority'], state: ['ready', 'empty', 'loading', 'error', 'partial']},
+  concepts: {size: ['density'], function: ['sortable', 'selectable', 'responsive'], state: ['state']},
+  defaults: {...tableContract.defaults, state: 'ready'},
+  forbidden: [
+    {id: 'TABLE_NO_ROWS_SORT', when: {state: ['empty', 'loading', 'error'], sortable: true}, why: '행을 보이지 않는 상태에서는 정렬 대상이 없다'},
+    {id: 'TABLE_NO_ROWS_SELECT', when: {state: ['empty', 'loading', 'error'], selectable: true}, why: '행을 보이지 않는 상태에서는 선택 대상이 없다'},
+  ],
+  states: [...tableContract.states],
+  transitions: [
+    {from: 'loading', to: 'ready', trigger: 'rows received'}, {from: 'loading', to: 'empty', trigger: 'empty result'}, {from: 'loading', to: 'error', trigger: 'request rejected'}, {from: 'ready', to: 'partial', trigger: 'partial result'},
+  ],
+  inputFields: ['id', 'columns', 'rows', 'message', 'selected'], unsupported: [...tableContract.unsupported],
+  pairs: [['--kit-text', '--kit-surface', 4.5, 'cell text'], ['--kit-muted', '--kit-surface', 4.5, 'header'], ['--kit-text', '--kit-soft', 4.5, 'row hover·selected'], ['--kit-muted', '--kit-soft', 4.5, 'header on hover'], ['--kit-danger', '--kit-surface', 4.5, 'error state'], ['--kit-focus', '--kit-surface', 3, 'focus ring']],
 });
 
 export const tableMaterial = defineMaterial({
