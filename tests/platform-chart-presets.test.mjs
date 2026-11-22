@@ -7,7 +7,7 @@ import {createBlueprint} from '../src/catalog.mjs';
 import {compile} from '../src/compiler.mjs';
 import {spaceVars} from '../src/spacing.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
-import {renderChartPreset} from '../src/render/chart-presets.mjs';
+import {renderChartPreset, applyChartColorRoles, chartColorRoleVars} from '../src/render/chart-presets.mjs';
 import {niceMax as niceMax26} from '../src/render/chart.mjs';
 import {niceMax as niceMaxLegacy, renderLegacyChart} from '../src/render/chart-legacy.mjs';
 import {KIND_DATA_TYPES} from '../src/catalog/chart-rules.mjs';
@@ -177,4 +177,61 @@ test('all themes keep the chart relations independent of the Coolors palettes', 
 test('niceMax is defined once: the 2.6.0 renderer re-exports the legacy function', () => {
   assert.equal(niceMax26, niceMaxLegacy);
   assert.deepEqual([0, -3, 0.7, 1, 1.2, 2.4, 5.5, 9.1, 130, 4999].map(niceMax26), [1, 1, 1, 1, 2, 5, 10, 10, 200, 5000]);
+});
+
+const tokensOf = (palette, set, mode = 'light') => {
+  const c = bindColor(env.registry.get(`palette:${palette}`), env.registry.get(`subtoken-set:${set}`), mode);
+  return c.ok ? {...c.vars, ...bindType(env.registry.get('type-system:tech-erp')).vars, ...Object.fromEntries(spaceVars('comfortable').split(';').map(d => d.split(':')))} : null;
+};
+
+test('colorRoles points heatmap at the sequential steps, waterfall at the diverging ends and donut at six categorical colors, without changing anything else', () => {
+  assert.deepEqual(chartColorRoleVars('heatmap'), ['--kit-seq1', '--kit-seq2', '--kit-seq3', '--kit-seq4', '--kit-seq5', '--kit-seq6', '--kit-seq7']);
+  assert.deepEqual(chartColorRoleVars('bar'), []);
+  // 기본은 렌더러 출력 그대로.
+  assert.equal(renderChartPreset('chart-preset:operations-activity-heatmap', {}, {colorRoles: false}), renderChartPreset('chart-preset:operations-activity-heatmap'));
+  const plain = renderChartPreset('chart-preset:analytics-retention-heatmap'), roles = renderChartPreset('chart-preset:analytics-retention-heatmap', {}, {colorRoles: true});
+  assert.notEqual(roles, plain);
+  assert.doesNotMatch(roles, /--kit-chart1/, 'no categorical color is left in the heatmap');
+  const steps = [...roles.matchAll(/class="ch-cell" style="fill:var\(--kit-seq(\d)\)"/g)].map(m => Number(m[1]));
+  assert.equal(steps.length, 30, 'five rows × six columns');
+  assert.equal(Math.min(...steps), 1); assert.equal(Math.max(...steps), 7, 'the lowest value is step 1 and the highest is step 7');
+  const values = [...plain.matchAll(/class="ch-cell" style="fill:var\(--kit-chart1\);fill-opacity:([\d.]+)"/g)].map(m => Number(m[1]));
+  assert.ok(values.map((v, i) => [v, steps[i]]).every(([v, s], _, all) => all.every(([v2, s2]) => v <= v2 ? s <= s2 : s >= s2)), 'the step order follows the value order');
+  assert.equal(roles.replace(/fill:var\(--kit-seq\d\)/g, 'F').replace(/background:var\(--kit-seq\d\)/g, 'B'), plain.replace(/fill:var\(--kit-chart1\);fill-opacity:[\d.]+/g, 'F').replace(/background:var\(--kit-chart1\);opacity:[\d.]+/g, 'B'), 'only the color references differ');
+  const wf = renderChartPreset('chart-preset:erp-budget-bridge', {}, {colorRoles: true});
+  assert.match(wf, /data-step="up" style="fill:var\(--kit-div6\)"/);
+  assert.match(wf, /data-step="down" style="fill:var\(--kit-div2\)"/);
+  assert.match(wf, /data-step="total" style="fill:var\(--kit-muted\)"/, 'totals stay neutral');
+  assert.doesNotMatch(wf, /--kit-chart[13]/);
+  const six = {categories: ['a', 'b', 'c', 'd', 'e', 'f', 'g'], series: [{name: '전환', values: [7, 6, 5, 4, 3, 2, 1]}]};
+  const donut = renderChartPreset('chart-preset:marketing-channel-share', six, {colorRoles: true});
+  assert.deepEqual([...donut.matchAll(/class="ch-slice" style="fill:var\(--kit-chart(\d)\)"/g)].map(m => m[1]).join(''), '1234561', 'the sixth slice uses chart6 instead of repeating chart1');
+  assert.equal(applyChartColorRoles('<svg/>', 'bar'), '<svg/>', 'other forms pass through');
+});
+
+test('assembleChartPreset enables the color roles only when the tokens provide them, for every palette × set that binds', () => {
+  const base = {context: 'dashboard'};
+  const heat = {preset: 'chart-preset:operations-activity-heatmap', ...base}, wf = {preset: 'chart-preset:erp-budget-bridge', ...base}, bar = {preset: 'chart-preset:sales-pipeline-value', ...base};
+  assert.equal(assembleChartPreset(heat).colorRoles, false, 'no tokens: the renderer output as is');
+  assert.equal(assembleChartPreset(heat).html, renderChartPreset(heat.preset));
+  assert.equal(assembleChartPreset({...heat, colorRoles: false, tokens: tokensOf('static-kit', 'standard')}).html, renderChartPreset(heat.preset), 'explicitly off');
+  assert.equal(assembleChartPreset({...bar, tokens: tokensOf('static-kit', 'standard')}).colorRoles, false, 'forms without a role mapping never change');
+  let applied = 0, fallback = 0, pairs = 0;
+  for (const p of env.registry.list('palette')) for (const s of env.registry.list('subtoken-set')) for (const mode of ['light', 'dark']) {
+    const tokens = tokensOf(p.id.slice(8), s.id.slice(13), mode);
+    if (!tokens) continue;
+    pairs++;
+    for (const req of [heat, wf]) {
+      const r = assembleChartPreset({...req, tokens});
+      assert.equal(r.ok, true, `${p.id}×${s.id}`);
+      const need = chartColorRoleVars(r.relation.form), has = need.every(v => Object.hasOwn(tokens, v));
+      assert.equal(r.colorRoles, has, `${p.id}×${s.id}/${mode}/${req.preset}: roles on exactly when the variables exist`);
+      assert.ok(!r.missing.some(v => /^--kit-(seq|div|chart)\d$/.test(v)), `${p.id}×${s.id}/${mode}: no chart color variable is left undefined (${r.missing})`);
+      if (has) { applied++; assert.match(r.html, /--kit-(seq|div)\d/); } else { fallback++; assert.match(r.html, /--kit-chart\d/, 'falls back to the categorical colors'); }
+    }
+  }
+  assert.ok(pairs >= 100 && applied > 0 && applied + fallback === pairs * 2, `${pairs} bound pairs: ${applied} with roles, ${fallback} fallback`);
+  const forced = assembleChartPreset({...heat, colorRoles: true, tokens: {}});
+  assert.equal(forced.colorRoles, true);
+  assert.ok(forced.missing.includes('--kit-seq1'), 'asking for roles without the variables reports them as missing');
 });

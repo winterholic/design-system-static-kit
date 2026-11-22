@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {themes, pageTypeIds, axes} from '../src/catalog/index.mjs';
 import {createPlatform, createPlatformRegistry, createRelationGraph, recommend, assemblePlatform, MINIMAL_REQUEST, definePlatformMaterial, validateEdge} from '../src/platform/index.mjs';
 import {
-  STYLE_CONTEXT_DETAILS, STYLE_CHECKS, styleContextFromTheme, deriveStyleRelations, recommendWithReason, hueOf,
+  STYLE_CONTEXT_DETAILS, STYLE_CHECKS, STYLE_PICKS, styleContextFromTheme, deriveStyleRelations, recommendWithReason, hueOf,
 } from '../src/platform/data/style-contexts.mjs';
 
 const env = createPlatform();
@@ -61,9 +61,10 @@ test('relations from a style context to palette, subtoken set, type system and f
   }
   const rel = (id, to, type) => record(id).relations.find(e => e.to === to && (!type || e.type === type));
   assert.ok(hueOf('#3157D5') >= 220 && hueOf('#3157D5') <= 232, 'static-kit brand is blue');
-  assert.equal(rel('trust', 'palette:static-kit').priority, 40, 'blue fintech context prefers the blue palette');
-  assert.equal(rel('garden', 'palette:static-kit', 'avoids').priority, 25, 'green context avoids the blue palette');
-  assert.equal(rel('aurora', 'subtoken-set:tinted').priority, 30, 'gradient backdrop prefers the brand-surface distribution');
+  assert.equal(rel('trust', 'palette:static-kit').priority, 70, 'blue fintech context: static-kit is the first pick');
+  assert.equal(rel('garden', 'palette:forest-green').priority, 70, 'garden context: forest-green is the first pick');
+  assert.equal(rel('garden', 'palette:static-kit', 'avoids').priority, 20, 'a palette outside the picks and far from the theme hue is avoided');
+  assert.deepEqual(record('aurora').relations.filter(e => e.to === 'subtoken-set:tinted').map(e => e.priority).sort((a, b) => a - b), [30, 70], 'gradient backdrop (rule, 30) and the first-pick set (70)');
   assert.equal(rel('ledger', 'subtoken-set:standard').priority, 30);
   assert.equal(rel('ledger', 'subtoken-set:tinted', 'avoids').priority, 15, 'dense plain themes avoid the tinted distribution');
   assert.equal(rel('editorial', 'type-system:tech-erp', 'avoids').priority, 15, 'a reading context avoids the work-purpose type system');
@@ -163,4 +164,38 @@ test('the workspace context keeps the minimal assembly result', () => {
   assert.deepEqual(r.value.manifest.selection.families, {'base-component:card-surface': 'family:quiet'});
   assert.deepEqual(record('workspace').axisPreferences.radius, ['soft', 'subtle']);
   assert.deepEqual(record('workspace').axisPreferences.elevation, ['outline', 'soft']);
+});
+
+test('the first palette and subtoken set of every style context are named by id, and the recommendation follows them without id-order ties', () => {
+  assert.deepEqual(Object.keys(STYLE_PICKS).sort(), THEME_IDS.sort(), 'all 54 themes name their picks');
+  const palettes = new Set(env.registry.list('palette').map(p => p.id.slice(8))), sets = new Set(env.registry.list('subtoken-set').map(p => p.id.slice(13)));
+  for (const [id, p] of Object.entries(STYLE_PICKS)) {
+    assert.ok(p.palette.every(x => palettes.has(x)) && p.subtokenSet.every(x => sets.has(x)), `${id}: picks exist in the registry`);
+    assert.notEqual(p.palette[0], p.palette[1]); assert.notEqual(p.subtokenSet[0], p.subtokenSet[1]);
+    const edges = record(id).relations;
+    assert.equal(edges.find(e => e.to === `palette:${p.palette[0]}`).priority, 70);
+    assert.equal(edges.find(e => e.to === `palette:${p.palette[1]}`).priority, 30);
+    assert.match(edges.find(e => e.to === `palette:${p.palette[0]}`).reason, /1순위 팔레트/);
+  }
+  const firsts = new Set(Object.values(STYLE_PICKS).map(p => p.palette[0]));
+  assert.ok(firsts.size >= 8, `first-pick palettes differ across themes (${firsts.size} of 9)`);
+  let checked = 0;
+  for (const id of THEME_IDS) {
+    const rec = record(id), mode = themes[id].defaults.mode === 'dark' ? 'dark' : 'light';
+    for (const context of rec.contexts) {
+      const pal = recommend(env.registry, env.graph, {kind: 'palette', context, mode, styleContext: rec.id});
+      assert.equal(pal.ranked[0].id, `palette:${STYLE_PICKS[id].palette[0]}`, `${id}/${context}: no anchor, the style context decides the palette`);
+      assert.ok(pal.ranked[0].score > pal.ranked[1].score, `${id}/${context}: not decided by id order`);
+      const set = recommend(env.registry, env.graph, {kind: 'subtoken-set', context, mode, styleContext: rec.id, selected: [pal.ranked[0].id]});
+      if (set.ranked.length > 1) assert.ok(set.ranked[0].score > set.ranked[1].score, `${id}/${context}: set not decided by id order`);
+      const wanted = STYLE_PICKS[id].subtokenSet.map(s => `subtoken-set:${s}`).find(s => set.ranked.some(r => r.id === s));
+      if (wanted) assert.equal(set.ranked[0].id, wanted, `${id}/${context}: the best available named set ranks first`);
+      checked++;
+    }
+  }
+  assert.ok(checked >= 150);
+  // 기본 조립도 같은 선택을 따른다: 앵커 없는 요청에서 스타일 맥락이 팔레트를 정한다.
+  const r = assemblePlatform({...structuredClone(MINIMAL_REQUEST), context: 'listing', styleContext: 'style-context:stay'}, env);
+  assert.equal(r.decisions.find(d => d.slot === 'palette').id, 'palette:ocean-cool');
+  assert.ok(r.decisions.find(d => d.slot === 'palette').reasons.some(x => x.from === 'style-context:stay' && /1순위 팔레트/.test(x.reason)));
 });

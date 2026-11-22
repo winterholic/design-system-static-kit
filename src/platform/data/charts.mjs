@@ -8,10 +8,11 @@
  *   - 스타일 맥락 ↔ 프리셋: 밀도·격자·값 라벨 옵션이 스타일 맥락의 성향과 맞는 정도로 순위를 낸다(rankChartPresets).
  *   - 프로필 ↔ 프리셋: 프로필이 허용한 형태(`charts.kinds`) 밖의 프리셋은 이유와 대안과 함께 거부한다(assembleChartPreset의 profile 인자).
  *
+ * 색: 플랫폼 색 역할(`--kit-chart1~6`, `--kit-seq1~7`, `--kit-div1~7`)을 읽는 형태는 히트맵(순차), 폭포(발산 양 끝), 도넛(범주형 6색)이다. `colorRoles`를 켜면 렌더러 출력의 색 참조만 바꾼다.
  * 조립(assembleChartPreset)은 AI가 SVG를 만들지 않는다: 같은 프리셋 렌더러(renderChartPreset)가 낸 그림과 데이터 표를 그대로 돌려주고, 안 되는 조합은 코드가 있는 진단으로 거부한다.
  */
 import {chartPresetMaterials} from '../../materials/chart-presets.mjs';
-import {renderChartPreset} from '../../render/chart-presets.mjs';
+import {renderChartPreset, chartColorRoleVars} from '../../render/chart-presets.mjs';
 import {KIND_DATA_TYPES} from '../../catalog/chart-rules.mjs';
 import {pageTypes, pageTypeIds} from '../../catalog/index.mjs';
 import {chunks} from '../../styles/chunks.mjs';
@@ -121,17 +122,18 @@ export function rankChartPresets(styleContext, {context, profile = null, dataTyp
 const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
 
 /**
- * 차트 프리셋 조립. request: {preset, context, profile?: {kinds}, data?: {categories, series, ...}, tokens?: {'--kit-*': 값}}
- * 반환: {ok, html, css, requires, missing, relation, diagnostics}
+ * 차트 프리셋 조립. request: {preset, context, profile?: {kinds}, data?: {categories, series, ...}, tokens?: {'--kit-*': 값}, colorRoles?: boolean}
+ * 반환: {ok, html, css, requires, missing, colorRoles, relation, diagnostics}
  *   html     렌더러가 낸 그림과 데이터 표(같은 입력은 같은 바이트)
  *   css      차트 부품 CSS(src/styles의 차트 조각 + 2.6.0 확장). 플랫폼 :root가 값을 주는 변수만 읽는 것이 아니므로 requires를 함께 낸다
- *   requires 출력(html+css)이 기본값 없이 읽는 `--kit-*` 변수. tokens를 주면 값이 없는 것을 missing에 남긴다(현재 플랫폼 색 역할에는 차트 색 --kit-chart1~5가 없다: 색 작업의 순차·발산 차트 색 역할이 채울 자리)
+ *   requires 출력(html+css)이 기본값 없이 읽는 `--kit-*` 변수. tokens를 주면 값이 없는 것을 missing에 남긴다
+ *   colorRoles 히트맵·폭포·도넛이 순차·발산·범주형 6색 변수를 읽게 바꿨는가. 생략하면 tokens가 그 변수를 모두 줄 때만 켠다. 켜지 않은 html은 렌더러 출력과 바이트가 같다
  * 거부 코드: P_CHART_PRESET(없는 프리셋) · P_CHART_CONTEXT·P_CHART_PAGETYPE(페이지 유형) · P_CHART_PROFILE_KIND(프로필 형태) · P_CHART_RENDER(데이터가 렌더 규칙에 걸림)
  */
 export function assembleChartPreset(request) {
-  const fail = diagnostics => ({ok: false, html: null, css: null, requires: [], missing: [], relation: null, diagnostics});
+  const fail = diagnostics => ({ok: false, html: null, css: null, requires: [], missing: [], colorRoles: false, relation: null, diagnostics});
   if (request === null || typeof request !== 'object' || Array.isArray(request)) return fail([diag('P_REQUEST', '$', '요청은 객체여야 합니다')]);
-  const allowed = ['preset', 'context', 'profile', 'data', 'tokens'];
+  const allowed = ['preset', 'context', 'profile', 'data', 'tokens', 'colorRoles'];
   const keys = Object.keys(request).filter(k => !allowed.includes(k));
   if (keys.length) return fail(keys.map(k => diag('P_REQUEST_KEY', `$.${k}`, `지원하지 않는 키: ${k}. 임의 SVG·CSS 경로는 없습니다`, {alternatives: allowed})));
   const rel = chartRelationOf(request.preset);
@@ -142,12 +144,15 @@ export function assembleChartPreset(request) {
     const alternatives = rel.alternatives.filter(a => request.profile.kinds.includes(chartRelationOf(a).form) && chartContextVerdict(chartRelationOf(a).form, request.context).ok);
     return {...fail([diag('P_CHART_PROFILE_KIND', '$.profile', `${rel.id}의 형태 ${rel.form}은 프로필이 허용한 차트 형태(${request.profile.kinds.join(', ') || '없음'})가 아닙니다`, {alternatives})]), relation: rel};
   }
-  const html = renderChartPreset(request.preset, request.data ?? {});
+  // 색 역할: true면 항상, 생략하면 tokens가 그 형태의 변수를 모두 줄 때만(변수 없는 화면에서 색이 사라지지 않게), false면 쓰지 않는다. 쓰지 않은 출력은 렌더러 출력 그대로다.
+  const roleVars = chartColorRoleVars(rel.form);
+  const colorRoles = request.colorRoles === true ? roleVars.length > 0 : request.colorRoles === false || !request.tokens ? false : roleVars.length > 0 && roleVars.every(v => Object.hasOwn(request.tokens, v));
+  const html = renderChartPreset(request.preset, request.data ?? {}, {colorRoles});
   if (typeof html !== 'string') return {...fail((html.errors ?? []).map(e => diag('P_CHART_RENDER', '$.data', `${e.code}: ${e.message}`))), relation: rel};
   const css = `${chunks.chart.trim()}\n${chartExtensionCSS().trim()}`;
   const requires = [...new Set([...(html + css).matchAll(/var\((--kit-[A-Za-z0-9-]+)\)/g)].map(m => m[1]))].sort();
   const missing = request.tokens ? requires.filter(v => !Object.hasOwn(request.tokens, v)) : [];
-  return {ok: true, html, css, requires, missing, relation: rel, diagnostics: []};
+  return {ok: true, html, css, requires, missing, colorRoles, relation: rel, diagnostics: []};
 }
 
 /** 프로필 `charts.presets`에 적힌 프리셋 목록(프로필 id → 프리셋 id[]). 프로필 데이터는 읽기만 한다. */

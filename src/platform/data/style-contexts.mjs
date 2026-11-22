@@ -30,7 +30,7 @@ import {MEDIA, validateMedia, mediaCSS, renderMedia} from './media.mjs';
 import {STATE_PATTERNS, STATE_KINDS, validateStatePattern, stateCSS, renderState} from './states.mjs';
 
 /** 54개 전부를 실패시킬 수 있는 테스트 줄: 이행·필드·관계·recommend 결과. */
-const EVIDENCE = ['tests/platform-style-contexts.test.mjs:14', 'tests/platform-style-contexts.test.mjs:31', 'tests/platform-style-contexts.test.mjs:52', 'tests/platform-style-contexts.test.mjs:89'];
+const EVIDENCE = ['tests/platform-style-contexts.test.mjs:14', 'tests/platform-style-contexts.test.mjs:31', 'tests/platform-style-contexts.test.mjs:52', 'tests/platform-style-contexts.test.mjs:90', 'tests/platform-style-contexts.test.mjs:169'];
 const SHAPE_AXES = ['radius', 'elevation', 'motion'];
 /** 테마 기본값에서 스타일 맥락의 축 선호로 옮기는 축. 앞의 셋은 패밀리 모양과 맞춰 순위를 내고, 나머지는 조립 엔진의 페이지 단계(셸·폭·밀도)와 스타일 재료(아이콘·바탕·장식)가 읽는다. */
 const CARRIED_AXES = [...SHAPE_AXES, 'density', 'shell', 'width', 'icon', 'backdrop', 'ornament', 'scale'];
@@ -163,6 +163,37 @@ function faceOf(id) {
   return {ids: [...new Set([bare, base, ...merges])], base};
 }
 
+
+// ---------------------------------------------------------------------------------------------
+// 테마별 팔레트·서브토큰 세트 1·2순위. 테마 설명(용도와 색 이름)을 읽고 정한 판단이다. 규칙 도출만으로는 앵커가 없을 때 동점이 많아(30/54) 추천 1순위가
+// id 순으로 정해졌다. 여기서 정한 관계가 맥락의 기본 추천을 결정한다(docs/platform/color.md 7절 5번). id가 아직 없으면(풀에 없으면) 그 줄은 건너뛴다.
+// [팔레트 1순위, 2순위, 세트 1순위, 2순위]
+// ---------------------------------------------------------------------------------------------
+const PICKS = {
+  workspace: ['static-kit', 'slate-neutral', 'standard', 'tinted'], ledger: ['slate-neutral', 'graphite-mono', 'data-dense', 'standard'], console: ['graphite-mono', 'ocean-cool', 'premium-dark', 'data-dense'],
+  aurora: ['dusk-violet', 'ocean-cool', 'tinted', 'premium-dark'], trust: ['static-kit', 'ocean-cool', 'standard', 'tinted'], insight: ['ocean-cool', 'static-kit', 'data-dense', 'standard'],
+  hub: ['static-kit', 'dusk-violet', 'tinted', 'standard'], precision: ['graphite-mono', 'slate-neutral', 'data-dense', 'high-contrast'], neon: ['dusk-violet', 'ocean-cool', 'premium-dark', 'tinted'],
+  playful: ['magenta-vivid', 'sunrise-warm', 'commerce-vivid', 'tinted'], studio: ['graphite-mono', 'magenta-vivid', 'standard', 'high-contrast'], gallery: ['graphite-mono', 'slate-neutral', 'standard', 'editorial-warm'],
+  brutalist: ['graphite-mono', 'sunrise-warm', 'high-contrast', 'standard'], retro: ['sunrise-warm', 'clay-earth', 'editorial-warm', 'commerce-vivid'], signal: ['sunrise-warm', 'graphite-mono', 'high-contrast', 'commerce-vivid'],
+  editorial: ['graphite-mono', 'clay-earth', 'editorial-warm', 'standard'], paper: ['clay-earth', 'graphite-mono', 'editorial-warm', 'standard'], manual: ['slate-neutral', 'static-kit', 'standard', 'editorial-warm'],
+  journal: ['clay-earth', 'slate-neutral', 'editorial-warm', 'standard'], magazine: ['graphite-mono', 'magenta-vivid', 'editorial-warm', 'high-contrast'], botanical: ['forest-green', 'clay-earth', 'editorial-warm', 'tinted'],
+  cloud: ['ocean-cool', 'static-kit', 'tinted', 'standard'], clinic: ['ocean-cool', 'forest-green', 'standard', 'tinted'], dining: ['clay-earth', 'sunrise-warm', 'editorial-warm', 'premium-dark'],
+  cafe: ['clay-earth', 'sunrise-warm', 'editorial-warm', 'commerce-vivid'], stay: ['ocean-cool', 'sunrise-warm', 'commerce-vivid', 'standard'], commerce: ['sunrise-warm', 'static-kit', 'commerce-vivid', 'standard'],
+  beauty: ['clay-earth', 'magenta-vivid', 'editorial-warm', 'premium-dark'], realty: ['slate-neutral', 'static-kit', 'standard', 'data-dense'], atelier: ['sunrise-warm', 'dusk-violet', 'tinted', 'commerce-vivid'],
+  learning: ['static-kit', 'forest-green', 'standard', 'tinted'], civic: ['static-kit', 'graphite-mono', 'high-contrast', 'standard'], hanji: ['clay-earth', 'graphite-mono', 'editorial-warm', 'standard'],
+  heritage: ['clay-earth', 'graphite-mono', 'editorial-warm', 'premium-dark'], clarity: ['static-kit', 'slate-neutral', 'standard', 'tinted'], pocket: ['forest-green', 'ocean-cool', 'tinted', 'standard'],
+  nocturne: ['dusk-violet', 'magenta-vivid', 'premium-dark', 'tinted'], sport: ['sunrise-warm', 'graphite-mono', 'commerce-vivid', 'high-contrast'], solar: ['sunrise-warm', 'static-kit', 'tinted', 'commerce-vivid'],
+  ocean: ['ocean-cool', 'static-kit', 'tinted', 'standard'], enterprise: ['slate-neutral', 'static-kit', 'standard', 'data-dense'], devtool: ['graphite-mono', 'static-kit', 'standard', 'data-dense'],
+  luxe: ['graphite-mono', 'clay-earth', 'premium-dark', 'editorial-warm'], swiss: ['graphite-mono', 'sunrise-warm', 'standard', 'high-contrast'], colorblock: ['magenta-vivid', 'sunrise-warm', 'commerce-vivid', 'tinted'],
+  newsroom: ['graphite-mono', 'slate-neutral', 'editorial-warm', 'high-contrast'], academic: ['slate-neutral', 'graphite-mono', 'editorial-warm', 'standard'], wedding: ['clay-earth', 'dusk-violet', 'editorial-warm', 'tinted'],
+  kids: ['magenta-vivid', 'sunrise-warm', 'commerce-vivid', 'tinted'], wine: ['clay-earth', 'dusk-violet', 'premium-dark', 'editorial-warm'], garden: ['forest-green', 'clay-earth', 'editorial-warm', 'tinted'],
+  school: ['static-kit', 'forest-green', 'high-contrast', 'standard'], bank: ['ocean-cool', 'static-kit', 'standard', 'data-dense'], game: ['dusk-violet', 'magenta-vivid', 'premium-dark', 'tinted'],
+};
+export const STYLE_PICKS = Object.freeze(Object.fromEntries(Object.entries(PICKS).map(([id, [p1, p2, s1, s2]]) => [id, Object.freeze({palette: [p1, p2], subtokenSet: [s1, s2]})])));
+const PALETTE_CHARACTER = {'static-kit': '범용 파랑 브랜드', 'slate-neutral': '차분한 청회색', 'sunrise-warm': '따뜻한 주황 계열', 'ocean-cool': '청록빛 파랑', 'forest-green': '초록 계열', 'clay-earth': '흙빛 갈색 계열', 'graphite-mono': '거의 무채색인 흑연', 'dusk-violet': '보라 계열', 'magenta-vivid': '선명한 분홍 계열'};
+const SET_CHARACTER = {standard: '중립 바탕에 브랜드 액션', tinted: '브랜드색이 도는 바탕', 'editorial-warm': '따뜻한 지면 톤', 'commerce-vivid': '액센트가 이끄는 상품 화면', 'premium-dark': '어두운 면을 먼저 설계한 프리미엄', 'high-contrast': '고대비 접근성', 'data-dense': '표·차트 판독용 밀도'};
+const CURATED = {palette: [70, 30], subtokenSet: [70, 30]};
+
 /** 관계 도출에 쓰는 재료 목록. 기본은 main에 등록된 data 배열이고, 시험에서 가짜 재료를 넣어 규칙을 직접 본다. */
 const POOL = Object.freeze({palettes: PALETTES, subtokenSets: SUBTOKEN_SETS, typeSystems: TYPE_SYSTEMS, families: FAMILIES});
 
@@ -172,14 +203,17 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
   const add = (type, to, priority, reason) => out.push({type, to, priority, reason});
   const hue = SETUP[themeId][2];
 
+  const pick = STYLE_PICKS[themeId], use = t.description.split('. ')[0];
   for (const p of pool.palettes) {
+    const rank = pick?.palette.indexOf(p.id.slice('palette:'.length)) ?? -1;
+    if (rank >= 0) { add('prefers', p.id, CURATED.palette[rank], `${t.name}(${use})의 ${rank + 1}순위 팔레트: ${PALETTE_CHARACTER[p.id.slice(8)] ?? p.label}`); continue; }
     const h = hueOf(p.seeds.brand), fam = p.tags.find(x => x.startsWith('family:'))?.slice(7);
     const neutral = h === null || ['neutral', 'mono'].includes(fam), quietCategory = ['work', 'read', 'institution'].includes(t.category);
     if (hue && h !== null) {
       const dist = bandDistance(h, hue);
-      if (dist === 0) add('prefers', p.id, 40, `테마 설명의 색감(색상각 ${hue.map(b => b.join('~')).join('·')}°)에 ${p.label}의 브랜드 원색(${h}°)이 들어간다`);
-      else if (dist > 60) add('avoids', p.id, 25, `테마 설명의 색감(${hue.map(b => b.join('~')).join('·')}°)에서 ${p.label}의 브랜드 원색(${h}°)이 ${dist}° 벗어난다`);
-      else add('prefers', p.id, 10, `${p.label}의 브랜드 원색(${h}°)이 테마 색감(${hue.map(b => b.join('~')).join('·')}°)과 가깝다(${dist}° 차이)`);
+      if (dist === 0) add('prefers', p.id, 15, `테마 설명의 색감(색상각 ${hue.map(b => b.join('~')).join('·')}°)에 ${p.label}의 브랜드 원색(${h}°)이 들어간다`);
+      else if (dist > 60) add('avoids', p.id, 20, `테마 설명의 색감(${hue.map(b => b.join('~')).join('·')}°)에서 ${p.label}의 브랜드 원색(${h}°)이 ${dist}° 벗어난다`);
+      else add('prefers', p.id, 8, `${p.label}의 브랜드 원색(${h}°)이 테마 색감(${hue.map(b => b.join('~')).join('·')}°)과 가깝다(${dist}° 차이)`);
     } else if (hue) add('avoids', p.id, 10, `테마는 색감(${hue.map(b => b.join('~')).join('·')}°)을 요구하는데 ${p.label}은 무채색 계열이다`);
     else if (d.mode === 'dark' && p.tone === 'dark') add('prefers', p.id, 15, `테마 기본 모드가 어두운 화면이고 ${p.label}은 어두운 톤 팔레트다`);
     else if (neutral) add('prefers', p.id, quietCategory ? 15 : 5, quietCategory ? `색 개성을 요구하지 않는 ${t.category} 맥락에는 중립 계열(${p.label})이 맞는다` : `테마가 특정 색감을 요구하지 않아 중립 계열(${p.label})은 선택지 중 하나다`);
@@ -190,7 +224,9 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
   }
 
   for (const s of pool.subtokenSets) {
-    const tags = s.tags, brandBackdrop = ['tint', 'gradient'].includes(d.backdrop), before = out.length;
+    const before = out.length, setRank = pick?.subtokenSet.indexOf(s.id.slice('subtoken-set:'.length)) ?? -1;
+    if (setRank >= 0) add('prefers', s.id, CURATED.subtokenSet[setRank], `${t.name}(${use})의 ${setRank + 1}순위 서브토큰 세트: ${SET_CHARACTER[s.id.slice(13)] ?? s.label}`);
+    const tags = s.tags, brandBackdrop = ['tint', 'gradient'].includes(d.backdrop);
     const pages = new Set(contexts), has = ctx => ctx.some(c => pages.has(c));
     if (tags.includes('brand-surface')) {
       if (brandBackdrop) add('prefers', s.id, 30, `테마의 바탕(${d.backdrop})이 브랜드 틴트라서 브랜드색 표면 분배가 맞는다`);
