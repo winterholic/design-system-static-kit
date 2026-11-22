@@ -23,7 +23,23 @@ export const assembleDesign = (request: AssembleRequest) => call<AssembleValue>(
 export const assembleComponents = (request: Record<string, unknown>) => call<{css: string; html: string; standalone: string; manifest: Record<string, any>}>('assembleComponents', request);
 export const recommend = (q: Record<string, unknown>) => call<RecommendValue>('recommendMaterials', q);
 export const proposeSets = (seeds: unknown) => call<ProposeValue>('proposeSubtokenSets', {seeds});
-export const purposeFamilies = (group?: string) => call<PurposeList>('listPurposeFamilies', group ? {group} : {});
+
+/** Purpose-family definitions share the public family material registry; visual-family records are not coerced into purpose definitions. */
+export function purposeFamilies(group?: string): Envelope<PurposeList> {
+  const listed = call<{items: Material[]}>('listPlatformMaterials', {kind: 'family'});
+  if (!listed.ok) return listed;
+  const purposeRows = listed.value.items.filter(row => row.id.startsWith('purpose:'));
+  const items: PurposeList['items'] = [];
+  for (const row of purposeRows) {
+    const detail = material(row.id);
+    if (!detail) return {ok: false, errors: [{code: 'PURPOSE_FAMILY_DETAIL_MISSING', path: '$.items', message: `목적 패밀리 ${row.id}의 상세 기록을 읽지 못했습니다.`}]};
+    items.push(detail as unknown as PurposeList['items'][number]);
+  }
+  if (!items.length) return {ok: false, errors: [{code: 'PURPOSE_FAMILY_MISSING', path: '$.items', message: 'Core의 family 재료 목록에 목적 패밀리 정의가 아직 없습니다.'}], warnings: listed.warnings};
+  const visuals = listed.value.items.filter(row => row.id.startsWith('family:')).map(row => ({id: row.id.slice('family:'.length), label: row.label}));
+  const groups = [...new Set(items.map(item => item.group))];
+  return {ok: true, value: {items: group ? items.filter(item => item.group === group) : items, groups, visuals}, warnings: listed.warnings};
+}
 
 const cache = new Map<string, Material[]>();
 const detailCache = new Map<string, Material>();

@@ -33,4 +33,4 @@ W6-b 화면이 Core 서비스 진입점(`@winterholic/design-system-static-kit/s
 
 현재 `@winterholic/design-system-static-kit/service`에서 웹이 사용할 수 있는 조립 함수는 `assembleDesign`, `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `checkCompatibility`, `applyEdit`다. `assembleDesign`은 기본 응답에서 `standalone`을 제외하므로 웹은 `opts.include`에 필요한 출력 조각을 명시한다. 목록도 요약이므로 팔레트 시드·재료 상세는 `getPlatformMaterial({id})`에서 읽는다.
 
-현재 공개되지 않은 함수는 `assembleComponents`, `listPurposeFamilies`, `proposeSubtokenSets`다. `kind: "family"`의 4개 재료는 시각 패밀리이며 목적 패밀리 정의가 아니다. 이 API가 들어오기 전에는 목적 패밀리 조립이나 사용자 hex 시드 제안을 웹에서 흉내 내지 않는다. `w6b-scenarios.spec.mjs`는 이 준비 조건으로 시나리오를 건너뛰지 않으며, 나머지 A/B/C·Explore 검증은 Core API 통합 뒤 실행한다.
+현재 공개되지 않은 함수는 `assembleComponents`, `proposeSubtokenSets`다. 목적 패밀리 조회는 별도 API를 요구하지 않고 `listPlatformMaterials({kind: "family"})`와 `getPlatformMaterial({id})`를 사용한다. 다만 현재 `family` 4개 재료는 시각 패밀리뿐이고 `purpose:*` 정의가 없어 Components 목적 패밀리 화면은 대기 상태다. 목적 패밀리 조립이나 사용자 hex 시드 제안을 웹에서 흉내 내지 않는다. `w6b-scenarios.spec.mjs`는 서비스 준비 조건으로 시나리오를 건너뛰지 않으며, A/B/C·Explore 검증은 필요한 Core 데이터와 조립 API 통합 뒤 실행한다.
