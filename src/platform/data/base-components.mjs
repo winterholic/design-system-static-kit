@@ -11,7 +11,7 @@ import {modalContract, renderModal, modalStyles, modalMaterial} from '../../mate
 import {tabsContract, renderTabs, tabsStyles, tabsMaterial} from '../../materials/tabs.mjs';
 import {tooltipContract, renderTooltip, tooltipStyles, tooltipMaterial} from '../../materials/tooltip.mjs';
 import {feedbackContract, renderFeedback, feedbackStyles, feedbackMaterial} from '../../materials/feedback.mjs';
-import {selectControlContract, renderSelectControl, selectStyles, selectMaterial} from '../../materials/select.mjs';
+import {selectControlContract, renderSelectControl, selectStyles, selectPlatformPatch, selectMaterial} from '../../materials/select.mjs';
 import {tableControlContract, renderDataTable, tableStyles, tableMaterial} from '../../materials/table.mjs';
 import {definePlatformMaterial} from '../contract.mjs';
 
@@ -24,7 +24,7 @@ const SPECS = [
   {contract: tabsContract, render: renderTabs, styles: tabsStyles, material: tabsMaterial, renderExport: 'renderTabs', stylesExport: 'tabsStyles', module: 'tabs', label: 'Tabs', tags: ['navigation']},
   {contract: tooltipContract, render: renderTooltip, styles: tooltipStyles, material: tooltipMaterial, renderExport: 'renderTooltip', stylesExport: 'tooltipStyles', module: 'tooltip', label: 'Tooltip', tags: ['overlay']},
   {contract: feedbackContract, render: renderFeedback, styles: feedbackStyles, material: feedbackMaterial, renderExport: 'renderFeedback', stylesExport: 'feedbackStyles', module: 'feedback', label: 'Feedback', tags: ['feedback']},
-  {contract: selectControlContract, render: renderSelectControl, styles: selectStyles, material: selectMaterial, renderExport: 'renderSelectControl', stylesExport: 'selectStyles', module: 'select', label: 'Select', tags: ['form']},
+  {contract: selectControlContract, render: renderSelectControl, styles: selectStyles + selectPlatformPatch, material: selectMaterial, renderExport: 'renderSelectControl', stylesExport: 'selectStyles', module: 'select', label: 'Select', tags: ['form']},
   {contract: tableControlContract, render: renderDataTable, styles: tableStyles, material: tableMaterial, renderExport: 'renderDataTable', stylesExport: 'tableStyles', module: 'table', label: 'Table', tags: ['data']},
 ];
 

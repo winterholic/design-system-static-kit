@@ -15,7 +15,7 @@ import {assemblePlatform, requiredVars} from '../index.mjs';
 import {renderMember, resolveMember, familyShapeVars, contrastPairs} from '../family.mjs';
 import {escapeHTML} from '../../escape-html.mjs';
 import {VISUAL_LANGUAGES} from './visual.mjs';
-import {checkPurposeCombination, validatePurposeFamily} from './kit.mjs';
+import {checkPurposeCombination, validatePurposeFamily, ICON_CSS} from './kit.mjs';
 import {CARD_FAMILIES} from './card.mjs';
 import {BUTTON_FAMILIES} from './button.mjs';
 import {NAVIGATION_FAMILIES} from './navigation.mjs';
@@ -126,9 +126,11 @@ const declBlock = (selector, vars) => `${selector}{${Object.entries(vars).map(([
 const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
 
 /** 공통 레이아웃 CSS: 패밀리 한 칸을 격자 셀로 쓸 때 쓰는 최소 규칙. 목적 패밀리 CSS는 각 정의가 소유한다. */
-const PAGE_CSS = '.kit-platform{display:grid;gap:var(--kit-gap);padding:var(--kit-inset)}.pf{min-width:0;box-sizing:border-box}';
+const PAGE_CSS = `.kit-platform{display:grid;gap:var(--kit-gap);padding:var(--kit-inset)}.pf{min-width:0;box-sizing:border-box}@media(max-width:640px){.kit-platform{padding:var(--kit-sp-item)}}${ICON_CSS}`;
 
-export function assembleFamilies(env, request) {
+/** options.definitions: 시험용으로 CSS·색 쌍을 바꿔 끼우는 {id → 정의} Map(렌더는 등록된 정의로 한다). 검사가 실제로 잡는지 보이는 데 쓴다. */
+export function assembleFamilies(env, request, {definitions = new Map()} = {}) {
+  const def = id => definitions.get(id) ?? getPurposeFamily(id);
   const items = request?.items ?? [];
   const {items: _drop, ...platformRequest} = request ?? {};
   const base = assemblePlatform({...platformRequest, components: []}, env);
@@ -145,7 +147,7 @@ export function assembleFamilies(env, request) {
   const usedPurposes = [...new Set(rendered.map(x => x.purpose))].sort();
   const usedVisuals = [...new Set(rendered.map(x => x.visual))].sort();
   const baseCss = usedBases.map(b => env.registry.kind('base-component').implementation(b).styles);
-  const purposeCss = [...new Set(usedPurposes.map(p => getPurposeFamily(p).sharedCss).filter(Boolean)), ...usedPurposes.map(p => getPurposeFamily(p).css)];
+  const purposeCss = [...new Set(usedPurposes.map(p => def(p).sharedCss).filter(Boolean)), ...usedPurposes.map(p => def(p).css)];
   const css = [
     base.value.css, PAGE_CSS,
     ...usedVisuals.map(v => declBlock(`[data-family="${VISUAL_LANGUAGES[v].key}"]`, familyShapeVars(env.registry.get(v)))),
@@ -160,7 +162,7 @@ export function assembleFamilies(env, request) {
     contrast.push({owner: b, pairs});
   }
   for (const p of usedPurposes) {
-    const own = getPurposeFamily(p);
+    const own = def(p);
     contrast.push({owner: p, pairs: contrastPairs({pairs: own.pairs}, tokens)});
   }
   for (const c of contrast) for (const p of c.pairs.filter(x => !x.ok)) diagnostics.push(diag('P_CHECK_CONTRAST', c.owner, `${p.use}: ${p.fg} on ${p.bg} ${p.ratio}:1 < ${p.minimum}:1`));

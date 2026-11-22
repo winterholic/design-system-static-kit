@@ -121,4 +121,6 @@ export function checkPurposeCombination(family, {visual, variant = {}, props = {
   return {ok: !errors.length, errors, resolved};
 }
 
+/** 아이콘 SVG 규칙. 기반 컴포넌트 CSS는 `.kit-icon`을 읽기만 하고 정의하지 않는다(정의는 src/styles/base.mjs의 컴파일 CSS). 조립 출력에 같은 규칙을 둔다. 어긋나지 않는 것은 테스트가 본다. */
+export const ICON_CSS = '.kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}';
 export const sel = (...names) => names.join(',');

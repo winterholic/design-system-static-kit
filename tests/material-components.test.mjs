@@ -71,3 +71,21 @@ function assertMaterial(contract, id, css) {
   assert.ok(material.tokens.length > 0);
   assert.ok(['--kit-surface', '--kit-text', '--kit-danger', '--kit-border'].some(token => css.includes(`var(${token})`)), 'component color tokens are reused');
 }
+
+test('Select and Table contracts follow the same partition and forbidden-combination rules as the other eight controls', async () => {
+  const {selectControlContract} = await import('../src/materials/select.mjs');
+  const {tableControlContract} = await import('../src/materials/table.mjs');
+  for (const contract of [selectControlContract, tableControlContract]) {
+    const claimed = Object.values(contract.concepts).flat();
+    assert.deepEqual([...claimed].sort(), Object.keys(contract.axes).sort(), contract.id);
+    let rejected = 0;
+    for (const props of allCombinations(contract)) {
+      if (violations(contract, props).length) { rejected++; assert.throws(() => resolveProps(contract, props), ContractError, contract.id); }
+      else assert.deepEqual(resolveProps(contract, props), props, contract.id);
+    }
+    assert.ok(rejected > 0, `${contract.id} declares at least one forbidden combination`);
+  }
+  assert.throws(() => resolveProps(selectControlContract, {mode: 'multiple', search: 'async'}), ContractError);
+  assert.throws(() => resolveProps(tableControlContract, {state: 'empty', sortable: true}), ContractError);
+  assert.deepEqual(resolveProps(tableControlContract, {state: 'partial', sortable: true, selectable: true}).state, 'partial');
+});

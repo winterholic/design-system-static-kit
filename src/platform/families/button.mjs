@@ -12,7 +12,7 @@ const SIZES = ['small', 'medium', 'large'];
 const PARENTS = ['slot:main', 'slot:header', 'slot:footer', 'slot:aside', 'slot:grid-item'];
 const BTN_STATES = ['default', 'hover', 'focus', 'active', 'loading', 'disabled'];
 
-const SHARED = `.pf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--pf-gap);font-family:var(--kit-font)}.pf-actions[data-layout=stack]{flex-direction:column;align-items:stretch}.pf-actions[data-layout=stack] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}.pf-actions[data-layout=pair] .kit-ctl-button-host{flex:0 1 auto}.pf-actions[data-align=end]{justify-content:flex-end}.pf-helper{display:flex;gap:var(--kit-sp-near);align-items:flex-start;margin:0;color:var(--kit-muted);font-size:var(--kit-t-small);word-break:keep-all;overflow-wrap:anywhere}.pf-helper .kit-icon{flex:none;width:18px;height:18px;margin-top:1px}.pf-actions .kit-ctl-button{white-space:nowrap}@media(max-width:640px){.pf-actions[data-layout=pair]{flex-direction:column-reverse;align-items:stretch}.pf-actions[data-layout=pair] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}}`;
+const SHARED = `.pf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--pf-gap);font-family:var(--kit-font)}.pf-actions[data-layout=stack]{flex-direction:column;align-items:stretch}.pf-actions[data-layout=stack] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}.pf-actions[data-layout=pair] .kit-ctl-button-host{flex:0 1 auto}.pf-actions[data-align=end]{justify-content:flex-end}.pf-helper{display:flex;gap:var(--kit-sp-near);align-items:flex-start;margin:0;color:var(--kit-muted);font-size:var(--kit-t-small);word-break:keep-all;overflow-wrap:anywhere}.pf-helper .kit-icon{flex:none;width:18px;height:18px;margin-top:1px}.pf-actions .kit-ctl-button{white-space:nowrap}.pf-destructive{display:grid;gap:var(--pf-gap)}@media(max-width:640px){.pf-actions[data-layout=pair]{flex-direction:column-reverse;align-items:stretch}.pf-actions[data-layout=pair] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}}`;
 
 const sizeOf = ctx => ctx.props.size;
 
@@ -169,18 +169,18 @@ export const buttonLoading = definePurposeFamily({
   forbidden: [],
   needs: {}, states: ['default', 'loading', 'hover', 'focus'],
   interactions: [{on: 'loading', behavior: '스피너가 시작 자리를 채우고 클릭만 막는다(aria-disabled). 포커스는 유지된다', runtime: 'attachButton'}, {on: 'compare', behavior: '대기와 로딩을 나란히 놓아 두 상태의 크기가 같음을 확인한다'}],
-  responsive: {strategy: 'viewport', breakpoints: [], behavior: '라벨은 줄바꿈하지 않는다. 상태가 바뀌어도 버튼 폭이 같다(스피너 자리가 항상 확보됨).'},
+  responsive: {strategy: 'viewport', breakpoints: [], behavior: '라벨은 줄바꿈하지 않는다. 대기·로딩 버튼은 최소 폭(9em)을 같이 쓰고, compare는 같은 폭의 두 칸이라 상태가 바뀌어도 폭이 흔들리지 않는다.'},
   a11y: {role: 'button (aria-busy, aria-disabled)', keyboard: '로딩 중에도 포커스 유지, Enter·Space는 무시', conditions: ['진행 안내는 role=status 숨은 글(처리 중입니다)', '진행 중 라벨을 바꾸더라도 버튼 이름은 동작을 설명']},
   pairs: [['--kit-onAction', '--kit-action', 4.5, 'loading label']],
   parents: PARENTS, example: {variant: {phase: 'compare', tier: 'primary'}, props: {size: 'medium'}, content: {label: '결제하기', loadingLabel: '결제 중'}},
   render(ctx) { return renderButtonLoading(ctx); },
-  css: ``,
+  css: `.pf-actions[data-phase] .kit-ctl-button{min-inline-size:9em}.pf-actions[data-phase=compare]{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr}.pf-actions[data-phase=compare] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}`,
 });
 export function renderButtonLoading(ctx) {
   const {content: c, variant: v} = ctx, size = sizeOf(ctx);
   const one = (state, label) => ctx.button(v.tier, {props: {size, state}, content: {label}});
   const idle = one('default', c.label), busy = one('loading', c.loadingLabel ?? c.label);
-  return `<div class="pf-actions" role="group" data-layout="row">${v.phase === 'compare' ? idle + busy : v.phase === 'idle' ? idle : busy}</div>`;
+  return `<div class="pf-actions" role="group" data-layout="row" data-phase="${v.phase}">${v.phase === 'compare' ? idle + busy : v.phase === 'idle' ? idle : busy}</div>`;
 }
 
 /* ---------- 토글 ---------- */
