@@ -46,7 +46,7 @@ const newFaces = [
   face('humanist-system', '인문주의 제목 + 시스템 본문', '기술 문서. 제목은 따뜻하고 본문·코드 주변은 중립이다.', {head: 'humanist', text: 'system', webfonts: ['pretendard', 'jetbrainsMono']}),
 ];
 const withWebfont = (f, extra) => (extra.length ? Object.freeze({...f, webfonts: [...new Set([...f.webfonts, ...extra])]}) : f);
-const EXTRA_WEBFONTS = {geometric: ['pretendard'], grotesk: ['pretendard'], rounded: ['pretendard'], humanist: ['pretendard']};
+const EXTRA_WEBFONTS = {geometric: ['pretendard'], grotesk: ['pretendard'], humanist: ['pretendard']};
 export const FACE_PAIRINGS = Object.freeze(Object.fromEntries([...legacyFaces.map(f => withWebfont(f, EXTRA_WEBFONTS[f.id.slice('face-pairing:'.length)] ?? [])), ...newFaces].map(f => [f.id, f])));
 
 /** 구형 프리셋 id → 서체 짝 id. 합쳐진 것은 대표 id(맨 앞 프리셋)의 서체 짝을 가리킨다. */
@@ -174,7 +174,7 @@ export const HANGUL_FAMILIES = Object.freeze(new Set(['apple sd gothic neo', 'ap
  */
 export const PLATFORM_FONTS = Object.freeze({
   macos: Object.freeze({basis: 'measured', systemUi: 'SF Pro', appleSystem: true, generics: {'sans-serif': ['Helvetica', 'Apple SD Gothic Neo'], serif: ['Times', 'AppleMyungjo'], monospace: ['Courier', 'Apple SD Gothic Neo']}, installed: Object.freeze(new Set([
-    'apple sd gothic neo', 'applemyungjo', 'sf mono', 'sfmono-regular', 'menlo', 'helvetica neue', 'arial', 'avenir next', 'avenir', 'futura', 'seravek', 'gill sans', 'optima', 'iowan old style', 'palatino', 'palatino linotype',
+    'apple sd gothic neo', 'applemyungjo', 'menlo', 'helvetica neue', 'arial', 'avenir next', 'avenir', 'futura', 'seravek', 'gill sans', 'optima', 'iowan old style', 'palatino', 'palatino linotype',
     'georgia', 'times new roman', 'charter', 'baskerville', 'didot', 'bodoni 72', 'hoefler text', 'rockwell', 'superclarendon', 'american typewriter', 'arial rounded mt bold', 'hiragino maru gothic pron', 'impact', 'arial narrow', 'avenir next condensed', 'book antiqua']))}),
   windows: Object.freeze({basis: 'assumed', systemUi: 'Segoe UI', appleSystem: false, generics: {'sans-serif': ['Arial', 'Malgun Gothic'], serif: ['Times New Roman', 'Batang'], monospace: ['Consolas', 'Malgun Gothic']}, installed: Object.freeze(new Set([
     'segoe ui', 'malgun gothic', 'batang', 'arial', 'georgia', 'times new roman', 'century gothic', 'candara', 'palatino linotype', 'book antiqua', 'cambria', 'consolas', 'impact', 'arial narrow', 'sitka text', 'rockwell', 'bodoni mt', 'hoefler text']))}),
