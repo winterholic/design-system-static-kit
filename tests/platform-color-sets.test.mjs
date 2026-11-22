@@ -154,3 +154,18 @@ test('the pipeline renders the chosen pair: different palette × set choices emi
   assert.equal(bad.ok, false);
   assert.ok(bad.diagnostics.some(d => d.code === 'P_CHECK_PALETTE_SUBTOKEN'), 'the failing pair is rejected before binding');
 });
+
+test('every passing pair assembles real components: no missing variable or contrast failure for Card and, when registered, Button', () => {
+  const comps = [{base: 'base-component:card-surface', content: {id: 'c1', title: '카드', body: '본문'}}];
+  if (env.registry.has('base-component:button-control')) comps.push({base: 'base-component:button-control', content: {id: 'b1', label: '저장'}});
+  let assembled = 0;
+  for (const {palette: p, set: s} of passing) for (const mode of ['light', 'dark']) {
+    const sc = env.registry.get(s), context = sc.contexts.includes('any') ? 'listing' : sc.contexts[0];
+    const r = assemblePlatform({context, mode, palette: p, subtokenSet: s, components: comps}, env);
+    assert.deepEqual(r.diagnostics.map(d => d.code), [], `${p} × ${s} (${mode})`);
+    assembled++;
+  }
+  assert.equal(assembled, passing.length * 2);
+  const dark = assemblePlatform({context: 'commerce', mode: 'dark', palette: 'palette:graphite-mono', subtokenSet: 'subtoken-set:commerce-vivid', components: comps}, env);
+  assert.deepEqual([dark.ok, dark.diagnostics[0].code], [false, 'P_CHECK_PALETTE_SUBTOKEN'], 'the one failing pair is refused with the same reason in the pipeline');
+});
