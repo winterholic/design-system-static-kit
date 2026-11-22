@@ -192,19 +192,31 @@ const uniqBlocked = list => uniq(list).sort((a, b) => a.kind.localeCompare(b.kin
 
 /** 점수 순으로 하나씩 고르되, 이미 고른 후보와 같은 재료를 많이 공유하면 감점한다(결정적: 동점이면 앞선 쪽). */
 export function diversify(passing) {
-  const out = [], rest = [...passing];
-  const signatures = new Map(rest.map(c => [c.selection, {
-    palette: c.selection.palette,
-    subtokenSet: c.selection.subtokenSet,
-    typeSystem: c.selection.typeSystem,
-    families: key(c.selection.families),
-  }]));
-  const shared = (a, b) => ['palette', 'subtokenSet', 'typeSystem'].filter(k => signatures.get(a.selection)[k] === signatures.get(b.selection)[k]).length + (signatures.get(a.selection).families === signatures.get(b.selection).families ? 1 : 0);
+  const out = [];
+  const rest = passing.map(candidate => ({
+    candidate,
+    shared: 0,
+    signature: {
+      palette: candidate.selection.palette,
+      subtokenSet: candidate.selection.subtokenSet,
+      typeSystem: candidate.selection.typeSystem,
+      families: key(candidate.selection.families),
+    },
+  }));
+  const shared = (a, b) =>
+    Number(a.palette === b.palette) +
+    Number(a.subtokenSet === b.subtokenSet) +
+    Number(a.typeSystem === b.typeSystem) +
+    Number(a.families === b.families);
   while (rest.length) {
     let best = 0, bestAdj = -Infinity;
-    rest.forEach((c, i) => { const adj = c.score - DIVERSITY_PENALTY * Math.max(0, ...out.map(o => shared(c, o))); if (adj > bestAdj) { bestAdj = adj; best = i; } });
-    const [c] = rest.splice(best, 1);
-    out.push({...c, adjusted: c.score - DIVERSITY_PENALTY * Math.max(0, ...out.map(o => shared(c, o)))});
+    rest.forEach(({candidate, shared: count}, i) => {
+      const adjusted = candidate.score - DIVERSITY_PENALTY * count;
+      if (adjusted > bestAdj) { bestAdj = adjusted; best = i; }
+    });
+    const [chosen] = rest.splice(best, 1);
+    out.push({...chosen.candidate, adjusted: chosen.candidate.score - DIVERSITY_PENALTY * chosen.shared});
+    for (const candidate of rest) candidate.shared = Math.max(candidate.shared, shared(candidate.signature, chosen.signature));
   }
   return out;
 }
