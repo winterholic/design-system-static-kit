@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>clip cases</title>
+<style>
+@import url("_base.css");
+.box { width: 220px; border: 1px solid #c8ccd4; }
+.icon-wrap { width: 42px; height: 42px; overflow: hidden; border: 1px solid #c8ccd4; border-radius: 8px; }
+.row { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+.small { font-size: 9px; }
+</style></head>
+<body><main><div class="stage">
+
+<!-- ============ BAD ============ -->
+<section class="case" id="bad-clip-text-y" data-expect="CLIP_TEXT"><small class="tag">bad: 높이가 고정된 칸에서 글 아랫줄이 잘림</small>
+<div class="box" style="height:24px;overflow:hidden">글이 두 줄 이상으로 접히는데 칸 높이가 한 줄만 허용해서 아래가 잘립니다 끝까지 보이지 않습니다</div></section>
+
+<section class="case" id="bad-clip-text-x" data-expect="CLIP_TEXT"><small class="tag">bad: 한 줄 글이 overflow hidden 칸 오른쪽에서 잘림</small>
+<div class="box" style="white-space:nowrap;overflow:hidden">잘려서 보이지 않는 아주 긴 한 줄의 글입니다 끝까지</div></section>
+
+<section class="case" id="bad-clip-icon" data-expect="CLIP_ICON"><small class="tag">bad: 아이콘이 둥근 칸의 overflow에 잘림</small>
+<div class="icon-wrap"><svg width="40" height="40" viewBox="0 0 40 40" style="margin-left:14px" aria-label="확인"><circle cx="20" cy="20" r="14" fill="none" stroke="#2742c8" stroke-width="3"/></svg></div></section>
+
+<section class="case" id="bad-clip-svg" data-expect="CLIP_SVG"><small class="tag">bad: SVG 안쪽 그림이 viewBox 밖으로 나가 잘림</small>
+<svg width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="막대"><rect x="10" y="20" width="60" height="30" fill="#2742c8"/><rect x="100" y="10" width="60" height="40" fill="#2742c8"/></svg></section>
+
+<section class="case" id="bad-svg-slice-crop" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 의미 있는 그림을 xMidYMid slice로 44.7% 세로 잘라 냄</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="bad-svg-slice-crop-aligned" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 위쪽에 맞춘 slice는 아래쪽에서 44.7% 잘라 냄</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMin slice" role="img" aria-label="위에 맞춘 램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="bad-svg-slice-art" data-expect="SVG_SLICE_CROP"><small class="tag">bad: 의미 있는 장식 그림의 slice 크롭만 경고</small>
+<svg class="kit-art" style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="가장자리가 잘린 그림"><rect x="-40" y="0" width="360" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-same-ratio" data-expect="none"><small class="tag">good: slice여도 표시 상자와 viewBox 비율이 같아 잘리지 않음</small>
+<svg style="width:320px;height:320px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="정사각형"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-meet" data-expect="none"><small class="tag">good: 비율은 다르지만 meet로 전체 그림을 보임</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="램프 전체"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-decoration" data-expect="none"><small class="tag">good: aria-hidden으로 표시한 의도된 장식 크롭</small>
+<svg style="width:594px;height:328.4px" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-visible" data-expect="none"><small class="tag">good: overflow visible이면 표시 상자에서 잘리지 않음</small>
+<svg style="width:594px;height:328.4px;overflow:visible" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid slice" role="img" aria-label="잘림 없는 램프"><rect x="0" y="0" width="320" height="320" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-svg-slice-small" data-expect="none"><small class="tag">good: crop이 20% 미만인 작은 비율 편차</small>
+<svg style="width:220px;height:180px" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="작은 크롭"><rect x="0" y="0" width="200" height="200" fill="#2742c8"/></svg></section>
+
+<section class="case" id="bad-small-text-html" data-expect="SMALL_TEXT"><small class="tag">bad: 표 라벨이 9px</small>
+<table><tr><th class="small" style="width:80px">분기</th><td class="small" style="width:80px">1,200</td></tr></table></section>
+
+<section class="case" id="bad-small-text-svg" data-expect="SMALL_TEXT"><small class="tag">bad: 차트 SVG 글자가 실제 렌더 6px(viewBox 600 → 240px)</small>
+<svg width="240" height="80" viewBox="0 0 600 200" role="img" aria-label="차트"><rect x="20" y="40" width="100" height="120" fill="#2742c8"/><text x="20" y="190" font-size="15">1분기 매출 액수</text></svg></section>
+
+<section class="case" id="bad-svg-text-overlap" data-expect="OVERLAP_SVG_TEXT"><small class="tag">bad: 차트 눈금 라벨 두 개가 같은 자리에 겹침</small>
+<svg width="240" height="100" viewBox="0 0 240 100" role="img" aria-label="차트"><rect x="10" y="20" width="60" height="50" fill="#2742c8"/><text x="20" y="90" font-size="13">2026년 1분기</text><text x="48" y="90" font-size="13">2026년 2분기</text></svg></section>
+
+<section class="case" id="bad-svg-text-overlap-values" data-expect="OVERLAP_SVG_TEXT"><small class="tag">bad: 값 라벨이 눈금 라벨 위에 얹힘</small>
+<svg width="240" height="100" viewBox="0 0 240 100" role="img" aria-label="차트"><rect x="10" y="20" width="60" height="50" fill="#2742c8"/><text x="30" y="84" font-size="13">1,200</text><text x="32" y="86" font-size="13">1분기</text></svg></section>
+
+<!-- ============ GOOD ============ -->
+<section class="case" id="good-icon-fits" data-expect="none"><small class="tag">good: 아이콘이 칸 안에 온전히 들어감</small>
+<div class="icon-wrap"><svg width="40" height="40" viewBox="0 0 40 40" aria-label="확인"><circle cx="20" cy="20" r="14" fill="none" stroke="#2742c8" stroke-width="3"/></svg></div></section>
+
+<section class="case" id="good-svg-fits" data-expect="none"><small class="tag">good: SVG 그림이 viewBox 안, 글자 12px</small>
+<svg width="240" height="100" viewBox="0 0 240 100" role="img" aria-label="막대"><rect x="10" y="20" width="60" height="50" fill="#2742c8"/><rect x="90" y="30" width="60" height="40" fill="#2742c8"/><text x="10" y="90" font-size="12">1분기</text></svg></section>
+
+<section class="case" id="good-svg-text-apart" data-expect="none"><small class="tag">good: 눈금 라벨이 서로 떨어져 있고 값 라벨은 막대 위</small>
+<svg width="240" height="100" viewBox="0 0 240 100" role="img" aria-label="차트"><rect x="10" y="30" width="60" height="40" fill="#2742c8"/><text x="40" y="24" font-size="13" text-anchor="middle">1,200</text><text x="40" y="92" font-size="13" text-anchor="middle">1분기</text><text x="120" y="92" font-size="13" text-anchor="middle">2분기</text></svg></section>
+
+<section class="case" id="good-svg-visible-overflow" data-expect="none"><small class="tag">good: viewBox 밖으로 나가지만 overflow: visible을 줌</small>
+<svg width="120" height="60" viewBox="0 0 120 60" style="overflow:visible" role="img" aria-label="막대"><rect x="10" y="20" width="60" height="30" fill="#2742c8"/><rect x="100" y="10" width="60" height="40" fill="#2742c8"/></svg></section>
+
+<section class="case" id="good-ellipsis-clamp" data-expect="none"><small class="tag">good: line-clamp로 의도한 줄임(잘림이 아님)</small>
+<div class="box" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">두 줄까지만 보여 주고 나머지는 말줄임으로 처리하는 카드 설명입니다. 이 글은 일부러 길게 써서 세 줄이 넘도록 만든 것입니다 끝</div></section>
+
+<section class="case" id="good-scroll-table" data-expect="none"><small class="tag">good: 가로 스크롤 영역 안의 넓은 표는 넘침이 아님</small>
+<div class="box" style="overflow-x:auto" tabindex="0" data-layout-scroll><table style="width:480px"><tr><th>분기</th><td>1,200</td><td>1,400</td><td>1,650</td></tr></table></div></section>
+
+<section class="case" id="good-small-hidden-sr" data-expect="none"><small class="tag">good: 시각 숨김 텍스트는 크기·잘림 대상이 아님</small>
+<button type="button" class="btn" style="min-height:44px">메뉴<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;font-size:8px">열기</span></button></section>
+
+<section class="case" id="good-label-12px" data-expect="none"><small class="tag">good: 12px 표 라벨은 하한(11px) 이상</small>
+<table><tr><th style="width:80px;font-size:12px">분기</th><td style="width:80px;font-size:12px">1,200</td></tr></table></section>
+
+</div></main></body></html>

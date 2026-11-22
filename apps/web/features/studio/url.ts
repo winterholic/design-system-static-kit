@@ -5,22 +5,25 @@ import {DEVICES, PANES, TABS} from './types';
 export type UrlView = {tab: Tab; pane: Pane; device: Device};
 export const DEFAULT_VIEW: UrlView = {tab: 'structure', pane: 'split', device: 1280};
 
-const START_KEYS = ['template', 'theme', 'variant', 'palette', 'mode', 'layout'] as const;
+const START_KEYS = ['template', 'theme', 'variant', 'palette', 'mode', 'layout', 'axes', 'catalogVersion', 'colorPalette', 'typeRoles', 'profile', 'component', 'componentAxes'] as const;
+const PAIR_KEYS: ReadonlySet<string> = new Set(['layout', 'axes', 'componentAxes']);
 const ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
 export type ParsedUrl = {start: StartRequest | null; view: UrlView; problems: Diagnostic[]};
 
 const problem = (path: string, message: string, hint: string): Diagnostic => ({code: 'URL_PARAM', path, message, hint});
 
-/** layout=hero:split,cards:outline → {hero:'split', cards:'outline'} */
-function parseLayout(text: string): {layout: Record<string, string>} | {problem: Diagnostic} {
+/** layout=hero:split,cards:outline → {hero:'split', cards:'outline'}. axes=radius:round,density:compact 도 같은 형식이다. */
+function parsePairs(key: 'layout' | 'axes' | 'componentAxes', text: string): {pairs: Record<string, string>} | {problem: Diagnostic} {
   const out: Record<string, string> = {};
+  const example = key === 'layout' ? 'layout=hero:split,cards:outline' : key === 'axes' ? 'axes=radius:round,density:compact' : 'componentAxes=mode:multiple,size:md';
   for (const part of text.split(',')) {
-    const [slot, option, ...extra] = part.split(':');
-    if (!slot || !option || extra.length || !ID.test(slot) || !ID.test(option)) return {problem: problem('$url.layout', `layout 값을 읽을 수 없습니다: ${part}`, 'layout=슬롯:옵션,슬롯:옵션 형식입니다. 예: layout=hero:split,cards:outline')};
-    out[slot] = option;
+    const [name, value, ...extra] = part.split(':');
+    if (!name || !value || extra.length || !ID.test(name) || !ID.test(value)) return {problem: problem(`$url.${key}`, `${key} 값을 읽을 수 없습니다: ${part}`, `${key}=이름:값,이름:값 형식입니다. 예: ${example}`)};
+    if (key === 'componentAxes' && Object.hasOwn(out, name)) return {problem: problem(`$url.${key}`, `${key} 축이 중복되었습니다: ${name}`, '각 축을 한 번씩만 지정하세요.')};
+    out[name] = value;
   }
-  return {layout: out};
+  return {pairs: out};
 }
 
 export function parseUrl(search: string): ParsedUrl {
@@ -30,13 +33,18 @@ export function parseUrl(search: string): ParsedUrl {
   for (const key of START_KEYS) {
     const value = q.get(key);
     if (value === null) continue;
-    if (key === 'layout') {
-      const layout = parseLayout(value);
-      if ('problem' in layout) problems.push(layout.problem);
-      else start.layout = layout.layout;
-    } else if (!ID.test(value)) problems.push(problem(`$url.${key}`, `${key} 값이 올바르지 않습니다: ${value.slice(0, 40)}`, '영문 소문자·숫자·하이픈으로 된 카탈로그 id를 쓰세요.'));
+    if (key === 'layout' || key === 'axes' || key === 'componentAxes') {
+      const parsed = parsePairs(key, value);
+      if ('problem' in parsed) problems.push(parsed.problem);
+      else start[key] = parsed.pairs;
+    } else if (key === 'catalogVersion' && value !== '2.6.0') problems.push(problem(`$url.${key}`, `시작 문서 버전은 2.6.0만 지정할 수 있습니다: ${value.slice(0, 40)}`, 'catalogVersion=2.6.0을 쓰거나 이 인자를 빼세요.'));
+    else if (!ID.test(value)) problems.push(problem(`$url.${key}`, `${key} 값이 올바르지 않습니다: ${value.slice(0, 40)}`, '영문 소문자·숫자·하이픈으로 된 카탈로그 id를 쓰세요.'));
     else (start as Record<string, string>)[key] = value;
   }
+  if (start.component && (start.catalogVersion !== '2.6.0' || Object.keys(start).some(key => !['component', 'componentAxes', 'catalogVersion'].includes(key)))) {
+    problems.push(problem('$url.component', 'Components 시작 요청은 등록 부품과 그 변형만 포함할 수 있습니다.', 'component, componentAxes, catalogVersion=2.6.0만 사용하세요.'));
+  }
+  if (start.componentAxes && !start.component) problems.push(problem('$url.componentAxes', '변형 축에는 등록 부품이 필요합니다.', 'component=<등록 노드>를 함께 지정하세요.'));
   const view: UrlView = {...DEFAULT_VIEW};
   const tab = q.get('tab'), pane = q.get('pane'), device = q.get('device');
   if (tab && (TABS as readonly string[]).includes(tab)) view.tab = tab as Tab;
@@ -60,7 +68,7 @@ export function startUrl(request: StartRequest): string {
   const q = new URLSearchParams();
   for (const key of START_KEYS) {
     const v = request[key];
-    if (key === 'layout' && v && typeof v === 'object') q.set('layout', Object.entries(v).map(([s, o]) => `${s}:${o}`).join(','));
+    if (PAIR_KEYS.has(key) && v && typeof v === 'object') q.set(key, Object.entries(v).map(([s, o]) => `${s}:${o}`).join(','));
     else if (typeof v === 'string') q.set(key, v);
   }
   const s = q.toString();

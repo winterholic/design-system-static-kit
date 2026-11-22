@@ -6,6 +6,7 @@ import {Thumb} from '@/features/explore/Thumb';
 import {curatedDesigns} from '@/features/explore/designs.server';
 import {filterRows, paginate, readQuery, writeQuery} from '@/features/explore/list-query';
 import styles from '@/features/explore/list.module.css';
+import {ButtonLink} from '@/ui';
 
 export const metadata = {title: 'Explore'};
 
@@ -48,7 +49,7 @@ export default async function ExplorePage({searchParams}: Props) {
       ) : (
         <div className={styles.empty}>
           <p>조건에 맞는 디자인이 없습니다.</p>
-          <Link href="/explore" className="btn btn-quiet">필터 초기화</Link>
+          <ButtonLink href="/explore" variant="secondary">필터 초기화</ButtonLink>
         </div>
       )}
       {view.pages > 1 ? (

@@ -1,7 +1,4 @@
-.toolbar { display: inline-flex; border: 1px solid var(--color-line); border-radius: var(--radius); overflow: hidden; }
-.toggle { min-height: var(--tap-min); padding: 0 var(--space-4); font: inherit; font-weight: var(--weight-strong); background: var(--color-bg); color: var(--color-fg); border: 0; cursor: pointer; }
-.toggle + .toggle { border-left: 1px solid var(--color-line); }
-.toggle[aria-pressed='true'] { background: var(--color-fg); color: var(--color-bg); }
+.toolbar { margin: 0; }
 .px { font-weight: var(--weight-regular); font-size: var(--text-xs); opacity: 0.75; }
 .stage { margin-top: var(--space-4); display: flex; justify-content: center; background: var(--color-surface); border-radius: var(--radius); padding: 0; overflow: hidden; }
 .slot { position: relative; overflow: hidden; background: #fff; border: 1px solid var(--color-line); }

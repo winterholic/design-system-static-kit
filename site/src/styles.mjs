@@ -1,1 +1,1 @@
-export {stylesheet, usedTypes} from './styles/index.mjs';
+export {stylesheet, usedTypes, typeRolesManifest} from './styles/index.mjs';

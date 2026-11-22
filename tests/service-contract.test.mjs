@@ -20,9 +20,9 @@ const envelope = r => {
 };
 const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.isFrozen(x) || Object.values(x).some(deepFrozenAnywhere));
 
-test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, and nothing else callable', () => {
+test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, assembleBlueprint (2.6.0 profiles) and the read-only queryMaterials, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
-  assert.deepEqual(fns, ['catalogSnapshot', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getComponentSpec', 'getSchema', 'hintFor', 'listCatalog', 'validateBlueprint', 'withHint']);
+  assert.deepEqual(fns, ['assembleBlueprint', 'catalogSnapshot', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getSchema', 'getTypePresets', 'hintFor', 'listCatalog', 'listMaterials', 'queryMaterials', 'validateBlueprint', 'withHint']); // getColorTokens·getMaterial·getTypePresets·listMaterials는 src/service/materials.mjs, queryMaterials는 Materials 화면용 src/service/materials-query.mjs
   assert.equal(CONTRACT_VERSION, '1.1.0');
 });
 
@@ -36,7 +36,7 @@ test('functions never throw on hostile input: they answer ok:false with a struct
   const cyc = {}; cyc.self = cyc;
   const inputs = [undefined, null, 0, 'x', [], cyc, {__proto__: null}, () => 1, Symbol.iterator.description, {kind: 5}, {type: {}}, {target: []}, 1n];
   for (const input of inputs) {
-    for (const fn of [listCatalog, getSchema, getComponentSpec, validateBlueprint, compileBlueprint, explainDecisions]) {
+    for (const fn of [listCatalog, getSchema, getComponentSpec, validateBlueprint, compileBlueprint, explainDecisions, service.listMaterials, service.getMaterial, service.getColorTokens, service.getTypePresets]) {
       let r; assert.doesNotThrow(() => { r = fn(input); }, `${fn.name}(${typeof input})`);
       envelope(r);
     }

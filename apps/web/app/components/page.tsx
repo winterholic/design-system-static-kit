@@ -23,7 +23,7 @@ export default function ComponentsPage() {
                     <Link href={`/components/${r.type}`} className={styles.link}>
                       {view.example ? <Thumb src={`/components/${r.type}/render`} title={`${r.label} 렌더 결과`} /> : <div className={styles.textOnly} />}
                       <h3 className={styles.title}>{r.label}</h3>
-                      <p className={styles.meta}><code>{r.type}</code>{view.variants.length ? ` · 변형 ${view.variants.length}` : ''}</p>
+                      <p className={styles.meta}><code>{r.type}</code>{r.since ? ` · ${r.since} · ${view.material?.kind} · ${view.material?.category} · 맥락 ${view.material?.contexts.join(', ')} · 재료 변형 ${view.variantGroups.length}축` : ''}{view.variants.length ? ` · 변형 ${view.variants.length}` : ''}</p>
                     </Link>
                   </li>
                 );

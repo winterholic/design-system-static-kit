@@ -2,6 +2,7 @@
 
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
+import {Chip, ChipGroup} from '@/ui';
 import styles from './preview.module.css';
 
 // 미리보기 폭. 실제 폭으로 그린 뒤 가용 폭에 맞춰 줄이므로 미디어 쿼리가 실제 휴대폰·데스크톱처럼 동작한다.
@@ -38,13 +39,13 @@ export function PreviewFrame({src, title}: {src: string; title: string}) {
 
   return (
     <div>
-      <div className={styles.toolbar} role="group" aria-label="미리보기 폭">
+      <ChipGroup label="미리보기 폭" className={styles.toolbar}>
         {(Object.keys(DEVICES) as Device[]).map(id => (
-          <button key={id} type="button" className={styles.toggle} aria-pressed={device === id} onClick={() => set(id)}>
+          <Chip key={id} pressed={device === id} onClick={() => set(id)}>
             {DEVICES[id].label} <span className={styles.px}>{DEVICES[id].width}px</span>
-          </button>
+          </Chip>
         ))}
-      </div>
+      </ChipGroup>
       <div ref={stage} className={styles.stage} style={{height: stageHeight * (scale || 1)}} data-device={device}>
         {scale ? (
           <div className={styles.slot} style={{width: virtual * scale, height: stageHeight * scale}}>

@@ -1,15 +1,10 @@
-import {icons} from '../catalog.mjs';
 import {FLOW} from '../layout.mjs';
+import {escapeHTML} from '../escape-html.mjs';
+import {icon} from './icon.mjs';
+export {escapeHTML};
+export {icon};
 
-export const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 export const e = escapeHTML;
-
-/** Icon markup is style-agnostic; the `icon` axis only changes CSS variables (stroke width, caps, fill). */
-export function icon(name, extra = '') {
-  const shapes = icons[name];
-  if (!shapes) throw new Error('Unknown icon: ' + name);
-  return `<svg class="kit-icon${extra ? ' ' + extra : ''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${shapes.map(d => `<path${d.endsWith('Z') ? ' class="c"' : ''} d="${d}"/>`).join('')}</svg>`;
-}
 
 /** Author anchors (`#features`) point at section ids (`s-features`); `#main` and https links pass through. */
 export const href = h => e(/^#[a-z]/.test(h) && h !== '#main' ? '#s-' + h.slice(1) : h);

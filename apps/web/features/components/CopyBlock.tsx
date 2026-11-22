@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from 'react';
+import {Button} from '@/ui';
 import styles from './components.module.css';
 
 export function CopyBlock({text, label}: {text: string; label: string}) {
@@ -12,7 +13,7 @@ export function CopyBlock({text, label}: {text: string; label: string}) {
   return (
     <div className={styles.block}>
       <pre tabIndex={0} aria-label={label} className={styles.pre}>{text}</pre>
-      <button type="button" className="btn btn-quiet" onClick={copy}>{state === 'copied' ? '복사했습니다' : state === 'failed' ? '복사하지 못했습니다' : '복사'}</button>
+      <Button variant="quiet" onClick={copy}>{state === 'copied' ? '복사했습니다' : state === 'failed' ? '복사하지 못했습니다' : '복사'}</Button>
       <span className="visually-hidden" role="status" aria-live="polite">{state === 'copied' ? `${label}을 복사했습니다` : ''}</span>
     </div>
   );

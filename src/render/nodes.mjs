@@ -6,6 +6,17 @@ import {bentoPlan, layoutRev, FLOW_BUDGETS, loneFields} from '../layout.mjs';
 import {SPACE} from '../spacing.mjs';
 import {compositionAttrs} from '../composition.mjs';
 import {expressionApplies, FEATURED_COLUMNS} from '../catalog/expression.mjs';
+// 2.6.0 재료 렌더 코드(select-table.md)를 그대로 쓴다. 이 두 파일만 컴파일 경로가 읽는 재료 모듈이다(tests/materials-registry.test.mjs).
+import {renderSelect} from '../materials/select.mjs';
+import {renderDataTable} from '../materials/table.mjs';
+import {renderButton} from '../materials/button.mjs';
+import {renderInput} from '../materials/input.mjs';
+import {renderCard} from '../materials/card.mjs';
+import {renderNavigation} from '../materials/navigation.mjs';
+import {renderModal} from '../materials/modal.mjs';
+import {renderTabs} from '../materials/tabs.mjs';
+import {renderTooltip} from '../materials/tooltip.mjs';
+import {renderFeedback} from '../materials/feedback.mjs';
 
 const PRIMARY_ICON = {info: 'info', success: 'check-circle', warning: 'alert-triangle', danger: 'alert-circle'};
 const EMPTY_ICON = {'first-use': 'sparkles', search: 'search', filter: 'filter', forbidden: 'lock', offline: 'wifi-off', 'not-found': 'map-pin', error: 'alert-circle', success: 'check-circle', maintenance: 'settings'};
@@ -141,6 +152,33 @@ export function makeRenderer(b, design = null) {
   };
   R.metric = n => `<dl class="kit-metric"${n.trend ? ' data-spark="yes"' : ''}>${n.trend ? spark(n) : ''}<dt>${e(n.label)}</dt><dd data-vl="${vlOf(n.value)}">${e(n.value)}</dd>${n.trend || n.detail ? `<dd class="kit-metric-foot">${n.trend ? `<span class="kit-trend" data-trend="${n.trend}">${icon(TREND[n.trend][0])}<span class="kit-sr">${TREND[n.trend][1]}</span>${e(n.delta)}</span>` : ''}${n.detail ? `<span class="kit-muted">${e(n.detail)}</span>` : ''}</dd>` : ''}</dl>`;
   R.table = (n, d, id) => { const tableDesign = design?.byNode.get(n)?.table; const cellAttrs = i => { const c = tableDesign?.columns[i]; return c ? ` data-column-min="${c.minWidth}" data-column-align="${c.align}" data-column-wrap="${c.wrap}"` : ''; }; const s = n.state ?? (n.rows.length ? 'ready' : 'empty'); return `<section class="kit-table-wrap" data-variant="${n.variant ?? 'plain'}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<div class="kit-table-scroll" tabindex="0" role="region" aria-label="${e(n.caption)}"><table${tableDesign ? ` data-table-min="${tableDesign.minimumWidth}"` : ''}><caption>${e(n.caption)}</caption><thead><tr>${n.columns.map((c, i) => `<th scope="col"${cellAttrs(i)}>${e(c)}</th>`).join('')}</tr></thead><tbody>${n.rows.map(r => `<tr>${r.map((c, i) => i === 0 ? `<th scope="row"${cellAttrs(i)}>${e(c)}</th>` : STATUS_HEADER.test(n.columns[i] ?? '') ? `<td${cellAttrs(i)}><span class="kit-badge"${statusDot(c) ? ` data-dot="${statusDot(c)}"` : ''}>${e(c)}</span></td>` : YES.test(c.trim()) ? `<td${cellAttrs(i)}><span class="kit-yes">${icon('check')}<span class="kit-sr">${e(c)}</span></span></td>` : NO.test(c.trim()) ? `<td${cellAttrs(i)}><span class="kit-no"><span aria-hidden="true">—</span><span class="kit-sr">${e(c)}</span></span></td>` : PERSON.test((n.columns[i] ?? '').trim()) ? `<td${cellAttrs(i)}><span class="kit-person"><span class="kit-avatar" aria-hidden="true">${e(initials(c))}</span>${e(c)}</span></td>` : `<td${cellAttrs(i)}>${e(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`; };
+  // 2.6.0 select-control·data-table: Blueprint 값을 재료 렌더러 인자로 옮길 뿐 마크업은 재료가 만든다. DOM id는 "select-"·"table-" 접두를 붙여 생성 id(block-N, field-*)와 겹치지 않게 한다.
+  R['select-control'] = n => renderSelect({
+    id: 'select-' + n.id, label: n.label,
+    options: n.options.map(o => ({value: o.value, label: o.label, ...(o.group ? {group: o.group} : {}), ...(o.disabled === 'yes' ? {disabled: true} : {})})),
+    mode: n.mode, search: n.search, size: n.size, shape: n.shape, maxMenuHeight: n.maxMenuHeight,
+    ...(n.mode === 'multiple' ? {values: n.values ?? []} : {value: n.value ?? null}),
+    state: n.state === 'disabled' ? 'ready' : n.state, disabled: n.state === 'disabled',
+    required: n.requirement === 'required', placeholder: n.placeholder, message: n.message,
+  });
+  R['data-table'] = (n, d, id) => `<section class="kit-data-block" aria-labelledby="${id}-title">${heading(d, n.title, id)}${renderDataTable({
+    id: 'table-' + n.id,
+    columns: n.columns.map(c => ({id: c.id, label: c.label, ...(c.sortable ? {sortable: c.sortable === 'yes'} : {}), ...(c.hideBelow ? {hideBelow: c.hideBelow} : {})})),
+    rows: n.rows.map(row => ({...row})),
+    density: n.density, responsive: n.responsive, state: n.state, sortable: n.sortable === 'yes', selectable: n.selectable === 'yes', message: n.message,
+  })}</section>`;
+
+  const ctlId = (n, id) => n.id ? `ctl-id-${n.id}` : `ctl-generated-${id}`;
+  const controlInput = n => { const {type, ...input} = n; return input; };
+  const refIds = value => typeof value === 'string' ? value.trim().split(/\s+/).filter(Boolean).map(x => `ctl-id-${x}`).join(' ') : '';
+  R['button-control'] = (n, d, id) => { const v = controlInput(n); return renderButton({...v, id: ctlId(n, id), ...(n.describedBy ? {describedBy: refIds(n.describedBy)} : {}), ...(n.labelledBy ? {labelledBy: refIds(n.labelledBy)} : {})}); };
+  R['input-control'] = (n, d, id) => { const v = controlInput(n); return renderInput({...v, id: ctlId(n, id), name: n.name ?? ctlId(n, id)}); };
+  R['card-surface'] = (n, d, id) => renderCard({...controlInput(n), id: ctlId(n, id), href: n.href ?? '#main'});
+  R['navigation-menu'] = (n, d, id) => renderNavigation({...controlInput(n), id: ctlId(n, id)});
+  R['modal-dialog'] = (n, d, id) => renderModal({...controlInput(n), id: ctlId(n, id), body: (n.body ?? []).map((item, i) => item.slot === 'input' ? {...item, id: `${ctlId(n, id)}-${item.id ?? `field-${i + 1}`}`} : item)});
+  R['tabs-control'] = (n, d, id) => renderTabs({...controlInput(n), id: ctlId(n, id)});
+  R.tooltip = (n, d, id) => renderTooltip({...controlInput(n), id: ctlId(n, id)});
+  R['feedback-message'] = (n, d, id) => renderFeedback({...controlInput(n), id: ctlId(n, id)});
   R.list = (n, d, id) => { const s = n.state ?? (n.items.length ? 'ready' : 'empty'), v = n.variant ?? 'divided'; return `<section class="kit-list" data-variant="${v}" aria-labelledby="${id}-title">${heading(d, n.title, id)}${stateMarkup(s)}${['ready', 'partial'].includes(s) ? `<ul>${n.items.map(x => `<li>${v === 'check' ? `<span class="kit-check" aria-hidden="true">${icon('check')}</span>` : x.icon ? `<span class="kit-li-icon">${icon(x.icon)}</span>` : ''}<div><strong>${e(x.title)}</strong>${x.description ? `<p>${e(x.description)}</p>` : ''}${x.meta ? `<span class="kit-muted">${e(x.meta)}</span>` : ''}</div>${x.status ? `<span class="kit-badge" data-status="${x.status}"${statusDot(x.status) ? ` data-dot="${statusDot(x.status)}"` : ''}>${e(x.status)}</span>` : ''}</li>`).join('')}</ul>` : ''}</section>`; };
   R.form = (n, d, id) => {
     const fieldHTML = f => {

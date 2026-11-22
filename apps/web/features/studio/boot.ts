@@ -4,16 +4,11 @@ import {core} from './core';
 import {perform, type BootState} from './model';
 import type {Loaded} from './storage';
 import {parseSaved} from './storage';
+import {isDisposable} from './protect';
 import type {ParsedUrl} from './url';
 import type {Blueprint, Diagnostic, NodePath, Origin, Picks} from './types';
 
 const summarize = (errors: Diagnostic[]) => errors.slice(0, 3).map(e => `${e.path} ${e.message}`).join(' / ');
-
-/**
- * 주소의 시작 인자가 덮어써도 잃을 것이 없는 문서인가. modified=false만으로는 부족하다:
- * 가져온 문서(origin 없음)는 편집 전에도 템플릿으로 다시 만들 수 없고, 이어받은 스타일 선택(picked)도 마찬가지다.
- */
-const regenerable = (origin: Origin, picked: Picks, modified: boolean) => !modified && origin !== null && Object.keys(picked).length === 0;
 
 export function computeBoot(parsed: ParsedUrl, stored: Loaded): BootState {
   const notices: BootState['notices'] = [];
@@ -47,7 +42,7 @@ export function computeBoot(parsed: ParsedUrl, stored: Loaded): BootState {
   if (parsed.problems.length) {
     notices.push({level: 'error', text: 'URL의 시작 상태 인자를 읽지 못해 적용하지 않았습니다.', details: parsed.problems});
   } else if (parsed.start) {
-    if (doc && !regenerable(origin, picked, modified)) {
+    if (doc && !isDisposable({doc, origin, picked, modified})) {
       // 작업 중인 문서가 있으면 덮어쓰기 전에 묻는다. 확인 전에는 URL 요청을 적용하지 않는다.
       dialog = {kind: 'confirm', action: {kind: 'start', request: parsed.start}};
     } else {

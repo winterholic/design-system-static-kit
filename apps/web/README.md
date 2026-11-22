@@ -8,6 +8,8 @@ Static Kit 플랫폼의 Next.js(App Router, TypeScript) 앱이다. 설계 근거
 - `app/dev/spike/**`와 `lib/spike-core.ts`는 Core import 스파이크(S1~S5) 재확인용이다. 필요 없어지면 지운다.
 - 해시 게이트 계산식은 `scripts/tree-hash.mjs` 한 곳이다(`00-baseline.md` 4.2절).
 - 화면의 색·글자·간격은 `app/globals.css`의 토큰만 쓴다. 내부 설계서·진단 링크는 상단 메뉴에 두지 않는다(`/dev/qa`).
+- 입력·선택·버튼은 `ui/`의 공용 부품(`Select`, `Input`, `Textarea`, `Checkbox`, `Button`, `ButtonLink`, `Chip`, `Segmented`)만 쓴다. 화면에서 `<select>`·`<input>`·`<button>`을 새로 쓰지 않는다. 상태 시험은 `/dev/ui`와 `e2e/ui-components.spec.mjs`, 전환 감사는 `docs/evidence/materials-site/ui-audit.md`.
+- Materials 화면(`app/materials/**`, `features/materials/`)의 값은 서버에서 `./service`의 읽기 전용 질의 `queryMaterials({view})`로 읽고 UI에 복제하지 않는다. Coolors 팔레트(kind `palette`)는 읽지 않는다. Studio로 넘기는 링크는 `features/materials/studio-link.ts` 한 곳이다.
 - `public/`은 `scripts/sync-static.mjs`가 `site/`에서 복사한 호환 산출물이다. 손으로 고치지 않고 커밋하지 않는다.
 
 ## 기존 URL 컷오버

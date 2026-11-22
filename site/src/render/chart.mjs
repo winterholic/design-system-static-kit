@@ -1,57 +1,107 @@
-import {e, num} from './util.mjs';
+import {e, num, fmt, fmtTick, DASH, marker, seg, txt, xText, gridOf, legendOf, categoryAxis, valueAxisY, pickLabels, legendItems, swatch} from './chart-kit.mjs';
+import {renderLegacyChart} from './chart-legacy.mjs';
+import {FORMS, formLegend, formSummary, formTable} from './chart-forms.mjs';
+import {geometry, valueScale, barWidth, tickPlan, fitText, levelsOf, CHART_FORM_KINDS} from '../catalog/chart-rules.mjs';
 
-/** Charts are plain SVG built from numbers; colors are token variables, series are also told apart by dash style and marker shape. */
-const W = 360, H = 240, M = {l: 38, r: 12, t: 14, b: 28};
-const DASH = ['', '6 4', '2 3'];
-const short = (s, n) => [...s].length > n ? [...s].slice(0, n).join('') + '…' : s;
+/** SVG charts. Series use both color and shape/dash; every figure also ships an HTML data table. */
 export function niceMax(v) { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
-const group = v => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-const fmt = (v, unit) => `${Number.isInteger(v) ? group(v) : String(Math.round(v * 100) / 100)}${unit ?? ''}`;
-const fmtTick = v => Number.isInteger(v) ? group(v) : String(Math.round(v * 10) / 10);
-const marker = (i, x, y, c) => i === 0 ? `<circle cx="${num(x)}" cy="${num(y)}" r="3.5" class="ch-m" style="fill:var(--kit-chart${c})"/>`
-  : i === 1 ? `<rect x="${num(x - 3.2)}" y="${num(y - 3.2)}" width="6.4" height="6.4" class="ch-m" style="fill:var(--kit-chart${c})"/>`
-    : `<path d="M${num(x)} ${num(y - 4.4)}L${num(x + 4.4)} ${num(y)}L${num(x)} ${num(y + 4.4)}L${num(x - 4.4)} ${num(y)}Z" class="ch-m" style="fill:var(--kit-chart${c})"/>`;
+
+/** 2.6.0: 값 라벨. 위치만 정하고 겹침 여부는 chartDiagnostics가 같은 간격 계산으로 이미 걸렀다. */
+function valueLabels(out, n, items) {
+  const picked = pickLabels(items.map(item => item.v), n.labels ?? 'none');
+  items.forEach((item, i) => { if (picked.has(i)) out.push(txt(item.x, item.y, fmtTick(item.v), {anchor: item.anchor ?? 'middle', cls: 'ch-v'})); });
+}
 
 function cartesian(n) {
-  const all = n.series.flatMap(s => s.values), lo = Math.min(0, ...all), hi = niceMax(Math.max(...all, 0)), span = (hi - lo) || 1;
-  const horizontal = n.kind === 'bars-h', left = horizontal ? 74 : M.l;
-  const pw = W - left - M.r, ph = H - M.t - M.b, cats = n.categories.length, out = [];
-  const X = i => left + (pw * (i + .5)) / cats, Y = v => M.t + ph - ((v - lo) / span) * ph;
-  const ticks = [0, 1, 2, 3, 4].map(i => lo + (span * i) / 4);
-  if (!horizontal) {
-    for (const t of ticks) out.push(`<path d="M${left} ${num(Y(t))}H${W - M.r}" class="ch-grid"/><text x="${left - 6}" y="${num(Y(t) + 4)}" text-anchor="end" class="ch-t">${fmtTick(t)}</text>`);
-    n.categories.forEach((c, i) => out.push(`<text x="${num(X(i))}" y="${H - 8}" text-anchor="middle" class="ch-t">${e(short(c, 4))}</text>`));
+  const g = geometry(n), kind = n.kind, out = [], grid = gridOf(n), showX = n.axis?.showX !== 'no', showY = n.axis?.showY !== 'no';
+  const {left, top, pw, ph} = g;
+  if (FORMS[kind]) { FORMS[kind].plot(n, g, out); return {inner: out.join(''), g}; }
+  if (kind === 'sparkline') {
+    const vals = n.series[0].values, min = Math.min(...vals), max = Math.max(...vals), range = max - min || 1;
+    const pts = vals.map((v, i) => [left + (pw * i) / (vals.length - 1), top + ph - ((v - min) / range) * ph]);
+    out.push(`<path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${num(p[0])} ${num(p[1])}`).join('')}" class="ch-line" style="stroke:var(--kit-chart1)"/>`);
+    out.push(`<circle cx="${num(pts.at(-1)[0])}" cy="${num(pts.at(-1)[1])}" r="4" class="ch-m" style="fill:var(--kit-chart1)"/>`);
+    if (n.labels === 'last') out.push(txt(pts.at(-1)[0] - 8, Math.max(13, pts.at(-1)[1] - 8), fmt(vals.at(-1), n.unit), {anchor: 'end', cls: 'ch-v'}));
+    return {inner: out.join(''), g};
   }
-  if (n.kind === 'bar') {
-    const group = pw / cats, bw = Math.min(30, (group * .72) / n.series.length);
-    n.series.forEach((s, si) => s.values.forEach((v, i) => {
-      const x = X(i) - (bw * n.series.length) / 2 + si * bw, y0 = Y(Math.max(v, 0)), h = Math.abs(Y(v) - Y(0));
-      out.push(`<rect x="${num(x)}" y="${num(y0)}" width="${num(bw - 1)}" height="${num(Math.max(h, 1))}" rx="2" class="ch-bar" style="fill:var(--kit-chart${si + 1})"/>`);
-      if (n.series.length === 1 && cats <= 6) out.push(`<text x="${num(x + bw / 2)}" y="${num(y0 - 4)}" text-anchor="middle" class="ch-v">${fmtTick(v)}</text>`);
+  if (kind === 'scatter') {
+    const xs = n.series.flatMap(s => s.points.map(p => p.x)), ys = n.series.flatMap(s => s.points.map(p => p.y));
+    const xlo = Number.isFinite(n.axis?.xMin) ? n.axis.xMin : Math.min(...xs), xhi = Number.isFinite(n.axis?.xMax) ? n.axis.xMax : Math.max(...xs);
+    const ylo = Number.isFinite(n.axis?.yMin) ? n.axis.yMin : Math.min(...ys), yhi = Number.isFinite(n.axis?.yMax) ? n.axis.yMax : Math.max(...ys);
+    const xspan = xhi - xlo || 1, yspan = yhi - ylo || 1, X = v => left + ((v - xlo) / xspan) * pw, Y = v => top + ph - ((v - ylo) / yspan) * ph;
+    const xTicks = Array.from({length: 5}, (_, i) => xlo + (xspan * i) / 4), plan = tickPlan(xTicks.map(fmtTick), pw / 4, {truncate: false});
+    for (let i = 0; i <= 4; i++) {
+      const yv = ylo + (yspan * i) / 4;
+      if (grid === 'vertical' || grid === 'both') out.push(seg(left + (pw * i) / 4, top, left + (pw * i) / 4, top + ph));
+      if (grid === 'horizontal' || grid === 'both') out.push(seg(left, top + ph - (ph * i) / 4, left + pw, top + ph - (ph * i) / 4));
+      if (showX && plan.shown[i] !== null) out.push(xText(g, left + (pw * i) / 4, plan.shown[i], g.H - 10));
+      if (showY) out.push(txt(left - 7, top + ph - (ph * i) / 4 + 4.5, fmtTick(yv), {anchor: 'end'}));
+    }
+    out.push(seg(left, top + ph, left + pw, top + ph, 'ch-axis'));
+    n.series.forEach((series, si) => series.points.forEach((p, i) => out.push(`<g class="ch-point" style="color:var(--kit-chart${si + 1})"><title>${e(series.name)} ${i + 1}: ${fmt(p.x, n.xLabel || '')}, ${fmt(p.y, n.unit)}</title>${marker(si, X(p.x), Y(p.y), si + 1)}</g>`)));
+    return {inner: out.join(''), g};
+  }
+  if (kind === 'heatmap') {
+    const rows = n.series.length, cols = n.categories.length, cellW = pw / cols, cellH = ph / rows, values = levelsOf(n);
+    const min = Math.min(...values), max = Math.max(...values), range = max - min || 1, plan = tickPlan(n.categories, cellW);
+    const ramp = v => (.16 + .84 * ((v - min) / range)).toFixed(2);
+    if (showX) n.categories.forEach((_, col) => { if (plan.shown[col] !== null) out.push(txt(left + cellW * (col + .5), g.H - 10, plan.shown[col])); });
+    n.series.forEach((series, row) => out.push(txt(left - 6, top + cellH * (row + .5) + 4.5, fitText(series.name, left - 10), {anchor: 'end'})));
+    n.series.forEach((series, row) => series.values.forEach((v, col) => {
+      out.push(`<rect x="${num(left + col * cellW + 1)}" y="${num(top + row * cellH + 1)}" width="${num(Math.max(0, cellW - 2))}" height="${num(Math.max(0, cellH - 2))}" rx="3" class="ch-cell" style="fill:var(--kit-chart1);fill-opacity:${ramp(v)}"><title>${e(series.name)} · ${e(n.categories[col])}: ${fmt(v, n.unit)}</title></rect>`);
+      if (n.labels === 'values') out.push(txt(left + cellW * (col + .5), top + cellH * (row + .5) + 4.5, fmtTick(v), {cls: 'ch-vh'}));
     }));
-  } else if (horizontal) {
-    const row = ph / cats, bh = Math.min(22, (row * .7) / n.series.length), Xv = v => left + ((v - lo) / span) * pw;
-    for (const t of ticks) out.push(`<path d="M${num(Xv(t))} ${M.t}V${M.t + ph}" class="ch-grid"/><text x="${num(Xv(t))}" y="${H - 8}" text-anchor="middle" class="ch-t">${fmtTick(t)}</text>`);
-    n.categories.forEach((c, i) => out.push(`<text x="${left - 6}" y="${num(M.t + row * (i + .5) + 4)}" text-anchor="end" class="ch-t">${e(short(c, 6))}</text>`));
-    n.series.forEach((s, si) => s.values.forEach((v, i) => {
-      const y = M.t + row * (i + .5) - (bh * n.series.length) / 2 + si * bh;
-      out.push(`<rect x="${num(Math.min(Xv(0), Xv(v)))}" y="${num(y)}" width="${num(Math.max(Math.abs(Xv(v) - Xv(0)), 1))}" height="${num(bh - 1)}" rx="2" class="ch-bar" style="fill:var(--kit-chart${si + 1})"/>`);
-      if (n.series.length === 1) out.push(`<text x="${num(Math.max(Xv(v), Xv(0)) + 4)}" y="${num(y + bh / 2 + 4)}" class="ch-v">${fmtTick(v)}</text>`);
+    return {inner: out.join(''), g};
+  }
+  const horizontal = kind === 'bars-h', stacked = kind === 'stacked-bar', bars = kind === 'bar' || stacked || horizontal, sc = valueScale(n), cats = n.categories.length;
+  if (horizontal) {
+    const X = v => left + ((v - sc.lo) / sc.span) * pw, row = ph / cats, bw = Math.min(22, (row * .68) / n.series.length);
+    for (const tick of sc.ticks) {
+      if (grid === 'vertical' || grid === 'both') out.push(seg(X(tick), top, X(tick), top + ph));
+      if (showY) out.push(txt(X(tick), g.H - 10, fmtTick(tick)));
+    }
+    if (grid === 'horizontal' || grid === 'both') for (let i = 0; i <= cats; i++) out.push(seg(left, top + row * i, left + pw, top + row * i));
+    out.push(seg(X(Math.max(sc.lo, Math.min(0, sc.hi))), top, X(Math.max(sc.lo, Math.min(0, sc.hi))), top + ph, 'ch-axis'));
+    if (showX) n.categories.forEach((c, i) => out.push(txt(left - 8, top + row * (i + .5) + 4.5, fitText(c, left - 10), {anchor: 'end'})));
+    const labels = [];
+    n.series.forEach((series, si) => series.values.forEach((v, i) => {
+      const y = top + row * (i + .5) - (bw * n.series.length) / 2 + si * bw, x0 = X(Math.min(0, v)), x1 = X(Math.max(0, v));
+      out.push(`<rect x="${num(x0)}" y="${num(y)}" width="${num(Math.max(1, x1 - x0))}" height="${num(bw - 1)}" rx="2" class="ch-bar" style="fill:var(--kit-chart${si + 1})"><title>${e(series.name)} · ${e(n.categories[i])}: ${fmt(v, n.unit)}</title></rect>`);
+      labels.push({v, x: v >= 0 ? x1 + 5 : x0 - 5, y: y + bw / 2 + 4, anchor: v >= 0 ? 'start' : 'end'});
     }));
+    valueLabels(out, n, labels);
+    return {inner: out.join(''), g};
+  }
+  // 세로 값 축: bar·stacked-bar·line·area
+  const X = i => left + g.slot * (i + .5);
+  const Y = valueAxisY(out, n, g, sc, {grid, show: showY});
+  categoryAxis(out, n, g, {labels: n.categories, at: X, grid, show: showX});
+  const labels = [], base0 = Math.max(sc.lo, Math.min(0, sc.hi));
+  if (bars) {
+    const bw = barWidth(g, stacked ? 1 : n.series.length);
+    n.series.forEach((series, si) => series.values.forEach((v, i) => {
+      const before = stacked ? n.series.slice(0, si).reduce((sum, item) => sum + item.values[i], 0) : 0;
+      const x = X(i) - (bw * (stacked ? 1 : n.series.length)) / 2 + (stacked ? 0 : si * bw);
+      const from = stacked ? before : base0, to = stacked ? before + v : v, y = Math.min(Y(from), Y(to)), h = Math.abs(Y(from) - Y(to));
+      out.push(`<rect x="${num(x)}" y="${num(y)}" width="${num(Math.max(1, bw - 1))}" height="${num(Math.max(1, h))}" rx="2" class="ch-bar" style="fill:var(--kit-chart${si + 1})"><title>${e(series.name)} · ${e(n.categories[i])}: ${fmt(v, n.unit)}</title></rect>`);
+      if (!stacked) labels.push({v, x: x + bw / 2, y: v < 0 ? y + h + 14 : y - 5});
+    }));
+    if (stacked) levelsOf(n).forEach((total, i) => labels.push({v: total, x: X(i), y: Y(total) - 5}));
+    valueLabels(out, n, labels);
   } else {
-    n.series.forEach((s, si) => {
-      const pts = s.values.map((v, i) => [X(i), Y(v)]);
-      if (n.kind === 'area') out.push(`<path d="M${num(pts[0][0])} ${num(Y(0))}${pts.map(p => `L${num(p[0])} ${num(p[1])}`).join('')}L${num(pts.at(-1)[0])} ${num(Y(0))}Z" class="ch-area" style="fill:var(--kit-chart${si + 1})"/>`);
+    n.series.forEach((series, si) => {
+      const pts = series.values.map((v, i) => [X(i), Y(v)]);
+      if (kind === 'area') out.push(`<path d="M${num(pts[0][0])} ${num(Y(base0))}${pts.map(p => `L${num(p[0])} ${num(p[1])}`).join('')}L${num(pts.at(-1)[0])} ${num(Y(base0))}Z" class="ch-area" style="fill:var(--kit-chart${si + 1})"/>`);
       out.push(`<path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${num(p[0])} ${num(p[1])}`).join('')}" class="ch-line" style="stroke:var(--kit-chart${si + 1})"${DASH[si] ? ` stroke-dasharray="${DASH[si]}"` : ''}/>`);
       pts.forEach(p => out.push(marker(si, p[0], p[1], si + 1)));
-      if (n.series.length === 1) pts.forEach((p, i) => { if (cats <= 7) out.push(`<text x="${num(p[0])}" y="${num(p[1] - 8)}" text-anchor="middle" class="ch-v">${fmtTick(s.values[i])}</text>`); });
+      valueLabels(out, n, pts.map((p, i) => ({v: series.values[i], x: p[0], y: p[1] - 9, anchor: p[0] + 16 > g.W ? 'end' : 'middle'})));
     });
   }
-  return out.join('');
+  return {inner: out.join(''), g};
 }
 
 function donut(n) {
-  const vals = n.series[0].values, total = vals.reduce((a, b) => a + b, 0) || 1, cx = 120, cy = 120, r = 82, r2 = 50;
+  const vals = n.series[0].values, total = vals.reduce((a, b) => a + b, 0), cx = 120, cy = 120, r = 82, r2 = 50;
   let a0 = -Math.PI / 2;
   const slices = vals.map((v, i) => {
     const a1 = a0 + (v / total) * Math.PI * 2 - (vals.length > 1 ? .02 : 0), large = a1 - a0 > Math.PI ? 1 : 0;
@@ -60,25 +110,57 @@ function donut(n) {
     a0 += (v / total) * Math.PI * 2;
     return `<path d="${d}" class="ch-slice" style="fill:var(--kit-chart${(i % 5) + 1})"/>`;
   });
-  return {svg: `<svg class="ch-donut" viewBox="0 0 240 240" role="img" aria-labelledby="__ID__-t __ID__-d" focusable="false"><title id="__ID__-t">${e(n.title)}</title><desc id="__ID__-d">${e(summary(n))}</desc>${slices.join('')}<text x="120" y="116" text-anchor="middle" class="ch-big">${fmtTick(total)}${e(n.unit ?? '')}</text><text x="120" y="136" text-anchor="middle" class="ch-t">합계</text></svg>`, total};
+  return `<svg class="ch-donut" viewBox="0 0 240 240" role="img" aria-labelledby="__ID__-t __ID__-d" focusable="false"><title id="__ID__-t">${e(n.title)}</title><desc id="__ID__-d">${e(summary(n))}</desc>${slices.join('')}<text x="120" y="116" text-anchor="middle" class="ch-big">${fmtTick(total)}</text><text x="120" y="136" text-anchor="middle" class="ch-t">합계</text></svg>`;
 }
 
-const summary = n => n.kind === 'donut'
-  ? `${n.caption} ` + n.categories.map((c, i) => `${c} ${fmt(n.series[0].values[i], n.unit)}`).join(', ')
-  : `${n.caption} ` + n.series.map(s => `${s.name}: ` + n.categories.map((c, i) => `${c} ${fmt(s.values[i], n.unit)}`).join(', ')).join(' / ');
+function summary(n) {
+  if (CHART_FORM_KINDS.includes(n.kind)) return formSummary(n);
+  if (n.kind === 'scatter') return `${n.caption} ` + n.series.map(s => `${s.name}: ` + s.points.map(p => `(${p.x}, ${p.y})`).join(', ')).join(' / ');
+  return `${n.caption} ` + n.series.map(s => `${s.name}: ` + n.categories.map((category, i) => `${category} ${fmt(s.values[i], n.unit)}`).join(', ')).join(' / ');
+}
+function tableFor(n) {
+  if (CHART_FORM_KINDS.includes(n.kind)) return formTable(n);
+  if (n.kind === 'scatter') return `<table><caption>${e(n.title)} 데이터</caption><thead><tr><th scope="col">계열</th><th scope="col">${e(n.xLabel || 'X')}</th><th scope="col">${e(n.yLabel || 'Y')}</th></tr></thead><tbody>${n.series.flatMap(s => s.points.map(p => `<tr><th scope="row">${e(s.name)}</th><td>${fmt(p.x, n.xLabel || '')}</td><td>${fmt(p.y, n.unit)}</td></tr>`)).join('')}</tbody></table>`;
+  return `<table><caption>${e(n.title)} 데이터</caption><thead><tr><th scope="col">구분</th>${n.series.map(s => `<th scope="col">${e(s.name)}</th>`).join('')}</tr></thead><tbody>${n.categories.map((category, i) => `<tr><th scope="row">${e(category)}</th>${n.series.map(s => `<td>${fmt(s.values[i], n.unit)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+/** 범례: legend 옵션(auto·bottom·right·none)과 형태별 기본 범례. 반환의 position은 CSS가 쓰는 data-legend 값이다. */
+function legendFor(n) {
+  const legend = legendParts(n);
+  return legend.html ? legend : {html: '', position: 'none'};
+}
+function legendParts(n) {
+  const mode = legendOf(n);
+  if (mode === 'none') return {html: '', position: 'none'};
+  const position = mode === 'right' ? 'right' : 'bottom';
+  if (n.kind === 'donut') {
+    const total = n.series[0].values.reduce((a, b) => a + b, 0);
+    return {position, html: `<ul class="kit-legend">${n.categories.map((c, i) => `<li><i style="background:var(--kit-chart${(i % 5) + 1})" aria-hidden="true"></i>${e(c)} <b>${fmt(n.series[0].values[i], n.unit)}</b> <span>(${Math.round((n.series[0].values[i] / total) * 100)}%)</span></li>`).join('')}</ul>`};
+  }
+  if (n.kind === 'heatmap') {
+    const values = levelsOf(n), min = Math.min(...values), max = Math.max(...values);
+    return {position, html: `<ul class="kit-legend" aria-label="색 진하기 값 범위">${Array.from({length: 5}, (_, i) => `<li><i style="background:var(--kit-chart1);opacity:${(.16 + .84 * (i / 4)).toFixed(2)}" aria-hidden="true"></i>${fmt(max - min >= 8 ? Math.round(min + ((max - min) * i) / 4) : Math.round((min + ((max - min) * i) / 4) * 10) / 10, n.unit)}</li>`).join('')}</ul>`};
+  }
+  if (CHART_FORM_KINDS.includes(n.kind)) return {position, html: formLegend(n)};
+  if (n.kind === 'sparkline') return {position, html: mode === 'auto' ? '' : legendItems([[swatch(1), n.series[0].name]])};
+  if (n.series.length > 1 || mode !== 'auto') return {position, html: legendItems(n.series.map((s, i) => [swatch(i + 1), s.name]))};
+  return {html: '', position: 'none'};
+}
 
 export function renderChart(n, id, {fillAssignedWidth = false} = {}) {
-  let svg, legend = '';
-  if (n.kind === 'donut') {
-    svg = donut(n).svg.replaceAll('__ID__', id);
-    const total = n.series[0].values.reduce((a, b) => a + b, 0) || 1;
-    legend = `<ul class="kit-legend">${n.categories.map((c, i) => `<li><i style="background:var(--kit-chart${(i % 5) + 1})" aria-hidden="true"></i>${e(c)} <b>${fmt(n.series[0].values[i], n.unit)}</b> <span>(${Math.round((n.series[0].values[i] / total) * 100)}%)</span></li>`).join('')}</ul>`;
-  } else {
-    svg = `<svg viewBox="0 0 ${W} ${H}"${fillAssignedWidth ? ' preserveAspectRatio="none"' : ''} role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${cartesian(n)}</svg>`;
-    if (fillAssignedWidth) svg = `<div class="kit-chart-plot">${svg}</div>`;
-    if (n.series.length > 1) legend = `<ul class="kit-legend">${n.series.map((s, i) => `<li><i style="background:var(--kit-chart${i + 1})" aria-hidden="true"></i>${e(s.name)}</li>`).join('')}</ul>`;
+  // Keep the established 2.4.0/2.5.0 SVG bytes unchanged unless a chart opts into the new axis contract.
+  if (['bar', 'bars-h', 'line', 'area', 'donut'].includes(n.kind) && !n.axis && !n.xLabel && !n.yLabel && !['dataType', 'grid', 'labels', 'legend', 'density', 'responsive'].some(key => n[key] !== undefined)) return renderLegacyChart(n, id, {fillAssignedWidth});
+  let svg;
+  const spark = n.kind === 'sparkline', axisOmitted = spark || n.axis?.showX === 'no' || n.axis?.showY === 'no', scroll = n.responsive === 'scroll' && n.kind !== 'donut';
+  if (n.kind === 'donut') svg = donut(n).replaceAll('__ID__', id);
+  else {
+    const {inner, g} = cartesian(n);
+    svg = `<svg viewBox="0 0 ${g.W} ${g.H}"${fillAssignedWidth && !scroll ? ' preserveAspectRatio="none"' : ''} data-axis="${axisOmitted ? 'omitted-intentionally' : 'shown'}" role="img" aria-labelledby="${id}-t ${id}-d" focusable="false"><title id="${id}-t">${e(n.title)}</title><desc id="${id}-d">${e(summary(n))}</desc>${inner}</svg>`;
+    if (scroll) svg = `<div class="kit-chart-scroll" data-layout-scroll tabindex="0" role="group" aria-label="${e(n.title)} 차트, 가로로 스크롤">${svg}</div>`;
+    else if (fillAssignedWidth) svg = `<div class="kit-chart-plot">${svg}</div>`;
   }
-  const head = ['', ...(n.kind === 'donut' ? [n.series[0].name] : n.series.map(s => s.name))];
-  const table = `<table><caption>${e(n.title)} 데이터</caption><thead><tr><th scope="col">구분</th>${head.slice(1).map(h => `<th scope="col">${e(h)}</th>`).join('')}</tr></thead><tbody>${n.categories.map((c, i) => `<tr><th scope="row">${e(c)}</th>${(n.kind === 'donut' ? [n.series[0]] : n.series).map(s => `<td>${fmt(s.values[i], n.unit)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-  return `<figure class="kit-chart" data-kind="${n.kind}"><figcaption><strong>${e(n.title)}</strong><span>${e(n.caption)}</span></figcaption><div class="kit-chart-body">${svg}${legend}</div><details class="kit-chart-data"><summary>데이터 표 보기</summary>${table}</details></figure>`;
+  const legend = legendFor(n);
+  const resolved = {grid: ['donut', 'sparkline', 'heatmap', 'funnel'].includes(n.kind) ? 'none' : gridOf(n), labels: n.labels ?? 'none', legend: legend.position, density: n.density ?? 'comfortable', responsive: scroll ? 'scroll' : 'fit'};
+  const attrs = ` data-chart="2.6"${n.dataType ? ` data-type="${n.dataType}"` : ''} data-grid="${resolved.grid}" data-labels="${resolved.labels}" data-legend="${resolved.legend}" data-density="${resolved.density}" data-responsive="${resolved.responsive}"`;
+  return `<figure class="kit-chart" data-kind="${n.kind}"${attrs}><figcaption><strong>${e(n.title)}</strong><span>${e(n.caption)}${n.unit ? ` · 단위 ${e(n.unit)}` : ''}</span></figcaption><div class="kit-chart-body">${svg}${legend.html}</div><details class="kit-chart-data"><summary>데이터 표 보기</summary>${tableFor(n)}</details></figure>`;
 }

@@ -148,12 +148,13 @@ test.describe('정적 산출물은 site/와 바이트가 같다', () => {
 });
 
 // 계산식은 scripts/tree-hash.mjs(00-baseline.md 4.2절과 같다). 의도한 카탈로그 개정이면 값을 갱신하고 이유를 기록한다.
-// examples·themes 는 b303f17c1 의 baseline 값 그대로다. v1 은 카탈로그 2.5.0(명시적 표현 문법) 갱신을 반영해 718d5df184940f7f 로 고정한다.
+// examples·themes는 b303f17c1 기준이다. v1은 2.6.0의 profile·colorPalette·typeRoles·controlSize와
+// x-extensions의 Select·Table·차트와 신규 컴포넌트 8종의 명세를 포함한다. 신규 명세는 2.6.0 확장에만 둔다.
 test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
   const parts = [
     {sub: 'examples', exclude: 'examples/themes/', count: 425, pinned: 'eb438ecf14a38c35'},
     {sub: 'examples/themes', count: 270, pinned: '8b73787be3b4a7ff'},
-    {sub: 'v1', count: 2, pinned: '718d5df184940f7f'},
+    {sub: 'v1', count: 2, pinned: 'e64c8d4a761e99b4'},
   ];
   for (const {sub, exclude, count, pinned} of parts) {
     test(`${sub}: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다`, () => {
@@ -167,14 +168,14 @@ test.describe('해시 게이트 (서버 없이 파일 비교)', () => {
 
 test.describe('noindex와 공개 메뉴', () => {
   test('/test-lab/** 와 /dev/** 는 X-Robots-Tag noindex', async ({request}) => {
-    for (const p of ['/test-lab/', '/test-lab/viewer.html', '/test-lab/cases/c-294/', '/dev/qa']) {
+    for (const p of ['/test-lab/', '/test-lab/viewer.html', '/test-lab/cases/c-294/', '/dev/qa', '/dev/ui']) {
       const res = await request.get(p);
       expect(res.headers()['x-robots-tag'], p).toContain('noindex');
     }
   });
 
   test('공개 화면과 예제에는 noindex 헤더가 없다', async ({request}) => {
-    for (const p of ['/', '/explore', '/examples/saas-landing/', '/v1/catalog.json']) {
+    for (const p of ['/', '/explore', '/materials', '/materials/color', '/examples/saas-landing/', '/v1/catalog.json']) {
       expect((await request.get(p)).headers()['x-robots-tag'], p).toBeUndefined();
     }
   });

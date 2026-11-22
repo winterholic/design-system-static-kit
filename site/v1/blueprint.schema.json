@@ -13,7 +13,8 @@
         "2.2.0",
         "2.3.0",
         "2.4.0",
-        "2.5.0"
+        "2.5.0",
+        "2.6.0"
       ]
     },
     "name": {
@@ -511,6 +512,50 @@
         "seaside-mojito-escape",
         "sunshine-snorkel"
       ]
+    },
+    "colorPalette": {
+      "type": "string",
+      "enum": [
+        "static-kit"
+      ],
+      "description": "2.6.0부터 내부에서 정의된 색상 팔레트만 선택할 수 있습니다. 임의 색상 문자열은 허용하지 않습니다.",
+      "x-since": "2.6.0"
+    },
+    "typeRoles": {
+      "type": "string",
+      "enum": [
+        "erp",
+        "dashboard",
+        "document",
+        "marketing"
+      ],
+      "description": "2.6.0부터 역할 타이포그래피 프리셋(erp·dashboard·document·marketing)을 고를 수 있습니다. 제목·본문·라벨·숫자 역할의 크기·행간·자간·서체가 컴파일 CSS의 --kit-t-* 변수에 반영됩니다. 기존 typography 축과 별개이며 고르지 않으면 출력은 그대로입니다.",
+      "x-since": "2.6.0"
+    },
+    "controlSize": {
+      "type": "string",
+      "enum": [
+        "compact",
+        "small",
+        "medium",
+        "large"
+      ],
+      "description": "2.6.0부터 프로파일 기본 컨트롤 크기를 선택합니다. 크기는 등록된 control token으로 해석되며 명시적 부품 크기는 유지됩니다.",
+      "x-since": "2.6.0"
+    },
+    "profile": {
+      "type": "string",
+      "enum": [
+        "erp",
+        "finance",
+        "commerce",
+        "saas-landing",
+        "editorial",
+        "docs",
+        "mobile-app"
+      ],
+      "description": "2.6.0부터 디자인 프로파일(src/profiles)을 고릅니다. 프로파일이 허용하지 않는 부품·프리셋·밀도 조합은 PROFILE_* 진단으로 거부됩니다.",
+      "x-since": "2.6.0"
     },
     "mode": {
       "type": "string",
@@ -5375,6 +5420,2326 @@
         "type"
       ],
       "additionalProperties": false
+    }
+  },
+  "x-extensions": {
+    "2.6.0": {
+      "x-since": "2.6.0",
+      "$defs": {
+        "chart": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "chart"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "caption": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "bar",
+                "bars-h",
+                "line",
+                "area",
+                "donut",
+                "stacked-bar",
+                "scatter",
+                "heatmap",
+                "sparkline",
+                "candlestick",
+                "ohlc",
+                "waterfall",
+                "funnel",
+                "histogram"
+              ]
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "minItems": 2,
+              "maxItems": 12
+            },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": -1000000,
+                      "maximum": 1000000
+                    },
+                    "minItems": 2,
+                    "maxItems": 12
+                  },
+                  "points": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "y": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 2,
+                    "maxItems": 12
+                  },
+                  "candles": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "open": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "high": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "low": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        },
+                        "close": {
+                          "type": "number",
+                          "minimum": -1000000,
+                          "maximum": 1000000
+                        }
+                      },
+                      "required": [
+                        "open",
+                        "high",
+                        "low",
+                        "close"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 2,
+                    "maxItems": 12
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "delta",
+                        "total"
+                      ]
+                    },
+                    "minItems": 2,
+                    "maxItems": 12
+                  },
+                  "samples": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": -1000000,
+                      "maximum": 1000000
+                    },
+                    "minItems": 5,
+                    "maxItems": 200
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 8
+            },
+            "xLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "yLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "axis": {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "max": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "xMin": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -1000000,
+                  "maximum": 1000000
+                },
+                "showX": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "showY": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            "dataType": {
+              "type": "string",
+              "enum": [
+                "time",
+                "category",
+                "part-to-whole",
+                "process",
+                "distribution",
+                "relationship"
+              ]
+            },
+            "grid": {
+              "type": "string",
+              "enum": [
+                "horizontal",
+                "vertical",
+                "both",
+                "none"
+              ]
+            },
+            "labels": {
+              "type": "string",
+              "enum": [
+                "none",
+                "values",
+                "extremes",
+                "last"
+              ]
+            },
+            "legend": {
+              "type": "string",
+              "enum": [
+                "auto",
+                "bottom",
+                "right",
+                "none"
+              ]
+            },
+            "density": {
+              "type": "string",
+              "enum": [
+                "comfortable",
+                "compact"
+              ]
+            },
+            "responsive": {
+              "type": "string",
+              "enum": [
+                "fit",
+                "scroll"
+              ]
+            },
+            "bins": {
+              "type": "number",
+              "minimum": 3,
+              "maximum": 12
+            }
+          },
+          "required": [
+            "type",
+            "title",
+            "caption",
+            "kind"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 넓어진 chart 정의. 2.4.0·2.5.0 문서는 $defs.chart만 받습니다."
+        },
+        "select-control": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "select-control"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "group": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "disabled": {
+                    "type": "string",
+                    "enum": [
+                      "yes"
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 50
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "single",
+                "multiple"
+              ]
+            },
+            "search": {
+              "type": "string",
+              "enum": [
+                "none",
+                "local",
+                "async"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "soft",
+                "square",
+                "pill"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "loading",
+                "error",
+                "disabled"
+              ]
+            },
+            "maxMenuHeight": {
+              "type": "integer",
+              "enum": [
+                192,
+                240,
+                288,
+                360
+              ]
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "minItems": 1,
+              "maxItems": 50
+            },
+            "placeholder": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "requirement": {
+              "type": "string",
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "label",
+            "options"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: 선택 상자. 2.5.0 이하 문서는 거부합니다."
+        },
+        "data-table": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "data-table"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "sortable": {
+                    "type": "string",
+                    "enum": [
+                      "yes",
+                      "no"
+                    ]
+                  },
+                  "hideBelow": {
+                    "type": "string",
+                    "enum": [
+                      "640px",
+                      "800px",
+                      "900px"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 8
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  }
+                },
+                "required": [],
+                "additionalProperties": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "number",
+                      "minimum": -1000000,
+                      "maximum": 1000000
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "minItems": 0,
+              "maxItems": 40
+            },
+            "density": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "comfortable",
+                "spacious"
+              ]
+            },
+            "responsive": {
+              "type": "string",
+              "enum": [
+                "scroll",
+                "priority"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "empty",
+                "loading",
+                "error",
+                "partial"
+              ]
+            },
+            "sortable": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "selectable": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "title",
+            "columns",
+            "rows"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: 데이터 표. 2.5.0 이하 문서는 거부합니다."
+        },
+        "button-control": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "button-control"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "solid",
+                "outline",
+                "soft",
+                "ghost",
+                "link"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "pill"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "behavior": {
+              "type": "string",
+              "enum": [
+                "action",
+                "toggle"
+              ]
+            },
+            "content": {
+              "type": "string",
+              "enum": [
+                "text",
+                "icon-start",
+                "icon-end",
+                "icon-only"
+              ]
+            },
+            "tone": {
+              "type": "string",
+              "enum": [
+                "action",
+                "neutral",
+                "danger"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "default",
+                "pressed",
+                "loading",
+                "disabled"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "icon": {
+              "type": "string",
+              "enum": [
+                "home",
+                "search",
+                "user",
+                "users",
+                "settings",
+                "bell",
+                "mail",
+                "calendar",
+                "clock",
+                "check",
+                "check-circle",
+                "x",
+                "x-circle",
+                "alert-triangle",
+                "alert-circle",
+                "info",
+                "help-circle",
+                "plus",
+                "minus",
+                "arrow-right",
+                "arrow-left",
+                "arrow-up",
+                "arrow-down",
+                "chevron-right",
+                "chevron-down",
+                "external",
+                "download",
+                "upload",
+                "edit",
+                "trash",
+                "copy",
+                "link",
+                "lock",
+                "unlock",
+                "eye",
+                "heart",
+                "star",
+                "bookmark",
+                "share",
+                "filter",
+                "menu",
+                "grid",
+                "list",
+                "chart",
+                "trending-up",
+                "trending-down",
+                "dollar",
+                "credit-card",
+                "cart",
+                "bag",
+                "tag",
+                "map-pin",
+                "phone",
+                "message",
+                "send",
+                "image",
+                "file",
+                "folder",
+                "code",
+                "terminal",
+                "globe",
+                "shield",
+                "zap",
+                "sun",
+                "moon",
+                "cloud",
+                "wifi-off",
+                "leaf",
+                "coffee",
+                "utensils",
+                "bed",
+                "building",
+                "stethoscope",
+                "book",
+                "graduation",
+                "sparkles",
+                "camera",
+                "play",
+                "music",
+                "truck",
+                "gift",
+                "refresh",
+                "logout",
+                "more",
+                "more-v",
+                "trophy",
+                "droplet"
+              ]
+            },
+            "ariaLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "describedBy": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "labelledBy": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            }
+          },
+          "required": [
+            "type",
+            "label"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Button. 2.5.0 이하 문서는 거부합니다."
+        },
+        "input-control": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "input-control"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "outline",
+                "filled",
+                "underline",
+                "ghost"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "pill"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "text",
+                "email",
+                "password",
+                "search",
+                "number",
+                "multiline"
+              ]
+            },
+            "affix": {
+              "type": "string",
+              "enum": [
+                "none",
+                "icon"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "default",
+                "error",
+                "readonly",
+                "disabled"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "hint": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "placeholder": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "icon": {
+              "type": "string",
+              "enum": [
+                "home",
+                "search",
+                "user",
+                "users",
+                "settings",
+                "bell",
+                "mail",
+                "calendar",
+                "clock",
+                "check",
+                "check-circle",
+                "x",
+                "x-circle",
+                "alert-triangle",
+                "alert-circle",
+                "info",
+                "help-circle",
+                "plus",
+                "minus",
+                "arrow-right",
+                "arrow-left",
+                "arrow-up",
+                "arrow-down",
+                "chevron-right",
+                "chevron-down",
+                "external",
+                "download",
+                "upload",
+                "edit",
+                "trash",
+                "copy",
+                "link",
+                "lock",
+                "unlock",
+                "eye",
+                "heart",
+                "star",
+                "bookmark",
+                "share",
+                "filter",
+                "menu",
+                "grid",
+                "list",
+                "chart",
+                "trending-up",
+                "trending-down",
+                "dollar",
+                "credit-card",
+                "cart",
+                "bag",
+                "tag",
+                "map-pin",
+                "phone",
+                "message",
+                "send",
+                "image",
+                "file",
+                "folder",
+                "code",
+                "terminal",
+                "globe",
+                "shield",
+                "zap",
+                "sun",
+                "moon",
+                "cloud",
+                "wifi-off",
+                "leaf",
+                "coffee",
+                "utensils",
+                "bed",
+                "building",
+                "stethoscope",
+                "book",
+                "graduation",
+                "sparkles",
+                "camera",
+                "play",
+                "music",
+                "truck",
+                "gift",
+                "refresh",
+                "logout",
+                "more",
+                "more-v",
+                "trophy",
+                "droplet"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "label"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Input. 2.5.0 이하 문서는 거부합니다."
+        },
+        "card-surface": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "card-surface"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "outline",
+                "filled",
+                "elevated",
+                "flat"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "round"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "behavior": {
+              "type": "string",
+              "enum": [
+                "static",
+                "link",
+                "selectable"
+              ]
+            },
+            "media": {
+              "type": "string",
+              "enum": [
+                "none",
+                "top",
+                "start"
+              ]
+            },
+            "footer": {
+              "type": "string",
+              "enum": [
+                "none",
+                "actions"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "default",
+                "selected",
+                "loading",
+                "error",
+                "disabled"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "body": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "meta": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "href": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "mediaIcon": {
+              "type": "string",
+              "enum": [
+                "home",
+                "search",
+                "user",
+                "users",
+                "settings",
+                "bell",
+                "mail",
+                "calendar",
+                "clock",
+                "check",
+                "check-circle",
+                "x",
+                "x-circle",
+                "alert-triangle",
+                "alert-circle",
+                "info",
+                "help-circle",
+                "plus",
+                "minus",
+                "arrow-right",
+                "arrow-left",
+                "arrow-up",
+                "arrow-down",
+                "chevron-right",
+                "chevron-down",
+                "external",
+                "download",
+                "upload",
+                "edit",
+                "trash",
+                "copy",
+                "link",
+                "lock",
+                "unlock",
+                "eye",
+                "heart",
+                "star",
+                "bookmark",
+                "share",
+                "filter",
+                "menu",
+                "grid",
+                "list",
+                "chart",
+                "trending-up",
+                "trending-down",
+                "dollar",
+                "credit-card",
+                "cart",
+                "bag",
+                "tag",
+                "map-pin",
+                "phone",
+                "message",
+                "send",
+                "image",
+                "file",
+                "folder",
+                "code",
+                "terminal",
+                "globe",
+                "shield",
+                "zap",
+                "sun",
+                "moon",
+                "cloud",
+                "wifi-off",
+                "leaf",
+                "coffee",
+                "utensils",
+                "bed",
+                "building",
+                "stethoscope",
+                "book",
+                "graduation",
+                "sparkles",
+                "camera",
+                "play",
+                "music",
+                "truck",
+                "gift",
+                "refresh",
+                "logout",
+                "more",
+                "more-v",
+                "trophy",
+                "droplet"
+              ]
+            },
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 2
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "title"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Card. 2.5.0 이하 문서는 거부합니다."
+        },
+        "navigation-menu": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "navigation-menu"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "underline",
+                "pill",
+                "block"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "pill"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "orientation": {
+              "type": "string",
+              "enum": [
+                "horizontal",
+                "vertical"
+              ]
+            },
+            "overflow": {
+              "type": "string",
+              "enum": [
+                "none",
+                "scroll",
+                "collapse"
+              ]
+            },
+            "submenu": {
+              "type": "string",
+              "enum": [
+                "none",
+                "disclosure"
+              ]
+            },
+            "icons": {
+              "type": "string",
+              "enum": [
+                "none",
+                "start"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "closed",
+                "open"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "href": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048
+                  },
+                  "icon": {
+                    "type": "string",
+                    "enum": [
+                      "home",
+                      "search",
+                      "user",
+                      "users",
+                      "settings",
+                      "bell",
+                      "mail",
+                      "calendar",
+                      "clock",
+                      "check",
+                      "check-circle",
+                      "x",
+                      "x-circle",
+                      "alert-triangle",
+                      "alert-circle",
+                      "info",
+                      "help-circle",
+                      "plus",
+                      "minus",
+                      "arrow-right",
+                      "arrow-left",
+                      "arrow-up",
+                      "arrow-down",
+                      "chevron-right",
+                      "chevron-down",
+                      "external",
+                      "download",
+                      "upload",
+                      "edit",
+                      "trash",
+                      "copy",
+                      "link",
+                      "lock",
+                      "unlock",
+                      "eye",
+                      "heart",
+                      "star",
+                      "bookmark",
+                      "share",
+                      "filter",
+                      "menu",
+                      "grid",
+                      "list",
+                      "chart",
+                      "trending-up",
+                      "trending-down",
+                      "dollar",
+                      "credit-card",
+                      "cart",
+                      "bag",
+                      "tag",
+                      "map-pin",
+                      "phone",
+                      "message",
+                      "send",
+                      "image",
+                      "file",
+                      "folder",
+                      "code",
+                      "terminal",
+                      "globe",
+                      "shield",
+                      "zap",
+                      "sun",
+                      "moon",
+                      "cloud",
+                      "wifi-off",
+                      "leaf",
+                      "coffee",
+                      "utensils",
+                      "bed",
+                      "building",
+                      "stethoscope",
+                      "book",
+                      "graduation",
+                      "sparkles",
+                      "camera",
+                      "play",
+                      "music",
+                      "truck",
+                      "gift",
+                      "refresh",
+                      "logout",
+                      "more",
+                      "more-v",
+                      "trophy",
+                      "droplet"
+                    ]
+                  },
+                  "current": {
+                    "type": "boolean"
+                  },
+                  "disabled": {
+                    "type": "boolean"
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 80
+                        },
+                        "href": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "icon": {
+                          "type": "string",
+                          "enum": [
+                            "home",
+                            "search",
+                            "user",
+                            "users",
+                            "settings",
+                            "bell",
+                            "mail",
+                            "calendar",
+                            "clock",
+                            "check",
+                            "check-circle",
+                            "x",
+                            "x-circle",
+                            "alert-triangle",
+                            "alert-circle",
+                            "info",
+                            "help-circle",
+                            "plus",
+                            "minus",
+                            "arrow-right",
+                            "arrow-left",
+                            "arrow-up",
+                            "arrow-down",
+                            "chevron-right",
+                            "chevron-down",
+                            "external",
+                            "download",
+                            "upload",
+                            "edit",
+                            "trash",
+                            "copy",
+                            "link",
+                            "lock",
+                            "unlock",
+                            "eye",
+                            "heart",
+                            "star",
+                            "bookmark",
+                            "share",
+                            "filter",
+                            "menu",
+                            "grid",
+                            "list",
+                            "chart",
+                            "trending-up",
+                            "trending-down",
+                            "dollar",
+                            "credit-card",
+                            "cart",
+                            "bag",
+                            "tag",
+                            "map-pin",
+                            "phone",
+                            "message",
+                            "send",
+                            "image",
+                            "file",
+                            "folder",
+                            "code",
+                            "terminal",
+                            "globe",
+                            "shield",
+                            "zap",
+                            "sun",
+                            "moon",
+                            "cloud",
+                            "wifi-off",
+                            "leaf",
+                            "coffee",
+                            "utensils",
+                            "bed",
+                            "building",
+                            "stethoscope",
+                            "book",
+                            "graduation",
+                            "sparkles",
+                            "camera",
+                            "play",
+                            "music",
+                            "truck",
+                            "gift",
+                            "refresh",
+                            "logout",
+                            "more",
+                            "more-v",
+                            "trophy",
+                            "droplet"
+                          ]
+                        },
+                        "current": {
+                          "type": "boolean"
+                        },
+                        "disabled": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "href"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 1,
+                    "maxItems": 8
+                  }
+                },
+                "required": [
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 8
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "label",
+            "items"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Navigation. 2.5.0 이하 문서는 거부합니다."
+        },
+        "modal-dialog": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "modal-dialog"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "elevated",
+                "outline",
+                "filled"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "round"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "dialog",
+                "alertdialog"
+              ]
+            },
+            "placement": {
+              "type": "string",
+              "enum": [
+                "center",
+                "bottom"
+              ]
+            },
+            "footer": {
+              "type": "string",
+              "enum": [
+                "actions",
+                "none"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "closed",
+                "open",
+                "busy",
+                "error"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "body": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "slot": {
+                        "const": "text"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500
+                      }
+                    },
+                    "required": [
+                      "slot",
+                      "text"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "slot": {
+                        "const": "input"
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 40,
+                        "pattern": "^[a-z][a-z0-9-]*$"
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                      },
+                      "hint": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "placeholder": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "required": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "slot",
+                      "id",
+                      "label"
+                    ]
+                  }
+                ]
+              },
+              "minItems": 0,
+              "maxItems": 8
+            },
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "cancel",
+                      "confirm"
+                    ]
+                  }
+                },
+                "required": [
+                  "label",
+                  "role"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 2
+            },
+            "triggerLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "title"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Modal. 2.5.0 이하 문서는 거부합니다."
+        },
+        "tabs-control": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "tabs-control"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "underline",
+                "pill",
+                "segmented"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "pill"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "orientation": {
+              "type": "string",
+              "enum": [
+                "horizontal",
+                "vertical"
+              ]
+            },
+            "activation": {
+              "type": "string",
+              "enum": [
+                "automatic",
+                "manual"
+              ]
+            },
+            "overflow": {
+              "type": "string",
+              "enum": [
+                "none",
+                "scroll"
+              ]
+            },
+            "icons": {
+              "type": "string",
+              "enum": [
+                "none",
+                "start"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "loading"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "tabs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "content": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "icon": {
+                    "type": "string",
+                    "enum": [
+                      "home",
+                      "search",
+                      "user",
+                      "users",
+                      "settings",
+                      "bell",
+                      "mail",
+                      "calendar",
+                      "clock",
+                      "check",
+                      "check-circle",
+                      "x",
+                      "x-circle",
+                      "alert-triangle",
+                      "alert-circle",
+                      "info",
+                      "help-circle",
+                      "plus",
+                      "minus",
+                      "arrow-right",
+                      "arrow-left",
+                      "arrow-up",
+                      "arrow-down",
+                      "chevron-right",
+                      "chevron-down",
+                      "external",
+                      "download",
+                      "upload",
+                      "edit",
+                      "trash",
+                      "copy",
+                      "link",
+                      "lock",
+                      "unlock",
+                      "eye",
+                      "heart",
+                      "star",
+                      "bookmark",
+                      "share",
+                      "filter",
+                      "menu",
+                      "grid",
+                      "list",
+                      "chart",
+                      "trending-up",
+                      "trending-down",
+                      "dollar",
+                      "credit-card",
+                      "cart",
+                      "bag",
+                      "tag",
+                      "map-pin",
+                      "phone",
+                      "message",
+                      "send",
+                      "image",
+                      "file",
+                      "folder",
+                      "code",
+                      "terminal",
+                      "globe",
+                      "shield",
+                      "zap",
+                      "sun",
+                      "moon",
+                      "cloud",
+                      "wifi-off",
+                      "leaf",
+                      "coffee",
+                      "utensils",
+                      "bed",
+                      "building",
+                      "stethoscope",
+                      "book",
+                      "graduation",
+                      "sparkles",
+                      "camera",
+                      "play",
+                      "music",
+                      "truck",
+                      "gift",
+                      "refresh",
+                      "logout",
+                      "more",
+                      "more-v",
+                      "trophy",
+                      "droplet"
+                    ]
+                  },
+                  "disabled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "content"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 6
+            },
+            "selected": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "label",
+            "tabs"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Tabs. 2.5.0 이하 문서는 거부합니다."
+        },
+        "tooltip": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "tooltip"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "inverse",
+                "surface"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "pill"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "trigger": {
+              "type": "string",
+              "enum": [
+                "text",
+                "icon"
+              ]
+            },
+            "purpose": {
+              "type": "string",
+              "enum": [
+                "description",
+                "name"
+              ]
+            },
+            "placement": {
+              "type": "string",
+              "enum": [
+                "top",
+                "bottom",
+                "start",
+                "end"
+              ]
+            },
+            "delay": {
+              "type": "string",
+              "enum": [
+                "none",
+                "short"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "hidden",
+                "visible"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "triggerLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "icon": {
+              "type": "string",
+              "enum": [
+                "home",
+                "search",
+                "user",
+                "users",
+                "settings",
+                "bell",
+                "mail",
+                "calendar",
+                "clock",
+                "check",
+                "check-circle",
+                "x",
+                "x-circle",
+                "alert-triangle",
+                "alert-circle",
+                "info",
+                "help-circle",
+                "plus",
+                "minus",
+                "arrow-right",
+                "arrow-left",
+                "arrow-up",
+                "arrow-down",
+                "chevron-right",
+                "chevron-down",
+                "external",
+                "download",
+                "upload",
+                "edit",
+                "trash",
+                "copy",
+                "link",
+                "lock",
+                "unlock",
+                "eye",
+                "heart",
+                "star",
+                "bookmark",
+                "share",
+                "filter",
+                "menu",
+                "grid",
+                "list",
+                "chart",
+                "trending-up",
+                "trending-down",
+                "dollar",
+                "credit-card",
+                "cart",
+                "bag",
+                "tag",
+                "map-pin",
+                "phone",
+                "message",
+                "send",
+                "image",
+                "file",
+                "folder",
+                "code",
+                "terminal",
+                "globe",
+                "shield",
+                "zap",
+                "sun",
+                "moon",
+                "cloud",
+                "wifi-off",
+                "leaf",
+                "coffee",
+                "utensils",
+                "bed",
+                "building",
+                "stethoscope",
+                "book",
+                "graduation",
+                "sparkles",
+                "camera",
+                "play",
+                "music",
+                "truck",
+                "gift",
+                "refresh",
+                "logout",
+                "more",
+                "more-v",
+                "trophy",
+                "droplet"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "triggerLabel",
+            "content"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Tooltip. 2.5.0 이하 문서는 거부합니다."
+        },
+        "feedback-message": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "feedback-message"
+            },
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "soft",
+                "outline",
+                "solid",
+                "plain"
+              ]
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "square",
+                "soft",
+                "pill"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "placement": {
+              "type": "string",
+              "enum": [
+                "inline",
+                "banner",
+                "toast"
+              ]
+            },
+            "dismiss": {
+              "type": "string",
+              "enum": [
+                "none",
+                "button"
+              ]
+            },
+            "action": {
+              "type": "string",
+              "enum": [
+                "none",
+                "button"
+              ]
+            },
+            "autoDismiss": {
+              "type": "string",
+              "enum": [
+                "off",
+                "timed"
+              ]
+            },
+            "tone": {
+              "type": "string",
+              "enum": [
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "visible",
+                "pending",
+                "dismissed"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40,
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "actionLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "dismissLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "message"
+          ],
+          "additionalProperties": false,
+          "x-since": "2.6.0",
+          "description": "2.6.0부터 쓸 수 있는 부품: Feedback. 2.5.0 이하 문서는 거부합니다."
+        }
+      },
+      "children": {
+        "page": [
+          "select-control",
+          "data-table",
+          "button-control",
+          "input-control",
+          "card-surface",
+          "navigation-menu",
+          "modal-dialog",
+          "tabs-control",
+          "tooltip",
+          "feedback-message"
+        ],
+        "section": [
+          "select-control",
+          "data-table",
+          "button-control",
+          "input-control",
+          "card-surface",
+          "navigation-menu",
+          "modal-dialog",
+          "tabs-control",
+          "tooltip",
+          "feedback-message"
+        ],
+        "grid": [
+          "card-surface",
+          "modal-dialog",
+          "tooltip",
+          "feedback-message"
+        ],
+        "split": [
+          "select-control",
+          "data-table",
+          "button-control",
+          "input-control",
+          "card-surface",
+          "navigation-menu",
+          "modal-dialog",
+          "tabs-control",
+          "tooltip",
+          "feedback-message"
+        ],
+        "aside": [
+          "select-control",
+          "data-table",
+          "button-control",
+          "input-control",
+          "card-surface",
+          "navigation-menu",
+          "modal-dialog",
+          "tabs-control",
+          "tooltip",
+          "feedback-message"
+        ],
+        "bento": [
+          "card-surface"
+        ],
+        "tab": [
+          "select-control",
+          "data-table",
+          "button-control",
+          "input-control",
+          "card-surface",
+          "navigation-menu",
+          "modal-dialog",
+          "tooltip",
+          "feedback-message"
+        ],
+        "reel": [
+          "card-surface"
+        ]
+      }
     }
   }
 }

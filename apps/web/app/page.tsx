@@ -4,6 +4,7 @@ import appStyles from './home.module.css';
 import {Showcase} from '@/features/home/Showcase';
 import {GITHUB_URL} from '@/lib/nav';
 import styles from '@/features/home/home.module.css';
+import {ButtonLink} from '@/ui';
 
 export default function Home() {
   return (
@@ -27,12 +28,12 @@ export default function Home() {
         <div>
           <h3>Explore</h3>
           <p>대표 디자인을 페이지 유형과 테마로 걸러 보고, 구성과 Blueprint를 확인합니다.</p>
-          <Link href="/explore" className="btn">Explore 둘러보기</Link>
+          <ButtonLink href="/explore">Explore 둘러보기</ButtonLink>
         </div>
         <div>
           <h3>Studio</h3>
           <p>템플릿에서 시작해 테마·팔레트·구성을 바꾸며 직접 편집합니다.</p>
-          <Link href="/studio" className="btn btn-quiet">Studio에서 만들기</Link>
+          <ButtonLink href="/studio" variant="secondary">Studio에서 만들기</ButtonLink>
         </div>
       </div>
 
@@ -57,8 +58,8 @@ npm run kit -- build my.json --out out/my-page`}</code></pre>
 
       <h2 className="section-title">시작하기</h2>
       <div className={styles.end}>
-        <Link href="/docs/getting-started" className="btn">시작 가이드</Link>
-        <a href={GITHUB_URL} rel="noopener" className="btn btn-quiet">GitHub</a>
+        <ButtonLink href="/docs/getting-started">시작 가이드</ButtonLink>
+        <ButtonLink href={GITHUB_URL} variant="secondary" external>GitHub</ButtonLink>
       </div>
     </div>
   );

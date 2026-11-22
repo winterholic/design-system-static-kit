@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
+import {optionStates, pick} from './helpers/select.mjs';
 
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
 
@@ -24,11 +25,11 @@ test('WB-02/WB-03: theme and layout edits preserve authored content', async ({pa
   await expect(page.getByText('수정됨')).toBeVisible();
 
   await page.getByRole('tab', {name: '디자인'}).click();
-  await page.locator('#d-theme-select').selectOption('console');
-  const layout = page.locator('select[id^="d-layout-"]').first();
+  await pick(page, page.locator('#d-theme-select'), 'console');
+  const layout = page.locator('[role="combobox"][id^="d-layout-"]').first();
   if (await layout.count()) {
-    const options = await layout.locator('option').evaluateAll(nodes => nodes.map(node => node.value).filter(Boolean));
-    if (options.length) await layout.selectOption(options.at(-1));
+    const options = (await optionStates(page, layout)).filter(o => o.value && !o.disabled);
+    if (options.length) await pick(page, layout, options.at(-1).value);
   }
   await page.getByRole('tab', {name: '구조·내용'}).click();
   await page.getByRole('treeitem', {name: /페이지 제목/}).click();
@@ -127,6 +128,8 @@ test('WB-04/WB-05: invalid JSON reports Core diagnostics without changing the do
   await page.getByRole('button', {name: '템플릿 바꾸기'}).click();
   await page.getByRole('radio', {name: /saas-landing/}).check();
   await page.getByRole('button', {name: '이 템플릿으로 바꾸기'}).click();
+  // 가져온 문서는 수정 전이어도 사용자의 작업이라 확인을 받고서야 바뀐다.
+  await page.getByRole('dialog', {name: '템플릿을 바꿀까요?'}).getByRole('button', {name: '템플릿 바꾸기'}).click();
   await expect(page.locator('[data-phase="ready"]')).toBeVisible();
   await expect(page.getByTestId('op-error')).toHaveCount(0);
 });
@@ -322,4 +325,33 @@ test('수정한 문서의 템플릿 교체는 확인을 받고, 실행 취소·�
   await page.keyboard.press('ControlOrMeta+z');
   await expect.poll(() => savedSummary(page).then(s => s?.title)).toBe('내가 쓴 제목');
   await expect(page.getByRole('button', {name: '모바일 390'})).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('2.6.0 업그레이드는 작업 내용을 보존하고 재료를 미리보기와 내보내기에 적용한다', async ({page}) => {
+  await page.goto('/studio?template=dashboard-overview');
+  await expect(page.locator('[data-phase="ready"]')).toBeVisible();
+  await page.getByRole('treeitem', {name: /페이지 제목/}).click();
+  const title = page.locator('#f-title');
+  await title.fill('업그레이드 뒤에도 남는 제목');
+  await title.press('Tab');
+
+  const before = JSON.parse((await downloadBytes(page, 'JSON 내보내기')).bytes);
+  expect(before.catalogVersion).toBe('2.4.0');
+  await page.getByRole('tab', {name: '디자인'}).click();
+  await expect(page.locator('#d-palette')).toBeVisible();
+  await page.getByRole('button', {name: '현재 문서를 2.6.0으로 업그레이드'}).click();
+  await expect(page.locator('#d-palette')).toHaveCount(0);
+  await expect(page.getByTestId('op-error')).toHaveCount(0);
+  await pick(page, page.locator('#material-type-roles'), 'dashboard');
+
+  const after = JSON.parse((await downloadBytes(page, 'JSON 내보내기')).bytes);
+  expect(after).toMatchObject({catalogVersion: '2.6.0', colorPalette: 'static-kit', typeRoles: 'dashboard'});
+  expect(after.tree).toEqual(before.tree);
+  const {bytes} = await downloadBytes(page, 'HTML 내보내기');
+  const html = bytes.toString('utf8');
+  expect(html).toContain('업그레이드 뒤에도 남는 제목');
+  expect(html).toContain('Role typography');
+  await expect(page.getByTestId('preview-frame')).toHaveAttribute('srcdoc', html);
+  await page.reload();
+  await expect(page.getByTestId('preview-frame')).toHaveAttribute('srcdoc', html);
 });

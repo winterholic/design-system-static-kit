@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {Client, StreamableHTTPClientTransport} from '@modelcontextprotocol/client';
+import {getComponentSpec} from '@winterholic/design-system-static-kit/service';
 
 const tools = ['list_design_system', 'get_design_schema', 'get_component_spec', 'validate_blueprint', 'compile_design', 'explain_design_decisions'];
 
@@ -20,6 +21,43 @@ test('REST Route Handlers serve OpenAPI, conditional reads, and validation diagn
   expect(invalid.status()).toBe(422);
   expect(invalid.headers()['cache-control']).toBe('no-store');
   expect(await invalid.json()).toMatchObject({ok: false, errors: expect.arrayContaining([expect.objectContaining({code: 'REQUIRED', path: '$.version'})])});
+});
+
+test('production REST output can mount the 2.6.0 component runtimes', async ({page, request}) => {
+  const fixture = await request.get('/examples/dashboard-overview/blueprint.json');
+  expect(fixture.status()).toBe(200);
+  const blueprint = await fixture.json();
+  blueprint.catalogVersion = '2.6.0';
+  const controls = [
+    ['button-control', 'button'], ['input-control', 'input'], ['card-surface', 'card'], ['navigation-menu', 'navigation'],
+    ['modal-dialog', 'modal'], ['tabs-control', 'tabs'], ['tooltip', 'tooltip'], ['feedback-message', 'feedback'],
+  ];
+  for (const [type] of controls) {
+    const spec = getComponentSpec({type, catalogVersion: '2.6.0'});
+    expect(spec.ok, type).toBe(true);
+    blueprint.tree.children.push(spec.value.example);
+  }
+  const result = await request.post('/api/v1/compile', {data: {blueprint, include: ['html'], html: 'full'}});
+  expect(result.status()).toBe(200);
+  const {value} = await result.json();
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.setContent(value.html);
+  // NOTE: Modal·Tooltip 예시는 내부에 Button·Input 컨트롤을 품으므로 다른 컨트롤 밖에 있는 루트만 센다.
+  const roots = await page.evaluate(ids => Object.fromEntries(ids.map(id => [id,
+    [...document.querySelectorAll(`[data-ctl=${id}]`)].filter(el => !el.parentElement?.closest('[data-ctl]')).length])),
+  controls.map(([, id]) => id));
+  for (const [, id] of controls) expect(roots[id], id).toBe(1);
+  expect(errors).toEqual([]);
+  const modal = page.locator('[data-ctl=modal]');
+  const trigger = modal.locator('.kit-ctl-modal-trigger button');
+  await trigger.click();
+  await expect(modal.locator('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(modal.locator('dialog')).toBeHidden();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toBeFocused();
+  expect(errors).toEqual([]);
 });
 
 for (const mode of ['modern', 'legacy']) {

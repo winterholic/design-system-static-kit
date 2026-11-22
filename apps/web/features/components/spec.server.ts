@@ -1,6 +1,6 @@
 import 'server-only';
-import {compileBlueprint, getComponentSpec, listCatalog} from '@winterholic/design-system-static-kit/service';
-import {insertNode, removeNode, resetDocument, updateNode} from '@winterholic/design-system-static-kit/edit';
+import {compileBlueprint, getComponentSpec, getMaterial, listCatalog} from '@winterholic/design-system-static-kit/service';
+import {importBlueprint, insertNode, removeNode, resetDocument, updateNode} from '@winterholic/design-system-static-kit/edit';
 
 // 부품 화면의 모든 데이터는 getComponentSpec·listCatalog 에서 온다. 카탈로그에 없는 변형·속성·관계는 만들지 않는다.
 // 렌더 결과는 Blueprint 를 직접 쓰지 않고 ./edit 연산(resetDocument, insertNode, removeNode, updateNode)으로 만든 문서의 컴파일 결과다.
@@ -19,11 +19,22 @@ const call = <T>(r: unknown, what: string): T => {
   return x.value;
 };
 
-export type ComponentRow = {type: string; label: string; group: string; childTypes: string[]};
+export type ComponentRow = {type: string; label: string; group: string; childTypes: string[]; since?: string};
 let listCache: ComponentRow[] | null = null;
 export function componentRows(): ComponentRow[] {
-  return listCache ??= call<{items: ComponentRow[]}>(listCatalog({kind: 'components', fields: ['type', 'label', 'group', 'childTypes'], limit: 200}), 'listCatalog(components)').items;
+  return listCache ??= call<{items: ComponentRow[]}>(listCatalog({kind: 'components', filter: {catalogVersion: '2.6.0'}, fields: ['type', 'label', 'group', 'childTypes', 'since'], limit: 200}), 'listCatalog(components@2.6.0)').items;
 }
+
+type MaterialView = {
+  id: string; kind: string; category: string; version: string; since: string; contexts: string[]; quality: {status: string; evidence: string[]}; preset: boolean;
+  defaults: Row; variants: Record<string, (string | number | boolean)[]>;
+  states: {values: string[]; transitions: Row[]}; responsive: {strategy: string; breakpoints?: string[]; note?: string};
+  tokens: string[]; tags: string[]; blueprint: {node?: string; field?: string; value?: string | null; since: string | null} | null;
+};
+const materialView = (id: string): MaterialView | null => {
+  const result = getMaterial({id: `component:${id}`}) as {ok: boolean; value?: MaterialView};
+  return result.ok ? result.value! : null;
+};
 
 /** JSON Schema 조각을 사람이 읽는 (형태, 제약) 으로 줄인다. 스키마에 있는 제약만 쓴다. */
 export function describeSchema(s: Json): {kind: string; detail: string[]} {
@@ -62,14 +73,18 @@ export type ComponentView = {
   pageTypes: {requiredBy: string[]; forbiddenIn: string[]};
   example: Json | null;
   variants: {id: string; ok: boolean; reason?: string}[];
+  material: MaterialView | null;
+  variantGroups: {name: string; values: (string | number | boolean)[]; defaultValue: string | number | boolean; availability: {value: string | number | boolean; ok: boolean; reason?: string}[]}[];
+  limitations: string[];
   related: {type: string; label: string}[];
 };
 
-type RawView = Omit<ComponentView, 'variants'> & {variantIds: string[]};
+type RawView = Omit<ComponentView, 'variants' | 'limitations'> & {variantIds: string[]};
 function rawView(type: string): RawView | null {
   const row = componentRows().find(r => r.type === type);
   if (!row) return null;
-  const spec = call<Json>(getComponentSpec({type}), `getComponentSpec(${type})`);
+  const material = row.since ? materialView(type) : null;
+  const spec = call<Json>(getComponentSpec({type, ...(row.since ? {catalogVersion: row.since} : {})}), `getComponentSpec(${type})`);
   const required = new Set<string>(spec.required);
   const fields = Object.entries(spec.fields as Json).map(([name, schema]) => ({name, required: required.has(name), ...describeSchema(schema)}));
   const parents = componentRows().filter(r => r.childTypes.includes(type)).map(r => r.type);
@@ -80,12 +95,13 @@ function rawView(type: string): RawView | null {
   const kin = [...new Set([...parents, ...(children?.allowed ?? [])])].filter(t => t !== type && t !== 'page');
   const sameGroup = componentRows().filter(r => r.group === row.group && r.type !== type && !kin.includes(r.type)).map(r => r.type);
   const related = [...kin.slice(0, 5), ...sameGroup].slice(0, 6).map(t => ({type: t, label: componentRows().find(r => r.type === t)!.label}));
+  const variantGroups = material ? Object.entries(material.variants).map(([name, values]) => ({name, values, defaultValue: material.defaults[name], availability: values.map(value => ({value, ok: true}))})) : [];
   return {
     type, label: row.label, group: row.group, groupLabel: groupLabel(row.group), fields, children, parents,
     pageTypes: {requiredBy: (spec.pageTypes.requiredBy as string[]).map(label), forbiddenIn: (spec.pageTypes.forbiddenIn as string[]).map(label)},
     example: spec.example ?? null,
     variantIds: (spec.fields as Json).variant?.enum ?? [],
-    related,
+    related, material, variantGroups,
   };
 }
 
@@ -97,7 +113,15 @@ export function componentView(type: string): ComponentView | null {
   let view: ComponentView | null = null;
   if (raw) {
     const {variantIds, ...rest} = raw;
-    view = {...rest, variants: variantIds.map(id => { const r = renderRaw(raw, id); return r.ok ? {id, ok: true} : {id, ok: false, reason: r.reason}; })};
+    view = {
+      ...rest,
+      variants: variantIds.map(id => { const r = renderRaw(raw, id); return r.ok ? {id, ok: true} : {id, ok: false, reason: r.reason}; }),
+      variantGroups: raw.variantGroups.map(group => ({...group, availability: group.availability.map(option => {
+        const r = renderRaw(raw, {[group.name]: option.value});
+        return r.ok ? {value: option.value, ok: true} : {value: option.value, ok: false, reason: r.reason};
+      })})),
+      limitations: raw.material?.tags.filter(tag => tag.startsWith('forbidden:') || tag.startsWith('unsupported:')).map(tag => tag.replace(/^(?:forbidden|unsupported):/, '')) ?? [],
+    };
   }
   viewCache.set(type, view);
   return view;
@@ -149,13 +173,47 @@ function isolatedDoc(type: string, example: Json, variant?: string): {doc: unkno
   return {doc};
 }
 
-function renderRaw(view: RawView, variant?: string): Rendered {
-  if (view.example && !(variant && !view.variantIds.includes(variant))) {
-    const built = isolatedDoc(view.type, {...view.example, ...(variant ? {variant} : {})});
-    if ('doc' in built) { const html = compileHtml(built.doc); if (html) return {ok: true, html, mode: 'isolated'}; }
-    else if (variant) return {ok: false, reason: built.error};
+function materialSelection(view: RawView, selection: Row = {}): {html: string} | {error: string} {
+  const material = view.material!;
+  for (const [key, value] of Object.entries(selection)) {
+    if (!material.variants[key]?.some(option => String(option) === String(value))) return {error: `카탈로그에 없는 ${key} 변형입니다.`};
   }
-  if (variant) return {ok: false, reason: '이 부품은 변형을 단독으로 렌더하지 못합니다.'};
+  const values = {...material.defaults, ...selection};
+  const made = resetDocument(null, BASE);
+  if (!made.ok) return {error: made.errors[0]?.message ?? '기본 Blueprint를 만들지 못했습니다.'};
+  // importBlueprint는 엔진이 만든 페이지를 받아 카탈로그 버전을 올리고 정상 문서로 검증한다.
+  const upgraded = importBlueprint(null, {blueprint: {...made.doc, catalogVersion: material.since}});
+  if (!upgraded.ok) return {error: upgraded.errors[0]?.message ?? '2.6.0 Blueprint로 올리지 못했습니다.'};
+  const node: Row = {...view.example, ...values};
+  for (const key of ['sortable', 'selectable']) if (typeof node[key] === 'boolean') node[key] = node[key] ? 'yes' : 'no';
+  // Core 계약상 내용이 없는 상태는 행도 비어 있어야 한다.
+  if (view.type === 'data-table' && !['ready', 'partial'].includes(node.state)) node.rows = [];
+  const at = upgraded.doc.tree.children.length;
+  const inserted = insertNode(upgraded.doc, {parent: [], node, index: at});
+  if (!inserted.ok) return {error: inserted.errors[0]?.message ?? '재료를 Blueprint에 넣지 못했습니다.'};
+  let doc: any = inserted.doc;
+  for (let i = doc.tree.children.length - 1; i >= 1; i--) {
+    if (i === at) continue;
+    const removed = removeNode(doc, {path: [i]});
+    if (!removed.ok) return {error: removed.errors[0]?.message ?? '미리보기에서 불필요한 부품을 지우지 못했습니다.'};
+    doc = removed.doc;
+  }
+  const compiled = compileBlueprint(doc, {include: ['html']}) as {ok: boolean; value?: {html: string}; errors?: {message: string}[]};
+  return compiled.ok ? {html: compiled.value!.html} : {error: compiled.errors?.[0]?.message ?? 'Core가 이 변형을 컴파일하지 못했습니다.'};
+}
+
+function renderRaw(view: RawView, variant?: string | Row): Rendered {
+  if (view.material && view.example) {
+    const built = materialSelection(view, typeof variant === 'object' ? variant : {});
+    return 'html' in built ? {ok: true, html: built.html, mode: 'isolated'} : {ok: false, reason: built.error};
+  }
+  const legacyVariant = typeof variant === 'string' ? variant : undefined;
+  if (view.example && !(legacyVariant && !view.variantIds.includes(legacyVariant))) {
+    const built = isolatedDoc(view.type, {...view.example, ...(legacyVariant ? {variant: legacyVariant} : {})});
+    if ('doc' in built) { const html = compileHtml(built.doc); if (html) return {ok: true, html, mode: 'isolated'}; }
+    else if (legacyVariant) return {ok: false, reason: built.error};
+  }
+  if (legacyVariant) return {ok: false, reason: '이 부품은 변형을 단독으로 렌더하지 못합니다.'};
   const template = templateUsing(view.type);
   if (!template) return {ok: false, reason: '이 부품을 쓰는 템플릿이 없습니다.'};
   const made = resetDocument(null, {template});
@@ -163,7 +221,7 @@ function renderRaw(view: RawView, variant?: string): Rendered {
   return html ? {ok: true, html, mode: 'template', template} : {ok: false, reason: '렌더하지 못했습니다.'};
 }
 
-export function renderComponent(type: string, variant?: string): Rendered {
+export function renderComponent(type: string, variant?: string | Row): Rendered {
   const view = rawView(type);
   return view ? renderRaw(view, variant) : {ok: false, reason: '알 수 없는 부품입니다.'};
 }

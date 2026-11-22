@@ -1,0 +1,247 @@
+{
+  "version": "2.0",
+  "catalogVersion": "2.6.0",
+  "name": "커머스 상품 목록",
+  "theme": "commerce",
+  "palette": "sweet-summer-melody",
+  "mode": "light",
+  "pageType": "commerce",
+  "shell": "stacked",
+  "typography": "sans",
+  "density": "comfortable",
+  "radius": "soft",
+  "control": "match",
+  "elevation": "outline",
+  "motion": "subtle",
+  "icon": "line",
+  "ornament": "none",
+  "backdrop": "plain",
+  "width": "wide",
+  "scale": "balanced",
+  "weight": "bold",
+  "footer": "columns",
+  "chrome": {
+    "nav": [
+      {
+        "label": "신상품",
+        "href": "#main",
+        "icon": "sparkles"
+      },
+      {
+        "label": "조명",
+        "href": "#main",
+        "icon": "sun",
+        "mega": [
+          {
+            "label": "스탠드",
+            "href": "#main",
+            "description": "책상과 침대맡을 위한 조명"
+          },
+          {
+            "label": "독서등",
+            "href": "#main",
+            "description": "눈이 편한 집중 조명"
+          },
+          {
+            "label": "무드등",
+            "href": "#main",
+            "description": "분위기를 바꾸는 작은 램프"
+          },
+          {
+            "label": "플로어",
+            "href": "#main",
+            "description": "공간을 채우는 큰 조명"
+          }
+        ]
+      },
+      {
+        "label": "이벤트",
+        "href": "#main",
+        "icon": "gift"
+      },
+      {
+        "label": "고객센터",
+        "href": "#main",
+        "icon": "message"
+      }
+    ],
+    "action": {
+      "label": "장바구니",
+      "href": "#main"
+    },
+    "footerNote": "© 2026 무드램프",
+    "footerLinks": [
+      {
+        "label": "이용약관",
+        "href": "#main"
+      },
+      {
+        "label": "개인정보",
+        "href": "#main"
+      },
+      {
+        "label": "문의",
+        "href": "#main"
+      }
+    ]
+  },
+  "tree": {
+    "type": "page",
+    "children": [
+      {
+        "type": "page-header",
+        "title": "조명",
+        "description": "상품 24개 · 오늘 주문하면 모레 도착",
+        "actions": [
+          {
+            "label": "정렬: 인기순",
+            "href": "#main",
+            "variant": "secondary"
+          }
+        ]
+      },
+      {
+        "type": "aside",
+        "side": "start",
+        "label": "필터",
+        "children": [
+          {
+            "type": "grid",
+            "columns": "three",
+            "children": [
+              {
+                "type": "card",
+                "title": "무드램프 미니",
+                "body": "손바닥만 한 크기에 12가지 분위기",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "orb",
+                "ratio": "1:1",
+                "badge": "베스트",
+                "meta": "무드램프",
+                "price": "39,000원",
+                "listPrice": "49,000원",
+                "rating": "4.8",
+                "reviews": "1,204"
+              },
+              {
+                "type": "card",
+                "title": "데스크 라이트 프로",
+                "body": "각도를 자유롭게 바꾸는 암 조명",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "desklamp",
+                "ratio": "1:1",
+                "meta": "노르딕 라이트",
+                "price": "59,000원",
+                "rating": "4.7",
+                "reviews": "382"
+              },
+              {
+                "type": "card",
+                "title": "캔들 워머 램프",
+                "body": "촛불 없이 향을 데우는 따뜻한 빛",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "candle",
+                "ratio": "1:1",
+                "badge": "신상",
+                "meta": "무드램프",
+                "price": "45,000원",
+                "rating": "4.6",
+                "reviews": "98"
+              },
+              {
+                "type": "card",
+                "title": "클래식 독서등",
+                "body": "눈이 편한 3단계 밝기 조절",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "lamp",
+                "ratio": "1:1",
+                "meta": "노르딕 라이트",
+                "price": "29,000원",
+                "listPrice": "35,000원",
+                "rating": "4.9",
+                "reviews": "2,310"
+              },
+              {
+                "type": "card",
+                "title": "플로어 램프 하루",
+                "body": "거실 한쪽을 채우는 스탠드 조명",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "floorlamp",
+                "ratio": "1:1",
+                "meta": "하루 리빙",
+                "price": "129,000원",
+                "rating": "4.5",
+                "reviews": "211"
+              },
+              {
+                "type": "card",
+                "title": "센서 무드등",
+                "body": "움직임을 감지해 켜지는 야간등",
+                "variant": "media",
+                "visual": "photo",
+                "motif": "orb",
+                "ratio": "1:1",
+                "meta": "무드램프",
+                "price": "19,000원",
+                "listPrice": "24,000원",
+                "rating": "4.4",
+                "reviews": "640"
+              }
+            ]
+          },
+          {
+            "type": "form",
+            "title": "필터",
+            "variant": "stacked",
+            "fields": [
+              {
+                "id": "price",
+                "label": "가격대",
+                "type": "select",
+                "options": [
+                  "전체",
+                  "3만원 이하",
+                  "3~5만원",
+                  "5만원 이상"
+                ],
+                "requirement": "optional"
+              },
+              {
+                "id": "stock",
+                "label": "재고 있는 상품만",
+                "type": "switch",
+                "requirement": "optional"
+              },
+              {
+                "id": "color",
+                "label": "색상",
+                "type": "radio",
+                "options": [
+                  "전체",
+                  "화이트",
+                  "컬러"
+                ],
+                "requirement": "optional"
+              }
+            ],
+            "submitLabel": "적용"
+          }
+        ]
+      },
+      {
+        "type": "pagination",
+        "pages": 4,
+        "current": 1
+      }
+    ]
+  },
+  "profile": "commerce",
+  "colorPalette": "static-kit",
+  "typeRoles": "marketing",
+  "controlSize": "large"
+}

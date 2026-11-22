@@ -8,7 +8,8 @@ import {core as getCore, isCoreLoaded, loadCore, type Core} from './core';
 import {download, exportBaseName, htmlText, jsonText} from './export';
 import {initialState, needsConfirm, reducer, type Action, type Dialog, type Intent, type PendingAction} from './model';
 import {parseDiagnosticPath} from './paths';
-import {clearSaved, markLegacyImported, readStored, writeSaved} from './storage';
+import {mayOverwriteStored} from './protect';
+import {clearSaved, markLegacyImported, peekSaved, readStored, writeSaved} from './storage';
 import {DEFAULT_VIEW, parseUrl, viewUrl, type UrlView} from './url';
 import type {Diagnostic, NodePath} from './types';
 import {Toolbar} from './components/Toolbar';
@@ -31,6 +32,10 @@ export function StudioApp() {
   const [compileCount, setCompileCount] = useState(0);
   const stateRef = useRef(state);
   stateRef.current = state;
+  // 이 세션이 마지막으로 읽었거나 쓴 저장 기록의 시각. 이것과 다른 기록이 저장소에 있으면 다른 탭이 쓴 것이다.
+  const knownSavedAt = useRef<string | null>(null);
+  // 마지막으로 저장한 상태. 바뀐 것이 없으면 다시 쓰지 않는다(화면을 떠날 때마다 오래된 상태로 덮어쓰는 일을 막는다).
+  const lastWritten = useRef<{doc: unknown; origin: unknown; picked: unknown; selection: unknown; modified: boolean} | null>(null);
 
   const refreshUrl = useCallback((view: UrlView, mode: 'push' | 'replace') => {
     const next = viewUrl(view);
@@ -47,6 +52,7 @@ export function StudioApp() {
     const needsCore = stored.kind === 'saved' || stored.kind === 'legacy' || parsed.start !== null || parsed.problems.length > 0;
     const finish = () => {
       const boot = computeBoot(parsed, stored);
+      if (stored.kind === 'saved') knownSavedAt.current = (stored.data as {savedAt?: string} | null)?.savedAt ?? null;
       dispatch({type: 'boot', state: boot});
       if (stored.kind === 'legacy') markLegacyImported();
       // 시작 인자는 한 번만 쓴다. 확인 대화상자가 열려 있으면 결정할 때까지 주소를 그대로 둔다.
@@ -89,18 +95,28 @@ export function StudioApp() {
   }, [coreReady, doc, scheme, state.phase]);
 
   // ---- 저장: 문서·출처·선택이 바뀌면 잠깐 모아 쓴다. 손상된 저장값이 있으면 사용자가 정할 때까지 덮어쓰지 않는다.
-  const blocked = state.session.recovery !== null || state.session.storage.status === 'unavailable';
+  // 다른 탭이 저장한 작업이 저장소에 있으면(버려도 되는 문서가 아니면) 덮어쓰지 않고 멈춘 뒤 사용자가 고르게 한다.
+  const blocked = state.session.recovery !== null || state.session.storage.status === 'unavailable' || state.session.storage.status === 'conflict';
   const {origin, picked, selection, modified} = state.session;
-  const persist = useCallback(() => {
+  const persist = useCallback((force = false) => {
     const s = stateRef.current;
     if (s.phase !== 'ready' || !s.document.doc || s.session.recovery) return;
-    const r = writeSaved({doc: s.document.doc, origin: s.session.origin, picked: s.session.picked, selection: s.session.selection, modified: s.session.modified});
+    if (!force && s.session.storage.status === 'conflict') return;
+    const now = {doc: s.document.doc, origin: s.session.origin, picked: s.session.picked, selection: s.session.selection, modified: s.session.modified};
+    const last = lastWritten.current;
+    if (!force && last && last.doc === now.doc && last.origin === now.origin && last.picked === now.picked && last.selection === now.selection && last.modified === now.modified) return;
+    if (!force && !mayOverwriteStored(knownSavedAt.current, peekSaved())) {
+      dispatch({type: 'storage', storage: {status: 'conflict', message: '다른 탭에서 이 문서를 저장했습니다. 이 탭의 내용으로 덮어쓰면 그 탭의 작업이 사라집니다.'}});
+      return;
+    }
+    const r = writeSaved({doc: now.doc, origin: now.origin, picked: now.picked, selection: now.selection, modified: now.modified});
+    if (r.ok) { knownSavedAt.current = r.savedAt; lastWritten.current = now; }
     const status = r.ok ? 'saved' : 'error';
     if (s.session.storage.status !== status || (!r.ok && s.session.storage.message !== r.message)) dispatch({type: 'storage', storage: r.ok ? {status: 'saved', savedAt: r.savedAt} : {status: 'error', message: r.message}});
   }, []);
   useEffect(() => {
     if (blocked || state.phase !== 'ready' || !doc) return;
-    const timer = setTimeout(persist, 250);
+    const timer = setTimeout(() => persist(), 250);
     return () => clearTimeout(timer);
   }, [doc, origin, picked, selection, modified, blocked, state.phase, persist]);
   useEffect(() => {
@@ -183,6 +199,8 @@ export function StudioApp() {
     const raw = stateRef.current.session.recovery?.raw;
     if (raw !== undefined) download('studio-recovered-raw.json', raw, 'application/json');
   }, []);
+  const overwriteStorage = useCallback(() => persist(true), [persist]);
+  const reloadSaved = useCallback(() => location.reload(), []);
   const resetStorage = useCallback(() => {
     dispatch({type: 'recovered', cleared: clearSaved()});
   }, []);
@@ -193,8 +211,8 @@ export function StudioApp() {
     navigate, setView: patch => dispatch({type: 'view', patch}), undo, redo,
     openDialog: (dialog: Dialog) => dispatch({type: 'dialog', dialog}), closeDialog, requestAction, confirmAction, jumpTo,
     dismissError: () => dispatch({type: 'dismissError'}), dismissNotice: id => dispatch({type: 'dismissNotice', id}),
-    exportJson, exportHtml, exportRecovery, resetStorage, withCore, compileCount,
-  }), [state, coreReady, catalog, edit, navigate, undo, redo, closeDialog, requestAction, confirmAction, jumpTo, exportJson, exportHtml, exportRecovery, resetStorage, withCore, compileCount]);
+    exportJson, exportHtml, exportRecovery, resetStorage, overwriteStorage, reloadSaved, withCore, compileCount,
+  }), [state, coreReady, catalog, edit, navigate, undo, redo, closeDialog, requestAction, confirmAction, jumpTo, exportJson, exportHtml, exportRecovery, resetStorage, overwriteStorage, reloadSaved, withCore, compileCount]);
 
   const {phase, view} = state;
   return (

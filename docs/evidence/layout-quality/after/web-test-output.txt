@@ -1,0 +1,250 @@
+
+> @winterholic/design-system-static-kit@2.0.0 web:test
+> npm --workspace apps/web run test:boundary && npm --workspace apps/web run test:unit && npm --workspace apps/web run test:e2e
+
+
+> @winterholic/static-kit-web@0.1.0 test:boundary
+> node --test boundary.check.mjs
+
+✔ apps/web 소스를 찾았다 (0.399584ms)
+✔ 루트 패키지는 지정한 진입점만 import 한다 (119.019875ms)
+✔ 검사 범위가 앱 전체 소스와 CSS를 포함한다 (0.419917ms)
+✔ 상대 경로, 디렉터리 별칭, type import와 dynamic import를 같은 경계로 검사한다 (1.666125ms)
+✔ CSS의 @import와 url() 의존성을 Core 경계에 맞춰 검사한다 (1.0385ms)
+✔ Next server-only 표식과 단일 읽기 전용 QA 데이터만 외부 경계 예외다 (0.608375ms)
+✔ src/ 를 상대 경로나 패키지 내부 경로로 직접 가리키지 않는다 (57.917333ms)
+✔ 루트 package.json exports 는 허용 진입점과 일치한다 (0.297666ms)
+✔ Core 를 부르는 코드에 React·Next 가 새어 들어가지 않는다(패키지 쪽 import 방향) (89.089334ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 504.740292
+
+> @winterholic/static-kit-web@0.1.0 test:unit
+> node --experimental-strip-types --experimental-loader ./features/studio/node-ts-loader.mjs --test features/studio/*.unit.mjs
+
+(node:76694) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./features/studio/node-ts-loader.mjs", pathToFileURL("./")); register("./features/studio/node-ts-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 수정하지 않은 템플릿 문서는 URL 시작 인자가 바로 바꾼다 (117.928875ms)
+✔ 수정한 문서는 URL 시작 인자를 적용하지 않고 확인을 요구한다 (2.813792ms)
+✔ 가져온 문서(출처 없음)는 URL 시작 인자를 적용하지 않고 확인을 요구한다 (1.178084ms)
+✔ 이어받은 스타일 선택이 있는 문서는 URL 시작 인자를 적용하지 않고 확인을 요구한다 (0.964041ms)
+✔ 저장 문서가 없으면 URL 시작 인자를 확인 없이 연다 (2.7035ms)
+(node:76694) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/features/studio/boot.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:76695) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./features/studio/node-ts-loader.mjs", pathToFileURL("./")); register("./features/studio/node-ts-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ failed Core operation preserves document and selected node atomically (135.471417ms)
+✔ theme edit preserves authored content and undo restores the previous document (4.191041ms)
+✔ preview-only color scheme changes leave document mode unchanged (0.520625ms)
+✔ failed recovery cleanup leaves corrupt data quarantined and reports the failure (0.117458ms)
+✔ undo and redo walk the same document history and a new edit drops the redo stack (2.744458ms)
+✔ template replacement is undoable and restores origin, modified flag and document together (3.103125ms)
+✔ preview settings are independent of document edits, undo and redo (1.402125ms)
+(node:76695) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/features/studio/model.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:76696) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./features/studio/node-ts-loader.mjs", pathToFileURL("./")); register("./features/studio/node-ts-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ saved Studio documents are versioned and round-trip through the dedicated key (2.284375ms)
+✔ legacy key is read without deleting its original value (0.424625ms)
+✔ clearSaved reports failure when the browser refuses to clear a corrupt save (0.07875ms)
+✔ storage read preserves malformed saved text for recovery export (0.055959ms)
+(node:76696) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/features/studio/storage.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:76697) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./features/studio/node-ts-loader.mjs", pathToFileURL("./")); register("./features/studio/node-ts-loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Studio consumes the shared start query and preserves every requested design choice (2.167458ms)
+✔ Studio view state has a stable URL contract and rejects malformed layout input (0.134208ms)
+(node:76697) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/features/studio/url.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/winterholic/development/projects/dssk-wt/layout-quality/apps/web/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 315.779167
+
+> @winterholic/static-kit-web@0.1.0 test:e2e
+> playwright test
+
+
+Running 142 tests using 1 worker
+
+  ✓    1 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › 홈 (/): serious·critical 위반 0건 (1.2s)
+  ✓    2 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Explore 목록 (/explore): serious·critical 위반 0건 (1.3s)
+  ✓    3 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Explore 상세 (/explore/saas-landing): serious·critical 위반 0건 (924ms)
+  ✓    4 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Components 목록 (/components): serious·critical 위반 0건 (1.1s)
+  ✓    5 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Components hero (/components/hero): serious·critical 위반 0건 (932ms)
+  ✓    6 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Studio (/studio?template=dashboard-overview): serious·critical 위반 0건 (1.1s)
+  ✓    7 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Docs 시작하기 (/docs/getting-started): serious·critical 위반 0건 (952ms)
+  ✓    8 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 390px › Integrations MCP (/integrations/mcp): serious·critical 위반 0건 (864ms)
+  ✓    9 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › 홈 (/): serious·critical 위반 0건 (1.1s)
+  ✓   10 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Explore 목록 (/explore): serious·critical 위반 0건 (1.2s)
+  ✓   11 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Explore 상세 (/explore/saas-landing): serious·critical 위반 0건 (929ms)
+  ✓   12 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Components 목록 (/components): serious·critical 위반 0건 (1.1s)
+  ✓   13 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Components hero (/components/hero): serious·critical 위반 0건 (936ms)
+  ✓   14 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Studio (/studio?template=dashboard-overview): serious·critical 위반 0건 (1.1s)
+  ✓   15 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Docs 시작하기 (/docs/getting-started): serious·critical 위반 0건 (1.0s)
+  ✓   16 [chromium] › e2e/a11y.spec.mjs:27:7 › axe 1280px › Integrations MCP (/integrations/mcp): serious·critical 위반 0건 (871ms)
+IFRAME-AXE /explore/saas-landing/render 390px: serious:color-contrast(5)
+  ✓   17 [chromium] › e2e/a11y.spec.mjs:45:7 › axe iframe 내부 컴파일 결과물 (보고용) › /explore/saas-landing/render 390px (966ms)
+IFRAME-AXE /explore/saas-landing/render 1280px: serious:color-contrast(3)
+  ✓   18 [chromium] › e2e/a11y.spec.mjs:45:7 › axe iframe 내부 컴파일 결과물 (보고용) › /explore/saas-landing/render 1280px (976ms)
+IFRAME-AXE /examples/saas-landing/ 390px: serious:color-contrast(5)
+  ✓   19 [chromium] › e2e/a11y.spec.mjs:45:7 › axe iframe 내부 컴파일 결과물 (보고용) › /examples/saas-landing/ 390px (1.0s)
+IFRAME-AXE /examples/saas-landing/ 1280px: serious:color-contrast(3)
+  ✓   20 [chromium] › e2e/a11y.spec.mjs:45:7 › axe iframe 내부 컴파일 결과물 (보고용) › /examples/saas-landing/ 1280px (924ms)
+IFRAME-AXE /components/hero/render 390px: 위반 없음
+  ✓   21 [chromium] › e2e/a11y.spec.mjs:45:7 › axe iframe 내부 컴파일 결과물 (보고용) › /components/hero/render 390px (795ms)
+IFRAME-AXE /components/hero/render 1280px: 위반 없음
+  ✓   22 [chromium] › e2e/a11y.spec.mjs:45:7 › axe iframe 내부 컴파일 결과물 (보고용) › /components/hero/render 1280px (799ms)
+  ✓   23 [chromium] › e2e/compat.spec.mjs:22:5 › 컷오버 전 옛 /combos/ → 새 경로 307 › /combos/ → /dev/qa/combos (22ms)
+  ✓   24 [chromium] › e2e/compat.spec.mjs:22:5 › 컷오버 전 옛 /combos/ → 새 경로 307 › /combos → /dev/qa/combos (3ms)
+  ✓   25 [chromium] › e2e/compat.spec.mjs:22:5 › 컷오버 전 옛 /combos/ → 새 경로 307 › /combos/index.html → /dev/qa/combos (4ms)
+  ✓   26 [chromium] › e2e/compat.spec.mjs:32:3 › 컷오버 전 옛 /combos/ → 새 경로 307 › 쿼리 파라미터 21개와 값을 그대로 보존한다 (7ms)
+  ✓   27 [chromium] › e2e/compat.spec.mjs:49:3 › 컷오버 전 옛 /combos/ → 새 경로 307 › 리다이렉트를 따라가면 새 화면이 열린다 (955ms)
+  ✓   28 [chromium] › e2e/compat.spec.mjs:55:3 › 컷오버 전 옛 /combos/ → 새 경로 307 › 임시 Explore 호환 경로는 쿼리를 유지하며 열린다 (44ms)
+  ✓   29 [chromium] › e2e/compat.spec.mjs:65:3 › 컷오버 전 옛 /combos/ → 새 경로 307 › 중복 슬래시는 Next 정규화 후 임시 리다이렉트, 대소문자 변형은 404다 (9ms)
+  ✓   30 [chromium] › e2e/compat.spec.mjs:75:3 › 컷오버 전 옛 /combos/ → 새 경로 307 › render.html 끝 슬래시도 기존 정적 렌더 결과를 제공한다 (2ms)
+  ✓   31 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /gallery/index.html (25ms)
+  ✓   32 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /v1/catalog.json (12ms)
+  ✓   33 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /v1/blueprint.schema.json (5ms)
+  ✓   34 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /combos/render.html (3ms)
+  ✓   35 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /examples/saas-landing/index.html (5ms)
+  ✓   36 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /examples/saas-landing/tokens.css (4ms)
+  ✓   37 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /examples/saas-landing/tokens.json (3ms)
+  ✓   38 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /examples/saas-landing/blueprint.json (3ms)
+  ✓   39 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /examples/saas-landing/manifest.json (3ms)
+  ✓   40 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /examples/themes/aurora/index.html (4ms)
+  ✓   41 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /test-lab/index.html (3ms)
+  ✓   42 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /test-lab/viewer.html (3ms)
+  ✓   43 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /src/combos/render.mjs (3ms)
+  ✓   44 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /docs/design.html (4ms)
+  ✓   45 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /docs/diagnosis-round6.html (3ms)
+  ✓   46 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /docs/layout.html (4ms)
+  ✓   47 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /docs/palettes.html (3ms)
+  ✓   48 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /docs/spacing.html (3ms)
+  ✓   49 [chromium] › e2e/compat.spec.mjs:91:5 › 정적 산출물은 site/와 바이트가 같다 › /docs/typography.html (4ms)
+  ✓   50 [chromium] › e2e/compat.spec.mjs:98:3 › 정적 산출물은 site/와 바이트가 같다 › /v1/*.json 은 JSON 으로 제공된다 (12ms)
+  ✓   51 [chromium] › e2e/compat.spec.mjs:105:3 › 정적 산출물은 site/와 바이트가 같다 › 폴더 주소(/examples/x/)는 리다이렉트 없이 index.html 바이트를 낸다 (16ms)
+  ✓   52 [chromium] › e2e/compat.spec.mjs:115:3 › 정적 산출물은 site/와 바이트가 같다 › /gallery 와 /gallery/ 는 리다이렉트 없이 오프라인 갤러리 바이트를 낸다 (44ms)
+  ✓   53 [chromium] › e2e/compat.spec.mjs:123:3 › 정적 산출물은 site/와 바이트가 같다 › examples 전체(템플릿 85 + 테마 54)가 200과 같은 바이트로 제공된다 (474ms)
+  ✓   54 [chromium] › e2e/compat.spec.mjs:136:3 › 정적 산출물은 site/와 바이트가 같다 › 없는 예제와 파일은 404 (9ms)
+  ✓   55 [chromium] › e2e/compat.spec.mjs:142:3 › 정적 산출물은 site/와 바이트가 같다 › 잘못 인코딩된 URL, 없는 문서와 동적 ID는 400 또는 404 (33ms)
+  ✓   56 [chromium] › e2e/compat.spec.mjs:159:5 › 해시 게이트 (서버 없이 파일 비교) › examples: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다 (32ms)
+  ✓   57 [chromium] › e2e/compat.spec.mjs:159:5 › 해시 게이트 (서버 없이 파일 비교) › examples/themes: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다 (20ms)
+  ✓   58 [chromium] › e2e/compat.spec.mjs:159:5 › 해시 게이트 (서버 없이 파일 비교) › v1: site/ 값이 고정 해시와 같고 public/ 복사본이 site/ 와 같다 (1ms)
+  ✓   59 [chromium] › e2e/compat.spec.mjs:169:3 › noindex와 공개 메뉴 › /test-lab/** 와 /dev/** 는 X-Robots-Tag noindex (12ms)
+  ✓   60 [chromium] › e2e/compat.spec.mjs:176:3 › noindex와 공개 메뉴 › 공개 화면과 예제에는 noindex 헤더가 없다 (19ms)
+  ✓   61 [chromium] › e2e/compat.spec.mjs:182:3 › noindex와 공개 메뉴 › robots.txt 가 test-lab 과 dev 를 막는다 (5ms)
+  ✓   62 [chromium] › e2e/compat.spec.mjs:189:3 › noindex와 공개 메뉴 › /dev/qa 는 meta robots noindex (3ms)
+  ✓   63 [chromium] › e2e/compat.spec.mjs:195:1 › 없는 경로는 not-found 화면과 404 (3ms)
+  ✓   64 [chromium] › e2e/explore-components-home.spec.mjs:4:1 › 홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 복원된다 (1.1s)
+  ✓   65 [chromium] › e2e/explore-components-home.spec.mjs:28:1 › Explore 상세는 컴파일 바이트와 Blueprint 및 Studio 계약을 제공하고 존재하지 않는 ID는 404 (362ms)
+  ✓   66 [chromium] › e2e/explore-components-home.spec.mjs:46:1 › Components는 실제 명세를 보여 주고 잘못된 부품 ID는 404 (290ms)
+  ✓   67 [chromium] › e2e/explore-components-home.spec.mjs:57:1 › 내부 조합 탐색기는 유지되고 /combos 는 쿼리를 보존하는 307로 이동한다 (574ms)
+  ✓   68 [chromium] › e2e/explore-components-home.spec.mjs:71:1 › QA는 여러 보기의 동일 조합 표시를 보존하고 기록의 보기로 재개방·복사·내보낸다 (4.4s)
+  ✓   69 [chromium] › e2e/explore-components-home.spec.mjs:116:1 › 공유 URL의 닫기와 Escape는 필터와 쪽을 유지하고 목록에서 연 상세의 뒤로 가기는 복원한다 (2.9s)
+  ✓   70 [chromium] › e2e/explore-fidelity.spec.mjs:11:1 › Explore HTML은 Core ./service 컴파일 바이트와 같다 (10ms)
+  ✓   71 [chromium] › e2e/explore-fidelity.spec.mjs:17:1 › 상세 Blueprint 경로는 같은 ./edit 입력을 반환하고 모르는 ID는 404 (105ms)
+  ✓   72 [chromium] › e2e/explore-fidelity.spec.mjs:25:1 › Studio 링크는 동일한 템플릿·테마·변형을 보존한다 (6ms)
+  ✓   73 [chromium] › e2e/explore-fidelity.spec.mjs:32:1 › 복합 대표 디자인의 컴파일 HTML·Blueprint·화면·Studio 링크에 슬롯, 팔레트, 모드가 같다 (24ms)
+  ✓   74 [chromium] › e2e/explore-studio-roundtrip.spec.mjs:6:1 › 복합 Explore 디자인을 실제 Studio 링크로 열고 다운로드·문서 미리보기가 산출물과 같다 (678ms)
+layout-quality: pages=131 widths=360,768,1280,1600 {"bySeverity":{"info":117},"exempt":9,"scanned":{"text":26002,"wrap":12639,"clip":256,"svg":0,"overflow":524,"smallText":26002,"bar":504}}
+  ✓   75 [chromium] › e2e/layout-quality.spec.mjs:10:1 › 공개 페이지 전체가 4개 폭에서 줄바꿈·잘림·넘침·상단 바 정렬 검사를 통과한다(면제는 사유 있는 것만) (2.3m)
+  ✓   76 [chromium] › e2e/layout-quality.spec.mjs:27:3 › 홈 제목·리드·규약 영역 › 수정 전에 잡히던 폭 상한 문제가 4개 폭 모두에서 없다 (1.6s)
+  ✓   77 [chromium] › e2e/layout-quality.spec.mjs:39:3 › 홈 제목·리드·규약 영역 › 1280px에서 제목·리드·규약 설명이 사용 가능한 폭을 쓴다(줄이 폭 상한 때문에 접히지 않는다) (201ms)
+  ✓   78 [chromium] › e2e/mcp.spec.mjs:6:1 › REST Route Handlers serve OpenAPI, conditional reads, and validation diagnostics (90ms)
+  ✓   79 [chromium] › e2e/mcp.spec.mjs:26:3 › MCP modern client connects to Next and compiles the same document as REST (136ms)
+  ✓   80 [chromium] › e2e/mcp.spec.mjs:26:3 › MCP legacy client connects to Next and compiles the same document as REST (58ms)
+  ✓   81 [chromium] › e2e/mcp.spec.mjs:55:1 › REST and MCP accept explicit 2.5 Blueprints and describe the warning fields (49ms)
+JS /: scripts=8 raw=580900 gzip=178739 (예산 raw=669000 gzip=206000)
+  ✓   82 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: / (52ms)
+JS /explore: scripts=8 raw=584270 gzip=179894 (예산 raw=673000 gzip=207000)
+  ✓   83 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /explore (59ms)
+JS /explore/saas-landing: scripts=8 raw=582918 gzip=179615 (예산 raw=671000 gzip=207000)
+  ✓   84 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /explore/saas-landing (51ms)
+JS /components: scripts=8 raw=580692 gzip=178654 (예산 raw=669000 gzip=206000)
+  ✓   85 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /components (52ms)
+JS /components/hero: scripts=8 raw=582152 gzip=179231 (예산 raw=670000 gzip=207000)
+  ✓   86 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /components/hero (53ms)
+JS /studio: scripts=9 raw=640608 gzip=196520 (예산 raw=737000 gzip=227000)
+  ✓   87 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /studio (55ms)
+JS /docs/getting-started: scripts=7 raw=579731 gzip=178050 (예산 raw=667000 gzip=205000)
+  ✓   88 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /docs/getting-started (50ms)
+JS /integrations/mcp: scripts=7 raw=579731 gzip=178050 (예산 raw=667000 gzip=205000)
+  ✓   89 [chromium] › e2e/perf-budget.spec.mjs:31:3 › 초기 JS 예산: /integrations/mcp (52ms)
+  ✓   90 [chromium] › e2e/perf-budget.spec.mjs:50:1 › Core 는 지연 로드되는 청크에만 있어서 시험의 표지가 낡지 않았다 (5ms)
+  ✓   91 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: / (5ms)
+  ✓   92 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /explore (10ms)
+  ✓   93 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /explore/saas-landing (5ms)
+  ✓   94 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /components/hero (6ms)
+  ✓   95 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /studio (5ms)
+  ✓   96 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /docs/getting-started (5ms)
+  ✓   97 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /integrations/mcp (5ms)
+  ✓   98 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /explore/saas-landing/render (7ms)
+  ✓   99 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /examples/saas-landing/ (6ms)
+  ✓  100 [chromium] › e2e/security.spec.mjs:7:3 › 보안 헤더: /api/v1/openapi.json (6ms)
+  ✓  101 [chromium] › e2e/security.spec.mjs:22:1 › Studio 미리보기 iframe 은 빈 sandbox 라서 스크립트·같은 출처 권한이 없다 (422ms)
+  ✓  102 [chromium] › e2e/security.spec.mjs:31:1 › Explore 미리보기 iframe 은 같은 출처 render 주소만 쓴다 (182ms)
+  ✓  103 [chromium] › e2e/security.spec.mjs:41:1 › REST: 상한을 넘는 본문은 413 PAYLOAD_TOO_LARGE 로 거부한다 (13ms)
+  ✓  104 [chromium] › e2e/security.spec.mjs:49:1 › REST: 호출 제한을 넘으면 429 RATE_LIMITED 와 Retry-After 를 준다 (282ms)
+  ✓  105 [chromium] › e2e/security.spec.mjs:67:1 › MCP: 상한을 넘는 본문은 413 으로 거부한다 (5ms)
+  ✓  106 [chromium] › e2e/security.spec.mjs:78:1 › REST·MCP 오류 응답은 구조화된 봉투이고 내부 경로·스택을 싣지 않는다 (33ms)
+  ✓  107 [chromium] › e2e/security.spec.mjs:100:1 › MCP: 다른 출처(Origin)의 호출은 403 으로 거부한다 (4ms)
+  ✓  108 [chromium] › e2e/shell.spec.mjs:15:5 › 390px › 상단 내비가 가로로 넘치지 않고 모든 항목에 닿을 수 있다 (415ms)
+  ✓  109 [chromium] › e2e/shell.spec.mjs:41:5 › 390px › 모든 라우트 골격이 가로 넘침 없이 열린다 (1.7s)
+  ✓  110 [chromium] › e2e/shell.spec.mjs:15:5 › 768px › 상단 내비가 가로로 넘치지 않고 모든 항목에 닿을 수 있다 (203ms)
+  ✓  111 [chromium] › e2e/shell.spec.mjs:41:5 › 768px › 모든 라우트 골격이 가로 넘침 없이 열린다 (1.6s)
+  ✓  112 [chromium] › e2e/shell.spec.mjs:15:5 › 1280px › 상단 내비가 가로로 넘치지 않고 모든 항목에 닿을 수 있다 (348ms)
+  ✓  113 [chromium] › e2e/shell.spec.mjs:41:5 › 1280px › 모든 라우트 골격이 가로 넘침 없이 열린다 (1.7s)
+  ✓  114 [chromium] › e2e/shell.spec.mjs:56:3 › 모바일 메뉴 접근성 › 키보드로 열고 Esc로 닫으면 초점이 버튼으로 돌아온다 (137ms)
+  ✓  115 [chromium] › e2e/shell.spec.mjs:71:3 › 모바일 메뉴 접근성 › 열린 동안 Tab은 버튼과 메뉴 링크 안에서만 돈다 (605ms)
+  ✓  116 [chromium] › e2e/shell.spec.mjs:87:3 › 모바일 메뉴 접근성 › 항목을 누르면 이동하고 메뉴가 닫힌다, 바깥을 누르면 닫힌다 (968ms)
+  ✓  117 [chromium] › e2e/shell.spec.mjs:98:3 › 모바일 메뉴 접근성 › 열린 채 폭을 넓히면 데스크톱 내비로 바뀌고 aria-expanded가 닫힌다 (372ms)
+  ✓  118 [chromium] › e2e/shell.spec.mjs:108:3 › 데스크톱 내비와 푸터 › 현재 위치가 aria-current로 표시된다 (178ms)
+  ✓  119 [chromium] › e2e/shell.spec.mjs:115:3 › 데스크톱 내비와 푸터 › 내부 설계서·진단·test-lab 링크가 상단 내비에 없다 (165ms)
+  ✓  120 [chromium] › e2e/shell.spec.mjs:121:3 › 데스크톱 내비와 푸터 › 푸터에 GitHub 링크가 있다 (158ms)
+  ✓  121 [chromium] › e2e/shell.spec.mjs:127:3 › 데스크톱 내비와 푸터 › 로고는 홈으로 간다 (507ms)
+  ✓  122 [chromium] › e2e/shell.spec.mjs:135:3 › /#catalog 호환 › /#catalog 로 열면 /explore 로 replace 되고 history 에 남지 않는다 (230ms)
+  ✓  123 [chromium] › e2e/shell.spec.mjs:143:3 › /#catalog 호환 › 해시가 없거나 다르면 홈에 머문다 (276ms)
+  ✓  124 [chromium] › e2e/shell.spec.mjs:150:1 › 홈의 미리보기는 컴파일된 예제(iframe)를 불러온다 (177ms)
+  ✓  125 [chromium] › e2e/shell.spec.mjs:159:1 › 건너뛰기 링크는 포커스하면 보이고 Enter로 main을 포커스한다 (441ms)
+  ✓  126 [chromium] › e2e/spike.spec.mjs:11:1 › S4 서버: 서버가 컴파일한 HTML이 site/examples/saas-landing/index.html 과 바이트 동일 (8ms)
+  ✓  127 [chromium] › e2e/spike.spec.mjs:17:1 › S4 서버: ./service 가 낸 관리 파일 5개(manifest 포함)의 sha256 이 site/examples/saas-landing 과 같다 (105ms)
+  ✓  128 [chromium] › e2e/spike.spec.mjs:27:1 › S1 서버 컴포넌트가 ./service 의 listCatalog 를 부른다 (템플릿 85개) (99ms)
+  ✓  129 [chromium] › e2e/spike.spec.mjs:32:1 › S2·S4 브라우저: 클라이언트 번들이 ./service 로 Node 폴리필 없이 컴파일하고 바이트 동일 (375ms)
+  ✓  130 [chromium] › e2e/spike.spec.mjs:48:1 › S5 초기 JS에 카탈로그가 없고 컴파일 때만 청크가 내려온다 (2.6s)
+  ✓  131 [chromium] › e2e/studio.spec.mjs:18:1 › WB-02/WB-03: theme and layout edits preserve authored content (653ms)
+  ✓  132 [chromium] › e2e/studio.spec.mjs:38:1 › WB-06: preview data-theme is temporary and exports stay byte-identical across device and scale (2.0s)
+  ✓  133 [chromium] › e2e/studio.spec.mjs:69:1 › WB-04/WB-05: invalid JSON reports Core diagnostics without changing the document; valid import clears stale source state across reload (2.5s)
+  ✓  134 [chromium] › e2e/studio.spec.mjs:134:1 › WB-08: rejected deletion preserves the required node, document, and selection atomically (1.7s)
+  ✓  135 [chromium] › e2e/studio.spec.mjs:158:1 › modified work is saved, restored, and protected by overwrite confirmation (1.1s)
+  ✓  136 [chromium] › e2e/studio.spec.mjs:176:1 › corrupt save remains recoverable when storage clearing fails (264ms)
+  ✓  137 [chromium] › e2e/studio.spec.mjs:193:1 › mobile panel controls and keyboard tree selection stay usable at 390px (408ms)
+  ✓  138 [chromium] › e2e/studio.spec.mjs:233:1 › URL 시작 인자는 가져온 문서(수정 전)를 확인 없이 덮어쓰지 않고, 이어서 작업하면 문서와 저장값이 그대로다 (2.3s)
+  ✓  139 [chromium] › e2e/studio.spec.mjs:251:1 › URL 시작 인자를 확인하면 덮어쓰고, 실행 취소로 가져온 문서를 되살린다 (2.3s)
+  ✓  140 [chromium] › e2e/studio.spec.mjs:264:1 › 수정하지 않은 템플릿 문서는 URL 시작 인자로 바로 바뀐다(주소 계약 유지) (1.0s)
+  ✓  141 [chromium] › e2e/studio.spec.mjs:276:1 › 수정한 문서는 URL 시작 인자 앞에서 확인을 받는다 (772ms)
+  ✓  142 [chromium] › e2e/studio.spec.mjs:288:1 › 수정한 문서의 템플릿 교체는 확인을 받고, 실행 취소·다시 실행이 작업과 미리보기 설정을 따로 다룬다 (4.1s)
+
+  142 passed (3.5m)
+EXIT 0

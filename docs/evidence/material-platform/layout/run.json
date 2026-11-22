@@ -1,0 +1,40 @@
+{
+  "run_date_local": "2026-11-22",
+  "branch": "feat/representative-layout-fix",
+  "source_revision": "5b607d374bbc4f168818c96f40db6af7296187ce",
+  "source_revision_short": "5b607d374",
+  "input_revision": "5b607d374bbc4f168818c96f40db6af7296187ce",
+  "assembly_command": "node scripts/material-platform-evidence/build.mjs",
+  "browser": "configured Ttakkari browser MCP Chromium",
+  "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "browser_version": "HeadlessChrome 157",
+  "browser_device_pixel_ratio": 1,
+  "browser_capture_utc": "2026-11-21T19:02:03.723Z",
+  "viewports": [
+    390,
+    1280
+  ],
+  "measurement": "scripts/layout-quality/probe.mjs layoutProbe executed by scripts/material-platform-evidence/probe.html in browser MCP; eight representative viewport cases plus two legacy regression controls.",
+  "representative_findings": "0 error/warn findings across 8 screen/width combinations; ERP@390 has 2 intentional SCROLL_REGION info findings.",
+  "legacy_controls": "legacy-s21@320: 2 SCROLL_REGION info findings and 0 errors; legacy-s06@1440: 1 SVG_SLICE_CROP warn (estimated vertical crop 44.7%, known fixture retained as a regression counterexample).",
+  "human_evaluation": "not evaluated",
+  "current_screenshots": [
+    "erp-390.png",
+    "erp-1280.png",
+    "commerce-390.png",
+    "commerce-1280.png",
+    "saas-390.png",
+    "saas-1280.png",
+    "analytics-390.png",
+    "analytics-1280.png"
+  ],
+  "preserved_previous_results": [
+    "report-previous-2026-11-21T190139Z.json",
+    "findings-previous-2026-11-21T190139Z.md",
+    "run-previous-2026-11-21T190139Z.json",
+    "previous-2026-11-21T190139Z-*.png",
+    "assembly-previous-2026-11-21T190139Z.json",
+    "previous-2026-11-21T175341Z-*"
+  ],
+  "screenshot_capture_utc": "2026-11-21T19:02:35.285Z–2026-11-21T19:02:37.194Z"
+}

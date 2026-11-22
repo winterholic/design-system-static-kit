@@ -4,13 +4,34 @@ import type {Blueprint, ComponentSpec, Diagnostic, OpResult} from './types';
 
 export type Envelope<T> = {ok: true; value: T; warnings: Diagnostic[]; catalogVersion: string} | {ok: false; errors: Diagnostic[]; warnings: Diagnostic[]; catalogVersion: string};
 
+/** src/edit/applicability.mjs: 연산 자체로 판정한 선택 가능성. errors는 연산이 거부할 때 내는 진단 그대로다. */
+export type Choice = {id: string; ok: boolean; errors: Diagnostic[]};
+export type LayoutChoice = Choice & {relocate: boolean};
+export type PartChoice = {type: string; label: string; group: string};
+export type Placement = {ok: boolean; accepted: PartChoice[]; rejected: {type: string; errors: Diagnostic[]}[]};
+
 export interface Core {
-  edit: {applyOp(doc: Blueprint | null, name: string, args: Record<string, unknown>): OpResult};
+  edit: {
+    applyOp(doc: Blueprint | null, name: string, args: Record<string, unknown>): OpResult;
+    partExample(type: string, catalogVersion?: string): Record<string, unknown> | null;
+    addPlacements(doc: Blueprint, path: number[]): {inside: Placement; after: Placement};
+    themeChoices(doc: Blueprint, opts?: {palette?: string}): Choice[];
+    themeVariantChoices(doc: Blueprint, opts?: {palette?: string}): Choice[];
+    paletteChoices(doc: Blueprint): Choice[];
+    modeChoices(doc: Blueprint): Choice[];
+    axisChoices(doc: Blueprint): Record<string, Choice[]>;
+    layoutChoices(doc: Blueprint, slots: {id: string; options: {id: string}[]}[]): Record<string, LayoutChoice[]>;
+  };
   service: {
     compileBlueprint(bp: unknown, opts?: Record<string, unknown>): Envelope<{html?: string; sizes?: unknown}>;
     validateBlueprint(bp: unknown): Envelope<{valid: true}>;
     listCatalog(q: Record<string, unknown>): Envelope<{items: any[]; total: number; nextCursor: string | null}>;
-    getComponentSpec(q: {type: string}): Envelope<ComponentSpec>;
+    getComponentSpec(q: {type: string; catalogVersion?: string}): Envelope<ComponentSpec>;
+    getMaterial(q: {id: string}): Envelope<any>;
+    getSchema(q: {target: 'blueprint'; fields?: string[]}): Envelope<{properties: Record<string, {enum?: string[]}>}>;
+    getColorTokens(q?: Record<string, unknown>): Envelope<{options: {id: string; label: string}[]}>;
+    getTypePresets(q?: Record<string, unknown>): Envelope<{presets: {id: string; label: string}[]}>;
+    assembleBlueprint(q: {profile: string; intent: Record<string, unknown>; content: Record<string, unknown>}): Envelope<{blueprint: Blueprint}>;
   };
 }
 

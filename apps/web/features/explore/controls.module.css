@@ -1,16 +1,5 @@
 .bar { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: end; margin-bottom: var(--space-5); }
-.field { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); color: var(--color-muted); min-width: 0; }
 .search { grid-column: 1 / -1; }
-.field input, .field select {
-  min-height: var(--tap-min); padding: 0 var(--space-3); font: inherit; font-size: var(--text-md); color: var(--color-fg);
-  background: var(--color-bg); border: 1px solid var(--color-line); border-radius: var(--radius); width: 100%; min-width: 0;
-}
-.field input:focus-visible, .field select:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; }
-.reset {
-  min-height: var(--tap-min); padding: 0 var(--space-4); font: inherit; font-weight: var(--weight-strong); color: var(--color-accent);
-  background: transparent; border: 1px solid var(--color-line); border-radius: var(--radius); cursor: pointer;
-}
-.reset:disabled { color: var(--color-muted); cursor: default; }
 .count { margin: 0; font-size: var(--text-sm); color: var(--color-muted); align-self: center; justify-self: end; }
 @media (min-width: 960px) {
   .bar { grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(0, 1fr)) auto auto; }
