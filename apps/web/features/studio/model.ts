@@ -5,7 +5,9 @@
 // 리듀서는 순수하다. 연산은 (doc, args) → 새 doc 순수 함수라서 호출해도 부작용이 없다. 시간은 액션이 들고 온다.
 import {core} from './core';
 import {clampPath, nodeAt, pathExists} from './paths';
+import type {ImpactReport} from './impact';
 import {isDisposable} from './protect';
+import type {SharePayload} from './share';
 import type {Blueprint, Device, Diagnostic, Node, NodePath, OpResult, Origin, Pane, Picks, PreviewScheme, ScaleMode, StartRequest, Tab} from './types';
 
 // ---------------------------------------------------------------- 상태 타입
@@ -19,12 +21,15 @@ export type PendingAction =
   | {kind: 'replaceTemplate'; template: string; keepAppearance: boolean}
   | {kind: 'reset'}
   | {kind: 'import'; text: string; upgrade: boolean}
-  | {kind: 'start'; request: StartRequest};
+  | {kind: 'start'; request: StartRequest}
+  | {kind: 'shared'; payload: SharePayload};
 
 export type Dialog =
   | {kind: 'template'}
   | {kind: 'import'}
   | {kind: 'confirm'; action: PendingAction}
+  /** 구 문서를 2.6.0 재료로 올리는 변경의 영향 요약. 확인해야 적용한다. */
+  | {kind: 'impact'; intent: Intent; report: ImpactReport}
   | null;
 
 export type Snapshot = {doc: Blueprint; origin: Origin; picked: Picks; selection: NodePath; modified: boolean; baseline: Blueprint | null};
@@ -50,6 +55,8 @@ export type StudioState = {
     notices: Notice[];
     storage: StorageStatus;
     recovery: Recovery | null;
+    /** 주소 해시에 작업을 담을 수 있는가. 문서가 너무 크면 false 이고 그 이유가 있다. */
+    shareUrl: {ok: boolean; reason?: string};
     seq: number;
   };
   view: {tab: Tab; pane: Pane; device: Device; scaleMode: ScaleMode; scheme: PreviewScheme; dialog: Dialog; focusRequest: {path: NodePath; field: string | null; id: number} | null};
@@ -58,7 +65,7 @@ export type StudioState = {
 export const initialState: StudioState = {
   phase: 'loading',
   document: {doc: null, validity: {ok: false, errors: [], warnings: []}},
-  session: {origin: null, picked: {}, selection: [], undo: [], redo: [], modified: false, baseline: null, lastValid: null, compileErrors: [], error: null, warnings: [], notices: [], storage: {status: 'idle'}, recovery: null, seq: 0},
+  session: {origin: null, picked: {}, selection: [], undo: [], redo: [], modified: false, baseline: null, lastValid: null, compileErrors: [], error: null, warnings: [], notices: [], storage: {status: 'idle'}, recovery: null, shareUrl: {ok: true}, seq: 0},
   view: {tab: 'structure', pane: 'split', device: 1280, scaleMode: 'fit', scheme: 'document', dialog: null, focusRequest: null},
 };
 
@@ -81,16 +88,18 @@ export type Intent =
   | {kind: 'replaceTemplate'; template: string; keepAppearance: boolean}
   | {kind: 'reset'; template?: string}
   | {kind: 'import'; text: string; upgrade?: boolean}
-  | {kind: 'start'; request: StartRequest};
+  | {kind: 'start'; request: StartRequest}
+  | {kind: 'openShared'; payload: SharePayload};
 
 /** 2.6.0 문서의 색은 내부 팔레트에서만 온다. 외부(Coolors) 팔레트는 권리를 확인하지 못해 2.6.0 경로에 쓰지 않는다(docs/materials/audit.md §3). */
 const INTERNAL_COLOR = 'static-kit';
 /** 문서 전체를 새로 세우는 의도. 수정 여부와 기준 문서(baseline)를 새로 잡는다. */
-const FRESH = new Set<Intent['kind']>(['replaceTemplate', 'reset', 'import', 'start']);
+const FRESH = new Set<Intent['kind']>(['replaceTemplate', 'reset', 'import', 'start', 'openShared']);
 export const DEFAULT_TEMPLATE = 'dashboard-overview';
 
 export type Context = {doc: Blueprint | null; origin: Origin; picked: Picks; selection: NodePath};
-export type Outcome = {res: OpResult; origin: Origin; picked: Picks; selection: NodePath};
+/** modified 를 정하면 FRESH 의도의 기본값(수정 없음) 대신 그 값을 쓴다. 공유 링크의 작업 상태가 이어진다. */
+export type Outcome = {res: OpResult; origin: Origin; picked: Picks; selection: NodePath; modified?: boolean};
 
 const failed = (doc: Blueprint | null, errors: Diagnostic[], warnings: Diagnostic[] = []): OpResult => ({ok: false, doc: doc as Blueprint, changes: [], errors, warnings, content: null});
 const childrenOf = (doc: Blueprint | null, parent: NodePath): Node[] => (nodeAt(doc, parent)?.children as Node[] | undefined) ?? [];
@@ -258,6 +267,10 @@ export function perform(ctx: Context, intent: Intent): Outcome {
       return keep(op(doc, 'importBlueprint', {blueprint: intent.text, upgrade: intent.upgrade === true, discard: true}), {origin: null, picked: {}, selection: []});
     case 'start':
       return startRequest(ctx, intent.request);
+    case 'openShared': {
+      const {payload} = intent;
+      return keep(op(doc, 'importBlueprint', {blueprint: payload.doc, discard: true}), {origin: payload.origin, picked: payload.picked, selection: [], modified: payload.modified});
+    }
   }
 }
 
@@ -276,12 +289,17 @@ export type Action =
   | {type: 'compiled'; doc: Blueprint; scheme: PreviewScheme; result: {ok: true; html: string; warnings: Diagnostic[]} | {ok: false; errors: Diagnostic[]}}
   | {type: 'storage'; storage: StorageStatus}
   | {type: 'recovered'; cleared: boolean}
-  | {type: 'notice'; level: Notice['level']; text: string; details?: Diagnostic[]};
+  | {type: 'notice'; level: Notice['level']; text: string; details?: Diagnostic[]}
+  | {type: 'shareUrl'; ok: boolean; reason?: string};
 
 /** 시작 시 한 번 계산한 상태 조각. 계산은 boot.ts가 하고 리듀서는 그대로 얹는다. */
 export type BootState = {
   phase: 'start' | 'ready';
   doc: Blueprint | null; origin: Origin; picked: Picks; selection: NodePath; modified: boolean;
+  /** 저장된 기준 문서와 실행 취소 기록. 없으면 이전 규칙(수정 없는 문서만 기준으로 삼고 기록은 비운다)을 쓴다. */
+  baseline?: Blueprint | null;
+  undo?: HistoryEntry[];
+  redo?: HistoryEntry[];
   view: Partial<StudioState['view']>;
   notices: Omit<Notice, 'id'>[];
   recovery: Recovery | null;
@@ -315,12 +333,12 @@ export function reducer(s: StudioState, a: Action): StudioState {
       const b = a.state;
       let seq = s.session.seq;
       const notices = b.notices.map(n => ({...n, id: ++seq}));
-      const baseline = b.doc && !b.modified ? b.doc : null;
+      const baseline = b.baseline !== undefined ? b.baseline : b.doc && !b.modified ? b.doc : null;
       return {
         ...s,
         phase: b.phase,
         document: {doc: b.doc, validity: validity(b.doc)},
-        session: {...s.session, origin: b.origin, picked: b.picked, selection: b.doc ? clampPath(b.doc, b.selection) : [], modified: b.modified, baseline, undo: [], redo: [], notices, recovery: b.recovery, storage: b.storage, seq},
+        session: {...s.session, origin: b.origin, picked: b.picked, selection: b.doc ? clampPath(b.doc, b.selection) : [], modified: b.modified, baseline, undo: b.undo ?? [], redo: b.redo ?? [], notices, recovery: b.recovery, storage: b.storage, seq},
         view: {...s.view, ...b.view},
       };
     }
@@ -342,7 +360,7 @@ export function reducer(s: StudioState, a: Action): StudioState {
         if (a.coalesce && top && top.coalesceKey === a.coalesce && a.at - top.at < 2000) undo = [...undo.slice(0, -1), {...top, at: a.at}];
         else undo = [...undo, {...prev, coalesceKey: a.coalesce, at: a.at}].slice(-HISTORY_LIMIT);
       }
-      const next: Snapshot = {doc: res.doc, origin: out.origin, picked: out.picked, selection: out.selection, modified: fresh ? false : true, baseline: fresh ? res.doc : s.session.baseline};
+      const next: Snapshot = {doc: res.doc, origin: out.origin, picked: out.picked, selection: out.selection, modified: out.modified ?? (fresh ? false : true), baseline: fresh ? res.doc : s.session.baseline};
       return {...withDoc(s, next, {undo, redo: [], warnings: res.warnings, seq}), phase: 'ready'};
     }
     case 'undo': {
@@ -390,6 +408,8 @@ export function reducer(s: StudioState, a: Action): StudioState {
     }
     case 'storage':
       return {...s, session: {...s.session, storage: a.storage}};
+    case 'shareUrl':
+      return s.session.shareUrl.ok === a.ok && s.session.shareUrl.reason === a.reason ? s : {...s, session: {...s.session, shareUrl: {ok: a.ok, reason: a.reason}}};
     case 'recovered':
       if (!a.cleared) {
         const id = nextNoticeId(s);

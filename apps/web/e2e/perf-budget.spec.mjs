@@ -13,8 +13,8 @@ const ROUTES = [
   {path: '/components', gz: 178_654, raw: 580_692, budgetGz: 206_000, budgetRaw: 669_000},
   {path: '/components/hero', gz: 179_231, raw: 582_152, budgetGz: 207_000, budgetRaw: 670_000},
   {path: '/studio', gz: 196_496, raw: 640_551, budgetGz: 227_000, budgetRaw: 737_000},
-  {path: '/docs/getting-started', gz: 178_050, raw: 579_731, budgetGz: 205_000, budgetRaw: 667_000},
-  {path: '/integrations/mcp', gz: 178_050, raw: 579_731, budgetGz: 205_000, budgetRaw: 667_000},
+  {path: '/docs/guide/getting-started', gz: 178_050, raw: 579_731, budgetGz: 205_000, budgetRaw: 667_000},
+  {path: '/docs/integrations/mcp', gz: 178_050, raw: 579_731, budgetGz: 205_000, budgetRaw: 667_000},
 ];
 
 // Core 번들(카탈로그 전체)에만 있는 문자열. 이 CSS 주석은 src/styles/expression.mjs 가 내보낸다.

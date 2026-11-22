@@ -1,5 +1,5 @@
 'use client';
-import {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {useLayoutEffect, useRef, useState} from 'react';
 import {useStudio} from '../context';
 import {DEVICES, SCHEMES, type Device, type PreviewScheme} from '../types';
 import {useNarrow} from '../useNarrow';
@@ -40,9 +40,12 @@ export function PreviewPane() {
   const scale = view.scaleMode === 'fit' && w > 0 ? Math.min(1, w / device) : 1;
   const html = session.lastValid?.html ?? '';
   const frameHeight = h > 0 ? Math.max(240, h / scale) : 600;
+  // 미리보기가 바뀔 때마다 iframe 요소를 새로 만든다. 이미 열린 iframe의 srcdoc 을 바꾸면 Chromium이 편집마다 history 항목을 하나씩
+  // 쌓아 뒤로 가기가 무반응이 된다(web-audit B10). 새로 끼운 iframe의 첫 탐색은 항목을 만들지 않는다. 렌더 중에 키를 정해야
+  // 바뀐 html이 옛 iframe에 한 번이라도 들어가지 않는다.
   const [swaps, setSwaps] = useState(0);
-  const last = useRef('');
-  useEffect(() => { if (html && html !== last.current) { last.current = html; setSwaps(n => n + 1); } }, [html]);
+  const [shown, setShown] = useState('');
+  if (html && html !== shown) { setShown(html); setSwaps(n => n + 1); }
 
   return (
     <section className={styles.previewPane} aria-label="미리보기" hidden={hidden} data-testid="preview" data-scale={scale.toFixed(4)} data-device={device} data-compiles={api.compileCount} data-swaps={swaps}>
@@ -69,8 +72,8 @@ export function PreviewPane() {
       <div ref={stage} className={styles.stage} data-scale-mode={view.scaleMode}>
         {html ? (
           <div className={styles.frameBox} style={{width: device * scale, height: frameHeight * scale}}>
-            {/* sandbox="" : 스크립트·같은 출처·폼 제출·팝업 없이 렌더만 한다. srcdoc 갱신은 문서 이동이 아니라 history를 늘리지 않는다. */}
-            <iframe title="문서 미리보기" sandbox="" srcDoc={html} className={styles.frame} style={{width: device, height: frameHeight, transform: `scale(${scale})`}} data-testid="preview-frame" />
+            {/* sandbox="" : 스크립트·같은 출처·폼 제출·팝업 없이 렌더만 한다. key 가 바뀌면 새 iframe이라 history 항목이 늘지 않는다. */}
+            <iframe key={swaps} title="문서 미리보기" sandbox="" srcDoc={html} className={styles.frame} style={{width: device, height: frameHeight, transform: `scale(${scale})`}} data-testid="preview-frame" />
           </div>
         ) : <p className={styles.muted} role="status">미리보기를 만드는 중입니다…</p>}
       </div>

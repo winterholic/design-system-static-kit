@@ -2,9 +2,9 @@
 import {expect, test} from '@playwright/test';
 
 const WIDTHS = [390, 768, 1280];
-const NAV = ['Explore', 'Materials', 'Components', 'Docs', 'Integrations', 'Studio'];
-const ROUTES = ['/', '/explore', '/explore/saas-landing', '/explore/combos', '/components', '/components/hero', '/studio', '/docs', '/docs/getting-started',
-  '/integrations', '/integrations/cli', '/integrations/rest-api', '/integrations/mcp', '/dev/qa',
+const NAV = ['Explore', 'Materials', 'Components', 'Studio', 'Docs'];
+const ROUTES = ['/', '/explore', '/explore/saas-landing', '/explore/combos', '/components', '/components/hero', '/studio', '/docs', '/docs/guide/getting-started', '/docs/guide/principles', '/docs/core/blueprint',
+  '/docs/integrations', '/docs/integrations/cli', '/docs/integrations/rest-api', '/docs/integrations/mcp', '/dev/qa',
   '/materials', '/materials/color', '/materials/typography', '/materials/foundations', '/materials/foundations/radius', '/dev/ui'];
 
 const overflow = page => page.evaluate(() => ({scroll: document.documentElement.scrollWidth, width: document.documentElement.clientWidth}));
@@ -73,13 +73,13 @@ test.describe('모바일 메뉴 접근성', () => {
     await page.goto('/');
     await page.getByRole('button', {name: /메뉴/}).click();
     const names = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 6; i++) {
       await page.keyboard.press('Tab');
       names.push(await page.evaluate(() => document.activeElement?.textContent?.trim().replace(/^메뉴.*/, '메뉴')));
     }
-    expect(new Set(names)).toEqual(new Set(['Materials', 'Components', 'Docs', 'Integrations', 'Studio', '메뉴', 'Explore']));
+    expect(new Set(names)).toEqual(new Set(['Materials', 'Components', 'Studio', 'Docs', '메뉴', 'Explore']));
     // 거꾸로 돌아도 같은 고리 안이다(footer 의 GitHub 링크로 빠지지 않는다).
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 6; i++) {
       await page.keyboard.press('Shift+Tab');
       expect(await page.evaluate(() => document.activeElement?.closest('header') !== null)).toBe(true);
     }
@@ -101,7 +101,7 @@ test.describe('모바일 메뉴 접근성', () => {
     await page.getByRole('button', {name: /메뉴/}).click();
     await page.setViewportSize({width: 1000, height: 800});
     await expect(page.getByRole('button', {name: /메뉴/})).toBeHidden();
-    await expect(page.getByRole('navigation', {name: '주요 메뉴'}).getByRole('link')).toHaveCount(6);
+    await expect(page.getByRole('navigation', {name: '주요 메뉴'}).getByRole('link')).toHaveCount(5);
   });
 });
 
@@ -116,7 +116,7 @@ test.describe('데스크톱 내비와 푸터', () => {
   test('내부 설계서·진단·test-lab 링크가 상단 내비에 없다', async ({page}) => {
     await page.goto('/');
     const hrefs = await page.locator('header a').evaluateAll(a => a.map(x => x.getAttribute('href')));
-    expect(hrefs.sort()).toEqual(['/', '/components', '/docs', '/explore', '/integrations', '/materials', '/studio']);
+    expect(hrefs.sort()).toEqual(['/', '/components', '/docs', '/explore', '/materials', '/studio']);
   });
 
   test('푸터에 GitHub 링크가 있다', async ({page}) => {
@@ -144,7 +144,7 @@ test.describe('/#catalog 호환', () => {
   test('해시가 없거나 다르면 홈에 머문다', async ({page}) => {
     await page.goto('/#other');
     await expect(page).toHaveURL(/\/#other$/);
-    await expect(page.locator('h1')).toContainText('고르면');
+    await expect(page.locator('h1')).toContainText('디자인을 고르고');
   });
 });
 

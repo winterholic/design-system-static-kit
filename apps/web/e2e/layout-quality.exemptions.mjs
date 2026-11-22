@@ -10,7 +10,7 @@ export const EXEMPTIONS = [
     reason: '정적 문서의 목차 링크는 섹션 제목 전문(40자 안팎)이다. 360px에서 두 줄이 되는 것이 의도이고, 줄이 늘어도 어색하지 않게 알약(999px) 대신 둥근 사각형(16px)으로 바꿨다. 제목을 줄이면 문서 내용이 바뀐다.',
   },
   {
-    code: 'BODY_ORPHAN', page: /\/docs\/(tokens-themes|spacing\.html)/, width: 360,
+    code: 'BODY_ORPHAN', page: /\/docs\/(core\/tokens-themes|spacing\.html)/, width: 360,
     reason: 'text-wrap: pretty를 켜도 360px 좁은 칸의 긴 목록 항목(6줄 안팎) 끝줄에 4자 미만의 한 단어가 남는다. 칸 폭이 정한 줄바꿈이고 경고 수준이다. text-wrap: balance는 긴 단락을 모두 고르게 깎아 데스크톱 가독성을 해치므로 쓰지 않는다.',
   },
 ];

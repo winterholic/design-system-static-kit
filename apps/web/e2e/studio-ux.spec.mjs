@@ -107,6 +107,11 @@ for (const template of ['dashboard-overview', 'agency-home']) {
       for (const option of usable.filter((_, k) => k % step === 0)) {
         // 앞서 고른 값 때문에 이 선택지가 지금은 충돌할 수 있다(선택지는 현재 조합 기준이다). 지금 활성인 것만 누른다.
         if (!await pick(page, select, option.value, {skipDisabled: true})) continue;
+        // 구 문서가 2.6.0 재료를 고르면 영향 요약이 먼저 뜬다. 이 시험은 선택지가 오류 없이 적용되는지 보므로 확인까지 누른다.
+        if (id.startsWith('material-')) {
+          const impact = page.getByTestId('impact-dialog');
+          if (await impact.waitFor({state: 'visible', timeout: 600}).then(() => true, () => false)) await page.getByRole('dialog').getByRole('button', {name: '적용'}).click();
+        }
         await expect(page.getByTestId('op-error'), `${id}=${option.value}`).toHaveCount(0);
       }
     }

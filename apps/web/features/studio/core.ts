@@ -21,9 +21,13 @@ export interface Core {
     modeChoices(doc: Blueprint): Choice[];
     axisChoices(doc: Blueprint): Record<string, Choice[]>;
     layoutChoices(doc: Blueprint, slots: {id: string; options: {id: string}[]}[]): Record<string, LayoutChoice[]>;
+    /** 변경 전/후 문서의 필드 차이. 영향 요약의 "바뀌는 값"과 "내가 고친 곳"의 근거다. */
+    diffDocs(before: unknown, after: unknown): {op: string; path: string; before?: unknown; after?: unknown}[];
+    /** 콘텐츠(글·링크 등)만 비교한다. missing 은 바뀐 문서에서 사라진 항목이다. */
+    contentDiff(before: unknown, after: unknown): {missing: unknown[]; added: unknown[]};
   };
   service: {
-    compileBlueprint(bp: unknown, opts?: Record<string, unknown>): Envelope<{html?: string; sizes?: unknown}>;
+    compileBlueprint(bp: unknown, opts?: Record<string, unknown>): Envelope<{html?: string; sizes?: unknown; tokens?: Record<string, Record<string, string>>}>;
     validateBlueprint(bp: unknown): Envelope<{valid: true}>;
     listCatalog(q: Record<string, unknown>): Envelope<{items: any[]; total: number; nextCursor: string | null}>;
     getComponentSpec(q: {type: string; catalogVersion?: string}): Envelope<ComponentSpec>;

@@ -10,8 +10,8 @@ const PAGES = [
   {name: 'Components 목록', path: '/components'},
   {name: 'Components hero', path: '/components/hero'},
   {name: 'Studio', path: '/studio?template=dashboard-overview', ready: '[data-phase="ready"]'},
-  {name: 'Docs 시작하기', path: '/docs/getting-started'},
-  {name: 'Integrations MCP', path: '/integrations/mcp'},
+  {name: 'Docs 시작하기', path: '/docs/guide/getting-started'},
+  {name: 'Integrations MCP', path: '/docs/integrations/mcp'},
 ];
 const WIDTHS = [390, 1280];
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];

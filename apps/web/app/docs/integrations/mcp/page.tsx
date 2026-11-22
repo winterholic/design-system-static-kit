@@ -6,7 +6,7 @@ export const metadata = {title: 'MCP 연동'};
 
 export default function Page() {
   return (
-    <PageShell eyebrow="Integrations" title="MCP · Streamable HTTP" lead="MCP 클라이언트에서 엔드포인트를 등록하고, 목록과 스키마를 살펴본 뒤 검증·컴파일 도구를 호출합니다.">
+    <PageShell eyebrow="Docs · 연동" title="MCP · Streamable HTTP" lead="MCP 클라이언트에서 엔드포인트를 등록하고, 목록과 스키마를 살펴본 뒤 검증·컴파일 도구를 호출합니다.">
       <article className="prose">
         <h2 className="section-title">연결</h2>
         <p>엔드포인트는 <code>http://localhost:3000/api/mcp</code>입니다. 클라이언트가 원격 Streamable HTTP 연결을 지원하면 이 URL을 서버 주소로 등록합니다. 클라이언트별 설정 파일 형식은 제품마다 다르므로 그 클라이언트의 HTTP MCP 설정란에 URL을 입력하세요.</p>
@@ -39,9 +39,9 @@ try {
         </ol>
         <p>도구는 여섯 개이며 모두 공통 서비스 계층의 함수 하나에 연결됩니다. 실패도 JSON 봉투로 반환하고 프로토콜의 도구 결과에서 <code>isError</code>가 참입니다. 알 수 없는 인자는 <code>BAD_REQUEST</code>로 거부합니다. HTML·CSS·스크립트·임의 URL 실행 기능은 제공하지 않습니다.</p>
         <p>Streamable HTTP 서버는 상태 없는 단일 Next Route Handler입니다. MCP의 2026-07-28 stateless 흐름과 2025-era Streamable HTTP 클라이언트를 같은 엔드포인트가 받습니다. 배포 함수의 상한은 30초이며 도구 호출은 결과 반환 후 10초 상한을 확인합니다.</p>
-        <p><Link href="/integrations/rest-api">REST API</Link>에는 같은 카탈로그와 OpenAPI 명세가 있습니다.</p>
+        <p><Link href="/docs/integrations/rest-api">REST API</Link>에는 같은 카탈로그와 OpenAPI 명세가 있습니다.</p>
       </article>
-      <p><ButtonLink href="/integrations" variant="quiet">연동 목록으로</ButtonLink></p>
+      <p><ButtonLink href="/docs/integrations" variant="quiet">연동 목록으로</ButtonLink></p>
     </PageShell>
   );
 }

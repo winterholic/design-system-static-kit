@@ -5,7 +5,7 @@ import {checkPage, checkUrls, discoverPaths, formatReport, summarize, DEFAULT_WI
 import {EXEMPTIONS} from './layout-quality.exemptions.mjs';
 
 // 공개 목록 페이지에서 한 단계 아래 링크를 따라가 페이지 집합을 만든다(문서·컴포넌트·Explore 상세 포함). 내부 QA(/dev)·API·정적 산출물 경로는 제외한다.
-const SEEDS = ['/', '/explore', '/explore?page=2', '/components', '/docs', '/integrations', '/studio', '/materials', '/materials/color', '/materials/typography', '/materials/typography?preset=erp', '/materials/typography?preset=document', '/materials/typography?preset=marketing', '/materials/foundations', '/materials/foundations/radius', '/materials/foundations/density', '/materials/foundations/elevation', '/materials/foundations/icon'];
+const SEEDS = ['/', '/explore', '/explore?page=2', '/components', '/docs', '/docs/integrations', '/docs/guide/principles', '/studio', '/materials', '/materials/color', '/materials/typography', '/materials/typography?preset=erp', '/materials/typography?preset=document', '/materials/typography?preset=marketing', '/materials/foundations', '/materials/foundations/radius', '/materials/foundations/density', '/materials/foundations/elevation', '/materials/foundations/icon'];
 
 test('공개 페이지 전체가 4개 폭에서 줄바꿈·잘림·넘침·상단 바 정렬 검사를 통과한다(면제는 사유 있는 것만)', async ({page, baseURL, browser}) => {
   test.setTimeout(900_000);

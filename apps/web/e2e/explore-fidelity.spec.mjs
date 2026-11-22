@@ -57,8 +57,9 @@ test('복합 대표 디자인의 컴파일 HTML·Blueprint·화면·Studio 링�
   const listHtml = await list.text();
   expect(list.status()).toBe(200);
   expect(listHtml).toContain(`/explore/${id}`);
-  expect(listHtml).toContain('복합 대표 디자인');
-  expect(listHtml).toContain('pearl');
-  expect(listHtml).toContain('dark');
-  expect(listHtml).toContain('hero:product');
+  // 목록 카드는 사람이 읽는 말(팔레트 이름, 모드)만 보이고 내부 값(hero:product, 팔레트 id)은 상세의 "구성 값 자세히"에만 있다(web-audit E1).
+  expect(listHtml).toContain('여러 재료를 함께 바꾼 사례');
+  expect(listHtml).toContain('다크 모드');
+  expect(listHtml).not.toContain('hero:product');
+  expect(listHtml).not.toContain('복합 대표 디자인');
 });

@@ -70,7 +70,7 @@ export function SiteHeader() {
         </button>
         <nav id="site-nav" ref={navRef} className={styles.nav} data-open={open} aria-label="주요 메뉴">
           {NAV_ITEMS.map(item => (
-            <Link key={item.href} href={item.href} className={styles.link} aria-current={isActive(pathname, item.href) ? 'page' : undefined}>
+            <Link key={item.href} href={item.href} className={styles.link} data-secondary={item.secondary ? 'true' : undefined} aria-current={isActive(pathname, item.href) ? 'page' : undefined}>
               {item.label}
             </Link>
           ))}

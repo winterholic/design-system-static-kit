@@ -28,5 +28,7 @@
   .toggle { display: none; }
   .nav, .nav[data-open="true"] { display: flex; flex-direction: row; position: static; padding: 0; border: 0; gap: var(--space-5); }
   .link { font-size: var(--text-sm); }
+  .link[data-secondary="true"] { margin-left: var(--space-4); padding-left: var(--space-5); border-left: 1px solid var(--color-line); color: var(--color-muted); font-weight: var(--weight-regular); }
+  .link[data-secondary="true"][aria-current="page"] { color: var(--color-accent); }
   .link[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.5em; text-decoration-thickness: 2px; }
 }

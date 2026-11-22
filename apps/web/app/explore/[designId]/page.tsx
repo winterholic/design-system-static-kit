@@ -49,21 +49,22 @@ export default async function DesignPage({params}: Props) {
         <PreviewFrame src={render} title={`${design.label} (${design.themeName}) 컴파일 결과`} />
       </Suspense>
 
-      <h2 className="section-title">구성</h2>
-      <dl className={styles.facts}>
-        <div><dt>템플릿</dt><dd>{design.label} <small>{design.template}</small></dd></div>
-        <div><dt>테마</dt><dd>{design.themeName} <small>{design.themeId} · {design.styleLabel}</small></dd></div>
-        <div><dt>변형</dt><dd>{design.variantLabel ? <>{design.variantLabel} <small>{design.variant}</small></> : '테마 기본'}</dd></div>
-        <div>
-          <dt>팔레트</dt>
-          <dd>
-            {design.paletteName} <small>{design.paletteId}</small>
-            <div className={styles.swatches} aria-hidden="true">{design.paletteColors.map(c => <span key={c} className={styles.swatch} style={{background: c}} />)}</div>
-          </dd>
-        </div>
-        <div><dt>모드</dt><dd>{MODE_LABEL[design.resolvedMode] ?? design.resolvedMode} <small>{design.resolvedMode}</small></dd></div>
-        {layout.length ? <div><dt>구성 변형</dt><dd>{layout.map(([slot, option]) => `${slot}:${option}`).join(', ')}</dd></div> : null}
-      </dl>
+      <h2 className="section-title">이 화면은 이렇게 조립됐습니다</h2>
+      <p className={styles.recipeLine}>
+        <span className={styles.swatches} aria-hidden="true">{design.paletteColors.map(c => <span key={c} className={styles.swatch} style={{background: c}} />)}</span>
+        <span>{design.label}에 <strong>{design.themeName}{design.variantLabel ? ` · ${design.variantLabel}` : ''}</strong> 테마, <strong>{design.paletteName}</strong> 팔레트, <strong>{MODE_LABEL[design.resolvedMode] ?? design.resolvedMode}</strong> 모드를 적용했습니다.</span>
+      </p>
+      <details className={styles.json}>
+        <summary>구성 값 자세히</summary>
+        <dl className={styles.facts}>
+          <div><dt>템플릿</dt><dd>{design.label} <small>{design.template}</small></dd></div>
+          <div><dt>테마</dt><dd>{design.themeName} <small>{design.themeId} · {design.styleLabel}</small></dd></div>
+          <div><dt>변형</dt><dd>{design.variantLabel ? <>{design.variantLabel} <small>{design.variant}</small></> : '테마 기본'}</dd></div>
+          <div><dt>팔레트</dt><dd>{design.paletteName} <small>{design.paletteId}</small></dd></div>
+          <div><dt>모드</dt><dd>{MODE_LABEL[design.resolvedMode] ?? design.resolvedMode} <small>{design.resolvedMode}</small></dd></div>
+          {layout.length ? <div><dt>구성 변형</dt><dd>{layout.map(([slot, option]) => `${slot}:${option}`).join(', ')}</dd></div> : null}
+        </dl>
+      </details>
 
       <CopyJson src={`/explore/${design.id}/blueprint.json`} label="Blueprint JSON" />
 

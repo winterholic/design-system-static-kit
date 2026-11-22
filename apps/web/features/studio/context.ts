@@ -23,6 +23,12 @@ export type StudioApi = {
   /** 수정된 작업이 있으면 확인 대화상자를 거치고, 없으면 바로 실행한다. */
   requestAction(action: PendingAction): void;
   confirmAction(action: PendingAction): void;
+  /** 구 문서를 2.6.0 재료로 올리는 변경은 영향 요약을 먼저 보여 주고, 그 밖의 변경은 바로 적용한다. */
+  editWithImpact(intent: Intent): void;
+  /** 영향 요약 대화상자에서 적용을 눌렀을 때. */
+  confirmImpact(intent: Intent): void;
+  /** 주소를 클립보드에 복사한다. 작업이 해시에 담겨 있어 같은 주소로 같은 작업을 연다. */
+  copyLink(): Promise<void>;
   jumpTo(diagnostic: Diagnostic): boolean;
   dismissError(): void;
   dismissNotice(id: number): void;

@@ -6,8 +6,8 @@ import {SITE_NAME} from '@/lib/nav';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: {default: `${SITE_NAME} · 디자인 컴파일러`, template: `%s · ${SITE_NAME}`},
-  description: '카탈로그가 허용한 값만 조합해 접근성 게이트를 통과한 HTML·CSS·토큰을 만드는 디자인 컴파일러.',
+  title: {default: `${SITE_NAME} · 디자인 탐색, 재료 조합, 코드 조립`, template: `%s · ${SITE_NAME}`},
+  description: '완성된 디자인을 둘러보고, 색·글자·부품을 바꿔 보고, 접근성 검사를 통과한 HTML·CSS·토큰으로 가져가세요.',
 };
 export const viewport: Viewport = {width: 'device-width', initialScale: 1};
 

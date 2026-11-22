@@ -1,7 +1,7 @@
 // 보안 시험: 응답 헤더, Studio 미리보기 iframe 의 sandbox, REST·MCP 의 413·429 거부.
 import {expect, test} from '@playwright/test';
 
-const PAGES = ['/', '/explore', '/explore/saas-landing', '/components/hero', '/studio', '/docs/getting-started', '/integrations/mcp', '/explore/saas-landing/render', '/examples/saas-landing/', '/api/v1/openapi.json'];
+const PAGES = ['/', '/explore', '/explore/saas-landing', '/components/hero', '/studio', '/docs/guide/getting-started', '/docs/integrations/mcp', '/explore/saas-landing/render', '/examples/saas-landing/', '/api/v1/openapi.json'];
 
 for (const path of PAGES) {
   test(`보안 헤더: ${path}`, async ({request}) => {

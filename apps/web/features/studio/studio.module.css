@@ -106,3 +106,9 @@
   .frameBox { margin-inline: auto; }
   .moreList { right: auto; left: 0; }
 }
+
+.impact { margin: 0 0 var(--space-4); }
+.impact div { display: grid; grid-template-columns: 7rem 1fr; gap: var(--space-3); padding: var(--space-2) 0; border-top: 1px solid var(--color-line); }
+.impact div:last-child { border-bottom: 1px solid var(--color-line); }
+.impact dt { color: var(--color-muted); font-size: var(--text-sm); }
+.impact dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }

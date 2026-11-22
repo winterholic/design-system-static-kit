@@ -13,3 +13,10 @@
 .pager a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--color-line); border-radius: var(--radius); text-decoration: none; font-weight: var(--weight-strong); }
 .pager [aria-disabled='true'] { color: var(--color-muted); border-color: transparent; pointer-events: none; }
 .aside { margin-top: var(--space-8); max-width: var(--measure); color: var(--color-muted); font-size: var(--text-sm); }
+
+.featured { margin-bottom: var(--space-6); }
+.featuredLead { margin: 0 0 var(--space-5); color: var(--color-muted); max-width: var(--measure); }
+.recipe { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: var(--space-1) 0 0; font-size: var(--text-sm); color: var(--color-muted); }
+.swatches { display: inline-flex; gap: 2px; }
+.swatches i { display: block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgb(0 0 0 / 0.12); }
+.badge { display: inline-block; margin: var(--space-2) 0 0; padding: 0 var(--space-2); border: 1px solid var(--color-line); border-radius: 999px; font-size: var(--text-xs); color: var(--color-muted); }

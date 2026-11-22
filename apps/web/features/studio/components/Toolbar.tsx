@@ -24,6 +24,7 @@ export function Toolbar() {
     <>
       <Button size="sm" onClick={close(() => api.withCore(() => api.openDialog({kind: 'template'})))}>템플릿 바꾸기</Button>
       <Button size="sm" onClick={close(() => api.withCore(() => api.openDialog({kind: 'import'})))}>JSON 가져오기</Button>
+      <Button size="sm" disabled={!hasDoc} onClick={close(api.copyLink)}>링크 복사</Button>
       <Button size="sm" disabled={!hasDoc} onClick={close(() => api.requestAction({kind: 'reset'}))}>초기화</Button>
       <Button size="sm" disabled={!hasDoc} onClick={close(api.exportJson)}>JSON 내보내기</Button>
       <Button size="sm" disabled={!hasDoc || !api.core} onClick={close(api.exportHtml)}>HTML 내보내기</Button>
@@ -34,7 +35,7 @@ export function Toolbar() {
     <div className={styles.toolbar} role="toolbar" aria-label="문서 도구">
       <div className={styles.docInfo}>
         <h2 className={styles.docName}>{document_.doc ? String(document_.doc.name) : 'Studio'}</h2>
-        {hasDoc ? <p className={styles.docStatus} role="status">{session.modified ? '수정됨' : '수정 없음'}{save ? ` · ${save}` : ''}{session.origin ? '' : ' · 가져온 문서'}</p> : null}
+        {hasDoc ? <p className={styles.docStatus} role="status">{session.modified ? '수정됨' : '수정 없음'}{save ? ` · ${save}` : ''}{session.origin ? '' : ' · 가져온 문서'}{session.shareUrl.ok ? '' : ' · 링크 공유 불가(문서가 큼)'}</p> : null}
       </div>
       <div className={styles.actions}>
         <Button size="sm" disabled={!session.undo.length} onClick={api.undo} aria-keyshortcuts="Control+Z Meta+Z">실행 취소</Button>

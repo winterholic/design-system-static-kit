@@ -4,8 +4,8 @@ import {optionStates, pick, valueOf} from './helpers/select.mjs';
 
 test('홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 복원된다', async ({page}) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', {name: /디자인 컴파일러/})).toBeVisible();
-  await expect(page.getByRole('link', {name: 'Explore 둘러보기'})).toBeVisible();
+  await expect(page.getByRole('heading', {level: 1, name: /디자인을 고르고/})).toBeVisible();
+  await expect(page.getByRole('link', {name: '디자인 둘러보기'})).toBeVisible();
   await expect(page.getByRole('link', {name: 'Studio에서 만들기'})).toBeVisible();
   await page.goto('/explore');
   const type = page.getByRole('combobox', {name: '페이지 유형'});

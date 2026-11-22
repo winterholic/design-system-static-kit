@@ -1,7 +1,8 @@
 'use client';
 import {useEffect, useId, useRef, useState, type ReactNode} from 'react';
 import {useStudio} from '../context';
-import type {PendingAction} from '../model';
+import type {Intent, PendingAction} from '../model';
+import type {ImpactReport} from '../impact';
 import type {Diagnostic} from '../types';
 import {DiagnosticList} from './Banners';
 import {Button, Checkbox, Input, Textarea} from '@/ui';
@@ -36,6 +37,8 @@ function confirmCopy(action: PendingAction, templateLabel: (id: string) => strin
       return {title: '초기화할까요?', body: `${resetTarget}의 처음 상태로 돌아갑니다. 수정한 내용은 사라지지만 실행 취소(Ctrl+Z)로 되돌릴 수 있습니다.`, ok: '초기화', cancel: '취소'};
     case 'import':
       return {title: '가져온 JSON으로 바꿀까요?', body: '수정한 내용이 가져온 문서로 바뀝니다. 가져온 문서는 출처 템플릿을 알 수 없습니다. 실행 취소(Ctrl+Z)로 되돌릴 수 있습니다.', ok: '가져와서 바꾸기', cancel: '취소'};
+    case 'shared':
+      return {title: '공유 링크의 작업으로 바꿀까요?', body: `이 브라우저에 작업 중인 문서가 있습니다. 링크의 문서 "${String(action.payload.doc.name ?? '이름 없음')}"를 열면 지금 문서가 바뀝니다(실행 취소로 되돌릴 수 있습니다). 내 작업을 유지하면 링크의 내용은 열리지 않습니다.`, ok: '링크의 작업 열기', cancel: '내 작업 유지'};
     case 'start': {
       const r = action.request;
       const parts = Object.entries(r).map(([k, v]) => `${k}=${typeof v === 'string' ? v : Object.entries(v as object).map(([s, o]) => `${s}:${o}`).join(',')}`).join(' ');
@@ -56,6 +59,30 @@ function ConfirmDialog({action}: {action: PendingAction}) {
       <div className="btn-row">
         <Button size="sm" autoFocus onClick={api.closeDialog}>{copy.cancel}</Button>
         <Button size="sm" variant="primary" onClick={() => api.confirmAction(action)}>{copy.ok}</Button>
+      </div>
+    </Modal>
+  );
+}
+
+const MODE_NAME: Record<string, string> = {light: '라이트', dark: '다크'};
+
+/** 구 문서를 2.6.0 재료로 올리기 전에 무엇이 바뀌는지 보여 준다. 적용해야 문서가 바뀌고, 취소하면 아무것도 바뀌지 않는다. */
+function ImpactDialog({intent, report}: {intent: Intent; report: ImpactReport}) {
+  const api = useStudio();
+  const colorTotal = report.colorShifts.reduce((n, c) => n + c.changed, 0);
+  return (
+    <Modal title={report.versionBump ? `문서를 ${report.versionBump.to}로 올리고 ${report.subject}를 적용할까요?` : `${report.subject}를 적용할까요?`} onClose={api.closeDialog}>
+      <dl className={styles.impact} data-testid="impact-dialog">
+        {report.versionBump ? <div><dt>문서 버전</dt><dd data-testid="impact-version">{report.versionBump.from} → {report.versionBump.to}</dd></div> : null}
+        <div><dt>바뀌는 값</dt><dd data-testid="impact-changes">{report.changeCount}곳{report.changed.length ? ` (${[...new Set(report.changed.map(c => c.label))].join(', ')}${report.changeCount > report.changed.length ? ' 외' : ''})` : ''}</dd></div>
+        <div><dt>색</dt><dd data-testid="impact-colors">{report.colorShifts.length ? (colorTotal ? report.colorShifts.filter(c => c.changed).map(c => `${MODE_NAME[c.mode] ?? c.mode} 모드 색 ${c.total}개 중 ${c.changed}개 바뀜`).join(' · ') : '색은 그대로입니다.') : '색 변화를 계산하지 못했습니다.'}</dd></div>
+        <div><dt>직접 고친 내용</dt><dd data-testid="impact-edits">{report.userEdits}곳 · 사라지는 콘텐츠 {report.contentLoss}개{report.contentLoss === 0 ? ' (글과 구조는 그대로 유지됩니다)' : ''}</dd></div>
+      </dl>
+      {report.paletteNote ? <p className={styles.muted} data-testid="impact-palette-note">{report.paletteNote}</p> : null}
+      <p className={styles.muted}>적용한 뒤에도 실행 취소(Ctrl+Z)로 이전 버전과 색으로 돌아갈 수 있습니다.</p>
+      <div className="btn-row">
+        <Button size="sm" autoFocus onClick={api.closeDialog}>취소</Button>
+        <Button size="sm" variant="primary" onClick={() => api.confirmImpact(intent)}>적용</Button>
       </div>
     </Modal>
   );
@@ -148,5 +175,6 @@ export function Dialogs() {
   if (!d) return null;
   if (d.kind === 'confirm') return <ConfirmDialog action={d.action} />;
   if (d.kind === 'import') return <ImportDialog />;
+  if (d.kind === 'impact') return <ImpactDialog intent={d.intent} report={d.report} />;
   return <TemplateDialog />;
 }

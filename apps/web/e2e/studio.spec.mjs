@@ -340,6 +340,9 @@ test('2.6.0 업그레이드는 작업 내용을 보존하고 재료를 미리보
   await page.getByRole('tab', {name: '디자인'}).click();
   await expect(page.locator('#d-palette')).toBeVisible();
   await page.getByRole('button', {name: '현재 문서를 2.6.0으로 업그레이드'}).click();
+  // 업그레이드는 영향을 먼저 보여 주고 확인을 받은 뒤에 적용한다.
+  await expect(page.getByTestId('impact-dialog')).toBeVisible();
+  await page.getByRole('dialog').getByRole('button', {name: '적용'}).click();
   await expect(page.locator('#d-palette')).toHaveCount(0);
   await expect(page.getByTestId('op-error')).toHaveCount(0);
   await pick(page, page.locator('#material-type-roles'), 'dashboard');

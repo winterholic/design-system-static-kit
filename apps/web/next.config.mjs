@@ -1,10 +1,14 @@
 import {resolve} from 'node:path';
+import {DOCS_REDIRECTS} from './lib/docs.mjs';
 
 // Core(src/)는 apps/web 밖에 있으므로 추적·번들 루트를 저장소 루트로 둔다.
 const repoRoot = resolve(import.meta.dirname, '../..');
 
 // /combos/의 쿼리를 보존해 내부 QA 경로로 한 번만 이동한다.
 const legacyCombos = ['/combos', '/combos/', '/combos/index.html'].map(source => ({source, destination: '/dev/qa/combos', permanent: false}));
+
+// 옛 주소(/integrations/*, /docs/getting-started 등)는 308로 새 /docs 구조에 보존한다. 끝 슬래시 변형도 같이 둔다(skipTrailingSlashRedirect).
+const legacyDocs = DOCS_REDIRECTS.flatMap(({from, to}) => [from, `${from}/`].map(source => ({source, destination: to, permanent: true})));
 
 /** @type {import('next').NextConfig} */
 export default {
@@ -15,7 +19,7 @@ export default {
   // 옛 정적 호스트와 같게 `/examples/x/`(끝 슬래시)를 리다이렉트 없이 200으로 낸다.
   skipTrailingSlashRedirect: true,
   async redirects() {
-    return legacyCombos;
+    return [...legacyCombos, ...legacyDocs];
   },
   async rewrites() {
     // 오프라인 갤러리와 디렉터리 URL은 리다이렉트 없이 정적 index.html을 낸다.

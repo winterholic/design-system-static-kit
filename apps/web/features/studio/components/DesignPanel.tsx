@@ -122,14 +122,14 @@ export function DesignPanel() {
       <section className={styles.section} aria-labelledby="d-materials" data-testid="material-choices">
         <h3 id="d-materials" className={styles.sectionTitle}>2.6.0 Materials</h3>
         <p className={styles.muted}>색 토큰과 역할 타이포그래피는 미리보기와 내보내기에 적용됩니다. Design Profile은 문서에 저장되며 호환성을 검사합니다. 기존 배치와 스타일은 프로파일 선택만으로 바뀌지 않습니다.</p>
-        {doc.catalogVersion !== '2.6.0' ? <Button size="sm" onClick={() => api.edit({kind: 'upgrade260'})}>현재 문서를 2.6.0으로 업그레이드</Button> : null}
+        {doc.catalogVersion !== '2.6.0' ? <Button size="sm" onClick={() => api.editWithImpact({kind: 'upgrade260'})}>현재 문서를 2.6.0으로 업그레이드</Button> : null}
         {materialData ? <div className={styles.axisGrid}>
           <MaterialSelect id="material-color" label="색 재료" value={doc.colorPalette ?? (doc.catalogVersion === '2.6.0' ? 'static-kit' : '')} items={materialData.colors} labelOf={id => materialData.labels.colors[id] ?? id}
-            onChange={value => api.edit({kind: 'setMaterial', field: 'colorPalette', value: value || null})} />
+            onChange={value => api.editWithImpact({kind: 'setMaterial', field: 'colorPalette', value: value || null})} />
           <MaterialSelect id="material-type-roles" label="역할 타이포그래피" value={doc.typeRoles ?? ''} items={materialData.types} labelOf={id => materialData.labels.types[id] ?? id}
-            onChange={value => api.edit({kind: 'setMaterial', field: 'typeRoles', value: value || null})} />
+            onChange={value => api.editWithImpact({kind: 'setMaterial', field: 'typeRoles', value: value || null})} />
           <MaterialSelect id="material-profile" label="Design Profile" value={doc.profile ?? ''} items={materialData.profiles} labelOf={id => id || '프로파일 없음'}
-            onChange={value => api.edit({kind: 'setMaterial', field: 'profile', value: value || null})} />
+            onChange={value => api.editWithImpact({kind: 'setMaterial', field: 'profile', value: value || null})} />
         </div> : <p className={styles.muted}>2.6.0 재료를 불러오지 못했습니다.</p>}
       </section>
 

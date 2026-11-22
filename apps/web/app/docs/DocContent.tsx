@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import {catalogSnapshot, getComponentSpec, getSchema, listCatalog} from '@winterholic/design-system-static-kit/service';
 import type {ReactNode} from 'react';
+import {DOCS_PAGES} from '@/lib/docs.mjs';
+import styles from './docs.module.css';
 
-const hrefFor = (slug: string) => `/docs/${slug}`;
+const hrefFor = (slug: string) => DOCS_PAGES.find(page => page.slug === slug)?.href ?? '/docs';
 const Code = ({children}: {children: ReactNode}) => <pre tabIndex={0}><code>{children}</code></pre>;
 const Note = ({children}: {children: ReactNode}) => <p className="note">{children}</p>;
 
@@ -18,7 +20,7 @@ npm run kit -- check ./my-build`}</Code>
     <p><code>init</code>은 기본 카탈로그 2.4.0을 사용합니다. 출력 폴더는 도구가 소유해야 하며, <code>check</code>는 현재 카탈로그로 다시 컴파일해 파일을 대조합니다.</p>
     <p>실제 생성 예제도 열어볼 수 있습니다: <Link href="/examples/saas-landing/">SaaS 랜딩 예제</Link>.</p>
     <h2 className="section-title">다음 단계</h2>
-    <ul><li><Link href={hrefFor('blueprint')}>Blueprint 구조와 스키마</Link></li><li><Link href={hrefFor('components')}>Core 부품 명세</Link></li><li><Link href={hrefFor('cli')}>CLI 상세</Link></li></ul>
+    <ul><li><Link href={hrefFor('blueprint')}>Blueprint 구조와 스키마</Link></li><li><Link href={hrefFor('components')}>Core 부품 명세</Link></li><li><Link href={hrefFor('principles')}>규약과 검증</Link></li><li><Link href="/docs/integrations/cli">CLI 상세</Link></li></ul>
   </div>;
 }
 
@@ -103,37 +105,24 @@ function TokensGuide() {
   </div>;
 }
 
-function CliGuide() {
-  const snapshot = catalogSnapshot();
-  const supported = snapshot.supportedCatalogVersions ?? [snapshot.version];
-  const supports25 = supported.includes('2.5.0');
-  return <div className="prose">
-    <p>CLI는 Node.js 22를 우선 지원하며 REST·MCP와 마찬가지로 공개 Core 서비스의 검증·컴파일 로직을 사용합니다.</p>
-    <Code>{`npm run kit -- templates
-npm run kit -- init saas-landing ./my-blueprint.json
-npm run kit -- validate ./my-blueprint.json
-npm run kit -- build ./my-blueprint.json --out ./my-build
-npm run kit -- check ./my-build`}</Code>
-    <ul><li><code>init</code>: Blueprint 파일을 새로 만듭니다. 이미 있는 파일을 덮어쓰지 않습니다.</li><li><code>validate</code>: 구조와 규칙을 검사하고 통과하면 <code>VALID</code>를 출력합니다.</li><li><code>build</code>: 관리 출력 파일을 생성합니다.</li><li><code>check</code>: 수정·누락·추가 파일을 재컴파일 결과와 대조합니다.</li></ul>
-    {supports25 ? <><p>새 2.5.0 필드를 사용할 때만 명시적으로 마이그레이션합니다. 기본 <code>init</code>과 기본 <code>migrate</code>는 2.4.0을 유지합니다.</p><Code>{'npm run kit -- migrate ./my-blueprint.json ./my-blueprint-v2.5.json --to 2.5.0'}</Code></> : null}
-    <p><Link href="/integrations/cli">CLI 연동 안내</Link>에서 설치와 자동화 환경을 확인하세요.</p>
-  </div>;
-}
-
-function RestGuide() {
-  return <div className="prose">
-    <p>REST 어댑터는 Core 공개 서비스 결과를 HTTP 경로로 전달합니다. 구현 후보의 명세는 OpenAPI와 요청·오류 계약을 기준으로 확인합니다.</p>
-    <ul><li><code>GET /api/v1/catalog</code>: 카탈로그 일부 조회</li><li><code>GET /api/v1/schema</code>: Blueprint JSON Schema 조회</li><li><code>POST /api/v1/validate</code>: Blueprint 검사</li><li><code>POST /api/v1/compile</code>: Blueprint 컴파일</li></ul>
-    <p>REST 요청 예제와 정확한 응답 계약은 담당 <Link href="/integrations/rest-api">REST API 연동 문서</Link>를 확인하세요. 그 문서의 예제 실행은 이 Docs 작업의 CLI 실행 결과와 별도로 판정합니다.</p>
-  </div>;
-}
-
-function McpGuide() {
-  return <div className="prose">
-    <p>MCP 서버는 Streamable HTTP 도구로 같은 Core 조회·검증·컴파일 함수를 제공합니다. 클라이언트는 보통 카탈로그 조회, 스키마 조회, 검증, 컴파일 순으로 호출합니다.</p>
-    <ul><li><code>list_design_system</code></li><li><code>get_design_schema</code></li><li><code>get_component_spec</code></li><li><code>validate_blueprint</code></li><li><code>compile_design</code></li><li><code>explain_design_decisions</code></li></ul>
-    <p>프로토콜 SDK 예제와 전송별 한계는 담당 <Link href="/integrations/mcp">MCP 연동 문서</Link>에서 확인하세요. 후보 구현의 테스트 통과는 최종 통합 서버의 원격 연결 확인과 다릅니다.</p>
-  </div>;
+function Principles() {
+  return <>
+    <div className="prose"><p>이 도구는 설명이 아니라 코드로 결과를 지킵니다. 메인 화면에서는 보이지 않지만, 아래 네 가지가 모든 결과의 바탕입니다.</p></div>
+    <dl className={styles.rules}>
+      <div><dt>허용된 값만</dt><dd>알 수 없는 속성, <code>style</code>·<code>className</code>, 임의 토큰 값, 잘못된 부모-자식 조합, 금지된 축 조합은 조용히 버려지지 않고 오류로 거부됩니다.</dd></div>
+      <div><dt>대비 검사</dt><dd>컴파일할 때 색 조합의 대비를 모두 계산하고, 기준에 못 미치면 결과를 만들지 않습니다.</dd></div>
+      <div><dt>맥락 규칙</dt><dd>페이지 유형이 필수·금지 부품을 정하고, 부품의 배치와 크기는 규칙표가 정합니다. 어떤 규칙이 이겼는지는 결과의 기록에 남습니다.</dd></div>
+      <div><dt>같은 입력, 같은 출력</dt><dd>시간·난수·환경에 기대지 않아 결과를 바이트 단위로 다시 만들고 비교할 수 있습니다.</dd></div>
+    </dl>
+    <div className="prose">
+      <h2 className="section-title">같은 검증을 어느 길로든</h2>
+      <p>CLI, REST API, MCP는 같은 검증·컴파일 함수를 부릅니다. 어느 길로 들어와도 같은 오류와 같은 결과를 받습니다.</p>
+      <Code>{`npm run kit -- init saas-landing my.json trust
+npm run kit -- validate my.json
+npm run kit -- build my.json --out out/my-page`}</Code>
+      <p><Link href="/docs/integrations">연동 안내 보기</Link> · <Link href={hrefFor('composition')}>조합 규칙 보기</Link> · <Link href={hrefFor('limitations')}>한계</Link></p>
+    </div>
+  </>;
 }
 
 function Limitations() {
@@ -144,7 +133,7 @@ function Limitations() {
       <li>폼은 입력 확인 데모이며 데이터 저장을 제공하지 않습니다.</li>
       <li>검사기는 Blueprint의 규약 준수를 확인하지만 상위 앱이 전역 CSS로 결과를 덮는 일을 막지 못합니다. 독립 HTML 또는 격리된 iframe으로 사용하세요.</li>
       <li>현재 Core 카탈로그 버전은 <code>{snapshot.version}</code>이며 지원 버전은 <code>{(snapshot.supportedCatalogVersions ?? [snapshot.version]).join(', ')}</code>입니다.</li>
-      <li>REST 호출 제한과 MCP 접근 제어는 배포 환경 설정의 영향을 받습니다. 상세 내용은 <Link href="/integrations/rest-api">REST</Link> 및 <Link href="/integrations/mcp">MCP</Link> 문서를 확인하세요.</li>
+      <li>REST 호출 제한과 MCP 접근 제어는 배포 환경 설정의 영향을 받습니다. 상세 내용은 <Link href="/docs/integrations/rest-api">REST</Link> 및 <Link href="/docs/integrations/mcp">MCP</Link> 문서를 확인하세요.</li>
     </ul>
     <p>개발 전용 실험·진단 경로는 공개 문서에 포함하지 않습니다.</p>
   </div>;
@@ -156,9 +145,7 @@ const content: Record<string, () => ReactNode> = {
   components: ComponentsGuide,
   composition: CompositionGuide,
   'tokens-themes': TokensGuide,
-  cli: CliGuide,
-  rest: RestGuide,
-  mcp: McpGuide,
+  principles: Principles,
   limitations: Limitations,
 };
 
