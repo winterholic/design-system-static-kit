@@ -1,6 +1,6 @@
 // W6-b 시나리오 A(팔레트→), B(Card→), C(대시보드 목적→)를 웹에서 끝까지 확인한다. 390폭과 1280폭에서 같은 흐름을 돈다.
 // 각 시나리오는 웹이 낸 결과(미리보기·내려받기)가 같은 요청의 Core 서비스 결과와 바이트가 같은지, 사전 구현 재료의 표식이 출력에 있는지 본다.
-// 조립 서비스 함수(assembleDesign 등)가 Core 서비스에 공개되기 전에는 건너뛴다(서비스 대기).
+// 서비스 준비가 빠지면 시나리오가 실패하도록 둔다. 조건부 skip은 두지 않는다.
 import {expect, test} from '@playwright/test';
 import * as service from '@winterholic/design-system-static-kit/service';
 import {pick} from './helpers/select.mjs';
@@ -70,6 +70,11 @@ for (const width of [390, 1280]) {
       await expect(page.getByTestId('seed-result')).toBeVisible();
       await expect(page.getByTestId('seed-rejected').locator('li').first()).toContainText(/7:1|대비|COLOR/);
       expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain('0D6E8E');
+      await page.getByLabel(/hex 색/).fill('#0D6E8E #8A8F99 #E8A100');
+      await page.getByRole('button', {name: '세트 후보 보기'}).click();
+      await expect(page).toHaveURL(/seeds=/);
+      await expect(page.getByTestId('seed-result').locator('li[data-set]').first()).toBeVisible();
+      await expect(page.getByTestId('seed-rejected').locator('li[data-set]').first()).toBeVisible();
 
       // Studio 조립으로: 고른 재료가 요청에 그대로 넘어간다
       await page.goto('/materials/palettes/ocean-cool?mode=dark');
@@ -86,15 +91,19 @@ for (const width of [390, 1280]) {
       await page.goto(`/studio/assemble?${new URLSearchParams({...handed, step: 'export'})}`);
       const css = await page.getByTestId('downloads').locator('a[data-part="css"]').getAttribute('href');
       const out = designOf(handedReq);
+      await expectSameBytes(request, await page.getByTestId('downloads').locator('a[data-part="html"]').getAttribute('href'), out.html);
       await expectSameBytes(request, css, out.css);
       await expectSameBytes(request, await page.getByTestId('downloads').locator('a[data-part="standalone"]').getAttribute('href'), out.standalone);
-      const manifest = await request.get(await page.getByTestId('downloads').locator('a[data-part="manifest"]').getAttribute('href'));
+      const manifestUrl = await page.getByTestId('downloads').locator('a[data-part="manifest"]').getAttribute('href');
+      await expectSameBytes(request, manifestUrl, JSON.stringify(out.manifest, null, 2) + '\n');
+      const manifest = await request.get(manifestUrl);
       expect(JSON.parse(await manifest.text()).platformContract).toBeTruthy();
       await page.screenshot({path: `test-results/a-${width}.png`, fullPage: true});
     });
 
     test('시나리오 B: 컴포넌트(가격 카드) → 시각 패밀리·상태·콘텐츠 → 금지 조합 → 코드 → 페이지 조립', async ({page, request}) => {
       await page.goto('/components');
+      expect(await page.getByTestId('purpose-families').locator('li[data-purpose]').count()).toBe(32);
       const card = page.getByTestId('purpose-families').locator('li[data-purpose="card.pricing"]');
       await expect(card).toBeVisible();
       await card.getByRole('link').click();
@@ -139,6 +148,8 @@ for (const width of [390, 1280]) {
       const dl = page.getByRole('list', {name: '내려받기'});
       await expectSameBytes(request, await dl.getByRole('link', {name: 'CSS'}).getAttribute('href'), main.css);
       await expectSameBytes(request, await dl.getByRole('link', {name: 'HTML 조각'}).getAttribute('href'), main.html);
+      await expectSameBytes(request, await dl.getByRole('link', {name: '완성 HTML 문서'}).getAttribute('href'), main.standalone);
+      await expectSameBytes(request, await dl.getByRole('link', {name: 'manifest(JSON)'}).getAttribute('href'), JSON.stringify(main.manifest, null, 2) + '\n');
       await expect(page.getByTestId('code-html')).toContainText('data-family="bold"');
 
       // 이 컴포넌트로 페이지 조립

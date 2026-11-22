@@ -5,7 +5,7 @@ import type {AssembleRequest, AssembleValue, Envelope, Material, ProposeValue, P
 // 조립 플랫폼 서비스 함수는 Core 서비스 진입점에서 이름으로 찾는다.
 // 웹은 src/platform 을 직접 import 하지 않는다(boundary.check.mjs). 함수가 없을 때 대신 만들어 내는 값도 없다.
 const mod = service as unknown as Record<string, ((arg?: any, opts?: any) => any) | undefined>;
-const NEEDED = ['assembleDesign', 'listPlatformMaterials', 'recommendMaterials'] as const;
+const NEEDED = ['assembleDesign', 'assembleComponents', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'proposeSubtokenSets'] as const;
 const WEB_INCLUDE = ['html', 'css', 'tokens', 'manifest', 'blueprint', 'script', 'standalone'] as const;
 const missing = () => NEEDED.filter(name => typeof mod[name] !== 'function');
 
@@ -26,19 +26,20 @@ export const proposeSets = (seeds: unknown) => call<ProposeValue>('proposeSubtok
 
 /** Purpose-family definitions share the public family material registry; visual-family records are not coerced into purpose definitions. */
 export function purposeFamilies(group?: string): Envelope<PurposeList> {
-  const listed = call<{items: Material[]}>('listPlatformMaterials', {kind: 'family'});
-  if (!listed.ok) return listed;
-  const purposeRows = listed.value.items.filter(row => row.id.startsWith('purpose:'));
+  const purposes = call<{items: Material[]}>('listPlatformMaterials', {kind: 'purpose-family', limit: 200});
+  if (!purposes.ok) return purposes;
+  const families = call<{items: Material[]}>('listPlatformMaterials', {kind: 'family', limit: 200});
+  if (!families.ok) return families;
   const items: PurposeList['items'] = [];
-  for (const row of purposeRows) {
+  for (const row of purposes.value.items) {
     const detail = material(row.id);
     if (!detail) return {ok: false, errors: [{code: 'PURPOSE_FAMILY_DETAIL_MISSING', path: '$.items', message: `목적 패밀리 ${row.id}의 상세 기록을 읽지 못했습니다.`}]};
     items.push(detail as unknown as PurposeList['items'][number]);
   }
-  if (!items.length) return {ok: false, errors: [{code: 'PURPOSE_FAMILY_MISSING', path: '$.items', message: 'Core의 family 재료 목록에 목적 패밀리 정의가 아직 없습니다.'}], warnings: listed.warnings};
-  const visuals = listed.value.items.filter(row => row.id.startsWith('family:')).map(row => ({id: row.id.slice('family:'.length), label: row.label}));
+  if (!items.length) return {ok: false, errors: [{code: 'PURPOSE_FAMILY_MISSING', path: '$.items', message: 'Core의 purpose-family 재료 목록에 목적 패밀리 정의가 아직 없습니다.'}], warnings: purposes.warnings};
+  const visuals = families.value.items.map(row => ({id: row.id.slice('family:'.length), label: row.label}));
   const groups = [...new Set(items.map(item => item.group))];
-  return {ok: true, value: {items: group ? items.filter(item => item.group === group) : items, groups, visuals}, warnings: listed.warnings};
+  return {ok: true, value: {items: group ? items.filter(item => item.group === group) : items, groups, visuals}, warnings: [...purposes.warnings, ...families.warnings]};
 }
 
 const cache = new Map<string, Material[]>();
