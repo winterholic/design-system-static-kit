@@ -4,9 +4,12 @@
 export * from './contract.mjs';
 export {createPlatformRegistry, PlatformError} from './registry.mjs';
 export {createRelationGraph, defineCheck, edgeApplies} from './relations.mjs';
-export {recommend, AXIS_PREFERENCE_WEIGHT} from './recommend.mjs';
+export {recommend, axisPreference, AXIS_PREFERENCE_WEIGHT} from './recommend.mjs';
 export {bindColor, paletteSubtokenCheck, COLOR_CHECKS} from './color.mjs';
 export {bindType, TYPE_CHECKS} from './type.mjs';
 export {FAMILY_CHECKS, familyMemberCheck, familyShapeVars, renderMember, memberCombinations, memberErrors, contrastPairs, requiredVars} from './family.mjs';
 export {assemblePlatform, normalizeRequest, resolveStyleContext, selectMaterials, checkCombination, bindTokens, composeComponents, emit, STAGES, REQUEST_KEYS, COMPONENT_KEYS} from './pipeline.mjs';
+export {assemblePage, exploreCandidates, evaluateCombo, assembleCombo, compareCandidates, legacyTokens, summarizePlan, diversify, DIVERSITY_PENALTY, PAGE_STAGES, BEAM} from './page.mjs';
+export {normalizePageRequest, planPage, columnsFor, PURPOSES, PURPOSE_IDS, PAGE_REQUEST_KEYS, PAGE_CONTENT_KEYS, PAGE_COMPONENT_KEYS, TABLE_PAGE_ROWS, TABLE_TOOLBAR_ROWS, nodeTypeOfBase, baseIsPlaceable} from './page-content.mjs';
+export {buildAxisValues, banPairs, styleForbidRelations, withStyleForbids, axisIds, materialAxisIds} from './axes.mjs';
 export {createPlatform, MINIMAL_REQUEST, PLATFORM_CHECKS} from './examples/minimal.mjs';

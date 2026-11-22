@@ -1,6 +1,6 @@
 # ADR 0012: 재료 조립 플랫폼 계약
 
-- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다.
+- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0(§9, 2026-11-22).
 - 날짜: 2026-11-22
 - 관련: ADR 0001, 0009, 0011; [감사 2026-11](../platform/audit-2026-11.md)
 - 번호 메모: 작업 카드는 `0010-assembly-platform.md`를 지시했다. 그러나 0010은 이미 `0010-expression-grammar-2-5.md`가 쓰고 있어 0012로 둔다.
@@ -161,7 +161,7 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 - 개별: id가 등록됐는가, 종류가 맞는가, 맥락이 맞는가, 축 값이 계약 안인가. `P_ATTR_*`로 보고한다.
 - 조합: 관계와 계산 관계. `P_REL_*`와 `P_CHECK_*`로 보고한다.
 
-**기존 규칙의 이행**(조립 엔진 작업 W5)
+**기존 규칙의 이행**(조립 엔진 작업 W5, 0.2.0에서 구현: §9.1)
 
 - 축 금지 X01 등과 테마 forbid는 `forbids`로 옮긴다.
 - 프로파일 허용 목록은 스타일 맥락의 선호와 패밀리 `contexts`로 옮긴다.
@@ -231,3 +231,45 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
   - 테마: 54개 이행.
   - 엔진: 페이지·슬롯 단계, 서비스·REST·MCP 공개, Blueprint 2.7.0, §8의 D1·D2·D3.
   - 웹: 탐색·조립 UI.
+
+## 9. 개정 기록
+
+계약을 바꿀 때마다 `PLATFORM_CONTRACT_VERSION`을 올리고 이 절에 적는다(0.x 동안은 minor에서도 깨지는 변경을 허용한다). 페이지 파이프라인의 동작은 [pages.md](../platform/pages.md)에 있다.
+
+### 9.1 0.2.0: 축 값 재료, 금지 관계, 페이지 단계(조립 엔진 W5-a)
+
+- **종류 추가**: `axis-value`(필드 `axis`, `value`, id `axis-value:<축>.<값>`). 스타일 축 15개의 모든 값 79개를 `src/platform/axes.mjs`가 등록한다. 셸·폭·밀도 같은 페이지 축 값이 `forbids` 관계의 대상이 되려면 레지스트리에 재료로 있어야 한다(관계 대상은 등록된 재료여야 한다).
+- **기존 규칙 이행**:
+  - 축 조합 금지 X01~X11은 술어이므로 두 축의 모든 값 쌍에 술어를 돌려 걸리는 쌍마다 `forbids` 관계를 만든다(18쌍). 이유는 기존 `why`에 규칙 id를 붙인 문장이고 `evidence`에 기존 출처를 둔다. 값 쌍마다 술어와 관계가 일치함을 시험이 확인한다.
+  - 테마 금지는 그 테마에서 온 스타일 맥락이 축 값 재료로 선언하는 `forbids`다. 테마 원본(`themes[id].forbid`)을 읽는다. 스타일 맥락 기록이 모양 축만 옮겨도 mode·ornament·backdrop 금지가 빠지지 않는다. `createPlatform`이 스타일 맥락을 등록할 때 `withStyleForbids`로 관계를 더한다(멱등).
+  - 패밀리 `shape`와 타이포 시스템의 서체 짝(`typography` 축 값)은 `materialAxisIds`로 축 값 재료 id가 되어 같은 관계에 걸린다. `recommend`는 그런 후보를 순위에서 빼고 `P_REL_FORBIDS`와 규칙의 설명을 `blocked`에 남긴다. 스타일 맥락 기록의 `forbid`가 가진 모양 금지는 옛 코드 `P_REL_STYLE_FORBID`로 그대로 보고하고, 같은 사실을 `P_REL_FORBIDS`로 한 번 더 적지 않는다. 기록에 없고 테마 원본에만 있는 금지(ornament·backdrop·mode 등)는 관계로만 보고된다.
+  - 단일 페이지 파이프라인(`assemblePlatform`)의 `checkCombination`도 모드·밀도·패밀리 모양·서체 짝을 평가에 넣는다.
+- **페이지 파이프라인**: `assemblePage`(`src/platform/page.mjs`). 목적·콘텐츠 → 계획 → 후보 탐색 → 호환 평가 → 코드 조립 → 검증 → 후보 비교의 7단계(§6의 7단계 파이프라인 위에 놓이고 대체하지 않는다). 레이아웃은 구형 템플릿 뼈대와 패턴 슬롯을 재사용하고, 마크업은 구형 노드 렌더러와 기반 컴포넌트 렌더러에서만 나온다.
+- 기존 공개 API, Blueprint 2.1~2.6 출력, 고정 해시는 바뀌지 않았다.
+
+### 9.2 0.3.0: 선택 필드, 고정 규칙, 추천 보강(W1·W2·W4 요청)
+
+요청의 출처는 각 작업의 문서다(`docs/platform/color.md` §7, `typography.md` §8, `style-contexts.md` §6.1).
+
+| 요청 | 결과 |
+|---|---|
+| W1-1 RoleRule `fixed` | 처리. `{fixed: '#RRGGBB' \| {from, step, mix?: {with, ratio}}, min?}`를 계약이 받는다(검증만). 값 계산은 `color.mjs`의 몫이라 색 작업이 `bindColor`에 더한다. 그 전에는 이 규칙을 쓴 세트가 `ok:false`로 보고된다 |
+| W1-2 세트 기록 필드 | 처리. `subtoken-set`에 선택 필드 `states`, `components`, `charts`(object). 없으면 결합 엔진의 기본 설계 |
+| W1-3 `dashboard` 맥락 시험 | 처리. `tests/platform-minimal.test.mjs`가 세트 순위 전체를 고정하지 않는다(표준이 1순위, 틴트가 그 뒤). 세트의 `contexts` 갱신은 색 작업 몫 |
+| W1-4 `index.mjs` 내보내기 | 하지 않음. `colorMatrix` 등은 main에 아직 없다. 그 코드가 main에 오면 한 줄로 더한다 |
+| W2-1 추천이 적합성 표를 읽는다 | 처리. `recommend({…, fit: true})`가 `typeFit` 점수와 이유를 더한다. 기본은 끈다: `tests/platform-type.test.mjs`가 기존 순위(workspace 1순위 tech-erp)를 고정하고 있어서다. 그 시험의 기대 순위가 옮겨지면 기본을 켠다. 페이지 파이프라인은 켠다 |
+| W2-2 오류 코드 | 처리. `P_TYPE_HANGUL_*`는 모두 `P_CHECK_TYPE_HANGUL`, `P_TYPE_HIERARCHY`는 그대로(`typeErrorCode`) |
+| W2-3 서체 짝·역할 체계를 종류로 | 승격하지 않는다. 지금 이 둘을 가리키는 관계가 없고 `type-system` 기록의 문자열 참조로 충분하다. 관계 대상이 되어야 하는 요구가 생기면 종류로 올린다 |
+| W2-5 기준선의 서체 짝 | 처리. 플랫폼 구간이 결합이 통과한 타이포 시스템의 고유 `(--kit-heading, --kit-font)` 쌍을 센다 |
+| W4-1 재료 종류 5개(surface, motion, background, media, state-pattern) | 하지 않음. 필드 명세(`STYLE_MATERIAL_SPECS`)가 main에 없어 추측으로 계약을 만들지 않는다. 그 파일이 main에 오면 종류와 필드를 그대로 받는다 |
+| W4-2 스타일 맥락 필드 | 처리. 선택 필드 `purpose`(string), `forbidCombos`(array), `tendencies`, `media`, `layout`(object) |
+| W4-3 빈 결과 이유 | 처리. 맥락 필터로 후보가 없으면 `recommend`가 `blocked`에 `{id: null, blocked: [{code: 'P_RECOMMEND_NO_CANDIDATE', …}]}`를 남긴다 |
+| W4-4 스타일 맥락을 앵커로 쓰는 동작 | 유지 |
+| W4-5 페이지 단계가 선호를 읽는다 | 처리. 요청 > 스타일 맥락 `axisPreferences.shell·width·density`(앞 값 우선) > 원본 테마 기본값 > 패턴 기본값. `layout.navLimit`은 내비 항목 수 상한이다 |
+
+필드 문법: 타입 끝의 `?`는 선택 필드다(없어도 null이어도 된다). 이전에는 `?`가 null 허용만 뜻했고 KIND_SPECS에는 쓰이지 않았다.
+
+### 9.3 서비스 공개 초안(W5-b 예고)
+
+`assembleDesign(request)`의 요청은 `assemblePage`와 같고 응답은 같은 봉투 안의 `{selected, candidates, blocked, comparison, plan, decisions}`다(`pages.md` §8). 서비스·REST·MCP 공개, Blueprint 2.7.0 게이트, §8의 D1·D2·D3은 다음 단계이고 이 개정은 그 어느 것도 하지 않았다.
+

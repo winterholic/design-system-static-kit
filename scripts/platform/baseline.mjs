@@ -18,6 +18,7 @@ import {PROFILES, PATTERNS} from '../../src/profiles/data.mjs';
 import {compile} from '../../src/compiler.mjs';
 import {templates, pageTypes, themes} from '../../src/catalog/index.mjs';
 import {resolveTokens} from '../../src/tokens.mjs';
+import {platformSection} from './platform-baseline.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = resolve(ROOT, 'docs/evidence/platform/baseline.json');
@@ -163,9 +164,10 @@ const t0 = Date.now();
 const result = {
   schema: 'platform-baseline/1', generator: 'scripts/platform/baseline.mjs',
   materials: await materialsSection(), reach: reachSection(), combinations: combosSection(), legacyComparison: legacyDiversity(),
+  platform: platformSection(),
 };
 const text = JSON.stringify(result, null, 2) + '\n';
-const m = result.materials, c = result.combinations;
+const m = result.materials, c = result.combinations, pf = result.platform;
 const summary = [
   `registered materials        ${m.catalogRegistry.registered} (catalogRegistry), ${m.designRegistry.registered} (designRegistry)`,
   `attribute combinations      ${m.catalogRegistry.attributeCombinations} (registry claim, not assemblable)`,
@@ -176,6 +178,9 @@ const summary = [
   `verified combinations       ${c.compiled} compiled, ${c.distinctCompiledOutputs} distinct outputs`,
   `color token sets (assemble) light ${c.distinctColorTokenSets.light}, dark ${c.distinctColorTokenSets.dark}; legacy themes light ${result.legacyComparison.themeDefaultPaletteTokenSetsLight}`,
   `effective face pairs        ${c.distinctEffectiveFacePairs}`,
+  `platform assemblable        ${pf.assemblable.assemblable} (of ${pf.assemblable.attempted} tried)`,
+  `platform verified           ${pf.verified.verified} assembled+checked, ${pf.verified.distinctOutputs} distinct outputs (${pf.verified.attempted} tried)`,
+  `platform color token sets   light ${pf.distinct.colorTokenSets.light}, dark ${pf.distinct.colorTokenSets.dark}; face pairs ${pf.distinct.facePairs}; families ${pf.distinct.families}`,
 ];
 if (process.argv.includes('--check')) {
   const saved = readFileSync(OUT, 'utf8');

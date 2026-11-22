@@ -50,7 +50,10 @@ test('palette × subtoken set is many-to-many: one palette under two sets, one s
 
 test('recommendation is the default assembly: rank, reasons and blocked candidates', () => {
   const rec = recommend(env.registry, env.graph, {kind: 'subtoken-set', context: 'dashboard', mode: 'light', selected: ['palette:static-kit']});
-  assert.deepEqual(rec.ranked.map(x => x.id), ['subtoken-set:standard', 'subtoken-set:tinted']);
+  // 세트가 더 등록돼도(색 작업) 표준이 앞서고 틴트가 그 뒤에 있으면 된다. 순위 전체를 고정하지 않는다.
+  const order = rec.ranked.map(x => x.id);
+  assert.equal(order[0], 'subtoken-set:standard');
+  assert.ok(order.indexOf('subtoken-set:tinted') > 0);
   assert.equal(rec.ranked[0].reasons[0].from, 'palette:static-kit');
   const picked = run().decisions.find(d => d.slot === 'subtokenSet');
   assert.deepEqual([picked.id, picked.source], ['subtoken-set:standard', 'recommend']);
@@ -58,7 +61,8 @@ test('recommendation is the default assembly: rank, reasons and blocked candidat
   const noAccent = definePlatformMaterial({id: 'palette:no-accent', kind: 'palette', label: 'no accent', tone: 'mid', seeds: {brand: '#3157D5', neutral: '#596579'}});
   const e2 = createPlatform({records: [noAccent]});
   const blocked = recommend(e2.registry, e2.graph, {kind: 'subtoken-set', context: 'dashboard', mode: 'light', selected: ['palette:no-accent']});
-  assert.equal(blocked.ranked.length, 0);
+  // 보조색(accent)이 필요한 세트는 모두 막힌다. 보조색이 필요 없는 세트가 새로 등록돼 후보가 남아도 된다.
+  for (const id of ['subtoken-set:standard', 'subtoken-set:tinted']) assert.ok(!blocked.ranked.some(x => x.id === id) && blocked.blocked.some(b => b.id === id), id);
   assert.ok(blocked.blocked.every(b => b.blocked[0].code === 'P_CHECK_PALETTE_SUBTOKEN'));
   assert.ok(codes(run({palette: 'palette:no-accent', subtokenSet: 'subtoken-set:standard'}, e2)).includes('P_CHECK_PALETTE_SUBTOKEN'));
 

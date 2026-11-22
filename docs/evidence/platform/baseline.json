@@ -346,5 +346,110 @@
   "legacyComparison": {
     "themeDefaultPaletteTokenSetsLight": 54,
     "note": "Coolors 팔레트(권리 미확인)를 쓰므로 신규 경로의 기준이 아니라 축소 폭 비교용이다"
+  },
+  "platform": {
+    "contractVersion": "0.3.0",
+    "registered": {
+      "palette": 9,
+      "subtokenSet": 7,
+      "typeSystem": 14,
+      "baseComponent": 10,
+      "family": 4,
+      "styleContext": 54,
+      "axisValue": 79
+    },
+    "assemblable": {
+      "attempted": 104868,
+      "assemblable": 104058,
+      "perPattern": {
+        "commerce-listing": {
+          "purpose": "commerce",
+          "assemblable": 8010,
+          "layoutAxes": {
+            "shells": 3,
+            "widths": 2,
+            "densities": 3
+          },
+          "verified": 448
+        },
+        "dashboard-grid": {
+          "purpose": "work-dashboard",
+          "assemblable": 15552,
+          "layoutAxes": {
+            "shells": 4,
+            "widths": 3,
+            "densities": 3
+          },
+          "verified": 444
+        },
+        "docs-reference": {
+          "purpose": "editorial-docs",
+          "assemblable": 3888,
+          "layoutAxes": {
+            "shells": 3,
+            "widths": 2,
+            "densities": 3
+          },
+          "verified": 228
+        },
+        "editorial-article": {
+          "purpose": "editorial-docs",
+          "assemblable": 8640,
+          "layoutAxes": {
+            "shells": 4,
+            "widths": 2,
+            "densities": 3
+          },
+          "verified": 376
+        },
+        "erp-workspace": {
+          "purpose": "work-dashboard",
+          "assemblable": 44856,
+          "layoutAxes": {
+            "shells": 3,
+            "widths": 2,
+            "densities": 3
+          },
+          "verified": 2398
+        },
+        "marketing-landing": {
+          "purpose": "saas-landing",
+          "assemblable": 23112,
+          "layoutAxes": {
+            "shells": 3,
+            "widths": 2,
+            "densities": 3
+          },
+          "verified": 1266
+        }
+      },
+      "note": "(패턴 × 셸 × 폭 × 밀도 × 모드) × (팔레트 × 세트 × 타이포 × 패밀리) 중 관계·색·서체 평가를 통과한 수. 렌더하지 않고 계산한다"
+    },
+    "verified": {
+      "attempted": 5361,
+      "verified": 5160,
+      "distinctOutputs": 5154,
+      "failures": {
+        "P_CHECK_CONTRAST": 201
+      },
+      "note": "실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)"
+    },
+    "distinct": {
+      "colorTokenSets": {
+        "light": 63,
+        "dark": 62
+      },
+      "facePairs": 14,
+      "families": 4,
+      "verifiedColorTokenSets": {
+        "light": 60,
+        "dark": 61
+      },
+      "verifiedFacePairs": 14,
+      "verifiedFamilies": 4
+    },
+    "colorGateFailures": {
+      "P_COLOR_CONTRAST": 1
+    }
   }
 }

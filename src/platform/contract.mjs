@@ -10,10 +10,10 @@
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-export const PLATFORM_CONTRACT_VERSION = '0.1.0';
+export const PLATFORM_CONTRACT_VERSION = '0.3.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
-export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family']);
+export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'axis-value']);
 
 /** 색 역할. 서브토큰 세트가 이 이름마다 값을 하나씩 만든다. css는 기존 컴파일 CSS가 읽는 변수 이름이다(부품 CSS를 고치지 않고 재사용하기 위해). */
 export const COLOR_ROLES = Object.freeze({
@@ -53,7 +53,7 @@ export const CLOSED_PAIRS = Object.freeze([['family', 'base-component']]);
 export const LICENSES = Object.freeze(['internal', 'MIT']);
 export const QUALITY = Object.freeze(['draft', 'implemented', 'verified']);
 
-/** 모든 플랫폼 재료가 가지는 필드. type 문법은 validate 함수가 읽는다: string·number·boolean·array·object, `?`는 null 허용. */
+/** 모든 플랫폼 재료가 가지는 필드. type 문법은 validate 함수가 읽는다: string·number·boolean·array·object. 끝에 `?`가 붙은 필드는 선택이다(없어도 되고 null이어도 된다, 0.3.0). */
 export const COMMON_FIELDS = Object.freeze({
   id: 'string', kind: 'string', version: 'string', label: 'string',
   contexts: 'array',     // 페이지 유형 또는 'any'
@@ -72,20 +72,28 @@ export const COMMON_FIELDS = Object.freeze({
  *   style-context  axisPreferences: {축: [선호 순서]}, forbid: {축: [값]}. 팔레트·서체를 소유하지 않고 추천 우선순위만 준다
  *   base-component contract: 기존 컴포넌트 계약 id, render·styles: 기존 구현 모듈 진입점. 동작·구조·접근성·상태를 소유한다
  *   family         members: {base-component id: FamilyMember}, shape: {radius, elevation}, density. 시각 언어를 소유한다
+ *   axis-value     axis: 스타일 축 이름, value: 그 축의 값. 페이지 축 값(셸·폭·밀도 등)이 관계(forbids)의 대상이 되게 하는 재료다(0.2.0, src/platform/axes.mjs)
  */
 export const KIND_SPECS = Object.freeze({
   palette: Object.freeze({seeds: 'object', tone: 'string'}),
-  'subtoken-set': Object.freeze({needs: 'array', roles: 'object', modes: 'array'}),
+  // states·components·charts는 선택 필드다(0.3.0): 상호작용 상태, 컴포넌트 의미 토큰, 차트 색 역할의 파생 설계. 없으면 결합 엔진의 기본 설계를 쓴다.
+  'subtoken-set': Object.freeze({needs: 'array', roles: 'object', modes: 'array', states: 'object?', components: 'object?', charts: 'object?'}),
   'type-system': Object.freeze({facePairing: 'string', roleScale: 'string', numerals: 'string'}),
-  'style-context': Object.freeze({axisPreferences: 'object', forbid: 'object', mood: 'array'}),
+  // purpose·forbidCombos·tendencies·media·layout은 선택 필드다(0.3.0). layout.navLimit와 axisPreferences.shell·width·density는 페이지 단계가 읽는다.
+  'style-context': Object.freeze({axisPreferences: 'object', forbid: 'object', mood: 'array', purpose: 'string?', forbidCombos: 'array?', tendencies: 'object?', media: 'object?', layout: 'object?'}),
   'base-component': Object.freeze({contract: 'string', render: 'object', styles: 'object', dependencies: 'array'}),
   family: Object.freeze({members: 'object', shape: 'object', density: 'string', states: 'array'}),
+  'axis-value': Object.freeze({axis: 'string', value: 'string'}),
 });
+
+/** 축 값 재료 id. `axis-value:<축>.<값>`. 스타일 축 값은 기존 카탈로그(src/catalog/axes.mjs)의 값 이름 그대로다. */
+export const axisValueId = (axis, value) => `axis-value:${axis}.${value}`;
 
 /**
  * 서브토큰 역할 규칙(RoleRule). 둘 중 하나다.
  *   {from: PALETTE_SLOT, light: step, dark: step, min?: {against: [role…], ratio}}   팔레트 자리의 램프 단계. min이 있으면 대비를 맞출 때까지 보정한다
  *   {on: role, min: number}                                                           그 역할 위에 놓이는 글자: 흰색 또는 램프 950 중 대비가 맞는 쪽
+ *   {fixed: '#RRGGBB' | {from: PALETTE_SLOT, step, mix: {with: '#RRGGBB', ratio: 0~1}}, min?: {against, ratio}}   고정값(0.3.0): 흰 표면처럼 팔레트와 무관한 값, 또는 램프 단계를 어떤 색과 비율로 섞은 값. 계산은 결합 엔진(color.mjs) 몫
  * against에 적은 역할은 같은 세트에서 먼저 정의되어야 한다(순서 = 계산 순서).
  */
 export const STEPS = Object.freeze(['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950']);
@@ -131,7 +139,7 @@ export function validatePlatformMaterial(m) {
   const fields = {...COMMON_FIELDS, ...spec};
   for (const k of Object.keys(m)) if (!Object.hasOwn(fields, k)) err('P_FIELD', `$.${k}`, `${m.kind}에 없는 필드: ${k}`);
   for (const [k, t] of Object.entries(fields)) {
-    if (!Object.hasOwn(m, k)) err('P_FIELD', `$.${k}`, `필수 필드 없음: ${k}`);
+    if (!Object.hasOwn(m, k)) { if (!t.endsWith('?')) err('P_FIELD', `$.${k}`, `필수 필드 없음: ${k}`); }
     else if (!fits(t, m[k])) err('P_TYPE', `$.${k}`, `${k}는 ${t}여야 합니다`);
   }
   if (out.length) return out;
@@ -157,10 +165,19 @@ export function validatePlatformMaterial(m) {
         if (!m.needs.includes(rule.from)) err('P_SUBTOKEN_NEED', `${p}.from`, `needs에 없는 팔레트 자리: ${rule.from}`);
         for (const md of ['light', 'dark']) if (!STEPS.includes(rule[md])) err('P_SUBTOKEN_STEP', `${p}.${md}`, `램프 단계는 ${STEPS.join('·')}입니다`);
         for (const a of rule.min?.against ?? []) if (!defined.has(a)) err('P_SUBTOKEN_ORDER', `${p}.min.against`, `${a}는 이 역할보다 먼저 정의해야 합니다`);
+      } else if (rule.fixed !== undefined) {
+        const f = rule.fixed, bad = msg => err('P_SUBTOKEN_RULE', `${p}.fixed`, msg);
+        if (typeof f === 'string') { if (!HEX.test(f)) bad('고정값은 대문자 #RRGGBB입니다'); }
+        else if (TYPE_OF(f) === 'object') {
+          if (!m.needs.includes(f.from)) err('P_SUBTOKEN_NEED', `${p}.fixed.from`, `needs에 없는 팔레트 자리: ${f.from}`);
+          if (!STEPS.includes(f.step)) err('P_SUBTOKEN_STEP', `${p}.fixed.step`, `램프 단계는 ${STEPS.join('·')}입니다`);
+          if (f.mix !== undefined && !(TYPE_OF(f.mix) === 'object' && HEX.test(f.mix.with) && typeof f.mix.ratio === 'number' && f.mix.ratio >= 0 && f.mix.ratio <= 1)) bad('mix는 {with: 대문자 #RRGGBB, ratio: 0~1}입니다');
+        } else bad('fixed는 #RRGGBB 문자열 또는 {from, step, mix?} 객체입니다');
+        for (const a of rule.min?.against ?? []) if (!defined.has(a)) err('P_SUBTOKEN_ORDER', `${p}.min.against`, `${a}는 이 역할보다 먼저 정의해야 합니다`);
       } else if (rule.on !== undefined) {
         if (!defined.has(rule.on)) err('P_SUBTOKEN_ORDER', `${p}.on`, `${rule.on}는 이 역할보다 먼저 정의해야 합니다`);
         if (typeof rule.min !== 'number') err('P_SUBTOKEN_RULE', `${p}.min`, 'on 규칙은 숫자 min(대비)이 필요합니다');
-      } else err('P_SUBTOKEN_RULE', p, '역할 규칙은 from 또는 on 중 하나입니다');
+      } else err('P_SUBTOKEN_RULE', p, '역할 규칙은 from·on·fixed 중 하나입니다');
       defined.add(role);
     }
     for (const role of COLOR_ROLE_NAMES) if (!Object.hasOwn(m.roles, role)) err('P_SUBTOKEN_ROLE', `$.roles.${role}`, `색 역할 ${role}이 없습니다(세트는 모든 역할을 낸다)`);

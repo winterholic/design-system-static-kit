@@ -20,6 +20,7 @@ import {bindColor} from './color.mjs';
 import {bindType} from './type.mjs';
 import {familyShapeVars, renderMember, contrastPairs, requiredVars} from './family.mjs';
 import {escapeHTML} from '../escape-html.mjs';
+import {axisIds, materialAxisIds} from './axes.mjs';
 
 export const REQUEST_KEYS = Object.freeze(['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'families', 'components']);
 export const COMPONENT_KEYS = Object.freeze(['base', 'family', 'props', 'content']);
@@ -28,7 +29,9 @@ export const DENSITIES = Object.freeze(['compact', 'comfortable', 'spacious']);
 export const STAGES = Object.freeze(['normalizeRequest', 'resolveStyleContext', 'selectMaterials', 'checkCombination', 'bindTokens', 'composeComponents', 'emit']);
 
 const plain = x => x !== null && typeof x === 'object' && !Array.isArray(x);
-const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
+/** 타이포 결합 오류 코드를 조합 검사 코드로 통일한다: 한글 한도(P_TYPE_HANGUL_*)는 모두 P_CHECK_TYPE_HANGUL, 위계(P_TYPE_HIERARCHY)는 따로 둔다(타이포 작업의 요청, 0.3.0). */
+export const typeErrorCode = code => (code.startsWith('P_TYPE_HANGUL') ? 'P_CHECK_TYPE_HANGUL' : code);
+export const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
 const failed = state => state.diagnostics.some(d => d.severity === 'error');
 
 /** 1단계. request → {intent}. 모르는 키는 거부하고 바꾸지 않는다. */
@@ -53,11 +56,11 @@ export function normalizeRequest(request) {
 }
 
 /** 요구한 id의 개별 속성 유효성: 등록됐는가, 종류가 맞는가, 맥락에 맞는가. */
-function attr(env, id, kind, path, context) {
+export function attr(env, id, kind, path, context) {
   const m = env.registry.get(id);
   if (!m) return diag('P_ATTR_UNKNOWN', path, `등록되지 않은 재료: ${id}`, {alternatives: env.registry.kind(kind).list().map(x => x.id)});
   if (m.kind !== kind) return diag('P_ATTR_KIND', path, `${id}는 ${kind}가 아니라 ${m.kind}입니다`);
-  if (!m.contexts.includes('any') && !m.contexts.includes(context)) return diag('P_ATTR_CONTEXT', path, `${id}는 ${context} 맥락용이 아닙니다(${m.contexts.join(', ')})`);
+  if (context != null && !m.contexts.includes('any') && !m.contexts.includes(context)) return diag('P_ATTR_CONTEXT', path, `${id}는 ${context} 맥락용이 아닙니다(${m.contexts.join(', ')})`);
   return null;
 }
 
@@ -110,8 +113,10 @@ export function selectMaterials(state, env) {
 export function checkCombination(state, env) {
   const {selection, intent} = state, diagnostics = [...state.diagnostics];
   // 패밀리는 자기 구성원(기반 컴포넌트)과만 짝지어 본다. 다른 패밀리의 기반 컴포넌트와 묶으면 닫힌 쌍 위반으로 잘못 읽힌다.
-  const core = [selection.styleContext, selection.palette, selection.subtokenSet, selection.typeSystem].filter(Boolean);
-  const groups = Object.entries(selection.families).map(([base, family]) => [...core, family, base]);
+  // 축 값 재료(요구한 모드·밀도, 패밀리 모양, 서체 짝)도 함께 평가한다. 축 조합 금지(X01 등)와 테마 금지가 forbids 관계로 걸린다(계약 0.2.0).
+  const typeSystem = env.registry.get(selection.typeSystem);
+  const core = [selection.styleContext, selection.palette, selection.subtokenSet, selection.typeSystem, ...axisIds({mode: intent.mode, density: intent.density}), ...materialAxisIds(typeSystem)].filter(Boolean);
+  const groups = Object.entries(selection.families).map(([base, family]) => [...core, family, base, ...materialAxisIds(env.registry.get(family))]);
   const ctx = {context: intent.context, mode: intent.mode, density: intent.density};
   const runs = (groups.length ? groups : [core]).map(ids => env.graph.evaluate(ids, ctx));
   const key = x => JSON.stringify(x);
@@ -120,7 +125,7 @@ export function checkCombination(state, env) {
   for (const v of relations.violations) diagnostics.push(diag(v.code, '$selection', `${v.from} × ${v.to}: ${v.reason}`));
   const ts = env.registry.get(selection.typeSystem);
   const type = ts ? bindType(ts) : null;
-  for (const e of type?.errors ?? []) diagnostics.push(diag(e.code === 'P_TYPE_HANGUL_WEIGHT' ? 'P_CHECK_TYPE_HANGUL' : e.code, '$.typeSystem', e.message));
+  for (const e of type?.errors ?? []) diagnostics.push(diag(typeErrorCode(e.code), '$.typeSystem', e.message));
   return {...state, diagnostics, relations};
 }
 
