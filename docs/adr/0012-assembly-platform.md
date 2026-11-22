@@ -271,7 +271,7 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 
 ### 9.3 서비스 공개 초안(W5-b 예고)
 
-`assembleDesign(request)`의 요청은 `assemblePage`와 같고 응답은 같은 봉투 안의 `{selected, candidates, blocked, comparison, plan, decisions}`다(`pages.md` §8). 서비스·REST·MCP 공개, Blueprint 2.7.0 게이트, §8의 D1·D2·D3은 다음 단계이고 이 개정은 그 어느 것도 하지 않았다.
+`assembleDesign(request)`의 요청은 `assemblePage`와 같고 응답은 같은 봉투 안의 `{selected, candidates, blocked, comparison, plan, decisions}`다(`pages.md` §8). 서비스·REST·MCP 공개, Blueprint 2.7.0 게이트, §8의 D1·D2·D3은 다음 단계였고 0.6.0(§9.6)에서 처리했다.
 
 ### 9.4 0.4.0: 색 작업(W1)이 main에 들어온 뒤의 요청 1~4
 
@@ -305,3 +305,19 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 - 상태 패턴의 `axes.density`는 어울리는 밀도의 힌트라 축 금지를 걸지 않는다(순위에서만 읽는다).
 - 기준선의 플랫폼 구간이 재료마다 그 재료를 명시한 요청을 실제로 조립해, 검증된 재료가 출력에 나타나는지 센다(`distinct.styleMaterials`).
 
+### 9.6 0.6.0: 페이지 조립의 서비스·REST·MCP 공개와 Blueprint 2.7.0(W5-b)
+
+| 항목 | 결정과 결과 |
+|---|---|
+| 2.7.0 게이트 | `materials`는 2.7.0 이상에서만 받는다. `ACCEPTED_CATALOG_VERSIONS`와 `VERSION_ORDER`는 바꾸지 않는다(`site/v1/catalog.json` 스냅샷과 ≤2.6.0 고정 해시가 그 값을 쓴다). 2.7.0은 `src/catalog/materials-field.mjs`의 `BLUEPRINT_CATALOG_VERSIONS`와 `atLeast` 안의 `ORDER_ALL`로만 다룬다. ≤2.6.0 문서에 `materials`가 있으면 `VERSION_FIELD`로 거부한다 |
+| `materials` 필드 | id만 저장한다(팔레트, 서브토큰 세트, 서체, 패밀리, 표면·모션·배경·미디어·상태 패턴, 목적 슬롯). `profile`과 함께 쓰면 `MATERIALS_CONFLICT`다. 출력을 바꾸는 필드이며 스키마에 `x-effect: output`을 단다 |
+| 왕복 | `assembleDesign`의 후보 `blueprint`를 `compileBlueprint`로 다시 컴파일하면 같은 html·css·tokens가 나온다. 조립과 컴파일이 같은 `renderPlatformBlueprint`(`src/platform/render.mjs`)를 부르기 때문이다. 컴파일러는 `catalogVersion === '2.7.0'`이고 `materials`가 있을 때만 이 경로로 간다(`src/platform/compile.mjs`) |
+| 서비스 함수 | `assembleDesign`, `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `checkCompatibility`, `listEditOps`, `applyEdit`를 같은 봉투로 공개한다. 서비스 `CONTRACT_VERSION`은 1.1.0 → 1.2.0(minor: 추가만 있고 기존 필드는 그대로) |
+| D1 | 처리. 2.6.0 `profile`은 출력에 영향이 없다는 것을 `PROFILE_NO_OUTPUT_EFFECT` 정보 진단과 `explainDecisions`의 `effects`로 드러낸다. 출력은 그대로다. 2.7.0 `materials`는 선택이 바뀌면 출력이 바뀌며 `tests/platform-service-assemble.test.mjs`가 스타일 맥락만 바꿔도 CSS가 바뀐다는 것을 고정한다 |
+| D2 | 처리. `colorPalette`가 있을 때 무시되는 `palette`는 검증에서 `PALETTE_IGNORED` 경고다. 이 경고는 검증 응답에만 있고 컴파일 출력과 ≤2.6.0 고정 해시는 바꾸지 않는다. 컴파일에는 경고가 없다 |
+| D3 | 처리. 채널은 서비스가 받는 `catalogVersion`을 그대로 넘긴다. 단 권리 규칙 R1에 따라 팔레트 목록은 기본 버전이 아니면 계속 거부한다. 재료 질의, 조립, 편집 연산을 REST·MCP에 노출했다 |
+| 목적 패밀리 | W3의 목적 패밀리(`families/`)를 페이지 슬롯의 `purpose`로 읽는다. 조합 검사(`checkPurposeCombination`)에 걸리면 후보가 아니라 `blocked`로 간다 |
+| `bindType` | `legacyRoles` 옵션(기본 꺼짐)이 `--kit-t-micro` 같은 구형 부품이 읽는 서체 변수를 파생한다. 옵션을 켠 페이지 조립만 이 변수를 내고, 켜지 않은 경로(기준선의 기존 플랫폼 구간, 고정 시험)는 바이트가 그대로다. 이로써 차트·부품이 읽는 변수의 `missing`이 0이다 |
+| 기준선 | 플랫폼 구간은 페이지 조립이 목적 패밀리와 상태 자리까지 읽으므로 조립 가능·검증된 수가 늘었다(조립 가능 119610, 검증 5793, 고유 출력 5787). 구형 구간(≤2.6.0) 수치와 `site/v1/catalog.json` 스냅샷은 바뀌지 않았다. 계약 문자열이 CSS 주석에 들어가므로 플랫폼 출력의 바이트는 0.6.0으로 바뀐다 |
+
+REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemble`·`assemble_design`, `POST /api/v1/assemble-blueprint`·`assemble_blueprint`, `GET /api/v1/materials[/{id}]`·`list_materials`·`get_material`, `GET /api/v1/platform/materials[/{id}]`·`list_platform_materials`·`get_platform_material`, `POST /api/v1/recommend`·`recommend_materials`, `POST /api/v1/compatibility`·`check_compatibility`, `GET /api/v1/edit/ops`·`list_edit_ops`, `POST /api/v1/edit`·`apply_edit`.

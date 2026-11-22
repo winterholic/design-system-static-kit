@@ -1,4 +1,4 @@
-import {CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS} from '../catalog.mjs';
+import {CATALOG_VERSION, BLUEPRINT_CATALOG_VERSIONS as ACCEPTED_CATALOG_VERSIONS} from '../catalog.mjs';
 import {diagnostic} from './errors.mjs';
 import {badRequest} from './envelope.mjs';
 

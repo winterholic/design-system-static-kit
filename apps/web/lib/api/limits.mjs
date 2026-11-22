@@ -7,7 +7,7 @@ export const MAX_BODY_BYTES = 512 * 1024;
 export const RATE_WINDOW_MS = 60_000;
 export const RATE_BUDGET = Number(process.env.API_RATE_BUDGET ?? 120);
 /** 호출 한 번의 비용. 컴파일이 가장 비싸다(약 10~100ms). */
-export const COST = Object.freeze({validate: 1, explain: 2, compile: 3});
+export const COST = Object.freeze({validate: 1, explain: 2, compile: 3, assemble: 6});
 /** 한 인스턴스가 추적하는 호출자 수 상한. 넘으면 가장 오래된 호출자부터 잊는다(메모리 상한). */
 export const RATE_MAX_CLIENTS = 2000;
 

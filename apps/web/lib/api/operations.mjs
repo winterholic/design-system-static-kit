@@ -1,10 +1,13 @@
 // REST v1 의 작업 표. 각 작업은 src/service 함수 하나를 부르는 얇은 어댑터이고, 같은 표에서 OpenAPI 문서를 만든다.
 // 비즈니스 규칙(허용 필터, 필드 이름, 범위, 오류 문구)은 서비스가 판정한다. 여기서는 URL·JSON 을 서비스 인자로 옮기기만 한다.
-import {CATALOG_KINDS, compileBlueprint, explainDecisions, getComponentSpec, getSchema, listCatalog, validateBlueprint} from '@winterholic/design-system-static-kit/service';
+import {
+  CATALOG_KINDS, compileBlueprint, explainDecisions, getComponentSpec, getSchema, listCatalog, validateBlueprint, assembleBlueprint, assembleDesign, listMaterials, getMaterial,
+  listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
+} from '@winterholic/design-system-static-kit/service';
 import {COST} from './limits.mjs';
 import {channelError} from './diagnostics.mjs';
 import {sha256} from './hash.mjs';
-import {rejectUnexpectedVersion} from './versions.mjs';
+import {rejectUnexpectedVersion, listArgs, schemaArgs} from './versions.mjs';
 
 const nullProto = () => Object.create(null);
 const bad = (path, message, hint) => channelError('BAD_REQUEST', path, message, hint);
@@ -48,7 +51,7 @@ const catalogRead = fixedKind => ({
   parse: ({url}) => {
     const {args, catalogVersion} = queryToArgs(url);
     if (fixedKind) { const e = forbid(args, 'kind'); if (e) return {reject: e}; args.kind = fixedKind; }
-    return {args, catalogVersion};
+    return {args: listArgs(args, catalogVersion), catalogVersion};
   },
   call: args => listCatalog(args),
 });
@@ -77,6 +80,7 @@ export const OPERATIONS = [
       const {args, catalogVersion} = queryToArgs(url);
       const e = forbid(args, 'type'); if (e) return {reject: e};
       args.type = params.id;
+      if (catalogVersion !== undefined) args.catalogVersion = catalogVersion;
       return {args, catalogVersion};
     },
     call: args => getComponentSpec(args),
@@ -88,7 +92,7 @@ export const OPERATIONS = [
       {name: 'target', in: 'query', required: true, schema: {type: 'string', enum: ['blueprint', 'component', 'chrome', 'diagnostic', 'edit-ops']}, description: '조회할 스키마'},
       {name: 'type', in: 'query', schema: {type: 'string'}, description: 'target=component 일 때 부품 type'}, FIELDS_PARAM, VERSION_PARAM,
     ],
-    parse: ({url}) => queryToArgs(url),
+    parse: ({url}) => { const {args, catalogVersion} = queryToArgs(url); return {args: schemaArgs(args, catalogVersion), catalogVersion}; },
     call: args => getSchema(args),
   },
   {
@@ -131,15 +135,92 @@ export const OPERATIONS = [
     },
     call: ({subject, opts}) => explainDecisions(subject, opts),
   },
+  {
+    id: 'assembleDesign', method: 'POST', path: '/api/v1/assemble', summary: '디자인 조립(플랫폼): 목적·콘텐츠 → 복수 후보', cost: COST.assemble,
+    description: '목적(purpose)과 콘텐츠로 페이지를 조립해 후보를 최대 8개까지 돌려줍니다. 후보마다 호환 검사, 품질 검사, 추천 이유(decisions[].reasons), value(html·css·tokens·manifest·blueprint)가 있고, 막힌 재료와 조합은 blocked에 이유와 함께 나옵니다. value.blueprint는 Blueprint 2.7.0이라 POST /api/v1/compile로 같은 출력을 다시 만들 수 있습니다. AI가 HTML·CSS를 만들지 않습니다: 모든 출력은 등록된 재료의 구현에서 나옵니다.',
+    body: {passthrough: true, required: ['purpose'], properties: {
+      purpose: {type: 'string', enum: ['saas-landing', 'work-dashboard', 'editorial-docs', 'commerce'], description: '페이지 목적'},
+      pattern: {type: 'string', description: '레이아웃 패턴(목적이 허용하는 것). 없으면 콘텐츠 양이 고른다'},
+      content: {type: 'object', description: '콘텐츠 구조: title, description, kpis, table, charts, list, hero, features, faq, cta, sections, products, status 등'},
+      components: {type: 'array', items: {type: 'object'}, description: '[{base, family?, props?, content, slot?}] 기반 컴포넌트를 슬롯에 놓는다'},
+      shell: {type: 'string'}, width: {type: 'string'}, density: {type: 'string'}, mode: {type: 'string', enum: ['light', 'dark']},
+      styleContext: {type: 'string'}, palette: {type: 'string'}, subtokenSet: {type: 'string'}, typeSystem: {type: 'string'},
+      families: {type: 'array', items: {type: 'string'}}, surface: {type: 'string'}, motion: {type: 'string'}, background: {type: 'string'}, media: {type: 'string'},
+      states: {type: 'object', description: '{empty?, loading?, error?, success?: 상태 패턴 id}'},
+      candidates: {type: 'integer', minimum: 1, maximum: 8, description: '후보 수(기본 3)'},
+      include: {type: 'array', items: {type: 'string', enum: ['html', 'css', 'tokens', 'manifest', 'blueprint', 'script', 'standalone']}, description: '후보마다 value에 넣을 항목(기본 html, css, tokens, manifest, blueprint)'},
+    }},
+    parse: ({body}) => { const {include, ...request} = body; return {args: {request, opts: include === undefined ? undefined : {include}}}; },
+    call: ({request, opts}) => assembleDesign(request, opts),
+  },
+  {
+    id: 'assembleBlueprint', method: 'POST', path: '/api/v1/assemble-blueprint', summary: '프로파일 조립(2.6.0 Blueprint)', cost: COST.assemble,
+    description: '디자인 프로파일로 2.6.0 Blueprint를 조립합니다. 지원하지 않는 요구는 다른 값으로 바꾸지 않고 ASSEMBLE_* 진단과 대안으로 돌려줍니다.',
+    body: {passthrough: true, required: ['profile'], properties: {profile: {type: 'string'}, intent: {type: 'object'}, content: {type: 'object'}}},
+    parse: ({body}) => ({args: body}),
+    call: args => assembleBlueprint(args),
+  },
+  {
+    id: 'listMaterials', method: 'GET', path: '/api/v1/materials', summary: '재료 목록(2.6.0 카탈로그 재료)',
+    description: 'kind·category·context·minQuality·tag·preset·since·query로 거르고 fields·limit·cursor로 필요한 조각만 받습니다.',
+    parameters: [...['kind', 'category', 'context', 'minQuality', 'tag', 'since', 'query'].map(name => ({name, in: 'query', schema: {type: 'string'}})), {name: 'preset', in: 'query', schema: {type: 'boolean'}, description: 'true면 완성 프리셋만'}, ...pick('fields', 'limit', 'cursor')],
+    parse: ({url}) => { const {args} = queryToArgs(url); if (args.preset === 'true' || args.preset === 'false') args.preset = args.preset === 'true'; return {args}; },
+    call: args => listMaterials(args),
+  },
+  {
+    id: 'getMaterial', method: 'GET', path: '/api/v1/materials/{id}', summary: '재료 한 장(2.6.0 카탈로그 재료)',
+    parameters: [{name: 'id', in: 'path', required: true, schema: {type: 'string'}, description: '재료 id(예 component:select-control)'}],
+    parse: ({url, params}) => { const {args} = queryToArgs(url); const e = forbid(args, 'id'); if (e) return {reject: e}; args.id = params.id; return {args}; },
+    call: args => getMaterial(args),
+  },
+  {
+    id: 'listPlatformMaterials', method: 'GET', path: '/api/v1/platform/materials', summary: '플랫폼 재료 목록(팔레트·세트·서체·패밀리·스타일 재료)',
+    description: '조립 플랫폼이 쓰는 재료입니다. kind는 style-context, palette, subtoken-set, type-system, base-component, family, axis-value, surface, motion, background, media, state-pattern.',
+    parameters: [...['kind', 'context', 'tag', 'query'].map(name => ({name, in: 'query', schema: {type: 'string'}})), ...pick('fields', 'limit', 'cursor')],
+    parse: ({url}) => ({args: queryToArgs(url).args}),
+    call: args => listPlatformMaterials(args),
+  },
+  {
+    id: 'getPlatformMaterial', method: 'GET', path: '/api/v1/platform/materials/{id}', summary: '플랫폼 재료 한 장과 관계',
+    parameters: [{name: 'id', in: 'path', required: true, schema: {type: 'string'}, description: '재료 id(예 palette:static-kit)'}],
+    parse: ({url, params}) => { const {args} = queryToArgs(url); const e = forbid(args, 'id'); if (e) return {reject: e}; args.id = params.id; return {args}; },
+    call: args => getPlatformMaterial(args),
+  },
+  {
+    id: 'recommendMaterials', method: 'POST', path: '/api/v1/recommend', summary: '재료 추천', cost: COST.validate,
+    description: '한 종류의 재료를 맥락·이미 고른 재료에 비춰 점수 순으로 돌려줍니다. 막힌 후보는 blocked에 코드와 이유가 있습니다.',
+    body: {passthrough: true, required: ['kind'], properties: {kind: {type: 'string'}, context: {type: 'string'}, mode: {type: 'string', enum: ['light', 'dark']}, density: {type: 'string'}, styleContext: {type: 'string'}, selected: {type: 'array', items: {type: 'string'}}, fit: {type: 'boolean'}}},
+    parse: ({body}) => ({args: body}),
+    call: args => recommendMaterials(args),
+  },
+  {
+    id: 'checkCompatibility', method: 'POST', path: '/api/v1/compatibility', summary: '재료 묶음 호환성', cost: COST.validate,
+    description: '재료 id 둘 이상이 함께 쓸 수 있는지 판정합니다. 위반은 code·reason과 함께, 적용된 관계와 계산 관계 결과를 함께 돌려줍니다.',
+    body: {passthrough: true, required: ['ids'], properties: {ids: {type: 'array', items: {type: 'string'}}, context: {type: 'string'}, mode: {type: 'string', enum: ['light', 'dark']}, density: {type: 'string'}}},
+    parse: ({body}) => ({args: body}),
+    call: args => checkCompatibility(args),
+  },
+  {
+    id: 'listEditOps', method: 'GET', path: '/api/v1/edit/ops', summary: '편집 연산 목록',
+    parse: () => ({args: undefined}), call: () => listEditOps(),
+  },
+  {
+    id: 'applyEdit', method: 'POST', path: '/api/v1/edit', summary: 'Blueprint 편집 연산 적용', cost: COST.validate,
+    description: 'steps의 연산을 차례로 적용합니다. 하나라도 실패하면 아무것도 적용하지 않습니다. 결과 문서는 검증하지 않으므로 POST /api/v1/validate로 확인하세요.',
+    body: {passthrough: true, required: ['blueprint', 'steps'], properties: {blueprint: {type: 'object'}, steps: {type: 'array', items: {type: 'object'}, description: '[{op, args?}] 최대 50개'}}},
+    parse: ({body}) => ({args: body}),
+    call: args => applyEdit(args),
+  },
 ];
 
 /** 요청 본문의 최상위 모양만 본다: 객체인가, 허용 키만 있는가, 필수 키가 있는가. 값의 의미는 서비스가 판정한다. */
 export function checkBodyShape(op, body) {
   if (body === null || typeof body !== 'object' || Array.isArray(body)) return bad('$body', '본문은 JSON 객체여야 합니다.');
   const allowed = Object.keys(op.body.properties);
-  const extra = Object.keys(body).find(k => !allowed.includes(k));
+  // passthrough 작업은 모르는 키와 빠진 필수 키를 서비스로 넘겨 서비스의 진단(path·hint·대안)을 그대로 받는다(채널이 같은 거부 문장을 내게 한다).
+  const extra = op.body.passthrough ? undefined : Object.keys(body).find(k => !allowed.includes(k));
   if (extra !== undefined) return bad(`$body.${extra}`, `알 수 없는 속성: ${extra}`, `허용 속성: ${allowed.join(', ')}`);
-  const missing = op.body.required.find(k => body[k] === undefined);
+  const missing = op.body.passthrough ? undefined : op.body.required.find(k => body[k] === undefined);
   if (missing !== undefined) return bad(`$body.${missing}`, `${missing} 가 필요합니다.`);
   return null;
 }

@@ -1,8 +1,9 @@
 import {nodeSpecAt, nodeExtended, nodeSince, nodeTypeKnown} from './catalog/node-extensions.mjs';
 import {chartDiagnostics, levelsOf} from './catalog/chart-rules.mjs';
 import {profileErrors} from './profiles/check.mjs';
+import {materialsSchema} from './catalog/materials-field.mjs';
 import {FEATURED_COLUMNS, FEATURED_MIN_CHILDREN, NARROW_CELL_OK, PULL_PARENTS, BLEED_RATIOS} from './catalog/expression.mjs';
-import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
+import {BLUEPRINT_VERSION, CATALOG_VERSION, ACCEPTED_CATALOG_VERSIONS, BLUEPRINT_CATALOG_VERSIONS, MATERIALS_SINCE_FIELD, SINCE_FIELDS, TOP_LEVEL_SINCE_FIELDS, PROFILE_SINCE_FIELD, atLeast, expressionApplies, assessBlueprintContracts, themes, palettes, axes, styleAxes, axisBans, nodeSpecs, requiredOf, limits, blueprintSchema, pageTypes, navLimits, iconShells, megaShells, MEGA_MAX} from './catalog.mjs';
 
 const VAGUE_LABELS = new Set(['여기', '여기를 클릭', '클릭', '클릭하세요', 'click here', 'here', 'link', '링크', '이곳']);
 const DAYS = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -54,14 +55,26 @@ export function validateBlueprint(input) {
   const top = blueprintSchema();
   // The tree is walked separately: cross-field invariants do not belong in a permissive schema walker.
   const props = {...top.properties}; delete props.tree;
+  // 2.7.0: 카탈로그 버전 목록과 materials 필드를 더한다. materials는 모든 버전에서 모양을 보고(2.7.0 미만이면 아래에서 VERSION_FIELD로 거부한다), 공개 스키마(blueprintSchema)와 스냅숏 바이트는 바꾸지 않는다.
+  if (input.catalogVersion === MATERIALS_SINCE_FIELD.since) props.catalogVersion = {type: 'string', enum: [...BLUEPRINT_CATALOG_VERSIONS]};
+  props.materials = materialsSchema();
   value(Object.fromEntries(Object.entries(input).filter(([k]) => k !== 'tree')), {type: 'object', properties: props, required: top.required.filter(k => k !== 'tree')}, '$');
   if (input.version !== BLUEPRINT_VERSION) error('$.version', 'VERSION', '지원 Blueprint 버전: ' + BLUEPRINT_VERSION + ' (1.0은 `kit migrate`로 변환)');
-  if (!ACCEPTED_CATALOG_VERSIONS.includes(input.catalogVersion)) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + ACCEPTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
+  if (!ACCEPTED_CATALOG_VERSIONS.includes(input.catalogVersion) && input.catalogVersion !== MATERIALS_SINCE_FIELD.since) error('$.catalogVersion', 'CATALOG_VERSION', '지원 카탈로그: ' + ACCEPTED_CATALOG_VERSIONS.join(', ') + ' (명시적 업그레이드: kit migrate)');
   for (const f of TOP_LEVEL_SINCE_FIELDS) if (Object.hasOwn(input, f.field) && !atLeast(input.catalogVersion, f.since)) error(`$.${f.field}`, 'VERSION_FIELD', `${f.field}는 ${f.since}부터 쓸 수 있습니다.`);
+  if (Object.hasOwn(input, MATERIALS_SINCE_FIELD.field)) {
+    if (!atLeast(input.catalogVersion, MATERIALS_SINCE_FIELD.since)) error('$.materials', 'VERSION_FIELD', `materials는 ${MATERIALS_SINCE_FIELD.since}부터 쓸 수 있습니다.`);
+    else for (const f of ['colorPalette', 'typeRoles', 'profile']) if (Object.hasOwn(input, f)) error(`$.${f}`, 'MATERIALS_CONFLICT', `materials가 있는 문서는 색을 palette × subtokenSet, 서체를 typeSystem으로만 정합니다. ${f}와 함께 쓸 수 없습니다.`);
+  }
   if (Object.hasOwn(input, PROFILE_SINCE_FIELD.field) && !atLeast(input.catalogVersion, PROFILE_SINCE_FIELD.since)) error('$.profile', 'VERSION_FIELD', `profile은 ${PROFILE_SINCE_FIELD.since}부터 쓸 수 있습니다.`);
   // 프로파일 계약(PF01~PF13): 프로파일이 허용하지 않는 부품·프리셋·밀도 조합을 거부한다. 근거와 대안(fix)을 오류에 싣는다.
   else if (PROFILE_SINCE_FIELD.values.includes(input.profile)) for (const e of profileErrors(input)) if (errors.length < 80) errors.push(e);
   const expr = expressionApplies(input), warnings = [];
+  // D1(ADR 0012 §8): profile은 검증 제약일 뿐 출력에 영향이 없다. 숨기지 않고 알린다(info).
+  if (Object.hasOwn(input, 'profile') && atLeast(input.catalogVersion, PROFILE_SINCE_FIELD.since) && !Object.hasOwn(input, 'materials')) warnings.push({path: '$.profile', code: 'PROFILE_NO_OUTPUT_EFFECT', severity: 'info', message: 'profile은 검증 제약(PF01~PF13)입니다. 컴파일 출력에는 영향이 없어 profile만 바꾼 두 문서는 같은 바이트를 냅니다. 출력을 바꾸는 선택은 2.7.0의 materials입니다.'});
+  // D2(ADR 0012 §8): 2.6.0에서 colorPalette를 고른 문서는 색을 그 내부 팔레트에서만 얻는다. 구형 palette 필드는 색에 쓰이지 않는데 값이 바뀌어도 오류가 없었다. 출력은 그대로이고 경고만 더한다.
+  if (Object.hasOwn(input, 'colorPalette') && atLeast(input.catalogVersion, '2.6.0') && !Object.hasOwn(input, 'materials')) warnings.push({path: '$.palette', code: 'PALETTE_IGNORED', severity: 'warning', message: `colorPalette(${String(input.colorPalette)})가 색을 정하므로 이 palette 값은 색에 쓰이지 않습니다.`});
+  if (plain(input.materials) && atLeast(input.catalogVersion, MATERIALS_SINCE_FIELD.since)) warnings.push({path: '$.palette', code: 'PALETTE_IGNORED', severity: 'warning', message: 'materials가 있는 문서의 색은 materials.palette × materials.subtokenSet이 정합니다. 이 palette 필드(구형 팔레트 id)는 색에 쓰이지 않습니다.'});
   const theme = Object.hasOwn(themes, input.theme) ? themes[input.theme] : null;
   const axisOk = ['mode', ...styleAxes].every(k => axes[k].includes(input[k]));
   if (theme) for (const [axis, banned] of Object.entries(theme.forbid)) if (banned.includes(input[axis])) error('$.' + axis, 'THEME_FORBID', `${theme.name} 테마는 ${axis}=${input[axis]}를 금지합니다. 금지 값: ${banned.join(', ')}`);

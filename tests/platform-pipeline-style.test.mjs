@@ -75,7 +75,7 @@ test('selected surface, motion, background and media show up in the page: scope 
   assert.ok(r.value.css.includes(surfaceScopeCSS(env.registry.get('surface:glow-glass'))), 'the surface becomes the variables the legacy parts read');
   assert.match(r.value.css, /\[data-surface="glow-glass"\]\{--kit-radius:18px;--kit-card-border:[^;]+;--kit-shadow:[^;]+;--kit-shadow-hover:/);
   assert.ok(r.value.css.includes('[data-motion="snappy"]{') && r.value.css.includes('[data-bg="blueprint-grid-lines"]{') && r.value.css.includes('[data-media="square-tech"]{'));
-  assert.deepEqual(r.value.manifest.styleMaterials, {surface: 'surface:glow-glass', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech', states: []});
+  assert.deepEqual(r.value.manifest.platform.styleMaterials, {surface: 'surface:glow-glass', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech', states: []});
   for (const slot of ['surface', 'motion', 'background', 'media']) assert.ok(r.decisions.some(d => d.slot === `style.${slot}` && d.source === 'intent'), slot);
   // a different surface changes the output, not only the manifest
   const other = dash({}, {mode: 'dark', surface: 'surface:soft-layered', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech'});
@@ -195,9 +195,9 @@ test('the pages with style materials still read only defined variables and keep 
     assert.equal(r.ok, true, `${purpose}: ${JSON.stringify(r.diagnostics)}`);
     for (const c of r.candidates) {
       assert.equal(c.quality.tokens.ok, true, `${purpose}: ${JSON.stringify(c.quality.tokens.missing)}`);
-      const pairs = c.value.manifest.contrast.styleMaterials;
+      const pairs = c.value.manifest.platform.contrast.styleMaterials;
       assert.ok(pairs.length > 0 && pairs.every(p => p.ok), `${purpose}: ${JSON.stringify(pairs.filter(p => !p.ok))}`);
-      assert.deepEqual(c.value.manifest.styleMaterials, r.value.manifest.styleMaterials, 'all candidates share the style material selection');
+      assert.deepEqual(c.value.manifest.platform.styleMaterials, r.value.manifest.platform.styleMaterials, 'all candidates share the style material selection');
     }
   }
 });

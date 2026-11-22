@@ -4,11 +4,12 @@
  * 반환값은 모두 JSON으로 직렬화되는 새 객체다(카탈로그 객체는 얼어 있어 그대로 내보내지 않는다).
  */
 import {
-  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules, expressionRules, SINCE_FIELDS, atLeast,
+  CATALOG_VERSION, SUPPORTED_CATALOG_VERSIONS, ACCEPTED_CATALOG_VERSIONS, BLUEPRINT_CATALOG_VERSIONS, PLATFORM_CATALOG_VERSION, COMPOSITION_VERSION, compositionRules, pageRules, compositionCoverage, variantContracts, recipes, recipeRules, expressionRules, SINCE_FIELDS, atLeast,
   themes, palettes, paletteFamilies, themeCategories, layoutOptionsOf, nodeSpecs, nodeTypes, requiredOf, chromeSpec, rules, axes, axisDefs, axisBans, pageTypes,
   templateList, templates, concepts, conceptsOfTemplate, iconNames, icons, blueprintSchema,
 } from '../catalog.mjs';
 import {recipePicks, recipeOfTemplate} from '../recipes.mjs';
+import {materialsSchema} from '../catalog/materials-field.mjs';
 import {opNames} from '../edit/index.mjs';
 import {nodeSpecAt, nodeTypesAt, nodeSince} from '../catalog/node-extensions.mjs';
 import {diagnostic} from './errors.mjs';
@@ -53,7 +54,7 @@ const KINDS = {
     id: 'type', summary: ['type', 'label', 'group'], all: ['type', 'label', 'group', 'required', 'optional', 'childTypes', 'since'],
     // filter.catalogVersion은 그 버전이 받아들이는 부품(2.6.0이면 select-control·data-table 포함)과 그 버전의 자식 목록을 보인다. 생략하면 기본 카탈로그(2.4.0·2.5.0과 같은 문법)다.
     rows: filter => { const version = filter?.catalogVersion; return (version ? nodeTypesAt(version) : nodeTypes).map(type => { const spec = nodeSpecAt(type, version); return {type, label: spec.label, group: spec.group, required: requiredOf(spec), optional: spec.optional ?? [], childTypes: spec.children ?? [], since: nodeSince(type)}; }); },
-    filters: {group: (r, v) => r.group === v, catalogVersion: {match: () => true, known: v => ACCEPTED_CATALOG_VERSIONS.includes(v), code: 'UNSUPPORTED_VERSION'}},
+    filters: {group: (r, v) => r.group === v, catalogVersion: {match: () => true, known: v => BLUEPRINT_CATALOG_VERSIONS.includes(v), code: 'UNSUPPORTED_VERSION'}},
   },
   pageTypes: {
     id: 'id', summary: ['id', 'label', 'description', 'shells'], all: ['id', 'label', 'description', 'require', 'forbid', 'allow', 'shells', 'widths', 'maxChildren'],
@@ -238,7 +239,7 @@ export function getSchema(q) {
     if (badKey) return fail([badKey]);
     if (typeof q.target !== 'string' || !SCHEMA_TARGETS.includes(q.target)) return fail([badRequest('$args.target', `알 수 없는 target: ${String(q.target)}`, `허용값: ${list(SCHEMA_TARGETS)}`)]);
     if (q.target !== 'component' && q.type !== undefined) return fail([badRequest('$args.type', 'type은 target이 component일 때만 씁니다.')]);
-    if (q.catalogVersion !== undefined && (q.target !== 'component' || typeof q.catalogVersion !== 'string' || !ACCEPTED_CATALOG_VERSIONS.includes(q.catalogVersion))) return fail([badRequest('$args.catalogVersion', 'catalogVersion은 target이 component일 때만, 지원하는 카탈로그 버전으로 씁니다.', `허용값: ${list(ACCEPTED_CATALOG_VERSIONS)}`)]);
+    if (q.catalogVersion !== undefined && (!(q.target === 'component' || (q.target === 'blueprint' && q.catalogVersion === PLATFORM_CATALOG_VERSION)) || typeof q.catalogVersion !== 'string' || !BLUEPRINT_CATALOG_VERSIONS.includes(q.catalogVersion))) return fail([badRequest('$args.catalogVersion', `catalogVersion은 target이 component일 때만(blueprint는 ${PLATFORM_CATALOG_VERSION}만), 지원하는 값이어야 합니다.`, `지원 버전: ${BLUEPRINT_CATALOG_VERSIONS.join(', ')}`)]);
     if (q.target === 'diagnostic' || q.target === 'edit-ops') if (q.fields !== undefined) return fail([badRequest('$args.fields', `${q.target}에는 fields를 쓸 수 없습니다.`)]);
 
     if (q.target === 'diagnostic') return ok(jsonClone(DIAGNOSTIC_SCHEMA));
@@ -248,7 +249,14 @@ export function getSchema(q) {
     }
     const full = blueprintSchema();
     let schema, defs = null;
-    if (q.target === 'blueprint') { schema = full; defs = full.$defs; }
+    if (q.target === 'blueprint') {
+      schema = full; defs = full.$defs;
+      // 2.7.0(opt-in): 카탈로그 버전 목록과 materials 필드를 더한 스키마. 기본 스키마와 공개 스냅숏은 그대로다.
+      if (q.catalogVersion === PLATFORM_CATALOG_VERSION) {
+        // 스키마 주석 x-effect(ADR 0012 §8 D1): 필드가 출력을 바꾸는지(output), 검증만 하는지(validation), 색에 쓰이지 않는지(none). 주석이라 검증기가 무시한다. 기본 스키마(고정 바이트)에는 달지 않는다.
+        for (const [field, effect] of Object.entries({profile: 'validation', palette: 'none', colorPalette: 'output', typeRoles: 'output', controlSize: 'output'})) if (schema.properties[field]) schema.properties[field] = {...schema.properties[field], 'x-effect': effect};
+        schema.properties.catalogVersion = {type: 'string', enum: [...BLUEPRINT_CATALOG_VERSIONS]}; schema.properties.materials = materialsSchema(); schema.title += ` (catalog ${PLATFORM_CATALOG_VERSION})`; }
+    }
     else if (q.target === 'chrome') schema = {$schema: DRAFT, title: 'Static Kit chrome', ...chromeSpec};
     else {
       if (typeof q.type !== 'string' || !q.type) return fail([badRequest('$args.type', 'component 스키마에는 type이 필요합니다.', 'listCatalog({kind: "components"})로 부품 type을 조회하세요.')]);
@@ -284,7 +292,7 @@ export function getComponentSpec(q) {
     if (!isPlain(q)) return fail([badRequest('$args', '조회 인자는 객체여야 합니다.', `예: {type: "hero"}`)]);
     const badKey = checkKeys(q, ['type', 'fields', 'catalogVersion'], '$args');
     if (badKey) return fail([badKey]);
-    if (q.catalogVersion !== undefined && (typeof q.catalogVersion !== 'string' || !ACCEPTED_CATALOG_VERSIONS.includes(q.catalogVersion))) return fail([badRequest('$args.catalogVersion', `지원하지 않는 카탈로그 버전: ${String(q.catalogVersion)}`, `허용값: ${list(ACCEPTED_CATALOG_VERSIONS)}`)]);
+    if (q.catalogVersion !== undefined && (typeof q.catalogVersion !== 'string' || !BLUEPRINT_CATALOG_VERSIONS.includes(q.catalogVersion))) return fail([badRequest('$args.catalogVersion', `지원하지 않는 카탈로그 버전: ${String(q.catalogVersion)}`, `허용값: ${list(BLUEPRINT_CATALOG_VERSIONS)}`)]);
     if (typeof q.type !== 'string' || !q.type) return fail([badRequest('$args.type', 'type이 필요합니다.', 'listCatalog({kind: "components"})로 부품 type을 조회하세요.')]);
     // catalogVersion을 주면 그 버전이 받아들이는 명세(2.6.0은 차트 새 형태·select-control·data-table 포함)를 낸다. 생략하면 기본 카탈로그다.
     const spec = nodeSpecAt(q.type, q.catalogVersion);

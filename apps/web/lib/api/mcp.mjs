@@ -3,13 +3,16 @@
 import {createMcpHandler} from 'mcp-handler';
 import {originValidationResponse, localhostAllowedOrigins} from '@modelcontextprotocol/server';
 import {z} from 'zod';
-import {CATALOG_KINDS, compileBlueprint, explainDecisions, getComponentSpec, getSchema, listCatalog, validateBlueprint} from '@winterholic/design-system-static-kit/service';
+import {
+  CATALOG_KINDS, compileBlueprint, explainDecisions, getComponentSpec, getSchema, listCatalog, validateBlueprint, assembleBlueprint, assembleDesign, listMaterials, getMaterial,
+  listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
+} from '@winterholic/design-system-static-kit/service';
 import {COST, MAX_BODY_BYTES, TOOL_TIMEOUT_MS} from './limits.mjs';
 import {channelError} from './diagnostics.mjs';
 import {sha256} from './hash.mjs';
 import {clientKey, takeRate} from './ratelimit.mjs';
 import {readTextLimited} from './http.mjs';
-import {rejectUnexpectedVersion} from './versions.mjs';
+import {rejectUnexpectedVersion, listArgs, schemaArgs} from './versions.mjs';
 
 // ---------------------------------------------------------------- 스키마
 
@@ -67,7 +70,63 @@ export const TOOLS = [
     input: loose({blueprint: z.unknown().optional().describe('Blueprint JSON (컴파일 가능해야 함)'), manifest: anyObject.optional().describe('compile_design 이 준 manifest'), path: z.string().optional().describe('이 경로 아래 노드만 (예 $.tree.children[1])'), rule: z.string().optional().describe('이 규칙 ID 가 적용된 결정만 (예 C02)'), level: z.string().optional().describe('summary(기본) | full'), catalogVersion}),
     output: envelopeOf(z.looseObject({decisions: z.array(anyObject), page: anyObject.nullable(), axes: z.array(anyObject), contrast: anyObject})), cost: COST.explain,
   },
+  {
+    name: 'assemble_design', title: '디자인 조립(복수 후보)', run: 'assemble',
+    description: '목적(purpose: saas-landing | work-dashboard | editorial-docs | commerce)과 콘텐츠로 페이지를 조립해 후보를 최대 8개 돌려준다. 후보마다 호환 검사·품질 검사·추천 이유(decisions[].reasons)와 value(html·css·tokens·manifest·blueprint)가 있고 막힌 재료·조합은 blocked 에 이유와 함께 나온다. 요청에 없는 값은 고르고, 있는 값은 검사해 그대로 쓴다. 응답이 크므로 include 로 필요한 항목만 받아라(기본 manifest 만, 본문은 include:["html","css"]). value.blueprint 는 Blueprint 2.7.0 이라 compile_design 으로 같은 출력을 다시 만들 수 있다. 임의 HTML·CSS 는 받지 않는다.',
+    input: loose({purpose: z.string().describe('saas-landing | work-dashboard | editorial-docs | commerce'), content: anyObject.optional().describe('콘텐츠: title, description, kpis, table, charts, list, hero, features, faq, cta, sections, products, status'), components: z.array(anyObject).optional().describe('[{base, family?, props?, content, slot?}]'), pattern: z.string().optional(), shell: z.string().optional(), width: z.string().optional(), density: z.string().optional(), mode: z.string().optional().describe('light | dark'), styleContext: z.string().optional(), palette: z.string().optional(), subtokenSet: z.string().optional(), typeSystem: z.string().optional(), families: z.array(z.string()).optional(), surface: z.string().optional(), motion: z.string().optional(), background: z.string().optional(), media: z.string().optional(), states: anyObject.optional(), candidates: z.number().optional().describe('1~8, 기본 3'), include: z.array(z.string()).optional().describe('html, css, tokens, manifest, blueprint, script, standalone. 기본 ["manifest"]'), catalogVersion}),
+    output: envelopeOf(z.looseObject({selected: z.string(), candidates: z.array(anyObject), blocked: z.array(anyObject), comparison: anyObject, plan: anyObject, decisions: z.array(anyObject)})), cost: COST.assemble,
+  },
+  {
+    name: 'assemble_blueprint', title: '프로파일 조립(2.6.0 Blueprint)', run: 'assembleBlueprint',
+    description: '디자인 프로파일(erp·finance·commerce 등)로 2.6.0 Blueprint 를 조립한다. 지원하지 않는 요구는 다른 값으로 바꾸지 않고 ASSEMBLE_* 진단과 대안으로 돌려준다.',
+    input: loose({profile: z.string().optional(), intent: anyObject.optional(), content: anyObject.optional(), catalogVersion}),
+    output: envelopeOf(z.looseObject({blueprint: anyObject, decisions: z.array(anyObject), materials: anyObject})), cost: COST.assemble,
+  },
+  {
+    name: 'list_materials', title: '재료 목록(2.6.0 카탈로그 재료)', run: 'listMaterials',
+    description: '2.6.0 카탈로그 재료를 kind·category·context·minQuality·tag·preset·since·query 로 거르고 fields·limit·cursor 로 필요한 조각만 받는다.',
+    input: loose({kind: z.string().optional(), category: z.string().optional(), context: z.string().optional(), minQuality: z.string().optional(), tag: z.string().optional(), preset: z.boolean().optional(), since: z.string().optional(), query: z.string().optional(), fields: z.array(z.string()).optional(), limit: z.number().optional(), cursor: z.string().optional(), catalogVersion}),
+    output: envelopeOf(z.looseObject({items: z.array(anyObject), total: z.number(), nextCursor: z.string().nullable(), byKind: anyObject})), cost: 0,
+  },
+  {
+    name: 'get_material', title: '재료 한 장(2.6.0 카탈로그 재료)', run: 'getMaterial',
+    description: '재료 id(예 component:select-control)로 재료 한 장의 전체 기록과 Blueprint 에서 고르는 자리(blueprint)를 받는다.',
+    input: loose({id: z.string().optional().describe('재료 id'), catalogVersion}), output: envelopeOf(anyObject), cost: 0,
+  },
+  {
+    name: 'list_platform_materials', title: '플랫폼 재료 목록', run: 'listPlatformMaterials',
+    description: '조립에 쓰는 플랫폼 재료(팔레트·서브토큰 세트·타이포 시스템·기반 컴포넌트·패밀리·스타일 맥락·표면·모션·배경·미디어·상태 패턴·축 값)를 kind·context·tag·query 로 거르고 fields·limit·cursor 로 필요한 조각만 받는다.',
+    input: loose({kind: z.string().optional(), context: z.string().optional(), tag: z.string().optional(), query: z.string().optional(), fields: z.array(z.string()).optional(), limit: z.number().optional(), cursor: z.string().optional(), catalogVersion}),
+    output: envelopeOf(z.looseObject({items: z.array(anyObject), total: z.number(), nextCursor: z.string().nullable(), byKind: anyObject})), cost: 0,
+  },
+  {
+    name: 'get_platform_material', title: '플랫폼 재료 한 장과 관계', run: 'getPlatformMaterial',
+    description: '플랫폼 재료 id(예 palette:static-kit)로 전체 기록과 나가고 들어오는 관계(edges, 이유 포함)를 받는다.',
+    input: loose({id: z.string().optional(), catalogVersion}), output: envelopeOf(anyObject), cost: 0,
+  },
+  {
+    name: 'recommend_materials', title: '재료 추천', run: 'recommendMaterials',
+    description: '한 종류(kind)의 플랫폼 재료를 맥락(context)·모드·밀도·스타일 맥락·이미 고른 재료(selected)에 비춰 점수 순으로 받는다. 막힌 후보는 blocked 에 코드와 이유가 있다.',
+    input: loose({kind: z.string().optional(), context: z.string().optional(), mode: z.string().optional(), density: z.string().optional(), styleContext: z.string().optional(), selected: z.array(z.string()).optional(), fit: z.boolean().optional(), catalogVersion}),
+    output: envelopeOf(z.looseObject({kind: z.string(), ranked: z.array(anyObject), blocked: z.array(anyObject)})), cost: COST.validate,
+  },
+  {
+    name: 'check_compatibility', title: '재료 묶음 호환성', run: 'checkCompatibility',
+    description: '플랫폼 재료 id 둘 이상이 함께 쓸 수 있는지 판정한다. 위반은 code·reason 과 함께, 적용된 관계와 계산 관계(대비 게이트 등) 결과를 함께 준다.',
+    input: loose({ids: z.array(z.string()).optional(), context: z.string().optional(), mode: z.string().optional(), density: z.string().optional(), catalogVersion}),
+    output: envelopeOf(z.looseObject({ok: z.boolean(), violations: z.array(anyObject), applied: z.array(anyObject), checks: z.array(anyObject)})), cost: COST.validate,
+  },
+  {
+    name: 'list_edit_ops', title: '편집 연산 목록', run: 'listEditOps',
+    description: 'Blueprint 편집 연산(setTheme, insertNode 등)의 이름과 호출 모양을 받는다. 적용은 apply_edit 로 한다.', input: loose({catalogVersion}), output: envelopeOf(z.looseObject({ops: z.array(z.string())})), cost: 0,
+  },
+  {
+    name: 'apply_edit', title: 'Blueprint 편집 연산 적용', run: 'applyEdit',
+    description: 'steps([{op, args?}])를 Blueprint 에 차례로 적용한다. 하나라도 실패하면 아무것도 적용하지 않고 연산이 낸 오류(code·path·message·hint)를 준다. 결과 문서는 validate_blueprint 로 확인하라.',
+    input: loose({blueprint: z.unknown().optional(), steps: z.array(anyObject).optional(), catalogVersion}), output: envelopeOf(z.looseObject({blueprint: anyObject, changes: z.array(z.unknown()), steps: z.number()})), cost: COST.validate,
+  },
 ];
+
 
 // ---------------------------------------------------------------- 도구 실행(서비스 호출만)
 
@@ -76,9 +135,10 @@ const withoutVersion = ({catalogVersion: _v, ...rest}) => rest;
 
 /** 도구 이름 → 서비스 호출. 서비스 봉투를 그대로 돌려준다. */
 const RUN = {
-  list: a => listCatalog(withoutVersion(a)),
-  schema: a => getSchema(withoutVersion(a)),
-  spec: a => getComponentSpec(withoutVersion(a)),
+  // D3: 서비스가 버전을 받는 조회는 catalogVersion 을 그대로 넘긴다(부품 목록·부품 명세·스키마). 나머지는 버전과 무관하다.
+  list: ({catalogVersion: v, ...a}) => listCatalog(listArgs(a, v)),
+  schema: ({catalogVersion: v, ...a}) => getSchema(schemaArgs(a, v)),
+  spec: a => getComponentSpec(a),
   validate: a => (a.blueprint === undefined ? notFound('$args.blueprint', 'blueprint 가 필요합니다.') : validateBlueprint(a.blueprint, a.catalogVersion === undefined ? undefined : {catalogVersion: a.catalogVersion})),
   compile: ({blueprint, catalogVersion: v, include, html, ...rest}) => {
     if (blueprint === undefined) return notFound('$args.blueprint', 'blueprint 가 필요합니다.');
@@ -87,6 +147,16 @@ const RUN = {
     if (v !== undefined) opts.catalogVersion = v;
     return compileBlueprint(blueprint, opts);
   },
+  assemble: ({catalogVersion: _v, include, ...request}) => assembleDesign(request, {include: include ?? ['manifest']}),
+  assembleBlueprint: a => assembleBlueprint(withoutVersion(a)),
+  listMaterials: a => listMaterials(withoutVersion(a)),
+  getMaterial: a => getMaterial(withoutVersion(a)),
+  listPlatformMaterials: a => listPlatformMaterials(withoutVersion(a)),
+  getPlatformMaterial: a => getPlatformMaterial(withoutVersion(a)),
+  recommendMaterials: a => recommendMaterials(withoutVersion(a)),
+  checkCompatibility: a => checkCompatibility(withoutVersion(a)),
+  listEditOps: () => listEditOps(),
+  applyEdit: a => applyEdit(withoutVersion(a)),
   explain: ({catalogVersion: _v, blueprint, manifest, ...opts}) => {
     const subject = {};
     if (blueprint !== undefined) subject.blueprint = blueprint;
@@ -109,7 +179,7 @@ export function executeTool(tool, args, request) {
     }
     // 서비스가 catalogVersion 을 직접 검사하는 도구(validate·compile)는 거기에 맡긴다.
     if (tool.run !== 'validate' && tool.run !== 'compile') {
-      const reject = rejectUnexpectedVersion(args.catalogVersion);
+      const reject = rejectUnexpectedVersion(args.catalogVersion, {kind: args.kind});
       if (reject) return toolResult(reject);
     }
     const started = Date.now();
@@ -124,6 +194,7 @@ export function executeTool(tool, args, request) {
 
 const INSTRUCTIONS = [
   'Static Kit 디자인 시스템: 카탈로그가 허용한 값만 조합해 접근성 게이트를 통과한 HTML 을 만든다.',
+  '빠른 길: assemble_design(목적·콘텐츠 → 복수 후보와 이유; 재료는 list_platform_materials·recommend_materials·check_compatibility 로 확인) → 후보의 value.blueprint(2.7.0)를 compile_design 으로 컴파일. 편집은 list_edit_ops·apply_edit.',
   '권장 흐름: list_design_system(필요한 종류만, fields·limit 로 좁혀서) → get_design_schema(blueprint 는 fields 로 일부만) 또는 get_component_spec → Blueprint JSON 작성 →',
   'validate_blueprint(오류의 path·hint·fix 로 해당 부분만 수정) → compile_design(기본은 HTML 본문 없이 요약) → 필요하면 explain_design_decisions.',
   '임의 HTML·CSS·스크립트·URL 은 받지 않는다. 오류는 {code, path, message, hint} 로 돌아온다.',

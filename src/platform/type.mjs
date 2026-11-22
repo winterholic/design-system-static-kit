@@ -155,7 +155,7 @@ function bindResolved(ts, face, scale, {webfonts}) {
  * 서체 짝·역할 체계 id가 어느 표에도 없으면 ok:false. 한글 한도·위계를 어기면 errors에 담고 ok:false.
  * webfonts를 켜면 서체 짝이 가진 웹폰트를 스택 맨 앞에 붙이고 @font-face를 돌려준다. 기본(끔)은 시스템 서체만 쓰는 출력이다.
  */
-export function bindType(ts, {webfonts = false} = {}) {
+export function bindType(ts, {webfonts = false, legacyRoles = false} = {}) {
   const errors = [];
   const legacyFace = TYPE_R2[strip('type-preset', ts.facePairing)], legacyScale = MATERIAL_TYPE_PRESETS[strip('type-role-preset', ts.roleScale)];
   const face = resolveFace(ts.facePairing);
@@ -167,7 +167,7 @@ export function bindType(ts, {webfonts = false} = {}) {
   if (errors.length) return {ok: false, vars: null, roles: null, errors, webfontCSS: ''};
 
   const label = `${ts.facePairing} × ${ts.roleScale}`;
-  if (legacyFace && legacyScale) return bindLegacy(ts, legacyFace, legacyScale, label);
+  if (legacyFace && legacyScale) return bindLegacy(ts, legacyFace, legacyScale, label, legacyRoles);
 
   const roles = bindResolved(ts, face, scale, {webfonts});
   errors.push(...hangulViolations(roles, label), ...hierarchyViolations(roles, label));
@@ -186,11 +186,25 @@ export function bindType(ts, {webfonts = false} = {}) {
   for (const name of SCALE_ROLES) Object.assign(vars, {
     [`--kit-type-${name}-size`]: r[name].size, [`--kit-type-${name}-weight`]: String(r[name].weight), [`--kit-type-${name}-leading`]: String(r[name].lineHeight), [`--kit-type-${name}-tracking`]: `${r[name].trackingEm}em`,
   });
-  return {ok: errors.length === 0, vars, roles, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing) : ''};
+  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing) : ''};
 }
 
+/**
+ * 구형 CSS(차트·카드·표·히어로·인용 등)가 읽는 크기 역할 변수 중 플랫폼 역할(TYPE_ROLES 10개)에 없는 것을 같은 서체·체계의 역할 크기에서 계산한다.
+ * bindType(ts, {legacyRoles: true})가 켠다(기본은 꺼 둔다: 구형 record가 내는 변수 16개는 2.6.0 출력이라 고정돼 있다). 구형 엔진(src/typography.mjs ROLES)의
+ * 지수·상한 관계를 CSS calc로 옮겼고 이미 있는 변수는 덮지 않는다. 조립 파이프라인과 차트 조립(assembleChartPreset)이 이 값을 쓰면 `--kit-t-micro` 같은 변수가 비지 않는다.
+ */
+export const LEGACY_ROLE_DERIVATIONS = Object.freeze({
+  micro: 'calc(var(--kit-t-caption) * 0.9167)', ui: 'calc(var(--kit-t-small) * 1.0714)',
+  'body-l': 'calc(var(--kit-t-body) + 1px)', prose: 'calc(var(--kit-t-body) + 2px)', lead: 'calc(var(--kit-t-body) + 3px)',
+  'sub-l': 'calc(var(--kit-t-sub) * 1.35)', quote: 'calc(var(--kit-t-sub) * 1.5)', 'quote-s': 'calc(var(--kit-t-sub) * 0.8)', 'quote-l': 'min(calc(var(--kit-t-sub) * 2.6), 34px)', glyph: 'min(calc(var(--kit-t-sub) * 3.2), 56px)',
+  'heading-s': 'calc(var(--kit-t-heading) * 0.8)', cta: 'calc(var(--kit-t-heading) * 1.1)', 'stat-s': 'calc(var(--kit-t-stat) * 0.6429)', fact: 'min(calc(var(--kit-t-stat) * 1.0714), 46px)',
+  logo: 'min(calc(var(--kit-t-sub) * 0.95), 22px)', display: 'var(--kit-t-title)', poster: 'calc(var(--kit-t-title) * 1.1)', mast: 'clamp(28px,6vw,56px)', code: 'clamp(96px,19vw,176px)',
+});
+const withLegacyRoles = (vars, on) => { if (on) for (const [role, css] of Object.entries(LEGACY_ROLE_DERIVATIONS)) vars[`--kit-t-${role}`] ??= css; return vars; };
+
 /** 구형 type-preset × type-role-preset. 2.6.0 엔진과 같은 값을 낸다(이 값은 바뀌지 않는다). 한도 검사만 새 규칙으로 넓혔다. */
-function bindLegacy(ts, face, scale, label) {
+function bindLegacy(ts, face, scale, label, legacyRoles) {
   const errors = [];
   const heading = STACKS[face.head], body = STACKS[face.text];
   const r = scale.roles, px = face.body;
@@ -206,7 +220,7 @@ function bindLegacy(ts, face, scale, label) {
   const vars = {'--kit-heading': heading, '--kit-font': body, '--kit-mono': STACKS.mono, '--kit-hw': String(roles.heading.weight), '--kit-line': String(roles.body.lineHeight)};
   for (const [role, names] of Object.entries(TYPE_ROLES)) for (const n of names) vars[n] = roles[role].size;
   vars['--kit-nums'] = ts.numerals === 'tabular' || face.nums === 'tabular' ? 'tabular-nums' : 'proportional-nums';
-  return {ok: errors.length === 0, vars, roles, errors, webfontCSS: ''};
+  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, errors, webfontCSS: ''};
 }
 
 // ---------- 실제 대체 서체 ----------

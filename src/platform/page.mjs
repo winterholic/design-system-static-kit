@@ -29,7 +29,11 @@ import {attr, diag, typeErrorCode} from './pipeline.mjs';
 import {typeFit} from './type.mjs';
 import {axisIds, materialAxisIds} from './axes.mjs';
 import {normalizePageRequest, planPage, pageAxisIds, nodeTypeOfBase, PAGE_CATALOG_VERSION} from './page-content.mjs';
-import {styleMaterialsCSS, styleMaterialAttrs, STATE_KINDS} from './style-materials.mjs';
+import {STATE_KINDS} from './style-materials.mjs';
+import {getPurposeFamily, renderPurposeFamily, checkPurposeCombination, VISUAL_LANGUAGES} from './families/index.mjs';
+import {renderPlatformBlueprint, platformManifest, evaluateMaterials, legacyTokens, walk, styleMaterialIds} from './render.mjs';
+export {legacyTokens, styleMaterialIds};
+import {PLATFORM_CATALOG_VERSION} from '../catalog/expression.mjs';
 import {renderState} from './data/states.mjs';
 import {themes} from '../catalog/themes.mjs';
 import {AXIS_PREFERENCE_WEIGHT} from './recommend.mjs';
@@ -125,10 +129,13 @@ function listKind(env, intent, plan, {slot, kind, requested, selected, limit, bl
   return ranked.slice(0, limit).map(r => ({...r, source: 'recommend'}));
 }
 
+/** 요청한 목적 패밀리 id(중복 없음, 정렬). */
+const purposeIds = plan => [...new Set(plan.components.filter(c => c.purpose).map(c => c.purpose))].sort();
+
 /** 이 페이지가 쓰는 기반 컴포넌트. 자동 승격 후보는 맥락에 패밀리가 있을 때만 쓴다(없으면 구형 노드). */
 function basesOf(plan, env) {
   const hasFamily = base => env.registry.kind('family').filter({context: plan.context}).some(f => f.members[base]);
-  const requested = plan.components.filter(c => !c.auto).map(c => c.base);
+  const requested = plan.components.filter(c => !c.auto && !c.purpose).map(c => c.base);
   const auto = plan.components.filter(c => c.auto).map(c => c.base).filter(hasFamily);
   return [...new Set([...requested, ...auto])].sort();
 }
@@ -152,20 +159,25 @@ export function exploreCandidates(plan, intent, env) {
       }});
       for (const type of types) {
         let famOptions = [{}];
-        for (const base of bases) {
-          const comp = plan.components.find(c => c.base === base && c.family);
-          const given = comp?.family ?? intent.families.find(f => env.registry.get(f)?.members?.[base]);
-          const anchors = [set.id, type.id, base, palette.id, ...axisAnchors];
+        // 시각 패밀리를 고르는 자리: 기반 컴포넌트마다 하나, 목적 패밀리(purpose:*)마다 하나. 목적 패밀리는 자기 기반 컴포넌트를 모두 가진 시각 패밀리만 받고, 요청한 변형·열린 축·콘텐츠로 렌더 검사를 통과해야 한다.
+        const slots = [...bases.map(base => ({key: base, bases: [base], purpose: null})), ...purposeIds(plan).map(id => ({key: id, bases: getPurposeFamily(id).bases, purpose: getPurposeFamily(id)}))];
+        for (const slot of slots) {
+          const comps = plan.components.filter(c => (slot.purpose ? c.purpose === slot.key : c.base === slot.key && !c.purpose));
+          const given = comps.find(c => c.family)?.family ?? intent.families.find(f => slot.bases.every(b => env.registry.get(f)?.members?.[b]) && (!slot.purpose || VISUAL_LANGUAGES[f]));
+          const anchors = [set.id, type.id, ...slot.bases, palette.id, ...axisAnchors];
+          const fits = fam => slot.bases.every(b => fam.members[b]) && (!slot.purpose || (VISUAL_LANGUAGES[fam.id] && comps.every(c => checkPurposeCombination(slot.purpose, {visual: fam.id, variant: c.variant, props: c.props, content: c.content}).ok)));
+          const why = fam => (slot.purpose ? comps.flatMap(c => checkPurposeCombination(slot.purpose, {visual: fam.id, variant: c.variant, props: c.props, content: c.content}).errors) : []);
           const options = given
-            ? listKind(env, intent, plan, {slot: `family(${base})`, kind: 'family', requested: given, selected: anchors, limit: 1, blocked, diagnostics: [], attrErrors})
+            ? listKind(env, intent, plan, {slot: `family(${slot.key})`, kind: 'family', requested: given, selected: anchors, limit: 1, blocked, diagnostics: [], attrErrors})
             : (() => {
               const ctx = {context: plan.context, mode: plan.axes.mode, density: plan.axes.density, styleContext: intent.styleContext};
               const rec = recommend(env.registry, env.graph, {kind: 'family', ...ctx, selected: anchors});
-              for (const b of rec.blocked) if (env.registry.get(b.id).members[base]) blocked.push({kind: 'family', id: b.id, blocked: b.blocked, base, source: 'recommend'});
-              return rec.ranked.filter(r => env.registry.get(r.id).members[base]).slice(0, BEAM.family).map(r => ({...r, source: 'recommend'}));
+              for (const b of rec.blocked) if (slot.bases.every(x => env.registry.get(b.id).members[x])) blocked.push({kind: 'family', id: b.id, blocked: b.blocked, base: slot.key, source: 'recommend'});
+              for (const r of rec.ranked) { const fam = env.registry.get(r.id); if (slot.bases.every(x => fam.members[x]) && !fits(fam)) blocked.push({kind: 'family', id: r.id, blocked: why(fam).map(e => ({code: e.code, with: slot.key, reason: e.message})), base: slot.key, source: 'recommend'}); }
+              return rec.ranked.filter(r => fits(env.registry.get(r.id))).slice(0, BEAM.family).map(r => ({...r, source: 'recommend'}));
             })();
-          if (!options.length) { diagnostics.push(diag('P_SELECT_EMPTY', `$.components`, `${base}를 구성원으로 가진 패밀리 후보가 없습니다(맥락 ${plan.context})`, {blocked: blocked.filter(b => b.base === base)})); famOptions = []; break; }
-          famOptions = famOptions.flatMap(o => options.map(f => ({...o, [base]: f})));
+          if (!options.length) { diagnostics.push(diag('P_SELECT_EMPTY', `$.components`, `${slot.key}를 구성원으로 가진 패밀리 후보가 없습니다(맥락 ${plan.context})`, {blocked: blocked.filter(b => b.base === slot.key)})); famOptions = []; break; }
+          famOptions = famOptions.flatMap(o => options.map(f => ({...o, [slot.key]: f})));
         }
         for (const fam of famOptions) combos.push({palette, subtokenSet: set, typeSystem: type, families: fam});
       }
@@ -191,23 +203,13 @@ export function diversify(passing) {
   return out;
 }
 
-/** 선택한 스타일 재료의 id 목록(상태 패턴 포함, 중복 없음). */
-export const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, style?.background, style?.media, ...(style?.states ?? []).map(x => x.id)].filter(Boolean))];
-
 const selectionOf = (combo, intent) => ({styleContext: intent.styleContext, palette: combo.palette.id, subtokenSet: combo.subtokenSet.id, typeSystem: combo.typeSystem.id, families: Object.fromEntries(Object.entries(combo.families).map(([b, f]) => [b, f.id]))});
 
 /** 조합 전체의 관계 평가. 축 값(페이지 축·패밀리 모양·서체 짝)도 같이 평가되어 X01 등이 forbids로 걸린다. */
 export function evaluateCombo(plan, intent, env, combo) {
   const sel = selectionOf(combo, intent), reg = env.registry;
   const ctx = {context: plan.context, mode: plan.axes.mode, density: plan.axes.density};
-  const typeSystem = reg.get(sel.typeSystem);
-  const core = [sel.styleContext, sel.palette, sel.subtokenSet, sel.typeSystem, ...pageAxisIds(plan), ...materialAxisIds(typeSystem), ...styleMaterialIds(plan.style).flatMap(id => materialAxisIds(reg.get(id)))].filter(Boolean);
-  const groups = Object.entries(sel.families).map(([base, f]) => [...core, f, base, ...materialAxisIds(reg.get(f))]);
-  const runs = (groups.length ? groups : [core]).map(ids => env.graph.evaluate(ids, ctx));
-  const relations = {ok: runs.every(r => r.ok), violations: uniq(runs.flatMap(r => r.violations)), applied: uniq(runs.flatMap(r => r.applied)), checks: uniq(runs.flatMap(r => r.checks))};
-  const type = bindType(typeSystem);
-  for (const e of type.errors ?? []) relations.violations.push({code: typeErrorCode(e.code), from: sel.typeSystem, to: sel.typeSystem, reason: e.message});
-  relations.ok = relations.violations.length === 0;
+  const relations = evaluateMaterials(env, {context: plan.context, axes: plan.axes, selection: sel, styleIds: styleMaterialIds(plan.style)});
   const sc = sel.styleContext ? reg.get(sel.styleContext) : null;
   let score = 0;
   for (const e of relations.applied) score += e.type === 'prefers' ? e.priority : e.type === 'avoids' ? -e.priority : 0;
@@ -236,42 +238,21 @@ function decisionsOf(plan, intent, env, combo, sel) {
 // ---------------------------------------------------------------------------------------------------------------------
 // 5. 조립
 
-const WHITE = '#FFFFFF';
-const LEGACY_PREFIX = '--kit-';
-
-/**
- * 구형 CSS가 읽지만 서브토큰 세트의 색 역할에 없는 토큰을 같은 팔레트에서 계산한다(구형 resolveTokens·getMode와 같은 식).
- * 세트가 이미 낸 값은 덮지 않는다(색 작업이 차트·hover 역할을 역할 규칙으로 옮기면 그 값이 쓰인다).
- */
-export function legacyTokens(color, palette, mode) {
-  const t = Object.fromEntries(Object.entries(color.vars).map(([k, v]) => [k.slice(LEGACY_PREFIX.length), v]));
-  const dark = mode === 'dark', derived = [];
-  const put = (name, value) => { if (t[name] === undefined) { t[name] = value; derived.push(name); } };
-  const ink = colorRamp(palette.seeds.neutral)['950'];
-  const onFill = bg => (colorContrast(WHITE, bg) >= colorContrast(ink, bg) ? WHITE : ink);
-  put('accentSoft', dark ? mix(t.accent, t.surface, 0.9) : mix(t.accent, WHITE, 0.9));
-  put('accentInk', readableColor(t.accent, [t.canvas, t.surface, t.soft, t.sunken, t.accentSoft], 4.5));
-  put('actionHover', mix(t.action, dark ? WHITE : '#000000', 0.12));
-  put('onActionHover', onFill(t.actionHover));
-  put('action-hover', t.actionHover);
-  put('action-active', mix(t.action, dark ? WHITE : '#000000', 0.2));
-  const chartSlots = ['brand', 'accent', 'info', 'success', 'warning'].filter(s => palette.seeds[s]);
-  chartSlots.forEach((slot, i) => put(`chart${i + 1}`, readableColor(colorRamp(palette.seeds[slot])[dark ? '400' : '600'], [t.surface], 3)));
-  put('chart-grid', t.border);
-  // 구형 폼·표 CSS가 읽는 컨트롤·표 토큰: 색 역할에서 같은 원칙으로 낸다(구형 color-tokens의 component 표와 같은 출처 역할).
-  put('control-bg', t.surface); put('control-fg', t.text); put('control-border', t.border);
-  put('control-hover-border', readableColor(t.action, [t.surface], 3)); put('control-active-border', t.focus); put('control-error', t.danger);
-  put('table-head', mix(t.surface, t.text, 0.05)); put('table-hover', t['card-hover']); put('table-selected', t.soft);
-  return {tokens: t, derived};
-}
-
-const walk = (nodes, f) => nodes.forEach(n => { f(n); if (Array.isArray(n.children)) walk(n.children, f); });
-
 /** 계획의 노드 트리에서 컴포넌트 마커를 후보의 노드로 바꾼다. 요청 컴포넌트는 패밀리 구성원 검사를 거친다(renderMember). */
 function instantiate(plan, intent, env, combo, diagnostics) {
   const sel = selectionOf(combo, intent), reg = env.registry, resolved = new Map();
   const tagOrder = [];
+  const purposes = [];
   plan.components.forEach((c, i) => {
+    if (c.purpose) {
+      // 목적 패밀리: 시각 패밀리(후보가 고른다)로 렌더해 보고(검사), 트리에는 표지 노드를 둔다. 렌더는 컴파일과 조립이 같은 함수로 한다(render.mjs).
+      const visual = sel.families[c.purpose];
+      const r = renderPurposeFamily(env, c.purpose, {visual, variant: c.variant, props: c.props, content: c.content ?? {}, id: c.id});
+      if (!r.ok) { for (const e of r.errors) diagnostics.push(diag(e.code, `$.components[${c.requestIndex}]`, e.message)); resolved.set(i, null); return; }
+      purposes.push({id: c.purpose, visual, ...(c.variant ? {variant: c.variant} : {}), ...(c.props ? {props: c.props} : {}), ...(c.id ? {uid: c.id} : {}), content: structuredClone(c.content ?? {})});
+      resolved.set(i, {type: 'metric', label: `platform-purpose-${purposes.length - 1}`, value: '0'});
+      return;
+    }
     const familyId = sel.families[c.base];
     if (!familyId) { resolved.set(i, c.legacy ? clone(c.legacy) : null); return; }
     const family = reg.get(familyId), member = family.members[c.base];
@@ -279,7 +260,7 @@ function instantiate(plan, intent, env, combo, diagnostics) {
     if (!r.ok) { for (const e of r.errors) diagnostics.push(diag(e.code, c.auto ? `$.content` : `$.components[${c.requestIndex}]`, e.message)); resolved.set(i, null); return; }
     resolved.set(i, {type: nodeTypeOfBase(c.base), ...member.preset, ...r.props, ...c.content, __family: familyId});
   });
-  if (failed(diagnostics)) return {children: [], tagOrder: []};
+  if (failed(diagnostics)) return {children: [], tagOrder: [], purposes: []};
   const build = nodes => nodes.map(n => {
     if (n.$component !== undefined) return clone(resolved.get(n.$component));
     if (Array.isArray(n.children)) return {...n, children: build(n.children)};
@@ -288,23 +269,25 @@ function instantiate(plan, intent, env, combo, diagnostics) {
   const children = plan.slots.flatMap(s => build(s.nodes));
   walk(children, n => { if (n.__family) { tagOrder.push(n.__family); } });
   walk(children, n => { delete n.__family; });
-  return {children, tagOrder};
+  return {children, tagOrder, purposes};
 }
 const clone = x => structuredClone(x);
 
-/** 후보의 카드 구성원 노드는 렌더 순서대로 패밀리 범위 표시(data-family)를 단다. 범위 안에서만 패밀리 모양 변수가 적용된다. */
-function tagFamilies(body, tagOrder) {
-  let i = 0;
-  const out = body.replace(/<article class="kit-ctl-card"/g, m => (i < tagOrder.length ? `${m} data-family="${escapeHTML(tagOrder[i++].slice('family:'.length))}"` : m));
-  return {html: out, ok: i === tagOrder.length};
+/** 조립 결과를 Blueprint 2.7.0의 materials로 옮긴다(id만). 상태 화면 표지의 번호가 states의 위치다. */
+function materialsOf(plan, sel, purposes) {
+  const m = {palette: sel.palette, subtokenSet: sel.subtokenSet, typeSystem: sel.typeSystem};
+  if (sel.styleContext) m.styleContext = sel.styleContext;
+  const baseFamilies = Object.fromEntries(Object.entries(sel.families).filter(([k]) => k.startsWith('base-component:')));
+  if (Object.keys(baseFamilies).length) m.families = baseFamilies;
+  if (purposes.length) m.purposes = purposes;
+  for (const k of ['surface', 'motion', 'background', 'media']) if (plan.style[k]) m[k] = plan.style[k];
+  if (plan.states.length) m.states = plan.states.map(st => ({id: plan.style.states.find(x => x.index === st.index).id, ...structuredClone(st.input)}));
+  return m;
 }
 
-const declBlock = (selector, vars) => `${selector}{${Object.entries(vars).map(([k, v]) => `${k}:${v}`).join(';')}}`;
-const usesInverse = tree => /"surface":"inverse"|"tone":"inverse"/.test(JSON.stringify(tree));
-
-function blueprintFor(plan, intent, env, sel, children, type) {
+function blueprintFor(plan, intent, env, sel, children, purposes) {
   const b = clone(plan.blueprint);
-  b.catalogVersion = PAGE_CATALOG_VERSION;
+  b.catalogVersion = PLATFORM_CATALOG_VERSION;
   b.mode = plan.axes.mode;
   for (const a of ['shell', 'width', 'density', 'scale', 'backdrop', 'ornament', 'footer', 'icon', 'weight', 'control']) b[a] = plan.axes[a];
   const face = /^type-preset:(.+)$/.exec(env.registry.get(sel.typeSystem).facePairing)?.[1];
@@ -313,6 +296,7 @@ function blueprintFor(plan, intent, env, sel, children, type) {
   if (intent.content.nav !== undefined) b.chrome = {...b.chrome, nav: clone(intent.content.nav)};
   b.tree = {type: 'page', children};
   if (intent.content.nav === undefined) fitNav(b, plan.navLimit);
+  b.materials = materialsOf(plan, sel, purposes);
   return b;
 }
 
@@ -338,90 +322,23 @@ function fitNav(b, navLimit) {
   if (!b.chrome.footerLinks) delete b.chrome.footerLinks;
 }
 
-/** 후보 하나의 코드 조립과 검증. 반환: {ok, value, quality, diagnostics}. */
+/** 후보 하나의 코드 조립과 검증. 반환: {ok, value, blueprint, quality, diagnostics}. value.blueprint가 Blueprint 2.7.0이고 컴파일하면 같은 html·css·tokens가 나온다. */
 export function assembleCombo(plan, intent, env, combo, evaluated) {
   const diagnostics = [], sel = evaluated.selection, reg = env.registry;
-  const palette = reg.get(sel.palette), set = reg.get(sel.subtokenSet), typeSystem = reg.get(sel.typeSystem);
-  const color = bindColor(palette, set, plan.axes.mode);
-  if (!color.ok) return {ok: false, value: null, diagnostics: [diag(color.error?.code ?? 'P_COLOR_CONTRAST', '$selection', color.error?.message ?? '대비 미달')], quality: null};
-  const type = bindType(typeSystem);
-  const {tokens, derived} = legacyTokens(color, palette, plan.axes.mode);
-  const {children, tagOrder} = instantiate(plan, intent, env, combo, diagnostics);
+  const {children, purposes} = instantiate(plan, intent, env, combo, diagnostics);
   if (failed(diagnostics)) return {ok: false, value: null, diagnostics, quality: null};
-  const b = blueprintFor(plan, intent, env, sel, children, type);
-  const verdict = validateBlueprint(b);
-  const page = {valid: verdict.valid, errors: verdict.errors.map(e => ({code: e.code, path: e.path, message: e.message})), warnings: (verdict.warnings ?? []).map(w => ({code: w.code, path: w.path, message: w.message}))};
-  if (!verdict.valid) {
-    for (const e of verdict.errors) diagnostics.push(diag(`P_PAGE_INVALID`, e.path, `${e.code}: ${e.message}`, {rule: e.code}));
-    return {ok: false, value: null, diagnostics, quality: {page}};
-  }
-  let design, body, artLog = {};
-  try { design = planComposition(b); body = renderTree(b, design, artLog); auditPage(design, artLog.arts); }
-  catch (e) { diagnostics.push(diag('P_RENDER', '$.tree', e.message)); return {ok: false, value: null, diagnostics, quality: {page}}; }
-  // 상태 화면 자리를 선택한 상태 패턴의 마크업으로 바꾼다(자리는 divider 노드 하나, 라벨이 번호다).
-  const style = plan.style, usedStateIds = [];
-  for (const st of style.states) {
-    const marker = `<div class="kit-divider" role="separator"><span>platform-state-${st.index}</span></div>`;
-    if (body.split(marker).length !== 2) { diagnostics.push(diag('P_RENDER', '$.tree', `상태 화면 자리(${st.index})를 렌더 결과에서 한 번 찾지 못했습니다`)); return {ok: false, value: null, diagnostics, quality: {page}}; }
-    try { body = body.replace(marker, () => renderState(reg.get(st.id), {...plan.states[st.index].input, level: 3})); }
-    catch (e) { diagnostics.push(diag('P_RENDER', plan.states[st.index].path, `상태 화면: ${e.message}`)); return {ok: false, value: null, diagnostics, quality: {page}}; }
-    usedStateIds.push(st.id);
-  }
-  // 선택한 표면·모션·배경·미디어는 쇼 셸에 범위 속성으로 달고(배경 장식 요소 포함) 재료 CSS를 붙인다.
-  const bg = style.background ? reg.get(style.background) : null;
-  body = body.replace('<div class="kit-shell"', `<div class="kit-shell" ${styleMaterialAttrs(style)}`);
-  if (bg && bg.deco.kind !== 'none') body = body.replace(/(<div class="kit-shell"[^>]*>)/, '$1<span class="kit-deco" aria-hidden="true"></span>');
-  const tagged = tagFamilies(body, tagOrder);
-  if (!tagged.ok) { diagnostics.push(diag('P_RENDER', '$.tree', '카드 구성원 수와 렌더된 카드 수가 다릅니다(패밀리 범위 표시를 달 수 없음)')); return {ok: false, value: null, diagnostics, quality: {page}}; }
-
-  const sets = {[plan.axes.mode]: tokens};
-  if (usesInverse(b.tree)) {
-    const opp = plan.axes.mode === 'dark' ? 'light' : 'dark', oc = bindColor(palette, set, opp);
-    sets.inverse = {[opp]: oc.ok ? legacyTokens(oc, palette, opp).tokens : tokens};
-    if (!oc.ok) diagnostics.push(diag('P_COLOR_CONTRAST', '$selection', `inverse 구역(${opp})의 색 결합 실패: ${oc.error?.message}`));
-  }
-  const families = [...new Set(Object.values(sel.families))].sort();
-  const platformCss = [
-    `/* platform ${PLATFORM_CONTRACT_VERSION} page: ${plan.purpose}/${plan.pattern} · ${sel.palette} × ${sel.subtokenSet} · ${sel.typeSystem} (${plan.axes.mode}, ${plan.axes.density}) */`,
-    declBlock(':root', type.vars ?? {}),
-    ...families.map(id => declBlock(`[data-family="${id.slice('family:'.length)}"]`, familyShapeVars(reg.get(id)))),
-  ].join('\n');
-  const css = stylesheet(b, sets, tagged.html, design) + platformCss + '\n' + styleMaterialsCSS(reg, style, usedStateIds) + '\n';
-  const script = formRuntime + controlRuntime(b);
-
-  const defined = new Set([...css.matchAll(/(--[A-Za-z0-9-]+):/g)].map(m => m[1]));
-  const missing = requiredVars(css).filter(v => !defined.has(v));
-  for (const v of missing) diagnostics.push(diag('P_TOKEN_MISSING', '$output.css', `${v}를 읽지만 어느 재료도 값을 주지 않습니다`));
-  const components = plan.components.filter(c => sel.families[c.base]).map(c => {
-    const pairs = contrastPairs(reg.kind('base-component').implementation(c.base).contract, color.vars);
-    for (const p of pairs.filter(x => !x.ok)) diagnostics.push(diag('P_CHECK_CONTRAST', c.auto ? '$.content' : `$.components[${c.requestIndex}]`, `${p.use}: ${p.fg} on ${p.bg} ${p.ratio}:1 < ${p.minimum}:1`));
-    return {base: c.base, family: sel.families[c.base], pairs};
-  });
-  const stylePairs = styleMaterialIds(style).flatMap(id => (reg.get(id).pairs ?? []).map(([fg, bg2, minimum]) => {
-    const a = color.roles[fg], b2 = color.roles[bg2], ratio = a && b2 ? Math.floor(colorContrast(a, b2) * 1e4) / 1e4 : null;
-    return {material: id, fg, bg: bg2, minimum, ratio, ok: ratio !== null && ratio >= minimum};
-  }));
-  for (const p of stylePairs.filter(x => !x.ok)) diagnostics.push(diag('P_CHECK_CONTRAST', `$.styleMaterials`, `${p.material}: ${p.fg} on ${p.bg} ${p.ratio}:1 < ${p.minimum}:1`));
-  const derivedPairs = [['accentInk', 'accentSoft', 4.5], ['onActionHover', 'actionHover', 4.5], ['text', 'table-head', 7], ['text', 'table-hover', 7], ['text', 'table-selected', 7], ['control-fg', 'control-bg', 7]].map(([fg, bg, minimum]) => ({fg, bg, minimum, ratio: Math.floor(colorContrast(tokens[fg], tokens[bg]) * 1e4) / 1e4})).map(p => ({...p, ok: p.ratio >= p.minimum}));
-  const quality = {
-    contrast: {ok: color.ok && components.every(c => c.pairs.every(p => p.ok)) && derivedPairs.every(p => p.ok) && stylePairs.every(p => p.ok), roles: color.report.length, failures: [...color.report.filter(r => r.ratio < r.minimum), ...derivedPairs.filter(p => !p.ok)], derived: derivedPairs, styleMaterials: stylePairs},
-    tokens: {ok: !missing.length, missing},
-    type: {ok: type.ok, errors: type.errors ?? []},
-    page,
-  };
-  // 대비 실패는 항목마다 이유를 낸다(결합 역할 대비는 bindColor가 통과시킨 것이라 여기서는 파생 쌍과 컴포넌트 쌍이 해당한다).
-  for (const p of derivedPairs.filter(x => !x.ok)) diagnostics.push(diag('P_CHECK_CONTRAST', '$.tokens', `파생 토큰 ${p.fg} on ${p.bg} ${p.ratio}:1 < ${p.minimum}:1`));
-  quality.ok = quality.contrast.ok && quality.tokens.ok && quality.type.ok && quality.page.valid;
-  const standalone = `<!doctype html>\n<html lang="ko" data-theme="${b.mode}" data-motion="${b.motion}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; connect-src 'none'"><meta name="color-scheme" content="${b.mode}"><meta name="generator" content="Static Kit platform ${PLATFORM_CONTRACT_VERSION}"><title>${escapeHTML(b.name)}</title><style>\n${css}</style></head><body>${tagged.html}<script>${script}</script></body></html>\n`;
-  const reuses = [...new Set([sel.styleContext, sel.palette, sel.subtokenSet, sel.typeSystem, ...Object.keys(sel.families), ...Object.values(sel.families)].filter(Boolean).flatMap(id => reg.get(id)?.reuses ?? []))].sort();
+  const b = blueprintFor(plan, intent, env, sel, children, purposes);
+  const r = renderPlatformBlueprint(b, env, {evaluated: evaluated.relations});
+  diagnostics.push(...r.diagnostics);
+  if (!r.parts) return {ok: false, value: null, diagnostics, quality: r.quality};
+  const base = platformManifest(b, {...r, reuses: [...r.reuses, `template:${plan.template}`, `theme:${plan.theme}`]});
   const manifest = {
-    platformContract: PLATFORM_CONTRACT_VERSION,
+    ...base, platformContract: PLATFORM_CONTRACT_VERSION,
     request: {purpose: plan.purpose, pattern: plan.pattern, mode: plan.axes.mode},
     page: {pattern: plan.pattern, template: plan.template, pageType: plan.pageType, axes: plan.axes, axisSources: plan.axisSources, slots: plan.slots.map(s => ({id: s.id, source: s.source, nodes: s.nodes.length}))},
-    selection: sel, relations: {applied: evaluated.relations.applied, checks: evaluated.relations.checks},
-    contrast: {roles: color.report, components, derived: derivedPairs, styleMaterials: stylePairs}, styleMaterials: style, derivedTokens: derived, reuses: [...reuses, `template:${plan.template}`, `theme:${plan.theme}`],
+    relations: {applied: evaluated.relations.applied, checks: evaluated.relations.checks},
   };
-  return {ok: quality.ok && !failed(diagnostics), colorVars: color.vars, value: {css, html: tagged.html, script, standalone, tokens: {...Object.fromEntries(Object.entries(tokens).map(([k, v]) => [LEGACY_PREFIX + k, v])), ...type.vars}, manifest}, quality, diagnostics};
+  return {ok: r.ok && !failed(diagnostics), colorVars: r.colorVars, blueprint: b, value: {...r.parts, manifest, blueprint: b}, quality: r.quality, diagnostics};
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

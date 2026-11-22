@@ -134,7 +134,7 @@ export function bindTokens(state, env) {
   const {selection, intent} = state, diagnostics = [...state.diagnostics];
   const color = bindColor(env.registry.get(selection.palette), env.registry.get(selection.subtokenSet), intent.mode);
   if (!color.ok) diagnostics.push(diag(color.error?.code ?? 'P_COLOR_CONTRAST', '$selection', color.error?.message ?? '대비 미달'));
-  const type = bindType(env.registry.get(selection.typeSystem));
+  const type = bindType(env.registry.get(selection.typeSystem), {legacyRoles: true});
   const families = Object.fromEntries([...new Set(Object.values(selection.families))].sort().map(id => [id, familyShapeVars(env.registry.get(id))]));
   const spacing = Object.fromEntries(spaceVars(intent.density).split(';').map(d => d.split(':')));
   const shade = {'--kit-shade': 'color-mix(in srgb,var(--kit-text) 14%,transparent)'};

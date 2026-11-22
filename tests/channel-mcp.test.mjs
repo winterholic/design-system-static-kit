@@ -9,12 +9,14 @@ import {mcpConnect, mcpFetch, resetRateLimit, sha256} from './channel-support.mj
 import {TOOLS, executeTool} from '../apps/web/lib/api/mcp.mjs';
 import {COST, MAX_BODY_BYTES, RATE_BUDGET, TOOL_TIMEOUT_MS} from '../apps/web/lib/api/limits.mjs';
 
-const NAMES = ['list_design_system', 'get_design_schema', 'get_component_spec', 'validate_blueprint', 'compile_design', 'explain_design_decisions'];
+const CORE_NAMES = ['list_design_system', 'get_design_schema', 'get_component_spec', 'validate_blueprint', 'compile_design', 'explain_design_decisions'];
+// W5-b: 조립·재료·추천·호환성·편집 도구가 같은 서비스 함수를 부른다(tests/platform-service-channels.test.mjs가 서비스·REST·MCP 일치를 본다).
+const NAMES = [...CORE_NAMES, 'assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit'];
 const bp = () => createBlueprint('dashboard-overview');
 const call = (client, name, args) => client.callTool({name, arguments: args});
 
 for (const era of ['modern', 'legacy']) {
-  test(`[${era}] 연결하고 도구 여섯 개를 입력·출력 스키마와 함께 낸다`, async () => {
+  test(`[${era}] 연결하고 도구 열여섯 개(핵심 여섯 + 조립·재료·편집 열)를 입력·출력 스키마와 함께 낸다`, async () => {
     const client = await mcpConnect(era);
     try {
       assert.equal(client.getServerVersion().name, 'static-kit');
@@ -127,8 +129,10 @@ test('잘못된 인자: 오타·없는 종류·없는 부품은 path·hint 가 �
     assert.equal(missing.isError, true); assert.equal(missing.structuredContent.errors[0].path, '$args.blueprint');
     const ver = await call(client, 'list_design_system', {kind: 'themes', catalogVersion: '9.9.9'});
     assert.deepEqual([ver.structuredContent.errors[0].code, ver.structuredContent.errors[0].path], ['UNSUPPORTED_VERSION', '$args.catalogVersion']);
-    const mismatch = await call(client, 'get_design_schema', {target: 'chrome', catalogVersion: '2.3.0'});
-    assert.equal(mismatch.structuredContent.errors[0].code, 'CATALOG_VERSION');
+    // D3(ADR 0012 §8): 서비스가 받는 버전은 채널이 거부하지 않는다. 버전과 무관한 대상(chrome)은 같은 결과를 낸다.
+    const older = await call(client, 'get_design_schema', {target: 'chrome', catalogVersion: '2.3.0'});
+    assert.equal(older.isError, false);
+    assert.deepEqual(older.structuredContent, (await call(client, 'get_design_schema', {target: 'chrome'})).structuredContent);
     const ok = await call(client, 'list_design_system', {kind: 'themes', limit: 1, catalogVersion: ver.structuredContent.catalogVersion});
     assert.equal(ok.isError, false);
   } finally { await client.close(); }
