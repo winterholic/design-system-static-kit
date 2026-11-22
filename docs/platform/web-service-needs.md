@@ -2,7 +2,7 @@
 
 W6-b 화면이 Core 서비스 진입점(`@winterholic/design-system-static-kit/service`)에서 이름으로 찾아 쓰는 함수다. 웹은 `src/platform/`을 직접 import하지 않는다. 함수가 없으면 화면은 "조립 서비스 연결 대기"를 보이고(`features/platform/Unavailable.tsx`) 대신 값을 만들지 않는다.
 
-모든 함수는 서비스 봉투 `{ok, value | errors, warnings}`를 쓴다. 이름과 모양은 `docs/platform/pages.md` §8 초안과 W5-b가 공개한 것을 따른다. 아래는 W6가 가정한 모양이고, 다르면 `apps/web/features/platform/platform.server.ts`(어댑터 한 곳)만 고친다.
+모든 함수는 서비스 봉투 `{ok, value | errors, warnings}`를 쓴다. 공개된 Core 계약은 `docs/platform/pages.md` §8을 따른다. 웹은 `apps/web/features/platform/platform.server.ts`에서 공개 함수만 호출한다.
 
 | 함수 | 입력 | 출력 | 쓰는 화면 | 근거 |
 |---|---|---|---|---|
@@ -28,3 +28,9 @@ W6-b 화면이 Core 서비스 진입점(`@winterholic/design-system-static-kit/s
 - Studio: `/studio/assemble` 여섯 단계(주소가 상태).
 - Explore: 플랫폼 조립 사례.
 - 미리보기와 내려받기는 `/platform/render`가 요청을 서비스에 그대로 넘기고 `value.standalone|html|css|manifest`를 그대로 돌려준다.
+
+## W6-b 통합 시 공개 여부 확인
+
+현재 `@winterholic/design-system-static-kit/service`에서 웹이 사용할 수 있는 조립 함수는 `assembleDesign`, `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `checkCompatibility`, `applyEdit`다. `assembleDesign`은 기본 응답에서 `standalone`을 제외하므로 웹은 `opts.include`에 필요한 출력 조각을 명시한다. 목록도 요약이므로 팔레트 시드·재료 상세는 `getPlatformMaterial({id})`에서 읽는다.
+
+현재 공개되지 않은 함수는 `assembleComponents`, `listPurposeFamilies`, `proposeSubtokenSets`다. `kind: "family"`의 4개 재료는 시각 패밀리이며 목적 패밀리 정의가 아니다. 이 API가 들어오기 전에는 목적 패밀리 조립이나 사용자 hex 시드 제안을 웹에서 흉내 내지 않는다. `w6b-scenarios.spec.mjs`는 이 준비 조건으로 시나리오를 건너뛰지 않으며, 나머지 A/B/C·Explore 검증은 Core API 통합 뒤 실행한다.

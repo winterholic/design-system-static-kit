@@ -5,9 +5,6 @@ import {expect, test} from '@playwright/test';
 import * as service from '@winterholic/design-system-static-kit/service';
 import {pick} from './helpers/select.mjs';
 
-const ready = ['assembleDesign', 'assembleComponents', 'listPlatformMaterials', 'recommendMaterials', 'proposeSubtokenSets', 'listPurposeFamilies'].every(n => typeof service[n] === 'function');
-test.skip(!ready, '서비스 대기: Core 서비스에 조립 플랫폼 함수가 아직 공개되지 않았다');
-
 const bytes = text => Buffer.from(text, 'utf8');
 // 미리보기 iframe 은 화면 근처에 올 때만 만들어진다. 보이게 한 뒤 주소를 읽는다.
 const srcOf = async (locator) => { await locator.scrollIntoViewIfNeeded(); const frame = locator.locator('iframe').first(); await frame.waitFor({state: 'attached'}); return frame.getAttribute('src'); };
@@ -21,7 +18,7 @@ const expectSameBytes = async (request, src, expected) => {
   const got = await res.text();
   expect(doc ? noScript(got) : got).toBe(doc ? noScript(expected) : expected);
 };
-const designOf = req => { const r = service.assembleDesign(req); if (!r.ok) throw new Error(r.errors[0].message); return r.value.candidates[0].value; };
+const designOf = req => { const r = service.assembleDesign(req, {include: ['html', 'css', 'tokens', 'manifest', 'blueprint', 'script', 'standalone']}); if (!r.ok) throw new Error(r.errors[0].message); return r.value.candidates[0].value; };
 const componentsOf = req => { const r = service.assembleComponents(req); if (!r.ok) throw new Error(r.errors[0].message); return r.value; };
 const urlState = page => Object.fromEntries(new URL(page.url()).searchParams);
 

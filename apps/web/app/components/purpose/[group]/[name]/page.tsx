@@ -20,7 +20,7 @@ export default async function PurposeFamilyPage({params, searchParams}: Props) {
   const sp = await searchParams;
   if (!platformReady()) return <PageShell eyebrow="Components" title="컴포넌트"><Unavailable what="컴포넌트 비교" /></PageShell>;
   const list = purposeFamilies();
-  if (!list.ok) return <PageShell eyebrow="Components" title="컴포넌트"><Unavailable what="목적 패밀리" /></PageShell>;
+  if (!list.ok) return <PageShell eyebrow="Components" title="컴포넌트"><Unavailable what="목적 패밀리" requires={'listPlatformMaterials({kind: "family"}) 목적 패밀리 기록'} /></PageShell>;
   const fam = list.value.items.find(f => f.id === `purpose:${group}.${name}`);
   if (!fam) notFound();
   const base = `/components/purpose/${group}/${name}`;

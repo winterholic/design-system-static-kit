@@ -70,12 +70,7 @@ export default async function PalettePage({params, searchParams}: Props) {
         {shown.map(({set, rank}) => (
           <li key={set.id} className={styles.cell} data-set={shortId(set.id)}>
             <h3>{set.label}</h3>
-            <div className={styles.pair}>
-              <Thumb src={renderSrc(requestFor(set.id))} title={`${palette.label} × ${set.label} ${MODE_LABEL[mode]} 페이지`} />
-              <Thumb src={renderSrc({context: 'landing', mode, palette: id, subtokenSet: set.id, ...(type ? {typeSystem: type} : {}), items: [
-                {purpose: 'purpose:card.pricing', visual: 'family:soft', content: {plan: '팀', price: '₩29,000', period: '월 / 사용자', features: ['무제한 프로젝트', '역할 기반 권한'], ctaLabel: '시작하기'}},
-              ]}, {kind: 'components'})} title={`${set.label} 카드와 버튼`} width={480} height={640} />
-            </div>
+            <Thumb src={renderSrc(requestFor(set.id))} title={`${palette.label} × ${set.label} ${MODE_LABEL[mode]} 페이지`} />
             {rank && rank.reasons.length ? <ul className={styles.reasons}>{text(rank.reasons).map(r => <li key={r}>{r}</li>)}</ul> : <p className={styles.meta}>이 팔레트에 대한 추천 근거는 없지만 대비 검사를 통과합니다.</p>}
           </li>
         ))}

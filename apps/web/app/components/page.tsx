@@ -46,7 +46,7 @@ export default function ComponentsPage() {
 
 function PurposeSection() {
   const list = purposeFamilies();
-  if (!list.ok) return <Unavailable what="목적별 컴포넌트" />;
+  if (!list.ok) return <Unavailable what="목적별 컴포넌트" requires={'listPlatformMaterials({kind: "family"}) 목적 패밀리 기록'} />;
   return (
     <div className={styles.groups} data-testid="purpose-families">
       {list.value.groups.map(group => (
