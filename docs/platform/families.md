@@ -125,7 +125,7 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:card.pricing | default, hover, focus, loading, disabled | cta: click → 신청(기반 버튼). featured는 solid, 나머지는 secondary / features → 체크 아이콘 목록(정적) | viewport 640px: 부모 격자가 열 수를 정한다. 카드 안에서 가격 줄은 줄바꿈하지 않고 버튼은 바닥에 붙는다. | article + ul; 기능 목록은 ul/li, 체크 아이콘은 장식; 추천 배지는 글자로 전달; 가격과 기간은 함께 읽힌다(월·연 단위) | slot:main, slot:grid-item, slot:aside | src/platform/families/card.mjs#renderCardPricing |
 | purpose:card.status | default, hover, focus, active, loading, error, disabled | link: click·Enter → 상세 로그로 이동 / loading → 상태 확인 중 스켈레톤(role=status) | container container 240px: 컨테이너가 좁아지면 시각 줄이 아래로 내려간다. 상태 글자는 줄바꿈하지 않는다. | article; 상태는 아이콘 모양과 글자로 전달한다(색만으로 구분하지 않는다); danger는 role=status가 아니라 일반 텍스트(자동 낭독 폭주 방지); 시각은 <time> 또는 상대 표현과 함께 | slot:main, slot:grid-item, slot:aside | src/platform/families/card.mjs#renderCardStatus |
 | purpose:card.gallery | default, hover, focus, active, loading, error, disabled | select: Space → 타일 체크박스 토글(네이티브 input, :checked로 표시) / link: click·Enter → 앨범으로 이동 | container container 280px: 타일 격자는 3열이며 컨테이너가 280px 아래로 줄면 2열이 된다. 타일은 정사각형을 유지한다. | article + group; 타일은 이미지 자리이고 각 타일에 이름(label)이 있다; 선택은 체크박스의 checked와 체크 아이콘으로 전달한다; 타일 그룹 role=group + 제목 연결 | slot:main, slot:grid-item, slot:aside | src/platform/families/card.mjs#renderCardGallery |
-| purpose:button.primary | default, hover, focus, active, loading, disabled | click·Enter·Space → 주 동작 실행(기반 버튼 attachButton) / pair → 보조 버튼은 같은 크기·같은 높이의 보조 외형 | viewport 640px: pair는 640px 이하에서 세로로 쌓이고 주 동작이 위에 온다(column-reverse). 버튼은 전체 폭이 된다. | group; 버튼 이름은 동사로 시작; 그룹에는 aria-label이 없어도 되지만 폼 안에서는 폼 제목과 연결된다; 포커스 링 3:1 이상 | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonPrimary |
+| purpose:button.primary | default, hover, focus, active, loading, disabled | click·Enter·Space → 주 동작 실행(기반 버튼 attachButton) / pair → 보조 버튼은 같은 크기·같은 높이의 보조 외형 | viewport 640px: pair는 640px 이하에서 세로로 쌓이고 주 동작이 위에 온다(DOM 순서 그대로 위에서 아래로). 버튼은 전체 폭이 된다. | group; 버튼 이름은 동사로 시작; 그룹에는 aria-label이 없어도 되지만 폼 안에서는 폼 제목과 연결된다; 포커스 링 3:1 이상 | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonPrimary |
 | purpose:button.secondary | default, hover, focus, active, disabled | click·Enter·Space → 각 버튼의 동작(기반 버튼) / hover·focus → 외곽선·배경 변화 | viewport 640px: row는 줄바꿈된다(flex-wrap). 버튼 높이와 글자 크기는 모두 같다. | group; 아이콘은 라벨 옆 장식; 비활성은 disabled 속성과 대비 3:1 표시 | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonSecondary |
 | purpose:button.emphasis | default, hover, focus, active | click·Enter·Space → 핵심 동작 실행(기반 버튼) / hover → 배경 한 단계 어둡게(action-hover) | viewport 640px: 배너는 640px 이하에서 문구 위, 버튼 아래로 쌓이고 버튼은 전체 폭이 된다. | group (+ banner는 section); 버튼 대비 4.5:1; 보조 설명은 aria-describedby로 버튼과 연결 | slot:main, slot:header, slot:footer | src/platform/families/button.mjs#renderButtonEmphasis |
 | purpose:button.destructive | default, hover, focus, active, loading, disabled | click·Enter·Space → 위험 동작 실행(기반 버튼, tone=danger) / loading → 진행 중에는 클릭 차단, 포커스 유지(aria-disabled) | viewport 640px: 640px 이하에서 세로로 쌓이고 취소가 위, 위험 버튼이 아래 전체 폭이다. | group; 위험 동작의 결과를 안내 글이 설명하고 aria-describedby로 연결; 위험 의미는 색만이 아니라 문구(삭제·영구)로 전달; 대비 4.5:1 | slot:main, slot:footer, slot:overlay | src/platform/families/button.mjs#renderButtonDestructive |
@@ -273,6 +273,28 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 측정이 실제로 잡는다는 것은 일부러 깨뜨린 CSS로 확인한다(`e2e/platform-families.spec.mjs`): `.pf-card{height:auto}`는 높이 불균형으로, `.pf-num{white-space:normal;width:4ch}`는 숫자 줄바꿈으로, 카드 좌측 패딩 2px는 패딩 위반으로, 보조 버튼 `min-height:72px`는 버튼 크기 불일치로 실패한다.
 
 스크린샷은 [evidence/families/](evidence/families/)에 묶음 × 시각 패밀리 × (desktop·mobile)로 24쌍 48장이다(`<묶음>-<시각 패밀리>-<desktop|mobile>.png`).
+
+### 6.1 접근성 계약 회귀 시험
+
+재료 검증(F1)은 목적 패밀리의 `a11y`(role·keyboard·conditions)를 렌더 마크업과 직접 대조하는 단언이 없다고 지적했다. 두 파일이 이를 맡는다.
+
+- `tests/platform-family-a11y.test.mjs`: 32종 전부. 계약의 조건 문구마다 마크업 단언이 하나씩 있어야 하고(키가 조건과 일대일), 계약이 바뀌면 단언 없는 조건이 시험을 깨뜨린다. 마크업으로 볼 수 없는 조건(터치 크기·대비)은 브라우저 시험 또는 대비 시험으로 넘기고 그 위치를 적는다. 예시 렌더로 루트 역할·Tab 순서·조건별 단언을 보고, 모든 변형 값 × 시각 패밀리 4종(1,000여 렌더)에서 id 중복, 끊어진 `aria-labelledby`·`describedby`·`controls`·`activedescendant`, 이름 없는 컨트롤, 라벨 없는 입력, 양수 `tabindex`, 노출된 장식 아이콘을 본다.
+- `e2e/platform-family-a11y.spec.mjs`: 32종 × 390·1280에서 Tab이 DOM 순서와 화면 읽기 순서대로 모든 정지에 닿고 포커스 표시가 있는지, 계약의 크기 조건(44px·56px·24px, 같은 줄 높이, 전체 폭), 탭·대화상자·콤보박스·메뉴 토글·비밀번호 보기·정렬·닫기의 키 조작과 상태 전이를 본다. 닫기 버튼은 관례상 모서리에 놓이고 DOM 끝에 있으므로 화면 읽기 순서 비교에서 뺀다.
+
+이 시험이 찾아 고친 것(계약과 렌더가 달랐던 곳):
+
+| 패밀리 | 계약 | 이전 렌더 | 고침 |
+|---|---|---|---|
+| `button.primary` pair | Tab 순서는 주 동작 → 보조 동작 | 보조가 DOM 앞(모바일 column-reverse에서 화면 순서와도 반대) | 주 동작을 앞에 두고 모바일은 위에서 아래 |
+| `form.settings` | 마지막에 저장 → 취소 | 취소 → 저장 | 저장을 앞에 둔다 |
+| `form.filter` | 선택 → 칩 → 적용 → 초기화 | 초기화 → 적용 | 적용을 앞에 둔다 |
+| `button.destructive` pair 모바일 | Tab 순서는 취소 → 위험 동작 | column-reverse라 위험 동작이 위, 취소가 아래(포커스가 아래에서 위로) | 취소가 위, 위험 동작이 아래 |
+| `button.emphasis` banner | banner는 section | 이름 없는 div | 제목이 이름인 `section`(제목이 없으면 div) |
+| `table.*` | 스크롤 영역에 키보드 접근 | 포커스 가능하지만 표시가 브라우저 기본 1px 고리 | 3px `--kit-focus` 고리 |
+| `feedback.confirm`·`error`·`warning` | 버튼 포커스 | 안쪽 버튼에 기본 1px 고리만 보임(기반 CSS가 규칙을 싣지 않음) | 패밀리 CSS가 3px 고리를 더함 |
+| `feedback.confirm` 모바일 | 포커스 순서 = 화면 순서 | 기반 모달 푸터가 column-reverse라 취소(위) → 확인(아래) 순서가 거꾸로 | 패밀리 CSS가 column으로 둠(기반 CSS 바이트는 그대로) |
+
+화면의 버튼 순서는 `button.primary` pair, `form.settings`, `form.filter`가 이전과 반대가 됐다(주 동작이 앞). 포커스 순서가 화면 읽기 순서와 같아야 하고 계약이 주 동작을 먼저로 적었기 때문이다. 바꾸려면 계약 문구와 두 시험을 함께 고쳐야 한다.
 
 ## 7. 정성 평가
 

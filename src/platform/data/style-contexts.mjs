@@ -193,6 +193,73 @@ const PICKS = {
 };
 export const STYLE_PICKS = Object.freeze(Object.fromEntries(Object.entries(PICKS).map(([id, [p1, p2, s1, s2]]) => [id, Object.freeze({palette: [p1, p2], subtokenSet: [s1, s2]})])));
 
+// ---------------------------------------------------------------------------------------------
+// 테마별 시각 패밀리 1순위와 이유. 형태 점수(축 일치)만으로는 editorial·soft가 54개 중 43개를 차지했다(재료 검증 S1).
+// 테마 성격으로 정한다: 업무·데이터는 quiet(외곽선), 읽기·기록·절제는 editorial(면 없는 선), 친근·생활·둥근 브랜드는 soft(채움),
+// 강한 브랜드·캠페인은 bold(각진 굵은 면). 테마가 금지한 모양의 패밀리나 첫 페이지 유형에 없는 패밀리는 고르지 않았다
+// (quiet은 dashboard·data·listing·settings에서만 후보다). 디자인 검토 전 판단이다(확인 필요).
+// ---------------------------------------------------------------------------------------------
+const FAMILY_PICKS = {
+  workspace: ['quiet', '업무·개발 도구는 외곽선 카드와 밑줄 탭이 정보 밀도를 해치지 않는다'],
+  ledger: ['quiet', '직각 고밀도 표와 입력이 많은 백오피스는 면 대신 외곽선으로 구분하는 언어가 맞는다'],
+  console: ['quiet', '로그와 상태를 오래 읽는 콘솔은 장식 없는 외곽선 언어가 눈을 덜 쓴다'],
+  aurora: ['soft', '그라데이션과 글로우의 SaaS는 둥근 채움 면이 빛과 어울리고 굵은 윤곽은 테마가 금지한다'],
+  trust: ['soft', '핀테크·보험의 가입 동선은 둥근 채움 면이 신뢰와 친근함을 함께 준다'],
+  insight: ['quiet', '차트와 표가 주인공인 분석 화면은 컨테이너가 외곽선으로 물러나야 한다'],
+  hub: ['soft', '협업·커뮤니티 도구는 알약 탭과 채운 카드로 대화 단위를 부드럽게 나눈다'],
+  precision: ['quiet', '규격과 데이터 구조를 드러내는 화면은 외곽선 구조가 정보를 가리지 않는다'],
+  neon: ['soft', '어두운 면 위의 글로우는 둥근 채움 면과 맞고 굵은 윤곽과 면 없는 선은 테마가 금지한다'],
+  playful: ['soft', '알약 버튼과 캔디 팔레트의 소비자 캠페인은 채운 둥근 면이 정체성이다'],
+  studio: ['bold', '큰 제목과 한 점 강조로 말하는 에이전시는 각진 굵은 면이 브랜드 선언이 된다'],
+  gallery: ['editorial', '작품이 주인공인 무채색 갤러리는 면 없는 선으로 물러나야 작품이 읽힌다'],
+  brutalist: ['bold', '굵은 테두리와 오프셋 그림자가 이 테마의 정체성이다'],
+  retro: ['bold', '70~90년대 인쇄물의 굵은 윤곽과 각진 면이 브랜드 소개의 개성이 된다'],
+  signal: ['bold', '캠페인·관제·발표는 높은 대비의 굵은 면으로 시선을 고정해야 한다'],
+  editorial: ['editorial', '긴 글을 읽는 출판·리서치는 면 없는 선과 밑줄이 읽기를 방해하지 않는다'],
+  paper: ['editorial', '지면 위에서 읽고 찾는 노트·위키는 면 없는 선 언어가 종이 질감과 맞는다'],
+  manual: ['editorial', '목차와 코드 블록이 있는 레퍼런스 문서는 면 없는 선이 본문을 가리지 않는다'],
+  journal: ['editorial', '블로그·뉴스레터는 면 없는 선으로 글의 호흡을 유지한다'],
+  magazine: ['editorial', '제호형 머리와 극적인 제목의 지면은 면 없는 선과 큰 제목이 짝이다'],
+  botanical: ['soft', '자연·웰니스 상품과 이야기는 둥근 채움 면이 부드러운 인상을 준다'],
+  cloud: ['soft', '헬스케어 예약·기록은 큰 반경의 채움 면이 안심을 준다'],
+  clinic: ['soft', '병원·의원의 예약 동선은 부드러운 채움 면이 긴장을 낮춘다'],
+  dining: ['editorial', '메뉴판과 예약은 면 없는 선과 여백이 차림표의 격을 만든다'],
+  cafe: ['soft', '카페·베이커리의 메뉴와 매장 소개는 둥근 채움 면이 따뜻한 인상을 준다'],
+  stay: ['soft', '숙소 사진 카드를 훑는 화면은 떠 있는 둥근 카드가 사진을 돋보이게 한다'],
+  commerce: ['soft', '상품 목록과 구매 동선은 채운 둥근 카드와 알약 버튼이 행동을 부른다'],
+  beauty: ['editorial', '톤온톤 브랜드 소개는 면 없는 선이 상품과 여백을 먼저 보이게 한다'],
+  realty: ['quiet', '매물 표와 지표는 외곽선 카드가 숫자를 가리지 않고 경계를 만든다'],
+  atelier: ['soft', '교육·창작 커뮤니티는 활기 있는 둥근 채움 면이 참여를 부른다'],
+  learning: ['soft', '진행 표시가 있는 학습 서비스는 둥근 채움 면과 알약 탭이 격려하는 인상을 준다'],
+  civic: ['editorial', '큰 터치 영역과 고대비의 공공 서비스는 장식 없는 면 없는 선이 읽기를 돕고 둥근 모양은 테마가 금지한다'],
+  hanji: ['editorial', '문화·전통 콘텐츠 읽기는 면 없는 선이 지면의 결을 살린다'],
+  heritage: ['editorial', '박물관·재단의 전시와 소개는 면 없는 선이 전시물을 앞세운다'],
+  clarity: ['quiet', '하단 탭바 모바일 앱의 목록·설정은 외곽선 언어가 반복 사용에 가볍다'],
+  pocket: ['soft', '큰 터치 타깃의 모바일 우선 화면은 크고 둥근 채움 면이 누르기 쉽다'],
+  nocturne: ['soft', '어두운 면 위의 미디어·음악은 둥근 채움 면과 글로우가 어울린다'],
+  sport: ['bold', '피트니스·스포츠의 기록과 상품은 각진 굵은 면과 빠른 움직임이 에너지를 준다'],
+  solar: ['soft', '에너지 서비스의 소개·요금·현황은 밝고 둥근 채움 면이 친근하다'],
+  ocean: ['soft', '여행·해양 상품 소개는 부드러운 채움 면이 휴식의 인상을 준다'],
+  enterprise: ['quiet', '낮은 채도의 기업 포털·인트라넷은 외곽선 카드가 절제된 업무 화면을 만든다'],
+  devtool: ['editorial', '코드가 주인공인 개발자 제품과 문서는 면 없는 선이 코드 블록을 앞세운다'],
+  luxe: ['editorial', '여백으로 가치를 말하는 고급 브랜드는 면 없는 선과 가는 윤곽이 맞고 굵은 윤곽은 테마가 금지한다'],
+  swiss: ['editorial', '격자와 큰 타이포의 스위스 스타일은 면 없는 선이 격자를 드러낸다'],
+  colorblock: ['bold', '큰 색면의 포스터형 캠페인은 각진 굵은 면이 색면의 힘을 키운다'],
+  newsroom: ['editorial', '촘촘한 머리기사와 구분선 지면은 면 없는 선 언어가 신문 조판과 맞는다'],
+  academic: ['editorial', '좁은 읽기 폭의 논문·리서치는 면 없는 선이 본문을 방해하지 않는다'],
+  wedding: ['soft', '청첩장과 참석 응답은 둥근 채움 면이 축하의 온기를 준다'],
+  kids: ['soft', '어린이 서비스는 큰 반경의 알약 채움 면이 친근하고 누르기 쉽다'],
+  wine: ['editorial', '와인바 메뉴와 예약은 면 없는 선과 여백이 차분한 분위기를 만든다'],
+  garden: ['soft', '식물·정원 가게는 둥근 채움 면이 유기적인 인상과 어울린다'],
+  school: ['editorial', '학교 안내와 신청은 고대비의 면 없는 선이 읽기와 입력을 분명히 한다'],
+  bank: ['quiet', '숫자가 먼저 읽히는 금융 화면은 외곽선 카드가 숫자를 앞세운다'],
+  game: ['soft', '어두운 면 위 빠른 움직임의 게임은 둥근 채움 면과 글로우가 맞고 굵은 윤곽은 테마가 금지한다'],
+};
+/** 테마별 시각 패밀리 1순위 id. 분포 시험과 문서 표가 읽는다. */
+export const STYLE_FAMILY_PICKS = Object.freeze(Object.fromEntries(Object.entries(FAMILY_PICKS).map(([id, [key]]) => [id, `family:${key}`])));
+/** 1순위 패밀리 관계의 가중치. 계약 한도(100)를 쓴다: 형태 점수의 최대 격차(−30~40)를 덮어야 테마 성격이 순위를 정한다. */
+const CURATED_FAMILY = 100;
+
 /**
  * W2 타이포 시스템의 스타일 맥락별 우선 후보.
  * 문서의 TYPE_FIT(용도·페이지 유형·밀도) 점수를 읽고, 테마의 서체 계열과 목적을 보조 기준으로 쓴다.
@@ -335,6 +402,8 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
     if (!f.contexts.includes('any') && !contexts.includes('any') && !f.contexts.some(c => contexts.includes(c))) add('avoids', f.id, 20, `패밀리의 페이지 유형(${f.contexts.join('·')})과 이 맥락의 페이지 유형(${contexts.join('·')})이 겹치지 않는다`);
     if (f.density === d.density) add('prefers', f.id, 10, `패밀리가 전제한 밀도(${f.density})가 테마 밀도와 같다`);
     else if ([f.density, d.density].sort().join() === 'compact,spacious') add('avoids', f.id, 10, `패밀리 밀도(${f.density})와 테마 밀도(${d.density})가 정반대다`);
+    const familyPick = FAMILY_PICKS[themeId];
+    if (familyPick && f.id === `family:${familyPick[0]}`) add('prefers', f.id, CURATED_FAMILY, `${t.name}(${use})의 1순위 시각 패밀리 ${familyPick[0]}: ${familyPick[1]}`);
     for (const [axis, banned] of Object.entries(t.forbid)) {
       if (!SHAPE_AXES.includes(axis)) continue;
       if (banned.includes(f.shape[axis])) add('forbids', f.id, 100, `${t.name} 테마는 ${axis}=${f.shape[axis]}를 금지한다(테마 금지)`);

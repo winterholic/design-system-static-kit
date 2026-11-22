@@ -12,7 +12,7 @@ const SIZES = ['small', 'medium', 'large'];
 const PARENTS = ['slot:main', 'slot:header', 'slot:footer', 'slot:aside', 'slot:grid-item'];
 const BTN_STATES = ['default', 'hover', 'focus', 'active', 'loading', 'disabled'];
 
-const SHARED = `.pf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--pf-gap);font-family:var(--kit-font)}.pf-actions[data-layout=stack]{flex-direction:column;align-items:stretch}.pf-actions[data-layout=stack] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}.pf-actions[data-layout=pair] .kit-ctl-button-host{flex:0 1 auto}.pf-actions[data-align=end]{justify-content:flex-end}.pf-helper{display:flex;gap:var(--kit-sp-near);align-items:flex-start;margin:0;color:var(--kit-muted);font-size:var(--kit-t-small);word-break:keep-all;overflow-wrap:anywhere}.pf-helper .kit-icon{flex:none;width:18px;height:18px;margin-top:1px}.pf-actions .kit-ctl-button{white-space:nowrap}.pf-destructive{display:grid;gap:var(--pf-gap)}@media(max-width:640px){.pf-actions[data-layout=pair]{flex-direction:column-reverse;align-items:stretch}.pf-actions[data-layout=pair] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}}`;
+const SHARED = `.pf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--pf-gap);font-family:var(--kit-font)}.pf-actions[data-layout=stack]{flex-direction:column;align-items:stretch}.pf-actions[data-layout=stack] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}.pf-actions[data-layout=pair] .kit-ctl-button-host{flex:0 1 auto}.pf-actions[data-align=end]{justify-content:flex-end}.pf-helper{display:flex;gap:var(--kit-sp-near);align-items:flex-start;margin:0;color:var(--kit-muted);font-size:var(--kit-t-small);word-break:keep-all;overflow-wrap:anywhere}.pf-helper .kit-icon{flex:none;width:18px;height:18px;margin-top:1px}.pf-actions .kit-ctl-button{white-space:nowrap}.pf-destructive{display:grid;gap:var(--pf-gap)}@media(max-width:640px){.pf-actions[data-layout=pair]{flex-direction:column;align-items:stretch}.pf-actions[data-layout=pair] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}}`;
 
 const sizeOf = ctx => ctx.props.size;
 
@@ -30,7 +30,7 @@ export const buttonPrimary = definePurposeFamily({
   ],
   needs: {}, states: BTN_STATES,
   interactions: [{on: 'click·Enter·Space', behavior: '주 동작 실행(기반 버튼 attachButton)'}, {on: 'pair', behavior: '보조 버튼은 같은 크기·같은 높이의 보조 외형'}],
-  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: 'pair는 640px 이하에서 세로로 쌓이고 주 동작이 위에 온다(column-reverse). 버튼은 전체 폭이 된다.'},
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: 'pair는 640px 이하에서 세로로 쌓이고 주 동작이 위에 온다(DOM 순서 그대로 위에서 아래로). 버튼은 전체 폭이 된다.'},
   a11y: {role: 'group', keyboard: 'Tab 순서는 주 동작 → 보조 동작', conditions: ['버튼 이름은 동사로 시작', '그룹에는 aria-label이 없어도 되지만 폼 안에서는 폼 제목과 연결된다', '포커스 링 3:1 이상']},
   pairs: [['--kit-onAction', '--kit-action', 4.5, 'primary label']],
   parents: PARENTS, example: {variant: {layout: 'pair', align: 'end'}, props: {size: 'medium'}, content: {label: '저장', secondaryLabel: '취소'}},
@@ -41,7 +41,8 @@ export function renderButtonPrimary(ctx) {
   const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx);
   const main = ctx.button('primary', {props: {size, state: p.state, content: c.icon ? 'icon-end' : 'text'}, content: {label: c.label, ...(c.icon ? {icon: c.icon} : {})}});
   const sec = v.layout !== 'single' && c.secondaryLabel ? ctx.button('secondary', {props: {size}, content: {label: c.secondaryLabel}}) : '';
-  return `<div class="pf-actions" role="group" data-layout="${v.layout}" data-align="${v.align}">${v.layout === 'pair' ? sec + main : main + sec}</div>`;
+  // Tab 순서 계약은 주 동작 → 보조 동작이다. 화면에서 읽히는 순서와 같아야 하므로 pair도 주 동작이 먼저 놓인다(모바일은 위에서 아래로 같은 순서).
+  return `<div class="pf-actions" role="group" data-layout="${v.layout}" data-align="${v.align}">${main}${sec}</div>`;
 }
 
 /* ---------- 보조 ---------- */
@@ -94,11 +95,13 @@ export const buttonEmphasis = definePurposeFamily({
   css: `.pf-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--kit-sp-item) var(--kit-gap);padding:var(--pf-pad);border-radius:var(--kit-radius);background:var(--kit-card-hover);color:var(--kit-text)}.pf-cta-text{display:grid;gap:var(--kit-sp-tight);min-width:0;flex:1 1 16rem}.pf-cta-text h3{margin:0;font-family:var(--kit-heading);font-size:var(--kit-t-heading);font-weight:var(--pf-title-weight);line-height:1.25;word-break:keep-all;overflow-wrap:anywhere}.pf-cta-text p{margin:0;color:var(--kit-muted)}.pf-cta[data-layout=inline]{background:transparent;padding:0}.pf-cta .pf-actions{flex:0 0 auto}@media(max-width:640px){.pf-cta .pf-actions{width:100%;flex-direction:column;align-items:stretch}.pf-cta .pf-actions :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}}`,
 });
 export function renderButtonEmphasis(ctx) {
-  const {content: c, variant: v} = ctx, size = sizeOf(ctx), hid = ctx.uid('helper');
+  const {content: c, variant: v} = ctx, size = sizeOf(ctx), hid = ctx.uid('helper'), tid = ctx.uid('headline');
   const main = ctx.button('emphasis', {props: {size, content: 'icon-end'}, content: {label: c.label, icon: 'arrow-right', describedBy: c.helper ? hid : ''}});
   const sec = c.secondaryLabel ? ctx.button('tertiary', {props: {size}, content: {label: c.secondaryLabel}}) : '';
-  const text = (c.headline || c.helper) ? `<div class="pf-cta-text">${c.headline ? `<h3>${e(c.headline)}</h3>` : ''}${c.helper ? `<p id="${e(hid)}">${e(c.helper)}</p>` : ''}</div>` : '';
-  return `<div class="pf-cta" data-layout="${v.layout}">${text}<div class="pf-actions" role="group">${main}${sec}</div></div>`;
+  const text = (c.headline || c.helper) ? `<div class="pf-cta-text">${c.headline ? `<h3 id="${e(tid)}">${e(c.headline)}</h3>` : ''}${c.helper ? `<p id="${e(hid)}">${e(c.helper)}</p>` : ''}</div>` : '';
+  // 계약: banner는 section(제목이 이름). 제목이 없으면 이름 없는 section이 되므로 div로 둔다.
+  const [open, close] = v.layout === 'banner' && c.headline ? [`<section class="pf-cta" data-layout="banner" aria-labelledby="${e(tid)}">`, '</section>'] : [`<div class="pf-cta" data-layout="${v.layout}">`, '</div>'];
+  return `${open}${text}<div class="pf-actions" role="group">${main}${sec}</div>${close}`;
 }
 
 /* ---------- 파괴적 ---------- */

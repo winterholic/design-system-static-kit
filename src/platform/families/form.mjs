@@ -131,7 +131,7 @@ export const formSettings = definePurposeFamily({
     {title: '지역과 언어', description: '날짜와 통화 표시 형식에 쓰입니다.', fields: [{type: 'select', label: '언어', value: 'ko', options: [{value: 'ko', label: '한국어'}, {value: 'en', label: 'English'}]}, {type: 'select', label: '시간대', value: 'seoul', options: [{value: 'seoul', label: '서울 (UTC+9)'}, {value: 'utc', label: 'UTC'}]}]},
   ]}},
   render(ctx) { return renderFormSettings(ctx); },
-  css: `.pf-settings{display:grid;gap:var(--kit-gap)}.pf-set-list{display:grid;gap:0}.pf-set-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:var(--kit-sp-head) var(--kit-gap);padding-block:var(--kit-gap);border-block-end:var(--pf-rule)}.pf-set-row .pf-form-head{align-content:start}.pf-set-controls{display:grid;gap:var(--kit-sp-item);max-width:28rem;min-width:0}.pf-settings[data-layout=cards] .pf-set-list{gap:var(--kit-sp-head)}.pf-settings[data-layout=cards] .pf-set-row{grid-template-columns:minmax(0,1fr);padding:var(--pf-pad);border:var(--pf-border);border-radius:var(--kit-radius);background:var(--pf-surface);box-shadow:var(--kit-shadow)}.pf-settings[data-layout=cards] .pf-set-row{background:var(--kit-surface)}[data-family=editorial] .pf-settings[data-layout=cards] .pf-set-row{border-radius:0;border-block-start:var(--pf-rule);background:transparent}.pf-set-foot{display:flex;justify-content:flex-end;gap:var(--pf-gap)}.pf-set-foot .kit-ctl-button{white-space:nowrap}@media(max-width:640px){.pf-set-row{grid-template-columns:minmax(0,1fr)}.pf-set-controls{max-width:none}.pf-set-foot{flex-direction:column-reverse;align-items:stretch}.pf-set-foot .kit-ctl-button-host{display:flex}.pf-set-foot .kit-ctl-button{width:100%}}`,
+  css: `.pf-settings{display:grid;gap:var(--kit-gap)}.pf-set-list{display:grid;gap:0}.pf-set-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:var(--kit-sp-head) var(--kit-gap);padding-block:var(--kit-gap);border-block-end:var(--pf-rule)}.pf-set-row .pf-form-head{align-content:start}.pf-set-controls{display:grid;gap:var(--kit-sp-item);max-width:28rem;min-width:0}.pf-settings[data-layout=cards] .pf-set-list{gap:var(--kit-sp-head)}.pf-settings[data-layout=cards] .pf-set-row{grid-template-columns:minmax(0,1fr);padding:var(--pf-pad);border:var(--pf-border);border-radius:var(--kit-radius);background:var(--pf-surface);box-shadow:var(--kit-shadow)}.pf-settings[data-layout=cards] .pf-set-row{background:var(--kit-surface)}[data-family=editorial] .pf-settings[data-layout=cards] .pf-set-row{border-radius:0;border-block-start:var(--pf-rule);background:transparent}.pf-set-foot{display:flex;justify-content:flex-end;gap:var(--pf-gap)}.pf-set-foot .kit-ctl-button{white-space:nowrap}@media(max-width:640px){.pf-set-row{grid-template-columns:minmax(0,1fr)}.pf-set-controls{max-width:none}.pf-set-foot{flex-direction:column;align-items:stretch}.pf-set-foot .kit-ctl-button-host{display:flex}.pf-set-foot .kit-ctl-button{width:100%}}`,
 });
 export function renderFormSettings(ctx) {
   const {content: c, variant: v, props: p} = ctx, size = p.size, hid = ctx.uid('title');
@@ -147,7 +147,8 @@ export function renderFormSettings(ctx) {
     }).join('');
     return `<div class="pf-set-row" role="group" aria-labelledby="${e(sid)}"${s.description ? ` aria-describedby="${e(did)}"` : ''}><div class="pf-form-head"><h3 id="${e(sid)}">${e(s.title)}</h3>${s.description ? `<p id="${e(did)}">${e(s.description)}</p>` : ''}</div><div class="pf-set-controls">${controls}</div></div>`;
   }).join('');
-  const foot = `<div class="pf-set-foot">${ctx.button('secondary', {props: {size}, content: {label: c.cancelLabel ?? '취소'}})}${submit(ctx.button('primary', {props: {size}, content: {label: c.saveLabel ?? '저장'}}))}</div>`;
+  // Tab 순서 계약은 저장 → 취소다. 화면에서 읽히는 순서와 같아야 하므로 저장이 먼저 놓인다.
+  const foot = `<div class="pf-set-foot">${submit(ctx.button('primary', {props: {size}, content: {label: c.saveLabel ?? '저장'}}))}${ctx.button('secondary', {props: {size}, content: {label: c.cancelLabel ?? '취소'}})}</div>`;
   const head = `<header class="pf-form-head"><h2 id="${e(hid)}">${e(c.title)}</h2>${c.description ? `<p>${e(c.description)}</p>` : ''}</header>`;
   return `<form class="pf-form pf-settings" action="${e(c.action ?? '#')}" method="post" aria-labelledby="${e(hid)}" data-layout="${v.layout}" ${formAttrs(ctx, size)}>${head}<div class="pf-set-list">${rows}</div>${foot}</form>`;
 }
@@ -189,7 +190,8 @@ export function renderFormFilter(ctx) {
     if (!Array.isArray(c.chips) || c.chips.length < 1 || c.chips.length > 6) throw new TypeError('필터 칩은 1~6개입니다');
     chips = `<div class="pf-chips" role="group" aria-label="${e(c.chipsLabel ?? '빠른 조건')}">${c.chips.map(ch => ctx.button('secondary', {props: {size, behavior: 'toggle', state: ch.pressed ? 'pressed' : 'default'}, content: {label: ch.label}})).join('')}</div>`;
   }
-  const actions = `<div class="pf-filter-actions">${ctx.button('secondary', {props: {size}, content: {label: c.resetLabel ?? '초기화'}})}${submit(ctx.button('primary', {props: {size}, content: {label: c.applyLabel ?? '적용'}}))}</div>`;
+  // Tab 순서 계약은 적용 → 초기화다. 화면에서 읽히는 순서와 같아야 하므로 적용이 먼저 놓인다.
+  const actions = `<div class="pf-filter-actions">${submit(ctx.button('primary', {props: {size}, content: {label: c.applyLabel ?? '적용'}}))}${ctx.button('secondary', {props: {size}, content: {label: c.resetLabel ?? '초기화'}})}</div>`;
   const applied = c.appliedCount ?? 0;
   const status = `<p class="pf-filter-status" role="status" aria-live="polite">${applied > 0 ? `필터 ${num(`${applied}개`)} 적용` : '적용된 필터 없음'}${typeof c.resultCount === 'number' ? ` · 결과 ${num(`${c.resultCount.toLocaleString('ko-KR')}건`)}` : ''}</p>`;
   const common = `action="${e(c.action ?? '#')}" method="get" data-layout="${v.layout}" data-size="${size}"`;

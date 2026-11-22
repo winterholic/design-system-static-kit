@@ -5,7 +5,7 @@
  */
 import {readFileSync, writeFileSync} from 'node:fs';
 import {themes, themeCategories} from '../src/catalog/index.mjs';
-import {createPlatform} from '../src/platform/index.mjs';
+import {createPlatform, recommend} from '../src/platform/index.mjs';
 import {assemble} from '../src/profiles/assemble.mjs';
 import {PROFILES} from '../src/profiles/data.mjs';
 import {STYLE_CONTEXTS, STYLE_CONTEXT_DETAILS, STYLE_MATERIALS, rankStyleMaterials} from '../src/platform/data/style-contexts.mjs';
@@ -29,6 +29,29 @@ function relationSummary(sc, env, kind) {
   const parts = [...net].map(([id, n]) => `${short(id)} ${n > 0 ? '+' : ''}${n}`);
   for (const id of banned) parts.push(`${short(id)} 금지`);
   return parts.join(', ') || '—';
+}
+
+
+/**
+ * 54개 스타일 맥락의 시각 패밀리 1·2순위. 첫 페이지 유형과 테마 기본 모드로 recommend()를 부른다(재료 검증 S1과 같은 방법).
+ * 반환: [{theme, category, context, mode, first, second, reason}]. reason은 1순위 패밀리로 향한 가장 강한 prefers 관계의 이유다.
+ */
+export function familyRanking(env = createPlatform()) {
+  return STYLE_CONTEXTS.map(sc => {
+    const theme = short(sc.id), mode = themes[theme].defaults.mode ?? 'light', context = sc.contexts[0];
+    const ranked = recommend(env.registry, env.graph, {kind: 'family', context, mode, styleContext: sc.id}).ranked;
+    const first = ranked[0]?.id ?? null;
+    const reason = sc.relations.filter(e => e.to === first && e.type === 'prefers').sort((a, b) => b.priority - a.priority)[0]?.reason ?? '';
+    return {theme, category: themes[theme].category, context, mode, first, second: ranked[1]?.id ?? null, reason};
+  });
+}
+
+/** 시각 패밀리별 1순위 횟수. [{family, count, share, themes}] 많은 순, 동수는 id 순. */
+export function familyDistribution(rows) {
+  const by = new Map();
+  for (const r of rows) (by.get(r.first) ?? by.set(r.first, []).get(r.first)).push(r.theme);
+  return [...by].map(([family, list]) => ({family, count: list.length, share: list.length / rows.length, themes: list}))
+    .sort((a, b) => b.count - a.count || a.family.localeCompare(b.family));
 }
 
 export function generateBlocks() {
@@ -60,6 +83,13 @@ export function generateBlocks() {
       const top = kind => { const r = rankStyleMaterials(sc, {kind}); return r.ranked.length ? `${short(r.ranked[0].id)} (${r.ranked.length}/${r.ranked.length + r.blocked.length})` : '막힘'; };
       return [`\`${short(sc.id)}\``, STYLE_CONTEXT_DETAILS[short(sc.id)].layout.mode, relationSummary(sc, env, 'palette'), relationSummary(sc, env, 'subtoken-set'), relationSummary(sc, env, 'type-system'), relationSummary(sc, env, 'family'),
         top('surface'), top('motion'), top('background'), top('media')]; }));
+
+  const familyRows = familyRanking(env);
+  blocks['family-distribution'] = table(['시각 패밀리', '1순위 횟수', '비율', '테마'],
+    [...familyDistribution(familyRows).map(d => [`\`${short(d.family)}\``, `${d.count}/${familyRows.length}`, `${(d.share * 100).toFixed(1)}%`, d.themes.map(t => `\`${t}\``).join(' ')]),
+      ['editorial·soft 합', `${familyRows.filter(r => ['family:editorial', 'family:soft'].includes(r.first)).length}/${familyRows.length}`, `${(familyRows.filter(r => ['family:editorial', 'family:soft'].includes(r.first)).length / familyRows.length * 100).toFixed(1)}%`, '재료 검증 S1 기준 43/54(79.6%)']]);
+  blocks['family-picks'] = table(['테마', '분류', '첫 페이지 유형 · 모드', '1순위', '2순위', '선택 이유(관계 reason)'],
+    familyRows.map(r => [`\`${r.theme}\``, themeCategories[r.category], `${r.context} · ${r.mode}`, `\`${short(r.first)}\``, r.second ? `\`${short(r.second)}\`` : '—', r.reason.replace(/^.*?시각 패밀리 \w+: /, '')]));
 
   const withStates = Object.entries(STYLE_MATERIALS).map(([kind, list]) => [kind, list]);
   blocks.materials = withStates.map(([kind, list]) => {
