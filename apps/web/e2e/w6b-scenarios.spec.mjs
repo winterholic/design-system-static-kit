@@ -161,7 +161,7 @@ for (const width of [390, 1280]) {
       const src = await srcOf(preview);
       const req = JSON.parse(Buffer.from(new URL(src, 'http://x').searchParams.get('r'), 'base64url').toString());
       expect(req.components).toHaveLength(3);
-      const page1 = service.assembleDesign({...req, candidates: 4});
+      const page1 = service.assembleDesign({...req, candidates: 4}, {include: ['standalone']});
       expect(page1.ok).toBe(true);
       const html = page1.value.candidates[0].value.standalone;
       expect(html).toContain('data-family="bold"');
@@ -192,7 +192,7 @@ for (const width of [390, 1280]) {
       const second = cands.nth(1);
       const secondSrc = await srcOf(second);
       const secondReq = JSON.parse(Buffer.from(new URL(secondSrc, 'http://x').searchParams.get('r'), 'base64url').toString());
-      const set4 = service.assembleDesign({...secondReq});
+      const set4 = service.assembleDesign({...secondReq}, {include: ['standalone']});
       await expectSameBytes(request, secondSrc, set4.value.candidates[1].value.standalone);
       await second.getByRole('link', {name: '이 후보로 계속'}).click();
       await expect(page).toHaveURL(/step=swap/);
