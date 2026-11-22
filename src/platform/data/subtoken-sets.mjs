@@ -22,7 +22,7 @@ const standard = {
   cardHover: r('neutral', '100', '800'), cardActive: r('neutral', '200', '700'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '200', '800'),
   text: r('neutral', '950', '50', FG_BG, 7), muted: r('neutral', '700', '300', FG_BG, 4.5), border: r('neutral', '200', '700'), rule: r('neutral', '500', '500', ['surface'], 3),
   action: r('brand', '700', '400', ['canvas', 'surface'], 4.5), onAction: on('action', 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'cardHover', 'cardActive'], 4.5), focus: r('brand', '600', '300', ['canvas', 'surface'], 3),
-  accent: r('accent', '700', '300'), onAccent: on('accent', 4.5),
+  accent: r('accent', '700', '300', ['soft'], 4.5), onAccent: on('accent', 4.5),
   success: r('success', '700', '300', ['surface'], 4.5), warning: r('warning', '800', '300', ['surface'], 4.5), danger: r('danger', '700', '300', ['surface', 'dangerSoft'], 4.5), info: r('info', '700', '300', ['surface'], 4.5),
   disabledFg: r('neutral', '500', '400', ['disabledBg'], 3),
 };
@@ -43,7 +43,7 @@ const editorialWarm = variant({
   cardHover: r('neutral', '100', '800'), cardActive: r('accent', '100', '800'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '200', '800'),
   text: r('neutral', '950', '100', FG_BG, 7), muted: r('neutral', '700', '400', FG_BG, 4.5), border: r('neutral', '300', '800'), rule: r('neutral', '600', '500', ['surface'], 3),
   action: r('brand', '700', '300', ['canvas', 'surface'], 4.5), link: r('accent', '800', '300', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 4.5), focus: r('accent', '600', '300', FG_BG, 3),
-  accent: r('accent', '700', '300', ['surface'], 4.5),
+  accent: r('accent', '700', '300', ['surface', 'soft'], 4.5),
   disabledFg: r('neutral', '500', '400', ['disabledBg'], 3),
 });
 
@@ -53,7 +53,7 @@ const commerceVivid = variant({
   cardHover: r('accent', '50', '900'), cardActive: r('accent', '100', '800'), dangerSoft: r('danger', '100', '900'), disabledBg: r('neutral', '200', '800'),
   border: r('neutral', '200', '700'), rule: r('neutral', '500', '500', ['surface'], 3),
   action: r('accent', '600', '300', ['canvas', 'surface'], 5), onAction: on('action', 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 4.5), focus: r('brand', '600', '300', FG_BG, 3),
-  accent: r('brand', '600', '300'), onAccent: on('accent', 4.5),
+  accent: r('brand', '700', '300'), onAccent: on('accent', 4.5),
   danger: r('danger', '700', '300', ['surface', 'dangerSoft'], 4.5),
 });
 
@@ -63,7 +63,7 @@ const premiumDark = variant({
   cardHover: r('neutral', '100', '800'), cardActive: r('neutral', '200', '700'), dangerSoft: r('danger', '50', '900'), disabledBg: r('neutral', '200', '800'),
   text: r('neutral', '950', '100', FG_BG, 7), muted: r('neutral', '700', '400', FG_BG, 4.5), border: r('neutral', '300', '800'), rule: r('neutral', '600', '600', ['surface'], 3),
   action: r('neutral', '900', '100', ['canvas', 'surface'], 7), onAction: on('action', 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'cardHover', 'cardActive'], 4.5), focus: r('accent', '600', '200', FG_BG, 3),
-  accent: r('brand', '700', '300', ['surface'], 4.5), onAccent: on('accent', 4.5),
+  accent: r('brand', '700', '300', ['surface', 'soft'], 4.5), onAccent: on('accent', 4.5),
   disabledFg: r('neutral', '500', '500', ['disabledBg'], 3),
 });
 
@@ -73,7 +73,7 @@ const highContrast = variant({
   cardHover: r('neutral', '100', '900'), cardActive: r('neutral', '200', '800'), dangerSoft: r('danger', '100', '900'), disabledBg: r('neutral', '200', '800'),
   text: r('neutral', '950', '50', FG_BG, 10), muted: r('neutral', '800', '200', FG_BG, 7), border: r('neutral', '700', '400', ['canvas', 'surface'], 4.5), rule: r('neutral', '800', '300', ['canvas', 'surface'], 4.5),
   action: r('brand', '800', '300', ['canvas', 'surface'], 7), onAction: on('action', 7), link: r('brand', '800', '200', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 7), focus: r('brand', '700', '200', FG_BG, 4.5),
-  accent: r('accent', '800', '200', ['canvas', 'surface'], 7), onAccent: on('accent', 7),
+  accent: r('accent', '800', '200', ['canvas', 'surface', 'soft'], 7), onAccent: on('accent', 7),
   success: r('success', '800', '200', ['surface', 'soft'], 7), warning: r('warning', '900', '200', ['surface', 'soft'], 7), danger: r('danger', '800', '200', ['surface', 'dangerSoft', 'soft'], 7), info: r('info', '800', '200', ['surface', 'soft'], 7),
   disabledFg: r('neutral', '700', '300', ['disabledBg'], 4.5),
 });
@@ -84,7 +84,7 @@ const dataDense = variant({
   cardHover: r('neutral', '100', '900'), cardActive: r('neutral', '200', '800'), disabledBg: r('neutral', '200', '900'),
   border: r('neutral', '300', '600'), rule: r('neutral', '500', '400', ['surface'], 3),
   action: r('brand', '700', '400', ['canvas', 'surface'], 4.5), link: r('brand', '700', '300', ['canvas', 'surface', 'soft', 'cardHover', 'cardActive'], 4.5),
-  accent: r('accent', '700', '300', ['surface'], 4.5),
+  accent: r('accent', '700', '300', ['surface', 'soft'], 4.5),
   success: r('success', '800', '200', ['surface', 'soft'], 4.5), warning: r('warning', '900', '200', ['surface', 'soft'], 4.5), danger: r('danger', '800', '200', ['surface', 'dangerSoft'], 4.5), info: r('info', '800', '200', ['surface', 'soft'], 4.5),
 });
 

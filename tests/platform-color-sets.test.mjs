@@ -169,3 +169,26 @@ test('every passing pair assembles real components: no missing variable or contr
   const dark = assemblePlatform({context: 'commerce', mode: 'dark', palette: 'palette:graphite-mono', subtokenSet: 'subtoken-set:commerce-vivid', components: comps}, env);
   assert.deepEqual([dark.ok, dark.diagnostics[0].code], [false, 'P_CHECK_PALETTE_SUBTOKEN'], 'the one failing pair is refused with the same reason in the pipeline');
 });
+
+test('bindColor gates accentInk on accentSoft at 4.5:1, so a set that leaves that pair unguarded is incompatible', () => {
+  const FLOOR = 4.5;
+  for (const {palette: p, set: s} of passing) for (const mode of ['light', 'dark']) {
+    const r = bind(p, s, mode), row = r.report.find(x => x.role === 'accentInk' && x.against === 'accentSoft');
+    assert.ok(row, `${p} × ${s} (${mode}) reports the accentInk × accentSoft pair`);
+    assert.equal(row.minimum, FLOOR);
+    assert.ok(colorContrast(r.vars['--kit-accentInk'], r.vars['--kit-accentSoft']) >= FLOOR, `${p} × ${s} (${mode})`);
+  }
+  // 결함 재현: 세트 설계가 accent를 soft 위에서 보정하지 않으면(원 설계) 이 쌍은 게이트에서 막혀야 한다. 하한을 낮추지 않는다.
+  const unguarded = {...set('tinted'), roles: {...set('tinted').roles, accent: {from: 'accent', light: '700', dark: '300'}}};
+  const bad = bindColor(palette('magenta-vivid'), unguarded, 'light');
+  assert.equal(bad.ok, false);
+  assert.equal(bad.error.code, 'P_COLOR_CONTRAST');
+  assert.ok(bad.report.some(x => x.role === 'accentInk' && x.against === 'accentSoft' && x.ratio < x.minimum), bad.error.message);
+  // 페이지 단계에서 막히던 4쌍은 세트 설계 수정으로 게이트를 통과한다.
+  for (const [p, st, mode] of [['magenta-vivid', 'data-dense', 'light'], ['magenta-vivid', 'tinted', 'light'], ['sunrise-warm', 'commerce-vivid', 'light'], ['sunrise-warm', 'tinted', 'dark']]) {
+    const r = bind(`palette:${p}`, `subtoken-set:${st}`, mode);
+    assert.equal(r.ok, true, `${p} × ${st} (${mode}): ${r.error?.message}`);
+    assert.ok(colorContrast(r.vars['--kit-accentInk'], r.vars['--kit-accentSoft']) >= FLOOR, `${p} × ${st} (${mode})`);
+    assert.equal(env.graph.evaluate([`palette:${p}`, `subtoken-set:${st}`]).ok, true, `${p} × ${st}: palette-subtoken relation`);
+  }
+});

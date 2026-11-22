@@ -88,6 +88,8 @@ function deriveStates(roles, design, mode, onMin, {contrast}) {
   // 글자 하한은 세트가 onAction·onAccent에 건 값을 따른다(고대비는 hover·active 위에서도 7:1).
   for (const [fg, bg, min] of [['onActionHover', 'actionHover', onMin.action], ['onActionActive', 'actionActive', onMin.action], ['onAccentHover', 'accentHover', onMin.accent], ['onAccentActive', 'accentActive', onMin.accent]]) contrast(fg, bg, s[fg], s[bg], min);
   for (const k of ['tableHead', 'tableHover', 'tableSelected']) contrast('text', k, roles.text, s[k], 4.5);
+  // accentInk(보조색 글자)는 accentSoft(강조 띠) 위에 놓인다. 역할 규칙이 accent를 surface 위에서만 보정하면 이 쌍이 4.5:1을 밑돈다(페이지 품질 검사가 막는 쪽).
+  contrast('accentInk', 'accentSoft', s.accentInk, s.accentSoft, 4.5);
   contrast('controlBorder', 'surface', s.controlBorder, roles.surface, design.control.min); contrast('controlHoverBorder', 'surface', s.controlHoverBorder, roles.surface, design.control.min);
   // 표 셀의 초점 고리는 안쪽(outline-offset:-2px)에 그려져 표 머리글·hover·선택 면 위에 놓인다.
   for (const k of ['tableHead', 'tableHover', 'tableSelected']) contrast('focus', k, roles.focus, s[k], 3);

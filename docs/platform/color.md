@@ -90,13 +90,13 @@
 | 선명한 3색(주황·청록) `#D2501E #6F625A #0D6E8E` | standard, tinted, editorial-warm, commerce-vivid, premium-dark, high-contrast, data-dense | 없음 |
 | 밝은 중립 시드를 낀 6색 `#0D6E8E #8A8F99 #E8A100 #2E8B57 #C0392B #3B6FD6` | tinted, data-dense | standard: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>editorial-warm: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>commerce-vivid: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>외 2개 |
 | 거의 검정인 3색 `#101010 #181818 #202020` | 없음 | standard: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>tinted: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>외 4개 |
-| 연한 파스텔 3색 `#F7F0B0 #F4F4F4 #E9F5C0` | 없음 | standard: no text color reaches 4.5:1 on accent<br>tinted: no text color reaches 4.5:1 on accent<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 5.2533:1 < 6:1, chart-diverging-end vs surface 2.5298:1 < 3:1, chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>외 4개 |
+| 연한 파스텔 3색 `#F7F0B0 #F4F4F4 #E9F5C0` | 없음 | standard: chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>tinted: chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 5.2533:1 < 6:1, chart-diverging-end vs surface 2.5298:1 < 3:1, chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>외 4개 |
 <!-- color-matrix:end -->
 
 ### 3.1 실패 이유 해설
 
 - **graphite-mono × commerce-vivid(다크)**: 이 세트는 보조 행동을 brand 램프 300단계로 칠한다. mono의 brand(`#2B2D33`) 300단계는 `#7D7E81`이다. 이 회색 위에서 흰 글자는 4.06:1, 어두운 글자(`#1A1A1B`)는 4.28:1이라 둘 다 4.5:1에 못 미친다. 중간 명도 대역에는 읽을 글자색이 없다는 뜻이다. 또 이 세트의 의도가 "선명한 강조색"인데 mono 팔레트에는 선명한 색이 없다. 그래서 팔레트가 `avoids` 관계(우선순위 40)로 이 세트를 밀어낸다.
-- 사용자 팔레트 시연의 거부 이유는 같은 게이트에서 나온 것이다. 밝은 중립 시드는 다크에서 본문 7:1을 맞출 수 없고, 거의 검정인 시드는 순차 램프의 이웃 단계가 구분되지 않으며, 연한 파스텔은 보조 행동 채움 위에 읽을 글자색이 없다.
+- 사용자 팔레트 시연의 거부 이유는 같은 게이트에서 나온 것이다. 밝은 중립 시드는 다크에서 본문 7:1을 맞출 수 없고, 거의 검정인 시드는 순차 램프의 이웃 단계가 구분되지 않으며, 연한 파스텔은 발산 차트의 중간값이 면과 구분되지 않는다(3.3의 accent 보정 뒤로 보조 행동 채움 쪽 실패는 사라졌다).
 
 ### 3.2 처음 설계에서 고친 것(정직한 기록)
 
@@ -107,6 +107,22 @@
 - 고대비의 `text` 12:1은 `cardActive`(neutral 300) 위에서 불가능했다. 활성 면을 한 단계 어둡게 하고 하한을 10으로 정했다.
 - 발산 차트의 중간값이 바탕과 거의 같은 명도라 이웃 단계 명암비가 1.0에 가까웠다. 명암비 대신 색차로 재고, 중간값을 neutral 200(라이트)·700(다크)로 올렸다.
 - 표 셀 초점 고리는 안쪽에 그려지므로(`outline-offset:-2px`) 초점색을 카드 면이 아니라 표 머리글·hover·선택 면 위에서 검사한다.
+
+### 3.3 accentInk × accentSoft 대비(페이지 품질 검사가 막던 4쌍)
+
+`accentInk`(= `accent`, 보조색 글자)는 `accentSoft`(= `soft`, 강조 띠) 위에 놓인다. 이전 게이트는 이 쌍을 재지 않았고, 세트가 `accent`를 `surface` 위에서만 보정하거나 아예 보정하지 않았다. 그래서 `bindColor`는 통과하는데 페이지 단계에서 4.5:1 미만으로 막히는 쌍이 4개 있었다. 임계값은 그대로 4.5:1이고, 세트 설계를 고쳤다.
+
+| 쌍 | 고치기 전 | 원인 | 고친 설계 |
+|---|---|---|---|
+| magenta-vivid × data-dense (라이트) | 4.38 | accent가 `surface`만 보정하고 `soft`(neutral 100)는 안 봄 | `accent`를 `soft`에서도 4.5:1로 보정 |
+| magenta-vivid × tinted (라이트) | 4.19 | accent에 보정 없음, `soft`는 brand 100 | 같음 |
+| sunrise-warm × tinted (다크) | 3.39 | accent 300단계가 `soft`(brand 800) 위에서 어두움 | 같음 |
+| sunrise-warm × commerce-vivid (라이트) | 3.90 | accent가 brand 600이고 `soft`가 보조색 100 | 라이트 단계를 brand 700으로(다크 300 유지) |
+
+- `bindColor`가 `accentInk vs accentSoft`를 4.5:1 게이트로 보고한다(`deriveStates`). 같은 결함이 다시 생기면 `palette-subtoken`이 그 쌍을 거부한다. `tests/platform-color-sets.test.mjs`가 고치기 전 설계로 같은 4쌍이 실패하는 것을 확인한다.
+- 고대비 세트는 `accent`를 `soft` 위에서도 7:1로 맞춘다. 이 세트의 하한이 7이라 magenta-vivid × high-contrast(라이트)의 보조색이 조금 어두워졌다. 통과하던 쌍이고 실패로 바뀐 쌍은 없다.
+- commerce-vivid는 다크를 건드리지 않는다. 다크에 `soft` 보정을 걸면 graphite-mono × commerce-vivid(다크)의 보조 행동 채움이 밝아져 이 쌍의 실패 이유(3.1)가 사라진다. 이 쌍의 거부는 설계 의도(`avoids`)이므로 유지한다. 라이트 단계 변경은 이 세트를 쓰는 모든 팔레트의 라이트 보조 행동 채움을 한 단계 어둡게 한다(brand 600 → 700).
+- 새로 실패한 쌍은 없다. 통과·실패 표는 `build.mjs`가 다시 만들었고 실패 쌍 목록은 그대로다.
 
 ## 4. 사용자 팔레트(`proposeSubtokenSets`)
 
@@ -139,7 +155,7 @@ const r = proposeSubtokenSets(['#D2501E', '#6F625A', '#0D6E8E']); // hex 3~6개
 |---|---|---|---|---|---|---|---|
 | editorial-warm · light | `#DEDBD9` | `#ECEAE9` | `#8E3614` | `#6E1C36` | 14.3 | 7.8 | disabledFg vs disabledBg 3.1572/3 |
 | editorial-warm · dark | `#1E1B19` | `#272320` | `#E39375` | `#C67B93` | 11.3 | 7.1 | rule vs surface 3.0319/3 |
-| commerce-vivid · light | `#DEDBD9` | `#ECEAE9` | `#892242` | `#B04319` | 14.3 | 8.9 | disabledFg vs disabledBg 3.1572/3 |
+| commerce-vivid · light | `#DEDBD9` | `#ECEAE9` | `#892242` | `#8E3614` | 14.3 | 8.9 | disabledFg vs disabledBg 3.1572/3 |
 | commerce-vivid · dark | `#1E1B19` | `#272320` | `#C77C94` | `#E39375` | 13.0 | 5.5 | action vs surface 5.001/5 |
 | premium-dark · light | `#DEDBD9` | `#ECEAE9` | `#272320` | `#8E3614` | 14.3 | 15.6 | link vs cardActive 4.5453/4.5 |
 | premium-dark · dark | `#1E1B19` | `#272320` | `#DEDBD9` | `#E39375` | 11.3 | 12.4 | link vs cardActive 4.5003/4.5 |
