@@ -15,7 +15,7 @@
   - `quality.status: verified`는 그 재료를 실패시킬 수 있는 테스트 줄(`tests/<file>.test.mjs:<line>`)이 있을 때만 붙인다.
   - 새로 쓴 테스트는 버그를 심어 실패하는 것을 한 번 확인한다(RED). 그다음 원래 코드로 통과하는지 확인한다(GREEN).
 - **성과 보고**: 등록 수량이나 속성 곱으로 보고하지 않는다. 플랫폼 경로의 "실제 조립 가능 조합"과 "검증된 조합"으로 보고한다. 이 수치는 W5가 `scripts/platform/baseline.mjs`에 플랫폼 구간을 더하면 측정할 수 있다.
-  - 기준선의 `registered.family`, `distinct.families`, `verifiedFamilies`는 시각 패밀리만 센다. `registered.purposeFamily`는 레지스트리 등록 수이고, `distinct.purposeFamilies`는 품질 검증된 대표 페이지 Blueprint의 `materials.purposes`에 실제 나온 고유 목적 패밀리만 센다. 등록 목적 패밀리 전체를 기본 페이지 사용 수로 해석하지 않는다.
+  - `registered.family`와 `distinct.families`는 레지스트리의 시각 패밀리 수다. `verifiedFamilies`는 품질 검증된 대표 페이지 선택에 실제 나온 고유 시각 패밀리 수다. `registered.purposeFamily`는 목적 패밀리 레지스트리 수이고, `distinct.purposeFamilies`는 대표 페이지 Blueprint의 `materials.purposes`에 실제 나온 고유 목적 패밀리만 센다. 등록 목적 패밀리 전체를 기본 페이지 사용 수로 해석하지 않는다.
   - 목적 패밀리는 기존 119,610 조립 가능 조합의 곱 축에 추가하지 않는다. 대표 페이지 검증은 기존 색·타이포·시각 패밀리 제약을 그대로 통과해야 한다.
   - 모션 대표 표본은 목적 패턴 × 등록 모션을 한 번 시도하고 light/dark 중 하나라도 통과하면 검증으로 센다. 두 모드가 모두 거부되면 `rejectedCases`에 이유를 기록한다. 2026-11 기준 `motion:expressive`는 `dashboard-grid`, `erp-workspace`에서 X11(`motion.lively × elevation.flat`)로 막혀 19개 중 17개가 검증됐다. X11 규칙은 완화하지 않는다.
 - **공통 검증 명령**(모든 작업이 완료 전에 돌린다)
@@ -116,7 +116,7 @@
 
 ### W5 기준선 해석
 
-- `platform.registered.family: 4`와 `platform.distinct.families: 4`는 기존 시각 패밀리다. `verifiedFamilies`도 검증 페이지 선택에 출력된 시각 패밀리만 뜻한다.
+- `platform.registered.family: 4`와 `platform.distinct.families: 4`는 등록된 시각 패밀리 수다. `platform.distinct.verifiedFamilies: 4`는 품질 검증된 페이지 출력에 실제 선택된 고유 시각 패밀리 수다.
 - `platform.registered.purposeFamily: 32`는 목적 패밀리 레지스트리 등록량이다. 현재 6개 대표 페이지 패턴에서 `platform.distinct.purposeFamilies.verified: 4`이며 ID는 `purpose:card.feature`, `purpose:card.kpi`, `purpose:card.product`, `purpose:table.business`다. 이 값은 `assemblePage` 품질 검증을 통과한 Blueprint의 `materials.purposes`에서 모은 고유 목적 패밀리다. 독립 부품 미리보기나 등록량 전체를 기본 페이지에서 사용한 수로 세지 않는다.
 - `platform.assemblable.assemblable: 119610`은 원래 정의대로 패턴 × 셸 × 폭 × 밀도 × 모드에 팔레트 × 서브토큰 세트 × 타이포 시스템 × 시각 패밀리를 곱하고 관계·색·서체 제약을 평가한 값이다. 목적 패밀리를 곱 축에 추가하지 않는다.
 - 모션 대표 검사는 `attempted: 19`, `verified: 17`, `usedInOutput: 17`이다. 빠진 두 표본은 `motion:expressive` × `dashboard-grid`와 `erp-workspace`다. 두 모드 모두 X11 `motion.lively × elevation.flat` 거부 이유를 내며 규칙은 그대로 유지한다.
