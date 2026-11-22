@@ -19,5 +19,6 @@ export {queryMaterials, MATERIAL_VIEWS} from './materials-query.mjs';
 export {assembleDesign} from './assemble-design.mjs';
 export {listEditOps, applyEdit} from './edit.mjs';
 export {listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility} from './platform-materials.mjs';
+export {proposeSubtokenSets, assembleComponents} from './platform-components.mjs';
 export {CONTRACT_VERSION} from './envelope.mjs';
 export {HINTS, DEFAULT_HINT, hintFor, withHint, diagnostic} from './errors.mjs';

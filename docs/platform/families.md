@@ -357,11 +357,31 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 
 ## 9. 계약과 다른 작업에 대한 요청
 
-W3는 `src/platform/contract.mjs`와 `pipeline.mjs`를 소유하지 않으므로 자기 파일 안의 확장 필드로 두었다. 아래는 W5에게 요청한다.
+W3는 `src/platform/contract.mjs`와 `pipeline.mjs`를 소유하지 않으므로 자기 파일 안의 확장 필드로 두었다. 요청 항목은 W5-c에서 다음 계약으로 처리했다.
 
 1. **목적 패밀리 재료 종류**: 지금은 `src/platform/families/`가 자체 레지스트리(`PURPOSE_FAMILIES`)와 검사(`validatePurposeFamily`)를 가진다. 플랫폼 레지스트리에 종류 `purpose-family`(또는 `family`의 확장 필드 `purpose`)를 더하면 `recommend()`와 관계 그래프가 목적 패밀리를 직접 다룰 수 있다. 필드 모양은 `PURPOSE_FIELDS`를 그대로 쓰면 된다.
 2. **시각 값 확장**: 시각 패밀리의 `--pf-*` 변수와 `metrics`, `recipe`는 `families/visual.mjs`에 있다(계약의 `family` 필드에는 없다). 계약에 `visual: {metrics, vars, recipe}` 필드를 더하면 `data/families.mjs`로 합칠 수 있다.
 3. **페이지 단계 진입점**: W5의 페이지 단계는 슬롯에 `renderPurposeFamily(env, id, {visual, variant, props, content})`(또는 `assembleFamilies`)를 부르면 된다. 반환은 `{ok, html, errors, resolved, bases}`다. 파이프라인의 `components: [{base, family, ...}]`는 기반 컴포넌트 단위라 목적 패밀리를 직접 받지 못한다.
 4. **`src/platform/index.mjs` 내보내기**: `export * from './families/index.mjs'` 한 줄.
 5. **회귀 테스트 한 줄 조정**: `tests/platform-minimal.test.mjs`의 "스타일 맥락이 후보를 모두 걸러 `P_SELECT_EMPTY`" 검사는 Card 패밀리가 하나라는 전제였다. 시각 패밀리가 넷이 되어 `soft` 하나만 금지하면 다른 패밀리가 남으므로, 금지 값을 패밀리가 가진 모서리 값 전부로 넓혔다(검사 의도는 그대로: 대체하지 않고 비운다).
-6. **구형 X01 규칙**(dock 셸 × compact 밀도 금지)은 `purpose:navigation.bottom`에 해당하지만 밀도는 패밀리가 아니라 요청이 정한다. 관계로 옮길 때 `forbids`에 `when: {density: ['compact']}`를 쓰는 것이 맞다(W5 몫).
+6. **구형 X01 규칙**(dock 셸 × compact 밀도 금지)은 `purpose:navigation.bottom`에 해당하지만 밀도는 패밀리가 아니라 요청이 정한다. 관계로 옮길 때 `forbids`에 `when: {density: ['compact']}`를 쓴다.
+
+### 9.1 W5-c 처리: 레지스트리·공개 API·슬롯
+
+- `purpose-family`는 `PLATFORM_KINDS`에 등록된다. 목적 패밀리 ID(`purpose:<group>.<name>`)와 `PURPOSE_FIELDS`의 필드는 그대로 유지한다. 각 레코드는 `bases` 의존을 `requires` 관계로 선언하고, 기반 부품 조립 계약은 계산 관계 `purpose-family-base`가 검사한다.
+- `visual`은 시각 패밀리 ID별 `{key, metrics, vars, recipe, allowed, reasons}`다. 허용 결과와 거부 이유는 `checkPurposeCombination`에서 계산해 레지스트리의 상세·추천·호환성과 실제 렌더가 같은 판정을 쓴다. 시각 패밀리의 원본 값은 `src/platform/families/visual.mjs`를 계속 단일 출처로 쓴다.
+- 공개 진입점은 `src/platform/index.mjs`의 `PURPOSE_FAMILY_IDS`, `PURPOSE_FAMILIES`, `PURPOSE_FIELDS`, `VISUAL_LANGUAGES`, `getPurposeFamily`, `listPurposeFamilies`, `validatePurposeFamilies`, `renderPurposeFamily`, `assembleFamilies`, `combinationMatrix`, `validatePurposeFamily`, `checkPurposeCombination`, `ICON_CSS`다. 렌더 시그니처는 `renderPurposeFamily(env, id, {visual, variant?, props?, content, id?}) → {ok, html, errors, resolved, bases}`다.
+- W6b Core 호출은 `assemblePage(request, env)`이며 서비스 진입점은 `assembleDesign(request, opts)`다. `request`는 `purpose`, `content`, `components?`, `families?`, `palette?`, `subtokenSet?`, `typeSystem?` 등을 받는다. 목적 컴포넌트 형태는 `{purpose, visual?, variant?, props?, content, id?, slot?}`이고, 자동 슬롯 승격을 같은 목적의 명시 컴포넌트가 대체한다.
+- `listPlatformMaterials({kind: 'purpose-family', ...})`, `getPlatformMaterial({id})`, `recommendMaterials({kind: 'purpose-family', context?, density?, styleContext?, selected?})`, `checkCompatibility({ids, context?, density?})`가 같은 레지스트리와 관계 그래프를 읽는다. REST는 각각 `GET /api/v1/platform/materials?kind=purpose-family`, `GET /api/v1/platform/materials/{id}`, `POST /api/v1/recommend`, `POST /api/v1/compatibility`; MCP는 `list_platform_materials`, `get_platform_material`, `recommend_materials`, `check_compatibility`다.
+
+### 9.2 W5-d 처리: Core 서비스 시연 계약
+
+- 목적 패밀리 목록·상세는 W5-c 서비스 계약을 그대로 쓴다: `listPlatformMaterials({kind: 'purpose-family', ...})` → `getPlatformMaterial({id})`. 새 전용 목록 함수는 두지 않는다.
+- `proposeSubtokenSets({seeds})`는 `{ok,value,warnings,catalogVersion,contractVersion}` 봉투로 팔레트 시드 배정, 통과 후보, 거부 이유와 light/dark 토큰 미리보기를 반환한다. 3~6개의 hex 시드는 요청 처리 중에만 메모리에서 쓰며 레지스트리나 저장소에 등록하지 않는다.
+- `assembleComponents(request)`는 `{context, mode?, density?, styleContext?, palette?, subtokenSet?, typeSystem?, seeds?, items:[{purpose,visual,variant?,props?,content,id?}]}`를 받고 `{html,css,script,manifest,standalone}`를 반환한다. `items`의 선택값은 기존 `assembleFamilies`/`renderPurposeFamily`와 기반 컴포넌트 런타임으로 렌더·검사한다. manifest는 선택된 목적·시각 패밀리의 변형·props·콘텐츠를 `purposeItems`에, 사용자 팔레트의 완성된 색 슬롯을 `userPalette.seeds`에 담는다. standalone은 해당 서비스 결과의 HTML·CSS·스크립트를 그대로 담는다.
+- `seeds`를 주면 `proposeSubtokenSets`의 대비 통과 세트만 선택할 수 있고, 생략한 세트는 첫 통과 후보를 쓴다. 임시 `palette:user-seeds`는 요청 범위의 새 레지스트리 안에만 둔다. 이 선택을 위해 Core 렌더러를 새로 만들지 않는다.
+- REST는 `POST /api/v1/platform/propose-subtoken-sets`, `POST /api/v1/platform/assemble-components`; MCP는 `propose_subtoken_sets`, `assemble_components`다. 같은 입력은 서비스 봉투와 두 채널에서 바이트가 같다.
+- 서비스 봉투는 1.3.0, 플랫폼 계약은 0.7.0을 유지한다. 이 추가 공개는 기존 필드 모양·레지스트리·baseline 조합 수를 바꾸지 않는다.
+- X01은 `purpose:navigation.bottom → axis-value:density.compact`의 조건부 `forbids`로 둔다. 추천·호환성·`assembleFamilies`가 모두 `X01:` 근거를 반환하며, 페이지 축 금지 검사는 기존 `tests/platform-pipeline-forbids.test.mjs`에서 계속 확인한다.
+- 기본 콘텐츠 승격은 KPI → `purpose:card.kpi`, 기능 소개 → `purpose:card.feature`, 요금제 → `purpose:card.pricing`, 기사 → `purpose:card.article`, 상품 → `purpose:card.product`, 표 → `purpose:table.business` 또는 명시한 분석형 `purpose:table.analytic`이다. 표의 배열형 columns/rows는 목적 패밀리 입력인 객체형으로 정규화한다. 구성요소를 명시하면 같은 목적의 자동 승격을 생략한다.
+- 목적 패밀리 마크업은 W3 구현과 `ICON_CSS`를 재사용한다. 아이콘 스타일은 `VISUAL_LANGUAGES`에서 `src/styles/base.mjs` 계약의 이름으로 선택한다. Coolors 데이터는 목록·상세·추천·호환성에 추가하지 않는다.

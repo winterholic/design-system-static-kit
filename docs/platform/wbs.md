@@ -91,13 +91,33 @@
 | 완료 기준 | 같은 요청에 대해 서비스, REST, MCP의 결과 바이트가 같다. 2.6.0 이하 고정 해시가 그대로다. D1: 2.7.0에서 `materials` 값만 바꾼 두 문서의 출력이 다르다. D2: 2.6.0 문서의 무시되는 `palette`가 경고로 보인다(또는 2.7.0으로 미룬 이유를 기록). D3: `catalogVersion: "2.6.0"` 조회가 REST·MCP에서 서비스와 같은 결과를 내고, 재료 질의·조립·편집 연산이 두 채널에 있다. 플랫폼 경로의 고유 색 토큰 집합과 서체 짝 수가 기존 경로(1, 3)보다 많다는 것을 baseline이 보인다 |
 | 검증 | `node --test tests/platform-*.test.mjs tests/channel-*.test.mjs tests/profiles-assemble.test.mjs`, `npm run web:test`(API 경로를 바꾼 경우), 공통 명령, `node scripts/platform/baseline.mjs`(갱신 후 커밋) |
 
+### W5-c (0.7.0)
+
+| 항목 | 내용 |
+|---|---|
+| 목표 | W3 목적 패밀리 32개를 레지스트리·추천·호환성·기본 페이지 슬롯에서 사용한다 |
+| 소유 파일 | W5 공통 소유 파일과 `src/catalog/materials-field.mjs`, `tests/service-contract.test.mjs`, `tests/service-expression.test.mjs`, `tests/platform-pipeline-contract.test.mjs` |
+| 결정 | `purpose-family` kind, visual metrics/vars/recipe, 기반 부품 requires, X01 조건부 관계, 기본 콘텐츠 승격, boolean·numeric purpose 축의 Blueprint 왕복을 추가한다. REST·MCP 경로와 operation은 0.6.0과 같고 새 kind를 사용한다 |
+| 완료 기준 | 32개 목록·상세·추천·호환성이 서비스/REST/MCP에서 일치한다. 페이지 출력이 KPI·표·상품·가격·기사·기능 소개 목적 패밀리를 사용하고, 명시 요청 우선·Blueprint 재컴파일 바이트 동등성이 고정 테스트를 통과한다. 기존 Blueprint ≤2.6.0과 Coolors 노출 제한은 유지한다 |
+
+### W5-d (목적 패밀리 시연·사용자 색 서비스)
+
+| 항목 | 내용 |
+|---|---|
+| 목표 | W6b가 사용자 hex 시드를 제안·미리보기하고, 목적 패밀리 결과를 그대로 독립 실행 문서로 받을 Core 서비스와 공통 채널을 제공한다 |
+| 소유 파일 | W5 공통 소유 파일 중 `src/service/**`, `apps/web/lib/api/**`, `apps/web/app/api/**`, `tests/platform-service*.test.mjs`, `tests/channel-*.test.mjs`, `docs/platform/wbs.md`, `docs/platform/families.md`, `docs/adr/0012-assembly-platform.md`, `docs/evidence/platform/**` |
+| 결정 | `proposeSubtokenSets({seeds})`는 순수 제안을 봉투로 돌리고 입력을 저장하지 않는다. `assembleComponents(request)`는 기존 `assembleFamilies` 렌더·진단을 사용해 html·css·script·manifest·standalone을 반환한다. 사용자 팔레트는 요청 안에서만 임시 레지스트리에 둔다. 발견은 `listPlatformMaterials({kind:'purpose-family'})`와 `getPlatformMaterial({id})` 계약을 쓴다. 서비스 봉투는 1.3.0, 플랫폼 재료 계약은 0.7.0을 유지한다 |
+| 공개 경로 | REST `POST /api/v1/platform/propose-subtoken-sets`, `POST /api/v1/platform/assemble-components`; MCP `propose_subtoken_sets`, `assemble_components` |
+| 완료 기준 | 서비스·REST·MCP 바이트 동등성, 선택 축·상태의 manifest 기록, standalone 안에 같은 html·css·script가 포함됨, 사용자 시드의 무저장, 기존 baseline·Blueprint 고정 출력 유지 |
+| 검증 | 사용자 지정 W5-d 검증 명령과 공통 명령. 기준선 수치는 레지스트리 조합 수가 변하지 않으므로 갱신 대신 `BASELINE MATCH`를 확인한다 |
+
 ## W6 웹 개편
 
 | 항목 | 내용 |
 |---|---|
 | 목표 | 재료를 탐색하고, 관계·추천 근거를 보여 주고, 조립 결과를 코드로 내보내는 화면을 만든다 |
 | 소유 파일 | `apps/web/**`에서 `apps/web/lib/api/**`와 `apps/web/app/api/**`(W5 소유)를 뺀 전부 |
-| 할 일 | ⓪ 웹 감사 R1·R2(`docs/platform/web-audit.md` §2)는 Core 결함 D1·D2(ADR 0012 §8)가 원인이므로 W5 결과를 기다린다. 웹에서 우회 값을 만들지 않는다. ① Core 서비스 함수(`assembleDesign`, `listMaterials`, `getMaterial`)만 쓴다. `src/platform/`을 직접 import하지 않는다(`apps/web/boundary.check.mjs` 방식). ② 추천 순위, 근거(`decisions[].reasons`), 막힌 후보(`blocked`)를 그대로 보여 준다. ③ 내보내기는 `value.css`·`value.html`·manifest를 그대로 쓴다. 웹에서 CSS를 다시 만들지 않는다. ④ Studio의 기존 프로파일 조립은 W5-b 전까지 그대로 둔다 |
+| 할 일 | ⓪ 웹 감사 R1·R2(`docs/platform/web-audit.md` §2)는 Core 결함 D1·D2(ADR 0012 §8)가 원인이므로 W5 결과를 기다린다. 웹에서 우회 값을 만들지 않는다. ① Core 서비스 함수만 쓴다. `src/platform/`을 직접 import하지 않는다(`apps/web/boundary.check.mjs` 방식). 재료 탐색은 `listPlatformMaterials`·`getPlatformMaterial`, 페이지 조립은 `assembleDesign`, 목적 패밀리 시연은 `assembleComponents`, 사용자 색 제안은 `proposeSubtokenSets`를 쓴다. ② 추천 순위, 근거(`decisions[].reasons`), 막힌 후보(`blocked`)를 그대로 보여 준다. ③ 내보내기는 서비스가 반환한 html·css·script·manifest·standalone을 그대로 쓴다. 웹에서 CSS를 다시 만들지 않는다. |
 | 완료 기준 | 웹의 조립 결과가 같은 요청의 서비스 결과와 바이트가 같다. Chromium에서 390px과 1280px으로 동작을 확인한다 |
 | 검증 | `npm run web:test`, `npm run test:browser`, 공통 명령 |
 

@@ -10,10 +10,10 @@
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-export const PLATFORM_CONTRACT_VERSION = '0.6.0';
+export const PLATFORM_CONTRACT_VERSION = '0.7.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
-export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern']);
+export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'purpose-family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern']);
 
 /** 색 역할. 서브토큰 세트가 이 이름마다 값을 하나씩 만든다. css는 기존 컴파일 CSS가 읽는 변수 이름이다(부품 CSS를 고치지 않고 재사용하기 위해). */
 export const COLOR_ROLES = Object.freeze({
@@ -48,7 +48,7 @@ export const EDGE_TYPES = Object.freeze({
 /** 관계 조건에 쓸 수 있는 키. 조건은 모두 AND이고 값 목록은 OR이다. */
 export const EDGE_CONDITION_KEYS = Object.freeze(['mode', 'context', 'density']);
 /** 닫힌 종류 쌍: 이 쌍은 compatible 관계(선언 또는 계산)가 있어야만 함께 조립한다. 나머지 쌍은 forbids가 없으면 열려 있다. */
-export const CLOSED_PAIRS = Object.freeze([['family', 'base-component']]);
+export const CLOSED_PAIRS = Object.freeze([['family', 'base-component'], ['purpose-family', 'base-component'], ['purpose-family', 'family']]);
 
 export const LICENSES = Object.freeze(['internal', 'MIT']);
 export const QUALITY = Object.freeze(['draft', 'implemented', 'verified']);
@@ -84,6 +84,7 @@ export const KIND_SPECS = Object.freeze({
   'style-context': Object.freeze({axisPreferences: 'object', forbid: 'object', mood: 'array', purpose: 'string?', forbidCombos: 'array?', tendencies: 'object?', media: 'object?', layout: 'object?'}),
   'base-component': Object.freeze({contract: 'string', render: 'object', styles: 'object', dependencies: 'array'}),
   family: Object.freeze({members: 'object', shape: 'object', density: 'string', states: 'array'}),
+  'purpose-family': Object.freeze({group: 'string', purpose: 'string', bases: 'array', entry: 'object', variants: 'object', props: 'object', defaults: 'object', content: 'object', forbidden: 'array', needs: 'object', states: 'array', interactions: 'array', responsive: 'object', a11y: 'object', pairs: 'array', parents: 'array', children: 'array', example: 'object', verification: 'object', visual: 'object', css: 'string', sharedCss: 'string'}),
   'axis-value': Object.freeze({axis: 'string', value: 'string'}),
   // 스타일 재료 5종(0.5.0, 스타일 작업의 요청). axes: 이 재료가 구현하는 축 값(순위·축 금지 평가), uses: 쓰는 축 값 전부(스타일 맥락이 금지한 값을 쓰면 차단).
   // 종류별 의미 검사(반경·깊이 이름, 상태·배치 이름 등)는 data/*.mjs의 validate*가 하고 createPlatform이 등록할 때 레지스트리가 부른다.
@@ -154,7 +155,7 @@ export function validatePlatformMaterial(m) {
   }
   if (out.length) return out;
   const idm = ID_PATTERN.exec(m.id);
-  if (!idm || idm[1] !== m.kind) err('P_ID', '$.id', `id는 \`${m.kind}:<name>\`입니다: ${m.id}`);
+  if (!idm || (m.kind === 'purpose-family' ? idm[1] !== 'purpose' : idm[1] !== m.kind)) err('P_ID', '$.id', `id는 \`${m.kind === 'purpose-family' ? 'purpose:<group>.<name>' : `${m.kind}:<name>`}\`입니다: ${m.id}`);
   if (!/^\d+\.\d+\.\d+$/.test(m.version)) err('P_VERSION', '$.version', 'version은 semver입니다');
   if (!LICENSES.includes(m.source.license)) err('P_LICENSE', '$.source.license', `라이선스는 ${LICENSES.join('·')}만 등록합니다(권리 미확인 자료는 등록하지 않는다)`);
   if (!QUALITY.includes(m.quality.status)) err('P_QUALITY', '$.quality.status', `품질은 ${QUALITY.join('·')} 중 하나입니다`);

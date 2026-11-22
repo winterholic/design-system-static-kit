@@ -1,0 +1,7 @@
+import {runOperation} from '@/lib/api/rest.mjs';
+
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
+
+const handler = (request: Request) => runOperation('assembleComponents', request);
+export {handler as GET, handler as POST, handler as PUT, handler as PATCH, handler as DELETE};

@@ -19,30 +19,49 @@ export function defineCheck({id, kinds, reason, run}) {
 /** 조건은 모두 AND, 값 목록은 OR. 맥락에 그 키가 없으면 조건부 관계는 적용하지 않는다. */
 export const edgeApplies = (edge, ctx = {}) => Object.entries(edge.when ?? {}).every(([k, values]) => ctx[k] !== undefined && values.includes(ctx[k]));
 
+const MAX_CACHED_CHECKS = 4096;
+
 export function createRelationGraph(registry, {checks = []} = {}) {
   const all = registry.list().flatMap(m => m.relations.map(e => Object.freeze({from: m.id, ...e})));
+  const byFrom = new Map(), byTo = new Map(), byPair = new Map();
+  const add = (map, key, edge) => {
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(edge);
+  };
+  for (const e of all) {
+    add(byFrom, e.from, e);
+    add(byTo, e.to, e);
+    add(byPair, JSON.stringify([e.from, e.to].sort()), e);
+  }
+  const checkCache = new Map();
   const kindOf = id => registry.get(id)?.kind ?? null;
   const graph = {
     checks: () => [...checks],
     edges: () => [...all],
     /** id에서 나가는 관계. type을 주면 그 종류만. */
-    from: (id, {type, ctx} = {}) => all.filter(e => e.from === id && (!type || e.type === type) && (!ctx || edgeApplies(e, ctx))),
+    from: (id, {type, ctx} = {}) => (byFrom.get(id) ?? []).filter(e => (!type || e.type === type) && (!ctx || edgeApplies(e, ctx))),
     /** id로 들어오는 관계. */
-    to: (id, {type, ctx} = {}) => all.filter(e => e.to === id && (!type || e.type === type) && (!ctx || edgeApplies(e, ctx))),
+    to: (id, {type, ctx} = {}) => (byTo.get(id) ?? []).filter(e => (!type || e.type === type) && (!ctx || edgeApplies(e, ctx))),
     /** 두 재료 사이의 관계(양방향). ctx를 주면 조건이 맞는 것만. */
-    between: (a, b, ctx) => all.filter(e => ((e.from === a && e.to === b) || (e.from === b && e.to === a)) && (!ctx || edgeApplies(e, ctx))),
+    between: (a, b, ctx) => (byPair.get(JSON.stringify([a, b].sort())) ?? []).filter(e => !ctx || edgeApplies(e, ctx)),
 
     /** 계산 관계 실행. 두 재료의 종류 쌍에 맞는 check만 돈다. [{check, a, b, ok, reason, detail}] */
     runChecks(a, b, ctx = {}) {
+      const cacheKey = JSON.stringify([a, b, ctx]);
+      const cached = checkCache.get(cacheKey);
+      if (cached) return cached.map(r => ({...r, detail: r.detail === null ? null : structuredClone(r.detail)}));
       const ma = registry.get(a), mb = registry.get(b);
       if (!ma || !mb) return [];
-      return checks.flatMap(c => {
+      const result = checks.flatMap(c => {
         const [ka, kb] = c.kinds;
         const pair = ma.kind === ka && mb.kind === kb ? [ma, mb] : ma.kind === kb && mb.kind === ka ? [mb, ma] : null;
         if (!pair) return [];
         const r = c.run(pair[0], pair[1], ctx, registry);
         return [{check: c.id, a: pair[0].id, b: pair[1].id, ok: r.ok, reason: r.ok ? c.reason : r.reason, detail: r.detail ?? null}];
       });
+      if (checkCache.size >= MAX_CACHED_CHECKS) checkCache.delete(checkCache.keys().next().value);
+      checkCache.set(cacheKey, result);
+      return result.map(r => ({...r, detail: r.detail === null ? null : structuredClone(r.detail)}));
     },
 
     /**

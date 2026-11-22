@@ -2,7 +2,7 @@
 // 비즈니스 규칙(허용 필터, 필드 이름, 범위, 오류 문구)은 서비스가 판정한다. 여기서는 URL·JSON 을 서비스 인자로 옮기기만 한다.
 import {
   CATALOG_KINDS, compileBlueprint, explainDecisions, getComponentSpec, getSchema, listCatalog, validateBlueprint, assembleBlueprint, assembleDesign, listMaterials, getMaterial,
-  listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
+  listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, proposeSubtokenSets, assembleComponents, listEditOps, applyEdit,
 } from '@winterholic/design-system-static-kit/service';
 import {COST} from './limits.mjs';
 import {channelError} from './diagnostics.mjs';
@@ -175,7 +175,7 @@ export const OPERATIONS = [
   },
   {
     id: 'listPlatformMaterials', method: 'GET', path: '/api/v1/platform/materials', summary: '플랫폼 재료 목록(팔레트·세트·서체·패밀리·스타일 재료)',
-    description: '조립 플랫폼이 쓰는 재료입니다. kind는 style-context, palette, subtoken-set, type-system, base-component, family, axis-value, surface, motion, background, media, state-pattern.',
+    description: '조립 플랫폼이 쓰는 재료입니다. kind는 style-context, palette, subtoken-set, type-system, base-component, family(시각), purpose-family(목적), axis-value, surface, motion, background, media, state-pattern.',
     parameters: [...['kind', 'context', 'tag', 'query'].map(name => ({name, in: 'query', schema: {type: 'string'}})), ...pick('fields', 'limit', 'cursor')],
     parse: ({url}) => ({args: queryToArgs(url).args}),
     call: args => listPlatformMaterials(args),
@@ -185,6 +185,18 @@ export const OPERATIONS = [
     parameters: [{name: 'id', in: 'path', required: true, schema: {type: 'string'}, description: '재료 id(예 palette:static-kit)'}],
     parse: ({url, params}) => { const {args} = queryToArgs(url); const e = forbid(args, 'id'); if (e) return {reject: e}; args.id = params.id; return {args}; },
     call: args => getPlatformMaterial(args),
+  },
+  {
+    id: 'proposeSubtokenSets', method: 'POST', path: '/api/v1/platform/propose-subtoken-sets', summary: '사용자 색 시드로 서브토큰 세트 제안', cost: COST.validate,
+    description: 'hex 시드 3~6개를 요청 안에서만 평가합니다. 등록하거나 저장하지 않으며 통과·거부 세트와 모드별 토큰 미리보기를 돌려줍니다.',
+    body: {passthrough: true, required: ['seeds'], properties: {seeds: {type: 'array', minItems: 3, maxItems: 6, items: {type: 'string', pattern: '^#[0-9A-Fa-f]{6}$'}}}},
+    parse: ({body}) => ({args: body}), call: args => proposeSubtokenSets(args),
+  },
+  {
+    id: 'assembleComponents', method: 'POST', path: '/api/v1/platform/assemble-components', summary: '목적 패밀리 조립·독립 시연', cost: COST.assemble,
+    description: '등록된 목적 패밀리와 시각 패밀리를 Core 조립기로 렌더해 html·css·script·manifest·standalone을 돌려줍니다. seeds를 주면 해당 요청에서만 사용자 팔레트를 평가합니다.',
+    body: {passthrough: true, required: ['context', 'items'], properties: {context: {type: 'string'}, mode: {type: 'string', enum: ['light', 'dark']}, density: {type: 'string', enum: ['compact', 'comfortable', 'spacious']}, styleContext: {type: 'string'}, palette: {type: 'string'}, subtokenSet: {type: 'string'}, typeSystem: {type: 'string'}, seeds: {type: 'array', minItems: 3, maxItems: 6, items: {type: 'string'}}, items: {type: 'array', minItems: 1, maxItems: 8, items: {type: 'object', required: ['purpose', 'visual'], properties: {purpose: {type: 'string'}, visual: {type: 'string'}, variant: {type: 'object'}, props: {type: 'object'}, content: {type: 'object'}, id: {type: 'string'}}}}}},
+    parse: ({body}) => ({args: body}), call: args => assembleComponents(args),
   },
   {
     id: 'recommendMaterials', method: 'POST', path: '/api/v1/recommend', summary: '재료 추천', cost: COST.validate,

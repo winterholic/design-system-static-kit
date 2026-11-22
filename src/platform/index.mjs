@@ -15,3 +15,6 @@ export {normalizePageRequest, planPage, columnsFor, PURPOSES, PURPOSE_IDS, PAGE_
 export {buildAxisValues, banPairs, styleForbidRelations, withStyleForbids, axisIds, materialAxisIds} from './axes.mjs';
 export {createPlatform, MINIMAL_REQUEST, PLATFORM_CHECKS} from './examples/minimal.mjs';
 export {checkStyleMaterials, rankStyleMaterials, assembleStyleMaterials, styleMaterialsCSS, styleMaterialAttrs, surfaceScopeCSS, STYLE_VALIDATORS, STATE_KINDS} from './style-materials.mjs';
+export {PURPOSE_FAMILY_IDS, PURPOSE_FAMILIES, PURPOSE_FIELDS, VISUAL_LANGUAGES, VISUAL_KEYS, getPurposeFamily, listPurposeFamilies, validatePurposeFamilies, renderPurposeFamily, assembleFamilies, combinationMatrix, validatePurposeFamily, checkPurposeCombination} from './families/index.mjs';
+export {ICON_CSS} from './families/kit.mjs';
+export {PURPOSE_CHECKS, purposeFamilyVisualCheck, purposeFamilyBaseCheck} from './examples/minimal.mjs';

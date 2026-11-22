@@ -2,9 +2,10 @@
 import {test, before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {
-  assembleDesign, assembleBlueprint, listMaterials, getMaterial, listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
+  assembleDesign, assembleBlueprint, listMaterials, getMaterial, listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, proposeSubtokenSets, assembleComponents, listEditOps, applyEdit,
   listCatalog, getSchema, getComponentSpec, compileBlueprint, validateBlueprint,
 } from '../src/service/index.mjs';
 import {createBlueprint} from '../src/catalog/index.mjs';
@@ -17,14 +18,16 @@ before(async () => { client = await mcpConnect('modern'); });
 after(async () => { await client.close(); });
 
 const json = x => JSON.stringify(x);
+const sha256 = x => createHash('sha256').update(x).digest('hex');
 const mcp = async (name, args) => (await client.callTool({name, arguments: args})).structuredContent;
 const INCLUDE = ['html', 'css', 'tokens', 'manifest', 'blueprint'];
 const kpis = n => Array.from({length: n}, (_, i) => ({label: `지표 ${i + 1}`, value: String(10 + i)}));
 const REQUESTS = [
-  {purpose: 'work-dashboard', candidates: 2, content: {title: '운영 현황', kpis: kpis(4), table: {title: '작업', columns: ['작업', '담당'], rows: [['a', 'b']]}}},
-  {purpose: 'saas-landing', candidates: 2, content: {features: [{title: 'A', body: 'a'}, {title: 'B', body: 'b'}]}},
-  {purpose: 'editorial-docs', candidates: 2, content: {title: '글', sections: [{title: '하나', body: '본문'}]}},
-  {purpose: 'commerce', candidates: 2, content: {products: [{title: '가', price: '1원'}, {title: '나', price: '2원'}]}},
+  // 채널 결과를 비교하는 검증은 선택 단계를 고정해 도구의 10초 제한 안에서 조립 바이트를 비교한다.
+  {purpose: 'work-dashboard', candidates: 1, palette: 'palette:forest-green', subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:work-insight', families: ['family:editorial'], content: {title: '운영 현황', kpis: kpis(4), table: {title: '작업', columns: ['작업', '담당'], rows: [['a', 'b']]}}},
+  {purpose: 'saas-landing', candidates: 1, content: {features: [{title: 'A', body: 'a'}, {title: 'B', body: 'b'}]}},
+  {purpose: 'editorial-docs', candidates: 1, content: {title: '글', sections: [{title: '하나', body: '본문'}]}},
+  {purpose: 'commerce', candidates: 1, content: {products: [{title: '가', price: '1원'}, {title: '나', price: '2원'}]}},
 ];
 
 test('assemble: the service, POST /api/v1/assemble and the assemble_design tool answer with the same bytes for every purpose', async () => {
@@ -37,6 +40,29 @@ test('assemble: the service, POST /api/v1/assemble and the assemble_design tool 
     assert.equal(viaRest.text, json(viaService), `${request.purpose}: REST`);
     assert.equal(json(viaMcp), json(viaService), `${request.purpose}: MCP`);
   }
+});
+
+test('assemble: the default work dashboard returns the unchanged three-candidate result through REST and MCP', async () => {
+  const request = {purpose: 'work-dashboard', content: {title: '업무 현황', kpis: [{label: '완료', value: '7'}, {label: '남음', value: '3'}, {label: '대기', value: '2'}], table: {title: '일정', columns: ['업무', '담당'], rows: [['문서', '운영']]}}};
+  const viaMcp = await mcp('assemble_design', request);
+  assert.equal(viaMcp.ok, true, JSON.stringify(viaMcp.errors));
+
+  const viaService = assembleDesign(request);
+  const viaRest = await rest('POST', '/api/v1/assemble', {body: request});
+  assert.equal(viaRest.status, 200);
+  assert.equal(viaService.value.candidates.length, 3);
+  assert.equal(viaRest.text, json(viaService));
+  assert.equal(viaMcp.value.candidates.length, 3);
+  assert.equal(viaMcp.value.selected, viaService.value.selected);
+  assert.deepEqual(viaMcp.value.candidates.map(({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint}) => ({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint})), viaService.value.candidates.map(({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint}) => ({id, rank, score, adjustedScore, selection, decisions, relations, quality, warnings, reasons, fingerprint})));
+  assert.deepEqual(viaMcp.value.blocked, viaService.value.blocked);
+  assert.deepEqual(viaMcp.value.comparison, viaService.value.comparison);
+  assert.deepEqual(viaMcp.value.plan, viaService.value.plan);
+  assert.deepEqual(viaMcp.value.decisions, viaService.value.decisions);
+  const viaMcpBlueprint = await mcp('assemble_design', {...request, include: ['blueprint']});
+  assert.equal(viaMcpBlueprint.ok, true, JSON.stringify(viaMcpBlueprint.errors));
+  assert.deepEqual(viaMcpBlueprint.value.candidates.map(c => c.value.blueprint), viaService.value.candidates.map(c => c.value.blueprint));
+  assert.equal(sha256(json(viaService)), '98e01ab08f0f96e0c1df752abaf719ad0dde74ada242cd23dbf2fec944416cba');
 });
 
 test('assemble: failures are the same diagnostics on every channel (REST answers 422 or 400, MCP isError)', async () => {
@@ -101,6 +127,70 @@ test('materials: listMaterials, getMaterial, the platform queries, recommend and
   assert.equal(json(await mcp('assemble_blueprint', profile)), json(assembleBlueprint(profile)));
 });
 
+test('purpose-family records are discoverable and recommendable through the service, REST and MCP', async () => {
+  const listed = listPlatformMaterials({kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']});
+  assert.equal(listed.ok, true);
+  assert.equal(listed.value.total, 32);
+  assert.equal(listed.value.items.length, 32);
+  assert.ok(listed.value.items.every(x => x.id.startsWith('purpose:')));
+  const summary = listPlatformMaterials({kind: 'purpose-family', limit: 100});
+  assert.ok(summary.value.items.every(x => x.purpose && x.group && x.bases.length));
+  const visualFields = listPlatformMaterials({kind: 'purpose-family', limit: 1, fields: ['visual']});
+  assert.deepEqual(new Set(Object.keys(visualFields.value.items[0].visual)), new Set(['family:bold', 'family:editorial', 'family:quiet', 'family:soft']));
+  const ids = listed.value.items.map(x => x.id);
+  const id = 'purpose:card.kpi';
+  const detail = getPlatformMaterial({id});
+  assert.equal(detail.ok, true);
+  assert.equal(detail.value.kind, 'purpose-family');
+  assert.ok(detail.value.bases.includes('base-component:card-surface'));
+  assert.ok(detail.value.visual);
+  assert.ok(detail.value.edges.from.some(x => x.type === 'requires'));
+  const recommendation = recommendMaterials({kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'});
+  assert.equal(recommendation.ok, true);
+  assert.ok(recommendation.value.ranked.some(x => x.id === id));
+  const compatibilityIds = [id, 'family:quiet', 'base-component:card-surface'];
+  const compatibility = checkCompatibility({ids: compatibilityIds});
+  assert.equal(compatibility.ok, true);
+  assert.equal(compatibility.value.ok, true);
+
+  const viaRest = await rest('GET', '/api/v1/platform/materials?kind=purpose-family&limit=100&fields=label%2Ccontexts%2Csource%2Creuses');
+  assert.equal(viaRest.text, json(listed));
+  assert.equal((await rest('GET', `/api/v1/platform/materials/${id}`)).text, json(detail));
+  assert.equal((await rest('POST', '/api/v1/recommend', {body: {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'}})).text, json(recommendation));
+  assert.equal((await rest('POST', '/api/v1/compatibility', {body: {ids: compatibilityIds}})).text, json(compatibility));
+  assert.equal(json(await mcp('list_platform_materials', {kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']})), json(listed));
+  assert.equal(json(await mcp('get_platform_material', {id})), json(detail));
+  assert.equal(json(await mcp('recommend_materials', {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'})), json(recommendation));
+  assert.equal(json(await mcp('check_compatibility', {ids: compatibilityIds})), json(compatibility));
+  assert.equal(ids.length, 32);
+});
+
+test('user seed proposals and purpose-family assembly keep Core, REST and MCP byte-identical', async () => {
+  const seeds = ['#D2501E', '#6F625A', '#0D6E8E'];
+  const proposal = proposeSubtokenSets({seeds});
+  assert.equal(proposal.ok, true);
+  assert.equal((await rest('POST', '/api/v1/platform/propose-subtoken-sets', {body: {seeds}})).text, json(proposal));
+  assert.equal(json(await mcp('propose_subtoken_sets', {seeds})), json(proposal));
+  const badSeeds = {seeds: ['#FFFFFF', '#FFFFFF', '#000000']};
+  assert.equal((await rest('POST', '/api/v1/platform/propose-subtoken-sets', {body: badSeeds})).text, json(proposeSubtokenSets(badSeeds)));
+  assert.equal(json(await mcp('propose_subtoken_sets', badSeeds)), json(proposeSubtokenSets(badSeeds)));
+
+  const request = {context: 'dashboard', mode: 'light', density: 'comfortable', seeds, subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:work-insight', items: [{purpose: 'purpose:button.toggle', visual: 'family:soft', variant: {layout: 'single'}, props: {state: 'pressed'}, content: {label: '알림'}}]};
+  const assembled = assembleComponents(request);
+  assert.equal(assembled.ok, true, json(assembled.errors));
+  assert.equal((await rest('POST', '/api/v1/platform/assemble-components', {body: request})).text, json(assembled));
+  assert.equal(json(await mcp('assemble_components', request)), json(assembled));
+});
+
+test('X01 keeps bottom navigation and compact density blocked in recommendations and compatibility', async () => {
+  const purpose = 'purpose:navigation.bottom', density = 'axis-value:density.compact';
+  const rec = recommendMaterials({kind: 'purpose-family', context: 'dashboard', density: 'compact', selected: [density]});
+  assert.ok(rec.value.blocked.some(x => x.id === purpose && x.blocked.some(b => b.reason.startsWith('X01:'))));
+  const compatibility = checkCompatibility({ids: [purpose, 'family:quiet', 'base-component:navigation-menu', density], context: 'dashboard', density: 'compact'});
+  assert.equal(compatibility.value.ok, false);
+  assert.ok(compatibility.value.violations.some(x => x.reason.startsWith('X01:')));
+});
+
 test('D3: catalogVersion is forwarded as the service takes it; a version the service supports is never refused by a channel', async () => {
   const fields = 'type&fields=type&limit=200';
   const at26 = json(listCatalog({kind: 'components', filter: {catalogVersion: '2.6.0'}, fields: ['type'], limit: 200}));
@@ -144,7 +234,7 @@ test('D3: every operation of the table has a route file and an OpenAPI entry, an
   }
   for (const id of ['assembleDesign', 'assembleBlueprint', 'listMaterials', 'getMaterial', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'checkCompatibility', 'listEditOps', 'applyEdit']) assert.ok(OPERATIONS.some(o => o.id === id), id);
   assert.equal(doc.paths['/api/v1/assemble'].post.requestBody.content['application/json'].schema.required[0], 'purpose');
-  assert.deepEqual(TOOLS.map(t => t.name).slice(6), ['assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit']);
+  assert.deepEqual(TOOLS.map(t => t.name).slice(6), ['assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'propose_subtoken_sets', 'assemble_components', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit']);
   for (const t of TOOLS) assert.ok(t.description.length > 40 && t.output && t.input, t.name);
 });
 

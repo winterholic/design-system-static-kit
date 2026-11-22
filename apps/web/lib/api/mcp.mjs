@@ -5,7 +5,7 @@ import {originValidationResponse, localhostAllowedOrigins} from '@modelcontextpr
 import {z} from 'zod';
 import {
   CATALOG_KINDS, compileBlueprint, explainDecisions, getComponentSpec, getSchema, listCatalog, validateBlueprint, assembleBlueprint, assembleDesign, listMaterials, getMaterial,
-  listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, listEditOps, applyEdit,
+  listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, proposeSubtokenSets, assembleComponents, listEditOps, applyEdit,
 } from '@winterholic/design-system-static-kit/service';
 import {COST, MAX_BODY_BYTES, TOOL_TIMEOUT_MS} from './limits.mjs';
 import {channelError} from './diagnostics.mjs';
@@ -95,7 +95,7 @@ export const TOOLS = [
   },
   {
     name: 'list_platform_materials', title: '플랫폼 재료 목록', run: 'listPlatformMaterials',
-    description: '조립에 쓰는 플랫폼 재료(팔레트·서브토큰 세트·타이포 시스템·기반 컴포넌트·패밀리·스타일 맥락·표면·모션·배경·미디어·상태 패턴·축 값)를 kind·context·tag·query 로 거르고 fields·limit·cursor 로 필요한 조각만 받는다.',
+    description: '조립에 쓰는 플랫폼 재료(팔레트·서브토큰 세트·타이포 시스템·기반 컴포넌트·시각·목적 패밀리·스타일 맥락·표면·모션·배경·미디어·상태 패턴·축 값)를 kind·context·tag·query 로 거르고 fields·limit·cursor 로 필요한 조각만 받는다.',
     input: loose({kind: z.string().optional(), context: z.string().optional(), tag: z.string().optional(), query: z.string().optional(), fields: z.array(z.string()).optional(), limit: z.number().optional(), cursor: z.string().optional(), catalogVersion}),
     output: envelopeOf(z.looseObject({items: z.array(anyObject), total: z.number(), nextCursor: z.string().nullable(), byKind: anyObject})), cost: 0,
   },
@@ -103,6 +103,17 @@ export const TOOLS = [
     name: 'get_platform_material', title: '플랫폼 재료 한 장과 관계', run: 'getPlatformMaterial',
     description: '플랫폼 재료 id(예 palette:static-kit)로 전체 기록과 나가고 들어오는 관계(edges, 이유 포함)를 받는다.',
     input: loose({id: z.string().optional(), catalogVersion}), output: envelopeOf(anyObject), cost: 0,
+  },
+  {
+    name: 'propose_subtoken_sets', title: '사용자 색 시드로 서브토큰 세트 제안', run: 'proposeSubtokenSets',
+    description: 'hex 시드 3~6개를 요청 안에서만 평가하고 통과·거부 세트와 모드별 토큰을 돌려준다. 입력은 저장하지 않는다.',
+    input: loose({seeds: z.array(z.unknown()).optional(), catalogVersion}), output: envelopeOf(anyObject), cost: COST.validate,
+  },
+  {
+    name: 'assemble_components', title: '목적 패밀리 조립·독립 시연', run: 'assembleComponents',
+    description: '등록 목적 패밀리와 시각 패밀리를 Core 조립기로 렌더해 html·css·script·manifest·standalone을 돌려준다. seeds는 요청 안에서만 쓴다.',
+    input: loose({context: z.string().optional(), mode: z.string().optional(), density: z.string().optional(), styleContext: z.string().optional(), palette: z.string().optional(), subtokenSet: z.string().optional(), typeSystem: z.string().optional(), seeds: z.array(z.unknown()).optional(), items: z.array(anyObject).optional(), catalogVersion}),
+    output: envelopeOf(anyObject), cost: COST.assemble,
   },
   {
     name: 'recommend_materials', title: '재료 추천', run: 'recommendMaterials',
@@ -155,6 +166,8 @@ const RUN = {
   getPlatformMaterial: a => getPlatformMaterial(withoutVersion(a)),
   recommendMaterials: a => recommendMaterials(withoutVersion(a)),
   checkCompatibility: a => checkCompatibility(withoutVersion(a)),
+  proposeSubtokenSets: ({seeds, catalogVersion: _version}) => proposeSubtokenSets({seeds}),
+  assembleComponents: a => assembleComponents(withoutVersion(a)),
   listEditOps: () => listEditOps(),
   applyEdit: a => applyEdit(withoutVersion(a)),
   explain: ({catalogVersion: _v, blueprint, manifest, ...opts}) => {
@@ -195,6 +208,7 @@ export function executeTool(tool, args, request) {
 const INSTRUCTIONS = [
   'Static Kit 디자인 시스템: 카탈로그가 허용한 값만 조합해 접근성 게이트를 통과한 HTML 을 만든다.',
   '빠른 길: assemble_design(목적·콘텐츠 → 복수 후보와 이유; 재료는 list_platform_materials·recommend_materials·check_compatibility 로 확인) → 후보의 value.blueprint(2.7.0)를 compile_design 으로 컴파일. 편집은 list_edit_ops·apply_edit.',
+  '목적 패밀리 미리보기: list_platform_materials(kind:"purpose-family") → get_platform_material → propose_subtoken_sets(선택: 사용자 hex 시드) → assemble_components(선택한 visual·variant·props·색·타이포). 사용자 시드는 저장되지 않는다.',
   '권장 흐름: list_design_system(필요한 종류만, fields·limit 로 좁혀서) → get_design_schema(blueprint 는 fields 로 일부만) 또는 get_component_spec → Blueprint JSON 작성 →',
   'validate_blueprint(오류의 path·hint·fix 로 해당 부분만 수정) → compile_design(기본은 HTML 본문 없이 요약) → 필요하면 explain_design_decisions.',
   '임의 HTML·CSS·스크립트·URL 은 받지 않는다. 오류는 {code, path, message, hint} 로 돌아온다.',

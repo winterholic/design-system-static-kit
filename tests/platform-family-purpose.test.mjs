@@ -53,7 +53,8 @@ test('rendered output: no P_TOKEN_MISSING and no P_CHECK_CONTRAST for any accept
   let assembled = 0;
   for (const f of PURPOSE_FAMILIES) for (const visual of VISUALS) for (const mode of ['light', 'dark']) {
     if (!checkPurposeCombination(f, exampleOf(f, visual)).ok) continue;
-    const r = assembleFamilies(env, {context: 'dashboard', mode, items: [{purpose: f.id, ...exampleOf(f, visual)}]});
+    const context = f.contexts.includes('any') ? 'dashboard' : f.contexts[0];
+    const r = assembleFamilies(env, {context, mode, items: [{purpose: f.id, ...exampleOf(f, visual)}]});
     const codes = r.diagnostics.map(d => d.code);
     assert.deepEqual(codes.filter(c => c === 'P_TOKEN_MISSING' || c === 'P_CHECK_CONTRAST'), [], `${f.id} × ${visual} ${mode}: ${r.diagnostics.map(d => d.message)}`);
     assert.equal(r.ok, true, `${f.id} × ${visual} ${mode}: ${JSON.stringify(r.diagnostics)}`);

@@ -165,7 +165,7 @@ test('state patterns replace the data region when the data is empty, loading or 
   const status = dash({status: {state: 'success', title: '저장했습니다'}});
   assert.equal(status.ok, true, JSON.stringify(status.diagnostics));
   assert.ok(status.value.html.indexOf('class="kit-page-header') < status.value.html.indexOf('data-state="success"'));
-  assert.ok(status.value.html.indexOf('data-state="success"') < status.value.html.indexOf('class="kit-metric"'));
+  assert.ok(status.value.html.indexOf('data-state="success"') < status.value.html.indexOf('data-purpose="card.kpi"'));
   const layout = env.registry.get(status.plan.style.states[0].id).layout;
   assert.ok(['banner', 'toast', 'block'].includes(layout));
   const err = dash({status: {state: 'error', title: '동기화에 실패했습니다'}});

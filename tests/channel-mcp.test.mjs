@@ -10,13 +10,13 @@ import {TOOLS, executeTool} from '../apps/web/lib/api/mcp.mjs';
 import {COST, MAX_BODY_BYTES, RATE_BUDGET, TOOL_TIMEOUT_MS} from '../apps/web/lib/api/limits.mjs';
 
 const CORE_NAMES = ['list_design_system', 'get_design_schema', 'get_component_spec', 'validate_blueprint', 'compile_design', 'explain_design_decisions'];
-// W5-b: 조립·재료·추천·호환성·편집 도구가 같은 서비스 함수를 부른다(tests/platform-service-channels.test.mjs가 서비스·REST·MCP 일치를 본다).
-const NAMES = [...CORE_NAMES, 'assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit'];
+// W5-b/d: 조립·재료·색 제안·목적 패밀리 시연·추천·호환성·편집 도구가 같은 서비스 함수를 부른다(tests/platform-service-channels.test.mjs가 서비스·REST·MCP 일치를 본다).
+const NAMES = [...CORE_NAMES, 'assemble_design', 'assemble_blueprint', 'list_materials', 'get_material', 'list_platform_materials', 'get_platform_material', 'propose_subtoken_sets', 'assemble_components', 'recommend_materials', 'check_compatibility', 'list_edit_ops', 'apply_edit'];
 const bp = () => createBlueprint('dashboard-overview');
 const call = (client, name, args) => client.callTool({name, arguments: args});
 
 for (const era of ['modern', 'legacy']) {
-  test(`[${era}] 연결하고 도구 열여섯 개(핵심 여섯 + 조립·재료·편집 열)를 입력·출력 스키마와 함께 낸다`, async () => {
+  test(`[${era}] 연결하고 도구 열여덟 개(핵심 여섯 + 조립·재료·색·시연 열둘)를 입력·출력 스키마와 함께 낸다`, async () => {
     const client = await mcpConnect(era);
     try {
       assert.equal(client.getServerVersion().name, 'static-kit');

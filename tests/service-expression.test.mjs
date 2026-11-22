@@ -50,7 +50,7 @@ test('Core diagnostic schema describes the 2.5.0 Dashboard CONTRACT_V03 warning 
 
   const r = validateBlueprint(b);
   assert.equal(r.ok, true);
-  assert.equal(r.contractVersion, '1.2.0');
+  assert.equal(r.contractVersion, '1.3.0');
   const warning = r.warnings.find(w => w.code === 'CONTRACT_V03');
   assert.ok(warning);
   assert.deepEqual(Object.keys(warning).sort(), ['code', 'contract', 'hint', 'message', 'path', 'rule', 'severity']);

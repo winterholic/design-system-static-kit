@@ -321,3 +321,25 @@ ADR 0011 레지스트리(`catalogRegistry`)는 "무엇이 등록됐는가"를 �
 | 기준선 | 플랫폼 구간은 페이지 조립이 목적 패밀리와 상태 자리까지 읽으므로 조립 가능·검증된 수가 늘었다(조립 가능 119610, 검증 5793, 고유 출력 5787). 구형 구간(≤2.6.0) 수치와 `site/v1/catalog.json` 스냅샷은 바뀌지 않았다. 계약 문자열이 CSS 주석에 들어가므로 플랫폼 출력의 바이트는 0.6.0으로 바뀐다 |
 
 REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemble`·`assemble_design`, `POST /api/v1/assemble-blueprint`·`assemble_blueprint`, `GET /api/v1/materials[/{id}]`·`list_materials`·`get_material`, `GET /api/v1/platform/materials[/{id}]`·`list_platform_materials`·`get_platform_material`, `POST /api/v1/recommend`·`recommend_materials`, `POST /api/v1/compatibility`·`check_compatibility`, `GET /api/v1/edit/ops`·`list_edit_ops`, `POST /api/v1/edit`·`apply_edit`.
+
+### 9.8 1.3.0 서비스 추가 공개: 사용자 색 제안·목적 패밀리 시연(W5-d)
+
+| 항목 | 결정과 결과 |
+|---|---|
+| 색 시드 제안 | `proposeSubtokenSets({seeds})`는 기존 `src/platform/color.mjs`의 `proposeSubtokenSets`를 봉투로 공개한다. 3~6개 hex 입력을 요청 중에만 쓰며 `palette:user-seeds`를 영구 레지스트리나 파일에 저장하지 않는다. 후보마다 light·dark 값, 대비 거부 이유를 돌려준다 |
+| 목적 패밀리 시연 | `assembleComponents(request)`는 `assembleFamilies`와 기반 컴포넌트 런타임을 재사용해 `{html,css,script,manifest,standalone}`을 낸다. 선택된 변형·props(상태 포함)·콘텐츠를 manifest `purposeItems`에, 사용자 팔레트의 완성된 시드 슬롯은 `userPalette.seeds`에 보존한다. 새 마크업 렌더러를 두지 않으며 standalone은 응답의 동일 HTML·CSS·스크립트를 포함한다 |
+| 사용자 색 미리보기 | 요청의 `seeds`는 임시 레지스트리에 넣고, 같은 대비 검사에서 통과한 `subtokenSet`만 조립한다. 세트를 생략하면 첫 통과 후보를 고른다. 실패한 세트는 출력하지 않고 Core 진단으로 그 이유를 돌려준다 |
+| 재료 탐색 | 별도 목적 패밀리 목록 API를 추가하지 않는다. W5-c의 `listPlatformMaterials({kind:'purpose-family'})`·`getPlatformMaterial({id})`를 유지한다 |
+| 공개 경로 | REST `POST /api/v1/platform/propose-subtoken-sets`, `POST /api/v1/platform/assemble-components`; MCP `propose_subtoken_sets`, `assemble_components`. 서비스·REST·MCP 결과 바이트를 채널 테스트로 맞춘다 |
+| 버전·기준선 | 봉투 모양은 바뀌지 않아 서비스 계약 1.3.0과 플랫폼 계약 0.7.0을 유지한다. 플랫폼 레지스트리 데이터·조합 수는 바뀌지 않으므로 수치 기준선을 갱신하지 않고 `baseline --check`로 이전 기준과 일치함을 확인한다. Blueprint ≤2.6.0 및 Coolors 노출 제한은 그대로다 |
+
+### 9.7 0.7.0: 목적 패밀리 재료와 기본 콘텐츠 슬롯(W5-c)
+
+| 항목 | 결정과 결과 |
+|---|---|
+| 플랫폼 종류 | `purpose-family` 32개를 등록한다. 목적 패밀리 ID 문법(`purpose:<group>.<name>`)은 유지한다. 레코드는 `PURPOSE_FIELDS`와 visual 필드를 가지며, `bases`를 `requires` 관계로 선언한다. 목적 패밀리·시각 패밀리와 목적 패밀리·기반 부품의 조합은 계산 관계로 검사한다 |
+| 시각 확장 | `visual[family-id] = {key, metrics, vars, recipe, allowed, reasons}`. `allowed`·`reasons`는 기존 `checkPurposeCombination`의 결과를 사용해 상세 조회·추천·호환성·페이지 렌더의 조합 판정을 맞춘다. 렌더와 아이콘 규칙은 W3의 `renderPurposeFamily`·`ICON_CSS`를 재사용한다 |
+| 기본 슬롯 | KPI·업무형 표·분석형 표·상품·가격·기사·기능 소개를 목적 패밀리 컴포넌트로 승격한다. `content` 수량으로 격자 열·행·표 쪽 나눔을 계산한다. 명시 컴포넌트는 동일 목적의 자동 승격을 대체한다. 2.7.0 Blueprint의 목적 컴포넌트 축은 문자열뿐 아니라 불리언·숫자도 받아 기반 계약의 boolean 축을 왕복한다 |
+| 서비스 계약 | `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `checkCompatibility`에 `purpose-family` kind를 추가한다. 서비스 계약 1.2.0 → 1.3.0, 플랫폼 계약 0.6.0 → 0.7.0 |
+| X01 | `purpose:navigation.bottom`이 `density=compact`일 때 `X01:` 이유가 있는 조건부 `forbids` 관계를 낸다. 추천·호환성에서 같은 금지 결과를 확인한다. 페이지 축의 구형 X01 검사는 그대로 둔다 |
+| 권리·고정 기준 | Coolors 재료는 계속 등록하지 않는다. 2.6.0 이하 Blueprint 출력과 `site/v1/catalog.json` 스냅샷은 이 변경 범위 밖이며 바이트 고정 검증을 유지한다 |

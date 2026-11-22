@@ -443,7 +443,7 @@ export function assemblePage(request, env) {
 export function summarizePlan(plan) {
   return {purpose: plan.purpose, pattern: plan.pattern, template: plan.template, pageType: plan.pageType, context: plan.context, theme: plan.theme, axes: plan.axes, axisSources: plan.axisSources,
     slots: plan.slots.map(s => ({id: s.id, source: s.source, nodes: s.nodes.map(n => n.type ?? 'component'), reasons: s.reasons})), layout: plan.layout, style: plan.style ?? null, states: plan.states.map(({index, kind, usage, path}) => ({index, kind, usage, path})),
-    components: plan.components.map(c => ({base: c.base, auto: c.auto, ...(c.requestIndex !== undefined ? {requestIndex: c.requestIndex} : {})}))};
+    components: plan.components.map(c => ({base: c.base, auto: c.auto, ...(c.purpose ? {purpose: c.purpose} : {}), ...(c.requestIndex !== undefined ? {requestIndex: c.requestIndex} : {})}))};
 }
 void COUNT_CODE;
 void mix;

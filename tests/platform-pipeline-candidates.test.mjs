@@ -30,7 +30,7 @@ test('one request yields several candidates that differ in palette, set, typogra
     assert.equal(c.quality.ok, true, JSON.stringify(c.quality));
     assert.equal(c.quality.contrast.ok && c.quality.tokens.ok && c.quality.type.ok && c.quality.page.valid, true);
     // decisions with reasons
-    assert.deepEqual(c.decisions.map(d => d.slot), ['palette', 'subtokenSet', 'typeSystem', 'family(base-component:card-surface)']);
+    assert.deepEqual(c.decisions.map(d => d.slot), ['palette', 'subtokenSet', 'typeSystem', 'family(base-component:card-surface)', 'family(purpose:card.kpi)']);
     for (const d of c.decisions) { assert.ok(['recommend', 'intent'].includes(d.source)); assert.ok(Array.isArray(d.reasons)); assert.equal(d.score, d.reasons.reduce((n, x) => n + x.priority, 0)); }
     assert.ok(c.reasons.every(x => typeof x === 'string' && x.length));
   }
@@ -68,7 +68,7 @@ test('requested materials are kept as given and recorded as intent; candidates t
   assert.ok(r.candidates.every(c => c.decisions[0].source === 'intent'));
   const full = assemblePage({...REQ, palette: 'palette:static-kit', subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:tech-erp', families: ['family:quiet']}, env);
   assert.equal(full.candidates.length, 1, 'everything fixed → one candidate');
-  assert.deepEqual(full.candidates[0].selection, {styleContext: null, palette: 'palette:static-kit', subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:tech-erp', families: {'base-component:card-surface': 'family:quiet'}});
+  assert.deepEqual(full.candidates[0].selection, {styleContext: null, palette: 'palette:static-kit', subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:tech-erp', families: {'base-component:card-surface': 'family:quiet', 'purpose:card.kpi': 'family:quiet'}});
   assert.ok(full.candidates[0].decisions.every(d => d.source === 'intent'));
   const unknown = assemblePage({...REQ, palette: 'palette:nope'}, env);
   assert.equal(unknown.ok, false);
