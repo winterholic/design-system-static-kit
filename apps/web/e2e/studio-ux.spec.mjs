@@ -93,19 +93,20 @@ for (const template of ['dashboard-overview', 'agency-home']) {
   test.setTimeout(300_000);
     await openTemplate(page, template);
     const selects = await designSelects(page);
-    const count = await selects.count();
-    expect(count).toBeGreaterThan(5);
+    // Choosing a 2.6.0 material can remove the legacy palette control and shift later controls.
+    const ids = await selects.evaluateAll(controls => controls.map(control => control.id));
+    expect(ids.length).toBeGreaterThan(5);
     let disabledSeen = 0;
-    for (let i = 0; i < count; i++) {
-      const id = await selects.nth(i).getAttribute('id');
-      const options = await optionStates(page, selects.nth(i));
+    for (const id of ids) {
+      const select = page.locator(`#${id}`);
+      const options = await optionStates(page, select);
       disabledSeen += options.filter(o => o.disabled).length;
       // 팔레트는 400개를 넘고 전부 같은 연산이라, 고르게 뽑은 몇 개만 눌러 본다. 나머지 선택지의 판정은 Core 단위 테스트가 전부 대조한다.
       const usable = options.filter(o => o.value && !o.disabled);
       const step = id === 'd-palette' ? Math.ceil(usable.length / 8) : 1;
       for (const option of usable.filter((_, k) => k % step === 0)) {
         // 앞서 고른 값 때문에 이 선택지가 지금은 충돌할 수 있다(선택지는 현재 조합 기준이다). 지금 활성인 것만 누른다.
-        if (!await pick(page, page.locator(`#${id}`), option.value, {skipDisabled: true})) continue;
+        if (!await pick(page, select, option.value, {skipDisabled: true})) continue;
         await expect(page.getByTestId('op-error'), `${id}=${option.value}`).toHaveCount(0);
       }
     }
