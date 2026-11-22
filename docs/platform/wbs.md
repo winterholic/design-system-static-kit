@@ -91,6 +91,15 @@
 | 완료 기준 | 같은 요청에 대해 서비스, REST, MCP의 결과 바이트가 같다. 2.6.0 이하 고정 해시가 그대로다. D1: 2.7.0에서 `materials` 값만 바꾼 두 문서의 출력이 다르다. D2: 2.6.0 문서의 무시되는 `palette`가 경고로 보인다(또는 2.7.0으로 미룬 이유를 기록). D3: `catalogVersion: "2.6.0"` 조회가 REST·MCP에서 서비스와 같은 결과를 내고, 재료 질의·조립·편집 연산이 두 채널에 있다. 플랫폼 경로의 고유 색 토큰 집합과 서체 짝 수가 기존 경로(1, 3)보다 많다는 것을 baseline이 보인다 |
 | 검증 | `node --test tests/platform-*.test.mjs tests/channel-*.test.mjs tests/profiles-assemble.test.mjs`, `npm run web:test`(API 경로를 바꾼 경우), 공통 명령, `node scripts/platform/baseline.mjs`(갱신 후 커밋) |
 
+### W5-c (0.7.0)
+
+| 항목 | 내용 |
+|---|---|
+| 목표 | W3 목적 패밀리 32개를 레지스트리·추천·호환성·기본 페이지 슬롯에서 사용한다 |
+| 소유 파일 | W5 공통 소유 파일과 `src/catalog/materials-field.mjs`, `tests/service-contract.test.mjs`, `tests/service-expression.test.mjs`, `tests/platform-pipeline-contract.test.mjs` |
+| 결정 | `purpose-family` kind, visual metrics/vars/recipe, 기반 부품 requires, X01 조건부 관계, 기본 콘텐츠 승격, boolean·numeric purpose 축의 Blueprint 왕복을 추가한다. REST·MCP 경로와 operation은 0.6.0과 같고 새 kind를 사용한다 |
+| 완료 기준 | 32개 목록·상세·추천·호환성이 서비스/REST/MCP에서 일치한다. 페이지 출력이 KPI·표·상품·가격·기사·기능 소개 목적 패밀리를 사용하고, 명시 요청 우선·Blueprint 재컴파일 바이트 동등성이 고정 테스트를 통과한다. 기존 Blueprint ≤2.6.0과 Coolors 노출 제한은 유지한다 |
+
 ## W6 웹 개편
 
 | 항목 | 내용 |

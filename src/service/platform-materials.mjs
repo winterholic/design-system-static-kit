@@ -16,8 +16,8 @@ import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './enve
 import {diagnostic} from './errors.mjs';
 
 const LIMIT_DEFAULT = 50, LIMIT_MAX = 200;
-const SUMMARY = ['id', 'kind', 'label', 'contexts', 'tags', 'quality'];
-const ALL = ['id', 'kind', 'label', 'version', 'contexts', 'tags', 'quality', 'source', 'reuses', 'relations'];
+const SUMMARY = ['id', 'kind', 'group', 'label', 'purpose', 'contexts', 'bases', 'tags', 'quality'];
+const ALL = ['id', 'kind', 'group', 'label', 'purpose', 'version', 'contexts', 'bases', 'children', 'entry', 'visual', 'variants', 'props', 'defaults', 'content', 'forbidden', 'needs', 'states', 'interactions', 'responsive', 'a11y', 'pairs', 'parents', 'example', 'verification', 'css', 'sharedCss', 'tags', 'quality', 'source', 'reuses', 'relations'];
 const list = xs => xs.join(', ');
 const MODES = ['light', 'dark'], DENSITIES = ['compact', 'comfortable', 'spacious'];
 

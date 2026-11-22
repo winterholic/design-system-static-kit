@@ -51,6 +51,27 @@ export function recommend(registry, graph, {kind, context, mode, density, styleC
   const pool = registry.kind(kind).filter({context});
   const scored = pool.map(m => {
     const s = graph.score(m.id, anchors, ctx);
+    if (kind === 'purpose-family') {
+      const visualIds = selected.filter(id => registry.get(id)?.kind === 'family');
+      const visuals = visualIds.length ? visualIds : registry.list('family').map(f => f.id);
+      const densityValues = m.props?.density ?? m.variants?.density;
+      if (density && densityValues && !densityValues.includes(density)) s.blocked.push({code: 'P_PURPOSE_DENSITY', with: `axis-value:density.${density}`, reason: `${m.id}는 ${density} 밀도를 받지 않습니다(허용: ${densityValues.join('·')})`});
+      const fitting = visuals.filter(id => m.visual?.[id]?.allowed && m.bases.every(base => registry.get(id)?.members?.[base]));
+      if (!fitting.length) {
+        const reasons = visuals.flatMap(id => m.visual?.[id]?.reasons ?? []);
+        s.blocked.push({code: 'P_CHECK_PURPOSE_FAMILY_VISUAL', with: visualIds[0] ?? m.id, reason: reasons[0] ?? `${m.id}를 그릴 호환 시각 패밀리가 없습니다`});
+      } else {
+        const visualScores = fitting.map(id => ({id, ...graph.score(id, [...anchors, ...m.bases], ctx)}));
+        const best = visualScores.filter(x => !x.blocked.length).sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))[0];
+        if (!best) {
+          const reason = visualScores.flatMap(x => x.blocked).find(x => x.reason)?.reason ?? `${m.id}에 맞는 시각 패밀리가 ${context ?? '현재 맥락'}에서 호환되지 않습니다`;
+          s.blocked.push({code: 'P_CHECK_PURPOSE_FAMILY_VISUAL', with: visualIds[0] ?? m.id, reason});
+        } else {
+          s.score += best.score;
+          if (best.reasons.length) s.reasons.push(...best.reasons.map(r => ({...r, via: best.id, reason: `${best.id}를 통해: ${r.reason}`})));
+        }
+      }
+    }
     // fit: true이면 타이포 시스템의 맥락(페이지 유형·밀도) 적합성 표(type.mjs typeFit)도 점수와 이유에 더한다(타이포 작업의 요청, 계약 0.3.0).
     // 기본은 꺼 둔다: 기존 순위를 고정한 시험(tests/platform-type.test.mjs 등)이 있어, 그 작업이 기대 순위를 옮긴 뒤 기본을 켠다. 페이지 파이프라인은 켠다.
     if (fit && kind === 'type-system') { const f = typeFit(m.id, ctx); s.score += f.score; s.reasons.push(...f.reasons); }

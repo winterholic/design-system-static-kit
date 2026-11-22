@@ -30,7 +30,7 @@ export function materialsSchema() {
       palette: MATERIAL_ID, subtokenSet: MATERIAL_ID, typeSystem: MATERIAL_ID, styleContext: MATERIAL_ID,
       families: {type: 'object', properties: {}, additionalProperties: MATERIAL_ID},
       surface: MATERIAL_ID, motion: MATERIAL_ID, background: MATERIAL_ID, media: MATERIAL_ID,
-      purposes: arr(obj({id: MATERIAL_ID, visual: MATERIAL_ID, uid: {...str(60), pattern: '^[a-z][a-z0-9-]*$'}, variant: OPEN(str(60)), props: OPEN(str(60)), content: OPEN(TWO)}, ['id', 'visual', 'content']), 0, 40),
+      purposes: arr(obj({id: MATERIAL_ID, visual: MATERIAL_ID, uid: {...str(60), pattern: '^[a-z][a-z0-9-]*$'}, variant: OPEN(SCALAR), props: OPEN(SCALAR), content: OPEN(TWO)}, ['id', 'visual', 'content']), 0, 40),
       states: arr(obj({id: MATERIAL_ID, title: str(100), body: str(300), details: str(120), action: obj({label: str(80), href: str(300, 1)}, ['label'])}, ['id']), 0, 12),
     }, ['palette', 'subtokenSet', 'typeSystem']),
     description: '2.7.0부터 플랫폼 조립 재료를 id로 고릅니다. 이 필드가 있으면 색은 palette × subtokenSet, 서체는 typeSystem으로만 정해집니다(colorPalette·typeRoles·profile과 함께 쓸 수 없고, palette 필드는 색에 쓰이지 않습니다).',

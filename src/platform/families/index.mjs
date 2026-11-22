@@ -15,6 +15,7 @@ import {assemblePlatform, requiredVars} from '../index.mjs';
 import {renderMember, resolveMember, familyShapeVars, contrastPairs} from '../family.mjs';
 import {escapeHTML} from '../../escape-html.mjs';
 import {VISUAL_LANGUAGES} from './visual.mjs';
+import {axisIds} from '../axes.mjs';
 import {checkPurposeCombination, validatePurposeFamily, ICON_CSS} from './kit.mjs';
 import {CARD_FAMILIES} from './card.mjs';
 import {BUTTON_FAMILIES} from './button.mjs';
@@ -139,6 +140,12 @@ export function assembleFamilies(env, request, {definitions = new Map()} = {}) {
   items.forEach((it, i) => {
     const r = renderPurposeFamily(env, it.purpose, it);
     if (!r.ok) { for (const e of r.errors) diagnostics.push(diag(e.code, `$.items[${i}]`, e.message)); return; }
+    const ids = [it.purpose, it.visual, ...getPurposeFamily(it.purpose).bases, ...axisIds(request.density ? {density: request.density} : {})];
+    const compatibility = env.graph.evaluate(ids, {context: request.context, mode: request.mode ?? 'light', density: request.density});
+    if (!compatibility.ok) {
+      for (const e of compatibility.violations) diagnostics.push(diag(e.code, `$.items[${i}]`, e.reason));
+      return;
+    }
     rendered.push({...it, html: r.html, bases: r.bases, resolved: r.resolved});
   });
   if (diagnostics.length) return {ok: false, value: null, diagnostics, stage: 'composeComponents'};

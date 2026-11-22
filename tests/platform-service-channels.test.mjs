@@ -21,10 +21,11 @@ const mcp = async (name, args) => (await client.callTool({name, arguments: args}
 const INCLUDE = ['html', 'css', 'tokens', 'manifest', 'blueprint'];
 const kpis = n => Array.from({length: n}, (_, i) => ({label: `지표 ${i + 1}`, value: String(10 + i)}));
 const REQUESTS = [
-  {purpose: 'work-dashboard', candidates: 2, content: {title: '운영 현황', kpis: kpis(4), table: {title: '작업', columns: ['작업', '담당'], rows: [['a', 'b']]}}},
-  {purpose: 'saas-landing', candidates: 2, content: {features: [{title: 'A', body: 'a'}, {title: 'B', body: 'b'}]}},
-  {purpose: 'editorial-docs', candidates: 2, content: {title: '글', sections: [{title: '하나', body: '본문'}]}},
-  {purpose: 'commerce', candidates: 2, content: {products: [{title: '가', price: '1원'}, {title: '나', price: '2원'}]}},
+  // 채널 결과를 비교하는 검증은 선택 단계를 고정해 도구의 10초 제한 안에서 조립 바이트를 비교한다.
+  {purpose: 'work-dashboard', candidates: 1, palette: 'palette:forest-green', subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:work-insight', families: ['family:editorial'], content: {title: '운영 현황', kpis: kpis(4), table: {title: '작업', columns: ['작업', '담당'], rows: [['a', 'b']]}}},
+  {purpose: 'saas-landing', candidates: 1, content: {features: [{title: 'A', body: 'a'}, {title: 'B', body: 'b'}]}},
+  {purpose: 'editorial-docs', candidates: 1, content: {title: '글', sections: [{title: '하나', body: '본문'}]}},
+  {purpose: 'commerce', candidates: 1, content: {products: [{title: '가', price: '1원'}, {title: '나', price: '2원'}]}},
 ];
 
 test('assemble: the service, POST /api/v1/assemble and the assemble_design tool answer with the same bytes for every purpose', async () => {
@@ -99,6 +100,53 @@ test('materials: listMaterials, getMaterial, the platform queries, recommend and
   const profile = {profile: 'erp'};
   assert.equal((await rest('POST', '/api/v1/assemble-blueprint', {body: profile})).text, json(assembleBlueprint(profile)));
   assert.equal(json(await mcp('assemble_blueprint', profile)), json(assembleBlueprint(profile)));
+});
+
+test('purpose-family records are discoverable and recommendable through the service, REST and MCP', async () => {
+  const listed = listPlatformMaterials({kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']});
+  assert.equal(listed.ok, true);
+  assert.equal(listed.value.total, 32);
+  assert.equal(listed.value.items.length, 32);
+  assert.ok(listed.value.items.every(x => x.id.startsWith('purpose:')));
+  const summary = listPlatformMaterials({kind: 'purpose-family', limit: 100});
+  assert.ok(summary.value.items.every(x => x.purpose && x.group && x.bases.length));
+  const visualFields = listPlatformMaterials({kind: 'purpose-family', limit: 1, fields: ['visual']});
+  assert.deepEqual(new Set(Object.keys(visualFields.value.items[0].visual)), new Set(['family:bold', 'family:editorial', 'family:quiet', 'family:soft']));
+  const ids = listed.value.items.map(x => x.id);
+  const id = 'purpose:card.kpi';
+  const detail = getPlatformMaterial({id});
+  assert.equal(detail.ok, true);
+  assert.equal(detail.value.kind, 'purpose-family');
+  assert.ok(detail.value.bases.includes('base-component:card-surface'));
+  assert.ok(detail.value.visual);
+  assert.ok(detail.value.edges.from.some(x => x.type === 'requires'));
+  const recommendation = recommendMaterials({kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'});
+  assert.equal(recommendation.ok, true);
+  assert.ok(recommendation.value.ranked.some(x => x.id === id));
+  const compatibilityIds = [id, 'family:quiet', 'base-component:card-surface'];
+  const compatibility = checkCompatibility({ids: compatibilityIds});
+  assert.equal(compatibility.ok, true);
+  assert.equal(compatibility.value.ok, true);
+
+  const viaRest = await rest('GET', '/api/v1/platform/materials?kind=purpose-family&limit=100&fields=label%2Ccontexts%2Csource%2Creuses');
+  assert.equal(viaRest.text, json(listed));
+  assert.equal((await rest('GET', `/api/v1/platform/materials/${id}`)).text, json(detail));
+  assert.equal((await rest('POST', '/api/v1/recommend', {body: {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'}})).text, json(recommendation));
+  assert.equal((await rest('POST', '/api/v1/compatibility', {body: {ids: compatibilityIds}})).text, json(compatibility));
+  assert.equal(json(await mcp('list_platform_materials', {kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']})), json(listed));
+  assert.equal(json(await mcp('get_platform_material', {id})), json(detail));
+  assert.equal(json(await mcp('recommend_materials', {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'})), json(recommendation));
+  assert.equal(json(await mcp('check_compatibility', {ids: compatibilityIds})), json(compatibility));
+  assert.equal(ids.length, 32);
+});
+
+test('X01 keeps bottom navigation and compact density blocked in recommendations and compatibility', async () => {
+  const purpose = 'purpose:navigation.bottom', density = 'axis-value:density.compact';
+  const rec = recommendMaterials({kind: 'purpose-family', context: 'dashboard', density: 'compact', selected: [density]});
+  assert.ok(rec.value.blocked.some(x => x.id === purpose && x.blocked.some(b => b.reason.startsWith('X01:'))));
+  const compatibility = checkCompatibility({ids: [purpose, 'family:quiet', 'base-component:navigation-menu', density], context: 'dashboard', density: 'compact'});
+  assert.equal(compatibility.value.ok, false);
+  assert.ok(compatibility.value.violations.some(x => x.reason.startsWith('X01:')));
 });
 
 test('D3: catalogVersion is forwarded as the service takes it; a version the service supports is never refused by a channel', async () => {

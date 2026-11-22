@@ -12,7 +12,7 @@ import {CATALOG_VERSION} from '../catalog.mjs';
 import {diagnostic} from './errors.mjs';
 
 /** 서비스 계약 버전. 결과 봉투나 Diagnostic 모양이 바뀔 때 올린다(카탈로그 버전과 따로 움직인다). */
-export const CONTRACT_VERSION = '1.2.0';
+export const CONTRACT_VERSION = '1.3.0';
 
 const versions = () => ({catalogVersion: CATALOG_VERSION, contractVersion: CONTRACT_VERSION});
 export const ok = (value, warnings = []) => ({ok: true, value, warnings, ...versions()});

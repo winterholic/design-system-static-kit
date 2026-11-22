@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createPlatform, assemblePage, bindColor, bindType} from '../src/platform/index.mjs';
+import {createPlatform, assemblePage, assembleFamilies, bindColor, bindType} from '../src/platform/index.mjs';
 import {assembleChartPreset} from '../src/platform/data/charts.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
 import {combinationMatrix, getPurposeFamily, PURPOSE_FAMILY_IDS} from '../src/platform/families/index.mjs';
@@ -120,4 +120,63 @@ test('the page output of every purpose defines every variable its CSS reads, cha
     assert.equal(r.ok, true, `${preset}: ${JSON.stringify(r.diagnostics)}`);
     for (const c of r.candidates) assert.deepEqual(c.quality.tokens.missing, [], `${preset} rank ${c.rank}`);
   }
+});
+
+test('page content promotes KPI, analytic and business tables, commerce and editorial cards, and feature cards to purpose families', () => {
+  const cases = [
+    [{purpose: 'work-dashboard', candidates: 1, content: {kpis: kpis(3)}}, 'purpose:card.kpi'],
+    [{purpose: 'work-dashboard', candidates: 1, content: {table: {title: '분석', columns: ['채널', '매출'], rows: [['앱', '3']], kind: 'analytic'}}}, 'purpose:table.analytic'],
+    [{purpose: 'work-dashboard', candidates: 1, content: {table: {title: '주문', columns: ['주문', '상태'], rows: [['A-1', '완료']], kind: 'business'}}}, 'purpose:table.business'],
+    [{purpose: 'commerce', pattern: 'commerce-listing', candidates: 1, content: {products: [{title: 'A', price: '1원'}, {title: 'B', price: '2원'}]}}, 'purpose:card.product'],
+    [{purpose: 'saas-landing', candidates: 1, content: {features: [{title: 'A', body: 'a', icon: 'shield'}, {title: 'B', body: 'b', icon: 'cart'}]}}, 'purpose:card.feature'],
+    [{purpose: 'editorial-docs', pattern: 'editorial-article', families: ['family:soft'], candidates: 1, content: {sections: [{title: '기사 모음', body: '최근 글을 모았습니다.'}], articles: [{title: 'A', excerpt: '요약 내용'}, {title: 'B', excerpt: '다른 요약'}]}}, 'purpose:card.article'],
+    [{purpose: 'saas-landing', candidates: 1, content: {pricing: [{plan: '기본', price: '1원', features: ['하나'], ctaLabel: '시작'}, {plan: '팀', price: '2원', features: ['둘'], ctaLabel: '시작'}]}}, 'purpose:card.pricing'],
+  ];
+  for (const [request, id] of cases) {
+    const r = assemblePage(request, env);
+    assert.equal(r.ok, true, `${id}: ${JSON.stringify(r.diagnostics)}`);
+    assert.match(r.value.html, new RegExp(`data-purpose="${id.slice('purpose:'.length)}"`));
+  }
+});
+
+test('explicit components override automatic purpose promotions and Blueprint recompilation preserves the exact page bytes', () => {
+  const request = {purpose: 'work-dashboard', pattern: 'dashboard-grid', candidates: 1, content: {title: '운영', kpis: kpis(2)}, components: [
+    {purpose: 'purpose:card.kpi', id: 'custom-kpi', slot: 'kpis', variant: {layout: 'inline'}, content: {...getPurposeFamily('purpose:card.kpi').example.content, label: '직접 요청'}},
+    {purpose: 'purpose:card.kpi', id: 'custom-kpi-two', slot: 'kpis', variant: {layout: 'inline'}, content: {...getPurposeFamily('purpose:card.kpi').example.content, label: '두 번째 요청'}},
+  ]};
+  const r = assembleDesign(request, {include: ['blueprint', 'standalone', 'css']});
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const candidate = r.value.candidates[0];
+  assert.match(candidate.value.standalone, /data-purpose="card\.kpi"/);
+  assert.match(candidate.value.standalone, /직접 요청/);
+  assert.doesNotMatch(candidate.value.standalone, /이번 달 매출/);
+  const compiled = compileBlueprint(candidate.value.blueprint, {include: ['html', 'css']});
+  assert.equal(compiled.ok, true, JSON.stringify(compiled.errors));
+  assert.equal(compiled.value.html, candidate.value.standalone);
+  assert.equal(compiled.value.css, candidate.value.css);
+});
+
+test('the purpose-family assembly entry applies the same X01 reason as recommendation and compatibility', () => {
+  const f = getPurposeFamily('purpose:navigation.bottom');
+  const result = assembleFamilies(env, {context: 'dashboard', mode: 'light', density: 'compact', styleContext: 'style-context:workspace', items: [
+    {purpose: f.id, visual: 'family:quiet', variant: f.example.variant, props: f.example.props, content: f.example.content},
+  ]});
+  assert.equal(result.ok, false);
+  assert.ok(result.diagnostics.some(x => x.code === 'P_REL_FORBIDS' && x.message.startsWith('X01:')));
+});
+
+test('boolean purpose props survive the Blueprint 2.7 schema and compile to the assembled table bytes', () => {
+  const f = getPurposeFamily('purpose:table.business');
+  const request = {purpose: 'work-dashboard', pattern: 'dashboard-grid', candidates: 1, components: [
+    {purpose: f.id, slot: 'detail', variant: {toolbar: 'none'}, props: {sortable: false, selectable: false}, content: f.example.content},
+  ]};
+  const assembled = assembleDesign(request, {include: ['blueprint', 'standalone', 'css']});
+  assert.equal(assembled.ok, true, JSON.stringify(assembled.errors));
+  const candidate = assembled.value.candidates[0];
+  assert.match(candidate.value.standalone, /data-purpose="table\.business"/);
+  assert.equal(candidate.value.blueprint.materials.purposes[0].props.sortable, false);
+  const compiled = compileBlueprint(candidate.value.blueprint, {include: ['html', 'css']});
+  assert.equal(compiled.ok, true, JSON.stringify(compiled.errors));
+  assert.equal(compiled.value.html, candidate.value.standalone);
+  assert.equal(compiled.value.css, candidate.value.css);
 });

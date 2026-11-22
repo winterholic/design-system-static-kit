@@ -20,7 +20,7 @@ import {getPurposeFamily, PURPOSE_FAMILY_IDS} from './families/index.mjs';
 export const PAGE_REQUEST_KEYS = Object.freeze(['purpose', 'pattern', 'shell', 'width', 'density', 'mode', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'families', 'components', 'content', 'candidates', 'surface', 'motion', 'background', 'media', 'states']);
 /** 컴포넌트는 기반 컴포넌트(base) 또는 목적 패밀리(purpose, 예 purpose:card.kpi) 중 하나다. 목적 패밀리는 variant·id도 받는다. */
 export const PAGE_COMPONENT_KEYS = Object.freeze(['base', 'purpose', 'family', 'props', 'variant', 'content', 'slot', 'id']);
-export const PAGE_CONTENT_KEYS = Object.freeze(['name', 'nav', 'title', 'description', 'actions', 'kpis', 'charts', 'table', 'list', 'hero', 'features', 'featuresTitle', 'quotes', 'faq', 'cta', 'lead', 'sections', 'notice', 'products', 'productsTitle', 'status']);
+export const PAGE_CONTENT_KEYS = Object.freeze(['name', 'nav', 'title', 'description', 'actions', 'kpis', 'charts', 'table', 'list', 'hero', 'features', 'featuresTitle', 'quotes', 'faq', 'cta', 'lead', 'sections', 'articles', 'pricing', 'pricingTitle', 'notice', 'products', 'productsTitle', 'status']);
 export const MAX_CANDIDATES = 8;
 /** 표가 이 행 수를 넘으면 쪽 단위로 나눠 첫 쪽만 놓고 페이지네이션을 둔다(구형 table·data-table 노드는 최대 40행). */
 export const TABLE_PAGE_ROWS = 20;
@@ -153,12 +153,31 @@ function regionState(ctx, spec, path, empty) {
 }
 
 const metricNode = k => ({type: 'metric', ...pick(k, ['label', 'value', 'detail', 'trend', 'delta'])});
+function purposeMarker(ctx, purpose, content, extra = {}) {
+  const index = ctx.addAuto({purpose, base: getPurposeFamily(purpose).bases[0], ...extra, content});
+  return {$component: index};
+}
+const explicitPurpose = (ctx, id) => ctx.intent.components.some(c => c.purpose === id);
+const tablePurposeContent = t => {
+  const sourceRows = t.rows;
+  const columns = t.columns.map((column, i) => {
+    if (typeof column !== 'string') return column;
+    const numeric = t.kind === 'analytic' && sourceRows.length > 0 && sourceRows.every(row => {
+      const value = Array.isArray(row) ? row[i] : row?.[`column-${i}`] ?? row?.[column];
+      return typeof value === 'number' || (typeof value === 'string' && /^-?\d+(?:\.\d+)?$/.test(value));
+    });
+    return {id: `column-${i}`, label: column, ...(numeric ? {kind: 'number'} : {})};
+  });
+  const rows = t.rows.map(row => Array.isArray(row) ? Object.fromEntries(columns.map((col, i) => [col.id, String(row[i] ?? '')])) : Object.fromEntries(Object.entries(row).map(([key, value]) => [key, String(value ?? '')])));
+  return {title: t.title ?? '표', ...(t.caption ? {note: t.caption} : {}), columns, rows, ...(t.totals ? {totals: t.totals} : {}), ...(t.totalLabel ? {totalLabel: t.totalLabel} : {}), ...(t.tones ? {tones: t.tones} : {})};
+};
 
 /** 필수 슬롯에 콘텐츠가 없으면 템플릿 뼈대의 내용을 넣는다(출처 skeleton으로 남는다). */
 function fillSkeletonFor(ctx, ids) {
   for (const id of ids) {
     const s = ctx.slot(id);
-    if (s && !s.nodes.length && s.min > 0) ctx.put(id, ctx.skeletonOf(id), 'skeleton', '콘텐츠가 없어 템플릿 뼈대의 내용을 쓴다');
+    const explicitlyFilled = ctx.intent.components.some(c => c.slot === id);
+    if (s && !s.nodes.length && s.min > 0 && !explicitlyFilled) ctx.put(id, ctx.skeletonOf(id), 'skeleton', '콘텐츠가 없어 템플릿 뼈대의 내용을 쓴다');
   }
 }
 
@@ -189,7 +208,7 @@ function fillDashboard(ctx) {
     else if (c.kpis.length > GRID_MAX) ctx.fail('P_PAGE_OVERFLOW', '$.content.kpis', `KPI ${c.kpis.length}개는 한 격자(최대 ${GRID_MAX}칸)에 담을 수 없습니다. 지표를 줄이거나 표로 옮기세요`);
     else {
       const columns = columnsFor(c.kpis.length), rows = Math.ceil(c.kpis.length / COLUMN_COUNT[columns]);
-      kpis = {type: 'grid', columns, children: c.kpis.map(metricNode)};
+      if (!explicitPurpose(ctx, 'purpose:card.kpi')) kpis = {type: 'grid', columns, children: c.kpis.map(k => purposeMarker(ctx, 'purpose:card.kpi', pick(k, ['label', 'value', 'unit', 'delta', 'deltaDirection', 'caption', 'series', 'href', 'message'])))};
       ctx.note('kpis.columns', columns, `KPI ${c.kpis.length}개 → ${COLUMN_COUNT[columns]}열 ${rows}줄(마지막 줄에 한 칸만 남지 않게)`);
     }
   }
@@ -198,14 +217,20 @@ function fillDashboard(ctx) {
   if (c.table !== undefined) {
     const t = c.table;
     if (!plain(t) || !Array.isArray(t.columns) || !Array.isArray(t.rows) || t.columns.length < 2 || t.columns.length > 8) ctx.fail('P_PAGE_CONTENT', '$.content.table', '표는 {title, columns: 2~8개, rows: [[…]]} 입니다');
+    else if (t.kind !== undefined && !['business', 'analytic'].includes(t.kind)) ctx.fail('P_PAGE_CONTENT', '$.content.table.kind', 'kind는 business 또는 analytic입니다');
     else if (regionState(ctx, t, '$.content.table', t.rows.length === 0)) {
       const st = regionState(ctx, t, '$.content.table', t.rows.length === 0);
       table = ctx.stateNode(st, 'region', stateText(ctx, t, '$.content.table'), '$.content.table');
       ctx.note('table.state', st, `표가 ${st} 상태라 표 자리에 ${st} 상태 패턴을 둔다(툴바·페이지네이션은 두지 않는다)`);
     } else {
       const n = t.rows.length, paged = n > TABLE_PAGE_ROWS, shown = paged ? t.rows.slice(0, TABLE_PAGE_ROWS) : t.rows, title = t.title ?? '표';
-      table = {type: 'table', title, caption: t.caption ?? `${title} ${n}행${paged ? `(1쪽 ${shown.length}행 표시)` : ''}`, columns: t.columns.map(String), rows: shown.map(r => r.map(String)), variant: n <= TABLE_TOOLBAR_ROWS ? 'plain' : 'striped'};
-      ctx.note('table.variant', table.variant, n <= TABLE_TOOLBAR_ROWS ? `표 ${n}행은 한눈에 읽히므로 plain` : `표 ${n}행은 줄을 따라 읽도록 striped`);
+      const purpose = t.kind === 'analytic' ? 'purpose:table.analytic' : t.kind === 'business' ? 'purpose:table.business' : 'purpose:table.business';
+      if (!explicitPurpose(ctx, purpose)) {
+        const source = {...t, rows: shown};
+        const content = tablePurposeContent(source);
+        table = purposeMarker(ctx, purpose, {...content, ...(t.bulkActions ? {bulkActions: t.bulkActions} : {})}, {variant: purpose === 'purpose:table.analytic' ? {summary: t.totals ? 'footer' : 'none', bars: 'inline'} : {toolbar: t.bulkActions?.length ? 'bulk' : 'none'}, props: {sortable: t.sortable !== false, ...(purpose === 'purpose:table.business' ? {selectable: t.selectable !== false} : {})}});
+      }
+      ctx.note('table.purpose', purpose, purpose === 'purpose:table.analytic' ? `표 ${n}행의 수치 비교를 분석형 표로 표현한다` : `표 ${n}행을 선택·정렬하는 업무형 표로 표현한다`);
       if (n > TABLE_TOOLBAR_ROWS) {
         const last = t.columns.length - 1, values = [...new Set(t.rows.map(r => String(r[last] ?? '')).filter(Boolean))].sort().slice(0, 4);
         toolbar = {type: 'filter-bar', placeholder: `${title} 검색`, filters: ['전체', ...(values.length ? values : ['최근'])].slice(0, 5), selected: 0};
@@ -232,7 +257,7 @@ function fillDashboard(ctx) {
   const list = c.list === undefined ? null : listState ? ctx.stateNode(listState, 'region', stateText(ctx, c.list, '$.content.list'), '$.content.list') : {type: 'list', title: c.list.title ?? '목록', items: c.list.items, variant: 'card'};
 
   if (!hasWork) {
-    if (kpis) ctx.put('kpis', [kpis], 'content'); else fillSkeletonFor(ctx, ['kpis']);
+    if (kpis) ctx.put('kpis', [kpis], 'content'); else if (!explicitPurpose(ctx, 'purpose:card.kpi')) fillSkeletonFor(ctx, ['kpis']);
     // 인사이트 칸: 차트 1개는 그대로, 2개 이상은 격자. 목록이 함께 있으면 본문+보조 영역으로 묶는다.
     const goodCharts = charts.filter(Boolean);
     if (goodCharts.length > 6) ctx.fail('P_PAGE_OVERFLOW', '$.content.charts', `차트 ${goodCharts.length}개는 인사이트 칸에 담을 수 없습니다(최대 6개). 차트를 줄이세요`);
@@ -289,12 +314,13 @@ function fillLanding(ctx) {
       if (chunks.at(-1).length === 1 && chunks.length > 1) chunks.at(-2).length > 2 && chunks.at(-1).unshift(chunks.at(-2).pop());
       chunks.forEach((chunk, ci) => {
         const columns = columnsFor(chunk.length);
-        // 구형 card 노드 대신 등록된 card-surface 패밀리 구성원으로 놓을 수 있으면 놓는다(page.mjs가 패밀리가 있을 때만 표시를 살린다).
-        const children = chunk.map((x, i) => ({$component: ctx.addAuto({base: 'base-component:card-surface', content: {id: `feature-${ci * per + i + 1}`, title: x.title, body: x.body, ...(x.href ? {href: x.href} : {})}, legacy: {type: 'card', title: x.title, body: x.body, variant: 'outline', ...(x.icon ? {icon: x.icon} : {})}})}));
-        sections.push({type: 'section', title: ci === 0 ? c.featuresTitle ?? '핵심 기능' : `${c.featuresTitle ?? '핵심 기능'} ${ci + 1}`, children: [{type: 'grid', columns, children}]});
+        if (!explicitPurpose(ctx, 'purpose:card.feature')) {
+          const children = chunk.map((x, i) => purposeMarker(ctx, 'purpose:card.feature', {icon: x.icon ?? 'shield', title: x.title, body: x.body, ...(x.href ? {href: x.href} : {}), ...(x.linkLabel ? {linkLabel: x.linkLabel} : {})}, {id: `feature-${ci * per + i + 1}`}));
+          sections.push({type: 'section', title: ci === 0 ? c.featuresTitle ?? '핵심 기능' : `${c.featuresTitle ?? '핵심 기능'} ${ci + 1}`, children: [{type: 'grid', columns, children}]});
+        }
         ctx.note(`features[${ci}].columns`, columns, `기능 ${chunk.length}개 → ${COLUMN_COUNT[columns]}열 ${Math.ceil(chunk.length / COLUMN_COUNT[columns])}줄`);
       });
-      if (sections.length > slotMax) ctx.fail('P_PAGE_OVERFLOW', '$.content.features', `기능 ${f.length}개는 구역 ${sections.length}개가 필요하지만 이 패턴의 구역 칸은 최대 ${slotMax}개입니다`);
+      if (!explicitPurpose(ctx, 'purpose:card.feature') && sections.length > slotMax) ctx.fail('P_PAGE_OVERFLOW', '$.content.features', `기능 ${f.length}개는 구역 ${sections.length}개가 필요하지만 이 패턴의 구역 칸은 최대 ${slotMax}개입니다`);
     }
   }
   if (c.quotes !== undefined) {
@@ -304,6 +330,10 @@ function fillLanding(ctx) {
       const nodes = q.map(x => ({type: 'quote', ...pick(x, ['quote', 'author', 'role'])}));
       sections.push(nodes.length === 1 ? nodes[0] : {type: 'grid', columns: nodes.length === 2 ? 'two' : 'three', children: nodes.slice(0, GRID_MAX)});
     }
+  }
+  if (c.pricing !== undefined) {
+    if (!Array.isArray(c.pricing) || c.pricing.length < 2) ctx.fail('P_PAGE_CONTENT', '$.content.pricing', 'pricing은 2개 이상의 요금제 배열입니다');
+    else if (!explicitPurpose(ctx, 'purpose:card.pricing')) sections.push({type: 'section', title: c.pricingTitle ?? '요금제', children: [{type: 'grid', columns: columnsFor(c.pricing.length), children: c.pricing.slice(0, GRID_MAX).map((x, i) => purposeMarker(ctx, 'purpose:card.pricing', pick(x, ['plan', 'price', 'period', 'description', 'features', 'ctaLabel', 'badge']), {id: `plan-${i + 1}`}))}]});
   }
   if (c.faq !== undefined) {
     if (!Array.isArray(c.faq) || c.faq.length < 2 || c.faq.length > 10) ctx.fail('P_PAGE_CONTENT', '$.content.faq', `자주 묻는 질문은 2~10개입니다(받은 개수: ${Array.isArray(c.faq) ? c.faq.length : '배열 아님'})`);
@@ -321,11 +351,13 @@ function fillEditorial(ctx) {
   const c = ctx.content, docs = ctx.patternId === 'docs-reference';
   ctx.put('header', [pageHeader(ctx)], c.title !== undefined || c.description !== undefined ? 'content' : 'skeleton');
   const secs = c.sections;
+  if (c.articles !== undefined && (!Array.isArray(c.articles) || c.articles.length < 2)) ctx.fail('P_PAGE_CONTENT', '$.content.articles', 'articles는 2개 이상의 글 배열입니다');
   if (secs !== undefined && (!Array.isArray(secs) || !secs.length || secs.some(s => !plain(s) || typeof s.title !== 'string' || typeof s.body !== 'string'))) { ctx.fail('P_PAGE_CONTENT', '$.content.sections', 'sections는 {title, body} 배열입니다'); return; }
   const lead = c.lead !== undefined ? {type: 'prose', title: '개요', body: c.lead, variant: 'lead'} : null;
   const prose = s => ({type: 'prose', title: s.title, body: s.body});
   if (!docs) {
     const nodes = [];
+    if (Array.isArray(c.articles) && c.articles.length >= 2 && !explicitPurpose(ctx, 'purpose:card.article')) nodes.push({type: 'grid', columns: columnsFor(Math.min(c.articles.length, GRID_MAX)), children: c.articles.slice(0, GRID_MAX).map((a, i) => purposeMarker(ctx, 'purpose:card.article', pick(a, ['eyebrow', 'title', 'excerpt', 'author', 'date', 'readTime', 'mediaIcon', 'href', 'message']), {id: `article-${i + 1}`}))});
     if (lead) nodes.push(lead);
     (secs ?? []).forEach((s, i) => nodes.push(prose(s, i)));
     if (nodes.length) {
@@ -337,6 +369,7 @@ function fillEditorial(ctx) {
   } else {
     // 문서: 본문 한 구역 안에 항목을 쌓는다(구역 하나는 자식을 최대 12개 받는다)
     const items = [...(lead ? [lead] : []), ...(secs ?? []).map(prose)];
+    if (Array.isArray(c.articles) && c.articles.length >= 2 && !explicitPurpose(ctx, 'purpose:card.article')) items.push({type: 'grid', columns: columnsFor(Math.min(c.articles.length, GRID_MAX)), children: c.articles.slice(0, GRID_MAX).map((a, i) => purposeMarker(ctx, 'purpose:card.article', pick(a, ['eyebrow', 'title', 'excerpt', 'author', 'date', 'readTime', 'mediaIcon', 'href', 'message']), {id: `article-${i + 1}`}))});
     if (items.length) {
       const per = 12, groups = [];
       for (let i = 0; i < items.length; i += per) groups.push(items.slice(i, i + per));
@@ -359,8 +392,10 @@ function fillCommerce(ctx) {
     const p = c.products;
     if (!Array.isArray(p) || p.length < 2) { ctx.fail('P_PAGE_CONTENT', '$.content.products', `상품은 2개 이상의 배열입니다(격자의 최소 칸 수가 2). 받은 개수: ${Array.isArray(p) ? p.length : '배열 아님'}`); return; }
     const shown = p.slice(0, PRODUCTS_PER_PAGE), pages = Math.ceil(p.length / PRODUCTS_PER_PAGE), columns = columnsFor(shown.length);
-    const cards = shown.map(x => ({type: 'card', variant: 'media', visual: x.visual ?? 'photo', ratio: '1:1', body: x.body ?? x.meta ?? x.title, ...pick(x, ['title', 'meta', 'badge', 'price', 'listPrice', 'rating', 'reviews', 'motif'])}));
-    ctx.put('catalog', [{type: 'grid', columns, children: cards}], 'content');
+    if (!explicitPurpose(ctx, 'purpose:card.product')) {
+      const cards = shown.map((x, i) => purposeMarker(ctx, 'purpose:card.product', {title: x.title, price: x.price, ...(x.listPrice ? {originalPrice: x.listPrice} : {}), ...(x.badge ? {badge: x.badge} : {}), ...(x.rating !== undefined ? {rating: x.rating} : {}), ...(x.reviews ? {reviews: x.reviews} : {}), ...(x.visual ? {mediaIcon: x.visual} : {}), ...(x.href ? {href: x.href} : {}), ...(x.body || x.meta ? {message: x.body ?? x.meta} : {})}, {id: `product-${i + 1}`}));
+      ctx.put('catalog', [{type: 'grid', columns, children: cards}], 'content');
+    }
     ctx.note('products.columns', columns, `상품 ${shown.length}개 → ${COLUMN_COUNT[columns]}열 ${Math.ceil(shown.length / COLUMN_COUNT[columns])}줄`);
     if (pages > 1) {
       ctx.put('footer', [{type: 'pagination', pages, current: 1}], 'content');
@@ -402,10 +437,11 @@ function placeComponents(ctx, requested) {
   const groups = new Map();
   const pageType = templates[ctx.pattern.template].pageType;
   for (const it of items) {
-    const type = nodeTypeOfBase(it.c.base);
     const purpose = it.c.purpose ? getPurposeFamily(it.c.purpose) : null;
+    const base = purpose?.bases[0] ?? it.c.base;
+    const type = nodeTypeOfBase(base);
     if (purpose && !purpose.contexts.includes('any') && !purpose.contexts.includes(pageType)) { ctx.fail('P_PAGE_COMPONENT', `${it.path}.purpose`, `${purpose.id}는 ${pageType} 페이지용이 아닙니다(어울리는 페이지 유형: ${purpose.contexts.join(', ')})`, purpose.contexts); continue; }
-    if (!baseIsPlaceable(it.c.base)) { ctx.fail('P_PAGE_COMPONENT', `${it.path}.base`, `${it.c.base}는 페이지 노드로 놓을 수 없습니다(노드 문법에 없는 컴포넌트). 놓을 수 있는 컴포넌트: ${placeableBases(ctx).join(', ')}`, placeableBases(ctx)); continue; }
+    if (!purpose && !baseIsPlaceable(it.c.base)) { ctx.fail('P_PAGE_COMPONENT', `${it.path}.base`, `${it.c.base}는 페이지 노드로 놓을 수 없습니다(노드 문법에 없는 컴포넌트). 놓을 수 있는 컴포넌트: ${placeableBases(ctx).join(', ')}`, placeableBases(ctx)); continue; }
     const fits = ctx.slots.filter(s => s.id !== 'header' && slotFit(s, type));
     let slot;
     if (it.c.slot !== undefined) {

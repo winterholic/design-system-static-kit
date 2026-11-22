@@ -15,9 +15,9 @@ test('the four required purposes assemble through the page pipeline, each from i
   assert.deepEqual(PURPOSE_IDS, ['saas-landing', 'work-dashboard', 'editorial-docs', 'commerce']);
   const cases = {
     'saas-landing': {content: {hero: {title: '제품을 빠르게', body: '소개', action: {label: '시작'}}, features: [{title: 'A', body: 'a'}, {title: 'B', body: 'b'}, {title: 'C', body: 'c'}], cta: {title: '지금', action: {label: '무료'}}}, pattern: 'marketing-landing', marker: /class="kit-hero"/},
-    'work-dashboard': {content: {kpis: kpis(4), table: table(5)}, pattern: 'dashboard-grid', marker: /class="kit-metric"/},
+    'work-dashboard': {content: {kpis: kpis(4), table: table(5)}, pattern: 'dashboard-grid', marker: /data-purpose="card\.kpi"/},
     'editorial-docs': {content: {title: '글', lead: '리드', sections: [{title: '하나', body: '본문'}]}, pattern: 'editorial-article', marker: /class="kit-prose"/},
-    commerce: {content: {title: '상품', products: Array.from({length: 6}, (_, i) => ({title: `상품 ${i}`, price: '1,000원', meta: '분류'}))}, pattern: 'commerce-listing', marker: /class="kit-card-price"/},
+    commerce: {content: {title: '상품', products: Array.from({length: 6}, (_, i) => ({title: `상품 ${i}`, price: '1,000원', meta: '분류'}))}, pattern: 'commerce-listing', marker: /data-purpose="card\.product"/},
   };
   for (const purpose of PURPOSE_IDS) {
     const r = assemblePage({purpose, candidates: 1, content: cases[purpose].content}, env);
@@ -35,8 +35,8 @@ test('data amount changes the layout: KPI 3 vs 8 changes columns and density, wi
   assert.equal(three.ok && eight.ok, true, JSON.stringify([three.diagnostics, eight.diagnostics]));
   assert.match(three.value.html, /class="kit-grid" data-columns="three"/);
   assert.match(eight.value.html, /class="kit-grid" data-columns="four"/);
-  assert.equal(count(three.value.html, /class="kit-metric"/), 3);
-  assert.equal(count(eight.value.html, /class="kit-metric"/), 8);
+  assert.equal(count(three.value.html, /data-purpose="card\.kpi"/), 3);
+  assert.equal(count(eight.value.html, /data-purpose="card\.kpi"/), 8);
   assert.equal(three.plan.axes.density, 'comfortable');
   assert.equal(eight.plan.axes.density, 'compact', '8 KPIs are placed densely');
   assert.equal(eight.plan.axisSources.density, 'content');
@@ -53,9 +53,9 @@ test('data amount changes the layout: table 5 rows vs 50 rows changes pattern, v
   const small = dash({kpis: kpis(4), table: table(5)}), mid = dash({kpis: kpis(4), table: table(15)}), big = dash({kpis: kpis(4), table: table(50)});
   for (const r of [small, mid, big]) assert.equal(r.ok, true, JSON.stringify(r.diagnostics));
   assert.equal(small.plan.pattern, 'dashboard-grid');
-  assert.match(small.value.html, /class="kit-table-wrap" data-variant="plain"/);
+  assert.match(small.value.html, /data-purpose="table\.business"/);
   assert.equal(count(small.value.html, /kit-filterbar/), 0);
-  assert.match(mid.value.html, /data-variant="striped"/);
+  assert.match(mid.value.html, /data-purpose="table\.business"/);
   assert.equal(count(mid.value.html, /class="kit-filterbar"/), 1, '11~20 rows get a search/filter bar');
   assert.equal(count(mid.value.html, /class="kit-pagination"/), 0);
   assert.equal(big.plan.pattern, 'erp-workspace', '50 rows need the pattern that has a pagination slot');
@@ -87,7 +87,7 @@ test('intent.components are placed as real nodes: family wraps, props reach the 
   for (const c of cards) assert.match(c, /data-family="[a-z-]+"/, 'each card is scoped to its family');
   assert.match(cards[1], /data-behavior="link"/);
   for (const t of ['알파 카드', '베타 카드', '감마 카드']) assert.ok(r.value.html.includes(t), t);
-  assert.deepEqual(r.plan.components.map(c => c.base), Array(3).fill('base-component:card-surface'));
+  assert.deepEqual(r.plan.components.filter(c => !c.auto).map(c => c.base), Array(3).fill('base-component:card-surface'));
   assert.equal(r.plan.slots.find(s => s.id === 'insights').nodes.includes('grid'), true, 'cards are laid out in a grid of the insights slot');
   const fam = r.candidates[0].selection.families['base-component:card-surface'];
   assert.ok(r.value.css.includes(`[data-family="${fam.slice('family:'.length)}"]`));
@@ -162,8 +162,8 @@ test('landing features: card count sets the columns, and cards are placed as fam
   assert.match(four.value.html, /data-columns="four"/);
   assert.match(six.value.html, /data-columns="three"/);
   assert.match(seven.value.html, /data-columns="four"/);
-  assert.equal(count(six.value.html, /<article class="kit-ctl-card"/), 6, 'plan upgrades legacy cards to family members');
-  assert.ok(Object.keys(six.candidates[0].selection.families).length === 1);
+  assert.equal(count(six.value.html, /data-purpose="card\.feature"/), 6, 'all six feature cards use the purpose family renderer');
+  assert.ok(Object.keys(six.candidates[0].selection.families).includes('purpose:card.feature'));
   assert.ok(six.plan.components.every(c => c.auto === true));
 });
 
@@ -184,7 +184,7 @@ test('commerce listing: product count sets columns and pages; a 30-product list 
   const products = n => Array.from({length: n}, (_, i) => ({title: `상품 ${i + 1}`, price: `${(i + 1) * 1000}원`, meta: '분류'}));
   const r = assemblePage({purpose: 'commerce', candidates: 1, content: {title: '상품', products: products(30)}}, env);
   assert.equal(r.ok, true, JSON.stringify(r.diagnostics));
-  assert.equal(count(r.value.html, /class="kit-card" /), 12, 'one page of 12');
+  assert.equal(count(r.value.html, /data-purpose="card\.product"/), 12, 'one page of 12 purpose-family product cards');
   assert.equal(count(r.value.html, /class="kit-pagination"/), 1);
   assert.match(r.decisions.find(d => d.slot === 'layout.products.pages').reason, /30개는 한 쪽에 12개씩 3쪽/);
   const detail = assemblePage({purpose: 'commerce', pattern: 'commerce-detail', candidates: 1, content: {title: '상세'}}, env);
