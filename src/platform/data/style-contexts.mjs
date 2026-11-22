@@ -20,7 +20,7 @@ import {defineCheck} from '../relations.mjs';
 import {recommend} from '../recommend.mjs';
 import {PALETTES} from './palettes.mjs';
 import {SUBTOKEN_SETS} from './subtoken-sets.mjs';
-import {TYPE_SYSTEMS} from './type-systems.mjs';
+import {TYPE_SYSTEMS, TYPE_FIT} from './type-systems.mjs';
 import {FAMILIES} from './families.mjs';
 import {FACE_PAIRINGS} from './type-materials.mjs';
 import {SURFACES, validateSurface, surfaceCSS, renderSurfaceSample} from './surfaces.mjs';
@@ -30,7 +30,7 @@ import {MEDIA, validateMedia, mediaCSS, renderMedia} from './media.mjs';
 import {STATE_PATTERNS, STATE_KINDS, validateStatePattern, stateCSS, renderState} from './states.mjs';
 
 /** 54개 전부를 실패시킬 수 있는 테스트 줄: 이행·필드·관계·recommend 결과. */
-const EVIDENCE = ['tests/platform-style-contexts.test.mjs:14', 'tests/platform-style-contexts.test.mjs:31', 'tests/platform-style-contexts.test.mjs:52', 'tests/platform-style-contexts.test.mjs:90', 'tests/platform-style-contexts.test.mjs:169'];
+const EVIDENCE = ['tests/platform-style-contexts.test.mjs:14', 'tests/platform-style-contexts.test.mjs:31', 'tests/platform-style-contexts.test.mjs:52', 'tests/platform-style-contexts.test.mjs:74', 'tests/platform-style-contexts.test.mjs:94'];
 const SHAPE_AXES = ['radius', 'elevation', 'motion'];
 /** 테마 기본값에서 스타일 맥락의 축 선호로 옮기는 축. 앞의 셋은 패밀리 모양과 맞춰 순위를 내고, 나머지는 조립 엔진의 페이지 단계(셸·폭·밀도)와 스타일 재료(아이콘·바탕·장식)가 읽는다. */
 const CARRIED_AXES = [...SHAPE_AXES, 'density', 'shell', 'width', 'icon', 'backdrop', 'ornament', 'scale'];
@@ -190,9 +190,53 @@ const PICKS = {
   school: ['static-kit', 'forest-green', 'high-contrast', 'standard'], bank: ['ocean-cool', 'static-kit', 'standard', 'data-dense'], game: ['dusk-violet', 'magenta-vivid', 'premium-dark', 'tinted'],
 };
 export const STYLE_PICKS = Object.freeze(Object.fromEntries(Object.entries(PICKS).map(([id, [p1, p2, s1, s2]]) => [id, Object.freeze({palette: [p1, p2], subtokenSet: [s1, s2]})])));
+
+/**
+ * W2 타이포 시스템의 스타일 맥락별 우선 후보.
+ * 문서의 TYPE_FIT(용도·페이지 유형·밀도) 점수를 읽고, 테마의 서체 계열과 목적을 보조 기준으로 쓴다.
+ * 선택한 두 후보는 관계 선호일 뿐 추천 순위를 고정하지 않는다. recommend()가 활성 관계를 합산한다.
+ * 각 선택은 스타일 맥락의 페이지 유형과 실제로 겹치며, 이름 순서로 고르지 않는다.
+ */
+function typeSystemPickScore(themeId, contexts, system) {
+  const t = themes[themeId], d = t.defaults;
+  const usage = system.tags.find(tag => PURPOSES.includes(tag));
+  const order = purposeOrder(t), purposeIndex = order.indexOf(usage);
+  const pages = contexts.filter(context => system.contexts.includes(context));
+  if (!pages.length) return null;
+
+  const face = faceOf(system.facePairing).base, themeFace = FACE_GROUP[d.typography];
+  const faceGroup = FACE_GROUP[face];
+  const faceScore = faceOf(system.facePairing).ids.includes(d.typography) ? 24
+    : faceGroup && faceGroup === themeFace ? 12
+    : ((themeFace === 'serif' && faceGroup === 'mono') || (themeFace === 'mono' && faceGroup === 'serif')) ? -18
+    : themeFace === 'friendly' && faceGroup === 'mono' ? -12 : 0;
+  const purposeScore = purposeIndex === 0 ? 36 : purposeIndex > 0 ? 24 : -12;
+  const fitRows = TYPE_FIT[system.id] ?? [];
+  const fitScore = pages.reduce((total, context) => total + fitRows.reduce((score, row) => {
+    const when = row.when;
+    if (when.context && !when.context.includes(context)) return score;
+    if (when.density && !when.density.includes(d.density)) return score;
+    if (when.viewport) return score;
+    return score + (row.type === 'prefers' ? row.priority : -row.priority);
+  }, 0), 0);
+  return {score: purposeScore + faceScore + fitScore + pages.length * 4, usage, purposeIndex, face, faceScore, pages, fitScore};
+}
+
+function chooseTypeSystems(themeId, contexts, pool) {
+  return pool.typeSystems.map(system => ({system, fit: typeSystemPickScore(themeId, contexts, system)}))
+    .filter(row => row.fit)
+    .sort((a, b) => b.fit.score - a.fit.score || a.system.id.localeCompare(b.system.id))
+    .slice(0, 2);
+}
+
+const STYLE_TYPE_SETUP = Object.freeze(Object.fromEntries(Object.keys(themes).map(id => [id, chooseTypeSystems(id, SETUP[id][0], {typeSystems: TYPE_SYSTEMS})])));
+export const STYLE_TYPE_PICKS = Object.freeze(Object.fromEntries(Object.entries(STYLE_TYPE_SETUP).map(([id, rows]) => [id, Object.freeze(rows.map(({system}) => system.id))])));
 const PALETTE_CHARACTER = {'static-kit': '범용 파랑 브랜드', 'slate-neutral': '차분한 청회색', 'sunrise-warm': '따뜻한 주황 계열', 'ocean-cool': '청록빛 파랑', 'forest-green': '초록 계열', 'clay-earth': '흙빛 갈색 계열', 'graphite-mono': '거의 무채색인 흑연', 'dusk-violet': '보라 계열', 'magenta-vivid': '선명한 분홍 계열'};
 const SET_CHARACTER = {standard: '중립 바탕에 브랜드 액션', tinted: '브랜드색이 도는 바탕', 'editorial-warm': '따뜻한 지면 톤', 'commerce-vivid': '액센트가 이끄는 상품 화면', 'premium-dark': '어두운 면을 먼저 설계한 프리미엄', 'high-contrast': '고대비 접근성', 'data-dense': '표·차트 판독용 밀도'};
 const CURATED = {palette: [70, 30], subtokenSet: [70, 30]};
+// Type-system picks are soft affinities: W2's page-conditioned relations and
+// existing theme/face rules must remain stronger than this curated shortlist.
+const CURATED_TYPE = [15, 10];
 
 /** 관계 도출에 쓰는 재료 목록. 기본은 main에 등록된 data 배열이고, 시험에서 가짜 재료를 넣어 규칙을 직접 본다. */
 const POOL = Object.freeze({palettes: PALETTES, subtokenSets: SUBTOKEN_SETS, typeSystems: TYPE_SYSTEMS, families: FAMILIES});
@@ -254,7 +298,10 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
   }
 
   const order = purposeOrder(t), group = FACE_GROUP[d.typography];
+  const typePicks = chooseTypeSystems(themeId, contexts, pool);
+  const strongPickIds = typePicks.length >= 2 ? new Set(typePicks.map(({system}) => system.id)) : new Set();
   for (const ts of pool.typeSystems) {
+    if (strongPickIds.has(ts.id)) continue;
     const {ids, base} = faceOf(ts.facePairing), face = base, fg = FACE_GROUP[base];
     if (ids.includes(d.typography)) add('prefers', ts.id, 40, `테마의 서체 축 기본값(${d.typography})이 이 시스템의 서체 짝(${ts.facePairing})이다`);
     else if (fg && fg === group) add('prefers', ts.id, 15, `서체 짝(${face})이 테마 서체(${d.typography})와 같은 ${GROUP_NAME[group]} 계열이다`);
@@ -267,6 +314,12 @@ export function deriveStyleRelations(themeId, contexts, pool = POOL) {
     else if (at > 0) add('prefers', ts.id, 10, `시스템 용도 ${usage}는 이 맥락의 차선이다(1순위 ${order[0]})`);
     else add('avoids', ts.id, 15, `${t.category} 맥락의 시스템 용도는 ${order.join('·')}이고 ${usage}는 목록에 없다`);
   }
+  typePicks.forEach(({system, fit}, index) => {
+    const purpose = fit.purposeIndex === 0 ? '우선 용도' : fit.purposeIndex > 0 ? '차선 용도' : '대체 용도';
+    const face = fit.faceScore > 0 ? `테마 서체(${d.typography})와 같은 계열(${fit.face})` : `테마 서체(${d.typography})와 다른 계열(${fit.face})`;
+    add('prefers', system.id, CURATED_TYPE[index],
+      `W2 ${system.label}(${system.id})은 ${purpose} ${fit.usage}이며 페이지 유형 ${fit.pages.join('·')}에 맞는다; ${face}, 해당 밀도(${d.density})의 타이포 적합 점수 ${fit.fitScore}를 반영했다`);
+  });
 
   const first = Object.fromEntries(SHAPE_AXES.map(a => [a, d[a]]));
   for (const f of pool.families) {

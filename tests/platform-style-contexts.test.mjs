@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {themes, pageTypeIds, axes} from '../src/catalog/index.mjs';
 import {createPlatform, createPlatformRegistry, createRelationGraph, recommend, assemblePlatform, MINIMAL_REQUEST, definePlatformMaterial, validateEdge} from '../src/platform/index.mjs';
 import {
-  STYLE_CONTEXT_DETAILS, STYLE_CHECKS, STYLE_PICKS, styleContextFromTheme, deriveStyleRelations, recommendWithReason, hueOf,
+  STYLE_CONTEXT_DETAILS, STYLE_CHECKS, STYLE_PICKS, STYLE_TYPE_PICKS, styleContextFromTheme, deriveStyleRelations, recommendWithReason, hueOf,
 } from '../src/platform/data/style-contexts.mjs';
 
 const env = createPlatform();
@@ -68,7 +68,55 @@ test('relations from a style context to palette, subtoken set, type system and f
   assert.equal(rel('ledger', 'subtoken-set:standard').priority, 30);
   assert.equal(rel('ledger', 'subtoken-set:tinted', 'avoids').priority, 15, 'dense plain themes avoid the tinted distribution');
   assert.equal(rel('editorial', 'type-system:tech-erp', 'avoids').priority, 15, 'a reading context avoids the work-purpose type system');
-  assert.deepEqual(record('insight').relations.filter(e => e.to === 'type-system:tech-erp').map(e => e.priority).sort((a, b) => a - b), [15, 25], 'dense work context: same sans group (15) and the ERP role scale first (25)');
+  assert.deepEqual(record('insight').relations.filter(e => e.to === 'type-system:tech-erp').map(e => e.priority), [10], 'dense work context keeps the non-selected ERP option as a light preference');
+});
+
+test('each style context prefers at least two compatible W2 type-system ids and reuses systems across contexts', () => {
+  const reuse = new Map();
+  for (const id of THEME_IDS) {
+    const rec = record(id);
+    const pickedIds = STYLE_TYPE_PICKS[id];
+    const picks = rec.relations.filter(edge => pickedIds.includes(edge.to) && edge.type === 'prefers');
+    assert.ok(picks.length >= 2, `${id}: at least two preferred type-system candidates`);
+    assert.deepEqual(picks.map(edge => edge.to), STYLE_TYPE_PICKS[id], `${id}: selected W2 ids are explicit and ordered`);
+    assert.deepEqual(picks.map(edge => edge.priority), [15, 10], `${id}: shortlist stays a soft preference under W2 page relations`);
+    for (const picked of picks) {
+      assert.match(picked.to, /^type-system:(work-console|work-insight|doc-essay|doc-handbook|doc-newsroom|mkt-atelier|mkt-brand|mkt-launch|shop-boutique|shop-catalog|mobile-app|mobile-feed|mobile-reader|tech-erp)$/);
+      assert.ok(rec.contexts.some(context => env.registry.get(picked.to).contexts.includes(context)), `${id}: ${picked.to} overlaps a page type`);
+      assert.ok(picked.reason.length > 20 && /페이지 유형|용도|서체|밀도/.test(picked.reason), `${id}: ${picked.to} explains its fit`);
+      reuse.set(picked.to, (reuse.get(picked.to) ?? 0) + 1);
+    }
+  }
+  assert.ok([...reuse.values()].some(count => count >= 2), 'type systems are reused by multiple style contexts');
+  assert.ok(reuse.size >= 10, 'the picks use multiple systems across the catalog');
+});
+
+test('type-system recommendations add page-conditioned W2 relations to the two curated style-context candidates', () => {
+  const cases = [
+    {
+      context: 'listing', styleContext: 'style-context:workspace',
+      expected: [['type-system:tech-erp', 80], ['type-system:work-console', 40], ['type-system:work-insight', 15]],
+      sources: ['작업 공간 스타일의 기존 기본 짝', 'W2 운영 콘솔', 'W2 분석 보드'],
+    },
+    {
+      context: 'dashboard', styleContext: 'style-context:devtool',
+      expected: [['type-system:tech-erp', 65], ['type-system:work-console', 40], ['type-system:work-insight', 10]],
+      sources: ['테마의 서체 축 기본값', '서체 짝(grotesk)', 'W2 분석 보드'],
+    },
+    {
+      context: 'dashboard', styleContext: 'style-context:workspace',
+      expected: [['type-system:tech-erp', 80], ['type-system:work-console', 40], ['type-system:work-insight', 40]],
+      sources: ['작업 공간 스타일의 기존 기본 짝', 'W2 운영 콘솔', 'W2 분석 보드'],
+    },
+  ];
+  for (const c of cases) {
+    const result = recommend(env.registry, env.graph, {kind: 'type-system', context: c.context, styleContext: c.styleContext});
+    assert.deepEqual(result.ranked.slice(0, 3).map(row => [row.id, row.score]), c.expected, `${c.styleContext}/${c.context}: actual additive rank`);
+    for (const [i, row] of result.ranked.slice(0, 3).entries()) {
+      assert.ok(row.reasons.some(reason => reason.reason.includes(c.sources[i])), `${row.id}: score has its expected relation evidence`);
+    }
+  }
+  assert.deepEqual(STYLE_TYPE_PICKS.workspace.slice(0, 2), ['type-system:work-insight', 'type-system:work-console'], 'curated candidate order comes from W2 fit; actual page recommendation can rank tech-erp ahead of them');
 });
 
 test('relation rules read the registered materials only, so later palettes, type systems and families are covered without editing this file', () => {
