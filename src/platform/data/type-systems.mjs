@@ -97,8 +97,8 @@ export const TYPE_FIT = Object.freeze({
     A({...MOBILE}, 10, '표제 48px·세리프 700은 좁은 화면에서 줄바꿈이 잦다'),
   ],
   'type-system:mkt-brand': [
-    P({context: ['landing', 'portfolio'], density: ['spacious']}, 55, '히어로 표제 36→72px가 본문의 4배라 첫 화면의 인상을 정한다'),
-    P({context: ['pricing', 'general']}, 10, '표제 위계가 단순해 한 장짜리 소개에 맞다'),
+    P({context: ['landing'], density: ['spacious']}, 60, '히어로 표제 36→72px가 본문의 4배라 첫 화면의 인상을 정한다'),
+    P({context: ['portfolio', 'pricing', 'general']}, 25, '표제 위계가 3단계로 단순해 한 장짜리 소개에 맞다'),
     A({density: ['compact']}, 45, '큰 표제와 컴팩트 밀도는 한 화면에 들어가는 정보를 해친다'),
     A({context: ['pricing']}, 15, '가격표 숫자 위계는 제품 출시(mkt-launch)가 더 낫다'),
   ],
@@ -109,7 +109,8 @@ export const TYPE_FIT = Object.freeze({
     A({context: ['portfolio']}, 15, '작품 소개에는 표제가 너무 두껍다'),
   ],
   'type-system:mkt-atelier': [
-    P({context: ['landing', 'portfolio', 'commerce'], density: ['spacious']}, 55, '굵기 500 표제와 행간 1.8이 절제된 브랜드 인상을 만든다'),
+    P({context: ['landing', 'portfolio', 'commerce'], density: ['spacious']}, 45, '굵기 500 표제와 행간 1.8이 절제된 브랜드 인상을 만든다'),
+    P({context: ['portfolio']}, 20, '작품·사례 소개에는 가는 표제가 이미지를 가리지 않는다'),
     A({density: ['compact']}, 50, '가는 표제와 넓은 행간은 컴팩트 밀도에서 위계가 흐려진다'),
     A({...MOBILE}, 10, '고대비 세리프 표제는 작은 크기에서 획이 가늘어 보인다'),
   ],

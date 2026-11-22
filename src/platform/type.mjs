@@ -225,7 +225,7 @@ export function effectiveFaces(stack, platform) {
   let latin = null, hangul = null, via = null;
   for (const fam of splitStack(stack)) {
     const k = fam.toLowerCase();
-    if (GENERIC.has(k)) { latin ??= p.generics[k]; if (!hangul) { hangul = p.generics[k]; via = 'generic'; } continue; }
+    if (GENERIC.has(k)) { latin ??= p.generics[k][0]; if (!hangul) { hangul = p.generics[k][1]; via = 'generic'; } continue; }
     const available = k === 'system-ui' || (SYSTEM_UI.has(k) ? p.appleSystem : p.installed.has(k));
     if (!available) continue;
     const name = SYSTEM_UI.has(k) ? p.systemUi : fam;

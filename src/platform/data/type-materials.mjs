@@ -170,16 +170,16 @@ export const LEGACY_MIGRATION = Object.freeze(TYPE_IDS.map(id => {
 export const HANGUL_FAMILIES = Object.freeze(new Set(['apple sd gothic neo', 'applemyungjo', 'noto sans kr', 'noto serif kr', 'noto sans cjk kr', 'noto serif cjk kr', 'malgun gothic', 'nanum gothic', 'nanum myeongjo', 'batang', 'd2coding', 'noto sans mono cjk kr', 'nanum gothic coding', 'pretendard variable']));
 /**
  * 플랫폼마다 설치돼 있다고 보는 서체. macos는 Chromium에서 측정해 맞췄다(docs/platform/evidence/type/fonts-macos.json). 나머지는 각 OS 기본 설치 목록에 대한 가정이라 확인 필요다.
- * generics: 스택 끝의 일반 계열(sans-serif·serif·monospace)이 한글에서 닿는 서체, systemUi: system-ui가 닿는 서체(한글 글리프는 다음 서체로 넘어간다).
+ * generics: 스택 끝의 일반 계열(sans-serif·serif·monospace)이 [라틴, 한글]에서 닿는 서체. systemUi: system-ui가 닿는 서체(한글 글리프는 다음 서체로 넘어간다).
  */
 export const PLATFORM_FONTS = Object.freeze({
-  macos: Object.freeze({basis: 'measured', systemUi: 'SF Pro', appleSystem: true, generics: {'sans-serif': 'Apple SD Gothic Neo', serif: 'AppleMyungjo', monospace: 'Apple SD Gothic Neo'}, installed: Object.freeze(new Set([
+  macos: Object.freeze({basis: 'measured', systemUi: 'SF Pro', appleSystem: true, generics: {'sans-serif': ['Helvetica', 'Apple SD Gothic Neo'], serif: ['Times', 'AppleMyungjo'], monospace: ['Courier', 'Apple SD Gothic Neo']}, installed: Object.freeze(new Set([
     'apple sd gothic neo', 'applemyungjo', 'sf mono', 'sfmono-regular', 'menlo', 'helvetica neue', 'arial', 'avenir next', 'avenir', 'futura', 'seravek', 'gill sans', 'optima', 'iowan old style', 'palatino', 'palatino linotype',
     'georgia', 'times new roman', 'charter', 'baskerville', 'didot', 'bodoni 72', 'hoefler text', 'rockwell', 'superclarendon', 'american typewriter', 'arial rounded mt bold', 'hiragino maru gothic pron', 'impact', 'arial narrow', 'avenir next condensed', 'book antiqua']))}),
-  windows: Object.freeze({basis: 'assumed', systemUi: 'Segoe UI', appleSystem: false, generics: {'sans-serif': 'Malgun Gothic', serif: 'Batang', monospace: 'Consolas'}, installed: Object.freeze(new Set([
+  windows: Object.freeze({basis: 'assumed', systemUi: 'Segoe UI', appleSystem: false, generics: {'sans-serif': ['Arial', 'Malgun Gothic'], serif: ['Times New Roman', 'Batang'], monospace: ['Consolas', 'Malgun Gothic']}, installed: Object.freeze(new Set([
     'segoe ui', 'malgun gothic', 'batang', 'arial', 'georgia', 'times new roman', 'century gothic', 'candara', 'palatino linotype', 'book antiqua', 'cambria', 'consolas', 'impact', 'arial narrow', 'sitka text', 'rockwell', 'bodoni mt', 'hoefler text']))}),
-  android: Object.freeze({basis: 'assumed', systemUi: 'Roboto', appleSystem: false, generics: {'sans-serif': 'Noto Sans CJK KR', serif: 'Noto Serif CJK KR', monospace: 'Noto Sans Mono CJK KR'}, installed: Object.freeze(new Set([
+  android: Object.freeze({basis: 'assumed', systemUi: 'Roboto', appleSystem: false, generics: {'sans-serif': ['Roboto', 'Noto Sans CJK KR'], serif: ['Noto Serif', 'Noto Serif CJK KR'], monospace: ['Droid Sans Mono', 'Noto Sans Mono CJK KR']}, installed: Object.freeze(new Set([
     'roboto', 'noto sans cjk kr', 'noto serif cjk kr', 'noto serif', 'noto sans mono cjk kr', 'roboto condensed']))}),
-  linux: Object.freeze({basis: 'assumed', systemUi: 'DejaVu Sans', appleSystem: false, generics: {'sans-serif': 'Noto Sans CJK KR', serif: 'Noto Serif CJK KR', monospace: 'Noto Sans Mono CJK KR'}, installed: Object.freeze(new Set([
+  linux: Object.freeze({basis: 'assumed', systemUi: 'DejaVu Sans', appleSystem: false, generics: {'sans-serif': ['DejaVu Sans', 'Noto Sans CJK KR'], serif: ['DejaVu Serif', 'Noto Serif CJK KR'], monospace: ['DejaVu Sans Mono', 'Noto Sans Mono CJK KR']}, installed: Object.freeze(new Set([
     'noto sans cjk kr', 'noto serif cjk kr', 'noto sans mono cjk kr', 'noto serif', 'nanum gothic', 'nanum myeongjo', 'nanum gothic coding', 'd2coding', 'dejavu sans']))}),
 });
