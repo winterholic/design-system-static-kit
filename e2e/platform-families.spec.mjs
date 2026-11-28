@@ -1,6 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {measureAll, summarize, familyMetrics, judge} from '../scripts/families/measure.mjs';
 import {buildPage, makeEnv, GROUPS, VISUALS, groupScenarios} from '../scripts/families/pages.mjs';
+import {INFO_MEDIA_RUNTIME} from '../src/platform/families/info-media.mjs';
 
 // 목적 패밀리의 브라우저 시험(ADR 0012 §4 확장, docs/platform/families.md).
 //  1) 묶음 × 시각 패밀리 × 모드 × (모바일 390, 데스크톱 1280) 전부에서 기존 layout-quality 검사기와 패밀리 측정이 통과한다.
@@ -151,4 +152,30 @@ test.describe('interactions the families promise', () => {
     await expect(b).toHaveAttribute('aria-selected', 'true');
     await expect(page.getByRole('tabpanel')).toContainText('작업 패널');
   });
+  const carouselItems = [{purpose: 'purpose:media.carousel', content: {label: '제품 사진', items: [{src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=', alt: '첫째', title: '제품 1'}, {src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=', alt: '둘째', title: '제품 2'}, {src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=', alt: '셋째', title: '제품 3'}]}}];
+  for (const width of [390, 1280]) {
+    test(`carousel at ${width}px: the track is a real scroll region, the buttons and a swipe both move it, and the counter follows`, async ({page}) => {
+      await open(page, 'media', carouselItems, width, QUIET, 'landing');
+      await page.addScriptTag({content: INFO_MEDIA_RUNTIME}); // 페이지 조립기의 런타임 묶음에는 정보·미디어 런타임이 없다. 서비스 조립 출력(actionRuntimeFor)과 같은 것을 붙인다.
+      const track = page.locator('.pf-carousel-track'), counter = page.locator('.pf-carousel-counter');
+      expect(await track.evaluate(el => getComputedStyle(el).overflowX), 'off-screen slides are scrolled, not clipped').toBe('auto');
+      expect(await track.evaluate(el => el.scrollWidth > el.clientWidth + 1)).toBe(true);
+      await expect(counter).toHaveText('1 / 3');
+      await page.locator('[data-carousel-next]').click();
+      await expect(counter).toHaveText('2 / 3');
+      await expect.poll(() => track.evaluate(el => Math.round(el.scrollLeft))).toBeGreaterThan(width / 2);
+      await page.locator('[data-carousel-prev]').click();
+      await expect(counter).toHaveText('1 / 3');
+      await expect.poll(() => track.evaluate(el => el.scrollLeft)).toBeLessThan(2);
+      await track.evaluate(el => { el.scrollTo({left: el.querySelectorAll('.pf-carousel-slide')[2].offsetLeft, behavior: 'instant'}); });
+      await expect(counter, 'a swipe moves the counter too').toHaveText('3 / 3');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), 'the hidden slides do not widen the page').toBe(true);
+    });
+    test(`responsive image at ${width}px: the caption sits below the ratio box and is not clipped`, async ({page}) => {
+      await open(page, 'media', [{purpose: 'purpose:media.responsive-image', content: {src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=', alt: '풍경', caption: '멋진 풍경'}}], width, QUIET, 'landing');
+      const box = await page.locator('.pf-responsive-image').boundingBox(), caption = await page.locator('.pf-image-caption').boundingBox();
+      expect(caption.y, 'caption starts below the image box').toBeGreaterThanOrEqual(box.y + box.height - 0.5);
+      expect(await page.locator('.pf-image-caption').evaluate(el => el.closest('.pf-responsive-image') === null)).toBe(true);
+    });
+  }
 });
