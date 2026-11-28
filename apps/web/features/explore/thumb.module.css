@@ -1,5 +1,7 @@
-.box { position: relative; overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius); }
+.box { position: relative; overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius); container-type: inline-size; }
 .frame { position: absolute; inset: 0 auto auto 0; border: 0; transform-origin: 0 0; pointer-events: none; background: #fff; }
 .interactive { pointer-events: auto; }
-.image { display: block; width: 100%; height: 100%; object-fit: contain; object-position: top center; pointer-events: none; }
-.svgContainer { width: 100%; height: 100%; display: flex; align-items: flex-start; justify-content: center; }
+/* SVG 는 화면 폭(--w) 그대로의 크기로 그려야 그 안의 미디어 쿼리가 실제 폭 기준으로 평가된다. 그 크기에서 카드 폭(100cqw)에 맞춰 줄인다.
+   tan(atan2(a, b)) 는 길이 a/b 를 단위 없는 비율로 만드는 방법이다(calc 의 길이÷길이는 아직 널리 지원되지 않는다). */
+.image { position: absolute; inset: 0 auto auto 0; display: block; width: var(--w); height: var(--h); max-width: none; transform-origin: 0 0; transform: scale(tan(atan2(100cqw, var(--w)))); pointer-events: none; }
+.refusal { margin: 0; padding: var(--space-4); font-size: var(--text-sm, 0.875rem); color: var(--color-muted, #5c6370); }

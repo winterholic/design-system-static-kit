@@ -71,6 +71,10 @@ test('Next server-only 표식과 단일 읽기 전용 QA 데이터만 외부 경
   assert.equal(analyzeSource(dataReader, "import diagnoses from '../../../../../docs/evidence/diagnosis-2.4.0.json';", ctx).length, 0);
   assert.equal(analyzeSource(dataReader, "import privateData from '../../../../../docs/private.json';", ctx).length, 1);
   assert.equal(analyzeSource(marker, "import 'not-a-dependency';", ctx).length, 1);
+  // 사전 생성 미리보기 목록 한 파일만 site/ 에서 읽을 수 있다.
+  const previews = join(web, 'features/explore/previews.server.ts');
+  assert.equal(analyzeSource(previews, "import data from '../../../../site/previews/previews-data.json';", ctx).length, 0);
+  assert.equal(analyzeSource(previews, "import data from '../../../../site/catalog-index.json';", ctx).length, 1);
 });
 
 test('src/ 를 상대 경로나 패키지 내부 경로로 직접 가리키지 않는다', () => {

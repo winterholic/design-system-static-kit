@@ -4,14 +4,45 @@
 import {expect, test} from '@playwright/test';
 import * as service from '@winterholic/design-system-static-kit/service';
 import {pick} from './helpers/select.mjs';
+import {readFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {toPreviewSvg} from '../lib/api/preview-svg.mjs';
+import {typeRequest} from '../../../scripts/lib/preview-requests.mjs';
 
 const bytes = text => Buffer.from(text, 'utf8');
-// 미리보기 iframe 은 화면 근처에 올 때만 만들어진다. 보이게 한 뒤 주소를 읽는다.
-const srcOf = async (locator) => { await locator.scrollIntoViewIfNeeded(); const frame = locator.locator('iframe').first(); await frame.waitFor({state: 'attached'}); return frame.getAttribute('src'); };
+// 목록·카드의 미리보기는 iframe 이 아니라 <img> 다. 사전 생성이 없는 요청(사용자가 고른 조합)은 /platform/render?...&part=svg 로 컴파일된 SVG 다.
+// srcOf 는 그 요청의 standalone 주소(part·w·h 를 뺀 같은 주소)를 돌려주고, SVG 가 같은 요청의 Core 결과에서 나온 것인지는 expectSameBytes 가 함께 본다.
+// 시험 영역(interactive)의 iframe 은 그대로 iframe 주소를 돌려준다.
+const svgOf = new Map();
+const srcOf = async (locator) => {
+  await locator.scrollIntoViewIfNeeded();
+  // 시험 영역의 iframe 은 화면 근처에 올 때 비동기로 만들어지므로 iframe 과 img 중 먼저 생기는 쪽을 본다.
+  const media = locator.locator('iframe, img').first();
+  await media.waitFor({state: 'attached'});
+  if (await media.evaluate(el => el.tagName) === 'IFRAME') return media.getAttribute('src');
+  const img = media;
+  const url = new URL(await img.getAttribute('src'), 'http://x');
+  expect(url.pathname, '선택 시 컴파일되는 미리보기 주소').toBe('/platform/render');
+  expect(url.searchParams.get('part')).toBe('svg');
+  const size = {width: Number(url.searchParams.get('w')), height: Number(url.searchParams.get('h'))};
+  const svgUrl = url.pathname + url.search;
+  for (const key of ['part', 'w', 'h']) url.searchParams.delete(key);
+  const standalone = url.pathname + url.search;
+  svgOf.set(standalone, {svgUrl, size});
+  return standalone;
+};
 const expectSameBytes = async (request, src, expected) => {
   const res = await request.get(src);
   expect(res.status(), src).toBe(200);
   expect(await res.body(), src).toEqual(bytes(expected));
+  // 카드에 실제로 쓰인 SVG 도 같은 문서에서 나왔다
+  const svg = svgOf.get(src);
+  if (svg) {
+    const r = await request.get(svg.svgUrl);
+    expect(r.status(), svg.svgUrl).toBe(200);
+    expect(r.headers()['content-type']).toContain('image/svg+xml');
+    expect(await r.text(), svg.svgUrl).toBe(toPreviewSvg(expected, svg.size));
+  }
 };
 const designOf = req => { const r = service.assembleDesign(req, {include: ['html', 'css', 'tokens', 'manifest', 'blueprint', 'script', 'standalone']}); if (!r.ok) throw new Error(r.errors[0].message); return r.value.candidates[0].value; };
 const componentsOf = req => { const r = service.assembleComponents(req); if (!r.ok) throw new Error(r.errors[0].message); return r.value; };
@@ -274,10 +305,16 @@ test.describe('Materials: 기타 재료와 타이포 비교', () => {
     await page.goto('/materials/typography?with=doc-essay,work-console&sample=doc');
     const grid = page.getByTestId('type-grid');
     await expect(grid.locator('li[data-system="doc-essay"] iframe, li[data-system="doc-essay"]').first()).toBeVisible();
-    const src = await srcOf(grid.locator('li[data-system="doc-essay"]'));
-    const req = JSON.parse(Buffer.from(new URL(src, 'http://x').searchParams.get('r'), 'base64url').toString());
+    // 기본 보기(문서 샘플·라이트·1280)는 빌드 시점에 Core 출력으로 만든 정적 파일이다. 그 파일은 같은 요청의 서비스 결과와 바이트가 같다.
+    const box = grid.locator('li[data-system="doc-essay"] [data-preview]');
+    await expect(box).toHaveAttribute('data-preview', 'static');
+    const staticSrc = await box.locator('img').getAttribute('src');
+    const req = typeRequest('type-system:doc-essay');
     expect(req.content.title).toContain('Getting Started');
-    await expectSameBytes(request, src, designOf(req).standalone);
+    const manifest = JSON.parse(readFileSync(join(import.meta.dirname, '../../../site/previews/previews-data.json'), 'utf8'));
+    const item = manifest.items[staticSrc.replace(/^\/previews\/|\.svg$/g, '')];
+    expect(item.id).toBe('type-system:doc-essay');
+    expect(await (await request.get(staticSrc)).text()).toBe(toPreviewSvg(designOf(req).standalone, {width: 1280, height: 800, title: item.title}));
     await expect(grid.locator('li[data-system="work-console"]')).toContainText(/맥락용이 아닙니다|맥락/);
     await page.getByRole('link', {name: '모바일 390'}).click();
     await expect(page).toHaveURL(/width=390/);

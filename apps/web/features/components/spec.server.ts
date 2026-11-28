@@ -1,8 +1,8 @@
 import 'server-only';
-import {compileBlueprint, getComponentSpec, getMaterial, listCatalog} from '@winterholic/design-system-static-kit/service';
-import {importBlueprint, insertNode, removeNode, resetDocument, updateNode} from '@winterholic/design-system-static-kit/edit';
+import {getComponentSpec, getMaterial, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {recordCompile} from '@/features/perf/counter.server';
 import {LruCache} from '@/lib/api/cache.mjs';
+import {renderComponentView} from '@/lib/api/preview-recipes.mjs';
 
 // 부품 화면의 모든 데이터는 getComponentSpec·listCatalog 에서 온다. 카탈로그에 없는 변형·속성·관계는 만들지 않는다.
 // 렌더 결과는 Blueprint 를 직접 쓰지 않고 ./edit 연산(resetDocument, insertNode, removeNode, updateNode)으로 만든 문서의 컴파일 결과다.
@@ -168,97 +168,11 @@ export function componentView(type: string): ComponentView | null {
 
 // ---------------------------------------------------------------- 렌더
 
-const BASE = {template: 'about-team', theme: 'workspace'};
-
+// 렌더 절차는 사전 생성(scripts/build-catalog-index.mjs)과 같은 모듈을 쓴다. 목록 그림과 상세 화면이 어긋나지 않게 하려는 것이다.
 export type Rendered = {ok: true; html: string; mode: 'isolated' | 'template'; template?: string} | {ok: false; reason: string};
 
-/** 이 부품이 들어 있는 첫 템플릿(카탈로그 순). 예제 노드가 없거나 단독으로 놓을 수 없는 부품의 대체 렌더다. */
-function templateUsing(type: string): string | null {
-  const templates = call<{items: Row[]}>(listCatalog({kind: 'templates', fields: ['id'], limit: 200}), 'listCatalog(templates)').items;
-  const has = (nodes: Json[] | undefined): boolean => !!nodes?.some(n => n.type === type || has(n.children));
-  for (const t of templates) {
-    const made = resetDocument(null, {template: t.id});
-    if (made.ok && has((made.doc as Json).tree.children)) return t.id;
-  }
-  return null;
-}
-
-const compileHtml = (doc: unknown): string | null => {
-  recordCompile('compileBlueprint');
-  const r = compileBlueprint(doc, {include: ['html']}) as {ok: boolean; value?: {html: string}};
-  return r.ok ? r.value!.html : null;
-};
-
-/** 머리글 + 이 부품 하나로 이루어진 페이지(page 는 children 이 2개 이상이어야 한다). variant 가 있으면 그 변형을 쓴다. */
-function isolatedDoc(type: string, example: Json, variant?: string): {doc: unknown} | {error: string} {
-  const made = resetDocument(null, BASE);
-  if (!made.ok) return {error: made.errors[0].message};
-  let doc: any = made.doc;
-  const at = type === 'hero' ? 1 : doc.tree.children.length; // 히어로는 머리글 바로 다음에만 올 수 있다
-  const inserted = insertNode(doc, {parent: [], node: example, index: at});
-  if (!inserted.ok) return {error: inserted.errors[0].message};
-  doc = inserted.doc;
-  for (let i = doc.tree.children.length - 1; i >= 1; i--) {
-    if (i === at) continue;
-    const removed = removeNode(doc, {path: [i]});
-    if (!removed.ok) return {error: removed.errors[0].message};
-    doc = removed.doc;
-  }
-  if (variant) {
-    const target = doc.tree.children.findIndex((n: Json) => n.type === type);
-    const set = updateNode(doc, {path: [target], set: {variant}});
-    if (!set.ok) return {error: set.errors[0].message};
-    doc = set.doc;
-  }
-  return {doc};
-}
-
-function materialSelection(view: RawView, selection: Row = {}): {html: string} | {error: string} {
-  const material = view.material!;
-  for (const [key, value] of Object.entries(selection)) {
-    if (!material.variants[key]?.some(option => String(option) === String(value))) return {error: `카탈로그에 없는 ${key} 변형입니다.`};
-  }
-  const values = {...material.defaults, ...selection};
-  const made = resetDocument(null, BASE);
-  if (!made.ok) return {error: made.errors[0]?.message ?? '기본 Blueprint를 만들지 못했습니다.'};
-  // importBlueprint는 엔진이 만든 페이지를 받아 카탈로그 버전을 올리고 정상 문서로 검증한다.
-  const upgraded = importBlueprint(null, {blueprint: {...made.doc, catalogVersion: material.since}});
-  if (!upgraded.ok) return {error: upgraded.errors[0]?.message ?? '2.6.0 Blueprint로 올리지 못했습니다.'};
-  const node: Row = {...view.example, ...values};
-  for (const key of ['sortable', 'selectable']) if (typeof node[key] === 'boolean') node[key] = node[key] ? 'yes' : 'no';
-  // Core 계약상 내용이 없는 상태는 행도 비어 있어야 한다.
-  if (view.type === 'data-table' && !['ready', 'partial'].includes(node.state)) node.rows = [];
-  const at = upgraded.doc.tree.children.length;
-  const inserted = insertNode(upgraded.doc, {parent: [], node, index: at});
-  if (!inserted.ok) return {error: inserted.errors[0]?.message ?? '재료를 Blueprint에 넣지 못했습니다.'};
-  let doc: any = inserted.doc;
-  for (let i = doc.tree.children.length - 1; i >= 1; i--) {
-    if (i === at) continue;
-    const removed = removeNode(doc, {path: [i]});
-    if (!removed.ok) return {error: removed.errors[0]?.message ?? '미리보기에서 불필요한 부품을 지우지 못했습니다.'};
-    doc = removed.doc;
-  }
-  const compiled = compileBlueprint(doc, {include: ['html']}) as {ok: boolean; value?: {html: string}; errors?: {message: string}[]};
-  return compiled.ok ? {html: compiled.value!.html} : {error: compiled.errors?.[0]?.message ?? 'Core가 이 변형을 컴파일하지 못했습니다.'};
-}
-
 function renderRaw(view: RawView, variant?: string | Row): Rendered {
-  if (view.material && view.example) {
-    const built = materialSelection(view, typeof variant === 'object' ? variant : {});
-    return 'html' in built ? {ok: true, html: built.html, mode: 'isolated'} : {ok: false, reason: built.error};
-  }
-  const legacyVariant = typeof variant === 'string' ? variant : undefined;
-  if (view.example && !(legacyVariant && !view.variantIds.includes(legacyVariant))) {
-    const built = isolatedDoc(view.type, {...view.example, ...(legacyVariant ? {variant: legacyVariant} : {})});
-    if ('doc' in built) { const html = compileHtml(built.doc); if (html) return {ok: true, html, mode: 'isolated'}; }
-    else if (legacyVariant) return {ok: false, reason: built.error};
-  }
-  if (legacyVariant) return {ok: false, reason: '이 부품은 변형을 단독으로 렌더하지 못합니다.'};
-  const template = templateUsing(view.type);
-  if (!template) return {ok: false, reason: '이 부품을 쓰는 템플릿이 없습니다.'};
-  const made = resetDocument(null, {template});
-  const html = made.ok ? compileHtml(made.doc) : null;
-  return html ? {ok: true, html, mode: 'template', template} : {ok: false, reason: '렌더하지 못했습니다.'};
+  return renderComponentView(view, variant, {onCompile: () => recordCompile('compileBlueprint')}) as Rendered;
 }
 
 export function renderComponent(type: string, variant?: string | Row): Rendered {

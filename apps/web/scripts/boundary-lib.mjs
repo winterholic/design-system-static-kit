@@ -25,8 +25,8 @@ export function makeContext(web, overrides = {}) {
     paths: tsconfig.compilerOptions?.paths ?? {},
     pathsBase: tsconfig.compilerOptions?.baseUrl ? resolve(web, tsconfig.compilerOptions.baseUrl) : web,
     allowedPackages,
-    // QA만 읽는 단일 근거 파일. 다른 docs/ 파일이나 저장소 외부 경로는 계속 거부한다.
-    allowedExternalDataFiles: new Set([resolve(root, 'docs/evidence/diagnosis-2.4.0.json')]),
+    // 읽기 전용 단일 근거 파일 둘만 허용한다: QA 진단, 빌드 시점 사전 생성 미리보기 목록(캐시 키 → 정적 SVG). 다른 파일이나 저장소 외부 경로는 계속 거부한다.
+    allowedExternalDataFiles: new Set([resolve(root, 'docs/evidence/diagnosis-2.4.0.json'), resolve(root, 'site/previews/previews-data.json')]),
     exportsMap: rootPkg.exports ?? {},
     ...overrides,
   };

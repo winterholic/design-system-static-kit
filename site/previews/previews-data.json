@@ -1,1394 +1,4360 @@
 {
-  "generatedAt": "2026-11-28T00:00:00.000Z",
-  "compilerVersion": "2.0.0",
-  "catalogVersion": "2.6.0",
-  "totalPreviews": 126,
+  "schemaVersion": "previews/1.0",
+  "engineVersion": "0.7.0/1.3.0",
+  "catalogVersion": "2.4.0",
+  "totalPreviews": 357,
+  "skipped": [
+    {
+      "kind": "purpose-family",
+      "id": "purpose:table.dense",
+      "key": "a0f9555baf310428ae423055be39e225",
+      "reason": "purpose:table.dense × family:soft: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:mkt-atelier",
+      "key": "7326fe7110ff2293218ad4547f697ec7",
+      "reason": "type-system:mkt-atelier는 article 맥락용이 아닙니다(landing, portfolio, commerce)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:mkt-brand",
+      "key": "27b6d246bcba59db7f87d9a984ac0abf",
+      "reason": "type-system:mkt-brand는 article 맥락용이 아닙니다(landing, portfolio, pricing, general)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:mkt-launch",
+      "key": "90b8020ab8871dc459b56e15e26ced5f",
+      "reason": "type-system:mkt-launch는 article 맥락용이 아닙니다(landing, pricing, auth, general)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:mobile-app",
+      "key": "7fedb3170f071fc2f9d09b5dbe0eb1e3",
+      "reason": "type-system:mobile-app는 article 맥락용이 아닙니다(general, auth, form, settings, commerce, community, listing, error)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:mobile-feed",
+      "key": "1086ba857e9e1671a6a48dd56e261cfa",
+      "reason": "type-system:mobile-feed는 article 맥락용이 아닙니다(community, listing, commerce, general, blog)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:shop-boutique",
+      "key": "c9fb52e8439a239411df93fbbd910f4a",
+      "reason": "type-system:shop-boutique는 article 맥락용이 아닙니다(commerce, portfolio, landing)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:shop-catalog",
+      "key": "b301d225a58f6b0d57ab8f8bbcebe755",
+      "reason": "type-system:shop-catalog는 article 맥락용이 아닙니다(commerce, listing, pricing)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:tech-erp",
+      "key": "afb3ee61eab31d2d158cc9f7a4776e74",
+      "reason": "type-system:tech-erp는 article 맥락용이 아닙니다(dashboard, data, listing, settings)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:work-console",
+      "key": "1d0c99b7e1532a047e9a075432d636df",
+      "reason": "type-system:work-console는 article 맥락용이 아닙니다(dashboard, data, listing, settings, form)"
+    },
+    {
+      "kind": "type-system",
+      "id": "type-system:work-insight",
+      "key": "909ecb47cd46325aafc3abb88a654366",
+      "reason": "type-system:work-insight는 article 맥락용이 아닙니다(dashboard, data, listing)"
+    }
+  ],
   "items": {
-    "explore:saas-landing": {
-      "id": "saas-landing",
+    "003f64981f495ad0d36f8690c352440a": {
       "kind": "explore",
-      "path": "/previews/explore/saas-landing.svg",
-      "htmlPath": "/previews/explore/saas-landing.html",
-      "title": "SaaS 서비스 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "9e2f1431724d135e9387601eae135cfb",
-      "ok": true
-    },
-    "explore:app-landing": {
-      "id": "app-landing",
-      "kind": "explore",
-      "path": "/previews/explore/app-landing.svg",
-      "htmlPath": "/previews/explore/app-landing.html",
-      "title": "앱 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "45aa58ae927451a26cafd9e3b60ce95b",
-      "ok": true
-    },
-    "explore:product-landing": {
-      "id": "product-landing",
-      "kind": "explore",
-      "path": "/previews/explore/product-landing.svg",
-      "htmlPath": "/previews/explore/product-landing.html",
-      "title": "제품 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "30b6d264aad25af13a21fc228ba11432",
-      "ok": true
-    },
-    "explore:agency-home": {
-      "id": "agency-home",
-      "kind": "explore",
-      "path": "/previews/explore/agency-home.svg",
-      "htmlPath": "/previews/explore/agency-home.html",
+      "id": "agency-home~theme_swiss",
+      "ids": [
+        "explore:agency-home~theme_swiss"
+      ],
+      "path": "/previews/003f64981f495ad0d36f8690c352440a.svg",
       "title": "에이전시 홈 미리보기",
       "width": 1280,
       "height": 800,
-      "hash": "0b1a717ec56b0b7aedc6e7f6ad4d4b80",
-      "ok": true
+      "htmlHash": "202f60fc91948ad96cfe7250c663b0f8"
     },
-    "explore:event-landing": {
-      "id": "event-landing",
+    "0152f8aed85bfddf24f8377fd5a336e3": {
       "kind": "explore",
-      "path": "/previews/explore/event-landing.svg",
-      "htmlPath": "/previews/explore/event-landing.html",
-      "title": "행사 안내 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "b6ac8a050a6cf7c77eb42804e885d4c7",
-      "ok": true
-    },
-    "explore:waitlist": {
-      "id": "waitlist",
-      "kind": "explore",
-      "path": "/previews/explore/waitlist.svg",
-      "htmlPath": "/previews/explore/waitlist.html",
-      "title": "대기자 등록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "ae66085720ac2d3efc987dfed14938cf",
-      "ok": true
-    },
-    "explore:campaign-donate": {
-      "id": "campaign-donate",
-      "kind": "explore",
-      "path": "/previews/explore/campaign-donate.svg",
-      "htmlPath": "/previews/explore/campaign-donate.html",
-      "title": "캠페인·후원 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "582a3b10d45c743f5a0dbe390b65bac9",
-      "ok": true
-    },
-    "explore:learning-course": {
-      "id": "learning-course",
-      "kind": "explore",
-      "path": "/previews/explore/learning-course.svg",
-      "htmlPath": "/previews/explore/learning-course.html",
-      "title": "강의 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "913e90fc32a3da9909a0eb101a94bbb0",
-      "ok": true
-    },
-    "explore:fitness-landing": {
-      "id": "fitness-landing",
-      "kind": "explore",
-      "path": "/previews/explore/fitness-landing.svg",
-      "htmlPath": "/previews/explore/fitness-landing.html",
-      "title": "피트니스 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "d64cad4eb0000e9cbad6f98e03349234",
-      "ok": true
-    },
-    "explore:solar-landing": {
-      "id": "solar-landing",
-      "kind": "explore",
-      "path": "/previews/explore/solar-landing.svg",
-      "htmlPath": "/previews/explore/solar-landing.html",
-      "title": "에너지·태양광 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "917f6ac3de86ff300f428337c1aca85e",
-      "ok": true
-    },
-    "explore:travel-ocean": {
-      "id": "travel-ocean",
-      "kind": "explore",
-      "path": "/previews/explore/travel-ocean.svg",
-      "htmlPath": "/previews/explore/travel-ocean.html",
-      "title": "여행 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "7b3dd6a21ed38d7571f0ac3019d935da",
-      "ok": true
-    },
-    "explore:museum-home": {
-      "id": "museum-home",
-      "kind": "explore",
-      "path": "/previews/explore/museum-home.svg",
-      "htmlPath": "/previews/explore/museum-home.html",
-      "title": "박물관·재단 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "13970ccf37f212a9f83c89cb0f4c3adb",
-      "ok": true
-    },
-    "explore:hanji-journey": {
-      "id": "hanji-journey",
-      "kind": "explore",
-      "path": "/previews/explore/hanji-journey.svg",
-      "htmlPath": "/previews/explore/hanji-journey.html",
-      "title": "전통 문화 여행 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "c77ec1678cc573ea8d919a2721f80d2d",
-      "ok": true
-    },
-    "explore:cafe-home": {
-      "id": "cafe-home",
-      "kind": "explore",
-      "path": "/previews/explore/cafe-home.svg",
-      "htmlPath": "/previews/explore/cafe-home.html",
-      "title": "카페 홈 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "abcef18727f256c39f858c05fd89e307",
-      "ok": true
-    },
-    "explore:clinic-home": {
-      "id": "clinic-home",
-      "kind": "explore",
-      "path": "/previews/explore/clinic-home.svg",
-      "htmlPath": "/previews/explore/clinic-home.html",
-      "title": "병원 홈 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "f101e1a46093f57c33dffafc43953e44",
-      "ok": true
-    },
-    "explore:pricing-page": {
-      "id": "pricing-page",
-      "kind": "explore",
-      "path": "/previews/explore/pricing-page.svg",
-      "htmlPath": "/previews/explore/pricing-page.html",
-      "title": "요금 비교 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "7fc0818d4a82f4a318840a897349c305",
-      "ok": true
-    },
-    "explore:dashboard-overview": {
-      "id": "dashboard-overview",
-      "kind": "explore",
-      "path": "/previews/explore/dashboard-overview.svg",
-      "htmlPath": "/previews/explore/dashboard-overview.html",
-      "title": "프로젝트 현황 대시보드 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "42843d1ded28f4f8923d50281f74c625",
-      "ok": true
-    },
-    "explore:dashboard-analytics": {
-      "id": "dashboard-analytics",
-      "kind": "explore",
-      "path": "/previews/explore/dashboard-analytics.svg",
-      "htmlPath": "/previews/explore/dashboard-analytics.html",
-      "title": "분석 리포트 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "51506b865eeda96ae9033e999678c5a6",
-      "ok": true
-    },
-    "explore:admin-table": {
-      "id": "admin-table",
-      "kind": "explore",
-      "path": "/previews/explore/admin-table.svg",
-      "htmlPath": "/previews/explore/admin-table.html",
-      "title": "관리자 목록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "e3cce0830f91a3aea6181a592e2b32fa",
-      "ok": true
-    },
-    "explore:project-board": {
-      "id": "project-board",
-      "kind": "explore",
-      "path": "/previews/explore/project-board.svg",
-      "htmlPath": "/previews/explore/project-board.html",
-      "title": "프로젝트 보드 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "ea9dc7b031bebe3086b5e92fd747747f",
-      "ok": true
-    },
-    "explore:inbox": {
-      "id": "inbox",
-      "kind": "explore",
-      "path": "/previews/explore/inbox.svg",
-      "htmlPath": "/previews/explore/inbox.html",
-      "title": "메시지함 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "62757b0438bb21666a62d155a3f1af98",
-      "ok": true
-    },
-    "explore:team-chat": {
-      "id": "team-chat",
-      "kind": "explore",
-      "path": "/previews/explore/team-chat.svg",
-      "htmlPath": "/previews/explore/team-chat.html",
-      "title": "팀 대화 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "982b4c60e573c4586bf211b5eeec0d79",
-      "ok": true
-    },
-    "explore:calendar-view": {
-      "id": "calendar-view",
-      "kind": "explore",
-      "path": "/previews/explore/calendar-view.svg",
-      "htmlPath": "/previews/explore/calendar-view.html",
-      "title": "월간 일정 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "4e56e49d7bc680faa36f52790ee637c2",
-      "ok": true
-    },
-    "explore:audit-log": {
-      "id": "audit-log",
-      "kind": "explore",
-      "path": "/previews/explore/audit-log.svg",
-      "htmlPath": "/previews/explore/audit-log.html",
-      "title": "감사 로그 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "fdfed1f04627c22013fe317a693584b6",
-      "ok": true
-    },
-    "explore:status-page": {
-      "id": "status-page",
-      "kind": "explore",
-      "path": "/previews/explore/status-page.svg",
-      "htmlPath": "/previews/explore/status-page.html",
-      "title": "서비스 상태 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "a6c0f373743b942b0f6d2e0dbe8b366e",
-      "ok": true
-    },
-    "explore:billing": {
-      "id": "billing",
-      "kind": "explore",
-      "path": "/previews/explore/billing.svg",
-      "htmlPath": "/previews/explore/billing.html",
-      "title": "결제·구독 관리 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "9dede10a028861afac1a0e99792d5867",
-      "ok": true
-    },
-    "explore:team-directory": {
-      "id": "team-directory",
-      "kind": "explore",
-      "path": "/previews/explore/team-directory.svg",
-      "htmlPath": "/previews/explore/team-directory.html",
-      "title": "구성원 디렉터리 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "ea0033e7d85bf52a43128f8f7f56bb7e",
-      "ok": true
-    },
-    "explore:docs-reference": {
-      "id": "docs-reference",
-      "kind": "explore",
-      "path": "/previews/explore/docs-reference.svg",
-      "htmlPath": "/previews/explore/docs-reference.html",
-      "title": "레퍼런스 문서 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "4d7cad88dc5e1d620c57d057e9a09bbf",
-      "ok": true
-    },
-    "explore:tutorial": {
-      "id": "tutorial",
-      "kind": "explore",
-      "path": "/previews/explore/tutorial.svg",
-      "htmlPath": "/previews/explore/tutorial.html",
-      "title": "튜토리얼 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "5cb62de8bb86e164028d3e8b40b16c08",
-      "ok": true
-    },
-    "explore:article": {
-      "id": "article",
-      "kind": "explore",
-      "path": "/previews/explore/article.svg",
-      "htmlPath": "/previews/explore/article.html",
-      "title": "읽는 문서 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "170bc91353ea819d2431b89d716504c3",
-      "ok": true
-    },
-    "explore:blog-index": {
-      "id": "blog-index",
-      "kind": "explore",
-      "path": "/previews/explore/blog-index.svg",
-      "htmlPath": "/previews/explore/blog-index.html",
-      "title": "블로그 목록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "54de7bf4e5cd2c5ffc6363f3660d2731",
-      "ok": true
-    },
-    "explore:blog-post": {
-      "id": "blog-post",
-      "kind": "explore",
-      "path": "/previews/explore/blog-post.svg",
-      "htmlPath": "/previews/explore/blog-post.html",
-      "title": "블로그 글 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "2215dc089359463a3b2a9965900bca01",
-      "ok": true
-    },
-    "explore:changelog": {
-      "id": "changelog",
-      "kind": "explore",
-      "path": "/previews/explore/changelog.svg",
-      "htmlPath": "/previews/explore/changelog.html",
-      "title": "변경 기록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "3547d3a203bfc1a46ba7e327c906b220",
-      "ok": true
-    },
-    "explore:help-center": {
-      "id": "help-center",
-      "kind": "explore",
-      "path": "/previews/explore/help-center.svg",
-      "htmlPath": "/previews/explore/help-center.html",
-      "title": "도움말 센터 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "731a9b4639711e4260d581d3c8ea35de",
-      "ok": true
-    },
-    "explore:policy": {
-      "id": "policy",
-      "kind": "explore",
-      "path": "/previews/explore/policy.svg",
-      "htmlPath": "/previews/explore/policy.html",
-      "title": "정책 문서 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "d015579f0ec79c24b96a1a4d1c11b462",
-      "ok": true
-    },
-    "explore:civic-service": {
-      "id": "civic-service",
-      "kind": "explore",
-      "path": "/previews/explore/civic-service.svg",
-      "htmlPath": "/previews/explore/civic-service.html",
-      "title": "민원 안내 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "c5dfe32c1db5a258b95cc66f7cb5265c",
-      "ok": true
-    },
-    "explore:product-detail": {
-      "id": "product-detail",
-      "kind": "explore",
-      "path": "/previews/explore/product-detail.svg",
-      "htmlPath": "/previews/explore/product-detail.html",
-      "title": "상품 상세 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "623adc6f92a757fdfc570a463dbd9b01",
-      "ok": true
-    },
-    "explore:product-listing": {
-      "id": "product-listing",
-      "kind": "explore",
-      "path": "/previews/explore/product-listing.svg",
-      "htmlPath": "/previews/explore/product-listing.html",
-      "title": "상품 목록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "0a9b9adb35e054598b609b7a33647d34",
-      "ok": true
-    },
-    "explore:checkout": {
-      "id": "checkout",
-      "kind": "explore",
-      "path": "/previews/explore/checkout.svg",
-      "htmlPath": "/previews/explore/checkout.html",
-      "title": "결제 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "faf2f03b4e63d5c7e833675bbe8425e9",
-      "ok": true
-    },
-    "explore:order-tracking": {
-      "id": "order-tracking",
-      "kind": "explore",
-      "path": "/previews/explore/order-tracking.svg",
-      "htmlPath": "/previews/explore/order-tracking.html",
-      "title": "주문 배송 조회 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "58ba82f423ddc7ea16fd4f1d18bd0c05",
-      "ok": true
-    },
-    "explore:beauty-detail": {
-      "id": "beauty-detail",
-      "kind": "explore",
-      "path": "/previews/explore/beauty-detail.svg",
-      "htmlPath": "/previews/explore/beauty-detail.html",
-      "title": "뷰티 상세 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "b1cbfaecb3fc6086684f2ed203ae4191",
-      "ok": true
-    },
-    "explore:menu-dining": {
-      "id": "menu-dining",
-      "kind": "explore",
-      "path": "/previews/explore/menu-dining.svg",
-      "htmlPath": "/previews/explore/menu-dining.html",
-      "title": "메뉴판 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "1e51b9d1d6f428299f13b631bf86865b",
-      "ok": true
-    },
-    "explore:realty-detail": {
-      "id": "realty-detail",
-      "kind": "explore",
-      "path": "/previews/explore/realty-detail.svg",
-      "htmlPath": "/previews/explore/realty-detail.html",
-      "title": "부동산 매물 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "36703b4eb86509ba621fffed9eea3752",
-      "ok": true
-    },
-    "explore:stay-detail": {
-      "id": "stay-detail",
-      "kind": "explore",
-      "path": "/previews/explore/stay-detail.svg",
-      "htmlPath": "/previews/explore/stay-detail.html",
-      "title": "숙소 상세 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "438b24ce276afff8ff096f8482d78cf7",
-      "ok": true
-    },
-    "explore:portfolio-grid": {
-      "id": "portfolio-grid",
-      "kind": "explore",
-      "path": "/previews/explore/portfolio-grid.svg",
-      "htmlPath": "/previews/explore/portfolio-grid.html",
-      "title": "포트폴리오 모음 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "f29a94519bac137fe3b4301d5aa8b94d",
-      "ok": true
-    },
-    "explore:case-study": {
-      "id": "case-study",
-      "kind": "explore",
-      "path": "/previews/explore/case-study.svg",
-      "htmlPath": "/previews/explore/case-study.html",
-      "title": "사례 연구 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "8327be9e6bc800d72313f8aa1557d47b",
-      "ok": true
-    },
-    "explore:about-team": {
-      "id": "about-team",
-      "kind": "explore",
-      "path": "/previews/explore/about-team.svg",
-      "htmlPath": "/previews/explore/about-team.html",
-      "title": "팀 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "46dc5253a2d70810ba14493ae081df0d",
-      "ok": true
-    },
-    "explore:music-player": {
-      "id": "music-player",
-      "kind": "explore",
-      "path": "/previews/explore/music-player.svg",
-      "htmlPath": "/previews/explore/music-player.html",
-      "title": "음악 플레이어 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "4ca8571ec845af785997bc88b556a257",
-      "ok": true
-    },
-    "explore:contact": {
-      "id": "contact",
-      "kind": "explore",
-      "path": "/previews/explore/contact.svg",
-      "htmlPath": "/previews/explore/contact.html",
-      "title": "문의하기 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "f7834de3cc6007a22eb5481be9e899f3",
-      "ok": true
-    },
-    "explore:onboarding-wizard": {
-      "id": "onboarding-wizard",
-      "kind": "explore",
-      "path": "/previews/explore/onboarding-wizard.svg",
-      "htmlPath": "/previews/explore/onboarding-wizard.html",
-      "title": "온보딩 단계 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "0b0f86a4f92e67feac06a58df21e4a04",
-      "ok": true
-    },
-    "explore:survey": {
-      "id": "survey",
-      "kind": "explore",
-      "path": "/previews/explore/survey.svg",
-      "htmlPath": "/previews/explore/survey.html",
-      "title": "설문 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "094299c2cc4c67a9d7ad9a9c524793e5",
-      "ok": true
-    },
-    "explore:settings": {
-      "id": "settings",
-      "kind": "explore",
-      "path": "/previews/explore/settings.svg",
-      "htmlPath": "/previews/explore/settings.html",
-      "title": "설정 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "b5e22f88df0329f347f17046ab8f0469",
-      "ok": true
-    },
-    "explore:profile": {
-      "id": "profile",
-      "kind": "explore",
-      "path": "/previews/explore/profile.svg",
-      "htmlPath": "/previews/explore/profile.html",
-      "title": "프로필 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "32705caa03133d2e5a253951534f55b0",
-      "ok": true
-    },
-    "explore:login": {
-      "id": "login",
-      "kind": "explore",
-      "path": "/previews/explore/login.svg",
-      "htmlPath": "/previews/explore/login.html",
-      "title": "로그인 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "4803b43b1f37a7dee61cb1eab85a7bb8",
-      "ok": true
-    },
-    "explore:signup": {
-      "id": "signup",
-      "kind": "explore",
-      "path": "/previews/explore/signup.svg",
-      "htmlPath": "/previews/explore/signup.html",
-      "title": "회원가입 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "863d39ab22e985090b7baa3fac7d1ec5",
-      "ok": true
-    },
-    "explore:forgot-password": {
-      "id": "forgot-password",
-      "kind": "explore",
-      "path": "/previews/explore/forgot-password.svg",
-      "htmlPath": "/previews/explore/forgot-password.html",
-      "title": "비밀번호 재설정 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "3b62f5716f0397b9db794523e2e0bfa6",
-      "ok": true
-    },
-    "explore:not-found": {
-      "id": "not-found",
-      "kind": "explore",
-      "path": "/previews/explore/not-found.svg",
-      "htmlPath": "/previews/explore/not-found.html",
-      "title": "404 페이지 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "cacfdeee6d63a69da7ea4cd86250901d",
-      "ok": true
-    },
-    "explore:server-error": {
-      "id": "server-error",
-      "kind": "explore",
-      "path": "/previews/explore/server-error.svg",
-      "htmlPath": "/previews/explore/server-error.html",
-      "title": "500 오류 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "fcf3f0887d256e9da8e5319f4bc1a353",
-      "ok": true
-    },
-    "explore:forbidden": {
-      "id": "forbidden",
-      "kind": "explore",
-      "path": "/previews/explore/forbidden.svg",
-      "htmlPath": "/previews/explore/forbidden.html",
-      "title": "403 권한 없음 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "9ffb62432b426370e395183ba074527e",
-      "ok": true
-    },
-    "explore:maintenance": {
-      "id": "maintenance",
-      "kind": "explore",
-      "path": "/previews/explore/maintenance.svg",
-      "htmlPath": "/previews/explore/maintenance.html",
-      "title": "점검 안내 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "ba3ba9891b99302ff73cd2a1aa69fe46",
-      "ok": true
-    },
-    "explore:offline": {
-      "id": "offline",
-      "kind": "explore",
-      "path": "/previews/explore/offline.svg",
-      "htmlPath": "/previews/explore/offline.html",
-      "title": "오프라인 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "76a704e5e227a99085803f8ba43e45bc",
-      "ok": true
-    },
-    "explore:b2b-solution": {
-      "id": "b2b-solution",
-      "kind": "explore",
-      "path": "/previews/explore/b2b-solution.svg",
-      "htmlPath": "/previews/explore/b2b-solution.html",
-      "title": "기업용 솔루션 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "617ca201d1b8aa27a4f64b584dd116fb",
-      "ok": true
-    },
-    "explore:devtool-landing": {
-      "id": "devtool-landing",
-      "kind": "explore",
-      "path": "/previews/explore/devtool-landing.svg",
-      "htmlPath": "/previews/explore/devtool-landing.html",
-      "title": "개발자 도구 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "e1e6c2404e36d68a1093566490396ef6",
-      "ok": true
-    },
-    "explore:luxury-brand": {
-      "id": "luxury-brand",
-      "kind": "explore",
-      "path": "/previews/explore/luxury-brand.svg",
-      "htmlPath": "/previews/explore/luxury-brand.html",
-      "title": "럭셔리 브랜드 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "446a2ad961735eec070332d0e9fb4d01",
-      "ok": true
-    },
-    "explore:campaign-poster": {
-      "id": "campaign-poster",
-      "kind": "explore",
-      "path": "/previews/explore/campaign-poster.svg",
-      "htmlPath": "/previews/explore/campaign-poster.html",
+      "id": "campaign-poster~theme_game",
+      "ids": [
+        "explore:campaign-poster~theme_game"
+      ],
+      "path": "/previews/0152f8aed85bfddf24f8377fd5a336e3.svg",
       "title": "캠페인 포스터형 소개 미리보기",
       "width": 1280,
       "height": 800,
-      "hash": "e3386708ae73e822e0d3f233b2a57e9f",
-      "ok": true
+      "htmlHash": "5b89cd82996b352385bbd9fc15ca4991"
     },
-    "explore:wedding-invite": {
-      "id": "wedding-invite",
+    "01e38df55f40526011612ea64156edd5": {
       "kind": "explore",
-      "path": "/previews/explore/wedding-invite.svg",
-      "htmlPath": "/previews/explore/wedding-invite.html",
-      "title": "청첩장 미리보기",
+      "id": "tutorial",
+      "ids": [
+        "explore:tutorial"
+      ],
+      "path": "/previews/01e38df55f40526011612ea64156edd5.svg",
+      "title": "튜토리얼 미리보기",
       "width": 1280,
       "height": 800,
-      "hash": "7fca050a21a7bfa948a17a177eb8d772",
-      "ok": true
+      "htmlHash": "5cb62de8bb86e164028d3e8b40b16c08"
     },
-    "explore:kids-class": {
-      "id": "kids-class",
+    "0212c33b1ae556665c5dfaf29e7552f9": {
       "kind": "explore",
-      "path": "/previews/explore/kids-class.svg",
-      "htmlPath": "/previews/explore/kids-class.html",
-      "title": "어린이 클래스 미리보기",
+      "id": "campaign-donate~theme_wedding",
+      "ids": [
+        "explore:campaign-donate~theme_wedding"
+      ],
+      "path": "/previews/0212c33b1ae556665c5dfaf29e7552f9.svg",
+      "title": "캠페인·후원 미리보기",
       "width": 1280,
       "height": 800,
-      "hash": "3bdf20cd66c59a01e8ca2d3732bb2f24",
-      "ok": true
+      "htmlHash": "de3484f34852bce3e271a603a2693bf5"
     },
-    "explore:bank-product": {
-      "id": "bank-product",
-      "kind": "explore",
-      "path": "/previews/explore/bank-product.svg",
-      "htmlPath": "/previews/explore/bank-product.html",
-      "title": "금융 상품 안내 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "aa47e26761f33c435564d16f5b2d31d4",
-      "ok": true
-    },
-    "explore:game-launch": {
-      "id": "game-launch",
-      "kind": "explore",
-      "path": "/previews/explore/game-launch.svg",
-      "htmlPath": "/previews/explore/game-launch.html",
-      "title": "게임 출시 안내 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "926bc3f05ee038cd81eb2c9d5046fa9e",
-      "ok": true
-    },
-    "explore:sales-dashboard": {
-      "id": "sales-dashboard",
-      "kind": "explore",
-      "path": "/previews/explore/sales-dashboard.svg",
-      "htmlPath": "/previews/explore/sales-dashboard.html",
-      "title": "영업 현황 대시보드 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "505fb5d2a8f8e37ca8e14f1f5ed24682",
-      "ok": true
-    },
-    "explore:finance-overview": {
-      "id": "finance-overview",
-      "kind": "explore",
-      "path": "/previews/explore/finance-overview.svg",
-      "htmlPath": "/previews/explore/finance-overview.html",
-      "title": "재무 현황 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "a06324e560ef9d3b9b5d8e8b154d4e72",
-      "ok": true
-    },
-    "explore:hr-people": {
-      "id": "hr-people",
-      "kind": "explore",
-      "path": "/previews/explore/hr-people.svg",
-      "htmlPath": "/previews/explore/hr-people.html",
-      "title": "인사 현황 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "84028204473c75461618284d48dbd526",
-      "ok": true
-    },
-    "explore:support-queue": {
-      "id": "support-queue",
-      "kind": "explore",
-      "path": "/previews/explore/support-queue.svg",
-      "htmlPath": "/previews/explore/support-queue.html",
-      "title": "고객 문의 대기열 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "b098fa9d0d05393e69110ea635958d8b",
-      "ok": true
-    },
-    "explore:incident-report": {
-      "id": "incident-report",
-      "kind": "explore",
-      "path": "/previews/explore/incident-report.svg",
-      "htmlPath": "/previews/explore/incident-report.html",
-      "title": "장애 회고 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "d286c446364f5b49e0be31d1190393b6",
-      "ok": true
-    },
-    "explore:job-board": {
-      "id": "job-board",
-      "kind": "explore",
-      "path": "/previews/explore/job-board.svg",
-      "htmlPath": "/previews/explore/job-board.html",
-      "title": "채용 공고 목록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "50d81d155cd6f26706ee3fa1c3fcd268",
-      "ok": true
-    },
-    "explore:job-detail": {
-      "id": "job-detail",
-      "kind": "explore",
-      "path": "/previews/explore/job-detail.svg",
-      "htmlPath": "/previews/explore/job-detail.html",
-      "title": "채용 상세 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "b84cfb83426d98a7b709ca2261f54679",
-      "ok": true
-    },
-    "explore:recipe-detail": {
-      "id": "recipe-detail",
-      "kind": "explore",
-      "path": "/previews/explore/recipe-detail.svg",
-      "htmlPath": "/previews/explore/recipe-detail.html",
-      "title": "레시피 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "e59d4a680d6a069df5bbf15c6956e078",
-      "ok": true
-    },
-    "explore:garden-shop": {
-      "id": "garden-shop",
-      "kind": "explore",
-      "path": "/previews/explore/garden-shop.svg",
-      "htmlPath": "/previews/explore/garden-shop.html",
-      "title": "식물 가게 상품 목록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "10044d92594b1fed241af3faf84768b6",
-      "ok": true
-    },
-    "explore:wine-list": {
-      "id": "wine-list",
-      "kind": "explore",
-      "path": "/previews/explore/wine-list.svg",
-      "htmlPath": "/previews/explore/wine-list.html",
-      "title": "와인 리스트 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "4b42d293b8465c668e2444e8120545c4",
-      "ok": true
-    },
-    "explore:course-catalog": {
-      "id": "course-catalog",
-      "kind": "explore",
-      "path": "/previews/explore/course-catalog.svg",
-      "htmlPath": "/previews/explore/course-catalog.html",
-      "title": "강좌 목록 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "c28b5118c4c4cc2b5206ecb90457592c",
-      "ok": true
-    },
-    "explore:property-search": {
-      "id": "property-search",
-      "kind": "explore",
-      "path": "/previews/explore/property-search.svg",
-      "htmlPath": "/previews/explore/property-search.html",
-      "title": "매물 검색 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "f44ccbbec62b2af6e9eaab0e9a1063a7",
-      "ok": true
-    },
-    "explore:event-schedule": {
-      "id": "event-schedule",
-      "kind": "explore",
-      "path": "/previews/explore/event-schedule.svg",
-      "htmlPath": "/previews/explore/event-schedule.html",
-      "title": "행사 일정표 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "d6c7e8580bb93ef9f4f049011bb403d9",
-      "ok": true
-    },
-    "explore:news-home": {
-      "id": "news-home",
-      "kind": "explore",
-      "path": "/previews/explore/news-home.svg",
-      "htmlPath": "/previews/explore/news-home.html",
-      "title": "뉴스 메인 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "03f70e0569bca1d22242c50a3c25e83d",
-      "ok": true
-    },
-    "explore:research-paper": {
-      "id": "research-paper",
-      "kind": "explore",
-      "path": "/previews/explore/research-paper.svg",
-      "htmlPath": "/previews/explore/research-paper.html",
-      "title": "연구 논문 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "82db979a35ded984dc552a4b63764d32",
-      "ok": true
-    },
-    "explore:api-reference": {
-      "id": "api-reference",
-      "kind": "explore",
-      "path": "/previews/explore/api-reference.svg",
-      "htmlPath": "/previews/explore/api-reference.html",
-      "title": "API 레퍼런스 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "494db588dec1468f38f75ef098976fe6",
-      "ok": true
-    },
-    "platform:saas-ocean": {
-      "id": "saas-ocean",
-      "kind": "platform",
-      "path": "/previews/platform/saas-ocean.svg",
-      "htmlPath": "/previews/platform/saas-ocean.html",
-      "title": "차분한 SaaS 소개 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "33a550be3a03ab2b8a94b73acde02057",
-      "ok": true
-    },
-    "platform:saas-dusk": {
-      "id": "saas-dusk",
-      "kind": "platform",
-      "path": "/previews/platform/saas-dusk.svg",
-      "htmlPath": "/previews/platform/saas-dusk.html",
-      "title": "어두운 프리미엄 SaaS 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "33a550be3a03ab2b8a94b73acde02057",
-      "ok": true
-    },
-    "platform:dash-forest": {
-      "id": "dash-forest",
-      "kind": "platform",
-      "path": "/previews/platform/dash-forest.svg",
-      "htmlPath": "/previews/platform/dash-forest.html",
-      "title": "데이터 밀도가 높은 운영 화면 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "bd68a04f5363f837a73c188fa8f01c55",
-      "ok": true
-    },
-    "platform:dash-slate": {
-      "id": "dash-slate",
-      "kind": "platform",
-      "path": "/previews/platform/dash-slate.svg",
-      "htmlPath": "/previews/platform/dash-slate.html",
-      "title": "고대비 업무 화면 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "bd68a04f5363f837a73c188fa8f01c55",
-      "ok": true
-    },
-    "platform:editorial-clay": {
-      "id": "editorial-clay",
-      "kind": "platform",
-      "path": "/previews/platform/editorial-clay.svg",
-      "htmlPath": "/previews/platform/editorial-clay.html",
-      "title": "따뜻한 에디토리얼 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "57e674e36b91429b420fd98973b5d676",
-      "ok": true
-    },
-    "platform:commerce-vivid": {
-      "id": "commerce-vivid",
-      "kind": "platform",
-      "path": "/previews/platform/commerce-vivid.svg",
-      "htmlPath": "/previews/platform/commerce-vivid.html",
-      "title": "선명한 커머스 미리보기",
-      "width": 1280,
-      "height": 800,
-      "hash": "ce95364ed62426673c34672a531a8829",
-      "ok": true
-    },
-    "purpose:purpose:button.destructive": {
-      "id": "purpose:button.destructive",
+    "024087a78e632462731eddafd4a7c173": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-destructive.svg",
-      "htmlPath": "/previews/purpose/purpose:button-destructive.html",
-      "title": "파괴적 버튼 묶음 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "bad3410a8edc0fc0cb5bd07f5c067074",
-      "ok": true
-    },
-    "purpose:purpose:button.emphasis": {
-      "id": "purpose:button.emphasis",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-emphasis.svg",
-      "htmlPath": "/previews/purpose/purpose:button-emphasis.html",
-      "title": "강조(CTA) 버튼 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "cdb55f90e8268f6823c2f07e33560b5f",
-      "ok": true
-    },
-    "purpose:purpose:button.icon": {
-      "id": "purpose:button.icon",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-icon.svg",
-      "htmlPath": "/previews/purpose/purpose:button-icon.html",
-      "title": "아이콘 버튼 툴바 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "537fb99e5efe68f4a2a774d92f2be0a4",
-      "ok": true
-    },
-    "purpose:purpose:button.loading": {
-      "id": "purpose:button.loading",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-loading.svg",
-      "htmlPath": "/previews/purpose/purpose:button-loading.html",
-      "title": "로딩 버튼 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "6d9ed8c2976db550d18f7624576c7329",
-      "ok": true
-    },
-    "purpose:purpose:button.primary": {
-      "id": "purpose:button.primary",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-primary.svg",
-      "htmlPath": "/previews/purpose/purpose:button-primary.html",
-      "title": "기본 버튼 묶음 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "41c68bc3df33c6650899f8b10b00a2a7",
-      "ok": true
-    },
-    "purpose:purpose:button.secondary": {
-      "id": "purpose:button.secondary",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-secondary.svg",
-      "htmlPath": "/previews/purpose/purpose:button-secondary.html",
-      "title": "보조 버튼 묶음 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "6450efc0cc6b6362a7bcf28454eefaa8",
-      "ok": true
-    },
-    "purpose:purpose:button.toggle": {
-      "id": "purpose:button.toggle",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:button-toggle.svg",
-      "htmlPath": "/previews/purpose/purpose:button-toggle.html",
-      "title": "토글 버튼 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "bd6fec8f435aeb95952114e18ba09528",
-      "ok": true
-    },
-    "purpose:purpose:card.article": {
-      "id": "purpose:card.article",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-article.svg",
-      "htmlPath": "/previews/purpose/purpose:card-article.html",
-      "title": "기사 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "1d74ca499819c01e1e4fc874f964c9ba",
-      "ok": true
-    },
-    "purpose:purpose:card.feature": {
-      "id": "purpose:card.feature",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-feature.svg",
-      "htmlPath": "/previews/purpose/purpose:card-feature.html",
-      "title": "기능 소개 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "453ee601c2943449a32e78ef9316f33a",
-      "ok": true
-    },
-    "purpose:purpose:card.gallery": {
-      "id": "purpose:card.gallery",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-gallery.svg",
-      "htmlPath": "/previews/purpose/purpose:card-gallery.html",
-      "title": "갤러리 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "5625cc7c06f4588bfd519b014fffcb15",
-      "ok": true
-    },
-    "purpose:purpose:card.kpi": {
-      "id": "purpose:card.kpi",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-kpi.svg",
-      "htmlPath": "/previews/purpose/purpose:card-kpi.html",
-      "title": "KPI 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "d08c0ea16aa5280171b3bbff07465e18",
-      "ok": true
-    },
-    "purpose:purpose:card.pricing": {
-      "id": "purpose:card.pricing",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-pricing.svg",
-      "htmlPath": "/previews/purpose/purpose:card-pricing.html",
-      "title": "가격 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "a4809f0405655e8b65b5f890cbc5bada",
-      "ok": true
-    },
-    "purpose:purpose:card.product": {
-      "id": "purpose:card.product",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-product.svg",
-      "htmlPath": "/previews/purpose/purpose:card-product.html",
-      "title": "상품 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "bf38c37d1685e5c848b7bdb43a20a14b",
-      "ok": true
-    },
-    "purpose:purpose:card.profile": {
       "id": "purpose:card.profile",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-profile.svg",
-      "htmlPath": "/previews/purpose/purpose:card-profile.html",
+      "ids": [
+        "purpose-family:purpose:card.profile"
+      ],
+      "path": "/previews/024087a78e632462731eddafd4a7c173.svg",
       "title": "사용자 정보 카드 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "e1f63c0e9f57f2dfcc581e0bbaf3e27c",
-      "ok": true
+      "htmlHash": "cc082f2640a838588a1f79a864e90727"
     },
-    "purpose:purpose:card.status": {
-      "id": "purpose:card.status",
+    "032de92cc71707fa9412eb9558d1a366": {
+      "kind": "explore",
+      "id": "event-landing",
+      "ids": [
+        "explore:event-landing"
+      ],
+      "path": "/previews/032de92cc71707fa9412eb9558d1a366.svg",
+      "title": "행사 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b6ac8a050a6cf7c77eb42804e885d4c7"
+    },
+    "0370499afd81ca0d3e99c59f5519dfa4": {
+      "kind": "component",
+      "id": "metric",
+      "ids": [
+        "component:metric"
+      ],
+      "path": "/previews/0370499afd81ca0d3e99c59f5519dfa4.svg",
+      "title": "지표 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "51aab147a176f3be43b2c064fd15c31e"
+    },
+    "03fd0b1723e6c4dcee8528ada967748c": {
+      "kind": "explore",
+      "id": "order-tracking~theme_commerce~variant_boutique",
+      "ids": [
+        "explore:order-tracking~theme_commerce~variant_boutique"
+      ],
+      "path": "/previews/03fd0b1723e6c4dcee8528ada967748c.svg",
+      "title": "주문 배송 조회 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "da1f8e9309b24568e9b852b37fdc6f1f"
+    },
+    "042ea4361cb295839e1989a38d3d1518": {
+      "kind": "explore",
+      "id": "course-catalog~theme_school",
+      "ids": [
+        "explore:course-catalog~theme_school"
+      ],
+      "path": "/previews/042ea4361cb295839e1989a38d3d1518.svg",
+      "title": "강좌 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3d91c3a402a670edf5c6d918008008ae"
+    },
+    "04c97d0aa97fa7624d8af846f0ab36fd": {
+      "kind": "explore",
+      "id": "wedding-invite~theme_signal",
+      "ids": [
+        "explore:wedding-invite~theme_signal"
+      ],
+      "path": "/previews/04c97d0aa97fa7624d8af846f0ab36fd.svg",
+      "title": "청첩장 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "59e2aeb80810d69d32aae653e4900c4b"
+    },
+    "05c1a3a43522dc8e5d559a784279c5aa": {
+      "kind": "component",
+      "id": "faq",
+      "ids": [
+        "component:faq"
+      ],
+      "path": "/previews/05c1a3a43522dc8e5d559a784279c5aa.svg",
+      "title": "자주 묻는 질문 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "71dba5eb7a06b7dace1fd676bae32ce6"
+    },
+    "062c2d141d3f0ed5f9aaae9f3df9ad68": {
+      "kind": "explore",
+      "id": "finance-overview~theme_trust",
+      "ids": [
+        "explore:finance-overview~theme_trust"
+      ],
+      "path": "/previews/062c2d141d3f0ed5f9aaae9f3df9ad68.svg",
+      "title": "재무 현황 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3af83e812dab794585ecf9533d7e2f96"
+    },
+    "074c80fc3d605a887ff566a21ee3924e": {
+      "kind": "explore",
+      "id": "clinic-home~theme_sport",
+      "ids": [
+        "explore:clinic-home~theme_sport"
+      ],
+      "path": "/previews/074c80fc3d605a887ff566a21ee3924e.svg",
+      "title": "병원 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f555d27777c91fe3c259f6f7bde80098"
+    },
+    "08b62be3746b55f754f708e71942db95": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:card-status.svg",
-      "htmlPath": "/previews/purpose/purpose:card-status.html",
-      "title": "상태 카드 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "e93b52c7b8709631671ea30cfc19568d",
-      "ok": true
-    },
-    "purpose:purpose:feedback.confirm": {
-      "id": "purpose:feedback.confirm",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:feedback-confirm.svg",
-      "htmlPath": "/previews/purpose/purpose:feedback-confirm.html",
-      "title": "확인 대화상자 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "ce8b13d1bb7028b56415190003b310d2",
-      "ok": true
-    },
-    "purpose:purpose:feedback.error": {
-      "id": "purpose:feedback.error",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:feedback-error.svg",
-      "htmlPath": "/previews/purpose/purpose:feedback-error.html",
-      "title": "오류 안내 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "63decde27be88ea859dcf72fc12f83f8",
-      "ok": true
-    },
-    "purpose:purpose:feedback.progress": {
-      "id": "purpose:feedback.progress",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:feedback-progress.svg",
-      "htmlPath": "/previews/purpose/purpose:feedback-progress.html",
-      "title": "진행 안내 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "74975f6724382a5337f0519142ae4bd4",
-      "ok": true
-    },
-    "purpose:purpose:feedback.result": {
-      "id": "purpose:feedback.result",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:feedback-result.svg",
-      "htmlPath": "/previews/purpose/purpose:feedback-result.html",
-      "title": "결과 안내 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "ca2a0bab9cdb5e7fed15804ccb35c2ea",
-      "ok": true
-    },
-    "purpose:purpose:feedback.warning": {
-      "id": "purpose:feedback.warning",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:feedback-warning.svg",
-      "htmlPath": "/previews/purpose/purpose:feedback-warning.html",
-      "title": "경고 안내 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "8733fdf1c9a1b191a357b0b0a1c7c65e",
-      "ok": true
-    },
-    "purpose:purpose:form.auth": {
-      "id": "purpose:form.auth",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:form-auth.svg",
-      "htmlPath": "/previews/purpose/purpose:form-auth.html",
-      "title": "인증 폼 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "f3f576cb3b0cb7c47cd11b664a7baf1e",
-      "ok": true
-    },
-    "purpose:purpose:form.filter": {
-      "id": "purpose:form.filter",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:form-filter.svg",
-      "htmlPath": "/previews/purpose/purpose:form-filter.html",
-      "title": "필터 폼 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "7773e45dad4e893c3bbb1ddc68607a46",
-      "ok": true
-    },
-    "purpose:purpose:form.group": {
       "id": "purpose:form.group",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:form-group.svg",
-      "htmlPath": "/previews/purpose/purpose:form-group.html",
+      "ids": [
+        "purpose-family:purpose:form.group"
+      ],
+      "path": "/previews/08b62be3746b55f754f708e71942db95.svg",
       "title": "입력 그룹 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "4372d5c776c64cc72dca0fab5e2b777c",
-      "ok": true
+      "htmlHash": "ce711b172e4a0079c3e25b93daa6e107"
     },
-    "purpose:purpose:form.search": {
-      "id": "purpose:form.search",
+    "08bfab02e15340215040eec4ab1a3fb1": {
+      "kind": "explore",
+      "id": "pricing-page~theme_devtool",
+      "ids": [
+        "explore:pricing-page~theme_devtool"
+      ],
+      "path": "/previews/08bfab02e15340215040eec4ab1a3fb1.svg",
+      "title": "요금 비교 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1011df2aff2a225778ff79521d749354"
+    },
+    "09ea317eb68ef2151fed186492f065b6": {
+      "kind": "explore",
+      "id": "product-landing~theme_commerce~variant_boutique",
+      "ids": [
+        "explore:product-landing~theme_commerce~variant_boutique"
+      ],
+      "path": "/previews/09ea317eb68ef2151fed186492f065b6.svg",
+      "title": "제품 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "02930a62808689b905cb6b7c64c819b5"
+    },
+    "0a9fa80796fd1f04a5c0642a79ccb37c": {
+      "kind": "component",
+      "id": "grid",
+      "ids": [
+        "component:grid"
+      ],
+      "path": "/previews/0a9fa80796fd1f04a5c0642a79ccb37c.svg",
+      "title": "그리드 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "68847ff8612383e6b1bf7295414dcfa5"
+    },
+    "0c00661c0c5c0a85b53d7b22dfca3934": {
+      "kind": "explore",
+      "id": "admin-table~theme_workspace",
+      "ids": [
+        "explore:admin-table~theme_workspace"
+      ],
+      "path": "/previews/0c00661c0c5c0a85b53d7b22dfca3934.svg",
+      "title": "관리자 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1c15e5a4b05bf329705f0819a53dcbfa"
+    },
+    "0c10f1600763959de5abed694e22c9ee": {
+      "kind": "explore",
+      "id": "profile",
+      "ids": [
+        "explore:profile"
+      ],
+      "path": "/previews/0c10f1600763959de5abed694e22c9ee.svg",
+      "title": "프로필 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "32705caa03133d2e5a253951534f55b0"
+    },
+    "0c16649cfd883ed797383ec3a47f2bd3": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:form-search.svg",
-      "htmlPath": "/previews/purpose/purpose:form-search.html",
-      "title": "검색 폼 미리보기",
+      "id": "purpose:button.loading",
+      "ids": [
+        "purpose-family:purpose:button.loading"
+      ],
+      "path": "/previews/0c16649cfd883ed797383ec3a47f2bd3.svg",
+      "title": "로딩 버튼 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "13ff992c7e040c8280a123174de18352",
-      "ok": true
+      "htmlHash": "ff42db856b6a615d3d471f2fb21c44a6"
     },
-    "purpose:purpose:form.settings": {
-      "id": "purpose:form.settings",
+    "0cd56cde9c6ad943a10cf1d7c4a62a8d": {
+      "kind": "component",
+      "id": "notice",
+      "ids": [
+        "component:notice"
+      ],
+      "path": "/previews/0cd56cde9c6ad943a10cf1d7c4a62a8d.svg",
+      "title": "알림 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "afd9468b3a409fe954a2c3048e6aa37b"
+    },
+    "0ce22cb403431adcaf92d9e56bc92d8f": {
+      "kind": "explore",
+      "id": "login",
+      "ids": [
+        "explore:login"
+      ],
+      "path": "/previews/0ce22cb403431adcaf92d9e56bc92d8f.svg",
+      "title": "로그인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4803b43b1f37a7dee61cb1eab85a7bb8"
+    },
+    "0d1eac203b4d9eca060abefbf515749c": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:form-settings.svg",
-      "htmlPath": "/previews/purpose/purpose:form-settings.html",
-      "title": "설정 폼 미리보기",
+      "id": "purpose:card.status",
+      "ids": [
+        "purpose-family:purpose:card.status"
+      ],
+      "path": "/previews/0d1eac203b4d9eca060abefbf515749c.svg",
+      "title": "상태 카드 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "84453c9a0cdb2e0f06df29915ea67c5d",
-      "ok": true
+      "htmlHash": "073f458f8e38655419af81e984b46f87"
     },
-    "purpose:purpose:navigation.bottom": {
-      "id": "purpose:navigation.bottom",
+    "0e21d8e45b8d97a25462ec2735c07b53": {
+      "kind": "component",
+      "id": "button-control",
+      "ids": [
+        "component:button-control"
+      ],
+      "path": "/previews/0e21d8e45b8d97a25462ec2735c07b53.svg",
+      "title": "Button 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e756814503838ddbee29d572eeef0113"
+    },
+    "0e3f5bd99eaaff061e46fcb054a793e5": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:navigation-bottom.svg",
-      "htmlPath": "/previews/purpose/purpose:navigation-bottom.html",
-      "title": "모바일 하단 바 미리보기",
+      "id": "purpose:form.auth",
+      "ids": [
+        "purpose-family:purpose:form.auth"
+      ],
+      "path": "/previews/0e3f5bd99eaaff061e46fcb054a793e5.svg",
+      "title": "인증 폼 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "6e15050e5766dc701d9686c47ba77b35",
-      "ok": true
+      "htmlHash": "bf7e3fa5631ef1e1db22ff93c90dd345"
     },
-    "purpose:purpose:navigation.sidebar": {
+    "0e867d48b2daf36fe3e1f965d790d97f": {
+      "kind": "explore",
+      "id": "realty-detail~theme_ocean",
+      "ids": [
+        "explore:realty-detail~theme_ocean"
+      ],
+      "path": "/previews/0e867d48b2daf36fe3e1f965d790d97f.svg",
+      "title": "부동산 매물 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a9fcc66df845324d992e3e9f3c64a40e"
+    },
+    "10309b164d5b6bb2c6fff3ecac944299": {
+      "kind": "explore",
+      "id": "course-catalog",
+      "ids": [
+        "explore:course-catalog"
+      ],
+      "path": "/previews/10309b164d5b6bb2c6fff3ecac944299.svg",
+      "title": "강좌 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c28b5118c4c4cc2b5206ecb90457592c"
+    },
+    "10a9ca910ea2b42ec27a980923ceaa3f": {
+      "kind": "explore",
+      "id": "project-board~theme_workspace",
+      "ids": [
+        "explore:project-board~theme_workspace"
+      ],
+      "path": "/previews/10a9ca910ea2b42ec27a980923ceaa3f.svg",
+      "title": "프로젝트 보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7f1405023e80225e56f4a3a28a6af02b"
+    },
+    "10d84d537871d0187bf0c7307f18b429": {
+      "kind": "explore",
+      "id": "login~theme_devtool",
+      "ids": [
+        "explore:login~theme_devtool"
+      ],
+      "path": "/previews/10d84d537871d0187bf0c7307f18b429.svg",
+      "title": "로그인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1f35bd568c916461e021ac6cc3448320"
+    },
+    "10eec404a0adaafbd7fc528fee5dfae3": {
+      "kind": "purpose-family",
       "id": "purpose:navigation.sidebar",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:navigation-sidebar.svg",
-      "htmlPath": "/previews/purpose/purpose:navigation-sidebar.html",
+      "ids": [
+        "purpose-family:purpose:navigation.sidebar"
+      ],
+      "path": "/previews/10eec404a0adaafbd7fc528fee5dfae3.svg",
       "title": "사이드바 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "24858e461dd7954a33ca13f991d6627c",
-      "ok": true
+      "htmlHash": "03c98fa4cbae84d776a84fa9a71a3273"
     },
-    "purpose:purpose:navigation.tabs": {
-      "id": "purpose:navigation.tabs",
+    "12162bdf6ee87edf433bddda76326614": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:navigation-tabs.svg",
-      "htmlPath": "/previews/purpose/purpose:navigation-tabs.html",
-      "title": "탭 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "cea5b6f4084b042766cd326cf1f25563",
-      "ok": true
-    },
-    "purpose:purpose:navigation.topbar": {
-      "id": "purpose:navigation.topbar",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:navigation-topbar.svg",
-      "htmlPath": "/previews/purpose/purpose:navigation-topbar.html",
-      "title": "상단 메뉴 미리보기",
-      "width": 480,
-      "height": 360,
-      "hash": "68c0e52dc64fcc71650d4c00fb9d910b",
-      "ok": true
-    },
-    "purpose:purpose:table.analytic": {
       "id": "purpose:table.analytic",
-      "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:table-analytic.svg",
-      "htmlPath": "/previews/purpose/purpose:table-analytic.html",
+      "ids": [
+        "purpose-family:purpose:table.analytic"
+      ],
+      "path": "/previews/12162bdf6ee87edf433bddda76326614.svg",
       "title": "분석형 표 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "e19a2b6ed6df3d7bc92a7f2376adac16",
-      "ok": true
+      "htmlHash": "64e359a85dd31d6b2206fe7b059cc8cc"
     },
-    "purpose:purpose:table.business": {
-      "id": "purpose:table.business",
+    "135829793ca7592b25add74c286e3e94": {
+      "kind": "explore",
+      "id": "product-landing~theme_beauty",
+      "ids": [
+        "explore:product-landing~theme_beauty"
+      ],
+      "path": "/previews/135829793ca7592b25add74c286e3e94.svg",
+      "title": "제품 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8e2da5e838dea0e38125a92084193aff"
+    },
+    "138c56b7e4c1b72d9669152cc033d5c5": {
+      "kind": "component",
+      "id": "menu",
+      "ids": [
+        "component:menu"
+      ],
+      "path": "/previews/138c56b7e4c1b72d9669152cc033d5c5.svg",
+      "title": "메뉴판 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ceb97e61b121ed9a71f0e06febdbde81"
+    },
+    "138c633b50e218eb1be4addfcd939597": {
+      "kind": "component",
+      "id": "steps",
+      "ids": [
+        "component:steps"
+      ],
+      "path": "/previews/138c633b50e218eb1be4addfcd939597.svg",
+      "title": "단계 안내 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f63646208093c1212223642db1303b53"
+    },
+    "155f775118a58134c9321006f96fc996": {
+      "kind": "explore",
+      "id": "campaign-donate~theme_civic",
+      "ids": [
+        "explore:campaign-donate~theme_civic"
+      ],
+      "path": "/previews/155f775118a58134c9321006f96fc996.svg",
+      "title": "캠페인·후원 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d2ca1ce0952102a01a372146df98d741"
+    },
+    "158f2d11d9c844c7abdfedd501f42ae2": {
+      "kind": "component",
+      "id": "card-surface",
+      "ids": [
+        "component:card-surface"
+      ],
+      "path": "/previews/158f2d11d9c844c7abdfedd501f42ae2.svg",
+      "title": "Card 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "44ecfe25628a2443c949cb04bd94a0ac"
+    },
+    "1625e47c7a6730cf282b3ca5039335ea": {
+      "kind": "explore",
+      "id": "stay-detail~theme_ocean",
+      "ids": [
+        "explore:stay-detail~theme_ocean"
+      ],
+      "path": "/previews/1625e47c7a6730cf282b3ca5039335ea.svg",
+      "title": "숙소 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1ea12c44debee21ecc23c5bb19a020ef"
+    },
+    "169ea4a3cc6b43492c036547c9474ae1": {
+      "kind": "explore",
+      "id": "about-team~theme_cafe",
+      "ids": [
+        "explore:about-team~theme_cafe"
+      ],
+      "path": "/previews/169ea4a3cc6b43492c036547c9474ae1.svg",
+      "title": "팀 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b7b3c1d8e245b6a4ec38a5877004345b"
+    },
+    "180a8147cedd4bac92e11dbf427d8cda": {
+      "kind": "explore",
+      "id": "order-tracking~theme_beauty",
+      "ids": [
+        "explore:order-tracking~theme_beauty"
+      ],
+      "path": "/previews/180a8147cedd4bac92e11dbf427d8cda.svg",
+      "title": "주문 배송 조회 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "95565e1c4d908dc1ae466150320ae2fb"
+    },
+    "188390eee77cfa419a0ffd6e8c8a6eb2": {
+      "kind": "explore",
+      "id": "incident-report",
+      "ids": [
+        "explore:incident-report"
+      ],
+      "path": "/previews/188390eee77cfa419a0ffd6e8c8a6eb2.svg",
+      "title": "장애 회고 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d286c446364f5b49e0be31d1190393b6"
+    },
+    "1912c0114e33855fe1d94294c79f394b": {
+      "kind": "explore",
+      "id": "solar-landing~theme_insight",
+      "ids": [
+        "explore:solar-landing~theme_insight"
+      ],
+      "path": "/previews/1912c0114e33855fe1d94294c79f394b.svg",
+      "title": "에너지·태양광 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "471f888ca71252838c0c172a0227fc2d"
+    },
+    "1991a32a0b08f21a04609e624c163915": {
+      "kind": "explore",
+      "id": "b2b-solution~theme_trust",
+      "ids": [
+        "explore:b2b-solution~theme_trust"
+      ],
+      "path": "/previews/1991a32a0b08f21a04609e624c163915.svg",
+      "title": "기업용 솔루션 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d7f3d35f50a94ff2129ff7cde9a9f1a0"
+    },
+    "1a7cdea028206a5fe7956054146eca1e": {
+      "kind": "component",
+      "id": "feature-list",
+      "ids": [
+        "component:feature-list"
+      ],
+      "path": "/previews/1a7cdea028206a5fe7956054146eca1e.svg",
+      "title": "기능 목록 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7efb3210eff7a630073a83e4ad723c8d"
+    },
+    "1ad53db7e8fedccdab6fb7292f8f4894": {
+      "kind": "component",
+      "id": "code",
+      "ids": [
+        "component:code"
+      ],
+      "path": "/previews/1ad53db7e8fedccdab6fb7292f8f4894.svg",
+      "title": "코드 블록 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "92bd897c75a5f4b11ac342f354028dcb"
+    },
+    "1c2ba21c3d49b78bb4447fe78e7b7f70": {
+      "kind": "explore",
+      "id": "menu-dining~theme_wine",
+      "ids": [
+        "explore:menu-dining~theme_wine"
+      ],
+      "path": "/previews/1c2ba21c3d49b78bb4447fe78e7b7f70.svg",
+      "title": "메뉴판 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a6cd20de8dde75b177ed89f69e04c8c8"
+    },
+    "1e9d64139b7a6e3fed8c9806ad53043f": {
+      "kind": "component",
+      "id": "stepper",
+      "ids": [
+        "component:stepper"
+      ],
+      "path": "/previews/1e9d64139b7a6e3fed8c9806ad53043f.svg",
+      "title": "단계 표시 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "50aeb3f5ff043d1a5ace0f71f33baa6b"
+    },
+    "1efb214e4e8ea2f316b45d5f5ba1bf08": {
+      "kind": "explore",
+      "id": "profile~theme_workspace",
+      "ids": [
+        "explore:profile~theme_workspace"
+      ],
+      "path": "/previews/1efb214e4e8ea2f316b45d5f5ba1bf08.svg",
+      "title": "프로필 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3bc79e66f7aaf7d063d2cf55aed0227a"
+    },
+    "1f56f2c0d9d3d207c7a14f0a1caf8ba1": {
+      "kind": "explore",
+      "id": "clinic-home",
+      "ids": [
+        "explore:clinic-home"
+      ],
+      "path": "/previews/1f56f2c0d9d3d207c7a14f0a1caf8ba1.svg",
+      "title": "병원 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f101e1a46093f57c33dffafc43953e44"
+    },
+    "1fb5146f714eab42bafb927912538477": {
+      "kind": "explore",
+      "id": "settings",
+      "ids": [
+        "explore:settings"
+      ],
+      "path": "/previews/1fb5146f714eab42bafb927912538477.svg",
+      "title": "설정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b5e22f88df0329f347f17046ab8f0469"
+    },
+    "1fd25b5f04aaad08b757677138a395c0": {
+      "kind": "component",
+      "id": "quote",
+      "ids": [
+        "component:quote"
+      ],
+      "path": "/previews/1fd25b5f04aaad08b757677138a395c0.svg",
+      "title": "인용·후기 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "012f3823f50848fbeb92747d1bcf4d04"
+    },
+    "2049f442e8a2d412563f314deea6bf28": {
+      "kind": "explore",
+      "id": "survey~theme_bank",
+      "ids": [
+        "explore:survey~theme_bank"
+      ],
+      "path": "/previews/2049f442e8a2d412563f314deea6bf28.svg",
+      "title": "설문 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a31a0a78ba3c88cbf85216000ab76c65"
+    },
+    "204ec9411c210b257db5cad10c9a6ce9": {
+      "kind": "explore",
+      "id": "travel-ocean",
+      "ids": [
+        "explore:travel-ocean"
+      ],
+      "path": "/previews/204ec9411c210b257db5cad10c9a6ce9.svg",
+      "title": "여행 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7b3dd6a21ed38d7571f0ac3019d935da"
+    },
+    "21215e8bb3aebe6e6086f9f0576ca71b": {
+      "kind": "explore",
+      "id": "music-player~theme_game",
+      "ids": [
+        "explore:music-player~theme_game"
+      ],
+      "path": "/previews/21215e8bb3aebe6e6086f9f0576ca71b.svg",
+      "title": "음악 플레이어 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b597883ad0f5e5c7118065b7c45904e3"
+    },
+    "21c9f403487b401d9c8c72b3f56c8ffa": {
+      "kind": "explore",
+      "id": "audit-log~theme_devtool",
+      "ids": [
+        "explore:audit-log~theme_devtool"
+      ],
+      "path": "/previews/21c9f403487b401d9c8c72b3f56c8ffa.svg",
+      "title": "감사 로그 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "6a8661b7f8885dee58f073b23cc5a82e"
+    },
+    "262d02507138aaa5118372187eda56f6": {
       "kind": "purpose-family",
-      "path": "/previews/purpose/purpose:table-business.svg",
-      "htmlPath": "/previews/purpose/purpose:table-business.html",
+      "id": "purpose:card.pricing",
+      "ids": [
+        "purpose-family:purpose:card.pricing"
+      ],
+      "path": "/previews/262d02507138aaa5118372187eda56f6.svg",
+      "title": "가격 카드 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "c5e2696f7d74a3c936817c7fe4557e4d"
+    },
+    "26643c620f2b7a70d2c541d986235be7": {
+      "kind": "purpose-family",
+      "id": "purpose:feedback.progress",
+      "ids": [
+        "purpose-family:purpose:feedback.progress"
+      ],
+      "path": "/previews/26643c620f2b7a70d2c541d986235be7.svg",
+      "title": "진행 안내 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "6c4af41dafadde97deaed1e009bcf2d5"
+    },
+    "26684587629d77219e4651931423165d": {
+      "kind": "purpose-family",
+      "id": "purpose:navigation.bottom",
+      "ids": [
+        "purpose-family:purpose:navigation.bottom"
+      ],
+      "path": "/previews/26684587629d77219e4651931423165d.svg",
+      "title": "모바일 하단 바 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "2831baa5da6821d8a8db67b915750d35"
+    },
+    "26c1b274c689ce66e16a5222661d41af": {
+      "kind": "explore",
+      "id": "onboarding-wizard",
+      "ids": [
+        "explore:onboarding-wizard"
+      ],
+      "path": "/previews/26c1b274c689ce66e16a5222661d41af.svg",
+      "title": "온보딩 단계 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0b0f86a4f92e67feac06a58df21e4a04"
+    },
+    "281b056be4c82f40ec752e7f9e8d87e1": {
+      "kind": "explore",
+      "id": "docs-reference",
+      "ids": [
+        "explore:docs-reference"
+      ],
+      "path": "/previews/281b056be4c82f40ec752e7f9e8d87e1.svg",
+      "title": "레퍼런스 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4d7cad88dc5e1d620c57d057e9a09bbf"
+    },
+    "28c4b4d1c6ccc947b67501d34fe76663": {
+      "kind": "explore",
+      "id": "contact~theme_trust",
+      "ids": [
+        "explore:contact~theme_trust"
+      ],
+      "path": "/previews/28c4b4d1c6ccc947b67501d34fe76663.svg",
+      "title": "문의하기 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "45e0ca3822f726e8ee147b6893ae22b0"
+    },
+    "2966eb2c9aa91c8d124289f39cc51087": {
+      "kind": "explore",
+      "id": "recipe-detail~theme_cafe",
+      "ids": [
+        "explore:recipe-detail~theme_cafe"
+      ],
+      "path": "/previews/2966eb2c9aa91c8d124289f39cc51087.svg",
+      "title": "레시피 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "2d77072a230277805c24e258b91b0d1e"
+    },
+    "29b9b833a8c42bfcf427480449a4f655": {
+      "kind": "explore",
+      "id": "menu-dining",
+      "ids": [
+        "explore:menu-dining"
+      ],
+      "path": "/previews/29b9b833a8c42bfcf427480449a4f655.svg",
+      "title": "메뉴판 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1e51b9d1d6f428299f13b631bf86865b"
+    },
+    "29d6e5269150ebc8c1f12e4441b2a026": {
+      "kind": "explore",
+      "id": "wedding-invite~theme_playful",
+      "ids": [
+        "explore:wedding-invite~theme_playful"
+      ],
+      "path": "/previews/29d6e5269150ebc8c1f12e4441b2a026.svg",
+      "title": "청첩장 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "38a804fe63db4a6af5f3f33622156358"
+    },
+    "2a1470ae1827b7fa2246ba9fbb70d83b": {
+      "kind": "explore",
+      "id": "agency-home",
+      "ids": [
+        "explore:agency-home"
+      ],
+      "path": "/previews/2a1470ae1827b7fa2246ba9fbb70d83b.svg",
+      "title": "에이전시 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0b1a717ec56b0b7aedc6e7f6ad4d4b80"
+    },
+    "2ae8c8ac893120a3a6fc1b1602eddd8e": {
+      "kind": "component",
+      "id": "tags",
+      "ids": [
+        "component:tags"
+      ],
+      "path": "/previews/2ae8c8ac893120a3a6fc1b1602eddd8e.svg",
+      "title": "태그 모음 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "2894632a70f24f73ff97970d3ef348e2"
+    },
+    "2b03cbf5e99d609b370e8a567e0c6b78": {
+      "kind": "explore",
+      "id": "product-listing",
+      "ids": [
+        "explore:product-listing"
+      ],
+      "path": "/previews/2b03cbf5e99d609b370e8a567e0c6b78.svg",
+      "title": "상품 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0a9b9adb35e054598b609b7a33647d34"
+    },
+    "2c02a6fa04699306c9227d1376457788": {
+      "kind": "component",
+      "id": "input-control",
+      "ids": [
+        "component:input-control"
+      ],
+      "path": "/previews/2c02a6fa04699306c9227d1376457788.svg",
+      "title": "Input 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b1f3ef530b3ce93d1e0a4fa87fd7e693"
+    },
+    "2d13deb086ceb0a5ea31f0a592f30e42": {
+      "kind": "component",
+      "id": "media",
+      "ids": [
+        "component:media"
+      ],
+      "path": "/previews/2d13deb086ceb0a5ea31f0a592f30e42.svg",
+      "title": "이미지 자리 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ca33a82a5e26865e4e06aa39a18c3686"
+    },
+    "2d7e30da2f8b0f530dc14db9038fd6c5": {
+      "kind": "purpose-family",
+      "id": "purpose:table.business",
+      "ids": [
+        "purpose-family:purpose:table.business"
+      ],
+      "path": "/previews/2d7e30da2f8b0f530dc14db9038fd6c5.svg",
       "title": "업무형 표 미리보기",
       "width": 480,
       "height": 360,
-      "hash": "bca45324498a26d3cf669590011a86f9",
-      "ok": true
+      "htmlHash": "4de1655a40f9a76f95a311076419d2db"
     },
-    "type:doc-essay": {
-      "id": "type-system:doc-essay",
-      "kind": "type-system",
-      "path": "/previews/typography/doc-essay.svg",
-      "htmlPath": "/previews/typography/doc-essay.html",
-      "title": "에세이 문서 샘플",
+    "2f55d93fcfee10aac952450beb64ebe6": {
+      "kind": "component",
+      "id": "pagination",
+      "ids": [
+        "component:pagination"
+      ],
+      "path": "/previews/2f55d93fcfee10aac952450beb64ebe6.svg",
+      "title": "페이지네이션 렌더 결과",
       "width": 1280,
       "height": 800,
-      "hash": "d5a8f65b116fe0df5b5c52f654cac645",
-      "ok": true
+      "htmlHash": "6f4edd2c2bfdf002bdfd55e46d065dfd"
     },
-    "type:doc-handbook": {
-      "id": "type-system:doc-handbook",
+    "2fcbf4e0d4f0c41e455e3e76a1f89c22": {
+      "kind": "explore",
+      "id": "inbox~theme_clarity",
+      "ids": [
+        "explore:inbox~theme_clarity"
+      ],
+      "path": "/previews/2fcbf4e0d4f0c41e455e3e76a1f89c22.svg",
+      "title": "메시지함 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "da83d66558566622d1885fbcf3228110"
+    },
+    "3067cb10fbd9e402cb118c04944b1f8a": {
+      "kind": "purpose-family",
+      "id": "purpose:navigation.topbar",
+      "ids": [
+        "purpose-family:purpose:navigation.topbar"
+      ],
+      "path": "/previews/3067cb10fbd9e402cb118c04944b1f8a.svg",
+      "title": "상단 메뉴 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "a4d59d3937f866518ac5e35bdb4a3857"
+    },
+    "30da33953a7a7028e401db58377fa676": {
+      "kind": "component",
+      "id": "modal-dialog",
+      "ids": [
+        "component:modal-dialog"
+      ],
+      "path": "/previews/30da33953a7a7028e401db58377fa676.svg",
+      "title": "Modal 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "106ffbde042f52d4544bd4a8ac62de43"
+    },
+    "324768a49625b3fd7df45375b2aaf512": {
+      "kind": "explore",
+      "id": "forgot-password~theme_hanji",
+      "ids": [
+        "explore:forgot-password~theme_hanji"
+      ],
+      "path": "/previews/324768a49625b3fd7df45375b2aaf512.svg",
+      "title": "비밀번호 재설정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f00522af04f1f3d3ff5c38487df30158"
+    },
+    "33bd1b13e42194ac2c039b234a79c2dc": {
+      "kind": "explore",
+      "id": "signup~theme_clinic",
+      "ids": [
+        "explore:signup~theme_clinic"
+      ],
+      "path": "/previews/33bd1b13e42194ac2c039b234a79c2dc.svg",
+      "title": "회원가입 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3cdb1679575cbee8055ffa636eaa8681"
+    },
+    "33f9e7400ded8ac1a967b714ad7e7c35": {
+      "kind": "explore",
+      "id": "game-launch~theme_neon",
+      "ids": [
+        "explore:game-launch~theme_neon"
+      ],
+      "path": "/previews/33f9e7400ded8ac1a967b714ad7e7c35.svg",
+      "title": "게임 출시 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "2173c47c9b744eccb25f083a76ac2d7c"
+    },
+    "3428a4df48ebecd032ca3f359b053013": {
+      "kind": "explore",
+      "id": "museum-home~theme_gallery",
+      "ids": [
+        "explore:museum-home~theme_gallery"
+      ],
+      "path": "/previews/3428a4df48ebecd032ca3f359b053013.svg",
+      "title": "박물관·재단 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c359c61de1b03a20c58dc188419d798d"
+    },
+    "34ccdb41b3038688fdc4e8fc9fcc6274": {
+      "kind": "component",
+      "id": "calendar",
+      "ids": [
+        "component:calendar"
+      ],
+      "path": "/previews/34ccdb41b3038688fdc4e8fc9fcc6274.svg",
+      "title": "월간 달력 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d1949589b034f8ee0709d5d6da3692e6"
+    },
+    "34ff9e112b5e2d4ca66620fdea3f7204": {
+      "kind": "explore",
+      "id": "wine-list~theme_commerce",
+      "ids": [
+        "explore:wine-list~theme_commerce"
+      ],
+      "path": "/previews/34ff9e112b5e2d4ca66620fdea3f7204.svg",
+      "title": "와인 리스트 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3307c1caf43e4c818f4639af6e79079e"
+    },
+    "3505922067c61903f375ec32bc2f02ad": {
+      "kind": "explore",
+      "id": "checkout~theme_stay",
+      "ids": [
+        "explore:checkout~theme_stay"
+      ],
+      "path": "/previews/3505922067c61903f375ec32bc2f02ad.svg",
+      "title": "결제 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f625c8ff324b3424be6e62d355e399df"
+    },
+    "367bb964ee35a93ad5ae386348170cd1": {
+      "kind": "explore",
+      "id": "admin-table~theme_enterprise",
+      "ids": [
+        "explore:admin-table~theme_enterprise"
+      ],
+      "path": "/previews/367bb964ee35a93ad5ae386348170cd1.svg",
+      "title": "관리자 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "22a0a8b9a00326fb37a6c6fb6cea3aee"
+    },
+    "36eabf3d8d3488fe16be89363e73e433": {
+      "kind": "explore",
+      "id": "contact~theme_bank",
+      "ids": [
+        "explore:contact~theme_bank"
+      ],
+      "path": "/previews/36eabf3d8d3488fe16be89363e73e433.svg",
+      "title": "문의하기 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "cfdd933f11085c9042961912c3119027"
+    },
+    "3769c132c80f876d37952a8fed0dace9": {
+      "kind": "explore",
+      "id": "billing~theme_workspace",
+      "ids": [
+        "explore:billing~theme_workspace"
+      ],
+      "path": "/previews/3769c132c80f876d37952a8fed0dace9.svg",
+      "title": "결제·구독 관리 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b773595b1fd0989e303a8cfc8c5cf0ff"
+    },
+    "3774915f685cc6e507fe51f8a23d7800": {
+      "kind": "component",
+      "id": "tabs-control",
+      "ids": [
+        "component:tabs-control"
+      ],
+      "path": "/previews/3774915f685cc6e507fe51f8a23d7800.svg",
+      "title": "Tabs 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8063ecbd7d8297292002a39857500bda"
+    },
+    "38084697cf88420131825e08bf4a3c77": {
+      "kind": "explore",
+      "id": "kids-class",
+      "ids": [
+        "explore:kids-class"
+      ],
+      "path": "/previews/38084697cf88420131825e08bf4a3c77.svg",
+      "title": "어린이 클래스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3bdf20cd66c59a01e8ca2d3732bb2f24"
+    },
+    "3872b700b93836a66c2e8e28ad0bc773": {
+      "kind": "explore",
+      "id": "status-page",
+      "ids": [
+        "explore:status-page"
+      ],
+      "path": "/previews/3872b700b93836a66c2e8e28ad0bc773.svg",
+      "title": "서비스 상태 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a6c0f373743b942b0f6d2e0dbe8b366e"
+    },
+    "3a5babf5bc638109a4ec75d904ab0e77": {
+      "kind": "explore",
+      "id": "inbox",
+      "ids": [
+        "explore:inbox"
+      ],
+      "path": "/previews/3a5babf5bc638109a4ec75d904ab0e77.svg",
+      "title": "메시지함 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "62757b0438bb21666a62d155a3f1af98"
+    },
+    "3af8a6dbee494a85302e06d51d89034d": {
+      "kind": "component",
+      "id": "timeline",
+      "ids": [
+        "component:timeline"
+      ],
+      "path": "/previews/3af8a6dbee494a85302e06d51d89034d.svg",
+      "title": "타임라인 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "dfae012dade1e19277ae733e28052db5"
+    },
+    "3afa98adb0c8ad0c94cafd19a9c6cb2b": {
+      "kind": "explore",
+      "id": "server-error~theme_manual",
+      "ids": [
+        "explore:server-error~theme_manual"
+      ],
+      "path": "/previews/3afa98adb0c8ad0c94cafd19a9c6cb2b.svg",
+      "title": "500 오류 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "edb16aa0f5bee25513bf710c2aee4e0f"
+    },
+    "3bf1f81d49ac645f5baadeae3e4c8bc6": {
+      "kind": "explore",
+      "id": "solar-landing",
+      "ids": [
+        "explore:solar-landing"
+      ],
+      "path": "/previews/3bf1f81d49ac645f5baadeae3e4c8bc6.svg",
+      "title": "에너지·태양광 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "917f6ac3de86ff300f428337c1aca85e"
+    },
+    "3c45111353fa5e5d43116efec8de39c3": {
+      "kind": "explore",
+      "id": "hanji-journey",
+      "ids": [
+        "explore:hanji-journey"
+      ],
+      "path": "/previews/3c45111353fa5e5d43116efec8de39c3.svg",
+      "title": "전통 문화 여행 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c77ec1678cc573ea8d919a2721f80d2d"
+    },
+    "3d7e0e76ab14f8329ccd1ab2dd34c921": {
+      "kind": "explore",
+      "id": "finance-overview~theme_bank~variant_private-bank",
+      "ids": [
+        "explore:finance-overview~theme_bank~variant_private-bank"
+      ],
+      "path": "/previews/3d7e0e76ab14f8329ccd1ab2dd34c921.svg",
+      "title": "재무 현황 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a8adcb8278fbf8ad72b8375ee149da9e"
+    },
+    "3eb265f7b4a2f074ffcd425415e47b9f": {
+      "kind": "explore",
+      "id": "checkout",
+      "ids": [
+        "explore:checkout"
+      ],
+      "path": "/previews/3eb265f7b4a2f074ffcd425415e47b9f.svg",
+      "title": "결제 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "faf2f03b4e63d5c7e833675bbe8425e9"
+    },
+    "3ec6a08e4c3a5a0fb6a9de95410f168b": {
+      "kind": "explore",
+      "id": "event-landing~theme_cafe",
+      "ids": [
+        "explore:event-landing~theme_cafe"
+      ],
+      "path": "/previews/3ec6a08e4c3a5a0fb6a9de95410f168b.svg",
+      "title": "행사 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0bdf7a0229f2ac99ea8a023fe0ae1035"
+    },
+    "40eb955232c708e5566ed07a23df208d": {
+      "kind": "explore",
+      "id": "changelog",
+      "ids": [
+        "explore:changelog"
+      ],
+      "path": "/previews/40eb955232c708e5566ed07a23df208d.svg",
+      "title": "변경 기록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3547d3a203bfc1a46ba7e327c906b220"
+    },
+    "42268c06c2ba03626489a600df38d3b7": {
+      "kind": "explore",
+      "id": "travel-ocean~theme_realty",
+      "ids": [
+        "explore:travel-ocean~theme_realty"
+      ],
+      "path": "/previews/42268c06c2ba03626489a600df38d3b7.svg",
+      "title": "여행 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "156b839e7b19f4f1f351cbef3e5f1037"
+    },
+    "445e8c5867356c8541c0490563c41398": {
+      "kind": "explore",
+      "id": "server-error",
+      "ids": [
+        "explore:server-error"
+      ],
+      "path": "/previews/445e8c5867356c8541c0490563c41398.svg",
+      "title": "500 오류 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "fcf3f0887d256e9da8e5319f4bc1a353"
+    },
+    "448bb9a22111998cc0d4a230db058ba3": {
+      "kind": "explore",
+      "id": "article",
+      "ids": [
+        "explore:article"
+      ],
+      "path": "/previews/448bb9a22111998cc0d4a230db058ba3.svg",
+      "title": "읽는 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "170bc91353ea819d2431b89d716504c3"
+    },
+    "4592bd4e2fcf68d1839b658f278bcb19": {
+      "kind": "component",
+      "id": "breadcrumb",
+      "ids": [
+        "component:breadcrumb"
+      ],
+      "path": "/previews/4592bd4e2fcf68d1839b658f278bcb19.svg",
+      "title": "브레드크럼 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "bd2a9ba996ed72195af261fda568afed"
+    },
+    "45d5d3db7df764b2fba84b8c517b612d": {
+      "kind": "explore",
+      "id": "event-schedule~theme_stay",
+      "ids": [
+        "explore:event-schedule~theme_stay"
+      ],
+      "path": "/previews/45d5d3db7df764b2fba84b8c517b612d.svg",
+      "title": "행사 일정표 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "506e0226eaa0ce5ba556aaa909b21bc7"
+    },
+    "477db55193f277f733585ce3d2199699": {
+      "kind": "explore",
+      "id": "wine-list~theme_cafe",
+      "ids": [
+        "explore:wine-list~theme_cafe"
+      ],
+      "path": "/previews/477db55193f277f733585ce3d2199699.svg",
+      "title": "와인 리스트 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "90359d17094b4a797ee327d1a0433377"
+    },
+    "478fd22e3dcbc0f230cc11de67af40c7": {
+      "kind": "explore",
+      "id": "portfolio-grid",
+      "ids": [
+        "explore:portfolio-grid"
+      ],
+      "path": "/previews/478fd22e3dcbc0f230cc11de67af40c7.svg",
+      "title": "포트폴리오 모음 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f29a94519bac137fe3b4301d5aa8b94d"
+    },
+    "4828a4b9bf451eb436bf74d4acd16c5a": {
+      "kind": "explore",
+      "id": "b2b-solution",
+      "ids": [
+        "explore:b2b-solution"
+      ],
+      "path": "/previews/4828a4b9bf451eb436bf74d4acd16c5a.svg",
+      "title": "기업용 솔루션 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "617ca201d1b8aa27a4f64b584dd116fb"
+    },
+    "4b3d3dcc57f5b2505c5d8dc0cedbe8a0": {
+      "kind": "explore",
+      "id": "case-study~theme_solar",
+      "ids": [
+        "explore:case-study~theme_solar"
+      ],
+      "path": "/previews/4b3d3dcc57f5b2505c5d8dc0cedbe8a0.svg",
+      "title": "사례 연구 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e3ba938de705a852cb729ea938796557"
+    },
+    "4b8703d0331c8de436c64c5a925c556c": {
+      "kind": "explore",
+      "id": "devtool-landing~theme_manual",
+      "ids": [
+        "explore:devtool-landing~theme_manual"
+      ],
+      "path": "/previews/4b8703d0331c8de436c64c5a925c556c.svg",
+      "title": "개발자 도구 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f498fe6b9c228f7daa0647ad3d933328"
+    },
+    "4b998153fc23807eab854a848b760641": {
+      "kind": "explore",
+      "id": "changelog~theme_devtool",
+      "ids": [
+        "explore:changelog~theme_devtool"
+      ],
+      "path": "/previews/4b998153fc23807eab854a848b760641.svg",
+      "title": "변경 기록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "eca0c5b720fcd63e8c33e4b5385cab83"
+    },
+    "4ce80a3fef4b415239ff52d8c97e706a": {
+      "kind": "component",
+      "id": "gallery",
+      "ids": [
+        "component:gallery"
+      ],
+      "path": "/previews/4ce80a3fef4b415239ff52d8c97e706a.svg",
+      "title": "갤러리 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b30a538a9cb1b715be1f5432adf0e7f9"
+    },
+    "4cf16fea460d828b86fa8b6fd9684a5c": {
+      "kind": "explore",
+      "id": "product-listing~theme_beauty",
+      "ids": [
+        "explore:product-listing~theme_beauty"
+      ],
+      "path": "/previews/4cf16fea460d828b86fa8b6fd9684a5c.svg",
+      "title": "상품 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ff9c3530fcd34292a2d2186ee0c21b93"
+    },
+    "4e007f1060766aaada474c2401e360cd": {
+      "kind": "explore",
+      "id": "realty-detail",
+      "ids": [
+        "explore:realty-detail"
+      ],
+      "path": "/previews/4e007f1060766aaada474c2401e360cd.svg",
+      "title": "부동산 매물 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "36703b4eb86509ba621fffed9eea3752"
+    },
+    "4e0b1e520190f2e9675dd26e8b2dccde": {
+      "kind": "explore",
+      "id": "blog-index~theme_devtool",
+      "ids": [
+        "explore:blog-index~theme_devtool"
+      ],
+      "path": "/previews/4e0b1e520190f2e9675dd26e8b2dccde.svg",
+      "title": "블로그 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "091fe139498b8ff39cdb5751906bacab"
+    },
+    "4e7b3d756cb265957468fccba40a6b61": {
+      "kind": "explore",
+      "id": "team-chat~theme_enterprise",
+      "ids": [
+        "explore:team-chat~theme_enterprise"
+      ],
+      "path": "/previews/4e7b3d756cb265957468fccba40a6b61.svg",
+      "title": "팀 대화 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "737bc16ffc6b3ddd125475192a237220"
+    },
+    "4ea17156bbc1c7cdb473591ab12d6503": {
+      "kind": "purpose-family",
+      "id": "purpose:card.gallery",
+      "ids": [
+        "purpose-family:purpose:card.gallery"
+      ],
+      "path": "/previews/4ea17156bbc1c7cdb473591ab12d6503.svg",
+      "title": "갤러리 카드 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "bb2d8c74b6f71a38a770b192de0421d7"
+    },
+    "4eaf1c6895bf0ca80f30212f5f120c73": {
+      "kind": "explore",
+      "id": "incident-report~theme_manual",
+      "ids": [
+        "explore:incident-report~theme_manual"
+      ],
+      "path": "/previews/4eaf1c6895bf0ca80f30212f5f120c73.svg",
+      "title": "장애 회고 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "82b09ffffee8d88efeaa098514bda770"
+    },
+    "4f2d0f7f5fe4891e3674862f95501c36": {
+      "kind": "purpose-family",
+      "id": "purpose:button.secondary",
+      "ids": [
+        "purpose-family:purpose:button.secondary"
+      ],
+      "path": "/previews/4f2d0f7f5fe4891e3674862f95501c36.svg",
+      "title": "보조 버튼 묶음 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "e9afaa105ffd35b6b377520f29a0101e"
+    },
+    "4f94a1d8326361acb60d1206741cd02d": {
       "kind": "type-system",
-      "path": "/previews/typography/doc-handbook.svg",
-      "htmlPath": "/previews/typography/doc-handbook.html",
+      "id": "type-system:doc-handbook",
+      "ids": [
+        "type-system:type-system:doc-handbook"
+      ],
+      "path": "/previews/4f94a1d8326361acb60d1206741cd02d.svg",
       "title": "핸드북 문서 샘플",
       "width": 1280,
       "height": 800,
-      "hash": "d5a8f65b116fe0df5b5c52f654cac645",
-      "ok": true
+      "htmlHash": "1b045c361e5b61cfc81a44a891bd69bc"
     },
-    "type:doc-newsroom": {
-      "id": "type-system:doc-newsroom",
+    "4f963f6c1307b33c2776894dd2e127f7": {
+      "kind": "explore",
+      "id": "cafe-home~theme_dining",
+      "ids": [
+        "explore:cafe-home~theme_dining"
+      ],
+      "path": "/previews/4f963f6c1307b33c2776894dd2e127f7.svg",
+      "title": "카페 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "39800cbb750703aaecec58464c278b28"
+    },
+    "50a3bed624b37c062b0c276668379611": {
+      "kind": "explore",
+      "id": "dashboard-overview",
+      "ids": [
+        "explore:dashboard-overview"
+      ],
+      "path": "/previews/50a3bed624b37c062b0c276668379611.svg",
+      "title": "프로젝트 현황 대시보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "42843d1ded28f4f8923d50281f74c625"
+    },
+    "521114cfc9273661fa5d3090d12426bf": {
+      "kind": "explore",
+      "id": "dashboard-overview~theme_enterprise",
+      "ids": [
+        "explore:dashboard-overview~theme_enterprise"
+      ],
+      "path": "/previews/521114cfc9273661fa5d3090d12426bf.svg",
+      "title": "프로젝트 현황 대시보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "34b6911da44468a831b653300e897a42"
+    },
+    "521f8f68abe369bdc4b9428e47cf696b": {
+      "kind": "explore",
+      "id": "changelog~theme_trust",
+      "ids": [
+        "explore:changelog~theme_trust"
+      ],
+      "path": "/previews/521f8f68abe369bdc4b9428e47cf696b.svg",
+      "title": "변경 기록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1a582556343bbb86047e5e201863f140"
+    },
+    "52aa9c2d6b7eb3f223ea8cbf9e537504": {
+      "kind": "component",
+      "id": "filter-bar",
+      "ids": [
+        "component:filter-bar"
+      ],
+      "path": "/previews/52aa9c2d6b7eb3f223ea8cbf9e537504.svg",
+      "title": "검색·필터 바 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a0d7baf74d95c510c06fcfe09b1315b2"
+    },
+    "532c9de727f60375a1974829e5062a59": {
+      "kind": "explore",
+      "id": "case-study",
+      "ids": [
+        "explore:case-study"
+      ],
+      "path": "/previews/532c9de727f60375a1974829e5062a59.svg",
+      "title": "사례 연구 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8327be9e6bc800d72313f8aa1557d47b"
+    },
+    "53528fd8699e78f04f14f5117859a34a": {
+      "kind": "explore",
+      "id": "help-center~theme_bank",
+      "ids": [
+        "explore:help-center~theme_bank"
+      ],
+      "path": "/previews/53528fd8699e78f04f14f5117859a34a.svg",
+      "title": "도움말 센터 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e2b5e5dc356835083ef1bb3b4094e08a"
+    },
+    "54ce1b06d9fa73bb3ff5a34d79fd4c40": {
+      "kind": "explore",
+      "id": "luxury-brand~theme_swiss",
+      "ids": [
+        "explore:luxury-brand~theme_swiss"
+      ],
+      "path": "/previews/54ce1b06d9fa73bb3ff5a34d79fd4c40.svg",
+      "title": "럭셔리 브랜드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a4873d1258cfea65bf6826e31e710bb6"
+    },
+    "5550618abbdac4242555e6558725ffa2": {
+      "kind": "explore",
+      "id": "not-found~theme_clarity",
+      "ids": [
+        "explore:not-found~theme_clarity"
+      ],
+      "path": "/previews/5550618abbdac4242555e6558725ffa2.svg",
+      "title": "404 페이지 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "752afbd381fe99413d53a6b37caf0f7a"
+    },
+    "5587db3602e21e692c62358d5602c5f0": {
+      "kind": "explore",
+      "id": "blog-index~theme_trust",
+      "ids": [
+        "explore:blog-index~theme_trust"
+      ],
+      "path": "/previews/5587db3602e21e692c62358d5602c5f0.svg",
+      "title": "블로그 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "51be8f53279eddb79d7848c80309beac"
+    },
+    "560546319f8f385b55294c19e3e8351d": {
+      "kind": "explore",
+      "id": "blog-post~theme_cafe",
+      "ids": [
+        "explore:blog-post~theme_cafe"
+      ],
+      "path": "/previews/560546319f8f385b55294c19e3e8351d.svg",
+      "title": "블로그 글 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "2d024f5ac970f78a671cca1acbce2fe6"
+    },
+    "56ba3f4449b9cac434a57ccd298a0c86": {
+      "kind": "explore",
+      "id": "campaign-donate",
+      "ids": [
+        "explore:campaign-donate"
+      ],
+      "path": "/previews/56ba3f4449b9cac434a57ccd298a0c86.svg",
+      "title": "캠페인·후원 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "582a3b10d45c743f5a0dbe390b65bac9"
+    },
+    "56dd4d84d9ab424b9414cec67741ad63": {
+      "kind": "explore",
+      "id": "onboarding-wizard~theme_trust",
+      "ids": [
+        "explore:onboarding-wizard~theme_trust"
+      ],
+      "path": "/previews/56dd4d84d9ab424b9414cec67741ad63.svg",
+      "title": "온보딩 단계 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f5ac2c43ef4d12ef4f99229e99a4bebe"
+    },
+    "59fcd544e450b3067f734e3f3aa80f0a": {
+      "kind": "explore",
+      "id": "settings~theme_clarity",
+      "ids": [
+        "explore:settings~theme_clarity"
+      ],
+      "path": "/previews/59fcd544e450b3067f734e3f3aa80f0a.svg",
+      "title": "설정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0608fe22d13ca4f45b615f0213f31142"
+    },
+    "5b4d7a00d431ed2b0c2a9805d8fdc934": {
+      "kind": "explore",
+      "id": "job-board~theme_ledger",
+      "ids": [
+        "explore:job-board~theme_ledger"
+      ],
+      "path": "/previews/5b4d7a00d431ed2b0c2a9805d8fdc934.svg",
+      "title": "채용 공고 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "91e57c28497e09da458ae48b4ace8c67"
+    },
+    "5b562c442e7a011ff45a7e48a8648b42": {
+      "kind": "explore",
+      "id": "offline~theme_hub",
+      "ids": [
+        "explore:offline~theme_hub"
+      ],
+      "path": "/previews/5b562c442e7a011ff45a7e48a8648b42.svg",
+      "title": "오프라인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "670021b31ed9cc19b996e5c44843d3ff"
+    },
+    "5ba8093e0da8fc19f25881cdefbbafc3": {
+      "kind": "explore",
+      "id": "profile~theme_clarity",
+      "ids": [
+        "explore:profile~theme_clarity"
+      ],
+      "path": "/previews/5ba8093e0da8fc19f25881cdefbbafc3.svg",
+      "title": "프로필 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0bf040c61c24970baa4b793a87f9446d"
+    },
+    "5bf22466b6600bb01a68ac163c20ea23": {
+      "kind": "explore",
+      "id": "support-queue~theme_enterprise",
+      "ids": [
+        "explore:support-queue~theme_enterprise"
+      ],
+      "path": "/previews/5bf22466b6600bb01a68ac163c20ea23.svg",
+      "title": "고객 문의 대기열 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d77e90c08836aeefe4518ebd2c744703"
+    },
+    "5c7328196032fb40026b05619c67ce84": {
+      "kind": "explore",
+      "id": "blog-index",
+      "ids": [
+        "explore:blog-index"
+      ],
+      "path": "/previews/5c7328196032fb40026b05619c67ce84.svg",
+      "title": "블로그 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "54de7bf4e5cd2c5ffc6363f3660d2731"
+    },
+    "5ca2d474763c1fdd6f337a2b56b9cebb": {
+      "kind": "explore",
+      "id": "settings~theme_trust",
+      "ids": [
+        "explore:settings~theme_trust"
+      ],
+      "path": "/previews/5ca2d474763c1fdd6f337a2b56b9cebb.svg",
+      "title": "설정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9c1df48f03e61132924b74475d021acd"
+    },
+    "5e13864f04cb1acec272022561a93e31": {
+      "kind": "explore",
+      "id": "learning-course",
+      "ids": [
+        "explore:learning-course"
+      ],
+      "path": "/previews/5e13864f04cb1acec272022561a93e31.svg",
+      "title": "강의 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "913e90fc32a3da9909a0eb101a94bbb0"
+    },
+    "5e65f16db857318adddb80ecd2be5432": {
+      "kind": "purpose-family",
+      "id": "purpose:feedback.result",
+      "ids": [
+        "purpose-family:purpose:feedback.result"
+      ],
+      "path": "/previews/5e65f16db857318adddb80ecd2be5432.svg",
+      "title": "결과 안내 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "cfe42eac4d4b07e2fffa71f3be4908ca"
+    },
+    "60bec733fcf407420a027ed9c30088ab": {
+      "kind": "component",
+      "id": "skeleton",
+      "ids": [
+        "component:skeleton"
+      ],
+      "path": "/previews/60bec733fcf407420a027ed9c30088ab.svg",
+      "title": "스켈레톤 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "88a9ef085cc49fe380162782b115d517"
+    },
+    "620a948d57b803de447a9fcbe51c0e49": {
+      "kind": "explore",
+      "id": "product-landing",
+      "ids": [
+        "explore:product-landing"
+      ],
+      "path": "/previews/620a948d57b803de447a9fcbe51c0e49.svg",
+      "title": "제품 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "30b6d264aad25af13a21fc228ba11432"
+    },
+    "629e9ac7df24298e8f77c503924fe3a1": {
+      "kind": "explore",
+      "id": "contact",
+      "ids": [
+        "explore:contact"
+      ],
+      "path": "/previews/629e9ac7df24298e8f77c503924fe3a1.svg",
+      "title": "문의하기 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f7834de3cc6007a22eb5481be9e899f3"
+    },
+    "62a8ff866aa355e6ffd78746a0ca51eb": {
+      "kind": "explore",
+      "id": "server-error~theme_devtool",
+      "ids": [
+        "explore:server-error~theme_devtool"
+      ],
+      "path": "/previews/62a8ff866aa355e6ffd78746a0ca51eb.svg",
+      "title": "500 오류 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "19af070c7ad92be23bb20d090a231534"
+    },
+    "6378baf3866a1ee0a58097b4c17da158": {
+      "kind": "platform",
+      "id": "editorial-clay",
+      "ids": [
+        "platform:editorial-clay"
+      ],
+      "path": "/previews/6378baf3866a1ee0a58097b4c17da158.svg",
+      "title": "따뜻한 에디토리얼 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "759304e6e1585f23ebe841f946b6d37f"
+    },
+    "63d9c4b763ab20549c480f3c8eb5f9a5": {
+      "kind": "component",
+      "id": "tabs",
+      "ids": [
+        "component:tabs"
+      ],
+      "path": "/previews/63d9c4b763ab20549c480f3c8eb5f9a5.svg",
+      "title": "탭 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3ac7ce712d5056261225044d4c96bc3c"
+    },
+    "6403d31f27ec12290686a3980fc7a38a": {
+      "kind": "explore",
+      "id": "inbox~theme_workspace",
+      "ids": [
+        "explore:inbox~theme_workspace"
+      ],
+      "path": "/previews/6403d31f27ec12290686a3980fc7a38a.svg",
+      "title": "메시지함 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "586f118f7c34f667462ccbf6b7e6e507"
+    },
+    "64de1e0ee1c3138131b237bf54a8358c": {
+      "kind": "explore",
+      "id": "article~theme_trust",
+      "ids": [
+        "explore:article~theme_trust"
+      ],
+      "path": "/previews/64de1e0ee1c3138131b237bf54a8358c.svg",
+      "title": "읽는 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c0f9bf4aa2a02b9e6598f96074d76219"
+    },
+    "652e10bf5cd38b38ee2b303fc8f679bd": {
+      "kind": "component",
+      "id": "team",
+      "ids": [
+        "component:team"
+      ],
+      "path": "/previews/652e10bf5cd38b38ee2b303fc8f679bd.svg",
+      "title": "팀 소개 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "6b1341fe124cc1b4ac1ffd427d4291aa"
+    },
+    "65ebaf59bcf6cb060ab25181c0c52b28": {
+      "kind": "explore",
+      "id": "research-paper~theme_learning",
+      "ids": [
+        "explore:research-paper~theme_learning"
+      ],
+      "path": "/previews/65ebaf59bcf6cb060ab25181c0c52b28.svg",
+      "title": "연구 논문 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "772aa5a07a7734d431fe55dc3b4a613b"
+    },
+    "65ebe905e86c4bb433a9ec05a2eb8da8": {
+      "kind": "purpose-family",
+      "id": "purpose:card.article",
+      "ids": [
+        "purpose-family:purpose:card.article"
+      ],
+      "path": "/previews/65ebe905e86c4bb433a9ec05a2eb8da8.svg",
+      "title": "기사 카드 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "2ac8916f67da46ce025589beb32dc22d"
+    },
+    "66eb039c56c6836bb4f61cc0245ea17b": {
+      "kind": "explore",
+      "id": "offline~theme_clarity",
+      "ids": [
+        "explore:offline~theme_clarity"
+      ],
+      "path": "/previews/66eb039c56c6836bb4f61cc0245ea17b.svg",
+      "title": "오프라인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e560e6b67a7a7236c58a44ed63774926"
+    },
+    "66f0428322f353b6d28a16f69236901b": {
+      "kind": "explore",
+      "id": "team-directory~theme_enterprise",
+      "ids": [
+        "explore:team-directory~theme_enterprise"
+      ],
+      "path": "/previews/66f0428322f353b6d28a16f69236901b.svg",
+      "title": "구성원 디렉터리 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "de504cca19d4ad33c425613282a17c30"
+    },
+    "683d3f871b0b65aa5a0f6cdb2a17268e": {
+      "kind": "explore",
+      "id": "learning-course~theme_academic",
+      "ids": [
+        "explore:learning-course~theme_academic"
+      ],
+      "path": "/previews/683d3f871b0b65aa5a0f6cdb2a17268e.svg",
+      "title": "강의 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f4f76fb0f3e65c0e960ed59d248a1cbb"
+    },
+    "68dcb39468460518554cc8815a8aa2a7": {
+      "kind": "platform",
+      "id": "dash-forest",
+      "ids": [
+        "platform:dash-forest"
+      ],
+      "path": "/previews/68dcb39468460518554cc8815a8aa2a7.svg",
+      "title": "데이터 밀도가 높은 운영 화면 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "73a7e73fd8b1c22663455b79e3e273e1"
+    },
+    "69168b7ba165ae2f987521c968028299": {
+      "kind": "explore",
+      "id": "cafe-home",
+      "ids": [
+        "explore:cafe-home"
+      ],
+      "path": "/previews/69168b7ba165ae2f987521c968028299.svg",
+      "title": "카페 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "abcef18727f256c39f858c05fd89e307"
+    },
+    "6964996252cd87486dc28999960b1076": {
+      "kind": "explore",
+      "id": "product-detail",
+      "ids": [
+        "explore:product-detail"
+      ],
+      "path": "/previews/6964996252cd87486dc28999960b1076.svg",
+      "title": "상품 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "623adc6f92a757fdfc570a463dbd9b01"
+    },
+    "697bb14c3777e86258d04e8946a501e7": {
+      "kind": "component",
+      "id": "split",
+      "ids": [
+        "component:split"
+      ],
+      "path": "/previews/697bb14c3777e86258d04e8946a501e7.svg",
+      "title": "2분할 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "dbdbd566125c5adbd6957d445cd3d1a5"
+    },
+    "69cf81672388945d7bd36222a48a2439": {
+      "kind": "component",
+      "id": "pricing",
+      "ids": [
+        "component:pricing"
+      ],
+      "path": "/previews/69cf81672388945d7bd36222a48a2439.svg",
+      "title": "요금제 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7b01ec8bb5462293568a3344d0b55264"
+    },
+    "6a3188fe0e209e4891be9672f527e7e3": {
+      "kind": "explore",
+      "id": "fitness-landing~theme_cloud",
+      "ids": [
+        "explore:fitness-landing~theme_cloud"
+      ],
+      "path": "/previews/6a3188fe0e209e4891be9672f527e7e3.svg",
+      "title": "피트니스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "22cb8603e1024fe3bd3a70872b1183b0"
+    },
+    "6aa3d2beeb95672e8b09547366d9c489": {
+      "kind": "explore",
+      "id": "team-directory",
+      "ids": [
+        "explore:team-directory"
+      ],
+      "path": "/previews/6aa3d2beeb95672e8b09547366d9c489.svg",
+      "title": "구성원 디렉터리 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ea0033e7d85bf52a43128f8f7f56bb7e"
+    },
+    "6aac0ee539085d21ecc904ad32f175b8": {
+      "kind": "component",
+      "id": "cta",
+      "ids": [
+        "component:cta"
+      ],
+      "path": "/previews/6aac0ee539085d21ecc904ad32f175b8.svg",
+      "title": "행동 유도 띠 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "02410ca20f0c8e3b8f94c37d432d0252"
+    },
+    "6af4b452ae75bbe8ca372e39ddd0b829": {
+      "kind": "component",
+      "id": "table",
+      "ids": [
+        "component:table"
+      ],
+      "path": "/previews/6af4b452ae75bbe8ca372e39ddd0b829.svg",
+      "title": "표 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c29493ffc1c6eaa414bbb2a9ac935ed5"
+    },
+    "6b616e6b5c2d0c11e80f71ffc731a061": {
+      "kind": "platform",
+      "id": "dash-slate",
+      "ids": [
+        "platform:dash-slate"
+      ],
+      "path": "/previews/6b616e6b5c2d0c11e80f71ffc731a061.svg",
+      "title": "고대비 업무 화면 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f8a2053a4074e93f1e83fde649f31798"
+    },
+    "6c7b901182a0ef9b736975ccdf1d29d0": {
+      "kind": "explore",
+      "id": "team-chat",
+      "ids": [
+        "explore:team-chat"
+      ],
+      "path": "/previews/6c7b901182a0ef9b736975ccdf1d29d0.svg",
+      "title": "팀 대화 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "982b4c60e573c4586bf211b5eeec0d79"
+    },
+    "6d64569d5f94fb326a5040b66a9193f1": {
+      "kind": "platform",
+      "id": "saas-dusk",
+      "ids": [
+        "platform:saas-dusk"
+      ],
+      "path": "/previews/6d64569d5f94fb326a5040b66a9193f1.svg",
+      "title": "어두운 프리미엄 SaaS 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a7d932ce65c52d750ac9503b9865c945"
+    },
+    "7107271b08574c1e9ce4310c32dee881": {
+      "kind": "explore",
+      "id": "not-found",
+      "ids": [
+        "explore:not-found"
+      ],
+      "path": "/previews/7107271b08574c1e9ce4310c32dee881.svg",
+      "title": "404 페이지 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "cacfdeee6d63a69da7ea4cd86250901d"
+    },
+    "71fdba392ec9cba4bb38c5d988bd71f1": {
+      "kind": "explore",
+      "id": "job-detail~theme_civic",
+      "ids": [
+        "explore:job-detail~theme_civic"
+      ],
+      "path": "/previews/71fdba392ec9cba4bb38c5d988bd71f1.svg",
+      "title": "채용 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "be46ddab95ba6dbf7d27dfe204cb2a99"
+    },
+    "71ffc8c13704670107cd59e47a29e125": {
+      "kind": "explore",
+      "id": "portfolio-grid~theme_heritage",
+      "ids": [
+        "explore:portfolio-grid~theme_heritage"
+      ],
+      "path": "/previews/71ffc8c13704670107cd59e47a29e125.svg",
+      "title": "포트폴리오 모음 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c531ecd8b2d9b7691bccc1e853b83e7a"
+    },
+    "734ca3551db8134bcbe20d545e622040": {
+      "kind": "explore",
+      "id": "kids-class~theme_learning",
+      "ids": [
+        "explore:kids-class~theme_learning"
+      ],
+      "path": "/previews/734ca3551db8134bcbe20d545e622040.svg",
+      "title": "어린이 클래스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d05dfb2bc6f61aae31793ca6dbf2463f"
+    },
+    "736e42aa7ff0a5727839a3d483117c5d": {
+      "kind": "explore",
+      "id": "blog-post~theme_trust",
+      "ids": [
+        "explore:blog-post~theme_trust"
+      ],
+      "path": "/previews/736e42aa7ff0a5727839a3d483117c5d.svg",
+      "title": "블로그 글 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "973b97b1974f3887a8f6325a05e6d48d"
+    },
+    "74038a73656716b8fdc716add6550cea": {
+      "kind": "explore",
+      "id": "clinic-home~theme_cloud",
+      "ids": [
+        "explore:clinic-home~theme_cloud"
+      ],
+      "path": "/previews/74038a73656716b8fdc716add6550cea.svg",
+      "title": "병원 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "33fdcdf0c78b428aa4ffb197c9971c79"
+    },
+    "753bf321d9de6b9618c11905d55ccd2f": {
+      "kind": "component",
+      "id": "kanban",
+      "ids": [
+        "component:kanban"
+      ],
+      "path": "/previews/753bf321d9de6b9618c11905d55ccd2f.svg",
+      "title": "칸반 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5aac03b8300d9ed4830c28976b58239a"
+    },
+    "77b55b2df0dd75bb5b5db068c4862d7f": {
+      "kind": "explore",
+      "id": "pricing-page~theme_trust",
+      "ids": [
+        "explore:pricing-page~theme_trust"
+      ],
+      "path": "/previews/77b55b2df0dd75bb5b5db068c4862d7f.svg",
+      "title": "요금 비교 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "cf685d40d30bc02167a372ea3920d85a"
+    },
+    "797bbdb567a457759009c0007d450bdc": {
+      "kind": "explore",
+      "id": "tutorial~theme_learning",
+      "ids": [
+        "explore:tutorial~theme_learning"
+      ],
+      "path": "/previews/797bbdb567a457759009c0007d450bdc.svg",
+      "title": "튜토리얼 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "54db421a7b70a684a6a6c468c30db811"
+    },
+    "7a4562094cf5f187de718216ec51a1fe": {
+      "kind": "component",
+      "id": "select-control",
+      "ids": [
+        "component:select-control"
+      ],
+      "path": "/previews/7a4562094cf5f187de718216ec51a1fe.svg",
+      "title": "선택 상자 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "38c11559d038f1ccc1c7ca08711030b4"
+    },
+    "7a8eac1eaf589341cfa18abfb4344ef4": {
+      "kind": "component",
+      "id": "tooltip",
+      "ids": [
+        "component:tooltip"
+      ],
+      "path": "/previews/7a8eac1eaf589341cfa18abfb4344ef4.svg",
+      "title": "Tooltip 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3bdac5820be41d9032cf7f72be51d36c"
+    },
+    "7aa54ed5bdafb3bfa03aafb6eec428ab": {
+      "kind": "purpose-family",
+      "id": "purpose:card.product",
+      "ids": [
+        "purpose-family:purpose:card.product"
+      ],
+      "path": "/previews/7aa54ed5bdafb3bfa03aafb6eec428ab.svg",
+      "title": "상품 카드 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "51d624c055e09ea1aa02770f2477f402"
+    },
+    "7b2a4bbeb49bc504fa406bc9f41350f7": {
+      "kind": "explore",
+      "id": "stay-detail~theme_realty",
+      "ids": [
+        "explore:stay-detail~theme_realty"
+      ],
+      "path": "/previews/7b2a4bbeb49bc504fa406bc9f41350f7.svg",
+      "title": "숙소 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "6f96d2dae769b0d9d5563e852c0c7ba7"
+    },
+    "7c01317ccef3a73c572673875a6bbfbf": {
+      "kind": "explore",
+      "id": "saas-landing~palette_pearl~mode_dark~hero_product",
+      "ids": [
+        "explore:saas-landing~palette_pearl~mode_dark~hero_product"
+      ],
+      "path": "/previews/7c01317ccef3a73c572673875a6bbfbf.svg",
+      "title": "SaaS 서비스 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e64da545e28d604c6fff1f1d40748aa2"
+    },
+    "7ce79232961b24176affcc407eb207bd": {
+      "kind": "explore",
+      "id": "admin-table",
+      "ids": [
+        "explore:admin-table"
+      ],
+      "path": "/previews/7ce79232961b24176affcc407eb207bd.svg",
+      "title": "관리자 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e3cce0830f91a3aea6181a592e2b32fa"
+    },
+    "7e72235eb226d14aa8d3b728b69e2cf1": {
+      "kind": "component",
+      "id": "aside",
+      "ids": [
+        "component:aside"
+      ],
+      "path": "/previews/7e72235eb226d14aa8d3b728b69e2cf1.svg",
+      "title": "본문+보조 영역 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "38f8fa070edd6d94d9a0f8027dcfb1a1"
+    },
+    "7e8cace8458bef4521fe1d7eeb40fdeb": {
+      "kind": "explore",
+      "id": "docs-reference~theme_devtool",
+      "ids": [
+        "explore:docs-reference~theme_devtool"
+      ],
+      "path": "/previews/7e8cace8458bef4521fe1d7eeb40fdeb.svg",
+      "title": "레퍼런스 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "414eff187b67c3ded5366fd1edaedab0"
+    },
+    "7ecd5acfac1fea7940be31338c0b0b06": {
+      "kind": "component",
+      "id": "data-table",
+      "ids": [
+        "component:data-table"
+      ],
+      "path": "/previews/7ecd5acfac1fea7940be31338c0b0b06.svg",
+      "title": "데이터 표 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "46e5181bbd03d8c0e2069a2638bc2675"
+    },
+    "7f94f5d55fb3f7ba157b13491e336043": {
+      "kind": "platform",
+      "id": "commerce-vivid",
+      "ids": [
+        "platform:commerce-vivid"
+      ],
+      "path": "/previews/7f94f5d55fb3f7ba157b13491e336043.svg",
+      "title": "선명한 커머스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "cc20392f696032a0427a15eae7c19d0c"
+    },
+    "7face8ae3e81be6401f7c8e4d0fff783": {
+      "kind": "component",
+      "id": "divider",
+      "ids": [
+        "component:divider"
+      ],
+      "path": "/previews/7face8ae3e81be6401f7c8e4d0fff783.svg",
+      "title": "구분선 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "fb4cdec2c3386f0b222f546816697a5e"
+    },
+    "80066e4dc80189341023e3c85c829f86": {
+      "kind": "explore",
+      "id": "api-reference~theme_manual",
+      "ids": [
+        "explore:api-reference~theme_manual"
+      ],
+      "path": "/previews/80066e4dc80189341023e3c85c829f86.svg",
+      "title": "API 레퍼런스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "55f6bebf7d2a4162d0a5d73ef0f43f76"
+    },
+    "8080906f331628228717a74073ab1670": {
+      "kind": "explore",
+      "id": "about-team",
+      "ids": [
+        "explore:about-team"
+      ],
+      "path": "/previews/8080906f331628228717a74073ab1670.svg",
+      "title": "팀 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "46dc5253a2d70810ba14493ae081df0d"
+    },
+    "82531cd8469abeac98ef6b7bbd5b984a": {
+      "kind": "explore",
+      "id": "saas-landing~theme_workspace",
+      "ids": [
+        "explore:saas-landing~theme_workspace"
+      ],
+      "path": "/previews/82531cd8469abeac98ef6b7bbd5b984a.svg",
+      "title": "SaaS 서비스 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "26476febfea14a5fc35e53e963e4565c"
+    },
+    "826f9cd372e284cc918af2cd6ccd89f5": {
+      "kind": "explore",
+      "id": "music-player",
+      "ids": [
+        "explore:music-player"
+      ],
+      "path": "/previews/826f9cd372e284cc918af2cd6ccd89f5.svg",
+      "title": "음악 플레이어 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4ca8571ec845af785997bc88b556a257"
+    },
+    "83697c896a148f47d3a6c8e16d40bbd1": {
+      "kind": "explore",
+      "id": "campaign-poster",
+      "ids": [
+        "explore:campaign-poster"
+      ],
+      "path": "/previews/83697c896a148f47d3a6c8e16d40bbd1.svg",
+      "title": "캠페인 포스터형 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e3386708ae73e822e0d3f233b2a57e9f"
+    },
+    "8685803739b073f8fa361db7721a2664": {
+      "kind": "component",
+      "id": "form",
+      "ids": [
+        "component:form"
+      ],
+      "path": "/previews/8685803739b073f8fa361db7721a2664.svg",
+      "title": "폼 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7f56f4b0e91adda5dedd439c5f81a1df"
+    },
+    "869e8238d5cf24e6fe6deaae0b8282ec": {
+      "kind": "explore",
+      "id": "garden-shop~theme_cafe",
+      "ids": [
+        "explore:garden-shop~theme_cafe"
+      ],
+      "path": "/previews/869e8238d5cf24e6fe6deaae0b8282ec.svg",
+      "title": "식물 가게 상품 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "10d81d0ddec278a395bf8c92a9c5ec6c"
+    },
+    "86ae89f2e2ce8afa9d37898d990541f5": {
+      "kind": "explore",
+      "id": "job-detail~theme_workspace",
+      "ids": [
+        "explore:job-detail~theme_workspace"
+      ],
+      "path": "/previews/86ae89f2e2ce8afa9d37898d990541f5.svg",
+      "title": "채용 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ece9ccf83b6dae720b227aec6347567e"
+    },
+    "88fd1919418e8986451764be60f752ae": {
+      "kind": "purpose-family",
+      "id": "purpose:navigation.tabs",
+      "ids": [
+        "purpose-family:purpose:navigation.tabs"
+      ],
+      "path": "/previews/88fd1919418e8986451764be60f752ae.svg",
+      "title": "탭 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "f3d9da62bafc2ff9ef32268a014d8405"
+    },
+    "89047619994e1e009ff98f7b88ab45d8": {
+      "kind": "explore",
+      "id": "civic-service",
+      "ids": [
+        "explore:civic-service"
+      ],
+      "path": "/previews/89047619994e1e009ff98f7b88ab45d8.svg",
+      "title": "민원 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c5dfe32c1db5a258b95cc66f7cb5265c"
+    },
+    "892ca8677d87ac2a4c9835f291908830": {
+      "kind": "explore",
+      "id": "sales-dashboard~theme_solar",
+      "ids": [
+        "explore:sales-dashboard~theme_solar"
+      ],
+      "path": "/previews/892ca8677d87ac2a4c9835f291908830.svg",
+      "title": "영업 현황 대시보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5a8526b6924cc00dfb72f8a358b0353a"
+    },
+    "89713870e0ae70ca1612978fe43ce5b3": {
+      "kind": "explore",
+      "id": "calendar-view~theme_clinic",
+      "ids": [
+        "explore:calendar-view~theme_clinic"
+      ],
+      "path": "/previews/89713870e0ae70ca1612978fe43ce5b3.svg",
+      "title": "월간 일정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0d0efa0ec4256a620c8206fc5f3ef33b"
+    },
+    "8a47b7db1f15068aea6f34811d495df8": {
+      "kind": "explore",
+      "id": "checkout~theme_bank",
+      "ids": [
+        "explore:checkout~theme_bank"
+      ],
+      "path": "/previews/8a47b7db1f15068aea6f34811d495df8.svg",
+      "title": "결제 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8d5ab620f6d9a32ca201f3f1229334c4"
+    },
+    "8acc764cb542f99ea0ce78320349b187": {
+      "kind": "explore",
+      "id": "hanji-journey~theme_gallery",
+      "ids": [
+        "explore:hanji-journey~theme_gallery"
+      ],
+      "path": "/previews/8acc764cb542f99ea0ce78320349b187.svg",
+      "title": "전통 문화 여행 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1516e4c915a33064ada82cc2be9b42b5"
+    },
+    "8b34cc338d974c37fd267605486638ff": {
+      "kind": "explore",
+      "id": "onboarding-wizard~theme_bank",
+      "ids": [
+        "explore:onboarding-wizard~theme_bank"
+      ],
+      "path": "/previews/8b34cc338d974c37fd267605486638ff.svg",
+      "title": "온보딩 단계 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c03732aa64019f5dafb99a393736f71b"
+    },
+    "8bca7bd7c22d7cb9dd529755fcd6d7b6": {
+      "kind": "explore",
+      "id": "tutorial~theme_devtool",
+      "ids": [
+        "explore:tutorial~theme_devtool"
+      ],
+      "path": "/previews/8bca7bd7c22d7cb9dd529755fcd6d7b6.svg",
+      "title": "튜토리얼 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a999bcf16c4812eb12fa11d5c67791b1"
+    },
+    "8bce6bc0499c00ffc2c2ae3d211e5217": {
+      "kind": "explore",
+      "id": "event-landing~theme_heritage",
+      "ids": [
+        "explore:event-landing~theme_heritage"
+      ],
+      "path": "/previews/8bce6bc0499c00ffc2c2ae3d211e5217.svg",
+      "title": "행사 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5e4a11f8d79882cb0774abf8abee0f62"
+    },
+    "8c877f755b4c37762e60cd9b658ad3b7": {
+      "kind": "explore",
+      "id": "garden-shop~theme_commerce",
+      "ids": [
+        "explore:garden-shop~theme_commerce"
+      ],
+      "path": "/previews/8c877f755b4c37762e60cd9b658ad3b7.svg",
+      "title": "식물 가게 상품 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "68cd9214881127c741c689c6197a1cf1"
+    },
+    "8d2bb6640a60968004985d09b958d05a": {
+      "kind": "explore",
+      "id": "about-team~theme_trust",
+      "ids": [
+        "explore:about-team~theme_trust"
+      ],
+      "path": "/previews/8d2bb6640a60968004985d09b958d05a.svg",
+      "title": "팀 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "361e6f6cb50c5c5fe611f7d5061fbeb9"
+    },
+    "8d31cdba562cc008fb6849ec3538dfe9": {
+      "kind": "explore",
+      "id": "support-queue",
+      "ids": [
+        "explore:support-queue"
+      ],
+      "path": "/previews/8d31cdba562cc008fb6849ec3538dfe9.svg",
+      "title": "고객 문의 대기열 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b098fa9d0d05393e69110ea635958d8b"
+    },
+    "8da562e945cee3d70dc7ae2f076e0303": {
+      "kind": "explore",
+      "id": "audit-log",
+      "ids": [
+        "explore:audit-log"
+      ],
+      "path": "/previews/8da562e945cee3d70dc7ae2f076e0303.svg",
+      "title": "감사 로그 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "fdfed1f04627c22013fe317a693584b6"
+    },
+    "8dae044c11dd844309790758a7597c34": {
+      "kind": "explore",
+      "id": "signup~theme_bank",
+      "ids": [
+        "explore:signup~theme_bank"
+      ],
+      "path": "/previews/8dae044c11dd844309790758a7597c34.svg",
+      "title": "회원가입 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5add48b5fbd68067bac491faf8672f90"
+    },
+    "8db2915c84ef4acf2b7e804c2d8a39c7": {
+      "kind": "explore",
+      "id": "beauty-detail~theme_commerce~variant_boutique",
+      "ids": [
+        "explore:beauty-detail~theme_commerce~variant_boutique"
+      ],
+      "path": "/previews/8db2915c84ef4acf2b7e804c2d8a39c7.svg",
+      "title": "뷰티 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "293e28416141bff849864a1f4f87f1b8"
+    },
+    "8fc2ed760a3325b1bf0bbce073f2007a": {
+      "kind": "component",
+      "id": "feedback-message",
+      "ids": [
+        "component:feedback-message"
+      ],
+      "path": "/previews/8fc2ed760a3325b1bf0bbce073f2007a.svg",
+      "title": "Feedback 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "60b8563dd6ce799f8c8a7c7d41cb4858"
+    },
+    "907a33ece25213082d17cba95ba7ae3d": {
+      "kind": "explore",
+      "id": "forbidden",
+      "ids": [
+        "explore:forbidden"
+      ],
+      "path": "/previews/907a33ece25213082d17cba95ba7ae3d.svg",
+      "title": "403 권한 없음 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9ffb62432b426370e395183ba074527e"
+    },
+    "91938f156a2c8fbceb23912f76d27d43": {
+      "kind": "explore",
+      "id": "api-reference~theme_console",
+      "ids": [
+        "explore:api-reference~theme_console"
+      ],
+      "path": "/previews/91938f156a2c8fbceb23912f76d27d43.svg",
+      "title": "API 레퍼런스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1dea201f7677f1e6bba1b0472c2b13c0"
+    },
+    "925c88593f2056146537b03ae20d5fa5": {
+      "kind": "explore",
+      "id": "property-search~theme_ocean",
+      "ids": [
+        "explore:property-search~theme_ocean"
+      ],
+      "path": "/previews/925c88593f2056146537b03ae20d5fa5.svg",
+      "title": "매물 검색 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a1a97ab207618a3ee53a19f1a3aeafcb"
+    },
+    "926c1e25ac61782e4f7465314174b9d7": {
+      "kind": "explore",
+      "id": "property-search~theme_stay",
+      "ids": [
+        "explore:property-search~theme_stay"
+      ],
+      "path": "/previews/926c1e25ac61782e4f7465314174b9d7.svg",
+      "title": "매물 검색 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8c3459b7cc5dd4c02e070ce7205a5f8e"
+    },
+    "940a11440577797278fceb5263e33938": {
+      "kind": "explore",
+      "id": "blog-post",
+      "ids": [
+        "explore:blog-post"
+      ],
+      "path": "/previews/940a11440577797278fceb5263e33938.svg",
+      "title": "블로그 글 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "2215dc089359463a3b2a9965900bca01"
+    },
+    "95af151d8ab9f68a3d8260b85d73d391": {
+      "kind": "purpose-family",
+      "id": "purpose:button.toggle",
+      "ids": [
+        "purpose-family:purpose:button.toggle"
+      ],
+      "path": "/previews/95af151d8ab9f68a3d8260b85d73d391.svg",
+      "title": "토글 버튼 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "0758f8be1b6fbc43971ea52fe668101f"
+    },
+    "976c96a9ad369e26cc21b9d715eaf183": {
+      "kind": "explore",
+      "id": "calendar-view",
+      "ids": [
+        "explore:calendar-view"
+      ],
+      "path": "/previews/976c96a9ad369e26cc21b9d715eaf183.svg",
+      "title": "월간 일정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4e56e49d7bc680faa36f52790ee637c2"
+    },
+    "97a69c312ddd57511d8ce5e3c248a20f": {
+      "kind": "explore",
+      "id": "team-chat~theme_workspace",
+      "ids": [
+        "explore:team-chat~theme_workspace"
+      ],
+      "path": "/previews/97a69c312ddd57511d8ce5e3c248a20f.svg",
+      "title": "팀 대화 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "977f58dc71bdb0b5d13cda150ed06a6a"
+    },
+    "988b75dc3a9bda14cd6a784ab6e46ab6": {
+      "kind": "explore",
+      "id": "recipe-detail",
+      "ids": [
+        "explore:recipe-detail"
+      ],
+      "path": "/previews/988b75dc3a9bda14cd6a784ab6e46ab6.svg",
+      "title": "레시피 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e59d4a680d6a069df5bbf15c6956e078"
+    },
+    "994634f298a686a65d7611352baeb363": {
+      "kind": "platform",
+      "id": "saas-ocean",
+      "ids": [
+        "platform:saas-ocean"
+      ],
+      "path": "/previews/994634f298a686a65d7611352baeb363.svg",
+      "title": "차분한 SaaS 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "94109763e28d256b3b93127bb520ee67"
+    },
+    "99eee9d48ce4ad1e644843f0a4fb4f51": {
+      "kind": "component",
+      "id": "actions",
+      "ids": [
+        "component:actions"
+      ],
+      "path": "/previews/99eee9d48ce4ad1e644843f0a4fb4f51.svg",
+      "title": "액션 그룹 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e1cbaf24121cb70584bb4581e5796703"
+    },
+    "9b048df12cc5d512e5bb44d2d3245434": {
+      "kind": "explore",
+      "id": "bank-product~theme_trust",
+      "ids": [
+        "explore:bank-product~theme_trust"
+      ],
+      "path": "/previews/9b048df12cc5d512e5bb44d2d3245434.svg",
+      "title": "금융 상품 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f0945b3a3beb2b6422bde6cf773abae5"
+    },
+    "9bf313bdd15bc4f6d9990baa5b3cc739": {
+      "kind": "explore",
+      "id": "b2b-solution~theme_solar",
+      "ids": [
+        "explore:b2b-solution~theme_solar"
+      ],
+      "path": "/previews/9bf313bdd15bc4f6d9990baa5b3cc739.svg",
+      "title": "기업용 솔루션 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "760a1e57a7b84d4098cc97e37f2bfe93"
+    },
+    "9c30d132eed733fb24ffdc6fae1da5e2": {
+      "kind": "explore",
+      "id": "sales-dashboard",
+      "ids": [
+        "explore:sales-dashboard"
+      ],
+      "path": "/previews/9c30d132eed733fb24ffdc6fae1da5e2.svg",
+      "title": "영업 현황 대시보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "505fb5d2a8f8e37ca8e14f1f5ed24682"
+    },
+    "9c6d30878c16559054b6d966c43a3d13": {
+      "kind": "explore",
+      "id": "maintenance~theme_clarity",
+      "ids": [
+        "explore:maintenance~theme_clarity"
+      ],
+      "path": "/previews/9c6d30878c16559054b6d966c43a3d13.svg",
+      "title": "점검 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d96875699fab05b0b7ff00d3cf6de776"
+    },
+    "9c9d872079bd714843b9b19a616dc524": {
+      "kind": "explore",
+      "id": "fitness-landing~theme_clinic",
+      "ids": [
+        "explore:fitness-landing~theme_clinic"
+      ],
+      "path": "/previews/9c9d872079bd714843b9b19a616dc524.svg",
+      "title": "피트니스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c2a2863315815f89f8e9a9422fd76a35"
+    },
+    "9e6b9415e4bc5445320a09d38b24201a": {
+      "kind": "explore",
+      "id": "agency-home~theme_colorblock",
+      "ids": [
+        "explore:agency-home~theme_colorblock"
+      ],
+      "path": "/previews/9e6b9415e4bc5445320a09d38b24201a.svg",
+      "title": "에이전시 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "47165989442e17780737e31328f620a5"
+    },
+    "9ea4d2e34f526ae3c1b53b8d1d061460": {
+      "kind": "explore",
+      "id": "fitness-landing",
+      "ids": [
+        "explore:fitness-landing"
+      ],
+      "path": "/previews/9ea4d2e34f526ae3c1b53b8d1d061460.svg",
+      "title": "피트니스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d64cad4eb0000e9cbad6f98e03349234"
+    },
+    "9fd567aa243dc76cd3ebecab5be803d2": {
+      "kind": "explore",
+      "id": "product-listing~theme_commerce~variant_boutique",
+      "ids": [
+        "explore:product-listing~theme_commerce~variant_boutique"
+      ],
+      "path": "/previews/9fd567aa243dc76cd3ebecab5be803d2.svg",
+      "title": "상품 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "43472634253b4581b24d5945d41a1723"
+    },
+    "a1ac386da458f2d1c9219ce7bb25b98e": {
+      "kind": "explore",
+      "id": "finance-overview",
+      "ids": [
+        "explore:finance-overview"
+      ],
+      "path": "/previews/a1ac386da458f2d1c9219ce7bb25b98e.svg",
+      "title": "재무 현황 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a06324e560ef9d3b9b5d8e8b154d4e72"
+    },
+    "a1c6c8c2e99d7a677fa5c5a7e257c70f": {
+      "kind": "explore",
+      "id": "news-home",
+      "ids": [
+        "explore:news-home"
+      ],
+      "path": "/previews/a1c6c8c2e99d7a677fa5c5a7e257c70f.svg",
+      "title": "뉴스 메인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "03f70e0569bca1d22242c50a3c25e83d"
+    },
+    "a1dceac11728cbecbbaaa66ca8b5f10d": {
+      "kind": "explore",
+      "id": "waitlist~theme_game",
+      "ids": [
+        "explore:waitlist~theme_game"
+      ],
+      "path": "/previews/a1dceac11728cbecbbaaa66ca8b5f10d.svg",
+      "title": "대기자 등록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "6d6710f8230c433f0f0fd8c6705ddca7"
+    },
+    "a22153c6655c61c993914c31a7d9577a": {
+      "kind": "explore",
+      "id": "login~theme_bank",
+      "ids": [
+        "explore:login~theme_bank"
+      ],
+      "path": "/previews/a22153c6655c61c993914c31a7d9577a.svg",
+      "title": "로그인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "6ed8b7b80d3cad322534bb063f3af7fc"
+    },
+    "a230e1367b3d1bf37454514ac2efac83": {
+      "kind": "explore",
+      "id": "hr-people",
+      "ids": [
+        "explore:hr-people"
+      ],
+      "path": "/previews/a230e1367b3d1bf37454514ac2efac83.svg",
+      "title": "인사 현황 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "84028204473c75461618284d48dbd526"
+    },
+    "a34248f8b1fa3e3dd95dfe87328ebee9": {
+      "kind": "explore",
+      "id": "forbidden~theme_school",
+      "ids": [
+        "explore:forbidden~theme_school"
+      ],
+      "path": "/previews/a34248f8b1fa3e3dd95dfe87328ebee9.svg",
+      "title": "403 권한 없음 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f88bfafceff40cf4cd5079cc97fdd689"
+    },
+    "a41d2e9fb9d7de7338b26dd96288c5fd": {
+      "kind": "component",
+      "id": "links",
+      "ids": [
+        "component:links"
+      ],
+      "path": "/previews/a41d2e9fb9d7de7338b26dd96288c5fd.svg",
+      "title": "링크 목록 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "42f4e5395af47f840f8eda12bdfada7f"
+    },
+    "a44a1e893be9aa528f73183d9f0e3f3d": {
+      "kind": "component",
+      "id": "page-header",
+      "ids": [
+        "component:page-header"
+      ],
+      "path": "/previews/a44a1e893be9aa528f73183d9f0e3f3d.svg",
+      "title": "페이지 제목 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9e2f1431724d135e9387601eae135cfb"
+    },
+    "a4858e24571c3cf123e22ceb66af240f": {
+      "kind": "explore",
+      "id": "not-found~theme_pocket",
+      "ids": [
+        "explore:not-found~theme_pocket"
+      ],
+      "path": "/previews/a4858e24571c3cf123e22ceb66af240f.svg",
+      "title": "404 페이지 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "96d9558a5ac5244440d2dfc387ac5641"
+    },
+    "a4db8c2c4a7d915863f94f9bbab1072c": {
+      "kind": "explore",
+      "id": "museum-home",
+      "ids": [
+        "explore:museum-home"
+      ],
+      "path": "/previews/a4db8c2c4a7d915863f94f9bbab1072c.svg",
+      "title": "박물관·재단 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "13970ccf37f212a9f83c89cb0f4c3adb"
+    },
+    "a53cff48196ff3fef25c4309dee8d7df": {
       "kind": "type-system",
-      "path": "/previews/typography/doc-newsroom.svg",
-      "htmlPath": "/previews/typography/doc-newsroom.html",
+      "id": "type-system:doc-newsroom",
+      "ids": [
+        "type-system:type-system:doc-newsroom"
+      ],
+      "path": "/previews/a53cff48196ff3fef25c4309dee8d7df.svg",
       "title": "신문 지면 문서 샘플",
       "width": 1280,
       "height": 800,
-      "hash": "d5a8f65b116fe0df5b5c52f654cac645",
-      "ok": true
+      "htmlHash": "1c0b14740b1c3245d7422cf1482cd3a1"
     },
-    "type:mobile-reader": {
-      "id": "type-system:mobile-reader",
+    "a62941c0b854cd50a1b45b1c62642764": {
+      "kind": "explore",
+      "id": "event-schedule~theme_cafe",
+      "ids": [
+        "explore:event-schedule~theme_cafe"
+      ],
+      "path": "/previews/a62941c0b854cd50a1b45b1c62642764.svg",
+      "title": "행사 일정표 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3e9a51ee95cad96c98450f31c591b1d4"
+    },
+    "a653fe08f7283deee5a38e3ea79a6730": {
+      "kind": "explore",
+      "id": "news-home~theme_journal",
+      "ids": [
+        "explore:news-home~theme_journal"
+      ],
+      "path": "/previews/a653fe08f7283deee5a38e3ea79a6730.svg",
+      "title": "뉴스 메인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e5934ba26083d636972fa2fb57dd28b3"
+    },
+    "a84dbe5e2b8205a2797aa6f488a2a826": {
+      "kind": "explore",
+      "id": "cafe-home~theme_wine",
+      "ids": [
+        "explore:cafe-home~theme_wine"
+      ],
+      "path": "/previews/a84dbe5e2b8205a2797aa6f488a2a826.svg",
+      "title": "카페 홈 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "bea88afa2c67645d1e285af094bafd4c"
+    },
+    "a8509851fb07e57725b3497bcf3789a9": {
       "kind": "type-system",
-      "path": "/previews/typography/mobile-reader.svg",
-      "htmlPath": "/previews/typography/mobile-reader.html",
+      "id": "type-system:mobile-reader",
+      "ids": [
+        "type-system:type-system:mobile-reader"
+      ],
+      "path": "/previews/a8509851fb07e57725b3497bcf3789a9.svg",
       "title": "모바일 읽기 문서 샘플",
       "width": 1280,
       "height": 800,
-      "hash": "d5a8f65b116fe0df5b5c52f654cac645",
-      "ok": true
+      "htmlHash": "fb777c865707fec6f217c43e044ce7ba"
+    },
+    "a87c381d2c80df01638e5de997aed5ba": {
+      "kind": "explore",
+      "id": "property-search",
+      "ids": [
+        "explore:property-search"
+      ],
+      "path": "/previews/a87c381d2c80df01638e5de997aed5ba.svg",
+      "title": "매물 검색 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f44ccbbec62b2af6e9eaab0e9a1063a7"
+    },
+    "a8b13ee6f922441379a9d31e9f79700c": {
+      "kind": "explore",
+      "id": "policy~theme_heritage",
+      "ids": [
+        "explore:policy~theme_heritage"
+      ],
+      "path": "/previews/a8b13ee6f922441379a9d31e9f79700c.svg",
+      "title": "정책 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "51d3294348adbdb7713e4956e84b3d3d"
+    },
+    "a93c45c677501bcf461b1849ec0132ec": {
+      "kind": "purpose-family",
+      "id": "purpose:button.destructive",
+      "ids": [
+        "purpose-family:purpose:button.destructive"
+      ],
+      "path": "/previews/a93c45c677501bcf461b1849ec0132ec.svg",
+      "title": "파괴적 버튼 묶음 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "a2a9c8ad287e776c1e0f3478f3b1768d"
+    },
+    "abdcdaf047b3909ab024c4d8506c3f2e": {
+      "kind": "explore",
+      "id": "api-reference",
+      "ids": [
+        "explore:api-reference"
+      ],
+      "path": "/previews/abdcdaf047b3909ab024c4d8506c3f2e.svg",
+      "title": "API 레퍼런스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "494db588dec1468f38f75ef098976fe6"
+    },
+    "ac072788241ac31ae5b08af5fb5dc153": {
+      "kind": "purpose-family",
+      "id": "purpose:form.search",
+      "ids": [
+        "purpose-family:purpose:form.search"
+      ],
+      "path": "/previews/ac072788241ac31ae5b08af5fb5dc153.svg",
+      "title": "검색 폼 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "9261b11372685c58b24726853b1a7238"
+    },
+    "ac899d15d3940bf83b102908bc743d8f": {
+      "kind": "explore",
+      "id": "portfolio-grid~theme_studio",
+      "ids": [
+        "explore:portfolio-grid~theme_studio"
+      ],
+      "path": "/previews/ac899d15d3940bf83b102908bc743d8f.svg",
+      "title": "포트폴리오 모음 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b62109a9fb7c12ce787607ee21869a93"
+    },
+    "acc3da0a3665c01fab7ced37695862e0": {
+      "kind": "explore",
+      "id": "beauty-detail",
+      "ids": [
+        "explore:beauty-detail"
+      ],
+      "path": "/previews/acc3da0a3665c01fab7ced37695862e0.svg",
+      "title": "뷰티 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b1cbfaecb3fc6086684f2ed203ae4191"
+    },
+    "ada89a3fb0b22d39b239506403d8160b": {
+      "kind": "explore",
+      "id": "course-catalog~theme_academic",
+      "ids": [
+        "explore:course-catalog~theme_academic"
+      ],
+      "path": "/previews/ada89a3fb0b22d39b239506403d8160b.svg",
+      "title": "강좌 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "0af3cefaaa8bf01a321f6d4cf51f96f5"
+    },
+    "adb746493e689be4c38b824ae0083764": {
+      "kind": "explore",
+      "id": "recipe-detail~theme_newsroom",
+      "ids": [
+        "explore:recipe-detail~theme_newsroom"
+      ],
+      "path": "/previews/adb746493e689be4c38b824ae0083764.svg",
+      "title": "레시피 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5c7ffbcbfc89d835438d5f5b5321cfb2"
+    },
+    "af19ad1bce446e274fce0be273a78b3f": {
+      "kind": "purpose-family",
+      "id": "purpose:button.emphasis",
+      "ids": [
+        "purpose-family:purpose:button.emphasis"
+      ],
+      "path": "/previews/af19ad1bce446e274fce0be273a78b3f.svg",
+      "title": "강조(CTA) 버튼 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "ce4c36c4b21e2cb6c98858403673774e"
+    },
+    "af83ecc66392ef41039a504206ccf945": {
+      "kind": "explore",
+      "id": "saas-landing~theme_aurora~variant_clean-saas",
+      "ids": [
+        "explore:saas-landing~theme_aurora~variant_clean-saas"
+      ],
+      "path": "/previews/af83ecc66392ef41039a504206ccf945.svg",
+      "title": "SaaS 서비스 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "da28839a7c520cfe58cce21e2ae1ea70"
+    },
+    "b02ad1cf580a261d7fa2b6ac86078d0e": {
+      "kind": "explore",
+      "id": "app-landing",
+      "ids": [
+        "explore:app-landing"
+      ],
+      "path": "/previews/b02ad1cf580a261d7fa2b6ac86078d0e.svg",
+      "title": "앱 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "45aa58ae927451a26cafd9e3b60ce95b"
+    },
+    "b0b4e67f8696f7a05a5f04c13a98da8f": {
+      "kind": "explore",
+      "id": "survey~theme_clinic",
+      "ids": [
+        "explore:survey~theme_clinic"
+      ],
+      "path": "/previews/b0b4e67f8696f7a05a5f04c13a98da8f.svg",
+      "title": "설문 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5db29b6847cc33f49523a7d7119e7a76"
+    },
+    "b0d540a87f1b88f97d9d13e1ec8f3aeb": {
+      "kind": "explore",
+      "id": "job-board",
+      "ids": [
+        "explore:job-board"
+      ],
+      "path": "/previews/b0d540a87f1b88f97d9d13e1ec8f3aeb.svg",
+      "title": "채용 공고 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "50d81d155cd6f26706ee3fa1c3fcd268"
+    },
+    "b0e6473ee2070a5479be94368ad70d8c": {
+      "kind": "explore",
+      "id": "devtool-landing~theme_console",
+      "ids": [
+        "explore:devtool-landing~theme_console"
+      ],
+      "path": "/previews/b0e6473ee2070a5479be94368ad70d8c.svg",
+      "title": "개발자 도구 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "091df97037fcacaa1f567ff73a163019"
+    },
+    "b1a25321bc3c25a8826656c3438dad91": {
+      "kind": "component",
+      "id": "toc",
+      "ids": [
+        "component:toc"
+      ],
+      "path": "/previews/b1a25321bc3c25a8826656c3438dad91.svg",
+      "title": "목차(자동) 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4d7cad88dc5e1d620c57d057e9a09bbf"
+    },
+    "b36496c128a7b6d37f57df038dd9eae5": {
+      "kind": "component",
+      "id": "chat",
+      "ids": [
+        "component:chat"
+      ],
+      "path": "/previews/b36496c128a7b6d37f57df038dd9eae5.svg",
+      "title": "대화 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "fbba0dbbb45af550804fd09b7815d678"
+    },
+    "b37d4e50d159ebe9b49f51378d5227bf": {
+      "kind": "explore",
+      "id": "realty-detail~theme_stay",
+      "ids": [
+        "explore:realty-detail~theme_stay"
+      ],
+      "path": "/previews/b37d4e50d159ebe9b49f51378d5227bf.svg",
+      "title": "부동산 매물 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4fae82b5ea5164e60c14b5a0546ab7b4"
+    },
+    "b4781618af629f817aae5fa536e7ef3f": {
+      "kind": "purpose-family",
+      "id": "purpose:button.primary",
+      "ids": [
+        "purpose-family:purpose:button.primary"
+      ],
+      "path": "/previews/b4781618af629f817aae5fa536e7ef3f.svg",
+      "title": "기본 버튼 묶음 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "a80af0d22e2fb09283279b0965d18713"
+    },
+    "b4a8e350aa87387b7190ba08effcf84b": {
+      "kind": "explore",
+      "id": "help-center",
+      "ids": [
+        "explore:help-center"
+      ],
+      "path": "/previews/b4a8e350aa87387b7190ba08effcf84b.svg",
+      "title": "도움말 센터 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "731a9b4639711e4260d581d3c8ea35de"
+    },
+    "b4b3ab8e61874a454530ab3e77c72835": {
+      "kind": "explore",
+      "id": "support-queue~theme_workspace",
+      "ids": [
+        "explore:support-queue~theme_workspace"
+      ],
+      "path": "/previews/b4b3ab8e61874a454530ab3e77c72835.svg",
+      "title": "고객 문의 대기열 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e6817208dddc6dba3efb29ffb54387b2"
+    },
+    "b4c8c093949f1024b4ac7b01908cf2bd": {
+      "kind": "type-system",
+      "id": "type-system:doc-essay",
+      "ids": [
+        "type-system:type-system:doc-essay"
+      ],
+      "path": "/previews/b4c8c093949f1024b4ac7b01908cf2bd.svg",
+      "title": "에세이 문서 샘플",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f933d9c9d10d210dc2db4450ad482837"
+    },
+    "b4f298be1b4809c371fe6286277083fb": {
+      "kind": "explore",
+      "id": "case-study~theme_trust",
+      "ids": [
+        "explore:case-study~theme_trust"
+      ],
+      "path": "/previews/b4f298be1b4809c371fe6286277083fb.svg",
+      "title": "사례 연구 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "68b0ce24118214804f4be8869cfe990e"
+    },
+    "b535084bfa22edb467a78546fc321caf": {
+      "kind": "explore",
+      "id": "stay-detail",
+      "ids": [
+        "explore:stay-detail"
+      ],
+      "path": "/previews/b535084bfa22edb467a78546fc321caf.svg",
+      "title": "숙소 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "438b24ce276afff8ff096f8482d78cf7"
+    },
+    "b756f73f3130c6ac1c9508889e3a7245": {
+      "kind": "purpose-family",
+      "id": "purpose:feedback.confirm",
+      "ids": [
+        "purpose-family:purpose:feedback.confirm"
+      ],
+      "path": "/previews/b756f73f3130c6ac1c9508889e3a7245.svg",
+      "title": "확인 대화상자 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "ff4ad303303e3b58914ae89301eae030"
+    },
+    "b8e294217f12f7f4d56d1848a7c74fe8": {
+      "kind": "explore",
+      "id": "maintenance~theme_pocket",
+      "ids": [
+        "explore:maintenance~theme_pocket"
+      ],
+      "path": "/previews/b8e294217f12f7f4d56d1848a7c74fe8.svg",
+      "title": "점검 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5dcb7ca537a6d39cc57a428fefbf1d7b"
+    },
+    "ba295c4b8dba45f4db4b9c1f64193735": {
+      "kind": "explore",
+      "id": "status-page~theme_civic",
+      "ids": [
+        "explore:status-page~theme_civic"
+      ],
+      "path": "/previews/ba295c4b8dba45f4db4b9c1f64193735.svg",
+      "title": "서비스 상태 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5758054265ce2dc5c10576a5b2042bfd"
+    },
+    "bb09547ca6822f08ff7837740a65ee4b": {
+      "kind": "explore",
+      "id": "music-player~theme_clarity",
+      "ids": [
+        "explore:music-player~theme_clarity"
+      ],
+      "path": "/previews/bb09547ca6822f08ff7837740a65ee4b.svg",
+      "title": "음악 플레이어 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "984f86110e0078dc90b7c6c2dc3b4fc9"
+    },
+    "bc208b4784decfc20a50a4fdc56fd2c8": {
+      "kind": "explore",
+      "id": "campaign-poster~theme_studio",
+      "ids": [
+        "explore:campaign-poster~theme_studio"
+      ],
+      "path": "/previews/bc208b4784decfc20a50a4fdc56fd2c8.svg",
+      "title": "캠페인 포스터형 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "009c9e20fc4f42531fdb1a6a16e3c851"
+    },
+    "bd09b1d3fb3275a1d1b5563b9e73bd9d": {
+      "kind": "explore",
+      "id": "docs-reference~theme_console",
+      "ids": [
+        "explore:docs-reference~theme_console"
+      ],
+      "path": "/previews/bd09b1d3fb3275a1d1b5563b9e73bd9d.svg",
+      "title": "레퍼런스 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1a54ec1443a422c1447d83fb495de4b2"
+    },
+    "bd9e79be16f940f89e32eec1e7e30025": {
+      "kind": "explore",
+      "id": "dashboard-analytics~theme_enterprise",
+      "ids": [
+        "explore:dashboard-analytics~theme_enterprise"
+      ],
+      "path": "/previews/bd9e79be16f940f89e32eec1e7e30025.svg",
+      "title": "분석 리포트 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "27e97f57c22fdba2d252cedd68e250ed"
+    },
+    "bf4e17ec6a012ce0c8d60f85c97268c1": {
+      "kind": "explore",
+      "id": "waitlist~theme_trust",
+      "ids": [
+        "explore:waitlist~theme_trust"
+      ],
+      "path": "/previews/bf4e17ec6a012ce0c8d60f85c97268c1.svg",
+      "title": "대기자 등록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "100e842a51997b51f3d296cae537befb"
+    },
+    "bfb9c3180864ae6143991b4d670eb7b1": {
+      "kind": "explore",
+      "id": "news-home~theme_magazine",
+      "ids": [
+        "explore:news-home~theme_magazine"
+      ],
+      "path": "/previews/bfb9c3180864ae6143991b4d670eb7b1.svg",
+      "title": "뉴스 메인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9e78d65d456f3cc9ab873ef2e434e6eb"
+    },
+    "bff2253b2eefbc12ac570c896df963f3": {
+      "kind": "explore",
+      "id": "bank-product~theme_bank~variant_private-bank",
+      "ids": [
+        "explore:bank-product~theme_bank~variant_private-bank"
+      ],
+      "path": "/previews/bff2253b2eefbc12ac570c896df963f3.svg",
+      "title": "금융 상품 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b2d05ca427447e5fa395ad9548b80132"
+    },
+    "c26db5fdd33c8a55224ad71f26dd80d5": {
+      "kind": "component",
+      "id": "progress",
+      "ids": [
+        "component:progress"
+      ],
+      "path": "/previews/c26db5fdd33c8a55224ad71f26dd80d5.svg",
+      "title": "진행률 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b1e9231f54a859c66f3e35cc5f9cf7c9"
+    },
+    "c2a5813acaeb0a1dfc51f71f18a0c858": {
+      "kind": "explore",
+      "id": "museum-home~theme_hanji",
+      "ids": [
+        "explore:museum-home~theme_hanji"
+      ],
+      "path": "/previews/c2a5813acaeb0a1dfc51f71f18a0c858.svg",
+      "title": "박물관·재단 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a7b48995d6049c316ecc3a7c5ca06c9e"
+    },
+    "c31a42711944b581f325496806e3b7a6": {
+      "kind": "explore",
+      "id": "hr-people~theme_workspace",
+      "ids": [
+        "explore:hr-people~theme_workspace"
+      ],
+      "path": "/previews/c31a42711944b581f325496806e3b7a6.svg",
+      "title": "인사 현황 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7be83f88171ee88cdd54f7e338db83b7"
+    },
+    "c33f86879c1f72f08c8520601016069b": {
+      "kind": "component",
+      "id": "section",
+      "ids": [
+        "component:section"
+      ],
+      "path": "/previews/c33f86879c1f72f08c8520601016069b.svg",
+      "title": "섹션 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8243e8bc19d4b246bceb65b3d61fb9ce"
+    },
+    "c459859f3a7e05fe673b824c72e35653": {
+      "kind": "explore",
+      "id": "dashboard-analytics",
+      "ids": [
+        "explore:dashboard-analytics"
+      ],
+      "path": "/previews/c459859f3a7e05fe673b824c72e35653.svg",
+      "title": "분석 리포트 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "51506b865eeda96ae9033e999678c5a6"
+    },
+    "c47985a2b7bce75e2f1a92c4eab12df1": {
+      "kind": "explore",
+      "id": "luxury-brand~theme_studio",
+      "ids": [
+        "explore:luxury-brand~theme_studio"
+      ],
+      "path": "/previews/c47985a2b7bce75e2f1a92c4eab12df1.svg",
+      "title": "럭셔리 브랜드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4c1e49c8924642514d5323fda75efc9e"
+    },
+    "c496907058180274d5802b9b5a6f9d76": {
+      "kind": "component",
+      "id": "properties",
+      "ids": [
+        "component:properties"
+      ],
+      "path": "/previews/c496907058180274d5802b9b5a6f9d76.svg",
+      "title": "속성 목록 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "1efe283ba34bf7aa8f89f6e1473700b8"
+    },
+    "c6c6db5f3a58ad8862562bc738a8a219": {
+      "kind": "explore",
+      "id": "learning-course~theme_school",
+      "ids": [
+        "explore:learning-course~theme_school"
+      ],
+      "path": "/previews/c6c6db5f3a58ad8862562bc738a8a219.svg",
+      "title": "강의 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3f8e238c66b4980935593bd9a0e73b6f"
+    },
+    "c84bb54631d5525924090a8c69e4f7dd": {
+      "kind": "purpose-family",
+      "id": "purpose:feedback.error",
+      "ids": [
+        "purpose-family:purpose:feedback.error"
+      ],
+      "path": "/previews/c84bb54631d5525924090a8c69e4f7dd.svg",
+      "title": "오류 안내 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "b9e4aac01adcded1728abe9f32e7285f"
+    },
+    "c8f24233d40b620146c1822ca128a2e4": {
+      "kind": "component",
+      "id": "empty-state",
+      "ids": [
+        "component:empty-state"
+      ],
+      "path": "/previews/c8f24233d40b620146c1822ca128a2e4.svg",
+      "title": "상태 화면 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "545b72e20e2b84d50963108f010c1813"
+    },
+    "c9223eb45c8ed482ab210a26640da76f": {
+      "kind": "explore",
+      "id": "order-tracking",
+      "ids": [
+        "explore:order-tracking"
+      ],
+      "path": "/previews/c9223eb45c8ed482ab210a26640da76f.svg",
+      "title": "주문 배송 조회 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "58ba82f423ddc7ea16fd4f1d18bd0c05"
+    },
+    "cac4340966670ce4f1029842dd8086c0": {
+      "kind": "explore",
+      "id": "status-page~theme_devtool",
+      "ids": [
+        "explore:status-page~theme_devtool"
+      ],
+      "path": "/previews/cac4340966670ce4f1029842dd8086c0.svg",
+      "title": "서비스 상태 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9c1504486382c3812a7eab21fc279e2d"
+    },
+    "cc066adeb4286c60770d7b69cbef49dc": {
+      "kind": "explore",
+      "id": "waitlist",
+      "ids": [
+        "explore:waitlist"
+      ],
+      "path": "/previews/cc066adeb4286c60770d7b69cbef49dc.svg",
+      "title": "대기자 등록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ae66085720ac2d3efc987dfed14938cf"
+    },
+    "cc2255e72f441233501d2a0e92752d20": {
+      "kind": "explore",
+      "id": "incident-report~theme_devtool",
+      "ids": [
+        "explore:incident-report~theme_devtool"
+      ],
+      "path": "/previews/cc2255e72f441233501d2a0e92752d20.svg",
+      "title": "장애 회고 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "2294b9973c2b1dd8ed9036a051a08350"
+    },
+    "ccf34ff20cf67bef163a8b2c445c0a88": {
+      "kind": "explore",
+      "id": "job-board~theme_workspace",
+      "ids": [
+        "explore:job-board~theme_workspace"
+      ],
+      "path": "/previews/ccf34ff20cf67bef163a8b2c445c0a88.svg",
+      "title": "채용 공고 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f63e3054c96f0b2a8f8d32dad9312fd6"
+    },
+    "cd6a5590b9c30c0e17ec413163f93ecc": {
+      "kind": "explore",
+      "id": "project-board~theme_enterprise",
+      "ids": [
+        "explore:project-board~theme_enterprise"
+      ],
+      "path": "/previews/cd6a5590b9c30c0e17ec413163f93ecc.svg",
+      "title": "프로젝트 보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "6945c38c44f6c435c7ac311e31dcc74f"
+    },
+    "cd9500272e5e4e1dadf5396e7b7311d2": {
+      "kind": "component",
+      "id": "bento",
+      "ids": [
+        "component:bento"
+      ],
+      "path": "/previews/cd9500272e5e4e1dadf5396e7b7311d2.svg",
+      "title": "벤토 격자 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d0ea6feddc61c8cb74dea5d69d179998"
+    },
+    "ceda1cfb9009b1b1e42f5f7bd4653512": {
+      "kind": "explore",
+      "id": "signup",
+      "ids": [
+        "explore:signup"
+      ],
+      "path": "/previews/ceda1cfb9009b1b1e42f5f7bd4653512.svg",
+      "title": "회원가입 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "863d39ab22e985090b7baa3fac7d1ec5"
+    },
+    "cfa06c17157babbc69053b8a27acab50": {
+      "kind": "explore",
+      "id": "calendar-view~theme_enterprise",
+      "ids": [
+        "explore:calendar-view~theme_enterprise"
+      ],
+      "path": "/previews/cfa06c17157babbc69053b8a27acab50.svg",
+      "title": "월간 일정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "88cd12d28cd36c3e50d04bb1364a0606"
+    },
+    "cfde94f47290fabdbaf5b2f09f40d612": {
+      "kind": "explore",
+      "id": "billing~theme_bank",
+      "ids": [
+        "explore:billing~theme_bank"
+      ],
+      "path": "/previews/cfde94f47290fabdbaf5b2f09f40d612.svg",
+      "title": "결제·구독 관리 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d04bf27c82d21b5649a3d4999bd435b4"
+    },
+    "d0484318790227d74411c0439fc65a52": {
+      "kind": "explore",
+      "id": "product-detail~theme_commerce~variant_boutique",
+      "ids": [
+        "explore:product-detail~theme_commerce~variant_boutique"
+      ],
+      "path": "/previews/d0484318790227d74411c0439fc65a52.svg",
+      "title": "상품 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "93e69625409e8933ebac26ac1af098e3"
+    },
+    "d0ed1847f1f7ba4b8c37b332f69b353c": {
+      "kind": "component",
+      "id": "prose",
+      "ids": [
+        "component:prose"
+      ],
+      "path": "/previews/d0ed1847f1f7ba4b8c37b332f69b353c.svg",
+      "title": "본문 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5436b9a69f7cb43fceb92a8a11cbd32e"
+    },
+    "d11952fb2f0c0d529fd7c8e1438318ea": {
+      "kind": "explore",
+      "id": "bank-product",
+      "ids": [
+        "explore:bank-product"
+      ],
+      "path": "/previews/d11952fb2f0c0d529fd7c8e1438318ea.svg",
+      "title": "금융 상품 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "aa47e26761f33c435564d16f5b2d31d4"
+    },
+    "d236bf29e55af6a757ba8c58f9cfde64": {
+      "kind": "purpose-family",
+      "id": "purpose:feedback.warning",
+      "ids": [
+        "purpose-family:purpose:feedback.warning"
+      ],
+      "path": "/previews/d236bf29e55af6a757ba8c58f9cfde64.svg",
+      "title": "경고 안내 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "1f685b702fc212196b9d3b9532ee4d45"
+    },
+    "d24899d98e5829d2ffdb60a790a3ad34": {
+      "kind": "component",
+      "id": "logo-cloud",
+      "ids": [
+        "component:logo-cloud"
+      ],
+      "path": "/previews/d24899d98e5829d2ffdb60a790a3ad34.svg",
+      "title": "고객사 이름 줄 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d4971456d97c71ddcd1f751f83127cb1"
+    },
+    "d26f87eae4fd99f9990d4c59e3527a21": {
+      "kind": "explore",
+      "id": "app-landing~theme_clarity",
+      "ids": [
+        "explore:app-landing~theme_clarity"
+      ],
+      "path": "/previews/d26f87eae4fd99f9990d4c59e3527a21.svg",
+      "title": "앱 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "afd8eb9b986c05d8db375464eed6ee73"
+    },
+    "d3407474238d0f953631a5b50bf7fa50": {
+      "kind": "component",
+      "id": "list",
+      "ids": [
+        "component:list"
+      ],
+      "path": "/previews/d3407474238d0f953631a5b50bf7fa50.svg",
+      "title": "목록 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "87cfac14fdb368a385520bb428141892"
+    },
+    "d6151f2e27919eb09443ad2116ec6bdc": {
+      "kind": "component",
+      "id": "master-detail",
+      "ids": [
+        "component:master-detail"
+      ],
+      "path": "/previews/d6151f2e27919eb09443ad2116ec6bdc.svg",
+      "title": "목록+상세 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "285fe0456624f11bc9ef4737d9c63954"
+    },
+    "d7ec0958c072e170dbebbe76824e7cae": {
+      "kind": "explore",
+      "id": "wine-list",
+      "ids": [
+        "explore:wine-list"
+      ],
+      "path": "/previews/d7ec0958c072e170dbebbe76824e7cae.svg",
+      "title": "와인 리스트 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4b42d293b8465c668e2444e8120545c4"
+    },
+    "d8adb520b8ba11f20cbb9354f627cf9f": {
+      "kind": "explore",
+      "id": "help-center~theme_clinic",
+      "ids": [
+        "explore:help-center~theme_clinic"
+      ],
+      "path": "/previews/d8adb520b8ba11f20cbb9354f627cf9f.svg",
+      "title": "도움말 센터 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f4c10e5fad67967f57dc41ab97c4a44b"
+    },
+    "d8b2591198b28fdedcae5ada7470a1f0": {
+      "kind": "explore",
+      "id": "survey",
+      "ids": [
+        "explore:survey"
+      ],
+      "path": "/previews/d8b2591198b28fdedcae5ada7470a1f0.svg",
+      "title": "설문 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "094299c2cc4c67a9d7ad9a9c524793e5"
+    },
+    "d9da49ddd3823f60f71ac1c6340953b6": {
+      "kind": "explore",
+      "id": "civic-service~theme_school",
+      "ids": [
+        "explore:civic-service~theme_school"
+      ],
+      "path": "/previews/d9da49ddd3823f60f71ac1c6340953b6.svg",
+      "title": "민원 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ab900af3bd462c22aa94ed45e051fe5e"
+    },
+    "da44134fab7c498caf34c83fb0ce803c": {
+      "kind": "explore",
+      "id": "maintenance",
+      "ids": [
+        "explore:maintenance"
+      ],
+      "path": "/previews/da44134fab7c498caf34c83fb0ce803c.svg",
+      "title": "점검 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ba3ba9891b99302ff73cd2a1aa69fe46"
+    },
+    "da6453dfd78370f62b4dbb1755824855": {
+      "kind": "explore",
+      "id": "game-launch",
+      "ids": [
+        "explore:game-launch"
+      ],
+      "path": "/previews/da6453dfd78370f62b4dbb1755824855.svg",
+      "title": "게임 출시 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "926bc3f05ee038cd81eb2c9d5046fa9e"
+    },
+    "da9d9f9a5da165fe09c411d16dbd0078": {
+      "kind": "explore",
+      "id": "research-paper~theme_newsroom",
+      "ids": [
+        "explore:research-paper~theme_newsroom"
+      ],
+      "path": "/previews/da9d9f9a5da165fe09c411d16dbd0078.svg",
+      "title": "연구 논문 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "fbf65a7be3266763d0e5acf4616ffb4e"
+    },
+    "db1ac15616a9b61cdef19c02daeb0a35": {
+      "kind": "explore",
+      "id": "app-landing~theme_trust",
+      "ids": [
+        "explore:app-landing~theme_trust"
+      ],
+      "path": "/previews/db1ac15616a9b61cdef19c02daeb0a35.svg",
+      "title": "앱 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9a01231a9348b1ec2b20f1c5c133efd9"
+    },
+    "dc3ac1a0be23398b4796e3de8dcd8330": {
+      "kind": "explore",
+      "id": "product-detail~theme_beauty",
+      "ids": [
+        "explore:product-detail~theme_beauty"
+      ],
+      "path": "/previews/dc3ac1a0be23398b4796e3de8dcd8330.svg",
+      "title": "상품 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c2c1f6c07d97d0c50c1fb27285e7b27f"
+    },
+    "dc52fba45076887e86b5a5a95eede7f2": {
+      "kind": "explore",
+      "id": "policy",
+      "ids": [
+        "explore:policy"
+      ],
+      "path": "/previews/dc52fba45076887e86b5a5a95eede7f2.svg",
+      "title": "정책 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d015579f0ec79c24b96a1a4d1c11b462"
+    },
+    "dc6fcff49e61cd676bd02ceaf9dd2ff9": {
+      "kind": "explore",
+      "id": "research-paper",
+      "ids": [
+        "explore:research-paper"
+      ],
+      "path": "/previews/dc6fcff49e61cd676bd02ceaf9dd2ff9.svg",
+      "title": "연구 논문 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "82db979a35ded984dc552a4b63764d32"
+    },
+    "dc815a9b237d23c84f72b56d9022744a": {
+      "kind": "component",
+      "id": "navigation-menu",
+      "ids": [
+        "component:navigation-menu"
+      ],
+      "path": "/previews/dc815a9b237d23c84f72b56d9022744a.svg",
+      "title": "Navigation 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7c5441b1efe3cd513d9328ec2f2664a5"
+    },
+    "dce21732a218e6e3080e3cc098fe27fe": {
+      "kind": "explore",
+      "id": "travel-ocean~theme_stay",
+      "ids": [
+        "explore:travel-ocean~theme_stay"
+      ],
+      "path": "/previews/dce21732a218e6e3080e3cc098fe27fe.svg",
+      "title": "여행 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "4f2e03fabcfac4ad416c91a785b5ac83"
+    },
+    "df8bd9bd7b09b9aba927d48e4c1d720b": {
+      "kind": "explore",
+      "id": "article~theme_devtool",
+      "ids": [
+        "explore:article~theme_devtool"
+      ],
+      "path": "/previews/df8bd9bd7b09b9aba927d48e4c1d720b.svg",
+      "title": "읽는 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "344ec5610f1a8f42d4dbee3ab6544878"
+    },
+    "e00587e00a0049f09e4df9607844e586": {
+      "kind": "component",
+      "id": "hero",
+      "ids": [
+        "component:hero"
+      ],
+      "path": "/previews/e00587e00a0049f09e4df9607844e586.svg",
+      "title": "히어로 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "651d34f466d73936f39fa7de22634576"
+    },
+    "e068221941d1a413bd7e2a46f246c422": {
+      "kind": "component",
+      "id": "chart",
+      "ids": [
+        "component:chart"
+      ],
+      "path": "/previews/e068221941d1a413bd7e2a46f246c422.svg",
+      "title": "차트 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "538a5a4f20611c8405680b654198509b"
+    },
+    "e11eef27a114142542a72d22cd38206b": {
+      "kind": "explore",
+      "id": "dashboard-analytics~theme_workspace",
+      "ids": [
+        "explore:dashboard-analytics~theme_workspace"
+      ],
+      "path": "/previews/e11eef27a114142542a72d22cd38206b.svg",
+      "title": "분석 리포트 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "aa98bf1c9ca8eabdcb473553e1ab0888"
+    },
+    "e1c43ba5029e9637ca89d77e928f46ae": {
+      "kind": "explore",
+      "id": "menu-dining~theme_cafe",
+      "ids": [
+        "explore:menu-dining~theme_cafe"
+      ],
+      "path": "/previews/e1c43ba5029e9637ca89d77e928f46ae.svg",
+      "title": "메뉴판 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9b5a61ecaf11480315c1ac83252afe7f"
+    },
+    "e1fb4228f4fcc9203360aaa1cdbfddbd": {
+      "kind": "explore",
+      "id": "game-launch~theme_nocturne",
+      "ids": [
+        "explore:game-launch~theme_nocturne"
+      ],
+      "path": "/previews/e1fb4228f4fcc9203360aaa1cdbfddbd.svg",
+      "title": "게임 출시 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "38e420bb37ceb6703006a4fc85b657d2"
+    },
+    "e200d3189b3bb2837ed9584aca5cf7fe": {
+      "kind": "explore",
+      "id": "job-detail",
+      "ids": [
+        "explore:job-detail"
+      ],
+      "path": "/previews/e200d3189b3bb2837ed9584aca5cf7fe.svg",
+      "title": "채용 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "b84cfb83426d98a7b709ca2261f54679"
+    },
+    "e20fb6b1f2b563ba648446e6ba16768a": {
+      "kind": "explore",
+      "id": "audit-log~theme_manual",
+      "ids": [
+        "explore:audit-log~theme_manual"
+      ],
+      "path": "/previews/e20fb6b1f2b563ba648446e6ba16768a.svg",
+      "title": "감사 로그 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "bd7a704cb992d8d8f4d8a8266ffbdeb4"
+    },
+    "e29432e2e36337a307546beddca8b684": {
+      "kind": "explore",
+      "id": "pricing-page",
+      "ids": [
+        "explore:pricing-page"
+      ],
+      "path": "/previews/e29432e2e36337a307546beddca8b684.svg",
+      "title": "요금 비교 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7fc0818d4a82f4a318840a897349c305"
+    },
+    "e29d06efd6826365d1a50896eba5b0ef": {
+      "kind": "explore",
+      "id": "offline",
+      "ids": [
+        "explore:offline"
+      ],
+      "path": "/previews/e29d06efd6826365d1a50896eba5b0ef.svg",
+      "title": "오프라인 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "76a704e5e227a99085803f8ba43e45bc"
+    },
+    "e3f6f145e631554330d9895d5bb5cb23": {
+      "kind": "explore",
+      "id": "project-board",
+      "ids": [
+        "explore:project-board"
+      ],
+      "path": "/previews/e3f6f145e631554330d9895d5bb5cb23.svg",
+      "title": "프로젝트 보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "ea9dc7b031bebe3086b5e92fd747747f"
+    },
+    "e59bef95f7064cdbd2947bdaa21c1be3": {
+      "kind": "explore",
+      "id": "hanji-journey~theme_heritage",
+      "ids": [
+        "explore:hanji-journey~theme_heritage"
+      ],
+      "path": "/previews/e59bef95f7064cdbd2947bdaa21c1be3.svg",
+      "title": "전통 문화 여행 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9e8a4de12a1db369f2e733801615f049"
+    },
+    "e6535ea89d7e69f19ee01938fa67f97e": {
+      "kind": "component",
+      "id": "reel",
+      "ids": [
+        "component:reel"
+      ],
+      "path": "/previews/e6535ea89d7e69f19ee01938fa67f97e.svg",
+      "title": "가로 스크롤 줄 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e52f097f4b9b809b17bb5f3a3e1a7ce6"
+    },
+    "e711dac68851e80fdf2f913980af2903": {
+      "kind": "explore",
+      "id": "devtool-landing",
+      "ids": [
+        "explore:devtool-landing"
+      ],
+      "path": "/previews/e711dac68851e80fdf2f913980af2903.svg",
+      "title": "개발자 도구 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "e1e6c2404e36d68a1093566490396ef6"
+    },
+    "e92de1625e15ec6b9654b498f9c30599": {
+      "kind": "explore",
+      "id": "forgot-password~theme_school",
+      "ids": [
+        "explore:forgot-password~theme_school"
+      ],
+      "path": "/previews/e92de1625e15ec6b9654b498f9c30599.svg",
+      "title": "비밀번호 재설정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5601afaf2d247e6ab9b6636fd0b81837"
+    },
+    "e9a625408cb3a592dff02965b5e4b0f3": {
+      "kind": "explore",
+      "id": "garden-shop",
+      "ids": [
+        "explore:garden-shop"
+      ],
+      "path": "/previews/e9a625408cb3a592dff02965b5e4b0f3.svg",
+      "title": "식물 가게 상품 목록 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "10044d92594b1fed241af3faf84768b6"
+    },
+    "eb4a5a5ce1b2f101e55a91db71fa5a8e": {
+      "kind": "explore",
+      "id": "kids-class~theme_school",
+      "ids": [
+        "explore:kids-class~theme_school"
+      ],
+      "path": "/previews/eb4a5a5ce1b2f101e55a91db71fa5a8e.svg",
+      "title": "어린이 클래스 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7a8cd4135b41445a3b11a20598a42692"
+    },
+    "ebc6f0f72986bfd9493ec5868b3af176": {
+      "kind": "explore",
+      "id": "saas-landing",
+      "ids": [
+        "explore:saas-landing"
+      ],
+      "path": "/previews/ebc6f0f72986bfd9493ec5868b3af176.svg",
+      "title": "SaaS 서비스 소개 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9e2f1431724d135e9387601eae135cfb"
+    },
+    "ec4596f48183833ecd4e3df887e06ddd": {
+      "kind": "explore",
+      "id": "beauty-detail~theme_commerce",
+      "ids": [
+        "explore:beauty-detail~theme_commerce"
+      ],
+      "path": "/previews/ec4596f48183833ecd4e3df887e06ddd.svg",
+      "title": "뷰티 상세 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "cc6c98ae3f9e999a0b4d8bb347f703db"
+    },
+    "ed462842aef99e47945576edd94ac992": {
+      "kind": "explore",
+      "id": "team-directory~theme_workspace",
+      "ids": [
+        "explore:team-directory~theme_workspace"
+      ],
+      "path": "/previews/ed462842aef99e47945576edd94ac992.svg",
+      "title": "구성원 디렉터리 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7baf97d894a91eb6e72410cebf5f1d60"
+    },
+    "eda2848f627f001ee349bad36934fcc3": {
+      "kind": "purpose-family",
+      "id": "purpose:button.icon",
+      "ids": [
+        "purpose-family:purpose:button.icon"
+      ],
+      "path": "/previews/eda2848f627f001ee349bad36934fcc3.svg",
+      "title": "아이콘 버튼 툴바 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "e5597742a2f75bd65abe021b9291f5b1"
+    },
+    "ee1ed220f8bb30173de850baee0c42a5": {
+      "kind": "purpose-family",
+      "id": "purpose:card.feature",
+      "ids": [
+        "purpose-family:purpose:card.feature"
+      ],
+      "path": "/previews/ee1ed220f8bb30173de850baee0c42a5.svg",
+      "title": "기능 소개 카드 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "5e912c3c99c61e7f618f02d20d0fdff9"
+    },
+    "ee1fcc77586dc1d1db2f66eed78e8e79": {
+      "kind": "explore",
+      "id": "policy~theme_bank",
+      "ids": [
+        "explore:policy~theme_bank"
+      ],
+      "path": "/previews/ee1fcc77586dc1d1db2f66eed78e8e79.svg",
+      "title": "정책 문서 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3a870b6c885452f23f84beefce1fd396"
+    },
+    "ee54ad7538152b345b0a7089fedbc8bc": {
+      "kind": "component",
+      "id": "reviews",
+      "ids": [
+        "component:reviews"
+      ],
+      "path": "/previews/ee54ad7538152b345b0a7089fedbc8bc.svg",
+      "title": "리뷰 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "5caac9cc994faa83cb4fe7f75164d436"
+    },
+    "efa86c5bc91f9648926602d18667dc02": {
+      "kind": "component",
+      "id": "summary",
+      "ids": [
+        "component:summary"
+      ],
+      "path": "/previews/efa86c5bc91f9648926602d18667dc02.svg",
+      "title": "주문·요약 박스 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "c4a3dc901162f8bee4621bf52a821c65"
+    },
+    "efafa0398800a5791e1d2eb199006e22": {
+      "kind": "explore",
+      "id": "wedding-invite",
+      "ids": [
+        "explore:wedding-invite"
+      ],
+      "path": "/previews/efafa0398800a5791e1d2eb199006e22.svg",
+      "title": "청첩장 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "7fca050a21a7bfa948a17a177eb8d772"
+    },
+    "efe8ed69385736db909fc4cbd5f75a91": {
+      "kind": "component",
+      "id": "buy-box",
+      "ids": [
+        "component:buy-box"
+      ],
+      "path": "/previews/efe8ed69385736db909fc4cbd5f75a91.svg",
+      "title": "구매 박스 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "19b1e3efc9d68e2d0c0e457f938985e5"
+    },
+    "f0c405b5a483c6f4ed85e2a6e2f33e97": {
+      "kind": "explore",
+      "id": "event-schedule",
+      "ids": [
+        "explore:event-schedule"
+      ],
+      "path": "/previews/f0c405b5a483c6f4ed85e2a6e2f33e97.svg",
+      "title": "행사 일정표 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d6c7e8580bb93ef9f4f049011bb403d9"
+    },
+    "f399d588b687d505cd04da76ccf0a725": {
+      "kind": "purpose-family",
+      "id": "purpose:form.filter",
+      "ids": [
+        "purpose-family:purpose:form.filter"
+      ],
+      "path": "/previews/f399d588b687d505cd04da76ccf0a725.svg",
+      "title": "필터 폼 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "bb69d645cc0b3c28ec9663363498c13b"
+    },
+    "f4f9f74be000e486b49c323cad6593b4": {
+      "kind": "purpose-family",
+      "id": "purpose:form.settings",
+      "ids": [
+        "purpose-family:purpose:form.settings"
+      ],
+      "path": "/previews/f4f9f74be000e486b49c323cad6593b4.svg",
+      "title": "설정 폼 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "7e72fe9c65a6c7bc43608f92f0907e63"
+    },
+    "f688876c60f39c779d62cf0c600e65ec": {
+      "kind": "explore",
+      "id": "hr-people~theme_ledger",
+      "ids": [
+        "explore:hr-people~theme_ledger"
+      ],
+      "path": "/previews/f688876c60f39c779d62cf0c600e65ec.svg",
+      "title": "인사 현황 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9d1f249c2cc4304dd1453021cc50a751"
+    },
+    "f8276ab1f04b784597ab7c5df10845ec": {
+      "kind": "explore",
+      "id": "dashboard-overview~theme_ledger",
+      "ids": [
+        "explore:dashboard-overview~theme_ledger"
+      ],
+      "path": "/previews/f8276ab1f04b784597ab7c5df10845ec.svg",
+      "title": "프로젝트 현황 대시보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "8e2396b1277a5a148d740993848c343e"
+    },
+    "fb0dc400e1ee49b07cbee2acc6d043d5": {
+      "kind": "explore",
+      "id": "solar-landing~theme_enterprise",
+      "ids": [
+        "explore:solar-landing~theme_enterprise"
+      ],
+      "path": "/previews/fb0dc400e1ee49b07cbee2acc6d043d5.svg",
+      "title": "에너지·태양광 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "a5158960353078e24dcb597cfbf1b7d2"
+    },
+    "fb3cf4ae77543ec7bc5157d4291e26fc": {
+      "kind": "explore",
+      "id": "forbidden~theme_hanji",
+      "ids": [
+        "explore:forbidden~theme_hanji"
+      ],
+      "path": "/previews/fb3cf4ae77543ec7bc5157d4291e26fc.svg",
+      "title": "403 권한 없음 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "83332c376836ac3f990e50a936662ad5"
+    },
+    "fb4ba1a248e345f0a61327aa3decf6c2": {
+      "kind": "component",
+      "id": "card",
+      "ids": [
+        "component:card"
+      ],
+      "path": "/previews/fb4ba1a248e345f0a61327aa3decf6c2.svg",
+      "title": "카드 렌더 결과",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "d2fe065ac0da445c463ac155500bf247"
+    },
+    "fb503efb594b571bfe82abd129c2591c": {
+      "kind": "explore",
+      "id": "forgot-password",
+      "ids": [
+        "explore:forgot-password"
+      ],
+      "path": "/previews/fb503efb594b571bfe82abd129c2591c.svg",
+      "title": "비밀번호 재설정 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "3b62f5716f0397b9db794523e2e0bfa6"
+    },
+    "fc83d820ec05f4821d5517dbe1f3964b": {
+      "kind": "explore",
+      "id": "civic-service~theme_hanji",
+      "ids": [
+        "explore:civic-service~theme_hanji"
+      ],
+      "path": "/previews/fc83d820ec05f4821d5517dbe1f3964b.svg",
+      "title": "민원 안내 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "50e0b2e1379db58756f9e75d281732ca"
+    },
+    "fd126c0a2e4de110c283ad326de83c51": {
+      "kind": "explore",
+      "id": "sales-dashboard~theme_workspace",
+      "ids": [
+        "explore:sales-dashboard~theme_workspace"
+      ],
+      "path": "/previews/fd126c0a2e4de110c283ad326de83c51.svg",
+      "title": "영업 현황 대시보드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "f1cddb04067e41a361d17191d4790af6"
+    },
+    "fd45d0e00fceb571473451a3ed6546b2": {
+      "kind": "explore",
+      "id": "luxury-brand",
+      "ids": [
+        "explore:luxury-brand"
+      ],
+      "path": "/previews/fd45d0e00fceb571473451a3ed6546b2.svg",
+      "title": "럭셔리 브랜드 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "446a2ad961735eec070332d0e9fb4d01"
+    },
+    "fe20291a83e7174a7271e65a21671b0d": {
+      "kind": "purpose-family",
+      "id": "purpose:card.kpi",
+      "ids": [
+        "purpose-family:purpose:card.kpi"
+      ],
+      "path": "/previews/fe20291a83e7174a7271e65a21671b0d.svg",
+      "title": "KPI 카드 미리보기",
+      "width": 480,
+      "height": 360,
+      "htmlHash": "ba3f33cb64aeb34941c8100fce1e21b4"
+    },
+    "feee38f3a5f7d3b105880be026e9a232": {
+      "kind": "explore",
+      "id": "billing",
+      "ids": [
+        "explore:billing"
+      ],
+      "path": "/previews/feee38f3a5f7d3b105880be026e9a232.svg",
+      "title": "결제·구독 관리 미리보기",
+      "width": 1280,
+      "height": 800,
+      "htmlHash": "9dede10a028861afac1a0e99792d5867"
     }
   }
 }

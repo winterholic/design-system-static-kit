@@ -55,7 +55,7 @@ export function TypeCompare({query}: {query: TypeQuery}) {
               <li key={t.id} className={styles.cell} data-system={typeSlug}>
                 <h3>{t.label}</h3>
                 {probe.ok
-                  ? <Thumb src={renderSrc(request)} previewUrl={`/previews/typography/${typeSlug}.svg`} title={`${t.label} ${sample.label} 샘플 ${w.label}`} width={w.id} height={w.h} />
+                  ? <Thumb src={renderSrc(request)} preview={{kind: 'assemble', request}} title={`${t.label} ${sample.label} 샘플 ${w.label}`} width={w.id} height={w.h} />
                   : <p className="note" role="status">{probe.reason}</p>}
                 <p className={styles.meta}>맥락: {(t.contexts ?? []).join(', ')}</p>
                 {probe.ok ? <Link className={styles.chipLink} href={writeState({purpose: sample.purpose, type: shortId(t.id), mode: query.mode, step: 'swap'})} prefetch={false}>Studio에서 쓰기</Link> : null}

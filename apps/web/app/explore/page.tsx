@@ -3,6 +3,7 @@ import {Suspense} from 'react';
 import {PageShell} from '@/shell/PageShell';
 import {ExploreControls, type Options} from '@/features/explore/ExploreControls';
 import {Thumb} from '@/features/explore/Thumb';
+import {designTarget} from '@/features/explore/previews.server';
 import {curatedDesigns, type Design} from '@/features/explore/designs.server';
 import {filterRows, paginate, readQuery, writeQuery} from '@/features/explore/list-query';
 import styles from '@/features/explore/list.module.css';
@@ -61,7 +62,7 @@ export default async function ExplorePage({searchParams}: Props) {
             {featured.map(d => (
               <li key={d.id} className={styles.card}>
                 <Link href={`/explore/${d.id}`} className={styles.link} prefetch={false}>
-                  <Thumb src={`/explore/${d.id}/render`} previewUrl={`/previews/explore/${d.id}.svg`} title={`${d.label} (${d.themeName}) 미리보기`} />
+                  <Thumb src={`/explore/${d.id}/render`} preview={designTarget(d)} title={`${d.label} (${d.themeName}) 미리보기`} />
                   <h3 className={styles.title}>{d.themeName}{d.variantLabel ? ` · ${d.variantLabel}` : ''}</h3>
                   <Recipe d={d} modeLabel={modeLabel} />
                 </Link>
@@ -79,7 +80,7 @@ export default async function ExplorePage({searchParams}: Props) {
           {view.items.map(d => (
             <li key={d.id} className={styles.card}>
               <Link href={`/explore/${d.id}`} className={styles.link} prefetch={false}>
-                <Thumb src={`/explore/${d.id}/render`} previewUrl={`/previews/explore/${d.id}.svg`} title={`${d.label} (${d.themeName}) 미리보기`} />
+                <Thumb src={`/explore/${d.id}/render`} preview={designTarget(d)} title={`${d.label} (${d.themeName}) 미리보기`} />
                 <h3 className={styles.title}>{d.label}</h3>
                 <p className={styles.meta}>{d.pageTypeLabel} · {d.styleLabel}</p>
                 <Recipe d={d} modeLabel={modeLabel} />
@@ -123,7 +124,7 @@ function PlatformCases() {
           return (
             <li key={k.id} className={styles.card} data-case={k.id}>
               <Link href={writeState({...k.state, step: 'swap'})} className={styles.link} prefetch={false}>
-                <Thumb src={renderSrc(request)} previewUrl={`/previews/platform/${k.id}.svg`} title={`${k.title} 미리보기`} />
+                <Thumb src={renderSrc(request)} preview={{kind: 'assemble', request}} title={`${k.title} 미리보기`} />
                 <h3 className={styles.title}>{k.title}</h3>
                 <p className={styles.meta}>{purposeOf(k.state.purpose)?.label} · {names.map(id => material(id)?.label ?? shortId(id)).join(' · ')}</p>
               </Link>

@@ -13,16 +13,9 @@ const trees = ['examples', 'v1', 'gallery', 'test-lab', 'src', 'previews', 'cata
 await rm(out, {recursive: true, force: true});
 await mkdir(join(out, 'docs'), {recursive: true});
 await mkdir(join(out, 'combos'), {recursive: true});
-for (const t of trees) {
-  try {
-    await cp(join(site, t), join(out, t), {recursive: true});
-  } catch {}
-}
+// site/ 의 생성물이 없으면 조용히 넘기지 않는다. 미리보기가 빠진 채 배포되면 목록 카드가 모두 빈 자리가 된다(npm run build 를 먼저 실행한다).
+for (const t of trees) await cp(join(site, t), join(out, t), {recursive: true});
 for (const f of (await readdir(join(site, 'docs'))).filter(f => f.endsWith('.html'))) await cp(join(site, 'docs', f), join(out, 'docs', f));
 await cp(join(site, 'combos/render.html'), join(out, 'combos/render.html'));
-for (const single of ['catalog-index.json', 'search-index.json']) {
-  try {
-    await cp(join(site, single), join(out, single));
-  } catch {}
-}
+for (const single of ['catalog-index.json', 'search-index.json']) await cp(join(site, single), join(out, single));
 console.log(`SYNCED ${trees.join(', ')}, docs/*.html, combos/render.html, catalog-index.json → apps/web/public`);

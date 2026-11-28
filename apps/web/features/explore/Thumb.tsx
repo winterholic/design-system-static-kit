@@ -1,87 +1,30 @@
-'use client';
-
-import {useRef} from 'react';
+import type {PreviewTarget} from '@/lib/api/preview-keys.mjs';
+import {LiveThumb} from './LiveThumb';
+import {previewRefusal, previewSrc} from './previews.server';
 import styles from './thumb.module.css';
 
 const VIEW_W = 1280, VIEW_H = 800;
 
-function getPreviewUrl(src: string): string | null {
-  const exploreMatch = src.match(/^\/explore\/([^/]+)\/render$/);
-  if (exploreMatch) return `/previews/explore/${exploreMatch[1]}.svg`;
-  const compMatch = src.match(/^\/components\/([^/]+)\/render$/);
-  if (compMatch) return `/previews/components/${compMatch[1]}.svg`;
-  return null;
-}
-
-/**
- * Thumb: 대표 미리보기 컴포넌트.
- * 일반 카탈로그 목록(Explore, Components, Typography 등)에서는 사전 생성된 정적 SVG(img)로
- * 인라인 렌더링하여 iframe 0개와 런타임 컴파일 0회를 달성한다 (CONTRACTS.md §5.1).
- * interactive 모드(상세 시험 영역 등)나 정적 자산이 없는 경우에만 격리된 iframe을 렌더링한다.
- */
-export function Thumb({
-  src,
-  title,
-  width = VIEW_W,
-  height = VIEW_H,
-  interactive = false,
-  previewUrl,
-  staticSvg,
-}: {
-  src: string;
-  title: string;
-  width?: number;
-  height?: number;
-  interactive?: boolean;
-  previewUrl?: string;
-  staticSvg?: string;
+// 목록·카드 그리드의 미리보기. iframe 도 Observer 도 쓰지 않는 <img> 한 장이다(CONTRACTS §5.1).
+//  1) preview 대상이 빌드 시점에 사전 생성돼 있으면 그 정적 SVG(파일명이 캐시 키: immutable 로 서빙한다).
+//  2) 없으면(사용자가 고른 샘플·모드·폭 등) 같은 요청을 /platform/render 가 SVG 로 컴파일해 준다. 선택 시점의 컴파일이며 서버 캐시를 거친다.
+//  3) 사전 생성 때 Core 가 거부한 조합이면 이유 문구(data-preview="unavailable"). 컴파일하지 않는다.
+//  4) 어느 쪽도 없으면 자리만 둔다(data-preview="missing"). 이 경우는 목록에서 시험이 실패하게 한다.
+// interactive 는 상세 화면의 시험 영역이다. 그때만 격리 iframe(LiveThumb)을 쓴다.
+export function Thumb({src, title, width = VIEW_W, height = VIEW_H, interactive = false, preview}: {
+  src: string; title: string; width?: number; height?: number; interactive?: boolean; preview?: PreviewTarget;
 }) {
-  const box = useRef<HTMLDivElement>(null);
-  const resolvedPreview = previewUrl ?? getPreviewUrl(src);
-
-  // 대화형 상세 시험 영역이거나 정적 자산이 없는 경우 격리 iframe 허용
-  if (interactive || !resolvedPreview) {
-    return (
-      <div ref={box} className={styles.box} style={{aspectRatio: `${width} / ${height}`}} data-live="true">
-        <iframe
-          key={src}
-          src={src}
-          title={title}
-          tabIndex={interactive ? 0 : -1}
-          aria-hidden={interactive ? undefined : 'true'}
-          sandbox="allow-scripts"
-          className={interactive ? `${styles.frame} ${styles.interactive}` : styles.frame}
-          style={{width, height}}
-        />
-      </div>
-    );
-  }
-
-  // 사전 생성 인라인 SVG 제공 시
-  if (staticSvg) {
-    return (
-      <div
-        ref={box}
-        className={styles.box}
-        style={{aspectRatio: `${width} / ${height}`}}
-        data-live="true"
-        dangerouslySetInnerHTML={{__html: staticSvg}}
-      />
-    );
-  }
-
-  // 일반 카탈로그 목록: 정적 자산(SVG) 렌더링 (iframe 0개, Observer 없음)
+  if (interactive) return <LiveThumb src={src} title={title} width={width} height={height} interactive />;
+  const target = preview ? {...preview, width: preview.width ?? width} : null;
+  const stat = target ? previewSrc(target) : null;
+  const refusal = !stat && target ? previewRefusal(target) : null;
+  // 사전 생성 때 Core 가 거부한 조합은 컴파일을 되풀이하지 않고 이유를 보인다(요청하면 오류 문서만 돌아온다).
+  if (refusal) return <div className={styles.box} style={{aspectRatio: `${width} / ${height}`}} data-preview="unavailable"><p className={styles.refusal} role="status">{refusal}</p></div>;
+  const dynamic = !stat && src.startsWith('/platform/render?') ? `${src}&part=svg&w=${width}&h=${height}` : null;
+  const url = stat ?? dynamic;
   return (
-    <div ref={box} className={styles.box} style={{aspectRatio: `${width} / ${height}`}} data-live="true">
-      <img
-        src={resolvedPreview}
-        alt={title}
-        width={width}
-        height={height}
-        loading="lazy"
-        decoding="async"
-        className={styles.image}
-      />
+    <div className={styles.box} style={{aspectRatio: `${width} / ${height}`, '--w': `${width}px`, '--h': `${height}px`} as React.CSSProperties} data-preview={stat ? 'static' : dynamic ? 'dynamic' : 'missing'}>
+      {url ? <img src={url} alt={title} width={width} height={height} loading="lazy" decoding="async" className={styles.image} /> : null}
     </div>
   );
 }
