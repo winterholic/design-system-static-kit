@@ -110,7 +110,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "A3 독립 HTTP 재검증(HEAD 7f9c24fca): 최신 공개 API의 101개 카드 ID가 페이지별 24/24/24/24/5와 정확히 일치하고 누락·중복이 없으며 목록 iframe·숨김 카드·서버 컴파일은 0이다. q=hero, purpose:card, page=2 복원과 상세 경로도 HTTP 200으로 확인했다. 상태는 Implemented 유지: 기존 A1 기록에서 Explore DOM 노드가 504→538로 증가해 “DOM 요소 수 대폭 감소” 기준을 충족하지 못했고, 이번 브라우저 스크롤 재요청 측정도 환경상 재검증하지 못했다. 과거 A3의 92개/4쪽은 현재 API 집합(101개/5쪽)과 달라 정정했다.",
+      "unresolvedIssues": "A3 독립 HTTP 재검증(검증 HEAD e4c4baad, origin/main 382b667be): 최신 공개 API의 101개 카드 ID가 페이지별 24/24/24/24/5와 정확히 일치하고 누락·중복이 없으며 목록 iframe·숨김 카드·서버 컴파일은 0이다. ttakkari_browser에서 101개/1–24, page=2에서 25–48을 확인했고 q=hero는 해당 상세 경로를 보여줬다. purpose:card, page=2 복원 및 두 상세 경로도 HTTP 200이다. Implemented 유지: A1의 Explore DOM 노드 504→538은 “DOM 요소 수 대폭 감소”를 충족하지 않고 이번 Chromium e2e/스크롤 왕복은 sandbox에서 미실행이다. 과거 A3 92개/4쪽은 현재 101개/5쪽으로 정정했다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/explore/Thumb.tsx",
@@ -190,7 +190,7 @@
         {
           "file": "apps/web/e2e/catalog-lists.spec.mjs",
           "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
-          "reason": "A3: Components test.fail 을 일반 시험으로 전환, 쪽 이동·검색·분류 시험 추가"
+          "reason": "A3: Components의 24개 상한·쪽 이동·URL 검색/분류·빈 결과에 더해 공개 API ID 집합 전체와 페이지 순회 결과를 비교해 누락/중복도 실패하도록 보강"
         },
         {
           "file": "apps/web/package.json",
@@ -297,7 +297,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "최신 HEAD 7f9c24fca에서 npm run verify의 생성물 재현성은 통과했고, `/components` 목록 전체의 ID 집합도 공개 API와 일치한다. TASK-TRA-03은 계속 Implemented: 생성된 catalog-chunks를 웹에서 실제로 선택 로드하는 소비자가 없고 초기 전송량 감소는 입증되지 않았다(초기 기록은 로컬 비압축 next start이며 원본 revision 미기록). Vercel 전송량 측정은 H 단계 소유.",
+      "unresolvedIssues": "최신 검증 HEAD e4c4baad(원격 main 382b667be 포함)에서 root 생성물 재현성은 단독으로 통과했고 `/components` 전체 ID 집합은 공개 API와 일치한다. TASK-TRA-03은 계속 Implemented: 생성된 catalog-chunks를 웹에서 실제로 선택 로드하는 소비자가 없고 초기 전송량 감소는 입증되지 않았다(과거 측정 source revision 미기록). Vercel 전송량 측정은 H 단계 소유.",
       "createFiles": [
         "scripts/lib/preview-requests.mjs",
         "apps/web/lib/api/preview-recipes.mjs",
@@ -375,7 +375,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "A3 구현 재검증: 웹 단위 80/80(공개 service 계약 버전 변경 시 cache miss, 동일 버전 재사용·디바운스 포함), 일반 빌드 정적 번들 39개에서 probe hook 문자열 0, DSK_STUDIO_PROBE=1 별도 빌드 정적 번들 39개 중 1개에서 두 hook 이름 확인. 브라우저의 window hook 런타임 단언은 Chromium 실행 권한 오류로 미실행. 조립 결과 공유 한계는 남아 Verified로 올리지 않음. A3 성능 JSON의 측정 source SHA도 미기록이라 revision 간 LCP 비교는 과거 수치로만 보존.",
+      "unresolvedIssues": "최신 검증 HEAD e4c4baad에서 웹 단위 80/80(공개 service 계약 버전 변경 시 cache miss, 동일 버전 재사용·디바운스·in-flight dedupe 포함), 일반 빌드 정적 번들 39개에서 probe hook 문자열 0, DSK_STUDIO_PROBE=1 빌드 39개 중 1개에서 두 훅 이름을 확인했다. approved ttakkari_browser는 목록 URL·화면을 확인했으나 window hook 값은 직접 읽지 못했다. 전체 npm run verify의 유일한 실패는 원격 main의 resizable-panel Chromium test가 Codex nested worker sandbox 권한 오류로 브라우저를 띄우지 못한 환경 문제다. 조립 결과 공유 한계는 남고 A3 성능 JSON의 source SHA도 미기록이므로 Verified로 올리지 않는다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/studio/StudioApp.tsx",
