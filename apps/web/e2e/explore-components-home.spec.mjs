@@ -30,7 +30,8 @@ test('홈과 Explore 필터는 URL에 남고 뒤로 가기·새로고침에서 �
 
 test('Explore 상세는 컴파일 바이트와 Blueprint 및 Studio 계약을 제공하고 존재하지 않는 ID는 404', async ({page, request}) => {
   await page.goto('/explore');
-  const card = page.locator('a[href^="/explore/"]:not([href="/explore/combos"])').first();
+  // /explore/materials 는 재료 비교 입구이고 /explore/combos 는 조합 탐색기다. 컴파일된 디자인 사례 카드만 고른다.
+  const card = page.locator('a[href^="/explore/"]:not([href="/explore/combos"]):not([href="/explore/materials"])').first();
   const href = await card.getAttribute('href');
   const detail = await request.get(href);
   const html = await request.get(`${href}/render`);

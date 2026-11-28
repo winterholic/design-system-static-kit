@@ -12,6 +12,7 @@
 .cell { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 .cell h3 { margin: 0; font-size: var(--text-md); }
 .meta { margin: 0; font-size: var(--text-sm); color: var(--color-muted); }
+.metaNote { max-width: var(--measure); }
 .reasons { margin: 0; padding-left: 1.2em; font-size: var(--text-sm); color: var(--color-muted); }
 .pair { display: grid; grid-template-columns: 1fr; gap: var(--space-2); }
 @media (min-width: 720px) { .pair { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); } }

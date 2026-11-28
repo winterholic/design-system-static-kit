@@ -4,6 +4,7 @@ import {expect, test} from '@playwright/test';
 import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {toPreviewSvg} from '../lib/api/preview-svg.mjs';
+import {previewKeyOf} from '../lib/api/preview-keys.mjs';
 import {allPlatformMaterials, caseRequest, purposeRequest, typeRequest} from '../../../scripts/lib/preview-requests.mjs';
 import {getPlatformMaterial} from '../../../src/service/index.mjs';
 import {PLATFORM_CASES} from '../features/platform/cases.ts';
@@ -44,9 +45,19 @@ test('사례·목적 패밀리·타이포: /platform/render 가 낸 문서 = 정
   };
   const keyOf = id => entries('platform').concat(entries('purpose-family'), entries('type-system')).find(([, v]) => v.ids.includes(id))?.[0];
   for (const k of PLATFORM_CASES) await check(keyOf(`platform:${k.id}`), `/platform/render?r=${token(caseRequest(k))}`);
-  for (const [key, item] of entries('purpose-family')) {
-    await check(key, `/platform/render?k=components&r=${token(purposeRequest(getPlatformMaterial({id: item.id}).value))}`);
+  // 사전 생성은 목적 패밀리마다 시각 패밀리별 미리보기를 만든다(키 = 요청의 items[0].visual 포함). 같은 요청을 서버에 보내 전부 대조한다.
+  let checkedPurposePreviews = 0;
+  for (const row of allPlatformMaterials('purpose-family')) {
+    for (const visual of allPlatformMaterials('family')) {
+      const request = purposeRequest(getPlatformMaterial({id: row.id}).value);
+      request.items[0].visual = visual.id;
+      const key = previewKeyOf({kind: 'components', request, width: 480});
+      if (!previews.items[key]) continue;
+      await check(key, `/platform/render?k=components&r=${token(request)}`);
+      checkedPurposePreviews++;
+    }
   }
+  expect(checkedPurposePreviews, '정적 목적 패밀리 미리보기를 하나도 빠뜨리지 않고 대조한다').toBe(entries('purpose-family').length);
   for (const [key, item] of entries('type-system')) await check(key, `/platform/render?r=${token(typeRequest(item.id))}`);
   expect(allPlatformMaterials('type-system').length).toBeGreaterThan(entries('type-system').length - 1);
 });

@@ -141,20 +141,23 @@ for (const width of [390, 1280]) {
       } while (cursor);
       const expectedPurposes = new Set(publicPurposes.map(row => row.id.slice('purpose:'.length)));
       expect(expectedPurposes.size).toBeGreaterThan(0);
+      // 목록 카드는 상세 주소(/components/purpose/<묶음>/<이름>)를 가진다. 모든 쪽을 넘기며 목적 패밀리 카드의 주소를 모은다.
+      const list = page.getByTestId('components-list');
       for (let n = 1; ; n++) {
-        for (const id of await page.locator('li[data-purpose]').evaluateAll(els => els.map(el => el.getAttribute('data-purpose')))) purposes.add(id);
-        const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('link', {name: '다음'});
-        if ((await next.getAttribute('aria-disabled')) === 'true') break;
+        await expect(list).not.toHaveAttribute('aria-busy', 'true');
+        for (const href of await list.locator('a[href^="/components/purpose/"]').evaluateAll(els => els.map(el => el.getAttribute('href')))) purposes.add(href.replace('/components/purpose/', '').split('/').join('.'));
+        const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('button', {name: '다음'});
+        if (await next.isDisabled()) break;
         await next.click();
         await expect(page).toHaveURL(new RegExp(`page=${n + 1}`));
       }
       expect([...purposes].sort()).toEqual([...expectedPurposes].sort());
       await page.goto('/components');
       await page.getByRole('searchbox', {name: '검색'}).fill('card.pricing');
-      await page.getByRole('button', {name: '찾기'}).click();
-      const card = page.getByTestId('purpose-families').locator('li[data-purpose="card.pricing"]');
+      await page.getByRole('button', {name: '검색', exact: true}).click();
+      const card = page.getByTestId('components-list').locator('a[href="/components/purpose/card/pricing"]');
       await expect(card).toBeVisible();
-      await card.getByRole('link').click();
+      await card.click();
       await expect(page).toHaveURL(/\/components\/purpose\/card\/pricing/);
 
       // 시각 패밀리 전부 비교: 칸 수는 Core 에 등록된 시각 패밀리 수와 같아야 한다(4종 고정이 아니다). 칸마다 보이는 이름이 있어야 한다.
