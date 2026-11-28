@@ -1,12 +1,12 @@
 {
   "schemaVersion": "catalog-index/1.0",
   "catalogVersion": "2.4.0",
-  "contentHash": "cc5522767291fe35d4c08c463f7c5aa7",
+  "contentHash": "130b59f1f1f9f620060c141bff48e178",
   "categories": [
     {
       "id": "all",
       "label": "전체",
-      "itemCount": 549
+      "itemCount": 555
     },
     {
       "id": "buttons",
@@ -86,7 +86,7 @@
     {
       "id": "mobile",
       "label": "모바일",
-      "itemCount": 2
+      "itemCount": 9
     }
   ],
   "materials": [
@@ -7533,7 +7533,8 @@
       "url": "/components/purpose/form/search",
       "purpose": "검색어 하나(필요하면 범위 선택)를 받아 제출한다. 머리줄과 목록 위에서 쓰며 inline은 한 줄, stacked는 세로로 쌓는다.",
       "relatedCategories": [
-        "inputs"
+        "inputs",
+        "mobile"
       ],
       "previewUrlsByFamily": {
         "family:bold": "/previews/78247addaa613b68f02a3694782e8136.svg",
@@ -8411,6 +8412,264 @@
         "family:quiet": "/previews/4eb6c32deaebe2dd159b0b434c573f41.svg",
         "family:soft": "/previews/8ac7f7f489ee2ef694f5e8c44d541373.svg",
         "family:tonal-layered": "/previews/4fd71b51a3345698609ead22b4de3d7e.svg"
+      }
+    },
+    {
+      "id": "purpose:mobile.action-sheet",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Action Sheet",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "mobile",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/13da2c2f51c4449d6d0ea5b322028e53.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/mobile/action-sheet",
+      "purpose": "화면 아래에서 선택 동작을 보여 주고 모달 키보드 동작을 보장한다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/13da2c2f51c4449d6d0ea5b322028e53.svg",
+        "family:corporate-formal": "/previews/d103ba6a487d40e510120f894dfe60f5.svg",
+        "family:dense-enterprise": "/previews/2854faad5a21c6deb9d8ea8bb9a6e7a2.svg",
+        "family:editorial": "/previews/ead0624b4c8f3c032ad97e77b34d8a5e.svg",
+        "family:elevated-material": "/previews/d5faf20da1391c7a6d482376acc0c2ca.svg",
+        "family:expressive": "/previews/b708010b7fd6e6c2ca1b57548c8280e1.svg",
+        "family:glass": "/previews/530f796b9efa4b23eface522cfe4ab34.svg",
+        "family:luxury": "/previews/ca77a2356272b2ba8bee7c0d1625b034.svg",
+        "family:outline-precise": "/previews/3c970e9acef84908e579e236233b8d89.svg",
+        "family:quiet": "/previews/638573cb5d0718d204f6f489d455134b.svg",
+        "family:soft": "/previews/7657f5951392a8642d7e811198b13dfe.svg",
+        "family:tonal-layered": "/previews/6a3c8e878b79f4de14f5839d5d1eca91.svg"
+      }
+    },
+    {
+      "id": "purpose:mobile.filter-panel",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Mobile Filter Panel",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "mobile",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/00e56ace0197cc2a48021389ef019f81.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/mobile/filter-panel",
+      "purpose": "검색 가능한 필터 조건을 모달 패널 안에서 고르고 적용한다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/d2acdfc166ff90faf79cd39b1812d393.svg",
+        "family:corporate-formal": "/previews/00e56ace0197cc2a48021389ef019f81.svg",
+        "family:dense-enterprise": "/previews/bff96c40a53996374db4e5b50aa615dd.svg",
+        "family:editorial": "/previews/28b50732c4b0ad9cfc6c7ba1cd8b8dcf.svg",
+        "family:elevated-material": "/previews/ebd9a2a0c1f0bdd4e21e643c2d636c27.svg",
+        "family:expressive": "/previews/730cc460fc32dccfcff072812010f209.svg",
+        "family:glass": "/previews/1c03915dcf98570bf51c62a86c856e97.svg",
+        "family:luxury": "/previews/d0a904896ced4af68b3e5ae755f23b65.svg",
+        "family:outline-precise": "/previews/6658b7197719233d89bc014c7c7700b6.svg",
+        "family:quiet": "/previews/deeb96e3268b6df9f683b49c757f7aad.svg",
+        "family:soft": "/previews/13b60fdf60ea589fe780c208135b9125.svg",
+        "family:tonal-layered": "/previews/d0061ff17959a1826e7c7b70101a05a4.svg"
+      }
+    },
+    {
+      "id": "purpose:mobile.full-screen-dialog",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Full-screen Dialog",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "mobile",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/08a3c227c26d2a08c10e34f77e328eb4.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/mobile/full-screen-dialog",
+      "purpose": "모바일 전체 화면에서 집중 작업을 제시하고 확인 또는 닫기를 제공한다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/3ab6eef20d56062a2fb62ba2cfe780bb.svg",
+        "family:corporate-formal": "/previews/26860486aa380a208712ed20b67b254b.svg",
+        "family:dense-enterprise": "/previews/c8a473c626b0e213491006289b138efe.svg",
+        "family:editorial": "/previews/e245e922673a3dd3b3971863de86816f.svg",
+        "family:elevated-material": "/previews/da1beb93dd84933d73832b993dffb809.svg",
+        "family:expressive": "/previews/08a3c227c26d2a08c10e34f77e328eb4.svg",
+        "family:glass": "/previews/e04eddd3dfe79582ae01c8cbf108d4d4.svg",
+        "family:luxury": "/previews/7f11b835b4972dd5b18cda8defc4f490.svg",
+        "family:outline-precise": "/previews/dddf42be929c2a26bc00e3e205eb6c33.svg",
+        "family:quiet": "/previews/904d121b57677c8f9b0018975dd10124.svg",
+        "family:soft": "/previews/b439b5e23da3390804d33885868fa6aa.svg",
+        "family:tonal-layered": "/previews/3546b922d4b97e0d3665943637250691.svg"
+      }
+    },
+    {
+      "id": "purpose:mobile.list-cell",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Mobile List Cell",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "mobile",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/2ed4893f44e843be905de931a7af2915.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/mobile/list-cell",
+      "purpose": "터치 가능한 제목·설명·보조 상태를 한 행으로 묶어 좁은 목록에서 읽고 실행한다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/d1b26097cbee52a50e370bdfb4996924.svg",
+        "family:corporate-formal": "/previews/e0db81c0cc7f2137dc215200b0ddb226.svg",
+        "family:dense-enterprise": "/previews/a7f2bd5ab0f1015923bb3428667def05.svg",
+        "family:editorial": "/previews/9c1ef8bea0a8fbc8dcf6e010ddc451bf.svg",
+        "family:elevated-material": "/previews/d887e01afde9b7db28810a286021ddc2.svg",
+        "family:expressive": "/previews/cac46ad6893cdb2ee87b21006963f27b.svg",
+        "family:glass": "/previews/836f4ed2c54e52e444c74d26977a8966.svg",
+        "family:luxury": "/previews/4492f713db753b99f5869931b0cf42ae.svg",
+        "family:outline-precise": "/previews/f5fa13e103b54ec3bc4247f7b08aa931.svg",
+        "family:quiet": "/previews/2ed4893f44e843be905de931a7af2915.svg",
+        "family:soft": "/previews/9590ded6fc5eed47e59a6b164811c6d8.svg",
+        "family:tonal-layered": "/previews/471fd672311fca4271fa02279b3be874.svg"
+      }
+    },
+    {
+      "id": "purpose:mobile.safe-area",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Safe-area Container",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "mobile",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/01a7392bb9d7c0951ecc4936e282a86c.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/mobile/safe-area",
+      "purpose": "노치와 시스템 제스처 영역을 피해 내부 콘텐츠와 터치 대상을 안전하게 배치한다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/5255cc7223e7ed3fe357551117bf52c5.svg",
+        "family:corporate-formal": "/previews/61602dadf4602783664b54f41b5410a9.svg",
+        "family:dense-enterprise": "/previews/92833d608676730c043fda9c07308a2b.svg",
+        "family:editorial": "/previews/b5a220f543da6ad58aea2b5666453f66.svg",
+        "family:elevated-material": "/previews/c73d6db4be59abd397ddc5c22141667a.svg",
+        "family:expressive": "/previews/c016ca7f3b778cdccc19c1fc8263bfe4.svg",
+        "family:glass": "/previews/4560476940f17c5fe5b43df13909cc32.svg",
+        "family:luxury": "/previews/4ccffd3578aa5ddb53b7e4e7c1281d85.svg",
+        "family:outline-precise": "/previews/26319e6ec6d15f88682bb0b95c31e7fc.svg",
+        "family:quiet": "/previews/9c9f69e425833dc21b6029c870ec2a04.svg",
+        "family:soft": "/previews/923cc486232ae38e309c69b2e9f7d766.svg",
+        "family:tonal-layered": "/previews/01a7392bb9d7c0951ecc4936e282a86c.svg"
+      }
+    },
+    {
+      "id": "purpose:mobile.sticky-action",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Sticky Bottom Action",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "mobile",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/170023b1bd92aceeda36c23d8e2ad846.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/mobile/sticky-action",
+      "purpose": "주요 화면 동작을 문서 흐름 안에 붙이고 안전 영역을 반영해 하단 터치 대상을 제공한다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/3e5635b591fe9477fe15557468cde9bd.svg",
+        "family:corporate-formal": "/previews/855925b3758b1fab43b400749176470a.svg",
+        "family:dense-enterprise": "/previews/a674917c3167b6a2835ca3026572b4c5.svg",
+        "family:editorial": "/previews/f9520d9543ea78e8343b4691babf12e5.svg",
+        "family:elevated-material": "/previews/6f6bf593a95a841d3d4dadfdff9d4aed.svg",
+        "family:expressive": "/previews/170023b1bd92aceeda36c23d8e2ad846.svg",
+        "family:glass": "/previews/a5cbeec4892ebaf40402682d3ff79f21.svg",
+        "family:luxury": "/previews/ea3ede1d82aed7a631d9a31466e7b723.svg",
+        "family:outline-precise": "/previews/b08a116dae6e655923b485104c3a21cf.svg",
+        "family:quiet": "/previews/df5af0afcb552e729d7ecdb5cb4b391e.svg",
+        "family:soft": "/previews/e0f26aa9f3bbb8b068a84a1c9f87b907.svg",
+        "family:tonal-layered": "/previews/2b700db65d22c35805c25dccd90c2fef.svg"
       }
     },
     {

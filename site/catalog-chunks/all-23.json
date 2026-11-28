@@ -2,10 +2,166 @@
   "schemaVersion": "catalog-index/1.0",
   "category": "all",
   "label": "전체",
-  "itemCount": 549,
+  "itemCount": 555,
   "page": 23,
-  "pages": 23,
+  "pages": 24,
   "materials": [
+    {
+      "id": "chart-preset:erp-normalized-stack",
+      "kind": "chart-preset",
+      "category": "chart",
+      "label": "ERP 부서별 예산 구성비",
+      "contexts": [
+        "dashboard"
+      ],
+      "tags": [
+        "chart",
+        "erp",
+        "normalized-stacked-bar",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/e15d7cc46264d42e9cb605b3487af332.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/chart-preset:erp-normalized-stack",
+      "purpose": "ERP 부서별 예산 구성비: normalized-stacked-bar 차트로 erp 맥락의 데이터를 보여 줍니다.",
+      "relatedCategories": [
+        "charts"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "chart-preset:analytics-multiline",
+      "kind": "chart-preset",
+      "category": "chart",
+      "label": "분석 유입·가입 다중 추이",
+      "contexts": [
+        "dashboard"
+      ],
+      "tags": [
+        "chart",
+        "analytics",
+        "multi-line",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/ab98c5151c94727e058ea5bed8655e65.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/chart-preset:analytics-multiline",
+      "purpose": "분석 유입·가입 다중 추이: multi-line 차트로 analytics 맥락의 데이터를 보여 줍니다.",
+      "relatedCategories": [
+        "charts"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "chart-preset:finance-step-rate",
+      "kind": "chart-preset",
+      "category": "chart",
+      "label": "금융 기준금리 변경 단계",
+      "contexts": [
+        "dashboard"
+      ],
+      "tags": [
+        "chart",
+        "finance",
+        "step-line",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/d0bf352b9fb33e6ef1a2b5c910f1c424.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/chart-preset:finance-step-rate",
+      "purpose": "금융 기준금리 변경 단계: step-line 차트로 finance 맥락의 데이터를 보여 줍니다.",
+      "relatedCategories": [
+        "charts"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "chart-preset:analytics-stacked-area",
+      "kind": "chart-preset",
+      "category": "chart",
+      "label": "분석 사용자 구성 추이",
+      "contexts": [
+        "dashboard"
+      ],
+      "tags": [
+        "chart",
+        "analytics",
+        "stacked-area",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/b267b5817870ddbebb1c7caeba517ef2.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/chart-preset:analytics-stacked-area",
+      "purpose": "분석 사용자 구성 추이: stacked-area 차트로 analytics 맥락의 데이터를 보여 줍니다.",
+      "relatedCategories": [
+        "charts"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "chart-preset:marketing-channel-pie",
+      "kind": "chart-preset",
+      "category": "chart",
+      "label": "마케팅 채널 점유 비율",
+      "contexts": [
+        "dashboard"
+      ],
+      "tags": [
+        "chart",
+        "marketing",
+        "pie",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/6e59a2b2399d625d86a8a899c80f64b2.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/chart-preset:marketing-channel-pie",
+      "purpose": "마케팅 채널 점유 비율: pie 차트로 marketing 맥락의 데이터를 보여 줍니다.",
+      "relatedCategories": [
+        "charts"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "chart-preset:analytics-bubble-segments",
+      "kind": "chart-preset",
+      "category": "chart",
+      "label": "분석 고객군 규모와 가치",
+      "contexts": [
+        "dashboard"
+      ],
+      "tags": [
+        "chart",
+        "analytics",
+        "bubble",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/d0d3acc48ce56d3a45f52a6d45bc8c47.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/chart-preset:analytics-bubble-segments",
+      "purpose": "분석 고객군 규모와 가치: bubble 차트로 analytics 맥락의 데이터를 보여 줍니다.",
+      "relatedCategories": [
+        "charts"
+      ],
+      "previewUrlsByFamily": {}
+    },
     {
       "id": "chart-preset:erp-treemap-costs",
       "kind": "chart-preset",
@@ -439,76 +595,6 @@
       "license": "MIT",
       "url": "/components/layout-primitive:flow",
       "purpose": "격자 흐름 배치 원형입니다.",
-      "relatedCategories": [
-        "layouts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "layout-primitive:container",
-      "kind": "layout-primitive",
-      "category": "layout-navigation",
-      "label": "컨테이너",
-      "contexts": [
-        "any"
-      ],
-      "tags": [
-        "layout",
-        "container"
-      ],
-      "previewUrl": "/previews/b21812dd43b9c09496347cbc7f8a4a6e.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "implemented",
-      "license": "MIT",
-      "url": "/components/layout-primitive:container",
-      "purpose": "컨테이너 배치 원형입니다.",
-      "relatedCategories": [],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "layout-primitive:split",
-      "kind": "layout-primitive",
-      "category": "layout-navigation",
-      "label": "2분할",
-      "contexts": [
-        "any"
-      ],
-      "tags": [
-        "layout",
-        "split"
-      ],
-      "previewUrl": "/previews/b6eb6ad64fb72c3035c5ad1311532f5f.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "implemented",
-      "license": "MIT",
-      "url": "/components/layout-primitive:split",
-      "purpose": "2분할 배치 원형입니다.",
-      "relatedCategories": [
-        "layouts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "layout-primitive:bento",
-      "kind": "layout-primitive",
-      "category": "layout-navigation",
-      "label": "벤토",
-      "contexts": [
-        "any"
-      ],
-      "tags": [
-        "layout",
-        "bento"
-      ],
-      "previewUrl": "/previews/55060220f244d1fd10876b0d20161930.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/layout-primitive:bento",
-      "purpose": "벤토 배치 원형입니다.",
       "relatedCategories": [
         "layouts"
       ],
