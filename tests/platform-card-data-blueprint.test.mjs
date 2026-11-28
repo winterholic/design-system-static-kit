@@ -13,7 +13,7 @@ const env = platformEnv();
 const VISUAL = 'family:quiet';
 test('KPI trend card delegates its sparkline and accessible data summary to the verified chart preset renderer', () => {
   const series = [3, 8, 5], categories = series.map((_, index) => String(index + 1));
-  const expected = renderChartPreset('chart-preset:mobile-sparkline', {title: '이번 달 매출 추세', caption: '이번 달 매출 값 변화', xLabel: '순서', yLabel: '값', unit: '', labels: 'none', categories, series: [{name: '이번 달 매출 추세', values: series}]});
+  const expected = renderChartPreset('chart-preset:mobile-sparkline', {title: '이번 달 매출 추세', caption: '이번 달 매출 값 변화', xLabel: '순서', yLabel: '값', unit: '', categories, series: [{name: '이번 달 매출 추세', values: series}]});
   assert.equal(typeof expected, 'string');
   const family = getPurposeFamily('purpose:card.kpi');
   const rendered = renderPurposeFamily(env, family.id, {

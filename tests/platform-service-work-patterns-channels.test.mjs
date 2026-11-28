@@ -21,7 +21,7 @@ test('M work patterns resolve as exact materials and Core, REST and MCP produce 
     const core = assembleComponents(request);
     assert.equal(core.ok, true, `${family.id}: ${JSON.stringify(core.errors)}`);
     assert.ok(core.value.html.includes(`data-work-pattern="${family.id}"`));
-    assert.equal(core.value.script.includes('window.__kitWorkPatterns'), ['purpose:work.approval-panel', 'purpose:work.search-result-list', 'purpose:work.task-list', 'purpose:work.user-management-table', 'purpose:work.settings-form', 'purpose:work.status-management', 'purpose:work.comment-thread'].includes(family.id));
+    assert.equal(core.value.script.includes('window.__kitWorkPatterns'), ['purpose:work.filter-toolbar', 'purpose:work.search-toolbar', 'purpose:work.bulk-action-toolbar', 'purpose:work.approval-panel', 'purpose:work.search-result-list', 'purpose:work.task-list', 'purpose:work.user-management-table', 'purpose:work.settings-form', 'purpose:work.status-management', 'purpose:work.comment-thread'].includes(family.id));
     assert.equal((await rest('POST', '/api/v1/platform/assemble-components', {body: request})).text, json(core), `${family.id}: REST assembly`);
     assert.equal(json((await client.callTool({name: 'assemble_components', arguments: request})).structuredContent), json(core), `${family.id}: MCP assembly`);
   }

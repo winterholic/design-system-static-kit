@@ -35,7 +35,7 @@ function StepBar({state}: {state: AssembleState}) {
 function repair(state: AssembleState): {state: AssembleState; dropped: {what: string; reason: string}[]} {
   const dropped: {what: string; reason: string}[] = [];
   let cur = state;
-  for (const key of ['type', 'set', 'palette', 'family', 'layout', 'component', 'state', 'surface', 'motion', 'background', 'media', 'style', 'shell', 'width', 'density'] as const) {
+  for (const key of ['type', 'set', 'palette', 'family', 'style', 'shell', 'width', 'density'] as const) {
     const req = requestOf(cur);
     if (!req) break;
     const p = probeDesign(req);
@@ -209,29 +209,6 @@ function SwapStep({state, here}: StepProps) {
     const p = probeDesign({...request, [axis]: value});
     return {value, label: m.label ?? value, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
   });
-  const layoutOptions = materials('layout').map(m => {
-    const p = probeDesign({...request, pattern: m.id});
-    return {value: shortId(m.id), label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
-  });
-  const contextOptions = materials('style-context').map(m => {
-    const p = probeDesign({...request, styleContext: m.id});
-    return {value: shortId(m.id), label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
-  });
-  const componentOptions = materials('base-component').map(m => {
-    const p = probeDesign({...request, components: [1, 2, 3].map(n => ({base: m.id, content: {id: `c${n}`, title: `${m.label} ${n}`, body: `${m.label} 예시 ${n}`}}))});
-    return {value: shortId(m.id), label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
-  });
-  const stateOptions = materials('state-pattern').map(m => {
-    const pattern = shortId(m.id);
-    const p = probeDesign({...request, states: {[pattern.split('-')[0]]: m.id}});
-    return {value: pattern, label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
-  });
-  const spacingOptions = materials('spacing').map(m => {
-    const density = typeof m.density === 'string' ? m.density : shortId(m.id);
-    const p = probeDesign({...request, density});
-    return {value: density, label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
-  });
-  const iconOptions = materials('icon').map(m => ({value: shortId(m.id), label: m.label, disabled: true, reason: 'Core assembleDesign 요청에는 아이콘 영역 선택 필드가 없어 결과에 반영할 수 없습니다.'}));
   return (
     <section aria-labelledby="swap-title">
       <h2 className="section-title" id="swap-title">재료를 바꿔 보세요</h2>
@@ -241,18 +218,13 @@ function SwapStep({state, here}: StepProps) {
           <SwapSelect id="s-set" label="서브토큰 세트" param="set" value={state.set ?? ''} placeholder="추천에 맡김" options={options('subtoken-set', materials('subtoken-set'), null, sets.blocked)} />
           <SwapSelect id="s-type" label="타이포 시스템" param="type" value={state.type ?? ''} placeholder="추천에 맡김" options={options('type-system', materials('type-system'), types.ranked, types.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-family" label="컴포넌트 패밀리" param="family" value={state.family ?? ''} placeholder="추천에 맡김" options={options('family', materials('family'), null, fams.blocked)} />
-          <SwapSelect id="s-style-context" label="디자인 맥락" param="style" value={state.style ?? ''} placeholder="Core 추천" options={contextOptions} />
-          <SwapSelect id="s-layout" label="레이아웃" param="layout" value={state.layout ?? ''} placeholder="Core 추천" options={layoutOptions} />
-          <SwapSelect id="s-component" label="컴포넌트" param="component" value={state.component ?? ''} placeholder="Core 추천" options={componentOptions} />
           <SwapSelect id="s-surface" label="표면" param="surface" value={state.surface ?? ''} placeholder="방향에 맡김" options={options('surface', materials('surface'), others.surface.ranked, others.surface.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-motion" label="모션" param="motion" value={state.motion ?? ''} placeholder="방향에 맡김" options={options('motion', materials('motion'), others.motion.ranked, others.motion.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-background" label="배경" param="background" value={state.background ?? ''} placeholder="방향에 맡김" options={options('background', materials('background'), others.background.ranked, others.background.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-media" label="미디어" param="media" value={state.media ?? ''} placeholder="방향에 맡김" options={options('media', materials('media'), others.media.ranked, others.media.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
-          <SwapSelect id="s-state-pattern" label="상태 패턴" param="state" value={state.state ?? ''} placeholder="Core 추천" options={stateOptions} />
           <SwapSelect id="s-shell" label="셸" param="shell" value={state.shell ?? ''} placeholder="방향에 맡김" options={axisOptions('shell')} />
           <SwapSelect id="s-width" label="폭" param="width" value={state.width ?? ''} placeholder="방향에 맡김" options={axisOptions('width')} />
-          <SwapSelect id="s-density" label="간격 토큰·밀도" param="density" value={state.density ?? ''} placeholder="방향에 맡김" options={spacingOptions} />
-          <SwapSelect id="s-icon-area" label="아이콘 영역" param="icon" value="" placeholder="Core 연결 대기" options={iconOptions} />
+          <SwapSelect id="s-density" label="밀도" param="density" value={state.density ?? ''} placeholder="방향에 맡김" options={axisOptions('density')} />
           <ul className={styles.chips} aria-label="색 모드">{(['light', 'dark'] as const).map(m => <li key={m}><Link href={here({mode: m})} aria-current={(state.mode ?? 'light') === m ? 'true' : undefined}>{m === 'dark' ? '다크' : '라이트'}</Link></li>)}</ul>
         </div>
         <div className={styles.stage}>

@@ -53,7 +53,6 @@ export default async function ExplorePage({searchParams}: Props) {
 
   return (
     <PageShell eyebrow="Explore" title="완성된 디자인 둘러보기" lead={`페이지 유형, 테마, 팔레트, 모드를 조립해 Core가 컴파일한 완성 화면 ${designs.length}개입니다. 마음에 드는 화면을 열어 구성을 보고 Studio에서 이어 편집하세요.`}>
-      <p><Link href="/explore/materials" className={styles.badge}>신규 재료를 직접 골라 비교하기</Link></p>
       {unfiltered && platformReady() ? <PlatformCases /> : null}
       {featured.length ? (
         <section aria-labelledby="explore-featured" className={styles.featured}>

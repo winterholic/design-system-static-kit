@@ -5,7 +5,6 @@ import {recordCompile} from '@/features/perf/counter.server';
 import {LruCache, previewCache, probeCache} from '@/lib/api/cache.mjs';
 import {previewKeyOf} from '@/lib/api/preview-keys.mjs';
 import {pregeneratedProbe} from '@/features/explore/previews.server';
-import {listAllMaterials} from './material-library.mjs';
 
 // 조립 플랫폼 서비스 함수는 Core 서비스 진입점에서 이름으로 찾는다.
 // 웹은 src/platform 을 직접 import 하지 않는다(boundary.check.mjs). 함수가 없을 때 대신 만들어 내는 값도 없다.
@@ -74,8 +73,9 @@ const detailCache: any = new LruCache(1000);
 export function materials(kind: string): Material[] {
   const hit = cache.get(kind);
   if (hit) return hit;
-  const items = listAllMaterials(query => call<{items: Material[]; nextCursor: string | null}>('listPlatformMaterials', query), kind);
-  if (items.length) cache.set(kind, items);
+  const r = call<{items: Material[]}>('listPlatformMaterials', {kind});
+  const items = r.ok ? r.value.items : [];
+  if (r.ok) cache.set(kind, items);
   return items;
 }
 
