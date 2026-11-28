@@ -341,7 +341,9 @@ export const buttonClose = definePurposeFamily({
 });
 export function renderButtonClose(ctx) {
   const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), name = c.ariaLabel ?? '닫기';
-  const btn = withButtonAttrs(ctx.button('tertiary', {props: {size, state: p.state, content: 'icon-only'}, content: {icon: 'x', ariaLabel: name}}), 'data-action-dismiss');
+  // 아이콘만 있는 버튼은 link 외형을 가질 수 없다(BTN_LINK_ICON_ONLY). 3단계가 link인 시각 패밀리는 2단계 외형을 쓴다.
+  const role = ctx.visual.recipe.tertiary === 'link' ? 'secondary' : 'tertiary';
+  const btn = withButtonAttrs(ctx.button(role, {props: {size, state: p.state, content: 'icon-only'}, content: {icon: 'x', ariaLabel: name}}), 'data-action-dismiss');
   if (v.layout === 'standalone' || !c.message) return `<div class="pf-actions" role="group" aria-label="${e(name)}">${btn}</div>`;
   return `<div class="pf-dismissible" data-dismissible><p>${e(c.message)}</p>${btn}</div>`;
 }

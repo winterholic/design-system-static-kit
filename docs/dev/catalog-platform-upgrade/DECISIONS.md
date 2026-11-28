@@ -163,10 +163,10 @@ CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(gi
 
 ---
 
-## DEC-010: A 계열(버튼·액션)의 등록 방식과 Blueprint 왕복
+## DEC-011: A 계열(버튼·액션)의 등록 방식과 Blueprint 왕복
 
 ### 맥락
-DEC-009가 만든 A 12항목은 `component:*` 계약과 독립 시연(`actions` 입력)이었다. 플랫폼 레지스트리는 id가 `purpose:<group>.<name>` 또는 `<kind>:<name>`이어야 하므로 `component:*`는 재료 질의(`listPlatformMaterials`)에도 Blueprint(`materials`)에도 등록될 수 없었다. 그래서 Manifest에서 A가 7/12에 머물렀고 `blueprint.field: materials.actions`는 실제 스키마에 없는 필드를 가리켰다.
+DEC-010이 만든 A 12항목은 `component:*` 계약과 독립 시연(`actions` 입력)이었다. 플랫폼 레지스트리는 id가 `purpose:<group>.<name>` 또는 `<kind>:<name>`이어야 하므로 `component:*`는 재료 질의(`listPlatformMaterials`)에도 Blueprint(`materials`)에도 등록될 수 없었다. 그래서 Manifest에서 A가 7/12에 머물렀고 `blueprint.field: materials.actions`는 실제 스키마에 없는 필드를 가리켰다.
 
 ### 결정
 1. 새 재료 종류를 만들지 않는다(`PLATFORM_KINDS`는 Track A 소유이고 종류를 더하면 코드·검증·웹 전체가 따라 움직인다). 기존 구현이 있는 7항목은 그 재료를 그대로 쓰고, 구조가 다른 5항목(Split·Menu·FAB·Copy·Close)만 목적 패밀리(`purpose:button.split·menu·fab·copy·close`)로 등록한다. 목적 패밀리는 레지스트리 질의, 시각 패밀리 조합 검사, `materials.purposes` Blueprint 왕복을 이미 가진다.

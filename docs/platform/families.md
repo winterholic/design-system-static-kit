@@ -54,10 +54,18 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 <!-- generated:visual -->
 | 시각 패밀리 | 한 줄 설명 | 모양(radius·elevation·motion) | 전제 밀도 | 덮는 기반 컴포넌트 | 고정 축 예(Card·Button·Navigation) |
 |---|---|---|---|---|---|
-| family:bold | 굵은 선과 각진 모서리, 딱딱한 그림자로 구획한다. 강한 대비와 큰 숫자가 필요한 화면용. | square·hard·lively | comfortable | 10/10 | card {"appearance":"elevated","shape":"square","footer":"none"}; button {"shape":"square"}; nav {"appearance":"block","shape":"square"} |
-| family:editorial | 상자 대신 가는 선과 넓은 여백으로 구획한다. 읽기 중심 화면과 큰 제목용. | subtle·flat·none | spacious | 10/10 | card {"appearance":"flat","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"underline","shape":"soft"} |
-| family:quiet | 외곽선과 여백으로 구획한다. 장식이 적고 정보 밀도가 높은 업무 화면용. | soft·outline·subtle | comfortable | 10/10 | card {"appearance":"outline","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"underline","shape":"soft"} |
-| family:soft | 채운 면과 큰 모서리로 구획한다. 선이 거의 없어 부드럽고 친근한 화면용. | round·lifted·subtle | spacious | 10/10 | card {"appearance":"filled","shape":"round","footer":"none"}; button {"shape":"pill"}; nav {"appearance":"pill","shape":"pill"} |
+| family:bold | 두꺼운 경계선과 오프셋 그림자, 각진 모서리로 구획한다. 높은 시각적 대비와 강한 힘이 필요한 화면용. | square·hard·lively | comfortable | 10/10 | card {"appearance":"elevated","shape":"square","footer":"none"}; button {"shape":"square"}; nav {"appearance":"block","shape":"square"} |
+| family:corporate-formal | 절제된 4px 모서리와 안정적 정렬. 가는 경계에 은은한 그림자를 겹쳐 신뢰감을 주는 계층을 만든다. | subtle·soft·subtle | comfortable | 10/10 | card {"appearance":"elevated","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"underline","shape":"soft"} |
+| family:dense-enterprise | 30px 컨트롤과 4~8px 간격, 움직임 없는 반응. 데이터 집약적 전문 도구와 관리 콘솔을 위한 압축된 구조. | subtle·outline·none | compact | 10/10 | card {"appearance":"outline","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"block","shape":"soft"} |
+| family:editorial | 상자 대신 가는 선과 넓은 여백, 타이포그래피 중심으로 구획한다. 규칙선을 활용한 읽기 중심 화면용. | subtle·flat·none | spacious | 10/10 | card {"appearance":"flat","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"underline","shape":"soft"} |
+| family:elevated-material | 테두리 없이 그림자 깊이로 계층을 만든다. 놓인 카드는 얕게, 메뉴·대화상자·툴팁은 깊게 떠 있다. | soft·lifted·subtle | comfortable | 10/10 | card {"appearance":"elevated","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"pill","shape":"soft"} |
+| family:expressive | 28px 라운드와 알약형 컨트롤, 강조색이 도는 테두리와 큰 상승 모션, 6px 악센트 띠로 리듬을 만든다. 글로우 그림자는 밝은 모드에서 보이지 않아(X05) 쓰지 않는다. | bubble·lifted·lively | spacious | 10/10 | card {"appearance":"elevated","shape":"round","footer":"none"}; button {"shape":"pill"}; nav {"appearance":"pill","shape":"pill"} |
+| family:glass | 반투명 면과 배경 블러, 반투명 테두리. 면 뒤로 배경이 비치므로 본문 위에 겹쳐 고정되는 요소에는 쓰지 못한다. | round·lifted·subtle | spacious | 10/10 | card {"appearance":"outline","shape":"round","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"pill","shape":"soft"} |
+| family:luxury | 넓은 여백과 직각 모서리, 44px 컨트롤과 32px 가로 여백. 가는 글자 굵기에 넓게 벌어진 대문자 라벨. | square·flat·subtle | spacious | 10/10 | card {"appearance":"outline","shape":"square","footer":"none"}; button {"shape":"square"}; nav {"appearance":"underline","shape":"soft"} |
+| family:outline-precise | 선명한 1px 경계와 각진 컨트롤, 정밀한 정렬선. 직각 끝맺음의 아이콘과 카드 위 기준선이 구조를 드러낸다. | subtle·outline·subtle | comfortable | 10/10 | card {"appearance":"outline","shape":"square","footer":"none"}; button {"shape":"square"}; nav {"appearance":"block","shape":"square"} |
+| family:quiet | 외곽선과 여백으로 구획한다. 평평한 표면과 제한적 경계의 절제된 업무 화면용. | soft·outline·subtle | comfortable | 10/10 | card {"appearance":"outline","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"underline","shape":"soft"} |
+| family:soft | 채운 면과 큰 모서리로 구획한다. 알약형 컨트롤과 떠 있는 부드러운 표면의 친근한 화면용. | round·lifted·subtle | spacious | 10/10 | card {"appearance":"filled","shape":"round","footer":"none"}; button {"shape":"pill"}; nav {"appearance":"pill","shape":"pill"} |
+| family:tonal-layered | 선과 그림자 없이 색조 면 위에 면을 쌓는다. 카드 위 4px 띠와 큰 컨트롤, 붙은 분절 탭이 계층을 알린다. | round·flat·none | comfortable | 10/10 | card {"appearance":"filled","shape":"soft","footer":"none"}; button {"shape":"soft"}; nav {"appearance":"block","shape":"soft"} |
 <!-- /generated:visual -->
 
 열린 축의 허용 조합 수(허용 / 전체). 허용은 `memberCombinations`가 기반 계약의 금지 조합을 빼고 센 값이다. 같은 기반 컴포넌트라도 시각 패밀리가 고정하는 축이 다르면 열린 조합 수가 다르다.
@@ -66,9 +74,17 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | 시각 패밀리 | button-control | card-surface | data-table | feedback-message | input-control | modal-dialog | navigation-menu | select-control | tabs-control | tooltip |
 |---|---|---|---|---|---|---|---|---|---|---|
 | family:bold | 884/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 64/192 | 240/288 | 32/128 | 160/256 |
+| family:corporate-formal | 936/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:dense-enterprise | 936/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 64/192 | 240/288 | 32/128 | 160/256 |
 | family:editorial | 936/1920 | 77/180 | 66/120 | 208/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:elevated-material | 936/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:expressive | 884/1920 | 132/180 | 66/120 | 320/1152 | 132/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:glass | 936/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:luxury | 884/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:outline-precise | 884/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 64/192 | 240/288 | 32/128 | 160/256 |
 | family:quiet | 936/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
 | family:soft | 884/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
+| family:tonal-layered | 936/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 64/192 | 240/288 | 32/128 | 160/256 |
 <!-- /generated:openAxes -->
 
 ## 4. 목적 패밀리 37종
@@ -179,89 +195,89 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 <!-- generated:combos -->
 | 목적 패밀리 | 변형×열린 축 조합(시각 패밀리당) | × 시각 패밀리 전체 | 허용 | 거부(패밀리 단위) |
 |---|---|---|---|---|
-| purpose:card.kpi | 96 | 384 | 288 | 96 |
-| purpose:card.product | 180 | 720 | 300 | 420 |
-| purpose:card.article | 72 | 288 | 256 | 32 |
-| purpose:card.feature | 72 | 288 | 216 | 72 |
-| purpose:card.profile | 48 | 192 | 136 | 56 |
-| purpose:card.pricing | 16 | 64 | 16 | 48 |
-| purpose:card.status | 240 | 960 | 760 | 200 |
-| purpose:card.gallery | 96 | 384 | 200 | 184 |
-| purpose:button.primary | 54 | 216 | 180 | 36 |
-| purpose:button.secondary | 24 | 96 | 72 | 24 |
-| purpose:button.emphasis | 4 | 16 | 12 | 4 |
-| purpose:button.destructive | 36 | 144 | 84 | 60 |
-| purpose:button.icon | 12 | 48 | 48 | 0 |
-| purpose:button.loading | 18 | 72 | 72 | 0 |
-| purpose:button.toggle | 18 | 72 | 60 | 12 |
-| purpose:button.split | 18 | 72 | 72 | 0 |
-| purpose:button.menu | 12 | 48 | 48 | 0 |
-| purpose:button.fab | 12 | 48 | 48 | 0 |
-| purpose:button.copy | 12 | 48 | 48 | 0 |
-| purpose:button.close | 12 | 48 | 36 | 12 |
-| purpose:navigation.sidebar | 24 | 96 | 96 | 0 |
-| purpose:navigation.topbar | 16 | 64 | 56 | 8 |
-| purpose:navigation.tabs | 96 | 384 | 336 | 48 |
-| purpose:navigation.bottom | 4 | 16 | 12 | 4 |
-| purpose:form.search | 24 | 96 | 96 | 0 |
-| purpose:form.auth | 12 | 48 | 48 | 0 |
-| purpose:form.settings | 6 | 24 | 24 | 0 |
-| purpose:form.filter | 12 | 48 | 48 | 0 |
-| purpose:form.group | 81 | 324 | 243 | 81 |
-| purpose:table.business | 160 | 640 | 240 | 400 |
-| purpose:table.analytic | 80 | 320 | 176 | 144 |
-| purpose:table.dense | 80 | 320 | 88 | 232 |
-| purpose:feedback.confirm | 24 | 96 | 64 | 32 |
-| purpose:feedback.error | 12 | 48 | 36 | 12 |
-| purpose:feedback.warning | 12 | 48 | 36 | 12 |
-| purpose:feedback.progress | 18 | 72 | 72 | 0 |
-| purpose:feedback.result | 12 | 48 | 48 | 0 |
+| purpose:card.kpi | 96 | 1152 | 864 | 288 |
+| purpose:card.product | 180 | 2160 | 900 | 1260 |
+| purpose:card.article | 72 | 864 | 768 | 96 |
+| purpose:card.feature | 72 | 864 | 648 | 216 |
+| purpose:card.profile | 48 | 576 | 408 | 168 |
+| purpose:card.pricing | 16 | 192 | 48 | 144 |
+| purpose:card.status | 240 | 2880 | 2280 | 600 |
+| purpose:card.gallery | 96 | 1152 | 600 | 552 |
+| purpose:button.primary | 54 | 648 | 540 | 108 |
+| purpose:button.secondary | 24 | 288 | 216 | 72 |
+| purpose:button.emphasis | 4 | 48 | 36 | 12 |
+| purpose:button.destructive | 36 | 432 | 252 | 180 |
+| purpose:button.icon | 12 | 144 | 144 | 0 |
+| purpose:button.loading | 18 | 216 | 216 | 0 |
+| purpose:button.toggle | 18 | 216 | 180 | 36 |
+| purpose:button.split | 18 | 216 | 216 | 0 |
+| purpose:button.menu | 12 | 144 | 144 | 0 |
+| purpose:button.fab | 12 | 144 | 144 | 0 |
+| purpose:button.copy | 12 | 144 | 144 | 0 |
+| purpose:button.close | 12 | 144 | 108 | 36 |
+| purpose:navigation.sidebar | 24 | 288 | 288 | 0 |
+| purpose:navigation.topbar | 16 | 192 | 184 | 8 |
+| purpose:navigation.tabs | 96 | 1152 | 1104 | 48 |
+| purpose:navigation.bottom | 4 | 48 | 40 | 8 |
+| purpose:form.search | 24 | 288 | 288 | 0 |
+| purpose:form.auth | 12 | 144 | 144 | 0 |
+| purpose:form.settings | 6 | 72 | 72 | 0 |
+| purpose:form.filter | 12 | 144 | 144 | 0 |
+| purpose:form.group | 81 | 972 | 891 | 81 |
+| purpose:table.business | 160 | 1920 | 720 | 1200 |
+| purpose:table.analytic | 80 | 960 | 528 | 432 |
+| purpose:table.dense | 80 | 960 | 352 | 608 |
+| purpose:feedback.confirm | 24 | 288 | 192 | 96 |
+| purpose:feedback.error | 12 | 144 | 108 | 36 |
+| purpose:feedback.warning | 12 | 144 | 108 | 36 |
+| purpose:feedback.progress | 18 | 216 | 216 | 0 |
+| purpose:feedback.result | 12 | 144 | 144 | 0 |
 
-합계: 전체 6900개 중 허용 4671개, 거부 2229개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
+합계: 전체 20700개 중 허용 14379개, 거부 6321개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
 <!-- /generated:combos -->
 
 목적 패밀리 × 시각 패밀리(각 패밀리 예시 기준)에서 거부되는 쌍과 이유.
 
 <!-- generated:matrix -->
-| 목적 패밀리 | bold | editorial | quiet | soft |
-|---|---|---|---|---|
-| purpose:card.kpi | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.product | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.article | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.feature | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.profile | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.pricing | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.status | 허용 | 허용 | 허용 | 허용 |
-| purpose:card.gallery | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.primary | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.secondary | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.emphasis | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.destructive | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.icon | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.loading | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.toggle | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.split | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.menu | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.fab | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.copy | 허용 | 허용 | 허용 | 허용 |
-| purpose:button.close | 허용 | 허용 | 허용 | 허용 |
-| purpose:navigation.sidebar | 허용 | 허용 | 허용 | 허용 |
-| purpose:navigation.topbar | 허용 | 허용 | 허용 | 허용 |
-| purpose:navigation.tabs | 허용 | 허용 | 허용 | 허용 |
-| purpose:navigation.bottom | 허용 | 거부: purpose:navigation.bottom × family:editorial: 면이 투명하다(본문 위에 겹쳐 고정되는 요소는 불투명한 면이 필요하다) | 허용 | 허용 |
-| purpose:form.search | 허용 | 허용 | 허용 | 허용 |
-| purpose:form.auth | 허용 | 허용 | 허용 | 허용 |
-| purpose:form.settings | 허용 | 허용 | 허용 | 허용 |
-| purpose:form.filter | 허용 | 허용 | 허용 | 허용 |
-| purpose:form.group | 허용 | 거부: GROUP_EDITORIAL: editorial의 입력 외형은 underline이라 칸의 상자가 없어 애드온·버튼을 같은 테두리로 이을 수 없다 | 허용 | 허용 |
-| purpose:table.business | 허용 | 허용 | 허용 | 허용 |
-| purpose:table.analytic | 허용 | 허용 | 허용 | 허용 |
-| purpose:table.dense | 허용 | 거부: purpose:table.dense × family:editorial: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 허용 | 거부: purpose:table.dense × family:soft: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 |
-| purpose:feedback.confirm | 허용 | 허용 | 허용 | 허용 |
-| purpose:feedback.error | 허용 | 허용 | 허용 | 허용 |
-| purpose:feedback.warning | 허용 | 허용 | 허용 | 허용 |
-| purpose:feedback.progress | 허용 | 허용 | 허용 | 허용 |
-| purpose:feedback.result | 허용 | 허용 | 허용 | 허용 |
+| 목적 패밀리 | bold | corporate-formal | dense-enterprise | editorial | elevated-material | expressive | glass | luxury | outline-precise | quiet | soft | tonal-layered |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| purpose:card.kpi | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.product | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.article | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.feature | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.profile | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.pricing | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.status | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:card.gallery | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.primary | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.secondary | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.emphasis | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.destructive | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.icon | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.loading | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.toggle | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.split | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.menu | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.fab | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.copy | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.close | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.sidebar | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.topbar | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.tabs | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.bottom | 허용 | 허용 | 허용 | 거부: purpose:navigation.bottom × family:editorial: 면이 투명하다(본문 위에 겹쳐 고정되는 요소는 불투명한 면이 필요하다) | 허용 | 허용 | 거부: purpose:navigation.bottom × family:glass: 면이 투명하다(본문 위에 겹쳐 고정되는 요소는 불투명한 면이 필요하다) | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.search | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.auth | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.settings | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.filter | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.group | 허용 | 허용 | 허용 | 거부: GROUP_EDITORIAL: editorial의 입력 외형은 underline이라 칸의 상자가 없어 애드온·버튼을 같은 테두리로 이을 수 없다 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:table.business | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:table.analytic | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:table.dense | 허용 | 허용 | 허용 | 거부: purpose:table.dense × family:editorial: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 허용 | 허용 | 허용 | 거부: purpose:table.dense × family:luxury: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 허용 | 허용 | 거부: purpose:table.dense × family:soft: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 거부: purpose:table.dense × family:tonal-layered: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 |
+| purpose:feedback.confirm | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.error | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.warning | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.progress | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.result | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 <!-- /generated:matrix -->
 
 ## 6. 정량 측정

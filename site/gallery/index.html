@@ -11347,6 +11347,88 @@ exports.PLATFORM_CHECKS = PLATFORM_CHECKS;
 exports.createPlatform = createPlatform;
 exports.MINIMAL_REQUEST = MINIMAL_REQUEST;
 };
+__defs["platform/families/action.mjs"] = function (exports, __m) {
+/**
+ * §6.2 A(버튼·액션) 계열이 함께 쓰는 마크업 조각, 런타임, CSS.
+ *
+ * 버튼 한 개의 외형·상태·접근성은 기반 컴포넌트 button-control이 소유한다. 이 파일은 버튼만으로는 표현되지 않는 구조
+ * (메뉴 패널, 복사 피드백, 닫기 대상, 단일 선택 묶음)만 가진다. 목적 패밀리(button.mjs)와 독립 시연(contracts.mjs)이 같은 조각을 쓴다.
+ *
+ * 런타임은 문서 단위 위임 핸들러 한 벌이다. 쓴 출력에만 붙고(actionRuntimeFor), 쓰지 않은 출력의 바이트는 바뀌지 않는다.
+ */
+const {escapeHTML} = __m("escape-html.mjs");
+
+const e = escapeHTML;
+
+/** 첫 번째 `<button `에 속성을 더한다. 기반 버튼 마크업은 항상 이 모양으로 시작한다. */
+function withButtonAttrs(html, attrs) {
+  if (!html.includes('<button ')) throw new TypeError('button markup expected');
+  // 함수형 치환: attrs에 사용자 값의 `$$`·`$&`가 있어도 치환 패턴으로 해석되지 않는다.
+  return html.replace('<button ', () => `<button ${attrs} `);
+}
+
+/** 메뉴 트리거에 붙는 속성. 패널 id는 같은 메뉴의 renderMenuPanel과 같아야 한다. */
+const menuTriggerAttrs = panelId => `aria-haspopup="menu" aria-expanded="false" aria-controls="${e(panelId)}" data-action-menu-trigger`;
+
+/** 메뉴 패널. 처음에는 hidden이고 런타임이 연다. 항목은 roving focus라 tabindex=-1이다. */
+function renderMenuPanel({id, label, items}) {
+  if (!Array.isArray(items) || items.length < 2 || items.length > 8 || items.some(x => typeof x?.label !== 'string' || !x.label.trim())) throw new TypeError('메뉴 항목은 label이 있는 2~8개입니다');
+  return `<div class="pf-menu-panel" role="menu" id="${e(id)}" aria-label="${e(label)}" hidden>${items.map(x => `<button type="button" class="pf-menu-item" role="menuitem" tabindex="-1"${x.value === undefined ? '' : ` data-value="${e(x.value)}"`}>${e(x.label)}</button>`).join('')}</div>`;
+}
+
+const ACTION_RUNTIME = `(function(){
+if(window.__kitAction)return;window.__kitAction=true;
+var q=function(r,s){return Array.prototype.slice.call(r.querySelectorAll(s))};
+var blocked=function(b){return b.disabled||b.getAttribute('aria-disabled')==='true'};
+var say=function(b,t){var h=b.closest('[data-ctl=button]'),s=h&&h.querySelector('[role=status]');if(s)s.textContent=t};
+var setMenu=function(tr,open,focus){var h=tr.closest('[data-action-menu]'),p=(h&&h.querySelector('[role=menu]'))||document.getElementById(tr.getAttribute('aria-controls'));if(!p)return;tr.setAttribute('aria-expanded',String(open));p.hidden=!open;if(open&&focus){var i=p.querySelector('[role=menuitem]');if(i)i.focus()}};
+var closeAll=function(except){q(document,'[data-action-menu-trigger][aria-expanded=true]').forEach(function(t){if(t!==except)setMenu(t,false)})};
+document.addEventListener('click',function(ev){
+var t=ev.target,tr=t.closest('[data-action-menu-trigger]');
+if(tr){if(blocked(tr))return;var open=tr.getAttribute('aria-expanded')!=='true';closeAll(tr);setMenu(tr,open,open);return}
+var item=t.closest('[role=menuitem]');
+if(item){var host=item.closest('[data-action-menu]'),own=host&&host.querySelector('[data-action-menu-trigger]');if(own){setMenu(own,false);own.focus();own.dispatchEvent(new CustomEvent('kit-menu-select',{bubbles:true,detail:{label:item.textContent,value:item.getAttribute('data-value')}}))}return}
+if(t.closest('[role=menu]'))return;
+closeAll();
+var cp=t.closest('[data-copy-text]');
+if(cp&&!blocked(cp)){var ok=cp.getAttribute('data-copied-label')||'복사했습니다.',no='복사하지 못했습니다.';if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(cp.getAttribute('data-copy-text')).then(function(){say(cp,ok)},function(){say(cp,no)});else say(cp,no);return}
+var dm=t.closest('[data-action-dismiss]');
+if(dm&&!blocked(dm)){var box=dm.closest('[data-dismissible]');if(box)box.hidden=true;dm.dispatchEvent(new CustomEvent('kit-dismiss',{bubbles:true}));return}
+var sg=t.closest('[data-action-segmented] button[aria-pressed]');
+if(sg&&!blocked(sg)){q(sg.closest('[data-action-segmented]'),'button[aria-pressed]').forEach(function(b){var on=b===sg,h=b.closest('[data-ctl=button]');b.setAttribute('aria-pressed',String(on));b.dataset.state=on?'pressed':'default';if(h)h.dataset.state=b.dataset.state})}
+});
+document.addEventListener('keydown',function(ev){
+var tr=ev.target.closest&&ev.target.closest('[data-action-menu-trigger]');
+if(tr&&(ev.key==='ArrowDown'||ev.key==='ArrowUp')&&!blocked(tr)){ev.preventDefault();closeAll(tr);setMenu(tr,true,true);return}
+var p=ev.target.closest&&ev.target.closest('[role=menu]');if(!p)return;
+var items=q(p,'[role=menuitem]'),i=items.indexOf(document.activeElement),host=p.closest('[data-action-menu]'),own=host&&host.querySelector('[data-action-menu-trigger]');
+if(!own||!items.length)return;
+var go=function(n){ev.preventDefault();items[n].focus()};
+if(ev.key==='Escape'){ev.preventDefault();setMenu(own,false);own.focus()}
+else if(ev.key==='ArrowDown')go((i+1)%items.length);
+else if(ev.key==='ArrowUp')go((i-1+items.length)%items.length);
+else if(ev.key==='Home')go(0);
+else if(ev.key==='End')go(items.length-1);
+else if(ev.key==='Tab')setMenu(own,false)
+});
+})();`;
+
+const ACTION_CSS = `.pf-menu{position:relative;display:inline-block}.pf-menu-panel{position:absolute;inset-block-start:calc(100% + 4px);inset-inline-start:0;z-index:20;display:grid;min-inline-size:12em;max-inline-size:min(20em,90vw);padding:var(--kit-sp-near);background:var(--kit-surface);color:var(--kit-text);border:1px solid var(--kit-border);border-radius:var(--kit-radius);box-shadow:0 6px 18px color-mix(in srgb,var(--kit-text) 18%,transparent)}.pf-menu-panel[hidden]{display:none}.pf-menu-item{display:block;inline-size:100%;min-block-size:44px;padding:0 var(--kit-sp-item);background:transparent;color:inherit;border:0;border-radius:var(--kit-radius);font:inherit;text-align:start;cursor:pointer}.pf-menu-item:hover,.pf-menu-item:focus-visible{background:var(--kit-card-hover)}.pf-menu-item:focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}.pf-split{display:inline-flex;align-items:stretch}.pf-split>.kit-ctl-button-host+.kit-ctl-button-host .kit-ctl-button{margin-inline-start:-1px;border-start-start-radius:0;border-end-start-radius:0}.pf-split>.kit-ctl-button-host:first-child .kit-ctl-button{border-start-end-radius:0;border-end-end-radius:0}.pf-fab .kit-ctl-button{border-radius:999px;min-inline-size:56px;min-block-size:56px;box-shadow:0 4px 12px color-mix(in srgb,var(--kit-text) 28%,transparent)}.pf-fab[data-extended=true] .kit-ctl-button{padding-inline:var(--kit-sp-item)}.pf-dismissible{display:flex;align-items:center;justify-content:space-between;gap:var(--kit-sp-item);padding:var(--kit-sp-near) var(--kit-sp-item);background:var(--kit-soft);color:var(--kit-text);border:1px solid var(--kit-border);border-radius:var(--kit-radius)}.pf-dismissible[hidden]{display:none}.pf-dismissible p{margin:0}@media(max-width:640px){.pf-menu-panel{inline-size:max-content}}`;
+
+/** 런타임이 필요한 목적 패밀리 id. 목적 패밀리 record는 필드가 닫혀 있어 런타임은 레코드 밖에서 관리한다. */
+const PURPOSE_RUNTIME_IDS = Object.freeze(['purpose:button.split', 'purpose:button.menu', 'purpose:button.copy', 'purpose:button.close']);
+
+/** 출력에 쓰인 목적 패밀리가 요구하는 런타임. 쓰인 것이 없으면 빈 문자열이라 기존 출력은 그대로다. */
+const actionRuntimeFor = ids => ([...ids].some(id => PURPOSE_RUNTIME_IDS.includes(id)) ? ACTION_RUNTIME : '');
+
+exports.withButtonAttrs = withButtonAttrs;
+exports.menuTriggerAttrs = menuTriggerAttrs;
+exports.renderMenuPanel = renderMenuPanel;
+exports.ACTION_RUNTIME = ACTION_RUNTIME;
+exports.ACTION_CSS = ACTION_CSS;
+exports.PURPOSE_RUNTIME_IDS = PURPOSE_RUNTIME_IDS;
+exports.actionRuntimeFor = actionRuntimeFor;
+};
 __defs["platform/families/button.mjs"] = function (exports, __m) {
 /**
  * Button 목적 패밀리 7종(컴포넌트 패밀리 작업 소유): 기본, 보조, 강조, 파괴적, 아이콘, 로딩, 토글.
@@ -11356,6 +11438,7 @@ __defs["platform/families/button.mjs"] = function (exports, __m) {
  */
 const {icon} = __m("render/icon.mjs");
 const {definePurposeFamily, e} = __m("platform/families/kit.mjs");
+const {ACTION_CSS, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} = __m("platform/families/action.mjs");
 
 const BUTTON = 'base-component:button-control';
 const SIZES = ['small', 'medium', 'large'];
@@ -11565,7 +11648,139 @@ function renderButtonToggle(ctx) {
   return `<div class="pf-actions" role="group" aria-label="${e(c.label)}" data-layout="row">${c.items.map(it => one(it.label, Boolean(it.pressed), it.icon)).join('')}</div>`;
 }
 
-const BUTTON_FAMILIES = Object.freeze([buttonPrimary, buttonSecondary, buttonEmphasis, buttonDestructive, buttonIcon, buttonLoading, buttonToggle]);
+/* ---------- 분할 버튼 ---------- */
+const MENU_ITEMS = {type: '{label, value?}[] (2~8)', required: true};
+const MENU_EXAMPLE = [{label: 'PDF로 저장', value: 'pdf'}, {label: 'CSV로 저장', value: 'csv'}, {label: '링크 복사', value: 'link'}];
+const MENU_STATES = ['default', 'hover', 'focus', 'active', 'disabled', 'loading', 'expanded'];
+const MENU_PAIRS = [['--kit-text', '--kit-surface', 4.5, 'menu item'], ['--kit-text', '--kit-card-hover', 4.5, 'menu item hover'], ['--kit-focus', '--kit-surface', 3, 'menu item focus ring']];
+const menuRule = (id, who) => ({on: `${who} click·Enter·Space·ArrowDown`, behavior: '메뉴를 열고 첫 항목에 포커스를 둔다(aria-expanded=true)', runtime: id});
+const buttonSplit = definePurposeFamily({
+  id: 'purpose:button.split', group: 'button', sharedCss: SHARED, label: '분할 버튼',
+  purpose: '자주 쓰는 주 동작 하나와 같은 계열의 대안 동작(다른 형식으로 저장, 예약 전송)을 한 덩어리로 둔다. 주 동작은 바로 실행하고 화살표 버튼은 메뉴만 연다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonSplit'},
+  variants: {tier: ['primary', 'secondary']}, props: {size: SIZES, state: ['default', 'loading', 'disabled']},
+  defaults: {tier: 'primary', size: 'medium', state: 'default'},
+  content: {label: {required: true, type: 'string'}, menuLabel: {type: 'string (화살표 버튼의 접근 가능한 이름)'}, items: MENU_ITEMS},
+  forbidden: [], needs: {}, states: MENU_STATES,
+  interactions: [{on: '주 버튼 click·Enter·Space', behavior: '주 동작 실행(메뉴는 열리지 않는다)', runtime: 'attachButton'}, menuRule('actionRuntime', '화살표 버튼'), {on: 'Escape·바깥 클릭', behavior: '메뉴를 닫고 화살표 버튼으로 포커스를 돌려준다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '두 버튼은 붙어 있는 한 덩어리로 줄바꿈하지 않는다. 메뉴 패널은 12em 이상, 화면 폭의 90%를 넘지 않는다. 각 버튼은 44px 이상이다.'},
+  a11y: {role: 'group (주 버튼 + button[aria-haspopup=menu])', keyboard: 'Tab 순서는 주 버튼 → 화살표 버튼, ArrowDown으로 메뉴를 열고 방향키·Home·End로 이동, Escape로 닫기', conditions: ['화살표 버튼은 aria-haspopup=menu와 aria-expanded', '화살표 버튼의 접근 가능한 이름', '메뉴는 role=menu이고 항목은 menuitem']},
+  pairs: [['--kit-onAction', '--kit-action', 4.5, 'split label'], ...MENU_PAIRS],
+  parents: PARENTS, example: {variant: {tier: 'primary'}, props: {size: 'medium'}, content: {label: '내보내기', menuLabel: '내보내기 형식 선택', items: MENU_EXAMPLE}},
+  render(ctx) { return renderButtonSplit(ctx); },
+  css: ACTION_CSS,
+});
+function renderButtonSplit(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), pid = ctx.uid('menu');
+  const main = ctx.button(v.tier, {props: {size, state: p.state}, content: {label: c.label}});
+  const caret = withButtonAttrs(ctx.button(v.tier, {props: {size, state: p.state === 'loading' ? 'disabled' : p.state, content: 'icon-only'}, content: {icon: 'chevron-down', ariaLabel: c.menuLabel ?? `${c.label} 옵션`}}), menuTriggerAttrs(pid));
+  return `<div class="pf-menu" data-action-menu><div class="pf-split" role="group" aria-label="${e(c.label)}">${main}${caret}</div>${renderMenuPanel({id: pid, label: c.menuLabel ?? `${c.label} 옵션`, items: c.items})}</div>`;
+}
+
+/* ---------- 메뉴 버튼 ---------- */
+const buttonMenu = definePurposeFamily({
+  id: 'purpose:button.menu', group: 'button', sharedCss: SHARED, label: '메뉴 버튼',
+  purpose: '여러 동작을 하나의 버튼 뒤에 접어 둔다(더 보기, 정렬 기준, 작업 메뉴). 버튼 자체는 동작을 실행하지 않고 메뉴만 연다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonMenu'},
+  variants: {tier: ['secondary', 'tertiary']}, props: {size: SIZES, state: ['default', 'disabled']},
+  defaults: {tier: 'secondary', size: 'medium', state: 'default'},
+  content: {label: {required: true, type: 'string'}, items: MENU_ITEMS},
+  forbidden: [], needs: {}, states: ['default', 'hover', 'focus', 'active', 'disabled', 'expanded'],
+  interactions: [menuRule('actionRuntime', '버튼'), {on: '항목 click·Enter·Space', behavior: '메뉴를 닫고 트리거로 포커스를 돌려준 뒤 kit-menu-select 이벤트를 낸다', runtime: 'actionRuntime'}, {on: 'Escape·바깥 클릭·Tab', behavior: '메뉴를 닫는다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '트리거 라벨은 줄바꿈하지 않고 메뉴 패널이 화면 폭의 90%를 넘지 않는다. 항목은 44px 이상이다.'},
+  a11y: {role: 'button[aria-haspopup=menu]', keyboard: 'Enter·Space·ArrowDown으로 열고 방향키·Home·End로 항목 이동, Escape로 닫고 트리거로 복귀', conditions: ['트리거는 aria-haspopup=menu와 aria-expanded와 aria-controls', '메뉴는 role=menu이고 항목은 menuitem', '닫을 때 포커스는 트리거로 돌아간다']},
+  pairs: MENU_PAIRS,
+  parents: PARENTS, example: {variant: {tier: 'secondary'}, props: {size: 'medium'}, content: {label: '더 보기', items: MENU_EXAMPLE}},
+  render(ctx) { return renderButtonMenu(ctx); },
+  css: ACTION_CSS,
+});
+function renderButtonMenu(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), pid = ctx.uid('menu');
+  const trigger = withButtonAttrs(ctx.button(v.tier, {props: {size, state: p.state, content: 'icon-end'}, content: {label: c.label, icon: 'chevron-down'}}), menuTriggerAttrs(pid));
+  return `<div class="pf-menu" data-action-menu>${trigger}${renderMenuPanel({id: pid, label: c.label, items: c.items})}</div>`;
+}
+
+/* ---------- 플로팅 액션 버튼 ---------- */
+const buttonFab = definePurposeFamily({
+  id: 'purpose:button.fab', group: 'button', sharedCss: SHARED, label: '플로팅 액션 버튼',
+  purpose: '화면에서 가장 중요한 단일 동작(새 글, 새 작업)을 떠 있는 원형 버튼으로 둔다. 아이콘만 있는 형태와 라벨을 더한 확장형이 있다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonFab'},
+  variants: {extended: ['icon', 'extended']}, props: {size: ['medium', 'large'], state: ['default', 'loading', 'disabled']},
+  defaults: {extended: 'icon', size: 'large', state: 'default'},
+  content: {label: {required: true, type: 'string (접근 가능한 이름이자 확장형의 라벨)'}, icon: {type: 'icon-name'}},
+  forbidden: [], needs: {}, states: BTN_STATES,
+  interactions: [{on: 'click·Enter·Space', behavior: '화면의 주 동작 실행(기반 버튼 attachButton)', runtime: 'attachButton'}, {on: 'loading', behavior: '스피너가 아이콘 자리를 채우고 클릭만 막는다', runtime: 'attachButton'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '터치 영역은 56px 이상의 원형이다. 화면 모서리 고정(position)과 safe-area는 페이지 배치가 정하며 이 컴포넌트는 흐름 안에 놓인다.'},
+  a11y: {role: 'button', keyboard: 'Tab, Enter·Space', conditions: ['아이콘만 있는 형태도 접근 가능한 이름', '원형 터치 영역 56px 이상', '떠 있는 그림자는 장식이며 포커스 링이 따로 보인다']},
+  pairs: [['--kit-onAction', '--kit-action', 4.5, 'fab label']],
+  parents: ['slot:main', 'slot:footer', 'slot:overlay', 'slot:grid-item'], example: {variant: {extended: 'icon'}, props: {size: 'large'}, content: {label: '새 작업 추가', icon: 'plus'}},
+  render(ctx) { return renderButtonFab(ctx); },
+  css: ACTION_CSS,
+});
+function renderButtonFab(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), ext = v.extended === 'extended';
+  const btn = ctx.button('emphasis', {props: {size, state: p.state, content: ext ? 'icon-start' : 'icon-only'}, content: {label: c.label, icon: c.icon ?? 'plus', ...(ext ? {} : {ariaLabel: c.label})}});
+  return `<div class="pf-fab" data-extended="${ext}">${btn}</div>`;
+}
+
+/* ---------- 복사 버튼 ---------- */
+const buttonCopy = definePurposeFamily({
+  id: 'purpose:button.copy', group: 'button', sharedCss: SHARED, label: '복사 버튼',
+  purpose: '값(링크, 코드, 계좌번호)을 클립보드로 복사하고 복사됐음을 말해 준다. 시각 변화가 아니라 읽어 주는 상태 문구로 결과를 전달한다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonCopy'},
+  variants: {display: ['label', 'icon-only']}, props: {size: SIZES, state: ['default', 'disabled']},
+  defaults: {display: 'label', size: 'medium', state: 'default'},
+  content: {label: {required: true, type: 'string'}, text: {required: true, type: 'string (복사할 값)'}, copiedLabel: {type: 'string (복사 성공 안내)'}},
+  forbidden: [], needs: {}, states: ['default', 'hover', 'focus', 'active', 'disabled', 'copied'],
+  interactions: [{on: 'click·Enter·Space', behavior: '값을 클립보드로 복사하고 상태 문구(role=status)를 갱신한다. 클립보드를 쓸 수 없으면 실패 문구를 읽어 준다', runtime: 'actionRuntime'}, {on: 'disabled', behavior: '복사를 실행하지 않는다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: [], behavior: '아이콘만 있는 형태도 터치 영역은 44px 이상이다. 라벨은 줄바꿈된다.'},
+  a11y: {role: 'button', keyboard: 'Tab, Enter·Space', conditions: ['복사 결과는 role=status 안내로 전달', '아이콘만 있는 형태도 접근 가능한 이름', '복사할 값은 버튼 이름에 넣지 않는다']},
+  pairs: [['--kit-text', '--kit-surface', 4.5, 'copy outline']],
+  parents: PARENTS, example: {variant: {display: 'label'}, props: {size: 'medium'}, content: {label: '링크 복사', text: 'https://example.com/share/abc', copiedLabel: '링크를 복사했습니다.'}},
+  render(ctx) { return renderButtonCopy(ctx); },
+  css: ACTION_CSS,
+});
+function renderButtonCopy(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), only = v.display === 'icon-only';
+  const btn = ctx.button('secondary', {props: {size, state: p.state, content: only ? 'icon-only' : 'icon-start'}, content: {label: c.label, icon: 'copy', ...(only ? {ariaLabel: c.label} : {})}});
+  return `<div class="pf-actions" role="group" aria-label="${e(c.label)}">${withButtonAttrs(btn, `data-copy-text="${e(c.text)}"${c.copiedLabel ? ` data-copied-label="${e(c.copiedLabel)}"` : ''}`)}</div>`;
+}
+
+/* ---------- 닫기 버튼 ---------- */
+const buttonClose = definePurposeFamily({
+  id: 'purpose:button.close', group: 'button', sharedCss: SHARED, label: '닫기 버튼',
+  purpose: '배너·패널·알림처럼 사용자가 치울 수 있는 덩어리의 오른쪽 끝에 둔다. 닫기 버튼은 이름 있는 아이콘 버튼이며 가장 가까운 닫을 수 있는 영역을 숨긴다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonClose'},
+  variants: {layout: ['standalone', 'attached']}, props: {size: SIZES, state: ['default', 'disabled']},
+  defaults: {layout: 'attached', size: 'medium', state: 'default'},
+  content: {ariaLabel: {type: 'string (접근 가능한 이름, 기본 닫기)'}, message: {type: 'string (attached에서 닫을 영역의 내용)'}},
+  forbidden: [
+    {id: 'BTN_CLOSE_ATTACHED_DISABLED', when: {layout: 'attached', state: 'disabled'}, why: '닫을 수 없는 영역에 닫기 버튼을 붙이면 왜 못 닫는지 알 수 없다(attached는 항상 활성)'},
+  ],
+  needs: {}, states: ['default', 'hover', 'focus', 'active', 'disabled'],
+  interactions: [{on: 'click·Enter·Space', behavior: 'attached는 가장 가까운 닫을 수 있는 영역을 숨기고 kit-dismiss 이벤트를 낸다. standalone은 이벤트만 낸다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '터치 영역은 44px 이상이다. attached는 내용이 길어도 닫기 버튼이 밀려나지 않고 내용이 줄바꿈된다.'},
+  a11y: {role: 'button', keyboard: 'Tab, Enter·Space', conditions: ['아이콘만 있으므로 접근 가능한 이름', '닫힌 뒤 영역은 접근성 트리에서도 사라진다(hidden)', '터치 영역 44px 이상']},
+  pairs: [['--kit-text', '--kit-surface', 4.5, 'close ghost'], ['--kit-text', '--kit-soft', 4.5, 'attached message']],
+  parents: ['slot:main', 'slot:header', 'slot:footer', 'slot:overlay', 'slot:grid-item'], example: {variant: {layout: 'attached'}, props: {size: 'medium'}, content: {ariaLabel: '공지 닫기', message: '새 버전이 배포되었습니다. 변경 내용을 확인하세요.'}},
+  render(ctx) { return renderButtonClose(ctx); },
+  css: ACTION_CSS,
+});
+function renderButtonClose(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), name = c.ariaLabel ?? '닫기';
+  // 아이콘만 있는 버튼은 link 외형을 가질 수 없다(BTN_LINK_ICON_ONLY). 3단계가 link인 시각 패밀리는 2단계 외형을 쓴다.
+  const role = ctx.visual.recipe.tertiary === 'link' ? 'secondary' : 'tertiary';
+  const btn = withButtonAttrs(ctx.button(role, {props: {size, state: p.state, content: 'icon-only'}, content: {icon: 'x', ariaLabel: name}}), 'data-action-dismiss');
+  if (v.layout === 'standalone' || !c.message) return `<div class="pf-actions" role="group" aria-label="${e(name)}">${btn}</div>`;
+  return `<div class="pf-dismissible" data-dismissible><p>${e(c.message)}</p>${btn}</div>`;
+}
+
+const BUTTON_FAMILIES = Object.freeze([buttonPrimary, buttonSecondary, buttonEmphasis, buttonDestructive, buttonIcon, buttonLoading, buttonToggle, buttonSplit, buttonMenu, buttonFab, buttonCopy, buttonClose]);
 
 exports.buttonPrimary = buttonPrimary;
 exports.renderButtonPrimary = renderButtonPrimary;
@@ -11581,6 +11796,16 @@ exports.buttonLoading = buttonLoading;
 exports.renderButtonLoading = renderButtonLoading;
 exports.buttonToggle = buttonToggle;
 exports.renderButtonToggle = renderButtonToggle;
+exports.buttonSplit = buttonSplit;
+exports.renderButtonSplit = renderButtonSplit;
+exports.buttonMenu = buttonMenu;
+exports.renderButtonMenu = renderButtonMenu;
+exports.buttonFab = buttonFab;
+exports.renderButtonFab = renderButtonFab;
+exports.buttonCopy = buttonCopy;
+exports.renderButtonCopy = renderButtonCopy;
+exports.buttonClose = buttonClose;
+exports.renderButtonClose = renderButtonClose;
 exports.BUTTON_FAMILIES = BUTTON_FAMILIES;
 };
 __defs["platform/families/card.mjs"] = function (exports, __m) {
@@ -11895,6 +12120,254 @@ exports.renderCardStatus = renderCardStatus;
 exports.cardGallery = cardGallery;
 exports.renderCardGallery = renderCardGallery;
 exports.CARD_FAMILIES = CARD_FAMILIES;
+};
+__defs["platform/families/contracts.mjs"] = function (exports, __m) {
+/** Shared component contract registry and §6.2 A action renderers.
+ *
+ * Keep the schema in this family-owned module. New families can import
+ * defineComponentContract/validateComponentContracts without editing the
+ * central family index; registration is discovered from the owned family
+ * modules by the platform entry point.
+ */
+const {BASE_COMPONENTS} = __m("platform/data/base-components.mjs");
+const {CARD_FAMILIES} = __m("platform/families/card.mjs");
+const {BUTTON_FAMILIES} = __m("platform/families/button.mjs");
+const {NAVIGATION_FAMILIES} = __m("platform/families/navigation.mjs");
+const {FORM_FAMILIES} = __m("platform/families/form.mjs");
+const {TABLE_FAMILIES} = __m("platform/families/table.mjs");
+const {FEEDBACK_FAMILIES} = __m("platform/families/feedback.mjs");
+const {renderButton} = __m("materials/button.mjs");
+const {COMPONENT_CLASSIFICATION} = __m("platform/families/inventory.mjs");
+const {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} = __m("platform/families/action.mjs");
+
+const COMPONENT_LAYERS = Object.freeze(['Primitive', 'Base', 'Purpose', 'Composite', 'Page Section']);
+const COMPONENT_CONTRACT_FIELDS = Object.freeze([
+  'id', 'version', 'componentType', 'layer', 'purpose', 'contexts', 'structure', 'slots', 'props', 'content',
+  'appearance', 'sizes', 'density', 'states', 'transitions', 'events', 'tokens', 'parents', 'children',
+  'responsive', 'accessibility', 'forbidden', 'examples', 'usage', 'renderer', 'blueprint', 'tests', 'unsupported',
+]);
+
+/** Style-only axis values do not create a second component type. */
+function countDistinctComponentTypes(components) {
+  return new Set(components.map(item => item.componentType ?? item.id)).size;
+}
+
+function defineComponentContract(spec) {
+  return Object.freeze({version: '1.0.0', componentType: spec.id, contexts: ['any'], structure: 'single root', slots: [], props: {},
+    content: {label: {type: 'string', required: true}}, appearance: ['default'], sizes: ['md'], density: ['comfortable'],
+    states: ['default'], transitions: [], events: [], tokens: [], parents: ['slot:main'], children: [],
+    responsive: {strategy: 'fluid', breakpoints: ['sm', 'md', 'lg'], behavior: 'wrap without horizontal overflow'},
+    accessibility: {role: 'semantic HTML', keyboard: ['Tab', 'Enter', 'Space'], requirements: []},
+    forbidden: [], examples: [], usage: 'Use where the component purpose applies.',
+    renderer: {module: 'src/platform/families/contracts.mjs', export: 'renderActionComponent'},
+    blueprint: {field: 'materials.purposes', id: null}, tests: [], unsupported: {}, ...spec});
+}
+
+/**
+ * A 계열 목적 패밀리가 어느 컴포넌트 종류의 구현인지. 같은 종류를 가리키는 계약(독립 시연 `component:*`와 목적 패밀리)은
+ * countDistinctComponentTypes에서 한 종류로 센다. 목적 패밀리가 새 종류를 만들지 않는 경우(아이콘·토글·로딩·복사·닫기·FAB)는 button-control이다.
+ */
+const PURPOSE_COMPONENT_TYPE = Object.freeze({
+  'purpose:button.icon': 'button-control', 'purpose:button.toggle': 'button-control', 'purpose:button.loading': 'button-control',
+  'purpose:button.fab': 'button-control', 'purpose:button.copy': 'button-control', 'purpose:button.close': 'button-control',
+  'purpose:button.split': 'split-button', 'purpose:button.menu': 'menu-button',
+});
+
+const normalizeBase = m => defineComponentContract({id: m.id, componentType: m.id.slice('base-component:'.length), layer: 'Base', purpose: m.label,
+  contexts: ['any'], structure: `base material ${m.id}`, slots: ['content'], props: {sourceContract: m.contract},
+  content: {label: {type: 'string', required: false}}, appearance: ['default'], sizes: ['xs', 'sm', 'md', 'lg', 'xl'],
+  states: ['default', 'hover', 'focus', 'active', 'disabled'], tokens: [], parents: ['slot:main', 'slot:header', 'slot:footer'],
+  children: [], renderer: m.render, blueprint: {field: 'components', id: m.id}, tests: ['tests/platform-family-base.test.mjs'],
+  unsupported: {states: [{value: 'loading', reason: '상태 지원은 해당 기반 재료의 source contract에 한정한다.'}]} });
+const normalizePurpose = f => defineComponentContract({id: f.id, componentType: PURPOSE_COMPONENT_TYPE[f.id] ?? f.id, layer: 'Purpose', purpose: f.purpose,
+  contexts: f.contexts, structure: f.label, slots: Object.keys(f.content), props: {...f.variants, ...f.props},
+  content: f.content, appearance: ['family visual recipe'], sizes: ['small', 'medium', 'large'], density: ['compact', 'comfortable', 'spacious'],
+  states: f.states, transitions: f.interactions, events: f.interactions, tokens: f.tokens ?? [], parents: f.parents,
+  children: f.children, responsive: f.responsive, accessibility: f.a11y, forbidden: f.forbidden,
+  examples: [f.example], usage: f.purpose, renderer: f.entry, blueprint: {field: 'materials.purposes', id: f.id},
+  tests: ['tests/platform-family-purpose.test.mjs'], unsupported: {states: []} });
+
+const COMPONENT_CONTRACTS = Object.freeze([
+  ...BASE_COMPONENTS.map(normalizeBase),
+  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES].map(normalizePurpose),
+]);
+
+function validateComponentContracts(contracts = ALL_COMPONENT_CONTRACTS) {
+  const errors = [], seen = new Set();
+  contracts.forEach((c, index) => {
+    const root = `$[${index}]`;
+    for (const key of COMPONENT_CONTRACT_FIELDS) if (!Object.hasOwn(c, key)) errors.push({path: `${root}.${key}`, message: `required field ${key}`});
+    if (seen.has(c.id)) errors.push({path: `${root}.id`, message: `duplicate component id ${c.id}`});
+    seen.add(c.id);
+    if (!COMPONENT_LAYERS.includes(c.layer)) errors.push({path: `${root}.layer`, message: `invalid layer ${c.layer}`});
+    for (const key of ['contexts', 'slots', 'states', 'events', 'tokens', 'parents', 'children', 'forbidden', 'examples', 'tests']) {
+      if (!Array.isArray(c[key])) errors.push({path: `${root}.${key}`, message: `${key} must be an array`});
+    }
+    for (const key of ['props', 'content', 'responsive', 'accessibility', 'renderer', 'blueprint', 'unsupported']) {
+      if (!c[key] || typeof c[key] !== 'object' || Array.isArray(c[key])) errors.push({path: `${root}.${key}`, message: `${key} must be an object`});
+    }
+    if (typeof c.componentType !== 'string' || !c.componentType) errors.push({path: `${root}.componentType`, message: 'componentType must be a non-empty string'});
+    for (const [axis, entries] of Object.entries(c.unsupported ?? {})) {
+      if (!Array.isArray(entries)) { errors.push({path: `${root}.unsupported.${axis}`, message: 'unsupported entries must be an array of {value, reason}'}); continue; }
+      entries.forEach((entry, n) => {
+        if (!entry?.reason?.trim()) errors.push({path: `${root}.unsupported.${axis}[${n}].reason`, message: 'unsupported values need a reason'});
+      });
+    }
+    if (typeof c.renderer?.module !== 'string' || typeof c.renderer?.export !== 'string') errors.push({path: `${root}.renderer`, message: 'renderer module/export required'});
+    if (typeof c.blueprint?.field !== 'string') errors.push({path: `${root}.blueprint`, message: 'blueprint connection required'});
+  });
+  return errors;
+}
+
+const SIZE_MAP = Object.freeze({xs: 'compact', sm: 'small', md: 'medium', lg: 'large', xl: 'large'});
+const APPEARANCE_MAP = Object.freeze({solid: 'solid', outline: 'outline', soft: 'soft', ghost: 'ghost', link: 'link', elevated: 'solid', destructive: 'solid'});
+
+/**
+ * §6.2 A 12항목. materialId는 이 항목을 실제로 구현하는 등록 재료이고, blueprint는 그 재료를 Blueprint 2.7.0에서 쓰는 방법이다.
+ *   purposes  materials.purposes에 목적 패밀리 id를 적고 트리에 표지 노드(metric, label `platform-purpose-<번호>`)를 둔다
+ *   node      트리 노드 하나(부품 type과 축 값)로 쓴다. 구형 부품은 materials 없이 2.6.0 이하에서도 컴파일된다
+ * 독립 시연(`actions` 입력과 renderActionComponent)은 시각 패밀리를 고르지 않는 기본 외형이고, Blueprint 재료는 시각 패밀리를 따른다.
+ */
+const NODE = (type, axes = {}) => ({field: 'tree', node: type, axes});
+const PURPOSE = id => ({field: 'materials.purposes', purpose: id});
+const ACTION_SPECS = [
+  ['component:button', 'Button', 'a-01-button', 'button-control', 'base-component:button-control', NODE('button-control')],
+  ['component:icon-button', 'Icon Button', 'a-02-icon-button', 'button-control', 'purpose:button.icon', PURPOSE('purpose:button.icon')],
+  ['component:link-button', 'Link Button', 'a-03-link-button', 'button-control', 'base-component:button-control', NODE('button-control', {appearance: 'link'})],
+  ['component:toggle-button', 'Toggle Button', 'a-04-toggle-button', 'button-control', 'purpose:button.toggle', PURPOSE('purpose:button.toggle')],
+  ['component:split-button', 'Split Button', 'a-05-split-button', 'split-button', 'purpose:button.split', PURPOSE('purpose:button.split')],
+  ['component:menu-button', 'Menu Button', 'a-06-menu-button', 'menu-button', 'purpose:button.menu', PURPOSE('purpose:button.menu')],
+  ['component:floating-action-button', 'Floating Action Button', 'a-07-floating-action-button', 'button-control', 'purpose:button.fab', PURPOSE('purpose:button.fab')],
+  ['component:button-group', 'Button Group', 'a-08-button-group', 'button-group', 'component:actions', NODE('actions')],
+  ['component:segmented-control', 'Segmented Control', 'a-09-segmented-control', 'tabs-control', 'base-component:tabs-control', NODE('tabs-control', {appearance: 'segmented'})],
+  ['component:copy-button', 'Copy Button', 'a-10-copy-button', 'button-control', 'purpose:button.copy', PURPOSE('purpose:button.copy')],
+  ['component:close-button', 'Close Button', 'a-11-close-button', 'button-control', 'purpose:button.close', PURPOSE('purpose:button.close')],
+  ['component:loading-action-button', 'Loading Action Button', 'a-12-loading-action-button', 'button-control', 'purpose:button.loading', PURPOSE('purpose:button.loading')],
+];
+const LAYER_OF = Object.freeze({independent: 'Base', variant: 'Purpose', composite: 'Composite'});
+
+const escAttr = s => String(s ?? '').replace(/[&<>"']/g, ch => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[ch]));
+const SAFE = /^[a-z][a-z0-9-]*$/;
+const slug = id => id.slice('component:'.length);
+/** data-component-appearance는 실제로 그려진 외형을 말해야 CSS 훅이 맞는다(link-button은 link, FAB은 기본 elevated). */
+const shownAppearance = (id, p) => (id === 'component:link-button' ? 'link' : p.appearance ?? (id === 'component:floating-action-button' ? 'elevated' : 'solid'));
+const coreButton = (p, extra = {}) => renderButton({label: p.label ?? 'Action', id: p.id, ariaLabel: p.ariaLabel,
+  icon: p.icon ?? 'plus', content: p.content ?? 'text', appearance: APPEARANCE_MAP[p.appearance] ?? 'solid',
+  size: SIZE_MAP[p.size] ?? 'medium', state: p.state === 'selected' ? 'pressed' : p.state ?? 'default',
+  behavior: p.behavior ?? 'action', tone: p.appearance === 'destructive' ? 'danger' : p.tone ?? 'action', ...extra});
+/** 단일 선택이므로 selected가 여럿이어도 첫 번째만 눌린다. 없으면 첫 항목이다. */
+const selectedIndex = all => { const i = all.findIndex(x => x.selected && x.state !== 'disabled'); return i >= 0 ? i : all.findIndex(x => x.state !== 'disabled'); };
+const listOf = (p, fallback) => (Array.isArray(p.items) && p.items.length ? p.items : fallback);
+const itemProps = item => ({label: item.label, ariaLabel: item.ariaLabel, icon: item.icon, size: item.size, appearance: item.appearance, state: item.state, content: item.content, tone: item.tone});
+/** 마크업 id는 호출자가 주지 않으면 컴포넌트 종류에서 정한다(서비스는 요청 순서대로 id를 준다). */
+function idsOf(id, p) {
+  const base = p.id ?? `kit-${slug(id)}`;
+  if (!SAFE.test(base)) throw new TypeError('id must be lowercase kebab-case');
+  return {base, menu: `${base}-menu`};
+}
+const SIZES = Object.freeze(['xs', 'sm', 'md', 'lg', 'xl']);
+const APPEARANCES = Object.freeze(Object.keys(APPEARANCE_MAP));
+const STATES = Object.freeze(['default', 'loading', 'disabled', 'selected']);
+/** 허용 값 밖은 기본값으로 바꾸지 않고 거부한다(속성에 들어가는 값이라 검증 없이 쓰지 않는다). */
+function checkProps(id, p) {
+  if (p.size !== undefined && !SIZES.includes(p.size)) throw new TypeError(`size는 ${SIZES.join('·')} 중 하나입니다: ${String(p.size)}`);
+  if (p.appearance !== undefined && !APPEARANCES.includes(p.appearance)) throw new TypeError(`appearance는 ${APPEARANCES.join('·')} 중 하나입니다: ${String(p.appearance)}`);
+  if (p.state !== undefined && !STATES.includes(p.state)) throw new TypeError(`state는 ${STATES.join('·')} 중 하나입니다(hover·active·focus는 사용자 조작이 만드는 상태라 입력이 아닙니다): ${String(p.state)}`);
+  if (id === 'component:copy-button' && typeof p.text !== 'string') throw new TypeError('복사할 값(text)이 필요합니다');
+}
+function renderByKind(id, p) {
+  checkProps(id, p);
+  const attrs = `data-component="${id}" data-component-size="${escAttr(p.size ?? 'md')}" data-component-appearance="${escAttr(shownAppearance(id, p))}"`;
+  const mark = html => withButtonAttrs(html, attrs);
+  const {base, menu} = idsOf(id, p);
+  switch (id) {
+    case 'component:button': return mark(coreButton(p));
+    case 'component:icon-button': return mark(coreButton({...p, content: 'icon-only', ariaLabel: p.ariaLabel ?? p.label}));
+    case 'component:link-button': return mark(coreButton({...p, appearance: 'link'}));
+    case 'component:toggle-button': return mark(coreButton({...p, behavior: 'toggle', state: p.selected ? 'pressed' : p.state ?? 'default'}));
+    case 'component:split-button': {
+      const label = p.menuLabel ?? `${p.label ?? 'Actions'} 옵션`;
+      const main = mark(coreButton({...p, id: `${base}-main`}));
+      const caret = withButtonAttrs(mark(coreButton({...p, id: `${base}-caret`, content: 'icon-only', icon: 'chevron-down', ariaLabel: label, state: p.state === 'loading' ? 'disabled' : p.state})), menuTriggerAttrs(menu));
+      return `<span class="pf-menu" data-action-menu><span class="pf-split" role="group" aria-label="${escAttr(p.label ?? 'Actions')}">${main}${caret}</span>${renderMenuPanel({id: menu, label, items: p.items})}</span>`;
+    }
+    case 'component:menu-button': {
+      const trigger = withButtonAttrs(mark(coreButton({...p, id: base, content: 'icon-end', icon: 'chevron-down'})), menuTriggerAttrs(menu));
+      return `<span class="pf-menu" data-action-menu>${trigger}${renderMenuPanel({id: menu, label: p.label ?? 'Actions', items: p.items})}</span>`;
+    }
+    case 'component:floating-action-button': return mark(coreButton({...p, content: p.label && p.extended ? 'icon-start' : 'icon-only', ariaLabel: p.ariaLabel ?? p.label, appearance: p.appearance ?? 'elevated'}));
+    case 'component:button-group': return `<span class="kit-action-group" role="group" aria-label="${escAttr(p.label ?? 'Actions')}">${listOf(p, [{label: p.label ?? 'Action'}]).map((item, i) => mark(coreButton({...itemProps(item), id: `${base}-${i}`, size: item.size ?? p.size, appearance: item.appearance ?? p.appearance}))).join('')}</span>`;
+    case 'component:segmented-control': return `<span class="kit-action-segmented" role="group" aria-label="${escAttr(p.label ?? 'Options')}" data-action-segmented>${listOf(p, [{label: p.label ?? 'Option'}]).map((item, i, all) => mark(coreButton({...itemProps(item), id: `${base}-${i}`, size: item.size ?? p.size, behavior: 'toggle', state: item.state === 'disabled' ? 'disabled' : i === selectedIndex(all) ? 'pressed' : 'default'}))).join('')}</span>`;
+    case 'component:copy-button': return withButtonAttrs(mark(coreButton({...p, icon: p.icon ?? 'copy', content: p.content ?? 'icon-start'})), `data-copy-text="${escAttr(p.text)}"${p.copiedLabel ? ` data-copied-label="${escAttr(p.copiedLabel)}"` : ''}`);
+    case 'component:close-button': {
+      const btn = withButtonAttrs(mark(coreButton({...p, label: '', content: 'icon-only', ariaLabel: p.ariaLabel ?? p.label ?? '닫기', icon: p.icon ?? 'x'})), 'data-action-dismiss');
+      return p.message ? `<div class="pf-dismissible" data-dismissible><p>${escAttr(p.message)}</p>${btn}</div>` : btn;
+    }
+    case 'component:loading-action-button': return mark(coreButton({...p, content: p.content ?? 'icon-start', state: p.state === 'default' ? 'loading' : p.state ?? 'loading'}));
+    default: throw new TypeError(`Unknown action component: ${id}`);
+  }
+}
+
+const ACTION_COMPONENTS = Object.freeze(ACTION_SPECS.map(([id, label, key, componentType, materialId, blueprint]) => {
+  const classification = COMPONENT_CLASSIFICATION[key];
+  if (!classification) throw new Error(`분류표에 없는 요구 항목: ${key}`);
+  return Object.freeze({
+    id, label, requirementId: `req:comp:${key}`, classification, componentType, materialId, blueprint, layer: LAYER_OF[classification],
+    version: '1.0.0', render: props => renderByKind(id, props ?? {}),
+  });
+}));
+/** 렌더러가 실제로 거부하는 조합(base-component:button-control 계약의 BTN_*). 키는 다른 계약과 같이 `why`다. */
+const forbiddenOf = id => [
+  ...(id === 'component:toggle-button' ? [{id: 'ACTION_TOGGLE_LOADING', when: {state: 'loading'}, why: 'pressed and busy are mutually exclusive (BTN_TOGGLE_LOADING)'}, {id: 'ACTION_TOGGLE_LINK', when: {appearance: 'link'}, why: 'a link look would show the pressed state by colour alone (BTN_TOGGLE_LINK)'}] : []),
+  ...(id === 'component:icon-button' || id === 'component:floating-action-button' ? [{id: 'ACTION_ICON_LINK', when: {appearance: 'link'}, why: 'an icon-only link does not read as a button (BTN_LINK_ICON_ONLY)'}] : []),
+  ...(id === 'component:link-button' ? [{id: 'ACTION_LINK_LOADING', when: {state: 'loading'}, why: 'a link look has no container for the spinner (BTN_LOADING_NO_SLOT)'}] : []),
+];
+const withSelected = id => id === 'component:toggle-button' || id === 'component:segmented-control';
+const menuLike = id => id === 'component:split-button' || id === 'component:menu-button';
+const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ...ACTION_COMPONENTS.map(item => defineComponentContract({
+  id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
+  slots: item.classification === 'composite' ? ['primary', 'secondary'] : ['label', 'leadingIcon', 'trailingIcon'],
+  props: {appearance: ['solid', 'outline', 'soft', 'ghost', 'link', 'elevated', 'destructive'], size: ['xs', 'sm', 'md', 'lg', 'xl'], state: ['default', 'disabled', 'loading', ...(withSelected(item.id) ? ['selected'] : [])],
+    ...(menuLike(item.id) ? {items: 'array of {label, value?} (2~8)'} : {})},
+  content: {label: {type: 'string', required: true}, icon: {type: 'icon-id', required: false}, ...(menuLike(item.id) ? {items: {type: 'array', required: true}} : {}), ...(item.id === 'component:copy-button' ? {text: {type: 'string', required: true}} : {})},
+  appearance: ['solid', 'outline', 'soft', 'ghost', 'link', 'elevated', 'destructive'], sizes: ['xs', 'sm', 'md', 'lg', 'xl'],
+  states: ['default', 'hover', 'active', 'focus', 'disabled', 'loading', ...(withSelected(item.id) ? ['selected'] : [])],
+  transitions: ['default→hover', 'hover→active', 'default→focus', 'default→disabled', 'default→loading'],
+  events: ['click', 'focus', 'blur', ...(menuLike(item.id) ? ['kit-menu-select'] : []), ...(item.id === 'component:close-button' ? ['kit-dismiss'] : [])],
+  tokens: ['--kit-action', '--kit-danger', '--kit-focus', '--kit-control-disabled-bg', '--kit-control-disabled-fg'],
+  parents: ['slot:main', 'slot:header', 'slot:footer'], children: item.classification === 'composite' ? ['component:button'] : [],
+  responsive: {strategy: 'wrap and constrain width', breakpoints: ['640px', '768px'], behavior: 'labels wrap; target remains at least 44px on touch screens'},
+  accessibility: {role: item.id === 'component:segmented-control' ? 'group of toggle buttons (one pressed)' : menuLike(item.id) ? 'button with aria-haspopup=menu controlling a role=menu' : 'button', keyboard: menuLike(item.id) ? ['Tab', 'Enter', 'Space', 'ArrowDown', 'ArrowUp', 'Home', 'End', 'Escape'] : ['Tab', 'Enter', 'Space'], requirements: ['icon-only requires accessible name', 'disabled and loading activation is blocked']},
+  forbidden: forbiddenOf(item.id),
+  examples: [{label: '저장', appearance: 'solid', size: 'md'}], usage: `${item.label} when ${item.label.toLowerCase()} is the intended action.`,
+  renderer: {module: 'src/platform/families/contracts.mjs', export: 'renderActionComponent'},
+  blueprint: {...item.blueprint, id: item.materialId}, tests: ['tests/platform-family-contract.test.mjs', 'tests/platform-action-blueprint.test.mjs'],
+  unsupported: item.id === 'component:floating-action-button' ? {position: [{value: 'fixed', reason: '뷰포트 모서리 고정과 safe-area는 페이지 배치가 정한다. 컴포넌트는 흐름 안에 놓인다.'}]} : {},
+}))]);
+const ACTION_COMPONENT_BY_ID = new Map(ACTION_COMPONENTS.map(item => [item.id, item]));
+function renderActionComponent(id, props = {}) {
+  const item = ACTION_COMPONENT_BY_ID.get(id);
+  if (!item) throw new TypeError(`Unknown action component: ${id}`);
+  return item.render(props);
+}
+
+/** 독립 시연 CSS: 메뉴·분할·닫기 구조(ACTION_CSS)와 크기·외형 훅. 파괴적 색은 tone=danger 버튼이 이미 정하므로 따로 덮지 않는다(대비 검사는 button-control 계약이 한다). */
+const ACTION_COMPONENT_CSS = ACTION_CSS + `.kit-action-group,.kit-action-segmented{display:inline-flex;align-items:stretch;gap:0}.kit-action-group .kit-ctl-button,.kit-action-segmented .kit-ctl-button{min-height:44px}.kit-ctl-button[data-component-appearance="elevated"]{box-shadow:0 3px 9px color-mix(in srgb,var(--kit-text) 20%,transparent)}.kit-ctl-button[data-component-size="xs"]{min-height:28px}.kit-ctl-button[data-component-size="sm"]{min-height:36px}.kit-ctl-button[data-component-size="md"]{min-height:44px}.kit-ctl-button[data-component-size="lg"]{min-height:48px}.kit-ctl-button[data-component-size="xl"]{min-height:56px}.kit-action-segmented [aria-pressed="true"]{box-shadow:inset 0 0 0 2px currentColor}@media(max-width:640px){.kit-ctl-button[data-component-size]{min-height:44px}.kit-action-group,.kit-action-segmented,.pf-split{flex-wrap:wrap;max-width:100%}}.kit-ctl-button[data-component="component:floating-action-button"][data-component-size]{border-radius:999px;min-inline-size:56px;min-block-size:56px}`;
+/** 독립 시연이 쓰는 런타임(메뉴 열기, 복사, 닫기, 단일 선택). 목적 패밀리가 쓰는 것과 같은 문자열이다. */
+const ACTION_COMPONENT_RUNTIME = ACTION_RUNTIME;
+
+exports.COMPONENT_LAYERS = COMPONENT_LAYERS;
+exports.COMPONENT_CONTRACT_FIELDS = COMPONENT_CONTRACT_FIELDS;
+exports.countDistinctComponentTypes = countDistinctComponentTypes;
+exports.defineComponentContract = defineComponentContract;
+exports.COMPONENT_CONTRACTS = COMPONENT_CONTRACTS;
+exports.validateComponentContracts = validateComponentContracts;
+exports.ACTION_COMPONENTS = ACTION_COMPONENTS;
+exports.ALL_COMPONENT_CONTRACTS = ALL_COMPONENT_CONTRACTS;
+exports.ACTION_COMPONENT_BY_ID = ACTION_COMPONENT_BY_ID;
+exports.renderActionComponent = renderActionComponent;
+exports.ACTION_COMPONENT_CSS = ACTION_COMPONENT_CSS;
+exports.ACTION_COMPONENT_RUNTIME = ACTION_COMPONENT_RUNTIME;
 };
 __defs["platform/families/feedback.mjs"] = function (exports, __m) {
 /**
@@ -12369,11 +12842,12 @@ const {FEEDBACK_FAMILIES} = __m("platform/families/feedback.mjs");
 
 { const __r = __m("platform/families/visual.mjs"); exports.VISUAL_LANGUAGES = __r.VISUAL_LANGUAGES; exports.VISUAL_KEYS = __r.VISUAL_KEYS; exports.visualMismatch = __r.visualMismatch; }
 { const __r = __m("platform/families/kit.mjs"); exports.PURPOSE_GROUPS = __r.PURPOSE_GROUPS; exports.definePurposeFamily = __r.definePurposeFamily; exports.validatePurposeFamily = __r.validatePurposeFamily; exports.checkPurposeCombination = __r.checkPurposeCombination; exports.PURPOSE_FIELDS = __r.PURPOSE_FIELDS; }
+{ const __r = __m("platform/families/contracts.mjs"); exports.COMPONENT_LAYERS = __r.COMPONENT_LAYERS; exports.COMPONENT_CONTRACT_FIELDS = __r.COMPONENT_CONTRACT_FIELDS; exports.COMPONENT_CONTRACTS = __r.COMPONENT_CONTRACTS; exports.ALL_COMPONENT_CONTRACTS = __r.ALL_COMPONENT_CONTRACTS; exports.defineComponentContract = __r.defineComponentContract; exports.validateComponentContracts = __r.validateComponentContracts; exports.countDistinctComponentTypes = __r.countDistinctComponentTypes; exports.ACTION_COMPONENTS = __r.ACTION_COMPONENTS; exports.ACTION_COMPONENT_BY_ID = __r.ACTION_COMPONENT_BY_ID; exports.renderActionComponent = __r.renderActionComponent; exports.ACTION_COMPONENT_CSS = __r.ACTION_COMPONENT_CSS; }
 
 /** 목적 패밀리 id(고정 계약). 새 id를 더하는 것은 호환이지만 이름을 바꾸거나 지우는 것은 호환이 아니다. */
 const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:card.kpi', 'purpose:card.product', 'purpose:card.article', 'purpose:card.feature', 'purpose:card.profile', 'purpose:card.pricing', 'purpose:card.status', 'purpose:card.gallery',
-  'purpose:button.primary', 'purpose:button.secondary', 'purpose:button.emphasis', 'purpose:button.destructive', 'purpose:button.icon', 'purpose:button.loading', 'purpose:button.toggle',
+  'purpose:button.primary', 'purpose:button.secondary', 'purpose:button.emphasis', 'purpose:button.destructive', 'purpose:button.icon', 'purpose:button.loading', 'purpose:button.toggle', 'purpose:button.split', 'purpose:button.menu', 'purpose:button.fab', 'purpose:button.copy', 'purpose:button.close',
   'purpose:navigation.sidebar', 'purpose:navigation.topbar', 'purpose:navigation.tabs', 'purpose:navigation.bottom',
   'purpose:form.search', 'purpose:form.auth', 'purpose:form.settings', 'purpose:form.filter', 'purpose:form.group',
   'purpose:table.business', 'purpose:table.analytic', 'purpose:table.dense',
@@ -12542,6 +13016,54 @@ exports.BASE_MARKERS = BASE_MARKERS;
 exports.renderPurposeFamily = renderPurposeFamily;
 exports.assembleFamilies = assembleFamilies;
 exports.combinationMatrix = combinationMatrix;
+};
+__defs["platform/families/inventory.mjs"] = function (exports, __m) {
+/**
+ * §6.2 필수 컴포넌트 207항목의 분류(docs/platform/components.md 분류표의 원천).
+ *
+ *   independent  그 자체로 하나의 재료(기반 컴포넌트·목적 패밀리·구형 부품)로 구현한다
+ *   variant      다른 재료의 외형·동작·kind 값 하나로 구현한다. 새 재료 종류가 아니다
+ *   composite    여러 컴포넌트를 묶은 동작 패턴이다
+ *
+ * 키는 Material Coverage Manifest의 요구 id에서 `req:comp:`를 뺀 값이다. 항목 목록은 REQUEST.md §6.2가 정하고
+ * tests/platform-family-inventory.test.mjs가 요구 목록과 이 표가 일대일인지, 문서 표와 Manifest가 이 표와 맞는지 본다.
+ *
+ * 판단 근거가 필요한 경계는 REQUEST §6.1의 계층 예시를 따른다.
+ *   `Card Surface → KPI Card → KPI Grid → Dashboard Summary Section`: KPI Card는 Purpose 한 칸(독립), KPI Grid는 그것을 묶은 패턴(복합).
+ *   `Button → Icon Button → Button Group → Bulk Action Toolbar`: Button Group과 Bulk Action Toolbar는 버튼을 묶은 패턴(복합)이다.
+ * Phone·URL Input은 Email·Password·Number Input과 같은 입력 kind 값이라 변형이다.
+ */
+const I = 'independent', V = 'variant', C = 'composite';
+
+const COMPONENT_CLASSIFICATION = Object.freeze({
+  'a-01-button': I, 'a-02-icon-button': V, 'a-03-link-button': V, 'a-04-toggle-button': V, 'a-05-split-button': C, 'a-06-menu-button': C, 'a-07-floating-action-button': V, 'a-08-button-group': C, 'a-09-segmented-control': V, 'a-10-copy-button': V, 'a-11-close-button': V, 'a-12-loading-action-button': V,
+  'b-01-text-input': I, 'b-02-textarea': V, 'b-03-search-input': I, 'b-04-password-input': V, 'b-05-number-input': V, 'b-06-currency-input': I, 'b-07-email-input': V, 'b-08-phone-input': V, 'b-09-url-input': V, 'b-10-otp-input': I, 'b-11-tag-input': I, 'b-12-file-input': I, 'b-13-drag-and-drop-upload': I, 'b-14-input-group': I,
+  'c-01-select': I, 'c-02-searchable-select': V, 'c-03-combobox': V, 'c-04-multi-select': V, 'c-05-grouped-select': I, 'c-06-radio': I, 'c-07-radio-group': I, 'c-08-radio-card': I, 'c-09-checkbox': I, 'c-10-checkbox-group': I, 'c-11-switch': I, 'c-12-slider': I, 'c-13-range-slider': I, 'c-14-rating': I, 'c-15-color-picker': I,
+  'd-01-calendar': I, 'd-02-date-picker': I, 'd-03-date-range-picker': I, 'd-04-time-picker': I, 'd-05-datetime-picker': I, 'd-06-month-picker': I, 'd-07-week-picker': I, 'd-08-schedule-selector': I,
+  'e-01-navbar': I, 'e-02-sidebar': I, 'e-03-collapsible-sidebar': I, 'e-04-breadcrumb': I, 'e-05-tabs': I, 'e-06-vertical-tabs': V, 'e-07-underline-tabs': V, 'e-08-stepper': I, 'e-09-pagination': I, 'e-10-bottom-navigation': I, 'e-11-navigation-drawer': I, 'e-12-table-of-contents': I, 'e-13-command-menu': I, 'e-14-context-menu': I,
+  'f-01-basic-card': I, 'f-02-feature-card': I, 'f-03-kpi-card': I, 'f-04-statistic-card': I, 'f-05-metric-trend-card': V, 'f-06-product-card': I, 'f-07-product-comparison-card': C, 'f-08-profile-card': I, 'f-09-team-member-card': I, 'f-10-article-card': I, 'f-11-media-card': V, 'f-12-pricing-card': I, 'f-13-plan-card': I, 'f-14-notification-card': I, 'f-15-activity-card': I, 'f-16-settings-card': V, 'f-17-integration-card': I, 'f-18-review-card': I, 'f-19-testimonial-card': I, 'f-20-interactive-selection-card': I, 'f-21-dashboard-widget-card': C, 'f-22-financial-asset-card': I,
+  'g-01-basic-table': I, 'g-02-data-table': I, 'g-03-sortable-table': V, 'g-04-filterable-table': I, 'g-05-selectable-table': V, 'g-06-expandable-row-table': I, 'g-07-grouped-table': I, 'g-08-dense-table': I, 'g-09-description-list': I, 'g-10-list': I, 'g-11-list-item': C, 'g-12-tree-view': I, 'g-13-kanban': I, 'g-14-timeline': I, 'g-15-activity-feed': V, 'g-16-master-detail': C, 'g-17-key-value-inspector': C, 'g-18-log-viewer': C, 'g-19-code-block': I, 'g-20-diff-viewer': I,
+  'h-01-modal': I, 'h-02-alert-dialog': V, 'h-03-confirmation-dialog': I, 'h-04-drawer': I, 'h-05-bottom-sheet': V, 'h-06-popover': I, 'h-07-tooltip': I, 'h-08-dropdown-menu': I, 'h-09-contextual-help': I,
+  'i-01-alert': I, 'i-02-banner': V, 'i-03-callout': I, 'i-04-toast': V, 'i-05-snackbar': V, 'i-06-inline-error': I, 'i-07-empty-state': I, 'i-08-error-state': I, 'i-09-success-state': I, 'i-10-skeleton': I, 'i-11-spinner': I, 'i-12-linear-progress': I, 'i-13-circular-progress': I, 'i-14-step-progress': V, 'i-15-loading-overlay': I, 'i-16-status-indicator': I,
+  'j-01-badge': V, 'j-02-status-badge': I, 'j-03-chip': V, 'j-04-filter-chip': V, 'j-05-tag': I, 'j-06-avatar': I, 'j-07-avatar-group': I, 'j-08-accordion': I, 'j-09-collapsible': I, 'j-10-divider': I, 'j-11-counter': I, 'j-12-notification-indicator': I, 'j-13-keyboard-shortcut': I, 'j-14-metadata-row': I, 'j-15-stat-comparison': I,
+  'k-01-image': V, 'k-02-responsive-image': I, 'k-03-media-frame': I, 'k-04-gallery': C, 'k-05-carousel': C, 'k-06-video-frame': V, 'k-07-audio-player-ui': I, 'k-08-file-preview': I, 'k-09-image-comparison': C, 'k-10-figure-and-caption': C, 'k-11-quote': I, 'k-12-rich-text-content': I,
+  'l-01-stack': I, 'l-02-cluster': I, 'l-03-grid': I, 'l-04-responsive-grid': I, 'l-05-split': I, 'l-06-bento': C, 'l-07-container': I, 'l-08-section': I, 'l-09-center': I, 'l-10-sidebar-layout': C, 'l-11-master-detail-layout': C, 'l-12-sticky-region': C, 'l-13-scroll-area': C, 'l-14-resizable-panel': C,
+  'm-01-filter-toolbar': I, 'm-02-search-toolbar': I, 'm-03-bulk-action-toolbar': C, 'm-04-data-summary': I, 'm-05-dashboard-kpi-grid': C, 'm-06-approval-panel': I, 'm-07-audit-log': I, 'm-08-permission-matrix': I, 'm-09-status-management': I, 'm-10-settings-form': I, 'm-11-search-result-list': I, 'm-12-user-management-table': I, 'm-13-task-list': I, 'm-14-workflow-steps': I, 'm-15-comment-thread': I,
+  'n-01-product-grid': I, 'n-02-product-detail-summary': I, 'n-03-product-variant-selector': C, 'n-04-quantity-selector': I, 'n-05-price-display': I, 'n-06-discount-display': I, 'n-07-cart-item': I, 'n-08-cart-summary': I, 'n-09-checkout-summary': I, 'n-10-order-status': I, 'n-11-review-summary': I,
+  'o-01-mobile-header': I, 'o-02-bottom-navigation': I, 'o-03-action-sheet': I, 'o-04-mobile-list-cell': I, 'o-05-mobile-search': I, 'o-06-mobile-tab-bar': I, 'o-07-full-screen-dialog': I, 'o-08-mobile-filter-panel': I, 'o-09-sticky-bottom-action': I, 'o-10-safe-area-container': I,
+});
+
+const CLASSIFICATION_LABEL = Object.freeze({independent: '독립 재료', variant: '변형', composite: '복합 패턴'});
+
+function classificationCounts() {
+  const counts = {independent: 0, variant: 0, composite: 0};
+  for (const kind of Object.values(COMPONENT_CLASSIFICATION)) counts[kind] += 1;
+  return counts;
+}
+
+exports.COMPONENT_CLASSIFICATION = COMPONENT_CLASSIFICATION;
+exports.CLASSIFICATION_LABEL = CLASSIFICATION_LABEL;
+exports.classificationCounts = classificationCounts;
 };
 __defs["platform/families/kit.mjs"] = function (exports, __m) {
 /**
@@ -13566,6 +14088,7 @@ Object.assign(exports, __m("platform/contract.mjs"));
 { const __r = __m("platform/style-materials.mjs"); exports.checkStyleMaterials = __r.checkStyleMaterials; exports.rankStyleMaterials = __r.rankStyleMaterials; exports.assembleStyleMaterials = __r.assembleStyleMaterials; exports.styleMaterialsCSS = __r.styleMaterialsCSS; exports.styleMaterialAttrs = __r.styleMaterialAttrs; exports.surfaceScopeCSS = __r.surfaceScopeCSS; exports.STYLE_VALIDATORS = __r.STYLE_VALIDATORS; exports.STATE_KINDS = __r.STATE_KINDS; }
 { const __r = __m("platform/families/index.mjs"); exports.PURPOSE_FAMILY_IDS = __r.PURPOSE_FAMILY_IDS; exports.PURPOSE_FAMILIES = __r.PURPOSE_FAMILIES; exports.PURPOSE_FIELDS = __r.PURPOSE_FIELDS; exports.VISUAL_LANGUAGES = __r.VISUAL_LANGUAGES; exports.VISUAL_KEYS = __r.VISUAL_KEYS; exports.getPurposeFamily = __r.getPurposeFamily; exports.listPurposeFamilies = __r.listPurposeFamilies; exports.validatePurposeFamilies = __r.validatePurposeFamilies; exports.renderPurposeFamily = __r.renderPurposeFamily; exports.assembleFamilies = __r.assembleFamilies; exports.combinationMatrix = __r.combinationMatrix; exports.validatePurposeFamily = __r.validatePurposeFamily; exports.checkPurposeCombination = __r.checkPurposeCombination; }
 { const __r = __m("platform/families/kit.mjs"); exports.ICON_CSS = __r.ICON_CSS; }
+{ const __r = __m("platform/families/contracts.mjs"); exports.COMPONENT_LAYERS = __r.COMPONENT_LAYERS; exports.COMPONENT_CONTRACT_FIELDS = __r.COMPONENT_CONTRACT_FIELDS; exports.COMPONENT_CONTRACTS = __r.COMPONENT_CONTRACTS; exports.ALL_COMPONENT_CONTRACTS = __r.ALL_COMPONENT_CONTRACTS; exports.defineComponentContract = __r.defineComponentContract; exports.validateComponentContracts = __r.validateComponentContracts; exports.countDistinctComponentTypes = __r.countDistinctComponentTypes; exports.ACTION_COMPONENTS = __r.ACTION_COMPONENTS; exports.ACTION_COMPONENT_BY_ID = __r.ACTION_COMPONENT_BY_ID; exports.renderActionComponent = __r.renderActionComponent; exports.ACTION_COMPONENT_CSS = __r.ACTION_COMPONENT_CSS; }
 { const __r = __m("platform/examples/minimal.mjs"); exports.PURPOSE_CHECKS = __r.PURPOSE_CHECKS; exports.purposeFamilyVisualCheck = __r.purposeFamilyVisualCheck; exports.purposeFamilyBaseCheck = __r.purposeFamilyBaseCheck; }
 
 
@@ -15422,6 +15945,7 @@ const {bindType} = __m("platform/type.mjs");
 const {familyShapeVars, contrastPairs, requiredVars} = __m("platform/family.mjs");
 const {axisIds, materialAxisIds} = __m("platform/axes.mjs");
 const {styleMaterialsCSS, styleMaterialAttrs} = __m("platform/style-materials.mjs");
+const {actionRuntimeFor} = __m("platform/families/action.mjs");
 const {renderState} = __m("platform/data/states.mjs");
 const {typeErrorCode} = __m("platform/pipeline.mjs");
 const {getPurposeFamily, renderPurposeFamily, VISUAL_LANGUAGES} = __m("platform/families/index.mjs");
@@ -15625,7 +16149,7 @@ function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   ].join('\n') + '\n' : '';
   const css = legacyCss + platformCss + '\n' + purposeCss + styleMaterialsCSS(reg, style, usedStateIds) + '\n';
   // 목적 패밀리가 쓴 기반 컴포넌트의 런타임도 낸다(트리에는 표지 노드뿐이라 쓰인 부품 type을 더해 같은 함수로 고른다).
-  const script = formRuntime + controlRuntime({...b, tree: {type: 'page', children: [...b.tree.children, ...[...usedBases].sort().map(x => ({type: x.slice('base-component:'.length)}))]}});
+  const script = formRuntime + controlRuntime({...b, tree: {type: 'page', children: [...b.tree.children, ...[...usedBases].sort().map(x => ({type: x.slice('base-component:'.length)}))]}}) + actionRuntimeFor(usedPurposes.map(p => p.id));
 
   const defined = new Set([...css.matchAll(/(--[A-Za-z0-9-]+):/g)].map(x => x[1]));
   const missing = requiredVars(css).filter(v => !defined.has(v));

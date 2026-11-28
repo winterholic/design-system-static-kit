@@ -337,7 +337,7 @@ REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemb
 
 | 항목 | 결정과 결과 |
 |---|---|
-| 플랫폼 종류 | `purpose-family` 32개를 등록한다(이후 §6.2 A 계열 5종 `purpose:button.split·menu·fab·copy·close`가 더해져 현재 37개, DEC-010). 목적 패밀리 ID 문법(`purpose:<group>.<name>`)은 유지한다. 레코드는 `PURPOSE_FIELDS`와 visual 필드를 가지며, `bases`를 `requires` 관계로 선언한다. 목적 패밀리·시각 패밀리와 목적 패밀리·기반 부품의 조합은 계산 관계로 검사한다 |
+| 플랫폼 종류 | `purpose-family` 32개를 등록한다(이후 §6.2 A 계열 5종 `purpose:button.split·menu·fab·copy·close`가 더해져 현재 37개, DEC-011). 목적 패밀리 ID 문법(`purpose:<group>.<name>`)은 유지한다. 레코드는 `PURPOSE_FIELDS`와 visual 필드를 가지며, `bases`를 `requires` 관계로 선언한다. 목적 패밀리·시각 패밀리와 목적 패밀리·기반 부품의 조합은 계산 관계로 검사한다 |
 | 시각 확장 | `visual[family-id] = {key, metrics, vars, recipe, allowed, reasons}`. `allowed`·`reasons`는 기존 `checkPurposeCombination`의 결과를 사용해 상세 조회·추천·호환성·페이지 렌더의 조합 판정을 맞춘다. 렌더와 아이콘 규칙은 W3의 `renderPurposeFamily`·`ICON_CSS`를 재사용한다 |
 | 기본 슬롯 | KPI·업무형 표·분석형 표·상품·가격·기사·기능 소개를 목적 패밀리 컴포넌트로 승격한다. `content` 수량으로 격자 열·행·표 쪽 나눔을 계산한다. 명시 컴포넌트는 동일 목적의 자동 승격을 대체한다. 2.7.0 Blueprint의 목적 컴포넌트 축은 문자열뿐 아니라 불리언·숫자도 받아 기반 계약의 boolean 축을 왕복한다 |
 | 서비스 계약 | `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `checkCompatibility`에 `purpose-family` kind를 추가한다. 서비스 계약 1.2.0 → 1.3.0, 플랫폼 계약 0.6.0 → 0.7.0 |
