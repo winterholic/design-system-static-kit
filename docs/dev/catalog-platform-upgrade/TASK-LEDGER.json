@@ -5,8 +5,8 @@
     "totalTasks": 44,
     "byStatus": {
       "Verified": 10,
-      "Implemented": 4,
-      "Pending": 29,
+      "Implemented": 5,
+      "Pending": 28,
       "In Progress": 1
     },
     "byTrack": {
@@ -702,32 +702,52 @@
       "taskId": "TASK-TRC-03",
       "title": "다국어 폰트 전략 및 WOFF2 서브셋 로딩 체계 수립",
       "goal": "한글, 영문, 일본어, 숫자, 코드 가독성을 보장하고 오픈 라이선스 웹폰트 서브셋 로딩 구현",
-      "scope": "apps/web/app/layout.tsx, apps/web/features/materials/types.ts",
+      "scope": "src/platform/data/type-materials.mjs, src/platform/type.mjs, src/service/index.mjs, apps/web/app/materials/typography/page.tsx, apps/web/features/materials/types.ts, apps/web/app/fonts/[file]/route.ts, docs/platform/typography.md",
       "track": "Track C",
       "dependencies": [
         "TASK-TRC-02"
       ],
       "modifiedFiles": [
-        "apps/web/app/layout.tsx",
-        "apps/web/features/materials/types.ts"
+        "src/platform/data/type-materials.mjs",
+        "src/platform/type.mjs",
+        "src/service/index.mjs",
+        "apps/web/app/materials/typography/page.tsx",
+        "apps/web/features/materials/types.ts",
+        "apps/web/app/fonts/[file]/route.ts",
+        "docs/platform/typography.md",
+        "docs/platform/evidence/type/samples.mjs",
+        "docs/platform/evidence/type/font-loading-evidence.json",
+        "tests/platform-type-fonts.test.mjs"
       ],
       "completionCriteria": "전체 웹폰트 일괄 다운로드 방지, WOFF2 서브셋 및 시스템 fallback 안전망 확보",
       "tests": [
-        "tests/platform-type.test.mjs"
+        "tests/platform-type.test.mjs",
+        "tests/platform-type-fonts.test.mjs",
+        "tests/platform-type-evidence.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null,
       "crossTrackFiles": [
         {
-          "file": "apps/web/app/layout.tsx",
+          "file": "apps/web/app/materials/typography/page.tsx",
           "owner": "Track F",
-          "reason": "웹폰트 로딩 전략의 적용 지점"
+          "reason": "기존 타이포 진입점의 선택형 웹폰트 주입 및 다국어 fallback 문구 연결"
         },
         {
           "file": "apps/web/features/materials/types.ts",
           "owner": "Track F",
-          "reason": "서체 메타 타입"
+          "reason": "웹폰트 메타데이터 및 로딩 플랜 타입 확장"
+        },
+        {
+          "file": "apps/web/app/fonts/[file]/route.ts",
+          "owner": "Track F",
+          "reason": "WOFF2 정적 서브셋 서빙 및 실패 모의 엔드포인트"
+        },
+        {
+          "file": "src/service/index.mjs",
+          "owner": "Track A",
+          "reason": "웹폰트 계획 및 메타데이터 공개 서비스 진입점 제공"
         }
       ]
     },

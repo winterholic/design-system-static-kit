@@ -82,8 +82,15 @@ function sampleVars(b) {
   return out;
 }
 const ROLE_FONT = {display: 1, heading: 1, sub: 1, body: 1, small: 1, label: 1, caption: 1, numeric: 1, code: 1};
-export function samplePage(system, kind) {
-  const b = bindType(system), scale = ROLE_SCALES[system.roleScale], d = GAP[scale?.density ?? 'compact'];
+export function samplePage(system, kind, {webfonts = false, fontBaseUrl = '/fonts', extraHtml = ''} = {}) {
+  const b = bindType(system, {webfonts, fontBaseUrl}), scale = ROLE_SCALES[system.roleScale], d = GAP[scale?.density ?? 'compact'];
   const vars = Object.entries(sampleVars(b)).map(([k, v]) => `${k}:${v}`).join(';');
-  return `<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${system.id} · ${kind}</title><style>:root{${vars}}${BASE_CSS(d)}</style><body>${kind === 'doc' ? DOC_HTML : DASH_HTML}</body></html>`;
+  const fontCss = webfonts ? (b.webfontCSS || '') : '';
+  let bodyContent = kind === 'doc' ? DOC_HTML : DASH_HTML;
+  if (extraHtml) {
+    bodyContent = bodyContent.includes('</article></div>')
+      ? bodyContent.replace('</article></div>', `${extraHtml}</article></div>`)
+      : bodyContent + `<div class="page">${extraHtml}</div>`;
+  }
+  return `<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${system.id} · ${kind}</title><style>:root{${vars}}${BASE_CSS(d)}${fontCss ? `\n${fontCss}` : ''}</style><body>${bodyContent}</body></html>`;
 }

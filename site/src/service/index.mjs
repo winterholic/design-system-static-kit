@@ -24,3 +24,4 @@ export {CONTRACT_VERSION} from './envelope.mjs';
 // 미리보기 캐시 키(CONTRACTS §5.2)가 엔진 버전을 "플랫폼 계약/서비스 계약"으로 만들 수 있도록 읽기 전용 상수만 내보낸다.
 export {PLATFORM_CONTRACT_VERSION} from '../platform/contract.mjs';
 export {HINTS, DEFAULT_HINT, hintFor, withHint, diagnostic} from './errors.mjs';
+

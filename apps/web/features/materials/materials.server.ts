@@ -120,12 +120,15 @@ export const typeView = memo((): TypeView => {
     roles: Object.entries(p.roles as Record<string, any>).map(([name, spec]) => ({name, size: sizeRange(spec.size), weight: spec.weight, lineHeight: spec.lineHeight, tracking: spec.trackingEm, policy: spec.policy, fontFamily: String(spec.fontFamily).split(',')[0].replace(/"/g, '')})),
     controls: Object.entries(p.controls as Record<string, any>).map(([size, c]) => ({size, height: c.height, padX: c.padX, gap: c.gap, iconPx: c.iconPx, labelRole: c.labelRole})),
     css: data.css[p.id],
+    webfontCss: data.webfontCss?.[p.id] ?? '',
   }));
   return {
     presets,
     corpus: (data.corpus as any[]).map(c => ({id: c.id, role: c.role, text: c.text, policy: c.policy})),
     controlSizes: data.controlSizes as string[],
     studioTemplates: Object.fromEntries(presets.map(p => [p.id, templateFor(p.context[0])])),
+    webfonts: data.webfonts,
+    webfontCss: data.webfontCss,
   };
 });
 

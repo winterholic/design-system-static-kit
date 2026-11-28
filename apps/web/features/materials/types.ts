@@ -20,8 +20,31 @@ export type ColorView = {
 
 export type RoleView = {name: string; size: string; weight: number; lineHeight: number; tracking: number; policy: string; fontFamily: string};
 export type ControlView = {size: string; height: number; padX: number; gap: number; iconPx: number; labelRole: string};
-export type PresetView = {id: string; label: string; density: string; context: string[]; engine: string; roles: RoleView[]; controls: ControlView[]; css: string};
-export type TypeView = {presets: PresetView[]; corpus: {id: string; role: string; text: string; policy: string}[]; controlSizes: string[]; studioTemplates: Record<string, string | null>};
+export type PresetView = {id: string; label: string; density: string; context: string[]; engine: string; roles: RoleView[]; controls: ControlView[]; css: string; webfontCss?: string};
+export type WebfontMeta = {
+  id: string;
+  family: string;
+  version: string;
+  covers: string[];
+  class: 'sans' | 'serif' | 'mono';
+  license: string;
+  licenseUrl: string;
+  source: string;
+  file: string;
+  weight: string;
+  unicodeRange: string | null;
+  sha256: string;
+  embeddingRights: string;
+  subsetProcedure: string;
+  fallbackStack: string;
+};
+export type WebfontLoadingPlan = {
+  required: boolean;
+  loading: {strategy: string; format: string; display: string; subset: string; preload: string; csp: string};
+  families: WebfontMeta[];
+  fallback: {heading: string; body: string; code: string};
+};
+export type TypeView = {presets: PresetView[]; corpus: {id: string; role: string; text: string; policy: string}[]; controlSizes: string[]; studioTemplates: Record<string, string | null>; webfonts?: Record<string, WebfontMeta>; webfontCss?: Record<string, string>};
 
 export type FoundationAxis = {
   axis: string; label: string; category: string; table: unknown;

@@ -449,7 +449,7 @@ export function bindType(ts, options = {}) {
   });
   const roles27 = resolve27Roles(ts, {webfonts});
   Object.assign(vars, typeRoleVars(roles27));
-  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, roles27, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing) : ''};
+  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, roles27, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing, {baseUrl: options.fontBaseUrl ?? '/fonts'}) : ''};
 }
 
 /**
