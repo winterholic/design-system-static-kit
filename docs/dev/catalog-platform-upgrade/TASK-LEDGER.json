@@ -1200,7 +1200,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "A 12/12는 Manifest에서 missing이 아니다(A 행 12개 모두 coverage direct·variant). 다섯 신규 목적 패밀리는 상태가 catalog-visible이고 blockedBy는 no-studio-choice다: Studio 선택지는 Track F 소유다. assembleDesign의 components로는 버튼 계열 목적 패밀리를 페이지 슬롯에 놓을 수 없다(패턴 슬롯에 button-control을 받는 칸이 없음, Track A). Blueprint는 materials.purposes + 표지 노드로 직접 쓴다. 분류 보정: Phone·URL Input을 변형으로, KPI Card를 독립 재료로, Dashboard KPI Grid·Bulk Action Toolbar를 복합 패턴으로 고쳐 149/36/22가 되었다. 근거는 docs/platform/components.md.",
+      "unresolvedIssues": "A 12/12는 Manifest에서 missing이 아니다(A 행 12개 모두 coverage direct·variant). 다섯 신규 목적 패밀리는 상태가 catalog-visible이고 blockedBy는 no-studio-choice다: Studio 선택지는 Track F 소유다. assembleDesign의 components로는 버튼 계열 목적 패밀리를 페이지 슬롯에 놓을 수 없다(패턴 슬롯에 button-control을 받는 칸이 없음, Track A). Blueprint는 materials.purposes + 표지 노드로 직접 쓴다. 분류 보정: Phone·URL Input을 변형으로, KPI Card를 독립 재료로, Dashboard KPI Grid·Bulk Action Toolbar를 복합 패턴으로 고쳐 149/36/22가 되었다. 근거는 docs/platform/components.md. 전체 브라우저 스위트(PW_PORT를 따로 준 npm run test:browser)는 292개 중 290개 통과, 2개 실패다. 둘 다 origin/main(039ec6171)에서 같은 값으로 재현된다: e2e/platform-family-a11y.spec.mjs의 topbar 토글 높이 36px(기대 44px)와, e2e/platform-families.spec.mjs가 시각 패밀리 12종으로 늘면서 10분 제한을 넘기고 landing의 3단계 link 외형 버튼 높이 불일치·luxury/glass 측정 실패를 내는 것(button 묶음 측정 20쪽 실패, main과 같은 쪽·같은 값). A 계열과 무관해 고치지 않았다(Track D 내비게이션·Track E 시각 패밀리).",
       "crossTrackFiles": [
         {
           "file": "src/platform/index.mjs",

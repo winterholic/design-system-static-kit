@@ -151,9 +151,10 @@ test.describe('standalone `actions` output', () => {
 });
 
 /** Blueprint를 컴파일한 페이지: 목적 패밀리가 런타임을 같이 싣고 나오는지, 브라우저에서 같은 동작이 되는지 본다. */
+// 조립이 고르는 스타일 맥락에 따라 밀도가 compact가 되면 버튼이 36px이므로 터치 영역 시험을 위해 밀도를 고정한다.
 function compiledPage(purposes) {
   const kpis = Array.from({length: 3}, (_, i) => ({label: `지표 ${i + 1}`, value: String(i)}));
-  const bp = structuredClone(assembleDesign({purpose: 'work-dashboard', candidates: 1, content: {title: '운영', kpis}}, {include: ['blueprint']}).value.candidates[0].value.blueprint);
+  const bp = structuredClone(assembleDesign({purpose: 'work-dashboard', density: 'comfortable', candidates: 1, content: {title: '운영', kpis}}, {include: ['blueprint']}).value.candidates[0].value.blueprint);
   bp.materials.purposes = purposes.map(({id, content}, i) => ({id, visual: 'family:quiet', uid: `a-${i}`, variant: getPurposeFamily(id).example.variant, props: getPurposeFamily(id).example.props, content: content ?? getPurposeFamily(id).example.content}));
   const grid = bp.tree.children.find(n => n.type === 'grid');
   grid.columns = purposes.length >= 3 ? 'three' : 'two';
@@ -185,7 +186,7 @@ test.describe('Blueprint-compiled A purposes', () => {
       await caret.click();
       await expect(page.locator('#a-1-menu')).toBeVisible();
       await expect(caret).toHaveAttribute('aria-expanded', 'true');
-      expect((await caret.boundingBox()).height, `${width}px: caret height`).toBeGreaterThanOrEqual(44);
+      expect((await caret.boundingBox()).height, `${width}px: caret height (touch target)`).toBeGreaterThanOrEqual(44);
       await page.keyboard.press('Escape');
       expect((await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth}))).s).toBeLessThanOrEqual(width);
     }
