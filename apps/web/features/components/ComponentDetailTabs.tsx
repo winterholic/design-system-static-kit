@@ -4,7 +4,7 @@ import {useEffect, useMemo, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {Button} from '@/ui';
 import {CopyBlock} from './CopyBlock';
-import {buildTabs, exportedSources} from './detail-model.mjs';
+import {buildTabs, exportedSources, playgroundAxes} from './detail-model.mjs';
 import type {ComponentView} from './spec.server';
 import type {PlaygroundOption} from './playground.server';
 import styles from './components.module.css';
@@ -18,7 +18,10 @@ const AXIS_LABELS: Record<string, string> = {
 const AXIS_KEYS = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'exampleText', 'viewport'];
 
 function initialSelection(view: ComponentView, params: URLSearchParams): Selection {
-  const selected: Selection = {...view.playground.defaults, viewport: params.get('viewport') === '390' ? '390' : '1280'};
+  const supportedAxes = playgroundAxes(view);
+  const selected: Selection = view.detail
+    ? Object.fromEntries(supportedAxes.map((axis: string) => [axis, (view.playground.defaults as Record<string, string>)[axis] ?? '']))
+    : {...view.playground.defaults, viewport: params.get('viewport') === '390' ? '390' : '1280'};
   for (const group of view.variantGroups) {
     const value = params.get(group.name);
     selected[group.name] = group.values.find(candidate => String(candidate) === value) ?? group.defaultValue;
@@ -28,9 +31,11 @@ function initialSelection(view: ComponentView, params: URLSearchParams): Selecti
     const option = view.playground.axes[axis].find(item => item.value === params.get(axis) && item.ok);
     if (option) selected[axis] = option.value;
   }
-  const exampleText = Object.entries(view.example ?? {}).find(([key, value]) => !['type', 'id'].includes(key) && typeof value === 'string')?.[1];
-  const text = params.get('exampleText');
-  selected.exampleText = text && text.length <= 200 ? text : typeof exampleText === 'string' ? exampleText : '';
+  if (!view.detail) {
+    const exampleText = Object.entries(view.example ?? {}).find(([key, value]) => !['type', 'id'].includes(key) && typeof value === 'string')?.[1];
+    const text = params.get('exampleText');
+    selected.exampleText = text && text.length <= 200 ? text : typeof exampleText === 'string' ? exampleText : '';
+  }
   return selected;
 }
 
@@ -95,6 +100,7 @@ export function ComponentDetailTabs({view, note}: Props) {
   const availabilityRequest = JSON.stringify({palette: selection.palette, subtokenSet: selection.subtokenSet, visualFamily: selection.visualFamily, typeSystem: selection.typeSystem, density: selection.density, mode: selection.mode});
 
   useEffect(() => {
+    if (view.detail) return;
     let live = true;
     const query = new URLSearchParams({selection: availabilityRequest});
     fetch(`/components/${view.type}/availability?${query}`, {cache: 'no-store'}).then(async response => {
@@ -103,7 +109,7 @@ export function ComponentDetailTabs({view, note}: Props) {
       if (live && result.axes) setAxisOptions(result.axes);
     }).catch(() => {});
     return () => { live = false; };
-  }, [availabilityRequest, view.type]);
+  }, [availabilityRequest, view.type, view.detail]);
 
   useEffect(() => {
     if (activeTab !== 'code') return;
@@ -179,6 +185,7 @@ export function ComponentDetailTabs({view, note}: Props) {
   };
 
   const renderPreview = (chosen: Selection) => <Preview type={view.type} selection={chosen} width={viewport === 390 ? 390 : '100%'} />;
+  const visibleAxes = playgroundAxes(view);
 
   return <section className={styles.detailTabs} aria-label={`${view.label} 상세`}>
     <div className={styles.detailTabList} role="tablist" aria-label={`${view.label} 상세 탭`} onKeyDown={moveTabFocus}>
@@ -212,7 +219,7 @@ export function ComponentDetailTabs({view, note}: Props) {
       </> : null}
       {activeTab === 'playground' ? <>
         <h2 className="section-title">Playground</h2>
-        <div className={styles.variantGroups}>{AXIS_KEYS.map(axis => {
+        <div className={styles.variantGroups}>{AXIS_KEYS.filter(axis => visibleAxes.includes(axis)).map(axis => {
           const config = axisConfig(axis);
           const current = axis === 'viewport' ? String(viewport) : String(selection[config.key] ?? config.options[0] ?? '');
           if (axis === 'exampleText') return <label key={axis} className={styles.variantField}>{AXIS_LABELS[axis]}<input aria-label={AXIS_LABELS[axis]} maxLength={200} value={String(selection.exampleText ?? '')} onChange={event => updateSelection('exampleText', event.target.value)} onBlur={() => draftContent !== null && updateUrl(activeTab)} /></label>;
@@ -238,9 +245,9 @@ export function ComponentDetailTabs({view, note}: Props) {
       </dl></> : null}
       {activeTab === 'composition' ? <><h2 className="section-title">Composition</h2><dl className={styles.ctx}>
         <div><dt>허용 부모</dt><dd>{view.parents.length ? view.parents.map(type => <code key={type}>{type} </code>) : '없음'}</dd></div>
-        <div><dt>허용 자식</dt><dd>{view.children ? <>{view.children.allowed.map(type => <code key={type}>{type} </code>)} · {view.children.min}~{view.children.max}개</> : '자식을 받지 않습니다'}</dd></div>
+        <div><dt>허용 자식</dt><dd>{view.children ? <>{view.children.allowed.map((type: string, index: number) => <code key={`${type}-${index}`}>{type} </code>)} · {view.children.min}~{view.children.max}개</> : view.detail?.composition?.children?.length ? view.detail.composition.children.map((type: string, index: number) => <code key={`${type}-${index}`}>{type} </code>) : '자식을 받지 않습니다'}</dd></div>
         <div><dt>필요한 슬롯</dt><dd>{view.material?.purposeContracts.flatMap(contract => Object.keys(contract.needs ?? {})).length ? [...new Set(view.material.purposeContracts.flatMap(contract => Object.keys(contract.needs ?? {})))].map(slot => <code key={slot}>{slot} </code>) : '필요 슬롯 없음'}</dd></div>
-        <div><dt>관련 목적 컴포넌트</dt><dd>{view.material?.purposeContracts.length ? view.material.purposeContracts.map(contract => <code key={contract.id}>{contract.label} </code>) : view.related.map(row => <code key={row.type}>{row.label} </code>)}</dd></div>
+        <div><dt>관련 목적 컴포넌트</dt><dd>{view.material?.purposeContracts?.length ? view.material.purposeContracts.map((contract: any) => <code key={contract.id}>{contract.label} </code>) : view.detail?.composition?.related?.length ? view.detail.composition.related.map((item: string, index: number) => <code key={`${item}-${index}`}>{item} </code>) : view.related.map(row => <code key={row.type}>{row.label} </code>)}</dd></div>
         <div><dt>금지 조합</dt><dd>{view.material?.purposeContracts.flatMap(contract => contract.forbidden.map(rule => ({...rule, purpose: contract.label}))).length ? view.material.purposeContracts.flatMap(contract => contract.forbidden.map(rule => <span key={`${contract.id}-${rule.id}`}><code>{rule.id}</code> · {Object.entries((rule as any).when ?? {}).map(([key, value]) => `${key}=${String(value)}`).join(', ')} · {rule.why}; </span>)) : '등록된 금지 조합이 없습니다.'}</dd></div>
       </dl></> : null}
     </div>

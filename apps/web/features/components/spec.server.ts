@@ -4,6 +4,7 @@ import {recordCompile} from '@/features/perf/counter.server';
 import {LruCache} from '@/lib/api/cache.mjs';
 import {exportComponentView} from '@/lib/api/preview-recipes.mjs';
 import {playgroundContract} from './playground.server';
+import {catalogDetailRows, catalogDetailView, exportCatalogDetail} from './material-detail.mjs';
 
 // 부품 화면의 모든 데이터는 getComponentSpec·listCatalog 에서 온다. 카탈로그에 없는 변형·속성·관계는 만들지 않는다.
 // 렌더 결과는 Blueprint 를 직접 쓰지 않고 ./edit 연산(resetDocument, insertNode, removeNode, updateNode)으로 만든 문서의 컴파일 결과다.
@@ -24,8 +25,9 @@ const call = <T>(r: unknown, what: string): T => {
 
 export type ComponentRow = {type: string; label: string; group: string; childTypes: string[]; since?: string};
 let listCache: ComponentRow[] | null = null;
+const catalogComponentRows = (): ComponentRow[] => call<{items: ComponentRow[]}>(listCatalog({kind: 'components', filter: {catalogVersion: '2.6.0'}, fields: ['type', 'label', 'group', 'childTypes', 'since'], limit: 200}), 'listCatalog(components@2.6.0)').items;
 export function componentRows(): ComponentRow[] {
-  return listCache ??= call<{items: ComponentRow[]}>(listCatalog({kind: 'components', filter: {catalogVersion: '2.6.0'}, fields: ['type', 'label', 'group', 'childTypes', 'since'], limit: 200}), 'listCatalog(components@2.6.0)').items;
+  return listCache ??= [...catalogComponentRows(), ...catalogDetailRows().map(row => ({type: row.type, label: row.label, group: row.kind, childTypes: [], since: '2.7.0'}))];
 }
 
 type MaterialView = {
@@ -94,11 +96,13 @@ export type ComponentView = {
   limitations: string[];
   related: {type: string; label: string}[];
   playground: import('./playground.server').PlaygroundContract;
+  playgroundAxes?: string[];
+  detail?: {kind: string; tabs: string[]; axes: string[]; composition?: {children: string[]; related: string[]}; tokens?: string[]; defaults?: Record<string, string>};
 };
 
 type RawView = Omit<ComponentView, 'variants' | 'limitations' | 'playground'> & {variantIds: string[]};
 function rawView(type: string): RawView | null {
-  const row = componentRows().find(r => r.type === type);
+  const row = catalogComponentRows().find(r => r.type === type);
   if (!row) return null;
   const material = row.since ? materialView(type) : null;
   const spec = call<Json>(getComponentSpec({type, ...(row.since ? {catalogVersion: row.since} : {})}), `getComponentSpec(${type})`);
@@ -141,8 +145,11 @@ export function componentSummary(type: string): ComponentSummary | null {
   if (summaryCache.has(type)) return summaryCache.get(type)!;
   const raw = rawView(type);
   if (!raw) {
-    summaryCache.set(type, null);
-    return null;
+    const material = catalogDetailView(type);
+    if (!material) { summaryCache.set(type, null); return null; }
+    const summary = {type, label: material.label, group: material.group, groupLabel: material.groupLabel, since: '2.7.0', material: material.material, variantCount: material.variants.length, variantGroupCount: material.variantGroups.length, hasExample: !!material.example};
+    summaryCache.set(type, summary);
+    return summary;
   }
   const row = componentRows().find(r => r.type === type);
   const summary: ComponentSummary = {
@@ -163,6 +170,8 @@ export function componentSummary(type: string): ComponentSummary | null {
 /** 변형은 카탈로그가 선언한 값 전부를 싣고, 예제 데이터로 만들 수 있는지(ok)와 못 만드는 이유를 함께 싣는다. */
 export function componentView(type: string): ComponentView | null {
   if (viewCache.has(type)) return viewCache.get(type)!;
+  const detail = catalogDetailView(type);
+  if (detail) { viewCache.set(type, detail); return detail; }
   const raw = rawView(type);
   let view: ComponentView | null = null;
   if (raw) {
@@ -200,6 +209,13 @@ export function exportComponent(type: string, variant?: string | Row) {
   const key = compileKey(type, variant);
   const hit = compiledCache.get(key);
   if (hit) return hit;
+  const detail = catalogDetailView(type);
+  if (detail) {
+    const result = exportCatalogDetail(detail, typeof variant === 'object' && variant ? variant : {});
+    const {previewHtml: _previewHtml, ...exported} = result;
+    compiledCache.set(key, exported);
+    return exported;
+  }
   const raw = rawView(type);
   // 렌더 모듈이 플랫폼 경로(시각 패밀리 등)를 고르려면 Playground 계약이 있어야 한다. rawView 에는 없다.
   const view = raw && {...raw, playground: playgroundContract(type)};

@@ -78,3 +78,22 @@ test('시각 패밀리 선택은 실제 출력을 바꾸고 Code 는 같은 선�
   const files = (await (await request.get(`/components/button-control/export?selection=${encodeURIComponent(JSON.stringify({...selection, size: 'medium', appearance: 'solid', state: 'default', viewport: '1280'}))}`)).json()).files;
   expect(JSON.parse(files['blueprint.json']).family).toBe('family:bold');
 });
+
+test('차트·레이아웃 재료는 종류별 탭만 보이고 기본 미리보기와 Code HTML 이 같다', async ({page, request}) => {
+  const samples = [
+    {id: 'chart-preset:erp-quarterly-revenue', hidden: ['States', 'Sizes', 'Composition'], shown: ['Overview', 'Playground', 'Tokens', 'Code', 'Accessibility']},
+    {id: 'layout:bento', hidden: ['Variants', 'States', 'Sizes', 'Tokens', 'Accessibility'], shown: ['Overview', 'Playground', 'Code', 'Composition']},
+    {id: 'component:stack', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens', 'Accessibility'], shown: ['Overview', 'Code', 'Composition']},
+    {id: 'layout-primitive:stack', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens'], shown: ['Overview', 'Code', 'Accessibility']},
+  ];
+  for (const sample of samples) {
+    const route = `/components/${sample.id}`;
+    expect((await request.get(route)).status()).toBe(200);
+    await page.goto(route);
+    for (const tab of sample.shown) await expect(page.getByRole('tab', {name: tab})).toHaveCount(1);
+    for (const tab of sample.hidden) await expect(page.getByRole('tab', {name: tab})).toHaveCount(0);
+    const preview = await (await request.get(`${route}/render`)).text();
+    const code = (await (await request.get(`${route}/export?selection=%7B%7D`)).json()).files['index.html'];
+    expect(preview).toBe(code);
+  }
+});

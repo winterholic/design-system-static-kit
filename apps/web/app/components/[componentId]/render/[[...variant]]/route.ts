@@ -1,4 +1,5 @@
 import {componentView, renderComponent} from '@/features/components/spec.server';
+import {playgroundAxes} from '@/features/components/detail-model.mjs';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,7 @@ export async function GET(req: Request, {params}: {params: Promise<{componentId:
     for (const axis of ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'mode', 'density', 'viewport'] as const) {
       const asked = params.get(axis);
       if (!asked) continue;
+      if (!playgroundAxes(view).includes(axis)) return unknownVariant(`이 재료는 ${axis} 축을 받지 않습니다.`);
       if (axis === 'viewport') {
         if (!['390', '1280'].includes(asked)) return unknownVariant('뷰포트는 390 또는 1280입니다.');
       } else {

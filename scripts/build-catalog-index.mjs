@@ -207,6 +207,7 @@ for (const {row, material} of componentList) {
 }
 // 플랫폼 레지스트리의 공개 재료만 읽는다(권리 미확인 팔레트는 이 레지스트리에 들어올 수 없다. CONTRACTS §7).
 const urlOf = (kind, d) => ({
+  layout: `/components/${d.id}`,
   palette: `/materials/palettes/${d.id.split(':')[1]}`, 'type-system': `/materials/typography?with=${d.id.split(':')[1]}`,
   'purpose-family': `/components/purpose/${d.group}/${d.id.split('.')[1]}`, 'style-context': '/materials/styles',
 }[kind] ?? '/materials');
@@ -236,7 +237,7 @@ const extraRow = (record, kind, fields) => {
     id: record.id, kind, category: record.category ?? kind, label: record.label, contexts: record.contexts ?? ['any'], tags: record.tags ?? [],
     previewUrl: key ? `/previews/${key}.svg` : null, previewUrlsByFamily: {}, purpose: fields.purpose,
     relatedCategories: classifyCatalogMaterial({...record, kind}, coverage), variantsCount: fields.variantsCount ?? 0, statesCount: 0,
-    qualityStatus: record.quality?.status === 'verified' ? 'verified' : 'implemented', license: record.source?.license ?? 'internal', url: '/materials',
+    qualityStatus: record.quality?.status === 'verified' ? 'verified' : 'implemented', license: record.source?.license ?? 'internal', url: `/components/${record.id}`,
   };
 };
 for (const preset of chartPresets) lightMaterials.push(extraRow(preset, 'chart-preset', {purpose: `${preset.label}: ${preset.ext.chartKind} 차트로 ${preset.ext.domain} 맥락의 데이터를 보여 줍니다.`}));

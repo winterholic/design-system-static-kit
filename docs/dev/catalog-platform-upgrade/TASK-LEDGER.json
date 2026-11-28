@@ -2,22 +2,22 @@
   "version": "1.3.0",
   "updatedAt": "2026-11-28",
   "summary": {
-    "totalTasks": 48,
+    "totalTasks": 49,
     "byStatus": {
-      "Completed": 1,
+      "Verified": 21,
       "Implemented": 10,
-      "In Progress": 2,
       "Pending": 15,
-      "Verified": 20
+      "In Progress": 2,
+      "Completed": 1
     },
     "byTrack": {
+      "Track G": 8,
       "Track A": 4,
       "Track B": 4,
       "Track C": 3,
       "Track D": 19,
       "Track E": 4,
-      "Track F": 6,
-      "Track G": 8
+      "Track F": 7
     }
   },
   "tasks": [
@@ -5182,6 +5182,85 @@
       "commit": "632311172972214d1eea73450d95ab5b775666a7",
       "status": "Implemented",
       "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRF-07",
+      "title": "차트·레이아웃 81종 상세 데이터·렌더·내보내기 연결",
+      "goal": "차트 프리셋 44, 레이아웃 24, 레이아웃 부품 7, 배치 원형 6개를 컴포넌트 상세 9탭 데이터원과 실제 렌더·Code 내보내기에 연결하고 카드 URL을 상세로 변경",
+      "scope": "apps/web/features/components/material-detail.mjs, apps/web/features/components/spec.server.ts, apps/web/features/components/detail-model.mjs, apps/web/features/components/ComponentDetailTabs.tsx, apps/web/app/components/[componentId]/render/[[...variant]]/route.ts, scripts/build-catalog-index.mjs, site/catalog-index.json, site/catalog-chunks/*.json, site/search-index.json",
+      "track": "Track F",
+      "dependencies": [
+        "TASK-TRF-02",
+        "TASK-TRG-03"
+      ],
+      "modifiedFiles": [
+        "apps/web/features/components/material-detail.mjs",
+        "apps/web/features/components/material-detail.unit.mjs",
+        "apps/web/features/components/spec.server.ts",
+        "apps/web/features/components/detail-model.mjs",
+        "apps/web/features/components/ComponentDetailTabs.tsx",
+        "apps/web/app/components/[componentId]/render/[[...variant]]/route.ts",
+        "apps/web/e2e/component-detail-tabs.spec.mjs",
+        "scripts/build-catalog-index.mjs",
+        "site/catalog-index.json",
+        "site/catalog-chunks/all-20.json",
+        "site/catalog-chunks/all-21.json",
+        "site/catalog-chunks/all-22.json",
+        "site/catalog-chunks/all-23.json",
+        "site/catalog-chunks/charts-1.json",
+        "site/catalog-chunks/charts-2.json",
+        "site/catalog-chunks/layouts-1.json",
+        "site/catalog-chunks/layouts-2.json",
+        "site/search-index.json",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
+      ],
+      "completionCriteria": "81개 상세 HTTP 200 및 카드 URL 상세 경로, 데이터 기반 탭·Playground 축, 네 종류별 Preview/Code HTML 바이트 동일성 단위시험, 전체 비브라우저 node:test·web:build·coverage MATCH·check-generated 통과, TASK-LEDGER 기록, origin/main 반영",
+      "tests": [
+        "node --test apps/web/features/components/material-detail.unit.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs",
+        "node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'",
+        "npm run web:build",
+        "npm run coverage:materials:check",
+        "node scripts/check-generated.mjs",
+        "node scripts/build-catalog-index.mjs",
+        "운영 빌드 next start + Node fetch: 81개 상세 라우트 HTTP 200"
+      ],
+      "commit": null,
+      "status": "Verified",
+      "unresolvedIssues": "앱 브라우저 E2E spec은 실행하지 않았다(작업 카드의 Chromium 제약). 테스트 필터를 점검하다 positive --test-name-pattern으로 Chromium 하위 테스트 5개를 선택해 실행했으나 모두 launch 전 Mach IPC bootstrap_check_in Permission denied (1100)로 실패했다. 이후 해당 브라우저 경로 시도를 중단했다. 전체 node:test는 --test-skip-pattern으로 아래 다섯 테스트를 제외해 1202/1202 통과했다: `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`; `stack: gap and align props change the real layout, including the gap step`; `container: width steps cap the real width, full does not, and content is escaped`; `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`; `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`. 새 apps/web/e2e/component-detail-tabs.spec.mjs에는 네 종류 탭 노출과 Preview/Code 바이트 동일성 확인을 작성했고 Claude 브라우저 검증 대기.",
+      "crossTrackFiles": [
+        {
+          "file": "scripts/build-catalog-index.mjs",
+          "ownerTrack": "Track G",
+          "reason": "카탈로그 카드의 차트·레이아웃 상세 URL 매핑"
+        },
+        {
+          "file": "site/catalog-index.json",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "81개 카드 URL을 새 상세 경로로 반영"
+        },
+        {
+          "file": "site/catalog-chunks/*.json",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "분류·검색 페이지 청크에 상세 URL 반영"
+        },
+        {
+          "file": "site/search-index.json",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "전체 검색 인덱스의 상세 URL 반영"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "변경 후 Coverage Manifest 재생성·일치 검사"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "교차 트랙 작업과 검증 결과 기록"
+        }
+      ]
     }
   ]
 }

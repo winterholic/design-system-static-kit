@@ -1900,3 +1900,39 @@ F1 검증(`34812d226`)이 확인한 대로 `site/catalog-index.json`의 차트 �
 - `e2e/platform-work-patterns.spec.mjs`: `13 passed`(기존 2 + 새 11). `platform-family-a11y.spec.mjs -g "purpose:work"`: `30 passed`.
 - `npm run test:browser`(같은 트리): **540개 중 534 통과, 6 실패. 6건 모두 M 밖이고 `purpose:work` 실패는 0이다.** 실패는 D7 폼 컨트롤(`purpose:form.radio-group`, `purpose:form.radio-card`, `purpose:form.date-range`)의 Tab 순서 시험(390·1280)으로 B/C/D 소관이다. 직전 측정에서 같이 나오던 D3 카드·데이터 6건은 그 사이 main에 들어온 D3 교정(`08bc5b7fe`)으로 풀렸다.
 - 기록 사고 하나: 이 절의 첫 push(`1bef72320`)는 로컬 기준 커밋이 낡아 그 사이 main에 올라온 다른 작업자의 변경(D3 교정, Explore·Studio 연결)을 되돌렸다. 바로 알아채고, `2585cc4e3`의 트리에 이 검증의 변경만 다시 얹은 보정 커밋을 이어서 올려 되돌림을 복구했다(강제 push·히스토리 재작성 없음). `1bef72320`을 기준으로 삼은 로컬 작업은 그 사이에 없다고 확인하지 못했다(확인 필요).
+
+## 31. TASK-TRF-07 차트·레이아웃 81종 상세 연결 (2026-11-28)
+
+§28.6에서 보류한 차트 프리셋 44, 레이아웃 24, 레이아웃 부품 7, 배치 원형 6종에 별도 상세 데이터원을 추가했다. `componentRows()`가 이 81개를 정적 라우트 매개변수에 포함하고, `/components/[componentId]`에서 각각 재료 데이터와 실제 Core 렌더 경로를 찾는다. Next 페이지 매개변수의 `%3A` ID는 상세 데이터원에서 정규화한다.
+
+| 종류 | 탭 | Playground 축 | 렌더·내보내기 |
+|---|---|---|---|
+| 차트 프리셋 44 | Overview, Playground, Tokens, Code, Accessibility | density | 검증 `renderChartPreset` + 생성된 차트 CSS; 2.6.0 chart preset 데이터 내보내기 |
+| 레이아웃 24 | Overview, Playground, Code, Composition | density, mode | `assembleSpecimen`의 슬롯 표본 조립 |
+| 레이아웃 부품 7 | Overview, Code, Composition | 없음 | `assembleComponents`의 `layouts` 경로 |
+| 배치 원형 6 | Overview, Code, Accessibility | 없음 | 원형을 사용하는 카탈로그 패턴 Blueprint 컴파일 |
+
+데이터 없는 States·Sizes·Composition·Tokens·Playground는 종류별로 숨긴다. 탭 패널은 활성 패널 하나만 렌더한다. 차트·레이아웃 동적 출력은 최근 사용 우선 64개 상한 캐시를 쓰고 플랫폼/서비스 계약 버전을 키에 포함한다. 2.1.0·2.4.0 및 `site/v1` 코드는 수정하지 않았다.
+
+검증 증거:
+
+```text
+$ node --test apps/web/features/components/material-detail.unit.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs
+ℹ tests 9 / pass 9 / fail 0
+$ node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'
+ℹ tests 1202 / pass 1202 / fail 0 / skipped 0
+$ npm run web:build
+✓ Generating static pages using 17 workers (961/961)
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1534 materials, 406 requirements)
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.
+$ node (production next start) fetch of all 81 detail URLs
+{"routes":81,"ok":81,"failures":[]}
+$ node scripts/build-catalog-index.mjs + 81-card URL comparison
+{"expected":81,"matched":81,"missing":0,"wrong":0}
+```
+
+앱 브라우저 E2E spec은 실행하지 않았다. 필터를 점검하다 positive `--test-name-pattern`으로 Chromium 하위 테스트 다섯 개를 선택했지만, 모두 Chromium launch 단계에서 Mach IPC `bootstrap_check_in … Permission denied (1100)`로 실패했다. 이후 브라우저 시도를 중단했다. 전체 Node 테스트는 `--test-skip-pattern`으로 다음 다섯 테스트를 제외했다: `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`; `stack: gap and align props change the real layout, including the gap step`; `container: width steps cap the real width, full does not, and content is escaped`; `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`; `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`. 새 `apps/web/e2e/component-detail-tabs.spec.mjs`에는 네 종류의 탭 노출과 기본 Preview HTML/Code export 바이트 동일성 확인을 추가했다. 후속 Claude 브라우저 검증 대상이다.
+
+결함 주입 RED: 상세 ID의 percent decoding을 임시 제거하자 URL 인코딩된 `chart-preset%3A...` 조회 단언이 `Cannot read properties of null (reading 'type')`로 실패했다. 디코딩을 복원한 뒤 상세·내보내기 단위 시험은 9/9 통과했다.

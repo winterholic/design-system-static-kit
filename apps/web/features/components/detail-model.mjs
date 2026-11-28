@@ -13,7 +13,12 @@ export const DETAIL_TABS = Object.freeze([
 const AXES = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'exampleText', 'viewport'];
 const allowedTabs = new Set(DETAIL_TABS.map(tab => tab.id));
 
+export function playgroundAxes(view) {
+  return Array.isArray(view?.playgroundAxes) ? view.playgroundAxes : AXES;
+}
+
 export function buildTabs(view) {
+  if (Array.isArray(view?.detail?.tabs)) return DETAIL_TABS.filter(tab => view.detail.tabs.includes(tab.id));
   const material = view?.material;
   const hasVariants = Boolean(view?.variants?.length || view?.variantGroups?.length);
   const hasStates = Boolean(material?.states?.values?.length);
@@ -24,7 +29,7 @@ export function buildTabs(view) {
     || tab.id === 'variants' && hasVariants
     || tab.id === 'states' && hasStates
     || tab.id === 'sizes' && hasSizes
-    || tab.id === 'playground' && Boolean(material)
+    || tab.id === 'playground' && Boolean(material) && playgroundAxes(view).length > 0
     || tab.id === 'tokens' && hasTokens
     || tab.id === 'code'
     || tab.id === 'accessibility'
