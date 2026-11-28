@@ -188,7 +188,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 66.
+집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 54.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -243,7 +243,7 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:d-08-schedule-selector` | Schedule Selector | 독립 재료 | missing | missing | — |
 | `req:comp:e-01-navbar` | Navbar | 독립 재료 | direct | verified | base-component:navigation-menu |
 | `req:comp:e-02-sidebar` | Sidebar | 독립 재료 | direct | catalog-visible | purpose:navigation.sidebar |
-| `req:comp:e-03-collapsible-sidebar` | Collapsible Sidebar | 독립 재료 | missing | missing | — |
+| `req:comp:e-03-collapsible-sidebar` | Collapsible Sidebar | 독립 재료 | direct | catalog-visible | purpose:navigation.collapsible-sidebar |
 | `req:comp:e-04-breadcrumb` | Breadcrumb | 독립 재료 | direct | verified | component:breadcrumb |
 | `req:comp:e-05-tabs` | Tabs | 독립 재료 | direct | verified | base-component:tabs-control |
 | `req:comp:e-06-vertical-tabs` | Vertical Tabs | 변형 | variant | verified | base-component:tabs-control |
@@ -251,10 +251,10 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:e-08-stepper` | Stepper | 독립 재료 | direct | verified | component:stepper |
 | `req:comp:e-09-pagination` | Pagination | 독립 재료 | direct | verified | component:pagination |
 | `req:comp:e-10-bottom-navigation` | Bottom Navigation | 독립 재료 | direct | catalog-visible | purpose:navigation.bottom |
-| `req:comp:e-11-navigation-drawer` | Navigation Drawer | 독립 재료 | missing | missing | — |
+| `req:comp:e-11-navigation-drawer` | Navigation Drawer | 독립 재료 | direct | catalog-visible | purpose:navigation.drawer |
 | `req:comp:e-12-table-of-contents` | Table of Contents | 독립 재료 | direct | verified | component:toc |
-| `req:comp:e-13-command-menu` | Command Menu | 독립 재료 | missing | missing | — |
-| `req:comp:e-14-context-menu` | Context Menu | 독립 재료 | missing | missing | — |
+| `req:comp:e-13-command-menu` | Command Menu | 독립 재료 | direct | catalog-visible | purpose:navigation.command-menu |
+| `req:comp:e-14-context-menu` | Context Menu | 독립 재료 | direct | catalog-visible | purpose:navigation.context-menu |
 | `req:comp:f-01-basic-card` | Basic Card | 독립 재료 | direct | verified | base-component:card-surface |
 | `req:comp:f-02-feature-card` | Feature Card | 독립 재료 | direct | verified | purpose:card.feature |
 | `req:comp:f-03-kpi-card` | KPI Card | 독립 재료 | direct | verified | purpose:card.kpi |
@@ -300,15 +300,15 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:h-01-modal` | Modal | 독립 재료 | direct | verified | base-component:modal-dialog |
 | `req:comp:h-02-alert-dialog` | Alert Dialog | 변형 | variant | verified | base-component:modal-dialog |
 | `req:comp:h-03-confirmation-dialog` | Confirmation Dialog | 독립 재료 | direct | catalog-visible | purpose:feedback.confirm |
-| `req:comp:h-04-drawer` | Drawer | 독립 재료 | missing | missing | — |
+| `req:comp:h-04-drawer` | Drawer | 독립 재료 | direct | catalog-visible | purpose:overlay.drawer |
 | `req:comp:h-05-bottom-sheet` | Bottom Sheet | 변형 | variant | verified | base-component:modal-dialog |
-| `req:comp:h-06-popover` | Popover | 독립 재료 | missing | missing | — |
+| `req:comp:h-06-popover` | Popover | 독립 재료 | direct | catalog-visible | purpose:overlay.popover |
 | `req:comp:h-07-tooltip` | Tooltip | 독립 재료 | direct | verified | base-component:tooltip |
-| `req:comp:h-08-dropdown-menu` | Dropdown Menu | 독립 재료 | missing | missing | — |
-| `req:comp:h-09-contextual-help` | Contextual Help | 독립 재료 | missing | missing | — |
+| `req:comp:h-08-dropdown-menu` | Dropdown Menu | 독립 재료 | direct | catalog-visible | purpose:overlay.dropdown-menu |
+| `req:comp:h-09-contextual-help` | Contextual Help | 독립 재료 | direct | catalog-visible | purpose:overlay.contextual-help |
 | `req:comp:i-01-alert` | Alert | 독립 재료 | direct | verified | base-component:feedback-message |
 | `req:comp:i-02-banner` | Banner | 변형 | variant | verified | base-component:feedback-message |
-| `req:comp:i-03-callout` | Callout | 독립 재료 | missing | missing | — |
+| `req:comp:i-03-callout` | Callout | 독립 재료 | direct | catalog-visible | purpose:feedback.callout |
 | `req:comp:i-04-toast` | Toast | 변형 | variant | verified | base-component:feedback-message |
 | `req:comp:i-05-snackbar` | Snackbar | 변형 | variant | verified | base-component:feedback-message |
 | `req:comp:i-06-inline-error` | Inline Error | 독립 재료 | direct | catalog-visible | purpose:feedback.error |
@@ -318,10 +318,10 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:i-10-skeleton` | Skeleton | 독립 재료 | direct | verified | state-pattern:loading-skeleton, component:skeleton |
 | `req:comp:i-11-spinner` | Spinner | 독립 재료 | direct | verified | state-pattern:loading-spinner |
 | `req:comp:i-12-linear-progress` | Linear Progress | 독립 재료 | direct | verified | purpose:feedback.progress, component:progress |
-| `req:comp:i-13-circular-progress` | Circular Progress | 독립 재료 | missing | missing | — |
+| `req:comp:i-13-circular-progress` | Circular Progress | 독립 재료 | direct | catalog-visible | purpose:feedback.circular-progress |
 | `req:comp:i-14-step-progress` | Step Progress | 변형 | variant | catalog-visible | purpose:feedback.progress |
-| `req:comp:i-15-loading-overlay` | Loading Overlay | 독립 재료 | missing | missing | — |
-| `req:comp:i-16-status-indicator` | Status Indicator | 독립 재료 | missing | missing | — |
+| `req:comp:i-15-loading-overlay` | Loading Overlay | 독립 재료 | direct | catalog-visible | purpose:feedback.loading-overlay |
+| `req:comp:i-16-status-indicator` | Status Indicator | 독립 재료 | direct | catalog-visible | purpose:feedback.status-indicator |
 | `req:comp:j-01-badge` | Badge | 변형 | variant | verified | component:tags |
 | `req:comp:j-02-status-badge` | Status Badge | 독립 재료 | direct | catalog-visible | purpose:info.status-badge |
 | `req:comp:j-03-chip` | Chip | 변형 | variant | verified | component:tags |

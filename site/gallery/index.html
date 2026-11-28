@@ -13365,6 +13365,14 @@ const forbiddenOf = id => [
 ];
 const withSelected = id => id === 'component:toggle-button' || id === 'component:segmented-control';
 const menuLike = id => id === 'component:split-button' || id === 'component:menu-button';
+const LAYOUT_CONTRACT_PROPS = Object.freeze({
+  'component:responsive-grid': {items: 'array of strings or {content: string} objects'},
+  'component:center': {content: 'string', label: 'string'},
+  'component:sticky-region': {content: 'string', label: 'string'},
+  'component:scroll-area': {content: 'string', label: 'string'},
+  'component:resizable-panel': {direction: ['horizontal', 'vertical'], value: 'finite number; output is clamped to 15~85', first: 'string', second: 'string', left: 'string (alias for first)', right: 'string (alias for second)', label: 'string'},
+});
+
 const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ...ACTION_COMPONENTS.map(item => defineComponentContract({
   id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
   slots: item.classification === 'composite' ? ['primary', 'secondary'] : ['label', 'leadingIcon', 'trailingIcon'],
@@ -13387,8 +13395,8 @@ const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ...ACTION
 })), ...COMMERCE_CONTRACTS, ...LAYOUT_COMPONENTS.map(item => defineComponentContract({
   id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
   slots: item.id === 'component:resizable-panel' ? ['first', 'second'] : ['content'],
-  props: item.id === 'component:resizable-panel' ? {direction: ['horizontal', 'vertical'], value: 'number (15~85)'} : {items: 'array'},
-  content: {label: {type: 'string', required: false}},
+  props: LAYOUT_CONTRACT_PROPS[item.id],
+  content: {},
   appearance: ['default'], sizes: ['md'], density: ['comfortable'], states: ['default'], transitions: [],
   events: item.id === 'component:resizable-panel' ? ['kit-panel-resize'] : [],
   tokens: ['--kit-surface', '--kit-text', '--kit-border', '--kit-focus', '--kit-radius'],
@@ -15238,8 +15246,11 @@ function renderByKind(id, p = {}) {
       return `<div ${idAttr}class="kit-layout-scroll-area" data-component="${id}"><div class="kit-layout-scroll-inner">${e(content)}</div></div>`;
     }
     case 'component:resizable-panel': {
-      const dir = p.direction === 'vertical' ? 'vertical' : 'horizontal';
-      const initial = Math.max(15, Math.min(85, Number(p.value ?? 50)));
+      if (p.direction !== undefined && !['horizontal', 'vertical'].includes(p.direction)) throw new TypeError('Resizable Panel direction must be horizontal or vertical');
+      const dir = p.direction ?? 'horizontal';
+      const value = p.value ?? 50;
+      if (typeof value !== 'number' || !Number.isFinite(value)) throw new TypeError('Resizable Panel value must be a finite number');
+      const initial = Math.max(15, Math.min(85, value));
       const first = e(p.first ?? p.left ?? '패널 1');
       const second = e(p.second ?? p.right ?? '패널 2');
       const label = e(p.label ?? '패널 크기 조절');

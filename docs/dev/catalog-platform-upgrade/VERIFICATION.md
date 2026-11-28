@@ -931,3 +931,47 @@ $ npm run verify
 ```
 
 TASK-TRC-03은 `Implemented`로 유지한다. 브라우저 전체 매트릭스와 `npm run verify`가 아직 통과 증거를 갖지 않아 `Verified`로 올리지 않았다. 공식 태그의 권리 확인, 실제 자산 해시 및 라이선스 동봉, 부분 브라우저 계측은 위와 같이 검증했다.
+
+## 16. D5 §6.2 L 레이아웃 독립 검증 (2026-11-28, `upgrade/d5-verify`)
+
+기준 커밋 `382b667bea37bd23901ecefb8a96f3484d2e0531`을 검토하고, 최신 `origin/main`의 후속 변경을 보존해 `84ae4357a`를 재기반화했다. 구현자가 주장한 14/14 충족은 재료 이름이 아니라 실제 렌더 출력으로 다시 판정했다. Manifest는 렌더 프로브가 통과한 11개만 연결하고 `Stack`, `Container`, `Resizable Panel`은 `missing`으로 남긴다.
+
+| §6.2 L 항목 | Manifest 재료 | 독립 판정 |
+|---|---|---|
+| Stack | — | missing. `layout-primitive:stack`은 selector 설명만 있고 출력 프로브가 실패한다. |
+| Cluster | `layout-primitive:cluster` | catalog-visible, 렌더 출력 프로브 통과 |
+| Grid | `component:grid` | verified, 렌더 출력 프로브 통과 |
+| Responsive Grid | `layout:equal-grid`, `layout-primitive:flow` | catalog-visible, 두 재료 모두 렌더 프로브 통과 |
+| Split | `layout-primitive:split`, `component:split` | verified, 두 재료 모두 렌더 프로브 통과 |
+| Bento | `layout-primitive:bento`, `component:bento` | verified, 두 재료 모두 렌더 프로브 통과 |
+| Container | — | missing. `layout-primitive:container`는 selector 설명만 있고 출력 프로브가 실패한다. |
+| Section | `component:section` | verified, 렌더 출력 프로브 통과 |
+| Center | `layout:centered-hero` | renderable, 출력에 중앙 정렬 규칙이 있음 |
+| Sidebar Layout | `component:aside` | verified, 렌더 출력 프로브 통과 |
+| Master-detail Layout | `component:master-detail` | verified, 렌더 출력 프로브 통과 |
+| Sticky Region | `layout:sticky-action-layout` | renderable, 출력에 `position:sticky`와 `bottom:0`이 있음 |
+| Scroll Area | `layout:master-detail` | renderable, 출력에 최대 높이와 `overflow:auto`가 있음 |
+| Resizable Panel | — | missing. `component:split`과 `layout:two-column`은 정적 분할이라 크기 조절 계약을 충족하지 않는다. |
+
+신규 5개 `component:*` 렌더러는 §6.3~6.4 컴포넌트 계약과 출력이 일치하는지 직접 확인했다. Responsive Grid는 `items`를 반응형 셀로 출력하고, Center·Sticky Region·Scroll Area는 `content`와 `label` fallback을 소비한다. Resizable Panel은 `direction`을 `horizontal|vertical`로 제한하고 유한 숫자 `value`를 15~85로 제한해 두 패널 크기와 `aria-valuenow`에 반영한다. `first/second`와 `left/right` 별칭, label, id도 출력에서 확인했다. 모든 사용자 텍스트는 HTML escape되며, 선언됐지만 읽히지 않는 content 스키마와 props는 제거했다. 런타임은 Resizable Panel이 포함될 때만 결합한다. 중복 id와 잘못된 입력은 Core·REST·MCP 모두 같은 진단을 반환한다.
+
+E3의 네 재사용 레이아웃은 각 이름의 실제 동작으로 검증했다: equal-grid의 grid 흐름과 열 규칙, centered-hero의 중앙 정렬, sticky-action-layout의 하단 고정, master-detail의 제한 높이와 내부 스크롤이 조립 출력에 들어간다. E3 `measurements.json`의 지문 시험도 현재 코드에서 통과했다. 회귀 시험은 안정 표본에 임시 레이아웃 재료를 하나 등록해도 `layoutFingerprint`가 그대로이고, 실제 슬롯/레이아웃 변경은 지문을 바꾸는지 확인한다.
+
+`tests/platform-layout-blueprint.test.mjs`는 14개 Manifest 행을 전수 순회해 모든 covered 재료에 대해 실행된 성공 프로브와 출력 hash를 요구한다. 기존 OR 기대식은 제거했고, 고정 출력 문자열을 재검증 근거로 쓰지 않는다. 직접 렌더러 props, escape, 런타임 포함 조건, 범위 오류, 서비스 채널 입력 일치도 확인했다. 잘못된 값·미사용 props·Manifest 재료·정적 레이아웃 런타임에 결함을 주입한 RED 시험들은 실패했고 수정 후 통과했다. 런타임 간격을 5%에서 10%로 임시 변경했을 때도 `45` 기대값 대신 `40`이 출력되어 1건 실패한 뒤 원복 후 2/2 통과했다.
+
+로컬 Chromium은 Codex nested worker sandbox의 IPC preflight가 `blocked`(Mach register/lookup denied, errno 0)로 끝나 `tests/platform-layout-resizable.test.mjs`는 미실행했다. 설정된 browser MCP에서는 패널 둘과 접근 가능한 separator를 확인하고 방향키 동작을 보냈으나, 그 화면에서 변경된 ARIA 값을 직접 읽었다고 주장하지 않는다. 런타임 스크립트 자체는 Node 이벤트 하네스로 경계 clamp, 두 방향 키, ARIA/flex 갱신, 이벤트 발행, 단일 리스너를 검사했다.
+
+### 16.1 실행 증거와 남은 확인
+
+```sh
+$ node --test tests/platform-layout-blueprint.test.mjs tests/platform-service-layout-channels.test.mjs tests/layout-quality.test.mjs tests/platform-family-contract.test.mjs tests/platform-family-inventory.test.mjs tests/platform-layout-runtime.test.mjs
+ℹ tests 58 / ℹ pass 58 / ℹ fail 0
+$ node --test tests/layout-quality.test.mjs
+ℹ tests 26 / ℹ pass 26 / ℹ fail 0
+$ node --test tests/platform-layout-runtime.test.mjs
+ℹ tests 2 / ℹ pass 2 / ℹ fail 0 (5% step restored after RED)
+```
+
+`npm ci`는 이 worktree의 실제 `node_modules`에 설치했다(Node 26.9.0, 저장소 권장 Node 22와 엔진 차이 경고). `npm run coverage:materials:check`와 `npm run coverage:materials`는 전수 생성 중 Codex command 실행에서 각각 종료 코드 143으로 끝났고 출력이 없어 MATCH/DRIFT 판정은 미확인이다. 최신 main의 나머지 Manifest 자료는 보존하고, D5의 세 missing 행과 요구 요약 수치는 직접 갱신했다. 따라서 이 수치 편집은 독립 산술 대조만 통과했으며 생성기 바이트 일치까지 검증한 것은 아니다.
+
+`npm run verify`는 `npm test` 단계에서 종료 코드 1이었다. Resizable Panel 브라우저 시험과 `platform-type-fonts.test.mjs`의 Chromium 시작 로그에서 `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)` 다음 `SIGTRAP`이 관측됐다. 따라서 verify 후속 단계는 자동으로 실행되지 않았다. 같은 revision에서 분리 실행한 `node scripts/audit.mjs`, `node scripts/docs.mjs`, `npm run build`, `node scripts/check-generated.mjs`는 각각 종료 코드 0이며 마지막 출력은 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`다. 브라우저 시험은 IPC 차단으로 미실행이다.
