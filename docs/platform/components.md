@@ -93,6 +93,30 @@ B~O 계열 작업자는 아래 A 구현을 그대로 따른다. 항목마다 등
 - FAB의 화면 모서리 고정과 safe-area는 컴포넌트가 아니라 페이지 배치가 정한다(`unsupported.position`에 이유를 적었다).
 - 같은 컴포넌트를 독립 시연 계약(`component:*`)과 목적 패밀리 계약이 모두 설명하므로 계약에 `componentType`을 두고 `countDistinctComponentTypes`가 한 종류로 센다. 등록 계약 59개는 42종이다.
 
+## N 계열(커머스 패턴) 기준 구현
+
+REQUEST §6.2 N의 커머스 패턴 11항목의 등록 재료, Blueprint 사용법, 독립 시연 대응은 아래와 같다.
+
+| 요구 | 등록 재료(재료 질의로 조회) | Blueprint 사용 | 독립 시연 `commerce` |
+|---|---|---|---|
+| Product Grid | `component:grid` | 트리 노드 `grid` | `component:product-grid` |
+| Product Detail Summary | `component:buy-box` | 트리 노드 `buy-box` | `component:buy-box` |
+| Product Variant Selector | `component:buy-box` (part-of) | `buy-box` 노드 내 `variants` 필드 | `component:product-variant-selector` |
+| Quantity Selector | `base-component:input-control` | 트리 노드 `input-control` (type: number) | `component:quantity-selector` |
+| Price Display | `component:buy-box` | 트리 노드 `buy-box` | `component:price-display` |
+| Discount Display | `purpose:card.product` | 트리 노드 `card` | `component:discount-display` |
+| Cart Item | `component:summary` | 트리 노드 `summary` | `component:cart-item` |
+| Cart Summary | `component:summary` | 트리 노드 `summary` | `component:cart-summary` |
+| Checkout Summary | `component:summary` | 트리 노드 `summary` | `component:checkout-summary` |
+| Order Status | `component:steps` | 트리 노드 `steps` | `component:order-status` |
+| Review Summary | `component:reviews` | 트리 노드 `reviews` | `component:review-summary` |
+
+- 이 대응은 `COMMERCE_COMPONENTS[].materialId`와 `blueprint`에 코드로 있으며 `tests/platform-family-contract.test.mjs`가 레지스트리 조회와 대조한다. `tests/platform-commerce-blueprint.test.mjs`가 11항목의 Blueprint 왕복(입력 Blueprint → 컴파일 → Core 마크업과 동일한 바이트 일치)과 단독 렌더를 검증한다.
+- `Product Variant Selector`는 독립 컴포넌트가 아닌 `Product Detail Summary(Buy Box)` 내의 part-of 복합 패턴이다. 렌더 시 첫 번째 옵션의 `checked` 속성을 보장하고 라디오 상태 전이를 지원하여 필수 선택 경로를 실질적으로 충족한다.
+- 독립 시연(`assembleComponents`의 `commerce` 입력)은 Core, REST(`/api/v1/platform/assemble-components`), MCP(`assemble_components`) 전 채널에서 동일한 스키마와 동일 바이트 출력을 보장한다(`tests/platform-service-commerce-channels.test.mjs`).
+- 런타임(`COMMERCE_COMPONENT_RUNTIME`)은 수량 조절기의 증감 버튼 및 입력 경계선 `disabled` 상태 토글, 카트 아이템의 삭제(`data-cart-item-remove`, dismiss 숨김 및 이벤트 발행)를 처리한다. CSS에 `.kit-cart-item[hidden]{display:none!important}`를 두어 display 충돌을 방지한다.
+- 커머스 계약 11종 추가로 총 등록 계약은 70개, 고유 `componentType`은 51종으로 집계된다.
+
 ### 분류 보정(독립 149 · 변형 36 · 복합 22)
 
 분류의 원천은 `src/platform/families/inventory.mjs`이고, 아래 표는 `node docs/platform/evidence/components/build.mjs`가 이 분류와 Manifest에서 만든다. 손으로 고치지 않는다. `tests/platform-family-inventory.test.mjs`가 요구 목록, Manifest, 이 표의 일치를 본다.
@@ -113,7 +137,7 @@ B~O 계열 작업자는 아래 A 구현을 그대로 따른다. 항목마다 등
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 90.
+집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 84.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -303,16 +327,16 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:m-13-task-list` | Task List | 독립 재료 | missing | missing | — |
 | `req:comp:m-14-workflow-steps` | Workflow Steps | 독립 재료 | direct | verified | component:steps |
 | `req:comp:m-15-comment-thread` | Comment Thread | 독립 재료 | missing | missing | — |
-| `req:comp:n-01-product-grid` | Product Grid | 독립 재료 | missing | missing | — |
+| `req:comp:n-01-product-grid` | Product Grid | 독립 재료 | direct | verified | component:grid |
 | `req:comp:n-02-product-detail-summary` | Product Detail Summary | 독립 재료 | direct | verified | component:buy-box |
 | `req:comp:n-03-product-variant-selector` | Product Variant Selector | 복합 패턴 | part-of | verified | component:buy-box |
-| `req:comp:n-04-quantity-selector` | Quantity Selector | 독립 재료 | missing | missing | — |
-| `req:comp:n-05-price-display` | Price Display | 독립 재료 | missing | missing | — |
-| `req:comp:n-06-discount-display` | Discount Display | 독립 재료 | missing | missing | — |
-| `req:comp:n-07-cart-item` | Cart Item | 독립 재료 | missing | missing | — |
+| `req:comp:n-04-quantity-selector` | Quantity Selector | 독립 재료 | direct | verified | base-component:input-control |
+| `req:comp:n-05-price-display` | Price Display | 독립 재료 | direct | verified | component:buy-box |
+| `req:comp:n-06-discount-display` | Discount Display | 독립 재료 | direct | verified | purpose:card.product |
+| `req:comp:n-07-cart-item` | Cart Item | 독립 재료 | direct | verified | component:summary |
 | `req:comp:n-08-cart-summary` | Cart Summary | 독립 재료 | direct | verified | component:summary |
 | `req:comp:n-09-checkout-summary` | Checkout Summary | 독립 재료 | direct | verified | component:summary |
-| `req:comp:n-10-order-status` | Order Status | 독립 재료 | missing | missing | — |
+| `req:comp:n-10-order-status` | Order Status | 독립 재료 | direct | verified | component:steps |
 | `req:comp:n-11-review-summary` | Review Summary | 독립 재료 | direct | verified | component:reviews |
 | `req:comp:o-01-mobile-header` | Mobile Header | 독립 재료 | direct | catalog-visible | purpose:navigation.topbar |
 | `req:comp:o-02-bottom-navigation` | Bottom Navigation | 독립 재료 | direct | catalog-visible | purpose:navigation.bottom |
