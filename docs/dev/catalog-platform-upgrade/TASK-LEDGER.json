@@ -456,7 +456,9 @@
       ],
       "modifiedFiles": [
         "src/platform/type.mjs",
-        "tests/platform-type-hangul.test.mjs"
+        "tests/platform-type-hangul.test.mjs",
+        "src/platform/pipeline.mjs",
+        "src/platform/render.mjs"
       ],
       "completionCriteria": "§5.3의 27개 역할(Display 3, Heading 6, Body 3, Label 3, 그 밖 12)별 clamp 크기, 행간, 자간 계산 완결, P_CHECK_TYPE_HANGUL 오류 검증 통과",
       "tests": [
@@ -467,6 +469,18 @@
       "unresolvedIssues": null,
       "createFiles": [
         "tests/platform-type-hangul.test.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/pipeline.mjs",
+          "owner": "Track A",
+          "reason": "27개 역할 변수를 조립 CSS에 주입하고 역할 클래스 규칙을 실제 파이프라인 출력에 포함"
+        },
+        {
+          "file": "src/platform/render.mjs",
+          "owner": "Track A",
+          "reason": "Blueprint 2.7.0 컴파일 CSS에서 27개 역할 변수를 실제 클래스 규칙으로 소비"
+        }
       ]
     },
     {

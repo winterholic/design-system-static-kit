@@ -53,6 +53,26 @@ export const TYPE_ROLE_DEFINITIONS = Object.freeze({
   'badge': Object.freeze({category: 'control', label: '뱃지/태그', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~2단어)', recommendedPlacement: '상태 뱃지, 카운터 뱃지, 태그 칩'}),
 });
 
+const typeRoleVars = roles => Object.fromEntries(TYPE_27_ROLES.flatMap(name => {
+  const role = roles?.[name];
+  if (!role) return [];
+  return [
+    [`--kit-type-${name}-font`, role.fontFamily],
+    [`--kit-type-${name}-size`, role.size],
+    [`--kit-type-${name}-weight`, String(role.weight)],
+    [`--kit-type-${name}-leading`, String(role.lineHeight)],
+    [`--kit-type-${name}-tracking`, `${role.trackingEm}em`],
+  ];
+}));
+
+/** 27개 역할 클래스를 플랫폼 CSS에 제공해 역할 변수들이 실제 렌더에 적용되게 한다. */
+export function typeRoleCSS() {
+  return TYPE_27_ROLES.map(name => {
+    const {wordBreak, lineBreak} = TYPE_ROLE_DEFINITIONS[name];
+    return `.kit-type-${name}{font-family:var(--kit-type-${name}-font);font-size:var(--kit-type-${name}-size);font-weight:var(--kit-type-${name}-weight);line-height:var(--kit-type-${name}-leading);letter-spacing:var(--kit-type-${name}-tracking);word-break:${wordBreak};line-break:${lineBreak}}`;
+  }).join('\n');
+}
+
 
 // ---------- 크기 ----------
 /** 모바일 폭(390px)에서 모바일 px, 데스크톱 폭(1280px)에서 데스크톱 px가 되는 선형 보간. 두 값이 같으면 고정 px. */
@@ -428,17 +448,7 @@ export function bindType(ts, options = {}) {
     [`--kit-type-${name}-size`]: r[name].size, [`--kit-type-${name}-weight`]: String(r[name].weight), [`--kit-type-${name}-leading`]: String(r[name].lineHeight), [`--kit-type-${name}-tracking`]: `${r[name].trackingEm}em`,
   });
   const roles27 = resolve27Roles(ts, {webfonts});
-  if (roles27) {
-    for (const name of TYPE_27_ROLES) {
-      const r27 = roles27[name];
-      if (r27) Object.assign(vars, {
-        [`--kit-type-${name}-size`]: r27.size,
-        [`--kit-type-${name}-weight`]: String(r27.weight),
-        [`--kit-type-${name}-leading`]: String(r27.lineHeight),
-        [`--kit-type-${name}-tracking`]: `${r27.trackingEm}em`,
-      });
-    }
-  }
+  Object.assign(vars, typeRoleVars(roles27));
   return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, roles27, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing) : ''};
 }
 
@@ -474,17 +484,7 @@ function bindLegacy(ts, face, scale, label, legacyRoles, options) {
   for (const [role, names] of Object.entries(TYPE_ROLES)) for (const n of names) vars[n] = roles[role].size;
   vars['--kit-nums'] = ts.numerals === 'tabular' || face.nums === 'tabular' ? 'tabular-nums' : 'proportional-nums';
   const roles27 = resolve27Roles(ts, {webfonts: false});
-  if (roles27 && options?.roles27Vars) {
-    for (const name of TYPE_27_ROLES) {
-      const r27 = roles27[name];
-      if (r27) Object.assign(vars, {
-        [`--kit-type-${name}-size`]: r27.size,
-        [`--kit-type-${name}-weight`]: String(r27.weight),
-        [`--kit-type-${name}-leading`]: String(r27.lineHeight),
-        [`--kit-type-${name}-tracking`]: `${r27.trackingEm}em`,
-      });
-    }
-  }
+  if (options?.roles27Vars) Object.assign(vars, typeRoleVars(roles27));
   return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, roles27, errors, webfontCSS: ''};
 }
 

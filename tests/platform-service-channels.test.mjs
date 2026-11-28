@@ -2,7 +2,6 @@
 import {test, before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {existsSync, readFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {
   assembleDesign, assembleBlueprint, listMaterials, getMaterial, listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility, proposeSubtokenSets, assembleComponents, listEditOps, applyEdit,
@@ -18,7 +17,6 @@ before(async () => { client = await mcpConnect('modern'); });
 after(async () => { await client.close(); });
 
 const json = x => JSON.stringify(x);
-const sha256 = x => createHash('sha256').update(x).digest('hex');
 const mcp = async (name, args) => (await client.callTool({name, arguments: args})).structuredContent;
 const INCLUDE = ['html', 'css', 'tokens', 'manifest', 'blueprint'];
 const kpis = n => Array.from({length: n}, (_, i) => ({label: `지표 ${i + 1}`, value: String(10 + i)}));

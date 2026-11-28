@@ -18,7 +18,7 @@ import {STATE_MARK, PURPOSE_MARK} from '../catalog/materials-field.mjs';
 import {BLUEPRINT_VERSION, styleAxes} from '../catalog/index.mjs';
 import {PLATFORM_CONTRACT_VERSION} from './contract.mjs';
 import {bindColor} from './color.mjs';
-import {bindType} from './type.mjs';
+import {bindType, typeRoleCSS} from './type.mjs';
 import {familyShapeVars, contrastPairs, requiredVars} from './family.mjs';
 import {axisIds, materialAxisIds} from './axes.mjs';
 import {styleMaterialsCSS, styleMaterialAttrs} from './style-materials.mjs';
@@ -147,7 +147,7 @@ export function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
 
   const color = bindColor(palette, set, b.mode);
   if (!color.ok) return {...stop(), diagnostics: [diag(color.error?.code ?? 'P_COLOR_CONTRAST', '$.materials', color.error?.message ?? '대비 미달')]};
-  const type = bindType(typeSystem, {legacyRoles: true});
+  const type = bindType(typeSystem, {legacyRoles: true, roles27Vars: true});
   const {tokens, derived} = legacyTokens(color, palette, b.mode);
 
   const verdict = validateBlueprint(b);
@@ -215,6 +215,7 @@ export function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   const platformCss = [
     `/* platform ${PLATFORM_CONTRACT_VERSION} page: ${sel.palette} × ${sel.subtokenSet} · ${sel.typeSystem} (${b.mode}, ${b.density}) */`,
     declBlock(':root', type.vars ?? {}),
+    typeRoleCSS(),
     ...families.map(id => declBlock(`[data-family="${id.slice('family:'.length)}"]`, familyShapeVars(reg.get(id)))),
   ].join('\n');
   const legacyCss = stylesheet(b, sets, tagged.html, design);
