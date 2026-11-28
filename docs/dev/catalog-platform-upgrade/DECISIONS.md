@@ -237,7 +237,7 @@ REQUEST §6.2 N의 커머스 패턴 11종(Product Grid, Product Detail Summary, 
 | Review Summary | `component:reviews` | 점수·리뷰 목록 표시 | 리뷰 집계·작성 없음 |
 
 - N 단독 기능의 실제 조립 경로는 `assembleComponents({commerce})`다. Studio 선택과 `assembleDesign`의 페이지 슬롯 배치는 미완료이며 이번 범위에서 선행 구현하지 않는다.
-- 재검증에서 11/11 항목이 정확한 재료 ID 질의, 해당 재료의 legacy Blueprint 컴파일 경로, `assembleComponents` HTML/CSS/런타임/standalone export, 입력 변화 반영 및 잘못된 입력 거부를 통과했다. 34개 N 집중 검증도 통과했고, 최신 origin/main 병합 후 Manifest는 1,480개 재료·406개 요구(72개 missing)로 재생성되어 check에서 일치했다. 기존 고정 출력 해시 및 결정론 시험은 전체 테스트 중 통과했다.
+- 재검증에서 11/11 항목이 정확한 재료 ID 질의, 해당 재료의 legacy Blueprint 컴파일 경로, `assembleComponents` HTML/CSS/런타임/standalone export, 입력 변화 반영 및 잘못된 입력 거부를 통과했다. 34개 N 집중 검증도 통과했고, 최신 origin/main 병합 후 Manifest는 1,480개 재료·406개 요구(69개 missing)로 재생성되어 check에서 일치했다. 기존 고정 출력 해시 및 결정론 시험은 전체 테스트 중 통과했다.
 - MCP 브라우저에서 390px·1280px 출력을 확인했다. 수량 키보드 조작과 min/max 경계, 옵션 선택, 카트 제거 이벤트를 확인하고 6개 신규 출력을 보았다. 전체 `npm run verify`는 최신 origin/main d43f6963a 병합 후 1,021개 중 1,020개 통과, 1개 실패(exit 1)다. 실패는 upstream `tests/platform-type-fonts.test.mjs` 4번 Playwright 시험의 `page.setContent` 30초 초과이며, 깨끗한 origin/main f5a77c7a8에서도 같은 오류로 재현되어 N 고유 실패가 아니다. 이전 병합 시점에 보였던 `platform-layout-resizable` 실패는 Codex sandbox의 Chromium Mach IPC 권한 거부(1100)였고 이 세션에서는 통과했다. EHI 병합 직후의 collapsible-sidebar coverage 불일치는 D5 병합 후 해소됐다.
 
 ---
