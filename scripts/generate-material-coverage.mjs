@@ -38,7 +38,7 @@ import {LEGACY_VARIANT_MAP} from '../src/platform/families/legacy-map.mjs';
 import {COMMERCE_COMPONENTS} from '../src/platform/families/contracts.mjs';
 import * as service from '../src/service/index.mjs';
 import * as edit from '../src/edit/index.mjs';
-import {platformSection} from './platform/platform-baseline.mjs';
+import {platformSectionParallel} from './platform/platform-baseline.mjs';
 import {renderChartPreset} from '../src/render/chart-presets.mjs';
 import {LAYOUT_COMPONENTS} from '../src/platform/families/contracts.mjs';
 
@@ -1142,7 +1142,7 @@ for (const kind of kindsInManifest) {
 }
 
 const platformBaseline = JSON.parse(read(BASELINE_PATH));
-const livePlatform = platformSection();
+const livePlatform = await platformSectionParallel();
 const legacyAttempted = (() => {
   let n = 0;
   for (const p of Object.values(PROFILES)) for (const pid of p.patterns) {

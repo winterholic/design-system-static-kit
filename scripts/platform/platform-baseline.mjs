@@ -15,6 +15,9 @@ import {createPlatform, assemblePage, bindColor, bindType, axisIds, materialAxis
 import {CLOSED_PAIRS} from '../../src/platform/contract.mjs';
 import {PATTERNS} from '../../src/profiles/data.mjs';
 import {templates, pageTypes, axes} from '../../src/catalog/index.mjs';
+import {Worker} from 'node:worker_threads';
+import {availableParallelism} from 'node:os';
+import {fileURLToPath} from 'node:url';
 
 const hash = v => createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex').slice(0, 16);
 const sortObj = o => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
@@ -79,6 +82,65 @@ export const REPRESENTATIVE = Object.freeze({
 /** 패밀리 구성원을 쓰는 패턴만 패밀리 축을 곱한다(요청 컴포넌트가 있거나 랜딩의 기능 카드가 자동 승격되는 경우). */
 const patternsOf = only => Object.entries(REPRESENTATIVE).filter(([pattern]) => !only || only.includes(pattern)).map(([pattern, r]) => ({pattern, components: [], ...r, usesFamily: Boolean(r.components?.length) || r.purpose === 'saas-landing'}));
 
+/** Pattern workers repeat whole-pattern relation counts; merge those once and combine verified fingerprints exactly. */
+export function mergePlatformSections(sections) {
+  if (!sections.length) throw new Error('mergePlatformSections requires at least one section');
+  const out = structuredClone(sections[0]);
+  const details = sections.map(section => section.__mergeDetails);
+  if (details.some(item => !item)) throw new Error('parallel platform section is missing merge details');
+  const patternKeys = [...new Set(details.flatMap(item => Object.keys(item.attemptedByPattern)))].sort();
+  out.assemblable.attempted = patternKeys.reduce((sum, pattern) => sum + details.find(item => item.attemptedByPattern[pattern] !== undefined).attemptedByPattern[pattern], 0);
+  out.assemblable.assemblable = patternKeys.reduce((sum, pattern) => sum + details.find(item => item.assemblableByPattern[pattern] !== undefined).assemblableByPattern[pattern], 0);
+  out.assemblable.perPattern = Object.fromEntries(patternKeys.map(pattern => {
+    const entries = sections.map(section => section.assemblable.perPattern[pattern]).filter(Boolean);
+    return [pattern, {...entries[0], verified: entries.reduce((sum, entry) => sum + entry.verified, 0)}];
+  }));
+  out.verified.attempted = sections.reduce((sum, section) => sum + section.verified.attempted, 0);
+  out.verified.verified = sections.reduce((sum, section) => sum + section.verified.verified, 0);
+  const union = key => [...new Set(details.flatMap(item => item[key]))];
+  out.verified.distinctOutputs = union('outputs').length;
+  out.verified.failures = Object.fromEntries([...new Set(sections.flatMap(section => Object.keys(section.verified.failures)))].sort().map(code => [code, sections.reduce((sum, section) => sum + (section.verified.failures[code] ?? 0), 0)]));
+  const styles = out.distinct.styleMaterials;
+  for (const kind of ['surface', 'motion', 'background', 'media', 'state-pattern']) {
+    const rows = sections.map(section => section.distinct.styleMaterials[kind]);
+    styles[kind] = {...rows[0], attempted: rows.reduce((sum, row) => sum + row.attempted, 0), verified: rows.reduce((sum, row) => sum + row.verified, 0), usedInOutput: rows.reduce((sum, row) => sum + row.usedInOutput, 0), rejectedCases: rows.flatMap(row => row.rejectedCases).sort((a, b) => a.pattern.localeCompare(b.pattern) || a.material.localeCompare(b.material))};
+  }
+  styles.distinctOutputs = union('styleOutputs').length;
+  const purposes = union('purposes').sort();
+  out.distinct.purposeFamilies = {verified: purposes.length, ids: purposes};
+  out.distinct.verifiedColorTokenSets = {light: union('lightColors').length, dark: union('darkColors').length};
+  out.distinct.verifiedFacePairs = union('faces').length;
+  out.distinct.verifiedFamilies = union('families').length;
+  delete out.__mergeDetails;
+  return out;
+}
+
+function runPlatformWorker(workerData) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(fileURLToPath(new URL('./platform-baseline-worker.mjs', import.meta.url)), {workerData});
+    worker.once('message', resolve);
+    worker.once('error', reject);
+    worker.once('exit', code => { if (code !== 0) reject(new Error(`platform baseline worker exited with code ${code}`)); });
+  });
+}
+
+/** Run full representative-page validation in parallel shards; no combination or quality check is sampled out. */
+export async function platformSectionParallel({maxWorkers = Math.min(availableParallelism() * 4, 48), shardsPerPattern = 12} = {}) {
+  if (!Number.isInteger(maxWorkers) || maxWorkers < 1 || !Number.isInteger(shardsPerPattern) || shardsPerPattern < 1) throw new Error('parallel platform section requires positive integer worker and shard counts');
+  const patterns = Object.keys(REPRESENTATIVE);
+  const jobs = patterns.flatMap(pattern => Array.from({length: shardsPerPattern}, (_, index) => ({pattern, verifiedShard: {index, count: shardsPerPattern}, includeMergeDetails: true})));
+  const results = new Array(jobs.length);
+  let next = 0;
+  const workerLoop = async () => {
+    while (next < jobs.length) {
+      const index = next++;
+      results[index] = await runPlatformWorker(jobs[index]);
+    }
+  };
+  await Promise.all(Array.from({length: Math.min(maxWorkers, jobs.length)}, workerLoop));
+  return mergePlatformSections(results);
+}
+
 /** 패턴이 허용하는 셸·폭·밀도(구형 페이지 유형 제한 포함). */
 function layoutAxes(patternId) {
   const p = PATTERNS[patternId], tpl = templates[p.template], pt = pageTypes[tpl.pageType];
@@ -86,7 +148,7 @@ function layoutAxes(patternId) {
 }
 
 /** env와 only(패턴 id 목록)는 시험용이다. 기준선은 기본값(등록된 전체 재료, 모든 대표 패턴)으로 잰다. */
-export function platformSection({env = createPlatform(), only = null} = {}) {
+export function platformSection({env = createPlatform(), only = null, verifiedShard = null, includeMergeDetails = false} = {}) {
   const reg = env.registry;
   const list = k => reg.list(k);
   const palettes = list('palette'), sets = list('subtoken-set'), types = list('type-system'), families = list('family'), purposeFamilies = list('purpose-family'), contexts = list('style-context');
@@ -104,7 +166,7 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
   // ---- 실제 조립 가능 조합(렌더 없이) ----
   const base = 'base-component:card-surface';
   const familiesFor = ctx => families.filter(f => f.contexts.includes('any') || f.contexts.includes(ctx));
-  const perPattern = {};
+  const perPattern = {}, attemptedByPattern = {}, assemblableByPattern = {};
   let assemblable = 0, attempted = 0;
   const layoutRelOk = new Map();
   const relationOk = createRelationEvaluator(env.graph, reg);
@@ -138,6 +200,8 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
       }
     }
     perPattern[pattern] = {purpose, assemblable: n, layoutAxes: {shells: L.shells.length, widths: L.widths.length, densities: L.densities.length}};
+    attemptedByPattern[pattern] = tried;
+    assemblableByPattern[pattern] = n;
     assemblable += n; attempted += tried;
   }
 
@@ -157,19 +221,24 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
     return r;
   };
   const verifiedPerPattern = {};
+  const shardIndex = verifiedShard?.index ?? 0, shardCount = verifiedShard?.count ?? 1;
   for (const {pattern, purpose, content, components, usesFamily} of patternsOf(only)) {
     const L = layoutAxes(pattern), ctx = L.pageType;
     const ts = types.filter(t => (t.contexts.includes('any') || t.contexts.includes(ctx)) && typeOk.get(t.id));
     const fs = usesFamily ? familiesFor(ctx).filter(f => f.members[base]) : [];
     let vp = 0;
     const before = verified;
+    let materialOrdinal = 0;
     for (const mode of MODES) for (const p of palettes) for (const s of sets) for (const t of ts) for (const f of (fs.length ? fs : [null])) {
       if (!(s.contexts.includes('any') || s.contexts.includes(ctx)) || !colorOk.get(`${p.id}|${s.id}|${mode}`)) continue;
+      if (materialOrdinal++ % shardCount !== shardIndex) continue;
       run({purpose, pattern, mode, palette: p.id, subtokenSet: s.id, typeSystem: t.id, ...(f ? {families: [f.id]} : {}), candidates: 1, components, content}, 'materials');
     }
     // 레이아웃 축: 1순위 재료 조합으로 셸·폭·밀도를 펼친다
-    const top = assemblePage({purpose, pattern, components, content, candidates: 1}, env);
-    if (top.ok) for (const shell of L.shells) for (const width of L.widths) for (const density of L.densities) run({purpose, pattern, shell, width, density, ...selectionRequest(top.candidates[0].selection), candidates: 1, components, content}, 'layout');
+    if (shardIndex === 0) {
+      const top = assemblePage({purpose, pattern, components, content, candidates: 1}, env);
+      if (top.ok) for (const shell of L.shells) for (const width of L.widths) for (const density of L.densities) run({purpose, pattern, shell, width, density, ...selectionRequest(top.candidates[0].selection), candidates: 1, components, content}, 'layout');
+    }
     vp = verified - before;
     verifiedPerPattern[pattern] = vp;
   }
@@ -180,7 +249,7 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
   const styleStats = Object.fromEntries([...styleKinds, 'state-pattern'].map(k => [k, {registered: list(k).length, attempted: 0, verified: 0, usedInOutput: 0, rejectedCases: []}]));
   const styleOutputs = new Set();
   const usedIn = (kind, m, r) => (kind === 'state-pattern' ? r.value.html.includes(`data-pattern="${m.id.split(':')[1]}"`) : r.value.html.includes(`data-${{surface: 'surface', motion: 'motion', background: 'bg', media: 'media'}[kind]}="${m.id.split(':')[1]}"`));
-  for (const {pattern, purpose, content, components} of patternsOf(only)) {
+  for (const {pattern, purpose, content, components} of (shardIndex === 0 ? patternsOf(only) : [])) {
     const ctx = layoutAxes(pattern).pageType, open = m => m.contexts.includes('any') || m.contexts.includes(ctx);
     const top = assemblePage({purpose, pattern, components, content, candidates: 1}, env);
     if (!top.ok) continue;
@@ -216,7 +285,7 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
   for (const stats of Object.values(styleStats)) stats.rejectedCases.sort((a, b) => a.pattern.localeCompare(b.pattern) || a.material.localeCompare(b.material));
 
   const registered = {palette: palettes.length, subtokenSet: sets.length, typeSystem: types.length, baseComponent: list('base-component').length, family: families.length, purposeFamily: purposeFamilies.length, styleContext: contexts.length, axisValue: list('axis-value').length};
-  return {
+  const result = {
     contractVersion: PLATFORM_CONTRACT_VERSION, registered,
     assemblable: {attempted, assemblable, perPattern: sortObj(perPattern), note: '(패턴 × 셸 × 폭 × 밀도 × 모드) × (팔레트 × 세트 × 타이포 × 시각 패밀리) 중 관계·색·서체 평가를 통과한 수. 렌더하지 않고 계산한다'},
     verified: {attempted: verifyAttempted, verified, distinctOutputs: outputs.size, failures: sortObj(failures), note: '실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)'},
@@ -229,5 +298,10 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
     },
     colorGateFailures: sortObj(colorFailures),
   };
+  if (includeMergeDetails) result.__mergeDetails = {
+    attemptedByPattern, assemblableByPattern,
+    outputs: [...outputs], lightColors: [...verifiedColor.light], darkColors: [...verifiedColor.dark], faces: [...verifiedFaces], families: [...verifiedFamilies], purposes: [...verifiedPurposeFamilies], styleOutputs: [...styleOutputs],
+  };
+  return result;
 }
 const selectionRequest = sel => ({palette: sel.palette, subtokenSet: sel.subtokenSet, typeSystem: sel.typeSystem, families: Object.values(sel.families)});
