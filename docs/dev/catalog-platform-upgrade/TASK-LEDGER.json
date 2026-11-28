@@ -292,7 +292,7 @@
         "tests/platform-color-differentiation.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
+      "status": "Verified",
       "unresolvedIssues": null
     },
     {
@@ -317,13 +317,13 @@
         "tests/token-layers-usage.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
+      "status": "Verified",
       "unresolvedIssues": null,
       "crossTrackFiles": [
         {
           "file": "src/platform/contract.mjs",
           "owner": "Track A",
-          "reason": "subtoken-set 스키마에 weights 및 contexts 등 선택 필드 허용"
+          "reason": "subtoken-set 스키마에 weights, contexts, forbiddenContexts 등 선택 설계 필드 허용"
         }
       ]
     },
@@ -350,8 +350,8 @@
         "tests/platform-color-user.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": null,
+      "status": "In Progress",
+      "unresolvedIssues": "현재 origin/main의 자체 시드 팔레트는 9종이다. B1 작업 트리에 200종 변경이 아직 커밋되지 않아 200×25 평가와 전체 매트릭스 검증을 완료하지 못했다.",
       "crossTrackFiles": [
         {
           "file": "src/service/platform-components.mjs",

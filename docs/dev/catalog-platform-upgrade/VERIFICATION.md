@@ -487,3 +487,67 @@ pairs=66 minDistinctProps=17 (soft×elevated-material) minCells=428
 ```
 고정 출력: `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `origin/main`과 diff가 없다. `check-generated`가 재빌드 바이트 일치를 확인했다.
 미실행: `apps/web` Playwright e2e와 `typecheck`(Track F 영역, 이번 변경은 `src/`와 문서·스크립트). Vercel 배포 확인.
+
+## 8. Track B2 서브토큰·계층·매칭 독립 검증 (2026-11-28)
+
+판정: **TRB-02와 TRB-03은 Verified. TRB-04의 서비스 경로는 통과했다. 200개 팔레트가 아직 없어 200×25 평가는 미완료이며, 브랜치를 원격에 올리지 않았다.**
+
+### 8.1 세트 값과 차별화 (완료 기준 1)
+
+- `SUBTOKEN_SETS`의 25개 id가 §4.4 목록과 일치한다. 각 세트는 23개 역할 규칙과 light/dark 램프 단계를 정의한다. 브랜드·강조·중립 가중치 합은 1이다.
+- 각 세트에는 권장 맥락과 `forbiddenContexts` 배열도 있다. 금지 맥락이 없는 세트도 빈 배열로 명시한다. 상호작용·컴포넌트·차트 설계는 각각 `states`·`components`·`charts`에 둔다.
+- 각 규칙은 등록된 원색 자리의 램프 단계, 고정값 또는 대비 기준을 참조한다. 테스트가 필수 역할 누락, 잘못된 램프 단계, 1이 아닌 가중치 합을 거부한다.
+- 현재 코드의 9개 팔레트를 대상으로 성공한 쌍의 light/dark 역할 맵을 직접 바인딩해 비교했다. 중복 맵은 없다. 같은 팔레트에서 성공 세트 간 최소 역할 차이는 4개다.
+
+### 8.2 테스트 단언 교정 (완료 기준 2)
+
+- 기존 매칭 테스트는 실패 팔레트·세트 5쌍을 고정하고 있었다. 계산된 실패 행의 오류 코드와 모드, 관계 그래프 결과를 검사하도록 바꿨다.
+- 자동 보정 테스트의 `adjustments.length >= 0` 단언은 항상 참이었다. 보고된 초기값을 실제 램프 단계와 대조한다. 조정값은 초기값과 달라야 하며 바인딩 결과와 같아야 한다.
+- 신규 역할·맥락 계약 테스트에 RED-GREEN을 수행했다.
+
+```text
+RED  node --test --test-name-pattern='all 25 subtoken sets' tests/platform-color-sets.test.mjs
+     fail 1 — forbiddenContexts가 null인 세트를 거부
+GREEN 같은 명령
+     pass 1, fail 0
+```
+
+### 8.3 다섯 계층과 컴포넌트 소비 (완료 기준 3)
+
+- `resolveTokenLayers`에 있던 고정 `#000000`·`chart1` 대체값을 제거했다. 2.6.0 resolver는 primitive 143개와 semantic 22개를 읽는다. state는 9개, component는 33개다. data-viz는 8개다. 값이 없으면 오류를 낸다.
+- Component Token 검사는 토큰 이름이 코드에 등장하는지만 보던 방식에서 실제 `var(--kit-…)` 참조를 찾도록 바꿨다. 차트 시리즈는 기존 `coreCSS`와 차트 renderer가 소비한다. 플랫폼 결합 테스트도 각 통과 쌍에서 Card/Button 컴포넌트와 상태·차트 토큰을 실제 조립 결과로 확인한다.
+- Track A 소유 파일 `src/platform/contract.mjs`에 선택 `forbiddenContexts` 필드를 허용했다. TRB-03의 `crossTrackFiles`에 파일과 소유자, 수정 사유를 기록했다.
+
+### 8.4 기존 색상 호환성 (완료 기준 4)
+
+- 지정 색 테스트와 기존 버전 고정 해시 검사가 통과했다. 2.6.0 static-kit 색상 그래프·CSS·재료·컴파일 출력의 고정 SHA-256은 변하지 않았다.
+
+### 8.5 서비스와 매트릭스 (완료 기준 5)
+
+- `evaluatePaletteSubtokens`와 `proposeSubtokenSets` 서비스 테스트가 실행돼 25개 세트 평가, context/mode 전달, 후보·차단 이유 반환을 확인했다.
+- `node scripts/platform/evaluate-color-matrix.mjs`는 9×25, 총 225쌍을 평가했다. 라이트·다크 조합 450개 중 445개가 통과하고 5개가 차단됐다. 두 번 실행한 JSON의 SHA-256은 `06d0f1926e7215a2b95130855b3445024f1578ae`로 같았다. 결정성을 위해 시간과 실행 시간 필드는 뺐다.
+- 현재 팔레트 9개는 모두 B2 부모 `c239a0fbc`에 있었다. 하나는 내부 `static-kit`이고 나머지 8개는 저장소 자체 제작 원색이다. B2는 팔레트 데이터 파일을 추가하지 않았다.
+- B1 워크트리의 팔레트 구현은 미커밋 상태다. `origin/main`에도 200개는 아직 없다. 따라서 200×25 실행과 200개 출처 확인은 미완료다.
+- 평가 스크립트가 다른 Run의 outbox로 결과를 복사하던 하드코딩도 제거했다. 결과는 저장소의 고정 경로에만 쓴다.
+
+### 8.6 생성 미러와 장부 (완료 기준 6, 7)
+
+- `npm run verify`의 `check-generated`가 `src/`에서 빌드한 3,402개 파일과 `site/`를 바이트 단위로 대조했다.
+- `npm run coverage:materials` 후 `npm run coverage:materials:check` 결과는 `MANIFEST MATCH ... (1339 materials, 337 requirements)`다.
+- 최종 fetch에서 `origin/main`은 `039ec61713adb697b086955859424742d2684b4c`였다. B1의 200개 팔레트 커밋은 없었다. 전체 매트릭스를 만들 수 없어 최종 rebase와 push를 보류했다.
+
+### 8.7 전체 검증 (완료 기준 8)
+
+```sh
+npm run verify
+```
+```text
+ℹ tests 803
+ℹ pass 803
+ℹ fail 0
+REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
+```
+
+실행한 6개 색상 지정 테스트는 `32 pass, 0 fail`이었다. TRB-02와 TRB-03은 독립 검증을 마쳐 장부에서 Verified로 올렸다. TRB-04는 서비스 경로와 현재 팔레트 매트릭스만 확인해 In Progress로 남겼다.
+
+200개 팔레트가 `origin/main`에 들어온 뒤 매트릭스와 출처를 확인해야 한다. 장부를 갱신하고 전체 verify를 다시 실행한 다음 rebase와 일반 push를 진행한다.

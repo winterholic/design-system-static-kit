@@ -1,4 +1,5 @@
 /** Closed, project-owned palette and its 2.6.0 color-token graph. No caller-provided color values. */
+import {coreCSS} from './styles/base.mjs';
 const STEPS = Object.freeze(['50','100','200','300','400','500','600','700','800','900','950']);
 const kebab = value => value.replace(/[A-Z]/g,m=>'-'+m.toLowerCase());
 const tokenId = value => 'color-token:'+kebab(value);
@@ -238,35 +239,70 @@ export const colorTokenUsage = () => Object.entries(COLOR_COMPONENT_CONTRACT).fl
 /** §4.5 5계층 토큰 해석기 */
 export function resolveTokenLayers({palette = 'static-kit', mode = 'light'} = {}) {
   const base = resolveColorTokens({palette, mode});
-  const semantic22 = {};
-  for (const role of SEMANTIC_TOKEN_ROLES) {
-    const key = role.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-    semantic22[role] = base.tokens[`--kit-${role}`] || base.tokens[`--kit-${key}`] || base.tokens[role] || '#000000';
-  }
-  const state9 = {};
-  for (const st of STATE_TOKEN_NAMES) {
-    state9[st] = base.tokens[`--kit-state-${st}`] || base.tokens[`state.${st}`] || '#000000';
-  }
-  const dataviz8 = {};
-  for (const dv of DATAVIZ_TOKEN_ROLES) {
-    dataviz8[dv] = base.tokens[`--kit-chart-${dv}`] || base.tokens[`--kit-chart1`] || '#000000';
-  }
+  const semanticSource = {
+    canvas: 'canvas', surface: 'surface', raised: 'raised', sunken: 'sunken', overlay: 'surface', inverse: 'text',
+    'text-primary': 'text', 'text-secondary': 'muted', 'text-muted': 'muted', 'text-disabled': 'disabledFg',
+    'border-subtle': 'border', 'border-default': 'border', 'border-strong': 'rule',
+    'action-primary': 'action', 'action-secondary': 'accent', link: 'link', focus: 'focus', accent: 'accent',
+    success: 'success', warning: 'warning', danger: 'danger', info: 'info',
+  };
+  const unprefixed = layer => Object.fromEntries(
+    Object.entries(layer).map(([path, value]) => [path.split('.').slice(1).join('.'), value])
+  );
+  const semanticValues = {...unprefixed(base.layers.semantic), ...unprefixed(base.layers.state)};
+  const required = (layer, key) => {
+    if (!Object.hasOwn(layer, key) || typeof layer[key] !== 'string') {
+      throw new Error(`COLOR_REFERENCE: missing resolved token ${key}`);
+    }
+    return layer[key];
+  };
+  const semantic22 = Object.fromEntries(SEMANTIC_TOKEN_ROLES.map(role => [
+    role,
+    required(semanticValues, semanticSource[role]),
+  ]));
+  const stateSource = {
+    default: ['semantic', 'semantic.surface'], hover: ['state', 'state.cardHover'], active: ['state', 'state.cardActive'],
+    focus: ['state', 'state.focus'], selected: ['state', 'state.tableSelected'], disabled: ['state', 'state.disabledBg'],
+    readonly: ['state', 'state.disabledBg'], error: ['state', 'state.error'], loading: ['semantic', 'semantic.info'],
+  };
+  const state9 = Object.fromEntries(STATE_TOKEN_NAMES.map(name => {
+    const [layer, key] = stateSource[name];
+    return [name, required(base.layers[layer], key)];
+  }));
+  const chart = Array.from({length: 6}, (_, index) => required(base.layers.semantic, `semantic.chart.${index}`));
+  const seqSteps = ['200', '300', '400', '500', '600', '700', '800'];
+  const sequential = seqSteps.map(step => required(base.ramps.brand, step));
+  const low = ['700', '600', '500'].map(step => required(base.ramps.status.danger, step));
+  const middle = required(base.ramps.neutral, '500');
+  const high = ['500', '600', '700'].map(step => required(base.ramps.status.success, step));
+  const datavizSource = {
+    categorical: chart,
+    sequential,
+    diverging: [...low, middle, ...high],
+    'up-down': {up: required(base.layers.semantic, 'semantic.success'), down: required(base.layers.semantic, 'semantic.danger')},
+    highlight: required(base.layers.semantic, 'semantic.accent'),
+    grid: required(base.layers.state, 'state.chartGrid'),
+    'axis-label': required(base.layers.semantic, 'semantic.muted'),
+    missing: required(base.layers.state, 'state.disabledFg'),
+  };
+  const dataviz8 = Object.fromEntries(DATAVIZ_TOKEN_ROLES.map(role => [role, datavizSource[role]]));
   return {
     primitive: base.layers.primitive,
     semantic: semantic22,
     state: state9,
-    component: COMPONENT_TOKEN_CONTRACTS,
+    component: base.layers.component,
     dataviz: dataviz8,
   };
 }
 
 /** 토큰 사용 검사: 선언된 컴포넌트 토큰들이 실제 사용/바인딩되는지 확인 */
 export function validateTokenUsage() {
-  const css = colorTokenCSS() + componentTokenCSS();
+  const css = coreCSS + colorTokenCSS() + componentTokenCSS();
   const allTokens = new Set(Object.values(COMPONENT_TOKEN_CONTRACTS).flatMap(c => c.tokens));
   const unused = [];
   for (const token of allTokens) {
-    if (!css.includes(`var(${token})`) && !css.includes(token)) {
+    const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!new RegExp(`var\\(\\s*${escaped}\\s*\\)`).test(css)) {
       unused.push(token);
     }
   }

@@ -311,6 +311,7 @@ const make = (id, label, roles, weights, extra = {}) => definePlatformMaterial({
   modes: ['light', 'dark'],
   roles,
   weights,
+  forbiddenContexts: [],
   quality: done,
   ...designFields(id),
   ...extra,

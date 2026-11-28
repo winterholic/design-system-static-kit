@@ -5,9 +5,14 @@ import {
   STATE_TOKEN_NAMES,
   DATAVIZ_TOKEN_ROLES,
   COMPONENT_TOKEN_CONTRACTS,
+  COLOR_COMPONENT_CONTRACT,
+  colorTokenCSS,
+  componentTokenCSS,
+  resolveColorTokens,
   resolveTokenLayers,
   validateTokenUsage
 } from '../src/color-tokens.mjs';
+import {coreCSS} from '../src/styles/base.mjs';
 import {createPlatform} from '../src/platform/index.mjs';
 
 test('5 token layers are explicitly defined and managed', () => {
@@ -62,4 +67,25 @@ test('token usage check: no declared component tokens are unused', () => {
   const check = validateTokenUsage();
   assert.equal(check.ok, true, `Unused tokens found: ${JSON.stringify(check.unused)}`);
   assert.equal(check.unused.length, 0);
+  const css = coreCSS + colorTokenCSS() + componentTokenCSS();
+  for (const [component, contract] of Object.entries(COLOR_COMPONENT_CONTRACT)) {
+    for (const token of contract.tokens) assert.match(css, new RegExp(`var\\(\\s*${token.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\s*\\)`), `${component} consumes ${token}`);
+  }
+});
+
+test('the five resolved layers carry computed primitive, semantic, state, component and data visualization values', () => {
+  const layers = resolveTokenLayers({palette: 'static-kit', mode: 'light'});
+  const resolved = resolveColorTokens({palette: 'static-kit', mode: 'light'});
+  for (const layer of ['primitive', 'semantic', 'state', 'component', 'dataviz']) assert.ok(Object.keys(layers[layer]).length > 0, `${layer} has resolved values`);
+  for (const value of Object.values(layers.semantic)) assert.match(value, /^#[0-9A-F]{6}$/);
+  for (const value of Object.values(layers.state)) assert.match(value, /^#[0-9A-F]{6}$/);
+  for (const value of Object.values(layers.component)) assert.match(value, /^#[0-9A-F]{6}$/);
+  assert.equal(layers.semantic.canvas, resolved.layers.semantic['semantic.canvas']);
+  assert.equal(layers.semantic['text-primary'], resolved.layers.semantic['semantic.text']);
+  assert.equal(layers.state.hover, resolved.layers.state['state.cardHover']);
+  assert.equal(layers.component['component.button.primary.default.bg'], resolved.layers.component['component.button.primary.default.bg']);
+  assert.deepEqual(layers.dataviz.categorical, Array.from({length: 6}, (_, i) => resolved.layers.semantic[`semantic.chart.${i}`]));
+  assert.equal(layers.dataviz.grid, resolved.layers.state['state.chartGrid']);
+  assert.ok(layers.dataviz.sequential.every(value => /^#[0-9A-F]{6}$/.test(value)));
+  assert.ok(layers.dataviz.diverging.every(value => /^#[0-9A-F]{6}$/.test(value)));
 });

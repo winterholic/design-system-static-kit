@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {createPlatform, COLOR_ROLE_NAMES} from '../src/platform/index.mjs';
 import {bindColor, evaluatePaletteSubtokens, matchSubtokenSets} from '../src/platform/color.mjs';
 import {proposeSubtokenSets} from '../src/service/platform-components.mjs';
-import {resolveColorTokens} from '../src/color-tokens.mjs';
+import {resolveColorTokens, colorRamp} from '../src/color-tokens.mjs';
 import {SUBTOKEN_SETS} from '../src/platform/data/subtoken-sets.mjs';
 import {PALETTES} from '../src/platform/data/palettes.mjs';
 
@@ -87,14 +87,20 @@ test('proposeSubtokenSets service path accepts context and mode options and retu
   assert.ok(top.score > 0);
 });
 
-test('auto-tuning adjustments do not collapse subtoken sets into identical token outputs', () => {
+test('reported auto-tuning adjustments match bound output and do not collapse distinct subtoken sets', () => {
+  let adjustmentCount = 0;
   for (const p of PALETTES.slice(0, 5)) {
     const ev = evaluatePaletteSubtokens(p);
     const passingSets = ev.ranked.map(x => x.id);
 
-    // 자동 보정이 발생한 세트가 존재함을 확인
-    const withAdjustments = ev.ranked.filter(x => x.adjustments.length > 0);
-    assert.ok(withAdjustments.length >= 0);
+    for (const item of ev.ranked) for (const adjustment of item.adjustments) {
+      const bound = bindColor(p, env.registry.get(item.id), adjustment.mode);
+      const initial = colorRamp(p.seeds[adjustment.from])[adjustment.originalStep];
+      assert.equal(adjustment.initial, initial, `${p.id} ${item.id} reports the role-rule seed as its initial value`);
+      assert.notEqual(adjustment.adjusted, adjustment.initial, `${p.id} ${item.id} reports an actual contrast adjustment`);
+      assert.equal(bound.roles[adjustment.role], adjustment.adjusted, `${p.id} ${item.id} adjustment matches the bound role`);
+      adjustmentCount++;
+    }
 
     // 어떠한 경우에도 두 세트의 23개 색 역할이 동일해지지 않음
     for (let i = 0; i < passingSets.length; i++) {
@@ -110,4 +116,5 @@ test('auto-tuning adjustments do not collapse subtoken sets into identical token
       }
     }
   }
+  assert.ok(adjustmentCount > 0, 'the matrix includes at least one actual contrast adjustment');
 });

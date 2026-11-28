@@ -4,7 +4,7 @@
  * 등록된 팔레트 전체(동적 배열)와 25종 서브토큰 세트의 호환성, 대비 게이트, 적합도 점수를 산출하여
  * docs/platform/evidence/color/subtoken-matrix-summary.json 에 요약 산출물을 기록한다.
  */
-import {writeFileSync, mkdirSync, copyFileSync, existsSync} from 'node:fs';
+import {writeFileSync, mkdirSync} from 'node:fs';
 import {resolve, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {PALETTES} from '../../src/platform/data/palettes.mjs';
@@ -13,11 +13,8 @@ import {evaluatePaletteSubtokens, bindColor} from '../../src/platform/color.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../..');
-const OUTBOX_DIR = '/Volumes/Backup/ttakkari-data/outbox/f05e7d7d-3783-41f6-8e91-af79a342fce3';
-
 console.log(`Evaluating Color Matrix: ${PALETTES.length} palettes × ${SUBTOKEN_SETS.length} subtoken sets...`);
 
-const startTime = Date.now();
 const modes = ['light', 'dark'];
 let totalCombinations = 0;
 let passingCombinations = 0;
@@ -112,10 +109,9 @@ const setSummaryArray = Array.from(setSummaries.values()).map(s => {
 });
 
 const summary = {
-  timestamp: new Date().toISOString(),
-  durationMs: Date.now() - startTime,
   metadata: {
     paletteCount: PALETTES.length,
+    paletteSources: PALETTES.map(p => ({id: p.id, origin: p.source?.origin ?? null, license: p.source?.license ?? null})),
     subtokenSetCount: SUBTOKEN_SETS.length,
     modes,
     totalPairs: PALETTES.length * SUBTOKEN_SETS.length,
@@ -137,9 +133,3 @@ mkdirSync(outputDir, {recursive: true});
 const outputPath = resolve(outputDir, 'subtoken-matrix-summary.json');
 writeFileSync(outputPath, JSON.stringify(summary, null, 2) + '\n', 'utf8');
 console.log(`Summary written to: ${outputPath}`);
-
-if (existsSync(OUTBOX_DIR)) {
-  const outboxDest = resolve(OUTBOX_DIR, 'subtoken-matrix-summary.json');
-  copyFileSync(outputPath, outboxDest);
-  console.log(`Copied to outbox: ${outboxDest}`);
-}
