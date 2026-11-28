@@ -12,6 +12,7 @@ import {layoutRuntimeFor} from '../platform/families/layout.mjs';
 import {dataDisplayRuntimeFor} from '../platform/families/data-display.mjs';
 import {cardSelectionRuntimeFor} from '../platform/families/card-extra.mjs';
 import {workPatternRuntimeFor} from '../platform/families/work-patterns.mjs';
+import {mobileDialogRuntimeFor} from '../platform/families/mobile.mjs';
 
 const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
 const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions', 'layouts', 'commerce'];
@@ -147,6 +148,8 @@ export function assembleComponents(request) {
       + dataDisplayRuntimeFor(request.items.map(item => item.purpose))
       + cardSelectionRuntimeFor(request.items.map(item => item.purpose))
       + workPatternRuntimeFor(request.items.map(item => item.purpose));
+    const mobileRuntime = mobileDialogRuntimeFor(request.items.map(item => item.purpose));
+    const withMobileRuntime = script + mobileRuntime;
     const purposeItems = request.items.map(item => {
       const family = env.registry.get(item.purpose);
       const defaults = fields => Object.fromEntries(Object.keys(fields).map(key => [key, family.defaults[key]]));
@@ -158,7 +161,7 @@ export function assembleComponents(request) {
       selection: {...engine.value.manifest.selection, ...(palette ? {palette} : {}), ...(subtokenSet ? {subtokenSet} : {}), context: request.context, mode: request.mode ?? 'light', density: request.density ?? 'comfortable'},
       purposeItems,
     };
-    const value = {css: engine.value.css + (actionItems.length ? ACTION_COMPONENT_CSS : '') + (layoutItems.length ? LAYOUT_CSS : '') + (commerceItems.length ? COMMERCE_COMPONENT_CSS : ''), html: engine.value.html + actionHtml + layoutHtml + commerceHtml, script, manifest: {...manifest, ...(actionItems.length ? {actionItems} : {}), ...(layoutItems.length ? {layoutItems} : {}), ...(commerceItems.length ? {commerceItems} : {})}};
+    const value = {css: engine.value.css + (actionItems.length ? ACTION_COMPONENT_CSS : '') + (layoutItems.length ? LAYOUT_CSS : '') + (commerceItems.length ? COMMERCE_COMPONENT_CSS : ''), html: engine.value.html + actionHtml + layoutHtml + commerceHtml, script: withMobileRuntime, manifest: {...manifest, ...(actionItems.length ? {actionItems} : {}), ...(layoutItems.length ? {layoutItems} : {}), ...(commerceItems.length ? {commerceItems} : {})}};
     if (userPalette) value.manifest.userPalette = userPalette;
     value.standalone = standalone({...value, mode: manifest.selection.mode});
     return ok(jsonClone(value), engine.diagnostics.map(diag));

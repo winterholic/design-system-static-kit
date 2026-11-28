@@ -30,7 +30,7 @@ export const COMPONENT_CLASSIFICATION = Object.freeze({
   'l-01-stack': I, 'l-02-cluster': I, 'l-03-grid': I, 'l-04-responsive-grid': I, 'l-05-split': I, 'l-06-bento': C, 'l-07-container': I, 'l-08-section': I, 'l-09-center': I, 'l-10-sidebar-layout': C, 'l-11-master-detail-layout': C, 'l-12-sticky-region': C, 'l-13-scroll-area': C, 'l-14-resizable-panel': C,
   'm-01-filter-toolbar': C, 'm-02-search-toolbar': C, 'm-03-bulk-action-toolbar': C, 'm-04-data-summary': C, 'm-05-dashboard-kpi-grid': C, 'm-06-approval-panel': C, 'm-07-audit-log': C, 'm-08-permission-matrix': C, 'm-09-status-management': C, 'm-10-settings-form': C, 'm-11-search-result-list': C, 'm-12-user-management-table': C, 'm-13-task-list': C, 'm-14-workflow-steps': C, 'm-15-comment-thread': C,
   'n-01-product-grid': I, 'n-02-product-detail-summary': I, 'n-03-product-variant-selector': C, 'n-04-quantity-selector': I, 'n-05-price-display': I, 'n-06-discount-display': I, 'n-07-cart-item': I, 'n-08-cart-summary': I, 'n-09-checkout-summary': I, 'n-10-order-status': I, 'n-11-review-summary': I,
-  'o-01-mobile-header': I, 'o-02-bottom-navigation': I, 'o-03-action-sheet': I, 'o-04-mobile-list-cell': I, 'o-05-mobile-search': I, 'o-06-mobile-tab-bar': I, 'o-07-full-screen-dialog': I, 'o-08-mobile-filter-panel': I, 'o-09-sticky-bottom-action': I, 'o-10-safe-area-container': I,
+  'o-01-mobile-header': I, 'o-02-bottom-navigation': I, 'o-03-action-sheet': C, 'o-04-mobile-list-cell': C, 'o-05-mobile-search': V, 'o-06-mobile-tab-bar': V, 'o-07-full-screen-dialog': C, 'o-08-mobile-filter-panel': C, 'o-09-sticky-bottom-action': C, 'o-10-safe-area-container': C,
 });
 
 export const CLASSIFICATION_LABEL = Object.freeze({independent: '독립 재료', variant: '변형', composite: '복합 패턴'});
