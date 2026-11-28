@@ -1783,3 +1783,16 @@ REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.
 - Variants의 `link` 외형은 기본 family(soft → `shape=pill`)에서 `BTN_LINK_SHAPE`로 거부돼 미리보기가 없다. Core 규칙이 낸 정당한 거부이고 사유는 표시된다.
 - Playground의 `shape`·`behavior`·`tone`·`content` 변형 축은 UI 조작 대상이 아니다(11축 목록에 없음).
 - 상세 탭 이동과 선택 변경은 여전히 서버에서 페이지 RSC를 다시 요청한다(컴파일 카운터는 증가하지 않는다).
+
+### 28.6 차트 프리셋·레이아웃류 카드의 상세 이동 판정 (최신 main `23e47e5dd` 기준, 2026-11-28)
+
+F1 검증(`34812d226`)이 확인한 대로 `site/catalog-index.json`의 차트 프리셋 44, 레이아웃 24, 레이아웃 부품 7, 배치 원형 6(합 81개)은 `url: '/materials'`다. `/materials`는 팔레트·타이포·스타일 비교 입구일 뿐 이 재료들의 항목이 없다. REQUEST §8.1은 차트·레이아웃을 카테고리로 두고 §8.2는 모든 카드에 "상세 이동"을 요구하므로 **열려야 한다**. 다만 **링크만 틀린 것이 아니라 상세 모델이 받지 못해서** 링크를 고치지 않았다. 실측: 운영 빌드에서 `/components/chart-preset:erp-quarterly-revenue`, `/components/layout:bento`, `/components/stack`, `/components/layout-primitive:stack`은 모두 404, `/components/chart`·`/components/bento`는 200이다(카탈로그 부품 65종만 `generateStaticParams`·`componentView` 대상).
+
+| 종류 | 개수 | 상세 모델에 없는 것 |
+|---|---:|---|
+| `chart-preset` | 44 | Core 재료 기록(`getMaterial`)은 있다: 변형 `scale`, 토큰 8, a11y, 예시 `chart` 노드, `render.export=renderChartPreset`. 없는 것: `getComponentSpec`(알 수 없는 부품), 상세 라우트의 id 해석, 단독 렌더(`renderChartPreset`은 SVG 조각이라 표준 HTML·차트 CSS 감싸기 필요), 예시 노드 기반 Code 내보내기. States·Sizes·Composition 탭은 데이터가 없어 비노출이 맞다. Playground는 시각 패밀리(기반 구성원 없음)·크기·외형·상태가 불가하고 팔레트·서브토큰·타이포·밀도·모드·뷰포트는 2.7.0 스타일 맥락 경로로 가능해 보이나 미구현·미검증이다. |
+| `layout` | 24 | 플랫폼 재료(`getPlatformMaterial`)만 있고 `getMaterial`·`getComponentSpec`이 없다. 변형·상태·토큰 필드가 없고(슬롯·밴드·규칙·관계만), 렌더는 `assembleSpecimen`(표본 조립)이며 Playground 축 입력을 받지 않는다. 필요: 슬롯·관계 중심의 Overview·Composition, 표본 렌더·내보내기 경로. |
+| `layout-component` | 7 | `component:stack` 등은 Core 레지스트리에 없고(`getMaterial` 실패), `src/platform/families/layout.mjs`의 `LAYOUT_COMPONENTS`에만 있다. `componentType`(stack, container…)에 해당하는 카탈로그 부품도 없다. 일부는 다른 재료(`layout:equal-grid` 등)와 Blueprint 필드를 가리킨다. 필요: Core 등록 또는 별도 상세 데이터원. |
+| `layout-primitive` | 6 | Core 재료는 있으나 변형·상태·토큰·Blueprint가 비어 있다(`render`는 `layoutContractCSS` 키). 9탭 중 Overview·Code·Accessibility 정도만 의미가 있다. |
+
+후속 작업이 필요하다: (1) `/components/[componentId]`가 재료 id(`chart-preset:*`, `layout:*`)를 해석하는 상세 데이터원, (2) 종류별 단독 렌더·내보내기 경로, (3) 데이터가 없는 탭 비노출 규칙 적용, (4) 구현 뒤 카드 `url`을 그 경로로 교체(`scripts/build-catalog-index.mjs` `extraRow`의 `url: '/materials'`와 `urlOf`의 기본값 `/materials`). 이 작업은 소유 트랙(Track A 서비스·Track F 웹·Track G 인덱스 생성)에 걸치므로 §6.1에 따라 TASK-LEDGER에 `crossTrackFiles`를 적고 진행해야 한다. 같은 방식으로 `/materials`로 가는 나머지 종류(기반 컴포넌트 10, 시각 패밀리 12, 서브토큰 세트 25, 아이콘 16, 축 값 79 등)는 REQUEST §8.1의 카테고리 대상 재료인지 별도 판정이 필요하다.
