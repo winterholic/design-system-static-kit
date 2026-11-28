@@ -14,7 +14,7 @@ import {axisDefs} from '../catalog/axes.mjs';
 import {recommend} from '../platform/recommend.mjs';
 import {platformEnv} from '../platform/compile.mjs';
 import {assembleSpecimen, layoutSpecimen, assembleLayout} from '../platform/layouts.mjs';
-import {bindType} from '../platform/type.mjs';
+import {bindType, webfontPlan} from '../platform/type.mjs';
 import {FACE_PAIRINGS, ROLE_SCALES, resolveRoleScale} from '../platform/data/type-materials.mjs';
 import {MATERIAL_TYPE_PRESETS} from '../materials/typography.mjs';
 import {TYPE_R2} from '../typography.mjs';
@@ -76,16 +76,21 @@ export function getPlatformMaterial(q) {
   });
 }
 
-/** 선택한 타이포 시스템 하나의 Specimen 표시 자료. 레지스트리 정의만 읽고 컴파일하지 않는다. */
+/**
+ * 선택한 타이포 시스템 하나의 Specimen 표시 자료. 레지스트리 정의만 읽고 컴파일하지 않는다.
+ * webfonts: true 이면 서체 짝의 웹폰트(@font-face)를 스택 맨 앞에 붙인 역할과 CSS를 낸다(기본은 시스템 서체만). 웹폰트가 없는 짝은 webfont.available 이 false 다.
+ */
 export function getTypographySpecimen(q) {
   return guard(() => {
     if (!isPlain(q)) return fail([badRequest('$args', '조회 인자는 객체여야 합니다.')]);
-    const badKey = checkKeys(q, ['id'], '$args');
+    const badKey = checkKeys(q, ['id', 'webfonts'], '$args');
     if (badKey) return fail([badKey]);
     if (typeof q.id !== 'string' || !q.id) return fail([badRequest('$args.id', '타이포 시스템 id가 필요합니다.')]);
+    if (q.webfonts !== undefined && typeof q.webfonts !== 'boolean') return fail([badRequest('$args.webfonts', 'webfonts는 true 또는 false입니다.')]);
     const {registry} = platformEnv(), material = registry.get(q.id);
     if (!material || material.kind !== 'type-system') return fail([diagnostic('TYPE_SPECIMEN_KIND', '$args.id', `타이포 시스템이 아닙니다: ${q.id}`, 'type-system 재료 id를 지정하세요.')]);
-    const binding = bindType(material);
+    const plan = webfontPlan(material.facePairing);
+    const binding = bindType(material, {webfonts: q.webfonts === true && plan !== null});
     if (!binding.ok) return fail(binding.errors.map(error => diagnostic(error.code, '$args.id', error.message)));
     const faceId = material.facePairing;
     const face = FACE_PAIRINGS[faceId];
@@ -102,6 +107,7 @@ export function getTypographySpecimen(q) {
       density: scale?.density ?? legacyScale?.density ?? 'comfortable',
       numerals: material.numerals,
       roles: binding.roles27,
+      webfont: {available: plan !== null, active: q.webfonts === true && plan !== null, css: binding.webfontCSS ?? '', families: plan ? plan.families.map(({family, file, license, source, covers}) => ({family, file, license, source, covers})) : []},
     }));
   });
 }

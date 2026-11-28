@@ -109,7 +109,7 @@ export default async function ExploreMaterialsPage({searchParams}: {searchParams
       <Field name="right" label="오른쪽 재료" value={rightValue} options={options} />
       <button className={styles.chipLink} type="submit">조건 적용하고 비교</button>
     </form>
-    <p className={styles.meta}>필터 값은 주소에 기록되어 새로고침·공유 링크에서도 복원됩니다. 비교 축은 같은 이름의 필터보다 우선합니다. 현재 목적: {PURPOSES.find(p => p.id === state.purpose)?.label}. 비교할 수 없는 재료는 선택 목록에서 비활성이며 이유가 붙습니다.</p>
+    <p className={`${styles.meta} ${styles.materialNote}`}>필터 값은 주소에 기록되어 새로고침·공유 링크에서도 복원됩니다. 비교 축은 같은 이름의 필터보다 우선합니다. 현재 목적: {PURPOSES.find(p => p.id === state.purpose)?.label}. 비교할 수 없는 재료는 선택 목록에서 비활성이며 이유가 붙습니다.</p>
     <section aria-labelledby="compare-results" className={styles.materialResults} data-testid="compare-results" data-axis={selectedAxis.key}>
       <h2 className="section-title" id="compare-results">{selectedAxis.label} 비교</h2>
       {selectedAxis.key === 'family' && state.component ? <p className={styles.meta} data-testid="family-host">시각 패밀리는 컴포넌트에 입히는 재료라서 두 결과에 같은 컴포넌트({materials('base-component').find(m => shortId(m.id) === state.component)?.label ?? state.component}) 3개를 놓았습니다.</p> : null}

@@ -3,9 +3,10 @@ import {redirect} from 'next/navigation';
 import type {CSSProperties} from 'react';
 import {PageShell} from '@/shell/PageShell';
 import {MaterialsNav} from '@/features/materials/MaterialsNav';
+import {typeView} from '@/features/materials/materials.server';
 import {studioForTypeSystem} from '@/features/materials/studio-link';
 import {Thumb} from '@/features/explore/Thumb';
-import {assembleComponents, materials, probeDesign, typographyControlsRequest, typographySpecimen} from '@/features/platform/platform.server';
+import {materials, probeDesign, typographyControls, typographySpecimen} from '@/features/platform/platform.server';
 import {renderSrc} from '@/features/platform/render-url';
 import {TypeCompare, TYPE_COMPARE_SCENARIOS, type TypeQuery} from '@/features/platform/TypeCompare';
 import {shortId, first} from '@/features/platform/labels';
@@ -23,6 +24,20 @@ const DENSITY_LABEL: Record<string, string> = {compact: '촘촘함', comfortable
 const SAMPLE_TITLE = '디자인 시스템은 읽히는 속도를 설계합니다';
 const SAMPLE_BODY = '한글과 English, 2026년 매출 ₩128,000 (4.6%)을 같은 문장에 두어 서체 차이를 비교합니다.';
 const ROLE_KEYS = ['display-xl','display-lg','display-md','heading-1','heading-2','heading-3','heading-4','heading-5','heading-6','body-lg','body-md','body-sm','label-lg','label-md','label-sm','caption','overline','button-label','input-value','table-header','table-cell','numeric','kpi','code','quote','navigation','badge'];
+// 역할마다 그 역할이 실제로 쓰이는 문장을 보인다. 숫자·금융·코드 역할이 한글 문장만 보이면 서체의 숫자 정렬과 고정폭 차이를 알 수 없다.
+const ROLE_SAMPLE: Record<string, string> = {
+  'heading-1': '2026년 4분기 운영 보고', 'heading-2': '매출과 전환율 Overview', 'heading-3': '고객 문의 처리 현황', 'heading-4': '주문 상태 Order status', 'heading-5': '배송 정보', 'heading-6': '메모 Notes',
+  'label-lg': '결제 수단 Payment', 'label-md': '상태 Status · 처리 완료', 'label-sm': '필수 Required', caption: '2026년 11월 28일 갱신 · Updated 3 min ago', overline: 'OVERLINE 개요 Overview',
+  'button-label': '저장하고 계속 Save', 'input-value': 'kim.seoyeon@example.com', 'table-header': '주문번호 · 고객 · 금액', 'table-cell': '#10421 · 김서연 · ₩1,280,000',
+  numeric: '₩1,280,000.50 · 4.6% · −12.3 · 1,111 / 8,888', kpi: '₩128,400,000', code: 'const total = sum(items); // 128000 · npm run build',
+  quote: '“좋은 위계는 읽는 속도를 설계한다.” — Field Notes', navigation: '개요 · 프로젝트 · 일정 · 설정', badge: 'NEW 신규 · BETA',
+};
+// Core 시험 문구(코퍼스 13개): 줄바꿈이 무너지기 쉬운 한글 무공백·숫자 한 줄 유지·코드 가로 스크롤 정책을 선택한 시스템의 서체로 보인다.
+const CORPUS_ROLE: Record<string, string> = {display: 'display-md', heading: 'heading-2', body: 'body-md', label: 'label-lg', caption: 'caption', numeric: 'numeric', code: 'code'};
+const CORPUS_ROLE_LABEL: Record<string, string> = {display: '디스플레이', heading: '제목', body: '본문', label: '라벨', caption: '캡션', numeric: '숫자', code: '코드'};
+const CORPUS_POLICY_LABEL: Record<string, string> = {wrap: '줄바꿈', nowrap: '한 줄 유지', scroll: '가로 스크롤'};
+const NUMERIC_ROLES = new Set(['numeric', 'kpi', 'table-cell', 'input-value']);
+const NUMS_FEATURE = {tabular: 'tabular-nums lining-nums', proportional: 'proportional-nums lining-nums'} as const;
 const LEGACY_PRESET = {erp: 'tech-erp', document: 'doc-essay', marketing: 'mkt-launch', editorial: 'doc-essay'} as const;
 const paramsFrom = (query: Search) => new URLSearchParams(Object.entries(query).flatMap(([key, value]) => Array.isArray(value) ? value.map(item => [key, item]) : value === undefined ? [] : [[key, value]]) as [string, string][]);
 
@@ -46,22 +61,33 @@ export default async function TypographyPage({searchParams}: {searchParams: Prom
   const rawQuery = params.toString();
   const askedSystem = first(search.system);
   const selectedId = askedSystem && validIds.has(askedSystem) ? `type-system:${askedSystem}` : null;
-  const selected = selectedId ? typographySpecimen(selectedId) : undefined;
+  const webfontsOn = first(search.webfonts) === '1';
+  const selected = selectedId ? typographySpecimen(selectedId, {webfonts: webfontsOn}) : undefined;
   const scenarioAsked = first(search.scenario) || ({doc: 'editorial', dash: 'erp'} as Record<string, string>)[first(search.sample) ?? ''] || 'saas';
   const scenario = scenarioAsked in TYPE_COMPARE_SCENARIOS ? scenarioAsked as TypeQuery['scenario'] : 'saas';
   const width = first(search.width) === '390' ? 390 : 1280;
   const mode = first(search.mode) === 'dark' ? 'dark' : 'light';
   const compareQuery: TypeQuery = {with: selection, scenario, width, mode, rawQuery};
 
-  const selectedContexts = selected?.contexts ?? [];
-  const preferredScenario = selectedContexts.includes('dashboard') || selectedContexts.includes('data') ? TYPE_COMPARE_SCENARIOS.erp
-    : selectedContexts.includes('commerce') ? TYPE_COMPARE_SCENARIOS.commerce
-    : selectedContexts.some((context: string) => ['docs','article','blog'].includes(context)) ? TYPE_COMPARE_SCENARIOS.editorial
-    : TYPE_COMPARE_SCENARIOS.saas;
-  const controlRequest = selectedId ? typographyControlsRequest(selectedId) : null;
-  const controls = controlRequest ? assembleComponents(controlRequest as any) : null;
-  const detailRequest = selectedId ? {purpose: preferredScenario.purpose, content: preferredScenario.content, typeSystem: selectedId, mode, candidates: 1} : null;
-  const detailProbe = detailRequest ? probeDesign(detailRequest as any) : null;
+  // 시스템이 허용하는 맥락과 맞는 목적부터 시험하고 Core 가 받는 첫 목적을 쓴다. 어느 목적도 못 받으면 Core 의 이유를 그대로 보인다.
+  const selectedContexts: string[] = selected?.contexts ?? [];
+  const scenarioOrder = (() => {
+    const first = selectedContexts.includes('dashboard') || selectedContexts.includes('data') ? 'erp'
+      : selectedContexts.includes('commerce') || selectedContexts.includes('listing') ? 'commerce'
+      : selectedContexts.some(context => ['docs', 'article', 'blog'].includes(context)) ? 'editorial' : 'saas';
+    return [first, 'saas', 'erp', 'editorial', 'commerce'].filter((id, i, all) => all.indexOf(id) === i) as TypeQuery['scenario'][];
+  })();
+  let detail: {scenario: typeof TYPE_COMPARE_SCENARIOS[keyof typeof TYPE_COMPARE_SCENARIOS]; request: Record<string, unknown>} | null = null;
+  let detailReason = '';
+  if (selectedId) for (const id of scenarioOrder) {
+    const scenarioItem = TYPE_COMPARE_SCENARIOS[id];
+    const request = {purpose: scenarioItem.purpose, content: scenarioItem.content, typeSystem: selectedId, mode, candidates: 1};
+    const probe = probeDesign(request as any);
+    if (probe.ok) { detail = {scenario: scenarioItem, request}; break; }
+    detailReason ||= probe.reason;
+  }
+  const controls = selectedId ? typographyControls(selectedId, selectedContexts) : [];
+  const numeralsFeature = NUMS_FEATURE[selected?.numerals as keyof typeof NUMS_FEATURE] ?? NUMS_FEATURE.proportional;
 
   return <PageShell eyebrow="Materials · Typography" title="타이포그래피 카탈로그" lead="같은 제목과 본문으로 41개 시스템을 훑고, 한 시스템의 27개 역할과 실제 Core 컴파일 결과를 확인합니다.">
     <MaterialsNav current="typography" />
@@ -85,7 +111,8 @@ export default async function TypographyPage({searchParams}: {searchParams: Prom
     {visible.length ? <ul className={styles.typeCatalogGrid} data-testid="type-catalog-grid">
       {visible.map(item => {
         const detail = typographySpecimen(item.id);
-        const titleRole = detail?.roles?.['display-xl'] ?? {};
+        // 카드 폭(약 280px)에 맞는 heading-1 역할로 같은 제목을 보인다. display-xl 은 데스크톱에서 60~80px 라 한 줄에 일곱 글자씩 여섯 줄로 갈라졌다.
+        const titleRole = detail?.roles?.['heading-1'] ?? {};
         const bodyRole = detail?.roles?.['body-md'] ?? {};
         const active = selection.includes(shortId(item.id));
         const detailHref = typeCatalogHref(rawQuery, {system: shortId(item.id)});
@@ -122,40 +149,81 @@ export default async function TypographyPage({searchParams}: {searchParams: Prom
     <TypeCompare query={compareQuery} />
 
     {selected && selectedId ? <section className={styles.typeSpecimen} data-testid="type-specimen" aria-labelledby="specimen-title">
+      {selected.webfont.css ? <style>{selected.webfont.css}</style> : null}
       <h2 className="section-title" id="specimen-title">{selected.label} · 상세 Specimen</h2>
-      <p className={styles.meta}>서체 조합: {selected.facePairing.label} · 역할 체계: {selected.roleScale.label} · 밀도: {DENSITY_LABEL[selected.density] ?? selected.density} · 숫자: {selected.numerals}</p>
-      <p><Link className={styles.chipLink} href={studioForTypeSystem(selectedId, preferredScenario.purpose)} prefetch={false}>이 시스템으로 Studio 열기</Link></p>
+      <p className={styles.meta}>서체 조합: {selected.facePairing.label} · 역할 체계: {selected.roleScale.label} · 밀도: {DENSITY_LABEL[selected.density] ?? selected.density} · 숫자: {selected.numerals === 'tabular' ? '고정폭 숫자(tabular)' : '비례폭 숫자(proportional)'}</p>
+      <p className={styles.meta} data-testid="type-fontsource">
+        서체 소스: {selected.webfont.available
+          ? <>
+            <Link className={styles.chipLink} href={typeCatalogHref(rawQuery, {webfonts: ''})} aria-current={!webfontsOn ? 'true' : undefined}>시스템 서체</Link>{' '}
+            <Link className={styles.chipLink} href={typeCatalogHref(rawQuery, {webfonts: '1'})} aria-current={webfontsOn ? 'true' : undefined}>웹폰트 사용</Link>{' '}
+            {webfontsOn ? `불러오는 서체: ${selected.webfont.families.map((f: any) => `${f.family}(${f.license})`).join(', ')}` : `웹폰트 ${selected.webfont.families.map((f: any) => f.family).join(', ')}를 켤 수 있습니다. 끄면 시스템 서체만 씁니다.`}
+          </>
+          : '이 시스템은 웹폰트 없이 시스템 서체만 씁니다.'}
+      </p>
+      {detail
+        ? <p><Link className={styles.chipLink} href={studioForTypeSystem(selectedId, detail.scenario.purpose)} prefetch={false}>이 시스템으로 Studio 열기</Link></p>
+        : <p role="status" className="note" data-testid="type-studio-unavailable">Studio로 열 수 없습니다. Core 이유: {detailReason || 'Core 결과 없음'}</p>}
 
       <h3 className={styles.typeSectionTitle}>27개 역할</h3>
       <ul className={styles.typeRoleList} data-testid="type-role-list">
         {ROLE_KEYS.map(key => {
           const role = selected.roles[key];
           if (!role) return null;
-          const roleStyle: CSSProperties = {fontFamily: role.fontFamily, fontSize: role.size, fontWeight: role.weight, lineHeight: role.lineHeight, letterSpacing: `${role.trackingEm ?? 0}em`};
+          const roleStyle: CSSProperties = {fontFamily: role.fontFamily, fontSize: role.size, fontWeight: role.weight, lineHeight: role.lineHeight, letterSpacing: `${role.trackingEm ?? 0}em`, ...(role.case === 'upper' ? {textTransform: 'uppercase'} : {}), ...(NUMERIC_ROLES.has(key) ? {fontVariantNumeric: numeralsFeature} : {})};
           return <li key={key} data-role={key}>
             <div><strong>{role.label ?? key}</strong><span>{key} · {role.sizePx?.mobile}→{role.sizePx?.desktop}px · {role.weight} · 행간 {role.lineHeight} · 자간 {role.trackingEm}em</span><small>{role.recommendedPlacement ?? ''}</small></div>
-            <p style={roleStyle}>{key.startsWith('display') ? SAMPLE_TITLE : SAMPLE_BODY}</p>
+            <p style={roleStyle}>{key.startsWith('display') ? SAMPLE_TITLE : (ROLE_SAMPLE[key] ?? SAMPLE_BODY)}</p>
           </li>;
         })}
       </ul>
-      <h3 className={styles.typeSectionTitle}>굵기 비교 · 다국어 · 숫자와 금융 · 코드</h3>
-      <div className={styles.typeWeightCompare}>{[400, 500, 600, 700].map(weight => <p key={weight} style={{fontFamily: selected.roles['body-md']?.fontFamily, fontWeight: weight}}>굵기 {weight} · 한글 English 日本語 2026年 · ₩128,000 · 4.6%</p>)}</div>
-      <p className={styles.typeCode}><code>const revenue = currencyKRW(128000); // 4.6% · npm run build</code></p>
+
+      <h3 className={styles.typeSectionTitle}>굵기 비교</h3>
+      <div className={styles.typeWeightCompare} data-testid="type-weights">{[400, 500, 600, 700].flatMap(weight => [
+        <p key={`b${weight}`} data-weight={weight} style={{fontFamily: selected.roles['body-md']?.fontFamily, fontWeight: weight}}>본문 굵기 {weight} · 한글 English 日本語 2026年</p>,
+        <p key={`h${weight}`} data-weight={weight} style={{fontFamily: selected.roles['display-md']?.fontFamily, fontWeight: weight}}>제목 굵기 {weight} · Display 디자인</p>,
+      ])}</div>
+
+      <h3 className={styles.typeSectionTitle}>다국어</h3>
+      <div className={styles.typeWeightCompare} data-testid="type-multilingual">{[['한국어', '다람쥐 헌 쳇바퀴에 타고파'], ['English', 'The quick brown fox jumps over the lazy dog'], ['日本語', '素早い狐がのろまな犬を飛び越える'], ['中文', '敏捷的棕色狐狸跳过了懒狗']].map(([lang, text]) =>
+        <p key={lang} lang={{한국어: 'ko', English: 'en', 日本語: 'ja', 中文: 'zh'}[lang]} style={{fontFamily: selected.roles['body-lg']?.fontFamily, fontSize: selected.roles['body-lg']?.size, lineHeight: selected.roles['body-lg']?.lineHeight}}><small>{lang}</small><span className={styles.typeLangText}>{text}</span></p>)}</div>
+
+      <h3 className={styles.typeSectionTitle}>시험 문구 (Core 코퍼스)</h3>
+      <ul className={styles.typeCorpus} data-testid="type-corpus">{typeView().corpus.map(sample => {
+        const role = selected.roles[CORPUS_ROLE[sample.role] ?? 'body-md'];
+        return <li key={sample.id} data-sample={sample.id} data-policy={sample.policy}>
+          <small>{CORPUS_ROLE_LABEL[sample.role] ?? sample.role} · {CORPUS_POLICY_LABEL[sample.policy] ?? sample.policy}</small>
+          <p style={{fontFamily: role?.fontFamily, fontSize: role?.size, fontWeight: role?.weight, lineHeight: role?.lineHeight, fontVariantNumeric: sample.role === 'numeric' ? numeralsFeature : undefined}}>{sample.text}</p>
+        </li>;
+      })}</ul>
+
+      <h3 className={styles.typeSectionTitle}>숫자와 금융 데이터 · 코드</h3>
+      <table className={styles.typeFinance} data-testid="type-finance" style={{fontFamily: selected.roles.numeric?.fontFamily, fontVariantNumeric: numeralsFeature}}>
+        <caption>숫자 정렬: {selected.numerals === 'tabular' ? '고정폭(tabular)이라 자릿수가 세로로 맞습니다' : '비례폭(proportional)이라 숫자 폭이 글자마다 다릅니다'}</caption>
+        <thead><tr><th scope="col">항목</th><th scope="col">금액(₩)</th><th scope="col">증감</th></tr></thead>
+        <tbody>{[['매출', '1,111,111', '+4.6%'], ['비용', '8,888,888', '−12.3%'], ['순이익', '10,000,000', '+0.8%'], ['미수금', '1,000', '0.0%']].map(([name, amount, delta]) => <tr key={name}><th scope="row">{name}</th><td data-amount={amount}>{amount}</td><td>{delta}</td></tr>)}</tbody>
+      </table>
+      <p className={styles.typeCode} data-testid="type-code"><code style={{fontFamily: selected.roles.code?.fontFamily, fontSize: selected.roles.code?.size}}>const revenue = currencyKRW(128000); // 4.6% · npm run build</code></p>
 
       <h3 className={styles.typeSectionTitle}>버튼·입력·표: Core 조립 및 내보내기 결과</h3>
-      {controls?.ok ? <>
-        <p className={styles.meta}>2.7.0 Core의 assembleComponents가 만든 button.primary, form.filter, table.business 묶음입니다. 아래 미리보기는 같은 요청의 Core standalone 결과를 표시합니다.</p>
-        <Thumb src={renderSrc(controlRequest!, {kind: 'components'})} preview={{kind: 'components', request: controlRequest!}} title={`${selected.label} 버튼·입력·표 Core 컴파일 결과`} width={1280} height={600} />
-        <ul className={styles.typeExports} aria-label="Core에서 내보내기">
-          {(['standalone', 'html', 'css', 'manifest'] as const).map(part => <li key={part}><a className={styles.chipLink} href={renderSrc(controlRequest!, {kind: 'components', part, download: true})} download data-part={part}>{({standalone: '완성 HTML', html: 'HTML 조각', css: 'CSS', manifest: 'Blueprint와 manifest'} as const)[part]} 다운로드</a></li>)}
-        </ul>
-      </> : <p role="status" className="note">Core 조립 제한: {controls?.errors?.map((error: any) => error.message).join(' ') ?? 'Core 결과 없음'}</p>}
+      <p className={styles.meta}>각각 Core의 assembleComponents가 이 시스템의 허용 맥락 안에서 조립한 결과입니다. 미리보기와 내려받는 파일은 같은 요청입니다.</p>
+      <div data-testid="type-controls">{controls.map(control => <section key={control.key} data-control={control.key} data-request={control.request ? JSON.stringify(control.request) : undefined} aria-label={`${control.label} Core 결과`}>
+        <h4>{control.label} <small>{control.purpose}{control.context ? ` · ${control.context} 맥락` : ''}</small></h4>
+        {control.request
+          ? <>
+            <Thumb src={renderSrc(control.request, {kind: 'components'})} preview={{kind: 'components', request: control.request}} title={`${selected.label} ${control.label} Core 컴파일 결과`} width={1280} height={360} />
+            <ul className={styles.typeExports} aria-label={`${control.label} Core에서 내보내기`}>
+              {(['standalone', 'html', 'css', 'manifest'] as const).map(part => <li key={part}><a className={styles.chipLink} href={renderSrc(control.request!, {kind: 'components', part, download: true})} download data-part={part}>{({standalone: '완성 HTML', html: 'HTML 조각', css: 'CSS', manifest: 'Blueprint와 manifest'} as const)[part]} 다운로드</a></li>)}
+            </ul>
+          </>
+          : <p role="status" className="note" data-testid="type-control-unavailable">Core 조립 제한: {control.reason}</p>}
+      </section>)}</div>
 
       <h3 className={styles.typeSectionTitle}>같은 시스템의 반응형 Core Specimen</h3>
-      {detailProbe?.ok && detailRequest ? <div className={styles.typeViewportCompare}>
-        <figure><figcaption>모바일 · 390px</figcaption><Thumb src={renderSrc(detailRequest as any)} preview={{kind: 'assemble', request: detailRequest}} title={`${selected.label} 모바일 390px Core 컴파일`} width={390} height={844} /></figure>
-        <figure><figcaption>데스크톱 · 1280px</figcaption><Thumb src={renderSrc(detailRequest as any)} preview={{kind: 'assemble', request: detailRequest}} title={`${selected.label} 데스크톱 1280px Core 컴파일`} width={1280} height={800} /></figure>
-      </div> : <p role="status" className="note">Core 렌더 제한: {detailProbe && !detailProbe.ok ? detailProbe.reason : 'Core 결과 없음'}</p>}
+      {detail ? <div className={styles.typeViewportCompare}>
+        <figure><figcaption>모바일 · 390px · {detail.scenario.label}</figcaption><Thumb src={renderSrc(detail.request as any)} preview={{kind: 'assemble', request: detail.request}} title={`${selected.label} 모바일 390px Core 컴파일`} width={390} height={844} /></figure>
+        <figure><figcaption>데스크톱 · 1280px · {detail.scenario.label}</figcaption><Thumb src={renderSrc(detail.request as any)} preview={{kind: 'assemble', request: detail.request}} title={`${selected.label} 데스크톱 1280px Core 컴파일`} width={1280} height={800} /></figure>
+      </div> : <p role="status" className="note" data-testid="type-detail-unavailable">Core 렌더 제한: 네 가지 페이지 목적 모두 이 시스템을 받지 않습니다. {detailReason}</p>}
     </section> : null}
   </PageShell>;
 }

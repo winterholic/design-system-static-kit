@@ -150,7 +150,7 @@ test.describe('타이포그래피', () => {
     await expect(page.getByTestId('type-specimen')).toContainText('日本語');
     await expect(page.getByTestId('type-specimen')).toContainText('₩128,000');
     await expect(page.getByTestId('type-specimen')).toContainText('currencyKRW');
-    await expect(page.getByTestId('type-specimen').locator('[data-part="standalone"]')).toHaveAttribute('download', '');
+    for (const key of ['button', 'input']) await expect(page.getByTestId('type-specimen').locator(`[data-control=${key}] [data-part="standalone"]`)).toHaveAttribute('download', '');
   });
 
   test('옛 프리셋 주소는 새 Specimen으로 연결되고 Studio 링크에 플랫폼 타이포 시스템을 보존한다', async ({page}) => {

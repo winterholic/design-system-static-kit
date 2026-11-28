@@ -89,23 +89,39 @@ export function material(id: string): Material | undefined {
   return r.value;
 }
 
-/** Core의 역할 변수와 웹폰트 fallback을 가진 Specimen 자료. 이 조회는 컴파일하지 않는다. */
-export function typographySpecimen(id: string): any | undefined {
-  const r = call<any>('getTypographySpecimen', {id});
+/** Core의 역할 변수를 가진 Specimen 자료. 이 조회는 컴파일하지 않는다. webfonts 를 켜면 서체 짝의 웹폰트를 스택 앞에 붙인 역할과 @font-face 를 함께 준다. */
+export function typographySpecimen(id: string, options: {webfonts?: boolean} = {}): any | undefined {
+  const r = call<any>('getTypographySpecimen', {id, ...(options.webfonts ? {webfonts: true} : {})});
   return r.ok ? r.value : undefined;
 }
 
-/** 버튼·필터 입력·업무 표의 실제 Core 컴파일 요청. 조립 가능한 맥락이 아니면 그대로 Core 진단을 돌려준다. */
-export function typographyControlsRequest(typeSystem: string): Record<string, unknown> {
-  const ids = ['purpose:button.primary', 'purpose:form.filter', 'purpose:table.business'];
-  const items = ids.map(id => material(id)).filter(Boolean).map((entry: any) => ({
-    purpose: entry.id,
-    visual: 'family:quiet',
-    variant: entry.example?.variant,
-    props: entry.example?.props,
-    content: entry.example?.content,
-  }));
-  return {context: 'dashboard', mode: 'light', density: 'comfortable', typeSystem, items};
+export type TypographyControl = {key: 'button' | 'input' | 'table'; label: string; purpose: string; context?: string; request?: Record<string, unknown>; reason?: string};
+// 목적 패밀리마다 어울리는 페이지 맥락이 달라(표는 dashboard·data·listing·admin 뿐) 하나의 요청으로 묶으면 대부분의 시스템이 거부된다.
+// 컨트롤마다 시스템이 허용하는 맥락을 차례로 시험해 Core 가 받는 첫 요청을 쓰고, 끝내 못 받으면 Core 의 이유를 그대로 낸다.
+const CONTROL_SPECS = [
+  {key: 'button', label: '버튼', purposes: ['purpose:button.primary']},
+  {key: 'input', label: '입력', purposes: ['purpose:form.search', 'purpose:form.filter', 'purpose:form.input-kind']},
+  {key: 'table', label: '표', purposes: ['purpose:table.business', 'purpose:table.dense']},
+] as const;
+
+/** 버튼·입력·표를 선택한 타이포 시스템으로 Core 에서 조립한 요청과 결과(또는 거부 이유). */
+export function typographyControls(typeSystem: string, contexts: string[]): TypographyControl[] {
+  return CONTROL_SPECS.map(spec => {
+    let reason = '';
+    for (const purpose of spec.purposes) {
+      const entry = material(purpose) as any;
+      if (!entry) continue;
+      for (const context of contexts) {
+        for (const visual of ['family:quiet', null]) {
+          const request = {context, mode: 'light', density: 'comfortable', typeSystem, items: [{purpose, ...(visual ? {visual} : {}), variant: entry.example?.variant, props: entry.example?.props, content: entry.example?.content}]};
+          const out = assembleComponents(request);
+          if (out.ok) return {key: spec.key, label: spec.label, purpose, context, request};
+          reason ||= out.errors.map(e => e.message).join(' ');
+        }
+      }
+    }
+    return {key: spec.key, label: spec.label, purpose: spec.purposes[0], reason: reason || 'Core가 이 시스템의 맥락에서 조립하지 못했습니다.'};
+  });
 }
 
 /** 선택지 시험용 조립: 거부 여부와 이유만 남기고(본문은 버린다) 같은 요청은 서버 프로세스 안의 상한 있는 캐시를 거친다. */

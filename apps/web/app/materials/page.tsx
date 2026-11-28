@@ -3,6 +3,7 @@ import {PageShell} from '@/shell/PageShell';
 import {MaterialsNav} from '@/features/materials/MaterialsNav';
 import {colorView, overview} from '@/features/materials/materials.server';
 import {studioForColor} from '@/features/materials/studio-link';
+import {materials as platformMaterials} from '@/features/platform/platform.server';
 import {ButtonLink} from '@/ui';
 import styles from '@/features/materials/materials.module.css';
 import {materials, platformReady} from '@/features/platform/platform.server';
@@ -13,6 +14,7 @@ export const metadata = {title: 'Materials', description: '색, 타이포그래�
 export default function MaterialsPage() {
   const count = overview();
   const color = colorView();
+  const typeSystems = platformMaterials('type-system').length;
   return (
     <PageShell eyebrow="Materials" title="디자인을 이루는 재료 둘러보기" lead="화면은 코드로 정의한 재료만으로 조립됩니다. 색과 글자, 간격과 모서리 같은 기초 재료를 직접 확인하고, 마음에 드는 것을 Studio에서 바로 써 보세요.">
       <MaterialsNav current="overview" />
@@ -26,7 +28,7 @@ export default function MaterialsPage() {
           </li>
           <li className={styles.card}>
             <h2>타이포 시스템</h2>
-            <p>시스템 {materials('type-system').length}개를 같은 샘플로 나란히 놓고 모바일·데스크톱 크기로 봅니다.</p>
+            <p>시스템 {platformMaterials('type-system').length}개를 같은 샘플로 나란히 놓고 모바일·데스크톱 크기로 봅니다.</p>
             <div className={styles.cardLink}><ButtonLink href="/materials/typography">글자 비교하기</ButtonLink></div>
           </li>
           <li className={styles.card}>
@@ -42,6 +44,12 @@ export default function MaterialsPage() {
           <p>원본 시드 {count.colorSeeds}개에서 계산한 50–950 램프와 역할·상태·부품 토큰 {count.colorTokens}개를 라이트와 다크로 비교합니다.</p>
           <div className={styles.strip} aria-hidden="true">{color.seeds.map(s => <span key={s.id} className={styles.stripChip} style={{background: s.hex}} />)}</div>
           <div className={styles.cardLink}><ButtonLink href="/materials/color" variant="secondary">색 보기</ButtonLink></div>
+        </li>
+        <li className={styles.card}>
+          <h2>타이포그래피</h2>
+          <p>{typeSystems}개 타이포 시스템을 같은 제목·본문으로 비교하고, 한 시스템의 27개 역할과 버튼·입력·표 적용 결과, 네 시스템 동시 비교를 봅니다.</p>
+          <p className={styles.cardMeta}>한글과 영문, 숫자, 코드가 섞여도 줄바꿈이 무너지지 않는지 봅니다.</p>
+          <div className={styles.cardLink}><ButtonLink href="/materials/typography" variant="secondary">타이포그래피 보기</ButtonLink></div>
         </li>
         <li className={styles.card}>
           <h2>기초 재료</h2>

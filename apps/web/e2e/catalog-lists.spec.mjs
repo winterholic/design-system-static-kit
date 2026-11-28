@@ -76,7 +76,9 @@ for (const list of LISTS) {
 
     // 모든 미리보기 박스는 사전 생성 정적 파일을 가리키고, 그림이 실제로 디코드된다
     const boxes = await page.locator('[data-preview]').evaluateAll(els => els.map(el => ({mode: el.getAttribute('data-preview'), src: el.querySelector('img')?.getAttribute('src') ?? null, text: el.textContent})));
-    expect(boxes.length, '미리보기가 있어야 한다').toBeGreaterThan(0);
+    // 타이포그래피 카탈로그의 카드는 그림이 아니라 Core 역할 값으로 그린 서체 견본이다. 그림(미리보기)은 비교·Specimen 에서 선택했을 때만 나온다(typography-catalog.spec.mjs 가 검증한다).
+    if (list.path !== '/materials/typography') expect(boxes.length, '미리보기가 있어야 한다').toBeGreaterThan(0);
+    else expect(boxes.length, '타이포그래피 목록은 선택 전에 그림을 읽지 않는다').toBe(0);
     // 사전 생성 때 Core 가 거부한 조합은 컴파일하지 않고 이유를 보인다(unavailable). 그 밖에는 모두 정적 파일이어야 한다.
     const unavailable = boxes.filter(b => b.mode === 'unavailable');
     for (const b of unavailable) expect(b.text.length, '거부 사유가 보여야 한다').toBeGreaterThan(5);

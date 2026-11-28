@@ -13,4 +13,8 @@ export const EXEMPTIONS = [
     code: 'BODY_ORPHAN', page: /\/docs\/(core\/tokens-themes|spacing\.html)/, width: 360,
     reason: 'text-wrap: pretty를 켜도 360px 좁은 칸의 긴 목록 항목(6줄 안팎) 끝줄에 4자 미만의 한 단어가 남는다. 칸 폭이 정한 줄바꿈이고 경고 수준이다. text-wrap: balance는 긴 단락을 모두 고르게 깎아 데스크톱 가독성을 해치므로 쓰지 않는다.',
   },
+  {
+    code: 'SMALL_TEXT', page: /\/materials\/typography/, locator: /typeRoleList|typeCorpus/,
+    reason: 'Specimen 은 27개 역할을 Core 가 정한 실제 크기로 보여야 한다. label-sm·caption·overline·badge 의 크기가 11px(역할 목록·시험 문구 caption)이라 12px 규칙에 걸리지만, 크기를 키우면 역할 비교가 거짓이 된다. 각 역할 행에 px 크기를 적어 두었다.',
+  },
 ];

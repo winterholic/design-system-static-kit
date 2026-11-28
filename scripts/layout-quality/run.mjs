@@ -77,7 +77,8 @@ export async function discoverPaths(page, base, seeds = ['/'], {exclude = /^\/(a
   const found = new Set(seeds);
   for (const seed of seeds) {
     await page.goto(new URL(seed, base).href, {waitUntil: 'load'});
-    const hrefs = await page.$$eval('a[href^="/"]', as => as.map(a => a.getAttribute('href').split('#')[0]));
+    // 내려받기 링크(download 속성)는 페이지가 아니라 파일이다. 따라가면 goto 가 "Download is starting" 으로 실패한다.
+    const hrefs = await page.$$eval('a[href^="/"]:not([download])', as => as.map(a => a.getAttribute('href').split('#')[0]));
     for (const h of hrefs) if (h && !exclude.test(h)) found.add(h);
   }
   for (const e of extra) found.add(e);
