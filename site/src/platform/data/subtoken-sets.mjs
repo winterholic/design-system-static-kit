@@ -57,6 +57,7 @@ const softPastel = variant({
   canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '900'), soft: r('brand', '50', '800'), sunken: r('neutral', '100', '900'),
   cardHover: r('neutral', '100', '800'), cardActive: r('neutral', '200', '700'), border: r('neutral', '200', '800'), rule: r('neutral', '300', '700', ['surface'], 3),
   text: r('neutral', '950', '50', FG_BG, 7), muted: r('neutral', '700', '300', FG_BG, 4.5), action: r('brand', '600', '300', ['canvas', 'surface'], 4.5), onAction: on('action', 4.5),
+  link: r('brand', '700', '300', FG_BG, 4.5),
 });
 
 /** 6. Minimal Monochrome: 무채색 중심, 제한적인 강조. */
@@ -170,7 +171,7 @@ const commerceVivid = variant({
 const commerceLuxury = variant({
   canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '900'), soft: r('neutral', '100', '900'), sunken: r('neutral', '100', '950'),
   cardHover: r('neutral', '100', '800'), cardActive: r('neutral', '200', '700'), border: r('neutral', '200', '800'), rule: r('neutral', '300', '700', ['surface'], 3),
-  action: r('neutral', '950', '100', ['canvas', 'surface'], 7), onAction: on('action', 7), link: r('brand', '800', '300', FG_BG, 4.5), focus: r('accent', '700', '300', FG_BG, 3),
+  action: r('neutral', '950', '100', ['canvas', 'surface'], 7), onAction: on('action', 7), link: r('accent', '800', '300', FG_BG, 4.5), focus: r('accent', '700', '300', FG_BG, 3),
   accent: r('brand', '800', '300', ['surface'], 4.5), onAccent: on('accent', 4.5),
 });
 
@@ -184,7 +185,7 @@ const mobileSoft = variant({
 /** 20. Social Expressive: 다수의 보조색과 콘텐츠 강조. */
 const socialExpressive = variant({
   canvas: r('neutral', '100', '950'), surface: r('neutral', '50', '900'), soft: r('accent', '50', '900'), sunken: r('neutral', '200', '950'),
-  cardHover: r('accent', '50', '800'), cardActive: r('brand', '50', '800'), border: r('neutral', '200', '700'), rule: r('neutral', '400', '600', ['surface'], 3),
+  cardHover: r('accent', '50', '800'), cardActive: r('accent', '50', '800'), border: r('neutral', '200', '700'), rule: r('neutral', '400', '600', ['surface'], 3),
   action: r('brand', '600', '400', ['canvas', 'surface'], 4.5), onAction: on('action', 4.5), link: r('accent', '700', '300', FG_BG, 4.5), focus: r('brand', '600', '300', FG_BG, 3),
   accent: r('accent', '700', '300', ['soft'], 4.5), onAccent: on('accent', 4.5),
 });
@@ -200,7 +201,7 @@ const wellnessCalm = variant({
 /** 22. Education Friendly: 학습 단계 및 친근한 상태 표현. */
 const educationFriendly = variant({
   canvas: r('neutral', '50', '950'), surface: r('neutral', '50', '900'), soft: r('accent', '50', '900'), sunken: r('neutral', '100', '950'),
-  cardHover: r('accent', '50', '800'), cardActive: r('neutral', '100', '800'), border: r('neutral', '200', '700'), rule: r('neutral', '400', '600', ['surface'], 3),
+  cardHover: r('accent', '50', '800'), cardActive: r('neutral', '100', '800'), border: r('accent', '200', '700'), rule: r('neutral', '400', '600', ['surface'], 3),
   action: r('brand', '600', '300', ['canvas', 'surface'], 4.5), onAction: on('action', 4.5), link: r('brand', '700', '300', FG_BG, 4.5), focus: r('accent', '600', '300', FG_BG, 3),
   success: r('success', '700', '300', ['surface'], 4.5), info: r('info', '700', '300', ['surface'], 4.5),
 });

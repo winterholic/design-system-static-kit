@@ -2,633 +2,952 @@
   "schemaVersion": "catalog-index/1.0",
   "category": "all",
   "label": "전체",
-  "itemCount": 555,
+  "itemCount": 756,
   "page": 22,
-  "pages": 24,
+  "pages": 32,
   "materials": [
     {
-      "id": "chart-preset:sales-pipeline-value",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "영업 단계별 금액",
+      "id": "purpose:navigation.bottom",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "모바일 하단 바",
       "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "erp",
-        "bar",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/6ca6c6206d9d507403665945734421b6.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:sales-pipeline-value",
-      "purpose": "영업 단계별 금액: bar 차트로 erp 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:campaign-weekly-growth",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "캠페인 주간 유입",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "marketing",
-        "area",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/2d312c7ce23dcdebee2770f037c5a640.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:campaign-weekly-growth",
-      "purpose": "캠페인 주간 유입: area 차트로 marketing 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:erp-budget-bridge",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "ERP 예산 대비 실적 브리지",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "erp",
-        "waterfall",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/c671211ae62361d33dc6161bc0e44195.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:erp-budget-bridge",
-      "purpose": "ERP 예산 대비 실적 브리지: waterfall 차트로 erp 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:erp-inventory-aging",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "ERP 재고 연령 분포",
-      "contexts": [
-        "data"
-      ],
-      "tags": [
-        "chart",
-        "erp",
-        "bars-h",
-        "data"
-      ],
-      "previewUrl": "/previews/5341cb6552dbc4aa76075f83edddd146.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:erp-inventory-aging",
-      "purpose": "ERP 재고 연령 분포: bars-h 차트로 erp 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:erp-cost-breakdown",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "ERP 부서별 비용 구성",
-      "contexts": [
-        "data"
-      ],
-      "tags": [
-        "chart",
-        "erp",
-        "stacked-bar",
-        "data"
-      ],
-      "previewUrl": "/previews/8aa66a2783a30a9aa02cc4bbefd7b9bc.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:erp-cost-breakdown",
-      "purpose": "ERP 부서별 비용 구성: stacked-bar 차트로 erp 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:erp-lead-time-histogram",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "ERP 발주 리드타임 분포",
-      "contexts": [
-        "data"
-      ],
-      "tags": [
-        "chart",
-        "erp",
-        "histogram",
-        "data"
-      ],
-      "previewUrl": "/previews/784dee7de656b3445b007dae3ef8203b.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:erp-lead-time-histogram",
-      "purpose": "ERP 발주 리드타임 분포: histogram 차트로 erp 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:erp-monthly-closing",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "ERP 월별 결산 소요 시간",
-      "contexts": [
-        "data"
-      ],
-      "tags": [
-        "chart",
-        "erp",
-        "bar",
-        "data"
-      ],
-      "previewUrl": "/previews/4a376e5e73905afce3c59266cb76f906.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:erp-monthly-closing",
-      "purpose": "ERP 월별 결산 소요 시간: bar 차트로 erp 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:finance-price-candles",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "금융 지수 일봉 캔들",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "finance",
-        "candlestick",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/3c61e1b75135cebdfb79d56b306a18f0.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:finance-price-candles",
-      "purpose": "금융 지수 일봉 캔들: candlestick 차트로 finance 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:finance-price-ohlc",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "금융 지수 OHLC 막대",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "finance",
-        "ohlc",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/96bc031f3e8d78afed8655c8283d03b6.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:finance-price-ohlc",
-      "purpose": "금융 지수 OHLC 막대: ohlc 차트로 finance 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:finance-cashflow-waterfall",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "금융 월간 현금흐름 폭포",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "finance",
-        "waterfall",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/768a5b8150cd24cb139ac96114e723c7.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:finance-cashflow-waterfall",
-      "purpose": "금융 월간 현금흐름 폭포: waterfall 차트로 finance 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:finance-yield-curve",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "금융 국채 수익률 곡선",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "finance",
-        "line",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/130f04310489b2fe2c9fb2cd7231337a.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:finance-yield-curve",
-      "purpose": "금융 국채 수익률 곡선: line 차트로 finance 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:finance-risk-return-scatter",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "금융 위험 대비 수익",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "finance",
-        "scatter",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/edf4b9fa97eb08a4e5110cd2a3364ab5.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:finance-risk-return-scatter",
-      "purpose": "금융 위험 대비 수익: scatter 차트로 finance 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:finance-drawdown-area",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "금융 고점 대비 낙폭",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "finance",
-        "area",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/77cef67c219f6c61b7091230dd9bd654.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:finance-drawdown-area",
-      "purpose": "금융 고점 대비 낙폭: area 차트로 finance 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:analytics-session-histogram",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "분석 세션 길이 분포",
-      "contexts": [
-        "data"
-      ],
-      "tags": [
-        "chart",
-        "analytics",
-        "histogram",
-        "data"
-      ],
-      "previewUrl": "/previews/c5539252e47d344e81bdc0737fbea750.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:analytics-session-histogram",
-      "purpose": "분석 세션 길이 분포: histogram 차트로 analytics 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:analytics-retention-heatmap",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "분석 코호트 잔존율",
-      "contexts": [
-        "data"
-      ],
-      "tags": [
-        "chart",
-        "analytics",
-        "heatmap",
-        "data"
-      ],
-      "previewUrl": "/previews/df344fcfa53e8d3ff3c7f16631023eeb.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:analytics-retention-heatmap",
-      "purpose": "분석 코호트 잔존율: heatmap 차트로 analytics 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:analytics-traffic-lines",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "분석 요일별 유입 단계",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "analytics",
-        "line",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/6c56ab8e1e5a7c202da54eafdd0942cb.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:analytics-traffic-lines",
-      "purpose": "분석 요일별 유입 단계: line 차트로 analytics 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:analytics-feature-adoption",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "분석 기능 사용률 순위",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "analytics",
-        "bars-h",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/93c37dcc85eef5879ea82398ad73f5af.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:analytics-feature-adoption",
-      "purpose": "분석 기능 사용률 순위: bars-h 차트로 analytics 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:analytics-growth-bridge",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "분석 월간 활성 사용자 증감",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "analytics",
-        "waterfall",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/e5947a80ba3af29c26951875fad77f2f.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:analytics-growth-bridge",
-      "purpose": "분석 월간 활성 사용자 증감: waterfall 차트로 analytics 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:marketing-channel-roas",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "마케팅 채널별 광고비와 매출",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "marketing",
-        "bar",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/3ee8c8b6c07be401ee2e24b827db2460.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:marketing-channel-roas",
-      "purpose": "마케팅 채널별 광고비와 매출: bar 차트로 marketing 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:marketing-conversion-funnel",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "마케팅 전환 퍼널",
-      "contexts": [
-        "dashboard"
-      ],
-      "tags": [
-        "chart",
-        "marketing",
-        "funnel",
-        "dashboard"
-      ],
-      "previewUrl": "/previews/3a1e9f71083eb4b36f083f20c4614405.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:marketing-conversion-funnel",
-      "purpose": "마케팅 전환 퍼널: funnel 차트로 marketing 맥락의 데이터를 보여 줍니다.",
-      "relatedCategories": [
-        "charts"
-      ],
-      "previewUrlsByFamily": {}
-    },
-    {
-      "id": "chart-preset:mobile-weekly-activity",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "모바일 요일별 활동 시간",
-      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
         "listing"
       ],
       "tags": [
-        "chart",
-        "mobile",
-        "bar",
+        "navigation",
+        "dashboard",
+        "commerce",
+        "content",
         "listing"
       ],
-      "previewUrl": "/previews/682d4878ede7c10ca8fcb2cf4236133f.svg",
-      "variantsCount": 0,
+      "previewUrl": "/previews/2a99eaf81f549715948ec6b7ae52e91c.svg",
+      "variantsCount": 1,
       "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:mobile-weekly-activity",
-      "purpose": "모바일 요일별 활동 시간: bar 차트로 mobile 맥락의 데이터를 보여 줍니다.",
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/bottom",
+      "purpose": "모바일 화면 맨 아래에서 주요 3~5개 구역을 아이콘 위·라벨 아래 칸으로 바꿔 누르게 한다. 엄지가 닿는 자리라 항목마다 44px 이상의 터치 칸을 갖는다.",
       "relatedCategories": [
-        "charts"
+        "navigation",
+        "mobile"
       ],
-      "previewUrlsByFamily": {}
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/ced95360b2ce985380643933d1c5c901.svg",
+        "family:corporate-formal": "/previews/93bf955c360b8845e0917f150d6f5053.svg",
+        "family:dense-enterprise": "/previews/bfa77fbf992a4194d0423283b84132c9.svg",
+        "family:elevated-material": "/previews/798de076f80a68f1e5035587eb618170.svg",
+        "family:expressive": "/previews/e6d1c064c0e45ca6e5861877a4cf9f0c.svg",
+        "family:luxury": "/previews/553f450b31a818a78dd0e71afd20a436.svg",
+        "family:outline-precise": "/previews/b618000abfe3dafa32eb255a6f3f172e.svg",
+        "family:quiet": "/previews/ac8ee608b299eeefa5135e680d2fdaa8.svg",
+        "family:soft": "/previews/2a99eaf81f549715948ec6b7ae52e91c.svg",
+        "family:tonal-layered": "/previews/41466bc63c972f39e0d0c19886097b64.svg"
+      }
     },
     {
-      "id": "chart-preset:mobile-balance-trend",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "모바일 월별 잔액 추이",
+      "id": "purpose:navigation.collapsible-sidebar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Collapsible Sidebar",
       "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/06992003fbc52a47f6428f34b194627d.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/collapsible-sidebar",
+      "purpose": "주요 내비게이션을 작은 화면에서 접고 펼치는 독립형 사이드바",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/23f011e2d83128b31f6757ba56cdf36f.svg",
+        "family:corporate-formal": "/previews/08c314e2a9c3eca0bc949fd0748aeab8.svg",
+        "family:dense-enterprise": "/previews/1659f9a2b37cf593719caf1c8bb5bec8.svg",
+        "family:editorial": "/previews/3019fb3241db54907cfe6f4ed4f58746.svg",
+        "family:elevated-material": "/previews/e857a2554bf4d90aba9e69dbec9a0b68.svg",
+        "family:expressive": "/previews/ad1e56588afe0e8346adf02415e51ba0.svg",
+        "family:glass": "/previews/eab35c42f9536c7cd8c484f7d4b15cb4.svg",
+        "family:luxury": "/previews/2f70b74243b3c0047dbff01a682ccd76.svg",
+        "family:outline-precise": "/previews/06992003fbc52a47f6428f34b194627d.svg",
+        "family:quiet": "/previews/e3e9e20e5470ff3fdf2454ef8e5ee764.svg",
+        "family:soft": "/previews/3c8d3e42541962fc2671efe714cc8d79.svg",
+        "family:tonal-layered": "/previews/6c13c5342df36db48032a7c9fc1735bb.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.command-menu",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Command Menu",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/180cdc1bb69de6e1a5d37fa90839a097.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/command-menu",
+      "purpose": "Command Menu는 항목 사이 방향키 이동과 Escape 닫기를 지원한다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/50ac68731672aa9fbbc81850ac5ccc72.svg",
+        "family:corporate-formal": "/previews/7226190d6b5de220a49fdf3b2ee7bcca.svg",
+        "family:dense-enterprise": "/previews/1b74bf253f3155a85c4324cbec0c6dbe.svg",
+        "family:editorial": "/previews/54281c9c6118e4f6214a5b1adb872db5.svg",
+        "family:elevated-material": "/previews/3721b568718bd3d0f9744769718a6406.svg",
+        "family:expressive": "/previews/2457f6e203345ac5573991c338249b69.svg",
+        "family:glass": "/previews/27ebc300883be410f4a705efcebe32b9.svg",
+        "family:luxury": "/previews/91e9faa9746b8dcbff925d3c36f38ee3.svg",
+        "family:outline-precise": "/previews/d31b752a1024d29153362e81d5a9ed3d.svg",
+        "family:quiet": "/previews/d6bb74d36a4d7bbb90f992d36e1b5ca9.svg",
+        "family:soft": "/previews/180cdc1bb69de6e1a5d37fa90839a097.svg",
+        "family:tonal-layered": "/previews/6029ea17f0b1d8fa5be9a00d23c1d3d9.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.context-menu",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Context Menu",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/047b41e5276501742435101e55f9f6c0.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/context-menu",
+      "purpose": "Context Menu는 항목 사이 방향키 이동과 Escape 닫기를 지원한다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/8d66cc4a41e15401b29bc5c847bc7b76.svg",
+        "family:corporate-formal": "/previews/bb65d948e5c111dd610435a4ac443192.svg",
+        "family:dense-enterprise": "/previews/f7bfcf9f8db31d18b2df22e2793b5428.svg",
+        "family:editorial": "/previews/ba288cb9b85dece6c6363c28a1cd052e.svg",
+        "family:elevated-material": "/previews/e0316395eec6985427dde301a27b74c0.svg",
+        "family:expressive": "/previews/b9bcf1f699577701176f2cd4153ca4bd.svg",
+        "family:glass": "/previews/bde5de2aa23097402a27fd3e6f019380.svg",
+        "family:luxury": "/previews/924e3a3094969ab658437217878b3b5a.svg",
+        "family:outline-precise": "/previews/f82794e6259441af288bab0cc3d4cffa.svg",
+        "family:quiet": "/previews/6189716f6f9a467c19f819a1097f52df.svg",
+        "family:soft": "/previews/047b41e5276501742435101e55f9f6c0.svg",
+        "family:tonal-layered": "/previews/3a24f1e315ad7c4463cdb696f688d44a.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.drawer",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Navigation Drawer",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/048706c223f602c2ffd2b517f06213cf.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/drawer",
+      "purpose": "Navigation Drawer는 콘텐츠를 주변 흐름 위에 표시하고 키보드로 닫을 수 있다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/048706c223f602c2ffd2b517f06213cf.svg",
+        "family:corporate-formal": "/previews/9a62d98ef2dbe8038d307277ce50fc8f.svg",
+        "family:dense-enterprise": "/previews/6f8bfbcbfbc3306ddcf243ac42ecb079.svg",
+        "family:editorial": "/previews/8a2946089abc38e11e28b37a88112de4.svg",
+        "family:elevated-material": "/previews/6ac3ef1684fa111b25f41c44796e00dd.svg",
+        "family:expressive": "/previews/14160565c559be9262995f1d5a1cef1b.svg",
+        "family:glass": "/previews/380c57b593e3f7329abf3154e1f70517.svg",
+        "family:luxury": "/previews/f782a95dfca9b21fd0e0dc2abdb744ba.svg",
+        "family:outline-precise": "/previews/2387b0c9b7bdb5edbf584eea56067919.svg",
+        "family:quiet": "/previews/a4a8bb1aa19fe221c029a8a730fa878f.svg",
+        "family:soft": "/previews/b494f4e5c8e7f4b7726c9e93fac2958c.svg",
+        "family:tonal-layered": "/previews/a575a84d81703c5d1488d0f831716d18.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.sidebar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "사이드바",
+      "contexts": [
+        "dashboard",
+        "data",
+        "settings"
+      ],
+      "tags": [
+        "navigation",
+        "dashboard",
+        "data",
+        "settings"
+      ],
+      "previewUrl": "/previews/05e3d7bbf74842c6668b7e660b268b2f.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/sidebar",
+      "purpose": "서비스의 주요 구역을 세로 목록으로 늘어놓고 현재 위치를 보인다. 대시보드·관리 화면의 왼쪽 고정 영역에서 쓰며 640px 이하에서는 머리만 남기고 접힌다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/7f169a32f0cf4a85ce67a8ad297e545b.svg",
+        "family:corporate-formal": "/previews/1bd384b825bf922cb71e1069be2bb529.svg",
+        "family:dense-enterprise": "/previews/52373d0c86a4d1adfc383f576684d7e3.svg",
+        "family:editorial": "/previews/9ca95644eb9f04484ada1b0f7981897c.svg",
+        "family:elevated-material": "/previews/05e3d7bbf74842c6668b7e660b268b2f.svg",
+        "family:expressive": "/previews/e0ffa9b31dac407ed5b2d1117a70a0c9.svg",
+        "family:glass": "/previews/c1fa4d42c5eb3c3ce93394b345b17630.svg",
+        "family:luxury": "/previews/d7cf15e5a2b5205c83cbfee54de28455.svg",
+        "family:outline-precise": "/previews/183f89ff0436576b9ef88e406ce9dcc5.svg",
+        "family:quiet": "/previews/d07fff252f714041fa02a55f9681c777.svg",
+        "family:soft": "/previews/a4626e32c0be392db7270a06497f2231.svg",
+        "family:tonal-layered": "/previews/bd5ef0c8118b9ce334959cfc035df7ab.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.tabs",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "탭",
+      "contexts": [
+        "dashboard",
+        "data",
+        "settings",
+        "content"
+      ],
+      "tags": [
+        "navigation",
+        "dashboard",
+        "data",
+        "settings",
+        "content"
+      ],
+      "previewUrl": "/previews/107416eabee1e247fccf663ce29ed8f3.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/tabs",
+      "purpose": "같은 대상의 관점(개요·작업·파일)을 한 자리에서 바꿔 보여 준다. 패널 머리(제목·설명)와 탭별 개수 배지를 곁들여 상세 화면과 설정 화면에서 쓴다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/2157c85ea6a3d77ea57fd593b7612c64.svg",
+        "family:corporate-formal": "/previews/6834695bfd06842ba1bde3d5346a4fe5.svg",
+        "family:dense-enterprise": "/previews/107416eabee1e247fccf663ce29ed8f3.svg",
+        "family:editorial": "/previews/d6555c43518a3656a10200bc1cd7e97c.svg",
+        "family:elevated-material": "/previews/d39e78bed00fc9136fdc10de2a8b9b57.svg",
+        "family:expressive": "/previews/ec1bb0b2f30ed73eddd68ed4cfe71aa4.svg",
+        "family:glass": "/previews/a65522e2c5566ef06fa83055d57490a1.svg",
+        "family:luxury": "/previews/ee405cfe082c7939625a773e0a670431.svg",
+        "family:outline-precise": "/previews/e4d4ab3629df8ab05076b448d5c7d69e.svg",
+        "family:quiet": "/previews/fe3f0082a3c8361af4a68ea0188ad1b0.svg",
+        "family:soft": "/previews/88e18213587cbd0db863392ad05e80e2.svg",
+        "family:tonal-layered": "/previews/71c0858a479d5009eb471bba23b59fd1.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.topbar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상단 메뉴",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/0325f88d121224c995307ea9ddb909b9.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/topbar",
+      "purpose": "브랜드, 가로 메뉴, 우측 주요 동작(로그인·시작하기)을 한 줄 머리로 묶는다. 랜딩·콘텐츠·대시보드 페이지 맨 위에서 쓰며 640px 이하에서는 메뉴가 토글 뒤로 접힌다.",
+      "relatedCategories": [
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/1351fbcc38615f01d11622e2f14677a3.svg",
+        "family:corporate-formal": "/previews/07d61c46ddb5a7fc4ca8ba33e6c2c581.svg",
+        "family:dense-enterprise": "/previews/d8701c3fabf054b5baded8e2a13dc6fa.svg",
+        "family:editorial": "/previews/745e046a28fd2621ddfd7b63b62514ac.svg",
+        "family:elevated-material": "/previews/0325f88d121224c995307ea9ddb909b9.svg",
+        "family:expressive": "/previews/8054b0a62ec7959ebfeac01da5bd2b14.svg",
+        "family:glass": "/previews/59f9f9c70ff84cfd8abc40198fb53c1b.svg",
+        "family:luxury": "/previews/542a628e5d3ab4925d6778fdb2d2e1f7.svg",
+        "family:outline-precise": "/previews/adada92755f20486514acefb5cdcf7c9.svg",
+        "family:quiet": "/previews/e82057d67f8c8a31a45fdf0e78ecad8a.svg",
+        "family:soft": "/previews/0567e350f8a344b8f84a6c4d8672843f.svg",
+        "family:tonal-layered": "/previews/c7cba399734ec16a732976dfc50ce6a9.svg"
+      }
+    },
+    {
+      "id": "purpose:overlay.contextual-help",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Contextual Help",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "overlay",
+        "any"
+      ],
+      "previewUrl": "/previews/006b1e2daee813cd06316b723562ca7f.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/overlay/contextual-help",
+      "purpose": "현재 입력이나 작업 맥락에 연결된 보조 설명",
+      "relatedCategories": [
+        "overlays"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/087b563126932cfac2f73b7f64e281a1.svg",
+        "family:corporate-formal": "/previews/66680a0a08edd9bf516e1f20a5dc19cf.svg",
+        "family:dense-enterprise": "/previews/006b1e2daee813cd06316b723562ca7f.svg",
+        "family:editorial": "/previews/05c50c06a133d0978b0a994c4da38fd0.svg",
+        "family:elevated-material": "/previews/e82f037419f435d7d2c62645418b2bff.svg",
+        "family:expressive": "/previews/d0485f4f0283269f5cdf2affa6032662.svg",
+        "family:glass": "/previews/18c3f641e3c3748bad080edf45ae0448.svg",
+        "family:luxury": "/previews/12f24b6cc2c446d56738ed6fbfa6689f.svg",
+        "family:outline-precise": "/previews/260199ecf96e789bd7df2db7da04d6f3.svg",
+        "family:quiet": "/previews/d248506323724ec6457d8ee168f22015.svg",
+        "family:soft": "/previews/0eb11449bcac2366aed974e90a29d94a.svg",
+        "family:tonal-layered": "/previews/6dd601b29ea040f392b62ce2936638dd.svg"
+      }
+    },
+    {
+      "id": "purpose:overlay.drawer",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Drawer",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "overlay",
+        "any"
+      ],
+      "previewUrl": "/previews/0d687b3acb070a604f16ac5430d51431.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/overlay/drawer",
+      "purpose": "Drawer는 콘텐츠를 주변 흐름 위에 표시하고 키보드로 닫을 수 있다.",
+      "relatedCategories": [
+        "overlays"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/0f3448fd7fe411bc8cc6b18578e4bdcd.svg",
+        "family:corporate-formal": "/previews/cf8b180b65f1f7097a0eabef90a277d0.svg",
+        "family:dense-enterprise": "/previews/9c0e55e3ac34707de328fb3b0346ea6c.svg",
+        "family:editorial": "/previews/0d687b3acb070a604f16ac5430d51431.svg",
+        "family:elevated-material": "/previews/dfaf4196a1ffec23bb6d495d2770e8c3.svg",
+        "family:expressive": "/previews/be50cfb4f1e077ebc95aaef82ded053c.svg",
+        "family:glass": "/previews/a36fdeceeb6783ebf24c196fdfa4ca99.svg",
+        "family:luxury": "/previews/4e6bb06bb3b9b3b962d5c7d0954f6dc8.svg",
+        "family:outline-precise": "/previews/6c9ea89345e362c9c1c563c2f16eefc0.svg",
+        "family:quiet": "/previews/6dc463d3b22f621afc07432eeb58748c.svg",
+        "family:soft": "/previews/697b19e2ee896a59efb90f9609495ee4.svg",
+        "family:tonal-layered": "/previews/a106f65527f64d6cf917915d7526ec85.svg"
+      }
+    },
+    {
+      "id": "purpose:overlay.dropdown-menu",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Dropdown Menu",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "overlay",
+        "any"
+      ],
+      "previewUrl": "/previews/2a8ad2948b013f9c1f958b437cbb46dd.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/overlay/dropdown-menu",
+      "purpose": "선택 명령을 메뉴 항목으로 제공하는 키보드 내비게이션 팝업",
+      "relatedCategories": [
+        "overlays"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/f82ee1d37af2e15c4bbfac49e4505855.svg",
+        "family:corporate-formal": "/previews/fac4b8d4d6e0bb0f954e88673251b2a8.svg",
+        "family:dense-enterprise": "/previews/fa916a733c510e96d869d95290d3817f.svg",
+        "family:editorial": "/previews/bcf6d57f7aa6da63b5bc7393dddb10cb.svg",
+        "family:elevated-material": "/previews/938890c2f57a8228c04fbb70b68e6e7a.svg",
+        "family:expressive": "/previews/75d71b8ac7741fe777c3176b9ad2db51.svg",
+        "family:glass": "/previews/fc789b6ae48c39f1db85af74ad8c8d1e.svg",
+        "family:luxury": "/previews/f87ec9525ffa87fede510cb921de3e7b.svg",
+        "family:outline-precise": "/previews/f84dd3b127516c42641d8e693620b472.svg",
+        "family:quiet": "/previews/47db24771b0ff6f999ee8df11929ada9.svg",
+        "family:soft": "/previews/2a8ad2948b013f9c1f958b437cbb46dd.svg",
+        "family:tonal-layered": "/previews/3fe6f314c8d349db975ade38496e5e5e.svg"
+      }
+    },
+    {
+      "id": "purpose:overlay.popover",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Popover",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "overlay",
+        "any"
+      ],
+      "previewUrl": "/previews/0ca5d60c535fd26bddc76e030b8337ce.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/overlay/popover",
+      "purpose": "Popover는 시작 요소 바로 아래에 붙어 보조 콘텐츠를 보여 주는 비모달 패널이다.",
+      "relatedCategories": [
+        "overlays"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/587a7e5bb24df8eda4e4accaaa1b66dd.svg",
+        "family:corporate-formal": "/previews/4db1b5174e6ae32fb6b63e8dc0c63b4a.svg",
+        "family:dense-enterprise": "/previews/0ca5d60c535fd26bddc76e030b8337ce.svg",
+        "family:editorial": "/previews/4bcfa17062c883a3cc1d7bc9bc022c99.svg",
+        "family:elevated-material": "/previews/e8247cce5ade0578c33e3743c637f627.svg",
+        "family:expressive": "/previews/72799d8a9588fa6be995c96e5618d9e8.svg",
+        "family:glass": "/previews/8507c0012a03faf25552e48fd71e0631.svg",
+        "family:luxury": "/previews/71561f606bddea28ee2e4bb0869515ac.svg",
+        "family:outline-precise": "/previews/95090d9cc0df32d8bb5544ad56d02c6c.svg",
+        "family:quiet": "/previews/f9e63ac7e1ef23355bb6174da849ebf8.svg",
+        "family:soft": "/previews/0d2cdcec4a681c68ee2ac454f0ab2a46.svg",
+        "family:tonal-layered": "/previews/5538f8dc0e096b550e9124f899ef4962.svg"
+      }
+    },
+    {
+      "id": "purpose:table.analytic",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "분석형 표",
+      "contexts": [
+        "dashboard",
+        "data"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data"
+      ],
+      "previewUrl": "/previews/1b8568a76fc5e2bba342dc48cc8779d8.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/analytic",
+      "purpose": "채널·상품별 수치를 비교한다. 숫자 열은 오른쪽 정렬이고 전월 대비 증감(아이콘+부호+글자), 인라인 막대(값 글자 병기), 합계 행을 갖고 머리글은 스크롤해도 고정된다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/5fecaa30ab81a500f29fa2aa78801d20.svg",
+        "family:corporate-formal": "/previews/4d25c9e79d4734e2f5fc567f5fc7aa85.svg",
+        "family:dense-enterprise": "/previews/f0b4a3e9a278e531e7071d8a92b24f90.svg",
+        "family:editorial": "/previews/7fe00eb78916ded9cd37d49e93481eaa.svg",
+        "family:elevated-material": "/previews/e86591905250fb346a656e845e35654d.svg",
+        "family:expressive": "/previews/28e91945eb5f6b656e13bc16da76575c.svg",
+        "family:glass": "/previews/da0cc8a8c57fda494d89e2f4913ab219.svg",
+        "family:luxury": "/previews/86c09ee69493c1c46bea0811d3960d41.svg",
+        "family:outline-precise": "/previews/1b8568a76fc5e2bba342dc48cc8779d8.svg",
+        "family:quiet": "/previews/893aac1b463d2947766a41259fddfe73.svg",
+        "family:soft": "/previews/5c8095a6fdf77c2264f2b62bae149992.svg",
+        "family:tonal-layered": "/previews/e7da4abf02429d4e7e00c1ba33f92e1c.svg"
+      }
+    },
+    {
+      "id": "purpose:table.business",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "업무형 표",
+      "contexts": [
+        "dashboard",
+        "data",
         "listing"
       ],
       "tags": [
-        "chart",
-        "mobile",
-        "line",
+        "table",
+        "dashboard",
+        "data",
         "listing"
       ],
-      "previewUrl": "/previews/18ddeed2bbe47de76115c4706dbc8e12.svg",
-      "variantsCount": 0,
+      "previewUrl": "/previews/064bb3918acc84a1cd7ac2c2b0b43cfc.svg",
+      "variantsCount": 1,
       "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:mobile-balance-trend",
-      "purpose": "모바일 월별 잔액 추이: line 차트로 mobile 맥락의 데이터를 보여 줍니다.",
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/business",
+      "purpose": "주문·결재·고객 같은 업무 목록을 선택(체크박스)·정렬(머리글 버튼)·상태 칩으로 다루는 표다. 툴바에 제목과 선택 건수, 선택 항목 일괄 동작을 둔다.",
       "relatedCategories": [
-        "charts"
+        "data"
       ],
-      "previewUrlsByFamily": {}
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/49d7fb519544543ee7a65984dc6561d3.svg",
+        "family:corporate-formal": "/previews/33823fed23d8e08903d2ec029dc964df.svg",
+        "family:dense-enterprise": "/previews/1f8cd6d064804087e4e7271f65376ec6.svg",
+        "family:editorial": "/previews/d90b2292eb055dfacd345034e0df6464.svg",
+        "family:elevated-material": "/previews/4b462d5eb274527b990ea1ee816e614c.svg",
+        "family:expressive": "/previews/5759a27400e308ac4cbd3eaf6b73e854.svg",
+        "family:glass": "/previews/78d89453fdcbd4c51252de0cbc163bef.svg",
+        "family:luxury": "/previews/63dea83ba465ca19a6fd4d4a98cd9b96.svg",
+        "family:outline-precise": "/previews/6a7a631f6a2c4902ebd95e692eb41240.svg",
+        "family:quiet": "/previews/064bb3918acc84a1cd7ac2c2b0b43cfc.svg",
+        "family:soft": "/previews/24cb57fb434fd17e12635f7a61d33446.svg",
+        "family:tonal-layered": "/previews/6b1706fa4861c03a48fc42f68ecad5a9.svg"
+      }
     },
     {
-      "id": "chart-preset:mobile-stock-candles",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "모바일 일봉 스크롤 캔들",
+      "id": "purpose:table.dense",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "고밀도 표",
       "contexts": [
-        "listing"
+        "dashboard",
+        "data"
       ],
       "tags": [
-        "chart",
-        "mobile",
-        "candlestick",
-        "listing"
+        "table",
+        "dashboard",
+        "data"
       ],
-      "previewUrl": "/previews/8d5c2ae4ef0f6d48a78ce80589b2582c.svg",
-      "variantsCount": 0,
+      "previewUrl": "/previews/3921a6b438711747532e7771c6dc6637.svg",
+      "variantsCount": 2,
       "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:mobile-stock-candles",
-      "purpose": "모바일 일봉 스크롤 캔들: candlestick 차트로 mobile 맥락의 데이터를 보여 줍니다.",
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/dense",
+      "purpose": "로그·재고·작업 큐처럼 한 화면에 행을 많이 보려는 표다. 셀 패딩을 최소로 줄이고 숫자는 모노·tabular-nums, 상태는 점 + 글자 약식으로 보인다. 줄무늬와 고정 머리를 켤 수 있다.",
       "relatedCategories": [
-        "charts"
+        "data"
       ],
-      "previewUrlsByFamily": {}
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/d74fcc0aa9c397f8a312f34a8886df73.svg",
+        "family:corporate-formal": "/previews/757d112caf761a777a6c16921fddb9f8.svg",
+        "family:dense-enterprise": "/previews/db9b489f8ce342648bcedf96efd02c58.svg",
+        "family:elevated-material": "/previews/dd77285ad5025b6f63e76303344248f2.svg",
+        "family:expressive": "/previews/3921a6b438711747532e7771c6dc6637.svg",
+        "family:glass": "/previews/bb6957fb299e70e5974c93adc366a011.svg",
+        "family:outline-precise": "/previews/f82af775e9db7c86ea1073ec3591db9b.svg",
+        "family:quiet": "/previews/542cc088035ff796f3d0d1d52a159989.svg"
+      }
     },
     {
-      "id": "chart-preset:analytics-grouped-bar",
-      "kind": "chart-preset",
-      "category": "chart",
-      "label": "분석 채널별 전환 비교",
+      "id": "purpose:table.diff",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "변경 비교 보기",
       "contexts": [
-        "dashboard"
+        "dashboard",
+        "data",
+        "admin"
       ],
       "tags": [
-        "chart",
-        "analytics",
-        "grouped-bar",
-        "dashboard"
+        "table",
+        "dashboard",
+        "data",
+        "admin"
       ],
-      "previewUrl": "/previews/fbc0f456c3bdba72a9afa61cbf496a7d.svg",
+      "previewUrl": "/previews/06c4825c09bd3d3979925baaba7f9607.svg",
       "variantsCount": 0,
       "statesCount": 0,
-      "qualityStatus": "verified",
-      "license": "MIT",
-      "url": "/components/chart-preset:analytics-grouped-bar",
-      "purpose": "분석 채널별 전환 비교: grouped-bar 차트로 analytics 맥락의 데이터를 보여 줍니다.",
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/diff",
+      "purpose": "이전·이후 텍스트를 나란히 비교하고 모바일에서는 위아래로 쌓는다.",
       "relatedCategories": [
-        "charts"
+        "data"
       ],
-      "previewUrlsByFamily": {}
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/88caf56751b69657b07036e416b7b839.svg",
+        "family:corporate-formal": "/previews/18a8c61cd64c3eab8aeeceb02661a38c.svg",
+        "family:dense-enterprise": "/previews/f5b39e383f4233447ebce734a69dc001.svg",
+        "family:editorial": "/previews/5d4dab0bee86d439282cf58ce3b7fbfd.svg",
+        "family:elevated-material": "/previews/06c4825c09bd3d3979925baaba7f9607.svg",
+        "family:expressive": "/previews/e1e4dbebe9f41c9249202cc17521c641.svg",
+        "family:glass": "/previews/d9f9a854ddc5cae7caa7e45f4d1dc35e.svg",
+        "family:luxury": "/previews/b5d969ebad89d2c02b0397ff612c484e.svg",
+        "family:outline-precise": "/previews/a653651bdfa77a4646dcc34bdd219c6c.svg",
+        "family:quiet": "/previews/48609029142ef25e626753972661be84.svg",
+        "family:soft": "/previews/97c403d31cf7186ceca7a8b67aed18bb.svg",
+        "family:tonal-layered": "/previews/200bad4179ebb2c6cb0f11779e509b33.svg"
+      }
+    },
+    {
+      "id": "purpose:table.expandable",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "행 확장 표",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/02b9ef71798836a5f2aa7d8c3ac03669.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/expandable",
+      "purpose": "각 행의 상세 내용을 네이티브 disclosure로 펼쳐 본다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/8001b3247c8eabbf178c3534c9eaa7f3.svg",
+        "family:corporate-formal": "/previews/c120d50f4d3faf1edb8956928b1a2da2.svg",
+        "family:dense-enterprise": "/previews/d1f8fca83e6148b2f3bee42ad0d7b95d.svg",
+        "family:editorial": "/previews/cfcacc5d76dbdbf121dd102509d1cf00.svg",
+        "family:elevated-material": "/previews/fd8f07a0a9ec636beff5e725090b8db3.svg",
+        "family:expressive": "/previews/ed01f5e7ae7896a01ae2dda517d5ecb9.svg",
+        "family:glass": "/previews/feb4b259a84f0b8f398c5ecdb05ff0cc.svg",
+        "family:luxury": "/previews/60d8f8c64f27050bb27b4c33f433a666.svg",
+        "family:outline-precise": "/previews/fc9cc39b36c6f818792460b0d0d7366c.svg",
+        "family:quiet": "/previews/02b9ef71798836a5f2aa7d8c3ac03669.svg",
+        "family:soft": "/previews/47ff8df9bedd2339b51bcec174431a0e.svg",
+        "family:tonal-layered": "/previews/f0fa4b399c4f6efc7f07176d8ae42951.svg"
+      }
+    },
+    {
+      "id": "purpose:table.filterable",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "필터 표",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/11e2c74790d5ec56c0e114a77cc2b6aa.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/filterable",
+      "purpose": "열 기준을 안내하는 검색 입력으로 행을 즉시 좁히고 일치 건수를 읽게 한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/64d2bb6f84bde838a8b58c200bea9b46.svg",
+        "family:corporate-formal": "/previews/11e2c74790d5ec56c0e114a77cc2b6aa.svg",
+        "family:dense-enterprise": "/previews/900f4132073de01efa2883e36bb0477c.svg",
+        "family:editorial": "/previews/692d2edf7f3379be3d9b5dbb405218c1.svg",
+        "family:elevated-material": "/previews/c417a359930b39f5c573900afdee8551.svg",
+        "family:expressive": "/previews/f8e889da28e32f8805fd27f8d1325c25.svg",
+        "family:glass": "/previews/4596a067b173584660776099242109b5.svg",
+        "family:luxury": "/previews/711f03bcdef279c610ee9d0fa2cb0b50.svg",
+        "family:outline-precise": "/previews/f408d02575b2c932d5dc486175d92a49.svg",
+        "family:quiet": "/previews/17a89098c2d63da633846003c54611e7.svg",
+        "family:soft": "/previews/39fbcfbe3d1730eca350cfebff0def35.svg",
+        "family:tonal-layered": "/previews/74357865280a7c330e8d7102ff95c95b.svg"
+      }
+    },
+    {
+      "id": "purpose:table.grouped",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "그룹 표",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/0779bfa2cda65a7b6b7f2df3c84adf82.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/grouped",
+      "purpose": "행을 같은 범주의 묶음으로 나누고 그룹 제목을 표 구조에서 읽게 한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/101b422afd2d5e78c1f00d9d65bbe378.svg",
+        "family:corporate-formal": "/previews/6bd8dc27b8c3d0739fa4555902be7e58.svg",
+        "family:dense-enterprise": "/previews/e31c17799d1bd28e2f42f2bf566b1a73.svg",
+        "family:editorial": "/previews/a5a418deeba9da2422151037fd59b197.svg",
+        "family:elevated-material": "/previews/7d91493997750bb3061e6d93d9cbced1.svg",
+        "family:expressive": "/previews/8df373044255ac52d19b9314b6c1d2ec.svg",
+        "family:glass": "/previews/bac6ca0c402dbb93d773532e3a535003.svg",
+        "family:luxury": "/previews/7dd0ce695d99e839804bf894e96b30a2.svg",
+        "family:outline-precise": "/previews/f25b1559f20d34ba067461d803eeb55c.svg",
+        "family:quiet": "/previews/80226fb92e5be964b01607b2c8f23ba3.svg",
+        "family:soft": "/previews/0779bfa2cda65a7b6b7f2df3c84adf82.svg",
+        "family:tonal-layered": "/previews/960b42e95b3dc9d4c7eb95d1c034cb7c.svg"
+      }
+    },
+    {
+      "id": "purpose:table.inspector",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "키·값 검사기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/0d4e57aaa3522c4a7a430262adcab960.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/inspector",
+      "purpose": "레코드의 필드 이름과 값을 쌍으로 나열하고 긴 값을 줄바꿈한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/0d4e57aaa3522c4a7a430262adcab960.svg",
+        "family:corporate-formal": "/previews/a77963865be1be49c27edbad1929727b.svg",
+        "family:dense-enterprise": "/previews/8f7311245f774b158e6826233264bcab.svg",
+        "family:editorial": "/previews/2a1b150dc03c3369438402fd883b8c49.svg",
+        "family:elevated-material": "/previews/518321c0ec1bce17241439c7cafb671e.svg",
+        "family:expressive": "/previews/75b17e8499927493e1f93d0f02b09019.svg",
+        "family:glass": "/previews/93cecd8a3b9df2968c01d33a42402636.svg",
+        "family:luxury": "/previews/c53411aed2c4c4fc6bb0c152556aa3e7.svg",
+        "family:outline-precise": "/previews/2acae1526d01d96d3c61ee93f496e096.svg",
+        "family:quiet": "/previews/d22e7612fbcb39422ccb5c3020b4102f.svg",
+        "family:soft": "/previews/5e0c085a144080eb3a11f384367d6c71.svg",
+        "family:tonal-layered": "/previews/6ad8b12ed98a9324bd39357fc8e66caf.svg"
+      }
+    },
+    {
+      "id": "purpose:table.log-viewer",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "로그 보기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/259726380424c333ccf259d7e5a267cc.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/log-viewer",
+      "purpose": "시각·심각도·메시지를 열로 나눠 긴 로그 문장을 읽는다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/b027fa3929a824b50e89613f09d65ec3.svg",
+        "family:corporate-formal": "/previews/c0d1cc9386bf97f0f848c4cb8a890c0e.svg",
+        "family:dense-enterprise": "/previews/669fdf0d3db0780caf41bec3daf8ffde.svg",
+        "family:editorial": "/previews/71c8fa642bb9334972374dab0ac21ca1.svg",
+        "family:elevated-material": "/previews/f8c4e5cf2815396d224fe7f1fd239046.svg",
+        "family:expressive": "/previews/b5d78e9ee5cc8ead6c045dfc0e513ba3.svg",
+        "family:glass": "/previews/469ee8775c87f6f8f78c0f807c3f4437.svg",
+        "family:luxury": "/previews/7b4f9dfb2dc15d4a906f594bf28985d1.svg",
+        "family:outline-precise": "/previews/fcff94b5445471de4a93875ad5660cd9.svg",
+        "family:quiet": "/previews/33edbabb5309f42ab17f622ab132e9cd.svg",
+        "family:soft": "/previews/259726380424c333ccf259d7e5a267cc.svg",
+        "family:tonal-layered": "/previews/837f51ccb492208ccce908f9a199f836.svg"
+      }
+    },
+    {
+      "id": "purpose:table.tree",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "트리 보기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/10f2b8b51da783f383107c45bcd60948.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/tree",
+      "purpose": "계층형 항목을 펼치고 접으며 방향키로 이동한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/10f2b8b51da783f383107c45bcd60948.svg",
+        "family:corporate-formal": "/previews/336a6d1f9974b52f3e14446ab7ec14de.svg",
+        "family:dense-enterprise": "/previews/e63a2966a80bdfdd7f1fbefbe0a0df3f.svg",
+        "family:editorial": "/previews/aa60d38e725ec1a2b48416440a8e8578.svg",
+        "family:elevated-material": "/previews/e910d05bdd99c5a68ffdfdd2d8319d55.svg",
+        "family:expressive": "/previews/172566f80afbed99e8cb0cd5db37dea5.svg",
+        "family:glass": "/previews/ef410d5011e9c7ec5f09f9209511e0eb.svg",
+        "family:luxury": "/previews/712cd29e5add03847263db49118fc779.svg",
+        "family:outline-precise": "/previews/4a0ebdd8aba4c7f264225a12f132d5a5.svg",
+        "family:quiet": "/previews/df8675614b87690314ad574755a20fb0.svg",
+        "family:soft": "/previews/b7e4482d7f63485b7d0525b11b8c1e94.svg",
+        "family:tonal-layered": "/previews/a2b76c0ec29c428898cce1a11c869e45.svg"
+      }
+    },
+    {
+      "id": "purpose:work.approval-panel",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Approval Panel",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "work",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/10d86151c77d3dcce669d87fc3d0fe77.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/work/approval-panel",
+      "purpose": "요청자·요청 내용·시각과 승인 또는 반려 동작을 제시한다.",
+      "relatedCategories": [
+        "work-patterns"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/b5f8476794e055a6159ae6407e80bfb8.svg",
+        "family:corporate-formal": "/previews/6b8228599ab26f50eaa2c4a7e7ab0de6.svg",
+        "family:dense-enterprise": "/previews/4fa4616129c763160c6cb05e4a9f63db.svg",
+        "family:editorial": "/previews/e5b2e28d513478c1eebabd2d8cbcae13.svg",
+        "family:elevated-material": "/previews/671b8b2fe9b573906c70cf7f5f4cadfc.svg",
+        "family:expressive": "/previews/92009c4575652559440b222285719936.svg",
+        "family:glass": "/previews/7550033cd73a934fa4d3d553ec9468db.svg",
+        "family:luxury": "/previews/10d86151c77d3dcce669d87fc3d0fe77.svg",
+        "family:outline-precise": "/previews/cd8e19a0d3fc16120760440a08f027fc.svg",
+        "family:quiet": "/previews/a518379108aa6888785c757c161bb1c8.svg",
+        "family:soft": "/previews/f584d743623af64f1e1e4b692cea5e7d.svg",
+        "family:tonal-layered": "/previews/a8b32169b0d02cad39a962b55cd5439e.svg"
+      }
+    },
+    {
+      "id": "purpose:work.audit-log",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Audit Log",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "work",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/33d41493257ca139063ba97596e3aaed.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/work/audit-log",
+      "purpose": "행위자·변경 내용·시각을 표의 헤더 관계로 기록한다.",
+      "relatedCategories": [
+        "work-patterns"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/addede3212409270d77a3a09c786b26a.svg",
+        "family:corporate-formal": "/previews/e194d4505cc60e09c77f8e0bb60839f3.svg",
+        "family:dense-enterprise": "/previews/8d4d587e40a71bd980836076b3d02688.svg",
+        "family:editorial": "/previews/ba246b37de5e72fc36cda6cdf8f47aff.svg",
+        "family:elevated-material": "/previews/c6c57dea5b8659848bd1bc5dd004f2ec.svg",
+        "family:expressive": "/previews/8251ac85b99e563eb09e358a6c46166b.svg",
+        "family:glass": "/previews/e86e4c512bebcfce628afc662e59e640.svg",
+        "family:luxury": "/previews/e16c58f4170df8d8858125df73625b52.svg",
+        "family:outline-precise": "/previews/92d4698ed005c44b13629a987edafa13.svg",
+        "family:quiet": "/previews/3d19eb367c701a54c08c9413fc0fce09.svg",
+        "family:soft": "/previews/33d41493257ca139063ba97596e3aaed.svg",
+        "family:tonal-layered": "/previews/59301793408b68e06fafbc09c06f6a53.svg"
+      }
     }
   ]
 }
