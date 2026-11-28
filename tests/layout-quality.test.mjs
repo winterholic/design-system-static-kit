@@ -69,7 +69,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {createPlatform} from '../src/platform/index.mjs';
 import {LAYOUTS, LAYOUT_KEYS, validateLayout} from '../src/platform/data/layouts.mjs';
-import {assembleLayout, assembleSpecimen, layoutSpecimen, reachedBand, dedupeRules} from '../src/platform/layouts.mjs';
+import {assembleLayout, assembleSpecimen, layoutSpecimen, layoutFingerprint, reachedBand, dedupeRules} from '../src/platform/layouts.mjs';
 import {compileLayout, layoutCSS, validateFills, validateLayoutSpec, bestCols, visualOrder, parseAreas, LAYOUT_BANDS, LAYOUT_BAND_NAMES} from '../src/layout.mjs';
 import {listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility} from '../src/service/index.mjs';
 import {mcpConnect, rest} from './channel-support.mjs';
@@ -356,9 +356,9 @@ test('브라우저 실측 증거(screens/layouts/measurements.json)가 24종 × 
       }
     }
     for (const w of data.mainWidths) assert.ok(e.variants.specimen.widths[w].slots.length >= m.slots.filter(s => s.required).length, `${e.slug} ${w}px 슬롯 위치 기록`);
-    // 증거가 현재 출력의 것인가: 표본 HTML+CSS 해시가 같아야 한다(코드가 바뀌었는데 실측을 다시 하지 않은 상태를 잡는다)
+    // 증거가 현재 레이아웃 코드의 것인가: 자리표시 조각으로 컴파일한 레이아웃 출력의 지문이 같아야 한다(다른 트랙의 색·부품 변경에는 흔들리지 않는다)
     const now = assembleSpecimen(env, m.id);
-    assert.equal(e.variants.specimen.outputHash, sha(now.value.html + now.value.css), `${e.slug}: 실측 이후 출력이 바뀌었다(node scripts/layouts/measure.mjs 다시 실행)`);
+    assert.ok(now.ok && e.variants.specimen.outputHash.length === 16); assert.equal(e.variants.specimen.layoutHash, layoutFingerprint(env, m), `${e.slug}: 실측 이후 레이아웃 출력이 바뀌었다(node scripts/layouts/measure.mjs 다시 실행)`);
     assert.ok(e.screenshot, `${e.slug}: 대표 폭 스크린샷`);
     // 폭 구간 규칙은 앞 구간 위에 쌓인다: 브라우저가 계산한 position이 그 폭에서 선언한 값과 같아야 한다(좁은 폭의 sticky가 넓은 폭으로 새지 않는다)
     for (const w of data.mainWidths) {

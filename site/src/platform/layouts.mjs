@@ -159,3 +159,21 @@ export const assembleSpecimen = (env, layoutId, options = {}) => {
   const fills = layoutSpecimen(env, layout, options);
   return {fills, ...assembleLayout(env, {layout: layoutId, fills, density: options.density, mode: options.mode, visual: options.visual, context: options.context, width: options.width})};
 };
+
+/**
+ * 레이아웃 자체의 출력 지문: 칸 내용을 자리표시 조각으로 바꿔 컴파일한 HTML·CSS의 해시. 다른 트랙(색·서체·부품)이 바뀌어도 변하지 않고 레이아웃 코드·재료가 바뀌면 변한다.
+ * 브라우저 실측 증거가 현재 레이아웃 코드의 것인지 확인하는 데 쓴다.
+ */
+export function layoutFingerprint(env, layout) {
+  const out = compileLayout(layout, layoutSpecimen(env, layout).map(f => ({slot: f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
+  return cyrb53(out.html + out.css);
+}
+
+/** 문자열 지문(53비트, 암호용 아님). Core는 node:* 모듈을 쓰지 않으므로 해시 함수를 직접 둔다. */
+function cyrb53(text) {
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < text.length; i++) { const c = text.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(14, '0');
+}

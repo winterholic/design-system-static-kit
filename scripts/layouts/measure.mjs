@@ -12,7 +12,7 @@ import {writeFileSync, mkdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {chromium} from '@playwright/test';
 import {createPlatform} from '../../src/platform/index.mjs';
-import {assembleLayout, layoutSpecimen} from '../../src/platform/layouts.mjs';
+import {assembleLayout, layoutSpecimen, layoutFingerprint} from '../../src/platform/layouts.mjs';
 import {LAYOUT_BANDS, LAYOUT_BAND_NAMES} from '../../src/layout.mjs';
 
 export const MAIN_WIDTHS = [320, 768, 1024, 1440];
@@ -113,7 +113,7 @@ export async function run({out = null, shots = true} = {}) {
         perWidth[width] = {band: LAYOUT_BAND_NAMES[bandOf(m.containerWidth)], containerWidth: m.containerWidth, docOverflow: m.docOverflow, bodyOverflow: m.bodyOverflow, outsideCount: m.outsideCount, outside: m.outside,
           overlaps: m.overlaps.filter(o => !pulled(layout, bandOf(m.containerWidth)).has(o.a) && !pulled(layout, bandOf(m.containerWidth)).has(o.b)), declaredOverlaps: m.overlaps.length - m.overlaps.filter(o => !pulled(layout, bandOf(m.containerWidth)).has(o.a) && !pulled(layout, bandOf(m.containerWidth)).has(o.b)).length, sticky, signature: signatureOf(m), slots: m.slots.map(s => ({slot: s.slot, x: +(s.left / m.containerWidth).toFixed(3), y: Math.round(s.top), w: +(s.width / m.containerWidth).toFixed(3), h: Math.round(s.height), count: s.count, itemColumns: new Set(s.items.map(i => Math.round(i.left / 6))).size, position: s.position, scrollable: s.scrollable}))};
       }
-      entry.variants[name] = {ok: true, fills: fills.length, outputHash: sha(r.value.html + r.value.css), htmlBytes: r.value.html.length, cssBytes: r.value.css.length, widths: perWidth};
+      entry.variants[name] = {ok: true, fills: fills.length, layoutHash: layoutFingerprint(env, layout), outputHash: sha(r.value.html + r.value.css), htmlBytes: r.value.html.length, cssBytes: r.value.css.length, widths: perWidth};
       if (!stress && shots && out) {
         const width = REPRESENTATIVE[layout.needsBand];
         await page.setViewportSize({width, height: 900}); await wait();
