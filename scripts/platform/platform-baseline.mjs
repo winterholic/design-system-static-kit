@@ -12,12 +12,57 @@
  */
 import {createHash} from 'node:crypto';
 import {createPlatform, assemblePage, bindColor, bindType, axisIds, materialAxisIds, PURPOSES, PLATFORM_CONTRACT_VERSION} from '../../src/platform/index.mjs';
+import {CLOSED_PAIRS} from '../../src/platform/contract.mjs';
 import {PATTERNS} from '../../src/profiles/data.mjs';
 import {templates, pageTypes, axes} from '../../src/catalog/index.mjs';
 
 const hash = v => createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex').slice(0, 16);
 const sortObj = o => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 const MODES = ['light', 'dark'];
+
+export function countAttemptedCombinations({modes, shells, widths, densities, palettes, sets, types, families}) {
+  return modes * shells * widths * densities * palettes * sets * types * families;
+}
+
+/**
+ * 관계 그래프의 전체 집합 평가를 필요한 boolean 판정으로 인수분해한다.
+ * requires는 전체 선택 집합에 대해 확인하고, 나머지 pair 관계·check·닫힌 쌍은
+ * 함수 호출 범위에서 재사용한다. 반환값은 graph.evaluate(ids, ctx).ok와 같다.
+ */
+export function createRelationEvaluator(graph, registry) {
+  const requiredByMaterial = new Map(), pairCompatibility = new Map();
+  const contextKey = ctx => JSON.stringify(ctx);
+  const requires = (id, ctx, ctxKey) => {
+    const key = JSON.stringify([id, ctxKey]);
+    if (!requiredByMaterial.has(key)) requiredByMaterial.set(key, graph.from(id, {type: 'requires', ctx}).map(edge => edge.to));
+    return requiredByMaterial.get(key);
+  };
+  const pairOk = (a, b, ctx, ctxKey) => {
+    const key = JSON.stringify([a, b, ctxKey]);
+    if (pairCompatibility.has(key)) return pairCompatibility.get(key);
+    const edges = graph.between(a, b, ctx);
+    const checks = graph.runChecks(a, b, ctx);
+    const closed = CLOSED_PAIRS.some(([x, y]) => {
+      const ka = registry.get(a)?.kind, kb = registry.get(b)?.kind;
+      return (ka === x && kb === y) || (ka === y && kb === x);
+    });
+    const ok = !edges.some(edge => edge.type === 'forbids')
+      && !checks.some(check => !check.ok)
+      && (!closed || edges.some(edge => edge.type === 'compatible') || checks.some(check => check.ok));
+    pairCompatibility.set(key, ok);
+    return ok;
+  };
+  return (ids, ctx = {}) => {
+    const selected = [...new Set(ids)].sort();
+    const selectedSet = new Set(selected), ctxKey = contextKey(ctx);
+    for (const id of selected) if (requires(id, ctx, ctxKey).some(target => !selectedSet.has(target))) return false;
+    for (let i = 0; i < selected.length; i++) for (let j = i + 1; j < selected.length; j++) {
+      if (!pairOk(selected[i], selected[j], ctx, ctxKey)) return false;
+    }
+    return true;
+  };
+}
+
 /** 패턴별 대표 콘텐츠. 데이터 양이 배치에 닿도록 패턴마다 다른 구조를 쓴다. */
 const rows = n => Array.from({length: n}, (_, i) => [`작업 ${i + 1}`, `담당 ${i % 5}`, ['진행', '완료', '대기'][i % 3]]);
 const kpis = n => Array.from({length: n}, (_, i) => ({label: `지표 ${i + 1}`, value: String(10 + i), trend: i % 2 ? 'down' : 'up', delta: `+${i}`, detail: '지난주 대비'}));
@@ -62,9 +107,10 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
   const perPattern = {};
   let assemblable = 0, attempted = 0;
   const layoutRelOk = new Map();
+  const relationOk = createRelationEvaluator(env.graph, reg);
   const layoutOk = (ctx, a, axisIdsOfMaterials) => {
     const k = JSON.stringify([a, axisIdsOfMaterials]);
-    if (!layoutRelOk.has(k)) layoutRelOk.set(k, env.graph.evaluate([...axisIds(a), ...axisIdsOfMaterials], {context: ctx, mode: a.mode, density: a.density}).ok);
+    if (!layoutRelOk.has(k)) layoutRelOk.set(k, relationOk([...axisIds(a), ...axisIdsOfMaterials], {context: ctx, mode: a.mode, density: a.density}));
     return layoutRelOk.get(k);
   };
   for (const {pattern, purpose, usesFamily} of patternsOf(only)) {
@@ -75,13 +121,16 @@ export function platformSection({env = createPlatform(), only = null} = {}) {
     let n = 0, tried = 0;
     const openSets = sets.filter(x => x.contexts.includes('any') || x.contexts.includes(ctx)), openTypes = types.filter(t => t.contexts.includes('any') || t.contexts.includes(ctx));
     // 시도한 수: 걸러 내기 전의 전체 곱(모드 × 레이아웃 × 팔레트 × 세트 × 타이포 × 패밀리). 통과한 수와 비교해 얼마나 막혔는지 보인다.
-    tried += MODES.length * L.shells.length * L.widths.length * L.densities.length * palettes.length * openSets.length * openTypes.length * famChoices.length;
+    tried += countAttemptedCombinations({
+      modes: MODES.length, shells: L.shells.length, widths: L.widths.length, densities: L.densities.length,
+      palettes: palettes.length, sets: openSets.length, types: openTypes.length, families: famChoices.length,
+    });
     for (const mode of MODES) {
       const tuples = [];
       for (const p of palettes) for (const s of sets) if ((s.contexts.includes('any') || s.contexts.includes(ctx)) && colorOk.get(`${p.id}|${s.id}|${mode}`)) for (const t of ts) for (const f of famChoices) {
         // 관계 평가: 재료 사이(금지·계산 관계)는 레이아웃과 무관하다
         const ids = [p.id, s.id, t.id, ...(f ? [f.id, base] : [])];
-        if (env.graph.evaluate(ids, {context: ctx, mode}).ok) tuples.push({t, f});
+        if (relationOk(ids, {context: ctx, mode})) tuples.push({t, f});
       }
       for (const shell of L.shells) for (const width of L.widths) for (const density of L.densities) {
         const a = {shell, width, density, mode};

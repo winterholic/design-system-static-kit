@@ -19,7 +19,7 @@ export function defineCheck({id, kinds, reason, run}) {
 /** 조건은 모두 AND, 값 목록은 OR. 맥락에 그 키가 없으면 조건부 관계는 적용하지 않는다. */
 export const edgeApplies = (edge, ctx = {}) => Object.entries(edge.when ?? {}).every(([k, values]) => ctx[k] !== undefined && values.includes(ctx[k]));
 
-const MAX_CACHED_CHECKS = 4096;
+const MAX_CACHED_CHECKS = 65536;
 
 export function createRelationGraph(registry, {checks = []} = {}) {
   const all = registry.list().flatMap(m => m.relations.map(e => Object.freeze({from: m.id, ...e})));
