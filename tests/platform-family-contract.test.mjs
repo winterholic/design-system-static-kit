@@ -9,10 +9,10 @@ const MENU_ITEMS = [{label: '하나'}, {label: '둘'}, {label: '셋'}];
 const propsFor = id => ({label: '저장', ariaLabel: '저장', icon: 'plus', text: '값', items: MENU_ITEMS, message: undefined, id: 'sample'});
 
 test('all existing base and purpose components carry complete layer contracts', () => {
-  // 기반 10 + 목적 패밀리 53(A 계열 5, J 계열 10, K 계열 6 포함) + A 독립 시연 12 + N 커머스 11 + L 독립 시연 5
+  // 기반 10 + 목적 패밀리 65 + A 독립 시연 12 + N 커머스 11 + L 독립 시연 7
   assert.equal(COMPONENT_CONTRACTS.length, 10 + PURPOSE_FAMILIES.length);
   assert.equal(PURPOSE_FAMILIES.length, 65);
-  assert.equal(ALL_COMPONENT_CONTRACTS.length, 103);
+  assert.equal(ALL_COMPONENT_CONTRACTS.length, 105);
   assert.deepEqual(validateComponentContracts(), []);
   for (const c of ALL_COMPONENT_CONTRACTS) for (const key of COMPONENT_CONTRACT_FIELDS) assert.ok(Object.hasOwn(c, key), `${c.id}.${key}`);
 });
@@ -159,8 +159,8 @@ test('the same component reached as an A demo and as a purpose family counts onc
   assert.equal(types.filter(t => t === 'split-button').length, 2, 'purpose:button.split and component:split-button');
   assert.equal(types.filter(t => t === 'menu-button').length, 2);
   assert.ok(types.filter(t => t === 'button-control').length >= 9, 'icon, toggle, loading, FAB, copy, close, link, button and the base all describe button-control');
-  // 기반 10 + 목적 패밀리 중 button-control로 합쳐지지 않는 29 + A 분할·메뉴·그룹 3 + N 커머스 9종 + L 계열 5종 + J/K 신규 16
-  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), 84);
+  // 기반 10 + 목적 패밀리 중 button-control로 합쳐지지 않는 29 + A 분할·메뉴·그룹 3 + N 커머스 9종 + L 계열 7종 + J/K 신규 16
+  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), 86);
 });
 
 // ---- 독립 검토(2026-11-28)에서 재현된 결함의 회귀 시험 ----

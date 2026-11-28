@@ -1075,3 +1075,37 @@ $ node --test tests/platform-layout-runtime.test.mjs
 `npm ci`는 이 worktree의 실제 `node_modules`에 설치했다(Node 26.9.0, 저장소 권장 Node 22와 엔진 차이 경고). `npm run coverage:materials:check`와 `npm run coverage:materials`는 전수 생성 중 Codex command 실행에서 각각 종료 코드 143으로 끝났고 출력이 없어 MATCH/DRIFT 판정은 미확인이다. 최신 main의 나머지 Manifest 자료는 보존하고, D5의 세 missing 행과 요구 요약 수치는 직접 갱신했다. 따라서 이 수치 편집은 독립 산술 대조만 통과했으며 생성기 바이트 일치까지 검증한 것은 아니다.
 
 `npm run verify`는 `npm test` 단계에서 종료 코드 1이었다. Resizable Panel 브라우저 시험과 `platform-type-fonts.test.mjs`의 Chromium 시작 로그에서 `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)` 다음 `SIGTRAP`이 관측됐다. 따라서 verify 후속 단계는 자동으로 실행되지 않았다. 같은 revision에서 분리 실행한 `node scripts/audit.mjs`, `node scripts/docs.mjs`, `npm run build`, `node scripts/check-generated.mjs`는 각각 종료 코드 0이며 마지막 출력은 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`다. 브라우저 시험은 IPC 차단으로 미실행이다.
+
+## 17. D5 §6.2 L 3개 미충족 항목 보완 (2026-11-28)
+
+Stack과 Container에 실제 세로 흐름·간격/정렬, 컨테이너 폭 제한 렌더러를 추가했다. Resizable Panel에는 포인터 드래그와 방향키·Home·End 런타임을 연결했다. 전 입력은 허용 값 검사와 HTML escape를 거치며, 핸들 조작은 15~85%에서 제한하고 `aria-valuenow`와 두 패널의 flex 비율을 갱신한다. Resizable Panel 미사용 조립에는 런타임이 들어가지 않는다.
+
+세 컴포넌트는 `assembleComponents({layouts})`에서 Core·REST·MCP에 같은 출력으로 연결했다. JSON 직렬화 후 다시 조립하는 Blueprint 왕복 시험은 Stack·Container·Resizable Panel 세 항목과 결정론적 출력/Manifest 항목을 확인한다. 출력 probe는 각 실제 HTML·CSS를 해시하고 Manifest가 직접 생성됐다.
+
+```sh
+$ npm ci
+added 52 packages; found 0 vulnerabilities (Node 26.9.0; package engine warning: repository requires Node 22.x)
+$ node --test tests/platform-family-contract.test.mjs tests/platform-family-inventory.test.mjs tests/platform-layout-blueprint.test.mjs tests/platform-layout-runtime.test.mjs tests/platform-service-layout-channels.test.mjs tests/layout-quality.test.mjs
+ℹ tests 62 / ℹ pass 62 / ℹ fail 0
+$ node --test --test-name-pattern='2\.1\.0|2\.4\.0|legacy|catalogSnapshot' tests/composition.test.mjs tests/typography-refine.test.mjs tests/expression-2-5.test.mjs tests/service-contract.test.mjs
+ℹ tests 11 / ℹ pass 11 / ℹ fail 0
+$ jq '[.requirements[]|select(.section=="§6.2 L" and .coverage=="direct")]|length' docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+14
+$ jq '[.requirements[]|select(.section=="§6.2 L" and .coverage=="missing")]|length' docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+0
+$ jq '.materials[]|select(.id=="component:stack" or .id=="component:container" or .id=="component:resizable-panel")|[.id,.evidence.probe.ran,.evidence.probe.ok,.evidence.outputHash]' docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+component:container true true c394aa803ef0db71; component:resizable-panel true true 700567984cf40dad; component:stack true true 9b4bd0d1b6e40452
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1479 materials, 406 requirements)
+$ npm run build && node scripts/check-generated.mjs
+BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 theme showcases, test-lab
+REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
+$ git diff origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json
+(exit 0; 출력 diff 없음)
+```
+
+TDD 실행 증거: 포인터 시험을 먼저 쓴 뒤 `node --test tests/platform-layout-runtime.test.mjs`에서 `pass 2 / fail 2`로 포인터 이벤트 미지원 실패를 확인했다. 런타임 구현 후 같은 명령은 `pass 4 / fail 0`이다. 생성 전 Manifest 시험의 3 missing assertion도 재생성 후 통과한다.
+
+Chromium 시험 `tests/platform-layout-resizable.test.mjs`는 미실행이다. Codex command sandbox에서 browser preflight가 `status=blocked`, Mach register 및 launch-services Mach lookup `denied`(errno 0), 종료 코드 78을 반환해 브라우저를 실행하지 않았고 재시도하지 않았다. 브라우저 동작을 대체 확인한 비브라우저 시험은 `tests/platform-layout-runtime.test.mjs`의 포인터·키보드 하네스 4/4다.
+
+TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest coverage는 direct 14/14이며 각 행 재료에 성공 출력 probe와 hash가 있다.

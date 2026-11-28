@@ -208,6 +208,8 @@ const forbiddenOf = id => [
 const withSelected = id => id === 'component:toggle-button' || id === 'component:segmented-control';
 const menuLike = id => id === 'component:split-button' || id === 'component:menu-button';
 const LAYOUT_CONTRACT_PROPS = Object.freeze({
+  'component:stack': {items: 'array of strings or {content: string} objects', gap: ['tight', 'near', 'item', 'gap'], align: ['start', 'center', 'stretch']},
+  'component:container': {content: 'string', label: 'string', width: ['narrow', 'standard', 'wide', 'full']},
   'component:responsive-grid': {items: 'array of strings or {content: string} objects'},
   'component:center': {content: 'string', label: 'string'},
   'component:sticky-region': {content: 'string', label: 'string'},

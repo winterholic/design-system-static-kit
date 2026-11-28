@@ -13366,6 +13366,8 @@ const forbiddenOf = id => [
 const withSelected = id => id === 'component:toggle-button' || id === 'component:segmented-control';
 const menuLike = id => id === 'component:split-button' || id === 'component:menu-button';
 const LAYOUT_CONTRACT_PROPS = Object.freeze({
+  'component:stack': {items: 'array of strings or {content: string} objects', gap: ['tight', 'near', 'item', 'gap'], align: ['start', 'center', 'stretch']},
+  'component:container': {content: 'string', label: 'string', width: ['narrow', 'standard', 'wide', 'full']},
   'component:responsive-grid': {items: 'array of strings or {content: string} objects'},
   'component:center': {content: 'string', label: 'string'},
   'component:sticky-region': {content: 'string', label: 'string'},
@@ -15190,16 +15192,53 @@ document.addEventListener('keydown',function(ev){
   else if(ev.key==='End')next=max;
   else return;
   ev.preventDefault();
+  apply(handle,host,next);
+});
+function apply(handle,host,next){
+  var min=Number(handle.getAttribute('aria-valuemin')||15);
+  var max=Number(handle.getAttribute('aria-valuemax')||85);
+  next=Math.max(min,Math.min(max,Math.round(next)));
   handle.setAttribute('aria-valuenow',String(next));
   var first=host.querySelector('.kit-panel-first');
   var second=host.querySelector('.kit-panel-second');
   if(first)first.style.flex='0 0 '+next+'%';
   if(second)second.style.flex='0 0 '+(100-next)+'%';
   handle.dispatchEvent(new CustomEvent('kit-panel-resize',{bubbles:true,detail:{value:next}}));
+}
+var drag=null;
+document.addEventListener('pointerdown',function(ev){
+  if(ev.button!==undefined&&ev.button!==0)return;
+  var handle=ev.target.closest&&ev.target.closest('[data-resizable-handle]');
+  if(!handle)return;
+  var host=handle.closest('[data-component="component:resizable-panel"]');
+  if(!host)return;
+  drag={handle:handle,host:host,pointerId:ev.pointerId};
+  if(ev.preventDefault)ev.preventDefault();
 });
+document.addEventListener('pointermove',function(ev){
+  if(!drag||(drag.pointerId!==undefined&&ev.pointerId!==undefined&&drag.pointerId!==ev.pointerId))return;
+  var rect=drag.host.getBoundingClientRect();
+  var verticalSeparator=(drag.handle.getAttribute('aria-orientation')||'vertical')==='vertical';
+  var start=verticalSeparator?rect.left:rect.top;
+  var extent=verticalSeparator?rect.width:rect.height;
+  if(!extent)return;
+  var point=verticalSeparator?ev.clientX:ev.clientY;
+  apply(drag.handle,drag.host,((point-start)/extent)*100);
+  if(ev.preventDefault)ev.preventDefault();
+});
+function stopDrag(ev){
+  if(drag&&(!drag.pointerId||ev.pointerId===undefined||drag.pointerId===ev.pointerId))drag=null;
+}
+document.addEventListener('pointerup',stopDrag);
+document.addEventListener('pointercancel',stopDrag);
 })();`;
 
 const LAYOUT_CSS = `
+.kit-layout-stack{display:flex;flex-direction:column;gap:var(--kit-sp-item);inline-size:100%;box-sizing:border-box}
+.kit-layout-stack[data-gap="tight"]{gap:var(--kit-sp-tight)}.kit-layout-stack[data-gap="near"]{gap:var(--kit-sp-near)}.kit-layout-stack[data-gap="item"]{gap:var(--kit-sp-item)}.kit-layout-stack[data-gap="gap"]{gap:var(--kit-sp-gap)}
+.kit-layout-stack[data-align="start"]{align-items:flex-start}.kit-layout-stack[data-align="center"]{align-items:center}.kit-layout-stack[data-align="stretch"]{align-items:stretch}
+.kit-layout-container{inline-size:100%;margin-inline:auto;padding-inline:var(--kit-sp-item);box-sizing:border-box}
+.kit-layout-container[data-width="narrow"]{max-inline-size:40rem}.kit-layout-container[data-width="standard"]{max-inline-size:64rem}.kit-layout-container[data-width="wide"]{max-inline-size:80rem}.kit-layout-container[data-width="full"]{max-inline-size:none}
 .kit-layout-responsive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--kit-sp-item);inline-size:100%;box-sizing:border-box}
 .kit-layout-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-block-size:160px;inline-size:100%;text-align:center;box-sizing:border-box;padding:var(--kit-sp-item)}
 .kit-layout-sticky-region{position:sticky;inset-block-start:0;z-index:10;inline-size:100%;background:var(--kit-surface);color:var(--kit-text);box-sizing:border-box;padding:var(--kit-sp-item);border-block-end:1px solid var(--kit-border)}
@@ -15216,11 +15255,13 @@ const LAYOUT_CSS = `
 const NODE = (type, axes = {}) => ({field: 'tree', node: type, axes});
 
 const LAYOUT_SPECS = [
+  ['component:stack', 'Stack', 'l-01-stack', 'stack', 'component:stack', {field: 'layouts', component: 'component:stack'}],
   ['component:responsive-grid', 'Responsive Grid', 'l-04-responsive-grid', 'responsive-grid', 'layout:equal-grid', NODE('grid')],
+  ['component:container', 'Container', 'l-07-container', 'container', 'component:container', {field: 'layouts', component: 'component:container'}],
   ['component:center', 'Center', 'l-09-center', 'center', 'layout:centered-hero', NODE('hero', {variant: 'centered'})],
   ['component:sticky-region', 'Sticky Region', 'l-12-sticky-region', 'sticky-region', 'layout:sticky-action-layout', NODE('actions')],
   ['component:scroll-area', 'Scroll Area', 'l-13-scroll-area', 'scroll-area', 'layout:master-detail', NODE('master-detail')],
-  ['component:resizable-panel', 'Resizable Panel', 'l-14-resizable-panel', 'resizable-panel', 'component:split', NODE('split')],
+  ['component:resizable-panel', 'Resizable Panel', 'l-14-resizable-panel', 'resizable-panel', 'component:resizable-panel', {field: 'layouts', component: 'component:resizable-panel'}],
 ];
 
 const LAYER_OF = Object.freeze({independent: 'Base', variant: 'Purpose', composite: 'Composite'});
@@ -15232,6 +15273,20 @@ function renderByKind(id, p = {}) {
       const items = Array.isArray(p.items) && p.items.length ? p.items : [{content: 'Grid item 1'}, {content: 'Grid item 2'}];
       const htmlItems = items.map((it, i) => `<div class="kit-layout-grid-cell" data-cell="${i}">${typeof it === 'string' ? e(it) : e(it.content ?? `항목 ${i + 1}`)}</div>`).join('');
       return `<div ${idAttr}class="kit-layout-responsive-grid" data-component="${id}">${htmlItems}</div>`;
+    }
+    case 'component:stack': {
+      const gap = p.gap ?? 'item', align = p.align ?? 'stretch';
+      if (!['tight', 'near', 'item', 'gap'].includes(gap)) throw new TypeError('Stack gap must be tight, near, item or gap');
+      if (!['start', 'center', 'stretch'].includes(align)) throw new TypeError('Stack align must be start, center or stretch');
+      const items = Array.isArray(p.items) && p.items.length ? p.items : ['첫 번째 항목', '두 번째 항목'];
+      const htmlItems = items.map((item, i) => `<div class="kit-layout-stack-item" data-item="${i}">${e(typeof item === 'string' ? item : item?.content ?? `항목 ${i + 1}`)}</div>`).join('');
+      return `<div ${idAttr}class="kit-layout-stack" data-component="${id}" data-gap="${gap}" data-align="${align}">${htmlItems}</div>`;
+    }
+    case 'component:container': {
+      const width = p.width ?? 'standard';
+      if (!['narrow', 'standard', 'wide', 'full'].includes(width)) throw new TypeError('Container width must be narrow, standard, wide or full');
+      const content = p.content ?? p.label ?? '컨테이너 콘텐츠';
+      return `<div ${idAttr}class="kit-layout-container" data-component="${id}" data-width="${width}">${e(content)}</div>`;
     }
     case 'component:center': {
       const content = p.content ?? p.label ?? '가운데 정렬 콘텐츠';
