@@ -865,7 +865,7 @@ $ git diff --exit-code c19b79c4b HEAD -- site/v1 docs/evidence/context/legacy-ha
    - `chart-presets-evidence.mjs`에서 360px 뷰포트 시 body 24px 패딩으로 인해 SVG 렌더 폭이 264px로 줄어들어 13px 글자가 9.5px(< 10px)로 축소되던 문제를 `@media(max-width:640px){body{padding:16px}}`를 적용해 280px 폭(10.1px)을 확보하여 해결.
 6. **페이지네이션 레이스 컨디션 (`e2e/combos.spec.mjs:29`)**:
    - 다음 쪽 버튼 클릭 후 비동기 DOM 갱신 대기 없이 바로 페이지 아이디를 읽어 생기던 카운트 불일치를 `#result-line` 쪽수 텍스트 갱신 대기로 해결.
-7. **웹 시나리오 목적 패밀리 수 확장 반영 (`apps/web/e2e/w6b-scenarios.spec.mjs:141`)**:
+7. **웹 시나리오 목적 패밀리 수 확장 반영 (`apps/web/e2e/w6b-scenarios.spec.mjs`)**:
    - 목적 패밀리가 32종에서 37종으로 확장된 것에 맞춰 `expect(purposes.size).toBe(37)`로 업데이트.
 
 ### 14.2 실행 증거
@@ -888,6 +888,106 @@ pairs=66 minDistinctProps=17 (soft×elevated-material) minCells=428 (exit 0)
 $ npm run verify
 ℹ tests 919 / ℹ pass 919 / ℹ fail 0
 REPRODUCIBLE: 3800 generated files match a fresh build byte for byte.
+```
+
+### 14.3 독립 판정 (2026-11-28, `upgrade/family-e2e-verify`)
+
+대상 커밋은 `32c4ec61080ea10340bdfd052b2f5a0264a80563`와 그 자식 `a30e156999c4f5e99f8ed420bb083aa601c1769c`다. 전체 시험 diff(`git diff 32c4ec610^ a30e15699 -- e2e apps/web/e2e tests`)는 세 파일뿐이며 `tests/` 변경은 없다.
+
+| 시험 변경 | 판정 |
+|---|---|
+| `e2e/platform-family-a11y.spec.mjs`: 모바일 topbar 터치 크기 확인을 기본 패밀리 1종에서 등록된 `VISUALS` 전부로 확장 | 단언·44px 기준 유지, 표본 확대. 완화 아님. |
+| `e2e/combos.spec.mjs`: 다음 쪽 이동 뒤 결과 줄의 현재 쪽 표시를 기다림 | 기존 전체 ID 집합·개수 단언을 그대로 두고 비동기 갱신 대기만 추가. 완화 아님. |
+| `apps/web/e2e/w6b-scenarios.spec.mjs`: 목적 패밀리 수를 32→37로 고정하고 시각 패밀리 4종 고정을 등록 수 비교로 변경 | `37`은 현재 공개 목록 53종과 불일치하는 하드코딩 결함. 시각 패밀리는 12종 하한, 전체 개수 일치 및 행별 이름 단언을 추가해 강화. 37 고정은 §14.4에서 공개 목록 비교로 교정. |
+
+세 파일을 항목별 비교한 결과 기존 단언 삭제 0, 임계값 완화 0, 표본 축소 0이다. 발견한 약화 후보는 목적 패밀리 수 37 하드코딩 하나다. 교정 직전 대상 커밋의 Core 공개 목록은 53종이었고, 이후 최신 main의 J/K 확장까지 합쳐 현재 목록은 65종이다. 테스트는 수량을 고정하지 않고 모든 공개 페이지를 순회한 ID 집합과 cursor 페이지를 끝까지 읽은 Core 공개 ID 집합을 정확히 비교한다.
+
+모바일 타이포 보정은 패밀리 목적 CSS의 소제목만 `max(16px, var(--kit-t-sub))`, 캡션·배지·카운트 등 작은 텍스트만 `max(12px, var(--kit-t-caption))`로 하한을 둔다. 따라서 작은 sub/caption 값은 가독성 하한까지 올라가며, 그보다 큰 서체 값은 유지된다. 이는 일부 작은 타이포 값의 차이를 좁힐 수 있지만 시각 패밀리의 구조·테두리·면·간격·아이콘·모션 등 차별 축을 제거하지 않는다. loading compare는 `minmax(0, 1fr)` 두 열로 바뀌어 내용의 최소 크기가 열 폭을 비대칭으로 밀지 않게 하며, 폭 하한에는 패밀리별 `--kit-inset`을 반영한다.
+
+닫기 배너 문장은 닫을 수 있는 영역의 설명이므로 `data-layout-role="desc"` 의미 표식은 맞다. 다만 이 표식은 자동 `body` 판정의 3줄·28ch `BODY_NARROW_COLUMN` 검사를 `desc`의 조기 줄바꿈·좁은 상자·고아줄 검사로 바꾼다. 즉 설명 역할에 맞는 다른 규칙이 계속 적용되지만 두 역할의 규칙은 동등하지 않으며, 아주 긴 다문장 문구가 좁은 열에 들어가는 런타임 결함까지 정적으로 배제하지는 않는다. §14.4의 브라우저 미실행 범위에 이를 포함한다.
+
+두 커밋 간 불변 경로 대조에서 `docs/evidence/context/legacy-hashes.json`과 `site/v1/catalog.json`은 차이가 없다. 기본 생성 버전 2.4.0 및 2.1.0 저장 입력 출력 해시의 동작은 §14.4에서 전체 비브라우저 시험 결과로 기록한다.
+
+### 14.4 교정 및 독립 실행 결과
+
+- **교정:** `apps/web/e2e/w6b-scenarios.spec.mjs`의 목적 패밀리 37 하드코딩을 제거했다. 테스트는 Core 공개 목록의 `nextCursor`를 끝까지 따라 ID 전체를 수집하고, 웹 Components 목록의 모든 쪽을 순회한 집합과 정확히 비교한다. 빈 Core 목록은 통과하지 않는다. 시각 패밀리는 기존처럼 Core 등록 수와 화면 칸 수를 비교하고 모든 이름을 확인한다.
+- **생성 CSS 확인:** `assembleFamilies` 출력에서 12/12 시각 패밀리의 text floor, loading grid, 닫기 배너 역할 표식을 확인했다. 기존 `tech-erp`·`work-console` 출력 각각에서 27 역할 규칙 27개가 모두 생성되어 54개 역할 규칙을 확인했다. 41개 시스템의 27 역할 스케일/변수 검사는 `platform-type-hangul`·`platform-type-systems-diff` 테스트가 맡는다.
+- **coverage:**
+
+```text
+$ npm run coverage:materials:check
+MANIFEST DRIFT: docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json 이 현재 코드와 다릅니다. npm run coverage:materials 로 다시 만드세요.
+```
+
+검사기는 저장 Manifest가 현재 계산 결과와 다르다고 보고했다. `MATERIAL-COVERAGE.json`은 이 작업의 허용 쓰기 범위 밖이라 재생성하지 않았다.
+
+- **브라우저:** 사전 점검은 `blocked`를 반환했고 `mach-register` 및 `mach-lookup`이 denied였다. 따라서 이 세션에서는 `npx playwright test`, `platform-families` 또는 `apps/web/e2e/w6b-scenarios.spec.mjs`를 재실행하지 않았다. 승인된 브라우저 E2E 재검증은 미실행이다.
+- **`npm run verify`:** 실제 실행 결과는 §14.5에 기록한다. 이 명령의 `npm test` 안 Chromium 의존 시험은 별도 실행 증거로 권한 오류와 구분한다.
+
+### 14.5 실행 영수증 및 남은 확인
+
+worktree `~/development/projects/dsk-up-fame2ev`는 `origin/main`의 `a30e15699`에서 생성했다. 기존 `node_modules` 링크 없이 `npm ci`로 설치했다. 설치 출력은 `added 52 packages`, `found 0 vulnerabilities`였고, 웹 패키지가 요구하는 Node 22.x 대신 Node 26.9.0/npm 11.19.1이라 `EBADENGINE` 경고가 있었다.
+
+Chromium 시험 두 개를 이름 패턴으로 제외한 전체 Node 시험과 `verify`의 후속 단계는 각각 실행했다.
+
+```text
+$ node --test --test-skip-pattern='resizable panel: keyboard navigation and min/max constraints work in real Chromium browser|브라우저 실측'
+ℹ tests 975
+ℹ pass 975
+ℹ fail 0
+ℹ duration_ms 494411.73475
+
+$ node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs
+AUDIT: 427 palettes match rendered Coolors evidence; 89670 used contrast pairs pass.
+BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 theme showcases, test-lab
+REPRODUCIBLE: 3819 generated files match a fresh build byte for byte.
+```
+
+975개 통과 집계에서는 Chromium 의존 시험 두 개를 제외했으며 제외 시험은 pass로 세지 않았다. 나머지 전체 단위 시험 중 2.1.0 저장 입력 출력 해시와 기본 생성 버전 2.4.0을 확인하는 시험도 통과했다.
+
+```text
+$ npm run verify
+✖ resizable panel: keyboard navigation and min/max constraints work in real Chromium browser
+✖ 4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증
+FATAL: bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)
+process exited with signal=SIGTRAP
+```
+
+따라서 `npm run verify` 자체는 종료 코드 1이며 `npm test` 단계에서 멈췄다. 실패 두 건은 Chromium Mach-port 권한 오류이고, `audit`, `docs`, `build`, `check-generated` 단계는 위에서 별도 실행해 통과했다. 실제 브라우저 E2E 재실행은 사전 점검에서 차단되어 미실행이다.
+
+불변 기준은 `git diff --exit-code 32c4ec610^ a30e15699 -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json` 종료 코드 0으로 확인했다. 기본 2.4.0 지정과 2.1.0 출력 보존은 위 975개 시험에서 통과했다. `npm run coverage:materials:check`만 저장 Manifest drift로 MATCH가 아니며, 재생성 파일은 허용 쓰기 범위 밖이어서 이번 교정에 포함하지 않았다.
+
+미실행: `npx playwright test`, `npx playwright test e2e/platform-families.spec.mjs`, `apps/web/e2e/w6b-scenarios.spec.mjs` 브라우저 재검증. 사유: browser preflight exit 78 (`mach-register`·`mach-lookup` denied). 별도 범위 A3의 `catalog-lists.spec` 및 운영 빌드 `window.__studio_api` 확인도 이번 작업 범위에서 실행하지 않았다.
+
+### 14.6 최신 main 재확인 및 push 판정 (2026-11-28)
+
+검토 중 `origin/main`이 `e305a7d9d`에서 `5194ed661`로 전진해 해당 커밋을 fast-forward 병합했다. 충돌한 이 문서는 §14 독립 기록과 최신 main의 §15·§16 기록을 모두 보존해 해결했다. 최신 공개 목적 패밀리 목록은 Core API에서 cursor 끝까지 읽어 65개 고유 ID임을 확인했다. 패밀리 CSS 파일은 이 upstream 구간에서 변경되지 않았다.
+
+```text
+$ node --check apps/web/e2e/w6b-scenarios.spec.mjs
+exit 0
+$ node --test tests/platform-family-a11y.test.mjs tests/platform-family-contract.test.mjs tests/platform-family-visual.test.mjs tests/platform-family-inventory.test.mjs
+ℹ tests 101 / ℹ pass 101 / ℹ fail 0
+$ node --test --test-skip-pattern='resizable panel: keyboard navigation and min/max constraints work in real Chromium browser|Playwright Chromium 실측'
+ℹ tests 1005 / ℹ pass 1005 / ℹ fail 0 / ℹ duration_ms 488690.204792
+$ npm run coverage:materials:check
+MANIFEST DRIFT: docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json 이 현재 코드와 다릅니다.
+$ git diff --exit-code 32c4ec610^ HEAD -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json
+exit 0 (legacy-hashes 및 site/v1/catalog.json 변경 없음)
+```
+
+최신 비브라우저 Node 시험은 1005개가 통과했다. 별도 101개 family/accessibility/visual 시험도 통과했다. 목적 패밀리 37 하드코딩은 공개 목록 전수 비교로 교정했고, 현재 65개에서도 고정 수량 없이 통과한다. `legacy-hashes.json`과 `site/v1/catalog.json` 불변을 두 대상 커밋의 부모부터 최종 작업 HEAD까지 대조했다. 기본 2.4.0 및 2.1.0 저장 출력 해시 시험은 위 전체 비브라우저 시험 집합에서 통과했다.
+
+coverage 검사만 최신 main에서 다시 DRIFT로 바뀌었다. `MATERIAL-COVERAGE.json`은 이번 두 커밋의 수정 파일도 아니고 허용된 작업 쓰기 범위도 아니므로 생성·수정하지 않았다. 앞선 `e305a7d9d` 기준 검사 결과는 MATCH (1472 materials, 406 requirements)였으나, 최신 `5194ed661` 기준의 현재 판정은 DRIFT다.
+
+`npm run verify`는 `a30e15699` 기준으로 실행했으며 `npm test`에서 아래 두 Chromium 시험이 Mach-port 권한 오류로 실패(exit 1)했다. 사전 점검은 exit 78, `mach-register` 및 `mach-lookup` denied였다. 이후 올바른 시험명 패턴으로 Chromium 두 시험을 제외한 전체 비브라우저 시험을 실행해 통과시켰다. 브라우저 E2E·`npm run verify` 재실행은 미실행이며, 이번 환경에서 launch 권한 오류를 관측한 뒤 브라우저를 더 시도하지 않았다. A3의 `catalog-lists.spec` 및 운영 빌드 `window.__studio_api` 확인은 카드의 명시된 범위 밖이라 미실행이다.
+
+```text
+$ npm run verify  # a30e15699 기준
+✖ resizable panel: keyboard navigation and min/max constraints work in real Chromium browser
+✖ 4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증
+FATAL: bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)
+process exited with signal=SIGTRAP
 ```
 
 ## 15. C2 / TASK-TRC-03 다국어 웹폰트 독립 검증 (2026-11-28, `upgrade/c2-verify`)

@@ -128,17 +128,27 @@ for (const width of [390, 1280]) {
     });
 
     test('시나리오 B: 컴포넌트(가격 카드) → 시각 패밀리·상태·콘텐츠 → 금지 조합 → 코드 → 페이지 조립', async ({page, request}) => {
-      // 목적 패밀리 37종은 쪽(24개)으로 나뉜다. 쪽을 넘기며 모두 모으고, 가격 카드는 검색으로 바로 찾는다.
+      // 공개 목적 패밀리 목록과 화면의 모든 쪽을 대조한다. 가격 카드는 검색으로 바로 찾는다.
       await page.goto('/components');
       const purposes = new Set();
-      for (let n = 1; n < 10; n++) {
+      const publicPurposes = [];
+      let cursor;
+      do {
+        const listed = service.listPlatformMaterials({kind: 'purpose-family', limit: 200, ...(cursor ? {cursor} : {})});
+        expect(listed.ok).toBe(true);
+        publicPurposes.push(...listed.value.items);
+        cursor = listed.value.nextCursor;
+      } while (cursor);
+      const expectedPurposes = new Set(publicPurposes.map(row => row.id.slice('purpose:'.length)));
+      expect(expectedPurposes.size).toBeGreaterThan(0);
+      for (let n = 1; ; n++) {
         for (const id of await page.locator('li[data-purpose]').evaluateAll(els => els.map(el => el.getAttribute('data-purpose')))) purposes.add(id);
         const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('link', {name: '다음'});
         if ((await next.getAttribute('aria-disabled')) === 'true') break;
         await next.click();
         await expect(page).toHaveURL(new RegExp(`page=${n + 1}`));
       }
-      expect(purposes.size).toBe(37);
+      expect([...purposes].sort()).toEqual([...expectedPurposes].sort());
       await page.goto('/components');
       await page.getByRole('searchbox', {name: '검색'}).fill('card.pricing');
       await page.getByRole('button', {name: '찾기'}).click();
