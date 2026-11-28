@@ -140,3 +140,65 @@ platform motion              17/19 verified; 2 rejected (see X-codes in evidence
    - `npm run verify` 전수 통과 확인.
    - 실제 출력 차이 검사(`Actual Output Test`)로 D1/D2 결함 재발 방지 확인.
    - 브라우저 E2E 시나리오 전수 통과 확인.
+
+---
+
+## 4. P0-PERF 성능 기준선 독립 검증 (커밋 `343c1a795` 대상, 2026-11-28)
+
+원작업은 다른 공급자가 했다. 아래는 별도 맥락에서 코드와 실행으로 다시 확인한 결과다. 측정은 모두 실험실 값이고, `local-prod`는 Vercel 운영 실측이 아니다.
+
+### 4.1 계측 노출 (`/api/dev/perf-counters`)
+- `DSK_PERF_METRICS`를 지정하지 않은 `next start`: GET·POST 모두 `HTTP/1.1 404 Not Found`. 코드는 `route.ts`와 `counter.server.ts`가 각각 `=== '1'`을 확인하고, 꺼져 있으면 `recordCompile`이 즉시 반환한다. 동작 변경 없음.
+- `DSK_PERF_METRICS=1`: `{"enabled":true,"counters":{...}}` 200.
+- Vercel 운영(`dpl_2Qiqt5cLnX1nsRav2CNopf44kr8e`): GET·POST 모두 404.
+
+### 4.2 계측 범위
+- 세는 곳: `platform.server`(`assembleDesign`, `assembleComponents`; `component-view.server`·`probeDesign`·페이지·`/platform/render`가 모두 이 두 함수를 거친다), `explore/designs.server`(`renderDesign`), `components/spec.server`(`compileHtml` = `componentView`·`renderComponent`).
+- 빠져 있던 곳: `explore/qa/combos.server`의 `renderCombo` → 호출 한 줄 추가.
+- 세지 않는 곳(의도): REST·MCP 공개 API(`lib/api`), 브라우저 안의 Studio 컴파일. 라우트 단위로 세면 405·검증 실패까지 세어져 부정확하다.
+- 세는 단위는 서비스 호출 1회이며 Blueprint 컴파일 수와 같지 않다.
+- Explore `compileCount` 8(390px)의 출처: 서버 렌더의 확인용 `assembleDesign` 6회(`PLATFORM_CASES` 6개, `explore/page.tsx:121`) + 보이는 사례 iframe 2개의 `/platform/render` 2회. 1280px은 6 + 6 = 12. 원본 기준선이 읽은 값이 맞았지만 설명이 없었다.
+
+### 4.3 재측정 대조 (로컬 운영 빌드, 중앙값 3회)
+| 항목 | 원 기준선 (390 / 1280) | 재측정 (390 / 1280) | 판정 |
+|---|---|---|---|
+| Explore DOM | 504 / 512 | 504 / 512 | 일치 |
+| Explore iframe(초기) | 2 / 6 | 2 / 6 | 일치 |
+| Explore LCP(ms) | 56 / 60 | 48 / 56 | 같은 자릿수 |
+| Explore 전송량 | 1.25MB / 1.61MB | 초기 로드 0.24 / 0.38MB, 전체 누적 1.72 / 1.83MB | 원 값은 클릭·스크롤 누적이었다(전체 누적과 같은 자릿수) |
+| Explore 스크롤 후 iframe | 미측정 | 동시 최대 5 / 12, 왕복 iframe 로드 64 / 56 | 신규 |
+| Color DOM / LCP | 2,689 / 2,690 · 40 / 44 | 2,689 / 2,690 · 40 / 40 | 일치 |
+| Components DOM / iframe | 674 / 681 · 2 / 6 | 674 / 681 · 2 / 6 | 일치 |
+| Components LCP | 32 / 36 | 32 / 36 | 일치 |
+
+### 4.4 발견 결함과 조치
+1. 페이지 항목에 `viewport`가 없었다 → `viewport{id,label,width,height,isMobile}` 추가. 확인: `jq '[.environments[].pages[]|select(.viewport.width==null)]|length'` → `0`.
+2. INP 250ms는 측정 산물이었다(비활성 버튼 클릭 2초 시간 초과를 250으로 보정) → Event Timing 관측값만 기록, 클릭 성공 여부 기록.
+3. 컴파일 수·전송량이 클릭·스크롤 누적이었다(Typography 7 = 초기 4 + 클릭 3) → 초기 로드, 상호작용 후, 스윕 후로 분리. 전송량은 압축 후 실제 전송 바이트로 변경.
+4. TTFB가 Vercel 동적 페이지를 9~10ms로 보고했다(본문 첫 바이트는 약 400ms) → `serverFirstByteMs` 추가.
+5. 콜드/웜 값이 서버를 데운 뒤 측정되면 무의미하다(Vercel 콜드 9ms) → 서버 재기동 직후 첫 요청 기준으로 바꾸고 Vercel은 콜드 측정으로 쓰지 않는다고 명시. 로컬 콜드/웜 본문 첫 바이트 279 / 26ms.
+6. `--measureVercel` 없이도 Vercel을 측정했다 → 플래그 필요.
+7. 카운터가 `renderCombo`를 세지 않았다 → 추가.
+8. 병목 판정 문서의 파일:줄 인용이 계측 삽입으로 밀려 있었다(`platform.server.ts` 45-46 → 52-53 등)와 사실 오류(병목 4·5·6·7, 아래 참조) → `PERF-BOTTLENECKS.md` 재작성.
+
+### 4.5 Vercel 배포 식별
+- 현재 운영 별칭 = `dpl_2Qiqt5cLnX1nsRav2CNopf44kr8e`(`vercel inspect design-system-static-kit.vercel.app`). GitHub 커밋 상태(`343c1a795`, 2026-11-28T01:11:59Z)의 배포 URL과 같은 ID라 커밋 `343c1a795`로 확인했다. 응답 헤더만으로는 커밋을 알 수 없다(`server: Vercel`, `x-vercel-id: icn1::iad1::...`).
+- 원 기준선의 Vercel 측정(01:05:39Z)은 이보다 앞선 배포(`4f34cacad`, 00:53Z)의 값이었다. 이번에 현재 배포로 다시 쟀고 JSON `environments.vercel.identity`에 기록했다.
+
+### 4.6 병목 판정 정정 요약
+- 병목 4: 전부 동적이라는 서술은 틀렸다. Explore 대표 디자인과 구조 부품 render는 SSG(`x-vercel-cache: PRERENDER`).
+- 병목 5: `/components`는 정적 프리렌더라 운영 요청 시 `componentView` 비용 없음. `next dev` 첫 요청에서 `compileBlueprint` 38회.
+- 병목 6: Typography는 3 + 1 = 4회(문서의 4+4 오류).
+- 병목 7: 콜드/웜 208ms를 근거로 든 부분 철회. 구조 판정만 유지.
+- 병목 2: 저장소에 없는 "CDP 트레이스" 대신 스크롤 왕복 수치로 대체.
+
+### 4.7 실행 증거
+```sh
+$ (unset DSK_PERF_METRICS; next start -p 4311) && curl -i /api/dev/perf-counters
+HTTP/1.1 404 Not Found
+$ npm run verify
+REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.   (EXIT=0)
+$ npm --workspace apps/web run typecheck / test:boundary / test:docs
+tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
+```
+미실행: `apps/web` Playwright e2e(`test:e2e`)는 이번 변경이 측정 스크립트·계측 호출·문서에 한정되어 실행하지 않았다(CI Web 워크플로가 실행). 테스트 코드는 새로 쓰지 않아 RED/GREEN 대상이 없다. 계측 게이트는 환경 변수 유무로 404/200을 모두 실행해 확인했다.

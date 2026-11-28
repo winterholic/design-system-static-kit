@@ -2,6 +2,7 @@ import 'server-only';
 import {catalogSnapshot, compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {checkDocument, resetDocument, setAppearance} from '@winterholic/design-system-static-kit/edit';
 import type {ComboIndex, ComboLite, View} from './combos-state';
+import {recordCompile} from '@/features/perf/counter.server';
 import diagnoses from '../../../../../docs/evidence/diagnosis-2.4.0.json';
 
 // 내부 QA 탐색기용 서버 모듈. 템플릿 × 구성 변형의 곱을 공개 진입점(./service)만으로 다시 만든다.
@@ -159,6 +160,7 @@ export function makeCombo(id: string, raw: Partial<View>): Made {
 export function renderCombo(id: string, raw: Partial<View>): {ok: true; html: string; notes: string[]} | {ok: false; error: string} {
   const made = makeCombo(id, raw);
   if (!made.ok) return made;
+  recordCompile('compileBlueprint');
   const compiled = compileBlueprint(made.doc, {include: ['html']}) as {ok: boolean; value?: {html: string}; errors?: {message: string}[]};
   if (!compiled.ok) return {ok: false, error: `규칙 위반: ${(compiled.errors ?? []).slice(0, 3).map(e => e.message).join(' / ')}`};
   return {ok: true, html: compiled.value!.html, notes: made.notes};

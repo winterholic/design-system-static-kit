@@ -1,12 +1,26 @@
 # 프론트엔드 성능 병목 1~7 감사 및 판정 보고서
 
 - **대상 저장소**: `winterholic/design-system-static-kit`
-- **기준 커밋 / 브랜치**: `upgrade/p0-perf` (based on `origin/main` 4f34cac)
-- **측정 기준일시**: 2026-11-28
-- **실측 데이터 원본**: `docs/dev/catalog-platform-upgrade/PERFORMANCE-BASELINE.json`
-- **실측 환경**:
-  - 로컬 운영 빌드 (`local-prod`): Next.js 16.4.6 운영 빌드 (`next build` 후 `next start -p 4310`)
-  - Vercel 운영 배포 (`vercel-prod`): `https://design-system-static-kit.vercel.app` (Next.js 16 배포본)
+- **측정·판정 기준 커밋**: `343c1a795` (원작업 커밋). 아래 파일:줄 인용은 이 커밋 기준이며 독립 검증(P0-PERF)에서 전부 다시 확인했다.
+- **측정 기준일**: 2026-11-28
+- **실측 데이터 원본**: `docs/dev/catalog-platform-upgrade/PERFORMANCE-BASELINE.json` (생성 스크립트 `scripts/perf/measure.mjs`, `npm run perf`)
+- **실측 환경과 한계**:
+  - `local-prod`: `next build` 후 `DSK_PERF_METRICS=1 next start`. 로컬 운영 빌드이며 **Vercel 운영 실측이 아니다**.
+  - `vercel-prod`: `https://design-system-static-kit.vercel.app` 실제 응답. 측정 시점 배포는 `dpl_2Qiqt5cLnX1nsRav2CNopf44kr8e`(커밋 `343c1a795`, `vercel inspect`와 GitHub 커밋 상태의 배포 URL로 대조). 단일 위치(로컬 Mac)에서 잰 실험실 값이며 실사용자(RUM) 데이터가 아니다. 이 환경에는 `DSK_PERF_METRICS`가 없어 컴파일 호출 수는 잡히지 않는다.
+  - 최초 기준선(커밋 `343c1a795`의 첫 JSON)은 배포 `4f34cacad` 시점에 잰 값이었다. 독립 검증에서 현재 배포로 다시 쟀다.
+
+### 독립 검증에서 바로잡은 측정 결함(수치 해석에 영향)
+
+| 결함 | 영향 | 조치 |
+|---|---|---|
+| 페이지 항목에 `viewport` 필드가 없었다(`viewportId`·`width`만 있었다) | `.viewport` 조회가 빈 값 | `viewport: {id,label,width,height,isMobile}` 추가(평탄 필드는 호환용 유지) |
+| INP 근사가 `min(탭 전환 소요, 250)`이었다. Explore에서는 비활성 "초기화" 버튼 클릭이 2초 시간 초과로 끝난 값이 250으로 기록됐다 | 이전 보고서의 "INP 250ms, 목표 +50ms 초과"는 **측정 산물이며 근거가 없다** | Event Timing 관측값만 기록. 클릭 성공 여부(`interactionOk`)와 대상을 남기고 실패 회차는 탭 전환 시간에서 제외 |
+| 컴파일 호출 수를 클릭·스크롤 이후에 읽었다 | Typography의 `7`은 초기 로드 4 + 클릭(샘플 링크 이동)으로 늘어난 3이었다 | 초기 로드(`compileCount`), 상호작용 후, 스윕 후 누적을 분리 |
+| 전송량·요청 수가 클릭과 스크롤까지 누적된 값이었고, 본문 크기는 content-length가 없으면 압축 해제 크기였다 | 같은 이름의 값이 "초기 로드"로 읽혔다 | 전송량은 Playwright `request.sizes()`의 실제 전송 바이트로 바꾸고 초기 로드(`totalTransfer`)와 전체 누적(`totalTransferWholeRun`)을 분리. `totalDecoded` 추가 |
+| TTFB를 `responseStart - requestStart`로만 읽었다 | Vercel 동적 페이지가 9~10ms로 보였지만 curl 본문 첫 바이트는 370~430ms | `serverFirstByteMs`(본문 첫 청크까지) 추가. 두 값의 의미를 JSON `notes`에 기록 |
+| 콜드/웜 비교가 서버를 이미 데운 뒤 실행되면 무의미했다(이번 재실행에서 `-5ms`로 확인) | Vercel 콜드 TTFB 9ms는 콜드가 아니었다 | 서버 재기동 직후 첫 요청과 두 번째 요청을 본문 첫 바이트로 비교. Vercel은 유휴 후 첫 요청을 보장할 수 없어 콜드 측정으로 쓰지 않는다고 명시 |
+| 카운터가 QA 조합 렌더(`renderCombo`)를 세지 않았다 | 계측 범위 누락 | `features/explore/qa/combos.server.ts`에 호출 추가 |
+| `--measureVercel` 없이도 Vercel을 측정했다(기본 URL이 항상 참) | 의도하지 않은 외부 요청 | 플래그가 있을 때만 측정 |
 
 ---
 
@@ -14,13 +28,13 @@
 
 | 번호 | 병목 항목 | 판정 | 주요 원인 코드 위치 | 핵심 실측 근거 요약 |
 |:---:|:---|:---:|:---|:---|
-| **1** | 미리보기마다 개별 iframe과 Observer가 생성된다 | **존재** | `apps/web/features/explore/Thumb.tsx:21-25`, `Thumb.tsx:30-42` | 카드마다 독립 IntersectionObserver/ResizeObserver 생성, 뷰포트 진입 시 카드별 iframe 마운트 (Explore 2~6개, Components 2~6개) |
-| **2** | 화면에서 멀어진 iframe을 제거하고 다시 진입하면 재생성한다 | **존재** | `apps/web/features/explore/Thumb.tsx:23`, `Thumb.tsx:30` | `isIntersecting`이 false가 되면 `live`가 false로 바뀌어 iframe DOM 언마운트, 재진입 시 재생성 및 네트워크 요청 재발생 |
-| **3** | 플랫폼 렌더 경로가 `force-dynamic`, `no-store`로 동작한다 | **존재** | `apps/web/app/platform/render/route.ts:6-7` | `export const dynamic = 'force-dynamic'`, `cache-control: no-store` 헤더로 CDN 및 브라우저 캐싱 전면 차단 |
-| **4** | 전시용 미리보기 요청마다 Core 조립이 수행된다 | **존재** | `apps/web/app/platform/render/route.ts:31-36` | 정적 미리보기 자산(SVG, WebP, 사전생성 HTML) 없이 iframe 요청마다 `assembleComponents`, `assembleDesign` 런타임 직접 실행 |
-| **5** | 컴포넌트 목록에서도 `componentView()`로 상세 변형 검증을 수행한다 | **존재** | `apps/web/app/components/page.tsx:28`, `spec.server.ts:118-122` | `/components` 목록 렌더 시 49개 부품 전부에 대해 `componentView()` 호출, 각 변형 축 옵션마다 `renderRaw` -> `compileBlueprint` 반복 실행 |
-| **6** | 타이포그래피 및 Explore에서 조립 가능 여부 검사와 실제 미리보기 조립이 중복된다 | **존재** | `apps/web/app/explore/page.tsx:121`, `TypeCompare.tsx:52` | 페이지 서버 컴포넌트에서 `assembleDesign()` 유효성 검사 1회 수행 후, 자식 `Thumb` iframe이 `/platform/render`에서 동일 요청으로 `assembleDesign()` 재호출 (2배 중복 조립) |
-| **7** | 프로세스 내부 캐시만으로는 서버리스 환경에서 충분한 재사용을 보장하기 어렵다 | **존재** | `platform.server.ts:45-46, 66`, `spec.server.ts:23, 108` | 프로세스 인메모리 `Map`에만 캐시 유지. Vercel Serverless Function 스케일아웃/콜드스타트 시 캐시 소멸 및 인스턴스 간 공유 불가 |
+| **1** | 미리보기마다 개별 iframe과 Observer가 생성된다 | **존재** | `apps/web/features/explore/Thumb.tsx:21-25`, `:30-42` | 카드마다 `ResizeObserver`·`IntersectionObserver`를 만들고 뷰포트 진입 시 iframe 마운트. 초기 로드 활성 iframe: Explore 2(390)/6(1280), Components 2/6, Typography 1, Components 상세 1 |
+| **2** | 화면에서 멀어진 iframe을 제거하고 다시 진입하면 재생성한다 | **존재** | `Thumb.tsx:23`, `:30` | 끝까지 내려갔다 올라오는 스윕에서 iframe 로드 Explore 64(390)/56(1280)회, Components 184/171회. Explore는 같은 페이지에서 카드 30개 안팎에 대해 로드가 두 배 이상 일어남 |
+| **3** | 플랫폼 렌더 경로가 `force-dynamic`, `no-store`로 동작한다 | **존재(`/platform/render`에 한함)** | `apps/web/app/platform/render/route.ts:6-7` | Vercel 실응답 `cache-control: no-store`, `x-vercel-cache: MISS`. 반면 `/explore/[id]/render`는 `x-vercel-cache: PRERENDER`로 CDN에 올라 있다 |
+| **4** | 전시용 미리보기 요청마다 Core 조립이 수행된다 | **부분 존재** | `route.ts:31-36` | 동적 조립은 `/platform/render`를 쓰는 미리보기(Explore 플랫폼 사례 6개, Components 목적 패밀리, Typography 비교, Components 상세의 일부)에 한한다. Explore 대표 디자인과 `/components/[id]/render`는 빌드 시 정적 생성(SSG)이다 |
+| **5** | 컴포넌트 목록에서도 `componentView()`로 상세 변형 검증을 수행한다 | **코드상 존재, 운영 요청 시점 비용은 없음** | `apps/web/app/components/page.tsx:28`, `spec.server.ts:119-124`, `:148-152` | `/components`는 `next build`에서 정적 프리렌더(○)라 운영 요청 때 `componentView`가 돌지 않는다(초기 로드 `compileBlueprint` 0). 프로세스가 갓 뜬 `next dev`에서 목록 한 번에 `compileBlueprint` **38회** |
+| **6** | 타이포그래피 및 Explore에서 조립 가능 여부 검사와 실제 미리보기 조립이 중복된다 | **존재** | `explore/page.tsx:121`, `TypeCompare.tsx:52`, `:57` | Explore 데스크톱: 확인용 6회 + iframe 6회 = 12회(모바일은 6 + 보이는 iframe 2 = 8). Typography: 확인용 3회 + iframe 1회 = 4회 |
+| **7** | 프로세스 내부 캐시만으로는 서버리스 환경에서 충분한 재사용을 보장하기 어렵다 | **존재(구조 판정, 운영 실측 없음)** | `platform.server.ts:52-53`, `:73`, `spec.server.ts:24`, `:109`, `designs.server.ts:66` | 캐시가 전부 프로세스 메모리다. Vercel 인스턴스 간 공유·콜드 스타트 영향은 이번 측정으로 직접 확인하지 못했다 |
 
 ---
 
@@ -29,189 +43,102 @@
 ### 병목 1: 미리보기마다 개별 iframe과 Observer가 생성된다
 - **판정**: `존재`
 - **코드 위치**:
-  - `apps/web/features/explore/Thumb.tsx:21-25`:
-    ```tsx
-    const resize = new ResizeObserver(measure);
-    resize.observe(el);
-    const io = new IntersectionObserver(entries => { for (const e of entries) setLive(e.isIntersecting); }, {rootMargin: '240px 0px'});
-    io.observe(el);
-    ```
-  - `apps/web/features/explore/Thumb.tsx:32-41`:
-    ```tsx
-    <iframe key={src} src={src} title={title} ... />
-    ```
-  - `apps/web/app/explore/page.tsx:64, 82`, `apps/web/app/components/page.tsx:32, 61`
-- **실측 근거**:
-  - `PERFORMANCE-BASELINE.json` 실측치:
-    - Explore 모바일(390px): 활성 iframe **2개**, 데스크톱(1280px): 활성 iframe **6개**
-    - Components 모바일(390px): 활성 iframe **2개**, 데스크톱(1280px): 활성 iframe **6개**
-    - Typography(비교): 활성 iframe **1개**
-    - Components 상세: 활성 iframe **1개**
-  - 일반 카탈로그 목록(Explore, Components)에 iframe 0개라는 지시서 §3.6 목표에 미달하며, 각 카드 DOM 요소마다 개별 Observer 인스턴스가 생성되어 가비지 컬렉션 및 레이아웃 측정 부하를 유발함.
-
----
+  - `apps/web/features/explore/Thumb.tsx:21-25`: `ResizeObserver`(21-22)와 `IntersectionObserver`(23-24, `rootMargin: '240px 0px'`), 정리 함수(25).
+  - `apps/web/features/explore/Thumb.tsx:30-42`: `live && scale > 0`일 때 `<iframe key={src} sandbox="allow-scripts" ...>` 마운트(iframe 요소는 32-41).
+  - 사용처: `apps/web/app/explore/page.tsx:64`(대표 사례), `:82`(전체 목록), `:126`(플랫폼 사례), `apps/web/app/components/page.tsx:32`(구조 부품), `:61`(목적 패밀리), `apps/web/features/platform/TypeCompare.tsx:57`.
+- **실측 근거** (`local-prod`, 초기 로드 `activeIframes` 중앙값):
+  - Explore 2(390px) / 6(1280px), Components 2 / 6, Typography 1 / 1, Components 상세 1 / 1. Materials·Color·Palettes·Studio는 0.
+  - 끝까지 스크롤하는 동안 동시에 존재한 iframe 최대치: Explore 5 / 12, Components 6 / 15.
+- 목표(일반 카탈로그 iframe 0개)와 격차가 있다.
 
 ### 병목 2: 화면에서 멀어진 iframe을 제거하고 다시 진입하면 재생성한다
 - **판정**: `존재`
-- **코드 위치**:
-  - `apps/web/features/explore/Thumb.tsx:23`:
-    ```tsx
-    const io = new IntersectionObserver(entries => { for (const e of entries) setLive(e.isIntersecting); }, {rootMargin: '240px 0px'});
-    ```
-  - `apps/web/features/explore/Thumb.tsx:30`:
-    ```tsx
-    {live && scale > 0 ? (
-      <iframe key={src} src={src} ... />
-    ) : null}
-    ```
-- **실측 근거**:
-  - 카드가 뷰포트 바깥으로 스크롤되면 `setLive(false)`가 호출되어 `iframe` 요소 자체가 DOM 트리에서 삭제(unmount)됨.
-  - 사용자가 다시 위/아래로 스크롤하여 진입하면 `setLive(true)`가 호출되면서 `<iframe key={src} ... />`가 새로 mount됨.
-  - 브라우저 CDP 네트워크 트레이스 확인 결과, 동일 카드 재방문 시 `/platform/render?r=...` 네트워크 요청이 매번 다시 발생하며 컴파일 및 렌더링 파이프라인이 반복 구동됨.
-
----
+- **코드 위치**: `Thumb.tsx:23`(`setLive(e.isIntersecting)`), `Thumb.tsx:30`(`live`가 false면 iframe을 렌더하지 않아 언마운트).
+- **실측 근거**: 이번 검증에서 맨 위에서 끝까지 내려갔다가 다시 맨 위로 올라오는 스윕(`scrollSweep`)을 측정했다.
+  - iframe 로드(framenavigated) 수, 내려가기만: Explore 32 / 28, Components 95 / 86.
+  - 내려갔다 올라오기까지: Explore 64 / 56, Components 184 / 171.
+  - 올라오는 길에 같은 카드의 iframe이 다시 로드되므로 재생성이 확인된다. `/platform/render`는 `no-store`라 브라우저·CDN 재사용이 없고 서버 조립이 다시 일어난다: Components 컴파일 호출이 초기 2 / 6에서 스윕 후 누적 66 / 64로 늘었다(목적 패밀리 썸네일이 재진입마다 `assembleComponents`를 부른다).
+  - 이전 문서가 인용한 "CDP 네트워크 트레이스"는 저장소에 증거가 없어 제거했다. 위 스윕 수치가 대체 근거다.
 
 ### 병목 3: 플랫폼 렌더 경로가 force-dynamic, no-store로 동작한다
-- **판정**: `존재`
-- **코드 위치**:
-  - `apps/web/app/platform/render/route.ts:6-7`:
-    ```ts
-    export const dynamic = 'force-dynamic';
-    const HEADERS = {'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store'};
-    ```
-- **실측 근거**:
-  - Vercel 운영 배포 (`https://design-system-static-kit.vercel.app/platform/render?r=...`) HTTP 응답 헤더 실측:
-    - `cache-control: no-store`
-    - `x-vercel-cache: MISS`
-  - 고정된 샘플이나 재료 미리보기임에도 불구하고 CDN(Edge) 및 브라우저 캐싱이 일체 허용되지 않아, 모든 요청이 원본 서버리스 함수로 전달되어 매번 연산됨.
-
----
+- **판정**: `존재` (`/platform/render`에 한함)
+- **코드 위치**: `apps/web/app/platform/render/route.ts:6`(`export const dynamic = 'force-dynamic'`), `:7`(`'cache-control': 'no-store'`).
+- **실측 근거** (2026-11-28 실제 `design-system-static-kit.vercel.app` 응답):
+  - `/platform/render?r=...`: `HTTP/2 200`, `cache-control: no-store`, `x-vercel-cache: MISS`.
+  - 비교: `/explore/saas-landing/render`는 `cache-control: public, max-age=0, must-revalidate`, `x-vercel-cache: PRERENDER`.
 
 ### 병목 4: 전시용 미리보기 요청마다 Core 조립이 수행된다
-- **판정**: `존재`
-- **코드 위치**:
-  - `apps/web/app/platform/render/route.ts:31-36`:
-    ```ts
-    if (q.get('k') === 'components') {
-      const r = assembleComponents(body as Record<string, unknown>);
-      return r.ok ? respond(r.value, q) : ...;
-    }
-    const r = assembleDesign(body as AssembleRequest);
-    return r.ok ? ... : ...;
-    ```
-- **실측 근거**:
-  - 서버 측 컴파일 계측 카운터(`DSK_PERF_METRICS=1`) 측정 결과:
-    - Explore 모바일 1회 로드: Core 조립 호출 **8회** (`assembleDesign` 8회)
-    - Explore 데스크톱 1회 로드: Core 조립 호출 **12회** (`assembleDesign` 12회)
-    - Components 데스크톱 1회 로드: Core 컴포넌트 조립 **6회** (`assembleComponents` 6회)
-    - Typography 1회 로드: Core 조립 **7회** (`assembleDesign` 7회)
-  - 사전 생성된 이미지(WebP, SVG)나 정적 파일이 전혀 제공되지 않으며, 단순 목록 표시용 썸네일임에도 매번 무거운 결정론적 Core 조립 연산이 발생함.
-
----
+- **판정**: `부분 존재`
+- **코드 위치**: `apps/web/app/platform/render/route.ts:31-33`(`k=components` → `assembleComponents`), `:35`(`assembleDesign`).
+- **정정**: 이전 문서는 "정적 미리보기 자산이 전혀 없다"고 했으나 사실과 다르다.
+  - 정적(SSG) 미리보기: Explore 대표 디자인 `/explore/[id]/render`, 구조 부품 `/components/[id]/render` (`next build` 라우트 표의 `●`). 이 경로는 런타임 조립이 0이다(Explore에서 `compileBlueprint` 초기 로드 0).
+  - 동적 조립: Explore 플랫폼 사례 6개(`PLATFORM_CASES`, `explore/page.tsx:126`), Components 목적 패밀리(`components/page.tsx:61`), Typography 비교(`TypeCompare.tsx:57`).
+- **실측 근거**(초기 로드 서버 계측 호출 수, 중앙값, 390 / 1280): Explore 8 / 12 (`assembleDesign`), Components 2 / 6 (`assembleComponents`), Typography 4 / 4 (`assembleDesign`).
+- **Explore 8의 출처**: 서버가 페이지를 그릴 때 확인용 `assembleDesign`을 사례 6개에 대해 6회(`explore/page.tsx:121`), 화면에 들어온 사례 iframe 2개가 `/platform/render`를 불러 2회. 1280px에서는 iframe 6개가 모두 보여 6 + 6 = 12.
 
 ### 병목 5: 컴포넌트 목록에서도 componentView()로 상세 변형 검증을 수행한다
-- **판정**: `존재`
+- **판정**: `코드상 존재, 운영 요청 시점 비용 없음`
 - **코드 위치**:
-  - `apps/web/app/components/page.tsx:27-30`:
-    ```tsx
-    {rows.filter(r => r.group === group).map(r => {
-      const view = componentView(r.type)!;
-      return ( ... );
-    })}
-    ```
-  - `apps/web/features/components/spec.server.ts:118-122`:
-    ```ts
-    variants: variantIds.map(id => { const r = renderRaw(raw, id); return r.ok ? {id, ok: true} : {id, ok: false, reason: r.reason}; }),
-    variantGroups: raw.variantGroups.map(group => ({...group, availability: group.availability.map(option => {
-      const r = renderRaw(raw, {[group.name]: option.value});
-      return r.ok ? {value: option.value, ok: true} : {value: option.value, ok: false, reason: r.reason};
-    })})),
-    ```
-  - `apps/web/features/components/spec.server.ts:147-150`: `compileHtml` -> `compileBlueprint`
+  - `apps/web/app/components/page.tsx:28`: `const view = componentView(r.type)!;` (구조 부품 카드마다 호출)
+  - `apps/web/features/components/spec.server.ts:119-124`: 변형 id마다 `renderRaw`(119), 변형 축 옵션마다 `renderRaw`(120-124).
+  - `apps/web/features/components/spec.server.ts:148-152`: `compileHtml` → `compileBlueprint`.
 - **실측 근거**:
-  - `/components`는 49개 부품 목록을 나열하는 목록 페이지임에도 불구하고, 각 카드 렌더를 위해 `componentView(r.type)`를 호출함.
-  - `componentView()`는 해당 컴포넌트의 모든 variant와 모든 축 옵션에 대해 `renderRaw`를 실행하고 내부에서 `compileBlueprint`를 반복 호출하여 유효성을 검증함.
-  - 초기 서버 콜드 스타트 시 `/components` 페이지 단 한 번의 접근으로 수십~수백 건의 Blueprint 컴파일이 직렬로 수행됨.
-
----
+  - `next build` 표에서 `/components`는 `○`(정적 프리렌더)다. 운영 서버가 목록 요청을 받을 때 `componentView`는 실행되지 않는다. 초기 로드 `compileBlueprint` 계측 0.
+  - 프로세스가 갓 시작된 `next dev`(`DSK_PERF_METRICS=1`)에서 `GET /components` 한 번에 `compileBlueprint` **38회**, 두 번째 요청은 `viewCache` 때문에 0회.
+  - 따라서 병목은 빌드 시간과 개발 서버, 그리고 목록에서 상세 검증을 호출하는 구조다. §3.4 "목록에서 상세 변형 컴파일을 수행하지 않는다"에는 어긋난다. 이전 문서의 "수십~수백 건이 요청 때 직렬 수행"은 운영 빌드에서는 맞지 않는다.
 
 ### 병목 6: 타이포그래피 및 Explore에서 조립 가능 여부 검사와 실제 미리보기 조립이 중복된다
 - **판정**: `존재`
 - **코드 위치**:
-  - **Explore**:
-    - `apps/web/app/explore/page.tsx:121`:
-      ```tsx
-      if (!request || !assembleDesign({...request, candidates: 1}).ok) return null;
-      ```
-    - `apps/web/app/explore/page.tsx:126`: `<Thumb src={renderSrc(request)} ... />`
-    - -> `Thumb`이 iframe을 띄우면 `/platform/render` 라우트(`route.ts:35`)에서 동일 `request`에 대해 `assembleDesign`을 또다시 호출!
-  - **Typography**:
-    - `apps/web/features/platform/TypeCompare.tsx:52`:
-      ```tsx
-      const probe = assembleDesign(request);
-      ```
-    - `apps/web/features/platform/TypeCompare.tsx:57`: `<Thumb src={renderSrc(request)} ... />`
-    - -> probe 통과 후 `Thumb` iframe이 `/platform/render`에서 정확히 동일한 `assembleDesign`을 재호출!
+  - Explore: `apps/web/app/explore/page.tsx:121`(`assembleDesign({...request, candidates: 1}).ok` 확인), `:126`(같은 `request`로 `Thumb` → `/platform/render` → `route.ts:35`에서 다시 조립).
+  - Typography: `apps/web/features/platform/TypeCompare.tsx:52`(`const probe = assembleDesign(request)`), `:57`(같은 `request`의 `Thumb`).
 - **실측 근거**:
-  - Explore 페이지의 `PlatformCases`: 페이지 렌더 단계에서 6개 케이스에 대해 `assembleDesign` 6회 실행 후, 뷰포트에 잡힌 Thumb들이 `/platform/render`를 요청하여 동일 요청에 대해 `assembleDesign`을 다시 실행함 (초기 로드 컴파일 횟수가 요청된 카드 수의 2배인 12회로 실측됨).
-  - Typography 페이지: 비교 대상 시스템 4개에 대해 페이지 컴포넌트에서 `assembleDesign` 4회, iframe 렌더링에서 다시 4회로 중복 실행됨 (총 7~8회 컴파일 기록).
-
----
+  - Explore: 확인용 6회 + iframe 호출(보이는 수만큼). 390px 8회, 1280px 12회. 사례 6개가 모두 보이면 정확히 2배다.
+  - Typography: 기본 비교 대상이 3개(`with` 기본값 `doc-essay,work-console,mkt-launch`, `typography/page.tsx:33`)라 확인용 3회 + 보이는 iframe 1회 = 4회. 이전 문서의 "4개 + 4회 = 7~8회"는 틀렸다(7은 클릭 후 누적).
 
 ### 병목 7: 프로세스 내부 캐시만으로는 서버리스 환경에서 충분한 재사용을 보장하기 어렵다
-- **판정**: `존재`
+- **판정**: `존재` (구조 판정. 운영 인스턴스 간 캐시 미스는 이번에 측정하지 않았다)
 - **코드 위치**:
-  - `apps/web/features/platform/platform.server.ts:45-46`:
-    ```ts
-    const cache = new Map<string, Material[]>();
-    const detailCache = new Map<string, Material>();
-    ```
-  - `apps/web/features/platform/platform.server.ts:66`: `const probes = new Map<string, ...>();`
-  - `apps/web/features/components/spec.server.ts:23`: `let listCache: ComponentRow[] | null = null;`
-  - `apps/web/features/components/spec.server.ts:108`: `const viewCache = new Map<string, ComponentView | null>();`
-  - `apps/web/features/explore/designs.server.ts:64`: `let cache: Design[] | null = null;`
-- **실측 근거**:
-  - 모든 캐시가 단일 Node.js 프로세스 메모리(`Map`, 변수)에 갇혀 있음.
-  - Vercel 운영 배포 환경 실측 시:
-    - 여러 사용자가 분산 인스턴스로 라우팅될 때 캐시 미스가 지속적으로 발생.
-    - 서버리스 람다 인스턴스가 주기적으로 교체(recycled)되거나 콜드 스타트가 발생할 때마다 캐시가 전무한 상태에서 초기 대규모 연산이 재발생함 (콜드/웜 TTFB 차이 208ms 발생 원인 중 하나).
+  - `apps/web/features/platform/platform.server.ts:52-53`: `const cache = new Map<string, Material[]>(); const detailCache = new Map<string, Material>();`
+  - `apps/web/features/platform/platform.server.ts:73`: `const probes = new Map<...>()`. `:80`에서 400개를 넘으면 비운다(상한 있음).
+  - `apps/web/features/components/spec.server.ts:24`: `let listCache`, `:109`: `const viewCache = new Map<...>()`.
+  - `apps/web/features/explore/designs.server.ts:66`: `let cache: Design[] | null = null;`
+- **실측 근거와 한계**:
+  - 모든 캐시가 단일 Node.js 프로세스 메모리다. `assembleDesign` 자체(Explore 확인용·`/platform/render`)에는 결과 캐시가 없다. `probeDesign`(`platform.server.ts:74-83`)만 `probes`를 쓴다.
+  - 이전 문서가 원인으로 든 "콜드/웜 TTFB 208ms 차이(Vercel 포함)"는 근거가 못 된다. 그 값은 로컬 서버를 막 띄운 첫 요청이었고, Vercel의 콜드/웜 측정은 콜드 상태를 보장하지 못했다. 이번 재측정의 로컬 콜드/웜은 본문 첫 바이트 279ms / 26ms다(차이 253ms, 로컬 서버 첫 요청).
 
 ---
 
-## 3. 지시서 §3.6 목표 대비 실측 기준선 격차 분석
+## 3. 지시서 §3.6 목표 대비 실측 기준선 격차 분석 (중앙값, 초기 로드)
 
-### 성능 목표 대비 주요 지표 비교표
-
-| 지표 | 지시서 목표 (§3.6) | 로컬 운영 빌드 실측 (중앙값) | Vercel 운영 배포 실측 (중앙값) | 목표 달성 여부 및 격차 |
+| 지표 | 지시서 목표 (§3.6) | 로컬 운영 빌드 | Vercel 운영 배포 | 판정 |
 |:---|:---:|:---:|:---:|:---:|
-| **LCP** | 2.5초 (2,500ms) 이하 | 24ms ~ 96ms | 80ms ~ 768ms (Explore 768ms) | **달성** (최대 768ms로 기준치 이내) |
-| **INP (상호작용 지연 근사)** | 200ms 이하 | 0ms ~ 250ms | 0ms ~ 250ms | **미달** (Explore, Color, Studio 등에서 250ms로 +50ms 초과) |
-| **CLS** | 0.1 이하 | 0.000 | 0.000 | **달성** (0.000으로 안정적) |
-| **일반 카탈로그 iframe** | **0개** | Explore: 2~6개, Components: 2~6개 | Explore: 2~6개, Components: 2~6개 | **미달 (격차: 최대 +6개)** |
-| **목록 요청 시 동적 컴파일** | **0회** | Explore: 8~12회, Typography: 7회, Components: 2~6회 | N/A (서버리스 런타임 직접 연산) | **미달 (격차: 최대 +12회)** |
-| **Color 페이지 DOM 노드** | 권장 범위 이내 | 2,689 ~ 2,690개 | 2,689 ~ 2,690개 | **주의** (대규모 DOM으로 INP 및 메모리 부담) |
-| **서버 TTFB (콜드 vs 웜)** | 지연 최소화 | 콜드 308ms / 웜 100ms (차이 208ms) | 콜드 지연 관찰됨 | **개선 필요** (+208ms 지연) |
+| **LCP** | 2.5초 이하 | 24 ~ 164ms (Studio 160~164ms) | 80 ~ 620ms (Explore 390px 620ms) | **달성** (최대 620ms) |
+| **INP** | 200ms 이하 | Event Timing 관측 최대 0 ~ 112ms | 0 ~ 136ms | **달성(관측 범위)**. 이전 "250ms 초과"는 측정 산물로 철회. 단 16ms 미만 이벤트는 관측되지 않고 실행된 상호작용이 제한적(아래 참고) |
+| **CLS** | 0.1 이하 | 0 | 0 | **달성** |
+| **일반 카탈로그 iframe** | 0개 | Explore 2~6, Components 2~6 (스크롤 중 동시 최대 12·15) | 동일 | **미달** |
+| **목록 요청 시 동적 컴파일** | 0회 | Explore 8~12, Components 2~6, Typography 4 | 계측 불가(`DSK_PERF_METRICS` 없음) | **미달** |
+| **고정 미리보기 반복 요청 시 재컴파일** | 0회 | 스크롤 내려갔다 올라오면 Explore 누적 26~30, Components 64~66 | 계측 불가 | **미달** (재진입마다 재조립) |
+| **캐시된 탭 전환** | 200ms 이내 | 탭 전환 UI 반응(클릭→2프레임) 159 ~ 259ms (Explore 179/259, Color 258/174, Typography 225/255, Studio 234/228) | 157 ~ 386ms | **대체로 미달·불안정**. 대상이 있는 페이지만 측정(Materials·Palettes·Components 목록은 눌러 볼 대상 없음) |
+| **초기 카탈로그 카드** | 24개 이하 | Explore 목록 쪽당 24개 + 사례 | 동일 | 원칙상 충족, Components 목록은 구조 부품 전체를 한 번에 렌더 |
+| **Color 페이지 DOM 노드** | 목표 없음 | 2,689 ~ 2,690 | 동일 | 주의 |
+| **서버 첫 바이트 (동적 페이지)** | 목표 없음 | 23 ~ 24ms (Explore), 로컬 콜드 279ms | Explore 375~421ms, Typography 249~424ms (정적 페이지 13~22ms) | 동적 라우트가 Vercel에서 느림 |
+
+탭 전환 시간은 "클릭 시작부터 두 번째 animation frame"이며 데이터 로딩 완료 시간이 아니다. 측정 대상은 페이지마다 처음 만나는 활성 탭·분할 버튼·페이지 이동 링크 하나다.
 
 ---
 
 ## 4. 목표 대비 가장 큰 격차 상위 5개와 원인 위치
 
-1. **일반 카탈로그 목록의 활성 iframe 노출 (목표: 0개, 실측: 최대 6개)**
-   - **원인 코드**: `apps/web/features/explore/Thumb.tsx:32-42`, `apps/web/app/explore/page.tsx:64, 82`, `apps/web/app/components/page.tsx:32, 61`
-   - **영향**: 뷰포트에 진입하는 각 카드마다 전체 독립 브라우징 컨텍스트(iframe)가 생성되어 메모리와 프로세스 자원을 낭비함.
+1. **일반 카탈로그 목록의 활성 iframe (목표 0개)**: 초기 최대 6개, 스크롤 중 동시 최대 12개(Explore)·15개(Components).
+   - 원인 코드: `apps/web/features/explore/Thumb.tsx:21-25`, `:30-42`; 사용처 `explore/page.tsx:64, 82, 126`, `components/page.tsx:32, 61`.
+2. **고정 미리보기 반복 요청 시 재컴파일 (목표 0회)**: 스크롤 왕복 후 Components 누적 64~66회, Explore 26~30회. 재진입마다 iframe 재생성과 `/platform/render` 재호출이 일어난다.
+   - 원인 코드: `Thumb.tsx:23, 30`(언마운트), `apps/web/app/platform/render/route.ts:6-7`(`no-store`).
+3. **일반 목록 요청 시 동적 컴파일 (목표 0회)**: 초기 로드 Explore 8~12회(확인용 6 + iframe), Components 2~6회, Typography 4회.
+   - 원인 코드: `explore/page.tsx:121`, `route.ts:31-36`, `TypeCompare.tsx:52`.
+4. **캐시된 탭 전환 200ms (측정된 대상에서 157~386ms)**: Color(DOM 2,690개), Studio, Typography.
+   - 원인: Color 페이지의 대규모 DOM(`apps/web/app/materials/color/page.tsx`)과 Studio 번들. 정확한 JS 비용 분해는 이번 범위 밖(측정 대상과 시간 정의의 한계가 있어 확정 판정으로 쓰지 않는다).
+5. **Vercel 동적 라우트의 서버 첫 바이트 (Explore 375~421ms, 정적 페이지는 13~22ms)**: 목표 수치는 없지만 정적 페이지와 20배 차이.
+   - 원인 코드: Explore가 `ƒ`(동적)이고 서버 렌더에서 `assembleDesign`을 6회 부른다(`explore/page.tsx:121`), 결과 캐시 없음.
 
-2. **일반 목록 요청 시 서버 측 동적 컴파일 발생 (목표: 0회, 실측: 6~12회)**
-   - **원인 코드**: `apps/web/app/platform/render/route.ts:31-36`, `apps/web/app/explore/page.tsx:121`
-   - **영향**: 정적 사전 렌더 자산이 없어 카탈로그를 탐색할 때마다 서버리스 CPU가 소모되고 서버 응답 시간이 지연됨.
-
-3. **실험실 상호작용 지연 (INP 근사) 200ms 기준 초과 (실측: 최대 250ms, 격차: +50ms)**
-   - **원인 코드**: `apps/web/app/materials/color/page.tsx` (2,690개 DOM 노드 일괄 렌더), Studio 대형 패널 JS 번들
-   - **영향**: 대규모 DOM 조작 및 긴 태스크(Long Task)로 인해 탭 전환 및 버튼 클릭 인터랙션에 버벅임 발생.
-
-4. **Explore 및 Typography에서의 조립 검사 및 렌더링 중복 조립 (중복도: 2배)**
-   - **원인 코드**: `apps/web/app/explore/page.tsx:121`, `apps/web/features/platform/TypeCompare.tsx:52`
-   - **영향**: 동일한 조합 요청에 대해 서버 페이지 렌더러와 클라이언트 iframe이 각각 한 번씩 총 2번 컴파일을 수행함.
-
-5. **서버 첫 요청(콜드 스타트) 시의 TTFB 지연 (+208ms 차이)**
-   - **원인 코드**: `apps/web/features/platform/platform.server.ts:45-66`, `spec.server.ts:118-122`
-   - **영향**: 프로세스 인메모리 캐시가 빈 상태에서 컴포넌트 명세 분석 및 변형 검증이 일시에 몰려 초기 사용자 체감 지연 초래.
+병목 5(`componentView`)와 병목 7(캐시)은 운영 요청 시점 격차로 측정되지 않아 순위에서 제외했다. 병목 5는 빌드 시간·개발 서버 비용, 병목 7은 Vercel 인스턴스 간 캐시 공유를 따로 측정하기 전까지 판정 보류다.
