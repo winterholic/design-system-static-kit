@@ -19,6 +19,8 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run verify
+        env:
+          FONT_LOADING_EVIDENCE_PATH: test-results/font-loading-evidence.json
       - run: git diff --exit-code -- site docs
       - run: npm run test:browser
       - uses: actions/upload-artifact@v4

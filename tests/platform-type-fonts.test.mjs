@@ -5,8 +5,8 @@
 
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {writeFileSync, existsSync, readFileSync} from 'node:fs';
-import {resolve} from 'node:path';
+import {writeFileSync, existsSync, readFileSync, mkdirSync} from 'node:fs';
+import {dirname, resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 import {createPlatform} from '../src/platform/examples/minimal.mjs';
 import {bindType, webfontCSS, webfontPlan, webfontRoleCSS} from '../src/platform/type.mjs';
@@ -15,8 +15,18 @@ import {samplePage} from '../docs/platform/evidence/type/samples.mjs';
 import {queryMaterials} from '../src/service/materials-query.mjs';
 
 const env = createPlatform();
-const evidencePath = resolve('docs/platform/evidence/type/font-loading-evidence.json');
+const evidencePath = resolve(process.env.FONT_LOADING_EVIDENCE_PATH ?? 'docs/platform/evidence/type/font-loading-evidence.json');
 const fontAssetsPath = resolve('apps/web/assets/fonts');
+
+test('CI 폰트 실측은 지정한 산출 경로를 사용하고 로컬 기본 경로를 보존한다', () => {
+  const configuredPath = process.env.FONT_LOADING_EVIDENCE_PATH;
+  assert.equal(
+    evidencePath,
+    configuredPath
+      ? resolve(configuredPath)
+      : resolve('docs/platform/evidence/type/font-loading-evidence.json'),
+  );
+});
 
 test('1. 모든 WOFF2 서브셋은 버전 고정 공식 출처, OFL-1.1 라이선스, SHA-256, 재현 절차를 갖춘다', () => {
   const fonts = Object.values(WEBFONTS);
@@ -345,6 +355,7 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
   }
 
   // 실측 증거 저장
+  mkdirSync(dirname(evidencePath), {recursive: true});
   writeFileSync(evidencePath, JSON.stringify(evidence, null, 2) + '\n');
   assert.ok(existsSync(evidencePath), '증거 파일 생성 완료');
 });
