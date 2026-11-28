@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateComponentContracts, ALL_COMPONENT_CONTRACTS, COMPONENT_CONTRACTS, ACTION_COMPONENTS, ACTION_COMPONENT_BY_ID, countDistinctComponentTypes, renderActionComponent, COMPONENT_CONTRACT_FIELDS} from '../src/platform/families/contracts.mjs';
+import {validateComponentContracts, ALL_COMPONENT_CONTRACTS, COMPONENT_CONTRACTS, ACTION_COMPONENTS, ACTION_COMPONENT_BY_ID, countDistinctComponentTypes, renderActionComponent, COMPONENT_CONTRACT_FIELDS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent} from '../src/platform/families/contracts.mjs';
 import {COMPONENT_CLASSIFICATION} from '../src/platform/families/inventory.mjs';
 import {PURPOSE_FAMILIES} from '../src/platform/index.mjs';
 import {getPlatformMaterial, getMaterial} from '../src/service/index.mjs';
@@ -9,12 +9,51 @@ const MENU_ITEMS = [{label: '하나'}, {label: '둘'}, {label: '셋'}];
 const propsFor = id => ({label: '저장', ariaLabel: '저장', icon: 'plus', text: '값', items: MENU_ITEMS, message: undefined, id: 'sample'});
 
 test('all existing base and purpose components carry complete layer contracts', () => {
-  // 기반 10 + 목적 패밀리 37(A 계열 5 포함) + A 독립 시연 12
+  // 기반 10 + 목적 패밀리 37(A 계열 5 포함) + A 독립 시연 12 + N 커머스 11
   assert.equal(COMPONENT_CONTRACTS.length, 10 + PURPOSE_FAMILIES.length);
   assert.equal(PURPOSE_FAMILIES.length, 37);
-  assert.equal(ALL_COMPONENT_CONTRACTS.length, 59);
+  assert.equal(ALL_COMPONENT_CONTRACTS.length, 70);
   assert.deepEqual(validateComponentContracts(), []);
   for (const c of ALL_COMPONENT_CONTRACTS) for (const key of COMPONENT_CONTRACT_FIELDS) assert.ok(Object.hasOwn(c, key), `${c.id}.${key}`);
+});
+
+test('each §6.2 N commerce component has a renderer, a canonical requirement link and a classification from the inventory', () => {
+  assert.equal(COMMERCE_COMPONENTS.length, 11);
+  const sampleProps = {
+    'component:product-grid': {items: [{title: '상품', price: '10,000원'}]},
+    'component:product-detail-summary': {title: '상품명', price: '39,000원'},
+    'component:product-variant-selector': {options: [{label: '색상', choices: ['블랙', '화이트']}]},
+    'component:quantity-selector': {value: 2},
+    'component:price-display': {price: '19,000원', originalPrice: '29,000원'},
+    'component:discount-display': {rate: '25%', badge: '특가'},
+    'component:cart-item': {title: '상품 A', price: '19,000원', quantity: 2},
+    'component:cart-summary': {title: '장바구니 요약', items: [{label: '상품', value: '19,000원'}], total: {label: '합계', value: '19,000원'}},
+    'component:checkout-summary': {title: '결제 요약', items: [{label: '주문', value: '19,000원'}], total: {label: '합계', value: '19,000원'}},
+    'component:order-status': {orderNumber: '20261128-001', statusLabel: '배송중'},
+    'component:review-summary': {score: '4.8', count: '10개', items: [{rating: 5, text: '좋아요', author: '고객'}]},
+  };
+  for (const item of COMMERCE_COMPONENTS) {
+    const html = item.render(sampleProps[item.id] ?? {});
+    assert.ok(html.includes(`data-component="${item.id}"`), item.id);
+    assert.match(item.requirementId, /^req:comp:n-\d\d-/);
+    assert.equal(COMPONENT_CLASSIFICATION[item.requirementId.slice('req:comp:'.length)], item.classification, `${item.id} follows the classification table`);
+  }
+});
+
+test('every N contract names a registered material and a Blueprint way to use it', () => {
+  for (const item of COMMERCE_COMPONENTS) {
+    const contract = ALL_COMPONENT_CONTRACTS.find(c => c.id === item.id);
+    assert.equal(contract.blueprint.id, item.materialId);
+    const registered = getPlatformMaterial({id: item.materialId}).ok || getMaterial({id: item.materialId}).ok;
+    assert.ok(registered, `${item.id} → ${item.materialId} is queryable from the registry`);
+    if (item.blueprint.field === 'materials.purposes') {
+      assert.equal(getPlatformMaterial({id: item.materialId}).value.kind, 'purpose-family', item.id);
+      assert.equal(item.blueprint.purpose, item.materialId);
+    } else {
+      assert.equal(item.blueprint.field, 'tree');
+      assert.ok(item.blueprint.node, item.id);
+    }
+  }
 });
 
 test('each §6.2 A action component has a renderer, a canonical requirement link and a classification from the inventory', () => {
@@ -120,8 +159,8 @@ test('the same component reached as an A demo and as a purpose family counts onc
   assert.equal(types.filter(t => t === 'split-button').length, 2, 'purpose:button.split and component:split-button');
   assert.equal(types.filter(t => t === 'menu-button').length, 2);
   assert.ok(types.filter(t => t === 'button-control').length >= 9, 'icon, toggle, loading, FAB, copy, close, link, button and the base all describe button-control');
-  // 기반 10 + 목적 패밀리 중 button-control로 합쳐지지 않는 29 + split-button·menu-button·button-group
-  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), 42);
+  // 기반 10 + 목적 패밀리 중 button-control로 합쳐지지 않는 29 + split-button·menu-button·button-group + N 커머스 9종
+  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), 51);
 });
 
 // ---- 독립 검토(2026-11-28)에서 재현된 결함의 회귀 시험 ----

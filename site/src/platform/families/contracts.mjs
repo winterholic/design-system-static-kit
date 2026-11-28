@@ -15,6 +15,9 @@ import {FEEDBACK_FAMILIES} from './feedback.mjs';
 import {renderButton} from '../../materials/button.mjs';
 import {COMPONENT_CLASSIFICATION} from './inventory.mjs';
 import {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} from './action.mjs';
+import {COMMERCE_SPECS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, COMMERCE_CONTRACTS} from './commerce.mjs';
+
+export {COMMERCE_SPECS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, COMMERCE_CONTRACTS};
 
 export const COMPONENT_LAYERS = Object.freeze(['Primitive', 'Base', 'Purpose', 'Composite', 'Page Section']);
 export const COMPONENT_CONTRACT_FIELDS = Object.freeze([
@@ -219,7 +222,7 @@ export const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ..
   renderer: {module: 'src/platform/families/contracts.mjs', export: 'renderActionComponent'},
   blueprint: {...item.blueprint, id: item.materialId}, tests: ['tests/platform-family-contract.test.mjs', 'tests/platform-action-blueprint.test.mjs'],
   unsupported: item.id === 'component:floating-action-button' ? {position: [{value: 'fixed', reason: '뷰포트 모서리 고정과 safe-area는 페이지 배치가 정한다. 컴포넌트는 흐름 안에 놓인다.'}]} : {},
-}))]);
+})), ...COMMERCE_CONTRACTS]);
 export const ACTION_COMPONENT_BY_ID = new Map(ACTION_COMPONENTS.map(item => [item.id, item]));
 export function renderActionComponent(id, props = {}) {
   const item = ACTION_COMPONENT_BY_ID.get(id);

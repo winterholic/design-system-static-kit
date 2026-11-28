@@ -6,13 +6,14 @@ import {proposeSubtokenSets as propose} from '../platform/color.mjs';
 import {formRuntime, controlRuntime, escapeHTML} from '../render.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 import {diagnostic, hintFor} from './errors.mjs';
-import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME} from '../platform/families/contracts.mjs';
+import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME, COMMERCE_COMPONENT_BY_ID, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME} from '../platform/families/contracts.mjs';
 import {actionRuntimeFor} from '../platform/families/action.mjs';
 
 const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
-const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions'];
+const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions', 'commerce'];
 const ITEM_KEYS = ['purpose', 'visual', 'variant', 'props', 'content', 'id'];
 const ACTION_KEYS = ['component', 'props'];
+const COMMERCE_KEYS = ['component', 'props'];
 const diag = d => diagnostic(d.code, d.path ?? '$', d.message, hintFor(d.code), {severity: d.severity === 'error' ? undefined : d.severity});
 
 /** 사용자 hex는 요청 동안만 사용한다. 레지스트리·파일·캐시에 기록하지 않는다. */
@@ -80,13 +81,25 @@ export function assembleComponents(request) {
         if (uid !== undefined && request.actions.findIndex(x => x.props?.id === uid) !== i) return fail([badRequest(`$args.actions[${i}].props.id`, `id가 겹칩니다: ${String(uid)}. 마크업 id와 메뉴 참조가 한 곳을 가리키도록 액션마다 다른 id를 주세요.`)]);
       }
     }
+    if (request.commerce !== undefined) {
+      if (!Array.isArray(request.commerce) || request.commerce.length > 11) return fail([badRequest('$args.commerce', 'commerce는 커머스 컴포넌트 0~11개 배열이어야 합니다.')]);
+      for (const [i, item] of request.commerce.entries()) {
+        if (!isPlain(item)) return fail([badRequest(`$args.commerce[${i}]`, '항목은 {component, props} 객체여야 합니다.')]);
+        const bad = checkKeys(item, COMMERCE_KEYS, `$args.commerce[${i}]`);
+        if (bad) return fail([bad]);
+        if (typeof item.component !== 'string' || !COMMERCE_COMPONENT_BY_ID.has(item.component)) return fail([badRequest(`$args.commerce[${i}].component`, '등록된 component id가 필요합니다.')]);
+        if (item.props !== undefined && !isPlain(item.props)) return fail([badRequest(`$args.commerce[${i}].props`, 'props는 객체여야 합니다.')]);
+        const uid = item.props?.id;
+        if (uid !== undefined && request.commerce.findIndex(x => x.props?.id === uid) !== i) return fail([badRequest(`$args.commerce[${i}].props.id`, `id가 겹칩니다: ${String(uid)}. 항목마다 다른 id를 주세요.`)]);
+      }
+    }
     let env = platformEnv(), palette = request.palette, subtokenSet = request.subtokenSet, userPalette = null;
     if (request.seeds !== undefined) {
       const p = paletteForSeeds(request.seeds, request.subtokenSet);
       if (p.error) return fail(p.error);
       env = createPlatform({records: [p.record]}); palette = p.record.id; subtokenSet = p.selectedSet; userPalette = {id: palette, seeds: p.proposal.palette.seeds};
     }
-    const {seeds: _transient, actions: _actions, ...assemblyRequest} = request;
+    const {seeds: _transient, actions: _actions, commerce: _commerce, ...assemblyRequest} = request;
     const engine = assembleFamilies(env, {...assemblyRequest, palette, subtokenSet, items: request.items});
     if (!engine.ok) return fail(engine.diagnostics.map(diag));
     const bases = engine.value.manifest.families.bases;
@@ -94,10 +107,17 @@ export function assembleComponents(request) {
     let actionHtml = '';
     try { actionHtml = actionItems.map(item => ACTION_COMPONENT_BY_ID.get(item.component).render(item.props)).join(''); }
     catch (e) { return fail([badRequest('$args.actions', `액션 컴포넌트를 렌더하지 못했습니다: ${e.message}`)]); }
+
+    const commerceItems = (request.commerce ?? []).map((item, i) => ({component: item.component, props: {id: `commerce-${i}`, ...(item.props ?? {})}}));
+    let commerceHtml = '';
+    try { commerceHtml = commerceItems.map(item => COMMERCE_COMPONENT_BY_ID.get(item.component).render(item.props)).join(''); }
+    catch (e) { return fail([badRequest('$args.commerce', `커머스 컴포넌트를 렌더하지 못했습니다: ${e.message}`)]); }
+
     // actions는 button-control을 렌더하므로 items가 쓰지 않아도 기반 버튼 런타임(토글·로딩 차단)이 필요하다.
     const runtimeBases = actionItems.length ? [...new Set([...bases, 'base-component:button-control'])].sort() : bases;
     const script = formRuntime + controlRuntime({catalogVersion: '2.7.0', tree: {type: 'page', children: runtimeBases.map(id => ({type: id.slice('base-component:'.length)}))}})
-      + (actionItems.length ? ACTION_COMPONENT_RUNTIME : actionRuntimeFor(request.items.map(item => item.purpose)));
+      + (actionItems.length ? ACTION_COMPONENT_RUNTIME : actionRuntimeFor(request.items.map(item => item.purpose)))
+      + (commerceItems.length ? COMMERCE_COMPONENT_RUNTIME : '');
     const purposeItems = request.items.map(item => {
       const family = env.registry.get(item.purpose);
       const defaults = fields => Object.fromEntries(Object.keys(fields).map(key => [key, family.defaults[key]]));
@@ -109,7 +129,7 @@ export function assembleComponents(request) {
       selection: {...engine.value.manifest.selection, ...(palette ? {palette} : {}), ...(subtokenSet ? {subtokenSet} : {}), context: request.context, mode: request.mode ?? 'light', density: request.density ?? 'comfortable'},
       purposeItems,
     };
-    const value = {css: engine.value.css + (actionItems.length ? ACTION_COMPONENT_CSS : ''), html: engine.value.html + actionHtml, script, manifest: {...manifest, ...(actionItems.length ? {actionItems} : {})}};
+    const value = {css: engine.value.css + (actionItems.length ? ACTION_COMPONENT_CSS : '') + (commerceItems.length ? COMMERCE_COMPONENT_CSS : ''), html: engine.value.html + actionHtml + commerceHtml, script, manifest: {...manifest, ...(actionItems.length ? {actionItems} : {}), ...(commerceItems.length ? {commerceItems} : {})}};
     if (userPalette) value.manifest.userPalette = userPalette;
     value.standalone = standalone({...value, mode: manifest.selection.mode});
     return ok(jsonClone(value), engine.diagnostics.map(diag));

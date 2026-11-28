@@ -187,3 +187,32 @@ A1 검증은 Components 목록의 DOM 카드 92개(24개 원칙 위반)를, A2 �
 3. **Studio 엔진 버전은 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`이다**(DEC-010 9항의 상수 사용). 어느 쪽이 바뀌어도 모든 Studio 캐시 키가 바뀐다. DEC-009 3항의 편차는 해소됐다.
 4. **측정 훅은 빌드 시점 스위치로만 켠다.** `DSK_STUDIO_PROBE=1` 로 빌드한 번들에만 `window.__studio_api`·`__studio_compile_count` 가 들어가고, 운영 빌드는 훅 코드가 번들에서 사라진다. 런타임 스위치(쿼리·localStorage)는 두지 않는다. 사용자가 운영 페이지에서 켤 수 있으면 훅이 노출된 것과 같기 때문이다. 이를 위해 `apps/web/next.config.mjs` 에 `env` 한 줄을 추가했다(§6.1 crossTrackFiles 에 기록).
 
+---
+
+## DEC-014: N 계열(커머스 패턴)의 11항목 계약 및 기존 상품·카트 구조 결합
+
+### 맥락
+REQUEST §6.2 N의 커머스 패턴 11종(Product Grid, Product Detail Summary, Product Variant Selector, Quantity Selector, Price Display, Discount Display, Cart Item, Cart Summary, Checkout Summary, Order Status, Review Summary)을 기존 상품·카트 구조와 결합해 실제 출력과 조립 경로를 지원해야 한다. 고유 동작이나 구조가 필요한 재료만 추가하고 불필요한 재료 중복 생성을 방지하며, Core/REST/MCP 전 채널에서 동일한 바이트 출력을 보장해야 한다.
+
+### 결정
+1. **고유 동작/구조 중심 재료 매핑 및 기존 기반 재사용**:
+   - Product Grid: `component:grid` (독립 렌더러 `kit-product-grid` 지원)
+   - Product Detail Summary: `component:buy-box`
+   - Product Variant Selector: `component:buy-box`의 part-of 복합 패턴. 첫 번째 옵션 `checked` 보장 및 옵션 선택 상태 지원.
+   - Quantity Selector: `base-component:input-control` (독립 렌더러 `kit-quantity-selector`, 증감/경계 disabled 토글 런타임 지원)
+   - Price Display: `component:buy-box` (독립 렌더러 `kit-price-display` 지원)
+   - Discount Display: `purpose:card.product` (독립 렌더러 `kit-discount-display` 지원)
+   - Cart Item: `component:summary` (독립 렌더러 `kit-cart-item`, dismiss 숨김 런타임 및 `.kit-cart-item[hidden]{display:none!important}` 지원)
+   - Cart Summary: `component:summary`
+   - Checkout Summary: `component:summary`
+   - Order Status: `component:steps` (독립 렌더러 `kit-order-status` 지원)
+   - Review Summary: `component:reviews`
+2. **단독 렌더러 및 단일 조립 경로 (`commerce` 채널 확장)**:
+   `src/platform/families/commerce.mjs`에 `renderCommerceComponent`를 구현하고, A 계열의 `actions`와 대칭으로 `assembleComponents`에 `commerce` 필드를 도입하여 Core, REST(`/api/v1/platform/assemble-components`), MCP(`assemble_components`)에서 동일 바이트 출력과 진단을 지원한다.
+3. **계약 수량 및 고유 컴포넌트 타입 집계**:
+   11종 계약(`COMMERCE_CONTRACTS`)을 `ALL_COMPONENT_CONTRACTS`에 병합하여 총 계약 수 70개, 고유 componentType 51종(기존 42종에서 9종 추가: `product-grid`, `buy-box`, `quantity-selector`, `price-display`, `discount-display`, `cart-item`, `summary`, `order-status`, `reviews`)으로 확장한다.
+4. **Product Variant Selector part-of 필수 선택 보장**:
+   Product Variant Selector는 독립 컴포넌트가 아니라 Buy Box 내의 복합 패턴(part-of)으로 동작하며, 런타임 및 HTML 렌더 시 첫 번째 옵션의 `checked` 속성을 보장하여 필수 선택 상태를 결손 없이 지원한다.
+5. **Studio 및 페이지 조립 제약**:
+   커머스 패턴 중 standalone 컴포넌트(Quantity Selector, Price Display, Discount Display, Cart Item 등)는 `assembleComponents`의 `commerce` 슬롯으로 독립 시연 및 조립을 지원하며, 전체 페이지 조립(`assembleDesign`) 시에는 커머스 템플릿의 지정된 슬롯에 배치된다.
+

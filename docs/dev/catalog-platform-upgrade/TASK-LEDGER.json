@@ -1578,12 +1578,75 @@
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/commerce.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/index.mjs",
+        "src/service/platform-components.mjs",
+        "apps/web/lib/api/operations.mjs",
+        "apps/web/lib/api/mcp.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/platform/components.md",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-commerce-blueprint.test.mjs",
+        "tests/platform-service-commerce-channels.test.mjs",
+        "tests/platform-service-commerce-components.test.mjs",
+        "e2e/platform-commerce-components.spec.mjs"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-commerce-blueprint.test.mjs",
+        "tests/platform-service-commerce-channels.test.mjs",
+        "tests/platform-service-commerce-components.test.mjs",
+        "e2e/platform-commerce-components.spec.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Verified",
+      "unresolvedIssues": "없음. §6.2 N 커머스 패턴 11종의 Manifest 지원 경로(direct/part-of)를 모두 확인하여 missing 0 달성. Product Variant Selector part-of 경로에서 첫 번째 옵션 checked 보장 및 상태 반영을 확인하고, Quantity Selector/Cart Item 등의 런타임 및 동일 바이트 일치성 검증 완료. Studio 선택/조립 경로는 기존 패턴 슬롯 및 assembleComponents commerce 필드로 지원.",
+      "createFiles": [
+        "src/platform/families/commerce.mjs",
+        "tests/platform-commerce-blueprint.test.mjs",
+        "tests/platform-service-commerce-channels.test.mjs",
+        "tests/platform-service-commerce-components.test.mjs",
+        "e2e/platform-commerce-components.spec.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/lib/api/operations.mjs",
+          "owner": "Track A",
+          "reason": "assembleComponents REST 스키마에 commerce 항목 지원 추가"
+        },
+        {
+          "file": "apps/web/lib/api/mcp.mjs",
+          "owner": "Track A",
+          "reason": "assemble_components MCP 스키마에 commerce 항목 지원 추가"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "owner": "Track A",
+          "reason": "서비스 진입점에서 commerce 키 조립 및 CSS/런타임 포함 지원"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "N 계열 11종 커버리지 매핑 및 Manifest 생성"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "owner": "Track G",
+          "reason": "N 계열 11종 missing 0 Manifest 갱신"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "owner": "Track G",
+          "reason": "DEC-013 N 계열 의사결정 기록"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-O",

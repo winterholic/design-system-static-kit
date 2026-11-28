@@ -214,30 +214,30 @@
   "summary": {
     "requirements": {
       "total": 337,
-      "fulfilled": 229,
-      "missing": 108,
-      "coverageRate": 0.6795,
+      "fulfilled": 235,
+      "missing": 102,
+      "coverageRate": 0.6973,
       "byCoverage": {
-        "direct": 191,
+        "direct": 197,
         "variant": 29,
         "schema": 7,
         "part-of": 2,
-        "missing": 108
+        "missing": 102
       },
       "statusDistribution": {
-        "missing": 108,
+        "missing": 102,
         "metadata-only": 0,
         "defined": 7,
         "renderable": 53,
         "catalog-visible": 26,
         "assemblable": 1,
-        "verified": 142
+        "verified": 148
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 90,
-          "direct": 79,
+          "missing": 84,
+          "direct": 85,
           "variant": 29,
           "schema": 7,
           "partOf": 2
@@ -2602,9 +2602,11 @@
       "id": "req:comp:n-01-product-grid",
       "section": "§6.2 N",
       "name": "Product Grid",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "component:grid"
+      ]
     },
     {
       "id": "req:comp:n-02-product-detail-summary",
@@ -2631,33 +2633,41 @@
       "id": "req:comp:n-04-quantity-selector",
       "section": "§6.2 N",
       "name": "Quantity Selector",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "base-component:input-control"
+      ]
     },
     {
       "id": "req:comp:n-05-price-display",
       "section": "§6.2 N",
       "name": "Price Display",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "component:buy-box"
+      ]
     },
     {
       "id": "req:comp:n-06-discount-display",
       "section": "§6.2 N",
       "name": "Discount Display",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.product"
+      ]
     },
     {
       "id": "req:comp:n-07-cart-item",
       "section": "§6.2 N",
       "name": "Cart Item",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "component:summary"
+      ]
     },
     {
       "id": "req:comp:n-08-cart-summary",
@@ -2683,9 +2693,11 @@
       "id": "req:comp:n-10-order-status",
       "section": "§6.2 N",
       "name": "Order Status",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "component:steps"
+      ]
     },
     {
       "id": "req:comp:n-11-review-summary",
@@ -11532,7 +11544,8 @@
         "req:comp:b-02-textarea",
         "req:comp:b-04-password-input",
         "req:comp:b-05-number-input",
-        "req:comp:b-07-email-input"
+        "req:comp:b-07-email-input",
+        "req:comp:n-04-quantity-selector"
       ],
       "status": "verified",
       "blockedBy": null,
@@ -31181,7 +31194,8 @@
       "category": "section-recipe",
       "requirementIds": [
         "req:comp:n-02-product-detail-summary",
-        "req:comp:n-03-product-variant-selector"
+        "req:comp:n-03-product-variant-selector",
+        "req:comp:n-05-price-display"
       ],
       "status": "verified",
       "blockedBy": null,
@@ -32819,7 +32833,8 @@
       "registry": "design",
       "category": "layout-navigation",
       "requirementIds": [
-        "req:comp:l-03-grid"
+        "req:comp:l-03-grid",
+        "req:comp:n-01-product-grid"
       ],
       "status": "verified",
       "blockedBy": null,
@@ -35402,7 +35417,8 @@
       "registry": "design",
       "category": "section-recipe",
       "requirementIds": [
-        "req:comp:m-14-workflow-steps"
+        "req:comp:m-14-workflow-steps",
+        "req:comp:n-10-order-status"
       ],
       "status": "verified",
       "blockedBy": null,
@@ -35479,6 +35495,7 @@
       "registry": "design",
       "category": "section-recipe",
       "requirementIds": [
+        "req:comp:n-07-cart-item",
         "req:comp:n-08-cart-summary",
         "req:comp:n-09-checkout-summary"
       ],
@@ -80162,7 +80179,8 @@
       "registry": "platform",
       "category": "card",
       "requirementIds": [
-        "req:comp:f-06-product-card"
+        "req:comp:f-06-product-card",
+        "req:comp:n-06-discount-display"
       ],
       "status": "verified",
       "blockedBy": null,
