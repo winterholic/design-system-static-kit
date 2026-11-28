@@ -4,11 +4,10 @@
   "summary": {
     "totalTasks": 29,
     "byStatus": {
+      "Implemented": 1,
+      "In Progress": 2,
       "Pending": 21,
-      "In Progress": 1,
-      "Implemented": 4,
-      "Verified": 3,
-      "Blocked": 0
+      "Verified": 5
     },
     "byTrack": {
       "Track A": 4,
@@ -356,7 +355,7 @@
       ],
       "commit": null,
       "status": "In Progress",
-      "unresolvedIssues": "현재 origin/main의 자체 시드 팔레트는 9종이다. B1 작업 트리에 200종 변경이 아직 커밋되지 않아 200×25 평가와 전체 매트릭스 검증을 완료하지 못했다.",
+      "unresolvedIssues": "200×25 평가는 B1(TRB-01) 병합 후 재실행",
       "crossTrackFiles": [
         {
           "file": "src/service/platform-components.mjs",
