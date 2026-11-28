@@ -6413,7 +6413,7 @@
         "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
         "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
       ],
-      "completionCriteria": "apps/web의 Core 내부 파일 상대경로 import 28곳 전수 제거, assembleLayoutSpecimen·renderChartPreset의 표준 결과 봉투 및 입력 방어 RED→GREEN 검증, foundations 인벤토리 deepFreeze 불변성 검증, test:boundary 9/9 통과, core-boundary·channel-rest·channel-mcp·service-contract 및 F2b·F5 단위시험 통과, web typecheck/build 성공, coverage MATCH, check-generated REPRODUCIBLE 통과, 고정 해시 및 site/v1 불변, 최신 origin/main rebase 후 push",
+      "completionCriteria": "apps/web의 Core 내부 파일 상대경로 import 28곳 전수 제거, assembleLayoutSpecimen·renderChartPreset의 표준 결과 봉투 및 입력 방어 RED→GREEN 검증, colorRoles 불리언·stable 불리언·width 축 도메인 검사와 fills 실제 조립 전달 검증, foundations 인벤토리 deepFreeze 불변성 검증, test:boundary 9/9 통과, core-boundary·channel-rest·channel-mcp·service-contract 및 F2b·F5 단위시험 통과, 848b61df2와 F2b 기본 81종 성공·실패 및 성공 파일 바이트 비교, web typecheck/build 성공, coverage MATCH, check-generated REPRODUCIBLE 통과, 고정 해시 및 site/v1 불변, 최신 origin/main 선형 조상 및 push",
       "tests": [
         "npm --workspace apps/web run test:boundary",
         "node --test tests/core-boundary.test.mjs tests/channel-rest.test.mjs tests/channel-mcp.test.mjs tests/service-contract.test.mjs apps/web/features/components/material-detail.unit.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs apps/web/features/materials/foundations-exhibit.unit.mjs",

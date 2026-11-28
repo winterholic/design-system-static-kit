@@ -17,12 +17,15 @@ export function renderChartPreset(id, data = {}, options = {}) {
     if (data !== undefined && data !== null && !isPlain(data)) {
       return fail([badRequest('$args.data', '차트 데이터는 객체여야 합니다.')]);
     }
-    if (options !== undefined && options !== null && !isPlain(options)) {
+    if (options !== undefined && !isPlain(options)) {
       return fail([badRequest('$args.options', 'options는 객체여야 합니다.')]);
     }
-    const opts = options ?? {};
+    const opts = options === undefined ? {} : options;
     const badKey = checkKeys(opts, ['colorRoles'], '$args.options');
     if (badKey) return fail([badKey]);
+    if (opts.colorRoles !== undefined && typeof opts.colorRoles !== 'boolean') {
+      return fail([badRequest('$args.options.colorRoles', 'colorRoles는 불리언이어야 합니다.')]);
+    }
 
     const material = byId.get(id);
     if (!material) {

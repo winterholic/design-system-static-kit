@@ -2483,6 +2483,43 @@ REPRODUCIBLE: 5380 generated files match a fresh build byte for byte.
    - 수정 후: 20/20 전수 통과 (GREEN).
    - Core/채널/경계/웹 단위 64/64 통과, 웹 typecheck 통과, `check-generated.mjs` 5,381개 파일 바이트 일치 통과.
 
+### 40.6 공개 서비스 옵션의 실제 적용·타입 검증 재교정 (2026-11-29)
+
+기존 완료 확인에서 놓친 옵션 값을 b550586e6 기준 서비스 코드에서 다시 실행했다. `colorRoles`는 키 존재만 확인해 문자열 `"false"`도 truthy 값으로 Core에 전달했고, `assembleLayoutSpecimen`은 `fills`를 조립 입력으로 쓰지 않으며 `width`와 `stable` 타입도 확인하지 않았다.
+
+- **기준 재현**: `chart-preset:operations-activity-heatmap`에서 `renderChartPreset(id, {}, {colorRoles: 'false'})`와 `{colorRoles: true}`는 둘 다 성공하고 HTML이 같았다(3,474 bytes). `fills: [{slot: 'invalid'}]`, `width: {}`, `stable: 'false'`도 모두 성공했고 레이아웃의 기본 5개 fills를 반환했다.
+- **RED**: 회귀 테스트를 먼저 추가하고 `node --test tests/service-contract.test.mjs` 실행. 22개 중 20개 통과, 신규 옵션 검증 두 테스트가 `true !== false`로 실패했다.
+- **GREEN**: 차트 `colorRoles` 불리언 검사, 레이아웃 `stable` 불리언·실제 Core width 축(`narrow|standard|wide|full`) 검사, `fills` 검증 및 기존 `assembleLayout`에 입력 전달을 추가했다. Core 조립 진단의 코드와 입력 경로도 서비스 봉투에 보존한다. 같은 명령은 22/22 통과했다.
+- **F2b 비교**: 848b61df2와 교정 후보에서 기본 81종(차트 44, 레이아웃 24, 컴포넌트 7, 원형 6)을 각각 실행했다. 둘 다 성공 81·실패 0이며 성공 파일 총 10,466,506 bytes를 파일별 문자열 전체로 비교해 차이 0이다.
+- 공유 Foundations 인벤토리 깊은 동결 및 같은 Blueprint CSS 불변은 서비스 계약 시험으로 확인했다. 새 레이아웃·차트 봉투, 잘못된 ID 진단, 내부 차트 Core의 문자열 반환 계약도 회귀 시험에 포함된다.
+
+검증 결과:
+
+```text
+$ npm --workspace apps/web run test:boundary
+ℹ tests 9 / ℹ pass 9 / ℹ fail 0
+
+$ node --test tests/core-boundary.test.mjs tests/service-contract.test.mjs tests/channel-rest.test.mjs tests/channel-mcp.test.mjs apps/web/features/components/material-detail.unit.mjs apps/web/features/materials/foundations-exhibit.unit.mjs
+ℹ tests 66 / ℹ pass 66 / ℹ fail 0
+
+$ npm --workspace apps/web run typecheck
+> tsc --noEmit (통과)
+
+$ npm --workspace apps/web run build
+✓ Compiled successfully; ✓ Generating static pages (962/962)
+
+$ npm run build
+BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 theme showcases, test-lab
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5381 generated files match a fresh build byte for byte.
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)
+```
+
+기준 `site/v1/` 및 legacy 출력 diff는 0이다. 이 재교정은 서비스 옵션 검증·사용과 테스트, 생성된 서비스 사본, 이 장부만 바꾼다.
+
 ## 41. F5 Foundations 배경 미리보기 Core 장식 스타일(크기·테두리) 정밀 일치 및 회귀 방지 (TASK-TRF-09)
 
 F5 Foundations 배경 미리보기에서 Core 출력과 어긋나던 두 가지 속성(`brand-tint-dots`의 24px 24px 장식 크기 및 `frosted-pane`의 Core 1px solid 테두리)을 수정하고, 기존 11종 배경의 고유 속성 및 mask·opacity·blur를 완벽히 유지하도록 개선했다. 단위 및 E2E 명세에 회귀 방지 단언을 추가하여 무결성을 보장했다.

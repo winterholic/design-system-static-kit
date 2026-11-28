@@ -10,6 +10,7 @@
  * 던지지 않는 같은 봉투를 돌려준다.
  */
 import {PLATFORM_KINDS} from '../platform/contract.mjs';
+import {axisDefs} from '../catalog/axes.mjs';
 import {recommend} from '../platform/recommend.mjs';
 import {platformEnv} from '../platform/compile.mjs';
 import {assembleSpecimen, layoutSpecimen, assembleLayout} from '../platform/layouts.mjs';
@@ -155,10 +156,10 @@ export function assembleLayoutSpecimen(layoutId, options = {}) {
     if (typeof layoutId !== 'string' || !layoutId) {
       return fail([badRequest('$args.layoutId', 'layoutId는 비어 있지 않은 문자열이어야 합니다.', 'listPlatformMaterials({kind: "layout"})로 id를 조회하세요.')]);
     }
-    if (options !== undefined && options !== null && !isPlain(options)) {
+    if (options !== undefined && !isPlain(options)) {
       return fail([badRequest('$args.options', 'options는 객체여야 합니다.')]);
     }
-    const opts = options ?? {};
+    const opts = options === undefined ? {} : options;
     const badKey = checkKeys(opts, ['density', 'mode', 'visual', 'context', 'width', 'stable', 'fills'], '$args.options');
     if (badKey) return fail([badKey]);
     if (opts.density !== undefined && !DENSITIES.includes(opts.density)) {
@@ -167,15 +168,34 @@ export function assembleLayoutSpecimen(layoutId, options = {}) {
     if (opts.mode !== undefined && !MODES.includes(opts.mode)) {
       return fail([badRequest('$args.options.mode', `mode는 ${list(MODES)} 중 하나입니다.`)]);
     }
+    if (opts.width !== undefined && (typeof opts.width !== 'string' || !Object.hasOwn(axisDefs.width.values, opts.width))) {
+      return fail([badRequest('$args.options.width', `width는 ${list(Object.keys(axisDefs.width.values))} 중 하나입니다.`)]);
+    }
+    if (opts.stable !== undefined && typeof opts.stable !== 'boolean') {
+      return fail([badRequest('$args.options.stable', 'stable은 불리언이어야 합니다.')]);
+    }
+    if (opts.visual !== undefined && (typeof opts.visual !== 'string' || !opts.visual)) {
+      return fail([badRequest('$args.options.visual', 'visual은 비어 있지 않은 family id 문자열이어야 합니다.')]);
+    }
+    if (opts.context !== undefined && (typeof opts.context !== 'string' || !opts.context)) {
+      return fail([badRequest('$args.options.context', 'context는 비어 있지 않은 페이지 맥락 문자열이어야 합니다.')]);
+    }
+    if (opts.fills !== undefined) {
+      if (!Array.isArray(opts.fills)) return fail([badRequest('$args.options.fills', 'fills는 슬롯 채움 객체의 배열이어야 합니다.')]);
+      const invalidFill = opts.fills.findIndex(fill => !isPlain(fill) || typeof fill.slot !== 'string' || !fill.slot || typeof fill.purpose !== 'string' || !fill.purpose);
+      if (invalidFill >= 0) return fail([badRequest(`$args.options.fills[${invalidFill}]`, '각 fills 항목은 비어 있지 않은 slot과 purpose 문자열이 필요합니다.')]);
+    }
     const env = platformEnv();
     const layout = env.registry.get(layoutId);
     if (!layout || layout.kind !== 'layout') {
       return fail([diagnostic('UNKNOWN_LAYOUT', '$args.layoutId', `등록되지 않은 레이아웃 재료: ${layoutId}`, 'listPlatformMaterials({kind: "layout"})로 id를 조회하세요.')]);
     }
-    const fills = layoutSpecimen(env, layout, {stable: true, ...opts});
+    const {fills: suppliedFills, ...specimenOptions} = opts;
+    const fills = suppliedFills ?? layoutSpecimen(env, layout, {stable: true, ...specimenOptions});
     const assembled = assembleLayout(env, {layout: layoutId, fills, density: opts.density, mode: opts.mode, visual: opts.visual, context: opts.context, width: opts.width});
     if (!assembled.ok) {
-      return fail(assembled.diagnostics?.length ? assembled.diagnostics.map(d => diagnostic(d.code, '$args', d.message)) : [diagnostic('LAYOUT_ASSEMBLY_FAILED', '$args', '레이아웃 조립에 실패했습니다.')]);
+      const pathOf = path => path === '$.layout' ? '$args.layoutId' : path?.startsWith('$.fills') ? `$args.options${path.slice(1)}` : '$args.options';
+      return fail(assembled.diagnostics?.length ? assembled.diagnostics.map(d => diagnostic(d.code, pathOf(d.path), d.message)) : [diagnostic('LAYOUT_ASSEMBLY_FAILED', '$args.options', '레이아웃 조립에 실패했습니다.')]);
     }
     return ok(jsonClone({fills, ...assembled.value}));
   });

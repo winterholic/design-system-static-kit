@@ -249,6 +249,44 @@ test('assembleLayoutSpecimen returns standard envelope and defends against hosti
   assert.equal(badOpts.ok, false);
 });
 
+test('assembleLayoutSpecimen rejects wrong option types and applies supplied fills and width', () => {
+  const badStable = service.assembleLayoutSpecimen('layout:asymmetric-grid', {stable: 'false'});
+  envelope(badStable);
+  assert.equal(badStable.ok, false);
+  assert.equal(badStable.errors[0].code, 'BAD_REQUEST');
+  assert.equal(badStable.errors[0].path, '$args.options.stable');
+
+  const badWidth = service.assembleLayoutSpecimen('layout:asymmetric-grid', {width: {}});
+  envelope(badWidth);
+  assert.equal(badWidth.ok, false);
+  assert.equal(badWidth.errors[0].code, 'BAD_REQUEST');
+  assert.equal(badWidth.errors[0].path, '$args.options.width');
+
+  const badWidthValue = service.assembleLayoutSpecimen('layout:asymmetric-grid', {width: 'ultra'});
+  envelope(badWidthValue);
+  assert.equal(badWidthValue.ok, false);
+  assert.equal(badWidthValue.errors[0].code, 'BAD_REQUEST');
+  assert.equal(badWidthValue.errors[0].path, '$args.options.width');
+
+  const specimen = service.assembleLayoutSpecimen('layout:asymmetric-grid');
+  const invalidFills = specimen.value.fills.map((fill, index) => index === 0 ? {...fill, slot: 'invalid'} : fill);
+  const badFills = service.assembleLayoutSpecimen('layout:asymmetric-grid', {fills: invalidFills});
+  envelope(badFills);
+  assert.equal(badFills.ok, false);
+  assert.equal(badFills.errors[0].code, 'L_SLOT_UNKNOWN');
+  assert.equal(badFills.errors[0].path, '$args.options.fills[0].slot');
+
+  const emptyFills = service.assembleLayoutSpecimen('layout:asymmetric-grid', {fills: []});
+  envelope(emptyFills);
+  assert.equal(emptyFills.ok, false);
+  assert.equal(emptyFills.errors[0].code, 'P_REQUEST_FILLS');
+  assert.equal(emptyFills.errors[0].path, '$args.options.fills');
+
+  const validWidth = service.assembleLayoutSpecimen('layout:asymmetric-grid', {width: 'wide'});
+  envelope(validWidth);
+  assert.equal(validWidth.ok, true);
+});
+
 test('renderChartPreset returns standard envelope and defends against hostile or invalid inputs', async () => {
   const res = service.renderChartPreset('chart-preset:erp-quarterly-revenue');
   envelope(res);
@@ -274,6 +312,20 @@ test('renderChartPreset returns standard envelope and defends against hostile or
   const {renderChartPreset: coreRenderChartPreset} = await import('../src/render/chart-presets.mjs');
   const raw = coreRenderChartPreset('chart-preset:erp-quarterly-revenue');
   assert.equal(typeof raw, 'string');
+});
+
+test('renderChartPreset rejects non-boolean colorRoles instead of treating strings as true', () => {
+  const heatmap = service.chartPresetMaterials.find(item => /heatmap/i.test(`${item.id} ${item.label}`));
+  assert.ok(heatmap, 'heatmap preset exists');
+  const bad = service.renderChartPreset(heatmap.id, {}, {colorRoles: 'false'});
+  envelope(bad);
+  assert.equal(bad.ok, false);
+  assert.equal(bad.errors[0].code, 'BAD_REQUEST');
+  assert.equal(bad.errors[0].path, '$args.options.colorRoles');
+
+  const enabled = service.renderChartPreset(heatmap.id, {}, {colorRoles: true});
+  envelope(enabled);
+  assert.equal(enabled.ok, true);
 });
 
 test('exposed shared inventories are deeply frozen so public consumers cannot mutate core state or compile results', () => {
