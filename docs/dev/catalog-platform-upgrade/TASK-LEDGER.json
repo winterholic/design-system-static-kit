@@ -1606,8 +1606,8 @@
         "e2e/platform-commerce-components.spec.mjs"
       ],
       "commit": null,
-      "status": "Verified",
-      "unresolvedIssues": "없음. §6.2 N 커머스 패턴 11종의 Manifest 지원 경로(direct/part-of)를 모두 확인하여 missing 0 달성. Product Variant Selector part-of 경로에서 첫 번째 옵션 checked 보장 및 상태 반영을 확인하고, Quantity Selector/Cart Item 등의 런타임 및 동일 바이트 일치성 검증 완료. Studio 선택/조립 경로는 기존 패턴 슬롯 및 assembleComponents commerce 필드로 지원.",
+      "status": "In Progress",
+      "unresolvedIssues": "독립 검증에서 원 구현의 Verified 주장은 근거를 넘었다고 판정했다. 7c1bd947c 기준 전체 npm test는 932/932 통과했으나 N 전용 검증은 Blueprint 7개와 나머지 4개 단독 렌더에 그쳤다. 재검증에서 계약을 종류별로 교정하고 11종 렌더 입력의 양성·음성·변경 출력을 추가했다. 전체 verify와 coverage 재생성/검사는 아직 진행 중이다. 기존 Blueprint에서 Quantity Selector의 min/max/step·증감, Cart Item의 수량·삭제 연결은 표현되지 않아 assembleComponents commerce 슬롯만 지원한다. Studio 선택과 전체 페이지 assembleDesign 연결은 Track F/G 범위로 남는다.",
       "createFiles": [
         "src/platform/families/commerce.mjs",
         "tests/platform-commerce-blueprint.test.mjs",

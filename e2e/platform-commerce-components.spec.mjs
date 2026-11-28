@@ -33,6 +33,19 @@ test.describe('standalone `commerce` output', () => {
       const incBtn = host.locator('[data-action="increase"]');
       const decBtn = host.locator('[data-action="decrease"]');
 
+      // 실제 N 루트 마크업을 집는다. 이름·내용이 비슷한 다른 컴포넌트로 통과하지 않게 한다.
+      await expect(page.locator('[data-component="component:quantity-selector"]')).toHaveCount(2); // 독립 조절기 + Cart Item 내 조절기
+      await expect(page.locator('[data-component="component:cart-item"]')).toHaveCount(1);
+      await expect(page.locator('[data-component="component:product-variant-selector"]')).toHaveCount(1);
+      await expect(page.locator('[data-component="component:price-display"]')).toHaveCount(1);
+      await expect(page.locator('[data-component="component:discount-display"]')).toHaveCount(1);
+      await expect(page.locator('[data-component="component:order-status"]')).toHaveCount(1);
+
+      await expect(input).toHaveValue('2');
+      await input.focus();
+      await input.press('ArrowUp');
+      await expect(input).toHaveValue('3');
+      await input.press('ArrowDown');
       await expect(input).toHaveValue('2');
       await incBtn.click();
       await expect(input).toHaveValue('3');
@@ -53,8 +66,13 @@ test.describe('standalone `commerce` output', () => {
       const cartItem = page.locator('#cart-item-1');
       await expect(cartItem).toBeVisible();
       const rmBtn = cartItem.locator('[data-action="cart-remove"]');
+      await page.evaluate(() => {
+        window.__commerceRemoveEvent = null;
+        document.addEventListener('kit-cart-remove', event => { window.__commerceRemoveEvent = event.detail; }, {once: true});
+      });
       await rmBtn.click();
       await expect(cartItem).toBeHidden();
+      await expect.poll(() => page.evaluate(() => window.__commerceRemoveEvent)).toEqual({id: 'cart-item-1'});
 
       // 3. 옵션 선택: 첫 번째(블랙) checked -> 두 번째(화이트) 클릭 -> 화이트 checked
       const optBlack = page.locator('input[value="블랙"]');

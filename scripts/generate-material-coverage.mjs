@@ -32,6 +32,7 @@ import {assemble as assembleProfile} from '../src/profiles/assemble.mjs';
 import {compile as compileDocument} from '../src/compiler.mjs';
 import {templates, themes, pageTypes, ACCEPTED_CATALOG_VERSIONS} from '../src/catalog/index.mjs';
 import {LEGACY_VARIANT_MAP} from '../src/platform/families/legacy-map.mjs';
+import {COMMERCE_COMPONENTS} from '../src/platform/families/contracts.mjs';
 import * as service from '../src/service/index.mjs';
 import * as edit from '../src/edit/index.mjs';
 import {platformSection} from './platform/platform-baseline.mjs';
@@ -948,16 +949,66 @@ for (const [id, entity] of [...entities.entries()].sort(([a], [b]) => (a < b ? -
     },
   });
 }
+const N_COMMERCE_SAMPLES = Object.freeze({
+  'component:product-grid': [{items: [{title: 'Coverage A', price: '10,000원'}]}, {items: [{title: 'Coverage B', price: '12,000원'}]}, {items: [{title: '잘못된 행'}]}],
+  'component:product-detail-summary': [{title: 'Coverage A', price: '10,000원'}, {title: 'Coverage B', price: '12,000원'}, {title: ''}],
+  'component:product-variant-selector': [{options: [{label: '색상', choices: ['검정', '흰색']}]}, {options: [{label: '색상', choices: ['초록', '노랑']}]}, {options: [{label: '색상', choices: []}] }],
+  'component:quantity-selector': [{value: 2, min: 1, max: 5}, {value: 3, min: 1, max: 5}, {value: 6, min: 1, max: 5}],
+  'component:price-display': [{price: '10,000원'}, {price: '12,000원'}, {label: '가격 label만 있음'}],
+  'component:discount-display': [{rate: '10%'}, {rate: '15%'}, {badge: '쿠폰'}],
+  'component:cart-item': [{title: 'Coverage A', price: '10,000원', quantity: 1}, {title: 'Coverage B', price: '12,000원', quantity: 2}, {title: '잘못된 항목'}],
+  'component:cart-summary': [{total: {label: '합계', value: '10,000원'}}, {total: {label: '합계', value: '12,000원'}}, {items: [{label: '배송비'}]}],
+  'component:checkout-summary': [{total: {label: '결제 금액', value: '10,000원'}}, {total: {label: '결제 금액', value: '12,000원'}}, {total: {label: '합계'} }],
+  'component:order-status': [{orderNumber: 'ORD-1', statusLabel: '배송중'}, {orderNumber: 'ORD-2', statusLabel: '배송완료'}, {orderNumber: 'ORD-1'}],
+  'component:review-summary': [{score: '4.5', count: '10개', items: [{rating: 5, text: '좋아요', author: '구매자'}]}, {score: '4.8', count: '11개', items: [{rating: 4, text: '괜찮아요', author: '구매자'}]}, {items: [{rating: 8, text: '잘못된 평점', author: '구매자'}]}],
+});
+
+/** N 요구를 alias의 legacy probe로만 승격하지 않는다. N 독립 renderer, 입력 변화, 거부, 정확한 material query를 다시 호출한다. */
+function probeCommerceRequirement(req) {
+  const item = COMMERCE_COMPONENTS.find(x => x.requirementId === req.reqId);
+  const samples = item && N_COMMERCE_SAMPLES[item.id];
+  if (!item || !samples) return {ok: false, reason: 'N commerce renderer sample is missing'};
+  const slug = item.id.slice('component:'.length);
+  const request = props => ({
+    context: 'commerce', mode: 'light', density: 'comfortable',
+    palette: 'palette:static-kit', subtokenSet: 'subtoken-set:commerce-vivid', typeSystem: 'type-system:shop-catalog',
+    items: [{purpose: 'purpose:card.product', visual: 'family:soft', content: {title: 'Coverage product', price: '1,000원'}}],
+    commerce: [{component: item.id, props: {id: `coverage-${slug}`, ...props}}],
+  });
+  const first = service.assembleComponents(request(samples[0]));
+  const changed = service.assembleComponents(request(samples[1]));
+  const invalid = service.assembleComponents(request(samples[2]));
+  const platform = service.getPlatformMaterial({id: item.materialId});
+  const legacy = service.getMaterial({id: item.materialId});
+  const queried = platform.ok ? platform.value : legacy.value;
+  const inputChanged = first.ok && changed.ok && first.value.html !== changed.value.html;
+  const invalidRejected = !invalid.ok && invalid.errors?.length > 0;
+  const marker = first.ok && first.value.html.includes(`data-component="${item.id}"`);
+  const exactMaterial = (platform.ok || legacy.ok) && queried?.id === item.materialId;
+  const ok = Boolean(first.ok && marker && inputChanged && invalidRejected && exactMaterial && first.value.standalone.includes(item.id));
+  return {
+    ok, method: 'assembleComponents({commerce})', componentId: item.id, materialId: item.materialId,
+    blueprintPath: {field: item.blueprint.field, ...(item.blueprint.node ? {node: item.blueprint.node, axes: item.blueprint.axes ?? {}} : {}), ...(item.blueprint.purpose ? {purpose: item.blueprint.purpose} : {})},
+    inputChanged, invalidRejected, exactMaterial, outputHash: first.ok ? sha(first.value.html + first.value.css + first.value.script + first.value.standalone) : null,
+    ...(ok ? {} : {reason: !exactMaterial ? 'declared material id did not resolve exactly' : !first.ok ? 'commerce renderer rejected valid probe input' : !marker ? 'N component marker did not reach HTML' : !inputChanged ? 'changed props did not change HTML' : !invalidRejected ? 'invalid props were not rejected' : 'standalone export omitted the N component'}),
+  };
+}
+
 // 요구 항목 → 재료 연결
 const requirements = ALL_REQS.map(req => {
   const cov = resolveCoverage(req);
   const mats = cov.ids.map(id => records.find(r => r.id === id)).filter(Boolean);
   for (const m of mats) m.requirementIds.push(req.reqId);
   const rank = s => STATUS.indexOf(s);
-  const status = cov.how === 'missing' ? 'missing' : STATUS[Math.max(...mats.map(m => rank(m.status)))];
+  const commerceProbe = req.section === '§6.2 N' ? probeCommerceRequirement(req) : null;
+  const commerceFailed = req.section === '§6.2 N' && !commerceProbe?.ok;
+  const coverage = commerceFailed ? 'missing' : cov.how;
+  const materialIds = commerceFailed ? [] : cov.ids;
+  const status = commerceFailed ? 'missing' : req.section === '§6.2 N' ? 'verified' : cov.how === 'missing' ? 'missing' : STATUS[Math.max(...mats.map(m => rank(m.status)))];
   return {
-    id: req.reqId, section: req.section, name: req.name, coverage: cov.how, status, materialIds: cov.ids,
+    id: req.reqId, section: req.section, name: req.name, coverage, status, materialIds,
     ...(cov.via ? {viaRecord: cov.via} : {}), ...(cov.variant ? {variant: cov.variant} : {}), ...(cov.schema ? {schema: cov.schema} : {}), ...(cov.note ? {note: cov.note} : {}),
+    ...(commerceProbe ? {commerceProbe} : {}),
   };
 });
 for (const r of records) r.requirementIds.sort();

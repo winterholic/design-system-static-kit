@@ -76,6 +76,7 @@ test('commerce: a different input changes the output through every channel (chan
 test('commerce: input the service rejects is the same diagnostic everywhere (unregistered component, 12 items exceeds max)', async () => {
   const cases = [
     {...BASE, commerce: [{component: 'component:unregistered-xyz', props: {label: 'x'}}]},
+    {...BASE, commerce: [{component: 'component:price-display', props: {label: '가격 label만 있음'}}]},
     {...BASE, commerce: Array.from({length: 12}, () => ({component: 'component:price-display', props: {price: '1,000원'}}))},
   ];
   for (const request of cases) {
@@ -83,7 +84,13 @@ test('commerce: input the service rejects is the same diagnostic everywhere (unr
     assert.equal(core.ok, false);
     const viaRest = await rest('POST', '/api/v1/platform/assemble-components', {body: request});
     assert.ok(viaRest.status >= 400 && viaRest.status < 500);
+    if (request.commerce?.length === 1 && request.commerce[0].component === 'component:price-display' && !request.commerce[0].props.price) {
+      assert.equal(viaRest.text, json(core), 'REST error envelope matches the Core bytes');
+    }
     const call = await client.callTool({name: 'assemble_components', arguments: request});
     assert.equal(call.isError, true);
+    if (request.commerce?.length === 1 && request.commerce[0].component === 'component:price-display' && !request.commerce[0].props.price) {
+      assert.equal(json(call.structuredContent), json(core), 'MCP error diagnostics match the Core envelope');
+    }
   }
 });

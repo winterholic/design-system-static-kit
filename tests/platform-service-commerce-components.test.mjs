@@ -86,13 +86,14 @@ test('value and input changes drive the output for the 6 core components', () =>
 
   // 3. Price Display: price, originalPrice, unit, state 변경 시 반영 증명
   const pd1 = assembleComponents({...base, commerce: [{component: 'component:price-display', props: {price: '15,000원'}}]});
-  const pd2 = assembleComponents({...base, commerce: [{component: 'component:price-display', props: {price: '12,000원', originalPrice: '20,000원', unit: '/박스', state: 'sale'}}]});
+  const pd2 = assembleComponents({...base, commerce: [{component: 'component:price-display', props: {price: '12,000원', originalPrice: '20,000원', unit: '/박스', state: 'sold-out'}}]});
   assert.ok(pd1.value.html.includes('15,000원'));
   assert.ok(!pd1.value.html.includes('정가'));
   assert.ok(pd2.value.html.includes('12,000원'));
   assert.ok(pd2.value.html.includes('20,000원'));
   assert.ok(pd2.value.html.includes('/박스'));
-  assert.ok(pd2.value.html.includes('data-state="sale"'));
+  assert.ok(pd2.value.html.includes('data-state="sold-out"'));
+  assert.ok(pd2.value.html.includes('품절'));
   assert.notEqual(pd1.value.html, pd2.value.html);
 
   // 4. Discount Display: rate, amount, badge 변경 시 반영 증명
@@ -107,12 +108,12 @@ test('value and input changes drive the output for the 6 core components', () =>
 
   // 5. Cart Item: title, option, quantity, price, removable 변경 시 반영 증명
   const ci1 = assembleComponents({...base, commerce: [{component: 'component:cart-item', props: {title: '아이템 1', price: '10,000원', quantity: 1, option: '옵션 A'}}]});
-  const ci2 = assembleComponents({...base, commerce: [{component: 'component:cart-item', props: {title: '아이템 2', price: '20,000원', quantity: 3, removable: false, state: 'out-of-stock'}}]});
+  const ci2 = assembleComponents({...base, commerce: [{component: 'component:cart-item', props: {title: '아이템 2', price: '20,000원', quantity: 3, removable: false, state: 'disabled'}}]});
   assert.ok(ci1.value.html.includes('아이템 1'));
   assert.ok(ci1.value.html.includes('옵션 A'));
   assert.ok(ci1.value.html.includes('data-action="cart-remove"'));
   assert.ok(ci2.value.html.includes('아이템 2'));
-  assert.ok(ci2.value.html.includes('data-state="out-of-stock"'));
+  assert.ok(ci2.value.html.includes('data-state="disabled"'));
   assert.ok(!ci2.value.html.includes('data-action="cart-remove"'));
   assert.notEqual(ci1.value.html, ci2.value.html);
 

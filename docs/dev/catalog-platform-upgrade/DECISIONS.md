@@ -214,5 +214,27 @@ REQUEST §6.2 N의 커머스 패턴 11종(Product Grid, Product Detail Summary, 
 4. **Product Variant Selector part-of 필수 선택 보장**:
    Product Variant Selector는 독립 컴포넌트가 아니라 Buy Box 내의 복합 패턴(part-of)으로 동작하며, 런타임 및 HTML 렌더 시 첫 번째 옵션의 `checked` 속성을 보장하여 필수 선택 상태를 결손 없이 지원한다.
 5. **Studio 및 페이지 조립 제약**:
-   커머스 패턴 중 standalone 컴포넌트(Quantity Selector, Price Display, Discount Display, Cart Item 등)는 `assembleComponents`의 `commerce` 슬롯으로 독립 시연 및 조립을 지원하며, 전체 페이지 조립(`assembleDesign`) 시에는 커머스 템플릿의 지정된 슬롯에 배치된다.
+   standalone 컴포넌트는 `assembleComponents`의 `commerce` 슬롯으로 독립 시연·내보내기를 지원한다. 이 결정은 Studio 선택이나 전체 페이지 조립(`assembleDesign`) 연결을 뜻하지 않는다. 그 연결은 별도 Track F/G 작업이다.
+
+### 독립 재검증 (2026-11-28)
+
+- 원 구현 `7c1bd947c`의 전용 시험은 Blueprint 표본 7종과 단독 렌더 표본 4종이었다. `TASK-TRD-N`의 `Verified` 표기는 이 증거보다 앞서 있어 철회하고 재검증 뒤 갱신한다.
+- Price Display는 필수 `price`를 요구하며 `label`만 전달하면 Core·REST·MCP 모두 같은 오류 봉투를 낸다. 각 렌더러의 계약에 실제로 쓰는 입력, 상태, 이벤트, 토큰, 키보드/ARIA 요구와 미지원 상태·기능을 개별 기록한다.
+- 11개 ID 각각에서 선언된 기존 재료를 조회하고, 그 재료가 지원하는 legacy Blueprint 경로와 독립 `commerce` 렌더/export 경로를 시험한다. 두 경로의 기능 범위는 동일하다고 간주하지 않는다.
+
+| 항목 | 재사용 Blueprint 경로 | N 독립 렌더·assembleComponents 지원 | 남은 제약 |
+|---|---|---|---|
+| Product Grid | `component:grid` | 상품 카드·열·간격 | loading/empty/error 화면 없음 |
+| Product Detail Summary | `component:buy-box` | 제목·가격·옵션·구매 문구 | 재고 상태·구매 처리는 백엔드 연결 없음 |
+| Product Variant Selector | `component:buy-box` part-of | 네이티브 라디오, 첫 값 선택 | 옵션 재고·비활성화 없음 |
+| Quantity Selector | `base-component:input-control` | 값·min/max/step, 증감·경계·disabled/readonly | legacy Blueprint input-control에는 min/max/step·증감 버튼 필드가 없음 |
+| Price Display | `component:buy-box` 안 가격 | 필수 가격·정가·단위·sold-out | 숫자 통화 계산 없음 |
+| Discount Display | `purpose:card.product` 배지 | 전달된 할인율·금액·배지 | 가격에서 할인 자동 계산 없음 |
+| Cart Item | `component:summary` 요약 행 | 수량 조절·삭제 이벤트 | legacy summary에 항목별 삭제·수량 조절이 없고 서버 장바구니 변경도 없음 |
+| Cart Summary | `component:summary` | 항목·합계 표시 | 배송비·세금·할인 계산 없음 |
+| Checkout Summary | `component:summary` | 항목·합계·결제 버튼 표시 | 결제 제출 없음 |
+| Order Status | `component:steps` | 전달된 상태·단계 표시 | 실시간 배송 조회 없음 |
+| Review Summary | `component:reviews` | 점수·리뷰 목록 표시 | 리뷰 집계·작성 없음 |
+
+- N 단독 기능의 실제 조립 경로는 `assembleComponents({commerce})`다. Studio 선택과 `assembleDesign`의 페이지 슬롯 배치는 미완료이며 이번 범위에서 선행 구현하지 않는다.
 
