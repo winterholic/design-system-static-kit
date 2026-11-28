@@ -10,7 +10,7 @@ import {listAllMaterials} from './material-library.mjs';
 // 조립 플랫폼 서비스 함수는 Core 서비스 진입점에서 이름으로 찾는다.
 // 웹은 src/platform 을 직접 import 하지 않는다(boundary.check.mjs). 함수가 없을 때 대신 만들어 내는 값도 없다.
 const mod = service as unknown as Record<string, ((arg?: any, opts?: any) => any) | undefined>;
-const NEEDED = ['assembleDesign', 'assembleComponents', 'listPlatformMaterials', 'getPlatformMaterial', 'recommendMaterials', 'proposeSubtokenSets'] as const;
+const NEEDED = ['assembleDesign', 'assembleComponents', 'listPlatformMaterials', 'getPlatformMaterial', 'getTypographySpecimen', 'recommendMaterials', 'proposeSubtokenSets'] as const;
 const WEB_INCLUDE = ['html', 'css', 'tokens', 'manifest', 'blueprint', 'script', 'standalone'] as const;
 const missing = () => NEEDED.filter(name => typeof mod[name] !== 'function');
 
@@ -87,6 +87,25 @@ export function material(id: string): Material | undefined {
   if (!r.ok) return undefined;
   detailCache.set(id, r.value);
   return r.value;
+}
+
+/** Core의 역할 변수와 웹폰트 fallback을 가진 Specimen 자료. 이 조회는 컴파일하지 않는다. */
+export function typographySpecimen(id: string): any | undefined {
+  const r = call<any>('getTypographySpecimen', {id});
+  return r.ok ? r.value : undefined;
+}
+
+/** 버튼·필터 입력·업무 표의 실제 Core 컴파일 요청. 조립 가능한 맥락이 아니면 그대로 Core 진단을 돌려준다. */
+export function typographyControlsRequest(typeSystem: string): Record<string, unknown> {
+  const ids = ['purpose:button.primary', 'purpose:form.filter', 'purpose:table.business'];
+  const items = ids.map(id => material(id)).filter(Boolean).map((entry: any) => ({
+    purpose: entry.id,
+    visual: 'family:quiet',
+    variant: entry.example?.variant,
+    props: entry.example?.props,
+    content: entry.example?.content,
+  }));
+  return {context: 'dashboard', mode: 'light', density: 'comfortable', typeSystem, items};
 }
 
 /** 선택지 시험용 조립: 거부 여부와 이유만 남기고(본문은 버린다) 같은 요청은 서버 프로세스 안의 상한 있는 캐시를 거친다. */

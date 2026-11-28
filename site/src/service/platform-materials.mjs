@@ -12,6 +12,10 @@
 import {PLATFORM_KINDS} from '../platform/contract.mjs';
 import {recommend} from '../platform/recommend.mjs';
 import {platformEnv} from '../platform/compile.mjs';
+import {bindType} from '../platform/type.mjs';
+import {FACE_PAIRINGS, ROLE_SCALES, resolveRoleScale} from '../platform/data/type-materials.mjs';
+import {MATERIAL_TYPE_PRESETS} from '../materials/typography.mjs';
+import {TYPE_R2} from '../typography.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 import {diagnostic} from './errors.mjs';
 
@@ -67,6 +71,36 @@ export function getPlatformMaterial(q) {
     if (!m) return fail([unknown('$args.id', q.id)]);
     const {render, styles, ...record} = m;
     return ok(jsonClone({...record, ...(render ? {render} : {}), ...(styles ? {styles} : {}), edges: {from: graph.from(m.id), to: graph.to(m.id)}}));
+  });
+}
+
+/** 선택한 타이포 시스템 하나의 Specimen 표시 자료. 레지스트리 정의만 읽고 컴파일하지 않는다. */
+export function getTypographySpecimen(q) {
+  return guard(() => {
+    if (!isPlain(q)) return fail([badRequest('$args', '조회 인자는 객체여야 합니다.')]);
+    const badKey = checkKeys(q, ['id'], '$args');
+    if (badKey) return fail([badKey]);
+    if (typeof q.id !== 'string' || !q.id) return fail([badRequest('$args.id', '타이포 시스템 id가 필요합니다.')]);
+    const {registry} = platformEnv(), material = registry.get(q.id);
+    if (!material || material.kind !== 'type-system') return fail([diagnostic('TYPE_SPECIMEN_KIND', '$args.id', `타이포 시스템이 아닙니다: ${q.id}`, 'type-system 재료 id를 지정하세요.')]);
+    const binding = bindType(material);
+    if (!binding.ok) return fail(binding.errors.map(error => diagnostic(error.code, '$args.id', error.message)));
+    const faceId = material.facePairing;
+    const face = FACE_PAIRINGS[faceId];
+    const legacyFace = TYPE_R2[faceId?.replace(/^type-preset:/, '')];
+    const scale = ROLE_SCALES[material.roleScale] ?? resolveRoleScale(material.roleScale);
+    const legacyScale = MATERIAL_TYPE_PRESETS[material.roleScale?.replace(/^type-role-preset:/, '')];
+    return ok(jsonClone({
+      id: material.id,
+      label: material.label,
+      contexts: material.contexts,
+      family: material.tags?.find(tag => ['general-product', 'enterprise', 'finance', 'developer', 'marketing', 'editorial', 'commerce', 'mobile', 'education', 'experimental'].includes(tag)) ?? material.tags?.[0] ?? 'general-product',
+      facePairing: {id: faceId, label: face?.label ?? legacyFace?.label ?? faceId},
+      roleScale: {id: material.roleScale, label: scale?.label ?? legacyScale?.label ?? material.roleScale},
+      density: scale?.density ?? legacyScale?.density ?? 'comfortable',
+      numerals: material.numerals,
+      roles: binding.roles27,
+    }));
   });
 }
 

@@ -168,17 +168,16 @@ test('Explore 첫 화면 카드는 24개 이하이고 쪽 이동으로 나머지
   expect(await page.locator('[data-preview]').count(), '대표·사례 카드까지 포함한 첫 화면 미리보기 수').toBeLessThanOrEqual(24 + 12);
 });
 
-test('Typography: 기본 보기는 정적 파일, 다크·모바일처럼 사용자가 고른 보기는 iframe 없이 선택 시 컴파일한 SVG', async ({page, request}) => {
+test('Typography: 41개 카탈로그는 첫 화면 24개, 목록에서 컴파일하지 않고 선택된 시스템만 비교 렌더한다', async ({page, request}) => {
   await request.post('/api/dev/perf-counters');
   await page.goto('/materials/typography?mode=dark&width=390');
   expect(await page.locator('iframe').count()).toBe(0);
-  const boxes = page.locator('[data-testid="type-grid"] [data-preview]');
-  expect(await boxes.count()).toBeGreaterThan(0);
-  for (const mode of await boxes.evaluateAll(els => els.map(e => e.getAttribute('data-preview')))) expect(mode).toBe('dynamic');
-  await page.locator('[data-testid="type-grid"] img').first().scrollIntoViewIfNeeded();
-  await page.waitForLoadState('networkidle');
-  const broken = await page.locator('[data-testid="type-grid"] img').evaluateAll(imgs => imgs.filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src));
-  expect(broken).toEqual([]);
+  await expect(page.getByTestId('type-catalog-count')).toContainText('41개 결과');
+  expect(await page.getByTestId('type-catalog-grid').locator('> li').count()).toBe(24);
+  const beforeCompare = await counters(request);
+  expect(beforeCompare.counters, '카탈로그 목록은 Core 컴파일하지 않는다').toMatchObject({assembleComponents: 0, assembleDesign: 0, total: 0});
+  await page.goto('/materials/typography?mode=dark&width=390&with=tech-erp,work-console&scenario=erp');
+  expect(await page.locator('[data-testid="type-grid"] li[data-system]').count()).toBe(2);
 });
 
 // ---- F1 독립 검증(Chromium): 17개 탭 전체, 공개 서비스 ID 포함, 390·1280 조작 ----

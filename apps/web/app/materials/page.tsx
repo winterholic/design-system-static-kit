@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {PageShell} from '@/shell/PageShell';
 import {MaterialsNav} from '@/features/materials/MaterialsNav';
-import {colorView, overview, typeView} from '@/features/materials/materials.server';
+import {colorView, overview} from '@/features/materials/materials.server';
 import {studioForColor} from '@/features/materials/studio-link';
 import {ButtonLink} from '@/ui';
 import styles from '@/features/materials/materials.module.css';
@@ -13,7 +13,6 @@ export const metadata = {title: 'Materials', description: '색, 타이포그래�
 export default function MaterialsPage() {
   const count = overview();
   const color = colorView();
-  const type = typeView();
   return (
     <PageShell eyebrow="Materials" title="디자인을 이루는 재료 둘러보기" lead="화면은 코드로 정의한 재료만으로 조립됩니다. 색과 글자, 간격과 모서리 같은 기초 재료를 직접 확인하고, 마음에 드는 것을 Studio에서 바로 써 보세요.">
       <MaterialsNav current="overview" />
@@ -43,12 +42,6 @@ export default function MaterialsPage() {
           <p>원본 시드 {count.colorSeeds}개에서 계산한 50–950 램프와 역할·상태·부품 토큰 {count.colorTokens}개를 라이트와 다크로 비교합니다.</p>
           <div className={styles.strip} aria-hidden="true">{color.seeds.map(s => <span key={s.id} className={styles.stripChip} style={{background: s.hex}} />)}</div>
           <div className={styles.cardLink}><ButtonLink href="/materials/color" variant="secondary">색 보기</ButtonLink></div>
-        </li>
-        <li className={styles.card}>
-          <h2>타이포그래피</h2>
-          <p>{type.presets.map(p => p.label).join(' · ')} 네 가지 프리셋의 역할별 글자 스타일과 {count.corpus}개 시험 문구, 컨트롤 크기 {count.controlSizes}단계입니다.</p>
-          <p className={styles.cardMeta}>한글과 영문, 숫자, 코드가 섞여도 줄바꿈이 무너지지 않는지 봅니다.</p>
-          <div className={styles.cardLink}><ButtonLink href="/materials/typography" variant="secondary">타이포그래피 보기</ButtonLink></div>
         </li>
         <li className={styles.card}>
           <h2>기초 재료</h2>

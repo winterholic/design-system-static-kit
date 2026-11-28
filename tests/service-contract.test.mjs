@@ -20,9 +20,9 @@ const envelope = r => {
 };
 const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.isFrozen(x) || Object.values(x).some(deepFrozenAnywhere));
 
-test('the service exposes the six functions of 03-interfaces 1.4 plus catalogSnapshot, assembleBlueprint (2.6.0 profiles) and the read-only queryMaterials, and nothing else callable', () => {
+test('the service exposes the declared platform APIs, including the read-only typography specimen query, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
-  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleComponents', 'assembleDesign', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'proposeSubtokenSets', 'queryMaterials', 'recommendMaterials', 'validateBlueprint', 'withHint']); // 플랫폼 서비스 계약 1.3.0에 사용자 색 제안·목적 패밀리 시연 공개를 더했다
+  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleComponents', 'assembleDesign', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'getTypographySpecimen', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'proposeSubtokenSets', 'queryMaterials', 'recommendMaterials', 'validateBlueprint', 'withHint']); // 플랫폼 서비스 계약에 읽기 전용 타이포 Specimen 조회를 더했다
   assert.equal(CONTRACT_VERSION, '1.3.0');
 });
 

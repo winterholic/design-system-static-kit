@@ -8,7 +8,6 @@ const PLATFORM_PALETTES = typeof service.listPlatformMaterials === 'function' ? 
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
 // 화면이 읽는 것과 같은 ./service 질의에서 기대값을 얻는다. Core 계산과의 독립 대조는 tests/service-materials.test.mjs가 한다.
 const color = queryMaterials({view: 'color'}).value;
-const typo = queryMaterials({view: 'typography'}).value;
 const ACTION = {light: color.tokens.light['color-action'], dark: color.tokens.dark['color-action']};
 
 test.beforeEach(async ({page}) => {
@@ -141,44 +140,29 @@ test.describe('색', () => {
 });
 
 test.describe('타이포그래피', () => {
-  test('프리셋 4종의 전체 역할·시험 문구·컨트롤 크기를 Core 그대로 보여 준다', async ({page}) => {
+  test('카탈로그는 41개 시스템을 24개 이하로 나누고 선택한 Specimen에서 27개 Core 역할을 보여 준다', async ({page}) => {
     await page.goto('/materials/typography');
-    const presets = typo.presets;
-    expect(presets).toHaveLength(4);
-    await expect(page.getByRole('navigation', {name: '프리셋'}).getByRole('link')).toHaveText(presets.map(p => p.label));
-    for (const preset of presets) {
-      await page.getByRole('navigation', {name: '프리셋'}).getByRole('link', {name: preset.label, exact: true}).click();
-      await expect(page).toHaveURL(new RegExp(`preset=${preset.id}$`));
-      await expect(page.getByRole('link', {name: preset.label, exact: true})).toHaveAttribute('aria-current', 'page');
-      const roles = page.getByTestId('role-list').locator('> li');
-      await expect(roles).toHaveCount(Object.keys(preset.roles).length);
-      await expect(page.locator('.mt-specimen')).toHaveAttribute('data-preset', preset.id);
-      // 코퍼스는 전부 나온다.
-      for (const sample of typo.corpus) await expect(page.locator('.mt-specimen').getByText(sample.text, {exact: true}).first()).toBeVisible();
-      // 컨트롤 크기 4단계와 높이.
-      const controls = page.locator('.mt-control');
-      await expect(controls).toHaveCount(typo.controlSizes.length);
-      for (const [size, c] of Object.entries(preset.controls)) {
-        const h = await page.locator(`.mt-control[data-size="${size}"]`).evaluate(el => Math.round(el.getBoundingClientRect().height));
-        expect(h, `${preset.id}/${size}`).toBe(c.height);
-      }
-    }
+    await expect(page.getByTestId('type-catalog-count')).toContainText('41개 결과');
+    await expect(page.getByTestId('type-catalog-grid').locator('> li')).toHaveCount(24);
+    await expect(page.locator('iframe')).toHaveCount(0);
+    await page.goto('/materials/typography?system=doc-essay');
+    await expect(page.getByTestId('type-role-list').locator('> li')).toHaveCount(27);
+    await expect(page.getByTestId('type-specimen')).toContainText('日本語');
+    await expect(page.getByTestId('type-specimen')).toContainText('₩128,000');
+    await expect(page.getByTestId('type-specimen')).toContainText('currencyKRW');
+    await expect(page.getByTestId('type-specimen').locator('[data-part="standalone"]')).toHaveAttribute('download', '');
   });
 
-  test('Studio에서 사용하기: 2.6.0 역할 프리셋과 페이지 문맥을 저장한다', async ({page}) => {
-    await page.goto('/studio');
-    await page.evaluate(() => localStorage.clear());
+  test('옛 프리셋 주소는 새 Specimen으로 연결되고 Studio 링크에 플랫폼 타이포 시스템을 보존한다', async ({page}) => {
     await page.goto('/materials/typography?preset=marketing');
-    await page.getByRole('link', {name: 'Studio에서 사용하기'}).click();
-    await expect(page.locator('[data-phase="ready"]')).toBeVisible();
-    await expect(page.getByTestId('op-error')).toHaveCount(0);
-    const preset = typo.presets.find(p => p.id === 'marketing');
-    await expect.poll(async () => (await savedDoc(page))?.typeRoles).toBe(preset.id);
-    const doc = await savedDoc(page);
-    expect(doc.catalogVersion).toBe('2.6.0');
-    expect(doc.pageType).toBe(preset.context[0]);
-    // 2.4.0 서체 조합 축과 2.6.0 역할 프리셋은 별도 필드다.
-    expect(doc.typography).toBe('sans');
+    await expect(page).toHaveURL(/system=mkt-launch/);
+    await expect(page.getByTestId('type-specimen')).toContainText('제품 출시');
+    const studio = page.getByRole('link', {name: '이 시스템으로 Studio 열기'});
+    await expect(studio).toHaveAttribute('href', /\/studio\/assemble\?purpose=saas-landing&type=mkt-launch&step=swap/);
+    await studio.click();
+    await expect(page).toHaveURL(/\/studio\/assemble\?.*type=mkt-launch/);
+    await expect(page.getByTestId('selection-summary')).toContainText('제품 출시');
+    await expect(page.getByTestId('swap-preview')).toBeVisible();
   });
 });
 

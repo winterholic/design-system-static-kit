@@ -2309,3 +2309,25 @@ REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
 ```
 
 `git diff 53e866c5d..HEAD`는 `apps/web/**`와 문서만 바꾼다. `site/`, `src/catalog`, `src/compiler.mjs`, `docs/evidence/context/legacy-hashes.json`은 변경 0(2.1.0 고정 해시·기본 2.4.0·`site/v1` 불변).
+
+## 38. TASK-TRF-04 — 타이포그래피 카탈로그·Specimen·비교·Studio 연결
+
+### 36.1 구현 및 계약
+
+- 41개 시스템을 24개씩 페이지로 나누고 검색·계열·페이지·비교 선택을 URL query로 복원한다. 비교 선택은 최대 4개이며 브라우저 뒤로/앞으로 이동이 링크 내비게이션으로 상태를 되살린다. 카탈로그 목록에서는 Core 상세 컴파일을 호출하지 않고 선택된 비교 시스템만 미리보기로 조립한다.
+- 상세는 Core `bindType` 결과의 27개 역할, 굵기, 한·영·일 텍스트, 숫자·금융, 코드 샘플을 표시한다. 버튼·입력·표 패널은 Core `assembleComponents`의 실제 HTML/CSS/manifest를 사용하고 내보내기 링크를 제공한다. 폭 비교는 390px·1280px 입력으로 Core가 각각 컴파일한 결과다.
+- `getTypographySpecimen`은 서비스의 읽기 전용 조회 API로만 노출된다. 선택 타이포 시스템 Studio 링크는 목적 및 시스템을 URL로 전달하고, Studio Blueprint 조립 시험에서 선택된 `materials.typeSystem` 및 내보내기 CSS가 달라짐을 확인한다.
+- 구형 `preset=erp|document|marketing|editorial` 경로는 새 Specimen 선택으로 연결한다. Materials 개요의 오래된 네 프리셋 카드를 제거했다. `/materials` Foundations 영역은 수정하지 않았다.
+- 고정 기준: Core 2.1.0 해시와 `site/v1` 산출물 불변, 기본 버전 2.4.0.
+
+### 36.2 Node 및 웹 검증
+
+- `node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'`: 전체 Node 시험 1,266개 통과, 실패·건너뜀 0.
+- `node --test tests/platform-type-presentation.test.mjs`: 3개 시험 통과. 41개 시스템×27 역할 데이터, 잘못된 입력 거부, 실제 Core 컴포넌트 조립 및 번들 출력 확인.
+- `node --test apps/web/features/platform/type-catalog-state.unit.mjs`: 3개 시험 통과. 페이지 크기 24, URL 필터, 4개 상한 및 5번째 선택 거부 확인.
+- `node --experimental-strip-types --experimental-loader ./apps/web/features/studio/node-ts-loader.mjs --test tests/studio-type-system-link.unit.mjs`: Studio 연결 1개 시험 통과. 선택 시스템의 Blueprint와 내보내기 결과 반영 확인.
+- `npm run typecheck --workspace apps/web`: 통과.
+- `npm run web:build`: 통과; Next.js가 962개 정적 페이지를 생성하고 `/materials/typography`, `/studio/assemble` 경로를 포함한다.
+- `npm run coverage:materials:check`: `MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)`.
+- `node scripts/check-generated.mjs`: `REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.`
+- Chromium E2E 명세는 `apps/web/e2e/typography-catalog.spec.mjs`에 390px·1280px 카탈로그·상세·비교·뒤로/앞으로 상태 검증을 작성했다. 하지 않음: 이 Codex 세션에서는 사용자 요청에 따라 Chromium 실행을 생략했으며, Claude 독립 검증이 남아 있다.
