@@ -1277,7 +1277,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "비브라우저 검증: node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측' 통과(1078 pass, 0 fail, 0 skipped; Chromium 의존 5개 시험 이름 패턴 제외). 상세/Core 단위시험 9/9, npm run web:build 성공(880/880 정적 페이지), coverage:materials:check MANIFEST MATCH(1480 materials/406 requirements), node scripts/check-generated.mjs REPRODUCIBLE(4560 files). 브라우저 시험은 기존 Chromium 실행 시 Mach IPC Permission denied (1100) 관찰 및 현재 작업 지시에 따라 재실행하지 않음. 2.1.0·2.4.0 및 site/v1 바이트 불변 시험은 전체 Node 검증에서 통과.",
+      "unresolvedIssues": "비브라우저 검증(원격 main rebase 후): node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측' 통과(1100 pass, 0 fail; Chromium 의존 5개 시험 이름 패턴 제외). 상세/Core 단위시험 9/9, npm run web:build 성공(880/880 정적 페이지), coverage:materials:check MANIFEST MATCH(1480 materials/406 requirements), node scripts/check-generated.mjs REPRODUCIBLE(4560 files). 브라우저 시험은 기존 Chromium 실행 시 Mach IPC Permission denied (1100) 관찰 및 현재 작업 지시에 따라 재실행하지 않음. 2.1.0·2.4.0 및 site/v1 바이트 불변 시험은 전체 Node 검증에서 통과.",
       "createFiles": [
         "apps/web/features/components/ComponentDetailTabs.tsx"
       ],
