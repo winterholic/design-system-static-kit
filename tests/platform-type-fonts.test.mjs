@@ -2,8 +2,6 @@
  * 다국어 서체 권리 확인, 선택형 WOFF2 서브셋 로딩 및 실패 대체(fallback) 검증.
  * REQUEST §5.4, TASK-TRC-03 완료 기준 검증.
  */
-// Playwright 브라우저 캐시 경로 강제 지정 (샌드박스 내부 HOME 대응)
-process.env.PLAYWRIGHT_BROWSERS_PATH = '/Users/winterholic/Library/Caches/ms-playwright';
 
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
