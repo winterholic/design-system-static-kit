@@ -711,8 +711,8 @@ Manifest 레이아웃 요구: `{"total":24,"missing":0,"direct":24}`. 24종 모�
 ### 11.4 실행 증거
 ```sh
 $ npm run verify                       # rebase 뒤, 마지막 커밋 포함
-ℹ tests 848 / ℹ pass 848 / ℹ fail 0
-REPRODUCIBLE: 3782 generated files match a fresh build byte for byte.
+ℹ tests 865 / ℹ pass 865 / ℹ fail 0
+REPRODUCIBLE: 3784 generated files match a fresh build byte for byte.
 $ npm --workspace apps/web run typecheck / test:boundary / test:docs
 tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
 $ npm run perf -- --url http://127.0.0.1:4291 --out docs/dev/catalog-platform-upgrade/PERFORMANCE-A1.json

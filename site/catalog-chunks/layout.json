@@ -2,7 +2,7 @@
   "schemaVersion": "catalog-index/1.0",
   "category": "layout",
   "label": "배치",
-  "itemCount": 11,
+  "itemCount": 35,
   "materials": [
     {
       "id": "component:section",
@@ -13,7 +13,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/c33f86879c1f72f08c8520601016069b.svg",
+      "previewUrl": "/previews/093afa79c2360d5eeaa9879c7a489e01.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -28,7 +28,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/0a9fa80796fd1f04a5c0642a79ccb37c.svg",
+      "previewUrl": "/previews/26272fe73b47303d736282f34f671e21.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -43,7 +43,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/697bb14c3777e86258d04e8946a501e7.svg",
+      "previewUrl": "/previews/bc3dfcb81d7b4dd07eaeaa97cb11252f.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -58,7 +58,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/7e72235eb226d14aa8d3b728b69e2cf1.svg",
+      "previewUrl": "/previews/9a3f7338f9e350fe59128488bee3c94e.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -73,7 +73,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/cd9500272e5e4e1dadf5396e7b7311d2.svg",
+      "previewUrl": "/previews/635ec564cedcb9f07fdd824ea2fcc057.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -88,7 +88,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/63d9c4b763ab20549c480f3c8eb5f9a5.svg",
+      "previewUrl": "/previews/14b2d5913007c3d173d15c4892dbd727.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -118,7 +118,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/753bf321d9de6b9618c11905d55ccd2f.svg",
+      "previewUrl": "/previews/b699db0721eee34685f106a917cdc091.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -148,7 +148,7 @@
         "any"
       ],
       "tags": [],
-      "previewUrl": "/previews/e6535ea89d7e69f19ee01938fa67f97e.svg",
+      "previewUrl": "/previews/17ea164c1235351895450efdc30705dc.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
@@ -176,11 +176,542 @@
         "unsupported:draggable reordering",
         "unsupported:lazy panel fetch (app injects aria-busy)"
       ],
-      "previewUrl": "/previews/3774915f685cc6e507fe51f8a23d7800.svg",
+      "previewUrl": "/previews/32c069cdc41fc80ee0ee3598b5865dd6.svg",
       "variantsCount": 8,
       "statesCount": 8,
       "qualityStatus": "verified",
       "license": "MIT"
+    },
+    {
+      "id": "layout:asymmetric-grid",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Asymmetric Grid",
+      "contexts": [
+        "landing",
+        "portfolio",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "asymmetric-grid",
+        "saas-landing",
+        "editorial-docs"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:bento",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Bento",
+      "contexts": [
+        "landing",
+        "dashboard",
+        "portfolio",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "bento",
+        "saas-landing",
+        "work-dashboard"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:centered-hero",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Centered Hero",
+      "contexts": [
+        "landing",
+        "pricing",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "centered-hero",
+        "saas-landing"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:commerce-grid",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Commerce Grid",
+      "contexts": [
+        "commerce",
+        "listing"
+      ],
+      "tags": [
+        "layout",
+        "commerce-grid",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:dashboard-grid",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Dashboard Grid",
+      "contexts": [
+        "dashboard",
+        "data"
+      ],
+      "tags": [
+        "layout",
+        "dashboard-grid",
+        "work-dashboard"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:documentation-layout",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Documentation Layout",
+      "contexts": [
+        "docs",
+        "article"
+      ],
+      "tags": [
+        "layout",
+        "documentation-layout",
+        "editorial-docs"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:double-sidebar",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Double Sidebar",
+      "contexts": [
+        "dashboard",
+        "community",
+        "docs",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "double-sidebar",
+        "work-dashboard",
+        "editorial-docs"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:editorial-layout",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Editorial Layout",
+      "contexts": [
+        "article",
+        "blog",
+        "docs"
+      ],
+      "tags": [
+        "layout",
+        "editorial-layout",
+        "editorial-docs"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:equal-grid",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Equal Grid",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "layout",
+        "equal-grid",
+        "saas-landing",
+        "work-dashboard",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:form-layout",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Form Layout",
+      "contexts": [
+        "form",
+        "auth",
+        "settings",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "form-layout",
+        "saas-landing",
+        "work-dashboard",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:kpi-strip",
+      "kind": "layout",
+      "category": "layout",
+      "label": "KPI Strip",
+      "contexts": [
+        "dashboard",
+        "data",
+        "landing",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "kpi-strip",
+        "work-dashboard",
+        "saas-landing"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:masonry",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Masonry",
+      "contexts": [
+        "community",
+        "portfolio",
+        "blog",
+        "listing",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "masonry",
+        "commerce",
+        "editorial-docs",
+        "saas-landing"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:master-detail",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Master-detail",
+      "contexts": [
+        "dashboard",
+        "data",
+        "community",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "master-detail",
+        "work-dashboard",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:media-hero",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Media Hero",
+      "contexts": [
+        "landing",
+        "portfolio",
+        "commerce",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "media-hero",
+        "saas-landing",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:mobile-stack",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Mobile Stack",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "layout",
+        "mobile-stack",
+        "commerce",
+        "work-dashboard"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:multi-step-form",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Multi-step Form",
+      "contexts": [
+        "form",
+        "commerce",
+        "auth",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "multi-step-form",
+        "commerce",
+        "work-dashboard",
+        "saas-landing"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:product-detail-layout",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Product Detail Layout",
+      "contexts": [
+        "commerce"
+      ],
+      "tags": [
+        "layout",
+        "product-detail-layout",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:settings-layout",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Settings Layout",
+      "contexts": [
+        "settings",
+        "form",
+        "dashboard"
+      ],
+      "tags": [
+        "layout",
+        "settings-layout",
+        "work-dashboard"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:sidebar-main",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Sidebar Main",
+      "contexts": [
+        "dashboard",
+        "data",
+        "docs",
+        "settings",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "sidebar-main",
+        "work-dashboard",
+        "editorial-docs"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:single-column",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Single Column",
+      "contexts": [
+        "article",
+        "blog",
+        "docs",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "single-column",
+        "editorial-docs",
+        "saas-landing"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:split-hero",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Split Hero",
+      "contexts": [
+        "landing",
+        "pricing",
+        "commerce",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "split-hero",
+        "saas-landing",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:sticky-action-layout",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Sticky Action Layout",
+      "contexts": [
+        "commerce",
+        "form",
+        "settings",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "sticky-action-layout",
+        "commerce",
+        "work-dashboard"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:three-column",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Three Column",
+      "contexts": [
+        "dashboard",
+        "community",
+        "docs",
+        "general"
+      ],
+      "tags": [
+        "layout",
+        "three-column",
+        "work-dashboard",
+        "editorial-docs"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "layout:two-column",
+      "kind": "layout",
+      "category": "layout",
+      "label": "Two Column",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "layout",
+        "two-column",
+        "saas-landing",
+        "work-dashboard",
+        "editorial-docs",
+        "commerce"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
     }
   ]
 }
