@@ -85,9 +85,9 @@ test('the committed baseline carries the platform section, and it beats the lega
   assert.ok(pf.distinct.colorTokenSets.dark > legacy.distinctColorTokenSets.dark);
   assert.ok(pf.distinct.facePairs > legacy.distinctEffectiveFacePairs, `${pf.distinct.facePairs} face pairs vs ${legacy.distinctEffectiveFacePairs}`);
   assert.ok(pf.distinct.families >= 1);
-  assert.equal(pf.registered.family, 4, 'registered.family counts visual families only');
-  assert.equal(pf.registered.purposeFamily, 37, 'purpose-family registrations are a separate count');
-  assert.equal(pf.distinct.families, 4, 'distinct.families retains its visual-family meaning');
+  assert.equal(pf.registered.family, 12, 'registered.family counts visual families only');
+  assert.equal(pf.registered.purposeFamily, 53, 'purpose-family registrations are a separate count');
+  assert.equal(pf.distinct.families, 12, 'distinct.families retains its visual-family meaning');
   assert.deepEqual(pf.distinct.purposeFamilies, {
     verified: 4,
     ids: ['purpose:card.feature', 'purpose:card.kpi', 'purpose:card.product', 'purpose:table.business'],
@@ -104,10 +104,7 @@ test('the committed baseline carries the platform section, and it beats the lega
     assert.equal(sm[kind].usedInOutput, sm[kind].verified, `${kind}: a verified material appears in the page output`);
     assert.ok(sm[kind].verified <= sm[kind].attempted, kind);
   }
-  assert.equal(sm.motion.verified, 17);
-  assert.deepEqual(sm.motion.rejectedCases.map(({pattern, material, code}) => ({pattern, material, code})), [
-    {pattern: 'dashboard-grid', material: 'motion:expressive', code: 'X11'},
-    {pattern: 'erp-workspace', material: 'motion:expressive', code: 'X11'},
-  ]);
+  assert.equal(sm.motion.verified, 19);
+  assert.deepEqual(sm.motion.rejectedCases, []);
   assert.ok(sm.distinctOutputs > 1);
 });

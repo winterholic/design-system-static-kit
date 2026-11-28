@@ -133,6 +133,40 @@ REQUEST §6.2 N의 커머스 패턴 11항목의 등록 재료, Blueprint 사용�
 - 런타임(`COMMERCE_COMPONENT_RUNTIME`)은 수량 조절기의 증감 버튼 및 입력 경계선 `disabled` 상태 토글, 카트 아이템의 삭제(`data-cart-item-remove`, dismiss 숨김 및 이벤트 발행)를 처리한다. CSS에 `.kit-cart-item[hidden]{display:none!important}`를 두어 display 충돌을 방지한다.
 - 커머스 계약 11종 추가로 총 등록 계약은 70개, 고유 `componentType`은 51종으로 집계된다.
 
+## J 계열(정보 표시) 및 K 계열(미디어·콘텐츠) 구현
+
+J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-013)을 따르며, 기존 시스템 재료 11종과 신규 목적 패밀리 16종(총 27항목)으로 구성된다.
+
+### J 계열 (정보 표시 15항목)
+- 기존 재료 매핑 5종: Badge(`base-component:badge`), Chip(`purpose:card.feature`), Filter Chip(`purpose:form.search`), Tag(`base-component:badge`), Divider(`base-component:card-surface`).
+- 신규 목적 패밀리 10종:
+  - `purpose:info.status-badge`: 상태별 시각 배지
+  - `purpose:info.avatar`: 단일 사용자 아바타 (이미지, 이니셜, fallback)
+  - `purpose:info.avatar-group`: 다중 아바타 그룹 및 초과 카운트 표시
+  - `purpose:info.accordion`: 다중 구획 접기/펼치기 및 키보드 탐색 (`INFO_MEDIA_RUNTIME`)
+  - `purpose:info.collapsible`: 단일 섹션 토글 패널 (`INFO_MEDIA_RUNTIME`)
+  - `purpose:info.counter`: 수치 및 카운터 표시
+  - `purpose:info.notification-indicator`: 알림 점 및 카운트 배지
+  - `purpose:info.keyboard-shortcut`: 단축키 조합 시각화 (`<kbd>`)
+  - `purpose:info.metadata-row`: 라벨-값 메타데이터 행
+  - `purpose:info.stat-comparison`: 지표 비교 및 증감 트렌드
+
+### K 계열 (미디어 및 콘텐츠 12항목)
+- 기존 재료 매핑 6종: Image(`media:fine-editorial`), Media Frame(`media:fine-editorial`), Gallery(`purpose:card.product`), Video Frame(`media:fine-editorial`), Quote(`purpose:editorial.quote`), Rich Text Content(`purpose:editorial.content`).
+- 신규 목적 패밀리 6종:
+  - `purpose:media.responsive-image`: 반응형 이미지 (`srcset`, `sizes`)
+  - `purpose:media.carousel`: 인터랙티브 슬라이더 및 인디케이터 (`INFO_MEDIA_RUNTIME`)
+  - `purpose:media.audio-player`: 시맨틱 오디오 플레이어 UI 및 컨트롤
+  - `purpose:media.file-preview`: 파일 형식별 미리보기 및 다운로드 정보
+  - `purpose:media.image-comparison`: 전후 비교 슬라이더 및 시각 차이 확인 (`INFO_MEDIA_RUNTIME`)
+  - `purpose:media.figure-caption`: 시맨틱 캡션 포함 미디어 피규어 (`<figure>`, `<figcaption>`)
+
+### 런타임 및 접근성 계약
+- 인터랙티브 4종(`accordion`, `collapsible`, `carousel`, `image-comparison`)은 `INFO_MEDIA_RUNTIME` 위임 핸들러를 통해 `actionRuntimeFor`에서 동적으로 주입된다.
+- WAI-ARIA 명세 준수: `aria-expanded`, `aria-controls`, `role="region"`, `role="group"`, `aria-roledescription="slide"`, `aria-valuenow` 등을 철저히 검증한다.
+- 모든 신규 목적 패밀리는 `materials.purposes`를 통해 Blueprint 컴파일 및 왕복 검증을 통과한다.
+- Studio 선택지(`blockedBy: no-studio-choice`)는 Track F 소유이므로 카탈로그 노출(`catalog-visible`) 상태로 관리된다.
+
 ### 분류 보정(독립 149 · 변형 36 · 복합 22)
 
 분류의 원천은 `src/platform/families/inventory.mjs`이고, 아래 표는 `node docs/platform/evidence/components/build.mjs`가 이 분류와 Manifest에서 만든다. 손으로 고치지 않는다. `tests/platform-family-inventory.test.mjs`가 요구 목록, Manifest, 이 표의 일치를 본다.
@@ -153,7 +187,7 @@ REQUEST §6.2 N의 커머스 패턴 11항목의 등록 재료, Blueprint 사용�
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 79.
+집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 63.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -288,30 +322,30 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:i-15-loading-overlay` | Loading Overlay | 독립 재료 | missing | missing | — |
 | `req:comp:i-16-status-indicator` | Status Indicator | 독립 재료 | missing | missing | — |
 | `req:comp:j-01-badge` | Badge | 변형 | variant | verified | component:tags |
-| `req:comp:j-02-status-badge` | Status Badge | 독립 재료 | missing | missing | — |
+| `req:comp:j-02-status-badge` | Status Badge | 독립 재료 | direct | catalog-visible | purpose:info.status-badge |
 | `req:comp:j-03-chip` | Chip | 변형 | variant | verified | component:tags |
 | `req:comp:j-04-filter-chip` | Filter Chip | 변형 | variant | catalog-visible | purpose:form.filter |
 | `req:comp:j-05-tag` | Tag | 독립 재료 | direct | verified | component:tags |
-| `req:comp:j-06-avatar` | Avatar | 독립 재료 | missing | missing | — |
-| `req:comp:j-07-avatar-group` | Avatar Group | 독립 재료 | missing | missing | — |
-| `req:comp:j-08-accordion` | Accordion | 독립 재료 | missing | missing | — |
-| `req:comp:j-09-collapsible` | Collapsible | 독립 재료 | missing | missing | — |
+| `req:comp:j-06-avatar` | Avatar | 독립 재료 | direct | verified | purpose:info.avatar |
+| `req:comp:j-07-avatar-group` | Avatar Group | 독립 재료 | direct | verified | purpose:info.avatar-group |
+| `req:comp:j-08-accordion` | Accordion | 독립 재료 | direct | verified | purpose:info.accordion |
+| `req:comp:j-09-collapsible` | Collapsible | 독립 재료 | direct | catalog-visible | purpose:info.collapsible |
 | `req:comp:j-10-divider` | Divider | 독립 재료 | direct | verified | component:divider |
-| `req:comp:j-11-counter` | Counter | 독립 재료 | missing | missing | — |
-| `req:comp:j-12-notification-indicator` | Notification Indicator | 독립 재료 | missing | missing | — |
-| `req:comp:j-13-keyboard-shortcut` | Keyboard Shortcut | 독립 재료 | missing | missing | — |
-| `req:comp:j-14-metadata-row` | Metadata Row | 독립 재료 | missing | missing | — |
-| `req:comp:j-15-stat-comparison` | Stat Comparison | 독립 재료 | missing | missing | — |
+| `req:comp:j-11-counter` | Counter | 독립 재료 | direct | catalog-visible | purpose:info.counter |
+| `req:comp:j-12-notification-indicator` | Notification Indicator | 독립 재료 | direct | catalog-visible | purpose:info.notification-indicator |
+| `req:comp:j-13-keyboard-shortcut` | Keyboard Shortcut | 독립 재료 | direct | verified | purpose:info.keyboard-shortcut |
+| `req:comp:j-14-metadata-row` | Metadata Row | 독립 재료 | direct | verified | purpose:info.metadata-row |
+| `req:comp:j-15-stat-comparison` | Stat Comparison | 독립 재료 | direct | verified | purpose:info.stat-comparison |
 | `req:comp:k-01-image` | Image | 변형 | variant | verified | component:media |
-| `req:comp:k-02-responsive-image` | Responsive Image | 독립 재료 | missing | missing | — |
+| `req:comp:k-02-responsive-image` | Responsive Image | 독립 재료 | direct | verified | purpose:media.responsive-image |
 | `req:comp:k-03-media-frame` | Media Frame | 독립 재료 | direct | verified | media:bold-poster, media:duotone-round, media:fine-editorial, media:line-soft-frame, media:solid-cover, media:square-tech |
 | `req:comp:k-04-gallery` | Gallery | 복합 패턴 | direct | verified | component:gallery |
-| `req:comp:k-05-carousel` | Carousel | 복합 패턴 | missing | missing | — |
+| `req:comp:k-05-carousel` | Carousel | 복합 패턴 | direct | verified | purpose:media.carousel |
 | `req:comp:k-06-video-frame` | Video Frame | 변형 | variant | verified | component:media |
-| `req:comp:k-07-audio-player-ui` | Audio Player UI | 독립 재료 | missing | missing | — |
-| `req:comp:k-08-file-preview` | File Preview | 독립 재료 | missing | missing | — |
-| `req:comp:k-09-image-comparison` | Image Comparison | 복합 패턴 | missing | missing | — |
-| `req:comp:k-10-figure-and-caption` | Figure and Caption | 복합 패턴 | missing | missing | — |
+| `req:comp:k-07-audio-player-ui` | Audio Player UI | 독립 재료 | direct | verified | purpose:media.audio-player |
+| `req:comp:k-08-file-preview` | File Preview | 독립 재료 | direct | verified | purpose:media.file-preview |
+| `req:comp:k-09-image-comparison` | Image Comparison | 복합 패턴 | direct | verified | purpose:media.image-comparison |
+| `req:comp:k-10-figure-and-caption` | Figure and Caption | 복합 패턴 | direct | verified | purpose:media.figure-caption |
 | `req:comp:k-11-quote` | Quote | 독립 재료 | direct | verified | component:quote |
 | `req:comp:k-12-rich-text-content` | Rich Text Content | 독립 재료 | direct | verified | component:prose |
 | `req:comp:l-01-stack` | Stack | 독립 재료 | direct | defined | layout-primitive:stack |

@@ -5,9 +5,10 @@
     "totalTasks": 44,
     "byStatus": {
       "Verified": 10,
-      "Implemented": 5,
-      "Pending": 28,
-      "In Progress": 1
+      "Implemented": 7,
+      "Pending": 26,
+      "In Progress": 1,
+      "Blocked": 0
     },
     "byTrack": {
       "Track G": 6,
@@ -1554,33 +1555,149 @@
       "taskId": "TASK-TRD-J",
       "title": "정보 표시 15항목",
       "goal": "정보 재료와 조립 경로",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "scope": "src/platform/families/info-media.mjs, src/platform/families/action.mjs, src/platform/families/index.mjs, src/platform/families/contracts.mjs, scripts/generate-material-coverage.mjs, docs/platform/components.md, tests/platform-info-media-*.test.mjs",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/kit.mjs",
+        "src/platform/families/info-media.mjs",
+        "src/platform/families/action.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/components.md",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": "J 15/15 항목 모두 missing·schema-only 0 달성. 기존 재료 5종 매핑, 신규 목적 패밀리 10종(status-badge, avatar, avatar-group, accordion, collapsible, counter, notification-indicator, keyboard-shortcut, metadata-row, stat-comparison) 구현 완료. accordion 및 collapsible은 INFO_MEDIA_RUNTIME을 통해 키보드(Enter/Space) 및 WAI-ARIA 상태 전이 지원. Studio 선택지는 Track F 소유이므로 catalog-visible, blockedBy: no-studio-choice 상태.",
+      "crossTrackFiles": [
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "등록 목적 패밀리 개수 37 → 53(J 10종, K 6종 추가)"
+        },
+        {
+          "file": "tests/platform-pipeline-baseline.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "기준선의 목적 패밀리 등록량 37 → 53"
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track A",
+          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 37 → 53)"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 목적 패밀리 매핑 연결"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "TASK-TRD-J/K 상태 Implemented 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "ownerTrack": "Track G",
+          "reason": "DEC-013 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Material Coverage 재생성 산출물"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-K",
       "title": "미디어 및 콘텐츠 12항목",
       "goal": "미디어/콘텐츠 재료 계약",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "scope": "src/platform/families/info-media.mjs, src/platform/families/action.mjs, src/platform/families/index.mjs, src/platform/families/contracts.mjs, scripts/generate-material-coverage.mjs, docs/platform/components.md, tests/platform-info-media-*.test.mjs",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/kit.mjs",
+        "src/platform/families/info-media.mjs",
+        "src/platform/families/action.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/components.md",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": "K 12/12 항목 모두 missing·schema-only 0 달성. 기존 재료 6종 매핑, 신규 목적 패밀리 6종(responsive-image, carousel, audio-player, file-preview, image-comparison, figure-caption) 구현 완료. carousel 및 image-comparison은 INFO_MEDIA_RUNTIME을 통해 키보드(ArrowLeft/ArrowRight) 및 WAI-ARIA 상태 전이 지원. E4 소유 Foundations 미디어 축과 충돌 없이 공통 계약 연결. Studio 선택지는 Track F 소유이므로 catalog-visible, blockedBy: no-studio-choice 상태.",
+      "crossTrackFiles": [
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "등록 목적 패밀리 개수 37 → 53(J 10종, K 6종 추가)"
+        },
+        {
+          "file": "tests/platform-pipeline-baseline.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "기준선의 목적 패밀리 등록량 37 → 53"
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track A",
+          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 37 → 53)"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 목적 패밀리 매핑 연결"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "TASK-TRD-J/K 상태 Implemented 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "ownerTrack": "Track G",
+          "reason": "DEC-013 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Material Coverage 재생성 산출물"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-L",

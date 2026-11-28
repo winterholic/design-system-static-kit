@@ -7,6 +7,7 @@
  * 런타임은 문서 단위 위임 핸들러 한 벌이다. 쓴 출력에만 붙고(actionRuntimeFor), 쓰지 않은 출력의 바이트는 바뀌지 않는다.
  */
 import {escapeHTML} from '../../escape-html.mjs';
+import {INFO_MEDIA_RUNTIME_IDS, INFO_MEDIA_RUNTIME} from './info-media.mjs';
 
 const e = escapeHTML;
 
@@ -66,7 +67,17 @@ else if(ev.key==='Tab')setMenu(own,false)
 export const ACTION_CSS = `.pf-menu{position:relative;display:inline-block}.pf-menu-panel{position:absolute;inset-block-start:calc(100% + 4px);inset-inline-start:0;z-index:20;display:grid;min-inline-size:12em;max-inline-size:min(20em,90vw);padding:var(--kit-sp-near);background:var(--kit-surface);color:var(--kit-text);border:1px solid var(--kit-border);border-radius:var(--kit-radius);box-shadow:0 6px 18px color-mix(in srgb,var(--kit-text) 18%,transparent)}.pf-menu-panel[hidden]{display:none}.pf-menu-item{display:block;inline-size:100%;min-block-size:44px;padding:0 var(--kit-sp-item);background:transparent;color:inherit;border:0;border-radius:var(--kit-radius);font:inherit;text-align:start;cursor:pointer}.pf-menu-item:hover,.pf-menu-item:focus-visible{background:var(--kit-card-hover)}.pf-menu-item:focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}.pf-split{display:inline-flex;align-items:stretch}.pf-split>.kit-ctl-button-host+.kit-ctl-button-host .kit-ctl-button{margin-inline-start:-1px;border-start-start-radius:0;border-end-start-radius:0}.pf-split>.kit-ctl-button-host:first-child .kit-ctl-button{border-start-end-radius:0;border-end-end-radius:0}.pf-fab .kit-ctl-button{border-radius:999px;min-inline-size:56px;min-block-size:56px;box-shadow:0 4px 12px color-mix(in srgb,var(--kit-text) 28%,transparent)}.pf-fab[data-extended=true] .kit-ctl-button{padding-inline:var(--kit-sp-item)}.pf-dismissible{display:flex;align-items:center;justify-content:space-between;gap:var(--kit-sp-item);padding:var(--kit-sp-near) var(--kit-sp-item);background:var(--kit-soft);color:var(--kit-text);border:1px solid var(--kit-border);border-radius:var(--kit-radius)}.pf-dismissible[hidden]{display:none}.pf-dismissible p{margin:0}@media(max-width:640px){.pf-menu-panel{inline-size:max-content}}.pf-split .kit-ctl-button,.pf-menu>.kit-ctl-button-host .kit-ctl-button,.pf-actions .kit-ctl-button[data-copy-text],.pf-actions .kit-ctl-button[data-action-dismiss],.pf-dismissible .kit-ctl-button{min-block-size:44px;min-inline-size:44px}`;
 
 /** 런타임이 필요한 목적 패밀리 id. 목적 패밀리 record는 필드가 닫혀 있어 런타임은 레코드 밖에서 관리한다. */
-export const PURPOSE_RUNTIME_IDS = Object.freeze(['purpose:button.split', 'purpose:button.menu', 'purpose:button.copy', 'purpose:button.close']);
+export const PURPOSE_RUNTIME_IDS = Object.freeze(['purpose:button.split', 'purpose:button.menu', 'purpose:button.copy', 'purpose:button.close', ...INFO_MEDIA_RUNTIME_IDS]);
 
 /** 출력에 쓰인 목적 패밀리가 요구하는 런타임. 쓰인 것이 없으면 빈 문자열이라 기존 출력은 그대로다. */
-export const actionRuntimeFor = ids => ([...ids].some(id => PURPOSE_RUNTIME_IDS.includes(id)) ? ACTION_RUNTIME : '');
+export const actionRuntimeFor = ids => {
+  const used = [...ids];
+  const parts = [];
+  if (used.some(id => ['purpose:button.split', 'purpose:button.menu', 'purpose:button.copy', 'purpose:button.close'].includes(id))) {
+    parts.push(ACTION_RUNTIME);
+  }
+  if (used.some(id => INFO_MEDIA_RUNTIME_IDS.includes(id))) {
+    parts.push(INFO_MEDIA_RUNTIME);
+  }
+  return parts.join('\n');
+};

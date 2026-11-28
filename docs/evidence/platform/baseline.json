@@ -3,23 +3,23 @@
   "generator": "scripts/platform/baseline.mjs",
   "materials": {
     "catalogRegistry": {
-      "registered": 1066,
-      "attributeCombinations": 795799,
-      "completePresets": 190,
-      "implemented": 382,
+      "registered": 1081,
+      "attributeCombinations": 795814,
+      "completePresets": 205,
+      "implemented": 397,
       "derived": 257,
       "rights": 427,
       "metadata": 0,
-      "uniqueCompletePresets": 190
+      "uniqueCompletePresets": 205
     },
     "designRegistry": {
-      "registered": 1084,
-      "completePresets": 208,
-      "implemented": 400,
+      "registered": 1099,
+      "completePresets": 223,
+      "implemented": 415,
       "derived": 257,
       "rights": 427,
       "metadata": 0,
-      "uniqueCompletePresets": 208
+      "uniqueCompletePresets": 223
     },
     "renderEntryPoints": 28,
     "unresolvedRenderEntries": [],
@@ -39,13 +39,13 @@
         ]
       },
       "chart-preset": {
-        "registered": 29,
-        "implemented": 29,
+        "registered": 44,
+        "implemented": 44,
         "derived": 0,
         "rights": 0,
         "metadata": 0,
-        "completePresets": 29,
-        "uniqueCompletePresets": 29,
+        "completePresets": 44,
+        "uniqueCompletePresets": 44,
         "renderEntries": [
           "src/render/chart-presets.mjs#renderChartPreset"
         ]
@@ -348,107 +348,113 @@
     "note": "Coolors 팔레트(권리 미확인)를 쓰므로 신규 경로의 기준이 아니라 축소 폭 비교용이다"
   },
   "platform": {
-    "contractVersion": "0.7.0",
+    "contractVersion": "0.8.0",
     "registered": {
       "palette": 9,
-      "subtokenSet": 7,
+      "subtokenSet": 25,
       "typeSystem": 14,
       "baseComponent": 10,
-      "family": 4,
-      "purposeFamily": 37,
+      "family": 12,
+      "purposeFamily": 53,
       "styleContext": 54,
       "axisValue": 79
     },
     "assemblable": {
-      "attempted": 120420,
-      "assemblable": 119610,
+      "attempted": 581256,
+      "assemblable": 567798,
       "perPattern": {
         "commerce-listing": {
           "purpose": "commerce",
-          "assemblable": 8010,
+          "assemblable": 14400,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 463
+          "verified": 818
         },
         "dashboard-grid": {
           "purpose": "work-dashboard",
-          "assemblable": 31104,
+          "assemblable": 211680,
           "layoutAxes": {
             "shells": 4,
             "widths": 3,
             "densities": 3
           },
-          "verified": 900
+          "verified": 5916
         },
         "docs-reference": {
           "purpose": "editorial-docs",
-          "assemblable": 3888,
+          "assemblable": 7776,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 234
+          "verified": 450
         },
         "editorial-article": {
           "purpose": "editorial-docs",
-          "assemblable": 8640,
+          "assemblable": 15552,
           "layoutAxes": {
             "shells": 4,
             "widths": 2,
             "densities": 3
           },
-          "verified": 384
+          "verified": 672
         },
         "erp-workspace": {
           "purpose": "work-dashboard",
-          "assemblable": 44856,
+          "assemblable": 141750,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 2510
+          "verified": 7893
         },
         "marketing-landing": {
           "purpose": "saas-landing",
-          "assemblable": 23112,
+          "assemblable": 176640,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 1302
+          "verified": 10258
         }
       },
       "note": "(패턴 × 셸 × 폭 × 밀도 × 모드) × (팔레트 × 세트 × 타이포 × 시각 패밀리) 중 관계·색·서체 평가를 통과한 수. 렌더하지 않고 계산한다"
     },
     "verified": {
-      "attempted": 5793,
-      "verified": 5793,
-      "distinctOutputs": 5787,
+      "attempted": 26007,
+      "verified": 26007,
+      "distinctOutputs": 26002,
       "failures": {},
       "note": "실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)"
     },
     "distinct": {
       "colorTokenSets": {
-        "light": 63,
-        "dark": 62
+        "light": 224,
+        "dark": 221
       },
       "facePairs": 14,
-      "families": 4,
+      "families": 12,
       "styleMaterials": {
         "surface": {
           "registered": 5,
           "attempted": 23,
-          "verified": 21,
-          "usedInOutput": 21,
+          "verified": 20,
+          "usedInOutput": 20,
           "rejectedCases": [
             {
               "pattern": "commerce-listing",
+              "material": "surface:tonal-sheet",
+              "code": "X11",
+              "reason": "axis-value:motion.lively × axis-value:elevation.flat: X11: 움직임은 깊이 변화로 설명되어야 하는데 flat에는 변화할 깊이가 없습니다."
+            },
+            {
+              "pattern": "dashboard-grid",
               "material": "surface:tonal-sheet",
               "code": "X11",
               "reason": "axis-value:motion.lively × axis-value:elevation.flat: X11: 움직임은 깊이 변화로 설명되어야 하는데 flat에는 변화할 깊이가 없습니다."
@@ -464,32 +470,25 @@
         "motion": {
           "registered": 4,
           "attempted": 19,
-          "verified": 17,
-          "usedInOutput": 17,
-          "rejectedCases": [
-            {
-              "pattern": "dashboard-grid",
-              "material": "motion:expressive",
-              "code": "X11",
-              "reason": "axis-value:motion.lively × axis-value:elevation.flat: X11: 움직임은 깊이 변화로 설명되어야 하는데 flat에는 변화할 깊이가 없습니다."
-            },
-            {
-              "pattern": "erp-workspace",
-              "material": "motion:expressive",
-              "code": "X11",
-              "reason": "axis-value:motion.lively × axis-value:elevation.flat: X11: 움직임은 깊이 변화로 설명되어야 하는데 flat에는 변화할 깊이가 없습니다."
-            }
-          ]
+          "verified": 19,
+          "usedInOutput": 19,
+          "rejectedCases": []
         },
         "background": {
           "registered": 5,
           "attempted": 18,
-          "verified": 15,
-          "usedInOutput": 15,
+          "verified": 14,
+          "usedInOutput": 14,
           "rejectedCases": [
             {
               "pattern": "commerce-listing",
               "material": "background:soft-gradient-organic",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
+              "pattern": "dashboard-grid",
+              "material": "background:aurora-glow-geometric",
               "code": "X04",
               "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
             },
@@ -540,15 +539,15 @@
         ]
       },
       "verifiedColorTokenSets": {
-        "light": 63,
-        "dark": 62
+        "light": 224,
+        "dark": 221
       },
       "verifiedFacePairs": 14,
-      "verifiedFamilies": 4,
+      "verifiedFamilies": 12,
       "note": "families/verifiedFamilies는 시각 패밀리 수다. purposeFamilies.verified/ids는 품질 검증을 통과한 대표 페이지 Blueprint의 materials.purposes에서 센 고유 목적 패밀리이며 등록 수와 다르다."
     },
     "colorGateFailures": {
-      "P_COLOR_CONTRAST": 1
+      "P_COLOR_CONTRAST": 5
     }
   }
 }

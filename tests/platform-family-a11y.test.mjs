@@ -523,6 +523,140 @@ const SPEC = {
       '실패는 원인과 다음 행동': d => { const r = render('purpose:feedback.result', QUIET, {variant: {outcome: 'failure'}, content: {title: '결제하지 못했습니다', message: '카드 한도를 초과했습니다. 다른 카드로 다시 시도하세요.'}}); ok(r.ok); ok(count(r.dom, '[role=alert]') === 1 && !query(r.dom, '[role=status]').filter(x => !classes(x).includes('kit-ctl-sr')).length, 'failure는 role=alert이고 결과 영역은 status가 아니다'); ok(/한도/.test(textOf(r.dom.root)) && /다시 시도/.test(textOf(r.dom.root)), '원인과 행동'); },
     },
   },
+  'purpose:info.status-badge': {
+    role: d => one(d, '.pf-info-badge'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      '색상만이 아니라 텍스트': d => ok(textOf(one(d, '.pf-info-badge')).trim().length > 0),
+      'role=status 제공': d => ok(count(d, '[role=status]') >= 1),
+      '대비 4.5:1': OFF('contrast'),
+    },
+  },
+  'purpose:info.avatar': {
+    role: d => one(d, '.pf-avatar'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      'aria-label 또는 alt': d => ok(has(one(d, '.pf-avatar'), 'aria-label') || query(d, 'img').some(i => has(i, 'alt'))),
+      '이니셜 표시 시 고대비': OFF('contrast'),
+    },
+  },
+  'purpose:info.avatar-group': {
+    role: d => one(d, '.pf-avatar-group'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      '그룹 aria-label': d => ok(has(one(d, '.pf-avatar-group'), 'aria-label')),
+      '초과 수치 명확히': d => ok(count(d, '.pf-avatar-more') >= 0),
+    },
+  },
+  'purpose:info.accordion': {
+    role: d => one(d, '.pf-accordion'),
+    keyboard: d => ok(tabOrder(d).length >= 1),
+    checks: {
+      'aria-expanded 및 aria-controls': d => ok(query(d, 'button[aria-expanded]').every(b => has(b, 'aria-controls'))),
+      'role=region 및 aria-labelledby': d => ok(query(d, '.pf-accordion-panel').every(p => has(p, 'aria-labelledby'))),
+      '키보드 상호작용': OFF('prose'),
+    },
+  },
+  'purpose:info.collapsible': {
+    role: d => one(d, '.pf-collapsible'),
+    keyboard: d => ok(tabOrder(d).length >= 1),
+    checks: {
+      'aria-expanded 동기화': d => ok(count(d, 'button[aria-expanded]') >= 1),
+      'aria-controls 연결': d => ok(query(d, 'button[aria-expanded]').every(b => has(b, 'aria-controls'))),
+      'hidden 속성 동기화': d => ok(count(d, '.pf-collapsible-body') >= 1),
+    },
+  },
+  'purpose:info.counter': {
+    role: d => one(d, '.pf-counter'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      '스크린리더용 설명': d => ok(has(one(d, '.pf-counter'), 'aria-label')),
+      '대비 4.5:1': OFF('contrast'),
+    },
+  },
+  'purpose:info.notification-indicator': {
+    role: d => one(d, '.pf-notification-indicator'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      '스크린리더용 레이블': d => ok(has(one(d, '.pf-notification-indicator'), 'aria-label')),
+      '시각적 점에 aria-hidden': d => ok(query(d, '.pf-indicator-dot').every(dot => dot.attrs['aria-hidden'] === 'true')),
+    },
+  },
+  'purpose:info.keyboard-shortcut': {
+    role: d => one(d, '.pf-kbd-group'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      'kbd 요소 시맨틱': d => ok(count(d, 'kbd') >= 1),
+      '전체 조합 aria-label': d => ok(has(one(d, '.pf-kbd-group'), 'aria-label')),
+    },
+  },
+  'purpose:info.metadata-row': {
+    role: d => one(d, 'dl'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      'dt/dd 시맨틱 구조': d => ok(count(d, 'dt') >= 1 && count(d, 'dd') >= 1),
+      '키-값 일대일': d => ok(count(d, 'dt') === count(d, 'dd')),
+    },
+  },
+  'purpose:info.stat-comparison': {
+    role: d => one(d, '.pf-stat-comparison'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      '수치와 증감 비교': d => ok(count(d, '.pf-stat-value') >= 1 && count(d, '.pf-stat-change') >= 1),
+      'trend 상승/하락': d => ok(has(one(d, '.pf-stat-comparison'), 'data-trend')),
+    },
+  },
+  'purpose:media.responsive-image': {
+    role: d => one(d, '.pf-responsive-image'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      'alt 텍스트 필수': d => ok(query(d, 'img').every(i => has(i, 'alt'))),
+      '반응형 가로세로': d => ok(has(one(d, '.pf-responsive-image'), 'data-ratio')),
+    },
+  },
+  'purpose:media.carousel': {
+    role: d => one(d, '.pf-carousel'),
+    keyboard: d => ok(tabOrder(d).length >= 1),
+    checks: {
+      'aria-roledescription="carousel"': d => ok(one(d, '.pf-carousel').attrs['aria-roledescription'] === 'carousel'),
+      'aria-roledescription="slide"': d => ok(query(d, '.pf-carousel-slide').every(s => s.attrs['aria-roledescription'] === 'slide' && has(s, 'aria-label'))),
+      '현재 활성 슬라이드': d => ok(count(d, '.pf-carousel-counter') >= 1),
+    },
+  },
+  'purpose:media.audio-player': {
+    role: d => one(d, '.pf-audio-player'),
+    keyboard: d => ok(tabOrder(d).length >= 1),
+    checks: {
+      'aria-label="오디오 플레이어"': d => ok(one(d, '.pf-audio-player').attrs['aria-label']?.includes('오디오 플레이어')),
+      '재생 버튼에 aria-pressed': d => ok(count(d, 'button[aria-pressed]') >= 1),
+      '진행 바에 role=progressbar': d => ok(count(d, '[role=progressbar]') >= 1),
+    },
+  },
+  'purpose:media.file-preview': {
+    role: d => one(d, '.pf-file-preview'),
+    keyboard: d => ok(tabOrder(d).length >= 1),
+    checks: {
+      '파일명과 파일 크기': d => ok(count(d, '.pf-file-name') >= 1 && count(d, '.pf-file-size') >= 1),
+      '다운로드 링크에 명확한 aria-label': d => ok(has(one(d, 'a'), 'aria-label')),
+    },
+  },
+  'purpose:media.image-comparison': {
+    role: d => one(d, '.pf-image-comparison'),
+    keyboard: d => ok(tabOrder(d).length >= 1),
+    checks: {
+      '슬라이더에 aria-label': d => ok(has(one(d, 'input[type=range]'), 'aria-label')),
+      '이미지에 대체 텍스트': d => ok(query(d, 'img').every(i => has(i, 'alt'))),
+      '키보드 조작': d => ok(count(d, 'input[type=range]') >= 1),
+    },
+  },
+  'purpose:media.figure-caption': {
+    role: d => one(d, 'figure'),
+    keyboard: d => assert.deepEqual(tabOrder(d), []),
+    checks: {
+      'figure 및 figcaption': d => ok(count(d, 'figure') >= 1 && count(d, 'figcaption') >= 1),
+      'alt 텍스트 제공': d => ok(query(d, 'img').every(i => has(i, 'alt'))),
+    },
+  },
 };
 
 function OFF(why) { return {off: why}; }
@@ -536,8 +670,8 @@ const KEYS = family => Object.keys(SPEC[family.id].checks);
 /** 조건 문구에 키가 들어 있는가. */
 const conditionOf = (family, key) => family.a11y.conditions.filter(c => c.includes(key));
 
-test('every contract condition of the 37 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
-  assert.equal(PURPOSE_FAMILIES.length, 37);
+test('every contract condition of the 53 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
+  assert.equal(PURPOSE_FAMILIES.length, 53);
   assert.deepEqual(Object.keys(SPEC).sort(), [...PURPOSE_FAMILY_IDS].sort(), 'SPEC covers exactly the registered families');
   for (const f of PURPOSE_FAMILIES) {
     const spec = SPEC[f.id];

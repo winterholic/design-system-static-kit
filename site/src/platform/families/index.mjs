@@ -23,10 +23,12 @@ import {NAVIGATION_FAMILIES} from './navigation.mjs';
 import {FORM_FAMILIES} from './form.mjs';
 import {TABLE_FAMILIES} from './table.mjs';
 import {FEEDBACK_FAMILIES} from './feedback.mjs';
+import {INFO_MEDIA_FAMILIES, INFO_FAMILIES, MEDIA_FAMILIES} from './info-media.mjs';
 
 export {VISUAL_LANGUAGES, VISUAL_KEYS, visualMismatch} from './visual.mjs';
 export {PURPOSE_GROUPS, definePurposeFamily, validatePurposeFamily, checkPurposeCombination, PURPOSE_FIELDS} from './kit.mjs';
 export {COMPONENT_LAYERS, COMPONENT_CONTRACT_FIELDS, COMPONENT_CONTRACTS, ALL_COMPONENT_CONTRACTS, defineComponentContract, validateComponentContracts, countDistinctComponentTypes, ACTION_COMPONENTS, ACTION_COMPONENT_BY_ID, renderActionComponent, ACTION_COMPONENT_CSS, COMMERCE_SPECS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, COMMERCE_CONTRACTS} from './contracts.mjs';
+export {INFO_MEDIA_FAMILIES, INFO_FAMILIES, MEDIA_FAMILIES} from './info-media.mjs';
 
 /** 목적 패밀리 id(고정 계약). 새 id를 더하는 것은 호환이지만 이름을 바꾸거나 지우는 것은 호환이 아니다. */
 export const PURPOSE_FAMILY_IDS = Object.freeze([
@@ -36,9 +38,12 @@ export const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:form.search', 'purpose:form.auth', 'purpose:form.settings', 'purpose:form.filter', 'purpose:form.group',
   'purpose:table.business', 'purpose:table.analytic', 'purpose:table.dense',
   'purpose:feedback.confirm', 'purpose:feedback.error', 'purpose:feedback.warning', 'purpose:feedback.progress', 'purpose:feedback.result',
+  'purpose:info.status-badge', 'purpose:info.avatar', 'purpose:info.avatar-group', 'purpose:info.accordion', 'purpose:info.collapsible',
+  'purpose:info.counter', 'purpose:info.notification-indicator', 'purpose:info.keyboard-shortcut', 'purpose:info.metadata-row', 'purpose:info.stat-comparison',
+  'purpose:media.responsive-image', 'purpose:media.carousel', 'purpose:media.audio-player', 'purpose:media.file-preview', 'purpose:media.image-comparison', 'purpose:media.figure-caption',
 ]);
 
-export const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES]);
+export const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES]);
 const BY_ID = new Map(PURPOSE_FAMILIES.map(f => [f.id, f]));
 export const getPurposeFamily = id => BY_ID.get(id) ?? null;
 export const listPurposeFamilies = group => PURPOSE_FAMILIES.filter(f => !group || f.group === group);

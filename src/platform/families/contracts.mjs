@@ -12,6 +12,7 @@ import {NAVIGATION_FAMILIES} from './navigation.mjs';
 import {FORM_FAMILIES} from './form.mjs';
 import {TABLE_FAMILIES} from './table.mjs';
 import {FEEDBACK_FAMILIES} from './feedback.mjs';
+import {INFO_MEDIA_FAMILIES} from './info-media.mjs';
 import {renderButton} from '../../materials/button.mjs';
 import {COMPONENT_CLASSIFICATION} from './inventory.mjs';
 import {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} from './action.mjs';
@@ -70,7 +71,7 @@ const normalizePurpose = f => defineComponentContract({id: f.id, componentType: 
 
 export const COMPONENT_CONTRACTS = Object.freeze([
   ...BASE_COMPONENTS.map(normalizeBase),
-  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES].map(normalizePurpose),
+  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES].map(normalizePurpose),
 ]);
 
 export function validateComponentContracts(contracts = ALL_COMPONENT_CONTRACTS) {
