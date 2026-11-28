@@ -141,10 +141,10 @@ body{margin:0;background:var(--kit-canvas);color:var(--kit-text);font-family:var
 .pf-responsive-image[data-ratio="21:9"]{aspect-ratio:21/9}
 .pf-responsive-image[data-fit="cover"] img{inline-size:100%;block-size:100%;object-fit:cover}
 .pf-responsive-image[data-fit="contain"] img{inline-size:100%;block-size:100%;object-fit:contain}
-.pf-image-caption{margin:var(--kit-sp-tight) 0 0;color:var(--kit-muted);font-size:var(--kit-t-small)}
+.pf-responsive-figure{margin:0;display:block}.pf-image-caption{margin:var(--kit-sp-tight) 0 0;color:var(--kit-muted);font-size:var(--kit-t-small)}
 
 .pf-carousel{position:relative;display:grid;gap:var(--kit-sp-near);font-family:var(--kit-font);inline-size:100%}
-.pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:hidden;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}
+.pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}.pf-carousel-track::-webkit-scrollbar{display:none}.pf-carousel-track:focus-visible{outline:2px solid var(--kit-focus);outline-offset:2px}
 .pf-carousel[data-layout="single"] .pf-carousel-track{grid-auto-columns:100%}
 .pf-carousel[data-layout="cards"] .pf-carousel-track{grid-auto-columns:minmax(72%,calc(50% - var(--kit-sp-item) / 2))}
 .pf-carousel[data-size="medium"] .pf-carousel-slide img{max-block-size:320px}
@@ -203,4 +203,4 @@ body{margin:0;background:var(--kit-canvas);color:var(--kit-text);font-family:var
 .pf-figure-caption[data-align="center"] figcaption{text-align:center}
 .pf-credit{display:block;margin-block-start:2px;font-size:11px;opacity:0.8}
 
-]]></style></head><body><div class="kit-platform" data-mode="light"><div class="pf pf-media-responsive-image" data-family="luxury" data-purpose="media.responsive-image"><div class="pf-responsive-image" data-ratio="16:9" data-fit="cover"><img src="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20640%20360%22%3E%3Crect%20fill=%22%23ddd%22%20width=%22640%22%20height=%22360%22/%3E%3C/svg%3E" alt="샘플 풍경 사진" loading="lazy"/><p class="pf-image-caption">멋진 풍경</p></div></div></div></body></html></foreignObject></svg>
+]]></style></head><body><div class="kit-platform" data-mode="light"><div class="pf pf-media-responsive-image" data-family="luxury" data-purpose="media.responsive-image"><figure class="pf-responsive-figure"><div class="pf-responsive-image" data-ratio="16:9" data-fit="cover"><img src="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20640%20360%22%3E%3Crect%20fill=%22%23ddd%22%20width=%22640%22%20height=%22360%22/%3E%3C/svg%3E" alt="샘플 풍경 사진" loading="lazy"/></div><figcaption class="pf-image-caption">멋진 풍경</figcaption></figure></div></div></body></html></foreignObject></svg>

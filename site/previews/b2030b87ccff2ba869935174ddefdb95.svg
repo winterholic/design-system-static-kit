@@ -141,10 +141,10 @@ body{margin:0;background:var(--kit-canvas);color:var(--kit-text);font-family:var
 .pf-responsive-image[data-ratio="21:9"]{aspect-ratio:21/9}
 .pf-responsive-image[data-fit="cover"] img{inline-size:100%;block-size:100%;object-fit:cover}
 .pf-responsive-image[data-fit="contain"] img{inline-size:100%;block-size:100%;object-fit:contain}
-.pf-image-caption{margin:var(--kit-sp-tight) 0 0;color:var(--kit-muted);font-size:var(--kit-t-small)}
+.pf-responsive-figure{margin:0;display:block}.pf-image-caption{margin:var(--kit-sp-tight) 0 0;color:var(--kit-muted);font-size:var(--kit-t-small)}
 
 .pf-carousel{position:relative;display:grid;gap:var(--kit-sp-near);font-family:var(--kit-font);inline-size:100%}
-.pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:hidden;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}
+.pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}.pf-carousel-track::-webkit-scrollbar{display:none}.pf-carousel-track:focus-visible{outline:2px solid var(--kit-focus);outline-offset:2px}
 .pf-carousel[data-layout="single"] .pf-carousel-track{grid-auto-columns:100%}
 .pf-carousel[data-layout="cards"] .pf-carousel-track{grid-auto-columns:minmax(72%,calc(50% - var(--kit-sp-item) / 2))}
 .pf-carousel[data-size="medium"] .pf-carousel-slide img{max-block-size:320px}

@@ -240,10 +240,10 @@ for (const width of WIDTHS) {
     test('feedback families: live regions exist before their text changes, errors are assertive alerts, progress values match what is drawn, the loading overlay stays inside its box', async ({page}) => {
       await page.setContent(page_html([
         'purpose:feedback.status-indicator',
-        {purpose: 'purpose:feedback.callout', content: {label: '오류', description: '저장하지 못했습니다.', tone: 'error'}},
-        'purpose:feedback.callout',
-        {purpose: 'purpose:feedback.circular-progress', content: {label: '업로드', value: 40}},
-        {purpose: 'purpose:feedback.circular-progress', content: {label: '준비'}},
+        {purpose: 'purpose:feedback.callout', id: 'callout-error', content: {label: '오류', description: '저장하지 못했습니다.', tone: 'error'}},
+        {purpose: 'purpose:feedback.callout', id: 'callout-info'},
+        {purpose: 'purpose:feedback.circular-progress', id: 'progress-known', content: {label: '업로드', value: 40}},
+        {purpose: 'purpose:feedback.circular-progress', id: 'progress-unknown', content: {label: '준비'}},
         'purpose:feedback.loading-overlay',
       ]));
       const status = page.locator('.ehi-status[role=status]');
