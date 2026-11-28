@@ -1440,4 +1440,21 @@ exit 0
 
 E/H/I가 포함된 최신 `origin/main` 반영 후(`db7ed45fc`)에도 §6.2 J·K coverage는 `direct 21 / variant 6 / missing 0 / schema 0`으로 유지되며, 1,480 materials / 406 requirements Manifest의 baseline 신선도 세 플래그가 모두 true다.
 
-그 뒤 E/H/I 통합 최신 main에서 `npm run verify`는 1,052/1,052 통과했고 3,836 생성 파일 재현성도 통과했다(§20.6). 이 결과가 앞선 worktree에서 기록한 Chromium 시작 실패 2건을 대체한다. 별도 `npm run test:browser`는 374 통과·1 실패였고, 유일한 실패는 §20.6에 기록한 기존 `e2e/platform-families.spec.mjs:12` 미디어 측정이다. D4와 무관해 변경하지 않았다.
+E/H/I 통합 main에서는 `npm run verify` 1,052/1,052 통과와 3,836 생성 파일 재현성이 확인됐다(§20.6). 이는 D4 수정 전 통합 기준 결과다. D4 커밋 `51f3ff022e81156bcc14d48d8f9aa7e77d47756b`에 대해 다시 실행한 아래 결과가 D4 최종 verify 판정이다. 별도 `npm run test:browser`는 374 통과·1 실패였고, 유일한 실패는 §20.6에 기록한 기존 `e2e/platform-families.spec.mjs:12` 미디어 측정이다. D4와 무관해 변경하지 않았다.
+
+### 21.3 D4 커밋 최종 검증
+
+```text
+$ npm run verify
+ℹ tests 1078 / ℹ pass 1073 / ℹ fail 5
+exit 1; 다섯 실패 모두 Chromium 시작 시 bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100), SIGTRAP
+
+실패 시험:
+- tests/platform-layout-resizable.test.mjs:13 — resizable panel: keyboard navigation and min/max constraints work in real Chromium browser
+- tests/platform-layout-resizable.test.mjs:117 — stack: gap and align props change the real layout, including the "gap" step
+- tests/platform-layout-resizable.test.mjs:143 — container: width steps cap the real width, full does not, and content is escaped
+- tests/platform-layout-resizable.test.mjs:156 — resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility
+- tests/platform-type-fonts.test.mjs:136 — 4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다
+```
+
+실행 엔진은 Codex/macOS `exec_command`다. Chromium launch 권한 오류 뒤 브라우저를 재시도하지 않았다. 앞 절에서 같은 D4 코드에 대해 `audit`, `docs`, `build`, `check-generated`를 별도 실행해 통과시켰고, 마지막 출력은 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`였다. 즉 D4의 `npm run verify`는 브라우저 의존 5개만 해당 환경에서 시작하지 못했고 비브라우저 시험 1,073개는 통과했다.
