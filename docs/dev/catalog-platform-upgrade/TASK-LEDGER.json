@@ -4,8 +4,8 @@
   "summary": {
     "totalTasks": 49,
     "byStatus": {
-      "Verified": 21,
-      "Implemented": 10,
+      "Verified": 22,
+      "Implemented": 9,
       "Pending": 15,
       "In Progress": 2,
       "Completed": 1
@@ -5177,11 +5177,30 @@
         "tests/platform-service-channels.test.mjs",
         "tests/platform-pregenerate.test.mjs",
         "tests/materials-registry.test.mjs",
-        "tests/wire-260.test.mjs"
+        "tests/wire-260.test.mjs",
+        "tests/platform-bcd-requirements.test.mjs",
+        "e2e/platform-form-interaction.spec.mjs"
       ],
       "commit": "632311172972214d1eea73450d95ab5b775666a7",
-      "status": "Implemented",
-      "unresolvedIssues": null
+      "status": "Verified",
+      "unresolvedIssues": "없음. 독립 브라우저 검증(VERIFICATION.md §32)으로 결함 10건을 고쳤다. 남은 한계: Combobox(async)는 공급자 주입 없이는 정적 출력에서 목록을 거르지 못한다.",
+      "crossTrackFiles": [
+        {
+          "file": "src/materials/select.mjs",
+          "ownerTrack": "Track B (기반 컴포넌트)",
+          "reason": "독립 검증(VERIFICATION.md §32) D-10: search=local이 열릴 때 검색 칸에 포커스. 기존 컨트롤 출력 바이트 시험 통과"
+        },
+        {
+          "file": "src/render/index.mjs",
+          "ownerTrack": "Track A",
+          "reason": "독립 검증(VERIFICATION.md §32) D-03: 2.7 폼 컨트롤 런타임 마운트 선택자에 checkbox-group·date-range 추가(2.7.0 opt-in 경로만)"
+        },
+        {
+          "file": "e2e/platform-family-a11y.spec.mjs",
+          "ownerTrack": "Track D",
+          "reason": "독립 검증(VERIFICATION.md §32) T-1: Tab 순회가 네이티브 라디오 그룹·날짜 입력 칸 규칙을 따르게 함(단언 유지)"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRF-07",

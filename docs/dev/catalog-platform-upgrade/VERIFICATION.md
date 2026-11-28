@@ -1936,3 +1936,65 @@ $ node scripts/build-catalog-index.mjs + 81-card URL comparison
 앱 브라우저 E2E spec은 실행하지 않았다. 필터를 점검하다 positive `--test-name-pattern`으로 Chromium 하위 테스트 다섯 개를 선택했지만, 모두 Chromium launch 단계에서 Mach IPC `bootstrap_check_in … Permission denied (1100)`로 실패했다. 이후 브라우저 시도를 중단했다. 전체 Node 테스트는 `--test-skip-pattern`으로 다음 다섯 테스트를 제외했다: `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`; `stack: gap and align props change the real layout, including the gap step`; `container: width steps cap the real width, full does not, and content is escaped`; `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`; `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`. 새 `apps/web/e2e/component-detail-tabs.spec.mjs`에는 네 종류의 탭 노출과 기본 Preview HTML/Code export 바이트 동일성 확인을 추가했다. 후속 Claude 브라우저 검증 대상이다.
 
 결함 주입 RED: 상세 ID의 percent decoding을 임시 제거하자 URL 인코딩된 `chart-preset%3A...` 조회 단언이 `Cannot read properties of null (reading 'type')`로 실패했다. 디코딩을 복원한 뒤 상세·내보내기 단위 시험은 9/9 통과했다.
+---
+
+## 32. D1 §6.2 B 텍스트 입력·C 선택·D 날짜/시간 37행 독립 브라우저 검증 (원 커밋 `632311172`…`b957dd40a`, 브랜치 `upgrade/d1-browser-verify`, 2026-11-28)
+
+엔진: Claude Sonnet 5.5. 지시의 `ttakkari_browser`는 이 세션에 없었고, 지정 preflight(`browser_preflight.py`)는 ttakkari 보호 영역 접근으로 가드가 막아 실행하지 못했다(재시도·우회하지 않음). 프로젝트 Playwright Chromium(`PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright`)은 이 세션에서 문제없이 떠서 그 경로로 확인했다. Codex/macOS에서 `MachPortRendezvousServer Permission denied (1100)`로 막혔던 Chromium 의존 시험은 아래 32.5에서 통과한다.
+
+### 32.1 37행 대조
+`tests/platform-bcd-requirements.test.mjs`(39건)가 37행 각각의 렌더 출력이 이름의 뜻을 갖는지 본다. 행↔재료는 MATERIAL-COVERAGE.json에서, 행 이름은 REQUEST.md에서 읽는다. 직접 28·변형 9, missing·schema 0, 변형 9건의 축 값(`kind`·`search`·`mode`)이 출력을 실제로 바꾼다. 매핑 교정은 없었다. 다만 다음은 판정으로 남긴다.
+- **Combobox(c-03)**는 기반 select의 `search: async` 변형이다. 공급자(`onOptionsRequest`)를 주입하면 로딩·오류·늦은 응답 폐기까지 동작하지만(시험으로 확인), 정적 standalone 출력에는 공급자가 없어 입력해도 목록이 걸러지지 않는다. 정적 사용자에게는 Searchable Select(local)가 입력으로 거르는 쪽이다.
+- **Calendar(d-01)**는 `component:calendar` 표시용 월 달력(table 의미 구조)이다. 월 이동·날짜 선택은 없다. 날짜 선택은 Date Picker 이하 네이티브 입력 행이 맡는다.
+
+### 32.2 발견 결함과 교정 (390px·1280px, Chromium)
+고치기 전 `e2e/platform-form-interaction.spec.mjs`는 38건 중 24건이 실패했다.
+
+| # | 행 | 결함 | 교정 |
+|---|---|---|---|
+| D-01 | Rating | `fieldMarkup`에 kind가 안 넘어가 라디오가 아니라 텍스트 입력 5개(20×34)로 그려졌다 | 라디오 5개, 같은 name |
+| D-02 | Date Range Picker | 시작일 `max`·종료일 `min`이 렌더 때 값으로 고정되어 사용자가 바꾼 값을 따르지 않았다 | `data-date-range` 런타임이 한계를 옮기고 순서가 뒤집히면 검증 메시지 |
+| D-03 | Checkbox Group | 필수 검증 런타임이 `mountControl` 선택자에 없어 마운트되지 않았다. 아무것도 안 골라도 유효 | `src/render/index.mjs` 선택자에 추가 |
+| D-04 | 텍스트·날짜·시간·파일·색 입력 전반 | 입력 높이 34px(터치 44px 계약 미달) | 44px |
+| D-05 | Radio·Radio Group·Radio Card·Checkbox(+Group)·Switch | 라벨이 컨트롤 위, 컨트롤은 별도 상자 안에 놓였다. 스위치는 큰 체크박스처럼 보였다 | 라벨 옆 한 줄, 줄 전체가 눌림 영역, 스위치는 트랙 모양 |
+| D-06 | Schedule Selector | 요일마다 이름이 두 번("월"과 "월요일") 나왔고 접근 가능한 이름은 "월"이었다 | "월요일" 하나 |
+| D-07 | Tag Input | 중복 입력도 "새 태그를 입력하세요."로 안내했다 | 중복이면 "X 태그는 이미 있습니다.", 빈 입력은 따로 |
+| D-08 | File Input | 키보드 포커스 표시 없음 | 포커스 링 |
+| D-09 | DateTime·Month Picker | `min`·`max` 콘텐츠 필드가 없어 경계값을 줄 수 없었다(Date·Time·Week는 있음) | 필드와 범위 검증 추가 |
+| D-10 | Searchable Select(local) | 열어도 검색 칸에 포커스가 가지 않아 타이핑이 필터가 되지 않았다(`search` 변수가 async 입력만 가리킴) | local도 검색 칸 포커스. 기반 select 런타임 한 곳(`src/materials/select.mjs`)이며 기존 컨트롤 출력 바이트 시험은 그대로 통과 |
+| T-1 | 시험 | `platform-family-a11y.spec.mjs`의 Tab 순회가 네이티브 규칙을 몰랐다. 라디오 그룹은 Tab 정지가 하나인데 모든 라디오를 기대했고, 날짜 입력은 칸마다 Tab을 받는데 한 번만 기대했다. radio-group·radio-card·date-range 6건이 구현 시점부터 실패 | 같은 name 묶음의 정지 하나, 한 컨트롤 안 칸 이동은 한 정지로 센다. 단언(이름·순서·포커스 표시)은 그대로 |
+
+### 32.3 조작 확인 항목 (`e2e/platform-form-interaction.spec.mjs`, 두 폭 41건씩 82건)
+24개 패밀리 각각: 가로 넘침 없음, 컨트롤마다 접근 가능한 이름, 터치 44px(체크·라디오는 줄 안쪽 다섯 점을 눌렀을 때 자기 라벨·칸이 받는지까지).
+- 텍스트: URL 형식, 통화 min/max/step 경계(0·1000 통과, -1·1001·1.5 거부, 글자 입력 거부), OTP maxlength·pattern(5자리·영문 거부).
+- 태그: Enter·쉼표·붙여넣기 추가, 중복·빈 입력 안내, Backspace·삭제 단추(44px), 삭제 뒤 입력 칸 포커스, 제출 값, 필수, 긴 태그 줄바꿈.
+- 파일·업로드: 선택기, accept, 드롭 시 허용 형식만 선택·거부 개수 안내, 단일 모드, disabled 무시, `aria-live`.
+- 선택: Select 단일·검색·다중(키보드 열기·화살표·Enter·Space·Escape·포커스 복귀·값 제출), 비동기 공급자, 라디오 방향키 한 선택·Tab 정지 하나, 체크박스·스위치 Space, 필수 묶음 검증 메시지·`aria-invalid`, 슬라이더 방향키·Home·End, 범위 슬라이더 교차 방지, 평점 방향키.
+- 날짜·시간: date·time·datetime·month·week의 min/max 경계가 네이티브 validity(`rangeUnderflow`·`rangeOverflow`)로 나오고 값이 제출됨, 범위 선택기의 한계 연동과 같은 날 범위, 일정 선택기 요일·시각, 색상.
+
+### 32.4 RED/GREEN
+고친 코드에 결함을 다시 심어 시험이 실패하는 것을 확인했고 원복해 통과를 확인했다.
+| 심은 결함 | 실패한 시험 |
+|---|---|
+| Rating kind 제거 | 평점 e2e, 의미 시험 Rating |
+| checkbox-group 마운트 선택자 제거 | 체크박스 그룹 e2e |
+| date-range 런타임 비활성 | 날짜 범위 e2e |
+| 입력 44px 규칙 제거 | `form.date` 터치 시험 |
+| local 검색 포커스 제거 | Select e2e |
+| 요일 라벨 중복 복원 | 일정 선택기 e2e, 의미 시험 |
+| 태그 중복 안내 제거 | 태그 e2e |
+
+### 32.5 Chromium 의존 시험과 실행 증거 (기준 SHA `3871dd0cc` 위에서, 이후 rebase로 `33c1ab813`)
+```sh
+$ node --test tests/platform-layout-resizable.test.mjs tests/platform-type-fonts.test.mjs
+✔ resizable panel: keyboard navigation and min/max constraints work in real Chromium browser
+✔ stack: gap and align props change the real layout, including the "gap" step
+✔ container: width steps cap the real width, full does not, and content is escaped
+✔ resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility
+✔ 4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다
+ℹ tests 12 / ℹ pass 12 / ℹ fail 0
+$ npm run verify
+ℹ tests 1252 / ℹ pass 1252 / ℹ fail 0
+REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.
+```
+Codex에서 막혔던 다섯 건(위 ✔ 다섯 줄)은 이 환경에서 통과한다. `combos.spec`의 ENOENT 실패 한 건은 같은 `test-results` 폴더를 두 Playwright 프로세스가 동시에 쓴 아티팩트 충돌이었고 단독 재실행은 통과했다.
