@@ -23,7 +23,7 @@
       "total": 406
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:80 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:95 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:103 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -55,7 +55,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 80
+        "materials": 95
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -200,7 +200,7 @@
           "apps/web/features/platform/assemble-state.ts"
         ],
         "proven": true,
-        "materials": 32
+        "materials": 40
       }
     },
     "channelProof": {
@@ -225,31 +225,31 @@
   "summary": {
     "requirements": {
       "total": 406,
-      "fulfilled": 352,
-      "missing": 54,
-      "coverageRate": 0.867,
+      "fulfilled": 362,
+      "missing": 44,
+      "coverageRate": 0.8916,
       "byCoverage": {
-        "direct": 312,
-        "variant": 31,
+        "direct": 323,
+        "variant": 30,
         "schema": 7,
         "part-of": 2,
-        "missing": 54
+        "missing": 44
       },
       "statusDistribution": {
-        "missing": 54,
+        "missing": 44,
         "metadata-only": 0,
         "defined": 5,
         "renderable": 84,
-        "catalog-visible": 46,
+        "catalog-visible": 43,
         "assemblable": 1,
-        "verified": 216
+        "verified": 229
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 36,
-          "direct": 131,
-          "variant": 31,
+          "missing": 26,
+          "direct": 142,
+          "variant": 30,
           "schema": 7,
           "partOf": 2
         },
@@ -366,18 +366,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1495,
+      "totalRecords": 1510,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
         "defined": 26,
         "renderable": 150,
-        "catalog-visible": 402,
+        "catalog-visible": 409,
         "assemblable": 4,
-        "verified": 486
+        "verified": 494
       },
       "registeredByRegistry": {
-        "platform": 396,
+        "platform": 411,
         "design": 1099
       }
     },
@@ -563,13 +563,13 @@
         }
       },
       "purpose-family": {
-        "registered": 80,
-        "actualMaterial": 80,
-        "assemblableVerified": 31,
-        "distinctOutputs": 80,
+        "registered": 95,
+        "actualMaterial": 95,
+        "assemblableVerified": 39,
+        "distinctOutputs": 95,
         "byStatus": {
-          "catalog-visible": 49,
-          "verified": 31
+          "catalog-visible": 56,
+          "verified": 39
         }
       },
       "recipe": {
@@ -808,8 +808,8 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 80,
-        "delta": 48,
+        "currentMeasured": 95,
+        "delta": 63,
         "status": "drift",
         "measuredBy": "live registry count"
       },
@@ -2712,10 +2712,23 @@
       "section": "§6.2 M",
       "name": "Filter Toolbar",
       "coverage": "direct",
-      "status": "catalog-visible",
+      "status": "verified",
       "materialIds": [
-        "purpose:form.filter"
-      ]
+        "purpose:work.filter-toolbar"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.filter-toolbar",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.filter-toolbar"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "c42e3c6811bcce5b"
+      }
     },
     {
       "id": "req:comp:m-02-search-toolbar",
@@ -2724,105 +2737,274 @@
       "coverage": "direct",
       "status": "verified",
       "materialIds": [
-        "component:filter-bar",
-        "purpose:form.search"
-      ]
+        "purpose:work.search-toolbar"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.search-toolbar",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.search-toolbar"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "ab364e1544fe808b"
+      }
     },
     {
       "id": "req:comp:m-03-bulk-action-toolbar",
       "section": "§6.2 M",
       "name": "Bulk Action Toolbar",
-      "coverage": "variant",
-      "status": "catalog-visible",
+      "coverage": "direct",
+      "status": "verified",
       "materialIds": [
-        "purpose:table.business"
+        "purpose:work.bulk-action-toolbar"
       ],
-      "viaRecord": "purpose:table.business",
-      "variant": {
-        "toolbar": "bulk"
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.bulk-action-toolbar",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.bulk-action-toolbar"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "b3373194ac53e8d8"
       }
     },
     {
       "id": "req:comp:m-04-data-summary",
       "section": "§6.2 M",
       "name": "Data Summary",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.data-summary"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.data-summary",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.data-summary"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "4ad126c612915e8e"
+      }
     },
     {
       "id": "req:comp:m-05-dashboard-kpi-grid",
       "section": "§6.2 M",
       "name": "Dashboard KPI Grid",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.dashboard-kpi-grid"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.dashboard-kpi-grid",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.dashboard-kpi-grid"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "c787ec09ba23de95"
+      }
     },
     {
       "id": "req:comp:m-06-approval-panel",
       "section": "§6.2 M",
       "name": "Approval Panel",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.approval-panel"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.approval-panel",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.approval-panel"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "c113eb2de97f372e"
+      }
     },
     {
       "id": "req:comp:m-07-audit-log",
       "section": "§6.2 M",
       "name": "Audit Log",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.audit-log"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.audit-log",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.audit-log"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "8f3249e6aea7e255"
+      }
     },
     {
       "id": "req:comp:m-08-permission-matrix",
       "section": "§6.2 M",
       "name": "Permission Matrix",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.permission-matrix"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.permission-matrix",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.permission-matrix"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "83dac524110f7769"
+      }
     },
     {
       "id": "req:comp:m-09-status-management",
       "section": "§6.2 M",
       "name": "Status Management",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.status-management"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.status-management",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.status-management"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "2b2f263cdc5ff5c7"
+      }
     },
     {
       "id": "req:comp:m-10-settings-form",
       "section": "§6.2 M",
       "name": "Settings Form",
       "coverage": "direct",
-      "status": "catalog-visible",
+      "status": "verified",
       "materialIds": [
-        "purpose:form.settings"
-      ]
+        "purpose:work.settings-form"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.settings-form",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.settings-form"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "eb4d222fac3fb221"
+      }
     },
     {
       "id": "req:comp:m-11-search-result-list",
       "section": "§6.2 M",
       "name": "Search Result List",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.search-result-list"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.search-result-list",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.search-result-list"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "5f75ef41b62dda68"
+      }
     },
     {
       "id": "req:comp:m-12-user-management-table",
       "section": "§6.2 M",
       "name": "User Management Table",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.user-management-table"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.user-management-table",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.user-management-table"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "b5e8d3b032d6bf22"
+      }
     },
     {
       "id": "req:comp:m-13-task-list",
       "section": "§6.2 M",
       "name": "Task List",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.task-list"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.task-list",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.task-list"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "82c04a749672c477"
+      }
     },
     {
       "id": "req:comp:m-14-workflow-steps",
@@ -2831,16 +3013,44 @@
       "coverage": "direct",
       "status": "verified",
       "materialIds": [
-        "component:steps"
-      ]
+        "purpose:work.workflow-steps"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.workflow-steps",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.workflow-steps"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "f7a82bafbd07e4c4"
+      }
     },
     {
       "id": "req:comp:m-15-comment-thread",
       "section": "§6.2 M",
       "name": "Comment Thread",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:work.comment-thread"
+      ],
+      "workPatternProbe": {
+        "ok": true,
+        "method": "assembleComponents({items:[purpose:work.*]})",
+        "materialId": "purpose:work.comment-thread",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "id": "purpose:work.comment-thread"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "e237618b14fdbc21"
+      }
     },
     {
       "id": "req:comp:n-01-product-grid",
@@ -34421,9 +34631,7 @@
       "kind": "component",
       "registry": "design",
       "category": "layout-navigation",
-      "requirementIds": [
-        "req:comp:m-02-search-toolbar"
-      ],
+      "requirementIds": [],
       "status": "verified",
       "blockedBy": null,
       "supportedVersions": {
@@ -37451,7 +37659,6 @@
       "registry": "design",
       "category": "section-recipe",
       "requirementIds": [
-        "req:comp:m-14-workflow-steps",
         "req:comp:n-10-order-status"
       ],
       "status": "verified",
@@ -85284,8 +85491,7 @@
       "registry": "platform",
       "category": "form",
       "requirementIds": [
-        "req:comp:j-04-filter-chip",
-        "req:comp:m-01-filter-toolbar"
+        "req:comp:j-04-filter-chip"
       ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
@@ -85460,8 +85666,7 @@
       "registry": "platform",
       "category": "form",
       "requirementIds": [
-        "req:comp:b-03-search-input",
-        "req:comp:m-02-search-toolbar"
+        "req:comp:b-03-search-input"
       ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
@@ -85555,8 +85760,7 @@
       "registry": "platform",
       "category": "form",
       "requirementIds": [
-        "req:comp:f-16-settings-card",
-        "req:comp:m-10-settings-form"
+        "req:comp:f-16-settings-card"
       ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
@@ -87993,8 +88197,7 @@
       "registry": "platform",
       "category": "table",
       "requirementIds": [
-        "req:comp:g-02-data-table",
-        "req:comp:m-03-bulk-action-toolbar"
+        "req:comp:g-02-data-table"
       ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
@@ -88708,6 +88911,1232 @@
           "qualityOk": true
         },
         "outputHash": "1bb2cfb091c1e273",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.approval-panel",
+      "name": "Approval Panel",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-06-approval-panel"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "36b3d4fe7b98d46a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.audit-log",
+      "name": "Audit Log",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-07-audit-log"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:data-table",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "f4f4b0c0ea63d473",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.bulk-action-toolbar",
+      "name": "Bulk Action Toolbar",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-03-bulk-action-toolbar"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "d3af21f987ce4e32",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.comment-thread",
+      "name": "Comment Thread",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-15-comment-thread"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "dfbf650aa211b735",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.dashboard-kpi-grid",
+      "name": "Dashboard KPI Grid",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-05-dashboard-kpi-grid"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "135b6624612c6891",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.data-summary",
+      "name": "Data Summary",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-04-data-summary"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "91f658101cd189dd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.filter-toolbar",
+      "name": "Filter Toolbar",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-01-filter-toolbar"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1e953c9ab80ec773",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.permission-matrix",
+      "name": "Permission Matrix",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-08-permission-matrix"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "eeade86e095f56cd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.search-result-list",
+      "name": "Search Result List",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-11-search-result-list"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "af6c49a42ea43c18",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.search-toolbar",
+      "name": "Search Toolbar",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-02-search-toolbar"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "de7ef6875cc60eae",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.settings-form",
+      "name": "Settings Form",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-10-settings-form"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "ade49f2b4cf00143",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.status-management",
+      "name": "Status Management",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-09-status-management"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "d543dbc76bbde8ed",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.task-list",
+      "name": "Task List",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-13-task-list"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "9796e505e98c86fe",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.user-management-table",
+      "name": "User Management Table",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-12-user-management-table"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "916b231ad425522c",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:work.workflow-steps",
+      "name": "Workflow Steps",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "work",
+      "requirementIds": [
+        "req:comp:m-14-workflow-steps"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/work-patterns.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "ready",
+          "loading",
+          "empty",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/work-patterns.mjs",
+        "renderer": "src/platform/families/work-patterns.mjs#renderWorkPattern",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e10eb26c52b3bda6",
         "duplicateOutputOf": []
       }
     },

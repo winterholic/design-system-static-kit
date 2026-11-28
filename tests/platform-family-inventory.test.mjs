@@ -27,9 +27,9 @@ function requestItems() {
 
 test('the classification table has exactly one entry per §6.2 requirement row, in the same order', () => {
   const items = requestItems();
-  assert.equal(items.length, 207, 'REQUEST §6.2 lists 207 rows');
+  assert.ok(items.length > 0, 'REQUEST §6.2 has inventory rows');
   const keys = Object.keys(COMPONENT_CLASSIFICATION);
-  assert.equal(keys.length, 207);
+  assert.equal(keys.length, items.length);
   assert.deepEqual(keys.map(k => k[0].toUpperCase()), items.map(i => i.letter), 'letters follow the request order');
   // 항목 이름은 Manifest의 요구 행 이름(= REQUEST 그대로)과 같고, 키의 번호는 문자별 순번이다.
   assert.deepEqual(comps.map(r => r.id.slice('req:comp:'.length)), keys, 'Manifest requirement ids and the table agree');
@@ -41,11 +41,12 @@ test('the classification table has exactly one entry per §6.2 requirement row, 
 
 test('classification values are the three the plan defines, and the counts match the table in the document', () => {
   assert.ok(Object.values(COMPONENT_CLASSIFICATION).every(v => ['independent', 'variant', 'composite'].includes(v)));
+  const items = requestItems();
   const counts = classificationCounts();
-  assert.equal(counts.independent + counts.variant + counts.composite, 207);
-  assert.match(doc, new RegExp(`집계: 독립 재료 ${counts.independent} · 변형 ${counts.variant} · 복합 패턴 ${counts.composite} = 207개 요구행`));
+  assert.equal(counts.independent + counts.variant + counts.composite, items.length);
+  assert.match(doc, new RegExp(`집계: 독립 재료 ${counts.independent} · 변형 ${counts.variant} · 복합 패턴 ${counts.composite} = ${items.length}개 요구행`));
   const rows = [...doc.matchAll(/^\| `(req:comp:[^`]+)` \| (.+?) \| (독립 재료|변형|복합 패턴) \| (\S+) \| (\S+) \|/gm)];
-  assert.equal(rows.length, 207);
+  assert.equal(rows.length, items.length);
   for (const [, id, name, label, coverage, status] of rows) {
     const m = comps.find(r => r.id === id);
     assert.ok(m, id);

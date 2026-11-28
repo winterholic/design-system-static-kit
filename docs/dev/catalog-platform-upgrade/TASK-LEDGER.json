@@ -2357,17 +2357,2510 @@
       "taskId": "TASK-TRD-M",
       "title": "업무 시스템 패턴 15항목",
       "goal": "업무용 composite 패턴",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "scope": "src/platform/families/work-patterns.mjs, src/platform/families/{kit,index,contracts,inventory}.mjs, src/service/platform-components.mjs, scripts/generate-material-coverage.mjs, tests/platform-work-patterns-blueprint.test.mjs, tests/platform-service-work-patterns-channels.test.mjs, tests/platform-family-{contract,inventory,a11y}.test.mjs, e2e/platform-work-patterns.spec.mjs, docs/platform/components.md, docs/platform/evidence/components/build.mjs, site/**(DEC-017에 따라 npm run build로 재생성하는 추적 생성물)",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/work-patterns.mjs",
+        "src/platform/families/kit.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/service/platform-components.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/platform/components.md",
+        "docs/platform/evidence/components/build.mjs",
+        "tests/platform-work-patterns-blueprint.test.mjs",
+        "tests/platform-service-work-patterns-channels.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-family-inventory.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "e2e/platform-work-patterns.spec.mjs",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "tests/platform-family-purpose.test.mjs",
+        "site/src/platform/families/work-patterns.mjs",
+        "site/src/platform/families/kit.mjs",
+        "site/src/platform/families/index.mjs",
+        "site/src/platform/families/contracts.mjs",
+        "site/src/platform/families/inventory.mjs",
+        "site/src/service/platform-components.mjs",
+        "site/catalog-chunks/all-1.json",
+        "site/catalog-chunks/all-10.json",
+        "site/catalog-chunks/all-11.json",
+        "site/catalog-chunks/all-12.json",
+        "site/catalog-chunks/all-13.json",
+        "site/catalog-chunks/all-14.json",
+        "site/catalog-chunks/all-15.json",
+        "site/catalog-chunks/all-16.json",
+        "site/catalog-chunks/all-17.json",
+        "site/catalog-chunks/all-18.json",
+        "site/catalog-chunks/all-19.json",
+        "site/catalog-chunks/all-2.json",
+        "site/catalog-chunks/all-20.json",
+        "site/catalog-chunks/all-3.json",
+        "site/catalog-chunks/all-4.json",
+        "site/catalog-chunks/all-5.json",
+        "site/catalog-chunks/all-6.json",
+        "site/catalog-chunks/all-7.json",
+        "site/catalog-chunks/all-8.json",
+        "site/catalog-chunks/all-9.json",
+        "site/catalog-chunks/cards-1.json",
+        "site/catalog-chunks/commerce-1.json",
+        "site/catalog-chunks/data-1.json",
+        "site/catalog-chunks/information-1.json",
+        "site/catalog-chunks/inputs-1.json",
+        "site/catalog-chunks/navigation-1.json",
+        "site/catalog-chunks/work-patterns-1.json",
+        "site/catalog-index.json",
+        "site/gallery/index.html",
+        "site/previews/00b8f249d2dd5dba908a78f4651a0b84.svg",
+        "site/previews/03a280ab334d1a4f90c484568daa656d.svg",
+        "site/previews/03be4111190dc8201587b957bcfbffd2.svg",
+        "site/previews/04df79baacbf478250e945860a0ac3ec.svg",
+        "site/previews/05d52a2d27b743d4b33226d8b92bef95.svg",
+        "site/previews/0652126f8e0077e2e8a56f0e42c7a207.svg",
+        "site/previews/0706c57d2ba249a64d7a049ca2702223.svg",
+        "site/previews/08c67b824caa2aa4cc532f7c50a1c007.svg",
+        "site/previews/0aaf9c2fb6dc7d3822d0a8ff51fcc4a9.svg",
+        "site/previews/0f3341e02db58ac7e06fe7fa7388b78e.svg",
+        "site/previews/103b7fff258f717a71be48a48c150f5c.svg",
+        "site/previews/10d86151c77d3dcce669d87fc3d0fe77.svg",
+        "site/previews/12cf9aa59a08b3cca68d30916f30ca08.svg",
+        "site/previews/12f5277316129893db12ee4a2262d8a9.svg",
+        "site/previews/14c6956e618582498ce37890fe11ef59.svg",
+        "site/previews/14ffc45df8e5c66a250a8896e21c6682.svg",
+        "site/previews/150f64047862e2644518e3e8c62062d2.svg",
+        "site/previews/16e521ecefa158260bd70409cf8ecc42.svg",
+        "site/previews/1722e640af87cb2a20cbc7f746abf533.svg",
+        "site/previews/178b8624e28849fd7f8e0075870a126e.svg",
+        "site/previews/194a456c3f03bf2e7bb4d3ddfd98c58b.svg",
+        "site/previews/1b8a231d18e5783315098d5685e9a413.svg",
+        "site/previews/1d314b3434bc21de73aef46695440580.svg",
+        "site/previews/235a9aa0e479e2ee63bed45623f490c1.svg",
+        "site/previews/254479a9136688987815a1905e4089cb.svg",
+        "site/previews/25eec464a94be3972982318cccc8f69d.svg",
+        "site/previews/2752bb3656ad2a4f8a0dca07e6c53696.svg",
+        "site/previews/29c814ca8049f124a37458b6b2995fb5.svg",
+        "site/previews/2cd6760711a0960b1275decb17ff2140.svg",
+        "site/previews/3159ecd1e913b8ac243ff95849215f0d.svg",
+        "site/previews/33d41493257ca139063ba97596e3aaed.svg",
+        "site/previews/361001b8b05ae6e4a7ace6d3ff525aa0.svg",
+        "site/previews/37c7669c56876d65f4ad7309664e0f64.svg",
+        "site/previews/38d004c142231e8d11c0abf669e291b7.svg",
+        "site/previews/3d19eb367c701a54c08c9413fc0fce09.svg",
+        "site/previews/4025a6da64a24ed619393dd45594d492.svg",
+        "site/previews/40411f090dcb92f0d8ab8acc2f468469.svg",
+        "site/previews/429e7d4b678a296c6d684381115bb157.svg",
+        "site/previews/4539746fb65af5dc8dc6ab18ffbc924b.svg",
+        "site/previews/4aa22a7b30a40755e0274c75d6a8a00a.svg",
+        "site/previews/4b2632e26221158daa8031e334b46769.svg",
+        "site/previews/4b7f7174a9022c1f4ff23984c8fbf240.svg",
+        "site/previews/4dd90a57cfe53ee406d8646b6587db67.svg",
+        "site/previews/4fa4616129c763160c6cb05e4a9f63db.svg",
+        "site/previews/510a5fe8c5a00e3a3a874a61ff1be686.svg",
+        "site/previews/528227f5709c8e9dada1a3e26244e6f1.svg",
+        "site/previews/536bcaeee121c23abaaf5ff338acee80.svg",
+        "site/previews/576bff5ff69c6905006b2e13a96a6ff4.svg",
+        "site/previews/581edc59b13c1b07ad1daecc7a52a6ec.svg",
+        "site/previews/59301793408b68e06fafbc09c06f6a53.svg",
+        "site/previews/5940cb9d0792cff094560a360743e261.svg",
+        "site/previews/59513b1476e7f4bb2e82e923c4f5b7b8.svg",
+        "site/previews/5b79ab6ae1bd8cba897a42ba3c55f1e1.svg",
+        "site/previews/5da008824e57e668b83a29ef2b4c7611.svg",
+        "site/previews/5de27aefa41e86165b233de4e75dfbb3.svg",
+        "site/previews/606cc122d1d585656d0c0d3d9594419d.svg",
+        "site/previews/6430d04e2abac7957201c82059e196d5.svg",
+        "site/previews/65569c34b17eb81fe61a667840984c5f.svg",
+        "site/previews/671b8b2fe9b573906c70cf7f5f4cadfc.svg",
+        "site/previews/6913b3bca4a125bec143c28d134e7780.svg",
+        "site/previews/69b2d3cc3ce89ab64106a3aea1b79f0f.svg",
+        "site/previews/69e70c38b665ccc7b62ef718c5b6b98a.svg",
+        "site/previews/6b8228599ab26f50eaa2c4a7e7ab0de6.svg",
+        "site/previews/6d6793e00eae692a460de2bffcc63d67.svg",
+        "site/previews/6deae693617761f4e81c405b99d06d80.svg",
+        "site/previews/6e115ecb65ad9b1867680236bfbf7a22.svg",
+        "site/previews/719851f964a7afb0e5bf8f5515095b94.svg",
+        "site/previews/72bbc12366b7cc9b708e70862d0489a3.svg",
+        "site/previews/72ee9cb8d5c61eb0e866240eef6a8ef7.svg",
+        "site/previews/74456e8b8a06142d22cc75e3580eb923.svg",
+        "site/previews/74d1d9d0d987d4204373bd97d9db5583.svg",
+        "site/previews/7550033cd73a934fa4d3d553ec9468db.svg",
+        "site/previews/76167e7f1194d7c12fd5a22dfbb04d56.svg",
+        "site/previews/77e5096bd37046e6aa59b735a47a63c7.svg",
+        "site/previews/78b65f29c650204b5a8bc1d89a10a1ca.svg",
+        "site/previews/7bfd8244d6440bf253a0f4ba5b1d6aba.svg",
+        "site/previews/7e249a82c653c5d04a88dbd3707738b0.svg",
+        "site/previews/7fa12b471f5b9cfbc3ba3e6f53bae4e2.svg",
+        "site/previews/7fa6ede50b3637d645220c8f6fe2fa4a.svg",
+        "site/previews/8251ac85b99e563eb09e358a6c46166b.svg",
+        "site/previews/840bfa07763a8517594da7045f5c1ce5.svg",
+        "site/previews/84772ed54288baf014e1f77bb64b2e81.svg",
+        "site/previews/87bde52b40e6ecc980d5f8388d120aab.svg",
+        "site/previews/899e52ffa408ea179d897eeb1daae4f0.svg",
+        "site/previews/8d4d587e40a71bd980836076b3d02688.svg",
+        "site/previews/9062baa99164ee58c4f719dc223b2dd7.svg",
+        "site/previews/91dd97276c73d6641c1472089a33cd38.svg",
+        "site/previews/92009c4575652559440b222285719936.svg",
+        "site/previews/92d4698ed005c44b13629a987edafa13.svg",
+        "site/previews/92db0effa65cee9e645d77f5b517f5c3.svg",
+        "site/previews/939d0dd29f886d458e266546f950e6d1.svg",
+        "site/previews/942ea9cba3e8f27d35f6a691b6a539ae.svg",
+        "site/previews/95b47e03daab3999d0830aa34141a9f4.svg",
+        "site/previews/979a49141f0ec7d781617c4bff975cbc.svg",
+        "site/previews/98c02bc1a115d1b1fb480f43cf5da5a1.svg",
+        "site/previews/9971c3e580e5472ddb60b7b0e29ce218.svg",
+        "site/previews/99a444b41dec384491d96910a2a77909.svg",
+        "site/previews/9a67cf7c718d103059f36108be05e04e.svg",
+        "site/previews/9ec98c6fad3fcf214d3ef8c0f03516e8.svg",
+        "site/previews/9f19a71b8b8d20e916e8f7a4b9fd258a.svg",
+        "site/previews/a01dba1ac78014a770722c0d593c9917.svg",
+        "site/previews/a4d2a4898646fec0a956a975dfcd8e65.svg",
+        "site/previews/a4f0aa7209f79fe83e71808e08e73059.svg",
+        "site/previews/a518379108aa6888785c757c161bb1c8.svg",
+        "site/previews/a81601f24871ce95b2aaf21f70a41998.svg",
+        "site/previews/a8b32169b0d02cad39a962b55cd5439e.svg",
+        "site/previews/ab5c046eb4b65470611ad5da06f81e2f.svg",
+        "site/previews/ab875024e3d654c331f4f6300698b0bb.svg",
+        "site/previews/ab92e213cf0bee73f1ef163c68e17ed4.svg",
+        "site/previews/accf23b20bdfc421d4492ef69c6af5a3.svg",
+        "site/previews/ad8e56160166a10feafeefc239de158c.svg",
+        "site/previews/addede3212409270d77a3a09c786b26a.svg",
+        "site/previews/ae5b470973a88ce90b58ac0b0a5622c8.svg",
+        "site/previews/b057b3b288c35912d8624652494283dc.svg",
+        "site/previews/b0cbe33bde458f11144b1b9eab0a8508.svg",
+        "site/previews/b109cd847dff0c9f63fc986da4217471.svg",
+        "site/previews/b32338250e2c903e45c1539125bd4690.svg",
+        "site/previews/b470b7a79c328eab6256be1b7cef8af1.svg",
+        "site/previews/b4e8da11d9dbb5653558ab0093899eb8.svg",
+        "site/previews/b50c2f14070bd03d1f663037dbf6006a.svg",
+        "site/previews/b5f8476794e055a6159ae6407e80bfb8.svg",
+        "site/previews/b63845535f631fd3c2d81c08191a4566.svg",
+        "site/previews/b82275c6dbc66875faa91eeed2b73298.svg",
+        "site/previews/b8b4c829ea1fe7acaebdbfffb1c13dc0.svg",
+        "site/previews/b958a37b27fe877b20650daa4fdd915e.svg",
+        "site/previews/ba246b37de5e72fc36cda6cdf8f47aff.svg",
+        "site/previews/bac2009be09e796bca6ad0cf823ada49.svg",
+        "site/previews/baf64f4f44ebe7abb58fc24e18d02958.svg",
+        "site/previews/be47b4a7b795ef5f8bf624a348757eb4.svg",
+        "site/previews/bee2fd12c5906248827248c0707408a0.svg",
+        "site/previews/c29ec24ad5be831700a38fac38f67d10.svg",
+        "site/previews/c5e0a2790296a180e2aecfb3caef47ac.svg",
+        "site/previews/c6625e55d826efec3ef28d2207eff34c.svg",
+        "site/previews/c6c57dea5b8659848bd1bc5dd004f2ec.svg",
+        "site/previews/c7e48bf5a1328f82050fe5be5b7a683e.svg",
+        "site/previews/c9a218fd917127bef58820bdf0635830.svg",
+        "site/previews/cad5b9510535c2f197e5437dee63b2e3.svg",
+        "site/previews/caed289d9eea2a86c3037b12b8aeeb51.svg",
+        "site/previews/cc1592c5410af1ea533412748e1b3db4.svg",
+        "site/previews/cd8e19a0d3fc16120760440a08f027fc.svg",
+        "site/previews/cdb17e0d55cedca9340e274988257f91.svg",
+        "site/previews/ce72439e239bfb4e27ac1f5e1d3fdca4.svg",
+        "site/previews/cf0b4edb62f4e96bb09c31e061e403c8.svg",
+        "site/previews/cf2a33e588faace7be4ce5eaa22eeeee.svg",
+        "site/previews/d163d3b979eb939f65117ce46159fc79.svg",
+        "site/previews/d3123584574b8303b2f850aa9850acdc.svg",
+        "site/previews/d7b32f8c90b3107772cb99904480dd29.svg",
+        "site/previews/d81e95ba4567553ef8f476260ecdbafc.svg",
+        "site/previews/d89ea748a70134d841ad4694b4b3c583.svg",
+        "site/previews/d8c03d91a0187c3d4edd604b0ae25169.svg",
+        "site/previews/db6453fea60fcb6a32ea58b0f0177b0d.svg",
+        "site/previews/dcae77dcc0f27dd80cd31d63792687ed.svg",
+        "site/previews/ded5a33a2e0684e1c1a9db3191f2a92b.svg",
+        "site/previews/e08035a7186572786c8be64b066a4247.svg",
+        "site/previews/e08ee3c08fe65331782acab3066da3e2.svg",
+        "site/previews/e16c58f4170df8d8858125df73625b52.svg",
+        "site/previews/e194d4505cc60e09c77f8e0bb60839f3.svg",
+        "site/previews/e22c6dd7ec0d5f44588a3c4105f02a65.svg",
+        "site/previews/e5b2e28d513478c1eebabd2d8cbcae13.svg",
+        "site/previews/e5e3f426757aeb8d1adef1fe7858ce67.svg",
+        "site/previews/e66db16ec3df59c1d13c2e00bb7a5db2.svg",
+        "site/previews/e72ec59521c5557c0b82d4c7535535e6.svg",
+        "site/previews/e86e4c512bebcfce628afc662e59e640.svg",
+        "site/previews/e9e36340c9fc73b840de46480b2be325.svg",
+        "site/previews/edaee5bb6c1dcf05fa26fcdc5128caf2.svg",
+        "site/previews/edb05d20fbba19c4c22778f1df65642e.svg",
+        "site/previews/edb54296530b560f803cc4c42dd63f86.svg",
+        "site/previews/ee9c9fe46640b32d3cd72ba9c49c1688.svg",
+        "site/previews/f08c239706dfd7404206ce12c4793637.svg",
+        "site/previews/f1458af4fd63463b0b428798f3abfca7.svg",
+        "site/previews/f15c269b28358d1e86bfeac6b991d03b.svg",
+        "site/previews/f25ade091da860777f35c20a68893c06.svg",
+        "site/previews/f2df9d650b527fb96f6b78df9db010e0.svg",
+        "site/previews/f337c934f18a8520f1c556bd6a1a7396.svg",
+        "site/previews/f584d743623af64f1e1e4b692cea5e7d.svg",
+        "site/previews/f5c34836f0112b35fe78642d16e1c27f.svg",
+        "site/previews/f6d75e0b0011913f2560901cdd03d5a9.svg",
+        "site/previews/fa98f67525d672d6323ceaf2437866a9.svg",
+        "site/previews/fb4cf46b6df6d029057ade31be0df958.svg",
+        "site/previews/fc883a9bc26c35ff28708928d5568b43.svg",
+        "site/previews/previews-data.json",
+        "site/search-index.json",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/evidence/platform/baseline.json",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+        "site/catalog-chunks/all-21.json",
+        "site/catalog-chunks/all-22.json"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-work-patterns-blueprint.test.mjs",
+        "tests/platform-service-work-patterns-channels.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-family-inventory.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "e2e/platform-work-patterns.spec.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-pregenerate.test.mjs",
+        "tests/platform-pipeline-baseline.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": "Chromium 의존 기존 브라우저 시험 5개와 신규 e2e/platform-work-patterns.spec.mjs는 사용자 지시에 따라 미실행이며, 후속 Claude 브라우저 검증이 남았다. 비브라우저 node --test 전체는 통과했다.",
+      "crossTrackFiles": [
+        {
+          "file": "src/service/platform-components.mjs",
+          "ownerTrack": "Track A",
+          "reason": "M 패밀리의 런타임을 해당 재료를 요청한 조립 출력에만 붙인다."
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "§6.2 M 각 행에 Core 출력·입력 변화·잘못된 값 거부·hash를 갖는 전용 프로브를 실행한다."
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Track G 생성기의 Material Coverage 재생성 산출물."
+        },
+        {
+          "file": "tests/platform-family-inventory.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "신규 M 복합 재료 분류와 requirement-row count를 REQUEST에서 계산한다."
+        },
+        {
+          "file": "tests/platform-family-a11y.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "새 purpose-family 전체를 등록 계약 기반 접근성 마크업 시험에 포함한다."
+        },
+        {
+          "file": "e2e/platform-work-patterns.spec.mjs",
+          "ownerTrack": "Track G",
+          "reason": "390px/1280px와 인터랙션의 브라우저 회귀 시험을 작성한다."
+        },
+        {
+          "file": "docs/platform/evidence/components/build.mjs",
+          "ownerTrack": "Track G",
+          "reason": "컴포넌트 분류표 출력과 현재 계약 집계를 갱신한다."
+        },
+        {
+          "file": "docs/platform/components.md",
+          "ownerTrack": "Track D",
+          "reason": "M 15항목의 분류·재료 연결을 생성된 표로 반영한다."
+        },
+        {
+          "file": "site/src/platform/families/work-patterns.mjs",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/work-patterns.mjs",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/kit.mjs",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/kit.mjs",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/index.mjs",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/index.mjs",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/contracts.mjs",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/contracts.mjs",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/inventory.mjs",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/platform/families/inventory.mjs",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/service/platform-components.mjs",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/src/service/platform-components.mjs",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-10.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-10.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-11.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-11.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-12.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-12.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-13.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-13.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-14.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-14.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-15.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-15.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-16.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-16.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-17.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-17.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-18.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-18.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-19.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-19.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-2.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-2.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-20.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-20.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-3.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-3.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-4.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-4.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-5.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-5.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-6.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-6.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-7.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-7.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-8.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-8.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-9.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-9.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/cards-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/cards-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/commerce-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/commerce-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/data-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/data-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/information-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/information-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/inputs-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/inputs-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/navigation-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/navigation-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/work-patterns-1.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/work-patterns-1.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-index.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-index.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/gallery/index.html",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/gallery/index.html",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/00b8f249d2dd5dba908a78f4651a0b84.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/00b8f249d2dd5dba908a78f4651a0b84.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/03a280ab334d1a4f90c484568daa656d.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/03a280ab334d1a4f90c484568daa656d.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/03be4111190dc8201587b957bcfbffd2.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/03be4111190dc8201587b957bcfbffd2.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/04df79baacbf478250e945860a0ac3ec.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/04df79baacbf478250e945860a0ac3ec.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/05d52a2d27b743d4b33226d8b92bef95.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/05d52a2d27b743d4b33226d8b92bef95.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0652126f8e0077e2e8a56f0e42c7a207.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0652126f8e0077e2e8a56f0e42c7a207.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0706c57d2ba249a64d7a049ca2702223.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0706c57d2ba249a64d7a049ca2702223.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/08c67b824caa2aa4cc532f7c50a1c007.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/08c67b824caa2aa4cc532f7c50a1c007.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0aaf9c2fb6dc7d3822d0a8ff51fcc4a9.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0aaf9c2fb6dc7d3822d0a8ff51fcc4a9.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0f3341e02db58ac7e06fe7fa7388b78e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/0f3341e02db58ac7e06fe7fa7388b78e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/103b7fff258f717a71be48a48c150f5c.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/103b7fff258f717a71be48a48c150f5c.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/10d86151c77d3dcce669d87fc3d0fe77.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/10d86151c77d3dcce669d87fc3d0fe77.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/12cf9aa59a08b3cca68d30916f30ca08.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/12cf9aa59a08b3cca68d30916f30ca08.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/12f5277316129893db12ee4a2262d8a9.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/12f5277316129893db12ee4a2262d8a9.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/14c6956e618582498ce37890fe11ef59.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/14c6956e618582498ce37890fe11ef59.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/14ffc45df8e5c66a250a8896e21c6682.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/14ffc45df8e5c66a250a8896e21c6682.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/150f64047862e2644518e3e8c62062d2.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/150f64047862e2644518e3e8c62062d2.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/16e521ecefa158260bd70409cf8ecc42.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/16e521ecefa158260bd70409cf8ecc42.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/1722e640af87cb2a20cbc7f746abf533.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/1722e640af87cb2a20cbc7f746abf533.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/178b8624e28849fd7f8e0075870a126e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/178b8624e28849fd7f8e0075870a126e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/194a456c3f03bf2e7bb4d3ddfd98c58b.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/194a456c3f03bf2e7bb4d3ddfd98c58b.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/1b8a231d18e5783315098d5685e9a413.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/1b8a231d18e5783315098d5685e9a413.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/1d314b3434bc21de73aef46695440580.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/1d314b3434bc21de73aef46695440580.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/235a9aa0e479e2ee63bed45623f490c1.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/235a9aa0e479e2ee63bed45623f490c1.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/254479a9136688987815a1905e4089cb.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/254479a9136688987815a1905e4089cb.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/25eec464a94be3972982318cccc8f69d.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/25eec464a94be3972982318cccc8f69d.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/2752bb3656ad2a4f8a0dca07e6c53696.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/2752bb3656ad2a4f8a0dca07e6c53696.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/29c814ca8049f124a37458b6b2995fb5.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/29c814ca8049f124a37458b6b2995fb5.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/2cd6760711a0960b1275decb17ff2140.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/2cd6760711a0960b1275decb17ff2140.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/3159ecd1e913b8ac243ff95849215f0d.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/3159ecd1e913b8ac243ff95849215f0d.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/33d41493257ca139063ba97596e3aaed.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/33d41493257ca139063ba97596e3aaed.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/361001b8b05ae6e4a7ace6d3ff525aa0.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/361001b8b05ae6e4a7ace6d3ff525aa0.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/37c7669c56876d65f4ad7309664e0f64.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/37c7669c56876d65f4ad7309664e0f64.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/38d004c142231e8d11c0abf669e291b7.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/38d004c142231e8d11c0abf669e291b7.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/3d19eb367c701a54c08c9413fc0fce09.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/3d19eb367c701a54c08c9413fc0fce09.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4025a6da64a24ed619393dd45594d492.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4025a6da64a24ed619393dd45594d492.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/40411f090dcb92f0d8ab8acc2f468469.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/40411f090dcb92f0d8ab8acc2f468469.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/429e7d4b678a296c6d684381115bb157.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/429e7d4b678a296c6d684381115bb157.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4539746fb65af5dc8dc6ab18ffbc924b.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4539746fb65af5dc8dc6ab18ffbc924b.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4aa22a7b30a40755e0274c75d6a8a00a.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4aa22a7b30a40755e0274c75d6a8a00a.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4b2632e26221158daa8031e334b46769.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4b2632e26221158daa8031e334b46769.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4b7f7174a9022c1f4ff23984c8fbf240.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4b7f7174a9022c1f4ff23984c8fbf240.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4dd90a57cfe53ee406d8646b6587db67.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4dd90a57cfe53ee406d8646b6587db67.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4fa4616129c763160c6cb05e4a9f63db.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/4fa4616129c763160c6cb05e4a9f63db.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/510a5fe8c5a00e3a3a874a61ff1be686.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/510a5fe8c5a00e3a3a874a61ff1be686.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/528227f5709c8e9dada1a3e26244e6f1.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/528227f5709c8e9dada1a3e26244e6f1.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/536bcaeee121c23abaaf5ff338acee80.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/536bcaeee121c23abaaf5ff338acee80.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/576bff5ff69c6905006b2e13a96a6ff4.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/576bff5ff69c6905006b2e13a96a6ff4.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/581edc59b13c1b07ad1daecc7a52a6ec.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/581edc59b13c1b07ad1daecc7a52a6ec.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/59301793408b68e06fafbc09c06f6a53.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/59301793408b68e06fafbc09c06f6a53.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5940cb9d0792cff094560a360743e261.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5940cb9d0792cff094560a360743e261.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/59513b1476e7f4bb2e82e923c4f5b7b8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/59513b1476e7f4bb2e82e923c4f5b7b8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5b79ab6ae1bd8cba897a42ba3c55f1e1.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5b79ab6ae1bd8cba897a42ba3c55f1e1.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5da008824e57e668b83a29ef2b4c7611.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5da008824e57e668b83a29ef2b4c7611.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5de27aefa41e86165b233de4e75dfbb3.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/5de27aefa41e86165b233de4e75dfbb3.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/606cc122d1d585656d0c0d3d9594419d.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/606cc122d1d585656d0c0d3d9594419d.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6430d04e2abac7957201c82059e196d5.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6430d04e2abac7957201c82059e196d5.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/65569c34b17eb81fe61a667840984c5f.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/65569c34b17eb81fe61a667840984c5f.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/671b8b2fe9b573906c70cf7f5f4cadfc.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/671b8b2fe9b573906c70cf7f5f4cadfc.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6913b3bca4a125bec143c28d134e7780.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6913b3bca4a125bec143c28d134e7780.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/69b2d3cc3ce89ab64106a3aea1b79f0f.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/69b2d3cc3ce89ab64106a3aea1b79f0f.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/69e70c38b665ccc7b62ef718c5b6b98a.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/69e70c38b665ccc7b62ef718c5b6b98a.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6b8228599ab26f50eaa2c4a7e7ab0de6.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6b8228599ab26f50eaa2c4a7e7ab0de6.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6d6793e00eae692a460de2bffcc63d67.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6d6793e00eae692a460de2bffcc63d67.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6deae693617761f4e81c405b99d06d80.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6deae693617761f4e81c405b99d06d80.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6e115ecb65ad9b1867680236bfbf7a22.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/6e115ecb65ad9b1867680236bfbf7a22.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/719851f964a7afb0e5bf8f5515095b94.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/719851f964a7afb0e5bf8f5515095b94.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/72bbc12366b7cc9b708e70862d0489a3.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/72bbc12366b7cc9b708e70862d0489a3.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/72ee9cb8d5c61eb0e866240eef6a8ef7.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/72ee9cb8d5c61eb0e866240eef6a8ef7.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/74456e8b8a06142d22cc75e3580eb923.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/74456e8b8a06142d22cc75e3580eb923.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/74d1d9d0d987d4204373bd97d9db5583.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/74d1d9d0d987d4204373bd97d9db5583.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7550033cd73a934fa4d3d553ec9468db.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7550033cd73a934fa4d3d553ec9468db.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/76167e7f1194d7c12fd5a22dfbb04d56.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/76167e7f1194d7c12fd5a22dfbb04d56.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/77e5096bd37046e6aa59b735a47a63c7.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/77e5096bd37046e6aa59b735a47a63c7.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/78b65f29c650204b5a8bc1d89a10a1ca.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/78b65f29c650204b5a8bc1d89a10a1ca.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7bfd8244d6440bf253a0f4ba5b1d6aba.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7bfd8244d6440bf253a0f4ba5b1d6aba.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7e249a82c653c5d04a88dbd3707738b0.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7e249a82c653c5d04a88dbd3707738b0.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7fa12b471f5b9cfbc3ba3e6f53bae4e2.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7fa12b471f5b9cfbc3ba3e6f53bae4e2.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7fa6ede50b3637d645220c8f6fe2fa4a.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/7fa6ede50b3637d645220c8f6fe2fa4a.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/8251ac85b99e563eb09e358a6c46166b.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/8251ac85b99e563eb09e358a6c46166b.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/840bfa07763a8517594da7045f5c1ce5.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/840bfa07763a8517594da7045f5c1ce5.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/84772ed54288baf014e1f77bb64b2e81.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/84772ed54288baf014e1f77bb64b2e81.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/87bde52b40e6ecc980d5f8388d120aab.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/87bde52b40e6ecc980d5f8388d120aab.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/899e52ffa408ea179d897eeb1daae4f0.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/899e52ffa408ea179d897eeb1daae4f0.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/8d4d587e40a71bd980836076b3d02688.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/8d4d587e40a71bd980836076b3d02688.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9062baa99164ee58c4f719dc223b2dd7.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9062baa99164ee58c4f719dc223b2dd7.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/91dd97276c73d6641c1472089a33cd38.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/91dd97276c73d6641c1472089a33cd38.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/92009c4575652559440b222285719936.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/92009c4575652559440b222285719936.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/92d4698ed005c44b13629a987edafa13.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/92d4698ed005c44b13629a987edafa13.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/92db0effa65cee9e645d77f5b517f5c3.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/92db0effa65cee9e645d77f5b517f5c3.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/939d0dd29f886d458e266546f950e6d1.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/939d0dd29f886d458e266546f950e6d1.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/942ea9cba3e8f27d35f6a691b6a539ae.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/942ea9cba3e8f27d35f6a691b6a539ae.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/95b47e03daab3999d0830aa34141a9f4.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/95b47e03daab3999d0830aa34141a9f4.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/979a49141f0ec7d781617c4bff975cbc.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/979a49141f0ec7d781617c4bff975cbc.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/98c02bc1a115d1b1fb480f43cf5da5a1.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/98c02bc1a115d1b1fb480f43cf5da5a1.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9971c3e580e5472ddb60b7b0e29ce218.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9971c3e580e5472ddb60b7b0e29ce218.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/99a444b41dec384491d96910a2a77909.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/99a444b41dec384491d96910a2a77909.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9a67cf7c718d103059f36108be05e04e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9a67cf7c718d103059f36108be05e04e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9ec98c6fad3fcf214d3ef8c0f03516e8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9ec98c6fad3fcf214d3ef8c0f03516e8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9f19a71b8b8d20e916e8f7a4b9fd258a.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/9f19a71b8b8d20e916e8f7a4b9fd258a.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a01dba1ac78014a770722c0d593c9917.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a01dba1ac78014a770722c0d593c9917.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a4d2a4898646fec0a956a975dfcd8e65.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a4d2a4898646fec0a956a975dfcd8e65.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a4f0aa7209f79fe83e71808e08e73059.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a4f0aa7209f79fe83e71808e08e73059.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a518379108aa6888785c757c161bb1c8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a518379108aa6888785c757c161bb1c8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a81601f24871ce95b2aaf21f70a41998.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a81601f24871ce95b2aaf21f70a41998.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a8b32169b0d02cad39a962b55cd5439e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/a8b32169b0d02cad39a962b55cd5439e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ab5c046eb4b65470611ad5da06f81e2f.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ab5c046eb4b65470611ad5da06f81e2f.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ab875024e3d654c331f4f6300698b0bb.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ab875024e3d654c331f4f6300698b0bb.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ab92e213cf0bee73f1ef163c68e17ed4.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ab92e213cf0bee73f1ef163c68e17ed4.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/accf23b20bdfc421d4492ef69c6af5a3.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/accf23b20bdfc421d4492ef69c6af5a3.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ad8e56160166a10feafeefc239de158c.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ad8e56160166a10feafeefc239de158c.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/addede3212409270d77a3a09c786b26a.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/addede3212409270d77a3a09c786b26a.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ae5b470973a88ce90b58ac0b0a5622c8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ae5b470973a88ce90b58ac0b0a5622c8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b057b3b288c35912d8624652494283dc.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b057b3b288c35912d8624652494283dc.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b0cbe33bde458f11144b1b9eab0a8508.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b0cbe33bde458f11144b1b9eab0a8508.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b109cd847dff0c9f63fc986da4217471.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b109cd847dff0c9f63fc986da4217471.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b32338250e2c903e45c1539125bd4690.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b32338250e2c903e45c1539125bd4690.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b470b7a79c328eab6256be1b7cef8af1.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b470b7a79c328eab6256be1b7cef8af1.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b4e8da11d9dbb5653558ab0093899eb8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b4e8da11d9dbb5653558ab0093899eb8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b50c2f14070bd03d1f663037dbf6006a.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b50c2f14070bd03d1f663037dbf6006a.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b5f8476794e055a6159ae6407e80bfb8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b5f8476794e055a6159ae6407e80bfb8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b63845535f631fd3c2d81c08191a4566.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b63845535f631fd3c2d81c08191a4566.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b82275c6dbc66875faa91eeed2b73298.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b82275c6dbc66875faa91eeed2b73298.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b8b4c829ea1fe7acaebdbfffb1c13dc0.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b8b4c829ea1fe7acaebdbfffb1c13dc0.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b958a37b27fe877b20650daa4fdd915e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/b958a37b27fe877b20650daa4fdd915e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ba246b37de5e72fc36cda6cdf8f47aff.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ba246b37de5e72fc36cda6cdf8f47aff.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/bac2009be09e796bca6ad0cf823ada49.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/bac2009be09e796bca6ad0cf823ada49.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/baf64f4f44ebe7abb58fc24e18d02958.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/baf64f4f44ebe7abb58fc24e18d02958.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/be47b4a7b795ef5f8bf624a348757eb4.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/be47b4a7b795ef5f8bf624a348757eb4.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/bee2fd12c5906248827248c0707408a0.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/bee2fd12c5906248827248c0707408a0.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c29ec24ad5be831700a38fac38f67d10.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c29ec24ad5be831700a38fac38f67d10.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c5e0a2790296a180e2aecfb3caef47ac.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c5e0a2790296a180e2aecfb3caef47ac.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c6625e55d826efec3ef28d2207eff34c.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c6625e55d826efec3ef28d2207eff34c.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c6c57dea5b8659848bd1bc5dd004f2ec.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c6c57dea5b8659848bd1bc5dd004f2ec.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c7e48bf5a1328f82050fe5be5b7a683e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c7e48bf5a1328f82050fe5be5b7a683e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c9a218fd917127bef58820bdf0635830.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/c9a218fd917127bef58820bdf0635830.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cad5b9510535c2f197e5437dee63b2e3.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cad5b9510535c2f197e5437dee63b2e3.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/caed289d9eea2a86c3037b12b8aeeb51.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/caed289d9eea2a86c3037b12b8aeeb51.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cc1592c5410af1ea533412748e1b3db4.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cc1592c5410af1ea533412748e1b3db4.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cd8e19a0d3fc16120760440a08f027fc.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cd8e19a0d3fc16120760440a08f027fc.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cdb17e0d55cedca9340e274988257f91.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cdb17e0d55cedca9340e274988257f91.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ce72439e239bfb4e27ac1f5e1d3fdca4.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ce72439e239bfb4e27ac1f5e1d3fdca4.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cf0b4edb62f4e96bb09c31e061e403c8.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cf0b4edb62f4e96bb09c31e061e403c8.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cf2a33e588faace7be4ce5eaa22eeeee.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/cf2a33e588faace7be4ce5eaa22eeeee.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d163d3b979eb939f65117ce46159fc79.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d163d3b979eb939f65117ce46159fc79.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d3123584574b8303b2f850aa9850acdc.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d3123584574b8303b2f850aa9850acdc.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d7b32f8c90b3107772cb99904480dd29.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d7b32f8c90b3107772cb99904480dd29.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d81e95ba4567553ef8f476260ecdbafc.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d81e95ba4567553ef8f476260ecdbafc.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d89ea748a70134d841ad4694b4b3c583.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d89ea748a70134d841ad4694b4b3c583.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d8c03d91a0187c3d4edd604b0ae25169.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/d8c03d91a0187c3d4edd604b0ae25169.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/db6453fea60fcb6a32ea58b0f0177b0d.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/db6453fea60fcb6a32ea58b0f0177b0d.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/dcae77dcc0f27dd80cd31d63792687ed.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/dcae77dcc0f27dd80cd31d63792687ed.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ded5a33a2e0684e1c1a9db3191f2a92b.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ded5a33a2e0684e1c1a9db3191f2a92b.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e08035a7186572786c8be64b066a4247.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e08035a7186572786c8be64b066a4247.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e08ee3c08fe65331782acab3066da3e2.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e08ee3c08fe65331782acab3066da3e2.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e16c58f4170df8d8858125df73625b52.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e16c58f4170df8d8858125df73625b52.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e194d4505cc60e09c77f8e0bb60839f3.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e194d4505cc60e09c77f8e0bb60839f3.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e22c6dd7ec0d5f44588a3c4105f02a65.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e22c6dd7ec0d5f44588a3c4105f02a65.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e5b2e28d513478c1eebabd2d8cbcae13.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e5b2e28d513478c1eebabd2d8cbcae13.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e5e3f426757aeb8d1adef1fe7858ce67.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e5e3f426757aeb8d1adef1fe7858ce67.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e66db16ec3df59c1d13c2e00bb7a5db2.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e66db16ec3df59c1d13c2e00bb7a5db2.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e72ec59521c5557c0b82d4c7535535e6.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e72ec59521c5557c0b82d4c7535535e6.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e86e4c512bebcfce628afc662e59e640.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e86e4c512bebcfce628afc662e59e640.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e9e36340c9fc73b840de46480b2be325.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/e9e36340c9fc73b840de46480b2be325.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/edaee5bb6c1dcf05fa26fcdc5128caf2.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/edaee5bb6c1dcf05fa26fcdc5128caf2.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/edb05d20fbba19c4c22778f1df65642e.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/edb05d20fbba19c4c22778f1df65642e.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/edb54296530b560f803cc4c42dd63f86.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/edb54296530b560f803cc4c42dd63f86.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ee9c9fe46640b32d3cd72ba9c49c1688.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/ee9c9fe46640b32d3cd72ba9c49c1688.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f08c239706dfd7404206ce12c4793637.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f08c239706dfd7404206ce12c4793637.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f1458af4fd63463b0b428798f3abfca7.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f1458af4fd63463b0b428798f3abfca7.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f15c269b28358d1e86bfeac6b991d03b.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f15c269b28358d1e86bfeac6b991d03b.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f25ade091da860777f35c20a68893c06.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f25ade091da860777f35c20a68893c06.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f2df9d650b527fb96f6b78df9db010e0.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f2df9d650b527fb96f6b78df9db010e0.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f337c934f18a8520f1c556bd6a1a7396.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f337c934f18a8520f1c556bd6a1a7396.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f584d743623af64f1e1e4b692cea5e7d.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f584d743623af64f1e1e4b692cea5e7d.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f5c34836f0112b35fe78642d16e1c27f.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f5c34836f0112b35fe78642d16e1c27f.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f6d75e0b0011913f2560901cdd03d5a9.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/f6d75e0b0011913f2560901cdd03d5a9.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/fa98f67525d672d6323ceaf2437866a9.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/fa98f67525d672d6323ceaf2437866a9.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/fb4cf46b6df6d029057ade31be0df958.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/fb4cf46b6df6d029057ade31be0df958.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/fc883a9bc26c35ff28708928d5568b43.svg",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/fc883a9bc26c35ff28708928d5568b43.svg",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/previews-data.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/previews/previews-data.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/search-index.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/search-index.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-018 공동 허가에 따라 레지스트리 등록량과 플랫폼 실측 기준선을 현재 M 등록 및 최신 main 상태로 재생성한다."
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-018 공동 허가에 따라 레지스트리 등록량과 플랫폼 실측 기준선을 현재 M 등록 및 최신 main 상태로 재생성한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-21.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-21.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-22.json",
+          "ownerTrack": "Track A",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        },
+        {
+          "file": "site/catalog-chunks/all-22.json",
+          "ownerTrack": "Track G",
+          "reason": "DEC-017 공동 허가: M 재료 및 최신 main 소스에 맞춰 npm run build가 재생성한 추적 사이트 산출물. site/v1/catalog.json은 제외하고 보존한다."
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-N",

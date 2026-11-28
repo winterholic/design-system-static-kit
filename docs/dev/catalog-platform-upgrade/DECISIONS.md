@@ -279,3 +279,21 @@ REQUEST §3.2는 모든 가능한 조합을 이미지나 HTML로 전수 생성�
 4. `MATERIAL-COVERAGE.json`과 `baseline.json`은 verified의 표본 수와 method 설명만 표본 의미를 드러내도록 갱신한다. legacy-hashes(2.1.0), 기본 2.4.0 출력, `site/v1`은 바이트를 보존한다.
 5. 근거는 B1 210 팔레트의 `dashboard-grid` 패턴 전수 조립 659.328초 측정과 REQUEST §3.2의 사전 생성 제약이다. 이 all-pairs 방법은 전수 렌더 비용을 줄이면서 후보 집합 내 모든 허용 쌍을 실제 품질 검사 경로에 남긴다.
 
+## DEC-017: M 업무 패턴 등록 후 정적 사이트 재생성
+
+### 맥락
+TASK-TRD-M은 15개의 신규 `purpose:work.*` 패밀리를 `src/`에 등록한다. `scripts/check-generated.mjs`는 새 빌드와 추적된 `site/`의 파일 집합 및 바이트 일치를 요구하므로, 신규 소스가 추가된 상태에서 검사는 `Generated site file set mismatch`로 실패한다. CONTRACTS §6은 소유자 없는 `site/**` 생성물을 열려면 Track A와 Track G가 합의하고 버전 정책을 기록하도록 한다.
+
+### 결정
+1. **Track A와 Track G의 공동 허가로 이 작업의 변경된 `src/**`에 대응하는 `site/**` 추적 생성물을 `npm run build`로 재생성한다.** 생성 결과는 같은 커밋에 포함하고 `node scripts/check-generated.mjs`로 새 빌드와 바이트 단위로 대조한다.
+2. **불변 범위**: 카탈로그 2.1.0·2.4.0 출력, `docs/evidence/context/legacy-hashes.json` 대상 출력, `site/v1/catalog.json`은 변경하지 않는다. 검증은 해당 파일의 diff와 기존 회귀 시험으로 확인한다.
+3. 이 허가는 현재 M 재료 구현의 생성물에 한정되며, 다른 고정 출력이나 `site/v1/**` 수정 권한을 부여하지 않는다.
+
+## DEC-018: M 등록 후 플랫폼 기준선 갱신
+
+### 맥락
+§6.2 M 등록으로 live `purpose-family` 레지스트리는 80개에서 95개가 됐다. `docs/evidence/platform/baseline.json`은 등록 수와 조립 실측을 함께 담으며, 이전 스냅샷의 등록 수를 유지하면 레지스트리 일치 검증이 실패한다.
+
+### 결정
+1. Track A와 Track G의 공동 허가로 기준선 생성기를 실행해 baseline 전체를 현재 코드에서 다시 측정한다. purpose-family 등록 수는 출력 레지스트리에서 계산하며 상수를 두지 않는다.
+2. 이 갱신은 등록 수와 현재 측정치를 기록하는 evidence 작업이다. 고정된 2.1.0·2.4.0 출력, `site/v1/catalog.json`은 범위에 포함하지 않으며 그대로 보존한다.

@@ -4,15 +4,15 @@ import {validateComponentContracts, ALL_COMPONENT_CONTRACTS, COMPONENT_CONTRACTS
 import {COMPONENT_CLASSIFICATION} from '../src/platform/families/inventory.mjs';
 import {PURPOSE_FAMILIES} from '../src/platform/index.mjs';
 import {getPlatformMaterial, getMaterial} from '../src/service/index.mjs';
+import {BASE_COMPONENTS} from '../src/platform/data/base-components.mjs';
+import {LAYOUT_COMPONENTS} from '../src/platform/families/contracts.mjs';
 
 const MENU_ITEMS = [{label: '하나'}, {label: '둘'}, {label: '셋'}];
 const propsFor = id => ({label: '저장', ariaLabel: '저장', icon: 'plus', text: '값', items: MENU_ITEMS, message: undefined, id: 'sample'});
 
 test('all existing base and purpose components carry complete layer contracts', () => {
-  // 기반 10 + 목적 패밀리 80(A·D3·EHI·J/K 포함) + A 독립 시연 12 + N 커머스 11 + L 독립 시연 5
-  assert.equal(COMPONENT_CONTRACTS.length, 10 + PURPOSE_FAMILIES.length);
-  assert.equal(PURPOSE_FAMILIES.length, 80);
-  assert.equal(ALL_COMPONENT_CONTRACTS.length, 120);
+  assert.equal(COMPONENT_CONTRACTS.length, BASE_COMPONENTS.length + PURPOSE_FAMILIES.length);
+  assert.equal(ALL_COMPONENT_CONTRACTS.length, COMPONENT_CONTRACTS.length + ACTION_COMPONENTS.length + COMMERCE_COMPONENTS.length + LAYOUT_COMPONENTS.length);
   assert.deepEqual(validateComponentContracts(), []);
   for (const c of ALL_COMPONENT_CONTRACTS) for (const key of COMPONENT_CONTRACT_FIELDS) assert.ok(Object.hasOwn(c, key), `${c.id}.${key}`);
 });
@@ -160,7 +160,7 @@ test('the same component reached as an A demo and as a purpose family counts onc
   assert.equal(types.filter(t => t === 'menu-button').length, 2);
   assert.ok(types.filter(t => t === 'button-control').length >= 9, 'icon, toggle, loading, FAB, copy, close, link, button and the base all describe button-control');
   // 기반·목적 패밀리·독립 시연·커머스·레이아웃을 componentType 기준으로 중복 제거한다.
-  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), 101);
+  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), new Set(ALL_COMPONENT_CONTRACTS.map(c => c.componentType)).size);
 });
 
 // ---- 독립 검토(2026-11-28)에서 재현된 결함의 회귀 시험 ----

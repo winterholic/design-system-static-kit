@@ -191,7 +191,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 147 · 변형 38 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 36.
+집계: 독립 재료 134 · 변형 38 · 복합 패턴 35 = 207개 요구행. 현재 Manifest missing: 26.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -366,21 +366,21 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:l-12-sticky-region` | Sticky Region | 복합 패턴 | direct | renderable | layout:sticky-action-layout |
 | `req:comp:l-13-scroll-area` | Scroll Area | 복합 패턴 | direct | renderable | layout:master-detail |
 | `req:comp:l-14-resizable-panel` | Resizable Panel | 복합 패턴 | direct | renderable | component:resizable-panel |
-| `req:comp:m-01-filter-toolbar` | Filter Toolbar | 독립 재료 | direct | catalog-visible | purpose:form.filter |
-| `req:comp:m-02-search-toolbar` | Search Toolbar | 독립 재료 | direct | verified | component:filter-bar, purpose:form.search |
-| `req:comp:m-03-bulk-action-toolbar` | Bulk Action Toolbar | 복합 패턴 | variant | catalog-visible | purpose:table.business |
-| `req:comp:m-04-data-summary` | Data Summary | 독립 재료 | missing | missing | — |
-| `req:comp:m-05-dashboard-kpi-grid` | Dashboard KPI Grid | 복합 패턴 | missing | missing | — |
-| `req:comp:m-06-approval-panel` | Approval Panel | 독립 재료 | missing | missing | — |
-| `req:comp:m-07-audit-log` | Audit Log | 독립 재료 | missing | missing | — |
-| `req:comp:m-08-permission-matrix` | Permission Matrix | 독립 재료 | missing | missing | — |
-| `req:comp:m-09-status-management` | Status Management | 독립 재료 | missing | missing | — |
-| `req:comp:m-10-settings-form` | Settings Form | 독립 재료 | direct | catalog-visible | purpose:form.settings |
-| `req:comp:m-11-search-result-list` | Search Result List | 독립 재료 | missing | missing | — |
-| `req:comp:m-12-user-management-table` | User Management Table | 독립 재료 | missing | missing | — |
-| `req:comp:m-13-task-list` | Task List | 독립 재료 | missing | missing | — |
-| `req:comp:m-14-workflow-steps` | Workflow Steps | 독립 재료 | direct | verified | component:steps |
-| `req:comp:m-15-comment-thread` | Comment Thread | 독립 재료 | missing | missing | — |
+| `req:comp:m-01-filter-toolbar` | Filter Toolbar | 복합 패턴 | direct | verified | purpose:work.filter-toolbar |
+| `req:comp:m-02-search-toolbar` | Search Toolbar | 복합 패턴 | direct | verified | purpose:work.search-toolbar |
+| `req:comp:m-03-bulk-action-toolbar` | Bulk Action Toolbar | 복합 패턴 | direct | verified | purpose:work.bulk-action-toolbar |
+| `req:comp:m-04-data-summary` | Data Summary | 복합 패턴 | direct | verified | purpose:work.data-summary |
+| `req:comp:m-05-dashboard-kpi-grid` | Dashboard KPI Grid | 복합 패턴 | direct | verified | purpose:work.dashboard-kpi-grid |
+| `req:comp:m-06-approval-panel` | Approval Panel | 복합 패턴 | direct | verified | purpose:work.approval-panel |
+| `req:comp:m-07-audit-log` | Audit Log | 복합 패턴 | direct | verified | purpose:work.audit-log |
+| `req:comp:m-08-permission-matrix` | Permission Matrix | 복합 패턴 | direct | verified | purpose:work.permission-matrix |
+| `req:comp:m-09-status-management` | Status Management | 복합 패턴 | direct | verified | purpose:work.status-management |
+| `req:comp:m-10-settings-form` | Settings Form | 복합 패턴 | direct | verified | purpose:work.settings-form |
+| `req:comp:m-11-search-result-list` | Search Result List | 복합 패턴 | direct | verified | purpose:work.search-result-list |
+| `req:comp:m-12-user-management-table` | User Management Table | 복합 패턴 | direct | verified | purpose:work.user-management-table |
+| `req:comp:m-13-task-list` | Task List | 복합 패턴 | direct | verified | purpose:work.task-list |
+| `req:comp:m-14-workflow-steps` | Workflow Steps | 복합 패턴 | direct | verified | purpose:work.workflow-steps |
+| `req:comp:m-15-comment-thread` | Comment Thread | 복합 패턴 | direct | verified | purpose:work.comment-thread |
 | `req:comp:n-01-product-grid` | Product Grid | 독립 재료 | direct | verified | component:grid |
 | `req:comp:n-02-product-detail-summary` | Product Detail Summary | 독립 재료 | direct | verified | component:buy-box |
 | `req:comp:n-03-product-variant-selector` | Product Variant Selector | 복합 패턴 | part-of | verified | component:buy-box |

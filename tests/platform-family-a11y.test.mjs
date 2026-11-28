@@ -734,7 +734,7 @@ for (const f of PURPOSE_FAMILIES) if (!SPEC[f.id]) {
     else checks[condition] = d => ok(textOf(d.root).trim().length > 0, 'rendered data is readable');
   }
   SPEC[f.id] = {
-    role: d => card || ['purpose:table.tree','purpose:table.inspector','purpose:table.diff'].includes(f.id) ? one(d, 'article') : one(d, 'table'),
+    role: d => f.group === 'work' ? one(d, 'section[aria-labelledby]') : card || ['purpose:table.tree','purpose:table.inspector','purpose:table.diff'].includes(f.id) ? one(d, 'article') : one(d, 'table'),
     keyboard: d => { for (const control of query(d, 'a[href],button,input,summary')) ok(accName(d, control).length > 0, 'interactive control has a name'); },
     checks,
   };

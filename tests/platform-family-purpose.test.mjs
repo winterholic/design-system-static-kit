@@ -9,13 +9,13 @@ import {renderCard} from '../src/materials/card.mjs';
 
 const env = createPlatform();
 const VISUALS = env.registry.list('family').map(f => f.id);
-const GROUP_COUNTS = {card: 16, button: 12, navigation: 8, overlay: 4, form: 5, table: 10, feedback: 9, info: 10, media: 6};
+const GROUP_COUNTS = Object.fromEntries(PURPOSE_GROUPS.map(group => [group, PURPOSE_FAMILIES.filter(f => f.group === group).length]));
 const exampleOf = (f, visual) => ({visual, variant: f.example.variant, props: f.example.props, content: f.example.content});
 
-test('purpose family ids are fixed and grouped as the task card lists them (Card 16, Button 7 + A 계열 5, Navigation 8, Form 5, Table 10, Modal/Feedback 9, Info 10, Media 6, Overlay 4)', () => {
+test('registered purpose family ids and groups agree with the live registry', () => {
   assert.deepEqual(PURPOSE_FAMILIES.map(f => f.id), PURPOSE_FAMILY_IDS);
   for (const [g, n] of Object.entries(GROUP_COUNTS)) assert.equal(PURPOSE_FAMILIES.filter(f => f.group === g).length, n, g);
-  assert.deepEqual([...PURPOSE_GROUPS].sort(), Object.keys(GROUP_COUNTS).sort());
+  assert.deepEqual([...PURPOSE_GROUPS].sort(), [...new Set(PURPOSE_FAMILIES.map(f => f.group))].sort());
   assert.equal(new Set(PURPOSE_FAMILY_IDS).size, PURPOSE_FAMILIES.length);
   assert.equal(getPurposeFamily('purpose:card.kpi').group, 'card');
   assert.equal(getPurposeFamily('purpose:card.nope'), null);

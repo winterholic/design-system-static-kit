@@ -11,6 +11,7 @@ import {readFileSync, writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {dirname, resolve} from 'node:path';
 import {COMPONENT_CLASSIFICATION, CLASSIFICATION_LABEL, classificationCounts} from '../../../../src/platform/families/inventory.mjs';
+import {ALL_COMPONENT_CONTRACTS, countDistinctComponentTypes} from '../../../../src/platform/families/contracts.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const DOC = resolve(ROOT, 'docs/platform/components.md');
@@ -35,7 +36,8 @@ export function inventoryMarkdown(manifest) {
 export function renderDoc(doc, manifest) {
   const a = doc.indexOf(BEGIN), b = doc.indexOf(END);
   if (a < 0 || b < a) throw new Error('components.md에 inventory-table 표지가 없습니다.');
-  return doc.slice(0, a + BEGIN.length) + '\n' + inventoryMarkdown(manifest) + '\n' + doc.slice(b);
+  const withTable = doc.slice(0, a + BEGIN.length) + '\n' + inventoryMarkdown(manifest) + '\n' + doc.slice(b);
+  return withTable.replace(/등록 계약은 \d+개, 구별되는 종류는 \d+종\./, `등록 계약은 ${ALL_COMPONENT_CONTRACTS.length}개, 구별되는 종류는 ${countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS)}종.`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

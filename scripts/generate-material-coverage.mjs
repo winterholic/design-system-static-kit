@@ -41,6 +41,7 @@ import * as edit from '../src/edit/index.mjs';
 import {platformSectionParallel} from './platform/platform-baseline.mjs';
 import {renderChartPreset} from '../src/render/chart-presets.mjs';
 import {LAYOUT_COMPONENTS} from '../src/platform/families/contracts.mjs';
+import {WORK_PATTERN_FAMILIES} from '../src/platform/families/work-patterns.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = 'docs/dev/catalog-platform-upgrade';
@@ -309,11 +310,22 @@ const COVERAGE = {
   'L/Sticky Region': D('layout:sticky-action-layout'),
   'L/Scroll Area': D('layout:master-detail'),
   'L/Resizable Panel': D('component:resizable-panel'),
-  'M/Filter Toolbar': D('purpose:form.filter'),
-  'M/Search Toolbar': D('component:filter-bar', 'purpose:form.search'),
-  'M/Bulk Action Toolbar': V('purpose:table.business', 'purpose:table.business', {toolbar: 'bulk'}),
-  'M/Settings Form': D('purpose:form.settings'),
-  'M/Workflow Steps': D('component:steps'),
+  // M patterns compose existing card, data-table, input and button primitives; each row has a dedicated renderer and live output probe.
+  'M/Filter Toolbar': D('purpose:work.filter-toolbar'),
+  'M/Search Toolbar': D('purpose:work.search-toolbar'),
+  'M/Bulk Action Toolbar': D('purpose:work.bulk-action-toolbar'),
+  'M/Data Summary': D('purpose:work.data-summary'),
+  'M/Dashboard KPI Grid': D('purpose:work.dashboard-kpi-grid'),
+  'M/Approval Panel': D('purpose:work.approval-panel'),
+  'M/Audit Log': D('purpose:work.audit-log'),
+  'M/Permission Matrix': D('purpose:work.permission-matrix'),
+  'M/Status Management': D('purpose:work.status-management'),
+  'M/Settings Form': D('purpose:work.settings-form'),
+  'M/Search Result List': D('purpose:work.search-result-list'),
+  'M/User Management Table': D('purpose:work.user-management-table'),
+  'M/Task List': D('purpose:work.task-list'),
+  'M/Workflow Steps': D('purpose:work.workflow-steps'),
+  'M/Comment Thread': D('purpose:work.comment-thread'),
   'N/Product Grid': D('component:grid'),
   'N/Product Detail Summary': D('component:buy-box'),
   'N/Product Variant Selector': P('component:buy-box', 'buy-box의 options(라벨+선택지)로만 존재한다'),
@@ -1109,6 +1121,32 @@ function probeCommerceRequirement(req) {
   };
 }
 
+/** M 업무 패턴은 등록 이름을 alias로 세지 않는다. 전용 purpose renderer를 Core 조립에 넣고 출력·입력 변화·거부를 확인한다. */
+function probeWorkPatternRequirement(req) {
+  const suffix = req.reqId.slice('req:comp:m-'.length).replace(/^\d+-/, '');
+  const family = WORK_PATTERN_FAMILIES.find(item => item.id === `purpose:work.${suffix}`);
+  if (!family) return {ok: false, reason: 'M work-pattern renderer sample is missing'};
+  const makeRequest = (props = family.example.props) => ({
+    context: 'dashboard', mode: 'light', density: 'comfortable',
+    items: [{purpose: family.id, visual: 'family:quiet', variant: family.example.variant, props, content: family.example.content, id: `coverage-${suffix}`}],
+  });
+  const first = service.assembleComponents(makeRequest());
+  const changed = service.assembleComponents(makeRequest({...family.example.props, density: 'compact', state: 'empty'}));
+  const invalid = service.assembleComponents(makeRequest({...family.example.props, density: 'ultra'}));
+  const detail = service.getPlatformMaterial({id: family.id});
+  const inputChanged = first.ok && changed.ok && first.value.html !== changed.value.html;
+  const invalidRejected = !invalid.ok && invalid.errors?.length > 0;
+  const exactMaterial = detail.ok && detail.value.id === family.id;
+  const marker = first.ok && first.value.html.includes(`data-work-pattern="${family.id}"`);
+  const ok = Boolean(first.ok && marker && inputChanged && invalidRejected && exactMaterial);
+  return {
+    ok, method: 'assembleComponents({items:[purpose:work.*]})', materialId: family.id,
+    blueprintPath: {field: 'materials.purposes', id: family.id}, inputChanged, invalidRejected, exactMaterial,
+    outputHash: first.ok ? sha(first.value.html + first.value.css + first.value.script + first.value.standalone) : null,
+    ...(ok ? {} : {reason: !exactMaterial ? 'purpose material query did not resolve exactly' : !first.ok ? 'valid M pattern failed Core assembly' : !marker ? 'M pattern marker did not reach HTML' : !inputChanged ? 'changed props did not change HTML' : 'invalid props were not rejected'}),
+  };
+}
+
 // 요구 항목 → 재료 연결
 const requirements = ALL_REQS.map(req => {
   const cov = resolveCoverage(req);
@@ -1117,13 +1155,17 @@ const requirements = ALL_REQS.map(req => {
   const rank = s => STATUS.indexOf(s);
   const commerceProbe = req.section === '§6.2 N' ? probeCommerceRequirement(req) : null;
   const commerceFailed = req.section === '§6.2 N' && !commerceProbe?.ok;
-  const coverage = commerceFailed ? 'missing' : cov.how;
-  const materialIds = commerceFailed ? [] : cov.ids;
-  const status = commerceFailed ? 'missing' : req.section === '§6.2 N' ? 'verified' : cov.how === 'missing' ? 'missing' : STATUS[Math.max(...mats.map(m => rank(m.status)))];
+  const workPatternProbe = req.section === '§6.2 M' ? probeWorkPatternRequirement(req) : null;
+  const workPatternFailed = req.section === '§6.2 M' && !workPatternProbe?.ok;
+  const failedProbe = commerceFailed || workPatternFailed;
+  const coverage = failedProbe ? 'missing' : cov.how;
+  const materialIds = failedProbe ? [] : cov.ids;
+  const status = failedProbe ? 'missing' : req.section === '§6.2 N' || req.section === '§6.2 M' ? 'verified' : cov.how === 'missing' ? 'missing' : STATUS[Math.max(...mats.map(m => rank(m.status)))];
   return {
     id: req.reqId, section: req.section, name: req.name, coverage, status, materialIds,
     ...(cov.via ? {viaRecord: cov.via} : {}), ...(cov.part ? {part: cov.part} : {}), ...(cov.variant ? {variant: cov.variant} : {}), ...(cov.schema ? {schema: cov.schema} : {}), ...(cov.note ? {note: cov.note} : {}),
     ...(commerceProbe ? {commerceProbe} : {}),
+    ...(workPatternProbe ? {workPatternProbe} : {}),
   };
 });
 for (const r of records) r.requirementIds.sort();

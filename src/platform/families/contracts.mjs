@@ -15,6 +15,7 @@ import {FEEDBACK_FAMILIES} from './feedback.mjs';
 import {INFO_MEDIA_FAMILIES} from './info-media.mjs';
 import {EHI_FAMILIES} from './ehi.mjs';
 import {DATA_DISPLAY_FAMILIES} from './data-display.mjs';
+import {WORK_PATTERN_FAMILIES} from './work-patterns.mjs';
 import {renderButton} from '../../materials/button.mjs';
 import {COMPONENT_CLASSIFICATION} from './inventory.mjs';
 import {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} from './action.mjs';
@@ -66,6 +67,14 @@ const PURPOSE_REQUIREMENT = Object.freeze({
   'purpose:table.grouped': 'g-07-grouped-table', 'purpose:table.tree': 'g-12-tree-view',
   'purpose:table.inspector': 'g-17-key-value-inspector', 'purpose:table.log-viewer': 'g-18-log-viewer',
   'purpose:table.diff': 'g-20-diff-viewer',
+  'purpose:work.filter-toolbar': 'm-01-filter-toolbar', 'purpose:work.search-toolbar': 'm-02-search-toolbar',
+  'purpose:work.bulk-action-toolbar': 'm-03-bulk-action-toolbar', 'purpose:work.data-summary': 'm-04-data-summary',
+  'purpose:work.dashboard-kpi-grid': 'm-05-dashboard-kpi-grid', 'purpose:work.approval-panel': 'm-06-approval-panel',
+  'purpose:work.audit-log': 'm-07-audit-log', 'purpose:work.permission-matrix': 'm-08-permission-matrix',
+  'purpose:work.status-management': 'm-09-status-management', 'purpose:work.settings-form': 'm-10-settings-form',
+  'purpose:work.search-result-list': 'm-11-search-result-list', 'purpose:work.user-management-table': 'm-12-user-management-table',
+  'purpose:work.task-list': 'm-13-task-list', 'purpose:work.workflow-steps': 'm-14-workflow-steps',
+  'purpose:work.comment-thread': 'm-15-comment-thread',
 });
 
 const normalizeBase = m => defineComponentContract({id: m.id, componentType: m.id.slice('base-component:'.length), layer: 'Base', purpose: m.label,
@@ -84,7 +93,7 @@ const normalizePurpose = f => defineComponentContract({id: f.id, componentType: 
 
 export const COMPONENT_CONTRACTS = Object.freeze([
   ...BASE_COMPONENTS.map(normalizeBase),
-  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES].map(normalizePurpose),
+  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES, ...WORK_PATTERN_FAMILIES].map(normalizePurpose),
 ]);
 
 export function validateComponentContracts(contracts = ALL_COMPONENT_CONTRACTS) {
