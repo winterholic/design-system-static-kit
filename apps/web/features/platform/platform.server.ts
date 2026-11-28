@@ -1,6 +1,7 @@
 import 'server-only';
 import * as service from '@winterholic/design-system-static-kit/service';
 import type {AssembleRequest, AssembleValue, Envelope, Material, ProposeValue, PurposeList, RecommendValue} from './types';
+import {recordCompile} from '@/features/perf/counter.server';
 
 // 조립 플랫폼 서비스 함수는 Core 서비스 진입점에서 이름으로 찾는다.
 // 웹은 src/platform 을 직접 import 하지 않는다(boundary.check.mjs). 함수가 없을 때 대신 만들어 내는 값도 없다.
@@ -19,8 +20,14 @@ const call = <T>(name: string, arg?: unknown, opts?: unknown): Envelope<T> => {
 
 // Core omits standalone (and other optional payloads) by default. Request the actual service output
 // explicitly so previews and downloads return the same document the Core assembled.
-export const assembleDesign = (request: AssembleRequest) => call<AssembleValue>('assembleDesign', request, {include: WEB_INCLUDE});
-export const assembleComponents = (request: Record<string, unknown>) => call<{css: string; html: string; standalone: string; manifest: Record<string, any>}>('assembleComponents', request);
+export const assembleDesign = (request: AssembleRequest) => {
+  recordCompile('assembleDesign');
+  return call<AssembleValue>('assembleDesign', request, {include: WEB_INCLUDE});
+};
+export const assembleComponents = (request: Record<string, unknown>) => {
+  recordCompile('assembleComponents');
+  return call<{css: string; html: string; standalone: string; manifest: Record<string, any>}>('assembleComponents', request);
+};
 export const recommend = (q: Record<string, unknown>) => call<RecommendValue>('recommendMaterials', q);
 export const proposeSets = (seeds: unknown) => call<ProposeValue>('proposeSubtokenSets', {seeds});
 

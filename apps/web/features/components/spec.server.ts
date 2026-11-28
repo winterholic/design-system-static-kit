@@ -1,6 +1,7 @@
 import 'server-only';
 import {compileBlueprint, getComponentSpec, getMaterial, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {importBlueprint, insertNode, removeNode, resetDocument, updateNode} from '@winterholic/design-system-static-kit/edit';
+import {recordCompile} from '@/features/perf/counter.server';
 
 // 부품 화면의 모든 데이터는 getComponentSpec·listCatalog 에서 온다. 카탈로그에 없는 변형·속성·관계는 만들지 않는다.
 // 렌더 결과는 Blueprint 를 직접 쓰지 않고 ./edit 연산(resetDocument, insertNode, removeNode, updateNode)으로 만든 문서의 컴파일 결과다.
@@ -145,6 +146,7 @@ function templateUsing(type: string): string | null {
 }
 
 const compileHtml = (doc: unknown): string | null => {
+  recordCompile('compileBlueprint');
   const r = compileBlueprint(doc, {include: ['html']}) as {ok: boolean; value?: {html: string}};
   return r.ok ? r.value!.html : null;
 };

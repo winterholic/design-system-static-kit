@@ -2,6 +2,7 @@ import 'server-only';
 import {catalogSnapshot, compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {resetDocument, setAppearance} from '@winterholic/design-system-static-kit/edit';
 import {formatDesignId, resetArgs, type DesignRef} from './id';
+import {recordCompile} from '@/features/perf/counter.server';
 
 // Explore 가 보여 주는 "대표 디자인" 목록과 그 Blueprint·HTML 을 만드는 서버 전용 모듈.
 // Blueprint 는 직접 만들지 않고 ./edit 의 resetDocument·setAppearance 로만 만든다(Studio 와 같은 경로).
@@ -54,6 +55,7 @@ export function buildDocument(ref: DesignRef) {
 
 /** 문서와 HTML. 실패하면 던진다(대표 목록은 모두 컴파일되는 것만 담는다: e2e 가 전체를 확인한다). */
 export function renderDesign(ref: DesignRef) {
+  recordCompile('compileBlueprint');
   const built = buildDocument(ref);
   if (!built.ok) throw new Error(`${formatDesignId(ref)}: ${built.errors[0]?.message}`);
   const compiled = compileBlueprint(built.doc, {include: ['html']}) as {ok: boolean; value?: {html: string}; errors?: {message: string}[]};
