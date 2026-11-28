@@ -4,7 +4,7 @@ import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 
 // 목적 패밀리 접근성 계약의 브라우저 쪽(재료 검증 F1). 마크업의 role·aria·라벨 연결은 tests/platform-family-a11y.test.mjs가 본다.
 // 이 파일은 마크업만으로 볼 수 없는 것을 본다.
-//  1) 37개 전부: 키보드 Tab 순서가 계약 순서와 같고 화면에서 읽히는 순서(위→아래, 왼쪽→오른쪽)와 같으며, 모든 Tab 정지에 포커스 표시가 있다.
+//  1) 등록된 모든 패밀리: 키보드 Tab 순서가 계약 순서와 같고 화면에서 읽히는 순서(위→아래, 왼쪽→오른쪽)와 같으며, 모든 Tab 정지에 포커스 표시가 있다.
 //  2) 계약에 적힌 크기 조건(터치 44px·56px·24px, 같은 줄 컨트롤 높이, 전체 폭 버튼)이 실제 레이아웃에서 지켜진다. 390·1280.
 //  3) 상호작용 패밀리의 키보드 조작과 상태 전이: 탭, 대화상자, 콤보박스, 메뉴 토글, 비밀번호 보기, 정렬, 닫기.
 // 패밀리 이름이 이 파일에 있어야 한다: 노드 시험이 "브라우저에서 본다"고 적은 조건의 확인 위치로 이 파일을 읽는다.
@@ -88,7 +88,7 @@ async function walkTab(page) {
   return {expected, seen};
 }
 
-test.describe('keyboard order of all 37 purpose families', () => {
+test.describe('keyboard order of all registered purpose families', () => {
   for (const f of PURPOSE_FAMILIES) {
     for (const width of [1280, 390]) {
       test(`${f.id} at ${width}px: Tab visits every stop once in DOM order, in the order the eye reads, and each stop shows a focus indicator`, async ({page}) => {
@@ -109,6 +109,20 @@ test.describe('keyboard order of all 37 purpose families', () => {
         for (const s of seen) expect(s.focusVisible && (s.ring.outline || s.ring.shadow || s.hostRing), `${f.id}: "${s.name}" shows a focus indicator on keyboard focus ${JSON.stringify(s.ring)} host=${s.hostRing}`).toBeTruthy();
       });
     }
+  }
+});
+
+test('all purpose families keep the page and their long data within the viewport at phone and desktop widths', async ({page}) => {
+  for (const f of PURPOSE_FAMILIES) for (const width of [390, 1280]) {
+    const item = example(f.id);
+    const built = buildPage(env, f.group, QUIET, {items: [item], runtime: true, context: f.contexts[0] === 'any' ? 'dashboard' : f.contexts[0]});
+    expect(built.ok, `${f.id}: ${JSON.stringify(built.diagnostics)}`).toBe(true);
+    await page.setViewportSize({width, height: 900});
+    await page.goto('about:blank');
+    await page.setContent(built.html);
+    const overflow = await page.evaluate(() => ({page: document.documentElement.scrollWidth - document.documentElement.clientWidth, root: [...document.querySelectorAll('.pf')].map(x => x.scrollWidth - x.clientWidth)}));
+    expect(overflow.page, `${f.id} @${width}: page overflow`).toBeLessThanOrEqual(1);
+    expect(overflow.root.every(x => x <= 1), `${f.id} @${width}: component overflow ${JSON.stringify(overflow.root)}`).toBe(true);
   }
 });
 

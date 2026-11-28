@@ -144,9 +144,13 @@ test('catalog-index.json 은 LightCatalogIndex 계약을 따른다(CONTRACTS §4
   assert.ok(!('generatedAt' in index), '시각을 싣지 않는다(바이트 재현성)');
   assert.equal(index.contentHash, sha(JSON.stringify({categories: index.categories, materials: index.materials})));
   for (const cat of index.categories) {
-    assert.equal(cat.itemCount, index.materials.filter(m => m.category === cat.id).length, cat.id);
-    const chunk = json(`catalog-chunks/${cat.id}.json`);
-    assert.deepEqual(chunk.materials, index.materials.filter(m => m.category === cat.id), `chunk ${cat.id}`);
+    const rows = cat.id === 'all' ? index.materials : index.materials.filter(m => m.relatedCategories.includes(cat.id));
+    const expectedItemCount = rows.length;
+    assert.equal(cat.itemCount, expectedItemCount, cat.id);
+    const pages = Math.max(1, Math.ceil(rows.length / 24));
+    const chunks = Array.from({length: pages}, (_, i) => json(`catalog-chunks/${cat.id}-${i + 1}.json`));
+    assert.ok(chunks.every((chunk, i) => chunk.category === cat.id && chunk.page === i + 1 && chunk.pages === pages), `${cat.id}: chunk metadata`);
+    assert.deepEqual(chunks.flatMap(chunk => chunk.materials), rows, `chunk ${cat.id}`);
   }
   for (const m of index.materials) {
     assert.ok(m.id && m.kind && m.category && m.label, m.id);

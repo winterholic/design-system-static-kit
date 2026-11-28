@@ -191,7 +191,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 147 · 변형 38 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 51.
+집계: 독립 재료 147 · 변형 38 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 36.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -264,42 +264,42 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:f-04-statistic-card` | Statistic Card | 독립 재료 | direct | verified | component:metric |
 | `req:comp:f-05-metric-trend-card` | Metric Trend Card | 변형 | variant | verified | purpose:card.kpi |
 | `req:comp:f-06-product-card` | Product Card | 독립 재료 | direct | verified | purpose:card.product |
-| `req:comp:f-07-product-comparison-card` | Product Comparison Card | 복합 패턴 | missing | missing | — |
+| `req:comp:f-07-product-comparison-card` | Product Comparison Card | 복합 패턴 | direct | verified | purpose:card.comparison |
 | `req:comp:f-08-profile-card` | Profile Card | 독립 재료 | direct | verified | purpose:card.profile |
 | `req:comp:f-09-team-member-card` | Team Member Card | 독립 재료 | direct | verified | component:team |
 | `req:comp:f-10-article-card` | Article Card | 독립 재료 | direct | verified | purpose:card.article |
 | `req:comp:f-11-media-card` | Media Card | 변형 | variant | verified | component:card |
 | `req:comp:f-12-pricing-card` | Pricing Card | 독립 재료 | direct | verified | purpose:card.pricing |
 | `req:comp:f-13-plan-card` | Plan Card | 독립 재료 | direct | assemblable | component:plan |
-| `req:comp:f-14-notification-card` | Notification Card | 독립 재료 | missing | missing | — |
-| `req:comp:f-15-activity-card` | Activity Card | 독립 재료 | missing | missing | — |
+| `req:comp:f-14-notification-card` | Notification Card | 독립 재료 | direct | verified | purpose:card.notification |
+| `req:comp:f-15-activity-card` | Activity Card | 독립 재료 | direct | verified | purpose:card.activity |
 | `req:comp:f-16-settings-card` | Settings Card | 변형 | variant | catalog-visible | purpose:form.settings |
-| `req:comp:f-17-integration-card` | Integration Card | 독립 재료 | missing | missing | — |
-| `req:comp:f-18-review-card` | Review Card | 독립 재료 | missing | missing | — |
+| `req:comp:f-17-integration-card` | Integration Card | 독립 재료 | direct | verified | purpose:card.integration |
+| `req:comp:f-18-review-card` | Review Card | 독립 재료 | direct | verified | purpose:card.review |
 | `req:comp:f-19-testimonial-card` | Testimonial Card | 독립 재료 | direct | verified | component:quote |
-| `req:comp:f-20-interactive-selection-card` | Interactive Selection Card | 독립 재료 | missing | missing | — |
-| `req:comp:f-21-dashboard-widget-card` | Dashboard Widget Card | 복합 패턴 | missing | missing | — |
-| `req:comp:f-22-financial-asset-card` | Financial Asset Card | 독립 재료 | missing | missing | — |
+| `req:comp:f-20-interactive-selection-card` | Interactive Selection Card | 독립 재료 | direct | verified | purpose:card.selection |
+| `req:comp:f-21-dashboard-widget-card` | Dashboard Widget Card | 복합 패턴 | direct | verified | purpose:card.dashboard-widget |
+| `req:comp:f-22-financial-asset-card` | Financial Asset Card | 독립 재료 | direct | verified | purpose:card.financial-asset |
 | `req:comp:g-01-basic-table` | Basic Table | 독립 재료 | direct | verified | base-component:data-table |
 | `req:comp:g-02-data-table` | Data Table | 독립 재료 | direct | catalog-visible | purpose:table.business |
 | `req:comp:g-03-sortable-table` | Sortable Table | 변형 | variant | verified | base-component:data-table |
-| `req:comp:g-04-filterable-table` | Filterable Table | 독립 재료 | missing | missing | — |
+| `req:comp:g-04-filterable-table` | Filterable Table | 독립 재료 | direct | catalog-visible | purpose:table.filterable |
 | `req:comp:g-05-selectable-table` | Selectable Table | 변형 | variant | verified | base-component:data-table |
-| `req:comp:g-06-expandable-row-table` | Expandable Row Table | 독립 재료 | missing | missing | — |
-| `req:comp:g-07-grouped-table` | Grouped Table | 독립 재료 | missing | missing | — |
+| `req:comp:g-06-expandable-row-table` | Expandable Row Table | 독립 재료 | direct | catalog-visible | purpose:table.expandable |
+| `req:comp:g-07-grouped-table` | Grouped Table | 독립 재료 | direct | catalog-visible | purpose:table.grouped |
 | `req:comp:g-08-dense-table` | Dense Table | 독립 재료 | direct | catalog-visible | purpose:table.dense |
 | `req:comp:g-09-description-list` | Description List | 독립 재료 | direct | verified | component:properties |
 | `req:comp:g-10-list` | List | 독립 재료 | direct | verified | component:list |
 | `req:comp:g-11-list-item` | List Item | 복합 패턴 | part-of | verified | component:list |
-| `req:comp:g-12-tree-view` | Tree View | 독립 재료 | missing | missing | — |
+| `req:comp:g-12-tree-view` | Tree View | 독립 재료 | direct | verified | purpose:table.tree |
 | `req:comp:g-13-kanban` | Kanban | 독립 재료 | direct | verified | component:kanban |
 | `req:comp:g-14-timeline` | Timeline | 독립 재료 | direct | verified | component:timeline |
 | `req:comp:g-15-activity-feed` | Activity Feed | 변형 | variant | verified | component:timeline |
 | `req:comp:g-16-master-detail` | Master-detail | 복합 패턴 | direct | verified | component:master-detail |
-| `req:comp:g-17-key-value-inspector` | Key-value Inspector | 복합 패턴 | missing | missing | — |
-| `req:comp:g-18-log-viewer` | Log Viewer | 복합 패턴 | missing | missing | — |
+| `req:comp:g-17-key-value-inspector` | Key-value Inspector | 복합 패턴 | direct | verified | purpose:table.inspector |
+| `req:comp:g-18-log-viewer` | Log Viewer | 복합 패턴 | direct | catalog-visible | purpose:table.log-viewer |
 | `req:comp:g-19-code-block` | Code Block | 독립 재료 | direct | verified | component:code |
-| `req:comp:g-20-diff-viewer` | Diff Viewer | 독립 재료 | missing | missing | — |
+| `req:comp:g-20-diff-viewer` | Diff Viewer | 독립 재료 | direct | verified | purpose:table.diff |
 | `req:comp:h-01-modal` | Modal | 독립 재료 | direct | verified | base-component:modal-dialog |
 | `req:comp:h-02-alert-dialog` | Alert Dialog | 변형 | variant | verified | base-component:modal-dialog |
 | `req:comp:h-03-confirmation-dialog` | Confirmation Dialog | 독립 재료 | direct | catalog-visible | purpose:feedback.confirm |

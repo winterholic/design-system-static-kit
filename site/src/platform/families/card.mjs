@@ -6,7 +6,9 @@
  * 셸 속성 목록이 renderCard와 어긋나지 않는 것은 tests/platform-family-purpose.test.mjs가 본다.
  */
 import {icon} from '../../render/icon.mjs';
+import {renderChartPreset} from '../../render/chart-presets.mjs';
 import {definePurposeFamily, e} from './kit.mjs';
+import {CARD_EXTRA_FAMILIES} from './card-extra.mjs';
 
 const CARD = 'base-component:card-surface', BUTTON = 'base-component:button-control';
 const SIZES = ['small', 'medium', 'large'];
@@ -37,10 +39,14 @@ const CARD_STATES = ['default', 'hover', 'focus', 'active', 'loading', 'error', 
 const SHARED = `.pf-card{height:100%;container-type:inline-size;font-family:var(--kit-font)}.pf-card-body{align-self:stretch;display:flex;flex-direction:column;gap:var(--pf-gap)}.pf-card .kit-ctl-card-title{font-family:var(--kit-heading);font-weight:var(--pf-title-weight);font-size:max(16px,var(--kit-t-sub));text-wrap:balance}.pf-num{white-space:nowrap;font-variant-numeric:tabular-nums;font-family:var(--kit-font)}.pf-label{margin:0;color:var(--kit-muted);font-size:var(--kit-t-label);text-transform:var(--pf-label-case);letter-spacing:var(--pf-label-track);font-weight:600}.pf-media{display:grid;place-items:center;flex:none;box-sizing:border-box;width:100%;aspect-ratio:4/3;border-radius:calc(var(--kit-radius) * .7);background:var(--kit-soft);color:var(--kit-link)}.pf-media .kit-icon{width:36px;height:36px}.pf-media[data-wide]{aspect-ratio:16/9}.pf-card[data-media=top]{flex-direction:column}.pf-card[data-accent=true]{border-top:var(--pf-accent-bar) solid var(--kit-action)}.pf-foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:var(--kit-sp-near);padding-top:var(--kit-sp-near)}.pf-chip{display:inline-flex;align-items:center;gap:var(--kit-sp-tight);padding:2px var(--kit-sp-near);border:1px solid currentColor;border-radius:999px;font-size:max(12px,var(--kit-t-caption));font-weight:600;white-space:nowrap}.pf-chip .kit-icon{width:14px;height:14px}.pf-card[data-state=error]{background:var(--kit-danger-soft)}.pf-card .kit-ctl-card-title.pf-label{margin:0;font-family:var(--kit-font);font-size:var(--kit-t-label);font-weight:600}`;
 
 /* ---------- KPI ---------- */
-const spark = (series, label) => {
-  const max = Math.max(...series), min = Math.min(...series), span = max - min || 1, w = 100, h = 28;
-  const pts = series.map((v, i) => `${(i * w / (series.length - 1)).toFixed(1)},${(h - 2 - (v - min) / span * (h - 4)).toFixed(1)}`).join(' ');
-  return `<svg class="pf-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${e(label)}"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+const spark = (series, label, unit = '') => {
+  const rendered = renderChartPreset('chart-preset:mobile-sparkline', {
+    title: `${label} 추세`, caption: `${label} 값 변화`, xLabel: '순서', yLabel: '값', unit,
+    categories: series.map((_, index) => String(index + 1)),
+    series: [{name: `${label} 추세`, values: series}],
+  });
+  if (typeof rendered !== 'string') throw new Error(`KPI sparkline chart preset rejected its data: ${JSON.stringify(rendered.errors)}`);
+  return `<div class="pf-spark">${rendered}</div>`;
 };
 const TREND = {up: ['trending-up', '증가'], down: ['trending-down', '감소'], flat: ['minus', '변동 없음']};
 
@@ -62,14 +68,14 @@ export const cardKpi = definePurposeFamily({
   pairs: [['--kit-muted', '--kit-surface', 4.5, 'KPI label'], ['--kit-muted', '--kit-card-hover', 4.5, 'KPI label on filled'], ['--kit-text', '--kit-surface', 7, 'KPI value'], ['--kit-text', '--kit-card-hover', 7, 'KPI value on filled'], ['--kit-link', '--kit-surface', 4.5, 'KPI sparkline']],
   parents: COMMON_PARENTS, example: {variant: {layout: 'stacked', trend: 'spark'}, props: {size: 'medium'}, content: {label: '이번 달 매출', value: '₩12,480,000', delta: '+12.4%', deltaDirection: 'up', caption: '지난달 대비', series: [4, 6, 5, 8, 7, 11, 12]}},
   render(ctx) { return renderCardKpi(ctx); },
-  css: `.pf-kpi-head{display:flex;justify-content:space-between;gap:var(--kit-sp-near);align-items:flex-start}.pf-kpi-value{margin:0;display:flex;align-items:baseline;gap:var(--kit-sp-tight);color:var(--kit-text);font-family:var(--kit-heading);font-size:min(calc(var(--kit-t-stat) * var(--pf-stat-scale)),16cqi);line-height:1.1;font-weight:var(--pf-title-weight)}.pf-kpi-unit{font-size:var(--kit-t-small);color:var(--kit-muted);font-weight:500}.pf-kpi-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--kit-sp-near);color:var(--kit-muted);font-size:max(12px,var(--kit-t-caption))}.pf-kpi-delta{color:var(--kit-text)}.pf-kpi-delta[data-dir=up] .kit-icon{color:var(--kit-success)}.pf-kpi-delta[data-dir=down] .kit-icon{color:var(--kit-danger)}.pf-spark{width:100%;height:28px;color:var(--kit-link);margin-top:var(--kit-sp-tight)}.pf-card[data-layout=inline] .pf-card-body{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}@container(max-width:300px){.pf-card[data-layout=inline] .pf-card-body{flex-direction:column;align-items:flex-start;justify-content:flex-start}}`,
+  css: `.pf-kpi-head{display:flex;justify-content:space-between;gap:var(--kit-sp-near);align-items:flex-start}.pf-kpi-value{margin:0;display:flex;align-items:baseline;gap:var(--kit-sp-tight);color:var(--kit-text);font-family:var(--kit-heading);font-size:min(calc(var(--kit-t-stat) * var(--pf-stat-scale)),16cqi);line-height:1.1;font-weight:var(--pf-title-weight)}.pf-kpi-unit{font-size:var(--kit-t-small);color:var(--kit-muted);font-weight:500}.pf-kpi-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--kit-sp-near);color:var(--kit-muted);font-size:max(12px,var(--kit-t-caption))}.pf-kpi-delta{color:var(--kit-text)}.pf-kpi-delta[data-dir=up] .kit-icon{color:var(--kit-success)}.pf-kpi-delta[data-dir=down] .kit-icon{color:var(--kit-danger)}.pf-spark{width:100%;min-width:0;margin-top:var(--kit-sp-tight)}.pf-spark .kit-chart{margin:0}.pf-card[data-layout=inline] .pf-card-body{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}@container(max-width:300px){.pf-card[data-layout=inline] .pf-card-body{flex-direction:column;align-items:flex-start;justify-content:flex-start}}`,
 });
 
 export function renderCardKpi(ctx) {
   const {content: c, variant: v} = ctx, props = baseProps(ctx, {media: 'none'});
   const dir = c.deltaDirection ?? 'flat', [trendIcon, trendText] = TREND[dir] ?? TREND.flat;
   const delta = c.delta ? `<span class="pf-chip pf-kpi-delta" data-dir="${e(dir)}">${icon(trendIcon)}<span class="kit-ctl-sr">${trendText} </span>${num(c.delta)}</span>` : '';
-  const html = shell(ctx, props, {title: c.label, href: c.href, attrs: `data-layout="${v.layout}"`, inner: hit => `<p class="kit-ctl-card-title pf-label">${hit}</p><p class="pf-kpi-value">${num(c.value)}${c.unit ? `<span class="pf-kpi-unit">${e(c.unit)}</span>` : ''}</p>${(delta || c.caption) ? `<p class="pf-kpi-foot">${delta}${c.caption ? `<span>${e(c.caption)}</span>` : ''}</p>` : ''}${v.trend === 'spark' && Array.isArray(c.series) && c.series.length > 1 ? spark(c.series, `${c.label} 추세`) : ''}${errorLine(ctx, props)}`});
+  const html = shell(ctx, props, {title: c.label, href: c.href, attrs: `data-layout="${v.layout}"`, inner: hit => `<p class="kit-ctl-card-title pf-label">${hit}</p><p class="pf-kpi-value">${num(c.value)}${c.unit ? `<span class="pf-kpi-unit">${e(c.unit)}</span>` : ''}</p>${(delta || c.caption) ? `<p class="pf-kpi-foot">${delta}${c.caption ? `<span>${e(c.caption)}</span>` : ''}</p>` : ''}${v.trend === 'spark' && Array.isArray(c.series) && c.series.length > 1 ? spark(c.series, c.label, c.unit ?? '') : ''}${errorLine(ctx, props)}`});
   return html;
 }
 
@@ -290,4 +296,4 @@ export function renderCardGallery(ctx) {
   return html;
 }
 
-export const CARD_FAMILIES = Object.freeze([cardKpi, cardProduct, cardArticle, cardFeature, cardProfile, cardPricing, cardStatus, cardGallery]);
+export const CARD_FAMILIES = Object.freeze([cardKpi, cardProduct, cardArticle, cardFeature, cardProfile, cardPricing, cardStatus, cardGallery, ...CARD_EXTRA_FAMILIES]);

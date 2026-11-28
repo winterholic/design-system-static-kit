@@ -12,6 +12,7 @@ import {platformEnv} from '../src/platform/compile.mjs';
 import {mcpConnect, rest, root, OPERATIONS} from './channel-support.mjs';
 import {buildOpenApi} from '../apps/web/lib/api/openapi.mjs';
 import {TOOLS} from '../apps/web/lib/api/mcp.mjs';
+import {PURPOSE_FAMILY_IDS} from '../src/platform/families/index.mjs';
 
 let client;
 before(async () => { client = await mcpConnect('modern'); });

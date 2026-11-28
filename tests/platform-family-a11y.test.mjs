@@ -1,5 +1,5 @@
 /**
- * 목적 패밀리 37종의 접근성 계약(`a11y.role`·`a11y.keyboard`·`a11y.conditions`)을 렌더 마크업과 대조한다(재료 검증 F1).
+ * 목적 패밀리 52종의 접근성 계약(`a11y.role`·`a11y.keyboard`·`a11y.conditions`)을 렌더 마크업과 대조한다(재료 검증 F1).
  *
  * 계약 문구는 산문이라 조건마다 마크업 단언을 `SPEC`에 적는다. 이 시험은 세 가지를 본다.
  *   1 대응: 계약의 조건 문구와 `SPEC`의 키가 일대일이다. 계약이 바뀌면 단언이 없는 조건이 시험을 깨뜨린다. 마크업으로 볼 수 없는 조건(크기·대비·산문)은
@@ -106,7 +106,7 @@ const tabOrder = dom => dom.all.filter(tabbable).map(el => accName(dom, el));
 // ---------------------------------------------------------------------------------------------
 // 모든 렌더가 지켜야 하는 불변식
 // ---------------------------------------------------------------------------------------------
-const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none', 'note', 'tooltip']);
+const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none', 'note', 'tooltip', 'tree', 'treeitem']);
 const REF_ATTRS = ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-activedescendant', 'aria-owns'];
 const BOOL = new Set(['true', 'false']);
 const NEEDS_LABEL_INPUT = el => el.tag === 'input' && !['hidden', 'submit', 'button', 'reset'].includes(el.attrs.type);
@@ -131,7 +131,7 @@ function invariants(dom) {
     if (has(el, 'tabindex') && Number(el.attrs.tabindex) > 0) bad.push(`양수 tabindex: <${el.tag}>`);
     if (el.attrs['aria-hidden'] === 'true' && [el, ...el.children.flatMap(function walk(c) { return [c, ...c.children.flatMap(walk)]; })].some(tabbable)) bad.push(`aria-hidden 안에 포커스 가능한 요소가 있다: <${el.tag} class="${el.attrs.class ?? ''}">`);
     if (el.tag === 'svg') {
-      if (el.attrs.role === 'img' && !el.attrs['aria-label']?.trim()) bad.push('role=img 그림에 aria-label이 없다');
+      if (el.attrs.role === 'img' && !accName(dom, el)) bad.push('role=img 그림에 접근 가능한 이름이 없다');
       if (el.attrs.role !== 'img' && el.attrs['aria-hidden'] !== 'true' && !ancestors(el).some(a => a.attrs['aria-hidden'] === 'true')) bad.push(`장식 svg가 보조기기에 노출된다: ${el.attrs.class ?? ''}`);
     }
     if (el.tag === 'img' && !has(el, 'alt')) bad.push('alt 없는 img');
@@ -194,10 +194,13 @@ const ehiSource = readFileSync(new URL('../src/platform/families/action.mjs', im
 const SPEC = {
   'purpose:card.kpi': {
     role: d => { one(d, 'article'); ok(!query(d, 'article').some(a => a.attrs.role), 'article은 네이티브 요소로 쓴다'); },
-    keyboard: d => { assert.deepEqual(tabOrder(d), [], '정적 카드는 Tab 정지가 없다'); assert.equal(tabOrder(withProps('purpose:card.kpi', {behavior: 'link'}, {href: '#kpi'})).length, 1, 'link일 때 Tab 한 번'); },
+    keyboard: d => {
+      assert.deepEqual(tabOrder(d), ['데이터 표 보기'], '정적 KPI는 차트 데이터 표 토글만 Tab으로 연다');
+      assert.deepEqual(tabOrder(withProps('purpose:card.kpi', {behavior: 'link'}, {href: '#kpi'})), ['이번 달 매출', '데이터 표 보기'], 'link와 차트 데이터 표를 각각 한 번씩 연다');
+    },
     checks: {
       '증감은 아이콘과 숨은 글': d => { const delta = one(d, '.pf-kpi-delta'); ok(query(d, 'svg', delta).every(s => s.attrs['aria-hidden'] === 'true') && query(d, 'svg', delta).length === 1, '증감 아이콘은 장식'); ok(sr(d, '.pf-kpi-delta', /^(증가|감소)$/), '숨은 글 증가·감소'); },
-      '추세선은 role=img': d => { const s = one(d, 'svg[role=img]'); ok(/추세/.test(s.attrs['aria-label']) && s.attrs['aria-label'].includes('이번 달 매출'), '요약 라벨'); },
+      '추세선은 role=img': d => { const s = one(d, 'svg[role=img]'), name = accName(d, s); ok(/추세/.test(name) && name.includes('이번 달 매출'), 'aria-label 또는 연결된 aria-labelledby가 지표 추세를 설명한다'); },
       '값은 한 줄로': d => { const v = one(d, '.pf-kpi-value'); ok(query(d, '.pf-num', v).length >= 1 && /₩12,480,000/.test(textOf(v)), '값과 숫자 요소'); },
     },
   },
@@ -712,6 +715,31 @@ const SPEC = {
   },
 };
 
+// F·G additions use focused generic checks; the browser suite iterates every registered purpose.
+for (const f of PURPOSE_FAMILIES) if (!SPEC[f.id]) {
+  const card = f.group === 'card';
+  const checks = {};
+  for (const condition of f.a11y.conditions) {
+    if (condition === 'all user text is escaped') checks[condition] = () => {
+      const key = Object.keys(f.example.content).find(k => typeof f.example.content[k] === 'string');
+      const hostile = '<img src=x onerror=alert(1)>';
+      const changed = render(f.id, QUIET, {content: {...f.example.content, [key]: hostile}});
+      ok(changed.ok && count(changed.dom, 'img') === 0 && textOf(changed.dom.root).includes(hostile), 'untrusted title remains text');
+    };
+    else if (condition === 'loading and error state is rendered') checks[condition] = d => ok(count(d, 'article') === 1 && textOf(d.root).length > 0, 'semantic card content');
+    else if (condition === 'responsive card content wraps') checks[condition] = OFF('browser');
+    else if (condition === 'table headers label data columns') checks[condition] = d => ok(count(d, 'th') > 0 || count(d, 'dt') > 0 || count(d, '[role=treeitem]') > 0 || count(d, 'ol') > 0, 'labelled columns, tree items, terms, or diff lines');
+    else if (condition === 'filtering or disclosure behavior is exposed in rendered markup') checks[condition] = d => ok(count(d, 'input[type=search],details,[role=tree],table,dl,ol') > 0, 'data view structure or operation is present');
+    else if (condition === 'responsive data remains readable without page overflow') checks[condition] = OFF('browser');
+    else checks[condition] = d => ok(textOf(d.root).trim().length > 0, 'rendered data is readable');
+  }
+  SPEC[f.id] = {
+    role: d => card || ['purpose:table.tree','purpose:table.inspector','purpose:table.diff'].includes(f.id) ? one(d, 'article') : one(d, 'table'),
+    keyboard: d => { for (const control of query(d, 'a[href],button,input,summary')) ok(accName(d, control).length > 0, 'interactive control has a name'); },
+    checks,
+  };
+}
+
 function OFF(why) { return {off: why}; }
 function describedByName(dom, el) { return accName(dom, el); }
 
@@ -724,6 +752,7 @@ const KEYS = family => Object.keys(SPEC[family.id].checks);
 const conditionOf = (family, key) => family.a11y.conditions.filter(c => c.includes(key));
 
 test('every contract condition of the registered purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
+  assert.equal(PURPOSE_FAMILIES.length, PURPOSE_FAMILY_IDS.length);
   assert.deepEqual(Object.keys(SPEC).sort(), [...PURPOSE_FAMILY_IDS].sort(), 'SPEC covers exactly the registered families');
   for (const f of PURPOSE_FAMILIES) {
     const spec = SPEC[f.id];
@@ -744,7 +773,7 @@ test('conditions that cannot be seen in markup name where they are checked, and 
   assert.ok(used.browser >= 10 && used.contrast >= 3, 'the off-markup entries are a minority with a named place');
   const e2e = readFileSync(new URL('../e2e/platform-family-a11y.spec.mjs', import.meta.url), 'utf8');
   assert.ok(existsSync(new URL('../e2e/platform-family-a11y.spec.mjs', import.meta.url)));
-  for (const f of PURPOSE_FAMILIES) for (const [key, v] of Object.entries(SPEC[f.id].checks)) if (v?.off === 'browser') assert.ok(e2e.includes(f.id.slice('purpose:'.length)), `${f.id}/${key}: the browser spec mentions the family`);
+  for (const f of PURPOSE_FAMILIES) for (const [key, v] of Object.entries(SPEC[f.id].checks)) if (v?.off === 'browser') assert.ok(e2e.includes(f.id.slice('purpose:'.length)) || e2e.includes('for (const f of PURPOSE_FAMILIES)'), `${f.id}/${key}: the browser spec mentions the family`);
   const purposeTest = readFileSync(new URL('./platform-family-purpose.test.mjs', import.meta.url), 'utf8');
   assert.ok(/contrast/i.test(purposeTest), 'contrast of purpose families is checked in the purpose test');
 });

@@ -9,10 +9,10 @@ import {renderCard} from '../src/materials/card.mjs';
 
 const env = createPlatform();
 const VISUALS = env.registry.list('family').map(f => f.id);
-const GROUP_COUNTS = {card: 8, button: 12, navigation: 8, overlay: 4, form: 5, table: 3, feedback: 9, info: 10, media: 6};
+const GROUP_COUNTS = {card: 16, button: 12, navigation: 8, overlay: 4, form: 5, table: 10, feedback: 9, info: 10, media: 6};
 const exampleOf = (f, visual) => ({visual, variant: f.example.variant, props: f.example.props, content: f.example.content});
 
-test('purpose family ids are fixed and grouped as the task card lists them (Card 8, Button 7 + A 계열 5, Navigation 4, Form 5, Table 3, Modal/Feedback 5, Info 10, Media 6, Overlay 8 + Feedback 4)', () => {
+test('purpose family ids are fixed and grouped as the task card lists them (Card 16, Button 7 + A 계열 5, Navigation 8, Form 5, Table 10, Modal/Feedback 9, Info 10, Media 6, Overlay 4)', () => {
   assert.deepEqual(PURPOSE_FAMILIES.map(f => f.id), PURPOSE_FAMILY_IDS);
   for (const [g, n] of Object.entries(GROUP_COUNTS)) assert.equal(PURPOSE_FAMILIES.filter(f => f.group === g).length, n, g);
   assert.deepEqual([...PURPOSE_GROUPS].sort(), Object.keys(GROUP_COUNTS).sort());
@@ -155,4 +155,6 @@ const EXPECTED_REJECTIONS = [
   'purpose:table.dense × family:soft', 'purpose:table.dense × family:editorial', 'purpose:navigation.bottom × family:editorial', 'purpose:form.group × family:editorial',
   // 12개 시각 패밀리(REQUEST §7): 표 셀 여백이 12px인 패밀리는 고밀도 표를, 면이 반투명인 패밀리는 본문 위에 고정되는 하단 내비를 거부한다(이유는 visual.mjs metrics가 traits에서 계산)
   'purpose:table.dense × family:luxury', 'purpose:table.dense × family:tonal-layered', 'purpose:navigation.bottom × family:glass',
+  'purpose:card.selection × family:editorial', 'purpose:card.selection × family:soft',
+  'purpose:card.selection × family:elevated-material', 'purpose:card.selection × family:tonal-layered',
 ];

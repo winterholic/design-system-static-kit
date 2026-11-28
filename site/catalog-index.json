@@ -1,12 +1,12 @@
 {
   "schemaVersion": "catalog-index/1.0",
   "catalogVersion": "2.4.0",
-  "contentHash": "01c8f6a675edd28292f892f9ffbb1406",
+  "contentHash": "63159df56a746105675b8272fa9e5bf9",
   "categories": [
     {
       "id": "all",
       "label": "전체",
-      "itemCount": 438
+      "itemCount": 453
     },
     {
       "id": "buttons",
@@ -36,12 +36,12 @@
     {
       "id": "cards",
       "label": "카드",
-      "itemCount": 15
+      "itemCount": 23
     },
     {
       "id": "data",
       "label": "데이터",
-      "itemCount": 15
+      "itemCount": 22
     },
     {
       "id": "charts",
@@ -5739,6 +5739,49 @@
       }
     },
     {
+      "id": "purpose:card.activity",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "활동 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/06cadc5a056b77e92cb44124453c1349.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/activity",
+      "purpose": "최근 작업 활동을 행위자·행동·시각 순으로 보여 준다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/bba3fcea3c92e8eccd68c8ce80c8b3d2.svg",
+        "family:corporate-formal": "/previews/8f43f5c95589ab3f06bc95790af192cf.svg",
+        "family:dense-enterprise": "/previews/24d052cb0fef3809eca995d111a2e107.svg",
+        "family:editorial": "/previews/fdc98fc6a9daa8b9880731956dc5b86b.svg",
+        "family:elevated-material": "/previews/2e5a6b58df2db2afd5c11bb14da4388e.svg",
+        "family:expressive": "/previews/2ae56b66025c67fde8cdc2ec8eee8be8.svg",
+        "family:glass": "/previews/c1afd1d2b884f87480b5928cc096538e.svg",
+        "family:luxury": "/previews/15876246fa969490d77046889ea8d335.svg",
+        "family:outline-precise": "/previews/f8f981d9c8ca6054e21c868ebbb5775b.svg",
+        "family:quiet": "/previews/ff493a428d2f8280581b13c251453d0e.svg",
+        "family:soft": "/previews/06cadc5a056b77e92cb44124453c1349.svg",
+        "family:tonal-layered": "/previews/9703f400f9b5bea6b49a05adc9c8a1a4.svg"
+      }
+    },
+    {
       "id": "purpose:card.article",
       "kind": "purpose-family",
       "category": "purpose-family",
@@ -5775,6 +5818,92 @@
         "family:quiet": "/previews/61f546cbae2bc75b928d78df92e677df.svg",
         "family:soft": "/previews/67fccb162b6ed03c388121bf437a7a4d.svg",
         "family:tonal-layered": "/previews/4837609904301022008ea30b600d6333.svg"
+      }
+    },
+    {
+      "id": "purpose:card.comparison",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상품 비교 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/1ca599ae3552fa632b304481efdd54cf.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/comparison",
+      "purpose": "두 개 이상의 상품을 같은 필드 순서로 비교하고 차이를 행 단위로 읽게 한다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/bb54bd64cd1512091299ea795d541956.svg",
+        "family:corporate-formal": "/previews/c3fd986376d1b8e143e65b76e5e0dba5.svg",
+        "family:dense-enterprise": "/previews/58d037603a8065a46874bdac3a63eb75.svg",
+        "family:editorial": "/previews/e4259a436ab7348e23359245de350e38.svg",
+        "family:elevated-material": "/previews/fbc768bec88e9af4b9ae09804da609a3.svg",
+        "family:expressive": "/previews/871f2ef1aa183a6a3e43e9339499c6c6.svg",
+        "family:glass": "/previews/35795e7cedbd1756218e2e3d5a100e42.svg",
+        "family:luxury": "/previews/451a1e2ba327737745d488387db9f311.svg",
+        "family:outline-precise": "/previews/1ca599ae3552fa632b304481efdd54cf.svg",
+        "family:quiet": "/previews/d7cde8bf5e8ba00ce41b0d57c01f3ad7.svg",
+        "family:soft": "/previews/cf9f2d8a047b97f3f8fa713bcae79b0b.svg",
+        "family:tonal-layered": "/previews/61d0eb061c3978f87eff2a95606f9a98.svg"
+      }
+    },
+    {
+      "id": "purpose:card.dashboard-widget",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "대시보드 위젯 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/0e8253bf692458cc0f52cd2d2f5fbfc1.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/dashboard-widget",
+      "purpose": "제목·주요 수치·보조 지표를 조합해 대시보드의 한 업무 지표를 요약한다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/30cc42d7b2f72a2fd66fb7ee75b0b54b.svg",
+        "family:corporate-formal": "/previews/a509e895f439ee4f24e8a79a51801c57.svg",
+        "family:dense-enterprise": "/previews/596f78e3151de3043a1a435ae46bf3e3.svg",
+        "family:editorial": "/previews/387d344939716507e14b5ff62dd2e021.svg",
+        "family:elevated-material": "/previews/4fe31e0167d736de1cb8a8497095292a.svg",
+        "family:expressive": "/previews/102b03f5803b8bc6e43995db262d63d1.svg",
+        "family:glass": "/previews/0e8253bf692458cc0f52cd2d2f5fbfc1.svg",
+        "family:luxury": "/previews/2ed95f91ecd0e35840fc70f88b814fbe.svg",
+        "family:outline-precise": "/previews/8b5aadc44e60a8164e5d08d6ed6045c9.svg",
+        "family:quiet": "/previews/cff03e6b818d81ffed531ea4a3b9d0d8.svg",
+        "family:soft": "/previews/80436a2083864677872ca1d53e04631b.svg",
+        "family:tonal-layered": "/previews/98ab78298a46b1067e558a6f1dd08236.svg"
       }
     },
     {
@@ -5817,6 +5946,49 @@
       }
     },
     {
+      "id": "purpose:card.financial-asset",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "금융 자산 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/1c47cc9214116f4cd36cbc1a0fda9458.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/financial-asset",
+      "purpose": "자산 이름·현재 값·변동을 숫자와 방향 문구로 함께 전달한다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/95cf0573c92beba24e7129aa987cc8c3.svg",
+        "family:corporate-formal": "/previews/57985417a9e30a8f7acb59f724cb5f8f.svg",
+        "family:dense-enterprise": "/previews/e567289a0ecd91daff3aab4a2c2eeaf1.svg",
+        "family:editorial": "/previews/37de1e7c9bcd0c865d74907d3a896b0e.svg",
+        "family:elevated-material": "/previews/ace704c383bf09ce2cfd7f9ae92601b9.svg",
+        "family:expressive": "/previews/7bc4f0187c87e15f1e95e534e3a74d28.svg",
+        "family:glass": "/previews/745ccf1a0ac939d24b47092de5bd4cb8.svg",
+        "family:luxury": "/previews/f023df26bd7dd191d9032412cda6b8a8.svg",
+        "family:outline-precise": "/previews/1c47cc9214116f4cd36cbc1a0fda9458.svg",
+        "family:quiet": "/previews/55d95330439c14afddcf46aee83d42dc.svg",
+        "family:soft": "/previews/298666eb2fc011de59596e0d220f666f.svg",
+        "family:tonal-layered": "/previews/474fac14042c139ed851fd680af7d580.svg"
+      }
+    },
+    {
       "id": "purpose:card.gallery",
       "kind": "purpose-family",
       "category": "purpose-family",
@@ -5856,6 +6028,49 @@
       }
     },
     {
+      "id": "purpose:card.integration",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "연동 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/43e01aabbd9c05051d43f6c405b46e63.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/integration",
+      "purpose": "외부 서비스 연동의 이름·연결 상태·설명을 보여 준다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/bced71ac8436eca2310236a3115b4572.svg",
+        "family:corporate-formal": "/previews/4c5b43de6d124dd6630f65655a3d0e41.svg",
+        "family:dense-enterprise": "/previews/eec0cfdd36ec2426549b264237f11f52.svg",
+        "family:editorial": "/previews/f8c5c7a64a386a04200c75be07b0803a.svg",
+        "family:elevated-material": "/previews/43e01aabbd9c05051d43f6c405b46e63.svg",
+        "family:expressive": "/previews/7d5bd8e0e4ef9368ea82e6f76bb22972.svg",
+        "family:glass": "/previews/72b4b546e0a7f70253e6f39f08f10912.svg",
+        "family:luxury": "/previews/f2966805ce336849d64ef9dfb882c856.svg",
+        "family:outline-precise": "/previews/aca58c21729fd46ca866a7b9152312fa.svg",
+        "family:quiet": "/previews/c8a4371bd5b7bda473c2c9504df5c4c9.svg",
+        "family:soft": "/previews/753705637af540c7564718940aa458c1.svg",
+        "family:tonal-layered": "/previews/88faa64ab414b4dd44b5c33b40aee5db.svg"
+      }
+    },
+    {
       "id": "purpose:card.kpi",
       "kind": "purpose-family",
       "category": "purpose-family",
@@ -5892,6 +6107,49 @@
         "family:quiet": "/previews/d15ee00e9656fa7d44e55490a400d5b9.svg",
         "family:soft": "/previews/d9ef204c94cff32ae13853fa0c92b9b0.svg",
         "family:tonal-layered": "/previews/cc20cbac7919c4e32f5764224aa8a599.svg"
+      }
+    },
+    {
+      "id": "purpose:card.notification",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "알림 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/25a72f93b4c4f0b4fbc7926231d339da.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/notification",
+      "purpose": "알림 한 건의 제목·본문·시각과 읽음 상태를 전달한다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/2868847e89d908b2347207a1d59f0bb6.svg",
+        "family:corporate-formal": "/previews/57341f95a1afa392025b0425e807f398.svg",
+        "family:dense-enterprise": "/previews/742a41fe08c7a52d80502ea20819c151.svg",
+        "family:editorial": "/previews/4eb84184c3cef5dd63319fec946caf14.svg",
+        "family:elevated-material": "/previews/ad0fe0bcbaa4aa3bb8f9caf70e77b8c6.svg",
+        "family:expressive": "/previews/eab9a114538082bf83a292d80860f50f.svg",
+        "family:glass": "/previews/73720458285be242dfb645cd2fd8da92.svg",
+        "family:luxury": "/previews/7c03238433ed32618f5d10faafc89f6b.svg",
+        "family:outline-precise": "/previews/25a72f93b4c4f0b4fbc7926231d339da.svg",
+        "family:quiet": "/previews/6c0fc35509946b9e55a217325b9036eb.svg",
+        "family:soft": "/previews/69ea592a30ab4f45edbceb8936333490.svg",
+        "family:tonal-layered": "/previews/9492d8fdd3694329d9b787475f69fd3a.svg"
       }
     },
     {
@@ -6014,6 +6272,88 @@
         "family:quiet": "/previews/14a2a6528a92e2b5177b8b110d4127f8.svg",
         "family:soft": "/previews/5fe26002ecf656d50485f0b2a1acc545.svg",
         "family:tonal-layered": "/previews/2a144577ff75580ee94f7efe183df6fb.svg"
+      }
+    },
+    {
+      "id": "purpose:card.review",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "후기 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/1ab96f2b208a190b928f943a0a9abb27.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/review",
+      "purpose": "평점·후기·작성자를 함께 보여 주며 별점은 숫자로도 읽힌다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/4b523e417c7fb7b1b8b21efd4681b3f0.svg",
+        "family:corporate-formal": "/previews/e22eafb2a50f7d9755cac5e4e4ffd407.svg",
+        "family:dense-enterprise": "/previews/b91f41573f634ab0222250efb6ddd6b7.svg",
+        "family:editorial": "/previews/b1cbd3d148d9775a27d8ec2a4bc1b2b5.svg",
+        "family:elevated-material": "/previews/c85e017ba5e24eb9267e9a2cf05c57e4.svg",
+        "family:expressive": "/previews/aeb354daaab9b375eaf0a2bbe7801fa0.svg",
+        "family:glass": "/previews/1ab96f2b208a190b928f943a0a9abb27.svg",
+        "family:luxury": "/previews/54b9a706afe2fee91f709e39341b7161.svg",
+        "family:outline-precise": "/previews/e31d5f7269fec6485b43de0e39688364.svg",
+        "family:quiet": "/previews/fc2c910dfe7de099ab0925c303f8a3eb.svg",
+        "family:soft": "/previews/f81073de9dd369b96f68570d10287c88.svg",
+        "family:tonal-layered": "/previews/2fb2ead43a3a5ef968ad11e110073c3a.svg"
+      }
+    },
+    {
+      "id": "purpose:card.selection",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "선택 카드",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/31bd4ebbea0a42d0df8555dfe9d871f5.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/selection",
+      "purpose": "선택 목록에서 한 항목을 키보드와 포인터로 선택한다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/7b0d1d4b5908c9a8abc979fae0db31f2.svg",
+        "family:corporate-formal": "/previews/8a141bec0e78221614eb5062134e2f4d.svg",
+        "family:dense-enterprise": "/previews/31bd4ebbea0a42d0df8555dfe9d871f5.svg",
+        "family:expressive": "/previews/5d982827c2ae5e0ab039b904315d5d32.svg",
+        "family:glass": "/previews/cba70c6041f1772c114fef58f4f0e443.svg",
+        "family:luxury": "/previews/4cf2c88c4652b0f18dd2f5ca4380c33a.svg",
+        "family:outline-precise": "/previews/69f10fadef04fc9c03bc53bec7bb7d16.svg",
+        "family:quiet": "/previews/7ae8e19d70fc5609fbf2ccebd9a31918.svg"
       }
     },
     {
@@ -7764,6 +8104,293 @@
         "family:glass": "/previews/bb6957fb299e70e5974c93adc366a011.svg",
         "family:outline-precise": "/previews/f82af775e9db7c86ea1073ec3591db9b.svg",
         "family:quiet": "/previews/542cc088035ff796f3d0d1d52a159989.svg"
+      }
+    },
+    {
+      "id": "purpose:table.diff",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "변경 비교 보기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/06c4825c09bd3d3979925baaba7f9607.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/diff",
+      "purpose": "이전·이후 텍스트를 나란히 비교하고 모바일에서는 위아래로 쌓는다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/88caf56751b69657b07036e416b7b839.svg",
+        "family:corporate-formal": "/previews/18a8c61cd64c3eab8aeeceb02661a38c.svg",
+        "family:dense-enterprise": "/previews/f5b39e383f4233447ebce734a69dc001.svg",
+        "family:editorial": "/previews/5d4dab0bee86d439282cf58ce3b7fbfd.svg",
+        "family:elevated-material": "/previews/06c4825c09bd3d3979925baaba7f9607.svg",
+        "family:expressive": "/previews/e1e4dbebe9f41c9249202cc17521c641.svg",
+        "family:glass": "/previews/d9f9a854ddc5cae7caa7e45f4d1dc35e.svg",
+        "family:luxury": "/previews/b5d969ebad89d2c02b0397ff612c484e.svg",
+        "family:outline-precise": "/previews/a653651bdfa77a4646dcc34bdd219c6c.svg",
+        "family:quiet": "/previews/48609029142ef25e626753972661be84.svg",
+        "family:soft": "/previews/97c403d31cf7186ceca7a8b67aed18bb.svg",
+        "family:tonal-layered": "/previews/200bad4179ebb2c6cb0f11779e509b33.svg"
+      }
+    },
+    {
+      "id": "purpose:table.expandable",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "행 확장 표",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/02b9ef71798836a5f2aa7d8c3ac03669.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/expandable",
+      "purpose": "각 행의 상세 내용을 네이티브 disclosure로 펼쳐 본다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/8001b3247c8eabbf178c3534c9eaa7f3.svg",
+        "family:corporate-formal": "/previews/c120d50f4d3faf1edb8956928b1a2da2.svg",
+        "family:dense-enterprise": "/previews/d1f8fca83e6148b2f3bee42ad0d7b95d.svg",
+        "family:editorial": "/previews/cfcacc5d76dbdbf121dd102509d1cf00.svg",
+        "family:elevated-material": "/previews/fd8f07a0a9ec636beff5e725090b8db3.svg",
+        "family:expressive": "/previews/ed01f5e7ae7896a01ae2dda517d5ecb9.svg",
+        "family:glass": "/previews/feb4b259a84f0b8f398c5ecdb05ff0cc.svg",
+        "family:luxury": "/previews/60d8f8c64f27050bb27b4c33f433a666.svg",
+        "family:outline-precise": "/previews/fc9cc39b36c6f818792460b0d0d7366c.svg",
+        "family:quiet": "/previews/02b9ef71798836a5f2aa7d8c3ac03669.svg",
+        "family:soft": "/previews/47ff8df9bedd2339b51bcec174431a0e.svg",
+        "family:tonal-layered": "/previews/f0fa4b399c4f6efc7f07176d8ae42951.svg"
+      }
+    },
+    {
+      "id": "purpose:table.filterable",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "필터 표",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/11e2c74790d5ec56c0e114a77cc2b6aa.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/filterable",
+      "purpose": "열 기준을 안내하는 검색 입력으로 행을 즉시 좁히고 일치 건수를 읽게 한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/64d2bb6f84bde838a8b58c200bea9b46.svg",
+        "family:corporate-formal": "/previews/11e2c74790d5ec56c0e114a77cc2b6aa.svg",
+        "family:dense-enterprise": "/previews/900f4132073de01efa2883e36bb0477c.svg",
+        "family:editorial": "/previews/692d2edf7f3379be3d9b5dbb405218c1.svg",
+        "family:elevated-material": "/previews/c417a359930b39f5c573900afdee8551.svg",
+        "family:expressive": "/previews/f8e889da28e32f8805fd27f8d1325c25.svg",
+        "family:glass": "/previews/4596a067b173584660776099242109b5.svg",
+        "family:luxury": "/previews/711f03bcdef279c610ee9d0fa2cb0b50.svg",
+        "family:outline-precise": "/previews/f408d02575b2c932d5dc486175d92a49.svg",
+        "family:quiet": "/previews/17a89098c2d63da633846003c54611e7.svg",
+        "family:soft": "/previews/39fbcfbe3d1730eca350cfebff0def35.svg",
+        "family:tonal-layered": "/previews/74357865280a7c330e8d7102ff95c95b.svg"
+      }
+    },
+    {
+      "id": "purpose:table.grouped",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "그룹 표",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/0779bfa2cda65a7b6b7f2df3c84adf82.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/grouped",
+      "purpose": "행을 같은 범주의 묶음으로 나누고 그룹 제목을 표 구조에서 읽게 한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/101b422afd2d5e78c1f00d9d65bbe378.svg",
+        "family:corporate-formal": "/previews/6bd8dc27b8c3d0739fa4555902be7e58.svg",
+        "family:dense-enterprise": "/previews/e31c17799d1bd28e2f42f2bf566b1a73.svg",
+        "family:editorial": "/previews/a5a418deeba9da2422151037fd59b197.svg",
+        "family:elevated-material": "/previews/7d91493997750bb3061e6d93d9cbced1.svg",
+        "family:expressive": "/previews/8df373044255ac52d19b9314b6c1d2ec.svg",
+        "family:glass": "/previews/bac6ca0c402dbb93d773532e3a535003.svg",
+        "family:luxury": "/previews/7dd0ce695d99e839804bf894e96b30a2.svg",
+        "family:outline-precise": "/previews/f25b1559f20d34ba067461d803eeb55c.svg",
+        "family:quiet": "/previews/80226fb92e5be964b01607b2c8f23ba3.svg",
+        "family:soft": "/previews/0779bfa2cda65a7b6b7f2df3c84adf82.svg",
+        "family:tonal-layered": "/previews/960b42e95b3dc9d4c7eb95d1c034cb7c.svg"
+      }
+    },
+    {
+      "id": "purpose:table.inspector",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "키·값 검사기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/0d4e57aaa3522c4a7a430262adcab960.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/inspector",
+      "purpose": "레코드의 필드 이름과 값을 쌍으로 나열하고 긴 값을 줄바꿈한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/0d4e57aaa3522c4a7a430262adcab960.svg",
+        "family:corporate-formal": "/previews/a77963865be1be49c27edbad1929727b.svg",
+        "family:dense-enterprise": "/previews/8f7311245f774b158e6826233264bcab.svg",
+        "family:editorial": "/previews/2a1b150dc03c3369438402fd883b8c49.svg",
+        "family:elevated-material": "/previews/518321c0ec1bce17241439c7cafb671e.svg",
+        "family:expressive": "/previews/75b17e8499927493e1f93d0f02b09019.svg",
+        "family:glass": "/previews/93cecd8a3b9df2968c01d33a42402636.svg",
+        "family:luxury": "/previews/c53411aed2c4c4fc6bb0c152556aa3e7.svg",
+        "family:outline-precise": "/previews/2acae1526d01d96d3c61ee93f496e096.svg",
+        "family:quiet": "/previews/d22e7612fbcb39422ccb5c3020b4102f.svg",
+        "family:soft": "/previews/5e0c085a144080eb3a11f384367d6c71.svg",
+        "family:tonal-layered": "/previews/6ad8b12ed98a9324bd39357fc8e66caf.svg"
+      }
+    },
+    {
+      "id": "purpose:table.log-viewer",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "로그 보기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/259726380424c333ccf259d7e5a267cc.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/log-viewer",
+      "purpose": "시각·심각도·메시지를 열로 나눠 긴 로그 문장을 읽는다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/b027fa3929a824b50e89613f09d65ec3.svg",
+        "family:corporate-formal": "/previews/c0d1cc9386bf97f0f848c4cb8a890c0e.svg",
+        "family:dense-enterprise": "/previews/669fdf0d3db0780caf41bec3daf8ffde.svg",
+        "family:editorial": "/previews/71c8fa642bb9334972374dab0ac21ca1.svg",
+        "family:elevated-material": "/previews/f8c4e5cf2815396d224fe7f1fd239046.svg",
+        "family:expressive": "/previews/b5d78e9ee5cc8ead6c045dfc0e513ba3.svg",
+        "family:glass": "/previews/469ee8775c87f6f8f78c0f807c3f4437.svg",
+        "family:luxury": "/previews/7b4f9dfb2dc15d4a906f594bf28985d1.svg",
+        "family:outline-precise": "/previews/fcff94b5445471de4a93875ad5660cd9.svg",
+        "family:quiet": "/previews/33edbabb5309f42ab17f622ab132e9cd.svg",
+        "family:soft": "/previews/259726380424c333ccf259d7e5a267cc.svg",
+        "family:tonal-layered": "/previews/837f51ccb492208ccce908f9a199f836.svg"
+      }
+    },
+    {
+      "id": "purpose:table.tree",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "트리 보기",
+      "contexts": [
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "tags": [
+        "table",
+        "dashboard",
+        "data",
+        "admin"
+      ],
+      "previewUrl": "/previews/10f2b8b51da783f383107c45bcd60948.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/table/tree",
+      "purpose": "계층형 항목을 펼치고 접으며 방향키로 이동한다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/10f2b8b51da783f383107c45bcd60948.svg",
+        "family:corporate-formal": "/previews/336a6d1f9974b52f3e14446ab7ec14de.svg",
+        "family:dense-enterprise": "/previews/e63a2966a80bdfdd7f1fbefbe0a0df3f.svg",
+        "family:editorial": "/previews/aa60d38e725ec1a2b48416440a8e8578.svg",
+        "family:elevated-material": "/previews/e910d05bdd99c5a68ffdfdd2d8319d55.svg",
+        "family:expressive": "/previews/172566f80afbed99e8cb0cd5db37dea5.svg",
+        "family:glass": "/previews/ef410d5011e9c7ec5f09f9209511e0eb.svg",
+        "family:luxury": "/previews/712cd29e5add03847263db49118fc779.svg",
+        "family:outline-precise": "/previews/4a0ebdd8aba4c7f264225a12f132d5a5.svg",
+        "family:quiet": "/previews/df8675614b87690314ad574755a20fb0.svg",
+        "family:soft": "/previews/b7e4482d7f63485b7d0525b11b8c1e94.svg",
+        "family:tonal-layered": "/previews/a2b76c0ec29c428898cce1a11c869e45.svg"
       }
     },
     {

@@ -23,7 +23,7 @@
       "total": 406
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:65 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:80 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:103 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -55,7 +55,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 65
+        "materials": 80
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -200,7 +200,7 @@
           "apps/web/features/platform/assemble-state.ts"
         ],
         "proven": true,
-        "materials": 21
+        "materials": 32
       }
     },
     "channelProof": {
@@ -225,30 +225,30 @@
   "summary": {
     "requirements": {
       "total": 406,
-      "fulfilled": 337,
-      "missing": 69,
-      "coverageRate": 0.83,
+      "fulfilled": 352,
+      "missing": 54,
+      "coverageRate": 0.867,
       "byCoverage": {
-        "direct": 297,
+        "direct": 312,
         "variant": 31,
         "schema": 7,
         "part-of": 2,
-        "missing": 69
+        "missing": 54
       },
       "statusDistribution": {
-        "missing": 69,
+        "missing": 54,
         "metadata-only": 0,
         "defined": 5,
         "renderable": 84,
-        "catalog-visible": 42,
+        "catalog-visible": 46,
         "assemblable": 1,
-        "verified": 205
+        "verified": 216
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 51,
-          "direct": 116,
+          "missing": 36,
+          "direct": 131,
           "variant": 31,
           "schema": 7,
           "partOf": 2
@@ -366,18 +366,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1480,
+      "totalRecords": 1495,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
         "defined": 26,
         "renderable": 150,
-        "catalog-visible": 398,
+        "catalog-visible": 402,
         "assemblable": 4,
-        "verified": 475
+        "verified": 486
       },
       "registeredByRegistry": {
-        "platform": 381,
+        "platform": 396,
         "design": 1099
       }
     },
@@ -563,13 +563,13 @@
         }
       },
       "purpose-family": {
-        "registered": 65,
-        "actualMaterial": 65,
-        "assemblableVerified": 20,
-        "distinctOutputs": 65,
+        "registered": 80,
+        "actualMaterial": 80,
+        "assemblableVerified": 31,
+        "distinctOutputs": 80,
         "byStatus": {
-          "catalog-visible": 45,
-          "verified": 20
+          "catalog-visible": 49,
+          "verified": 31
         }
       },
       "recipe": {
@@ -753,8 +753,8 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 65,
-        "delta": 33,
+        "currentMeasured": 80,
+        "delta": 48,
         "status": "drift",
         "measuredBy": "live registry count"
       },
@@ -1545,9 +1545,11 @@
       "id": "req:comp:f-07-product-comparison-card",
       "section": "§6.2 F",
       "name": "Product Comparison Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.comparison"
+      ]
     },
     {
       "id": "req:comp:f-08-profile-card",
@@ -1617,17 +1619,21 @@
       "id": "req:comp:f-14-notification-card",
       "section": "§6.2 F",
       "name": "Notification Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.notification"
+      ]
     },
     {
       "id": "req:comp:f-15-activity-card",
       "section": "§6.2 F",
       "name": "Activity Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.activity"
+      ]
     },
     {
       "id": "req:comp:f-16-settings-card",
@@ -1647,17 +1653,21 @@
       "id": "req:comp:f-17-integration-card",
       "section": "§6.2 F",
       "name": "Integration Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.integration"
+      ]
     },
     {
       "id": "req:comp:f-18-review-card",
       "section": "§6.2 F",
       "name": "Review Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.review"
+      ]
     },
     {
       "id": "req:comp:f-19-testimonial-card",
@@ -1673,25 +1683,31 @@
       "id": "req:comp:f-20-interactive-selection-card",
       "section": "§6.2 F",
       "name": "Interactive Selection Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.selection"
+      ]
     },
     {
       "id": "req:comp:f-21-dashboard-widget-card",
       "section": "§6.2 F",
       "name": "Dashboard Widget Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.dashboard-widget"
+      ]
     },
     {
       "id": "req:comp:f-22-financial-asset-card",
       "section": "§6.2 F",
       "name": "Financial Asset Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:card.financial-asset"
+      ]
     },
     {
       "id": "req:comp:g-01-basic-table",
@@ -1731,9 +1747,11 @@
       "id": "req:comp:g-04-filterable-table",
       "section": "§6.2 G",
       "name": "Filterable Table",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:table.filterable"
+      ]
     },
     {
       "id": "req:comp:g-05-selectable-table",
@@ -1753,17 +1771,21 @@
       "id": "req:comp:g-06-expandable-row-table",
       "section": "§6.2 G",
       "name": "Expandable Row Table",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:table.expandable"
+      ]
     },
     {
       "id": "req:comp:g-07-grouped-table",
       "section": "§6.2 G",
       "name": "Grouped Table",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:table.grouped"
+      ]
     },
     {
       "id": "req:comp:g-08-dense-table",
@@ -1810,9 +1832,11 @@
       "id": "req:comp:g-12-tree-view",
       "section": "§6.2 G",
       "name": "Tree View",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:table.tree"
+      ]
     },
     {
       "id": "req:comp:g-13-kanban",
@@ -1862,17 +1886,21 @@
       "id": "req:comp:g-17-key-value-inspector",
       "section": "§6.2 G",
       "name": "Key-value Inspector",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:table.inspector"
+      ]
     },
     {
       "id": "req:comp:g-18-log-viewer",
       "section": "§6.2 G",
       "name": "Log Viewer",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:table.log-viewer"
+      ]
     },
     {
       "id": "req:comp:g-19-code-block",
@@ -1888,9 +1916,11 @@
       "id": "req:comp:g-20-diff-viewer",
       "section": "§6.2 G",
       "name": "Diff Viewer",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:table.diff"
+      ]
     },
     {
       "id": "req:comp:h-01-modal",
@@ -46726,7 +46756,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "7860b6c5a2299554",
+        "outputHash": "ffb9df4ab7e2cb0f",
         "duplicateOutputOf": []
       }
     },
@@ -46801,7 +46831,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "e27a837e96b1b610",
+        "outputHash": "29c47123f20d7ab0",
         "duplicateOutputOf": []
       }
     },
@@ -46872,7 +46902,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "0f8c5e39a2fcec4c",
+        "outputHash": "95fc2c3b50332d97",
         "duplicateOutputOf": []
       }
     },
@@ -47012,7 +47042,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "09f226becb77b865",
+        "outputHash": "3a54c792b3117a8e",
         "duplicateOutputOf": []
       }
     },
@@ -47292,7 +47322,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "aa3750c71f035154",
+        "outputHash": "2d2c69aede789f39",
         "duplicateOutputOf": []
       }
     },
@@ -47426,7 +47456,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "f47f440c9e4bae27",
+        "outputHash": "ff877e4e0bb55129",
         "duplicateOutputOf": []
       }
     },
@@ -47496,7 +47526,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "f1ba5fbb6dbdfcb4",
+        "outputHash": "b68fb9bb4e0090d9",
         "duplicateOutputOf": []
       }
     },
@@ -47707,7 +47737,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "8798b745d6e50037",
+        "outputHash": "fb756d7e9efe540e",
         "duplicateOutputOf": []
       }
     },
@@ -83006,6 +83036,86 @@
       }
     },
     {
+      "id": "purpose:card.activity",
+      "name": "활동 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-15-activity-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardActivity",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardActivity",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "c7dbfe975a5786e5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:card.article",
       "name": "기사 카드",
       "kind": "purpose-family",
@@ -83087,6 +83197,166 @@
           "qualityOk": true
         },
         "outputHash": "90f392f29035e21b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:card.comparison",
+      "name": "상품 비교 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-07-product-comparison-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardComparison",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardComparison",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e77832cac677f9b2",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:card.dashboard-widget",
+      "name": "대시보드 위젯 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-21-dashboard-widget-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardDashboardWidget",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardDashboardWidget",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e3f1390eddf711f6",
         "duplicateOutputOf": []
       }
     },
@@ -83178,6 +83448,86 @@
       }
     },
     {
+      "id": "purpose:card.financial-asset",
+      "name": "금융 자산 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-22-financial-asset-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardFinancialAsset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardFinancialAsset",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "bf8035e4f0397571",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:card.gallery",
       "name": "갤러리 카드",
       "kind": "purpose-family",
@@ -83260,6 +83610,86 @@
           "qualityOk": true
         },
         "outputHash": "3a4d58a2589f7523",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:card.integration",
+      "name": "연동 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-17-integration-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardIntegration",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardIntegration",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1386a295a292c8e8",
         "duplicateOutputOf": []
       }
     },
@@ -83348,7 +83778,87 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "de12b118ea64f395",
+        "outputHash": "36808403a41270f3",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:card.notification",
+      "name": "알림 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-14-notification-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardNotification",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardNotification",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6a54b0c1f1561b2f",
         "duplicateOutputOf": []
       }
     },
@@ -83621,6 +84131,164 @@
           "qualityOk": true
         },
         "outputHash": "e22882bcec4909bf",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:card.review",
+      "name": "후기 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-18-review-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardReview",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardReview",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "4e2fc6878a7bc4dd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:card.selection",
+      "name": "선택 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "card",
+      "requirementIds": [
+        "req:comp:f-20-interactive-selection-card"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/card.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/card-extra.mjs#renderCardSelection",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "selected",
+          "loading",
+          "empty",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/card.mjs",
+        "renderer": "src/platform/families/card-extra.mjs#renderCardSelection",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "d5d8a31858de15f9",
         "duplicateOutputOf": []
       }
     },
@@ -87454,6 +88122,537 @@
           "qualityOk": true
         },
         "outputHash": "e3f17f9aa472964b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.diff",
+      "name": "변경 비교 보기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-20-diff-viewer"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderDiff",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderDiff",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "901f3a9f73cd3871",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.expandable",
+      "name": "행 확장 표",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-06-expandable-row-table"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderExpandable",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:data-table",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderExpandable",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "c552cfb9822f4f79",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.filterable",
+      "name": "필터 표",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-04-filterable-table"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderFilterable",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:data-table",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderFilterable",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e89bbcafb1fe0b2e",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.grouped",
+      "name": "그룹 표",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-07-grouped-table"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderGrouped",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:data-table",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderGrouped",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "08510491a13d5647",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.inspector",
+      "name": "키·값 검사기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-17-key-value-inspector"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderInspector",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderInspector",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6ac8a298d37b454d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.log-viewer",
+      "name": "로그 보기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-18-log-viewer"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderLogViewer",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:data-table",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderLogViewer",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6c31fa409de148b3",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:table.tree",
+      "name": "트리 보기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "table",
+      "requirementIds": [
+        "req:comp:g-12-tree-view"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/table.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/data-display.mjs#renderTree",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "ready",
+          "partial",
+          "empty",
+          "loading",
+          "error"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/table.mjs",
+        "renderer": "src/platform/families/data-display.mjs#renderTree",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1bb2cfb091c1e273",
         "duplicateOutputOf": []
       }
     },

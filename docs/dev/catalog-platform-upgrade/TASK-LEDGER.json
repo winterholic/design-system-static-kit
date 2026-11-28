@@ -1698,28 +1698,138 @@
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/card-extra.mjs",
+        "src/platform/families/card.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/platform/render.mjs",
+        "src/service/platform-components.mjs",
+        "tests/platform-card-data-blueprint.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-service-channels.test.mjs",
+        "tests/platform-service-card-data-channels.test.mjs",
+        "e2e/platform-card-data.spec.mjs",
+        "e2e/platform-family-a11y.spec.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/platform/components.md",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/evidence/platform/baseline.json"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-card-data-blueprint.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-service-card-data-channels.test.mjs",
+        "e2e/platform-card-data.spec.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/families/contracts.mjs",
+          "owner": "Track D",
+          "reason": "F componentType와 inventory classification ↔ layer 연결을 등록"
+        },
+        {
+          "file": "src/platform/families/index.mjs",
+          "owner": "Track D",
+          "reason": "F 목적 패밀리 모듈을 레지스트리에 합류"
+        },
+        {
+          "file": "src/platform/render.mjs",
+          "owner": "Track A",
+          "reason": "Blueprint가 F selection 재료에 필요한 런타임을 출력"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "owner": "Track A",
+          "reason": "F selection 재료 런타임을 Core assembleComponents 출력에 연결"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "F 8개 요구 ID를 실제 등록 재료로 대응"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-G",
-      "title": "데이터 표시 19항목",
+      "title": "데이터 표시 20항목",
       "goal": "데이터 표시와 업무 복합 패턴 계약",
       "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/data-display.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/platform/render.mjs",
+        "src/service/platform-components.mjs",
+        "tests/platform-card-data-blueprint.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-pipeline-baseline.test.mjs",
+        "tests/platform-service-channels.test.mjs",
+        "tests/platform-service-card-data-channels.test.mjs",
+        "e2e/platform-card-data.spec.mjs",
+        "e2e/platform-family-a11y.spec.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/platform/components.md",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/evidence/platform/baseline.json"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-card-data-blueprint.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-service-card-data-channels.test.mjs",
+        "e2e/platform-card-data.spec.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/families/contracts.mjs",
+          "owner": "Track D",
+          "reason": "G componentType와 inventory classification ↔ layer 연결을 등록"
+        },
+        {
+          "file": "src/platform/families/index.mjs",
+          "owner": "Track D",
+          "reason": "G 목적 패밀리 모듈을 레지스트리에 합류"
+        },
+        {
+          "file": "src/platform/render.mjs",
+          "owner": "Track A",
+          "reason": "Blueprint가 filter·expand·tree 런타임을 사용한 경우 출력"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "owner": "Track A",
+          "reason": "G 런타임을 Core assembleComponents 출력에 연결"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "G 7개 요구 ID를 실제 등록 재료로 대응"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-H",

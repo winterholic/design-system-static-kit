@@ -9,6 +9,8 @@ import {diagnostic, hintFor} from './errors.mjs';
 import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME, COMMERCE_COMPONENT_BY_ID, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, LAYOUT_COMPONENT_BY_ID, LAYOUT_CSS} from '../platform/families/contracts.mjs';
 import {actionRuntimeFor} from '../platform/families/action.mjs';
 import {layoutRuntimeFor} from '../platform/families/layout.mjs';
+import {dataDisplayRuntimeFor} from '../platform/families/data-display.mjs';
+import {cardSelectionRuntimeFor} from '../platform/families/card-extra.mjs';
 
 const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
 const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions', 'layouts', 'commerce'];
@@ -140,7 +142,9 @@ export function assembleComponents(request) {
     const script = formRuntime + controlRuntime({catalogVersion: '2.7.0', tree: {type: 'page', children: runtimeBases.map(id => ({type: id.slice('base-component:'.length)}))}})
       + (actionItems.length ? ACTION_COMPONENT_RUNTIME : actionRuntimeFor(request.items.map(item => item.purpose)))
       + layoutRuntimeFor(layoutItems.map(item => item.component))
-      + (commerceItems.length ? COMMERCE_COMPONENT_RUNTIME : '');
+      + (commerceItems.length ? COMMERCE_COMPONENT_RUNTIME : '')
+      + dataDisplayRuntimeFor(request.items.map(item => item.purpose))
+      + cardSelectionRuntimeFor(request.items.map(item => item.purpose));
     const purposeItems = request.items.map(item => {
       const family = env.registry.get(item.purpose);
       const defaults = fields => Object.fromEntries(Object.keys(fields).map(key => [key, family.defaults[key]]));

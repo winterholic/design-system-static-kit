@@ -12496,6 +12496,121 @@ exports.buttonClose = buttonClose;
 exports.renderButtonClose = renderButtonClose;
 exports.BUTTON_FAMILIES = BUTTON_FAMILIES;
 };
+__defs["platform/families/card-extra.mjs"] = function (exports, __m) {
+/** §6.2 F 카드 중 기존 목적 패밀리로 표현되지 않던 8개 항목. */
+const {definePurposeFamily, e} = __m("platform/families/kit.mjs");
+
+const CARD = 'base-component:card-surface';
+const PARENTS = ['slot:main', 'slot:grid-item', 'slot:aside'];
+const TEXT_PAIRS = [['--kit-text', '--kit-surface', 7, 'card content'], ['--kit-muted', '--kit-surface', 4.5, 'card secondary text'], ['--kit-danger', '--kit-danger-soft', 4.5, 'card error']];
+const CSS = `.pf-card-extra{min-width:0;overflow-wrap:anywhere;color:var(--kit-text)}.pf-card-extra h3,.pf-card-extra p,.pf-card-extra ul{margin:0}.pf-card-extra h3{font-family:var(--kit-heading);font-size:var(--kit-t-sub);font-weight:var(--pf-title-weight);line-height:1.25;overflow-wrap:anywhere}.pf-card-extra .pf-muted{color:var(--kit-muted)}.pf-card-extra .pf-num{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.pf-card-extra .pf-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--kit-sp-near)}.pf-card-extra .pf-card-row{display:flex;justify-content:space-between;gap:var(--kit-sp-item);padding-block:var(--kit-sp-near);border-block-end:1px solid var(--kit-border)}.pf-card-extra .pf-card-state{display:inline-flex;align-items:center;gap:var(--kit-sp-tight);font-size:var(--kit-t-small)}.pf-card-extra [data-state=loading] .pf-card-body{min-height:5rem}.pf-card-extra .pf-card-hit{display:block;width:100%;min-height:44px;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:start;cursor:pointer}.pf-card-extra .pf-card-hit:focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.pf-card-extra [aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--kit-action)}.pf-card-widget-value{font-size:clamp(1.2rem,14cqi,2rem)}@media(max-width:640px){.pf-card-extra .pf-card-grid{grid-template-columns:minmax(0,1fr)}.pf-card-extra .pf-card-row{flex-wrap:wrap}}`;
+const MESSAGE = {message: {type: 'string'}, emptyMessage: {type: 'string'}};
+
+function frame(ctx, {title, content, behavior = 'static', state, href = '#', extra = ''}) {
+  const resolvedState = state ?? ctx.props.state ?? 'default';
+  const baseState = resolvedState === 'empty' ? 'default' : resolvedState;
+  const p = ctx.resolve(CARD, {...ctx.props, behavior, state: baseState, media: 'none'});
+  const inert = resolvedState === 'loading' || resolvedState === 'disabled';
+  let heading = `<h3 class="kit-ctl-card-title">${e(title)}</h3>`;
+  if (behavior === 'selectable') heading = `<button type="button" class="kit-ctl-card-hit pf-card-hit" aria-pressed="${resolvedState === 'selected'}"${inert ? ' aria-disabled="true" disabled' : ''}>${e(title)}</button>`;
+  else if (behavior === 'link') heading = inert ? `<span class="kit-ctl-card-hit" role="link" aria-disabled="true">${e(title)}</span>` : `<h3 class="kit-ctl-card-title"><a class="kit-ctl-card-hit" href="${e(href)}">${e(title)}</a></h3>`;
+  const attrs = Object.entries(p).filter(([key]) => key !== 'state').map(([key, value]) => `data-${e(key)}="${e(value)}"`).join(' ');
+  const body = resolvedState === 'loading'
+    ? '<span class="kit-ctl-skel" aria-hidden="true"></span><span class="kit-ctl-skel" data-short aria-hidden="true"></span><span class="kit-ctl-sr" role="status">불러오는 중입니다.</span>'
+    : resolvedState === 'empty' ? `${heading}<p role="status">${e(ctx.content.emptyMessage ?? '표시할 데이터가 없습니다.')}</p>`
+      : resolvedState === 'error' ? `${heading}<p class="kit-ctl-card-error" role="alert">${e(ctx.content.message ?? '불러오지 못했습니다.')}</p>`
+        : `${heading}${content}`;
+  return `<article class="kit-ctl-card pf-card pf-card-extra" data-ctl="card" id="${e(ctx.id)}" ${attrs} data-state="${e(resolvedState)}"${extra ? ` ${extra}` : ''}${resolvedState === 'loading' ? ' aria-busy="true"' : ''}><div class="kit-ctl-card-body pf-card-body">${body}</div></article>`;
+}
+
+const base = (id, _requirementId, label, purpose, content, example, render, options = {}) => definePurposeFamily({
+  id, group: 'card', sharedCss: CSS, label, purpose,
+  contexts: ['dashboard', 'data', 'listing', 'commerce'], bases: [CARD], children: [CARD],
+  entry: {module: 'src/platform/families/card-extra.mjs', export: options.exportName ?? 'renderCardExtra'},
+  variants: {}, props: {size: ['small', 'medium', 'large'], behavior: options.behavior ?? ['static'], state: options.states ?? ['default', 'loading', 'empty', 'error', 'disabled']},
+  defaults: {size: 'medium', behavior: options.defaultBehavior ?? 'static', state: 'default'},
+  content: {...MESSAGE, ...content}, forbidden: [], needs: options.needs ?? {}, states: options.states ?? ['default', 'hover', 'focus', 'active', 'loading', 'empty', 'error', 'disabled'],
+  interactions: [{on: 'loading', behavior: '내용을 스켈레톤으로 바꾸고 aria-busy와 status 문구를 렌더한다', runtime: 'base-component:card-surface'}, {on: 'error', behavior: '오류를 role=alert로 표시한다'}],
+  responsive: {strategy: 'container and viewport', breakpoints: ['container 280px', '640px'], behavior: '긴 텍스트와 숫자는 줄바꿈하고 내부 열은 640px 이하에서 한 열로 재배치한다.'},
+  a11y: {role: 'article', keyboard: '링크·선택 동작만 Tab 정지점이 되며 기본 상태는 정적이다', conditions: ['all user text is escaped', 'loading and error state is rendered', 'responsive card content wraps']},
+  pairs: TEXT_PAIRS, parents: PARENTS, example, render, css: options.css ?? '',
+});
+
+const cardComparison = base('purpose:card.comparison', 'req:comp:f-07-product-comparison-card', '상품 비교 카드', '두 개 이상의 상품을 같은 필드 순서로 비교하고 차이를 행 단위로 읽게 한다.',
+  {title: {required: true, type: 'string'}, items: {required: true, type: 'array<{name, price, summary}>', min: 2, max: 3}},
+  {variant: {}, props: {}, content: {title: '요금제 비교', items: [{name: '기본', price: '₩9,000', summary: '프로젝트 3개 · 기본 지원'}, {name: '팀', price: '₩29,000', summary: '무제한 프로젝트 · 우선 지원'}] }},
+  ctx => { const c = ctx.content; if (!Array.isArray(c.items) || c.items.length < 2 || c.items.length > 3) throw new TypeError('비교 항목은 2~3개여야 합니다'); const grid = `<div class="pf-card-grid" role="group" aria-label="${e(c.title)}">${c.items.map(item => `<section><h4>${e(item.name)}</h4><p class="pf-num">${e(item.price)}</p><p>${e(item.summary)}</p></section>`).join('')}</div>`; return frame(ctx, {title: c.title, content: grid}); }, {exportName: 'renderCardComparison', css: `.pf-card-extra .pf-card-grid section{min-width:0;padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius)}`});
+
+const cardNotification = base('purpose:card.notification', 'req:comp:f-14-notification-card', '알림 카드', '알림 한 건의 제목·본문·시각과 읽음 상태를 전달한다.',
+  {title: {required: true, type: 'string'}, message: {required: true, type: 'string'}, time: {type: 'string'}, unread: {type: 'boolean'}},
+  {variant: {}, props: {}, content: {title: '새 댓글', message: '결제 화면 검토에 댓글이 추가됐습니다.', time: '방금 전', unread: true}},
+  ctx => { const c = ctx.content; return frame(ctx, {title: c.title, content: `<p>${e(c.message)}</p><p class="pf-muted">${e(c.time ?? '')}</p><span class="pf-card-state" role="status">${c.unread ? '읽지 않음' : '읽음'}</span>`, extra: `data-unread="${c.unread === true}"`}); }, {exportName: 'renderCardNotification'});
+
+const cardActivity = base('purpose:card.activity', 'req:comp:f-15-activity-card', '활동 카드', '최근 작업 활동을 행위자·행동·시각 순으로 보여 준다.',
+  {title: {required: true, type: 'string'}, items: {required: true, type: 'array<{actor, action, time}>', min: 1, max: 8}},
+  {variant: {}, props: {}, content: {title: '최근 활동', items: [{actor: '민지', action: '접근 권한을 변경했습니다.', time: '10분 전'}, {actor: '도윤', action: '새 항목을 만들었습니다.', time: '1시간 전'}]}},
+  ctx => { const c = ctx.content; return frame(ctx, {title: c.title, content: `<ol>${(c.items ?? []).slice(0, 8).map(x => `<li class="pf-card-row"><span><strong>${e(x.actor)}</strong> ${e(x.action)}</span><time>${e(x.time)}</time></li>`).join('')}</ol>`}); }, {exportName: 'renderCardActivity'});
+
+const cardIntegration = base('purpose:card.integration', 'req:comp:f-17-integration-card', '연동 카드', '외부 서비스 연동의 이름·연결 상태·설명을 보여 준다.',
+  {title: {required: true, type: 'string'}, provider: {required: true, type: 'string'}, statusLabel: {required: true, type: 'string'}, detail: {type: 'string'}},
+  {variant: {}, props: {}, content: {title: 'Slack', provider: '워크스페이스', statusLabel: '연결됨', detail: '알림 채널 #product로 전달합니다.'}},
+  ctx => { const c = ctx.content; return frame(ctx, {title: c.title, content: `<p class="pf-muted">${e(c.provider)}</p><p class="pf-card-state" role="status">${e(c.statusLabel)}</p><p>${e(c.detail ?? '')}</p>`}); }, {exportName: 'renderCardIntegration'});
+
+const cardReview = base('purpose:card.review', 'req:comp:f-18-review-card', '후기 카드', '평점·후기·작성자를 함께 보여 주며 별점은 숫자로도 읽힌다.',
+  {quote: {required: true, type: 'string'}, author: {required: true, type: 'string'}, rating: {required: true, type: 'number(0..5)'}, date: {type: 'string'}},
+  {variant: {}, props: {}, content: {quote: '설치가 간단했고 팀이 바로 사용할 수 있었습니다.', author: '김민지', rating: 4.5, date: '2026-11-20'}},
+  ctx => { const c = ctx.content; const rating = Math.max(0, Math.min(5, Number(c.rating) || 0)); return frame(ctx, {title: '사용자 후기', content: `<p class="pf-card-state" aria-label="별점 ${e(rating)}점 / 5점">${'★'.repeat(Math.round(rating))}${'☆'.repeat(5 - Math.round(rating))}<span>${e(rating)} / 5</span></p><blockquote>${e(c.quote)}</blockquote><p class="pf-muted">${e(c.author)} · ${e(c.date ?? '')}</p>`}); }, {exportName: 'renderCardReview'});
+
+const cardSelection = base('purpose:card.selection', 'req:comp:f-20-interactive-selection-card', '선택 카드', '선택 목록에서 한 항목을 키보드와 포인터로 선택한다.',
+  {title: {required: true, type: 'string'}, description: {type: 'string'}, selectedLabel: {type: 'string'}},
+  {variant: {}, props: {behavior: 'selectable'}, content: {title: '월간 결제', description: '매월 결제되며 언제든 변경할 수 있습니다.', selectedLabel: '선택됨'}},
+  ctx => { const c = ctx.content, p = ctx.props; return frame(ctx, {title: c.title, behavior: 'selectable', state: p.state, extra: `data-selected="${p.state === 'selected'}"`, content: `<p>${e(c.description ?? '')}</p><span class="pf-card-state" aria-hidden="true">${e(c.selectedLabel ?? '선택됨')}</span>`}); },
+  {exportName: 'renderCardSelection', behavior: ['selectable'], defaultBehavior: 'selectable', states: ['default', 'selected', 'loading', 'empty', 'error', 'disabled'], needs: {visual: {minBorderW: 1}}, css: `.pf-card-extra:has([aria-pressed=true]){box-shadow:inset 0 0 0 2px var(--kit-action)}`});
+
+const cardDashboardWidget = base('purpose:card.dashboard-widget', 'req:comp:f-21-dashboard-widget-card', '대시보드 위젯 카드', '제목·주요 수치·보조 지표를 조합해 대시보드의 한 업무 지표를 요약한다.',
+  {title: {required: true, type: 'string'}, value: {required: true, type: 'string'}, unit: {type: 'string'}, details: {type: 'array<{label,value}>'}, message: {type: 'string'}},
+  {variant: {}, props: {}, content: {title: '처리 대기', value: '1,284', unit: '건', details: [{label: '오늘 증가', value: '+84'}, {label: 'SLA 이내', value: '96.8%'}]}},
+  ctx => { const c = ctx.content; return frame(ctx, {title: c.title, content: `<p class="pf-num pf-card-widget-value">${e(c.value)}${c.unit ? ` <span class="pf-muted">${e(c.unit)}</span>` : ''}</p><dl>${(c.details ?? []).map(x => `<div class="pf-card-row"><dt class="pf-muted">${e(x.label)}</dt><dd class="pf-num">${e(x.value)}</dd></div>`).join('')}</dl>`}); }, {exportName: 'renderCardDashboardWidget'});
+
+const cardFinancialAsset = base('purpose:card.financial-asset', 'req:comp:f-22-financial-asset-card', '금융 자산 카드', '자산 이름·현재 값·변동을 숫자와 방향 문구로 함께 전달한다.',
+  {name: {required: true, type: 'string'}, symbol: {required: true, type: 'string'}, value: {required: true, type: 'string'}, change: {required: true, type: 'string'}, direction: {required: true, type: 'up|down|flat'}, currency: {type: 'string'}},
+  {variant: {}, props: {}, content: {name: '삼성전자', symbol: '005930', value: '₩72,400', change: '+1.4%', direction: 'up', currency: 'KRW'}},
+  ctx => { const c = ctx.content, words = {up: '상승', down: '하락', flat: '변동 없음'}; if (!Object.hasOwn(words, c.direction)) throw new TypeError('direction은 up·down·flat 중 하나여야 합니다'); return frame(ctx, {title: c.name, content: `<p class="pf-muted">${e(c.symbol)} · ${e(c.currency ?? '')}</p><p class="pf-num">${e(c.value)}</p><p class="pf-card-state" data-direction="${e(c.direction)}"><span class="kit-ctl-sr">${words[c.direction]} </span>${e(c.change)}</p>`}); }, {exportName: 'renderCardFinancialAsset'});
+
+const CARD_EXTRA_FAMILIES = Object.freeze([cardComparison, cardNotification, cardActivity, cardIntegration, cardReview, cardSelection, cardDashboardWidget, cardFinancialAsset]);
+
+const CARD_SELECTION_RUNTIME = `(function(){if(window.__kitCardSelection)return;window.__kitCardSelection=true;document.addEventListener('click',function(e){var button=e.target.closest('.pf-card-selection .pf-card-hit[aria-pressed]');if(!button||button.disabled)return;var selected=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(selected));var card=button.closest('.pf-card-selection'),article=button.closest('[data-ctl=card]');if(card)card.setAttribute('data-selected',String(selected));if(article)article.setAttribute('data-selected',String(selected));});})();`;
+const cardSelectionRuntimeFor = ids => ids.includes('purpose:card.selection') ? CARD_SELECTION_RUNTIME : '';
+
+const renderCardComparison = ctx => cardComparison.render(ctx);
+const renderCardNotification = ctx => cardNotification.render(ctx);
+const renderCardActivity = ctx => cardActivity.render(ctx);
+const renderCardIntegration = ctx => cardIntegration.render(ctx);
+const renderCardReview = ctx => cardReview.render(ctx);
+const renderCardSelection = ctx => cardSelection.render(ctx);
+const renderCardDashboardWidget = ctx => cardDashboardWidget.render(ctx);
+const renderCardFinancialAsset = ctx => cardFinancialAsset.render(ctx);
+
+exports.cardComparison = cardComparison;
+exports.cardNotification = cardNotification;
+exports.cardActivity = cardActivity;
+exports.cardIntegration = cardIntegration;
+exports.cardReview = cardReview;
+exports.cardSelection = cardSelection;
+exports.cardDashboardWidget = cardDashboardWidget;
+exports.cardFinancialAsset = cardFinancialAsset;
+exports.CARD_EXTRA_FAMILIES = CARD_EXTRA_FAMILIES;
+exports.CARD_SELECTION_RUNTIME = CARD_SELECTION_RUNTIME;
+exports.cardSelectionRuntimeFor = cardSelectionRuntimeFor;
+exports.renderCardComparison = renderCardComparison;
+exports.renderCardNotification = renderCardNotification;
+exports.renderCardActivity = renderCardActivity;
+exports.renderCardIntegration = renderCardIntegration;
+exports.renderCardReview = renderCardReview;
+exports.renderCardSelection = renderCardSelection;
+exports.renderCardDashboardWidget = renderCardDashboardWidget;
+exports.renderCardFinancialAsset = renderCardFinancialAsset;
+};
 __defs["platform/families/card.mjs"] = function (exports, __m) {
 /**
  * Card 목적 패밀리 8종(컴포넌트 패밀리 작업 소유): KPI, 상품, 기사, 기능 소개, 사용자 정보, 가격, 상태, 갤러리.
@@ -12505,7 +12620,9 @@ __defs["platform/families/card.mjs"] = function (exports, __m) {
  * 셸 속성 목록이 renderCard와 어긋나지 않는 것은 tests/platform-family-purpose.test.mjs가 본다.
  */
 const {icon} = __m("render/icon.mjs");
+const {renderChartPreset} = __m("render/chart-presets.mjs");
 const {definePurposeFamily, e} = __m("platform/families/kit.mjs");
+const {CARD_EXTRA_FAMILIES} = __m("platform/families/card-extra.mjs");
 
 const CARD = 'base-component:card-surface', BUTTON = 'base-component:button-control';
 const SIZES = ['small', 'medium', 'large'];
@@ -12536,10 +12653,14 @@ const CARD_STATES = ['default', 'hover', 'focus', 'active', 'loading', 'error', 
 const SHARED = `.pf-card{height:100%;container-type:inline-size;font-family:var(--kit-font)}.pf-card-body{align-self:stretch;display:flex;flex-direction:column;gap:var(--pf-gap)}.pf-card .kit-ctl-card-title{font-family:var(--kit-heading);font-weight:var(--pf-title-weight);font-size:max(16px,var(--kit-t-sub));text-wrap:balance}.pf-num{white-space:nowrap;font-variant-numeric:tabular-nums;font-family:var(--kit-font)}.pf-label{margin:0;color:var(--kit-muted);font-size:var(--kit-t-label);text-transform:var(--pf-label-case);letter-spacing:var(--pf-label-track);font-weight:600}.pf-media{display:grid;place-items:center;flex:none;box-sizing:border-box;width:100%;aspect-ratio:4/3;border-radius:calc(var(--kit-radius) * .7);background:var(--kit-soft);color:var(--kit-link)}.pf-media .kit-icon{width:36px;height:36px}.pf-media[data-wide]{aspect-ratio:16/9}.pf-card[data-media=top]{flex-direction:column}.pf-card[data-accent=true]{border-top:var(--pf-accent-bar) solid var(--kit-action)}.pf-foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:var(--kit-sp-near);padding-top:var(--kit-sp-near)}.pf-chip{display:inline-flex;align-items:center;gap:var(--kit-sp-tight);padding:2px var(--kit-sp-near);border:1px solid currentColor;border-radius:999px;font-size:max(12px,var(--kit-t-caption));font-weight:600;white-space:nowrap}.pf-chip .kit-icon{width:14px;height:14px}.pf-card[data-state=error]{background:var(--kit-danger-soft)}.pf-card .kit-ctl-card-title.pf-label{margin:0;font-family:var(--kit-font);font-size:var(--kit-t-label);font-weight:600}`;
 
 /* ---------- KPI ---------- */
-const spark = (series, label) => {
-  const max = Math.max(...series), min = Math.min(...series), span = max - min || 1, w = 100, h = 28;
-  const pts = series.map((v, i) => `${(i * w / (series.length - 1)).toFixed(1)},${(h - 2 - (v - min) / span * (h - 4)).toFixed(1)}`).join(' ');
-  return `<svg class="pf-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${e(label)}"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+const spark = (series, label, unit = '') => {
+  const rendered = renderChartPreset('chart-preset:mobile-sparkline', {
+    title: `${label} 추세`, caption: `${label} 값 변화`, xLabel: '순서', yLabel: '값', unit,
+    categories: series.map((_, index) => String(index + 1)),
+    series: [{name: `${label} 추세`, values: series}],
+  });
+  if (typeof rendered !== 'string') throw new Error(`KPI sparkline chart preset rejected its data: ${JSON.stringify(rendered.errors)}`);
+  return `<div class="pf-spark">${rendered}</div>`;
 };
 const TREND = {up: ['trending-up', '증가'], down: ['trending-down', '감소'], flat: ['minus', '변동 없음']};
 
@@ -12561,14 +12682,14 @@ const cardKpi = definePurposeFamily({
   pairs: [['--kit-muted', '--kit-surface', 4.5, 'KPI label'], ['--kit-muted', '--kit-card-hover', 4.5, 'KPI label on filled'], ['--kit-text', '--kit-surface', 7, 'KPI value'], ['--kit-text', '--kit-card-hover', 7, 'KPI value on filled'], ['--kit-link', '--kit-surface', 4.5, 'KPI sparkline']],
   parents: COMMON_PARENTS, example: {variant: {layout: 'stacked', trend: 'spark'}, props: {size: 'medium'}, content: {label: '이번 달 매출', value: '₩12,480,000', delta: '+12.4%', deltaDirection: 'up', caption: '지난달 대비', series: [4, 6, 5, 8, 7, 11, 12]}},
   render(ctx) { return renderCardKpi(ctx); },
-  css: `.pf-kpi-head{display:flex;justify-content:space-between;gap:var(--kit-sp-near);align-items:flex-start}.pf-kpi-value{margin:0;display:flex;align-items:baseline;gap:var(--kit-sp-tight);color:var(--kit-text);font-family:var(--kit-heading);font-size:min(calc(var(--kit-t-stat) * var(--pf-stat-scale)),16cqi);line-height:1.1;font-weight:var(--pf-title-weight)}.pf-kpi-unit{font-size:var(--kit-t-small);color:var(--kit-muted);font-weight:500}.pf-kpi-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--kit-sp-near);color:var(--kit-muted);font-size:max(12px,var(--kit-t-caption))}.pf-kpi-delta{color:var(--kit-text)}.pf-kpi-delta[data-dir=up] .kit-icon{color:var(--kit-success)}.pf-kpi-delta[data-dir=down] .kit-icon{color:var(--kit-danger)}.pf-spark{width:100%;height:28px;color:var(--kit-link);margin-top:var(--kit-sp-tight)}.pf-card[data-layout=inline] .pf-card-body{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}@container(max-width:300px){.pf-card[data-layout=inline] .pf-card-body{flex-direction:column;align-items:flex-start;justify-content:flex-start}}`,
+  css: `.pf-kpi-head{display:flex;justify-content:space-between;gap:var(--kit-sp-near);align-items:flex-start}.pf-kpi-value{margin:0;display:flex;align-items:baseline;gap:var(--kit-sp-tight);color:var(--kit-text);font-family:var(--kit-heading);font-size:min(calc(var(--kit-t-stat) * var(--pf-stat-scale)),16cqi);line-height:1.1;font-weight:var(--pf-title-weight)}.pf-kpi-unit{font-size:var(--kit-t-small);color:var(--kit-muted);font-weight:500}.pf-kpi-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--kit-sp-near);color:var(--kit-muted);font-size:max(12px,var(--kit-t-caption))}.pf-kpi-delta{color:var(--kit-text)}.pf-kpi-delta[data-dir=up] .kit-icon{color:var(--kit-success)}.pf-kpi-delta[data-dir=down] .kit-icon{color:var(--kit-danger)}.pf-spark{width:100%;min-width:0;margin-top:var(--kit-sp-tight)}.pf-spark .kit-chart{margin:0}.pf-card[data-layout=inline] .pf-card-body{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}@container(max-width:300px){.pf-card[data-layout=inline] .pf-card-body{flex-direction:column;align-items:flex-start;justify-content:flex-start}}`,
 });
 
 function renderCardKpi(ctx) {
   const {content: c, variant: v} = ctx, props = baseProps(ctx, {media: 'none'});
   const dir = c.deltaDirection ?? 'flat', [trendIcon, trendText] = TREND[dir] ?? TREND.flat;
   const delta = c.delta ? `<span class="pf-chip pf-kpi-delta" data-dir="${e(dir)}">${icon(trendIcon)}<span class="kit-ctl-sr">${trendText} </span>${num(c.delta)}</span>` : '';
-  const html = shell(ctx, props, {title: c.label, href: c.href, attrs: `data-layout="${v.layout}"`, inner: hit => `<p class="kit-ctl-card-title pf-label">${hit}</p><p class="pf-kpi-value">${num(c.value)}${c.unit ? `<span class="pf-kpi-unit">${e(c.unit)}</span>` : ''}</p>${(delta || c.caption) ? `<p class="pf-kpi-foot">${delta}${c.caption ? `<span>${e(c.caption)}</span>` : ''}</p>` : ''}${v.trend === 'spark' && Array.isArray(c.series) && c.series.length > 1 ? spark(c.series, `${c.label} 추세`) : ''}${errorLine(ctx, props)}`});
+  const html = shell(ctx, props, {title: c.label, href: c.href, attrs: `data-layout="${v.layout}"`, inner: hit => `<p class="kit-ctl-card-title pf-label">${hit}</p><p class="pf-kpi-value">${num(c.value)}${c.unit ? `<span class="pf-kpi-unit">${e(c.unit)}</span>` : ''}</p>${(delta || c.caption) ? `<p class="pf-kpi-foot">${delta}${c.caption ? `<span>${e(c.caption)}</span>` : ''}</p>` : ''}${v.trend === 'spark' && Array.isArray(c.series) && c.series.length > 1 ? spark(c.series, c.label, c.unit ?? '') : ''}${errorLine(ctx, props)}`});
   return html;
 }
 
@@ -12789,7 +12910,7 @@ function renderCardGallery(ctx) {
   return html;
 }
 
-const CARD_FAMILIES = Object.freeze([cardKpi, cardProduct, cardArticle, cardFeature, cardProfile, cardPricing, cardStatus, cardGallery]);
+const CARD_FAMILIES = Object.freeze([cardKpi, cardProduct, cardArticle, cardFeature, cardProfile, cardPricing, cardStatus, cardGallery, ...CARD_EXTRA_FAMILIES]);
 
 exports.cardKpi = cardKpi;
 exports.renderCardKpi = renderCardKpi;
@@ -13415,6 +13536,7 @@ const {TABLE_FAMILIES} = __m("platform/families/table.mjs");
 const {FEEDBACK_FAMILIES} = __m("platform/families/feedback.mjs");
 const {INFO_MEDIA_FAMILIES} = __m("platform/families/info-media.mjs");
 const {EHI_FAMILIES} = __m("platform/families/ehi.mjs");
+const {DATA_DISPLAY_FAMILIES} = __m("platform/families/data-display.mjs");
 const {renderButton} = __m("materials/button.mjs");
 const {COMPONENT_CLASSIFICATION} = __m("platform/families/inventory.mjs");
 const {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} = __m("platform/families/action.mjs");
@@ -13456,6 +13578,17 @@ const PURPOSE_COMPONENT_TYPE = Object.freeze({
   'purpose:button.fab': 'button-control', 'purpose:button.copy': 'button-control', 'purpose:button.close': 'button-control',
   'purpose:button.split': 'split-button', 'purpose:button.menu': 'menu-button',
 });
+/** §6.2 requirement ↔ registered purpose-family mapping; classification is owned by inventory.mjs. */
+const PURPOSE_REQUIREMENT = Object.freeze({
+  'purpose:card.comparison': 'f-07-product-comparison-card', 'purpose:card.notification': 'f-14-notification-card',
+  'purpose:card.activity': 'f-15-activity-card', 'purpose:card.integration': 'f-17-integration-card',
+  'purpose:card.review': 'f-18-review-card', 'purpose:card.selection': 'f-20-interactive-selection-card',
+  'purpose:card.dashboard-widget': 'f-21-dashboard-widget-card', 'purpose:card.financial-asset': 'f-22-financial-asset-card',
+  'purpose:table.filterable': 'g-04-filterable-table', 'purpose:table.expandable': 'g-06-expandable-row-table',
+  'purpose:table.grouped': 'g-07-grouped-table', 'purpose:table.tree': 'g-12-tree-view',
+  'purpose:table.inspector': 'g-17-key-value-inspector', 'purpose:table.log-viewer': 'g-18-log-viewer',
+  'purpose:table.diff': 'g-20-diff-viewer',
+});
 
 const normalizeBase = m => defineComponentContract({id: m.id, componentType: m.id.slice('base-component:'.length), layer: 'Base', purpose: m.label,
   contexts: ['any'], structure: `base material ${m.id}`, slots: ['content'], props: {sourceContract: m.contract},
@@ -13463,7 +13596,7 @@ const normalizeBase = m => defineComponentContract({id: m.id, componentType: m.i
   states: ['default', 'hover', 'focus', 'active', 'disabled'], tokens: [], parents: ['slot:main', 'slot:header', 'slot:footer'],
   children: [], renderer: m.render, blueprint: {field: 'components', id: m.id}, tests: ['tests/platform-family-base.test.mjs'],
   unsupported: {states: [{value: 'loading', reason: '상태 지원은 해당 기반 재료의 source contract에 한정한다.'}]} });
-const normalizePurpose = f => defineComponentContract({id: f.id, componentType: PURPOSE_COMPONENT_TYPE[f.id] ?? f.id, layer: 'Purpose', purpose: f.purpose,
+const normalizePurpose = f => defineComponentContract({id: f.id, componentType: PURPOSE_COMPONENT_TYPE[f.id] ?? PURPOSE_REQUIREMENT[f.id] ?? f.id, layer: COMPONENT_CLASSIFICATION[PURPOSE_REQUIREMENT[f.id]] === 'composite' ? 'Composite' : 'Purpose', purpose: f.purpose,
   contexts: f.contexts, structure: f.label, slots: Object.keys(f.content), props: {...f.variants, ...f.props},
   content: f.content, appearance: ['family visual recipe'], sizes: ['small', 'medium', 'large'], density: ['compact', 'comfortable', 'spacious'],
   states: f.states, transitions: f.interactions, events: f.interactions, tokens: f.tokens ?? [], parents: f.parents,
@@ -13473,7 +13606,7 @@ const normalizePurpose = f => defineComponentContract({id: f.id, componentType: 
 
 const COMPONENT_CONTRACTS = Object.freeze([
   ...BASE_COMPONENTS.map(normalizeBase),
-  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES].map(normalizePurpose),
+  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES].map(normalizePurpose),
 ]);
 
 function validateComponentContracts(contracts = ALL_COMPONENT_CONTRACTS) {
@@ -13691,6 +13824,158 @@ exports.ACTION_COMPONENT_BY_ID = ACTION_COMPONENT_BY_ID;
 exports.renderActionComponent = renderActionComponent;
 exports.ACTION_COMPONENT_CSS = ACTION_COMPONENT_CSS;
 exports.ACTION_COMPONENT_RUNTIME = ACTION_COMPONENT_RUNTIME;
+};
+__defs["platform/families/data-display.mjs"] = function (exports, __m) {
+/** §6.2 G 데이터 표시: 표 기반 패턴과 트리·검사기·로그·diff 패턴. */
+const {definePurposeFamily, e} = __m("platform/families/kit.mjs");
+
+const TABLE = 'base-component:data-table';
+const CARD = 'base-component:card-surface';
+const PARENTS = ['slot:main', 'slot:grid-item'];
+const STATES = ['ready', 'partial', 'empty', 'loading', 'error'];
+const TABLE_CSS = `.pf-data-view{min-width:0;max-width:100%;color:var(--kit-text);font-family:var(--kit-font)}.pf-data-view h3{margin:0 0 var(--kit-sp-near);font:var(--pf-title-weight) var(--kit-t-sub)/1.25 var(--kit-heading);overflow-wrap:anywhere}.pf-data-view p{margin:0;overflow-wrap:anywhere}.pf-data-view label{display:grid;gap:var(--kit-sp-tight);min-width:0;color:var(--kit-muted)}.pf-data-view input[type=search]{box-sizing:border-box;min-height:44px;max-width:100%;padding:var(--kit-sp-near);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font:inherit}.pf-data-view :is(button,summary,input):focus-visible{outline:3px solid var(--kit-focus);outline-offset:2px}.pf-data-view .pf-live{min-height:1.5em;color:var(--kit-muted)}.pf-data-view [data-filter-empty]{padding:var(--kit-sp-item);color:var(--kit-muted)}.pf-data-view .kit-table-scroll{max-width:100%}.pf-data-view .pf-group-row th{padding:var(--kit-sp-near);background:var(--kit-soft);color:var(--kit-text);text-align:start}.pf-data-view details summary{min-height:44px;display:flex;align-items:center;cursor:pointer}.pf-tree{padding:0;list-style:none}.pf-tree ul{margin-inline-start:1.25rem;padding-inline-start:.75rem;border-inline-start:1px solid var(--kit-border);list-style:none}.pf-tree li{margin-block:var(--kit-sp-tight)}.pf-tree [role=treeitem]{min-height:44px;max-width:100%;padding:var(--kit-sp-tight) var(--kit-sp-near);border:0;border-radius:var(--kit-radius);background:transparent;color:var(--kit-text);font:inherit;text-align:start;overflow-wrap:anywhere;cursor:pointer}.pf-tree [role=treeitem][aria-expanded=true]{font-weight:650}.pf-inspector{display:grid;grid-template-columns:minmax(8rem,.7fr) minmax(0,1.3fr);gap:0 var(--kit-sp-item)}.pf-inspector dt,.pf-inspector dd{min-width:0;margin:0;padding-block:var(--kit-sp-near);border-block-end:1px solid var(--kit-border);overflow-wrap:anywhere}.pf-inspector dt{color:var(--kit-muted)}.pf-log-message{white-space:normal;overflow-wrap:anywhere}.pf-diff{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--kit-sp-item)}.pf-diff section{min-width:0;overflow:hidden}.pf-diff h4{margin:0;padding:var(--kit-sp-near);color:var(--kit-text);background:var(--kit-soft)}.pf-diff ol{margin:0;padding:var(--kit-sp-near) var(--kit-sp-near) var(--kit-sp-near) 3em;overflow-wrap:anywhere;white-space:pre-wrap;font:var(--kit-t-small)/1.5 var(--kit-mono);font-variant-numeric:tabular-nums}.pf-diff li{padding-inline-start:var(--kit-sp-near);overflow-wrap:anywhere}.pf-diff [data-change=added]{border-inline-start:3px solid var(--kit-muted)}.pf-diff [data-change=removed]{border-inline-start:3px solid var(--kit-muted)}@media(max-width:640px){.pf-inspector{grid-template-columns:minmax(0,1fr)}.pf-inspector dt{border:0;padding-block-end:0}.pf-inspector dd{padding-block-start:var(--kit-sp-tight)}.pf-diff{grid-template-columns:minmax(0,1fr)}}`;
+const TABLE_PAIRS = [['--kit-text', '--kit-surface', 7, 'data values'], ['--kit-muted', '--kit-surface', 4.5, 'data labels'], ['--kit-focus', '--kit-surface', 3, 'keyboard focus']];
+const MESSAGE = {message: {type: 'string'}};
+
+function family({id, requirementId: _requirementId, label, purpose, content, example, render, bases = [TABLE], componentType: _componentType = null, interactions = [], role = 'table', keyboard = 'Tab visits native controls; Enter or Space activates buttons and disclosures', css = '', exportName = null}) {
+  return definePurposeFamily({id, group: 'table', sharedCss: TABLE_CSS, label, purpose,
+    contexts: ['dashboard', 'data', 'admin'], bases, children: bases,
+    entry: {module: 'src/platform/families/data-display.mjs', export: exportName ?? `render${id.split(':')[1].split('.').map(x => x.replace(/(^|-)(\w)/g, (_, a, b) => b.toUpperCase())).join('')}`},
+    variants: {}, props: {density: ['compact', 'comfortable', 'spacious'], state: STATES}, defaults: {density: 'comfortable', state: 'ready'},
+    content: {...MESSAGE, ...content}, forbidden: [], needs: {}, states: STATES,
+    interactions: [{on: 'empty/loading/error', behavior: 'table base renders status text and aria-busy or role=alert'}, ...interactions],
+    responsive: {strategy: 'container and viewport', breakpoints: ['640px', '800px'], behavior: 'tables scroll within their own region; key/value and diff columns stack below 640px; long cells wrap.'},
+    a11y: {role, keyboard, conditions: ['table headers label data columns', 'filtering or disclosure behavior is exposed in rendered markup', 'responsive data remains readable without page overflow']},
+    pairs: TABLE_PAIRS, parents: PARENTS, example, render, css,
+  });
+}
+
+function dataTable(ctx, {columns, rows, sortable = true, selectable = false, label, responsive = 'priority'}) {
+  const html = ctx.base(TABLE, {props: {density: ctx.props.density, state: ctx.props.state, sortable, selectable, responsive}, content: {id: ctx.uid('table'), columns, rows, message: ctx.content.message ?? '', selected: ctx.content.selected ?? [], label}});
+  return html.replace('aria-label="데이터 표"', `aria-label="${e(label ?? '데이터 표')}"`);
+}
+function tableFrame(ctx, title, before, table, after = '') {
+  const state = ctx.props.state;
+  if (state === 'loading' || state === 'empty' || state === 'error') {
+    const message = state === 'loading' ? '불러오는 중입니다.' : state === 'empty' ? (ctx.content.emptyMessage ?? '표시할 데이터가 없습니다.') : (ctx.content.message ?? '데이터를 불러오지 못했습니다.');
+    return `<section class="pf-data-view" data-display="${e(ctx.id)}" data-state="${e(state)}"${state === 'loading' ? ' aria-busy="true"' : ''}><h3 id="${e(ctx.uid('title'))}">${e(title)}</h3><p role="${state === 'error' ? 'alert' : 'status'}">${e(message)}</p></section>`;
+  }
+  return `<section class="pf-data-view" data-display="${e(ctx.id)}"><h3 id="${e(ctx.uid('title'))}">${e(title)}</h3>${before}${table}${after}</section>`;
+}
+const FILTER_COLUMNS = [{id: 'name', label: '이름'}, {id: 'value', label: '값', kind: 'number'}];
+
+const tableFilterable = family({id: 'purpose:table.filterable', exportName: 'renderFilterable', requirementId: 'req:comp:g-04-filterable-table', label: '필터 표', purpose: '열 기준을 안내하는 검색 입력으로 행을 즉시 좁히고 일치 건수를 읽게 한다.',
+  content: {title: {required: true, type: 'string'}, filterLabel: {type: 'string'}, columns: {required: true, type: 'table columns'}, rows: {required: true, type: 'scalar rows'}, selected: {type: 'string[]'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '서비스 현황', columns: FILTER_COLUMNS, rows: [{id: 'api', name: 'API Gateway', value: 12}, {id: 'worker', name: 'Worker', value: 4}]}},
+  render(ctx) { const c = ctx.content, id = ctx.uid('filter'), rows = ctx.props.state === 'empty' ? [] : c.rows; const html = dataTable(ctx, {columns: c.columns, rows, label: c.title, sortable: ['ready', 'partial'].includes(ctx.props.state)}); const marked = html.replace('<section class="kit-data-table"', '<section data-table-filterable'); const before = `<label for="${e(id)}">${e(c.filterLabel ?? '표 행 필터')}<input type="search" id="${e(id)}" data-table-filter aria-controls="${e(ctx.uid('table'))}" autocomplete="off"></label>`; return tableFrame(ctx, c.title, before, marked, `<p class="pf-live" data-filter-count role="status" aria-live="polite"></p><p data-filter-empty hidden>검색 결과가 없습니다.</p>`); },
+  interactions: [{on: 'search input', behavior: '대소문자 구분 없이 행 전체 텍스트를 필터링하고 건수·빈 결과 문구를 갱신한다', runtime: 'cardDataRuntimeFor'}],
+  role: 'region containing a labelled data table and search field', keyboard: 'Tab to search and sortable headers; typing filters rows and the live region announces the result count',
+});
+
+const tableExpandable = family({id: 'purpose:table.expandable', exportName: 'renderExpandable', requirementId: 'req:comp:g-06-expandable-row-table', label: '행 확장 표', purpose: '각 행의 상세 내용을 네이티브 disclosure로 펼쳐 본다.',
+  content: {title: {required: true, type: 'string'}, rows: {required: true, type: 'array<{id,name,value,details}>'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '배포 기록', rows: [{id: 'd1', name: 'web', value: '성공', details: '빌드 8초, 검증 31초'}, {id: 'd2', name: 'api', value: '대기', details: '배포 슬롯 확보 대기'}]}},
+  render(ctx) { const c = ctx.content, sourceRows = ctx.props.state === 'empty' ? [] : c.rows, rows = sourceRows.map((r, i) => ({id: r.id ?? `row-${i + 1}`, name: r.name, value: r.value, details: `__D3_ROW_DETAILS_${i}__`})); let html = dataTable(ctx, {columns: [{id: 'name', label: '이름'}, {id: 'value', label: '상태'}, {id: 'details', label: '상세'}], rows, sortable: false, label: c.title}); sourceRows.forEach((row, i) => { const marker = `__D3_ROW_DETAILS_${i}__`, panel = ctx.uid(`detail-${i}`); html = html.replace(new RegExp(`<td([^>]*>)${marker}<\\/td>`), `<td$1<details data-row-expand><summary aria-expanded="false" aria-controls="${e(panel)}">상세 보기</summary><div id="${e(panel)}">${e(row.details)}</div></details></td>`); }); return tableFrame(ctx, c.title, '', html); },
+  interactions: [{on: 'details summary click·Enter·Space', behavior: 'native disclosure opens the row detail and aria-expanded follows open state', runtime: 'cardDataRuntimeFor'}],
+  keyboard: 'Tab to each summary; Enter or Space toggles its associated detail',
+});
+
+const tableGrouped = family({id: 'purpose:table.grouped', exportName: 'renderGrouped', requirementId: 'req:comp:g-07-grouped-table', label: '그룹 표', purpose: '행을 같은 범주의 묶음으로 나누고 그룹 제목을 표 구조에서 읽게 한다.',
+  content: {title: {required: true, type: 'string'}, rows: {required: true, type: 'array<{id,group,name,value}>'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '작업', rows: [{id: '1', group: '진행 중', name: '카탈로그', value: '검토'}, {id: '2', group: '진행 중', name: '서비스', value: '구현'}, {id: '3', group: '완료', name: '요청 분석', value: '완료'}]}},
+  render(ctx) { const c = ctx.content, sourceRows = ctx.props.state === 'empty' ? [] : c.rows, rows = sourceRows.map((r, i) => ({id: r.id ?? `row-${i + 1}`, group: r.group, name: r.name, value: r.value})); let html = dataTable(ctx, {columns: [{id: 'group', label: '그룹'}, {id: 'name', label: '이름'}, {id: 'value', label: '상태'}], rows, sortable: false, label: c.title}); const groups = rows.map(r => r.group); let previous = null, i = 0; html = html.replace(/<tr data-row="(\d+)"[^>]*>/g, (match, index) => { const group = groups[Number(index)]; if (group === previous) return match; previous = group; const label = `<tr class="pf-group-row"><th scope="rowgroup" colspan="3">${e(group)}</th></tr>`; return `${label}${match}`; }); return tableFrame(ctx, c.title, '', html); },
+  role: 'table with rowgroup heading rows', keyboard: 'Tab to the scroll region; table content follows reading order',
+});
+
+
+function cardState(ctx, title) {
+  const state = ctx.props.state;
+  if (!['loading', 'empty', 'error'].includes(state)) return null;
+  const message = state === 'loading' ? '불러오는 중입니다.' : state === 'empty' ? (ctx.content.emptyMessage ?? '표시할 데이터가 없습니다.') : (ctx.content.message ?? '데이터를 불러오지 못했습니다.');
+  const p = ctx.resolve(CARD, {size: 'medium', behavior: 'static', media: 'none', state: 'default'});
+  const attrs = Object.entries(p).filter(([k]) => k !== 'state').map(([k, v]) => `data-${e(k)}="${e(v)}"`).join(' ');
+  return `<article class="kit-ctl-card pf-data-view" data-ctl="card" data-state="${e(state)}" id="${e(ctx.id)}" ${attrs}${state === 'loading' ? ' aria-busy="true"' : ''}><div class="kit-ctl-card-body"><h3>${e(title)}</h3><p role="${state === 'error' ? 'alert' : 'status'}">${e(message)}</p></div></article>`;
+}
+
+function treeNodes(items, uid) {
+  if (!Array.isArray(items) || !items.length) throw new TypeError('Tree items must be a non-empty flat array');
+  const ids = new Set(items.map(item => item.id));
+  if (ids.size !== items.length || items.some(item => !item.id || (item.parent && !ids.has(item.parent)))) throw new TypeError('Tree item ids must be unique and parent ids must exist');
+  const childrenOf = parent => items.filter(item => (item.parent ?? '') === parent);
+  let visited = 0;
+  const render = (nodes, depth, path) => nodes.map((item, index) => {
+    visited += 1;
+    const children = childrenOf(item.id), hasChildren = children.length > 0;
+    const branch = `${path}-${index}`, id = uid(`tree-${branch}`), label = e(item.label);
+    return `<li role="none"><button type="button" id="${e(id)}" role="treeitem" aria-level="${depth + 1}" tabindex="${depth === 0 && index === 0 ? '0' : '-1'}"${hasChildren ? ` aria-expanded="false" aria-controls="${e(id)}-group"` : ''}>${label}</button>${hasChildren ? `<ul role="group" id="${e(id)}-group" hidden>${render(children, depth + 1, branch)}</ul>` : ''}</li>`;
+  }).join('');
+  const html = render(childrenOf(''), 0, 'tree');
+  if (visited !== items.length) throw new TypeError('Tree items must form an acyclic tree reachable from a root');
+  return html;
+}
+
+const tableTree = family({id: 'purpose:table.tree', exportName: 'renderTree', requirementId: 'req:comp:g-12-tree-view', label: '트리 보기', purpose: '계층형 항목을 펼치고 접으며 방향키로 이동한다.', bases: [CARD],
+  content: {title: {required: true, type: 'string'}, items: {required: true, type: 'flat array<{id,parent?,label}>'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '프로젝트', items: [{id: 'frontend', label: 'Frontend'}, {id: 'components', parent: 'frontend', label: 'Components'}, {id: 'pages', parent: 'frontend', label: 'Pages'}, {id: 'backend', label: 'Backend'}, {id: 'api', parent: 'backend', label: 'API'}]}},
+  render(ctx) { const c = ctx.content; const state = cardState(ctx, c.title); if (state) return state; const p = ctx.resolve(CARD, {size: 'medium', behavior: 'static', media: 'none', state: 'default'}); const attrs = Object.entries(p).map(([k, v]) => `data-${e(k)}="${e(v)}"`).join(' '); const tree = `<ul class="pf-tree" role="tree" aria-label="${e(c.title)}">${treeNodes(c.items, ctx.uid)}</ul>`; return `<article class="kit-ctl-card pf-data-view" data-ctl="card" id="${e(ctx.id)}" ${attrs}><div class="kit-ctl-card-body"><h3 id="${e(ctx.uid('title'))}">${e(c.title)}</h3>${tree}</div></article>`; },
+  interactions: [{on: 'ArrowUp·ArrowDown·Home·End', behavior: 'roving focus moves between visible treeitems'}, {on: 'ArrowRight·ArrowLeft·Enter·Space', behavior: 'expand, collapse, or activate the focused treeitem', runtime: 'cardDataRuntimeFor'}],
+  role: 'tree with labelled treeitems and nested groups', keyboard: 'Tab enters the tree once; arrow keys move, expand, and collapse; Home and End move to visible bounds',
+});
+
+const tableInspector = family({id: 'purpose:table.inspector', exportName: 'renderInspector', requirementId: 'req:comp:g-17-key-value-inspector', label: '키·값 검사기', purpose: '레코드의 필드 이름과 값을 쌍으로 나열하고 긴 값을 줄바꿈한다.', bases: [CARD], componentType: 'key-value-inspector',
+  content: {title: {required: true, type: 'string'}, items: {required: true, type: 'array<{key,value}>'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '요청 정보', items: [{key: 'requestId', value: 'req_01JABCD'}, {key: 'source', value: 'mobile-client'}, {key: 'details', value: '한 줄보다 긴 진단 값은 모바일에서도 읽을 수 있도록 줄바꿈됩니다.'}]}},
+  render(ctx) { const c = ctx.content; const state = cardState(ctx, c.title); if (state) return state; const p = ctx.resolve(CARD, {size: 'medium', behavior: 'static', media: 'none', state: 'default'}); const attrs = Object.entries(p).map(([k, v]) => `data-${e(k)}="${e(v)}"`).join(' '); return `<article class="kit-ctl-card pf-data-view" data-ctl="card" id="${e(ctx.id)}" ${attrs}><div class="kit-ctl-card-body"><h3>${e(c.title)}</h3><dl class="pf-inspector">${c.items.map(x => `<dt>${e(x.key)}</dt><dd>${e(x.value)}</dd>`).join('')}</dl></div></article>`; },
+  role: 'article containing a definition list', keyboard: 'read-only definition list has no extra Tab stops',
+});
+
+const LOG_COLUMNS = [{id: 'time', label: '시각'}, {id: 'level', label: '수준'}, {id: 'message', label: '메시지'}];
+const tableLogViewer = family({id: 'purpose:table.log-viewer', exportName: 'renderLogViewer', requirementId: 'req:comp:g-18-log-viewer', label: '로그 보기', purpose: '시각·심각도·메시지를 열로 나눠 긴 로그 문장을 읽는다.', componentType: 'log-viewer',
+  content: {title: {required: true, type: 'string'}, rows: {required: true, type: 'array<{id,time,level,message}>'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '최근 로그', rows: [{id: 'l1', time: '10:42:01', level: 'INFO', message: '작업이 시작되었습니다.'}, {id: 'l2', time: '10:42:08', level: 'ERROR', message: '업스트림 응답 시간 초과: 재시도 횟수 3회 초과'}]}},
+  render(ctx) { const c = ctx.content, sourceRows = ctx.props.state === 'empty' ? [] : c.rows, rows = sourceRows.map((r, i) => ({id: r.id ?? `log-${i + 1}`, ...r})); const html = dataTable(ctx, {columns: LOG_COLUMNS.map(x => ({...x, sortable: x.id !== 'message'})), rows, sortable: ['ready', 'partial'].includes(ctx.props.state), label: c.title}); return tableFrame(ctx, c.title, '', html.replace(/data-column="message"/g, 'data-column="message" class="pf-log-message"')); },
+  role: 'region containing a labelled log table', keyboard: 'Tab to sortable headers; Enter or Space changes sort direction',
+});
+
+const tableDiff = family({id: 'purpose:table.diff', exportName: 'renderDiff', requirementId: 'req:comp:g-20-diff-viewer', label: '변경 비교 보기', purpose: '이전·이후 텍스트를 나란히 비교하고 모바일에서는 위아래로 쌓는다.', bases: [CARD], componentType: 'diff-viewer',
+  content: {title: {required: true, type: 'string'}, beforeLabel: {type: 'string'}, afterLabel: {type: 'string'}, before: {required: true, type: 'string'}, after: {required: true, type: 'string'}, message: {type: 'string'}, emptyMessage: {type: 'string'}},
+  example: {variant: {}, props: {}, content: {title: '설정 변경', beforeLabel: '이전', afterLabel: '이후', before: 'timeout: 10\nretries: 2', after: 'timeout: 30\nretries: 2'}},
+  render(ctx) { const c = ctx.content; const state = cardState(ctx, c.title); if (state) return state; const p = ctx.resolve(CARD, {size: 'medium', behavior: 'static', media: 'none', state: 'default'}), attrs = Object.entries(p).map(([k, v]) => `data-${e(k)}="${e(v)}"`).join(' '), list = (text, change) => `<ol>${String(text).split('\n').map(line => `<li data-change="${change}">${e(line) || '&nbsp;'}</li>`).join('')}</ol>`; return `<article class="kit-ctl-card pf-data-view" data-ctl="card" id="${e(ctx.id)}" ${attrs}><div class="kit-ctl-card-body"><h3>${e(c.title)}</h3><div class="pf-diff"><section aria-label="${e(c.beforeLabel ?? '이전')}"><h4>${e(c.beforeLabel ?? '이전')}</h4>${list(c.before, 'removed')}</section><section aria-label="${e(c.afterLabel ?? '이후')}"><h4>${e(c.afterLabel ?? '이후')}</h4>${list(c.after, 'added')}</section></div></div></article>`; },
+  role: 'article with two labelled, line-numbered code lists', keyboard: 'read-only comparison has no extra Tab stops',
+});
+
+const DATA_DISPLAY_FAMILIES = Object.freeze([tableFilterable, tableExpandable, tableGrouped, tableTree, tableInspector, tableLogViewer, tableDiff]);
+
+const DATA_DISPLAY_RUNTIME_IDS = Object.freeze(['purpose:table.filterable', 'purpose:table.expandable', 'purpose:table.tree']);
+const DATA_DISPLAY_RUNTIME = `(function(){if(window.__kitDataDisplay)return;window.__kitDataDisplay=true;document.addEventListener('input',function(e){var input=e.target.closest('[data-table-filter]');if(!input)return;var root=input.closest('.pf-data-view');if(!root)return;var table=root.querySelector('[data-table-filterable]');if(!table)return;var rows=[...table.querySelectorAll('tbody tr[data-row]')],q=input.value.trim().toLocaleLowerCase();var visible=0;rows.forEach(function(row){var show=row.textContent.toLocaleLowerCase().includes(q);row.hidden=!show;if(show)visible++;});var count=root.querySelector('[data-filter-count]'),empty=root.querySelector('[data-filter-empty]');if(count)count.textContent=visible+'개 행 표시';if(empty)empty.hidden=visible!==0;});document.addEventListener('toggle',function(e){var detail=e.target;if(detail.matches('details[data-row-expand]')){var summary=detail.querySelector('summary');if(summary)summary.setAttribute('aria-expanded',String(detail.open));}},true);document.addEventListener('click',function(e){var item=e.target.closest('[role=treeitem]');if(!item)return;var group=item.parentElement.querySelector(':scope > [role=group]');if(group){var open=item.getAttribute('aria-expanded')!=='true';item.setAttribute('aria-expanded',String(open));group.hidden=!open;}});document.addEventListener('keydown',function(e){var item=e.target.closest('[role=treeitem]');if(!item)return;var tree=item.closest('[role=tree]'),all=[...tree.querySelectorAll('[role=treeitem]')].filter(function(x){return !x.closest('[role=group][hidden]');}),i=all.indexOf(item),next=null,group=item.parentElement.querySelector(':scope > [role=group]');if(e.key==='ArrowDown')next=all[Math.min(all.length-1,i+1)];if(e.key==='ArrowUp')next=all[Math.max(0,i-1)];if(e.key==='Home')next=all[0];if(e.key==='End')next=all.at(-1);if(e.key==='ArrowRight'&&group&&group.hidden){item.click();e.preventDefault();return;}if(e.key==='ArrowRight'&&group&&!group.hidden)next=group.querySelector('[role=treeitem]');if(e.key==='ArrowLeft'&&group&&!group.hidden){item.click();e.preventDefault();return;}if(e.key==='ArrowLeft'){var parent=item.closest('[role=group]')?.parentElement.querySelector(':scope > [role=treeitem]');if(parent)next=parent;}if(next){e.preventDefault();all.forEach(function(x){x.tabIndex=-1;});next.tabIndex=0;next.focus();}});})();`;
+const dataDisplayRuntimeFor = ids => ids.some(id => DATA_DISPLAY_RUNTIME_IDS.includes(id)) ? DATA_DISPLAY_RUNTIME : '';
+
+const renderFilterable = ctx => tableFilterable.render(ctx);
+const renderExpandable = ctx => tableExpandable.render(ctx);
+const renderGrouped = ctx => tableGrouped.render(ctx);
+const renderTree = ctx => tableTree.render(ctx);
+const renderInspector = ctx => tableInspector.render(ctx);
+const renderLogViewer = ctx => tableLogViewer.render(ctx);
+const renderDiff = ctx => tableDiff.render(ctx);
+
+exports.tableFilterable = tableFilterable;
+exports.tableExpandable = tableExpandable;
+exports.tableGrouped = tableGrouped;
+exports.tableTree = tableTree;
+exports.tableInspector = tableInspector;
+exports.tableLogViewer = tableLogViewer;
+exports.tableDiff = tableDiff;
+exports.DATA_DISPLAY_FAMILIES = DATA_DISPLAY_FAMILIES;
+exports.DATA_DISPLAY_RUNTIME_IDS = DATA_DISPLAY_RUNTIME_IDS;
+exports.DATA_DISPLAY_RUNTIME = DATA_DISPLAY_RUNTIME;
+exports.dataDisplayRuntimeFor = dataDisplayRuntimeFor;
+exports.renderFilterable = renderFilterable;
+exports.renderExpandable = renderExpandable;
+exports.renderGrouped = renderGrouped;
+exports.renderTree = renderTree;
+exports.renderInspector = renderInspector;
+exports.renderLogViewer = renderLogViewer;
+exports.renderDiff = renderDiff;
 };
 __defs["platform/families/ehi.mjs"] = function (exports, __m) {
 /** E·H·I 독립 재료: Navigation, Overlay, Feedback. 모든 출력은 패밀리 컴파일러의 실제 재료 토큰을 사용한다. */
@@ -14364,6 +14649,7 @@ const {TABLE_FAMILIES} = __m("platform/families/table.mjs");
 const {FEEDBACK_FAMILIES} = __m("platform/families/feedback.mjs");
 const {INFO_MEDIA_FAMILIES, INFO_FAMILIES, MEDIA_FAMILIES} = __m("platform/families/info-media.mjs");
 const {EHI_FAMILIES} = __m("platform/families/ehi.mjs");
+const {DATA_DISPLAY_FAMILIES} = __m("platform/families/data-display.mjs");
 
 { const __r = __m("platform/families/visual.mjs"); exports.VISUAL_LANGUAGES = __r.VISUAL_LANGUAGES; exports.VISUAL_KEYS = __r.VISUAL_KEYS; exports.visualMismatch = __r.visualMismatch; }
 { const __r = __m("platform/families/kit.mjs"); exports.PURPOSE_GROUPS = __r.PURPOSE_GROUPS; exports.definePurposeFamily = __r.definePurposeFamily; exports.validatePurposeFamily = __r.validatePurposeFamily; exports.checkPurposeCombination = __r.checkPurposeCombination; exports.PURPOSE_FIELDS = __r.PURPOSE_FIELDS; }
@@ -14373,10 +14659,12 @@ const {EHI_FAMILIES} = __m("platform/families/ehi.mjs");
 /** 목적 패밀리 id(고정 계약). 새 id를 더하는 것은 호환이지만 이름을 바꾸거나 지우는 것은 호환이 아니다. */
 const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:card.kpi', 'purpose:card.product', 'purpose:card.article', 'purpose:card.feature', 'purpose:card.profile', 'purpose:card.pricing', 'purpose:card.status', 'purpose:card.gallery',
+  'purpose:card.comparison', 'purpose:card.notification', 'purpose:card.activity', 'purpose:card.integration', 'purpose:card.review', 'purpose:card.selection', 'purpose:card.dashboard-widget', 'purpose:card.financial-asset',
   'purpose:button.primary', 'purpose:button.secondary', 'purpose:button.emphasis', 'purpose:button.destructive', 'purpose:button.icon', 'purpose:button.loading', 'purpose:button.toggle', 'purpose:button.split', 'purpose:button.menu', 'purpose:button.fab', 'purpose:button.copy', 'purpose:button.close',
   'purpose:navigation.sidebar', 'purpose:navigation.topbar', 'purpose:navigation.tabs', 'purpose:navigation.bottom',
   'purpose:form.search', 'purpose:form.auth', 'purpose:form.settings', 'purpose:form.filter', 'purpose:form.group',
   'purpose:table.business', 'purpose:table.analytic', 'purpose:table.dense',
+  'purpose:table.filterable', 'purpose:table.expandable', 'purpose:table.grouped', 'purpose:table.tree', 'purpose:table.inspector', 'purpose:table.log-viewer', 'purpose:table.diff',
   'purpose:feedback.confirm', 'purpose:feedback.error', 'purpose:feedback.warning', 'purpose:feedback.progress', 'purpose:feedback.result',
   'purpose:info.status-badge', 'purpose:info.avatar', 'purpose:info.avatar-group', 'purpose:info.accordion', 'purpose:info.collapsible',
   'purpose:info.counter', 'purpose:info.notification-indicator', 'purpose:info.keyboard-shortcut', 'purpose:info.metadata-row', 'purpose:info.stat-comparison',
@@ -14386,7 +14674,7 @@ const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:feedback.callout', 'purpose:feedback.circular-progress', 'purpose:feedback.loading-overlay', 'purpose:feedback.status-indicator',
 ]);
 
-const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES]);
+const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES]);
 const BY_ID = new Map(PURPOSE_FAMILIES.map(f => [f.id, f]));
 const getPurposeFamily = id => BY_ID.get(id) ?? null;
 const listPurposeFamilies = group => PURPOSE_FAMILIES.filter(f => !group || f.group === group);
@@ -18741,6 +19029,8 @@ const {familyShapeVars, contrastPairs, requiredVars} = __m("platform/family.mjs"
 const {axisIds, materialAxisIds} = __m("platform/axes.mjs");
 const {styleMaterialsCSS, styleMaterialAttrs} = __m("platform/style-materials.mjs");
 const {actionRuntimeFor} = __m("platform/families/action.mjs");
+const {dataDisplayRuntimeFor} = __m("platform/families/data-display.mjs");
+const {cardSelectionRuntimeFor} = __m("platform/families/card-extra.mjs");
 const {renderState} = __m("platform/data/states.mjs");
 const {typeErrorCode} = __m("platform/pipeline.mjs");
 const {getPurposeFamily, renderPurposeFamily, VISUAL_LANGUAGES} = __m("platform/families/index.mjs");
@@ -18945,7 +19235,8 @@ function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   ].join('\n') + '\n' : '';
   const css = legacyCss + platformCss + '\n' + purposeCss + styleMaterialsCSS(reg, style, usedStateIds) + '\n';
   // 목적 패밀리가 쓴 기반 컴포넌트의 런타임도 낸다(트리에는 표지 노드뿐이라 쓰인 부품 type을 더해 같은 함수로 고른다).
-  const script = formRuntime + controlRuntime({...b, tree: {type: 'page', children: [...b.tree.children, ...[...usedBases].sort().map(x => ({type: x.slice('base-component:'.length)}))]}}) + actionRuntimeFor(usedPurposes.map(p => p.id));
+  const purposeIds = usedPurposes.map(p => p.id);
+  const script = formRuntime + controlRuntime({...b, tree: {type: 'page', children: [...b.tree.children, ...[...usedBases].sort().map(x => ({type: x.slice('base-component:'.length)}))]}}) + actionRuntimeFor(purposeIds) + dataDisplayRuntimeFor(purposeIds) + cardSelectionRuntimeFor(purposeIds);
 
   const defined = new Set([...css.matchAll(/(--[A-Za-z0-9-]+):/g)].map(x => x[1]));
   const missing = requiredVars(css).filter(v => !defined.has(v));

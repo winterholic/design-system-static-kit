@@ -14,6 +14,7 @@ import {TABLE_FAMILIES} from './table.mjs';
 import {FEEDBACK_FAMILIES} from './feedback.mjs';
 import {INFO_MEDIA_FAMILIES} from './info-media.mjs';
 import {EHI_FAMILIES} from './ehi.mjs';
+import {DATA_DISPLAY_FAMILIES} from './data-display.mjs';
 import {renderButton} from '../../materials/button.mjs';
 import {COMPONENT_CLASSIFICATION} from './inventory.mjs';
 import {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} from './action.mjs';
@@ -55,6 +56,17 @@ const PURPOSE_COMPONENT_TYPE = Object.freeze({
   'purpose:button.fab': 'button-control', 'purpose:button.copy': 'button-control', 'purpose:button.close': 'button-control',
   'purpose:button.split': 'split-button', 'purpose:button.menu': 'menu-button',
 });
+/** §6.2 requirement ↔ registered purpose-family mapping; classification is owned by inventory.mjs. */
+const PURPOSE_REQUIREMENT = Object.freeze({
+  'purpose:card.comparison': 'f-07-product-comparison-card', 'purpose:card.notification': 'f-14-notification-card',
+  'purpose:card.activity': 'f-15-activity-card', 'purpose:card.integration': 'f-17-integration-card',
+  'purpose:card.review': 'f-18-review-card', 'purpose:card.selection': 'f-20-interactive-selection-card',
+  'purpose:card.dashboard-widget': 'f-21-dashboard-widget-card', 'purpose:card.financial-asset': 'f-22-financial-asset-card',
+  'purpose:table.filterable': 'g-04-filterable-table', 'purpose:table.expandable': 'g-06-expandable-row-table',
+  'purpose:table.grouped': 'g-07-grouped-table', 'purpose:table.tree': 'g-12-tree-view',
+  'purpose:table.inspector': 'g-17-key-value-inspector', 'purpose:table.log-viewer': 'g-18-log-viewer',
+  'purpose:table.diff': 'g-20-diff-viewer',
+});
 
 const normalizeBase = m => defineComponentContract({id: m.id, componentType: m.id.slice('base-component:'.length), layer: 'Base', purpose: m.label,
   contexts: ['any'], structure: `base material ${m.id}`, slots: ['content'], props: {sourceContract: m.contract},
@@ -62,7 +74,7 @@ const normalizeBase = m => defineComponentContract({id: m.id, componentType: m.i
   states: ['default', 'hover', 'focus', 'active', 'disabled'], tokens: [], parents: ['slot:main', 'slot:header', 'slot:footer'],
   children: [], renderer: m.render, blueprint: {field: 'components', id: m.id}, tests: ['tests/platform-family-base.test.mjs'],
   unsupported: {states: [{value: 'loading', reason: '상태 지원은 해당 기반 재료의 source contract에 한정한다.'}]} });
-const normalizePurpose = f => defineComponentContract({id: f.id, componentType: PURPOSE_COMPONENT_TYPE[f.id] ?? f.id, layer: 'Purpose', purpose: f.purpose,
+const normalizePurpose = f => defineComponentContract({id: f.id, componentType: PURPOSE_COMPONENT_TYPE[f.id] ?? PURPOSE_REQUIREMENT[f.id] ?? f.id, layer: COMPONENT_CLASSIFICATION[PURPOSE_REQUIREMENT[f.id]] === 'composite' ? 'Composite' : 'Purpose', purpose: f.purpose,
   contexts: f.contexts, structure: f.label, slots: Object.keys(f.content), props: {...f.variants, ...f.props},
   content: f.content, appearance: ['family visual recipe'], sizes: ['small', 'medium', 'large'], density: ['compact', 'comfortable', 'spacious'],
   states: f.states, transitions: f.interactions, events: f.interactions, tokens: f.tokens ?? [], parents: f.parents,
@@ -72,7 +84,7 @@ const normalizePurpose = f => defineComponentContract({id: f.id, componentType: 
 
 export const COMPONENT_CONTRACTS = Object.freeze([
   ...BASE_COMPONENTS.map(normalizeBase),
-  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES].map(normalizePurpose),
+  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES].map(normalizePurpose),
 ]);
 
 export function validateComponentContracts(contracts = ALL_COMPONENT_CONTRACTS) {

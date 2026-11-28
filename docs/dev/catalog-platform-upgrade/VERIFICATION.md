@@ -1458,3 +1458,49 @@ exit 1; 다섯 실패 모두 Chromium 시작 시 bootstrap_check_in org.chromium
 ```
 
 실행 엔진은 Codex/macOS `exec_command`다. Chromium launch 권한 오류 뒤 브라우저를 재시도하지 않았다. 앞 절에서 같은 D4 코드에 대해 `audit`, `docs`, `build`, `check-generated`를 별도 실행해 통과시켰고, 마지막 출력은 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`였다. 즉 D4의 `npm run verify`는 브라우저 의존 5개만 해당 환경에서 시작하지 못했고 비브라우저 시험 1,073개는 통과했다.
+
+## 22. D3 §6.2 F 카드·G 데이터 표시 구현 (2026-11-28)
+
+최신 main(`ffd309d96`) 위에서 D3를 재기반화하고 coverage, baseline, 컴포넌트 분류표, 카탈로그 인덱스 및 미리보기를 다시 생성했다. TASK-TRD-F는 `카드 22항목`, TASK-TRD-G는 실제 요구행 수인 `데이터 표시 20항목`이며 둘 다 `Implemented`다.
+
+### 22.1 구현 및 범위
+
+- Manifest의 F 22행은 direct 19 / variant 3 / missing 0이다. G 20행은 direct 16 / variant 3 / part-of 1 / missing 0이다. G의 `List Item`은 기존 `component:list`의 자식 구조로 존재한다.
+- 카드·표시 계열 렌더러와 계약은 loading, empty, error, 내용 이스케이프, 실제 마크업 상태 및 Blueprint 재료를 시험한다. Core·REST·MCP가 재료 조회와 Blueprint 조립에서 같은 출력을 내는 시험도 통과했다.
+- KPI 차트 카드는 기존 검증 프리셋 `chart-preset:mobile-sparkline`을 `renderChartPreset`으로 재사용한다. 차트 렌더러 `src/render/chart-presets.mjs`는 바꾸지 않았다.
+- `e2e/platform-family-a11y.spec.mjs`에서 정적 가족 수 37을 등록 목록에 따라 검사하도록 바꾸고, 모든 가족의 예시 페이지와 컴포넌트가 390px 및 1280px 폭에서 수평 넘침이 없는지 단언을 추가했다. 최신 등록 수 변경 뒤 문구·제목의 고정 숫자가 낡았고 모든 가족 예시의 작은 화면 overflow가 확인되지 않아 바꿨다. 기존 키보드·포커스·터치 크기·상태 단언은 삭제하거나 완화하지 않았다.
+- 최신 main이 전체 카탈로그 버킷을 전체 행 수로 세고 카테고리별 `*-1.json` 페이지로 나누도록 바뀌어, `tests/platform-pregenerate.test.mjs`가 이를 확인하도록 갱신했다. 시험은 24행 페이지 수, 페이지 메타데이터, 페이지 순서와 전체 행을 비교한다.
+
+### 22.2 검증 증거
+
+```text
+$ node scripts/platform/baseline.mjs
+platform assemblable 1712172 / verified 68018; (401.1s)
+
+$ node --test [F/G 집중 시험·REST/MCP·inventory·pregenerate]
+ℹ tests 141 / ℹ pass 141 / ℹ fail 0
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1495 materials, 406 requirements)
+
+$ npm run verify
+ℹ tests 1101 / ℹ pass 1096 / ℹ fail 5
+비브라우저 시험은 모두 통과. 아래 5개만 Chromium 시작의 Mach IPC Permission denied (1100) / SIGTRAP으로 실패.
+
+$ node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs
+AUDIT 통과; DOCS 생성; BUILT static workbench, gallery, schema/catalog API
+REPRODUCIBLE: 4738 generated files match a fresh build byte for byte.
+
+$ git diff --exit-code origin/main -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json
+exit 0
+```
+
+Chromium을 시작하지 못한 시험 이름:
+
+- `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`
+- `stack: gap and align props change the real layout, including the "gap" step`
+- `container: width steps cap the real width, full does not, and content is escaped`
+- `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`
+- `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`
+
+고정 출력 확인은 기존 legacy-hashes·catalogVersion 시험과 함께 실행한 호환성 테스트 및 `site/v1/catalog.json` 바이트 비교에서 보존됐다. 브라우저 오류는 Codex/macOS `exec_command`에서 관찰된 Mach IPC 시작 거부로, 해당 브라우저 시험은 검증하지 못했다.
