@@ -2748,9 +2748,11 @@ exit 0
 ### 44.1 검증 증거와 미실행 항목
 
 - 시작 상태는 HEAD `d74367fd3`(부모 `6aae08887`)와 추적 파일 6개 미커밋 변경이었다. 타이포·Foundations 관련 5개 파일(`apps/web/app/materials/typography/page.tsx`, `apps/web/e2e/w6b-scenarios.spec.mjs`, `apps/web/features/materials/FoundationCategory.tsx`, `apps/web/features/materials/materials.module.css`, `apps/web/features/platform/platform.module.css`)은 stash로 보존했다. row 3의 이미 반영된 코드 수정만 회귀 시험과 함께 이번 범위에 분리했다.
+- 최신 원격 `origin/main` `3b955287a`에 rebase했다. 충돌 난 Explore 재료 안내문은 main의 `materialNote` 스타일을 유지했고, 중복으로 남은 사용되지 않는 `metaNote`는 제거했다. 타이포 작업자 파일은 rebase 대상 커밋에서 제외했다.
 - `npm --workspace apps/web run build`: Next.js 16.4.6 성공, 정적 페이지 962개 생성.
+- `npm --workspace apps/web run test:unit`: `tests 98, pass 98, fail 0`.
 - `node --test tests/layout-quality.test.mjs`: selector 원복 RED 1건, 복구 GREEN `27/27`.
 - Ttakkari Browser의 Chromium에서 로컬 `next start`를 사용해 Explore 사례 상세·렌더, Foundations 아이콘 범주·축 상세 링크, 컴포넌트 다음 페이지, 가격 카드 iframe을 390px·1280px에서 조작했다.
 - parity 대조는 `purpose:overlay.contextual-help`의 선택 요청·서비스 출력·정적 SVG를 같은 width/title 조건으로 직렬화해 수행했다.
 - Codex 로컬 브라우저 프리플라이트는 `blocked`(Mach rendezvous 등록과 CoreServices mach lookup 거부). 이에 따라 로컬 `npm --workspace apps/web run test:e2e -- ...`는 실행하지 않았으며 같은 기동을 반복하지 않는다. 운영형 Chromium 조작은 설정된 Ttakkari Browser로 수행했다. GH Web 전체 e2e는 push 뒤 실행 증거로 보완한다.
-- 최신 main rebase 및 push 후 직전 main 기준 diff·불변 파일 비교와 `git diff --check`를 기록한다.
+- 2.1.0 고정 해시·기본 2.4.0·`site/v1/` 불변 파일은 직전 main 대비 변경이 없다. push 직전 diff stat·`git diff --check`·원격 SHA를 별도로 대조한다.
