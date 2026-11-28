@@ -2160,3 +2160,107 @@ node RED: D-05·D-06 단언과 D-04·D-07 단언이 원래 소스에서 `✖` 2�
 - 하지 않음: 시트·대화상자의 backdrop 클릭 닫기. 계약에 없는 동작이라 요구하지 않았고 지금은 닫히지 않는다(참고).
 - Mobile Header의 1280px 링크 36px은 데스크톱 레이아웃이라 손대지 않았다.
 - sticky 바의 하단 바 높이 보정은 런타임(`ResizeObserver`)이 있을 때 정확하다. 런타임이 없으면 56px 기준 CSS 대체값이다.
+
+
+---
+
+## 36. TASK-TRF-06 Explore 필터·비교 및 Studio 재료 선택 독립 브라우저 검증 및 교정 (원 커밋 `18d6338dc`·`2585cc4e3`, 교정 커밋 위 main 기준, 2026-11-29)
+
+구현 기록은 Codex 샌드박스에서 Chromium을 시작할 수 없어 브라우저 시험이 모두 미실행이었다. 이번에는 새 worktree(`dsk-up-f3v`, `origin/main` `2585cc4e3`에서 분기)에서 `npm ci` 후 운영 빌드(`next build` → `next start`)를 Playwright Chromium으로 390px·1280px 두 폭에서 실제 조작했다. 모든 판정은 주소 해시가 아니라 화면에 붙은 조립 요청(`data-request`), 실제로 컴파일된 standalone 문서의 계산 스타일·DOM 구조, 그려진 `<img>`로 한다.
+
+### 36.1 구현 그대로의 실행 결과
+
+`WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- material-explorer-studio.spec.mjs`를 구현 그대로 실행하니 4개 중 **3개가 실패**했다(`3 failed, 1 passed`).
+
+| 시험 | 실패 원인 | 구분 |
+|---|---|---|
+| Explore 재료 비교 | `style=work-console`은 등록된 디자인 맥락이 아니다(실제 id는 `console`). 왼쪽·오른쪽 값도 select가 쓰는 짧은 값이 아니라 `palette:ocean-cool` 형태로 기대했다 | 시험 결함 |
+| Studio 선택 복원 | `getByLabel('컴포넌트')`가 "컴포넌트 패밀리"와 겹쳐 strict mode 위반. 더 깊게는 `component=data-table`이 같은 카드를 3개 놓는 요청이 되어 Core가 거부하는 조합이다(Studio 선택지에서도 비활성이어야 하는 값). `layout=dashboard-grid`는 D-1 때문에 거부된다 | 시험 결함과 제품 결함(36.2 D-1) |
+| 아이콘 영역 | 목적을 고르지 않은 채 `step=swap`을 열어 단계가 `purpose`로 되돌아가 select가 없다 | 시험 결함 |
+| 시각화 비교 | 통과했다. 그러나 두 iframe 안은 `include는 허용된 이름의 배열이어야 합니다.`와 `축 최댓값이 데이터보다 작아 값이 잘립니다.`를 돌려주는 HTTP 404였다. 시험은 iframe 개수와 select 값만 봤다 | 제품 결함(D-3), 시험이 결함을 가렸다 |
+
+### 36.2 발견한 제품 결함과 교정
+
+| # | 결함 | 증거 | 교정 |
+|---|---|---|---|
+| D-1 | Studio·Explore의 레이아웃 선택이 Core 요청에 `pattern: "layout:dashboard-grid"`로 실려 항상 거부된다. Core의 `pattern`은 페이지 패턴 id(`dashboard-grid`)만 받는다. 레이아웃 24개가 모두 비활성이었고, 구현의 단위 시험은 이 틀린 값(`layout:dashboard-grid`)을 정답으로 단언했다 | `assembleDesign({purpose:'work-dashboard', pattern:'layout:dashboard-grid'})` → `work-dashboard 목적은 패턴 layout:dashboard-grid을 쓰지 않습니다`. `pattern:'dashboard-grid'`는 통과 | `patternOfLayout`과 `LAYOUT_PAGE_PATTERN`(레지스트리 `reuses: pattern:*` 6개)로 변환한다. 표가 레지스트리와 같은지 단위 시험이 대조한다. 페이지 패턴이 없는 레이아웃 18개는 이유를 붙여 비활성으로 둔다 |
+| D-2 | Explore 필터 중 밀도·셸·폭이 조립 상태에 닿지 않는다. select 값이 `axis-value:density.compact` 전체 id인데 주소 읽기는 짧은 값만 받는다. "간격 토큰" select는 아예 다른 이름(`spacing`)으로 보내져 무시된다. 제출 뒤 select가 비어 돌아온다 | 1280px에서 밀도·셸·폭 필터를 골라 제출 → 결과 요청에 키 없음, select 값 소실 | 값을 짧은 값으로 통일하고 밀도 축을 하나(`density`)로 합쳤다. 예전 공유 링크의 전체 id와 `compare=density`는 그대로 받는다 |
+| D-3 | 시각화 비교 미리보기가 둘 다 404. `compileBlueprint`에 `include:['standalone']`을 넘겼는데 허용값이 아니고, 프리셋 예시의 축 범위(`axis.max`)가 공통 표본을 잘라내는 프리셋도 있다. 비교 가능한 프리셋도 44개 중 막대·선·영역 10개로 줄여 두었다 | `GET /explore/chart-preview/marketing-channel-roas` → 404, 본문이 오류 문구 | 별도 라우트(iframe)를 지우고 Core 조립 경로(`assembleDesign`의 `content.charts[{preset,...}]`)로 같은 표본을 두 프리셋에 넣어 `<img>`로 보인다. 프리셋은 44개 전부 선택지에 두고 Core가 거부한 것은 이유와 함께 비활성이다 |
+| D-4 | Studio의 서브토큰 세트·시각 패밀리·표면 선택지가 Core 거부를 미리 막지 않는다. 대시보드에서 세트 25개 중 14개, 패밀리 12개 중 2개, 표면 5개 중 1개가 활성인데 고르면 `P_ATTR_CONTEXT` 오류 화면이 된다. 오류 화면은 어느 선택이 충돌 원인인지 알려 주지 않는다 | 구현 그대로 대시보드·랜딩 두 목적에서 활성 옵션을 하나씩 조립해 보니 위 수치만큼 거부 | 모든 선택지를 현재 요청에서 그 축만 바꿔 Core로 시험하고 거부 이유를 붙여 비활성으로 둔다. 요청이 이미 충돌 상태이면 충돌 선택을 풀고 계속하는 링크를 보인다 |
+| D-5 | Explore 처음 화면에 결과가 없고(`compare` 없음), 왼쪽·오른쪽 select가 빈 채 나온다. 비교 축을 바꿔 제출하면 이전 축의 값이 새 축에 없어 다시 빈 화면이 된다. 레이아웃 축의 기본 쌍(`asymmetric-grid`, `bento`)은 둘 다 Core가 거부해 결과가 하나도 없었다 | `/explore/materials` → `main img` 0, `left` 옵션 0 | 기본 비교 축을 팔레트로 하고, 왼쪽은 현재 필터 값(없으면 첫 활성), 오른쪽은 다른 활성 값으로 채운다. 이 축에 없는 left·right는 기본으로 대체한다. 비활성 옵션과 이유는 Studio와 같다 |
+| D-6 | 시각 패밀리는 배치된 컴포넌트에 입혀지는 재료라 컴포넌트가 없으면 두 결과가 바이트까지 같다(`work-dashboard` 기준 `bold`·`glass`·`quiet`의 standalone이 동일). Explore 시각 패밀리 비교가 구별되지 않는 두 화면을 별개 디자인처럼 보였고 Studio의 패밀리 선택도 미리보기에 반영되지 않았다 | `assembleDesign` 결과 해시가 패밀리와 무관하게 같음, 카드 3개를 놓으면 모서리·그림자·여백이 달라짐 | Explore는 컴포넌트 필터가 없으면 Core가 받는 경우에 한해 두 결과에 같은 카드 3개를 놓고 그 사실을 화면에 적는다. Studio는 컴포넌트 없이 패밀리를 고를 때 안내를 보인다 |
+
+### 36.3 완료 기준 항목별 판정
+
+1. **§11.1 필터 9종과 비교 6종 (390px·1280px).** 필터 9종(페이지 목적, 디자인 맥락, 팔레트 계열, 서브토큰 세트, 타이포 시스템, 시각 패밀리, 밀도, 레이아웃, 라이트·다크)을 화면에서 골라 제출한 뒤 주소·select 복원·두 결과의 조립 요청·그려진 이미지를 함께 확인한다. 비교 6종은 한 축만 다르다.
+
+   | 비교 | 다른 요청 키 | 컴파일 문서에서 확인한 같은 것과 다른 것 |
+   |---|---|---|
+   | 같은 레이아웃, 다른 색상(팔레트) | `palette` | DOM 구조·제목 서체 같음, `body` 배경색 다름 |
+   | 같은 팔레트, 다른 서브토큰 | `subtokenSet` | 구조·서체 같음, `:root` 토큰 값 다름 |
+   | 같은 콘텐츠, 다른 타이포 | `typeSystem` | 구조·본문 텍스트·배경색 같음, 제목 `font-family` 다름 |
+   | 같은 컴포넌트, 다른 시각 패밀리 | `families` | 구조·배경색 같음, 카드 모서리·그림자·여백 다름 |
+   | 같은 제품 목적, 다른 레이아웃 | `pattern` | 색·서체 토큰 같음, DOM 구조 다름 |
+   | 같은 데이터, 다른 시각화 | `content`(차트 preset만) | 시리즈 데이터 같음, 차트 DOM 구조 다름 |
+
+   팔레트 계열: 지금 등록된 팔레트 9개는 계열 태그(`family:*`)가 하나씩이라 팔레트 선택과 계열 선택이 같다. 팔레트가 200개로 늘면(Track B) 계열 단위 필터가 따로 필요해진다. 현재는 같은 결과이므로 결함으로 세지 않고 후속으로 남긴다.
+
+2. **§11.2 Studio 선택 10종.** Palette, Subtoken Set, Typography, Visual Family, Layout, Components, Surface, Motion, Density, Content를 UI로 고르고 매번 요청 키, 컴파일 문서의 변화(배경색·토큰·제목 서체·카드 모양·마크업·본문 텍스트)를 확인했다. 내보내기 화면의 코드에도 같은 콘텐츠가 들어간다. 비호환 선택은 비활성과 이유(title)로 막히고 눌러도 값·주소가 바뀌지 않는다. 활성이라고 표시된 옵션 전수(대시보드·랜딩 두 목적의 세트·패밀리·표면·팔레트·레이아웃)가 실제로 조립된다. 단계 이동·새로고침·뒤로/앞으로 가기·단계 표시줄 왕복 뒤 5개 선택(팔레트·레이아웃·컴포넌트·밀도·패밀리)이 복원된다.
+
+3. **아이콘 영역 비활성과 차트 제외가 §11 요구를 줄였는가.**
+   - **아이콘 영역:** §11.2의 열 가지 영역에 아이콘은 없다. 따라서 §11.2를 줄인 것은 아니다. 다만 §16.2의 "모든 재료를 Studio에서 지원 범위에 따라 사용 가능"에는 못 미친다. 아이콘 영역 재료 16개는 Core 요청에 대응 필드가 없어 모두 비활성이고 이유가 붙는다(시험으로 고정). 필드 추가는 Track A의 계약 확장이며 이 작업에서 열지 않았다.
+   - **차트:** 구현은 "같은 데이터로 비교할 수 없는 차트를 제외"한다고 적었지만 실제로는 막대·선·영역 10개만 남겼고 그마저 미리보기가 모두 404라서 §11.1의 "같은 데이터, 다른 시각화"를 **줄였다**(그리고 동작하지 않았다). 교정 뒤에는 등록된 44개를 모두 선택지에 두고 Core 조립이 같은 표본(4개월 매출 1계열)을 받는 **13개**(막대 4, 가로 막대 2, 선 3, 영역 2, 도넛 1, 스파크라인 1)를 비교한다. 나머지 31개는 Core의 거부 이유와 함께 비활성이다. 이유별로는 Blueprint 차트 `kind` 목록(카탈로그 2.4.0 고정)에 없는 확장 형태가 15개, 다른 데이터 형태가 필요한 것(좌표·OHLC·표본·합계 행·2계열 이상·감소 단계)이 15개, 프리셋 자체 축 범위가 표본을 잘라내는 것이 1개다. 앞의 두 묶음은 같은 데이터로 비교할 수 없다는 타당한 제외이거나 Core 계약 한계다. 확장 형태 15개 중 계단선·트리맵·레이더·진행률 4개는 Core 자체 데이터 계약(`validateChartPresetData`)이 이 표본을 받는 형태인데 조립 경로(`assembleDesign`)가 받지 않는다. 이 한계는 Core·Track A/E의 후속이며 `unresolvedIssues`에 남겼다. 수치는 업무 대시보드 목적 기준이다.
+
+4. **Explore가 선택한 결과만 렌더하는가.** 비교 축 6종을 바꿔 가며 확인했다. `compare-result`는 정확히 둘, `main img` 둘 이하, `iframe` 0, `tabpanel`·`hidden`·닫힌 `details` 0. 조합 전체를 그리는 목록이 없다. Studio 재료 교체 단계에서는 후보 비교·내보내기·콘텐츠 패널과 닫힌 select 목록이 DOM에 없고 select를 열 때만 `listbox` 하나가 생긴다.
+
+5. **브라우저 spec 실행과 회귀 시험.** 아래 36.4.
+
+6. **고정 해시·버전.** `src/catalog/**`, `src/compiler.mjs` 등 고정 출력 영역은 수정하지 않았다. `npm run verify`와 `check-generated`는 36.5.
+
+### 36.4 시험과 RED/GREEN
+
+`apps/web/e2e/material-explorer-studio.spec.mjs`를 4개에서 27개(390px·1280px 각 12개와 폭 무관 3개)로 다시 썼다. 원래 시험이 확인하던 것(Explore 주소 복원, Studio 단계·새로고침 복원, 아이콘 영역 비활성과 이유, 시각화 비교 복원)은 모두 남기되, 틀린 id와 겹치는 label을 바로잡고 주소 대신 요청·컴파일 문서를 단언한다. 기대값을 낮춘 곳은 없다. 단위 시험(`tests/platform-material-selection.test.mjs`)은 틀린 값을 정답으로 박은 단언 3곳을 Core가 받는 값(`dashboard-grid`, `split-hero`)으로 바꾸고, 그 값이 실제 `assembleDesign`을 통과하는지와 예전 표기가 거부되는지, 표가 레지스트리와 같은지, 차트 두 프리셋이 같은 데이터로 조립되는지를 더했다.
+
+고친 코드에 결함을 하나씩 되살려(RED) 시험이 실패하는지 본 뒤 원복해 통과(GREEN)를 확인했다.
+
+| 되살린 결함 | 실패한 시험 |
+|---|---|
+| D-1 `pattern`에 `layout:` 접두를 다시 붙임 | e2e "Studio 선택 10종", e2e "Explore 필터 9종", 단위 시험 3개 |
+| D-2 밀도 필터를 `spacing` 이름으로 되돌림 | e2e "Explore 필터 9종" (밀도 단계에서 주소 단언 실패) |
+| D-3 차트 데이터를 요청에 싣지 않음 | e2e "Explore 비교 6종", 단위 시험 "chart comparison" |
+| D-4 선택지 Core 시험 제거 | e2e "Core 가 받지 않는 선택을 비활성으로 막고", e2e "활성 선택은 모두 실제로 조립된다"(전수) |
+| D-4 충돌 복구 링크 제거 | e2e "충돌하는 주소 상태" |
+| D-5 left·right 대체 로직 제거 | e2e "처음 화면과 비교 축 변경", e2e "비교 목록은 Core 가 받지 않는 재료를 비활성" |
+| D-5 비활성 이유 제거 | e2e "비교 목록은 Core 가 받지 않는 재료를 비활성" |
+| D-6 카드 컴포넌트 보강 제거 | e2e "Explore 비교 6종" (시각 패밀리 단계) |
+
+- `WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- material-explorer-studio.spec.mjs --repeat-each=2`: `54 passed` (두 번 모두 통과, rebase 전후 각 1회).
+- 기준선 대조(구현 그대로): `3 failed, 1 passed`.
+- 다른 e2e 영향 확인: `a11y`, `w6b-scenarios`, `studio`, `studio-ux`, `w6a-shell-studio`, `explore-studio-roundtrip`, `components-studio-roundtrip`, `security` 묶음 135 passed, 2 failed. 실패 2개는 `w6b-scenarios.spec.mjs:130` 시나리오 B(390px·1280px)이며 `/components` 쪽 이동 목록의 기존 실패다. 이 변경이 건드리지 않은 경로이고 §14·§28의 기록과 같은 계열이다. 기준선을 같은 빌드로 다시 재지는 않았다(범위 밖).
+- `npm --workspace apps/web run test:unit` 95/95. `test:boundary` 8/9, 실패 1건은 TRF-07의 `features/components/material-detail.mjs`가 `src/`를 직접 import하는 기존 결함이며 F3 파일은 위반이 없다.
+
+측정한 비용: Studio 재료 교체 화면은 선택지마다 Core 시험을 하므로 같은 입력을 처음 받으면 서버에서 0.5초에서 1.0초가 걸렸다(`curl`, 로컬 운영 빌드). 같은 주소를 다시 받으면 7ms였다(서버 캐시). 목록 요청이 아니라 선택 시점의 컴파일이다.
+
+### 36.5 최종 검증
+
+`origin/main` `81258e09f`에 rebase한 뒤 교정 커밋 위에서 실행했다.
+
+| 명령 | 결과 |
+|---|---|
+| `npm run typecheck --workspace apps/web` | 오류 없음 |
+| `npm run web:build` | `Compiled successfully` |
+| `node --test tests/platform-material-selection.test.mjs tests/platform-material-library.test.mjs` | `tests 8, pass 8, fail 0` |
+| `WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- material-explorer-studio.spec.mjs --repeat-each=2` | `54 passed` |
+| `npm run verify` | exit 0. `tests 1268, pass 1268, fail 0, skipped 0`, 마지막 줄 `REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.` |
+| `npm run coverage:materials:check` | `MANIFEST MATCH ... (1540 materials, 406 requirements)` (생성 규칙이 읽는 재료 레지스트리를 바꾸지 않아 Manifest 재생성 결과가 같다. 손으로 병합하지 않았다) |
+| `node scripts/check-generated.mjs` | `REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.` |
+
+`npm run verify`의 단위 시험에 2.1.0~2.3.0 레이아웃 개정, 2.4.0·2.5.0 컴파일 출력의 기준선 바이트 동일, 2.4.0→2.6.0 차트 출력 고정 해시가 들어 있고 모두 통과했다. 이 변경은 `src/`·`site/`를 건드리지 않았다(`git diff HEAD~2 -- src site` 비어 있음). 2.1.0 고정 해시, 기본 2.4.0, `site/v1`은 바뀌지 않았다.
+
+### 36.6 남은 한계·범위 밖 발견
+
+- Studio에서 실제로 고를 수 있는 재료의 폭은 Core `assembleDesign` 계약이 정한다. 컴포넌트는 10개 중 `card-surface`(2~3개 배치)만 어느 목적에서도 조립되고 나머지 9개는 Core 이유와 함께 비활성이다. 레이아웃은 24개 중 페이지 패턴이 있는 6개만 선택할 수 있고 업무 대시보드는 `dashboard-grid` 하나, SaaS 랜딩은 0개다. 이 때문에 "같은 제품 목적, 다른 레이아웃" 비교가 실제로 두 결과를 내는 목적은 에디토리얼·커머스뿐이다. 선택지는 전부 보이고 이유가 붙지만, §16.2의 "모든 재료를 사용 가능"은 Track A·D·E의 Core 계약 확장 전까지 충족되지 않는다.
+- 팔레트는 9개만 등록되어 있다(Track B 진행 중). 팔레트가 늘면 계열 단위 필터가 필요하다.
+- 아이콘 영역 필드, 확장 차트 형태 15개의 조립은 Core 계약 확장이 필요하다.
+- D1 폼 Tab 순서와 D7 업무 패턴 셀 토큰 브라우저 실패는 다른 작업자의 몫이라 건드리지 않았다. F3 변경과 겹치지 않는다.
+- `boundary.check.mjs`의 기존 실패 1건과 `w6b-scenarios` 시나리오 B 기존 실패 2건은 F3 범위 밖이다.

@@ -4,8 +4,8 @@
   "summary": {
     "totalTasks": 49,
     "byStatus": {
-      "Verified": 23,
-      "Implemented": 9,
+      "Verified": 24,
+      "Implemented": 8,
       "Pending": 14,
       "In Progress": 2,
       "Completed": 1
@@ -1416,7 +1416,6 @@
       "modifiedFiles": [
         "apps/web/app/explore/page.tsx",
         "apps/web/app/explore/materials/page.tsx",
-        "apps/web/app/explore/chart-preview/[presetId]/route.ts",
         "apps/web/app/studio/assemble/page.tsx",
         "apps/web/features/platform/assemble-state.ts",
         "apps/web/features/platform/chart-compare.mjs",
@@ -1433,21 +1432,21 @@
       "completionCriteria": "Explore의 목적·맥락·팔레트·세트·타이포·패밀리·간격/밀도·레이아웃·모드 필터가 Core 재료 레지스트리에서 읽히고 URL로 복원된다. 여섯 비교 흐름은 같은 입력의 한 축만 바꾸며 선택된 두 결과만 검증·렌더한다. Studio는 지원 재료를 Core assembleDesign로 보내고 불가 조합을 이유와 함께 막으며 주소 상태를 단계 이동·새로고침에서 복원한다. 목록 iframe·컴파일은 0, Studio 중복 제거·디바운스·상한 캐시 계약과 legacy/site 출력 보존, 단위 RED/GREEN, 브라우저 제외 전체 Node 시험, web:build, coverage MATCH, check-generated 통과.",
       "tests": [
         "node --test tests/platform-material-selection.test.mjs tests/platform-material-library.test.mjs",
-        "node --test --test-skip-pattern=\"real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측\"",
-        "apps/web/e2e/material-explorer-studio.spec.mjs (작성, Chromium 차단으로 미실행)",
+        "WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- material-explorer-studio.spec.mjs --repeat-each=2 (54 passed, 390px·1280px)",
+        "npm run verify",
         "npm run typecheck --workspace apps/web",
         "npm run web:build",
         "npm run coverage:materials:check",
         "node scripts/check-generated.mjs"
       ],
-      "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "아이콘 영역 재료는 Studio에 레지스트리 선택지를 노출하되 현재 assembleDesign 요청 계약에 icon-area 입력 키가 없어 비활성화하고 이유를 표시한다(출력 연결은 Track A 계약 확장 필요). 산점도·캔들 등 차트는 막대·선·영역 비교와 데이터 도메인이 달라 동일 입력 비교 선택에서 제외된다. Chromium 브라우저 시험은 요청 지시에 따라 작성만 하고 미실행했으며 이후 Claude가 검증한다. 2.1.0·2.4.0/site/v1 출력은 수정하지 않았다.",
+      "commit": "8403c17c0",
+      "status": "Verified",
+      "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §36). 구현 그대로 e2e 4개 중 3개가 실패했고 제품 결함 6건을 교정했다: 레이아웃이 Core pattern 으로 전달되지 않음(D-1), 밀도·셸·폭 필터가 조립 상태에 닿지 않음(D-2), 시각화 비교 미리보기가 모두 404(D-3), Studio 선택지가 Core 거부를 미리 막지 않음(D-4), Explore 처음 화면·기본 비교 쌍이 비어 있음(D-5), 시각 패밀리가 컴포넌트 없이는 출력에 반영되지 않음(D-6). 회귀 시험 e2e 27개(×2 폭)와 단위 시험을 더했고 결함별 RED→GREEN을 확인했다(§36.4). 판정: 아이콘 영역 비활성은 §11.2의 열 가지 영역에 없어 §11을 줄이지 않지만 §16.2 '모든 재료 사용'에는 못 미친다(Core 요청 필드 필요, Track A). 차트 제외는 구현이 막대·선·영역 10개로 줄이고 미리보기도 404라 §11.1을 줄인 것이었다. 교정 후 업무 대시보드 기준 44개 중 13개를 같은 데이터로 비교하고 31개는 Core 이유와 함께 비활성이다. 남은 한계(Core 계약): Studio 컴포넌트는 card-surface 하나만 조립되고 레이아웃은 페이지 패턴이 있는 6개만(대시보드 1, 랜딩 0) 고를 수 있다. 확장 차트 형태 15개는 Blueprint 차트 kind 목록(2.4.0 고정)에 없어 조립되지 않는다(그중 4개는 같은 표본을 받는 데이터 계약). 팔레트 9개는 계열 하나씩이라 계열 필터가 팔레트 선택과 같다(200개로 늘면 계열 필터 필요, Track B). 2.1.0 고정 해시·기본 2.4.0·site/v1 출력은 수정하지 않았다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/e2e/material-explorer-studio.spec.mjs",
           "ownerTrack": "Track G",
-          "reason": "Explore/Studio URL 복원·비호환 사유·같은 데이터 차트 비교를 브라우저 경로로 검증하는 회귀 시험(Chromium 차단으로 미실행)"
+          "reason": "Explore/Studio 필터·비교·재료 선택·단계 복원·비호환 사유를 390px·1280px 브라우저에서 단언하는 회귀 시험(구현 시점 4개 → 독립 검증에서 27개로 확장, 실행 54 passed)"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
@@ -1458,6 +1457,11 @@
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
           "ownerTrack": "Track G (generated output)",
           "reason": "coverage:materials 생성기로 재료·요구 관계 Manifest 재생성"
+        },
+        {
+          "file": "tests/platform-material-selection.test.mjs",
+          "ownerTrack": "Track G (CONTRACTS §6 표에 없는 파일은 Track G가 소유자를 정한다)",
+          "reason": "레이아웃 pattern 전달·레지스트리 표 대조·차트 같은 데이터 조립 단위 시험. 틀린 값을 정답으로 박았던 단언 3곳을 Core가 받는 값으로 바꿈"
         }
       ]
     },
