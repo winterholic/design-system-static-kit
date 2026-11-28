@@ -12,6 +12,7 @@ import {axisDefs} from '../catalog/axes.mjs';
 import {axisIds} from './axes.mjs';
 import {layoutAccepts} from './data/layouts.mjs';
 import {PURPOSE_FAMILIES, getPurposeFamily, renderPurposeFamily, assembleFamilies} from './families/index.mjs';
+import {EHI_FAMILIES} from './families/ehi.mjs';
 import {compileLayout, LAYOUT_BANDS, LAYOUT_BAND_NAMES} from '../layout.mjs';
 
 /** 페이지 좌우 여백(px)의 합. 폭 축 값(콘텐츠 폭)에서 컨테이너 폭을 가늠할 때 뺀다(--kit-gutter 24px × 2). */
@@ -264,7 +265,10 @@ export const LAYOUT_BASELINE_SPECIMENS = Object.freeze({
 const SLOT_ITEMS = {grid: 6, columns: 8, bento: 5};
 /** 슬롯을 채울 항목 수: 반복 흐름은 열 수가 폭마다 달라지는 값, 그 밖의 슬롯은 최소 수(여러 개 받는 슬롯은 2개)다. */
 const specimenCount = slot => Math.max(slot.min, Math.min(slot.max, SLOT_ITEMS[slot.flow?.mode] ?? (slot.max > 1 ? Math.min(slot.max, slot.min > 1 ? slot.min : 2) : 1)));
-const accepted = slot => PURPOSE_FAMILIES.filter(f => slot.accepts.includes(f.id) || slot.accepts.includes(`group:${f.group}`));
+const EHI_IDS = new Set(EHI_FAMILIES.map(f => f.id));
+// Group-only specimens are pinned visual evidence. New navigation/overlay/feedback families are still
+// accepted by explicit id, while their registration does not silently reshuffle existing layout samples.
+const accepted = slot => PURPOSE_FAMILIES.filter(f => slot.accepts.includes(f.id) || (slot.accepts.includes(`group:${f.group}`) && !EHI_IDS.has(f.id)));
 
 /** 자유 문장 필드(제목·본문·설명 등)에만 길게 이어지는 단어를 붙인다(콘텐츠 길이 대응 시험). 숫자·가격·상태 라벨·아이콘 이름 같은 한 줄 값은 부품 계약의 몫이라 건드리지 않는다. */
 export const PROSE_KEYS = Object.freeze(['title', 'body', 'description', 'excerpt', 'message', 'detail', 'note', 'helper', 'headline', 'caption', 'hint']);

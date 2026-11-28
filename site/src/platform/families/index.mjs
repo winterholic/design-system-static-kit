@@ -24,6 +24,7 @@ import {FORM_FAMILIES} from './form.mjs';
 import {TABLE_FAMILIES} from './table.mjs';
 import {FEEDBACK_FAMILIES} from './feedback.mjs';
 import {INFO_MEDIA_FAMILIES, INFO_FAMILIES, MEDIA_FAMILIES} from './info-media.mjs';
+import {EHI_FAMILIES} from './ehi.mjs';
 
 export {VISUAL_LANGUAGES, VISUAL_KEYS, visualMismatch} from './visual.mjs';
 export {PURPOSE_GROUPS, definePurposeFamily, validatePurposeFamily, checkPurposeCombination, PURPOSE_FIELDS} from './kit.mjs';
@@ -41,9 +42,12 @@ export const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:info.status-badge', 'purpose:info.avatar', 'purpose:info.avatar-group', 'purpose:info.accordion', 'purpose:info.collapsible',
   'purpose:info.counter', 'purpose:info.notification-indicator', 'purpose:info.keyboard-shortcut', 'purpose:info.metadata-row', 'purpose:info.stat-comparison',
   'purpose:media.responsive-image', 'purpose:media.carousel', 'purpose:media.audio-player', 'purpose:media.file-preview', 'purpose:media.image-comparison', 'purpose:media.figure-caption',
+  'purpose:navigation.collapsible-sidebar', 'purpose:navigation.drawer', 'purpose:navigation.command-menu', 'purpose:navigation.context-menu',
+  'purpose:overlay.drawer', 'purpose:overlay.popover', 'purpose:overlay.dropdown-menu', 'purpose:overlay.contextual-help',
+  'purpose:feedback.callout', 'purpose:feedback.circular-progress', 'purpose:feedback.loading-overlay', 'purpose:feedback.status-indicator',
 ]);
 
-export const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES]);
+export const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES]);
 const BY_ID = new Map(PURPOSE_FAMILIES.map(f => [f.id, f]));
 export const getPurposeFamily = id => BY_ID.get(id) ?? null;
 export const listPurposeFamilies = group => PURPOSE_FAMILIES.filter(f => !group || f.group === group);

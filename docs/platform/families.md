@@ -131,6 +131,18 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.warning | 실패는 아니지만 확인이 필요한 상황(만료 임박, 용량 부족, 되돌릴 수 없는 변경 예고)을 알린다. 인라인 안내나 확인이 필요한 대화상자로 낸다. | feedback-message, modal-dialog, button-control | form: inline·dialog; ack: none·button | size: small·medium·large | {"form":"inline","ack":"button","size":"medium"} | WARNING_DIALOG_NO_ACK |
 | purpose:feedback.progress | 시간이 걸리는 작업(업로드, 가져오기, 배포)의 진행을 막대·단계 목록·취소와 함께 보인다. 사용자가 언제 끝나는지와 취소할 수 있는지를 안다. | feedback-message, button-control | kind: determinate·indeterminate·steps; cancel: button·none | size: small·medium·large | {"kind":"determinate","cancel":"button","size":"medium"} | 없음 |
 | purpose:feedback.result | 작업이 끝난 뒤 결과(완료, 실패, 확인 중)를 한 화면 분량으로 알리고 다음 행동을 둔다. 결제 완료, 가입 완료, 신청 접수 화면에서 쓴다. | button-control | outcome: success·failure·pending; layout: page·inline | size: medium·large | {"outcome":"success","layout":"page","size":"large"} | 없음 |
+| purpose:navigation.collapsible-sidebar | 주요 내비게이션을 작은 화면에서 접고 펼치는 독립형 사이드바 | navigation-menu, button-control |  |  | {} | 없음 |
+| purpose:navigation.drawer | Navigation Drawer는 콘텐츠를 주변 흐름 위에 표시하고 키보드로 닫을 수 있다. | button-control, navigation-menu |  |  | {} | 없음 |
+| purpose:navigation.command-menu | Command Menu는 항목 사이 방향키 이동과 Escape 닫기를 지원한다. | button-control |  |  | {} | 없음 |
+| purpose:navigation.context-menu | Context Menu는 항목 사이 방향키 이동과 Escape 닫기를 지원한다. | button-control |  |  | {} | 없음 |
+| purpose:overlay.drawer | Drawer는 콘텐츠를 주변 흐름 위에 표시하고 키보드로 닫을 수 있다. | button-control |  |  | {} | 없음 |
+| purpose:overlay.popover | Popover는 콘텐츠를 주변 흐름 위에 표시하고 키보드로 닫을 수 있다. | button-control |  |  | {} | 없음 |
+| purpose:overlay.dropdown-menu | 선택 명령을 메뉴 항목으로 제공하는 키보드 내비게이션 팝업 | button-control |  |  | {} | 없음 |
+| purpose:overlay.contextual-help | 현재 입력이나 작업 맥락에 연결된 보조 설명 | button-control |  |  | {} | 없음 |
+| purpose:feedback.callout | 본문 흐름 안에서 맥락이 필요한 안내와 선택 행동을 전달한다. | feedback-message |  |  | {} | 없음 |
+| purpose:feedback.circular-progress | 작업 진행률을 원형 표시와 접근 가능한 값으로 함께 제공한다. | feedback-message |  |  | {} | 없음 |
+| purpose:feedback.loading-overlay | 현재 화면 위에 진행 중 상태를 표시하고 대기 안내를 보인다. | feedback-message |  |  | {} | 없음 |
+| purpose:feedback.status-indicator | 상태를 텍스트와 색을 함께 사용해 전달한다. | feedback-message |  |  | {} | 없음 |
 <!-- /generated:purpose -->
 
 상태·상호작용·반응형·접근성·부모·진입점은 다음과 같다.
@@ -175,6 +187,18 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.warning | visible, dismissed, closed, open | ack click → 경고를 확인하고 닫는다(기반 버튼·dismiss) [attachFeedback] / dialog confirm·cancel → 계속·취소 선택 [attachModal] | viewport 640px: 인라인 안내는 한 줄이 모자라면 버튼이 아래로 내려간다. 메시지 폭은 부모를 따른다. | status(inline) \| alertdialog(dialog); 경고는 삼각형 아이콘과 "주의:" 숨은 글로 전달(노랑만으로 구분하지 않는다); 경고색 글자는 어두운 단계(대비 4.5:1); 확인이 필요한 경고는 대화상자로 낸다 | slot:main, slot:header, slot:overlay | src/platform/families/feedback.mjs#renderFeedbackWarning |
 | purpose:feedback.progress | pending, done | progress → native <progress>의 value 갱신(앱이 value를 바꾼다), indeterminate는 value 없음 / cancel click → 진행 취소(기반 버튼) | container -: 막대는 컨테이너 폭을 채운다. 단계 목록은 세로로 쌓인다. 퍼센트 글자는 줄바꿈하지 않는다. | progressbar(native progress) + status; <progress>에 접근 가능한 이름(aria-labelledby); 진행률 숫자를 글자로도 제공; 단계 상태는 아이콘·글자(완료·진행 중·대기)로 전달; indeterminate는 aria-busy | slot:main, slot:overlay, slot:aside | src/platform/families/feedback.mjs#renderFeedbackProgress |
 | purpose:feedback.result | success, failure, pending | primary click → 다음 행동으로 이동(기반 버튼) / mount → 결과 영역이 role=status(실패는 alert)로 한 번 낭독된다 | viewport 640px: 가운데 정렬한 한 열 구성. 640px 이하에서 버튼은 세로로 쌓이고 전체 폭이 된다. 상세 목록은 값을 줄바꿈 없이 오른쪽에 둔다. | status \| alert(failure); 결과는 아이콘 모양·제목 글자·색으로 함께 전달; 제목은 h2(페이지) 또는 h3(인라인); 실패는 원인과 다음 행동을 문장으로 쓴다 | slot:main, slot:overlay | src/platform/families/feedback.mjs#renderFeedbackResult |
+| purpose:navigation.collapsible-sidebar | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | complementary > navigation; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 열림 상태에 aria-expanded·aria-controls가 실제 요소에 반영된다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderCollapsibleSidebar |
+| purpose:navigation.drawer | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | dialog; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 모달은 포커스를 내부에 가두고 닫을 때 호출 요소로 복귀; Escape와 바깥 클릭 정책을 실제 런타임이 처리; 열림 상태에 aria-expanded·aria-controls가 일치 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderNavigationDrawer |
+| purpose:navigation.command-menu | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | button > dialog > menu; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; aria-expanded·aria-controls가 닫힌 메뉴와 연결된다; 명령 검색 입력은 이름을 갖고 결과 항목을 거른다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderCommandMenu |
+| purpose:navigation.context-menu | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | button > menu; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; aria-expanded·aria-controls가 닫힌 메뉴와 연결된다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderContextMenu |
+| purpose:overlay.drawer | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | dialog; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 모달은 포커스를 내부에 가두고 닫을 때 호출 요소로 복귀; Escape와 바깥 클릭 정책을 실제 런타임이 처리; 열림 상태에 aria-expanded·aria-controls가 일치 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderDrawer |
+| purpose:overlay.popover | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | dialog; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 팝오버는 비모달이며 포커스를 가두지 않음; Escape와 바깥 클릭 정책을 실제 런타임이 처리; 열림 상태에 aria-expanded·aria-controls가 일치 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderPopover |
+| purpose:overlay.dropdown-menu | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | button > menu; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; aria-expanded·aria-controls가 닫힌 메뉴와 연결된다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderDropdownMenu |
+| purpose:overlay.contextual-help | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | button > tooltip; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; aria-describedby는 도움말 tooltip의 실제 id를 가리킨다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderContextualHelp |
+| purpose:feedback.callout | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | note; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderCallout |
+| purpose:feedback.circular-progress | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | progressbar; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; progressbar 값은 그려진 진행량과 숫자가 같다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderCircularProgress |
+| purpose:feedback.loading-overlay | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | status; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderLoadingOverlay |
+| purpose:feedback.status-indicator | default, open, closed, focus, disabled, loading | click·Enter·Space → 열기·닫기 상태와 aria-expanded가 실제 DOM에 반영된다 [EHI_RUNTIME] / Escape → 열린 오버레이를 닫고 시작 요소로 포커스를 복귀한다 [EHI_RUNTIME] / Tab → 모달 오버레이 안에서 포커스를 순환시키고 비모달 팝업은 자연스러운 탭 순서를 따른다 [EHI_RUNTIME] | viewport 640px: 콘텐츠는 최대 뷰포트 너비와 높이를 넘기지 않고 좁은 화면에서는 내부 스크롤 또는 바텀 시트로 전환한다. | status; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 상태 문구는 role=status aria-live=polite live region에 넣는다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderStatusIndicator |
 <!-- /generated:fields -->
 
 ## 5. 조합 규칙
@@ -232,8 +256,20 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.warning | 12 | 144 | 108 | 36 |
 | purpose:feedback.progress | 18 | 216 | 216 | 0 |
 | purpose:feedback.result | 12 | 144 | 144 | 0 |
+| purpose:navigation.collapsible-sidebar | 1 | 12 | 12 | 0 |
+| purpose:navigation.drawer | 1 | 12 | 12 | 0 |
+| purpose:navigation.command-menu | 1 | 12 | 12 | 0 |
+| purpose:navigation.context-menu | 1 | 12 | 12 | 0 |
+| purpose:overlay.drawer | 1 | 12 | 12 | 0 |
+| purpose:overlay.popover | 1 | 12 | 12 | 0 |
+| purpose:overlay.dropdown-menu | 1 | 12 | 12 | 0 |
+| purpose:overlay.contextual-help | 1 | 12 | 12 | 0 |
+| purpose:feedback.callout | 1 | 12 | 12 | 0 |
+| purpose:feedback.circular-progress | 1 | 12 | 12 | 0 |
+| purpose:feedback.loading-overlay | 1 | 12 | 12 | 0 |
+| purpose:feedback.status-indicator | 1 | 12 | 12 | 0 |
 
-합계: 전체 20700개 중 허용 14379개, 거부 6321개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
+합계: 전체 20844개 중 허용 14523개, 거부 6321개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
 <!-- /generated:combos -->
 
 목적 패밀리 × 시각 패밀리(각 패밀리 예시 기준)에서 거부되는 쌍과 이유.
@@ -278,6 +314,18 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.warning | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:feedback.progress | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:feedback.result | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.collapsible-sidebar | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.drawer | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.command-menu | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:navigation.context-menu | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:overlay.drawer | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:overlay.popover | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:overlay.dropdown-menu | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:overlay.contextual-help | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.callout | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.circular-progress | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.loading-overlay | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:feedback.status-indicator | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 <!-- /generated:matrix -->
 
 ## 6. 정량 측정

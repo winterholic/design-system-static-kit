@@ -9,14 +9,14 @@ import {renderCard} from '../src/materials/card.mjs';
 
 const env = createPlatform();
 const VISUALS = env.registry.list('family').map(f => f.id);
-const GROUP_COUNTS = {card: 8, button: 12, navigation: 4, form: 5, table: 3, feedback: 5, info: 10, media: 6};
+const GROUP_COUNTS = {card: 8, button: 12, navigation: 8, overlay: 4, form: 5, table: 3, feedback: 9, info: 10, media: 6};
 const exampleOf = (f, visual) => ({visual, variant: f.example.variant, props: f.example.props, content: f.example.content});
 
-test('purpose family ids are fixed and grouped as the task card lists them (Card 8, Button 7 + A 계열 5, Navigation 4, Form 5, Table 3, Modal/Feedback 5, Info 10, Media 6)', () => {
+test('purpose family ids are fixed and grouped as the task card lists them (Card 8, Button 7 + A 계열 5, Navigation 4, Form 5, Table 3, Modal/Feedback 5, Info 10, Media 6, Overlay 8 + Feedback 4)', () => {
   assert.deepEqual(PURPOSE_FAMILIES.map(f => f.id), PURPOSE_FAMILY_IDS);
   for (const [g, n] of Object.entries(GROUP_COUNTS)) assert.equal(PURPOSE_FAMILIES.filter(f => f.group === g).length, n, g);
   assert.deepEqual([...PURPOSE_GROUPS].sort(), Object.keys(GROUP_COUNTS).sort());
-  assert.equal(new Set(PURPOSE_FAMILY_IDS).size, 53);
+  assert.equal(new Set(PURPOSE_FAMILY_IDS).size, 65);
   assert.equal(getPurposeFamily('purpose:card.kpi').group, 'card');
   assert.equal(getPurposeFamily('purpose:card.nope'), null);
 });
