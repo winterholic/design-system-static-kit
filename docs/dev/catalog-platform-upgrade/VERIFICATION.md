@@ -533,8 +533,8 @@ GREEN 같은 명령
 ### 8.6 생성 미러와 장부 (완료 기준 6, 7)
 
 - `npm run verify`의 `check-generated`가 `src/`에서 빌드한 3,402개 파일과 `site/`를 바이트 단위로 대조했다.
-- `npm run coverage:materials` 후 `npm run coverage:materials:check` 결과는 `MANIFEST MATCH ... (1339 materials, 337 requirements)`다.
-- 최종 fetch에서 `origin/main`은 `039ec61713adb697b086955859424742d2684b4c`였다. B1의 200개 팔레트 커밋은 없었다. 전체 매트릭스를 만들 수 없어 최종 rebase와 push를 보류했다.
+- `npm run coverage:materials:check`는 `MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1347 materials, 337 requirements)`로 통과했다.
+- 최종 fetch에서 `origin/main`은 `039ec61713adb697b086955859424742d2684b4c`였고, `git merge-base --is-ancestor origin/main HEAD`가 통과해 그 위로 rebase됐다. B1의 200개 팔레트 커밋은 없었다. B1 워크트리에서 팔레트 데이터와 장부·생성 스크립트가 미커밋 상태임을 확인해 push는 보류했다. 따라서 완료된 것은 최신 main rebase와 coverage 일치 확인이며, 200×25·출처 확인과 push는 미완료다.
 
 ### 8.7 전체 검증 (완료 기준 8)
 
@@ -542,12 +542,14 @@ GREEN 같은 명령
 npm run verify
 ```
 ```text
-ℹ tests 803
-ℹ pass 803
+ℹ tests 814
+ℹ pass 814
 ℹ fail 0
 REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
 ```
 
 실행한 6개 색상 지정 테스트는 `32 pass, 0 fail`이었다. TRB-02와 TRB-03은 독립 검증을 마쳐 장부에서 Verified로 올렸다. TRB-04는 서비스 경로와 현재 팔레트 매트릭스만 확인해 In Progress로 남겼다.
 
-200개 팔레트가 `origin/main`에 들어온 뒤 매트릭스와 출처를 확인해야 한다. 장부를 갱신하고 전체 verify를 다시 실행한 다음 rebase와 일반 push를 진행한다.
+실행 증거(최신 rebase 후): `node scripts/platform/evaluate-color-matrix.mjs && git diff --exit-code docs/platform/evidence/color/subtoken-matrix-summary.json` → `9 palettes × 25 subtoken sets`, summary 생성, `diff` 무출력·exit 0. `npm run coverage:materials:check` → `MANIFEST MATCH ... (1347 materials, 337 requirements)`. `npm run verify` → 814/814 통과, 3,402 생성 파일 재현.
+
+남은 일: B1이 200개 팔레트를 커밋해 `origin/main`에 반영한 뒤 200×25 매트릭스와 200개 출처를 검증한다. 그때 장부·검증 기록을 갱신하고 verify를 재실행한 다음 일반 push한다. 현재 B1 워크트리 변경은 미커밋이므로 이번 브랜치에서는 TRB-04를 `In Progress`로 유지한다.
