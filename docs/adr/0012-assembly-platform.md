@@ -356,7 +356,7 @@ REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemb
 
 ### 9.10 0.9.0: Foundations 재료(TASK-TRE-04 재료 부분, REQUEST §9.3~§9.7)
 
-- `spacing`과 `icon`을 플랫폼 재료 종류로 등록한다. 간격 재료는 기존 4px `SPACE` 토큰 묶음을 밀도별로 내고, 페이지 컴파일러는 선택된 밀도 재료를 읽어 CSS에 반영한다.
-- `surface`는 17개 원형을 각 재료의 facets로, `motion`은 15개 목적 패턴을 각 재료의 patterns로 둔다. 모션 property·duration·easing·delay와 reduced-motion 정책을 컴파일 CSS에 반영한다.
-- 아이콘 영역 재료는 `src/catalog/icons.mjs`를 수정하지 않고 기존 내부 원본 심볼을 참조한다. 영역별 허용 목록과 공통 viewBox·크기·선 굵기·정렬·시각 패밀리 규칙을 레지스트리에 둔다. 배경은 12종이며 frosted blur는 0~16px, 단일 `.kit-deco` 요소로 제한한다.
+- `spacing`과 `icon`을 플랫폼 재료 종류로 등록한다. 간격 재료는 기존 4px `SPACE` 토큰 묶음을 밀도별로 내고, §9.3의 9개 역할을 서로 다른 토큰에 묶은 `[data-spacing-role]` opt-in 규칙을 함께 낸다. 페이지 컴파일러는 선택된 밀도 재료를 읽어 CSS에 반영한다.
+- `surface`는 17개 원형을 각 재료의 facets로, `motion`은 15개 목적 패턴을 각 재료의 patterns로 둔다. 모션 property·duration·easing·delay와 reduced-motion 정책(`instant`·`fade`)을 컴파일 CSS에 반영한다. 17개 원형은 서로 다른 모양이고 15개 패턴은 서로 다른 전환 조합이어야 한다(시험이 컴파일 결과로 대조).
+- 아이콘 영역 재료는 `src/catalog/icons.mjs`를 수정하지 않고 기존 내부 원본 심볼을 참조한다. 영역별 허용 목록과 공통 viewBox·크기·선 굵기·정렬·시각 패밀리 규칙을 레지스트리에 둔다. 배경은 §9.5의 12개 항목에 재료 13종을 대응하며 frosted blur는 0~16px, 단일 `.kit-deco` 요소로 제한한다.
 - 플랫폼 계약은 0.8.0에서 0.9.0으로 오른다. Blueprint 2.1~2.6 출력과 고정 해시는 변경하지 않는다.

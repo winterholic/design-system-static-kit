@@ -8,12 +8,12 @@ import {
   STYLE_CONTEXTS, STYLE_MATERIALS, checkStyleMaterials, listStyleMaterials, styleMaterialById, rankStyleMaterials, assembleStyleMaterials, renderStyleMaterialSamples,
 } from '../src/platform/data/style-contexts.mjs';
 import {SURFACES, SURFACE_FACETS, surfaceCSS, renderSurfaceSample} from '../src/platform/data/surfaces.mjs';
-import {MOTIONS, MOTION_PATTERNS, motionCSS, renderMotionSample, MOTION_STATES} from '../src/platform/data/motion.mjs';
+import {MOTIONS, MOTION_PATTERNS, motionCSS, renderMotionSample, MOTION_STATES, validateMotion} from '../src/platform/data/motion.mjs';
 import {BACKGROUNDS, backgroundCSS, stopColor, renderBackgroundSample, validateBackground} from '../src/platform/data/backgrounds.mjs';
 import {MEDIA, mediaCSS, renderMedia} from '../src/platform/data/media.mjs';
 import {STATE_PATTERNS, STATE_KINDS, stateCSS, renderState} from '../src/platform/data/states.mjs';
-import {SPACING_MATERIALS, spacingCSS} from '../src/platform/data/spacing.mjs';
-import {ICON_MATERIALS, iconCSS, renderAreaIcon} from '../src/platform/data/icons.mjs';
+import {SPACING_MATERIALS, spacingCSS, renderSpacingSample} from '../src/platform/data/spacing.mjs';
+import {ICON_MATERIALS, iconCSS, renderAreaIcon, validateIconMaterial} from '../src/platform/data/icons.mjs';
 
 const env = createPlatform();
 const palette = env.registry.get('palette:static-kit');
@@ -30,7 +30,7 @@ test('every style material kind registers complete presets, and every state has 
   for (const [kind, list] of Object.entries(STYLE_MATERIALS)) assert.ok(list.length >= 2, `${kind}: ${list.length}`);
   for (const st of STATE_KINDS) assert.ok(STATE_PATTERNS.filter(m => m.state === st).length >= 2, `state ${st}`);
   assert.ok(MOTIONS.length >= 3 && SURFACES.length >= 4 && MEDIA.length >= 4);
-  assert.equal(BACKGROUNDS.length, 12, 'all §9.5 background patterns have a preset');
+  assert.equal(BACKGROUNDS.length, 13, 'every §9.5 background pattern has its own preset (Tinted is a plain tint, Dot Pattern is the dotted one)');
   assert.equal(styleMaterialById('surface:soft-layered').kind, 'surface');
   assert.equal(listStyleMaterials('surface').length, SURFACES.length);
   for (const m of Object.values(STYLE_MATERIALS).flat()) assert.ok(m.source.license === 'internal' && m.id === `${m.kind}:${m.id.split(':')[1]}`);
@@ -121,7 +121,10 @@ test('every preset outputs real CSS and markup that passes the spacing contract 
   const tokenSet = new Set(Object.values(TOKEN));
   for (const m of Object.values(STYLE_MATERIALS).flat()) {
     const css = {surface: surfaceCSS, motion: motionCSS, background: backgroundCSS, media: mediaCSS, 'state-pattern': stateCSS, spacing: spacingCSS, icon: iconCSS}[m.kind](m);
-    assert.ok(css.length > 80, m.id);
+    const scope = {surface: 'data-surface', motion: 'data-motion', background: 'data-bg', media: 'data-media', 'state-pattern': 'data-pattern', spacing: 'data-density', icon: 'data-icon-area'}[m.kind];
+    const key = m.kind === 'icon' ? m.area : m.id.slice(m.kind.length + 1);
+    assert.ok(css.includes(`[${scope}="${key}"]`), `${m.id}: the CSS is scoped to its own [${scope}="${key}"]`);
+    assert.ok((css.match(/\{/g) ?? []).length >= 3, `${m.id}: more than a stub rule`);
     assert.deepEqual(lintSpacing(css), [], `${m.id}: padding/margin/gap use the spacing scale only`);
     for (const [, tok] of css.matchAll(/var\((--kit-(?:sp-[a-z-]+|gap|inset|section|band|control))\)/g)) assert.ok(tokenSet.has(tok), `${m.id}: ${tok} is a spacing token`);
     assert.doesNotMatch(css, /#[0-9a-fA-F]{3,8}\b(?!\s*0%)/, `${m.id}: no hard-coded hex colors`);
@@ -204,7 +207,7 @@ test('style contexts rank the presets: the same preset is reused by several them
   for (const sc of STYLE_CONTEXTS) for (const kind of Object.keys(STYLE_MATERIALS)) for (const state of kind === 'state-pattern' ? STATE_KINDS : [undefined]) {
     for (const context of sc.contexts) {
       const r = rankStyleMaterials(sc, {kind, context, state});
-      assert.ok(r.ranked.length > 0 || r.reasons.length > 0, `${sc.id}/${context}/${kind}/${state}`);
+      if (r.ranked.length === 0) assert.ok(r.reasons.length > 0 && r.reasons.every(x => x.code && x.id), `${sc.id}/${context}/${kind}/${state}: an empty ranking explains itself`);
     }
   }
   const tops = kind => STYLE_CONTEXTS.map(sc => rankStyleMaterials(sc, {kind}).ranked[0].id);
@@ -269,5 +272,136 @@ test('the evidence lines of the verified style materials point at test() lines',
     const [file, line] = ref.split(':');
     if (!cache.has(file)) cache.set(file, readFileSync(new URL(`../${file}`, import.meta.url), 'utf8').split('\n'));
     assert.match(cache.get(file)[Number(line) - 1] ?? '', /^test\(/, `${m.id}: ${ref}`);
+  }
+});
+
+const facetRules = css => Object.fromEntries([...css.matchAll(/:is\(\[data-surface-facet="([^"]+)"\],[^{]*\)\{border-radius:([^;]+);border:([^;]+);box-shadow:([^;]+);padding:/g)].map(m => [m[1], {radius: m[2], border: m[3], shadow: m[4]}]));
+const shadowBlur = shadow => Math.max(...[...shadow.matchAll(/(?:-?\d+(?:px)?\s+){2}(\d+)px/g)].map(m => Number(m[1])));
+
+test('the 17 surface facets compile to 17 different looks, and elevation steps differ by shadow rather than by name', () => {
+  const rules = facetRules(surfaceCSS(SURFACES[0]));
+  assert.equal(Object.keys(rules).length, SURFACE_FACETS.length, 'every facet is compiled');
+  const seen = new Map();
+  for (const [id, r] of Object.entries(rules)) {
+    const key = JSON.stringify(r);
+    assert.ok(!seen.has(key), `${id} compiles to the same radius, border and shadow as ${seen.get(key)}`);
+    seen.set(key, id);
+  }
+  assert.ok(new Set(['sharp', 'subtle', 'rounded', 'large-rounded', 'pill', 'mixed-radius'].map(id => rules[id].radius)).size === 6, 'the six radius facets have six radii');
+  assert.ok(new Set(['hairline-border', 'standard-border', 'strong-border', 'double-border'].map(id => rules[id].border)).size === 4, 'the four border facets have four borders');
+  const steps = ['flat-surface', 'subtle-elevation', 'medium-elevation', 'deep-elevation'].map(id => rules[id]);
+  assert.equal(new Set(steps.map(r => r.shadow)).size, 4, 'flat, subtle, medium and deep elevation have four shadows');
+  assert.ok(shadowBlur(steps[1].shadow) < shadowBlur(steps[2].shadow) && shadowBlur(steps[2].shadow) < shadowBlur(steps[3].shadow), 'shadow blur grows from subtle to medium to deep');
+  assert.equal(steps[0].shadow, 'none');
+  assert.match(rules.glow.shadow, /color-mix/);
+  assert.match(rules.inset.shadow, /^inset /);
+  assert.match(rules['hard-offset'].shadow, /^\d+px \d+px 0 /);
+  for (const m of SURFACES) assert.deepEqual(facetRules(surfaceCSS(m)), rules, `${m.id} shares the facet primitives`);
+  const duplicate = clone => { const c = structuredClone(SURFACES[0]); c.facets = c.facets.map(f => f.id === 'deep-elevation' ? {...f, elevation: 'lifted', radius: '10px'} : f); return c; };
+  assert.equal(facetRules(surfaceCSS(duplicate()))['deep-elevation'].shadow, facetRules(surfaceCSS(SURFACES[0]))['medium-elevation'].shadow, 'a regression that gives deep the medium shadow is visible to this check');
+});
+
+test('the 15 motion patterns are 15 different recipes, and each one compiles its own reduced-motion policy', () => {
+  const recipe = (m, p) => JSON.stringify([[...p.properties].sort(), m.duration[p.duration], p.easing === 'standard' ? m.easing.standard : m.easing[p.easing], p.delay]);
+  for (const m of MOTIONS.filter(x => x.id !== 'motion:still')) {
+    const seen = new Map();
+    for (const p of m.patterns) {
+      assert.ok(!seen.has(recipe(m, p)), `${m.id}: ${p.id} is the same recipe as ${seen.get(recipe(m, p))}`);
+      seen.set(recipe(m, p), p.id);
+    }
+  }
+  for (const m of MOTIONS) {
+    const css = motionCSS(m), reduce = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'));
+    for (const p of m.patterns) {
+      const rule = reduce.match(new RegExp(`\\[data-motion-pattern="${p.id}"\\]\\{transition:([^}]+)\\}`))?.[1];
+      assert.ok(rule, `${m.id}: ${p.id} has a reduced-motion rule`);
+      if (p.reducedMotion === 'fade') assert.equal(rule, 'opacity var(--kit-m-fast) linear 0ms!important', `${p.id} keeps only an opacity cue`);
+      else assert.equal(rule, 'none!important', `${p.id} is instant`);
+    }
+  }
+  const policies = new Set(MOTION_PATTERNS.map(p => p.reducedMotion));
+  assert.deepEqual([...policies].sort(), ['fade', 'instant'], 'both policies are used, so the field is a decision and not a constant');
+  for (const p of MOTION_PATTERNS) assert.ok(p.reducedMotion !== 'fade' || p.properties.includes('opacity'), `${p.id}: fade needs opacity`);
+  const flipped = structuredClone(MOTIONS[0]); flipped.patterns[0].reducedMotion = 'fade';
+  assert.notEqual(motionCSS(MOTIONS[0]), motionCSS(flipped), 'the policy is consumed by the compiled CSS');
+  const bad = structuredClone(MOTIONS[0]); bad.patterns.find(p => p.id === 'press').reducedMotion = 'fade';
+  assert.ok(validateMotion(bad).some(e => e.code === 'P_MOTION_PATTERN_REDUCE'), 'fade without opacity is rejected');
+});
+
+test('the nine spacing roles read nine different tokens, vary by role instead of by one multiplier, and those tokens are read by compiled pages', async () => {
+  const {SPACING_ROLES, validateSpacing} = await import('../src/platform/data/spacing.mjs');
+  const {compileBlueprint} = await import('../src/service/index.mjs');
+  const edit = await import('../src/edit/index.mjs');
+  const {templates} = await import('../src/catalog/index.mjs');
+  assert.equal(SPACING_ROLES.length, 9);
+  assert.equal(new Set(SPACING_ROLES.map(r => r.token)).size, 9, 'no two roles share a token');
+  for (const m of SPACING_MATERIALS) {
+    assert.deepEqual(validateSpacing(m), [], m.id);
+    for (const r of SPACING_ROLES) assert.ok(spacingCSS(m).includes(`[data-spacing-role="${r.id}"]{${r.prop}:var(${TOKEN[r.token]})}`), `${m.id}: ${r.id} rule`);
+  }
+  const px = (density, role) => SPACE[density][SPACING_ROLES.find(r => r.id === role).token];
+  const ratios = new Set(SPACING_ROLES.map(r => (px('spacious', r.id) / px('compact', r.id)).toFixed(3)));
+  assert.ok(ratios.size >= 4, `density is not one multiplier: ${[...ratios]}`);
+  for (const r of SPACING_ROLES) assert.ok(px('compact', r.id) <= px('comfortable', r.id) && px('comfortable', r.id) <= px('spacious', r.id), `${r.id} never shrinks as density loosens`);
+  const aliased = structuredClone(SPACING_MATERIALS[0]); aliased.roles['list-gap'] = aliased.roles['form-gap'];
+  assert.ok(validateSpacing(aliased).some(e => e.code === 'P_SPACING_ROLE_ALIAS'), 'two roles on one token are rejected');
+  const swapped = structuredClone(SPACING_MATERIALS[0]); swapped.roles['page-margin'] = 'near';
+  assert.notEqual(spacingCSS(SPACING_MATERIALS[0]), spacingCSS(swapped), 'a role mapping is consumed by the compiled CSS');
+
+  let css = '';
+  for (const t of Object.keys(templates)) { const made = edit.resetDocument(null, {template: t}); const r = made.ok && compileBlueprint(made.doc, {include: ['css']}); if (r?.ok) css += r.value.css.replace(/[^{}]*data-spacing-role[^{}]*\{[^}]*\}/g, ''); }
+  for (const r of SPACING_ROLES) assert.ok(css.includes(`var(${TOKEN[r.token]})`), `${r.id}: no compiled page reads ${TOKEN[r.token]} outside the role rules`);
+  assert.match(renderSpacingSample(SPACING_MATERIALS[1]), /data-density="comfortable"[\s\S]*data-spacing-role="icon-text"/);
+});
+
+test('icon-area values are drawn: the grid, family, small size and alignment all reach the output', () => {
+  const m = ICON_MATERIALS[0];
+  const css = iconCSS(m);
+  assert.match(css, /vertical-align:var\(--kit-icon-align\)/, 'the alignment variable is read');
+  assert.match(css, /--kit-icon-align:middle/);
+  assert.match(css, /\[data-icon-size="sm"\]\{width:var\(--kit-icon-min\);height:var\(--kit-icon-min\)\}/);
+  assert.ok(m.strokeWidth * m.minSize / m.size >= 1.25, 'a stroke still reads as a line at the smallest size');
+  const svg = renderAreaIcon(m, {symbol: 'home', size: 'sm'});
+  assert.match(svg, /<svg data-icon-family="original-outline" data-icon-size="sm" class="kit-icon icon-symbol-home" viewBox="0 0 24 24"/);
+  assert.match(css, /data-icon-family="original-outline"/, 'the rules only style svgs of this family');
+  assert.throws(() => renderAreaIcon({...m, viewBox: '0 0 20 20'}, {symbol: 'home'}), RangeError, 'an icon not drawn on the material grid is refused');
+  assert.throws(() => renderAreaIcon(m, {symbol: 'home', size: 'lg'}), RangeError);
+  const familyChanged = {...structuredClone(m), family: 'other-outline'};
+  assert.notEqual(iconCSS(m), iconCSS(familyChanged), 'the family is consumed by the CSS selector');
+  assert.ok(validateIconMaterial({...structuredClone(m), minSize: 12}).some(e => e.code === 'P_ICON_SMALL'));
+  assert.ok(validateIconMaterial({...structuredClone(m), strokeWidth: 1}).some(e => e.code === 'P_ICON_SYSTEM' || e.code === 'P_ICON_SMALL'));
+  for (const area of ICON_MATERIALS) assert.deepEqual(validateIconMaterial(area), [], area.id);
+});
+
+test('the coverage ledger maps all 69 foundation requirements to a real part of a real material, one part each', async () => {
+  const {SPACING_ROLES} = await import('../src/platform/data/spacing.mjs');
+  const ledger = JSON.parse(readFileSync(new URL('../docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json', import.meta.url), 'utf8'));
+  const reqs = ledger.requirements.filter(q => q.id.startsWith('req:foundation:'));
+  assert.equal(reqs.length, 69);
+  const kindOf = q => q.id.split(':')[2];
+  const counts = Object.fromEntries(['spacing', 'surface', 'background', 'motion', 'icon'].map(k => [k, reqs.filter(q => kindOf(q) === k).length]));
+  assert.deepEqual(counts, {spacing: 9, surface: 17, background: 12, motion: 15, icon: 16});
+  const known = {spacing: SPACING_ROLES.map(r => `role:${r.id}`), surface: SURFACE_FACETS.map(f => `facet:${f.id}`), motion: MOTION_PATTERNS.map(p => `pattern:${p.id}`)};
+  const materialIds = new Set(ledger.materials.map(x => x.id));
+  for (const q of reqs) {
+    assert.equal(q.coverage, 'direct', q.id);
+    assert.ok(q.materialIds.length === 1 && materialIds.has(q.materialIds[0]), `${q.id} points at a registered material`);
+    assert.ok(!q.status.includes('missing') && q.status !== 'metadata-only', `${q.id} is ${q.status}`);
+  }
+  for (const kind of ['spacing', 'surface', 'motion']) {
+    const parts = reqs.filter(q => kindOf(q) === kind).map(q => q.part);
+    assert.deepEqual(parts, known[kind], `${kind}: requirement order and parts match the material`);
+  }
+  const names = kind => reqs.filter(q => kindOf(q) === kind).map(q => q.name);
+  assert.deepEqual(names('spacing'), SPACING_ROLES.map(r => r.label), 'the REQUEST sentences are the role labels');
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  assert.deepEqual(names('surface').map(slug), SURFACE_FACETS.map(f => f.id));
+  assert.deepEqual(names('motion').map(slug), MOTION_PATTERNS.map(p => p.id));
+  assert.deepEqual(reqs.filter(q => kindOf(q) === 'icon').map(q => q.materialIds[0]), ICON_MATERIALS.map(x => x.id), 'every icon area has its own material, in REQUEST order');
+  const backgrounds = reqs.filter(q => kindOf(q) === 'background');
+  assert.equal(new Set(backgrounds.map(q => q.materialIds[0])).size, backgrounds.length, 'no background material stands for two requirements');
+  for (const id of ['spacing:comfortable', ...ICON_MATERIALS.map(x => x.id)]) {
+    const record = ledger.materials.find(x => x.id === id);
+    assert.ok(record.definitionPath && record.status !== 'metadata-only' && record.status !== 'defined', `${id} is ${record.status} (${record.blockedBy})`);
   }
 });

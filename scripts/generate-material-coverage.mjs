@@ -24,7 +24,10 @@ import {resolve, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 
-import {createPlatform, PURPOSES, PLATFORM_CONTRACT_VERSION, baseIsPlaceable} from '../src/platform/index.mjs';
+import {createPlatform, PURPOSES, PLATFORM_CONTRACT_VERSION, baseIsPlaceable, assembleStyleMaterials} from '../src/platform/index.mjs';
+import {SPACING_ROLES} from '../src/platform/data/spacing.mjs';
+import {SURFACE_FACETS} from '../src/platform/data/surfaces.mjs';
+import {MOTION_PATTERNS} from '../src/platform/data/motion.mjs';
 import {assembleSpecimen} from '../src/platform/layouts.mjs';
 import {designRegistry} from '../src/profiles/registry.mjs';
 import {PROFILES, PATTERNS} from '../src/profiles/data.mjs';
@@ -90,6 +93,7 @@ const need = id => { const e = entities.get(id); if (!e) throw new Error(`요구
 const REQUEST = read(REQUEST_PATH).split('\n');
 const lineIndex = re => { const i = REQUEST.findIndex(l => re.test(l)); if (i < 0) throw new Error(`REQUEST.md에서 ${re} 를 찾지 못했습니다.`); return i; };
 const slice = (from, to) => REQUEST.slice(lineIndex(from), lineIndex(to));
+const fail = message => { throw new Error(message); };
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const cells = line => line.split('|').slice(1, -1).map(c => c.trim());
 const tableRows = lines => lines.filter(l => l.startsWith('|') && !/^\|\s*-/.test(l)).map(cells).slice(1);
@@ -142,6 +146,8 @@ const BASELINE_TABLE = tableRows(slice(/^## 2\.1 /, /^## 2\.2 /)).filter(r => /^
 // P(id, 이유)                       다른 재료의 구성 요소로만 존재한다(별도 재료가 아님).
 // 항목이 아래 표에 없으면 missing이다(조용히 가까운 재료로 바꾸지 않는다).
 const D = (...ids) => ({how: 'direct', ids});
+// DP(id, 부분)                      재료 안의 한 부분(spacing 역할·surface facet·motion 패턴)이 요구 항목을 구현한다. 부분이 그 재료에 실제로 있어야 한다.
+const DP = (id, part) => ({how: 'direct', ids: [id], part});
 const V = (id, via, variant, note) => ({how: 'variant', ids: [id], via, variant, note});
 const S = (id, type, path, value, note) => ({how: 'schema', ids: [id], type, path, value, note});
 const P = (id, note) => ({how: 'part-of', ids: [id], note});
@@ -418,11 +424,11 @@ const COVERAGE = {
   'lay/Sticky Action Layout': D('layout:sticky-action-layout'),
   'lay/Form Layout': D('layout:form-layout'),
   'lay/Multi-step Form': D('layout:multi-step-form'),
-  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.spacing.map(req => [req.key, D('spacing:comfortable')])),
-  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.surface.map(req => [req.key, D('surface:hairline-panel')])),
-  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.motion.map(req => [req.key, D('motion:calm')])),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.spacing.map(req => [req.key, DP('spacing:comfortable', `role:${(SPACING_ROLES.find(r => r.label === req.name) ?? fail(`간격 역할이 없습니다: ${req.name}`)).id}`)])),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.surface.map(req => [req.key, DP('surface:hairline-panel', `facet:${(SURFACE_FACETS.find(f => f.id === slug(req.name)) ?? fail(`표면 facet이 없습니다: ${req.name}`)).id}`)])),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.motion.map(req => [req.key, DP('motion:calm', `pattern:${(MOTION_PATTERNS.find(p => p.id === slug(req.name)) ?? fail(`모션 패턴이 없습니다: ${req.name}`)).id}`)])),
   'foundation/background/Solid': D('background:plain-canvas'),
-  'foundation/background/Tinted': D('background:brand-tint-dots'),
+  'foundation/background/Tinted': D('background:soft-tint'),
   'foundation/background/Gradient': D('background:soft-gradient-organic'),
   'foundation/background/Radial Gradient': D('background:radial-focus'),
   'foundation/background/Mesh-like Gradient': D('background:mesh-field'),
@@ -466,7 +472,7 @@ function resolveCoverage(req) {
     if (!Array.isArray(node) || !node.includes(spec.value)) throw new Error(`${req.key}: ${spec.type} 스키마 ${spec.path}에 ${spec.value}가 없습니다.`);
     return {how: 'schema', ids: spec.ids, schema: {type: spec.type, path: spec.path, value: spec.value}, note: spec.note ?? null};
   }
-  return {how: spec.how, ids: spec.ids, note: spec.note ?? null};
+  return {how: spec.how, ids: spec.ids, note: spec.note ?? null, ...(spec.part ? {part: spec.part} : {})};
 }
 
 // -----------------------------------------------------------------------------
@@ -483,6 +489,7 @@ const DEFINITION = {
   'style-context': ['src/platform/data/style-contexts.mjs', 'STYLE_CONTEXTS'],
   surface: ['src/platform/data/surfaces.mjs', 'SURFACES'],
   motion: ['src/platform/data/motion.mjs', 'MOTIONS'],
+  spacing: ['src/platform/data/spacing.mjs', 'SPACING_MATERIALS'],
   background: ['src/platform/data/backgrounds.mjs', 'BACKGROUNDS'],
   media: ['src/platform/data/media.mjs', 'MEDIA'],
   'state-pattern': ['src/platform/data/states.mjs', 'STATE_PATTERNS'],
@@ -681,7 +688,16 @@ function platformRequest(rec, kind) {
     default: return null;
   }
 }
+/** 간격 밀도·아이콘 영역은 assembleDesign 요청 키가 없다. 스타일 재료 조립(assembleStyleMaterials)이 내는 CSS에 이 재료의 범위 규칙이 실제로 있는지로 본다. */
+function styleMaterialProbe(rec, kind) {
+  const method = 'assembleStyleMaterials';
+  const r = assembleStyleMaterials(platformEnv.registry, {styleContext: 'style-context:ledger', context: 'dashboard', ...(kind === 'spacing' ? {spacing: rec.id} : {icons: [rec.id]})});
+  if (!r.ok) return {method, ran: true, ok: false, reason: r.diagnostics[0]?.message ?? 'assembleStyleMaterials 실패'};
+  const scope = kind === 'spacing' ? `[data-density="${rec.density}"]` : `[data-icon-area="${rec.area}"]`;
+  return {method, ran: true, ok: true, noEffect: !r.css.includes(scope), qualityOk: true, blueprintHasId: false, manifestHasId: false, htmlBytes: 0, cssBytes: r.css.length, outputHash: sha(r.css)};
+}
 function assembleProbe(rec, kind) {
+  if (kind === 'spacing' || (kind === 'icon' && rec.area)) return styleMaterialProbe(rec, kind);
   const request = platformRequest(rec, kind);
   if (!request) return {method: 'assembleDesign', ran: false, ok: false, reason: '이 종류는 assembleDesign 요청 키로 직접 고를 수 없다'};
   let last = null;
@@ -1040,7 +1056,7 @@ const requirements = ALL_REQS.map(req => {
   const status = cov.how === 'missing' ? 'missing' : STATUS[Math.max(...mats.map(m => rank(m.status)))];
   return {
     id: req.reqId, section: req.section, name: req.name, coverage: cov.how, status, materialIds: cov.ids,
-    ...(cov.via ? {viaRecord: cov.via} : {}), ...(cov.variant ? {variant: cov.variant} : {}), ...(cov.schema ? {schema: cov.schema} : {}), ...(cov.note ? {note: cov.note} : {}),
+    ...(cov.via ? {viaRecord: cov.via} : {}), ...(cov.part ? {part: cov.part} : {}), ...(cov.variant ? {variant: cov.variant} : {}), ...(cov.schema ? {schema: cov.schema} : {}), ...(cov.note ? {note: cov.note} : {}),
   };
 });
 for (const r of records) r.requirementIds.sort();

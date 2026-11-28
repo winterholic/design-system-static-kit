@@ -23,7 +23,7 @@
       "total": 406
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:65 axis-value:79 surface:5 motion:4 background:12 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:65 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:103 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -93,7 +93,7 @@
           "apps/web/app/materials/styles/page.tsx"
         ],
         "proven": true,
-        "materials": 89
+        "materials": 90
       },
       "web:/materials/foundations": {
         "role": "catalog",
@@ -153,7 +153,7 @@
           "apps/web/app/studio/assemble/page.tsx"
         ],
         "proven": true,
-        "materials": 123
+        "materials": 124
       },
       "web:/studio/assemble#direction": {
         "role": "studio",
@@ -178,7 +178,7 @@
           "apps/web/app/materials/styles/page.tsx"
         ],
         "proven": true,
-        "materials": 76
+        "materials": 77
       },
       "web:/components/purpose/[group]/[name]#visual-families": {
         "role": "catalog",
@@ -233,9 +233,9 @@
       },
       "statusDistribution": {
         "missing": 69,
-        "metadata-only": 9,
-        "defined": 21,
-        "renderable": 59,
+        "metadata-only": 0,
+        "defined": 5,
+        "renderable": 84,
         "catalog-visible": 43,
         "assemblable": 1,
         "verified": 204
@@ -362,18 +362,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1479,
+      "totalRecords": 1480,
       "statusDistribution": {
         "missing": 0,
-        "metadata-only": 430,
-        "defined": 42,
-        "renderable": 131,
+        "metadata-only": 427,
+        "defined": 26,
+        "renderable": 150,
         "catalog-visible": 398,
         "assemblable": 4,
-        "verified": 474
+        "verified": 475
       },
       "registeredByRegistry": {
-        "platform": 380,
+        "platform": 381,
         "design": 1099
       }
     },
@@ -401,12 +401,12 @@
         }
       },
       "background": {
-        "registered": 12,
-        "actualMaterial": 12,
-        "assemblableVerified": 12,
-        "distinctOutputs": 12,
+        "registered": 13,
+        "actualMaterial": 13,
+        "assemblableVerified": 13,
+        "distinctOutputs": 13,
         "byStatus": {
-          "verified": 12
+          "verified": 13
         }
       },
       "base-component": {
@@ -459,11 +459,11 @@
       },
       "icon": {
         "registered": 103,
-        "actualMaterial": 87,
+        "actualMaterial": 103,
         "assemblableVerified": 0,
-        "distinctOutputs": 87,
+        "distinctOutputs": 103,
         "byStatus": {
-          "defined": 16,
+          "renderable": 16,
           "catalog-visible": 87
         }
       },
@@ -579,11 +579,11 @@
       },
       "spacing": {
         "registered": 3,
-        "actualMaterial": 0,
+        "actualMaterial": 3,
         "assemblableVerified": 0,
-        "distinctOutputs": 0,
+        "distinctOutputs": 3,
         "byStatus": {
-          "metadata-only": 3
+          "renderable": 3
         }
       },
       "state-pattern": {
@@ -4251,90 +4251,99 @@
       "section": "§9.3",
       "name": "페이지 여백",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:page-margin"
     },
     {
       "id": "req:foundation:spacing:02-",
       "section": "§9.3",
       "name": "섹션 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:section-gap"
     },
     {
       "id": "req:foundation:spacing:03-",
       "section": "§9.3",
       "name": "컨테이너 내부 여백",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:container-padding"
     },
     {
       "id": "req:foundation:spacing:04-",
       "section": "§9.3",
       "name": "컴포넌트 내부 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:component-gap"
     },
     {
       "id": "req:foundation:spacing:05-",
       "section": "§9.3",
       "name": "형제 요소 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:sibling-gap"
     },
     {
       "id": "req:foundation:spacing:06-",
       "section": "§9.3",
       "name": "목록 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:list-gap"
     },
     {
       "id": "req:foundation:spacing:07-",
       "section": "§9.3",
       "name": "폼 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:form-gap"
     },
     {
       "id": "req:foundation:spacing:08-",
       "section": "§9.3",
       "name": "표 셀 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:table-cell"
     },
     {
       "id": "req:foundation:spacing:09-",
       "section": "§9.3",
       "name": "아이콘과 텍스트 간격",
       "coverage": "direct",
-      "status": "metadata-only",
+      "status": "renderable",
       "materialIds": [
         "spacing:comfortable"
-      ]
+      ],
+      "part": "role:icon-text"
     },
     {
       "id": "req:foundation:surface:01-sharp",
@@ -4344,7 +4353,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:sharp"
     },
     {
       "id": "req:foundation:surface:02-subtle",
@@ -4354,7 +4364,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:subtle"
     },
     {
       "id": "req:foundation:surface:03-rounded",
@@ -4364,7 +4375,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:rounded"
     },
     {
       "id": "req:foundation:surface:04-large-rounded",
@@ -4374,7 +4386,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:large-rounded"
     },
     {
       "id": "req:foundation:surface:05-pill",
@@ -4384,7 +4397,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:pill"
     },
     {
       "id": "req:foundation:surface:06-mixed-radius",
@@ -4394,7 +4408,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:mixed-radius"
     },
     {
       "id": "req:foundation:surface:07-hairline-border",
@@ -4404,7 +4419,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:hairline-border"
     },
     {
       "id": "req:foundation:surface:08-standard-border",
@@ -4414,7 +4430,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:standard-border"
     },
     {
       "id": "req:foundation:surface:09-strong-border",
@@ -4424,7 +4441,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:strong-border"
     },
     {
       "id": "req:foundation:surface:10-double-border",
@@ -4434,7 +4452,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:double-border"
     },
     {
       "id": "req:foundation:surface:11-flat-surface",
@@ -4444,7 +4463,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:flat-surface"
     },
     {
       "id": "req:foundation:surface:12-subtle-elevation",
@@ -4454,7 +4474,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:subtle-elevation"
     },
     {
       "id": "req:foundation:surface:13-medium-elevation",
@@ -4464,7 +4485,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:medium-elevation"
     },
     {
       "id": "req:foundation:surface:14-deep-elevation",
@@ -4474,7 +4496,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:deep-elevation"
     },
     {
       "id": "req:foundation:surface:15-hard-offset",
@@ -4484,7 +4507,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:hard-offset"
     },
     {
       "id": "req:foundation:surface:16-glow",
@@ -4494,7 +4518,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:glow"
     },
     {
       "id": "req:foundation:surface:17-inset",
@@ -4504,7 +4529,8 @@
       "status": "verified",
       "materialIds": [
         "surface:hairline-panel"
-      ]
+      ],
+      "part": "facet:inset"
     },
     {
       "id": "req:foundation:background:01-solid",
@@ -4523,7 +4549,7 @@
       "coverage": "direct",
       "status": "verified",
       "materialIds": [
-        "background:brand-tint-dots"
+        "background:soft-tint"
       ]
     },
     {
@@ -4634,7 +4660,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:hover"
     },
     {
       "id": "req:foundation:motion:02-press",
@@ -4644,7 +4671,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:press"
     },
     {
       "id": "req:foundation:motion:03-focus",
@@ -4654,7 +4682,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:focus"
     },
     {
       "id": "req:foundation:motion:04-expand",
@@ -4664,7 +4693,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:expand"
     },
     {
       "id": "req:foundation:motion:05-collapse",
@@ -4674,7 +4704,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:collapse"
     },
     {
       "id": "req:foundation:motion:06-fade",
@@ -4684,7 +4715,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:fade"
     },
     {
       "id": "req:foundation:motion:07-slide",
@@ -4694,7 +4726,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:slide"
     },
     {
       "id": "req:foundation:motion:08-scale",
@@ -4704,7 +4737,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:scale"
     },
     {
       "id": "req:foundation:motion:09-popover-enter",
@@ -4714,7 +4748,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:popover-enter"
     },
     {
       "id": "req:foundation:motion:10-modal-enter",
@@ -4724,7 +4759,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:modal-enter"
     },
     {
       "id": "req:foundation:motion:11-drawer-enter",
@@ -4734,7 +4770,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:drawer-enter"
     },
     {
       "id": "req:foundation:motion:12-toast-enter",
@@ -4744,7 +4781,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:toast-enter"
     },
     {
       "id": "req:foundation:motion:13-loading",
@@ -4754,7 +4792,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:loading"
     },
     {
       "id": "req:foundation:motion:14-progress",
@@ -4764,7 +4803,8 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:progress"
     },
     {
       "id": "req:foundation:motion:15-skeleton",
@@ -4774,14 +4814,15 @@
       "status": "verified",
       "materialIds": [
         "motion:calm"
-      ]
+      ],
+      "part": "pattern:skeleton"
     },
     {
       "id": "req:foundation:icon:01-navigation",
       "section": "§9.7",
       "name": "Navigation",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-navigation"
       ]
@@ -4791,7 +4832,7 @@
       "section": "§9.7",
       "name": "Action",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-action"
       ]
@@ -4801,7 +4842,7 @@
       "section": "§9.7",
       "name": "Editing",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-editing"
       ]
@@ -4811,7 +4852,7 @@
       "section": "§9.7",
       "name": "Status",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-status"
       ]
@@ -4821,7 +4862,7 @@
       "section": "§9.7",
       "name": "Communication",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-communication"
       ]
@@ -4831,7 +4872,7 @@
       "section": "§9.7",
       "name": "Files",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-files"
       ]
@@ -4841,7 +4882,7 @@
       "section": "§9.7",
       "name": "Media",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-media"
       ]
@@ -4851,7 +4892,7 @@
       "section": "§9.7",
       "name": "Commerce",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-commerce"
       ]
@@ -4861,7 +4902,7 @@
       "section": "§9.7",
       "name": "Finance",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-finance"
       ]
@@ -4871,7 +4912,7 @@
       "section": "§9.7",
       "name": "Analytics",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-analytics"
       ]
@@ -4881,7 +4922,7 @@
       "section": "§9.7",
       "name": "Developer",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-developer"
       ]
@@ -4891,7 +4932,7 @@
       "section": "§9.7",
       "name": "User",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-user"
       ]
@@ -4901,7 +4942,7 @@
       "section": "§9.7",
       "name": "Settings",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-settings"
       ]
@@ -4911,7 +4952,7 @@
       "section": "§9.7",
       "name": "Calendar",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-calendar"
       ]
@@ -4921,7 +4962,7 @@
       "section": "§9.7",
       "name": "Security",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-security"
       ]
@@ -4931,7 +4972,7 @@
       "section": "§9.7",
       "name": "Accessibility",
       "coverage": "direct",
-      "status": "defined",
+      "status": "renderable",
       "materialIds": [
         "icon:area-accessibility"
       ]
@@ -5495,7 +5536,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": [
           "axis-value:mode.light",
           "axis-value:shell.topbar",
@@ -5570,7 +5611,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "7930995a87f523b3",
+        "outputHash": "6d58cfa8b05fa927",
         "duplicateOutputOf": []
       }
     },
@@ -5641,7 +5682,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8a539f17e03b6e71",
+        "outputHash": "7d353afc12c4d923",
         "duplicateOutputOf": []
       }
     },
@@ -6825,7 +6866,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ae5f860f9de44089",
+        "outputHash": "492f686d3f953a73",
         "duplicateOutputOf": []
       }
     },
@@ -6893,7 +6934,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": [
           "axis-value:density.comfortable",
           "axis-value:shell.topbar",
@@ -8088,7 +8129,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "437e32c9df27f2a0",
+        "outputHash": "f23c90b331d33617",
         "duplicateOutputOf": []
       }
     },
@@ -8227,7 +8268,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "b16065778b2d3fe8",
+        "outputHash": "261315581e376064",
         "duplicateOutputOf": []
       }
     },
@@ -8298,7 +8339,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d4b603dd6ae0e5a5",
+        "outputHash": "f59663ccb57655a3",
         "duplicateOutputOf": []
       }
     },
@@ -8437,7 +8478,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "240fee529d3b4ec8",
+        "outputHash": "6a75e9b464ef3d29",
         "duplicateOutputOf": []
       }
     },
@@ -8508,7 +8549,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "def9d78d7fd83fd5",
+        "outputHash": "c6e9b899ccf67fc3",
         "duplicateOutputOf": []
       }
     },
@@ -8647,7 +8688,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4091ea384f80ce04",
+        "outputHash": "8f07dc863b322830",
         "duplicateOutputOf": []
       }
     },
@@ -8718,7 +8759,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": [
           "axis-value:density.comfortable",
           "axis-value:mode.light",
@@ -10261,7 +10302,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "9bb48bea5f40c7fa",
+        "outputHash": "737a4672dfd0f18c",
         "duplicateOutputOf": []
       }
     },
@@ -10332,7 +10373,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a2be1eeb51832e83",
+        "outputHash": "44d866904babf119",
         "duplicateOutputOf": []
       }
     },
@@ -10403,7 +10444,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": [
           "axis-value:density.comfortable",
           "axis-value:mode.light",
@@ -10478,7 +10519,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "370f747ab352fa52",
+        "outputHash": "a9ae2a8e7f893190",
         "duplicateOutputOf": []
       }
     },
@@ -11711,7 +11752,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "377a12db593b9edb",
+        "outputHash": "80307bce06e63625",
         "duplicateOutputOf": []
       }
     },
@@ -11789,7 +11830,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "662836d98d05847d",
+        "outputHash": "588daa471171b157",
         "duplicateOutputOf": []
       }
     },
@@ -11800,7 +11841,6 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
-        "req:foundation:background:02-tinted",
         "req:foundation:background:07-dot-pattern"
       ],
       "status": "verified",
@@ -11868,7 +11908,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "5731080233cd7dd5",
+        "outputHash": "b8fbba06def721c8",
         "duplicateOutputOf": []
       }
     },
@@ -11946,7 +11986,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "fe336e6dbfb997fc",
+        "outputHash": "0ed848f02a595917",
         "duplicateOutputOf": []
       }
     },
@@ -12019,7 +12059,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "84b144083465bcb8",
+        "outputHash": "eca392a72d67243d",
         "duplicateOutputOf": []
       }
     },
@@ -12092,7 +12132,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4484ab5cbc8344f7",
+        "outputHash": "1e404b21f7b495d3",
         "duplicateOutputOf": []
       }
     },
@@ -12165,7 +12205,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "97e53f80bdd56739",
+        "outputHash": "669dfc6bb7979545",
         "duplicateOutputOf": []
       }
     },
@@ -12238,7 +12278,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "b16065778b2d3fe8",
+        "outputHash": "261315581e376064",
         "duplicateOutputOf": []
       }
     },
@@ -12316,7 +12356,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f30d71b54b7aba18",
+        "outputHash": "7ec0d6d072c99289",
         "duplicateOutputOf": []
       }
     },
@@ -12394,7 +12434,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -12467,7 +12507,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "43d75bd604e59693",
+        "outputHash": "4aed497ee0178a1d",
         "duplicateOutputOf": []
       }
     },
@@ -12545,7 +12585,80 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "dddf0b80d1ae2835",
+        "outputHash": "998270efcfd86369",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "background:soft-tint",
+      "name": "단색 틴트 바탕",
+      "kind": "background",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:foundation:background:02-tinted"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/backgrounds.mjs#BACKGROUNDS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/styles"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/materials/styles#studio-link",
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-style-materials.test.mjs:39"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "axis:backdrop",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/backgrounds.mjs#BACKGROUNDS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "906333e7415b698a",
         "duplicateOutputOf": []
       }
     },
@@ -38267,7 +38380,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8faef8e1c0af4a29",
+        "outputHash": "df47287f3c0c7c1a",
         "duplicateOutputOf": []
       }
     },
@@ -38351,7 +38464,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8f3ee0b5cc497c32",
+        "outputHash": "32396c1efec09dec",
         "duplicateOutputOf": []
       }
     },
@@ -38435,7 +38548,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "1658052df83c4d86",
+        "outputHash": "71d75e0f9e193c6e",
         "duplicateOutputOf": []
       }
     },
@@ -38519,7 +38632,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8fd8e12152eca39f",
+        "outputHash": "d81ded9f579555c8",
         "duplicateOutputOf": []
       }
     },
@@ -38603,7 +38716,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ab4839ead7b0d650",
+        "outputHash": "dc52159c9d8ec475",
         "duplicateOutputOf": []
       }
     },
@@ -38687,7 +38800,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "717914a5128f612e",
+        "outputHash": "a18ed4b4806a01fd",
         "duplicateOutputOf": []
       }
     },
@@ -38771,7 +38884,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f12b6385f195dd73",
+        "outputHash": "320b7d95d63261e3",
         "duplicateOutputOf": []
       }
     },
@@ -38855,7 +38968,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3f839c2e9915a07e",
+        "outputHash": "098bd78beab3e690",
         "duplicateOutputOf": []
       }
     },
@@ -38939,7 +39052,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "05a0a9a7e7bf65bd",
+        "outputHash": "d0eb943b3d762bcd",
         "duplicateOutputOf": []
       }
     },
@@ -39023,7 +39136,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ee641f7d7694f2a6",
+        "outputHash": "d1e348140cfe6f87",
         "duplicateOutputOf": []
       }
     },
@@ -39107,7 +39220,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "96a715abc690180f",
+        "outputHash": "256c89d441a918be",
         "duplicateOutputOf": []
       }
     },
@@ -39191,7 +39304,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d19f889783b9f2df",
+        "outputHash": "88863dc91129191d",
         "duplicateOutputOf": []
       }
     },
@@ -39332,8 +39445,8 @@
       "requirementIds": [
         "req:foundation:icon:16-accessibility"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39343,9 +39456,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39358,15 +39471,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39395,12 +39508,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "a43b67cac4de3e37",
         "duplicateOutputOf": []
       }
     },
@@ -39413,8 +39526,8 @@
       "requirementIds": [
         "req:foundation:icon:02-action"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39424,9 +39537,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39439,15 +39552,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39476,12 +39589,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "a9686a2536f5721e",
         "duplicateOutputOf": []
       }
     },
@@ -39494,8 +39607,8 @@
       "requirementIds": [
         "req:foundation:icon:10-analytics"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39505,9 +39618,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39520,15 +39633,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39557,12 +39670,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "591b15c79ba0d15b",
         "duplicateOutputOf": []
       }
     },
@@ -39575,8 +39688,8 @@
       "requirementIds": [
         "req:foundation:icon:14-calendar"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39586,9 +39699,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39601,15 +39714,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39638,12 +39751,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "7fc66b29177dc907",
         "duplicateOutputOf": []
       }
     },
@@ -39656,8 +39769,8 @@
       "requirementIds": [
         "req:foundation:icon:08-commerce"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39667,9 +39780,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39682,15 +39795,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39719,12 +39832,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "055b5df3b66c1d57",
         "duplicateOutputOf": []
       }
     },
@@ -39737,8 +39850,8 @@
       "requirementIds": [
         "req:foundation:icon:05-communication"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39748,9 +39861,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39763,15 +39876,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39800,12 +39913,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "ff789aa9b45f5985",
         "duplicateOutputOf": []
       }
     },
@@ -39818,8 +39931,8 @@
       "requirementIds": [
         "req:foundation:icon:11-developer"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39829,9 +39942,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39844,15 +39957,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39881,12 +39994,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "eb35be498765638c",
         "duplicateOutputOf": []
       }
     },
@@ -39899,8 +40012,8 @@
       "requirementIds": [
         "req:foundation:icon:03-editing"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39910,9 +40023,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -39925,15 +40038,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -39962,12 +40075,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "e2c4ff59fbdc8818",
         "duplicateOutputOf": []
       }
     },
@@ -39980,8 +40093,8 @@
       "requirementIds": [
         "req:foundation:icon:06-files"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -39991,9 +40104,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40006,15 +40119,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40043,12 +40156,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "006505503cd8e912",
         "duplicateOutputOf": []
       }
     },
@@ -40061,8 +40174,8 @@
       "requirementIds": [
         "req:foundation:icon:09-finance"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40072,9 +40185,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40087,15 +40200,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40124,12 +40237,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "6ca725c41935f40d",
         "duplicateOutputOf": []
       }
     },
@@ -40142,8 +40255,8 @@
       "requirementIds": [
         "req:foundation:icon:07-media"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40153,9 +40266,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40168,15 +40281,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40205,12 +40318,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "d2668a6918bb8769",
         "duplicateOutputOf": []
       }
     },
@@ -40223,8 +40336,8 @@
       "requirementIds": [
         "req:foundation:icon:01-navigation"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40234,9 +40347,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40249,15 +40362,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40286,12 +40399,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "51b2a7b25c81cb1f",
         "duplicateOutputOf": []
       }
     },
@@ -40304,8 +40417,8 @@
       "requirementIds": [
         "req:foundation:icon:15-security"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40315,9 +40428,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40330,15 +40443,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40367,12 +40480,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "98e6f7617aae20bf",
         "duplicateOutputOf": []
       }
     },
@@ -40385,8 +40498,8 @@
       "requirementIds": [
         "req:foundation:icon:13-settings"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40396,9 +40509,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40411,15 +40524,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40448,12 +40561,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "64fbcf6fb7ca10ef",
         "duplicateOutputOf": []
       }
     },
@@ -40466,8 +40579,8 @@
       "requirementIds": [
         "req:foundation:icon:04-status"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40477,9 +40590,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40492,15 +40605,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40529,12 +40642,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "0f3d8db2cecd6f72",
         "duplicateOutputOf": []
       }
     },
@@ -40547,8 +40660,8 @@
       "requirementIds": [
         "req:foundation:icon:12-user"
       ],
-      "status": "defined",
-      "blockedBy": "no-render-probe",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -40558,9 +40671,9 @@
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
       "definitionPath": "src/platform/data/icons.mjs#ICON_MATERIALS",
-      "rendererConnected": false,
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -40573,15 +40686,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -40610,12 +40723,12 @@
         "definition": "src/platform/data/icons.mjs#ICON_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "fa1529e346a0cc69",
         "duplicateOutputOf": []
       }
     },
@@ -48183,7 +48296,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d8ec4d45233efaee",
+        "outputHash": "ff9d12f4d0d09c2b",
         "duplicateOutputOf": []
       }
     },
@@ -48256,7 +48369,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "e72314dabf363bfa",
+        "outputHash": "2f88b195eeefa635",
         "duplicateOutputOf": []
       }
     },
@@ -48329,7 +48442,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "1000bf95f5588d6b",
+        "outputHash": "8c65db379ed31d59",
         "duplicateOutputOf": []
       }
     },
@@ -48402,7 +48515,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -48475,7 +48588,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d7aa7d01192dd07c",
+        "outputHash": "83882a24df4b6957",
         "duplicateOutputOf": []
       }
     },
@@ -48548,7 +48661,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "419d94c9220dd4d9",
+        "outputHash": "cde8a85de59dd1f6",
         "duplicateOutputOf": []
       }
     },
@@ -48635,7 +48748,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -48706,7 +48819,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "5251f2c8cb300e2c",
+        "outputHash": "42abc9533bb3ab94",
         "duplicateOutputOf": []
       }
     },
@@ -48777,7 +48890,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "975509ca2c1d5682",
+        "outputHash": "70c959299a2bb79d",
         "duplicateOutputOf": []
       }
     },
@@ -48848,7 +48961,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "79b147d12584c40d",
+        "outputHash": "28c275cf027cd3c2",
         "duplicateOutputOf": []
       }
     },
@@ -52723,7 +52836,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -56810,7 +56923,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "937b4cc73d4c2da9",
+        "outputHash": "3e93a013bb99ae54",
         "duplicateOutputOf": []
       }
     },
@@ -59896,7 +60009,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3fc6dd3ad6f9addd",
+        "outputHash": "84a93a26165e3d7a",
         "duplicateOutputOf": []
       }
     },
@@ -61855,7 +61968,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "907ebe00953789f5",
+        "outputHash": "27bc6334254c0aa1",
         "duplicateOutputOf": []
       }
     },
@@ -63110,7 +63223,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "6bfd95b7425afdcf",
+        "outputHash": "fe70fca26cf79953",
         "duplicateOutputOf": []
       }
     },
@@ -68662,7 +68775,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "b64b7eb331327d07",
+        "outputHash": "42c0c0d06a1eeace",
         "duplicateOutputOf": []
       }
     },
@@ -73435,7 +73548,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "154c0f1b5fbcad5d",
+        "outputHash": "009265b54a791cc7",
         "duplicateOutputOf": []
       }
     },
@@ -74916,7 +75029,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "19872a8c70abaf8a",
+        "outputHash": "e891e2014c3bc5a7",
         "duplicateOutputOf": []
       }
     },
@@ -76599,7 +76712,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "794da2cdea7f8d65",
+        "outputHash": "af9d961dcedc4ced",
         "duplicateOutputOf": []
       }
     },
@@ -87546,8 +87659,8 @@
         "req:foundation:spacing:08-",
         "req:foundation:spacing:09-"
       ],
-      "status": "metadata-only",
-      "blockedBy": "no-definition",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -87556,10 +87669,10 @@
         "materialVersion": "0.1.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
-      "rendererConnected": false,
+      "definitionPath": "src/platform/data/spacing.mjs#SPACING_MATERIALS",
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -87572,15 +87685,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -87591,15 +87704,15 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/data/spacing.mjs#SPACING_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "a1c3fe8abe9d6742",
         "duplicateOutputOf": []
       }
     },
@@ -87610,8 +87723,8 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [],
-      "status": "metadata-only",
-      "blockedBy": "no-definition",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -87620,10 +87733,10 @@
         "materialVersion": "0.1.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
-      "rendererConnected": false,
+      "definitionPath": "src/platform/data/spacing.mjs#SPACING_MATERIALS",
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -87636,15 +87749,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -87655,15 +87768,15 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/data/spacing.mjs#SPACING_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "d5315e6f4c2b694d",
         "duplicateOutputOf": []
       }
     },
@@ -87674,8 +87787,8 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [],
-      "status": "metadata-only",
-      "blockedBy": "no-definition",
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
       "supportedVersions": {
         "supported": [
           "2.7.0"
@@ -87684,10 +87797,10 @@
         "materialVersion": "0.1.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
-      "rendererConnected": false,
+      "definitionPath": "src/platform/data/spacing.mjs#SPACING_MATERIALS",
+      "rendererConnected": true,
       "rendererEntry": null,
-      "usesTokensAndCss": false,
+      "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": []
@@ -87700,15 +87813,15 @@
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
       "blueprintExpressible": false,
-      "exportReflected": false,
-      "a11yAndResponsiveTested": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
           "tests/platform-style-materials.test.mjs:39"
         ],
         "invalidEvidenceRefs": [],
-        "liveProbe": "not-run"
+        "liveProbe": "passed"
       },
       "rightsAndLicense": "internal",
       "legacyDuplicateRelation": [
@@ -87719,15 +87832,15 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/data/spacing.mjs#SPACING_MATERIALS",
         "renderer": null,
         "probe": {
-          "method": "assembleDesign",
-          "ran": false,
-          "ok": false,
-          "reason": "이 종류는 assembleDesign 요청 키로 직접 고를 수 없다"
+          "method": "assembleStyleMaterials",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
         },
-        "outputHash": null,
+        "outputHash": "2fbe99c68c08140c",
         "duplicateOutputOf": []
       }
     },
@@ -87793,7 +87906,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8f78041825c5593c",
+        "outputHash": "6cd3293037835055",
         "duplicateOutputOf": []
       }
     },
@@ -87859,7 +87972,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3c3767657df7e2b8",
+        "outputHash": "e2bbb114e9f92d7a",
         "duplicateOutputOf": []
       }
     },
@@ -87925,7 +88038,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -87991,7 +88104,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "7d3cd88e0502b516",
+        "outputHash": "4715b1f559f61ed4",
         "duplicateOutputOf": []
       }
     },
@@ -88057,7 +88170,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f60e06480d417919",
+        "outputHash": "0c90808a2a00d56f",
         "duplicateOutputOf": []
       }
     },
@@ -88123,7 +88236,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "76e50087f46f52b7",
+        "outputHash": "08ede841115ed90e",
         "duplicateOutputOf": []
       }
     },
@@ -88189,7 +88302,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "178e9896c7eaded7",
+        "outputHash": "f4ae3b5fb7340023",
         "duplicateOutputOf": [
           "state-pattern:success-toast"
         ]
@@ -88257,7 +88370,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "178e9896c7eaded7",
+        "outputHash": "f4ae3b5fb7340023",
         "duplicateOutputOf": [
           "state-pattern:success-confirmation"
         ]
@@ -88334,7 +88447,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "63535ac156c59938",
+        "outputHash": "eb17a0edab467402",
         "duplicateOutputOf": []
       }
     },
@@ -88409,7 +88522,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "0bc24f8653f80cb1",
+        "outputHash": "5adf2ca48f413a9f",
         "duplicateOutputOf": []
       }
     },
@@ -88484,7 +88597,7 @@
           "mode": "dark",
           "qualityOk": true
         },
-        "outputHash": "48225b0b9a04d702",
+        "outputHash": "16b0810763ec0df4",
         "duplicateOutputOf": []
       }
     },
@@ -88559,7 +88672,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3aece91bbb14ba20",
+        "outputHash": "b81512702e9cfc53",
         "duplicateOutputOf": []
       }
     },
@@ -88634,7 +88747,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "af31132cc97e2a78",
+        "outputHash": "3a5251cccac0705f",
         "duplicateOutputOf": []
       }
     },
@@ -88709,7 +88822,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "e4202bce5bff720b",
+        "outputHash": "e367eefd9b48519f",
         "duplicateOutputOf": []
       }
     },
@@ -88784,7 +88897,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a59c6dbf73075fe7",
+        "outputHash": "d19da1a0c945fa5b",
         "duplicateOutputOf": []
       }
     },
@@ -88859,7 +88972,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "9a272cbbaf5ba0b5",
+        "outputHash": "ff21cea68582e750",
         "duplicateOutputOf": []
       }
     },
@@ -89073,7 +89186,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "2643b8c46296c456",
+        "outputHash": "bfcd2c0e973fecc1",
         "duplicateOutputOf": []
       }
     },
@@ -89148,7 +89261,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ad42688b0c102c9c",
+        "outputHash": "e1b576a7b89c0961",
         "duplicateOutputOf": []
       }
     },
@@ -89222,7 +89335,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ab6fd59091abd085",
+        "outputHash": "fc3a72e99bd6146e",
         "duplicateOutputOf": []
       }
     },
@@ -89297,7 +89410,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "5d15ad467a7a9dd7",
+        "outputHash": "6ed1a0dcb7e5545f",
         "duplicateOutputOf": []
       }
     },
@@ -89372,7 +89485,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "cd3d0f4f51459a69",
+        "outputHash": "0012a43d6dd4369c",
         "duplicateOutputOf": []
       }
     },
@@ -89447,7 +89560,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "1348564b6bc1e8d3",
+        "outputHash": "804972a9e02147f3",
         "duplicateOutputOf": []
       }
     },
@@ -89522,7 +89635,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "c78d200934fe0166",
+        "outputHash": "4d277f2f8003876b",
         "duplicateOutputOf": []
       }
     },
@@ -89597,7 +89710,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4e792d38ef76ac62",
+        "outputHash": "2739c7fcf307809f",
         "duplicateOutputOf": []
       }
     },
@@ -89671,7 +89784,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "51ed58b7254bfaef",
+        "outputHash": "998407a76edf282e",
         "duplicateOutputOf": []
       }
     },
@@ -89815,7 +89928,7 @@
           "mode": "dark",
           "qualityOk": true
         },
-        "outputHash": "a966b77ce1b29283",
+        "outputHash": "7d04ad822450b4c3",
         "duplicateOutputOf": []
       }
     },
@@ -89890,7 +90003,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ce8c846445df0afc",
+        "outputHash": "b7adf5e4649dbcd4",
         "duplicateOutputOf": []
       }
     },
@@ -89965,7 +90078,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "5a66dc9fa8889f45",
+        "outputHash": "10a580fc2dba719d",
         "duplicateOutputOf": []
       }
     },
@@ -90040,7 +90153,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "6064f644e68b74fd",
+        "outputHash": "c8acde1eb43b9d10",
         "duplicateOutputOf": []
       }
     },
@@ -90114,7 +90227,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "6b17f3aee411247b",
+        "outputHash": "495dcb7e3e6fb9ff",
         "duplicateOutputOf": []
       }
     },
@@ -90188,7 +90301,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "9640822c51966ad4",
+        "outputHash": "ce18e7358e9319fe",
         "duplicateOutputOf": []
       }
     },
@@ -90263,7 +90376,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "15b1de1f4a95e0c2",
+        "outputHash": "49f1dc40b8cb37dd",
         "duplicateOutputOf": []
       }
     },
@@ -90337,7 +90450,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f02e78677427ff69",
+        "outputHash": "e455cf461ccbcc82",
         "duplicateOutputOf": [
           "style-context:playful"
         ]
@@ -90413,7 +90526,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d05cc6e8fc9cee60",
+        "outputHash": "7fbb74d8df244676",
         "duplicateOutputOf": []
       }
     },
@@ -90487,7 +90600,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "554fb73b345e4d08",
+        "outputHash": "b175a75f9521afef",
         "duplicateOutputOf": []
       }
     },
@@ -90561,7 +90674,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "bfaf11b36310cc34",
+        "outputHash": "3750ac5695303d89",
         "duplicateOutputOf": []
       }
     },
@@ -90636,7 +90749,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "152c9bd17c212629",
+        "outputHash": "b7da85f1b2c42a73",
         "duplicateOutputOf": []
       }
     },
@@ -90710,7 +90823,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "1987a51be17ffbd1",
+        "outputHash": "47c607da698c37ea",
         "duplicateOutputOf": []
       }
     },
@@ -90784,7 +90897,7 @@
           "mode": "dark",
           "qualityOk": true
         },
-        "outputHash": "8d8291010274b949",
+        "outputHash": "1a4862a3c5bd6c47",
         "duplicateOutputOf": []
       }
     },
@@ -90858,7 +90971,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ba3410b87e1d11c8",
+        "outputHash": "af2ac8092d1468dc",
         "duplicateOutputOf": []
       }
     },
@@ -90932,7 +91045,7 @@
           "mode": "dark",
           "qualityOk": true
         },
-        "outputHash": "7a45a72a09d21351",
+        "outputHash": "20d6023028eb8944",
         "duplicateOutputOf": []
       }
     },
@@ -91006,7 +91119,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "26f7bb814b11f60f",
+        "outputHash": "3c39be7aceee532b",
         "duplicateOutputOf": []
       }
     },
@@ -91080,7 +91193,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "04f2d405fe42c01d",
+        "outputHash": "1e6282116973f099",
         "duplicateOutputOf": []
       }
     },
@@ -91154,7 +91267,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f02e78677427ff69",
+        "outputHash": "e455cf461ccbcc82",
         "duplicateOutputOf": [
           "style-context:kids"
         ]
@@ -91300,7 +91413,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "11fc59fb503d7e69",
+        "outputHash": "30fb58d8bb2fc3f5",
         "duplicateOutputOf": []
       }
     },
@@ -91374,7 +91487,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "149933b900c36557",
+        "outputHash": "ff7a7e0d02e69e8a",
         "duplicateOutputOf": []
       }
     },
@@ -91448,7 +91561,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a18ce0193ae3d869",
+        "outputHash": "fc327b285559af86",
         "duplicateOutputOf": []
       }
     },
@@ -91592,7 +91705,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "ca6f72b2bca82abf",
+        "outputHash": "7dcba037c11afd9f",
         "duplicateOutputOf": []
       }
     },
@@ -91666,7 +91779,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "bc2281e1997427c0",
+        "outputHash": "2fd6b8fd4a0fa34c",
         "duplicateOutputOf": []
       }
     },
@@ -91740,7 +91853,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4f1cef7136ca709e",
+        "outputHash": "30b78ca0acf4facb",
         "duplicateOutputOf": []
       }
     },
@@ -91814,7 +91927,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "785c0e47a1fa8260",
+        "outputHash": "52319cfd831506ef",
         "duplicateOutputOf": []
       }
     },
@@ -91888,7 +92001,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "76d89fe6791a3381",
+        "outputHash": "c1bf21056066fa18",
         "duplicateOutputOf": []
       }
     },
@@ -91962,7 +92075,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "b052518ebf2418a9",
+        "outputHash": "6bfea86264c5c975",
         "duplicateOutputOf": []
       }
     },
@@ -92036,7 +92149,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "19872a8c70abaf8a",
+        "outputHash": "e891e2014c3bc5a7",
         "duplicateOutputOf": []
       }
     },
@@ -92110,7 +92223,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "e83059e7216c3256",
+        "outputHash": "da5ae9f221ffa7eb",
         "duplicateOutputOf": []
       }
     },
@@ -92184,7 +92297,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "dbb5ecc1ac9775f2",
+        "outputHash": "42d9b8c178a2d022",
         "duplicateOutputOf": []
       }
     },
@@ -92258,7 +92371,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "5cfcd50f6856c064",
+        "outputHash": "b337c984c3f2e1e1",
         "duplicateOutputOf": []
       }
     },
@@ -92322,7 +92435,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3067f5cd5337476f",
+        "outputHash": "174d3dcf35d06b26",
         "duplicateOutputOf": []
       }
     },
@@ -92386,7 +92499,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "aacc2640d47eb514",
+        "outputHash": "912ed73a40842074",
         "duplicateOutputOf": []
       }
     },
@@ -92450,7 +92563,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "da9964974be7efeb",
+        "outputHash": "f6aa5dea0b5c801c",
         "duplicateOutputOf": []
       }
     },
@@ -92514,7 +92627,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "14da93e03cfb679b",
+        "outputHash": "4ce916f2f48722f2",
         "duplicateOutputOf": []
       }
     },
@@ -92578,7 +92691,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "18c6621ce027c554",
+        "outputHash": "1cccb2ffd578698b",
         "duplicateOutputOf": []
       }
     },
@@ -92644,7 +92757,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "0ef02c614206ae8a",
+        "outputHash": "fc17cf8aff7e6fec",
         "duplicateOutputOf": []
       }
     },
@@ -92708,7 +92821,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "61e7f5385b62bfb3",
+        "outputHash": "caf3b519bb48a544",
         "duplicateOutputOf": []
       }
     },
@@ -92774,7 +92887,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "bca0451e6ddcd496",
+        "outputHash": "a7f831b39769347c",
         "duplicateOutputOf": []
       }
     },
@@ -92838,7 +92951,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "85e2fc720f81d90c",
+        "outputHash": "6c1415a364211dfd",
         "duplicateOutputOf": []
       }
     },
@@ -92902,7 +93015,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "40066b51d9b4f386",
+        "outputHash": "4c9a2b91ce60cac1",
         "duplicateOutputOf": []
       }
     },
@@ -92968,7 +93081,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -93032,7 +93145,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "935fe73d7d6e57a4",
+        "outputHash": "4c21326efe188a8c",
         "duplicateOutputOf": []
       }
     },
@@ -93096,7 +93209,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "13af9978681c61d9",
+        "outputHash": "02487b45a426b90b",
         "duplicateOutputOf": []
       }
     },
@@ -93160,7 +93273,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "11ef8c856a9d176d",
+        "outputHash": "ab731869c4060c44",
         "duplicateOutputOf": []
       }
     },
@@ -93224,7 +93337,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4e47e16e5519df8e",
+        "outputHash": "f331ab765cb4bbd6",
         "duplicateOutputOf": []
       }
     },
@@ -93290,7 +93403,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "907ebe00953789f5",
+        "outputHash": "27bc6334254c0aa1",
         "duplicateOutputOf": []
       }
     },
@@ -93354,7 +93467,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "297f3867b5210c97",
+        "outputHash": "87378ebac80e696b",
         "duplicateOutputOf": []
       }
     },
@@ -93418,7 +93531,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "197bb9fa7efe4805",
+        "outputHash": "5acf1df389e3cef6",
         "duplicateOutputOf": []
       }
     },
@@ -93484,7 +93597,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "937b4cc73d4c2da9",
+        "outputHash": "3e93a013bb99ae54",
         "duplicateOutputOf": []
       }
     },
@@ -93548,7 +93661,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "20a08353ff922948",
+        "outputHash": "6328227875e5f4aa",
         "duplicateOutputOf": []
       }
     },
@@ -93612,7 +93725,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3fcb9297d0677b1c",
+        "outputHash": "4b85546bb3746573",
         "duplicateOutputOf": []
       }
     },
@@ -93676,7 +93789,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a3dbf31723f34611",
+        "outputHash": "91d122f3424a8e9e",
         "duplicateOutputOf": []
       }
     },
@@ -93748,7 +93861,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d1f88382c9575d86",
+        "outputHash": "4611705e73cf8fb5",
         "duplicateOutputOf": []
       }
     },
@@ -93814,7 +93927,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d0cb12b340a499d4",
+        "outputHash": "f8bd0321709ef29c",
         "duplicateOutputOf": []
       }
     },
@@ -93878,7 +93991,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "1d30b1fa5943a607",
+        "outputHash": "19d9085f778d0287",
         "duplicateOutputOf": []
       }
     },
@@ -93954,7 +94067,7 @@
           "mode": "dark",
           "qualityOk": true
         },
-        "outputHash": "31ef60a59af0a3d7",
+        "outputHash": "26fdbf77868bc3ad",
         "duplicateOutputOf": []
       }
     },
@@ -94048,7 +94161,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "6c6f0d924b59f689",
+        "outputHash": "916d17ce168e7afc",
         "duplicateOutputOf": []
       }
     },
@@ -94124,7 +94237,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "87b81f4e7eb13d52",
+        "outputHash": "f8620e4d84ab38f6",
         "duplicateOutputOf": []
       }
     },
@@ -94200,7 +94313,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -94276,7 +94389,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "19e2705b81f9e514",
+        "outputHash": "51f98a7ae64ad3f6",
         "duplicateOutputOf": []
       }
     },
@@ -106607,7 +106720,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "c3aa7627dab04329",
+        "outputHash": "df261cfd9e0766d3",
         "duplicateOutputOf": []
       }
     },
@@ -106671,7 +106784,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8efd17faf5fb80f6",
+        "outputHash": "3297ec03bafcdb34",
         "duplicateOutputOf": []
       }
     },
@@ -106795,7 +106908,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a5b14bd81be66d6f",
+        "outputHash": "00092bf7fb784adb",
         "duplicateOutputOf": []
       }
     },
@@ -106865,7 +106978,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "b16065778b2d3fe8",
+        "outputHash": "261315581e376064",
         "duplicateOutputOf": []
       }
     },
@@ -106929,7 +107042,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "fc37958153017642",
+        "outputHash": "b583215cbb598f10",
         "duplicateOutputOf": []
       }
     },
@@ -106993,7 +107106,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "314dce8ec63a22c4",
+        "outputHash": "ebda604335823eba",
         "duplicateOutputOf": []
       }
     },
@@ -107057,7 +107170,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "800b6d36f7c8093e",
+        "outputHash": "72d4a0bd8e857bb6",
         "duplicateOutputOf": []
       }
     },
@@ -107121,7 +107234,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "e78ffd8f1b47a784",
+        "outputHash": "ae25f3d201e2b6d7",
         "duplicateOutputOf": []
       }
     },
@@ -107185,7 +107298,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "40a7dab35c246b6e",
+        "outputHash": "635b5cb78b83cb60",
         "duplicateOutputOf": []
       }
     },
@@ -107255,7 +107368,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "80b067bef36eee2f",
+        "outputHash": "f1b027e04543e871",
         "duplicateOutputOf": []
       }
     },
@@ -107325,7 +107438,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8f409e9560fbf9f1",
+        "outputHash": "9a5175998472dbe7",
         "duplicateOutputOf": []
       }
     },
@@ -107395,7 +107508,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "eb977e567a803c6a",
+        "outputHash": "ac6c42028724189e",
         "duplicateOutputOf": []
       }
     },
@@ -107459,7 +107572,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "08d1c896389357ee",
+        "outputHash": "fc46aacaa00d306b",
         "duplicateOutputOf": []
       }
     },
@@ -107523,7 +107636,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a5d1fed8623138a1",
+        "outputHash": "8383a41ec4b78353",
         "duplicateOutputOf": []
       }
     },
@@ -107598,7 +107711,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f0397054a5dec39a",
+        "outputHash": "b4589bb30ab37eaf",
         "duplicateOutputOf": []
       }
     },
@@ -107662,7 +107775,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f949912e3258697d",
+        "outputHash": "4eba76af40226287",
         "duplicateOutputOf": []
       }
     },
@@ -107732,7 +107845,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "5dea30aaad6a36d5",
+        "outputHash": "56172910c4536b8b",
         "duplicateOutputOf": []
       }
     },
@@ -107802,7 +107915,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "6b93117849bff6e7",
+        "outputHash": "3e2d1435000bd821",
         "duplicateOutputOf": []
       }
     },
@@ -107930,7 +108043,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "554fb06e3269960a",
+        "outputHash": "8eca3e2e304ebc0a",
         "duplicateOutputOf": []
       }
     },
@@ -108000,7 +108113,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "727709d341965c1b",
+        "outputHash": "ae00c7a00c37c816",
         "duplicateOutputOf": []
       }
     },
@@ -108070,7 +108183,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "9cde4479358b5adc",
+        "outputHash": "917ddbf6673ee2cd",
         "duplicateOutputOf": []
       }
     },
@@ -108134,7 +108247,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8c45b8849eedf707",
+        "outputHash": "692ea0e9536a2192",
         "duplicateOutputOf": []
       }
     },
@@ -108198,7 +108311,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "f6403f0b96a7064c",
+        "outputHash": "a6a43dbe7db8ef98",
         "duplicateOutputOf": []
       }
     },
@@ -108273,7 +108386,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "1657c176b527e22b",
+        "outputHash": "37325d3db45f7640",
         "duplicateOutputOf": []
       }
     },
@@ -108337,7 +108450,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "e39bd8c2eee5f5b3",
+        "outputHash": "dd33fb6958f451dc",
         "duplicateOutputOf": []
       }
     },
@@ -108401,7 +108514,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "808965ab63fc1490",
+        "outputHash": "85a0fcc2a6b00049",
         "duplicateOutputOf": []
       }
     },
@@ -108465,7 +108578,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4bb0d9427e58cb10",
+        "outputHash": "ea0328254297c595",
         "duplicateOutputOf": []
       }
     },
@@ -108529,7 +108642,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "436c86464c54a96c",
+        "outputHash": "35cec2760b7a5272",
         "duplicateOutputOf": []
       }
     },
@@ -108593,7 +108706,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8a68af504e0eae7b",
+        "outputHash": "b50b9df9504b679d",
         "duplicateOutputOf": []
       }
     },
@@ -108717,7 +108830,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "4b384e6c8be6b97b",
+        "outputHash": "2e59f4db6df708e3",
         "duplicateOutputOf": []
       }
     },
@@ -108781,7 +108894,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "c14d3249e98dd92c",
+        "outputHash": "9230da7ac5920ed0",
         "duplicateOutputOf": []
       }
     },
@@ -108845,7 +108958,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "857b9b7e35fc9bac",
+        "outputHash": "77445eee0b507a2c",
         "duplicateOutputOf": []
       }
     },
@@ -108909,7 +109022,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "a1ede0315cde9cf3",
+        "outputHash": "74b0f60bf7f8503e",
         "duplicateOutputOf": []
       }
     },
@@ -108973,7 +109086,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "def9d78d7fd83fd5",
+        "outputHash": "c6e9b899ccf67fc3",
         "duplicateOutputOf": []
       }
     },
@@ -109037,7 +109150,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "eb77ddcc810decda",
+        "outputHash": "b6946568177aa514",
         "duplicateOutputOf": []
       }
     },
@@ -109161,7 +109274,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "3d930627aa3a0349",
+        "outputHash": "ac7284bbde0937a3",
         "duplicateOutputOf": []
       }
     },
