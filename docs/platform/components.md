@@ -191,7 +191,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 134 · 변형 38 · 복합 패턴 35 = 207개 요구행. 현재 Manifest missing: 26.
+집계: 독립 재료 134 · 변형 38 · 복합 패턴 35 = 207개 요구행. 현재 Manifest missing: 8.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -212,38 +212,38 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:b-03-search-input` | Search Input | 독립 재료 | direct | catalog-visible | purpose:form.search |
 | `req:comp:b-04-password-input` | Password Input | 변형 | variant | verified | base-component:input-control |
 | `req:comp:b-05-number-input` | Number Input | 변형 | variant | verified | base-component:input-control |
-| `req:comp:b-06-currency-input` | Currency Input | 독립 재료 | missing | missing | — |
+| `req:comp:b-06-currency-input` | Currency Input | 독립 재료 | direct | catalog-visible | purpose:form.currency |
 | `req:comp:b-07-email-input` | Email Input | 변형 | variant | verified | base-component:input-control |
-| `req:comp:b-08-phone-input` | Phone Input | 변형 | schema | verified | component:form |
-| `req:comp:b-09-url-input` | URL Input | 변형 | schema | verified | component:form |
-| `req:comp:b-10-otp-input` | OTP Input | 독립 재료 | missing | missing | — |
-| `req:comp:b-11-tag-input` | Tag Input | 독립 재료 | missing | missing | — |
-| `req:comp:b-12-file-input` | File Input | 독립 재료 | missing | missing | — |
-| `req:comp:b-13-drag-and-drop-upload` | Drag-and-drop Upload | 독립 재료 | missing | missing | — |
+| `req:comp:b-08-phone-input` | Phone Input | 변형 | variant | catalog-visible | purpose:form.input-kind |
+| `req:comp:b-09-url-input` | URL Input | 변형 | variant | catalog-visible | purpose:form.input-kind |
+| `req:comp:b-10-otp-input` | OTP Input | 독립 재료 | direct | catalog-visible | purpose:form.otp |
+| `req:comp:b-11-tag-input` | Tag Input | 독립 재료 | direct | catalog-visible | purpose:form.tags |
+| `req:comp:b-12-file-input` | File Input | 독립 재료 | direct | catalog-visible | purpose:form.file |
+| `req:comp:b-13-drag-and-drop-upload` | Drag-and-drop Upload | 독립 재료 | direct | catalog-visible | purpose:form.upload |
 | `req:comp:b-14-input-group` | Input Group | 독립 재료 | direct | catalog-visible | purpose:form.group |
 | `req:comp:c-01-select` | Select | 독립 재료 | direct | verified | base-component:select-control |
 | `req:comp:c-02-searchable-select` | Searchable Select | 변형 | variant | verified | base-component:select-control |
 | `req:comp:c-03-combobox` | Combobox | 변형 | variant | verified | base-component:select-control |
 | `req:comp:c-04-multi-select` | Multi-select | 변형 | variant | verified | base-component:select-control |
-| `req:comp:c-05-grouped-select` | Grouped Select | 독립 재료 | missing | missing | — |
-| `req:comp:c-06-radio` | Radio | 독립 재료 | schema | verified | component:form |
-| `req:comp:c-07-radio-group` | Radio Group | 독립 재료 | schema | verified | component:form |
-| `req:comp:c-08-radio-card` | Radio Card | 독립 재료 | missing | missing | — |
-| `req:comp:c-09-checkbox` | Checkbox | 독립 재료 | schema | verified | component:form |
-| `req:comp:c-10-checkbox-group` | Checkbox Group | 독립 재료 | missing | missing | — |
-| `req:comp:c-11-switch` | Switch | 독립 재료 | schema | verified | component:form |
-| `req:comp:c-12-slider` | Slider | 독립 재료 | missing | missing | — |
-| `req:comp:c-13-range-slider` | Range Slider | 독립 재료 | missing | missing | — |
-| `req:comp:c-14-rating` | Rating | 독립 재료 | missing | missing | — |
-| `req:comp:c-15-color-picker` | Color Picker | 독립 재료 | missing | missing | — |
+| `req:comp:c-05-grouped-select` | Grouped Select | 독립 재료 | direct | catalog-visible | purpose:form.grouped-select |
+| `req:comp:c-06-radio` | Radio | 독립 재료 | direct | catalog-visible | purpose:form.radio |
+| `req:comp:c-07-radio-group` | Radio Group | 독립 재료 | direct | catalog-visible | purpose:form.radio-group |
+| `req:comp:c-08-radio-card` | Radio Card | 독립 재료 | direct | catalog-visible | purpose:form.radio-card |
+| `req:comp:c-09-checkbox` | Checkbox | 독립 재료 | direct | catalog-visible | purpose:form.checkbox |
+| `req:comp:c-10-checkbox-group` | Checkbox Group | 독립 재료 | direct | catalog-visible | purpose:form.checkbox-group |
+| `req:comp:c-11-switch` | Switch | 독립 재료 | direct | catalog-visible | purpose:form.switch |
+| `req:comp:c-12-slider` | Slider | 독립 재료 | direct | catalog-visible | purpose:form.slider |
+| `req:comp:c-13-range-slider` | Range Slider | 독립 재료 | direct | catalog-visible | purpose:form.range-slider |
+| `req:comp:c-14-rating` | Rating | 독립 재료 | direct | catalog-visible | purpose:form.rating |
+| `req:comp:c-15-color-picker` | Color Picker | 독립 재료 | direct | catalog-visible | purpose:form.color |
 | `req:comp:d-01-calendar` | Calendar | 독립 재료 | direct | verified | component:calendar |
-| `req:comp:d-02-date-picker` | Date Picker | 독립 재료 | schema | verified | component:form |
-| `req:comp:d-03-date-range-picker` | Date Range Picker | 독립 재료 | missing | missing | — |
-| `req:comp:d-04-time-picker` | Time Picker | 독립 재료 | missing | missing | — |
-| `req:comp:d-05-datetime-picker` | DateTime Picker | 독립 재료 | missing | missing | — |
-| `req:comp:d-06-month-picker` | Month Picker | 독립 재료 | missing | missing | — |
-| `req:comp:d-07-week-picker` | Week Picker | 독립 재료 | missing | missing | — |
-| `req:comp:d-08-schedule-selector` | Schedule Selector | 독립 재료 | missing | missing | — |
+| `req:comp:d-02-date-picker` | Date Picker | 독립 재료 | direct | catalog-visible | purpose:form.date |
+| `req:comp:d-03-date-range-picker` | Date Range Picker | 독립 재료 | direct | catalog-visible | purpose:form.date-range |
+| `req:comp:d-04-time-picker` | Time Picker | 독립 재료 | direct | catalog-visible | purpose:form.time |
+| `req:comp:d-05-datetime-picker` | DateTime Picker | 독립 재료 | direct | catalog-visible | purpose:form.datetime |
+| `req:comp:d-06-month-picker` | Month Picker | 독립 재료 | direct | catalog-visible | purpose:form.month |
+| `req:comp:d-07-week-picker` | Week Picker | 독립 재료 | direct | catalog-visible | purpose:form.week |
+| `req:comp:d-08-schedule-selector` | Schedule Selector | 독립 재료 | direct | catalog-visible | purpose:form.schedule |
 | `req:comp:e-01-navbar` | Navbar | 독립 재료 | direct | verified | base-component:navigation-menu |
 | `req:comp:e-02-sidebar` | Sidebar | 독립 재료 | direct | catalog-visible | purpose:navigation.sidebar |
 | `req:comp:e-03-collapsible-sidebar` | Collapsible Sidebar | 독립 재료 | direct | catalog-visible | purpose:navigation.collapsible-sidebar |

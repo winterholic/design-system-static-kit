@@ -1716,5 +1716,10 @@ exit 0
 - 23개 missing/schema 요구에 실제 목적 패밀리와 2.7 opt-in runtime을 연결했다. 네이티브 input/select/fieldset, token 기반 CSS, 상태·검증·ARIA·키보드·44px 터치 목표를 렌더 출력에서 확인했다.
 - Blueprint → 컴파일은 Core 조립 마크업과 바이트 동일·결정적이며 Registry·REST·MCP 채널의 목록과 조립 출력도 동일하다.
 
-### 27.2 최신 검증
-최신 origin/main 재기반화와 생성물 재생성 뒤 검증 결과를 기록한다. 브라우저 시험은 Codex/macOS 실행 환경의 Chromium MachPort 권한 제한으로 미실행이다.
+### 27.2 최신 검증 (2026-11-28, `origin/main` `f3d2f379d` 기준)
+- `npm run coverage:materials:check`: `MANIFEST MATCH` (1,534 materials, 406 requirements). §6.2 B/C/D 37행은 direct 28·variant 9, missing·schema 0.
+- B/C/D 집중 계약·Blueprint·채널 시험: 213/213 통과. purpose 목록 계약은 119개 live registry 기준이며 200개 페이지 요청으로 Core·REST·MCP 출력 전체를 비교한다.
+- `node scripts/platform/baseline.mjs --check`: `BASELINE MATCH` (119 purpose families). `node docs/platform/evidence/components/build.mjs --check`: 207행 최신. legacy 2.1.0·기본 2.4.0·고정 2.4.0/2.5.0 출력과 `site/v1` 경로는 diff 없음.
+- `npm run verify`: 1,163 tests, 1,158 pass, 5 fail. 다섯 건은 모두 Chromium이 `bootstrap_check_in ... MachPortRendezvousServer: Permission denied (1100)` 후 `SIGTRAP`으로 종료된 브라우저 시험이다: `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`; `stack: gap and align props change the real layout, including the "gap" step`; `container: width steps cap the real width, full does not, and content is escaped`; `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`; `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`. 비브라우저 실패는 없다.
+- verify가 test 단계에서 멈춰 후속 단계를 별도 실행했다: `node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs` 통과, `REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.`
+- B/C/D 전용 browser E2E(`e2e/platform-family-a11y.spec.mjs`)는 MachPort 사전 점검 차단으로 미실행이다.

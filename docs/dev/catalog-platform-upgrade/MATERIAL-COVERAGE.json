@@ -23,7 +23,7 @@
       "total": 406
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:95 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:119 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:103 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -55,7 +55,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 95
+        "materials": 119
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -225,32 +225,32 @@
   "summary": {
     "requirements": {
       "total": 406,
-      "fulfilled": 362,
-      "missing": 44,
-      "coverageRate": 0.8916,
+      "fulfilled": 380,
+      "missing": 26,
+      "coverageRate": 0.936,
       "byCoverage": {
-        "direct": 323,
-        "variant": 30,
-        "schema": 7,
+        "direct": 346,
+        "variant": 32,
+        "schema": 0,
         "part-of": 2,
-        "missing": 44
+        "missing": 26
       },
       "statusDistribution": {
-        "missing": 44,
+        "missing": 26,
         "metadata-only": 0,
         "defined": 5,
         "renderable": 84,
-        "catalog-visible": 43,
+        "catalog-visible": 68,
         "assemblable": 1,
-        "verified": 229
+        "verified": 222
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 26,
-          "direct": 142,
-          "variant": 30,
-          "schema": 7,
+          "missing": 8,
+          "direct": 165,
+          "variant": 32,
+          "schema": 0,
           "partOf": 2
         },
         "subtokenSets": {
@@ -366,18 +366,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1510,
+      "totalRecords": 1534,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
         "defined": 26,
         "renderable": 150,
-        "catalog-visible": 409,
+        "catalog-visible": 433,
         "assemblable": 4,
         "verified": 494
       },
       "registeredByRegistry": {
-        "platform": 411,
+        "platform": 435,
         "design": 1099
       }
     },
@@ -563,12 +563,12 @@
         }
       },
       "purpose-family": {
-        "registered": 95,
-        "actualMaterial": 95,
+        "registered": 119,
+        "actualMaterial": 119,
         "assemblableVerified": 39,
-        "distinctOutputs": 95,
+        "distinctOutputs": 119,
         "byStatus": {
-          "catalog-visible": 56,
+          "catalog-visible": 80,
           "verified": 39
         }
       },
@@ -808,8 +808,8 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 95,
-        "delta": 63,
+        "currentMeasured": 119,
+        "delta": 87,
         "status": "drift",
         "measuredBy": "live registry count"
       },
@@ -1050,9 +1050,11 @@
       "id": "req:comp:b-06-currency-input",
       "section": "§6.2 B",
       "name": "Currency Input",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.currency"
+      ]
     },
     {
       "id": "req:comp:b-07-email-input",
@@ -1072,63 +1074,69 @@
       "id": "req:comp:b-08-phone-input",
       "section": "§6.2 B",
       "name": "Phone Input",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "variant",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
+        "purpose:form.input-kind"
       ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "tel"
+      "viaRecord": "purpose:form.input-kind",
+      "variant": {
+        "kind": "tel"
       }
     },
     {
       "id": "req:comp:b-09-url-input",
       "section": "§6.2 B",
       "name": "URL Input",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "variant",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
+        "purpose:form.input-kind"
       ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "url"
+      "viaRecord": "purpose:form.input-kind",
+      "variant": {
+        "kind": "url"
       }
     },
     {
       "id": "req:comp:b-10-otp-input",
       "section": "§6.2 B",
       "name": "OTP Input",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.otp"
+      ]
     },
     {
       "id": "req:comp:b-11-tag-input",
       "section": "§6.2 B",
       "name": "Tag Input",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.tags"
+      ]
     },
     {
       "id": "req:comp:b-12-file-input",
       "section": "§6.2 B",
       "name": "File Input",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.file"
+      ]
     },
     {
       "id": "req:comp:b-13-drag-and-drop-upload",
       "section": "§6.2 B",
       "name": "Drag-and-drop Upload",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.upload"
+      ]
     },
     {
       "id": "req:comp:b-14-input-group",
@@ -1197,118 +1205,111 @@
       "id": "req:comp:c-05-grouped-select",
       "section": "§6.2 C",
       "name": "Grouped Select",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.grouped-select"
+      ]
     },
     {
       "id": "req:comp:c-06-radio",
       "section": "§6.2 C",
       "name": "Radio",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "direct",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
-      ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "radio"
-      },
-      "note": "radio 필드는 options(2개 이상)를 받으므로 항상 라디오 묶음으로 렌더된다"
+        "purpose:form.radio"
+      ]
     },
     {
       "id": "req:comp:c-07-radio-group",
       "section": "§6.2 C",
       "name": "Radio Group",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "direct",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
-      ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "radio"
-      }
+        "purpose:form.radio-group"
+      ]
     },
     {
       "id": "req:comp:c-08-radio-card",
       "section": "§6.2 C",
       "name": "Radio Card",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.radio-card"
+      ]
     },
     {
       "id": "req:comp:c-09-checkbox",
       "section": "§6.2 C",
       "name": "Checkbox",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "direct",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
-      ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "checkbox"
-      }
+        "purpose:form.checkbox"
+      ]
     },
     {
       "id": "req:comp:c-10-checkbox-group",
       "section": "§6.2 C",
       "name": "Checkbox Group",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.checkbox-group"
+      ]
     },
     {
       "id": "req:comp:c-11-switch",
       "section": "§6.2 C",
       "name": "Switch",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "direct",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
-      ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "switch"
-      }
+        "purpose:form.switch"
+      ]
     },
     {
       "id": "req:comp:c-12-slider",
       "section": "§6.2 C",
       "name": "Slider",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.slider"
+      ]
     },
     {
       "id": "req:comp:c-13-range-slider",
       "section": "§6.2 C",
       "name": "Range Slider",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.range-slider"
+      ]
     },
     {
       "id": "req:comp:c-14-rating",
       "section": "§6.2 C",
       "name": "Rating",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.rating"
+      ]
     },
     {
       "id": "req:comp:c-15-color-picker",
       "section": "§6.2 C",
       "name": "Color Picker",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.color"
+      ]
     },
     {
       "id": "req:comp:d-01-calendar",
@@ -1324,65 +1325,71 @@
       "id": "req:comp:d-02-date-picker",
       "section": "§6.2 D",
       "name": "Date Picker",
-      "coverage": "schema",
-      "status": "verified",
+      "coverage": "direct",
+      "status": "catalog-visible",
       "materialIds": [
-        "component:form"
-      ],
-      "schema": {
-        "type": "form",
-        "path": "fields.items.properties.type.enum",
-        "value": "date"
-      },
-      "note": "브라우저 기본 date 입력이다. 달력 팝업 컴포넌트가 아니다"
+        "purpose:form.date"
+      ]
     },
     {
       "id": "req:comp:d-03-date-range-picker",
       "section": "§6.2 D",
       "name": "Date Range Picker",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.date-range"
+      ]
     },
     {
       "id": "req:comp:d-04-time-picker",
       "section": "§6.2 D",
       "name": "Time Picker",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.time"
+      ]
     },
     {
       "id": "req:comp:d-05-datetime-picker",
       "section": "§6.2 D",
       "name": "DateTime Picker",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.datetime"
+      ]
     },
     {
       "id": "req:comp:d-06-month-picker",
       "section": "§6.2 D",
       "name": "Month Picker",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.month"
+      ]
     },
     {
       "id": "req:comp:d-07-week-picker",
       "section": "§6.2 D",
       "name": "Week Picker",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.week"
+      ]
     },
     {
       "id": "req:comp:d-08-schedule-selector",
       "section": "§6.2 D",
       "name": "Schedule Selector",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.schedule"
+      ]
     },
     {
       "id": "req:comp:e-01-navbar",
@@ -2727,7 +2734,7 @@
         "inputChanged": true,
         "invalidRejected": true,
         "exactMaterial": true,
-        "outputHash": "c42e3c6811bcce5b"
+        "outputHash": "97c426872ea89807"
       }
     },
     {
@@ -2750,7 +2757,7 @@
         "inputChanged": true,
         "invalidRejected": true,
         "exactMaterial": true,
-        "outputHash": "ab364e1544fe808b"
+        "outputHash": "06fff65fe977d7fe"
       }
     },
     {
@@ -2934,7 +2941,7 @@
         "inputChanged": true,
         "invalidRejected": true,
         "exactMaterial": true,
-        "outputHash": "eb4d222fac3fb221"
+        "outputHash": "24f5133830937b91"
       }
     },
     {
@@ -2957,7 +2964,7 @@
         "inputChanged": true,
         "invalidRejected": true,
         "exactMaterial": true,
-        "outputHash": "5f75ef41b62dda68"
+        "outputHash": "a6df0a5f3ffeaeb8"
       }
     },
     {
@@ -34702,15 +34709,7 @@
       "kind": "component",
       "registry": "design",
       "category": "form-data-feedback",
-      "requirementIds": [
-        "req:comp:b-08-phone-input",
-        "req:comp:b-09-url-input",
-        "req:comp:c-06-radio",
-        "req:comp:c-07-radio-group",
-        "req:comp:c-09-checkbox",
-        "req:comp:c-11-switch",
-        "req:comp:d-02-date-picker"
-      ],
+      "requirementIds": [],
       "status": "verified",
       "blockedBy": null,
       "supportedVersions": {
@@ -85485,6 +85484,614 @@
       }
     },
     {
+      "id": "purpose:form.checkbox",
+      "name": "체크박스",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-09-checkbox"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "c5861124d26324a7",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.checkbox-group",
+      "name": "체크박스 그룹",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-10-checkbox-group"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6cf5f8b56bd8bb48",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.color",
+      "name": "색상 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-15-color-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "be1c62fb7c45c083",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.currency",
+      "name": "통화 입력",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:b-06-currency-input"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "5e339d205a3e314e",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.date",
+      "name": "날짜",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-02-date-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "9d72bc1c3ee40863",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.date-range",
+      "name": "날짜 범위 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-03-date-range-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "016dd23e6ed6bbe9",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.datetime",
+      "name": "날짜와 시각 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-05-datetime-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "cad8a3d59907f2d0",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.file",
+      "name": "파일 입력",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:b-12-file-input"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "f9b49dbc94d4363e",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:form.filter",
       "name": "필터 폼",
       "kind": "purpose-family",
@@ -85656,6 +86263,772 @@
           "qualityOk": true
         },
         "outputHash": "f4bb2d5b6d055923",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.grouped-select",
+      "name": "그룹 선택",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-05-grouped-select"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:select-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "945837108e5131fd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.input-kind",
+      "name": "입력 종류",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:b-08-phone-input",
+        "req:comp:b-09-url-input"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "kind": [
+            "tel",
+            "url"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "843ea16b0a75faf5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.month",
+      "name": "월 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-06-month-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e9cd494248e5d102",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.otp",
+      "name": "일회용 코드 입력",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:b-10-otp-input"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "f098d77e5c0c1afe",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.radio",
+      "name": "라디오",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-06-radio"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "8ea4cc9f6e0aa0d3",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.radio-card",
+      "name": "라디오 카드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-08-radio-card"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6f62ea1727aba56c",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.radio-group",
+      "name": "라디오 그룹",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-07-radio-group"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "824299cc95939e4e",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.range-slider",
+      "name": "범위 슬라이더",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-13-range-slider"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "cbdf4c7dee7808be",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.rating",
+      "name": "평점",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-14-rating"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "8bfbbc8945f5026d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.schedule",
+      "name": "일정 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-08-schedule-selector"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e0bfcd2eb58a762f",
         "duplicateOutputOf": []
       }
     },
@@ -85840,6 +87213,462 @@
           "qualityOk": true
         },
         "outputHash": "16bcb16db2e673b2",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.slider",
+      "name": "슬라이더",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-12-slider"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "95ade7948e16a170",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.switch",
+      "name": "스위치",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:c-11-switch"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "5e3e7918956e463f",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.tags",
+      "name": "태그 입력",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:b-11-tag-input"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "67298c2841c36b8c",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.time",
+      "name": "시각 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-04-time-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e37a12e9acf0a125",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.upload",
+      "name": "드래그 앤 드롭 업로드",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:b-13-drag-and-drop-upload"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "02ac87a8197ef8ad",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:form.week",
+      "name": "주 선택기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "form",
+      "requirementIds": [
+        "req:comp:d-07-week-picker"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/form.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/form-controls.mjs#renderFormControl",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "disabled",
+          "error",
+          "readonly"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/form.mjs",
+        "renderer": "src/platform/families/form-controls.mjs#renderFormControl",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "2527f028bd591e03",
         "duplicateOutputOf": []
       }
     },

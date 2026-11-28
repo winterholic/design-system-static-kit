@@ -21,6 +21,7 @@ import {CARD_FAMILIES} from './card.mjs';
 import {BUTTON_FAMILIES} from './button.mjs';
 import {NAVIGATION_FAMILIES} from './navigation.mjs';
 import {FORM_FAMILIES} from './form.mjs';
+import {FORM_CONTROL_FAMILIES} from './form-controls.mjs';
 import {TABLE_FAMILIES} from './table.mjs';
 import {FEEDBACK_FAMILIES} from './feedback.mjs';
 import {INFO_MEDIA_FAMILIES, INFO_FAMILIES, MEDIA_FAMILIES} from './info-media.mjs';
@@ -40,6 +41,10 @@ export const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:button.primary', 'purpose:button.secondary', 'purpose:button.emphasis', 'purpose:button.destructive', 'purpose:button.icon', 'purpose:button.loading', 'purpose:button.toggle', 'purpose:button.split', 'purpose:button.menu', 'purpose:button.fab', 'purpose:button.copy', 'purpose:button.close',
   'purpose:navigation.sidebar', 'purpose:navigation.topbar', 'purpose:navigation.tabs', 'purpose:navigation.bottom',
   'purpose:form.search', 'purpose:form.auth', 'purpose:form.settings', 'purpose:form.filter', 'purpose:form.group',
+  'purpose:form.input-kind', 'purpose:form.currency', 'purpose:form.otp', 'purpose:form.tags', 'purpose:form.file', 'purpose:form.upload', 'purpose:form.grouped-select',
+  'purpose:form.radio', 'purpose:form.radio-group', 'purpose:form.radio-card', 'purpose:form.checkbox', 'purpose:form.checkbox-group', 'purpose:form.switch',
+  'purpose:form.slider', 'purpose:form.range-slider', 'purpose:form.rating', 'purpose:form.color', 'purpose:form.date', 'purpose:form.date-range',
+  'purpose:form.time', 'purpose:form.datetime', 'purpose:form.month', 'purpose:form.week', 'purpose:form.schedule',
   'purpose:table.business', 'purpose:table.analytic', 'purpose:table.dense',
   'purpose:table.filterable', 'purpose:table.expandable', 'purpose:table.grouped', 'purpose:table.tree', 'purpose:table.inspector', 'purpose:table.log-viewer', 'purpose:table.diff',
   'purpose:feedback.confirm', 'purpose:feedback.error', 'purpose:feedback.warning', 'purpose:feedback.progress', 'purpose:feedback.result',
@@ -52,7 +57,7 @@ export const PURPOSE_FAMILY_IDS = Object.freeze([
   ...WORK_PATTERN_IDS,
 ]);
 
-export const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES, ...WORK_PATTERN_FAMILIES]);
+export const PURPOSE_FAMILIES = Object.freeze([...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...FORM_CONTROL_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES, ...WORK_PATTERN_FAMILIES]);
 const BY_ID = new Map(PURPOSE_FAMILIES.map(f => [f.id, f]));
 export const getPurposeFamily = id => BY_ID.get(id) ?? null;
 export const listPurposeFamilies = group => PURPOSE_FAMILIES.filter(f => !group || f.group === group);
