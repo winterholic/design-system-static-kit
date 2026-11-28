@@ -15,6 +15,8 @@ import {createPlatform, assemblePage, bindColor, bindType, axisIds, materialAxis
 import {CLOSED_PAIRS} from '../../src/platform/contract.mjs';
 import {PATTERNS} from '../../src/profiles/data.mjs';
 import {templates, pageTypes, axes} from '../../src/catalog/index.mjs';
+import {normalizePageRequest, planPage} from '../../src/platform/page-content.mjs';
+import {selectStyleMaterials, exploreCandidates, evaluateCombo, assembleCombo} from '../../src/platform/page.mjs';
 import {Worker} from 'node:worker_threads';
 import {availableParallelism} from 'node:os';
 import {fileURLToPath} from 'node:url';
@@ -147,6 +149,55 @@ function layoutAxes(patternId) {
   return {pageType: tpl.pageType, shells: p.shells.filter(s => pt.shells.includes(s)), widths: p.widths.filter(w => !pt.widths || pt.widths.includes(w)), densities: [...axes.density]};
 }
 
+function pageFingerprintHash(text) {
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < text.length; i++) { const c = text.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(14, '0');
+}
+
+function pageFingerprint(value, colorVars) {
+  const decl = name => [...value.css.matchAll(new RegExp(`--kit-${name}:([^;}]+)`, 'g'))].at(-1)?.[1] ?? null;
+  return {
+    color: pageFingerprintHash(JSON.stringify(Object.fromEntries(Object.entries(colorVars).sort(([a], [b]) => a.localeCompare(b))))),
+    face: pageFingerprintHash(JSON.stringify([decl('heading'), decl('font')])),
+    output: pageFingerprintHash(value.css + value.html),
+  };
+}
+
+/** Build the page plan/style once per material-independent request; every material tuple still runs relation, render and quality checks. */
+export function assembleVerifiedPage(request, env, preparedCache = new Map()) {
+  const normalized = normalizePageRequest(request);
+  if (normalized.diagnostics.length) return {ok: false, diagnostics: normalized.diagnostics, candidates: []};
+  const intent = normalized.intent;
+  const planRequest = {...request};
+  for (const key of ['palette', 'subtokenSet', 'typeSystem', 'families']) delete planRequest[key];
+  const planKey = JSON.stringify(planRequest);
+  let prepared = preparedCache.get(planKey);
+  if (!prepared) {
+    const planned = planPage(intent, env);
+    if (!planned.plan) return {ok: false, diagnostics: planned.diagnostics, candidates: []};
+    const style = selectStyleMaterials(planned.plan, intent, env);
+    if (style.diagnostics.length) return {ok: false, diagnostics: style.diagnostics, candidates: []};
+    planned.plan.style = style.selection;
+    prepared = {plan: planned.plan};
+    preparedCache.set(planKey, prepared);
+  }
+  const plan = prepared.plan;
+  const explored = exploreCandidates(plan, intent, env);
+  if (!explored.combos.length) return {ok: false, diagnostics: explored.diagnostics, candidates: []};
+  const evaluated = explored.combos.map(combo => ({combo, ...evaluateCombo(plan, intent, env, combo)}));
+  const passing = evaluated.filter(item => item.relations.ok).sort((a, b) => b.score - a.score || JSON.stringify(a.selection).localeCompare(JSON.stringify(b.selection)));
+  if (!passing.length) {
+    const violations = evaluated[0].relations.violations;
+    return {ok: false, diagnostics: violations.map(v => ({code: v.code, severity: 'error', message: `${v.from} × ${v.to}: ${v.reason}`})), candidates: []};
+  }
+  const item = passing[0], assembled = assembleCombo(plan, intent, env, item.combo, item);
+  if (!assembled.ok) return {ok: false, diagnostics: assembled.diagnostics, candidates: []};
+  return {ok: true, diagnostics: assembled.diagnostics, candidates: [{quality: assembled.quality, selection: item.selection, value: assembled.value, fingerprint: pageFingerprint(assembled.value, assembled.colorVars)}]};
+}
+
 /** env와 only(패턴 id 목록)는 시험용이다. 기준선은 기본값(등록된 전체 재료, 모든 대표 패턴)으로 잰다. */
 export function platformSection({env = createPlatform(), only = null, verifiedShard = null, includeMergeDetails = false} = {}) {
   const reg = env.registry;
@@ -208,9 +259,10 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
   // ---- 검증된 조합: 실제 조립 ----
   const outputs = new Set(), verifiedColor = {light: new Set(), dark: new Set()}, verifiedFaces = new Set(), verifiedFamilies = new Set(), verifiedPurposeFamilies = new Set(), failures = {};
   let verified = 0, verifyAttempted = 0;
+  const preparedPages = new Map();
   const run = (request, ctxLabel) => {
     verifyAttempted++;
-    const r = assemblePage(request, env);
+    const r = assembleVerifiedPage(request, env, preparedPages);
     if (!r.ok) { const code = r.diagnostics.find(d => d.severity === 'error')?.code ?? 'UNKNOWN'; failures[code] = (failures[code] ?? 0) + 1; return null; }
     const c = r.candidates[0];
     if (!c.quality.ok) { failures[`QUALITY:${ctxLabel}`] = (failures[`QUALITY:${ctxLabel}`] ?? 0) + 1; return null; }

@@ -1,7 +1,23 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {createPlatform} from '../../src/platform/index.mjs';
+import {assemblePage} from '../../src/platform/page.mjs';
 import {createRelationGraph, defineCheck} from '../../src/platform/relations.mjs';
-import {countAttemptedCombinations, createRelationEvaluator, mergePlatformSections} from './platform-baseline.mjs';
+import {assembleVerifiedPage, countAttemptedCombinations, createRelationEvaluator, mergePlatformSections} from './platform-baseline.mjs';
+
+test('prepared material assembly matches assemblePage output and quality', () => {
+  const env = createPlatform(), request = {
+    purpose: 'editorial-docs', pattern: 'docs-reference', palette: 'palette:clay-earth',
+    subtokenSet: 'subtoken-set:developer-console', typeSystem: 'type-system:doc-dev-docs', candidates: 1,
+  };
+  const expected = assemblePage(request, env);
+  const actual = assembleVerifiedPage(request, env, new Map());
+  assert.equal(actual.ok, expected.ok);
+  assert.deepEqual(actual.candidates[0].quality, expected.candidates[0].quality);
+  assert.deepEqual(actual.candidates[0].selection, expected.candidates[0].selection);
+  assert.deepEqual(actual.candidates[0].fingerprint, expected.candidates[0].fingerprint);
+  assert.deepEqual(actual.candidates[0].value, expected.candidates[0].value);
+});
 
 test('parallel platform sections merge counters by sum and fingerprints by set union', () => {
   const make = (outputs, colors, faces, families, purposes, styleOutputs) => ({
