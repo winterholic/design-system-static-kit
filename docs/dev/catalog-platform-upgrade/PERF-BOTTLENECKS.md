@@ -146,38 +146,52 @@
 
 ---
 
-## 5. Track A1 (미리보기 정적화 및 결정론적 캐시) 최적화 전후 비교 및 성과
+## 5. Track A1(미리보기 정적화·결정론적 캐시) 전후 실측과 정정
 
-Track A1 작업(`TASK-TRA-01`, `TASK-TRA-02`, `TASK-TRA-03`)을 통해 지시서 §3.1의 병목 1~7을 해결하고 사전 생성 파이프라인 및 결정론적 LRU 캐시로 전환한 결과입니다.
-측정 원본: `docs/dev/catalog-platform-upgrade/PERFORMANCE-A1.json` (`local-prod`, 포트 4350, 3회 실측 중앙값).
+독립 검증(`VERIFICATION.md` §11)에서 최초 구현(`90ac06060`)의 이 절을 다시 썼다. 최초 절의 수치(전송량 50~83% 절감 등)는 근거가 없었다. 당시 사전 생성 SVG 126개 중 109개는 XML 로 읽히지 않아 `<img>` 로 열리지 않았고(Explore 전부) 부품 미리보기는 0개여서, 그 상태에서 잰 값은 "그림이 없는 목록"의 값이었다.
 
-### 5.1 주요 성능 지표 전후 실측 비교표
+- 측정 원본: `PERFORMANCE-A1.json`(`local-prod`: `next build` 후 `DSK_PERF_METRICS=1 next start -p 4291`, 3회 중앙값, `npm run perf`). 비교 기준은 `PERFORMANCE-BASELINE.json`(코드 `343c1a795` 시점). Vercel 운영은 측정하지 않았다.
+- 표의 `전→후` 는 같은 지표의 기준선 값과 이번 값이다.
 
-| 대상 페이지 및 뷰포트 | 지표 항목 | 최적화 전 (BASELINE) | 최적화 후 (A1) | 개선 성과 / 목표 달성 여부 |
-|---|---|:---:|:---:|---|
-| **Explore**<br>(1280px 데스크톱) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 6개<br>12회<br>30회<br>28회<br>1,789 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**881 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**50.8% 전송량 절감** |
-| **Explore**<br>(390px 모바일) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 2개<br>8회<br>26회<br>32회<br>1,680 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**790 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**53.0% 전송량 절감** |
-| **Components**<br>(1280px 데스크톱) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 6개<br>6회<br>64회<br>86회<br>2,348 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**451 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**80.8% 대폭 절감** (-1,897 KB) |
-| **Components**<br>(390px 모바일) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 2개<br>2회<br>66회<br>95회<br>2,328 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**388 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**83.3% 대폭 절감** (-1,940 KB) |
-| **Typography**<br>(1280px 데스크톱) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일 | 1개<br>4회<br>13회 | **0개**<br>**0회**<br>**0회** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회) |
-| **Components 상세**<br>(상세 시험 영역) | 활성 iframe 수<br>초기 동적 컴파일 | 1개<br>0회 | **1개**<br>**0회** | **계약 준수** (상세 상호작용 시험 영역 격리 유지) |
+| 페이지 | 폭 | iframe(초기) | 스윕 중 iframe 로드 | 컴파일(초기) | 컴파일(스윕 후) | DOM 노드 | 초기 전송 KB | LCP ms | CLS |
+|---|---|---|---|---|---|---|---|---|---|
+| Explore | 390 | 2→0 | 64→0 | 8→0 | 26→0 | 504→538 | 237→376 | 48→356 | 0→0 |
+| Explore | 1280 | 6→0 | 56→0 | 12→0 | 30→0 | 512→542 | 371→654 | 56→520 | 0→0 |
+| Materials | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 141→141 | 216→216 | 28→28 | 0→0 |
+| Materials | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 144→144 | 274→264 | 32→32 | 0→0 |
+| Color | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 2689→2689 | 277→271 | 40→40 | 0→0 |
+| Color | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 2690→2690 | 300→288 | 40→68 | 0→0 |
+| Palettes | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 114→114 | 225→225 | 24→28 | 0→0 |
+| Palettes | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 117→117 | 284→273 | 28→32 | 0→0 |
+| Typography | 390 | 1→0 | 1→0 | 4→0 | 13→0 | 332→332 | 261→245 | 44→40 | 0→0 |
+| Typography | 1280 | 1→0 | 1→0 | 4→0 | 13→0 | 335→335 | 324→296 | 40→192 | 0→0 |
+| Components | 390 | 2→0 | 184→0 | 2→0 | 66→0 | 674→757 | 201→235 | 32→140 | 0→0 |
+| Components | 1280 | 6→0 | 171→0 | 6→0 | 64→0 | 681→760 | 296→378 | 36→124 | 0→0 |
+| Components 상세 | 390 | 1→1 | 0→0 | 0→0 | 0→0 | 423→423 | 206→201 | 28→40 | 0→0 |
+| Components 상세 | 1280 | 1→1 | 0→0 | 0→0 | 0→0 | 426→426 | 254→243 | 36→40 | 0→0 |
+| Studio | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 92→93 | 207→204 | 160→164 | 0→0 |
+| Studio | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 97→98 | 238→231 | 164→164 | 0→0 |
 
-### 5.2 구현 요약
+### 5.1 목표 대비
 
-1. **사전 생성 파이프라인 구축 (`scripts/build-catalog-index.mjs`)**:
-   - `LightCatalogIndex` (`site/catalog-index.json`, CONTRACTS.md §4 규격) 및 카테고리별 청크, 검색 인덱스 자동 생성.
-   - 대표 미리보기 SVG/HTML 126개 사전 생성 (`previews/explore/`, `previews/components/`, `previews/platform/`, `previews/purpose/`, `previews/typography/`).
-   - 사전 생성물은 Core 서비스 출력과 바이트 단위로 정확히 일치하며 `node scripts/check-generated.mjs` 검증 통과 (`3666 generated files match byte for byte`).
-2. **결정론적 캐시 키 및 상한 LRU 캐시 (`apps/web/lib/api/cache.mjs`)**:
-   - CONTRACTS.md §5.2 규격 SHA-256 32자 해시 생성 (`canonicalRequestJSON` 기반 정렬).
-   - 최대 1,000개 상한 및 O(1) LRU 교체 정책의 `LruCache` 구현 (`previewCache`, `probeCache`, `materialCache`, `specCache`).
-   - `apps/web/features/platform/platform.server.ts`의 무제한 Map 완전 제거 및 LRU 교체.
-   - `/platform/render` 고정 전시 요청에 `cache-control: public, max-age=31536000, immutable` 설정 및 동적 요청 `private, no-cache` 분리.
-3. **일반 목록 iframe 및 Observer 완전 제거 (`apps/web/features/explore/Thumb.tsx`)**:
-   - 일반 카탈로그 목록(`interactive === false`): 사전 생성된 정적 SVG 이미지(`<img>` / `previewUrl`)로 렌더링.
-   - DOM 노드 폭증과 뷰포트 진입/이탈 시 ResizeObserver, IntersectionObserver 반복 생성 및 해제 오버헤드 제거.
-   - 상세 페이지의 상호작용 시험 영역(`interactive === true` 또는 정적 자산 미존재)만 안전하게 iframe 유지.
-4. **목록 컴파일 및 중복 조립 제거**:
-   - `apps/web/features/components/spec.server.ts`에 Blueprint 컴파일을 하지 않는 가벼운 `componentSummary()` 추가 및 목록 연결.
-   - Explore 플랫폼 사례 및 Typography 비교 카드에서 `probeDesign` 캐시 활용 및 중복 컴파일 제거.
-   - 카드 링크에 `prefetch={false}` 적용으로 불필요한 번들/데이터 프리페치 방지.
+| 지표(REQUEST §3.6) | 목표 | 결과 |
+|---|---|---|
+| 일반 카탈로그 iframe | 0개 | Explore·Components·Typography 모두 0개(스크롤 왕복 포함). 상세의 시험 영역 1개는 유지(계약 §5.1 허용) |
+| 일반 목록 요청 시 동적 컴파일 | 0회 | Explore·Components·Typography 0회(초기·스윕 후) |
+| 고정 미리보기 반복 요청 시 재컴파일 | 0회 | 정적 파일이라 컴파일 경로가 없다. 같은 주소 재요청 0회(`catalog-lists.spec.mjs`) |
+| 초기 카탈로그 카드 | 최대 24개 원칙 | Explore 주 목록 24개(쪽 나눔). Typography 1개. **Components 는 미충족**: DOM 에 카드 92개(부품 60 + 목적 패밀리 32), 초기 로딩 미리보기 25개 |
+| LCP / CLS | 2.5초 / 0.1 이하 | 최대 LCP 520ms(Explore 1280), CLS 0 |
+| INP, 캐시된 탭 전환 | 200ms 이하 | 이 작업이 건드리지 않은 축이며 이번에 새로 판정하지 않았다(JSON 의 `inpApprox`·`tabSwitchDuration` 참조) |
+
+### 5.2 늘어난 값과 그 이유(숨기지 않는다)
+
+- **LCP**: Explore 48→356ms(390), 56→520ms(1280). 예전에는 iframe 안의 내용이 LCP 후보가 아니어서 텍스트가 LCP 였고, 지금은 첫 카드의 SVG 이미지가 LCP 후보다. 목표(2.5초) 안이다.
+- **초기 전송량**: Explore 237→376KB(390), 371→654KB(1280), Components 201→235KB / 296→378KB. 로컬 `next start` 는 `public/` 정적 파일을 압축하지 않는다(응답에 `Content-Encoding` 없음). 사전 생성 SVG 357개의 평균은 원본 52.4KB, gzip 11.8KB 이므로 압축되는 CDN 에서는 같은 이미지 수의 전송량이 이 값의 약 1/4 이다. Vercel CDN 이 실제로 압축하는지는 측정하지 못했다(`확인 필요`). 브라우저의 지연 로딩이 화면 근처 두 화면 분량(Explore 24개, Components 25개)을 미리 불러오는 것도 원인이다.
+- **DOM 노드**: Components 674→757 / 681→760, Explore 504→538 / 512→542. 카드마다 이미지 한 장이 항상 DOM 에 있다(예전에는 화면 밖 카드의 iframe 이 없었다). "DOM 요소 수 대폭 감소"(TASK-TRA-01 기준)는 달성하지 못했다. iframe 과 Observer 가 사라지는 대신 가벼운 노드가 늘었다.
+
+### 5.3 구현(요약)
+
+1. 사전 생성(`scripts/build-catalog-index.mjs`): Core 가 만든 완성 문서를 XHTML 로 직렬화한 SVG 357개(Explore 대표 디자인 256, 부품 60, 목적 패밀리 31, 사례 6, 타이포 4)와 경량 인덱스. 거부된 조합 11개는 사유와 함께 건너뛴다(`previews-data.json` 의 `skipped`).
+2. 캐시 키는 CONTRACTS §5.2 그대로이고 파일 이름이다(`/previews/<키>.svg`, immutable). 화면은 자기 요청의 키가 있을 때만 정적 파일을 쓴다.
+3. `/platform/render` 는 `private, no-cache` + ETag/304, 서버 캐시는 개수·바이트 상한 LRU.
+4. 목록 카드는 `<img>` 한 장(iframe·Observer 없음). 상세 시험 영역만 iframe.

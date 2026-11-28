@@ -673,3 +673,64 @@ REPRODUCIBLE: 3404 generated files match a fresh build byte for byte.
 ```
 Manifest 레이아웃 요구: `{"total":24,"missing":0,"direct":24}`. 24종 모두 `renderable`(`blockedBy: not-in-web-catalog`), REST·MCP 조회 가능, 품질 verified(유효한 시험 참조).
 미실행: `apps/web` Playwright e2e와 typecheck(Track F 영역, 이번 변경은 `src/`·문서·스크립트). 웹 카탈로그·Studio 노출은 구현하지 않았다(Track F).
+
+## 11. TASK-TRA-01~03 미리보기 사전 생성·목록 iframe 제거·캐시 독립 검증 (원 커밋 `90ac06060`, 브랜치 `upgrade/a1-preview`, 2026-11-28)
+
+원 구현(Gemini Flash)은 보고가 진행 중으로 끝났고 push 하지 못했다. 이 절은 다른 맥락에서 코드와 실측으로 다시 확인한 결과다. 원 커밋 위에 수정 커밋 두 개를 쌓아 최신 `origin/main`(`039ec6171`)에 rebase 했다.
+
+### 11.1 판정 요약
+- iframe 제거, 컴파일 0회, 정적 미리보기, 캐시 헤더 분리는 **수정 후** 달성됐다. 원 커밋 그대로는 달성되지 않았다(11.2).
+- 미해결: Components 목록의 카드 수(92개), 초기 전송량·DOM 노드 수 증가, 청크 소비자 없음(11.5). 그래서 TASK-TRA-02 만 Verified, TRA-01·03 은 Implemented 로 둔다.
+
+### 11.2 발견 결함과 조치
+1. **미리보기 SVG 가 `<img>` 로 열리지 않았다.** 생성기가 완성 HTML 문서를 SVG 에 그대로 넣어 XML 오류였다. `xmllint --noout site/previews/explore/about-team.svg` → `StartTag: invalid element name <!doctype html>`, 플랫폼 사례는 `Specification mandates value for attribute data-flow`. `90ac06060` 의 SVG 126개를 `xmllint` 로 검사하면 109개가 오류였다(Explore 85/85, 플랫폼 사례 5/6, 목적 패밀리 19/31, 타이포 0/4). Explore 목록 전체가 깨진 이미지였다. → Core 문서를 XHTML 로 직렬화하는 변환기(`apps/web/lib/api/preview-svg.mjs`)로 교체. 357개 모두 XML 검사 통과, Chromium 과 WebKit 에서 같은 문서의 직접 렌더와 `<img>` 렌더가 같은 화면이다(WebKit 은 바이트 동일).
+2. **부품 미리보기가 0개였다**(`site/previews/components/` 비어 있음). 생성기가 `compileBlueprint(doc, {include: ['html', 'css', 'standalone']})` 를 불렀는데 `standalone` 은 이 함수의 허용 이름이 아니라서 48개 전부가 `include는 허용된 이름의 배열이어야 합니다.` 로 거부됐고, 생성기는 실패를 `continue` 로 삼켰다. 게다가 웹 `/components/<type>/render` 와 다른 절차(다른 노드 제거 없음, 2.6.0 승격 없음)를 따로 구현해 있어서 컴파일이 됐더라도 상세 화면과 다른 그림이었다. → 웹과 같은 절차를 한 모듈(`preview-recipes.mjs`)로 옮겨 웹 화면과 생성기가 함께 쓴다. 60개 생성, 예제 없는 4개는 목록 카드가 텍스트 카드다.
+3. **Explore 의 테마 변형 디자인은 미리보기 파일이 없었다.** 웹 목록은 256개 디자인(`agency-home~theme_swiss` 등)인데 생성기는 템플릿 기본 85개만 만들었다. → 웹과 같은 `curatedDesignRefs()` 로 256개.
+4. **타이포그래피가 다크·샘플·폭 선택을 무시하고 같은 그림을 보였다.** 비교 샘플 본문도 복사본이 달랐다(`DOC_SAMPLE` 축약). → 화면이 자기 요청의 캐시 키를 만들어 사전 생성 목록에 있을 때만 정적 파일을 쓰고, 아니면 선택 시점에 컴파일한다(iframe 아님).
+5. **생성기에 하드코딩이 있었다**: `COMPILER_VERSION='2.0.0'`, `CATALOG_VERSION='2.6.0'`, 사례 6건 복사본, 샘플 복사본. 인덱스는 `generatedAt` 을 싣고(CONTRACTS §4 위반) 부품과 목적 패밀리 2종만 담았다(레지스트리는 13종). → 버전은 코드 상수, 사례·샘플·designId 는 웹의 TS 파일을 직접 읽고, 인덱스는 레지스트리 전 종류에서 만들며 `contentHash` 를 싣는다.
+6. **캐시 키가 CONTRACTS §5.2 와 달랐다.** 버전 기본값 하드코딩(`2.0.0`, `2.6.0`), 문자열 trim(계약은 trim 금지), 재료 정렬 없음. 시험(`canonicalize ... trims strings`)이 그 오류를 고정하고 있었다. → 규격 그대로 다시 구현하고 시험은 문서의 식을 독립적으로 다시 써서 비교한다. 서비스가 `PLATFORM_CONTRACT_VERSION` 을 읽기 전용으로 내보낸다.
+7. **렌더 라우트가 `custom` 이 없으면 모든 요청에 `public, max-age=31536000, immutable` 을 냈다.** `custom` 을 보내는 곳이 없어 Studio 입력과 사용자 콘텐츠까지 공개 CDN 에 1년 캐시될 수 있었고, 엔진이 바뀌어도 같은 주소가 낡은 결과를 냈다. → 렌더 라우트는 `private, no-cache` + ETag/304. 고정 미리보기는 이름이 캐시 키인 정적 파일이라서만 immutable.
+8. **서버 캐시에 바이트 상한이 없었다**(항목 1,000개 × 수백 KB). 렌더 주소의 임의 문자열이 버전 조회 메모를 키울 수 있었다. → 개수+바이트(96MB) 상한 LRU, 메모도 상한.
+9. **`probeDesign` 이 목록 요청에서 컴파일했다**(Explore 사례 카드마다, Typography 선택마다. 기준선의 초기 컴파일은 Explore 8~12회, Typography 4회). → 사전 생성 때 조립해 본 요청은 결과(가능/거부 사유)를 목록에서 재사용한다. 거부된 조합 카드는 오류 문서를 요청하지 않고 사유를 보인다.
+10. `sync-static.mjs` 가 복사 실패를 `catch {}` 로 삼켰다(미리보기가 빠진 채 배포될 수 있다). → 실패하면 멈춘다.
+11. **`TASK-LEDGER.json` 이 낡은 기반으로 통째로 덮여 있었다**(v1.1.0 → v1.0.0, 다른 작업의 항목 삭제). → 최신 main 의 장부를 그대로 두고 TRA-01~03 항목만 고쳤다.
+12. `PERF-BOTTLENECKS.md` §5 의 수치(전송량 50~83% 절감 등)에 근거가 없었다(11.1). → 실측으로 다시 썼다.
+13. iframe 에 의존한 기존 e2e(`shell`, `w6a-shell-studio`, `w6b-scenarios`)는 구조가 바뀐 부분만 이미지 기준으로 다시 세웠다. 근거는 같거나 강해졌다: 카드의 그림이 지금 서버가 Core 로 컴파일한 문서와 바이트까지 같다. 단언을 지우거나 느슨하게 하지 않았다.
+
+### 11.3 완료 기준 판정
+| # | 기준 | 판정 | 근거 |
+|---|---|---|---|
+| 1 | 사전 생성이 Core 출력에서 나옴, 바이트 일치, 대표만 | 충족 | `tests/platform-pregenerate.test.mjs`(서비스 진입점을 직접 호출해 SVG 바이트 비교, 원본 HTML 해시), `apps/web/e2e/previews-parity.spec.mjs`(운영 서버의 렌더 라우트 출력과 비교). 357개 중 Explore 256·부품 60·패밀리 31·사례 6·타이포 4. 타이포는 시스템당 기본 보기 1개만. 손으로 SVG 한 군데를 고치면 시험이 실패한다(RED). |
+| 2 | 캐시 키 §5.2, 고정 immutable, 사용자 입력 비공개, 무제한 Map 없음 | 충족 | `tests/platform-cache.test.mjs`(식 독립 재현, 버전 필수, 상한, 모듈 수준 Map 금지). `curl -sI` 고정: `Cache-Control: public, max-age=31536000, immutable`, 사용자 입력: `cache-control: private, no-cache` + `etag`, 같은 입력 재요청 304. |
+| 3 | 운영 빌드 실측: iframe 0, 컴파일 0, 스크롤 왕복 재컴파일 0, 초기 카드 24 이하, 숨긴 탭 없음 | **부분** | iframe·컴파일·재요청·숨긴 탭은 충족(`catalog-lists.spec.mjs`, `PERFORMANCE-A1.json`). 카드 수는 Explore(주 목록 24)와 Typography(1)만 충족, **Components 는 92개로 미충족**(11.5). 목록에 `componentView` 상세 변형 컴파일 없음(컴파일 카운터 0). |
+| 4 | 기존 URL·기존 브라우저 시험 유지 | 부분 | 루트 `npm run test:browser`: 272 통과·2 실패, 웹 e2e: 아래 11.4. 실패는 이 작업과 무관한 패밀리 변경에서 온 것(11.5). `e2e/catalog.spec.mjs` 는 저장소와 git 이력에 없다(기록의 실패 흔적은 찾지 못함). |
+| 5 | 레지스트리 추가 시 인덱스·미리보기 자동 생성 | 충족 | 인덱스는 `PLATFORM_KINDS` 13종과 부품 카탈로그를 읽어 만들고(종류별 수가 레지스트리와 같음을 시험), 미리보기 대상은 레지스트리·카탈로그에서 정한다. 권리 미확인 팔레트는 인덱스에 없다. 하드코딩된 재료 목록 없음. |
+| 6 | crossTrackFiles, Verified/Implemented, VERIFICATION 절 | 충족 | `TASK-LEDGER.json` TRA-01~03, 이 절. |
+| 7 | `npm run verify` 통과, 최신 main rebase, push | 11.4 | |
+
+### 11.4 실행 증거
+```sh
+$ npm run verify                       # rebase 뒤, 마지막 커밋 포함
+ℹ tests 829 / ℹ pass 829 / ℹ fail 0
+REPRODUCIBLE: 3782 generated files match a fresh build byte for byte.
+$ npm --workspace apps/web run typecheck / test:boundary / test:docs
+tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
+$ npm run perf -- --url http://127.0.0.1:4291 --out docs/dev/catalog-platform-upgrade/PERFORMANCE-A1.json
+Explore/Components/Typography: iframe 0, 컴파일 0(초기·스윕 후), 스윕 iframe 로드 0   (PERF-BOTTLENECKS.md §5 표)
+$ curl -sI /previews/<키>.svg ; curl -sI '/platform/render?r=…'
+Cache-Control: public, max-age=31536000, immutable ; cache-control: private, no-cache + etag
+```
+- RED/GREEN: ① 미리보기 SVG 한 곳을 손으로 고치면 `tests/platform-pregenerate.test.mjs` 실패, 원복하면 통과. ② SVG 끝에 `<!doctype html>` 을 붙이면 XML 검사 실패. ③ 모듈 수준 `new Map()` 을 넣으면 `platform-cache.test.mjs` 실패. ④ `caseRequest` 의 후보 수를 바꾸면 `platform-preview-parity.test.mjs` 실패. ⑤ `Thumb` 이 항상 iframe 을 쓰게 바꾸고 렌더 라우트를 `public, immutable` 로 바꾸어 빌드하면 `catalog-lists.spec.mjs` 4건과 Cache-Control 시험이 실패하고, 원복해 다시 빌드하면 모두 통과.
+- 웹 e2e 전체(`WEB_REUSE=1 npx playwright test`): 238 통과, 4 실패. 4건은 모두 11.5 의 4번(패밀리 12종 이후 `VISUAL_LABEL` 4종): `a11y.spec` 목적 패밀리 상세 390·1280, `w6b-scenarios` 시나리오 B 390·1280. 이 브랜치의 변경과 무관하다. `catalog-lists.spec` 의 "알려진 미충족" 1건은 의도한 실패(`test.fail`)로 통과 처리된다.
+- 루트 `npm run test:browser`(`PW_PORT=4292`): 272 통과, 2 실패(`platform-families.spec.mjs:12` 600초 시간 초과, `platform-family-a11y.spec.mjs:140` topbar 토글 36px). 둘 다 이 브랜치 변경과 무관한 패밀리 쪽 실패다(11.5 의 4번).
+
+### 11.5 남은 문제
+1. **Components 목록 카드 92개**(REQUEST §3.4 의 24개 원칙 미충족). 기존 시험(w6b 시나리오 B 등)이 `/components` 한 화면에 목적 패밀리 32개 전부를 전제하고, Components 웹 카탈로그 개편은 Track F 의 일이다. `catalog-lists.spec.mjs` 에 "알려진 미충족"으로 남겨(`test.fail`) 고쳐지면 알려 준다. 브라우저의 지연 로딩 덕분에 초기에 불러오는 미리보기는 25개다.
+2. **초기 전송량·DOM 노드 증가**(PERF-BOTTLENECKS.md §5.2). 압축되는 서빙에서의 값은 측정하지 못했다(`확인 필요`).
+3. **카테고리 청크(`site/catalog-chunks/*.json`) 소비자가 웹에 없다.** 생성과 정합성은 시험하지만 "탭 전환 시 필요한 청크만 로딩"은 아직 아니다. 이 때문에 TRA-03 은 Implemented 다.
+4. **이 작업과 무관한 최신 main 의 실패**(원인 위치만 기록, 고치지 않았다):
+   - `e2e/platform-family-a11y.spec.mjs:140` topbar 토글 높이 36px < 44px. 깨끗한 `origin/main`(`039ec6171`) 워크트리에서도 같은 값으로 실패했다.
+   - `e2e/platform-families.spec.mjs:12` 600초 시간 초과(패밀리 12종 × 모드 × 폭 전수 측정). 같은 조건의 `origin/main` 에서는 실행하지 않았다(`미실행`).
+   - `apps/web/e2e/a11y.spec.mjs` 목적 패밀리 상세 2건, `w6b-scenarios` 시나리오 B 2건: 패밀리가 12종이 되었는데 `apps/web/app/components/purpose/[group]/[name]/page.tsx` 의 `VISUAL_LABEL` 이 4종만 있어 새 8종의 칩 라벨이 비고(link-name 위반), 시험은 4종을 기대한다. 이 파일은 이 브랜치가 건드리지 않았다. 최신 main 에서 웹 빌드로 실행해 확인하지는 못했다(워크트리 빌드 불가, 코드 근거).
+5. 사전 생성기가 웹의 TS 파일을 Node 의 TS 제거로 읽는다: Node 22.18 이상 필요(`확인 필요`: 그 아래 버전).
+6. Vercel 운영 측정은 하지 않았다.

@@ -148,3 +148,4 @@ CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(gi
 7. 서버 캐시는 항목 수(1,000)와 바이트(조립 결과 96MB) 상한이 있는 LRU 다. 상한 없는 모듈 수준 Map 은 `tests/platform-cache.test.mjs` 가 막는다.
 8. 사전 생성기는 웹의 순수 TS 데이터 세 파일(`id.ts`, `cases.ts`, `samples.ts`)을 Node 의 TS 제거로 직접 읽는다. Node 22.18 이상이 필요하다(로컬 26.9 에서 확인, 그 아래 버전은 확인하지 않았다 `확인 필요`).
 9. Studio 의 컴파일 결과 캐시(DEC-009)는 엔진 버전으로 `compileBlueprint/<CONTRACT_VERSION>` 만 쓴다. DEC-009 3항이 "platform 계약 버전을 공개 진입점에 노출할지는 Track A가 정한다"고 남겼으므로, 이 결정으로 `PLATFORM_CONTRACT_VERSION` 을 `src/service/index.mjs` 가 읽기 전용 상수로 내보낸다(채널 출력은 바뀌지 않는다). Studio 키가 이를 쓸지는 Track F 가 정한다.
+10. **초기 전송량 목표는 새로 만들지 않는다.** TASK-TRA-03 은 목표를 `PERFORMANCE-BASELINE.json` 측정값 기준으로 DECISIONS 에 적으라고 했지만 REQUEST §3.6 에는 KB 수치가 없고, 측정은 로컬 `next start`(정적 파일 비압축)뿐이라 압축 서빙 기준값이 없다. 이번에는 기준선 대비 실측만 `PERF-BOTTLENECKS.md` §5 에 적고(Explore 초기 전송량은 늘었다), 목표 수치는 압축되는 서빙(Vercel)에서 측정한 뒤 정한다.
