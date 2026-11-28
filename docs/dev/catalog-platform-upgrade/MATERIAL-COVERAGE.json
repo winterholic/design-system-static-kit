@@ -16,7 +16,7 @@
       "total": 337
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:7 type-system:14 base-component:10 family:12 purpose-family:32 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:14 base-component:10 family:12 purpose-family:32 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8",
       "design": "axis:15 chart-preset:29 color-token:257 component:65 icon:87 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -60,7 +60,7 @@
           "apps/web/app/materials/palettes/[paletteId]/page.tsx"
         ],
         "proven": true,
-        "materials": 16
+        "materials": 34
       },
       "web:/materials/color": {
         "role": "catalog",
@@ -146,7 +146,7 @@
           "apps/web/app/studio/assemble/page.tsx"
         ],
         "proven": true,
-        "materials": 76
+        "materials": 94
       },
       "web:/studio/assemble#direction": {
         "role": "studio",
@@ -303,7 +303,7 @@
       }
     },
     "materials": {
-      "totalRecords": 1329,
+      "totalRecords": 1347,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
@@ -311,10 +311,10 @@
         "renderable": 85,
         "catalog-visible": 377,
         "assemblable": 4,
-        "verified": 415
+        "verified": 433
       },
       "registeredByRegistry": {
-        "platform": 245,
+        "platform": 263,
         "design": 1084
       }
     },
@@ -520,12 +520,12 @@
         }
       },
       "subtoken-set": {
-        "registered": 7,
-        "actualMaterial": 7,
-        "assemblableVerified": 7,
-        "distinctOutputs": 7,
+        "registered": 25,
+        "actualMaterial": 25,
+        "assemblableVerified": 25,
+        "distinctOutputs": 25,
         "byStatus": {
-          "verified": 7
+          "verified": 25
         }
       },
       "surface": {
@@ -587,14 +587,14 @@
     "combinations": {
       "note": "조합 가능 수는 재료 수가 아니다. 재료를 서로 곱해 평가한 조립 경우의 수이며 byKind의 재료 집계와 합산하지 않는다.",
       "platform": {
-        "assemblableCombinations": 258288,
-        "attemptedCombinations": 262656,
-        "verifiedAssemblies": 12344,
-        "attemptedAssemblies": 12344,
-        "distinctVerifiedOutputs": 12339,
+        "assemblableCombinations": 567798,
+        "attemptedCombinations": 581256,
+        "verifiedAssemblies": 26007,
+        "attemptedAssemblies": 26007,
+        "distinctVerifiedOutputs": 26002,
         "distinctColorTokenSets": {
-          "light": 63,
-          "dark": 62
+          "light": 224,
+          "dark": 221
         },
         "distinctFacePairs": 14,
         "distinctVisualFamilies": 12,
@@ -621,9 +621,9 @@
       {
         "material": "서브토큰 세트",
         "previousBaseline": 7,
-        "currentMeasured": 7,
-        "delta": 0,
-        "status": "match",
+        "currentMeasured": 25,
+        "delta": 18,
+        "status": "drift",
         "measuredBy": "live registry count"
       },
       {
@@ -76204,7 +76204,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "c0c00d8d93d4578c",
+        "outputHash": "8174e3f97b2cff2a",
         "duplicateOutputOf": []
       }
     },
@@ -76890,7 +76890,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "49699e632a69ea28",
+        "outputHash": "d30514f23ff9e725",
         "duplicateOutputOf": []
       }
     },
@@ -77164,7 +77164,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "72c5aef879d8a271",
+        "outputHash": "820d5e0739ba0537",
         "duplicateOutputOf": []
       }
     },
@@ -77254,7 +77254,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "21d4dd189d09c7f9",
+        "outputHash": "d07e4f2ea458f724",
         "duplicateOutputOf": []
       }
     },
@@ -77890,7 +77890,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "a5d3b39637502103",
+        "outputHash": "3da1480c57c2cbf7",
         "duplicateOutputOf": []
       }
     },
@@ -78256,7 +78256,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "0ecadbc10c663d9f",
+        "outputHash": "f6e7d09981eadf34",
         "duplicateOutputOf": []
       }
     },
@@ -78350,7 +78350,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "37614f9062d32f67",
+        "outputHash": "fb41c87030498923",
         "duplicateOutputOf": []
       }
     },
@@ -78436,7 +78436,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "3db6d6056f895f33",
+        "outputHash": "9ced8f0e11f3eaef",
         "duplicateOutputOf": []
       }
     },
@@ -78622,7 +78622,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "8d852682fa8bb42c",
+        "outputHash": "edb9975f5149d5bc",
         "duplicateOutputOf": []
       }
     },
@@ -78721,7 +78721,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "f97e79758e0b65b0",
+        "outputHash": "dd89e65196876754",
         "duplicateOutputOf": []
       }
     },
@@ -78818,7 +78818,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "b8ab69284d37b002",
+        "outputHash": "cdd3419ad88cdb79",
         "duplicateOutputOf": []
       }
     },
@@ -83585,8 +83585,328 @@
       }
     },
     {
+      "id": "subtoken-set:accent-dominant",
+      "name": "보조색 강조(Accent Dominant)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "e25cde675101f2b6",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:analytics",
+      "name": "애널리틱스 차트 우선(Analytics)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "18dad0c85b695808",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:brand-dominant",
+      "name": "브랜드 지배(Brand Dominant)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "f5342d994233c098",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:brutalist-contrast",
+      "name": "브루탈리스트 콘트라스트(Brutalist Contrast)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "125cb8aecf987d8b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:commerce-luxury",
+      "name": "커머스 럭셔리(Commerce Luxury)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "63bf823b43ba8ed5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "subtoken-set:commerce-vivid",
-      "name": "강조색이 선명한 커머스",
+      "name": "강조색이 선명한 커머스(Commerce Vivid)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -83651,8 +83971,72 @@
       }
     },
     {
+      "id": "subtoken-set:corporate",
+      "name": "안정된 코퍼레이트(Corporate)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "1fd50d6b795adbb8",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "subtoken-set:data-dense",
-      "name": "데이터 밀집(표·차트 중심)",
+      "name": "데이터 밀집(ERP Dense)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -83717,8 +84101,136 @@
       }
     },
     {
+      "id": "subtoken-set:developer-console",
+      "name": "개발자 콘솔(Developer Console)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "f4ad2fce8aabfd0b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:editorial-ink",
+      "name": "에디토리얼 잉크(Editorial Ink)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "editorial-docs",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "3eda00638e397e2b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "subtoken-set:editorial-warm",
-      "name": "따뜻한 에디토리얼",
+      "name": "따뜻한 에디토리얼(Editorial Paper)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -83783,8 +84295,264 @@
       }
     },
     {
+      "id": "subtoken-set:education-friendly",
+      "name": "친근한 교육(Education Friendly)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "425864ef81cc6971",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:finance-precision",
+      "name": "금융 정밀(Finance Precision)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "4a4eed15be6d8ccd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:glass-compatible",
+      "name": "글래스모피즘 호환(Glass Compatible)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "cfeac7dd75e9c0cc",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:gradient-compatible",
+      "name": "그라데이션 호환(Gradient Compatible)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "834627aa48403d4a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "subtoken-set:high-contrast",
-      "name": "고대비",
+      "name": "고대비(High Contrast)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -83849,8 +84617,136 @@
       }
     },
     {
+      "id": "subtoken-set:minimal-monochrome",
+      "name": "미니멀 모노크롬(Minimal Monochrome)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "editorial-docs",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "78a618876948fa78",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:mobile-soft",
+      "name": "모바일 소프트(Mobile Soft)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "f502d69658481f6f",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "subtoken-set:premium-dark",
-      "name": "어두운 배경의 프리미엄",
+      "name": "어두운 배경의 프리미엄(Premium Dark)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -83915,8 +84811,200 @@
       }
     },
     {
+      "id": "subtoken-set:premium-light",
+      "name": "정제된 라이트 프리미엄(Premium Light)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "17666765b61cb92a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:social-expressive",
+      "name": "소셜 익스프레시브(Social Expressive)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "23a09a7ef331c57a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:soft-pastel",
+      "name": "부드러운 파스텔(Soft Pastel)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "01eb98553e2c6ce9",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "subtoken-set:standard",
-      "name": "표준 분배(차분한 제품 UI)",
+      "name": "표준 분배(Standard Neutral)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -83988,7 +85076,7 @@
     },
     {
       "id": "subtoken-set:tinted",
-      "name": "틴트 분배",
+      "name": "틴트 분배(Brand Tinted)",
       "kind": "subtoken-set",
       "registry": "platform",
       "category": null,
@@ -84049,6 +85137,70 @@
           "qualityOk": true
         },
         "outputHash": "b5bc700a1a3a4a78",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "subtoken-set:wellness-calm",
+      "name": "웰니스 캄(Wellness Calm)",
+      "kind": "subtoken-set",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/materials/palettes/[paletteId]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "376ef285ae3d5bbe",
         "duplicateOutputOf": []
       }
     },

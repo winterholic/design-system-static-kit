@@ -14,6 +14,26 @@ export const STATIC_COLOR_PALETTE = Object.freeze({
 export const COLOR_PALETTE_IDS = Object.freeze(['static-kit']);
 export const colorPaletteOptions = () => [{id: 'static-kit', label: 'Static Kit', usage: STATIC_COLOR_PALETTE.usage}];
 export const COLOR_STATES = Object.freeze(['default', 'hover', 'active', 'disabled', 'error', 'focus']);
+
+/** §4.5 토큰 5계층: Semantic 22종 */
+export const SEMANTIC_TOKEN_ROLES = Object.freeze([
+  'canvas', 'surface', 'raised', 'sunken', 'overlay', 'inverse',
+  'text-primary', 'text-secondary', 'text-muted', 'text-disabled',
+  'border-subtle', 'border-default', 'border-strong',
+  'action-primary', 'action-secondary', 'link', 'focus', 'accent',
+  'success', 'warning', 'danger', 'info'
+]);
+
+/** §4.5 토큰 5계층: State 9종 */
+export const STATE_TOKEN_NAMES = Object.freeze([
+  'default', 'hover', 'active', 'focus', 'selected', 'disabled', 'readonly', 'error', 'loading'
+]);
+
+/** §4.5 토큰 5계층: Data Visualization 8종 */
+export const DATAVIZ_TOKEN_ROLES = Object.freeze([
+  'categorical', 'sequential', 'diverging', 'up-down', 'highlight', 'grid', 'axis-label', 'missing'
+]);
+
 export const COLOR_COMPONENT_CONTRACT = Object.freeze({
   button: Object.freeze({states: Object.freeze(['default','hover','active','disabled','focus']), tokens: Object.freeze(['--kit-action','--kit-onAction','--kit-action-hover','--kit-action-active','--kit-control-disabled-bg','--kit-control-disabled-fg','--kit-focus'])}),
   input: Object.freeze({states: COLOR_STATES, tokens: Object.freeze(['--kit-control-bg','--kit-control-fg','--kit-control-border','--kit-control-hover-border','--kit-control-active-border','--kit-control-error','--kit-focus','--kit-control-disabled-bg','--kit-control-disabled-fg'])}),
@@ -21,6 +41,26 @@ export const COLOR_COMPONENT_CONTRACT = Object.freeze({
   card: Object.freeze({states: Object.freeze(['default','hover','active','error','focus']), tokens: Object.freeze(['--kit-surface','--kit-card-hover','--kit-card-active','--kit-danger-soft','--kit-focus'])}),
   table: Object.freeze({states: Object.freeze(['default','hover','active','error','focus']), tokens: Object.freeze(['--kit-surface','--kit-table-head','--kit-table-hover','--kit-table-selected','--kit-danger-soft','--kit-focus'])}),
   chart: Object.freeze({states: Object.freeze(['default']), tokens: Object.freeze(['--kit-chart1','--kit-chart2','--kit-chart3','--kit-chart4','--kit-chart5','--kit-chart-grid'])}),
+});
+
+/** §4.5 컴포넌트 토큰 계약 확장 (16종 컴포넌트 전수) */
+export const COMPONENT_TOKEN_CONTRACTS = Object.freeze({
+  button: Object.freeze({states: Object.freeze(['default','hover','active','disabled','focus']), tokens: Object.freeze(['--kit-action','--kit-onAction','--kit-action-hover','--kit-action-active','--kit-control-disabled-bg','--kit-control-disabled-fg','--kit-focus'])}),
+  input: Object.freeze({states: COLOR_STATES, tokens: Object.freeze(['--kit-control-bg','--kit-control-fg','--kit-control-border','--kit-control-hover-border','--kit-control-active-border','--kit-control-error','--kit-focus','--kit-control-disabled-bg','--kit-control-disabled-fg'])}),
+  select: Object.freeze({states: COLOR_STATES, tokens: Object.freeze(['--kit-control-bg','--kit-control-fg','--kit-control-border','--kit-control-hover-border','--kit-control-active-border','--kit-control-error','--kit-focus','--kit-control-disabled-bg','--kit-control-disabled-fg'])}),
+  checkbox: Object.freeze({states: Object.freeze(['default', 'hover', 'active', 'focus', 'selected', 'disabled', 'error']), tokens: Object.freeze(['--kit-control-bg', '--kit-control-border', '--kit-action', '--kit-onAction', '--kit-focus', '--kit-control-disabled-bg', '--kit-control-disabled-fg'])}),
+  radio: Object.freeze({states: Object.freeze(['default', 'hover', 'active', 'focus', 'selected', 'disabled']), tokens: Object.freeze(['--kit-control-bg', '--kit-control-border', '--kit-action', '--kit-onAction', '--kit-focus', '--kit-control-disabled-bg', '--kit-control-disabled-fg'])}),
+  switch: Object.freeze({states: Object.freeze(['default', 'hover', 'active', 'focus', 'selected', 'disabled']), tokens: Object.freeze(['--kit-control-border', '--kit-action', '--kit-surface', '--kit-focus', '--kit-control-disabled-bg', '--kit-control-disabled-fg'])}),
+  tabs: Object.freeze({states: Object.freeze(['default', 'hover', 'active', 'focus', 'selected', 'disabled']), tokens: Object.freeze(['--kit-border', '--kit-action', '--kit-text', '--kit-muted', '--kit-focus'])}),
+  badge: Object.freeze({states: Object.freeze(['default', 'hover']), tokens: Object.freeze(['--kit-soft', '--kit-accent', '--kit-success', '--kit-warning', '--kit-danger', '--kit-info', '--kit-text', '--kit-border'])}),
+  chip: Object.freeze({states: Object.freeze(['default', 'hover', 'active', 'selected', 'disabled', 'focus']), tokens: Object.freeze(['--kit-surface', '--kit-border', '--kit-text', '--kit-action', '--kit-onAction', '--kit-focus'])}),
+  card: Object.freeze({states: Object.freeze(['default','hover','active','error','focus']), tokens: Object.freeze(['--kit-surface','--kit-border','--kit-card-hover','--kit-card-active','--kit-danger-soft','--kit-focus'])}),
+  table: Object.freeze({states: Object.freeze(['default','hover','active','error','focus']), tokens: Object.freeze(['--kit-surface','--kit-border','--kit-table-head','--kit-table-hover','--kit-table-selected','--kit-danger-soft','--kit-focus'])}),
+  tooltip: Object.freeze({states: Object.freeze(['default']), tokens: Object.freeze(['--kit-sunken', '--kit-text', '--kit-border'])}),
+  popover: Object.freeze({states: Object.freeze(['default', 'focus']), tokens: Object.freeze(['--kit-surface', '--kit-border', '--kit-text', '--kit-focus'])}),
+  modal: Object.freeze({states: Object.freeze(['default', 'focus']), tokens: Object.freeze(['--kit-surface', '--kit-border', '--kit-text', '--kit-focus', '--kit-sunken'])}),
+  drawer: Object.freeze({states: Object.freeze(['default', 'focus']), tokens: Object.freeze(['--kit-surface', '--kit-border', '--kit-text', '--kit-focus', '--kit-sunken'])}),
+  toast: Object.freeze({states: Object.freeze(['default', 'hover', 'error']), tokens: Object.freeze(['--kit-surface', '--kit-border', '--kit-text', '--kit-success', '--kit-warning', '--kit-danger', '--kit-info'])}),
 });
 
 const rgb = hex => { if (!/^#[\da-f]{6}$/i.test(hex)) throw new Error('COLOR_PALETTE: internal swatch is not six-digit hex'); return hex.slice(1).match(/../g).map(x => parseInt(x, 16)); };
@@ -157,6 +197,22 @@ thead th{background:var(--kit-table-head)}tbody tr:hover{background:var(--kit-ta
 .kit-chart .ch-grid{stroke:var(--kit-chart-grid)}
 `; }
 
+/** §4.5 확장 컴포넌트 16종 토큰 스타일 */
+export function componentTokenCSS() { return `
+.kit-button[data-variant=primary]:hover{background:var(--kit-action-hover)}
+.kit-checkbox:checked,.kit-radio:checked{background:var(--kit-action);color:var(--kit-onAction);border-color:var(--kit-action)}
+.kit-switch[aria-checked=true]{background:var(--kit-action)}
+.kit-tabs [role=tab]{color:var(--kit-muted)}
+.kit-tabs [role=tab][aria-selected=true]{color:var(--kit-action);border-bottom-color:var(--kit-action)}
+.kit-badge{background:var(--kit-soft);color:var(--kit-text);border-color:var(--kit-border)}
+.kit-badge[data-variant=accent]{background:var(--kit-accent);color:var(--kit-onAccent)}
+.kit-chip[data-selected=true]{background:var(--kit-action);color:var(--kit-onAction)}
+.kit-tooltip{background:var(--kit-sunken);color:var(--kit-text);border-color:var(--kit-border)}
+.kit-popover,.kit-modal,.kit-drawer{background:var(--kit-surface);color:var(--kit-text);border-color:var(--kit-border)}
+.kit-toast{background:var(--kit-surface);color:var(--kit-text);border-color:var(--kit-border)}
+.kit-toast[data-tone=success]{border-left-color:var(--kit-success)}.kit-toast[data-tone=warning]{border-left-color:var(--kit-warning)}.kit-toast[data-tone=danger]{border-left-color:var(--kit-danger)}.kit-toast[data-tone=info]{border-left-color:var(--kit-info)}
+`; }
+
 export function colorTokenMaterials() {
   const out=[], light=resolveColorTokens({palette:'static-kit',mode:'light'}), dark=resolveColorTokens({palette:'static-kit',mode:'dark'});
   const layerById={};
@@ -178,5 +234,44 @@ export const colorTokenUsage = () => Object.entries(COLOR_COMPONENT_CONTRACT).fl
   const safe=kebab(cssName.replace(/^--kit-/,'')).replace(/^-/, '');
   return {id:'color-token:component.'+component+'.'+safe,component,cssName,states:[...c.states]};
 }));
+
+/** §4.5 5계층 토큰 해석기 */
+export function resolveTokenLayers({palette = 'static-kit', mode = 'light'} = {}) {
+  const base = resolveColorTokens({palette, mode});
+  const semantic22 = {};
+  for (const role of SEMANTIC_TOKEN_ROLES) {
+    const key = role.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    semantic22[role] = base.tokens[`--kit-${role}`] || base.tokens[`--kit-${key}`] || base.tokens[role] || '#000000';
+  }
+  const state9 = {};
+  for (const st of STATE_TOKEN_NAMES) {
+    state9[st] = base.tokens[`--kit-state-${st}`] || base.tokens[`state.${st}`] || '#000000';
+  }
+  const dataviz8 = {};
+  for (const dv of DATAVIZ_TOKEN_ROLES) {
+    dataviz8[dv] = base.tokens[`--kit-chart-${dv}`] || base.tokens[`--kit-chart1`] || '#000000';
+  }
+  return {
+    primitive: base.layers.primitive,
+    semantic: semantic22,
+    state: state9,
+    component: COMPONENT_TOKEN_CONTRACTS,
+    dataviz: dataviz8,
+  };
+}
+
+/** 토큰 사용 검사: 선언된 컴포넌트 토큰들이 실제 사용/바인딩되는지 확인 */
+export function validateTokenUsage() {
+  const css = colorTokenCSS() + componentTokenCSS();
+  const allTokens = new Set(Object.values(COMPONENT_TOKEN_CONTRACTS).flatMap(c => c.tokens));
+  const unused = [];
+  for (const token of allTokens) {
+    if (!css.includes(`var(${token})`) && !css.includes(token)) {
+      unused.push(token);
+    }
+  }
+  return {ok: unused.length === 0, unused, totalDeclared: allTokens.size};
+}
+
 /** 플랫폼 색 결합(src/platform/color.mjs)이 같은 램프·대비 보정 규칙을 재사용하게 내보낸다. static-kit 출력에는 영향이 없다. */
 export {ramp as colorRamp, readable as readableColor, contrast as colorContrast, mix as colorMix, STEPS as COLOR_STEPS};

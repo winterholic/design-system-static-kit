@@ -25,19 +25,37 @@
 - **명도 램프**: 모든 시드는 50~950의 11단계 램프로 펼쳐진다. 램프는 2.6.0 엔진의 `colorRamp`가 계산한다. 단계가 올라갈수록 흰색 대비가 단조롭게 커지는 것을 테스트가 확인한다.
 - **중립 시드의 명도**: neutral은 static-kit과 비슷한 중간 어두움(HSL 명도 0.38~0.42)으로 골랐다. 시드를 더 밝게 두면 라이트 표면이 하얘지지만, 다크에서 본문 7:1을 맞출 수 없는 세트가 생긴다(사용자 팔레트 시연의 두 번째 줄).
 
-## 2. 서브토큰 세트 7개(기존 2 + 새 5)
+## 2. 서브토큰 세트 25개(지시서 §4.4 기준 완비)
 
 세트는 색 역할 23개(배경·표면·글자·경계, 주/보조 액션, 상태색)의 분배 규칙이다. 원색 값을 갖지 않는다.
 
 | id | 설계 의도 | 주 행동 | 보조 행동 | 대비 하한 | contexts |
 |---|---|---|---|---|---|
-| `standard` | 차분한 제품 UI. 중립 바탕, 브랜드는 액션·링크·초점에만 | brand 700/400 | accent | 글자 7, 나머지 4.5 | any |
-| `tinted` | 같은 팔레트에서 브랜드색이 도는 바탕과 경계 | brand 600/300 | accent | 글자 7, 나머지 4.5 | any |
+| `standard` | 차분한 제품 UI. 중립 바탕, 브랜드는 액션·링크·초점에만 | brand 700/400 | accent | 글자 7, 나머지 4.5 | general, landing, dashboard |
+| `tinted` | 같은 팔레트에서 브랜드색이 도는 바탕과 경계 | brand 600/300 | accent | 글자 7, 나머지 4.5 | general, landing, dashboard |
 | `editorial-warm` | 따뜻한 에디토리얼. 종이 같은 바탕, 강조 띠와 링크는 보조색, 진한 규칙선 | brand 700/300 | accent 700/300 | 글자 7 | article, blog, docs, landing, portfolio, community, general |
 | `commerce-vivid` | 강조색이 선명한 커머스. 주 행동이 보조색, 브랜드는 링크와 보조 행동으로 내려간다 | accent 600/300 | brand 600/300 | 주 행동 5, 글자 7 | commerce, landing, listing, pricing, portfolio, general |
 | `premium-dark` | 어두운 배경의 프리미엄. 다크가 주 모드, 한 단계 밝은 표면, 낮은 대비 경계. 주 행동은 중립 램프의 반전 | neutral 900/100 | brand 700/300 | 주 행동 7, 글자 7 | landing, portfolio, commerce, pricing, article, general |
 | `high-contrast` | 고대비. 글자 10, 보조 글자·행동·링크·상태색 7, 경계·초점 4.5 | brand 800/300 | accent 800/200 | 글자 10, 행동 7 | 대시보드를 뺀 모든 페이지 유형 |
-| `data-dense` | 표·차트 중심. 면은 중립 단계로만 나누고 경계는 진하게, 상태색은 한 단계 어둡게(다크는 밝게) | brand 700/400 | accent | 글자 7 | data, listing, settings |
+| `data-dense` | 표·차트 중심. 면은 중립 단계로만 나누고 경계는 진하게, 상태색은 한 단계 어둡게(다크는 밝게) | brand 700/400 | accent | 글자 7 | dashboard, data, listing, settings |
+| `brand-dominant` | 브랜드 지배. 주요 영역을 브랜드 컬러가 주도 | brand 800/300 | accent 700/300 | 글자 7, 행동 4.5 | landing, general, portfolio, commerce |
+| `accent-dominant` | 보조색 강조. 보조색 중심의 주요 강조와 다채로운 시각 요소 | accent 600/300 | brand 700/400 | 글자 7, 행동 4.5 | commerce, landing, pricing, general |
+| `soft-pastel` | 부드러운 파스텔. 저채도 표면 및 부드러운 경계 구분 | brand 600/300 | accent | 글자 7, 행동 4.5 | general, article, portfolio, docs, landing |
+| `minimal-monochrome` | 미니멀 모노크롬. 무채색 중심 표면과 절제된 강조 | neutral 900/100 | neutral 700/300 | 글자 7, 행동 7 | portfolio, article, general, docs |
+| `premium-light` | 정제된 라이트 프리미엄. 정제된 밝은 표면과 절제된 강조 | neutral 950/100 | accent 700/300 | 글자 7, 행동 7 | portfolio, landing, commerce, pricing, general |
+| `editorial-ink` | 에디토리얼 잉크. 진한 본문 텍스트와 타이포그래피 우선 | brand 700/300 | brand 800/300 | 글자 8, 행동 4.5 | article, docs, general, blog |
+| `corporate` | 기업형 UI. 안정적인 중립 표면과 브랜드 컬러의 균형 | brand 800/300 | accent 700/300 | 글자 7, 행동 4.5 | dashboard, general, form, settings |
+| `finance-precision` | 금융 정밀. 수치 및 상승·하락 정보의 명확한 상태 전달 | brand 800/300 | accent | 글자 7, 상태 5 | dashboard, data, pricing |
+| `analytics` | 분석형 UI. 차트와 데이터 시각화 구분 우선 | brand 700/400 | accent 700/300 | 글자 7, 행동 4.5 | dashboard, data, listing |
+| `developer-console` | 개발자 콘솔. 코드·로그·상태 중심의 높은 가독성 | brand 600/300 | brand 600/300 | 글자 7, 행동 4.5 | dashboard, data, settings, docs |
+| `commerce-luxury` | 럭셔리 커머스. 절제된 상품 표시 및 세련된 가격 강조 | neutral 950/100 | brand 800/300 | 글자 7, 행동 7 | commerce, portfolio, landing |
+| `mobile-soft` | 모바일 친화. 터치 컨트롤과 부드러운 면 구분 | brand 600/300 | brand 600/300 | 글자 7, 행동 4.5 | general, landing, commerce |
+| `social-expressive` | 소셜 커뮤니티. 다수의 보조색과 생동감 있는 콘텐츠 강조 | brand 600/400 | accent 700/300 | 글자 7, 행동 4.5 | community, landing, general |
+| `wellness-calm` | 웰니스 캄. 차분하고 낮은 시각적 긴장의 휴식감 | brand 500/400 | accent | 글자 7, 행동 4.5 | general, landing, article |
+| `education-friendly` | 교육 친화. 학습 단계 및 친근한 상태 표현 | brand 600/300 | accent 700/300 | 글자 7, 행동 4.5 | general, dashboard, landing |
+| `glass-compatible` | 글래스모피즘 호환. 투명·반투명 표면에 적합한 대비 확보 | brand 800/300 | accent | 글자 8, 행동 4.5 | landing, general, dashboard |
+| `brutalist-contrast` | 브루탈리스트. 강한 경계선 및 선명한 색상 대비 | brand 600/300 | brand 700/300 | 글자 10, 경계 5 | landing, general, portfolio |
+| `gradient-compatible` | 그라데이션 호환. 그라데이션 표면과의 분리력 유지 | brand 800/300 | accent 700/300 | 글자 8, 행동 4.5 | landing, general |
 
 - 각 세트는 라이트와 다크 역할을 모두 낸다(`modes: ['light', 'dark']`). 다크는 라이트의 반전이 아니라 세트마다 따로 정한 단계다.
 - `contexts`에 `dashboard`가 없는 이유는 §7에 있다.
@@ -62,35 +80,39 @@
 ## 3. 통과·실패 쌍
 
 <!-- color-matrix:begin -->
-팔레트 9개 × 세트 7개 = 63쌍 중 통과 62쌍, 실패 1쌍. 판정은 계산 관계 `palette-subtoken`(`bindColor`의 라이트·다크 두 모드 모두)이다.
+팔레트 9개 × 세트 25개 = 225쌍 중 통과 220쌍, 실패 5쌍. 판정은 계산 관계 `palette-subtoken`(`bindColor`의 라이트·다크 두 모드 모두)이다.
 
-| 팔레트 \ 세트 | standard | tinted | editorial-warm | commerce-vivid | premium-dark | high-contrast | data-dense | 통과한 세트 수 |
-|---|---|---|---|---|---|---|---|---|
-| static-kit | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| slate-neutral | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| sunrise-warm | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| ocean-cool | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| forest-green | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| clay-earth | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| graphite-mono | 통과 | 통과 | 통과 | **실패** | 통과 | 통과 | 통과 | 6 |
-| dusk-violet | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| magenta-vivid | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 7 |
-| **통과한 팔레트 수** | 9 | 9 | 9 | 8 | 9 | 9 | 9 | |
+| 팔레트 \ 세트 | standard | tinted | editorial-warm | commerce-vivid | premium-dark | high-contrast | data-dense | brand-dominant | accent-dominant | soft-pastel | minimal-monochrome | premium-light | editorial-ink | corporate | finance-precision | analytics | developer-console | commerce-luxury | mobile-soft | social-expressive | wellness-calm | education-friendly | glass-compatible | brutalist-contrast | gradient-compatible | 통과한 세트 수 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| static-kit | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| slate-neutral | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| sunrise-warm | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| ocean-cool | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| forest-green | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| clay-earth | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| graphite-mono | 통과 | 통과 | 통과 | **실패** | 통과 | 통과 | 통과 | **실패** | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | **실패** | 통과 | **실패** | 21 |
+| dusk-violet | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 25 |
+| magenta-vivid | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | **실패** | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 통과 | 24 |
+| **통과한 팔레트 수** | 9 | 9 | 9 | 8 | 9 | 9 | 9 | 8 | 9 | 9 | 9 | 9 | 9 | 9 | 9 | 8 | 9 | 9 | 9 | 9 | 9 | 9 | 8 | 9 | 8 | |
 
 ### 실패한 쌍과 이유
 
 | 팔레트 | 세트 | 모드 | 이유 |
 |---|---|---|---|
 | graphite-mono | commerce-vivid | dark | `P_COLOR_CONTRAST` no text color reaches 4.5:1 on accent |
+| graphite-mono | brand-dominant | dark | `P_COLOR_CONTRAST` no text color reaches 4.5:1 on action |
+| graphite-mono | glass-compatible | dark | `P_COLOR_CONTRAST` focus vs tableSelected 2.5454:1 < 3:1 |
+| graphite-mono | gradient-compatible | dark | `P_COLOR_CONTRAST` focus vs tableSelected 2.5454:1 < 3:1 |
+| magenta-vivid | analytics | light | `P_COLOR_CONTRAST` accentInk vs accentSoft 4.3795:1 < 4.5:1 |
 
 ### 사용자 팔레트 시연(`proposeSubtokenSets`)
 
 | 입력 | 후보 | 거부(이유 첫 줄) |
 |---|---|---|
-| 선명한 3색(주황·청록) `#D2501E #6F625A #0D6E8E` | standard, tinted, editorial-warm, commerce-vivid, premium-dark, high-contrast, data-dense | 없음 |
-| 밝은 중립 시드를 낀 6색 `#0D6E8E #8A8F99 #E8A100 #2E8B57 #C0392B #3B6FD6` | tinted, data-dense | standard: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>editorial-warm: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>commerce-vivid: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>외 2개 |
-| 거의 검정인 3색 `#101010 #181818 #202020` | 없음 | standard: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>tinted: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>외 4개 |
-| 연한 파스텔 3색 `#F7F0B0 #F4F4F4 #E9F5C0` | 없음 | standard: chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>tinted: chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 5.2533:1 < 6:1, chart-diverging-end vs surface 2.5298:1 < 3:1, chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>외 4개 |
+| 선명한 3색(주황·청록) `#D2501E #6F625A #0D6E8E` | editorial-warm, accent-dominant, commerce-vivid, education-friendly, data-dense, wellness-calm, mobile-soft, social-expressive, brand-dominant, tinted, analytics, brutalist-contrast, high-contrast, commerce-luxury, corporate, developer-console, editorial-ink, finance-precision, glass-compatible, gradient-compatible, minimal-monochrome, premium-dark, premium-light, soft-pastel, standard | 없음 |
+| 밝은 중립 시드를 낀 6색 `#0D6E8E #8A8F99 #E8A100 #2E8B57 #C0392B #3B6FD6` | brutalist-contrast, tinted, wellness-calm, brand-dominant, mobile-soft, data-dense | standard: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>editorial-warm: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>commerce-vivid: text는 canvas·surface·soft·cardHover·cardActive 위에서 7:1을 동시에 맞출 수 없습니다(neutral 램프를 밝게·어둡게 모두 보정해도 불가)<br>외 16개 |
+| 거의 검정인 3색 `#101010 #181818 #202020` | 없음 | standard: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>tinted: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 0.6125:1 < 6:1<br>외 22개 |
+| 연한 파스텔 3색 `#F7F0B0 #F4F4F4 #E9F5C0` | 없음 | standard: chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>tinted: chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>editorial-warm: chart-sequential-step vs adjacent ΔE76 5.2533:1 < 6:1, chart-diverging-end vs surface 2.5298:1 < 3:1, chart-diverging-mid vs surface ΔE76 1.3828:1 < 6:1<br>외 22개 |
 <!-- color-matrix:end -->
 
 ### 3.1 실패 이유 해설

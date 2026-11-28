@@ -78,7 +78,7 @@ export const COMMON_FIELDS = Object.freeze({
 export const KIND_SPECS = Object.freeze({
   palette: Object.freeze({seeds: 'object', tone: 'string'}),
   // states·components·charts는 선택 필드다(0.3.0): 상호작용 상태, 컴포넌트 의미 토큰, 차트 색 역할의 파생 설계. 없으면 결합 엔진의 기본 설계를 쓴다.
-  'subtoken-set': Object.freeze({needs: 'array', roles: 'object', modes: 'array', states: 'object?', components: 'object?', charts: 'object?'}),
+  'subtoken-set': Object.freeze({needs: 'array', roles: 'object', modes: 'array', states: 'object?', components: 'object?', charts: 'object?', weights: 'object?'}),
   'type-system': Object.freeze({facePairing: 'string', roleScale: 'string', numerals: 'string'}),
   // purpose·forbidCombos·tendencies·media·layout은 선택 필드다(0.3.0). layout.navLimit와 axisPreferences.shell·width·density는 페이지 단계가 읽는다.
   'style-context': Object.freeze({axisPreferences: 'object', forbid: 'object', mood: 'array', purpose: 'string?', forbidCombos: 'array?', tendencies: 'object?', media: 'object?', layout: 'object?'}),

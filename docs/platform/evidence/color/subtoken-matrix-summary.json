@@ -1,0 +1,1958 @@
+{
+  "timestamp": "2026-11-28T02:28:05.059Z",
+  "durationMs": 762,
+  "metadata": {
+    "paletteCount": 9,
+    "subtokenSetCount": 25,
+    "modes": [
+      "light",
+      "dark"
+    ],
+    "totalPairs": 225,
+    "totalCombinationsWithModes": 450
+  },
+  "overall": {
+    "passingCombinations": 445,
+    "failingCombinations": 5,
+    "passRate": "98.89%",
+    "distinctSetsUsed": 25
+  },
+  "failureReasonDistribution": {
+    "P_COLOR_CONTRAST": 5
+  },
+  "setSummaries": [
+    {
+      "id": "subtoken-set:standard",
+      "label": "표준 분배(Standard Neutral)",
+      "tags": [
+        "neutral-surface",
+        "calm-product-ui"
+      ],
+      "weights": {
+        "brand": 0.2,
+        "accent": 0.1,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 37
+    },
+    {
+      "id": "subtoken-set:tinted",
+      "label": "틴트 분배(Brand Tinted)",
+      "tags": [
+        "brand-surface",
+        "brand-tinted"
+      ],
+      "weights": {
+        "brand": 0.5,
+        "accent": 0.1,
+        "neutral": 0.4
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 31
+    },
+    {
+      "id": "subtoken-set:editorial-warm",
+      "label": "따뜻한 에디토리얼(Editorial Paper)",
+      "tags": [
+        "editorial",
+        "warm-paper",
+        "editorial-paper"
+      ],
+      "weights": {
+        "brand": 0.2,
+        "accent": 0.25,
+        "neutral": 0.55
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1.01,
+      "adjustmentsCount": 24
+    },
+    {
+      "id": "subtoken-set:commerce-vivid",
+      "label": "강조색이 선명한 커머스(Commerce Vivid)",
+      "tags": [
+        "commerce",
+        "accent-led",
+        "vivid-cta"
+      ],
+      "weights": {
+        "brand": 0.15,
+        "accent": 0.45,
+        "neutral": 0.4
+      },
+      "passCount": 8,
+      "failCount": 1,
+      "passRate": "89%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 25
+    },
+    {
+      "id": "subtoken-set:premium-dark",
+      "label": "어두운 배경의 프리미엄(Premium Dark)",
+      "tags": [
+        "premium",
+        "dark-first"
+      ],
+      "weights": {
+        "brand": 0.15,
+        "accent": 0.15,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 45
+    },
+    {
+      "id": "subtoken-set:high-contrast",
+      "label": "고대비(High Contrast)",
+      "tags": [
+        "accessibility",
+        "high-contrast"
+      ],
+      "weights": {
+        "brand": 0.2,
+        "accent": 0.1,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 58
+    },
+    {
+      "id": "subtoken-set:data-dense",
+      "label": "데이터 밀집(ERP Dense)",
+      "tags": [
+        "data",
+        "table-chart",
+        "erp-dense"
+      ],
+      "weights": {
+        "brand": 0.15,
+        "accent": 0.15,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1.01,
+      "adjustmentsCount": 13
+    },
+    {
+      "id": "subtoken-set:brand-dominant",
+      "label": "브랜드 지배(Brand Dominant)",
+      "tags": [
+        "brand-dominant",
+        "high-brand-presence"
+      ],
+      "weights": {
+        "brand": 0.65,
+        "accent": 0.1,
+        "neutral": 0.25
+      },
+      "passCount": 8,
+      "failCount": 1,
+      "passRate": "89%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 20
+    },
+    {
+      "id": "subtoken-set:accent-dominant",
+      "label": "보조색 강조(Accent Dominant)",
+      "tags": [
+        "accent-dominant",
+        "vibrant-accent"
+      ],
+      "weights": {
+        "brand": 0.15,
+        "accent": 0.55,
+        "neutral": 0.3
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 31
+    },
+    {
+      "id": "subtoken-set:soft-pastel",
+      "label": "부드러운 파스텔(Soft Pastel)",
+      "tags": [
+        "soft-pastel",
+        "low-saturation",
+        "gentle"
+      ],
+      "weights": {
+        "brand": 0.25,
+        "accent": 0.15,
+        "neutral": 0.6
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 40
+    },
+    {
+      "id": "subtoken-set:minimal-monochrome",
+      "label": "미니멀 모노크롬(Minimal Monochrome)",
+      "tags": [
+        "minimal-monochrome",
+        "grayscale",
+        "editorial-minimal"
+      ],
+      "weights": {
+        "brand": 0.05,
+        "accent": 0.05,
+        "neutral": 0.9
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 29
+    },
+    {
+      "id": "subtoken-set:premium-light",
+      "label": "정제된 라이트 프리미엄(Premium Light)",
+      "tags": [
+        "premium-light",
+        "refined-surface",
+        "luxury-light"
+      ],
+      "weights": {
+        "brand": 0.15,
+        "accent": 0.15,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 29
+    },
+    {
+      "id": "subtoken-set:editorial-ink",
+      "label": "에디토리얼 잉크(Editorial Ink)",
+      "tags": [
+        "editorial-ink",
+        "typography-first",
+        "high-legibility"
+      ],
+      "weights": {
+        "brand": 0.2,
+        "accent": 0.1,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 25
+    },
+    {
+      "id": "subtoken-set:corporate",
+      "label": "안정된 코퍼레이트(Corporate)",
+      "tags": [
+        "corporate",
+        "enterprise-classic",
+        "trustworthy"
+      ],
+      "weights": {
+        "brand": 0.35,
+        "accent": 0.1,
+        "neutral": 0.55
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 42
+    },
+    {
+      "id": "subtoken-set:finance-precision",
+      "label": "금융 정밀(Finance Precision)",
+      "tags": [
+        "finance",
+        "precision-data",
+        "trading"
+      ],
+      "weights": {
+        "brand": 0.2,
+        "accent": 0.1,
+        "neutral": 0.7
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 31
+    },
+    {
+      "id": "subtoken-set:analytics",
+      "label": "애널리틱스 차트 우선(Analytics)",
+      "tags": [
+        "analytics",
+        "bi-dashboard",
+        "chart-first"
+      ],
+      "weights": {
+        "brand": 0.2,
+        "accent": 0.2,
+        "neutral": 0.6
+      },
+      "passCount": 8,
+      "failCount": 1,
+      "passRate": "89%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 18
+    },
+    {
+      "id": "subtoken-set:developer-console",
+      "label": "개발자 콘솔(Developer Console)",
+      "tags": [
+        "developer-console",
+        "terminal",
+        "code-first"
+      ],
+      "weights": {
+        "brand": 0.25,
+        "accent": 0.1,
+        "neutral": 0.65
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 75
+    },
+    {
+      "id": "subtoken-set:commerce-luxury",
+      "label": "커머스 럭셔리(Commerce Luxury)",
+      "tags": [
+        "commerce-luxury",
+        "understated-elegance"
+      ],
+      "weights": {
+        "brand": 0.1,
+        "accent": 0.1,
+        "neutral": 0.8
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 38
+    },
+    {
+      "id": "subtoken-set:mobile-soft",
+      "label": "모바일 소프트(Mobile Soft)",
+      "tags": [
+        "mobile-soft",
+        "touch-friendly"
+      ],
+      "weights": {
+        "brand": 0.35,
+        "accent": 0.15,
+        "neutral": 0.5
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 23
+    },
+    {
+      "id": "subtoken-set:social-expressive",
+      "label": "소셜 익스프레시브(Social Expressive)",
+      "tags": [
+        "social-expressive",
+        "community",
+        "vibrant"
+      ],
+      "weights": {
+        "brand": 0.35,
+        "accent": 0.35,
+        "neutral": 0.3
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 28
+    },
+    {
+      "id": "subtoken-set:wellness-calm",
+      "label": "웰니스 캄(Wellness Calm)",
+      "tags": [
+        "wellness-calm",
+        "low-tension"
+      ],
+      "weights": {
+        "brand": 0.25,
+        "accent": 0.1,
+        "neutral": 0.65
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 42
+    },
+    {
+      "id": "subtoken-set:education-friendly",
+      "label": "친근한 교육(Education Friendly)",
+      "tags": [
+        "education-friendly",
+        "learning"
+      ],
+      "weights": {
+        "brand": 0.35,
+        "accent": 0.25,
+        "neutral": 0.4
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 23
+    },
+    {
+      "id": "subtoken-set:glass-compatible",
+      "label": "글래스모피즘 호환(Glass Compatible)",
+      "tags": [
+        "glass-compatible",
+        "translucent-contrast"
+      ],
+      "weights": {
+        "brand": 0.3,
+        "accent": 0.15,
+        "neutral": 0.55
+      },
+      "passCount": 8,
+      "failCount": 1,
+      "passRate": "89%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 23
+    },
+    {
+      "id": "subtoken-set:brutalist-contrast",
+      "label": "브루탈리스트 콘트라스트(Brutalist Contrast)",
+      "tags": [
+        "brutalist-contrast",
+        "bold-borders"
+      ],
+      "weights": {
+        "brand": 0.3,
+        "accent": 0.2,
+        "neutral": 0.5
+      },
+      "passCount": 9,
+      "failCount": 0,
+      "passRate": "100%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 17
+    },
+    {
+      "id": "subtoken-set:gradient-compatible",
+      "label": "그라데이션 호환(Gradient Compatible)",
+      "tags": [
+        "gradient-compatible",
+        "high-surface-separation"
+      ],
+      "weights": {
+        "brand": 0.35,
+        "accent": 0.15,
+        "neutral": 0.5
+      },
+      "passCount": 8,
+      "failCount": 1,
+      "passRate": "89%",
+      "avgScore": 60,
+      "avgMargin": 1,
+      "adjustmentsCount": 20
+    }
+  ],
+  "paletteSummaries": [
+    {
+      "paletteId": "palette:static-kit",
+      "family": "static",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 24,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0019
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0067
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0025
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0022
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0022
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 25,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0088
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0038
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0002
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:wellness-calm"
+    },
+    {
+      "paletteId": "palette:slate-neutral",
+      "family": "slate",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.001
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0054
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0011
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 25,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0078
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.001
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 24,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0069
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0014
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0017
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0064
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0064
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0011
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0046
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0079
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0014
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:brutalist-contrast"
+    },
+    {
+      "paletteId": "palette:sunrise-warm",
+      "family": "sunrise",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 25,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0007
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0106
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0002
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 22,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0026
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0036
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0007
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0034
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 24,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 21,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 23,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 17,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 15,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 18,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0048
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 16,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 14,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0024
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0024
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0029
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0018
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 19,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 20,
+          "score": 60,
+          "margin": 1
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:editorial-warm"
+    },
+    {
+      "paletteId": "palette:ocean-cool",
+      "family": "ocean",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 25,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.011
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.011
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.0006
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0072
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0006
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 24,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0017
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0072
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.002
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0031
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0033
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0031
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0039
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0012
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:commerce-vivid"
+    },
+    {
+      "paletteId": "palette:forest-green",
+      "family": "forest",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0016
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0057
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0009
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0189
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0106
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0042
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 24,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.001
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0016
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0028
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 25,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0028
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:data-dense"
+    },
+    {
+      "paletteId": "palette:clay-earth",
+      "family": "clay",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0036
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0041
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0035
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.0016
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0074
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 24,
+          "score": 60,
+          "margin": 1.0008
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0113
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0055
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0054
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0052
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0036
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.001
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0093
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.002
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0093
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0022
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0019
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 25,
+          "score": 60,
+          "margin": 1.0005
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.004
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0036
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0036
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0011
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0045
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0013
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0093
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:data-dense"
+    },
+    {
+      "paletteId": "palette:graphite-mono",
+      "family": "graphite",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0128
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0019
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 21,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0104
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0016
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0055
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0009
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0015
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0049
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 20,
+          "score": 60,
+          "margin": 1
+        }
+      ],
+      "failingSets": [
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "reasons": [
+            {
+              "mode": "dark",
+              "code": "P_COLOR_CONTRAST",
+              "message": "palette:graphite-mono × subtoken-set:commerce-vivid (dark): COLOR_CONTRAST: no text color reaches 4.5:1 on accent"
+            }
+          ]
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "reasons": [
+            {
+              "mode": "dark",
+              "code": "P_COLOR_CONTRAST",
+              "message": "palette:graphite-mono × subtoken-set:brand-dominant (dark): COLOR_CONTRAST: no text color reaches 4.5:1 on action"
+            }
+          ]
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "reasons": [
+            {
+              "mode": "dark",
+              "code": "P_COLOR_CONTRAST",
+              "message": "palette:graphite-mono × subtoken-set:glass-compatible (dark): focus vs tableSelected 2.5454:1 < 3:1"
+            }
+          ]
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "reasons": [
+            {
+              "mode": "dark",
+              "code": "P_COLOR_CONTRAST",
+              "message": "palette:graphite-mono × subtoken-set:gradient-compatible (dark): focus vs tableSelected 2.5454:1 < 3:1"
+            }
+          ]
+        }
+      ],
+      "topRanked": "subtoken-set:tinted"
+    },
+    {
+      "paletteId": "palette:dusk-violet",
+      "family": "dusk",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0063
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0068
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0061
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0025
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0006
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0029
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0027
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0021
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0055
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0013
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.0007
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0063
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0025
+        },
+        {
+          "id": "subtoken-set:analytics",
+          "rank": 24,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 25,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0063
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0025
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0025
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0011
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0011
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0009
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0041
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0063
+        }
+      ],
+      "failingSets": [],
+      "topRanked": "subtoken-set:editorial-warm"
+    },
+    {
+      "paletteId": "palette:magenta-vivid",
+      "family": "magenta",
+      "passingSets": [
+        {
+          "id": "subtoken-set:standard",
+          "rank": 13,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:tinted",
+          "rank": 1,
+          "score": 60,
+          "margin": 1.0049
+        },
+        {
+          "id": "subtoken-set:editorial-warm",
+          "rank": 19,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:commerce-vivid",
+          "rank": 2,
+          "score": 60,
+          "margin": 1.0044
+        },
+        {
+          "id": "subtoken-set:premium-dark",
+          "rank": 10,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:high-contrast",
+          "rank": 24,
+          "score": 60,
+          "margin": 1
+        },
+        {
+          "id": "subtoken-set:data-dense",
+          "rank": 17,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:brand-dominant",
+          "rank": 3,
+          "score": 60,
+          "margin": 1.0036
+        },
+        {
+          "id": "subtoken-set:accent-dominant",
+          "rank": 14,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:soft-pastel",
+          "rank": 12,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:minimal-monochrome",
+          "rank": 9,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:premium-light",
+          "rank": 11,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:editorial-ink",
+          "rank": 18,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:corporate",
+          "rank": 16,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:finance-precision",
+          "rank": 8,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:developer-console",
+          "rank": 23,
+          "score": 60,
+          "margin": 1.0001
+        },
+        {
+          "id": "subtoken-set:commerce-luxury",
+          "rank": 7,
+          "score": 60,
+          "margin": 1.0004
+        },
+        {
+          "id": "subtoken-set:mobile-soft",
+          "rank": 4,
+          "score": 60,
+          "margin": 1.0024
+        },
+        {
+          "id": "subtoken-set:social-expressive",
+          "rank": 22,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:wellness-calm",
+          "rank": 6,
+          "score": 60,
+          "margin": 1.0012
+        },
+        {
+          "id": "subtoken-set:education-friendly",
+          "rank": 5,
+          "score": 60,
+          "margin": 1.0018
+        },
+        {
+          "id": "subtoken-set:glass-compatible",
+          "rank": 20,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:brutalist-contrast",
+          "rank": 15,
+          "score": 60,
+          "margin": 1.0003
+        },
+        {
+          "id": "subtoken-set:gradient-compatible",
+          "rank": 21,
+          "score": 60,
+          "margin": 1.0003
+        }
+      ],
+      "failingSets": [
+        {
+          "id": "subtoken-set:analytics",
+          "reasons": [
+            {
+              "mode": "light",
+              "code": "P_COLOR_CONTRAST",
+              "message": "palette:magenta-vivid × subtoken-set:analytics (light): accentInk vs accentSoft 4.3795:1 < 4.5:1"
+            }
+          ]
+        }
+      ],
+      "topRanked": "subtoken-set:tinted"
+    }
+  ]
+}

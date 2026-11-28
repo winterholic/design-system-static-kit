@@ -14,6 +14,7 @@ import {colorRamp, readableColor, colorContrast, colorMix} from '../color-tokens
 import {COLOR_ROLES, PALETTE_SLOTS} from './contract.mjs';
 import {defineCheck} from './relations.mjs';
 import {SUBTOKEN_SETS, DEFAULT_DESIGN} from './data/subtoken-sets.mjs';
+import {PALETTES} from './data/palettes.mjs';
 
 const WHITE = '#FFFFFF';
 const floor4 = x => Math.floor(x * 1e4) / 1e4;
@@ -316,25 +317,173 @@ export function assignSeeds(input) {
 }
 
 /**
- * proposeSubtokenSets(seeds, {sets}) → {ok, errors, palette, assignments, ignored, candidates, rejected}
- *   candidates  통과한 세트 [{set, label, tags, margin, modes: {light: {vars, charts}, dark: {...}}}]. margin은 가장 빠듯한 게이트의 ratio/minimum(1에 가까울수록 빠듯함)
+ * 팔레트 × 서브토큰 세트 결합 평가 엔진 (TASK-TRB-04).
+ * 팔레트와 25종 서브토큰 세트의 대비 적합도, 권장 순위(랭킹), 자동 보정 내역 및 차단 이유를 산출한다.
+ *
+ * @param {Object|string} paletteInput 팔레트 객체 또는 id 문자열
+ * @param {Object} [options]
+ * @param {string} [options.mode] 'light' | 'dark' (미지정 시 양쪽 모드 검사)
+ * @param {string} [options.context] 페이지 유형 맥락 (예: 'landing', 'general', 'dashboard')
+ * @param {Array} [options.sets=SUBTOKEN_SETS] 평가 대상 세트 목록
+ * @returns {Array} 25종 세트 평가 결과 배열. Array 속성으로 .ranked, .blocked 제공.
+ */
+export function evaluatePaletteSubtokens(paletteInput, {mode, context, sets = SUBTOKEN_SETS} = {}) {
+  let palette = paletteInput;
+  if (typeof paletteInput === 'string') {
+    const rawId = paletteInput.startsWith('palette:') ? paletteInput : `palette:${paletteInput}`;
+    palette = PALETTES.find(p => p.id === rawId || p.id === paletteInput);
+    if (!palette) {
+      throw new Error(`P_PALETTE_NOT_FOUND: 팔레트를 찾을 수 없습니다: ${paletteInput}`);
+    }
+  }
+  if (!palette || !palette.seeds) {
+    throw new Error('P_PALETTE_INVALID: 유효한 seeds를 가진 팔레트가 필요합니다.');
+  }
+
+  const results = sets.map(set => {
+    const modesToTest = mode ? [mode] : set.modes;
+    const modes = {};
+    const blockedReasons = [];
+    const adjustments = [];
+    const contrastReport = {};
+    let minMargin = Infinity;
+
+    // 맥락 금지 확인
+    if (context && set.forbiddenContexts?.includes(context)) {
+      blockedReasons.push({
+        code: 'P_FORBIDDEN_CONTEXT',
+        mode: mode ?? 'all',
+        message: `${set.id}는 ${context} 맥락에서 사용할 수 없습니다(금지 조합)`,
+      });
+    }
+
+    for (const m of modesToTest) {
+      const r = bindColor(palette, set, m);
+      if (!r.ok) {
+        blockedReasons.push({
+          mode: m,
+          code: r.error.code,
+          message: r.error.message,
+        });
+      } else {
+        modes[m] = {roles: r.roles, vars: r.vars, charts: r.charts};
+        contrastReport[m] = r.report;
+        for (const item of r.report) {
+          const margin = item.ratio / item.minimum;
+          if (margin < minMargin) minMargin = margin;
+        }
+
+        // 자동 보정 감지: base step 색상 대비 readableColor가 보정한 역할 추적
+        const ramps = Object.fromEntries(set.needs.map(n => [n, colorRamp(palette.seeds[n])]));
+        for (const [role, rule] of Object.entries(set.roles)) {
+          if (rule.from !== undefined) {
+            const base = ramps[rule.from][rule[m]];
+            if (r.roles[role] !== base) {
+              adjustments.push({
+                role,
+                mode: m,
+                from: rule.from,
+                originalStep: rule[m],
+                initial: base,
+                adjusted: r.roles[role],
+              });
+            }
+          }
+        }
+      }
+    }
+
+    const applicable = blockedReasons.length === 0;
+    const reasons = [];
+    let score = 0;
+
+    if (applicable) {
+      score = 50;
+      const marginBonus = Math.min(30, Math.round((minMargin - 1) * 10));
+      score += Math.max(0, marginBonus);
+      reasons.push(`대비 마진 여유도: ${floor4(minMargin)}배 (+${Math.max(0, marginBonus)}점)`);
+
+      if (context && set.contexts?.includes(context)) {
+        score += 30;
+        reasons.push(`권장 맥락: ${context} 적합 (+30점)`);
+      } else if (context) {
+        reasons.push(`맥락: ${context} (일반 적용)`);
+      }
+
+      if (set.weights) {
+        score += 10;
+        reasons.push('역할 가중치 규칙 부합 (+10점)');
+      }
+
+      if (adjustments.length > 0) {
+        reasons.push(`대비 자동 보정 ${adjustments.length}건 적용`);
+      }
+    } else {
+      reasons.push(...blockedReasons.map(b => `${b.mode ? b.mode + ': ' : ''}${b.message}`));
+    }
+
+    return {
+      id: set.id,
+      label: set.label,
+      applicable,
+      score,
+      rank: null,
+      reasons,
+      contrastReport,
+      recommendedContexts: [...(set.contexts ?? [])],
+      forbiddenContexts: [...(set.forbiddenContexts ?? [])],
+      adjustments,
+      blockedReasons,
+      modes,
+      margin: applicable ? floor4(minMargin) : 0,
+    };
+  });
+
+  const applicableItems = results.filter(x => x.applicable);
+  applicableItems.sort((a, b) => b.score - a.score || b.margin - a.margin || a.id.localeCompare(b.id));
+  applicableItems.forEach((item, idx) => {
+    item.rank = idx + 1;
+  });
+
+  results.filter(x => !x.applicable).forEach(item => {
+    item.rank = null;
+  });
+
+  results.ranked = applicableItems;
+  results.blocked = results.filter(x => !x.applicable);
+
+  return results;
+}
+
+export const matchSubtokenSets = evaluatePaletteSubtokens;
+
+/**
+ * proposeSubtokenSets(seeds, {sets, context, mode}) → {ok, errors, palette, assignments, ignored, candidates, rejected, evaluations}
+ *   candidates  통과한 세트 [{set, label, tags, margin, score, rank, modes: {light: {vars, charts}, dark: {...}}}].
  *   rejected    실패한 세트 [{set, label, reasons: [{mode, code, message}]}]
+ *   evaluations 25종 세트 전체 평가 결과 목록
  * 같은 결합 경로(bindColor)를 쓴다. 결과는 호출자에게 돌려줄 뿐 레지스트리에 등록하지 않는다(license 미확인 입력은 등록 불가).
  */
-export function proposeSubtokenSets(input, {sets = SUBTOKEN_SETS} = {}) {
+export function proposeSubtokenSets(input, {sets = SUBTOKEN_SETS, context, mode} = {}) {
   const a = assignSeeds(input);
-  if (!a.ok) return {ok: false, errors: a.errors, palette: null, assignments: [], ignored: [], candidates: [], rejected: []};
+  if (!a.ok) return {ok: false, errors: a.errors, palette: null, assignments: [], ignored: [], candidates: [], rejected: [], evaluations: []};
   const palette = Object.freeze({id: 'palette:user-seeds', kind: 'palette', seeds: Object.freeze(a.seeds)});
-  const candidates = [], rejected = [];
-  for (const set of sets) {
-    const modes = {}, reasons = [];
-    let margin = Infinity;
-    for (const mode of set.modes) {
-      const r = bindColor(palette, set, mode);
-      if (r.ok) { modes[mode] = {vars: r.vars, charts: r.charts}; margin = Math.min(margin, ...r.report.map(x => x.ratio / x.minimum)); } else reasons.push({mode, code: r.error.code, message: r.error.message});
-    }
-    if (reasons.length) rejected.push({set: set.id, label: set.label, reasons});
-    else candidates.push({set: set.id, label: set.label, tags: [...set.tags], margin: floor4(margin), modes});
-  }
-  return {ok: true, errors: [], palette, assignments: a.assignments, ignored: a.ignored, candidates, rejected};
+
+  const evaluations = evaluatePaletteSubtokens(palette, {mode, context, sets});
+  const candidates = evaluations.ranked.map(r => ({
+    set: r.id,
+    label: r.label,
+    tags: [...(sets.find(s => s.id === r.id)?.tags ?? [])],
+    margin: r.margin,
+    score: r.score,
+    rank: r.rank,
+    modes: r.modes,
+  }));
+  const rejected = evaluations.blocked.map(r => ({
+    set: r.id,
+    label: r.label,
+    reasons: r.blockedReasons,
+  }));
+
+  return {ok: true, errors: [], palette, assignments: a.assignments, ignored: a.ignored, candidates, rejected, evaluations};
 }

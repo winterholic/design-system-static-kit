@@ -18,7 +18,8 @@ test('at least five subtoken sets exist, including the calm product, warm editor
   assert.ok(SUBTOKEN_SETS.length >= 5);
   const tags = new Set(SUBTOKEN_SETS.flatMap(s => s.tags));
   for (const t of ['calm-product-ui', 'editorial', 'commerce', 'premium', 'high-contrast']) assert.ok(tags.has(t), t);
-  assert.deepEqual(SUBTOKEN_SETS.map(s => s.id), ['subtoken-set:standard', 'subtoken-set:tinted', 'subtoken-set:editorial-warm', 'subtoken-set:commerce-vivid', 'subtoken-set:premium-dark', 'subtoken-set:high-contrast', 'subtoken-set:data-dense']);
+  assert.deepEqual(SUBTOKEN_SETS.slice(0, 7).map(s => s.id), ['subtoken-set:standard', 'subtoken-set:tinted', 'subtoken-set:editorial-warm', 'subtoken-set:commerce-vivid', 'subtoken-set:premium-dark', 'subtoken-set:high-contrast', 'subtoken-set:data-dense']);
+  assert.equal(SUBTOKEN_SETS.length, 25);
   assert.deepEqual(Object.keys(SUBTOKEN_SET_DESIGNS).sort(), SUBTOKEN_SETS.map(s => s.id).sort(), 'every set has a derived design');
   for (const s of SUBTOKEN_SETS) { assert.deepEqual(s.modes, ['light', 'dark']); assert.deepEqual(Object.keys(s.roles), Object.keys(SUBTOKEN_SETS[0].roles), `${s.id} keeps the shared role order`); }
 });
@@ -44,7 +45,14 @@ test('match table: every set passes at least three palettes, every palette match
   for (const s of SUBTOKEN_SETS) assert.ok(passing.filter(x => x.set === s.id).length >= 3, `${s.id} passes ${passing.filter(x => x.set === s.id).length} palettes`);
   for (const p of PALETTES) assert.ok(passing.filter(x => x.palette === p.id).length >= 3, `${p.id} matches ${passing.filter(x => x.palette === p.id).length} sets`);
   // 실패는 이유와 함께 고정한다. 이 목록이 바뀌면 색 분배나 게이트가 바뀐 것이므로 docs/platform/color.md의 표도 같이 갱신해야 한다.
-  assert.deepEqual(failing.map(x => `${x.palette} × ${x.set}`), ['palette:graphite-mono × subtoken-set:commerce-vivid']);
+  const expectedFailures = [
+    'palette:graphite-mono × subtoken-set:commerce-vivid',
+    'palette:graphite-mono × subtoken-set:brand-dominant',
+    'palette:graphite-mono × subtoken-set:glass-compatible',
+    'palette:graphite-mono × subtoken-set:gradient-compatible',
+    'palette:magenta-vivid × subtoken-set:analytics'
+  ];
+  assert.deepEqual(failing.map(x => `${x.palette} × ${x.set}`), expectedFailures);
   assert.match(failing[0].reasons[0].message, /no text color reaches 4.5:1 on accent/);
   assert.deepEqual(failing[0].reasons.map(r => [r.mode, r.code]), [['dark', 'P_COLOR_CONTRAST']], 'light passes, only the dark mid-tone secondary fill has no readable text');
   assert.equal(env.graph.evaluate(['palette:graphite-mono', 'subtoken-set:commerce-vivid']).violations[0].code, 'P_CHECK_PALETTE_SUBTOKEN', 'the relation graph agrees with the matrix');

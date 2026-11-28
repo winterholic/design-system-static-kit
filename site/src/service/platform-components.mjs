@@ -7,7 +7,7 @@ import {formRuntime, controlRuntime, escapeHTML} from '../render.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 import {diagnostic, hintFor} from './errors.mjs';
 
-const PROPOSE_KEYS = ['seeds'];
+const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
 const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items'];
 const ITEM_KEYS = ['purpose', 'visual', 'variant', 'props', 'content', 'id'];
 const diag = d => diagnostic(d.code, d.path ?? '$', d.message, hintFor(d.code), {severity: d.severity === 'error' ? undefined : d.severity});
@@ -19,7 +19,7 @@ export function proposeSubtokenSets(args) {
     const unknown = checkKeys(args, PROPOSE_KEYS, '$args');
     if (unknown) return fail([unknown]);
     if (args.seeds === undefined) return fail([badRequest('$args.seeds', 'hex 시드 배열이 필요합니다.')]);
-    const result = propose(args.seeds);
+    const result = propose(args.seeds, {context: args.context, mode: args.mode});
     if (!result.ok) return fail(result.errors.map(e => diag({...e, path: '$args.seeds'})));
     return ok(jsonClone(result));
   });
