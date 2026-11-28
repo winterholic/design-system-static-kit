@@ -923,7 +923,7 @@ $ npm run web:build
 
 ```sh
 $ npm run coverage:materials:check MATCH
-MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1434 materials, 337 requirements)
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1472 materials, 406 requirements)
 $ git diff --exit-code site/v1/catalog.json docs/evidence/context/legacy-hashes.json docs/evidence/typography-refine/legacy-2-2-hashes.json docs/evidence/layout-refine/legacy-2-3-hashes.json docs/evidence/variants/legacy-2-3-hashes.json
 (exit 0)
 $ npm run verify
