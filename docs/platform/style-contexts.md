@@ -10,7 +10,7 @@
 <!-- generated:counts -->
 - 스타일 맥락: 54개(테마 54개 전부, `styleContextFromTheme`으로 등록)
 - 선언 관계(스타일 맥락 → 팔레트·서브토큰 세트·타이포 시스템·패밀리): 2364개. prefers 1495, avoids 808, forbids 61
-- 관계 대상(main에 등록된 재료): 팔레트 9 · 서브토큰 세트 7 · 타이포 시스템 14 · 패밀리 4
+- 관계 대상(main에 등록된 재료): 팔레트 9 · 서브토큰 세트 7 · 타이포 시스템 41 · 패밀리 4
 - 스타일 재료 프리셋: surface 5 · motion 4 · background 5 · media 6 · state-pattern 8
 - 차트 프리셋 관계: 29개, 형태 14종 × 페이지 유형 16종
 <!-- /generated:counts -->

@@ -4,9 +4,9 @@
   "summary": {
     "totalTasks": 28,
     "byStatus": {
-      "Pending": 25,
+      "Pending": 23,
       "In Progress": 1,
-      "Implemented": 0,
+      "Implemented": 2,
       "Verified": 2,
       "Blocked": 0
     },
@@ -54,7 +54,9 @@
       "goal": "Manifest의 모든 수치와 상태를 코드·서비스 호출·웹 라우트에서만 얻도록 생성기를 고치고, CONTRACTS·장부·계획 문서의 모호하거나 충돌하거나 존재하지 않는 참조를 바로잡는다",
       "scope": "scripts/generate-material-coverage.mjs, docs/dev/catalog-platform-upgrade/(PERFORMANCE-BASELINE.json, PERF-BOTTLENECKS.md 제외), package.json 스크립트 항목",
       "track": "Track G",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "scripts/generate-material-coverage.mjs",
         "package.json",
@@ -80,7 +82,9 @@
       "goal": "일반 카탈로그 목록 및 카드에서 iframe을 완전히 제거하고 사전 생성된 정적 SVG/HTML 조각을 사용하도록 개편",
       "scope": "apps/web/features/explore/Thumb.tsx, apps/web/features/components/ComponentPreview.tsx, apps/web/features/platform/platform.server.ts",
       "track": "Track A",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "apps/web/features/explore/Thumb.tsx",
         "apps/web/features/components/ComponentPreview.tsx",
@@ -118,7 +122,9 @@
       "goal": "Core 결정론적 특성을 활용한 전시용 산출물 빌드 타임 사전 생성 및 런타임 캐싱 계층 구현 산출 위치와 캐시 키 규칙은 CONTRACTS.md §5.2, §5.3을 따른다(`site/`에는 쓰지 않는다).",
       "scope": "apps/web/scripts/sync-static.mjs 확장, apps/web/app/platform/render/route.ts, apps/web/lib/api/cache.mjs(신규)",
       "track": "Track A",
-      "dependencies": ["TASK-TRA-01"],
+      "dependencies": [
+        "TASK-TRA-01"
+      ],
       "modifiedFiles": [
         "apps/web/scripts/sync-static.mjs",
         "apps/web/app/platform/render/route.ts",
@@ -148,7 +154,9 @@
       "goal": "780KB 단일 카탈로그 다운로드 병목 제거 및 카테고리/탭 단위 경량 인덱스 분할 제공",
       "scope": "scripts/platform/build-catalog-index.mjs 신규 작성, apps/web/features/components/spec.server.ts 최적화",
       "track": "Track A",
-      "dependencies": ["TASK-TRA-02"],
+      "dependencies": [
+        "TASK-TRA-02"
+      ],
       "modifiedFiles": [
         "apps/web/features/components/spec.server.ts"
       ],
@@ -176,7 +184,9 @@
       "goal": "권리 미확인 Coolors 427개를 대체할 10개 색상 계열별 자체 원색 시드 팔레트 200종 구축",
       "scope": "src/platform/data/palettes.mjs, tests/platform-color-palettes.test.mjs, docs/platform/color.md(생성 표는 docs/platform/evidence/color/build.mjs로 다시 만든다)",
       "track": "Track B",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "src/platform/data/palettes.mjs",
         "tests/platform-color-palettes.test.mjs",
@@ -196,7 +206,9 @@
       "goal": "동일 팔레트에서 다양한 시각 위계와 제품 맥락을 구현하는 25종 서브토큰 세트 정의",
       "scope": "src/platform/data/subtoken-sets.mjs, src/platform/color.mjs, tests/platform-color-sets.test.mjs",
       "track": "Track B",
-      "dependencies": ["TASK-TRB-01"],
+      "dependencies": [
+        "TASK-TRB-01"
+      ],
       "modifiedFiles": [
         "src/platform/data/subtoken-sets.mjs",
         "src/platform/color.mjs",
@@ -216,7 +228,9 @@
       "goal": "시드 색상부터 컴포넌트 및 데이터 시각화까지 연결되는 정교한 토큰 계층 연결",
       "scope": "src/color-tokens.mjs, src/platform/color.mjs, tests/color-tokens.test.mjs",
       "track": "Track B",
-      "dependencies": ["TASK-TRB-02"],
+      "dependencies": [
+        "TASK-TRB-02"
+      ],
       "modifiedFiles": [
         "src/color-tokens.mjs",
         "src/platform/color.mjs",
@@ -236,7 +250,9 @@
       "goal": "200개 팔레트 × 25개 서브토큰 세트 × light/dark (10,000 조합) 결합 적합도 및 대비 게이트 자동화",
       "scope": "src/platform/recommend.mjs, src/service/platform-components.mjs(proposeSubtokenSets)",
       "track": "Track B",
-      "dependencies": ["TASK-TRB-03"],
+      "dependencies": [
+        "TASK-TRB-03"
+      ],
       "modifiedFiles": [
         "src/platform/recommend.mjs",
         "src/service/platform-components.mjs"
@@ -268,19 +284,44 @@
       "goal": "서체 짝 × 역할 스케일의 곱으로 구성된 실질적으로 차별화된 40종 타이포그래피 시스템 확보",
       "scope": "src/platform/data/type-systems.mjs, tests/platform-type.test.mjs, docs/platform/typography.md",
       "track": "Track C",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "src/platform/data/type-systems.mjs",
+        "src/platform/data/type-materials.mjs",
         "tests/platform-type.test.mjs",
-        "docs/platform/typography.md"
+        "tests/platform-type-evidence.test.mjs",
+        "tests/platform-type-systems-diff.test.mjs",
+        "docs/platform/typography.md",
+        "docs/platform/evidence/type/metrics.json",
+        "docs/platform/evidence/type/fonts-macos.json",
+        "tests/platform-service-channels.test.mjs"
       ],
       "completionCriteria": "§5.2의 10개 계열(General Product, Enterprise, Finance 등)별 각 4종 총 40종 등록, 시스템별 고유 Heading/Body CSS 변수 생성 입증",
       "tests": [
         "tests/platform-type.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "타이포그래피 40종 재료 커버리지 매핑 및 추적"
+        },
+        {
+          "file": "src/platform/data/style-contexts.mjs",
+          "owner": "Track E",
+          "reason": "신규 27종 시스템의 스타일 컨텍스트 추천 풀 과다 오염 방지 및 W2 14종 격리"
+        },
+        {
+          "file": "docs/platform/style-contexts.md",
+          "owner": "Track E",
+          "reason": "스타일 컨텍스트 문서 재생성"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRC-02",
@@ -288,7 +329,9 @@
       "goal": "Display부터 Badge까지 16개 역할 정의 및 세리프 굵기 상한 등 한글 타이포그래피 규칙 검증 강화",
       "scope": "src/platform/type.mjs, tests/platform-type-hangul.test.mjs",
       "track": "Track C",
-      "dependencies": ["TASK-TRC-01"],
+      "dependencies": [
+        "TASK-TRC-01"
+      ],
       "modifiedFiles": [
         "src/platform/type.mjs",
         "tests/platform-type-hangul.test.mjs"
@@ -298,7 +341,7 @@
         "tests/platform-type-hangul.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null,
       "createFiles": [
         "tests/platform-type-hangul.test.mjs"
@@ -310,7 +353,9 @@
       "goal": "한글, 영문, 일본어, 숫자, 코드 가독성을 보장하고 오픈 라이선스 웹폰트 서브셋 로딩 구현",
       "scope": "apps/web/app/layout.tsx, apps/web/features/materials/types.ts",
       "track": "Track C",
-      "dependencies": ["TASK-TRC-02"],
+      "dependencies": [
+        "TASK-TRC-02"
+      ],
       "modifiedFiles": [
         "apps/web/app/layout.tsx",
         "apps/web/features/materials/types.ts"
@@ -341,7 +386,9 @@
       "goal": "§6.2 인벤토리 전수 경로 확보 및 2.6.0 기반 컨트롤 10종 확장",
       "scope": "src/materials/{button,input,select,card,table,tabs,modal,tooltip,feedback,navigation}.mjs, src/platform/data/base-components.mjs",
       "track": "Track D",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "src/materials/button.mjs",
         "src/materials/input.mjs",
@@ -369,7 +416,9 @@
       "goal": "KPI Card, Data Table, Approval Panel, Product Grid 등 실무 수준의 목적형 UI 패턴 120종 구축",
       "scope": "src/platform/families/{card,table,button,form,feedback,navigation}.mjs, tests/platform-family-purpose.test.mjs (입력·모달 계열 목적 패밀리는 form.mjs, feedback.mjs에 둔다. 새 파일을 만들면 families/index.mjs에 등록)",
       "track": "Track D",
-      "dependencies": ["TASK-TRD-01"],
+      "dependencies": [
+        "TASK-TRD-01"
+      ],
       "modifiedFiles": [
         "src/platform/families/card.mjs",
         "src/platform/families/table.mjs",
@@ -392,7 +441,9 @@
       "goal": "Focus trap, ARIA 1.2 규격, 터치 타겟(44px), 명도 대비 전수 검증",
       "scope": "src/materials/contract.mjs, tests/material-components-a11y.test.mjs",
       "track": "Track D",
-      "dependencies": ["TASK-TRD-02"],
+      "dependencies": [
+        "TASK-TRD-02"
+      ],
       "modifiedFiles": [
         "src/materials/contract.mjs",
         "tests/material-components-a11y.test.mjs"
@@ -414,7 +465,9 @@
       "goal": "색상 외에도 형태, 간격, 테두리, 그림자가 달라지는 12개 시각 패밀리 구현",
       "scope": "src/platform/data/families.mjs, src/platform/family.mjs, src/platform/families/visual.mjs, tests/platform-family-visual.test.mjs",
       "track": "Track E",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "src/platform/data/families.mjs",
         "src/platform/family.mjs",
@@ -439,7 +492,9 @@
       "goal": "금융, ERP, 애널리틱스 목적의 29종 차트 프리셋 검증 및 비즈니스 데이터 왜곡 방지",
       "scope": "src/materials/chart-presets.mjs, src/platform/data/charts.mjs, src/render/chart-presets.mjs, tests/chart-presets.test.mjs",
       "track": "Track E",
-      "dependencies": ["TASK-TRE-01"],
+      "dependencies": [
+        "TASK-TRE-01"
+      ],
       "modifiedFiles": [
         "src/materials/chart-presets.mjs",
         "src/platform/data/charts.mjs",
@@ -460,7 +515,9 @@
       "goal": "단순 축소가 아닌 화면 폭별 의미 있는 재배치를 지원하는 24종 레이아웃 재료 확보",
       "scope": "src/layout.mjs, tests/layout-quality.test.mjs",
       "track": "Track E",
-      "dependencies": ["TASK-TRE-01"],
+      "dependencies": [
+        "TASK-TRE-01"
+      ],
       "modifiedFiles": [
         "src/layout.mjs",
         "tests/layout-quality.test.mjs"
@@ -479,7 +536,9 @@
       "goal": "기초 디자인 재료 전수 정의 및 Foundations 탐색 화면 구축",
       "scope": "src/platform/data/{surfaces,motion,backgrounds,media,states}.mjs, apps/web/app/materials/foundations/page.tsx (아이콘은 2.x 카탈로그의 `src/catalog/icons.mjs`가 고정 출력 영역이므로 신규 아이콘은 플랫폼 재료 종류로 추가한다)",
       "track": "Track E",
-      "dependencies": ["TASK-TRE-03"],
+      "dependencies": [
+        "TASK-TRE-03"
+      ],
       "modifiedFiles": [
         "src/platform/data/surfaces.mjs",
         "src/platform/data/motion.mjs",
@@ -509,7 +568,10 @@
       "goal": "긴 단일 페이지 스크롤 제거, 17개 카테고리 탭 도입 및 초기 24개 카드 청크 렌더링",
       "scope": "apps/web/app/components/page.tsx, apps/web/features/components/CategoryTabs.tsx",
       "track": "Track F",
-      "dependencies": ["TASK-TRA-03", "TASK-TRD-01"],
+      "dependencies": [
+        "TASK-TRA-03",
+        "TASK-TRD-01"
+      ],
       "modifiedFiles": [
         "apps/web/app/components/page.tsx"
       ],
@@ -530,7 +592,9 @@
       "goal": "Overview, Variants, States, Sizes, Playground, Tokens, Code, A11y, Composition 9개 탭 상세 제공",
       "scope": "apps/web/app/components/[componentId]/page.tsx, apps/web/features/components/ComponentDetailTabs.tsx",
       "track": "Track F",
-      "dependencies": ["TASK-TRF-01"],
+      "dependencies": [
+        "TASK-TRF-01"
+      ],
       "modifiedFiles": [
         "apps/web/app/components/[componentId]/page.tsx"
       ],
@@ -551,7 +615,9 @@
       "goal": "분리된 /materials/color, /materials/palettes, /materials/palettes/custom 경로를 단일 색상 작업대로 통합",
       "scope": "apps/web/app/materials/color/page.tsx, apps/web/features/materials/ColorExplorer.tsx",
       "track": "Track F",
-      "dependencies": ["TASK-TRB-04"],
+      "dependencies": [
+        "TASK-TRB-04"
+      ],
       "modifiedFiles": [
         "apps/web/app/materials/color/page.tsx",
         "apps/web/features/materials/ColorExplorer.tsx"
@@ -570,7 +636,9 @@
       "goal": "40개 타이포 시스템 카드 탐색, 27개 역할 상세 Specimen, 최대 4개 시스템 동시 비교 화면 구축",
       "scope": "apps/web/app/materials/typography/page.tsx, apps/web/features/platform/TypeCompare.tsx",
       "track": "Track F",
-      "dependencies": ["TASK-TRC-03"],
+      "dependencies": [
+        "TASK-TRC-03"
+      ],
       "modifiedFiles": [
         "apps/web/app/materials/typography/page.tsx",
         "apps/web/features/platform/TypeCompare.tsx"
@@ -589,7 +657,11 @@
       "goal": "Studio에서 모든 재료(팔레트, 세트, 타이포, 패밀리, 레이아웃)를 조립하고 상태 URL 공유 지원",
       "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**(진입 컴포넌트는 기존 StudioApp.tsx)",
       "track": "Track F",
-      "dependencies": ["TASK-TRF-02", "TASK-TRF-03", "TASK-TRF-04"],
+      "dependencies": [
+        "TASK-TRF-02",
+        "TASK-TRF-03",
+        "TASK-TRF-04"
+      ],
       "modifiedFiles": [
         "apps/web/app/studio/page.tsx",
         "apps/web/features/studio/StudioApp.tsx"
@@ -608,7 +680,9 @@
       "goal": "새 재료 추가 시 Manifest 누락 또는 잘못된 상태 기재를 빌드/CI 단계에서 자동 차단",
       "scope": "tests/material-coverage-manifest.test.mjs(신규. 기존 tests/material-coverage.test.mjs는 scripts/materials/coverage.mjs 보고서 검사이므로 건드리지 않는다), package.json verify 스크립트",
       "track": "Track G",
-      "dependencies": ["TASK-P0-01"],
+      "dependencies": [
+        "TASK-P0-01"
+      ],
       "modifiedFiles": [
         "package.json"
       ],
@@ -629,7 +703,11 @@
       "goal": "재료 선택(팔레트, 세트, 타이포, 패밀리)을 변경했을 때 실제 HTML/CSS 출력이 달라지는지 전수 검증",
       "scope": "scripts/actual-output-verify.mjs, tests/actual-output.test.mjs",
       "track": "Track G",
-      "dependencies": ["TASK-TRB-04", "TASK-TRC-02", "TASK-TRE-01"],
+      "dependencies": [
+        "TASK-TRB-04",
+        "TASK-TRC-02",
+        "TASK-TRE-01"
+      ],
       "modifiedFiles": [],
       "completionCriteria": "manifest의 선택 ID만 바뀌고 실제 출력은 같은 결함(ADR 0012 §8 D1/D2) 100% 차단",
       "tests": [
@@ -649,7 +727,9 @@
       "goal": "색상, 타이포, 컴포넌트, Studio의 4대 핵심 사용자 흐름을 실제 Chromium 브라우저에서 자동 검증",
       "scope": "e2e/catalog-platform.spec.mjs, playwright.config.mjs",
       "track": "Track G",
-      "dependencies": ["TASK-TRF-05"],
+      "dependencies": [
+        "TASK-TRF-05"
+      ],
       "modifiedFiles": [
         "playwright.config.mjs"
       ],
@@ -670,7 +750,9 @@
       "goal": "배포 빌드 성공 확인, 배포 버전(Commit SHA, Catalog Version) 노출 및 운영 환경 CDN 캐싱 실측",
       "scope": "apps/web/app/api/version/route.ts, docs/dev/catalog-platform-upgrade/VERIFICATION.md",
       "track": "Track G",
-      "dependencies": ["TASK-TRG-03"],
+      "dependencies": [
+        "TASK-TRG-03"
+      ],
       "modifiedFiles": [
         "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
       ],

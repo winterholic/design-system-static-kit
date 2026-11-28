@@ -10,6 +10,15 @@ import {STACKS, TYPE_R2, TYPE_IDS, ROLES, roleSizes} from '../../typography.mjs'
 import {MATERIAL_TYPE_PRESETS, clampBounds} from '../../materials/typography.mjs';
 
 export const SERIF_STACKS = Object.freeze(new Set(['iowan', 'georgia', 'charter', 'baskerville', 'didone', 'slab', 'news', 'palatino']));
+export const TYPE_27_ROLES = Object.freeze([
+  'display-xl', 'display-lg', 'display-md',
+  'heading-1', 'heading-2', 'heading-3', 'heading-4', 'heading-5', 'heading-6',
+  'body-lg', 'body-md', 'body-sm',
+  'label-lg', 'label-md', 'label-sm',
+  'caption', 'overline', 'button-label', 'input-value',
+  'table-header', 'table-cell', 'numeric', 'kpi', 'code',
+  'quote', 'navigation', 'badge',
+]);
 export const SCALE_ROLES = Object.freeze(['display', 'heading', 'sub', 'body', 'small', 'label', 'caption', 'numeric', 'code']);
 
 // ---------- 웹폰트(선택) ----------
@@ -29,7 +38,10 @@ export const WEBFONT_LOADING = Object.freeze({strategy: 'self-host', format: 'wo
 
 // ---------- 서체 짝 ----------
 /** 서체 짝 하나. head·text·ui·numeric은 STACKS 이름, code는 고정폭 스택. ui는 라벨·캡션, numeric은 숫자 역할의 서체다. */
-const face = (id, label, concept, o) => Object.freeze({id: `face-pairing:${id}`, label, concept, ui: o.text, numeric: o.text, code: 'mono', merges: [], webfonts: [], ...o});
+const face = (id, label, concept, o) => {
+  const serifText = SERIF_STACKS.has(o.text);
+  return Object.freeze({id: `face-pairing:${id}`, label, concept, ui: o.ui ?? (serifText ? 'system' : o.text), numeric: o.numeric ?? (serifText ? 'system' : o.text), code: 'mono', merges: [], webfonts: [], ...o});
+};
 
 /** 구형 18개 → 서체 짝 16개. (제목 스택, 본문 스택)이 같은 프리셋은 한 서체 짝으로 합치고, 차이(비율·숫자 정렬·라벨 대소문자)는 역할 체계로 보낸다. */
 const legacyGroups = new Map();
@@ -44,6 +56,30 @@ const newFaces = [
   face('grotesk-system', '그로테스크 제목 + 시스템 본문', '운영 콘솔. 제목은 Helvetica 계열로 단단하고, 본문은 플랫폼 UI 서체라 표에서 가장 익숙하다.', {head: 'grotesk', text: 'system'}),
   face('geometric-system', '기하학 제목 + 시스템 본문', '분석 보드. 제목에만 원형 글자를 쓰고 숫자·본문은 중립 UI 서체로 둔다.', {head: 'geometric', text: 'system', webfonts: ['pretendard']}),
   face('humanist-system', '인문주의 제목 + 시스템 본문', '기술 문서. 제목은 따뜻하고 본문·코드 주변은 중립이다.', {head: 'humanist', text: 'system', webfonts: ['pretendard', 'jetbrainsMono']}),
+  face('baskerville-charter', '바스커빌 제목 + 차터 본문', '고전 에디토리얼. 바스커빌 표제의 우아함과 차터 본문의 안정성.', {head: 'baskerville', text: 'charter'}),
+  face('baskerville-system', '바스커빌 제목 + 시스템 본문', '모던 에디토리얼. 전통 세리프 표제와 현대적 시스템 본문의 조화.', {head: 'baskerville', text: 'system'}),
+  face('georgia-system', '조지아 제목 + 시스템 본문', '리테일 뱅킹. 화면용으로 설계된 조지아의 가독성과 시스템 본문의 실용성.', {head: 'georgia', text: 'system'}),
+  face('charter-system', '차터 제목 + 시스템 본문', '중립 프로덕트. 균형 잡힌 차터 표제와 중립 시스템 본문.', {head: 'charter', text: 'system'}),
+  face('slab-humanist', '슬랩 제목 + 인문주의 본문', '개발자 제품. 단단한 슬랩 세리프 표제와 따뜻한 휴머니스트 본문.', {head: 'slab', text: 'humanist'}),
+  face('condensed-grotesk', '압축 제목 + 그로테스크 본문', '시스템 모니터. 좁은 공간에 많은 글자를 담는 압축 표제와 단단한 본문.', {head: 'condensed', text: 'grotesk'}),
+  face('poster-grotesk', '포스터 제목 + 그로테스크 본문', '표현형 마케팅. 강렬한 임팩트 표제와 정돈된 그로테스크 본문.', {head: 'poster', text: 'grotesk'}),
+  face('rounded-system', '라운드 제목 + 시스템 본문', '소프트 프로덕트. 부드러운 라운드 표제와 익숙한 시스템 본문.', {head: 'rounded', text: 'system'}),
+  face('didone-system', '디도네 제목 + 시스템 본문', '매거진. 고대비 디도네 표제와 가독성 높은 시스템 본문.', {head: 'didone', text: 'system'}),
+  face('news-system', '뉴스 제목 + 시스템 본문', '친근한 모바일. 신문 스타일 표제와 직관적인 시스템 본문.', {head: 'news', text: 'system'}),
+  face('palatino-system', '팔라티노 제목 + 시스템 본문', '접근성 모바일. 넉넉한 글자폭의 팔라티노 표제와 시스템 본문.', {head: 'palatino', text: 'system'}),
+  face('geometric-grotesk', '기하학 제목 + 그로테스크 본문', '기하학 프로덕트. 원형 기하학 표제와 중립적 그로테스크 본문.', {head: 'geometric', text: 'grotesk'}),
+  face('grotesk-humanist', '그로테스크 제목 + 인문주의 본문', '기술 문서. 정돈된 그로테스크 표제와 장문 읽기에 편한 인문주의 본문.', {head: 'grotesk', text: 'humanist'}),
+  face('humanist-geometric', '인문주의 제목 + 기하학 본문', '인문주의 프로덕트. 따뜻한 휴머니스트 표제와 모던한 기하학 본문.', {head: 'humanist', text: 'geometric'}),
+  face('georgia-charter', '조지아 제목 + 차터 본문', '럭셔리 커머스. 프리미엄 감성의 정통 세리프 조합.', {head: 'georgia', text: 'charter'}),
+  face('iowan-humanist', '아이오완 제목 + 인문주의 본문', '학습 플랫폼. 클래식 서명 표제와 학습 집중도를 높이는 인문주의 본문.', {head: 'iowan', text: 'humanist'}),
+  face('palatino-palatino', '팔라티노 제목 + 팔라티노 본문', '학술 논문. 일관된 정통 북 세리프 전신 조합.', {head: 'palatino', text: 'palatino'}),
+  face('slab-grotesk', '슬랩 제목 + 그로테스크 본문', '인터랙티브 교육. 명확한 블록형 슬랩 표제와 그로테스크 본문.', {head: 'slab', text: 'grotesk'}),
+  face('condensed-humanist', '압축 제목 + 인문주의 본문', '레트로. 클래식 헤드라인 압축 표제와 인문주의 본문.', {head: 'condensed', text: 'humanist'}),
+  face('didone-charter', '디도네 제목 + 차터 본문', '믹스드 세리프. 우아한 모던 세리프 표제와 튼튼한 올드스타일 본문.', {head: 'didone', text: 'charter'}),
+  face('poster-humanist', '포스터 제목 + 인문주의 본문', '산업 유틸리티. 시인성 높은 포스터 표제와 인문주의 본문.', {head: 'poster', text: 'humanist'}),
+  face('charter-humanist', '차터 제목 + 인문주의 본문', '금융 터미널. 견고한 차터 표제와 가독성 높은 휴머니스트 본문.', {head: 'charter', text: 'humanist'}),
+  face('baskerville-humanist', '바스커빌 제목 + 인문주의 본문', '개발 모니터. 섬세한 바스커빌 표제와 휴머니스트 본문.', {head: 'baskerville', text: 'humanist'}),
+  face('georgia-humanist', '조지아 제목 + 인문주의 본문', '브루탈리스트. 굵은 조지아 표제와 휴머니스트 본문.', {head: 'georgia', text: 'humanist'}),
 ];
 const withWebfont = (f, extra) => (extra.length ? Object.freeze({...f, webfonts: [...new Set([...f.webfonts, ...extra])]}) : f);
 const EXTRA_WEBFONTS = {geometric: ['pretendard'], grotesk: ['pretendard'], humanist: ['pretendard']};
@@ -103,6 +139,60 @@ const DESIGNED = [
   scale('mobile-feed', '모바일 피드', {density: 'compact', concept: '목록·타임라인. 본문 15px 행간 1.55로 한 화면에 카드 여러 장. 숫자(좋아요·가격)는 18→20px.',
     display: [26, 32, 700, 1.25, -.015], heading: [20, 24, 700, 1.3, -.01], sub: [16, 17, 650, 1.35, 0], body: [15, 15, 400, 1.55, 0], small: [13, 13, 400, 1.4, 0],
     label: [12, 12, 600, 1.3, .02], caption: [12, 12, 450, 1.4, .01], numeric: [18, 20, 650, 1.2, -.01], code: [13, 13, 450, 1.55, 0]}),
+  scale('product-neutral', '중립 프로덕트', {density: 'comfortable', concept: '가장 균형 잡힌 중립적 본문과 위계',
+    display: [26, 34, 700, 1.22, -0.015], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 22, 600, 1.24, -0.005], code: [12, 13, 450, 1.55, 0]}),
+  scale('product-humanist', '인문주의 프로덕트', {density: 'comfortable', concept: '소비자 앱을 위한 친근하고 따뜻한 위계',
+    display: [28, 40, 700, 1.24, -0.01], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('product-geometric', '기하학 프로덕트', {density: 'comfortable', concept: '현대적인 SaaS와 기술 제품의 기하학적 리듬',
+    display: [28, 42, 700, 1.22, -0.015], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('product-soft', '소프트 프로덕트', {density: 'comfortable', concept: '부드러운 모서리와 어울리는 둥근 리듬',
+    display: [30, 44, 700, 1.24, -0.02], heading: [22, 28, 700, 1.32, -0.015], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [20, 24, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('enterprise-formal', '공식 엔터프라이즈', {density: 'compact', concept: '제도적 신뢰도와 절제된 위계의 엔터프라이즈 어드민',
+    display: [30, 52, 700, 1.22, -0.015], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.035], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('finance-numeric', '금융 숫자 정밀', {density: 'compact', concept: '수치와 테이블 중심의 금융 거래 위계',
+    display: [32, 46, 600, 1.22, -0.01], heading: [24, 30, 600, 1.32, -0.005], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [22, 28, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('finance-terminal', '마켓 터미널', {density: 'compact', concept: '실시간 시세와 다수의 호가를 담는 터미널 위계',
+    display: [32, 50, 700, 1.24, -0.02], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('finance-banking', '리테일 뱅킹', {density: 'comfortable', concept: '이체 내역과 계좌 정보를 명확히 구분하는 뱅킹 위계',
+    display: [32, 58, 600, 1.22, 0], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('finance-report', '임원 리포트', {density: 'spacious', concept: '자산 관리 및 투자 제안서의 품격 있는 리포트 위계',
+    display: [34, 60, 700, 1.22, -0.015], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.045], caption: [11, 11, 450, 1.4, 0.01], numeric: [20, 24, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('dev-console', '코드 콘솔', {density: 'compact', concept: '터미널과 CLI 콘솔의 고정폭 중심 리듬',
+    display: [36, 56, 600, 1.22, 0], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('dev-docs', '기술 레퍼런스', {density: 'compact', concept: 'API 명세와 코드 블록이 강조되는 기술 문서',
+    display: [36, 62, 700, 1.24, -0.02], heading: [22, 28, 700, 1.32, -0.015], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('dev-product', '개발자 제품', {density: 'comfortable', concept: '클라우드 콘솔 및 협업 도구의 개발자 친화적 위계',
+    display: [36, 70, 700, 1.22, -0.02], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.55, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('dev-monitor', '시스템 모니터', {density: 'compact', concept: '모니터링 대시보드와 경보 로그를 위한 고밀도 위계',
+    display: [26, 34, 700, 1.22, -0.015], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [20, 26, 700, 1.18, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('mkt-expressive', '표현형 브랜드', {density: 'spacious', concept: '시선을 사로잡는 대담한 포스터 표제',
+    display: [26, 36, 700, 1.24, -0.02], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('doc-magazine', '매거진 에디토리얼', {density: 'spacious', concept: '문화 매거진의 고대비 표제와 넉넉한 본문',
+    display: [28, 40, 700, 1.24, -0.01], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('doc-modern', '모던 에디토리얼', {density: 'comfortable', concept: '현대적 저널과 칼럼의 유려한 본문 리듬',
+    display: [28, 42, 700, 1.22, -0.015], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [20, 24, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('shop-luxury', '럭셔리 커머스', {density: 'spacious', concept: '명품 브랜드의 절제된 가격과 품격 있는 상품 설명',
+    display: [30, 44, 700, 1.24, -0.02], heading: [22, 28, 700, 1.32, -0.015], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [22, 28, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('shop-promo', '프로모션 커머스', {density: 'compact', concept: '특가 할인과 긴급 혜택이 돋보이는 프로모션 위계',
+    display: [30, 52, 700, 1.22, -0.015], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.035], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('mobile-friendly', '친근한 모바일', {density: 'comfortable', concept: '생활형 모바일 앱의 둥글고 부드러운 터치 위계',
+    display: [32, 46, 600, 1.22, -0.01], heading: [24, 30, 600, 1.32, -0.005], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('mobile-accessible', '접근성 모바일', {density: 'spacious', concept: '큰 터치 영역과 넉넉한 행간의 고가독성 모바일',
+    display: [32, 50, 700, 1.24, -0.02], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [20, 24, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('edu-learning', '학습 플랫폼', {density: 'comfortable', concept: '학습 진도와 개념 이해를 돕는 친근한 교육 위계',
+    display: [32, 58, 600, 1.22, 0], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('edu-academic', '학술 논문', {density: 'comfortable', concept: '대학 학술지 및 심층 연구 보고서의 정통 세리프 위계',
+    display: [34, 60, 700, 1.22, -0.015], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.045], caption: [11, 11, 450, 1.4, 0.01], numeric: [22, 28, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('edu-friendly', '인터랙티브 교육', {density: 'comfortable', concept: '퀴즈와 튜토리얼을 위한 시각적 교육 위계',
+    display: [36, 56, 600, 1.22, 0], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('exp-retro', '레트로 컴퓨팅', {density: 'comfortable', concept: '초기 개인용 컴퓨터의 향수를 담은 슬랩 세리프 위계',
+    display: [36, 62, 700, 1.24, -0.02], heading: [22, 28, 700, 1.32, -0.015], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('exp-brutalist', '브루탈리스트', {density: 'compact', concept: '규격화되지 않은 강한 대비와 압축된 타이포그래피',
+    display: [36, 70, 700, 1.22, -0.02], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 14, 400, 1.62, 0], small: [12, 12, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.015], caption: [11, 11, 450, 1.4, 0.01], numeric: [18, 20, 650, 1.22, -0.01], code: [12, 13, 450, 1.55, 0]}),
+  scale('exp-industrial', '산업 유틸리티', {density: 'compact', concept: '엔지니어링 장비 매뉴얼과 기술 스펙 시트의 견고한 위계',
+    display: [26, 36, 700, 1.24, -0.02], heading: [20, 26, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 15, 400, 1.55, 0], small: [12, 13, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.025], caption: [11, 11, 450, 1.4, 0.01], numeric: [16, 16, 500, 1.28, 0], code: [12, 13, 450, 1.55, 0]}),
+  scale('exp-mixed-serif', '믹스드 세리프', {density: 'spacious', concept: '극적 디도네 표제와 고전 세리프 본문의 실험적 결합',
+    display: [28, 38, 700, 1.22, -0.015], heading: [18, 22, 650, 1.32, -0.01], sub: [15, 17, 600, 1.36, 0], body: [14, 15, 400, 1.55, 0], small: [12, 13, 400, 1.45, 0], label: [12, 12, 600, 1.3, 0.055], caption: [11, 11, 450, 1.4, 0.01], numeric: [22, 28, 700, 1.16, -0.01], code: [12, 13, 450, 1.55, 0]}),
 ];
 
 // ---------- 구형 → 역할 체계 ----------

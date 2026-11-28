@@ -62,7 +62,7 @@ test('assemble: the default work dashboard returns matching three-candidate resu
   const viaMcpBlueprint = await mcp('assemble_design', {...request, include: ['blueprint']});
   assert.equal(viaMcpBlueprint.ok, true, JSON.stringify(viaMcpBlueprint.errors));
   assert.deepEqual(viaMcpBlueprint.value.candidates.map(c => c.value.blueprint), viaService.value.candidates.map(c => c.value.blueprint));
-  assert.equal(sha256(json(viaService)), 'e45f33c0fa6d801bec30f12c8d12e717e326e9fb48282a3f9c8d56aad4d146a8');
+  assert.equal(sha256(json(viaService)), '49a2f11ebd3de8b22d333c1ab9fee057381733b548396329997f8f79c5680a6d');
 });
 
 test('assemble: failures are the same diagnostics on every channel (REST answers 422 or 400, MCP isError)', async () => {

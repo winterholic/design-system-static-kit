@@ -11,7 +11,7 @@
 import {STACKS, TYPE_R2, HANGUL, ROLES} from '../typography.mjs';
 import {MATERIAL_TYPE_PRESETS, clampBounds} from '../materials/typography.mjs';
 import {TYPE_ROLES} from './contract.mjs';
-import {FACE_PAIRINGS, SERIF_STACKS, SCALE_ROLES, WEBFONTS, WEBFONT_LOADING, PLATFORM_FONTS, HANGUL_FAMILIES, resolveRoleScale} from './data/type-materials.mjs';
+import {FACE_PAIRINGS, SERIF_STACKS, SCALE_ROLES, TYPE_27_ROLES, WEBFONTS, WEBFONT_LOADING, PLATFORM_FONTS, HANGUL_FAMILIES, resolveRoleScale} from './data/type-materials.mjs';
 import {TYPE_FIT} from './data/type-systems.mjs';
 
 const strip = (prefix, id) => (typeof id === 'string' && id.startsWith(prefix + ':') ? id.slice(prefix.length + 1) : null);
@@ -20,6 +20,39 @@ const SYSTEM_IDS = ['tabular', 'proportional'];
 
 /** 타이포 작업이 소유하는 계산 관계 목록. 서체 짝 × 역할 체계 검사는 한 기록 안의 일이라 bindType 오류로 내고, 다른 종류와의 관계가 생기면 여기에 더한다. */
 export const TYPE_CHECKS = Object.freeze([]);
+
+export {TYPE_27_ROLES} from './data/type-materials.mjs';
+
+export const TYPE_ROLE_DEFINITIONS = Object.freeze({
+  'display-xl': Object.freeze({category: 'display', label: '초대형 표제', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '1~2줄 (최대 30자)', recommendedPlacement: '히어로 섹션, 마케팅 헤드라인, 메인 랜딩 포스터'}),
+  'display-lg': Object.freeze({category: 'display', label: '대형 표제', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '1~2줄 (최대 40자)', recommendedPlacement: '주요 섹션 타이틀, 대형 프로모션 헤드라인'}),
+  'display-md': Object.freeze({category: 'display', label: '중형 표제', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '2줄 이내 (최대 50자)', recommendedPlacement: '서브 섹션 타이틀, 모바일 히어로 표제'}),
+  'heading-1': Object.freeze({category: 'heading', label: '페이지 제목 (H1)', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '2줄 이내 (최대 60자)', recommendedPlacement: '페이지 최상단 단일 H1 제목, 문서 제목'}),
+  'heading-2': Object.freeze({category: 'heading', label: '영역 제목 (H2)', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '2줄 이내 (최대 60자)', recommendedPlacement: '주요 본문 영역, 섹션 구분 헤더'}),
+  'heading-3': Object.freeze({category: 'heading', label: '카드/그룹 제목 (H3)', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '1~2줄 (최대 50자)', recommendedPlacement: '카드 타이틀, 패널 상단 제목, 대시보드 위젯 헤더'}),
+  'heading-4': Object.freeze({category: 'heading', label: '소그룹 제목 (H4)', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '1~2줄 (최대 50자)', recommendedPlacement: '폼 그룹 헤더, 세부 리스트 그룹 타이틀'}),
+  'heading-5': Object.freeze({category: 'heading', label: '컴포넌트 제목 (H5)', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '1줄 권장 (최대 40자)', recommendedPlacement: '모달 헤더, 팝오버 헤더, 드롭다운 그룹명'}),
+  'heading-6': Object.freeze({category: 'heading', label: '최소 헤더 (H6)', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '1줄 권장 (최대 30자)', recommendedPlacement: '테이블 캡션 헤더, 메타데이터 그룹 소제목'}),
+  'body-lg': Object.freeze({category: 'body', label: '리드/서문 본문', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '줄당 45~65자 (최대 3줄 권장)', recommendedPlacement: '아티클 서문, 랜딩 요약문, 리드 단락'}),
+  'body-md': Object.freeze({category: 'body', label: '표준 본문', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '줄당 40~65자 (긴 글에 최적)', recommendedPlacement: '기본 단락 텍스트, 설명문, 아티클 본문'}),
+  'body-sm': Object.freeze({category: 'body', label: '소형 본문', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '줄당 35~55자', recommendedPlacement: '보조 설명, 안내 문구, 컴팩트 카드 본문'}),
+  'label-lg': Object.freeze({category: 'label', label: '대형 라벨', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~4단어)', recommendedPlacement: '폼 필드 주요 라벨, 대형 탭 라벨, 강조 컨트롤'}),
+  'label-md': Object.freeze({category: 'label', label: '표준 라벨', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~3단어)', recommendedPlacement: '컨트롤 라벨, 체크박스, 라디오, 스위치 텍스트'}),
+  'label-sm': Object.freeze({category: 'label', label: '소형 라벨', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~2단어)', recommendedPlacement: '보조 라벨, 폼 도움말 타이틀, 메타데이터 필드명'}),
+  'caption': Object.freeze({category: 'specialized', label: '캡션', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '1~2줄 (최대 60자)', recommendedPlacement: '이미지 설명, 저작권 표기, 각주'}),
+  'overline': Object.freeze({category: 'specialized', label: '오버라인', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~3단어)', recommendedPlacement: '제목 상단 카테고리 태그, 맥락 프리픽스'}),
+  'button-label': Object.freeze({category: 'control', label: '버튼 라벨', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~3단어)', recommendedPlacement: '액션 버튼, 다이얼로그 확인/취소 버튼'}),
+  'input-value': Object.freeze({category: 'control', label: '입력 필드 값', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 또는 텍스트에어리어 단락', recommendedPlacement: '텍스트 인풋, 셀렉트 박스 현재 선택값'}),
+  'table-header': Object.freeze({category: 'control', label: '테이블 헤더', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 권장 (열 너비 내)', recommendedPlacement: '데이터 그리드/테이블 th 요소, 정렬 트리거'}),
+  'table-cell': Object.freeze({category: 'control', label: '테이블 셀', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 권장 (줄바꿈 시 컴팩트 행간 유지)', recommendedPlacement: '데이터 그리드/테이블 td 요소'}),
+  'numeric': Object.freeze({category: 'specialized', label: '수치/통계', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (숫자 + 단위)', recommendedPlacement: '가격, 통계치, 수치 비교 표'}),
+  'kpi': Object.freeze({category: 'specialized', label: 'KPI 대형 수치', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (단독 수치)', recommendedPlacement: '대시보드 KPI 카드, 핵심 성과 지표 숫자'}),
+  'code': Object.freeze({category: 'specialized', label: '코드', wordBreak: 'break-all', lineBreak: 'normal', lengthPolicy: '코드 블록 또는 인라인 토큰', recommendedPlacement: '인라인 코드, 코드 블록, 터미널 출력'}),
+  'quote': Object.freeze({category: 'specialized', label: '인용구', wordBreak: 'keep-all', lineBreak: 'strict', lengthPolicy: '줄당 35~55자 (2~4줄 권장)', recommendedPlacement: '블록쿼트, 고객 추천사, 풀쿼트'}),
+  'navigation': Object.freeze({category: 'control', label: '내비게이션 링크', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~3단어)', recommendedPlacement: '헤더 GNB, 사이드바 LNB, 탭 네비게이션'}),
+  'badge': Object.freeze({category: 'control', label: '뱃지/태그', wordBreak: 'keep-all', lineBreak: 'normal', lengthPolicy: '단일 줄 (1~2단어)', recommendedPlacement: '상태 뱃지, 카운터 뱃지, 태그 칩'}),
+});
+
 
 // ---------- 크기 ----------
 /** 모바일 폭(390px)에서 모바일 px, 데스크톱 폭(1280px)에서 데스크톱 px가 되는 선형 보간. 두 값이 같으면 고정 px. */
@@ -62,33 +95,79 @@ const BANDS = Object.freeze({
 export function hangulViolations(roles, label = '') {
   const out = [], tag = label ? `${label}: ` : '';
   const at = (code, rule, role, message) => out.push({code, rule, role, message: tag + message});
-  for (const name of SCALE_ROLES) {
-    const r = roles[name]; if (!r) continue;
-    if (r.serif && r.weight > HANGUL.serifHangulWeightMax) at('P_TYPE_HANGUL_WEIGHT', 'serif-weight', name, `세리프 ${name} 굵기 ${r.weight}는 한글 세리프 굵기 상한 ${HANGUL.serifHangulWeightMax}를 넘습니다`);
+
+  // 1. 세리프 굵기 상한 (HANGUL.serifHangulWeightMax = 600)
+  for (const [name, r] of Object.entries(roles)) {
+    if (!r) continue;
+    if (r.serif && r.weight > HANGUL.serifHangulWeightMax) {
+      at('P_TYPE_HANGUL_WEIGHT', 'serif-weight', name, `세리프 ${name} 굵기 ${r.weight}는 한글 세리프 굵기 상한 ${HANGUL.serifHangulWeightMax}를 넘습니다`);
+    }
   }
-  for (const name of ['display', 'heading', 'sub']) {
-    const r = roles[name]; if (!r || r.serif || r.weight >= FLOORS.sansHeadingWeight) continue;
+
+  // 2. 산세리프 제목 굵기 바닥 (FLOORS.sansHeadingWeight = 600)
+  const sansHeadingRoles = ['display', 'display-xl', 'display-lg', 'display-md', 'heading', 'heading-1', 'heading-2', 'heading-3', 'sub'];
+  for (const name of sansHeadingRoles) {
+    const r = roles[name];
+    if (!r || r.serif || r.weight >= FLOORS.sansHeadingWeight) continue;
     at('P_CHECK_TYPE_HANGUL', 'sans-weight-floor', name, `산세리프 ${name} 굵기 ${r.weight}는 바닥 ${FLOORS.sansHeadingWeight} 아래라 본문보다 가늘어 보입니다`);
   }
-  for (const [name, b] of Object.entries(BANDS)) {
+
+  // 3. 자간 하한, 행간 하한, 크기 상한
+  const roleBands = {
+    display: BANDS.display, 'display-xl': BANDS.display, 'display-lg': BANDS.display, 'display-md': BANDS.display,
+    heading: BANDS.heading, 'heading-1': BANDS.heading, 'heading-2': BANDS.sub, 'heading-3': BANDS.sub, sub: BANDS.sub,
+  };
+  for (const [name, b] of Object.entries(roleBands)) {
     const r = roles[name]; if (!r) continue;
     if (r.trackingEm < b.track) at('P_CHECK_TYPE_HANGUL', 'tracking-floor', name, `${name} 자간 ${r.trackingEm}em가 한글 하한 ${b.track}em보다 좁습니다(굵은 한글 음절이 이웃과 닿습니다)`);
     if (r.lineHeight < b.lh) at('P_CHECK_TYPE_HANGUL', 'leading-floor', name, `${name} 행간 ${r.lineHeight}가 한글 하한 ${b.lh}보다 좁습니다`);
     const max = Math.max(r.sizePx.mobile, r.sizePx.desktop);
     if (max > b.cap) at('P_CHECK_TYPE_HANGUL', 'size-cap', name, `${name} 크기 ${max}px가 한글 상한 ${b.cap}px를 넘습니다`);
   }
-  const body = roles.body;
-  if (body && (body.lineHeight < HANGUL.body[0] || body.lineHeight > HANGUL.body[1])) at('P_CHECK_TYPE_HANGUL', 'body-leading', 'body', `본문 행간 ${body.lineHeight}가 한글 본문 범위 ${HANGUL.body.join('~')} 밖입니다`);
-  if (roles.label && roles.label.trackingEm > HANGUL.labelMax) at('P_CHECK_TYPE_HANGUL', 'label-tracking', 'label', `라벨 자간 ${roles.label.trackingEm}em가 상한 ${HANGUL.labelMax}em를 넘습니다(한글에는 대소문자가 없어 넓은 자간은 음절만 떼어 놓습니다)`);
-  for (const [name, floor] of Object.entries(FLOORS.px)) {
+
+  // 4. 본문 행간 대역
+  for (const name of ['body', 'body-lg', 'body-md']) {
+    const r = roles[name]; if (!r) continue;
+    if (r.lineHeight < HANGUL.body[0] || r.lineHeight > HANGUL.body[1]) {
+      at('P_CHECK_TYPE_HANGUL', 'body-leading', name, `본문 ${name} 행간 ${r.lineHeight}가 한글 본문 범위 ${HANGUL.body.join('~')} 밖입니다`);
+    }
+  }
+
+  // 5. 라벨 자간 상한
+  for (const name of ['label', 'label-lg', 'label-md', 'label-sm', 'overline', 'badge']) {
+    const r = roles[name]; if (!r) continue;
+    if (r.trackingEm > HANGUL.labelMax) {
+      at('P_CHECK_TYPE_HANGUL', 'label-tracking', name, `라벨 ${name} 자간 ${r.trackingEm}em가 상한 ${HANGUL.labelMax}em를 넘습니다(한글에는 대소문자가 없어 넓은 자간은 음절만 떼어 놓습니다)`);
+    }
+  }
+
+  // 6. 크기 바닥
+  const floorRolesPx = {
+    body: FLOORS.px.body, 'body-lg': FLOORS.px.body, 'body-md': FLOORS.px.body,
+    small: FLOORS.px.small, 'body-sm': FLOORS.px.small,
+    label: FLOORS.px.label, 'label-lg': FLOORS.px.label, 'label-md': FLOORS.px.label,
+    caption: FLOORS.px.caption, 'label-sm': FLOORS.px.caption, badge: FLOORS.px.caption,
+    code: FLOORS.px.code,
+  };
+  for (const [name, floor] of Object.entries(floorRolesPx)) {
     const r = roles[name]; if (!r) continue;
     const min = Math.min(r.sizePx.mobile, r.sizePx.desktop);
     if (min < floor) at('P_CHECK_TYPE_HANGUL', 'size-floor', name, `${name} 크기 ${min}px가 플랫폼 하한 ${floor}px보다 작습니다`);
   }
-  for (const [name, floor] of Object.entries(FLOORS.leading)) {
+
+  // 7. 행간 바닥
+  const floorRolesLh = {
+    small: FLOORS.leading.small, 'body-sm': FLOORS.leading.small,
+    caption: FLOORS.leading.caption, overline: FLOORS.leading.caption,
+    label: FLOORS.leading.label, 'label-lg': FLOORS.leading.label, 'label-md': FLOORS.leading.label, 'label-sm': FLOORS.leading.label,
+    'button-label': FLOORS.leading.label, badge: FLOORS.leading.label,
+    code: FLOORS.leading.code,
+  };
+  for (const [name, floor] of Object.entries(floorRolesLh)) {
     const r = roles[name]; if (!r) continue;
     if (r.lineHeight < floor) at('P_CHECK_TYPE_HANGUL', 'leading-floor', name, `${name} 행간 ${r.lineHeight}가 한글 하한 ${floor}보다 좁습니다`);
   }
+
   return out;
 }
 
@@ -137,6 +216,167 @@ export function webfontPlan(faceId) {
   return {required: false, loading: WEBFONT_LOADING, families: f.webfonts.map(k => ({...WEBFONTS[k]})), fallback: {heading: STACKS[f.head], body: STACKS[f.text], code: STACKS[f.code]}};
 }
 
+/**
+ * 27개 역할 타이포그래피 체계 해결(Display 3, Heading 6, Body 3, Label 3, Specialized/Controls 12).
+ * 시스템 ts와 서체 짝·역할 스케일로부터 27개 역할 전체의 {size, sizePx, weight, lineHeight, trackingEm, fontFamily, serif, case?}를 반환한다.
+ */
+export function resolve27Roles(ts, {webfonts = false} = {}) {
+  const legacyFace = TYPE_R2[strip('type-preset', ts.facePairing)], legacyScale = MATERIAL_TYPE_PRESETS[strip('type-role-preset', ts.roleScale)];
+  let baseRoles;
+  if (legacyFace && legacyScale) {
+    const heading = STACKS[legacyFace.head], body = STACKS[legacyFace.text];
+    const r = legacyScale.roles, px = legacyFace.body;
+    baseRoles = {
+      display: {...r.display, sizePx: parseSize(r.display.size), fontFamily: heading, serif: SERIF_STACK_VALUES.has(heading)},
+      heading: {...r.heading, sizePx: parseSize(r.heading.size), fontFamily: heading, serif: SERIF_STACK_VALUES.has(heading)},
+      sub: {size: `${Math.min(ROLES.sub.cap, Math.round(px * legacyFace.ratio))}px`, sizePx: {mobile: Math.min(ROLES.sub.cap, Math.round(px * legacyFace.ratio)), desktop: Math.min(ROLES.sub.cap, Math.round(px * legacyFace.ratio))}, weight: r.heading.weight, lineHeight: legacyFace.lh.sub, trackingEm: legacyFace.track.sub, fontFamily: heading, serif: SERIF_STACK_VALUES.has(heading)},
+      body: {...r.body, sizePx: parseSize(r.body.size), fontFamily: body, serif: SERIF_STACK_VALUES.has(body)},
+      small: {size: `${ROLES.small.fixed(px)}px`, sizePx: {mobile: ROLES.small.fixed(px), desktop: ROLES.small.fixed(px)}, weight: r.body.weight, lineHeight: legacyFace.lh.body, trackingEm: 0, fontFamily: body, serif: SERIF_STACK_VALUES.has(body)},
+      label: {...r.label, sizePx: parseSize(r.label.size), fontFamily: body, serif: SERIF_STACK_VALUES.has(body)},
+      caption: {...r.caption, sizePx: parseSize(r.caption.size), fontFamily: body, serif: SERIF_STACK_VALUES.has(body)},
+      numeric: {...r.numeric, sizePx: parseSize(r.numeric.size), fontFamily: body, serif: SERIF_STACK_VALUES.has(body)},
+      code: {size: r.body.size, sizePx: parseSize(r.body.size), weight: 450, lineHeight: 1.55, trackingEm: 0, fontFamily: STACKS.mono, serif: false},
+    };
+  } else {
+    const face = resolveFace(ts.facePairing);
+    const scale = resolveRoleScale(ts.roleScale);
+    if (!face || !scale) return null;
+    baseRoles = bindResolved(ts, face, scale, {webfonts});
+  }
+  const r = baseRoles;
+  const r27 = {};
+
+  // Display (3)
+  const dXLm = Math.min(HANGUL.caps.display, Math.round(r.display.sizePx.mobile * 1.15));
+  const dXLd = Math.min(HANGUL.caps.display, Math.round(r.display.sizePx.desktop * 1.15));
+  r27['display-xl'] = {
+    size: fluidPx(dXLm, dXLd), sizePx: {mobile: dXLm, desktop: dXLd}, weight: r.display.weight,
+    lineHeight: Math.max(1.15, Math.min(r.display.lineHeight, 1.25)), trackingEm: r.display.trackingEm,
+    fontFamily: r.display.fontFamily, serif: r.display.serif,
+  };
+  r27['display-lg'] = {...r.display};
+  const dMDm = Math.round((r.display.sizePx.mobile + r.heading.sizePx.mobile * 2) / 3);
+  const dMDd = Math.round((r.display.sizePx.desktop + r.heading.sizePx.desktop * 2) / 3);
+  r27['display-md'] = {
+    size: fluidPx(dMDm, dMDd), sizePx: {mobile: dMDm, desktop: dMDd}, weight: r.display.weight,
+    lineHeight: Math.min(1.3, Number((r.display.lineHeight + 0.05).toFixed(2))), trackingEm: r.display.trackingEm,
+    fontFamily: r.display.fontFamily, serif: r.display.serif,
+  };
+
+  // Heading (6)
+  r27['heading-1'] = {...r.heading};
+  r27['heading-2'] = {...r.sub};
+  const h3m = Math.max(r.body.sizePx.mobile + 2, Math.round(r.sub.sizePx.mobile * 0.9));
+  const h3d = Math.max(r.body.sizePx.desktop + 2, Math.round(r.sub.sizePx.desktop * 0.9));
+  r27['heading-3'] = {
+    size: fluidPx(h3m, h3d), sizePx: {mobile: h3m, desktop: h3d}, weight: r.sub.serif ? Math.min(600, r.sub.weight) : Math.max(600, r.sub.weight),
+    lineHeight: r.sub.lineHeight, trackingEm: r.sub.trackingEm,
+    fontFamily: r.heading.fontFamily, serif: r.heading.serif,
+  };
+  const h4m = Math.max(r.body.sizePx.mobile + 1, Math.round(r.sub.sizePx.mobile * 0.82));
+  const h4d = Math.max(r.body.sizePx.desktop + 1, Math.round(r.sub.sizePx.desktop * 0.82));
+  r27['heading-4'] = {
+    size: fluidPx(h4m, h4d), sizePx: {mobile: h4m, desktop: h4d}, weight: r.sub.serif ? Math.min(600, r.sub.weight) : Math.max(600, r.sub.weight),
+    lineHeight: 1.35, trackingEm: r.sub.trackingEm,
+    fontFamily: r.heading.fontFamily, serif: r.heading.serif,
+  };
+  const h5m = r.body.sizePx.mobile;
+  const h5d = r.body.sizePx.desktop;
+  r27['heading-5'] = {
+    size: fluidPx(h5m, h5d), sizePx: {mobile: h5m, desktop: h5d}, weight: r.sub.serif ? 600 : Math.max(600, r.sub.weight),
+    lineHeight: 1.4, trackingEm: 0,
+    fontFamily: r.heading.fontFamily, serif: r.heading.serif,
+  };
+  const h6m = Math.max(FLOORS.px.small, r.small.sizePx.mobile);
+  const h6d = Math.max(FLOORS.px.small, r.small.sizePx.desktop);
+  r27['heading-6'] = {
+    size: fluidPx(h6m, h6d), sizePx: {mobile: h6m, desktop: h6d}, weight: r.sub.serif ? 600 : Math.max(600, r.sub.weight),
+    lineHeight: 1.45, trackingEm: 0,
+    fontFamily: r.heading.fontFamily, serif: r.heading.serif,
+  };
+
+  // Body (3)
+  const bLGm = r.body.sizePx.mobile + 1;
+  const bLGd = r.body.sizePx.desktop + 2;
+  r27['body-lg'] = {
+    size: fluidPx(bLGm, bLGd), sizePx: {mobile: bLGm, desktop: bLGd}, weight: r.body.weight,
+    lineHeight: Math.min(HANGUL.body[1], Number((r.body.lineHeight + 0.05).toFixed(2))), trackingEm: r.body.trackingEm,
+    fontFamily: r.body.fontFamily, serif: r.body.serif,
+  };
+  r27['body-md'] = {...r.body};
+  r27['body-sm'] = {...r.small};
+
+  // Label (3)
+  r27['label-lg'] = {
+    size: fluidPx(r.body.sizePx.mobile, r.body.sizePx.desktop), sizePx: {...r.body.sizePx}, weight: r.label.weight,
+    lineHeight: r.label.lineHeight, trackingEm: r.label.trackingEm,
+    fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+  r27['label-md'] = {...r.label};
+  const lSMm = Math.max(FLOORS.px.caption, r.label.sizePx.mobile - 1);
+  const lSMd = Math.max(FLOORS.px.caption, r.label.sizePx.desktop - 1);
+  r27['label-sm'] = {
+    size: fluidPx(lSMm, lSMd), sizePx: {mobile: lSMm, desktop: lSMd}, weight: r.label.weight,
+    lineHeight: r.label.lineHeight, trackingEm: r.label.trackingEm,
+    fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+
+  // Specialized / Controls (12)
+  r27['caption'] = {...r.caption};
+  r27['overline'] = {
+    size: r.caption.size, sizePx: {...r.caption.sizePx}, weight: 600,
+    lineHeight: Math.max(FLOORS.leading.caption, 1.35),
+    trackingEm: Math.min(HANGUL.labelMax, Math.max(0.04, Number(((r.label.trackingEm || 0) + 0.04).toFixed(3)))),
+    case: 'upper', fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+  r27['button-label'] = {
+    size: r.label.size, sizePx: {...r.label.sizePx}, weight: Math.max(600, r.label.weight),
+    lineHeight: Math.max(FLOORS.leading.label, 1.25), trackingEm: r.label.trackingEm,
+    fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+  r27['input-value'] = {
+    size: r.body.size, sizePx: {...r.body.sizePx}, weight: 400,
+    lineHeight: 1.45, trackingEm: 0,
+    fontFamily: r.body.fontFamily, serif: r.body.serif,
+  };
+  r27['table-header'] = {
+    size: r.small.size, sizePx: {...r.small.sizePx}, weight: 600,
+    lineHeight: Math.max(FLOORS.leading.small, 1.4), trackingEm: r.label.trackingEm,
+    fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+  r27['table-cell'] = {
+    size: r.small.size, sizePx: {...r.small.sizePx}, weight: 400,
+    lineHeight: Math.max(FLOORS.leading.small, 1.4), trackingEm: 0,
+    fontFamily: r.body.fontFamily, serif: r.body.serif,
+  };
+  r27['numeric'] = {...r.numeric};
+  const kpiM = Math.max(28, r.numeric.sizePx.mobile);
+  const kpiD = Math.max(40, r.numeric.sizePx.desktop);
+  r27['kpi'] = {
+    size: fluidPx(kpiM, kpiD), sizePx: {mobile: kpiM, desktop: kpiD}, weight: 700,
+    lineHeight: 1.15, trackingEm: -0.02,
+    fontFamily: r.numeric.fontFamily, serif: r.numeric.serif,
+  };
+  r27['code'] = {...r.code};
+  r27['quote'] = {
+    size: fluidPx(bLGm, bLGd), sizePx: {mobile: bLGm, desktop: bLGd}, weight: 400,
+    lineHeight: 1.75, trackingEm: 0,
+    fontFamily: r.heading.fontFamily, serif: r.heading.serif,
+  };
+  r27['navigation'] = {
+    size: r.label.size, sizePx: {...r.label.sizePx}, weight: 500,
+    lineHeight: Math.max(FLOORS.leading.label, 1.3), trackingEm: r.label.trackingEm,
+    fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+  r27['badge'] = {
+    size: fluidPx(lSMm, lSMd), sizePx: {mobile: lSMm, desktop: lSMd}, weight: 600,
+    lineHeight: Math.max(FLOORS.leading.label, 1.25), trackingEm: r.label.trackingEm,
+    fontFamily: r.label.fontFamily, serif: r.label.serif,
+  };
+
+  return r27;
+}
+
 function bindResolved(ts, face, scale, {webfonts}) {
   const faceStack = n => STACKS[n];
   const keys = webfonts ? face.webfonts : [];
@@ -155,7 +395,8 @@ function bindResolved(ts, face, scale, {webfonts}) {
  * 서체 짝·역할 체계 id가 어느 표에도 없으면 ok:false. 한글 한도·위계를 어기면 errors에 담고 ok:false.
  * webfonts를 켜면 서체 짝이 가진 웹폰트를 스택 맨 앞에 붙이고 @font-face를 돌려준다. 기본(끔)은 시스템 서체만 쓰는 출력이다.
  */
-export function bindType(ts, {webfonts = false, legacyRoles = false} = {}) {
+export function bindType(ts, options = {}) {
+  const {webfonts = false, legacyRoles = false} = options;
   const errors = [];
   const legacyFace = TYPE_R2[strip('type-preset', ts.facePairing)], legacyScale = MATERIAL_TYPE_PRESETS[strip('type-role-preset', ts.roleScale)];
   const face = resolveFace(ts.facePairing);
@@ -167,7 +408,7 @@ export function bindType(ts, {webfonts = false, legacyRoles = false} = {}) {
   if (errors.length) return {ok: false, vars: null, roles: null, errors, webfontCSS: ''};
 
   const label = `${ts.facePairing} × ${ts.roleScale}`;
-  if (legacyFace && legacyScale) return bindLegacy(ts, legacyFace, legacyScale, label, legacyRoles);
+  if (legacyFace && legacyScale) return bindLegacy(ts, legacyFace, legacyScale, label, legacyRoles, options);
 
   const roles = bindResolved(ts, face, scale, {webfonts});
   errors.push(...hangulViolations(roles, label), ...hierarchyViolations(roles, label));
@@ -186,7 +427,19 @@ export function bindType(ts, {webfonts = false, legacyRoles = false} = {}) {
   for (const name of SCALE_ROLES) Object.assign(vars, {
     [`--kit-type-${name}-size`]: r[name].size, [`--kit-type-${name}-weight`]: String(r[name].weight), [`--kit-type-${name}-leading`]: String(r[name].lineHeight), [`--kit-type-${name}-tracking`]: `${r[name].trackingEm}em`,
   });
-  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing) : ''};
+  const roles27 = resolve27Roles(ts, {webfonts});
+  if (roles27) {
+    for (const name of TYPE_27_ROLES) {
+      const r27 = roles27[name];
+      if (r27) Object.assign(vars, {
+        [`--kit-type-${name}-size`]: r27.size,
+        [`--kit-type-${name}-weight`]: String(r27.weight),
+        [`--kit-type-${name}-leading`]: String(r27.lineHeight),
+        [`--kit-type-${name}-tracking`]: `${r27.trackingEm}em`,
+      });
+    }
+  }
+  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, roles27, errors, webfontCSS: webfonts ? webfontCSS(ts.facePairing) : ''};
 }
 
 /**
@@ -204,7 +457,7 @@ export const LEGACY_ROLE_DERIVATIONS = Object.freeze({
 const withLegacyRoles = (vars, on) => { if (on) for (const [role, css] of Object.entries(LEGACY_ROLE_DERIVATIONS)) vars[`--kit-t-${role}`] ??= css; return vars; };
 
 /** 구형 type-preset × type-role-preset. 2.6.0 엔진과 같은 값을 낸다(이 값은 바뀌지 않는다). 한도 검사만 새 규칙으로 넓혔다. */
-function bindLegacy(ts, face, scale, label, legacyRoles) {
+function bindLegacy(ts, face, scale, label, legacyRoles, options) {
   const errors = [];
   const heading = STACKS[face.head], body = STACKS[face.text];
   const r = scale.roles, px = face.body;
@@ -220,7 +473,19 @@ function bindLegacy(ts, face, scale, label, legacyRoles) {
   const vars = {'--kit-heading': heading, '--kit-font': body, '--kit-mono': STACKS.mono, '--kit-hw': String(roles.heading.weight), '--kit-line': String(roles.body.lineHeight)};
   for (const [role, names] of Object.entries(TYPE_ROLES)) for (const n of names) vars[n] = roles[role].size;
   vars['--kit-nums'] = ts.numerals === 'tabular' || face.nums === 'tabular' ? 'tabular-nums' : 'proportional-nums';
-  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, errors, webfontCSS: ''};
+  const roles27 = resolve27Roles(ts, {webfonts: false});
+  if (roles27 && options?.roles27Vars) {
+    for (const name of TYPE_27_ROLES) {
+      const r27 = roles27[name];
+      if (r27) Object.assign(vars, {
+        [`--kit-type-${name}-size`]: r27.size,
+        [`--kit-type-${name}-weight`]: String(r27.weight),
+        [`--kit-type-${name}-leading`]: String(r27.lineHeight),
+        [`--kit-type-${name}-tracking`]: `${r27.trackingEm}em`,
+      });
+    }
+  }
+  return {ok: errors.length === 0, vars: withLegacyRoles(vars, legacyRoles), roles, roles27, errors, webfontCSS: ''};
 }
 
 // ---------- 실제 대체 서체 ----------
@@ -283,3 +548,8 @@ export function scaleProfile(scale) {
     bodyLinesPer800: {mobile: line('mobile'), desktop: line('desktop')}, displayGrowth: R1(r.display.sizePx.desktop / r.display.sizePx.mobile), bodyPx: {...r.body.sizePx},
   };
 }
+
+const DIMS = {displayOverBody: .3, headingOverBody: .08, bodyLeading: .04, displayTracking: .004, bodyLines: .8, displayGrowth: .15, numericOverBody: .2};
+const vectorOf = scale => { const p = scaleProfile(scale); return {displayOverBody: p.displayOverBody, headingOverBody: p.headingOverBody, bodyLeading: p.bodyLeading, displayTracking: p.displayTracking, bodyLines: p.bodyLinesPer800.desktop, displayGrowth: p.displayGrowth, numericOverBody: p.numericOverBody}; };
+/** 두 체계가 의미 있게 다른 차원의 수. 차원: 본문 대비 제목·숫자 비율, 행간, 자간, 화면당 본문 줄 수(정보 밀도), 모바일→데스크톱 확대. */
+export const differingDims = (a, b) => { const x = vectorOf(a), y = vectorOf(b); return Object.keys(DIMS).filter(k => Math.abs(x[k] - y[k]) > DIMS[k]).length; };

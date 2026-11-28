@@ -291,6 +291,14 @@ function typeSystemPickScore(themeId, contexts, system) {
   return {score: purposeScore + faceScore + fitScore + pages.length * 4, usage, purposeIndex, face, faceScore, pages, fitScore};
 }
 
+const W2_TYPE_SYSTEM_IDS = new Set([
+  'type-system:work-console', 'type-system:work-insight', 'type-system:doc-essay', 'type-system:doc-handbook',
+  'type-system:doc-newsroom', 'type-system:mkt-atelier', 'type-system:mkt-brand', 'type-system:mkt-launch',
+  'type-system:shop-boutique', 'type-system:shop-catalog', 'type-system:mobile-app', 'type-system:mobile-feed',
+  'type-system:mobile-reader', 'type-system:tech-erp',
+]);
+const W2_TYPE_SYSTEMS = Object.freeze(TYPE_SYSTEMS.filter(s => W2_TYPE_SYSTEM_IDS.has(s.id)));
+
 function chooseTypeSystems(themeId, contexts, pool) {
   return pool.typeSystems.map(system => ({system, fit: typeSystemPickScore(themeId, contexts, system)}))
     .filter(row => row.fit)
@@ -298,7 +306,7 @@ function chooseTypeSystems(themeId, contexts, pool) {
     .slice(0, 2);
 }
 
-const STYLE_TYPE_SETUP = Object.freeze(Object.fromEntries(Object.keys(themes).map(id => [id, chooseTypeSystems(id, SETUP[id][0], {typeSystems: TYPE_SYSTEMS})])));
+const STYLE_TYPE_SETUP = Object.freeze(Object.fromEntries(Object.keys(themes).map(id => [id, chooseTypeSystems(id, SETUP[id][0], {typeSystems: W2_TYPE_SYSTEMS})])));
 export const STYLE_TYPE_PICKS = Object.freeze(Object.fromEntries(Object.entries(STYLE_TYPE_SETUP).map(([id, rows]) => [id, Object.freeze(rows.map(({system}) => system.id))])));
 const PALETTE_CHARACTER = {'static-kit': '범용 파랑 브랜드', 'slate-neutral': '차분한 청회색', 'sunrise-warm': '따뜻한 주황 계열', 'ocean-cool': '청록빛 파랑', 'forest-green': '초록 계열', 'clay-earth': '흙빛 갈색 계열', 'graphite-mono': '거의 무채색인 흑연', 'dusk-violet': '보라 계열', 'magenta-vivid': '선명한 분홍 계열'};
 const SET_CHARACTER = {standard: '중립 바탕에 브랜드 액션', tinted: '브랜드색이 도는 바탕', 'editorial-warm': '따뜻한 지면 톤', 'commerce-vivid': '액센트가 이끄는 상품 화면', 'premium-dark': '어두운 면을 먼저 설계한 프리미엄', 'high-contrast': '고대비 접근성', 'data-dense': '표·차트 판독용 밀도'};
@@ -308,7 +316,7 @@ const CURATED = {palette: [70, 30], subtokenSet: [70, 30]};
 const CURATED_TYPE = [15, 10];
 
 /** 관계 도출에 쓰는 재료 목록. 기본은 main에 등록된 data 배열이고, 시험에서 가짜 재료를 넣어 규칙을 직접 본다. */
-const POOL = Object.freeze({palettes: PALETTES, subtokenSets: SUBTOKEN_SETS, typeSystems: TYPE_SYSTEMS, families: FAMILIES});
+const POOL = Object.freeze({palettes: PALETTES, subtokenSets: SUBTOKEN_SETS, typeSystems: W2_TYPE_SYSTEMS, families: FAMILIES});
 
 /** 테마 한 개의 스타일 맥락 → 재료 관계 [{type, to, priority, reason}]. 같은 입력은 같은 목록이다. */
 export function deriveStyleRelations(themeId, contexts, pool = POOL) {
