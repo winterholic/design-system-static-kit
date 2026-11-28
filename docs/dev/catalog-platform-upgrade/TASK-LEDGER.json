@@ -2,16 +2,16 @@
   "version": "1.3.0",
   "updatedAt": "2026-11-29",
   "summary": {
-    "totalTasks": 51,
+    "totalTasks": 52,
     "byStatus": {
-      "Verified": 27,
+      "Verified": 30,
       "Implemented": 8,
-      "Pending": 13,
-      "In Progress": 2,
+      "Pending": 12,
+      "In Progress": 1,
       "Completed": 1
     },
     "byTrack": {
-      "Track G": 8,
+      "Track G": 9,
       "Track A": 4,
       "Track B": 4,
       "Track C": 3,
@@ -1493,7 +1493,7 @@
         "npm run coverage:materials:check",
         "node scripts/check-generated.mjs"
       ],
-      "commit": "cdf1216df",
+      "commit": "2455aceca",
       "status": "Verified",
       "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §42). 구현 그대로 typography-catalog e2e 3개 중 2개, materials 2개, catalog-lists 1개가 실패했고 제품 결함 8건을 교정했다: 버튼·입력·표를 dashboard 맥락 한 요청으로 묶어 27/41 시스템에서 조립 실패(D-1), 반응형 Specimen·Studio 링크가 목적 하나만 시험(D-2), 거부된 비교 칸의 Studio 링크(D-3), 웹폰트 선택 로딩 소실(D-4), 역할별 견본·숫자 정렬·코퍼스 소실(D-5), Materials 개요 진입 카드 소실(D-6), 커머스 비교 콘텐츠가 41개 모두 거부(D-7), 360px 넘침·끝줄 고아(D-8). 결함별 RED→GREEN을 확인했고 e2e 30개(390·1280px)와 단위 시험 4개를 더했다. 줄어든 기존 확인: 옛 프리셋의 컨트롤 크기 4단계 높이 비교와 Studio 편집기 typeRoles 진입은 새 41개 시스템 모델에 대응이 없어 복원하지 않았다(코퍼스 13개는 복원). 남은 한계: 어느 목적도 받지 않는 시스템 5개(doc-edu-friendly, mobile-friendly, work-exp-brutalist, work-product-humanist, work-product-soft)는 Studio 링크 없이 Core 이유를 보인다(Track A·C), 표 컨트롤은 20/41만 조립된다(Core 규칙). Next 번들이 Core standalone의 인라인 <script> 본문을 압축한다. 2.1.0 고정 해시·기본 2.4.0·site/v1 출력은 수정하지 않았다.",
       "crossTrackFiles": [

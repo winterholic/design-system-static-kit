@@ -2716,7 +2716,7 @@ exit 0
 |---|---|
 | `npm run typecheck --workspace apps/web` | 오류 없음 |
 | `node --test tests/platform-type-presentation.test.mjs tests/platform-material-selection.test.mjs` | `tests 13, pass 13, fail 0` |
-| `WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- typography-catalog.spec.mjs materials.spec.mjs catalog-lists.spec.mjs material-explorer-studio.spec.mjs --repeat-each=2` | 타이포·F3·catalog-lists 전부 통과, 실패는 `materials.spec.mjs` "기초 재료" 2개(Foundations 개편, 42.6) |
+| `WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- typography-catalog.spec.mjs materials.spec.mjs catalog-lists.spec.mjs material-explorer-studio.spec.mjs --repeat-each=2` | 타이포·F3·catalog-lists 전부 통과, 실패는 `materials.spec.mjs` "기초 재료" 2개(Foundations 개편, 43.6) |
 | `... test:e2e -- layout-quality.spec.mjs typography-catalog.spec.mjs` | `typography-catalog` 30개 통과. 공개 페이지 전수(385쪽)의 미면제 발견 13건은 모두 `/materials/foundations`의 `CELL_TOKEN_BREAK`(다른 작업자 영역). 타이포 페이지 발견 0 |
 | `npm run verify` | exit 0. `tests 1279, pass 1279, fail 0, skipped 0`, 마지막 줄 `REPRODUCIBLE: 5381 generated files match a fresh build byte for byte.` |
 | `npm run coverage:materials:check` | `MANIFEST MATCH ... (1540 materials, 406 requirements)` |
