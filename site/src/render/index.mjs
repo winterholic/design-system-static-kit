@@ -60,5 +60,5 @@ export function controlRuntime(b) {
   return runtimes.filter(([type]) => used.has(type))
     .map(([, selector, runtime]) => mountControl(selector, runtime)).join('')
     + (atLeast(b.catalogVersion, '2.7.0') && used.has('input-control')
-      ? mountControl('.pf-native-tags,.pf-native-range-pair[data-range-slider],.pf-native-file[data-file-drop]', formControlRuntime) : '');
+      ? mountControl('.pf-native-tags,.pf-native-range-pair[data-range-slider],.pf-native-range-pair[data-date-range],.pf-native-options[data-checkbox-group],.pf-native-file[data-file-drop]', formControlRuntime) : '');
 }

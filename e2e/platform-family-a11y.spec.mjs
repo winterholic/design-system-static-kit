@@ -58,7 +58,14 @@ const IN_PAGE = () => {
   };
   const visible = el => { const r = el.getBoundingClientRect(), cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden'; };
   const tabbables = () => [...document.querySelectorAll('a[href],button,input:not([type=hidden]),select,textarea,summary,[tabindex]')]
-    .filter(el => !el.disabled && el.tabIndex >= 0 && visible(el) && !el.closest('[inert],[hidden]'));
+    .filter(el => !el.disabled && el.tabIndex >= 0 && visible(el) && !el.closest('[inert],[hidden]'))
+    // 네이티브 라디오는 같은 name 묶음에서 Tab 정지가 하나뿐이다(선택된 것, 없으면 첫 번째). 나머지는 방향키로 옮긴다.
+    .filter(el => {
+      if (el.type !== 'radio' || !el.name) return true;
+      const group = [...document.querySelectorAll('input[type=radio]')].filter(r => r.name === el.name && r.form === el.form && !r.disabled && visible(r));
+      const checked = group.find(r => r.checked);
+      return el === (checked ?? group[0]);
+    });
   return {nameOf, tabbables, visible};
 };
 
@@ -77,8 +84,14 @@ async function walkTab(page) {
   }
   const expected = await page.evaluate(`(${IN_PAGE})().tabbables().map(el => ({name: (${IN_PAGE})().nameOf(el), tag: el.tagName.toLowerCase()}))`);
   const seen = [];
+  await page.evaluate(() => { window.__walkPrev = null; });
   for (let i = 0; i < expected.length; i += 1) {
-    await page.keyboard.press('Tab');
+    // 날짜·시간 입력은 칸(월·일·연 등)마다 Tab 정지가 있어 한 컨트롤이 여러 번 포커스를 받는다. 같은 컨트롤 안의 칸 이동은 한 정지로 센다.
+    for (let step = 0; step < 8; step += 1) {
+      await page.keyboard.press('Tab');
+      const again = await page.evaluate(() => { const el = document.activeElement, same = window.__walkPrev === el && ['date', 'time', 'datetime-local', 'month', 'week'].includes(el.type); window.__walkPrev = el; return same; });
+      if (!again) break;
+    }
     seen.push(await page.evaluate(`(() => {
       const el = document.activeElement, io = (${IN_PAGE})(), cs = getComputedStyle(el);
       // 스크롤 영역 안에서 포커스가 스크롤을 일으키므로, 위치는 모든 스크롤 조상을 0으로 돌려 잰다(고정 머리글 포함).
