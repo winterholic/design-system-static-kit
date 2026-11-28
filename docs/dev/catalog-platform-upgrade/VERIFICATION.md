@@ -1594,7 +1594,7 @@ $ shasum -a 256 docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
 ```text
 $ time npm run coverage:materials:check
 MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1495 materials, 406 requirements)
-35.055s elapsed
+45.533s elapsed (latest `origin/main` 9ba7fcd79)
 
 $ node --test scripts/platform/platform-baseline-perf.test.mjs
 tests 5 / pass 5 / fail 0
