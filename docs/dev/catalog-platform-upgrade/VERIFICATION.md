@@ -1998,3 +1998,50 @@ $ npm run verify
 REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.
 ```
 Codex에서 막혔던 다섯 건(위 ✔ 다섯 줄)은 이 환경에서 통과한다. `combos.spec`의 ENOENT 실패 한 건은 같은 `test-results` 폴더를 두 Playwright 프로세스가 동시에 쓴 아티팩트 충돌이었고 단독 재실행은 통과했다.
+
+## 33. TASK-TRD-O 모바일 패턴 10행 구현·Manifest 갱신 (rebase 기준 `cd21f6c99`, 구현 `cb59e7560`, 2026-11-29)
+
+### 33.1 O 10행 지원 경로와 분류
+
+push 전 rebase 뒤 `node scripts/generate-material-coverage.mjs`로 Manifest를 다시 만들었다. 전체 406 요구행 중 18행은 O 바깥에서 아직 missing이다. O는 **direct 8, variant 2, schema 0, part-of 0, missing 0**이며 모든 행이 `catalog-visible`이다.
+
+| O 행 | 분류 | 근거 재료와 경로 |
+|---|---|---|
+| Mobile Header | direct | `purpose:navigation.topbar` |
+| Bottom Navigation | direct | `purpose:navigation.bottom`; E와 같은 이름의 요구 행을 유지하며 재료 공유 |
+| Action Sheet | direct | `purpose:mobile.action-sheet` |
+| Mobile List Cell | direct | `purpose:mobile.list-cell` |
+| Mobile Search | variant | `purpose:form.search`, `{layout: "stacked"}` |
+| Mobile Tab Bar | variant | `purpose:navigation.bottom`, `{position: "sticky"}`; Bottom Navigation 재료 공유 |
+| Full-screen Dialog | direct | `purpose:mobile.full-screen-dialog` |
+| Mobile Filter Panel | direct | `purpose:mobile.filter-panel` |
+| Sticky Bottom Action | direct | `purpose:mobile.sticky-action` |
+| Safe-area Container | direct | `purpose:mobile.safe-area` |
+
+### 33.2 계약 시험과 채널
+
+O 집중 계약은 선언 prop 출력 변화, 문자열 이스케이프, 잘못된 값 거부, Blueprint JSON 왕복, dialog 키보드 동작, Core·REST·MCP 바이트 동일성을 확인했다. 기존 `size` prop 출력을 medium으로 고정해 `declared button size changes its actual output` 단언이 실패하는 RED를 확인하고 원상 복구 후 통과했다. 집중 시험은 146/146, 전체 비브라우저 Node 시험은 최종 rebase 기준 1258/1258 통과했다.
+
+### 33.3 390px·1280px 관측과 미실행
+
+앞선 Ttakkari 브라우저 수동 관측에서 Action Sheet와 Full-screen Dialog는 모달로 열리고 Escape 뒤 트리거에 포커스가 돌아왔다. Filter Panel은 검색 조건에 따라 live status가 `1개 조건 표시`로 바뀌고 Escape로 닫혔다. 검색 입력은 390px·1280px에서 값을 받았다. Safe-area 버튼은 두 폭 모두 44px이며 컨테이너 안에 놓였다. 본문 끝과 Sticky Bottom Action 사이 간격은 390px에서 42px, 1280px에서 54px였다.
+
+`e2e/platform-mobile-patterns.spec.mjs` 자동 Chromium E2E는 **사용자 지시에 따라 미실행**이다. 클릭 뒤 `aria-current` 전환과 Tab/Shift+Tab 포커스 순환은 **확정하지 못했다**. 후속 Claude 독립 브라우저 검증이 남았다. 앞선 Chromium 시작 오류는 Codex에서 `MachPortRendezvousServer: Permission denied (1100)` 및 `SIGTRAP`이었으며 이번 작업에서는 Chromium·Playwright를 재실행하지 않았다.
+
+### 33.4 Manifest·정적 산출물·호환 불변
+
+```text
+$ node scripts/generate-material-coverage.mjs
+Materials: 1540, Requirements: 406, Missing requirements: 18
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)
+
+$ node docs/platform/evidence/components/build.mjs --check
+components.md 분류표가 최신입니다.
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
+```
+
+`site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `origin/main` 대비 변경이 없다. 2.1.0 고정 전체 출력 byte-for-byte 시험과 기본 2.4.0 opt-in 비브라우저 시험도 통과했다.

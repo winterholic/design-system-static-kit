@@ -1,12 +1,12 @@
 {
   "version": "1.3.0",
-  "updatedAt": "2026-11-28",
+  "updatedAt": "2026-11-29",
   "summary": {
     "totalTasks": 49,
     "byStatus": {
       "Verified": 22,
-      "Implemented": 9,
-      "Pending": 15,
+      "Implemented": 10,
+      "Pending": 14,
       "In Progress": 2,
       "Completed": 1
     },
@@ -5064,21 +5064,737 @@
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+        "docs/evidence/platform/baseline.json",
+        "docs/platform/components.md",
+        "e2e/platform-mobile-patterns.spec.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "site/catalog-chunks/all-1.json",
+        "site/catalog-chunks/all-10.json",
+        "site/catalog-chunks/all-11.json",
+        "site/catalog-chunks/all-12.json",
+        "site/catalog-chunks/all-13.json",
+        "site/catalog-chunks/all-14.json",
+        "site/catalog-chunks/all-15.json",
+        "site/catalog-chunks/all-16.json",
+        "site/catalog-chunks/all-17.json",
+        "site/catalog-chunks/all-18.json",
+        "site/catalog-chunks/all-19.json",
+        "site/catalog-chunks/all-2.json",
+        "site/catalog-chunks/all-20.json",
+        "site/catalog-chunks/all-21.json",
+        "site/catalog-chunks/all-22.json",
+        "site/catalog-chunks/all-23.json",
+        "site/catalog-chunks/all-24.json",
+        "site/catalog-chunks/all-3.json",
+        "site/catalog-chunks/all-4.json",
+        "site/catalog-chunks/all-5.json",
+        "site/catalog-chunks/all-6.json",
+        "site/catalog-chunks/all-7.json",
+        "site/catalog-chunks/all-8.json",
+        "site/catalog-chunks/all-9.json",
+        "site/catalog-chunks/inputs-1.json",
+        "site/catalog-chunks/mobile-1.json",
+        "site/catalog-index.json",
+        "site/gallery/index.html",
+        "site/previews/00e56ace0197cc2a48021389ef019f81.svg",
+        "site/previews/01a7392bb9d7c0951ecc4936e282a86c.svg",
+        "site/previews/08a3c227c26d2a08c10e34f77e328eb4.svg",
+        "site/previews/13b60fdf60ea589fe780c208135b9125.svg",
+        "site/previews/13da2c2f51c4449d6d0ea5b322028e53.svg",
+        "site/previews/170023b1bd92aceeda36c23d8e2ad846.svg",
+        "site/previews/1c03915dcf98570bf51c62a86c856e97.svg",
+        "site/previews/26319e6ec6d15f88682bb0b95c31e7fc.svg",
+        "site/previews/26860486aa380a208712ed20b67b254b.svg",
+        "site/previews/2854faad5a21c6deb9d8ea8bb9a6e7a2.svg",
+        "site/previews/28b50732c4b0ad9cfc6c7ba1cd8b8dcf.svg",
+        "site/previews/2b700db65d22c35805c25dccd90c2fef.svg",
+        "site/previews/2ed4893f44e843be905de931a7af2915.svg",
+        "site/previews/3546b922d4b97e0d3665943637250691.svg",
+        "site/previews/3ab6eef20d56062a2fb62ba2cfe780bb.svg",
+        "site/previews/3c970e9acef84908e579e236233b8d89.svg",
+        "site/previews/3e5635b591fe9477fe15557468cde9bd.svg",
+        "site/previews/4492f713db753b99f5869931b0cf42ae.svg",
+        "site/previews/4560476940f17c5fe5b43df13909cc32.svg",
+        "site/previews/471fd672311fca4271fa02279b3be874.svg",
+        "site/previews/4ccffd3578aa5ddb53b7e4e7c1281d85.svg",
+        "site/previews/5255cc7223e7ed3fe357551117bf52c5.svg",
+        "site/previews/530f796b9efa4b23eface522cfe4ab34.svg",
+        "site/previews/61602dadf4602783664b54f41b5410a9.svg",
+        "site/previews/638573cb5d0718d204f6f489d455134b.svg",
+        "site/previews/6658b7197719233d89bc014c7c7700b6.svg",
+        "site/previews/6a3c8e878b79f4de14f5839d5d1eca91.svg",
+        "site/previews/6f6bf593a95a841d3d4dadfdff9d4aed.svg",
+        "site/previews/730cc460fc32dccfcff072812010f209.svg",
+        "site/previews/7657f5951392a8642d7e811198b13dfe.svg",
+        "site/previews/7f11b835b4972dd5b18cda8defc4f490.svg",
+        "site/previews/836f4ed2c54e52e444c74d26977a8966.svg",
+        "site/previews/855925b3758b1fab43b400749176470a.svg",
+        "site/previews/904d121b57677c8f9b0018975dd10124.svg",
+        "site/previews/923cc486232ae38e309c69b2e9f7d766.svg",
+        "site/previews/92833d608676730c043fda9c07308a2b.svg",
+        "site/previews/9590ded6fc5eed47e59a6b164811c6d8.svg",
+        "site/previews/9c1ef8bea0a8fbc8dcf6e010ddc451bf.svg",
+        "site/previews/9c9f69e425833dc21b6029c870ec2a04.svg",
+        "site/previews/a5cbeec4892ebaf40402682d3ff79f21.svg",
+        "site/previews/a674917c3167b6a2835ca3026572b4c5.svg",
+        "site/previews/a7f2bd5ab0f1015923bb3428667def05.svg",
+        "site/previews/b08a116dae6e655923b485104c3a21cf.svg",
+        "site/previews/b439b5e23da3390804d33885868fa6aa.svg",
+        "site/previews/b5a220f543da6ad58aea2b5666453f66.svg",
+        "site/previews/b708010b7fd6e6c2ca1b57548c8280e1.svg",
+        "site/previews/bff96c40a53996374db4e5b50aa615dd.svg",
+        "site/previews/c016ca7f3b778cdccc19c1fc8263bfe4.svg",
+        "site/previews/c73d6db4be59abd397ddc5c22141667a.svg",
+        "site/previews/c8a473c626b0e213491006289b138efe.svg",
+        "site/previews/ca77a2356272b2ba8bee7c0d1625b034.svg",
+        "site/previews/cac46ad6893cdb2ee87b21006963f27b.svg",
+        "site/previews/d0061ff17959a1826e7c7b70101a05a4.svg",
+        "site/previews/d0a904896ced4af68b3e5ae755f23b65.svg",
+        "site/previews/d103ba6a487d40e510120f894dfe60f5.svg",
+        "site/previews/d1b26097cbee52a50e370bdfb4996924.svg",
+        "site/previews/d2acdfc166ff90faf79cd39b1812d393.svg",
+        "site/previews/d5faf20da1391c7a6d482376acc0c2ca.svg",
+        "site/previews/d887e01afde9b7db28810a286021ddc2.svg",
+        "site/previews/da1beb93dd84933d73832b993dffb809.svg",
+        "site/previews/dddf42be929c2a26bc00e3e205eb6c33.svg",
+        "site/previews/deeb96e3268b6df9f683b49c757f7aad.svg",
+        "site/previews/df5af0afcb552e729d7ecdb5cb4b391e.svg",
+        "site/previews/e04eddd3dfe79582ae01c8cbf108d4d4.svg",
+        "site/previews/e0db81c0cc7f2137dc215200b0ddb226.svg",
+        "site/previews/e0f26aa9f3bbb8b068a84a1c9f87b907.svg",
+        "site/previews/e245e922673a3dd3b3971863de86816f.svg",
+        "site/previews/ea3ede1d82aed7a631d9a31466e7b723.svg",
+        "site/previews/ead0624b4c8f3c032ad97e77b34d8a5e.svg",
+        "site/previews/ebd9a2a0c1f0bdd4e21e643c2d636c27.svg",
+        "site/previews/f5fa13e103b54ec3bc4247f7b08aa931.svg",
+        "site/previews/f9520d9543ea78e8343b4691babf12e5.svg",
+        "site/previews/previews-data.json",
+        "site/search-index.json",
+        "site/src/platform/families/contracts.mjs",
+        "site/src/platform/families/index.mjs",
+        "site/src/platform/families/inventory.mjs",
+        "site/src/platform/families/kit.mjs",
+        "site/src/platform/families/mobile.mjs",
+        "site/src/platform/render.mjs",
+        "site/src/service/platform-components.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/platform/families/kit.mjs",
+        "src/platform/families/mobile.mjs",
+        "src/platform/render.mjs",
+        "src/service/platform-components.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-mobile.test.mjs",
+        "tests/platform-service-channels.test.mjs"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
-      "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null,
+      "tests": [
+        "O 집중 계약·접근성·채널 시험 146/146",
+        "전체 비브라우저 Node 시험 1258/1258 (Chromium 시험 이름 제외)",
+        "npm run coverage:materials:check (1540 materials/406 requirements)",
+        "node docs/platform/evidence/components/build.mjs --check",
+        "node scripts/check-generated.mjs (5379 files)",
+        "e2e/platform-mobile-patterns.spec.mjs 미실행 (사용자 지시)"
+      ],
+      "commit": "cb59e7560, a1b8c4bd3",
+      "status": "Implemented",
+      "unresolvedIssues": "자동 Chromium E2E는 사용자 지시에 따라 미실행. aria-current의 클릭 후 전환과 Tab/Shift+Tab 순환은 확정하지 못해 후속 Claude 독립 브라우저 검증이 남았다.",
       "crossTrackFiles": [
-        {"file": "src/service/platform-components.mjs", "owner": "Track A", "reason": "모바일 overlay 네이티브 dialog 여닫기 런타임을 공용 assembleComponents 출력에 연결"},
-        {"file": "src/platform/render.mjs", "owner": "Track A", "reason": "모바일 dialog 런타임을 Blueprint 컴파일 출력에도 연결"},
-        {"file": "scripts/generate-material-coverage.mjs", "owner": "Track G", "reason": "O 요구 10행의 direct·variant 매핑 근거를 레지스트리 재료에 연결"},
-        {"file": "e2e/platform-mobile-patterns.spec.mjs", "owner": "Track G", "reason": "요청된 390px·1280px 모바일 동작 E2E를 추가"},
-        {"file": "tests/platform-service-channels.test.mjs", "owner": "Track G", "reason": "모바일 패턴 서비스·REST·MCP 동등성 대조 추가"},
-        {"file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json", "owner": "Track G", "reason": "O 10행 실측 출력·상태·coverage 증거 재생성"},
-        {"file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md", "owner": "Track G", "reason": "최신 실행 결과와 브라우저 실행 한계를 기록"},
-        {"file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json", "owner": "Track G", "reason": "작업 파일·시험·상태와 교차 트랙 허가를 기록"}
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "owner": "Track G",
+          "reason": "O 10행 실측 출력·상태·coverage 증거 재생성"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "owner": "Track G",
+          "reason": "작업 파일·시험·상태와 교차 트랙 허가를 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+          "owner": "Track G",
+          "reason": "최신 실행 결과와 브라우저 실행 한계를 기록"
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "owner": "Track G",
+          "reason": "모바일 purpose family 등록 수 125를 플랫폼 기준선에 반영"
+        },
+        {
+          "file": "e2e/platform-mobile-patterns.spec.mjs",
+          "owner": "Track G",
+          "reason": "요청된 390px·1280px 모바일 동작 E2E를 추가"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "O 요구 10행의 direct·variant 매핑 근거를 레지스트리 재료에 연결"
+        },
+        {
+          "file": "site/catalog-chunks/all-1.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-10.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-11.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-12.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-13.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-14.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-15.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-16.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-17.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-18.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-19.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-2.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-20.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-21.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-22.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-23.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-24.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-3.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-4.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-5.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-6.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-7.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-8.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/all-9.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/inputs-1.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-chunks/mobile-1.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/catalog-index.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/gallery/index.html",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/00e56ace0197cc2a48021389ef019f81.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/01a7392bb9d7c0951ecc4936e282a86c.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/08a3c227c26d2a08c10e34f77e328eb4.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/13b60fdf60ea589fe780c208135b9125.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/13da2c2f51c4449d6d0ea5b322028e53.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/170023b1bd92aceeda36c23d8e2ad846.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/1c03915dcf98570bf51c62a86c856e97.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/26319e6ec6d15f88682bb0b95c31e7fc.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/26860486aa380a208712ed20b67b254b.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/2854faad5a21c6deb9d8ea8bb9a6e7a2.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/28b50732c4b0ad9cfc6c7ba1cd8b8dcf.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/2b700db65d22c35805c25dccd90c2fef.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/2ed4893f44e843be905de931a7af2915.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/3546b922d4b97e0d3665943637250691.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/3ab6eef20d56062a2fb62ba2cfe780bb.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/3c970e9acef84908e579e236233b8d89.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/3e5635b591fe9477fe15557468cde9bd.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/4492f713db753b99f5869931b0cf42ae.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/4560476940f17c5fe5b43df13909cc32.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/471fd672311fca4271fa02279b3be874.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/4ccffd3578aa5ddb53b7e4e7c1281d85.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/5255cc7223e7ed3fe357551117bf52c5.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/530f796b9efa4b23eface522cfe4ab34.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/61602dadf4602783664b54f41b5410a9.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/638573cb5d0718d204f6f489d455134b.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/6658b7197719233d89bc014c7c7700b6.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/6a3c8e878b79f4de14f5839d5d1eca91.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/6f6bf593a95a841d3d4dadfdff9d4aed.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/730cc460fc32dccfcff072812010f209.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/7657f5951392a8642d7e811198b13dfe.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/7f11b835b4972dd5b18cda8defc4f490.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/836f4ed2c54e52e444c74d26977a8966.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/855925b3758b1fab43b400749176470a.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/904d121b57677c8f9b0018975dd10124.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/923cc486232ae38e309c69b2e9f7d766.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/92833d608676730c043fda9c07308a2b.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/9590ded6fc5eed47e59a6b164811c6d8.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/9c1ef8bea0a8fbc8dcf6e010ddc451bf.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/9c9f69e425833dc21b6029c870ec2a04.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/a5cbeec4892ebaf40402682d3ff79f21.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/a674917c3167b6a2835ca3026572b4c5.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/a7f2bd5ab0f1015923bb3428667def05.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/b08a116dae6e655923b485104c3a21cf.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/b439b5e23da3390804d33885868fa6aa.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/b5a220f543da6ad58aea2b5666453f66.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/b708010b7fd6e6c2ca1b57548c8280e1.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/bff96c40a53996374db4e5b50aa615dd.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/c016ca7f3b778cdccc19c1fc8263bfe4.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/c73d6db4be59abd397ddc5c22141667a.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/c8a473c626b0e213491006289b138efe.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/ca77a2356272b2ba8bee7c0d1625b034.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/cac46ad6893cdb2ee87b21006963f27b.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d0061ff17959a1826e7c7b70101a05a4.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d0a904896ced4af68b3e5ae755f23b65.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d103ba6a487d40e510120f894dfe60f5.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d1b26097cbee52a50e370bdfb4996924.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d2acdfc166ff90faf79cd39b1812d393.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d5faf20da1391c7a6d482376acc0c2ca.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/d887e01afde9b7db28810a286021ddc2.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/da1beb93dd84933d73832b993dffb809.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/dddf42be929c2a26bc00e3e205eb6c33.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/deeb96e3268b6df9f683b49c757f7aad.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/df5af0afcb552e729d7ecdb5cb4b391e.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/e04eddd3dfe79582ae01c8cbf108d4d4.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/e0db81c0cc7f2137dc215200b0ddb226.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/e0f26aa9f3bbb8b068a84a1c9f87b907.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/e245e922673a3dd3b3971863de86816f.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/ea3ede1d82aed7a631d9a31466e7b723.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/ead0624b4c8f3c032ad97e77b34d8a5e.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/ebd9a2a0c1f0bdd4e21e643c2d636c27.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/f5fa13e103b54ec3bc4247f7b08aa931.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/f9520d9543ea78e8343b4691babf12e5.svg",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/previews/previews-data.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/search-index.json",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/platform/families/contracts.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/platform/families/index.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/platform/families/inventory.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/platform/families/kit.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/platform/families/mobile.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/platform/render.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "site/src/service/platform-components.mjs",
+          "owner": "Track G",
+          "reason": "O 패턴·최신 main 기준으로 정적 사이트 산출물을 재생성"
+        },
+        {
+          "file": "src/platform/render.mjs",
+          "owner": "Track A",
+          "reason": "모바일 dialog 런타임을 Blueprint 컴파일 출력에도 연결"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "owner": "Track A",
+          "reason": "모바일 overlay 네이티브 dialog 여닫기 런타임을 공용 assembleComponents 출력에 연결"
+        },
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "owner": "Track G",
+          "reason": "모바일 패턴 서비스·REST·MCP 동등성 대조 추가"
+        }
       ]
     },
     {
