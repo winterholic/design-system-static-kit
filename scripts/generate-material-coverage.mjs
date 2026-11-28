@@ -34,6 +34,7 @@ import {LEGACY_VARIANT_MAP} from '../src/platform/families/legacy-map.mjs';
 import * as service from '../src/service/index.mjs';
 import * as edit from '../src/edit/index.mjs';
 import {platformSection} from './platform/platform-baseline.mjs';
+import {renderChartPreset} from '../src/render/chart-presets.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = 'docs/dev/catalog-platform-upgrade';
@@ -272,20 +273,33 @@ const COVERAGE = {
   'fam/Expressive': D('family:expressive'),
   'chart/Vertical Bar': CHART('bar'),
   'chart/Horizontal Bar': CHART('bars-h'),
-  'chart/Grouped Bar': CHART('bar', 2),
+  'chart/Grouped Bar': CHART('grouped-bar', 2),
   'chart/Stacked Bar': CHART('stacked-bar'),
+  'chart/100% Stacked Bar': CHART('normalized-stacked-bar', 2),
   'chart/Line': CHART('line'),
-  'chart/Multi-line': CHART('line', 2),
+  'chart/Multi-line': CHART('multi-line', 2),
+  'chart/Step Line': CHART('step-line'),
   'chart/Area': CHART('area'),
+  'chart/Stacked Area': CHART('stacked-area', 2),
+  'chart/Pie': CHART('pie'),
   'chart/Donut': CHART('donut'),
   'chart/Scatter': CHART('scatter'),
+  'chart/Bubble': CHART('bubble'),
   'chart/Heatmap': CHART('heatmap'),
+  'chart/Treemap': CHART('treemap'),
+  'chart/Radar': CHART('radar'),
   'chart/Waterfall': CHART('waterfall'),
   'chart/Funnel': CHART('funnel'),
+  'chart/Gauge': CHART('gauge'),
+  'chart/Bullet': CHART('bullet'),
   'chart/Sparkline': CHART('sparkline'),
   'chart/Candlestick': CHART('candlestick'),
   'chart/OHLC': CHART('ohlc'),
   'chart/Histogram': CHART('histogram'),
+  'chart/Box Plot': CHART('box-plot'),
+  'chart/Combination Chart': CHART('combination', 2),
+  'chart/Calendar Heatmap': CHART('calendar-heatmap'),
+  'chart/Progress Chart': CHART('progress-chart'),
   'lay/Single Column': D('layout-primitive:flow'),
   'lay/Two Column': D('layout-primitive:split'),
   'lay/Three Column': V('component:grid', 'component:grid', {columns: 'three'}),
@@ -665,6 +679,11 @@ function legacyProbe(rec, kind) {
   switch (kind) {
     case 'component': return componentProbe(rec);
     case 'chart-preset': {
+      if (rec.ext?.options?.dataSchema) {
+        const chart = renderChartPreset(rec.id);
+        if (typeof chart !== 'string' || !chart.includes('<svg') || !chart.includes('<table')) return {method: 'renderChartPreset(SVG + accessible table)', ran: true, ok: false, reason: chart?.errors?.[0]?.message ?? 'SVG 또는 요약 테이블이 비어 있다'};
+        return {method: 'renderChartPreset(SVG + accessible table)', ran: true, ok: true, qualityOk: true, htmlBytes: chart.length, cssBytes: 0, outputHash: sha(chart), blueprintHasId: null, manifestHasId: null};
+      }
       const doc = isolatedDoc(rec, rec.examples[0]);
       return done(doc && compileHtml(doc), 'compileBlueprint(isolated chart node)');
     }

@@ -12,7 +12,7 @@
 - 선언 관계(스타일 맥락 → 팔레트·서브토큰 세트·타이포 시스템·패밀리): 4149개. prefers 2900, avoids 1123, forbids 126
 - 관계 대상(main에 등록된 재료): 팔레트 9 · 서브토큰 세트 25 · 타이포 시스템 14 · 패밀리 12
 - 스타일 재료 프리셋: surface 5 · motion 4 · background 5 · media 6 · state-pattern 8
-- 차트 프리셋 관계: 29개, 형태 14종 × 페이지 유형 16종
+- 차트 프리셋 관계: 44개, 형태 29종 × 페이지 유형 16종
 <!-- /generated:counts -->
 
 - Coolors 팔레트 427개는 옮기지 않았다. 스타일 맥락 기록에 테마의 `palettes`가 들어가지 않는다(시험이 54개 모두 본다).
@@ -426,12 +426,12 @@
 - 프리셋의 기본 페이지 유형(`contexts`)은 항상 허용된다(시험).
 
 <!-- generated:form-groups -->
-- comparison: bar, bars-h
-- composition: stacked-bar, donut, waterfall
-- trend: line, area, sparkline
-- distribution: histogram, heatmap
-- relationship: scatter
-- process: funnel
+- comparison: bar, bars-h, grouped-bar, bullet
+- composition: stacked-bar, normalized-stacked-bar, donut, pie, treemap, waterfall
+- trend: line, multi-line, step-line, area, stacked-area, sparkline, combination
+- distribution: histogram, box-plot, heatmap, calendar-heatmap
+- relationship: scatter, bubble, radar, gauge
+- process: funnel, progress-chart
 - market: candlestick, ohlc
 <!-- /generated:form-groups -->
 
@@ -452,6 +452,21 @@
 | funnel | O | O | O | O | · | · | · | · | · | O | · | O | · | · | · | · |
 | candlestick | O | · | O | O | O | · | · | · | · | · | · | · | · | · | · | · |
 | ohlc | O | · | O | O | O | · | · | · | · | · | · | · | · | · | · | · |
+| grouped-bar | O | O | O | O | O | O | O | O | O | O | O | O | · | O | · | · |
+| normalized-stacked-bar | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| multi-line | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| step-line | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| stacked-area | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| pie | O | O | O | O | O | O | O | O | O | O | O | O | · | O | · | · |
+| bubble | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| treemap | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| radar | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| gauge | O | · | O | O | O | · | · | · | · | · | · | · | · | · | · | · |
+| bullet | O | · | O | O | O | · | · | · | · | · | · | · | · | · | · | · |
+| box-plot | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| combination | O | · | O | O | · | · | O | O | · | · | · | · | · | · | · | · |
+| calendar-heatmap | O | · | O | O | · | · | · | · | · | · | · | · | · | · | · | · |
+| progress-chart | O | · | O | O | O | · | · | · | · | · | · | · | · | · | · | · |
 <!-- /generated:chart-matrix -->
 
 ### 5.2 프리셋별 관계
@@ -460,34 +475,49 @@
 | 프리셋 | 형태(군) | 데이터 유형 | 도메인 | 기본 페이지 유형 | 허용 페이지 유형(수) | 옵션(격자·라벨·범례·밀도·반응형) | 같은 데이터의 다른 형태(대안) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `erp-quarterly-revenue` | stacked-bar (composition) | time | erp | dashboard | 8 | horizontal·values·bottom·comfortable·fit | analytics-growth-bridge, erp-budget-bridge, finance-cashflow-waterfall |
-| `finance-monthly-close` | line (trend) | time | finance | dashboard | 13 | both·last·bottom·comfortable·fit | campaign-weekly-growth, finance-drawdown-area, mobile-sparkline |
-| `analytics-cohort-scatter` | scatter (relationship) | relationship | analytics | dashboard | 5 | both·none·none·comfortable·fit | — |
+| `finance-monthly-close` | line (trend) | time | finance | dashboard | 13 | both·last·bottom·comfortable·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `analytics-cohort-scatter` | scatter (relationship) | relationship | analytics | dashboard | 5 | both·none·none·comfortable·fit | analytics-bubble-segments, analytics-radar-capability, finance-gauge-risk |
 | `marketing-channel-share` | donut (composition) | part-to-whole | marketing | dashboard | 13 | none·none·right·comfortable·fit | analytics-growth-bridge, erp-budget-bridge, erp-cost-breakdown |
-| `mobile-sparkline` | sparkline (trend) | time | mobile | dashboard | 10 | none·last·none·compact·fit | analytics-traffic-lines, campaign-weekly-growth, finance-drawdown-area |
-| `operations-activity-heatmap` | heatmap (distribution) | time | erp | dashboard | 3 | none·none·bottom·comfortable·fit | analytics-growth-bridge, analytics-traffic-lines, campaign-weekly-growth |
-| `sales-pipeline-value` | bar (comparison) | process | erp | dashboard | 13 | horizontal·values·none·comfortable·fit | analytics-feature-adoption, erp-inventory-aging, marketing-conversion-funnel |
-| `campaign-weekly-growth` | area (trend) | time | marketing | dashboard | 13 | horizontal·extremes·none·comfortable·fit | analytics-traffic-lines, finance-monthly-close, finance-yield-curve |
+| `mobile-sparkline` | sparkline (trend) | time | mobile | dashboard | 10 | none·last·none·compact·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `operations-activity-heatmap` | heatmap (distribution) | time | erp | dashboard | 3 | none·none·bottom·comfortable·fit | erp-calendar-activity, analytics-combination-volume, analytics-growth-bridge |
+| `sales-pipeline-value` | bar (comparison) | process | erp | dashboard | 13 | horizontal·values·none·comfortable·fit | analytics-feature-adoption, erp-inventory-aging, erp-progress-completion |
+| `campaign-weekly-growth` | area (trend) | time | marketing | dashboard | 13 | horizontal·extremes·none·comfortable·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
 | `erp-budget-bridge` | waterfall (composition) | category | erp | dashboard | 5 | horizontal·values·bottom·comfortable·fit | erp-cost-breakdown, erp-quarterly-revenue, marketing-channel-share |
-| `erp-inventory-aging` | bars-h (comparison) | category | erp | data | 13 | vertical·values·none·comfortable·fit | erp-monthly-closing, marketing-channel-roas, mobile-weekly-activity |
+| `erp-inventory-aging` | bars-h (comparison) | category | erp | data | 13 | vertical·values·none·comfortable·fit | analytics-grouped-bar, erp-bullet-target, erp-monthly-closing |
 | `erp-cost-breakdown` | stacked-bar (composition) | category | erp | data | 8 | both·none·right·compact·fit | analytics-growth-bridge, erp-budget-bridge, finance-cashflow-waterfall |
-| `erp-lead-time-histogram` | histogram (distribution) | distribution | erp | data | 5 | both·none·none·comfortable·fit | — |
-| `erp-monthly-closing` | bar (comparison) | time | erp | data | 13 | horizontal·extremes·none·comfortable·scroll | analytics-growth-bridge, analytics-retention-heatmap, analytics-traffic-lines |
-| `finance-price-candles` | candlestick (market) | time | finance | dashboard | 4 | horizontal·none·bottom·comfortable·fit | finance-price-ohlc, analytics-growth-bridge, analytics-retention-heatmap |
-| `finance-price-ohlc` | ohlc (market) | time | finance | dashboard | 4 | both·none·right·compact·fit | finance-price-candles, mobile-stock-candles, analytics-growth-bridge |
-| `finance-cashflow-waterfall` | waterfall (composition) | time | finance | dashboard | 5 | none·values·right·compact·fit | erp-cost-breakdown, erp-quarterly-revenue, analytics-retention-heatmap |
-| `finance-yield-curve` | line (trend) | time | finance | dashboard | 13 | none·values·none·comfortable·fit | campaign-weekly-growth, finance-drawdown-area, mobile-sparkline |
-| `finance-risk-return-scatter` | scatter (relationship) | relationship | finance | dashboard | 5 | horizontal·none·bottom·comfortable·fit | — |
-| `finance-drawdown-area` | area (trend) | time | finance | dashboard | 13 | none·extremes·none·compact·fit | analytics-traffic-lines, finance-monthly-close, finance-yield-curve |
-| `analytics-session-histogram` | histogram (distribution) | distribution | analytics | data | 5 | horizontal·values·none·compact·fit | — |
-| `analytics-retention-heatmap` | heatmap (distribution) | time | analytics | data | 3 | none·values·bottom·compact·fit | analytics-growth-bridge, analytics-traffic-lines, campaign-weekly-growth |
-| `analytics-traffic-lines` | line (trend) | time | analytics | dashboard | 13 | horizontal·none·right·comfortable·fit | campaign-weekly-growth, finance-drawdown-area, mobile-sparkline |
-| `analytics-feature-adoption` | bars-h (comparison) | category | analytics | dashboard | 13 | none·values·none·compact·fit | erp-monthly-closing, marketing-channel-roas, mobile-weekly-activity |
-| `analytics-growth-bridge` | waterfall (composition) | time | analytics | dashboard | 5 | both·values·bottom·comfortable·scroll | erp-cost-breakdown, erp-quarterly-revenue, analytics-retention-heatmap |
-| `marketing-channel-roas` | bar (comparison) | category | marketing | dashboard | 13 | horizontal·none·bottom·comfortable·fit | analytics-feature-adoption, erp-inventory-aging, analytics-growth-bridge |
-| `marketing-conversion-funnel` | funnel (process) | process | marketing | dashboard | 6 | none·values·none·comfortable·fit | analytics-feature-adoption, erp-inventory-aging, erp-monthly-closing |
-| `mobile-weekly-activity` | bar (comparison) | time | mobile | listing | 13 | none·values·none·compact·fit | analytics-growth-bridge, analytics-retention-heatmap, analytics-traffic-lines |
-| `mobile-balance-trend` | line (trend) | time | mobile | listing | 13 | none·last·none·compact·fit | campaign-weekly-growth, finance-drawdown-area, mobile-sparkline |
-| `mobile-stock-candles` | candlestick (market) | time | mobile | listing | 4 | none·none·bottom·compact·scroll | finance-price-ohlc, analytics-growth-bridge, analytics-retention-heatmap |
+| `erp-lead-time-histogram` | histogram (distribution) | distribution | erp | data | 5 | both·none·none·comfortable·fit | finance-box-volatility |
+| `erp-monthly-closing` | bar (comparison) | time | erp | data | 13 | horizontal·extremes·none·comfortable·scroll | analytics-combination-volume, analytics-growth-bridge, analytics-multiline |
+| `finance-price-candles` | candlestick (market) | time | finance | dashboard | 4 | horizontal·none·bottom·comfortable·fit | finance-price-ohlc, analytics-combination-volume, analytics-growth-bridge |
+| `finance-price-ohlc` | ohlc (market) | time | finance | dashboard | 4 | both·none·right·compact·fit | finance-price-candles, mobile-stock-candles, analytics-combination-volume |
+| `finance-cashflow-waterfall` | waterfall (composition) | time | finance | dashboard | 5 | none·values·right·compact·fit | erp-cost-breakdown, erp-quarterly-revenue, analytics-combination-volume |
+| `finance-yield-curve` | line (trend) | time | finance | dashboard | 13 | none·values·none·comfortable·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `finance-risk-return-scatter` | scatter (relationship) | relationship | finance | dashboard | 5 | horizontal·none·bottom·comfortable·fit | analytics-bubble-segments, analytics-radar-capability, finance-gauge-risk |
+| `finance-drawdown-area` | area (trend) | time | finance | dashboard | 13 | none·extremes·none·compact·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `analytics-session-histogram` | histogram (distribution) | distribution | analytics | data | 5 | horizontal·values·none·compact·fit | finance-box-volatility |
+| `analytics-retention-heatmap` | heatmap (distribution) | time | analytics | data | 3 | none·values·bottom·compact·fit | erp-calendar-activity, analytics-combination-volume, analytics-growth-bridge |
+| `analytics-traffic-lines` | line (trend) | time | analytics | dashboard | 13 | horizontal·none·right·comfortable·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `analytics-feature-adoption` | bars-h (comparison) | category | analytics | dashboard | 13 | none·values·none·compact·fit | analytics-grouped-bar, erp-bullet-target, erp-monthly-closing |
+| `analytics-growth-bridge` | waterfall (composition) | time | analytics | dashboard | 5 | both·values·bottom·comfortable·scroll | erp-cost-breakdown, erp-quarterly-revenue, analytics-combination-volume |
+| `marketing-channel-roas` | bar (comparison) | category | marketing | dashboard | 13 | horizontal·none·bottom·comfortable·fit | analytics-feature-adoption, analytics-grouped-bar, erp-bullet-target |
+| `marketing-conversion-funnel` | funnel (process) | process | marketing | dashboard | 6 | none·values·none·comfortable·fit | erp-progress-completion, analytics-feature-adoption, erp-inventory-aging |
+| `mobile-weekly-activity` | bar (comparison) | time | mobile | listing | 13 | none·values·none·compact·fit | analytics-combination-volume, analytics-growth-bridge, analytics-multiline |
+| `mobile-balance-trend` | line (trend) | time | mobile | listing | 13 | none·last·none·compact·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `mobile-stock-candles` | candlestick (market) | time | mobile | listing | 4 | none·none·bottom·compact·scroll | finance-price-ohlc, analytics-combination-volume, analytics-growth-bridge |
+| `analytics-grouped-bar` | grouped-bar (comparison) | category | analytics | dashboard | 13 | horizontal·none·bottom·comfortable·fit | analytics-feature-adoption, erp-bullet-target, erp-inventory-aging |
+| `erp-normalized-stack` | normalized-stacked-bar (composition) | part-to-whole | erp | dashboard | 5 | horizontal·none·bottom·comfortable·fit | analytics-growth-bridge, erp-budget-bridge, erp-cost-breakdown |
+| `analytics-multiline` | multi-line (trend) | time | analytics | dashboard | 5 | horizontal·none·bottom·comfortable·fit | analytics-combination-volume, analytics-stacked-area, analytics-traffic-lines |
+| `finance-step-rate` | step-line (trend) | time | finance | dashboard | 5 | horizontal·none·none·comfortable·fit | analytics-combination-volume, analytics-multiline, analytics-stacked-area |
+| `analytics-stacked-area` | stacked-area (trend) | time | analytics | dashboard | 5 | horizontal·none·bottom·comfortable·fit | analytics-combination-volume, analytics-multiline, analytics-traffic-lines |
+| `marketing-channel-pie` | pie (composition) | part-to-whole | marketing | dashboard | 13 | horizontal·none·none·comfortable·fit | analytics-growth-bridge, erp-budget-bridge, erp-cost-breakdown |
+| `analytics-bubble-segments` | bubble (relationship) | relationship | analytics | dashboard | 5 | horizontal·none·none·comfortable·fit | analytics-cohort-scatter, analytics-radar-capability, finance-gauge-risk |
+| `erp-treemap-costs` | treemap (composition) | part-to-whole | erp | data | 5 | horizontal·none·none·comfortable·fit | analytics-growth-bridge, erp-budget-bridge, erp-cost-breakdown |
+| `analytics-radar-capability` | radar (relationship) | relationship | analytics | dashboard | 5 | horizontal·none·bottom·comfortable·fit | analytics-bubble-segments, analytics-cohort-scatter, finance-gauge-risk |
+| `finance-gauge-risk` | gauge (relationship) | relationship | finance | dashboard | 4 | horizontal·none·none·comfortable·fit | analytics-bubble-segments, analytics-cohort-scatter, analytics-radar-capability |
+| `erp-bullet-target` | bullet (comparison) | category | erp | dashboard | 4 | horizontal·none·none·comfortable·fit | analytics-feature-adoption, analytics-grouped-bar, erp-inventory-aging |
+| `finance-box-volatility` | box-plot (distribution) | distribution | finance | data | 5 | horizontal·none·bottom·comfortable·fit | analytics-session-histogram, erp-lead-time-histogram |
+| `analytics-combination-volume` | combination (trend) | time | analytics | dashboard | 5 | horizontal·none·bottom·comfortable·fit | analytics-multiline, analytics-stacked-area, analytics-traffic-lines |
+| `erp-calendar-activity` | calendar-heatmap (distribution) | time | erp | data | 3 | horizontal·none·bottom·comfortable·fit | analytics-retention-heatmap, operations-activity-heatmap, analytics-combination-volume |
+| `erp-progress-completion` | progress-chart (process) | process | erp | dashboard | 4 | horizontal·none·none·comfortable·fit | marketing-conversion-funnel, analytics-feature-adoption, erp-inventory-aging |
 <!-- /generated:chart-presets -->
 
 ### 5.3 프로필에 적힌 프리셋의 결과

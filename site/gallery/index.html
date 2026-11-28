@@ -5257,10 +5257,29 @@ const {chartOptions} = __m("catalog/chart-rules.mjs");
  * 같은 형태의 두 프리셋은 `PRESET_AXES`에서 2곳 이상 달라야 한다(`distinctnessViolations`, tests/chart-presets-distinct.test.mjs).
  * 색은 서명에 넣지 않는다: 색만 다른 프리셋은 서명이 같아 실패한다.
  */
-const EVIDENCE = ['tests/chart-presets-distinct.test.mjs:36', 'tests/chart-presets-distinct.test.mjs:62', 'tests/chart-presets-forms.test.mjs:32'];
+const EVIDENCE = ['tests/chart-presets.test.mjs:233', 'tests/chart-presets.test.mjs:271', 'tests/chart-presets-distinct.test.mjs:51', 'tests/chart-presets-forms.test.mjs:32'];
 const PRESET_AXES = Object.freeze(['grid', 'labels', 'legend', 'density', 'responsive', 'axes', 'series', 'dataType']);
 
-const noAxisKinds = ['donut', 'sparkline', 'funnel'];
+const noAxisKinds = ['donut', 'pie', 'sparkline', 'funnel', 'treemap', 'radar', 'gauge', 'bullet', 'calendar-heatmap', 'progress-chart'];
+const PRESET_DATA_SCHEMAS = Object.freeze({
+  'grouped-bar': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'zero-baseline']},
+  'normalized-stacked-bar': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'each-category-total-100']},
+  'multi-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['ordered-categories']},
+  'step-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['ordered-categories']},
+  'stacked-area': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'zero-baseline']},
+  pie: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'total-100']},
+  bubble: {seriesField: 'points', categoryCount: 'none', minimumSeries: 1, valueType: '{x:number,y:number,size:number}', constraints: ['finite-coordinates', 'positive-size']},
+  treemap: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'positive-total']},
+  radar: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['shared-scale-0-100']},
+  gauge: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['domain-0-100']},
+  bullet: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'required-target-in-domain']},
+  'box-plot': {seriesField: 'quartiles', categoryCount: 'series-length', minimumSeries: 1, valueType: '{min,q1,median,q3,max}', constraints: ['ordered-five-number-summary']},
+  combination: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['bar-and-line-series', 'zero-baseline-for-bars']},
+  'calendar-heatmap': {seriesField: 'values', categoryCount: 'weekdays', minimumSeries: 1, valueType: 'finite-number', constraints: ['complete-week-grid', 'nonnegative']},
+  'progress-chart': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['domain-0-100']},
+});
+const standardDataSchema = kind => PRESET_DATA_SCHEMAS[kind] ?? ({seriesField: ['scatter', 'bubble'].includes(kind) ? 'points' : ['candlestick', 'ohlc'].includes(kind) ? 'candles' : kind === 'histogram' ? 'samples' : 'values', categoryCount: ['scatter', 'histogram'].includes(kind) ? 'none' : 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['finite-values', ...(kind === 'donut' ? ['nonnegative', 'total-100'] : []), ...(['bar', 'bars-h', 'stacked-bar', 'area', 'histogram', 'waterfall'].includes(kind) ? ['zero-baseline'] : []), ...(kind === 'heatmap' ? ['nonnegative'] : []), ...(kind === 'funnel' ? ['non-increasing-stages'] : []), ...(kind === 'sparkline' ? ['exactly-one-series'] : [])]});
+const distortionRules = kind => standardDataSchema(kind).constraints.map(rule => ({rule, enforcedBy: 'validateChartPresetData'}));
 const captionOf = (kind, x, y) => kind === 'donut' ? `${x} 구성 · 값은 ${y}`
   : kind === 'sparkline' ? `${x} 순 ${y} 추이 · 상세 축 표시는 생략`
     : kind === 'funnel' ? `${x}별 ${y}와 첫 단계 대비 비율`
@@ -5277,7 +5296,7 @@ const preset = ({name, label, domain, context = 'dashboard', kind, dataType, uni
     ...(grid ? {grid} : {}), ...(labels ? {labels} : {}), ...(legend ? {legend} : {}), ...(density ? {density} : {}), ...(responsive ? {responsive} : {}), ...(bins ? {bins} : {}),
     ...(categories.length ? {categories} : {}), series,
   };
-  const options = chartOptions(node), omitted = noAxisKinds.includes(kind);
+  const options = {...chartOptions(node), dataSchema: standardDataSchema(kind), distortionRules: distortionRules(kind)}, omitted = noAxisKinds.includes(kind);
   return defineMaterial({
     id: `chart-preset:${name}`, kind: 'chart-preset', category: 'chart', label, since: '2.6.0', contexts: [context],
     render: {module: 'src/render/chart-presets.mjs', export: 'renderChartPreset', key: `chart-preset:${name}`},
@@ -5347,6 +5366,22 @@ const chartPresetMaterials = Object.freeze([
   preset({name: 'mobile-weekly-activity', label: '모바일 요일별 활동 시간', domain: 'mobile', context: 'listing', kind: 'bar', dataType: 'time', unit: '분', x: '요일', y: '활동 시간', categories: weekdays, axis: {showY: 'no'}, grid: 'none', labels: 'values', density: 'compact', series: [{name: '활동', values: [32, 45, 28, 60, 52, 18, 24]}]}),
   preset({name: 'mobile-balance-trend', label: '모바일 월별 잔액 추이', domain: 'mobile', context: 'listing', kind: 'line', dataType: 'time', unit: '만 원', x: '월', y: '잔액', categories: ['6월', '7월', '8월', '9월', '10월', '11월'], grid: 'none', labels: 'last', density: 'compact', series: [{name: '잔액', values: [120, 135, 128, 150, 162, 171]}]}),
   preset({name: 'mobile-stock-candles', label: '모바일 일봉 스크롤 캔들', domain: 'mobile', context: 'listing', kind: 'candlestick', dataType: 'time', unit: '포인트', x: '거래일', y: '지수', categories: ['10/28', '10/29', '10/30', '10/31', '11/03', '11/04', '11/05', '11/06', '11/07', '11/10', '11/11', '11/12'], grid: 'none', density: 'compact', responsive: 'scroll', series: [{name: '종합지수', candles: [[2441, 2468, 2430, 2462], [2462, 2475, 2449, 2453], [2453, 2471, 2444, 2466], [2466, 2489, 2461, 2480], ...index.slice(0, 8)].map(candle)}]}),
+  // ---- §9.1 추가 개별 형태 ----
+  preset({name: 'analytics-grouped-bar', label: '분석 채널별 전환 비교', domain: 'analytics', kind: 'grouped-bar', dataType: 'category', unit: '%', x: '채널', y: '전환율', categories: ['검색', '메일', '추천'], series: [{name: '신규', values: [42, 35, 51]}, {name: '재방문', values: [58, 49, 67]}]}),
+  preset({name: 'erp-normalized-stack', label: 'ERP 부서별 예산 구성비', domain: 'erp', kind: 'normalized-stacked-bar', dataType: 'part-to-whole', unit: '%', x: '부서', y: '예산 구성', categories: ['영업', '개발', '운영'], series: [{name: '인건비', values: [50, 60, 40]}, {name: '운영비', values: [30, 25, 35]}, {name: '투자', values: [20, 15, 25]}]}),
+  preset({name: 'analytics-multiline', label: '분석 유입·가입 다중 추이', domain: 'analytics', kind: 'multi-line', dataType: 'time', unit: '천 명', x: '월', y: '사용자', categories: ['1월', '2월', '3월', '4월'], series: [{name: '유입', values: [12, 15, 17, 21]}, {name: '가입', values: [3, 4, 5, 7]}]}),
+  preset({name: 'finance-step-rate', label: '금융 기준금리 변경 단계', domain: 'finance', kind: 'step-line', dataType: 'time', unit: '%', x: '시점', y: '기준금리', categories: ['1월', '2월', '3월', '4월'], series: [{name: '기준금리', values: [2.5, 2.5, 3, 3.25]}]}),
+  preset({name: 'analytics-stacked-area', label: '분석 사용자 구성 추이', domain: 'analytics', kind: 'stacked-area', dataType: 'time', unit: '천 명', x: '월', y: '사용자', categories: ['1월', '2월', '3월', '4월'], series: [{name: '무료', values: [40, 44, 48, 52]}, {name: '유료', values: [12, 15, 18, 22]}]}),
+  preset({name: 'marketing-channel-pie', label: '마케팅 채널 점유 비율', domain: 'marketing', kind: 'pie', dataType: 'part-to-whole', unit: '%', x: '채널', y: '점유율', categories: ['검색', '메일', '추천', '직접'], series: [{name: '비율', values: [40, 25, 20, 15]}]}),
+  preset({name: 'analytics-bubble-segments', label: '분석 고객군 규모와 가치', domain: 'analytics', kind: 'bubble', dataType: 'relationship', unit: '천 명', x: '활성도', y: '매출', series: [{name: '고객군', points: [{x: 2, y: 30, size: 12}, {x: 5, y: 55, size: 22}, {x: 8, y: 72, size: 34}]}]}),
+  preset({name: 'erp-treemap-costs', label: 'ERP 부서별 비용 면적 구성', domain: 'erp', context: 'data', kind: 'treemap', dataType: 'part-to-whole', unit: '백만 원', x: '부서', y: '비용', categories: ['영업', '개발', '운영', '지원'], series: [{name: '비용', values: [420, 680, 350, 210]}]}),
+  preset({name: 'analytics-radar-capability', label: '분석 업무 역량 프로필', domain: 'analytics', kind: 'radar', dataType: 'relationship', unit: '점', x: '역량', y: '점수', categories: ['품질', '속도', '안정성', '확장성', '비용'], series: [{name: '현재', values: [78, 65, 82, 70, 58]}, {name: '목표', values: [90, 80, 90, 85, 75]}]}),
+  preset({name: 'finance-gauge-risk', label: '금융 포트폴리오 위험도', domain: 'finance', kind: 'gauge', dataType: 'relationship', unit: '점', x: '위험도', y: '점수', categories: ['위험도'], series: [{name: '현재 위험도', values: [62]}]}),
+  preset({name: 'erp-bullet-target', label: 'ERP 목표 대비 실적', domain: 'erp', kind: 'bullet', dataType: 'category', unit: '%', x: '지표', y: '달성률', categories: ['분기 매출'], series: [{name: '실적', values: [78], target: 85}]}),
+  preset({name: 'finance-box-volatility', label: '금융 자산 변동 구간', domain: 'finance', context: 'data', kind: 'box-plot', dataType: 'distribution', unit: '%', x: '자산', y: '수익률', categories: ['주식형', '채권형'], series: [{name: '주식형', quartiles: {min: -12, q1: -3, median: 4, q3: 11, max: 24}}, {name: '채권형', quartiles: {min: -5, q1: -1, median: 2, q3: 5, max: 10}}]}),
+  preset({name: 'analytics-combination-volume', label: '분석 주문량과 전환율', domain: 'analytics', kind: 'combination', dataType: 'time', unit: '건 / %', x: '월', y: '주문량·전환율', categories: ['1월', '2월', '3월', '4월'], series: [{name: '주문량', values: [120, 150, 136, 190], mark: 'bar'}, {name: '전환율', values: [4, 5, 4.5, 6], mark: 'line'}]}),
+  preset({name: 'erp-calendar-activity', label: 'ERP 일자별 작업량', domain: 'erp', context: 'data', kind: 'calendar-heatmap', dataType: 'time', unit: '건', x: '요일', y: '주차', categories: ['월', '화', '수', '목', '금', '토', '일'], series: [{name: '1주', values: [2, 5, 4, 7, 6, 1, 0]}, {name: '2주', values: [3, 4, 8, 6, 9, 2, 1]}, {name: '3주', values: [1, 6, 5, 8, 7, 0, 0]}, {name: '4주', values: [4, 7, 6, 9, 8, 3, 1]}]}),
+  preset({name: 'erp-progress-completion', label: 'ERP 프로젝트 완료율', domain: 'erp', kind: 'progress-chart', dataType: 'process', unit: '%', x: '업무', y: '완료율', categories: ['설계', '구현', '검수'], series: [{name: '완료율', values: [100, 72, 38]}]}),
 ]);
 
 /** 프리셋 서명: 형태와 PRESET_AXES 값. 색은 들어 있지 않다. */
@@ -16073,6 +16108,78 @@ const {renderChart} = __m("render/chart.mjs");
 const {chartDiagnostics, levelsOf, seriesField} = __m("catalog/chart-rules.mjs");
 
 const byId = new Map(chartPresetMaterials.map(material => [material.id, material]));
+const EXTENDED_KINDS = new Set(chartPresetMaterials.filter(m => !['bar', 'bars-h', 'stacked-bar', 'line', 'area', 'donut', 'scatter', 'heatmap', 'waterfall', 'funnel', 'sparkline', 'candlestick', 'ohlc', 'histogram'].includes(m.ext.chartKind)).map(m => m.ext.chartKind));
+const escape = value => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+const finite = value => typeof value === 'number' && Number.isFinite(value);
+const zeroBaseline = new Set(['bar', 'bars-h', 'grouped-bar', 'stacked-bar', 'normalized-stacked-bar', 'area', 'stacked-area', 'histogram', 'waterfall', 'treemap', 'bullet', 'combination', 'progress-chart']);
+const percentTotals = new Set(['pie', 'donut']);
+const pointKinds = new Set(['scatter', 'bubble']);
+const categoryFree = new Set(['scatter', 'bubble', 'histogram']);
+const sum = values => values.reduce((total, value) => total + value, 0);
+
+/** Public, per-kind data contract validation used before either SVG path renders. */
+function validateChartPresetData(kind, chart) {
+  const errors = [], add = (code, message) => errors.push({code, message});
+  const material = chartPresetMaterials.find(m => m.ext.chartKind === kind);
+  if (!material) return [{code: 'CHART_KIND', message: `지원하지 않는 차트 유형: ${kind}`}];
+  if (!chart || typeof chart !== 'object' || Array.isArray(chart)) return [{code: 'CHART_SHAPE', message: '차트 데이터는 객체여야 합니다.'}];
+    const {minimumSeries = 1} = material.ext.options.dataSchema;
+  const series = Array.isArray(chart.series) ? chart.series : [];
+  const categories = Array.isArray(chart.categories) ? chart.categories : [];
+  if (series.length < minimumSeries) add('CHART_SHAPE', `${kind}은 계열 ${minimumSeries}개 이상이 필요합니다.`);
+  if (kind === 'sparkline' && series.length !== 1) add('CHART_SHAPE', 'sparkline은 계열 하나만 허용합니다.');
+  if (!categoryFree.has(kind) && (!categories.length || categories.some(label => typeof label !== 'string' || !label.trim()))) add('CHART_SHAPE', `${kind}은 비어 있지 않은 범주 라벨이 필요합니다.`);
+  if (kind === 'calendar-heatmap' && categories.length !== 7) add('CHART_SHAPE', 'calendar-heatmap은 월요일부터 일요일까지 7개 요일이 필요합니다.');
+  if (kind === 'gauge' && categories.length !== 1) add('CHART_SHAPE', 'gauge는 값 하나에 대응하는 범주 하나가 필요합니다.');
+  if (kind === 'bullet' && categories.length !== 1) add('CHART_SHAPE', 'bullet은 목표와 비교할 지표 하나가 필요합니다.');
+  if (kind === 'box-plot' && categories.length !== series.length) add('CHART_SHAPE', 'box-plot은 계열마다 범주 하나가 필요합니다.');
+  if (!pointKinds.has(kind) && kind !== 'box-plot' && kind !== 'candlestick' && kind !== 'ohlc' && kind !== 'histogram') {
+    for (const [i, item] of series.entries()) {
+      if (!Array.isArray(item?.values) || item.values.length !== categories.length) add('CHART_SHAPE', `계열 ${i + 1}은 범주와 길이가 같은 values 배열이 필요합니다.`);
+      else if (item.values.some(value => !finite(value))) add('CHART_VALUE', `계열 ${i + 1}은 유한한 숫자만 가질 수 있습니다.`);
+    }
+  }
+  if (kind === 'box-plot') for (const [i, item] of series.entries()) {
+    const q = item?.quartiles;
+    if (!q || !['min', 'q1', 'median', 'q3', 'max'].every(key => finite(q[key]))) { add('CHART_SHAPE', `계열 ${i + 1}은 min·q1·median·q3·max 숫자가 필요합니다.`); continue; }
+    if (!(q.min <= q.q1 && q.q1 <= q.median && q.median <= q.q3 && q.q3 <= q.max)) add('CHART_ORDER', `계열 ${i + 1}의 five-number summary 순서가 잘못되었습니다.`);
+  }
+  if (pointKinds.has(kind)) for (const [i, item] of series.entries()) {
+    if (!Array.isArray(item?.points) || !item.points.length || item.points.some(point => !finite(point?.x) || !finite(point?.y) || kind === 'bubble' && (!finite(point?.size) || point.size <= 0))) add('CHART_SHAPE', `${kind} 계열 ${i + 1}의 점 좌표${kind === 'bubble' ? '와 양수 size' : ''}가 필요합니다.`);
+  }
+  if (kind === 'histogram' && series.some(item => !Array.isArray(item?.samples) || item.samples.length < 2 || item.samples.some(value => !finite(value)))) add('CHART_SHAPE', 'histogram은 유한한 표본 두 개 이상이 필요합니다.');
+  if (kind === 'candlestick' || kind === 'ohlc') for (const [i, item] of series.entries()) {
+    const candles = item?.candles;
+    if (!Array.isArray(candles) || candles.length !== categories.length || candles.some(c => !['open', 'high', 'low', 'close'].every(key => finite(c?.[key])))) add('CHART_SHAPE', `${kind} 계열 ${i + 1}에 범주별 OHLC 값이 필요합니다.`);
+    else if (candles.some(c => c.low > Math.min(c.open, c.close) || c.high < Math.max(c.open, c.close) || c.low > c.high)) add('CHART_ORDER', `${kind}의 각 캔들은 low ≤ open·close ≤ high여야 합니다.`);
+  }
+  if (kind === 'calendar-heatmap' && series.some(item => !Array.isArray(item.values) || item.values.length !== 7)) add('CHART_SHAPE', 'calendar-heatmap의 각 주는 7일의 값이 필요합니다.');
+  if (['grouped-bar', 'normalized-stacked-bar', 'stacked-bar', 'stacked-area', 'treemap', 'radar', 'progress-chart', 'calendar-heatmap', 'heatmap'].includes(kind) && series.some(item => item.values?.some(value => value < 0))) add('CHART_DOMAIN', `${kind}은 음수 값을 허용하지 않습니다.`);
+  if (percentTotals.has(kind) && series.length === 1 && series[0]?.values?.length && Math.abs(sum(series[0].values) - 100) > 1e-6) add('CHART_TOTAL', `${kind}의 비중 합계는 100%여야 합니다.`);
+  if (kind === 'normalized-stacked-bar' && categories.some((_, i) => Math.abs(sum(series.map(item => item.values?.[i] ?? 0)) - 100) > 1e-6)) add('CHART_TOTAL', '100% 누적 막대는 모든 범주의 계열 합계가 100%여야 합니다.');
+  if (kind === 'treemap' && series[0]?.values && sum(series[0].values) <= 0) add('CHART_TOTAL', 'treemap은 양수 면적 합계가 필요합니다.');
+  if (kind === 'funnel' && series.some(item => item.values?.some((value, i) => i > 0 && value > item.values[i - 1]))) add('CHART_ORDER', 'funnel 단계 값은 앞 단계보다 커질 수 없습니다.');
+  if (kind === 'waterfall' && series[0]?.roles && series[0]?.values) {
+    let running = 0;
+    for (const [i, value] of series[0].values.entries()) {
+      if (series[0].roles[i] === 'total') {
+        if (i > 0 && Math.abs(value - running) > 1e-6 * Math.max(1, Math.abs(running))) { add('CHART_TOTAL', 'waterfall의 total은 앞 단계 누계와 같아야 합니다.'); break; }
+        running = value;
+      } else running += value;
+    }
+  }
+  if (['gauge', 'progress-chart'].includes(kind) && series.some(item => item.values?.some(value => value < 0 || value > 100))) add('CHART_DOMAIN', `${kind} 값은 0~100 범위여야 합니다.`);
+  if (kind === 'bullet' && !finite(series[0]?.target)) add('CHART_SHAPE', 'bullet은 비교 기준 target 숫자가 필요합니다.');
+  if (kind === 'bullet' && finite(series[0]?.target) && (series[0].target < 0 || series[0].target > 100 || series[0].values?.[0] > 100)) add('CHART_DOMAIN', 'bullet 실적과 목표는 0~100 범위여야 합니다.');
+  if (kind === 'combination' && (!series.some(item => item.mark === 'bar') || !series.some(item => item.mark === 'line'))) add('CHART_SHAPE', 'combination은 bar와 line 계열을 모두 가져야 합니다.');
+  if (kind === 'radar' && series.some(item => item.values?.some(value => value < 0 || value > 100))) add('CHART_DOMAIN', 'radar 값은 공통 0~100 척도여야 합니다.');
+  if (zeroBaseline.has(kind) && chart.axis && finite(chart.axis.min) && chart.axis.min !== 0) add('CHART_BASELINE', `${kind}의 값 길이·면적 축은 0에서 시작해야 합니다.`);
+  if (zeroBaseline.has(kind) && chart.axis && finite(chart.axis.max)) {
+    const values = series.flatMap(item => Array.isArray(item.values) ? item.values : []);
+    if (values.some(value => value > chart.axis.max)) add('CHART_AXIS', '축 최댓값이 입력 값을 잘라냅니다.');
+  }
+  return errors;
+}
 
 /**
  * 2.6.0 compiler seam: resolve an id to the existing chart node contract, then pass it through
@@ -16150,6 +16257,102 @@ function applyChartColorRoles(html, kind) {
   return html;
 }
 
+function renderExtendedChart(n, id) {
+  const W = 360, H = 180, left = 32, top = 12, pw = 312, ph = 132, cats = n.categories ?? [], series = n.series ?? [];
+  const colors = i => `var(--kit-chart${(i % 6) + 1})`;
+  const values = n.kind === 'box-plot' ? series.flatMap(item => Object.values(item.quartiles)) : series.flatMap(item => item.values ?? item.points?.map(point => point.y) ?? []);
+  const max = Math.max(1, ...(n.kind === 'stacked-area' ? cats.map((_, i) => sum(series.map(item => item.values[i]))) : values));
+  const min = Math.min(0, ...values);
+  const y = value => top + ph - ((value - min) / ((max - min) || 1)) * ph;
+  const x = i => left + (cats.length <= 1 ? pw / 2 : (i / (cats.length - 1)) * pw);
+  let marks = '';
+  switch (n.kind) {
+    case 'grouped-bar': case 'normalized-stacked-bar': {
+      const each = pw / cats.length, bw = Math.min(24, each * .72 / series.length);
+      marks = cats.map((_, ci) => {
+        const total = sum(series.map(item => item.values[ci])); let running = 0;
+        return series.map((item, si) => {
+          const value = n.kind === 'normalized-stacked-bar' ? item.values[ci] : item.values[ci];
+          const h = n.kind === 'normalized-stacked-bar' ? value * ph / 100 : value / max * ph;
+          const bx = n.kind === 'normalized-stacked-bar' ? left + ci * each + each * .18 : left + ci * each + each / 2 + (si - (series.length - 1) / 2) * bw - bw / 2;
+          const by = n.kind === 'normalized-stacked-bar' ? top + ph - (running + value) * ph / 100 : y(value);
+          running += n.kind === 'normalized-stacked-bar' ? value : 0;
+          return `<rect data-series="${si}" x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(n.kind === 'normalized-stacked-bar' ? each * .64 : bw).toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" fill="${colors(si)}"><title>${escape(cats[ci])}: ${value}${n.unit ? ` ${escape(n.unit)}` : ''}</title></rect>`;
+        }).join('');
+      }).join(''); break;
+    }
+    case 'multi-line': case 'step-line': {
+      marks = series.map((item, si) => {
+        const pts = item.values.map((value, i) => `${x(i).toFixed(1)},${y(value).toFixed(1)}`);
+        const points = n.kind === 'step-line' ? pts.flatMap((point, i) => i ? [`${pts[i].split(',')[0]},${pts[i - 1].split(',')[1]}`, point] : [point]) : pts;
+        const line = n.kind === 'step-line' ? `<path d="M${points.join(' L')}" fill="none" stroke="${colors(si)}" stroke-width="3"/>` : `<polyline points="${points.join(' ')}" fill="none" stroke="${colors(si)}" stroke-width="3"/>`;
+        return `${line}${pts.map(point => `<circle cx="${point.split(',')[0]}" cy="${point.split(',')[1]}" r="3" fill="${colors(si)}"/>`).join('')}`;
+      }).join(''); break;
+    }
+    case 'stacked-area': {
+      let below = cats.map(() => 0);
+      marks = series.map((item, si) => {
+        const next = below.map((value, i) => value + item.values[i]);
+        const upper = next.map((value, i) => `${x(i).toFixed(1)},${y(value).toFixed(1)}`);
+        const lower = below.map((value, i) => `${x(i).toFixed(1)},${y(value).toFixed(1)}`).reverse();
+        below = next;
+        return `<polygon points="${[...upper, ...lower].join(' ')}" fill="${colors(si)}" fill-opacity=".72" stroke="${colors(si)}"/>`;
+      }).join(''); break;
+    }
+    case 'pie': {
+      let angle = -Math.PI / 2;
+      marks = cats.map((label, i) => {
+        const next = angle + (series[0].values[i] / 100) * 2 * Math.PI, x1 = 180 + 70 * Math.cos(angle), y1 = 86 + 70 * Math.sin(angle), x2 = 180 + 70 * Math.cos(next), y2 = 86 + 70 * Math.sin(next), large = next - angle > Math.PI ? 1 : 0;
+        const path = `<path data-slice="${i}" d="M180 86 L${x1.toFixed(2)} ${y1.toFixed(2)} A70 70 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${colors(i)}"><title>${escape(label)} ${series[0].values[i]}%</title></path>`;
+        angle = next; return path;
+      }).join(''); break;
+    }
+    case 'bubble': {
+      const pts = series.flatMap(item => item.points), xmax = Math.max(1, ...pts.map(p => p.x)), ymax = Math.max(1, ...pts.map(p => p.y));
+      marks = series.flatMap((item, si) => item.points.map(point => `<circle data-bubble-size="${point.size}" cx="${(left + point.x / xmax * pw).toFixed(1)}" cy="${(top + ph - point.y / ymax * ph).toFixed(1)}" r="${(3 + Math.sqrt(point.size) * 1.7).toFixed(1)}" fill="${colors(si)}" fill-opacity=".7"><title>${escape(item.name)}: ${point.x}, ${point.y}; size ${point.size}</title></circle>`)).join(''); break;
+    }
+    case 'treemap': {
+      const values = series[0].values, total = sum(values); let cursor = left;
+      marks = values.map((value, i) => { const width = pw * value / total, rect = `<rect x="${cursor.toFixed(1)}" y="${top}" width="${Math.max(1, width - 2).toFixed(1)}" height="${ph}" rx="2" fill="${colors(i)}"><title>${escape(cats[i])}: ${value}</title></rect><text x="${(cursor + 5).toFixed(1)}" y="${top + 18}" fill="var(--kit-text)">${escape(cats[i])}</text>`; cursor += width; return rect; }).join(''); break;
+    }
+    case 'radar': {
+      const cx = 180, cy = 84, radius = 66, angleAt = i => -Math.PI / 2 + i * 2 * Math.PI / cats.length;
+      const rings = [1 / 3, 2 / 3, 1].map(r => `<polygon points="${cats.map((_, i) => `${(cx + radius * r * Math.cos(angleAt(i))).toFixed(1)},${(cy + radius * r * Math.sin(angleAt(i))).toFixed(1)}`).join(' ')}" fill="none" stroke="var(--kit-border)"/>`).join('');
+      marks = rings + series.map((item, si) => `<polygon points="${item.values.map((value, i) => `${(cx + radius * value / 100 * Math.cos(angleAt(i))).toFixed(1)},${(cy + radius * value / 100 * Math.sin(angleAt(i))).toFixed(1)}`).join(' ')}" fill="${colors(si)}" fill-opacity=".25" stroke="${colors(si)}" stroke-width="2"/>`).join(''); break;
+    }
+    case 'gauge': {
+      const value = series[0].values[0], angle = Math.PI + value / 100 * Math.PI;
+      marks = `<path d="M72 124 A108 108 0 0 1 288 124" fill="none" stroke="var(--kit-border)" stroke-width="22"/><path d="M72 124 A108 108 0 0 1 ${(180 + 108 * Math.cos(angle)).toFixed(1)} ${(124 + 108 * Math.sin(angle)).toFixed(1)}" fill="none" stroke="${colors(0)}" stroke-width="22"/><line x1="180" y1="124" x2="${(180 + 72 * Math.cos(angle)).toFixed(1)}" y2="${(124 + 72 * Math.sin(angle)).toFixed(1)}" stroke="var(--kit-text)" stroke-width="4"/><circle cx="180" cy="124" r="7" fill="var(--kit-text)"/><text x="180" y="90" text-anchor="middle">${value}${escape(n.unit)}</text>`; break;
+    }
+    case 'bullet': {
+      const value = series[0].values[0], target = series[0].target;
+      marks = `<rect x="${left}" y="48" width="${pw}" height="46" rx="4" fill="var(--kit-border)"/><rect x="${left}" y="48" width="${(pw * .55).toFixed(1)}" height="46" fill="var(--kit-muted)" opacity=".28"/><rect x="${left}" y="48" width="${(pw * value / 100).toFixed(1)}" height="46" rx="4" fill="${colors(0)}"/><line x1="${(left + pw * target / 100).toFixed(1)}" y1="40" x2="${(left + pw * target / 100).toFixed(1)}" y2="102" stroke="var(--kit-text)" stroke-width="4"/><text x="${left}" y="120">실적 ${value}% · 목표 ${target}%</text>`; break;
+    }
+    case 'box-plot': {
+      marks = series.map((item, i) => { const q = item.quartiles, scale = v => left + (v - min) / (max - min || 1) * pw, cy = 34 + i * 54; return `<line x1="${scale(q.min)}" y1="${cy}" x2="${scale(q.max)}" y2="${cy}" stroke="${colors(i)}" stroke-width="2"/><line x1="${scale(q.min)}" y1="${cy - 9}" x2="${scale(q.min)}" y2="${cy + 9}" stroke="${colors(i)}"/><line x1="${scale(q.max)}" y1="${cy - 9}" x2="${scale(q.max)}" y2="${cy + 9}" stroke="${colors(i)}"/><rect x="${scale(q.q1)}" y="${cy - 15}" width="${Math.max(2, scale(q.q3) - scale(q.q1))}" height="30" fill="${colors(i)}" fill-opacity=".35" stroke="${colors(i)}"/><line x1="${scale(q.median)}" y1="${cy - 15}" x2="${scale(q.median)}" y2="${cy + 15}" stroke="var(--kit-text)" stroke-width="3"/>`}).join(''); break;
+    }
+    case 'combination': {
+      marks = series.map((item, si) => item.mark === 'line' ? `<polyline points="${item.values.map((value, i) => `${x(i).toFixed(1)},${(top + ph - value / Math.max(...item.values) * ph).toFixed(1)}`).join(' ')}" fill="none" stroke="${colors(si)}" stroke-width="3"/>` : item.values.map((value, i) => `<rect x="${(x(i) - 9).toFixed(1)}" y="${y(value).toFixed(1)}" width="18" height="${Math.max(1, top + ph - y(value)).toFixed(1)}" fill="${colors(si)}"/>`).join('')).join(''); break;
+    }
+    case 'calendar-heatmap': {
+      const vals = series.flatMap(item => item.values), hi = Math.max(1, ...vals);
+      marks = series.flatMap((item, week) => item.values.map((value, day) => `<rect x="${(left + day * 43).toFixed(1)}" y="${(top + week * 28).toFixed(1)}" width="36" height="22" rx="3" fill="${colors(0)}" fill-opacity="${(.12 + .88 * value / hi).toFixed(2)}"><title>${escape(item.name)} ${escape(cats[day])}: ${value}</title></rect>`)).join(''); break;
+    }
+    case 'progress-chart': {
+      marks = series[0].values.map((value, i) => { const yy = top + 10 + i * 38; return `<text x="${left}" y="${yy + 13}">${escape(cats[i])}</text><rect x="${left + 80}" y="${yy}" width="${pw - 80}" height="18" rx="9" fill="var(--kit-border)"/><rect x="${left + 80}" y="${yy}" width="${((pw - 80) * value / 100).toFixed(1)}" height="18" rx="9" fill="${colors(i)}"/><text x="${W - 36}" y="${yy + 14}" text-anchor="end">${value}%</text>`; }).join(''); break;
+    }
+    default: return null;
+  }
+  const title = escape(n.title), description = escape(`${n.caption} · ${n.series.map(item => item.name).join(', ')} · ${n.unit ?? ''}`);
+  const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="${id}-t ${id}-d" focusable="false" data-renderer-kind="${n.kind}"><title id="${id}-t">${title}</title><desc id="${id}-d">${description}</desc>${marks}</svg>`;
+  const rows = n.kind === 'box-plot' ? series.map((item, i) => `<tr><th scope="row">${escape(cats[i])}</th><td>${['min', 'q1', 'median', 'q3', 'max'].map(key => `${key} ${item.quartiles[key]}`).join(' · ')}</td></tr>`)
+    : pointKinds.has(n.kind) ? series.flatMap(item => item.points.map(point => `<tr><th scope="row">${escape(item.name)}</th><td>x ${point.x}, y ${point.y}${n.kind === 'bubble' ? `, 크기 ${point.size}` : ''}</td></tr>`))
+      : n.kind === 'candlestick' || n.kind === 'ohlc' ? series.flatMap(item => item.candles.map((candle, i) => `<tr><th scope="row">${escape(cats[i])}</th><td>시가 ${candle.open} · 고가 ${candle.high} · 저가 ${candle.low} · 종가 ${candle.close}</td></tr>`))
+        : series.flatMap(item => item.values?.map((value, i) => `<tr><th scope="row">${escape(cats[i])}</th><td>${escape(item.name)}: ${value}${n.unit ? ` ${escape(n.unit)}` : ''}</td></tr>`) ?? []);
+  const table = `<details class="kit-chart-data"><summary>데이터 표 보기</summary><table><thead><tr><th scope="col">${escape(n.xLabel ?? '항목')}</th><th scope="col">${escape(n.yLabel ?? '값')}</th></tr></thead><tbody>${rows.join('')}</tbody></table></details>`;
+  return `<figure class="kit-chart" data-kind="${n.kind}" data-chart="2.6" data-type="${escape(n.dataType)}" data-responsive="fit"><figcaption><strong>${title}</strong><span>${escape(n.caption)} · 단위 ${escape(n.unit ?? '')}</span></figcaption><div class="kit-chart-body">${svg}</div>${table}</figure>`;
+}
+
 /**
  * Render by preset id with supplied data. Invalid values are returned as explicit diagnostics.
  * options.colorRoles: true이면 applyChartColorRoles를 적용한다. 기본(false)은 2.4.0~2.6.0 출력과 바이트가 같다.
@@ -16157,12 +16360,21 @@ function applyChartColorRoles(html, kind) {
 function renderChartPreset(id, data = {}, {colorRoles = false} = {}) {
   const chart = resolveChartPreset(id, data);
   if (chart.errors) return chart;
+  if (EXTENDED_KINDS.has(chart.kind)) {
+    const contractErrors = validateChartPresetData(chart.kind, chart);
+    if (contractErrors.length) return {errors: contractErrors};
+    const html = renderExtendedChart(chart, `preset-${id.replace(/[^a-z0-9-]/gi, '-')}`);
+    return colorRoles ? applyChartColorRoles(html, chart.kind) : html;
+  }
   const errors = checkData(chart);
   if (errors.length) return {errors};
+  const contractErrors = validateChartPresetData(chart.kind, chart);
+  if (contractErrors.length) return {errors: contractErrors};
   const html = renderChart(chart, `preset-${id.replace(/[^a-z0-9-]/gi, '-')}`);
   return colorRoles ? applyChartColorRoles(html, chart.kind) : html;
 }
 
+exports.validateChartPresetData = validateChartPresetData;
 exports.resolveChartPreset = resolveChartPreset;
 exports.CHART_COLOR_ROLE_VARS = CHART_COLOR_ROLE_VARS;
 exports.chartColorRoleVars = chartColorRoleVars;

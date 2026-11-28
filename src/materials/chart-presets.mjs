@@ -6,10 +6,29 @@ import {chartOptions} from '../catalog/chart-rules.mjs';
  * 같은 형태의 두 프리셋은 `PRESET_AXES`에서 2곳 이상 달라야 한다(`distinctnessViolations`, tests/chart-presets-distinct.test.mjs).
  * 색은 서명에 넣지 않는다: 색만 다른 프리셋은 서명이 같아 실패한다.
  */
-const EVIDENCE = ['tests/chart-presets-distinct.test.mjs:36', 'tests/chart-presets-distinct.test.mjs:62', 'tests/chart-presets-forms.test.mjs:32'];
+const EVIDENCE = ['tests/chart-presets.test.mjs:233', 'tests/chart-presets.test.mjs:271', 'tests/chart-presets-distinct.test.mjs:51', 'tests/chart-presets-forms.test.mjs:32'];
 export const PRESET_AXES = Object.freeze(['grid', 'labels', 'legend', 'density', 'responsive', 'axes', 'series', 'dataType']);
 
-const noAxisKinds = ['donut', 'sparkline', 'funnel'];
+const noAxisKinds = ['donut', 'pie', 'sparkline', 'funnel', 'treemap', 'radar', 'gauge', 'bullet', 'calendar-heatmap', 'progress-chart'];
+const PRESET_DATA_SCHEMAS = Object.freeze({
+  'grouped-bar': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'zero-baseline']},
+  'normalized-stacked-bar': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'each-category-total-100']},
+  'multi-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['ordered-categories']},
+  'step-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['ordered-categories']},
+  'stacked-area': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'zero-baseline']},
+  pie: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'total-100']},
+  bubble: {seriesField: 'points', categoryCount: 'none', minimumSeries: 1, valueType: '{x:number,y:number,size:number}', constraints: ['finite-coordinates', 'positive-size']},
+  treemap: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'positive-total']},
+  radar: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['shared-scale-0-100']},
+  gauge: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['domain-0-100']},
+  bullet: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'required-target-in-domain']},
+  'box-plot': {seriesField: 'quartiles', categoryCount: 'series-length', minimumSeries: 1, valueType: '{min,q1,median,q3,max}', constraints: ['ordered-five-number-summary']},
+  combination: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['bar-and-line-series', 'zero-baseline-for-bars']},
+  'calendar-heatmap': {seriesField: 'values', categoryCount: 'weekdays', minimumSeries: 1, valueType: 'finite-number', constraints: ['complete-week-grid', 'nonnegative']},
+  'progress-chart': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['domain-0-100']},
+});
+const standardDataSchema = kind => PRESET_DATA_SCHEMAS[kind] ?? ({seriesField: ['scatter', 'bubble'].includes(kind) ? 'points' : ['candlestick', 'ohlc'].includes(kind) ? 'candles' : kind === 'histogram' ? 'samples' : 'values', categoryCount: ['scatter', 'histogram'].includes(kind) ? 'none' : 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['finite-values', ...(kind === 'donut' ? ['nonnegative', 'total-100'] : []), ...(['bar', 'bars-h', 'stacked-bar', 'area', 'histogram', 'waterfall'].includes(kind) ? ['zero-baseline'] : []), ...(kind === 'heatmap' ? ['nonnegative'] : []), ...(kind === 'funnel' ? ['non-increasing-stages'] : []), ...(kind === 'sparkline' ? ['exactly-one-series'] : [])]});
+const distortionRules = kind => standardDataSchema(kind).constraints.map(rule => ({rule, enforcedBy: 'validateChartPresetData'}));
 const captionOf = (kind, x, y) => kind === 'donut' ? `${x} 구성 · 값은 ${y}`
   : kind === 'sparkline' ? `${x} 순 ${y} 추이 · 상세 축 표시는 생략`
     : kind === 'funnel' ? `${x}별 ${y}와 첫 단계 대비 비율`
@@ -26,7 +45,7 @@ const preset = ({name, label, domain, context = 'dashboard', kind, dataType, uni
     ...(grid ? {grid} : {}), ...(labels ? {labels} : {}), ...(legend ? {legend} : {}), ...(density ? {density} : {}), ...(responsive ? {responsive} : {}), ...(bins ? {bins} : {}),
     ...(categories.length ? {categories} : {}), series,
   };
-  const options = chartOptions(node), omitted = noAxisKinds.includes(kind);
+  const options = {...chartOptions(node), dataSchema: standardDataSchema(kind), distortionRules: distortionRules(kind)}, omitted = noAxisKinds.includes(kind);
   return defineMaterial({
     id: `chart-preset:${name}`, kind: 'chart-preset', category: 'chart', label, since: '2.6.0', contexts: [context],
     render: {module: 'src/render/chart-presets.mjs', export: 'renderChartPreset', key: `chart-preset:${name}`},
@@ -96,6 +115,22 @@ export const chartPresetMaterials = Object.freeze([
   preset({name: 'mobile-weekly-activity', label: '모바일 요일별 활동 시간', domain: 'mobile', context: 'listing', kind: 'bar', dataType: 'time', unit: '분', x: '요일', y: '활동 시간', categories: weekdays, axis: {showY: 'no'}, grid: 'none', labels: 'values', density: 'compact', series: [{name: '활동', values: [32, 45, 28, 60, 52, 18, 24]}]}),
   preset({name: 'mobile-balance-trend', label: '모바일 월별 잔액 추이', domain: 'mobile', context: 'listing', kind: 'line', dataType: 'time', unit: '만 원', x: '월', y: '잔액', categories: ['6월', '7월', '8월', '9월', '10월', '11월'], grid: 'none', labels: 'last', density: 'compact', series: [{name: '잔액', values: [120, 135, 128, 150, 162, 171]}]}),
   preset({name: 'mobile-stock-candles', label: '모바일 일봉 스크롤 캔들', domain: 'mobile', context: 'listing', kind: 'candlestick', dataType: 'time', unit: '포인트', x: '거래일', y: '지수', categories: ['10/28', '10/29', '10/30', '10/31', '11/03', '11/04', '11/05', '11/06', '11/07', '11/10', '11/11', '11/12'], grid: 'none', density: 'compact', responsive: 'scroll', series: [{name: '종합지수', candles: [[2441, 2468, 2430, 2462], [2462, 2475, 2449, 2453], [2453, 2471, 2444, 2466], [2466, 2489, 2461, 2480], ...index.slice(0, 8)].map(candle)}]}),
+  // ---- §9.1 추가 개별 형태 ----
+  preset({name: 'analytics-grouped-bar', label: '분석 채널별 전환 비교', domain: 'analytics', kind: 'grouped-bar', dataType: 'category', unit: '%', x: '채널', y: '전환율', categories: ['검색', '메일', '추천'], series: [{name: '신규', values: [42, 35, 51]}, {name: '재방문', values: [58, 49, 67]}]}),
+  preset({name: 'erp-normalized-stack', label: 'ERP 부서별 예산 구성비', domain: 'erp', kind: 'normalized-stacked-bar', dataType: 'part-to-whole', unit: '%', x: '부서', y: '예산 구성', categories: ['영업', '개발', '운영'], series: [{name: '인건비', values: [50, 60, 40]}, {name: '운영비', values: [30, 25, 35]}, {name: '투자', values: [20, 15, 25]}]}),
+  preset({name: 'analytics-multiline', label: '분석 유입·가입 다중 추이', domain: 'analytics', kind: 'multi-line', dataType: 'time', unit: '천 명', x: '월', y: '사용자', categories: ['1월', '2월', '3월', '4월'], series: [{name: '유입', values: [12, 15, 17, 21]}, {name: '가입', values: [3, 4, 5, 7]}]}),
+  preset({name: 'finance-step-rate', label: '금융 기준금리 변경 단계', domain: 'finance', kind: 'step-line', dataType: 'time', unit: '%', x: '시점', y: '기준금리', categories: ['1월', '2월', '3월', '4월'], series: [{name: '기준금리', values: [2.5, 2.5, 3, 3.25]}]}),
+  preset({name: 'analytics-stacked-area', label: '분석 사용자 구성 추이', domain: 'analytics', kind: 'stacked-area', dataType: 'time', unit: '천 명', x: '월', y: '사용자', categories: ['1월', '2월', '3월', '4월'], series: [{name: '무료', values: [40, 44, 48, 52]}, {name: '유료', values: [12, 15, 18, 22]}]}),
+  preset({name: 'marketing-channel-pie', label: '마케팅 채널 점유 비율', domain: 'marketing', kind: 'pie', dataType: 'part-to-whole', unit: '%', x: '채널', y: '점유율', categories: ['검색', '메일', '추천', '직접'], series: [{name: '비율', values: [40, 25, 20, 15]}]}),
+  preset({name: 'analytics-bubble-segments', label: '분석 고객군 규모와 가치', domain: 'analytics', kind: 'bubble', dataType: 'relationship', unit: '천 명', x: '활성도', y: '매출', series: [{name: '고객군', points: [{x: 2, y: 30, size: 12}, {x: 5, y: 55, size: 22}, {x: 8, y: 72, size: 34}]}]}),
+  preset({name: 'erp-treemap-costs', label: 'ERP 부서별 비용 면적 구성', domain: 'erp', context: 'data', kind: 'treemap', dataType: 'part-to-whole', unit: '백만 원', x: '부서', y: '비용', categories: ['영업', '개발', '운영', '지원'], series: [{name: '비용', values: [420, 680, 350, 210]}]}),
+  preset({name: 'analytics-radar-capability', label: '분석 업무 역량 프로필', domain: 'analytics', kind: 'radar', dataType: 'relationship', unit: '점', x: '역량', y: '점수', categories: ['품질', '속도', '안정성', '확장성', '비용'], series: [{name: '현재', values: [78, 65, 82, 70, 58]}, {name: '목표', values: [90, 80, 90, 85, 75]}]}),
+  preset({name: 'finance-gauge-risk', label: '금융 포트폴리오 위험도', domain: 'finance', kind: 'gauge', dataType: 'relationship', unit: '점', x: '위험도', y: '점수', categories: ['위험도'], series: [{name: '현재 위험도', values: [62]}]}),
+  preset({name: 'erp-bullet-target', label: 'ERP 목표 대비 실적', domain: 'erp', kind: 'bullet', dataType: 'category', unit: '%', x: '지표', y: '달성률', categories: ['분기 매출'], series: [{name: '실적', values: [78], target: 85}]}),
+  preset({name: 'finance-box-volatility', label: '금융 자산 변동 구간', domain: 'finance', context: 'data', kind: 'box-plot', dataType: 'distribution', unit: '%', x: '자산', y: '수익률', categories: ['주식형', '채권형'], series: [{name: '주식형', quartiles: {min: -12, q1: -3, median: 4, q3: 11, max: 24}}, {name: '채권형', quartiles: {min: -5, q1: -1, median: 2, q3: 5, max: 10}}]}),
+  preset({name: 'analytics-combination-volume', label: '분석 주문량과 전환율', domain: 'analytics', kind: 'combination', dataType: 'time', unit: '건 / %', x: '월', y: '주문량·전환율', categories: ['1월', '2월', '3월', '4월'], series: [{name: '주문량', values: [120, 150, 136, 190], mark: 'bar'}, {name: '전환율', values: [4, 5, 4.5, 6], mark: 'line'}]}),
+  preset({name: 'erp-calendar-activity', label: 'ERP 일자별 작업량', domain: 'erp', context: 'data', kind: 'calendar-heatmap', dataType: 'time', unit: '건', x: '요일', y: '주차', categories: ['월', '화', '수', '목', '금', '토', '일'], series: [{name: '1주', values: [2, 5, 4, 7, 6, 1, 0]}, {name: '2주', values: [3, 4, 8, 6, 9, 2, 1]}, {name: '3주', values: [1, 6, 5, 8, 7, 0, 0]}, {name: '4주', values: [4, 7, 6, 9, 8, 3, 1]}]}),
+  preset({name: 'erp-progress-completion', label: 'ERP 프로젝트 완료율', domain: 'erp', kind: 'progress-chart', dataType: 'process', unit: '%', x: '업무', y: '완료율', categories: ['설계', '구현', '검수'], series: [{name: '완료율', values: [100, 72, 38]}]}),
 ]);
 
 /** 프리셋 서명: 형태와 PRESET_AXES 값. 색은 들어 있지 않다. */

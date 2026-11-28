@@ -17,7 +17,7 @@
     },
     "registries": {
       "platform": "style-context:54 palette:436 subtoken-set:25 type-system:14 base-component:10 family:12 purpose-family:32 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8",
-      "design": "axis:15 chart-preset:29 color-token:257 component:65 icon:87 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
+      "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:87 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
     "webSurfaces": {
@@ -214,21 +214,21 @@
   "summary": {
     "requirements": {
       "total": 337,
-      "fulfilled": 176,
-      "missing": 161,
-      "coverageRate": 0.5223,
+      "fulfilled": 189,
+      "missing": 148,
+      "coverageRate": 0.5608,
       "byCoverage": {
-        "direct": 133,
+        "direct": 146,
         "variant": 34,
         "schema": 7,
         "part-of": 2,
-        "missing": 161
+        "missing": 148
       },
       "statusDistribution": {
-        "missing": 161,
+        "missing": 148,
         "metadata-only": 0,
         "defined": 3,
-        "renderable": 22,
+        "renderable": 35,
         "catalog-visible": 24,
         "assemblable": 1,
         "verified": 126
@@ -268,8 +268,8 @@
         },
         "charts": {
           "total": 29,
-          "missing": 13,
-          "direct": 16,
+          "missing": 0,
+          "direct": 29,
           "variant": 0,
           "schema": 0,
           "partOf": 0
@@ -303,19 +303,19 @@
       }
     },
     "materials": {
-      "totalRecords": 1347,
+      "totalRecords": 1362,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
         "defined": 21,
-        "renderable": 85,
+        "renderable": 100,
         "catalog-visible": 377,
         "assemblable": 4,
         "verified": 433
       },
       "registeredByRegistry": {
         "platform": 263,
-        "design": 1084
+        "design": 1099
       }
     },
     "byKind": {
@@ -360,12 +360,12 @@
         }
       },
       "chart-preset": {
-        "registered": 29,
-        "actualMaterial": 29,
+        "registered": 44,
+        "actualMaterial": 44,
         "assemblableVerified": 0,
-        "distinctOutputs": 29,
+        "distinctOutputs": 44,
         "byStatus": {
-          "renderable": 29
+          "renderable": 44
         }
       },
       "color-token": {
@@ -685,9 +685,9 @@
       {
         "material": "차트 프리셋",
         "previousBaseline": 29,
-        "currentMeasured": 29,
-        "delta": 0,
-        "status": "match",
+        "currentMeasured": 44,
+        "delta": 15,
+        "status": "drift",
         "measuredBy": "live registry count"
       },
       {
@@ -3468,9 +3468,9 @@
       "coverage": "direct",
       "status": "renderable",
       "materialIds": [
-        "chart-preset:marketing-channel-roas"
+        "chart-preset:analytics-grouped-bar"
       ],
-      "note": "ext.chartKind=bar, 계열 2개 이상인 프리셋 1개"
+      "note": "ext.chartKind=grouped-bar, 계열 2개 이상인 프리셋 1개"
     },
     {
       "id": "req:chart:04-stacked-bar",
@@ -3488,9 +3488,12 @@
       "id": "req:chart:05-100-stacked-bar",
       "section": "§9.1",
       "name": "100% Stacked Bar",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:erp-normalized-stack"
+      ],
+      "note": "ext.chartKind=normalized-stacked-bar, 계열 2개 이상인 프리셋 1개"
     },
     {
       "id": "req:chart:06-line",
@@ -3513,18 +3516,20 @@
       "coverage": "direct",
       "status": "renderable",
       "materialIds": [
-        "chart-preset:analytics-traffic-lines",
-        "chart-preset:finance-monthly-close"
+        "chart-preset:analytics-multiline"
       ],
-      "note": "ext.chartKind=line, 계열 2개 이상인 프리셋 2개"
+      "note": "ext.chartKind=multi-line, 계열 2개 이상인 프리셋 1개"
     },
     {
       "id": "req:chart:08-step-line",
       "section": "§9.1",
       "name": "Step Line",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:finance-step-rate"
+      ],
+      "note": "ext.chartKind=step-line인 프리셋 1개"
     },
     {
       "id": "req:chart:09-area",
@@ -3542,17 +3547,23 @@
       "id": "req:chart:10-stacked-area",
       "section": "§9.1",
       "name": "Stacked Area",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:analytics-stacked-area"
+      ],
+      "note": "ext.chartKind=stacked-area, 계열 2개 이상인 프리셋 1개"
     },
     {
       "id": "req:chart:11-pie",
       "section": "§9.1",
       "name": "Pie",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:marketing-channel-pie"
+      ],
+      "note": "ext.chartKind=pie인 프리셋 1개"
     },
     {
       "id": "req:chart:12-donut",
@@ -3581,9 +3592,12 @@
       "id": "req:chart:14-bubble",
       "section": "§9.1",
       "name": "Bubble",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:analytics-bubble-segments"
+      ],
+      "note": "ext.chartKind=bubble인 프리셋 1개"
     },
     {
       "id": "req:chart:15-heatmap",
@@ -3601,17 +3615,23 @@
       "id": "req:chart:16-treemap",
       "section": "§9.1",
       "name": "Treemap",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:erp-treemap-costs"
+      ],
+      "note": "ext.chartKind=treemap인 프리셋 1개"
     },
     {
       "id": "req:chart:17-radar",
       "section": "§9.1",
       "name": "Radar",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:analytics-radar-capability"
+      ],
+      "note": "ext.chartKind=radar인 프리셋 1개"
     },
     {
       "id": "req:chart:18-waterfall",
@@ -3641,17 +3661,23 @@
       "id": "req:chart:20-gauge",
       "section": "§9.1",
       "name": "Gauge",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:finance-gauge-risk"
+      ],
+      "note": "ext.chartKind=gauge인 프리셋 1개"
     },
     {
       "id": "req:chart:21-bullet",
       "section": "§9.1",
       "name": "Bullet",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:erp-bullet-target"
+      ],
+      "note": "ext.chartKind=bullet인 프리셋 1개"
     },
     {
       "id": "req:chart:22-sparkline",
@@ -3703,33 +3729,45 @@
       "id": "req:chart:26-box-plot",
       "section": "§9.1",
       "name": "Box Plot",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:finance-box-volatility"
+      ],
+      "note": "ext.chartKind=box-plot인 프리셋 1개"
     },
     {
       "id": "req:chart:27-combination-chart",
       "section": "§9.1",
       "name": "Combination Chart",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:analytics-combination-volume"
+      ],
+      "note": "ext.chartKind=combination, 계열 2개 이상인 프리셋 1개"
     },
     {
       "id": "req:chart:28-calendar-heatmap",
       "section": "§9.1",
       "name": "Calendar Heatmap",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:erp-calendar-activity"
+      ],
+      "note": "ext.chartKind=calendar-heatmap인 프리셋 1개"
     },
     {
       "id": "req:chart:29-progress-chart",
       "section": "§9.1",
       "name": "Progress Chart",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "chart-preset:erp-progress-completion"
+      ],
+      "note": "ext.chartKind=progress-chart인 프리셋 1개"
     },
     {
       "id": "req:layout:01-single-column",
@@ -11908,6 +11946,72 @@
       }
     },
     {
+      "id": "chart-preset:analytics-bubble-segments",
+      "name": "분석 고객군 규모와 가치",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:14-bubble"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "4590f0365e3f7261",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "chart-preset:analytics-cohort-scatter",
       "name": "분석 전환율 분포",
       "kind": "chart-preset",
@@ -11944,14 +12048,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -11963,12 +12068,78 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "aec84aee2346593a",
+        "outputHash": "9d7d9d61e00b8ff1",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:analytics-combination-volume",
+      "name": "분석 주문량과 전환율",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:27-combination-chart"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "f7221b56240f1dc1",
         "duplicateOutputOf": []
       }
     },
@@ -12009,14 +12180,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12028,12 +12200,78 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "d731cf00677bb8fc",
+        "outputHash": "3a23074019c0fa1e",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:analytics-grouped-bar",
+      "name": "분석 채널별 전환 비교",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:03-grouped-bar"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "51157da742b82db1",
         "duplicateOutputOf": []
       }
     },
@@ -12074,14 +12312,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12093,12 +12332,144 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "f884d50fed47f6f6",
+        "outputHash": "67976fc34250e598",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:analytics-multiline",
+      "name": "분석 유입·가입 다중 추이",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:07-multi-line"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "406b5cbf47c0445a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:analytics-radar-capability",
+      "name": "분석 업무 역량 프로필",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:17-radar"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "41e84a3d5c7aad74",
         "duplicateOutputOf": []
       }
     },
@@ -12139,14 +12510,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12158,12 +12530,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "69fdc73807691283",
+        "outputHash": "f0635fa101633f11",
         "duplicateOutputOf": []
       }
     },
@@ -12204,14 +12576,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12223,24 +12596,23 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "c949f8d8fc78e389",
+        "outputHash": "2f67c5a7c9f4b048",
         "duplicateOutputOf": []
       }
     },
     {
-      "id": "chart-preset:analytics-traffic-lines",
-      "name": "분석 요일별 유입 단계",
+      "id": "chart-preset:analytics-stacked-area",
+      "name": "분석 사용자 구성 추이",
       "kind": "chart-preset",
       "registry": "design",
       "category": "chart",
       "requirementIds": [
-        "req:chart:06-line",
-        "req:chart:07-multi-line"
+        "req:chart:10-stacked-area"
       ],
       "status": "renderable",
       "blockedBy": "not-in-web-catalog",
@@ -12270,14 +12642,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12289,12 +12662,78 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "dce23f89e4d7fd03",
+        "outputHash": "454dd838fcc00e9d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:analytics-traffic-lines",
+      "name": "분석 요일별 유입 단계",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:06-line"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "109f729b9760f141",
         "duplicateOutputOf": []
       }
     },
@@ -12335,14 +12774,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12354,12 +12794,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "571f6bc0c2613ba1",
+        "outputHash": "eb9469a89f966c0a",
         "duplicateOutputOf": []
       }
     },
@@ -12400,14 +12840,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12419,12 +12860,144 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "89b5dd9df28b2cd6",
+        "outputHash": "294803cb129609bd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:erp-bullet-target",
+      "name": "ERP 목표 대비 실적",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:21-bullet"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "2202442bda7e399f",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:erp-calendar-activity",
+      "name": "ERP 일자별 작업량",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:28-calendar-heatmap"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "3a7944830e8c36be",
         "duplicateOutputOf": []
       }
     },
@@ -12465,14 +13038,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12484,12 +13058,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "dd48b0e4166239d5",
+        "outputHash": "f01f3e0c1ffa8fa1",
         "duplicateOutputOf": []
       }
     },
@@ -12530,14 +13104,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12549,12 +13124,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "d9ed20a1c12f10ab",
+        "outputHash": "155a0958103bbe61",
         "duplicateOutputOf": []
       }
     },
@@ -12595,14 +13170,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12614,12 +13190,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "2506cd6b17031cee",
+        "outputHash": "bd292ef4ab532109",
         "duplicateOutputOf": []
       }
     },
@@ -12660,14 +13236,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12679,12 +13256,144 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "4b8ba9820ac86af8",
+        "outputHash": "04d6436fb7c372cb",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:erp-normalized-stack",
+      "name": "ERP 부서별 예산 구성비",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:05-100-stacked-bar"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "a107609cf15c5e5a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:erp-progress-completion",
+      "name": "ERP 프로젝트 완료율",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:29-progress-chart"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "193ce0c7ef48ac77",
         "duplicateOutputOf": []
       }
     },
@@ -12725,14 +13434,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12744,12 +13454,144 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "d819f48982fa443e",
+        "outputHash": "0bedd9d72b1e047d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:erp-treemap-costs",
+      "name": "ERP 부서별 비용 면적 구성",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:16-treemap"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "e920faafad2607d9",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:finance-box-volatility",
+      "name": "금융 자산 변동 구간",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:26-box-plot"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "4bbf00037d535b9c",
         "duplicateOutputOf": []
       }
     },
@@ -12790,14 +13632,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12809,12 +13652,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "e58063ccb13761b3",
+        "outputHash": "72d84fc895bfdd9f",
         "duplicateOutputOf": []
       }
     },
@@ -12855,14 +13698,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12874,24 +13718,23 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "0e97988fe88ba6c5",
+        "outputHash": "45082bcc55fb0850",
         "duplicateOutputOf": []
       }
     },
     {
-      "id": "chart-preset:finance-monthly-close",
-      "name": "금융 월말 잔액 추이",
+      "id": "chart-preset:finance-gauge-risk",
+      "name": "금융 포트폴리오 위험도",
       "kind": "chart-preset",
       "registry": "design",
       "category": "chart",
       "requirementIds": [
-        "req:chart:06-line",
-        "req:chart:07-multi-line"
+        "req:chart:20-gauge"
       ],
       "status": "renderable",
       "blockedBy": "not-in-web-catalog",
@@ -12921,14 +13764,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -12940,12 +13784,78 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "8b542afbe3c3aeee",
+        "outputHash": "2ba769e7838d7632",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:finance-monthly-close",
+      "name": "금융 월말 잔액 추이",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:06-line"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "ca25acbbba49798f",
         "duplicateOutputOf": []
       }
     },
@@ -12986,14 +13896,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13005,12 +13916,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "3c35c3c060e6aa26",
+        "outputHash": "4bda023e62e3c953",
         "duplicateOutputOf": []
       }
     },
@@ -13051,14 +13962,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13070,12 +13982,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "c60a7a13089ab331",
+        "outputHash": "c06446e2d974b3c4",
         "duplicateOutputOf": []
       }
     },
@@ -13116,14 +14028,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13135,12 +14048,78 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "8c9d22a4182c3e4b",
+        "outputHash": "adbd8beddf686bc5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:finance-step-rate",
+      "name": "금융 기준금리 변경 단계",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:08-step-line"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "85a6e717d1fe9415",
         "duplicateOutputOf": []
       }
     },
@@ -13181,14 +14160,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13200,24 +14180,23 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "88d9ff7218d339b3",
+        "outputHash": "7a540ddf5a2e1e73",
         "duplicateOutputOf": []
       }
     },
     {
-      "id": "chart-preset:marketing-channel-roas",
-      "name": "마케팅 채널별 광고비와 매출",
+      "id": "chart-preset:marketing-channel-pie",
+      "name": "마케팅 채널 점유 비율",
       "kind": "chart-preset",
       "registry": "design",
       "category": "chart",
       "requirementIds": [
-        "req:chart:01-vertical-bar",
-        "req:chart:03-grouped-bar"
+        "req:chart:11-pie"
       ],
       "status": "renderable",
       "blockedBy": "not-in-web-catalog",
@@ -13247,14 +14226,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13266,12 +14246,78 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "c153461edf6d0d98",
+        "outputHash": "1bf7be1a04da6af0",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "chart-preset:marketing-channel-roas",
+      "name": "마케팅 채널별 광고비와 매출",
+      "kind": "chart-preset",
+      "registry": "design",
+      "category": "chart",
+      "requirementIds": [
+        "req:chart:01-vertical-bar"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.6.0"
+        ],
+        "introducedIn": "2.6.0",
+        "materialVersion": "1.0.0"
+      },
+      "definitionPath": "src/materials/chart-presets.mjs#chartPresetMaterials",
+      "rendererConnected": true,
+      "rendererEntry": "src/render/chart-presets.mjs#renderChartPreset",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "scale": [
+            "standard"
+          ]
+        },
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": false,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
+          "tests/chart-presets-forms.test.mjs:32"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "MIT",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
+        "renderer": "src/render/chart-presets.mjs#renderChartPreset",
+        "probe": {
+          "method": "renderChartPreset(SVG + accessible table)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "031b620f71faee65",
         "duplicateOutputOf": []
       }
     },
@@ -13312,14 +14358,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13331,12 +14378,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "f25a29bf3262d0d8",
+        "outputHash": "5a4223d3de04c5d2",
         "duplicateOutputOf": []
       }
     },
@@ -13377,14 +14424,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13396,12 +14444,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "e5a03062dc7a3523",
+        "outputHash": "7ee1f7f0902d7759",
         "duplicateOutputOf": []
       }
     },
@@ -13442,14 +14490,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13461,12 +14510,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "92d59bca46a9d01f",
+        "outputHash": "00dca6f054422b74",
         "duplicateOutputOf": []
       }
     },
@@ -13507,14 +14556,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13526,12 +14576,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "a36eb3acf00d9f6d",
+        "outputHash": "575d555fe2ab3642",
         "duplicateOutputOf": []
       }
     },
@@ -13572,14 +14622,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13591,12 +14642,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "693957f4479c290f",
+        "outputHash": "3981750b220eeb05",
         "duplicateOutputOf": []
       }
     },
@@ -13637,14 +14688,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13656,12 +14708,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "bac4eb3d569f6b9c",
+        "outputHash": "ff85f07d0da3eed5",
         "duplicateOutputOf": []
       }
     },
@@ -13702,14 +14754,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13721,12 +14774,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "8a884d507583865c",
+        "outputHash": "ea3d77e4dfa0a372",
         "duplicateOutputOf": []
       }
     },
@@ -13767,14 +14820,15 @@
       "studioAssemblable": false,
       "studioSurfaces": [],
       "restAndMcpAvailable": true,
-      "blueprintExpressible": true,
+      "blueprintExpressible": false,
       "exportReflected": true,
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "verified",
         "evidenceRefs": [
-          "tests/chart-presets-distinct.test.mjs:36",
-          "tests/chart-presets-distinct.test.mjs:62",
+          "tests/chart-presets.test.mjs:233",
+          "tests/chart-presets.test.mjs:271",
+          "tests/chart-presets-distinct.test.mjs:51",
           "tests/chart-presets-forms.test.mjs:32"
         ],
         "invalidEvidenceRefs": [],
@@ -13786,12 +14840,12 @@
         "definition": "src/materials/chart-presets.mjs#chartPresetMaterials",
         "renderer": "src/render/chart-presets.mjs#renderChartPreset",
         "probe": {
-          "method": "compileBlueprint(isolated chart node)",
+          "method": "renderChartPreset(SVG + accessible table)",
           "ran": true,
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "c66394e2aceebdf3",
+        "outputHash": "b0aa52c55791bf14",
         "duplicateOutputOf": []
       }
     },

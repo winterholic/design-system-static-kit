@@ -4,6 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {createBlueprint} from '../../src/catalog.mjs';
 import {compile} from '../../src/compiler.mjs';
 import {chartPresetMaterials} from '../../src/materials/chart-presets.mjs';
+import {renderChartPreset} from '../../src/render/chart-presets.mjs';
 
 /**
  * 모든 차트 프리셋의 증거 페이지. 카탈로그 2.6.0 Blueprint 하나를 컴파일하므로 결정적이다(같은 입력은 같은 바이트).
@@ -22,13 +23,13 @@ export function renderChartEvidence() {
   blueprint.shell = 'minimal';
   blueprint.pageType = 'general';
   blueprint.chrome.nav = blueprint.chrome.nav.slice(0, 2);
+  blueprint.tree = {type: 'page', children: [{type: 'page-header', title: '차트 프리셋', description: '각 도형은 등록된 chart-preset SVG 렌더러가 데이터와 접근성 표를 함께 출력합니다.'}, {type: 'chart', title: '스타일 추출용 기준 차트', caption: '생성된 카탈로그 CSS', kind: 'bar', unit: '건', categories: ['A', 'B'], series: [{name: '표본', values: [2, 3]}]}]};
+  const css = compile(blueprint).css;
   const sections = DOMAINS.map(([domain, title]) => {
     const presets = chartPresetMaterials.filter(material => material.ext.domain === domain);
-    return {type: 'section', title: `${title} 차트 프리셋 ${presets.length}개`, description: presets.map(material => material.id.replace('chart-preset:', '')).join(' · '),
-      children: [{type: 'grid', columns: 'two', children: presets.map(material => structuredClone(material.examples[0]))}]};
-  });
-  blueprint.tree = {type: 'page', children: [{type: 'page-header', title: `차트 프리셋 ${chartPresetMaterials.length}개`, description: '형태·축·격자·값 라벨·범례·밀도·반응형이 서로 다른 검증된 프리셋의 예시입니다.'}, ...sections]};
-  return compile(blueprint).html.trimEnd() + '\n';
+    return `<section><h2>${title} · ${presets.length}개</h2><p>${presets.map(material => material.id.replace('chart-preset:', '')).join(' · ')}</p><div class="preset-grid">${presets.map(material => renderChartPreset(material.id)).join('\n')}</div></section>`;
+  }).join('\n');
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>차트 프리셋 렌더 증거</title><style>${css}\nbody{margin:0;padding:24px;background:#f7f8fa;color:#18202b;font-family:system-ui,sans-serif}main{max-width:1280px;margin:auto}section{margin:32px 0}h1,h2{line-height:1.3}.preset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}.kit-chart{min-width:0}</style></head><body><main><h1>차트 프리셋 ${chartPresetMaterials.length}개 · 고유 유형 ${new Set(chartPresetMaterials.map(material => material.ext.chartKind)).size}종</h1>${sections}</main></body></html>\n`;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

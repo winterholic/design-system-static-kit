@@ -20,10 +20,18 @@ import {chartExtensionCSS} from '../../styles/chart-extension.mjs';
 import {PROFILES} from '../../profiles/data.mjs';
 
 export const CHART_FORM_GROUPS = Object.freeze({
-  comparison: ['bar', 'bars-h'], composition: ['stacked-bar', 'donut', 'waterfall'], trend: ['line', 'area', 'sparkline'],
-  distribution: ['histogram', 'heatmap'], relationship: ['scatter'], process: ['funnel'], market: ['candlestick', 'ohlc'],
+  comparison: ['bar', 'bars-h', 'grouped-bar', 'bullet'], composition: ['stacked-bar', 'normalized-stacked-bar', 'donut', 'pie', 'treemap', 'waterfall'], trend: ['line', 'multi-line', 'step-line', 'area', 'stacked-area', 'sparkline', 'combination'],
+  distribution: ['histogram', 'box-plot', 'heatmap', 'calendar-heatmap'], relationship: ['scatter', 'bubble', 'radar', 'gauge'], process: ['funnel', 'progress-chart'], market: ['candlestick', 'ohlc'],
 });
 export const groupOfForm = form => Object.entries(CHART_FORM_GROUPS).find(([, forms]) => forms.includes(form))?.[0] ?? null;
+const EXTENDED_DATA_TYPES = Object.freeze({
+  'grouped-bar': ['category'], 'normalized-stacked-bar': ['part-to-whole'], 'multi-line': ['time'],
+  'step-line': ['time'], 'stacked-area': ['time'], pie: ['part-to-whole'], bubble: ['relationship'],
+  treemap: ['part-to-whole'], radar: ['relationship'], gauge: ['relationship'], bullet: ['category'],
+  'box-plot': ['distribution'], combination: ['time'], 'calendar-heatmap': ['time'], 'progress-chart': ['process'],
+});
+const dataTypesOf = form => KIND_DATA_TYPES[form] ?? EXTENDED_DATA_TYPES[form] ?? [];
+export const CHART_KIND_DATA_TYPES = Object.freeze({...KIND_DATA_TYPES, ...EXTENDED_DATA_TYPES});
 
 const WORK = ['dashboard', 'data', 'general'], LIST = ['listing', 'community', 'settings'], READ = ['article', 'blog', 'docs'], MARKET = ['landing', 'pricing', 'commerce', 'portfolio'], INPUT = ['form', 'auth', 'error'];
 const ALL_BUT_INPUT = [...WORK, ...LIST, ...READ, ...MARKET];
@@ -37,6 +45,12 @@ export const FORM_CONTEXTS = Object.freeze({
   scatter: [...WORK, 'article', 'docs'], histogram: [...WORK, 'article', 'docs'], waterfall: [...WORK, 'article', 'docs'],
   funnel: [...WORK, 'landing', 'pricing', 'commerce'],
   candlestick: [...WORK, 'listing'], ohlc: [...WORK, 'listing'],
+  'grouped-bar': ALL_BUT_INPUT, 'normalized-stacked-bar': [...WORK, 'article', 'docs'],
+  'multi-line': [...WORK, 'article', 'docs'], 'step-line': [...WORK, 'article', 'docs'],
+  'stacked-area': [...WORK, 'article', 'docs'], pie: ALL_BUT_INPUT, bubble: [...WORK, 'article', 'docs'],
+  treemap: [...WORK, 'article', 'docs'], radar: [...WORK, 'article', 'docs'], gauge: [...WORK, 'listing'],
+  bullet: [...WORK, 'listing'], 'box-plot': [...WORK, 'article', 'docs'], combination: [...WORK, 'article', 'docs'],
+  'calendar-heatmap': WORK, 'progress-chart': [...WORK, 'listing'],
 });
 
 const FORM_REASON = {
@@ -73,7 +87,7 @@ export function chartContextVerdict(form, context) {
 function relationOf(m) {
   const form = m.ext.chartKind, dataType = m.ext.dataType, group = groupOfForm(form);
   const allowed = new Set([...FORM_CONTEXTS[form], ...m.contexts]);
-  const alternatives = chartPresetMaterials.filter(o => o.id !== m.id && o.ext.chartKind !== form && KIND_DATA_TYPES[o.ext.chartKind].includes(dataType))
+  const alternatives = chartPresetMaterials.filter(o => o.id !== m.id && o.ext.chartKind !== form && dataTypesOf(o.ext.chartKind).includes(dataType))
     .sort((a, b) => (groupOfForm(b.ext.chartKind) === group) - (groupOfForm(a.ext.chartKind) === group) || a.id.localeCompare(b.id)).map(o => o.id);
   return Object.freeze({
     id: m.id, form, group, domain: m.ext.domain, dataType, primaryContexts: [...m.contexts], allowedContexts: pageTypeIds.filter(c => allowed.has(c)),

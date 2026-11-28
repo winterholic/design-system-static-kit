@@ -4,10 +4,11 @@
   "summary": {
     "totalTasks": 29,
     "byStatus": {
-      "Implemented": 1,
+      "Pending": 20,
       "In Progress": 2,
-      "Pending": 21,
-      "Verified": 5
+      "Implemented": 2,
+      "Verified": 5,
+      "Blocked": 0
     },
     "byTrack": {
       "Track A": 4,
@@ -652,8 +653,35 @@
         "tests/chart-presets.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "§9.1의 29유형을 Manifest 요구사항에 명시 매핑하고 새 SVG 렌더러의 실제 출력 probe로 검증"
+        },
+        {
+          "file": "site/gallery/index.html",
+          "owner": "Track G",
+          "reason": "정적 갤러리 생성 출력에 확장된 차트 재료를 반영하고 check-generated 바이트 재현성을 유지"
+        },
+        {
+          "file": "tests/platform-chart-presets.test.mjs",
+          "owner": "Track E",
+          "reason": "기존 차트 출력 해시를 이전 프리셋에 고정하고 프리셋 수와 29종 형태 수를 분리해 검증"
+        },
+        {
+          "file": "tests/chart-presets-distinct.test.mjs",
+          "owner": "Track E",
+          "reason": "새 형태를 실제 프리셋 SVG 렌더 경로로 검증하고 기존 컴파일러 경로는 지원 형태에만 적용"
+        },
+        {
+          "file": "scripts/materials/chart-presets-evidence.mjs",
+          "owner": "Track E",
+          "reason": "근거 페이지가 모든 형태를 컴파일러 대용 없이 실제 프리셋 SVG 렌더러로 출력"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRE-03",

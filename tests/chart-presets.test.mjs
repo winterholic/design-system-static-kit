@@ -7,7 +7,23 @@ import {CATALOG_VERSION, VERSION_ORDER, TOP_LEVEL_SINCE_FIELDS, atLeast} from '.
 import {compile, validateBlueprint} from '../src/compiler.mjs';
 import {catalogRegistry, resolveChartPreset} from '../src/materials/index.mjs';
 import {chartPresetMaterials} from '../src/materials/chart-presets.mjs';
-import {renderChartPreset} from '../src/render/chart-presets.mjs';
+import {renderChartPreset, validateChartPresetData} from '../src/render/chart-presets.mjs';
+import {getMaterial} from '../src/service/index.mjs';
+import {rest, mcpConnect} from './channel-support.mjs';
+
+const REQUIREMENT_CHARTS = Object.freeze({
+  'Vertical Bar': 'bar', 'Horizontal Bar': 'bars-h', 'Grouped Bar': 'grouped-bar',
+  'Stacked Bar': 'stacked-bar', '100% Stacked Bar': 'normalized-stacked-bar',
+  Line: 'line', 'Multi-line': 'multi-line', 'Step Line': 'step-line', Area: 'area',
+  'Stacked Area': 'stacked-area', Pie: 'pie', Donut: 'donut', Scatter: 'scatter',
+  Bubble: 'bubble', Heatmap: 'heatmap', Treemap: 'treemap', Radar: 'radar',
+  Waterfall: 'waterfall', Funnel: 'funnel', Gauge: 'gauge', Bullet: 'bullet',
+  Sparkline: 'sparkline', Candlestick: 'candlestick', OHLC: 'ohlc', Histogram: 'histogram',
+  'Box Plot': 'box-plot', 'Combination Chart': 'combination', 'Calendar Heatmap': 'calendar-heatmap',
+  'Progress Chart': 'progress-chart',
+});
+
+const svgShapeCounts = svg => Object.fromEntries(['rect', 'path', 'circle', 'line', 'polygon', 'polyline', 'text'].map(tag => [tag, (svg.match(new RegExp(`<${tag}\\b`, 'g')) ?? []).length]));
 
 const NEW_KINDS = ['stacked-bar', 'scatter', 'heatmap', 'sparkline'];
 const chartKinds = nodeSpecAt('chart', '2.6.0').fields.kind.enum;
@@ -48,7 +64,7 @@ test('chart data domains are checked and the SVG renderer exposes intentional ax
   assert.doesNotMatch(svg, /class="ch-t"/);
 });
 
-test('chart presets are complete verified materials with compile-ready examples', () => {
+test('chart presets are verified materials with render-ready examples and legacy examples remain compiler-ready', () => {
   assert.ok(chartPresetMaterials.length >= 6);
   const registry = catalogRegistry();
   assert.deepEqual(registry.check(), []);
@@ -61,10 +77,16 @@ test('chart presets are complete verified materials with compile-ready examples'
     assert.ok(preset.a11y.rules.length >= 2);
     assert.ok(preset.examples.length > 0);
     for (const example of preset.examples) {
-      assert.deepEqual(extended(example), [], preset.id);
-      const result = compiled(example);
-      assert.match(result.html, /class="kit-chart"/);
-      assert.match(result.html, /<table>/);
+      const rendered = renderChartPreset(preset.id);
+      assert.equal(typeof rendered, 'string', `${preset.id} renders its example`);
+      assert.match(rendered, /class="kit-chart"/);
+      assert.match(rendered, /<table[ >]/);
+      if (['bar', 'bars-h', 'stacked-bar', 'line', 'area', 'donut', 'scatter', 'heatmap', 'waterfall', 'funnel', 'sparkline', 'candlestick', 'ohlc', 'histogram'].includes(preset.ext.chartKind)) {
+        assert.deepEqual(extended(example), [], preset.id);
+        const result = compiled(example);
+        assert.match(result.html, /class="kit-chart"/);
+        assert.match(result.html, /<table>/);
+      }
     }
   }
 });
@@ -206,4 +228,108 @@ test('catalogVersion 2.6.0 Blueprints validate and compile scatter, stacked-bar,
     }
   }
   assert.ok(validateBlueprint(pageWithChart(charts.scatter, '2.5.0')).errors.some(error => error.code === 'UNKNOWN_KEY'), 'points are an unknown key before 2.6.0');
+});
+
+test('REQUEST §9.1 chart types have per-type schemas and render distinct responsive SVG structures with an accessible data table', () => {
+  const byKind = new Map(chartPresetMaterials.map(material => [material.ext.chartKind, material]));
+  assert.equal(Object.keys(REQUIREMENT_CHARTS).length, 29);
+  const signatures = new Set();
+  for (const [label, kind] of Object.entries(REQUIREMENT_CHARTS)) {
+    const material = byKind.get(kind);
+    assert.ok(material, `${label} has a preset with renderer-supported kind ${kind}`);
+    assert.ok(material.ext.options.dataSchema && material.ext.options.distortionRules?.length, `${label} declares a schema and anti-distortion rules`);
+    const example = material.examples[0];
+    assert.deepEqual(validateChartPresetData(kind, example), [], `${label} example validates against its schema`);
+    const rendered = renderChartPreset(material.id);
+    assert.equal(typeof rendered, 'string', `${label} renders`);
+    assert.match(rendered, new RegExp(`data-kind="${kind}"`));
+    if (!['bar', 'bars-h', 'stacked-bar', 'line', 'area', 'donut', 'scatter', 'heatmap', 'waterfall', 'funnel', 'sparkline', 'candlestick', 'ohlc', 'histogram'].includes(kind)) assert.match(rendered, new RegExp(`data-renderer-kind="${kind}"`));
+    assert.match(rendered, /<svg[^>]+viewBox=/, `${label} emits responsive viewBox SVG`);
+    assert.match(rendered, /<table[ >]/, `${label} emits an accessible data table`);
+    const svg = rendered.match(/<svg[\s\S]*?<\/svg>/)?.[0];
+    assert.ok(svg, `${label} has an SVG`);
+    const signature = JSON.stringify(svgShapeCounts(svg));
+    assert.ok(!signatures.has(signature), `${label} has a distinct SVG element-kind/count signature (${signature})`);
+    signatures.add(signature);
+    assert.ok(validateChartPresetData(kind, {...structuredClone(example), series: []}).length > 0, `${label} rejects an empty data series`);
+    const changed = structuredClone(example);
+    if (['scatter', 'bubble'].includes(kind)) changed.series[0].points[0].x += 1;
+    else if (['candlestick', 'ohlc'].includes(kind)) changed.series[0].candles[0].close -= 1;
+    else if (kind === 'histogram') changed.series[0].samples[0] += 25;
+    else if (kind === 'box-plot') changed.series[0].quartiles.median += 0.25;
+    else if (kind === 'normalized-stacked-bar') { changed.series[0].values[0] += 1; changed.series[1].values[0] -= 1; }
+    else if (kind === 'pie' || kind === 'donut') { changed.series[0].values[0] += 1; changed.series[0].values[1] -= 1; }
+    else if (kind === 'waterfall') { changed.series[0].values[0] += 1; changed.series[0].values[changed.series[0].values.length - 1] += 1; }
+    else if (kind === 'bullet') changed.series[0].values[0] += 1;
+    else if (kind === 'gauge' || kind === 'progress-chart') changed.series[0].values[0] -= 1;
+    else changed.series[0].values[0] += 1;
+    assert.notEqual(renderChartPreset(material.id), renderChartPreset(material.id, {series: changed.series}), `${label} SVG/table consumes supplied values`);
+  }
+  assert.equal(signatures.size, 29);
+});
+
+test('each chart type rejects an input that violates its domain-specific data rule', () => {
+  const corrupt = kind => {
+    const chart = structuredClone(chartPresetMaterials.find(material => material.ext.chartKind === kind).examples[0]);
+    switch (kind) {
+      case 'bar': case 'bars-h': case 'grouped-bar': case 'area': case 'histogram': case 'waterfall': chart.axis = {...chart.axis, min: 1}; break;
+      case 'stacked-bar': case 'stacked-area': chart.series[0].values[0] = -1; break;
+      case 'normalized-stacked-bar': chart.series[0].values[0] += 1; break;
+      case 'line': case 'multi-line': case 'step-line': chart.categories[0] = ''; break;
+      case 'pie': case 'donut': chart.series[0].values[0] += 1; break;
+      case 'scatter': chart.series[0].points[0].x = Infinity; break;
+      case 'bubble': chart.series[0].points[0].size = 0; break;
+      case 'heatmap': chart.series[0].values[0] = -1; break;
+      case 'treemap': chart.series[0].values.fill(0); break;
+      case 'radar': chart.series[0].values[0] = 101; break;
+      case 'gauge': case 'progress-chart': chart.series[0].values[0] = 101; break;
+      case 'funnel': chart.series[0].values[1] = chart.series[0].values[0] + 1; break;
+      case 'bullet': delete chart.series[0].target; break;
+      case 'sparkline': chart.series.push(structuredClone(chart.series[0])); break;
+      case 'candlestick': case 'ohlc': chart.series[0].candles[0].open = chart.series[0].candles[0].high + 1; break;
+      case 'box-plot': chart.series[0].quartiles.median = chart.series[0].quartiles.q3 + 1; break;
+      case 'combination': chart.series.forEach(item => { item.mark = 'bar'; }); break;
+      case 'calendar-heatmap': chart.categories.pop(); break;
+      default: throw new Error(`missing invalid fixture for ${kind}`);
+    }
+    return chart;
+  };
+  for (const kind of Object.values(REQUIREMENT_CHARTS)) {
+    const example = corrupt(kind);
+    const preset = chartPresetMaterials.find(material => material.ext.chartKind === kind);
+    assert.ok(validateChartPresetData(kind, example).length > 0 || typeof renderChartPreset(preset.id, {series: example.series, categories: example.categories, axis: example.axis}) !== 'string', `${kind} rejects its invalid input`);
+  }
+});
+
+test('business chart schemas reject distorted part-to-whole totals and non-zero bar baselines', () => {
+  const pie = chartPresetMaterials.find(material => material.ext.chartKind === 'pie');
+  const pieInput = structuredClone(pie.examples[0]);
+  pieInput.series[0].values = [20, 30, 40];
+  assert.ok(validateChartPresetData('pie', pieInput).some(error => error.code === 'CHART_TOTAL'));
+
+  const bar = chartPresetMaterials.find(material => material.ext.chartKind === 'bar');
+  const barInput = structuredClone(bar.examples[0]);
+  barInput.axis = {...barInput.axis, min: 10};
+  assert.ok(validateChartPresetData('bar', barInput).some(error => error.code === 'CHART_BASELINE'));
+});
+
+test('chart preset records resolve through the service registry, REST and MCP material queries', async () => {
+  const id = 'chart-preset:analytics-bubble-segments';
+  const serviceResult = getMaterial({id});
+  assert.equal(serviceResult.ok, true);
+  assert.equal(serviceResult.value.ext.chartKind, 'bubble');
+  assert.equal(serviceResult.value.ext.options.dataSchema.seriesField, 'points');
+
+  const restResult = await rest('GET', `/api/v1/materials/${id}`);
+  assert.equal(restResult.status, 200);
+  assert.equal(restResult.json.value.ext.chartKind, 'bubble');
+
+  const client = await mcpConnect('modern');
+  try {
+    const mcpResult = await client.callTool({name: 'get_material', arguments: {id}});
+    assert.equal(mcpResult.structuredContent.value.ext.chartKind, 'bubble');
+    assert.equal(mcpResult.structuredContent.value.ext.options.dataSchema.seriesField, 'points');
+  } finally {
+    await client.close();
+  }
 });

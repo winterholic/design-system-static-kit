@@ -15,17 +15,26 @@ import {assemble} from '../src/profiles/assemble.mjs';
 import {PROFILES} from '../src/profiles/data.mjs';
 import {STYLE_CONTEXTS} from '../src/platform/data/style-contexts.mjs';
 import {
-  CHART_PRESET_RELATIONS, CHART_FORM_GROUPS, FORM_CONTEXTS, chartRelationOf, chartContextVerdict, chartTendency, rankChartPresets, assembleChartPreset,
+  CHART_PRESET_RELATIONS, CHART_FORM_GROUPS, FORM_CONTEXTS, CHART_KIND_DATA_TYPES, chartRelationOf, chartContextVerdict, chartTendency, rankChartPresets, assembleChartPreset,
   PROFILE_LISTED_PRESETS, profileChartVerdict, groupOfForm,
 } from '../src/platform/data/charts.mjs';
 
 const sha = s => createHash('sha256').update(s).digest('hex');
 const env = createPlatform();
 const INPUT = ['form', 'auth', 'error'];
+const LEGACY_PRESET_IDS = new Set([
+  'erp-quarterly-revenue', 'finance-monthly-close', 'analytics-cohort-scatter', 'marketing-channel-share', 'mobile-sparkline', 'operations-activity-heatmap', 'sales-pipeline-value', 'campaign-weekly-growth',
+  'erp-budget-bridge', 'erp-inventory-aging', 'erp-cost-breakdown', 'erp-lead-time-histogram', 'erp-monthly-closing',
+  'finance-price-candles', 'finance-price-ohlc', 'finance-cashflow-waterfall', 'finance-yield-curve', 'finance-risk-return-scatter', 'finance-drawdown-area',
+  'analytics-session-histogram', 'analytics-retention-heatmap', 'analytics-traffic-lines', 'analytics-feature-adoption', 'analytics-growth-bridge',
+  'marketing-channel-roas', 'marketing-conversion-funnel', 'mobile-weekly-activity', 'mobile-balance-trend', 'mobile-stock-candles',
+]);
 
 test('2.4.0 to 2.6.0 chart output is byte-identical: preset renders and compiled dashboards are pinned', () => {
-  const all = chartPresetMaterials.map(m => m.id + '\n' + renderChartPreset(m.id)).join('\n---\n');
-  assert.equal(sha(all), '7557476d913b6bbe961b6f5481e4ee42f9c8fb2da8365286dc95d31569b771eb', 'all 29 chart presets render the same bytes');
+  const legacyMaterials = chartPresetMaterials.filter(m => LEGACY_PRESET_IDS.has(m.id.slice('chart-preset:'.length)));
+  assert.equal(legacyMaterials.length, 29);
+  const all = legacyMaterials.map(m => m.id + '\n' + renderChartPreset(m.id)).join('\n---\n');
+  assert.equal(sha(all), '7557476d913b6bbe961b6f5481e4ee42f9c8fb2da8365286dc95d31569b771eb', 'the pinned 29 legacy preset renders are byte-identical');
   // 눈금 상한(niceMax)이 값에 따라 달라지는 데이터로 구형 렌더러 출력을 직접 고정한다(대시보드 예시는 상한이 갈리는 값을 쓰지 않는다).
   const legacy = [['bar', [12, 28, 40]], ['bars-h', [1.2, 3.6, 4.2]], ['line', [130, 180, 230]], ['area', [7, 19, 23]]]
     .map(([kind, values], i) => renderLegacyChart({kind, title: 't', caption: 'c', unit: '건', categories: ['가', '나', '다'], series: [{name: 's', values}]}, `x${i}`)).join('\n');
@@ -39,22 +48,24 @@ test('2.4.0 to 2.6.0 chart output is byte-identical: preset renders and compiled
   }
 });
 
-test('all 29 chart presets have a context and form relation derived from the material and the form rules', () => {
-  assert.equal(CHART_PRESET_RELATIONS.length, 29);
+test('chart preset relations cover all 29 forms; material count is independent of type coverage', () => {
+  assert.equal(CHART_PRESET_RELATIONS.length, chartPresetMaterials.length);
+  assert.equal(chartPresetMaterials.length, 44);
+  assert.equal(new Set(CHART_PRESET_RELATIONS.map(r => r.form)).size, 29);
   assert.deepEqual(CHART_PRESET_RELATIONS.map(r => r.id), chartPresetMaterials.map(m => m.id));
   const forms = new Set(Object.values(CHART_FORM_GROUPS).flat());
-  assert.deepEqual([...forms].sort(), Object.keys(KIND_DATA_TYPES).sort(), 'every chart form belongs to exactly one group');
-  assert.deepEqual(Object.keys(FORM_CONTEXTS).sort(), Object.keys(KIND_DATA_TYPES).sort());
+  assert.deepEqual([...forms].sort(), Object.keys(CHART_KIND_DATA_TYPES).sort(), 'every chart form belongs to exactly one group');
+  assert.deepEqual(Object.keys(FORM_CONTEXTS).sort(), Object.keys(CHART_KIND_DATA_TYPES).sort());
   for (const r of CHART_PRESET_RELATIONS) {
-    assert.ok(KIND_DATA_TYPES[r.form].includes(r.dataType), `${r.id}: ${r.form} can show ${r.dataType}`);
+    assert.ok(CHART_KIND_DATA_TYPES[r.form].includes(r.dataType), `${r.id}: ${r.form} can show ${r.dataType}`);
     assert.equal(r.group, groupOfForm(r.form));
     assert.ok(r.primaryContexts.every(c => r.allowedContexts.includes(c)), `${r.id}: a preset's own page type is allowed`);
     assert.ok(r.allowedContexts.every(c => pageTypeIds.includes(c) && !INPUT.includes(c)), `${r.id}: input pages never take a chart`);
     for (const a of r.alternatives) {
       const o = chartRelationOf(a);
-      assert.ok(o && o.id !== r.id && o.form !== r.form && KIND_DATA_TYPES[o.form].includes(r.dataType), `${r.id} → ${a}: another form for the same data type`);
+      assert.ok(o && o.id !== r.id && o.form !== r.form && CHART_KIND_DATA_TYPES[o.form].includes(r.dataType), `${r.id} → ${a}: another form for the same data type`);
     }
-    assert.equal(r.axesOmitted, ['donut', 'sparkline', 'funnel'].includes(r.form));
+    assert.equal(r.axesOmitted, ['donut', 'pie', 'sparkline', 'funnel', 'treemap', 'radar', 'gauge', 'bullet', 'calendar-heatmap', 'progress-chart'].includes(r.form));
   }
   assert.ok(Object.values(CHART_FORM_GROUPS).every(forms => forms.length >= 1));
   assert.ok(chartRelationOf('chart-preset:erp-quarterly-revenue').alternatives.length >= 1, 'a stacked bar can fall back to another form');
@@ -71,7 +82,7 @@ test('every rejected form × page type pair carries its reason, and the matrix h
   assert.match(chartContextVerdict('bar', 'auth').reason, /입력과 복구/);
   assert.equal(chartContextVerdict('bar', 'auth').code, 'P_CHART_CONTEXT');
   assert.equal(chartContextVerdict('bar', 'nowhere').code, 'P_CHART_CONTEXT');
-  assert.equal(chartContextVerdict('pie', 'dashboard').code, 'P_CHART_FORM');
+  assert.equal(chartContextVerdict('sunburst', 'dashboard').code, 'P_CHART_FORM');
 });
 
 test('the five profile-listed presets that never assembled are now assembled by the platform, or rejected with a stated reason', () => {
@@ -138,7 +149,7 @@ test('assembleChartPreset rejects with a code and a reason, and never invents ma
   assert.equal(heat.html, null);
   assert.match(heat.diagnostics[0].message, /heatmap/);
   assert.deepEqual(codes({preset: 'chart-preset:nope', context: 'dashboard'}), ['P_CHART_PRESET']);
-  assert.ok(assembleChartPreset({preset: 'chart-preset:nope', context: 'dashboard'}).diagnostics[0].alternatives.length === 29);
+  assert.ok(assembleChartPreset({preset: 'chart-preset:nope', context: 'dashboard'}).diagnostics[0].alternatives.length >= 29);
   assert.deepEqual(codes({preset: 'chart-preset:sales-pipeline-value', context: 'auth'}), ['P_CHART_CONTEXT']);
   assert.deepEqual(codes({preset: 'chart-preset:erp-quarterly-revenue', context: 'dashboard', profile: {kinds: ['bar']}}), ['P_CHART_PROFILE_KIND']);
   assert.deepEqual(codes({preset: 'chart-preset:erp-quarterly-revenue', context: 'dashboard', data: {categories: ['a', 'b'], series: [{name: 's', values: [1]}]}}), ['P_CHART_RENDER'], 'data the renderer rule rejects');
@@ -203,7 +214,7 @@ test('colorRoles points heatmap at the sequential steps, waterfall at the diverg
   assert.match(wf, /data-step="down" style="fill:var\(--kit-div2\)"/);
   assert.match(wf, /data-step="total" style="fill:var\(--kit-muted\)"/, 'totals stay neutral');
   assert.doesNotMatch(wf, /--kit-chart[13]/);
-  const six = {categories: ['a', 'b', 'c', 'd', 'e', 'f', 'g'], series: [{name: '전환', values: [7, 6, 5, 4, 3, 2, 1]}]};
+  const six = {categories: ['a', 'b', 'c', 'd', 'e', 'f', 'g'], series: [{name: '전환', values: [25, 20, 15, 15, 10, 10, 5]}]};
   const donut = renderChartPreset('chart-preset:marketing-channel-share', six, {colorRoles: true});
   assert.deepEqual([...donut.matchAll(/class="ch-slice" style="fill:var\(--kit-chart(\d)\)"/g)].map(m => m[1]).join(''), '1234561', 'the sixth slice uses chart6 instead of repeating chart1');
   assert.equal(applyChartColorRoles('<svg/>', 'bar'), '<svg/>', 'other forms pass through');

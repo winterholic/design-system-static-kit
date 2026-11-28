@@ -8,6 +8,8 @@ import {catalogRegistry} from '../src/materials/index.mjs';
 import {chartPresetMaterials, distinctnessViolations, signatureDifferences, PRESET_AXES} from '../src/materials/chart-presets.mjs';
 import {PROFILES} from '../src/profiles/data.mjs';
 import {renderChartEvidence, EVIDENCE_PATH} from '../scripts/materials/chart-presets-evidence.mjs';
+import {renderChartPreset, validateChartPresetData} from '../src/render/chart-presets.mjs';
+import {CHART_KIND_DATA_TYPES} from '../src/platform/data/charts.mjs';
 
 const chartPage = chart => {
   const blueprint = createBlueprint('dashboard-overview');
@@ -21,13 +23,14 @@ const figureAttrs = html => Object.fromEntries([...html.match(/<figure[^>]*class
 test('chart presets: about thirty verified presets across ERP, finance, analytics, marketing and mobile, keeping every earlier id', () => {
   const ids = chartPresetMaterials.map(material => material.id);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
-  assert.ok(chartPresetMaterials.length >= 28 && chartPresetMaterials.length <= 36, `${chartPresetMaterials.length} presets`);
+  assert.ok(chartPresetMaterials.length >= 29, `${chartPresetMaterials.length} presets cover the required chart forms`);
   for (const earlier of ['erp-quarterly-revenue', 'finance-monthly-close', 'analytics-cohort-scatter', 'marketing-channel-share', 'mobile-sparkline', 'operations-activity-heatmap', 'sales-pipeline-value', 'campaign-weekly-growth']) assert.ok(ids.includes(`chart-preset:${earlier}`), earlier);
   const domains = new Set(chartPresetMaterials.map(material => material.ext.domain));
   assert.deepEqual([...domains].sort(), ['analytics', 'erp', 'finance', 'marketing', 'mobile']);
   for (const domain of domains) assert.ok(chartPresetMaterials.filter(material => material.ext.domain === domain).length >= 4, `${domain} has at least four presets`);
   const kinds = new Set(chartPresetMaterials.map(material => material.ext.chartKind));
-  for (const kind of [...CHART_FORM_KINDS, 'stacked-bar', 'scatter', 'heatmap', 'sparkline', 'bar', 'bars-h', 'line', 'area', 'donut']) assert.ok(kinds.has(kind), `${kind} has a preset`);
+  assert.equal(kinds.size, 29, 'coverage counts unique chart forms, independently of preset count');
+  assert.deepEqual([...kinds].sort(), Object.keys(CHART_KIND_DATA_TYPES).sort());
   const registry = catalogRegistry();
   assert.deepEqual(registry.check(), []);
   assert.equal(registry.filter({kind: 'chart-preset', preset: true, minQuality: 'verified'}).length, chartPresetMaterials.length);
@@ -45,27 +48,41 @@ test('chart presets differ visibly: same-form presets differ in at least two of 
   assert.deepEqual(signatureDifferences(base, withSignature({grid: 'none'})), ['grid']);
 });
 
-test('the preset signature is what the renderer draws: data-* attributes equal the resolved options and the markup differs between same-form presets', () => {
+test('native preset options reach compiler markup; every extended form reaches its own SVG renderer', () => {
   const skeleton = html => html.match(/<figure[^>]*class="kit-chart".*?<\/figure>/s)[0].replace(/ style="[^"]*"/g, '').replace(/>[^<]+</g, '><').replace(/[-\d.]+/g, '#').replace(/<title[^>]*>.*?<\/title>/g, '');
   const rendered = new Map();
+  const native = new Set(['bar', 'bars-h', 'line', 'area', 'donut', 'stacked-bar', 'scatter', 'heatmap', 'sparkline', 'candlestick', 'ohlc', 'waterfall', 'funnel', 'histogram']);
   for (const material of chartPresetMaterials) {
-    const html = compile(chartPage(structuredClone(material.examples[0]))).html, attrs = figureAttrs(html), options = chartOptions(material.examples[0]);
-    assert.deepEqual({grid: attrs.grid, labels: attrs.labels, legend: attrs.legend, density: attrs.density, responsive: attrs.responsive}, {grid: options.grid, labels: options.labels, legend: options.legend, density: options.density, responsive: options.responsive}, material.id);
-    assert.deepEqual(Object.fromEntries(PRESET_AXES.map(key => [key, material.ext.options[key]])), Object.fromEntries(PRESET_AXES.map(key => [key, options[key]])), `${material.id} stored options`);
-    rendered.set(material.id, skeleton(html));
+    if (native.has(material.ext.chartKind)) {
+      const html = compile(chartPage(structuredClone(material.examples[0]))).html, attrs = figureAttrs(html), options = chartOptions(material.examples[0]);
+      assert.deepEqual({grid: attrs.grid, labels: attrs.labels, legend: attrs.legend, density: attrs.density, responsive: attrs.responsive}, {grid: options.grid, labels: options.labels, legend: options.legend, density: options.density, responsive: options.responsive}, material.id);
+      assert.deepEqual(Object.fromEntries(PRESET_AXES.map(key => [key, material.ext.options[key]])), Object.fromEntries(PRESET_AXES.map(key => [key, options[key]])), `${material.id} stored options`);
+      rendered.set(material.id, skeleton(html));
+    } else {
+      const html = renderChartPreset(material.id);
+      assert.equal(typeof html, 'string', material.id);
+      assert.match(html, new RegExp(`data-renderer-kind="${material.ext.chartKind}"`), material.id);
+      assert.match(html, /<svg[^>]+viewBox=/, material.id);
+      assert.match(html, /<table[ >]/, material.id);
+    }
   }
   const bySkeleton = Map.groupBy([...rendered], ([, shape]) => shape);
   const clones = [...bySkeleton.values()].filter(group => group.length > 1).map(group => group.map(([id]) => id));
   assert.deepEqual(clones, [], 'no two presets render to the same structure once text, numbers and colors are removed');
 });
 
-test('chart presets validate and compile deterministically on catalog 2.6.0 and are rejected before it', () => {
+test('native chart presets compile deterministically; extended chart data validate and render deterministically', () => {
   for (const material of chartPresetMaterials) {
     const chart = material.examples[0];
-    assert.deepEqual(chartDiagnostics(chart), [], `${material.id} has no static chart diagnostics`);
-    assert.deepEqual(validateBlueprint(chartPage(structuredClone(chart))).errors, [], material.id);
-    assert.equal(compile(chartPage(structuredClone(chart))).html, compile(chartPage(structuredClone(chart))).html, `${material.id} is deterministic`);
-    for (const version of ['2.4.0', '2.5.0']) assert.equal(validateBlueprint({...chartPage(structuredClone(chart)), catalogVersion: version}).valid, false, `${material.id} at ${version}`);
+    if (['bar', 'bars-h', 'line', 'area', 'donut', 'stacked-bar', 'scatter', 'heatmap', 'sparkline', 'candlestick', 'ohlc', 'waterfall', 'funnel', 'histogram'].includes(material.ext.chartKind)) {
+      assert.deepEqual(chartDiagnostics(chart), [], `${material.id} has no static chart diagnostics`);
+      assert.deepEqual(validateBlueprint(chartPage(structuredClone(chart))).errors, [], material.id);
+      assert.equal(compile(chartPage(structuredClone(chart))).html, compile(chartPage(structuredClone(chart))).html, `${material.id} is deterministic`);
+      for (const version of ['2.4.0', '2.5.0']) assert.equal(validateBlueprint({...chartPage(structuredClone(chart)), catalogVersion: version}).valid, false, `${material.id} at ${version}`);
+    } else {
+      assert.deepEqual(validateChartPresetData(material.ext.chartKind, chart), [], `${material.id} schema`);
+      assert.equal(renderChartPreset(material.id), renderChartPreset(material.id), `${material.id} deterministic SVG`);
+    }
   }
 });
 
