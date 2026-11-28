@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useMemo, useState} from 'react';
-import {usePathname, useRouter} from 'next/navigation';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {Button} from '@/ui';
 import {CopyBlock} from './CopyBlock';
 import {buildTabs, exportedSources} from './detail-model.mjs';
@@ -9,13 +9,13 @@ import type {ComponentView} from './spec.server';
 import type {PlaygroundOption} from './playground.server';
 import styles from './components.module.css';
 
-type Props = {view: ComponentView; initialTab: string; initialSelection: Selection; note?: string};
+type Props = {view: ComponentView; note?: string};
 type Selection = Record<string, string | number | boolean>;
 const AXIS_LABELS: Record<string, string> = {
   palette: '팔레트', subtokenSet: '서브토큰 세트', visualFamily: '시각 패밀리', typeSystem: '타이포 시스템',
-  size: '크기', density: '밀도', appearance: '외형', state: '상태', mode: '라이트·다크', content: '예시 콘텐츠', viewport: '뷰포트',
+  size: '크기', density: '밀도', appearance: '외형', state: '상태', mode: '라이트·다크', exampleText: '예시 콘텐츠', viewport: '뷰포트',
 };
-const AXIS_KEYS = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'content', 'viewport'];
+const AXIS_KEYS = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'exampleText', 'viewport'];
 
 function initialSelection(view: ComponentView, params: URLSearchParams): Selection {
   const selected: Selection = {...view.playground.defaults, viewport: params.get('viewport') === '390' ? '390' : '1280'};
@@ -29,8 +29,8 @@ function initialSelection(view: ComponentView, params: URLSearchParams): Selecti
     if (option) selected[axis] = option.value;
   }
   const exampleText = Object.entries(view.example ?? {}).find(([key, value]) => !['type', 'id'].includes(key) && typeof value === 'string')?.[1];
-  const content = params.get('content');
-  selected.content = content && content.length <= 200 ? content : typeof exampleText === 'string' ? exampleText : '';
+  const text = params.get('exampleText');
+  selected.exampleText = text && text.length <= 200 ? text : typeof exampleText === 'string' ? exampleText : '';
   return selected;
 }
 
@@ -56,7 +56,8 @@ function Preview({type, selection, width}: {type: string; selection: Selection; 
   }, [src]);
   return reason
     ? <p className={styles.note} role="status">렌더되지 않았습니다. Core 검증 결과: {reason}</p>
-    : <iframe title={`${type} 컴파일 미리보기`} className={styles.frame} src={src} style={{width, maxWidth: '100%', height: 420, marginInline: width === 390 ? 'auto' : undefined}} />;
+    // key 로 새 iframe 을 만든다. 같은 iframe 의 src 를 바꾸면 부모 세션 히스토리에 항목이 늘어 뒤로 가기가 iframe 만 되돌린다.
+    : <iframe key={src} title={`${type} 컴파일 미리보기`} className={styles.frame} src={src} style={{width, maxWidth: '100%', height: 420, marginInline: width === 390 ? 'auto' : undefined}} />;
 }
 
 function AxisControl({axis, options, value, disabledReason, onChange}: {axis: string; options: (string | number | boolean | PlaygroundOption)[]; value: string; disabledReason?: string; onChange: (value: string) => void}) {
@@ -72,17 +73,25 @@ function AxisControl({axis, options, value, disabledReason, onChange}: {axis: st
   </label>;
 }
 
-export function ComponentDetailTabs({view, initialTab, initialSelection: initialPick, note}: Props) {
+export function ComponentDetailTabs({view, note}: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const tabs = useMemo(() => buildTabs(view), [view]);
-  const [activeTab, setActiveTab] = useState(() => tabs.some(tab => tab.id === initialTab) ? initialTab : 'overview');
-  const [selection, setSelection] = useState<Selection>(initialPick);
+  // 탭과 선택의 원천은 URL이다. 화면이 URL 반영보다 앞서가면 직후 뒤로 가기가 이전 문서로 빠진다.
+  const search = useSearchParams().toString();
+  const activeTab = useMemo(() => {
+    const tab = new URLSearchParams(search).get('tab') ?? 'overview';
+    return tabs.some(item => item.id === tab) ? tab : 'overview';
+  }, [tabs, search]);
+  const urlSelection = useMemo(() => initialSelection(view, new URLSearchParams(search)), [view, search]);
+  const [draftContent, setDraftContent] = useState<string | null>(null);
+  useEffect(() => setDraftContent(null), [search]);
+  const selection: Selection = draftContent === null ? urlSelection : {...urlSelection, exampleText: draftContent};
   const [axisOptions, setAxisOptions] = useState(view.playground.axes);
   const [variantIndex, setVariantIndex] = useState(0);
   const [exportResult, setExportResult] = useState<{html: string; css: string; tokens: string; blueprint: string} | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
-  const [viewport, setViewport] = useState<390 | 1280>(initialPick.viewport === '390' ? 390 : 1280);
+  const viewport: 390 | 1280 = selection.viewport === '390' ? 390 : 1280;
   const availabilityRequest = JSON.stringify({palette: selection.palette, subtokenSet: selection.subtokenSet, visualFamily: selection.visualFamily, typeSystem: selection.typeSystem, density: selection.density, mode: selection.mode});
 
   useEffect(() => {
@@ -96,17 +105,6 @@ export function ComponentDetailTabs({view, initialTab, initialSelection: initial
     return () => { live = false; };
   }, [availabilityRequest, view.type]);
 
-  useEffect(() => {
-    const restore = () => {
-      const params = new URLSearchParams(window.location.search);
-      const tab = params.get('tab') ?? 'overview';
-      setActiveTab(tabs.some(item => item.id === tab) ? tab : 'overview');
-      setSelection(initialSelection(view, params));
-      setViewport(params.get('viewport') === '390' ? 390 : 1280);
-    };
-    window.addEventListener('popstate', restore);
-    return () => window.removeEventListener('popstate', restore);
-  }, [tabs, view]);
   useEffect(() => {
     if (activeTab !== 'code') return;
     const query = new URLSearchParams({selection: JSON.stringify(selection)});
@@ -131,7 +129,6 @@ export function ComponentDetailTabs({view, initialTab, initialSelection: initial
     if (nextViewport !== 1280) next.set('viewport', String(nextViewport));
     else if (next.get('viewport') === '1280') next.delete('viewport');
     const query = next.toString();
-    setActiveTab(tab);
     router.push(`${pathname}${query ? `?${query}` : ''}`, {scroll: false});
   };
 
@@ -143,14 +140,24 @@ export function ComponentDetailTabs({view, initialTab, initialSelection: initial
       : undefined;
     const stateValue = axis === 'state' && view.material?.states.values.includes(value) ? value : undefined;
     const option = groupValue ?? registered ?? stateValue;
-    if (axis === 'content') {
+    if (axis === 'exampleText') {
       if (value.length > 200) return;
-      const next = {...selection, content: value};
-      setSelection(next); updateUrl(activeTab, next); return;
+      setDraftContent(value); return;
     }
     if (option === undefined) return;
-    const next = {...selection, [axis]: option};
-    setSelection(next); updateUrl(activeTab, next);
+    updateUrl(activeTab, {...selection, [axis]: option});
+  };
+
+  // 수동 활성화 탭: 방향키는 포커스만 옮기고 Enter·Space(버튼 기본 동작)가 탭을 연다.
+  const moveTabFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
+    if (!keys.includes(event.key)) return;
+    const buttons = [...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    if (at < 0) return;
+    const target = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (at + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+    event.preventDefault();
+    buttons[target].focus();
   };
 
   const stateValues = view.material?.states.values ?? [];
@@ -174,8 +181,8 @@ export function ComponentDetailTabs({view, initialTab, initialSelection: initial
   const renderPreview = (chosen: Selection) => <Preview type={view.type} selection={chosen} width={viewport === 390 ? 390 : '100%'} />;
 
   return <section className={styles.detailTabs} aria-label={`${view.label} 상세`}>
-    <div className={styles.detailTabList} role="tablist" aria-label={`${view.label} 상세 탭`}>
-      {tabs.map(tab => <button key={tab.id} id={`tab-${tab.id}`} role="tab" aria-selected={activeTab === tab.id} aria-controls="panel-${tab.id}" className={styles.detailTab} onClick={() => updateUrl(tab.id)}>{tab.label}</button>)}
+    <div className={styles.detailTabList} role="tablist" aria-label={`${view.label} 상세 탭`} onKeyDown={moveTabFocus}>
+      {tabs.map(tab => <button key={tab.id} id={`tab-${tab.id}`} role="tab" aria-selected={activeTab === tab.id} aria-controls={activeTab === tab.id ? `panel-${tab.id}` : undefined} tabIndex={activeTab === tab.id ? 0 : -1} className={styles.detailTab} onClick={() => updateUrl(tab.id)}>{tab.label}</button>)}
     </div>
     <div id={`panel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`} className={styles.detailPanel}>
       {activeTab === 'overview' ? <>
@@ -208,9 +215,9 @@ export function ComponentDetailTabs({view, initialTab, initialSelection: initial
         <div className={styles.variantGroups}>{AXIS_KEYS.map(axis => {
           const config = axisConfig(axis);
           const current = axis === 'viewport' ? String(viewport) : String(selection[config.key] ?? config.options[0] ?? '');
-          if (axis === 'content') return <label key={axis} className={styles.variantField}>{AXIS_LABELS[axis]}<input aria-label={AXIS_LABELS[axis]} maxLength={200} value={String(selection.content ?? '')} onChange={event => setSelection(previous => ({...previous, content: event.target.value}))} onBlur={() => updateUrl(activeTab)} /></label>;
+          if (axis === 'exampleText') return <label key={axis} className={styles.variantField}>{AXIS_LABELS[axis]}<input aria-label={AXIS_LABELS[axis]} maxLength={200} value={String(selection.exampleText ?? '')} onChange={event => updateSelection('exampleText', event.target.value)} onBlur={() => draftContent !== null && updateUrl(activeTab)} /></label>;
           return <AxisControl key={axis} axis={axis} options={config.options} value={current} disabledReason={config.reason} onChange={value => {
-            if (axis === 'viewport') { const next = {...selection, viewport: value}; setViewport(Number(value) as 390 | 1280); setSelection(next); updateUrl(activeTab, next, Number(value) as 390 | 1280); }
+            if (axis === 'viewport') updateUrl(activeTab, {...selection, viewport: value}, Number(value) as 390 | 1280);
             else updateSelection(config.key, value);
           }} />;
         })}</div>

@@ -10,7 +10,7 @@ export const DETAIL_TABS = Object.freeze([
   {id: 'composition', label: 'Composition'},
 ]);
 
-const AXES = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'content', 'viewport'];
+const AXES = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'exampleText', 'viewport'];
 const allowedTabs = new Set(DETAIL_TABS.map(tab => tab.id));
 
 export function buildTabs(view) {

@@ -47,10 +47,10 @@ export async function GET(req: Request, {params}: {params: Promise<{componentId:
       }
       values[axis] = asked;
     }
-    const content = params.get('content');
-    if (content !== null) {
-      if (content.length > 200) return unknownVariant('예시 콘텐츠는 200자 이하여야 합니다.');
-      values.content = content;
+    const exampleText = params.get('exampleText');
+    if (exampleText !== null) {
+      if (exampleText.length > 200) return unknownVariant('예시 콘텐츠는 200자 이하여야 합니다.');
+      values.exampleText = exampleText;
     }
     selection = values;
   }

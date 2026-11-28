@@ -110,7 +110,7 @@ export function isolatedDoc(type, example, variant) {
 function materialSelection(view, selection) {
   const material = view.material;
   const variantSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => material.variants[key]));
-  const styleSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode', 'viewport', 'content'].includes(key)));
+  const styleSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode', 'viewport', 'exampleText'].includes(key)));
   for (const [key, value] of Object.entries(variantSelection)) {
     if (!material.variants[key]?.some(option => String(option) === String(value))) return {error: `카탈로그에 없는 ${key} 변형입니다.`};
   }
@@ -121,9 +121,9 @@ function materialSelection(view, selection) {
   const upgraded = importBlueprint(null, {blueprint: {...made.doc, catalogVersion: material.since}});
   if (!upgraded.ok) return {error: upgraded.errors[0]?.message ?? '2.6.0 Blueprint로 올리지 못했습니다.'};
   const node = {...view.example, ...values};
-  if (typeof styleSelection.content === 'string') {
+  if (typeof styleSelection.exampleText === 'string') {
     const field = Object.keys(node).find(key => !['type', 'id', 'variant', 'appearance', 'shape', 'size', 'behavior', 'tone', 'state', 'content'].includes(key) && typeof node[key] === 'string');
-    if (field) node[field] = styleSelection.content;
+    if (field) node[field] = styleSelection.exampleText;
   }
   for (const key of ['sortable', 'selectable']) if (typeof node[key] === 'boolean') node[key] = node[key] ? 'yes' : 'no';
   // Core 계약상 내용이 없는 상태는 행도 비어 있어야 한다.
@@ -157,7 +157,7 @@ function platformComponent(view, selection) {
   if (typeof selection.state === 'string') props.state = selection.state;
   const content = Object.fromEntries(Object.entries(view.example ?? {}).filter(([key, value]) => !['type', 'id', 'variant', 'appearance', 'shape', 'size', 'behavior', 'tone', 'state', 'content'].includes(key) && value !== undefined));
   const textField = Object.keys(content).find(key => typeof content[key] === 'string');
-  if (textField && typeof selection.content === 'string') content[textField] = selection.content;
+  if (textField && typeof selection.exampleText === 'string') content[textField] = selection.exampleText;
   const assembled = assembleComponentContext({
     context: 'general', base: contract.base, family: selection.visualFamily,
     palette: selection.palette, subtokenSet: selection.subtokenSet, typeSystem: selection.typeSystem,

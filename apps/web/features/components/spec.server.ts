@@ -200,7 +200,9 @@ export function exportComponent(type: string, variant?: string | Row) {
   const key = compileKey(type, variant);
   const hit = compiledCache.get(key);
   if (hit) return hit;
-  const view = rawView(type);
+  const raw = rawView(type);
+  // 렌더 모듈이 플랫폼 경로(시각 패밀리 등)를 고르려면 Playground 계약이 있어야 한다. rawView 에는 없다.
+  const view = raw && {...raw, playground: playgroundContract(type)};
   const result = view ? exportComponentView(view, variant, {onCompile: () => recordCompile('compileBlueprint')}) : {ok: false as const, reason: '알 수 없는 부품입니다.'};
   compiledCache.set(key, result);
   return result;
