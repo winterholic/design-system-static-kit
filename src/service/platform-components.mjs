@@ -6,7 +6,8 @@ import {proposeSubtokenSets as propose} from '../platform/color.mjs';
 import {formRuntime, controlRuntime, escapeHTML} from '../render.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 import {diagnostic, hintFor} from './errors.mjs';
-import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS} from '../platform/families/contracts.mjs';
+import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME} from '../platform/families/contracts.mjs';
+import {actionRuntimeFor} from '../platform/families/action.mjs';
 
 const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
 const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions'];
@@ -75,6 +76,8 @@ export function assembleComponents(request) {
         if (bad) return fail([bad]);
         if (typeof item.component !== 'string' || !ACTION_COMPONENT_BY_ID.has(item.component)) return fail([badRequest(`$args.actions[${i}].component`, '등록된 component id가 필요합니다.')]);
         if (item.props !== undefined && !isPlain(item.props)) return fail([badRequest(`$args.actions[${i}].props`, 'props는 객체여야 합니다.')]);
+        const uid = item.props?.id;
+        if (uid !== undefined && request.actions.findIndex(x => x.props?.id === uid) !== i) return fail([badRequest(`$args.actions[${i}].props.id`, `id가 겹칩니다: ${String(uid)}. 마크업 id와 메뉴 참조가 한 곳을 가리키도록 액션마다 다른 id를 주세요.`)]);
       }
     }
     let env = platformEnv(), palette = request.palette, subtokenSet = request.subtokenSet, userPalette = null;
@@ -87,10 +90,14 @@ export function assembleComponents(request) {
     const engine = assembleFamilies(env, {...assemblyRequest, palette, subtokenSet, items: request.items});
     if (!engine.ok) return fail(engine.diagnostics.map(diag));
     const bases = engine.value.manifest.families.bases;
-    const actionItems = (request.actions ?? []).map(item => ({component: item.component, props: item.props ?? {}}));
-    const script = formRuntime + controlRuntime({catalogVersion: '2.7.0', tree: {type: 'page', children: bases.map(id => ({type: id.slice('base-component:'.length)}))}})
-      + (actionItems.length ? `document.addEventListener('click',e=>{const b=e.target.closest('[data-component]');if(!b||b.disabled||b.getAttribute('aria-disabled')==='true')return;if(b.dataset.component==='component:copy-button')navigator.clipboard?.writeText(b.dataset.copyText||'').then(()=>{const s=b.closest('[data-ctl="button"]')?.querySelector('[role="status"]');if(s)s.textContent='복사했습니다.'});if(b.getAttribute('aria-haspopup')==='menu')b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')!=='true')});` : '');
-    const actionHtml = actionItems.map(item => ACTION_COMPONENT_BY_ID.get(item.component).render(item.props)).join('');
+    const actionItems = (request.actions ?? []).map((item, i) => ({component: item.component, props: {id: `action-${i}`, ...(item.props ?? {})}}));
+    let actionHtml = '';
+    try { actionHtml = actionItems.map(item => ACTION_COMPONENT_BY_ID.get(item.component).render(item.props)).join(''); }
+    catch (e) { return fail([badRequest('$args.actions', `액션 컴포넌트를 렌더하지 못했습니다: ${e.message}`)]); }
+    // actions는 button-control을 렌더하므로 items가 쓰지 않아도 기반 버튼 런타임(토글·로딩 차단)이 필요하다.
+    const runtimeBases = actionItems.length ? [...new Set([...bases, 'base-component:button-control'])].sort() : bases;
+    const script = formRuntime + controlRuntime({catalogVersion: '2.7.0', tree: {type: 'page', children: runtimeBases.map(id => ({type: id.slice('base-component:'.length)}))}})
+      + (actionItems.length ? ACTION_COMPONENT_RUNTIME : actionRuntimeFor(request.items.map(item => item.purpose)));
     const purposeItems = request.items.map(item => {
       const family = env.registry.get(item.purpose);
       const defaults = fields => Object.fromEntries(Object.keys(fields).map(key => [key, family.defaults[key]]));

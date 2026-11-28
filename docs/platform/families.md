@@ -71,7 +71,7 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | family:soft | 884/1920 | 132/180 | 66/120 | 320/1152 | 144/192 | 50/128 | 72/192 | 240/288 | 96/128 | 160/256 |
 <!-- /generated:openAxes -->
 
-## 4. 목적 패밀리 32종
+## 4. 목적 패밀리 37종
 
 필수 필드(`PURPOSE_FIELDS`): 목적·맥락, 어울리는 페이지 유형, 구성 기반 컴포넌트, 렌더 진입점, 변형과 기본값, 허용·금지 조합, 상태, 실제 상호작용, 반응형 동작, 접근성 조건, 사용 토큰(CSS에서 계산), 허용 부모·자식, 컴파일 가능한 예시, 검증 결과. 하나라도 빠지면 `validatePurposeFamily`가 거부한다.
 
@@ -93,6 +93,11 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:button.icon | 글자 없이 아이콘만으로 동작을 나열한다(복사, 편집, 더보기). 좁은 머리줄과 표 행 끝에서 쓰며, 모든 버튼은 접근 가능한 이름을 가진다. | button-control | layout: toolbar·attached | size: small·medium·large; state: default·disabled | {"layout":"toolbar","size":"medium","state":"default"} | 없음 |
 | purpose:button.loading | 요청을 보내는 동안 버튼의 크기를 바꾸지 않고 진행 중임을 알린다. 저장·결제·업로드처럼 응답을 기다리는 동작에서 쓴다. | button-control | phase: loading·idle·compare; tier: primary·secondary | size: small·medium·large | {"phase":"loading","tier":"primary","size":"medium"} | 없음 |
 | purpose:button.toggle | 켜짐·꺼짐이 남는 선택(즐겨찾기, 보기 방식, 필터 칩)을 aria-pressed 버튼으로 보인다. 단일 토글과 여러 개를 묶은 그룹이 있다. | button-control | layout: single·group | size: small·medium·large; state: default·pressed·disabled | {"layout":"single","size":"medium","state":"default"} | BTN_TOGGLE_GROUP_PRESSED |
+| purpose:button.split | 자주 쓰는 주 동작 하나와 같은 계열의 대안 동작(다른 형식으로 저장, 예약 전송)을 한 덩어리로 둔다. 주 동작은 바로 실행하고 화살표 버튼은 메뉴만 연다. | button-control | tier: primary·secondary | size: small·medium·large; state: default·loading·disabled | {"tier":"primary","size":"medium","state":"default"} | 없음 |
+| purpose:button.menu | 여러 동작을 하나의 버튼 뒤에 접어 둔다(더 보기, 정렬 기준, 작업 메뉴). 버튼 자체는 동작을 실행하지 않고 메뉴만 연다. | button-control | tier: secondary·tertiary | size: small·medium·large; state: default·disabled | {"tier":"secondary","size":"medium","state":"default"} | 없음 |
+| purpose:button.fab | 화면에서 가장 중요한 단일 동작(새 글, 새 작업)을 떠 있는 원형 버튼으로 둔다. 아이콘만 있는 형태와 라벨을 더한 확장형이 있다. | button-control | extended: icon·extended | size: medium·large; state: default·loading·disabled | {"extended":"icon","size":"large","state":"default"} | 없음 |
+| purpose:button.copy | 값(링크, 코드, 계좌번호)을 클립보드로 복사하고 복사됐음을 말해 준다. 시각 변화가 아니라 읽어 주는 상태 문구로 결과를 전달한다. | button-control | display: label·icon-only | size: small·medium·large; state: default·disabled | {"display":"label","size":"medium","state":"default"} | 없음 |
+| purpose:button.close | 배너·패널·알림처럼 사용자가 치울 수 있는 덩어리의 오른쪽 끝에 둔다. 닫기 버튼은 이름 있는 아이콘 버튼이며 가장 가까운 닫을 수 있는 영역을 숨긴다. | button-control | layout: standalone·attached | size: small·medium·large; state: default·disabled | {"layout":"attached","size":"medium","state":"default"} | BTN_CLOSE_ATTACHED_DISABLED |
 | purpose:navigation.sidebar | 서비스의 주요 구역을 세로 목록으로 늘어놓고 현재 위치를 보인다. 대시보드·관리 화면의 왼쪽 고정 영역에서 쓰며 640px 이하에서는 머리만 남기고 접힌다. | navigation-menu | density: default·compact; footer: none·links | size: small·medium·large; icons: none·start | {"density":"default","footer":"none","size":"medium","icons":"none"} | 없음 |
 | purpose:navigation.topbar | 브랜드, 가로 메뉴, 우측 주요 동작(로그인·시작하기)을 한 줄 머리로 묶는다. 랜딩·콘텐츠·대시보드 페이지 맨 위에서 쓰며 640px 이하에서는 메뉴가 토글 뒤로 접힌다. | navigation-menu, button-control | actions: none·buttons; sticky: static·sticky | size: small·medium; icons: none·start | {"actions":"buttons","sticky":"static","size":"medium","icons":"none"} | TOPBAR_STICKY_TRANSPARENT |
 | purpose:navigation.tabs | 같은 대상의 관점(개요·작업·파일)을 한 자리에서 바꿔 보여 준다. 패널 머리(제목·설명)와 탭별 개수 배지를 곁들여 상세 화면과 설정 화면에서 쓴다. | tabs-control | layout: top·side; counts: none·badge | size: small·medium·large; activation: automatic·manual; icons: none·start; state: ready·loading | {"layout":"top","counts":"none","size":"medium","activation":"automatic","icons":"none","state":"ready"} | TABS_SIDE_SEGMENTED |
@@ -132,6 +137,11 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:button.icon | default, hover, focus, active, disabled | click·Enter·Space → 각 아이콘 동작 / hover·focus → 배경 변화, 포커스 링 | viewport 640px: 버튼은 정사각형 터치 영역(최소 44px 변)을 유지한다. 줄이 모자라면 줄바꿈한다. | toolbar; 모든 아이콘 버튼에 aria-label(필수, BTN_ICON_NAME); 툴바에 aria-label; 아이콘만으로 의미가 모호하면 Tooltip과 함께 쓴다 | slot:header, slot:main, slot:grid-item | src/platform/families/button.mjs#renderButtonIcon |
 | purpose:button.loading | default, loading, hover, focus | loading → 스피너가 시작 자리를 채우고 클릭만 막는다(aria-disabled). 포커스는 유지된다 [attachButton] / compare → 대기와 로딩을 나란히 놓아 두 상태의 크기가 같음을 확인한다 | viewport -: 라벨은 줄바꿈하지 않는다. 대기·로딩 버튼은 최소 폭(9em)을 같이 쓰고, compare는 같은 폭의 두 칸이라 상태가 바뀌어도 폭이 흔들리지 않는다. | button (aria-busy, aria-disabled); 진행 안내는 role=status 숨은 글(처리 중입니다); 진행 중 라벨을 바꾸더라도 버튼 이름은 동작을 설명 | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonLoading |
 | purpose:button.toggle | default, pressed, hover, focus, active, disabled | click·Space·Enter → aria-pressed 전환, onPress 콜백 [attachButton] / group → 항목이 독립 토글(복수 선택). 단일 선택 라디오와 다르다 | viewport 640px: 그룹은 줄바꿈된다. 눌림 상태는 색만이 아니라 아이콘(check)과 aria-pressed로 전달한다. | button[aria-pressed] (group은 role=group + aria-label); pressed 상태는 aria-pressed로 전달; 라벨은 상태가 바뀌어도 같다(상태를 라벨에 넣지 않는다) | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonToggle |
+| purpose:button.split | default, hover, focus, active, disabled, loading, expanded | 주 버튼 click·Enter·Space → 주 동작 실행(메뉴는 열리지 않는다) [attachButton] / 화살표 버튼 click·Enter·Space·ArrowDown → 메뉴를 열고 첫 항목에 포커스를 둔다(aria-expanded=true) [actionRuntime] / Escape·바깥 클릭 → 메뉴를 닫고 화살표 버튼으로 포커스를 돌려준다 [actionRuntime] | viewport 640px: 두 버튼은 붙어 있는 한 덩어리로 줄바꿈하지 않는다. 메뉴 패널은 12em 이상, 화면 폭의 90%를 넘지 않는다. 각 버튼은 44px 이상이다. | group (주 버튼 + button[aria-haspopup=menu]); 화살표 버튼은 aria-haspopup=menu와 aria-expanded; 화살표 버튼의 접근 가능한 이름; 메뉴는 role=menu이고 항목은 menuitem | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonSplit |
+| purpose:button.menu | default, hover, focus, active, disabled, expanded | 버튼 click·Enter·Space·ArrowDown → 메뉴를 열고 첫 항목에 포커스를 둔다(aria-expanded=true) [actionRuntime] / 항목 click·Enter·Space → 메뉴를 닫고 트리거로 포커스를 돌려준 뒤 kit-menu-select 이벤트를 낸다 [actionRuntime] / Escape·바깥 클릭·Tab → 메뉴를 닫는다 [actionRuntime] | viewport 640px: 트리거 라벨은 줄바꿈하지 않고 메뉴 패널이 화면 폭의 90%를 넘지 않는다. 항목은 44px 이상이다. | button[aria-haspopup=menu]; 트리거는 aria-haspopup=menu와 aria-expanded와 aria-controls; 메뉴는 role=menu이고 항목은 menuitem; 닫을 때 포커스는 트리거로 돌아간다 | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonMenu |
+| purpose:button.fab | default, hover, focus, active, loading, disabled | click·Enter·Space → 화면의 주 동작 실행(기반 버튼 attachButton) [attachButton] / loading → 스피너가 아이콘 자리를 채우고 클릭만 막는다 [attachButton] | viewport 640px: 터치 영역은 56px 이상의 원형이다. 화면 모서리 고정(position)과 safe-area는 페이지 배치가 정하며 이 컴포넌트는 흐름 안에 놓인다. | button; 아이콘만 있는 형태도 접근 가능한 이름; 원형 터치 영역 56px 이상; 떠 있는 그림자는 장식이며 포커스 링이 따로 보인다 | slot:main, slot:footer, slot:overlay, slot:grid-item | src/platform/families/button.mjs#renderButtonFab |
+| purpose:button.copy | default, hover, focus, active, disabled, copied | click·Enter·Space → 값을 클립보드로 복사하고 상태 문구(role=status)를 갱신한다. 클립보드를 쓸 수 없으면 실패 문구를 읽어 준다 [actionRuntime] / disabled → 복사를 실행하지 않는다 [actionRuntime] | viewport -: 아이콘만 있는 형태도 터치 영역은 44px 이상이다. 라벨은 줄바꿈된다. | button; 복사 결과는 role=status 안내로 전달; 아이콘만 있는 형태도 접근 가능한 이름; 복사할 값은 버튼 이름에 넣지 않는다 | slot:main, slot:header, slot:footer, slot:aside, slot:grid-item | src/platform/families/button.mjs#renderButtonCopy |
+| purpose:button.close | default, hover, focus, active, disabled | click·Enter·Space → attached는 가장 가까운 닫을 수 있는 영역을 숨기고 kit-dismiss 이벤트를 낸다. standalone은 이벤트만 낸다 [actionRuntime] | viewport 640px: 터치 영역은 44px 이상이다. attached는 내용이 길어도 닫기 버튼이 밀려나지 않고 내용이 줄바꿈된다. | button; 아이콘만 있으므로 접근 가능한 이름; 닫힌 뒤 영역은 접근성 트리에서도 사라진다(hidden); 터치 영역 44px 이상 | slot:main, slot:header, slot:footer, slot:overlay, slot:grid-item | src/platform/families/button.mjs#renderButtonClose |
 | purpose:navigation.sidebar | default, hover, focus, active, current, disabled | link click → 쪽 안 링크면 현재 위치(aria-current)가 눌린 항목으로 옮겨진다 [attachNavigation] / ≤640px summary click·Enter·Space → 접힌 메뉴 영역을 연다(네이티브 details/summary, 스크립트 없음). 641px 이상에서는 항상 펼쳐져 있다 | viewport 640px: 641px 이상은 폭 18rem 이내의 세로 목록이다. 640px 이하는 전체 폭 머리줄(브랜드 + 메뉴 열기 버튼)만 보이고 메뉴는 details 안에 접힌다. ::details-content를 모르는 브라우저는 모든 폭에서 열기 버튼이 보인다. | complementary > navigation; 현재 위치는 aria-current=page(색만이 아니라 기반 메뉴의 굵기·표시); 터치 대상은 브랜드·열기 버튼 44px 이상; 메뉴 이름(aria-label)이 필수; 아이콘은 장식(aria-hidden) | slot:aside, slot:main | src/platform/families/navigation.mjs#renderNavigationSidebar |
 | purpose:navigation.topbar | default, hover, focus, active, current, disabled | ≤640px toggle click·Enter·Space → 메뉴 목록을 머리 아래 패널로 열고 닫는다(aria-expanded) [attachNavigation] / Escape·바깥 클릭·링크 클릭 → 열린 메뉴를 닫고 Escape는 토글로 포커스를 돌려준다 [attachNavigation] / link click → 쪽 안 링크면 aria-current가 옮겨진다 [attachNavigation] / sticky → sticky 변형은 스크롤해도 화면 위에 남는다(position:sticky) | viewport 640px: 641px 이상은 브랜드 \| 메뉴 \| 우측 동작이 한 줄이다. 640px 이하는 브랜드 + 메뉴 토글이 첫 줄, 동작 버튼이 둘째 줄(같은 너비)이고 메뉴 목록은 머리 아래 패널로 열린다. | banner > navigation; 토글은 aria-expanded·aria-controls; 현재 위치 aria-current=page; 메뉴와 버튼은 같은 size라 같은 줄에서 높이가 같다; 터치 대상 44px 이상(브랜드·토글) | slot:header | src/platform/families/navigation.mjs#renderNavigationTopbar |
 | purpose:navigation.tabs | ready, loading, selected, unselected, hover, focus, active, disabled | click → 눌린 탭이 선택되고 해당 패널만 보인다 [attachTabs] / ArrowLeft·ArrowRight(side는 ArrowUp·ArrowDown)·Home·End → 탭 사이 포커스 이동(roving tabindex), automatic은 포커스가 곧 선택, manual은 Enter·Space로 선택 [attachTabs] | viewport 640px: side는 640px 이하에서 가로 줄로 눕고 그 줄 안에서만 스크롤한다. 탭 목록이 폭을 넘으면 목록 안에서만 가로 스크롤하고 쪽은 넘치지 않는다. | tablist > tab + tabpanel; 선택은 aria-selected(색만이 아니라 기반 탭의 표시 방식); 개수 배지는 숫자 글자이고 숨은 글 "개"가 붙는다; 패널 머리 제목이 탭 목록의 이름이 된다; loading은 패널 aria-busy와 role=status | slot:main, slot:grid-item | src/platform/families/navigation.mjs#renderNavigationTabs |
@@ -184,6 +194,11 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:button.icon | 12 | 48 | 48 | 0 |
 | purpose:button.loading | 18 | 72 | 72 | 0 |
 | purpose:button.toggle | 18 | 72 | 60 | 12 |
+| purpose:button.split | 18 | 72 | 72 | 0 |
+| purpose:button.menu | 12 | 48 | 48 | 0 |
+| purpose:button.fab | 12 | 48 | 48 | 0 |
+| purpose:button.copy | 12 | 48 | 48 | 0 |
+| purpose:button.close | 12 | 48 | 36 | 12 |
 | purpose:navigation.sidebar | 24 | 96 | 96 | 0 |
 | purpose:navigation.topbar | 16 | 64 | 56 | 8 |
 | purpose:navigation.tabs | 96 | 384 | 336 | 48 |
@@ -202,7 +217,7 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.progress | 18 | 72 | 72 | 0 |
 | purpose:feedback.result | 12 | 48 | 48 | 0 |
 
-합계: 전체 6636개 중 허용 4419개, 거부 2217개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
+합계: 전체 6900개 중 허용 4671개, 거부 2229개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
 <!-- /generated:combos -->
 
 목적 패밀리 × 시각 패밀리(각 패밀리 예시 기준)에서 거부되는 쌍과 이유.
@@ -225,6 +240,11 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:button.icon | 허용 | 허용 | 허용 | 허용 |
 | purpose:button.loading | 허용 | 허용 | 허용 | 허용 |
 | purpose:button.toggle | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.split | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.menu | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.fab | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.copy | 허용 | 허용 | 허용 | 허용 |
+| purpose:button.close | 허용 | 허용 | 허용 | 허용 |
 | purpose:navigation.sidebar | 허용 | 허용 | 허용 | 허용 |
 | purpose:navigation.topbar | 허용 | 허용 | 허용 | 허용 |
 | purpose:navigation.tabs | 허용 | 허용 | 허용 | 허용 |
@@ -278,8 +298,8 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 
 재료 검증(F1)은 목적 패밀리의 `a11y`(role·keyboard·conditions)를 렌더 마크업과 직접 대조하는 단언이 없다고 지적했다. 두 파일이 이를 맡는다.
 
-- `tests/platform-family-a11y.test.mjs`: 32종 전부. 계약의 조건 문구마다 마크업 단언이 하나씩 있어야 하고(키가 조건과 일대일), 계약이 바뀌면 단언 없는 조건이 시험을 깨뜨린다. 마크업으로 볼 수 없는 조건(터치 크기·대비)은 브라우저 시험 또는 대비 시험으로 넘기고 그 위치를 적는다. 예시 렌더로 루트 역할·Tab 순서·조건별 단언을 보고, 모든 변형 값 × 시각 패밀리 4종(1,000여 렌더)에서 id 중복, 끊어진 `aria-labelledby`·`describedby`·`controls`·`activedescendant`, 이름 없는 컨트롤, 라벨 없는 입력, 양수 `tabindex`, 노출된 장식 아이콘을 본다.
-- `e2e/platform-family-a11y.spec.mjs`: 32종 × 390·1280에서 Tab이 DOM 순서와 화면 읽기 순서대로 모든 정지에 닿고 포커스 표시가 있는지, 계약의 크기 조건(44px·56px·24px, 같은 줄 높이, 전체 폭), 탭·대화상자·콤보박스·메뉴 토글·비밀번호 보기·정렬·닫기의 키 조작과 상태 전이를 본다. 닫기 버튼은 관례상 모서리에 놓이고 DOM 끝에 있으므로 화면 읽기 순서 비교에서 뺀다.
+- `tests/platform-family-a11y.test.mjs`: 37종 전부. 계약의 조건 문구마다 마크업 단언이 하나씩 있어야 하고(키가 조건과 일대일), 계약이 바뀌면 단언 없는 조건이 시험을 깨뜨린다. 마크업으로 볼 수 없는 조건(터치 크기·대비)은 브라우저 시험 또는 대비 시험으로 넘기고 그 위치를 적는다. 예시 렌더로 루트 역할·Tab 순서·조건별 단언을 보고, 모든 변형 값 × 시각 패밀리 4종(1,000여 렌더)에서 id 중복, 끊어진 `aria-labelledby`·`describedby`·`controls`·`activedescendant`, 이름 없는 컨트롤, 라벨 없는 입력, 양수 `tabindex`, 노출된 장식 아이콘을 본다.
+- `e2e/platform-family-a11y.spec.mjs`: 37종 × 390·1280에서 Tab이 DOM 순서와 화면 읽기 순서대로 모든 정지에 닿고 포커스 표시가 있는지, 계약의 크기 조건(44px·56px·24px, 같은 줄 높이, 전체 폭), 탭·대화상자·콤보박스·메뉴 토글·비밀번호 보기·정렬·닫기의 키 조작과 상태 전이를 본다. 닫기 버튼은 관례상 모서리에 놓이고 DOM 끝에 있으므로 화면 읽기 순서 비교에서 뺀다.
 
 이 시험이 찾아 고친 것(계약과 렌더가 달랐던 곳):
 

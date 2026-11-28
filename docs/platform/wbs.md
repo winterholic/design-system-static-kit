@@ -98,7 +98,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| 목표 | W3 목적 패밀리 32개를 레지스트리·추천·호환성·기본 페이지 슬롯에서 사용한다 |
+| 목표 | W3 목적 패밀리 32개(이후 A 계열 5종이 더해져 37개)를 레지스트리·추천·호환성·기본 페이지 슬롯에서 사용한다 |
 | 소유 파일 | W5 공통 소유 파일과 `src/catalog/materials-field.mjs`, `tests/service-contract.test.mjs`, `tests/service-expression.test.mjs`, `tests/platform-pipeline-contract.test.mjs` |
 | 결정 | `purpose-family` kind, visual metrics/vars/recipe, 기반 부품 requires, X01 조건부 관계, 기본 콘텐츠 승격, boolean·numeric purpose 축의 Blueprint 왕복을 추가한다. REST·MCP 경로와 operation은 0.6.0과 같고 새 kind를 사용한다 |
 | 완료 기준 | 32개 목록·상세·추천·호환성이 서비스/REST/MCP에서 일치한다. 페이지 출력이 KPI·표·상품·가격·기사·기능 소개 목적 패밀리를 사용하고, 명시 요청 우선·Blueprint 재컴파일 바이트 동등성이 고정 테스트를 통과한다. 기존 Blueprint ≤2.6.0과 Coolors 노출 제한은 유지한다 |
@@ -117,7 +117,7 @@
 ### W5 기준선 해석
 
 - `platform.registered.family: 4`와 `platform.distinct.families: 4`는 등록된 시각 패밀리 수다. `platform.distinct.verifiedFamilies: 4`는 품질 검증된 페이지 출력에 실제 선택된 고유 시각 패밀리 수다.
-- `platform.registered.purposeFamily: 32`는 목적 패밀리 레지스트리 등록량이다. 현재 6개 대표 페이지 패턴에서 `platform.distinct.purposeFamilies.verified: 4`이며 ID는 `purpose:card.feature`, `purpose:card.kpi`, `purpose:card.product`, `purpose:table.business`다. 이 값은 `assemblePage` 품질 검증을 통과한 Blueprint의 `materials.purposes`에서 모은 고유 목적 패밀리다. 독립 부품 미리보기나 등록량 전체를 기본 페이지에서 사용한 수로 세지 않는다.
+- `platform.registered.purposeFamily: 37`(W3 시점 32 + §6.2 A 계열 5)는 목적 패밀리 레지스트리 등록량이다. 현재 6개 대표 페이지 패턴에서 `platform.distinct.purposeFamilies.verified: 4`이며 ID는 `purpose:card.feature`, `purpose:card.kpi`, `purpose:card.product`, `purpose:table.business`다. 이 값은 `assemblePage` 품질 검증을 통과한 Blueprint의 `materials.purposes`에서 모은 고유 목적 패밀리다. 독립 부품 미리보기나 등록량 전체를 기본 페이지에서 사용한 수로 세지 않는다.
 - `platform.assemblable.assemblable: 119610`은 원래 정의대로 패턴 × 셸 × 폭 × 밀도 × 모드에 팔레트 × 서브토큰 세트 × 타이포 시스템 × 시각 패밀리를 곱하고 관계·색·서체 제약을 평가한 값이다. 목적 패밀리를 곱 축에 추가하지 않는다.
 - 모션 대표 검사는 `attempted: 19`, `verified: 17`, `usedInOutput: 17`이다. 빠진 두 표본은 `motion:expressive` × `dashboard-grid`와 `erp-workspace`다. 두 모드 모두 X11 `motion.lively × elevation.flat` 거부 이유를 내며 규칙은 그대로 유지한다.
 

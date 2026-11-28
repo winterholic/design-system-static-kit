@@ -66,11 +66,54 @@ test('material variation changes rendered output', () => {
 });
 ```
 
+## A 계열(버튼·액션) 기준 구현
+
+B~O 계열 작업자는 아래 A 구현을 그대로 따른다. 항목마다 등록 재료, Blueprint 사용법, 독립 시연이 한 줄로 이어져야 완료다.
+
+| 요구 | 등록 재료(재료 질의로 조회) | Blueprint 사용 | 독립 시연 `actions` |
+|---|---|---|---|
+| Button | `base-component:button-control` | 트리 노드 `button-control` | `component:button` |
+| Icon Button | `purpose:button.icon` | `materials.purposes` + 표지 노드 | `component:icon-button` |
+| Link Button | `base-component:button-control` | 노드 `button-control`, `appearance: link` | `component:link-button` |
+| Toggle Button | `purpose:button.toggle` | `materials.purposes` | `component:toggle-button` |
+| Split Button | `purpose:button.split` | `materials.purposes` | `component:split-button` |
+| Menu Button | `purpose:button.menu` | `materials.purposes` | `component:menu-button` |
+| Floating Action Button | `purpose:button.fab` | `materials.purposes` | `component:floating-action-button` |
+| Button Group | `component:actions` | 트리 노드 `actions` | `component:button-group` |
+| Segmented Control | `base-component:tabs-control` | 노드 `tabs-control`, `appearance: segmented` | `component:segmented-control` |
+| Copy Button | `purpose:button.copy` | `materials.purposes` | `component:copy-button` |
+| Close Button | `purpose:button.close` | `materials.purposes` | `component:close-button` |
+| Loading Action Button | `purpose:button.loading` | `materials.purposes` | `component:loading-action-button` |
+
+- 이 표의 대응은 `ACTION_COMPONENTS[].materialId`와 `blueprint`에 코드로 있고 `tests/platform-family-contract.test.mjs`가 레지스트리 조회와 대조한다. `tests/platform-action-blueprint.test.mjs`가 12항목의 Blueprint 왕복(입력 Blueprint → 컴파일 → Core가 낸 마크업과 같은 출력, 같은 입력은 같은 바이트)과 재료 질의를 본다.
+- Blueprint 사용법 `materials.purposes`는 조립 파이프라인(`assemblePage`)이 아니라 Blueprint를 직접 쓰는 경로다. 대시보드·랜딩 등 페이지 패턴의 슬롯은 `button-control`을 받는 칸이 없어 `assembleDesign`의 `components`로 버튼 계열 목적 패밀리를 놓을 수 없다(Track A의 페이지 슬롯 규칙). 이 제약은 해소하지 않았고, 버튼은 `materials.purposes`에 id를 적고 격자의 표지 노드(`metric`, label `platform-purpose-N`)를 두어 쓴다.
+- `actions` 입력(`assembleComponents`의 독립 시연)은 시각 패밀리를 고르지 않는 기본 외형이다. 메뉴·복사·닫기·단일 선택의 구조와 런타임은 `src/platform/families/action.mjs`의 같은 조각을 목적 패밀리와 함께 쓴다.
+- 런타임(`ACTION_RUNTIME`)은 문서 단위 위임 핸들러 한 벌이다. 메뉴(ArrowDown·방향키·Home·End·Escape, 닫을 때 트리거로 포커스 복귀), 복사(성공·실패 문구는 `role=status`), 닫기(`data-dismissible` 숨김), 단일 선택(`data-action-segmented`)을 맡는다. 이 재료를 쓴 출력에만 붙는다(`actionRuntimeFor`). 쓰지 않은 출력의 바이트는 바뀌지 않는다.
+- 메뉴 버튼과 분할 버튼은 항목(`items`, 2~8개)이 필수다. 항목이 없으면 빈 팝업을 그리지 않고 요청 오류(`BAD_REQUEST`) 또는 컴파일 진단으로 거부한다.
+- FAB의 화면 모서리 고정과 safe-area는 컴포넌트가 아니라 페이지 배치가 정한다(`unsupported.position`에 이유를 적었다).
+- 같은 컴포넌트를 독립 시연 계약(`component:*`)과 목적 패밀리 계약이 모두 설명하므로 계약에 `componentType`을 두고 `countDistinctComponentTypes`가 한 종류로 센다. 등록 계약 59개는 42종이다.
+
+### 분류 보정(독립 149 · 변형 36 · 복합 22)
+
+분류의 원천은 `src/platform/families/inventory.mjs`이고, 아래 표는 `node docs/platform/evidence/components/build.mjs`가 이 분류와 Manifest에서 만든다. 손으로 고치지 않는다. `tests/platform-family-inventory.test.mjs`가 요구 목록, Manifest, 이 표의 일치를 본다.
+
+처음 분류(독립 151 · 변형 35 · 복합 21)에서 근거가 있는 다섯 행을 고쳤다.
+
+| 행 | 이전 | 현재 | 근거 |
+|---|---|---|---|
+| Phone Input, URL Input | 독립 재료 | 변형 | 같은 입력 칸의 kind 값이다. Email·Password·Number Input은 변형인데 둘만 독립으로 두면 같은 기준이 갈렸다. |
+| KPI Card | 복합 패턴 | 독립 재료 | REQUEST §6.1이 `Card Surface → KPI Card → KPI Grid → Dashboard Summary Section`으로 KPI Card를 목적 컴포넌트 한 칸으로 둔다. |
+| Dashboard KPI Grid | 독립 재료 | 복합 패턴 | 같은 예시에서 KPI Grid는 KPI Card를 묶은 패턴이다. 독립 검토가 지적했다. |
+| Bulk Action Toolbar | 변형 | 복합 패턴 | REQUEST §6.1이 `Button → Icon Button → Button Group → Bulk Action Toolbar`로 버튼을 묶은 패턴 쪽에 둔다. 현재 Manifest는 표 툴바(`purpose:table.business`)의 변형으로 충족하지만 분류는 요구 문서의 구조를 따른다. |
+
+경계가 모호한 나머지 행(예: Filterable Table, Collapsible Sidebar, List Item)은 바꾸지 않았다. 그 행을 구현하는 계열 작업자가 구조를 보고 정한다.
+
 ## §6.2 207항목 분류표
 
-direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다.
+direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
-집계: 독립 재료 151 · 변형 35 · 복합 패턴 21 = 207개 요구행. 현재 Manifest missing: 95.
+<!-- inventory-table:begin -->
+집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 90.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -78,13 +121,13 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:a-02-icon-button` | Icon Button | 변형 | direct | catalog-visible | purpose:button.icon |
 | `req:comp:a-03-link-button` | Link Button | 변형 | variant | verified | base-component:button-control |
 | `req:comp:a-04-toggle-button` | Toggle Button | 변형 | direct | catalog-visible | purpose:button.toggle |
-| `req:comp:a-05-split-button` | Split Button | 복합 패턴 | missing | missing | — |
-| `req:comp:a-06-menu-button` | Menu Button | 복합 패턴 | missing | missing | — |
-| `req:comp:a-07-floating-action-button` | Floating Action Button | 변형 | missing | missing | — |
+| `req:comp:a-05-split-button` | Split Button | 복합 패턴 | direct | catalog-visible | purpose:button.split |
+| `req:comp:a-06-menu-button` | Menu Button | 복합 패턴 | direct | catalog-visible | purpose:button.menu |
+| `req:comp:a-07-floating-action-button` | Floating Action Button | 변형 | direct | catalog-visible | purpose:button.fab |
 | `req:comp:a-08-button-group` | Button Group | 복합 패턴 | direct | verified | component:actions |
 | `req:comp:a-09-segmented-control` | Segmented Control | 변형 | variant | verified | base-component:tabs-control |
-| `req:comp:a-10-copy-button` | Copy Button | 변형 | missing | missing | — |
-| `req:comp:a-11-close-button` | Close Button | 변형 | missing | missing | — |
+| `req:comp:a-10-copy-button` | Copy Button | 변형 | direct | catalog-visible | purpose:button.copy |
+| `req:comp:a-11-close-button` | Close Button | 변형 | direct | catalog-visible | purpose:button.close |
 | `req:comp:a-12-loading-action-button` | Loading Action Button | 변형 | direct | catalog-visible | purpose:button.loading |
 | `req:comp:b-01-text-input` | Text Input | 독립 재료 | direct | verified | base-component:input-control |
 | `req:comp:b-02-textarea` | Textarea | 변형 | variant | verified | base-component:input-control |
@@ -93,8 +136,8 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:b-05-number-input` | Number Input | 변형 | variant | verified | base-component:input-control |
 | `req:comp:b-06-currency-input` | Currency Input | 독립 재료 | missing | missing | — |
 | `req:comp:b-07-email-input` | Email Input | 변형 | variant | verified | base-component:input-control |
-| `req:comp:b-08-phone-input` | Phone Input | 독립 재료 | schema | verified | component:form |
-| `req:comp:b-09-url-input` | URL Input | 독립 재료 | schema | verified | component:form |
+| `req:comp:b-08-phone-input` | Phone Input | 변형 | schema | verified | component:form |
+| `req:comp:b-09-url-input` | URL Input | 변형 | schema | verified | component:form |
 | `req:comp:b-10-otp-input` | OTP Input | 독립 재료 | missing | missing | — |
 | `req:comp:b-11-tag-input` | Tag Input | 독립 재료 | missing | missing | — |
 | `req:comp:b-12-file-input` | File Input | 독립 재료 | missing | missing | — |
@@ -139,7 +182,7 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:e-14-context-menu` | Context Menu | 독립 재료 | missing | missing | — |
 | `req:comp:f-01-basic-card` | Basic Card | 독립 재료 | direct | verified | base-component:card-surface |
 | `req:comp:f-02-feature-card` | Feature Card | 독립 재료 | direct | verified | purpose:card.feature |
-| `req:comp:f-03-kpi-card` | KPI Card | 복합 패턴 | direct | verified | purpose:card.kpi |
+| `req:comp:f-03-kpi-card` | KPI Card | 독립 재료 | direct | verified | purpose:card.kpi |
 | `req:comp:f-04-statistic-card` | Statistic Card | 독립 재료 | direct | verified | component:metric |
 | `req:comp:f-05-metric-trend-card` | Metric Trend Card | 변형 | variant | verified | purpose:card.kpi |
 | `req:comp:f-06-product-card` | Product Card | 독립 재료 | direct | verified | purpose:card.product |
@@ -247,9 +290,9 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:l-14-resizable-panel` | Resizable Panel | 복합 패턴 | missing | missing | — |
 | `req:comp:m-01-filter-toolbar` | Filter Toolbar | 독립 재료 | direct | catalog-visible | purpose:form.filter |
 | `req:comp:m-02-search-toolbar` | Search Toolbar | 독립 재료 | direct | verified | component:filter-bar, purpose:form.search |
-| `req:comp:m-03-bulk-action-toolbar` | Bulk Action Toolbar | 변형 | variant | catalog-visible | purpose:table.business |
+| `req:comp:m-03-bulk-action-toolbar` | Bulk Action Toolbar | 복합 패턴 | variant | catalog-visible | purpose:table.business |
 | `req:comp:m-04-data-summary` | Data Summary | 독립 재료 | missing | missing | — |
-| `req:comp:m-05-dashboard-kpi-grid` | Dashboard KPI Grid | 독립 재료 | missing | missing | — |
+| `req:comp:m-05-dashboard-kpi-grid` | Dashboard KPI Grid | 복합 패턴 | missing | missing | — |
 | `req:comp:m-06-approval-panel` | Approval Panel | 독립 재료 | missing | missing | — |
 | `req:comp:m-07-audit-log` | Audit Log | 독립 재료 | missing | missing | — |
 | `req:comp:m-08-permission-matrix` | Permission Matrix | 독립 재료 | missing | missing | — |
@@ -281,3 +324,4 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:o-08-mobile-filter-panel` | Mobile Filter Panel | 독립 재료 | missing | missing | — |
 | `req:comp:o-09-sticky-bottom-action` | Sticky Bottom Action | 독립 재료 | missing | missing | — |
 | `req:comp:o-10-safe-area-container` | Safe-area Container | 독립 재료 | missing | missing | — |
+<!-- inventory-table:end -->

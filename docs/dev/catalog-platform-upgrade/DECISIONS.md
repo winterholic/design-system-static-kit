@@ -160,3 +160,18 @@ CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(gi
 2. 각 후속 계열은 `src/platform/families/<family>.mjs`와 전용 테스트를 독립 작성한다. 계열 배열을 `families/index.mjs`에 등록하는 일은 통합자가 한 번에 처리해 병렬 충돌을 줄인다.
 3. 색상·외형·크기·밀도 값은 새 종류로 세지 않고 `componentType` 단위로 집계한다. §6.2 요구 행 분류는 독립 재료·변형·복합 패턴 세 가지로 고정한다.
 4. A 계열의 Core 조립·REST·MCP 입력 경로는 기존 `assembleComponents` 단일 진입점을 재사용한다. Blueprint 지원은 실제 컴파일 round-trip이 검증된 경우에만 연결 완료로 센다.
+
+---
+
+## DEC-010: A 계열(버튼·액션)의 등록 방식과 Blueprint 왕복
+
+### 맥락
+DEC-009가 만든 A 12항목은 `component:*` 계약과 독립 시연(`actions` 입력)이었다. 플랫폼 레지스트리는 id가 `purpose:<group>.<name>` 또는 `<kind>:<name>`이어야 하므로 `component:*`는 재료 질의(`listPlatformMaterials`)에도 Blueprint(`materials`)에도 등록될 수 없었다. 그래서 Manifest에서 A가 7/12에 머물렀고 `blueprint.field: materials.actions`는 실제 스키마에 없는 필드를 가리켰다.
+
+### 결정
+1. 새 재료 종류를 만들지 않는다(`PLATFORM_KINDS`는 Track A 소유이고 종류를 더하면 코드·검증·웹 전체가 따라 움직인다). 기존 구현이 있는 7항목은 그 재료를 그대로 쓰고, 구조가 다른 5항목(Split·Menu·FAB·Copy·Close)만 목적 패밀리(`purpose:button.split·menu·fab·copy·close`)로 등록한다. 목적 패밀리는 레지스트리 질의, 시각 패밀리 조합 검사, `materials.purposes` Blueprint 왕복을 이미 가진다.
+2. `ACTION_COMPONENTS[].materialId`와 `blueprint`가 항목마다 등록 재료와 Blueprint 사용법을 코드로 적는다. 독립 시연 `actions`는 시각 패밀리를 고르지 않는 기본 외형으로 남기고, 메뉴·복사·닫기·단일 선택의 구조와 런타임은 `src/platform/families/action.mjs` 한 곳에서 둘이 같이 쓴다.
+3. 런타임은 목적 패밀리 레코드의 필드가 아니라(레코드 필드는 닫혀 있다) `actionRuntimeFor(ids)`가 쓴 id를 보고 붙인다. `src/platform/render.mjs`와 `assembleComponents`만 이 함수를 부르고, 쓰지 않은 출력의 바이트는 그대로다(기존 고정 해시 영향 없음).
+4. 버튼 계열 목적 패밀리는 `assembleDesign`의 `components`로 페이지에 놓이지 않는다(패턴 슬롯에 `button-control`을 받는 칸이 없다). 이 제약은 Track A의 페이지 슬롯 규칙이라 이번 범위에서 풀지 않았다. Blueprint는 `materials.purposes`와 격자의 표지 노드로 직접 쓴다.
+5. 분류 원천을 `src/platform/families/inventory.mjs`로 옮기고 문서 표는 생성기(`docs/platform/evidence/components/build.mjs`)가 쓴다. 근거가 있는 다섯 행(Phone·URL Input, KPI Card, Dashboard KPI Grid, Bulk Action Toolbar)을 보정해 149/36/22가 되었다(`docs/platform/components.md`).
+6. 변형을 신규 종류로 세지 않는 규칙을 계약에 넣었다: 계약마다 `componentType`을 두고, 같은 컴포넌트를 독립 시연과 목적 패밀리가 모두 설명해도 한 종류로 센다.

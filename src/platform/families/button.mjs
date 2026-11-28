@@ -6,6 +6,7 @@
  */
 import {icon} from '../../render/icon.mjs';
 import {definePurposeFamily, e} from './kit.mjs';
+import {ACTION_CSS, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} from './action.mjs';
 
 const BUTTON = 'base-component:button-control';
 const SIZES = ['small', 'medium', 'large'];
@@ -215,4 +216,134 @@ export function renderButtonToggle(ctx) {
   return `<div class="pf-actions" role="group" aria-label="${e(c.label)}" data-layout="row">${c.items.map(it => one(it.label, Boolean(it.pressed), it.icon)).join('')}</div>`;
 }
 
-export const BUTTON_FAMILIES = Object.freeze([buttonPrimary, buttonSecondary, buttonEmphasis, buttonDestructive, buttonIcon, buttonLoading, buttonToggle]);
+/* ---------- 분할 버튼 ---------- */
+const MENU_ITEMS = {type: '{label, value?}[] (2~8)', required: true};
+const MENU_EXAMPLE = [{label: 'PDF로 저장', value: 'pdf'}, {label: 'CSV로 저장', value: 'csv'}, {label: '링크 복사', value: 'link'}];
+const MENU_STATES = ['default', 'hover', 'focus', 'active', 'disabled', 'loading', 'expanded'];
+const MENU_PAIRS = [['--kit-text', '--kit-surface', 4.5, 'menu item'], ['--kit-text', '--kit-card-hover', 4.5, 'menu item hover'], ['--kit-focus', '--kit-surface', 3, 'menu item focus ring']];
+const menuRule = (id, who) => ({on: `${who} click·Enter·Space·ArrowDown`, behavior: '메뉴를 열고 첫 항목에 포커스를 둔다(aria-expanded=true)', runtime: id});
+export const buttonSplit = definePurposeFamily({
+  id: 'purpose:button.split', group: 'button', sharedCss: SHARED, label: '분할 버튼',
+  purpose: '자주 쓰는 주 동작 하나와 같은 계열의 대안 동작(다른 형식으로 저장, 예약 전송)을 한 덩어리로 둔다. 주 동작은 바로 실행하고 화살표 버튼은 메뉴만 연다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonSplit'},
+  variants: {tier: ['primary', 'secondary']}, props: {size: SIZES, state: ['default', 'loading', 'disabled']},
+  defaults: {tier: 'primary', size: 'medium', state: 'default'},
+  content: {label: {required: true, type: 'string'}, menuLabel: {type: 'string (화살표 버튼의 접근 가능한 이름)'}, items: MENU_ITEMS},
+  forbidden: [], needs: {}, states: MENU_STATES,
+  interactions: [{on: '주 버튼 click·Enter·Space', behavior: '주 동작 실행(메뉴는 열리지 않는다)', runtime: 'attachButton'}, menuRule('actionRuntime', '화살표 버튼'), {on: 'Escape·바깥 클릭', behavior: '메뉴를 닫고 화살표 버튼으로 포커스를 돌려준다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '두 버튼은 붙어 있는 한 덩어리로 줄바꿈하지 않는다. 메뉴 패널은 12em 이상, 화면 폭의 90%를 넘지 않는다. 각 버튼은 44px 이상이다.'},
+  a11y: {role: 'group (주 버튼 + button[aria-haspopup=menu])', keyboard: 'Tab 순서는 주 버튼 → 화살표 버튼, ArrowDown으로 메뉴를 열고 방향키·Home·End로 이동, Escape로 닫기', conditions: ['화살표 버튼은 aria-haspopup=menu와 aria-expanded', '화살표 버튼의 접근 가능한 이름', '메뉴는 role=menu이고 항목은 menuitem']},
+  pairs: [['--kit-onAction', '--kit-action', 4.5, 'split label'], ...MENU_PAIRS],
+  parents: PARENTS, example: {variant: {tier: 'primary'}, props: {size: 'medium'}, content: {label: '내보내기', menuLabel: '내보내기 형식 선택', items: MENU_EXAMPLE}},
+  render(ctx) { return renderButtonSplit(ctx); },
+  css: ACTION_CSS,
+});
+export function renderButtonSplit(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), pid = ctx.uid('menu');
+  const main = ctx.button(v.tier, {props: {size, state: p.state}, content: {label: c.label}});
+  const caret = withButtonAttrs(ctx.button(v.tier, {props: {size, state: p.state === 'loading' ? 'disabled' : p.state, content: 'icon-only'}, content: {icon: 'chevron-down', ariaLabel: c.menuLabel ?? `${c.label} 옵션`}}), menuTriggerAttrs(pid));
+  return `<div class="pf-menu" data-action-menu><div class="pf-split" role="group" aria-label="${e(c.label)}">${main}${caret}</div>${renderMenuPanel({id: pid, label: c.menuLabel ?? `${c.label} 옵션`, items: c.items})}</div>`;
+}
+
+/* ---------- 메뉴 버튼 ---------- */
+export const buttonMenu = definePurposeFamily({
+  id: 'purpose:button.menu', group: 'button', sharedCss: SHARED, label: '메뉴 버튼',
+  purpose: '여러 동작을 하나의 버튼 뒤에 접어 둔다(더 보기, 정렬 기준, 작업 메뉴). 버튼 자체는 동작을 실행하지 않고 메뉴만 연다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonMenu'},
+  variants: {tier: ['secondary', 'tertiary']}, props: {size: SIZES, state: ['default', 'disabled']},
+  defaults: {tier: 'secondary', size: 'medium', state: 'default'},
+  content: {label: {required: true, type: 'string'}, items: MENU_ITEMS},
+  forbidden: [], needs: {}, states: ['default', 'hover', 'focus', 'active', 'disabled', 'expanded'],
+  interactions: [menuRule('actionRuntime', '버튼'), {on: '항목 click·Enter·Space', behavior: '메뉴를 닫고 트리거로 포커스를 돌려준 뒤 kit-menu-select 이벤트를 낸다', runtime: 'actionRuntime'}, {on: 'Escape·바깥 클릭·Tab', behavior: '메뉴를 닫는다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '트리거 라벨은 줄바꿈하지 않고 메뉴 패널이 화면 폭의 90%를 넘지 않는다. 항목은 44px 이상이다.'},
+  a11y: {role: 'button[aria-haspopup=menu]', keyboard: 'Enter·Space·ArrowDown으로 열고 방향키·Home·End로 항목 이동, Escape로 닫고 트리거로 복귀', conditions: ['트리거는 aria-haspopup=menu와 aria-expanded와 aria-controls', '메뉴는 role=menu이고 항목은 menuitem', '닫을 때 포커스는 트리거로 돌아간다']},
+  pairs: MENU_PAIRS,
+  parents: PARENTS, example: {variant: {tier: 'secondary'}, props: {size: 'medium'}, content: {label: '더 보기', items: MENU_EXAMPLE}},
+  render(ctx) { return renderButtonMenu(ctx); },
+  css: ACTION_CSS,
+});
+export function renderButtonMenu(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), pid = ctx.uid('menu');
+  const trigger = withButtonAttrs(ctx.button(v.tier, {props: {size, state: p.state, content: 'icon-end'}, content: {label: c.label, icon: 'chevron-down'}}), menuTriggerAttrs(pid));
+  return `<div class="pf-menu" data-action-menu>${trigger}${renderMenuPanel({id: pid, label: c.label, items: c.items})}</div>`;
+}
+
+/* ---------- 플로팅 액션 버튼 ---------- */
+export const buttonFab = definePurposeFamily({
+  id: 'purpose:button.fab', group: 'button', sharedCss: SHARED, label: '플로팅 액션 버튼',
+  purpose: '화면에서 가장 중요한 단일 동작(새 글, 새 작업)을 떠 있는 원형 버튼으로 둔다. 아이콘만 있는 형태와 라벨을 더한 확장형이 있다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonFab'},
+  variants: {extended: ['icon', 'extended']}, props: {size: ['medium', 'large'], state: ['default', 'loading', 'disabled']},
+  defaults: {extended: 'icon', size: 'large', state: 'default'},
+  content: {label: {required: true, type: 'string (접근 가능한 이름이자 확장형의 라벨)'}, icon: {type: 'icon-name'}},
+  forbidden: [], needs: {}, states: BTN_STATES,
+  interactions: [{on: 'click·Enter·Space', behavior: '화면의 주 동작 실행(기반 버튼 attachButton)', runtime: 'attachButton'}, {on: 'loading', behavior: '스피너가 아이콘 자리를 채우고 클릭만 막는다', runtime: 'attachButton'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '터치 영역은 56px 이상의 원형이다. 화면 모서리 고정(position)과 safe-area는 페이지 배치가 정하며 이 컴포넌트는 흐름 안에 놓인다.'},
+  a11y: {role: 'button', keyboard: 'Tab, Enter·Space', conditions: ['아이콘만 있는 형태도 접근 가능한 이름', '원형 터치 영역 56px 이상', '떠 있는 그림자는 장식이며 포커스 링이 따로 보인다']},
+  pairs: [['--kit-onAction', '--kit-action', 4.5, 'fab label']],
+  parents: ['slot:main', 'slot:footer', 'slot:overlay', 'slot:grid-item'], example: {variant: {extended: 'icon'}, props: {size: 'large'}, content: {label: '새 작업 추가', icon: 'plus'}},
+  render(ctx) { return renderButtonFab(ctx); },
+  css: ACTION_CSS,
+});
+export function renderButtonFab(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), ext = v.extended === 'extended';
+  const btn = ctx.button('emphasis', {props: {size, state: p.state, content: ext ? 'icon-start' : 'icon-only'}, content: {label: c.label, icon: c.icon ?? 'plus', ...(ext ? {} : {ariaLabel: c.label})}});
+  return `<div class="pf-fab" data-extended="${ext}">${btn}</div>`;
+}
+
+/* ---------- 복사 버튼 ---------- */
+export const buttonCopy = definePurposeFamily({
+  id: 'purpose:button.copy', group: 'button', sharedCss: SHARED, label: '복사 버튼',
+  purpose: '값(링크, 코드, 계좌번호)을 클립보드로 복사하고 복사됐음을 말해 준다. 시각 변화가 아니라 읽어 주는 상태 문구로 결과를 전달한다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonCopy'},
+  variants: {display: ['label', 'icon-only']}, props: {size: SIZES, state: ['default', 'disabled']},
+  defaults: {display: 'label', size: 'medium', state: 'default'},
+  content: {label: {required: true, type: 'string'}, text: {required: true, type: 'string (복사할 값)'}, copiedLabel: {type: 'string (복사 성공 안내)'}},
+  forbidden: [], needs: {}, states: ['default', 'hover', 'focus', 'active', 'disabled', 'copied'],
+  interactions: [{on: 'click·Enter·Space', behavior: '값을 클립보드로 복사하고 상태 문구(role=status)를 갱신한다. 클립보드를 쓸 수 없으면 실패 문구를 읽어 준다', runtime: 'actionRuntime'}, {on: 'disabled', behavior: '복사를 실행하지 않는다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: [], behavior: '아이콘만 있는 형태도 터치 영역은 44px 이상이다. 라벨은 줄바꿈된다.'},
+  a11y: {role: 'button', keyboard: 'Tab, Enter·Space', conditions: ['복사 결과는 role=status 안내로 전달', '아이콘만 있는 형태도 접근 가능한 이름', '복사할 값은 버튼 이름에 넣지 않는다']},
+  pairs: [['--kit-text', '--kit-surface', 4.5, 'copy outline']],
+  parents: PARENTS, example: {variant: {display: 'label'}, props: {size: 'medium'}, content: {label: '링크 복사', text: 'https://example.com/share/abc', copiedLabel: '링크를 복사했습니다.'}},
+  render(ctx) { return renderButtonCopy(ctx); },
+  css: ACTION_CSS,
+});
+export function renderButtonCopy(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), only = v.display === 'icon-only';
+  const btn = ctx.button('secondary', {props: {size, state: p.state, content: only ? 'icon-only' : 'icon-start'}, content: {label: c.label, icon: 'copy', ...(only ? {ariaLabel: c.label} : {})}});
+  return `<div class="pf-actions" role="group" aria-label="${e(c.label)}">${withButtonAttrs(btn, `data-copy-text="${e(c.text)}"${c.copiedLabel ? ` data-copied-label="${e(c.copiedLabel)}"` : ''}`)}</div>`;
+}
+
+/* ---------- 닫기 버튼 ---------- */
+export const buttonClose = definePurposeFamily({
+  id: 'purpose:button.close', group: 'button', sharedCss: SHARED, label: '닫기 버튼',
+  purpose: '배너·패널·알림처럼 사용자가 치울 수 있는 덩어리의 오른쪽 끝에 둔다. 닫기 버튼은 이름 있는 아이콘 버튼이며 가장 가까운 닫을 수 있는 영역을 숨긴다.',
+  contexts: ['any'], bases: [BUTTON], children: [BUTTON],
+  entry: {module: 'src/platform/families/button.mjs', export: 'renderButtonClose'},
+  variants: {layout: ['standalone', 'attached']}, props: {size: SIZES, state: ['default', 'disabled']},
+  defaults: {layout: 'attached', size: 'medium', state: 'default'},
+  content: {ariaLabel: {type: 'string (접근 가능한 이름, 기본 닫기)'}, message: {type: 'string (attached에서 닫을 영역의 내용)'}},
+  forbidden: [
+    {id: 'BTN_CLOSE_ATTACHED_DISABLED', when: {layout: 'attached', state: 'disabled'}, why: '닫을 수 없는 영역에 닫기 버튼을 붙이면 왜 못 닫는지 알 수 없다(attached는 항상 활성)'},
+  ],
+  needs: {}, states: ['default', 'hover', 'focus', 'active', 'disabled'],
+  interactions: [{on: 'click·Enter·Space', behavior: 'attached는 가장 가까운 닫을 수 있는 영역을 숨기고 kit-dismiss 이벤트를 낸다. standalone은 이벤트만 낸다', runtime: 'actionRuntime'}],
+  responsive: {strategy: 'viewport', breakpoints: ['640px'], behavior: '터치 영역은 44px 이상이다. attached는 내용이 길어도 닫기 버튼이 밀려나지 않고 내용이 줄바꿈된다.'},
+  a11y: {role: 'button', keyboard: 'Tab, Enter·Space', conditions: ['아이콘만 있으므로 접근 가능한 이름', '닫힌 뒤 영역은 접근성 트리에서도 사라진다(hidden)', '터치 영역 44px 이상']},
+  pairs: [['--kit-text', '--kit-surface', 4.5, 'close ghost'], ['--kit-text', '--kit-soft', 4.5, 'attached message']],
+  parents: ['slot:main', 'slot:header', 'slot:footer', 'slot:overlay', 'slot:grid-item'], example: {variant: {layout: 'attached'}, props: {size: 'medium'}, content: {ariaLabel: '공지 닫기', message: '새 버전이 배포되었습니다. 변경 내용을 확인하세요.'}},
+  render(ctx) { return renderButtonClose(ctx); },
+  css: ACTION_CSS,
+});
+export function renderButtonClose(ctx) {
+  const {content: c, variant: v, props: p} = ctx, size = sizeOf(ctx), name = c.ariaLabel ?? '닫기';
+  const btn = withButtonAttrs(ctx.button('tertiary', {props: {size, state: p.state, content: 'icon-only'}, content: {icon: 'x', ariaLabel: name}}), 'data-action-dismiss');
+  if (v.layout === 'standalone' || !c.message) return `<div class="pf-actions" role="group" aria-label="${e(name)}">${btn}</div>`;
+  return `<div class="pf-dismissible" data-dismissible><p>${e(c.message)}</p>${btn}</div>`;
+}
+
+export const BUTTON_FAMILIES = Object.freeze([buttonPrimary, buttonSecondary, buttonEmphasis, buttonDestructive, buttonIcon, buttonLoading, buttonToggle, buttonSplit, buttonMenu, buttonFab, buttonCopy, buttonClose]);

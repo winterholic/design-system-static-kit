@@ -31,7 +31,7 @@ export {COMPONENT_LAYERS, COMPONENT_CONTRACT_FIELDS, COMPONENT_CONTRACTS, ALL_CO
 /** 목적 패밀리 id(고정 계약). 새 id를 더하는 것은 호환이지만 이름을 바꾸거나 지우는 것은 호환이 아니다. */
 export const PURPOSE_FAMILY_IDS = Object.freeze([
   'purpose:card.kpi', 'purpose:card.product', 'purpose:card.article', 'purpose:card.feature', 'purpose:card.profile', 'purpose:card.pricing', 'purpose:card.status', 'purpose:card.gallery',
-  'purpose:button.primary', 'purpose:button.secondary', 'purpose:button.emphasis', 'purpose:button.destructive', 'purpose:button.icon', 'purpose:button.loading', 'purpose:button.toggle',
+  'purpose:button.primary', 'purpose:button.secondary', 'purpose:button.emphasis', 'purpose:button.destructive', 'purpose:button.icon', 'purpose:button.loading', 'purpose:button.toggle', 'purpose:button.split', 'purpose:button.menu', 'purpose:button.fab', 'purpose:button.copy', 'purpose:button.close',
   'purpose:navigation.sidebar', 'purpose:navigation.topbar', 'purpose:navigation.tabs', 'purpose:navigation.bottom',
   'purpose:form.search', 'purpose:form.auth', 'purpose:form.settings', 'purpose:form.filter', 'purpose:form.group',
   'purpose:table.business', 'purpose:table.analytic', 'purpose:table.dense',

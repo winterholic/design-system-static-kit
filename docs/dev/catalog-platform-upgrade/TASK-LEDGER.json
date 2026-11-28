@@ -1,12 +1,12 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "updatedAt": "2026-11-28",
   "summary": {
     "totalTasks": 44,
     "byStatus": {
       "Pending": 31,
-      "In Progress": 2,
-      "Implemented": 3,
+      "In Progress": 1,
+      "Implemented": 4,
       "Verified": 8,
       "Blocked": 0
     },
@@ -1147,33 +1147,60 @@
       "taskId": "TASK-TRD-A",
       "title": "공통 계약 기준과 버튼·액션 12항목 구현",
       "goal": "계층 스키마·검증기·207항목 분류 및 A 계열의 렌더/조립/REST/MCP/Blueprint/export 연결",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md, A 계열을 Blueprint·재료 질의·REST·MCP·E2E에 연결하는 데 필요한 교차 파일(crossTrackFiles)",
       "track": "Track D",
       "dependencies": [
         "TASK-P0-01"
       ],
       "modifiedFiles": [
         "src/platform/families/contracts.mjs",
+        "src/platform/families/action.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/platform/families/button.mjs",
         "src/platform/families/index.mjs",
         "src/platform/index.mjs",
+        "src/platform/render.mjs",
         "src/service/platform-components.mjs",
         "apps/web/lib/api/operations.mjs",
         "apps/web/lib/api/mcp.mjs",
+        "scripts/families/pages.mjs",
+        "scripts/generate-material-coverage.mjs",
         "docs/platform/components.md",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/platform/families.md",
+        "docs/platform/wbs.md",
+        "docs/platform/web-service-needs.md",
+        "docs/adr/0012-assembly-platform.md",
+        "docs/evidence/platform/baseline.json",
         "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
         "tests/platform-family-contract.test.mjs",
+        "tests/platform-family-inventory.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-action-blueprint.test.mjs",
         "tests/platform-service-action-components.test.mjs",
-        "e2e/platform-action-components.spec.mjs"
+        "tests/platform-service-action-channels.test.mjs",
+        "tests/platform-service-channels.test.mjs",
+        "tests/platform-pipeline-baseline.test.mjs",
+        "e2e/platform-action-components.spec.mjs",
+        "e2e/platform-family-a11y.spec.mjs"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
         "tests/platform-family-contract.test.mjs",
+        "tests/platform-family-inventory.test.mjs",
+        "tests/platform-action-blueprint.test.mjs",
         "tests/platform-service-action-components.test.mjs",
-        "e2e/platform-action-components.spec.mjs"
+        "tests/platform-service-action-channels.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "e2e/platform-action-components.spec.mjs",
+        "e2e/platform-family-a11y.spec.mjs"
       ],
       "commit": null,
-      "status": "In Progress",
-      "unresolvedIssues": "Manifest 기준 A는 7/12 항목만 기존 레지스트리 경로로 충족되고 5개가 missing. 새 actions 조립 경로는 list/get 재료 질의 및 Blueprint compile round-trip에 등록되지 않았다. Chromium E2E는 Playwright launch에서 MachPortRendezvousServer permission denied로 실행되지 않았다.",
+      "status": "Implemented",
+      "unresolvedIssues": "A 12/12는 Manifest에서 missing이 아니다(A 행 12개 모두 coverage direct·variant). 다섯 신규 목적 패밀리는 상태가 catalog-visible이고 blockedBy는 no-studio-choice다: Studio 선택지는 Track F 소유다. assembleDesign의 components로는 버튼 계열 목적 패밀리를 페이지 슬롯에 놓을 수 없다(패턴 슬롯에 button-control을 받는 칸이 없음, Track A). Blueprint는 materials.purposes + 표지 노드로 직접 쓴다. 분류 보정: Phone·URL Input을 변형으로, KPI Card를 독립 재료로, Dashboard KPI Grid·Bulk Action Toolbar를 복합 패턴으로 고쳐 149/36/22가 되었다. 근거는 docs/platform/components.md.",
       "crossTrackFiles": [
         {
           "file": "src/platform/index.mjs",
@@ -1181,9 +1208,14 @@
           "reason": "§6.3 컴포넌트 계약 스키마·검증기와 액션 렌더러를 공개 플랫폼 진입점에서 노출"
         },
         {
+          "file": "src/platform/render.mjs",
+          "ownerTrack": "Track A",
+          "reason": "Blueprint 컴파일 결과가 목적 패밀리의 런타임(메뉴·복사·닫기)을 싣도록 actionRuntimeFor를 한 줄 더함. 쓰지 않은 출력의 바이트는 그대로"
+        },
+        {
           "file": "src/service/platform-components.mjs",
           "ownerTrack": "Track A",
-          "reason": "§6.2 A 액션을 Core assembleComponents 및 standalone 산출물에 연결"
+          "reason": "§6.2 A 액션을 Core assembleComponents 및 standalone 산출물에 연결하고 런타임·요청 오류 처리를 더함"
         },
         {
           "file": "apps/web/lib/api/operations.mjs",
@@ -1196,6 +1228,36 @@
           "reason": "MCP assemble_components actions 입력 스키마 연결"
         },
         {
+          "file": "tests/platform-service-channels.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "등록 목적 패밀리 개수 32 → 37(A 계열 5종 추가)"
+        },
+        {
+          "file": "tests/platform-pipeline-baseline.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "기준선의 목적 패밀리 등록량 32 → 37"
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track A",
+          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 32 → 37 한 줄)"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 A 5항목(Split·Menu·FAB·Copy·Close)을 등록 재료에 대응시킴"
+        },
+        {
+          "file": "e2e/platform-action-components.spec.mjs",
+          "ownerTrack": "Track G",
+          "reason": "실제 Chromium에서 통과하도록 다시 씀(aria-disabled 클릭 대기 교착 수정, 메뉴·복사·닫기·단일 선택·터치 영역·Blueprint 컴파일 페이지 추가)"
+        },
+        {
+          "file": "e2e/platform-family-a11y.spec.mjs",
+          "ownerTrack": "Track G",
+          "reason": "목적 패밀리 37종 순회와 split·menu·fab·close의 브라우저 확인 추가"
+        },
+        {
           "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
           "ownerTrack": "Track G",
           "reason": "요청대로 계열 A~O 작업으로 분할하고 A 진행 상태를 기록"
@@ -1203,7 +1265,7 @@
         {
           "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
           "ownerTrack": "Track G",
-          "reason": "공통 계약·계열 파일 등록 정책 결정 기록"
+          "reason": "공통 계약·계열 파일 등록 정책과 A 계열 등록 방식 결정 기록"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",

@@ -28,7 +28,7 @@
           "apps/web/features/components/spec.server.ts"
         ],
         "proven": true,
-        "materials": 96
+        "materials": 101
       },
       "web:/components/[componentId]": {
         "role": "detail",
@@ -44,7 +44,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 32
+        "materials": 37
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -236,8 +236,8 @@
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 95,
-          "direct": 74,
+          "missing": 90,
+          "direct": 79,
           "variant": 29,
           "schema": 7,
           "partOf": 2
@@ -490,12 +490,12 @@
         }
       },
       "purpose-family": {
-        "registered": 32,
-        "actualMaterial": 32,
+        "registered": 37,
+        "actualMaterial": 37,
         "assemblableVerified": 8,
-        "distinctOutputs": 32,
+        "distinctOutputs": 37,
         "byStatus": {
-          "catalog-visible": 24,
+          "catalog-visible": 29,
           "verified": 8
         }
       },
@@ -670,9 +670,9 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 32,
-        "delta": 0,
-        "status": "match",
+        "currentMeasured": 37,
+        "delta": 5,
+        "status": "drift",
         "measuredBy": "live registry count"
       },
       {
@@ -766,25 +766,31 @@
       "id": "req:comp:a-05-split-button",
       "section": "§6.2 A",
       "name": "Split Button",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:button.split"
+      ]
     },
     {
       "id": "req:comp:a-06-menu-button",
       "section": "§6.2 A",
       "name": "Menu Button",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:button.menu"
+      ]
     },
     {
       "id": "req:comp:a-07-floating-action-button",
       "section": "§6.2 A",
       "name": "Floating Action Button",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:button.fab"
+      ]
     },
     {
       "id": "req:comp:a-08-button-group",
@@ -814,17 +820,21 @@
       "id": "req:comp:a-10-copy-button",
       "section": "§6.2 A",
       "name": "Copy Button",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:button.copy"
+      ]
     },
     {
       "id": "req:comp:a-11-close-button",
       "section": "§6.2 A",
       "name": "Close Button",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:button.close"
+      ]
     },
     {
       "id": "req:comp:a-12-loading-action-button",
@@ -78658,6 +78668,169 @@
       }
     },
     {
+      "id": "purpose:button.close",
+      "name": "닫기 버튼",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "button",
+      "requirementIds": [
+        "req:comp:a-11-close-button"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/button.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/button.mjs#renderButtonClose",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "standalone",
+            "attached"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/button.mjs",
+        "renderer": "src/platform/families/button.mjs#renderButtonClose",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "18dc368a5e1db665",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:button.copy",
+      "name": "복사 버튼",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "button",
+      "requirementIds": [
+        "req:comp:a-10-copy-button"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/button.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/button.mjs#renderButtonCopy",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "display": [
+            "label",
+            "icon-only"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "disabled",
+          "copied"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/button.mjs",
+        "renderer": "src/platform/families/button.mjs#renderButtonCopy",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "87734c31dbbb05a8",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:button.destructive",
       "name": "파괴적 버튼 묶음",
       "kind": "purpose-family",
@@ -78816,6 +78989,88 @@
           "qualityOk": true
         },
         "outputHash": "aa100b4cb068a469",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:button.fab",
+      "name": "플로팅 액션 버튼",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "button",
+      "requirementIds": [
+        "req:comp:a-07-floating-action-button"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/button.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/button.mjs#renderButtonFab",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "extended": [
+            "icon",
+            "extended"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "loading",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/button.mjs",
+        "renderer": "src/platform/families/button.mjs#renderButtonFab",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1df9031a07cf04ae",
         "duplicateOutputOf": []
       }
     },
@@ -78986,6 +79241,88 @@
       }
     },
     {
+      "id": "purpose:button.menu",
+      "name": "메뉴 버튼",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "button",
+      "requirementIds": [
+        "req:comp:a-06-menu-button"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/button.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/button.mjs#renderButtonMenu",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "tier": [
+            "secondary",
+            "tertiary"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "disabled",
+          "expanded"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/button.mjs",
+        "renderer": "src/platform/families/button.mjs#renderButtonMenu",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "5ae273b3d2944dc6",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:button.primary",
       "name": "기본 버튼 묶음",
       "kind": "purpose-family",
@@ -79150,6 +79487,89 @@
           "qualityOk": true
         },
         "outputHash": "c2f180076b629ff5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:button.split",
+      "name": "분할 버튼",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "button",
+      "requirementIds": [
+        "req:comp:a-05-split-button"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/button.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/button.mjs#renderButtonSplit",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "tier": [
+            "primary",
+            "secondary"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "disabled",
+          "loading",
+          "expanded"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/button.mjs",
+        "renderer": "src/platform/families/button.mjs#renderButtonSplit",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "c445f4b65b8f6edc",
         "duplicateOutputOf": []
       }
     },
