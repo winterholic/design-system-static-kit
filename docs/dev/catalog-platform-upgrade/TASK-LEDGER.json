@@ -4,9 +4,9 @@
   "summary": {
     "totalTasks": 28,
     "byStatus": {
-      "Pending": 25,
+      "Pending": 24,
       "In Progress": 1,
-      "Implemented": 0,
+      "Implemented": 1,
       "Verified": 2,
       "Blocked": 0
     },
@@ -419,18 +419,50 @@
         "src/platform/data/families.mjs",
         "src/platform/family.mjs",
         "src/platform/families/visual.mjs",
-        "tests/platform-family-visual.test.mjs"
+        "src/platform/families/legacy-map.mjs",
+        "tests/platform-style-family-distribution.test.mjs",
+        "tests/platform-family-visual.test.mjs",
+        "docs/platform/style-contexts.md"
       ],
       "completionCriteria": "Minimal Flat부터 Expressive까지 12개 패밀리 등록, 패밀리 변경 시 실제 출력 CSS의 모서리/그림자 차이 증명",
       "tests": [
         "tests/platform-family-visual.test.mjs",
-        "tests/platform-family-legacy.test.mjs"
+        "tests/platform-family-legacy.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-family-base.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null,
       "createFiles": [
         "tests/platform-family-visual.test.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/features/platform/component-view.server.ts",
+          "owner": "Track F",
+          "reason": "웹 상세 뷰 선택지 VISUALS에 12개 시각 패밀리 등록"
+        },
+        {
+          "file": "tests/platform-family-a11y.test.mjs",
+          "owner": "Track D",
+          "reason": "VISUAL_KEYS.length 12 단언 갱신"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "12개 시각 패밀리 COVERAGE 매핑 등록"
+        },
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "owner": "Track F",
+          "reason": "12개 시각 패밀리 목적 컴포넌트 visual 세트 및 채널 일관성 해시 갱신"
+        },
+        {
+          "file": "scripts/families/pages.mjs",
+          "owner": "Track E",
+          "reason": "페이지 생성기 VISUALS에 12개 시각 패밀리 ID 등록"
+        }
       ]
     },
     {

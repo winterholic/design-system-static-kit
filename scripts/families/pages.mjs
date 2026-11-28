@@ -14,7 +14,11 @@ import {feedbackRuntime} from '../../src/materials/feedback.mjs';
 import {tableRuntime} from '../../src/materials/table.mjs';
 import {selectRuntime} from '../../src/materials/select.mjs';
 
-export const VISUALS = ['family:quiet', 'family:soft', 'family:bold', 'family:editorial'];
+export const VISUALS = [
+  'family:quiet', 'family:soft', 'family:bold', 'family:editorial',
+  'family:outline-precise', 'family:corporate-formal', 'family:dense-enterprise', 'family:elevated-material',
+  'family:tonal-layered', 'family:glass', 'family:luxury', 'family:expressive',
+];
 export const GROUPS = PURPOSE_GROUPS;
 
 /** 높이·숫자·크기 불균형이 생기기 쉬운 입력을 더한다(짧은 값, 아주 긴 값, 가로 배치). 패밀리 예시 외의 추가 항목이다. */

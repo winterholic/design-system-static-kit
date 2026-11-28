@@ -5,6 +5,20 @@
  *   to.props      기반 컴포넌트 축. 시각 패밀리가 고정하는 축(appearance·shape)이면 호출자가 정하지 않고 시각 패밀리 선택이 대신한다(`via: 'visual'`).
  *   어휘가 달라 1:1이 아닌 행은 note에 이유를 적는다. 대응할 수 없는 값은 `to: null`과 이유로 남긴다(조용히 가까운 값으로 바꾸지 않는다).
  * tests/platform-family-legacy.test.mjs가 모든 행을 실제 계약과 패밀리 검사에 대 본다.
+ *
+ * [REQUEST §7 12개 시각 패밀리 및 기존 4개 패밀리 매핑]
+ * - Minimal Flat       -> family:quiet (새 ID 없이 기존 ID 확장)
+ * - Soft Rounded       -> family:soft (새 ID 없이 기존 ID 확장)
+ * - Brutalist          -> family:bold (새 ID 없이 기존 ID 확장)
+ * - Editorial          -> family:editorial (새 ID 없이 기존 ID 확장)
+ * - Outline Precise    -> family:outline-precise (신규 확충)
+ * - Corporate Formal   -> family:corporate-formal (신규 확충)
+ * - Dense Enterprise   -> family:dense-enterprise (신규 확충)
+ * - Elevated Material  -> family:elevated-material (신규 확충)
+ * - Tonal Layered      -> family:tonal-layered (신규 확충)
+ * - Glass              -> family:glass (신규 확충)
+ * - Luxury             -> family:luxury (신규 확충)
+ * - Expressive         -> family:expressive (신규 확충)
  */
 const CARD = 'base-component:card-surface', TABS = 'base-component:tabs-control', FB = 'base-component:feedback-message', NAV = 'base-component:navigation-menu';
 

@@ -62,7 +62,7 @@ test('assemble: the default work dashboard returns matching three-candidate resu
   const viaMcpBlueprint = await mcp('assemble_design', {...request, include: ['blueprint']});
   assert.equal(viaMcpBlueprint.ok, true, JSON.stringify(viaMcpBlueprint.errors));
   assert.deepEqual(viaMcpBlueprint.value.candidates.map(c => c.value.blueprint), viaService.value.candidates.map(c => c.value.blueprint));
-  assert.equal(sha256(json(viaService)), 'e45f33c0fa6d801bec30f12c8d12e717e326e9fb48282a3f9c8d56aad4d146a8');
+  assert.equal(sha256(json(viaService)), '3bc907bc825ea9f5fedf7fc687cde24dd8d00766f979e3603de84de21c96c1a5');
 });
 
 test('assemble: failures are the same diagnostics on every channel (REST answers 422 or 400, MCP isError)', async () => {
@@ -136,7 +136,12 @@ test('purpose-family records are discoverable and recommendable through the serv
   const summary = listPlatformMaterials({kind: 'purpose-family', limit: 100});
   assert.ok(summary.value.items.every(x => x.purpose && x.group && x.bases.length));
   const visualFields = listPlatformMaterials({kind: 'purpose-family', limit: 1, fields: ['visual']});
-  assert.deepEqual(new Set(Object.keys(visualFields.value.items[0].visual)), new Set(['family:bold', 'family:editorial', 'family:quiet', 'family:soft']));
+  assert.deepEqual(new Set(Object.keys(visualFields.value.items[0].visual)), new Set([
+    'family:quiet', 'family:soft', 'family:bold', 'family:editorial',
+    'family:outline-precise', 'family:corporate-formal', 'family:dense-enterprise',
+    'family:elevated-material', 'family:tonal-layered', 'family:glass',
+    'family:luxury', 'family:expressive'
+  ]));
   const ids = listed.value.items.map(x => x.id);
   const id = 'purpose:card.kpi';
   const detail = getPlatformMaterial({id});

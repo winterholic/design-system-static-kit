@@ -547,7 +547,7 @@ test('every variant value of every purpose family, in every visual family, keeps
   }
   assert.ok(rendered > 1000, `rendered ${rendered}`);
   assert.ok(skipped < rendered / 4, `skipped (rejected combinations) ${skipped} of ${rendered + skipped}`);
-  assert.equal(VISUAL_KEYS.length, 4);
+  assert.equal(VISUAL_KEYS.length, 12);
 });
 
 test('the structure checks fail on broken markup (the helpers are not vacuous)', () => {

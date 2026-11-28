@@ -7,7 +7,11 @@ export type CQ = {
   visual: string; variant: Record<string, string>; props: Record<string, string>; content: Record<string, string>;
   palette: string | null; set: string | null; type: string | null; mode: 'light' | 'dark'; device: 390 | 1280;
 };
-export const VISUALS = ['quiet', 'soft', 'bold', 'editorial'] as const;
+export const VISUALS = [
+  'quiet', 'soft', 'bold', 'editorial',
+  'outline-precise', 'corporate-formal', 'dense-enterprise', 'elevated-material',
+  'tonal-layered', 'glass', 'luxury', 'expressive',
+] as const;
 const SAFE = /^[a-z0-9][a-z0-9-]{0,40}$/;
 type SP = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? null;
