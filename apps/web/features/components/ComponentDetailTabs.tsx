@@ -1,0 +1,241 @@
+'use client';
+
+import {useEffect, useMemo, useState} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
+import {Button} from '@/ui';
+import {CopyBlock} from './CopyBlock';
+import {buildTabs, exportedSources} from './detail-model.mjs';
+import type {ComponentView} from './spec.server';
+import type {PlaygroundOption} from './playground.server';
+import styles from './components.module.css';
+
+type Props = {view: ComponentView; initialTab: string; initialSelection: Selection; note?: string};
+type Selection = Record<string, string | number | boolean>;
+const AXIS_LABELS: Record<string, string> = {
+  palette: '팔레트', subtokenSet: '서브토큰 세트', visualFamily: '시각 패밀리', typeSystem: '타이포 시스템',
+  size: '크기', density: '밀도', appearance: '외형', state: '상태', mode: '라이트·다크', content: '예시 콘텐츠', viewport: '뷰포트',
+};
+const AXIS_KEYS = ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'size', 'density', 'appearance', 'state', 'mode', 'content', 'viewport'];
+
+function initialSelection(view: ComponentView, params: URLSearchParams): Selection {
+  const selected: Selection = {...view.playground.defaults, viewport: params.get('viewport') === '390' ? '390' : '1280'};
+  for (const group of view.variantGroups) {
+    const value = params.get(group.name);
+    selected[group.name] = group.values.find(candidate => String(candidate) === value) ?? group.defaultValue;
+  }
+  if (view.material?.states.values.length) selected.state = params.get('state') && view.material.states.values.includes(params.get('state')!) ? params.get('state')! : view.material.states.values[0];
+  for (const axis of ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode'] as const) {
+    const option = view.playground.axes[axis].find(item => item.value === params.get(axis) && item.ok);
+    if (option) selected[axis] = option.value;
+  }
+  const exampleText = Object.entries(view.example ?? {}).find(([key, value]) => !['type', 'id'].includes(key) && typeof value === 'string')?.[1];
+  const content = params.get('content');
+  selected.content = content && content.length <= 200 ? content : typeof exampleText === 'string' ? exampleText : '';
+  return selected;
+}
+
+function renderHref(type: string, selection: Selection) {
+  if (typeof selection.variant === 'string') return `/components/${type}/render/${encodeURIComponent(selection.variant)}`;
+  const query = new URLSearchParams();
+  for (const [axis, value] of Object.entries(selection)) if (String(value)) query.set(axis, String(value));
+  return `/components/${type}/render${query.size ? `?${query}` : ''}`;
+}
+
+function Preview({type, selection, width}: {type: string; selection: Selection; width: number | '100%'}) {
+  const src = renderHref(type, selection);
+  const [reason, setReason] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    setReason(null);
+    fetch(src).then(async response => {
+      if (response.ok) return;
+      const message = (await response.text()).trim();
+      if (live) setReason(message || `Core가 이 선택을 거부했습니다 (${response.status}).`);
+    }).catch(() => { if (live) setReason('Core 선택 검증 결과를 가져오지 못했습니다.'); });
+    return () => { live = false; };
+  }, [src]);
+  return reason
+    ? <p className={styles.note} role="status">렌더되지 않았습니다. Core 검증 결과: {reason}</p>
+    : <iframe title={`${type} 컴파일 미리보기`} className={styles.frame} src={src} style={{width, maxWidth: '100%', height: 420, marginInline: width === 390 ? 'auto' : undefined}} />;
+}
+
+function AxisControl({axis, options, value, disabledReason, onChange}: {axis: string; options: (string | number | boolean | PlaygroundOption)[]; value: string; disabledReason?: string; onChange: (value: string) => void}) {
+  const normalized = options.map(option => typeof option === 'object' ? option : ({value: String(option), label: String(option), ok: true}));
+  const selected = normalized.find(option => option.value === value);
+  const reason = disabledReason ?? (selected && !selected.ok ? selected.reason : undefined);
+  return <label className={styles.variantField}>
+    {AXIS_LABELS[axis]}
+    <select aria-label={AXIS_LABELS[axis]} value={value} disabled={Boolean(disabledReason)} title={reason} onChange={event => onChange(event.target.value)}>
+      {normalized.length ? normalized.map(option => <option key={option.value} value={option.value} disabled={!option.ok} title={option.reason}>{option.label}{option.ok ? '' : ' · 비호환'}</option>) : <option value="">계약에 없음</option>}
+    </select>
+    {reason ? <small>{reason}</small> : null}
+  </label>;
+}
+
+export function ComponentDetailTabs({view, initialTab, initialSelection: initialPick, note}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const tabs = useMemo(() => buildTabs(view), [view]);
+  const [activeTab, setActiveTab] = useState(() => tabs.some(tab => tab.id === initialTab) ? initialTab : 'overview');
+  const [selection, setSelection] = useState<Selection>(initialPick);
+  const [axisOptions, setAxisOptions] = useState(view.playground.axes);
+  const [variantIndex, setVariantIndex] = useState(0);
+  const [exportResult, setExportResult] = useState<{html: string; css: string; tokens: string; blueprint: string} | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [viewport, setViewport] = useState<390 | 1280>(initialPick.viewport === '390' ? 390 : 1280);
+  const availabilityRequest = JSON.stringify({palette: selection.palette, subtokenSet: selection.subtokenSet, visualFamily: selection.visualFamily, typeSystem: selection.typeSystem, density: selection.density, mode: selection.mode});
+
+  useEffect(() => {
+    let live = true;
+    const query = new URLSearchParams({selection: availabilityRequest});
+    fetch(`/components/${view.type}/availability?${query}`, {cache: 'no-store'}).then(async response => {
+      if (!response.ok) return;
+      const result = await response.json();
+      if (live && result.axes) setAxisOptions(result.axes);
+    }).catch(() => {});
+    return () => { live = false; };
+  }, [availabilityRequest, view.type]);
+
+  useEffect(() => {
+    const restore = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab') ?? 'overview';
+      setActiveTab(tabs.some(item => item.id === tab) ? tab : 'overview');
+      setSelection(initialSelection(view, params));
+      setViewport(params.get('viewport') === '390' ? 390 : 1280);
+    };
+    window.addEventListener('popstate', restore);
+    return () => window.removeEventListener('popstate', restore);
+  }, [tabs, view]);
+  useEffect(() => {
+    if (activeTab !== 'code') return;
+    const query = new URLSearchParams({selection: JSON.stringify(selection)});
+    let live = true;
+    setExportResult(null); setExportError(null);
+    fetch(`/components/${view.type}/export?${query}`, {cache: 'no-store'}).then(async response => {
+      if (!response.ok) throw new Error((await response.text()) || `Core 컴파일 오류 (${response.status})`);
+      const payload = await response.json();
+      if (live) setExportResult(exportedSources(payload.files));
+    }).catch(error => { if (live) setExportError(error instanceof Error ? error.message : '내보내기 결과를 읽지 못했습니다.'); });
+    return () => { live = false; };
+  }, [activeTab, selection, view.type]);
+
+  const updateUrl = (tab: string, nextSelection = selection, nextViewport = viewport) => {
+    const next = new URLSearchParams(window.location.search);
+    if (tab === 'overview') next.delete('tab'); else next.set('tab', tab);
+    for (const key of [...AXIS_KEYS, ...view.variantGroups.map(group => group.name)]) next.delete(key);
+    for (const [key, value] of Object.entries(nextSelection)) {
+      const group = view.variantGroups.find(item => item.name === key);
+      if (!group || String(value) !== String(group.defaultValue)) next.set(key, String(value));
+    }
+    if (nextViewport !== 1280) next.set('viewport', String(nextViewport));
+    else if (next.get('viewport') === '1280') next.delete('viewport');
+    const query = next.toString();
+    setActiveTab(tab);
+    router.push(`${pathname}${query ? `?${query}` : ''}`, {scroll: false});
+  };
+
+  const updateSelection = (axis: string, value: string) => {
+    const group = view.variantGroups.find(item => item.name === axis);
+    const groupValue = group?.values.find(candidate => String(candidate) === value);
+    const registered = (['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode'] as string[]).includes(axis)
+      ? axisOptions[axis as keyof typeof axisOptions].find(option => option.value === value && option.ok)?.value
+      : undefined;
+    const stateValue = axis === 'state' && view.material?.states.values.includes(value) ? value : undefined;
+    const option = groupValue ?? registered ?? stateValue;
+    if (axis === 'content') {
+      if (value.length > 200) return;
+      const next = {...selection, content: value};
+      setSelection(next); updateUrl(activeTab, next); return;
+    }
+    if (option === undefined) return;
+    const next = {...selection, [axis]: option};
+    setSelection(next); updateUrl(activeTab, next);
+  };
+
+  const stateValues = view.material?.states.values ?? [];
+  const appearanceGroup = view.variantGroups.find(group => /appearance|style|visual/i.test(group.name));
+  const variants = appearanceGroup ? appearanceGroup.values.map(value => ({id: String(value), ok: true})) : view.variants;
+  const selectedVariant = variants[Math.min(variantIndex, Math.max(0, variants.length - 1))];
+  const variantSelection: Selection = appearanceGroup && selectedVariant
+    ? {...selection, [appearanceGroup.name]: selectedVariant.id}
+    : selectedVariant ? {variant: selectedVariant.id} : {};
+  const sizeGroup = view.variantGroups.find(group => /size/i.test(group.name));
+  const stateGroup = view.variantGroups.find(group => /state/i.test(group.name));
+  const axisConfig = (axis: string) => {
+    const group = view.variantGroups.find(item => item.name.toLowerCase() === axis.toLowerCase());
+    if (axis === 'viewport') return {options: ['390', '1280'], key: 'viewport', reason: undefined};
+    if (group) return {options: group.values, key: group.name, reason: undefined};
+    if (['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode'].includes(axis)) return {options: axisOptions[axis as keyof typeof axisOptions], key: axis, reason: axis === 'visualFamily' && !view.playground.base ? '이 컴포넌트는 시각 패밀리와 연결된 기반 구성원 계약이 없습니다.' : undefined};
+    if (axis === 'state' && stateValues.length) return {options: stateValues.map(value => ({value, label: value, ok: Boolean(view.playground.base), reason: view.playground.base ? undefined : '플랫폼 기반 구성원 렌더 계약이 없어 상태를 컴파일할 수 없습니다.'})), key: 'state', reason: view.playground.base ? undefined : '플랫폼 기반 구성원 렌더 계약이 없어 상태를 컴파일할 수 없습니다.'};
+    return {options: [], key: axis, reason: '이 컴포넌트 계약에 이 축의 선택값이 없습니다.'};
+  };
+
+  const renderPreview = (chosen: Selection) => <Preview type={view.type} selection={chosen} width={viewport === 390 ? 390 : '100%'} />;
+
+  return <section className={styles.detailTabs} aria-label={`${view.label} 상세`}>
+    <div className={styles.detailTabList} role="tablist" aria-label={`${view.label} 상세 탭`}>
+      {tabs.map(tab => <button key={tab.id} id={`tab-${tab.id}`} role="tab" aria-selected={activeTab === tab.id} aria-controls="panel-${tab.id}" className={styles.detailTab} onClick={() => updateUrl(tab.id)}>{tab.label}</button>)}
+    </div>
+    <div id={`panel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`} className={styles.detailPanel}>
+      {activeTab === 'overview' ? <>
+        <iframe title={`${view.label} 기본 컴파일 결과`} className={styles.frame} src={`/components/${view.type}/render`} style={{height: 420}} />
+        {note ? <p className={styles.note}>{note}</p> : null}
+        {view.material ? <><h2 className="section-title">재료 계약</h2><dl className={styles.ctx}>
+          <div><dt>종류 · 분류</dt><dd><code>{view.material.kind}</code> · {view.material.category} · {view.groupLabel}</dd></div>
+          <div><dt>도입 · 재료 버전</dt><dd>카탈로그 {view.material.since} · 재료 {view.material.version}</dd></div>
+          <div><dt>맥락 · 품질</dt><dd>{view.material.contexts.join(', ')} · {view.material.quality.status}{view.material.preset ? ' · 프리셋' : ''}</dd></div>
+        </dl></> : null}
+      </> : null}
+      {activeTab === 'variants' ? <>
+        <h2 className="section-title">Variants</h2>
+        {variants.length ? <><p>{selectedVariant?.id ?? '지원 변형 없음'} · {variantIndex + 1}/{variants.length}</p>{selectedVariant ? renderPreview(variantSelection) : null}<div className={styles.pager}>
+          <Button variant="secondary" disabled={variantIndex === 0} onClick={() => setVariantIndex(i => Math.max(0, i - 1))}>이전 변형</Button>
+          <Button variant="secondary" disabled={variantIndex >= variants.length - 1} onClick={() => setVariantIndex(i => Math.min(variants.length - 1, i + 1))}>다음 변형</Button>
+        </div></> : <p>외형 변형이 등록되어 있지 않습니다.</p>}
+      </> : null}
+      {activeTab === 'states' ? <>
+        <h2 className="section-title">States</h2><div className={styles.variantGroups}>{stateValues.map(state => <Button key={state} variant="secondary" aria-pressed={selection.state === state} disabled={!stateGroup && state !== 'default'} title={!stateGroup && state !== 'default' ? '렌더 변형으로 지원되지 않는 상태입니다.' : undefined} onClick={() => stateGroup && updateSelection(stateGroup.name, state)}>{state}</Button>)}</div>
+        {stateGroup ? renderPreview({...selection, [stateGroup.name]: selection[stateGroup.name] ?? stateGroup.defaultValue}) : <p className={styles.note}>선언된 상태 전이는 아래 계약을 따릅니다. 이 부품의 렌더 계약에 상태 축이 없어 상태 미리보기는 제한됩니다.</p>}
+        <ul className={styles.transitions}>{(view.material?.states.transitions ?? []).map((transition, index) => <li key={index}><code>{transition.from} → {transition.to}</code> · {transition.trigger}</li>)}</ul>
+      </> : null}
+      {activeTab === 'sizes' ? <>
+        <h2 className="section-title">Sizes</h2>
+        {sizeGroup ? <><div className={styles.variantGroups}>{sizeGroup.values.map(size => <Button key={String(size)} variant="secondary" aria-pressed={String(selection[sizeGroup.name]) === String(size)} onClick={() => updateSelection(sizeGroup.name, String(size))}>{String(size)}</Button>)}</div>{renderPreview({...selection, [sizeGroup.name]: selection[sizeGroup.name] ?? sizeGroup.defaultValue})}</> : <p>크기 축이 등록되어 있지 않습니다.</p>}
+      </> : null}
+      {activeTab === 'playground' ? <>
+        <h2 className="section-title">Playground</h2>
+        <div className={styles.variantGroups}>{AXIS_KEYS.map(axis => {
+          const config = axisConfig(axis);
+          const current = axis === 'viewport' ? String(viewport) : String(selection[config.key] ?? config.options[0] ?? '');
+          if (axis === 'content') return <label key={axis} className={styles.variantField}>{AXIS_LABELS[axis]}<input aria-label={AXIS_LABELS[axis]} maxLength={200} value={String(selection.content ?? '')} onChange={event => setSelection(previous => ({...previous, content: event.target.value}))} onBlur={() => updateUrl(activeTab)} /></label>;
+          return <AxisControl key={axis} axis={axis} options={config.options} value={current} disabledReason={config.reason} onChange={value => {
+            if (axis === 'viewport') { const next = {...selection, viewport: value}; setViewport(Number(value) as 390 | 1280); setSelection(next); updateUrl(activeTab, next, Number(value) as 390 | 1280); }
+            else updateSelection(config.key, value);
+          }} />;
+        })}</div>
+        {renderPreview(selection)}
+      </> : null}
+      {activeTab === 'tokens' ? <><h2 className="section-title">Tokens</h2><ul className={styles.chips}>{(view.material?.tokens ?? []).map(token => <li key={token}><code>{token}</code></li>)}</ul></> : null}
+      {activeTab === 'code' ? <><h2 className="section-title">Code</h2>{exportError ? <p className={styles.note} role="status">검증된 선택 결과를 가져오지 못했습니다: {exportError}</p> : null}{exportResult ? <>
+        <h3 className="section-title">HTML · index.html</h3><CopyBlock text={exportResult.html} label="컴파일 HTML" />
+        <h3 className="section-title">CSS · tokens.css</h3><CopyBlock text={exportResult.css} label="컴파일 CSS" />
+        <h3 className="section-title">Tokens · tokens.json</h3><CopyBlock text={exportResult.tokens} label="컴파일 토큰 JSON" />
+        <h3 className="section-title">Blueprint · blueprint.json</h3><CopyBlock text={exportResult.blueprint} label="컴파일 Blueprint JSON" />
+      </> : <p role="status">선택한 계약을 Core에서 컴파일하고 있습니다.</p>}</> : null}
+      {activeTab === 'accessibility' ? <><h2 className="section-title">Accessibility</h2><dl className={styles.ctx}>
+        <div><dt>접근성 규칙</dt><dd>{view.material?.a11y?.rules?.length ? view.material.a11y.rules.map((rule: string) => <code key={rule}>{rule} </code>) : '등록된 규칙이 없습니다.'}</dd></div>
+        <div><dt>역할</dt><dd>{view.material?.a11y?.role ?? '등록된 역할 설명이 없습니다.'}</dd></div>
+        <div><dt>키보드</dt><dd>{view.material?.a11y?.keyboard ?? '등록된 키보드 계약이 없습니다.'}</dd></div>
+        <div><dt>필수 속성과 제약</dt><dd>{view.fields.filter(field => field.required || /aria|label/i.test(field.name)).map(field => <code key={field.name}>{field.name}{field.required ? ' (필수)' : ''}</code>)}</dd></div>
+      </dl></> : null}
+      {activeTab === 'composition' ? <><h2 className="section-title">Composition</h2><dl className={styles.ctx}>
+        <div><dt>허용 부모</dt><dd>{view.parents.length ? view.parents.map(type => <code key={type}>{type} </code>) : '없음'}</dd></div>
+        <div><dt>허용 자식</dt><dd>{view.children ? <>{view.children.allowed.map(type => <code key={type}>{type} </code>)} · {view.children.min}~{view.children.max}개</> : '자식을 받지 않습니다'}</dd></div>
+        <div><dt>필요한 슬롯</dt><dd>{view.material?.purposeContracts.flatMap(contract => Object.keys(contract.needs ?? {})).length ? [...new Set(view.material.purposeContracts.flatMap(contract => Object.keys(contract.needs ?? {})))].map(slot => <code key={slot}>{slot} </code>) : '필요 슬롯 없음'}</dd></div>
+        <div><dt>관련 목적 컴포넌트</dt><dd>{view.material?.purposeContracts.length ? view.material.purposeContracts.map(contract => <code key={contract.id}>{contract.label} </code>) : view.related.map(row => <code key={row.type}>{row.label} </code>)}</dd></div>
+        <div><dt>금지 조합</dt><dd>{view.material?.purposeContracts.flatMap(contract => contract.forbidden.map(rule => ({...rule, purpose: contract.label}))).length ? view.material.purposeContracts.flatMap(contract => contract.forbidden.map(rule => <span key={`${contract.id}-${rule.id}`}><code>{rule.id}</code> · {Object.entries((rule as any).when ?? {}).map(([key, value]) => `${key}=${String(value)}`).join(', ')} · {rule.why}; </span>)) : '등록된 금지 조합이 없습니다.'}</dd></div>
+      </dl></> : null}
+    </div>
+  </section>;
+}

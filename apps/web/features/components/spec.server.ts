@@ -1,8 +1,9 @@
 import 'server-only';
-import {getComponentSpec, getMaterial, listCatalog} from '@winterholic/design-system-static-kit/service';
+import {CONTRACT_VERSION, PLATFORM_CONTRACT_VERSION, getComponentSpec, getMaterial, getPlatformMaterial, listCatalog, listPlatformMaterials} from '@winterholic/design-system-static-kit/service';
 import {recordCompile} from '@/features/perf/counter.server';
 import {LruCache} from '@/lib/api/cache.mjs';
-import {renderComponentView} from '@/lib/api/preview-recipes.mjs';
+import {exportComponentView} from '@/lib/api/preview-recipes.mjs';
+import {playgroundContract} from './playground.server';
 
 // 부품 화면의 모든 데이터는 getComponentSpec·listCatalog 에서 온다. 카탈로그에 없는 변형·속성·관계는 만들지 않는다.
 // 렌더 결과는 Blueprint 를 직접 쓰지 않고 ./edit 연산(resetDocument, insertNode, removeNode, updateNode)으로 만든 문서의 컴파일 결과다.
@@ -31,11 +32,24 @@ type MaterialView = {
   id: string; kind: string; category: string; version: string; since: string; contexts: string[]; quality: {status: string; evidence: string[]}; preset: boolean;
   defaults: Row; variants: Record<string, (string | number | boolean)[]>;
   states: {values: string[]; transitions: Row[]}; responsive: {strategy: string; breakpoints?: string[]; note?: string};
-  tokens: string[]; tags: string[]; blueprint: {node?: string; field?: string; value?: string | null; since: string | null} | null;
+  tokens: string[]; tags: string[]; a11y: Row; structure: Row; validation: Row;
+  purposeContracts: {id: string; label: string; forbidden: {id: string; why: string}[]; needs: Row}[];
+  blueprint: {node?: string; field?: string; value?: string | null; since: string | null} | null;
 };
+const purposeContracts = new LruCache(200);
 const materialView = (id: string): MaterialView | null => {
   const result = getMaterial({id: `component:${id}`}) as {ok: boolean; value?: MaterialView};
-  return result.ok ? result.value! : null;
+  if (!result.ok) return null;
+  if (!purposeContracts.has(id)) {
+    const base = getPlatformMaterial({id: `base-component:${id}`}) as {ok: boolean; value?: Row};
+    const purposeIds = base.ok ? [...new Set((base.value?.edges?.to ?? []).map((edge: Row) => edge.from).filter((value: string) => value?.startsWith('purpose:')))] : [];
+    const purposes = purposeIds.flatMap(purposeId => {
+      const detail = getPlatformMaterial({id: purposeId}) as {ok: boolean; value?: Row};
+      return detail.ok && detail.value ? [{id: purposeId, label: detail.value.label, forbidden: detail.value.forbidden ?? [], needs: detail.value.needs ?? {}}] : [];
+    });
+    purposeContracts.set(id, purposes);
+  }
+  return {...result.value!, purposeContracts: purposeContracts.get(id) ?? []};
 };
 
 /** JSON Schema 조각을 사람이 읽는 (형태, 제약) 으로 줄인다. 스키마에 있는 제약만 쓴다. */
@@ -79,9 +93,10 @@ export type ComponentView = {
   variantGroups: {name: string; values: (string | number | boolean)[]; defaultValue: string | number | boolean; availability: {value: string | number | boolean; ok: boolean; reason?: string}[]}[];
   limitations: string[];
   related: {type: string; label: string}[];
+  playground: import('./playground.server').PlaygroundContract;
 };
 
-type RawView = Omit<ComponentView, 'variants' | 'limitations'> & {variantIds: string[]};
+type RawView = Omit<ComponentView, 'variants' | 'limitations' | 'playground'> & {variantIds: string[]};
 function rawView(type: string): RawView | null {
   const row = componentRows().find(r => r.type === type);
   if (!row) return null;
@@ -154,11 +169,10 @@ export function componentView(type: string): ComponentView | null {
     const {variantIds, ...rest} = raw;
     view = {
       ...rest,
-      variants: variantIds.map(id => { const r = renderRaw(raw, id); return r.ok ? {id, ok: true} : {id, ok: false, reason: r.reason}; }),
-      variantGroups: raw.variantGroups.map(group => ({...group, availability: group.availability.map(option => {
-        const r = renderRaw(raw, {[group.name]: option.value});
-        return r.ok ? {value: option.value, ok: true} : {value: option.value, ok: false, reason: r.reason};
-      })})),
+      // 옵션의 적합성은 선택된 하나를 Core에 전달해 확인한다. 페이지 진입 때 전체 변형을 컴파일하지 않는다.
+      variants: variantIds.map(id => ({id, ok: true})),
+      variantGroups: raw.variantGroups,
+      playground: playgroundContract(type),
       limitations: raw.material?.tags.filter(tag => tag.startsWith('forbidden:') || tag.startsWith('unsupported:')).map(tag => tag.replace(/^(?:forbidden|unsupported):/, '')) ?? [],
     };
   }
@@ -169,15 +183,27 @@ export function componentView(type: string): ComponentView | null {
 // ---------------------------------------------------------------- 렌더
 
 // 렌더 절차는 사전 생성(scripts/build-catalog-index.mjs)과 같은 모듈을 쓴다. 목록 그림과 상세 화면이 어긋나지 않게 하려는 것이다.
-export type Rendered = {ok: true; html: string; mode: 'isolated' | 'template'; template?: string} | {ok: false; reason: string};
+export type Rendered = {ok: true; html: string; mode: 'isolated' | 'template' | 'platform'; template?: string} | {ok: false; reason: string};
 
-function renderRaw(view: RawView, variant?: string | Row): Rendered {
-  return renderComponentView(view, variant, {onCompile: () => recordCompile('compileBlueprint')}) as Rendered;
-}
+const compiledCache: any = new LruCache(64);
+const canonical = (value: any): any => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object'
+  ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
+const compileKey = (type: string, variant?: string | Row) => `${PLATFORM_CONTRACT_VERSION}/${CONTRACT_VERSION}:${type}:${JSON.stringify(canonical(variant ?? null))}`;
 
 export function renderComponent(type: string, variant?: string | Row): Rendered {
+  const result = exportComponent(type, variant);
+  if (!result.ok) return result;
+  return {ok: true, html: result.files['index.html'], mode: result.mode ?? 'isolated'};
+}
+
+export function exportComponent(type: string, variant?: string | Row) {
+  const key = compileKey(type, variant);
+  const hit = compiledCache.get(key);
+  if (hit) return hit;
   const view = rawView(type);
-  return view ? renderRaw(view, variant) : {ok: false, reason: '알 수 없는 부품입니다.'};
+  const result = view ? exportComponentView(view, variant, {onCompile: () => recordCompile('compileBlueprint')}) : {ok: false as const, reason: '알 수 없는 부품입니다.'};
+  compiledCache.set(key, result);
+  return result;
 }
 
 export function templateLabel(id: string): string {

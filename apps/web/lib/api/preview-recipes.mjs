@@ -2,6 +2,7 @@
 // 화면용 코드와 사전 생성 코드가 따로 있으면 목록 그림과 상세 화면이 어긋난다(REQUEST §3.2: 수작업 구현으로 실제 컴파일 결과와 달라지지 않게 한다).
 // 여기에는 Core 서비스·edit 연산을 부르는 절차만 있다. HTML·CSS 를 직접 만들지 않는다.
 import {compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
+import {assembleComponentContext} from '../../../../src/service/component-context.mjs';
 import {importBlueprint, insertNode, removeNode, resetDocument, setAppearance, updateNode} from '@winterholic/design-system-static-kit/edit';
 
 const call = (r, what) => {
@@ -106,18 +107,24 @@ export function isolatedDoc(type, example, variant) {
   return {doc};
 }
 
-function materialSelection(view, selection, compile) {
+function materialSelection(view, selection) {
   const material = view.material;
-  for (const [key, value] of Object.entries(selection)) {
+  const variantSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => material.variants[key]));
+  const styleSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode', 'viewport', 'content'].includes(key)));
+  for (const [key, value] of Object.entries(variantSelection)) {
     if (!material.variants[key]?.some(option => String(option) === String(value))) return {error: `카탈로그에 없는 ${key} 변형입니다.`};
   }
-  const values = {...material.defaults, ...selection};
+  const values = {...material.defaults, ...variantSelection};
   const made = resetDocument(null, COMPONENT_BASE);
   if (!made.ok) return {error: made.errors[0]?.message ?? '기본 Blueprint를 만들지 못했습니다.'};
   // importBlueprint는 엔진이 만든 페이지를 받아 카탈로그 버전을 올리고 정상 문서로 검증한다.
   const upgraded = importBlueprint(null, {blueprint: {...made.doc, catalogVersion: material.since}});
   if (!upgraded.ok) return {error: upgraded.errors[0]?.message ?? '2.6.0 Blueprint로 올리지 못했습니다.'};
   const node = {...view.example, ...values};
+  if (typeof styleSelection.content === 'string') {
+    const field = Object.keys(node).find(key => !['type', 'id', 'variant', 'appearance', 'shape', 'size', 'behavior', 'tone', 'state', 'content'].includes(key) && typeof node[key] === 'string');
+    if (field) node[field] = styleSelection.content;
+  }
   for (const key of ['sortable', 'selectable']) if (typeof node[key] === 'boolean') node[key] = node[key] ? 'yes' : 'no';
   // Core 계약상 내용이 없는 상태는 행도 비어 있어야 한다.
   if (view.type === 'data-table' && !['ready', 'partial'].includes(node.state)) node.rows = [];
@@ -131,8 +138,35 @@ function materialSelection(view, selection, compile) {
     if (!removed.ok) return {error: removed.errors[0]?.message ?? '미리보기에서 불필요한 부품을 지우지 못했습니다.'};
     doc = removed.doc;
   }
-  const compiled = compile(doc);
-  return compiled.html === undefined ? {error: compiled.error ?? 'Core가 이 변형을 컴파일하지 못했습니다.'} : {html: compiled.html};
+  if (Object.keys(styleSelection).length) {
+    const context = importBlueprint(null, {blueprint: {...doc, catalogVersion: '2.7.0'}});
+    if (!context.ok) return {error: context.errors[0]?.message ?? '플랫폼 스타일 맥락으로 승격하지 못했습니다.'};
+    doc = context.doc;
+    const {palette, subtokenSet, typeSystem, mode = 'light', density = 'comfortable', visualFamily} = styleSelection;
+    if (!palette || !subtokenSet || !typeSystem) return {error: 'Core 재료 선택에 팔레트·서브토큰 세트·타이포 시스템이 모두 필요합니다.'};
+    doc = {...doc, mode, density, materials: {palette, subtokenSet, typeSystem, ...(view.playground?.base && visualFamily ? {families: {[view.playground.base]: visualFamily}} : {})}};
+  }
+  return {doc};
+}
+
+function platformComponent(view, selection) {
+  const contract = view.playground;
+  if (!contract?.base || !selection?.palette || !selection?.subtokenSet || !selection?.typeSystem || !selection?.visualFamily) return null;
+  const groups = Object.fromEntries(view.variantGroups.map(group => [group.name, selection[group.name] ?? group.defaultValue]));
+  const props = Object.fromEntries(Object.entries(groups).filter(([key]) => ['appearance', 'size', 'state'].includes(key)));
+  if (typeof selection.state === 'string') props.state = selection.state;
+  const content = Object.fromEntries(Object.entries(view.example ?? {}).filter(([key, value]) => !['type', 'id', 'variant', 'appearance', 'shape', 'size', 'behavior', 'tone', 'state', 'content'].includes(key) && value !== undefined));
+  const textField = Object.keys(content).find(key => typeof content[key] === 'string');
+  if (textField && typeof selection.content === 'string') content[textField] = selection.content;
+  const assembled = assembleComponentContext({
+    context: 'general', base: contract.base, family: selection.visualFamily,
+    palette: selection.palette, subtokenSet: selection.subtokenSet, typeSystem: selection.typeSystem,
+    mode: selection.mode ?? contract.defaults.mode, density: selection.density ?? contract.defaults.density,
+    viewport: selection.viewport === '390' || selection.viewport === 390 ? 390 : 1280,
+    props, content,
+  });
+  return assembled.ok ? {ok: true, files: assembled.value.files, manifest: assembled.value.manifest, mode: 'platform'}
+    : {ok: false, reason: assembled.errors.map(error => error.message).join(' ')};
 }
 
 /**
@@ -142,26 +176,44 @@ function materialSelection(view, selection, compile) {
  * @param {{onCompile?: () => void}} [hooks] 컴파일 횟수 계측용
  * @returns {{ok: true, html: string, mode: 'isolated' | 'template', template?: string} | {ok: false, reason: string}}
  */
-export function renderComponentView(view, variant, {onCompile} = {}) {
-  const compile = doc => {
-    onCompile?.();
-    const r = compileBlueprint(doc, {include: ['html']});
-    return r.ok ? {html: r.value.html} : {error: r.errors?.[0]?.message};
-  };
+function componentDocument(view, variant) {
   if (view.material && view.example) {
-    const built = materialSelection(view, typeof variant === 'object' ? variant : {}, compile);
-    return 'html' in built ? {ok: true, html: built.html, mode: 'isolated'} : {ok: false, reason: built.error};
+    const selection = typeof variant === 'object' ? variant : {};
+    if (view.playground?.base && selection.palette) return {platform: platformComponent(view, selection)};
+    const built = materialSelection(view, selection);
+    return 'doc' in built ? {doc: built.doc, mode: 'isolated'} : {error: built.error};
   }
   const legacyVariant = typeof variant === 'string' ? variant : undefined;
   if (view.example && !(legacyVariant && !view.variantIds.includes(legacyVariant))) {
     const built = isolatedDoc(view.type, {...view.example, ...(legacyVariant ? {variant: legacyVariant} : {})});
-    if ('doc' in built) { const {html} = compile(built.doc); if (html) return {ok: true, html, mode: 'isolated'}; }
-    else if (legacyVariant) return {ok: false, reason: built.error};
+    if ('doc' in built) return {doc: built.doc, mode: 'isolated'};
+    else if (legacyVariant) return {error: built.error};
   }
-  if (legacyVariant) return {ok: false, reason: '이 부품은 변형을 단독으로 렌더하지 못합니다.'};
+  if (legacyVariant) return {error: '이 부품은 변형을 단독으로 렌더하지 못합니다.'};
   const template = templateUsing(view.type);
-  if (!template) return {ok: false, reason: '이 부품을 쓰는 템플릿이 없습니다.'};
+  if (!template) return {error: '이 부품을 쓰는 템플릿이 없습니다.'};
   const made = resetDocument(null, {template});
-  const html = made.ok ? compile(made.doc).html : null;
-  return html ? {ok: true, html, mode: 'template', template} : {ok: false, reason: '렌더하지 못했습니다.'};
+  return made.ok ? {doc: made.doc, mode: 'template', template} : {error: '렌더하지 못했습니다.'};
+}
+
+/** 같은 검증된 Blueprint 컴파일러가 만든 내보내기 파일을 그대로 돌려준다. */
+export function exportComponentView(view, variant, {onCompile} = {}) {
+  const built = componentDocument(view, variant);
+  if ('platform' in built) {
+    if (!built.platform?.ok) return {ok: false, reason: built.platform?.reason ?? 'Core 플랫폼 렌더를 구성하지 못했습니다.'};
+    onCompile?.();
+    return {ok: true, files: built.platform.files, manifest: built.platform.manifest, mode: 'platform'};
+  }
+  if (!built.doc) return {ok: false, reason: built.error};
+  onCompile?.();
+  const result = compileBlueprint(built.doc, {include: ['files']});
+  if (!result.ok) return {ok: false, reason: result.errors?.[0]?.message ?? 'Core가 컴파일하지 못했습니다.'};
+  return {ok: true, files: result.value.files, manifest: result.value.manifest, mode: built.mode, template: built.template};
+}
+
+/** 부품 하나를 한 번만 동적으로 컴파일한다. 모든 변형을 만들지 않고 요청된 선택만 처리한다. */
+export function renderComponentView(view, variant, {onCompile} = {}) {
+  const exported = exportComponentView(view, variant, {onCompile});
+  if (!exported.ok) return exported;
+  return {ok: true, html: exported.files['index.html'], mode: exported.mode};
 }

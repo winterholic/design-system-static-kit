@@ -12,6 +12,12 @@
 .textOnly { padding: var(--space-4) 0; border-top: 1px solid var(--color-line); }
 
 .crumb { margin: 0 0 var(--space-4); font-size: var(--text-sm); }
+.detailTabs { min-width: 0; }
+.detailTabList { display: flex; gap: var(--space-2); overflow-x: auto; padding: 2px 2px var(--space-2); border-bottom: 1px solid var(--color-line); }
+.detailTab { flex: 0 0 auto; min-height: var(--tap-min); padding: 0 var(--space-3); border: 1px solid transparent; border-radius: var(--radius); background: transparent; color: var(--color-muted); font: inherit; cursor: pointer; }
+.detailTab[aria-selected='true'] { border-color: var(--color-line); background: var(--color-surface); color: var(--color-text); font-weight: var(--weight-strong); }
+.detailTab:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.detailPanel { display: grid; gap: var(--space-4); padding-top: var(--space-5); min-width: 0; }
 .head h1 { margin: 0 0 var(--space-2); }
 .sub { margin: 0 0 var(--space-5); color: var(--color-muted); }
 .variants { margin-bottom: var(--space-3); }

@@ -11,3 +11,8 @@ export function renderComponentView(
   variant?: string | Row,
   hooks?: {onCompile?: () => void},
 ): {ok: true; html: string; mode: 'isolated' | 'template'; template?: string} | {ok: false; reason: string};
+export function exportComponentView(
+  view: {type: string; material: any; example: any; variantIds: string[]},
+  variant?: string | Row,
+  hooks?: {onCompile?: () => void},
+): {ok: true; files: Record<string, string>; manifest: Row; mode: 'isolated' | 'template'; template?: string} | {ok: false; reason: string};

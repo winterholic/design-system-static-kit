@@ -12,7 +12,11 @@ export const representative = theme => (templateList.find(t => t.theme === theme
 // A stale file from an older build must never survive into the generated tree.
 if (out.startsWith(root + '/') || out.startsWith('/tmp') || out.includes('static-kit-build-')) await rm(out, {recursive: true, force: true});
 await mkdir(out, {recursive: true});
-await cp(join(root, 'src'), join(out, 'src'), {recursive: true});
+// Web-only server compilation internals are not part of the public static-kit source bundle.
+await cp(join(root, 'src'), join(out, 'src'), {
+  recursive: true,
+  filter: source => resolve(source) !== join(root, 'src/service/component-context.mjs'),
+});
 await cp(join(root, 'index.html'), join(out, 'index.html'));
 // 전체 조합 갤러리·뷰어: 4,102개 조합을 파일로 만들지 않고 src/combos.mjs가 브라우저에서 그 자리에서 컴파일한다.
 await cp(join(root, 'combos'), join(out, 'combos'), {recursive: true});

@@ -1238,24 +1238,75 @@
     {
       "taskId": "TASK-TRF-02",
       "title": "컴포넌트 상세 9개 탭 완결 구현",
-      "goal": "Overview, Variants, States, Sizes, Playground, Tokens, Code, A11y, Composition 9개 탭 상세 제공",
+      "goal": "REQUEST §8.3·§8.4의 9탭 상세, 계약 기반 탭·접근성·조합, 검증 컴파일 Playground 및 실제 내보내기 Code",
       "scope": "apps/web/app/components/[componentId]/page.tsx, apps/web/features/components/ComponentDetailTabs.tsx",
       "track": "Track F",
       "dependencies": [
         "TASK-TRF-01"
       ],
       "modifiedFiles": [
-        "apps/web/app/components/[componentId]/page.tsx"
+        "apps/web/app/components/[componentId]/page.tsx",
+        "apps/web/app/components/[componentId]/availability/route.ts",
+        "apps/web/app/components/[componentId]/export/route.ts",
+        "apps/web/app/components/[componentId]/render/[[...variant]]/route.ts",
+        "apps/web/features/components/ComponentDetailTabs.tsx",
+        "apps/web/features/components/components.module.css",
+        "apps/web/features/components/playground.server.ts",
+        "apps/web/features/components/detail-model.mjs",
+        "apps/web/features/components/detail-model.unit.mjs",
+        "apps/web/features/components/detail-export.unit.mjs",
+        "apps/web/features/components/spec.server.ts",
+        "apps/web/lib/api/preview-recipes.mjs",
+        "apps/web/lib/api/preview-recipes.d.mts",
+        "apps/web/e2e/component-detail-tabs.spec.mjs",
+        "tests/platform-component-context.test.mjs",
+        "tests/platform-pregenerate.test.mjs",
+        "scripts/build.mjs",
+        "src/service/component-context.mjs"
       ],
-      "completionCriteria": "모든 지원 변형/상태를 시각적으로 확인 가능, Playground에서 팔레트/패밀리 변경 시 실시간 반영",
+      "completionCriteria": "재료 계약으로 관련 탭만 표시하고 활성 탭만 DOM에 둔다. Variants·States·Sizes는 동일 콘텐츠로 한 번에 하나씩 렌더한다. Playground의 11축은 재료 계약과 Core 검증 결과를 사용하고, 거부된 선택은 이유를 보여 주며 렌더하지 않는다. Code 네 파일은 같은 선택의 Core exporter 바이트와 같고 복사 가능하다. URL 직접 접근·뒤로 복원, 컴파일 캐시 상한/계약 버전, 상세 비브라우저 및 브라우저 회귀 시험을 갖춘다.",
       "tests": [
-        "npm run web:test"
+        "apps/web/features/components/detail-model.unit.mjs",
+        "apps/web/features/components/detail-export.unit.mjs",
+        "tests/platform-component-context.test.mjs",
+        "node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'",
+        "apps/web/e2e/component-detail-tabs.spec.mjs",
+        "npm run web:build",
+        "npm run coverage:materials:check",
+        "node scripts/check-generated.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null,
+      "status": "Implemented",
+      "unresolvedIssues": "비브라우저 검증: node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측' 통과(1078 pass, 0 fail, 0 skipped; Chromium 의존 5개 시험 이름 패턴 제외). 상세/Core 단위시험 9/9, npm run web:build 성공(880/880 정적 페이지), coverage:materials:check MANIFEST MATCH(1480 materials/406 requirements), node scripts/check-generated.mjs REPRODUCIBLE(4560 files). 브라우저 시험은 기존 Chromium 실행 시 Mach IPC Permission denied (1100) 관찰 및 현재 작업 지시에 따라 재실행하지 않음. 2.1.0·2.4.0 및 site/v1 바이트 불변 시험은 전체 Node 검증에서 통과.",
       "createFiles": [
         "apps/web/features/components/ComponentDetailTabs.tsx"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "src/service/component-context.mjs",
+          "ownerTrack": "Track A",
+          "reason": "F2 상세 Playground가 Core 플랫폼 파이프라인의 실제 컴포넌트 렌더·재료 조합 진단·동일 맥락 내보내기를 호출하는 전용 서비스 진입점"
+        },
+        {
+          "file": "tests/platform-pregenerate.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "기존 사전 생성 인덱스 시험을 CONTRACTS §4의 all 및 paginated chunk 스키마와 맞춤"
+        },
+        {
+          "file": "scripts/build.mjs",
+          "ownerTrack": "Track G",
+          "reason": "웹 서버 전용 컴파일러 모듈을 공개 정적 번들 src 파일 집합에 포함하지 않도록 생성 경로에서 제외"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "Track F 상세 작업의 상태·변경 파일·검증 증거를 진행 장부에 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "요청에 따라 coverage:materials 생성기로 Manifest 재생성 후 일치 검사"
+        }
       ]
     },
     {
