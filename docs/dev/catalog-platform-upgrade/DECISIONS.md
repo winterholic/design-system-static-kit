@@ -150,7 +150,7 @@ CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(gi
 9. Studio 의 컴파일 결과 캐시(DEC-009)는 엔진 버전으로 `compileBlueprint/<CONTRACT_VERSION>` 만 쓴다. DEC-009 3항이 "platform 계약 버전을 공개 진입점에 노출할지는 Track A가 정한다"고 남겼으므로, 이 결정으로 `PLATFORM_CONTRACT_VERSION` 을 `src/service/index.mjs` 가 읽기 전용 상수로 내보낸다(채널 출력은 바뀌지 않는다). Studio 키가 이를 쓸지는 Track F 가 정한다.
 10. **초기 전송량 목표는 새로 만들지 않는다.** TASK-TRA-03 은 목표를 `PERFORMANCE-BASELINE.json` 측정값 기준으로 DECISIONS 에 적으라고 했지만 REQUEST §3.6 에는 KB 수치가 없고, 측정은 로컬 `next start`(정적 파일 비압축)뿐이라 압축 서빙 기준값이 없다. 이번에는 기준선 대비 실측만 `PERF-BOTTLENECKS.md` §5 에 적고(Explore 초기 전송량은 늘었다), 목표 수치는 압축되는 서빙(Vercel)에서 측정한 뒤 정한다.
 
-## DEC-010: 컴포넌트 공통 계약과 계열 등록
+## DEC-011: 컴포넌트 공통 계약과 계열 등록
 
 ### 맥락
 §6.2의 207개 요구를 여러 계열 작업자가 병렬로 다루므로 같은 필드·계층·검증 기준과 별도 재료/변형/복합 분류가 필요하다.
@@ -163,10 +163,10 @@ CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(gi
 
 ---
 
-## DEC-011: A 계열(버튼·액션)의 등록 방식과 Blueprint 왕복
+## DEC-012: A 계열(버튼·액션)의 등록 방식과 Blueprint 왕복
 
 ### 맥락
-DEC-010이 만든 A 12항목은 `component:*` 계약과 독립 시연(`actions` 입력)이었다. 플랫폼 레지스트리는 id가 `purpose:<group>.<name>` 또는 `<kind>:<name>`이어야 하므로 `component:*`는 재료 질의(`listPlatformMaterials`)에도 Blueprint(`materials`)에도 등록될 수 없었다. 그래서 Manifest에서 A가 7/12에 머물렀고 `blueprint.field: materials.actions`는 실제 스키마에 없는 필드를 가리켰다.
+DEC-011이 만든 A 12항목은 `component:*` 계약과 독립 시연(`actions` 입력)이었다. 플랫폼 레지스트리는 id가 `purpose:<group>.<name>` 또는 `<kind>:<name>`이어야 하므로 `component:*`는 재료 질의(`listPlatformMaterials`)에도 Blueprint(`materials`)에도 등록될 수 없었다. 그래서 Manifest에서 A가 7/12에 머물렀고 `blueprint.field: materials.actions`는 실제 스키마에 없는 필드를 가리켰다.
 
 ### 결정
 1. 새 재료 종류를 만들지 않는다(`PLATFORM_KINDS`는 Track A 소유이고 종류를 더하면 코드·검증·웹 전체가 따라 움직인다). 기존 구현이 있는 7항목은 그 재료를 그대로 쓰고, 구조가 다른 5항목(Split·Menu·FAB·Copy·Close)만 목적 패밀리(`purpose:button.split·menu·fab·copy·close`)로 등록한다. 목적 패밀리는 레지스트리 질의, 시각 패밀리 조합 검사, `materials.purposes` Blueprint 왕복을 이미 가진다.
