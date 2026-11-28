@@ -4,8 +4,8 @@
   "summary": {
     "totalTasks": 47,
     "byStatus": {
-      "Verified": 20,
-      "Implemented": 9,
+"Verified": 20,
+      "Implemented": 10,
       "Pending": 15,
       "In Progress": 2,
       "Completed": 1
@@ -17,7 +17,7 @@
       "Track C": 3,
       "Track D": 19,
       "Track E": 4,
-      "Track F": 5
+"Track F": 6
     }
   },
   "tasks": [
@@ -1388,6 +1388,64 @@
       "commit": null,
       "status": "Pending",
       "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRF-06",
+      "title": "Explore 재료 필터·비교 및 Studio 재료 축 연결과 URL 상태 보존",
+      "goal": "REQUEST §11.1·§11.2의 탐색 필터·단일 축 비교, Core 검증 기반 Studio 재료 선택, 탭 전환·새로고침 상태 복원을 신규 플랫폼 재료 레지스트리와 연결한다.",
+      "scope": "apps/web/app/explore/{page.tsx,materials/page.tsx,chart-preview/[presetId]/route.ts}, apps/web/app/studio/assemble/page.tsx, apps/web/features/platform/{assemble-state.ts,chart-compare.mjs,chart-compare.server.ts,material-library.mjs,platform.server.ts,platform.module.css}, apps/web/e2e/material-explorer-studio.spec.mjs, tests/platform-material-{selection,library}.test.mjs, docs/dev/catalog-platform-upgrade/{TASK-LEDGER.json,MATERIAL-COVERAGE.json}",
+      "track": "Track F",
+      "dependencies": [
+        "TASK-TRF-02",
+        "TASK-TRF-05"
+      ],
+      "modifiedFiles": [
+        "apps/web/app/explore/page.tsx",
+        "apps/web/app/explore/materials/page.tsx",
+        "apps/web/app/explore/chart-preview/[presetId]/route.ts",
+        "apps/web/app/studio/assemble/page.tsx",
+        "apps/web/features/platform/assemble-state.ts",
+        "apps/web/features/platform/chart-compare.mjs",
+        "apps/web/features/platform/chart-compare.server.ts",
+        "apps/web/features/platform/material-library.mjs",
+        "apps/web/features/platform/platform.server.ts",
+        "apps/web/features/platform/platform.module.css",
+        "apps/web/e2e/material-explorer-studio.spec.mjs",
+        "tests/platform-material-selection.test.mjs",
+        "tests/platform-material-library.test.mjs",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json"
+      ],
+      "completionCriteria": "Explore의 목적·맥락·팔레트·세트·타이포·패밀리·간격/밀도·레이아웃·모드 필터가 Core 재료 레지스트리에서 읽히고 URL로 복원된다. 여섯 비교 흐름은 같은 입력의 한 축만 바꾸며 선택된 두 결과만 검증·렌더한다. Studio는 지원 재료를 Core assembleDesign로 보내고 불가 조합을 이유와 함께 막으며 주소 상태를 단계 이동·새로고침에서 복원한다. 목록 iframe·컴파일은 0, Studio 중복 제거·디바운스·상한 캐시 계약과 legacy/site 출력 보존, 단위 RED/GREEN, 브라우저 제외 전체 Node 시험, web:build, coverage MATCH, check-generated 통과.",
+      "tests": [
+        "node --test tests/platform-material-selection.test.mjs tests/platform-material-library.test.mjs",
+        "node --test --test-skip-pattern=\"real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측\"",
+        "apps/web/e2e/material-explorer-studio.spec.mjs (작성, Chromium 차단으로 미실행)",
+        "npm run typecheck --workspace apps/web",
+        "npm run web:build",
+        "npm run coverage:materials:check",
+        "node scripts/check-generated.mjs"
+      ],
+      "commit": null,
+      "status": "Implemented",
+      "unresolvedIssues": "아이콘 영역 재료는 Studio에 레지스트리 선택지를 노출하되 현재 assembleDesign 요청 계약에 icon-area 입력 키가 없어 비활성화하고 이유를 표시한다(출력 연결은 Track A 계약 확장 필요). 산점도·캔들 등 차트는 막대·선·영역 비교와 데이터 도메인이 달라 동일 입력 비교 선택에서 제외된다. Chromium 브라우저 시험은 요청 지시에 따라 작성만 하고 미실행했으며 이후 Claude가 검증한다. 2.1.0·2.4.0/site/v1 출력은 수정하지 않았다.",
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/e2e/material-explorer-studio.spec.mjs",
+          "ownerTrack": "Track G",
+          "reason": "Explore/Studio URL 복원·비호환 사유·같은 데이터 차트 비교를 브라우저 경로로 검증하는 회귀 시험(Chromium 차단으로 미실행)"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "Track F §11 구현 범위, 검증 근거와 남은 Core 계약 제약 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "coverage:materials 생성기로 재료·요구 관계 Manifest 재생성"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRG-01",
