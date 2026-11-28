@@ -1708,3 +1708,13 @@ exit 0
 - `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`
 
 위 다섯 브라우저 시험 및 신규 `e2e/platform-work-patterns.spec.mjs`는 사용자 지시에 따라 실행하지 않았다. 이후 Claude 브라우저 검증이 남는다. 최초 전체 시험은 기준선 갱신 전 stale 등록 수와 사이트 빌드 동시 실행 때문에 실패/경합이 관찰됐다. 기준선을 재측정하고 사이트 생성이 끝난 뒤 프리렌더 시험 8/8 및 기준선 등록 시험을 따로 통과시킨 다음, 최종 전체 Node 회귀를 실행했다.
+
+## 27. TASK-TRD-BCD 폼 입력·선택·날짜/시간 컨트롤
+
+### 27.1 구현과 계약
+- §6.2 B/C/D 37개 행은 inventory 분류를 유지해 28 direct, 9 variant로 연결했다. phone·URL은 input-kind variant다.
+- 23개 missing/schema 요구에 실제 목적 패밀리와 2.7 opt-in runtime을 연결했다. 네이티브 input/select/fieldset, token 기반 CSS, 상태·검증·ARIA·키보드·44px 터치 목표를 렌더 출력에서 확인했다.
+- Blueprint → 컴파일은 Core 조립 마크업과 바이트 동일·결정적이며 Registry·REST·MCP 채널의 목록과 조립 출력도 동일하다.
+
+### 27.2 최신 검증
+최신 origin/main 재기반화와 생성물 재생성 뒤 검증 결과를 기록한다. 브라우저 시험은 Codex/macOS 실행 환경의 Chromium MachPort 권한 제한으로 미실행이다.
