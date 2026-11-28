@@ -4,8 +4,8 @@
   "summary": {
     "totalTasks": 51,
     "byStatus": {
-      "Verified": 26,
-      "Implemented": 9,
+      "Verified": 27,
+      "Implemented": 8,
       "Pending": 13,
       "In Progress": 2,
       "Completed": 1
@@ -1477,22 +1477,25 @@
         "site/src/service/platform-materials.mjs",
         "site/src/service/index.mjs",
         "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
-        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json"
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "apps/web/features/platform/type-scenarios.mjs",
+        "scripts/layout-quality/run.mjs",
+        "apps/web/e2e/layout-quality.exemptions.mjs",
+        "apps/web/app/explore/materials/page.tsx"
       ],
       "completionCriteria": "전체 41개 카탈로그(24개 페이지, URL 검색/계열 복원), 상세 27 역할 및 Core 컴파일 버튼·입력·표, 최대 4개 선택형 비교와 URL 복원, 선택 타이포의 Studio Blueprint/내보내기 반영, 390/1280 e2e 명세, Node·웹 빌드·coverage·generated 검증",
       "tests": [
-        "node --test --test-skip-pattern=\"real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측\"",
-        "node --test tests/platform-type-presentation.test.mjs",
-        "node --test apps/web/features/platform/type-catalog-state.unit.mjs",
-        "node --experimental-strip-types --experimental-loader ./apps/web/features/studio/node-ts-loader.mjs --test tests/studio-type-system-link.unit.mjs",
+        "node --test tests/platform-type-presentation.test.mjs tests/platform-material-selection.test.mjs",
+        "WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- typography-catalog.spec.mjs materials.spec.mjs catalog-lists.spec.mjs --repeat-each=2 (390px·1280px)",
+        "npm run verify",
         "npm run typecheck --workspace apps/web",
         "npm run web:build",
         "npm run coverage:materials:check",
         "node scripts/check-generated.mjs"
       ],
-      "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "390px·1280px Playwright Chromium e2e 명세를 작성했으나, 요청에 따라 이 Codex 세션에서는 브라우저를 실행하지 않았다. Claude의 독립 Chromium 검증이 남아 있다.",
+      "commit": "cdf1216df",
+      "status": "Verified",
+      "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §42). 구현 그대로 typography-catalog e2e 3개 중 2개, materials 2개, catalog-lists 1개가 실패했고 제품 결함 8건을 교정했다: 버튼·입력·표를 dashboard 맥락 한 요청으로 묶어 27/41 시스템에서 조립 실패(D-1), 반응형 Specimen·Studio 링크가 목적 하나만 시험(D-2), 거부된 비교 칸의 Studio 링크(D-3), 웹폰트 선택 로딩 소실(D-4), 역할별 견본·숫자 정렬·코퍼스 소실(D-5), Materials 개요 진입 카드 소실(D-6), 커머스 비교 콘텐츠가 41개 모두 거부(D-7), 360px 넘침·끝줄 고아(D-8). 결함별 RED→GREEN을 확인했고 e2e 30개(390·1280px)와 단위 시험 4개를 더했다. 줄어든 기존 확인: 옛 프리셋의 컨트롤 크기 4단계 높이 비교와 Studio 편집기 typeRoles 진입은 새 41개 시스템 모델에 대응이 없어 복원하지 않았다(코퍼스 13개는 복원). 남은 한계: 어느 목적도 받지 않는 시스템 5개(doc-edu-friendly, mobile-friendly, work-exp-brutalist, work-product-humanist, work-product-soft)는 Studio 링크 없이 Core 이유를 보인다(Track A·C), 표 컨트롤은 20/41만 조립된다(Core 규칙). Next 번들이 Core standalone의 인라인 <script> 본문을 압축한다. 2.1.0 고정 해시·기본 2.4.0·site/v1 출력은 수정하지 않았다.",
       "crossTrackFiles": [
         {
           "file": "src/service/platform-materials.mjs",
@@ -1533,6 +1536,21 @@
           "file": "apps/web/app/materials/page.tsx",
           "owner": "Track F",
           "reason": "Materials 개요의 옛 네 프리셋 진입 카드를 제거. Foundations 영역은 수정하지 않음"
+        },
+        {
+          "file": "scripts/layout-quality/run.mjs",
+          "owner": "Track G",
+          "reason": "공개 페이지 크롤이 Specimen의 내려받기(download) 링크를 페이지로 따라가 goto가 중단되던 문제를 download 속성 링크 제외로 교정"
+        },
+        {
+          "file": "apps/web/e2e/layout-quality.exemptions.mjs",
+          "owner": "Track G",
+          "reason": "Specimen이 역할·코퍼스를 Core가 정한 11px 실제 크기로 보이므로 SMALL_TEXT 면제를 사유와 함께 추가"
+        },
+        {
+          "file": "apps/web/app/explore/materials/page.tsx",
+          "owner": "Track F",
+          "reason": "F3 Explore 안내 문단의 한 줄 길이를 72ch로 제한(layout-quality 전수 검사가 드러낸 BODY_MEASURE_LONG)"
         }
       ]
     },

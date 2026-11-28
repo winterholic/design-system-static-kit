@@ -2651,3 +2651,71 @@ exit 0
 ```
 
 전체 `npm test`는 종료까지 실행했다. 코드가 직접 Chromium을 띄우는 5개 브라우저 사례(레이아웃 4개, 웹폰트 1개)는 macOS Mach rendezvous 권한 오류 `Permission denied (1100)` 후 `SIGTRAP`으로 실패했다. 해당 다섯 사례를 제외한 나머지 Node 사례는 이번 최신 main 기준으로 1,276/1,276 통과했다. 제외한 사례는 `platform-layout-resizable.test.mjs`의 키보드 조작, stack 간격, container 폭, 드래그 경계 4개와 `platform-type-fonts.test.mjs`의 Playwright WOFF2 로드 1개다. MCP 브라우저는 별도로 `site/gallery/`를 열어 렌더링을 확인했다. 2.1.0/2.4.0 고정 출력 시험도 전체 통과 스위트에서 통과했고, `site/v1` 및 legacy hash 파일 diff는 없다.
+
+---
+
+## 43. TASK-TRF-04 타이포그래피 카탈로그·Specimen·비교·Studio 연결 독립 브라우저 검증 및 교정 (원 커밋 `9df203a55`, 기준 `b550586e6`, 2026-11-29)
+
+구현 기록은 Codex 샌드박스에서 Chromium을 시작할 수 없어 브라우저 시험이 미실행이었다. 이번에는 새 worktree(`dsk-up-f4v`, `origin/main` `9df203a55`에서 분기)에서 `npm ci` 후 운영 빌드(`next build` → `next start`)를 Playwright Chromium으로 390px·1280px(레이아웃 검사는 360px 포함)에서 직접 조작했다. 증거는 주소가 아니라 계산 스타일, 컴파일된 standalone 문서, 화면에 붙은 Core 요청(`data-request`), 실제로 불러온 폰트(`document.fonts`)다.
+
+### 43.1 구현 그대로의 실행 결과
+
+- `typography-catalog.spec.mjs`: `1 passed, 2 failed`. 두 실패의 첫 원인은 시험의 `getByLabel('계열')`이 폼(`aria-label` "…계열 필터")과 select 둘에 걸린 strict mode 위반이다. 고쳐 보면 다음 단언 `[data-part="standalone"]`이 없어 다시 실패했다(결함 D-1).
+- `materials.spec.mjs` 2개 실패: "개요에서 세 화면으로 이어진다"(타이포그래피 링크 없음, D-6), Specimen 내보내기 링크 없음(D-1).
+- `catalog-lists.spec.mjs` 3번째(Typography 목록) 실패: 목록에 미리보기가 하나도 없어 `미리보기가 있어야 한다`(설계 변경에 시험이 따라오지 않음, 아래 판정).
+
+### 43.2 발견한 제품 결함과 교정
+
+| # | 결함 | 증거 | 교정 |
+|---|---|---|---|
+| D-1 | 버튼·입력·표를 `context: dashboard`와 dashboard 전용 목적(`form.filter`, `table.business`) 한 요청으로 묶어, 시스템이 허용하는 맥락이 다르면 Core가 거부한다. 41개 중 **27개**의 Specimen에 버튼·입력·표가 하나도 없고 내보내기가 없다 | `P_ATTR_CONTEXT: type-system:doc-essay는 dashboard 맥락용이 아닙니다(article, blog, docs, community)` | 컨트롤마다 시스템이 허용하는 맥락을 차례로 시험해 Core가 받는 첫 요청을 쓴다(`button.primary`, `form.search`→`form.filter`→`form.input-kind`, `table.business`→`table.dense`). 결과: 버튼 41/41, 입력 41/41, 표 20/41(표 목적이 dashboard·data·listing·admin에만 허용). 못 받는 컨트롤은 Core 이유를 그대로 보인다 |
+| D-2 | 반응형 Specimen과 "Studio 열기"가 맥락 하나로 고른 목적 하나만 시험한다. 12개 시스템이 "Core 렌더 제한", 5개는 Studio 링크를 눌렀더니 오류 화면 | `doc-edu-friendly`, `mobile-friendly`, `work-exp-brutalist`, `work-product-humanist`, `work-product-soft`의 Studio 링크 → `swap-error` | 네 목적을 시스템 맥락에 맞는 것부터 모두 시험해 Core가 받는 첫 목적을 쓴다. 어느 목적도 받지 않는 위 5개는 Core 이유와 함께 Studio 링크를 만들지 않는다(Core 한계, 36.6과 같은 계열) |
+| D-3 | 비교 모드 칸이 Core가 거부한 조합에도 Studio 링크를 그대로 보인다 | 거부된 칸의 링크 → 오류 | 받는 칸에만 링크, 못 받는 칸은 이유 문구 |
+| D-4 | 옛 페이지에 있던 웹폰트 선택 로딩(OFL 표기, `webfonts=1`)이 새 페이지에서 사라졌다. `document.fonts`가 비어 있어 서체를 실제로 불러오는 경로가 없다. 웹폰트 짝을 가진 시스템은 12개(`work-insight`, `mkt-launch`, `doc-essay` 등) | 1280px에서 `[...document.fonts].length === 0`, 웹폰트 토글 없음 | `getTypographySpecimen({id, webfonts: true})`가 웹폰트를 스택 앞에 붙인 역할과 `@font-face`, 서체·라이선스 목록을 준다(웹폰트 없는 짝은 `available: false`). Specimen에 "시스템 서체 / 웹폰트 사용" 토글을 둔다. 켜면 `/fonts/PretendardGOVVariable.woff2`가 200 `font/woff2`로 오고 `document.fonts`가 `loaded`, 역할 서체가 `"Pretendard GOV"`로 시작한다 |
+| D-5 | 27개 역할 모두 같은 한글 문장을 보이고, 숫자·금융·코드 역할도 마찬가지라 서체의 숫자 정렬과 고정폭 차이를 알 수 없다. 시스템이 선언한 숫자 정렬(tabular 28·proportional 13)이 화면에 적용되지 않는다(`font-variant-numeric: normal`). 코드 견본은 역할 서체가 아니라 전역 변수를 쓴다 | 계산 스타일 `normal`, 같은 문장 | 역할별 견본(숫자·KPI·코드·버튼·표 머리글 등), 숫자 역할에 `tabular-nums`·`proportional-nums` 적용, 금액 표(고정폭이면 자릿수 정렬), 코드 견본에 `code` 역할 서체, 굵기 비교를 본문·제목 두 서체로, 다국어 4개(한·영·일·중), 옛 페이지에 있던 Core 시험 문구 13개(줄바꿈·한 줄 유지·가로 스크롤 정책) 복원 |
+| D-6 | Materials 개요에서 옛 네 프리셋 카드를 지우고 대체 카드를 두지 않아 타이포그래피 페이지로 들어가는 개요 진입이 없다 | `getByRole('link', {name: '타이포그래피 보기'})` 없음 | "41개 타이포 시스템" 카드로 교체(개수는 레지스트리에서 읽는다) |
+| D-7 | 비교 모드 "커머스" 콘텐츠의 `products: [{name, price}]`가 Core 입력 규약(`title`)과 달라 41개 시스템 **모두** 거부된다. 커머스로 전환하면 네 칸이 전부 오류 | `P_SELECT_EMPTY: purpose:card.product를 구성원으로 가진 패밀리 후보가 없습니다` | `title`로 고침. 다섯 콘텐츠 모두 최소 4개 시스템이 받는다(단위 시험으로 고정). 콘텐츠를 `type-scenarios.mjs` 한 곳에 두어 화면과 시험이 같은 값을 읽는다 |
+| D-8 | 360px에서 비교 도구줄(콘텐츠 5종)이 36.7px, 코드 견본이 최대 183px 넘친다. 카드 제목 견본이 1280px에서 display-xl(60~80px)이라 한 줄 7자씩 6줄로 갈라지고 끝줄이 한두 글자 남는다. 일본어 견본·Studio 불가 문구도 끝줄이 남는다 | `layout-quality.spec.mjs` 공개 페이지 전수(383쪽, 크롤이 41개 시스템 Specimen을 모두 따라간다): 오류 1140, 경고 4576, 대부분 타이포 페이지의 `OVERFLOW_X`·`CLIP_TEXT`·`BODY_ORPHAN`·`SMALL_TEXT` | 도구줄 줄바꿈, 코드 견본 `pre-wrap`, 카드 제목을 heading-1로, `text-wrap` 지정, 견본 문장 단축. 11px 역할 견본(label-sm·caption·overline·badge)은 Core가 정한 실제 크기를 보이는 것이 목적이라 사유를 적어 `SMALL_TEXT`를 면제했다 |
+
+### 43.3 완료 기준 항목별 판정
+
+1. **전체 카탈로그.** 41개가 같은 제목·본문 샘플로 계산된 서체·크기·굵기·행간·자간 조합이 **41종 모두 다르고**, 제목 서체 스택은 15종, 크기는 1280px에서 16종·390px에서 6종이다(390px에서는 `clamp`로 모바일 하한에 모이지만 서체·굵기·행간으로 구별된다). 첫 화면 카드 24개(2쪽 17개), 카드 목록에서 `<img>` 0·iframe 0·컴파일 0. 검색(`q`)·계열(`family`)·쪽(`page`)은 주소에 남고 새로고침·뒤로·앞으로에서 첫 카드와 결과 수가 복원된다.
+2. **상세 Specimen.** 27개 역할, 굵기 8줄, 다국어 4개, 금융 숫자 표, 코드, 버튼·입력·표, 390/1280 비교가 나온다. 버튼·입력·표의 standalone·html·css·manifest 내려받기는 Core 서비스가 낸 값과 같다. 단 Next 번들이 Core가 인라인하는 런타임 함수 소스를 압축하므로 `standalone`의 `<script>` 본문만 Node 직접 호출과 다르다(나머지는 한 바이트도 같다). 이 차이는 이번 범위가 아니라 고치지 않았다. 폰트는 웹폰트를 켜면 실제로 불러온다(D-4).
+3. **비교 모드.** 최대 4개(주소에 5개를 넣어도 4개만 렌더, 4개가 차면 모든 카드의 추가 링크가 사라지고 한도 버튼이 비활성), 다섯 가지 콘텐츠 전환(요청의 purpose·content가 시나리오와 같고, 4개 문서의 본문 텍스트가 같으며 제목 서체는 갈린다), 선택된 시스템만 렌더(선택 전 `main img` 0, 선택 후 정확히 4), 주소 복원(뒤로 가기·새로고침), 터치 높이 44px 이상(카드 제목 링크는 같은 곳으로 가는 44px "Specimen 열기" 버튼이 따로 있어 제외), 가로 넘침 0(390·360px).
+4. **Studio 연결.** 두 시스템(`work-insight`, `work-finance-banking`)으로 Studio를 열어 `#s-type`, 선택 요약, `swap-preview`의 `typeSystem`, 내보내기의 "typeSystem: <이름> 내가 고른 값"을 확인했다. 내보내는 CSS가 Specimen이 보여 준 27개 역할의 서체 스택을 모두 담고, 두 시스템의 컴파일 문서와 제목 서체가 다르다.
+5. **구현자 E2E와 판정.** 아래 43.4.
+6. **`npm run verify`와 기록.** 아래 43.5.
+
+### 43.4 시험, RED/GREEN, 기존 시험 변경 판정
+
+`apps/web/e2e/typography-catalog.spec.mjs`를 3개에서 30개(390px·1280px 각 13개와 폭 무관 4개)로 다시 썼다. 단위 시험 `tests/platform-type-presentation.test.mjs`에 4개를 더했다(웹폰트 선택 로딩, 숫자 정렬 선언, 41개 전수 컨트롤 조립, 다섯 비교 콘텐츠의 수용).
+
+| 되살린 결함 | 실패한 시험 |
+|---|---|
+| D-1 컨트롤을 dashboard 맥락 하나로 | e2e "허용 맥락이 좁은 시스템도…", e2e "41개 시스템 전수" |
+| D-2 목적 하나만 시험 | e2e "41개 시스템 전수"(링크가 없는데 다른 목적은 받는 시스템 7개) |
+| D-3 칸의 Studio 링크를 항상 표시 | e2e "Core 가 받지 않는 조합은 이유를 보이고…" |
+| D-4 웹폰트 `<style>` 제거 | e2e "웹폰트: 켜면 문서에 @font-face…" |
+| D-5 숫자 정렬 적용 제거 / 코퍼스를 3개로 | e2e "27개 역할, 굵기, 다국어, 금융 숫자…", e2e "Core 시험 문구 13개" |
+| D-6 개요 카드 제거 | e2e "Materials 개요에서…" |
+| D-7 커머스 콘텐츠를 `name`으로 | e2e "다섯 가지 같은 콘텐츠…", 단위 "five comparison contents" |
+| D-8 도구줄·코드 견본 CSS 되돌림 | e2e "360px: 비교 도구줄…"(두 CSS 각각) |
+
+기존 시험 변경 판정(원래 확인하던 내용이 줄었는가):
+
+- `catalog-lists.spec.mjs` Typography 목록: 원래 "목록 카드가 모두 정적 파일 미리보기"를 확인했다. 새 카드는 그림이 아니라 Core 역할 값으로 그린 서체 견본이라 미리보기 0개가 정상이다. 단언을 지우지 않고 "타이포 목록은 선택 전 그림 0, 컴파일 0, iframe 0"으로 바꿨고, 선택했을 때 그림이 실제로 그려지는지는 새 spec이 본다. 줄지 않았다.
+- `materials.spec.mjs` 타이포 시험 2개(구현자가 교체): 원래 4개 프리셋의 (a) 역할 수, (b) **시험 문구 코퍼스 전부 표시**, (c) **컨트롤 크기 4단계 높이**, (d) Studio 편집기에 `typeRoles` 프리셋 저장을 확인했다. (a)는 41개 시스템×27개 역할로 대체돼 늘었다. (b)는 구현에서 빠졌다가 이번에 복원했다. (c)는 대체가 없다: 새 Specimen의 버튼·입력은 Core `assembleComponents` 한 크기(`medium`)이고 네 단계 크기·높이 비교는 보이지 않는다. (d)는 2.7.0 조립 Studio 흐름(Blueprint 컴파일·내보내기 반영)으로 대체돼 REQUEST §5.5의 "실제 Blueprint와 내보내기 결과"는 충족하지만 옛 Studio 편집기로 가는 `studioForPreset` 진입은 화면에서 사라졌다. 즉 **(c)와 (d)는 줄었다.** 둘 다 옛 2.6.0 프리셋 전용 기능이라 새 41개 시스템 모델에 대응이 없고 복원은 이번 범위 밖이므로 남은 한계로 적는다.
+- 옛 `preset=erp|document|marketing|editorial` 주소는 새 Specimen으로 이어진다(시험으로 확인). 다만 `document`와 `editorial`이 같은 시스템(`doc-essay`)으로 가서 두 프리셋의 구별은 사라졌다.
+- `layout-quality.spec.mjs`: 공개 페이지 크롤이 Specimen의 내려받기 링크를 따라가 `page.goto: Download is starting`으로 중단돼 검사 자체가 실행되지 않았다(구현 때문에 새로 생긴 링크). 크롤러가 `download` 속성 링크를 건너뛰게 했다(`scripts/layout-quality/run.mjs`, Track G). 임계값은 낮추지 않았다.
+
+### 43.5 최종 검증
+
+(rebase 뒤 최신 main 위에서 실행한 결과로 채운다.)
+
+### 43.6 남은 한계·범위 밖 발견
+
+- 어느 목적도 받지 않는 시스템 5개(`doc-edu-friendly`, `mobile-friendly`, `work-exp-brutalist`, `work-product-humanist`, `work-product-soft`)는 Specimen·비교에서 Core 이유가 보이고 Studio 링크가 없다. 시스템이 선언한 맥락과 네 페이지 목적 사이의 간극이라 데이터(Track C) 또는 목적 확장(Track A)이 필요하다.
+- 표 컨트롤은 41개 중 20개만 조립된다(Core 규칙: 표 목적이 dashboard·data·listing·admin 맥락에서만 허용).
+- 옛 프리셋의 컨트롤 크기 4단계 비교와 `typeRoles` 편집기 진입은 새 모델에 대응이 없어 복원하지 않았다(43.4).
+- Core 서비스 `<script>` 본문은 Next 번들에서 압축된 채 나간다.
+- 같은 시점 `materials.spec.mjs` "기초 재료" 2개(`아이콘 \d+개` 제목, 아이콘 격자)는 Foundations 전시 페이지 개편(다른 작업자) 때문에 실패한다. 타이포와 무관해 건드리지 않았다.

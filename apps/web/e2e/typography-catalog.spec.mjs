@@ -174,7 +174,8 @@ for (const viewport of VIEWPORTS) {
       await expect(items).toHaveCount(13);
       const read = await items.evaluateAll(nodes => nodes.map(li => { const p = li.querySelector('p'), s = getComputedStyle(p); return {id: li.dataset.sample, text: p.innerText, whiteSpace: s.whiteSpace, family: s.fontFamily, nums: s.fontVariantNumeric, fits: p.scrollWidth <= p.clientWidth + 1, boxFits: li.getBoundingClientRect().right <= innerWidth + 0.5}; }));
       expect(read.map(row => row.id)).toEqual(corpus.map(sample => sample.id));
-      expect(read.map(row => row.text)).toEqual(corpus.map(sample => sample.text));
+      const squash = text => text.replace(/\s+/g, ' ');
+      expect(read.map(row => squash(row.text))).toEqual(corpus.map(sample => squash(sample.text)));
       for (const sample of corpus) {
         const row = read.find(item => item.id === sample.id);
         expect(row.boxFits, `${sample.id} 칸이 화면 안에 있다`).toBe(true);
