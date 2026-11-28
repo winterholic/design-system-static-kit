@@ -27,6 +27,20 @@ export function borderDeclaration(kind) {
   return BORDER_DECLARATIONS[kind] ?? '0';
 }
 
+function extractBackgroundSize(bg = '') {
+  let depth = 0;
+  for (let i = 0; i < bg.length; i++) {
+    const c = bg[i];
+    if (c === '(') depth++;
+    else if (c === ')') depth--;
+    else if (c === '/' && depth === 0) {
+      const match = bg.slice(i + 1).trim().match(/^([^\s;]+(?:\s+[^\s;]+)?)/);
+      return match ? match[1] : null;
+    }
+  }
+  return null;
+}
+
 export function backgroundDecoration(css = '', blur = 0) {
   const declarations = Object.fromEntries(css.split(';').map(part => {
     const colon = part.indexOf(':');
@@ -34,7 +48,8 @@ export function backgroundDecoration(css = '', blur = 0) {
   }).filter(Boolean));
   return {
     '--deco-background': declarations['background-image'] ?? declarations.background ?? 'none',
-    '--deco-size': declarations['background-size'] ?? 'auto',
+    '--deco-size': declarations['background-size'] ?? extractBackgroundSize(declarations.background) ?? 'auto',
+    '--deco-border': declarations.border ?? 'none',
     '--deco-mask': declarations['mask-image'] ?? 'none',
     '--deco-webkit-mask': declarations['-webkit-mask-image'] ?? declarations['mask-image'] ?? 'none',
     '--deco-opacity': declarations.opacity ?? '1',

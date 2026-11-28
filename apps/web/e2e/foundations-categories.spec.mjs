@@ -73,13 +73,24 @@ for (const width of [390, 1280]) {
       await page.goto('/materials/foundations?category=background');
       const decorations = await page.locator('[data-category-panel] [class*="backgroundSample"]').evaluateAll(nodes => nodes.map(node => {
         const style = getComputedStyle(node, '::before');
-        return {image: style.backgroundImage, mask: style.maskImage, opacity: style.opacity, blur: style.backdropFilter};
+        return {image: style.backgroundImage, mask: style.maskImage, opacity: style.opacity, blur: style.backdropFilter, border: `${style.borderTopWidth} ${style.borderTopStyle}`};
       }));
       expect(decorations.filter(item => item.image !== 'none').length).toBeGreaterThanOrEqual(8);
       expect(decorations.some(item => item.mask !== 'none')).toBe(true);
+
+      const dots = page.getByRole('heading', {name: '브랜드 틴트와 점 무늬'}).locator('..').locator('[class*="backgroundSample"]');
+      const size = await dots.evaluate(node => getComputedStyle(node, '::before').backgroundSize);
+      expect(size).toBe('24px 24px');
+
       const frosted = page.getByRole('heading', {name: '제한된 프로스트 글라스'}).locator('..').locator('[class*="backgroundSample"]');
       const blur = await frosted.evaluate(node => getComputedStyle(node, '::before').backdropFilter);
       expect(blur).toBe('blur(12px)');
+      const frostedBorder = await frosted.evaluate(node => {
+        const style = getComputedStyle(node, '::before');
+        return `${style.borderTopWidth} ${style.borderTopStyle}`;
+      });
+      expect(frostedBorder).toBe('1px solid');
+      expect(decorations.filter(item => item.border === '1px solid').length).toBe(1);
     });
   });
 }

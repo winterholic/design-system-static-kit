@@ -52,6 +52,22 @@ test('border samples use valid Core values and Background retains image, mask an
   assert.equal(decoration['--deco-opacity'], '.28');
   assert.equal(decoration['--deco-blur'], 'blur(12px)');
   assert.equal(backgroundDecoration('background:radial-gradient(red,transparent)')['--deco-background'], 'radial-gradient(red,transparent)');
+
+  const dots = BACKGROUNDS.find(item => item.id === 'background:brand-tint-dots');
+  const dotsDeco = backgroundDecoration(dots.deco.css, dots.deco.blur);
+  assert.equal(dotsDeco['--deco-size'], '24px 24px');
+
+  const frosted = BACKGROUNDS.find(item => item.id === 'background:frosted-pane');
+  const frostedDeco = backgroundDecoration(frosted.deco.css, frosted.deco.blur);
+  assert.match(frostedDeco['--deco-border'], /^1px solid/);
+  assert.equal(frostedDeco['--deco-blur'], 'blur(12px)');
+
+  for (const item of BACKGROUNDS) {
+    if (item.id !== 'background:frosted-pane') {
+      const deco = backgroundDecoration(item.deco.css, item.deco.blur);
+      assert.equal(deco['--deco-border'], 'none');
+    }
+  }
 });
 
 test('layout samples preserve Core area matrices and radius count includes facets', () => {

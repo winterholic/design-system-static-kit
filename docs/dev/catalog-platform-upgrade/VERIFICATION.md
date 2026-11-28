@@ -2463,3 +2463,82 @@ REPRODUCIBLE: 5380 generated files match a fresh build byte for byte.
 - 2.1.0 고정 해시, 기본 2.4.0, `site/v1/` 계약 불변: `git diff site/v1 site/examples` diff 없음.
 - Foundations 단일 범주 서버 렌더 및 차트·레이아웃 상세 81종 미리보기/Code 바이트 일치성 유지.
 
+## 41. F5 Foundations 배경 미리보기 Core 장식 스타일(크기·테두리) 정밀 일치 및 회귀 방지 (TASK-TRF-09)
+
+F5 Foundations 배경 미리보기에서 Core 출력과 어긋나던 두 가지 속성(`brand-tint-dots`의 24px 24px 장식 크기 및 `frosted-pane`의 Core 1px solid 테두리)을 수정하고, 기존 11종 배경의 고유 속성 및 mask·opacity·blur를 완벽히 유지하도록 개선했다. 단위 및 E2E 명세에 회귀 방지 단언을 추가하여 무결성을 보장했다.
+
+### 41.1 원인 분석 및 수정 내역
+
+1. **brand-tint-dots 장식 크기 불일치**:
+   - 원인: Core `BACKGROUNDS`의 `brand-tint-dots`는 `deco.css`에서 `background:radial-gradient(...) 0 0/24px 24px;...` shorthand를 사용한다. 기존 `backgroundDecoration` 함수는 개별 `background-size` 속성이 없을 때 기본값 `'auto'`를 반환했고, `materials.module.css`의 `background-size: var(--deco-size)`가 shorthand의 크기를 덮어씌워 브라우저 실측 시 `backgroundSize: auto`가 되는 문제가 있었다.
+   - 수정: `extractBackgroundSize` 헬퍼 함수를 구현하여 중첩된 괄호(gradient, color-mix) 외부의 shorthand 크기 토큰(`/24px 24px`)을 안전하게 추출하도록 개선했다. 이를 통해 `--deco-size: '24px 24px'`가 정확히 전달된다.
+2. **frosted-pane 테두리 누락**:
+   - 원인: Core `frosted-pane`은 `deco.css`에 `border:1px solid ...` 선언을 가지고 있으나, 웹 `.backgroundSample::before`에 테두리 스타일이 누락되어 브라우저 실측 시 `borderTopWidth: 0px`, `borderTopStyle: none`으로 계산되었다.
+   - 수정: `backgroundDecoration`에서 `--deco-border: declarations.border ?? 'none'`를 전달하고, `materials.module.css`의 `.backgroundSample::before`에 `border: var(--deco-border, none); border-radius: inherit;`를 추가했다.
+3. **기존 11종 및 기존 속성 불변 보존**:
+   - `frosted-pane`을 제외한 나머지 12종 배경은 `--deco-border`가 `'none'`으로 설정되어 `0px none`이 유지된다.
+   - 기존의 `maskImage`, `opacity`, `backdropFilter: blur(12px)` 및 11종 배경의 고유 속성은 그대로 보존된다.
+
+### 41.2 RED → GREEN 재현 및 검증
+
+- **단위 시험 회귀 단언 추가 및 RED 확인**:
+  `apps/web/features/materials/foundations-exhibit.unit.mjs`에 `brand-tint-dots`의 `--deco-size === '24px 24px'`, `frosted-pane`의 `--deco-border === /^1px solid/`, 그리고 다른 12종 배경의 `--deco-border === 'none'` 단언을 추가.
+  수정 전 코드에서 실행 시 즉시 실패(RED) 확인:
+  ```text
+  ✖ border samples use valid Core values and Background retains image, mask and opacity declarations (0.592583ms)
+    AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+    + actual: 'auto'
+    - expected: '24px 24px'
+  ```
+- **수정 후 GREEN 확인**:
+  `foundations-exhibit.mjs` 및 `materials.module.css` 수정 후 5/5 전수 통과(GREEN).
+- **E2E 명세 회귀 단언 보강**:
+  `apps/web/e2e/foundations-categories.spec.mjs`의 390px 및 1280px 시험에 `brand-tint-dots`의 `backgroundSize === '24px 24px'`, `frosted-pane`의 `border === '1px solid'`, 그리고 다른 배경들 중 1px solid border가 1개뿐임을 단언하는 검증 코드를 추가.
+
+### 41.3 명령 실행 결과
+
+```text
+$ npm --workspace apps/web run test:boundary
+✔ apps/web 소스를 찾았다 (0.4645ms)
+✔ 루트 패키지는 지정한 진입점만 import 한다 (460.551625ms)
+✔ 검사 범위가 앱 전체 소스와 CSS를 포함한다 (0.982458ms)
+✔ 상대 경로, 디렉터리 별칭, type import와 dynamic import를 같은 경계로 검사한다 (1.545459ms)
+✔ CSS의 @import와 url() 의존성을 Core 경계에 맞춰 검사한다 (0.746959ms)
+✔ Next server-only 표식과 단일 읽기 전용 QA 데이터만 외부 경계 예외다 (0.560625ms)
+✔ src/ 를 상대 경로나 패키지 내부 경로로 직접 가리키지 않는다 (377.021167ms)
+✔ 루트 package.json exports 는 허용 진입점과 일치한다 (0.465ms)
+✔ Core 를 부르는 코드에 React·Next 가 새어 들어가지 않는다(패키지 쪽 import 방향) (544.865917ms)
+ℹ tests 9 / ℹ pass 9 / ℹ fail 0
+
+$ npm run typecheck --workspace apps/web
+> tsc --noEmit (에러 없음 통과)
+
+$ node --test apps/web/features/materials/foundations-exhibit.unit.mjs
+✔ Foundations exhibits all eleven §9.8 categories in the requested order (0.770208ms)
+✔ each category exposes its full supplied definitions and rejects unknown categories (0.179333ms)
+✔ Core source inventories cover every Foundations exhibit definition (0.118625ms)
+✔ border samples use valid Core values and Background retains image, mask and opacity declarations (0.425917ms)
+✔ layout samples preserve Core area matrices and radius count includes facets (5.9115ms)
+ℹ tests 5 / ℹ pass 5 / ℹ fail 0
+
+$ node --test tests/core-boundary.test.mjs tests/service-contract.test.mjs apps/web/features/materials/foundations-exhibit.unit.mjs apps/web/features/components/material-detail.unit.mjs
+ℹ tests 35 / ℹ pass 35 / ℹ fail 0
+
+$ npm run web:build
+✓ Compiled successfully in 2.2s
+✓ Generating static pages using 17 workers (962/962) in 2.8s
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5380 generated files match a fresh build byte for byte.
+```
+
+### 41.4 불변 조건 및 계약 검증
+
+- Core 소재 정의(`src/platform/data/backgrounds.mjs`), 고정 출력(2.1.0, 2.4.0, `site/v1/`) 무변경.
+- 전시용 사본 CSS를 만들지 않고 Core 선언을 직접 소비하는 구조 유지.
+- Foundations 단일 범주만 렌더하는 계약 유지.
+
+

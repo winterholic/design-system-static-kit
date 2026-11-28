@@ -2,9 +2,9 @@
   "version": "1.3.0",
   "updatedAt": "2026-11-29",
   "summary": {
-    "totalTasks": 50,
+    "totalTasks": 51,
     "byStatus": {
-      "Verified": 25,
+      "Verified": 26,
       "Implemented": 9,
       "Pending": 13,
       "In Progress": 2,
@@ -17,7 +17,7 @@
       "Track C": 3,
       "Track D": 19,
       "Track E": 4,
-      "Track F": 8
+      "Track F": 9
     }
   },
   "tasks": [
@@ -6468,6 +6468,58 @@
           "file": "site/src/service/**",
           "ownerTrack": "Track G (generated output)",
           "reason": "build 산출물의 src/service 동기화"
+        }
+      ]
+    },
+    {
+      "taskId": "TASK-TRF-09",
+      "title": "F5 Foundations 배경 미리보기 Core 장식 스타일(크기·테두리) 정밀 일치 및 회귀 방지",
+      "goal": "Core 배경 shorthand의 24px 24px 장식 크기와 frosted-pane의 Core 1px solid 테두리가 웹 렌더에 반영되도록 개선하고 단위 및 E2E 회귀 방지 단언 추가",
+      "scope": "apps/web/features/materials/foundations-exhibit.mjs, apps/web/features/materials/materials.module.css, apps/web/features/materials/foundations-exhibit.unit.mjs, apps/web/e2e/foundations-categories.spec.mjs, docs/dev/catalog-platform-upgrade/TASK-LEDGER.json, docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+      "track": "Track F",
+      "dependencies": [
+        "TASK-TRF-08",
+        "TASK-TRG-05"
+      ],
+      "modifiedFiles": [
+        "apps/web/features/materials/foundations-exhibit.mjs",
+        "apps/web/features/materials/materials.module.css",
+        "apps/web/features/materials/foundations-exhibit.unit.mjs",
+        "apps/web/e2e/foundations-categories.spec.mjs",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
+      ],
+      "completionCriteria": "Core 배경 shorthand 24px 24px 장식 크기 및 frosted 1px solid 테두리 반영, 기존 11종 및 mask/opacity/blur 보존, 단위 RED->GREEN 증명, 390px·1280px E2E 단언 추가, web typecheck 통과, test:boundary 9/9 PASS, coverage MATCH, check-generated REPRODUCIBLE, VERIFICATION.md §41 기록, 최신 main rebase 및 push",
+      "tests": [
+        "npm --workspace apps/web run test:boundary",
+        "npm run typecheck --workspace apps/web",
+        "node --test apps/web/features/materials/foundations-exhibit.unit.mjs",
+        "npm run coverage:materials:check",
+        "node scripts/check-generated.mjs"
+      ],
+      "commit": "e21c45ba1",
+      "status": "Verified",
+      "unresolvedIssues": "",
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/features/materials/foundations-exhibit.mjs",
+          "ownerTrack": "Track F",
+          "reason": "background shorthand 크기 추출 및 테두리 속성 추출 추가"
+        },
+        {
+          "file": "apps/web/features/materials/materials.module.css",
+          "ownerTrack": "Track F",
+          "reason": "backgroundSample::before에 border: var(--deco-border, none) 추가"
+        },
+        {
+          "file": "apps/web/features/materials/foundations-exhibit.unit.mjs",
+          "ownerTrack": "Track F",
+          "reason": "brand-tint-dots 24px 24px 및 frosted-pane 1px solid border 회귀 단언 추가"
+        },
+        {
+          "file": "apps/web/e2e/foundations-categories.spec.mjs",
+          "ownerTrack": "Track F",
+          "reason": "390px·1280px E2E 명세에 backgroundSize 24px 24px 및 border 1px solid 회귀 단언 추가"
         }
       ]
     }
