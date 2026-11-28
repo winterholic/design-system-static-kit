@@ -37,6 +37,9 @@ const SHARED_CSS = `
 .pf-info-badge[data-tone="warning"]{border-color:var(--kit-border);color:var(--kit-text)}
 .pf-info-badge[data-tone="info"]{border-color:var(--kit-action);color:var(--kit-action)}
 .pf-info-badge[data-tone="neutral"]{border-color:var(--kit-border);color:var(--kit-muted)}
+.pf-info-badge[data-size="small"]{padding:1px 6px;font-size:var(--kit-t-caption)}
+.pf-info-badge[data-size="medium"]{padding:2px var(--kit-sp-near);font-size:var(--kit-t-small)}
+.pf-info-badge[data-size="large"]{padding:4px var(--kit-sp-item);font-size:var(--kit-t-body)}
 
 .pf-avatar{display:inline-flex;align-items:center;justify-content:center;overflow:hidden;background:var(--kit-soft);color:var(--kit-text);font-family:var(--kit-font);font-weight:600;vertical-align:middle;user-select:none;flex:none}
 .pf-avatar[data-shape="circle"]{border-radius:50%}
@@ -47,6 +50,7 @@ const SHARED_CSS = `
 .pf-avatar img{inline-size:100%;block-size:100%;object-fit:cover}
 
 .pf-avatar-group{display:inline-flex;align-items:center;font-family:var(--kit-font)}
+.pf-avatar-fallback[hidden]{display:none}
 .pf-avatar-group .pf-avatar{border:2px solid var(--kit-surface)}
 .pf-avatar-group[data-spacing="tight"] .pf-avatar:not(:first-child){margin-inline-start:-8px}
 .pf-avatar-group[data-spacing="normal"] .pf-avatar:not(:first-child){margin-inline-start:-4px}
@@ -60,6 +64,10 @@ const SHARED_CSS = `
 .pf-accordion[data-layout="stack"]{gap:0}
 .pf-accordion[data-layout="stack"] .pf-accordion-item:not(:first-child){border-block-start-color:transparent;border-start-start-radius:0;border-start-end-radius:0}
 .pf-accordion[data-layout="stack"] .pf-accordion-item:not(:last-child){border-end-start-radius:0;border-end-end-radius:0}
+.pf-accordion[data-layout="separated"]{gap:var(--kit-sp-near)}
+.pf-accordion[data-density="compact"] .pf-accordion-trigger{min-block-size:36px;padding:var(--kit-sp-tight) var(--kit-sp-near)}
+.pf-accordion[data-density="comfortable"] .pf-accordion-trigger{min-block-size:44px;padding:var(--kit-sp-near) var(--kit-sp-item)}
+.pf-accordion[data-density="spacious"] .pf-accordion-trigger{min-block-size:52px;padding:var(--kit-sp-item) var(--kit-inset)}
 .pf-accordion-trigger{display:flex;align-items:center;justify-content:space-between;inline-size:100%;min-block-size:44px;padding:var(--kit-sp-near) var(--kit-sp-item);background:transparent;color:var(--kit-text);border:0;font:inherit;font-weight:600;text-align:start;cursor:pointer}
 .pf-accordion-trigger:hover{background:var(--kit-card-hover)}
 .pf-accordion-trigger:focus-visible{outline:2px solid var(--kit-focus);outline-offset:-2px}
@@ -67,14 +75,19 @@ const SHARED_CSS = `
 .pf-accordion-panel[hidden]{display:none}
 
 .pf-collapsible{display:grid;gap:var(--kit-sp-tight);font-family:var(--kit-font)}
+.pf-collapsible[data-layout="inline"]{background:transparent;border:0}
 .pf-collapsible[data-layout="card"]{padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface)}
 .pf-collapsible-trigger{display:inline-flex;align-items:center;gap:var(--kit-sp-near);min-block-size:44px;padding:var(--kit-sp-tight) var(--kit-sp-near);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font:inherit;cursor:pointer}
 .pf-collapsible-trigger:hover{background:var(--kit-card-hover)}
 .pf-collapsible-trigger:focus-visible{outline:2px solid var(--kit-focus);outline-offset:2px}
+.pf-collapsible[data-size="small"] .pf-collapsible-trigger{min-block-size:36px;font-size:var(--kit-t-small)}
+.pf-collapsible[data-size="medium"] .pf-collapsible-trigger{min-block-size:44px;font-size:var(--kit-t-body)}
+.pf-collapsible[data-size="large"] .pf-collapsible-trigger{min-block-size:52px;font-size:var(--kit-t-heading)}
 .pf-collapsible-body{padding:var(--kit-sp-near) 0;color:var(--kit-text)}
 .pf-collapsible-body[hidden]{display:none}
 
 .pf-counter{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:999px;font-family:var(--kit-font);font-size:var(--kit-t-small);font-weight:600;line-height:1.2;background:var(--kit-soft);color:var(--kit-text)}
+.pf-counter[data-variant="pill"]{border-radius:999px}
 .pf-counter[data-variant="circle"]{inline-size:24px;block-size:24px;padding:0;border-radius:50%}
 .pf-counter[data-tone="action"]{background:var(--kit-action);color:var(--kit-surface)}
 .pf-counter[data-tone="danger"]{background:var(--kit-danger);color:var(--kit-surface)}
@@ -82,6 +95,7 @@ const SHARED_CSS = `
 .pf-counter[data-size="large"]{font-size:var(--kit-t-body);min-inline-size:28px;min-block-size:28px;padding:4px 10px}
 
 .pf-notification-indicator{display:inline-flex;align-items:center;justify-content:center;inline-size:12px;block-size:12px}
+.pf-notification-indicator[data-style="dot"] .pf-indicator-dot{animation:none}
 .pf-indicator-dot{inline-size:8px;block-size:8px;border-radius:50%;background:var(--kit-action)}
 .pf-notification-indicator[data-tone="danger"] .pf-indicator-dot{background:var(--kit-danger)}
 .pf-notification-indicator[data-tone="warning"] .pf-indicator-dot{background:var(--kit-border)}
@@ -91,21 +105,30 @@ const SHARED_CSS = `
 .pf-kbd-group{display:inline-flex;align-items:center;gap:4px;font-family:var(--kit-mono, monospace);font-size:var(--kit-t-small)}
 .pf-kbd-key{display:inline-flex;align-items:center;justify-content:center;min-inline-size:24px;min-block-size:24px;padding:2px 6px;border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);box-shadow:0 1px 0 var(--kit-border)}
 .pf-kbd-group[data-style="solid"] .pf-kbd-key{background:var(--kit-soft);border-color:transparent}
+.pf-kbd-group[data-style="outline"] .pf-kbd-key{background:var(--kit-surface);border-color:var(--kit-border)}
+.pf-kbd-group[data-size="small"]{gap:2px;font-size:var(--kit-t-caption)}
+.pf-kbd-group[data-size="medium"]{gap:4px;font-size:var(--kit-t-small)}
 
 .pf-metadata-row{display:grid;gap:var(--kit-sp-tight);margin:0;padding:0;font-family:var(--kit-font)}
 .pf-metadata-row[data-layout="inline"]{display:flex;flex-wrap:wrap;align-items:center;gap:var(--kit-sp-item)}
+.pf-metadata-row[data-layout="stacked"]{display:grid;grid-template-columns:1fr}
 .pf-meta-item{display:flex;gap:var(--kit-sp-near);align-items:baseline}
 .pf-meta-item dt{margin:0;color:var(--kit-muted);font-size:var(--kit-t-small)}
 .pf-meta-item dd{margin:0;color:var(--kit-text);font-weight:600;font-size:var(--kit-t-body)}
+.pf-metadata-row[data-density="compact"]{gap:2px}
+.pf-metadata-row[data-density="comfortable"]{gap:var(--kit-sp-tight)}
 
 .pf-stat-comparison{display:grid;gap:4px;font-family:var(--kit-font);padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface)}
 .pf-stat-comparison[data-layout="horizontal"]{display:flex;align-items:baseline;justify-content:space-between}
+.pf-stat-comparison[data-layout="vertical"]{display:grid;justify-content:initial}
 .pf-stat-label{color:var(--kit-muted);font-size:var(--kit-t-small)}
 .pf-stat-value{font-size:var(--kit-t-heading);font-weight:700;color:var(--kit-text);line-height:1.2}
 .pf-stat-change{font-size:var(--kit-t-small);font-weight:600}
 .pf-stat-comparison[data-trend="up"] .pf-stat-change{color:var(--kit-action)}
 .pf-stat-comparison[data-trend="down"] .pf-stat-change{color:var(--kit-danger)}
 .pf-stat-comparison[data-trend="neutral"] .pf-stat-change{color:var(--kit-muted)}
+.pf-stat-comparison[data-size="medium"] .pf-stat-value{font-size:var(--kit-t-heading)}
+.pf-stat-comparison[data-size="large"] .pf-stat-value{font-size:var(--kit-t-price)}
 
 .pf-responsive-image{display:block;position:relative;overflow:hidden;border-radius:var(--kit-radius);background:var(--kit-soft)}
 .pf-responsive-image img{display:block;inline-size:100%;block-size:auto}
@@ -119,6 +142,10 @@ const SHARED_CSS = `
 
 .pf-carousel{position:relative;display:grid;gap:var(--kit-sp-near);font-family:var(--kit-font);inline-size:100%}
 .pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:hidden;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}
+.pf-carousel[data-layout="single"] .pf-carousel-track{grid-auto-columns:100%}
+.pf-carousel[data-layout="cards"] .pf-carousel-track{grid-auto-columns:minmax(72%,calc(50% - var(--kit-sp-item) / 2))}
+.pf-carousel[data-size="medium"] .pf-carousel-slide img{max-block-size:320px}
+.pf-carousel[data-size="large"] .pf-carousel-slide img{max-block-size:480px}
 .pf-carousel-slide{scroll-snap-align:center;display:grid;gap:var(--kit-sp-near);box-sizing:border-box}
 .pf-carousel-slide img{inline-size:100%;max-block-size:400px;object-fit:cover;border-radius:var(--kit-radius)}
 .pf-carousel-nav{display:flex;align-items:center;justify-content:space-between;padding:var(--kit-sp-tight) 0}
@@ -129,6 +156,9 @@ const SHARED_CSS = `
 
 .pf-audio-player{display:grid;gap:var(--kit-sp-near);padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font-family:var(--kit-font)}
 .pf-audio-player[data-layout="compact"]{display:flex;align-items:center}
+.pf-audio-player[data-layout="full"]{display:grid;grid-template-columns:minmax(0,1fr)}
+.pf-audio-player[data-size="small"]{padding:var(--kit-sp-near);gap:var(--kit-sp-tight)}
+.pf-audio-player[data-size="medium"]{padding:var(--kit-sp-item);gap:var(--kit-sp-near)}
 .pf-audio-header{display:flex;align-items:center;gap:var(--kit-sp-item)}
 .pf-audio-play-btn{min-inline-size:44px;min-block-size:44px;border:1px solid var(--kit-border);border-radius:50%;background:var(--kit-action);color:var(--kit-surface);font:inherit;cursor:pointer;display:inline-grid;place-items:center}
 .pf-audio-play-btn:focus-visible{outline:2px solid var(--kit-focus);outline-offset:2px}
@@ -142,6 +172,10 @@ const SHARED_CSS = `
 
 .pf-file-preview{display:flex;align-items:center;gap:var(--kit-sp-item);padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius);background:var(--kit-surface);color:var(--kit-text);font-family:var(--kit-font)}
 .pf-file-preview[data-layout="card"]{flex-direction:column;align-items:flex-start}
+.pf-file-preview[data-layout="row"]{flex-direction:row;align-items:center}
+.pf-file-preview[data-size="small"]{padding:var(--kit-sp-near);gap:var(--kit-sp-tight);font-size:var(--kit-t-small)}
+.pf-file-preview[data-size="medium"]{padding:var(--kit-sp-item);gap:var(--kit-sp-item)}
+.pf-file-preview[data-size="large"]{padding:var(--kit-sp-inset-s);gap:var(--kit-sp-item);font-size:var(--kit-t-body)}
 .pf-file-badge{display:inline-flex;align-items:center;justify-content:center;padding:4px 8px;border-radius:var(--kit-radius);background:var(--kit-soft);color:var(--kit-text);font-size:11px;font-weight:700}
 .pf-file-details{display:grid;gap:2px;flex:1;min-inline-size:0}
 .pf-file-name{font-weight:600;font-size:var(--kit-t-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -151,6 +185,8 @@ const SHARED_CSS = `
 .pf-file-download:focus-visible{outline:2px solid var(--kit-focus);outline-offset:2px}
 
 .pf-image-comparison{position:relative;display:grid;gap:var(--kit-sp-tight);font-family:var(--kit-font);inline-size:100%}
+.pf-image-comparison[data-size="medium"]{max-inline-size:720px}
+.pf-image-comparison[data-size="large"]{max-inline-size:1024px}
 .pf-comp-stage{position:relative;overflow:hidden;border-radius:var(--kit-radius);background:var(--kit-soft);aspect-ratio:16/9;user-select:none}
 .pf-comp-img{position:absolute;inset:0;inline-size:100%;block-size:100%;object-fit:cover}
 .pf-comp-clip{position:absolute;inset:0;inline-size:100%;block-size:100%}
@@ -160,6 +196,7 @@ const SHARED_CSS = `
 .pf-figure-caption{margin:0;display:grid;gap:var(--kit-sp-tight);font-family:var(--kit-font)}
 .pf-figure-caption img{display:block;inline-size:100%;border-radius:var(--kit-radius);background:var(--kit-soft)}
 .pf-figure-caption figcaption{margin:0;color:var(--kit-muted);font-size:var(--kit-t-small)}
+.pf-figure-caption[data-align="start"] figcaption{text-align:start}
 .pf-figure-caption[data-align="center"] figcaption{text-align:center}
 .pf-credit{display:block;margin-block-start:2px;font-size:11px;opacity:0.8}
 `;
@@ -218,7 +255,7 @@ export function renderAvatar(ctx) {
   const {content: c, variant: v, props: p} = ctx;
   if (!c.name?.trim()) throw new TypeError('Avatar requires name');
   const initials = e(c.initials ?? c.name.slice(0, 2));
-  return `<span class="pf-avatar" data-shape="${e(v.shape)}" data-size="${e(p.size)}" role="img" aria-label="${e(c.name)}">${c.src ? `<img src="${e(c.src)}" alt="${e(c.name)}" />` : initials}</span>`;
+  return `<span class="pf-avatar" data-shape="${e(v.shape)}" data-size="${e(p.size)}" role="img" aria-label="${e(c.name)}">${c.src ? `<span class="pf-avatar-fallback" hidden>${initials}</span><img src="${e(c.src)}" alt="${e(c.name)}" />` : initials}</span>`;
 }
 
 // 3. Avatar Group
@@ -243,11 +280,13 @@ export const infoAvatarGroup = definePurposeFamily({
 });
 export function renderAvatarGroup(ctx) {
   const {content: c, variant: v, props: p} = ctx;
-  if (!Array.isArray(c.items) || !c.items.length) throw new TypeError('Avatar Group requires items array');
+  if (!Array.isArray(c.items) || c.items.length < 1 || c.items.length > 10) throw new TypeError('Avatar Group requires 1 to 10 items');
+  if (c.items.some(it => !it || typeof it.name !== 'string' || !it.name.trim())) throw new TypeError('Avatar Group items require a name');
   const max = c.max ?? 3;
+  if (!Number.isInteger(max) || max < 1 || max > 10) throw new TypeError('Avatar Group max must be an integer from 1 to 10');
   const visible = c.items.slice(0, max);
   const remaining = c.items.length - visible.length;
-  const avatars = visible.map(it => `<span class="pf-avatar" data-shape="circle" data-size="${e(p.size)}" role="img" aria-label="${e(it.name)}">${it.src ? `<img src="${e(it.src)}" alt="${e(it.name)}" />` : e(it.initials ?? it.name.slice(0, 2))}</span>`).join('');
+  const avatars = visible.map(it => `<span class="pf-avatar" data-shape="circle" data-size="${e(p.size)}" role="img" aria-label="${e(it.name)}">${it.src ? `<span class="pf-avatar-fallback" hidden>${e(it.initials ?? it.name.slice(0, 2))}</span><img src="${e(it.src)}" alt="${e(it.name)}" />` : e(it.initials ?? it.name.slice(0, 2))}</span>`).join('');
   const more = remaining > 0 ? `<span class="pf-avatar-more" aria-label="외 ${remaining}명">+${remaining}</span>` : '';
   return `<div class="pf-avatar-group" data-spacing="${e(v.spacing)}" data-size="${e(p.size)}" role="group" aria-label="참여자 목록">${avatars}${more}</div>`;
 }
@@ -274,7 +313,7 @@ export const infoAccordion = definePurposeFamily({
 });
 export function renderAccordion(ctx) {
   const {content: c, variant: v, props: p} = ctx;
-  if (!Array.isArray(c.items) || c.items.length < 2) throw new TypeError('Accordion requires at least 2 items');
+  if (!Array.isArray(c.items) || c.items.length < 2 || c.items.length > 10 || c.items.some(it => !it || typeof it.title !== 'string' || !it.title.trim() || typeof it.content !== 'string')) throw new TypeError('Accordion requires 2 to 10 titled items');
   const items = c.items.map((it, i) => {
     const tid = ctx.uid(`acc-t-${i}`), pid = ctx.uid(`acc-p-${i}`);
     const open = Boolean(it.open);
@@ -388,7 +427,7 @@ export const infoKeyboardShortcut = definePurposeFamily({
 });
 export function renderKeyboardShortcut(ctx) {
   const {content: c, variant: v, props: p} = ctx;
-  if (!Array.isArray(c.keys) || !c.keys.length) throw new TypeError('Keyboard Shortcut requires keys array');
+  if (!Array.isArray(c.keys) || c.keys.length < 1 || c.keys.length > 4 || c.keys.some(k => typeof k !== 'string' || !k.trim())) throw new TypeError('Keyboard Shortcut requires 1 to 4 non-empty keys');
   const keys = c.keys.map(k => `<kbd class="pf-kbd-key">${e(k)}</kbd>`).join('');
   return `<kbd class="pf-kbd-group" data-style="${e(v.style)}" data-size="${e(p.size)}" aria-label="${e(c.label ?? c.keys.join(' + '))}">${keys}</kbd>`;
 }
@@ -415,7 +454,7 @@ export const infoMetadataRow = definePurposeFamily({
 });
 export function renderMetadataRow(ctx) {
   const {content: c, variant: v, props: p} = ctx;
-  if (!Array.isArray(c.items) || !c.items.length) throw new TypeError('Metadata Row requires items array');
+  if (!Array.isArray(c.items) || c.items.length < 1 || c.items.length > 6 || c.items.some(it => !it || typeof it.label !== 'string' || !it.label.trim() || typeof it.value !== 'string')) throw new TypeError('Metadata Row requires 1 to 6 labeled items');
   const items = c.items.map(it => `<div class="pf-meta-item"><dt>${e(it.label)}</dt><dd>${e(it.value)}</dd></div>`).join('');
   return `<dl class="pf-metadata-row" data-layout="${e(v.layout)}" data-density="${e(p.density)}">${items}</dl>`;
 }
@@ -500,7 +539,7 @@ export const mediaCarousel = definePurposeFamily({
 export function renderCarousel(ctx) {
   const {content: c, variant: v, props: p} = ctx;
   if (!c.label?.trim()) throw new TypeError('Carousel requires label');
-  if (!Array.isArray(c.items) || c.items.length < 2) throw new TypeError('Carousel requires at least 2 items');
+  if (!Array.isArray(c.items) || c.items.length < 2 || c.items.length > 8 || c.items.some(it => !it || !['title', 'src', 'alt'].every(key => typeof it[key] === 'string' && it[key].trim()))) throw new TypeError('Carousel requires 2 to 8 complete items');
   const slides = c.items.map((it, i) => {
     return `<article class="pf-carousel-slide" role="group" aria-roledescription="slide" aria-label="${i + 1} / ${c.items.length}: ${e(it.title)}"><img src="${e(it.src)}" alt="${e(it.alt)}" /><h3>${e(it.title)}</h3>${it.description ? `<p>${e(it.description)}</p>` : ''}</article>`;
   }).join('');
@@ -646,15 +685,26 @@ export const INFO_MEDIA_FAMILIES = Object.freeze([...INFO_FAMILIES, ...MEDIA_FAM
 
 /** 런타임이 필요한 J/K 인터랙티브 항목 */
 export const INFO_MEDIA_RUNTIME_IDS = Object.freeze([
+  'purpose:info.avatar',
+  'purpose:info.avatar-group',
   'purpose:info.accordion',
   'purpose:info.collapsible',
   'purpose:media.carousel',
+  'purpose:media.audio-player',
   'purpose:media.image-comparison',
 ]);
 
 export const INFO_MEDIA_RUNTIME = `(function(){
 if(window.__kitInfoMedia)return;window.__kitInfoMedia=true;
 var q=function(r,s){return Array.prototype.slice.call(r.querySelectorAll(s))};
+
+document.addEventListener('error',function(ev){
+  var img=ev.target;
+  if(!img||img.tagName!=='IMG')return;
+  var avatar=img.closest&&img.closest('.pf-avatar');
+  var fallback=avatar&&avatar.querySelector('.pf-avatar-fallback');
+  if(fallback){img.hidden=true;fallback.hidden=false;}
+},true);
 
 document.addEventListener('click',function(ev){
   var t=ev.target;

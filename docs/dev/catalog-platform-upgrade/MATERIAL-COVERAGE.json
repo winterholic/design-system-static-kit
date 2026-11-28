@@ -211,9 +211,9 @@
         "live": false
       },
       "freshness": {
-        "platformSectionEqualsBaseline": false,
+        "platformSectionEqualsBaseline": true,
         "legacyAttemptedEqualsBaseline": true,
-        "registeredEqualsBaseline": false
+        "registeredEqualsBaseline": true
       }
     },
     "ladder": "누적 사다리. defined(정의·권리 통과, 실제 호출 실패 또는 프로브 없음) → renderable(서비스 호출로 실제 출력) → catalog-visible(웹 카탈로그 라우트가 이 재료를 렌더) → assemblable(Studio가 선택지를 제공) → verified(유효한 테스트 참조 또는 실제 조립 품질 검사 통과). metadata-only는 권리 미확인 또는 정의 없음. blockedBy가 막힌 첫 단계다."
@@ -225,8 +225,8 @@
       "missing": 69,
       "coverageRate": 0.83,
       "byCoverage": {
-        "direct": 298,
-        "variant": 30,
+        "direct": 297,
+        "variant": 31,
         "schema": 7,
         "part-of": 2,
         "missing": 69
@@ -244,8 +244,8 @@
         "components": {
           "total": 207,
           "missing": 51,
-          "direct": 117,
-          "variant": 30,
+          "direct": 116,
+          "variant": 31,
           "schema": 7,
           "partOf": 2
         },
@@ -2232,11 +2232,15 @@
       "id": "req:comp:j-05-tag",
       "section": "§6.2 J",
       "name": "Tag",
-      "coverage": "direct",
+      "coverage": "variant",
       "status": "verified",
       "materialIds": [
         "component:tags"
-      ]
+      ],
+      "viaRecord": "component:tags",
+      "variant": {
+        "variant": "outline"
+      }
     },
     {
       "id": "req:comp:j-06-avatar",
@@ -85099,7 +85103,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "7a789274a1c91d8f",
+        "outputHash": "acc98c76fe7d2a84",
         "duplicateOutputOf": []
       }
     },
@@ -85178,7 +85182,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "2014543e943c138a",
+        "outputHash": "540b866533cdf9f0",
         "duplicateOutputOf": []
       }
     },
@@ -85257,7 +85261,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "f22b216b1ae2a594",
+        "outputHash": "f70202fb92c1acae",
         "duplicateOutputOf": []
       }
     },
@@ -85337,7 +85341,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "d2639536f78b50c3",
+        "outputHash": "432c9e16af9c4cfc",
         "duplicateOutputOf": []
       }
     },
@@ -85414,7 +85418,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "060adbb9d38ddf93",
+        "outputHash": "03b568597268a74c",
         "duplicateOutputOf": []
       }
     },
@@ -85493,7 +85497,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "ad988a3900fdab54",
+        "outputHash": "01a3f692dbc8c252",
         "duplicateOutputOf": []
       }
     },
@@ -85572,7 +85576,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "af8bb9a82debce5f",
+        "outputHash": "0b5f2f554b942cc3",
         "duplicateOutputOf": []
       }
     },
@@ -85649,7 +85653,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "b3d87e80f5ccceff",
+        "outputHash": "cf19cc9e51893998",
         "duplicateOutputOf": []
       }
     },
@@ -85728,7 +85732,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "1b04a43a3bc08fc7",
+        "outputHash": "40a9bc711c637213",
         "duplicateOutputOf": []
       }
     },
@@ -85809,7 +85813,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "0edf5207214980ab",
+        "outputHash": "c697f1468256ed2e",
         "duplicateOutputOf": []
       }
     },
@@ -85896,7 +85900,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "49fe161e8db2af21",
+        "outputHash": "b0dbd4878c366583",
         "duplicateOutputOf": []
       }
     },
@@ -85981,7 +85985,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "ad7d8a682c550102",
+        "outputHash": "aa279176f34fb7f2",
         "duplicateOutputOf": []
       }
     },
@@ -86060,7 +86064,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "7a6f1621706512c3",
+        "outputHash": "92a905efa7a8be64",
         "duplicateOutputOf": []
       }
     },
@@ -86141,7 +86145,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "e921b9bccc5c388c",
+        "outputHash": "95da1f08b1f64a25",
         "duplicateOutputOf": []
       }
     },
@@ -86220,7 +86224,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "35f43986914f078c",
+        "outputHash": "6fbcdc6fb7076765",
         "duplicateOutputOf": []
       }
     },
@@ -86301,7 +86305,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "bd970c1dba2e699d",
+        "outputHash": "21e864968b33e671",
         "duplicateOutputOf": []
       }
     },

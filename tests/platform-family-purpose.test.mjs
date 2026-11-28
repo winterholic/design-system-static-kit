@@ -16,7 +16,7 @@ test('purpose family ids are fixed and grouped as the task card lists them (Card
   assert.deepEqual(PURPOSE_FAMILIES.map(f => f.id), PURPOSE_FAMILY_IDS);
   for (const [g, n] of Object.entries(GROUP_COUNTS)) assert.equal(PURPOSE_FAMILIES.filter(f => f.group === g).length, n, g);
   assert.deepEqual([...PURPOSE_GROUPS].sort(), Object.keys(GROUP_COUNTS).sort());
-  assert.equal(new Set(PURPOSE_FAMILY_IDS).size, 65);
+  assert.equal(new Set(PURPOSE_FAMILY_IDS).size, PURPOSE_FAMILIES.length);
   assert.equal(getPurposeFamily('purpose:card.kpi').group, 'card');
   assert.equal(getPurposeFamily('purpose:card.nope'), null);
 });

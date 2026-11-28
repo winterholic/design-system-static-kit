@@ -6,6 +6,7 @@ import {createFixturePlatform} from './platform-pipeline-fixtures.mjs';
 import {PURPOSE_IDS, bindColor, bindType, axisIds, materialAxisIds} from '../src/platform/index.mjs';
 import {PATTERNS} from '../src/profiles/data.mjs';
 import {templates, pageTypes, axes} from '../src/catalog/index.mjs';
+import {platformEnv} from '../src/platform/compile.mjs';
 
 const saved = JSON.parse(readFileSync(new URL('../docs/evidence/platform/baseline.json', import.meta.url), 'utf8'));
 
@@ -24,7 +25,7 @@ test('the platform section counts what really assembles, not what is registered'
   assert.ok(r.distinct.purposeFamilies.verified > 0);
   assert.deepEqual(r.distinct.purposeFamilies.ids, [...r.distinct.purposeFamilies.ids].sort());
   assert.ok(r.distinct.colorTokenSets.light < r.registered.palette * r.registered.subtokenSet, 'blocked pairs are not counted');
-  assert.ok(r.colorGateFailures.P_COLOR_CONTRAST >= 1 || Object.keys(r.colorGateFailures).length >= 1, 'the failing pair is reported by code');
+  assert.ok(r.colorGateFailures.P_COLOR_CONTRAST >= 1, 'the failing color pair is reported with the contrast diagnostic');
   // the section is a pure function of the registry: same registry, same numbers
   assert.equal(JSON.stringify(platformSection({env: createFixturePlatform(), only: ['dashboard-grid']})), JSON.stringify(r));
   const sm = r.distinct.styleMaterials;
@@ -75,6 +76,7 @@ test('representative content exists for the patterns of every required purpose',
 
 test('the committed baseline carries the platform section, and it beats the legacy assembly path on color token sets and face pairs', () => {
   const pf = saved.platform, legacy = saved.combinations;
+  const registry = platformEnv().registry;
   assert.equal(typeof pf.contractVersion, 'string');
   for (const k of ['assemblable', 'verified', 'distinct']) assert.ok(pf[k], k);
   assert.ok(pf.assemblable.assemblable > 0 && pf.verified.verified > 0);
@@ -85,9 +87,9 @@ test('the committed baseline carries the platform section, and it beats the lega
   assert.ok(pf.distinct.colorTokenSets.dark > legacy.distinctColorTokenSets.dark);
   assert.ok(pf.distinct.facePairs > legacy.distinctEffectiveFacePairs, `${pf.distinct.facePairs} face pairs vs ${legacy.distinctEffectiveFacePairs}`);
   assert.ok(pf.distinct.families >= 1);
-  assert.equal(pf.registered.family, 12, 'registered.family counts visual families only');
-  assert.equal(pf.registered.purposeFamily, 53, 'purpose-family registrations are a separate count');
-  assert.equal(pf.distinct.families, 12, 'distinct.families retains its visual-family meaning');
+  assert.equal(pf.registered.family, registry.list('family').length, 'registered.family counts current visual-family registrations');
+  assert.equal(pf.registered.purposeFamily, registry.list('purpose-family').length, 'purpose-family registration count comes from the live registry');
+  assert.equal(pf.distinct.families, registry.list('family').length, 'distinct.families retains its visual-family meaning');
   assert.deepEqual(pf.distinct.purposeFamilies, {
     verified: 4,
     ids: ['purpose:card.feature', 'purpose:card.kpi', 'purpose:card.product', 'purpose:table.business'],

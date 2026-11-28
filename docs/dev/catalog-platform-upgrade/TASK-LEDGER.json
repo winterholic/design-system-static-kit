@@ -4,10 +4,11 @@
   "summary": {
     "totalTasks": 45,
     "byStatus": {
-      "Verified": 15,
-      "Implemented": 8,
+      "Verified": 16,
+      "Implemented": 6,
       "Pending": 20,
-      "In Progress": 2
+      "In Progress": 2,
+      "Completed": 1
     },
     "byTrack": {
       "Track G": 7,
@@ -1853,18 +1854,31 @@
         "tests/platform-info-media-contract.test.mjs",
         "tests/platform-info-media-blueprint.test.mjs",
         "tests/platform-info-media-channels.test.mjs",
-        "tests/platform-info-media-interactive.test.mjs"
+        "tests/platform-info-media-interactive.test.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/service/platform-components.mjs",
+        "tests/platform-pipeline-baseline.test.mjs",
+        "tests/platform-service-channels.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-style-family-distribution.test.mjs",
+        "docs/evidence/platform/baseline.json",
+        "site/gallery/index.html",
+        "site/previews/previews-data.json"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
         "tests/platform-info-media-contract.test.mjs",
         "tests/platform-info-media-blueprint.test.mjs",
         "tests/platform-info-media-channels.test.mjs",
-        "tests/platform-info-media-interactive.test.mjs"
+        "tests/platform-info-media-interactive.test.mjs",
+        "tests/platform-pipeline-baseline.test.mjs",
+        "tests/platform-service-channels.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "J 15/15 항목 모두 missing·schema-only 0 달성. 기존 재료 5종 매핑, 신규 목적 패밀리 10종(status-badge, avatar, avatar-group, accordion, collapsible, counter, notification-indicator, keyboard-shortcut, metadata-row, stat-comparison) 구현 완료. accordion 및 collapsible은 INFO_MEDIA_RUNTIME을 통해 키보드(Enter/Space) 및 WAI-ARIA 상태 전이 지원. Studio 선택지는 Track F 소유이므로 catalog-visible, blockedBy: no-studio-choice 상태.",
+      "status": "Verified",
+      "unresolvedIssues": "D4 독립 검증 완료. npm run verify는 1007개 중 1005개 통과했으며 나머지 2개는 Chromium Mach IPC bootstrap_check_in Permission denied (1100)로 브라우저 시작이 막힌 환경 항목이다(VERIFICATION.md §15에 시험명을 기록). J의 Tag는 component:tags outline 변형으로 매핑·분류했고, 배열 계약·축 렌더·Avatar fallback·Audio Player runtime·중복 ID·27행 Blueprint 검증을 보강했다. Studio 선택지는 Track F 소유로 catalog-visible, blockedBy: no-studio-choice.",
       "crossTrackFiles": [
         {
           "file": "tests/platform-service-channels.test.mjs",
@@ -1874,12 +1888,12 @@
         {
           "file": "tests/platform-pipeline-baseline.test.mjs",
           "ownerTrack": "Track A",
-          "reason": "기준선의 목적 패밀리 등록량 37 → 53"
+          "reason": "목적 패밀리 수를 고정값 대신 현재 레지스트리 길이로 계산하도록 교정(D4 시점 37 → 53, 이후 main의 등록은 기준선 65)"
         },
         {
           "file": "docs/evidence/platform/baseline.json",
           "ownerTrack": "Track A",
-          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 37 → 53)"
+          "reason": "node scripts/platform/baseline.mjs로 재계산한 기준선(visual 12, purpose 65; D4 당시 53에서 이후 main 등록분 포함)"
         },
         {
           "file": "scripts/generate-material-coverage.mjs",
@@ -1927,18 +1941,31 @@
         "tests/platform-info-media-contract.test.mjs",
         "tests/platform-info-media-blueprint.test.mjs",
         "tests/platform-info-media-channels.test.mjs",
-        "tests/platform-info-media-interactive.test.mjs"
+        "tests/platform-info-media-interactive.test.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/service/platform-components.mjs",
+        "tests/platform-pipeline-baseline.test.mjs",
+        "tests/platform-service-channels.test.mjs",
+        "tests/platform-family-a11y.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-family-purpose.test.mjs",
+        "tests/platform-style-family-distribution.test.mjs",
+        "docs/evidence/platform/baseline.json",
+        "site/gallery/index.html",
+        "site/previews/previews-data.json"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
         "tests/platform-info-media-contract.test.mjs",
         "tests/platform-info-media-blueprint.test.mjs",
         "tests/platform-info-media-channels.test.mjs",
-        "tests/platform-info-media-interactive.test.mjs"
+        "tests/platform-info-media-interactive.test.mjs",
+        "tests/platform-pipeline-baseline.test.mjs",
+        "tests/platform-service-channels.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "K 12/12 항목 모두 missing·schema-only 0 달성. 기존 재료 6종 매핑, 신규 목적 패밀리 6종(responsive-image, carousel, audio-player, file-preview, image-comparison, figure-caption) 구현 완료. carousel 및 image-comparison은 INFO_MEDIA_RUNTIME을 통해 키보드(ArrowLeft/ArrowRight) 및 WAI-ARIA 상태 전이 지원. E4 소유 Foundations 미디어 축과 충돌 없이 공통 계약 연결. Studio 선택지는 Track F 소유이므로 catalog-visible, blockedBy: no-studio-choice 상태.",
+      "status": "Verified",
+      "unresolvedIssues": "D4 독립 검증 완료. npm run verify는 1007개 중 1005개 통과했으며 나머지 2개는 Chromium Mach IPC bootstrap_check_in Permission denied (1100)로 브라우저 시작이 막힌 환경 항목이다(VERIFICATION.md §15에 시험명을 기록). J의 Tag는 component:tags outline 변형으로 매핑·분류했고, 배열 계약·축 렌더·Avatar fallback·Audio Player runtime·중복 ID·27행 Blueprint 검증을 보강했다. Studio 선택지는 Track F 소유로 catalog-visible, blockedBy: no-studio-choice.",
       "crossTrackFiles": [
         {
           "file": "tests/platform-service-channels.test.mjs",
@@ -1948,12 +1975,12 @@
         {
           "file": "tests/platform-pipeline-baseline.test.mjs",
           "ownerTrack": "Track A",
-          "reason": "기준선의 목적 패밀리 등록량 37 → 53"
+          "reason": "목적 패밀리 수를 고정값 대신 현재 레지스트리 길이로 계산하도록 교정(D4 시점 37 → 53, 이후 main의 등록은 기준선 65)"
         },
         {
           "file": "docs/evidence/platform/baseline.json",
           "ownerTrack": "Track A",
-          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 37 → 53)"
+          "reason": "node scripts/platform/baseline.mjs로 재계산한 기준선(visual 12, purpose 65; D4 당시 53에서 이후 main 등록분 포함)"
         },
         {
           "file": "scripts/generate-material-coverage.mjs",

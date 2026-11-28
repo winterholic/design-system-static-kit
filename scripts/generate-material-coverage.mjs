@@ -257,7 +257,7 @@ const COVERAGE = {
   'J/Status Badge': D('purpose:info.status-badge'),
   'J/Chip': V('component:tags', 'component:tags', {variant: 'chips'}),
   'J/Filter Chip': V('purpose:form.filter', 'purpose:form.filter', {chips: 'toggles'}),
-  'J/Tag': D('component:tags'),
+  'J/Tag': V('component:tags', 'component:tags', {variant: 'outline'}),
   'J/Avatar': D('purpose:info.avatar'),
   'J/Avatar Group': D('purpose:info.avatar-group'),
   'J/Accordion': D('purpose:info.accordion'),

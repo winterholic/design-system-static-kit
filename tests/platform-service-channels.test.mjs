@@ -8,6 +8,7 @@ import {
   listCatalog, getSchema, getComponentSpec, compileBlueprint, validateBlueprint,
 } from '../src/service/index.mjs';
 import {createBlueprint} from '../src/catalog/index.mjs';
+import {platformEnv} from '../src/platform/compile.mjs';
 import {mcpConnect, rest, root, OPERATIONS} from './channel-support.mjs';
 import {buildOpenApi} from '../apps/web/lib/api/openapi.mjs';
 import {TOOLS} from '../apps/web/lib/api/mcp.mjs';
@@ -128,9 +129,10 @@ test('materials: listMaterials, getMaterial, the platform queries, recommend and
 
 test('purpose-family records are discoverable and recommendable through the service, REST and MCP', async () => {
   const listed = listPlatformMaterials({kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']});
+  const registeredPurposeCount = platformEnv().registry.list('purpose-family').length;
   assert.equal(listed.ok, true);
-  assert.equal(listed.value.total, 65);
-  assert.equal(listed.value.items.length, 65);
+  assert.equal(listed.value.total, registeredPurposeCount);
+  assert.equal(listed.value.items.length, registeredPurposeCount);
   assert.ok(listed.value.items.every(x => x.id.startsWith('purpose:')));
   const summary = listPlatformMaterials({kind: 'purpose-family', limit: 100});
   assert.ok(summary.value.items.every(x => x.purpose && x.group && x.bases.length));
@@ -166,7 +168,7 @@ test('purpose-family records are discoverable and recommendable through the serv
   assert.equal(json(await mcp('get_platform_material', {id})), json(detail));
   assert.equal(json(await mcp('recommend_materials', {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'})), json(recommendation));
   assert.equal(json(await mcp('check_compatibility', {ids: compatibilityIds})), json(compatibility));
-  assert.equal(ids.length, 65);
+  assert.equal(ids.length, registeredPurposeCount);
 });
 
 test('user seed proposals and purpose-family assembly keep Core, REST and MCP byte-identical', async () => {

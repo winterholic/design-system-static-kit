@@ -252,10 +252,12 @@ REQUEST §6.2의 J 정보 표시(15항목)와 K 미디어 및 콘텐츠(12항목
    - J 정보 표시 10종: `purpose:info.status-badge`, `purpose:info.avatar`, `purpose:info.avatar-group`, `purpose:info.accordion`, `purpose:info.collapsible`, `purpose:info.counter`, `purpose:info.notification-indicator`, `purpose:info.keyboard-shortcut`, `purpose:info.metadata-row`, `purpose:info.stat-comparison`.
    - K 미디어/콘텐츠 6종: `purpose:media.responsive-image`, `purpose:media.carousel`, `purpose:media.audio-player`, `purpose:media.file-preview`, `purpose:media.image-comparison`, `purpose:media.figure-caption`.
    - 플랫폼 목적 패밀리 등록량이 37종에서 53종으로 확장되었다.
-2. **기존 구현 재사용 및 중복 금지**:
-   - 기존 구현이 존재하는 J 5항목(Badge, Chip, Filter Chip, Tag, Divider)과 K 6항목(Image, Media Frame, Gallery, Video Frame, Quote, Rich Text Content)은 기존 `base-component` 및 `purpose:*`를 매핑하고 불필요한 중복 재료를 생성하지 않는다.
+2. **기존 구현 재사용 및 실제 출력 대조**:
+   - J 5항목은 Badge→`component:tags`(`variant=badges`), Chip→`component:tags`(`variant=chips`), Filter Chip→`purpose:form.filter`(`chips=toggles`), Tag→`component:tags`(`variant=outline`), Divider→`component:divider`로 매핑한다.
+   - K 6항목은 Image→`component:media`(`kind=photo`), Media Frame→6개 `media:*` 스타일 재료, Gallery→`component:gallery`, Video Frame→`component:media`(`kind=video`), Quote→`component:quote`, Rich Text Content→`component:prose`로 매핑한다.
+   - 각 매핑의 의미는 실제 Blueprint 노드 또는 스타일 재료 조립 출력을 시험해 확인한다. `Tag`는 `component:tags`의 기본 chips 출력과 구분되도록 `outline` 변형으로 기록한다.
 3. **인터랙티브 런타임 및 접근성**:
-   - 상태 전이와 상호작용이 필요한 4개 컴포넌트(`accordion`, `collapsible`, `carousel`, `image-comparison`)는 `INFO_MEDIA_RUNTIME`과 `INFO_MEDIA_RUNTIME_IDS`를 통해 `actionRuntimeFor`에 연결된다.
+   - 상태 전이와 상호작용이 필요한 5개 컴포넌트(`accordion`, `collapsible`, `carousel`, `audio-player`, `image-comparison`)와 이미지 실패 대체 표시가 필요한 `avatar`, `avatar-group`은 `INFO_MEDIA_RUNTIME`과 `INFO_MEDIA_RUNTIME_IDS`를 통해 런타임에 연결된다.
    - 키보드 내비게이션(Enter/Space 토글, ArrowRight/ArrowLeft 캐러셀 슬라이드 및 비교 슬라이더 조절)과 ARIA 표준(`aria-expanded`, `aria-controls`, `aria-roledescription`, `aria-valuenow`, `role="region"`, `role="group"`)을 준수한다.
    - 사용하지 않는 페이지 출력에서는 런타임 JS가 주입되지 않아 무거운 부하를 초래하지 않는다.
 4. **카탈로그 노출 및 Studio 선택 제약**:

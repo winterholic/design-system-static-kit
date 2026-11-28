@@ -1290,6 +1290,7 @@ $ node --test tests/platform-ehi-requirements.test.mjs tests/platform-ehi-contra
 ℹ pass 120 / ℹ fail 0
 $ npm run coverage:materials:check
 MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1480 materials, 406 requirements)
+freshness: platformSectionEqualsBaseline=true / legacyAttemptedEqualsBaseline=true / registeredEqualsBaseline=true
 $ npm run verify
 ℹ tests 1052 / ℹ pass 1052 / ℹ fail 0
 REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
@@ -1300,3 +1301,143 @@ $ npm run test:browser
 `platform-families.spec.mjs:12`의 실패는 E·H·I 변경과 무관하다. 같은 측정(`measureAll({groups: ['media']})`)이 이 커밋을 올리지 않은 `origin/main`(`898d2da21`)에서도 똑같이 media 묶음 전부를 실패시킨다. 실패는 K 계열(미디어) 소관이라 고치지 않았다. E·H·I 묶음(navigation·overlay·feedback)은 이 시험에서 통과했다.
 
 불변 확인: 위 `npm run verify`의 시험에 레거시 해시(2.1.0), 기본 2.4.0, `site/v1/catalog.json`, 기존 컨트롤 출력 바이트 동일 시험이 포함되어 통과했다. 기반 컴포넌트 CSS(`src/materials/*`)는 이 커밋에서 바뀌지 않았다(첫 시도에서 `feedback.mjs`를 고쳤다가 "기존 컨트롤 출력 바이트 동일" 시험이 실패해 되돌렸다).
+
+## 21. D4 J·K 독립 검증 및 교정 (`upgrade/d4-verify`, 2026-11-28)
+
+### 판정
+
+- e7c4058a3의 §6.2 J·K 27행은 `status`가 아니라 Manifest `coverage` 값으로 셌다. `direct` 21, `variant` 6, `missing` 0, `schema` 0이다. 기존 11종은 5 direct·6 variant이고, 신규 목적 패밀리 16종은 모두 direct다.
+- 기존 매핑은 출력까지 확인했다: Badge=`component:tags` badges, Chip=chips, Tag=outline, Filter Chip=`purpose:form.filter` toggle, Divider=`kit-hr`; Image·Video Frame은 각각 photo·video, Media Frame 6개 스타일은 실제 조립 CSS, Gallery·Quote·Rich Text는 각 Blueprint 노드 출력이다. Tag의 기본 chips 출력은 요구 의미와 달라 outline으로 기록했다.
+- 신규 목적 패밀리 16종은 계약 정의와 렌더를 대조했다. 모든 variant/prop 값이 출력 마크업에 도달하고, 여러 값 축의 CSS selector도 있으며, Figure 배치·목록 상한·사용자 문자열 이스케이프·중복 ID·runtime 포함 여부를 시험했다. Avatar 이미지 실패 시 이니셜 대체 표시와 Audio Player runtime 연결이 빠져 있어 보완했다.
+- Blueprint 경로는 27행 전부 확인했다. 16개 purpose Blueprint 컴파일, 기존 컴포넌트의 `edit.insertNode` 후 컴파일, Filter Chip 실제 토글 마크업, Media Frame 6종 스타일 조립을 행별로 검사한다.
+- 파이프라인 기준선의 목적/시각 패밀리 개수는 고정값 대신 현재 등록 목록에서 계산하게 했다. 최신 재산출은 visual 12, purpose 65다. 웹 E2E의 목적 목록 수도 공개 `listPlatformMaterials`의 total과 페이지에서 읽은 ID 집합을 비교한다.
+- 미리보기 사전 생성물은 수정된 렌더와 달라 재빌드했다. 이후 사전 렌더 바이트 시험과 `check-generated`가 통과했다. 레이아웃 측정 JSON은 24종 fingerprint 및 가로 스크롤 0 계약과 계속 일치한다.
+- 2.1.0 고정 해시, 기본 2.4.0 출력, `site/v1/catalog.json` 바이트 계약은 호환성 시험에서 보존됐다. Material Coverage는 최신 생성 기준과 MATCH다.
+- `npm run verify`는 1,007개 중 1,005개 통과했다. 실패 2개는 Chromium 시작 단계의 Mach IPC `bootstrap_check_in ... Permission denied (1100)`다: `tests/platform-layout-resizable.test.mjs`의 “resizable panel: keyboard navigation and min/max constraints work in real Chromium browser”, `tests/platform-type-fonts.test.mjs`의 “4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증”. `audit`, docs, build, check-generated는 테스트 실패로 verify 체인에서 건너뛰므로 별도 실행해 통과를 확인했다.
+- 요청된 D0b 절은 이 문서나 업그레이드 디렉터리에서 찾지 못했다(`rg -n 'D0b|D0B' docs/dev/catalog-platform-upgrade` 0건). 따라서 해당 절의 별도 주장은 검증 근거로 사용하지 않았다.
+
+### 교정
+
+- `J/Tag` 매핑 및 구성 분류를 `component:tags` outline 변형으로 변경하고, 생성된 `docs/platform/components.md` 분류표도 재생성했다.
+- Accordion, Avatar Group, Keyboard Shortcut, Metadata Row, Carousel의 선언 배열 경계를 렌더 단계에서 거부하도록 했다. 아바타 이미지 오류 fallback과 Audio Player runtime ID를 연결했다.
+- `assembleComponents`가 중복 ID를 거부해 ARIA 참조 ID가 겹치지 않게 했다. info-media 계약 시험에 모든 축의 출력 반영, HTML escape, 배열 제한, runtime, 실제 media CSS, 27행 Blueprint 검사를 더했다.
+- 파이프라인 테스트에서 color gate를 임의 오류로 통과시키던 OR 대체 단언을 `P_COLOR_CONTRAST` 진단 단언으로 좁혔다. 목적·시각 패밀리 수 시험은 등록 수를 계산하도록 바꿨다.
+- 기준선 `docs/evidence/platform/baseline.json`과 Manifest를 재생성했다. 미리보기 SVG 16개, `site/previews/previews-data.json`, gallery를 새 렌더 출력으로 갱신했다.
+
+### 실행 증거
+
+```text
+$ jq '[.requirements[] | select(.section=="§6.2 J" or .section=="§6.2 K") | .coverage] | group_by(.) | map({k:.[0],n:length})' docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+direct 21 / variant 6
+
+$ node --test tests/platform-info-media-*.test.mjs tests/platform-pipeline-baseline.test.mjs
+ℹ tests 30 / ℹ pass 30 / ℹ fail 0
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1472 materials, 406 requirements)
+
+$ node --test tests/composition.test.mjs tests/materials-registry.test.mjs tests/expression-2-5.test.mjs tests/service-contract.test.mjs
+ℹ tests 68 / ℹ pass 68 / ℹ fail 0
+
+$ node --test tests/layout-quality.test.mjs
+ℹ tests 26 / ℹ pass 26 / ℹ fail 0
+
+$ npm run verify
+ℹ tests 1007 / ℹ pass 1005 / ℹ fail 2
+실패 2개 모두 Chromium Mach IPC 권한 오류(위 판정 참조).
+
+$ node scripts/audit.mjs
+AUDIT 통과; 4590 template×theme pages + 1249 palette×mode pages compile.
+
+$ node scripts/docs.mjs
+DOCS: typography, layout primitives, diagnosis 작성 완료.
+
+$ npm run build
+BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 theme showcases.
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
+```
+
+RED→GREEN 근거: 상한 검사는 11개 Avatar Group 항목을 허용했고, 이미지 fallback 시험은 마크업에서 `.pf-avatar-fallback`을 찾지 못했으며, 중복 ID 시험은 조립 성공을 확인했다. 각 시험은 renderer/runtime/service 수정 뒤 통과했다. 27행 Blueprint 추가시험은 Media Frame의 실제 CSS를 확인하도록 고쳤고, 16행 생성 미리보기는 재빌드 후 서비스 출력과 바이트 일치했다.
+
+### 21.1 이전 main 기준 재검증 (2026-11-28)
+
+`origin/main`의 최신 상태(`d43f6963a`에서 작업 시작)를 기반으로 다시 확인했다. 당시 검증 worktree는 7커밋 뒤처져 있어 현재 main을 기준으로 재생성했고, 충돌은 최신 main의 C2·D5·E4 기록과 공개 목록 검사를 보존해 합쳤다. `node_modules`는 디렉터리였고 symlink가 아니었다. Node `v26.9.0`, npm `11.19.1`에서 `npm ci`가 52개 패키지를 설치하고 취약점 0개를 보고했다(웹 패키지는 Node 22.x를 요구해 EBADENGINE 경고가 있었다).
+
+```text
+$ jq '[.requirements[] | select(.section=="§6.2 J" or .section=="§6.2 K") | .coverage] | group_by(.) | map({k:.[0],n:length})' docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+direct 21 / variant 6; missing 0 / schema 0 (27행)
+
+$ node scripts/platform/baseline.mjs
+platform assemblable 1712172 (of 1744740 tried)
+platform verified 68018 assembled+checked; visual 12, purpose 65 registered
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1480 materials, 406 requirements)
+
+$ node --test tests/platform-info-media-*.test.mjs
+ℹ tests 26 / ℹ pass 26 / ℹ fail 0
+
+$ node --test tests/layout-quality.test.mjs
+ℹ tests 26 / ℹ pass 26 / ℹ fail 0
+24종 layoutFingerprint와 320·768·1024·1440px 측정 기록 일치
+
+$ node --test tests/platform-pipeline-baseline.test.mjs (npm run verify 안에서 실행)
+✔ the platform section counts what really assembles, not what is registered (525812ms)
+✔ the counted assemblable combinations equal a one-by-one evaluation of every combination (411820ms)
+
+$ npm run verify
+exit 1: tests/platform-layout-resizable.test.mjs의 "resizable panel: keyboard navigation and min/max constraints work in real Chromium browser"와 tests/platform-type-fonts.test.mjs의 "4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증"이 Chromium 시작 시 실패
+bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100), SIGTRAP
+
+$ node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs
+AUDIT 통과; DOCS 생성; BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 theme showcases
+REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
+
+$ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json
+exit 0
+```
+
+신규 시험의 음성 대조에서 `.pf-avatar-fallback-red-check`로 클래스명을 깨뜨렸을 때 첫 단언은 부분 문자열만 찾으며 잘못 통과했다. 단언을 정확한 `class="pf-avatar-fallback"` 토큰 검사로 고친 뒤, 같은 변경에서 시험이 실패하는 RED와 원래 class 복구 후 통과하는 GREEN을 확인했다. 그 뒤 전체 info-media 26개가 통과했다. 요청된 별도 D0b 절은 당시 `VERIFICATION.md`에 없었고 REQUEST·DECISIONS·Manifest 검색도 0건이었다.
+
+전체 `npm run verify`는 Chromium 두 시험에서만 환경 오류로 종료되어 audit·docs·build·check-generated는 이어 실행해 확인했다. 실행 엔진은 Codex의 macOS `exec_command`이며, 관측된 오류는 Chromium Mach IPC `Permission denied (1100)`다. 이 오류는 해당 시험 실행 환경의 결과이며 다른 실행 환경의 브라우저 상태를 뜻하지 않는다.
+
+### 21.2 D6 병합 이후 재검증 (`91659ea03`, 2026-11-28)
+
+검증 도중 D6가 main에 반영되어 최신 17커밋을 다시 fetch하고 병합했다. D6 커머스 자료와 성능 측정 파일·원문은 main 버전을 유지했다. D4 작업만 다시 적용한 뒤 baseline, Manifest, 컴포넌트 분류표 및 사이트 사전 생성물을 최신 코드 기준으로 재생성했다.
+
+```text
+$ node scripts/platform/baseline.mjs
+platform assemblable 1712172 (of 1744740 tried)
+platform verified 68018 assembled+checked; visual 12; purpose 65
+(553.9s)
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1480 materials, 406 requirements)
+
+$ node --test tests/platform-info-media-*.test.mjs tests/layout-quality.test.mjs
+ℹ tests 52 / ℹ pass 52 / ℹ fail 0
+
+$ node --test tests/composition.test.mjs tests/materials-registry.test.mjs tests/expression-2-5.test.mjs tests/service-contract.test.mjs
+ℹ tests 68 / ℹ pass 68 / ℹ fail 0
+legacy 2.1.0 출력 해시와 기본 생성 버전 2.4.0 시험 포함
+
+$ npm run verify
+✔ the platform section counts what really assembles, not what is registered (493399ms)
+✔ the counted assemblable combinations equal a one-by-one evaluation of every combination (160585ms)
+exit 1: Chromium 실측 2개가 bootstrap_check_in ... Permission denied (1100) / SIGTRAP으로 시작 실패
+
+$ node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs
+AUDIT 통과; DOCS 생성; BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 theme showcases
+REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
+
+$ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json
+exit 0
+```
+
+`npm run verify` 안에서 실패한 시험명은 `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`와 `4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증`이다. 첫 Chromium 실패의 로컬 환경은 Codex/macOS `exec_command`; 두 시험 모두 Mach IPC `Permission denied (1100)` 후 `SIGTRAP`으로 종료했다. 비브라우저 시험에는 실패가 없었고, `audit`, `docs`, `build`, `check-generated`는 별도 실행으로 확인했다.
+
+E/H/I가 포함된 최신 `origin/main` 반영 후(`db7ed45fc`)에도 §6.2 J·K coverage는 `direct 21 / variant 6 / missing 0 / schema 0`으로 유지되며, 1,480 materials / 406 requirements Manifest의 baseline 신선도 세 플래그가 모두 true다.
+
+그 뒤 E/H/I 통합 최신 main에서 `npm run verify`는 1,052/1,052 통과했고 3,836 생성 파일 재현성도 통과했다(§20.6). 이 결과가 앞선 worktree에서 기록한 Chromium 시작 실패 2건을 대체한다. 별도 `npm run test:browser`는 374 통과·1 실패였고, 유일한 실패는 §20.6에 기록한 기존 `e2e/platform-families.spec.mjs:12` 미디어 측정이다. D4와 무관해 변경하지 않았다.

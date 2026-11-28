@@ -3,10 +3,14 @@
 // 같은 입력은 같은 바이트이며, 재료 질의가 같은 재료를 돌려준다.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {assembleDesign, compileBlueprint, validateBlueprint, listPlatformMaterials, getPlatformMaterial, recommendMaterials} from '../src/service/index.mjs';
 import {platformEnv} from '../src/platform/compile.mjs';
 import {getPurposeFamily, renderPurposeFamily} from '../src/platform/families/index.mjs';
 import {INFO_MEDIA_FAMILIES, INFO_MEDIA_RUNTIME_IDS} from '../src/platform/families/info-media.mjs';
+import * as edit from '../src/edit/index.mjs';
+import {nodeSpecs} from '../src/catalog/nodes.mjs';
+import {assembleStyleMaterials} from '../src/platform/style-materials.mjs';
 
 const env = platformEnv();
 const VISUAL = 'family:soft';
@@ -79,4 +83,70 @@ test('J/K registry query: all 16 materials are queryable via listPlatformMateria
   assert.equal(listedMedia.ok, true);
   assert.ok(listedMedia.value.items.some(x => x.id === 'purpose:media.carousel'));
   assert.ok(listedMedia.value.items.some(x => x.id === 'purpose:media.responsive-image'));
+});
+
+test('J/K Manifest coverage is calculated from coverage and all 27 requirement rows round-trip through their real Blueprint renderer', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json', import.meta.url), 'utf8'));
+  const rows = manifest.requirements.filter(r => r.section === '§6.2 J' || r.section === '§6.2 K');
+  assert.equal(rows.length, 27);
+  assert.ok(rows.every(r => r.coverage !== 'missing' && r.coverage !== 'schema'), 'coverage field, not status, must show a registered implementation');
+  assert.equal(rows.find(r => r.name === 'Tag').coverage, 'variant', 'a tag is the outline tag presentation of the tag collection, not its default chip presentation');
+
+  const legacyExpectations = {
+    Badge: ['tags', {variant: 'badges'}, 'data-variant="badges"'],
+    Chip: ['tags', {variant: 'chips'}, 'data-variant="chips"'],
+    Tag: ['tags', {variant: 'outline'}, 'data-variant="outline"'],
+    Divider: ['divider', {}, 'class="kit-hr"'],
+    Image: ['media', {kind: 'photo'}, 'class="kit-media"'],
+    Gallery: ['gallery', {}, 'class="kit-gallery"'],
+    'Video Frame': ['media', {kind: 'video'}, 'class="kit-media"'],
+    Quote: ['quote', {}, '<blockquote>'],
+    'Rich Text Content': ['prose', {}, 'class="kit-prose"'],
+  };
+  const legacyBase = edit.resetDocument(null, {template: 'about-team', theme: 'workspace'}).doc;
+  for (const row of rows) {
+    assert.ok(row.coverage !== 'missing' && row.coverage !== 'schema', `${row.section} ${row.name}`);
+    if (row.materialIds.every(id => id.startsWith('purpose:')) && row.name !== 'Filter Chip') {
+      for (const id of row.materialIds) {
+        const family = getPurposeFamily(id);
+        assert.ok(family, `${row.name} points to registered family ${id}`);
+        const bp = purposeBlueprint(id);
+        assert.equal(validateBlueprint(bp).ok, true, `${row.name}/${id} Blueprint validation`);
+        const built = compile(bp);
+        assert.ok(built.html.includes(`data-purpose="${id.slice('purpose:'.length)}"`), `${row.name}/${id} compiled output`);
+      }
+      continue;
+    }
+    if (row.name === 'Media Frame') {
+      for (const id of row.materialIds) {
+        const material = env.registry.get(id);
+        assert.ok(material, `${row.name} maps to registered media style ${id}`);
+        const styleContext = env.registry.list('style-context').find(sc => material.contexts.includes('any') || material.contexts.includes(sc.contexts[0]));
+        const context = styleContext.contexts[0];
+        const rendered = assembleStyleMaterials(env.registry, {styleContext: styleContext.id, context, media: id});
+        assert.equal(rendered.ok, true, `${id} media style assembly: ${JSON.stringify(rendered.diagnostics)}`);
+        assert.equal(rendered.selection.media, id);
+        assert.match(rendered.css, /\.kit-media-photo\{[^}]*aspect-ratio:/, `${id} contributes a rendered media-frame aspect ratio`);
+      }
+      continue;
+    }
+    if (row.name === 'Filter Chip') {
+      const f = getPurposeFamily('purpose:form.filter');
+      const r = renderPurposeFamily(env, f.id, {visual: VISUAL, variant: {layout: 'bar', chips: 'toggles'}, props: f.example.props, content: f.example.content, id: 'filter-chips'});
+      assert.equal(r.ok, true, JSON.stringify(r.errors));
+      assert.match(r.html, /class="pf-chips"/);
+      assert.equal((r.html.match(/data-behavior="toggle"/g) ?? []).length, f.example.content.chips.length);
+      continue;
+    }
+    const expectation = legacyExpectations[row.name];
+    assert.ok(expectation, `${row.name} has an explicit renderer assertion`);
+    const [type, overrides, marker] = expectation;
+    assert.ok(row.materialIds.includes(`component:${type}`), `${row.name} material id maps to Blueprint node ${type}`);
+    const node = {...structuredClone(nodeSpecs[type].example), ...overrides};
+    const inserted = edit.insertNode(legacyBase, {parent: [], node});
+    assert.equal(inserted.ok, true, `${row.name} node insertion`);
+    const built = compileBlueprint(inserted.doc, {include: ['html', 'css', 'manifest']});
+    assert.equal(built.ok, true, `${row.name} Blueprint compile: ${JSON.stringify(built.errors)}`);
+    assert.ok(built.value.html.includes(marker), `${row.name} renderer output includes ${marker}`);
+  }
 });

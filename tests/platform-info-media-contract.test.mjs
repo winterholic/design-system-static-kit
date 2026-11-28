@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createPlatform} from '../src/platform/examples/minimal.mjs';
+import {assembleComponents} from '../src/service/index.mjs';
 import {validatePurposeFamily} from '../src/platform/families/kit.mjs';
 import {validateComponentContracts, ALL_COMPONENT_CONTRACTS} from '../src/platform/families/contracts.mjs';
 import {getPurposeFamily, renderPurposeFamily, listPurposeFamilies} from '../src/platform/families/index.mjs';
@@ -130,4 +131,128 @@ test('info-media: component contracts include info-media families and pass valid
     assert.ok(c, `contract for ${id} must exist in ALL_COMPONENT_CONTRACTS`);
     assert.equal(c.layer, 'Purpose');
   }
+});
+
+test('info-media: every declared multi-value variant and prop has a matching CSS rule', () => {
+  const axisAttributes = {
+    tone: 'tone', size: 'size', shape: 'shape', spacing: 'spacing', layout: 'layout', density: 'density',
+    variant: 'variant', style: 'style', trend: 'trend', aspectRatio: 'ratio', fit: 'fit', orientation: 'orientation',
+    placement: 'placement', align: 'align',
+  };
+  for (const family of INFO_MEDIA_FAMILIES) {
+    const css = `${family.sharedCss}\n${family.css}`;
+    for (const [axis, values] of Object.entries({...family.variants, ...family.props})) {
+      if (values.length < 2 || axis === 'placement') continue; // placement changes markup order, not a visual selector.
+      const attr = axisAttributes[axis];
+      assert.ok(attr, `${family.id}.${axis} needs an explicit CSS attribute mapping`);
+      for (const value of values) {
+        assert.match(css, new RegExp(`\\[data-${attr}=["']${value}["']\\]`), `${family.id}.${axis}=${value} must affect styling`);
+      }
+    }
+  }
+});
+
+test('info-media: every declared variant and prop value reaches the rendered markup', () => {
+  const axisAttributes = {
+    tone: 'tone', size: 'size', shape: 'shape', spacing: 'spacing', layout: 'layout', density: 'density',
+    variant: 'variant', style: 'style', trend: 'trend', aspectRatio: 'ratio', fit: 'fit', orientation: 'orientation',
+    placement: 'placement', align: 'align',
+  };
+  for (const family of INFO_MEDIA_FAMILIES) {
+    for (const [kind, axes] of [['variant', family.variants], ['props', family.props]]) {
+      for (const [axis, values] of Object.entries(axes)) {
+        if (axis === 'placement') continue; // validated by the before/after caption-order assertion below.
+        for (const value of values) {
+          const rendered = renderPurposeFamily(env, family.id, {
+            visual: 'family:soft',
+            variant: {...family.example.variant, ...(kind === 'variant' ? {[axis]: value} : {})},
+            props: {...family.example.props, ...(kind === 'props' ? {[axis]: value} : {})},
+            content: family.example.content,
+          });
+          assert.equal(rendered.ok, true, `${family.id}.${kind}.${axis}=${value}: ${JSON.stringify(rendered.errors)}`);
+          assert.ok(rendered.html.includes(`data-${axisAttributes[axis]}="${value}"`), `${family.id}.${kind}.${axis}=${value} reaches markup`);
+        }
+      }
+    }
+  }
+});
+
+test('info-media: Figure placement moves its caption around the image in rendered output', () => {
+  const family = INFO_MEDIA_FAMILIES.find(f => f.id === 'purpose:media.figure-caption');
+  const render = placement => renderPurposeFamily(env, family.id, {
+    visual: 'family:soft', variant: {placement}, props: family.example.props, content: family.example.content,
+  });
+  const top = render('top'), bottom = render('bottom');
+  assert.equal(top.ok, true);
+  assert.equal(bottom.ok, true);
+  assert.ok(top.html.indexOf('<figcaption') < top.html.indexOf('<img'));
+  assert.ok(bottom.html.indexOf('<img') < bottom.html.indexOf('<figcaption'));
+});
+
+test('info-media: audio player is included in runtime shipping when its play control is rendered', () => {
+  const result = assembleComponents({
+    context: 'general', mode: 'light', density: 'comfortable',
+    items: [{purpose: 'purpose:media.audio-player', visual: 'family:soft', content: {title: '재생 확인', duration: '02:00'}}],
+  });
+  assert.equal(result.ok, true, JSON.stringify(result.errors));
+  assert.match(result.value.html, /data-audio-play/);
+  assert.match(result.value.script, /data-audio-play/);
+});
+
+test('info-media: duplicate component ids are rejected before they can produce duplicate ARIA targets', () => {
+  const result = assembleComponents({
+    context: 'general', mode: 'light', density: 'comfortable',
+    items: [0, 1].map(() => ({purpose: 'purpose:info.accordion', visual: 'family:soft', id: 'duplicate-panel', content: {items: [{title: 'A', content: '1'}, {title: 'B', content: '2'}]}})),
+  });
+  assert.equal(result.ok, false);
+  assert.match(result.errors[0].message, /id가 겹칩니다/);
+});
+
+test('info-media: hostile user content is HTML-escaped in family output', () => {
+  const hostile = '\"><img src=x onerror=alert(1)>';
+  for (const family of INFO_MEDIA_FAMILIES) {
+    const content = structuredClone(family.example.content);
+    const replace = value => {
+      if (typeof value === 'string') return hostile;
+      if (Array.isArray(value)) return value.map(replace);
+      if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, replace(child)]));
+      return value;
+    };
+    const rendered = renderPurposeFamily(env, family.id, {
+      visual: 'family:soft', variant: family.example.variant, props: family.example.props,
+      content: replace(content), id: `escape-${family.id.slice('purpose:'.length).replaceAll('.', '-')}`,
+    });
+    assert.equal(rendered.ok, true, `${family.id}: ${JSON.stringify(rendered.errors)}`);
+    assert.doesNotMatch(rendered.html, /<img src=x onerror=/, `${family.id} user content must not create an image tag`);
+    assert.ok(rendered.html.includes('&lt;img src=x onerror='), `${family.id} user HTML is escaped`);
+  }
+});
+
+test('info-media: declared array content limits are enforced by their renderers', () => {
+  const cases = [
+    ['purpose:info.avatar-group', {items: Array.from({length: 11}, (_, i) => ({name: `Person ${i}`}))}],
+    ['purpose:info.accordion', {items: Array.from({length: 11}, (_, i) => ({title: `T${i}`, content: `C${i}`}))}],
+    ['purpose:info.keyboard-shortcut', {keys: ['1', '2', '3', '4', '5']}],
+    ['purpose:info.metadata-row', {items: Array.from({length: 7}, (_, i) => ({label: `L${i}`, value: `V${i}`}))}],
+    ['purpose:media.carousel', {label: 'Gallery', items: Array.from({length: 9}, (_, i) => ({title: `S${i}`, src: `${i}.jpg`, alt: `Slide ${i}`}))}],
+  ];
+  for (const [id, override] of cases) {
+    const family = INFO_MEDIA_FAMILIES.find(f => f.id === id);
+    const rendered = renderPurposeFamily(env, id, {
+      visual: 'family:soft', variant: family.example.variant, props: family.example.props,
+      content: {...family.example.content, ...override},
+    });
+    assert.equal(rendered.ok, false, `${id} must reject data outside its declared bounds`);
+    assert.ok(rendered.errors.some(e => e.code === 'P_RENDER'), `${id} reports a renderer diagnostic`);
+  }
+});
+
+test('info-media: avatar image errors reveal the initials fallback in shipped runtime', () => {
+  const result = assembleComponents({
+    context: 'general', mode: 'light', density: 'comfortable',
+    items: [{purpose: 'purpose:info.avatar', visual: 'family:soft', content: {name: 'A Person', initials: 'AP', src: 'avatar.jpg'}}],
+  });
+  assert.equal(result.ok, true, JSON.stringify(result.errors));
+  assert.match(result.value.html, /class="pf-avatar-fallback"(?:\s|>)/);
+  assert.match(result.value.script, /pf-avatar-fallback/);
 });

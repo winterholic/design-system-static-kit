@@ -64,12 +64,16 @@ export function assembleComponents(request) {
     if (unknown) return fail([unknown]);
     if (typeof request.context !== 'string' || !request.context) return fail([badRequest('$args.context', '맥락(context) 문자열이 필요합니다.')]);
     if (!Array.isArray(request.items) || request.items.length < 1 || request.items.length > 8) return fail([badRequest('$args.items', 'items는 목적 패밀리 1~8개의 배열이어야 합니다.')]);
+    const purposeIds = new Set();
     for (const [i, item] of request.items.entries()) {
       if (!isPlain(item)) return fail([badRequest(`$args.items[${i}]`, '항목은 목적 패밀리 객체여야 합니다.')]);
       const bad = checkKeys(item, ITEM_KEYS, `$args.items[${i}]`);
       if (bad) return fail([bad]);
       if (typeof item.purpose !== 'string' || typeof item.visual !== 'string') return fail([badRequest(`$args.items[${i}]`, 'purpose와 visual id가 필요합니다.')]);
       for (const key of ['variant', 'props', 'content']) if (item[key] !== undefined && !isPlain(item[key])) return fail([badRequest(`$args.items[${i}].${key}`, `${key}는 객체여야 합니다.`)]);
+      const uid = item.id ?? item.purpose.slice('purpose:'.length).replace('.', '-');
+      if (typeof uid === 'string' && purposeIds.has(uid)) return fail([badRequest(`$args.items[${i}].id`, `id가 겹칩니다: ${uid}. 목적 패밀리마다 다른 id를 주세요.`)]);
+      if (typeof uid === 'string') purposeIds.add(uid);
     }
     if (request.actions !== undefined) {
       if (!Array.isArray(request.actions) || request.actions.length > 12) return fail([badRequest('$args.actions', 'actions는 액션 컴포넌트 0~12개 배열이어야 합니다.')]);

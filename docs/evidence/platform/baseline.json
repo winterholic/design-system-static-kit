@@ -348,88 +348,88 @@
     "note": "Coolors 팔레트(권리 미확인)를 쓰므로 신규 경로의 기준이 아니라 축소 폭 비교용이다"
   },
   "platform": {
-    "contractVersion": "0.8.0",
+    "contractVersion": "0.9.0",
     "registered": {
       "palette": 9,
       "subtokenSet": 25,
-      "typeSystem": 14,
+      "typeSystem": 41,
       "baseComponent": 10,
       "family": 12,
-      "purposeFamily": 53,
+      "purposeFamily": 65,
       "styleContext": 54,
       "axisValue": 79
     },
     "assemblable": {
-      "attempted": 581256,
-      "assemblable": 567798,
+      "attempted": 1744740,
+      "assemblable": 1712172,
       "perPattern": {
         "commerce-listing": {
           "purpose": "commerce",
-          "assemblable": 14400,
+          "assemblable": 20160,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 818
+          "verified": 1138
         },
         "dashboard-grid": {
           "purpose": "work-dashboard",
-          "assemblable": 211680,
+          "assemblable": 987840,
           "layoutAxes": {
             "shells": 4,
             "widths": 3,
             "densities": 3
           },
-          "verified": 5916
+          "verified": 27476
         },
         "docs-reference": {
           "purpose": "editorial-docs",
-          "assemblable": 7776,
+          "assemblable": 20736,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 450
+          "verified": 1170
         },
         "editorial-article": {
           "purpose": "editorial-docs",
-          "assemblable": 15552,
+          "assemblable": 46656,
           "layoutAxes": {
             "shells": 4,
             "widths": 2,
             "densities": 3
           },
-          "verified": 672
+          "verified": 1968
         },
         "erp-workspace": {
           "purpose": "work-dashboard",
-          "assemblable": 141750,
+          "assemblable": 283500,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 7893
+          "verified": 15768
         },
         "marketing-landing": {
           "purpose": "saas-landing",
-          "assemblable": 176640,
+          "assemblable": 353280,
           "layoutAxes": {
             "shells": 3,
             "widths": 2,
             "densities": 3
           },
-          "verified": 10258
+          "verified": 20498
         }
       },
       "note": "(패턴 × 셸 × 폭 × 밀도 × 모드) × (팔레트 × 세트 × 타이포 × 시각 패밀리) 중 관계·색·서체 평가를 통과한 수. 렌더하지 않고 계산한다"
     },
     "verified": {
-      "attempted": 26007,
-      "verified": 26007,
-      "distinctOutputs": 26002,
+      "attempted": 68018,
+      "verified": 68018,
+      "distinctOutputs": 68013,
       "failures": {},
       "note": "실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)"
     },
@@ -438,14 +438,14 @@
         "light": 224,
         "dark": 221
       },
-      "facePairs": 14,
+      "facePairs": 41,
       "families": 12,
       "styleMaterials": {
         "surface": {
           "registered": 5,
           "attempted": 23,
-          "verified": 20,
-          "usedInOutput": 20,
+          "verified": 19,
+          "usedInOutput": 19,
           "rejectedCases": [
             {
               "pattern": "commerce-listing",
@@ -455,6 +455,12 @@
             },
             {
               "pattern": "dashboard-grid",
+              "material": "surface:tonal-sheet",
+              "code": "X11",
+              "reason": "axis-value:motion.lively × axis-value:elevation.flat: X11: 움직임은 깊이 변화로 설명되어야 하는데 flat에는 변화할 깊이가 없습니다."
+            },
+            {
+              "pattern": "erp-workspace",
               "material": "surface:tonal-sheet",
               "code": "X11",
               "reason": "axis-value:motion.lively × axis-value:elevation.flat: X11: 움직임은 깊이 변화로 설명되어야 하는데 flat에는 변화할 깊이가 없습니다."
@@ -475,10 +481,10 @@
           "rejectedCases": []
         },
         "background": {
-          "registered": 5,
-          "attempted": 18,
-          "verified": 14,
-          "usedInOutput": 14,
+          "registered": 13,
+          "attempted": 35,
+          "verified": 25,
+          "usedInOutput": 25,
           "rejectedCases": [
             {
               "pattern": "commerce-listing",
@@ -493,8 +499,44 @@
               "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
             },
             {
+              "pattern": "dashboard-grid",
+              "material": "background:dark-premium",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
+              "pattern": "erp-workspace",
+              "material": "background:aurora-glow-geometric",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
+              "pattern": "erp-workspace",
+              "material": "background:soft-gradient-organic",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
               "pattern": "marketing-landing",
               "material": "background:aurora-glow-geometric",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
+              "pattern": "marketing-landing",
+              "material": "background:dark-premium",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
+              "pattern": "marketing-landing",
+              "material": "background:mesh-field",
+              "code": "X04",
+              "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
+            },
+            {
+              "pattern": "marketing-landing",
+              "material": "background:radial-focus",
               "code": "X04",
               "reason": "axis-value:elevation.hard × axis-value:backdrop.gradient: X04: 굵은 오프셋 그림자는 단색 바탕에서만 윤곽이 분명합니다."
             },
@@ -527,7 +569,7 @@
           "usedInOutput": 38,
           "rejectedCases": []
         },
-        "distinctOutputs": 98
+        "distinctOutputs": 108
       },
       "purposeFamilies": {
         "verified": 4,
@@ -542,7 +584,7 @@
         "light": 224,
         "dark": 221
       },
-      "verifiedFacePairs": 14,
+      "verifiedFacePairs": 38,
       "verifiedFamilies": 12,
       "note": "families/verifiedFamilies는 시각 패밀리 수다. purposeFamilies.verified/ids는 품질 검증을 통과한 대표 페이지 Blueprint의 materials.purposes에서 센 고유 목적 패밀리이며 등록 수와 다르다."
     },

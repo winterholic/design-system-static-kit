@@ -723,8 +723,7 @@ const KEYS = family => Object.keys(SPEC[family.id].checks);
 /** 조건 문구에 키가 들어 있는가. */
 const conditionOf = (family, key) => family.a11y.conditions.filter(c => c.includes(key));
 
-test('every contract condition of the 65 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
-  assert.equal(PURPOSE_FAMILIES.length, 65);
+test('every contract condition of the registered purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
   assert.deepEqual(Object.keys(SPEC).sort(), [...PURPOSE_FAMILY_IDS].sort(), 'SPEC covers exactly the registered families');
   for (const f of PURPOSE_FAMILIES) {
     const spec = SPEC[f.id];

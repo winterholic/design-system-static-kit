@@ -141,7 +141,7 @@ REQUEST §6.2 N의 커머스 패턴 11항목의 등록 재료, Blueprint 사용�
 J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-013)을 따르며, 기존 시스템 재료 11종과 신규 목적 패밀리 16종(총 27항목)으로 구성된다.
 
 ### J 계열 (정보 표시 15항목)
-- 기존 재료 매핑 5종: Badge(`base-component:badge`), Chip(`purpose:card.feature`), Filter Chip(`purpose:form.search`), Tag(`base-component:badge`), Divider(`base-component:card-surface`).
+- 기존 재료 매핑 5종: Badge(`component:tags`, `variant=badges`), Chip(`component:tags`, `variant=chips`), Filter Chip(`purpose:form.filter`, `chips=toggles`), Tag(`component:tags`, `variant=outline`), Divider(`component:divider`). 이 값들은 설계 레지스트리 재료와 2.4.0 Blueprint 노드 렌더 출력으로 대조한다.
 - 신규 목적 패밀리 10종:
   - `purpose:info.status-badge`: 상태별 시각 배지
   - `purpose:info.avatar`: 단일 사용자 아바타 (이미지, 이니셜, fallback)
@@ -155,9 +155,9 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
   - `purpose:info.stat-comparison`: 지표 비교 및 증감 트렌드
 
 ### K 계열 (미디어 및 콘텐츠 12항목)
-- 기존 재료 매핑 6종: Image(`media:fine-editorial`), Media Frame(`media:fine-editorial`), Gallery(`purpose:card.product`), Video Frame(`media:fine-editorial`), Quote(`purpose:editorial.quote`), Rich Text Content(`purpose:editorial.content`).
+- 기존 재료 매핑 6종: Image(`component:media`, `kind=photo`), Media Frame(6개 `media:*` 스타일 재료), Gallery(`component:gallery`), Video Frame(`component:media`, `kind=video`), Quote(`component:quote`), Rich Text Content(`component:prose`). Blueprint 노드 출력 또는 스타일 재료 조립 출력으로 실제 역할을 확인한다.
 - 신규 목적 패밀리 6종:
-  - `purpose:media.responsive-image`: 반응형 이미지 (`srcset`, `sizes`)
+  - `purpose:media.responsive-image`: 컨테이너 폭과 비율에 맞춰 표시하는 반응형 이미지
   - `purpose:media.carousel`: 인터랙티브 슬라이더 및 인디케이터 (`INFO_MEDIA_RUNTIME`)
   - `purpose:media.audio-player`: 시맨틱 오디오 플레이어 UI 및 컨트롤
   - `purpose:media.file-preview`: 파일 형식별 미리보기 및 다운로드 정보
@@ -165,9 +165,9 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
   - `purpose:media.figure-caption`: 시맨틱 캡션 포함 미디어 피규어 (`<figure>`, `<figcaption>`)
 
 ### 런타임 및 접근성 계약
-- 인터랙티브 4종(`accordion`, `collapsible`, `carousel`, `image-comparison`)은 `INFO_MEDIA_RUNTIME` 위임 핸들러를 통해 `actionRuntimeFor`에서 동적으로 주입된다.
+- 인터랙션 5종(`accordion`, `collapsible`, `carousel`, `audio-player`, `image-comparison`)과 이미지 실패 대체 표시 2종(`avatar`, `avatar-group`)은 `INFO_MEDIA_RUNTIME`을 통해 필요한 경우에만 동적으로 주입된다.
 - WAI-ARIA 명세 준수: `aria-expanded`, `aria-controls`, `role="region"`, `role="group"`, `aria-roledescription="slide"`, `aria-valuenow` 등을 철저히 검증한다.
-- 모든 신규 목적 패밀리는 `materials.purposes`를 통해 Blueprint 컴파일 및 왕복 검증을 통과한다.
+- J·K 27개 요구 행은 Manifest coverage와 각 실제 렌더 경로를 모두 확인한다. 신규 목적 패밀리 16종은 `materials.purposes` Blueprint 왕복, 기존 컴포넌트 노드는 트리 노드 Blueprint, 미디어 프레임은 스타일 재료 조립으로 확인한다.
 - Studio 선택지(`blockedBy: no-studio-choice`)는 Track F 소유이므로 카탈로그 노출(`catalog-visible`) 상태로 관리된다.
 
 ### 분류 보정(독립 148 · 변형 37 · 복합 22)
@@ -191,7 +191,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 148 · 변형 37 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 51.
+집계: 독립 재료 147 · 변형 38 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 51.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -329,7 +329,7 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:j-02-status-badge` | Status Badge | 독립 재료 | direct | catalog-visible | purpose:info.status-badge |
 | `req:comp:j-03-chip` | Chip | 변형 | variant | verified | component:tags |
 | `req:comp:j-04-filter-chip` | Filter Chip | 변형 | variant | catalog-visible | purpose:form.filter |
-| `req:comp:j-05-tag` | Tag | 독립 재료 | direct | verified | component:tags |
+| `req:comp:j-05-tag` | Tag | 변형 | variant | verified | component:tags |
 | `req:comp:j-06-avatar` | Avatar | 독립 재료 | direct | verified | purpose:info.avatar |
 | `req:comp:j-07-avatar-group` | Avatar Group | 독립 재료 | direct | verified | purpose:info.avatar-group |
 | `req:comp:j-08-accordion` | Accordion | 독립 재료 | direct | verified | purpose:info.accordion |
