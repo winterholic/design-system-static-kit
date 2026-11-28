@@ -406,7 +406,7 @@ test('폭 구간 규칙이 앞 구간 위에 쌓여도 선언이 새지 않는�
   }
 });
 
-test('회귀 방지: 새 목적 패밀리가 추가되어도 layoutSpecimen(stable)과 layoutFingerprint는 변하지 않고, 레이아웃 변경은 불일치로 검출된다', async () => {
+test('회귀 방지: 재료를 추가해도 stable 표본 지문은 유지되고, 레이아웃 변경은 새 지문을 만든다', async () => {
   // 1. 24개 레이아웃 모두에 기준 표본이 등록되어 있어야 한다.
   assert.equal(Object.keys(LAYOUT_BASELINE_SPECIMENS).length, 24);
   for (const m of LAYOUTS) {
@@ -435,7 +435,8 @@ test('회귀 방지: 새 목적 패밀리가 추가되어도 layoutSpecimen(stab
   const fpBefore = layoutFingerprint(env, target);
   const specimenBefore = layoutSpecimen(env, target, {stable: true});
 
-  // stable: true 표본과 지문은 불변
+  // 실제 플랫폼 레지스트리에 임시 재료를 하나 등록한다. stable 표본은 이와 무관해야 한다.
+  env.registry.kind('layout').register({...target, id: 'layout:temporary-stability-probe', label: '임시 안정화 시험 재료'});
   const fpAfter = layoutFingerprint(env, target);
   const specimenAfter = layoutSpecimen(env, target, {stable: true});
   assert.equal(fpBefore, fpAfter, '재료 추가 상황에서도 layoutFingerprint 불변');
@@ -443,9 +444,9 @@ test('회귀 방지: 새 목적 패밀리가 추가되어도 layoutSpecimen(stab
 
   // 4. 반대로 레이아웃 슬롯 구성이나 영역이 실제로 변경되면 layoutFingerprint가 불일치를 검출해야 한다.
   const mutatedLayout = clone(target);
-  mutatedLayout.slots[0].name = 'modified_head';
-  const mutatedOut = compileLayout(mutatedLayout, specimenBefore.map(f => ({slot: f.slot === 'head' ? 'modified_head' : f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
-  const mutatedHash = cyrb53(mutatedOut.html + mutatedOut.css);
+  mutatedLayout.bands[0].columns = [1, 1];
+  mutatedLayout.bands[0].areas = 'head head | tiles tiles';
+  const mutatedHash = layoutFingerprint(env, mutatedLayout);
   assert.notEqual(fpBefore, mutatedHash, '레이아웃 슬롯/구조 변경 시 지문 불일치 검출');
 });
 

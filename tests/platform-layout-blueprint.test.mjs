@@ -2,9 +2,12 @@
 // 그대로 나오고, 같은 입력은 같은 바이트이며, 재료 질의가 같은 재료를 돌려준다.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {compileBlueprint, validateBlueprint, getComponentSpec, listPlatformMaterials, getPlatformMaterial, getMaterial} from '../src/service/index.mjs';
 import {platformEnv} from '../src/platform/compile.mjs';
-import {LAYOUT_COMPONENTS, LAYOUT_COMPONENT_BY_ID, renderLayoutComponent} from '../src/platform/families/contracts.mjs';
+import {LAYOUT_COMPONENTS, LAYOUT_COMPONENT_BY_ID, ALL_COMPONENT_CONTRACTS, renderLayoutComponent} from '../src/platform/families/contracts.mjs';
+import {layoutRuntimeFor} from '../src/platform/families/layout.mjs';
+import {assembleSpecimen} from '../src/platform/layouts.mjs';
 import * as edit from '../src/edit/index.mjs';
 
 const env = platformEnv();
@@ -40,7 +43,7 @@ const LAYOUT_CASES = {
   'component:center': {
     node: {type: 'hero', variant: 'centered', title: '가운데 히어로', body: '본문 내용'},
     since: '2.4.0',
-    expect: /hero--centered|data-variant="centered"/,
+    expect: /data-variant="centered"/,
   },
   'component:sticky-region': {
     node: {type: 'actions', items: [{label: '고정 동작', href: '#main', variant: 'primary'}]},
@@ -102,4 +105,78 @@ test('L registry query: layout materials are queried consistently via listPlatfo
   const layoutList = listPlatformMaterials({kind: 'layout', limit: 50});
   assert.equal(layoutList.ok, true);
   assert.equal(layoutList.value.total, 24);
+});
+
+test('§6.2 L: every covered row has a material with a passing rendered-output probe', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json', import.meta.url), 'utf8'));
+  const materials = new Map(manifest.materials.map(material => [material.id, material]));
+  const rows = manifest.requirements.filter(row => row.section === '§6.2 L');
+  assert.equal(rows.length, 14, 'REQUEST §6.2 L has 14 rows');
+  assert.deepEqual(rows.filter(row => row.coverage === 'missing').map(row => row.name).sort(), ['Container', 'Resizable Panel', 'Stack'], 'only rows without a semantically matching material remain missing');
+  for (const row of rows) {
+    if (row.coverage === 'missing') {
+      assert.deepEqual(row.materialIds, [], `${row.name}: missing rows do not claim a material`);
+      continue;
+    }
+    assert.ok(row.materialIds.length, `${row.name}: covered rows have a material`);
+    for (const id of row.materialIds) {
+      const material = materials.get(id);
+      assert.ok(material, `${row.name}: ${id} exists in Manifest`);
+      assert.equal(material.evidence?.probe?.ran, true, `${row.name}: ${id} ran a rendered-output probe`);
+      assert.equal(material.evidence?.probe?.ok, true, `${row.name}: ${id} rendered into output`);
+      assert.ok(material.evidence?.outputHash, `${row.name}: ${id} has output evidence`);
+    }
+  }
+});
+
+test('the four reused E3 layout mappings render their named layout behavior', () => {
+  const cases = [
+    ['layout:equal-grid', ['data-layout="equal-grid"', 'data-flow="grid"'], ['grid-template-columns']],
+    ['layout:centered-hero', ['data-layout="centered-hero"'], ['justify-content:center']],
+    ['layout:sticky-action-layout', ['data-layout="sticky-action-layout"'], ['position:sticky', 'bottom:0']],
+    ['layout:master-detail', ['data-layout="master-detail"'], ['max-height:min(70vh,40rem)', 'overflow:auto']],
+  ];
+  for (const [id, htmlFragments, cssFragments] of cases) {
+    const output = assembleSpecimen(env, id);
+    assert.equal(output.ok, true, `${id} assembles from its registered E3 material`);
+    for (const fragment of htmlFragments) assert.ok(output.value.html.includes(fragment), `${id} HTML contains ${fragment}`);
+    for (const fragment of cssFragments) assert.ok(output.value.css.includes(fragment), `${id} CSS contains ${fragment}`);
+  }
+});
+
+test('L renderers consume declared values, escape user content, and include runtime only for resizable panels', () => {
+  const contracts = new Map(ALL_COMPONENT_CONTRACTS.map(contract => [contract.id, contract]));
+  const declaredProps = {
+    'component:responsive-grid': ['items'],
+    'component:center': ['content', 'label'],
+    'component:sticky-region': ['content', 'label'],
+    'component:scroll-area': ['content', 'label'],
+    'component:resizable-panel': ['direction', 'first', 'label', 'left', 'right', 'second', 'value'],
+  };
+  for (const [id, expected] of Object.entries(declaredProps)) {
+    assert.deepEqual(Object.keys(contracts.get(id).props).sort(), expected, `${id} contract lists exactly the renderer inputs`);
+    assert.deepEqual(Object.keys(contracts.get(id).content), [], `${id} does not declare a separate content object the renderer never reads`);
+  }
+  const cases = [
+    ['component:responsive-grid', {items: ['<b>grid</b>']}, ['data-component="component:responsive-grid"', '&lt;b&gt;grid&lt;/b&gt;']],
+    ['component:center', {content: '<b>center</b>'}, ['data-component="component:center"', '&lt;b&gt;center&lt;/b&gt;']],
+    ['component:sticky-region', {content: '<b>sticky</b>'}, ['data-component="component:sticky-region"', '&lt;b&gt;sticky&lt;/b&gt;']],
+    ['component:scroll-area', {content: '<b>scroll</b>'}, ['data-component="component:scroll-area"', '&lt;b&gt;scroll&lt;/b&gt;']],
+    ['component:resizable-panel', {id: 'panel" onfocus="x', direction: 'vertical', value: 35, first: '<b>first</b>', second: '<b>second</b>', label: '<b>resize</b>'}, ['data-component="component:resizable-panel"', 'data-direction="vertical"', 'aria-valuenow="35"', 'aria-orientation="horizontal"', 'flex:0 0 35%', 'flex:0 0 65%', '&lt;b&gt;first&lt;/b&gt;', '&lt;b&gt;second&lt;/b&gt;', 'aria-label="&lt;b&gt;resize&lt;/b&gt;"', 'id="panel&quot; onfocus=&quot;x"']],
+  ];
+  for (const [id, props, expected] of cases) {
+    const html = renderLayoutComponent(id, props);
+    for (const fragment of expected) assert.ok(html.includes(fragment), `${id} renders ${fragment}`);
+    assert.ok(!html.includes('<b>'), `${id} escapes user HTML`);
+  }
+  assert.match(renderLayoutComponent('component:resizable-panel'), /data-resizable-handle/);
+  for (const id of ['component:center', 'component:sticky-region', 'component:scroll-area']) {
+    assert.ok(renderLayoutComponent(id, {label: `${id} label`}).includes(`${id} label`), `${id} reads the declared label fallback`);
+  }
+  const aliases = renderLayoutComponent('component:resizable-panel', {left: 'left alias', right: 'right alias'});
+  assert.ok(aliases.includes('left alias') && aliases.includes('right alias'), 'resizable panel reads its left/right aliases');
+  assert.equal(layoutRuntimeFor(['component:center']), '', 'non-interactive layouts do not receive the resize runtime');
+  assert.match(layoutRuntimeFor(['component:resizable-panel']), /kit-panel-resize/);
+  assert.throws(() => renderLayoutComponent('component:resizable-panel', {value: 'not-a-number'}), /finite number/i);
+  assert.throws(() => renderLayoutComponent('component:resizable-panel', {direction: 'diagonal'}), /direction.*horizontal.*vertical/i);
 });
