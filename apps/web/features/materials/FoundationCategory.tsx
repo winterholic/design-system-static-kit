@@ -153,7 +153,7 @@ function Layout({data}: {data: Exhibit}) {
       split: {gridTemplateColumns: '3fr 2fr'}, bento: {gridTemplateAreas: '"a a b" "c d d"', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'},
     };
     const sampleStyle: CSSProperties = isPrimitive ? primitiveStyles[item.id.replace('layout-primitive:', '')] : {
-      gridTemplateColumns: mobile!.columns, gridTemplateAreas: mobile!.template,
+      '--layout-xs-columns': mobile!.columns, '--layout-xs-areas': mobile!.template,
       '--layout-sm-columns': layoutPreviewGrid(item, item.bands[1] ?? item.bands.at(-1)).columns,
       '--layout-sm-areas': layoutPreviewGrid(item, item.bands[1] ?? item.bands.at(-1)).template,
       '--layout-md-columns': medium!.columns, '--layout-md-areas': medium!.template,
@@ -161,7 +161,7 @@ function Layout({data}: {data: Exhibit}) {
     } as CSSProperties;
     return <li key={item.id} className={styles.exhibitCard}>
       <h3>{item.label}</h3><p className={styles.cardMeta}>{isPrimitive ? item.css : item.pattern}</p>
-      <div className={styles.layoutSample} aria-label={`${item.label} 레이아웃 실제 슬롯 예시`} style={sampleStyle}>
+      <div className={styles.layoutSample} aria-label={`${item.label} 레이아웃 실제 슬롯 예시`} data-layout-xs-areas={isPrimitive ? undefined : mobile!.template} data-layout-lg-areas={isPrimitive ? undefined : preview!.template} style={sampleStyle}>
         {(isPrimitive ? ['a', 'b', 'c', 'd'].map((area, index) => ({name: area, label: `${item.id.replace('layout-primitive:', '')} ${index + 1}`})) : slots.filter((slot: AnyRecord) => previewAreas.includes(slot.name))).map((slot: AnyRecord) => <span key={slot.name} style={isPrimitive && item.id.endsWith(':bento') ? {gridArea: slot.name} : preview && !isPrimitive ? {gridArea: slot.name} : undefined}>{slot.label ?? slot.name}</span>)}
       </div>
       <Facts title="사용 조건">{isPrimitive ? <span>배치 원형은 `{item.id}` 계열의 구조 보조 재료입니다.</span> : <><span>컨테이너 {item.container.width} · 최소 콘텐츠 폭 {item.minContent}px</span><span>{item.contexts.join(' · ')}</span><span>밀도: {item.density.allowed.join(' · ')} (기본 {item.density.default})</span></>}</Facts>

@@ -244,7 +244,7 @@
 .iconGrid { width: 100%; grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr)); }
 .iconCell { min-height: 5rem; }
 .iconCell svg { flex: none; width: 28px; height: 28px; }
-.layoutSample { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: var(--space-2); width: 100%; min-height: 5rem; padding: var(--space-2); border: 1px dashed var(--color-line); border-radius: var(--radius); }
+.layoutSample { display: grid; grid-template-columns: var(--layout-xs-columns, repeat(auto-fit, minmax(0, 1fr))); grid-template-areas: var(--layout-xs-areas, none); gap: var(--space-2); width: 100%; min-height: 5rem; padding: var(--space-2); border: 1px dashed var(--color-line); border-radius: var(--radius); }
 .layoutSample span { display: grid; place-items: center; min-width: 0; min-height: 40px; padding: var(--space-2); background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 4px; font-size: var(--text-xs); overflow-wrap: anywhere; }
 .detailLink { display: inline-flex; align-items: center; min-height: 44px; margin-top: auto; color: var(--color-accent); font-weight: var(--weight-strong); text-underline-offset: 3px; }
 .chartSample { width: 100%; min-width: 0; overflow: visible; }

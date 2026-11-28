@@ -38,8 +38,12 @@ for (const width of [390, 1280]) {
       }
       await page.goto('/materials/foundations?category=layout');
       await expect(page.getByRole('link', {name: /상세 렌더·토큰·구성 보기/}).first()).toHaveAttribute('href', /\/components\/layout%3A/);
-      const layouts = await page.locator('[data-category-panel] [class*="layoutSample"]').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).gridTemplateAreas));
-      expect(new Set(layouts).size).toBeGreaterThan(10);
+      const layouts = await page.locator('[data-category-panel] [class*="layoutSample"]').evaluateAll(nodes => nodes.filter(node => node.hasAttribute('data-layout-xs-areas')).map(node => ({
+        actual: getComputedStyle(node).gridTemplateAreas,
+        expected: node.dataset[window.innerWidth >= 1180 ? 'layoutLgAreas' : 'layoutXsAreas'],
+      })));
+      expect(new Set(layouts.map(item => item.actual)).size).toBeGreaterThan(10);
+      expect(layouts.every(item => item.actual === item.expected)).toBe(true);
       await page.goto('/materials/foundations?category=chart');
       await expect(page.locator('[data-category-panel] [class*="chartSample"] svg').first()).toBeVisible();
       await expect(page.getByRole('link', {name: /차트 설정·데이터·토큰 상세 보기/}).first()).toHaveAttribute('href', /\/components\/chart-preset%3A/);
@@ -74,7 +78,8 @@ for (const width of [390, 1280]) {
       expect(decorations.filter(item => item.image !== 'none').length).toBeGreaterThanOrEqual(8);
       expect(decorations.some(item => item.mask !== 'none')).toBe(true);
       const frosted = page.getByRole('heading', {name: '제한된 프로스트 글라스'}).locator('..').locator('[class*="backgroundSample"]');
-      await expect(frosted).toHaveCSS('backdrop-filter', 'blur(12px)');
+      const blur = await frosted.evaluate(node => getComputedStyle(node, '::before').backdropFilter);
+      expect(blur).toBe('blur(12px)');
     });
   });
 }
