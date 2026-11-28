@@ -4,8 +4,8 @@
   "summary": {
     "totalTasks": 47,
     "byStatus": {
-      "Verified": 17,
-      "Implemented": 11,
+      "Verified": 18,
+      "Implemented": 10,
       "Pending": 16,
       "In Progress": 2,
       "Completed": 1
@@ -1290,9 +1290,9 @@
         "npm run coverage:materials:check",
         "node scripts/check-generated.mjs"
       ],
-      "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "비브라우저 검증(원격 main rebase 후): node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측' 통과(1100 pass, 0 fail; Chromium 의존 5개 시험 이름 패턴 제외). 상세/Core 단위시험 9/9, npm run web:build 성공(880/880 정적 페이지), coverage:materials:check MANIFEST MATCH(1480 materials/406 requirements), node scripts/check-generated.mjs REPRODUCIBLE(4560 files). 브라우저 시험은 기존 Chromium 실행 시 Mach IPC Permission denied (1100) 관찰 및 현재 작업 지시에 따라 재실행하지 않음. 2.1.0·2.4.0 및 site/v1 바이트 불변 시험은 전체 Node 검증에서 통과.",
+      "commit": "9ab2412f4644c17e176b68a772118511e7fdb996",
+      "status": "Verified",
+      "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §28, 기준 565c9f37d, 교정 9ab2412f4). 구현 그대로 component-detail-tabs.spec 2개가 모두 실패해 결함 5건(URL-화면 경합, content 키 충돌로 기본 Playground 미리보기 거부, iframe src 히스토리 증가, 시각 패밀리가 출력에 반영 안 됨, 탭 aria-controls·키보드)을 재현·교정하고 회귀 시험 3개를 더했다(RED→GREEN 확인). 수정 후 spec 5개×3회 15 passed, 상세/Core 단위 9/9, coverage:materials:check MANIFEST MATCH(1534 materials), check-generated REPRODUCIBLE(5305 files). 범위 밖: explore-components-home.spec 3개와 components-studio-roundtrip.spec 1개는 F2 이전 상세 UI를 기대해 실패(단언 보존, 후속 갱신 필요).",
       "createFiles": [
         "apps/web/features/components/ComponentDetailTabs.tsx"
       ],

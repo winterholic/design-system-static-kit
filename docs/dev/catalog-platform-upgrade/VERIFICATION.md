@@ -1723,3 +1723,63 @@ exit 0
 - `npm run verify`: 1,163 tests, 1,158 pass, 5 fail. 다섯 건은 모두 Chromium이 `bootstrap_check_in ... MachPortRendezvousServer: Permission denied (1100)` 후 `SIGTRAP`으로 종료된 브라우저 시험이다: `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`; `stack: gap and align props change the real layout, including the "gap" step`; `container: width steps cap the real width, full does not, and content is escaped`; `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`; `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`. 비브라우저 실패는 없다.
 - verify가 test 단계에서 멈춰 후속 단계를 별도 실행했다: `node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs` 통과, `REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.`
 - B/C/D 전용 browser E2E(`e2e/platform-family-a11y.spec.mjs`)는 MachPort 사전 점검 차단으로 미실행이다.
+
+## 28. TASK-TRF-02 컴포넌트 상세 9탭·Playground 독립 브라우저 검증 및 교정 (기준 `565c9f37d`, 교정 커밋 `9ab2412f4` 위에서 측정, 2026-11-28)
+
+구현 기록은 Chromium IPC 권한 오류로 새 E2E를 실행하지 못했다. 이번에는 해당 명령 환경에서 `src/ttakkari/agents/browser_preflight.py`를 먼저 실행해 `permissions_allowed`를 확인한 뒤 Playwright Chromium(`PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright`)으로 운영 빌드(`next start`, `WEB_PORT=4342`)를 390px·1280px 폭에서 실제 조작했다. 이 세션에는 설정된 Ttakkari 브라우저 MCP 도구가 붙어 있지 않아 UI도 같은 Playwright로 조작했다. 수치는 `origin/main` `b957dd40a`에 rebase한 `9ab2412f4` 기준이다. 장부의 1480개와 커밋 안 Manifest 1495개는 다르다. 기준 `565c9f37d`에서는 1495, rebase 뒤 `9ab2412f4`에서는 **1534**(`MANIFEST MATCH ... (1534 materials, 406 requirements)`)가 실측이다.
+
+### 28.1 기존 상세 spec 실행과 결함 재현
+
+`WEB_PORT=4342 npm --workspace apps/web run test:e2e -- component-detail-tabs.spec.mjs`를 구현 그대로 실행하니 **2개 모두 실패**했다(`2 failed`). 두 시험 모두 `page.goBack()` 뒤 탭·선택이 사라졌다. 이 실패는 구현자가 브라우저를 돌리지 못해 가려져 있었다.
+
+### 28.2 발견한 결함과 교정 (모두 F2 변경이 원인)
+
+| # | 증상(재현) | 원인 | 교정 | 회귀 시험 |
+|---|---|---|---|---|
+| 1 | 탭·선택 변경 직후 뒤로 가기가 이전 문서(`about:blank`)로 빠짐. 화면은 즉시 바뀌고 URL은 약 33ms 뒤에 바뀜 | `setActiveTab` 이후 `router.push`가 비동기. 같은 이유로 `history.pushState` 대체도 Next의 지연 동기화와 경합해 약 절반이 실패 | 탭·선택을 `useSearchParams`에서 파생(URL이 원천), 상태 복원용 `popstate` 수동 처리 제거. 페이지는 `connection()`으로 요청마다 렌더해 직접 열기의 첫 HTML도 URL 탭을 씀 | 기존 2개 spec(`--repeat-each=8`에서 16/16) |
+| 2 | **기본 Playground 미리보기가 거부됨**: `카탈로그에 없는 content 변형입니다.` iframe 0개 | button-control의 재료 변형 축 이름이 `content`(text·icon-start…)이고 Playground의 자유 텍스트 "예시 콘텐츠" 키도 `content`라 같은 이름이 Core 변형 검증과 충돌 | 예시 콘텐츠 키를 `exampleText`로 분리(UI·render 라우트·`preview-recipes.mjs`·`detail-model.mjs`) | 새 spec "Playground 기본 선택은 ... 충돌하지 않는다": 수정 전 `toHaveCount(1)` 실패(RED), 수정 후 통과 |
+| 3 | 같은 선택에서 미리보기를 켜면 선택마다 세션 히스토리가 2칸씩 늘고(`history.length` 2→4→6) 뒤로 가기가 iframe만 되돌려 spec이 60초 타임아웃 | 같은 `<iframe>`의 `src`를 바꾸면 부모 세션 히스토리에 항목이 생김(결함 2가 가리고 있다가 수정 뒤 드러남) | `key={src}`로 새 iframe을 만든다(선택당 +1) | 기존 spec 2번(수정 전 15초 타임아웃 6/6 실패 → 수정 후 18/18) |
+| 4 | **시각 패밀리 선택이 출력에 반영되지 않음**: soft/bold/editorial/dense-enterprise/corporate-formal 렌더 바이트 SHA 모두 `26c4c18e` 동일, 플랫폼 경로(`assembleComponentContext`)가 한 번도 실행되지 않음 | `exportComponent`가 `playground`가 빠진 `rawView`를 렌더 모듈에 넘겨 `view.playground?.base`가 항상 비어 있었음 | `{...raw, playground: playgroundContract(type)}`를 넘김 | 새 spec "시각 패밀리 선택은 실제 출력을 바꾸고 Code는 같은 선택의 내보내기와 같다": 수정 전 `expect(bold).not.toBe(soft)` 실패(RED), 수정 후 통과 |
+| 5 | 탭 `aria-controls`가 템플릿이 아닌 리터럴 `panel-${tab.id}`, 방향키 이동·roving tabindex 없음 | JSX 속성에 큰따옴표 문자열을 썼고 키보드 계약이 없었음 | 활성 탭만 `aria-controls={`panel-${id}`}`, `tabIndex` 0/-1, ←/→/Home/End는 포커스만 이동하고 Enter·Space가 연다 | 새 spec "탭은 방향키로 ...": 수정 전 `tabindex` 기대 `"0"`, 실제 `""`로 실패(RED), 수정 후 통과 |
+
+### 28.3 완료 기준 항목별 실측
+
+- **9탭·미지원 탭·DOM 부재(390·1280 동일):** button-control 9탭 전부, data-table은 Sizes 없음(8탭), hero는 Overview·Variants·Code·Accessibility·Composition, page는 Overview·Code·Accessibility·Composition. `/components/page?tab=playground`는 Overview로 돌아가고 Playground 조작이 0개. 모든 탭에서 `[role=tabpanel]`은 1개. iframe은 Overview·Variants·States·Sizes·Playground 1개, Tokens·Code·Accessibility·Composition 0개. 가로 넘침 없음(`scrollWidth == clientWidth`: 390, 1280).
+- **Variants/States/Sizes 단일 미리보기:** Variants는 solid>outline>soft>ghost>link를 한 개씩 넘기며 iframe은 항상 1개(link는 아래 비호환 사유로 0개). Sizes compact/small/medium/large에서 버튼 높이 28/32/40/48px, iframe은 항상 1개. States loading·disabled는 iframe 1개와 `disabled=true`, pressed는 사유 표시와 iframe 0개.
+- **URL·뒤로 가기:** `?tab=sizes&size=large` 직접 열기는 Sizes와 large `aria-pressed=true`. States→Composition 이동 뒤 뒤로 가기 2회가 States, Sizes(large 유지)를 복원하고 앞으로 가기는 States.
+- **11축(예시 콘텐츠 포함) 반영, 계산 스타일 증거(1280 기준, 390도 같은 결과):**
+  - 팔레트 static-kit→graphite-mono: 버튼 배경 `rgb(33,59,144)`→`rgb(29,30,35)`.
+  - 서브토큰 세트 standard→brutalist-contrast: 배경 `rgb(33,59,144)`→`rgb(41,73,179)`, 본문 배경 `rgb(217,219,224)`→`rgb(233,234,237)`.
+  - 시각 패밀리 soft→bold: `data-shape` pill→square, 반경 999px→0px, 굵기 700→800, 패딩 `1px 28px`→`1px 20px`.
+  - 타이포 mkt-launch→doc-dev-docs: 글꼴 `Helvetica Neue…`→`Seravek, "Gill Sans"…`, 크기 12.75px→12px.
+  - 밀도 comfortable→compact: `.kit-platform` 패딩 24px→16px(spacious 32px). 버튼 자체 높이는 같고 컨테이너 여백이 바뀐다.
+  - 모드 light→dark: 배경 `rgb(33,59,144)`→`rgb(107,134,225)`, `data-theme` light→dark.
+  - 크기 medium→compact: 높이 40→28px. 외형 solid→outline: 배경 투명, 글자색 반전. 상태 default→loading: `disabled=true`, 폭 80→110px. 예시 콘텐츠 `저장`→`결제하기`: 버튼 텍스트 변경.
+  - 뷰포트 1280→390: iframe 폭 1056→390px(페이지 폭 390에서는 컨테이너 358px로 잘려 변화 없음, 물리적 한계).
+  - 모든 축에서 선택값이 페이지 URL과 iframe `src`에 들어가고, 미리보기 PNG 해시도 달라졌다. 성공 해시만 달라지는 경우는 증거로 쓰지 않았다.
+- **비호환:** palette clay-earth × subtoken-set analytics 상태에서 `마젠타 비비드 · 비호환` 옵션이 비활성이고 `title`에 `accentInk vs accentSoft 4.3795:1 < 4.5:1`. 이 조합을 강제 URL(`palette=magenta-vivid&subtokenSet=analytics`)로 열면 선택값은 남지만 iframe 0개와 `렌더되지 않았습니다. Core 검증 결과: ...` 표시. 같은 조합의 `/render`는 404, `/export`는 422(같은 사유). state=pressed(action 버튼)는 `BTN_PRESSED_ACTION`, appearance=link는 `BTN_LINK_SHAPE`로 거부. 계약에 없는 값(`size=huge`, `appearance=neon`, 미등록 palette)은 404.
+- **Code = export:** 팔레트·패밀리·모드·크기·외형·밀도·뷰포트·예시 콘텐츠를 바꾼 선택에서 Code의 HTML·CSS·토큰·Blueprint 4개 블록이 페이지가 보낸 `/export` 응답의 `index.html`·`tokens.css`·`tokens.json`·`blueprint.json`과 모두 일치(`true true true true`), 같은 요청을 독립 재호출해도 4개 파일 바이트가 같다. 또 같은 선택의 미리보기 iframe 응답 HTML과 Code의 `index.html`이 바이트 일치(30406바이트).
+- **복사·컴파일 증가:** 4개 복사 버튼의 클립보드가 블록 텍스트와 24/24 일치(대기 조건을 `복사했습니다` 버튼 등장·소멸로 고정한 6회×4). 처음 스크립트의 `false` 1건은 `getByText('복사했습니다')`가 이전 버튼 상태와 겹친 스크립트 대기 경합이었다. 컴파일 카운터(`/api/dev/perf-counters`, 처음 보는 선택의 미리보기는 `total=1`로 계측이 비어 있지 않음)는 Code 복사 4회와 Tokens·Accessibility·Composition·Overview 전환 뒤에도 `total=0`(리셋 후), 같은 선택의 Code 진입도 증가 없음.
+- **키보드:** Overview에서 →가 Variants로, End가 Composition으로, →가 Overview로 순환하며 포커스가 옮겨지고, Enter로 Variants가 열리며 URL이 `tab=variants`가 된다(`tabindex` 활성 탭만 0).
+
+### 28.4 명령 실행 결과(`9ab2412f4`)
+
+```text
+$ npm run web:build
+✓ Generating static pages using 17 workers (880/880) in 1467ms   # rebase 후 `9ab2412f4`
+$ WEB_PORT=4342 npm --workspace apps/web run test:e2e -- component-detail-tabs.spec.mjs   # 수정 후, --repeat-each=3
+15 passed (6.9s)                                                # 시험 5개 × 3회
+$ node --test tests/platform-component-context.test.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs
+ℹ tests 9 / pass 9 / fail 0
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1534 materials, 406 requirements)
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.
+```
+
+### 28.5 범위 밖 관찰(수정하지 않음)
+
+- 다음 4개 e2e가 실패한다: `explore-components-home.spec.mjs:49·63·98`, `components-studio-roundtrip.spec.mjs:4`. F2 이전의 옛 상세 화면(`허용 속성` 제목, `mode` combobox, `렌더 결과` iframe, `찾기` 버튼)을 기대하는데 `origin/main`의 상세는 그 UI가 없다(`git grep` 결과 해당 문자열이 상세 구현에 없음). 같은 8개 spec 묶음의 나머지 131개는 통과했다. 지시에 따라 단언은 바꾸지 않았고 갱신은 Track G·F의 후속이다. 옛 코드에서 직접 재실행한 대조는 하지 않았다(코드 근거만).
+- Variants의 `link` 외형은 기본 family(soft → `shape=pill`)에서 `BTN_LINK_SHAPE`로 거부돼 미리보기가 없다. Core 규칙이 낸 정당한 거부이고 사유는 표시된다.
+- Playground의 `shape`·`behavior`·`tone`·`content` 변형 축은 UI 조작 대상이 아니다(11축 목록에 없음).
+- 상세 탭 이동과 선택 변경은 여전히 서버에서 페이지 RSC를 다시 요청한다(컴파일 카운터는 증가하지 않는다).
