@@ -728,7 +728,9 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": null,
+      "unresolvedIssues": [
+        "Codex nested worker sandbox에서 tests/platform-type-fonts.test.mjs의 Playwright Chromium launch가 bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer permission denied (1100) / SIGTRAP으로 차단됨. 전체 Chromium 시험 매트릭스(404 fallback, JetBrains Mono 브라우저 요청)는 미검증이며, 승인된 Ttakkari browser에서 1280x900·390x844 기본/선택 Noto Serif KR·Pretendard GOV 요청만 부분 실측했다. npm run verify는 같은 브라우저 시험을 재시도하게 되어 실행하지 않음."
+      ],
       "crossTrackFiles": [
         {
           "file": "apps/web/app/materials/typography/page.tsx",

@@ -889,3 +889,45 @@ $ npm run verify
 ℹ tests 919 / ℹ pass 919 / ℹ fail 0
 REPRODUCIBLE: 3800 generated files match a fresh build byte for byte.
 ```
+
+## 15. C2 / TASK-TRC-03 다국어 웹폰트 독립 검증 (2026-11-28, `upgrade/c2-verify`)
+
+원 커밋 `c53bbe12c`의 웹폰트 자료와 선택형 로딩을 검토했다. 기존 assets는 저장소에 없었고, evidence에는 64-byte mock WOFF2가 성공 응답으로 기록되어 있었다. 기존 “브라우저 실측” 시험은 Playwright Chromium을 실제 실행하려고 했지만 브라우저가 열리지 않아 실측을 수행하지 못했다. 테스트를 `Playwright Chromium 실측`으로 명명하고, 실제 WOFF2 파일·자연 로딩·폰트 상태를 확인하도록 고쳤다. 현 Codex nested worker 실행은 `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)` 뒤 `SIGTRAP`으로 launch 단계에서 종료됐다. 재시도는 하지 않았다.
+
+공식 릴리스 태그와 OFL-1.1 고지문을 각 업스트림 저장소에서 확인하고, 파일 해시를 기록했다. 원본 WOFF2와 함께 각 라이선스 고지 파일을 배포한다. 브라우저 시험에는 CSS face 해시, 역할 CSS 해시 및 WOFF2 해시를 source fingerprint로 기록한다. 저장된 측정은 빌드된 현재 CSS·폰트와의 지문 일치로만 연결된다.
+
+| 서체 | 고정 버전 / 공식 릴리스 | 라이선스 고지 파일 | WOFF2 SHA-256 |
+|---|---|---|---|
+| Pretendard GOV | 1.3.9 / `v1.3.9` | `PretendardGOV-OFL.txt` | `b097c96ed0bec69724bd07e357e399dde2869846c3b3da839526c8076f4d66b6` |
+| Noto Serif KR | 2.001 / `Serif2.001` | `NotoSerifKR-OFL.txt` | `5cb2160fbab99bacfc7aca467e7c2bd9581b475eba0ed86dd30e851b8df85b49` |
+| JetBrains Mono | 2.304 / `v2.304` | `JetBrainsMono-OFL.txt` | `d882f8523510ef98b797b882e89b8a84e3fa3cf31a9d4951af3a11e3e1d2a26d` |
+
+```sh
+$ node --test --test-name-pattern='모든 WOFF2|모든 공개 WOFF2|선택된 웹폰트 CSS|Materials 서비스|선택적 로딩|Core 입력 결정성|webfonts are optional|2\.6\.0 typeRoles' tests/platform-type-fonts.test.mjs tests/platform-type.test.mjs tests/platform-type-evidence.test.mjs
+ℹ tests 9 / ℹ pass 9 / ℹ fail 0
+$ node --test --test-name-pattern='2\.1\.0|2\.4\.0|legacy|catalogSnapshot' tests/composition.test.mjs tests/typography-refine.test.mjs tests/expression-2-5.test.mjs tests/service-contract.test.mjs
+ℹ tests 11 / ℹ pass 11 / ℹ fail 0
+$ shasum -a 256 apps/web/assets/fonts/*.woff2
+PretendardGOVVariable.woff2 b097c96e…66b6; NotoSerifKR-Variable.woff2 5cb2160f…5b49; JetBrainsMono-Variable.woff2 d882f852…a26d
+$ git diff --exit-code c53bbe12c^ -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json docs/evidence/typography-refine/legacy-2-2-hashes.json docs/evidence/layout-refine/legacy-2-3-hashes.json docs/evidence/variants/legacy-2-3-hashes.json
+(exit 0; 고정 산출물 변경 없음)
+$ npm run build && node scripts/check-generated.mjs
+REPRODUCIBLE: 3819 generated files match a fresh build byte for byte.
+$ npm run web:build
+✓ TypeScript passed; generated static pages 1102/1102.
+```
+
+관련 기능 시험은 결함을 넣었을 때 asset 부재와 역할 CSS 미수출에서 각각 실패(RED)했고, 파일 추가와 실제 역할 CSS 연결 후 통과(GREEN)했다. 기본 `webfonts=0`은 생성 CSS와 페이지 코드에서 웹폰트가 비어 있고, 선택 상태는 해당 페어의 unicode-range 조각만 `@font-face`로 만들며 시스템 스택을 뒤에 둔다. 페이지는 선택된 `webfontRoleCss`를 실제 역할 CSS로 적용한다. 로딩 실패 경로는 `font-display: swap`과 기존 fallback 스택을 유지한다. 미검증 폰트는 `EXCLUDED_OR_UNVERIFIED_FONTS`에 남으며 공개 파일 허용 목록에는 세 개 확인된 서체만 있다.
+
+승인된 Ttakkari browser로 정적 운영 빌드를 확인한 부분 측정: 1280x900 및 390x844에서 기본 문서는 웹폰트 요청 0건, 문서 선택은 Noto Serif KR, 마케팅 선택은 Pretendard GOV를 요청했다. 기록 상태는 `partially-measured`다. JetBrains Mono의 실제 브라우저 요청과 404 로딩 실패 전체 행렬은 미실행이다. 로컬 browser MCP 외 Chromium 재실행은 Codex nested worker sandbox의 관측된 launch 권한 오류 때문에 하지 않았다.
+
+```sh
+$ npm run coverage:materials:check MATCH
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1434 materials, 337 requirements)
+$ git diff --exit-code site/v1/catalog.json docs/evidence/context/legacy-hashes.json docs/evidence/typography-refine/legacy-2-2-hashes.json docs/evidence/layout-refine/legacy-2-3-hashes.json docs/evidence/variants/legacy-2-3-hashes.json
+(exit 0)
+$ npm run verify
+미실행: 구성에 브라우저 Chromium 시험이 포함되고 같은 환경에서 launch permission denied가 확인되어 재시도하지 않음. 아래에 명시한 구성 시험·생성 검사·빌드만 실행.
+```
+
+TASK-TRC-03은 `Implemented`로 유지한다. 브라우저 전체 매트릭스와 `npm run verify`가 아직 통과 증거를 갖지 않아 `Verified`로 올리지 않았다. 공식 태그의 권리 확인, 실제 자산 해시 및 라이선스 동봉, 부분 브라우저 계측은 위와 같이 검증했다.

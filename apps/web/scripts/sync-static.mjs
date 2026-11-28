@@ -9,6 +9,7 @@ const out = join(web, 'public');
 
 // /combos/render.html은 ../src/combos/render.mjs를 불러 쓰므로 /src/**를 함께 둔다(옛 앱 제거 때 같이 내린다).
 const trees = ['examples', 'v1', 'gallery', 'test-lab', 'src', 'previews', 'catalog-chunks'];
+const fontAssets = join(web, 'assets/fonts');
 
 await rm(out, {recursive: true, force: true});
 await mkdir(join(out, 'docs'), {recursive: true});
@@ -18,4 +19,5 @@ for (const t of trees) await cp(join(site, t), join(out, t), {recursive: true});
 for (const f of (await readdir(join(site, 'docs'))).filter(f => f.endsWith('.html'))) await cp(join(site, 'docs', f), join(out, 'docs', f));
 await cp(join(site, 'combos/render.html'), join(out, 'combos/render.html'));
 for (const single of ['catalog-index.json', 'search-index.json']) await cp(join(site, single), join(out, single));
-console.log(`SYNCED ${trees.join(', ')}, docs/*.html, combos/render.html, catalog-index.json → apps/web/public`);
+await cp(fontAssets, join(out, 'fonts'), {recursive: true});
+console.log(`SYNCED ${trees.join(', ')}, docs/*.html, combos/render.html, catalog-index.json, fonts → apps/web/public`);
