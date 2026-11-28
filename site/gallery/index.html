@@ -12857,6 +12857,8 @@ const {renderButton} = __m("materials/button.mjs");
 const {COMPONENT_CLASSIFICATION} = __m("platform/families/inventory.mjs");
 const {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} = __m("platform/families/action.mjs");
 const {COMMERCE_SPECS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, COMMERCE_CONTRACTS} = __m("platform/families/commerce.mjs");
+const {LAYOUT_COMPONENTS, LAYOUT_CSS, LAYOUT_RUNTIME, renderLayoutComponent} = __m("platform/families/layout.mjs");
+
 
 
 
@@ -13063,7 +13065,24 @@ const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ...ACTION
   renderer: {module: 'src/platform/families/contracts.mjs', export: 'renderActionComponent'},
   blueprint: {...item.blueprint, id: item.materialId}, tests: ['tests/platform-family-contract.test.mjs', 'tests/platform-action-blueprint.test.mjs'],
   unsupported: item.id === 'component:floating-action-button' ? {position: [{value: 'fixed', reason: '뷰포트 모서리 고정과 safe-area는 페이지 배치가 정한다. 컴포넌트는 흐름 안에 놓인다.'}]} : {},
-})), ...COMMERCE_CONTRACTS]);
+})), ...COMMERCE_CONTRACTS, ...LAYOUT_COMPONENTS.map(item => defineComponentContract({
+  id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
+  slots: item.id === 'component:resizable-panel' ? ['first', 'second'] : ['content'],
+  props: item.id === 'component:resizable-panel' ? {direction: ['horizontal', 'vertical'], value: 'number (15~85)'} : {items: 'array'},
+  content: {label: {type: 'string', required: false}},
+  appearance: ['default'], sizes: ['md'], density: ['comfortable'], states: ['default'], transitions: [],
+  events: item.id === 'component:resizable-panel' ? ['kit-panel-resize'] : [],
+  tokens: ['--kit-surface', '--kit-text', '--kit-border', '--kit-focus', '--kit-radius'],
+  parents: ['slot:main', 'slot:container'], children: [],
+  responsive: {strategy: 'fluid', breakpoints: ['640px', '768px', '1024px'], behavior: 'fluid container and wrap'},
+  accessibility: item.id === 'component:resizable-panel' ? {role: 'separator with aria-valuenow', keyboard: ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'], requirements: ['aria-valuenow reflects panel size percentage', 'separator is focusable']} : {role: 'region', keyboard: [], requirements: []},
+  forbidden: [], examples: [{label: item.label}], usage: `${item.label} for layout structure and composition.`,
+  renderer: {module: 'src/platform/families/layout.mjs', export: 'renderLayoutComponent'},
+  blueprint: {...item.blueprint, id: item.materialId},
+  tests: ['tests/platform-layout-blueprint.test.mjs', 'tests/platform-layout-resizable.test.mjs'],
+  unsupported: {},
+}))]);
+const LAYOUT_COMPONENT_BY_ID = new Map(LAYOUT_COMPONENTS.map(item => [item.id, item]));
 const ACTION_COMPONENT_BY_ID = new Map(ACTION_COMPONENTS.map(item => [item.id, item]));
 function renderActionComponent(id, props = {}) {
   const item = ACTION_COMPONENT_BY_ID.get(id);
@@ -13083,6 +13102,10 @@ exports.renderCommerceComponent = renderCommerceComponent;
 exports.COMMERCE_COMPONENT_CSS = COMMERCE_COMPONENT_CSS;
 exports.COMMERCE_COMPONENT_RUNTIME = COMMERCE_COMPONENT_RUNTIME;
 exports.COMMERCE_CONTRACTS = COMMERCE_CONTRACTS;
+exports.LAYOUT_COMPONENTS = LAYOUT_COMPONENTS;
+exports.LAYOUT_CSS = LAYOUT_CSS;
+exports.LAYOUT_RUNTIME = LAYOUT_RUNTIME;
+exports.renderLayoutComponent = renderLayoutComponent;
 exports.COMPONENT_LAYERS = COMPONENT_LAYERS;
 exports.COMPONENT_CONTRACT_FIELDS = COMPONENT_CONTRACT_FIELDS;
 exports.countDistinctComponentTypes = countDistinctComponentTypes;
@@ -13091,6 +13114,7 @@ exports.COMPONENT_CONTRACTS = COMPONENT_CONTRACTS;
 exports.validateComponentContracts = validateComponentContracts;
 exports.ACTION_COMPONENTS = ACTION_COMPONENTS;
 exports.ALL_COMPONENT_CONTRACTS = ALL_COMPONENT_CONTRACTS;
+exports.LAYOUT_COMPONENT_BY_ID = LAYOUT_COMPONENT_BY_ID;
 exports.ACTION_COMPONENT_BY_ID = ACTION_COMPONENT_BY_ID;
 exports.renderActionComponent = renderActionComponent;
 exports.ACTION_COMPONENT_CSS = ACTION_COMPONENT_CSS;
@@ -13930,6 +13954,139 @@ exports.validatePurposeFamily = validatePurposeFamily;
 exports.checkPurposeCombination = checkPurposeCombination;
 exports.ICON_CSS = ICON_CSS;
 exports.sel = sel;
+};
+__defs["platform/families/layout.mjs"] = function (exports, __m) {
+/**
+ * §6.2 L(레이아웃) 부품 5종이 함께 쓰는 마크업 조각, 런타임, CSS.
+ *
+ * Responsive Grid, Center, Sticky Region, Scroll Area, Resizable Panel의 단독 렌더러와
+ * Resizable Panel의 키보드(방향키·Home·End) 및 크기 제약 런타임을 제공한다.
+ */
+const {escapeHTML} = __m("escape-html.mjs");
+const {COMPONENT_CLASSIFICATION} = __m("platform/families/inventory.mjs");
+
+const e = escapeHTML;
+
+const LAYOUT_RUNTIME = `(function(){
+if(window.__kitLayout)return;window.__kitLayout=true;
+document.addEventListener('keydown',function(ev){
+  var handle=ev.target.closest&&ev.target.closest('[data-resizable-handle]');
+  if(!handle)return;
+  var host=handle.closest('[data-component="component:resizable-panel"]');
+  if(!host)return;
+  var min=Number(handle.getAttribute('aria-valuemin')||15);
+  var max=Number(handle.getAttribute('aria-valuemax')||85);
+  var current=Number(handle.getAttribute('aria-valuenow')||50);
+  var step=5;
+  var next=current;
+  var orientation=handle.getAttribute('aria-orientation')||'vertical';
+  var decKey=orientation==='horizontal'?'ArrowUp':'ArrowLeft';
+  var incKey=orientation==='horizontal'?'ArrowDown':'ArrowRight';
+  if(ev.key===decKey)next=Math.max(min,current-step);
+  else if(ev.key===incKey)next=Math.min(max,current+step);
+  else if(ev.key==='Home')next=min;
+  else if(ev.key==='End')next=max;
+  else return;
+  ev.preventDefault();
+  handle.setAttribute('aria-valuenow',String(next));
+  var first=host.querySelector('.kit-panel-first');
+  var second=host.querySelector('.kit-panel-second');
+  if(first)first.style.flex='0 0 '+next+'%';
+  if(second)second.style.flex='0 0 '+(100-next)+'%';
+  handle.dispatchEvent(new CustomEvent('kit-panel-resize',{bubbles:true,detail:{value:next}}));
+});
+})();`;
+
+const LAYOUT_CSS = `
+.kit-layout-responsive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--kit-sp-item);inline-size:100%;box-sizing:border-box}
+.kit-layout-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-block-size:160px;inline-size:100%;text-align:center;box-sizing:border-box;padding:var(--kit-sp-item)}
+.kit-layout-sticky-region{position:sticky;inset-block-start:0;z-index:10;inline-size:100%;background:var(--kit-surface);color:var(--kit-text);box-sizing:border-box;padding:var(--kit-sp-item);border-block-end:1px solid var(--kit-border)}
+.kit-layout-scroll-area{overflow-y:auto;max-block-size:400px;inline-size:100%;box-sizing:border-box;padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius)}
+.kit-layout-resizable{display:flex;inline-size:100%;min-block-size:200px;box-sizing:border-box;border:1px solid var(--kit-border);border-radius:var(--kit-radius);overflow:hidden}
+.kit-layout-resizable[data-direction="vertical"]{flex-direction:column}
+.kit-panel-first,.kit-panel-second{overflow:auto;box-sizing:border-box;padding:var(--kit-sp-item);min-inline-size:0;min-block-size:0}
+.kit-split-handle{flex:0 0 8px;background:var(--kit-border);cursor:col-resize;user-select:none;touch-action:none;outline:none;transition:background 0.15s ease}
+.kit-layout-resizable[data-direction="vertical"]>.kit-split-handle{flex:0 0 8px;cursor:row-resize}
+.kit-split-handle:hover,.kit-split-handle:focus-visible{background:var(--kit-focus)}
+.kit-split-handle:focus-visible{outline:2px solid var(--kit-focus);outline-offset:1px}
+`;
+
+const NODE = (type, axes = {}) => ({field: 'tree', node: type, axes});
+
+const LAYOUT_SPECS = [
+  ['component:responsive-grid', 'Responsive Grid', 'l-04-responsive-grid', 'responsive-grid', 'layout:equal-grid', NODE('grid')],
+  ['component:center', 'Center', 'l-09-center', 'center', 'layout:centered-hero', NODE('hero', {variant: 'centered'})],
+  ['component:sticky-region', 'Sticky Region', 'l-12-sticky-region', 'sticky-region', 'layout:sticky-action-layout', NODE('actions')],
+  ['component:scroll-area', 'Scroll Area', 'l-13-scroll-area', 'scroll-area', 'layout:master-detail', NODE('master-detail')],
+  ['component:resizable-panel', 'Resizable Panel', 'l-14-resizable-panel', 'resizable-panel', 'component:split', NODE('split')],
+];
+
+const LAYER_OF = Object.freeze({independent: 'Base', variant: 'Purpose', composite: 'Composite'});
+
+function renderByKind(id, p = {}) {
+  const idAttr = p.id ? `id="${e(p.id)}" ` : '';
+  switch (id) {
+    case 'component:responsive-grid': {
+      const items = Array.isArray(p.items) && p.items.length ? p.items : [{content: 'Grid item 1'}, {content: 'Grid item 2'}];
+      const htmlItems = items.map((it, i) => `<div class="kit-layout-grid-cell" data-cell="${i}">${typeof it === 'string' ? e(it) : e(it.content ?? `항목 ${i + 1}`)}</div>`).join('');
+      return `<div ${idAttr}class="kit-layout-responsive-grid" data-component="${id}">${htmlItems}</div>`;
+    }
+    case 'component:center': {
+      const content = p.content ?? p.label ?? '가운데 정렬 콘텐츠';
+      return `<div ${idAttr}class="kit-layout-center" data-component="${id}"><div class="kit-layout-center-inner">${e(content)}</div></div>`;
+    }
+    case 'component:sticky-region': {
+      const content = p.content ?? p.label ?? '고정 영역';
+      return `<div ${idAttr}class="kit-layout-sticky-region" data-component="${id}"><div class="kit-layout-sticky-inner">${e(content)}</div></div>`;
+    }
+    case 'component:scroll-area': {
+      const content = p.content ?? p.label ?? '스크롤 영역 내용';
+      return `<div ${idAttr}class="kit-layout-scroll-area" data-component="${id}"><div class="kit-layout-scroll-inner">${e(content)}</div></div>`;
+    }
+    case 'component:resizable-panel': {
+      const dir = p.direction === 'vertical' ? 'vertical' : 'horizontal';
+      const initial = Math.max(15, Math.min(85, Number(p.value ?? 50)));
+      const first = e(p.first ?? p.left ?? '패널 1');
+      const second = e(p.second ?? p.right ?? '패널 2');
+      const label = e(p.label ?? '패널 크기 조절');
+      const orientation = dir === 'vertical' ? 'horizontal' : 'vertical';
+      return `<div ${idAttr}class="kit-layout-resizable" data-component="${id}" data-direction="${dir}">` +
+        `<div class="kit-panel-first" style="flex:0 0 ${initial}%">${first}</div>` +
+        `<div class="kit-split-handle" role="separator" tabindex="0" aria-valuenow="${initial}" aria-valuemin="15" aria-valuemax="85" aria-orientation="${orientation}" data-resizable-handle aria-label="${label}"></div>` +
+        `<div class="kit-panel-second" style="flex:0 0 ${100 - initial}%">${second}</div>` +
+        `</div>`;
+    }
+    default:
+      throw new TypeError(`Unknown layout component: ${id}`);
+  }
+}
+
+const LAYOUT_COMPONENTS = Object.freeze(LAYOUT_SPECS.map(([id, label, key, componentType, materialId, blueprint]) => {
+  const classification = COMPONENT_CLASSIFICATION[key];
+  if (!classification) throw new Error(`분류표에 없는 요구 항목: ${key}`);
+  return Object.freeze({
+    id, label, requirementId: `req:comp:${key}`, classification, componentType, materialId, blueprint, layer: LAYER_OF[classification],
+    version: '1.0.0', render: props => renderByKind(id, props ?? {}),
+  });
+}));
+
+const LAYOUT_COMPONENT_BY_ID = new Map(LAYOUT_COMPONENTS.map(item => [item.id, item]));
+
+function renderLayoutComponent(id, props = {}) {
+  const item = LAYOUT_COMPONENT_BY_ID.get(id);
+  if (!item) throw new TypeError(`Unknown layout component: ${id}`);
+  return item.render(props);
+}
+
+const layoutRuntimeFor = ids => ([...ids].includes('component:resizable-panel') ? LAYOUT_RUNTIME : '');
+
+exports.LAYOUT_RUNTIME = LAYOUT_RUNTIME;
+exports.LAYOUT_CSS = LAYOUT_CSS;
+exports.LAYOUT_SPECS = LAYOUT_SPECS;
+exports.LAYOUT_COMPONENTS = LAYOUT_COMPONENTS;
+exports.LAYOUT_COMPONENT_BY_ID = LAYOUT_COMPONENT_BY_ID;
+exports.renderLayoutComponent = renderLayoutComponent;
+exports.layoutRuntimeFor = layoutRuntimeFor;
 };
 __defs["platform/families/navigation.mjs"] = function (exports, __m) {
 /**
@@ -14871,6 +15028,219 @@ const layoutAxisCheck = defineCheck({
 
 const LAYOUT_CHECKS = Object.freeze([layoutSlotFitCheck, layoutAxisCheck]);
 
+/**
+ * 24개 레이아웃의 실측 기준 표본 목록 (E3 기준 고정 매핑).
+ * 목적 패밀리가 추가되거나 알파벳 순서가 바뀌어도 브라우저 실측 증거(measurements.json) 및 layoutFingerprint가
+ * 무관한 재료 추가에 의해 흔들리지 않도록 안정화한다. 실제 레이아웃이나 기준 표본의 변경은 지문 불일치로 검출된다.
+ */
+const LAYOUT_BASELINE_SPECIMENS = Object.freeze({
+  'layout:asymmetric-grid': [
+    {slot: 'feature', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.feature'},
+    {slot: 'items', purpose: 'purpose:card.gallery'},
+    {slot: 'items', purpose: 'purpose:card.kpi'},
+  ],
+  'layout:bento': [
+    {slot: 'head', purpose: 'purpose:button.emphasis'},
+    {slot: 'tiles', purpose: 'purpose:card.article'},
+    {slot: 'tiles', purpose: 'purpose:card.feature'},
+    {slot: 'tiles', purpose: 'purpose:card.gallery'},
+    {slot: 'tiles', purpose: 'purpose:card.kpi'},
+    {slot: 'tiles', purpose: 'purpose:card.pricing'},
+  ],
+  'layout:centered-hero': [
+    {slot: 'copy', purpose: 'purpose:button.emphasis'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+  ],
+  'layout:commerce-grid': [
+    {slot: 'toolbar', purpose: 'purpose:button.close'},
+    {slot: 'toolbar', purpose: 'purpose:button.copy'},
+    {slot: 'filters', purpose: 'purpose:form.auth'},
+    {slot: 'filters', purpose: 'purpose:form.filter'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+  ],
+  'layout:dashboard-grid': [
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'charts', purpose: 'purpose:card.article'},
+    {slot: 'charts', purpose: 'purpose:card.feature'},
+    {slot: 'side', purpose: 'purpose:card.article'},
+    {slot: 'table', purpose: 'purpose:table.dense'},
+    {slot: 'table', purpose: 'purpose:table.dense'},
+  ],
+  'layout:documentation-layout': [
+    {slot: 'nav', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'toc', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+  ],
+  'layout:double-sidebar': [
+    {slot: 'left', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'main', purpose: 'purpose:card.article'},
+    {slot: 'main', purpose: 'purpose:card.feature'},
+    {slot: 'right', purpose: 'purpose:card.article'},
+    {slot: 'right', purpose: 'purpose:card.feature'},
+  ],
+  'layout:editorial-layout': [
+    {slot: 'kicker', purpose: 'purpose:card.status'},
+    {slot: 'headline', purpose: 'purpose:button.emphasis'},
+    {slot: 'figure', purpose: 'purpose:card.gallery'},
+    {slot: 'lede', purpose: 'purpose:card.article'},
+    {slot: 'body', purpose: 'purpose:card.article'},
+    {slot: 'body', purpose: 'purpose:card.article'},
+    {slot: 'aside', purpose: 'purpose:card.article'},
+  ],
+  'layout:equal-grid': [
+    {slot: 'head', purpose: 'purpose:button.emphasis'},
+    {slot: 'items', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.feature'},
+    {slot: 'items', purpose: 'purpose:card.gallery'},
+    {slot: 'items', purpose: 'purpose:card.kpi'},
+    {slot: 'items', purpose: 'purpose:card.pricing'},
+    {slot: 'items', purpose: 'purpose:card.product'},
+  ],
+  'layout:form-layout': [
+    {slot: 'intro', purpose: 'purpose:button.emphasis'},
+    {slot: 'fields', purpose: 'purpose:form.auth'},
+    {slot: 'fields', purpose: 'purpose:form.filter'},
+    {slot: 'fields', purpose: 'purpose:form.group'},
+    {slot: 'fields', purpose: 'purpose:form.search'},
+    {slot: 'fields', purpose: 'purpose:form.settings'},
+    {slot: 'fields', purpose: 'purpose:form.auth'},
+    {slot: 'aside', purpose: 'purpose:card.status'},
+    {slot: 'aside', purpose: 'purpose:feedback.confirm'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:kpi-strip': [
+    {slot: 'lead', purpose: 'purpose:card.feature'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+  ],
+  'layout:masonry': [
+    {slot: 'items', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.feature'},
+    {slot: 'items', purpose: 'purpose:card.gallery'},
+    {slot: 'items', purpose: 'purpose:card.kpi'},
+    {slot: 'items', purpose: 'purpose:card.pricing'},
+    {slot: 'items', purpose: 'purpose:card.product'},
+    {slot: 'items', purpose: 'purpose:card.profile'},
+    {slot: 'items', purpose: 'purpose:card.status'},
+  ],
+  'layout:master-detail': [
+    {slot: 'list', purpose: 'purpose:card.article'},
+    {slot: 'list', purpose: 'purpose:card.feature'},
+    {slot: 'detail', purpose: 'purpose:card.article'},
+    {slot: 'detail', purpose: 'purpose:card.feature'},
+    {slot: 'meta', purpose: 'purpose:card.article'},
+  ],
+  'layout:media-hero': [
+    {slot: 'media', purpose: 'purpose:card.gallery'},
+    {slot: 'copy', purpose: 'purpose:button.emphasis'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:mobile-stack': [
+    {slot: 'header', purpose: 'purpose:button.emphasis'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.feature'},
+    {slot: 'content', purpose: 'purpose:card.gallery'},
+    {slot: 'content', purpose: 'purpose:card.kpi'},
+    {slot: 'content', purpose: 'purpose:card.pricing'},
+    {slot: 'content', purpose: 'purpose:card.product'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:multi-step-form': [
+    {slot: 'steps', purpose: 'purpose:feedback.progress'},
+    {slot: 'panel', purpose: 'purpose:form.auth'},
+    {slot: 'panel', purpose: 'purpose:form.filter'},
+    {slot: 'summary', purpose: 'purpose:card.article'},
+    {slot: 'summary', purpose: 'purpose:card.feature'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:product-detail-layout': [
+    {slot: 'gallery', purpose: 'purpose:card.gallery'},
+    {slot: 'info', purpose: 'purpose:card.pricing'},
+    {slot: 'buy', purpose: 'purpose:button.close'},
+    {slot: 'buy', purpose: 'purpose:button.copy'},
+    {slot: 'details', purpose: 'purpose:card.article'},
+    {slot: 'details', purpose: 'purpose:card.feature'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+  ],
+  'layout:settings-layout': [
+    {slot: 'nav', purpose: 'purpose:navigation.bottom'},
+    {slot: 'sections', purpose: 'purpose:form.auth'},
+    {slot: 'sections', purpose: 'purpose:form.filter'},
+    {slot: 'help', purpose: 'purpose:card.article'},
+    {slot: 'help', purpose: 'purpose:card.feature'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:sidebar-main': [
+    {slot: 'sidebar', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'main', purpose: 'purpose:card.article'},
+    {slot: 'main', purpose: 'purpose:card.feature'},
+  ],
+  'layout:single-column': [
+    {slot: 'lead', purpose: 'purpose:button.emphasis'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.feature'},
+    {slot: 'aside', purpose: 'purpose:card.article'},
+  ],
+  'layout:split-hero': [
+    {slot: 'copy', purpose: 'purpose:button.emphasis'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+    {slot: 'media', purpose: 'purpose:card.gallery'},
+  ],
+  'layout:sticky-action-layout': [
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.feature'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+    {slot: 'summary', purpose: 'purpose:card.article'},
+    {slot: 'summary', purpose: 'purpose:card.feature'},
+  ],
+  'layout:three-column': [
+    {slot: 'center', purpose: 'purpose:card.article'},
+    {slot: 'center', purpose: 'purpose:card.feature'},
+    {slot: 'left', purpose: 'purpose:card.article'},
+    {slot: 'left', purpose: 'purpose:card.feature'},
+    {slot: 'right', purpose: 'purpose:card.article'},
+    {slot: 'right', purpose: 'purpose:card.feature'},
+  ],
+  'layout:two-column': [
+    {slot: 'primary', purpose: 'purpose:card.article'},
+    {slot: 'primary', purpose: 'purpose:card.feature'},
+    {slot: 'secondary', purpose: 'purpose:card.article'},
+    {slot: 'secondary', purpose: 'purpose:card.feature'},
+  ],
+});
+
 const SLOT_ITEMS = {grid: 6, columns: 8, bento: 5};
 /** 슬롯을 채울 항목 수: 반복 흐름은 열 수가 폭마다 달라지는 값, 그 밖의 슬롯은 최소 수(여러 개 받는 슬롯은 2개)다. */
 const specimenCount = slot => Math.max(slot.min, Math.min(slot.max, SLOT_ITEMS[slot.flow?.mode] ?? (slot.max > 1 ? Math.min(slot.max, slot.min > 1 ? slot.min : 2) : 1)));
@@ -14882,9 +15252,24 @@ const stretch = (v, key = '') => (typeof v === 'string' ? (PROSE_KEYS.includes(k
 
 /**
  * 슬롯 계약을 모두 채우는 항목 목록: [{slot, purpose, variant, props, content}]. 선택 슬롯도 채운다.
- * 슬롯 허용 콘텐츠에 드는 목적 패밀리를 돌려 가며 쓰고, 시각 패밀리가 거부하는 항목은 건너뛴다. options: {visual, density, context, stress}
+ * 슬롯 허용 콘텐츠에 드는 목적 패밀리를 돌려 가며 쓰고, 시각 패밀리가 거부하는 항목은 건너뛴다. options: {visual, density, context, stress, stable}
+ * stable=true: 브라우저 실측 증거 경로에서 고정된 E3 기준 표본(LAYOUT_BASELINE_SPECIMENS)을 써서 무관한 새 목적 패밀리 추가에 따른 표본 변동을 막는다.
+ * stable=false: 공개 동적 표본이 필요한 곳에서 카탈로그 등록 목적 패밀리 전체를 동적으로 탐색하는 기존 동작을 보존한다.
  */
-function layoutSpecimen(env, layout, {visual = 'family:quiet', density = layout.density.default, context = layout.contexts.find(c => c !== 'any') ?? 'general', stress = false} = {}) {
+function layoutSpecimen(env, layout, {visual = 'family:quiet', density = layout.density.default, context = layout.contexts.find(c => c !== 'any') ?? 'general', stress = false, stable = false} = {}) {
+  if (stable && LAYOUT_BASELINE_SPECIMENS[layout.id]) {
+    const baseline = LAYOUT_BASELINE_SPECIMENS[layout.id];
+    return baseline.map(({slot, purpose}) => {
+      const f = getPurposeFamily(purpose);
+      return {
+        slot,
+        purpose,
+        variant: f.example.variant,
+        props: f.example.props,
+        content: stress && f.group !== 'button' ? stretch(f.example.content) : f.example.content,
+      };
+    });
+  }
   const items = [];
   for (const slot of layout.slots) {
     const n = specimenCount(slot);
@@ -14979,7 +15364,7 @@ function assembleLayout(env, request) {
 /** 레이아웃 재료 하나의 표본 조립(전시·프로브·실측이 같은 입력을 쓴다). */
 const assembleSpecimen = (env, layoutId, options = {}) => {
   const layout = env.registry.get(layoutId);
-  const fills = layoutSpecimen(env, layout, options);
+  const fills = layoutSpecimen(env, layout, {stable: true, ...options});
   return {fills, ...assembleLayout(env, {layout: layoutId, fills, density: options.density, mode: options.mode, visual: options.visual, context: options.context, width: options.width})};
 };
 
@@ -14988,7 +15373,7 @@ const assembleSpecimen = (env, layoutId, options = {}) => {
  * 브라우저 실측 증거가 현재 레이아웃 코드의 것인지 확인하는 데 쓴다.
  */
 function layoutFingerprint(env, layout) {
-  const out = compileLayout(layout, layoutSpecimen(env, layout).map(f => ({slot: f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
+  const out = compileLayout(layout, layoutSpecimen(env, layout, {stable: true}).map(f => ({slot: f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
   return cyrb53(out.html + out.css);
 }
 
@@ -15006,12 +15391,14 @@ exports.reachedBand = reachedBand;
 exports.layoutSlotFitCheck = layoutSlotFitCheck;
 exports.layoutAxisCheck = layoutAxisCheck;
 exports.LAYOUT_CHECKS = LAYOUT_CHECKS;
+exports.LAYOUT_BASELINE_SPECIMENS = LAYOUT_BASELINE_SPECIMENS;
 exports.PROSE_KEYS = PROSE_KEYS;
 exports.layoutSpecimen = layoutSpecimen;
 exports.dedupeRules = dedupeRules;
 exports.assembleLayout = assembleLayout;
 exports.assembleSpecimen = assembleSpecimen;
 exports.layoutFingerprint = layoutFingerprint;
+exports.cyrb53 = cyrb53;
 };
 __defs["platform/page-content.mjs"] = function (exports, __m) {
 /**

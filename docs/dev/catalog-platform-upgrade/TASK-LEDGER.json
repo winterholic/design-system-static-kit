@@ -1540,17 +1540,81 @@
     {
       "taskId": "TASK-TRD-L",
       "title": "레이아웃 14항목",
-      "goal": "레이아웃 primitive·복합 레이아웃 계약",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "goal": "레이아웃 primitive·복합 레이아웃 계약 및 E3 연결",
+      "scope": "src/platform/families/layout.mjs, src/platform/families/contracts.mjs, src/platform/layouts.mjs, src/service/platform-components.mjs, apps/web/lib/api/**, tests/platform-layout-*.test.mjs, tests/platform-service-layout-channels.test.mjs, docs/platform/components.md",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/layout.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/service/platform-components.mjs",
+        "apps/web/lib/api/operations.mjs",
+        "apps/web/lib/api/mcp.mjs",
+        "src/platform/layouts.mjs",
+        "scripts/layouts/measure.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/components.md",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "tests/layout-quality.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-layout-blueprint.test.mjs",
+        "tests/platform-layout-resizable.test.mjs",
+        "tests/platform-service-layout-channels.test.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/layouts.mjs",
+          "ownerTrack": "Track E",
+          "reason": "목적 패밀리 추가 시 레이아웃 표본 변동(9d4706794 회귀)을 막기 위해 24개 레이아웃 기준 표본(LAYOUT_BASELINE_SPECIMENS) 및 stable 옵션 도입"
+        },
+        {
+          "file": "scripts/layouts/measure.mjs",
+          "ownerTrack": "Track E",
+          "reason": "레이아웃 브라우저 실측 시 stable: true 적용"
+        },
+        {
+          "file": "tests/layout-quality.test.mjs",
+          "ownerTrack": "Track E",
+          "reason": "stable 표본 불변성 및 레이아웃 슬롯 변경 시 불일치 검출 회귀 시험 추가"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "ownerTrack": "Track A",
+          "reason": "assembleComponents에 layouts 입력 및 런타임/CSS 결합 지원"
+        },
+        {
+          "file": "apps/web/lib/api/operations.mjs",
+          "ownerTrack": "Track A",
+          "reason": "REST OpenAPI assembleComponents layouts 입력 스키마 연결"
+        },
+        {
+          "file": "apps/web/lib/api/mcp.mjs",
+          "ownerTrack": "Track A",
+          "reason": "MCP assemble_components layouts 입력 스키마 연결"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 §6.2 L 5항목(Responsive Grid, Center, Sticky Region, Scroll Area, Resizable Panel) 등록 재료 매핑"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Material Coverage 재생성 산출물(L 계열 14/14 충족, missing 0)"
+        }
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-layout-blueprint.test.mjs",
+        "tests/platform-layout-resizable.test.mjs",
+        "tests/platform-service-layout-channels.test.mjs",
+        "tests/layout-quality.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
+      "status": "Completed",
       "unresolvedIssues": null
     },
     {

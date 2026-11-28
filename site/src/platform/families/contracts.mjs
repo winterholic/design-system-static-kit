@@ -16,8 +16,10 @@ import {renderButton} from '../../materials/button.mjs';
 import {COMPONENT_CLASSIFICATION} from './inventory.mjs';
 import {ACTION_CSS, ACTION_RUNTIME, withButtonAttrs, menuTriggerAttrs, renderMenuPanel} from './action.mjs';
 import {COMMERCE_SPECS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, COMMERCE_CONTRACTS} from './commerce.mjs';
+import {LAYOUT_COMPONENTS, LAYOUT_CSS, LAYOUT_RUNTIME, renderLayoutComponent} from './layout.mjs';
 
 export {COMMERCE_SPECS, COMMERCE_COMPONENTS, COMMERCE_COMPONENT_BY_ID, renderCommerceComponent, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, COMMERCE_CONTRACTS};
+export {LAYOUT_COMPONENTS, LAYOUT_CSS, LAYOUT_RUNTIME, renderLayoutComponent};
 
 export const COMPONENT_LAYERS = Object.freeze(['Primitive', 'Base', 'Purpose', 'Composite', 'Page Section']);
 export const COMPONENT_CONTRACT_FIELDS = Object.freeze([
@@ -222,7 +224,24 @@ export const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ..
   renderer: {module: 'src/platform/families/contracts.mjs', export: 'renderActionComponent'},
   blueprint: {...item.blueprint, id: item.materialId}, tests: ['tests/platform-family-contract.test.mjs', 'tests/platform-action-blueprint.test.mjs'],
   unsupported: item.id === 'component:floating-action-button' ? {position: [{value: 'fixed', reason: '뷰포트 모서리 고정과 safe-area는 페이지 배치가 정한다. 컴포넌트는 흐름 안에 놓인다.'}]} : {},
-})), ...COMMERCE_CONTRACTS]);
+})), ...COMMERCE_CONTRACTS, ...LAYOUT_COMPONENTS.map(item => defineComponentContract({
+  id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
+  slots: item.id === 'component:resizable-panel' ? ['first', 'second'] : ['content'],
+  props: item.id === 'component:resizable-panel' ? {direction: ['horizontal', 'vertical'], value: 'number (15~85)'} : {items: 'array'},
+  content: {label: {type: 'string', required: false}},
+  appearance: ['default'], sizes: ['md'], density: ['comfortable'], states: ['default'], transitions: [],
+  events: item.id === 'component:resizable-panel' ? ['kit-panel-resize'] : [],
+  tokens: ['--kit-surface', '--kit-text', '--kit-border', '--kit-focus', '--kit-radius'],
+  parents: ['slot:main', 'slot:container'], children: [],
+  responsive: {strategy: 'fluid', breakpoints: ['640px', '768px', '1024px'], behavior: 'fluid container and wrap'},
+  accessibility: item.id === 'component:resizable-panel' ? {role: 'separator with aria-valuenow', keyboard: ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'], requirements: ['aria-valuenow reflects panel size percentage', 'separator is focusable']} : {role: 'region', keyboard: [], requirements: []},
+  forbidden: [], examples: [{label: item.label}], usage: `${item.label} for layout structure and composition.`,
+  renderer: {module: 'src/platform/families/layout.mjs', export: 'renderLayoutComponent'},
+  blueprint: {...item.blueprint, id: item.materialId},
+  tests: ['tests/platform-layout-blueprint.test.mjs', 'tests/platform-layout-resizable.test.mjs'],
+  unsupported: {},
+}))]);
+export const LAYOUT_COMPONENT_BY_ID = new Map(LAYOUT_COMPONENTS.map(item => [item.id, item]));
 export const ACTION_COMPONENT_BY_ID = new Map(ACTION_COMPONENTS.map(item => [item.id, item]));
 export function renderActionComponent(id, props = {}) {
   const item = ACTION_COMPONENT_BY_ID.get(id);
