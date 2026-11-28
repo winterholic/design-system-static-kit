@@ -191,7 +191,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 134 · 변형 38 · 복합 패턴 35 = 207개 요구행. 현재 Manifest missing: 8.
+집계: 독립 재료 126 · 변형 40 · 복합 패턴 41 = 207개 요구행. 현재 Manifest missing: 0.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -394,12 +394,12 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:n-11-review-summary` | Review Summary | 독립 재료 | direct | verified | component:reviews |
 | `req:comp:o-01-mobile-header` | Mobile Header | 독립 재료 | direct | catalog-visible | purpose:navigation.topbar |
 | `req:comp:o-02-bottom-navigation` | Bottom Navigation | 독립 재료 | direct | catalog-visible | purpose:navigation.bottom |
-| `req:comp:o-03-action-sheet` | Action Sheet | 독립 재료 | missing | missing | — |
-| `req:comp:o-04-mobile-list-cell` | Mobile List Cell | 독립 재료 | missing | missing | — |
-| `req:comp:o-05-mobile-search` | Mobile Search | 독립 재료 | missing | missing | — |
-| `req:comp:o-06-mobile-tab-bar` | Mobile Tab Bar | 독립 재료 | missing | missing | — |
-| `req:comp:o-07-full-screen-dialog` | Full-screen Dialog | 독립 재료 | missing | missing | — |
-| `req:comp:o-08-mobile-filter-panel` | Mobile Filter Panel | 독립 재료 | missing | missing | — |
-| `req:comp:o-09-sticky-bottom-action` | Sticky Bottom Action | 독립 재료 | missing | missing | — |
-| `req:comp:o-10-safe-area-container` | Safe-area Container | 독립 재료 | missing | missing | — |
+| `req:comp:o-03-action-sheet` | Action Sheet | 복합 패턴 | direct | catalog-visible | purpose:mobile.action-sheet |
+| `req:comp:o-04-mobile-list-cell` | Mobile List Cell | 복합 패턴 | direct | catalog-visible | purpose:mobile.list-cell |
+| `req:comp:o-05-mobile-search` | Mobile Search | 변형 | variant | catalog-visible | purpose:form.search |
+| `req:comp:o-06-mobile-tab-bar` | Mobile Tab Bar | 변형 | variant | catalog-visible | purpose:navigation.bottom |
+| `req:comp:o-07-full-screen-dialog` | Full-screen Dialog | 복합 패턴 | direct | catalog-visible | purpose:mobile.full-screen-dialog |
+| `req:comp:o-08-mobile-filter-panel` | Mobile Filter Panel | 복합 패턴 | direct | catalog-visible | purpose:mobile.filter-panel |
+| `req:comp:o-09-sticky-bottom-action` | Sticky Bottom Action | 복합 패턴 | direct | catalog-visible | purpose:mobile.sticky-action |
+| `req:comp:o-10-safe-area-container` | Safe-area Container | 복합 패턴 | direct | catalog-visible | purpose:mobile.safe-area |
 <!-- inventory-table:end -->

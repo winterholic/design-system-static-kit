@@ -23,7 +23,7 @@
       "total": 406
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:119 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:125 axis-value:79 surface:5 motion:4 background:13 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:103 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -55,7 +55,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 119
+        "materials": 125
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -225,31 +225,31 @@
   "summary": {
     "requirements": {
       "total": 406,
-      "fulfilled": 380,
-      "missing": 26,
-      "coverageRate": 0.936,
+      "fulfilled": 388,
+      "missing": 18,
+      "coverageRate": 0.9557,
       "byCoverage": {
-        "direct": 346,
-        "variant": 32,
+        "direct": 352,
+        "variant": 34,
         "schema": 0,
         "part-of": 2,
-        "missing": 26
+        "missing": 18
       },
       "statusDistribution": {
-        "missing": 26,
+        "missing": 18,
         "metadata-only": 0,
         "defined": 5,
         "renderable": 84,
-        "catalog-visible": 68,
+        "catalog-visible": 76,
         "assemblable": 1,
         "verified": 222
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 8,
-          "direct": 165,
-          "variant": 32,
+          "missing": 0,
+          "direct": 171,
+          "variant": 34,
           "schema": 0,
           "partOf": 2
         },
@@ -366,18 +366,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1534,
+      "totalRecords": 1540,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
         "defined": 26,
         "renderable": 150,
-        "catalog-visible": 433,
+        "catalog-visible": 439,
         "assemblable": 4,
         "verified": 494
       },
       "registeredByRegistry": {
-        "platform": 435,
+        "platform": 441,
         "design": 1099
       }
     },
@@ -563,12 +563,12 @@
         }
       },
       "purpose-family": {
-        "registered": 119,
-        "actualMaterial": 119,
+        "registered": 125,
+        "actualMaterial": 125,
         "assemblableVerified": 39,
-        "distinctOutputs": 119,
+        "distinctOutputs": 125,
         "byStatus": {
-          "catalog-visible": 80,
+          "catalog-visible": 86,
           "verified": 39
         }
       },
@@ -808,8 +808,8 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 119,
-        "delta": 87,
+        "currentMeasured": 125,
+        "delta": 93,
         "status": "drift",
         "measuredBy": "live registry count"
       },
@@ -3362,65 +3362,91 @@
       "id": "req:comp:o-03-action-sheet",
       "section": "§6.2 O",
       "name": "Action Sheet",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:mobile.action-sheet"
+      ]
     },
     {
       "id": "req:comp:o-04-mobile-list-cell",
       "section": "§6.2 O",
       "name": "Mobile List Cell",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:mobile.list-cell"
+      ]
     },
     {
       "id": "req:comp:o-05-mobile-search",
       "section": "§6.2 O",
       "name": "Mobile Search",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "variant",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:form.search"
+      ],
+      "viaRecord": "purpose:form.search",
+      "variant": {
+        "layout": "stacked"
+      },
+      "note": "모바일 폭에서 검색 입력을 한 열로 배치한다"
     },
     {
       "id": "req:comp:o-06-mobile-tab-bar",
       "section": "§6.2 O",
       "name": "Mobile Tab Bar",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "variant",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:navigation.bottom"
+      ],
+      "viaRecord": "purpose:navigation.bottom",
+      "variant": {
+        "position": "sticky"
+      },
+      "note": "Bottom Navigation과 같은 재료를 sticky 표시 변형으로 공유한다"
     },
     {
       "id": "req:comp:o-07-full-screen-dialog",
       "section": "§6.2 O",
       "name": "Full-screen Dialog",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:mobile.full-screen-dialog"
+      ]
     },
     {
       "id": "req:comp:o-08-mobile-filter-panel",
       "section": "§6.2 O",
       "name": "Mobile Filter Panel",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:mobile.filter-panel"
+      ]
     },
     {
       "id": "req:comp:o-09-sticky-bottom-action",
       "section": "§6.2 O",
       "name": "Sticky Bottom Action",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:mobile.sticky-action"
+      ]
     },
     {
       "id": "req:comp:o-10-safe-area-container",
       "section": "§6.2 O",
       "name": "Safe-area Container",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:mobile.safe-area"
+      ]
     },
     {
       "id": "req:subtoken:01-standard-neutral",
@@ -87039,7 +87065,8 @@
       "registry": "platform",
       "category": "form",
       "requirementIds": [
-        "req:comp:b-03-search-input"
+        "req:comp:b-03-search-input",
+        "req:comp:o-05-mobile-search"
       ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
@@ -88946,6 +88973,494 @@
       }
     },
     {
+      "id": "purpose:mobile.action-sheet",
+      "name": "Action Sheet",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "mobile",
+      "requirementIds": [
+        "req:comp:o-03-action-sheet"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/mobile.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/mobile.mjs#renderMobileActionSheet",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "density": [
+            "comfortable",
+            "compact"
+          ],
+          "presentation": [
+            "sheet",
+            "full"
+          ]
+        },
+        "states": [
+          "closed",
+          "open",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/mobile.mjs",
+        "renderer": "src/platform/families/mobile.mjs#renderMobileActionSheet",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "caf2dee1f8999852",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:mobile.filter-panel",
+      "name": "Mobile Filter Panel",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "mobile",
+      "requirementIds": [
+        "req:comp:o-08-mobile-filter-panel"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/mobile.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/mobile.mjs#renderMobileFilterPanel",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "density": [
+            "comfortable",
+            "compact"
+          ],
+          "presentation": [
+            "sheet",
+            "full"
+          ]
+        },
+        "states": [
+          "closed",
+          "open",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:input-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/mobile.mjs",
+        "renderer": "src/platform/families/mobile.mjs#renderMobileFilterPanel",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "62f55d9b14ff9fba",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:mobile.full-screen-dialog",
+      "name": "Full-screen Dialog",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "mobile",
+      "requirementIds": [
+        "req:comp:o-07-full-screen-dialog"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/mobile.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/mobile.mjs#renderMobileFullScreenDialog",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "density": [
+            "comfortable",
+            "compact"
+          ],
+          "presentation": [
+            "sheet",
+            "full"
+          ]
+        },
+        "states": [
+          "closed",
+          "open",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/mobile.mjs",
+        "renderer": "src/platform/families/mobile.mjs#renderMobileFullScreenDialog",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1344598c3ef08f62",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:mobile.list-cell",
+      "name": "Mobile List Cell",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "mobile",
+      "requirementIds": [
+        "req:comp:o-04-mobile-list-cell"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/mobile.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/mobile.mjs#renderMobileListCell",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "accessory": [
+            "chevron",
+            "none"
+          ],
+          "density": [
+            "comfortable",
+            "compact"
+          ]
+        },
+        "states": [
+          "default",
+          "focus",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/mobile.mjs",
+        "renderer": "src/platform/families/mobile.mjs#renderMobileListCell",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "91d2c6187c3bdbcb",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:mobile.safe-area",
+      "name": "Safe-area Container",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "mobile",
+      "requirementIds": [
+        "req:comp:o-10-safe-area-container"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/mobile.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/mobile.mjs#renderMobileSafeArea",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "edges": [
+            "all",
+            "vertical"
+          ]
+        },
+        "states": [
+          "default",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/mobile.mjs",
+        "renderer": "src/platform/families/mobile.mjs#renderMobileSafeArea",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "d48ffd08e77ae18a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:mobile.sticky-action",
+      "name": "Sticky Bottom Action",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "mobile",
+      "requirementIds": [
+        "req:comp:o-09-sticky-bottom-action"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/mobile.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/mobile.mjs#renderMobileStickyAction",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "align": [
+            "full",
+            "content"
+          ]
+        },
+        "states": [
+          "default",
+          "focus",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/mobile.mjs",
+        "renderer": "src/platform/families/mobile.mjs#renderMobileStickyAction",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "e373feaa403c19bb",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:navigation.bottom",
       "name": "모바일 하단 바",
       "kind": "purpose-family",
@@ -88953,7 +89468,8 @@
       "category": "navigation",
       "requirementIds": [
         "req:comp:e-10-bottom-navigation",
-        "req:comp:o-02-bottom-navigation"
+        "req:comp:o-02-bottom-navigation",
+        "req:comp:o-06-mobile-tab-bar"
       ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
