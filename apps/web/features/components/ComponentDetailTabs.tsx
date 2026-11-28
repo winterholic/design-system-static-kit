@@ -2,7 +2,9 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {Button} from '@/ui';
+import {Button, ButtonLink} from '@/ui';
+import {startUrl} from '@/features/studio/url';
+import {PLAYGROUND_KEYS, variantKey} from '@/lib/api/variant-keys.mjs';
 import {CopyBlock} from './CopyBlock';
 import {buildTabs, exportedSources, playgroundAxes} from './detail-model.mjs';
 import type {ComponentView} from './spec.server';
@@ -23,16 +25,18 @@ function initialSelection(view: ComponentView, params: URLSearchParams): Selecti
     ? Object.fromEntries(supportedAxes.map((axis: string) => [axis, (view.playground.defaults as Record<string, string>)[axis] ?? '']))
     : {...view.playground.defaults, viewport: params.get('viewport') === '390' ? '390' : '1280'};
   for (const group of view.variantGroups) {
-    const value = params.get(group.name);
-    selected[group.name] = group.values.find(candidate => String(candidate) === value) ?? group.defaultValue;
+    const value = params.get(variantKey(group.name));
+    selected[variantKey(group.name)] = group.values.find(candidate => String(candidate) === value) ?? group.defaultValue;
   }
-  if (view.material?.states.values.length) selected.state = params.get('state') && view.material.states.values.includes(params.get('state')!) ? params.get('state')! : view.material.states.values[0];
+  // 상태 변형 축이 없는 재료만 재료 계약의 상태 목록을 쓴다. 변형 축이 있으면 그 기본값이 기준이다.
+  if (view.material?.states.values.length && !view.variantGroups.some(group => group.name === 'state')) selected.state = params.get('state') && view.material.states.values.includes(params.get('state')!) ? params.get('state')! : view.material.states.values[0];
   for (const axis of ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode'] as const) {
     const option = view.playground.axes[axis].find(item => item.value === params.get(axis) && item.ok);
     if (option) selected[axis] = option.value;
   }
   if (!view.detail) {
-    const exampleText = Object.entries(view.example ?? {}).find(([key, value]) => !['type', 'id'].includes(key) && typeof value === 'string')?.[1];
+    const groupNames = new Set(view.variantGroups.map(group => group.name));
+    const exampleText = Object.entries(view.example ?? {}).find(([key, value]) => !['type', 'id'].includes(key) && typeof value === 'string' && !(groupNames.has(key) && view.variantGroups.find(group => group.name === key)?.values.some(candidate => String(candidate) === value)))?.[1];
     const text = params.get('exampleText');
     selected.exampleText = text && text.length <= 200 ? text : typeof exampleText === 'string' ? exampleText : '';
   }
@@ -65,13 +69,13 @@ function Preview({type, selection, width}: {type: string; selection: Selection; 
     : <iframe key={src} title={`${type} 컴파일 미리보기`} className={styles.frame} src={src} style={{width, maxWidth: '100%', height: 420, marginInline: width === 390 ? 'auto' : undefined}} />;
 }
 
-function AxisControl({axis, options, value, disabledReason, onChange}: {axis: string; options: (string | number | boolean | PlaygroundOption)[]; value: string; disabledReason?: string; onChange: (value: string) => void}) {
+function AxisControl({axis, label = AXIS_LABELS[axis], options, value, disabledReason, onChange}: {axis: string; label?: string; options: (string | number | boolean | PlaygroundOption)[]; value: string; disabledReason?: string; onChange: (value: string) => void}) {
   const normalized = options.map(option => typeof option === 'object' ? option : ({value: String(option), label: String(option), ok: true}));
   const selected = normalized.find(option => option.value === value);
   const reason = disabledReason ?? (selected && !selected.ok ? selected.reason : undefined);
   return <label className={styles.variantField}>
-    {AXIS_LABELS[axis]}
-    <select aria-label={AXIS_LABELS[axis]} value={value} disabled={Boolean(disabledReason)} title={reason} onChange={event => onChange(event.target.value)}>
+    {label}
+    <select aria-label={label} value={value} disabled={Boolean(disabledReason)} title={reason} onChange={event => onChange(event.target.value)}>
       {normalized.length ? normalized.map(option => <option key={option.value} value={option.value} disabled={!option.ok} title={option.reason}>{option.label}{option.ok ? '' : ' · 비호환'}</option>) : <option value="">계약에 없음</option>}
     </select>
     {reason ? <small>{reason}</small> : null}
@@ -127,9 +131,9 @@ export function ComponentDetailTabs({view, note}: Props) {
   const updateUrl = (tab: string, nextSelection = selection, nextViewport = viewport) => {
     const next = new URLSearchParams(window.location.search);
     if (tab === 'overview') next.delete('tab'); else next.set('tab', tab);
-    for (const key of [...AXIS_KEYS, ...view.variantGroups.map(group => group.name)]) next.delete(key);
+    for (const key of [...AXIS_KEYS, ...view.variantGroups.map(group => variantKey(group.name))]) next.delete(key);
     for (const [key, value] of Object.entries(nextSelection)) {
-      const group = view.variantGroups.find(item => item.name === key);
+      const group = view.variantGroups.find(item => variantKey(item.name) === key);
       if (!group || String(value) !== String(group.defaultValue)) next.set(key, String(value));
     }
     if (nextViewport !== 1280) next.set('viewport', String(nextViewport));
@@ -139,7 +143,7 @@ export function ComponentDetailTabs({view, note}: Props) {
   };
 
   const updateSelection = (axis: string, value: string) => {
-    const group = view.variantGroups.find(item => item.name === axis);
+    const group = view.variantGroups.find(item => variantKey(item.name) === axis);
     const groupValue = group?.values.find(candidate => String(candidate) === value);
     const registered = (['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode'] as string[]).includes(axis)
       ? axisOptions[axis as keyof typeof axisOptions].find(option => option.value === value && option.ok)?.value
@@ -167,23 +171,27 @@ export function ComponentDetailTabs({view, note}: Props) {
   };
 
   const stateValues = view.material?.states.values ?? [];
-  const appearanceGroup = view.variantGroups.find(group => /appearance|style|visual/i.test(group.name));
+  // Variants 는 외형 축을 우선한다. 외형 축이 없는 재료(select-control 의 mode 등)는 크기·상태가 아닌 첫 변형 축을 비교한다.
+  const appearanceGroup = view.variantGroups.find(group => /appearance|style|visual/i.test(group.name)) ?? view.variantGroups.find(group => !/size|state/i.test(group.name));
   const variants = appearanceGroup ? appearanceGroup.values.map(value => ({id: String(value), ok: true})) : view.variants;
   const selectedVariant = variants[Math.min(variantIndex, Math.max(0, variants.length - 1))];
   const variantSelection: Selection = appearanceGroup && selectedVariant
-    ? {...selection, [appearanceGroup.name]: selectedVariant.id}
+    ? {...selection, [variantKey(appearanceGroup.name)]: selectedVariant.id}
     : selectedVariant ? {variant: selectedVariant.id} : {};
   const sizeGroup = view.variantGroups.find(group => /size/i.test(group.name));
   const stateGroup = view.variantGroups.find(group => /state/i.test(group.name));
   const axisConfig = (axis: string) => {
-    const group = view.variantGroups.find(item => item.name.toLowerCase() === axis.toLowerCase());
+    const group = PLAYGROUND_KEYS.includes(axis) ? undefined : view.variantGroups.find(item => item.name.toLowerCase() === axis.toLowerCase());
     if (axis === 'viewport') return {options: ['390', '1280'], key: 'viewport', reason: undefined};
-    if (group) return {options: group.values, key: group.name, reason: undefined};
+    if (group) return {options: group.values, key: variantKey(group.name), reason: undefined};
     if (['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode'].includes(axis)) return {options: axisOptions[axis as keyof typeof axisOptions], key: axis, reason: axis === 'visualFamily' && !view.playground.base ? '이 컴포넌트는 시각 패밀리와 연결된 기반 구성원 계약이 없습니다.' : undefined};
     if (axis === 'state' && stateValues.length) return {options: stateValues.map(value => ({value, label: value, ok: Boolean(view.playground.base), reason: view.playground.base ? undefined : '플랫폼 기반 구성원 렌더 계약이 없어 상태를 컴파일할 수 없습니다.'})), key: 'state', reason: view.playground.base ? undefined : '플랫폼 기반 구성원 렌더 계약이 없어 상태를 컴파일할 수 없습니다.'};
     return {options: [], key: axis, reason: '이 컴포넌트 계약에 이 축의 선택값이 없습니다.'};
   };
 
+  // Playground 11축이 이미 다루는 변형(크기·외형·상태) 밖의 부품 변형 축. 빠지면 shape·mode·search 같은 계약 축을 고를 수 없다.
+  const extraGroups = view.variantGroups.filter(group => !['size', 'appearance', 'state'].includes(group.name.toLowerCase()));
+  const studioHref = startUrl({catalogVersion: '2.6.0', component: view.type, componentAxes: Object.fromEntries(view.variantGroups.map(group => [group.name, String(selection[variantKey(group.name)] ?? group.defaultValue)]))});
   const renderPreview = (chosen: Selection) => <Preview type={view.type} selection={chosen} width={viewport === 390 ? 390 : '100%'} />;
   const visibleAxes = playgroundAxes(view);
 
@@ -199,7 +207,15 @@ export function ComponentDetailTabs({view, note}: Props) {
           <div><dt>종류 · 분류</dt><dd><code>{view.material.kind}</code> · {view.material.category} · {view.groupLabel}</dd></div>
           <div><dt>도입 · 재료 버전</dt><dd>카탈로그 {view.material.since} · 재료 {view.material.version}</dd></div>
           <div><dt>맥락 · 품질</dt><dd>{view.material.contexts.join(', ')} · {view.material.quality.status}{view.material.preset ? ' · 프리셋' : ''}</dd></div>
-        </dl></> : null}
+          {view.material.responsive ? <div><dt>반응형</dt><dd>{view.material.responsive.strategy}{view.material.responsive.note ? ` — ${view.material.responsive.note}` : ''}</dd></div> : null}
+          <div><dt>Blueprint 연결</dt><dd><code>{view.material.blueprint?.node ?? `${view.material.blueprint?.field}=${view.material.blueprint?.value ?? ''}`}</code>{view.material.blueprint?.since ? ` · ${view.material.blueprint.since}부터` : ''}</dd></div>
+        </dl>
+        {view.limitations.length ? <><h3 className="section-title">제약과 미지원</h3><ul className={styles.limits}>{view.material.tags.filter(tag => tag.startsWith('forbidden:') || tag.startsWith('unsupported:')).map(tag => <li key={tag}>{tag.startsWith('forbidden:') ? '조합 제한' : '미지원'} · <code>{tag.replace(/^(?:forbidden|unsupported):/, '')}</code></li>)}</ul></> : null}</> : null}
+        <h2 className="section-title">허용 속성</h2>
+        {view.fields.length ? <div className={styles.tableWrap} tabIndex={0} role="region" aria-label="허용 속성 표"><table className={styles.table}>
+          <thead><tr><th scope="col">이름</th><th scope="col">필수</th><th scope="col">형태</th><th scope="col">허용 값·제약</th></tr></thead>
+          <tbody>{view.fields.map(field => <tr key={field.name}><th scope="row"><code>{field.name}</code></th><td>{field.required ? '필수' : '선택'}</td><td><code>{field.kind}</code></td><td><div className={styles.values}>{field.detail.map(detail => <code key={detail}>{detail}</code>)}</div></td></tr>)}</tbody>
+        </table></div> : <p>이 부품은 자식만 받고 자체 속성이 없습니다.</p>}
       </> : null}
       {activeTab === 'variants' ? <>
         <h2 className="section-title">Variants</h2>
@@ -209,13 +225,13 @@ export function ComponentDetailTabs({view, note}: Props) {
         </div></> : <p>외형 변형이 등록되어 있지 않습니다.</p>}
       </> : null}
       {activeTab === 'states' ? <>
-        <h2 className="section-title">States</h2><div className={styles.variantGroups}>{stateValues.map(state => <Button key={state} variant="secondary" aria-pressed={selection.state === state} disabled={!stateGroup && state !== 'default'} title={!stateGroup && state !== 'default' ? '렌더 변형으로 지원되지 않는 상태입니다.' : undefined} onClick={() => stateGroup && updateSelection(stateGroup.name, state)}>{state}</Button>)}</div>
-        {stateGroup ? renderPreview({...selection, [stateGroup.name]: selection[stateGroup.name] ?? stateGroup.defaultValue}) : <p className={styles.note}>선언된 상태 전이는 아래 계약을 따릅니다. 이 부품의 렌더 계약에 상태 축이 없어 상태 미리보기는 제한됩니다.</p>}
+        <h2 className="section-title">States</h2><div className={styles.variantGroups}>{stateValues.map(state => <Button key={state} variant="secondary" aria-pressed={selection.state === state} disabled={stateGroup ? !stateGroup.values.some(value => String(value) === state) : state !== 'default'} title={(stateGroup ? !stateGroup.values.some(value => String(value) === state) : state !== 'default') ? '렌더 변형으로 지원되지 않는 상태입니다.' : undefined} onClick={() => stateGroup && updateSelection(variantKey(stateGroup.name), state)}>{state}</Button>)}</div>
+        {stateGroup ? renderPreview({...selection, [variantKey(stateGroup.name)]: selection[variantKey(stateGroup.name)] ?? stateGroup.defaultValue}) : <p className={styles.note}>선언된 상태 전이는 아래 계약을 따릅니다. 이 부품의 렌더 계약에 상태 축이 없어 상태 미리보기는 제한됩니다.</p>}
         <ul className={styles.transitions}>{(view.material?.states.transitions ?? []).map((transition, index) => <li key={index}><code>{transition.from} → {transition.to}</code> · {transition.trigger}</li>)}</ul>
       </> : null}
       {activeTab === 'sizes' ? <>
         <h2 className="section-title">Sizes</h2>
-        {sizeGroup ? <><div className={styles.variantGroups}>{sizeGroup.values.map(size => <Button key={String(size)} variant="secondary" aria-pressed={String(selection[sizeGroup.name]) === String(size)} onClick={() => updateSelection(sizeGroup.name, String(size))}>{String(size)}</Button>)}</div>{renderPreview({...selection, [sizeGroup.name]: selection[sizeGroup.name] ?? sizeGroup.defaultValue})}</> : <p>크기 축이 등록되어 있지 않습니다.</p>}
+        {sizeGroup ? <><div className={styles.variantGroups}>{sizeGroup.values.map(size => <Button key={String(size)} variant="secondary" aria-pressed={String(selection[variantKey(sizeGroup.name)]) === String(size)} onClick={() => updateSelection(variantKey(sizeGroup.name), String(size))}>{String(size)}</Button>)}</div>{renderPreview({...selection, [variantKey(sizeGroup.name)]: selection[variantKey(sizeGroup.name)] ?? sizeGroup.defaultValue})}</> : <p>크기 축이 등록되어 있지 않습니다.</p>}
       </> : null}
       {activeTab === 'playground' ? <>
         <h2 className="section-title">Playground</h2>
@@ -228,7 +244,9 @@ export function ComponentDetailTabs({view, note}: Props) {
             else updateSelection(config.key, value);
           }} />;
         })}</div>
+        {extraGroups.length ? <div className={styles.variantGroups} role="group" aria-label="부품 변형 축">{extraGroups.map(group => <AxisControl key={group.name} axis={variantKey(group.name)} label={PLAYGROUND_KEYS.includes(group.name) ? `${group.name} (부품 변형)` : group.name} options={group.values} value={String(selection[variantKey(group.name)] ?? group.defaultValue)} onChange={value => updateSelection(variantKey(group.name), value)} />)}</div> : null}
         {renderPreview(selection)}
+        {view.variantGroups.length ? <p className={styles.openStudio}><ButtonLink href={studioHref} variant="secondary">선택한 부품을 Studio에서 열기</ButtonLink></p> : null}
       </> : null}
       {activeTab === 'tokens' ? <><h2 className="section-title">Tokens</h2><ul className={styles.chips}>{(view.material?.tokens ?? []).map(token => <li key={token}><code>{token}</code></li>)}</ul></> : null}
       {activeTab === 'code' ? <><h2 className="section-title">Code</h2>{exportError ? <p className={styles.note} role="status">검증된 선택 결과를 가져오지 못했습니다: {exportError}</p> : null}{exportResult ? <>
@@ -245,6 +263,8 @@ export function ComponentDetailTabs({view, note}: Props) {
       </dl></> : null}
       {activeTab === 'composition' ? <><h2 className="section-title">Composition</h2><dl className={styles.ctx}>
         <div><dt>허용 부모</dt><dd>{view.parents.length ? view.parents.map(type => <code key={type}>{type} </code>) : '없음'}</dd></div>
+        {view.pageTypes.requiredBy.length ? <div><dt>반드시 필요한 페이지 유형</dt><dd>{view.pageTypes.requiredBy.join(', ')}</dd></div> : null}
+        {view.pageTypes.forbiddenIn.length ? <div><dt>쓸 수 없는 페이지 유형</dt><dd>{view.pageTypes.forbiddenIn.join(', ')}</dd></div> : null}
         <div><dt>허용 자식</dt><dd>{view.children ? <>{view.children.allowed.map((type: string, index: number) => <code key={`${type}-${index}`}>{type} </code>)} · {view.children.min}~{view.children.max}개</> : view.detail?.composition?.children?.length ? view.detail.composition.children.map((type: string, index: number) => <code key={`${type}-${index}`}>{type} </code>) : '자식을 받지 않습니다'}</dd></div>
         <div><dt>필요한 슬롯</dt><dd>{view.material?.purposeContracts.flatMap(contract => Object.keys(contract.needs ?? {})).length ? [...new Set(view.material.purposeContracts.flatMap(contract => Object.keys(contract.needs ?? {})))].map(slot => <code key={slot}>{slot} </code>) : '필요 슬롯 없음'}</dd></div>
         <div><dt>관련 목적 컴포넌트</dt><dd>{view.material?.purposeContracts?.length ? view.material.purposeContracts.map((contract: any) => <code key={contract.id}>{contract.label} </code>) : view.detail?.composition?.related?.length ? view.detail.composition.related.map((item: string, index: number) => <code key={`${item}-${index}`}>{item} </code>) : view.related.map(row => <code key={row.type}>{row.label} </code>)}</dd></div>

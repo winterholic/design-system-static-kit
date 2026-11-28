@@ -3,6 +3,7 @@
 // 여기에는 Core 서비스·edit 연산을 부르는 절차만 있다. HTML·CSS 를 직접 만들지 않는다.
 import {compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {assembleComponentContext} from '../../../../src/service/component-context.mjs';
+import {variantKey, variantNameOf} from './variant-keys.mjs';
 import {importBlueprint, insertNode, removeNode, resetDocument, setAppearance, updateNode} from '@winterholic/design-system-static-kit/edit';
 
 const call = (r, what) => {
@@ -109,7 +110,10 @@ export function isolatedDoc(type, example, variant) {
 
 function materialSelection(view, selection) {
   const material = view.material;
-  const variantSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => material.variants[key]));
+  const variantSelection = Object.fromEntries(Object.entries(selection).flatMap(([key, value]) => {
+    const name = variantNameOf(key, material);
+    return name ? [[name, value]] : [];
+  }));
   const styleSelection = Object.fromEntries(Object.entries(selection).filter(([key]) => ['palette', 'subtokenSet', 'visualFamily', 'typeSystem', 'density', 'mode', 'viewport', 'exampleText'].includes(key)));
   for (const [key, value] of Object.entries(variantSelection)) {
     if (!material.variants[key]?.some(option => String(option) === String(value))) return {error: `카탈로그에 없는 ${key} 변형입니다.`};
@@ -122,7 +126,8 @@ function materialSelection(view, selection) {
   if (!upgraded.ok) return {error: upgraded.errors[0]?.message ?? '2.6.0 Blueprint로 올리지 못했습니다.'};
   const node = {...view.example, ...values};
   if (typeof styleSelection.exampleText === 'string') {
-    const field = Object.keys(node).find(key => !['type', 'id', 'variant', 'appearance', 'shape', 'size', 'behavior', 'tone', 'state', 'content'].includes(key) && typeof node[key] === 'string');
+    const texts = exampleContent(view);
+    const field = Object.keys(texts).find(key => key !== 'id' && typeof texts[key] === 'string');
     if (field) node[field] = styleSelection.exampleText;
   }
   for (const key of ['sortable', 'selectable']) if (typeof node[key] === 'boolean') node[key] = node[key] ? 'yes' : 'no';
@@ -149,14 +154,30 @@ function materialSelection(view, selection) {
   return {doc};
 }
 
+/** 예제에서 변형 값이 아닌 필드(id, 문구, 옵션 등). 변형 축과 이름이 같아도 값이 그 축의 값이 아니면 문구 필드다(tooltip 의 content). */
+function exampleContent(view) {
+  const groups = new Map(Object.entries(view.material?.variants ?? {}).map(([name, values]) => [name, {name, values}]));
+  return Object.fromEntries(Object.entries(view.example ?? {}).filter(([key, value]) => {
+    if (value === undefined || key === 'type' || key === 'variant') return false;
+    const group = groups.get(key);
+    return !group || !group.values.some(candidate => String(candidate) === String(value));
+  }));
+}
+
 function platformComponent(view, selection) {
   const contract = view.playground;
   if (!contract?.base || !selection?.palette || !selection?.subtokenSet || !selection?.typeSystem || !selection?.visualFamily) return null;
-  const groups = Object.fromEntries(view.variantGroups.map(group => [group.name, selection[group.name] ?? group.defaultValue]));
-  const props = Object.fromEntries(Object.entries(groups).filter(([key]) => ['appearance', 'size', 'state'].includes(key)));
-  if (typeof selection.state === 'string') props.state = selection.state;
-  const content = Object.fromEntries(Object.entries(view.example ?? {}).filter(([key, value]) => !['type', 'id', 'variant', 'appearance', 'shape', 'size', 'behavior', 'tone', 'state', 'content'].includes(key) && value !== undefined));
-  const textField = Object.keys(content).find(key => typeof content[key] === 'string');
+  // 기본값과 같은 변형은 보내지 않는다. 시각 패밀리가 고정하는 속성(shape, appearance 등)을 기본값이 덮어쓰면 기본 선택부터 거부된다.
+  // 사용자가 기본값과 다르게 고른 변형만 Core 검증에 맡기고, 거부 사유는 그대로 보인다.
+  const props = {};
+  for (const group of view.variantGroups) {
+    const chosen = selection[variantKey(group.name)];
+    if (chosen !== undefined && String(chosen) !== String(group.defaultValue)) props[group.name] = group.values.find(value => String(value) === String(chosen)) ?? chosen;
+  }
+  const defaultState = view.variantGroups.find(group => group.name === 'state')?.defaultValue ?? view.material?.states?.values?.[0];
+  if (typeof selection.state === 'string' && !view.variantGroups.some(group => group.name === 'state') && selection.state !== defaultState) props.state = selection.state;
+  const content = exampleContent(view);
+  const textField = Object.keys(content).find(key => key !== 'id' && typeof content[key] === 'string');
   if (textField && typeof selection.exampleText === 'string') content[textField] = selection.exampleText;
   const assembled = assembleComponentContext({
     context: 'general', base: contract.base, family: selection.visualFamily,

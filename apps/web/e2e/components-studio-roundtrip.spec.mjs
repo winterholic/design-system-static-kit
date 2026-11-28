@@ -2,14 +2,16 @@ import {expect, test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
 
 test('Components opens the selected registered material in Studio, preserves work, previews and exports it', async ({page}) => {
-  await page.goto('/components/select-control');
+  await page.goto('/components/select-control?tab=playground');
 
-  for (const [axis, value] of [['mode', 'multiple'], ['search', 'local'], ['maxMenuHeight', '192']]) {
-    await page.getByRole('combobox', {name: axis}).click();
-    await page.getByRole('option', {name: value, exact: true}).click();
+  // 변형 축은 Playground 의 부품 변형 선택이다. mode 는 라이트·다크 축과 이름이 겹쳐 `mode (부품 변형)`으로 보인다.
+  for (const [axis, value] of [['mode (부품 변형)', 'multiple'], ['search', 'local'], ['maxMenuHeight', '192']]) {
+    await page.getByLabel(axis, {exact: true}).selectOption(value);
+    await expect(page.getByLabel(axis, {exact: true})).toHaveValue(value);
   }
 
   const studioLink = page.getByRole('link', {name: '선택한 부품을 Studio에서 열기'});
+  await expect(studioLink).toHaveAttribute('href', /maxMenuHeight%3A192/);
   const href = await studioLink.getAttribute('href');
   expect(href).toContain('component=select-control');
   expect(href).toContain('componentAxes=mode%3Amultiple%2Csearch%3Alocal%2Csize%3Amd%2Cshape%3Asoft%2Cstate%3Aready%2CmaxMenuHeight%3A192');

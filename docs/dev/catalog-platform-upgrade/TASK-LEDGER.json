@@ -1277,7 +1277,9 @@
         "tests/platform-component-context.test.mjs",
         "tests/platform-pregenerate.test.mjs",
         "scripts/build.mjs",
-        "src/service/component-context.mjs"
+        "src/service/component-context.mjs",
+        "apps/web/e2e/explore-components-home.spec.mjs",
+        "apps/web/e2e/components-studio-roundtrip.spec.mjs"
       ],
       "completionCriteria": "재료 계약으로 관련 탭만 표시하고 활성 탭만 DOM에 둔다. Variants·States·Sizes는 동일 콘텐츠로 한 번에 하나씩 렌더한다. Playground의 11축은 재료 계약과 Core 검증 결과를 사용하고, 거부된 선택은 이유를 보여 주며 렌더하지 않는다. Code 네 파일은 같은 선택의 Core exporter 바이트와 같고 복사 가능하다. URL 직접 접근·뒤로 복원, 컴파일 캐시 상한/계약 버전, 상세 비브라우저 및 브라우저 회귀 시험을 갖춘다.",
       "tests": [
@@ -1292,9 +1294,11 @@
       ],
       "commit": "9ab2412f4644c17e176b68a772118511e7fdb996",
       "status": "Verified",
-      "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §28, 기준 565c9f37d, 교정 9ab2412f4). 구현 그대로 component-detail-tabs.spec 2개가 모두 실패해 결함 5건(URL-화면 경합, content 키 충돌로 기본 Playground 미리보기 거부, iframe src 히스토리 증가, 시각 패밀리가 출력에 반영 안 됨, 탭 aria-controls·키보드)을 재현·교정하고 회귀 시험 3개를 더했다(RED→GREEN 확인). 수정 후 spec 5개×3회 15 passed, 상세/Core 단위 9/9, coverage:materials:check MANIFEST MATCH(1534 materials), check-generated REPRODUCIBLE(5305 files). 범위 밖: explore-components-home.spec 3개와 components-studio-roundtrip.spec 1개는 F2 이전 상세 UI를 기대해 실패(단언 보존, 후속 갱신 필요).",
+      "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §28, 기준 565c9f37d, 교정 9ab2412f4). 구현 그대로 component-detail-tabs.spec 2개가 모두 실패해 결함 5건(URL-화면 경합, content 키 충돌로 기본 Playground 미리보기 거부, iframe src 히스토리 증가, 시각 패밀리가 출력에 반영 안 됨, 탭 aria-controls·키보드)을 재현·교정하고 회귀 시험 3개를 더했다(RED→GREEN 확인). 수정 후 spec 5개×3회 15 passed, 상세/Core 단위 9/9, coverage:materials:check MANIFEST MATCH(1534 materials), check-generated REPRODUCIBLE(5305 files). 범위 밖: explore-components-home.spec 3개와 components-studio-roundtrip.spec 1개는 F2 이전 상세 UI를 기대해 실패(단언 보존, 후속 갱신 필요). 후속(VERIFICATION §34): 옛 상세 e2e 4개를 새 UI 기준으로 갱신하며 새 UI에 없던 기능(허용 속성 표, 제약·미지원, Studio 링크, 부품 변형 축 선택)과 Playground 결함(10개 부품 중 9개 기본 미리보기 거부, mode·density 키 충돌, 상호작용 런타임 없음, 360px 탭 넘침)을 고쳤다.",
       "createFiles": [
-        "apps/web/features/components/ComponentDetailTabs.tsx"
+        "apps/web/features/components/ComponentDetailTabs.tsx",
+        "apps/web/lib/api/variant-keys.mjs",
+        "apps/web/lib/api/variant-keys.d.mts"
       ],
       "crossTrackFiles": [
         {
@@ -1321,6 +1325,16 @@
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
           "ownerTrack": "Track G (generated output)",
           "reason": "요청에 따라 coverage:materials 생성기로 Manifest 재생성 후 일치 검사"
+        },
+        {
+          "file": "apps/web/e2e/explore-components-home.spec.mjs, apps/web/e2e/components-studio-roundtrip.spec.mjs",
+          "ownerTrack": "Track G",
+          "reason": "F2가 바꾼 상세 UI(탭·Playground)에 맞춰 옛 상세 UI를 기대하던 시험 4개를 같은 의도로 갱신(단언 수·강도 유지)"
+        },
+        {
+          "file": "apps/web/lib/api/variant-keys.mjs, apps/web/lib/api/variant-keys.d.mts",
+          "ownerTrack": "Track A",
+          "reason": "재료 변형 축 이름이 Playground 선택 키와 겹칠 때(select-control mode, data-table density) 선택 객체·URL에서 구분하는 순수 규칙. 화면·render 라우트·preview-recipes가 공유"
         }
       ]
     },

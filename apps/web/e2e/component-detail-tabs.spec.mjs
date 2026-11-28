@@ -97,3 +97,32 @@ test('차트·레이아웃 재료는 종류별 탭만 보이고 기본 미리보
     expect(preview).toBe(code);
   }
 });
+
+test('재료 변형이 있는 모든 부품의 기본 Playground 선택은 컴파일된 미리보기를 만든다', async ({page}) => {
+  // 시각 패밀리가 고정하는 속성(appearance·shape)을 기본값이 덮어쓰거나 예제 id 가 빠지면 기본 선택부터 거부됐다(button-control 만 통과).
+  for (const id of ['button-control', 'select-control', 'input-control', 'card-surface', 'navigation-menu', 'modal-dialog', 'tabs-control', 'tooltip', 'feedback-message', 'data-table']) {
+    await page.goto(`/components/${id}?tab=playground`);
+    await expect(page.locator(`iframe[title="${id} 컴파일 미리보기"]`), id).toHaveCount(1);
+    await expect(page.getByText('렌더되지 않았습니다'), id).toHaveCount(0);
+  }
+});
+
+test('부품 변형 축 이름이 Playground 축과 겹쳐도 따로 선택되고 Studio 링크가 변형 선택을 싣는다', async ({page}) => {
+  await page.goto('/components/data-table?tab=playground');
+  await expect(page.getByLabel('밀도').locator('option')).toHaveText(['compact', 'comfortable', 'spacious']);
+  await page.getByLabel('density (부품 변형)').selectOption('compact');
+  await expect(page).toHaveURL(/variant\.density=compact/);
+  await expect(page.getByLabel('밀도')).toHaveValue('comfortable');
+  await expect(page.getByRole('link', {name: '선택한 부품을 Studio에서 열기'})).toHaveAttribute('href', /componentAxes=density%3Acompact/);
+  const frame = page.frameLocator('iframe[title="data-table 컴파일 미리보기"]');
+  await expect(frame.getByRole('table')).toBeVisible();
+});
+
+test('360px 에서도 9개 탭이 모두 화면 안에 보인다', async ({page}) => {
+  await page.setViewportSize({width: 360, height: 800});
+  await page.goto('/components/button-control');
+  const tabs = page.getByRole('tab');
+  await expect(tabs).toHaveCount(9);
+  const rights = await tabs.evaluateAll(buttons => buttons.map(button => Math.round(button.getBoundingClientRect().right)));
+  for (const right of rights) expect(right).toBeLessThanOrEqual(360);
+});

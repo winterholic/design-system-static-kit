@@ -50,13 +50,16 @@ test('Components는 실제 명세를 보여 주고 잘못된 부품 ID는 404', 
   await page.goto('/components');
   // 부품은 쪽으로 나뉘어 있어 첫 쪽에 없다. 검색으로 찾는다.
   await page.getByRole('searchbox', {name: '검색'}).fill('hero');
-  await page.getByRole('button', {name: '찾기'}).click();
-  await page.getByRole('link', {name: /hero/}).first().click();
+  await page.getByRole('button', {name: '검색', exact: true}).click();
+  await page.locator('a[href="/components/hero"]').click();
   await expect(page.getByRole('heading', {name: '히어로'})).toBeVisible();
+  // 허용 속성 표와 실제 렌더 결과는 Overview, 놓을 수 있는 자리(허용 부모·자식)는 Composition 탭이다.
   await expect(page.getByRole('heading', {name: '허용 속성'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: '놓을 수 있는 자리'})).toBeVisible();
   await expect(page.getByRole('table').getByRole('row').nth(1)).toBeVisible();
-  await expect(page.locator('iframe[title*="렌더 결과"]')).toBeVisible();
+  await expect(page.locator('iframe[title$="기본 컴파일 결과"]')).toBeVisible();
+  await page.getByRole('tab', {name: 'Composition'}).click();
+  await expect(page.getByText('허용 부모')).toBeVisible();
+  await expect(page.getByText('허용 자식')).toBeVisible();
   expect((await request.get('/components/not-a-component')).status()).toBe(404);
 });
 
@@ -71,10 +74,18 @@ test('Components는 2.6.0 재료 계약과 실제 변형 렌더를 제공한다'
   await expect(page.getByText(/카탈로그 2\.6\.0/)).toBeVisible();
   await expect(page.getByRole('heading', {name: '재료 계약'})).toBeVisible();
   await expect(page.getByText('multiple + async')).toBeVisible();
-  await expect(page.getByText('--kit-action')).toBeVisible();
-  await expect(page.getByLabel('mode', {exact: true})).toBeVisible();
-  await expect(page.getByRole('button', {name: '좁게 375px'})).toBeVisible();
-  await expect(page.locator('iframe[title*="렌더 결과"]')).toHaveAttribute('src', /\/components\/select-control\/render/);
+  await expect(page.locator('iframe[title$="기본 컴파일 결과"]')).toHaveAttribute('src', /\/components\/select-control\/render/);
+  await page.getByRole('tab', {name: 'Tokens'}).click();
+  await expect(page.getByText('--kit-action', {exact: true})).toBeVisible();
+  // 재료 변형 축 mode(single·multiple)와 좁은 뷰포트는 Playground 에서 고른다. 라이트·다크 mode 축과 이름이 겹쳐도 따로 있어야 한다.
+  await page.getByRole('tab', {name: 'Playground'}).click();
+  await expect(page.getByLabel('mode (부품 변형)')).toBeVisible();
+  await expect(page.getByLabel('mode (부품 변형)').locator('option')).toHaveText(['single', 'multiple']);
+  await expect(page.getByLabel('라이트·다크').locator('option')).toHaveText(['light', 'dark']);
+  await page.getByLabel('뷰포트').selectOption('390');
+  const preview = page.locator('iframe[title="select-control 컴파일 미리보기"]');
+  await expect(preview).toHaveAttribute('src', /\/components\/select-control\/render/);
+  await expect(preview).toHaveCSS('width', '390px');
 
   const multi = await request.get('/components/select-control/render/mode~multiple');
   expect(multi.status()).toBe(200);
@@ -88,7 +99,8 @@ test('Components는 2.6.0 재료 계약과 실제 변형 렌더를 제공한다'
   await page.goto('/components/data-table');
   await expect(page.getByRole('heading', {name: '데이터 표'})).toBeVisible();
   await expect(page.getByText('pagination')).toBeVisible();
-  await expect(page.getByText('--kit-sp-item')).toBeVisible();
+  await page.getByRole('tab', {name: 'Tokens'}).click();
+  await expect(page.getByText('--kit-sp-item', {exact: true})).toBeVisible();
   const compact = await request.get('/components/data-table/render/density~compact');
   expect(compact.status()).toBe(200);
   expect(await compact.text()).toContain('data-density="compact"');
@@ -99,8 +111,8 @@ test('웹 번들의 2.6.0 부품 미리보기에서 선택과 정렬 런타임�
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
 
-  await page.goto('/components/select-control');
-  const select = page.frameLocator('iframe[title*="렌더 결과"]');
+  await page.goto('/components/select-control?tab=playground');
+  const select = page.frameLocator('iframe[title="select-control 컴파일 미리보기"]');
   const region = select.getByRole('combobox', {name: '지역'});
   await region.press('Enter');
   await expect(region).toHaveAttribute('aria-expanded', 'true');

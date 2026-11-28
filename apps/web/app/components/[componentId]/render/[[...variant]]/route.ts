@@ -1,5 +1,6 @@
 import {componentView, renderComponent} from '@/features/components/spec.server';
 import {playgroundAxes} from '@/features/components/detail-model.mjs';
+import {variantKey} from '@/lib/api/variant-keys.mjs';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,16 +21,16 @@ export async function GET(req: Request, {params}: {params: Promise<{componentId:
       if (separator < 1 || value === undefined || values.has(axis)) return unknownVariant('등록된 변형 축과 값을 한 번씩 사용하세요.');
       values.set(axis, value);
     }
-    selection = Object.fromEntries(values);
+    selection = Object.fromEntries([...values].map(([axis, value]) => [variantKey(axis), value]));
   }
   if (view && !variant?.length) {
     const params = new URL(req.url).searchParams;
     const values: Record<string, string> = {};
     for (const group of view.variantGroups) {
-      const asked = params.get(group.name);
+      const asked = params.get(variantKey(group.name));
       if (!asked) continue;
       if (!group.values.some(value => String(value) === asked)) return unknownVariant(`카탈로그에 없는 ${group.name} 변형입니다.`);
-      values[group.name] = asked;
+      values[variantKey(group.name)] = asked;
     }
     const state = params.get('state');
     if (state && !view.variantGroups.some(group => group.name === 'state')) {

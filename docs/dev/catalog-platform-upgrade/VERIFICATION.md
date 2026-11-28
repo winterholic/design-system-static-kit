@@ -1802,11 +1802,11 @@ F1 검증(`34812d226`)이 확인한 대로 `site/catalog-index.json`의 차트 �
 
 엔진: Claude Sonnet 5.5. 구현자(GPT Luna)는 Chromium을 띄우지 못해 브라우저 시험을 실행하지 못했고, 구현 직후 `npm run test:browser`는 6건이 실패했다. 이 검증은 Chromium으로 15개 신규 목적 패밀리와 관련 행을 조작해 결함을 찾아 고쳤다.
 
-### 29.1 행별 판정 (F 22행 + G 20행)
+### 33.1 행별 판정 (F 22행 + G 20행)
 
 `tests/platform-card-data-requirements.test.mjs`가 42행 각각의 렌더 출력이 이름의 뜻을 갖는지 본다. 어느 재료가 어느 행을 맡는지는 MATERIAL-COVERAGE.json의 요구 레코드에서, 행 이름은 REQUEST.md에서 읽는다. 구성은 F 직접 19·변형 3, G 직접 16·변형 3·부분 1로 구현 보고와 같다. 변형 6행(Metric Trend·Media·Settings·Sortable·Selectable·Activity Feed)은 장부가 적은 축 값이 실제로 출력을 바꾸는지 확인한다.
 
-### 29.2 발견 결함과 교정
+### 33.2 발견 결함과 교정
 
 | # | 행 | 결함 | 교정 |
 |---|---|---|---|
@@ -1823,7 +1823,7 @@ F1 검증(`34812d226`)이 확인한 대로 `site/catalog-index.json`의 차트 �
 | D-11 | 시험 하네스 | 페이지 조립기(`scripts/families/pages.mjs`)의 런타임 묶음에 정보·미디어, 데이터 표시, 카드 선택 런타임이 없었다. D3의 `platform-card-data.spec.mjs`는 `runtime: true`로 이 동작을 기대하지만 실행되지 않았다 | 세 런타임을 묶음에 추가 |
 | D-12 | 시험 | `all purpose families keep the page ... within the viewport`가 `navigation.sidebar`(comfortable 밀도를 받지 않음)에서 조립 실패로 멈췄다. 앞 패밀리에서 먼저 실패해 그 뒤 패밀리는 한 번도 검사되지 않았다 | 받아 주는 첫 밀도로 조립. 모든 패밀리를 계속 검사 |
 
-### 29.3 데이터 표시·카드 조작 (`e2e/platform-card-data-interaction.spec.mjs`, 390px·1280px, 서비스 standalone 출력)
+### 33.3 데이터 표시·카드 조작 (`e2e/platform-card-data-interaction.spec.mjs`, 390px·1280px, 서비스 standalone 출력)
 
 - 선택 카드: Space·Enter·클릭, `aria-pressed`와 `data-selected` 동기, 카드 어디를 눌러도 선택, 초기 selected, disabled, 키보드 포커스 링, 44px.
 - 정적 카드 7종: Tab 정지 없음, loading(`aria-busy`+status)·empty(status)·error(alert), 긴 문구 줄바꿈, 가로 넘침 없음, 제목 16px.
@@ -1832,7 +1832,7 @@ F1 검증(`34812d226`)이 확인한 대로 `site/catalog-index.json`의 차트 �
 - 그룹 표: 그룹 머리글 순서와 tbody 분리. 트리: 한 Tab 정지, ArrowRight·Left·Down·Home·End·Enter, 로빙 tabindex, 항목 44px, 펼침 표시.
 - 검사기·로그·diff: 매우 긴 값 줄바꿈, 가로 넘침 없음, loading·empty·error 상태.
 
-### 29.4 접근성 E2E 변경 판정 (D3가 바꾼 것)
+### 33.4 접근성 E2E 변경 판정 (D3가 바꾼 것)
 
 | 변경 | 판정 |
 |---|---|
@@ -2045,3 +2045,44 @@ REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
 ```
 
 `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `origin/main` 대비 변경이 없다. 2.1.0 고정 전체 출력 byte-for-byte 시험과 기본 2.4.0 opt-in 비브라우저 시험도 통과했다.
+
+
+## 34. 옛 상세 UI 기대 e2e 4개의 갱신과 새 UI 결함 교정 (기준 `58d4c11cf`, rebase 후 TASK-TRF-07 반영 main 위, 2026-11-29)
+
+§28.6의 차트·레이아웃 판정은 이후 TASK-TRF-07(§31)이 상세 라우트를 연결해 대체됐다. §28.5가 범위 밖으로 남긴 실패 4개(`explore-components-home.spec.mjs` 49·63·98줄, `components-studio-roundtrip.spec.mjs` 4줄)를 새 상세 UI 기준으로 옮겼다. 각 시험은 구현 그대로 실패(RED)했고, 옮기는 과정에서 새 UI에 같은 기능이 없는 곳을 결함으로 보고 고쳤다.
+
+### 34.1 시험별 의도와 새 UI의 대응
+
+| 시험 | 원래 의도 | 새 UI의 같은 기능 | 단언 변화 |
+|---|---|---|---|
+| explore-components-home 49 | 목록 검색 → 상세, 허용 속성 표, 놓을 수 있는 자리, 렌더 결과, 없는 ID는 404 | 목록 `검색` 버튼(F1이 `찾기`를 바꿈), Overview의 `허용 속성` 표와 기본 컴파일 iframe, Composition 탭의 `허용 부모`·`허용 자식` | 6개 → 8개(놓을 수 있는 자리를 부모·자식 2개로 나눔) |
+| 63 | select-control·data-table 계약: `재료 계약`, `multiple + async`, 토큰, `mode` 변형 축, 좁은 뷰포트, iframe, render 라우트 | Overview(제약과 미지원), Tokens 탭, Playground의 `mode (부품 변형)`·`뷰포트` 390 선택과 단일 미리보기 폭 | 모두 유지, 변형 축 옵션 `single·multiple`·라이트·다크 옵션 `light·dark`·iframe 폭 390px 추가 |
+| 98 | 미리보기 안에서 select 키보드 런타임과 표 정렬 런타임 실행 | Playground 미리보기 iframe(`select-control 컴파일 미리보기`) | 단언 동일, 대상 iframe만 교체 |
+| components-studio-roundtrip 4 | 변형 축 선택 → Studio 링크 → 미리보기 반영 → 편집 보존 → 내보내기 | Playground의 부품 변형 축 선택(`mode (부품 변형)`·`search`·`maxMenuHeight`)과 `선택한 부품을 Studio에서 열기` 링크 | 단언 동일, 링크 갱신 대기 1개 추가 |
+
+### 34.2 새 UI에 없어서 고친 것 (모두 F2 구현의 결함)
+
+1. **허용 속성 표 없음**: 옛 화면의 모든 속성·제약 표가 Accessibility의 필수 속성 요약으로만 남았다. Overview에 `허용 속성` 표를 복원했다. 같은 이유로 `제약과 미지원`(`forbidden:`/`unsupported:` 태그, 예: `multiple + async`)·반응형·Blueprint 연결과 Composition의 필요/금지 페이지 유형을 되살렸다.
+2. **Playground가 10개 중 9개 부품에서 기본 선택부터 거부됨**(실측: button-control만 iframe 1개, 나머지는 `appearance는 family:soft가 filled로 고정합니다`, `Table requires a safe id`, `카탈로그에 없는 state 변형입니다`). 원인은 기본값 변형을 항상 props로 보내 시각 패밀리의 고정 속성을 덮어쓴 것, 예제 `id`를 내용에서 뺀 것, 상태를 재료 상태 목록 첫 값으로 덮어쓴 것이다. 기본값과 다른 변형만 보내고 예제 내용·상태 기준을 고쳤다. 수정 뒤 10개 모두 iframe 1개(`e2e/component-detail-tabs.spec.mjs` 새 시험).
+3. **변형 축 선택 불가**: 11축 밖의 부품 변형(shape, behavior, search, maxMenuHeight 등)을 고를 방법이 없었다. Playground에 `부품 변형 축` 그룹을 두고, Variants 탭은 외형 축이 없는 재료(select-control)에서 첫 비크기·비상태 축을 비교하게 했다. States 탭은 렌더 계약에 없는 상태(hover·focus·active)를 비활성+사유로 막는다.
+4. **키 충돌**: select-control의 `mode`, data-table의 `density`가 라이트·다크·밀도 축과 같은 이름이라 `라이트·다크` 선택에 `single·multiple`이 나왔다. 겹치는 변형 축만 `variant.` 접두사로 구분한다(`apps/web/lib/api/variant-keys.mjs`). 경로형 `/render/mode~multiple`은 그대로 동작한다.
+5. **Studio 링크 없음**: 상세에서 Studio로 가는 링크(`componentAxes`)가 없었다. Playground에 복원했다.
+6. **상호작용 런타임 없음**: Playground·Code의 HTML에 `<script>`가 없어 select 목록·표 정렬이 동작하지 않았다(CSP도 `script-src` 없음). `assembleComponentContext`가 `assembleComponents`와 같은 `formRuntime + controlRuntime`을 붙이고 CSP에 `script-src 'unsafe-inline'`을 둔다(미리보기와 Code는 같은 바이트).
+7. **360px에서 9개 탭이 화면 밖으로 나감**(`e2e/layout-quality.spec.mjs`가 `/components/<type>` 28곳에서 `#tab-composition` 넘침 검출): 탭 목록을 줄바꿈으로 바꿨다(새 시험: 수정 전 오른쪽 끝 476px, 수정 후 360px 이하).
+
+### 34.3 실행 결과
+
+```text
+$ WEB_REUSE=1 WEB_PORT=4342 npm --workspace apps/web run test:e2e -- explore-components-home.spec.mjs components-studio-roundtrip.spec.mjs a11y.spec.mjs perf-budget.spec.mjs shell.spec.mjs catalog-lists.spec.mjs
+81 passed (1.4m)
+$ npm --workspace apps/web run test:unit            # tests 92 / pass 92
+$ node --test tests/platform-component-context.test.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs   # tests 9 / pass 9
+$ node scripts/check-generated.mjs                  # REPRODUCIBLE: 5305 generated files match a fresh build byte for byte.
+$ npm run coverage:materials:check                  # MANIFEST MATCH (1534 materials, 406 requirements)
+```
+
+### 34.4 `npm run test:browser`(루트 e2e 전체, `PW_PORT=4399`)와 `apps/web` 전체 e2e의 남은 실패 (F2 상세와 무관)
+
+- 루트 `test:browser`: **476 passed, 15 failed**(11.3분). 15개는 모두 목적 패밀리·플랫폼 페이지다: `platform-card-data.spec.mjs:16`(`.pf-card-selection`의 `data-selected`), `platform-families.spec.mjs:13`(`button.emphasis @1280: component overflow`), `platform-family-a11y.spec.mjs` 12개(card.kpi 포커스 표시 4, form.radio-group·radio-card·date-range Tab 순서 6, work.filter-toolbar 화면 순서 2, 폰 폭 넘침 1, 카드 상호작용 1), `platform-work-patterns.spec.mjs:21`(검색 결과 행 숨김). `src/service` 변경을 걷어낸 상태에서 대표 4개(card-data, work-patterns, radio-group, filter-toolbar)가 같은 실패로 재현됐다. 소관: D3(카드·데이터 §6.2 F·G: card.kpi, 카드 선택, 데이터 패턴), TASK-TRD-BCD(radio·date-range), D7 M(work 패턴), 패밀리 레이아웃(button.emphasis 넘침).
+- `apps/web` 전체 e2e: 253 passed, 4 failed, 1 skipped. 이 중 `layout-quality.spec.mjs:10`은 상세 넘침(위 7번)을 고친 뒤 `/components` 카테고리 탭 컨테이너(F1) 넘침만 남았다. `previews-parity.spec.mjs:37`은 `purpose:overlay.contextual-help` 정적 미리보기 불일치, `w6b-scenarios.spec.mjs:130` 2개(390·1280)는 F1 이전 목록 UI(`li[data-purpose]`, `쪽 이동`)를 기대한다. 모두 상세 구현 밖이라 고치지 않았다.
+- `npm --workspace apps/web run test:boundary`는 9개 중 1개 실패한다(`preview-recipes.mjs`가 `src/service/component-context.mjs`를 직접 import). F2 이전부터의 구현 결정이다. `service` 진입점으로 재노출하면 공개 번들(`scripts/build.mjs`가 이 파일을 제외)이 깨지고, 진입점을 늘리면 경계 규약(`service`·`edit`만)에 어긋난다. Track A·G의 결정이 필요해 손대지 않았다.
