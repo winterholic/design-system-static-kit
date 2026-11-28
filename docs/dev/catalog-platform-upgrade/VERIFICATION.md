@@ -392,3 +392,83 @@ REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.   (EXIT=0)
 ```
 시험 RED 확인: `compiler.ts`에 결함 8개를 하나씩 심어 `compiler.unit.mjs`가 실패하는지 보았다(색 후보가 profile을 무시, 오래된 응답 폐기 제거, 키에서 mode 제거, LRU 제거 정지, 디바운스 제거, 진행 중 공유 제거, `cancel`이 응답을 무효화하지 않음, 프로파일 후보가 mode를 무시). 8개 모두 실패했고 원래 코드로 되돌리면 14건 통과한다. 판정 재사용 시험은 개발 중 `colorPalette`를 `choices`의 무시 목록에 넣었을 때도 실제로 실패해(`colorPalette=(none)`에서 판정이 달라짐) 그 필드를 목록에서 뺐다.
 미실행: `05cd7c875` 시점 코드 그대로의 내보내기 sha256(비교 기준은 `c239a0fbc`와 수정본), Vercel 운영 측정.
+## 7. TASK-TRE-01 시각 패밀리 12종 독립 검증 (원 커밋 `71d8e5974`, 브랜치 `upgrade/e1-families`)
+
+원 구현(Gemini Flash)을 새 맥락에서 다시 검증했다. 결론: 12종은 선언되어 있었으나 렌더가 쓰지 않는 값과 항상 통과하는 시험이 있어 "구현 완료"로 볼 수 없었다. 결함을 고쳤고 수치로 확인했다.
+
+### 7.1 발견 결함과 조치
+| # | 결함(원 구현) | 증거 | 조치 |
+|---|---|---|---|
+| 1 | `traits`(12개 속성)가 어느 렌더도 읽지 않았다. 시험은 `traits[key] !== undefined`만 봤다 | `grep traits src/` → `visual.mjs` 밖 소비처 0 | `traits`를 유일한 원천으로 삼고 `vars`·`metrics`·`recipe`·`shape`·카드 구조·내비 표현을 거기서 계산(`visual.mjs` `define`). `families.mjs`는 shape·카드·내비를 `visual.mjs`에서 읽는다 |
+| 2 | `--pf-control-h`, `--pf-glass-blur`, `--pf-cell-pad`, 포커스 링, 상태 표현이 출력 CSS에서 읽히지 않았다. 컨트롤 높이는 12종 모두 같았다 | 출력 CSS의 `var(--pf-control-h` 0건 | `--kit-control`(컨트롤 크기 계산이 읽는 기존 토큰)·`--kit-inset`·`--kit-bw`를 패밀리 범위에서 덮고, `FAMILY_SCOPE_CSS`가 포커스 링 두께·간격, 라벨 글자 형태, 표 셀 여백, 표면 계층 그림자, 유리 블러를 읽는다. 값이 출력에서 읽히는지 시험(Criterion 2b)이 본다 |
+| 3 | 66쌍 시험이 존재하지 않는 `--kit-control`을 비교했고, `--pf-surface`의 색 토큰 이름(`var(--kit-soft)` 대 `var(--kit-surface)`)·테두리 색 이름까지 차이로 세어 사실상 항상 통과했다 | 원 시험 `diffs.length >= 1` | 색 토큰 이름을 지우고(테두리=굵기, 면=투명도, 그림자=오프셋·번짐) 쌍마다 값 12개 이상·묶음 6개 이상 차이를 요구. 구성원 고정 축과 버튼 강조 외형도 비교(Criterion 3) |
+| 4 | soft·elevated·tonal·glass가 거의 같았다 | 원 값: elevated×tonal 6종 속성(4묶음), soft×elevated 11종, soft×tonal 13종 | 아래 7.2의 설계 변경 |
+| 5 | glass의 면은 반투명(75%)인데 `opaqueSurface: true`로 선언했다. 블러 소비처도 없었다 | `metrics`와 `traits.surface` 불일치 | 불투명 여부를 `traits.surface`에서 계산한다. glass는 본문 위 고정 요소(하단 내비)를 거부한다. 면 알파 78%와 블러 14px를 glass 범위 규칙이 읽는다 |
+| 6 | 신규 8종은 54개 스타일 맥락 중 어느 곳에서도 1순위가 못 됐다. 원 작업이 분포 시험의 대상을 `FAMILIES`에서 기존 4종(`BASE_FAMILIES`)으로 줄여 가렸다 | `node` 분포 출력: 4종만 1순위 | `FAMILY_PICKS`에 신규 패밀리 1순위 지정(맥락 성격과 이유 포함). 시험은 4종 5곳 이상을 유지하고 12종 모두 1곳 이상을 요구하도록 강화 |
+| 7 | `10개 기반 컴포넌트의 고정 축 조합이 모두 고유`라고 했으나 확인하는 시험이 없었다 | 커밋 메시지 | Criterion 3d 추가 |
+| 8 | `docs`의 `quality.evidence`가 가리키는 줄(`:29`, `:73`)은 새 시험과 무관 | | 새 시험 줄로 갱신 |
+
+### 7.2 패밀리별 핵심 차이(§7 12개 속성)
+핵심 값(`traits`). 컨트롤은 높이 · 가로 여백(px), 링은 포커스 링 두께/간격(px).
+
+| 패밀리 | 모서리 | 테두리 | 그림자·표면 | 컨트롤 | 아이콘 | 버튼 강조 | 링 | 카드·내비 | 모션 |
+|---|---|---|---|---|---|---|---|---|---|
+| quiet (Minimal Flat) | 10px | 1px | 없음, 불투명 | 36 · 20 | line 2 | solid·outline·ghost | 3/2 | outline 카드, underline 내비 | 150ms |
+| soft (Soft Rounded) | 18px | 0 | lifted, 채운 면 | 40 · 28 | duotone | solid·soft·ghost, 알약 | 3/2 | filled 카드, pill 내비 | 150ms |
+| bold (Brutalist) | 0 | 2px | 오프셋 4px, 불투명 | 38 · 20 | line-bold 2.6 | solid·outline, 대문자 | 4/2 | elevated 카드 6px 띠, block 내비 | 260ms, -4px |
+| editorial | 4px | 규칙선 1px | 없음, 투명 | 36 · 16 | line-fine 1.5 | solid·outline·link, 대문자 | 2/4 | flat 카드, underline | 0ms |
+| outline-precise | 4px(컨트롤 0) | 1px 진한 선 | 없음 | 34 · 16 | line-square 직각 끝 | solid·outline·ghost | 2/1 | outline 카드 2px 기준선, block 내비, 분절 탭 | 150ms |
+| corporate-formal | 4px | 1px | soft 그림자 | 40 · 24 | line 2 | solid·outline·link | 3/2 | elevated 카드, underline | 150ms |
+| dense-enterprise | 4px | 1px | 없음 | 30 · 12, 표 셀 4px | line-fine | solid·outline·ghost | 2/0 | outline 카드, block 내비, 분절 탭 | 0ms |
+| elevated-material | 10px | 0 | 놓인 면 얕게, 뜬 면 깊게 | 38 · 20 | solid 채움 | solid·soft·ghost | 3/2 | elevated 카드, pill 내비 | 150ms |
+| tonal-layered | 18px | 0 | 없음, 색조 면 | 44 · 20 | solid 채움 | solid·soft·link | 3/2 | filled 카드 4px 띠, block 내비, 분절 탭 | 0ms |
+| glass | 18px | 1px 반투명 | lifted, 면 알파 78% + 블러 14px | 40 · 28, 카드 24px | line-fine | solid·outline·ghost | 3/2 | outline 카드, pill 내비 | 150ms |
+| luxury | 0 | 1px | 없음 | 44 · 32, 카드 32px | line-fine 1.5 | solid·outline·ghost, 대문자 자간 .12em, 굵기 500 | 2/4 | outline 카드, underline | 150ms |
+| expressive | 28px | 1px 강조색 | lifted | 44 · 28 | duotone | solid·soft·ghost, 알약 | 4/3 | elevated 카드 6px 띠, pill 내비 | 260ms, -4px |
+glow 그림자는 쓰지 않았다. 밝은 모드에서 X05가 금지한다(`P_REL_FORBIDS`). 처음 expressive에 썼다가 `platform-color-sets` 시험이 잡아 되돌렸다.
+
+### 7.3 쌍별 비색상 CSS 차이(브라우저 실측)
+`node scripts/families/differentiation.mjs --min 12`: 같은 장면(버튼·카드·입력·내비·표·피드백, 7장면)을 12개 패밀리로 `assembleFamilies`에서 렌더하고 Chromium computed style에서 색 속성(color, background-color RGB, border-color, outline-color, 그림자 색)을 뺀 값을 요소 순서로 견줬다. 모서리·테두리·윤곽·그림자·면 투명도·블러·간격·크기·글자 형태·모션·아이콘 선·hover/focus 상태를 센다. 전체 66쌍은 `screens/families/differentiation.md`.
+- 가장 가까운 쌍: soft × elevated-material, 다른 속성 종류 17, 다른 묶음 6/10, 다른 칸 753.
+- 66쌍 전부 속성 종류 17 이상, 묶음 5 이상(최소 quiet × luxury 5, 속성 19), 다른 칸 428 이상.
+- 사용자가 지목한 쌍: soft×elevated 17·6, soft×glass 23·7, elevated×glass 25·8, outline-precise×dense-enterprise 23·6, quiet×tonal 26·9, quiet×editorial 32·9, editorial×tonal 28·8(속성 종류·묶음).
+- 수정 전(원 구현, 같은 하네스): elevated×tonal 6종·4묶음, soft×elevated 11종·5묶음, soft×tonal 13종, quiet×corporate 14종.
+가장 가까운 12쌍:
+
+| 쌍 | 다른 속성 종류 | 다른 묶음(10) | 다른 칸(요소×속성) | 상태 칸 | 장면별(button/card/card-listing/input/nav/table/feedback) |
+|---|---:|---:|---:|---:|---|
+| soft × elevated-material | 17 | 6 | 753 | 0 | 56 / 74 / 38 / 210 / 160 / 178 / 37 |
+| quiet × luxury | 19 | 5 | 817 | 4 | 73 / 84 / 44 / 227 / 155 / 188 / 50 |
+| quiet × elevated-material | 21 | 8 | 428 | 2 | 40 / 40 / 23 / 99 / 138 / 64 / 26 |
+| quiet × outline-precise | 21 | 8 | 577 | 4 | 50 / 63 / 36 / 201 / 131 / 60 / 40 |
+| soft × expressive | 22 | 7 | 508 | 7 | 31 / 46 / 24 / 131 / 85 / 173 / 25 |
+| quiet × corporate-formal | 22 | 6 | 562 | 0 | 50 / 76 / 35 / 197 / 107 / 51 / 46 |
+| soft × tonal-layered | 23 | 8 | 478 | 5 | 57 / 78 / 33 / 141 / 128 / 28 / 18 |
+| soft × glass | 23 | 7 | 529 | 0 | 40 / 40 / 20 / 106 / 119 / 173 / 31 |
+| quiet × glass | 23 | 8 | 616 | 2 | 51 / 77 / 35 / 197 / 156 / 62 / 40 |
+| outline-precise × dense-enterprise | 23 | 6 | 681 | 5 | 61 / 84 / 38 / 173 / 134 / 162 / 34 |
+| elevated-material × tonal-layered | 23 | 7 | 701 | 5 | 59 / 67 / 34 / 188 / 156 / 176 / 26 |
+| dense-enterprise × tonal-layered | 24 | 7 | 678 | 4 | 46 / 68 / 30 / 197 / 126 / 180 / 35 |
+
+`npm test`에는 브라우저 없이 도는 정적 판(Criterion 3: 쌍마다 값 12개 이상, 묶음 6개 이상; 최소 dense×quiet 14값, corporate×quiet 6묶음)이 있다.
+
+### 7.4 스크린샷
+`node scripts/families/screenshots.mjs`: 같은 화면(상단 내비, 탭, KPI·프로필 카드, 버튼, 검색·필터 입력, 표, 확인 알림)을 12종으로 1100px 폭에 그렸다. 모든 화면에 같은 색 번짐 배경을 깔아 유리 질감이 보이게 했다.
+`docs/dev/catalog-platform-upgrade/screens/families/`의 `quiet.png soft.png bold.png editorial.png outline-precise.png corporate-formal.png dense-enterprise.png elevated-material.png tonal-layered.png glass.png luxury.png expressive.png` 12장과 비교 시트 `overview.png`.
+육안 확인: 각진 분절 탭(outline-precise)·소형 컨트롤(dense)·밑줄 입력과 규칙선(editorial)·알약형 채움(soft, tonal)·반투명 카드와 번진 배경(glass)·굵은 선과 오프셋 그림자(bold)가 한눈에 구분된다. quiet·corporate-formal은 가장 비슷해 보이며, 4px 대 10px 모서리, 컨트롤 40 대 36px, 은은한 그림자, 텍스트 링크 단계로 구분된다(속성 22종, 6묶음 차이).
+
+### 7.5 호환성·채널
+- 기존 4개 ID 유지: `family:quiet|soft|bold|editorial` 등록, 새 ID 없음(Criterion 1).
+- 거부 사유: 호환 판정은 관계 그래프와 `checkPurposeCombination`을 거친다. 하단 내비×glass는 `P_PURPOSE_VISUAL`(면 투명), 고밀도 표×{soft, editorial, luxury, tonal-layered}는 셀 여백 12px로 거부한다(Criterion 4b). `forbids`(위반)와 `avoids`(경고)는 구분된다: `checkCompatibility(elevated-material + editorial-warm)` → `ok: true`, `applied: avoids`, glow×밝은 모드 → `P_REL_FORBIDS`.
+- REST·MCP·Blueprint·내보내기: `listPlatformMaterials({kind:'family'})` 12건, `assembleComponents`가 12종 모두 성공하고 CSS가 12가지, `platform-service-channels`(REST·MCP·Core 바이트 일치)가 통과.
+
+### 7.6 기존 시험 변경(완화 아님, 공개)
+- `tests/platform-family-purpose.test.mjs` `EXPECTED_REJECTIONS`: 기존 4건 유지, 새 3건 추가(`table.dense × luxury·tonal-layered`, `navigation.bottom × glass`). 사유는 7.1 #5, 셀 여백 12px.
+- `tests/platform-service-channels.test.mjs`의 work-dashboard 해시: 원 커밋이 한 번 바꾼 값을 다시 갱신. 차이는 출력 CSS의 패밀리 변수와 범위 규칙뿐이다(`diff`로 후보 선택·계획·결정은 동일 확인).
+- `tests/platform-style-family-distribution.test.mjs`: 원 커밋이 줄인 대상을 되돌려 12종 모두 1순위 1곳 이상을 요구.
+- `docs/platform/style-contexts.md`: `node tests/platform-style-doc.mjs --write`로 재생성.
+
+### 7.7 RED/GREEN
+- `--pf-unused-glow` 변수를 한 패밀리에 넣음 → Criterion 2b 실패(`emitted by familyShapeVars but no output CSS reads them`), 되돌리면 통과.
+- corporate-formal의 traits를 quiet 복사본으로 바꿈 → Criterion 3 실패(`only 3 differing values`), 되돌리면 통과.
+- expressive에 `glow` 사용 → `platform-color-sets` 시험이 `P_REL_FORBIDS`로 실패, `lifted`로 되돌려 통과.

@@ -14,7 +14,7 @@
  */
 import {escapeHTML} from '../../escape-html.mjs';
 import {varsOf} from '../../materials/control-kit.mjs';
-import {VISUAL_KEYS, VISUAL_LANGUAGES, visualMismatch} from './visual.mjs';
+import {VISUAL_KEYS, VISUAL_LANGUAGES, visualMismatch, FAMILY_SCOPE_CSS} from './visual.mjs';
 
 export const e = escapeHTML;
 export const PURPOSE_GROUPS = Object.freeze(['card', 'button', 'navigation', 'form', 'table', 'feedback']);
@@ -121,6 +121,7 @@ export function checkPurposeCombination(family, {visual, variant = {}, props = {
   return {ok: !errors.length, errors, resolved};
 }
 
-/** 아이콘 SVG 규칙. 기반 컴포넌트 CSS는 `.kit-icon`을 읽기만 하고 정의하지 않는다(정의는 src/styles/base.mjs의 컴파일 CSS). 조립 출력에 같은 규칙을 둔다. 어긋나지 않는 것은 테스트가 본다. */
-export const ICON_CSS = '.kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}';
+/** 아이콘 SVG 규칙. 기반 컴포넌트 CSS는 `.kit-icon`을 읽기만 하고 정의하지 않는다(정의는 src/styles/base.mjs의 컴파일 CSS). 조립 출력에 같은 규칙을 둔다. 어긋나지 않는 것은 테스트가 본다.
+ * 뒤에 붙는 FAMILY_SCOPE_CSS는 시각 패밀리 범위에서 포커스 링·라벨 글자 형태·표면 계층 그림자·표 셀 여백·유리 질감을 읽는 규칙이다(visual.mjs). 아이콘과 같은 시각 언어 CSS라 같은 곳에서 낸다. */
+export const ICON_CSS = '.kit-icon{width:1.25em;height:1.25em;flex:none;vertical-align:-.22em}.kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:var(--kit-icon-cap);stroke-linejoin:var(--kit-icon-join)}.kit-icon path.c{fill:var(--kit-icon-fill)}' + FAMILY_SCOPE_CSS;
 export const sel = (...names) => names.join(',');

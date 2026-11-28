@@ -7,6 +7,7 @@ import {familyRanking, familyDistribution} from './platform-style-doc.mjs';
 
 const env = createPlatform();
 const rows = familyRanking(env);
+const FAMILIES = env.registry.list('family').map(f => f.id);
 const BASE_FAMILIES = ['family:quiet', 'family:soft', 'family:bold', 'family:editorial'];
 const MAX_SHARE = 0.5, MIN_COUNT = 5;
 
@@ -15,6 +16,9 @@ test('one visual family does not take more than half of the 54 first-place picks
   const dist = familyDistribution(rows);
   for (const d of dist) assert.ok(d.share <= MAX_SHARE, `${d.family} is first for ${d.count}/54 contexts (${(d.share * 100).toFixed(1)}%), over ${MAX_SHARE * 100}%: ${d.themes.join(', ')}`);
   for (const id of BASE_FAMILIES) assert.ok((dist.find(d => d.family === id)?.count ?? 0) >= MIN_COUNT, `${id} is first for fewer than ${MIN_COUNT} contexts`);
+  // 12개 중 5곳씩은 54개 맥락에 담기지 않으므로(60 > 54) 신규 8개는 한 곳 이상으로 두되, 어느 맥락에서도 1순위가 못 되는 죽은 재료는 없어야 한다
+  assert.equal(FAMILIES.length, 12);
+  for (const id of FAMILIES) assert.ok((dist.find(d => d.family === id)?.count ?? 0) >= 1, `${id} is never first: no recommendation can reach it`);
   const base = ['family:editorial', 'family:soft'];
   assert.ok(rows.filter(r => base.includes(r.first)).length <= 43 - 4, 'editorial+soft stays clearly below the 43/54 the material review found');
 });

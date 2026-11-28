@@ -153,4 +153,6 @@ test('every visual family has visual metrics and no visual family hard-codes col
 
 const EXPECTED_REJECTIONS = [
   'purpose:table.dense × family:soft', 'purpose:table.dense × family:editorial', 'purpose:navigation.bottom × family:editorial', 'purpose:form.group × family:editorial',
+  // 12개 시각 패밀리(REQUEST §7): 표 셀 여백이 12px인 패밀리는 고밀도 표를, 면이 반투명인 패밀리는 본문 위에 고정되는 하단 내비를 거부한다(이유는 visual.mjs metrics가 traits에서 계산)
+  'purpose:table.dense × family:luxury', 'purpose:table.dense × family:tonal-layered', 'purpose:navigation.bottom × family:glass',
 ];

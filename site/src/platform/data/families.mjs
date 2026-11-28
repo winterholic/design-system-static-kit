@@ -3,6 +3,7 @@
  *   members  {base-component id: {preset: 고정 축, open: 호출자에게 여는 축, needs?: {typeRoles}}}
  *   shape    {radius, elevation, motion}: src/styles/base.mjs 축 값 표의 이름
  *   density  패밀리가 전제한 간격 밀도, states: 구성원 전체가 보장하는 상태
+ * shape와 카드 구조·내비게이션 표현은 families/visual.mjs의 traits에서 읽는다(원천 하나: 같은 값을 두 곳에 적으면 선언과 렌더가 어긋난다).
  * 목적 패밀리(구조)는 이 파일이 아니라 src/platform/families/에 있고, 시각 패밀리와 독립 축으로 곱해진다. 계약에 없는 시각 값(--pf-*)은 families/visual.mjs.
  *
  * 구성원은 10개 기반 컴포넌트 전부다. 의존(Card→Button 등)은 family-requires 검사가 지킨다.
@@ -62,84 +63,78 @@ const BASE_ID = {
 const PRESETS = {
   // 1. Minimal Flat
   quiet: {
-    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'outline', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 2. Soft Rounded
   soft: {
-    button: {shape: 'pill'}, input: {appearance: 'filled', shape: 'soft'}, card: {appearance: 'filled', shape: 'round', footer: 'none'},
-    nav: {appearance: 'pill', shape: 'pill'}, modal: {appearance: 'filled', shape: 'round'}, tabs: {appearance: 'pill', shape: 'pill'},
+    button: {shape: 'pill'}, input: {appearance: 'filled', shape: 'soft'}, modal: {appearance: 'filled', shape: 'round'}, tabs: {appearance: 'pill', shape: 'pill'},
     tooltip: {appearance: 'inverse', shape: 'pill'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'pill'}, table: {},
   },
   // 3. Brutalist
   bold: {
-    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, card: {appearance: 'elevated', shape: 'square', footer: 'none'},
-    nav: {appearance: 'block', shape: 'square'}, modal: {appearance: 'elevated', shape: 'square'}, tabs: {appearance: 'segmented', shape: 'square'},
+    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, modal: {appearance: 'elevated', shape: 'square'}, tabs: {appearance: 'segmented', shape: 'square'},
     tooltip: {appearance: 'inverse', shape: 'square'}, feedback: {appearance: 'solid', shape: 'square'}, select: {shape: 'square'}, table: {},
   },
   // 4. Editorial
   editorial: {
-    button: {shape: 'soft'}, input: {appearance: 'underline', shape: 'soft'}, card: {appearance: 'flat', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'plain', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 5. Outline Precise
   'outline-precise': {
-    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, card: {appearance: 'outline', shape: 'square', footer: 'none'},
-    nav: {appearance: 'block', shape: 'square'}, modal: {appearance: 'outline', shape: 'square'}, tabs: {appearance: 'segmented', shape: 'square'},
+    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, modal: {appearance: 'outline', shape: 'square'}, tabs: {appearance: 'segmented', shape: 'square'},
     tooltip: {appearance: 'surface', shape: 'square'}, feedback: {appearance: 'outline', shape: 'square'}, select: {shape: 'square'}, table: {},
   },
   // 6. Corporate Formal
   'corporate-formal': {
-    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'elevated', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, modal: {appearance: 'elevated', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
     tooltip: {appearance: 'inverse', shape: 'soft'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 7. Dense Enterprise
   'dense-enterprise': {
-    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'block', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'segmented', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'segmented', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'outline', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 8. Elevated Material
   'elevated-material': {
-    button: {shape: 'soft'}, input: {appearance: 'filled', shape: 'soft'}, card: {appearance: 'elevated', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'pill', shape: 'soft'}, modal: {appearance: 'elevated', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, modal: {appearance: 'elevated', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
     tooltip: {appearance: 'inverse', shape: 'soft'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 9. Tonal Layered
   'tonal-layered': {
-    button: {shape: 'soft'}, input: {appearance: 'filled', shape: 'soft'}, card: {appearance: 'filled', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'block', shape: 'soft'}, modal: {appearance: 'filled', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'filled', shape: 'soft'}, modal: {appearance: 'filled', shape: 'soft'}, tabs: {appearance: 'segmented', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 10. Glass
   glass: {
-    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
-    nav: {appearance: 'pill', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'outline', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
   // 11. Luxury
   luxury: {
-    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, card: {appearance: 'outline', shape: 'square', footer: 'none'},
-    nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'square'}, tabs: {appearance: 'underline', shape: 'soft'},
+    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, modal: {appearance: 'outline', shape: 'square'}, tabs: {appearance: 'underline', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'square'}, feedback: {appearance: 'outline', shape: 'square'}, select: {shape: 'square'}, table: {},
   },
   // 12. Expressive
   expressive: {
-    button: {shape: 'pill'}, input: {appearance: 'filled', shape: 'pill'}, card: {appearance: 'elevated', shape: 'round', footer: 'none'},
-    nav: {appearance: 'pill', shape: 'pill'}, modal: {appearance: 'filled', shape: 'round'}, tabs: {appearance: 'pill', shape: 'pill'},
+    button: {shape: 'pill'}, input: {appearance: 'filled', shape: 'pill'}, modal: {appearance: 'filled', shape: 'round'}, tabs: {appearance: 'pill', shape: 'pill'},
     tooltip: {appearance: 'surface', shape: 'pill'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'pill'}, table: {},
   },
 };
 
-const members = key => Object.fromEntries(Object.keys(OPEN).map(k => [T(BASE_ID[k]), {preset: PRESETS[key][k], open: OPEN[k], needs: TYPE[k]}]));
+// 카드 구조와 내비게이션 표현은 visual.mjs의 traits가 유일한 원천이다(같은 값을 두 곳에 적으면 선언과 렌더가 어긋난다).
+const presetOf = (key, k) => {
+  const v = VISUAL_LANGUAGES[`family:${key}`].members;
+  return k === 'card' ? v.card : k === 'nav' ? v.nav : PRESETS[key][k];
+};
+const members = key => Object.fromEntries(Object.keys(OPEN).map(k => [T(BASE_ID[k]), {preset: presetOf(key, k), open: OPEN[k], needs: TYPE[k]}]));
+const shapeOf = key => ({...VISUAL_LANGUAGES[`family:${key}`].shape});
 
 const FAMILY_BASE = {
   kind: 'family',
   states: ALL_STATES,
-  quality: {status: 'implemented', evidence: ['tests/platform-family-visual.test.mjs:29', 'tests/platform-family-visual.test.mjs:73']},
+  quality: {status: 'implemented', evidence: ['tests/platform-family-visual.test.mjs:103', 'tests/platform-family-visual.test.mjs:132', 'tests/platform-family-visual.test.mjs:146', 'tests/platform-family-visual.test.mjs:205']},
   reuses: ['component:card-surface'],
 };
 
@@ -151,7 +146,7 @@ export const FAMILIES = Object.freeze([
     label: '조용한 업무 (Minimal Flat)',
     contexts: ['dashboard', 'data', 'listing', 'settings'],
     members: members('quiet'),
-    shape: {radius: 'soft', elevation: 'outline', motion: 'subtle'},
+    shape: shapeOf('quiet'),
     density: 'comfortable',
     tags: [VISUAL_LANGUAGES['family:quiet'].key],
     relations: [
@@ -166,7 +161,7 @@ export const FAMILIES = Object.freeze([
     id: 'family:soft',
     label: '부드러운 채움 (Soft Rounded)',
     members: members('soft'),
-    shape: {radius: 'round', elevation: 'lifted', motion: 'subtle'},
+    shape: shapeOf('soft'),
     density: 'spacious',
     tags: [VISUAL_LANGUAGES['family:soft'].key],
     relations: [
@@ -180,7 +175,7 @@ export const FAMILIES = Object.freeze([
     id: 'family:bold',
     label: '굵은 대비 (Brutalist)',
     members: members('bold'),
-    shape: {radius: 'square', elevation: 'hard', motion: 'lively'},
+    shape: shapeOf('bold'),
     density: 'comfortable',
     tags: [VISUAL_LANGUAGES['family:bold'].key],
     relations: [
@@ -195,7 +190,7 @@ export const FAMILIES = Object.freeze([
     id: 'family:editorial',
     label: '에디토리얼 (Editorial)',
     members: members('editorial'),
-    shape: {radius: 'subtle', elevation: 'flat', motion: 'none'},
+    shape: shapeOf('editorial'),
     density: 'spacious',
     tags: [VISUAL_LANGUAGES['family:editorial'].key],
     relations: [
@@ -210,7 +205,7 @@ export const FAMILIES = Object.freeze([
     label: '정밀 외곽선 (Outline Precise)',
     contexts: ['dashboard', 'data', 'listing', 'docs'],
     members: members('outline-precise'),
-    shape: {radius: 'subtle', elevation: 'outline', motion: 'subtle'},
+    shape: shapeOf('outline-precise'),
     density: 'comfortable',
     tags: [VISUAL_LANGUAGES['family:outline-precise'].key],
     relations: [
@@ -226,7 +221,7 @@ export const FAMILIES = Object.freeze([
     label: '안정된 기업형 (Corporate Formal)',
     contexts: ['dashboard', 'listing', 'settings', 'docs'],
     members: members('corporate-formal'),
-    shape: {radius: 'soft', elevation: 'soft', motion: 'subtle'},
+    shape: shapeOf('corporate-formal'),
     density: 'comfortable',
     tags: [VISUAL_LANGUAGES['family:corporate-formal'].key],
     relations: [
@@ -241,7 +236,7 @@ export const FAMILIES = Object.freeze([
     label: '고밀도 엔터프라이즈 (Dense Enterprise)',
     contexts: ['dashboard', 'data', 'listing', 'settings'],
     members: members('dense-enterprise'),
-    shape: {radius: 'subtle', elevation: 'outline', motion: 'none'},
+    shape: shapeOf('dense-enterprise'),
     density: 'compact',
     tags: [VISUAL_LANGUAGES['family:dense-enterprise'].key],
     relations: [
@@ -256,7 +251,7 @@ export const FAMILIES = Object.freeze([
     id: 'family:elevated-material',
     label: '입체 머티리얼 (Elevated Material)',
     members: members('elevated-material'),
-    shape: {radius: 'soft', elevation: 'lifted', motion: 'subtle'},
+    shape: shapeOf('elevated-material'),
     density: 'comfortable',
     tags: [VISUAL_LANGUAGES['family:elevated-material'].key],
     relations: [
@@ -271,7 +266,7 @@ export const FAMILIES = Object.freeze([
     id: 'family:tonal-layered',
     label: '톤 계층 (Tonal Layered)',
     members: members('tonal-layered'),
-    shape: {radius: 'soft', elevation: 'flat', motion: 'subtle'},
+    shape: shapeOf('tonal-layered'),
     density: 'comfortable',
     tags: [VISUAL_LANGUAGES['family:tonal-layered'].key],
     relations: [
@@ -287,7 +282,7 @@ export const FAMILIES = Object.freeze([
     label: '유리 질감 (Glass)',
     contexts: ['landing', 'commerce', 'dashboard'],
     members: members('glass'),
-    shape: {radius: 'soft', elevation: 'lifted', motion: 'subtle'},
+    shape: shapeOf('glass'),
     density: 'spacious',
     tags: [VISUAL_LANGUAGES['family:glass'].key],
     relations: [
@@ -303,7 +298,7 @@ export const FAMILIES = Object.freeze([
     label: '럭셔리 (Luxury)',
     contexts: ['landing', 'commerce', 'article'],
     members: members('luxury'),
-    shape: {radius: 'square', elevation: 'flat', motion: 'subtle'},
+    shape: shapeOf('luxury'),
     density: 'spacious',
     tags: [VISUAL_LANGUAGES['family:luxury'].key],
     relations: [
@@ -319,11 +314,11 @@ export const FAMILIES = Object.freeze([
     label: '표현형 (Expressive)',
     contexts: ['landing', 'commerce'],
     members: members('expressive'),
-    shape: {radius: 'bubble', elevation: 'lifted', motion: 'lively'},
+    shape: shapeOf('expressive'),
     density: 'spacious',
     tags: [VISUAL_LANGUAGES['family:expressive'].key],
     relations: [
-      {type: 'prefers', to: 'subtoken-set:commerce-vivid', priority: 12, reason: '과감한 형태와 글로우는 역동적인 커머스·쇼케이스 세트와 어울린다'},
+      {type: 'prefers', to: 'subtoken-set:commerce-vivid', priority: 12, reason: '과감한 형태와 강조색 테두리는 역동적인 커머스·쇼케이스 세트와 어울린다'},
       {type: 'avoids', to: 'subtoken-set:data-dense', priority: 15, reason: '큰 라운드와 과감한 강조는 밀집 업무 화면에 부적합하다'},
     ],
   }),

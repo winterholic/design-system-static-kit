@@ -7,7 +7,7 @@
       "Pending": 24,
       "In Progress": 1,
       "Implemented": 1,
-      "Verified": 2,
+      "Verified": 3,
       "Blocked": 0
     },
     "byTrack": {
@@ -491,7 +491,11 @@
         "src/platform/families/legacy-map.mjs",
         "tests/platform-style-family-distribution.test.mjs",
         "tests/platform-family-visual.test.mjs",
-        "docs/platform/style-contexts.md"
+        "docs/platform/style-contexts.md",
+        "src/platform/data/style-contexts.mjs",
+        "scripts/families/differentiation.mjs",
+        "scripts/families/screenshots.mjs",
+        "docs/dev/catalog-platform-upgrade/screens/families/"
       ],
       "completionCriteria": "Minimal Flat부터 Expressive까지 12개 패밀리 등록, 패밀리 변경 시 실제 출력 CSS의 모서리/그림자 차이 증명",
       "tests": [
@@ -501,10 +505,12 @@
         "tests/platform-family-base.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": null,
+      "status": "Verified",
+      "unresolvedIssues": "원 구현(71d8e5974) 결함: traits가 렌더에 쓰이지 않음, --pf-control-h·--pf-glass-blur 미소비, 66쌍 시험이 존재하지 않는 변수(--kit-control)와 색 토큰 이름 차이까지 세어 항상 통과, soft·elevated·tonal·glass 거의 동일, 신규 8개가 어느 스타일 맥락에서도 1순위가 못 되는데 분포 시험을 4개 기준으로 완화함. 조치와 수치는 VERIFICATION.md §7. 남은 한계: apps/web 선택 UI와 Playwright e2e는 이번에 실행하지 않았다(Track F).",
       "createFiles": [
-        "tests/platform-family-visual.test.mjs"
+        "tests/platform-family-visual.test.mjs",
+        "scripts/families/differentiation.mjs",
+        "scripts/families/screenshots.mjs"
       ],
       "crossTrackFiles": [
         {
@@ -531,6 +537,16 @@
           "file": "scripts/families/pages.mjs",
           "owner": "Track E",
           "reason": "페이지 생성기 VISUALS에 12개 시각 패밀리 ID 등록"
+        },
+        {
+          "file": "src/platform/families/kit.mjs",
+          "owner": "Track D",
+          "reason": "ICON_CSS 끝에 FAMILY_SCOPE_CSS(visual.mjs)를 붙여 포커스 링·라벨 글자·표 셀 여백·표면 계층 그림자·유리 질감 규칙이 조립 출력에 실리게 함(import 1개, export 1줄)"
+        },
+        {
+          "file": "tests/platform-family-purpose.test.mjs",
+          "owner": "Track D",
+          "reason": "EXPECTED_REJECTIONS에 12개 패밀리에서 새로 생기는 거부 3건 추가(기존 4건 그대로). 셀 여백 12px 패밀리의 고밀도 표, 반투명 면의 하단 내비"
         }
       ]
     },
