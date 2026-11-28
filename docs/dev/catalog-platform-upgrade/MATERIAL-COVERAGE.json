@@ -16,7 +16,7 @@
       "total": 337
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:7 type-system:14 base-component:10 family:4 purpose-family:32 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8",
+      "platform": "style-context:54 palette:436 subtoken-set:7 type-system:14 base-component:10 family:12 purpose-family:32 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8",
       "design": "axis:15 chart-preset:29 color-token:257 component:65 icon:87 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -146,7 +146,7 @@
           "apps/web/app/studio/assemble/page.tsx"
         ],
         "proven": true,
-        "materials": 68
+        "materials": 76
       },
       "web:/studio/assemble#direction": {
         "role": "studio",
@@ -180,7 +180,7 @@
           "apps/web/features/platform/component-view.server.ts"
         ],
         "proven": true,
-        "materials": 4
+        "materials": 12
       },
       "web:/studio/assemble#component-handoff": {
         "role": "studio",
@@ -204,9 +204,9 @@
         "live": false
       },
       "freshness": {
-        "platformSectionEqualsBaseline": true,
+        "platformSectionEqualsBaseline": false,
         "legacyAttemptedEqualsBaseline": true,
-        "registeredEqualsBaseline": true
+        "registeredEqualsBaseline": false
       }
     },
     "ladder": "누적 사다리. defined(정의·권리 통과, 실제 호출 실패 또는 프로브 없음) → renderable(서비스 호출로 실제 출력) → catalog-visible(웹 카탈로그 라우트가 이 재료를 렌더) → assemblable(Studio가 선택지를 제공) → verified(유효한 테스트 참조 또는 실제 조립 품질 검사 통과). metadata-only는 권리 미확인 또는 정의 없음. blockedBy가 막힌 첫 단계다."
@@ -214,24 +214,24 @@
   "summary": {
     "requirements": {
       "total": 337,
-      "fulfilled": 167,
-      "missing": 170,
-      "coverageRate": 0.4955,
+      "fulfilled": 176,
+      "missing": 161,
+      "coverageRate": 0.5223,
       "byCoverage": {
-        "direct": 124,
+        "direct": 133,
         "variant": 34,
         "schema": 7,
         "part-of": 2,
-        "missing": 170
+        "missing": 161
       },
       "statusDistribution": {
-        "missing": 170,
+        "missing": 161,
         "metadata-only": 0,
         "defined": 3,
         "renderable": 22,
         "catalog-visible": 24,
         "assemblable": 1,
-        "verified": 117
+        "verified": 126
       },
       "breakdown": {
         "components": {
@@ -260,8 +260,8 @@
         },
         "families": {
           "total": 12,
-          "missing": 9,
-          "direct": 3,
+          "missing": 0,
+          "direct": 12,
           "variant": 0,
           "schema": 0,
           "partOf": 0
@@ -303,7 +303,7 @@
       }
     },
     "materials": {
-      "totalRecords": 1321,
+      "totalRecords": 1329,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
@@ -311,10 +311,10 @@
         "renderable": 85,
         "catalog-visible": 377,
         "assemblable": 4,
-        "verified": 407
+        "verified": 415
       },
       "registeredByRegistry": {
-        "platform": 237,
+        "platform": 245,
         "design": 1084
       }
     },
@@ -390,12 +390,12 @@
         }
       },
       "family": {
-        "registered": 4,
-        "actualMaterial": 4,
-        "assemblableVerified": 4,
-        "distinctOutputs": 4,
+        "registered": 12,
+        "actualMaterial": 12,
+        "assemblableVerified": 12,
+        "distinctOutputs": 12,
         "byStatus": {
-          "verified": 4
+          "verified": 12
         }
       },
       "icon": {
@@ -587,17 +587,17 @@
     "combinations": {
       "note": "조합 가능 수는 재료 수가 아니다. 재료를 서로 곱해 평가한 조립 경우의 수이며 byKind의 재료 집계와 합산하지 않는다.",
       "platform": {
-        "assemblableCombinations": 119610,
-        "attemptedCombinations": 120420,
-        "verifiedAssemblies": 5793,
-        "attemptedAssemblies": 5793,
-        "distinctVerifiedOutputs": 5787,
+        "assemblableCombinations": 258288,
+        "attemptedCombinations": 262656,
+        "verifiedAssemblies": 12344,
+        "attemptedAssemblies": 12344,
+        "distinctVerifiedOutputs": 12339,
         "distinctColorTokenSets": {
           "light": 63,
           "dark": 62
         },
         "distinctFacePairs": 14,
-        "distinctVisualFamilies": 4,
+        "distinctVisualFamilies": 12,
         "verifiedPurposeFamiliesInPages": 4,
         "method": "scripts/platform/platform-baseline.mjs platformSection() 직접 호출(렌더 없이 관계 평가, 대표 페이지는 assemblePage로 조립·품질 검사)"
       },
@@ -669,9 +669,9 @@
       {
         "material": "시각 패밀리",
         "previousBaseline": 4,
-        "currentMeasured": 4,
-        "delta": 0,
-        "status": "match",
+        "currentMeasured": 12,
+        "delta": 8,
+        "status": "drift",
         "measuredBy": "live registry count"
       },
       {
@@ -3339,41 +3339,51 @@
       "id": "req:family:03-outline-precise",
       "section": "§7",
       "name": "Outline Precise",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:outline-precise"
+      ]
     },
     {
       "id": "req:family:04-corporate-formal",
       "section": "§7",
       "name": "Corporate Formal",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:corporate-formal"
+      ]
     },
     {
       "id": "req:family:05-dense-enterprise",
       "section": "§7",
       "name": "Dense Enterprise",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:dense-enterprise"
+      ]
     },
     {
       "id": "req:family:06-elevated-material",
       "section": "§7",
       "name": "Elevated Material",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:elevated-material"
+      ]
     },
     {
       "id": "req:family:07-tonal-layered",
       "section": "§7",
       "name": "Tonal Layered",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:tonal-layered"
+      ]
     },
     {
       "id": "req:family:08-editorial",
@@ -3389,33 +3399,41 @@
       "id": "req:family:09-glass",
       "section": "§7",
       "name": "Glass",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:glass"
+      ]
     },
     {
       "id": "req:family:10-brutalist",
       "section": "§7",
       "name": "Brutalist",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:bold"
+      ]
     },
     {
       "id": "req:family:11-luxury",
       "section": "§7",
       "name": "Luxury",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:luxury"
+      ]
     },
     {
       "id": "req:family:12-expressive",
       "section": "§7",
       "name": "Expressive",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "family:expressive"
+      ]
     },
     {
       "id": "req:chart:01-vertical-bar",
@@ -35266,11 +35284,13 @@
     },
     {
       "id": "family:bold",
-      "name": "굵은 대비",
+      "name": "굵은 대비 (Brutalist)",
       "kind": "family",
       "registry": "platform",
       "category": null,
-      "requirementIds": [],
+      "requirementIds": [
+        "req:family:10-brutalist"
+      ],
       "status": "verified",
       "blockedBy": null,
       "supportedVersions": {
@@ -35314,7 +35334,10 @@
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "implemented",
-        "evidenceRefs": [],
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
         "invalidEvidenceRefs": [],
         "liveProbe": "passed"
       },
@@ -35337,13 +35360,177 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "b524ee5e39d1203c",
+        "outputHash": "c47d7110e4e1ce07",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:corporate-formal",
+      "name": "안정된 기업형 (Corporate Formal)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:04-corporate-formal"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "80b58a3f338c156a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:dense-enterprise",
+      "name": "고밀도 엔터프라이즈 (Dense Enterprise)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:05-dense-enterprise"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "6c50ae1f1a39445b",
         "duplicateOutputOf": []
       }
     },
     {
       "id": "family:editorial",
-      "name": "에디토리얼",
+      "name": "에디토리얼 (Editorial)",
       "kind": "family",
       "registry": "platform",
       "category": null,
@@ -35393,7 +35580,10 @@
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "implemented",
-        "evidenceRefs": [],
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
         "invalidEvidenceRefs": [],
         "liveProbe": "passed"
       },
@@ -35416,13 +35606,423 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "82b17f26e784f372",
+        "outputHash": "ce64f48a741aa006",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:elevated-material",
+      "name": "입체 머티리얼 (Elevated Material)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:06-elevated-material"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "027db4c0cf2bf268",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:expressive",
+      "name": "표현형 (Expressive)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:12-expressive"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "21cffedf616eed9d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:glass",
+      "name": "유리 질감 (Glass)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:09-glass"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "fcaeee46ba994f65",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:luxury",
+      "name": "럭셔리 (Luxury)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:11-luxury"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "a897b93fd3642009",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:outline-precise",
+      "name": "정밀 외곽선 (Outline Precise)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:03-outline-precise"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "work-dashboard",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "29eef5c9b51f0662",
         "duplicateOutputOf": []
       }
     },
     {
       "id": "family:quiet",
-      "name": "조용한 업무",
+      "name": "조용한 업무 (Minimal Flat)",
       "kind": "family",
       "registry": "platform",
       "category": null,
@@ -35472,7 +36072,10 @@
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "implemented",
-        "evidenceRefs": [],
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
         "invalidEvidenceRefs": [],
         "liveProbe": "passed"
       },
@@ -35495,13 +36098,13 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "0d34ea306d2ad685",
+        "outputHash": "859f5bdcf4d54aff",
         "duplicateOutputOf": []
       }
     },
     {
       "id": "family:soft",
-      "name": "부드러운 채움",
+      "name": "부드러운 채움 (Soft Rounded)",
       "kind": "family",
       "registry": "platform",
       "category": null,
@@ -35551,7 +36154,10 @@
       "a11yAndResponsiveTested": true,
       "qualityVerdict": {
         "status": "implemented",
-        "evidenceRefs": [],
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
         "invalidEvidenceRefs": [],
         "liveProbe": "passed"
       },
@@ -35574,7 +36180,89 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "8939190d2c7d9d05",
+        "outputHash": "efce57ad7610053b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "family:tonal-layered",
+      "name": "톤 계층 (Tonal Layered)",
+      "kind": "family",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:family:07-tonal-layered"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "0.1.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/data/families.mjs#FAMILIES",
+      "rendererConnected": true,
+      "rendererEntry": null,
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "hover",
+          "focus",
+          "active",
+          "selected",
+          "loading",
+          "error",
+          "disabled"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components/purpose/[group]/[name]#visual-families"
+      ],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#swap"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [
+          "tests/platform-family-visual.test.mjs:29",
+          "tests/platform-family-visual.test.mjs:73"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/data/families.mjs#FAMILIES",
+        "renderer": null,
+        "probe": {
+          "method": "assembleDesign",
+          "ran": true,
+          "ok": true,
+          "purpose": "saas-landing",
+          "mode": "light",
+          "qualityOk": true
+        },
+        "outputHash": "f5c2c808550a4c83",
         "duplicateOutputOf": []
       }
     },
@@ -75333,7 +76021,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "e1befdf3d704e851",
+        "outputHash": "92eaa0ca4f8bade8",
         "duplicateOutputOf": []
       }
     },
@@ -75411,7 +76099,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "5a13b4e8c1ef330d",
+        "outputHash": "2bf5d62ac5823d8c",
         "duplicateOutputOf": []
       }
     },
@@ -75492,7 +76180,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "3b71877d64e0b063",
+        "outputHash": "4155d8164fb36d9d",
         "duplicateOutputOf": []
       }
     },
@@ -75577,7 +76265,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "27ae620419827a91",
+        "outputHash": "8da91f1c337dd46d",
         "duplicateOutputOf": []
       }
     },
@@ -75662,7 +76350,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "061c9babefa8bd7a",
+        "outputHash": "bffcf8266ceaf34b",
         "duplicateOutputOf": []
       }
     },
@@ -75745,7 +76433,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "19c63593d891a5ed",
+        "outputHash": "8d49db15959980ad",
         "duplicateOutputOf": []
       }
     },
@@ -75827,7 +76515,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "2d05631501d06afd",
+        "outputHash": "019d94a98543b366",
         "duplicateOutputOf": []
       }
     },
@@ -75913,7 +76601,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "2f36fd50ba058719",
+        "outputHash": "96d5102da3c29573",
         "duplicateOutputOf": []
       }
     },
@@ -76001,7 +76689,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "611873cb2e51b85a",
+        "outputHash": "b25f185096259a5a",
         "duplicateOutputOf": []
       }
     },
@@ -76088,7 +76776,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "7fed94e102cd2868",
+        "outputHash": "564eae225afff4f2",
         "duplicateOutputOf": []
       }
     },
@@ -76178,7 +76866,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "931f0f0cd4541b1b",
+        "outputHash": "ab59a8a9d899e5c4",
         "duplicateOutputOf": []
       }
     },
@@ -76266,7 +76954,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "19aef17a12082fee",
+        "outputHash": "faacf517f5f62d12",
         "duplicateOutputOf": []
       }
     },
@@ -76361,7 +77049,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "6c03c436e773409a",
+        "outputHash": "f8857057c14bb102",
         "duplicateOutputOf": []
       }
     },
@@ -76452,7 +77140,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "e11013d444013133",
+        "outputHash": "0b333cddf0d9b823",
         "duplicateOutputOf": []
       }
     },
@@ -76542,7 +77230,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "c7e9e1d08efb520e",
+        "outputHash": "359f57fa7ec6fcff",
         "duplicateOutputOf": []
       }
     },
@@ -76635,7 +77323,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "bda71f5989f02fe7",
+        "outputHash": "1ef3939bbf14a18b",
         "duplicateOutputOf": []
       }
     },
@@ -76728,7 +77416,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "64c74cfe9b001d21",
+        "outputHash": "63920224b4790342",
         "duplicateOutputOf": []
       }
     },
@@ -76817,7 +77505,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "4e1172b2ba2e5b6e",
+        "outputHash": "d92a3155a8089edc",
         "duplicateOutputOf": []
       }
     },
@@ -76901,7 +77589,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "c637fdb53fbfed46",
+        "outputHash": "374fd1eba2c0abce",
         "duplicateOutputOf": []
       }
     },
@@ -76993,7 +77681,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "8c86caa2fcef49b9",
+        "outputHash": "0e68295490eec686",
         "duplicateOutputOf": []
       }
     },
@@ -77087,7 +77775,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "fba434797f99e5ea",
+        "outputHash": "88f95be602ced34a",
         "duplicateOutputOf": []
       }
     },
@@ -77178,7 +77866,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "6ba86505d3314d49",
+        "outputHash": "b008549cc22895d1",
         "duplicateOutputOf": []
       }
     },
@@ -77265,7 +77953,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "3660268e5a7c5cc0",
+        "outputHash": "90fae64ff30ae6cf",
         "duplicateOutputOf": []
       }
     },
@@ -77361,7 +78049,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "f23d866d6dfeae1a",
+        "outputHash": "54f77b207c9d082e",
         "duplicateOutputOf": []
       }
     },
@@ -77453,7 +78141,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "d65b134b8255873f",
+        "outputHash": "905725678ec67a6c",
         "duplicateOutputOf": []
       }
     },
@@ -77544,7 +78232,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "583b83f024ec7fec",
+        "outputHash": "88ba76fe69b46712",
         "duplicateOutputOf": []
       }
     },
@@ -77638,7 +78326,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "cb01a836213f97d2",
+        "outputHash": "89e9b335a1cf1775",
         "duplicateOutputOf": []
       }
     },
@@ -77724,7 +78412,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "c2a8544dbcba1c4c",
+        "outputHash": "1bde3b64321c32e8",
         "duplicateOutputOf": []
       }
     },
@@ -77823,7 +78511,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "1549d92a15a81206",
+        "outputHash": "64de1e915878a225",
         "duplicateOutputOf": []
       }
     },
@@ -77910,7 +78598,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "0d12be6720593804",
+        "outputHash": "d9642cdef598c42c",
         "duplicateOutputOf": []
       }
     },
@@ -78009,7 +78697,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "8596eccf27f0c53c",
+        "outputHash": "5434a03442e4c0bc",
         "duplicateOutputOf": []
       }
     },
@@ -78106,7 +78794,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "bdbbb07119b35d5e",
+        "outputHash": "f62911eab4eea0aa",
         "duplicateOutputOf": []
       }
     },
@@ -78796,7 +79484,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d50d25d6cc6add24",
+        "outputHash": "1716b38723594c25",
         "duplicateOutputOf": [
           "state-pattern:success-toast"
         ]
@@ -78867,7 +79555,7 @@
           "mode": "light",
           "qualityOk": true
         },
-        "outputHash": "d50d25d6cc6add24",
+        "outputHash": "1716b38723594c25",
         "duplicateOutputOf": [
           "state-pattern:success-confirmation"
         ]

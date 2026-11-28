@@ -7907,69 +7907,316 @@ const ALL_STATES = ['default', 'hover', 'focus', 'active', 'selected', 'loading'
 const roles = (...r) => ({typeRoles: r});
 
 const OPEN = {
-  button: ['appearance', 'size', 'behavior', 'content', 'tone', 'state'], input: ['size', 'kind', 'affix', 'state'], card: ['size', 'behavior', 'media', 'state'],
-  nav: ['size', 'orientation', 'overflow', 'submenu', 'icons', 'state'], modal: ['size', 'role', 'placement', 'footer', 'state'],
-  tabs: ['size', 'orientation', 'activation', 'overflow', 'icons', 'state'], tooltip: ['size', 'trigger', 'purpose', 'placement', 'delay', 'state'],
-  feedback: ['size', 'placement', 'dismiss', 'action', 'autoDismiss', 'tone', 'state'], select: ['mode', 'search', 'size', 'state', 'maxMenuHeight'],
+  button: ['appearance', 'size', 'behavior', 'content', 'tone', 'state'],
+  input: ['size', 'kind', 'affix', 'state'],
+  card: ['size', 'behavior', 'media', 'state'],
+  nav: ['size', 'orientation', 'overflow', 'submenu', 'icons', 'state'],
+  modal: ['size', 'role', 'placement', 'footer', 'state'],
+  tabs: ['size', 'orientation', 'activation', 'overflow', 'icons', 'state'],
+  tooltip: ['size', 'trigger', 'purpose', 'placement', 'delay', 'state'],
+  feedback: ['size', 'placement', 'dismiss', 'action', 'autoDismiss', 'tone', 'state'],
+  select: ['mode', 'search', 'size', 'state', 'maxMenuHeight'],
   table: ['density', 'sortable', 'selectable', 'responsive', 'state'],
 };
-const TYPE = {
-  button: roles('label'), input: roles('label', 'small'), card: roles('sub', 'body', 'caption', 'small', 'label'), nav: roles('label'), modal: roles('heading', 'body'),
-  tabs: roles('label'), tooltip: roles('small'), feedback: roles('body', 'small'), select: roles('label', 'small'), table: roles('small', 'numeric'),
-};
-const BASE_ID = {button: 'button-control', input: 'input-control', card: 'card-surface', nav: 'navigation-menu', modal: 'modal-dialog', tabs: 'tabs-control', tooltip: 'tooltip', feedback: 'feedback-message', select: 'select-control', table: 'data-table'};
 
-/** 시각 언어별 고정 축. Button의 외형은 강조 단계(기본·보조·강조)가 정하므로 열어 두고 모양만 고정한다(단계별 외형은 visual.mjs recipe). 이 표가 "quiet은 외곽선, soft는 채움, bold는 각진 굵은 면, editorial은 면 없는 선"이라는 정체성이다. */
+const TYPE = {
+  button: roles('label'),
+  input: roles('label', 'small'),
+  card: roles('sub', 'body', 'caption', 'small', 'label'),
+  nav: roles('label'),
+  modal: roles('heading', 'body'),
+  tabs: roles('label'),
+  tooltip: roles('small'),
+  feedback: roles('body', 'small'),
+  select: roles('label', 'small'),
+  table: roles('small', 'numeric'),
+};
+
+const BASE_ID = {
+  button: 'button-control',
+  input: 'input-control',
+  card: 'card-surface',
+  nav: 'navigation-menu',
+  modal: 'modal-dialog',
+  tabs: 'tabs-control',
+  tooltip: 'tooltip',
+  feedback: 'feedback-message',
+  select: 'select-control',
+  table: 'data-table',
+};
+
+/**
+ * 시각 언어별 고정 축.
+ * Button의 외형은 강조 단계(기본·보조·강조)가 정하므로 열어 두고 모양만 고정한다(단계별 외형은 visual.mjs recipe).
+ * 12개 시각 패밀리가 고유한 고정 축 조합(signature)을 가진다.
+ */
 const PRESETS = {
+  // 1. Minimal Flat
   quiet: {
     button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
     nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'outline', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
+  // 2. Soft Rounded
   soft: {
     button: {shape: 'pill'}, input: {appearance: 'filled', shape: 'soft'}, card: {appearance: 'filled', shape: 'round', footer: 'none'},
     nav: {appearance: 'pill', shape: 'pill'}, modal: {appearance: 'filled', shape: 'round'}, tabs: {appearance: 'pill', shape: 'pill'},
     tooltip: {appearance: 'inverse', shape: 'pill'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'pill'}, table: {},
   },
+  // 3. Brutalist
   bold: {
     button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, card: {appearance: 'elevated', shape: 'square', footer: 'none'},
     nav: {appearance: 'block', shape: 'square'}, modal: {appearance: 'elevated', shape: 'square'}, tabs: {appearance: 'segmented', shape: 'square'},
     tooltip: {appearance: 'inverse', shape: 'square'}, feedback: {appearance: 'solid', shape: 'square'}, select: {shape: 'square'}, table: {},
   },
+  // 4. Editorial
   editorial: {
     button: {shape: 'soft'}, input: {appearance: 'underline', shape: 'soft'}, card: {appearance: 'flat', shape: 'soft', footer: 'none'},
     nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
     tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'plain', shape: 'soft'}, select: {shape: 'soft'}, table: {},
   },
+  // 5. Outline Precise
+  'outline-precise': {
+    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, card: {appearance: 'outline', shape: 'square', footer: 'none'},
+    nav: {appearance: 'block', shape: 'square'}, modal: {appearance: 'outline', shape: 'square'}, tabs: {appearance: 'segmented', shape: 'square'},
+    tooltip: {appearance: 'surface', shape: 'square'}, feedback: {appearance: 'outline', shape: 'square'}, select: {shape: 'square'}, table: {},
+  },
+  // 6. Corporate Formal
+  'corporate-formal': {
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
+    nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'elevated', shape: 'soft'}, tabs: {appearance: 'underline', shape: 'soft'},
+    tooltip: {appearance: 'inverse', shape: 'soft'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'soft'}, table: {},
+  },
+  // 7. Dense Enterprise
+  'dense-enterprise': {
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
+    nav: {appearance: 'block', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'segmented', shape: 'soft'},
+    tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'outline', shape: 'soft'}, select: {shape: 'soft'}, table: {},
+  },
+  // 8. Elevated Material
+  'elevated-material': {
+    button: {shape: 'soft'}, input: {appearance: 'filled', shape: 'soft'}, card: {appearance: 'elevated', shape: 'soft', footer: 'none'},
+    nav: {appearance: 'pill', shape: 'soft'}, modal: {appearance: 'elevated', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
+    tooltip: {appearance: 'inverse', shape: 'soft'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'soft'}, table: {},
+  },
+  // 9. Tonal Layered
+  'tonal-layered': {
+    button: {shape: 'soft'}, input: {appearance: 'filled', shape: 'soft'}, card: {appearance: 'filled', shape: 'soft', footer: 'none'},
+    nav: {appearance: 'block', shape: 'soft'}, modal: {appearance: 'filled', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
+    tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'soft'}, table: {},
+  },
+  // 10. Glass
+  glass: {
+    button: {shape: 'soft'}, input: {appearance: 'outline', shape: 'soft'}, card: {appearance: 'outline', shape: 'soft', footer: 'none'},
+    nav: {appearance: 'pill', shape: 'soft'}, modal: {appearance: 'outline', shape: 'soft'}, tabs: {appearance: 'pill', shape: 'soft'},
+    tooltip: {appearance: 'surface', shape: 'soft'}, feedback: {appearance: 'outline', shape: 'soft'}, select: {shape: 'soft'}, table: {},
+  },
+  // 11. Luxury
+  luxury: {
+    button: {shape: 'square'}, input: {appearance: 'outline', shape: 'square'}, card: {appearance: 'outline', shape: 'square', footer: 'none'},
+    nav: {appearance: 'underline', shape: 'soft'}, modal: {appearance: 'outline', shape: 'square'}, tabs: {appearance: 'underline', shape: 'soft'},
+    tooltip: {appearance: 'surface', shape: 'square'}, feedback: {appearance: 'outline', shape: 'square'}, select: {shape: 'square'}, table: {},
+  },
+  // 12. Expressive
+  expressive: {
+    button: {shape: 'pill'}, input: {appearance: 'filled', shape: 'pill'}, card: {appearance: 'elevated', shape: 'round', footer: 'none'},
+    nav: {appearance: 'pill', shape: 'pill'}, modal: {appearance: 'filled', shape: 'round'}, tabs: {appearance: 'pill', shape: 'pill'},
+    tooltip: {appearance: 'surface', shape: 'pill'}, feedback: {appearance: 'soft', shape: 'soft'}, select: {shape: 'pill'}, table: {},
+  },
 };
 
 const members = key => Object.fromEntries(Object.keys(OPEN).map(k => [T(BASE_ID[k]), {preset: PRESETS[key][k], open: OPEN[k], needs: TYPE[k]}]));
 
-const FAMILY_BASE = {kind: 'family', states: ALL_STATES, quality: {status: 'implemented', evidence: []}, reuses: ['component:card-surface']};
+const FAMILY_BASE = {
+  kind: 'family',
+  states: ALL_STATES,
+  quality: {status: 'implemented', evidence: ['tests/platform-family-visual.test.mjs:29', 'tests/platform-family-visual.test.mjs:73']},
+  reuses: ['component:card-surface'],
+};
 
 const FAMILIES = Object.freeze([
+  // 1. Minimal Flat
   definePlatformMaterial({
-    ...FAMILY_BASE, id: 'family:quiet', label: '조용한 업무', contexts: ['dashboard', 'data', 'listing', 'settings'], members: members('quiet'),
-    shape: {radius: 'soft', elevation: 'outline', motion: 'subtle'}, density: 'comfortable', tags: [VISUAL_LANGUAGES['family:quiet'].key],
+    ...FAMILY_BASE,
+    id: 'family:quiet',
+    label: '조용한 업무 (Minimal Flat)',
+    contexts: ['dashboard', 'data', 'listing', 'settings'],
+    members: members('quiet'),
+    shape: {radius: 'soft', elevation: 'outline', motion: 'subtle'},
+    density: 'comfortable',
+    tags: [VISUAL_LANGUAGES['family:quiet'].key],
     relations: [
       {type: 'prefers', to: 'subtoken-set:standard', priority: 10, reason: '외곽선 카드는 중립 표면에서 경계가 가장 잘 읽힌다'},
       {type: 'prefers', to: 'type-system:tech-erp', priority: 10, reason: '업무 카드의 제목·숫자는 촘촘한 역할 체계와 맞는다'},
     ],
   }),
+
+  // 2. Soft Rounded
   definePlatformMaterial({
-    ...FAMILY_BASE, id: 'family:soft', label: '부드러운 채움', members: members('soft'),
-    shape: {radius: 'round', elevation: 'lifted', motion: 'subtle'}, density: 'spacious', tags: [VISUAL_LANGUAGES['family:soft'].key],
-    relations: [{type: 'prefers', to: 'subtoken-set:tinted', priority: 10, reason: '채운 면은 브랜드 쪽으로 기운 바탕에서 면 구분이 가장 자연스럽다'}],
+    ...FAMILY_BASE,
+    id: 'family:soft',
+    label: '부드러운 채움 (Soft Rounded)',
+    members: members('soft'),
+    shape: {radius: 'round', elevation: 'lifted', motion: 'subtle'},
+    density: 'spacious',
+    tags: [VISUAL_LANGUAGES['family:soft'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:tinted', priority: 10, reason: '채운 면은 브랜드 쪽으로 기운 바탕에서 면 구분이 가장 자연스럽다'},
+    ],
   }),
+
+  // 3. Brutalist
   definePlatformMaterial({
-    ...FAMILY_BASE, id: 'family:bold', label: '굵은 대비', members: members('bold'),
-    shape: {radius: 'square', elevation: 'hard', motion: 'lively'}, density: 'comfortable', tags: [VISUAL_LANGUAGES['family:bold'].key],
-    relations: [{type: 'avoids', to: 'subtoken-set:tinted', priority: 10, reason: '굵은 검은 선은 색이 도는 바탕에서 탁해 보인다'}],
+    ...FAMILY_BASE,
+    id: 'family:bold',
+    label: '굵은 대비 (Brutalist)',
+    members: members('bold'),
+    shape: {radius: 'square', elevation: 'hard', motion: 'lively'},
+    density: 'comfortable',
+    tags: [VISUAL_LANGUAGES['family:bold'].key],
+    relations: [
+      {type: 'avoids', to: 'subtoken-set:tinted', priority: 10, reason: '굵은 검은 선은 색이 도는 바탕에서 탁해 보인다'},
+      {type: 'prefers', to: 'subtoken-set:high-contrast', priority: 10, reason: '강한 경계와 오프셋 그림자는 명확한 명암 대비에서 극대화된다'},
+    ],
   }),
+
+  // 4. Editorial
   definePlatformMaterial({
-    ...FAMILY_BASE, id: 'family:editorial', label: '에디토리얼', members: members('editorial'),
-    shape: {radius: 'subtle', elevation: 'flat', motion: 'none'}, density: 'spacious', tags: [VISUAL_LANGUAGES['family:editorial'].key],
-    relations: [{type: 'prefers', to: 'subtoken-set:standard', priority: 5, reason: '선과 여백만으로 구획하므로 중립 바탕에서 읽기 흐름이 가장 안정적이다'}],
+    ...FAMILY_BASE,
+    id: 'family:editorial',
+    label: '에디토리얼 (Editorial)',
+    members: members('editorial'),
+    shape: {radius: 'subtle', elevation: 'flat', motion: 'none'},
+    density: 'spacious',
+    tags: [VISUAL_LANGUAGES['family:editorial'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:standard', priority: 5, reason: '선과 여백만으로 구획하므로 중립 바탕에서 읽기 흐름이 가장 안정적이다'},
+    ],
+  }),
+
+  // 5. Outline Precise
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:outline-precise',
+    label: '정밀 외곽선 (Outline Precise)',
+    contexts: ['dashboard', 'data', 'listing', 'docs'],
+    members: members('outline-precise'),
+    shape: {radius: 'subtle', elevation: 'outline', motion: 'subtle'},
+    density: 'comfortable',
+    tags: [VISUAL_LANGUAGES['family:outline-precise'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:standard', priority: 10, reason: '정밀 외곽선은 중립 바탕에서 정렬선이 가장 선명하다'},
+      {type: 'prefers', to: 'type-system:tech-erp', priority: 10, reason: '정밀한 구조는 수치·단위 정렬 시스템과 어울린다'},
+    ],
+  }),
+
+  // 6. Corporate Formal
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:corporate-formal',
+    label: '안정된 기업형 (Corporate Formal)',
+    contexts: ['dashboard', 'listing', 'settings', 'docs'],
+    members: members('corporate-formal'),
+    shape: {radius: 'soft', elevation: 'soft', motion: 'subtle'},
+    density: 'comfortable',
+    tags: [VISUAL_LANGUAGES['family:corporate-formal'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:standard', priority: 10, reason: '기업형 화면은 차분한 중립 표면과 절제된 브랜드 액션이 적합하다'},
+    ],
+  }),
+
+  // 7. Dense Enterprise
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:dense-enterprise',
+    label: '고밀도 엔터프라이즈 (Dense Enterprise)',
+    contexts: ['dashboard', 'data', 'listing', 'settings'],
+    members: members('dense-enterprise'),
+    shape: {radius: 'subtle', elevation: 'outline', motion: 'none'},
+    density: 'compact',
+    tags: [VISUAL_LANGUAGES['family:dense-enterprise'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:data-dense', priority: 15, reason: '고밀도 제어 요소는 다수의 데이터 경계를 지원하는 세트와 맞는다'},
+      {type: 'avoids', to: 'subtoken-set:tinted', priority: 10, reason: '밀집된 정보 화면에서 배경 색조는 텍스트 가독성을 저해할 수 있다'},
+    ],
+  }),
+
+  // 8. Elevated Material
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:elevated-material',
+    label: '입체 머티리얼 (Elevated Material)',
+    members: members('elevated-material'),
+    shape: {radius: 'soft', elevation: 'lifted', motion: 'subtle'},
+    density: 'comfortable',
+    tags: [VISUAL_LANGUAGES['family:elevated-material'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:standard', priority: 10, reason: '부유하는 그림자 계층은 밝은 중립 바탕에서 자연스럽게 읽힌다'},
+      {type: 'avoids', to: 'subtoken-set:editorial-warm', priority: 10, reason: '종이 질감 표면 위에 인위적인 그림자는 어색하다'},
+    ],
+  }),
+
+  // 9. Tonal Layered
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:tonal-layered',
+    label: '톤 계층 (Tonal Layered)',
+    members: members('tonal-layered'),
+    shape: {radius: 'soft', elevation: 'flat', motion: 'subtle'},
+    density: 'comfortable',
+    tags: [VISUAL_LANGUAGES['family:tonal-layered'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:tinted', priority: 12, reason: '외곽선 없이 색조 면으로 구획하므로 틴트 바탕에서 자연스러운 계층이 형성된다'},
+      {type: 'avoids', to: 'subtoken-set:high-contrast', priority: 10, reason: '명암 대비 중심 세트에서는 미세한 톤 차이가 사라진다'},
+    ],
+  }),
+
+  // 10. Glass
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:glass',
+    label: '유리 질감 (Glass)',
+    contexts: ['landing', 'commerce', 'dashboard'],
+    members: members('glass'),
+    shape: {radius: 'soft', elevation: 'lifted', motion: 'subtle'},
+    density: 'spacious',
+    tags: [VISUAL_LANGUAGES['family:glass'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:standard', priority: 10, reason: '반투명 표면 뒤에 배경 대비를 유지하기에 적합하다'},
+      {type: 'avoids', to: 'subtoken-set:data-dense', priority: 15, reason: '복잡한 데이터 표 뒤에 비치는 배경은 숫자 가독성을 저해한다'},
+    ],
+  }),
+
+  // 11. Luxury
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:luxury',
+    label: '럭셔리 (Luxury)',
+    contexts: ['landing', 'commerce', 'article'],
+    members: members('luxury'),
+    shape: {radius: 'square', elevation: 'flat', motion: 'subtle'},
+    density: 'spacious',
+    tags: [VISUAL_LANGUAGES['family:luxury'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:premium-dark', priority: 12, reason: '넓은 여백과 섬세한 선은 프리미엄 다크 또는 프리미엄 라이트에서 극대화된다'},
+      {type: 'avoids', to: 'subtoken-set:data-dense', priority: 15, reason: '고밀도 정보 배치는 럭셔리 패밀리의 넓은 호흡과 충돌한다'},
+    ],
+  }),
+
+  // 12. Expressive
+  definePlatformMaterial({
+    ...FAMILY_BASE,
+    id: 'family:expressive',
+    label: '표현형 (Expressive)',
+    contexts: ['landing', 'commerce'],
+    members: members('expressive'),
+    shape: {radius: 'bubble', elevation: 'lifted', motion: 'lively'},
+    density: 'spacious',
+    tags: [VISUAL_LANGUAGES['family:expressive'].key],
+    relations: [
+      {type: 'prefers', to: 'subtoken-set:commerce-vivid', priority: 12, reason: '과감한 형태와 글로우는 역동적인 커머스·쇼케이스 세트와 어울린다'},
+      {type: 'avoids', to: 'subtoken-set:data-dense', priority: 15, reason: '큰 라운드와 과감한 강조는 밀집 업무 화면에 부적합하다'},
+    ],
   }),
 ]);
 
@@ -11591,43 +11838,482 @@ __defs["platform/families/visual.mjs"] = function (exports, __m) {
  * 계약에 필드를 더하기 전까지의 확장 자리다(보고서의 요청 항목). 색과 서체는 소유하지 않는다: 값은 모두 var(--kit-*) 참조다.
  *
  *   metrics  숫자로 비교하는 값. 목적 패밀리의 `needs.visual`이 이 값을 읽어 조합을 거부한다.
+ *   traits   구조화된 12개 시각 언어 특성(모서리·테두리·그림자·표면·컨트롤높이·여백·아이콘·강조단계·상태·카드구조·내비표현·모션).
  *   vars     `[data-family="<key>"]` 범위에 놓이는 CSS 변수(--pf-*). 목적 패밀리 CSS가 읽는다.
  *   recipe   목적 패밀리가 기반 컴포넌트의 열린 축을 고르는 값(강조 단계별 버튼 외형 등).
  */
 const {ICON} = __m("styles/base.mjs");
 
 /** 아이콘 선 굵기·끝·채움은 기존 아이콘 스타일 표(src/styles/base.mjs ICON)의 이름으로만 고른다. */
-const iconVars = name => ({'--kit-icon-sw': String(ICON[name].sw), '--kit-icon-cap': ICON[name].cap, '--kit-icon-join': ICON[name].join, '--kit-icon-fill': ICON[name].fill});
+const iconVars = name => ({
+  '--kit-icon-sw': String(ICON[name].sw),
+  '--kit-icon-cap': ICON[name].cap,
+  '--kit-icon-join': ICON[name].join,
+  '--kit-icon-fill': ICON[name].fill,
+});
 
 const VISUAL_LANGUAGES = Object.freeze({
+  // 1. Minimal Flat (기존 family:quiet 매핑 유지 및 확장)
   'family:quiet': Object.freeze({
-    key: 'quiet', icon: 'line', summary: '외곽선과 여백으로 구획한다. 장식이 적고 정보 밀도가 높은 업무 화면용.',
+    key: 'quiet',
+    icon: 'line',
+    summary: '외곽선과 여백으로 구획한다. 평평한 표면과 제한적 경계의 절제된 업무 화면용.',
     metrics: Object.freeze({cellPadY: 8, borderW: 1, opaqueSurface: true, labelCase: 'none'}),
-    vars: Object.freeze({'--pf-pad': 'var(--kit-sp-item)', '--pf-gap': 'var(--kit-sp-near)', '--pf-border': '1px solid var(--kit-border)', '--pf-surface': 'var(--kit-surface)', '--pf-title-weight': '650', '--pf-label-case': 'none', '--pf-label-track': '0', '--pf-stat-scale': '1', '--pf-cell-pad': 'var(--kit-sp-near)', '--pf-rule': '1px solid var(--kit-border)', '--pf-accent-bar': '0px', ...iconVars('line')}),
+    traits: Object.freeze({
+      corner: 'soft',
+      border: '1px solid var(--kit-border)',
+      shadow: 'none',
+      surface: 'var(--kit-surface)',
+      controlHeight: '36px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'line', sw: 2}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-1px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'outline', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'underline', shape: 'soft'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-near)',
+      '--pf-border': '1px solid var(--kit-border)',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '650',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0',
+      '--pf-stat-scale': '1',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '36px',
+      ...iconVars('line'),
+    }),
     recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
   }),
+
+  // 2. Soft Rounded (기존 family:soft 매핑 유지 및 확장)
   'family:soft': Object.freeze({
-    key: 'soft', icon: 'duotone', summary: '채운 면과 큰 모서리로 구획한다. 선이 거의 없어 부드럽고 친근한 화면용.',
+    key: 'soft',
+    icon: 'duotone',
+    summary: '채운 면과 큰 모서리로 구획한다. 둥근 모서리와 부드러운 표면의 친근한 화면용.',
     metrics: Object.freeze({cellPadY: 12, borderW: 0, opaqueSurface: true, labelCase: 'none'}),
-    vars: Object.freeze({'--pf-pad': 'var(--kit-sp-inset-s)', '--pf-gap': 'var(--kit-sp-item)', '--pf-border': '0 solid transparent', '--pf-surface': 'var(--kit-card-hover)', '--pf-title-weight': '700', '--pf-label-case': 'none', '--pf-label-track': '0', '--pf-stat-scale': '1.1', '--pf-cell-pad': 'var(--kit-sp-item)', '--pf-rule': '0 solid transparent', '--pf-accent-bar': '0px', ...iconVars('duotone')}),
+    traits: Object.freeze({
+      corner: 'round',
+      border: '0 solid transparent',
+      shadow: 'lifted',
+      surface: 'var(--kit-card-hover)',
+      controlHeight: '40px',
+      padding: 'var(--kit-sp-inset-s)',
+      icon: Object.freeze({style: 'duotone', sw: 1.8}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-1px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'filled', shape: 'round'}),
+      navExpression: Object.freeze({appearance: 'pill', shape: 'pill'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-inset-s)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '0 solid transparent',
+      '--pf-surface': 'var(--kit-card-hover)',
+      '--pf-title-weight': '700',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0',
+      '--pf-stat-scale': '1.1',
+      '--pf-cell-pad': 'var(--kit-sp-item)',
+      '--pf-rule': '0 solid transparent',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '40px',
+      ...iconVars('duotone'),
+    }),
     recipe: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
   }),
+
+  // 3. Brutalist (기존 family:bold 매핑 유지 및 확장)
   'family:bold': Object.freeze({
-    key: 'bold', icon: 'line-bold', summary: '굵은 선과 각진 모서리, 딱딱한 그림자로 구획한다. 강한 대비와 큰 숫자가 필요한 화면용.',
+    key: 'bold',
+    icon: 'line-bold',
+    summary: '강한 경계와 오프셋 그림자, 각진 모서리로 구획한다. 높은 시각적 대비와 강한 힘이 필요한 화면용.',
     metrics: Object.freeze({cellPadY: 8, borderW: 2, opaqueSurface: true, labelCase: 'uppercase'}),
-    vars: Object.freeze({'--pf-pad': 'var(--kit-sp-item)', '--pf-gap': 'var(--kit-sp-near)', '--pf-border': '2px solid var(--kit-text)', '--pf-surface': 'var(--kit-surface)', '--pf-title-weight': '800', '--pf-label-case': 'uppercase', '--pf-label-track': '.06em', '--pf-stat-scale': '1.25', '--pf-cell-pad': 'var(--kit-sp-near)', '--pf-rule': '2px solid var(--kit-text)', '--pf-accent-bar': '6px', ...iconVars('line-bold')}),
+    traits: Object.freeze({
+      corner: 'square',
+      border: '2px solid var(--kit-text)',
+      shadow: 'hard',
+      surface: 'var(--kit-surface)',
+      controlHeight: '38px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'line-bold', sw: 2.6}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-4px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'elevated', shape: 'square'}),
+      navExpression: Object.freeze({appearance: 'block', shape: 'square'}),
+      motion: Object.freeze({dur: '260ms', lift: '-4px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-near)',
+      '--pf-border': '2px solid var(--kit-text)',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '800',
+      '--pf-label-case': 'uppercase',
+      '--pf-label-track': '.06em',
+      '--pf-stat-scale': '1.25',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '2px solid var(--kit-text)',
+      '--pf-accent-bar': '6px',
+      '--pf-control-h': '38px',
+      ...iconVars('line-bold'),
+    }),
     recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
   }),
+
+  // 4. Editorial (기존 family:editorial 매핑 유지 및 확장)
   'family:editorial': Object.freeze({
-    key: 'editorial', icon: 'line-fine', summary: '상자 대신 가는 선과 넓은 여백으로 구획한다. 읽기 중심 화면과 큰 제목용.',
+    key: 'editorial',
+    icon: 'line-fine',
+    summary: '상자 대신 가는 선과 넓은 여백, 타이포그래피 중심으로 구획한다. 규칙선을 활용한 읽기 중심 화면용.',
     metrics: Object.freeze({cellPadY: 12, borderW: 0, opaqueSurface: false, labelCase: 'uppercase'}),
-    vars: Object.freeze({'--pf-pad': 'var(--kit-sp-inset-s)', '--pf-gap': 'var(--kit-sp-item)', '--pf-border': '0 solid transparent', '--pf-surface': 'transparent', '--pf-title-weight': '700', '--pf-label-case': 'uppercase', '--pf-label-track': '.08em', '--pf-stat-scale': '1.2', '--pf-cell-pad': 'var(--kit-sp-item)', '--pf-rule': '1px solid var(--kit-text)', '--pf-accent-bar': '0px', ...iconVars('line-fine')}),
+    traits: Object.freeze({
+      corner: 'subtle',
+      border: '0 solid transparent',
+      shadow: 'none',
+      surface: 'transparent',
+      controlHeight: '36px',
+      padding: 'var(--kit-sp-inset-s)',
+      icon: Object.freeze({style: 'line-fine', sw: 1.5}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '0px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'flat', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'underline', shape: 'soft'}),
+      motion: Object.freeze({dur: '0ms', lift: '0px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-inset-s)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '0 solid transparent',
+      '--pf-surface': 'transparent',
+      '--pf-title-weight': '700',
+      '--pf-label-case': 'uppercase',
+      '--pf-label-track': '.08em',
+      '--pf-stat-scale': '1.2',
+      '--pf-cell-pad': 'var(--kit-sp-item)',
+      '--pf-rule': '1px solid var(--kit-text)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '36px',
+      ...iconVars('line-fine'),
+    }),
     recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 5. Outline Precise (신규)
+  'family:outline-precise': Object.freeze({
+    key: 'outline-precise',
+    icon: 'line-square',
+    summary: '선명한 경계와 정밀한 기하학적 구조. 정확한 외곽선과 절제된 정렬선이 돋보이는 시스템용.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 1, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'subtle',
+      border: '1px solid var(--kit-border)',
+      shadow: 'none',
+      surface: 'var(--kit-surface)',
+      controlHeight: '34px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'line-square', sw: 2}),
+      buttonEmphasis: Object.freeze({primary: 'outline', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-1px', focusOutline: '2px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'outline', shape: 'square'}),
+      navExpression: Object.freeze({appearance: 'block', shape: 'square'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-near)',
+      '--pf-border': '1px solid var(--kit-border)',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '600',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0.02em',
+      '--pf-stat-scale': '1',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '2px',
+      '--pf-control-h': '34px',
+      ...iconVars('line-square'),
+    }),
+    recipe: Object.freeze({primary: 'outline', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 6. Corporate Formal (신규)
+  'family:corporate-formal': Object.freeze({
+    key: 'corporate-formal',
+    icon: 'line',
+    summary: '절제된 형태와 안정적 정렬. 신뢰감을 주는 부드러운 모서리와 은은한 계층 표현.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 1, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'soft',
+      border: '1px solid var(--kit-border)',
+      shadow: 'soft',
+      surface: 'var(--kit-surface)',
+      controlHeight: '38px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'line', sw: 2}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-1px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'outline', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'underline', shape: 'soft'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '1px solid var(--kit-border)',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '700',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '-0.01em',
+      '--pf-stat-scale': '1.05',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '38px',
+      ...iconVars('line'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 7. Dense Enterprise (신규)
+  'family:dense-enterprise': Object.freeze({
+    key: 'dense-enterprise',
+    icon: 'line',
+    summary: '작은 컨트롤과 높은 정보 밀도. 데이터 집약적 전문 도구 및 관리 콘솔을 위한 압축된 레이아웃.',
+    metrics: Object.freeze({cellPadY: 6, borderW: 1, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'subtle',
+      border: '1px solid var(--kit-border)',
+      shadow: 'none',
+      surface: 'var(--kit-surface)',
+      controlHeight: '30px',
+      padding: 'var(--kit-sp-near)',
+      icon: Object.freeze({style: 'line', sw: 2}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '0px', focusOutline: '2px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'outline', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'block', shape: 'soft'}),
+      motion: Object.freeze({dur: '0ms', lift: '0px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-near)',
+      '--pf-gap': 'var(--kit-sp-tight)',
+      '--pf-border': '1px solid var(--kit-border)',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '650',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0',
+      '--pf-stat-scale': '0.95',
+      '--pf-cell-pad': 'var(--kit-sp-tight)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '30px',
+      ...iconVars('line'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 8. Elevated Material (신규)
+  'family:elevated-material': Object.freeze({
+    key: 'elevated-material',
+    icon: 'solid',
+    summary: '표면 계층과 깊이감 있는 그림자. 물리적 층위감이 느껴지는 입체적인 카드와 부유 요소.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 0, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'soft',
+      border: '0 solid transparent',
+      shadow: 'lifted',
+      surface: 'var(--kit-surface)',
+      controlHeight: '38px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'solid', sw: 1.8}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-2px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'elevated', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'pill', shape: 'soft'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '0 solid transparent',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '700',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0',
+      '--pf-stat-scale': '1.1',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '38px',
+      ...iconVars('solid'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 9. Tonal Layered (신규)
+  'family:tonal-layered': Object.freeze({
+    key: 'tonal-layered',
+    icon: 'duotone',
+    summary: '색조를 활용한 계층. 테두리와 그림자 없이 톤의 대비와 미세한 명도 단계로 영역을 분할.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 0, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'soft',
+      border: '0 solid transparent',
+      shadow: 'none',
+      surface: 'var(--kit-soft)',
+      controlHeight: '38px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'duotone', sw: 1.8}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-1px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'filled', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'block', shape: 'soft'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '0 solid transparent',
+      '--pf-surface': 'var(--kit-soft)',
+      '--pf-title-weight': '650',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0',
+      '--pf-stat-scale': '1.05',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '0 solid transparent',
+      '--pf-accent-bar': '4px',
+      '--pf-control-h': '38px',
+      ...iconVars('duotone'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 10. Glass (신규)
+  'family:glass': Object.freeze({
+    key: 'glass',
+    icon: 'line-fine',
+    summary: '반투명 표면 및 배경 블러. 투명도와 정밀한 반투명 테두리로 현대적인 입체감을 제공.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 1, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'soft',
+      border: '1px solid color-mix(in srgb, var(--kit-border) 60%, transparent)',
+      shadow: 'lifted',
+      surface: 'color-mix(in srgb, var(--kit-surface) 75%, transparent)',
+      controlHeight: '38px',
+      padding: 'var(--kit-sp-item)',
+      icon: Object.freeze({style: 'line-fine', sw: 1.5}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-1px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'outline', shape: 'soft'}),
+      navExpression: Object.freeze({appearance: 'pill', shape: 'soft'}),
+      motion: Object.freeze({dur: '150ms', lift: '-1px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-item)',
+      '--pf-gap': 'var(--kit-sp-near)',
+      '--pf-border': '1px solid color-mix(in srgb, var(--kit-border) 60%, transparent)',
+      '--pf-surface': 'color-mix(in srgb, var(--kit-surface) 75%, transparent)',
+      '--pf-title-weight': '650',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '0.01em',
+      '--pf-stat-scale': '1.05',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid color-mix(in srgb, var(--kit-border) 40%, transparent)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '38px',
+      '--pf-glass-blur': '12px',
+      ...iconVars('line-fine'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 11. Luxury (신규)
+  'family:luxury': Object.freeze({
+    key: 'luxury',
+    icon: 'line-fine',
+    summary: '넓은 여백 및 절제된 요소. 직각 모서리, 확장된 자간, 미니멀한 헤어라인의 프리미엄 감성.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 1, opaqueSurface: true, labelCase: 'uppercase'}),
+    traits: Object.freeze({
+      corner: 'square',
+      border: '1px solid var(--kit-border)',
+      shadow: 'none',
+      surface: 'var(--kit-surface)',
+      controlHeight: '42px',
+      padding: 'var(--kit-inset)',
+      icon: Object.freeze({style: 'line-fine', sw: 1.5}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '0px', focusOutline: '2px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'outline', shape: 'square'}),
+      navExpression: Object.freeze({appearance: 'underline', shape: 'soft'}),
+      motion: Object.freeze({dur: '150ms', lift: '0px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-inset)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '1px solid var(--kit-border)',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '500',
+      '--pf-label-case': 'uppercase',
+      '--pf-label-track': '.12em',
+      '--pf-stat-scale': '1.15',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '0px',
+      '--pf-control-h': '42px',
+      ...iconVars('line-fine'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'outline', emphasis: 'solid', tertiary: 'ghost'}),
+  }),
+
+  // 12. Expressive (신규)
+  'family:expressive': Object.freeze({
+    key: 'expressive',
+    icon: 'duotone',
+    summary: '강조된 형태와 풍부한 시각적 리듬. 큰 라운드, 역동적인 모션, 과감한 악센트.',
+    metrics: Object.freeze({cellPadY: 8, borderW: 1, opaqueSurface: true, labelCase: 'none'}),
+    traits: Object.freeze({
+      corner: 'bubble',
+      border: '1px solid color-mix(in srgb,var(--kit-action) 40%,var(--kit-border))',
+      shadow: 'lifted',
+      surface: 'var(--kit-surface)',
+      controlHeight: '44px',
+      padding: 'var(--kit-sp-inset-s)',
+      icon: Object.freeze({style: 'duotone', sw: 1.8}),
+      buttonEmphasis: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
+      state: Object.freeze({hoverLift: '-4px', focusOutline: '3px solid var(--kit-focus)'}),
+      cardStructure: Object.freeze({appearance: 'elevated', shape: 'round'}),
+      navExpression: Object.freeze({appearance: 'pill', shape: 'pill'}),
+      motion: Object.freeze({dur: '260ms', lift: '-4px'}),
+    }),
+    vars: Object.freeze({
+      '--pf-pad': 'var(--kit-sp-inset-s)',
+      '--pf-gap': 'var(--kit-sp-item)',
+      '--pf-border': '1px solid color-mix(in srgb,var(--kit-action) 40%,var(--kit-border))',
+      '--pf-surface': 'var(--kit-surface)',
+      '--pf-title-weight': '800',
+      '--pf-label-case': 'none',
+      '--pf-label-track': '-0.02em',
+      '--pf-stat-scale': '1.2',
+      '--pf-cell-pad': 'var(--kit-sp-near)',
+      '--pf-rule': '1px solid var(--kit-border)',
+      '--pf-accent-bar': '6px',
+      '--pf-control-h': '44px',
+      ...iconVars('duotone'),
+    }),
+    recipe: Object.freeze({primary: 'solid', secondary: 'soft', emphasis: 'solid', tertiary: 'ghost'}),
   }),
 });
 
 const VISUAL_KEYS = Object.freeze(Object.values(VISUAL_LANGUAGES).map(v => v.key));
 const visualOf = familyId => VISUAL_LANGUAGES[familyId] ?? null;
+
 /** 목적 패밀리가 요구하는 시각 값(needs.visual)과 시각 언어 측정값을 견준다. 어긋나면 이유를 돌려준다. */
 function visualMismatch(needs = {}, language) {
   const out = [];
