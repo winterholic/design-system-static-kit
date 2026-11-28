@@ -553,3 +553,31 @@ REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
 실행 증거(최신 rebase 후): `node scripts/platform/evaluate-color-matrix.mjs && git diff --exit-code docs/platform/evidence/color/subtoken-matrix-summary.json` → `9 palettes × 25 subtoken sets`, summary 생성, `diff` 무출력·exit 0. `npm run coverage:materials:check` → `MANIFEST MATCH ... (1347 materials, 337 requirements)`. `npm run verify` → 814/814 통과, 3,402 생성 파일 재현.
 
 남은 일: B1이 200개 팔레트를 커밋해 `origin/main`에 반영한 뒤 200×25 매트릭스와 200개 출처를 검증한다. 그때 장부·검증 기록을 갱신하고 verify를 재실행한 다음 일반 push한다. 현재 B1 워크트리 변경은 미커밋이므로 이번 브랜치에서는 TRB-04를 `In Progress`로 유지한다.
+
+## 9. Track C 타이포 시스템 독립 검증 (2026-11-28)
+
+검증 대상은 원 C1 `330098c21`을 당시 main에서 최신 `origin/main` `e208de4ca5a358889859d089d2ad1cb65ed1c076` 위로 rebase한 `d7dfbfa113bf1f23a246a6773c96bb8676938149`와 역할 렌더링 교정 `25a568d97e820520dd54f7585ba58552522baef4`이다.
+
+### 9.1 판정 및 교정
+
+- **기존 바이트 호환성: 통과.** `git diff c239a0fbc 330098c21 -- tests site/v1 '*legacy*' '*hash*'`에서는 `tests/platform-service-channels.test.mjs`의 해시 단언 변경만 확인했다. 이는 2.7 조립 출력 해시였고 2.x 기존 출력 해시는 아니었다. 해당 하드코딩 단언은 기대 해시를 교체해 통과시키지 않고, 같은 요청을 반복 조립한 결과의 JSON 바이트가 재현되는지 검사하도록 바꿨다. `site/v1/catalog.json` 및 `docs/evidence/context/legacy-hashes.json`은 최신 main 대비 그대로다.
+- **타이포 시스템: 통과.** 41종이 §5.2의 10계열에 각 4종 이상 포함되고 기존 ID 14개가 보존된다. 실제 프로필(폰트 스택, 데스크톱·모바일 크기, 굵기, 행간, 자간) 계산상 완전 중복은 0건이며, 가장 가까운 쌍도 17개 역할 속성이 다르다.
+- **역할 소비: 원 구현 실패 후 교정.** 원 구현의 27개 역할은 선언만 있고 컴파일 CSS에서 소비되지 않았다. `display-xl`부터 27개 전 역할이 조립 및 Blueprint 컴파일 출력에 규칙과 속성으로 나타나는 검사를 추가했다. 최초 실행은 `display-xl` 누락에서 실패(RED)했고, `typeRoleCSS`/`typeRoleVars`와 pipeline/render 연결 수정 뒤 통과(GREEN)했다.
+- **시험 품질: 통과.** 시험은 출력 CSS와 전체 유효 프로필을 검사하며 고정 구현 해시를 기대하지 않는다. 한글 줄바꿈 시험은 역할 값을 변이해 실제 위반 검출을 확인했다.
+- **폰트 권리: 통과(재배포 없음).** 새 공개 카탈로그에 폰트 파일을 추가하지 않았다. 사용 가능한 폰트 메타데이터에는 OFL-1.1 권리 필드와 원 출처 URL이 기록되어 있으며, 번들 폰트 재배포는 없다.
+- **장부/소유권: 통과.** 최초 충돌 처리에서 TRB-02/03/04 기록이 이전 값으로 되돌아간 점을 최신 main의 원본 레코드로 복원했다. 최종 장부는 TRC-01/02 외 모든 task 레코드가 최신 main과 일치한다. TRC-02는 역할 렌더 수정으로 변경한 Track A 소유 `pipeline.mjs`, `render.mjs`와 사유를 §6.1 교차 트랙 기록에 포함한다.
+- **장부 및 매니페스트: 통과.** TRC-01/02를 Verified로 기록했다. 최신 main 기준 매니페스트를 생성 스크립트로 재생성했다.
+
+### 9.2 실행 증거
+
+```sh
+$ node --test tests/platform-type-systems-diff.test.mjs tests/platform-type-hangul.test.mjs tests/platform-type-evidence.test.mjs tests/platform-service-channels.test.mjs
+ℹ tests 27 / ℹ pass 27 / ℹ fail 0
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1389 materials, 337 requirements)
+$ npm run verify
+ℹ tests 828 / ℹ pass 828 / ℹ fail 0
+REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
+```
+
+미실행: 브라우저 추가 UI 검증 및 Vercel 배포 확인. 코드·컴파일 출력 검증과 기존 증거 이미지는 정적·전체 검증에서 확인했다.
