@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 register('../apps/web/features/studio/node-ts-loader.mjs', import.meta.url);
 import {listPlatformMaterials, getPlatformMaterial, assembleDesign} from '../src/service/index.mjs';
 import {CHART_SAMPLE, withChartPreset} from '../apps/web/features/platform/chart-compare.mjs';
-import {LAYOUT_PAGE_PATTERN, patternOfLayout} from '../apps/web/features/platform/material-library.mjs';
+import {listAllMaterials, LAYOUT_PAGE_PATTERN, patternOfLayout} from '../apps/web/features/platform/material-library.mjs';
 const {readState, requestOf, writeState, withMaterialChoice} = await import('../apps/web/features/platform/assemble-state.ts');
 
 test('studio URL keeps selected layout, component, and foundation materials and sends them to Core', () => {
@@ -86,12 +86,11 @@ test('chart comparison puts the identical data into two registered presets that 
 });
 
 test('platform materials fetches every registry page rather than only the default first page', () => {
-  const palette = listPlatformMaterials({kind: 'palette', limit: 200});
-  assert.equal(palette.ok, true);
-  assert.equal(palette.value.items.length, palette.value.total);
+  const listAll = kind => listAllMaterials(query => listPlatformMaterials(query), kind);
+  const total = kind => listPlatformMaterials({kind, limit: 200}).value.total;
+  const palette = listAll('palette');
+  assert.equal(palette.length, total('palette'));
   for (const kind of ['layout', 'base-component', 'surface', 'motion', 'background', 'media', 'state-pattern', 'spacing']) {
-    const result = listPlatformMaterials({kind, limit: 200});
-    assert.equal(result.ok, true, kind);
-    assert.equal(result.value.items.length, result.value.total, kind);
+    assert.equal(listAll(kind).length, total(kind), kind);
   }
 });

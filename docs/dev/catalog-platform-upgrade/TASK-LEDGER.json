@@ -524,6 +524,11 @@
           "file": "tests/platform-pipeline-integration.test.mjs",
           "owner": "Track A",
           "reason": "210 팔레트 축 추가로 바뀐 후보 동률 순서를 통제하고 family-diversity 계약을 독립 검증"
+        },
+        {
+          "file": "tests/platform-material-selection.test.mjs",
+          "owner": "Track G",
+          "reason": "B1이 팔레트 210개를 채우면 Core의 200개 페이지 한 번만 조회하는 기존 시험 가정이 틀린다. Track F의 기존 listAllMaterials 페이지 수집기를 사용해 전체 팔레트 레지스트리를 검증하도록 교정한다(CONTRACTS §6.1)."
         }
       ],
       "createFiles": [
