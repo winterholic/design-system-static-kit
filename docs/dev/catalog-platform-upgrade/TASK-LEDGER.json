@@ -324,6 +324,11 @@
           "file": "src/platform/contract.mjs",
           "owner": "Track A",
           "reason": "subtoken-set 스키마에 weights, contexts, forbiddenContexts 등 선택 설계 필드 허용"
+        },
+        {
+          "file": "src/platform/index.mjs",
+          "owner": "Track A",
+          "reason": "색상 토큰 5계층 resolver를 공개 플랫폼 진입점에서 export"
         }
       ]
     },
@@ -357,6 +362,41 @@
           "file": "src/service/platform-components.mjs",
           "owner": "Track A",
           "reason": "proposeSubtokenSets 서비스 진입점에서 context/mode 옵션 전달 및 evaluations 반환"
+        },
+        {
+          "file": "scripts/platform/evaluate-color-matrix.mjs",
+          "owner": "Track A",
+          "reason": "팔레트×서브토큰 평가 매트릭스 및 결정적 요약 생성"
+        },
+        {
+          "file": "docs/platform/style-contexts.md",
+          "owner": "Track G",
+          "reason": "25개 서브토큰 등록에 맞춰 생성된 스타일 맥락 문서 갱신"
+        },
+        {
+          "file": "docs/platform/evidence/color/subtoken-matrix-summary.json",
+          "owner": "Track G",
+          "reason": "서비스 매트릭스 평가의 생성 근거 자료"
+        },
+        {
+          "file": "docs/platform/evidence/color/sunrise-warm-4sets-light.html",
+          "owner": "Track G",
+          "reason": "라이트 모드 생성 미리보기 근거 갱신"
+        },
+        {
+          "file": "docs/platform/evidence/color/sunrise-warm-4sets-light.png",
+          "owner": "Track G",
+          "reason": "라이트 모드 생성 미리보기 이미지 갱신"
+        },
+        {
+          "file": "docs/platform/evidence/color/sunrise-warm-4sets-dark.html",
+          "owner": "Track G",
+          "reason": "다크 모드 생성 미리보기 근거 갱신"
+        },
+        {
+          "file": "docs/platform/evidence/color/sunrise-warm-4sets-dark.png",
+          "owner": "Track G",
+          "reason": "다크 모드 생성 미리보기 이미지 갱신"
         }
       ]
     },
