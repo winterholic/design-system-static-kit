@@ -8,12 +8,21 @@ const site = resolve(web, '../../site');
 const out = join(web, 'public');
 
 // /combos/render.html은 ../src/combos/render.mjs를 불러 쓰므로 /src/**를 함께 둔다(옛 앱 제거 때 같이 내린다).
-const trees = ['examples', 'v1', 'gallery', 'test-lab', 'src'];
+const trees = ['examples', 'v1', 'gallery', 'test-lab', 'src', 'previews', 'catalog-chunks'];
 
 await rm(out, {recursive: true, force: true});
 await mkdir(join(out, 'docs'), {recursive: true});
 await mkdir(join(out, 'combos'), {recursive: true});
-for (const t of trees) await cp(join(site, t), join(out, t), {recursive: true});
+for (const t of trees) {
+  try {
+    await cp(join(site, t), join(out, t), {recursive: true});
+  } catch {}
+}
 for (const f of (await readdir(join(site, 'docs'))).filter(f => f.endsWith('.html'))) await cp(join(site, 'docs', f), join(out, 'docs', f));
 await cp(join(site, 'combos/render.html'), join(out, 'combos/render.html'));
-console.log(`SYNCED ${trees.join(', ')}, docs/*.html, combos/render.html → apps/web/public`);
+for (const single of ['catalog-index.json', 'search-index.json']) {
+  try {
+    await cp(join(site, single), join(out, single));
+  } catch {}
+}
+console.log(`SYNCED ${trees.join(', ')}, docs/*.html, combos/render.html, catalog-index.json → apps/web/public`);

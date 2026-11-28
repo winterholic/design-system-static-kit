@@ -43,10 +43,11 @@ await writeFile(join(out, '.nojekyll'), '');
     ['scripts/test-lab/generate.mjs', '--out', lab],
     ['scripts/test-lab/check.mjs', '--out', lab],
     ['scripts/test-lab/index.mjs', '--out', lab],
+    ['scripts/build-catalog-index.mjs', out],
   ];
   for (const s of steps) {
     const r = spawnSync(process.execPath, s, {cwd: root, encoding: 'utf8'});
-    if (r.status !== 0) { console.error(r.stdout?.slice(-2000)); console.error(r.stderr?.slice(-2000)); throw new Error('test-lab build failed: ' + s[0]); }
+    if (r.status !== 0) { console.error(r.stdout?.slice(-2000)); console.error(r.stderr?.slice(-2000)); throw new Error('build step failed: ' + s[0]); }
   }
 }
 console.log(`BUILT static workbench, gallery, schema/catalog API, ${templateList.length} template examples, ${Object.keys(themes).length} theme showcases, test-lab → ${out}`);

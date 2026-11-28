@@ -2,6 +2,7 @@ import 'server-only';
 import * as service from '@winterholic/design-system-static-kit/service';
 import type {AssembleRequest, AssembleValue, Envelope, Material, ProposeValue, PurposeList, RecommendValue} from './types';
 import {recordCompile} from '@/features/perf/counter.server';
+import {LruCache, previewCache, probeCache, computePreviewCacheKey} from '@/lib/api/cache.mjs';
 
 // 조립 플랫폼 서비스 함수는 Core 서비스 진입점에서 이름으로 찾는다.
 // 웹은 src/platform 을 직접 import 하지 않는다(boundary.check.mjs). 함수가 없을 때 대신 만들어 내는 값도 없다.
@@ -20,14 +21,39 @@ const call = <T>(name: string, arg?: unknown, opts?: unknown): Envelope<T> => {
 
 // Core omits standalone (and other optional payloads) by default. Request the actual service output
 // explicitly so previews and downloads return the same document the Core assembled.
-export const assembleDesign = (request: AssembleRequest) => {
+export const assembleDesign = (request: AssembleRequest): Envelope<AssembleValue> => {
+  const key = computePreviewCacheKey({
+    request,
+    mode: request.mode ?? 'light',
+    viewportWidth: (request as any).viewportWidth ?? request.width ?? 'default',
+  });
+  if (previewCache.has(key)) {
+    return previewCache.get(key) as Envelope<AssembleValue>;
+  }
   recordCompile('assembleDesign');
-  return call<AssembleValue>('assembleDesign', request, {include: WEB_INCLUDE});
+  const result = call<AssembleValue>('assembleDesign', request, {include: WEB_INCLUDE});
+  if (result.ok) {
+    previewCache.set(key, result);
+  }
+  return result;
 };
-export const assembleComponents = (request: Record<string, unknown>) => {
+
+export const assembleComponents = (request: Record<string, unknown>): Envelope<{css: string; html: string; standalone: string; manifest: Record<string, any>}> => {
+  const key = computePreviewCacheKey({
+    request,
+    mode: (request.mode as string) ?? 'light',
+  });
+  if (previewCache.has(key)) {
+    return previewCache.get(key) as Envelope<{css: string; html: string; standalone: string; manifest: Record<string, any>}>;
+  }
   recordCompile('assembleComponents');
-  return call<{css: string; html: string; standalone: string; manifest: Record<string, any>}>('assembleComponents', request);
+  const result = call<{css: string; html: string; standalone: string; manifest: Record<string, any>}>('assembleComponents', request);
+  if (result.ok) {
+    previewCache.set(key, result);
+  }
+  return result;
 };
+
 export const recommend = (q: Record<string, unknown>) => call<RecommendValue>('recommendMaterials', q);
 export const proposeSets = (seeds: unknown) => call<ProposeValue>('proposeSubtokenSets', {seeds});
 
@@ -49,8 +75,9 @@ export function purposeFamilies(group?: string): Envelope<PurposeList> {
   return {ok: true, value: {items: group ? items.filter(item => item.group === group) : items, groups, visuals}, warnings: [...purposes.warnings, ...families.warnings]};
 }
 
-const cache = new Map<string, Material[]>();
-const detailCache = new Map<string, Material>();
+const cache: any = new LruCache(1000);
+const detailCache: any = new LruCache(1000);
+
 export function materials(kind: string): Material[] {
   const hit = cache.get(kind);
   if (hit) return hit;
@@ -59,6 +86,7 @@ export function materials(kind: string): Material[] {
   if (r.ok) cache.set(kind, items);
   return items;
 }
+
 // Lists are intentionally summaries; fetch the registered record for seeds, roles, relations and render data.
 export function material(id: string): Material | undefined {
   const hit = detailCache.get(id);
@@ -69,15 +97,17 @@ export function material(id: string): Material | undefined {
   return r.value;
 }
 
-/** 선택지 시험용 조립: 거부 여부와 이유만 남기고(본문은 버린다) 같은 요청은 서버 프로세스 안에서 한 번만 돌린다. */
-const probes = new Map<string, {ok: true} | {ok: false; reason: string}>();
+/** 선택지 시험용 조립: 거부 여부와 이유만 남기고(본문은 버린다) 같은 요청은 서버 프로세스 안에서 캐시를 거친다. */
 export function probeDesign(request: AssembleRequest): {ok: true} | {ok: false; reason: string} {
-  const key = JSON.stringify(request);
-  const hit = probes.get(key);
+  const key = computePreviewCacheKey({
+    request: {...request, candidates: 1},
+    mode: request.mode ?? 'light',
+    viewportWidth: (request as any).viewportWidth ?? request.width ?? 'default',
+  });
+  const hit = probeCache.get(key) as {ok: true} | {ok: false; reason: string} | undefined;
   if (hit) return hit;
   const r = assembleDesign({...request, candidates: 1});
   const out = r.ok ? {ok: true as const} : {ok: false as const, reason: r.errors.map(e => e.message).join(' ')};
-  if (probes.size > 400) probes.clear();
-  probes.set(key, out);
+  probeCache.set(key, out);
   return out;
 }

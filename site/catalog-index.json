@@ -1,0 +1,2462 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "catalogVersion": "2.6.0",
+  "generatedAt": "2026-11-28T00:00:00.000Z",
+  "categories": [
+    {
+      "id": "structure",
+      "label": "페이지 구조",
+      "itemCount": 2
+    },
+    {
+      "id": "layout",
+      "label": "배치",
+      "itemCount": 11
+    },
+    {
+      "id": "data",
+      "label": "데이터",
+      "itemCount": 11
+    },
+    {
+      "id": "content",
+      "label": "내용",
+      "itemCount": 20
+    },
+    {
+      "id": "form",
+      "label": "입력",
+      "itemCount": 4
+    },
+    {
+      "id": "feedback",
+      "label": "상태·피드백",
+      "itemCount": 7
+    },
+    {
+      "id": "media",
+      "label": "미디어",
+      "itemCount": 2
+    },
+    {
+      "id": "nav",
+      "label": "탐색",
+      "itemCount": 7
+    },
+    {
+      "id": "purpose-family",
+      "label": "목적 패밀리",
+      "itemCount": 32
+    }
+  ],
+  "materials": [
+    {
+      "id": "component:page-header",
+      "kind": "component",
+      "category": "structure",
+      "label": "페이지 제목",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "structure",
+        "page-header"
+      ],
+      "previewUrl": "/previews/components/page-header.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:hero",
+      "kind": "component",
+      "category": "structure",
+      "label": "히어로",
+      "contexts": [
+        "general",
+        "landing",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing"
+      ],
+      "tags": [
+        "structure",
+        "hero"
+      ],
+      "previewUrl": "/previews/components/hero.svg",
+      "variantsCount": 4,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:section",
+      "kind": "component",
+      "category": "layout",
+      "label": "섹션",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "section"
+      ],
+      "previewUrl": "/previews/components/section.svg",
+      "variantsCount": 3,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:grid",
+      "kind": "component",
+      "category": "layout",
+      "label": "그리드",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "grid"
+      ],
+      "previewUrl": "/previews/components/grid.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:split",
+      "kind": "component",
+      "category": "layout",
+      "label": "2분할",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "split"
+      ],
+      "previewUrl": "/previews/components/split.svg",
+      "variantsCount": 3,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:aside",
+      "kind": "component",
+      "category": "layout",
+      "label": "본문+보조 영역",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "aside"
+      ],
+      "previewUrl": "/previews/components/aside.svg",
+      "variantsCount": 3,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:bento",
+      "kind": "component",
+      "category": "layout",
+      "label": "벤토 격자",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "bento"
+      ],
+      "previewUrl": "/previews/components/bento.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:tabs",
+      "kind": "component",
+      "category": "layout",
+      "label": "탭",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "tabs"
+      ],
+      "previewUrl": "/previews/components/tabs.svg",
+      "variantsCount": 1,
+      "statesCount": 2,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:tab",
+      "kind": "component",
+      "category": "layout",
+      "label": "탭 패널",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "tab"
+      ],
+      "previewUrl": "/previews/components/tab.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:kanban",
+      "kind": "component",
+      "category": "layout",
+      "label": "칸반",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "kanban"
+      ],
+      "previewUrl": "/previews/components/kanban.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:lane",
+      "kind": "component",
+      "category": "layout",
+      "label": "칸반 열",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "lane"
+      ],
+      "previewUrl": "/previews/components/lane.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:task",
+      "kind": "component",
+      "category": "data",
+      "label": "작업 카드",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "task"
+      ],
+      "previewUrl": "/previews/components/task.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:timeline",
+      "kind": "component",
+      "category": "data",
+      "label": "타임라인",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "timeline"
+      ],
+      "previewUrl": "/previews/components/timeline.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:steps",
+      "kind": "component",
+      "category": "content",
+      "label": "단계 안내",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "steps"
+      ],
+      "previewUrl": "/previews/components/steps.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:reel",
+      "kind": "component",
+      "category": "layout",
+      "label": "가로 스크롤 줄",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "layout",
+        "reel"
+      ],
+      "previewUrl": "/previews/components/reel.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:master-detail",
+      "kind": "component",
+      "category": "data",
+      "label": "목록+상세",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "master-detail"
+      ],
+      "previewUrl": "/previews/components/master-detail.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:chat",
+      "kind": "component",
+      "category": "data",
+      "label": "대화",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "chat"
+      ],
+      "previewUrl": "/previews/components/chat.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:calendar",
+      "kind": "component",
+      "category": "data",
+      "label": "월간 달력",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "calendar"
+      ],
+      "previewUrl": "/previews/components/calendar.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:card",
+      "kind": "component",
+      "category": "content",
+      "label": "카드",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "card"
+      ],
+      "previewUrl": "/previews/components/card.svg",
+      "variantsCount": 6,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:metric",
+      "kind": "component",
+      "category": "data",
+      "label": "지표",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "metric"
+      ],
+      "previewUrl": "/previews/components/metric.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:table",
+      "kind": "component",
+      "category": "data",
+      "label": "표",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "table"
+      ],
+      "previewUrl": "/previews/components/table.svg",
+      "variantsCount": 2,
+      "statesCount": 6,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:list",
+      "kind": "component",
+      "category": "data",
+      "label": "목록",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "list"
+      ],
+      "previewUrl": "/previews/components/list.svg",
+      "variantsCount": 2,
+      "statesCount": 6,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:form",
+      "kind": "component",
+      "category": "form",
+      "label": "폼",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings",
+        "auth"
+      ],
+      "tags": [
+        "form",
+        "form"
+      ],
+      "previewUrl": "/previews/components/form.svg",
+      "variantsCount": 1,
+      "statesCount": 3,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:prose",
+      "kind": "component",
+      "category": "content",
+      "label": "본문",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "prose"
+      ],
+      "previewUrl": "/previews/components/prose.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:notice",
+      "kind": "component",
+      "category": "feedback",
+      "label": "알림",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "notice"
+      ],
+      "previewUrl": "/previews/components/notice.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:actions",
+      "kind": "component",
+      "category": "content",
+      "label": "액션 그룹",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "content",
+        "actions"
+      ],
+      "previewUrl": "/previews/components/actions.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:faq",
+      "kind": "component",
+      "category": "content",
+      "label": "자주 묻는 질문",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "faq"
+      ],
+      "previewUrl": "/previews/components/faq.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:quote",
+      "kind": "component",
+      "category": "content",
+      "label": "인용·후기",
+      "contexts": [
+        "general",
+        "landing",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form"
+      ],
+      "tags": [
+        "content",
+        "quote"
+      ],
+      "previewUrl": "/previews/components/quote.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:feature-list",
+      "kind": "component",
+      "category": "content",
+      "label": "기능 목록",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "feature-list"
+      ],
+      "previewUrl": "/previews/components/feature-list.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:logo-cloud",
+      "kind": "component",
+      "category": "content",
+      "label": "고객사 이름 줄",
+      "contexts": [
+        "general",
+        "landing",
+        "listing",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing"
+      ],
+      "tags": [
+        "content",
+        "logo-cloud"
+      ],
+      "previewUrl": "/previews/components/logo-cloud.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:cta",
+      "kind": "component",
+      "category": "content",
+      "label": "행동 유도 띠",
+      "contexts": [
+        "general",
+        "landing",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form"
+      ],
+      "tags": [
+        "content",
+        "cta"
+      ],
+      "previewUrl": "/previews/components/cta.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:tags",
+      "kind": "component",
+      "category": "content",
+      "label": "태그 모음",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "tags"
+      ],
+      "previewUrl": "/previews/components/tags.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:team",
+      "kind": "component",
+      "category": "content",
+      "label": "팀 소개",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "team"
+      ],
+      "previewUrl": "/previews/components/team.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:code",
+      "kind": "component",
+      "category": "content",
+      "label": "코드 블록",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "code"
+      ],
+      "previewUrl": "/previews/components/code.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:properties",
+      "kind": "component",
+      "category": "data",
+      "label": "속성 목록",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "properties"
+      ],
+      "previewUrl": "/previews/components/properties.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:chart",
+      "kind": "component",
+      "category": "data",
+      "label": "차트",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "data",
+        "chart"
+      ],
+      "previewUrl": "/previews/components/chart.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:progress",
+      "kind": "component",
+      "category": "feedback",
+      "label": "진행률",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "feedback",
+        "progress"
+      ],
+      "previewUrl": "/previews/components/progress.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:empty-state",
+      "kind": "component",
+      "category": "feedback",
+      "label": "상태 화면",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "empty-state"
+      ],
+      "previewUrl": "/previews/components/empty-state.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:skeleton",
+      "kind": "component",
+      "category": "feedback",
+      "label": "스켈레톤",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "feedback",
+        "skeleton"
+      ],
+      "previewUrl": "/previews/components/skeleton.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:media",
+      "kind": "component",
+      "category": "media",
+      "label": "이미지 자리",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "media",
+        "media"
+      ],
+      "previewUrl": "/previews/components/media.svg",
+      "variantsCount": 4,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:gallery",
+      "kind": "component",
+      "category": "media",
+      "label": "갤러리",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form"
+      ],
+      "tags": [
+        "media",
+        "gallery"
+      ],
+      "previewUrl": "/previews/components/gallery.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:breadcrumb",
+      "kind": "component",
+      "category": "nav",
+      "label": "브레드크럼",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "nav",
+        "breadcrumb"
+      ],
+      "previewUrl": "/previews/components/breadcrumb.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:pagination",
+      "kind": "component",
+      "category": "nav",
+      "label": "페이지네이션",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "nav",
+        "pagination"
+      ],
+      "previewUrl": "/previews/components/pagination.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:filter-bar",
+      "kind": "component",
+      "category": "nav",
+      "label": "검색·필터 바",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "nav",
+        "filter-bar"
+      ],
+      "previewUrl": "/previews/components/filter-bar.svg",
+      "variantsCount": 0,
+      "statesCount": 2,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:stepper",
+      "kind": "component",
+      "category": "nav",
+      "label": "단계 표시",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "nav",
+        "stepper"
+      ],
+      "previewUrl": "/previews/components/stepper.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:summary",
+      "kind": "component",
+      "category": "content",
+      "label": "주문·요약 박스",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "summary"
+      ],
+      "previewUrl": "/previews/components/summary.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:buy-box",
+      "kind": "component",
+      "category": "content",
+      "label": "구매 박스",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "buy-box"
+      ],
+      "previewUrl": "/previews/components/buy-box.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:reviews",
+      "kind": "component",
+      "category": "content",
+      "label": "리뷰",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "reviews"
+      ],
+      "previewUrl": "/previews/components/reviews.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:menu",
+      "kind": "component",
+      "category": "content",
+      "label": "메뉴판",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "menu"
+      ],
+      "previewUrl": "/previews/components/menu.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:links",
+      "kind": "component",
+      "category": "nav",
+      "label": "링크 목록",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "nav",
+        "links"
+      ],
+      "previewUrl": "/previews/components/links.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:divider",
+      "kind": "component",
+      "category": "content",
+      "label": "구분선",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings",
+        "auth"
+      ],
+      "tags": [
+        "content",
+        "divider"
+      ],
+      "previewUrl": "/previews/components/divider.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:pricing",
+      "kind": "component",
+      "category": "content",
+      "label": "요금제",
+      "contexts": [
+        "general",
+        "landing",
+        "commerce",
+        "portfolio",
+        "pricing"
+      ],
+      "tags": [
+        "content",
+        "pricing"
+      ],
+      "previewUrl": "/previews/components/pricing.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:plan",
+      "kind": "component",
+      "category": "content",
+      "label": "요금제 항목",
+      "contexts": [
+        "general",
+        "landing",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "content",
+        "plan"
+      ],
+      "previewUrl": "/previews/components/plan.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:toc",
+      "kind": "component",
+      "category": "nav",
+      "label": "목차(자동)",
+      "contexts": [
+        "general",
+        "dashboard",
+        "data",
+        "listing",
+        "community",
+        "docs",
+        "article",
+        "blog",
+        "commerce",
+        "portfolio",
+        "pricing",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "nav",
+        "toc"
+      ],
+      "previewUrl": "/previews/components/toc.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:select-control",
+      "kind": "component",
+      "category": "form",
+      "label": "선택 상자",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "select-control",
+        "forbidden:multiple + async",
+        "forbidden:disabled + loading",
+        "forbidden:disabled + error",
+        "unsupported:virtualized options",
+        "unsupported:tag creation",
+        "unsupported:select-all"
+      ],
+      "previewUrl": "/previews/components/select-control.svg",
+      "variantsCount": 6,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:data-table",
+      "kind": "component",
+      "category": "data",
+      "label": "데이터 표",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "data",
+        "data-table",
+        "layout:table-content-1",
+        "unsupported:pagination",
+        "unsupported:virtual scrolling",
+        "unsupported:column resizing",
+        "unsupported:editable cells",
+        "unsupported:server sorting"
+      ],
+      "previewUrl": "/previews/components/data-table.svg",
+      "variantsCount": 5,
+      "statesCount": 5,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:button-control",
+      "kind": "component",
+      "category": "form",
+      "label": "Button",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:behavior+content",
+        "state:state",
+        "context:tone",
+        "forbidden:BTN_LOADING_NO_SLOT",
+        "forbidden:BTN_LINK_ICON_ONLY",
+        "forbidden:BTN_LINK_SHAPE",
+        "forbidden:BTN_PRESSED_ACTION",
+        "forbidden:BTN_TOGGLE_LOADING",
+        "forbidden:BTN_TOGGLE_LINK",
+        "forbidden:BTN_DISABLED_TONE",
+        "forbidden:BTN_DANGER_LINK",
+        "unsupported:split button",
+        "unsupported:button group",
+        "unsupported:anchor navigation (use link nodes)"
+      ],
+      "previewUrl": "/previews/components/button-control.svg",
+      "variantsCount": 7,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:input-control",
+      "kind": "component",
+      "category": "form",
+      "label": "Input",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:kind+affix",
+        "state:state",
+        "forbidden:INPUT_UNDERLINE_SHAPE",
+        "forbidden:INPUT_MULTILINE_PILL",
+        "forbidden:INPUT_MULTILINE_COMPACT",
+        "forbidden:INPUT_MULTILINE_AFFIX",
+        "forbidden:INPUT_PASSWORD_READONLY",
+        "forbidden:INPUT_SEARCH_READONLY",
+        "forbidden:INPUT_SEARCH_AFFIX",
+        "unsupported:masked input",
+        "unsupported:input groups with attached buttons",
+        "unsupported:tag input"
+      ],
+      "previewUrl": "/previews/components/input-control.svg",
+      "variantsCount": 6,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:card-surface",
+      "kind": "component",
+      "category": "content",
+      "label": "Card",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:behavior+media+footer",
+        "state:state",
+        "forbidden:CARD_SELECTED_NOT_SELECTABLE",
+        "forbidden:CARD_FLAT_SELECTABLE",
+        "forbidden:CARD_FLAT_SHAPE",
+        "forbidden:CARD_NESTED_INTERACTIVE",
+        "forbidden:CARD_INERT_ACTIONS",
+        "forbidden:CARD_DISABLED_STATIC",
+        "forbidden:CARD_START_COMPACT",
+        "unsupported:drag handle",
+        "unsupported:expandable body",
+        "unsupported:image media (icon tile only)"
+      ],
+      "previewUrl": "/previews/components/card-surface.svg",
+      "variantsCount": 7,
+      "statesCount": 8,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:navigation-menu",
+      "kind": "component",
+      "category": "nav",
+      "label": "Navigation",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:orientation+overflow+submenu+icons",
+        "state:state",
+        "forbidden:NAV_UNDERLINE_SHAPE",
+        "forbidden:NAV_VERTICAL_OVERFLOW",
+        "forbidden:NAV_SCROLL_SUBMENU",
+        "forbidden:NAV_OPEN_WITHOUT_COLLAPSE",
+        "forbidden:NAV_BLOCK_SCROLL",
+        "unsupported:mega menu panels",
+        "unsupported:nested submenus deeper than one level",
+        "unsupported:breadcrumb (use component:breadcrumb)"
+      ],
+      "previewUrl": "/previews/components/navigation-menu.svg",
+      "variantsCount": 8,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:modal-dialog",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Modal",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:MODAL_NESTED",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:role+placement+footer",
+        "state:state",
+        "forbidden:MODAL_ALERT_NO_ACTIONS",
+        "forbidden:MODAL_STATE_NO_FOOTER",
+        "forbidden:MODAL_SHEET_SIZE",
+        "unsupported:modal inside modal",
+        "unsupported:non-modal (popover) dialogs",
+        "unsupported:free-form HTML body (typed text and input slots only)",
+        "unsupported:side drawer"
+      ],
+      "previewUrl": "/previews/components/modal-dialog.svg",
+      "variantsCount": 7,
+      "statesCount": 5,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:tabs-control",
+      "kind": "component",
+      "category": "layout",
+      "label": "Tabs",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:orientation+activation+overflow+icons",
+        "state:state",
+        "forbidden:TABS_UNDERLINE_SHAPE",
+        "forbidden:TABS_SEGMENTED_VERTICAL",
+        "forbidden:TABS_SEGMENTED_SCROLL",
+        "forbidden:TABS_VERTICAL_SCROLL",
+        "unsupported:closable tabs",
+        "unsupported:draggable reordering",
+        "unsupported:lazy panel fetch (app injects aria-busy)"
+      ],
+      "previewUrl": "/previews/components/tabs-control.svg",
+      "variantsCount": 8,
+      "statesCount": 8,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:tooltip",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Tooltip",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:TOOLTIP_INTERACTIVE",
+        "forbidden:TOOLTIP_DISABLED_TRIGGER",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:trigger+purpose+placement+delay",
+        "state:state",
+        "forbidden:TOOLTIP_NAME_TEXT_TRIGGER",
+        "forbidden:TOOLTIP_NAME_DELAY",
+        "unsupported:interactive content (links, buttons, forms)",
+        "unsupported:rich HTML",
+        "unsupported:tooltip on non-focusable or disabled elements",
+        "unsupported:click-to-open popover (use a dialog or disclosure)"
+      ],
+      "previewUrl": "/previews/components/tooltip.svg",
+      "variantsCount": 8,
+      "statesCount": 4,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "component:feedback-message",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Feedback",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:placement+dismiss+action+autoDismiss",
+        "state:state",
+        "context:tone",
+        "forbidden:FB_PLAIN_TOAST",
+        "forbidden:FB_BANNER_PILL",
+        "forbidden:FB_TOAST_DANGER_TIMED",
+        "forbidden:FB_TOAST_ACTION_TIMED",
+        "forbidden:FB_TOAST_STUCK",
+        "forbidden:FB_TIMED_NOT_TOAST",
+        "forbidden:FB_PENDING_DISMISS",
+        "forbidden:FB_PENDING_TONE",
+        "forbidden:FB_PENDING_TIMED",
+        "forbidden:FB_DISMISSED_UNREACHABLE",
+        "unsupported:toast queue and stacking manager",
+        "unsupported:swipe to dismiss",
+        "unsupported:progress percentage (use progress)"
+      ],
+      "previewUrl": "/previews/components/feedback-message.svg",
+      "variantsCount": 9,
+      "statesCount": 6,
+      "qualityStatus": "verified",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.destructive",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "파괴적 버튼 묶음",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-destructive.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.emphasis",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "강조(CTA) 버튼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-emphasis.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.icon",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "아이콘 버튼 툴바",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-icon.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.loading",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "로딩 버튼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-loading.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.primary",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "기본 버튼 묶음",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-primary.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.secondary",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "보조 버튼 묶음",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-secondary.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:button.toggle",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "토글 버튼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:button-toggle.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.article",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "기사 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-article.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.feature",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "기능 소개 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-feature.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.gallery",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "갤러리 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-gallery.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.kpi",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "KPI 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-kpi.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.pricing",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "가격 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-pricing.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.product",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상품 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-product.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.profile",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "사용자 정보 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-profile.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:card.status",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상태 카드",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:card-status.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:feedback.confirm",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "확인 대화상자",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:feedback-confirm.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:feedback.error",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "오류 안내",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:feedback-error.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:feedback.progress",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "진행 안내",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:feedback-progress.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:feedback.result",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "결과 안내",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:feedback-result.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:feedback.warning",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "경고 안내",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:feedback-warning.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:form.auth",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "인증 폼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:form-auth.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:form.filter",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "필터 폼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:form-filter.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:form.group",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "입력 그룹",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:form-group.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:form.search",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "검색 폼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:form-search.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:form.settings",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "설정 폼",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:form-settings.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:navigation.bottom",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "모바일 하단 바",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:navigation-bottom.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:navigation.sidebar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "사이드바",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:navigation-sidebar.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:navigation.tabs",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "탭",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:navigation-tabs.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:navigation.topbar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상단 메뉴",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:navigation-topbar.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:table.analytic",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "분석형 표",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:table-analytic.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:table.business",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "업무형 표",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:table-business.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "purpose:table.dense",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "고밀도 표",
+      "contexts": [
+        "components"
+      ],
+      "tags": [
+        "platform",
+        "purpose"
+      ],
+      "previewUrl": "/previews/purpose/purpose:table-dense.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    }
+  ]
+}

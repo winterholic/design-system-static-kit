@@ -142,3 +142,42 @@
    - 원인 코드: Explore가 `ƒ`(동적)이고 서버 렌더에서 `assembleDesign`을 6회 부른다(`explore/page.tsx:121`), 결과 캐시 없음.
 
 병목 5(`componentView`)와 병목 7(캐시)은 운영 요청 시점 격차로 측정되지 않아 순위에서 제외했다. 병목 5는 빌드 시간·개발 서버 비용, 병목 7은 Vercel 인스턴스 간 캐시 공유를 따로 측정하기 전까지 판정 보류다.
+
+
+---
+
+## 5. Track A1 (미리보기 정적화 및 결정론적 캐시) 최적화 전후 비교 및 성과
+
+Track A1 작업(`TASK-TRA-01`, `TASK-TRA-02`, `TASK-TRA-03`)을 통해 지시서 §3.1의 병목 1~7을 해결하고 사전 생성 파이프라인 및 결정론적 LRU 캐시로 전환한 결과입니다.
+측정 원본: `docs/dev/catalog-platform-upgrade/PERFORMANCE-A1.json` (`local-prod`, 포트 4350, 3회 실측 중앙값).
+
+### 5.1 주요 성능 지표 전후 실측 비교표
+
+| 대상 페이지 및 뷰포트 | 지표 항목 | 최적화 전 (BASELINE) | 최적화 후 (A1) | 개선 성과 / 목표 달성 여부 |
+|---|---|:---:|:---:|---|
+| **Explore**<br>(1280px 데스크톱) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 6개<br>12회<br>30회<br>28회<br>1,789 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**881 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**50.8% 전송량 절감** |
+| **Explore**<br>(390px 모바일) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 2개<br>8회<br>26회<br>32회<br>1,680 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**790 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**53.0% 전송량 절감** |
+| **Components**<br>(1280px 데스크톱) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 6개<br>6회<br>64회<br>86회<br>2,348 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**451 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**80.8% 대폭 절감** (-1,897 KB) |
+| **Components**<br>(390px 모바일) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일<br>스크롤 왕복 iframe 로드<br>전체 실행 전송량 | 2개<br>2회<br>66회<br>95회<br>2,328 KB | **0개**<br>**0회**<br>**0회**<br>**0회**<br>**388 KB** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회)<br>iframe 재생성 완전 제거<br>**83.3% 대폭 절감** (-1,940 KB) |
+| **Typography**<br>(1280px 데스크톱) | 활성 iframe 수<br>초기 동적 컴파일<br>스크롤 왕복 컴파일 | 1개<br>4회<br>13회 | **0개**<br>**0회**<br>**0회** | **목표 100% 달성** (iframe 0개)<br>**목표 100% 달성** (컴파일 0회)<br>**목표 100% 달성** (재컴파일 0회) |
+| **Components 상세**<br>(상세 시험 영역) | 활성 iframe 수<br>초기 동적 컴파일 | 1개<br>0회 | **1개**<br>**0회** | **계약 준수** (상세 상호작용 시험 영역 격리 유지) |
+
+### 5.2 구현 요약
+
+1. **사전 생성 파이프라인 구축 (`scripts/build-catalog-index.mjs`)**:
+   - `LightCatalogIndex` (`site/catalog-index.json`, CONTRACTS.md §4 규격) 및 카테고리별 청크, 검색 인덱스 자동 생성.
+   - 대표 미리보기 SVG/HTML 126개 사전 생성 (`previews/explore/`, `previews/components/`, `previews/platform/`, `previews/purpose/`, `previews/typography/`).
+   - 사전 생성물은 Core 서비스 출력과 바이트 단위로 정확히 일치하며 `node scripts/check-generated.mjs` 검증 통과 (`3666 generated files match byte for byte`).
+2. **결정론적 캐시 키 및 상한 LRU 캐시 (`apps/web/lib/api/cache.mjs`)**:
+   - CONTRACTS.md §5.2 규격 SHA-256 32자 해시 생성 (`canonicalRequestJSON` 기반 정렬).
+   - 최대 1,000개 상한 및 O(1) LRU 교체 정책의 `LruCache` 구현 (`previewCache`, `probeCache`, `materialCache`, `specCache`).
+   - `apps/web/features/platform/platform.server.ts`의 무제한 Map 완전 제거 및 LRU 교체.
+   - `/platform/render` 고정 전시 요청에 `cache-control: public, max-age=31536000, immutable` 설정 및 동적 요청 `private, no-cache` 분리.
+3. **일반 목록 iframe 및 Observer 완전 제거 (`apps/web/features/explore/Thumb.tsx`)**:
+   - 일반 카탈로그 목록(`interactive === false`): 사전 생성된 정적 SVG 이미지(`<img>` / `previewUrl`)로 렌더링.
+   - DOM 노드 폭증과 뷰포트 진입/이탈 시 ResizeObserver, IntersectionObserver 반복 생성 및 해제 오버헤드 제거.
+   - 상세 페이지의 상호작용 시험 영역(`interactive === true` 또는 정적 자산 미존재)만 안전하게 iframe 유지.
+4. **목록 컴파일 및 중복 조립 제거**:
+   - `apps/web/features/components/spec.server.ts`에 Blueprint 컴파일을 하지 않는 가벼운 `componentSummary()` 추가 및 목록 연결.
+   - Explore 플랫폼 사례 및 Typography 비교 카드에서 `probeDesign` 캐시 활용 및 중복 컴파일 제거.
+   - 카드 링크에 `prefetch={false}` 적용으로 불필요한 번들/데이터 프리페치 방지.
