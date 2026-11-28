@@ -179,12 +179,18 @@ async function runStudioContinuousEditScenario(page, baseUrl) {
 
     const compileCountBefore = await page.evaluate(() => window.__studio_compile_count);
 
-    // 디자인 탭 열기 (존재 시)
-    const designTab = page.getByRole('tab', {name: '디자인'});
-    if ((await designTab.count()) > 0) {
-      await designTab.click();
-      await page.waitForTimeout(100);
-    }
+    // 디자인 탭 첫 열림 지연: 클릭부터 소재 선택 패널이 DOM에 나타날 때까지(지연 로딩 청크 내려받기와 첫 판정 포함).
+    const designTabOpenMs = await page.evaluate(async () => {
+      const tab = [...document.querySelectorAll('[role="tab"]')].find((t) => t.textContent?.trim() === '디자인');
+      if (!tab) return null;
+      const t0 = performance.now();
+      tab.click();
+      while (!document.querySelector('[data-testid="material-choices"]') && performance.now() - t0 < 5000) {
+        await new Promise((r) => requestAnimationFrame(r));
+      }
+      return document.querySelector('[data-testid="material-choices"]') ? Math.round(performance.now() - t0) : null;
+    });
+    await page.waitForTimeout(100);
 
     // 10회 연속 팔레트 변경 (15ms 간격 - 75ms 디바운스보다 짧음)
     const editTrace = await page.evaluate(async () => {
@@ -216,14 +222,28 @@ async function runStudioContinuousEditScenario(page, baseUrl) {
     const editsRequested = 10;
     const compilesSuppressed = Math.max(0, editsRequested - compilesTriggered);
 
-    // 캐시 재사용 검증: 이미 컴파일된 팔레트로 재변경 시 컴파일이 추가 발생하지 않아야 함
-    const countBeforeCache = compileCountAfter;
-    const cacheStart = Date.now();
-    await page.evaluate(() => {
+    // 편집 한 번이 미리보기 HTML에 반영되기까지의 지연. 아직 컴파일하지 않은 팔레트(cold)와 이미 컴파일한 팔레트(revisit)를 따로 잰다.
+    const previewLatency = (palette) => page.evaluate(async (target) => {
       const api = window.__studio_api;
-      const testPalette = (api?.catalog?.palettes?.[0]?.id) || 'nordic-frost';
-      api.edit({kind: 'setPalette', palette: testPalette});
-    });
+      const html = () => window.__studio_api?.state?.session?.lastValid?.html;
+      const before = html();
+      const t0 = performance.now();
+      api.edit({kind: 'setPalette', palette: target});
+      while (html() === before && performance.now() - t0 < 700) await new Promise((r) => requestAnimationFrame(r));
+      return html() === before ? null : Math.round(performance.now() - t0);
+    }, palette);
+    const allPalettes = await page.evaluate(() => (window.__studio_api?.catalog?.palettes || []).map((p) => p.id));
+    let editToPreviewMs = null;
+    for (const candidate of allPalettes.slice(5, 25)) {
+      editToPreviewMs = await previewLatency(candidate);
+      if (editToPreviewMs !== null) break;
+    }
+    await page.waitForTimeout(200);
+
+    // 캐시 재사용 검증: 이미 컴파일된 팔레트로 재변경 시 컴파일이 추가 발생하지 않아야 함
+    const countBeforeCache = await page.evaluate(() => window.__studio_compile_count);
+    const cacheStart = Date.now();
+    const revisitToPreviewMs = await previewLatency(allPalettes[0] || 'nordic-frost');
     await page.waitForTimeout(200);
     const countAfterCache = await page.evaluate(() => window.__studio_compile_count);
     const cacheAdditionalCompiles = countAfterCache - countBeforeCache;
@@ -243,10 +263,13 @@ async function runStudioContinuousEditScenario(page, baseUrl) {
       editDurationMs: editTrace.durationMs,
       settleDelayMs: 350,
       totalDurationMs: editTrace.durationMs + 350,
+      designTabOpenMs,
+      editToPreviewMs,
       cacheRevisit: {
         additionalCompiles: cacheAdditionalCompiles,
         cacheHit: cacheAdditionalCompiles === 0,
         durationMs: cacheDurationMs,
+        previewLatencyMs: revisitToPreviewMs,
       },
     };
   } catch (err) {
@@ -649,7 +672,10 @@ async function measureEnvironment(browser, baseUrl, envName, runs, filters = {})
           editDurationMs: median(rawRuns.map((r) => r.studioContinuousEdit?.editDurationMs ?? 0)),
           settleDelayMs: median(rawRuns.map((r) => r.studioContinuousEdit?.settleDelayMs ?? 0)),
           totalDurationMs: median(rawRuns.map((r) => r.studioContinuousEdit?.totalDurationMs ?? 0)),
+          designTabOpenMs: median(rawRuns.map((r) => r.studioContinuousEdit?.designTabOpenMs).filter((v) => v != null)),
+          editToPreviewMs: median(rawRuns.map((r) => r.studioContinuousEdit?.editToPreviewMs).filter((v) => v != null)),
           cacheRevisit: {
+            previewLatencyMs: median(rawRuns.map((r) => r.studioContinuousEdit?.cacheRevisit?.previewLatencyMs).filter((v) => v != null)),
             additionalCompiles: median(rawRuns.map((r) => r.studioContinuousEdit?.cacheRevisit?.additionalCompiles ?? 0)),
             cacheHit: rawRuns.every((r) => r.studioContinuousEdit?.cacheRevisit?.cacheHit),
             durationMs: median(rawRuns.map((r) => r.studioContinuousEdit?.cacheRevisit?.durationMs ?? 0)),

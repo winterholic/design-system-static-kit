@@ -2,16 +2,16 @@
   "version": "1.1.0",
   "updatedAt": "2026-11-28",
   "summary": {
-    "totalTasks": 28,
+    "totalTasks": 29,
     "byStatus": {
-      "Pending": 24,
+      "Pending": 25,
       "In Progress": 1,
       "Implemented": 1,
       "Verified": 2,
       "Blocked": 0
     },
     "byTrack": {
-      "Track A": 3,
+      "Track A": 4,
       "Track B": 4,
       "Track C": 3,
       "Track D": 3,
@@ -167,6 +167,75 @@
           "file": "apps/web/features/components/spec.server.ts",
           "owner": "Track F",
           "reason": "목록 데이터를 인덱스 청크에서 읽도록 바꾼다"
+        }
+      ]
+    },
+    {
+      "taskId": "TASK-TRA-04",
+      "title": "Studio 연속 편집 성능: 디바운스·중복 제거·오래된 응답 무시·결과 캐시·코드 분할",
+      "goal": "REQUEST §3.5의 Studio 최적화를 검증을 생략하지 않고 구현한다. 미리보기와 내보내기가 같은 결과 캐시를 쓰고, 캐시 키는 CONTRACTS §5.2를 따르며, 대형 패널은 실제 분할 청크로 지연 로딩한다.",
+      "scope": "apps/web/features/studio/{compiler.ts,StudioApp.tsx,export.ts,components/DesignPanel.tsx,components/EditPane.tsx}, compiler.unit.mjs, scripts/perf/measure.mjs, PERFORMANCE-A2.json",
+      "track": "Track A",
+      "dependencies": ["TASK-P0-01"],
+      "modifiedFiles": [
+        "apps/web/features/studio/StudioApp.tsx",
+        "apps/web/features/studio/export.ts",
+        "apps/web/features/studio/components/DesignPanel.tsx",
+        "apps/web/features/studio/components/EditPane.tsx",
+        "apps/web/e2e/studio-ux.spec.mjs",
+        "scripts/perf/measure.mjs",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md"
+      ],
+      "createFiles": [
+        "apps/web/features/studio/compiler.ts",
+        "apps/web/features/studio/compiler.unit.mjs",
+        "docs/dev/catalog-platform-upgrade/PERFORMANCE-A2.json",
+        "scripts/perf/run-a2-perf.mjs"
+      ],
+      "completionCriteria": "(1) 디바운스·진행 중 중복 제거·오래된 응답 무시·캐시를 실제 Core와 실제 schedule 경로로 시험한다. (2) 후보 탐색 재사용은 Core 판정과 전수 비교로 건너뛴 판정이 없음을 보인다. (3) 내보내기 HTML 바이트가 전후 같다(sha256). (4) 전후 코드를 같은 스크립트로 번갈아 재측정한다. (5) npm run verify, 웹 단위·경계·e2e 통과.",
+      "tests": [
+        "npm --workspace apps/web run test:unit",
+        "npx playwright test e2e/studio.spec.mjs",
+        "npm run verify"
+      ],
+      "commit": null,
+      "status": "Implemented",
+      "unresolvedIssues": "VERIFICATION.md §6.5. (a) 조립(/studio/assemble)은 서버 컴포넌트라 브라우저 캐시와 공유되지 않아 '조립 결과와 미리보기 결과의 공유'는 미리보기와 내보내기 사이로 한정된다. (b) 캐시 키의 engineVersion은 platform 계약 버전을 공개 진입점에서 얻을 수 없어 CONTRACTS §5.2와 편차가 있다(DEC-009 결정 3). 둘 다 Track A의 공개 진입점 결정이 필요해 Verified로 올리지 않는다.",
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/features/studio/StudioApp.tsx",
+          "owner": "Track F",
+          "reason": "미리보기 컴파일을 컴파일 관리자로 교체한다"
+        },
+        {
+          "file": "apps/web/features/studio/export.ts",
+          "owner": "Track F",
+          "reason": "내보내기가 미리보기와 같은 결과 캐시를 쓴다"
+        },
+        {
+          "file": "apps/web/features/studio/components/DesignPanel.tsx",
+          "owner": "Track F",
+          "reason": "후보 탐색을 판정 묶음별 키로 재사용한다"
+        },
+        {
+          "file": "apps/web/features/studio/components/EditPane.tsx",
+          "owner": "Track F",
+          "reason": "대형 패널을 별도 청크로 지연 로딩하고 유휴 시 미리 받는다"
+        },
+        {
+          "file": "apps/web/features/studio/compiler.ts",
+          "owner": "Track F",
+          "reason": "컴파일 관리자·캐시·키 계산의 본체(신규)"
+        },
+        {
+          "file": "apps/web/features/studio/compiler.unit.mjs",
+          "owner": "Track F",
+          "reason": "컴파일 관리자와 판정 재사용 단위 시험(신규)"
+        },
+        {
+          "file": "apps/web/e2e/studio-ux.spec.mjs",
+          "owner": "Track G",
+          "reason": "지연 로딩된 디자인 패널이 나타날 때까지 기다린 뒤 선택 상자를 센다"
         }
       ]
     },
@@ -586,33 +655,20 @@
     {
       "taskId": "TASK-TRF-05",
       "title": "Studio 조립 인터페이스 및 재료 선택 상태 보존 공유 경로",
-      "goal": "Studio에서 모든 재료(팔레트, 세트, 타이포, 패밀리, 레이아웃)를 조립하고 상태 URL 공유 지원 및 연속 편집 최적화",
-      "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**, scripts/perf/**",
+      "goal": "Studio에서 모든 재료(팔레트, 세트, 타이포, 패밀리, 레이아웃)를 조립하고 상태 URL 공유 지원",
+      "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**(진입 컴포넌트는 기존 StudioApp.tsx)",
       "track": "Track F",
       "dependencies": ["TASK-TRF-02", "TASK-TRF-03", "TASK-TRF-04"],
       "modifiedFiles": [
-        "apps/web/features/studio/compiler.ts",
-        "apps/web/features/studio/compiler.unit.mjs",
-        "apps/web/features/studio/StudioApp.tsx",
-        "apps/web/features/studio/export.ts",
-        "apps/web/features/studio/components/EditPane.tsx",
-        "apps/web/features/studio/components/DesignPanel.tsx",
-        "apps/web/app/studio/assemble/page.tsx",
-        "scripts/perf/measure.mjs",
-        "scripts/perf/run-a2-perf.mjs",
-        "docs/dev/catalog-platform-upgrade/PERFORMANCE-A2.json",
-        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
-        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json"
+        "apps/web/app/studio/page.tsx",
+        "apps/web/features/studio/StudioApp.tsx"
       ],
-      "completionCriteria": "Studio 연속 편집 경로에 75ms 디바운스, 동일 요청 중복 제거, 오래된 응답 무시, LRU 캐시(상한 100) 기반 재사용, 대형 패널(EditPane, PreviewPane, Dialogs, DesignPanel, StructurePanel, CheckPanel) React.lazy 지연 로딩 적용. 팔레트 10회 연속 변경 시 컴파일 1회(90% 억제) 및 재방문 컴파일 0회(캐시 히트), 초기 JS 전송량 기준선 대비 2.5KB+ 감소 입증, Core 출력 바이트 동일성 100% 보존, Studio E2E 13종 및 단위 65종 전수 통과.",
+      "completionCriteria": "선택 재료가 컴파일 출력에 100% 반영, 공유 URL 접속 시 선택 상태 완벽 복원",
       "tests": [
-        "npm run web:test",
-        "npx playwright test e2e/studio.spec.mjs",
-        "node scripts/perf/run-a2-perf.mjs",
-        "npm run verify"
+        "npm run web:test"
       ],
       "commit": null,
-      "status": "Implemented",
+      "status": "Pending",
       "unresolvedIssues": null
     },
     {

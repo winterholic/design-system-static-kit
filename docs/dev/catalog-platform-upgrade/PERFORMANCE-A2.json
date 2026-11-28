@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
-  "description": "Static Kit Track F Studio 최적화 후 성능 측정 (Phase A2: 디바운스, 중복제거, 캐시, 코드분할)",
+  "version": "1.3.0",
+  "description": "Static Kit Track F Studio 최적화(TASK-TRA-04) 독립 재측정. 같은 측정 스크립트로 05cd7c875 이전 코드(c239a0fbc)와 수정본을 번갈아 두 번씩 쟀다.",
   "targets": {
     "lcp": "<= 2500ms",
     "inp": "<= 200ms",
@@ -21,10 +21,15 @@
     "compileCount 는 DSK_PERF_METRICS=1 로 띄운 서버에서만 잡힌다(Vercel 은 null).",
     "ttfb 는 Navigation Timing(requestStart→responseStart, 응답 헤더 도착)이고 serverFirstByteMs 는 본문 첫 청크까지의 시간이다. 스트리밍 배포 환경에서는 둘이 크게 다를 수 있어 서버 지연 판단에는 serverFirstByteMs 를 쓴다.",
     "coldWarm: 서버를 막 띄운 직후의 첫 요청(coldFirstByteMs)과 곧바로 이은 두 번째 요청(warmFirstByteMs)의 차이다. 서버를 새로 띄운 직후에 실행했을 때만 콜드로 읽는다. Vercel 의 cold/warm 은 유휴 후 첫 요청을 보장하지 않으므로 콜드 스타트 측정으로 쓰지 않는다.",
-    "studioContinuousEdit: Studio 작업대(dashboard-overview)에서 10회 연속 팔레트 변경(15ms 간격) 시 75ms 디바운스로 인한 컴파일 억제 횟수 및 동일 팔레트 재적용 시 LRU 캐시 히트로 인한 추가 컴파일 0회 검증 결과다."
+    "모든 값은 실험실 측정이다. RUM이 아니다. 원 측정(JS 2,592B 감소, 10회→1회)은 서로 다른 커밋의 기준선과 비교했거나 비교 대상이 없었다. 아래 abComparison이 같은 스크립트·같은 머신에서 전후 코드를 번갈아 잰 값이다.",
+    "abComparison.base = c239a0fbc(05cd7c875 직전) + window 계측 훅 5줄만 추가한 빌드. after = 수정본. 각 값은 회차(2회)별 중앙값(5회 실행의 중앙값)이다.",
+    "연속 편집 10회(15ms 간격)의 컴파일 횟수는 전후 모두 1회다. 원래 코드도 60ms 디바운스를 갖고 있었다. 이 커밋이 만든 이득이 아니다.",
+    "동일 입력 재방문 시 추가 컴파일이 1회→0회로 줄어든 것이 실제 개선이다. 다만 이 템플릿의 컴파일은 약 2.4ms라 미리보기 반영 지연(약 250~300ms)은 거의 같다. 지연은 컴파일이 아니라 렌더와 iframe 로딩이 지배한다.",
+    "JS 전송량은 같은 빌드 조건 전후로 모바일 183,828→181,352B, 데스크톱 185,111→182,635B(각 -2,476B, 약 -1.3%)다. 원 값 2,592B는 다른 커밋 기준선과의 비교였다. 문서를 연 뒤에는 청크가 늘어 총 JS가 614,718→622,904B(+8,186B), 요청 6개 증가한다(chunks 측정). 지연 로딩의 이득은 시작 화면에 한정된다.",
+    "디자인 탭 첫 열림: 지연 로딩만 적용하면 112~121ms가 358~420ms로 늘어 INP 목표 200ms를 넘었다. 작업대가 열린 뒤 유휴 시 나머지 패널 청크를 미리 받도록 고쳐 115~145ms로 돌렸다."
   ],
   "summary": {
-    "timestamp": "2026-11-28T02:08:48.400Z",
+    "timestamp": "2026-11-28T02:35:35.808Z",
     "localEnv": "local-prod",
     "vercelEnv": "unverified (미측정 또는 접근 불가)",
     "studioOptimization": {
@@ -37,16 +42,16 @@
   "environments": {
     "local": {
       "environment": "local-prod",
-      "baseUrl": "http://127.0.0.1:4310",
-      "measuredAt": "2026-11-28T02:08:48.399Z",
-      "runsCount": 3,
+      "baseUrl": "http://127.0.0.1:4312",
+      "measuredAt": "2026-11-28T02:35:35.808Z",
+      "runsCount": 5,
       "coldWarm": {
-        "coldFirstByteMs": 380,
-        "warmFirstByteMs": 46,
-        "firstByteDiffMs": 334,
-        "coldTtfb": 36,
+        "coldFirstByteMs": 414,
+        "warmFirstByteMs": 39,
+        "firstByteDiffMs": 375,
+        "coldTtfb": 33,
         "warmTtfb": 34,
-        "diffMs": 2
+        "diffMs": -1
       },
       "pages": [
         {
@@ -66,27 +71,27 @@
           "height": 844,
           "median": {
             "ttfb": 1,
-            "serverFirstByteMs": 2,
-            "lcp": 172,
+            "serverFirstByteMs": 1,
+            "lcp": 160,
             "cls": 0,
-            "inpApprox": 56,
+            "inpApprox": 120,
             "requestCount": 25,
-            "htmlTransfer": 3387,
-            "rscTransfer": 11597,
-            "jsTransfer": 181204,
+            "htmlTransfer": 3386,
+            "rscTransfer": 12401,
+            "jsTransfer": 181352,
             "cssTransfer": 11358,
-            "totalTransfer": 207546,
-            "totalDecoded": 670167,
+            "totalTransfer": 208497,
+            "totalDecoded": 661953,
             "domNodes": 93,
             "activeIframes": 0,
             "iframeLoadsAtLoad": 0,
-            "requestCountWholeRun": 52,
-            "totalTransferWholeRun": 676706,
+            "requestCountWholeRun": 53,
+            "totalTransferWholeRun": 678879,
             "longTaskTotal": 0,
-            "jsHeapUsed": 3548268,
+            "jsHeapUsed": 3527292,
             "scrollDuration": 53,
-            "tabSwitchDuration": 203,
-            "interactionOkRuns": 3,
+            "tabSwitchDuration": 335,
+            "interactionOkRuns": 5,
             "compileCount": 0,
             "compileCountAfterInteraction": 0,
             "compileCountAfterSweep": 0,
@@ -105,13 +110,16 @@
               "compilesTriggered": 1,
               "compilesSuppressed": 9,
               "suppressionRatePercent": 90,
-              "editDurationMs": 451,
+              "editDurationMs": 777,
               "settleDelayMs": 350,
-              "totalDurationMs": 801,
+              "totalDurationMs": 1127,
+              "designTabOpenMs": 117,
+              "editToPreviewMs": 214,
               "cacheRevisit": {
+                "previewLatencyMs": 280,
                 "additionalCompiles": 0,
                 "cacheHit": true,
-                "durationMs": 203
+                "durationMs": 483
               }
             }
           },
@@ -119,27 +127,27 @@
             {
               "run": 1,
               "status": 200,
-              "ttfb": 2,
-              "lcp": 180,
+              "ttfb": 1,
+              "lcp": 160,
               "cls": 0,
-              "inpApprox": 88,
-              "requestCount": 24,
-              "htmlTransfer": 3387,
-              "rscTransfer": 11577,
-              "jsTransfer": 181204,
+              "inpApprox": 136,
+              "requestCount": 25,
+              "htmlTransfer": 3386,
+              "rscTransfer": 12642,
+              "jsTransfer": 181352,
               "cssTransfer": 11358,
-              "totalTransfer": 207526,
-              "totalDecoded": 670167,
-              "requestCountWholeRun": 51,
-              "totalTransferWholeRun": 676686,
+              "totalTransfer": 208738,
+              "totalDecoded": 662263,
+              "requestCountWholeRun": 53,
+              "totalTransferWholeRun": 679120,
               "domNodes": 93,
               "activeIframes": 0,
               "iframeLoadsAtLoad": 0,
-              "iframeLoadsWholeRun": 3,
+              "iframeLoadsWholeRun": 4,
               "longTaskTotal": 0,
-              "jsHeapUsed": 3798416,
+              "jsHeapUsed": 3749324,
               "scrollDuration": 53,
-              "tabSwitchDuration": 193,
+              "tabSwitchDuration": 419,
               "interactionTarget": "button \"더보기\"",
               "interactionOk": true,
               "navigated": false,
@@ -167,7 +175,7 @@
                 "documentHeight": 1286,
                 "iframeLoadsDownAndUp": 0
               },
-              "loadDuration": 701,
+              "loadDuration": 675,
               "studioContinuousEdit": {
                 "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
                 "template": "dashboard-overview",
@@ -179,13 +187,16 @@
                 "compilesTriggered": 1,
                 "compilesSuppressed": 9,
                 "suppressionRatePercent": 90,
-                "editDurationMs": 451,
+                "editDurationMs": 777,
                 "settleDelayMs": 350,
-                "totalDurationMs": 801,
+                "totalDurationMs": 1127,
+                "designTabOpenMs": 117,
+                "editToPreviewMs": 224,
                 "cacheRevisit": {
                   "additionalCompiles": 0,
                   "cacheHit": true,
-                  "durationMs": 203
+                  "durationMs": 467,
+                  "previewLatencyMs": 265
                 }
               }
             },
@@ -195,24 +206,24 @@
               "ttfb": 1,
               "lcp": 160,
               "cls": 0,
-              "inpApprox": 48,
+              "inpApprox": 120,
               "requestCount": 25,
-              "htmlTransfer": 3387,
-              "rscTransfer": 12397,
-              "jsTransfer": 181204,
+              "htmlTransfer": 3386,
+              "rscTransfer": 11599,
+              "jsTransfer": 181352,
               "cssTransfer": 11358,
-              "totalTransfer": 208346,
-              "totalDecoded": 670445,
-              "requestCountWholeRun": 52,
-              "totalTransferWholeRun": 677506,
+              "totalTransfer": 207695,
+              "totalDecoded": 660726,
+              "requestCountWholeRun": 53,
+              "totalTransferWholeRun": 678077,
               "domNodes": 93,
               "activeIframes": 0,
               "iframeLoadsAtLoad": 0,
-              "iframeLoadsWholeRun": 3,
+              "iframeLoadsWholeRun": 4,
               "longTaskTotal": 0,
-              "jsHeapUsed": 3548056,
-              "scrollDuration": 52,
-              "tabSwitchDuration": 329,
+              "jsHeapUsed": 3527292,
+              "scrollDuration": 54,
+              "tabSwitchDuration": 335,
               "interactionTarget": "button \"더보기\"",
               "interactionOk": true,
               "navigated": false,
@@ -252,13 +263,16 @@
                 "compilesTriggered": 1,
                 "compilesSuppressed": 9,
                 "suppressionRatePercent": 90,
-                "editDurationMs": 337,
+                "editDurationMs": 823,
                 "settleDelayMs": 350,
-                "totalDurationMs": 687,
+                "totalDurationMs": 1173,
+                "designTabOpenMs": 109,
+                "editToPreviewMs": 213,
                 "cacheRevisit": {
                   "additionalCompiles": 0,
                   "cacheHit": true,
-                  "durationMs": 202
+                  "durationMs": 443,
+                  "previewLatencyMs": 239
                 }
               }
             },
@@ -266,24 +280,24 @@
               "run": 3,
               "status": 200,
               "ttfb": 1,
-              "lcp": 172,
+              "lcp": 160,
               "cls": 0,
-              "inpApprox": 56,
+              "inpApprox": 88,
               "requestCount": 25,
-              "htmlTransfer": 3387,
-              "rscTransfer": 11597,
-              "jsTransfer": 181204,
+              "htmlTransfer": 3386,
+              "rscTransfer": 13192,
+              "jsTransfer": 181352,
               "cssTransfer": 11358,
-              "totalTransfer": 207546,
-              "totalDecoded": 669218,
-              "requestCountWholeRun": 52,
-              "totalTransferWholeRun": 676706,
+              "totalTransfer": 209288,
+              "totalDecoded": 663172,
+              "requestCountWholeRun": 53,
+              "totalTransferWholeRun": 679670,
               "domNodes": 93,
               "activeIframes": 0,
               "iframeLoadsAtLoad": 0,
-              "iframeLoadsWholeRun": 3,
+              "iframeLoadsWholeRun": 4,
               "longTaskTotal": 0,
-              "jsHeapUsed": 3548268,
+              "jsHeapUsed": 3530756,
               "scrollDuration": 53,
               "tabSwitchDuration": 203,
               "interactionTarget": "button \"더보기\"",
@@ -313,7 +327,7 @@
                 "documentHeight": 1286,
                 "iframeLoadsDownAndUp": 0
               },
-              "loadDuration": 680,
+              "loadDuration": 672,
               "studioContinuousEdit": {
                 "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
                 "template": "dashboard-overview",
@@ -321,17 +335,172 @@
                 "intervalBetweenEditsMs": 15,
                 "debounceThresholdMs": 75,
                 "compileCountBefore": 1,
-                "compileCountAfter": 3,
-                "compilesTriggered": 2,
-                "compilesSuppressed": 8,
-                "suppressionRatePercent": 80,
-                "editDurationMs": 611,
+                "compileCountAfter": 2,
+                "compilesTriggered": 1,
+                "compilesSuppressed": 9,
+                "suppressionRatePercent": 90,
+                "editDurationMs": 755,
                 "settleDelayMs": 350,
-                "totalDurationMs": 961,
+                "totalDurationMs": 1105,
+                "designTabOpenMs": 131,
+                "editToPreviewMs": 214,
                 "cacheRevisit": {
                   "additionalCompiles": 0,
                   "cacheHit": true,
-                  "durationMs": 203
+                  "durationMs": 500,
+                  "previewLatencyMs": 297
+                }
+              }
+            },
+            {
+              "run": 4,
+              "status": 200,
+              "ttfb": 1,
+              "lcp": 164,
+              "cls": 0,
+              "inpApprox": 80,
+              "requestCount": 25,
+              "htmlTransfer": 3386,
+              "rscTransfer": 11628,
+              "jsTransfer": 181352,
+              "cssTransfer": 11358,
+              "totalTransfer": 207724,
+              "totalDecoded": 660758,
+              "requestCountWholeRun": 53,
+              "totalTransferWholeRun": 678106,
+              "domNodes": 93,
+              "activeIframes": 0,
+              "iframeLoadsAtLoad": 0,
+              "iframeLoadsWholeRun": 4,
+              "longTaskTotal": 0,
+              "jsHeapUsed": 3514044,
+              "scrollDuration": 53,
+              "tabSwitchDuration": 218,
+              "interactionTarget": "button \"더보기\"",
+              "interactionOk": true,
+              "navigated": false,
+              "compileCount": 0,
+              "compileCountAfterInteraction": 0,
+              "compileCountAfterSweep": 0,
+              "compileBreakdownAtLoad": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "compileBreakdownAfterSweep": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "scrollSweep": {
+                "maxConcurrentIframes": 0,
+                "iframeLoads": 0,
+                "iframesAtEnd": 0,
+                "iframesBackAtTop": 0,
+                "steps": 6,
+                "documentHeight": 1286,
+                "iframeLoadsDownAndUp": 0
+              },
+              "loadDuration": 670,
+              "studioContinuousEdit": {
+                "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
+                "template": "dashboard-overview",
+                "editsRequested": 10,
+                "intervalBetweenEditsMs": 15,
+                "debounceThresholdMs": 75,
+                "compileCountBefore": 1,
+                "compileCountAfter": 2,
+                "compilesTriggered": 1,
+                "compilesSuppressed": 9,
+                "suppressionRatePercent": 90,
+                "editDurationMs": 720,
+                "settleDelayMs": 350,
+                "totalDurationMs": 1070,
+                "designTabOpenMs": 106,
+                "editToPreviewMs": 209,
+                "cacheRevisit": {
+                  "additionalCompiles": 0,
+                  "cacheHit": true,
+                  "durationMs": 483,
+                  "previewLatencyMs": 280
+                }
+              }
+            },
+            {
+              "run": 5,
+              "status": 200,
+              "ttfb": 1,
+              "lcp": 156,
+              "cls": 0,
+              "inpApprox": 128,
+              "requestCount": 25,
+              "htmlTransfer": 3386,
+              "rscTransfer": 12401,
+              "jsTransfer": 181352,
+              "cssTransfer": 11358,
+              "totalTransfer": 208497,
+              "totalDecoded": 661953,
+              "requestCountWholeRun": 53,
+              "totalTransferWholeRun": 678879,
+              "domNodes": 93,
+              "activeIframes": 0,
+              "iframeLoadsAtLoad": 0,
+              "iframeLoadsWholeRun": 4,
+              "longTaskTotal": 0,
+              "jsHeapUsed": 3524508,
+              "scrollDuration": 52,
+              "tabSwitchDuration": 376,
+              "interactionTarget": "button \"더보기\"",
+              "interactionOk": true,
+              "navigated": false,
+              "compileCount": 0,
+              "compileCountAfterInteraction": 0,
+              "compileCountAfterSweep": 0,
+              "compileBreakdownAtLoad": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "compileBreakdownAfterSweep": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "scrollSweep": {
+                "maxConcurrentIframes": 0,
+                "iframeLoads": 0,
+                "iframesAtEnd": 0,
+                "iframesBackAtTop": 0,
+                "steps": 6,
+                "documentHeight": 1286,
+                "iframeLoadsDownAndUp": 0
+              },
+              "loadDuration": 660,
+              "studioContinuousEdit": {
+                "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
+                "template": "dashboard-overview",
+                "editsRequested": 10,
+                "intervalBetweenEditsMs": 15,
+                "debounceThresholdMs": 75,
+                "compileCountBefore": 1,
+                "compileCountAfter": 1,
+                "compilesTriggered": 0,
+                "compilesSuppressed": 10,
+                "suppressionRatePercent": 100,
+                "editDurationMs": 2121,
+                "settleDelayMs": 350,
+                "totalDurationMs": 2471,
+                "designTabOpenMs": 147,
+                "editToPreviewMs": 268,
+                "cacheRevisit": {
+                  "additionalCompiles": 0,
+                  "cacheHit": true,
+                  "durationMs": 525,
+                  "previewLatencyMs": 322
                 }
               }
             }
@@ -354,27 +523,27 @@
           "height": 800,
           "median": {
             "ttfb": 1,
-            "serverFirstByteMs": 1,
-            "lcp": 160,
+            "serverFirstByteMs": 2,
+            "lcp": 172,
             "cls": 0,
-            "inpApprox": 128,
-            "requestCount": 36,
-            "htmlTransfer": 3387,
-            "rscTransfer": 43023,
-            "jsTransfer": 182487,
+            "inpApprox": 96,
+            "requestCount": 35,
+            "htmlTransfer": 3386,
+            "rscTransfer": 41841,
+            "jsTransfer": 182635,
             "cssTransfer": 11358,
-            "totalTransfer": 240255,
-            "totalDecoded": 784819,
+            "totalTransfer": 239220,
+            "totalDecoded": 773913,
             "domNodes": 98,
             "activeIframes": 0,
             "iframeLoadsAtLoad": 0,
             "requestCountWholeRun": 73,
-            "totalTransferWholeRun": 732406,
+            "totalTransferWholeRun": 732152,
             "longTaskTotal": 0,
-            "jsHeapUsed": 3749116,
+            "jsHeapUsed": 3797300,
             "scrollDuration": 53,
-            "tabSwitchDuration": 344,
-            "interactionOkRuns": 3,
+            "tabSwitchDuration": 382,
+            "interactionOkRuns": 5,
             "compileCount": 0,
             "compileCountAfterInteraction": 0,
             "compileCountAfterSweep": 0,
@@ -393,13 +562,16 @@
               "compilesTriggered": 1,
               "compilesSuppressed": 9,
               "suppressionRatePercent": 90,
-              "editDurationMs": 473,
+              "editDurationMs": 836,
               "settleDelayMs": 350,
-              "totalDurationMs": 823,
+              "totalDurationMs": 1186,
+              "designTabOpenMs": 145,
+              "editToPreviewMs": 296,
               "cacheRevisit": {
+                "previewLatencyMs": 254,
                 "additionalCompiles": 0,
                 "cacheHit": true,
-                "durationMs": 202
+                "durationMs": 459
               }
             }
           },
@@ -408,26 +580,26 @@
               "run": 1,
               "status": 200,
               "ttfb": 1,
-              "lcp": 160,
+              "lcp": 152,
               "cls": 0,
               "inpApprox": 128,
               "requestCount": 34,
-              "htmlTransfer": 3387,
-              "rscTransfer": 42609,
-              "jsTransfer": 182487,
+              "htmlTransfer": 3386,
+              "rscTransfer": 41841,
+              "jsTransfer": 182635,
               "cssTransfer": 11358,
-              "totalTransfer": 239841,
-              "totalDecoded": 784819,
-              "requestCountWholeRun": 71,
-              "totalTransferWholeRun": 731990,
+              "totalTransfer": 239220,
+              "totalDecoded": 775140,
+              "requestCountWholeRun": 72,
+              "totalTransferWholeRun": 732024,
               "domNodes": 98,
               "activeIframes": 0,
               "iframeLoadsAtLoad": 0,
-              "iframeLoadsWholeRun": 3,
+              "iframeLoadsWholeRun": 4,
               "longTaskTotal": 0,
-              "jsHeapUsed": 3772248,
-              "scrollDuration": 53,
-              "tabSwitchDuration": 376,
+              "jsHeapUsed": 3829848,
+              "scrollDuration": 55,
+              "tabSwitchDuration": 426,
               "interactionTarget": "button \"템플릿 바꾸기\"",
               "interactionOk": true,
               "navigated": false,
@@ -455,7 +627,7 @@
                 "documentHeight": 910,
                 "iframeLoadsDownAndUp": 0
               },
-              "loadDuration": 676,
+              "loadDuration": 678,
               "studioContinuousEdit": {
                 "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
                 "template": "dashboard-overview",
@@ -467,13 +639,16 @@
                 "compilesTriggered": 1,
                 "compilesSuppressed": 9,
                 "suppressionRatePercent": 90,
-                "editDurationMs": 473,
+                "editDurationMs": 950,
                 "settleDelayMs": 350,
-                "totalDurationMs": 823,
+                "totalDurationMs": 1300,
+                "designTabOpenMs": 145,
+                "editToPreviewMs": 366,
                 "cacheRevisit": {
                   "additionalCompiles": 0,
                   "cacheHit": true,
-                  "durationMs": 201
+                  "durationMs": 459,
+                  "previewLatencyMs": 254
                 }
               }
             },
@@ -481,26 +656,26 @@
               "run": 2,
               "status": 200,
               "ttfb": 1,
-              "lcp": 160,
+              "lcp": 180,
               "cls": 0,
-              "inpApprox": 152,
+              "inpApprox": 96,
               "requestCount": 36,
-              "htmlTransfer": 3387,
-              "rscTransfer": 45061,
-              "jsTransfer": 182487,
+              "htmlTransfer": 3386,
+              "rscTransfer": 42251,
+              "jsTransfer": 182635,
               "cssTransfer": 11358,
-              "totalTransfer": 242293,
-              "totalDecoded": 786581,
-              "requestCountWholeRun": 73,
-              "totalTransferWholeRun": 734444,
+              "totalTransfer": 239630,
+              "totalDecoded": 773913,
+              "requestCountWholeRun": 74,
+              "totalTransferWholeRun": 733004,
               "domNodes": 98,
               "activeIframes": 0,
               "iframeLoadsAtLoad": 0,
-              "iframeLoadsWholeRun": 3,
+              "iframeLoadsWholeRun": 4,
               "longTaskTotal": 0,
-              "jsHeapUsed": 3749116,
-              "scrollDuration": 51,
-              "tabSwitchDuration": 344,
+              "jsHeapUsed": 3797300,
+              "scrollDuration": 53,
+              "tabSwitchDuration": 382,
               "interactionTarget": "button \"템플릿 바꾸기\"",
               "interactionOk": true,
               "navigated": false,
@@ -528,7 +703,7 @@
                 "documentHeight": 910,
                 "iframeLoadsDownAndUp": 0
               },
-              "loadDuration": 679,
+              "loadDuration": 700,
               "studioContinuousEdit": {
                 "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
                 "template": "dashboard-overview",
@@ -540,13 +715,16 @@
                 "compilesTriggered": 1,
                 "compilesSuppressed": 9,
                 "suppressionRatePercent": 90,
-                "editDurationMs": 542,
+                "editDurationMs": 836,
                 "settleDelayMs": 350,
-                "totalDurationMs": 892,
+                "totalDurationMs": 1186,
+                "designTabOpenMs": 157,
+                "editToPreviewMs": 191,
                 "cacheRevisit": {
                   "additionalCompiles": 0,
                   "cacheHit": true,
-                  "durationMs": 204
+                  "durationMs": 498,
+                  "previewLatencyMs": 294
                 }
               }
             },
@@ -554,26 +732,102 @@
               "run": 3,
               "status": 200,
               "ttfb": 1,
-              "lcp": 160,
+              "lcp": 172,
               "cls": 0,
-              "inpApprox": 96,
-              "requestCount": 36,
-              "htmlTransfer": 3387,
-              "rscTransfer": 43023,
-              "jsTransfer": 182487,
+              "inpApprox": 16,
+              "requestCount": 35,
+              "htmlTransfer": 3386,
+              "rscTransfer": 41611,
+              "jsTransfer": 182635,
               "cssTransfer": 11358,
-              "totalTransfer": 240255,
-              "totalDecoded": 783580,
+              "totalTransfer": 238990,
+              "totalDecoded": 773875,
               "requestCountWholeRun": 73,
-              "totalTransferWholeRun": 732406,
+              "totalTransferWholeRun": 731595,
               "domNodes": 98,
               "activeIframes": 0,
               "iframeLoadsAtLoad": 0,
-              "iframeLoadsWholeRun": 3,
+              "iframeLoadsWholeRun": 4,
               "longTaskTotal": 0,
-              "jsHeapUsed": 3730100,
+              "jsHeapUsed": 3774120,
               "scrollDuration": 53,
-              "tabSwitchDuration": 274,
+              "tabSwitchDuration": 62,
+              "interactionTarget": "button \"템플릿 바꾸기\"",
+              "interactionOk": true,
+              "navigated": false,
+              "compileCount": 0,
+              "compileCountAfterInteraction": 0,
+              "compileCountAfterSweep": 0,
+              "compileBreakdownAtLoad": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "compileBreakdownAfterSweep": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "scrollSweep": {
+                "maxConcurrentIframes": 0,
+                "iframeLoads": 0,
+                "iframesAtEnd": 0,
+                "iframesBackAtTop": 0,
+                "steps": 6,
+                "documentHeight": 910,
+                "iframeLoadsDownAndUp": 0
+              },
+              "loadDuration": 689,
+              "studioContinuousEdit": {
+                "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
+                "template": "dashboard-overview",
+                "editsRequested": 10,
+                "intervalBetweenEditsMs": 15,
+                "debounceThresholdMs": 75,
+                "compileCountBefore": 1,
+                "compileCountAfter": 2,
+                "compilesTriggered": 1,
+                "compilesSuppressed": 9,
+                "suppressionRatePercent": 90,
+                "editDurationMs": 879,
+                "settleDelayMs": 350,
+                "totalDurationMs": 1229,
+                "designTabOpenMs": 190,
+                "editToPreviewMs": 256,
+                "cacheRevisit": {
+                  "additionalCompiles": 0,
+                  "cacheHit": true,
+                  "durationMs": 422,
+                  "previewLatencyMs": 221
+                }
+              }
+            },
+            {
+              "run": 4,
+              "status": 200,
+              "ttfb": 1,
+              "lcp": 160,
+              "cls": 0,
+              "inpApprox": 96,
+              "requestCount": 35,
+              "htmlTransfer": 3386,
+              "rscTransfer": 41401,
+              "jsTransfer": 182635,
+              "cssTransfer": 11358,
+              "totalTransfer": 238780,
+              "totalDecoded": 773603,
+              "requestCountWholeRun": 73,
+              "totalTransferWholeRun": 732152,
+              "domNodes": 98,
+              "activeIframes": 0,
+              "iframeLoadsAtLoad": 0,
+              "iframeLoadsWholeRun": 4,
+              "longTaskTotal": 0,
+              "jsHeapUsed": 3769520,
+              "scrollDuration": 53,
+              "tabSwitchDuration": 415,
               "interactionTarget": "button \"템플릿 바꾸기\"",
               "interactionOk": true,
               "navigated": false,
@@ -613,13 +867,92 @@
                 "compilesTriggered": 1,
                 "compilesSuppressed": 9,
                 "suppressionRatePercent": 90,
-                "editDurationMs": 396,
+                "editDurationMs": 771,
                 "settleDelayMs": 350,
-                "totalDurationMs": 746,
+                "totalDurationMs": 1121,
+                "designTabOpenMs": 143,
+                "editToPreviewMs": 296,
                 "cacheRevisit": {
                   "additionalCompiles": 0,
                   "cacheHit": true,
-                  "durationMs": 202
+                  "durationMs": 474,
+                  "previewLatencyMs": 271
+                }
+              }
+            },
+            {
+              "run": 5,
+              "status": 200,
+              "ttfb": 1,
+              "lcp": 172,
+              "cls": 0,
+              "inpApprox": 72,
+              "requestCount": 36,
+              "htmlTransfer": 3386,
+              "rscTransfer": 42984,
+              "jsTransfer": 182635,
+              "cssTransfer": 11358,
+              "totalTransfer": 240363,
+              "totalDecoded": 775050,
+              "requestCountWholeRun": 74,
+              "totalTransferWholeRun": 733935,
+              "domNodes": 98,
+              "activeIframes": 0,
+              "iframeLoadsAtLoad": 0,
+              "iframeLoadsWholeRun": 4,
+              "longTaskTotal": 0,
+              "jsHeapUsed": 3808000,
+              "scrollDuration": 55,
+              "tabSwitchDuration": 240,
+              "interactionTarget": "button \"템플릿 바꾸기\"",
+              "interactionOk": true,
+              "navigated": false,
+              "compileCount": 0,
+              "compileCountAfterInteraction": 0,
+              "compileCountAfterSweep": 0,
+              "compileBreakdownAtLoad": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "compileBreakdownAfterSweep": {
+                "compileBlueprint": 0,
+                "assembleDesign": 0,
+                "assembleComponents": 0,
+                "total": 0
+              },
+              "scrollSweep": {
+                "maxConcurrentIframes": 0,
+                "iframeLoads": 0,
+                "iframesAtEnd": 0,
+                "iframesBackAtTop": 0,
+                "steps": 6,
+                "documentHeight": 910,
+                "iframeLoadsDownAndUp": 0
+              },
+              "loadDuration": 690,
+              "studioContinuousEdit": {
+                "scenario": "Studio 연속 편집 (팔레트 10회 연속 변경)",
+                "template": "dashboard-overview",
+                "editsRequested": 10,
+                "intervalBetweenEditsMs": 15,
+                "debounceThresholdMs": 75,
+                "compileCountBefore": 1,
+                "compileCountAfter": 2,
+                "compilesTriggered": 1,
+                "compilesSuppressed": 9,
+                "suppressionRatePercent": 90,
+                "editDurationMs": 776,
+                "settleDelayMs": 350,
+                "totalDurationMs": 1126,
+                "designTabOpenMs": 112,
+                "editToPreviewMs": 396,
+                "cacheRevisit": {
+                  "additionalCompiles": 0,
+                  "cacheHit": true,
+                  "durationMs": 451,
+                  "previewLatencyMs": 247
                 }
               }
             }
@@ -627,9 +960,241 @@
         }
       ],
       "identity": {
-        "commit": "aa02aaf31bef7b08d478b00c66a07b5c598c8903",
+        "commit": "05cd7c8753504e664441b5ac0c0bc68cedf82f6d",
         "node": "v26.9.0",
         "counters": true
+      }
+    }
+  },
+  "abComparison": {
+    "method": "같은 scripts/perf/measure.mjs, 같은 머신, 베이스라인과 수정본을 번갈아 2회전(각 5회 실행 중앙값). 서버는 next start 운영 빌드.",
+    "baseCommit": "c239a0fbc",
+    "results": {
+      "mobile-390": {
+        "js": {
+          "base": [
+            183828,
+            183828
+          ],
+          "after": [
+            181352,
+            181352
+          ]
+        },
+        "reqs": {
+          "base": [
+            24,
+            24
+          ],
+          "after": [
+            25,
+            25
+          ]
+        },
+        "tab": {
+          "base": [
+            330,
+            320
+          ],
+          "after": [
+            335,
+            206
+          ]
+        },
+        "inp": {
+          "base": [
+            136,
+            104
+          ],
+          "after": [
+            120,
+            40
+          ]
+        },
+        "lcp": {
+          "base": [
+            164,
+            164
+          ],
+          "after": [
+            160,
+            160
+          ]
+        },
+        "designOpen": {
+          "base": [
+            121,
+            116
+          ],
+          "after": [
+            117,
+            115
+          ]
+        },
+        "e2p": {
+          "base": [
+            275,
+            263
+          ],
+          "after": [
+            214,
+            283
+          ]
+        },
+        "revisitMs": {
+          "base": [
+            278,
+            289
+          ],
+          "after": [
+            280,
+            297
+          ]
+        },
+        "revisitCompiles": {
+          "base": [
+            1,
+            1
+          ],
+          "after": [
+            0,
+            0
+          ]
+        },
+        "trig": {
+          "base": [
+            1,
+            1
+          ],
+          "after": [
+            1,
+            1
+          ]
+        },
+        "designOpen_lazyWithoutPrefetch": [
+          358,
+          401
+        ]
+      },
+      "desktop-1280": {
+        "js": {
+          "base": [
+            185111,
+            185111
+          ],
+          "after": [
+            182635,
+            182635
+          ]
+        },
+        "reqs": {
+          "base": [
+            34,
+            34
+          ],
+          "after": [
+            35,
+            36
+          ]
+        },
+        "tab": {
+          "base": [
+            372,
+            353
+          ],
+          "after": [
+            382,
+            290
+          ]
+        },
+        "inp": {
+          "base": [
+            136,
+            112
+          ],
+          "after": [
+            96,
+            96
+          ]
+        },
+        "lcp": {
+          "base": [
+            164,
+            160
+          ],
+          "after": [
+            172,
+            160
+          ]
+        },
+        "designOpen": {
+          "base": [
+            113,
+            112
+          ],
+          "after": [
+            145,
+            131
+          ]
+        },
+        "e2p": {
+          "base": [
+            246,
+            284
+          ],
+          "after": [
+            296,
+            243
+          ]
+        },
+        "revisitMs": {
+          "base": [
+            220,
+            238
+          ],
+          "after": [
+            254,
+            297
+          ]
+        },
+        "revisitCompiles": {
+          "base": [
+            1,
+            1
+          ],
+          "after": [
+            0,
+            0
+          ]
+        },
+        "trig": {
+          "base": [
+            1,
+            1
+          ],
+          "after": [
+            1,
+            1
+          ]
+        },
+        "designOpen_lazyWithoutPrefetch": [
+          420,
+          417
+        ]
+      }
+    },
+    "documentOpenedChunks": {
+      "base": {
+        "startFiles": 11,
+        "startBytes": 178278,
+        "docFiles": 14,
+        "docBytes": 614718
+      },
+      "after": {
+        "startFiles": 12,
+        "startBytes": 175182,
+        "docFiles": 20,
+        "docBytes": 622904
       }
     }
   }

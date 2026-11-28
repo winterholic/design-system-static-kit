@@ -1,7 +1,7 @@
 # 아키텍처 및 거버넌스 결정 기록 (DECISIONS.md)
 
 - 상태: 활성 (Phase 0 전수 감사 완료)
-- 버전: 1.0.0
+- 버전: 1.1.0 (P0-AUDIT 독립 검증 반영)
 - 관리 위치: `docs/dev/catalog-platform-upgrade/DECISIONS.md`
 - 관련: `REQUEST.md §1`, `docs/architecture.md`, `docs/governance.md`, `docs/adr/0012-assembly-platform.md`
 
@@ -60,6 +60,7 @@
 ### 결정
 1. Coolors 427 팔레트를 신규 플랫폼 레지스트리(`src/platform/data/palettes.mjs`)에 등록하거나 신규 공개 카탈로그에 노출하지 않는다.
 2. 기존 카탈로그 2.1~2.6 Blueprint 컴파일 호환성을 위해서만 읽기 전용으로 유지한다.
+   - **현행 편차(2026-11-28)**: Studio `DesignPanel`의 "모든 팔레트" 목록이 이 427개를 선택지로 낸다. 결정 2와 어긋나지만 이 문서는 선택지에서 뺄지, 권리 결정을 받을지를 정하지 않는다. Track F와 Track B가 정해 새 DEC로 남긴다. 그때까지 Manifest의 `rights-unverified` 기록이 `studioAssemblable: true`로 나오는 것이 편차의 기계적 표지다.
 3. Track B에서 상업적 이용 및 재배포가 확실한 자체 원색 시드 팔레트 200종을 새롭게 구축하여 신규 공개 라이브러리로 대체한다.
 
 ---
@@ -85,7 +86,7 @@
 ### 결정
 1. 등록 수(Registered), 실질적 재료 수(Actual Material), 조합 가능 수(Combinable), 실제 조립 검증 수(Assemblable & Verified), 고유 출력 수(Distinct Outputs)를 명확히 분리하여 집계한다.
 2. 조합 가능 수는 "재료 수"로 표현할 수 없으며, 반드시 "조합 가능 조합 수"로 명시한다.
-3. 목적 패밀리 32종은 기존 119,610 조립 가능 조합의 곱 축에 합산하지 않고 별도 집계한다.
+3. 목적 패밀리는 플랫폼 조립 가능 조합(`MATERIAL-COVERAGE.json`의 `summary.combinations.platform.assemblableCombinations`)의 곱 축에 합산하지 않고 `summary.byKind`에서 별도로 집계한다. 숫자는 이 문서에 옮겨 적지 않는다. Manifest가 코드에서 계산한 값만 근거로 쓴다.
 
 ---
 
@@ -95,8 +96,8 @@
 7개 트랙이 동시에 작업을 진행할 때 동일 파일에 대한 동시 수정으로 인한 충돌 및 분기를 방지한다.
 
 ### 결정
-1. `CONTRACTS.md` §6의 파일 소유권 매트릭스를 절대적으로 준수한다.
-2. REST API, MCP 서버, Next.js 웹 애플리케이션, Studio는 독자적인 컴파일 로직을 갖지 않고, 오직 `src/service/assemble-design.mjs`의 `assembleDesign()` 단일 서비스 함수만 호출한다.
+1. `CONTRACTS.md` §6의 파일 소유권 매트릭스를 준수한다. 다른 트랙 파일은 §6.1의 교차 트랙 허가(`TASK-LEDGER.json`의 `crossTrackFiles`)가 있을 때만 고친다.
+2. REST API, MCP 서버, Next.js 웹 애플리케이션, Studio는 독자적인 컴파일·조립 로직을 갖지 않고, Core 서비스 진입점(`src/service/index.mjs`, ADR 0009)이 공개한 함수와 `src/edit`의 연산만 호출한다. 조립은 `assembleDesign()`·`assembleComponents()`, 카탈로그 읽기는 `listCatalog`·`getMaterial`·`listPlatformMaterials` 등이다. 웹은 `src/platform`을 직접 import하지 않는다(`apps/web/boundary.check.mjs`가 강제).
 3. 채널 간 결과의 바이트 일치성은 채널 일관성 테스트(`tests/channel-*.test.mjs`)로 보증한다.
 
 ---
@@ -115,24 +116,17 @@ Phase 0 감사의 Manifest 생성기는 이전 기준값을 `?? 9` 같은 리터
 
 ---
 
-## DEC-009: Studio 연속 편집 최적화 및 렌더 캐시 모듈화 (Phase A2)
+## DEC-009: Studio 연속 편집 최적화와 컴파일 결과 캐시 (TASK-TRA-04)
 
 ### 맥락
-Studio는 브라우저 내부에서 사용자의 색상, 타이포, 축, 레이아웃 변경에 따라 Blueprint 컴파일을 반복 실행한다. 빠른 연속 입력 시 매 키스트로크/클릭마다 무거운 컴파일 연산이 비동기로 중복 트리거되고, 네트워크/스레드 응답 순서 역전으로 이전 응답이 최신 결과를 덮어쓸 위험이 있었다. 또한 모든 편집 패널이 초기 진입 시점에 동기 로딩되어 초기 JS 번들 크기가 비대해지는 문제가 있었다.
+Studio는 브라우저 안에서 Blueprint를 컴파일한다. REQUEST §3.5는 입력 디바운스, 중복 제거, 오래된 응답 무시, 변경 없는 영역 재사용, 후보 탐색 축소, 조립·미리보기 결과 공유, 코드 분할, 대형 패널 지연 로딩을 요구하고 "성능 최적화를 위해 검증 자체를 생략하지 않는다"고 못박는다. 원 구현(`05cd7c875`)은 독립 검증에서 아래 결함이 나와 수정했다.
 
 ### 결정
-1. **75ms 디바운싱 및 In-flight 중복 제거**:
-   `StudioCompileManager`를 구현하여 연속적인 입력 변경을 75ms 동안 모아 최종 정규화 입력만 1회 컴파일한다. 동일한 키에 대한 컴파일이 진행 중일 때는 Promise를 공유하여 중복 연산을 제거한다.
-2. **단조 증가 ID 기반 오래된 응답(Stale Response) 폐기**:
-   매 스케줄마다 `currentRequestId`를 단조 증가시키고, 비동기 응답 도착 시 `reqId < currentRequestId`인 경우 결과를 즉시 폐기하여 화면이 구버전으로 덮어쓰여지는 역전 현상을 100% 방지한다.
-3. **버전 인식 결정론적 LRU 캐시 (`features/studio/compiler.ts`)**:
-   `computeCacheKey(compilerVer, catalogVer, doc, mode, viewport)` 규격(`CONTRACTS.md §5.2`)에 따라 정규화된 32자 MD5 키를 생성하고, 크기 상한 100의 LRU 퇴출 정책을 적용한다. 조립 화면(`/studio/assemble`)의 후보군과 작업대(`/studio`)의 미리보기 및 HTML 내보내기(`export.ts`)가 싱글톤 캐시 인스턴스(`studioCompileCache`)를 공유하여 중복 컴파일을 0회로 억제한다.
-   *이 캐시 모듈은 향후 A1 트랙의 플랫폼 렌더 캐시 모듈과 통합 가능한 독립 아키텍처로 설계되었다.*
-4. **독립 축별 후보 탐색 분리 (검증 생략 금지)**:
-   `DesignPanel`에서 색상 변경 시 타이포/프로파일 후보 탐색을 스킵하고, 타이포 변경 시 색상/프로파일 후보 탐색을 스킵하도록 독립 메모이제이션을 적용한다. 단, Core의 `applyOp` 기반 계약 검증은 일체 생략하지 않고 전수 유지한다.
-5. **대형 패널 `React.lazy` 지연 로딩**:
-   작업대 최상위의 `EditPane`, `PreviewPane`, `Dialogs` 및 편집창 내부의 `StructurePanel`, `DesignPanel`, `CheckPanel`을 기능별로 동적 분할(`React.lazy` + `<Suspense>`)하여 초기 화면 로딩 시 불필요한 번들을 전송하지 않는다.
-6. **성능 측정 검증**:
-   `PERFORMANCE-A2.json` 측정 결과, 모바일/데스크톱 모두 초기 JS 전송량이 기준선 대비 2,592 bytes 감소하였고, 10회 연속 팔레트 변경 시 컴파일 횟수가 10회에서 1회로 90% 억제되었으며, 동일 팔레트 재적용 시 추가 컴파일 0회(캐시 히트)가 입증되었다.
-7. **바이트 동일성 불변 원칙 준수**:
-   Core 컴파일 결과 및 HTML 내보내기 SHA256 해시 바이트 동일성을 보존하며, `npm run verify`(794개 테스트 전수 통과, 3,402개 생성 파일 일치) 및 Studio 브라우저 E2E 테스트 13종 전원 통과를 확인하였다.
+1. **컴파일 관리자** (`apps/web/features/studio/compiler.ts`의 `StudioCompileManager`): 75ms 디바운스, 캐시 확인, 같은 키가 컴파일 중이면 그 결과를 함께 쓰는 진행 중 중복 제거, 더 새로운 `schedule`·`cancel`이 있었던 요청의 응답 폐기(요청 번호가 최신일 때만 전달). 컴파일 함수는 주입할 수 있어 동기·비동기 모두 같은 경로로 시험한다.
+2. **캐시 키는 CONTRACTS §5.2를 따른다**: `SHA256(engineVersion:catalogVersion:materialIds:canonicalRequest:mode:viewport)`의 앞 32자. 해시는 Node와 브라우저에서 같은 동기 SHA-256 구현이다(원 구현은 브라우저에서 비암호학적 대체 해시를 썼고 Node에서는 `eval('require')`를 썼다. 환경마다 키가 달랐고 충돌하면 다른 입력의 HTML을 돌려줄 수 있었다). 기기 폭은 컴파일 결과에 영향이 없어 키와 의존성에서 뺐다.
+3. **엔진 버전의 편차**: §5.2의 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION` 중 웹은 `src/platform`을 import할 수 없고(`boundary.check.mjs`) Studio의 `compileBlueprint`는 platform 계약을 거치지 않는다. 공개 진입점이 내보내는 `CONTRACT_VERSION`만 써서 `compileBlueprint/<CONTRACT_VERSION>`을 엔진 버전으로 쓴다. platform 계약 버전을 공개 진입점에 노출할지는 Track A가 정한다.
+4. **캐시 상한과 제거**: 크기 상한 100의 LRU. 키에 버전이 있어 만료 시간은 두지 않는다(§5.3 동적 요청). 예외로 끝난 컴파일은 캐시하지 않는다.
+5. **공유 범위**: 미리보기와 HTML 내보내기가 한 캐시(`studioCompileCache`)를 쓴다. 조립 화면(`/studio/assemble`)은 서버 컴포넌트라 브라우저 캐시와 인스턴스를 공유할 수 없어, 원 구현의 `cacheCandidates`(서버에서 도는 사실상 죽은 코드이며 검증하지 않은 HTML을 컴파일 키로 저장했다)를 제거했다. 조립에서 Studio로는 기존 시작 요청 경로를 쓴다.
+6. **후보 탐색 재사용은 검증을 생략하지 않는다**: 원 구현은 후보 시험을 `theme/colorPalette/catalogVersion` 같은 일부 필드로만 메모했고 존재하지 않는 `doc.axes`·`doc.layout`·`doc.template`을 키로 써서 판정이 낡았다. Core로 확인한 결과 `profile`이 바뀌면 색·타입 후보 판정이, `mode`·스타일 축(typography 포함)이 바뀌면 프로파일 후보 판정이, `colorPalette`가 바뀌면 타입·프로파일 후보와 선택 가능성 판정이 실제로 바뀐다. 그래서 판정 묶음마다 "읽지 않음이 확인된 필드"만 키에서 빼고(`EXPLORATION_IGNORED`) 나머지가 모두 같을 때만 이전 판정을 쓴다. 레거시 `palette`(색 변경)는 모든 판정에, `typeRoles`(타이포 변경)는 선택 가능성·색·프로파일 판정에 영향이 없다. 이 전제는 `compiler.unit.mjs`가 실제 Core로 전수 비교하며, 읽는 필드가 늘면 그 시험이 먼저 깨진다.
+7. **지연 로딩**: `EditPane`·`PreviewPane`·`Dialogs`·세 패널은 별도 청크다(`next build` 산출물로 확인). 시작 화면에서만 JS가 줄고(약 -2.5KB), 문서를 열면 청크 수가 늘어 총량은 오히려 늘어난다(`PERFORMANCE-A2.json`). 지연 로딩만 적용하면 디자인 탭 첫 열림이 약 120ms에서 약 400ms로 늘어 INP 목표(200ms)를 넘으므로, 작업대가 열린 뒤 유휴 시 나머지 패널 청크를 미리 받는다.
+8. **측정 주장 정정**: 원 기록의 "10회 연속 편집 시 10회→1회"는 이 커밋의 이득이 아니다(원래 코드도 60ms 디바운스로 1회). 같은 스크립트로 전후 코드를 번갈아 잰 값은 `PERFORMANCE-A2.json`의 `abComparison`이다. 원 기록의 "2,592B 감소"는 다른 커밋의 기준선과 비교한 값이고, 같은 조건 전후 값은 -2,476B다. 원 기록의 "32자 MD5 키" 서술은 코드(Node는 SHA-256, 브라우저는 비암호학적 해시)와 맞지 않아 바로잡았다.

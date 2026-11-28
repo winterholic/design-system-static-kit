@@ -85,7 +85,10 @@ test('부품 추가: 선택한 노드가 받을 수 없는 자리에는 선택�
 
 async function designSelects(page) {
   await page.getByRole('tab', {name: '디자인'}).click();
-  return page.locator('[role="tabpanel"] [role="combobox"]');
+  const selects = page.locator('[role="tabpanel"] [role="combobox"]');
+  // 디자인 패널은 별도 청크라 클릭 직후에는 불러오는 중일 수 있다. evaluateAll은 기다리지 않으므로 첫 선택 상자가 나올 때까지 기다린다.
+  await selects.first().waitFor();
+  return selects;
 }
 
 for (const template of ['dashboard-overview', 'agency-home']) {

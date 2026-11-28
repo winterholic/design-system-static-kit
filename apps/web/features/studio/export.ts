@@ -5,7 +5,7 @@ import {compileBlueprintWithCache} from './compiler';
 
 export const jsonText = (doc: Blueprint) => JSON.stringify(doc, null, 2) + '\n';
 
-/** 미리보기와 같은 compileBlueprint 호출이다. 캐시를 공유하며, 미리보기 전용 설정(기기·배율·색 보기)은 넣지 않는다. */
+/** 미리보기와 같은 compileBlueprint 호출이며 미리보기와 같은 캐시를 쓴다. 미리보기 전용 설정(기기·배율·색 보기)은 넣지 않는다. */
 export function htmlText(core: Core, doc: Blueprint): {ok: true; html: string} | {ok: false; errors: Diagnostic[]} {
   const {result} = compileBlueprintWithCache(core, doc, 'document');
   return result.ok ? {ok: true, html: result.html} : {ok: false, errors: result.errors};

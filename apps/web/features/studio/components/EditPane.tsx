@@ -1,5 +1,5 @@
 'use client';
-import {lazy, Suspense, useRef} from 'react';
+import {lazy, Suspense, useEffect, useRef} from 'react';
 import {useStudio} from '../context';
 import type {Tab} from '../types';
 import {useNarrow} from '../useNarrow';
@@ -7,10 +7,21 @@ import {DiagnosticList} from './Banners';
 import {Button} from '@/ui';
 import styles from '../studio.module.css';
 
-// 대형 패널(디자인/검증/구조) 온디맨드 지연 로딩
-const StructurePanel = lazy(() => import('./StructurePanel').then(m => ({default: m.StructurePanel})));
-const DesignPanel = lazy(() => import('./DesignPanel').then(m => ({default: m.DesignPanel})));
-const CheckPanel = lazy(() => import('./CheckPanel').then(m => ({default: m.CheckPanel})));
+// 대형 패널(디자인/검증/구조)은 별도 청크로 나눈다. 시작 화면은 문서가 없어 이 청크를 받지 않는다.
+const loadStructure = () => import('./StructurePanel').then(m => ({default: m.StructurePanel}));
+const loadDesign = () => import('./DesignPanel').then(m => ({default: m.DesignPanel}));
+const loadCheck = () => import('./CheckPanel').then(m => ({default: m.CheckPanel}));
+const StructurePanel = lazy(loadStructure);
+const DesignPanel = lazy(loadDesign);
+const CheckPanel = lazy(loadCheck);
+
+/** 작업대가 열린 뒤 한가할 때 나머지 탭의 청크를 미리 받는다. 탭을 처음 열 때 청크 내려받기 때문에 입력이 막히지 않게 한다(측정: PERFORMANCE-A2.json). */
+function prefetchPanels() {
+  const run = () => { void loadDesign(); void loadCheck(); };
+  const idle = (window as unknown as {requestIdleCallback?: (cb: () => void, opts?: {timeout: number}) => number}).requestIdleCallback;
+  if (idle) idle(run, {timeout: 1500});
+  else setTimeout(run, 200);
+}
 
 const TAB_LABEL: Record<Tab, string> = {structure: '구조·내용', design: '디자인', check: '검증'};
 const ORDER: Tab[] = ['structure', 'design', 'check'];
@@ -43,6 +54,7 @@ export function EditPane() {
   const narrow = useNarrow();
   const {view, session, document: doc} = api.state;
   const refs = useRef<Partial<Record<Tab, HTMLButtonElement | null>>>({});
+  useEffect(prefetchPanels, []);
   const hidden = narrow ? view.pane === 'preview' : view.pane === 'preview';
   const issues = session.error ? session.error.errors.length : 0;
   const warnings = session.warnings.length + (session.lastValid?.warnings.length ?? 0);

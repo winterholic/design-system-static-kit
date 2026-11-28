@@ -129,7 +129,8 @@ export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}
   // 같은 정규화 입력은 캐시를 재사용해 중복 컴파일을 방지하고, 오래된 지연 응답은 무시한다.
   const compileManagerRef = useRef<StudioCompileManager | null>(null);
   if (!compileManagerRef.current) {
-    compileManagerRef.current = new StudioCompileManager(null, {debounceMs: 75});
+    // compileCount는 실제로 컴파일한 횟수다(캐시·진행 중 요청 재사용과 버려진 응답은 세지 않는다).
+    compileManagerRef.current = new StudioCompileManager(null, {debounceMs: 75, onCompile: () => setCompileCount(n => n + 1)});
   }
 
   useEffect(() => {
@@ -142,17 +143,17 @@ export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}
     }
   }, [compileCount]);
 
+  // 기기 폭은 컴파일 결과에 영향이 없어 의존성과 캐시 키에 넣지 않는다(기기를 바꿔도 다시 컴파일하지 않는다).
   const doc = state.document.doc, scheme = state.view.scheme;
   useEffect(() => {
     if (!coreReady || !doc || state.phase !== 'ready') return;
-    compileManagerRef.current?.schedule(doc, scheme, (result, meta) => {
-      if (!meta.fromCache) setCompileCount(n => n + 1);
+    compileManagerRef.current?.schedule(doc, scheme, result => {
       dispatch({type: 'compiled', doc, scheme, result});
-    }, {device: state.view.device});
+    });
     return () => {
       compileManagerRef.current?.cancel();
     };
-  }, [coreReady, doc, scheme, state.phase, state.view.device]);
+  }, [coreReady, doc, scheme, state.phase]);
 
   // ---- 저장: 문서·출처·선택이 바뀌면 잠깐 모아 쓴다. 손상된 저장값이 있으면 사용자가 정할 때까지 덮어쓰지 않는다.
   // 다른 탭이 저장한 작업이 저장소에 있으면(버려도 되는 문서가 아니면) 덮어쓰지 않고 멈춘 뒤 사용자가 고르게 한다.
