@@ -7,35 +7,18 @@ process.env.PLAYWRIGHT_BROWSERS_PATH = '/Users/winterholic/Library/Caches/ms-pla
 
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {writeFileSync, existsSync} from 'node:fs';
+import {writeFileSync, existsSync, readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
+import {createHash} from 'node:crypto';
 import {createPlatform} from '../src/platform/examples/minimal.mjs';
-import {bindType, webfontCSS, webfontPlan} from '../src/platform/type.mjs';
+import {bindType, webfontCSS, webfontPlan, webfontRoleCSS} from '../src/platform/type.mjs';
 import {WEBFONTS, EXCLUDED_OR_UNVERIFIED_FONTS} from '../src/platform/data/type-materials.mjs';
 import {samplePage} from '../docs/platform/evidence/type/samples.mjs';
+import {queryMaterials} from '../src/service/materials-query.mjs';
 
 const env = createPlatform();
 const evidencePath = resolve('docs/platform/evidence/type/font-loading-evidence.json');
-
-// 최소 유효 wOF2 버퍼 (테스트 모의 응답용)
-function mockWoff2Buffer() {
-  const header = Buffer.alloc(48);
-  header.write('wOF2', 0, 4, 'ascii');
-  header.writeUInt32BE(0x00010000, 4);
-  header.writeUInt32BE(64, 8);
-  header.writeUInt16BE(0, 12);
-  header.writeUInt16BE(0, 14);
-  header.writeUInt32BE(0, 16);
-  header.writeUInt32BE(16, 20);
-  header.writeUInt16BE(1, 24);
-  header.writeUInt16BE(0, 26);
-  header.writeUInt32BE(0, 28);
-  header.writeUInt32BE(0, 32);
-  header.writeUInt32BE(0, 36);
-  header.writeUInt32BE(0, 40);
-  header.writeUInt32BE(0, 44);
-  return Buffer.concat([header, Buffer.alloc(16)]);
-}
+const fontAssetsPath = resolve('apps/web/assets/fonts');
 
 test('1. 모든 WOFF2 서브셋은 버전 고정 공식 출처, OFL-1.1 라이선스, SHA-256, 재현 절차를 갖춘다', () => {
   const fonts = Object.values(WEBFONTS);
@@ -45,6 +28,8 @@ test('1. 모든 WOFF2 서브셋은 버전 고정 공식 출처, OFL-1.1 라이�
     assert.ok(typeof font.id === 'string' && font.id.length > 0, `${font.id}: id 필드`);
     assert.ok(typeof font.family === 'string' && font.family.length > 0, `${font.id}: family 필드`);
     assert.match(font.version, /^\d+\.\d+(\.\d+)?$/, `${font.id}: 고정 버전 형식 (x.y.z)`);
+    assert.ok(font.sourceTag && font.licenseUrl.includes(font.sourceTag), `${font.id}: 공식 라이선스 URL은 고정한 업스트림 태그에 속해야 함`);
+    assert.equal(new URL(font.licenseUrl).hostname, 'github.com', `${font.id}: 공식 GitHub 라이선스 URL`);
     assert.equal(font.license, 'OFL-1.1', `${font.id}: SIL Open Font License 1.1 필수`);
     assert.ok(font.source.startsWith('https://github.com/'), `${font.id}: 공식 GitHub 저장소 출처`);
     assert.ok(font.file.endsWith('.woff2'), `${font.id}: WOFF2 파일 형식`);
@@ -59,6 +44,43 @@ test('1. 모든 WOFF2 서브셋은 버전 고정 공식 출처, OFL-1.1 라이�
   assert.equal(EXCLUDED_OR_UNVERIFIED_FONTS.notoSansJp.status, 'excluded-from-bundle');
   assert.ok(EXCLUDED_OR_UNVERIFIED_FONTS.notoSansJp.systemFallback.includes('Hiragino Sans'));
   assert.equal(EXCLUDED_OR_UNVERIFIED_FONTS.unverifiedCommercial.status, 'banned');
+  assert.ok(!fonts.some(font => font.family === EXCLUDED_OR_UNVERIFIED_FONTS.unverifiedCommercial.family), '권리 미확인 상용 서체는 공개 폰트 표에 없음');
+});
+
+test('모든 공개 WOFF2 파일은 기록된 SHA-256을 만족하고 OFL 고지 파일과 함께 배포된다', () => {
+  for (const font of Object.values(WEBFONTS)) {
+    const asset = resolve(fontAssetsPath, font.file);
+    assert.ok(existsSync(asset), `${font.id}: 저장소에 실제 WOFF2 자산이 있어야 함`);
+    const bytes = readFileSync(asset);
+    assert.equal(bytes.subarray(0, 4).toString('ascii'), 'wOF2', `${font.id}: WOFF2 시그니처`);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), font.sha256, `${font.id}: 자산 SHA-256`);
+    assert.ok(font.licenseFile, `${font.id}: 함께 배포할 라이선스 파일 경로`);
+    const licensePath = resolve(fontAssetsPath, font.licenseFile);
+    assert.ok(existsSync(licensePath), `${font.id}: 라이선스 고지 파일 존재`);
+    assert.match(readFileSync(licensePath, 'utf8'), /SIL OPEN FONT LICENSE Version 1\.1/i, `${font.id}: OFL-1.1 고지문`);
+  }
+});
+
+test('선택된 웹폰트 CSS는 같은 계열 역할에 실제 적용하고 원래 시스템 스택을 fallback으로 보존한다', () => {
+  const css = webfontRoleCSS(
+    [WEBFONTS.notoSerifKr, WEBFONTS.jetbrainsMono],
+    {body: '"Iowan Old Style", Georgia, serif', code: '"SF Mono", Consolas, monospace', label: 'system-ui, sans-serif'},
+    '.mt-specimen[data-preset="document"]',
+  );
+  assert.match(css, /\.mt-role-body\{font-family:"Noto Serif KR","Iowan Old Style", Georgia, serif;\}/);
+  assert.match(css, /\.mt-role-code\{font-family:"JetBrains Mono","SF Mono", Consolas, monospace;\}/);
+  assert.doesNotMatch(css, /mt-role-label/);
+});
+
+test('Materials 서비스는 웹폰트 선택 시 실제 역할 CSS를 내고 기본 선택은 비운다', () => {
+  const result = queryMaterials({view: 'typography'});
+  assert.equal(result.ok, true);
+  assert.equal(result.value.webfontCss.erp, '');
+  assert.equal(result.value.webfontRoleCss.erp, '');
+  assert.match(result.value.webfontCss.document, /NotoSerifKR-Variable\.woff2/);
+  assert.match(result.value.webfontRoleCss.document, /\.mt-role-body\{font-family:"Noto Serif KR"/);
+  assert.match(result.value.webfontCss.marketing, /PretendardGOVVariable\.woff2/);
+  assert.match(result.value.webfontRoleCss.marketing, /\.mt-role-display\{font-family:"Pretendard GOV"/);
 });
 
 test('2. 선택적 로딩: 미선택 서체는 @font-face가 생성되지 않고 한글/영문 unicode-range가 분리된다', () => {
@@ -71,7 +93,7 @@ test('2. 선택적 로딩: 미선택 서체는 @font-face가 생성되지 않고
   assert.ok(geoPlan);
   assert.deepEqual(geoPlan.families.map(f => f.id), ['pretendard']);
   const geoCss = webfontCSS('face-pairing:geometric-system');
-  assert.match(geoCss, /font-family:"Pretendard Variable"/);
+  assert.match(geoCss, /font-family:"Pretendard GOV"/);
   assert.equal(geoCss.includes('Noto Serif KR'), false, '미선택 서체 Noto Serif KR은 포함되지 않음');
   assert.equal(geoCss.includes('JetBrains Mono'), false, '미선택 서체 JetBrains Mono는 포함되지 않음');
 
@@ -104,26 +126,37 @@ test('3. Core 입력 결정성 및 기본 호환성 (webfonts 끔 상태의 바�
 
   // webfonts: true를 켰을 때만 웹폰트가 스택 맨 앞에 전치됨
   const rWithFont = bindType(env.registry.get('type-system:work-insight'), {webfonts: true});
-  assert.ok(rWithFont.vars['--kit-heading'].startsWith('"Pretendard Variable",'));
+  assert.ok(rWithFont.vars['--kit-heading'].startsWith('"Pretendard GOV",'));
+  const webfontPlanForSystem = webfontPlan('face-pairing:geometric');
+  assert.ok(rWithFont.vars['--kit-heading'].endsWith(webfontPlanForSystem.fallback.heading), '웹폰트 실패 때 쓸 시스템 스택이 생성 CSS에 남는다');
   assert.match(rWithFont.webfontCSS, /@font-face/);
+  assert.match(rWithFont.webfontCSS, /font-display:swap/);
 });
 
-test('4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증', async () => {
+test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다', async () => {
   const {chromium} = await import('playwright');
   const browser = await chromium.launch();
-  const evidence = {
-    timestamp: new Date().toISOString(),
-    viewports: ['390x844', '1280x900'],
-    positiveRuns: [],
-    negativeRuns: [],
-    multilingualRuns: [],
-  };
-
   const candidateSystems = [
     env.registry.get('type-system:work-insight'), // pretendard
     env.registry.get('type-system:doc-essay'),     // notoSerifKr
     env.registry.get('type-system:doc-handbook'),  // pretendard + jetbrainsMono
   ];
+  const cssFaces = Object.fromEntries([...new Set(candidateSystems.map(system => system.facePairing))]
+    .map(faceId => [faceId, createHash('sha256').update(webfontCSS(faceId)).digest('hex')]));
+  const evidence = {
+    schemaVersion: 2,
+    status: 'measured',
+    timestamp: new Date().toISOString(),
+    sourceFingerprint: {
+      fonts: Object.fromEntries(Object.entries(WEBFONTS).map(([id, font]) => [id, createHash('sha256').update(readFileSync(resolve(fontAssetsPath, font.file))).digest('hex')])),
+      cssFaces,
+      materialRoleCss: Object.fromEntries(Object.entries(queryMaterials({view: 'typography'}).value.webfontRoleCss).map(([id, css]) => [id, createHash('sha256').update(css).digest('hex')])),
+    },
+    viewports: ['390x844', '1280x900'],
+    positiveRuns: [],
+    negativeRuns: [],
+    multilingualRuns: [],
+  };
 
   try {
     for (const vp of [{width: 1280, height: 900, name: '1280px'}, {width: 390, height: 844, name: '390px'}]) {
@@ -134,15 +167,18 @@ test('4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 �
         {
           const page = await context.newPage();
           const requests = [];
+          const loadedFamilies = [];
           await page.route('http://static-kit.local/**', route => {
             const url = route.request().url();
             if (url.endsWith('.woff2')) {
               requests.push(url);
+              const font = Object.values(WEBFONTS).find(item => url.endsWith(item.file));
+              assert.ok(font, `등록된 서체만 요청: ${url}`);
               return route.fulfill({
                 status: 200,
                 contentType: 'font/woff2',
                 headers: {'Access-Control-Allow-Origin': '*'},
-                body: mockWoff2Buffer(),
+                body: readFileSync(resolve(fontAssetsPath, font.file)),
               });
             }
             return route.continue();
@@ -153,13 +189,10 @@ test('4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 �
           await page.setContent(html, {waitUntil: 'load'});
           // 브라우저 폰트 로드 트리거
           await page.evaluate(() => document.fonts.ready);
-          // 명시적으로 폰트 로드 확인
           const plan = webfontPlan(sys.facePairing);
-          if (plan) {
-            for (const fam of plan.families) {
-              await page.evaluate(f => document.fonts.load(`16px "${f.family}"`), fam).catch(() => {});
-            }
-          }
+          // 문서에 실제로 쓰인 글리프만으로 브라우저가 요청한 서브셋을 기록한다. document.fonts.load()로 강제 요청하지 않는다.
+          const loadedNames = await page.evaluate(() => Array.from(document.fonts).filter(face => face.status === 'loaded').map(face => face.family));
+          for (const fam of plan?.families ?? []) loadedFamilies.push({family: fam.family, loaded: loadedNames.includes(fam.family)});
 
           const metrics = await page.evaluate(() => {
             const el = document.documentElement;
@@ -176,15 +209,20 @@ test('4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 �
           assert.equal(metrics.overflowX, false, `${sys.id} ${vp.name} 양성 경로 가로 넘침 없음`);
           assert.ok(metrics.titleText.length > 0, '제목 글자 정상 렌더링');
           assert.ok(requests.length > 0, `${sys.id}: WOFF2 폰트 요청 수신됨 (${requests.length}건)`);
+          assert.ok(loadedFamilies.length > 0 && loadedFamilies.every(font => font.loaded), `${sys.id}: 문서의 글리프 범위와 일치하는 실제 서브셋이 브라우저에 로드됨`);
 
           evidence.positiveRuns.push({
             system: sys.id,
             viewport: vp.name,
             requestsCount: requests.length,
             requestedUrls: requests,
+            loadedFamilies,
             overflowX: metrics.overflowX,
             scrollHeight: metrics.scrollHeight,
-            bytesReceived: requests.length * 64,
+            bytesReceived: requests.reduce((sum, url) => {
+              const font = Object.values(WEBFONTS).find(item => url.endsWith(item.file));
+              return sum + readFileSync(resolve(fontAssetsPath, font.file)).length;
+            }, 0),
           });
 
           await page.close();
@@ -207,12 +245,6 @@ test('4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 �
           const html = samplePage(sys, 'doc', {webfonts: true, fontBaseUrl});
           await page.setContent(html, {waitUntil: 'load'});
           await page.evaluate(() => document.fonts.ready);
-          const plan = webfontPlan(sys.facePairing);
-          if (plan) {
-            for (const fam of plan.families) {
-              await page.evaluate(f => document.fonts.load(`16px "${f.family}"`), fam).catch(() => {});
-            }
-          }
 
           const metrics = await page.evaluate(() => {
             const el = document.documentElement;
@@ -231,13 +263,18 @@ test('4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 �
           assert.ok(metrics.titleText.length > 0, 'Fallback 서체로 제목 렌더링 유지');
           assert.ok(failedRequests.length > 0, `${sys.id}: 폰트 실패 요청 감지됨`);
 
+          const fallbackFamilies = await page.evaluate(() => ({
+            heading: getComputedStyle(document.querySelector('.t-display, h1.t-heading')).fontFamily,
+            body: getComputedStyle(document.querySelector('p.t-body')).fontFamily,
+          }));
           evidence.negativeRuns.push({
             system: sys.id,
             viewport: vp.name,
             failedRequestsCount: failedRequests.length,
             overflowX: metrics.overflowX,
             scrollHeight: metrics.scrollHeight,
-            fallbackStatus: 'rendered-via-system-stack',
+            fallbackStatus: 'font request rejected; CSS system fallback retained',
+            fallbackFamilies,
           });
 
           await page.close();

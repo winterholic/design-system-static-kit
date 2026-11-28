@@ -262,20 +262,20 @@ const COVERAGE = {
   'K/Figure and Caption': D('purpose:media.figure-caption'),
   'K/Quote': D('component:quote'),
   'K/Rich Text Content': D('component:prose'),
-  'L/Stack': D('layout-primitive:stack'),
+  // Stack has no output selector in any compiled pattern template; keep it missing until an actual renderer is added.
   'L/Cluster': D('layout-primitive:cluster'),
   'L/Grid': D('component:grid'),
   'L/Responsive Grid': D('layout:equal-grid', 'layout-primitive:flow'),
   'L/Split': D('layout-primitive:split', 'component:split'),
   'L/Bento': D('layout-primitive:bento', 'component:bento'),
-  'L/Container': D('layout-primitive:container'),
+  // Container is only a selector note today and is absent from actual compiled output.
   'L/Section': D('component:section'),
   'L/Center': D('layout:centered-hero'),
   'L/Sidebar Layout': D('component:aside'),
   'L/Master-detail Layout': D('component:master-detail'),
   'L/Sticky Region': D('layout:sticky-action-layout'),
   'L/Scroll Area': D('layout:master-detail'),
-  'L/Resizable Panel': D('component:split', 'layout:two-column'),
+  // Both candidate materials render static splits; neither exposes the Resizable Panel separator/runtime.
   'M/Filter Toolbar': D('purpose:form.filter'),
   'M/Search Toolbar': D('component:filter-bar', 'purpose:form.search'),
   'M/Bulk Action Toolbar': V('purpose:table.business', 'purpose:table.business', {toolbar: 'bulk'}),

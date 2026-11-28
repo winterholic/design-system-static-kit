@@ -207,6 +207,14 @@ const forbiddenOf = id => [
 ];
 const withSelected = id => id === 'component:toggle-button' || id === 'component:segmented-control';
 const menuLike = id => id === 'component:split-button' || id === 'component:menu-button';
+const LAYOUT_CONTRACT_PROPS = Object.freeze({
+  'component:responsive-grid': {items: 'array of strings or {content: string} objects'},
+  'component:center': {content: 'string', label: 'string'},
+  'component:sticky-region': {content: 'string', label: 'string'},
+  'component:scroll-area': {content: 'string', label: 'string'},
+  'component:resizable-panel': {direction: ['horizontal', 'vertical'], value: 'finite number; output is clamped to 15~85', first: 'string', second: 'string', left: 'string (alias for first)', right: 'string (alias for second)', label: 'string'},
+});
+
 export const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ...ACTION_COMPONENTS.map(item => defineComponentContract({
   id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
   slots: item.classification === 'composite' ? ['primary', 'secondary'] : ['label', 'leadingIcon', 'trailingIcon'],
@@ -229,8 +237,8 @@ export const ALL_COMPONENT_CONTRACTS = Object.freeze([...COMPONENT_CONTRACTS, ..
 })), ...COMMERCE_CONTRACTS, ...LAYOUT_COMPONENTS.map(item => defineComponentContract({
   id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['any'], structure: item.classification,
   slots: item.id === 'component:resizable-panel' ? ['first', 'second'] : ['content'],
-  props: item.id === 'component:resizable-panel' ? {direction: ['horizontal', 'vertical'], value: 'number (15~85)'} : {items: 'array'},
-  content: {label: {type: 'string', required: false}},
+  props: LAYOUT_CONTRACT_PROPS[item.id],
+  content: {},
   appearance: ['default'], sizes: ['md'], density: ['comfortable'], states: ['default'], transitions: [],
   events: item.id === 'component:resizable-panel' ? ['kit-panel-resize'] : [],
   tokens: ['--kit-surface', '--kit-text', '--kit-border', '--kit-focus', '--kit-radius'],

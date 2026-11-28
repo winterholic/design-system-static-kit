@@ -11,7 +11,8 @@
 import {catalogRegistry, MATERIAL_TYPE_PRESETS, MULTILINGUAL_TYPE_CORPUS, CONTROL_SIZES, renderMaterialTypeCSS} from '../materials/index.mjs';
 import {STATIC_COLOR_PALETTE, resolveColorTokens, colorTokenUsage} from '../color-tokens.mjs';
 import {webfontCSS} from '../platform/type.mjs';
-import {WEBFONTS, LEGACY_FACE_OF} from '../platform/data/type-materials.mjs';
+import {WEBFONTS, FACE_PAIRINGS, LEGACY_FACE_OF} from '../platform/data/type-materials.mjs';
+import {webfontRoleCSS} from '../platform/type.mjs';
 import {ok, fail, guard, checkKeys, badRequest, isPlain, jsonClone} from './envelope.mjs';
 
 export const MATERIAL_VIEWS = Object.freeze(['color', 'typography', 'foundations']);
@@ -44,6 +45,14 @@ const VIEWS = {
         Object.keys(MATERIAL_TYPE_PRESETS).map(id => {
           const face = LEGACY_FACE_OF[MATERIAL_TYPE_PRESETS[id]?.engine] ?? 'face-pairing:sans';
           return [id, webfontCSS(face, {baseUrl: '/fonts'})];
+        })
+      ),
+      webfontRoleCss: Object.fromEntries(
+        Object.entries(MATERIAL_TYPE_PRESETS).map(([id, preset]) => {
+          const face = LEGACY_FACE_OF[preset.engine] ?? 'face-pairing:sans';
+          const fonts = (FACE_PAIRINGS[face]?.webfonts ?? []).map(fontId => WEBFONTS[fontId]);
+          const roleStacks = Object.fromEntries(Object.entries(preset.roles).map(([role, spec]) => [role, spec.fontFamily]));
+          return [id, webfontRoleCSS(fonts, roleStacks, `.mt-specimen[data-preset="${id}"]`)];
         })
       ),
     };

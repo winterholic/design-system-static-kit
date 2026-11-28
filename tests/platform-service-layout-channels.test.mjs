@@ -52,7 +52,12 @@ test('layouts: Core, POST /api/v1/platform/assemble-components and assemble_comp
     assert.ok(core.value.html.includes(`data-component="${id}"`), `${id} reaches output through every channel`);
   }
   assert.equal(core.value.manifest.layoutItems.length, 5);
-  assert.ok(core.value.standalone.includes(core.value.script) && core.value.script.includes('window.__kitLayout'), 'standalone export carries the layout runtime');
+  assert.ok(core.value.script.includes('window.__kitLayout'), 'resizable panel adds the interaction runtime');
+  assert.ok(core.value.standalone.includes(core.value.script), 'standalone export carries the script');
+  const withoutLayouts = assembleComponents(BASE);
+  assert.equal(withoutLayouts.value.script.includes('window.__kitLayout'), false, 'outputs without a resizable panel omit its runtime');
+  const staticLayout = assembleComponents({...BASE, layouts: [{component: 'component:center', props: {label: '가운데'}}]});
+  assert.equal(staticLayout.value.script.includes('window.__kitLayout'), false, 'static layout components omit the resize runtime');
 });
 
 test('layouts: a different input changes output through every channel', async () => {
@@ -72,6 +77,7 @@ test('layouts: input the service rejects yields the same diagnostic everywhere (
   const cases = [
     {...BASE, layouts: [{component: 'component:unknown-layout', props: {label: 'x'}}]},
     {...BASE, layouts: [{component: 'component:center', props: {id: 'same'}}, {component: 'component:center', props: {id: 'same'}}]},
+    {...BASE, layouts: [{component: 'component:resizable-panel', props: {value: 'not-a-number'}}]},
   ];
   for (const request of cases) {
     const core = assembleComponents(request);

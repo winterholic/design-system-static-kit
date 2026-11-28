@@ -221,13 +221,21 @@ function withWebfonts(stackValue, keys) {
   return lead.length ? `${lead.join(',')},${stackValue}` : stackValue;
 }
 
-/** 서체 짝의 웹폰트 @font-face. 서체 파일은 저장소에 없고 baseUrl 아래에 호스팅한다고 본다. 파일이 없으면 브라우저가 스택의 다음(시스템) 서체로 그린다. */
+/** 서체 짝의 웹폰트 @font-face. 앱은 버전 고정 WOFF2 자산을 같은 출처에서 서빙한다. */
 export function webfontCSS(faceId, {baseUrl = '/fonts'} = {}) {
   const f = resolveFace(faceId);
   return (f?.webfonts ?? []).map(k => {
     const w = WEBFONTS[k];
     return `@font-face{font-family:"${w.family}";src:url("${baseUrl}/${w.file}") format("woff2");font-weight:${w.weight};font-style:normal;font-display:${WEBFONT_LOADING.display};${w.unicodeRange ? `unicode-range:${w.unicodeRange};` : ''}}`;
   }).join('\n');
+}
+/** 선택 웹폰트를 같은 일반 계열 역할에 붙이고, 각 역할의 원래 시스템 스택을 fallback으로 남긴다. */
+export function webfontRoleCSS(fonts, roleStacks, selector = '.mt-specimen') {
+  const generic = {sans: /,\s*sans-serif\s*$/i, serif: /,\s*serif\s*$/i, mono: /,\s*monospace\s*$/i};
+  return fonts.flatMap(font => Object.entries(roleStacks)
+    .filter(([role, stack]) => /^[a-z0-9-]+$/.test(role) && generic[font.class]?.test(stack))
+    .map(([role, stack]) => `${selector} .mt-role-${role}{font-family:"${font.family}",${stack};}`))
+    .join('\n');
 }
 /** 서체 짝이 웹폰트를 쓸 때의 설명: 서체, 로딩 방식, 웹폰트가 없을 때 그려지는 스택. 웹폰트가 필요 없으면 null. */
 export function webfontPlan(faceId) {

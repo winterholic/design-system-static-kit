@@ -6,8 +6,9 @@ import {proposeSubtokenSets as propose} from '../platform/color.mjs';
 import {formRuntime, controlRuntime, escapeHTML} from '../render.mjs';
 import {ok, fail, guard, isPlain, jsonClone, checkKeys, badRequest} from './envelope.mjs';
 import {diagnostic, hintFor} from './errors.mjs';
-import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME, COMMERCE_COMPONENT_BY_ID, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, LAYOUT_COMPONENT_BY_ID, LAYOUT_CSS, LAYOUT_RUNTIME} from '../platform/families/contracts.mjs';
+import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME, COMMERCE_COMPONENT_BY_ID, COMMERCE_COMPONENT_CSS, COMMERCE_COMPONENT_RUNTIME, LAYOUT_COMPONENT_BY_ID, LAYOUT_CSS} from '../platform/families/contracts.mjs';
 import {actionRuntimeFor} from '../platform/families/action.mjs';
+import {layoutRuntimeFor} from '../platform/families/layout.mjs';
 
 const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
 const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions', 'layouts', 'commerce'];
@@ -134,7 +135,7 @@ export function assembleComponents(request) {
     const runtimeBases = actionItems.length ? [...new Set([...bases, 'base-component:button-control'])].sort() : bases;
     const script = formRuntime + controlRuntime({catalogVersion: '2.7.0', tree: {type: 'page', children: runtimeBases.map(id => ({type: id.slice('base-component:'.length)}))}})
       + (actionItems.length ? ACTION_COMPONENT_RUNTIME : actionRuntimeFor(request.items.map(item => item.purpose)))
-      + (layoutItems.length ? LAYOUT_RUNTIME : '')
+      + layoutRuntimeFor(layoutItems.map(item => item.component))
       + (commerceItems.length ? COMMERCE_COMPONENT_RUNTIME : '');
     const purposeItems = request.items.map(item => {
       const family = env.registry.get(item.purpose);
