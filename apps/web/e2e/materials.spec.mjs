@@ -168,9 +168,9 @@ test.describe('타이포그래피', () => {
 
 test.describe('기초 재료', () => {
   test('축 목록에서 상세로 가고 상세의 값마다 Studio 링크나 쓸 수 없는 이유가 있다', async ({page}) => {
-    await page.goto('/materials/foundations');
-    await expect(page.getByRole('heading', {name: /아이콘 \d+개/})).toBeVisible();
-    await page.getByRole('link', {name: '모서리'}).click();
+    await page.goto('/materials/foundations?category=radius');
+    await expect(page.locator('[data-category-panel]')).toHaveAttribute('data-category-panel', 'radius');
+    await page.getByRole('navigation', {name: '기초 재료 축 상세'}).getByRole('link', {name: '모서리'}).click();
     await expect(page).toHaveURL(/foundations\/radius$/);
     await expect(page.locator('li[data-value]')).toHaveCount(5);
     await page.goto('/materials/foundations/shell');
@@ -201,10 +201,19 @@ test.describe('기초 재료', () => {
   });
 
   test('아이콘 격자는 Core의 아이콘 수와 같다', async ({page}) => {
-    await page.goto('/materials/foundations');
-    const heading = await page.getByRole('heading', {name: /아이콘 \d+개/}).innerText();
-    const n = Number(/(\d+)/.exec(heading)[1]);
-    expect(n).toBeGreaterThan(50);
-    await expect(page.getByTestId('icon-grid').locator('> li')).toHaveCount(n);
+    const core = new Set();
+    for (let cursor; ;) {
+      const listed = service.listCatalog({kind: 'icons', fields: ['id'], limit: 200, ...(cursor ? {cursor} : {})});
+      expect(listed.ok).toBe(true);
+      for (const item of listed.value.items) core.add(item.id);
+      if (!listed.value.nextCursor) break;
+      cursor = listed.value.nextCursor;
+    }
+    expect(core.size).toBeGreaterThan(50);
+    await page.goto('/materials/foundations?category=icon');
+    const shown = await page.locator('[data-category-panel] [class*="iconCell"] span').allInnerTexts();
+    expect(new Set(shown).size, '화면의 서로 다른 아이콘 수').toBe(core.size);
+    expect([...new Set(shown)].sort()).toEqual([...core].sort());
+    await expect(page.locator('[data-category-panel] [class*="iconCell"] svg').first()).toBeVisible();
   });
 });

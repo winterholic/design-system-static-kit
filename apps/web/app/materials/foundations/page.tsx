@@ -3,6 +3,7 @@ import {PageShell} from '@/shell/PageShell';
 import {MaterialsNav} from '@/features/materials/MaterialsNav';
 import {FoundationCategory} from '@/features/materials/FoundationCategory';
 import {FOUNDATION_CATEGORIES} from '@/features/materials/foundations-exhibit.mjs';
+import {foundationAxes} from '@/features/materials/materials.server';
 import styles from '@/features/materials/materials.module.css';
 
 export const metadata = {
@@ -29,6 +30,10 @@ export default async function FoundationsPage({searchParams}: Props) {
         >{item.label}</Link>)}
       </nav>
       <FoundationCategory id={category.id} />
+      <nav className={styles.foundationNav} aria-label="기초 재료 축 상세">
+        <span className={styles.cardMeta}>축별 값 비교와 Studio에서 사용하기</span>
+        {foundationAxes().map(axis => <Link key={axis.axis} href={`/materials/foundations/${axis.axis}`} className={styles.foundationTab}>{axis.label}</Link>)}
+      </nav>
     </PageShell>
   );
 }
