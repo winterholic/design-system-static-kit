@@ -768,3 +768,65 @@ $ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context
 ```
 
 2.1.0 저장 입력 전체의 컴파일 출력 해시는 `legacy-hashes.json`과 일치한다. 2.4.0의 85개 템플릿 및 15개 수기 사례 컴파일 해시는 고정 기준과 일치하고, 새 Blueprint의 기본 버전도 2.4.0이다.
+
+## 13. A3 및 A1 잔여 기준 독립 재검증 (2026-11-28, `upgrade/a3-verify`)
+
+검증 대상은 최신 원격 `main`의 A3 커밋 `7f9c24fca6dd295bd672739d85ae25999fe2dde1`이다. 현재 작업 HEAD도 이 SHA에서 시작했다. 실제 구성·증거 오류를 다음과 같이 교정했다.
+
+### 13.1 Components 실제 공개 집합과 페이지 동작
+
+`catalog-lists.spec.mjs`를 보강해 화면의 `data-total` 하나만 믿지 않고, 공개 API가 반환한 ID 집합과 모든 페이지를 비교하도록 했다. API에서 목적 패밀리 37개와 구조 부품 65개를 조회하며 `page` 구조 노드 1개는 목록 카드에서 제외한다. 따라서 현재 공개 카드 집합은 101개(과거 A3 문서의 92개/4쪽 주장은 오래된 카운트)다.
+
+운영 빌드 HTTP 응답을 공개 API와 직접 대조했다.
+
+```text
+GET /api/v1/platform/materials?kind=purpose-family&limit=200&fields=id,group → 37
+GET /api/v1/catalog?kind=components&catalogVersion=2.6.0&limit=200&fields=type,label,group → 65 (page 제외 64)
+/components 페이지별 카드/링크 → 24, 24, 24, 24, 5 (HTTP 200)
+공개 API의 101개 ID와 페이지 순회 결과: 완전 일치, 누락 0, 중복 0
+iframe 0, 숨김 카드 0; q=hero → /components/hero, 상세 경로 HTTP 200
+page=2 복원: 25–48번째 ID 동일; group=purpose:card → 공개 카드 8개
+모든 목록·검색·분류 요청 뒤 compileBlueprint=0, assembleDesign=0, assembleComponents=0, total=0
+```
+
+화면도 승인된 `ttakkari_browser`에서 현재 로컬 빌드로 열었다. `/components`는 “101개 중 1–24번째”, `/components?page=2`는 “101개 중 25–48번째”로 표시됐고, `?q=hero`는 첫 페이지 밖의 Hero를 보여줬다. HTTP 검사는 전체 페이지 집합을 다루고, MCP 브라우저는 화면·URL 일부를 확인한다.
+
+### 13.2 Studio 캐시와 측정 훅
+
+`npm --workspace apps/web run test:unit`은 80/80 통과했다. Studio 캐시 단위시험은 `./service` 공개 진입점의 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`을 읽고, 같은 버전은 컴파일 결과를 재사용하며 platform 또는 service 버전만 바꿔도 키가 달라짐을 확인한다. 기존 디바운스와 같은 요청 공유도 함께 통과했다.
+
+일반 운영 빌드의 `apps/web/.next/static` 39개 파일에서는 `__studio_api`, `__studio_compile_count` 문자열을 찾지 못했다. `DSK_STUDIO_PROBE=1 npm run web:build` 별도 빌드에서는 같은 39개 중 한 청크에 두 이름이 모두 들어갔다. 그러나 브라우저에서 `window` 값을 읽는 `studio-probe.spec.mjs` 런타임 단언은 이번 환경에서 실행하지 못했다.
+
+`npx playwright test e2e/catalog-lists.spec.mjs --reporter=line`은 Codex nested worker sandbox에서 Chromium 실행 단계가 실패했다. 관찰 오류: `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)`, 뒤이어 `SIGTRAP`; 따라서 해당 Playwright 시험의 10건은 모두 브라우저 미기동으로 실패했다. 같은 실패를 우회해 브라우저를 다시 실행하지 않았다. 브라우저 런타임 훅·스크롤 왕복 네트워크 요청은 미검증이며, 위 HTTP·번들 검사는 대체 가능한 부분만 확인한다.
+
+### 13.3 성능 수치와 provenance 정정
+
+`PERFORMANCE-A1.json`의 측정 시각은 `2026-11-28T04:02:13Z`, `PERFORMANCE-A3.json`은 `04:55:48Z`, probe 데이터는 `04:56:57Z`다. 이 파일들은 실행 source SHA를 저장하지 않았다. A1 branch tip `29ac798d6` 커밋은 `04:31:17Z`, A3 `7f9c24fca`는 `05:34:08Z`이므로 측정 시각만으로 해당 커밋의 실행이었다고 귀속할 수 없다. JSON과 `PERF-BOTTLENECKS.md`에 누락 provenance 및 현재 재검증 범위를 추가했다.
+
+과거 A3 파일에 기록된 Components LCP는 390px 140→172ms, 1280px 124→164ms다. iframe·목록 컴파일은 0으로 유지된다는 것과 LCP 증가를 별개로 기록한다. 이번 세션은 브라우저 성능 실측을 재현하지 못했고 해당 증가의 원인도 확정하지 못했다. 따라서 이 LCP 차이는 역사적 기록값이며, A3 변경의 원인·효과로 주장하지 않는다. Vercel/RUM/운영 첫 바이트는 측정하지 않았고, 운영 실측은 H 단계 소유다.
+
+### 13.4 판정 및 실행 증거
+
+- `TASK-TRA-01`은 `Implemented` 유지: 현재 A3 Components 카드 상한·정합성은 통과했지만 A1의 Explore DOM 노드 증가(기준선 504→538)는 “DOM 요소 수 대폭 감소” 기준을 충족하지 못하며, 스크롤 왕복 브라우저 실측을 이번에 반복하지 못했다.
+- `TASK-TRA-03`은 `Implemented` 유지: 인덱스·목록은 재현되지만 `catalog-chunks`를 화면에서 필요한 청크만 읽는 소비자가 없고 초기 전송량 절감이 확인되지 않았다.
+- `TASK-TRA-04`는 `Implemented` 유지: 캐시 버전 키와 운영 번들 격리는 검증됐으나 조립/Studio 결과 공유 제한은 남고, window hook 런타임 검사는 환경상 미실행이다.
+- 원 A3 구현의 문서 판정은 수정했다: 카드 수는 92가 아니라 101, 페이지는 4가 아니라 5다. 원 A3 LCP 전후 수치는 source SHA가 없어 재현·인과 귀속이 되지 않는다.
+
+```sh
+$ git rev-parse HEAD && git branch -r --contains 7f9c24fca
+7f9c24fca6dd295bd672739d85ae25999fe2dde1
+origin/HEAD -> origin/main; origin/main
+$ npm --workspace apps/web run test:unit
+ℹ tests 80 / ℹ pass 80 / ℹ fail 0
+$ npm run verify
+ℹ tests 919 / ℹ pass 919 / ℹ fail 0
+REPRODUCIBLE: 3800 generated files match a fresh build byte for byte. (EXIT=0)
+$ npm run web:build
+✓ Compiled successfully; TypeScript passed; generated static pages 1102/1102. (EXIT=0)
+$ DSK_STUDIO_PROBE=1 npm run web:build
+✓ Compiled successfully; TypeScript passed; generated static pages 1102/1102. (EXIT=0)
+$ git diff --exit-code c19b79c4b HEAD -- site/v1 docs/evidence/context/legacy-hashes.json
+(exit 0, no diff)
+```
+
+미실행: `npm run perf`의 Chromium 기반 390/1280 LCP 재측정, Playwright 목록/Studio 브라우저 시험, 브라우저 안의 window hook 값 직접 읽기. 사유는 위 Chromium sandbox 실행 오류. Vercel 성능 측정은 H 단계 소유라 수행하지 않았다.

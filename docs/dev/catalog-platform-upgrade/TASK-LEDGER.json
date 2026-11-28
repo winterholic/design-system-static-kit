@@ -110,7 +110,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "독립 검증(VERIFICATION.md §11)에서 iframe 0개·컴파일 0회·스크롤 왕복 재요청 0회는 충족했다. A3(DEC-013): Components 목록을 쪽(24개)·검색·분류로 나눠 DOM 카드를 24개 이하로 줄였고(92→24, DOM 노드 757→247 / 760→250) catalog-lists.spec.mjs 의 test.fail 을 일반 시험으로 바꿨다. 기존 시험 중 한 화면 전체를 전제한 단언(explore-components-home 2건, w6b 시나리오 B 앞부분)은 검색·쪽 이동으로 같은 항목을 확인하도록 고쳤다. 남은 한계: ① DOM 노드는 Explore 에서 기준선(504→538)보다 늘어 \"DOM 요소 수 대폭 감소\"는 Components 에서만 달성 ② Components 가 동적 라우트가 되어 LCP 가 140→172ms(390)로 늘었고 Vercel 서버 첫 바이트는 측정하지 못했다(PERF-BOTTLENECKS §6.2). 원 구현의 SVG 는 126개 중 109개가 <img> 로 열리지 않았고 부품 미리보기가 0개였다(A1 에서 수정함). 상태는 GPT 독립 검증 전이라 Implemented 로 둔다.",
+      "unresolvedIssues": "A3 독립 HTTP 재검증(HEAD 7f9c24fca): 최신 공개 API의 101개 카드 ID가 페이지별 24/24/24/24/5와 정확히 일치하고 누락·중복이 없으며 목록 iframe·숨김 카드·서버 컴파일은 0이다. q=hero, purpose:card, page=2 복원과 상세 경로도 HTTP 200으로 확인했다. 상태는 Implemented 유지: 기존 A1 기록에서 Explore DOM 노드가 504→538로 증가해 “DOM 요소 수 대폭 감소” 기준을 충족하지 못했고, 이번 브라우저 스크롤 재요청 측정도 환경상 재검증하지 못했다. 과거 A3의 92개/4쪽은 현재 API 집합(101개/5쪽)과 달라 정정했다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/explore/Thumb.tsx",
@@ -297,7 +297,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "독립 검증(VERIFICATION.md §11)에서 생성·바이트 일치·자동 생성은 충족했다. 미충족: ① 초기 전송량은 줄지 않고 늘었다(로컬 next start 가 정적 파일을 압축하지 않음. 평균 원본 52.4KB, gzip 11.8KB) ② site/catalog-chunks 의 소비자가 웹에 없어 \"탭 전환 시 필요한 청크만 로딩\"은 아직 아니다. 원 구현은 부품 미리보기 0개, Explore 테마 변형 미생성, 인덱스에 generatedAt, 하드코딩 사례 복사본이 있었다(수정함).",
+      "unresolvedIssues": "최신 HEAD 7f9c24fca에서 npm run verify의 생성물 재현성은 통과했고, `/components` 목록 전체의 ID 집합도 공개 API와 일치한다. TASK-TRA-03은 계속 Implemented: 생성된 catalog-chunks를 웹에서 실제로 선택 로드하는 소비자가 없고 초기 전송량 감소는 입증되지 않았다(초기 기록은 로컬 비압축 next start이며 원본 revision 미기록). Vercel 전송량 측정은 H 단계 소유.",
       "createFiles": [
         "scripts/lib/preview-requests.mjs",
         "apps/web/lib/api/preview-recipes.mjs",
@@ -375,7 +375,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "VERIFICATION.md §6.5. (a) 조립(/studio/assemble)은 서버 컴포넌트라 브라우저 캐시와 공유되지 않아 '조립 결과와 미리보기 결과의 공유'는 미리보기와 내보내기 사이로 한정된다(남음). A3(DEC-013)에서 해소: (b) 캐시 키의 engineVersion 을 CONTRACTS §5.2 의 PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION 으로 바꿨고(공개 진입점 ./service 상수) 계약 버전이 바뀌면 키가 바뀌는 시험을 compiler.unit.mjs 에 뒀다. (c) window.__studio_api·__studio_compile_count 는 DSK_STUDIO_PROBE=1 빌드에만 들어가고 운영 빌드 번들에는 없다(e2e/studio-probe.spec.mjs). (a) 때문에 Verified 로 올리지 않는다.",
+      "unresolvedIssues": "A3 구현 재검증: 웹 단위 80/80(공개 service 계약 버전 변경 시 cache miss, 동일 버전 재사용·디바운스 포함), 일반 빌드 정적 번들 39개에서 probe hook 문자열 0, DSK_STUDIO_PROBE=1 별도 빌드 정적 번들 39개 중 1개에서 두 hook 이름 확인. 브라우저의 window hook 런타임 단언은 Chromium 실행 권한 오류로 미실행. 조립 결과 공유 한계는 남아 Verified로 올리지 않음. A3 성능 JSON의 측정 source SHA도 미기록이라 revision 간 LCP 비교는 과거 수치로만 보존.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/studio/StudioApp.tsx",
@@ -436,6 +436,31 @@
           "file": "scripts/perf/measure.mjs",
           "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
           "reason": "A3: 훅이 없는 운영 빌드에서는 Studio 편집 시나리오를 이유와 함께 건너뜀"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/PERF-BOTTLENECKS.md",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/PERFORMANCE-A3.json",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/PERFORMANCE-A3-studio-probe.json",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
         }
       ]
     },
@@ -1342,33 +1367,33 @@
         },
         {
           "file": "scripts/generate-material-coverage.mjs",
-          "ownerTrack": "Track G",
-          "reason": "COVERAGE에 A 5항목(Split·Menu·FAB·Copy·Close)을 등록 재료에 대응시킴"
+          "reason": "COVERAGE에 A 5항목(Split·Menu·FAB·Copy·Close)을 등록 재료에 대응시킴",
+          "owner": "Track G"
         },
         {
           "file": "e2e/platform-action-components.spec.mjs",
-          "ownerTrack": "Track G",
-          "reason": "실제 Chromium에서 통과하도록 다시 씀(aria-disabled 클릭 대기 교착 수정, 메뉴·복사·닫기·단일 선택·터치 영역·Blueprint 컴파일 페이지 추가)"
+          "reason": "실제 Chromium에서 통과하도록 다시 씀(aria-disabled 클릭 대기 교착 수정, 메뉴·복사·닫기·단일 선택·터치 영역·Blueprint 컴파일 페이지 추가)",
+          "owner": "Track G"
         },
         {
           "file": "e2e/platform-family-a11y.spec.mjs",
-          "ownerTrack": "Track G",
-          "reason": "목적 패밀리 37종 순회와 split·menu·fab·close의 브라우저 확인 추가"
+          "reason": "목적 패밀리 37종 순회와 split·menu·fab·close의 브라우저 확인 추가",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
-          "ownerTrack": "Track G",
-          "reason": "요청대로 계열 A~O 작업으로 분할하고 A 진행 상태를 기록"
+          "reason": "요청대로 계열 A~O 작업으로 분할하고 A 진행 상태를 기록",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
-          "ownerTrack": "Track G",
-          "reason": "공통 계약·계열 파일 등록 정책과 A 계열 등록 방식 결정 기록"
+          "reason": "공통 계약·계열 파일 등록 정책과 A 계열 등록 방식 결정 기록",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
-          "ownerTrack": "Track G",
-          "reason": "요청된 Material Coverage 재생성 산출물"
+          "reason": "요청된 Material Coverage 재생성 산출물",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/screens/layouts/measurements.json",
