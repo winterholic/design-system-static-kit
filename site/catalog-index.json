@@ -1,7 +1,7 @@
 {
   "schemaVersion": "catalog-index/1.0",
   "catalogVersion": "2.4.0",
-  "contentHash": "85b5395a0453145b45620b27bd95528d",
+  "contentHash": "24c8c5aa557eadf46a05ad95e8a2d090",
   "categories": [
     {
       "id": "structure",
@@ -71,7 +71,7 @@
     {
       "id": "family",
       "label": "시각 패밀리",
-      "itemCount": 4
+      "itemCount": 12
     },
     {
       "id": "purpose-family",
@@ -3134,7 +3134,7 @@
       "id": "family:bold",
       "kind": "family",
       "category": "family",
-      "label": "굵은 대비",
+      "label": "굵은 대비 (Brutalist)",
       "contexts": [
         "any"
       ],
@@ -3148,10 +3148,50 @@
       "license": "internal"
     },
     {
+      "id": "family:corporate-formal",
+      "kind": "family",
+      "category": "family",
+      "label": "안정된 기업형 (Corporate Formal)",
+      "contexts": [
+        "dashboard",
+        "listing",
+        "settings",
+        "docs"
+      ],
+      "tags": [
+        "corporate-formal"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "family:dense-enterprise",
+      "kind": "family",
+      "category": "family",
+      "label": "고밀도 엔터프라이즈 (Dense Enterprise)",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "settings"
+      ],
+      "tags": [
+        "dense-enterprise"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
       "id": "family:editorial",
       "kind": "family",
       "category": "family",
-      "label": "에디토리얼",
+      "label": "에디토리얼 (Editorial)",
       "contexts": [
         "any"
       ],
@@ -3165,10 +3205,103 @@
       "license": "internal"
     },
     {
+      "id": "family:elevated-material",
+      "kind": "family",
+      "category": "family",
+      "label": "입체 머티리얼 (Elevated Material)",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "elevated-material"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "family:expressive",
+      "kind": "family",
+      "category": "family",
+      "label": "표현형 (Expressive)",
+      "contexts": [
+        "landing",
+        "commerce"
+      ],
+      "tags": [
+        "expressive"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "family:glass",
+      "kind": "family",
+      "category": "family",
+      "label": "유리 질감 (Glass)",
+      "contexts": [
+        "landing",
+        "commerce",
+        "dashboard"
+      ],
+      "tags": [
+        "glass"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "family:luxury",
+      "kind": "family",
+      "category": "family",
+      "label": "럭셔리 (Luxury)",
+      "contexts": [
+        "landing",
+        "commerce",
+        "article"
+      ],
+      "tags": [
+        "luxury"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "family:outline-precise",
+      "kind": "family",
+      "category": "family",
+      "label": "정밀 외곽선 (Outline Precise)",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "docs"
+      ],
+      "tags": [
+        "outline-precise"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
       "id": "family:quiet",
       "kind": "family",
       "category": "family",
-      "label": "조용한 업무",
+      "label": "조용한 업무 (Minimal Flat)",
       "contexts": [
         "dashboard",
         "data",
@@ -3188,12 +3321,29 @@
       "id": "family:soft",
       "kind": "family",
       "category": "family",
-      "label": "부드러운 채움",
+      "label": "부드러운 채움 (Soft Rounded)",
       "contexts": [
         "any"
       ],
       "tags": [
         "soft"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "family:tonal-layered",
+      "kind": "family",
+      "category": "family",
+      "label": "톤 계층 (Tonal Layered)",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "tonal-layered"
       ],
       "previewUrl": null,
       "variantsCount": 0,
