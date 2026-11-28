@@ -1796,3 +1796,66 @@ F1 검증(`34812d226`)이 확인한 대로 `site/catalog-index.json`의 차트 �
 | `layout-primitive` | 6 | Core 재료는 있으나 변형·상태·토큰·Blueprint가 비어 있다(`render`는 `layoutContractCSS` 키). 9탭 중 Overview·Code·Accessibility 정도만 의미가 있다. |
 
 후속 작업이 필요하다: (1) `/components/[componentId]`가 재료 id(`chart-preset:*`, `layout:*`)를 해석하는 상세 데이터원, (2) 종류별 단독 렌더·내보내기 경로, (3) 데이터가 없는 탭 비노출 규칙 적용, (4) 구현 뒤 카드 `url`을 그 경로로 교체(`scripts/build-catalog-index.mjs` `extraRow`의 `url: '/materials'`와 `urlOf`의 기본값 `/materials`). 이 작업은 소유 트랙(Track A 서비스·Track F 웹·Track G 인덱스 생성)에 걸치므로 §6.1에 따라 TASK-LEDGER에 `crossTrackFiles`를 적고 진행해야 한다. 같은 방식으로 `/materials`로 가는 나머지 종류(기반 컴포넌트 10, 시각 패밀리 12, 서브토큰 세트 25, 아이콘 16, 축 값 79 등)는 REQUEST §8.1의 카테고리 대상 재료인지 별도 판정이 필요하다.
+---
+
+## 29. D3 §6.2 F 카드·G 데이터 표시 독립 검증 (원 커밋 `d69cbfa25`, 브랜치 `upgrade/d2-verify`, 2026-11-28)
+
+엔진: Claude Sonnet 5.5. 구현자(GPT Luna)는 Chromium을 띄우지 못해 브라우저 시험을 실행하지 못했고, 구현 직후 `npm run test:browser`는 6건이 실패했다. 이 검증은 Chromium으로 15개 신규 목적 패밀리와 관련 행을 조작해 결함을 찾아 고쳤다.
+
+### 29.1 행별 판정 (F 22행 + G 20행)
+
+`tests/platform-card-data-requirements.test.mjs`가 42행 각각의 렌더 출력이 이름의 뜻을 갖는지 본다. 어느 재료가 어느 행을 맡는지는 MATERIAL-COVERAGE.json의 요구 레코드에서, 행 이름은 REQUEST.md에서 읽는다. 구성은 F 직접 19·변형 3, G 직접 16·변형 3·부분 1로 구현 보고와 같다. 변형 6행(Metric Trend·Media·Settings·Sortable·Selectable·Activity Feed)은 장부가 적은 축 값이 실제로 출력을 바꾸는지 확인한다.
+
+### 29.2 발견 결함과 교정
+
+| # | 행 | 결함 | 교정 |
+|---|---|---|---|
+| D-01 | Filterable Table | `html.replace('<section class="kit-data-table"', '<section data-table-filterable')`가 `kit-data-table` 클래스를 지웠다. 정렬 연결이 `.kit-data-table`을 찾으므로 헤더 단추를 눌러도 `aria-sort`가 생기지 않았고 표 스타일도 잃었다 | 클래스를 지키고 속성만 더한다 |
+| D-02 | Interactive Selection Card | `CARD_SELECTION_RUNTIME`이 기반 카드 런타임이 이미 바꾼 `aria-pressed`를 다시 뒤집었다. 서비스 조립 출력에서 Space·클릭이 아무 일도 하지 않았다(두 번 토글) | 기반이 바꾼 값을 읽어 `data-selected`만 맞춘다 |
+| D-03 | Interactive Selection Card | 선택되지 않았는데도 "선택됨" 문구가 보였다 | `data-selected=false`이면 숨김 |
+| D-04 | Grouped Table | 그룹 머리글(`th scope=rowgroup`)이 하나의 `tbody`에 여럿 있어 첫 머리글이 모든 그룹의 행을 묶는 것으로 읽혔다 | 그룹마다 `tbody` 하나 |
+| D-05 | Review Card | `<p aria-label>`은 이름을 가질 수 없는 역할이라 별점 이름이 전달되지 않았다. 4.5점을 별 5개로 반올림해 채웠다. 인용문에 기본 들여쓰기 | 별은 이름 있는 `role=img`, 숫자는 별도 텍스트, 내림으로 채움, 들여쓰기 제거 |
+| D-06 | Notification·Integration Card | 정적 상태 문구에 `role=status`(live region 오용) | 일반 텍스트 |
+| D-07 | Comparison·Table titles·Diff | 제목·소제목이 12~15px로 `SMALL_TEXT`(16px 미만) | `max(16px, var(--kit-t-sub))` |
+| D-08 | Metric Trend(KPI) | 추세선이 차트 프리셋으로 바뀌며 값 라벨이 8px로 줄고(`SMALL_TEXT`), "데이터 표 보기" summary에 포커스 표시가 없었으며 캡션이 카드 안에 중복 표시됐다 | 값 라벨 없음(`labels:'none'`), summary 44px와 포커스 링, 캡션은 시각적으로만 숨김 |
+| D-09 | Tree View | 하위가 있는 항목에 펼침 표시가 없었다 | 닫힘 ▸ 열림 ▾(회전) |
+| D-10 | Emphasis(CTA) | `.pf-cta .pf-actions{flex:0 0 auto}`라 좁은 칸(288px)에서 두 버튼이 칸을 64px 넘겼다(D3가 추가한 전체 패밀리 넘침 시험이 처음으로 드러냄) | `flex:0 1 auto;max-inline-size:100%` |
+| D-11 | 시험 하네스 | 페이지 조립기(`scripts/families/pages.mjs`)의 런타임 묶음에 정보·미디어, 데이터 표시, 카드 선택 런타임이 없었다. D3의 `platform-card-data.spec.mjs`는 `runtime: true`로 이 동작을 기대하지만 실행되지 않았다 | 세 런타임을 묶음에 추가 |
+| D-12 | 시험 | `all purpose families keep the page ... within the viewport`가 `navigation.sidebar`(comfortable 밀도를 받지 않음)에서 조립 실패로 멈췄다. 앞 패밀리에서 먼저 실패해 그 뒤 패밀리는 한 번도 검사되지 않았다 | 받아 주는 첫 밀도로 조립. 모든 패밀리를 계속 검사 |
+
+### 29.3 데이터 표시·카드 조작 (`e2e/platform-card-data-interaction.spec.mjs`, 390px·1280px, 서비스 standalone 출력)
+
+- 선택 카드: Space·Enter·클릭, `aria-pressed`와 `data-selected` 동기, 카드 어디를 눌러도 선택, 초기 selected, disabled, 키보드 포커스 링, 44px.
+- 정적 카드 7종: Tab 정지 없음, loading(`aria-busy`+status)·empty(status)·error(alert), 긴 문구 줄바꿈, 가로 넘침 없음, 제목 16px.
+- 필터 표: 입력으로 행 줄임, 건수 live region 노드 유지, 빈 결과 문구, 지우면 복원, 입력 칸 44px, 정렬 헤더를 키보드로 눌러 `aria-sort`, 정렬 뒤에도 필터 유지.
+- 행 확장 표: Enter·Space로 `aria-expanded` 갱신, 행마다 독립, `aria-controls` 해석, summary 44px.
+- 그룹 표: 그룹 머리글 순서와 tbody 분리. 트리: 한 Tab 정지, ArrowRight·Left·Down·Home·End·Enter, 로빙 tabindex, 항목 44px, 펼침 표시.
+- 검사기·로그·diff: 매우 긴 값 줄바꿈, 가로 넘침 없음, loading·empty·error 상태.
+
+### 29.4 접근성 E2E 변경 판정 (D3가 바꾼 것)
+
+| 변경 | 판정 |
+|---|---|
+| `describe('... all 37 purpose families')` → `registered` | 약화 아님. 반복 대상은 원래 `PURPOSE_FAMILIES` 전체이고 제목만 숫자를 적고 있었다. 고정 수를 풀어 새 패밀리가 자동으로 포함된다 |
+| 새 시험 `keep the page and their long data within the viewport` | 강화. 다만 위 D-10·D-12 때문에 구현 시점에는 첫 실패에서 멈췄고 이후 패밀리를 실제로는 검사하지 않았다. 고친 뒤 전체 패밀리를 통과한다 |
+| 단위 시험(`tests/platform-family-a11y.test.mjs`): 정적 KPI의 Tab 정지 `[]` → `['데이터 표 보기']`, `role=img`의 이름을 `aria-label`뿐 아니라 연결된 `aria-labelledby`도 허용 | 계약 변경에 맞춘 갱신이다. 차트 프리셋이 데이터 표 토글을 가지므로 맞다. 그러나 짝인 브라우저 시험(`platform-family-a11y.spec.mjs:567`)은 0을 그대로 기대해 실패한 채 남았다. 같은 계약(정적 KPI 1, link 2)으로 고쳤다. 이름 허용 확대는 `aria-labelledby`가 접근 가능한 이름인 점에서 타당하다 |
+| `EXPECTED_REJECTIONS`에 `purpose:card.selection × editorial·soft·elevated-material·tonal-layered` 추가 | 사유가 있는 거부다. 기반 카드 계약(`CARD_FLAT_SELECTABLE`: flat에는 표면이 없어 선택 테두리가 허공에 뜬다)과 `needs.visual.minBorderW`에서 나온다. 거부를 풀어 보았으나 기반 계약이 막아 되돌렸다 |
+| `tests/platform-pregenerate.test.mjs`의 카탈로그 청크 검사(카테고리별 한 파일 → 쪽 나눔 `all-1..N`, `relatedCategories`) | F1(카탈로그 목록 개편)의 구조 변경에 맞춘 것이며 비교 대상(청크 내용이 인덱스 행과 같은지)은 유지된다 |
+
+### 29.5 RED/GREEN
+
+고친 코드에 결함을 다시 심어 시험이 실패하는 것을 확인했고 원복해 통과를 확인했다.
+
+| 심은 결함 | 실패한 시험 |
+|---|---|
+| 필터 표의 클래스 제거(D-01) | e2e "headers sort with aria-sort", 의미 시험 Filterable Table |
+| 선택 런타임을 다시 토글하게(D-02) | e2e "Space and Enter and a click toggle" |
+| 그룹 표를 단일 tbody로(D-04) | 의미 시험 Grouped Table |
+| 비교 카드 h4 크기 규칙 제거(D-07) | e2e "no text under 16px headings" |
+| 데이터 표 summary 포커스 링 제거(D-08) | `platform-family-a11y.spec.mjs`의 `purpose:card.kpi at 390px` 포커스 표시 |
+| CTA `flex:0 0 auto` 복원(D-10) | `all purpose families keep the page ... within the viewport` |
+
+### 29.6 남은 한계·범위 밖 발견
+
+- `src/platform/families/index.mjs`를 단독으로 import하면 `PURPOSE_FAMILIES` 초기화 순서 오류가 난다(`3421079e0`에서도 같음). 서비스 진입점으로 불러 오면 문제없어 고치지 않았다.
+- Plan Card의 장부 상태는 `assemblable`이다. 노드가 `pricing` 부모를 요구해 단독 컴파일이 안 되기 때문이며 렌더는 템플릿에서 확인했다.

@@ -4,9 +4,9 @@
   "summary": {
     "totalTasks": 47,
     "byStatus": {
-      "Verified": 18,
-      "Implemented": 10,
-      "Pending": 16,
+      "Verified": 20,
+      "Implemented": 9,
+      "Pending": 15,
       "In Progress": 2,
       "Completed": 1
     },
@@ -1793,11 +1793,13 @@
         "tests/platform-family-a11y.test.mjs",
         "tests/platform-family-contract.test.mjs",
         "tests/platform-service-card-data-channels.test.mjs",
-        "e2e/platform-card-data.spec.mjs"
+        "e2e/platform-card-data.spec.mjs",
+        "tests/platform-card-data-requirements.test.mjs",
+        "e2e/platform-card-data-interaction.spec.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": null,
+      "status": "Verified",
+      "unresolvedIssues": "없음. 독립 검증(VERIFICATION.md §29)이 Chromium으로 카드·데이터 표시를 조작해 결함 12건을 고쳤다.",
       "crossTrackFiles": [
         {
           "file": "src/platform/families/contracts.mjs",
@@ -1823,6 +1825,26 @@
           "file": "scripts/generate-material-coverage.mjs",
           "owner": "Track G",
           "reason": "F 8개 요구 ID를 실제 등록 재료로 대응"
+        },
+        {
+          "file": "src/platform/families/button.mjs",
+          "ownerTrack": "Track D (A 계열)",
+          "reason": "독립 검증(VERIFICATION.md §29) D-10: CTA 버튼 묶음이 좁은 칸에서 칸을 넘던 한 줄 수정(.pf-cta .pf-actions)"
+        },
+        {
+          "file": "scripts/families/pages.mjs",
+          "ownerTrack": "Track E",
+          "reason": "독립 검증(VERIFICATION.md §29) D-11: 페이지 조립기 런타임 묶음에 정보·미디어, 데이터 표시, 카드 선택 런타임 추가"
+        },
+        {
+          "file": "e2e/platform-family-a11y.spec.mjs",
+          "ownerTrack": "Track D",
+          "reason": "독립 검증(VERIFICATION.md §29): 정적 KPI의 Tab 정지 기대를 계약(1, link 2)에 맞추고 전체 패밀리 넘침 시험이 받아 주는 밀도로 조립하게 함"
+        },
+        {
+          "file": "e2e/platform-families.spec.mjs",
+          "ownerTrack": "Track D",
+          "reason": "독립 검증(VERIFICATION.md §29): 캐러셀 시험이 조립기의 정보·미디어 런타임을 쓰게 되어 수동 주입 제거"
         }
       ]
     },
@@ -1864,11 +1886,13 @@
         "tests/platform-family-a11y.test.mjs",
         "tests/platform-family-contract.test.mjs",
         "tests/platform-service-card-data-channels.test.mjs",
-        "e2e/platform-card-data.spec.mjs"
+        "e2e/platform-card-data.spec.mjs",
+        "tests/platform-card-data-requirements.test.mjs",
+        "e2e/platform-card-data-interaction.spec.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": null,
+      "status": "Verified",
+      "unresolvedIssues": "없음. 독립 검증(VERIFICATION.md §29)이 Chromium으로 카드·데이터 표시를 조작해 결함 12건을 고쳤다.",
       "crossTrackFiles": [
         {
           "file": "src/platform/families/contracts.mjs",
@@ -1894,6 +1918,26 @@
           "file": "scripts/generate-material-coverage.mjs",
           "owner": "Track G",
           "reason": "G 7개 요구 ID를 실제 등록 재료로 대응"
+        },
+        {
+          "file": "src/platform/families/button.mjs",
+          "ownerTrack": "Track D (A 계열)",
+          "reason": "독립 검증(VERIFICATION.md §29) D-10: CTA 버튼 묶음이 좁은 칸에서 칸을 넘던 한 줄 수정(.pf-cta .pf-actions)"
+        },
+        {
+          "file": "scripts/families/pages.mjs",
+          "ownerTrack": "Track E",
+          "reason": "독립 검증(VERIFICATION.md §29) D-11: 페이지 조립기 런타임 묶음에 정보·미디어, 데이터 표시, 카드 선택 런타임 추가"
+        },
+        {
+          "file": "e2e/platform-family-a11y.spec.mjs",
+          "ownerTrack": "Track D",
+          "reason": "독립 검증(VERIFICATION.md §29): 정적 KPI의 Tab 정지 기대를 계약(1, link 2)에 맞추고 전체 패밀리 넘침 시험이 받아 주는 밀도로 조립하게 함"
+        },
+        {
+          "file": "e2e/platform-families.spec.mjs",
+          "ownerTrack": "Track D",
+          "reason": "독립 검증(VERIFICATION.md §29): 캐러셀 시험이 조립기의 정보·미디어 런타임을 쓰게 되어 수동 주입 제거"
         }
       ]
     },

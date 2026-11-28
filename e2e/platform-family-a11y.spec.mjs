@@ -119,7 +119,9 @@ test.describe('keyboard order of all registered purpose families', () => {
 test('all purpose families keep the page and their long data within the viewport at phone and desktop widths', async ({page}) => {
   for (const f of PURPOSE_FAMILIES) for (const width of [390, 1280]) {
     const item = example(f.id);
-    const built = buildPage(env, f.group, QUIET, {items: [item], runtime: true, context: f.contexts[0] === 'any' ? 'dashboard' : f.contexts[0]});
+    // 패밀리가 받는 페이지 밀도가 다르다(예: sidebar는 default·compact). 받아 주는 첫 밀도로 조립하고, 어느 밀도로도 안 되면 실패한다.
+    let built = null;
+    for (const density of ['comfortable', 'compact', 'spacious']) { built = buildPage(env, f.group, QUIET, {items: [item], runtime: true, density, context: f.contexts[0] === 'any' ? 'dashboard' : f.contexts[0]}); if (built.ok) break; }
     expect(built.ok, `${f.id}: ${JSON.stringify(built.diagnostics)}`).toBe(true);
     await page.setViewportSize({width, height: 900});
     await page.goto('about:blank');
@@ -569,7 +571,8 @@ test.describe('keyboard interaction and state transitions', () => {
   });
 
   test('purpose:card.kpi, purpose:card.article, purpose:card.feature, purpose:card.profile, purpose:card.pricing, purpose:card.status: only the declared controls take focus; static cards take none', async ({page}) => {
-    const stops = {'purpose:card.kpi': 0, 'purpose:card.feature': 0, 'purpose:card.status': 0, 'purpose:card.article': 1, 'purpose:card.profile': 2, 'purpose:card.pricing': 1};
+    // KPI의 추세선은 차트 프리셋이라 데이터 표를 여는 summary 하나가 선언된 정지점이다(tests/platform-family-a11y.test.mjs와 같은 계약).
+    const stops = {'purpose:card.kpi': 1, 'purpose:card.feature': 0, 'purpose:card.status': 0, 'purpose:card.article': 1, 'purpose:card.profile': 2, 'purpose:card.pricing': 1};
     for (const [id, n] of Object.entries(stops)) {
       await open(page, example(id));
       const {expected} = await walkTab(page);
@@ -577,7 +580,7 @@ test.describe('keyboard interaction and state transitions', () => {
     }
     for (const id of ['purpose:card.kpi', 'purpose:card.feature', 'purpose:card.status']) {
       await open(page, withExample(id, {props: {behavior: 'link'}, content: {href: '#go'}}));
-      expect((await walkTab(page)).expected.length, `${id} link`).toBe(1);
+      expect((await walkTab(page)).expected.length, `${id} link`).toBe(id === 'purpose:card.kpi' ? 2 : 1);
     }
   });
 
