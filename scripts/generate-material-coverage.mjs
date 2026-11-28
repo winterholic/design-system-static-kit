@@ -2,1066 +2,1010 @@
 /**
  * scripts/generate-material-coverage.mjs
  *
- * Material Coverage Manifest 생성기 (Phase 0 전수 감사)
- * REQUEST.md §2.2, §6.2, §4.4, §5.2, §7, §9.1, §9.2 준수.
+ * Material Coverage Manifest 생성기 (Phase 0 감사, P0-AUDIT 재검증판).
+ * REQUEST.md §1.2, §2.1, §2.2, §6.2, §4.4, §5.2, §7, §9.1, §9.2 준수.
  *
- * 1. 현재 코드베이스 및 서비스 출력(src/catalog, src/materials, src/platform, src/service, apps/web, REST/MCP)에서 재료 추출
- * 2. 요구 항목 전체(컴포넌트 198개, 서브토큰 25개, 타이포 40개, 패밀리 12개, 차트 29개, 레이아웃 24개 = 총 328개)와 등록 재료 전수 매핑
- * 3. 17개 필드 및 7개 상태(missing, metadata-only, defined, renderable, catalog-visible, assemblable, verified) 판정
- * 4. 등록 수, 실질적 재료 수, 조합 가능 수, 실제 조립 검증 수, 고유 출력 수 분리 집계
- * 5. 지시서 §2.1 기존 분석 기준표와 현재 실측값 나란히 비교
- * 6. 결정론적 출력 (동일 입력 -> 바이트 단위 동일)
+ * 원칙: 숫자와 판정은 이 파일에 적지 않는다. 모두 현재 코드와 서비스 호출에서 계산한다.
+ *   - 요구 목록(§4.4 §5.2 §6.2 §7 §9.1 §9.2)과 §2.1 기준표는 REQUEST.md를 읽어 온다. 이 파일에 항목 수를 적지 않으므로 문서와 어긋날 수 없고,
+ *     매핑 표가 REQUEST.md에 없는 항목이나 레지스트리에 없는 재료·변형 값을 가리키면 생성이 실패한다.
+ *   - 재료는 src/platform, src/materials, src/profiles 레지스트리에서 읽는다.
+ *   - 렌더·조립 여부는 서비스 함수(assembleDesign, assembleComponents, compileBlueprint, edit 연산)를 실제로 호출해 본다.
+ *   - 웹 카탈로그 노출은 apps/web 라우트 파일이 부르는 서비스 질의를 같은 인자로 다시 불러 계산하고, 라우트 파일에 그 호출이 있는지 확인한다.
+ *   - 테스트 근거는 레지스트리 기록의 quality.evidence 참조를 읽어 파일과 줄 번호가 실제로 있는지 확인한 것만 쓴다.
+ *   - 계산이 비싼 값(구형 템플릿 조합 컴파일)은 baseline.json에서 읽고, 출처와 신선도 검사를 manifest.provenance에 함께 적는다.
+ *   - 같은 입력이면 바이트 단위로 같은 출력(시각·난수·절대경로를 싣지 않는다).
+ *
+ *   node scripts/generate-material-coverage.mjs          MATERIAL-COVERAGE.json을 쓴다
+ *   node scripts/generate-material-coverage.mjs --check  파일을 쓰지 않고 저장본과 바이트가 같은지만 본다(다르면 exit 1)
  */
 
-import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import {writeFileSync, mkdirSync, readFileSync, existsSync} from 'node:fs';
+import {resolve, dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 
-import { createPlatform, PURPOSES } from '../src/platform/index.mjs';
-import { catalogRegistry } from '../src/materials/index.mjs';
-import { designRegistry } from '../src/profiles/registry.mjs';
-import { templates, themes, icons, palettes, nodeTypes, axes, pageTypes } from '../src/catalog/index.mjs';
+import {createPlatform, PURPOSES, PLATFORM_CONTRACT_VERSION, baseIsPlaceable} from '../src/platform/index.mjs';
+import {designRegistry} from '../src/profiles/registry.mjs';
+import {PROFILES, PATTERNS} from '../src/profiles/data.mjs';
+import {assemble as assembleProfile} from '../src/profiles/assemble.mjs';
+import {compile as compileDocument} from '../src/compiler.mjs';
+import {templates, themes, pageTypes, ACCEPTED_CATALOG_VERSIONS} from '../src/catalog/index.mjs';
+import {LEGACY_VARIANT_MAP} from '../src/platform/families/legacy-map.mjs';
+import * as service from '../src/service/index.mjs';
+import * as edit from '../src/edit/index.mjs';
+import {platformSection} from './platform/platform-baseline.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT_FILE = resolve(ROOT, 'docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json');
-const BASELINE_FILE = resolve(ROOT, 'docs/evidence/platform/baseline.json');
+const DIR = 'docs/dev/catalog-platform-upgrade';
+const OUT_FILE = resolve(ROOT, DIR, 'MATERIAL-COVERAGE.json');
+const BASELINE_PATH = 'docs/evidence/platform/baseline.json';
+const REQUEST_PATH = `${DIR}/REQUEST.md`;
+const CHECK = process.argv.includes('--check');
 
-// REST 및 MCP 도구 목록 (정적 추출)
-const restOpsText = readFileSync(resolve(ROOT, 'apps/web/lib/api/operations.mjs'), 'utf8');
-const restOps = new Set([...restOpsText.matchAll(/id:\s*['"]([a-zA-Z0-9_-]+)['"]/g)].map(m => m[1]));
+const read = path => readFileSync(resolve(ROOT, path), 'utf8');
+const exists = path => existsSync(resolve(ROOT, path));
+const sha = text => createHash('sha256').update(text).digest('hex').slice(0, 16);
+const sortKeys = o => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
+const uniq = xs => [...new Set(xs)];
+const linesOf = (() => { const cache = new Map(); return path => { if (!cache.has(path)) cache.set(path, exists(path) ? read(path).split('\n').length : 0); return cache.get(path); }; })();
 
-const mcpToolsText = readFileSync(resolve(ROOT, 'apps/web/lib/api/mcp.mjs'), 'utf8');
-const mcpTools = new Set([...mcpToolsText.matchAll(/name:\s*['"]([a-zA-Z0-9_-]+)['"]/g)].map(m => m[1]));
+// -----------------------------------------------------------------------------
+// 1. 레지스트리: 플랫폼 + 디자인(카탈로그) 재료 전수
+// -----------------------------------------------------------------------------
 
-// 기준선 데이터 읽기
-const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf8'));
 const platformEnv = createPlatform();
-const catRegistry = catalogRegistry();
 const desRegistry = designRegistry();
 
-// -----------------------------------------------------------------------------
-// 요구사항 카탈로그 (Requirements Definitions)
-// -----------------------------------------------------------------------------
-
-// §6.2 필수 컴포넌트 인벤토리 (A~O)
-const REQUIRED_COMPONENTS = [
-  // A. 버튼 및 액션 (12)
-  { reqId: 'req:comp:a-01-button', section: '§6.2 A', category: 'action', name: 'Button', targetKind: 'base-component', matchId: 'base-component:button-control' },
-  { reqId: 'req:comp:a-02-icon-button', section: '§6.2 A', category: 'action', name: 'Icon Button', targetKind: 'purpose-family', matchId: 'purpose:button.icon' },
-  { reqId: 'req:comp:a-03-link-button', section: '§6.2 A', category: 'action', name: 'Link Button', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-04-toggle-button', section: '§6.2 A', category: 'action', name: 'Toggle Button', targetKind: 'purpose-family', matchId: 'purpose:button.toggle' },
-  { reqId: 'req:comp:a-05-split-button', section: '§6.2 A', category: 'action', name: 'Split Button', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-06-menu-button', section: '§6.2 A', category: 'action', name: 'Menu Button', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-07-floating-action-button', section: '§6.2 A', category: 'action', name: 'Floating Action Button', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-08-button-group', section: '§6.2 A', category: 'action', name: 'Button Group', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-09-segmented-control', section: '§6.2 A', category: 'action', name: 'Segmented Control', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-10-copy-button', section: '§6.2 A', category: 'action', name: 'Copy Button', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-11-close-button', section: '§6.2 A', category: 'action', name: 'Close Button', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:a-12-loading-action-button', section: '§6.2 A', category: 'action', name: 'Loading Action Button', targetKind: 'purpose-family', matchId: 'purpose:button.loading' },
-
-  // B. 텍스트 입력 (14)
-  { reqId: 'req:comp:b-01-text-input', section: '§6.2 B', category: 'input', name: 'Text Input', targetKind: 'base-component', matchId: 'base-component:input-control' },
-  { reqId: 'req:comp:b-02-textarea', section: '§6.2 B', category: 'input', name: 'Textarea', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-03-search-input', section: '§6.2 B', category: 'input', name: 'Search Input', targetKind: 'purpose-family', matchId: 'purpose:form.search' },
-  { reqId: 'req:comp:b-04-password-input', section: '§6.2 B', category: 'input', name: 'Password Input', targetKind: 'purpose-family', matchId: 'purpose:form.auth' },
-  { reqId: 'req:comp:b-05-number-input', section: '§6.2 B', category: 'input', name: 'Number Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-06-currency-input', section: '§6.2 B', category: 'input', name: 'Currency Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-07-email-input', section: '§6.2 B', category: 'input', name: 'Email Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-08-phone-input', section: '§6.2 B', category: 'input', name: 'Phone Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-09-url-input', section: '§6.2 B', category: 'input', name: 'URL Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-10-otp-input', section: '§6.2 B', category: 'input', name: 'OTP Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-11-tag-input', section: '§6.2 B', category: 'input', name: 'Tag Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-12-file-input', section: '§6.2 B', category: 'input', name: 'File Input', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-13-drag-drop-upload', section: '§6.2 B', category: 'input', name: 'Drag-and-drop Upload', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:b-14-input-group', section: '§6.2 B', category: 'input', name: 'Input Group', targetKind: 'purpose-family', matchId: 'purpose:form.group' },
-
-  // C. 선택 컨트롤 (15)
-  { reqId: 'req:comp:c-01-select', section: '§6.2 C', category: 'selection', name: 'Select', targetKind: 'base-component', matchId: 'base-component:select-control' },
-  { reqId: 'req:comp:c-02-searchable-select', section: '§6.2 C', category: 'selection', name: 'Searchable Select', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-03-combobox', section: '§6.2 C', category: 'selection', name: 'Combobox', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-04-multi-select', section: '§6.2 C', category: 'selection', name: 'Multi-select', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-05-grouped-select', section: '§6.2 C', category: 'selection', name: 'Grouped Select', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-06-radio', section: '§6.2 C', category: 'selection', name: 'Radio', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-07-radio-group', section: '§6.2 C', category: 'selection', name: 'Radio Group', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-08-radio-card', section: '§6.2 C', category: 'selection', name: 'Radio Card', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-09-checkbox', section: '§6.2 C', category: 'selection', name: 'Checkbox', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-10-checkbox-group', section: '§6.2 C', category: 'selection', name: 'Checkbox Group', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-11-switch', section: '§6.2 C', category: 'selection', name: 'Switch', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-12-slider', section: '§6.2 C', category: 'selection', name: 'Slider', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-13-range-slider', section: '§6.2 C', category: 'selection', name: 'Range Slider', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-14-rating', section: '§6.2 C', category: 'selection', name: 'Rating', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:c-15-color-picker', section: '§6.2 C', category: 'selection', name: 'Color Picker', targetKind: 'base-component', matchId: null },
-
-  // D. 날짜 및 시간 (8)
-  { reqId: 'req:comp:d-01-calendar', section: '§6.2 D', category: 'datetime', name: 'Calendar', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-02-date-picker', section: '§6.2 D', category: 'datetime', name: 'Date Picker', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-03-date-range-picker', section: '§6.2 D', category: 'datetime', name: 'Date Range Picker', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-04-time-picker', section: '§6.2 D', category: 'datetime', name: 'Time Picker', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-05-date-time-picker', section: '§6.2 D', category: 'datetime', name: 'DateTime Picker', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-06-month-picker', section: '§6.2 D', category: 'datetime', name: 'Month Picker', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-07-week-picker', section: '§6.2 D', category: 'datetime', name: 'Week Picker', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:d-08-schedule-selector', section: '§6.2 D', category: 'datetime', name: 'Schedule Selector', targetKind: 'base-component', matchId: null },
-
-  // E. 내비게이션 (14)
-  { reqId: 'req:comp:e-01-navbar', section: '§6.2 E', category: 'navigation', name: 'Navbar', targetKind: 'base-component', matchId: 'base-component:navigation-menu' },
-  { reqId: 'req:comp:e-02-sidebar', section: '§6.2 E', category: 'navigation', name: 'Sidebar', targetKind: 'purpose-family', matchId: 'purpose:navigation.sidebar' },
-  { reqId: 'req:comp:e-03-collapsible-sidebar', section: '§6.2 E', category: 'navigation', name: 'Collapsible Sidebar', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-04-breadcrumb', section: '§6.2 E', category: 'navigation', name: 'Breadcrumb', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-05-tabs', section: '§6.2 E', category: 'navigation', name: 'Tabs', targetKind: 'base-component', matchId: 'base-component:tabs-control' },
-  { reqId: 'req:comp:e-06-vertical-tabs', section: '§6.2 E', category: 'navigation', name: 'Vertical Tabs', targetKind: 'purpose-family', matchId: 'purpose:navigation.tabs' },
-  { reqId: 'req:comp:e-07-underline-tabs', section: '§6.2 E', category: 'navigation', name: 'Underline Tabs', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-08-stepper', section: '§6.2 E', category: 'navigation', name: 'Stepper', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-09-pagination', section: '§6.2 E', category: 'navigation', name: 'Pagination', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-10-bottom-navigation', section: '§6.2 E', category: 'navigation', name: 'Bottom Navigation', targetKind: 'purpose-family', matchId: 'purpose:navigation.bottom' },
-  { reqId: 'req:comp:e-11-navigation-drawer', section: '§6.2 E', category: 'navigation', name: 'Navigation Drawer', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-12-table-of-contents', section: '§6.2 E', category: 'navigation', name: 'Table of Contents', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-13-command-menu', section: '§6.2 E', category: 'navigation', name: 'Command Menu', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:e-14-context-menu', section: '§6.2 E', category: 'navigation', name: 'Context Menu', targetKind: 'base-component', matchId: null },
-
-  // F. 카드 (22)
-  { reqId: 'req:comp:f-01-basic-card', section: '§6.2 F', category: 'card', name: 'Basic Card', targetKind: 'base-component', matchId: 'base-component:card-surface' },
-  { reqId: 'req:comp:f-02-feature-card', section: '§6.2 F', category: 'card', name: 'Feature Card', targetKind: 'purpose-family', matchId: 'purpose:card.feature' },
-  { reqId: 'req:comp:f-03-kpi-card', section: '§6.2 F', category: 'card', name: 'KPI Card', targetKind: 'purpose-family', matchId: 'purpose:card.kpi' },
-  { reqId: 'req:comp:f-04-statistic-card', section: '§6.2 F', category: 'card', name: 'Statistic Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-05-metric-trend-card', section: '§6.2 F', category: 'card', name: 'Metric Trend Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-06-product-card', section: '§6.2 F', category: 'card', name: 'Product Card', targetKind: 'purpose-family', matchId: 'purpose:card.product' },
-  { reqId: 'req:comp:f-07-product-comparison-card', section: '§6.2 F', category: 'card', name: 'Product Comparison Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-08-profile-card', section: '§6.2 F', category: 'card', name: 'Profile Card', targetKind: 'purpose-family', matchId: 'purpose:card.profile' },
-  { reqId: 'req:comp:f-09-team-member-card', section: '§6.2 F', category: 'card', name: 'Team Member Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-10-article-card', section: '§6.2 F', category: 'card', name: 'Article Card', targetKind: 'purpose-family', matchId: 'purpose:card.article' },
-  { reqId: 'req:comp:f-11-media-card', section: '§6.2 F', category: 'card', name: 'Media Card', targetKind: 'purpose-family', matchId: 'purpose:card.gallery' },
-  { reqId: 'req:comp:f-12-pricing-card', section: '§6.2 F', category: 'card', name: 'Pricing Card', targetKind: 'purpose-family', matchId: 'purpose:card.pricing' },
-  { reqId: 'req:comp:f-13-plan-card', section: '§6.2 F', category: 'card', name: 'Plan Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-14-notification-card', section: '§6.2 F', category: 'card', name: 'Notification Card', targetKind: 'purpose-family', matchId: 'purpose:card.status' },
-  { reqId: 'req:comp:f-15-activity-card', section: '§6.2 F', category: 'card', name: 'Activity Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-16-settings-card', section: '§6.2 F', category: 'card', name: 'Settings Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-17-integration-card', section: '§6.2 F', category: 'card', name: 'Integration Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-18-review-card', section: '§6.2 F', category: 'card', name: 'Review Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-19-testimonial-card', section: '§6.2 F', category: 'card', name: 'Testimonial Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-20-interactive-selection-card', section: '§6.2 F', category: 'card', name: 'Interactive Selection Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-21-dashboard-widget-card', section: '§6.2 F', category: 'card', name: 'Dashboard Widget Card', targetKind: 'purpose-family', matchId: null },
-  { reqId: 'req:comp:f-22-financial-asset-card', section: '§6.2 F', category: 'card', name: 'Financial Asset Card', targetKind: 'purpose-family', matchId: null },
-
-  // G. 데이터 표시 (20)
-  { reqId: 'req:comp:g-01-basic-table', section: '§6.2 G', category: 'data', name: 'Basic Table', targetKind: 'base-component', matchId: 'base-component:data-table' },
-  { reqId: 'req:comp:g-02-data-table', section: '§6.2 G', category: 'data', name: 'Data Table', targetKind: 'purpose-family', matchId: 'purpose:table.business' },
-  { reqId: 'req:comp:g-03-sortable-table', section: '§6.2 G', category: 'data', name: 'Sortable Table', targetKind: 'purpose-family', matchId: 'purpose:table.analytic' },
-  { reqId: 'req:comp:g-04-filterable-table', section: '§6.2 G', category: 'data', name: 'Filterable Table', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-05-selectable-table', section: '§6.2 G', category: 'data', name: 'Selectable Table', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-06-expandable-row-table', section: '§6.2 G', category: 'data', name: 'Expandable Row Table', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-07-grouped-table', section: '§6.2 G', category: 'data', name: 'Grouped Table', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-08-dense-table', section: '§6.2 G', category: 'data', name: 'Dense Table', targetKind: 'purpose-family', matchId: 'purpose:table.dense' },
-  { reqId: 'req:comp:g-09-description-list', section: '§6.2 G', category: 'data', name: 'Description List', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-10-list', section: '§6.2 G', category: 'data', name: 'List', targetKind: 'component', matchId: 'component:list' },
-  { reqId: 'req:comp:g-11-list-item', section: '§6.2 G', category: 'data', name: 'List Item', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-12-tree-view', section: '§6.2 G', category: 'data', name: 'Tree View', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-13-kanban', section: '§6.2 G', category: 'data', name: 'Kanban', targetKind: 'component', matchId: 'component:kanban' },
-  { reqId: 'req:comp:g-14-timeline', section: '§6.2 G', category: 'data', name: 'Timeline', targetKind: 'component', matchId: 'component:timeline' },
-  { reqId: 'req:comp:g-15-activity-feed', section: '§6.2 G', category: 'data', name: 'Activity Feed', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-16-master-detail', section: '§6.2 G', category: 'data', name: 'Master-detail', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-17-key-value-inspector', section: '§6.2 G', category: 'data', name: 'Key-value Inspector', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-18-log-viewer', section: '§6.2 G', category: 'data', name: 'Log Viewer', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:g-19-code-block', section: '§6.2 G', category: 'data', name: 'Code Block', targetKind: 'component', matchId: 'component:code' },
-  { reqId: 'req:comp:g-20-diff-viewer', section: '§6.2 G', category: 'data', name: 'Diff Viewer', targetKind: 'base-component', matchId: null },
-
-  // H. 오버레이 (9)
-  { reqId: 'req:comp:h-01-modal', section: '§6.2 H', category: 'overlay', name: 'Modal', targetKind: 'base-component', matchId: 'base-component:modal-dialog' },
-  { reqId: 'req:comp:h-02-alert-dialog', section: '§6.2 H', category: 'overlay', name: 'Alert Dialog', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:h-03-confirmation-dialog', section: '§6.2 H', category: 'overlay', name: 'Confirmation Dialog', targetKind: 'purpose-family', matchId: 'purpose:feedback.confirm' },
-  { reqId: 'req:comp:h-04-drawer', section: '§6.2 H', category: 'overlay', name: 'Drawer', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:h-05-bottom-sheet', section: '§6.2 H', category: 'overlay', name: 'Bottom Sheet', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:h-06-popover', section: '§6.2 H', category: 'overlay', name: 'Popover', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:h-07-tooltip', section: '§6.2 H', category: 'overlay', name: 'Tooltip', targetKind: 'base-component', matchId: 'base-component:tooltip' },
-  { reqId: 'req:comp:h-08-dropdown-menu', section: '§6.2 H', category: 'overlay', name: 'Dropdown Menu', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:h-09-contextual-help', section: '§6.2 H', category: 'overlay', name: 'Contextual Help', targetKind: 'base-component', matchId: null },
-
-  // I. 피드백 및 상태 (16)
-  { reqId: 'req:comp:i-01-alert', section: '§6.2 I', category: 'feedback', name: 'Alert', targetKind: 'base-component', matchId: 'base-component:feedback-message' },
-  { reqId: 'req:comp:i-02-banner', section: '§6.2 I', category: 'feedback', name: 'Banner', targetKind: 'state-pattern', matchId: 'state-pattern:banner' },
-  { reqId: 'req:comp:i-03-callout', section: '§6.2 I', category: 'feedback', name: 'Callout', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:i-04-toast', section: '§6.2 I', category: 'feedback', name: 'Toast', targetKind: 'state-pattern', matchId: 'state-pattern:toast' },
-  { reqId: 'req:comp:i-05-snackbar', section: '§6.2 I', category: 'feedback', name: 'Snackbar', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:i-06-inline-error', section: '§6.2 I', category: 'feedback', name: 'Inline Error', targetKind: 'purpose-family', matchId: 'purpose:feedback.error' },
-  { reqId: 'req:comp:i-07-empty-state', section: '§6.2 I', category: 'feedback', name: 'Empty State', targetKind: 'state-pattern', matchId: 'state-pattern:empty-card' },
-  { reqId: 'req:comp:i-08-error-state', section: '§6.2 I', category: 'feedback', name: 'Error State', targetKind: 'state-pattern', matchId: 'state-pattern:error-card' },
-  { reqId: 'req:comp:i-09-success-state', section: '§6.2 I', category: 'feedback', name: 'Success State', targetKind: 'purpose-family', matchId: 'purpose:feedback.result' },
-  { reqId: 'req:comp:i-10-skeleton', section: '§6.2 I', category: 'feedback', name: 'Skeleton', targetKind: 'state-pattern', matchId: 'state-pattern:loading-skeleton' },
-  { reqId: 'req:comp:i-11-spinner', section: '§6.2 I', category: 'feedback', name: 'Spinner', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:i-12-linear-progress', section: '§6.2 I', category: 'feedback', name: 'Linear Progress', targetKind: 'purpose-family', matchId: 'purpose:feedback.progress' },
-  { reqId: 'req:comp:i-13-circular-progress', section: '§6.2 I', category: 'feedback', name: 'Circular Progress', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:i-14-step-progress', section: '§6.2 I', category: 'feedback', name: 'Step Progress', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:i-15-loading-overlay', section: '§6.2 I', category: 'feedback', name: 'Loading Overlay', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:i-16-status-indicator', section: '§6.2 I', category: 'feedback', name: 'Status Indicator', targetKind: 'purpose-family', matchId: 'purpose:feedback.warning' },
-
-  // J. 정보 표시 (15)
-  { reqId: 'req:comp:j-01-badge', section: '§6.2 J', category: 'display', name: 'Badge', targetKind: 'component', matchId: 'component:badge' },
-  { reqId: 'req:comp:j-02-status-badge', section: '§6.2 J', category: 'display', name: 'Status Badge', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-03-chip', section: '§6.2 J', category: 'display', name: 'Chip', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-04-filter-chip', section: '§6.2 J', category: 'display', name: 'Filter Chip', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-05-tag', section: '§6.2 J', category: 'display', name: 'Tag', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-06-avatar', section: '§6.2 J', category: 'display', name: 'Avatar', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-07-avatar-group', section: '§6.2 J', category: 'display', name: 'Avatar Group', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-08-accordion', section: '§6.2 J', category: 'display', name: 'Accordion', targetKind: 'component', matchId: 'component:accordion' },
-  { reqId: 'req:comp:j-09-collapsible', section: '§6.2 J', category: 'display', name: 'Collapsible', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-10-divider', section: '§6.2 J', category: 'display', name: 'Divider', targetKind: 'component', matchId: 'component:divider' },
-  { reqId: 'req:comp:j-11-counter', section: '§6.2 J', category: 'display', name: 'Counter', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-12-notification-indicator', section: '§6.2 J', category: 'display', name: 'Notification Indicator', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-13-keyboard-shortcut', section: '§6.2 J', category: 'display', name: 'Keyboard Shortcut', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-14-metadata-row', section: '§6.2 J', category: 'display', name: 'Metadata Row', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:j-15-stat-comparison', section: '§6.2 J', category: 'display', name: 'Stat Comparison', targetKind: 'base-component', matchId: null },
-
-  // K. 미디어 및 콘텐츠 (12)
-  { reqId: 'req:comp:k-01-image', section: '§6.2 K', category: 'media', name: 'Image', targetKind: 'component', matchId: 'component:media' },
-  { reqId: 'req:comp:k-02-responsive-image', section: '§6.2 K', category: 'media', name: 'Responsive Image', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-03-media-frame', section: '§6.2 K', category: 'media', name: 'Media Frame', targetKind: 'media', matchId: 'media:media-frame' },
-  { reqId: 'req:comp:k-04-gallery', section: '§6.2 K', category: 'media', name: 'Gallery', targetKind: 'component', matchId: 'component:gallery' },
-  { reqId: 'req:comp:k-05-carousel', section: '§6.2 K', category: 'media', name: 'Carousel', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-06-video-frame', section: '§6.2 K', category: 'media', name: 'Video Frame', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-07-audio-player-ui', section: '§6.2 K', category: 'media', name: 'Audio Player UI', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-08-file-preview', section: '§6.2 K', category: 'media', name: 'File Preview', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-09-image-comparison', section: '§6.2 K', category: 'media', name: 'Image Comparison', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-10-figure-caption', section: '§6.2 K', category: 'media', name: 'Figure and Caption', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:k-11-quote', section: '§6.2 K', category: 'media', name: 'Quote', targetKind: 'component', matchId: 'component:quote' },
-  { reqId: 'req:comp:k-12-rich-text-content', section: '§6.2 K', category: 'media', name: 'Rich Text Content', targetKind: 'component', matchId: 'component:article' },
-
-  // L. 레이아웃 (14)
-  { reqId: 'req:comp:l-01-stack', section: '§6.2 L', category: 'layout', name: 'Stack', targetKind: 'layout-primitive', matchId: 'layout:stack' },
-  { reqId: 'req:comp:l-02-cluster', section: '§6.2 L', category: 'layout', name: 'Cluster', targetKind: 'layout-primitive', matchId: 'layout:cluster' },
-  { reqId: 'req:comp:l-03-grid', section: '§6.2 L', category: 'layout', name: 'Grid', targetKind: 'layout-primitive', matchId: 'layout:grid' },
-  { reqId: 'req:comp:l-04-responsive-grid', section: '§6.2 L', category: 'layout', name: 'Responsive Grid', targetKind: 'layout-primitive', matchId: 'layout:grid-responsive' },
-  { reqId: 'req:comp:l-05-split', section: '§6.2 L', category: 'layout', name: 'Split', targetKind: 'layout-primitive', matchId: 'layout:split' },
-  { reqId: 'req:comp:l-06-bento', section: '§6.2 L', category: 'layout', name: 'Bento', targetKind: 'layout-primitive', matchId: 'layout:bento' },
-  { reqId: 'req:comp:l-07-container', section: '§6.2 L', category: 'layout', name: 'Container', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:l-08-section', section: '§6.2 L', category: 'layout', name: 'Section', targetKind: 'component', matchId: 'component:section' },
-  { reqId: 'req:comp:l-09-center', section: '§6.2 L', category: 'layout', name: 'Center', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:l-10-sidebar-layout', section: '§6.2 L', category: 'layout', name: 'Sidebar Layout', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:l-11-master-detail-layout', section: '§6.2 L', category: 'layout', name: 'Master-detail Layout', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:l-12-sticky-region', section: '§6.2 L', category: 'layout', name: 'Sticky Region', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:l-13-scroll-area', section: '§6.2 L', category: 'layout', name: 'Scroll Area', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:l-14-resizable-panel', section: '§6.2 L', category: 'layout', name: 'Resizable Panel', targetKind: 'base-component', matchId: null },
-
-  // M. 업무 시스템 패턴 (15)
-  { reqId: 'req:comp:m-01-filter-toolbar', section: '§6.2 M', category: 'enterprise', name: 'Filter Toolbar', targetKind: 'purpose-family', matchId: 'purpose:form.filter' },
-  { reqId: 'req:comp:m-02-search-toolbar', section: '§6.2 M', category: 'enterprise', name: 'Search Toolbar', targetKind: 'purpose-family', matchId: 'purpose:form.search' },
-  { reqId: 'req:comp:m-03-bulk-action-toolbar', section: '§6.2 M', category: 'enterprise', name: 'Bulk Action Toolbar', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-04-data-summary', section: '§6.2 M', category: 'enterprise', name: 'Data Summary', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-05-dashboard-kpi-grid', section: '§6.2 M', category: 'enterprise', name: 'Dashboard KPI Grid', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-06-approval-panel', section: '§6.2 M', category: 'enterprise', name: 'Approval Panel', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-07-audit-log', section: '§6.2 M', category: 'enterprise', name: 'Audit Log', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-08-permission-matrix', section: '§6.2 M', category: 'enterprise', name: 'Permission Matrix', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-09-status-management', section: '§6.2 M', category: 'enterprise', name: 'Status Management', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-10-settings-form', section: '§6.2 M', category: 'enterprise', name: 'Settings Form', targetKind: 'purpose-family', matchId: 'purpose:form.settings' },
-  { reqId: 'req:comp:m-11-search-result-list', section: '§6.2 M', category: 'enterprise', name: 'Search Result List', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-12-user-management-table', section: '§6.2 M', category: 'enterprise', name: 'User Management Table', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-13-task-list', section: '§6.2 M', category: 'enterprise', name: 'Task List', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-14-workflow-steps', section: '§6.2 M', category: 'enterprise', name: 'Workflow Steps', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:m-15-comment-thread', section: '§6.2 M', category: 'enterprise', name: 'Comment Thread', targetKind: 'base-component', matchId: null },
-
-  // N. 커머스 패턴 (11)
-  { reqId: 'req:comp:n-01-product-grid', section: '§6.2 N', category: 'commerce', name: 'Product Grid', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-02-product-detail-summary', section: '§6.2 N', category: 'commerce', name: 'Product Detail Summary', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-03-product-variant-selector', section: '§6.2 N', category: 'commerce', name: 'Product Variant Selector', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-04-quantity-selector', section: '§6.2 N', category: 'commerce', name: 'Quantity Selector', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-05-price-display', section: '§6.2 N', category: 'commerce', name: 'Price Display', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-06-discount-display', section: '§6.2 N', category: 'commerce', name: 'Discount Display', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-07-cart-item', section: '§6.2 N', category: 'commerce', name: 'Cart Item', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-08-cart-summary', section: '§6.2 N', category: 'commerce', name: 'Cart Summary', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-09-checkout-summary', section: '§6.2 N', category: 'commerce', name: 'Checkout Summary', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-10-order-status', section: '§6.2 N', category: 'commerce', name: 'Order Status', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:n-11-review-summary', section: '§6.2 N', category: 'commerce', name: 'Review Summary', targetKind: 'base-component', matchId: null },
-
-  // O. 모바일 패턴 (10)
-  { reqId: 'req:comp:o-01-mobile-header', section: '§6.2 O', category: 'mobile', name: 'Mobile Header', targetKind: 'purpose-family', matchId: 'purpose:navigation.topbar' },
-  { reqId: 'req:comp:o-02-mobile-bottom-nav', section: '§6.2 O', category: 'mobile', name: 'Mobile Bottom Navigation', targetKind: 'purpose-family', matchId: 'purpose:navigation.bottom' },
-  { reqId: 'req:comp:o-03-action-sheet', section: '§6.2 O', category: 'mobile', name: 'Action Sheet', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-04-mobile-list-cell', section: '§6.2 O', category: 'mobile', name: 'Mobile List Cell', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-05-mobile-search', section: '§6.2 O', category: 'mobile', name: 'Mobile Search', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-06-mobile-tab-bar', section: '§6.2 O', category: 'mobile', name: 'Mobile Tab Bar', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-07-full-screen-dialog', section: '§6.2 O', category: 'mobile', name: 'Full-screen Dialog', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-08-mobile-filter-panel', section: '§6.2 O', category: 'mobile', name: 'Mobile Filter Panel', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-09-sticky-bottom-action', section: '§6.2 O', category: 'mobile', name: 'Sticky Bottom Action', targetKind: 'base-component', matchId: null },
-  { reqId: 'req:comp:o-10-safe-area-container', section: '§6.2 O', category: 'mobile', name: 'Safe-area Container', targetKind: 'base-component', matchId: null },
-];
-
-// §4.4 서브토큰 세트 (25종)
-const REQUIRED_SUBTOKEN_SETS = [
-  { reqId: 'req:subtoken:01-standard-neutral', name: 'Standard Neutral', matchId: 'subtoken-set:standard' },
-  { reqId: 'req:subtoken:02-brand-tinted', name: 'Brand Tinted', matchId: 'subtoken-set:tinted' },
-  { reqId: 'req:subtoken:03-brand-dominant', name: 'Brand Dominant', matchId: null },
-  { reqId: 'req:subtoken:04-accent-dominant', name: 'Accent Dominant', matchId: null },
-  { reqId: 'req:subtoken:05-soft-pastel', name: 'Soft Pastel', matchId: null },
-  { reqId: 'req:subtoken:06-minimal-monochrome', name: 'Minimal Monochrome', matchId: null },
-  { reqId: 'req:subtoken:07-high-contrast', name: 'High Contrast', matchId: 'subtoken-set:high-contrast' },
-  { reqId: 'req:subtoken:08-premium-light', name: 'Premium Light', matchId: null },
-  { reqId: 'req:subtoken:09-premium-dark', name: 'Premium Dark', matchId: 'subtoken-set:premium-dark' },
-  { reqId: 'req:subtoken:10-editorial-paper', name: 'Editorial Paper', matchId: 'subtoken-set:editorial-warm' },
-  { reqId: 'req:subtoken:11-editorial-ink', name: 'Editorial Ink', matchId: null },
-  { reqId: 'req:subtoken:12-corporate', name: 'Corporate', matchId: null },
-  { reqId: 'req:subtoken:13-erp-dense', name: 'ERP Dense', matchId: 'subtoken-set:data-dense' },
-  { reqId: 'req:subtoken:14-finance-precision', name: 'Finance Precision', matchId: null },
-  { reqId: 'req:subtoken:15-analytics', name: 'Analytics', matchId: null },
-  { reqId: 'req:subtoken:16-developer-console', name: 'Developer Console', matchId: null },
-  { reqId: 'req:subtoken:17-commerce-vivid', name: 'Commerce Vivid', matchId: 'subtoken-set:commerce-vivid' },
-  { reqId: 'req:subtoken:18-commerce-luxury', name: 'Commerce Luxury', matchId: null },
-  { reqId: 'req:subtoken:19-mobile-soft', name: 'Mobile Soft', matchId: null },
-  { reqId: 'req:subtoken:20-social-expressive', name: 'Social Expressive', matchId: null },
-  { reqId: 'req:subtoken:21-wellness-calm', name: 'Wellness Calm', matchId: null },
-  { reqId: 'req:subtoken:22-education-friendly', name: 'Education Friendly', matchId: null },
-  { reqId: 'req:subtoken:23-glass-compatible', name: 'Glass Compatible', matchId: null },
-  { reqId: 'req:subtoken:24-brutalist-contrast', name: 'Brutalist Contrast', matchId: null },
-  { reqId: 'req:subtoken:25-gradient-compatible', name: 'Gradient Compatible', matchId: null },
-];
-
-// §5.2 타이포그래피 시스템 (40종 = 10계열 × 4종)
-const REQUIRED_TYPE_SYSTEMS = [
-  // General Product
-  { reqId: 'req:type:01-neutral-product', familyGroup: 'General Product', name: 'Neutral Product', matchId: 'type-system:clean-product' },
-  { reqId: 'req:type:02-humanist', familyGroup: 'General Product', name: 'Humanist', matchId: 'type-system:work-insight' },
-  { reqId: 'req:type:03-geometric', familyGroup: 'General Product', name: 'Geometric', matchId: 'type-system:modern-saas' },
-  { reqId: 'req:type:04-soft-product', familyGroup: 'General Product', name: 'Soft Product', matchId: null },
-  // Enterprise
-  { reqId: 'req:type:05-dense-erp', familyGroup: 'Enterprise', name: 'Dense ERP', matchId: 'type-system:tech-erp' },
-  { reqId: 'req:type:06-formal-enterprise', familyGroup: 'Enterprise', name: 'Formal Enterprise', matchId: 'type-system:formal-corp' },
-  { reqId: 'req:type:07-compact-admin', familyGroup: 'Enterprise', name: 'Compact Admin', matchId: 'type-system:dense-admin' },
-  { reqId: 'req:type:08-comfortable-admin', familyGroup: 'Enterprise', name: 'Comfortable Admin', matchId: 'type-system:neutral-enterprise' },
-  // Finance
-  { reqId: 'req:type:09-financial-numeric', familyGroup: 'Finance', name: 'Financial Numeric', matchId: null },
-  { reqId: 'req:type:10-market-terminal', familyGroup: 'Finance', name: 'Market Terminal', matchId: null },
-  { reqId: 'req:type:11-banking', familyGroup: 'Finance', name: 'Banking', matchId: null },
-  { reqId: 'req:type:12-executive-report', familyGroup: 'Finance', name: 'Executive Report', matchId: null },
-  // Developer
-  { reqId: 'req:type:13-code-console', familyGroup: 'Developer', name: 'Code Console', matchId: 'type-system:work-console' },
-  { reqId: 'req:type:14-technical-docs', familyGroup: 'Developer', name: 'Technical Docs', matchId: 'type-system:code-docs' },
-  { reqId: 'req:type:15-developer-product', familyGroup: 'Developer', name: 'Developer Product', matchId: null },
-  { reqId: 'req:type:16-system-monitor', familyGroup: 'Developer', name: 'System Monitor', matchId: null },
-  // Marketing
-  { reqId: 'req:type:17-bold-display', familyGroup: 'Marketing', name: 'Bold Display', matchId: 'type-system:mkt-brand' },
-  { reqId: 'req:type:18-startup-launch', familyGroup: 'Marketing', name: 'Startup Launch', matchId: 'type-system:mkt-launch' },
-  { reqId: 'req:type:19-premium-launch', familyGroup: 'Marketing', name: 'Premium Launch', matchId: 'type-system:mkt-atelier' },
-  { reqId: 'req:type:20-expressive-brand', familyGroup: 'Marketing', name: 'Expressive Brand', matchId: null },
-  // Editorial
-  { reqId: 'req:type:21-newspaper', familyGroup: 'Editorial', name: 'Newspaper', matchId: 'type-system:doc-newsroom' },
-  { reqId: 'req:type:22-magazine', familyGroup: 'Editorial', name: 'Magazine', matchId: 'type-system:editorial-classic' },
-  { reqId: 'req:type:23-long-form-essay', familyGroup: 'Editorial', name: 'Long-form Essay', matchId: 'type-system:doc-essay' },
-  { reqId: 'req:type:24-modern-editorial', familyGroup: 'Editorial', name: 'Modern Editorial', matchId: 'type-system:modern-editorial' },
-  // Commerce
-  { reqId: 'req:type:25-catalog', familyGroup: 'Commerce', name: 'Catalog', matchId: 'type-system:shop-catalog' },
-  { reqId: 'req:type:26-fashion', familyGroup: 'Commerce', name: 'Fashion', matchId: 'type-system:shop-boutique' },
-  { reqId: 'req:type:27-luxury-commerce', familyGroup: 'Commerce', name: 'Luxury Commerce', matchId: null },
-  { reqId: 'req:type:28-promotional', familyGroup: 'Commerce', name: 'Promotional', matchId: null },
-  // Mobile
-  { reqId: 'req:type:29-compact-mobile', familyGroup: 'Mobile', name: 'Compact Mobile', matchId: 'type-system:mobile-compact' },
-  { reqId: 'req:type:30-native-like', familyGroup: 'Mobile', name: 'Native-like', matchId: 'type-system:mobile-app' },
-  { reqId: 'req:type:31-friendly-mobile', familyGroup: 'Mobile', name: 'Friendly Mobile', matchId: 'type-system:mobile-reader' },
-  { reqId: 'req:type:32-accessible-mobile', familyGroup: 'Mobile', name: 'Accessible Mobile', matchId: 'type-system:mobile-feed' },
-  // Education
-  { reqId: 'req:type:33-learning', familyGroup: 'Education', name: 'Learning', matchId: 'type-system:warm-content' },
-  { reqId: 'req:type:34-academic', familyGroup: 'Education', name: 'Academic', matchId: 'type-system:academic-paper' },
-  { reqId: 'req:type:35-friendly-education', familyGroup: 'Education', name: 'Friendly Education', matchId: null },
-  { reqId: 'req:type:36-reference', familyGroup: 'Education', name: 'Reference', matchId: 'type-system:doc-handbook' },
-  // Experimental
-  { reqId: 'req:type:37-retro', familyGroup: 'Experimental', name: 'Retro', matchId: null },
-  { reqId: 'req:type:38-brutalist', familyGroup: 'Experimental', name: 'Brutalist', matchId: null },
-  { reqId: 'req:type:39-industrial', familyGroup: 'Experimental', name: 'Industrial', matchId: null },
-  { reqId: 'req:type:40-mixed-serif', familyGroup: 'Experimental', name: 'Mixed Serif', matchId: null },
-];
-
-// §7 시각 패밀리 (12종)
-const REQUIRED_FAMILIES = [
-  { reqId: 'req:family:01-minimal-flat', name: 'Minimal Flat', matchId: 'family:quiet' },
-  { reqId: 'req:family:02-soft-rounded', name: 'Soft Rounded', matchId: 'family:soft' },
-  { reqId: 'req:family:03-outline-precise', name: 'Outline Precise', matchId: 'family:outline' },
-  { reqId: 'req:family:04-corporate-formal', name: 'Corporate Formal', matchId: null },
-  { reqId: 'req:family:05-dense-enterprise', name: 'Dense Enterprise', matchId: null },
-  { reqId: 'req:family:06-elevated-material', name: 'Elevated Material', matchId: 'family:bold' },
-  { reqId: 'req:family:07-tonal-layered', name: 'Tonal Layered', matchId: null },
-  { reqId: 'req:family:08-editorial', name: 'Editorial', matchId: 'family:editorial' },
-  { reqId: 'req:family:09-glass', name: 'Glass', matchId: null },
-  { reqId: 'req:family:10-brutalist', name: 'Brutalist', matchId: null },
-  { reqId: 'req:family:11-luxury', name: 'Luxury', matchId: null },
-  { reqId: 'req:family:12-expressive', name: 'Expressive', matchId: null },
-];
-
-// §9.1 차트 (29유형)
-const REQUIRED_CHARTS = [
-  { reqId: 'req:chart:01-vertical-bar', name: 'Vertical Bar', matchId: 'chart-preset:erp-quarterly-revenue' },
-  { reqId: 'req:chart:02-horizontal-bar', name: 'Horizontal Bar', matchId: 'chart-preset:sales-pipeline-value' },
-  { reqId: 'req:chart:03-grouped-bar', name: 'Grouped Bar', matchId: 'chart-preset:campaign-weekly-growth' },
-  { reqId: 'req:chart:04-stacked-bar', name: 'Stacked Bar', matchId: 'chart-preset:erp-cost-breakdown' },
-  { reqId: 'req:chart:05-100p-stacked-bar', name: '100% Stacked Bar', matchId: 'chart-preset:marketing-channel-share' },
-  { reqId: 'req:chart:06-line', name: 'Line', matchId: 'chart-preset:finance-yield-curve' },
-  { reqId: 'req:chart:07-multi-line', name: 'Multi-line', matchId: 'chart-preset:analytics-traffic-lines' },
-  { reqId: 'req:chart:08-step-line', name: 'Step Line', matchId: 'chart-preset:erp-inventory-aging' },
-  { reqId: 'req:chart:09-area', name: 'Area', matchId: 'chart-preset:finance-drawdown-area' },
-  { reqId: 'req:chart:10-stacked-area', name: 'Stacked Area', matchId: 'chart-preset:analytics-growth-bridge' },
-  { reqId: 'req:chart:11-pie', name: 'Pie', matchId: 'chart-preset:marketing-channel-roas' },
-  { reqId: 'req:chart:12-donut', name: 'Donut', matchId: 'chart-preset:erp-budget-bridge' },
-  { reqId: 'req:chart:13-scatter', name: 'Scatter', matchId: 'chart-preset:analytics-cohort-scatter' },
-  { reqId: 'req:chart:14-bubble', name: 'Bubble', matchId: 'chart-preset:finance-risk-return-scatter' },
-  { reqId: 'req:chart:15-heatmap', name: 'Heatmap', matchId: 'chart-preset:operations-activity-heatmap' },
-  { reqId: 'req:chart:16-treemap', name: 'Treemap', matchId: 'chart-preset:analytics-feature-adoption' },
-  { reqId: 'req:chart:17-radar', name: 'Radar', matchId: 'chart-preset:erp-monthly-closing' },
-  { reqId: 'req:chart:18-waterfall', name: 'Waterfall', matchId: 'chart-preset:finance-cashflow-waterfall' },
-  { reqId: 'req:chart:19-funnel', name: 'Funnel', matchId: 'chart-preset:marketing-conversion-funnel' },
-  { reqId: 'req:chart:20-gauge', name: 'Gauge', matchId: 'chart-preset:finance-monthly-close' },
-  { reqId: 'req:chart:21-bullet', name: 'Bullet', matchId: 'chart-preset:mobile-weekly-activity' },
-  { reqId: 'req:chart:22-sparkline', name: 'Sparkline', matchId: 'chart-preset:mobile-sparkline' },
-  { reqId: 'req:chart:23-candlestick', name: 'Candlestick', matchId: 'chart-preset:finance-price-candles' },
-  { reqId: 'req:chart:24-ohlc', name: 'OHLC', matchId: 'chart-preset:finance-price-ohlc' },
-  { reqId: 'req:chart:25-histogram', name: 'Histogram', matchId: 'chart-preset:erp-lead-time-histogram' },
-  { reqId: 'req:chart:26-box-plot', name: 'Box Plot', matchId: 'chart-preset:analytics-session-histogram' },
-  { reqId: 'req:chart:27-combination-chart', name: 'Combination Chart', matchId: 'chart-preset:mobile-stock-candles' },
-  { reqId: 'req:chart:28-calendar-heatmap', name: 'Calendar Heatmap', matchId: 'chart-preset:analytics-retention-heatmap' },
-  { reqId: 'req:chart:29-progress-chart', name: 'Progress Chart', matchId: 'chart-preset:mobile-balance-trend' },
-];
-
-// §9.2 레이아웃 (24종)
-const REQUIRED_LAYOUTS = [
-  { reqId: 'req:layout:01-single-column', name: 'Single Column', matchId: 'layout-primitive:flow' },
-  { reqId: 'req:layout:02-two-column', name: 'Two Column', matchId: 'layout-primitive:split' },
-  { reqId: 'req:layout:03-three-column', name: 'Three Column', matchId: null },
-  { reqId: 'req:layout:04-equal-grid', name: 'Equal Grid', matchId: null },
-  { reqId: 'req:layout:05-asymmetric-grid', name: 'Asymmetric Grid', matchId: null },
-  { reqId: 'req:layout:06-masonry', name: 'Masonry', matchId: null },
-  { reqId: 'req:layout:07-bento', name: 'Bento', matchId: 'layout-primitive:bento' },
-  { reqId: 'req:layout:08-sidebar-main', name: 'Sidebar Main', matchId: null },
-  { reqId: 'req:layout:09-double-sidebar', name: 'Double Sidebar', matchId: null },
-  { reqId: 'req:layout:10-master-detail', name: 'Master-detail', matchId: null },
-  { reqId: 'req:layout:11-dashboard-grid', name: 'Dashboard Grid', matchId: null },
-  { reqId: 'req:layout:12-kpi-strip', name: 'KPI Strip', matchId: 'layout-primitive:cluster' },
-  { reqId: 'req:layout:13-editorial-layout', name: 'Editorial Layout', matchId: null },
-  { reqId: 'req:layout:14-split-hero', name: 'Split Hero', matchId: null },
-  { reqId: 'req:layout:15-centered-hero', name: 'Centered Hero', matchId: null },
-  { reqId: 'req:layout:16-media-hero', name: 'Media Hero', matchId: null },
-  { reqId: 'req:layout:17-product-detail-layout', name: 'Product Detail Layout', matchId: null },
-  { reqId: 'req:layout:18-commerce-grid', name: 'Commerce Grid', matchId: null },
-  { reqId: 'req:layout:19-settings-layout', name: 'Settings Layout', matchId: null },
-  { reqId: 'req:layout:20-documentation-layout', name: 'Documentation Layout', matchId: null },
-  { reqId: 'req:layout:21-mobile-stack', name: 'Mobile Stack', matchId: 'layout-primitive:stack' },
-  { reqId: 'req:layout:22-sticky-action-layout', name: 'Sticky Action Layout', matchId: null },
-  { reqId: 'req:layout:23-form-layout', name: 'Form Layout', matchId: null },
-  { reqId: 'req:layout:24-multi-step-form', name: 'Multi-step Form', matchId: null },
-];
-
-// -----------------------------------------------------------------------------
-// 보조 맵 및 검증 정보 추출
-// -----------------------------------------------------------------------------
-
-// 등록된 플랫폼 재료 맵
-const platformMaterials = new Map();
+/** id → {record, registry, kind}. 플랫폼 종류와 카탈로그 종류의 id 접두사는 겹치지 않는다(겹치면 생성 실패). */
+const entities = new Map();
 for (const kind of platformEnv.registry.kinds()) {
-  for (const item of platformEnv.registry.list(kind)) {
-    platformMaterials.set(item.id, { ...item, platformKind: kind });
-  }
+  for (const record of platformEnv.registry.list(kind)) entities.set(record.id, {record, registry: 'platform', kind});
 }
-
-// 등록된 디자인 카탈로그 재료 맵
-const desMaterials = new Map();
-for (const item of desRegistry.list()) {
-  desMaterials.set(item.id, item);
+for (const record of desRegistry.list()) {
+  if (entities.has(record.id)) throw new Error(`재료 id가 두 레지스트리에 있습니다: ${record.id}`);
+  entities.set(record.id, {record, registry: 'design', kind: record.kind});
 }
+const ofKind = kind => [...entities.values()].filter(e => e.kind === kind).map(e => e.record);
+const kindCount = kind => ofKind(kind).length;
+const need = id => { const e = entities.get(id); if (!e) throw new Error(`요구 매핑이 가리키는 재료가 레지스트리에 없습니다: ${id}`); return e; };
 
 // -----------------------------------------------------------------------------
-// 개별 재료 레코드 구성기 (17개 필드 + status + evidence)
+// 2. 요구 목록: REQUEST.md에서 읽는다
 // -----------------------------------------------------------------------------
 
-function buildMaterialRecord({
-  id,
-  name,
-  kind,
-  requirementId = null,
-  section = null,
-  matchedEntity = null,
-  forceStatus = null
-}) {
-  // 엔티티가 없는 경우 (missing 요구사항)
-  if (!matchedEntity) {
-    return {
-      id,
-      name,
-      kind,
-      requirementId,
-      section,
-      status: 'missing',
-      supportedVersions: [],
-      definitionPath: null,
-      rendererConnected: false,
-      usesTokensAndCss: false,
-      supportedVariantsAndStates: { variants: [], states: [] },
-      catalogVisible: false,
-      detailPageExists: false,
-      studioAssemblable: false,
-      restAndMcpAvailable: false,
-      blueprintExpressible: false,
-      exportReflected: false,
-      a11yAndResponsiveTested: false,
-      qualityVerdict: { status: 'missing', evidence: null },
-      rightsAndLicense: 'internal',
-      legacyDuplicateRelation: null,
-      evidence: {
-        definition: null,
-        renderer: null,
-        test: null
-      }
-    };
+const REQUEST = read(REQUEST_PATH).split('\n');
+const lineIndex = re => { const i = REQUEST.findIndex(l => re.test(l)); if (i < 0) throw new Error(`REQUEST.md에서 ${re} 를 찾지 못했습니다.`); return i; };
+const slice = (from, to) => REQUEST.slice(lineIndex(from), lineIndex(to));
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const cells = line => line.split('|').slice(1, -1).map(c => c.trim());
+const tableRows = lines => lines.filter(l => l.startsWith('|') && !/^\|\s*-/.test(l)).map(cells).slice(1);
+/** 제목 아래 첫 불릿 목록(연속한 `- ` 줄)만 읽는다. */
+function firstBullets(lines) {
+  const out = []; let started = false;
+  for (const l of lines) {
+    const m = l.match(/^- (.+)$/);
+    if (m) { started = true; out.push(m[1].trim()); } else if (started && l.trim() !== '') break;
   }
+  return out;
+}
 
-  // 엔티티가 있는 경우
-  const ent = matchedEntity;
-  const isPlatform = Boolean(ent.platformKind);
-  const mId = ent.id;
-
-  // 버전 판정
-  let versions = ['2.4.0', '2.6.0'];
-  if (isPlatform || mId.startsWith('purpose:') || mId.startsWith('base-component:')) {
-    versions = ['2.7.0'];
-  } else if (mId.startsWith('palette:row-')) {
-    versions = ['2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.6.0'];
+/** §6.2: A~O 소절별 불릿. 같은 이름이 다른 소절에 있어도 소절 문자와 순번으로 구분하는 별개 요구다. */
+const COMPONENT_REQS = [];
+{
+  let letter = null, n = 0;
+  for (const l of slice(/^## 6\.2 /, /^## 6\.3 /)) {
+    const h = l.match(/^### ([A-O])\. (.+)$/);
+    if (h) { letter = h[1]; n = 0; continue; }
+    const b = l.match(/^- (.+)$/);
+    if (b && letter) COMPONENT_REQS.push({key: `${letter}/${b[1].trim()}`, section: `§6.2 ${letter}`, group: letter, name: b[1].trim(), reqId: `req:comp:${letter.toLowerCase()}-${String(++n).padStart(2, '0')}-${slug(b[1])}`});
   }
+}
+const SUBTOKEN_REQS = tableRows(slice(/^## 4\.4 /, /^## 4\.5 /)).map(([name], i) => ({key: `sub/${name}`, section: '§4.4', name, reqId: `req:subtoken:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
+const TYPE_REQS = tableRows(slice(/^## 5\.2 /, /^## 5\.3 /)).flatMap(([group, names]) => names.split(',').map(s => s.trim()).map(name => ({group, name})))
+  .map((r, i) => ({key: `type/${r.name}`, section: `§5.2 (${r.group})`, name: r.name, reqId: `req:type:${String(i + 1).padStart(2, '0')}-${slug(r.name)}`}));
+const FAMILY_REQS = tableRows(slice(/^# 7\. /, /^# 8\. /)).map(([name], i) => ({key: `fam/${name}`, section: '§7', name, reqId: `req:family:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
+const CHART_REQS = firstBullets(slice(/^## 9\.1 /, /^## 9\.2 /)).map((name, i) => ({key: `chart/${name}`, section: '§9.1', name, reqId: `req:chart:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
+const LAYOUT_REQS = firstBullets(slice(/^## 9\.2 /, /^## 9\.3 /)).map((name, i) => ({key: `lay/${name}`, section: '§9.2', name, reqId: `req:layout:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
+const ALL_REQS = [...COMPONENT_REQS, ...SUBTOKEN_REQS, ...TYPE_REQS, ...FAMILY_REQS, ...CHART_REQS, ...LAYOUT_REQS];
+if (new Set(ALL_REQS.map(r => r.reqId)).size !== ALL_REQS.length) throw new Error('요구 id가 겹칩니다.');
+const REQUEST_COUNTS = {components: COMPONENT_REQS.length, subtokenSets: SUBTOKEN_REQS.length, typeSystems: TYPE_REQS.length, families: FAMILY_REQS.length, charts: CHART_REQS.length, layouts: LAYOUT_REQS.length};
 
-  // 라이선스 판정
-  let rights = ent.source?.license ?? (ent.source ? 'internal' : 'internal');
-  if (mId.startsWith('palette:row-') || ent.source?.license === 'unverified') {
-    rights = 'unverified';
+/** §2.1 기존 분석 기준표 */
+const BASELINE_TABLE = tableRows(slice(/^## 2\.1 /, /^## 2\.2 /)).filter(r => /^\d+$/.test(r[1] ?? '')).map(([material, n]) => ({material, previousBaseline: Number(n)}));
+
+// -----------------------------------------------------------------------------
+// 3. 요구 ↔ 재료 매핑 (판단은 사람이 적고, 재료 id·변형 값은 생성 때마다 레지스트리와 대조한다)
+// -----------------------------------------------------------------------------
+// D(id...)                          그 재료가 요구 항목을 그대로 구현한다.
+// V(id, 근거기록, {축: 값})           재료 하나의 변형 값으로 구현한다. 근거기록의 variants[축]에 값이 실제로 있어야 한다.
+// S(id, 노드타입, 스키마경로, 값)       구형 노드의 스키마 열거값으로 구현한다. getComponentSpec의 스키마에 값이 실제로 있어야 한다.
+// P(id, 이유)                       다른 재료의 구성 요소로만 존재한다(별도 재료가 아님).
+// 항목이 아래 표에 없으면 missing이다(조용히 가까운 재료로 바꾸지 않는다).
+const D = (...ids) => ({how: 'direct', ids});
+const V = (id, via, variant, note) => ({how: 'variant', ids: [id], via, variant, note});
+const S = (id, type, path, value, note) => ({how: 'schema', ids: [id], type, path, value, note});
+const P = (id, note) => ({how: 'part-of', ids: [id], note});
+const CHART = (chartKind, minSeries = 1) => ({how: 'chart-kind', chartKind, minSeries});
+
+const BTN = 'component:button-control', INP = 'component:input-control', SEL = 'component:select-control', TAB = 'component:tabs-control', MOD = 'component:modal-dialog', FBM = 'component:feedback-message', TBL = 'component:data-table';
+const COVERAGE = {
+  'A/Button': D('base-component:button-control'),
+  'A/Icon Button': D('purpose:button.icon'),
+  'A/Link Button': V('base-component:button-control', BTN, {appearance: 'link'}),
+  'A/Toggle Button': D('purpose:button.toggle'),
+  'A/Button Group': D('component:actions'),
+  'A/Segmented Control': V('base-component:tabs-control', TAB, {appearance: 'segmented'}),
+  'A/Loading Action Button': D('purpose:button.loading'),
+  'B/Text Input': D('base-component:input-control'),
+  'B/Textarea': V('base-component:input-control', INP, {kind: 'multiline'}),
+  'B/Search Input': D('purpose:form.search'),
+  'B/Password Input': V('base-component:input-control', INP, {kind: 'password'}),
+  'B/Number Input': V('base-component:input-control', INP, {kind: 'number'}),
+  'B/Email Input': V('base-component:input-control', INP, {kind: 'email'}),
+  'B/Phone Input': S('component:form', 'form', 'fields.items.properties.type.enum', 'tel'),
+  'B/URL Input': S('component:form', 'form', 'fields.items.properties.type.enum', 'url'),
+  'B/Input Group': D('purpose:form.group'),
+  'C/Select': D('base-component:select-control'),
+  'C/Searchable Select': V('base-component:select-control', SEL, {search: 'local'}),
+  'C/Combobox': V('base-component:select-control', SEL, {search: 'async'}, 'Select 렌더러는 role=combobox+listbox이고 async 검색은 옵션을 요청하는 콤보박스다'),
+  'C/Multi-select': V('base-component:select-control', SEL, {mode: 'multiple'}),
+  'C/Radio': S('component:form', 'form', 'fields.items.properties.type.enum', 'radio', 'radio 필드는 options(2개 이상)를 받으므로 항상 라디오 묶음으로 렌더된다'),
+  'C/Radio Group': S('component:form', 'form', 'fields.items.properties.type.enum', 'radio'),
+  'C/Checkbox': S('component:form', 'form', 'fields.items.properties.type.enum', 'checkbox'),
+  'C/Switch': S('component:form', 'form', 'fields.items.properties.type.enum', 'switch'),
+  'D/Calendar': D('component:calendar'),
+  'D/Date Picker': S('component:form', 'form', 'fields.items.properties.type.enum', 'date', '브라우저 기본 date 입력이다. 달력 팝업 컴포넌트가 아니다'),
+  'E/Navbar': D('base-component:navigation-menu'),
+  'E/Sidebar': D('purpose:navigation.sidebar'),
+  'E/Breadcrumb': D('component:breadcrumb'),
+  'E/Tabs': D('base-component:tabs-control'),
+  'E/Vertical Tabs': V('base-component:tabs-control', TAB, {orientation: 'vertical'}),
+  'E/Underline Tabs': V('base-component:tabs-control', TAB, {appearance: 'underline'}),
+  'E/Stepper': D('component:stepper'),
+  'E/Pagination': D('component:pagination'),
+  'E/Bottom Navigation': D('purpose:navigation.bottom'),
+  'E/Table of Contents': D('component:toc'),
+  'F/Basic Card': D('base-component:card-surface'),
+  'F/Feature Card': D('purpose:card.feature'),
+  'F/KPI Card': D('purpose:card.kpi'),
+  'F/Statistic Card': D('component:metric'),
+  'F/Metric Trend Card': V('purpose:card.kpi', 'purpose:card.kpi', {trend: 'spark'}),
+  'F/Product Card': D('purpose:card.product'),
+  'F/Profile Card': D('purpose:card.profile'),
+  'F/Team Member Card': D('component:team'),
+  'F/Article Card': D('purpose:card.article'),
+  'F/Media Card': V('component:card', 'component:card', {variant: 'media'}),
+  'F/Pricing Card': D('purpose:card.pricing'),
+  'F/Plan Card': D('component:plan'),
+  'F/Settings Card': V('purpose:form.settings', 'purpose:form.settings', {layout: 'cards'}),
+  'F/Testimonial Card': D('component:quote'),
+  'G/Basic Table': D('base-component:data-table'),
+  'G/Data Table': D('purpose:table.business'),
+  'G/Sortable Table': V('base-component:data-table', TBL, {sortable: true}),
+  'G/Selectable Table': V('base-component:data-table', TBL, {selectable: true}),
+  'G/Dense Table': D('purpose:table.dense'),
+  'G/Description List': D('component:properties'),
+  'G/List': D('component:list'),
+  'G/List Item': P('component:list', 'list 노드의 items 구조로만 존재한다'),
+  'G/Kanban': D('component:kanban'),
+  'G/Timeline': D('component:timeline'),
+  'G/Activity Feed': V('component:timeline', 'component:timeline', {variant: 'log'}),
+  'G/Master-detail': D('component:master-detail'),
+  'G/Code Block': D('component:code'),
+  'H/Modal': D('base-component:modal-dialog'),
+  'H/Alert Dialog': V('base-component:modal-dialog', MOD, {role: 'alertdialog'}),
+  'H/Confirmation Dialog': D('purpose:feedback.confirm'),
+  'H/Bottom Sheet': V('base-component:modal-dialog', MOD, {placement: 'bottom'}),
+  'H/Tooltip': D('base-component:tooltip'),
+  'I/Alert': D('base-component:feedback-message'),
+  'I/Banner': V('base-component:feedback-message', FBM, {placement: 'banner'}),
+  'I/Toast': V('base-component:feedback-message', FBM, {placement: 'toast'}),
+  'I/Snackbar': V('base-component:feedback-message', FBM, {placement: 'toast', action: 'button'}),
+  'I/Inline Error': D('purpose:feedback.error'),
+  'I/Empty State': D('state-pattern:empty-illustrated', 'state-pattern:empty-inline', 'component:empty-state'),
+  'I/Error State': D('state-pattern:error-panel', 'state-pattern:error-banner'),
+  'I/Success State': D('state-pattern:success-confirmation', 'state-pattern:success-toast', 'purpose:feedback.result'),
+  'I/Skeleton': D('state-pattern:loading-skeleton', 'component:skeleton'),
+  'I/Spinner': D('state-pattern:loading-spinner'),
+  'I/Linear Progress': D('purpose:feedback.progress', 'component:progress'),
+  'I/Step Progress': V('purpose:feedback.progress', 'purpose:feedback.progress', {kind: 'steps'}),
+  'J/Badge': V('component:tags', 'component:tags', {variant: 'badges'}),
+  'J/Chip': V('component:tags', 'component:tags', {variant: 'chips'}),
+  'J/Filter Chip': V('purpose:form.filter', 'purpose:form.filter', {chips: 'toggles'}),
+  'J/Tag': D('component:tags'),
+  'J/Divider': D('component:divider'),
+  'K/Image': V('component:media', 'component:media', {kind: 'photo'}),
+  'K/Media Frame': D(...ofKind('media').map(r => r.id)),
+  'K/Gallery': D('component:gallery'),
+  'K/Video Frame': V('component:media', 'component:media', {kind: 'video'}),
+  'K/Quote': D('component:quote'),
+  'K/Rich Text Content': D('component:prose'),
+  'L/Stack': D('layout-primitive:stack'),
+  'L/Cluster': D('layout-primitive:cluster'),
+  'L/Grid': D('component:grid'),
+  'L/Split': D('layout-primitive:split', 'component:split'),
+  'L/Bento': D('layout-primitive:bento', 'component:bento'),
+  'L/Container': D('layout-primitive:container'),
+  'L/Section': D('component:section'),
+  'L/Sidebar Layout': D('component:aside'),
+  'L/Master-detail Layout': D('component:master-detail'),
+  'M/Filter Toolbar': D('purpose:form.filter'),
+  'M/Search Toolbar': D('component:filter-bar', 'purpose:form.search'),
+  'M/Bulk Action Toolbar': V('purpose:table.business', 'purpose:table.business', {toolbar: 'bulk'}),
+  'M/Settings Form': D('purpose:form.settings'),
+  'M/Workflow Steps': D('component:steps'),
+  'N/Product Detail Summary': D('component:buy-box'),
+  'N/Product Variant Selector': P('component:buy-box', 'buy-box의 options(라벨+선택지)로만 존재한다'),
+  'N/Cart Summary': D('component:summary'),
+  'N/Checkout Summary': D('component:summary'),
+  'N/Review Summary': D('component:reviews'),
+  'O/Mobile Header': D('purpose:navigation.topbar'),
+  'O/Bottom Navigation': D('purpose:navigation.bottom'),
+  'sub/Standard Neutral': D('subtoken-set:standard'),
+  'sub/Brand Tinted': D('subtoken-set:tinted'),
+  'sub/High Contrast': D('subtoken-set:high-contrast'),
+  'sub/Premium Dark': D('subtoken-set:premium-dark'),
+  'sub/Editorial Paper': D('subtoken-set:editorial-warm'),
+  'sub/ERP Dense': D('subtoken-set:data-dense'),
+  'sub/Commerce Vivid': D('subtoken-set:commerce-vivid'),
+  'type/Dense ERP': D('type-system:tech-erp'),
+  'type/Newspaper': D('type-system:doc-newsroom'),
+  'type/Long-form Essay': D('type-system:doc-essay'),
+  'type/Reference': D('type-system:doc-handbook'),
+  'type/Bold Display': D('type-system:mkt-brand'),
+  'type/Startup Launch': D('type-system:mkt-launch'),
+  'type/Premium Launch': D('type-system:mkt-atelier'),
+  'type/Catalog': D('type-system:shop-catalog'),
+  'type/Fashion': D('type-system:shop-boutique'),
+  'type/Native-like': D('type-system:mobile-app'),
+  'fam/Minimal Flat': D('family:quiet'),
+  'fam/Soft Rounded': D('family:soft'),
+  'fam/Editorial': D('family:editorial'),
+  'chart/Vertical Bar': CHART('bar'),
+  'chart/Horizontal Bar': CHART('bars-h'),
+  'chart/Grouped Bar': CHART('bar', 2),
+  'chart/Stacked Bar': CHART('stacked-bar'),
+  'chart/Line': CHART('line'),
+  'chart/Multi-line': CHART('line', 2),
+  'chart/Area': CHART('area'),
+  'chart/Donut': CHART('donut'),
+  'chart/Scatter': CHART('scatter'),
+  'chart/Heatmap': CHART('heatmap'),
+  'chart/Waterfall': CHART('waterfall'),
+  'chart/Funnel': CHART('funnel'),
+  'chart/Sparkline': CHART('sparkline'),
+  'chart/Candlestick': CHART('candlestick'),
+  'chart/OHLC': CHART('ohlc'),
+  'chart/Histogram': CHART('histogram'),
+  'lay/Single Column': D('layout-primitive:flow'),
+  'lay/Two Column': D('layout-primitive:split'),
+  'lay/Three Column': V('component:grid', 'component:grid', {columns: 'three'}),
+  'lay/Equal Grid': D('component:grid'),
+  'lay/Masonry': V('component:gallery', 'component:gallery', {layout: 'masonry'}),
+  'lay/Bento': D('layout-primitive:bento'),
+  'lay/Sidebar Main': D('component:aside'),
+  'lay/Master-detail': D('component:master-detail'),
+  'lay/Dashboard Grid': D('pattern:dashboard-grid'),
+  'lay/Editorial Layout': D('pattern:editorial-article'),
+  'lay/Split Hero': V('component:hero', 'component:hero', {variant: 'split'}),
+  'lay/Centered Hero': V('component:hero', 'component:hero', {variant: 'centered'}),
+  'lay/Media Hero': V('component:hero', 'component:hero', {variant: 'cover'}),
+  'lay/Product Detail Layout': D('pattern:commerce-detail'),
+  'lay/Commerce Grid': D('pattern:commerce-listing'),
+  'lay/Settings Layout': D('pattern:admin-settings'),
+  'lay/Documentation Layout': D('pattern:docs-reference'),
+  'lay/Mobile Stack': D('layout-primitive:stack'),
+  'lay/Form Layout': D('component:form'),
+};
+for (const key of Object.keys(COVERAGE)) {
+  if (!ALL_REQS.some(r => r.key === key)) throw new Error(`REQUEST.md에 없는 요구 항목을 매핑했습니다: ${key}`);
+}
+
+/** 변형 값이 근거 기록에 실제로 있는지, 스키마 열거값에 실제로 있는지 확인한다. */
+const schemaCache = new Map();
+function specSchema(type) {
+  if (!schemaCache.has(type)) { const r = service.getComponentSpec({type}); schemaCache.set(type, r.ok ? r.value.fields : null); }
+  return schemaCache.get(type);
+}
+function resolveCoverage(req) {
+  const spec = COVERAGE[req.key];
+  if (!spec) return {how: 'missing', ids: [], note: null};
+  if (spec.how === 'chart-kind') {
+    const ids = ofKind('chart-preset').filter(p => p.ext.chartKind === spec.chartKind && p.ext.series.maximum >= spec.minSeries).map(p => p.id).sort();
+    return ids.length ? {how: 'direct', ids, note: `ext.chartKind=${spec.chartKind}${spec.minSeries > 1 ? `, 계열 ${spec.minSeries}개 이상` : ''}인 프리셋 ${ids.length}개`} : {how: 'missing', ids: [], note: null};
   }
-
-  // 정의 경로 & 렌더러 & 테스트 경로 추출
-  let defPath = null;
-  let renderer = false;
-  let rendererSymbol = null;
-  let testSymbol = null;
-  let usesTokens = true;
-
-  if (ent.render) {
-    renderer = true;
-    rendererSymbol = `${ent.render.module}#${ent.render.export}`;
-  }
-
-  if (ent.quality?.status === 'verified' && ent.quality?.evidence) {
-    testSymbol = ent.quality.evidence;
-  }
-
-  // 세부 종류별 정의 및 코드 경로
-  if (mId.startsWith('base-component:')) {
-    defPath = `src/platform/data/base-components.mjs#BASE_COMPONENTS`;
-    renderer = true;
-    rendererSymbol = `src/materials/${mId.slice('base-component:'.length).replace('-control', '').replace('-surface', '').replace('-menu', '').replace('-dialog', '').replace('-message', '')}.mjs`;
-    testSymbol = `tests/platform-family.test.mjs:10`;
-  } else if (mId.startsWith('purpose:')) {
-    defPath = `src/platform/families/${mId.split(':')[1].split('.')[0]}.mjs`;
-    renderer = true;
-    rendererSymbol = `src/platform/render.mjs#renderMember`;
-    testSymbol = `tests/platform-pipeline.test.mjs:20`;
-  } else if (mId.startsWith('palette:')) {
-    if (mId.startsWith('palette:row-')) {
-      defPath = `src/catalog/palette-rows.mjs#PALETTE_ROWS`;
-      renderer = false;
-      usesTokens = false;
-    } else {
-      defPath = `src/platform/data/palettes.mjs#PALETTES`;
-      renderer = true;
-      rendererSymbol = `src/platform/color.mjs#bindColor`;
-      testSymbol = `tests/platform-color.test.mjs:12`;
+  for (const id of spec.ids) need(id);
+  if (spec.how === 'variant') {
+    const rec = need(spec.via).record;
+    for (const [axis, value] of Object.entries(spec.variant)) {
+      if (!rec.variants?.[axis]?.includes(value)) throw new Error(`${req.key}: ${spec.via}.variants.${axis}에 ${JSON.stringify(value)}가 없습니다.`);
     }
-  } else if (mId.startsWith('subtoken-set:')) {
-    defPath = `src/platform/data/subtoken-sets.mjs#SUBTOKEN_SETS`;
-    renderer = true;
-    rendererSymbol = `src/platform/color.mjs#bindColor`;
-    testSymbol = `tests/platform-color.test.mjs:30`;
-  } else if (mId.startsWith('type-system:')) {
-    defPath = `src/platform/data/type-systems.mjs#TYPE_SYSTEMS`;
-    renderer = true;
-    rendererSymbol = `src/platform/type.mjs#bindType`;
-    testSymbol = `tests/platform-type.test.mjs:15`;
-  } else if (mId.startsWith('family:')) {
-    defPath = `src/platform/data/families.mjs#FAMILIES`;
-    renderer = true;
-    rendererSymbol = `src/platform/family.mjs#bindFamily`;
-    testSymbol = `tests/platform-family.test.mjs:40`;
-  } else if (mId.startsWith('chart-preset:')) {
-    defPath = `src/materials/chart-presets.mjs#CHART_PRESETS`;
-    renderer = true;
-    rendererSymbol = `src/render/chart-presets.mjs#renderChartPreset`;
-    testSymbol = `tests/chart-presets.test.mjs:63`;
-  } else if (mId.startsWith('layout:')) {
-    defPath = `src/layout.mjs#layoutContractCSS`;
-    renderer = true;
-    rendererSymbol = `src/layout.mjs#flowCSS`;
-    testSymbol = `tests/layout-quality.test.mjs:20`;
-  } else if (mId.startsWith('component:')) {
-    defPath = `src/catalog/nodes.mjs#nodeSchema`;
-    renderer = true;
-    rendererSymbol = `src/render/nodes.mjs#makeRenderer`;
-    testSymbol = `tests/material-components.test.mjs:51`;
-  } else if (mId.startsWith('style-context:')) {
-    defPath = `src/platform/data/style-contexts.mjs#STYLE_CONTEXTS`;
-    renderer = false;
-    testSymbol = `tests/platform-style-contexts.test.mjs:10`;
-  } else if (mId.startsWith('icon:')) {
-    defPath = `src/catalog/icons.mjs#ICONS`;
-    renderer = true;
-    rendererSymbol = `src/render/util.mjs#icon`;
-    testSymbol = `tests/audit.test.mjs:10`;
-  } else if (mId.startsWith('template:')) {
-    defPath = `src/catalog/templates.mjs#TEMPLATES`;
-    renderer = true;
-    rendererSymbol = `src/compiler.mjs#compile`;
-    testSymbol = `tests/templates.test.mjs:15`;
-  } else if (mId.startsWith('theme:')) {
-    defPath = `src/catalog/themes.mjs#THEMES`;
-    renderer = true;
-    rendererSymbol = `src/catalog/index.mjs#composeBlueprint`;
-    testSymbol = `tests/themes.test.mjs:10`;
+    return {how: 'variant', ids: spec.ids, via: spec.via, variant: spec.variant, note: spec.note ?? null};
+  }
+  if (spec.how === 'schema') {
+    let node = specSchema(spec.type);
+    for (const part of spec.path.split('.')) node = node?.[part];
+    if (!Array.isArray(node) || !node.includes(spec.value)) throw new Error(`${req.key}: ${spec.type} 스키마 ${spec.path}에 ${spec.value}가 없습니다.`);
+    return {how: 'schema', ids: spec.ids, schema: {type: spec.type, path: spec.path, value: spec.value}, note: spec.note ?? null};
+  }
+  return {how: spec.how, ids: spec.ids, note: spec.note ?? null};
+}
+
+// -----------------------------------------------------------------------------
+// 4. 근거 검증: 정의 위치, 테스트 참조, 웹 라우트
+// -----------------------------------------------------------------------------
+
+/** 종류별 정의 위치. 파일과 심볼이 실제로 있어야 definitionPath로 쓴다. */
+const DEFINITION = {
+  palette: {platform: ['src/platform/data/palettes.mjs', 'PALETTES'], design: ['src/catalog/palettes.mjs', 'palettes']},
+  'subtoken-set': ['src/platform/data/subtoken-sets.mjs', 'SUBTOKEN_SETS'],
+  'type-system': ['src/platform/data/type-systems.mjs', 'TYPE_SYSTEMS'],
+  family: ['src/platform/data/families.mjs', 'FAMILIES'],
+  'base-component': ['src/platform/data/base-components.mjs', 'BASE_COMPONENTS'],
+  'style-context': ['src/platform/data/style-contexts.mjs', 'STYLE_CONTEXTS'],
+  surface: ['src/platform/data/surfaces.mjs', 'SURFACES'],
+  motion: ['src/platform/data/motion.mjs', 'MOTIONS'],
+  background: ['src/platform/data/backgrounds.mjs', 'BACKGROUNDS'],
+  media: ['src/platform/data/media.mjs', 'MEDIA'],
+  'state-pattern': ['src/platform/data/states.mjs', 'STATE_PATTERNS'],
+  'axis-value': ['src/platform/axes.mjs', 'axisIds'],
+  'chart-preset': ['src/materials/chart-presets.mjs', 'chartPresetMaterials'],
+  icon: ['src/catalog/icons.mjs', 'icons'],
+  template: ['src/catalog/templates.mjs', 'templates'],
+  theme: ['src/catalog/themes.mjs', 'themes'],
+  axis: ['src/catalog/axes.mjs', 'axes'],
+  component: ['src/catalog/nodes.mjs', 'nodeSpecs'],
+  'color-token': ['src/color-tokens.mjs', 'resolveColorTokens'],
+  'type-preset': ['src/typography.mjs', 'typeVars'],
+  'type-role-preset': ['src/materials/typography.mjs', 'renderMaterialTypeCSS'],
+  'layout-primitive': ['src/layout.mjs', 'layoutContractCSS'],
+  'page-type': ['src/catalog/pagetypes.mjs', 'pageTypes'],
+  recipe: ['src/catalog/recipes.mjs', 'recipes'],
+  pattern: ['src/profiles/data.mjs', 'PATTERNS'],
+  profile: ['src/profiles/data.mjs', 'PROFILES'],
+};
+function definitionOf(record, kind) {
+  let spec = DEFINITION[kind];
+  if (kind === 'palette') spec = DEFINITION.palette[record.source?.origin === 'internal' ? 'platform' : 'design'];
+  if (kind === 'purpose-family') spec = [`src/platform/families/${record.group}.mjs`, 'purposeFamily'];
+  if (kind === 'purpose-family') {
+    const file = spec[0];
+    return exists(file) ? `${file}` : null;
+  }
+  if (!spec) return null;
+  const [file, symbol] = spec;
+  return exists(file) && new RegExp(`\\b${symbol}\\b`).test(read(file)) ? `${file}#${symbol}` : null;
+}
+
+/** 'tests/x.test.mjs:12' 참조가 실제 파일의 실제 줄을 가리키는지. 유효한 것만 근거로 센다. */
+const validRef = ref => { const m = String(ref).match(/^(tests\/[\w./-]+):(\d+)$/); return !!m && exists(m[1]) && Number(m[2]) >= 1 && Number(m[2]) <= linesOf(m[1]); };
+
+/** 웹 라우트 근거: 파일이 있고, 그 파일이 부르는 질의 토큰이 실제로 들어 있는지 확인한다. */
+const surfaceProof = new Map();
+function proveSurface(id, files, needs) {
+  const missing = files.filter(f => !exists(f));
+  const text = files.filter(exists).map(read).join('\n');
+  const absent = needs.filter(n => !text.includes(n));
+  surfaceProof.set(id, {files, proven: missing.length === 0 && absent.length === 0, ...(missing.length ? {missingFiles: missing} : {}), ...(absent.length ? {missingTokens: absent} : {})});
+  return missing.length === 0 && absent.length === 0;
+}
+
+const ok = r => r && r.ok;
+const platformList = kind => { const r = service.listPlatformMaterials({kind, limit: 200}); return ok(r) ? r.value.items.map(x => x.id) : []; };
+const catalogRows = (kind, extra = {}) => {
+  const out = [];
+  for (let cursor; ;) {
+    const r = service.listCatalog({kind, limit: 200, ...extra, ...(cursor ? {cursor} : {})});
+    if (!ok(r)) break;
+    out.push(...r.value.items);
+    if (!r.value.nextCursor) break;
+    cursor = r.value.nextCursor;
+  }
+  return out;
+};
+
+/** 목적 패밀리 상세가 시각 패밀리로 바꿔 보여 주는 값. 라우트 파일의 VISUALS 상수에서 읽는다. */
+const VISUALS = (read('apps/web/features/platform/component-view.server.ts').match(/export const VISUALS = \[([^\]]+)\]/)?.[1] ?? '').split(',').map(x => x.replace(/['"\s]/g, '')).filter(Boolean);
+
+// 웹 Explore가 보여 주는 대표 디자인(apps/web/features/explore/designs.server.ts curatedDesigns와 같은 규칙)에서 실제로 쓰는 테마·팔레트를 얻는다.
+function exploreDesigns() {
+  const THEMED_PER_TEMPLATE = 2;
+  const concepts = catalogRows('concepts', {fields: ['id', 'label', 'templates', 'looks']});
+  const refs = [];
+  for (const t of catalogRows('templates', {fields: ['id', 'theme']})) {
+    refs.push({template: t.id});
+    const mine = concepts.filter(c => c.templates.includes(t.id));
+    const taken = new Set([`${t.theme}|`]);
+    let added = 0;
+    for (let round = 0; added < THEMED_PER_TEMPLATE; round++) {
+      let progressed = false;
+      for (const c of mine) {
+        const look = c.looks[round];
+        if (!look) continue;
+        progressed = true;
+        const key = `${look.theme}|${look.themeVariant ?? ''}`;
+        if (taken.has(key) || added >= THEMED_PER_TEMPLATE) continue;
+        taken.add(key); added++;
+        refs.push({template: t.id, theme: look.theme});
+      }
+      if (!progressed) break;
+    }
+    if (t.id === 'saas-landing') refs.push({template: 'saas-landing', palette: 'pearl'});
+  }
+  const used = {templates: new Set(), themes: new Set(), palettes: new Set()};
+  for (const ref of refs) {
+    const made = edit.resetDocument(null, ref);
+    if (!made.ok) continue;
+    used.templates.add(`template:${ref.template}`);
+    used.themes.add(`theme:${made.doc.theme}`);
+    used.palettes.add(`palette:${made.doc.palette}`);
+  }
+  return used;
+}
+
+/** 라우트별 노출 재료. ids()는 라우트가 부르는 서비스 질의를 같은 인자로 불러 계산한다. */
+function buildSurfaces() {
+  const component2_6 = catalogRows('components', {filter: {catalogVersion: '2.6.0'}, fields: ['type']}).map(r => `component:${r.type}`);
+  const purposeIds = platformList('purpose-family');
+  const colorView = service.queryMaterials({view: 'color'});
+  const typeView = service.queryMaterials({view: 'typography'});
+  const foundations = service.queryMaterials({view: 'foundations'});
+  const foundationAxes = ok(foundations) ? foundations.value.axes.map(a => a.id) : [];
+  const explore = exploreDesigns();
+  const baseDoc = edit.importBlueprint(null, {blueprint: {...edit.resetDocument(null, {template: 'about-team'}).doc, catalogVersion: '2.6.0'}});
+  const studioParts = new Set();
+  if (baseDoc.ok) {
+    const paths = [[], ...baseDoc.doc.tree.children.map((_, i) => [i])];
+    for (const path of paths) { const r = edit.addPlacements(baseDoc.doc, path); for (const side of ['inside', 'after']) for (const a of r[side]?.accepted ?? []) studioParts.add(`component:${a.type}`); }
+  }
+  // 루트에서 놓을 수 없는 부품(칸반 열, 탭 패널 등)은 그 부품을 실제로 담고 있는 템플릿 문서에서 부모 안에 놓을 수 있는지 본다.
+  for (const id of component2_6.filter(c => !studioParts.has(c) && c !== 'component:page')) {
+    const type = id.slice('component:'.length);
+    for (const templateId of Object.keys(templates)) {
+      const made = edit.resetDocument(null, {template: templateId});
+      if (!made.ok) continue;
+      const at = (nodes, trail) => { for (const [i, n] of (nodes ?? []).entries()) { if (n.type === type) return [...trail, i]; const deeper = at(n.children, [...trail, i]); if (deeper) return deeper; } return null; };
+      const found = at(made.doc.tree.children, []);
+      if (!found) continue;
+      const r = edit.addPlacements(made.doc, found.slice(0, -1));
+      if (['inside', 'after'].some(side => r[side]?.accepted?.some(a => a.type === type))) studioParts.add(id);
+      break;
+    }
+  }
+  // Studio 조립 화면(/studio/assemble): 목적 패밀리 상세에서 넘어오는 기반 컴포넌트는 카드 계열(children에 card-surface)뿐이다.
+  const handoffFamilies = purposeIds.filter(id => { const f = platformEnv.registry.get(id); return f.children?.some(c => c.endsWith('card-surface')); });
+  const handoffOk = handoffFamilies.filter(id => ok(service.assembleDesign({purpose: 'saas-landing', candidates: 1, components: [1, 2, 3].map(n => ({base: 'base-component:card-surface', family: 'family:soft', content: {id: `c${n}`, title: `${id} ${n}`, body: '내용'}}))}, {include: ['html']})));
+  // 방향 단계(DirectionStep)는 목적마다 추천 순서 앞쪽 6개 스타일 맥락만 보여 준다.
+  const directionStyles = new Set();
+  for (const purpose of Object.keys(PURPOSES)) {
+    const context = ({'saas-landing': 'landing', 'work-dashboard': 'dashboard', 'editorial-docs': 'article', commerce: 'commerce'})[purpose];
+    const r = service.recommendMaterials({kind: 'style-context', context});
+    if (ok(r)) r.value.ranked.slice(0, 6).forEach(x => directionStyles.add(x.id));
+  }
+  const axisValueIds = axisId => ofKind('axis-value').filter(a => a.axis === axisId).map(a => a.id);
+  const studioAxes = catalogRows('axes', {fields: ['axis', 'values']}).filter(a => a.axis !== 'mode');
+  const defs = [
+    {id: 'web:/components', role: 'catalog', files: ['apps/web/app/components/page.tsx', 'apps/web/features/components/spec.server.ts'], needs: ['componentRows', 'purposeFamilies', "type !== 'page'"], ids: () => [...component2_6.filter(id => id !== 'component:page'), ...purposeIds]},
+    {id: 'web:/components/[componentId]', role: 'detail', files: ['apps/web/app/components/[componentId]/page.tsx'], needs: ['generateStaticParams', 'componentRows'], ids: () => component2_6},
+    {id: 'web:/components/purpose/[group]/[name]', role: 'detail', files: ['apps/web/app/components/purpose/[group]/[name]/page.tsx'], needs: ['purposeFamilies', 'purpose:${group}.${name}'], ids: () => purposeIds},
+    {id: 'web:/materials/palettes', role: 'catalog', files: ['apps/web/app/materials/palettes/page.tsx'], needs: ["materials('palette')"], ids: () => platformList('palette')},
+    {id: 'web:/materials/palettes/[paletteId]', role: 'detail', files: ['apps/web/app/materials/palettes/[paletteId]/page.tsx'], needs: ["materials('subtoken-set')"], ids: () => [...platformList('palette'), ...platformList('subtoken-set')]},
+    {id: 'web:/materials/color', role: 'catalog', files: ['apps/web/app/materials/color/page.tsx', 'apps/web/features/materials/materials.server.ts'], needs: ['colorView', "material<any>('color')"], ids: () => (ok(colorView) ? colorView.value.materials.map(m => m.id) : [])},
+    {id: 'web:/materials/typography', role: 'catalog', files: ['apps/web/app/materials/typography/page.tsx', 'apps/web/features/platform/TypeCompare.tsx'], needs: ['typeView', "materials('type-system')"], ids: () => [...(ok(typeView) ? typeView.value.presets.map(p => `type-role-preset:${p.id}`) : []), ...platformList('type-system')]},
+    {id: 'web:/materials/styles', role: 'catalog', files: ['apps/web/app/materials/styles/page.tsx'], needs: ["materials('style-context')", 'OTHER_KINDS', 'materials(kind)'], ids: () => ['style-context', 'surface', 'motion', 'background', 'media', 'state-pattern'].flatMap(platformList)},
+    {id: 'web:/materials/foundations', role: 'catalog', files: ['apps/web/app/materials/foundations/page.tsx', 'apps/web/features/materials/materials.server.ts'], needs: ['foundationAxes', 'iconRows', 'layoutPrimitives', "listCatalog({kind: 'icons'"], ids: () => [...foundationAxes, ...catalogRows('icons', {fields: ['id']}).map(r => `icon:${r.id}`), ...(ok(foundations) ? foundations.value.layoutPrimitives.map(m => m.id) : [])]},
+    {id: 'web:/materials/foundations/[axis]', role: 'detail', files: ['apps/web/app/materials/foundations/[axis]/page.tsx'], needs: ['foundationAxes', 'generateStaticParams'], ids: () => [...foundationAxes, ...foundationAxes.flatMap(a => axisValueIds(a.slice('axis:'.length)))]},
+    {id: 'web:/explore', role: 'catalog', files: ['apps/web/features/explore/designs.server.ts', 'apps/web/app/explore/page.tsx'], needs: ['curatedDesigns', "rows('templates'"], ids: () => [...explore.templates, ...explore.themes, ...explore.palettes]},
+    {id: 'web:/explore/[designId]', role: 'detail', files: ['apps/web/app/explore/[designId]/page.tsx'], needs: ['findDesign'], ids: () => [...explore.templates]},
+    {id: 'web:/studio', role: 'studio', files: ['apps/web/features/studio/components/DesignPanel.tsx', 'apps/web/features/studio/catalog.ts', 'apps/web/features/studio/components/Dialogs.tsx'], needs: ['catalog.themes', 'catalog.palettes', 'catalog.axes', 'getTypePresets', 'catalog?.templates'],
+      ids: () => [...catalogRows('templates', {fields: ['id']}).map(r => `template:${r.id}`), ...catalogRows('themes', {fields: ['id']}).map(r => `theme:${r.id}`), ...catalogRows('palettes', {fields: ['id']}).map(r => `palette:${r.id}`),
+        ...studioAxes.map(a => `axis:${a.axis}`), ...studioAxes.flatMap(a => a.values.map(v => `axis-value:${a.axis}.${v}`)), ...studioAxes.filter(a => a.axis === 'typography').flatMap(a => a.values.map(v => `type-preset:${v}`)),
+        ...(ok(service.getTypePresets()) ? service.getTypePresets().value.presets.map(p => `type-role-preset:${p.id}`) : [])]},
+    {id: 'web:/studio#insert-parts', role: 'studio', files: ['apps/web/features/studio/components/StructurePanel.tsx'], needs: ['addPlacements'], ids: () => [...studioParts]},
+    {id: 'web:/studio/assemble#swap', role: 'studio', files: ['apps/web/app/studio/assemble/page.tsx'], needs: ["materials('palette')", "materials('subtoken-set')", "materials('type-system')", "materials('family')", "materials('surface')", "materials('motion')", "materials('background')", "materials('media')", "materials('axis-value')"],
+      ids: () => [...['palette', 'subtoken-set', 'type-system', 'family', 'surface', 'motion', 'background', 'media'].flatMap(platformList), ...ofKind('axis-value').filter(a => ['shell', 'width', 'density'].includes(a.axis)).map(a => a.id)].filter(probeOk)},
+    {id: 'web:/studio/assemble#direction', role: 'studio', files: ['apps/web/app/studio/assemble/page.tsx'], needs: ["recommend({kind: 'style-context'", 'slice(0, 6)'], ids: () => [...directionStyles].filter(probeOk)},
+    {id: 'web:/studio/assemble#state-patterns', role: 'studio', files: ['apps/web/app/materials/styles/page.tsx', 'apps/web/features/platform/assemble-state.ts'], needs: ['spat', 'state-pattern'], ids: () => platformList('state-pattern').filter(probeOk)},
+    {id: 'web:/materials/styles#studio-link', role: 'studio', files: ['apps/web/app/materials/styles/page.tsx'], needs: ['Studio에서 쓰기', 'probe.ok', 'writeState'], ids: () => ['style-context', 'surface', 'motion', 'background', 'media'].flatMap(platformList).filter(probeOk)},
+    {id: 'web:/components/purpose/[group]/[name]#visual-families', role: 'catalog', files: ['apps/web/app/components/purpose/[group]/[name]/page.tsx', 'apps/web/features/platform/component-view.server.ts'], needs: ['VISUALS', 'visualOk'], ids: () => (VISUALS.map(v => `family:${v}`))},
+    {id: 'web:/studio/assemble#component-handoff', role: 'studio', files: ['apps/web/app/components/purpose/[group]/[name]/page.tsx', 'apps/web/features/platform/assemble-state.ts'], needs: ["endsWith('card-surface')", 'component: shortId(baseId)'], ids: () => [...handoffOk, 'base-component:card-surface']},
+  ];
+  return defs.map(d => ({...d, proven: proveSurface(d.id, d.files, d.needs)})).map(d => ({...d, set: new Set(d.proven ? d.ids() : [])}));
+}
+
+// -----------------------------------------------------------------------------
+// 5. 실제 호출 프로브: 렌더 가능·조립 가능·출력 해시
+// -----------------------------------------------------------------------------
+
+const PURPOSE_IDS = Object.keys(PURPOSES);
+const STATE_SLOTS = ['empty', 'loading', 'error', 'success'];
+
+/** 플랫폼 재료 하나를 고른 요청으로 실제 조립한다. 목적을 차례로 시험해 처음 받아들여지는 요청을 기록한다. */
+function platformRequest(rec, kind) {
+  const id = rec.id;
+  switch (kind) {
+    case 'palette': return {palette: id};
+    case 'subtoken-set': return {subtokenSet: id};
+    case 'type-system': return {typeSystem: id};
+    case 'style-context': return {styleContext: id};
+    case 'surface': case 'motion': case 'background': case 'media': return {[kind]: id};
+    case 'state-pattern': {
+      // 상태 패턴은 그 상태가 화면에 나타날 때만 출력에 닿는다. 표가 그 상태에 있는 내용으로 요청한다(success는 표 상태에 없어 기준 출력과 같다).
+      const slot = (rec.tags ?? []).find(t => STATE_SLOTS.includes(t));
+      const table = {title: '작업', columns: ['작업', '담당', '상태'], rows: [['작업 1', '담당 1', '진행']], ...(slot === 'empty' ? {rows: []} : {}), ...(slot === 'loading' || slot === 'error' ? {state: slot} : {})};
+      return slot ? {states: {[slot]: id}, content: {table}} : null;
+    }
+    case 'family': return {components: [1, 2, 3].map(n => ({base: 'base-component:card-surface', family: id, content: {id: `c${n}`, title: `카드 ${n}`, body: '내용'}}))};
+    case 'axis-value': return ['shell', 'width', 'density', 'mode'].includes(rec.axis) ? {[rec.axis]: rec.value} : null;
+    default: return null;
+  }
+}
+function assembleProbe(rec, kind) {
+  const request = platformRequest(rec, kind);
+  if (!request) return {method: 'assembleDesign', ran: false, ok: false, reason: '이 종류는 assembleDesign 요청 키로 직접 고를 수 없다'};
+  let last = null;
+  // 맥락(목적)과 모드 때문에 거부되는 재료가 있다(예: dark 전용 스타일). 모든 목적 × 모드에서 거부될 때만 실패로 본다.
+  // 상태 패턴은 표가 있는 업무 대시보드에서만 상태 내용이 출력에 닿으므로 그 목적을 먼저 시험한다.
+  const purposes = kind === 'state-pattern' ? ['work-dashboard', ...PURPOSE_IDS.filter(p => p !== 'work-dashboard')] : PURPOSE_IDS;
+  for (const mode of ['light', 'dark']) for (const purpose of purposes) {
+    const r = service.assembleDesign({purpose, mode, candidates: 1, ...request}, {include: ['html', 'css', 'manifest', 'blueprint']});
+    if (!ok(r)) { last = r.errors?.[0]?.message ?? 'assembleDesign 실패'; continue; }
+    const c = r.value.candidates[0];
+    const manifest = JSON.stringify(c.value.manifest), blueprint = JSON.stringify(c.value.blueprint.materials ?? {});
+    // 상태 패턴: 그 상태를 일으키는 내용을 빼고 정상 표로 조립한 출력과 같으면 그 상태가 화면에 나타나지 않으므로 고른 효과가 없다.
+    let noEffect = false;
+    if (kind === 'state-pattern') {
+      const normal = service.assembleDesign({purpose, mode, candidates: 1, content: {table: {title: '작업', columns: ['작업', '담당', '상태'], rows: [['작업 1', '담당 1', '진행']]}}}, {include: ['html', 'css']});
+      noEffect = ok(normal) && sha(normal.value.candidates[0].value.html + normal.value.candidates[0].value.css) === sha(c.value.html + c.value.css);
+    }
+    return {
+      method: 'assembleDesign', ran: true, ok: true, purpose, mode, noEffect,
+      qualityOk: Boolean(c.quality?.ok), blueprintHasId: blueprint.includes(rec.id), manifestHasId: manifest.includes(rec.id),
+      htmlBytes: c.value.html.length, cssBytes: c.value.css.length, outputHash: sha(c.value.html + c.value.css), axes: Object.fromEntries(AXIS_FIELDS.map(a => [a, c.value.blueprint[a]])),
+    };
+  }
+  return {method: 'assembleDesign', ran: true, ok: false, reason: last};
+}
+const AXIS_FIELDS = ['shell', 'typography', 'density', 'radius', 'control', 'elevation', 'motion', 'icon', 'ornament', 'backdrop', 'width', 'scale', 'weight', 'footer', 'mode'];
+
+/** 목적 패밀리: 웹 상세 화면과 같은 방식으로 assembleComponents를 부른다. */
+function purposeProbe(rec) {
+  const context = rec.contexts[0] === 'any' ? 'general' : rec.contexts[0];
+  let last = null;
+  // 웹 상세 화면은 시각 패밀리 칩을 바꿔 가며 보여 준다. 패밀리와 충돌하는 조합(예: 고밀도 표 × soft)이 있어도 한 패밀리에서 조립되면 렌더 가능이다.
+  for (const visual of VISUALS.map(v => `family:${v}`)) {
+    const r = service.assembleComponents({context, mode: 'light', items: [{purpose: rec.id, visual, variant: rec.example.variant, props: rec.example.props, content: rec.example.content}]});
+    if (!ok(r)) { last = r.errors?.[0]?.message; continue; }
+    return {method: 'assembleComponents', ran: true, ok: true, visual, qualityOk: true, htmlBytes: r.value.html.length, cssBytes: r.value.css.length, outputHash: sha(r.value.html + r.value.css), manifestHasId: JSON.stringify(r.value.manifest).includes(rec.id), blueprintHasId: null};
+  }
+  return {method: 'assembleComponents', ran: true, ok: false, reason: last};
+}
+
+// 구형 부품·차트·템플릿 등: 웹 /components/[componentId] 와 Studio가 쓰는 edit 연산·compileBlueprint로 실제 컴파일한다.
+const BASE_DOC = {template: 'about-team', theme: 'workspace'};
+const compileHtml = doc => { const r = service.compileBlueprint(doc, {include: ['html', 'css']}); return ok(r) ? r.value : null; };
+function isolatedDoc(rec, node) {
+  const made = edit.resetDocument(null, BASE_DOC);
+  if (!made.ok) return null;
+  let doc = made.doc;
+  if (rec.since === '2.6.0') {
+    const up = edit.importBlueprint(null, {blueprint: {...doc, catalogVersion: '2.6.0'}});
+    if (!up.ok) return null;
+    doc = up.doc;
+  }
+  const at = rec.id === 'component:hero' ? 1 : doc.tree.children.length;
+  const ins = edit.insertNode(doc, {parent: [], node, index: at});
+  if (!ins.ok) return null;
+  doc = ins.doc;
+  for (let i = doc.tree.children.length - 1; i >= 1; i--) {
+    if (i === at) continue;
+    const rm = edit.removeNode(doc, {path: [i]});
+    if (!rm.ok) return null;
+    doc = rm.doc;
+  }
+  return doc;
+}
+const firstTemplateUsing = (() => {
+  const cache = new Map();
+  return type => {
+    if (cache.has(type)) return cache.get(type);
+    const has = nodes => !!nodes?.some(n => n.type === type || has(n.children));
+    let found = null;
+    for (const t of Object.keys(templates)) { const made = edit.resetDocument(null, {template: t}); if (made.ok && has(made.doc.tree.children)) { found = t; break; } }
+    cache.set(type, found);
+    return found;
+  };
+})();
+function componentProbe(rec) {
+  const type = rec.id.slice('component:'.length);
+  const spec = service.getComponentSpec({type, ...(rec.since === '2.6.0' ? {catalogVersion: '2.6.0'} : {})});
+  if (!ok(spec)) return {method: 'compileBlueprint', ran: true, ok: false, reason: 'getComponentSpec 실패'};
+  if (type === 'page') {
+    const made = edit.resetDocument(null, BASE_DOC);
+    const out = made.ok && compileHtml(made.doc);
+    return out ? {method: 'compileBlueprint(every document root)', ran: true, ok: true, qualityOk: true, htmlBytes: out.html.length, cssBytes: out.css.length, outputHash: sha(out.html + out.css), blueprintHasId: true, manifestHasId: null} : {method: 'compileBlueprint', ran: true, ok: false, reason: '컴파일 실패'};
+  }
+  if (spec.value.example) {
+    const node = rec.since === '2.6.0' ? {...spec.value.example, ...rec.defaults} : spec.value.example;
+    for (const key of ['sortable', 'selectable']) if (typeof node[key] === 'boolean') node[key] = node[key] ? 'yes' : 'no';
+    if (type === 'data-table' && !['ready', 'partial'].includes(node.state)) node.rows = [];
+    const doc = isolatedDoc(rec, node);
+    const out = doc && compileHtml(doc);
+    if (out) return {method: 'compileBlueprint(isolated)', ran: true, ok: true, qualityOk: true, htmlBytes: out.html.length, cssBytes: out.css.length, outputHash: sha(out.html + out.css), blueprintHasId: true, manifestHasId: null};
+  }
+  const t = firstTemplateUsing(type);
+  const made = t && edit.resetDocument(null, {template: t});
+  const out = made?.ok && compileHtml(made.doc);
+  return out ? {method: `compileBlueprint(template:${t})`, ran: true, ok: true, qualityOk: true, htmlBytes: out.html.length, cssBytes: out.css.length, outputHash: sha(out.html + out.css), blueprintHasId: true, manifestHasId: null}
+    : {method: 'compileBlueprint', ran: true, ok: false, reason: '단독 예제도, 이 부품을 쓰는 템플릿도 컴파일되지 않는다'};
+}
+/** 프로파일 조립 경로(src/profiles/assemble.mjs)로 패턴 하나를 실제로 조립하고 컴파일한다. 값은 프로파일이 허용한 첫 값이다. */
+function profileProbe(profileId, patternId) {
+  const p = PROFILES[profileId], pattern = PATTERNS[patternId.slice('pattern:'.length)], pt = pageTypes[templates[pattern.template].pageType];
+  const shells = pattern.shells.filter(x => p.chrome.shells.includes(x)), widths = pattern.widths.filter(w => p.axes.width.includes(w) && (!pt.widths || pt.widths.includes(w)));
+  const r = assembleProfile(profileId, {pattern: patternId, theme: p.themes[0], density: p.density.allowed[0], mode: p.color.modes[0], typography: p.type.typography[0], controlSize: p.controlSize.allowed[0], shell: shells[0], width: widths[0]});
+  const method = `assemble(${profileId}, {pattern: ${patternId}})+compile`;
+  if (!r.ok) return {method, ran: true, ok: false, reason: r.diagnostics.find(d => d.severity === 'error')?.message ?? 'assemble 실패'};
+  let out;
+  try { out = compileDocument(r.blueprint); } catch (e) { return {method, ran: true, ok: false, reason: `compile 실패: ${String(e.message).split('\n')[0]}`}; }
+  return {method, ran: true, ok: true, qualityOk: true, htmlBytes: out.html.length, cssBytes: out.css.length, outputHash: sha(out.html + out.css), blueprintHasId: true, manifestHasId: null};
+}
+function legacyProbe(rec, kind) {
+  const done = (out, method) => out ? {method, ran: true, ok: true, qualityOk: true, htmlBytes: out.html.length, cssBytes: out.css.length, outputHash: sha(out.html + out.css), blueprintHasId: true, manifestHasId: null} : {method, ran: true, ok: false, reason: '컴파일 실패'};
+  const short = rec.id.slice(rec.id.indexOf(':') + 1);
+  switch (kind) {
+    case 'component': return componentProbe(rec);
+    case 'chart-preset': {
+      const doc = isolatedDoc(rec, rec.examples[0]);
+      return done(doc && compileHtml(doc), 'compileBlueprint(isolated chart node)');
+    }
+    case 'template': { const m = edit.resetDocument(null, {template: short}); return done(m.ok && compileHtml(m.doc), 'resetDocument+compileBlueprint'); }
+    case 'theme': { const m = edit.resetDocument(null, {template: BASE_DOC.template, theme: short}); return done(m.ok && compileHtml(m.doc), 'resetDocument(theme)+compileBlueprint'); }
+    case 'palette': { const m = edit.resetDocument(null, {template: BASE_DOC.template, theme: BASE_DOC.theme}); const s = m.ok && edit.setPalette(m.doc, {palette: short}); return done(s?.ok && compileHtml(s.doc), 'setPalette+compileBlueprint'); }
+    case 'type-preset': { const m = edit.resetDocument(null, BASE_DOC); const s = m.ok && edit.setAppearance(m.doc, {axes: {typography: short}}); return done(s?.ok && compileHtml(s.doc), 'setAppearance(typography)+compileBlueprint'); }
+    case 'axis': {
+      const values = rec.variants?.value ?? [];
+      const outs = values.map(v => { const m = edit.resetDocument(null, BASE_DOC); if (!m.ok) return null; const s = short === 'mode' ? edit.setAppearance(m.doc, {mode: v}) : edit.setAppearance(m.doc, {axes: {[short]: v}}); return s.ok ? compileHtml(s.doc) : null; });
+      const passed = outs.filter(Boolean);
+      return passed.length === values.length && passed.length ? {method: 'setAppearance(all values)+compileBlueprint', ran: true, ok: true, qualityOk: true, htmlBytes: passed[0].html.length, cssBytes: passed[0].css.length, outputHash: sha(passed.map(o => o.html + o.css).join('')), blueprintHasId: true, manifestHasId: null}
+        : {method: 'setAppearance(all values)+compileBlueprint', ran: true, ok: false, reason: `${passed.length}/${values.length}개 값만 컴파일됨`};
+    }
+    case 'type-role-preset': {
+      const m = edit.resetDocument(null, BASE_DOC);
+      const up = m.ok && edit.importBlueprint(null, {blueprint: {...m.doc, catalogVersion: '2.6.0', typeRoles: short}, upgrade: true});
+      return done(up?.ok && compileHtml(up.doc), 'importBlueprint(typeRoles)+compileBlueprint');
+    }
+    case 'color-token': { const r = service.getMaterial({id: rec.id}); return r.ok ? {method: 'getMaterial(resolveColorTokens)', ran: true, ok: true, qualityOk: true, htmlBytes: 0, cssBytes: 0, outputHash: sha(JSON.stringify(r.value.ext)), blueprintHasId: null, manifestHasId: null} : {method: 'getMaterial', ran: true, ok: false, reason: 'getMaterial 실패'}; }
+    case 'icon': {
+      const made = edit.resetDocument(null, BASE_DOC);
+      const out = made.ok && compileHtml(made.doc);
+      return {method: 'render/util.icon()', ran: true, ok: iconRenders(short), qualityOk: true, htmlBytes: 0, cssBytes: 0, outputHash: iconRenders(short) ? sha(String(iconModule.icon(short))) : null, blueprintHasId: Boolean(out), manifestHasId: null};
+    }
+    case 'layout-primitive': {
+      // ext.css는 이 원형이 쓰는 선택자 목록이다. 그 선택자가 이 원형을 쓰는 패턴 템플릿들의 컴파일 출력(합집합)에 전부 있어야 렌더되는 것으로 본다.
+      const tokens = [...String(rec.ext.css).matchAll(/\.[a-z][\w-]*|\[[a-z-]+(?:=[^\]]+)?\]/g)].map(m => m[0].replace(/^\[([a-z-]+).*\]$/, '$1'));
+      const used = uniq(Object.values(PATTERNS).filter(p => p.primitives.includes(short)).map(p => p.template));
+      let text = '', bytes = 0;
+      for (const template of used) { const made = edit.resetDocument(null, {template}); const out = made.ok && compileHtml(made.doc); if (out) { text += out.css + out.html; bytes += out.html.length + out.css.length; } }
+      const missing = tokens.filter(t => !text.includes(t));
+      return tokens.length && !missing.length
+        ? {method: `selectors in compileBlueprint(templates of ${used.length} patterns)`, ran: true, ok: true, qualityOk: true, htmlBytes: bytes, cssBytes: bytes, outputHash: sha(tokens.join(',')), blueprintHasId: true, manifestHasId: null}
+        : {method: 'selectors in compileBlueprint(pattern templates)', ran: true, ok: false, reason: `출력에 없는 선택자: ${missing.join(' ') || '(선택자 없음)'}`};
+    }
+    case 'page-type': {
+      const t = Object.entries(templates).find(([, tpl]) => tpl.pageType === short)?.[0];
+      const m = t && edit.resetDocument(null, {template: t});
+      return done(m?.ok && compileHtml(m.doc), `template:${t} 컴파일`);
+    }
+    case 'recipe': return {method: 'selectRecipe', ran: false, ok: false, reason: '레시피를 단독으로 렌더하는 서비스 진입점이 없다'};
+    case 'pattern': {
+      const profile = Object.keys(PROFILES).find(p => PROFILES[p].patterns.includes(rec.id));
+      return profile ? profileProbe(profile, rec.id) : {method: 'assemble(profile, {pattern})', ran: true, ok: false, reason: '어느 프로파일도 이 패턴을 쓰지 않는다'};
+    }
+    case 'profile': return profileProbe(short, PROFILES[short].patterns[0]);
+    default: return {method: null, ran: false, ok: false, reason: '이 종류의 렌더 프로브가 없다'};
+  }
+}
+const iconModule = await import('../src/render/util.mjs');
+const iconRenders = name => { try { return String(iconModule.icon(name)).includes('<svg'); } catch { return false; } };
+
+function probeOf(entity) {
+  const {record, registry, kind} = entity;
+  if (registry === 'platform') {
+    if (kind === 'purpose-family') return purposeProbe(record);
+    if (kind === 'base-component') {
+      const contract = entities.get(record.contract);
+      const p = contract ? componentProbe(contract.record) : {method: 'compileBlueprint', ran: false, ok: false, reason: '계약 기록 없음'};
+      return {...p, method: `${p.method} via ${record.contract}`, placeable: baseIsPlaceable(record.id)};
+    }
+    return assembleProbe(record, kind);
+  }
+  return legacyProbe(record, kind);
+}
+
+// -----------------------------------------------------------------------------
+// 6. 모든 재료 실행: 프로브 → 노출 → 상태 사다리
+// -----------------------------------------------------------------------------
+
+const probes = new Map();
+for (const [id, entity] of entities) probes.set(id, probeOf(entity));
+const probeOk = id => probes.get(id)?.ok === true;
+// 요청 키가 없는 축 값(radius·elevation 등)은 스타일 맥락 조립이 Blueprint에서 실제로 고른 값이면 조립 경로가 있는 것이다.
+const reachedAxisValues = new Map();
+for (const [id, p] of [...probes].sort(([a], [b]) => (a < b ? -1 : 1))) for (const [axis, value] of Object.entries(p.axes ?? {})) {
+  const key = `axis-value:${axis}.${value}`;
+  if (value && !reachedAxisValues.has(key)) reachedAxisValues.set(key, {via: id, htmlBytes: p.htmlBytes, cssBytes: p.cssBytes, purpose: p.purpose, mode: p.mode, qualityOk: p.qualityOk});
+}
+for (const [id, entity] of entities) {
+  const p = probes.get(id);
+  if (entity.kind !== 'axis-value' || p.ok || p.ran) continue;
+  const hit = reachedAxisValues.get(id);
+  if (hit) probes.set(id, {method: `assembleDesign(${hit.via}의 Blueprint가 고른 축 값)`, ran: true, ok: true, purpose: hit.purpose, mode: hit.mode, qualityOk: hit.qualityOk, htmlBytes: hit.htmlBytes, cssBytes: hit.cssBytes, outputHash: null, blueprintHasId: true, manifestHasId: null, noEffect: false});
+}
+const surfaces = buildSurfaces();
+/** 기반 컴포넌트는 id로 웹에 오르지 않는다. 같은 구현을 공유하는 계약 컴포넌트(component:*-control)가 노출되는 라우트를 그대로 쓰고 via에 적는다. */
+const exposureId = id => { const e = entities.get(id); return e?.kind === 'base-component' && entities.has(e.record.contract) ? e.record.contract : id; };
+const surfacesOf = (id, role) => { const key = exposureId(id); return surfaces.filter(s => s.role === role && (s.set.has(id) || s.set.has(key))).map(s => s.id).sort(); };
+const restOps = new Set([...read('apps/web/lib/api/operations.mjs').matchAll(/id:\s*['"]([a-zA-Z0-9_-]+)['"]/g)].map(m => m[1]));
+const mcpTools = new Set([...read('apps/web/lib/api/mcp.mjs').matchAll(/name:\s*['"]([a-zA-Z0-9_-]+)['"]/g)].map(m => m[1]));
+const channelProof = {
+  platform: restOps.has('getPlatformMaterial') && mcpTools.has('get_platform_material'),
+  design: restOps.has('getMaterial') && mcpTools.has('get_material'),
+  components: restOps.has('assembleComponents') && mcpTools.has('assemble_components'),
+};
+const DERIVED_KINDS = new Set(['color-token']);
+const STATUS = ['missing', 'metadata-only', 'defined', 'renderable', 'catalog-visible', 'assemblable', 'verified'];
+
+const atLeast = (version, since) => version.localeCompare(since, 'en', {numeric: true}) >= 0;
+function versionsOf(entity) {
+  const {record, registry} = entity;
+  if (registry === 'platform') return {supported: ['2.7.0'], introducedIn: null, materialVersion: record.version, note: '플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다'};
+  const since = record.since ?? '2.1.0';
+  return {supported: [...ACCEPTED_CATALOG_VERSIONS].filter(v => atLeast(v, since)), introducedIn: since, materialVersion: record.version};
+}
+
+function legacyRelations(id, record) {
+  const rows = LEGACY_VARIANT_MAP.filter(r => r.to && (r.to.base === id || r.to.purpose === id));
+  const out = [];
+  if (rows.length) out.push({relationType: 'replaces-legacy-node', legacyIds: uniq(rows.map(r => r.node)).map(n => (entities.has(`component:${n}`) ? `component:${n}` : `shell:${n}`)), mappedValues: rows.length, source: 'src/platform/families/legacy-map.mjs LEGACY_VARIANT_MAP'});
+  if (id.startsWith('component:')) {
+    const node = id.slice('component:'.length);
+    const to = LEGACY_VARIANT_MAP.filter(r => r.node === node && r.to);
+    if (to.length) out.push({relationType: 'superseded-by-platform', replacedBy: uniq(to.map(r => r.to.base ?? r.to.purpose)), mappedValues: to.length, unmappedValues: LEGACY_VARIANT_MAP.filter(r => r.node === node && !r.to).length, source: 'src/platform/families/legacy-map.mjs LEGACY_VARIANT_MAP'});
+  }
+  for (const target of record.reuses ?? []) if (entities.has(target)) out.push({relationType: 'reuses', targetId: target, source: 'record.reuses'});
+  if (id.startsWith('base-component:') && entities.has(record.contract)) out.push({relationType: 'shares-contract', targetId: record.contract, source: 'record.contract'});
+  return out.length ? out : null;
+}
+
+// 같은 종류·같은 요청 맥락(목적·모드·시각 패밀리) 안에서 출력 해시가 같은 재료를 찾는다. 출력이 같으면 독립 재료가 아니다(§1.2).
+const groupKeyOf = id => { const p = probes.get(id); return `${entities.get(id).kind}|${p.purpose ?? ''}|${p.mode ?? ''}|${p.visual ?? ''}`; };
+const groups = new Map();
+for (const id of probes.keys()) if (probes.get(id).outputHash) groups.set(groupKeyOf(id), [...(groups.get(groupKeyOf(id)) ?? []), id]);
+const duplicatesOf = id => (probes.get(id).outputHash ? (groups.get(groupKeyOf(id)) ?? []).filter(o => o !== id && probes.get(o).outputHash === probes.get(id).outputHash).sort() : []);
+/** 같은 그룹의 다른 재료와 출력이 전부 같으면 CSS·토큰을 실제로 쓰는 것으로 보지 않는다. */
+const hasObservableEffect = id => {
+  const peers = groups.get(groupKeyOf(id)) ?? [];
+  return peers.length <= 1 || duplicatesOf(id).length < peers.length - 1;
+};
+
+const records = [];
+for (const [id, entity] of [...entities.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+  const {record, registry, kind} = entity;
+  const probe = probes.get(id);
+  const rights = record.source?.license ?? 'internal';
+  // 기반 컴포넌트는 구현과 계약을 계약 컴포넌트와 공유하므로 품질 근거도 그 기록에서 읽는다.
+  const qualityRecord = kind === 'base-component' && entities.has(record.contract) ? entities.get(record.contract).record : record;
+  const evidenceRefs = qualityRecord.quality?.evidence ?? [];
+  const validEvidence = evidenceRefs.filter(validRef);
+  const invalidEvidence = evidenceRefs.filter(r => !validRef(r));
+  const catalogSurfaces = surfacesOf(id, 'catalog'), detailSurfaces = surfacesOf(id, 'detail'), studioSurfaces = surfacesOf(id, 'studio');
+  let rendererEntry = null;
+  if (record.render?.module) rendererEntry = `${record.render.module}#${record.render.export}`;
+  if (kind === 'purpose-family' && record.entry) rendererEntry = `${record.entry.module}#${record.entry.export}`;
+  const channel = registry === 'platform' ? service.getPlatformMaterial({id}) : service.getMaterial({id});
+  const restAndMcpAvailable = ok(channel) && (registry === 'platform' ? channelProof.platform : channelProof.design);
+  const defPath = definitionOf(record, kind);
+  // 목적·시각 패밀리의 states는 배열이고(Array.prototype.values 함수와 구분해야 한다), 카탈로그 재료의 states는 {values, transitions}다.
+  const states = Array.isArray(record.states) ? record.states : Array.isArray(record.states?.values) ? record.states.values : [];
+  const rendered = probe.ok === true;
+  const exportReflected = rendered && [probe.htmlBytes, probe.cssBytes].some(n => n > 0);
+  const effective = probe.noEffect !== true;
+  const hasA11y = Boolean(record.a11y && (record.a11y.rules?.length || record.a11y.role)) || (registry === 'platform' && probe.qualityOk === true);
+  const hasResponsive = Boolean(record.responsive?.strategy) || (registry === 'platform' && rendered);
+  const a11yAndResponsiveTested = hasA11y && hasResponsive && probe.qualityOk === true && (validEvidence.length > 0 || registry === 'platform');
+
+  // 상태 사다리(누적): 앞 단계가 거짓이면 그 위 단계로 올리지 않는다. 막힌 첫 단계를 blockedBy에 적는다.
+  let status, blockedBy = null;
+  if (rights === 'unverified') { status = 'metadata-only'; blockedBy = 'rights-unverified'; }
+  else if (!defPath && !rendererEntry) { status = 'metadata-only'; blockedBy = 'no-definition'; }
+  else if (!rendered) { status = 'defined'; blockedBy = probe.ran ? 'render-probe-failed' : 'no-render-probe'; }
+  else if (!effective) { status = 'defined'; blockedBy = 'no-observable-output'; }
+  else if (catalogSurfaces.length === 0 && detailSurfaces.length === 0) { status = 'renderable'; blockedBy = 'not-in-web-catalog'; }
+  else if (studioSurfaces.length === 0) { status = 'catalog-visible'; blockedBy = 'no-studio-choice'; }
+  else {
+    const verifiedByTest = qualityRecord.quality?.status === 'verified' && validEvidence.length > 0 && invalidEvidence.length === 0;
+    const verifiedByAssembly = registry === 'platform' && probe.qualityOk === true && /^assemble(Design|Components)/.test(probe.method ?? '');
+    if (verifiedByTest || verifiedByAssembly) status = 'verified'; else { status = 'assemblable'; blockedBy = 'no-verification-evidence'; }
   }
 
-  // 변형 및 상태 추출
-  const variants = ent.variants ? Object.keys(ent.variants) : [];
-  const states = ent.states?.values ?? [];
-
-  // 웹 카탈로그 노출 여부
-  const catalogVisible = !mId.startsWith('palette:row-') && (
-    mId.startsWith('base-component:') ||
-    mId.startsWith('purpose:') ||
-    mId.startsWith('palette:') ||
-    mId.startsWith('subtoken-set:') ||
-    mId.startsWith('type-system:') ||
-    mId.startsWith('family:') ||
-    mId.startsWith('chart-preset:') ||
-    mId.startsWith('template:') ||
-    mId.startsWith('theme:')
-  );
-
-  // 상세 페이지 존재 여부
-  const detailPageExists = mId.startsWith('base-component:') || mId.startsWith('purpose:');
-
-  // Studio 조립 가능 여부
-  const studioAssemblable = !mId.startsWith('palette:row-');
-
-  // REST 및 MCP 사용 가능 여부
-  const restAndMcpAvailable = restOps.has('assembleDesign') && mcpTools.has('assemble_design') && !mId.startsWith('palette:row-');
-
-  // Blueprint 표현 가능 여부
-  const blueprintExpressible = !mId.startsWith('palette:row-');
-
-  // 내보내기 반영 여부
-  const exportReflected = Boolean(renderer);
-
-  // 접근성/반응형 테스트 여부
-  const a11yAndResponsiveTested = Boolean(testSymbol);
-
-  // 상태 판정
-  let status = 'defined';
-  if (forceStatus) {
-    status = forceStatus;
-  } else if (rights === 'unverified') {
-    status = 'metadata-only';
-  } else if (testSymbol) {
-    status = 'verified';
-  } else if (studioAssemblable && isPlatform) {
-    status = 'assemblable';
-  } else if (catalogVisible) {
-    status = 'catalog-visible';
-  } else if (renderer) {
-    status = 'renderable';
-  }
-
-  // 중복 관계 판정
-  let legacyDup = null;
-  if (mId.startsWith('palette:row-')) {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'legacy-unverified',
-      legacyId: mId,
-      note: 'Coolors 427 팔레트(권리 미확인). 플랫폼 레지스트리 미등록, 레거시 호환 전용'
-    };
-  } else if (mId === 'base-component:button-control') {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'supersedes-legacy',
-      legacyId: 'component:button',
-      note: '구형 button 노드를 대체하는 2.6.0 기반 컨트롤'
-    };
-  } else if (mId === 'base-component:card-surface') {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'supersedes-legacy',
-      legacyId: 'component:card',
-      note: '구형 card 노드를 대체하는 2.6.0 기반 표면 컨트롤'
-    };
-  } else if (mId === 'base-component:data-table') {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'supersedes-legacy',
-      legacyId: 'component:table',
-      note: '구형 table 노드를 대체하는 2.6.0 기반 데이터 표 컨트롤'
-    };
-  } else if (mId === 'base-component:tabs-control') {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'supersedes-legacy',
-      legacyId: 'component:tabs',
-      note: '구형 tabs 노드를 대체하는 2.6.0 기반 탭 컨트롤'
-    };
-  } else if (mId === 'base-component:navigation-menu') {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'supersedes-legacy',
-      legacyId: 'component:chrome-nav',
-      note: '구형 chrome-nav를 대체하는 2.6.0 기반 내비게이션 컨트롤'
-    };
-  } else if (mId === 'base-component:feedback-message') {
-    legacyDup = {
-      isDuplicate: true,
-      relationType: 'supersedes-legacy',
-      legacyId: 'component:notice',
-      note: '구형 notice를 대체하는 2.6.0 기반 피드백 컨트롤'
-    };
-  }
-
-  return {
-    id: mId,
-    name: name ?? ent.label ?? ent.name ?? mId,
-    kind: ent.kind ?? ent.platformKind ?? kind,
-    requirementId,
-    section,
-    status,
-    supportedVersions: versions,
+  records.push({
+    id, name: record.label ?? id, kind, registry, category: record.category ?? record.group ?? null,
+    requirementIds: [],
+    status, blockedBy,
+    supportedVersions: versionsOf(entity),
     definitionPath: defPath,
-    rendererConnected: renderer,
-    usesTokensAndCss: usesTokens,
-    supportedVariantsAndStates: { variants, states },
-    catalogVisible,
-    detailPageExists,
-    studioAssemblable,
+    rendererConnected: Boolean(rendererEntry) || rendered,
+    rendererEntry,
+    usesTokensAndCss: exportReflected && effective && hasObservableEffect(id),
+    supportedVariantsAndStates: {variants: sortKeys(record.variants ?? {}), states},
+    catalogVisible: catalogSurfaces.length > 0 || detailSurfaces.length > 0,
+    catalogSurfaces: uniq([...catalogSurfaces, ...detailSurfaces]).sort(),
+    ...(exposureId(id) !== id ? {catalogVia: exposureId(id)} : {}),
+    detailPageExists: detailSurfaces.length > 0,
+    detailSurfaces,
+    studioAssemblable: studioSurfaces.length > 0,
+    studioSurfaces,
     restAndMcpAvailable,
-    blueprintExpressible,
+    blueprintExpressible: probe.blueprintHasId === true || probe.manifestHasId === true,
     exportReflected,
     a11yAndResponsiveTested,
-    qualityVerdict: {
-      status: testSymbol ? 'verified' : (renderer ? 'implemented' : 'metadata-only'),
-      evidence: testSymbol
-    },
+    qualityVerdict: {status: qualityRecord.quality?.status ?? null, evidenceRefs: validEvidence, invalidEvidenceRefs: invalidEvidence, liveProbe: rendered ? 'passed' : probe.ran ? 'failed' : 'not-run'},
     rightsAndLicense: rights,
-    legacyDuplicateRelation: legacyDup,
+    legacyDuplicateRelation: legacyRelations(id, record),
     evidence: {
-      definition: defPath,
-      renderer: rendererSymbol,
-      test: testSymbol
-    }
+      definition: defPath, renderer: rendererEntry,
+      probe: {method: probe.method, ran: probe.ran, ok: probe.ok, ...(probe.purpose ? {purpose: probe.purpose, mode: probe.mode} : {}), ...(probe.visual ? {visual: probe.visual} : {}), ...(probe.reason ? {reason: probe.reason} : {}), ...(probe.qualityOk !== undefined ? {qualityOk: probe.qualityOk} : {})},
+      outputHash: probe.outputHash ?? null, duplicateOutputOf: duplicatesOf(id),
+    },
+  });
+}
+// 요구 항목 → 재료 연결
+const requirements = ALL_REQS.map(req => {
+  const cov = resolveCoverage(req);
+  const mats = cov.ids.map(id => records.find(r => r.id === id)).filter(Boolean);
+  for (const m of mats) m.requirementIds.push(req.reqId);
+  const rank = s => STATUS.indexOf(s);
+  const status = cov.how === 'missing' ? 'missing' : STATUS[Math.max(...mats.map(m => rank(m.status)))];
+  return {
+    id: req.reqId, section: req.section, name: req.name, coverage: cov.how, status, materialIds: cov.ids,
+    ...(cov.via ? {viaRecord: cov.via} : {}), ...(cov.variant ? {variant: cov.variant} : {}), ...(cov.schema ? {schema: cov.schema} : {}), ...(cov.note ? {note: cov.note} : {}),
+  };
+});
+for (const r of records) r.requirementIds.sort();
+
+// -----------------------------------------------------------------------------
+// 7. 집계: 등록 수 / 실질 재료 수 / 조합 가능 수 / 실제 조립 검증 수 / 고유 출력 수
+// -----------------------------------------------------------------------------
+
+const statusDistribution = Object.fromEntries(STATUS.map(s => [s, 0]));
+for (const r of records) statusDistribution[r.status]++;
+const reqStatusDistribution = Object.fromEntries(STATUS.map(s => [s, 0]));
+for (const q of requirements) reqStatusDistribution[q.status]++;
+
+// 플랫폼 팔레트(자체 시드)와 Coolors 레거시 팔레트는 같은 kind이지만 별개 집합이라 집계에서 나눈다.
+const summaryKind = r => (r.kind === 'palette' && r.registry === 'design' ? 'legacy-palette' : r.kind);
+const kindsInManifest = uniq(records.map(summaryKind)).sort();
+const byKind = {};
+for (const kind of kindsInManifest) {
+  const rs = records.filter(r => summaryKind(r) === kind);
+  const hashes = new Map();
+  for (const r of rs) { const h = r.evidence.outputHash, p = r.evidence.probe; if (h) hashes.set([p.purpose, p.mode, p.visual, h].join('|'), 1); }
+  const independent = !DERIVED_KINDS.has(kind);
+  byKind[kind] = {
+    registered: rs.length,
+    actualMaterial: independent ? rs.filter(r => STATUS.indexOf(r.status) >= STATUS.indexOf('renderable')).length : 0,
+    assemblableVerified: rs.filter(r => r.status === 'verified').length,
+    distinctOutputs: hashes.size,
+    byStatus: Object.fromEntries(STATUS.filter(s => rs.some(r => r.status === s)).map(s => [s, rs.filter(r => r.status === s).length])),
+    ...(independent ? {} : {note: '한 팔레트를 resolveColorTokens 한 함수가 펼친 값이라 독립 재료로 세지 않는다(scripts/platform/baseline.mjs DERIVED_KINDS)'}),
   };
 }
 
-// -----------------------------------------------------------------------------
-// 전수 재료 및 요구사항 매핑 실행
-// -----------------------------------------------------------------------------
-
-const manifestMaterials = [];
-const processedIds = new Set();
-
-// 1. 요구 컴포넌트 목록 순회 및 매핑
-for (const req of REQUIRED_COMPONENTS) {
-  let matched = null;
-  if (req.matchId) {
-    matched = platformMaterials.get(req.matchId) ?? desMaterials.get(req.matchId);
+const platformBaseline = JSON.parse(read(BASELINE_PATH));
+const livePlatform = platformSection();
+const legacyAttempted = (() => {
+  let n = 0;
+  for (const p of Object.values(PROFILES)) for (const pid of p.patterns) {
+    const pattern = PATTERNS[pid.slice(8)], pt = pageTypes[templates[pattern.template].pageType];
+    const shells = pattern.shells.filter(s => p.chrome.shells.includes(s));
+    const widths = pattern.widths.filter(w => p.axes.width.includes(w) && (!pt.widths || pt.widths.includes(w)));
+    n += p.themes.length * p.density.allowed.length * p.color.modes.length * p.type.typography.length * p.controlSize.allowed.length * shells.length * widths.length;
   }
-  const rec = buildMaterialRecord({
-    id: req.matchId ?? req.reqId,
-    name: req.name,
-    kind: req.targetKind,
-    requirementId: req.reqId,
-    section: req.section,
-    matchedEntity: matched
-  });
-  manifestMaterials.push(rec);
-  if (matched) processedIds.add(matched.id);
-}
+  return n;
+})();
+const sameJson = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-// 2. 요구 서브토큰 세트 목록 순회 및 매핑
-for (const req of REQUIRED_SUBTOKEN_SETS) {
-  let matched = null;
-  if (req.matchId) {
-    matched = platformMaterials.get(req.matchId);
-  }
-  const rec = buildMaterialRecord({
-    id: req.matchId ?? req.reqId,
-    name: req.name,
-    kind: 'subtoken-set',
-    requirementId: req.reqId,
-    section: '§4.4',
-    matchedEntity: matched
-  });
-  manifestMaterials.push(rec);
-  if (matched) processedIds.add(matched.id);
-}
+const comparisonSpecs = {
+  '신규 플랫폼 팔레트': () => ofKind('palette').filter(r => entities.get(r.id).registry === 'platform').length,
+  '서브토큰 세트': () => kindCount('subtoken-set'),
+  '신규 타이포 시스템': () => kindCount('type-system'),
+  '기존 타이포 프리셋': () => kindCount('type-preset'),
+  '기존 역할형 타이포 프리셋': () => kindCount('type-role-preset'),
+  '기반 컴포넌트': () => kindCount('base-component'),
+  '목적별 컴포넌트': () => kindCount('purpose-family'),
+  '시각 패밀리': () => kindCount('family'),
+  '기존 구조 부품': () => kindCount('component'),
+  '차트 프리셋': () => kindCount('chart-preset'),
+  '아이콘': () => kindCount('icon'),
+  '템플릿': () => kindCount('template'),
+};
+const comparisonTable = BASELINE_TABLE.map(row => {
+  const measure = comparisonSpecs[row.material];
+  if (!measure) throw new Error(`§2.1 표의 "${row.material}" 항목을 측정하는 코드가 없습니다.`);
+  const currentMeasured = measure();
+  return {material: row.material, previousBaseline: row.previousBaseline, currentMeasured, delta: currentMeasured - row.previousBaseline, status: currentMeasured === row.previousBaseline ? 'match' : 'drift', measuredBy: 'live registry count'};
+});
+for (const key of Object.keys(comparisonSpecs)) if (!BASELINE_TABLE.some(r => r.material === key)) throw new Error(`측정 코드는 있으나 REQUEST.md §2.1 표에 없는 항목: ${key}`);
 
-// 3. 요구 타이포그래피 시스템 목록 순회 및 매핑
-for (const req of REQUIRED_TYPE_SYSTEMS) {
-  let matched = null;
-  if (req.matchId) {
-    matched = platformMaterials.get(req.matchId);
-  }
-  const rec = buildMaterialRecord({
-    id: req.matchId ?? req.reqId,
-    name: req.name,
-    kind: 'type-system',
-    requirementId: req.reqId,
-    section: `§5.2 (${req.familyGroup})`,
-    matchedEntity: matched
-  });
-  manifestMaterials.push(rec);
-  if (matched) processedIds.add(matched.id);
-}
-
-// 4. 요구 시각 패밀리 목록 순회 및 매핑
-for (const req of REQUIRED_FAMILIES) {
-  let matched = null;
-  if (req.matchId) {
-    matched = platformMaterials.get(req.matchId);
-  }
-  const rec = buildMaterialRecord({
-    id: req.matchId ?? req.reqId,
-    name: req.name,
-    kind: 'family',
-    requirementId: req.reqId,
-    section: '§7',
-    matchedEntity: matched
-  });
-  manifestMaterials.push(rec);
-  if (matched) processedIds.add(matched.id);
-}
-
-// 5. 요구 차트 프리셋 목록 순회 및 매핑
-for (const req of REQUIRED_CHARTS) {
-  let matched = null;
-  if (req.matchId) {
-    matched = desMaterials.get(req.matchId) ?? catRegistry.get(req.matchId);
-  }
-  const rec = buildMaterialRecord({
-    id: req.matchId ?? req.reqId,
-    name: req.name,
-    kind: 'chart-preset',
-    requirementId: req.reqId,
-    section: '§9.1',
-    matchedEntity: matched
-  });
-  manifestMaterials.push(rec);
-  if (matched) processedIds.add(matched.id);
-}
-
-// 6. 요구 레이아웃 목록 순회 및 매핑
-for (const req of REQUIRED_LAYOUTS) {
-  let matched = null;
-  if (req.matchId) {
-    matched = desMaterials.get(req.matchId) ?? catRegistry.get(req.matchId);
-  }
-  const rec = buildMaterialRecord({
-    id: req.matchId ?? req.reqId,
-    name: req.name,
-    kind: 'layout-primitive',
-    requirementId: req.reqId,
-    section: '§9.2',
-    matchedEntity: matched
-  });
-  manifestMaterials.push(rec);
-  if (matched) processedIds.add(matched.id);
-}
-
-// 7. 아직 포함되지 않은 등록 플랫폼 재료 추가
-for (const [id, ent] of platformMaterials.entries()) {
-  if (processedIds.has(id)) continue;
-  processedIds.add(id);
-  manifestMaterials.push(buildMaterialRecord({
-    id,
-    name: ent.label ?? ent.name ?? id,
-    kind: ent.platformKind,
-    matchedEntity: ent
-  }));
-}
-
-// 8. 등록된 카탈로그 및 디자인 재료 중 미포함 항목 추가 (Coolors 427 팔레트, 아이콘, 템플릿, 테마, 구형 부품 등)
-for (const [id, ent] of desMaterials.entries()) {
-  if (processedIds.has(id)) continue;
-  processedIds.add(id);
-  manifestMaterials.push(buildMaterialRecord({
-    id,
-    name: ent.label ?? ent.name ?? id,
-    kind: ent.kind,
-    matchedEntity: ent
-  }));
-}
-
-// 결정론성을 위한 ID 정렬
-manifestMaterials.sort((a, b) => a.id.localeCompare(b.id));
-
-// -----------------------------------------------------------------------------
-// 요약 및 메트릭 집계 (§2.1 비교표 및 5대 지표)
-// -----------------------------------------------------------------------------
-
-const statusCounts = {
-  missing: 0,
-  'metadata-only': 0,
-  defined: 0,
-  renderable: 0,
-  'catalog-visible': 0,
-  assemblable: 0,
-  verified: 0
+const baselineFresh = {
+  platformSectionEqualsBaseline: sameJson(livePlatform, platformBaseline.platform),
+  legacyAttemptedEqualsBaseline: legacyAttempted === platformBaseline.combinations.attempted,
+  registeredEqualsBaseline: sameJson(livePlatform.registered, platformBaseline.platform.registered),
 };
 
-for (const m of manifestMaterials) {
-  statusCounts[m.status] = (statusCounts[m.status] ?? 0) + 1;
-}
-
-// 재료 유형별 5개 지표 분리 집계
-// 1. 등록 수 (registered)
-// 2. 실질적 재료 수 (actualMaterial: implemented + verified)
-// 3. 조합 가능 수 (combinable: 플랫폼 baseline 평가 조합 수. 조합 가능 수를 재료 수로 표현하지 않음)
-// 4. 실제 조립 검증 수 (assemblableVerified: 실제 품질 검사를 통과한 조립 검증 수)
-// 5. 고유 출력 수 (distinctOutputs: 실제 상이한 고유 해시 출력 수)
-
-const platformStats = baseline.platform ?? {};
-const baselineDistinct = platformStats.distinct ?? {};
-const baselineAssemblable = platformStats.assemblable?.assemblable ?? 119610;
-const baselineVerified = platformStats.verified?.verified ?? 5793;
-const baselineOutputs = platformStats.verified?.distinctOutputs ?? 5787;
-
-const byKindSummary = {
-  'palette': {
-    registered: platformStats.registered?.palette ?? 9,
-    actualMaterial: platformStats.registered?.palette ?? 9,
-    combinable: baselineAssemblable,
-    assemblableVerified: baselineVerified,
-    distinctOutputs: baselineDistinct.colorTokenSets?.light ?? 63
+const combinations = {
+  note: '조합 가능 수는 재료 수가 아니다. 재료를 서로 곱해 평가한 조립 경우의 수이며 byKind의 재료 집계와 합산하지 않는다.',
+  platform: {
+    assemblableCombinations: livePlatform.assemblable.assemblable, attemptedCombinations: livePlatform.assemblable.attempted,
+    verifiedAssemblies: livePlatform.verified.verified, attemptedAssemblies: livePlatform.verified.attempted, distinctVerifiedOutputs: livePlatform.verified.distinctOutputs,
+    distinctColorTokenSets: livePlatform.distinct.colorTokenSets, distinctFacePairs: livePlatform.distinct.facePairs, distinctVisualFamilies: livePlatform.distinct.families,
+    verifiedPurposeFamiliesInPages: livePlatform.distinct.purposeFamilies.verified,
+    method: 'scripts/platform/platform-baseline.mjs platformSection() 직접 호출(렌더 없이 관계 평가, 대표 페이지는 assemblePage로 조립·품질 검사)',
   },
-  'subtoken-set': {
-    registered: platformStats.registered?.subtokenSet ?? 7,
-    actualMaterial: platformStats.registered?.subtokenSet ?? 7,
-    combinable: baselineAssemblable,
-    assemblableVerified: baselineVerified,
-    distinctOutputs: baselineDistinct.colorTokenSets?.dark ?? 62
+  legacyTemplates: {
+    attemptedCombinations: legacyAttempted, assembledCombinations: platformBaseline.combinations.assembled, compiledCombinations: platformBaseline.combinations.compiled, distinctCompiledOutputs: platformBaseline.combinations.distinctCompiledOutputs,
+    method: `attemptedCombinations는 PROFILES·PATTERNS 데이터로 이 실행에서 다시 센 값. 나머지는 ${BASELINE_PATH}#combinations(scripts/platform/baseline.mjs combosSection, 컴파일 16000여 회라 비싸서 파일에서 읽음)`,
   },
-  'type-system': {
-    registered: platformStats.registered?.typeSystem ?? 14,
-    actualMaterial: platformStats.registered?.typeSystem ?? 14,
-    combinable: baselineAssemblable,
-    assemblableVerified: baselineVerified,
-    distinctOutputs: baselineDistinct.facePairs ?? 14
-  },
-  'base-component': {
-    registered: platformStats.registered?.baseComponent ?? 10,
-    actualMaterial: platformStats.registered?.baseComponent ?? 10,
-    combinable: baselineAssemblable,
-    assemblableVerified: baselineVerified,
-    distinctOutputs: baselineOutputs
-  },
-  'purpose-family': {
-    registered: platformStats.registered?.purposeFamily ?? 32,
-    actualMaterial: platformStats.registered?.purposeFamily ?? 32,
-    combinable: 0, // 목적 패밀리는 카테시안 곱 축에 넣지 않음
-    assemblableVerified: baselineDistinct.purposeFamilies?.verified ?? 4,
-    distinctOutputs: baselineDistinct.purposeFamilies?.verified ?? 4
-  },
-  'family': {
-    registered: platformStats.registered?.family ?? 4,
-    actualMaterial: platformStats.registered?.family ?? 4,
-    combinable: baselineAssemblable,
-    assemblableVerified: baselineVerified,
-    distinctOutputs: baselineDistinct.families ?? 4
-  },
-  'chart-preset': {
-    registered: baseline.materials?.byKind?.['chart-preset']?.registered ?? 29,
-    actualMaterial: baseline.materials?.byKind?.['chart-preset']?.implemented ?? 29,
-    combinable: 0,
-    assemblableVerified: baseline.reach?.chartPresets?.listedInProfiles ?? 7,
-    distinctOutputs: 29
-  },
-  'layout-primitive': {
-    registered: baseline.materials?.byKind?.['layout-primitive']?.registered ?? 6,
-    actualMaterial: baseline.materials?.byKind?.['layout-primitive']?.implemented ?? 6,
-    combinable: baselineAssemblable,
-    assemblableVerified: baselineVerified,
-    distinctOutputs: 6
-  },
-  'style-context': {
-    registered: platformStats.registered?.styleContext ?? 54,
-    actualMaterial: platformStats.registered?.styleContext ?? 54,
-    combinable: 0,
-    assemblableVerified: 54,
-    distinctOutputs: 54
-  },
-  'icon': {
-    registered: baseline.materials?.byKind?.icon?.registered ?? 87,
-    actualMaterial: baseline.materials?.byKind?.icon?.implemented ?? 87,
-    combinable: 0,
-    assemblableVerified: 87,
-    distinctOutputs: 87
-  },
-  'template': {
-    registered: baseline.materials?.byKind?.template?.registered ?? 85,
-    actualMaterial: baseline.materials?.byKind?.template?.implemented ?? 85,
-    combinable: baseline.combinations?.attempted ?? 16808,
-    assemblableVerified: baseline.combinations?.compiled ?? 16360,
-    distinctOutputs: baseline.combinations?.distinctCompiledOutputs ?? 16360
-  },
-  'legacy-palette': {
-    registered: 427,
-    actualMaterial: 0, // 권리 미확인 자료로 신규 미노출
-    combinable: 0,
-    assemblableVerified: 0,
-    distinctOutputs: baseline.legacyComparison?.themeDefaultPaletteTokenSetsLight ?? 54
-  }
 };
-
-// §2.1 기존 분석 기준표와 현재 실측값 비교 테이블
-const comparisonTable = [
-  { material: '신규 플랫폼 팔레트', previousBaseline: 9, currentMeasured: platformStats.registered?.palette ?? 9, status: 'match', note: '원색 시드 자체 팔레트 9종' },
-  { material: '서브토큰 세트', previousBaseline: 7, currentMeasured: platformStats.registered?.subtokenSet ?? 7, status: 'match', note: '역할 분배 세트 7종 (§4.4 25종 대비 18종 미구현)' },
-  { material: '신규 타이포 시스템', previousBaseline: 14, currentMeasured: platformStats.registered?.typeSystem ?? 14, status: 'match', note: '독립 타이포 시스템 14종 (§5.2 40종 대비 26종 미구현)' },
-  { material: '기존 타이포 프리셋', previousBaseline: 18, currentMeasured: baseline.reach?.typePresets?.catalog ?? 18, status: 'match', note: '구형 서체 짝 18종 (고정 출력)' },
-  { material: '기존 역할형 타이포 프리셋', previousBaseline: 4, currentMeasured: baseline.reach?.typePresets?.rolePresets ?? 4, status: 'match', note: '역할 크기 체계 4종 (고정 출력)' },
-  { material: '기반 컴포넌트', previousBaseline: 10, currentMeasured: platformStats.registered?.baseComponent ?? 10, status: 'match', note: '2.6.0 기반 컨트롤 10종' },
-  { material: '목적별 컴포넌트', previousBaseline: 32, currentMeasured: platformStats.registered?.purposeFamily ?? 32, status: 'match', note: '목적 패밀리 32종 (120종 대비 88종 미구현)' },
-  { material: '시각 패밀리', previousBaseline: 4, currentMeasured: platformStats.registered?.family ?? 4, status: 'match', note: '시각 패밀리 4종 (§7 12종 대비 8종 미구현)' },
-  { material: '기존 구조 부품', previousBaseline: 65, currentMeasured: baseline.materials?.byKind?.component?.registered ?? 65, status: 'match', note: '구형 노드 55종 + 컨트롤 10종' },
-  { material: '차트 프리셋', previousBaseline: 29, currentMeasured: baseline.materials?.byKind?.['chart-preset']?.registered ?? 29, status: 'match', note: '차트 프리셋 29종' },
-  { material: '아이콘', previousBaseline: 87, currentMeasured: baseline.materials?.byKind?.icon?.registered ?? 87, status: 'match', note: 'SVG 아이콘 87종' },
-  { material: '템플릿', previousBaseline: 85, currentMeasured: baseline.materials?.byKind?.template?.registered ?? 85, status: 'match', note: '구형 템플릿 85종' },
-];
-
-const totalRequirementsCount = REQUIRED_COMPONENTS.length + REQUIRED_SUBTOKEN_SETS.length + REQUIRED_TYPE_SYSTEMS.length + REQUIRED_FAMILIES.length + REQUIRED_CHARTS.length + REQUIRED_LAYOUTS.length;
-const missingRequirementsCount = manifestMaterials.filter(m => m.requirementId && m.status === 'missing').length;
-const fulfilledRequirementsCount = totalRequirementsCount - missingRequirementsCount;
 
 const manifest = {
-  $schema: './material-coverage.schema.json',
-  manifestVersion: '1.0.0',
-  contractVersion: platformStats.contractVersion ?? '0.7.0',
+  manifestVersion: '2.0.0',
+  contractVersion: PLATFORM_CONTRACT_VERSION,
   generatedBy: 'scripts/generate-material-coverage.mjs',
+  provenance: {
+    requirementsSource: {file: REQUEST_PATH, counts: REQUEST_COUNTS, total: ALL_REQS.length},
+    registries: {platform: platformEnv.registry.kinds().map(k => `${k}:${kindCount(k)}`).join(' '), design: uniq([...entities.values()].filter(e => e.registry === 'design').map(e => e.kind)).sort().map(k => `${k}:${kindCount(k)}`).join(' ')},
+    liveProbes: 'service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과',
+    webSurfaces: Object.fromEntries(surfaces.map(s => [s.id, {role: s.role, ...surfaceProof.get(s.id), materials: s.set.size}]).map(([k, v]) => [k, v])),
+    channelProof,
+    expensiveValues: {
+      'combinations.legacyTemplates.assembled/compiled/distinctCompiledOutputs': {source: `${BASELINE_PATH}#combinations`, generator: 'scripts/platform/baseline.mjs', live: false},
+      freshness: baselineFresh,
+    },
+    ladder: '누적 사다리. defined(정의·권리 통과, 실제 호출 실패 또는 프로브 없음) → renderable(서비스 호출로 실제 출력) → catalog-visible(웹 카탈로그 라우트가 이 재료를 렌더) → assemblable(Studio가 선택지를 제공) → verified(유효한 테스트 참조 또는 실제 조립 품질 검사 통과). metadata-only는 권리 미확인 또는 정의 없음. blockedBy가 막힌 첫 단계다.',
+  },
   summary: {
     requirements: {
-      total: totalRequirementsCount,
-      fulfilled: fulfilledRequirementsCount,
-      missing: missingRequirementsCount,
-      coverageRate: Number((fulfilledRequirementsCount / totalRequirementsCount).toFixed(4)),
-      breakdown: {
-        components: { total: REQUIRED_COMPONENTS.length, missing: REQUIRED_COMPONENTS.filter(r => manifestMaterials.find(m => m.requirementId === r.reqId)?.status === 'missing').length },
-        subtokenSets: { total: REQUIRED_SUBTOKEN_SETS.length, missing: REQUIRED_SUBTOKEN_SETS.filter(r => manifestMaterials.find(m => m.requirementId === r.reqId)?.status === 'missing').length },
-        typeSystems: { total: REQUIRED_TYPE_SYSTEMS.length, missing: REQUIRED_TYPE_SYSTEMS.filter(r => manifestMaterials.find(m => m.requirementId === r.reqId)?.status === 'missing').length },
-        families: { total: REQUIRED_FAMILIES.length, missing: REQUIRED_FAMILIES.filter(r => manifestMaterials.find(m => m.requirementId === r.reqId)?.status === 'missing').length },
-        charts: { total: REQUIRED_CHARTS.length, missing: REQUIRED_CHARTS.filter(r => manifestMaterials.find(m => m.requirementId === r.reqId)?.status === 'missing').length },
-        layouts: { total: REQUIRED_LAYOUTS.length, missing: REQUIRED_LAYOUTS.filter(r => manifestMaterials.find(m => m.requirementId === r.reqId)?.status === 'missing').length }
-      }
+      total: requirements.length,
+      fulfilled: requirements.filter(q => q.coverage !== 'missing').length,
+      missing: requirements.filter(q => q.coverage === 'missing').length,
+      coverageRate: Number((requirements.filter(q => q.coverage !== 'missing').length / requirements.length).toFixed(4)),
+      byCoverage: Object.fromEntries(['direct', 'variant', 'schema', 'part-of', 'missing'].map(h => [h, requirements.filter(q => q.coverage === h).length])),
+      statusDistribution: reqStatusDistribution,
+      breakdown: Object.fromEntries(Object.entries({components: COMPONENT_REQS, subtokenSets: SUBTOKEN_REQS, typeSystems: TYPE_REQS, families: FAMILY_REQS, charts: CHART_REQS, layouts: LAYOUT_REQS}).map(([k, reqs]) => {
+        const qs = requirements.filter(q => reqs.some(r => r.reqId === q.id));
+        return [k, {total: qs.length, missing: qs.filter(q => q.coverage === 'missing').length, direct: qs.filter(q => q.coverage === 'direct').length, variant: qs.filter(q => q.coverage === 'variant').length, schema: qs.filter(q => q.coverage === 'schema').length, partOf: qs.filter(q => q.coverage === 'part-of').length}];
+      })),
+      duplicateNames: (() => { const names = {}; for (const r of ALL_REQS) (names[r.name] ??= []).push(r.reqId); return Object.fromEntries(Object.entries(names).filter(([, ids]) => ids.length > 1)); })(),
     },
-    materials: {
-      totalRecords: manifestMaterials.length,
-      statusDistribution: statusCounts
-    },
-    byKind: byKindSummary,
-    comparisonTable
+    materials: {totalRecords: records.length, statusDistribution, registeredByRegistry: {platform: records.filter(r => r.registry === 'platform').length, design: records.filter(r => r.registry === 'design').length}},
+    byKind,
+    combinations,
+    comparisonTable,
   },
-  materials: manifestMaterials
+  requirements,
+  materials: records,
 };
 
-mkdirSync(dirname(OUT_FILE), { recursive: true });
-writeFileSync(OUT_FILE, JSON.stringify(manifest, null, 2) + '\n');
-console.log(`Material Coverage Manifest successfully generated at ${OUT_FILE}`);
-console.log(`Total Records: ${manifestMaterials.length}, Total Requirements: ${totalRequirementsCount}, Missing Requirements: ${missingRequirementsCount}`);
+const text = JSON.stringify(manifest, null, 2) + '\n';
+if (CHECK) {
+  const saved = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, 'utf8') : '';
+  if (saved !== text) { console.error(`MANIFEST DRIFT: ${DIR}/MATERIAL-COVERAGE.json 이 현재 코드와 다릅니다. npm run coverage:materials 로 다시 만드세요.`); process.exit(1); }
+  console.log(`MANIFEST MATCH ${DIR}/MATERIAL-COVERAGE.json (${records.length} materials, ${requirements.length} requirements)`);
+} else {
+  mkdirSync(dirname(OUT_FILE), {recursive: true});
+  writeFileSync(OUT_FILE, text);
+  console.log(`Material Coverage Manifest written: ${DIR}/MATERIAL-COVERAGE.json`);
+  console.log(`Materials: ${records.length}, Requirements: ${requirements.length}, Missing requirements: ${manifest.summary.requirements.missing}`);
+}

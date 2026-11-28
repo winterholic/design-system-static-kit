@@ -22,6 +22,7 @@
     "dev": "node scripts/serve.mjs",
     "verify": "npm test && node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs",
     "coverage:materials": "node scripts/generate-material-coverage.mjs",
+    "coverage:materials:check": "node scripts/generate-material-coverage.mjs --check",
     "kit": "node scripts/kit.mjs",
     "test:browser": "playwright test",
     "test:lab": "node scripts/test-lab/generate.mjs && node scripts/test-lab/check.mjs && node scripts/test-lab/index.mjs",

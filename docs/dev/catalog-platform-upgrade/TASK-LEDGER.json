@@ -1,14 +1,13 @@
 {
-  "$schema": "./task-ledger.schema.json",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "updatedAt": "2026-11-28",
   "summary": {
-    "totalTasks": 27,
+    "totalTasks": 28,
     "byStatus": {
       "Pending": 25,
       "In Progress": 1,
       "Implemented": 0,
-      "Verified": 1,
+      "Verified": 2,
       "Blocked": 0
     },
     "byTrack": {
@@ -18,7 +17,7 @@
       "Track D": 3,
       "Track E": 4,
       "Track F": 5,
-      "Track G": 5
+      "Track G": 6
     }
   },
   "tasks": [
@@ -47,7 +46,33 @@
       ],
       "commit": null,
       "status": "Verified",
-      "unresolvedIssues": null
+      "unresolvedIssues": "P0-AUDIT(TASK-P0-02)가 생성기의 하드코딩 fallback, 존재하지 않는 재료 id 26개 매핑, 접두사 추정 노출 판정을 고쳤다. 이 작업의 이전 수치(1,551건, 228 missing)는 폐기. 상세는 VERIFICATION.md §4."
+    },
+    {
+      "taskId": "TASK-P0-02",
+      "title": "Phase 0 감사 산출물 독립 검증 및 Manifest 생성기 수정 (P0-AUDIT)",
+      "goal": "Manifest의 모든 수치와 상태를 코드·서비스 호출·웹 라우트에서만 얻도록 생성기를 고치고, CONTRACTS·장부·계획 문서의 모호하거나 충돌하거나 존재하지 않는 참조를 바로잡는다",
+      "scope": "scripts/generate-material-coverage.mjs, docs/dev/catalog-platform-upgrade/(PERFORMANCE-BASELINE.json, PERF-BOTTLENECKS.md 제외), package.json 스크립트 항목",
+      "track": "Track G",
+      "dependencies": ["TASK-P0-01"],
+      "modifiedFiles": [
+        "scripts/generate-material-coverage.mjs",
+        "package.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/CONTRACTS.md",
+        "docs/dev/catalog-platform-upgrade/MASTER-PLAN.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/BLOCKERS.md",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
+      ],
+      "completionCriteria": "`npm run coverage:materials` 2회 바이트 일치, `npm run coverage:materials:check` 통과, `npm run verify` 통과, VERIFICATION.md §4에 발견 결함·수정·남은 한계 기록",
+      "tests": [
+        "scripts/generate-material-coverage.mjs --check"
+      ],
+      "commit": null,
+      "status": "Verified",
+      "unresolvedIssues": "남은 한계는 VERIFICATION.md §4.3"
     },
     {
       "taskId": "TASK-TRA-01",
@@ -63,17 +88,35 @@
       ],
       "completionCriteria": "일반 카탈로그 목록 페이지에서 활성 iframe 0개 달성, DOM 요소 수 대폭 감소, 스크롤 프레임드랍 해소",
       "tests": [
-        "tests/platform-service.test.mjs"
+        "tests/platform-service-assemble.test.mjs",
+        "tests/platform-service-channels.test.mjs"
       ],
       "commit": null,
       "status": "In Progress",
-      "unresolvedIssues": "상세 인터랙티브 미리보기와의 격리 모드 분리 필요"
+      "unresolvedIssues": "상세 인터랙티브 미리보기와의 격리 모드 분리 필요",
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/features/explore/Thumb.tsx",
+          "owner": "Track F",
+          "reason": "목록 카드 iframe 제거의 본체"
+        },
+        {
+          "file": "apps/web/features/components/ComponentPreview.tsx",
+          "owner": "Track F",
+          "reason": "목록 카드 iframe 제거"
+        },
+        {
+          "file": "apps/web/features/platform/platform.server.ts",
+          "owner": "Track F",
+          "reason": "목록 요청의 동적 컴파일 호출 제거"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRA-02",
       "title": "결정론적 사전 생성 파이프라인 및 정규화 캐시 키 엔진 구축",
-      "goal": "Core 결정론적 특성을 활용한 전시용 산출물 빌드 타임 사전 생성 및 런타임 캐싱 계층 구현",
-      "scope": "scripts/sync-static.mjs 확장, apps/web/app/platform/render/route.ts, apps/web/lib/api/cache.mjs",
+      "goal": "Core 결정론적 특성을 활용한 전시용 산출물 빌드 타임 사전 생성 및 런타임 캐싱 계층 구현 산출 위치와 캐시 키 규칙은 CONTRACTS.md §5.2, §5.3을 따른다(`site/`에는 쓰지 않는다).",
+      "scope": "apps/web/scripts/sync-static.mjs 확장, apps/web/app/platform/render/route.ts, apps/web/lib/api/cache.mjs(신규)",
       "track": "Track A",
       "dependencies": ["TASK-TRA-01"],
       "modifiedFiles": [
@@ -83,46 +126,65 @@
       ],
       "completionCriteria": "대표 미리보기 정적 자산 빌드 시 생성, 고정 미리보기 반복 요청 시 Core 컴파일 호출 0회",
       "tests": [
-        "tests/platform-service.test.mjs"
+        "tests/platform-service-assemble.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "apps/web/lib/api/cache.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/app/platform/render/route.ts",
+          "owner": "Track F",
+          "reason": "렌더 라우트에 캐시 키 조회를 붙인다"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRA-03",
       "title": "경량 카탈로그 인덱스 스키마 생성기 및 카테고리별 청크 로더",
       "goal": "780KB 단일 카탈로그 다운로드 병목 제거 및 카테고리/탭 단위 경량 인덱스 분할 제공",
-      "scope": "scripts/build-catalog-index.mjs 신규 작성, apps/web/features/components/spec.server.ts 최적화",
+      "scope": "scripts/platform/build-catalog-index.mjs 신규 작성, apps/web/features/components/spec.server.ts 최적화",
       "track": "Track A",
       "dependencies": ["TASK-TRA-02"],
       "modifiedFiles": [
-        "scripts/build-catalog-index.mjs",
         "apps/web/features/components/spec.server.ts"
       ],
-      "completionCriteria": "초기 로딩 전송량 100KB 이하 달성, 탭 전환 시 필요한 청크만 로딩",
+      "completionCriteria": "초기 로딩 전송량 목표를 TASK-TRA-01 이후 `PERFORMANCE-BASELINE.json`의 측정값을 기준으로 정해 DECISIONS.md에 적고(REQUEST에는 KB 수치가 없다. 이전 장부의 100KB는 근거가 없다), 탭 전환 시 필요한 청크만 로딩",
       "tests": [
         "tests/channel-rest.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "scripts/platform/build-catalog-index.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/features/components/spec.server.ts",
+          "owner": "Track F",
+          "reason": "목록 데이터를 인덱스 청크에서 읽도록 바꾼다"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRB-01",
       "title": "자체 원색 시드 팔레트 200종 확충 및 출처/라이선스 관리",
       "goal": "권리 미확인 Coolors 427개를 대체할 10개 색상 계열별 자체 원색 시드 팔레트 200종 구축",
-      "scope": "src/platform/data/palettes.mjs, tests/platform-color.test.mjs, docs/platform/color.md",
+      "scope": "src/platform/data/palettes.mjs, tests/platform-color-palettes.test.mjs, docs/platform/color.md(생성 표는 docs/platform/evidence/color/build.mjs로 다시 만든다)",
       "track": "Track B",
       "dependencies": ["TASK-P0-01"],
       "modifiedFiles": [
         "src/platform/data/palettes.mjs",
-        "tests/platform-color.test.mjs",
+        "tests/platform-color-palettes.test.mjs",
         "docs/platform/color.md"
       ],
       "completionCriteria": "10개 계열별 각 20개 총 200개 팔레트 등록, 모든 팔레트에 출처(license: internal/MIT) 명시, OKLCH 지각 거리 중복 검사 통과",
       "tests": [
-        "tests/platform-color.test.mjs"
+        "tests/platform-color-palettes.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
@@ -132,17 +194,17 @@
       "taskId": "TASK-TRB-02",
       "title": "실질적 역할 차별화 서브토큰 세트 25종 설계 및 RoleRule 바인딩",
       "goal": "동일 팔레트에서 다양한 시각 위계와 제품 맥락을 구현하는 25종 서브토큰 세트 정의",
-      "scope": "src/platform/data/subtoken-sets.mjs, src/platform/color.mjs, tests/platform-color-subtoken.test.mjs",
+      "scope": "src/platform/data/subtoken-sets.mjs, src/platform/color.mjs, tests/platform-color-sets.test.mjs",
       "track": "Track B",
       "dependencies": ["TASK-TRB-01"],
       "modifiedFiles": [
         "src/platform/data/subtoken-sets.mjs",
         "src/platform/color.mjs",
-        "tests/platform-color-subtoken.test.mjs"
+        "tests/platform-color-sets.test.mjs"
       ],
       "completionCriteria": "§4.4에 명시된 25개 세트 전수 정의, 23개 색상 역할별 램프 단계 및 대비 규칙(RoleRule) 완결",
       "tests": [
-        "tests/platform-color-subtoken.test.mjs"
+        "tests/platform-color-sets.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
@@ -150,7 +212,7 @@
     },
     {
       "taskId": "TASK-TRB-03",
-      "title": "토큰 5계층(Primitive/Semantic/State/Component/Chart) 매핑 완성",
+      "title": "토큰 5계층(Primitive/Semantic/State/Component/Data Visualization) 매핑 완성",
       "goal": "시드 색상부터 컴포넌트 및 데이터 시각화까지 연결되는 정교한 토큰 계층 연결",
       "scope": "src/color-tokens.mjs, src/platform/color.mjs, tests/color-tokens.test.mjs",
       "track": "Track B",
@@ -172,20 +234,33 @@
       "taskId": "TASK-TRB-04",
       "title": "200×25 결합 평가 자동화 및 적합도 랭킹/대비 검사기",
       "goal": "200개 팔레트 × 25개 서브토큰 세트 × light/dark (10,000 조합) 결합 적합도 및 대비 게이트 자동화",
-      "scope": "src/platform/recommend.mjs, src/service/propose-subtoken-sets.mjs",
+      "scope": "src/platform/recommend.mjs, src/service/platform-components.mjs(proposeSubtokenSets)",
       "track": "Track B",
       "dependencies": ["TASK-TRB-03"],
       "modifiedFiles": [
         "src/platform/recommend.mjs",
-        "src/service/propose-subtoken-sets.mjs"
+        "src/service/platform-components.mjs"
       ],
       "completionCriteria": "모든 조합에 대한 대비 합격/불합격 및 적합도 점수 산출 완료, 차단 이유(blocked) 제공",
       "tests": [
-        "tests/platform-color.test.mjs"
+        "tests/platform-color-compat.test.mjs",
+        "tests/platform-color-user.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/recommend.mjs",
+          "owner": "Track A",
+          "reason": "적합도 랭킹은 추천 엔진에 있다"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "owner": "Track A",
+          "reason": "proposeSubtokenSets는 이 파일에 있다(`src/service/propose-subtoken-sets.mjs`는 존재하지 않는다)"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRC-01",
@@ -209,7 +284,7 @@
     },
     {
       "taskId": "TASK-TRC-02",
-      "title": "16개 타이포 역할 체계 및 한글 서체 한도 검증 규칙 확대",
+      "title": "27개 타이포 역할 체계(REQUEST §5.3) 및 한글 서체 한도 검증 규칙 확대",
       "goal": "Display부터 Badge까지 16개 역할 정의 및 세리프 굵기 상한 등 한글 타이포그래피 규칙 검증 강화",
       "scope": "src/platform/type.mjs, tests/platform-type-hangul.test.mjs",
       "track": "Track C",
@@ -218,13 +293,16 @@
         "src/platform/type.mjs",
         "tests/platform-type-hangul.test.mjs"
       ],
-      "completionCriteria": "16개 역할별 clamp 크기, 행간, 자간 계산 완결, P_CHECK_TYPE_HANGUL 오류 검증 통과",
+      "completionCriteria": "§5.3의 27개 역할(Display 3, Heading 6, Body 3, Label 3, 그 밖 12)별 clamp 크기, 행간, 자간 계산 완결, P_CHECK_TYPE_HANGUL 오류 검증 통과",
       "tests": [
         "tests/platform-type-hangul.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "tests/platform-type-hangul.test.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRC-03",
@@ -243,11 +321,23 @@
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/app/layout.tsx",
+          "owner": "Track F",
+          "reason": "웹폰트 로딩 전략의 적용 지점"
+        },
+        {
+          "file": "apps/web/features/materials/types.ts",
+          "owner": "Track F",
+          "reason": "서체 메타 타입"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-01",
-      "title": "필수 컴포넌트 인벤토리 220종 계약 및 렌더러 구현 (A~O군)",
+      "title": "필수 컴포넌트 인벤토리 207항목 계약 및 렌더러 구현 (A~O군)",
       "goal": "§6.2 인벤토리 전수 경로 확보 및 2.6.0 기반 컨트롤 10종 확장",
       "scope": "src/materials/{button,input,select,card,table,tabs,modal,tooltip,feedback,navigation}.mjs, src/platform/data/base-components.mjs",
       "track": "Track D",
@@ -265,7 +355,7 @@
         "src/materials/navigation.mjs",
         "src/platform/data/base-components.mjs"
       ],
-      "completionCriteria": "A~O 카테고리별 기반 컴포넌트 계약 및 렌더러 완성, Material Coverage의 missing 항목 대폭 해소",
+      "completionCriteria": "REQUEST §6.2의 207항목 각각에 지원 경로 확보. Manifest `summary.requirements.breakdown.components.missing`이 줄어들고, 줄어든 항목마다 `requirements[].status`가 `renderable` 이상이어야 한다. 변형으로 충족하면 근거 기록의 `variants`에 값이 실제로 있어야 한다",
       "tests": [
         "tests/material-components.test.mjs"
       ],
@@ -277,20 +367,20 @@
       "taskId": "TASK-TRD-02",
       "title": "목적별 컴포넌트 및 복합 패턴 120종 레시피 구현",
       "goal": "KPI Card, Data Table, Approval Panel, Product Grid 등 실무 수준의 목적형 UI 패턴 120종 구축",
-      "scope": "src/platform/families/*.mjs, tests/platform-family.test.mjs",
+      "scope": "src/platform/families/{card,table,button,form,feedback,navigation}.mjs, tests/platform-family-purpose.test.mjs (입력·모달 계열 목적 패밀리는 form.mjs, feedback.mjs에 둔다. 새 파일을 만들면 families/index.mjs에 등록)",
       "track": "Track D",
       "dependencies": ["TASK-TRD-01"],
       "modifiedFiles": [
         "src/platform/families/card.mjs",
         "src/platform/families/table.mjs",
         "src/platform/families/button.mjs",
-        "src/platform/families/input.mjs",
-        "src/platform/families/modal.mjs",
-        "src/platform/families/feedback.mjs"
+        "src/platform/families/form.mjs",
+        "src/platform/families/feedback.mjs",
+        "src/platform/families/navigation.mjs"
       ],
-      "completionCriteria": "32개 등록 목적 패밀리를 120종으로 확장, 실제 슬롯 배치 및 Blueprint 왕복 검증 통과",
+      "completionCriteria": "32개 등록 목적 패밀리를 120종 이상으로 확장하되 의미 없는 분할로 숫자를 채우지 않는다(REQUEST §6.2). Manifest `byKind.purpose-family.distinctOutputs`가 `registered`와 같아야 한다. 실제 슬롯 배치 및 Blueprint 왕복 검증 통과",
       "tests": [
-        "tests/platform-family.test.mjs"
+        "tests/platform-family-purpose.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
@@ -313,41 +403,50 @@
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "tests/material-components-a11y.test.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRE-01",
       "title": "시각 패밀리 12종 형태 언어(모서리·그림자·표면) 구축",
       "goal": "색상 외에도 형태, 간격, 테두리, 그림자가 달라지는 12개 시각 패밀리 구현",
-      "scope": "src/platform/data/families.mjs, src/platform/family.mjs, tests/platform-family.test.mjs",
+      "scope": "src/platform/data/families.mjs, src/platform/family.mjs, src/platform/families/visual.mjs, tests/platform-family-visual.test.mjs",
       "track": "Track E",
       "dependencies": ["TASK-P0-01"],
       "modifiedFiles": [
         "src/platform/data/families.mjs",
         "src/platform/family.mjs",
-        "tests/platform-family.test.mjs"
+        "src/platform/families/visual.mjs",
+        "tests/platform-family-visual.test.mjs"
       ],
       "completionCriteria": "Minimal Flat부터 Expressive까지 12개 패밀리 등록, 패밀리 변경 시 실제 출력 CSS의 모서리/그림자 차이 증명",
       "tests": [
-        "tests/platform-family.test.mjs"
+        "tests/platform-family-visual.test.mjs",
+        "tests/platform-family-legacy.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "tests/platform-family-visual.test.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRE-02",
-      "title": "차트 29유형 데이터 스키마 및 SVG 렌더러 완성",
+      "title": "차트 29유형(REQUEST §9.1) 데이터 스키마 및 SVG 렌더러 완성",
       "goal": "금융, ERP, 애널리틱스 목적의 29종 차트 프리셋 검증 및 비즈니스 데이터 왜곡 방지",
-      "scope": "src/platform/data/charts.mjs, src/render/chart-presets.mjs, tests/chart-presets.test.mjs",
+      "scope": "src/materials/chart-presets.mjs, src/platform/data/charts.mjs, src/render/chart-presets.mjs, tests/chart-presets.test.mjs",
       "track": "Track E",
       "dependencies": ["TASK-TRE-01"],
       "modifiedFiles": [
+        "src/materials/chart-presets.mjs",
         "src/platform/data/charts.mjs",
         "src/render/chart-presets.mjs",
         "tests/chart-presets.test.mjs"
       ],
-      "completionCriteria": "29개 차트 프리셋의 데이터 스키마 및 반응형 SVG 출력 일치 확인, 접근성 요약 테이블 제공",
+      "completionCriteria": "§9.1의 29유형 각각이 그 유형으로 렌더되는 프리셋을 가진다(`ext.chartKind`가 렌더러 지원 종류여야 하며 Manifest `requirements.breakdown.charts.missing` 0). 등록된 프리셋 수가 아니라 유형 수가 기준이다. 반응형 SVG 출력 일치 확인, 접근성 요약 테이블 제공",
       "tests": [
         "tests/chart-presets.test.mjs"
       ],
@@ -378,7 +477,7 @@
       "taskId": "TASK-TRE-04",
       "title": "Foundations(표면, 배경, 모션, 아이콘) 재료 확충 및 전시장 개편",
       "goal": "기초 디자인 재료 전수 정의 및 Foundations 탐색 화면 구축",
-      "scope": "src/platform/data/{surfaces,motion,backgrounds,media,states}.mjs, apps/web/app/materials/foundations/page.tsx",
+      "scope": "src/platform/data/{surfaces,motion,backgrounds,media,states}.mjs, apps/web/app/materials/foundations/page.tsx (아이콘은 2.x 카탈로그의 `src/catalog/icons.mjs`가 고정 출력 영역이므로 신규 아이콘은 플랫폼 재료 종류로 추가한다)",
       "track": "Track E",
       "dependencies": ["TASK-TRE-03"],
       "modifiedFiles": [
@@ -391,11 +490,18 @@
       ],
       "completionCriteria": "모션 reduced-motion 정책 준수, 고비용 blur 제한, Foundations 전시장 인터랙티브 확인",
       "tests": [
-        "tests/platform-pipeline.test.mjs"
+        "tests/platform-style-materials.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/app/materials/foundations/page.tsx",
+          "owner": "Track F",
+          "reason": "Foundations 전시장 개편"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRF-01",
@@ -405,8 +511,7 @@
       "track": "Track F",
       "dependencies": ["TASK-TRA-03", "TASK-TRD-01"],
       "modifiedFiles": [
-        "apps/web/app/components/page.tsx",
-        "apps/web/features/components/CategoryTabs.tsx"
+        "apps/web/app/components/page.tsx"
       ],
       "completionCriteria": "카테고리 탭 전환 속도 200ms 이내, 숨겨진 탭 DOM 미생성, 검색 필터 정상 연동",
       "tests": [
@@ -414,7 +519,10 @@
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "apps/web/features/components/CategoryTabs.tsx"
+      ]
     },
     {
       "taskId": "TASK-TRF-02",
@@ -424,8 +532,7 @@
       "track": "Track F",
       "dependencies": ["TASK-TRF-01"],
       "modifiedFiles": [
-        "apps/web/app/components/[componentId]/page.tsx",
-        "apps/web/features/components/ComponentDetailTabs.tsx"
+        "apps/web/app/components/[componentId]/page.tsx"
       ],
       "completionCriteria": "모든 지원 변형/상태를 시각적으로 확인 가능, Playground에서 팔레트/패밀리 변경 시 실시간 반영",
       "tests": [
@@ -433,12 +540,15 @@
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "apps/web/features/components/ComponentDetailTabs.tsx"
+      ]
     },
     {
       "taskId": "TASK-TRF-03",
       "title": "통합 색상 작업대(팔레트-서브토큰-토큰 일체형 워크벤치) 개편",
-      "goal": "분리된 /color, /palettes, /palettes/custom 경로를 단일 색상 작업대로 통합",
+      "goal": "분리된 /materials/color, /materials/palettes, /materials/palettes/custom 경로를 단일 색상 작업대로 통합",
       "scope": "apps/web/app/materials/color/page.tsx, apps/web/features/materials/ColorExplorer.tsx",
       "track": "Track F",
       "dependencies": ["TASK-TRB-04"],
@@ -457,7 +567,7 @@
     {
       "taskId": "TASK-TRF-04",
       "title": "타이포그래피 4분할 비교 모드 및 상세 Specimen UI",
-      "goal": "40개 타이포 시스템 카드 탐색, 16개 역할 상세 Specimen, 최대 4개 시스템 동시 비교 화면 구축",
+      "goal": "40개 타이포 시스템 카드 탐색, 27개 역할 상세 Specimen, 최대 4개 시스템 동시 비교 화면 구축",
       "scope": "apps/web/app/materials/typography/page.tsx, apps/web/features/platform/TypeCompare.tsx",
       "track": "Track F",
       "dependencies": ["TASK-TRC-03"],
@@ -477,12 +587,12 @@
       "taskId": "TASK-TRF-05",
       "title": "Studio 조립 인터페이스 및 재료 선택 상태 보존 공유 경로",
       "goal": "Studio에서 모든 재료(팔레트, 세트, 타이포, 패밀리, 레이아웃)를 조립하고 상태 URL 공유 지원",
-      "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**",
+      "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**(진입 컴포넌트는 기존 StudioApp.tsx)",
       "track": "Track F",
       "dependencies": ["TASK-TRF-02", "TASK-TRF-03", "TASK-TRF-04"],
       "modifiedFiles": [
         "apps/web/app/studio/page.tsx",
-        "apps/web/features/studio/StudioWorkbench.tsx"
+        "apps/web/features/studio/StudioApp.tsx"
       ],
       "completionCriteria": "선택 재료가 컴파일 출력에 100% 반영, 공유 URL 접속 시 선택 상태 완벽 복원",
       "tests": [
@@ -496,49 +606,52 @@
       "taskId": "TASK-TRG-01",
       "title": "Material Coverage Manifest 자동 검증 테스트 및 CI 연동",
       "goal": "새 재료 추가 시 Manifest 누락 또는 잘못된 상태 기재를 빌드/CI 단계에서 자동 차단",
-      "scope": "tests/material-coverage.test.mjs, package.json verify 스크립트",
+      "scope": "tests/material-coverage-manifest.test.mjs(신규. 기존 tests/material-coverage.test.mjs는 scripts/materials/coverage.mjs 보고서 검사이므로 건드리지 않는다), package.json verify 스크립트",
       "track": "Track G",
       "dependencies": ["TASK-P0-01"],
       "modifiedFiles": [
-        "tests/material-coverage.test.mjs",
         "package.json"
       ],
-      "completionCriteria": "Manifest의 17개 필드, 7개 상태값, 코드 참조 일치 여부 자동 단언 통과",
+      "completionCriteria": "Manifest의 17개 필드, 7개 상태값, 코드 참조(정의 경로, 테스트 참조의 파일·줄) 일치 여부 자동 단언 통과. `npm run coverage:materials:check`를 verify에 넣을지(약 30초 추가) 결정하고 DECISIONS.md에 기록",
       "tests": [
-        "tests/material-coverage.test.mjs"
+        "tests/material-coverage-manifest.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "tests/material-coverage-manifest.test.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRG-02",
       "title": "실제 출력 차이(Actual Output Test) 검사기 구현",
       "goal": "재료 선택(팔레트, 세트, 타이포, 패밀리)을 변경했을 때 실제 HTML/CSS 출력이 달라지는지 전수 검증",
-      "scope": "scripts/platform/actual-output-verify.mjs, tests/actual-output.test.mjs",
+      "scope": "scripts/actual-output-verify.mjs, tests/actual-output.test.mjs",
       "track": "Track G",
       "dependencies": ["TASK-TRB-04", "TASK-TRC-02", "TASK-TRE-01"],
-      "modifiedFiles": [
-        "scripts/platform/actual-output-verify.mjs",
-        "tests/actual-output.test.mjs"
-      ],
+      "modifiedFiles": [],
       "completionCriteria": "manifest의 선택 ID만 바뀌고 실제 출력은 같은 결함(ADR 0012 §8 D1/D2) 100% 차단",
       "tests": [
         "tests/actual-output.test.mjs"
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "scripts/actual-output-verify.mjs",
+        "tests/actual-output.test.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRG-03",
       "title": "대표 사용자 시나리오 E2E 브라우저 테스트 전수 구축",
       "goal": "색상, 타이포, 컴포넌트, Studio의 4대 핵심 사용자 흐름을 실제 Chromium 브라우저에서 자동 검증",
-      "scope": "e2e/catalog-platform.spec.mjs, playwright.config.ts",
+      "scope": "e2e/catalog-platform.spec.mjs, playwright.config.mjs",
       "track": "Track G",
       "dependencies": ["TASK-TRF-05"],
       "modifiedFiles": [
-        "e2e/catalog-platform.spec.mjs"
+        "playwright.config.mjs"
       ],
       "completionCriteria": "390px 모바일 및 1280px 데스크톱에서 4대 E2E 시나리오 전수 통과",
       "tests": [
@@ -546,7 +659,10 @@
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "createFiles": [
+        "e2e/catalog-platform.spec.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRG-04",
@@ -556,7 +672,6 @@
       "track": "Track G",
       "dependencies": ["TASK-TRG-03"],
       "modifiedFiles": [
-        "apps/web/app/api/version/route.ts",
         "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
       ],
       "completionCriteria": "Vercel 프로덕션 빌드 성공, /api/version 정상 응답, 성능 목표(LCP/INP/CLS) 운영 실측 기록",
@@ -565,7 +680,17 @@
       ],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": "Vercel 운영 배포 환경의 권한 상태에 따른 실측 가능 여부 확인 필요"
+      "unresolvedIssues": "Vercel 운영 배포 환경의 권한 상태에 따른 실측 가능 여부 확인 필요",
+      "createFiles": [
+        "apps/web/app/api/version/route.ts"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "apps/web/app/api/version/route.ts",
+          "owner": "Track A",
+          "reason": "apps/web/app/api/**는 Track A 소유다(CONTRACTS.md §6)"
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 # 아키텍처 및 거버넌스 결정 기록 (DECISIONS.md)
 
 - 상태: 활성 (Phase 0 전수 감사 완료)
-- 버전: 1.0.0
+- 버전: 1.1.0 (P0-AUDIT 독립 검증 반영)
 - 관리 위치: `docs/dev/catalog-platform-upgrade/DECISIONS.md`
 - 관련: `REQUEST.md §1`, `docs/architecture.md`, `docs/governance.md`, `docs/adr/0012-assembly-platform.md`
 
@@ -60,6 +60,7 @@
 ### 결정
 1. Coolors 427 팔레트를 신규 플랫폼 레지스트리(`src/platform/data/palettes.mjs`)에 등록하거나 신규 공개 카탈로그에 노출하지 않는다.
 2. 기존 카탈로그 2.1~2.6 Blueprint 컴파일 호환성을 위해서만 읽기 전용으로 유지한다.
+   - **현행 편차(2026-11-28)**: Studio `DesignPanel`의 "모든 팔레트" 목록이 이 427개를 선택지로 낸다. 결정 2와 어긋나지만 이 문서는 선택지에서 뺄지, 권리 결정을 받을지를 정하지 않는다. Track F와 Track B가 정해 새 DEC로 남긴다. 그때까지 Manifest의 `rights-unverified` 기록이 `studioAssemblable: true`로 나오는 것이 편차의 기계적 표지다.
 3. Track B에서 상업적 이용 및 재배포가 확실한 자체 원색 시드 팔레트 200종을 새롭게 구축하여 신규 공개 라이브러리로 대체한다.
 
 ---
@@ -85,7 +86,7 @@
 ### 결정
 1. 등록 수(Registered), 실질적 재료 수(Actual Material), 조합 가능 수(Combinable), 실제 조립 검증 수(Assemblable & Verified), 고유 출력 수(Distinct Outputs)를 명확히 분리하여 집계한다.
 2. 조합 가능 수는 "재료 수"로 표현할 수 없으며, 반드시 "조합 가능 조합 수"로 명시한다.
-3. 목적 패밀리 32종은 기존 119,610 조립 가능 조합의 곱 축에 합산하지 않고 별도 집계한다.
+3. 목적 패밀리는 플랫폼 조립 가능 조합(`MATERIAL-COVERAGE.json`의 `summary.combinations.platform.assemblableCombinations`)의 곱 축에 합산하지 않고 `summary.byKind`에서 별도로 집계한다. 숫자는 이 문서에 옮겨 적지 않는다. Manifest가 코드에서 계산한 값만 근거로 쓴다.
 
 ---
 
@@ -95,6 +96,20 @@
 7개 트랙이 동시에 작업을 진행할 때 동일 파일에 대한 동시 수정으로 인한 충돌 및 분기를 방지한다.
 
 ### 결정
-1. `CONTRACTS.md` §6의 파일 소유권 매트릭스를 절대적으로 준수한다.
-2. REST API, MCP 서버, Next.js 웹 애플리케이션, Studio는 독자적인 컴파일 로직을 갖지 않고, 오직 `src/service/assemble-design.mjs`의 `assembleDesign()` 단일 서비스 함수만 호출한다.
+1. `CONTRACTS.md` §6의 파일 소유권 매트릭스를 준수한다. 다른 트랙 파일은 §6.1의 교차 트랙 허가(`TASK-LEDGER.json`의 `crossTrackFiles`)가 있을 때만 고친다.
+2. REST API, MCP 서버, Next.js 웹 애플리케이션, Studio는 독자적인 컴파일·조립 로직을 갖지 않고, Core 서비스 진입점(`src/service/index.mjs`, ADR 0009)이 공개한 함수와 `src/edit`의 연산만 호출한다. 조립은 `assembleDesign()`·`assembleComponents()`, 카탈로그 읽기는 `listCatalog`·`getMaterial`·`listPlatformMaterials` 등이다. 웹은 `src/platform`을 직접 import하지 않는다(`apps/web/boundary.check.mjs`가 강제).
 3. 채널 간 결과의 바이트 일치성은 채널 일관성 테스트(`tests/channel-*.test.mjs`)로 보증한다.
+
+---
+
+## DEC-008: Manifest 수치는 코드에서만 얻는다 (P0-AUDIT)
+
+### 맥락
+Phase 0 감사의 Manifest 생성기는 이전 기준값을 `?? 9` 같은 리터럴로 되돌려 쓰고 비교표 `status`를 `match`로 고정했으며, 존재하지 않는 재료 id(예: `layout:stack`, `type-system:modern-saas`) 26개를 매핑해 조용히 `missing`으로 만들었고, 웹·Studio 노출을 id 접두사로 추정했다. 그 결과 수치는 코드의 변화에 반응하지 않았다.
+
+### 결정
+1. 수량, 비교표, 노출 여부, 상태는 레지스트리·서비스 호출·라우트 파일에서 생성 시점에 계산한다. 이전 기준값은 REQUEST.md §2.1 표에서 읽는다.
+2. 요구 항목 목록은 REQUEST.md에서 읽는다(생성기에 항목 수를 적지 않는다).
+3. 매핑이 가리키는 재료 id·변형 값이 레지스트리에 없으면 생성이 실패한다.
+4. 계산이 비싼 값만 `docs/evidence/platform/baseline.json`에서 읽고 출처와 신선도를 Manifest에 적는다.
+5. 상세 규칙은 `CONTRACTS.md` §8.
