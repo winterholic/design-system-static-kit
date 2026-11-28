@@ -15,23 +15,28 @@ const use = (state, props, duration, easing) => ({state, props, duration, easing
 
 const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
-/** Purpose-specific motion recipes. Components opt in by setting data-motion-pattern; no blanket page animation is applied. */
+/**
+ * Purpose-specific motion recipes. Components opt in by setting data-motion-pattern; no blanket page animation is applied.
+ * reducedMotion is what the pattern does under prefers-reduced-motion: `instant` removes the transition, `fade` keeps only a short opacity change
+ * (a cue that carries no movement) and drops transform. `fade` needs `opacity` among the pattern's properties.
+ */
+export const REDUCED_POLICIES = Object.freeze(['instant', 'fade']);
 export const MOTION_PATTERNS = Object.freeze([
-  {id: 'hover', properties: ['background-color', 'box-shadow'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'press', properties: ['transform'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'focus', properties: ['outline-color'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'expand', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'collapse', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'exit', delay: 0, reducedMotion: 'none'},
-  {id: 'fade', properties: ['opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'slide', properties: ['transform', 'opacity'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'scale', properties: ['transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'popover-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'modal-enter', properties: ['opacity', 'transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'drawer-enter', properties: ['transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'toast-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 40, reducedMotion: 'none'},
-  {id: 'loading', properties: ['opacity'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'progress', properties: ['width'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'skeleton', properties: ['background-position'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'hover', properties: ['background-color', 'box-shadow'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'press', properties: ['transform'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'focus', properties: ['outline-color'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'expand', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'fade'},
+  {id: 'collapse', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'exit', delay: 0, reducedMotion: 'fade'},
+  {id: 'fade', properties: ['opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'fade'},
+  {id: 'slide', properties: ['transform', 'opacity'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'fade'},
+  {id: 'scale', properties: ['transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'instant'},
+  {id: 'popover-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'fade'},
+  {id: 'modal-enter', properties: ['opacity', 'transform'], duration: 'slow', easing: 'enter', delay: 0, reducedMotion: 'fade'},
+  {id: 'drawer-enter', properties: ['transform'], duration: 'slow', easing: 'enter', delay: 0, reducedMotion: 'instant'},
+  {id: 'toast-enter', properties: ['opacity', 'transform'], duration: 'base', easing: 'enter', delay: 40, reducedMotion: 'fade'},
+  {id: 'loading', properties: ['opacity'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'progress', properties: ['width'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'skeleton', properties: ['background-position'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'instant'},
 ].map(Object.freeze));
 
 export const MOTIONS = Object.freeze([
@@ -108,7 +113,7 @@ export function validateMotion(m) {
     if (!p.properties.length || p.properties.some(prop => !/^[a-z-]+$/.test(prop))) err('P_MOTION_PATTERN_PROPERTY', `$.patterns[${i}].properties`, 'property를 하나 이상 명시해야 합니다');
     if (!Object.hasOwn(m.duration, p.duration) || !Object.hasOwn(m.easing, p.easing)) err('P_MOTION_PATTERN_TOKEN', `$.patterns[${i}]`, '각 패턴은 duration과 easing을 지정해야 합니다');
     if (!Number.isInteger(p.delay) || p.delay < 0 || p.delay > 200) err('P_MOTION_PATTERN_DELAY', `$.patterns[${i}].delay`, 'delay는 0~200ms 정수입니다');
-    if (p.reducedMotion !== 'none') err('P_MOTION_PATTERN_REDUCE', `$.patterns[${i}].reducedMotion`, 'reduced-motion 정책은 none이어야 합니다');
+    if (!REDUCED_POLICIES.includes(p.reducedMotion) || (p.reducedMotion === 'fade' && !p.properties.includes('opacity'))) err('P_MOTION_PATTERN_REDUCE', `$.patterns[${i}].reducedMotion`, `reduced-motion 정책은 ${REDUCED_POLICIES.join('·')}이며 fade는 opacity를 움직이는 패턴만 씁니다`);
   });
   if (!/^-?\d+px$/.test(m.lift) || !/^\d+px$/.test(m.enterY)) err('P_MOTION_LIFT', '$.lift', 'lift는 -?Npx, enterY는 Npx입니다');
   if (!m.axes.motion || !Object.hasOwn(MOTION, m.axes.motion)) err('P_MOTION_AXIS', '$.axes.motion', `기존 motion 축 값이 아닙니다: ${m.axes.motion}`);
@@ -144,7 +149,9 @@ export function motionCSS(m, {keyframes = true} = {}) {
     `${sel} [data-skeleton]{background-size:200% 100%;animation:kit-m-shimmer 1.4s linear infinite}`,
     `${sel} [data-spinner]{animation:kit-m-spin 900ms linear infinite}`,
   ] : [];
-  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important;scroll-behavior:auto!important}}`;
+  // 정책 규칙은 일괄 규칙(`${sel} *`)보다 명시도가 높아 같은 !important 안에서 이긴다.
+  const policy = m.patterns.map(p => `${sel} [data-motion-pattern="${p.id}"]{transition:${p.reducedMotion === 'fade' ? 'opacity var(--kit-m-fast) linear 0ms' : 'none'}!important}`).join('');
+  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important;scroll-behavior:auto!important}${policy}}`;
   const frames = keyframes ? m.keyframes.map(k => MOTION_KEYFRAMES[k]) : [];
   return [...frames, vars, ...trans, ...patterns, ...anim, reduce].join('\n');
 }

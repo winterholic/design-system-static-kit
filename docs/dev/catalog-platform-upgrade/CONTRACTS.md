@@ -308,6 +308,6 @@ npm run coverage:materials:check   # 저장본이 현재 코드와 바이트까�
 
 ## 10. TASK-TRE-04 Foundations 재료 확장
 
-- `spacing` 재료는 기존 `SPACE`의 4px 격자를 재사용하며 역할별 밀도 토큰을 컴파일 CSS에 낸다. `icon` 영역 재료는 기존 내부 원본 심볼만 허용하고 공통 24px viewBox·크기·선 굵기·정렬·시각 패밀리를 검증한다.
-- `surface`는 17개의 식별된 facets(반경·테두리·깊이)를, `motion`은 15개의 목적 패턴(property·duration·easing·delay·reduced-motion 정책)을 가진다. 값은 컴파일 CSS로 연결한다.
-- `background`는 REQUEST §9.5의 12종을 제공한다. Frosted blur는 0~16px이며 단일 `.kit-deco` 요소에 한정한다.
+- `spacing` 재료는 기존 `SPACE`의 4px 격자를 재사용하고, §9.3의 9개 역할(페이지 여백·섹션 간격·컨테이너 내부 여백·컴포넌트 내부 간격·형제 요소 간격·목록 간격·폼 간격·표 셀 간격·아이콘과 텍스트 간격)을 서로 다른 토큰 9개에 묶어 `[data-spacing-role]` opt-in 규칙으로 컴파일 CSS에 낸다. 두 역할이 같은 토큰을 읽으면 등록이 거부된다(같은 거리를 두 이름으로 부르지 않는다). `icon` 영역 재료는 기존 내부 원본 심볼만 허용하고 공통 24px viewBox·크기·최소 크기(16px, 그 크기에서 선 굵기 1.25px 이상)·선 굵기·정렬·시각 패밀리를 검증하며, 렌더 단계에서 viewBox를 대조하고 `data-icon-family`·`data-icon-size`를 찍어 CSS가 그 값을 읽는다.
+- `surface`는 17개의 식별된 facets(반경·테두리·깊이)를, `motion`은 15개의 목적 패턴(property·duration·easing·delay·reduced-motion 정책)을 가진다. 17개 facet은 서로 다른 반경·테두리·그림자로 컴파일되며(Medium과 Deep Elevation은 그림자가 다르다), `.kit-surface[data-level]` 단계 규칙과 함께 달려도 이기도록 명시도를 한 단계 높였다. 15개 패턴은 서로 다른 전환 조합이고, reduced-motion 정책은 `instant`(전환 제거)와 `fade`(opacity만 짧게, transform 제거) 두 가지이며 패턴마다 컴파일 CSS에 규칙이 있다.
+- `background`는 REQUEST §9.5의 12개 항목을 각각 서로 다른 재료 13종으로 제공한다(Tinted는 단색 틴트 `soft-tint`, Dot Pattern은 `brand-tint-dots`). Frosted blur는 0~16px이며 단일 `.kit-deco` 요소에 한정하고, 흐려질 또렷한 줄무늬를 바탕에 둔다(매끄러운 그라데이션 위의 blur는 화면에 보이지 않는다).

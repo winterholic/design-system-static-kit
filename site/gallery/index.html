@@ -8166,8 +8166,8 @@ const KIND_SPECS = Object.freeze({
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
-  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
-  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', roles: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', minSize: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
 /** 스타일 재료 종류. 페이지 단계가 하나씩 고르며 상태 패턴은 상태마다 고른다. */
 const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon']);
@@ -8398,9 +8398,10 @@ const BACKGROUNDS = Object.freeze([
   defineStyleMaterial({
     id: 'background:frosted-pane', kind: 'background', label: '제한된 프로스트 글라스', contexts: ['dashboard', 'landing', 'general'], tags: ['frosted', 'glass'],
     axes: {backdrop: 'tint', ornament: 'none'}, uses: {backdrop: ['tint'], ornament: ['none']},
-    page: {background: `linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
+    // blur는 뒤에 또렷한 모양이 있어야 보인다. 매끄러운 그라데이션만 깔면 12px blur가 화면에 아무 변화도 내지 못한다.
+    page: {background: `repeating-linear-gradient(135deg,${mix('accent', 14)} 0 16px,transparent 16px 32px),linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
     deco: {kind: 'frosted', blur: 12, css: `border:1px solid ${mix('text', 8)};background:${mix('canvas', 72)}`},
-    stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+    stops: ['canvas', 'soft', ['accent', 14, 'canvas']], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
   }),
   defineStyleMaterial({
     id: 'background:layered-surface', kind: 'background', label: '겹친 표면', contexts: ['dashboard', 'data', 'settings', 'general'], tags: ['layered', 'surface'],
@@ -8415,6 +8416,12 @@ const BACKGROUNDS = Object.freeze([
     page: {background: `radial-gradient(90% 60% at 50% 0%,${mix('action', 12)},transparent 65%),linear-gradient(160deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.surface}))`},
     deco: {kind: 'premium', css: `background:linear-gradient(120deg,${mix('accent', 12)},transparent 38% 68%,${mix('action', 10)})`},
     stops: ['canvas', 'surface'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
+  }),
+  defineStyleMaterial({
+    id: 'background:soft-tint', kind: 'background', label: '단색 틴트 바탕', contexts: ['any'], tags: ['tint', 'calm', 'read'],
+    axes: {backdrop: 'tint', ornament: 'none'}, uses: {backdrop: ['tint'], ornament: ['none']},
+    page: {background: `var(${COLOR_ROLES.soft})`}, deco: {kind: 'none', css: ''}, stops: ['soft'],
+    pairs: [['text', 'soft', 7], ['muted', 'soft', 4.5]], reuses: ['axis:backdrop'],
   }),
 ].map(verifiedBy(EVIDENCE)));
 
@@ -8863,32 +8870,44 @@ const GROUPS = {
 };
 const ICON_MATERIALS = Object.freeze(Object.entries(GROUPS).map(([area, symbols]) => definePlatformMaterial({
   id: `icon:area-${area}`, kind: 'icon', label: `${area} icons`, area, symbols,
-  viewBox: '0 0 24 24', size: 24, strokeWidth: 2, alignment: 'optical-center', family: 'original-outline',
+  viewBox: '0 0 24 24', size: 24, minSize: 16, strokeWidth: 2, alignment: 'optical-center', family: 'original-outline',
   contexts: ['any'], tags: ['icon', area], uses: {iconArea: [area]}, reuses: symbols.map(name => `icon:${name}`),
   source: {origin: 'in-repository-original', license: 'internal'},
   quality: {status: 'verified', evidence: ['tests/platform-style-materials.test.mjs:39']},
 })));
 
+/** Alignment name → the vertical-align that keeps a glyph centered on the text x-height. */
+const VALIGN = Object.freeze({'optical-center': 'middle'});
+/** A stroke thinner than this once the glyph is scaled down to minSize stops reading as a line. */
+const MIN_RENDERED_STROKE = 1.25;
+
 function validateIconMaterial(m) {
   const errors = [];
   if (!/^icon:area-[a-z-]+$/.test(m.id) || m.id !== `icon:area-${m.area}`) errors.push({code: 'P_ICON_ID', path: '$.id', message: 'icon id must match its area'});
   if (m.viewBox !== '0 0 24 24' || m.size !== 24 || m.strokeWidth !== 2 || m.alignment !== 'optical-center' || m.family !== 'original-outline') errors.push({code: 'P_ICON_SYSTEM', path: '$', message: 'icon materials must use the shared 24px original outline system'});
+  if (!Number.isInteger(m.minSize) || m.minSize < 16 || m.minSize > m.size || m.strokeWidth * m.minSize / m.size < MIN_RENDERED_STROKE) errors.push({code: 'P_ICON_SMALL', path: '$.minSize', message: `minSize must be an integer from 16px up to ${m.size}px, and the stroke must still render at ${MIN_RENDERED_STROKE}px or more there`});
   if (m.symbols.length < 4 || m.symbols.some(name => !iconNames.includes(name))) errors.push({code: 'P_ICON_SYMBOL', path: '$.symbols', message: 'each area needs at least four existing internal icons'});
   return errors;
 }
 
-/** Icon materials compile to scoped styling and an explicit, small per-area symbol allowlist. */
+/**
+ * Icon materials compile to scoped styling and an explicit, small per-area symbol allowlist.
+ * The rules only match svgs that carry this material's family (renderAreaIcon stamps it), so family, size, minSize, stroke and alignment all change what is drawn.
+ */
 function iconCSS(m) {
-  const sel = `[data-icon-area="${m.area}"]`;
-  const symbols = m.symbols.map(symbol => `${sel} .kit-icon.icon-symbol-${symbol}{stroke:currentColor}`).join('');
-  return `${sel}{--kit-icon-size:${m.size}px;--kit-icon-sw:${m.strokeWidth};--kit-icon-align:${m.alignment}}${sel} .kit-icon{width:var(--kit-icon-size);height:var(--kit-icon-size);vertical-align:middle}${sel} .kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:round;stroke-linejoin:round}${symbols}`;
+  const sel = `[data-icon-area="${m.area}"]`, icon = `${sel} .kit-icon[data-icon-family="${m.family}"]`;
+  const symbols = m.symbols.map(symbol => `${icon}.icon-symbol-${symbol}{stroke:currentColor}`).join('');
+  return `${sel}{--kit-icon-size:${m.size}px;--kit-icon-min:${m.minSize}px;--kit-icon-sw:${m.strokeWidth};--kit-icon-align:${VALIGN[m.alignment] ?? m.alignment}}${icon}{width:var(--kit-icon-size);height:var(--kit-icon-size);vertical-align:var(--kit-icon-align)}${icon}[data-icon-size="sm"]{width:var(--kit-icon-min);height:var(--kit-icon-min)}${icon} path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:round;stroke-linejoin:round}${symbols}`;
 }
 
 /** Renders only a symbol allowed by the selected platform icon area. Informative SVGs receive a labeled wrapper; unlabeled ones stay decorative. */
-function renderAreaIcon(m, {symbol, label} = {}) {
+function renderAreaIcon(m, {symbol, label, size} = {}) {
   if (!m.symbols.includes(symbol)) throw new RangeError(`${symbol} is not in ${m.id}`);
+  if (size !== undefined && size !== 'sm') throw new RangeError('size must be omitted or "sm"');
   if (label !== undefined && (typeof label !== 'string' || !label.trim())) throw new RangeError('label must be non-empty when supplied');
-  const svg = renderIcon(symbol, `icon-symbol-${symbol}`);
+  const drawn = renderIcon(symbol, `icon-symbol-${symbol}`);
+  if (!drawn.includes(`viewBox="${m.viewBox}"`)) throw new RangeError(`${symbol} is not drawn on the ${m.viewBox} grid of ${m.id}`);
+  const svg = drawn.replace('<svg ', `<svg data-icon-family="${m.family}"${size ? ` data-icon-size="${size}"` : ''} `);
   if (label === undefined) return svg;
   return `<span class="kit-icon-area" role="img" aria-label="${String(label).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]))}">${svg.replace(' aria-hidden="true"', '')}</span>`;
 }
@@ -9443,23 +9462,28 @@ const use = (state, props, duration, easing) => ({state, props, duration, easing
 
 const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
-/** Purpose-specific motion recipes. Components opt in by setting data-motion-pattern; no blanket page animation is applied. */
+/**
+ * Purpose-specific motion recipes. Components opt in by setting data-motion-pattern; no blanket page animation is applied.
+ * reducedMotion is what the pattern does under prefers-reduced-motion: `instant` removes the transition, `fade` keeps only a short opacity change
+ * (a cue that carries no movement) and drops transform. `fade` needs `opacity` among the pattern's properties.
+ */
+const REDUCED_POLICIES = Object.freeze(['instant', 'fade']);
 const MOTION_PATTERNS = Object.freeze([
-  {id: 'hover', properties: ['background-color', 'box-shadow'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'press', properties: ['transform'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'focus', properties: ['outline-color'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'expand', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'collapse', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'exit', delay: 0, reducedMotion: 'none'},
-  {id: 'fade', properties: ['opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'slide', properties: ['transform', 'opacity'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'scale', properties: ['transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'popover-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'modal-enter', properties: ['opacity', 'transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'drawer-enter', properties: ['transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
-  {id: 'toast-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 40, reducedMotion: 'none'},
-  {id: 'loading', properties: ['opacity'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'progress', properties: ['width'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
-  {id: 'skeleton', properties: ['background-position'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'hover', properties: ['background-color', 'box-shadow'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'press', properties: ['transform'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'focus', properties: ['outline-color'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'expand', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'fade'},
+  {id: 'collapse', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'exit', delay: 0, reducedMotion: 'fade'},
+  {id: 'fade', properties: ['opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'fade'},
+  {id: 'slide', properties: ['transform', 'opacity'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'fade'},
+  {id: 'scale', properties: ['transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'instant'},
+  {id: 'popover-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'fade'},
+  {id: 'modal-enter', properties: ['opacity', 'transform'], duration: 'slow', easing: 'enter', delay: 0, reducedMotion: 'fade'},
+  {id: 'drawer-enter', properties: ['transform'], duration: 'slow', easing: 'enter', delay: 0, reducedMotion: 'instant'},
+  {id: 'toast-enter', properties: ['opacity', 'transform'], duration: 'base', easing: 'enter', delay: 40, reducedMotion: 'fade'},
+  {id: 'loading', properties: ['opacity'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'progress', properties: ['width'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'instant'},
+  {id: 'skeleton', properties: ['background-position'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'instant'},
 ].map(Object.freeze));
 
 const MOTIONS = Object.freeze([
@@ -9536,7 +9560,7 @@ function validateMotion(m) {
     if (!p.properties.length || p.properties.some(prop => !/^[a-z-]+$/.test(prop))) err('P_MOTION_PATTERN_PROPERTY', `$.patterns[${i}].properties`, 'property를 하나 이상 명시해야 합니다');
     if (!Object.hasOwn(m.duration, p.duration) || !Object.hasOwn(m.easing, p.easing)) err('P_MOTION_PATTERN_TOKEN', `$.patterns[${i}]`, '각 패턴은 duration과 easing을 지정해야 합니다');
     if (!Number.isInteger(p.delay) || p.delay < 0 || p.delay > 200) err('P_MOTION_PATTERN_DELAY', `$.patterns[${i}].delay`, 'delay는 0~200ms 정수입니다');
-    if (p.reducedMotion !== 'none') err('P_MOTION_PATTERN_REDUCE', `$.patterns[${i}].reducedMotion`, 'reduced-motion 정책은 none이어야 합니다');
+    if (!REDUCED_POLICIES.includes(p.reducedMotion) || (p.reducedMotion === 'fade' && !p.properties.includes('opacity'))) err('P_MOTION_PATTERN_REDUCE', `$.patterns[${i}].reducedMotion`, `reduced-motion 정책은 ${REDUCED_POLICIES.join('·')}이며 fade는 opacity를 움직이는 패턴만 씁니다`);
   });
   if (!/^-?\d+px$/.test(m.lift) || !/^\d+px$/.test(m.enterY)) err('P_MOTION_LIFT', '$.lift', 'lift는 -?Npx, enterY는 Npx입니다');
   if (!m.axes.motion || !Object.hasOwn(MOTION, m.axes.motion)) err('P_MOTION_AXIS', '$.axes.motion', `기존 motion 축 값이 아닙니다: ${m.axes.motion}`);
@@ -9572,7 +9596,9 @@ function motionCSS(m, {keyframes = true} = {}) {
     `${sel} [data-skeleton]{background-size:200% 100%;animation:kit-m-shimmer 1.4s linear infinite}`,
     `${sel} [data-spinner]{animation:kit-m-spin 900ms linear infinite}`,
   ] : [];
-  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important;scroll-behavior:auto!important}}`;
+  // 정책 규칙은 일괄 규칙(`${sel} *`)보다 명시도가 높아 같은 !important 안에서 이긴다.
+  const policy = m.patterns.map(p => `${sel} [data-motion-pattern="${p.id}"]{transition:${p.reducedMotion === 'fade' ? 'opacity var(--kit-m-fast) linear 0ms' : 'none'}!important}`).join('');
+  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important;scroll-behavior:auto!important}${policy}}`;
   const frames = keyframes ? m.keyframes.map(k => MOTION_KEYFRAMES[k]) : [];
   return [...frames, vars, ...trans, ...patterns, ...anim, reduce].join('\n');
 }
@@ -9585,6 +9611,7 @@ function renderMotionSample(m) {
 }
 
 exports.MOTION_STATES = MOTION_STATES;
+exports.REDUCED_POLICIES = REDUCED_POLICIES;
 exports.MOTION_PATTERNS = MOTION_PATTERNS;
 exports.MOTIONS = MOTIONS;
 exports.validateMotion = validateMotion;
@@ -9679,8 +9706,25 @@ __defs["platform/data/spacing.mjs"] = function (exports, __m) {
 const {SPACE, TOKEN} = __m("spacing.mjs");
 const {definePlatformMaterial} = __m("platform/contract.mjs");
 
+/**
+ * The nine §9.3 spacing roles. Each role reads one scale token for one CSS property, so a role is a different distance, not a name for the same one.
+ * Components opt in with data-spacing-role; no role is applied to a page on its own. Tokens follow docs/spacing.md S01~S09 and are the ones the compiled pages already read.
+ */
+const SPACING_ROLES = Object.freeze([
+  {id: 'page-margin', label: '페이지 여백', token: 'band', prop: 'padding-block'},
+  {id: 'section-gap', label: '섹션 간격', token: 'section', prop: 'gap'},
+  {id: 'container-padding', label: '컨테이너 내부 여백', token: 'inset', prop: 'padding'},
+  {id: 'component-gap', label: '컴포넌트 내부 간격', token: 'head', prop: 'gap'},
+  {id: 'sibling-gap', label: '형제 요소 간격', token: 'gap', prop: 'gap'},
+  {id: 'list-gap', label: '목록 간격', token: 'item', prop: 'gap'},
+  {id: 'form-gap', label: '폼 간격', token: 'sub', prop: 'gap'},
+  {id: 'table-cell', label: '표 셀 간격', token: 'near', prop: 'padding-block'},
+  {id: 'icon-text', label: '아이콘과 텍스트 간격', token: 'tight', prop: 'gap'},
+].map(Object.freeze));
+
 const SPACING_MATERIALS = Object.freeze(Object.entries(SPACE).map(([density, tokens]) => definePlatformMaterial({
   id: `spacing:${density}`, kind: 'spacing', label: `${density} spacing`, density, tokens,
+  roles: Object.fromEntries(SPACING_ROLES.map(r => [r.id, r.token])),
   contexts: ['any'], tags: ['spacing', density], axes: {density}, uses: {density: [density]},
   reuses: ['axis-value:density.' + density],
   quality: {status: 'verified', evidence: ['tests/platform-style-materials.test.mjs:39']},
@@ -9692,19 +9736,36 @@ function validateSpacing(m) {
   else for (const [key, px] of Object.entries(m.tokens)) {
     if (!Object.hasOwn(SPACE[m.density], key) || SPACE[m.density][key] !== px || !Number.isInteger(px) || px % 4 !== 0) errors.push({code: 'P_SPACING_TOKEN', path: `$.tokens.${key}`, message: `token must match the 4px ${m.density} spacing scale`});
   }
+  if (JSON.stringify(Object.keys(m.roles)) !== JSON.stringify(SPACING_ROLES.map(r => r.id))) errors.push({code: 'P_SPACING_ROLES', path: '$.roles', message: 'all nine §9.3 spacing roles are required, in REQUEST order'});
+  else {
+    for (const [role, key] of Object.entries(m.roles)) if (!Object.hasOwn(m.tokens, key)) errors.push({code: 'P_SPACING_ROLE_TOKEN', path: `$.roles.${role}`, message: `${key} is not a spacing token`});
+    if (new Set(Object.values(m.roles)).size !== SPACING_ROLES.length) errors.push({code: 'P_SPACING_ROLE_ALIAS', path: '$.roles', message: 'two roles read the same token, so they would be one distance under two names'});
+  }
   return errors;
 }
 
-/** Emits the complete spacing contract in the platform compiler output. */
+/** Emits the complete spacing contract in the platform compiler output: the density tokens, then one opt-in rule per role. */
 function spacingCSS(m) {
-  const name = m.id.slice('spacing:'.length);
+  const name = m.id.slice('spacing:'.length), sel = `[data-density="${name}"]`;
   const vars = Object.entries(m.tokens).map(([key, value]) => `${TOKEN[key]}:${value}px`).join(';');
-  return `[data-density="${name}"]{${vars}}`;
+  const roles = SPACING_ROLES.map(r => `${sel} [data-spacing-role="${r.id}"]{${r.prop}:var(${TOKEN[m.roles[r.id]]})}`);
+  const demo = `${sel}.kit-spacing-demo{display:grid;gap:var(--kit-sp-near)}${sel}.kit-spacing-demo [data-spacing-role]{display:flex;flex-wrap:wrap;align-items:flex-start;border:1px dashed var(--kit-rule)}${sel}.kit-spacing-demo [data-spacing-role]>span{background:var(--kit-soft);color:var(--kit-text);padding:var(--kit-sp-tight) var(--kit-sp-near)}`;
+  return [`${sel}{${vars}}`, ...roles, demo].join('\n');
 }
 
+const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+
+/** One box per role. Each box holds two chips so the distance the role sets (gap, or padding around them) can be read off the layout. */
+function renderSpacingSample(m) {
+  const name = m.id.slice('spacing:'.length);
+  return `<div class="kit-spacing-demo" data-density="${name}">${SPACING_ROLES.map(r => `<div class="kit-spacing-role" data-spacing-role="${r.id}"><span>${escapeHTML(r.label)}</span><span>${m.tokens[m.roles[r.id]]}px</span></div>`).join('')}</div>`;
+}
+
+exports.SPACING_ROLES = SPACING_ROLES;
 exports.SPACING_MATERIALS = SPACING_MATERIALS;
 exports.validateSpacing = validateSpacing;
 exports.spacingCSS = spacingCSS;
+exports.renderSpacingSample = renderSpacingSample;
 };
 __defs["platform/data/states.mjs"] = function (exports, __m) {
 /**
@@ -10949,8 +11010,8 @@ const STYLE_MATERIAL_SPECS = Object.freeze({
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
-  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
-  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', roles: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', minSize: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
 
 const TYPE_OF = v => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v);
@@ -11002,7 +11063,7 @@ const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 /** Selectable radius/border/elevation primitives; double borders are restricted to pricing and form surfaces. */
 const SURFACE_FACETS = Object.freeze([
   {id: 'sharp', radius: '0', border: 'none', elevation: 'flat'},
-  {id: 'subtle', radius: '4px', border: 'hairline', elevation: 'outline'},
+  {id: 'subtle', radius: '4px', border: 'none', elevation: 'flat'},
   {id: 'rounded', radius: '10px', border: 'standard', elevation: 'soft'},
   {id: 'large-rounded', radius: '28px', border: 'none', elevation: 'lifted'},
   {id: 'pill', radius: '999px', border: 'none', elevation: 'flat'},
@@ -11014,11 +11075,20 @@ const SURFACE_FACETS = Object.freeze([
   {id: 'flat-surface', radius: '10px', border: 'none', elevation: 'flat'},
   {id: 'subtle-elevation', radius: '10px', border: 'hairline', elevation: 'soft'},
   {id: 'medium-elevation', radius: '10px', border: 'none', elevation: 'lifted'},
-  {id: 'deep-elevation', radius: '18px', border: 'none', elevation: 'lifted'},
+  {id: 'deep-elevation', radius: '10px', border: 'none', elevation: 'deep'},
   {id: 'hard-offset', radius: '0', border: 'strong', elevation: 'hard'},
   {id: 'glow', radius: '18px', border: 'none', elevation: 'glow'},
   {id: 'inset', radius: '10px', border: 'hairline', elevation: 'inset'},
 ].map(Object.freeze));
+
+/**
+ * 깊이 단계 중 축 값 표(ELEVATION)에 없는 두 칸. 표 자체를 바꾸면 2.1~2.4 고정 출력이 변하므로 facet에서만 쓴다.
+ * deep은 lifted(medium)보다 번짐과 오프셋이 뚜렷이 커서 Medium/Deep Elevation이 같은 그림자가 되지 않게 한다.
+ */
+const FACET_SHADOW = Object.freeze({
+  inset: 'inset 0 2px 6px var(--kit-shade)',
+  deep: '0 4px 8px var(--kit-shade),0 32px 64px -16px var(--kit-shade)',
+});
 
 /**
  * 표면 프리셋 5개. 서로 눈에 띄게 다르다: 단계 9칸(3단계 × 반경·깊이·채움) 중 3칸 이상 달라야 한다(시험이 쌍마다 센다).
@@ -11066,7 +11136,7 @@ function validateSurface(m) {
   for (const [i, f] of m.facets.entries()) {
     if (!/^(?:0|\d+px|\d+px \d+px \d+px \d+px)$/.test(f.radius)) err('P_SURFACE_FACET_RADIUS', `$.facets[${i}].radius`, 'radius는 격자 기반 px 모서리 값이어야 합니다');
     if (!['none', 'hairline', 'standard', 'strong', 'double'].includes(f.border)) err('P_SURFACE_FACET_BORDER', `$.facets[${i}].border`, '알 수 없는 테두리 단계입니다');
-    if (!['flat', 'outline', 'soft', 'lifted', 'glow', 'hard', 'inset'].includes(f.elevation)) err('P_SURFACE_FACET_ELEVATION', `$.facets[${i}].elevation`, '알 수 없는 깊이 단계입니다');
+    if (!Object.hasOwn(FACET_SHADOW, f.elevation) && !Object.hasOwn(ELEVATION, f.elevation)) err('P_SURFACE_FACET_ELEVATION', `$.facets[${i}].elevation`, '알 수 없는 깊이 단계입니다');
     if (f.border === 'double' && JSON.stringify(f.contexts) !== JSON.stringify(['form', 'pricing'])) err('P_SURFACE_DOUBLE_CONTEXT', `$.facets[${i}].contexts`, '이중 테두리는 form·pricing 맥락에만 허용합니다');
   }
   for (const level of ['base', 'raised', 'overlay']) {
@@ -11094,10 +11164,12 @@ function surfaceCSS(m) {
   rules.push(`${sel} .kit-surface[data-level="raised"]:hover{box-shadow:${hover}}`);
   const borders = {none: '0', hairline: '1px solid var(--kit-border)', standard: '1px solid var(--kit-rule)', strong: '2px solid var(--kit-text)', double: '3px double var(--kit-border)'};
   for (const f of m.facets) {
-    const shadow = f.elevation === 'inset' ? 'inset 0 2px 6px var(--kit-shade)' : ELEVATION[f.elevation].shadow;
+    const shadow = FACET_SHADOW[f.elevation] ?? ELEVATION[f.elevation].shadow;
     const context = f.contexts ? `:is(${f.contexts.map(c => `[data-context="${c}"]`).join(',')}) ` : '';
-    rules.push(`${context}${sel} [data-surface-facet="${f.id}"]{border-radius:${f.radius};border:${borders[f.border]};box-shadow:${shadow};padding:var(--kit-inset)}`);
+    // `.kit-surface[data-level]`(단계 규칙)과 함께 달려도 facet이 이기도록 명시도를 한 단계 높인다.
+    rules.push(`${context}${sel} :is([data-surface-facet="${f.id}"],.kit-surface[data-level][data-surface-facet="${f.id}"]){border-radius:${f.radius};border:${borders[f.border]};box-shadow:${shadow};padding:var(--kit-inset)}`);
   }
+  rules.push(`${sel}.kit-facet-demo{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:var(--kit-gap)}`);
   rules.push(`${sel} .kit-surface :is(h3,p){margin:0}${sel} .kit-surface h3+p{margin-top:var(--kit-sp-near)}`);
   return rules.join('\n');
 }
@@ -11110,6 +11182,11 @@ function renderSurfaceSample(m, {title = '표면', body = '경계와 그림자�
   return `<div class="kit-surface-demo" data-surface="${name(m)}">${Object.keys(m.levels).map(l => `<section class="kit-surface" data-level="${l}"><h3>${escapeHTML(title)} · ${level[l]}</h3><p>${escapeHTML(body)}</p></section>`).join('')}</div>`;
 }
 
+/** 표면 facet 17개의 샘플 마크업. 이중 테두리는 form·pricing 맥락에서만 열리므로 맥락 래퍼를 둔다. */
+function renderSurfaceFacetSample(m, {context = 'form'} = {}) {
+  return `<div data-context="${context}"><div class="kit-surface-demo kit-facet-demo" data-surface="${name(m)}">${m.facets.map(f => `<section class="kit-surface" data-level="base" data-surface-facet="${f.id}"><h3>${f.id}</h3><p>${f.radius} · ${f.border} · ${f.elevation}</p></section>`).join('')}</div></div>`;
+}
+
 exports.STYLE_MATERIAL_KINDS = STYLE_MATERIAL_KINDS;
 exports.STYLE_MATERIAL_SPECS = STYLE_MATERIAL_SPECS;
 exports.defineStyleMaterial = defineStyleMaterial;
@@ -11117,10 +11194,12 @@ exports.validateStyleMaterialShape = validateStyleMaterialShape;
 exports.pairErrors = pairErrors;
 exports.verifiedBy = verifiedBy;
 exports.SURFACE_FACETS = SURFACE_FACETS;
+exports.FACET_SHADOW = FACET_SHADOW;
 exports.SURFACES = SURFACES;
 exports.validateSurface = validateSurface;
 exports.surfaceCSS = surfaceCSS;
 exports.renderSurfaceSample = renderSurfaceSample;
+exports.renderSurfaceFacetSample = renderSurfaceFacetSample;
 };
 __defs["platform/data/type-materials.mjs"] = function (exports, __m) {
 /**

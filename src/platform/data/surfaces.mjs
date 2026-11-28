@@ -25,8 +25,8 @@ export const STYLE_MATERIAL_SPECS = Object.freeze({
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
-  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
-  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', roles: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', minSize: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
 
 const TYPE_OF = v => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v);
@@ -78,7 +78,7 @@ const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 /** Selectable radius/border/elevation primitives; double borders are restricted to pricing and form surfaces. */
 export const SURFACE_FACETS = Object.freeze([
   {id: 'sharp', radius: '0', border: 'none', elevation: 'flat'},
-  {id: 'subtle', radius: '4px', border: 'hairline', elevation: 'outline'},
+  {id: 'subtle', radius: '4px', border: 'none', elevation: 'flat'},
   {id: 'rounded', radius: '10px', border: 'standard', elevation: 'soft'},
   {id: 'large-rounded', radius: '28px', border: 'none', elevation: 'lifted'},
   {id: 'pill', radius: '999px', border: 'none', elevation: 'flat'},
@@ -90,11 +90,20 @@ export const SURFACE_FACETS = Object.freeze([
   {id: 'flat-surface', radius: '10px', border: 'none', elevation: 'flat'},
   {id: 'subtle-elevation', radius: '10px', border: 'hairline', elevation: 'soft'},
   {id: 'medium-elevation', radius: '10px', border: 'none', elevation: 'lifted'},
-  {id: 'deep-elevation', radius: '18px', border: 'none', elevation: 'lifted'},
+  {id: 'deep-elevation', radius: '10px', border: 'none', elevation: 'deep'},
   {id: 'hard-offset', radius: '0', border: 'strong', elevation: 'hard'},
   {id: 'glow', radius: '18px', border: 'none', elevation: 'glow'},
   {id: 'inset', radius: '10px', border: 'hairline', elevation: 'inset'},
 ].map(Object.freeze));
+
+/**
+ * 깊이 단계 중 축 값 표(ELEVATION)에 없는 두 칸. 표 자체를 바꾸면 2.1~2.4 고정 출력이 변하므로 facet에서만 쓴다.
+ * deep은 lifted(medium)보다 번짐과 오프셋이 뚜렷이 커서 Medium/Deep Elevation이 같은 그림자가 되지 않게 한다.
+ */
+export const FACET_SHADOW = Object.freeze({
+  inset: 'inset 0 2px 6px var(--kit-shade)',
+  deep: '0 4px 8px var(--kit-shade),0 32px 64px -16px var(--kit-shade)',
+});
 
 /**
  * 표면 프리셋 5개. 서로 눈에 띄게 다르다: 단계 9칸(3단계 × 반경·깊이·채움) 중 3칸 이상 달라야 한다(시험이 쌍마다 센다).
@@ -142,7 +151,7 @@ export function validateSurface(m) {
   for (const [i, f] of m.facets.entries()) {
     if (!/^(?:0|\d+px|\d+px \d+px \d+px \d+px)$/.test(f.radius)) err('P_SURFACE_FACET_RADIUS', `$.facets[${i}].radius`, 'radius는 격자 기반 px 모서리 값이어야 합니다');
     if (!['none', 'hairline', 'standard', 'strong', 'double'].includes(f.border)) err('P_SURFACE_FACET_BORDER', `$.facets[${i}].border`, '알 수 없는 테두리 단계입니다');
-    if (!['flat', 'outline', 'soft', 'lifted', 'glow', 'hard', 'inset'].includes(f.elevation)) err('P_SURFACE_FACET_ELEVATION', `$.facets[${i}].elevation`, '알 수 없는 깊이 단계입니다');
+    if (!Object.hasOwn(FACET_SHADOW, f.elevation) && !Object.hasOwn(ELEVATION, f.elevation)) err('P_SURFACE_FACET_ELEVATION', `$.facets[${i}].elevation`, '알 수 없는 깊이 단계입니다');
     if (f.border === 'double' && JSON.stringify(f.contexts) !== JSON.stringify(['form', 'pricing'])) err('P_SURFACE_DOUBLE_CONTEXT', `$.facets[${i}].contexts`, '이중 테두리는 form·pricing 맥락에만 허용합니다');
   }
   for (const level of ['base', 'raised', 'overlay']) {
@@ -170,10 +179,12 @@ export function surfaceCSS(m) {
   rules.push(`${sel} .kit-surface[data-level="raised"]:hover{box-shadow:${hover}}`);
   const borders = {none: '0', hairline: '1px solid var(--kit-border)', standard: '1px solid var(--kit-rule)', strong: '2px solid var(--kit-text)', double: '3px double var(--kit-border)'};
   for (const f of m.facets) {
-    const shadow = f.elevation === 'inset' ? 'inset 0 2px 6px var(--kit-shade)' : ELEVATION[f.elevation].shadow;
+    const shadow = FACET_SHADOW[f.elevation] ?? ELEVATION[f.elevation].shadow;
     const context = f.contexts ? `:is(${f.contexts.map(c => `[data-context="${c}"]`).join(',')}) ` : '';
-    rules.push(`${context}${sel} [data-surface-facet="${f.id}"]{border-radius:${f.radius};border:${borders[f.border]};box-shadow:${shadow};padding:var(--kit-inset)}`);
+    // `.kit-surface[data-level]`(단계 규칙)과 함께 달려도 facet이 이기도록 명시도를 한 단계 높인다.
+    rules.push(`${context}${sel} :is([data-surface-facet="${f.id}"],.kit-surface[data-level][data-surface-facet="${f.id}"]){border-radius:${f.radius};border:${borders[f.border]};box-shadow:${shadow};padding:var(--kit-inset)}`);
   }
+  rules.push(`${sel}.kit-facet-demo{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:var(--kit-gap)}`);
   rules.push(`${sel} .kit-surface :is(h3,p){margin:0}${sel} .kit-surface h3+p{margin-top:var(--kit-sp-near)}`);
   return rules.join('\n');
 }
@@ -184,4 +195,9 @@ const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': 
 export function renderSurfaceSample(m, {title = '표면', body = '경계와 그림자가 단계를 나눕니다.'} = {}) {
   const level = {base: '기본', raised: '떠오름', overlay: '겹침'};
   return `<div class="kit-surface-demo" data-surface="${name(m)}">${Object.keys(m.levels).map(l => `<section class="kit-surface" data-level="${l}"><h3>${escapeHTML(title)} · ${level[l]}</h3><p>${escapeHTML(body)}</p></section>`).join('')}</div>`;
+}
+
+/** 표면 facet 17개의 샘플 마크업. 이중 테두리는 form·pricing 맥락에서만 열리므로 맥락 래퍼를 둔다. */
+export function renderSurfaceFacetSample(m, {context = 'form'} = {}) {
+  return `<div data-context="${context}"><div class="kit-surface-demo kit-facet-demo" data-surface="${name(m)}">${m.facets.map(f => `<section class="kit-surface" data-level="base" data-surface-facet="${f.id}"><h3>${f.id}</h3><p>${f.radius} · ${f.border} · ${f.elevation}</p></section>`).join('')}</div></div>`;
 }

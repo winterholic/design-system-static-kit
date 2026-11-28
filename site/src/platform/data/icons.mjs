@@ -15,32 +15,44 @@ const GROUPS = {
 };
 export const ICON_MATERIALS = Object.freeze(Object.entries(GROUPS).map(([area, symbols]) => definePlatformMaterial({
   id: `icon:area-${area}`, kind: 'icon', label: `${area} icons`, area, symbols,
-  viewBox: '0 0 24 24', size: 24, strokeWidth: 2, alignment: 'optical-center', family: 'original-outline',
+  viewBox: '0 0 24 24', size: 24, minSize: 16, strokeWidth: 2, alignment: 'optical-center', family: 'original-outline',
   contexts: ['any'], tags: ['icon', area], uses: {iconArea: [area]}, reuses: symbols.map(name => `icon:${name}`),
   source: {origin: 'in-repository-original', license: 'internal'},
   quality: {status: 'verified', evidence: ['tests/platform-style-materials.test.mjs:39']},
 })));
 
+/** Alignment name → the vertical-align that keeps a glyph centered on the text x-height. */
+const VALIGN = Object.freeze({'optical-center': 'middle'});
+/** A stroke thinner than this once the glyph is scaled down to minSize stops reading as a line. */
+const MIN_RENDERED_STROKE = 1.25;
+
 export function validateIconMaterial(m) {
   const errors = [];
   if (!/^icon:area-[a-z-]+$/.test(m.id) || m.id !== `icon:area-${m.area}`) errors.push({code: 'P_ICON_ID', path: '$.id', message: 'icon id must match its area'});
   if (m.viewBox !== '0 0 24 24' || m.size !== 24 || m.strokeWidth !== 2 || m.alignment !== 'optical-center' || m.family !== 'original-outline') errors.push({code: 'P_ICON_SYSTEM', path: '$', message: 'icon materials must use the shared 24px original outline system'});
+  if (!Number.isInteger(m.minSize) || m.minSize < 16 || m.minSize > m.size || m.strokeWidth * m.minSize / m.size < MIN_RENDERED_STROKE) errors.push({code: 'P_ICON_SMALL', path: '$.minSize', message: `minSize must be an integer from 16px up to ${m.size}px, and the stroke must still render at ${MIN_RENDERED_STROKE}px or more there`});
   if (m.symbols.length < 4 || m.symbols.some(name => !iconNames.includes(name))) errors.push({code: 'P_ICON_SYMBOL', path: '$.symbols', message: 'each area needs at least four existing internal icons'});
   return errors;
 }
 
-/** Icon materials compile to scoped styling and an explicit, small per-area symbol allowlist. */
+/**
+ * Icon materials compile to scoped styling and an explicit, small per-area symbol allowlist.
+ * The rules only match svgs that carry this material's family (renderAreaIcon stamps it), so family, size, minSize, stroke and alignment all change what is drawn.
+ */
 export function iconCSS(m) {
-  const sel = `[data-icon-area="${m.area}"]`;
-  const symbols = m.symbols.map(symbol => `${sel} .kit-icon.icon-symbol-${symbol}{stroke:currentColor}`).join('');
-  return `${sel}{--kit-icon-size:${m.size}px;--kit-icon-sw:${m.strokeWidth};--kit-icon-align:${m.alignment}}${sel} .kit-icon{width:var(--kit-icon-size);height:var(--kit-icon-size);vertical-align:middle}${sel} .kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:round;stroke-linejoin:round}${symbols}`;
+  const sel = `[data-icon-area="${m.area}"]`, icon = `${sel} .kit-icon[data-icon-family="${m.family}"]`;
+  const symbols = m.symbols.map(symbol => `${icon}.icon-symbol-${symbol}{stroke:currentColor}`).join('');
+  return `${sel}{--kit-icon-size:${m.size}px;--kit-icon-min:${m.minSize}px;--kit-icon-sw:${m.strokeWidth};--kit-icon-align:${VALIGN[m.alignment] ?? m.alignment}}${icon}{width:var(--kit-icon-size);height:var(--kit-icon-size);vertical-align:var(--kit-icon-align)}${icon}[data-icon-size="sm"]{width:var(--kit-icon-min);height:var(--kit-icon-min)}${icon} path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:round;stroke-linejoin:round}${symbols}`;
 }
 
 /** Renders only a symbol allowed by the selected platform icon area. Informative SVGs receive a labeled wrapper; unlabeled ones stay decorative. */
-export function renderAreaIcon(m, {symbol, label} = {}) {
+export function renderAreaIcon(m, {symbol, label, size} = {}) {
   if (!m.symbols.includes(symbol)) throw new RangeError(`${symbol} is not in ${m.id}`);
+  if (size !== undefined && size !== 'sm') throw new RangeError('size must be omitted or "sm"');
   if (label !== undefined && (typeof label !== 'string' || !label.trim())) throw new RangeError('label must be non-empty when supplied');
-  const svg = renderIcon(symbol, `icon-symbol-${symbol}`);
+  const drawn = renderIcon(symbol, `icon-symbol-${symbol}`);
+  if (!drawn.includes(`viewBox="${m.viewBox}"`)) throw new RangeError(`${symbol} is not drawn on the ${m.viewBox} grid of ${m.id}`);
+  const svg = drawn.replace('<svg ', `<svg data-icon-family="${m.family}"${size ? ` data-icon-size="${size}"` : ''} `);
   if (label === undefined) return svg;
   return `<span class="kit-icon-area" role="img" aria-label="${String(label).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]))}">${svg.replace(' aria-hidden="true"', '')}</span>`;
 }

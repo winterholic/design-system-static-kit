@@ -82,9 +82,10 @@ export const BACKGROUNDS = Object.freeze([
   defineStyleMaterial({
     id: 'background:frosted-pane', kind: 'background', label: '제한된 프로스트 글라스', contexts: ['dashboard', 'landing', 'general'], tags: ['frosted', 'glass'],
     axes: {backdrop: 'tint', ornament: 'none'}, uses: {backdrop: ['tint'], ornament: ['none']},
-    page: {background: `linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
+    // blur는 뒤에 또렷한 모양이 있어야 보인다. 매끄러운 그라데이션만 깔면 12px blur가 화면에 아무 변화도 내지 못한다.
+    page: {background: `repeating-linear-gradient(135deg,${mix('accent', 14)} 0 16px,transparent 16px 32px),linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
     deco: {kind: 'frosted', blur: 12, css: `border:1px solid ${mix('text', 8)};background:${mix('canvas', 72)}`},
-    stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+    stops: ['canvas', 'soft', ['accent', 14, 'canvas']], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
   }),
   defineStyleMaterial({
     id: 'background:layered-surface', kind: 'background', label: '겹친 표면', contexts: ['dashboard', 'data', 'settings', 'general'], tags: ['layered', 'surface'],
@@ -99,6 +100,12 @@ export const BACKGROUNDS = Object.freeze([
     page: {background: `radial-gradient(90% 60% at 50% 0%,${mix('action', 12)},transparent 65%),linear-gradient(160deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.surface}))`},
     deco: {kind: 'premium', css: `background:linear-gradient(120deg,${mix('accent', 12)},transparent 38% 68%,${mix('action', 10)})`},
     stops: ['canvas', 'surface'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
+  }),
+  defineStyleMaterial({
+    id: 'background:soft-tint', kind: 'background', label: '단색 틴트 바탕', contexts: ['any'], tags: ['tint', 'calm', 'read'],
+    axes: {backdrop: 'tint', ornament: 'none'}, uses: {backdrop: ['tint'], ornament: ['none']},
+    page: {background: `var(${COLOR_ROLES.soft})`}, deco: {kind: 'none', css: ''}, stops: ['soft'],
+    pairs: [['text', 'soft', 7], ['muted', 'soft', 4.5]], reuses: ['axis:backdrop'],
   }),
 ].map(verifiedBy(EVIDENCE)));
 

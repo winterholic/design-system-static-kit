@@ -1078,17 +1078,20 @@
         "docs/adr/0012-assembly-platform.md",
         "docs/dev/catalog-platform-upgrade/CONTRACTS.md",
         "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
-        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json"
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/screens/foundations/render-check.mjs",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
       ],
       "completionCriteria": "REQUEST §9.3~§9.7 69개 요구 missing 0; 재료 값의 컴파일 CSS 소비·쌍별 차이·reduced-motion·blur 제한 검증; Registry/관계 그래프/서비스/REST/MCP 조회 통과; legacy 2.1.0 해시와 기본 2.4.0 출력 불변. 재료 구현 완료. Foundations 전시장 페이지는 Track F.",
       "tests": [
         "node --test tests/platform-style-materials.test.mjs",
         "npm run coverage:materials:check",
+        "node docs/dev/catalog-platform-upgrade/screens/foundations/render-check.mjs",
         "npm run verify"
       ],
       "commit": null,
       "status": "In Progress",
-      "unresolvedIssues": "재료 범위 완료: §9.3~§9.7 69개 요구 missing 0. 재료 전용 시험 13/13, coverage:materials:check MATCH, 감사·문서·빌드·생성 재현성 검증 통과. 전체 verify의 최신 main resizable-panel Chromium E2E는 Codex 샌드박스 MachPortRendezvous 권한 오류(Permission denied 1100, SIGTRAP)로 이 환경에서 미검증. Foundations 페이지는 Track F.",
+      "unresolvedIssues": "재료 부분 검증 완료(독립 검증 VERIFICATION.md §18): §9.3~§9.7 69개 요구 missing 0이며 각 요구가 재료의 실제 부분(간격 역할 9·표면 facet 17·모션 패턴 15)이나 별개 재료(배경 13·아이콘 영역 16)에 하나씩 대응한다. 독립 검증이 찾은 결함을 고쳤다: 17개 facet이 `.kit-surface[data-level]` 단계 규칙에 가려 화면에서 1종류로 보임, subtle=hairline-border와 medium=deep elevation이 같은 모양, slide=modal-enter가 같은 전환, reducedMotion 필드가 상수이고 CSS에 소비되지 않음, frosted blur가 매끄러운 바탕 위라 화면에 안 보임, Tinted·Dot Pattern이 한 재료를 공유, 간격 9개 요구가 역할 구분 없이 한 재료에 묶임, 아이콘 viewBox·family·정렬 변수가 선언만 있음, 간격·아이콘 영역 25개 재료가 장부에서 metadata-only/defined. Chromium 렌더 확인(screens/foundations/render-check.mjs)이 reduced-motion·blur 상한·그림자/표면 차이를 계산 스타일과 실제 CSSTransition으로 확인한다. 남은 것: (1) Foundations 전시장 페이지(Track F), (2) 간격 밀도·아이콘 영역·표면 facet은 assembleDesign 요청 키가 없고 페이지 컴파일은 표면 base 단계와 밀도 토큰만 소비한다(facet·패턴·간격 역할은 opt-in 마크업, §10 조립 연결 소관), (3) `npm run verify` 984개 중 983 통과, 실패 1건은 tests/platform-type-fonts.test.mjs 4번 시험이 라우트 없이 static-kit.local을 요청해 이 호스트에서 load 대기가 30초를 넘는 환경 의존 결함(E4 변경과 무관, C2 소관).",
       "crossTrackFiles": [
         {
           "file": "apps/web/app/materials/foundations/page.tsx",
@@ -2047,7 +2050,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "2026-11-28 D5 보완: Stack·Container·Resizable Panel 전용 직접 렌더러와 계약 props를 추가했다. 생성된 Material Coverage는 §6.2 L 14/14 direct이며 각 재료의 실제 assembleComponents 출력 프로브/hash가 있다. Core/REST/MCP 동일 출력, 입력 검증·이스케이프, JSON Blueprint 왕복 및 비브라우저 포인터·키보드 런타임 시험을 추가했다. Chromium 시험 결과는 VERIFICATION.md §17에 기록한다."
+      "unresolvedIssues": "2026-11-28 D5 보완: Stack·Container·Resizable Panel 전용 직접 렌더러와 계약 props를 추가했다. 생성된 Material Coverage는 §6.2 L 14/14 direct이며 각 재료의 실제 assembleComponents 출력 프로브/hash가 있다. Core/REST/MCP 동일 출력, 입력 검증·이스케이프, JSON Blueprint 왕복 및 비브라우저 포인터·키보드 런타임 시험을 추가했다. Chromium 시험 결과는 VERIFICATION.md §18에 기록한다."
     },
     {
       "taskId": "TASK-TRD-M",

@@ -1,0 +1,12 @@
+surface.double-border: {"form":"double","dashboard":"solid"}
+surface.facets.distinct: 17/17
+surface.elevation.blur(subtle,medium,deep): [16,32,64]
+surface.presets.base: ["hairline-panel: r=4px 1pxsolid no-shadow","soft-layered: r=10px 1pxsolid shadow","hard-offset: r=0px 2pxsolid shadow","glow-glass: r=18px 1pxsolid shadow","tonal-sheet: r=10px 1pxsolid no-shadow"]
+motion.no-preference.at-50%-of-each-transition: {"pressX":87.7834,"modalOpacity":0.839245,"modalY":6.4302,"drawerX":83.9245,"transitions":{"press":"transform:120","modal":"opacity:240,transform:240","drawer":"transform:240"}}
+motion.reduce.at-50%-of-each-transition: {"pressX":100,"modalOpacity":0.5,"modalY":0,"drawerX":100,"transitions":{"press":"","modal":"opacity:120","drawer":""}}
+motion.computed.reduce(press,modal-enter,drawer-enter): [{"id":"press","prop":"none","dur":"0s","delay":"0s"},{"id":"modal-enter","prop":"opacity","dur":"0.12s","delay":"0s"},{"id":"drawer-enter","prop":"none","dur":"0s","delay":"0s"}]
+background.backdrop-filter(all deco): ["blur(12px)"]
+background.stripe-edge-step(frosted 12px vs 0px): {"blur12":2,"blur0":21}
+spacing.measured(spacious/compact ratio per role): {"page-margin":1.86,"section-gap":2,"container-padding":2,"component-gap":1.67,"sibling-gap":2,"list-gap":1.33,"form-gap":2,"table-cell":1,"icon-text":1}
+icon.computed: ["navigation: 24px stroke 2px small 16px","finance: 24px stroke 2px small 16px","security: 24px stroke 2px small 16px","accessibility: 24px stroke 2px small 16px"]
+ALL CHECKS PASSED

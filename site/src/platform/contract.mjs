@@ -97,8 +97,8 @@ export const KIND_SPECS = Object.freeze({
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
-  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
-  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', roles: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', minSize: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
 /** 스타일 재료 종류. 페이지 단계가 하나씩 고르며 상태 패턴은 상태마다 고른다. */
 export const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon']);

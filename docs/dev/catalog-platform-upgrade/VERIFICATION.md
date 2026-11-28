@@ -1109,3 +1109,73 @@ TDD 실행 증거: 포인터 시험을 먼저 쓴 뒤 `node --test tests/platfor
 Chromium 시험 `tests/platform-layout-resizable.test.mjs`는 미실행이다. Codex command sandbox에서 browser preflight가 `status=blocked`, Mach register 및 launch-services Mach lookup `denied`(errno 0), 종료 코드 78을 반환해 브라우저를 실행하지 않았고 재시도하지 않았다. 브라우저 동작을 대체 확인한 비브라우저 시험은 `tests/platform-layout-runtime.test.mjs`의 포인터·키보드 하네스 4/4다.
 
 TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest coverage는 direct 14/14이며 각 행 재료에 성공 출력 probe와 hash가 있다.
+
+## 18. TASK-TRE-04 Foundations 재료(§9.3~§9.7 69항목) 독립 검증 및 A3 브라우저 잔여 확인 (2026-11-28, `upgrade/e4-verify`)
+
+검증 대상은 `origin/main`의 `3421079e0`(구현 `994b64bd9`, 미러 `2c4babd48`)이다. 구현 보고(69항목 missing 0, 재료 시험 13/13)는 맞았지만 **missing 0은 요구가 어떤 재료 이름에 연결됐다는 뜻일 뿐, 그 값이 화면에 나타난다는 뜻이 아니었다.** 코드를 읽고 브라우저로 렌더해 다음을 찾아 고쳤다. 실행 환경은 Node v26.9.0, Playwright Chromium(`PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright`)이다.
+
+### 18.1 판정: 구현이 놓친 결함
+
+| # | 결함 | 어떻게 드러났나 |
+|---|---|---|
+| 1 | 17개 표면 facet이 화면에서 **서로 다르지 않았다.** facet 규칙 `[data-surface] [data-surface-facet]`(명시도 0,2,0)이 `.kit-surface[data-level]` 단계 규칙(0,3,0)에 가려, 단계 표면 위에서는 반경·테두리·그림자가 전부 단계 값이 됐다 | Chromium 계산 스타일에서 서로 다른 모양이 1/17. 기존 시험은 CSS 문자열 대조만 해서 통과했다 |
+| 2 | `subtle`과 `hairline-border`가 컴파일 결과 동일(4px·1px 헤어라인·그림자 없음), `medium-elevation`과 `deep-elevation`이 같은 그림자(`lifted`)이고 반경만 달랐다 | facet별 컴파일 선언 쌍 비교 |
+| 3 | 모션 패턴 `slide`와 `modal-enter`가 같은 전환(속성 집합·길이·곡선·지연 동일), `toast-enter`는 `popover-enter`와 지연만 달랐다 | 패턴별 컴파일 전환 비교 |
+| 4 | `reducedMotion` 필드가 15개 모두 상수 `none`이고 CSS가 읽지 않았다(일괄 `*{transition-duration:.01ms}`만 있었다) | 값을 바꿔도 컴파일 CSS가 변하지 않음(잎 값 변이 검사) |
+| 5 | Frosted Glass의 `blur(12px)`가 **화면에 아무 변화도 내지 못했다.** 뒤에 매끄러운 그라데이션만 있어 흐려질 대상이 없다 | blur 12px와 0px의 스크린샷 줄무늬 경계 변화량 비교 |
+| 6 | Tinted와 Dot Pattern이 한 재료(`background:brand-tint-dots`)에 연결됐다. 단색 틴트 재료가 없었다 | 장부의 요구→재료 연결 |
+| 7 | 간격 9개 요구(페이지 여백~아이콘과 텍스트 간격)가 구분 없이 `spacing:comfortable` 하나에 연결됐고, 재료에 역할 개념이 없었다. 표면 17·모션 15개 요구도 재료 하나(`hairline-panel`, `calm`)에 연결됐다 | 장부 `materialIds` |
+| 8 | 아이콘 `viewBox`·`family`가 선언만 있고 어디서도 읽히지 않았고, `--kit-icon-align` 변수는 선언만 되고 읽는 규칙이 없었다. 작은 크기 가독성 규칙이 없었다 | 잎 값 변이 검사, CSS 대조 |
+| 9 | 간격 밀도 3종은 장부 상태가 `metadata-only/no-definition`, 아이콘 영역 16종은 `defined/no-render-probe`였다. 69항목 중 25항목이 그 상태 | `MATERIAL-COVERAGE.json` |
+
+구현 보고와 달리 맞았던 것: 69항목이 REQUEST §9.3~§9.7 문장에서 생성되고(`foundations` 9·17·12·15·16), 아이콘이 `src/catalog/icons.mjs`를 바꾸지 않았으며(`git diff origin/main -- src/catalog/icons.mjs` 빈 출력), 간격 값이 4px 격자와 기존 `SPACE` 토큰을 쓴다.
+
+### 18.2 교정
+
+- 표면: facet 규칙을 `:is([data-surface-facet],.kit-surface[data-level][data-surface-facet])`로 올려 단계 표면 위에서도 이기게 했다. `subtle`은 테두리 없는 4px, `deep-elevation`은 `FACET_SHADOW.deep`(`ELEVATION` 표는 건드리지 않아 2.1~2.4 출력 불변)로 바꿔 17개가 모두 다른 모양이 되고 그림자 번짐이 subtle 16 < medium 32 < deep 64가 된다. facet 샘플 `renderSurfaceFacetSample`을 추가했다(이중 테두리는 form·pricing 맥락 래퍼 안에서만 열린다).
+- 모션: `modal-enter`·`drawer-enter`를 `slow`, `toast-enter`를 `base`로 올려 15개가 서로 다른 전환이 된다. `reducedMotion`은 `instant`(전환 제거)와 `fade`(opacity만 짧게, transform 제거)로 바꾸고 패턴마다 reduce 규칙을 컴파일한다(일괄 규칙보다 명시도가 높다). 등록 검사는 `fade`가 opacity를 움직이는 패턴만 허용한다.
+- 배경: Tinted용 `background:soft-tint`를 추가해 12개 항목에 재료 13종이 대응한다. Frosted의 바탕에 또렷한 줄무늬를 깔아 blur가 화면에서 보인다(대비 stops에도 반영).
+- 간격: `SPACING_ROLES` 9개를 서로 다른 토큰 9개(band·section·inset·head·gap·item·sub·near·tight)에 묶고 `[data-spacing-role]` opt-in 규칙으로 컴파일한다. 두 역할이 같은 토큰을 읽으면 등록이 거부된다. 토큰은 모두 현재 컴파일된 페이지 CSS가 읽는 것이다.
+- 아이콘: `renderAreaIcon`이 viewBox를 대조하고 `data-icon-family`·`data-icon-size`를 찍으며 CSS 선택자가 family를 읽는다. `--kit-icon-align`을 `vertical-align`이 읽는다. `minSize` 16px와 그 크기에서 선 굵기 1.25px 이상 검사를 추가했다.
+- 장부: 요구에 `part`(`role:*`·`facet:*`·`pattern:*`)를 달아 요구 문장 하나가 재료의 부분 하나에 대응하게 했고, 간격·아이콘 영역에 정의 경로와 `assembleStyleMaterials` 프로브를 연결했다. 69항목 상태는 `metadata-only/defined` 25 → `renderable` 25(웹 카탈로그에 아직 없음)로 정직하게 올랐고 나머지 44는 `verified`다.
+
+### 18.3 시험과 RED
+
+`tests/platform-style-materials.test.mjs`에 시험 5개를 더해 18개다(기존 13). 하드코딩 기대값 대신 컴파일 결과의 성질을 본다: facet 17개 쌍별 다른 반경·테두리·그림자, 그림자 번짐 순서, 15개 전환 레시피 쌍별 차이와 정책별 reduce 규칙, 역할 토큰 9개 서로 다름·밀도 배율이 역할마다 다름·역할 토큰이 컴파일된 모든 템플릿 CSS에서 읽힘, 아이콘 viewBox·family·크기, 장부의 부분·재료 대응. 기존 시험에서 항상 참인 단언은 찾지 못했다. 약한 단언 3건을 고쳤다: (1) facet 쌍 비교가 원시 필드 `[radius,border,elevation]`만 봐서 결함 1·2를 놓쳤고 컴파일 결과 비교로 바꿨다. (2) 순위 시험의 유일한 OR 단언 `ranked.length > 0 || reasons.length > 0`을 '비어 있으면 사유가 있고 사유마다 code·id가 있다'는 함의로 바꿨다. (3) 프리셋 CSS를 `css.length > 80`으로만 보던 단언을 '자기 범위 선택자(`[data-surface=...]` 등)를 포함하고 규칙이 3개 이상'으로 바꿨다.
+
+결함을 심어 실패를 확인했다(원복 후 18/18 통과):
+
+| 심은 결함 | 실패한 시험 |
+|---|---|
+| deep-elevation에 medium 그림자 | facet 17종, 프리셋 차이 |
+| subtle을 hairline-border와 같게 | facet 17종, 프리셋 차이 |
+| modal-enter를 slide와 같게 | 모션 패턴 15종 |
+| reduce 정책 규칙을 CSS에서 제거 | 모션 패턴 15종 |
+| 패턴 정책을 전부 `instant`(상수)로 | 모션 패턴 15종 |
+| 간격 두 역할이 같은 토큰 | 등록 거부(시험 파일 로드 실패) |
+| 아이콘 정렬 변수 미사용 / viewBox 미대조 | 아이콘 값이 출력에 닿음 |
+| 장부에서 Tinted를 Dot Pattern 재료에 연결 | 장부 대응 시험 |
+| facet 명시도를 낮춤 | facet 17종(시험) + Chromium 확인(2/17) |
+| reduce 정책 규칙 제거, fade에서 transform 유지, frosted를 매끄러운 바탕으로, blur 24px | Chromium 확인 4건 모두 실패(blur 24px는 등록 단계에서 거부) |
+
+### 18.4 Chromium 렌더 확인(`screens/foundations/render-check.mjs`, 대표 재료만)
+
+계산 스타일과 실제 `CSSTransition`을 읽고(시간 표본이 아니라 전환을 멈춰 50% 지점 값을 읽는다) 스크린샷 6장을 같은 폴더에 둔다. 출력 전문은 `render-check.out.txt`다. 요약:
+
+- 표면: facet 17/17 서로 다름, 그림자 번짐 16/32/64, `double-border`는 form 맥락에서 `double`, dashboard 맥락에서는 열리지 않음. 표면 프리셋 5종의 base 단계 모양이 모두 다름.
+- 모션(calm): `prefers-reduced-motion: no-preference`에서 press `transform:120ms`, modal-enter `opacity·transform:240ms`, drawer-enter `transform:240ms`가 실제로 걸리고 50% 지점 값이 시작·끝 사이(pressX 87.8, drawerX 83.9, modalY 6.4)다. `reduce`에서는 press·drawer가 전환 없이 즉시 끝 값(100)이고 modal-enter는 `opacity:120ms`만 남아 transform이 즉시 끝 값(0)이며 opacity는 0.5다.
+- 배경: 모든 `.kit-deco`의 `backdrop-filter`는 `blur(12px)` 하나(상한 16px 이하), 17px는 등록 거부. 줄무늬 경계 변화량 blur12 = 2, blur0 = 21로 화면에서 실제로 흐려진다.
+- 간격: 역할 9개의 실제 레이아웃 거리가 `SPACE` 토큰과 같고(compact·spacious), spacious/compact 배율이 역할마다 다르다(1.0·1.33·1.67·1.86·2.0).
+- 아이콘: 영역 4종 계산 스타일 24px·stroke 2px·`vertical-align:middle`, 작은 크기 16px, 장식은 `aria-hidden`, 이름이 있는 것은 `role="img" aria-label`.
+
+### 18.5 A3 브라우저 잔여 2건
+
+1. `cd apps/web && npx playwright test e2e/catalog-lists.spec.mjs`: **10개 중 9개 통과, 1개 실패.** Explore·Components·Typography 목록의 24카드 상한, iframe 0, 컴파일 0회, 정적 미리보기 디코드는 통과했다. 실패한 시험(`catalog-lists.spec.mjs:174`)은 `/components/hero`의 `h1`이 `Hero`를 포함해야 한다고 단언하지만 화면은 한국어 라벨 `히어로`를 낸다(`src/catalog/nodes.mjs`의 `label`). 단언만 `히어로`로 바꾼 임시 사본으로 같은 시험을 돌리면 통과하므로 제품 결함이 아니라 `ef1ade200`이 넣은 시험의 기대값 오류다. A3는 확인만 하는 범위라 고치지 않았다. 수정안: 단언을 `toContainText('히어로')`(또는 `/히어로|Hero/`)로 바꾼다.
+2. 운영 빌드(`npm run web:build` 후 `next start`)에서 Studio 편집 후 `typeof window.__studio_api`는 `undefined`, `__studio_compile_count`도 `undefined`, `'__studio_api' in window`는 `false`다(`e2e/studio-probe.spec.mjs` 운영 시험 2개 통과: window 훅 없음, `.next/static` 번들에 훅 문자열 없음). `DSK_STUDIO_PROBE=1` 빌드에서는 `typeof window.__studio_api`가 `object`, `__studio_compile_count`는 `number`(값 2)로 존재한다.
+
+### 18.6 불변 조건과 전체 검증
+
+- `src/catalog/icons.mjs`·`src/catalog`·`src/render`·`src/styles`·`src/spacing.mjs`·`site/v1`·`docs/evidence/context/legacy-hashes.json`: 검증 대상 `3421079e0`에서 `git diff origin/main` 빈 출력(교정 커밋도 이 경로를 건드리지 않았다). legacy 2.1.0 해시와 기본 2.4.0 출력 시험(`tests/composition.test.mjs`, `tests/platform-color-compat.test.mjs`) 22/22 통과.
+- `npm run coverage:materials:check`: `MANIFEST MATCH`(최신 main `e901afcc5` 위로 rebase한 뒤 재생성한 `MATERIAL-COVERAGE.json` 기준, 재료 1480·요구 406·missing 요구 69는 §9.3~§9.7이 아닌 구성요소 요구).
+- `npm run verify`(최신 main `e901afcc5` 위로 rebase한 최종 트리): `npm test` **1015개 중 1014 통과, 1 실패**. 실패는 `tests/platform-type-fonts.test.mjs` 4번 시험의 `page.setContent: Timeout 30000ms exceeded`다. 이 시험의 마지막 구간(289~299줄 근처, 일본어 fallback 표본)은 앞 구간과 달리 `page.route('http://static-kit.local/**')`를 걸지 않고 그 주소를 요청한다. 이 호스트에서는 그 이름이 풀리지만(curl `dns=0.01s`) 연결이 응답하지 않아 `load` 대기가 30초를 넘긴다. 저장소 코드 없이 Chromium에 같은 `<link>`만 넣어도 8초 타임아웃으로 재현된다. E4 변경과 무관한 C2 시험의 환경 의존 결함이고 쓰기 범위 밖이라 고치지 않았다(수정안: 마지막 구간에도 같은 라우트를 건다). 같은 시험은 교정 전 `3421079e0` 위에서도 같은 이유로 실패했다. 따라서 `npm run verify`의 `npm test` 단계는 이 1건 때문에 exit 1이다. 이후 단계는 따로 실행해 통과했다: `audit` exit 0, `docs` exit 0, `build` exit 0, `check-generated` `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`
+- 루트 브라우저 시험 `npx playwright test`(교정 직후, rebase 전): 325개 중 324 통과, 1 실패. 실패는 `e2e/platform-families.spec.mjs:12`의 `media dashboard/comfortable family:quiet light mobile: CLIP_ICON,CLIP_TEXT,CLIP_TEXT,OVERFLOW_X`를 비롯한 media 묶음 측정이다(D4 정보·미디어 패밀리의 레이아웃 품질). 교정 전 `3421079e0`을 새로 `npm ci`한 작업 트리에서 같은 측정(`measureAll({groups: ['media'], modes: ['light']})`)을 돌려도 같은 코드(`CLIP_ICON,CLIP_TEXT,CLIP_TEXT,OVERFLOW_X`)로 실패하고, 최신 main 위의 교정본에서도 동일하다. E4가 만든 실패가 아니며 D4 소관이다.
