@@ -516,7 +516,7 @@ GREEN 같은 명령
 
 - `resolveTokenLayers`에 있던 고정 `#000000`·`chart1` 대체값을 제거했다. 2.6.0 resolver는 primitive 143개와 semantic 22개를 읽는다. state는 9개, component는 33개다. data-viz는 8개다. 값이 없으면 오류를 낸다.
 - Component Token 검사는 토큰 이름이 코드에 등장하는지만 보던 방식에서 실제 `var(--kit-…)` 참조를 찾도록 바꿨다. 차트 시리즈는 기존 `coreCSS`와 차트 renderer가 소비한다. 플랫폼 결합 테스트도 각 통과 쌍에서 Card/Button 컴포넌트와 상태·차트 토큰을 실제 조립 결과로 확인한다.
-- Track A 소유 파일 `src/platform/contract.mjs`에 선택 `forbiddenContexts` 필드를 허용했다. TRB-03의 `crossTrackFiles`에 파일과 소유자, 수정 사유를 기록했다.
+- Track A 소유 파일 `src/platform/contract.mjs`에 선택 `forbiddenContexts` 필드를 허용했다. TRB-03의 `crossTrackFiles`에 파일과 소유자, 수정 사유를 기록했다. 추가로 Track A 소유 `src/platform/index.mjs`, 서비스 경로와 평가 스크립트, Track G 소유 스타일 맥락 문서와 생성 evidence도 CONTRACTS §6.1에 따라 TRB-03/04의 `crossTrackFiles`에 개별 기록했다.
 
 ### 8.4 기존 색상 호환성 (완료 기준 4)
 
