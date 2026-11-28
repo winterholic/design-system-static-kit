@@ -2,7 +2,7 @@
   "schemaVersion": "catalog-index/1.0",
   "category": "inputs",
   "label": "입력",
-  "itemCount": 8,
+  "itemCount": 14,
   "page": 1,
   "pages": 1,
   "materials": [
@@ -23,9 +23,7 @@
       "url": "/components/form",
       "purpose": "폼를 화면 구성에 사용합니다.",
       "relatedCategories": [
-        "inputs",
-        "selection",
-        "date-time"
+        "inputs"
       ],
       "previewUrlsByFamily": {}
     },
@@ -204,6 +202,80 @@
       }
     },
     {
+      "id": "purpose:form.currency",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "통화 입력",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/036d0191273d6f04644082e788281e01.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/currency",
+      "purpose": "통화 단위가 붙은 금액을 숫자로 입력하고 네이티브 범위 검증을 적용한다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/e2b23745d8f7089d0504739f1898f59a.svg",
+        "family:corporate-formal": "/previews/5ded5a19c094f5f7de372b33de80b8d5.svg",
+        "family:dense-enterprise": "/previews/882316cabdd384d2ab22f60161a3556e.svg",
+        "family:editorial": "/previews/3b723876c09b62882e0962bd7ae206de.svg",
+        "family:elevated-material": "/previews/382e7a347b78d9c4cb47a75ff1b106a7.svg",
+        "family:expressive": "/previews/f095e71029c98547a388a3f3a692e3ac.svg",
+        "family:glass": "/previews/44ff2b5e16334818bc9d4d58ce185fb9.svg",
+        "family:luxury": "/previews/c132ad49aa22d04318fb049dd22972e6.svg",
+        "family:outline-precise": "/previews/be760938f9dcc9f0d0fc62855e4f167d.svg",
+        "family:quiet": "/previews/036d0191273d6f04644082e788281e01.svg",
+        "family:soft": "/previews/32fb670dbc1cef314c4d1b187db80c22.svg",
+        "family:tonal-layered": "/previews/62cc320b1289caababceda2cf3fed2fd.svg"
+      }
+    },
+    {
+      "id": "purpose:form.file",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "파일 입력",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/0b0127e97cc6ccfa6eed24917757ecdd.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/file",
+      "purpose": "브라우저 파일 선택기를 통해 허용 형식의 파일을 선택한다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/841a19c4acadd07a140bbf5b62a758fe.svg",
+        "family:corporate-formal": "/previews/f288d95a0110f2af176b62d1132a9aef.svg",
+        "family:dense-enterprise": "/previews/3e122dc6f44bee26313dc74c1a31acef.svg",
+        "family:editorial": "/previews/b32316c808cde4cc92b67239512782d9.svg",
+        "family:elevated-material": "/previews/4b0a39d4cc4cb0f68a1cb62a52d053e8.svg",
+        "family:expressive": "/previews/e0bbb3932c6b2f91a128e3733e20b33c.svg",
+        "family:glass": "/previews/fe03487b8b8f9041d50adde62f47f41f.svg",
+        "family:luxury": "/previews/5a597d1984b4eb583cabd1370e64006d.svg",
+        "family:outline-precise": "/previews/d1933c286e578ab3ca15b55106d77702.svg",
+        "family:quiet": "/previews/1f729212e193892993ae9cb032b4a217.svg",
+        "family:soft": "/previews/b15cdc8294a737d034fe0198b99dd6af.svg",
+        "family:tonal-layered": "/previews/0b0127e97cc6ccfa6eed24917757ecdd.svg"
+      }
+    },
+    {
       "id": "purpose:form.group",
       "kind": "purpose-family",
       "category": "purpose-family",
@@ -237,6 +309,80 @@
         "family:quiet": "/previews/db6e247aa2e0be7f943ebd1bc90402e7.svg",
         "family:soft": "/previews/3d2d583ef3de860a2cb3de5fd47688a2.svg",
         "family:tonal-layered": "/previews/76ef84503c3509a40b2c58cefdc39aad.svg"
+      }
+    },
+    {
+      "id": "purpose:form.input-kind",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "입력 종류",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/0744a9ca97589d6fe7db1b49a8011f43.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/input-kind",
+      "purpose": "전화번호·URL 같은 네이티브 input kind 변형을 기존 입력 재료의 레이블·상태 계약으로 렌더한다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/cc01a612642265b7f72f5b1e3446ae08.svg",
+        "family:corporate-formal": "/previews/fadc61500092c2c24416233ae9e27bd8.svg",
+        "family:dense-enterprise": "/previews/bf28692deb26d55c822e99134b8c2c2d.svg",
+        "family:editorial": "/previews/0744a9ca97589d6fe7db1b49a8011f43.svg",
+        "family:elevated-material": "/previews/b5bd8ec88a54b5c12c50cfaade1360ab.svg",
+        "family:expressive": "/previews/b72c4729bbbbec544ad3b9123a020120.svg",
+        "family:glass": "/previews/a7b9c23e2f54f804b9ee1bf406d8bea3.svg",
+        "family:luxury": "/previews/519fa1712f6a9027333a85e7b691bb62.svg",
+        "family:outline-precise": "/previews/b8cafc25a4c9c1e36cdfbd7ccb12908a.svg",
+        "family:quiet": "/previews/e96cfaea9f8ec7c886f15650a3495881.svg",
+        "family:soft": "/previews/7297a93af76e636dec14ea6a233d8b99.svg",
+        "family:tonal-layered": "/previews/f39a13953be17bbc3313827fa47714c4.svg"
+      }
+    },
+    {
+      "id": "purpose:form.otp",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "일회용 코드 입력",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/07abcb34a2fe35742c0e126ef783f75b.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/otp",
+      "purpose": "일회용 인증 코드를 한 칸에 입력하고 길이와 문자 집합을 검증한다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/78a374ea0597f42986e4e2e5174bc30c.svg",
+        "family:corporate-formal": "/previews/07abcb34a2fe35742c0e126ef783f75b.svg",
+        "family:dense-enterprise": "/previews/ec387f18b4e631c0cba6ad305fcd67d8.svg",
+        "family:editorial": "/previews/cf378aeac47d1bb7e76cc4f2a3958399.svg",
+        "family:elevated-material": "/previews/60a559c6dab10e328cd8fca97bc10dcf.svg",
+        "family:expressive": "/previews/a420a64384bfcf74cc331ea567f9cd78.svg",
+        "family:glass": "/previews/9bcce58aed375440583506b5b425c79d.svg",
+        "family:luxury": "/previews/fa28ff5ee7fa7012126da5a0a112f5b2.svg",
+        "family:outline-precise": "/previews/98f8323179287b3a139194b631dd1c92.svg",
+        "family:quiet": "/previews/6d22e66c11c6d43a3c372b09d2fc5c02.svg",
+        "family:soft": "/previews/5498f8ac32204f05264a77fa2d43d9bc.svg",
+        "family:tonal-layered": "/previews/e5f36fda8a5e2d89d4f029641c8d7d5c.svg"
       }
     },
     {
@@ -274,6 +420,80 @@
         "family:quiet": "/previews/ce2e84831b7268794a0abc0592470495.svg",
         "family:soft": "/previews/9650a364d4914a98990f81212e91b027.svg",
         "family:tonal-layered": "/previews/111b65378e27d2732ae5d1d10c586139.svg"
+      }
+    },
+    {
+      "id": "purpose:form.tags",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "태그 입력",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/037e770bcf5c93f7193f8583e4e0706d.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/tags",
+      "purpose": "태그를 쉼표나 Enter로 추가하고 개별 삭제 및 폼 제출을 지원한다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/037e770bcf5c93f7193f8583e4e0706d.svg",
+        "family:corporate-formal": "/previews/27aed1b4e6675f4cc6b6015c77a2b1bc.svg",
+        "family:dense-enterprise": "/previews/e54b5cd4d5e1c0fab6b5d56d3993120b.svg",
+        "family:editorial": "/previews/a9d9383ff18cafc714bb8a500b9f094e.svg",
+        "family:elevated-material": "/previews/e9f6f0c6cbb21de575b10b7565278279.svg",
+        "family:expressive": "/previews/bae2e3f90484e01f01fc4c362bf6cbee.svg",
+        "family:glass": "/previews/6652f746791180dfbf0b6ee03f107d5d.svg",
+        "family:luxury": "/previews/65db64d2d7578094b9513c2056c4272e.svg",
+        "family:outline-precise": "/previews/fe49c86266fa70d6f944d7d094f0c8af.svg",
+        "family:quiet": "/previews/34ea058af14de6bc730caff36f869519.svg",
+        "family:soft": "/previews/d760311aa99beb6e4f4afc9255d8fb99.svg",
+        "family:tonal-layered": "/previews/7f5a6a748b4fe8fb0ff43f3c89ce77e4.svg"
+      }
+    },
+    {
+      "id": "purpose:form.upload",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "드래그 앤 드롭 업로드",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/02a32455c830eb0f24b6dea8ea8f945e.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/upload",
+      "purpose": "파일 입력을 넓은 드롭 영역에 배치해 파일 선택과 파일 끌어 놓기를 제공한다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/be59d4bafa9a6980beaf86cce8eb0af3.svg",
+        "family:corporate-formal": "/previews/203a4e330514345d9e0749f69144445b.svg",
+        "family:dense-enterprise": "/previews/21cfd2fec3bf401beaebae4b74fb52b4.svg",
+        "family:editorial": "/previews/d3e1389a6dc58bb38f9a0a55db8f5473.svg",
+        "family:elevated-material": "/previews/8a33d14ed2ca6cc11aea5a6a6f2f2678.svg",
+        "family:expressive": "/previews/dffb04c09a81f5ab6564c389dae2224b.svg",
+        "family:glass": "/previews/1b3daf61ba83c3a816001901bc897e99.svg",
+        "family:luxury": "/previews/2bd2ccf17b17f5440909129b4a8ddba5.svg",
+        "family:outline-precise": "/previews/02a32455c830eb0f24b6dea8ea8f945e.svg",
+        "family:quiet": "/previews/ffd2d60c928bc5c56cbdcdb3699f176f.svg",
+        "family:soft": "/previews/946d19632d62caad8d57f64460fdef4e.svg",
+        "family:tonal-layered": "/previews/bff54079a0ebcbee38f1531c140fbd36.svg"
       }
     }
   ]

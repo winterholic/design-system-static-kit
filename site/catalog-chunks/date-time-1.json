@@ -2,7 +2,7 @@
   "schemaVersion": "catalog-index/1.0",
   "category": "date-time",
   "label": "날짜·시간",
-  "itemCount": 2,
+  "itemCount": 8,
   "page": 1,
   "pages": 1,
   "materials": [
@@ -28,27 +28,263 @@
       "previewUrlsByFamily": {}
     },
     {
-      "id": "component:form",
-      "kind": "component",
-      "category": "form",
-      "label": "폼",
+      "id": "purpose:form.date",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "날짜",
       "contexts": [
         "any"
       ],
-      "tags": [],
-      "previewUrl": "/previews/7c0f4358c4b01bbbea300483c3fd7f56.svg",
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/2185fff2ba2d61d86e3a1aadb7dfee1a.svg",
       "variantsCount": 0,
       "statesCount": 0,
       "qualityStatus": "implemented",
       "license": "internal",
-      "url": "/components/form",
-      "purpose": "폼를 화면 구성에 사용합니다.",
+      "url": "/components/purpose/form/date",
+      "purpose": "네이티브 date 입력과 실제 달력 날짜 검증으로 날짜 값을 받는다.",
       "relatedCategories": [
-        "inputs",
-        "selection",
         "date-time"
       ],
-      "previewUrlsByFamily": {}
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/901e5f242ffeaca5337a9b8525a3ca59.svg",
+        "family:corporate-formal": "/previews/a6997a41f6718100bda5bba438f2aaab.svg",
+        "family:dense-enterprise": "/previews/cadb655b8d05eec990f97621ebc4ec83.svg",
+        "family:editorial": "/previews/d527fc34493de49ad726abd5ebddd0dd.svg",
+        "family:elevated-material": "/previews/64885387a5671f9353f3ecd8b2dfacaa.svg",
+        "family:expressive": "/previews/db98143b9b1c5bdf54a413fa4f0f4493.svg",
+        "family:glass": "/previews/9a0e174e99e826d97796bbeed2dd0463.svg",
+        "family:luxury": "/previews/36c102e1c4cb88ab520fbcc75612384c.svg",
+        "family:outline-precise": "/previews/2185fff2ba2d61d86e3a1aadb7dfee1a.svg",
+        "family:quiet": "/previews/c2ba63247624740c09f43e1c41573921.svg",
+        "family:soft": "/previews/d6ece27a7bbbb1e8e721486128c730aa.svg",
+        "family:tonal-layered": "/previews/2f8a44b205adaca6dd0785b54f3644ce.svg"
+      }
+    },
+    {
+      "id": "purpose:form.date-range",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "날짜 범위 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/27a51eacdab98b28de83b7454b4428dc.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/date-range",
+      "purpose": "시작일과 종료일을 별도의 date 입력으로 받아 범위를 검증한다.",
+      "relatedCategories": [
+        "date-time"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/4061949b972054d4bad837517d49999c.svg",
+        "family:corporate-formal": "/previews/9d5d8a181da190098cccf1fa238f5d2a.svg",
+        "family:dense-enterprise": "/previews/59240a440a4a8ce75aab0b343fc16b38.svg",
+        "family:editorial": "/previews/429e0687b9e823eb7f5aa6ac30228c41.svg",
+        "family:elevated-material": "/previews/9f14052c476eaa8df17ae347bff6cdc7.svg",
+        "family:expressive": "/previews/abfe581cff2533c33e6a011cd73e9f91.svg",
+        "family:glass": "/previews/92884f90b0d371cd1a6cac48c8400d74.svg",
+        "family:luxury": "/previews/2bd98c7858796bf4289d9f871a3d3320.svg",
+        "family:outline-precise": "/previews/564ba02da3c2c23d8cccd929fff1b928.svg",
+        "family:quiet": "/previews/d605ed01e4ed6111ef20f549f4373daf.svg",
+        "family:soft": "/previews/27a51eacdab98b28de83b7454b4428dc.svg",
+        "family:tonal-layered": "/previews/c1c496a3fd1169c7c01db46a7b546627.svg"
+      }
+    },
+    {
+      "id": "purpose:form.datetime",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "날짜와 시각 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/215f868bf28b7c9b6af359700308c1af.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/datetime",
+      "purpose": "네이티브 datetime-local 입력과 브라우저 제약 검증으로 날짜와 시각을 받는다.",
+      "relatedCategories": [
+        "date-time"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/6f1ebdfe341e663eb195a4a5cdcbc7c2.svg",
+        "family:corporate-formal": "/previews/256406b915014a5d340d3962a6323f1e.svg",
+        "family:dense-enterprise": "/previews/8245e6ea36c828f3b47ce9dd42432266.svg",
+        "family:editorial": "/previews/fa91640a129d4bc8d132d75b02d331f4.svg",
+        "family:elevated-material": "/previews/77a2069686f01ce58ea5b08133ffbeb1.svg",
+        "family:expressive": "/previews/912d741a1cfaeffe13a9df850df7c6b5.svg",
+        "family:glass": "/previews/600770d6fb3d9e7633c2e402c40798ed.svg",
+        "family:luxury": "/previews/34e1acf1f62214fbf98fa683fb9b00db.svg",
+        "family:outline-precise": "/previews/c23c462238938000350b24764d05e843.svg",
+        "family:quiet": "/previews/e9c9256fbbf21487a242a3d4605841b3.svg",
+        "family:soft": "/previews/215f868bf28b7c9b6af359700308c1af.svg",
+        "family:tonal-layered": "/previews/a8e141e64df37581ac27706c89c73e29.svg"
+      }
+    },
+    {
+      "id": "purpose:form.month",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "월 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/008bf952fb3f25157df55f467648b964.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/month",
+      "purpose": "네이티브 month 입력과 브라우저 제약 검증으로 월 값을 받는다.",
+      "relatedCategories": [
+        "date-time"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/ad31b0fb37d545cdccfeeee48ff54f9c.svg",
+        "family:corporate-formal": "/previews/1c4b5c1a4224e7671e8d07d1883a45a2.svg",
+        "family:dense-enterprise": "/previews/fbc235f0e879c54ae25daa09cec2a383.svg",
+        "family:editorial": "/previews/20cdd694c85b9360ef34c46986749d58.svg",
+        "family:elevated-material": "/previews/008bf952fb3f25157df55f467648b964.svg",
+        "family:expressive": "/previews/1abc3d103ca6e01a08773c03c3f4dd66.svg",
+        "family:glass": "/previews/08545426b6635719b001835e1f16d894.svg",
+        "family:luxury": "/previews/8ecb1b8888ca170336ef5d7573d77595.svg",
+        "family:outline-precise": "/previews/e4db33883ee6527e930964e6cd86befd.svg",
+        "family:quiet": "/previews/78ead8b990c7c0c4f060c817f547e483.svg",
+        "family:soft": "/previews/c8605583a4603e9fd8f8a0b503a93beb.svg",
+        "family:tonal-layered": "/previews/a235afb44e99814adef0d065daf127b3.svg"
+      }
+    },
+    {
+      "id": "purpose:form.schedule",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "일정 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/2422771fdbbd023f90759eab3d22b96a.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/schedule",
+      "purpose": "요일을 복수 선택하고 선택한 일정의 시작 시각을 입력한다.",
+      "relatedCategories": [
+        "date-time"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/b6d2e829e9fb5bfcaf4e1806210dcfe2.svg",
+        "family:corporate-formal": "/previews/783dc08be63af98650184b8842de5fcb.svg",
+        "family:dense-enterprise": "/previews/58e76cb3cc22282bc6366e2448056fb5.svg",
+        "family:editorial": "/previews/522417db6ea66995e94c6b97bab6dccb.svg",
+        "family:elevated-material": "/previews/a3c0e51b7608c42c53e31e1c7ceff0ab.svg",
+        "family:expressive": "/previews/730144cded5073d505408d03a2745c27.svg",
+        "family:glass": "/previews/698e841803facdaf8ce729402391c5cf.svg",
+        "family:luxury": "/previews/3d99b1ac938a72a3a5e577002a78584e.svg",
+        "family:outline-precise": "/previews/2422771fdbbd023f90759eab3d22b96a.svg",
+        "family:quiet": "/previews/fd11e04a4ee3373f6ecfedd64fb0c66f.svg",
+        "family:soft": "/previews/689089c7dc247726773814c7981c6f24.svg",
+        "family:tonal-layered": "/previews/372fcd8b77dc1e3f2aa2ca743fbc0c7c.svg"
+      }
+    },
+    {
+      "id": "purpose:form.time",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "시각 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/100fbebef6e5f14f79a569f88d6a43b3.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/time",
+      "purpose": "네이티브 time 입력과 브라우저 제약 검증으로 시각 값을 받는다.",
+      "relatedCategories": [
+        "date-time"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/b68d854aca303f6a30b4c3baa4a47101.svg",
+        "family:corporate-formal": "/previews/dfd0f6206cc265d1c3b5e9ea0fe91cd1.svg",
+        "family:dense-enterprise": "/previews/100fbebef6e5f14f79a569f88d6a43b3.svg",
+        "family:editorial": "/previews/18549a51b37a5a21b052dc70e04b4872.svg",
+        "family:elevated-material": "/previews/50cd491a9618d6f66f9dee4c1e6519a9.svg",
+        "family:expressive": "/previews/994016c89c0c92b01670d9b346408a05.svg",
+        "family:glass": "/previews/12ba9014feb8a7fae0198b9430496f63.svg",
+        "family:luxury": "/previews/a10e5852852135f054b573be59bab818.svg",
+        "family:outline-precise": "/previews/995d2f1903081d82887f4f3386537622.svg",
+        "family:quiet": "/previews/448457425dd4eb7a185d523423f1fb8c.svg",
+        "family:soft": "/previews/552d8aa2b4856d27aa9e6a46bc40e7ef.svg",
+        "family:tonal-layered": "/previews/ad6442afd10d20c3dfd5246d87a91728.svg"
+      }
+    },
+    {
+      "id": "purpose:form.week",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "주 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/0e04a4a10ae237fb4243f2246c3216fd.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/week",
+      "purpose": "네이티브 week 입력과 브라우저 제약 검증으로 주 선택기 값을 받는다.",
+      "relatedCategories": [
+        "date-time"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/54275be4bdb169b841d5a27bad4379b7.svg",
+        "family:corporate-formal": "/previews/c8321c4f5aba586cdc5b1303e0706046.svg",
+        "family:dense-enterprise": "/previews/29e274e3d1e2cdce177be8892918b37b.svg",
+        "family:editorial": "/previews/fd45cb7cced239a9090fadfe8c23b1d2.svg",
+        "family:elevated-material": "/previews/b07b0589ba32711888358d9912738d2c.svg",
+        "family:expressive": "/previews/cf2d83630933c8c1c6ae931f16dd74ad.svg",
+        "family:glass": "/previews/a833b0fcc2142158725a47ed16e7ef31.svg",
+        "family:luxury": "/previews/0e04a4a10ae237fb4243f2246c3216fd.svg",
+        "family:outline-precise": "/previews/a6cb6b60863eae03e3584703e752b339.svg",
+        "family:quiet": "/previews/7373d946be8159b75490cc17a628e4da.svg",
+        "family:soft": "/previews/fd573c0f75fcc44525b6c3287e70f041.svg",
+        "family:tonal-layered": "/previews/68f2b51670f98c53d05342179bd0ff73.svg"
+      }
     }
   ]
 }

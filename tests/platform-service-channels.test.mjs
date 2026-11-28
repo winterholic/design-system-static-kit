@@ -129,7 +129,7 @@ test('materials: listMaterials, getMaterial, the platform queries, recommend and
 });
 
 test('purpose-family records are discoverable and recommendable through the service, REST and MCP', async () => {
-  const listed = listPlatformMaterials({kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']});
+  const listed = listPlatformMaterials({kind: 'purpose-family', limit: 200, fields: ['label', 'contexts', 'source', 'reuses']});
   const registeredPurposeCount = platformEnv().registry.list('purpose-family').length;
   assert.equal(listed.ok, true);
   assert.equal(listed.value.total, registeredPurposeCount);
@@ -160,12 +160,12 @@ test('purpose-family records are discoverable and recommendable through the serv
   assert.equal(compatibility.ok, true);
   assert.equal(compatibility.value.ok, true);
 
-  const viaRest = await rest('GET', '/api/v1/platform/materials?kind=purpose-family&limit=100&fields=label%2Ccontexts%2Csource%2Creuses');
+  const viaRest = await rest('GET', '/api/v1/platform/materials?kind=purpose-family&limit=200&fields=label%2Ccontexts%2Csource%2Creuses');
   assert.equal(viaRest.text, json(listed));
   assert.equal((await rest('GET', `/api/v1/platform/materials/${id}`)).text, json(detail));
   assert.equal((await rest('POST', '/api/v1/recommend', {body: {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'}})).text, json(recommendation));
   assert.equal((await rest('POST', '/api/v1/compatibility', {body: {ids: compatibilityIds}})).text, json(compatibility));
-  assert.equal(json(await mcp('list_platform_materials', {kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']})), json(listed));
+  assert.equal(json(await mcp('list_platform_materials', {kind: 'purpose-family', limit: 200, fields: ['label', 'contexts', 'source', 'reuses']})), json(listed));
   assert.equal(json(await mcp('get_platform_material', {id})), json(detail));
   assert.equal(json(await mcp('recommend_materials', {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'})), json(recommendation));
   assert.equal(json(await mcp('check_compatibility', {ids: compatibilityIds})), json(compatibility));

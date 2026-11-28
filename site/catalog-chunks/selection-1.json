@@ -2,33 +2,10 @@
   "schemaVersion": "catalog-index/1.0",
   "category": "selection",
   "label": "선택",
-  "itemCount": 2,
+  "itemCount": 12,
   "page": 1,
   "pages": 1,
   "materials": [
-    {
-      "id": "component:form",
-      "kind": "component",
-      "category": "form",
-      "label": "폼",
-      "contexts": [
-        "any"
-      ],
-      "tags": [],
-      "previewUrl": "/previews/7c0f4358c4b01bbbea300483c3fd7f56.svg",
-      "variantsCount": 0,
-      "statesCount": 0,
-      "qualityStatus": "implemented",
-      "license": "internal",
-      "url": "/components/form",
-      "purpose": "폼를 화면 구성에 사용합니다.",
-      "relatedCategories": [
-        "inputs",
-        "selection",
-        "date-time"
-      ],
-      "previewUrlsByFamily": {}
-    },
     {
       "id": "base-component:select-control",
       "kind": "base-component",
@@ -51,6 +28,413 @@
         "selection"
       ],
       "previewUrlsByFamily": {}
+    },
+    {
+      "id": "purpose:form.checkbox",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "체크박스",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/0a3b5206bd0128badcd65d9a5ececeae.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/checkbox",
+      "purpose": "레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/9b18ad07d2a6dfe76b0b9afc857df326.svg",
+        "family:corporate-formal": "/previews/1ade9282ce872f6df7c619963dab3225.svg",
+        "family:dense-enterprise": "/previews/36942f6b026c8b73a2383af8c9d72b4b.svg",
+        "family:editorial": "/previews/ab2b23967c2949e216887a4042b3062b.svg",
+        "family:elevated-material": "/previews/671fe42ad91affa3d4ff9137e159ee0f.svg",
+        "family:expressive": "/previews/0a3b5206bd0128badcd65d9a5ececeae.svg",
+        "family:glass": "/previews/1d7d2a41e646c2e808f9d27e652d9bc6.svg",
+        "family:luxury": "/previews/64349fe2f95e34e0817dc9495ee9358a.svg",
+        "family:outline-precise": "/previews/4b83c5fba90e3d327747ef1de087d784.svg",
+        "family:quiet": "/previews/1efd315f382eeb092f64e3a9b6997b6c.svg",
+        "family:soft": "/previews/59feecf10a2b105bc16e252df5ba9060.svg",
+        "family:tonal-layered": "/previews/f533024c7ef2c8cf277385656eb0119e.svg"
+      }
+    },
+    {
+      "id": "purpose:form.checkbox-group",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "체크박스 그룹",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/035e57d3476b3b75d08d6ea695981c52.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/checkbox-group",
+      "purpose": "레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/fa0c30e248d201c1a7d06f8cf1ec9b8f.svg",
+        "family:corporate-formal": "/previews/cadf247704a21b0e4c36a06bdceab8b0.svg",
+        "family:dense-enterprise": "/previews/ab35bac503a1d7985b891d46fecc178d.svg",
+        "family:editorial": "/previews/6488283a57d515ee908617e233e2d31b.svg",
+        "family:elevated-material": "/previews/035e57d3476b3b75d08d6ea695981c52.svg",
+        "family:expressive": "/previews/56efc1375195ba21577a1ce4012bb00e.svg",
+        "family:glass": "/previews/ed231851edd3248fbc859f93a11d9890.svg",
+        "family:luxury": "/previews/be2b52ec49aa42b6d3ffb800cf17019f.svg",
+        "family:outline-precise": "/previews/dff4d4b73ac7b06d89a06a9763db221f.svg",
+        "family:quiet": "/previews/06c33c19155a76b4e77e3cc6adabeb85.svg",
+        "family:soft": "/previews/1b2b7d31d56f410d7d7d728417206c80.svg",
+        "family:tonal-layered": "/previews/bc3edf250232d26affd81a8ae83b8ce8.svg"
+      }
+    },
+    {
+      "id": "purpose:form.color",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "색상 선택기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/05a14097ec0f9d950adf1981bd272719.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/color",
+      "purpose": "네이티브 색상 선택기로 색상 값을 입력한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/daba38c78987015dc8488ad610c55d39.svg",
+        "family:corporate-formal": "/previews/4ef8278cb8da023ffbbbb88c6fb2a9bf.svg",
+        "family:dense-enterprise": "/previews/e8c1193c78c6c5bd616537f5df1095d1.svg",
+        "family:editorial": "/previews/05a14097ec0f9d950adf1981bd272719.svg",
+        "family:elevated-material": "/previews/efb83a91f7b7b95e8fb267b6ff33de47.svg",
+        "family:expressive": "/previews/4ea692e5251dc9ab1f00014c3cc24fe5.svg",
+        "family:glass": "/previews/289ce8a3f4c4897a315ed893a52d7438.svg",
+        "family:luxury": "/previews/32b400d4f8075e332f2c912a898e4a79.svg",
+        "family:outline-precise": "/previews/65a9c033f5e8be7d2734f25dc620a723.svg",
+        "family:quiet": "/previews/eac240bf776c4e9c89dda63170cd551a.svg",
+        "family:soft": "/previews/150983298bb64484f7e3bd2c3f6a89f6.svg",
+        "family:tonal-layered": "/previews/0f7f5dee47c60ae8f13a979f36638d65.svg"
+      }
+    },
+    {
+      "id": "purpose:form.grouped-select",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "그룹 선택",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/05144a0ac4b7bbaa345a4e018df14c4d.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/grouped-select",
+      "purpose": "옵션 그룹을 구분해 단일 항목을 고른다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/e333bf59b0aa0aca1537ed9564dc972d.svg",
+        "family:corporate-formal": "/previews/7912ab93f9f73bf3d0b65c071083573a.svg",
+        "family:dense-enterprise": "/previews/c447755cb05a789c02ae21970d2b0834.svg",
+        "family:editorial": "/previews/3a8936e028c04f37477a8dacb0763933.svg",
+        "family:elevated-material": "/previews/d1fdc5b7d2b1e2e168b72cb660f4255c.svg",
+        "family:expressive": "/previews/05144a0ac4b7bbaa345a4e018df14c4d.svg",
+        "family:glass": "/previews/559d84fb6fca9d15c1b474dcfbb59852.svg",
+        "family:luxury": "/previews/d379aa103caacb7980e06b61ad4bb044.svg",
+        "family:outline-precise": "/previews/637eef26ffb3ae55860a3ae4f83db80f.svg",
+        "family:quiet": "/previews/19e203f3f251a96d2ddfdd17a8080666.svg",
+        "family:soft": "/previews/56b56083cf19960cdf0679807315e328.svg",
+        "family:tonal-layered": "/previews/a4f3f6d29ae9f2938cff04436ea90070.svg"
+      }
+    },
+    {
+      "id": "purpose:form.radio",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "라디오",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/219794f6273907c87820632a88844682.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/radio",
+      "purpose": "레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/e05f8132deb483862e6cc044cedab111.svg",
+        "family:corporate-formal": "/previews/fe496f11ebd540a68f46e0f513253f91.svg",
+        "family:dense-enterprise": "/previews/3ffa9686da07da5cb459e58af51e4bf2.svg",
+        "family:editorial": "/previews/d0a05f410f0b03bfd993c779dd8a2eb9.svg",
+        "family:elevated-material": "/previews/d45f05dd0b98ef8ec75a87716c219209.svg",
+        "family:expressive": "/previews/76ae6acbbcdc8a1f88791eb56913fc0c.svg",
+        "family:glass": "/previews/219794f6273907c87820632a88844682.svg",
+        "family:luxury": "/previews/82078892a35ee3e9a8547179f12619b0.svg",
+        "family:outline-precise": "/previews/f60e015a5b37b808f824630c8bcbe145.svg",
+        "family:quiet": "/previews/c6155ad93ed5068b9c7c57bdba7cb20a.svg",
+        "family:soft": "/previews/a05361f1bf527f45ab0483a0b976f72e.svg",
+        "family:tonal-layered": "/previews/3e016730c0fb280a2d3cb8098422b378.svg"
+      }
+    },
+    {
+      "id": "purpose:form.radio-card",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "라디오 카드",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/1f82b2226e11f2efad35884791cd807b.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/radio-card",
+      "purpose": "레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/1f82b2226e11f2efad35884791cd807b.svg",
+        "family:corporate-formal": "/previews/802847f107232cc982de465d5a3488d8.svg",
+        "family:dense-enterprise": "/previews/1fb32d6657ddb0f0d9b9a9123ba11f49.svg",
+        "family:editorial": "/previews/c20189ab893d9ffc960f1885e492ca70.svg",
+        "family:elevated-material": "/previews/f7aba3a220cae99152c3a18f6d634266.svg",
+        "family:expressive": "/previews/4ec2bf8aacd5e800cfe32954678de1d4.svg",
+        "family:glass": "/previews/e8a670befbed12cb9c7c61e63e875b7c.svg",
+        "family:luxury": "/previews/705e1fa0e8afffcc67ea23fc0c1561a5.svg",
+        "family:outline-precise": "/previews/477696b678a47ba578ce9a89948c1aca.svg",
+        "family:quiet": "/previews/20c4619269da3e8536a2195eb1c544d7.svg",
+        "family:soft": "/previews/5a639d8138c5321a0fb386ac712258fe.svg",
+        "family:tonal-layered": "/previews/f384a6db724845f0d3c0f3e2365166c5.svg"
+      }
+    },
+    {
+      "id": "purpose:form.radio-group",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "라디오 그룹",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/0c3b0097ae46732e4c008e97db2f63dc.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/radio-group",
+      "purpose": "레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/18cf6a8c5304f44d7e736195cc905844.svg",
+        "family:corporate-formal": "/previews/6c88119d43adc361709d2d2e041e5b7f.svg",
+        "family:dense-enterprise": "/previews/17b836223cbfbac1cc3ab0f36b4b2da7.svg",
+        "family:editorial": "/previews/6820bfd0588df665de650fb7ac9dbc85.svg",
+        "family:elevated-material": "/previews/561064e6d4ed343a12e0d61769424729.svg",
+        "family:expressive": "/previews/d32934992cb95f8543fb421a12ec523c.svg",
+        "family:glass": "/previews/b5dff36b5069f7483588da3feaf10b1d.svg",
+        "family:luxury": "/previews/0c3b0097ae46732e4c008e97db2f63dc.svg",
+        "family:outline-precise": "/previews/a193ea2bb3764e9994691bc42742d33d.svg",
+        "family:quiet": "/previews/469e08af324b7146c72c8a30ccbe4586.svg",
+        "family:soft": "/previews/a3d6f1286f9fc4ef965817de3cb9f03f.svg",
+        "family:tonal-layered": "/previews/914cd6838477f8178e4fdabfbeaa67c2.svg"
+      }
+    },
+    {
+      "id": "purpose:form.range-slider",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "범위 슬라이더",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/1a3e4fe572aa6b2969469fd5f4185ad4.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/range-slider",
+      "purpose": "같은 숫자 구간의 시작값과 끝값을 두 개의 키보드 조작 가능한 range 입력으로 정한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/987c47750f4b178feb4903d64368025d.svg",
+        "family:corporate-formal": "/previews/e0270a196b2104bc30de719b8591f385.svg",
+        "family:dense-enterprise": "/previews/1a3e4fe572aa6b2969469fd5f4185ad4.svg",
+        "family:editorial": "/previews/c339e62fcb8a81db5568e33fb26a6249.svg",
+        "family:elevated-material": "/previews/b84e81ef43ee604da85ffff89a3ed57b.svg",
+        "family:expressive": "/previews/b4c98f0f38c37c26e728eaf5ae2d02ec.svg",
+        "family:glass": "/previews/adfe975dd15115375aeced121bce179d.svg",
+        "family:luxury": "/previews/718a5dbf6ed96146ff2376152e85ba44.svg",
+        "family:outline-precise": "/previews/e242dc2b89dbda31b8a10b15816a682e.svg",
+        "family:quiet": "/previews/711858e7553f6ea40caf52f0964cde43.svg",
+        "family:soft": "/previews/6af727b2a642019275db4dc85faed2e7.svg",
+        "family:tonal-layered": "/previews/bc58b8b08549aabce92b35235f3eec4a.svg"
+      }
+    },
+    {
+      "id": "purpose:form.rating",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "평점",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/122e020d13cacb01d62c2aa3b7132e17.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/rating",
+      "purpose": "네이티브 라디오 그룹으로 별점 하나를 선택한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/30a9baa2f6f73d0002ada188ea7e782d.svg",
+        "family:corporate-formal": "/previews/a30fd75b0348f6682a07607ddc2baf3b.svg",
+        "family:dense-enterprise": "/previews/d9d572157a1496c2e47addab935ef2db.svg",
+        "family:editorial": "/previews/b448d49ea3e481f12c16ff9be6178f7a.svg",
+        "family:elevated-material": "/previews/c2f6ba36d2250211c82d81477b984e6c.svg",
+        "family:expressive": "/previews/34c7a6bfb0c712a60ab8ee9dcc526576.svg",
+        "family:glass": "/previews/734ec0702320f011c6ff0cd81a3482f8.svg",
+        "family:luxury": "/previews/8a83ecdcf90be9882e000ffe093733d2.svg",
+        "family:outline-precise": "/previews/8aa98a890cf85cd55c4d5d7f671fa9db.svg",
+        "family:quiet": "/previews/122e020d13cacb01d62c2aa3b7132e17.svg",
+        "family:soft": "/previews/4fd5a19d179e9e05cd9708e7e24e1787.svg",
+        "family:tonal-layered": "/previews/b2cd327dbbee953702fee0a668663812.svg"
+      }
+    },
+    {
+      "id": "purpose:form.slider",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "슬라이더",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/05b75e97e05408364501c16297f3bea1.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/slider",
+      "purpose": "수치 범위에서 단일 값을 조절한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/d3f6984b304df0c1e4be42eb8275ef24.svg",
+        "family:corporate-formal": "/previews/be1b7e093d1bc499cf1e6bba71911049.svg",
+        "family:dense-enterprise": "/previews/05b75e97e05408364501c16297f3bea1.svg",
+        "family:editorial": "/previews/4c774cc6efd83ce7aa6a5176eeb169e3.svg",
+        "family:elevated-material": "/previews/16e1b72c54e8a81b7b176d1825f926ee.svg",
+        "family:expressive": "/previews/a9bd2485cbc2fd995ef20b81d3f4d4ba.svg",
+        "family:glass": "/previews/ae7ad330bf4e8aa63cdad8388fe6e859.svg",
+        "family:luxury": "/previews/f5228297eb9c57d1156b15623abb45bb.svg",
+        "family:outline-precise": "/previews/ac3a99679499254690ffdd909bb180ec.svg",
+        "family:quiet": "/previews/2006f74da023fae8ef72be4571c182bd.svg",
+        "family:soft": "/previews/cbe63fe9c805696e53058be80aededd3.svg",
+        "family:tonal-layered": "/previews/0abe9343972c4e5e1ac13b2d441532a5.svg"
+      }
+    },
+    {
+      "id": "purpose:form.switch",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "스위치",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/1694c149f28f4ac71c92a3548ba3195d.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/switch",
+      "purpose": "레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다.",
+      "relatedCategories": [
+        "selection"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/319da42b0bffa6d174dac0c5b88b044e.svg",
+        "family:corporate-formal": "/previews/170c7494b5fc6506e7ba7bf6509b2c2d.svg",
+        "family:dense-enterprise": "/previews/584b7c22439d31159393ccca672c09a3.svg",
+        "family:editorial": "/previews/4358bfb30fb503b7df63655239356494.svg",
+        "family:elevated-material": "/previews/72aa58744b1345cfc0d8fe8c1678671e.svg",
+        "family:expressive": "/previews/ff76110183fa718e3790c68a2df44c78.svg",
+        "family:glass": "/previews/2ef16fef55784ed2745add906fdb6fe2.svg",
+        "family:luxury": "/previews/97417da0b8b3f312e447660e2afcd342.svg",
+        "family:outline-precise": "/previews/d53418f5177cef6036412b5b3444c088.svg",
+        "family:quiet": "/previews/604c1d73af1a1571492d2dd58b37a254.svg",
+        "family:soft": "/previews/1694c149f28f4ac71c92a3548ba3195d.svg",
+        "family:tonal-layered": "/previews/2b9d79087446642e0b00f376f27a6e53.svg"
+      }
     }
   ]
 }
