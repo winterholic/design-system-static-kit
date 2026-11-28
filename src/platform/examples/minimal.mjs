@@ -14,6 +14,8 @@ import {STYLE_CONTEXTS, STYLE_CHECKS, STYLE_MATERIALS} from '../data/style-conte
 import {STYLE_VALIDATORS, checkStyleMaterials} from '../style-materials.mjs';
 import {BASE_COMPONENTS, BASE_IMPLEMENTATIONS} from '../data/base-components.mjs';
 import {FAMILIES} from '../data/families.mjs';
+import {LAYOUTS, validateLayout} from '../data/layouts.mjs';
+import {LAYOUT_CHECKS} from '../layouts.mjs';
 import {definePlatformMaterial} from '../contract.mjs';
 import {PURPOSE_FAMILIES, VISUAL_LANGUAGES, checkPurposeCombination} from '../families/index.mjs';
 import {defineCheck} from '../relations.mjs';
@@ -56,11 +58,11 @@ export const purposeFamilyBaseCheck = defineCheck({
 });
 
 export const PURPOSE_CHECKS = Object.freeze([purposeFamilyVisualCheck, purposeFamilyBaseCheck]);
-export const PLATFORM_CHECKS = Object.freeze([...COLOR_CHECKS, ...TYPE_CHECKS, ...FAMILY_CHECKS, ...STYLE_CHECKS, ...PURPOSE_CHECKS]);
+export const PLATFORM_CHECKS = Object.freeze([...COLOR_CHECKS, ...TYPE_CHECKS, ...FAMILY_CHECKS, ...STYLE_CHECKS, ...PURPOSE_CHECKS, ...LAYOUT_CHECKS]);
 
 /** records·implementations를 더 줄 수 있다(시험·통합 중 재료). 참조가 끊기면 예외다. */
 export function createPlatform({records = [], implementations = {}, checks = PLATFORM_CHECKS} = {}) {
-  const registry = createPlatformRegistry({validators: STYLE_VALIDATORS}).registerAll([...STYLE_CONTEXTS.map(withStyleForbids), ...Object.values(STYLE_MATERIALS).flat(), ...PALETTES, ...SUBTOKEN_SETS, ...TYPE_SYSTEMS, ...BASE_COMPONENTS, ...FAMILIES, ...purposeRecords, ...buildAxisValues(), ...records.map(withStyleForbids)]);
+  const registry = createPlatformRegistry({validators: {...STYLE_VALIDATORS, layout: validateLayout}}).registerAll([...STYLE_CONTEXTS.map(withStyleForbids), ...Object.values(STYLE_MATERIALS).flat(), ...PALETTES, ...SUBTOKEN_SETS, ...TYPE_SYSTEMS, ...BASE_COMPONENTS, ...FAMILIES, ...purposeRecords, ...buildAxisValues(), ...LAYOUTS, ...records.map(withStyleForbids)]);
   for (const [id, impl] of Object.entries({...BASE_IMPLEMENTATIONS, ...implementations})) registry.kind('base-component').implement(id, impl);
   const broken = [...registry.check(), ...checkStyleMaterials(registry)];
   if (broken.length) { const e = new Error('platform graph broken:\n' + broken.map(x => `${x.path} [${x.code}] ${x.message}`).join('\n')); e.errors = broken; throw e; }

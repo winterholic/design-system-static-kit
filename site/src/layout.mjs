@@ -1,3 +1,6 @@
+import {escapeHTML} from './escape-html.mjs';
+import {TOKEN} from './spacing.mjs';
+
 /** Layout primitives (6차). docs/layout.md is generated from this file.
  *  Parts do not choose their own column counts or widths. A flow (grid of equal items) asks the container how wide it is and takes the
  *  column count from a table that never leaves a single orphan on the last row. The renderer only writes `data-flow`, `data-n` and `data-cap`;
@@ -176,8 +179,8 @@ export const isShortCell = c => c.type === 'metric' || c.type === 'progress';
 
 /** 벤토 배치 표. 4열 격자에서 칸마다 가로 칸 수(span). 큰 칸(F)은 2×2이고 항상 첫 칸이다.
  *  F 뒤 m칸: 2→[2,2] · 3→[1,1,2] · 4→[1,1,1,1] · 5→[1,1,1,1,4]. 큰 칸이 없으면 3→[1,1,2] · 4→[2,2,2,2] · 5→[2,2,1,1,2] · 6→[2,2,1,1,1,1]. 모든 줄이 4열을 채운다. */
-const BENTO_AFTER_FEATURE = {2: [2, 2], 3: [1, 1, 2], 4: [1, 1, 1, 1], 5: [1, 1, 1, 1, 4]};
-const BENTO_FLAT = {3: [1, 1, 2], 4: [2, 2, 2, 2], 5: [2, 2, 1, 1, 2], 6: [2, 2, 1, 1, 1, 1]};
+export const BENTO_AFTER_FEATURE = {2: [2, 2], 3: [1, 1, 2], 4: [1, 1, 1, 1], 5: [1, 1, 1, 1, 4]};
+export const BENTO_FLAT = {3: [1, 1, 2], 4: [2, 2, 2, 2], 5: [2, 2, 1, 1, 2], 6: [2, 2, 1, 1, 1, 1]};
 const BENTO_SPAN = {feature: 2, two: 2, one: 1, full: 4};
 /** 4열 모드는 컨테이너가 이 폭 이상일 때다(`.kit-bento` 규칙의 1179px 경계). 큰 칸이 줄 높이를 따르는 규칙도 이 폭에서만 켜진다. */
 export const BENTO = {wide: 1180, minVisual: 180};
@@ -420,4 +423,233 @@ ${FIXED_FRAMES.map(f => `| \`${f.selector}\` | ${f.proof} | ${f.why} |`).join('\
 | 구성 변형 | 항목 수와 맞지 않는 열 수 옵션(3개를 2열로) | \`src/catalog/variants.mjs\` \`fits\` |
 | 렌더 실측 | 실제 화면의 고아 줄 | \`scripts/design-qa/layout-probe.mjs\` \`GRID_ORPHAN\` |
 `;
+}
+
+// ---------- 레이아웃 패턴 24종 (REQUEST §9.2, 계약 0.8.0 `layout` 재료) ----------
+// 기존 출력(위 흐름·벤토·린트)은 그대로 두고, 아래는 `layout:*` 재료(src/platform/data/layouts.mjs)를 HTML·CSS로 컴파일하는 함수만 더한다.
+// 레이아웃은 슬롯 계약과 폭 구간(bands)별 배치 표만 갖고, 칸의 크기·열 수는 이 함수가 컨테이너 쿼리로 낸다. 부품은 칸 안에 들어가고 자기 폭을 정하지 않는다.
+
+/** 레이아웃 컨테이너 폭 구간(px). 뷰포트가 아니라 `.kit-lay` 컨테이너의 폭이다: 320·768·1024·1440 뷰포트가 각각 xs·sm·md·lg에 들어간다(페이지 좌우 여백 포함). */
+export const LAYOUT_BANDS = Object.freeze([0, 560, 880, 1180]);
+export const LAYOUT_BAND_NAMES = Object.freeze(['xs', 'sm', 'md', 'lg']);
+export const LAYOUT_TAGS = Object.freeze(['div', 'aside', 'header', 'footer']);
+export const LAYOUT_FLOW_MODES = Object.freeze(['stack', 'grid', 'columns', 'row', 'bento']);
+export const LAYOUT_LENGTH_POLICIES = Object.freeze(['wrap', 'scroll-x', 'cap']);
+/** 트랙 하나의 최소 폭 해석에 쓰는 값: 비율 칸(fr)은 레이아웃이 선언한 `minCol`, 범위 칸은 최솟값(rem). */
+const REM = 16;
+
+/** 영역 표 문자열 'a b | c d'를 행×열 배열로. `_`는 의도한 빈 칸(여백)이다. */
+export const parseAreas = text => String(text).split('|').map(row => row.trim().split(/\s+/).filter(Boolean));
+/** 폭 구간 하나의 트랙 목록을 CSS로. 숫자 n은 `minmax(0,nfr)`, [최소, 최대](rem)는 `minmax(Arem,Brem)`, 문자열은 그대로다. */
+export const trackCSS = t => (typeof t === 'number' ? `minmax(0,${t}fr)` : Array.isArray(t) ? `minmax(${t[0]}rem,${t[1]}rem)` : String(t));
+/** 트랙의 최소 폭(px). 비율 칸은 minCol. */
+export const trackMin = (t, minCol) => (typeof t === 'number' ? minCol : Array.isArray(t) ? t[0] * REM : /^(\d+(?:\.\d+)?)rem$/.test(t) ? parseFloat(t) * REM : 0);
+
+/** 칸 사이 간격: 밀도 3종 모두에서 쓰는 가장 큰 gap 토큰 값(spacing SPACE.spacious.gap=32). 폭 구간의 최소 폭 검증에 쓴다. */
+export const LAYOUT_MAX_GAP = 32;
+
+/** 한 폭 구간의 배치 후보: 슬롯 이름 → 영역 표에서의 위치. [{name, rows:[min,max], cols:[min,max]}] */
+export function areaBoxes(areas) {
+  const boxes = new Map();
+  areas.forEach((row, r) => row.forEach((name, c) => {
+    if (name === '_') return;
+    const b = boxes.get(name) ?? {name, rows: [r, r], cols: [c, c]};
+    b.rows = [Math.min(b.rows[0], r), Math.max(b.rows[1], r)]; b.cols = [Math.min(b.cols[0], c), Math.max(b.cols[1], c)];
+    boxes.set(name, b);
+  }));
+  return [...boxes.values()];
+}
+
+/** 영역이 사각형이 아니거나(ㄱ자) 같은 이름이 떨어져 있으면 CSS grid가 무효로 만든다. 문제가 있는 이름 목록. */
+export function brokenAreas(areas) {
+  return areaBoxes(areas).filter(b => {
+    for (let r = b.rows[0]; r <= b.rows[1]; r++) for (let c = b.cols[0]; c <= b.cols[1]; c++) if (areas[r][c] !== b.name) return true;
+    return false;
+  }).map(b => b.name);
+}
+
+/** 읽기 순서: 영역 표에서 슬롯이 처음 나타나는 순서(행 우선, 같은 행은 왼쪽부터). DOM 순서와 다르면 시각 순서가 바뀐 것이다. */
+export const visualOrder = areas => areaBoxes(areas).sort((a, b) => a.rows[0] - b.rows[0] || a.cols[0] - b.cols[0]).map(b => b.name);
+
+/** 비어 있는 선택 슬롯을 뺀 구간 표. 빈 슬롯이 있던 행·열에 채워진 슬롯이 하나도 없으면 트랙과 함께 지운다(의도한 여백 `_`만 있는 행·열은 그대로다). */
+export function bandForFilled(band, present) {
+  const holds = n => n !== '_' && n !== '.';
+  let areas = parseAreas(band.areas).map(row => row.map(n => (n === '_' || present.has(n) ? n : '.')));
+  areas = areas.filter(row => !(row.includes('.') && !row.some(holds)));
+  const keep = (band.columns).map((_, c) => { const col = areas.map(row => row[c]); return !(col.includes('.') && !col.some(holds)); });
+  areas = areas.map(row => row.filter((_, c) => keep[c]));
+  return {areas, tracks: band.columns.filter((_, c) => keep[c])};
+}
+
+const gapVar = key => `var(${TOKEN[key] ?? TOKEN.gap})`;
+const slugOf = id => id.slice(id.indexOf(':') + 1);
+
+/** 흐름이 있는 슬롯(반복 항목)의 폭 구간별 규칙. n은 이 컴파일에서 슬롯에 들어간 항목 수. */
+function flowRules(layout, slot, n, bi, sel) {
+  const flow = slot.flow ?? {mode: 'stack'};
+  const cap = flow.caps?.[bi] ?? 1, base = `${sel}[data-slot="${slot.name}"][data-count="${n}"]`;
+  const gap = gapVar(layout.density.itemGap);
+  // 폭 구간 규칙은 앞 구간 위에 쌓이므로(컨테이너 쿼리는 min-width) 구간마다 같은 속성을 모두 다시 적는다: 앞 구간의 값이 남아 새는 일이 없다.
+  switch (flow.mode) {
+    case 'grid': return `${base}{display:grid;grid-template-columns:repeat(${bestCols(n, cap)},minmax(0,1fr));gap:${gap}}`;
+    case 'columns': return `${base}{display:block;column-count:${Math.max(1, Math.min(cap, n))};column-gap:${gap}}`;
+    // 행(row): cap 1은 세로로 쌓고(칸 폭을 채움) 2는 가로로 나열하며 넘치면 줄바꿈한다(항목 자기 폭). 항목 폭을 나누지 않는 것은 버튼 묶음의 최소 폭이 슬롯보다 클 때 넘치지 않게 하려는 것이다.
+    case 'row': return `${base}{display:flex;flex-direction:${cap > 1 ? 'row' : 'column'};flex-wrap:wrap;gap:${gapVar('near')};align-items:${cap > 1 ? 'center' : 'stretch'}}`
+      + `${base}>.kit-lay-item{flex:0 1 auto;min-width:0}`;
+    case 'bento': {
+      const wide = cap >= 4, span = Math.min(2, cap);
+      return `${base}{display:grid;grid-template-columns:repeat(${cap},minmax(0,1fr));gap:${gap};grid-auto-flow:row dense}`
+        + `${base}>[data-tile=feature]{grid-column:span ${span};grid-row:${wide ? 'span 2' : 'auto'}}${base}>[data-tile=two]{grid-column:span ${span}}${base}>[data-tile=full]{grid-column:1/-1}`
+        + `${base}>[data-tile=one]{grid-column:span 1}${base}>[data-tile=one][data-tail]{grid-column:${wide ? 'span 1' : '1/-1'}}`;
+    }
+    default: return `${base}{display:flex;flex-direction:column;gap:${gap}}`;
+  }
+}
+
+/** 슬롯 한 개가 한 폭 구간에서 갖는 선언 표(속성 → 값). 구간마다 이 표를 만들어 앞 구간과 견준다. */
+function slotDecls(slot, band, bi) {
+  const d = {'grid-area': slot.name};
+  const st = (slot.sticky ?? []).find(x => bi >= x.from && (x.until === undefined || bi < x.until));
+  if (st) {
+    d.position = 'sticky'; d[st.edge] = st.edge === 'bottom' ? '0' : gapVar('gap'); d['align-self'] = 'start';
+    if (st.edge === 'bottom') Object.assign(d, {'z-index': '1', background: 'var(--kit-surface)', 'border-top': '1px solid var(--kit-border)', padding: 'var(--kit-sp-near) var(--kit-sp-item)'});
+  }
+  // 앞 슬롯의 아래쪽에 겹쳐 올라오는 패널(media-hero): 불투명한 표면 배경과 안쪽 여백으로 글 대비를 시각에 맡기지 않는다.
+  if (band.pull?.[slot.name]) Object.assign(d, {'margin-top': `-${band.pull[slot.name]}rem`, position: 'relative', 'z-index': '1', background: 'var(--kit-surface)', padding: 'var(--kit-inset)', border: '1px solid var(--kit-border)'});
+  if (band.stretch?.includes(slot.name)) d['align-self'] = 'stretch';
+  if (band.start?.includes(slot.name)) d['align-self'] = 'start';
+  if (slot.length === 'cap' && bi >= (slot.capFrom ?? 1)) Object.assign(d, {'max-height': 'min(70vh,40rem)', overflow: 'auto'});
+  return d;
+}
+/** 앞 구간의 선언이 다음 구간에 없을 때 쓰는 되돌림 값(CSS 초기값). */
+const SLOT_RESET = Object.freeze({position: 'static', top: 'auto', bottom: 'auto', 'align-self': 'auto', 'z-index': 'auto', background: 'none', 'border-top': '0', border: '0', padding: '0', 'margin-top': '0', 'max-height': 'none', overflow: 'visible'});
+
+/** 한 레이아웃의 CSS. counts: {슬롯 이름: 항목 수}, present: 채워진 슬롯 이름 집합. 같은 입력이면 같은 바이트다. */
+export function layoutCSS(layout, {counts = {}, present = new Set(layout.slots.map(s => s.name))} = {}) {
+  const slug = slugOf(layout.id), sel = `.kit-lay[data-layout="${slug}"]`, grid = `${sel}>.kit-lay-grid`;
+  const out = [`/* ${layout.id} (src/layout.mjs layoutCSS) */`, `${sel}{container:lay/inline-size}`];
+  const gap = gapVar(layout.density.gap);
+  out.push(`${grid}{display:grid;gap:${gap};min-width:0}`);
+  LAYOUT_BANDS.forEach((from, bi) => {
+    const band = layout.bands[bi], {areas, tracks} = bandForFilled(band, present);
+    const names = new Set(areas.flat());
+    const rules = [`${grid}{grid-template-columns:${tracks.map(trackCSS).join(' ')};grid-template-areas:${areas.map(r => `"${r.join(' ')}"`).join(' ')};justify-content:${band.align ?? 'normal'}}`];
+    for (const slot of layout.slots) {
+      if (!present.has(slot.name) || !names.has(slot.name)) continue;
+      // 앞 구간과 달라진 선언만 쓰되, 앞 구간에 있던 선언이 이 구간에 없으면 되돌림 값(SLOT_RESET)을 쓴다.
+      const now = slotDecls(slot, band, bi), before = bi === 0 ? {} : slotDecls(slot, layout.bands[bi - 1], bi - 1);
+      const own = Object.keys({...before, ...now}).filter(k => (now[k] ?? SLOT_RESET[k]) !== (before[k] ?? (bi === 0 ? undefined : SLOT_RESET[k]))).map(k => `${k}:${now[k] ?? SLOT_RESET[k]}`);
+      if (bi === 0 || own.length) rules.push(`${grid}>[data-slot="${slot.name}"]{${own.join(';')}}`);
+      if (counts[slot.name] !== undefined) rules.push(flowRules(layout, slot, counts[slot.name], bi, grid + '>'));
+    }
+    out.push(bi === 0 ? rules.join('\n') : `@container lay (min-width:${from}px){\n${rules.join('\n')}\n}`);
+  });
+  const base = [`${grid}>[data-slot]{min-width:0;overflow-wrap:anywhere}`, `${grid} [data-slot] :is(img,svg,video,canvas){max-width:100%}`, `${grid}>[data-slot] .kit-lay-item{min-width:0}`];
+  // 격자·벤토의 칸은 줄 높이를 채운다: 같은 줄의 이웃이 더 길어도 칸 아래가 비지 않게 칸 안의 카드가 남는 높이를 받는다(벽돌 배치는 자연 높이를 유지한다).
+  if (layout.slots.some(s => ['grid', 'bento'].includes(s.flow?.mode))) base.push(...['grid', 'bento'].map(m => `${grid} [data-slot][data-flow=${m}]>.kit-lay-item{display:flex}${grid} [data-slot][data-flow=${m}]>.kit-lay-item>.pf{flex:1 1 auto;display:flex;flex-direction:column}${grid} [data-slot][data-flow=${m}]>.kit-lay-item>.pf>:first-child:last-child{flex:1 1 auto}`));
+  if (layout.slots.some(s => s.flow?.mode === 'columns')) base.push(`${grid} [data-slot][data-flow=columns]>.kit-lay-item{break-inside:avoid;margin-bottom:${gapVar(layout.density.itemGap)}}`);
+  for (const slot of layout.slots) if (slot.length === 'scroll-x') base.push(`${grid}>[data-slot="${slot.name}"]{overflow-x:auto}`);
+  out.push(...base);
+  return out.join('\n');
+}
+
+/** 채움(fills)이 슬롯 계약을 지키는지. fills: [{slot, html, purpose?, layout?}] (purpose는 `purpose:*`, 중첩 레이아웃이면 layout은 `layout:*`). */
+export function validateFills(layout, fills, {depth = 0} = {}) {
+  const out = [], err = (code, path, message) => out.push({code, path, message});
+  const bySlot = new Map(layout.slots.map(s => [s.name, []]));
+  fills.forEach((f, i) => {
+    if (!bySlot.has(f?.slot)) { err('L_SLOT_UNKNOWN', `$.fills[${i}].slot`, `${layout.id}에 없는 슬롯: ${f?.slot}`); return; }
+    if (typeof f.html !== 'string' || !f.html) { err('L_FILL_HTML', `$.fills[${i}].html`, '채움은 렌더된 HTML 문자열이어야 합니다'); return; }
+    bySlot.get(f.slot).push({f, i});
+  });
+  for (const slot of layout.slots) {
+    const list = bySlot.get(slot.name);
+    if (slot.required && !list.length) err('L_SLOT_REQUIRED', `$.fills`, `필수 슬롯이 비었습니다: ${slot.name}`);
+    if (list.length && list.length < slot.min) err('L_SLOT_MIN', `$.fills`, `${slot.name} 슬롯은 항목이 ${slot.min}개 이상이어야 합니다(현재 ${list.length})`);
+    if (list.length > slot.max) err('L_SLOT_MAX', `$.fills`, `${slot.name} 슬롯은 항목이 ${slot.max}개 이하여야 합니다(현재 ${list.length})`);
+    for (const {f, i} of list) {
+      const kind = f.layout ?? f.purpose;
+      const group = kind?.startsWith('purpose:') ? `group:${kind.slice('purpose:'.length).split('.')[0]}` : null;
+      if (!kind || !(slot.accepts.includes(kind) || (group && slot.accepts.includes(group)))) err('L_SLOT_ACCEPTS', `$.fills[${i}]`, `${slot.name} 슬롯은 ${slot.accepts.join(', ')}만 받습니다(받은 값: ${kind ?? '없음'})`);
+      if (f.layout) {
+        if (!layout.nesting.allow.includes(f.layout)) err('L_NEST_FORBIDDEN', `$.fills[${i}]`, `${layout.id}는 ${f.layout}를 안에 둘 수 없습니다(허용: ${layout.nesting.allow.join(', ') || '없음'})`);
+        if (depth + 1 >= layout.nesting.maxDepth) err('L_NEST_DEPTH', `$.fills[${i}]`, `${layout.id}의 중첩 깊이 한도(${layout.nesting.maxDepth})를 넘습니다`);
+      }
+    }
+  }
+  return out;
+}
+
+/** 슬롯 항목에 붙는 벤토 칸 크기 표지. 큰 칸은 시각 요소가 있는 첫 칸이다. */
+function tileOf(n) {
+  const plan = bentoPlan(Array.from({length: n}, (_, i) => ({type: 'card', visual: i === 0})));
+  return plan.map(p => ({tile: p.cell, tail: p.tail}));
+}
+
+/**
+ * 레이아웃 컴파일. layout은 `layout:*` 재료 기록, fills는 렌더된 조각 목록, opts: {density?}.
+ * 반환: {ok, html, css, diagnostics, manifest}. 계약 위반이면 ok:false이고 html·css는 null이다(조용히 고치지 않는다).
+ * DOM 순서는 슬롯 계약의 순서다. 폭이 넓어질 때의 재배치는 CSS grid-template-areas가 하고 DOM은 바뀌지 않는다.
+ */
+export function compileLayout(layout, fills, {density = layout.density.default} = {}) {
+  const diagnostics = validateFills(layout, fills);
+  if (!layout.density.allowed.includes(density)) diagnostics.push({code: 'L_DENSITY', path: '$.density', message: `${layout.id}는 ${density} 밀도를 받지 않습니다(허용: ${layout.density.allowed.join('·')})`});
+  if (diagnostics.length) return {ok: false, html: null, css: null, diagnostics, manifest: null};
+  const counts = {}, present = new Set();
+  for (const f of fills) { counts[f.slot] = (counts[f.slot] ?? 0) + 1; present.add(f.slot); }
+  const parts = layout.slots.filter(s => present.has(s.name)).map(slot => {
+    const mine = fills.filter(f => f.slot === slot.name), n = mine.length;
+    const tiles = slot.flow?.mode === 'bento' ? tileOf(n) : null;
+    const items = mine.map((f, i) => `<div class="kit-lay-item" data-i="${i}"${tiles ? ` data-tile="${tiles[i].tile}"${tiles[i].tail ? ' data-tail' : ''}` : ''}>${f.html}</div>`).join('');
+    const label = slot.tag === 'aside' ? ` aria-label="${escapeHTML(slot.label)}"` : '';
+    return `<${slot.tag}${label} class="kit-lay-slot" data-slot="${slot.name}" data-count="${n}" data-flow="${slot.flow?.mode ?? 'stack'}">${items}</${slot.tag}>`;
+  });
+  const html = `<div class="kit-lay" data-layout="${slugOf(layout.id)}" data-density="${density}"><div class="kit-lay-grid">${parts.join('')}</div></div>`;
+  const css = layoutCSS(layout, {counts, present});
+  return {ok: true, html, css, diagnostics: [], manifest: {layout: layout.id, density, slots: layout.slots.filter(s => present.has(s.name)).map(s => ({name: s.name, count: counts[s.name]})), bands: LAYOUT_BAND_NAMES.map((name, i) => ({band: name, from: LAYOUT_BANDS[i], areas: bandForFilled(layout.bands[i], present).areas.map(r => r.join(' '))}))}};
+}
+
+/** 레이아웃 재료 기록의 구조 검사(데이터 파일이 등록 때 부른다). 폭 구간·영역·최소 폭·순서 선언의 일관성을 본다. [{code, path, message}] */
+export function validateLayoutSpec(layout) {
+  const out = [], err = (code, path, message) => out.push({code, path, message});
+  const names = layout.slots.map(s => s.name);
+  if (new Set(names).size !== names.length) err('P_LAYOUT_SLOT', '$.slots', '슬롯 이름이 겹칩니다');
+  if (!layout.slots.some(s => s.required)) err('P_LAYOUT_SLOT', '$.slots', '필수 슬롯이 하나도 없습니다');
+  layout.slots.forEach((s, i) => {
+    const p = `$.slots[${i}]`;
+    if (!/^[a-z][a-z0-9-]*$/.test(s.name)) err('P_LAYOUT_SLOT', p, `슬롯 이름은 kebab-case입니다: ${s.name}`);
+    if (!LAYOUT_TAGS.includes(s.tag)) err('P_LAYOUT_SLOT', `${p}.tag`, `태그는 ${LAYOUT_TAGS.join('·')}입니다`);
+    if (s.tag === 'aside' && !s.label) err('P_LAYOUT_SLOT', `${p}.label`, 'aside 슬롯은 landmark 이름(label)이 필요합니다');
+    if (!Array.isArray(s.accepts) || !s.accepts.length || s.accepts.some(a => !/^(group:[a-z]+|purpose:[a-z]+\.[a-z]+|layout:[a-z0-9-]+)$/.test(a))) err('P_LAYOUT_ACCEPTS', `${p}.accepts`, '허용 콘텐츠는 group:<묶음>·purpose:<id>·layout:<id> 목록입니다');
+    if (!Number.isInteger(s.min) || !Number.isInteger(s.max) || s.min < (s.required ? 1 : 0) || s.max < Math.max(s.min, 1)) err('P_LAYOUT_COUNT', p, `항목 수는 필수면 min≥1, max≥min입니다(min ${s.min}, max ${s.max})`);
+    if (s.flow && !LAYOUT_FLOW_MODES.includes(s.flow.mode)) err('P_LAYOUT_FLOW', `${p}.flow.mode`, `흐름은 ${LAYOUT_FLOW_MODES.join('·')}입니다`);
+    if (s.flow?.mode === 'row' && !(s.flow.caps ?? []).every(c => c === 1 || c === 2)) err('P_LAYOUT_FLOW', `${p}.flow.caps`, 'row 흐름의 caps는 1(세로)과 2(가로 나열)뿐입니다');
+    if (s.flow && s.flow.mode !== 'stack' && !(Array.isArray(s.flow.caps) && s.flow.caps.length === LAYOUT_BANDS.length)) err('P_LAYOUT_FLOW', `${p}.flow.caps`, `caps는 폭 구간 수(${LAYOUT_BANDS.length})만큼 필요합니다`);
+    if (s.flow?.mode === 'bento' && (s.min < 3 || s.max > 6)) err('P_LAYOUT_FLOW', p, '벤토 슬롯은 항목 3~6개입니다(BENTO 배치 표의 범위)');
+    if (s.length !== undefined && !LAYOUT_LENGTH_POLICIES.includes(s.length)) err('P_LAYOUT_LENGTH', `${p}.length`, `길이 대응은 ${LAYOUT_LENGTH_POLICIES.join('·')}입니다`);
+  });
+  if (!Array.isArray(layout.bands) || layout.bands.length !== LAYOUT_BANDS.length) { err('P_LAYOUT_BANDS', '$.bands', `폭 구간은 ${LAYOUT_BANDS.length}개(${LAYOUT_BAND_NAMES.join('·')})입니다`); return out; }
+  const declared = new Set(layout.reorders ?? []);
+  let prevOrder = null;
+  layout.bands.forEach((b, i) => {
+    const p = `$.bands[${i}]`, areas = parseAreas(b.areas);
+    if (!areas.length || areas.some(r => r.length !== b.columns.length)) { err('P_LAYOUT_AREAS', p, `영역 표의 열 수(${areas.map(r => r.length).join('/')})가 트랙 수(${b.columns.length})와 다릅니다`); return; }
+    const used = new Set(areas.flat().filter(n => n !== '_'));
+    for (const n of used) if (!names.includes(n)) err('P_LAYOUT_AREAS', p, `영역 표에 없는 슬롯 이름: ${n}`);
+    for (const n of names) if (!used.has(n)) err('P_LAYOUT_AREAS', p, `슬롯 ${n}이 ${LAYOUT_BAND_NAMES[i]} 구간 표에 없습니다(내용을 숨기지 않는다)`);
+    const broken = brokenAreas(areas);
+    if (broken.length) err('P_LAYOUT_AREAS', p, `영역이 사각형이 아닙니다: ${broken.join(', ')}`);
+    // 최소 폭: 이 구간이 시작하는 컨테이너 폭에서 트랙의 최소 폭 합과 간격이 들어가야 한다(들어가지 않으면 가로 넘침).
+    const need = b.columns.reduce((a, t) => a + trackMin(t, layout.minCol), 0) + LAYOUT_MAX_GAP * (b.columns.length - 1);
+    if (need > LAYOUT_BANDS[i] && i > 0) err('P_LAYOUT_MINWIDTH', p, `${LAYOUT_BAND_NAMES[i]} 구간(${LAYOUT_BANDS[i]}px)에 트랙 최소 폭 ${need}px이 들어가지 않습니다`);
+    if (i === 0 && need > layout.minContent) err('P_LAYOUT_MINWIDTH', p, `xs 구간의 트랙 최소 폭 ${need}px이 minContent(${layout.minContent}px)보다 큽니다`);
+    // 읽기 순서: DOM은 슬롯 선언 순서. 시각 순서가 달라지는 구간은 reorders에 선언해야 한다.
+    const order = visualOrder(areas), same = order.length === names.length && order.every((n, k) => n === names[k]);
+    if (!same && !declared.has(LAYOUT_BAND_NAMES[i])) err('P_LAYOUT_ORDER', p, `${LAYOUT_BAND_NAMES[i]} 구간의 시각 순서(${order.join('>')})가 DOM 순서(${names.join('>')})와 다른데 reorders에 선언하지 않았습니다`);
+    if (same && declared.has(LAYOUT_BAND_NAMES[i])) err('P_LAYOUT_ORDER', p, `${LAYOUT_BAND_NAMES[i]} 구간은 순서가 같은데 reorders에 선언했습니다`);
+    prevOrder = order;
+  });
+  void prevOrder;
+  if (layout.minContent < 240 || layout.minContent > 360) err('P_LAYOUT_MINWIDTH', '$.minContent', '최소 콘텐츠 폭은 240~360px입니다(320px 화면의 콘텐츠 영역)');
+  return out;
 }

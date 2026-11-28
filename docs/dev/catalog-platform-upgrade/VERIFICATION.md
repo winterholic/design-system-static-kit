@@ -622,3 +622,54 @@ MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1362 ma
 $ git diff c269ad506 -- site/v1 docs/evidence/context/legacy-hashes.json   (diff 없음)
 ```
 미실행: `apps/web` Playwright e2e, 배포 확인, 다크 모드.
+
+## 10. TASK-TRE-03 레이아웃 패턴 24종 (브랜치 `upgrade/e3-layouts`)
+
+### 10.1 구현 범위
+- 재료: `layout:*` 24종(`src/platform/data/layouts.mjs`, 플랫폼 계약 0.7.0 → 0.8.0). REQUEST §9.2의 이름·순서와 1:1이다.
+- 슬롯 계약: 슬롯마다 필수 여부, 허용 콘텐츠(`group:`·`purpose:`·`layout:`), 항목 수, 선언 순서(= DOM 순서), 흐름(grid·columns·row·bento), 길이 대응(wrap·scroll-x·cap), sticky를 가진다. §9.2의 9개 정의 항목(슬롯, 부모 컨테이너, 최소 콘텐츠 폭, 반응형 변화, 열 수·배치 규칙, 밀도, 콘텐츠 길이, 중첩, 적용 목적)은 모든 레이아웃이 가진다.
+- 폭별 재배치: 컨테이너 쿼리 구간 xs 0·sm 560·md 880·lg 1180px마다 트랙과 영역 표를 따로 적는다. 숨기는 슬롯은 허용하지 않는다(등록 검사 `P_LAYOUT_AREAS`).
+- 컴파일: `compileLayout`(`src/layout.mjs`)은 계약 위반을 거부한다. 조립: `assembleLayout`(`src/platform/layouts.mjs`)이 칸을 목적 패밀리 렌더로 채우고 관계 그래프(`layout-slot-fit`, `layout-axis`, `forbids`, `avoids`)를 거친다.
+- 조회: `listPlatformMaterials({kind:'layout'})`·`getPlatformMaterial`·`recommendMaterials`·`checkCompatibility`와 같은 REST·MCP. 서비스 공개 함수는 더하지 않았다.
+- 기존 출력: `src/layout.mjs`는 함수와 export를 더했을 뿐 기존 흐름·벤토 출력은 그대로다(BENTO 표 2개에 `export`만 붙임). `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `git diff` 변화 없음.
+
+### 10.2 구현 중 시험과 실측이 잡은 결함(수정함)
+1. `band.pull`(media-hero의 겹침)을 데이터에 선언만 하고 렌더가 쓰지 않았다: 첫 실측에서 media-hero의 겹침이 0이었다. 구현하고 "선언한 값이 렌더에 쓰인다" 시험이 `margin-top:-` 을 요구한다.
+2. 좁은 구간의 `sticky`가 넓은 구간으로 새서(구간 규칙은 앞 구간 위에 쌓인다) 설정 화면의 저장 영역이 본문을 덮었다. 스크린샷에서 발견했다. 구간마다 앞 구간 값을 되돌림 값으로 다시 적고, 규칙을 순서대로 적용해 얻은 `position`·`align-self`를 선언과 견주는 시험과, 브라우저가 계산한 `position`을 폭마다 견주는 실측 시험을 더했다.
+3. 행 흐름의 `caps` 크기가 출력에 닿지 않았다(2나 3이나 같음): `row`는 1(세로)과 2(가로)만 허용하도록 줄였다. 처음에는 폭을 1/cap으로 나누려 했으나 버튼 묶음이 슬롯보다 넓어 768px에서 넘쳤다(`overflow-wrap:anywhere`가 최소 폭 계산을 0으로 만든다).
+4. 표본 항목 5개에서 `bestCols(5, 2)`는 고아를 피해 1열을 고른다: commerce-grid가 한 열로 보였다. 표본을 6개로 바꿨다(알고리즘은 의도대로).
+5. 쌍별 비교에서 equal-grid와 kpi-strip이 폭 1개에서만 달랐다: kpi-strip의 열 상한을 2·3·5·6으로 바꿔 구분했다.
+6. 긴 콘텐츠 시험이 숫자·가격·아이콘 이름까지 늘려 부품 내부(한 줄 값)가 넘쳤다. 자유 문장 필드(`PROSE_KEYS`)만 늘리도록 좁혔다. 한 줄 값의 최소 폭은 부품 계약(Track D) 몫이다. 이 한계는 숨기지 않는다.
+
+### 10.3 브라우저 실측(`node scripts/layouts/measure.mjs`, Chromium)
+- 24종 × 8개 폭(320·360·480·640·768·1024·1280·1440) × 표본 2종(정상, 긴 문장): 문서 가로 스크롤 최대 0px, 스크롤 영역 밖으로 나간 요소 0개. 주 폭 4개(320·768·1024·1440)의 슬롯·항목 사각형을 `screens/layouts/measurements.json`에 기록했다.
+- 폭별 재배치: 열·행 순위와 폭 비율로 만든 서명이라 단순 축소는 같은 서명이다. 24종 모두 인접 주 폭 사이에 슬롯이 자리를 옮기는 구간이 있고 서로 다른 배치가 2개 이상이다(요약 표는 `measurements.md`). media-hero는 sm→md에서 순위가 같고(겹침이 시작) lg에서 바뀐다: 서로 다른 배치 2개로 가장 적다.
+- 쌍별 구분: 276쌍 모두 서명이 다른 주 폭이 2개 이상(최소 2). 이름 없는 서명이므로 이름만 다른 같은 배치는 0이다.
+- sticky: 320px에서 아래에 붙는 슬롯은 자연 위치가 접힌 선(900px) 아래여도 화면 아래에 붙어 보인다(`pinnedBottom`).
+- 스크린샷은 레이아웃마다 한 장이다(핵심 배치 구간에 처음 들어가는 뷰포트: xs 320·sm 768·md 1024·lg 1440). 전수 이미지는 만들지 않았다.
+- 증거의 신선도: 시험이 실측 JSON의 표본 해시를 현재 출력의 해시와 비교한다. 코드가 바뀌었는데 실측을 다시 하지 않으면 실패한다.
+
+### 10.4 RED/GREEN
+| 코드를 이렇게 망가뜨리면 | 실패한 시험 | 되돌리면 |
+|---|---|---|
+| sticky 되돌림 값 제거 | `폭 구간 규칙이 앞 구간 위에 쌓여도…` (`layout:settings-layout.actions md: position`) | 통과 |
+| `pull` 선언을 렌더에서 무시 | `선언한 값이 렌더에 실제로 쓰인다…` (`layout:media-hero: pull`) | 통과 |
+| 슬롯 허용 콘텐츠 검사 제거 | `슬롯 계약이 거부한다…` (`charts는 카드만`) | 통과 |
+| 폭 축 계산 관계를 항상 통과 | `관계 그래프…` | 통과 |
+
+### 10.5 기존 시험 변경(공개)
+- `tests/platform-pipeline-contract.test.mjs`: 계약 버전 단언 0.8.0.
+- `tests/platform-service-channels.test.mjs`: work-dashboard 채널 해시 `a729…` → `0972…`. 계약 버전을 0.7.0으로 되돌리면 기존 해시로 통과해(12/12) 차이가 `manifest.platformContract` 문자열뿐임을 확인했다.
+
+### 10.6 실행 증거
+```sh
+$ node --test tests/layout-quality.test.mjs
+ℹ tests 25 / ℹ pass 25 / ℹ fail 0
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1353 materials, 337 requirements)
+$ npm run verify                       (EXIT=0)
+ℹ tests 822 / ℹ pass 822 / ℹ fail 0
+REPRODUCIBLE: 3404 generated files match a fresh build byte for byte.
+```
+Manifest 레이아웃 요구: `{"total":24,"missing":0,"direct":24}`. 24종 모두 `renderable`(`blockedBy: not-in-web-catalog`), REST·MCP 조회 가능, 품질 verified(유효한 시험 참조).
+미실행: `apps/web` Playwright e2e와 typecheck(Track F 영역, 이번 변경은 `src/`·문서·스크립트). 웹 카탈로그·Studio 노출은 구현하지 않았다(Track F).

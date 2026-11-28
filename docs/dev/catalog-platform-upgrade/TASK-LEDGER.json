@@ -4,9 +4,9 @@
   "summary": {
     "totalTasks": 29,
     "byStatus": {
-      "Pending": 20,
+      "Pending": 19,
       "In Progress": 2,
-      "Implemented": 2,
+      "Implemented": 3,
       "Verified": 5,
       "Blocked": 0
     },
@@ -659,7 +659,7 @@
       ],
       "commit": "b18314415d33e18000289d5f7205383646aeca6d",
       "status": "Verified",
-      "unresolvedIssues": "원 구현(b18314415)의 결함과 조치는 VERIFICATION.md §9 참조: 확장 15유형 SVG에 축·범례·라벨이 없었고, 증거 페이지 CSS에 2.6 차트 확장 규칙이 빠져 있었고, 입력 거부 구멍 7건(파이 음수, 단일 계열 형태의 초과 계열 무시, 불릿 음수, 선형 축 잘림, 누적 면적 합계 잘림, 레이더 2축, 선형 중복 범주)과 버블 반지름 왜곡이 있었다.",
+      "unresolvedIssues": "원 구현(b18314415)의 결함과 조치는 VERIFICATION.md §10 참조: 확장 15유형 SVG에 축·범례·라벨이 없었고, 증거 페이지 CSS에 2.6 차트 확장 규칙이 빠져 있었고, 입력 거부 구멍 7건(파이 음수, 단일 계열 형태의 초과 계열 무시, 불릿 음수, 선형 축 잘림, 누적 면적 합계 잘림, 레이더 2축, 선형 중복 범주)과 버블 반지름 왜곡이 있었다.",
       "crossTrackFiles": [
         {
           "file": "scripts/generate-material-coverage.mjs",
@@ -696,22 +696,77 @@
       "taskId": "TASK-TRE-03",
       "title": "반응형 레이아웃 패턴 24종 구현 및 슬롯 규칙 정립",
       "goal": "단순 축소가 아닌 화면 폭별 의미 있는 재배치를 지원하는 24종 레이아웃 재료 확보",
-      "scope": "src/layout.mjs, tests/layout-quality.test.mjs",
+      "scope": "src/layout.mjs, tests/layout-quality.test.mjs, 레이아웃 재료 데이터(src/platform/data/layouts.mjs)와 관계·조립(src/platform/layouts.mjs), 브라우저 실측 스크립트(scripts/layouts/), 문서·스크린샷",
       "track": "Track E",
-      "dependencies": [
-        "TASK-TRE-01"
-      ],
+      "dependencies": ["TASK-TRE-01"],
       "modifiedFiles": [
         "src/layout.mjs",
-        "tests/layout-quality.test.mjs"
+        "tests/layout-quality.test.mjs",
+        "docs/platform/layouts.md",
+        "docs/dev/catalog-platform-upgrade/screens/layouts/"
       ],
       "completionCriteria": "320px~1440px에서 가로 스크롤 없는 레이아웃 적응성 입증, 24종 레이아웃 슬롯 계약 완성",
       "tests": [
         "tests/layout-quality.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": "웹 카탈로그 라우트와 Studio 선택지는 없다(Manifest 상태 renderable, blockedBy not-in-web-catalog): Track F 몫이다. 레이아웃은 Blueprint 2.7.0 materials 필드나 assembleDesign 요청 키로 고르지 못한다(src/catalog은 고정 출력 영역): assembleLayout이 조립 경로이고 서비스 공개 함수는 더하지 않았다. 긴 콘텐츠 시험은 자유 문장 필드(PROSE_KEYS)만 늘린다: 숫자·가격·버튼 라벨처럼 한 줄 값의 최소 폭은 부품 계약(Track D) 몫이다. 상세는 VERIFICATION.md §10.",
+      "createFiles": [
+        "src/platform/data/layouts.mjs",
+        "src/platform/layouts.mjs",
+        "scripts/layouts/measure.mjs",
+        "scripts/layouts/doc.mjs",
+        "docs/platform/layouts.md",
+        "docs/dev/catalog-platform-upgrade/screens/layouts/"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/contract.mjs",
+          "owner": "Track A",
+          "reason": "PLATFORM_KINDS·KIND_SPECS에 layout 종류, CLOSED_PAIRS에 [layout, purpose-family], PLATFORM_CONTRACT_VERSION 0.7.0 → 0.8.0"
+        },
+        {
+          "file": "src/platform/examples/minimal.mjs",
+          "owner": "Track G",
+          "reason": "createPlatform이 LAYOUTS를 등록하고 layout 의미 검사(validators.layout)와 계산 관계(LAYOUT_CHECKS)를 연결"
+        },
+        {
+          "file": "src/service/platform-materials.mjs",
+          "owner": "Track A",
+          "reason": "listPlatformMaterials fields 허용 목록에 layout 필드 13개 추가"
+        },
+        {
+          "file": "apps/web/lib/api/operations.mjs",
+          "owner": "Track A",
+          "reason": "REST platform/materials 설명에 kind layout 안내"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "§9.2 요구 24항목을 layout:* 재료로 매핑, layout 정의 위치·렌더 프로브(assembleLayout 표본) 등록"
+        },
+        {
+          "file": "tests/platform-pipeline-contract.test.mjs",
+          "owner": "Track A",
+          "reason": "플랫폼 계약 버전 단언 0.7.0 → 0.8.0"
+        },
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "owner": "Track F",
+          "reason": "work-dashboard 채널 해시 갱신: 차이는 manifest.platformContract 문자열(0.8.0)뿐임을 계약 버전을 0.7.0으로 되돌려 확인"
+        },
+        {
+          "file": "docs/adr/0012-assembly-platform.md",
+          "owner": "Track A",
+          "reason": "계약 0.8.0 개정 기록(§9.9)"
+        },
+        {
+          "file": "package.json",
+          "owner": "Track G",
+          "reason": "scripts에 layouts:measure·layouts:doc 추가"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRE-04",

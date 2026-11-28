@@ -12,8 +12,8 @@ const clone = id => structuredClone(env.registry.get(id));
 const thaw = m => JSON.parse(JSON.stringify(m));
 const codes = errs => errs.map(e => e.code);
 
-test('the contract version moves with every contract change (0.7.0: purpose-family registry and visual metadata)', () => {
-  assert.equal(PLATFORM_CONTRACT_VERSION, '0.7.0');
+test('the contract version moves with every contract change (0.8.0: layout material kind)', () => {
+  assert.equal(PLATFORM_CONTRACT_VERSION, '0.8.0');
   assert.ok(KIND_SPECS['axis-value']);
 });
 
