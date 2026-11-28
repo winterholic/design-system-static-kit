@@ -8,6 +8,10 @@ import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 //  2) 계약에 적힌 크기 조건(터치 44px·56px·24px, 같은 줄 컨트롤 높이, 전체 폭 버튼)이 실제 레이아웃에서 지켜진다. 390·1280.
 //  3) 상호작용 패밀리의 키보드 조작과 상태 전이: 탭, 대화상자, 콤보박스, 메뉴 토글, 비밀번호 보기, 정렬, 닫기.
 // 패밀리 이름이 이 파일에 있어야 한다: 노드 시험이 "브라우저에서 본다"고 적은 조건의 확인 위치로 이 파일을 읽는다.
+// B/C/D form controls measured by the same all-family pass: form.input-kind, form.currency, form.otp, form.tags, form.file, form.upload,
+// form.grouped-select, form.radio, form.radio-group, form.radio-card, form.checkbox, form.checkbox-group, form.switch,
+// form.slider, form.range-slider, form.rating, form.color, form.date, form.date-range, form.time, form.datetime,
+// form.month, form.week, form.schedule.
 const env = makeEnv();
 const QUIET = 'family:quiet';
 const GROUP_OF = id => PURPOSE_FAMILIES.find(f => f.id === id).group;

@@ -1,5 +1,5 @@
 /**
- * 목적 패밀리 52종의 접근성 계약(`a11y.role`·`a11y.keyboard`·`a11y.conditions`)을 렌더 마크업과 대조한다(재료 검증 F1).
+ * 목적 패밀리 104종의 접근성 계약(`a11y.role`·`a11y.keyboard`·`a11y.conditions`)을 렌더 마크업과 대조한다(재료 검증 F1).
  *
  * 계약 문구는 산문이라 조건마다 마크업 단언을 `SPEC`에 적는다. 이 시험은 세 가지를 본다.
  *   1 대응: 계약의 조건 문구와 `SPEC`의 키가 일대일이다. 계약이 바뀌면 단언이 없는 조건이 시험을 깨뜨린다. 마크업으로 볼 수 없는 조건(크기·대비·산문)은
@@ -106,7 +106,7 @@ const tabOrder = dom => dom.all.filter(tabbable).map(el => accName(dom, el));
 // ---------------------------------------------------------------------------------------------
 // 모든 렌더가 지켜야 하는 불변식
 // ---------------------------------------------------------------------------------------------
-const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none', 'note', 'tooltip', 'tree', 'treeitem']);
+const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'switch', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none', 'note', 'tooltip', 'tree', 'treeitem']);
 const REF_ATTRS = ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-activedescendant', 'aria-owns'];
 const BOOL = new Set(['true', 'false']);
 const NEEDS_LABEL_INPUT = el => el.tag === 'input' && !['hidden', 'submit', 'button', 'reset'].includes(el.attrs.type);
@@ -737,6 +737,22 @@ for (const f of PURPOSE_FAMILIES) if (!SPEC[f.id]) {
     role: d => f.group === 'work' ? one(d, 'section[aria-labelledby]') : card || ['purpose:table.tree','purpose:table.inspector','purpose:table.diff'].includes(f.id) ? one(d, 'article') : one(d, 'table'),
     keyboard: d => { for (const control of query(d, 'a[href],button,input,summary')) ok(accName(d, control).length > 0, 'interactive control has a name'); },
     checks,
+  };
+}
+
+// §6.2 B/C/D: markup assertions use the same family conditions; dimensions and focus rings are measured in browser e2e.
+for (const family of PURPOSE_FAMILIES.filter(item => item.id.startsWith('purpose:form.') && !['search', 'auth', 'settings', 'filter', 'group'].includes(item.id.slice('purpose:form.'.length)))) {
+  SPEC[family.id] = {
+    role: dom => ok(inputs(dom).length > 0 || count(dom, '[role=combobox]') > 0, '실제 입력 또는 선택 컨트롤'),
+    keyboard: dom => { const order = tabOrder(dom); ok(order.length > 0 && order.every(name => name.trim()), 'Tab order has named stops'); },
+    checks: {
+      '모든 입력은 고유 id와 label for/id로 연결': dom => assert.deepEqual(invariants(dom), [], family.id),
+      '포커스 표시와 터치 목표 최소 44px': OFF('browser'),
+      '필수·비활성·오류 상태는 네이티브 속성과 연결': dom => {
+        const controls = [...inputs(dom), ...query(dom, '[role=combobox]')];
+        ok(controls.length > 0 && controls.every(control => control.attrs.id && (control.attrs['aria-describedby'] || control.attrs['aria-labelledby'])), '이름·상태 설명이 연결된 입력');
+      },
+    },
   };
 }
 

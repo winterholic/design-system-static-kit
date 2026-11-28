@@ -10,6 +10,7 @@ import {CARD_FAMILIES} from './card.mjs';
 import {BUTTON_FAMILIES} from './button.mjs';
 import {NAVIGATION_FAMILIES} from './navigation.mjs';
 import {FORM_FAMILIES} from './form.mjs';
+import {FORM_CONTROL_FAMILIES} from './form-controls.mjs';
 import {TABLE_FAMILIES} from './table.mjs';
 import {FEEDBACK_FAMILIES} from './feedback.mjs';
 import {INFO_MEDIA_FAMILIES} from './info-media.mjs';
@@ -53,6 +54,7 @@ export function defineComponentContract(spec) {
  * countDistinctComponentTypes에서 한 종류로 센다. 목적 패밀리가 새 종류를 만들지 않는 경우(아이콘·토글·로딩·복사·닫기·FAB)는 button-control이다.
  */
 const PURPOSE_COMPONENT_TYPE = Object.freeze({
+  'purpose:form.input-kind': 'input-control',
   'purpose:button.icon': 'button-control', 'purpose:button.toggle': 'button-control', 'purpose:button.loading': 'button-control',
   'purpose:button.fab': 'button-control', 'purpose:button.copy': 'button-control', 'purpose:button.close': 'button-control',
   'purpose:button.split': 'split-button', 'purpose:button.menu': 'menu-button',
@@ -93,7 +95,7 @@ const normalizePurpose = f => defineComponentContract({id: f.id, componentType: 
 
 export const COMPONENT_CONTRACTS = Object.freeze([
   ...BASE_COMPONENTS.map(normalizeBase),
-  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES, ...WORK_PATTERN_FAMILIES].map(normalizePurpose),
+  ...[...CARD_FAMILIES, ...BUTTON_FAMILIES, ...NAVIGATION_FAMILIES, ...FORM_FAMILIES, ...FORM_CONTROL_FAMILIES, ...TABLE_FAMILIES, ...DATA_DISPLAY_FAMILIES, ...FEEDBACK_FAMILIES, ...INFO_MEDIA_FAMILIES, ...EHI_FAMILIES, ...WORK_PATTERN_FAMILIES].map(normalizePurpose),
 ]);
 
 export function validateComponentContracts(contracts = ALL_COMPONENT_CONTRACTS) {

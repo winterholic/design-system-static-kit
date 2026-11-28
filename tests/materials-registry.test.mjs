@@ -188,7 +188,7 @@ test('materials: registering the catalog changes neither the catalog nor any 2.4
   catalogRegistry();
   assert.equal(sha([nodeSpecs, themes, palettes, templates]), before);
   // 컴파일 경로는 재료 레지스트리·어댑터를 읽지 않는다. 2.6.0 연결 뒤에는 필요한 렌더·스타일 모듈만 직접 읽는다.
-  const RENDER_REUSE = ['select', 'table', 'typography', 'control-size', 'button', 'input', 'card', 'navigation', 'modal', 'tabs', 'tooltip', 'feedback'];
+  const RENDER_REUSE = ['select', 'table', 'typography', 'control-size', 'button', 'input', 'form-controls', 'card', 'navigation', 'modal', 'tabs', 'tooltip', 'feedback'];
   for (const f of ['src/compiler.mjs', 'src/validate.mjs', 'src/render/nodes.mjs', 'src/render/index.mjs', 'src/styles/index.mjs', 'src/service/index.mjs', 'src/edit/index.mjs']) {
     const imported = [...read(f).matchAll(/^\s*import .*from ['"]([^'"]*materials\/[^'"]*)['"]/gm)].map(m => m[1].replace(/^.*materials\//, '').replace(/\.mjs$/, ''));
     assert.ok(imported.every(name => RENDER_REUSE.includes(name)), `${f} imports ${imported.join(',')}`);

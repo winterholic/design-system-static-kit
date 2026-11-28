@@ -160,7 +160,11 @@ test('the same component reached as an A demo and as a purpose family counts onc
   assert.equal(types.filter(t => t === 'menu-button').length, 2);
   assert.ok(types.filter(t => t === 'button-control').length >= 9, 'icon, toggle, loading, FAB, copy, close, link, button and the base all describe button-control');
   // 기반·목적 패밀리·독립 시연·커머스·레이아웃을 componentType 기준으로 중복 제거한다.
+<<<<<<< HEAD
   assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), new Set(ALL_COMPONENT_CONTRACTS.map(c => c.componentType)).size);
+=======
+  assert.equal(countDistinctComponentTypes(ALL_COMPONENT_CONTRACTS), 124);
+>>>>>>> 7d2daeb9e (Add B/C/D form control families)
 });
 
 // ---- 독립 검토(2026-11-28)에서 재현된 결함의 회귀 시험 ----

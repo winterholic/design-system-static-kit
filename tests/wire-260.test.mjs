@@ -518,7 +518,7 @@ test('the compile path reads only the material render/style modules; the registr
   const components = ['button.mjs', 'card.mjs', 'feedback.mjs', 'input.mjs', 'modal.mjs', 'navigation.mjs', 'tabs.mjs', 'tooltip.mjs'];
   assert.deepEqual(importsOf('src/render/nodes.mjs').sort(), [...components, 'select.mjs', 'table.mjs'].sort());
   assert.deepEqual(importsOf('src/styles/index.mjs').sort(), [...components, 'control-size.mjs', 'select.mjs', 'table.mjs', 'typography.mjs'].sort());
-  assert.deepEqual(importsOf('src/render/index.mjs').sort(), [...components, 'select.mjs', 'table.mjs'].sort());
+  assert.deepEqual(importsOf('src/render/index.mjs').sort(), [...components, 'form-controls.mjs', 'select.mjs', 'table.mjs'].sort());
   assert.deepEqual(importsOf('src/validate.mjs'), []);
   assert.deepEqual(importsOf('src/service/index.mjs'), []);
   assert.deepEqual(importsOf('src/service/materials.mjs'), ['index.mjs', 'typography.mjs']);

@@ -4,6 +4,7 @@ import {selectRuntime} from '../materials/select.mjs';
 import {tableRuntime} from '../materials/table.mjs';
 import {buttonRuntime} from '../materials/button.mjs';
 import {inputRuntime} from '../materials/input.mjs';
+import {formControlRuntime} from '../materials/form-controls.mjs';
 import {cardRuntime} from '../materials/card.mjs';
 import {navigationRuntime} from '../materials/navigation.mjs';
 import {modalRuntime} from '../materials/modal.mjs';
@@ -57,5 +58,7 @@ export function controlRuntime(b) {
     ['feedback-message', '[data-ctl=feedback]', feedbackRuntime],
   ];
   return runtimes.filter(([type]) => used.has(type))
-    .map(([, selector, runtime]) => mountControl(selector, runtime)).join('');
+    .map(([, selector, runtime]) => mountControl(selector, runtime)).join('')
+    + (atLeast(b.catalogVersion, '2.7.0') && used.has('input-control')
+      ? mountControl('.pf-native-tags,.pf-native-range-pair[data-range-slider],.pf-native-file[data-file-drop]', formControlRuntime) : '');
 }
