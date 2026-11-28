@@ -2637,16 +2637,16 @@ dark contrast 94, light contrast 85, dark chart 6, light chart 6
 ```text
 $ time npm run coverage:materials:check
 MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1741 materials, 406 requirements)
-total 3:05.67
+total 2:48.57
 
 $ node scripts/check-generated.mjs
-REPRODUCIBLE: 5387 generated files match a fresh build byte for byte.
+REPRODUCIBLE: 5388 generated files match a fresh build byte for byte.
 
 $ npm test -- --test-skip-pattern='real Chromium browser|stack: gap and align props|container: width steps|resizable panel: pointer drag|Playwright Chromium 실측'
 tests 1270 / pass 1270 / fail 0
-duration 436514 ms
+duration 434970 ms
 
-$ git diff --quiet HEAD -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json site/v1/blueprint.schema.json
+$ git diff --quiet origin/main -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json site/v1/blueprint.schema.json
 exit 0
 ```
 
