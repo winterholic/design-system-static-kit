@@ -10,7 +10,7 @@ import {ACTION_COMPONENT_BY_ID, ACTION_COMPONENT_CSS, ACTION_COMPONENT_RUNTIME} 
 import {actionRuntimeFor} from '../platform/families/action.mjs';
 
 const PROPOSE_KEYS = ['seeds', 'context', 'mode'];
-const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items'];
+const REQUEST_KEYS = ['context', 'mode', 'density', 'styleContext', 'palette', 'subtokenSet', 'typeSystem', 'seeds', 'items', 'actions'];
 const ITEM_KEYS = ['purpose', 'visual', 'variant', 'props', 'content', 'id'];
 const ACTION_KEYS = ['component', 'props'];
 const diag = d => diagnostic(d.code, d.path ?? '$', d.message, hintFor(d.code), {severity: d.severity === 'error' ? undefined : d.severity});
