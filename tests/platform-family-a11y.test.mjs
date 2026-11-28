@@ -106,7 +106,7 @@ const tabOrder = dom => dom.all.filter(tabbable).map(el => accName(dom, el));
 // ---------------------------------------------------------------------------------------------
 // 모든 렌더가 지켜야 하는 불변식
 // ---------------------------------------------------------------------------------------------
-const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none']);
+const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none', 'note', 'tooltip']);
 const REF_ATTRS = ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-activedescendant', 'aria-owns'];
 const BOOL = new Set(['true', 'false']);
 const NEEDS_LABEL_INPUT = el => el.tag === 'input' && !['hidden', 'submit', 'button', 'reset'].includes(el.attrs.type);
@@ -168,6 +168,21 @@ const inputs = dom => query(dom, 'input').filter(NEEDS_LABEL_INPUT);
 
 // 변형을 바꿔 렌더하는 키보드 사례의 짧은 이름
 const withProps = (id, props, content = {}) => { const r = render(id, QUIET, {props, content}); assert.ok(r.ok, `${id} ${JSON.stringify(props)}: ${JSON.stringify(r.errors)}`); return r.dom; };
+const ehiCss = id => family(id).sharedCss + family(id).css;
+const ehiCommonChecks = id => ({
+  '44px 이상 터치 영역': () => { const css = ehiCss(id); ok(css.includes('.ehi button{min-inline-size:44px;min-block-size:44px') && css.includes('min-inline-size:44px;min-block-size:44px'), '버튼과 메뉴 항목의 44px CSS 계약'); },
+  '줄바꿈되며 뷰포트를': () => { const css = ehiCss(id); ok(/overflow-wrap:anywhere/.test(css) && /max-inline-size:min\(36rem,calc\(100vw - 2rem\)\)/.test(css), '긴 텍스트와 패널 폭이 CSS에 반영'); },
+  '모션 감소 설정': () => { const css = ehiCss(id); ok(/prefers-reduced-motion:reduce/.test(css) && /animation:none/.test(css), 'reduced-motion이 스피너 애니메이션을 정지'); },
+});
+const ehiKeyboard = () => d => assert.deepEqual(tabOrder(d), tabOrder(d).length ? [tabOrder(d)[0]] : [], '닫힌 메뉴에서는 호출 버튼만 Tab 정지');
+const ehiOverlayChecks = () => ({
+  '모달은 포커스를': d => { const dialog = one(d, '[role=dialog]'); ok(dialog.attrs['aria-modal'] === 'true' && count(d, '[data-focus-trap]') === 1, 'modal focus trap과 aria-modal'); },
+  'Escape와 바깥 클릭': d => ok(ehiSource.includes("ev.key==='Escape'") && ehiSource.includes("if(back&&t===back)"), 'Escape와 backdrop close가 런타임에 구현'),
+  'aria-expanded·aria-controls': d => { const trigger = one(d, '[data-ehi-trigger]'), id = trigger.attrs['aria-controls']; ok(trigger.attrs['aria-expanded'] === 'false' && !!id && d.byId.has(id), '닫힘 상태와 실제 panel 연결'); },
+});
+const ehiSource = readFileSync(new URL('../src/platform/families/action.mjs', import.meta.url), 'utf8');
+
+
 
 // ---------------------------------------------------------------------------------------------
 // 계약 대응표. key는 계약 조건 문구에 들어 있는 낱말(정확히 한 조건에 맞아야 한다), check는 렌더 마크업 단언이다.
@@ -657,6 +672,41 @@ const SPEC = {
       'alt 텍스트 제공': d => ok(query(d, 'img').every(i => has(i, 'alt'))),
     },
   },
+  'purpose:navigation.collapsible-sidebar': {
+    role: d => { one(d, 'aside'); one(d, 'nav'); }, keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:navigation.collapsible-sidebar'), '열림 상태에 aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 접힘 패널 연결'); }},
+  },
+  'purpose:navigation.drawer': {
+    role: d => one(d, '[role=dialog]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:navigation.drawer'), ...ehiOverlayChecks()},
+  },
+  'purpose:navigation.command-menu': {
+    role: d => { one(d, '[role=dialog]'); one(d, '[role=menu]'); }, keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:navigation.command-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 menu 연결'); }, '명령 검색': d => { const input = one(d, 'input[type=search]'); ok(accName(d, input) === '명령 검색' && count(d, '[role=menuitem]') === 2, '검색 이름과 메뉴 명령'); }},
+  },
+  'purpose:navigation.context-menu': {
+    role: d => one(d, '[role=menu]'), keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:navigation.context-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 메뉴 연결'); }},
+  },
+  'purpose:overlay.drawer': {role: d => one(d, '[role=dialog]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:overlay.drawer'), ...ehiOverlayChecks()}},
+  'purpose:overlay.popover': {
+    role: d => { const dialog = one(d, '[role=dialog]'); ok(dialog.attrs['aria-modal'] === 'false' && count(d, '[data-focus-trap]') === 0, '비모달·비가둠 popover'); }, keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:overlay.popover'), '팝오버는 비모달': d => ok(one(d, '[role=dialog]').attrs['aria-modal'] === 'false', 'aria-modal=false'), 'Escape와 바깥 클릭': d => ok(ehiSource.includes("ev.key==='Escape'") && ehiSource.includes("if(back&&t===back)"), 'Escape와 backdrop close'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 panel 연결'); }},
+  },
+  'purpose:overlay.dropdown-menu': {role: d => one(d, '[role=menu]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:overlay.dropdown-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 menu 연결'); }}},
+  'purpose:overlay.contextual-help': {
+    role: d => one(d, '[role=tooltip]'), keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:overlay.contextual-help'), 'aria-describedby': d => { const b = one(d, '[data-ehi-tooltip-trigger]'), tip = d.byId.get(b.attrs['aria-describedby']); ok(tip?.attrs.role === 'tooltip' && b.attrs['aria-expanded'] === 'false', '호출 버튼이 실제 도움말을 설명으로 가리킨다'); }},
+  },
+  'purpose:feedback.callout': {role: d => one(d, '[role=note]'), keyboard: ehiKeyboard(), checks: ehiCommonChecks('purpose:feedback.callout')},
+  'purpose:feedback.circular-progress': {
+    role: d => one(d, '[role=progressbar]'), keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:feedback.circular-progress'), 'progressbar 값': d => { const p = one(d, '[role=progressbar]'); ok(p.attrs['aria-valuemin'] === '0' && p.attrs['aria-valuemax'] === '100' && p.attrs['aria-valuenow'] === '40' && p.attrs.style.includes('40%'), 'drawn progress and exposed numeric value match'); }},
+  },
+  'purpose:feedback.loading-overlay': {role: d => one(d, '[role=status]'), keyboard: ehiKeyboard(), checks: ehiCommonChecks('purpose:feedback.loading-overlay')},
+  'purpose:feedback.status-indicator': {
+    role: d => one(d, '[role=status]'), keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:feedback.status-indicator'), 'aria-live': d => { const status = one(d, '[role=status]'); ok(status.attrs['aria-live'] === 'polite' && textOf(status).includes('동기화 완료'), 'live region contains the rendered state text'); }},
+  },
 };
 
 function OFF(why) { return {off: why}; }
@@ -670,8 +720,8 @@ const KEYS = family => Object.keys(SPEC[family.id].checks);
 /** 조건 문구에 키가 들어 있는가. */
 const conditionOf = (family, key) => family.a11y.conditions.filter(c => c.includes(key));
 
-test('every contract condition of the 53 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
-  assert.equal(PURPOSE_FAMILIES.length, 53);
+test('every contract condition of the 65 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
+  assert.equal(PURPOSE_FAMILIES.length, 65);
   assert.deepEqual(Object.keys(SPEC).sort(), [...PURPOSE_FAMILY_IDS].sort(), 'SPEC covers exactly the registered families');
   for (const f of PURPOSE_FAMILIES) {
     const spec = SPEC[f.id];

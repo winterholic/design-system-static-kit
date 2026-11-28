@@ -23,7 +23,7 @@
       "total": 406
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:53 axis-value:79 surface:5 motion:4 background:12 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:65 axis-value:79 surface:5 motion:4 background:12 media:6 state-pattern:8 spacing:3 icon:103 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:103 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -35,7 +35,7 @@
           "apps/web/features/components/spec.server.ts"
         ],
         "proven": true,
-        "materials": 117
+        "materials": 129
       },
       "web:/components/[componentId]": {
         "role": "detail",
@@ -51,7 +51,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 53
+        "materials": 65
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -221,30 +221,30 @@
   "summary": {
     "requirements": {
       "total": 406,
-      "fulfilled": 325,
-      "missing": 81,
-      "coverageRate": 0.8005,
+      "fulfilled": 337,
+      "missing": 69,
+      "coverageRate": 0.83,
       "byCoverage": {
-        "direct": 287,
+        "direct": 299,
         "variant": 29,
         "schema": 7,
         "part-of": 2,
-        "missing": 81
+        "missing": 69
       },
       "statusDistribution": {
-        "missing": 81,
+        "missing": 69,
         "metadata-only": 9,
         "defined": 23,
         "renderable": 56,
-        "catalog-visible": 31,
+        "catalog-visible": 43,
         "assemblable": 1,
         "verified": 205
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 63,
-          "direct": 106,
+          "missing": 51,
+          "direct": 118,
           "variant": 29,
           "schema": 7,
           "partOf": 2
@@ -362,18 +362,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1460,
+      "totalRecords": 1472,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 430,
         "defined": 42,
         "renderable": 124,
-        "catalog-visible": 386,
+        "catalog-visible": 398,
         "assemblable": 4,
         "verified": 474
       },
       "registeredByRegistry": {
-        "platform": 361,
+        "platform": 373,
         "design": 1099
       }
     },
@@ -550,12 +550,12 @@
         }
       },
       "purpose-family": {
-        "registered": 53,
-        "actualMaterial": 53,
+        "registered": 65,
+        "actualMaterial": 65,
         "assemblableVerified": 20,
-        "distinctOutputs": 53,
+        "distinctOutputs": 65,
         "byStatus": {
-          "catalog-visible": 33,
+          "catalog-visible": 45,
           "verified": 20
         }
       },
@@ -740,8 +740,8 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 53,
-        "delta": 21,
+        "currentMeasured": 65,
+        "delta": 33,
         "status": "drift",
         "measuredBy": "live registry count"
       },
@@ -1340,9 +1340,11 @@
       "id": "req:comp:e-03-collapsible-sidebar",
       "section": "§6.2 E",
       "name": "Collapsible Sidebar",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:navigation.collapsible-sidebar"
+      ]
     },
     {
       "id": "req:comp:e-04-breadcrumb",
@@ -1426,9 +1428,11 @@
       "id": "req:comp:e-11-navigation-drawer",
       "section": "§6.2 E",
       "name": "Navigation Drawer",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:navigation.drawer"
+      ]
     },
     {
       "id": "req:comp:e-12-table-of-contents",
@@ -1444,17 +1448,21 @@
       "id": "req:comp:e-13-command-menu",
       "section": "§6.2 E",
       "name": "Command Menu",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:navigation.command-menu"
+      ]
     },
     {
       "id": "req:comp:e-14-context-menu",
       "section": "§6.2 E",
       "name": "Context Menu",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:navigation.context-menu"
+      ]
     },
     {
       "id": "req:comp:f-01-basic-card",
@@ -1909,9 +1917,11 @@
       "id": "req:comp:h-04-drawer",
       "section": "§6.2 H",
       "name": "Drawer",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:overlay.drawer"
+      ]
     },
     {
       "id": "req:comp:h-05-bottom-sheet",
@@ -1931,9 +1941,11 @@
       "id": "req:comp:h-06-popover",
       "section": "§6.2 H",
       "name": "Popover",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:overlay.popover"
+      ]
     },
     {
       "id": "req:comp:h-07-tooltip",
@@ -1949,17 +1961,21 @@
       "id": "req:comp:h-08-dropdown-menu",
       "section": "§6.2 H",
       "name": "Dropdown Menu",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:overlay.dropdown-menu"
+      ]
     },
     {
       "id": "req:comp:h-09-contextual-help",
       "section": "§6.2 H",
       "name": "Contextual Help",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:overlay.contextual-help"
+      ]
     },
     {
       "id": "req:comp:i-01-alert",
@@ -1989,9 +2005,11 @@
       "id": "req:comp:i-03-callout",
       "section": "§6.2 I",
       "name": "Callout",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:feedback.callout"
+      ]
     },
     {
       "id": "req:comp:i-04-toast",
@@ -2103,9 +2121,11 @@
       "id": "req:comp:i-13-circular-progress",
       "section": "§6.2 I",
       "name": "Circular Progress",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:feedback.circular-progress"
+      ]
     },
     {
       "id": "req:comp:i-14-step-progress",
@@ -2125,17 +2145,21 @@
       "id": "req:comp:i-15-loading-overlay",
       "section": "§6.2 I",
       "name": "Loading Overlay",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:feedback.loading-overlay"
+      ]
     },
     {
       "id": "req:comp:i-16-status-indicator",
       "section": "§6.2 I",
       "name": "Status Indicator",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:feedback.status-indicator"
+      ]
     },
     {
       "id": "req:comp:j-01-badge",
@@ -83067,6 +83091,164 @@
       }
     },
     {
+      "id": "purpose:feedback.callout",
+      "name": "Callout",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "feedback",
+      "requirementIds": [
+        "req:comp:i-03-callout"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/feedback.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderCallout",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/feedback.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderCallout",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "14d19741bc74d9a5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:feedback.circular-progress",
+      "name": "Circular Progress",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "feedback",
+      "requirementIds": [
+        "req:comp:i-13-circular-progress"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/feedback.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderCircularProgress",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/feedback.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderCircularProgress",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "9207d53f22dadc07",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:feedback.confirm",
       "name": "확인 대화상자",
       "kind": "purpose-family",
@@ -83253,6 +83435,85 @@
       }
     },
     {
+      "id": "purpose:feedback.loading-overlay",
+      "name": "Loading Overlay",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "feedback",
+      "requirementIds": [
+        "req:comp:i-15-loading-overlay"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/feedback.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderLoadingOverlay",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/feedback.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderLoadingOverlay",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1d2321851aaa7974",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:feedback.progress",
       "name": "진행 안내",
       "kind": "purpose-family",
@@ -83422,6 +83683,85 @@
           "qualityOk": true
         },
         "outputHash": "eece223ec1f13552",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:feedback.status-indicator",
+      "name": "Status Indicator",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "feedback",
+      "requirementIds": [
+        "req:comp:i-16-status-indicator"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/feedback.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderStatusIndicator",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/feedback.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderStatusIndicator",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "f23368f4904ee661",
         "duplicateOutputOf": []
       }
     },
@@ -85358,6 +85698,332 @@
       }
     },
     {
+      "id": "purpose:navigation.collapsible-sidebar",
+      "name": "Collapsible Sidebar",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "navigation",
+      "requirementIds": [
+        "req:comp:e-03-collapsible-sidebar"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/navigation.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderCollapsibleSidebar",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:navigation-menu",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/navigation.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderCollapsibleSidebar",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "1b3fe1d644a25ddf",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:navigation.command-menu",
+      "name": "Command Menu",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "navigation",
+      "requirementIds": [
+        "req:comp:e-13-command-menu"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/navigation.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderCommandMenu",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/navigation.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderCommandMenu",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "3a6a6a8804924146",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:navigation.context-menu",
+      "name": "Context Menu",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "navigation",
+      "requirementIds": [
+        "req:comp:e-14-context-menu"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/navigation.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderContextMenu",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/navigation.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderContextMenu",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "ee67eda61e753866",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:navigation.drawer",
+      "name": "Navigation Drawer",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "navigation",
+      "requirementIds": [
+        "req:comp:e-11-navigation-drawer"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/navigation.mjs",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderNavigationDrawer",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:navigation-menu",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": "src/platform/families/navigation.mjs",
+        "renderer": "src/platform/families/ehi.mjs#renderNavigationDrawer",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "b502c323a225ae4b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "purpose:navigation.sidebar",
       "name": "사이드바",
       "kind": "purpose-family",
@@ -85633,6 +86299,322 @@
           "qualityOk": true
         },
         "outputHash": "e2335b798b11e00d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:overlay.contextual-help",
+      "name": "Contextual Help",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "overlay",
+      "requirementIds": [
+        "req:comp:h-09-contextual-help"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderContextualHelp",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/ehi.mjs#renderContextualHelp",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "da21010c27acd8fd",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:overlay.drawer",
+      "name": "Drawer",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "overlay",
+      "requirementIds": [
+        "req:comp:h-04-drawer"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderDrawer",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/ehi.mjs#renderDrawer",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "53cfc7d1daefd8a7",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:overlay.dropdown-menu",
+      "name": "Dropdown Menu",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "overlay",
+      "requirementIds": [
+        "req:comp:h-08-dropdown-menu"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderDropdownMenu",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/ehi.mjs#renderDropdownMenu",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "77134b4d1287bf3e",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:overlay.popover",
+      "name": "Popover",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "overlay",
+      "requirementIds": [
+        "req:comp:h-06-popover"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/ehi.mjs#renderPopover",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [
+          "tests/platform-ehi-contract.test.mjs"
+        ],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/ehi.mjs#renderPopover",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "5dace89000cd752e",
         "duplicateOutputOf": []
       }
     },
