@@ -2378,6 +2378,16 @@ Claude Playwright 검증은 390px·1280px에서 주소 복원·단일 패널·�
 
 단위 시험 `node --test apps/web/features/materials/foundations-exhibit.unit.mjs`는 새 helper export가 없고 blur 보존이 빠진 상태에서 예상 실패(RED)를 확인한 뒤 구현 후 `tests 5 / pass 5 / fail 0`으로 통과했다. 새 Claude 독립 브라우저 재검증은 코드 반영 후 별도 실행 예정이므로 아직 Verified로 올리지 않는다.
 
+### 39.4 독립 Chromium 2차 검증과 후속 교정
+
+Claude가 `be0ce1c85` 아카이브 빌드를 Playwright 1.64.1 / Chromium 156.0.8078.4로 재측정했다. Border 5종, Background 12/13, Chart SVG·표 29종, Layout Core area 24/24, URL, Motion·reduced-motion, Icon 16영역·권리, 세부 링크 59개는 동작했지만 다음을 발견했다.
+
+- CSS Modules가 만든 해시 class 때문에 E2E의 `.layoutSample`, `.facetSample`, `.backgroundSample`, `.chartSample` 선택자가 0개를 반환했다. 관련 선택자를 `[class*=\"…\"]`로 바꾸고 frosted blur 계산 스타일 단언을 추가했다.
+- CSS 압축 결과 `-webkit-backdrop-filter`만 남아 Chromium 표준 `backdrop-filter` 계산값이 `none`이었다. 접두 선언을 제거하고 표준 `backdrop-filter`만 남겼다.
+- 데스크톱 wide band를 작은 카드 안에서 그려 390px와 1280px에서 layout 샘플의 일부 라벨이 좁은 칸에 갇혔다. 카드 목록을 전폭 단일 열로 만들고 Core `bands[0..3]`를 390·560·880·1180px 기준으로 반응형 전환한다. xs/sm/md/lg에서 각 24개 area matrix가 서로 구별되는 시험값을 확인했다.
+
+새 수정은 `ab319cd46`이며, 다시 Claude 독립 브라우저 검증을 요청했다. 최종 E2E 통과와 frosted 계산 스타일을 확인하기 전까지 상태는 Implemented로 둔다.
+
 `apps/web/e2e/foundations-categories.spec.mjs`에는 390px·1280px URL/뒤로 가기, 단일 패널, 터치 링크 크기·가로 넘침, 11개 정의, Core 차트 SVG, Motion reduced-motion, Icon 권리, 상세 링크를 확인하는 명세를 작성했다. **Chromium 실행은 하지 않음**: 작업 지시가 Codex Chromium 재시도를 금지하고 Claude 독립 브라우저 검증을 지정했다. 따라서 실제 브라우저 동작과 픽셀 실측은 검증 대기다.
 
 새 Track F 항목 `TASK-TRF-08`을 장부에 추가했다. 내비게이션 공통 컴포넌트는 수정하지 않았다. `git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json`은 rebase 후 최신 origin/main 기준으로 불변 파일 비교와 push 직전 diff stat을 다시 수행한다.
