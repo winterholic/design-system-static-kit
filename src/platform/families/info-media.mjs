@@ -141,7 +141,7 @@ const SHARED_CSS = `
 .pf-responsive-figure{margin:0;display:block}.pf-image-caption{margin:var(--kit-sp-tight) 0 0;color:var(--kit-muted);font-size:var(--kit-t-small)}
 
 .pf-carousel{position:relative;display:grid;gap:var(--kit-sp-near);font-family:var(--kit-font);inline-size:100%}
-.pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}.pf-carousel-track::-webkit-scrollbar{display:none}
+.pf-carousel-track{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:var(--kit-sp-item);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;scroll-snap-type:x mandatory;border-radius:var(--kit-radius)}.pf-carousel-track::-webkit-scrollbar{display:none}.pf-carousel-track:focus-visible{outline:2px solid var(--kit-focus);outline-offset:2px}
 .pf-carousel[data-layout="single"] .pf-carousel-track{grid-auto-columns:100%}
 .pf-carousel[data-layout="cards"] .pf-carousel-track{grid-auto-columns:minmax(72%,calc(50% - var(--kit-sp-item) / 2))}
 .pf-carousel[data-size="medium"] .pf-carousel-slide img{max-block-size:320px}
@@ -544,7 +544,7 @@ export function renderCarousel(ctx) {
   const slides = c.items.map((it, i) => {
     return `<article class="pf-carousel-slide" role="group" aria-roledescription="slide" aria-label="${i + 1} / ${c.items.length}: ${e(it.title)}"><img src="${e(it.src)}" alt="${e(it.alt)}" /><h3>${e(it.title)}</h3>${it.description ? `<p>${e(it.description)}</p>` : ''}</article>`;
   }).join('');
-  return `<section class="pf-carousel" role="region" aria-roledescription="carousel" aria-label="${e(c.label)}" data-carousel data-layout="${e(v.layout)}" data-size="${e(p.size)}"><div class="pf-carousel-track" role="group" aria-label="슬라이드 목록" data-layout-scroll>${slides}</div><div class="pf-carousel-nav"><button type="button" class="pf-carousel-btn" data-carousel-prev aria-label="이전 슬라이드">‹</button><span class="pf-carousel-counter" aria-live="polite">1 / ${c.items.length}</span><button type="button" class="pf-carousel-btn" data-carousel-next aria-label="다음 슬라이드">›</button></div></section>`;
+  return `<section class="pf-carousel" role="region" aria-roledescription="carousel" aria-label="${e(c.label)}" data-carousel data-layout="${e(v.layout)}" data-size="${e(p.size)}"><div class="pf-carousel-track" role="group" aria-label="슬라이드 목록" data-layout-scroll tabindex="0">${slides}</div><div class="pf-carousel-nav"><button type="button" class="pf-carousel-btn" data-carousel-prev aria-label="이전 슬라이드">‹</button><span class="pf-carousel-counter" aria-live="polite">1 / ${c.items.length}</span><button type="button" class="pf-carousel-btn" data-carousel-next aria-label="다음 슬라이드">›</button></div></section>`;
 }
 
 // 3. Audio Player UI
