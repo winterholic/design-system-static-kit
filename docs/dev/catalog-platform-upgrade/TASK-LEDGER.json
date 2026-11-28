@@ -1821,7 +1821,9 @@
         "tests/platform-commerce-blueprint.test.mjs",
         "tests/platform-service-commerce-channels.test.mjs",
         "tests/platform-service-commerce-components.test.mjs",
-        "e2e/platform-commerce-components.spec.mjs"
+        "e2e/platform-commerce-components.spec.mjs",
+        "site/gallery/index.html",
+        "site/src/platform/families/commerce.mjs"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
@@ -1831,9 +1833,9 @@
         "tests/platform-service-commerce-components.test.mjs",
         "e2e/platform-commerce-components.spec.mjs"
       ],
-      "commit": null,
-      "status": "In Progress",
-      "unresolvedIssues": "독립 검증에서 원 구현의 Verified 주장은 근거를 넘었다고 판정했다. 7c1bd947c 기준 전체 npm test는 932/932 통과했으나 N 전용 검증은 Blueprint 7개와 나머지 4개 단독 렌더에 그쳤다. 재검증에서 계약을 종류별로 교정하고 11종 렌더 입력의 양성·음성·변경 출력을 추가했다. 전체 verify와 coverage 재생성/검사는 아직 진행 중이다. 기존 Blueprint에서 Quantity Selector의 min/max/step·증감, Cart Item의 수량·삭제 연결은 표현되지 않아 assembleComponents commerce 슬롯만 지원한다. Studio 선택과 전체 페이지 assembleDesign 연결은 Track F/G 범위로 남는다.",
+      "commit": "5fad98940",
+      "status": "Completed",
+      "unresolvedIssues": "원 구현 7c1bd947c에서 N 전용 Blueprint 시험 7종·단독 렌더 4종뿐인데 Verified로 승격됐던 기록을 철회했다. 재검증은 11/11 exact material query, legacy Blueprint 경로, assembleComponents render/export, 변경 입력, 잘못된 입력 거부 및 Core/REST/MCP 출력·진단 일치를 확인했고 Manifest 11행을 모두 live probe 근거로 재생성했다. N 집중 테스트 34/34, coverage:materials:check, audit, docs, build, check-generated는 통과했다. 전체 npm run verify는 N과 무관한 upstream tests/platform-layout-resizable.test.mjs 및 tests/platform-type-fonts.test.mjs 브라우저 테스트가 Codex sandbox Chromium bootstrap_check_in MachPortRendezvousServer 권한 거부(1100)/SIGTRAP으로 실패해 exit 1이며, 전체 테스트 983개 중 981개 통과했다. 로컬 브라우저는 사용하지 않았고 MCP 브라우저에서 N 390/1280px 상호작용을 확인했다. Studio 선택 및 assembleDesign 전체 페이지 연결은 Track F/G의 후속 범위다.",
       "createFiles": [
         "src/platform/families/commerce.mjs",
         "tests/platform-commerce-blueprint.test.mjs",
@@ -1871,6 +1873,16 @@
           "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
           "owner": "Track G",
           "reason": "DEC-013 N 계열 의사결정 기록"
+        },
+        {
+          "file": "site/gallery/index.html",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "N 전용 commerce renderer 변경을 반영한 정적 gallery 및 site source mirror 재생성; npm run build와 check-generated로 검증"
+        },
+        {
+          "file": "site/src/platform/families/commerce.mjs",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "N 전용 commerce renderer 변경을 반영한 정적 gallery 및 site source mirror 재생성; npm run build와 check-generated로 검증"
         }
       ]
     },

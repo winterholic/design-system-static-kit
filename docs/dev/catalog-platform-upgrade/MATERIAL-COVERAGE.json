@@ -2650,7 +2650,24 @@
       "status": "verified",
       "materialIds": [
         "component:grid"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:product-grid",
+        "materialId": "component:grid",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "grid",
+          "axes": {
+            "columns": "three"
+          }
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "6da5c73667e813f9"
+      }
     },
     {
       "id": "req:comp:n-02-product-detail-summary",
@@ -2660,7 +2677,22 @@
       "status": "verified",
       "materialIds": [
         "component:buy-box"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:product-detail-summary",
+        "materialId": "component:buy-box",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "buy-box",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "0aee008e3e8e0519"
+      }
     },
     {
       "id": "req:comp:n-03-product-variant-selector",
@@ -2671,7 +2703,22 @@
       "materialIds": [
         "component:buy-box"
       ],
-      "note": "buy-box의 options(라벨+선택지)로만 존재한다"
+      "note": "buy-box의 options(라벨+선택지)로만 존재한다",
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:product-variant-selector",
+        "materialId": "component:buy-box",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "buy-box",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "99114b0c33e0d22d"
+      }
     },
     {
       "id": "req:comp:n-04-quantity-selector",
@@ -2681,7 +2728,24 @@
       "status": "verified",
       "materialIds": [
         "base-component:input-control"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:quantity-selector",
+        "materialId": "base-component:input-control",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "input-control",
+          "axes": {
+            "kind": "number"
+          }
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "806722ca0d4fb511"
+      }
     },
     {
       "id": "req:comp:n-05-price-display",
@@ -2691,7 +2755,22 @@
       "status": "verified",
       "materialIds": [
         "component:buy-box"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:price-display",
+        "materialId": "component:buy-box",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "buy-box",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "32d62ecf4c806b32"
+      }
     },
     {
       "id": "req:comp:n-06-discount-display",
@@ -2701,7 +2780,21 @@
       "status": "verified",
       "materialIds": [
         "purpose:card.product"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:discount-display",
+        "materialId": "purpose:card.product",
+        "blueprintPath": {
+          "field": "materials.purposes",
+          "purpose": "purpose:card.product"
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "13bcf51d3d493302"
+      }
     },
     {
       "id": "req:comp:n-07-cart-item",
@@ -2711,7 +2804,22 @@
       "status": "verified",
       "materialIds": [
         "component:summary"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:cart-item",
+        "materialId": "component:summary",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "summary",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "780651d05559a841"
+      }
     },
     {
       "id": "req:comp:n-08-cart-summary",
@@ -2721,7 +2829,22 @@
       "status": "verified",
       "materialIds": [
         "component:summary"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:cart-summary",
+        "materialId": "component:summary",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "summary",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "1c439a9c58bfc125"
+      }
     },
     {
       "id": "req:comp:n-09-checkout-summary",
@@ -2731,7 +2854,22 @@
       "status": "verified",
       "materialIds": [
         "component:summary"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:checkout-summary",
+        "materialId": "component:summary",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "summary",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "4cf3112bc818fa46"
+      }
     },
     {
       "id": "req:comp:n-10-order-status",
@@ -2741,7 +2879,22 @@
       "status": "verified",
       "materialIds": [
         "component:steps"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:order-status",
+        "materialId": "component:steps",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "steps",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "46f6cc55a2e24903"
+      }
     },
     {
       "id": "req:comp:n-11-review-summary",
@@ -2751,7 +2904,22 @@
       "status": "verified",
       "materialIds": [
         "component:reviews"
-      ]
+      ],
+      "commerceProbe": {
+        "ok": true,
+        "method": "assembleComponents({commerce})",
+        "componentId": "component:review-summary",
+        "materialId": "component:reviews",
+        "blueprintPath": {
+          "field": "tree",
+          "node": "reviews",
+          "axes": {}
+        },
+        "inputChanged": true,
+        "invalidRejected": true,
+        "exactMaterial": true,
+        "outputHash": "4343dc596694153e"
+      }
     },
     {
       "id": "req:comp:o-01-mobile-header",

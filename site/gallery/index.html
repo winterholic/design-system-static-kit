@@ -12497,35 +12497,112 @@ const COMMERCE_SPECS = [
 
 const LAYER_OF = Object.freeze({independent: 'Base', variant: 'Purpose', composite: 'Composite'});
 
-const SIZES = Object.freeze(['sm', 'md', 'lg', 'xl']);
-const STATES = Object.freeze(['default', 'disabled', 'readonly', 'sold-out', 'sale', 'loading', 'out-of-stock']);
+const COMMERCE_STATES = Object.freeze({
+  'component:product-grid': ['default'],
+  'component:product-detail-summary': ['default'],
+  'component:product-variant-selector': ['default'],
+  'component:quantity-selector': ['default', 'disabled', 'readonly'],
+  'component:price-display': ['default', 'sold-out'],
+  'component:discount-display': ['default', 'sale'],
+  'component:cart-item': ['default', 'disabled'],
+  'component:cart-summary': ['default'],
+  'component:checkout-summary': ['default'],
+  'component:order-status': ['default'],
+  'component:review-summary': ['default'],
+});
+const COMMERCE_SIZES = Object.freeze({
+  'component:product-grid': [],
+  'component:product-detail-summary': [],
+  'component:product-variant-selector': [],
+  'component:quantity-selector': ['sm', 'md', 'lg'],
+  'component:price-display': ['md'],
+  'component:discount-display': ['md'],
+  'component:cart-item': ['md'],
+  'component:cart-summary': [],
+  'component:checkout-summary': [],
+  'component:order-status': [],
+  'component:review-summary': [],
+});
+const ORDER_STATUSES = Object.freeze(['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled']);
+
+const requiredText = (value, name) => {
+  if (typeof value !== 'string' || !value.trim()) throw new TypeError(`${name}은 필수 문자열입니다`);
+};
+const validRows = (value, name, fields) => {
+  if (!Array.isArray(value)) throw new TypeError(`${name}는 배열이어야 합니다`);
+  for (const [i, row] of value.entries()) {
+    if (!row || typeof row !== 'object' || Array.isArray(row)) throw new TypeError(`${name}[${i}]는 객체여야 합니다`);
+    for (const field of fields) requiredText(row[field], `${name}[${i}].${field}`);
+  }
+};
 
 function checkCommerceProps(id, p) {
-  if (p.size !== undefined && !SIZES.includes(p.size)) {
-    throw new TypeError(`size는 ${SIZES.join('·')} 중 하나입니다: ${String(p.size)}`);
+  const states = COMMERCE_STATES[id];
+  if (!states) throw new TypeError(`Unknown commerce component: ${id}`);
+  const sizes = COMMERCE_SIZES[id];
+  if (p.size !== undefined && !sizes.includes(p.size)) throw new TypeError(`${id} size는 ${sizes.length ? sizes.join('·') : '지원하지 않음'}입니다: ${String(p.size)}`);
+  if (p.state !== undefined && !states.includes(p.state)) throw new TypeError(`${id} state는 ${states.join('·')}만 지원합니다: ${String(p.state)}`);
+  if (id === 'component:product-grid') {
+    if (p.columns !== undefined && !['one', 'two', 'three', 'four'].includes(p.columns)) throw new TypeError('columns는 one·two·three·four 중 하나입니다');
+    if (p.gap !== undefined && !['sm', 'md', 'lg'].includes(p.gap)) throw new TypeError('gap은 sm·md·lg 중 하나입니다');
+    if (p.items !== undefined) validRows(p.items, 'items', ['title', 'price']);
   }
-  if (p.state !== undefined && !STATES.includes(p.state)) {
-    throw new TypeError(`state는 ${STATES.join('·')} 중 하나입니다: ${String(p.state)}`);
-  }
-  if (id === 'component:quantity-selector') {
-    if (p.value !== undefined && typeof p.value !== 'number') throw new TypeError('value는 숫자여야 합니다');
-  }
-  if (id === 'component:price-display') {
-    if (!p.price || typeof p.price !== 'string') throw new TypeError('price는 필수 문자열입니다');
-  }
-  if (id === 'component:discount-display') {
-    if (!p.rate || typeof p.rate !== 'string') throw new TypeError('rate는 필수 문자열입니다');
-  }
-  if (id === 'component:cart-item') {
-    if (!p.title || typeof p.title !== 'string') throw new TypeError('title은 필수 문자열입니다');
-    if (!p.price || typeof p.price !== 'string') throw new TypeError('price는 필수 문자열입니다');
-  }
-  if (id === 'component:order-status') {
-    if (!p.orderNumber || typeof p.orderNumber !== 'string') throw new TypeError('orderNumber는 필수 문자열입니다');
-    if (!p.statusLabel || typeof p.statusLabel !== 'string') throw new TypeError('statusLabel은 필수 문자열입니다');
+  if (id === 'component:discount-display' && p.variant !== undefined && !['badge', 'inline'].includes(p.variant)) throw new TypeError('variant는 badge·inline 중 하나입니다');
+  if (id === 'component:product-detail-summary') {
+    if (p.title !== undefined) requiredText(p.title, 'title');
+    if (p.price !== undefined) requiredText(p.price, 'price');
   }
   if (id === 'component:product-variant-selector') {
     if (!Array.isArray(p.options) || p.options.length === 0) throw new TypeError('options는 1개 이상의 배열이어야 합니다');
+    p.options.forEach((option, i) => {
+      requiredText(option?.label, `options[${i}].label`);
+      if (!Array.isArray(option?.choices) || option.choices.length === 0) throw new TypeError(`options[${i}].choices는 1개 이상이어야 합니다`);
+      option.choices.forEach((choice, n) => requiredText(choice, `options[${i}].choices[${n}]`));
+    });
+  }
+  if (id === 'component:quantity-selector') {
+    const value = p.value ?? 1, min = p.min ?? 1, max = p.max ?? 99, step = p.step ?? 1;
+    for (const [name, number] of [['value', value], ['min', min], ['max', max], ['step', step]]) {
+      if (!Number.isSafeInteger(number)) throw new TypeError(`${name}은 안전한 정수여야 합니다`);
+    }
+    if (min < 1 || max < min || value < min || value > max || step < 1) throw new TypeError('value/min/max/step 수량 범위가 올바르지 않습니다');
+  }
+  if (id === 'component:price-display') {
+    requiredText(p.price, 'price');
+  }
+  if (id === 'component:discount-display') {
+    requiredText(p.rate, 'rate');
+  }
+  if (id === 'component:cart-item') {
+    requiredText(p.title, 'title');
+    requiredText(p.price, 'price');
+    const quantity = p.quantity ?? 1, min = p.min ?? 1, max = p.max ?? 99;
+    if (![quantity, min, max].every(Number.isSafeInteger) || min < 0 || quantity < min || quantity > max) throw new TypeError('quantity/min/max 수량 범위가 올바르지 않습니다');
+  }
+  if (id === 'component:order-status') {
+    requiredText(p.orderNumber, 'orderNumber');
+    requiredText(p.statusLabel, 'statusLabel');
+    if (p.status !== undefined && !ORDER_STATUSES.includes(p.status)) throw new TypeError(`status는 ${ORDER_STATUSES.join('·')} 중 하나입니다`);
+    if (p.steps !== undefined) {
+      if (!Array.isArray(p.steps) || p.steps.length === 0) throw new TypeError('steps는 1개 이상의 배열이어야 합니다');
+      p.steps.forEach((step, i) => requiredText(step, `steps[${i}]`));
+    }
+    if (p.currentStep !== undefined && (!Number.isSafeInteger(p.currentStep) || p.currentStep < 0 || p.currentStep >= (p.steps ?? ['1', '2', '3', '4', '5']).length)) throw new TypeError('currentStep은 steps 범위 안의 정수여야 합니다');
+  }
+  if (id === 'component:cart-summary' || id === 'component:checkout-summary') {
+    if (p.items !== undefined) validRows(p.items, 'items', ['label', 'value']);
+    if (p.total !== undefined) validRows([p.total], 'total', ['label', 'value']);
+  }
+  if (id === 'component:review-summary') {
+    if (p.score !== undefined && (!Number.isFinite(Number(p.score)) || Number(p.score) < 0 || Number(p.score) > 5)) throw new TypeError('score는 0부터 5 사이여야 합니다');
+    if (p.items !== undefined) {
+      if (!Array.isArray(p.items)) throw new TypeError('items는 배열이어야 합니다');
+      p.items.forEach((item, i) => {
+        if (!Number.isFinite(Number(item?.rating)) || Number(item.rating) < 1 || Number(item.rating) > 5) throw new TypeError(`items[${i}].rating은 1부터 5 사이여야 합니다`);
+        requiredText(item?.text, `items[${i}].text`);
+        requiredText(item?.author, `items[${i}].author`);
+      });
+    }
   }
 }
 
@@ -12542,8 +12619,9 @@ function renderQuantitySelector(p) {
   const id = p.id ?? 'kit-qty-input';
   const label = p.label ?? '수량 조절';
 
-  const decDisabled = disabled || val <= min;
-  const incDisabled = disabled || val >= max;
+  const inactive = disabled || readonly;
+  const decDisabled = inactive || val <= min;
+  const incDisabled = inactive || val >= max;
 
   return `<div class="kit-quantity-selector" data-component="component:quantity-selector" data-size="${escAttr(size)}"${p.state ? ` data-state="${escAttr(p.state)}"` : ''} role="group" aria-label="${escAttr(label)}">` +
     `<button type="button" class="kit-qty-btn" data-action="decrease" aria-label="수량 감소"${decDisabled ? ' disabled' : ''}>${icon('minus')}</button>` +
@@ -12566,7 +12644,7 @@ function renderPriceDisplay(p) {
 function renderDiscountDisplay(p) {
   const variant = p.variant ?? 'badge';
   const size = p.size ?? 'md';
-  return `<div class="kit-discount-display" data-component="component:discount-display" data-variant="${escAttr(variant)}" data-size="${escAttr(size)}">` +
+  return `<div class="kit-discount-display" data-component="component:discount-display" data-variant="${escAttr(variant)}" data-size="${escAttr(size)}" data-state="${escAttr(p.state ?? 'default')}">` +
     `<span class="kit-discount-rate">${e(p.rate)}</span>` +
     (p.amount ? `<span class="kit-discount-amount">${e(p.amount)}</span>` : '') +
     (p.badge ? `<span class="kit-discount-badge">${e(p.badge)}</span>` : '') +
@@ -12591,7 +12669,7 @@ function renderCartItem(p) {
     renderPriceDisplay({price: p.price, originalPrice: p.originalPrice, size: 'sm'}) +
     `</div>` +
     `</div>` +
-    (removable ? `<button type="button" class="kit-cart-item-remove" data-action="cart-remove" aria-label="${escAttr(p.title)} 삭제">${icon('x')}</button>` : '') +
+    (removable ? `<button type="button" class="kit-cart-item-remove" data-action="cart-remove" aria-label="${escAttr(p.title)} 삭제"${state === 'disabled' ? ' disabled' : ''}>${icon('x')}</button>` : '') +
     `</article>`;
 }
 
@@ -12766,59 +12844,105 @@ const COMMERCE_COMPONENTS = Object.freeze(COMMERCE_SPECS.map(([id, label, key, c
 
 const COMMERCE_COMPONENT_BY_ID = new Map(COMMERCE_COMPONENTS.map(item => [item.id, item]));
 
-function makeCommerceContract(spec) {
+const text = required => ({type: 'string', required});
+const content = Object.freeze({
+  'component:product-grid': {items: {type: 'array<{title, price, ...}>', required: false}},
+  'component:product-detail-summary': {title: text(false), price: text(false), note: text(false)},
+  'component:product-variant-selector': {options: {type: 'array<{label, choices:string[]}>', required: true}},
+  'component:quantity-selector': {},
+  'component:price-display': {price: text(true), originalPrice: text(false), unit: text(false)},
+  'component:discount-display': {rate: text(true), amount: text(false), badge: text(false)},
+  'component:cart-item': {title: text(true), price: text(true), option: text(false)},
+  'component:cart-summary': {items: {type: 'array<{label, value}>', required: false}, total: {type: '{label, value}', required: false}},
+  'component:checkout-summary': {items: {type: 'array<{label, value}>', required: false}, total: {type: '{label, value}', required: false}},
+  'component:order-status': {orderNumber: text(true), statusLabel: text(true), steps: {type: 'string[]', required: false}},
+  'component:review-summary': {score: {type: 'number 0..5', required: false}, items: {type: 'array<{rating:1..5, text, author}>', required: false}},
+});
+const props = Object.freeze({
+  'component:product-grid': {columns: ['one', 'two', 'three', 'four'], gap: ['sm', 'md', 'lg']},
+  'component:product-detail-summary': {id: 'kebab-case id', actionLabel: text(false)},
+  'component:product-variant-selector': {id: 'kebab-case id'},
+  'component:quantity-selector': {value: 'integer', min: 'integer', max: 'integer', step: 'positive integer', id: 'kebab-case id', label: text(false)},
+  'component:price-display': {state: ['default', 'sold-out'], size: ['md']},
+  'component:discount-display': {state: ['default', 'sale'], variant: ['badge', 'inline'], size: ['md']},
+  'component:cart-item': {quantity: 'integer', min: 'integer', max: 'integer', removable: 'boolean', id: 'kebab-case id', size: ['md'], state: ['default', 'disabled']},
+  'component:cart-summary': {actionLabel: text(false)},
+  'component:checkout-summary': {actionLabel: text(false)},
+  'component:order-status': {status: ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled'], currentStep: 'integer'},
+  'component:review-summary': {count: text(false)},
+});
+const tokenUsage = Object.freeze({
+  'component:product-grid': ['--kit-sp-near', '--kit-sp-item', '--kit-sp-head', '--kit-radius', '--kit-surface', '--kit-surface-alt', '--kit-rule', '--kit-accent', '--kit-text', '--kit-t-body'],
+  'component:product-detail-summary': ['--kit-text', '--kit-muted', '--kit-sp-near'],
+  'component:product-variant-selector': ['--kit-text', '--kit-control-bg', '--kit-control-border', '--kit-focus'],
+  'component:quantity-selector': ['--kit-control-border', '--kit-control-bg', '--kit-control-fg', '--kit-t-body', '--kit-focus'],
+  'component:price-display': ['--kit-t-price', '--kit-t-small', '--kit-t-caption', '--kit-text', '--kit-muted'],
+  'component:discount-display': ['--kit-danger', '--kit-accent', '--kit-t-price'],
+  'component:cart-item': ['--kit-sp-item', '--kit-radius', '--kit-rule', '--kit-surface-alt', '--kit-text', '--kit-muted', '--kit-danger'],
+  'component:cart-summary': ['--kit-text', '--kit-muted', '--kit-rule', '--kit-inset', '--kit-radius'],
+  'component:checkout-summary': ['--kit-text', '--kit-muted', '--kit-rule', '--kit-inset', '--kit-radius'],
+  'component:order-status': ['--kit-rule', '--kit-radius', '--kit-surface', '--kit-accent', '--kit-success', '--kit-text', '--kit-muted'],
+  'component:review-summary': ['--kit-t-price', '--kit-text', '--kit-muted', '--kit-inset', '--kit-radius'],
+});
+const a11y = Object.freeze({
+  'component:product-grid': {role: 'list of product articles', keyboard: ['Tab', 'Enter'], requirements: ['each product is a labelled article; price and title are visible text']},
+  'component:product-detail-summary': {role: 'region', keyboard: ['Tab', 'Enter', 'Space'], requirements: ['radio options have fieldset and legend; purchase action has a text name']},
+  'component:product-variant-selector': {role: 'group', keyboard: ['Tab', 'ArrowLeft', 'ArrowRight', 'Space'], requirements: ['each option group has a legend and native labelled radio inputs']},
+  'component:quantity-selector': {role: 'group', keyboard: ['Tab', 'Enter', 'ArrowUp', 'ArrowDown'], requirements: ['decrease and increase buttons have names; number input has a name and min/max/step']},
+  'component:price-display': {role: 'text', keyboard: [], requirements: ['current and original prices remain readable text; sold-out status has text']},
+  'component:discount-display': {role: 'text', keyboard: [], requirements: ['discount rate, amount and badge remain readable text']},
+  'component:cart-item': {role: 'article', keyboard: ['Tab', 'Enter', 'ArrowUp', 'ArrowDown'], requirements: ['quantity controls have names; remove button includes product name']},
+  'component:cart-summary': {role: 'region', keyboard: ['Tab', 'Enter', 'Space'], requirements: ['amounts use a description list; action button has a text name']},
+  'component:checkout-summary': {role: 'region', keyboard: ['Tab', 'Enter', 'Space'], requirements: ['amounts use a description list; action button has a text name']},
+  'component:order-status': {role: 'region', keyboard: [], requirements: ['current order step uses aria-current=step; progress navigation has a name']},
+  'component:review-summary': {role: 'region', keyboard: [], requirements: ['each star score exposes an accessible rating label; review body and author are text']},
+});
+const unsupportedStates = Object.freeze({
+  'component:product-grid': ['loading', 'empty', 'error'],
+  'component:product-detail-summary': ['loading', 'disabled', 'out-of-stock'],
+  'component:product-variant-selector': ['disabled', 'unavailable'],
+  'component:quantity-selector': ['loading', 'sold-out', 'out-of-stock'],
+  'component:price-display': ['loading', 'error', 'sale'],
+  'component:discount-display': ['loading', 'error', 'sold-out'],
+  'component:cart-item': ['loading', 'sold-out', 'out-of-stock'],
+  'component:cart-summary': ['loading', 'empty', 'error'],
+  'component:checkout-summary': ['loading', 'empty', 'error'],
+  'component:order-status': ['loading', 'error'],
+  'component:review-summary': ['loading', 'empty', 'error'],
+});
+const STATE_REASON = '현재 독립 렌더러에는 해당 상태의 표현이 없어 요청을 거부한다.';
+const unsupportedFeatures = Object.freeze({
+  'component:product-grid': [{value: 'loading/empty/error visuals', reason: '독립 렌더러는 입력 items 또는 기본 표본만 그리며 로딩·빈·오류 화면을 그리지 않는다.'}],
+  'component:product-detail-summary': [{value: 'unavailable inventory state', reason: '상품 재고와 주문 가능 여부는 거래 백엔드 범위라 여기서 계산하지 않는다.'}],
+  'component:product-variant-selector': [{value: 'unavailable option choices', reason: '옵션 비활성화·재고 연결은 거래 백엔드 범위라 여기서 계산하지 않는다.'}],
+  'component:quantity-selector': [{value: 'legacy Blueprint min/max/step and +/- controls', reason: '기존 input-control Blueprint는 value와 number kind만 표현한다. 완전한 min/max/step 및 증감 버튼은 assembleComponents의 commerce 슬롯에서 지원한다.'}],
+  'component:price-display': [{value: 'numeric currency calculation and automatic sale state', reason: '가격은 전달받은 문자열로 표시하며 통화 계산이나 할인 자동 계산은 하지 않는다.'}],
+  'component:discount-display': [{value: 'discount calculation from prices', reason: '할인율과 금액은 호출자가 전달한 텍스트를 표시하며 가격으로부터 계산하지 않는다.'}],
+  'component:cart-item': [{value: 'legacy Blueprint quantity controls and removal', reason: '기존 summary Blueprint는 행·수량 제어·삭제 이벤트를 표현하지 않는다. 완전한 항목은 assembleComponents의 commerce 슬롯에서 지원한다.'}, {value: 'server-side cart mutation', reason: '삭제 이벤트만 내보내며 거래 백엔드 상태를 변경하지 않는다.'}],
+  'component:cart-summary': [{value: 'shipping/tax/discount calculation', reason: '합계는 전달된 값만 표시하며 계산하지 않는다.'}],
+  'component:checkout-summary': [{value: 'payment submission', reason: '결제 버튼은 화면 출력용이며 거래 백엔드에 연결되지 않는다.'}],
+  'component:order-status': [{value: 'live shipment tracking', reason: '상태·배송 정보는 전달된 표본 문자열이며 외부 추적을 조회하지 않는다.'}],
+  'component:review-summary': [{value: 'review submission and aggregation', reason: '평점과 리뷰는 전달된 표본 데이터이며 별도 집계·작성 동작은 없다.'}],
+});
+
+function makeCommerceContract(item) {
   return Object.freeze({
-    version: '1.0.0',
-    componentType: spec.id,
-    contexts: ['any'],
-    structure: 'single root',
-    slots: [],
-    props: {},
-    content: {},
-    appearance: ['default'],
-    sizes: ['md'],
-    density: ['comfortable'],
-    states: ['default'],
-    transitions: [],
-    events: [],
-    tokens: [],
-    parents: ['slot:main'],
-    children: [],
-    responsive: {strategy: 'fluid', breakpoints: ['768px'], behavior: 'fluid'},
-    accessibility: {role: 'region', keyboard: [], requirements: []},
-    forbidden: [],
-    examples: [],
-    usage: '',
-    renderer: {module: 'src/platform/families/commerce.mjs', export: 'renderCommerceComponent'},
-    blueprint: {field: 'materials.purposes'},
-    tests: ['tests/platform-family-contract.test.mjs'],
-    unsupported: {},
-    ...spec,
+    id: item.id, version: '1.0.0', componentType: item.componentType, layer: item.layer, purpose: item.label,
+    contexts: ['commerce', 'listing'], structure: item.classification,
+    slots: item.classification === 'composite' ? ['primary', 'secondary'] : ['content'],
+    props: props[item.id], content: content[item.id], appearance: ['default'], sizes: COMMERCE_SIZES[item.id],
+    density: ['comfortable'], states: COMMERCE_STATES[item.id], transitions: item.id === 'component:cart-item' ? ['default→disabled'] : item.id === 'component:price-display' ? ['default→sold-out'] : item.id === 'component:discount-display' ? ['default→sale'] : [],
+    events: item.id === 'component:quantity-selector' || item.id === 'component:cart-item' ? ['change', ...(item.id === 'component:cart-item' ? ['kit-cart-remove'] : [])] : [],
+    tokens: tokenUsage[item.id], parents: ['slot:main', 'slot:aside'], children: [],
+    responsive: {strategy: 'fluid and wrap', breakpoints: ['640px', '768px'], behavior: item.id === 'component:product-grid' ? 'single column at 640px and below' : 'content wraps without horizontal overflow'},
+    accessibility: a11y[item.id], forbidden: [], examples: [{label: item.label}], usage: `${item.label} in commerce flows.`,
+    renderer: {module: 'src/platform/families/commerce.mjs', export: 'renderCommerceComponent'}, blueprint: {...item.blueprint, id: item.materialId},
+    tests: ['tests/platform-commerce-blueprint.test.mjs', 'tests/platform-service-commerce-channels.test.mjs'],
+    unsupported: {states: unsupportedStates[item.id].map(value => ({value, reason: STATE_REASON})), features: unsupportedFeatures[item.id]},
   });
 }
 
-const COMMERCE_CONTRACTS = Object.freeze(COMMERCE_COMPONENTS.map(item => makeCommerceContract({
-  id: item.id, componentType: item.componentType, layer: item.layer, purpose: item.label, contexts: ['commerce', 'listing', 'any'],
-  structure: item.classification,
-  slots: item.classification === 'composite' ? ['primary', 'secondary'] : ['content'],
-  props: {size: ['sm', 'md', 'lg', 'xl'], state: ['default', 'disabled', 'readonly', 'sold-out', 'sale', 'out-of-stock']},
-  content: {label: {type: 'string', required: false}},
-  appearance: ['default'], sizes: ['sm', 'md', 'lg', 'xl'],
-  states: ['default', 'disabled', 'readonly', 'sold-out', 'sale', 'out-of-stock'],
-  transitions: ['default→disabled', 'default→sale', 'default→sold-out'],
-  events: ['click', 'change', 'kit-cart-remove'],
-  tokens: ['--kit-text', '--kit-muted', '--kit-accent', '--kit-control-bg', '--kit-control-border'],
-  parents: ['slot:main', 'slot:aside'], children: [],
-  responsive: {strategy: 'fluid and wrap', breakpoints: ['640px', '768px'], behavior: 'grid columns collapse on narrow viewports'},
-  accessibility: {role: 'region', keyboard: ['Tab', 'Enter', 'Space', 'ArrowUp', 'ArrowDown'], requirements: ['numeric input supports keyboard adjustments', 'price and discount carry accessible text']},
-  forbidden: [],
-  examples: [{label: item.label}],
-  usage: `${item.label} in commerce flows.`,
-  renderer: {module: 'src/platform/families/commerce.mjs', export: 'renderCommerceComponent'},
-  blueprint: {...item.blueprint, id: item.materialId},
-  tests: ['tests/platform-commerce-blueprint.test.mjs', 'tests/platform-service-commerce-channels.test.mjs'],
-  unsupported: {},
-})));
+const COMMERCE_CONTRACTS = Object.freeze(COMMERCE_COMPONENTS.map(makeCommerceContract));
 
 /** CSS 조각 */
 const COMMERCE_COMPONENT_CSS = `
@@ -12847,9 +12971,11 @@ const COMMERCE_COMPONENT_CSS = `
 .kit-cart-item-remove{border:0;background:transparent;cursor:pointer;color:var(--kit-muted,#999);padding:4px}
 .kit-cart-item-remove:hover{color:var(--kit-danger,#e53e3e)}
 .kit-product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--kit-sp-item,16px)}
+.kit-product-grid[data-columns="one"]{grid-template-columns:repeat(1,1fr)}
 .kit-product-grid[data-columns="two"]{grid-template-columns:repeat(2,1fr)}
 .kit-product-grid[data-columns="three"]{grid-template-columns:repeat(3,1fr)}
 .kit-product-grid[data-columns="four"]{grid-template-columns:repeat(4,1fr)}
+.kit-product-grid[data-gap="sm"]{gap:var(--kit-sp-near,8px)}.kit-product-grid[data-gap="md"]{gap:var(--kit-sp-item,16px)}.kit-product-grid[data-gap="lg"]{gap:var(--kit-sp-head,24px)}
 @media(max-width:640px){.kit-product-grid{grid-template-columns:repeat(1,1fr)!important}}
 .kit-product-card{border:1px solid var(--kit-rule,#eee);border-radius:var(--kit-radius,6px);overflow:hidden;background:var(--kit-surface,#fff);display:flex;flex-direction:column}
 .kit-product-card-media{position:relative;height:160px;background:var(--kit-surface-alt,#f8f8f8);display:flex;align-items:center;justify-content:center}
@@ -12857,6 +12983,7 @@ const COMMERCE_COMPONENT_CSS = `
 .kit-product-card-body{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
 .kit-product-card-title{margin:0;font-size:var(--kit-t-body,14px)}
 .kit-product-card-rating{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--kit-muted,#666);margin:0}
+.kit-discount-display[data-variant="inline"] .kit-discount-badge{padding:0;background:transparent;color:var(--kit-accent,#e53e3e)}
 .kit-order-status{border:1px solid var(--kit-rule,#eee);border-radius:var(--kit-radius,8px);padding:16px;background:var(--kit-surface,#fff)}
 .kit-order-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--kit-rule,#eee);padding-bottom:12px;margin-bottom:16px}
 .kit-order-badge{padding:4px 8px;border-radius:4px;font-size:12px;font-weight:700;background:var(--kit-accent-subtle,#e2e8f0);color:var(--kit-text,#333)}
