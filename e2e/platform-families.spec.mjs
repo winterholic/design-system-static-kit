@@ -1,7 +1,6 @@
 import {test, expect} from '@playwright/test';
 import {measureAll, summarize, familyMetrics, judge} from '../scripts/families/measure.mjs';
 import {buildPage, makeEnv, GROUPS, VISUALS, groupScenarios} from '../scripts/families/pages.mjs';
-import {INFO_MEDIA_RUNTIME} from '../src/platform/families/info-media.mjs';
 
 // 목적 패밀리의 브라우저 시험(ADR 0012 §4 확장, docs/platform/families.md).
 //  1) 묶음 × 시각 패밀리 × 모드 × (모바일 390, 데스크톱 1280) 전부에서 기존 layout-quality 검사기와 패밀리 측정이 통과한다.
@@ -156,7 +155,6 @@ test.describe('interactions the families promise', () => {
   for (const width of [390, 1280]) {
     test(`carousel at ${width}px: the track is a real scroll region, the buttons and a swipe both move it, and the counter follows`, async ({page}) => {
       await open(page, 'media', carouselItems, width, QUIET, 'landing');
-      await page.addScriptTag({content: INFO_MEDIA_RUNTIME}); // 페이지 조립기의 런타임 묶음에는 정보·미디어 런타임이 없다. 서비스 조립 출력(actionRuntimeFor)과 같은 것을 붙인다.
       const track = page.locator('.pf-carousel-track'), counter = page.locator('.pf-carousel-counter');
       expect(await track.evaluate(el => getComputedStyle(el).overflowX), 'off-screen slides are scrolled, not clipped').toBe('auto');
       expect(await track.evaluate(el => el.scrollWidth > el.clientWidth + 1)).toBe(true);

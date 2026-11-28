@@ -50,3 +50,12 @@
 .steps li a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tap-min); }
 .steps li[aria-current="step"] { color: var(--color-accent); font-weight: var(--weight-heading); border-bottom: 2px solid var(--color-accent); }
 .steps li[data-done="true"] { color: var(--color-fg); }
+.materialFilters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space-3); margin: var(--space-5) 0; padding: var(--space-4); border: 1px solid var(--color-line); border-radius: var(--radius); }
+.field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; font-size: var(--text-sm); font-weight: var(--weight-strong); }
+.field select { min-height: var(--tap-min); max-width: 100%; padding: 0 var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius); color: var(--color-fg); background: var(--color-bg); font: inherit; }
+.materialResults { margin-top: var(--space-6); }
+.materialPair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--space-5); }
+.materialResult { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.materialResult h3 { margin: 0; }
+.materialChartFrame { width: 100%; min-height: 32rem; border: 1px solid var(--color-line); border-radius: var(--radius); background: var(--color-bg); }
+@media (max-width: 480px) { .materialFilters { grid-template-columns: 1fr; } }

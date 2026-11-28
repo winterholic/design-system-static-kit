@@ -131,6 +131,30 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:form.settings | 계정·알림 같은 설정을 구역별로 나눠 바꾼다. 구역 제목·설명이 왼쪽, 컨트롤이 오른쪽에 놓이는 행으로 읽히고 맨 아래에서 저장·취소한다. | input-control, select-control, button-control | layout: rows·cards | size: small·medium·large | {"layout":"rows","size":"medium"} | 없음 |
 | purpose:form.filter | 목록·표를 좁히는 조건을 선택 여러 개와 토글 칩으로 고르고 적용·초기화한다. 적용된 조건 수와 결과 건수를 안내한다. | select-control, button-control | layout: bar·panel; chips: none·toggles | size: small·medium·large | {"layout":"bar","chips":"none","size":"medium"} | 없음 |
 | purpose:form.group | 입력 칸 앞이나 뒤에 단위·주소 같은 애드온 또는 제출 버튼을 한 테두리로 이어 하나의 컨트롤처럼 보인다. 도메인·금액·구독 입력에서 쓴다. | input-control, button-control | addon: prefix·suffix·button | size: small·medium·large; kind: text·email·number; state: default·error·disabled | {"addon":"prefix","size":"medium","kind":"text","state":"default"} | GROUP_EDITORIAL |
+| purpose:form.input-kind | 전화번호·URL 같은 네이티브 input kind 변형을 기존 입력 재료의 레이블·상태 계약으로 렌더한다. | input-control | kind: tel·url | size: small·medium·large; state: default·disabled·error·readonly | {"kind":"tel","size":"medium","state":"default"} | 없음 |
+| purpose:form.currency | 통화 단위가 붙은 금액을 숫자로 입력하고 네이티브 범위 검증을 적용한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.otp | 일회용 인증 코드를 한 칸에 입력하고 길이와 문자 집합을 검증한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.tags | 태그를 쉼표나 Enter로 추가하고 개별 삭제 및 폼 제출을 지원한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.file | 브라우저 파일 선택기를 통해 허용 형식의 파일을 선택한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.upload | 파일 입력을 넓은 드롭 영역에 배치해 파일 선택과 파일 끌어 놓기를 제공한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.grouped-select | 옵션 그룹을 구분해 단일 항목을 고른다. | select-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.radio | 레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.radio-group | 레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.radio-card | 레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.checkbox | 레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.checkbox-group | 레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.switch | 레이블과 값이 연결된 네이티브 선택 컨트롤로 폼에 선택 상태를 전달한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.slider | 수치 범위에서 단일 값을 조절한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.range-slider | 같은 숫자 구간의 시작값과 끝값을 두 개의 키보드 조작 가능한 range 입력으로 정한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.rating | 네이티브 라디오 그룹으로 별점 하나를 선택한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.color | 네이티브 색상 선택기로 색상 값을 입력한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.date | 네이티브 date 입력과 실제 달력 날짜 검증으로 날짜 값을 받는다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.date-range | 시작일과 종료일을 별도의 date 입력으로 받아 범위를 검증한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.time | 네이티브 time 입력과 브라우저 제약 검증으로 시각 값을 받는다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.datetime | 네이티브 datetime-local 입력과 브라우저 제약 검증으로 날짜와 시각을 받는다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.month | 네이티브 month 입력과 브라우저 제약 검증으로 월 값을 받는다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.week | 네이티브 week 입력과 브라우저 제약 검증으로 주 선택기 값을 받는다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
+| purpose:form.schedule | 요일을 복수 선택하고 선택한 일정의 시작 시각을 입력한다. | input-control |  | size: small·medium·large; state: default·disabled·error·readonly | {"size":"medium","state":"default"} | 없음 |
 | purpose:table.business | 주문·결재·고객 같은 업무 목록을 선택(체크박스)·정렬(머리글 버튼)·상태 칩으로 다루는 표다. 툴바에 제목과 선택 건수, 선택 항목 일괄 동작을 둔다. | data-table, button-control | toolbar: none·bulk | density: comfortable·spacious; state: ready·partial·empty·loading·error; sortable: true·false; selectable: true·false; responsive: scroll·priority | {"toolbar":"bulk","density":"comfortable","state":"ready","sortable":true,"selectable":true,"responsive":"scroll"} | BUSINESS_NO_ROWS_SORT, BUSINESS_NO_ROWS_SELECT, BUSINESS_BULK_NO_SELECT |
 | purpose:table.analytic | 채널·상품별 수치를 비교한다. 숫자 열은 오른쪽 정렬이고 전월 대비 증감(아이콘+부호+글자), 인라인 막대(값 글자 병기), 합계 행을 갖고 머리글은 스크롤해도 고정된다. | data-table | summary: none·footer; bars: none·inline | density: comfortable·spacious; state: ready·partial·empty·loading·error; sortable: true·false | {"summary":"footer","bars":"inline","density":"comfortable","state":"ready","sortable":true} | ANALYTIC_NO_ROWS_SORT, ANALYTIC_NO_ROWS_SUMMARY |
 | purpose:table.dense | 로그·재고·작업 큐처럼 한 화면에 행을 많이 보려는 표다. 셀 패딩을 최소로 줄이고 숫자는 모노·tabular-nums, 상태는 점 + 글자 약식으로 보인다. 줄무늬와 고정 머리를 켤 수 있다. | data-table | zebra: off·on; stickyHead: off·on | state: ready·partial·empty·loading·error; sortable: true·false; selectable: false·true | {"zebra":"on","stickyHead":"on","state":"ready","sortable":true,"selectable":false} | DENSE_NO_ROWS_SORT, DENSE_NO_ROWS_SELECT, needs.visual {"maxCellPadY":8} |
@@ -174,6 +198,21 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.circular-progress | 작업 진행률을 원형 표시와 접근 가능한 값으로 함께 제공한다. | feedback-message |  |  | {} | 없음 |
 | purpose:feedback.loading-overlay | 한 영역 위에 진행 중 상태를 겹쳐 보이고 그 영역의 내용 조작을 막는다. 화면 전체를 덮지 않는다. | feedback-message |  |  | {} | 없음 |
 | purpose:feedback.status-indicator | 상태를 점 모양·색·텍스트를 함께 사용해 전달한다. | feedback-message |  |  | {} | 없음 |
+| purpose:work.filter-toolbar | 필터 조건을 검색어와 토글 가능한 필터 묶음으로 좁힌다. | input-control, button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.search-toolbar | 검색어·범위·실행 동작을 한 search landmark에 묶는다. | input-control, button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.bulk-action-toolbar | 선택 수와 선택 대상에 적용할 일괄 동작을 묶는다. | button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.data-summary | 합계와 변동 값을 정의 목록으로 요약한다. | card-surface | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.dashboard-kpi-grid | 서로 다른 핵심 지표 카드를 반응형 격자로 배치한다. | card-surface | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.approval-panel | 요청자·요청 내용·시각과 승인 또는 반려 동작을 제시한다. | card-surface, button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.audit-log | 행위자·변경 내용·시각을 표의 헤더 관계로 기록한다. | data-table | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.permission-matrix | 역할별 권한을 행과 열이 명시된 체크박스 표로 편집한다. | card-surface | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.status-management | 현재 상태와 허용된 전이 목록을 선택해 저장한다. | button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.settings-form | 레이블·현재 값을 가진 설정 입력과 저장 동작을 묶는다. | input-control, button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.search-result-list | 검색 결과를 링크·요약·부가 정보로 읽고 검색어로 좁힌다. | input-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.user-management-table | 사용자 선택과 이름·이메일·역할·상태를 데이터 표로 관리한다. | card-surface | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.task-list | 작업 완료 여부·담당자·기한을 할 일 목록으로 묶는다. | card-surface | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.workflow-steps | 진행 단계와 현재 단계를 읽기 순서의 목록으로 표현한다. | card-surface | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
+| purpose:work.comment-thread | 작성자·본문·시각의 댓글을 시간순으로 나열하고 새 댓글 입력을 제공한다. | card-surface, button-control | layout: inline·stacked | density: compact·comfortable·spacious; state: ready·loading·empty·error | {"layout":"inline","density":"comfortable","state":"ready"} | 없음 |
 <!-- /generated:purpose -->
 
 상태·상호작용·반응형·접근성·부모·진입점은 다음과 같다.
@@ -218,6 +257,30 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:form.settings | default, hover, focus, error, disabled | 저장 버튼 click·Enter → 폼을 제출한다(네이티브 submit, 선택 값은 hidden input으로 전달) / blur → 입력 칸의 네이티브 제약 검사 결과를 칸 아래에 표시한다 [attachInput] / select click·방향키 → 선택 목록 열기·이동·확정 [attachSelect] | viewport 640px: rows는 [설명 1fr \| 컨트롤 2fr] 두 열이고 640px 이하에서 한 열(설명 위, 컨트롤 아래)로 쌓인다. cards는 항상 한 열이다. 저장·취소는 640px 이하에서 전체 폭으로 쌓이고 저장이 위에 온다. | form > group(구역); 구역은 role=group이고 제목·설명과 aria-labelledby·aria-describedby로 연결된다; 모든 칸에 보이는 라벨; 입력·선택·버튼은 같은 size라 높이가 같다; 구역 제목과 컨트롤 사이 간격은 구역마다 같다 | slot:main | src/platform/families/form.mjs#renderFormSettings |
 | purpose:form.filter | default, hover, focus, pressed, open | 선택 click·방향키·Enter → 조건 목록 열기·이동·확정 [attachSelect] / 칩 click·Space·Enter → aria-pressed 전환(복수 선택) [attachButton] / 적용 버튼 click → 폼을 제출한다(네이티브 submit, 선택 값은 hidden input으로 전달) / 초기화 버튼 click → 앱이 onPress 콜백으로 조건을 비운다(선택 칸의 표시 문구는 앱이 갱신한다) [attachButton] | viewport 640px: bar는 한 줄(줄바꿈 허용)이고 640px 이하에서 선택이 한 열, 적용·초기화는 전체 폭 두 칸이 된다. panel은 선택을 격자(최소 12rem 칸)로 놓고 칩·버튼을 아래 줄에 둔다. | form(aria-label) > group(칩); 적용 건수 안내는 role=status(aria-live polite); 칩 그룹은 role=group과 이름을 가진다; 칩의 눌림은 aria-pressed(색만이 아니라 기반 버튼의 테두리 변화); 선택·칩·버튼은 같은 size라 같은 줄에서 높이가 같다 | slot:main, slot:header | src/platform/families/form.mjs#renderFormFilter |
 | purpose:form.group | default, hover, focus, error, disabled | 입력 포커스 → 칸 테두리가 포커스 색으로 바뀌고 윤곽선이 이어 붙은 조각 위에 놓인다 / addon=button 버튼 click → 앱이 onPress 콜백으로 처리한다 [attachButton] / blur → 네이티브 제약 검사 결과를 그룹 아래에 표시한다 [attachInput] | fluid -: 입력 칸이 남는 폭을 채우고(min-width:0) 애드온·버튼은 글자 폭만 차지한다. 애드온 글자는 줄바꿈하지 않는다. | group(aria-labelledby 라벨); 라벨은 그룹과 입력에 모두 연결된다(그룹 aria-labelledby, 입력 label for); 애드온 글자는 입력의 aria-describedby에 연결되어 "https:// " 같은 문맥이 읽힌다; 아이콘 애드온은 장식(aria-hidden); 입력·애드온·버튼은 같은 size라 높이가 같다 | slot:main, slot:aside, slot:grid-item | src/platform/families/form.mjs#renderFormGroup |
+| purpose:form.input-kind | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.currency | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.otp | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.tags | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → Enter·쉼표 추가 / 키보드·포인터 또는 폼 제출 → Backspace·삭제 버튼 제거 / 키보드·포인터 또는 폼 제출 → 숨은 name/value 입력을 제출 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 태그 목록과 레이블이 연결된 입력, 변경을 알리는 라이브 상태; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.file | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 파일 선택 입력; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.upload | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 파일 선택 입력을 포함한 드롭 영역; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.grouped-select | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 레이블이 연결된 그룹 옵션 콤보박스; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.radio | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 레이블이 연결된 네이티브 선택 입력; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.radio-group | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | fieldset과 legend가 있는 단일 선택 radiogroup; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.radio-card | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | fieldset과 legend가 있는 단일 선택 radiogroup; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.checkbox | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 레이블이 연결된 네이티브 선택 입력; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.checkbox-group | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 레이블이 있는 복수 선택 checkbox group; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.switch | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | role=switch checkbox; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.slider | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 레이블이 연결된 단일 range 입력; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.range-slider | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 그룹 이름 아래 최소값과 최대값을 조절하는 두 range 입력; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.rating | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | legend이 연결된 1~5점 단일 선택 라디오 그룹; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.color | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.date | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.date-range | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 기간 fieldset 안에 시작일과 종료일이 연결된 두 date 입력; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.time | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.datetime | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.month | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.week | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | label이 연결된 네이티브 폼 컨트롤; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
+| purpose:form.schedule | default, hover, focus, disabled, error, readonly | 키보드·포인터 또는 폼 제출 → 네이티브 입력·검증 / 키보드·포인터 또는 폼 제출 → 제출 시 name/value 전달 | fluid 640px: 컨테이너 폭에 맞춰 줄바꿈하고 컨트롤 폭을 넘기지 않는다 | 요일 체크박스 그룹과 시각 입력을 포함하는 fieldset; 모든 입력은 고유 id와 label for/id로 연결; 포커스 표시와 터치 목표 최소 44px; 필수·비활성·오류 상태는 네이티브 속성과 연결 | slot:main, slot:aside, slot:grid-item | src/platform/families/form-controls.mjs#renderFormControl |
 | purpose:table.business | ready, partial, empty, loading, error, sorted, selected, hover, focus | 머리글 버튼 click·Enter·Space → 그 열로 정렬하고 같은 버튼을 다시 누르면 방향이 바뀐다(머리글 aria-sort, 숫자 열은 크기순) [attachTable] / 행 체크박스·전체 선택 change → 행 선택과 전체 선택을 전환한다(선택된 행은 data-selected 배경으로 표시) [attachTable] / 행 선택 변경 → 툴바의 선택 건수가 갱신되고 일괄 동작 버튼은 선택이 있을 때만 나타난다(CSS :has와 카운터, 스크립트 없음) / 일괄 동작 버튼 click → 앱이 onPress 콜백으로 선택된 행(attachTable의 selectionChange)에 적용한다 [attachButton] | container+viewport 640px,800px: 표는 .kit-table-scroll 안에서만 가로 스크롤한다. responsive=priority는 hideBelow가 지정된 열을 숨기고 640px 이하에서 셀에 열 이름을 함께 보인다. 툴바는 640px 이하에서 제목 → (건수·동작) 두 줄이 된다. | table(region 안, 영역 이름은 title); 정렬 방향은 머리글 aria-sort와 화살표 글자로 전달한다; 상태는 색 + 글자 + 아이콘 칩이다(색만으로 전달하지 않는다); 행 체크박스는 첫 열 값으로 이름이 붙는다("A-1042 선택"); 숫자 열은 오른쪽 정렬, tabular-nums, 줄바꿈하지 않는다 | slot:main, slot:grid-item | src/platform/families/table.mjs#renderTableBusiness |
 | purpose:table.analytic | ready, partial, empty, loading, error, sorted, selected, hover, focus | 머리글 버튼 click·Enter·Space → 그 열로 정렬하고 같은 버튼을 다시 누르면 방향이 바뀐다(머리글 aria-sort, 숫자 열은 크기순) [attachTable] / scroll → 표 영역을 세로로 스크롤해도 머리글이 위에 고정된다(position:sticky, 영역 최대 높이 22rem) | container 640px: 표는 .kit-table-scroll 안에서만 가로·세로로 스크롤한다. 숫자 열은 줄바꿈하지 않아 폭이 줄면 영역 안에서 스크롤된다. | table(region 안, 영역 이름은 title); 증감은 아이콘 + 부호 + 글자이고 숨은 글(증가·감소)이 붙는다(색만으로 전달하지 않는다); 막대는 장식(aria-hidden)이고 같은 값이 글자로 병기된다; 합계 행은 tfoot의 th scope=row 합계로 시작한다; 숫자 열 머리글도 오른쪽 정렬 | slot:main, slot:grid-item | src/platform/families/table.mjs#renderTableAnalytic |
 | purpose:table.dense | ready, partial, empty, loading, error, sorted, selected, hover, focus | 머리글 버튼 click·Enter·Space → 그 열로 정렬하고 같은 버튼을 다시 누르면 방향이 바뀐다(머리글 aria-sort, 숫자 열은 크기순) [attachTable] / 행 체크박스·전체 선택 change → 행 선택과 전체 선택을 전환한다(선택된 행은 data-selected 배경으로 표시) [attachTable] / scroll → stickyHead=on이면 표 영역(최대 높이 24rem)을 스크롤해도 머리글이 위에 고정된다(position:sticky) | container 640px: 표는 .kit-table-scroll 안에서만 가로·세로로 스크롤한다. 셀은 줄바꿈하지 않아 행 높이가 일정하다. | table(region 안, 영역 이름은 title); 상태는 점(색) + 글자라 색만으로 전달하지 않는다; 행 높이가 작아도 머리글 버튼과 체크박스는 24px 이상 터치 대상을 갖는다; 줄무늬 배경에서도 글자 대비 4.5:1; 숫자 열은 오른쪽 정렬, 모노, tabular-nums | slot:main, slot:grid-item | src/platform/families/table.mjs#renderTableDense |
@@ -261,6 +324,21 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.circular-progress | determinate, indeterminate | value 변경 → 숫자·원 채움·aria-valuenow가 같은 값으로 함께 바뀐다(값이 없으면 진행 중 표시) | viewport 640px: 원은 3.5rem 고정 크기이고 설명 문구는 원 아래에서 줄바꿈된다. | progressbar; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; progressbar 값은 그려진 진행량과 숫자가 같다; 원 안의 숫자는 채움색이 아니라 표면 위에 놓여 대비가 유지된다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderCircularProgress |
 | purpose:feedback.loading-overlay | loading | 표시 → 덮인 영역은 aria-busy=true가 되고 진행 문구가 live region으로 알려진다 | viewport 640px: 덮는 영역은 부모 폭을 따르고 36rem을 넘지 않는다. | status; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 덮는 영역은 aria-busy=true이고 가려진 내용은 보조기기에서 숨긴다; 진행 문구는 role=status live region이다; 화면 전체가 아니라 영역 안에만 겹친다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderLoadingOverlay |
 | purpose:feedback.status-indicator | success, warning, error, info, neutral | 문구 변경 → 같은 live region 노드의 문구가 바뀌면 보조기기가 알린다 | viewport 640px: 점과 문구는 한 줄로 놓이고 긴 문구는 줄바꿈된다. | status; 모든 조작 요소에 44px 이상 터치 영역; 긴 문구는 줄바꿈되며 뷰포트를 가로로 밀지 않음; 모션 감소 설정에서는 진행 장식 애니메이션을 정지; 상태 문구는 role=status aria-live=polite live region에 넣는다; 의미는 색뿐 아니라 점 모양(경고 마름모, 오류 사각)과 숨은 접두 문구로도 전달된다 | slot:main, slot:header, slot:aside | src/platform/families/ehi.mjs#renderStatusIndicator |
+| purpose:work.filter-toolbar | ready, loading, empty, error | native controls → 검색 입력과 필터 버튼은 독립된 Tab 정지점이다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 검색 입력과 필터 버튼은 독립된 Tab 정지점이다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.search-toolbar | ready, loading, empty, error | native controls → 범위 select와 검색 입력은 네이티브 키보드 동작을 따른다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 범위 select와 검색 입력은 네이티브 키보드 동작을 따른다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.bulk-action-toolbar | ready, loading, empty, error | native controls → 비활성 동작은 선택 수가 0일 때 실행할 수 없다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 비활성 동작은 선택 수가 0일 때 실행할 수 없다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.data-summary | ready, loading, empty, error | native controls → 정의 목록의 레이블과 값은 읽기 순서로 연결된다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 정의 목록의 레이블과 값은 읽기 순서로 연결된다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.dashboard-kpi-grid | ready, loading, empty, error | native controls → 각 지표는 제목과 수치가 있는 독립 article이다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 각 지표는 제목과 수치가 있는 독립 article이다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.approval-panel | ready, loading, empty, error | native controls → 승인·반려는 이름을 가진 버튼이며 결과는 status 영역에 표시된다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 승인·반려는 이름을 가진 버튼이며 결과는 status 영역에 표시된다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.audit-log | ready, loading, empty, error | native controls → 표 캡션과 열 머리글이 각 감사 기록의 문맥을 제공한다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 표 캡션과 열 머리글이 각 감사 기록의 문맥을 제공한다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.permission-matrix | ready, loading, empty, error | native controls → 각 체크박스는 역할과 권한 이름을 접근 가능한 이름으로 가진다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 각 체크박스는 역할과 권한 이름을 접근 가능한 이름으로 가진다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.status-management | ready, loading, empty, error | native controls → 현재 상태가 선택값으로 표시되고 저장 결과는 live status로 알린다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 현재 상태가 선택값으로 표시되고 저장 결과는 live status로 알린다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.settings-form | ready, loading, empty, error | native controls → 각 입력은 연결된 label을 가지며 저장 안내는 live status로 표시한다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 각 입력은 연결된 label을 가지며 저장 안내는 live status로 표시한다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.search-result-list | ready, loading, empty, error | native controls → 각 결과 제목은 탐색 가능한 링크이고 필터 결과는 읽기 순서를 유지한다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 각 결과 제목은 탐색 가능한 링크이고 필터 결과는 읽기 순서를 유지한다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.user-management-table | ready, loading, empty, error | native controls → 표의 각 행은 사용자 이름을 행 머리글로 사용하고 선택 제어는 라벨을 가진다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 표의 각 행은 사용자 이름을 행 머리글로 사용하고 선택 제어는 라벨을 가진다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.task-list | ready, loading, empty, error | native controls → 각 작업 완료 체크는 작업 제목 label과 연결되고 완료 건수는 live status로 알린다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 각 작업 완료 체크는 작업 제목 label과 연결되고 완료 건수는 live status로 알린다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.workflow-steps | ready, loading, empty, error | native controls → 단계 목록은 progressbar 역할을 오용하지 않고 aria-current=step으로 현재 위치를 알린다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 단계 목록은 progressbar 역할을 오용하지 않고 aria-current=step으로 현재 위치를 알린다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
+| purpose:work.comment-thread | ready, loading, empty, error | native controls → 댓글 작성 입력은 이름이 있고 제출 후 안내 영역은 live status로 남는다. | fluid grid and contained tables 640px: grid collapses to one column and tables scroll inside the pattern boundary. | section labelled by its heading; semantic heading and table relationships; 댓글 작성 입력은 이름이 있고 제출 후 안내 영역은 live status로 남는다. | slot:main, slot:aside | src/platform/families/work-patterns.mjs#renderWorkPattern |
 <!-- /generated:fields -->
 
 ## 5. 조합 규칙
@@ -318,6 +396,30 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:form.settings | 6 | 72 | 72 | 0 |
 | purpose:form.filter | 12 | 144 | 144 | 0 |
 | purpose:form.group | 81 | 972 | 891 | 81 |
+| purpose:form.input-kind | 24 | 288 | 288 | 0 |
+| purpose:form.currency | 12 | 144 | 144 | 0 |
+| purpose:form.otp | 12 | 144 | 144 | 0 |
+| purpose:form.tags | 12 | 144 | 144 | 0 |
+| purpose:form.file | 12 | 144 | 144 | 0 |
+| purpose:form.upload | 12 | 144 | 144 | 0 |
+| purpose:form.grouped-select | 12 | 144 | 144 | 0 |
+| purpose:form.radio | 12 | 144 | 144 | 0 |
+| purpose:form.radio-group | 12 | 144 | 144 | 0 |
+| purpose:form.radio-card | 12 | 144 | 144 | 0 |
+| purpose:form.checkbox | 12 | 144 | 144 | 0 |
+| purpose:form.checkbox-group | 12 | 144 | 144 | 0 |
+| purpose:form.switch | 12 | 144 | 144 | 0 |
+| purpose:form.slider | 12 | 144 | 144 | 0 |
+| purpose:form.range-slider | 12 | 144 | 144 | 0 |
+| purpose:form.rating | 12 | 144 | 144 | 0 |
+| purpose:form.color | 12 | 144 | 144 | 0 |
+| purpose:form.date | 12 | 144 | 144 | 0 |
+| purpose:form.date-range | 12 | 144 | 144 | 0 |
+| purpose:form.time | 12 | 144 | 144 | 0 |
+| purpose:form.datetime | 12 | 144 | 144 | 0 |
+| purpose:form.month | 12 | 144 | 144 | 0 |
+| purpose:form.week | 12 | 144 | 144 | 0 |
+| purpose:form.schedule | 12 | 144 | 144 | 0 |
 | purpose:table.business | 160 | 1920 | 720 | 1200 |
 | purpose:table.analytic | 80 | 960 | 528 | 432 |
 | purpose:table.dense | 80 | 960 | 352 | 608 |
@@ -361,8 +463,23 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.circular-progress | 1 | 12 | 12 | 0 |
 | purpose:feedback.loading-overlay | 1 | 12 | 12 | 0 |
 | purpose:feedback.status-indicator | 1 | 12 | 12 | 0 |
+| purpose:work.filter-toolbar | 24 | 288 | 288 | 0 |
+| purpose:work.search-toolbar | 24 | 288 | 288 | 0 |
+| purpose:work.bulk-action-toolbar | 24 | 288 | 288 | 0 |
+| purpose:work.data-summary | 24 | 288 | 288 | 0 |
+| purpose:work.dashboard-kpi-grid | 24 | 288 | 288 | 0 |
+| purpose:work.approval-panel | 24 | 288 | 288 | 0 |
+| purpose:work.audit-log | 24 | 288 | 288 | 0 |
+| purpose:work.permission-matrix | 24 | 288 | 288 | 0 |
+| purpose:work.status-management | 24 | 288 | 288 | 0 |
+| purpose:work.settings-form | 24 | 288 | 288 | 0 |
+| purpose:work.search-result-list | 24 | 288 | 288 | 0 |
+| purpose:work.user-management-table | 24 | 288 | 288 | 0 |
+| purpose:work.task-list | 24 | 288 | 288 | 0 |
+| purpose:work.workflow-steps | 24 | 288 | 288 | 0 |
+| purpose:work.comment-thread | 24 | 288 | 288 | 0 |
 
-합계: 전체 24816개 중 허용 18423개, 거부 6393개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
+합계: 전체 32736개 중 허용 26343개, 거부 6393개. 허용은 패밀리 계약(변형·열린 기반 축 값, 금지 조합, 시각 패밀리 요구)과 기반 컴포넌트 계약(`resolveMember`)을 모두 통과한다고 보장하는 수가 아니라, 패밀리 계약만 통과한 수다. 기반 계약 위반은 렌더 때 `P_REL_CONTRACT`로 거부된다.
 <!-- /generated:combos -->
 
 목적 패밀리 × 시각 패밀리(각 패밀리 예시 기준)에서 거부되는 쌍과 이유.
@@ -407,6 +524,30 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:form.settings | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:form.filter | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:form.group | 허용 | 허용 | 허용 | 거부: GROUP_EDITORIAL: editorial의 입력 외형은 underline이라 칸의 상자가 없어 애드온·버튼을 같은 테두리로 이을 수 없다 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.input-kind | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.currency | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.otp | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.tags | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.file | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.upload | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.grouped-select | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.radio | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.radio-group | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.radio-card | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.checkbox | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.checkbox-group | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.switch | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.slider | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.range-slider | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.rating | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.color | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.date | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.date-range | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.time | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.datetime | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.month | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.week | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:form.schedule | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:table.business | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:table.analytic | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:table.dense | 허용 | 허용 | 허용 | 거부: purpose:table.dense × family:editorial: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 허용 | 허용 | 허용 | 거부: purpose:table.dense × family:luxury: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 허용 | 허용 | 거부: purpose:table.dense × family:soft: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 | 거부: purpose:table.dense × family:tonal-layered: 셀 상하 패딩 12px가 이 패밀리의 상한 8px를 넘는다 |
@@ -450,6 +591,21 @@ Select와 Table은 `Object.freeze`만 쓰던 계약을 `defineContract` 방식�
 | purpose:feedback.circular-progress | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:feedback.loading-overlay | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 | purpose:feedback.status-indicator | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.filter-toolbar | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.search-toolbar | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.bulk-action-toolbar | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.data-summary | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.dashboard-kpi-grid | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.approval-panel | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.audit-log | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.permission-matrix | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.status-management | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.settings-form | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.search-result-list | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.user-management-table | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.task-list | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.workflow-steps | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
+| purpose:work.comment-thread | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 | 허용 |
 <!-- /generated:matrix -->
 
 ## 6. 정량 측정
