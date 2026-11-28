@@ -140,17 +140,25 @@ function Icon({data}: {data: Exhibit}) {
 }
 
 function Layout({data}: {data: Exhibit}) {
-  return <ul className={styles.exhibitGrid}>{data.rows.map((item: AnyRecord) => {
+  return <ul className={`${styles.exhibitGrid} ${styles.layoutGrid}`}>{data.rows.map((item: AnyRecord) => {
     const isPrimitive = item.id?.startsWith('layout-primitive:');
     const slots = item.slots ?? [];
     const preview = isPrimitive ? null : layoutPreviewGrid(item);
-    const previewAreas = isPrimitive ? [] : [...new Set(item.bands.at(-1).areas.split(/[|\s]+/).filter((area: string) => area && area !== '_'))];
+    const mobile = isPrimitive ? null : layoutPreviewGrid(item, item.bands[0]);
+    const medium = isPrimitive ? null : layoutPreviewGrid(item, item.bands[2] ?? item.bands.at(-1));
+    const previewAreas = isPrimitive ? [] : [...new Set(item.bands.flatMap((band: AnyRecord) => band.areas.split(/[|\s]+/)).filter((area: string) => area && area !== '_'))];
     const primitiveStyles: Record<string, CSSProperties> = {
       stack: {display: 'flex', flexDirection: 'column'}, cluster: {display: 'flex', flexWrap: 'wrap', alignContent: 'center'},
       flow: {gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'}, container: {width: 'min(100%, 24rem)', marginInline: 'auto'},
       split: {gridTemplateColumns: '3fr 2fr'}, bento: {gridTemplateAreas: '"a a b" "c d d"', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'},
     };
-    const sampleStyle = isPrimitive ? primitiveStyles[item.id.replace('layout-primitive:', '')] : {gridTemplateColumns: preview!.columns, gridTemplateAreas: preview!.template};
+    const sampleStyle: CSSProperties = isPrimitive ? primitiveStyles[item.id.replace('layout-primitive:', '')] : {
+      gridTemplateColumns: mobile!.columns, gridTemplateAreas: mobile!.template,
+      '--layout-sm-columns': layoutPreviewGrid(item, item.bands[1] ?? item.bands.at(-1)).columns,
+      '--layout-sm-areas': layoutPreviewGrid(item, item.bands[1] ?? item.bands.at(-1)).template,
+      '--layout-md-columns': medium!.columns, '--layout-md-areas': medium!.template,
+      '--layout-lg-columns': preview!.columns, '--layout-lg-areas': preview!.template,
+    } as CSSProperties;
     return <li key={item.id} className={styles.exhibitCard}>
       <h3>{item.label}</h3><p className={styles.cardMeta}>{isPrimitive ? item.css : item.pattern}</p>
       <div className={styles.layoutSample} aria-label={`${item.label} 레이아웃 실제 슬롯 예시`} style={sampleStyle}>

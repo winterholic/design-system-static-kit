@@ -51,6 +51,7 @@ test('border samples use valid Core values and Background retains image, mask an
 
 test('layout samples preserve Core area matrices and radius count includes facets', () => {
   const [single, three] = LAYOUTS.filter(item => ['layout:single-column', 'layout:three-column'].includes(item.id));
+  assert.equal(layoutPreviewGrid(single, single.bands[0]).template, '"lead" "content" "aside"');
   assert.equal(layoutPreviewGrid(single).template, '". lead ." ". content aside"');
   assert.match(layoutPreviewGrid(single).columns, /minmax\(0, min\(44rem, 100%\)\)/);
   assert.match(layoutPreviewGrid(three).columns, /1fr 3fr 1fr/);

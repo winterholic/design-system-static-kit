@@ -38,12 +38,12 @@ for (const width of [390, 1280]) {
       }
       await page.goto('/materials/foundations?category=layout');
       await expect(page.getByRole('link', {name: /상세 렌더·토큰·구성 보기/}).first()).toHaveAttribute('href', /\/components\/layout%3A/);
-      const layouts = await page.locator('[data-category-panel] .layoutSample').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).gridTemplateAreas));
+      const layouts = await page.locator('[data-category-panel] [class*="layoutSample"]').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).gridTemplateAreas));
       expect(new Set(layouts).size).toBeGreaterThan(10);
       await page.goto('/materials/foundations?category=chart');
       await expect(page.locator('[data-category-panel] [class*="chartSample"] svg').first()).toBeVisible();
       await expect(page.getByRole('link', {name: /차트 설정·데이터·토큰 상세 보기/}).first()).toHaveAttribute('href', /\/components\/chart-preset%3A/);
-      const details = page.locator('[data-category-panel] .chartSample details').first();
+      const details = page.locator('[data-category-panel] [class*="chartSample"] details').first();
       await expect(details).toBeVisible();
       await details.locator('summary').click();
       await expect(details.locator('table')).toBeVisible();
@@ -64,15 +64,17 @@ for (const width of [390, 1280]) {
 
     test('Border and Background render each Core border and decoration style', async ({page}) => {
       await page.goto('/materials/foundations?category=border');
-      const borders = await page.locator('[data-category-panel] .facetSample').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).borderTopStyle));
+      const borders = await page.locator('[data-category-panel] [class*="facetSample"]').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).borderTopStyle));
       expect(new Set(borders)).toEqual(new Set(['none', 'solid', 'double']));
       await page.goto('/materials/foundations?category=background');
-      const decorations = await page.locator('[data-category-panel] .backgroundSample').evaluateAll(nodes => nodes.map(node => {
+      const decorations = await page.locator('[data-category-panel] [class*="backgroundSample"]').evaluateAll(nodes => nodes.map(node => {
         const style = getComputedStyle(node, '::before');
-        return {image: style.backgroundImage, mask: style.maskImage, opacity: style.opacity};
+        return {image: style.backgroundImage, mask: style.maskImage, opacity: style.opacity, blur: style.backdropFilter};
       }));
       expect(decorations.filter(item => item.image !== 'none').length).toBeGreaterThanOrEqual(8);
       expect(decorations.some(item => item.mask !== 'none')).toBe(true);
+      const frosted = page.getByRole('heading', {name: '제한된 프로스트 글라스'}).locator('..').locator('[class*="backgroundSample"]');
+      await expect(frosted).toHaveCSS('backdrop-filter', 'blur(12px)');
     });
   });
 }

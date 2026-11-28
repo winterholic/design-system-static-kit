@@ -42,8 +42,7 @@ export function backgroundDecoration(css = '', blur = 0) {
   };
 }
 
-export function layoutPreviewGrid(item) {
-  const band = item.bands?.at(-1);
+export function layoutPreviewGrid(item, band = item.bands?.at(-1)) {
   if (!band) return {columns: '1fr', template: '"sample"'};
   const columns = band.columns.map(column => Array.isArray(column)
     ? `minmax(0, min(${column[1]}rem, 100%))`
