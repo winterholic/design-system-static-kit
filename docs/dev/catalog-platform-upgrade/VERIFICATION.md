@@ -2092,3 +2092,71 @@ $ npm run coverage:materials:check                  # MANIFEST MATCH (1534 mater
 - `component-detail-tabs.spec.mjs`(TRF-07의 차트·레이아웃 시험 포함) + `explore-components-home` + `components-studio-roundtrip` + `catalog-lists` + `a11y` 묶음: 62 passed, 1 failed. 실패 1개는 `explore-components-home.spec.mjs:31`(Explore 상세): `/explore`의 첫 카드가 `/explore/materials`(`18d6338dc`가 추가한 재료 입구)가 돼 `.first()` 선택이 `/render`가 없는 주소를 집는다(404). 상세 구현과 무관해 고치지 않았다.
 - `layout-quality.spec.mjs:10`: 상세 페이지(차트·레이아웃 포함) 넘침은 없고 `/components` 카테고리 탭 컨테이너(F1) 넘침만 남았다.
 - `npm --workspace apps/web run test:unit` 95/95, 상세·Core 단위 9/9, `check-generated` REPRODUCIBLE(5305), `coverage:materials:check` MANIFEST MATCH(1534), `test:boundary` 8/9(위 §34.4의 기존 1건).
+
+## 35. O §6.2 모바일 패턴 10행 독립 브라우저 검증 (원 커밋 `cb59e7560`·`a1b8c4bd3`·`eb72531f7`, 브랜치 `upgrade/o-browser-verify`, 2026-11-29)
+
+엔진: Claude Sonnet 5.5. 프로젝트 Playwright Chromium(`chromium-1248`)이 이 세션에서 정상으로 떴다. Codex 샌드박스의 `MachPortRendezvousServer Permission denied (1100)`는 재현되지 않았다. 원 저장소에 링크하지 않고 새 worktree(`../dsk-up-o-verify`)에서 `npm ci`로 설치해 검증했다.
+
+### 35.1 10행 판정 (Manifest `req:comp:o-01`…`o-10` 직접 읽기)
+
+`tests/platform-family-mobile.test.mjs`의 새 시험이 Manifest에서 O 10행을 읽어 direct 8·variant 2, 모두 `catalog-visible`, 모든 재료가 렌더되고, variant 2행의 축 값(`layout=stacked`, `position=sticky`)이 같은 축의 다른 값과 다른 출력을 내는지 단언한다. 판정은 실제 렌더를 Chromium에서 열어 본 결과다.
+
+| O 행 | 분류 | 판정 | 근거·발견 |
+|---|---|---|---|
+| Mobile Header | direct (`navigation.topbar`) | 충족(390px) | 390px에서 44px 토글로 접히고 열기·Escape 닫기·포커스 복귀·펼친 링크 44px 이상. 1280px은 데스크톱 가로 메뉴라 링크 36px(모바일 터치 대상 아님). `sticky` 변형은 결함 D-04로 안 붙었다 |
+| Bottom Navigation | direct (`navigation.bottom`) | 충족 | 모든 칸 클릭·Enter 뒤 `aria-current`가 정확히 하나로 옮겨지고 Tab·Shift+Tab이 칸 순서대로 이동. 56px 칸 |
+| Action Sheet | direct (`mobile.action-sheet`) | 결함 교정 뒤 충족 | 열기·Esc·트리거 복귀는 처음부터 맞았다. 포커스 가두기가 거짓이었다(D-01). 아래쪽 safe-area 여백 누락(D-05) |
+| Mobile List Cell | direct (`mobile.list-cell`) | 결함 교정 뒤 충족 | 제목 블록 아래에 전체 폭 버튼이 놓여 "한 행"이 아니었고 `accessory`·`density` 축이 화면에 아무 차이도 없었다(D-03) |
+| Mobile Search | variant (`form.search` `{layout: stacked}`) | 결함 교정 뒤 충족 | 축 값은 출력을 바꾼다(버튼이 아래 줄 전체 폭). 입력 칸 36px·입력 34px로 터치 44px 미달(D-02) |
+| Mobile Tab Bar | variant (`navigation.bottom` `{position: sticky}`) | 결함 교정 뒤 충족 | `data-sticky`만 붙고 스크롤해도 붙지 않았다(D-04). 라벨형 링크 내비게이션이며 `role=tablist` 탭이 아니다. 탭 패널 의미는 `navigation.tabs`가 맡는다 |
+| Full-screen Dialog | direct (`mobile.full-screen-dialog`) | 충족(포커스 가두기 교정) | 390px에서 viewport 전체(390×844), 1280px에서 중앙 대화상자(계약 문구와 같다). D-01 |
+| Mobile Filter Panel | direct (`mobile.filter-panel`) | 결함 교정 뒤 충족 | 검색해도 걸러진 옵션이 계속 보였다(D-06) |
+| Sticky Bottom Action | direct (`mobile.sticky-action`) | 결함 교정 뒤 충족 | 래퍼가 가둬 안 붙었고(D-04) 하단 바와 같이 쓰면 가렸으며(D-07) 주요 동작이 soft 외형이었다 |
+| Safe-area Container | direct (`mobile.safe-area`) | 충족 | `max(기본 여백, env(safe-area-inset-*))`. 실제 inset>0은 이 세션에서 만들 수 없어 CSS 단언으로만 확인(35.5) |
+
+### 35.2 발견 결함과 교정
+
+고치기 전 `e2e/platform-mobile-patterns.spec.mjs`의 원래 3건은 2건이 실패했고(다음 35.3), 아래 결함은 처음엔 시험이 없어 못 잡았다.
+
+| # | 행 | 결함 | 교정 |
+|---|---|---|---|
+| D-01 | Action Sheet·Full-screen Dialog·Filter Panel | "native modal dialog가 포커스를 가둔다"는 거짓이었다. Tab 3~4번에 한 번씩 포커스가 문서 body(브라우저 UI)로 나갔다 | 런타임에 Tab keydown 순환(끝↔처음, 다이얼로그 밖이면 첫 칸). Escape 닫힘·트리거 복귀는 원래 맞았다 |
+| D-02 | Mobile Search | stacked의 선택 트리거·입력 칸 36px, 입력 34px | stacked에서 칸·버튼 44px(입력 42px+테두리) |
+| D-03 | Mobile List Cell | 제목 아래 전체 폭 버튼(56×366)이라 한 행이 아니었고 chevron·none, comfortable·compact가 픽셀까지 같았다 | 제목 블록 옆에 동작 버튼을 두는 한 행, chevron은 `::after` 글리프(none은 없음), compact는 44px 행 |
+| D-04 | Mobile Tab Bar·Sticky Bottom Action·Mobile Header(sticky) | 목적 래퍼(`div.pf`)가 부모 크기를 자기 높이로 만들어 `position:sticky`가 스크롤 중 붙지 않았다 | 세 래퍼를 `display:contents`. 같은 컨테이너 안 본문 뒤에서 viewport 아래(844)에 붙는다 |
+| D-05 | Action Sheet·Filter Panel | 640px 이하 아래 시트의 아래 여백에 `safe-area-inset-bottom`이 없었다(Full-screen만 있었다) | 시트 규칙에 상하좌우 inset 추가 |
+| D-06 | Mobile Filter Panel | 검색어를 쳐도 `hidden` 옵션이 `display:flex`에 져서 화면에 그대로였고 상태 문구("1개 조건 표시")만 바뀌었다 | `label[hidden]{display:none}` |
+| D-07 | Sticky Bottom Action + sticky Bottom Navigation | 두 바가 모두 `bottom:0`이라 D-04를 고치면 액션이 하단 바에 가려졌다(액션 746–844, 바 778–844) | 하단 바 높이를 런타임이 `--pf-bottom-bar-h`로 올리고 액션이 그만큼 위로 올라간다(액션 680–778, 바 778–844) |
+
+보조 교정: Sticky Bottom Action의 주요 버튼을 soft에서 solid로 바꿨다(주요 동작이 배경에 묻혔다).
+
+### 35.3 e2e 시험 자체의 결함과 바꾼 시험
+
+구현 직후 `e2e/platform-mobile-patterns.spec.mjs`를 처음 실행했을 때 3건 중 2건이 실패했고, 모두 제품이 아니라 시험의 결함이었다. 바꾼 부분과 원래 확인 내용은 다음과 같다. 기대값은 낮추지 않았다.
+- `page.setContent`를 같은 window에 반복해 런타임의 한 번 실행 플래그(`window.__kitMobileDialog`)가 남아 두 번째 패턴(Full-screen Dialog)이 안 열렸다. 같은 저장소의 `platform-card-data-interaction.spec.mjs` 규약대로 `about:blank`를 거치는 `fresh()`로 바꿨다. 원래 확인(열기·Esc·포커스 복귀·Escape 뒤 트리거 포커스)은 그대로다.
+- 검색 폼의 `getByRole('button')`이 지우기 버튼과 검색 버튼 2개에 걸려 strict mode로 실패했다. 이름이 `검색`인 제출 버튼을 지정했다(활성화 확인은 그대로).
+- Filter Panel에서 `fill('active')`는 사용자에게 보이지 않는 값(`active`)으로 검색했지만 런타임은 화면 라벨(`활성`)로 거른다. 검색어를 `활성`으로 바꾸고, 원래의 "1개 보임·`1개` 상태 문구"에 "없는 조건이면 0개·비우면 2개"를 더했다.
+- 다이얼로그의 버튼 높이 44~64px 단언에 hidden인 지우기 버튼(높이 0)이 들어가 있었다. 화면에 보이는 버튼만 세도록 했다(범위 44~64px는 그대로).
+
+### 35.4 회귀 시험과 RED·GREEN
+
+새 e2e 6건(총 9건)과 node 3건을 추가했다. 교정 전 소스(`origin/main`의 `mobile.mjs`·`navigation.mjs`·`form.mjs`)로 되돌리고 e2e를 돌리자 새로 쓰거나 고친 시험 5건이 실패했다.
+
+| 시험 | RED 때 실패 메시지 |
+|---|---|
+| overlays keep Tab and Shift+Tab inside the dialog | `purpose:mobile.action-sheet Tab #3 left the dialog at 390px` |
+| Mobile Search stacked keeps 44px touch targets | `{"tag":"kit-select-trigger","height":36…} under 44px at 390px` |
+| Mobile List Cell is one row… | `title block and action are on separate lines at 390px` |
+| sticky Bottom Navigation and Sticky Bottom Action stay pinned… | `Mobile Tab Bar (sticky) leaves the viewport at 390px` |
+| Action Sheet, Full-screen Dialog and Mobile Filter Panel…(교정한 원 시험) | `toHaveCount(1)`(걸러도 2개 보임) |
+| 같은 시험, D-07만 되살림(`body:has` 규칙 무력화) | `sticky action (746.2-844) overlaps the bottom bar (778-844) at scroll 0, 390px` |
+
+node RED: D-05·D-06 단언과 D-04·D-07 단언이 원래 소스에서 `✖` 2건으로 실패하고 교정 소스에서 통과한다. Manifest 10행 시험은 결함 회귀가 아니라 판정 근거라 RED 대상이 아니다(원래 소스에서도 통과).
+
+### 35.5 실측과 한계
+
+390px·1280px 모두에서 가로 넘침 0, 터치 대상 44px 이상(교정 뒤 O 재료 전부, Mobile Header 1280px 제외), Escape 닫기·트리거 포커스 복귀, Tab·Shift+Tab 순환, 하단 바 `aria-current` 전환, 하단 바·액션 겹침 0을 실제 조작으로 확인했다.
+- 하지 않음: `env(safe-area-inset-*)`가 0이 아닌 실제 기기(헤드리스 Chromium은 inset을 줄 수 없다). 여백 계산식은 CSS 단언으로만 확인했다.
+- 하지 않음: 시트·대화상자의 backdrop 클릭 닫기. 계약에 없는 동작이라 요구하지 않았고 지금은 닫히지 않는다(참고).
+- Mobile Header의 1280px 링크 36px은 데스크톱 레이아웃이라 손대지 않았다.
+- sticky 바의 하단 바 높이 보정은 런타임(`ResizeObserver`)이 있을 때 정확하다. 런타임이 없으면 56px 기준 CSS 대체값이다.

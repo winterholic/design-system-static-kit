@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {platformEnv} from '../src/platform/compile.mjs';
 import {PURPOSE_FAMILIES, getPurposeFamily, renderPurposeFamily} from '../src/platform/families/index.mjs';
 import {assembleComponents, assembleDesign, compileBlueprint} from '../src/service/index.mjs';
@@ -87,4 +88,49 @@ test('O mobile overlays expose native dialog keyboard semantics and safe-area la
   assert.equal(result.ok, true, JSON.stringify(result.errors));
   assert.match(safe.css, /padding-block-end:[^;}]*env\(safe-area-inset-bottom\)/);
   assert.match(safe.css, /padding-block-start:[^;}]*env\(safe-area-inset-top\)/);
+});
+
+test('O rows read from the Material Coverage Manifest are served by materials whose declared variant axes change the output', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json', import.meta.url), 'utf8'));
+  const rows = manifest.requirements.filter(row => row.id.startsWith('req:comp:o-'));
+  assert.equal(rows.length, 10);
+  assert.equal(rows.filter(row => row.coverage === 'direct').length, 8);
+  assert.equal(rows.filter(row => row.coverage === 'variant').length, 2);
+  for (const row of rows) {
+    assert.equal(row.status, 'catalog-visible', row.name);
+    for (const materialId of row.materialIds) {
+      const family = getPurposeFamily(materialId);
+      assert.ok(family, `${row.name}: ${materialId} is registered`);
+      const request = {visual: VISUAL, variant: family.example.variant, props: family.example.props, content: family.example.content, id: 'o-row'};
+      const base = renderPurposeFamily(env, materialId, request);
+      assert.equal(base.ok, true, `${row.name}: ${JSON.stringify(base.errors)}`);
+      if (row.coverage !== 'variant') continue;
+      for (const [axis, value] of Object.entries(row.variant)) {
+        assert.ok(family.variants[axis]?.includes(value), `${row.name}: ${axis}=${value} is a declared value`);
+        const changed = renderPurposeFamily(env, materialId, {...request, variant: {...request.variant, [axis]: value}});
+        assert.equal(changed.ok, true, `${row.name}: ${JSON.stringify(changed.errors)}`);
+        const other = family.variants[axis].find(x => x !== value);
+        const contrast = renderPurposeFamily(env, materialId, {...request, variant: {...request.variant, [axis]: other}});
+        assert.notEqual(changed.html, contrast.html, `${row.name}: ${axis}=${value} must differ from ${axis}=${other}`);
+      }
+    }
+  }
+});
+
+test('O bottom sheets reserve the bottom safe-area inset and hidden filter options really disappear', () => {
+  const sheet = getPurposeFamily('purpose:mobile.action-sheet').css.match(/\.pf-mobile-overlay\[data-mobile-sheet\]\{[^}]*\}/)?.[0] ?? '';
+  assert.match(sheet, /padding-block-end:max\([^;}]*env\(safe-area-inset-bottom\)\)/, 'sheet rule pads by the home-indicator inset');
+  const css = getPurposeFamily('purpose:mobile.filter-panel').css;
+  assert.match(css, /\.pf-mobile-options label\[hidden\]\{display:none\}/, 'author display:flex must not defeat the hidden attribute');
+});
+
+test('O sticky patterns are not confined by their own purpose wrapper, and the sticky action clears a sticky bottom bar', () => {
+  assert.match(getPurposeFamily('purpose:navigation.bottom').css, /\.pf-navigation-bottom\{display:contents\}/);
+  assert.match(getPurposeFamily('purpose:navigation.topbar').css, /\.pf-navigation-topbar\{display:contents\}/);
+  const css = getPurposeFamily('purpose:mobile.sticky-action').css;
+  assert.match(css, /\.pf-mobile-sticky-action\{display:contents\}/);
+  assert.match(css, /body:has\(\.pf-bottom\[data-sticky\]\) \.pf-mobile-sticky\{inset-block-end:var\(--pf-bottom-bar-h/);
+  const result = assembleComponents({context: 'dashboard', items: [{purpose: 'purpose:mobile.sticky-action', visual: VISUAL, variant: {align: 'full'}, props: {size: 'medium'}, content: {label: '계속'}, id: 'sticky-script'}]});
+  assert.equal(result.ok, true);
+  assert.match(result.value.script, /--pf-bottom-bar-h/, 'sticky action ships the runtime that publishes the bar height');
 });
