@@ -48,6 +48,9 @@ test('Explore 상세는 컴파일 바이트와 Blueprint 및 Studio 계약을 �
 
 test('Components는 실제 명세를 보여 주고 잘못된 부품 ID는 404', async ({page, request}) => {
   await page.goto('/components');
+  // 부품은 쪽으로 나뉘어 있어 첫 쪽에 없다. 검색으로 찾는다.
+  await page.getByRole('searchbox', {name: '검색'}).fill('hero');
+  await page.getByRole('button', {name: '찾기'}).click();
   await page.getByRole('link', {name: /hero/}).first().click();
   await expect(page.getByRole('heading', {name: '히어로'})).toBeVisible();
   await expect(page.getByRole('heading', {name: '허용 속성'})).toBeVisible();
@@ -58,8 +61,9 @@ test('Components는 실제 명세를 보여 주고 잘못된 부품 ID는 404', 
 });
 
 test('Components는 2.6.0 재료 계약과 실제 변형 렌더를 제공한다', async ({page, request}) => {
-  await page.goto('/components');
+  await page.goto('/components?q=select-control');
   await expect(page.getByRole('link', {name: /선택 상자/})).toHaveAttribute('href', '/components/select-control');
+  await page.goto('/components?q=data-table');
   await expect(page.getByRole('link', {name: /데이터 표/})).toHaveAttribute('href', '/components/data-table');
 
   await page.goto('/components/select-control');

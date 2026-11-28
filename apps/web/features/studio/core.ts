@@ -27,6 +27,9 @@ export interface Core {
     contentDiff(before: unknown, after: unknown): {missing: unknown[]; added: unknown[]};
   };
   service: {
+    /** 서비스 계약 버전과 플랫폼 계약 버전. 둘 다 공개 진입점이 내보내며 캐시 키의 엔진 버전을 이룬다. */
+    CONTRACT_VERSION: string;
+    PLATFORM_CONTRACT_VERSION: string;
     compileBlueprint(bp: unknown, opts?: Record<string, unknown>): Envelope<{html?: string; sizes?: unknown; tokens?: Record<string, Record<string, string>>}>;
     validateBlueprint(bp: unknown): Envelope<{valid: true}>;
     listCatalog(q: Record<string, unknown>): Envelope<{items: any[]; total: number; nextCursor: string | null}>;

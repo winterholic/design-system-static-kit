@@ -174,7 +174,9 @@ async function runStudioContinuousEditScenario(page, baseUrl) {
   try {
     await page.goto(`${baseUrl}/studio?template=dashboard-overview`, {waitUntil: 'networkidle', timeout: 30000});
     await page.waitForSelector('[data-phase="ready"]', {timeout: 15000});
-    await page.waitForFunction(() => window.__studio_api !== undefined && typeof window.__studio_compile_count === 'number', {timeout: 10000});
+    // 측정 훅은 DSK_STUDIO_PROBE=1 로 빌드한 번들에만 있다(운영 빌드에는 없다). 없으면 이유를 남기고 이 시나리오만 건너뛴다.
+    const hooked = await page.waitForFunction(() => window.__studio_api !== undefined && typeof window.__studio_compile_count === 'number', {timeout: 10000}).then(() => true, () => false);
+    if (!hooked) return {scenario: 'Studio 연속 편집 (팔레트 10회 연속 변경)', skipped: '측정 훅이 없다(운영 빌드). DSK_STUDIO_PROBE=1 로 다시 빌드한 서버를 측정해야 한다.'};
     await page.waitForTimeout(300);
 
     const compileCountBefore = await page.evaluate(() => window.__studio_compile_count);

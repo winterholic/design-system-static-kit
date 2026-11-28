@@ -347,7 +347,7 @@ tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
 
 원 구현의 메모는 이 의존을 무시해 판정이 낡았다(검증 결과를 보여 주는 선택지 비활성 표시가 틀림). 수정: `EXPLORATION_IGNORED`로 판정 묶음마다 "읽지 않음이 확인된 필드"만 키에서 빼고 나머지가 같을 때만 재사용. 시험 `compiler.unit.mjs`가 3개 템플릿(profile erp 허용) × 모든 팔레트·모드·축 값·타입·프로파일·색 재료 변형에서 "키가 같으면 Core 판정이 같다"를 전수 비교한다(재사용 확인 건수 400건 초과를 단언).
 
-**캐시 키 (CONTRACTS §5.2)**: `SHA256(engineVersion:catalogVersion:materialIds:canonicalRequest:mode:viewport)[:32]`를 시험이 `node:crypto`로 독립 계산해 대조한다. 원 구현은 재료 id가 `theme@catalogVersion`뿐이었고 엔진 버전이 상수 `'2.0.0'`이었으며 브라우저는 비암호학적 해시, Node는 `eval('require')`를 썼다. 편차 하나가 남는다: platform 계약 버전을 공개 진입점에서 얻을 수 없어 엔진 버전은 `compileBlueprint/<service CONTRACT_VERSION>`이다(DEC-009 결정 3).
+**캐시 키 (CONTRACTS §5.2)**: `SHA256(engineVersion:catalogVersion:materialIds:canonicalRequest:mode:viewport)[:32]`를 시험이 `node:crypto`로 독립 계산해 대조한다. 원 구현은 재료 id가 `theme@catalogVersion`뿐이었고 엔진 버전이 상수 `'2.0.0'`이었으며 브라우저는 비암호학적 해시, Node는 `eval('require')`를 썼다. 편차 하나가 남았다: platform 계약 버전을 공개 진입점에서 얻을 수 없어 엔진 버전이 `compileBlueprint/<service CONTRACT_VERSION>`이었다(DEC-009 결정 3). **A3 에서 해소**: 엔진 버전은 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`이다(DEC-013 3항).
 
 **상한과 제거**: LRU 상한 100, 만료 없음(키에 버전), 예외 결과는 캐시하지 않음. 상한 초과 시 최근 미사용 제거를 시험이 확인한다. 항목은 컴파일 HTML(템플릿당 수십 KB)이라 상한 100은 수 MB 수준이다(바이트 상한은 두지 않음).
 
@@ -374,8 +374,8 @@ tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
 
 ### 6.5 남은 한계 (그래서 `Verified`가 아니라 `Implemented`)
 1. 조립(`/studio/assemble`)과 Studio 사이의 결과 공유는 구조상 불가능하다(서버 컴포넌트 vs 브라우저 모듈). 공유가 필요하면 조립 결과를 직렬화해 Studio로 넘기는 설계가 필요하다.
-2. 캐시 키 엔진 버전이 §5.2의 platform 계약 버전을 포함하지 않는다(Track A의 공개 진입점 결정 필요).
-3. `window.__studio_api`가 운영 빌드에도 노출된다(측정 스크립트가 쓴다). 동작에는 영향이 없으나 범위 밖이라 그대로 두었다.
+2. ~~캐시 키 엔진 버전이 §5.2의 platform 계약 버전을 포함하지 않는다~~ — A3 에서 해소(공개 진입점 상수 사용, 계약 버전이 바뀌면 키가 바뀌는 시험 `compiler.unit.mjs`).
+3. ~~`window.__studio_api`가 운영 빌드에도 노출된다~~ — A3 에서 해소(`DSK_STUDIO_PROBE=1` 빌드에만 포함, `e2e/studio-probe.spec.mjs`).
 4. 코드 분할의 크기 이득은 작다(-1.3%). 유지하되 효과가 크다고 말할 수 없다.
 
 ### 6.6 실행 증거

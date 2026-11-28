@@ -43,3 +43,18 @@
 .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
 .block { max-width: 720px; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
 .pre { width: 100%; margin: 0; padding: var(--space-4); max-height: 360px; overflow: auto; background: var(--color-surface); border-radius: var(--radius); font-size: var(--text-sm); line-height: 1.5; }
+
+.bar { display: grid; grid-template-columns: 1fr; gap: var(--space-3); align-items: end; margin-bottom: var(--space-5); }
+.barField { display: grid; gap: var(--space-1); min-width: 0; color: var(--color-muted); font-size: var(--text-sm); }
+.barField input, .barField select { min-height: var(--tap-min); padding: 0 var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius); background: var(--color-surface); color: var(--color-text); font: inherit; min-width: 0; }
+.barField input:focus-visible, .barField select:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.count { margin: 0; font-size: var(--text-sm); color: var(--color-muted); align-self: center; }
+@media (min-width: 960px) {
+  .bar { grid-template-columns: minmax(220px, 1.6fr) minmax(0, 1fr) auto auto auto; }
+  .count { justify-self: end; }
+}
+.empty { padding: var(--space-7) 0; color: var(--color-muted); }
+.empty p { margin: 0 0 var(--space-4); }
+.pager { display: flex; align-items: center; justify-content: center; gap: var(--space-5); margin-top: var(--space-7); font-size: var(--text-sm); }
+.pager a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--color-line); border-radius: var(--radius); text-decoration: none; font-weight: var(--weight-strong); }
+.pager [aria-disabled='true'] { color: var(--color-muted); border-color: transparent; pointer-events: none; }

@@ -175,3 +175,15 @@ DEC-011이 만든 A 12항목은 `component:*` 계약과 독립 시연(`actions` 
 4. 버튼 계열 목적 패밀리는 `assembleDesign`의 `components`로 페이지에 놓이지 않는다(패턴 슬롯에 `button-control`을 받는 칸이 없다). 이 제약은 Track A의 페이지 슬롯 규칙이라 이번 범위에서 풀지 않았다. Blueprint는 `materials.purposes`와 격자의 표지 노드로 직접 쓴다.
 5. 분류 원천을 `src/platform/families/inventory.mjs`로 옮기고 문서 표는 생성기(`docs/platform/evidence/components/build.mjs`)가 쓴다. 근거가 있는 다섯 행(Phone·URL Input, KPI Card, Dashboard KPI Grid, Bulk Action Toolbar)을 보정해 149/36/22가 되었다(`docs/platform/components.md`).
 6. 변형을 신규 종류로 세지 않는 규칙을 계약에 넣었다: 계약마다 `componentType`을 두고, 같은 컴포넌트를 독립 시연과 목적 패밀리가 모두 설명해도 한 종류로 센다.
+
+## DEC-013: Components 목록 쪽 나눔, Studio 캐시 키의 platform 계약 버전, 측정 훅 (TASK-TRA-01, TASK-TRA-04 잔여)
+
+### 맥락
+A1 검증은 Components 목록의 DOM 카드 92개(24개 원칙 위반)를, A2 검증은 Studio 캐시 키의 platform 계약 버전 누락과 운영 빌드의 `window.__studio_api` 노출을 남겼다.
+
+### 결정
+1. **Components 는 쪽(24개)과 검색·분류로 나눈다. 탭이나 숨김은 쓰지 않는다.** 목적 패밀리 → 구조 부품 순서의 단일 목록을 서버에서 걸러 한 쪽만 카드로 만든다. 분류 값은 `<kind>:<group>`이다(목적 `form`과 부품 `form`처럼 같은 이름이 두 종류에 있다). 상세 주소는 바꾸지 않는다. 라우트가 동적이 되는 대가(LCP 소폭 증가, Vercel 서버 첫 바이트 미측정)는 PERF-BOTTLENECKS §6.2 에 적었다.
+2. **기존 시험은 지우지 않고 쪽 나눔에 맞게 고친다.** 한 화면에 부품 링크와 목적 패밀리 32개가 모두 있다는 전제의 단언은 검색으로 찾거나 쪽을 모두 넘겨 32개를 센다(`explore-components-home`, `w6b-scenarios` 시나리오 B 앞부분). 같은 항목 수·같은 링크를 요구한다.
+3. **Studio 엔진 버전은 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`이다**(DEC-010 9항의 상수 사용). 어느 쪽이 바뀌어도 모든 Studio 캐시 키가 바뀐다. DEC-009 3항의 편차는 해소됐다.
+4. **측정 훅은 빌드 시점 스위치로만 켠다.** `DSK_STUDIO_PROBE=1` 로 빌드한 번들에만 `window.__studio_api`·`__studio_compile_count` 가 들어가고, 운영 빌드는 훅 코드가 번들에서 사라진다. 런타임 스위치(쿼리·localStorage)는 두지 않는다. 사용자가 운영 페이지에서 켤 수 있으면 훅이 노출된 것과 같기 때문이다. 이를 위해 `apps/web/next.config.mjs` 에 `env` 한 줄을 추가했다(§6.1 crossTrackFiles 에 기록).
+

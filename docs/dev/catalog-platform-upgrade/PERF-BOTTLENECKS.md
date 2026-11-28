@@ -179,7 +179,7 @@
 | 일반 카탈로그 iframe | 0개 | Explore·Components·Typography 모두 0개(스크롤 왕복 포함). 상세의 시험 영역 1개는 유지(계약 §5.1 허용) |
 | 일반 목록 요청 시 동적 컴파일 | 0회 | Explore·Components·Typography 0회(초기·스윕 후) |
 | 고정 미리보기 반복 요청 시 재컴파일 | 0회 | 정적 파일이라 컴파일 경로가 없다. 같은 주소 재요청 0회(`catalog-lists.spec.mjs`) |
-| 초기 카탈로그 카드 | 최대 24개 원칙 | Explore 주 목록 24개(쪽 나눔). Typography 1개. **Components 는 미충족**: DOM 에 카드 92개(부품 60 + 목적 패밀리 32), 초기 로딩 미리보기 25개 |
+| 초기 카탈로그 카드 | 최대 24개 원칙 | Explore 주 목록 24개(쪽 나눔). Typography 1개. Components 는 A3 에서 해소(§6): 한 쪽 24개 이하, 전체 92개는 쪽 이동·검색으로. 이 표의 시점(A1)에는 DOM 에 카드 92개, 초기 로딩 미리보기 25개였다 |
 | LCP / CLS | 2.5초 / 0.1 이하 | 최대 LCP 520ms(Explore 1280), CLS 0 |
 | INP, 캐시된 탭 전환 | 200ms 이하 | 이 작업이 건드리지 않은 축이며 이번에 새로 판정하지 않았다(JSON 의 `inpApprox`·`tabSwitchDuration` 참조) |
 
@@ -195,3 +195,44 @@
 2. 캐시 키는 CONTRACTS §5.2 그대로이고 파일 이름이다(`/previews/<키>.svg`, immutable). 화면은 자기 요청의 키가 있을 때만 정적 파일을 쓴다.
 3. `/platform/render` 는 `private, no-cache` + ETag/304, 서버 캐시는 개수·바이트 상한 LRU.
 4. 목록 카드는 `<img>` 한 장(iframe·Observer 없음). 상세 시험 영역만 iframe.
+
+---
+
+## 6. Track A3(Components 쪽 나눔·Studio 캐시 키·측정 훅) 전후 실측
+
+A1 검증(§5)과 A2 검증(`VERIFICATION.md` §6)이 남긴 세 가지를 닫는다. 측정 원본은 `PERFORMANCE-A3.json`(운영 빌드), `PERFORMANCE-A3-studio-probe.json`(Studio 편집 시나리오만, 측정 빌드)이다. 둘 다 `local-prod`(`next build` 후 `DSK_PERF_METRICS=1 next start -p 4291`, `npm run perf -- --url http://127.0.0.1:4291 --pages explore,components,studio`, 3회 중앙값)이고 RUM 이 아니다. 전은 `PERFORMANCE-A1.json`, 후는 이번 값이다. Vercel 운영은 측정하지 않았다.
+
+### 6.1 변경
+
+1. **Components 목록 쪽 나눔**: `/components` 는 목적 패밀리 32 + 구조 부품 60 = 92개를 한 쪽 24개씩 서버에서 잘라 그린다(4쪽). 쪽 밖 카드는 DOM 에 만들지 않고 탭으로 숨기지도 않는다. 주소는 그대로 `/components`이고 `?page=N`, `?q=검색어`, `?group=<kind>:<분류>` 가 붙는다. 검색·분류는 쪽을 자르기 전에 92개 전체에서 걸러서 첫 쪽에 없는 카드도 찾는다(`features/components/list-query.ts`). 검색 상자는 JS 없이 동작하는 GET 폼이다. 상세 주소(`/components/<type>`, `/components/purpose/<group>/<id>`)는 바뀌지 않았다.
+2. **Studio 캐시 키 엔진 버전**: `compileBlueprint/<CONTRACT_VERSION>` → `<PLATFORM_CONTRACT_VERSION>/<CONTRACT_VERSION>`(CONTRACTS §5.2 와 같은 형식, 현재 `0.8.0/1.3.0`). 값은 A1 이 `./service` 공개 진입점에 열어 둔 읽기 전용 상수이고 웹이 `src/platform` 을 import 하지 않는다. 상수를 읽지 못하면 `unknown/unknown` 이라 정상 버전의 키와 섞이지 않는다.
+3. **측정 훅 운영 빌드 제거**: `window.__studio_api`, `window.__studio_compile_count` 는 `DSK_STUDIO_PROBE=1` 로 빌드한 번들에만 들어간다(`features/studio/probe.ts`, `next.config.mjs` 가 값을 `'0'`/`'1'` 로 박는다). 운영 빌드는 `.next/static` 에 이 문자열이 없다. 측정 스크립트는 훅이 없으면 Studio 편집 시나리오만 이유와 함께 건너뛴다.
+
+Studio 편집 시나리오를 재려면 측정 빌드가 필요하다: `DSK_STUDIO_PROBE=1 npm run web:build` 후 `DSK_PERF_METRICS=1 next start`. 측정 뒤에는 변수 없이 다시 빌드한다.
+
+### 6.2 전→후 (중앙값)
+
+| 페이지 | 폭 | iframe(초기) | 스윕 중 iframe 로드 | 컴파일(초기) | 컴파일(스윕 후) | DOM 노드 | 초기 전송 KB | LCP ms | CLS |
+|---|---|---|---|---|---|---|---|---|---|
+| Components | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 757→247 | 241→233 | 140→172 | 0→0 |
+| Components | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 760→250 | 387→359 | 124→164 | 0→0 |
+| Explore | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 538→538 | 385→385 | 356→340 | 0→0 |
+| Explore | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 542→541 | 670→658 | 520→516 | 0→0 |
+| Studio | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 93→93 | 209→209 | 164→160 | 0→0 |
+| Studio | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 98→97 | 236→223 | 164→164 | 0→0 |
+
+- Components 첫 쪽의 DOM 카드(`[data-preview]`)는 24개이고 초기 로딩 미리보기는 23개다(`catalog-lists.spec.mjs` 출력). 쪽 2~4 도 24개 이하다(같은 시험이 쪽을 모두 넘기며 확인).
+- Components LCP 는 140→172(390), 124→164(1280)로 늘었다. 목표(2.5초)의 7% 이하이지만 늘어난 값이다. 원인은 조사하지 않았다(`확인 필요`). 이 라우트가 `searchParams` 때문에 정적(`○`)에서 동적(`ƒ`)이 된 영향일 수 있고, 로컬 서버 첫 바이트는 4ms 였다. Vercel 에서의 서버 첫 바이트는 측정하지 못했다.
+- Explore·Studio 의 페이지 지표는 이 변경이 건드리지 않았고 차이는 잡음 범위다.
+- **iframe 0, 동적 컴파일 0 유지**: 위 표와 `catalog-lists.spec.mjs` 에서 확인했다. 스크롤 왕복 재요청 0회와 서버 컴파일 0회도 같은 시험이 통과한다.
+
+### 6.3 Studio 편집 시나리오(측정 빌드, 390 / 1280)
+
+| 지표 | A3 (390 / 1280) | A2 검증(`VERIFICATION.md` §6.4, 390) |
+|---|---|---|
+| 10회 연속 편집(15ms 간격) 컴파일 수 | 1 / 1 | 1 / 1 |
+| 같은 팔레트 재적용 추가 컴파일 | 0 / 0 | 0 / 0 |
+| 디자인 탭 첫 열림(ms) | 128 / 127 | 117 / 115 |
+| 편집→미리보기 반영, 새 팔레트(ms) | 279 / 196 | 214 / 283 |
+
+캐시 키에 platform 버전이 들어갔어도 같은 계약 버전 안에서는 재사용이 그대로다(재적용 추가 컴파일 0). 지연 값은 3회 중앙값이고 두 측정의 차이는 잡음 범위로 보이며, 이 변경의 효과나 손실로 읽지 않는다(반복 측정으로 확인하지 않았다 `확인 필요`).

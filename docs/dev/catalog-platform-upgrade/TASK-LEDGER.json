@@ -93,7 +93,13 @@
         "apps/web/features/platform/TypeCompare.tsx",
         "apps/web/e2e/shell.spec.mjs",
         "apps/web/e2e/w6a-shell-studio.spec.mjs",
-        "apps/web/e2e/w6b-scenarios.spec.mjs"
+        "apps/web/e2e/w6b-scenarios.spec.mjs",
+        "apps/web/features/components/list-query.ts",
+        "apps/web/features/components/list-query.unit.mjs",
+        "apps/web/features/components/components.module.css",
+        "apps/web/e2e/catalog-lists.spec.mjs",
+        "apps/web/e2e/explore-components-home.spec.mjs",
+        "apps/web/package.json"
       ],
       "completionCriteria": "일반 카탈로그 목록 페이지에서 활성 iframe 0개 달성, DOM 요소 수 대폭 감소, 스크롤 프레임드랍 해소. 검증 기준(VERIFICATION.md §11): 목록 요청 동적 컴파일 0회, 스크롤 왕복 재요청 0회, 초기 카드 24개 이하 원칙",
       "tests": [
@@ -104,7 +110,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "독립 검증(VERIFICATION.md §11)에서 iframe 0개·컴파일 0회·스크롤 왕복 재요청 0회는 충족했다. 미충족: ① Components 목록이 카드 92개를 DOM 에 둔다(24개 원칙, 기존 시험이 한 화면 전부를 전제해 쪽 나눔은 Components 개편(Track F)과 함께 해야 함. catalog-lists.spec.mjs 에 test.fail 로 남김) ② DOM 노드 수는 줄지 않고 늘었다(Components 674→757, Explore 504→538). 원 구현의 SVG 는 126개 중 109개가 <img> 로 열리지 않았고 부품 미리보기가 0개였다(수정함).",
+      "unresolvedIssues": "독립 검증(VERIFICATION.md §11)에서 iframe 0개·컴파일 0회·스크롤 왕복 재요청 0회는 충족했다. A3(DEC-013): Components 목록을 쪽(24개)·검색·분류로 나눠 DOM 카드를 24개 이하로 줄였고(92→24, DOM 노드 757→247 / 760→250) catalog-lists.spec.mjs 의 test.fail 을 일반 시험으로 바꿨다. 기존 시험 중 한 화면 전체를 전제한 단언(explore-components-home 2건, w6b 시나리오 B 앞부분)은 검색·쪽 이동으로 같은 항목을 확인하도록 고쳤다. 남은 한계: ① DOM 노드는 Explore 에서 기준선(504→538)보다 늘어 \"DOM 요소 수 대폭 감소\"는 Components 에서만 달성 ② Components 가 동적 라우트가 되어 LCP 가 140→172ms(390)로 늘었고 Vercel 서버 첫 바이트는 측정하지 못했다(PERF-BOTTLENECKS §6.2). 원 구현의 SVG 는 126개 중 109개가 <img> 로 열리지 않았고 부품 미리보기가 0개였다(A1 에서 수정함). 상태는 GPT 독립 검증 전이라 Implemented 로 둔다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/explore/Thumb.tsx",
@@ -139,7 +145,7 @@
         {
           "file": "apps/web/app/components/page.tsx",
           "owner": "Track F",
-          "reason": "Thumb 대상 전달, 목록은 componentSummary 로 상세 컴파일 없음"
+          "reason": "Thumb 대상 전달, 목록은 componentSummary 로 상세 컴파일 없음. A3: 92개를 쪽(24개)·검색·분류로 나눈 서버 렌더로 재작성(탭 숨김 없음, 상세 주소 유지)"
         },
         {
           "file": "apps/web/features/platform/TypeCompare.tsx",
@@ -159,12 +165,37 @@
         {
           "file": "apps/web/e2e/w6b-scenarios.spec.mjs",
           "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
-          "reason": "카드 미리보기가 <img> 가 된 것에 맞춰 주소 읽기와 바이트 비교를 갱신(단언은 유지·강화)"
+          "reason": "카드 미리보기가 <img> 가 된 것에 맞춰 주소 읽기와 바이트 비교를 갱신(단언은 유지·강화) / A3: 시나리오 B 의 목적 패밀리 32개 확인을 쪽을 모두 넘겨 세는 방식으로, 가격 카드는 검색으로 찾도록 갱신(32개 단언 유지). 시나리오 B 뒷부분의 상류 실패(시각 패밀리 12종 확장)는 건드리지 않음"
+        },
+        {
+          "file": "apps/web/features/components/list-query.ts",
+          "owner": "Track F",
+          "reason": "A3: Components 목록의 쪽 나눔·검색·분류 순수 함수(신규)"
+        },
+        {
+          "file": "apps/web/features/components/list-query.unit.mjs",
+          "owner": "Track F",
+          "reason": "A3: 위 함수의 단위 시험(신규)"
+        },
+        {
+          "file": "apps/web/features/components/components.module.css",
+          "owner": "Track F",
+          "reason": "A3: 검색 폼·쪽 이동·빈 결과 스타일 추가"
+        },
+        {
+          "file": "apps/web/e2e/explore-components-home.spec.mjs",
+          "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
+          "reason": "A3: 첫 쪽에 없는 부품(hero, select-control, data-table)을 검색으로 찾도록 갱신(같은 링크·같은 단언 유지)"
         },
         {
           "file": "apps/web/e2e/catalog-lists.spec.mjs",
           "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
-          "reason": "목록 성능 구조 시험(새 파일)"
+          "reason": "A3: Components test.fail 을 일반 시험으로 전환, 쪽 이동·검색·분류 시험 추가"
+        },
+        {
+          "file": "apps/web/package.json",
+          "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
+          "reason": "A3: test:unit 글롭에 features/components/*.unit.mjs 추가"
         }
       ],
       "createFiles": [
@@ -322,13 +353,19 @@
         "apps/web/features/studio/components/EditPane.tsx",
         "apps/web/e2e/studio-ux.spec.mjs",
         "scripts/perf/measure.mjs",
-        "docs/dev/catalog-platform-upgrade/DECISIONS.md"
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "apps/web/features/studio/core.ts",
+        "apps/web/next.config.mjs"
       ],
       "createFiles": [
         "apps/web/features/studio/compiler.ts",
         "apps/web/features/studio/compiler.unit.mjs",
         "docs/dev/catalog-platform-upgrade/PERFORMANCE-A2.json",
-        "scripts/perf/run-a2-perf.mjs"
+        "scripts/perf/run-a2-perf.mjs",
+        "apps/web/features/studio/probe.ts",
+        "apps/web/e2e/studio-probe.spec.mjs",
+        "docs/dev/catalog-platform-upgrade/PERFORMANCE-A3.json",
+        "docs/dev/catalog-platform-upgrade/PERFORMANCE-A3-studio-probe.json"
       ],
       "completionCriteria": "(1) 디바운스·진행 중 중복 제거·오래된 응답 무시·캐시를 실제 Core와 실제 schedule 경로로 시험한다. (2) 후보 탐색 재사용은 Core 판정과 전수 비교로 건너뛴 판정이 없음을 보인다. (3) 내보내기 HTML 바이트가 전후 같다(sha256). (4) 전후 코드를 같은 스크립트로 번갈아 재측정한다. (5) npm run verify, 웹 단위·경계·e2e 통과.",
       "tests": [
@@ -338,12 +375,12 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "VERIFICATION.md §6.5. (a) 조립(/studio/assemble)은 서버 컴포넌트라 브라우저 캐시와 공유되지 않아 '조립 결과와 미리보기 결과의 공유'는 미리보기와 내보내기 사이로 한정된다. (b) 캐시 키의 engineVersion은 platform 계약 버전을 공개 진입점에서 얻을 수 없어 CONTRACTS §5.2와 편차가 있다(DEC-009 결정 3). 둘 다 Track A의 공개 진입점 결정이 필요해 Verified로 올리지 않는다.",
+      "unresolvedIssues": "VERIFICATION.md §6.5. (a) 조립(/studio/assemble)은 서버 컴포넌트라 브라우저 캐시와 공유되지 않아 '조립 결과와 미리보기 결과의 공유'는 미리보기와 내보내기 사이로 한정된다(남음). A3(DEC-013)에서 해소: (b) 캐시 키의 engineVersion 을 CONTRACTS §5.2 의 PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION 으로 바꿨고(공개 진입점 ./service 상수) 계약 버전이 바뀌면 키가 바뀌는 시험을 compiler.unit.mjs 에 뒀다. (c) window.__studio_api·__studio_compile_count 는 DSK_STUDIO_PROBE=1 빌드에만 들어가고 운영 빌드 번들에는 없다(e2e/studio-probe.spec.mjs). (a) 때문에 Verified 로 올리지 않는다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/studio/StudioApp.tsx",
           "owner": "Track F",
-          "reason": "미리보기 컴파일을 컴파일 관리자로 교체한다"
+          "reason": "미리보기 컴파일을 컴파일 관리자로 교체한다. A3: 측정 훅 두 개를 STUDIO_PROBE 로 감싼다"
         },
         {
           "file": "apps/web/features/studio/export.ts",
@@ -363,17 +400,42 @@
         {
           "file": "apps/web/features/studio/compiler.ts",
           "owner": "Track F",
-          "reason": "컴파일 관리자·캐시·키 계산의 본체(신규)"
+          "reason": "컴파일 관리자·캐시·키 계산의 본체(신규). A3: 엔진 버전을 PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION 으로"
         },
         {
           "file": "apps/web/features/studio/compiler.unit.mjs",
           "owner": "Track F",
-          "reason": "컴파일 관리자와 판정 재사용 단위 시험(신규)"
+          "reason": "컴파일 관리자와 판정 재사용 단위 시험(신규). A3: 계약 버전이 바뀌면 키가 바뀌는 시험"
         },
         {
           "file": "apps/web/e2e/studio-ux.spec.mjs",
           "owner": "Track G",
           "reason": "지연 로딩된 디자인 패널이 나타날 때까지 기다린 뒤 선택 상자를 센다"
+        },
+        {
+          "file": "apps/web/features/studio/core.ts",
+          "owner": "Track F",
+          "reason": "A3: Core 타입에 CONTRACT_VERSION·PLATFORM_CONTRACT_VERSION 추가"
+        },
+        {
+          "file": "apps/web/features/studio/probe.ts",
+          "owner": "Track F",
+          "reason": "A3: 측정 훅 빌드 시점 스위치(신규)"
+        },
+        {
+          "file": "apps/web/next.config.mjs",
+          "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
+          "reason": "A3: env DSK_STUDIO_PROBE 를 '0'/'1' 로 박아 운영 빌드 번들에서 측정 훅 코드를 접히게 함(TRA-02 에서 이미 연 파일, 한 줄 추가)"
+        },
+        {
+          "file": "apps/web/e2e/studio-probe.spec.mjs",
+          "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
+          "reason": "A3: 운영 빌드에 window 훅과 번들 문자열이 없음을, 측정 빌드에서는 있음을 확인(신규)"
+        },
+        {
+          "file": "scripts/perf/measure.mjs",
+          "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
+          "reason": "A3: 훅이 없는 운영 빌드에서는 Studio 편집 시나리오를 이유와 함께 건너뜀"
         }
       ]
     },

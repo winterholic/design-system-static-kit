@@ -19,6 +19,7 @@ import {StartScreen} from './components/StartScreen';
 import {Banners} from './components/Banners';
 import {StudioCompileManager} from './compiler';
 import styles from './studio.module.css';
+import {STUDIO_PROBE} from './probe';
 
 // 편집하지 않는 대형 패널 및 다이얼로그 지연 로딩 (초기 JS 전송량 절감)
 const EditPane = lazy(() => import('./components/EditPane').then(m => ({default: m.EditPane})));
@@ -137,10 +138,9 @@ export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}
     if (coreReady) compileManagerRef.current?.setCore(getCore());
   }, [coreReady]);
 
+  // 측정 전용 훅. 운영 빌드에는 들어 있지 않다(probe.ts).
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as unknown as {__studio_compile_count: number}).__studio_compile_count = compileCount;
-    }
+    if (STUDIO_PROBE) (window as unknown as {__studio_compile_count: number}).__studio_compile_count = compileCount;
   }, [compileCount]);
 
   // 기기 폭은 컴파일 결과에 영향이 없어 의존성과 캐시 키에 넣지 않는다(기기를 바꿔도 다시 컴파일하지 않는다).
@@ -348,9 +348,7 @@ export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}
   }), [state, coreReady, catalog, edit, navigate, undo, redo, closeDialog, requestAction, confirmAction, editWithImpact, confirmImpact, copyLink, jumpTo, exportJson, exportHtml, exportRecovery, resetStorage, overwriteStorage, reloadSaved, withCore, compileCount]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as unknown as {__studio_api?: StudioApi}).__studio_api = api;
-    }
+    if (STUDIO_PROBE) (window as unknown as {__studio_api?: StudioApi}).__studio_api = api;
   }, [api]);
 
   const {phase, view} = state;

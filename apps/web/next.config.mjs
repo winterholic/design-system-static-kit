@@ -16,6 +16,9 @@ export default {
   outputFileTracingRoot: repoRoot,
   poweredByHeader: false,
   experimental: {caseSensitiveRoutes: true},
+  // Studio 측정 훅 스위치(features/studio/probe.ts). 항상 '0' 또는 '1' 로 박아 넣어서 운영 빌드의 번들에서 훅 코드가 접혀 사라지게 한다.
+  // 측정 빌드만 DSK_STUDIO_PROBE=1 로 만든다.
+  env: {DSK_STUDIO_PROBE: process.env.DSK_STUDIO_PROBE === '1' ? '1' : '0'},
   // 옛 정적 호스트와 같게 `/examples/x/`(끝 슬래시)를 리다이렉트 없이 200으로 낸다.
   skipTrailingSlashRedirect: true,
   async redirects() {

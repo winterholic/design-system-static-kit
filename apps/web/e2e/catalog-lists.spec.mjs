@@ -82,12 +82,55 @@ test('Typography 목록의 미리보기 카드는 24개 이하다', async ({page
   expect(await page.locator('[data-preview]').count()).toBeLessThanOrEqual(24);
 });
 
-// 알려진 미충족: /components 는 부품 60여 개와 목적 패밀리 32개 카드를 한 번에 DOM 에 둔다. 기존 시험(w6b 시나리오 B 등)이 한 화면에 32개 전부가 있음을 전제로 해서
-// 쪽 나눔·탭으로 나누려면 Components 웹 카탈로그 개편(Track F)과 시험 갱신이 함께 필요하다. 고쳐서 통과하게 되면 이 시험이 "예상한 실패가 통과했다"로 알려 준다.
-test('Components 목록의 미리보기 카드는 24개 이하다 (알려진 미충족)', async ({page}) => {
-  test.fail();
+// Components 는 부품 60여 개와 목적 패밀리 32개를 쪽(24개)으로 나눠 DOM 에 만든다. 검색·분류는 숨은 카드까지 전체 목록에서 찾는다.
+test('Components 목록의 미리보기 카드는 24개 이하다', async ({page}) => {
   await page.goto('/components');
   expect(await page.locator('[data-preview]').count()).toBeLessThanOrEqual(24);
+  expect(await page.locator('[data-testid="components-list"] li').count(), '카드(li) 전체도 24개 이하').toBeLessThanOrEqual(24);
+  expect(await page.locator('iframe').count()).toBe(0);
+  expect(await page.locator('[hidden] li, [role="tabpanel"][hidden]').count(), '탭으로 숨긴 카드가 없다').toBe(0);
+  const total = Number(await page.getByTestId('components-count').getAttribute('data-total'));
+  expect(total, '전체 카드 수는 쪽 분량보다 많다').toBeGreaterThan(24);
+});
+
+test('Components 쪽 이동: 모든 쪽이 24개 이하이고 쪽을 모두 모으면 전체 카드와 같다(중복·누락 없음)', async ({page}) => {
+  await page.goto('/components');
+  const total = Number(await page.getByTestId('components-count').getAttribute('data-total'));
+  const seen = [];
+  for (let n = 1; n < 20; n++) {
+    const hrefs = await page.locator('[data-testid="components-list"] li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
+    expect(hrefs.length).toBeLessThanOrEqual(24);
+    seen.push(...hrefs);
+    const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('link', {name: '다음'});
+    if ((await next.getAttribute('aria-disabled')) === 'true') break;
+    await next.click();
+    await expect(page).toHaveURL(new RegExp(`page=${n + 1}`));
+  }
+  expect(seen.length).toBe(total);
+  expect(new Set(seen).size, '같은 카드가 두 쪽에 나왔다').toBe(total);
+});
+
+test('Components 검색은 첫 쪽에 없는 카드도 찾고, 분류 필터와 쪽 번호가 URL 에 남는다', async ({page}) => {
+  await page.goto('/components');
+  expect(await page.locator('a[href="/components/hero"]').count(), '첫 쪽에는 hero 가 없다').toBe(0);
+  await page.getByRole('searchbox', {name: '검색'}).fill('hero');
+  await page.getByRole('button', {name: '찾기'}).click();
+  await expect(page).toHaveURL(/[?&]q=hero/);
+  await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
+  expect(await page.locator('[data-testid="components-list"] li').count()).toBeLessThanOrEqual(24);
+  // 같은 주소로 다시 열어도(새로고침·공유 링크) 같은 결과
+  await page.goto('/components?q=hero');
+  await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
+  await expect(page.getByRole('searchbox', {name: '검색'})).toHaveValue('hero');
+  // 분류
+  await page.goto('/components?group=purpose%3Acard');
+  const cards = page.locator('[data-testid="purpose-families"] li[data-purpose]');
+  expect(await cards.count()).toBeGreaterThan(0);
+  expect(await page.locator('[data-testid="components-list"] li').count()).toBe(await cards.count());
+  // 결과가 없으면 안내와 초기화
+  await page.goto('/components?q=%EC%97%86%EB%8A%94%EB%A7%90zzzz');
+  await expect(page.getByText('조건에 맞는 컴포넌트가 없습니다.')).toBeVisible();
+  await expect(page.getByTestId('components-count')).toHaveAttribute('data-total', '0');
 });
 
 test('Explore 첫 화면 카드는 24개 이하이고 쪽 이동으로 나머지를 본다', async ({page}) => {

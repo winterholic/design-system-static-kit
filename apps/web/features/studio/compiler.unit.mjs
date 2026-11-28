@@ -188,7 +188,35 @@ test('preview and HTML export share one cache entry and export bytes equal an un
   assert.equal(exported.html, preview.html);
   assert.equal(sha(exported.html), sha(coreCompile(c)(doc0, 'document').html), 'identical to an uncached compile');
   assert.equal(compileBlueprintWithCache(c, doc0, 'document').fromCache, true);
-  assert.equal(engineVersionOf(c), 'compileBlueprint/' + c.service.CONTRACT_VERSION);
+  assert.equal(engineVersionOf(c), `${c.service.PLATFORM_CONTRACT_VERSION}/${c.service.CONTRACT_VERSION}`);
+});
+
+test('엔진 버전은 공개 진입점의 PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION이고, 둘 중 하나가 바뀌면 캐시 키가 바뀐다 (CONTRACTS §5.2)', async () => {
+  const c = await loadCore();
+  const {PLATFORM_CONTRACT_VERSION: platform, CONTRACT_VERSION: service} = c.service;
+  assert.match(platform, /^\d+\.\d+\.\d+$/);
+  assert.equal(engineVersionOf(c), `${platform}/${service}`);
+  const fake = (p, s) => ({service: {PLATFORM_CONTRACT_VERSION: p, CONTRACT_VERSION: s}});
+  const doc = {version: '2.0', catalogVersion: '2.6.0', theme: 'workspace', palette: 'slate', mode: 'light', tree: {type: 'page', children: []}};
+  const key = core => computeCacheKey(engineVersionOf(core), '2.6.0', doc, 'light');
+  const base = key(fake('0.8.0', '1.3.0'));
+  assert.equal(key(fake('0.8.0', '1.3.0')), base, '같은 버전이면 같은 키');
+  assert.notEqual(key(fake('0.9.0', '1.3.0')), base, 'platform 계약 버전이 바뀌면 키가 바뀐다');
+  assert.notEqual(key(fake('0.8.0', '1.4.0')), base, '서비스 계약 버전이 바뀌면 키가 바뀐다');
+  assert.notEqual(key(fake(undefined, '1.3.0')), base, 'platform 계약 버전을 읽지 못하면 정상 버전의 키와 섞이지 않는다');
+  // 매니저가 실제로 쓰는 키: 계약 버전이 다른 두 매니저는 같은 캐시를 공유해도 서로의 결과를 재사용하지 않는다.
+  const cache = new LRUCache(10);
+  let compiles = 0;
+  const compile = () => { compiles++; return {ok: true, html: '<p>' + compiles + '</p>', warnings: []}; };
+  const run = async version => {
+    const m = new StudioCompileManager(null, {debounceMs: 0, compile, engineVersion: engineVersionOf(fake(version, '1.3.0')), cache});
+    return new Promise(resolve => m.schedule(doc, 'document', resolve));
+  };
+  await run('0.8.0');
+  await run('0.8.0');
+  assert.equal(compiles, 1, '같은 계약 버전은 재사용');
+  await run('0.9.0');
+  assert.equal(compiles, 2, '계약 버전이 바뀌면 다시 컴파일');
 });
 
 // ---- 후보 탐색 재사용은 판정을 바꾸지 않는다 ------------------------------------------------------------------------

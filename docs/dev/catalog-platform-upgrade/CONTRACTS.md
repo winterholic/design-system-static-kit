@@ -166,7 +166,7 @@ interface LightMaterialSummary {
 미리보기 생성 및 조립 결과 캐싱은 다음 요소로 SHA-256 해시를 만든다.
 
 ```text
-engineVersion    = PLATFORM_CONTRACT_VERSION + "/" + CONTRACT_VERSION     // 현재 0.7.0/1.3.0 (`compilerVersion`이라는 상수는 코드에 없다)
+engineVersion    = PLATFORM_CONTRACT_VERSION + "/" + CONTRACT_VERSION     // 현재 0.8.0/1.3.0 (`compilerVersion`이라는 상수는 코드에 없다)
 materialIds      = 요청이 고른 모든 재료의 "id@version"을 사전순 정렬해 ","로 이은 문자열
 canonicalRequest = 객체 키를 재귀적으로 사전순 정렬한 JSON(공백 없음). 문자열 값은 trim하지 않는다(콘텐츠가 바뀌므로)
 

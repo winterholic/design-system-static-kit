@@ -80,12 +80,13 @@ export function materialIdsOf(doc: Blueprint, catalogVersion: string): string {
 export const catalogVersionOf = (doc: Blueprint): string => (typeof doc.catalogVersion === 'string' ? doc.catalogVersion : 'unversioned');
 
 /**
- * 엔진 버전. CONTRACTS §5.2는 PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION이지만 웹은 src/platform을 import할 수 없고(boundary.check),
- * Studio가 쓰는 compileBlueprint는 platform 계약을 거치지 않는다. 공개 진입점이 내보내는 서비스 계약 버전만 쓴다.
+ * 엔진 버전: CONTRACTS §5.2의 PLATFORM_CONTRACT_VERSION + "/" + CONTRACT_VERSION. 웹은 src/platform을 import할 수 없으므로(boundary.check)
+ * 공개 진입점(./service)이 내보내는 두 상수를 읽는다. 어느 쪽이 바뀌어도 모든 키가 바뀐다.
+ * 상수를 읽지 못하면 "unknown"으로 두어 정상 버전의 키와 섞이지 않게 한다.
  */
 export function engineVersionOf(core: Core | null): string {
-  const v = (core?.service as unknown as {CONTRACT_VERSION?: string} | undefined)?.CONTRACT_VERSION;
-  return `compileBlueprint/${v ?? 'unknown'}`;
+  const s = core?.service as {CONTRACT_VERSION?: string; PLATFORM_CONTRACT_VERSION?: string} | undefined;
+  return `${s?.PLATFORM_CONTRACT_VERSION ?? 'unknown'}/${s?.CONTRACT_VERSION ?? 'unknown'}`;
 }
 
 /**
