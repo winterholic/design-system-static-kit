@@ -2353,7 +2353,7 @@ $ node --test apps/web/features/materials/foundations-exhibit.unit.mjs
 (§9.8 범주 순서, 선택된 범주의 데이터 격리, Core 재료 인벤토리 수량)
 
 $ node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'
-ℹ tests 1263 / ℹ pass 1263 / ℹ fail 0
+ℹ tests 1266 / ℹ pass 1266 / ℹ fail 0
 
 $ npm run typecheck --workspace apps/web
 > tsc --noEmit
