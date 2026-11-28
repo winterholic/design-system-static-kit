@@ -9,6 +9,24 @@ export function attachFormControls(root, {onChange} = {}) {
     });
     return;
   }
+  if (root.matches('[data-date-range]')) {
+    // 시작일·종료일: 사용자가 바꾼 값에 맞춰 서로의 상한·하한을 옮기고, 순서가 뒤집히면 이유를 네이티브 검증 메시지로 남긴다.
+    const fields = [...root.querySelectorAll('input[type="date"]')], start = fields.find(field => field.dataset.rangeEdge === 'low'), end = fields.find(field => field.dataset.rangeEdge === 'high');
+    if (start && end) {
+      const hardMin = start.getAttribute('min') ?? '', hardMax = end.getAttribute('max') ?? '';
+      const sync = () => {
+        if (end.value) start.max = end.value; else if (hardMax) start.max = hardMax; else start.removeAttribute('max');
+        if (start.value) end.min = start.value; else if (hardMin) end.min = hardMin; else end.removeAttribute('min');
+        const reversed = Boolean(start.value && end.value && start.value > end.value);
+        start.setCustomValidity(reversed ? '시작일은 종료일보다 늦을 수 없습니다.' : '');
+        end.setCustomValidity(reversed ? '종료일은 시작일보다 빠를 수 없습니다.' : '');
+        if (typeof onChange === 'function') onChange({id: start.id, value: {start: start.value, end: end.value}});
+      };
+      for (const field of fields) field.addEventListener('input', sync);
+      sync();
+    }
+    return;
+  }
   if (root.matches('[data-checkbox-group]')) {
     const fields = [...root.querySelectorAll('input[type="checkbox"]')];
     if (!fields.length) throw new TypeError('Checkbox group is incomplete');
@@ -34,9 +52,11 @@ export function attachFormControls(root, {onChange} = {}) {
       field.setAttribute('aria-invalid', String(missing));
     };
     validate();
+    let duplicates = [];
     const add = raw => {
       const value = String(raw).trim();
-      if (!value || current().some(item => item.toLocaleLowerCase() === value.toLocaleLowerCase())) return false;
+      if (!value) return false;
+      if (current().some(item => item.toLocaleLowerCase() === value.toLocaleLowerCase())) { duplicates.push(value); return false; }
       const li = doc.createElement('li'), text = doc.createElement('span'), remove = doc.createElement('button'), hidden = doc.createElement('input');
       text.textContent = value; remove.type = 'button'; remove.dataset.tagRemove = ''; remove.className = 'pf-native-tag-remove'; remove.setAttribute('aria-label', `${value} 태그 삭제`); remove.textContent = '×';
       hidden.type = 'hidden'; hidden.name = root.dataset.tagsName; hidden.value = value; hidden.dataset.tagValue = '';
@@ -44,8 +64,8 @@ export function attachFormControls(root, {onChange} = {}) {
     };
     field.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ',') {
-        event.preventDefault(); const added = field.value.split(',').map(add).some(Boolean); field.value = '';
-        status.textContent = added ? '태그를 추가했습니다.' : '새 태그를 입력하세요.';
+        event.preventDefault(); duplicates = []; const typed = field.value.trim(), added = field.value.split(',').map(add).some(Boolean); field.value = '';
+        status.textContent = added ? '태그를 추가했습니다.' : duplicates.length ? `${duplicates[0]} 태그는 이미 있습니다.` : typed ? '새 태그를 입력하세요.' : '추가할 태그를 입력하세요.';
         if (added && typeof onChange === 'function') onChange({id: field.id, value: current()});
       } else if (event.key === 'Backspace' && !field.value && list.lastElementChild) {
         list.lastElementChild.remove(); validate(); status.textContent = '마지막 태그를 삭제했습니다.';
