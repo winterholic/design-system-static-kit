@@ -6386,6 +6386,90 @@
           "reason": "§9.8 11개 범주·URL 뒤로가기·단일 렌더·모션·권리·상세 경로를 390px·1280px에서 확인하는 명세"
         }
       ]
+    },
+    {
+      "taskId": "TASK-TRG-05",
+      "title": "웹 apps/web의 Core 내부 직접 의존 해소 및 공개 서비스 경계 회귀 복구",
+      "goal": "F2b 상세와 F5 Foundations 등 웹의 Core 내부 직접 의존 28곳을 기존 공개 service·edit 경계로 옮겨 Track G 통합의 경계 회귀를 해소한다.",
+      "scope": "apps/web/lib/api/preview-recipes.mjs, apps/web/features/components/material-detail.mjs, apps/web/features/materials/materials.server.ts, apps/web/features/materials/foundations-exhibit.unit.mjs, src/service/index.mjs, src/service/foundations.mjs, src/service/platform-materials.mjs, tests/service-contract.test.mjs",
+      "track": "Track G",
+      "dependencies": [
+        "TASK-TRF-08"
+      ],
+      "modifiedFiles": [
+        "apps/web/lib/api/preview-recipes.mjs",
+        "apps/web/features/components/material-detail.mjs",
+        "apps/web/features/materials/materials.server.ts",
+        "apps/web/features/materials/foundations-exhibit.unit.mjs",
+        "src/service/index.mjs",
+        "src/service/platform-materials.mjs",
+        "src/service/foundations.mjs",
+        "site/src/service/index.mjs",
+        "site/src/service/platform-materials.mjs",
+        "site/src/service/foundations.mjs",
+        "tests/service-contract.test.mjs",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
+      ],
+      "completionCriteria": "apps/web의 Core 내부 파일 상대경로 import 28곳 전수 제거, test:boundary 9/9 통과, 위반 재도입 시 boundary 실패 RED→GREEN 입증, core-boundary·channel-rest·channel-mcp·service-contract 및 F2b·F5 단위시험 통과, web typecheck/build 성공, coverage MATCH, check-generated REPRODUCIBLE 통과, 고정 해시 및 site/v1 불변, 최신 origin/main rebase 후 push",
+      "tests": [
+        "npm --workspace apps/web run test:boundary",
+        "node --test tests/core-boundary.test.mjs tests/channel-rest.test.mjs tests/channel-mcp.test.mjs tests/service-contract.test.mjs apps/web/features/components/material-detail.unit.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs apps/web/features/materials/foundations-exhibit.unit.mjs",
+        "npm run typecheck --workspace apps/web",
+        "npm run web:build",
+        "npm run coverage:materials:check",
+        "node scripts/check-generated.mjs"
+      ],
+      "commit": "a98c4b280",
+      "status": "Verified",
+      "unresolvedIssues": "",
+      "crossTrackFiles": [
+        {
+          "file": "src/service/index.mjs",
+          "ownerTrack": "Track A",
+          "reason": "웹 apps/web의 공개 서비스 경계 사용을 위한 assembleComponentContext, assembleLayoutSpecimen, renderChartPreset 및 Foundations 인벤토리 노출"
+        },
+        {
+          "file": "src/service/platform-materials.mjs",
+          "ownerTrack": "Track A",
+          "reason": "레이아웃 표본 조립 서비스 함수 assembleLayoutSpecimen 추가"
+        },
+        {
+          "file": "src/service/foundations.mjs",
+          "ownerTrack": "Track A",
+          "reason": "Foundations 전시 및 상세용 플랫폼·카탈로그 정의 인벤토리 묶음 신설"
+        },
+        {
+          "file": "tests/service-contract.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "신규 서비스 함수 3종 추가에 따른 callable 계약 단언 갱신"
+        },
+        {
+          "file": "apps/web/features/components/material-detail.mjs",
+          "ownerTrack": "Track F",
+          "reason": "Core 내부 직접 상대경로 import 10곳을 @winterholic/design-system-static-kit/service 및 edit으로 이전"
+        },
+        {
+          "file": "apps/web/features/materials/materials.server.ts",
+          "ownerTrack": "Track F",
+          "reason": "Core 내부 직접 상대경로 import 10곳을 @winterholic/design-system-static-kit/service로 이전"
+        },
+        {
+          "file": "apps/web/features/materials/foundations-exhibit.unit.mjs",
+          "ownerTrack": "Track F",
+          "reason": "Core 내부 직접 상대경로 import 7곳을 @winterholic/design-system-static-kit/service로 이전"
+        },
+        {
+          "file": "apps/web/lib/api/preview-recipes.mjs",
+          "ownerTrack": "Track F",
+          "reason": "Core 내부 직접 상대경로 import 1곳을 @winterholic/design-system-static-kit/service로 이전"
+        },
+        {
+          "file": "site/src/service/**",
+          "ownerTrack": "Track G (generated output)",
+          "reason": "build 산출물의 src/service 동기화"
+        }
+      ]
     }
   ]
 }

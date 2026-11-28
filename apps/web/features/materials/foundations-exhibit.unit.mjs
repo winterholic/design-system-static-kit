@@ -1,13 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FOUNDATION_CATEGORIES, backgroundDecoration, borderDeclaration, categoryDefinitionCount, categoryRows, layoutPreviewGrid} from './foundations-exhibit.mjs';
-import {SPACING_MATERIALS, SPACING_ROLES} from '../../../../src/platform/data/spacing.mjs';
-import {SURFACE_FACETS, SURFACES} from '../../../../src/platform/data/surfaces.mjs';
-import {BACKGROUNDS} from '../../../../src/platform/data/backgrounds.mjs';
-import {MOTION_PATTERNS, MOTIONS} from '../../../../src/platform/data/motion.mjs';
-import {ICON_MATERIALS} from '../../../../src/platform/data/icons.mjs';
-import {LAYOUTS} from '../../../../src/platform/data/layouts.mjs';
-import {chartPresetMaterials} from '../../../../src/materials/chart-presets.mjs';
+import {
+  BACKGROUNDS,
+  chartPresetMaterials,
+  ICON_MATERIALS,
+  LAYOUTS,
+  MOTION_PATTERNS,
+  MOTIONS,
+  SPACING_MATERIALS,
+  SPACING_ROLES,
+  SURFACE_FACETS,
+  SURFACES,
+} from '@winterholic/design-system-static-kit/service';
 
 test('Foundations exhibits all eleven §9.8 categories in the requested order', () => {
   assert.deepEqual(FOUNDATION_CATEGORIES.map(({id}) => id), [

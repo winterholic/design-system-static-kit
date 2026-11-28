@@ -12,6 +12,7 @@
 import {PLATFORM_KINDS} from '../platform/contract.mjs';
 import {recommend} from '../platform/recommend.mjs';
 import {platformEnv} from '../platform/compile.mjs';
+import {assembleSpecimen} from '../platform/layouts.mjs';
 import {bindType} from '../platform/type.mjs';
 import {FACE_PAIRINGS, ROLE_SCALES, resolveRoleScale} from '../platform/data/type-materials.mjs';
 import {MATERIAL_TYPE_PRESETS} from '../materials/typography.mjs';
@@ -147,3 +148,9 @@ export function checkCompatibility(q) {
     return ok(jsonClone(r));
   });
 }
+
+/** 레이아웃 재료 하나의 표본 조립(apps/web 컴포넌트 상세 내보내기 등이 호출). */
+export function assembleLayoutSpecimen(layoutId, options = {}) {
+  return assembleSpecimen(platformEnv(), layoutId, options);
+}
+

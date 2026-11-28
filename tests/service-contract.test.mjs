@@ -22,7 +22,7 @@ const deepFrozenAnywhere = x => x !== null && typeof x === 'object' && (Object.i
 
 test('the service exposes the declared platform APIs, including the read-only typography specimen query, and nothing else callable', () => {
   const fns = Object.entries(service).filter(([, v]) => typeof v === 'function').map(([k]) => k).sort();
-  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleComponents', 'assembleDesign', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'getTypographySpecimen', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'proposeSubtokenSets', 'queryMaterials', 'recommendMaterials', 'validateBlueprint', 'withHint']); // 플랫폼 서비스 계약에 읽기 전용 타이포 Specimen 조회를 더했다
+  assert.deepEqual(fns, ['applyEdit', 'assembleBlueprint', 'assembleComponentContext', 'assembleComponents', 'assembleDesign', 'assembleLayoutSpecimen', 'catalogSnapshot', 'checkCompatibility', 'compileBlueprint', 'diagnostic', 'explainDecisions', 'getColorTokens', 'getComponentSpec', 'getMaterial', 'getPlatformMaterial', 'getSchema', 'getTypePresets', 'getTypographySpecimen', 'hintFor', 'listCatalog', 'listEditOps', 'listMaterials', 'listPlatformMaterials', 'proposeSubtokenSets', 'queryMaterials', 'recommendMaterials', 'renderChartPreset', 'validateBlueprint', 'withHint']); // 플랫폼 서비스 계약에 컴포넌트 맥락 조립·레이아웃 표본 조립·차트 프리셋 렌더를 정식 반영했다
   assert.equal(CONTRACT_VERSION, '1.3.0');
 });
 

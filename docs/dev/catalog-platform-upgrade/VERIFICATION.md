@@ -2400,3 +2400,66 @@ Claude는 `fb14894da4cc804fac2ec1d2ced113ba0cd1c8b9` 아카이브 빌드를 Play
 `apps/web/e2e/foundations-categories.spec.mjs`에는 390px·1280px URL/뒤로 가기, 단일 패널, 터치 링크 크기·가로 넘침, 11개 정의, Core 차트 SVG, Motion reduced-motion, Icon 권리, 상세 링크를 확인하는 명세를 작성했다. Codex에서는 Chromium을 실행하지 않았고 지정된 Claude 독립 검증에서 8/8 통과했다(§39.5).
 
 새 Track F 항목 `TASK-TRF-08`을 장부에 추가했다. 내비게이션 공통 컴포넌트는 수정하지 않았다. `git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json`은 rebase 후 최신 origin/main 기준으로 불변 파일 비교와 push 직전 diff stat을 다시 수행한다.
+
+## 40. TASK-TRG-05 Track G 웹 앱 apps/web의 Core 내부 직접 의존 해소 및 공개 서비스 경계 회귀 복구 (기준 `a9b5b2cb9` (rebase 후), 커밋 `a98c4b280`, 2026-11-29)
+
+F2b 상세(`material-detail.mjs` 10곳), F5 Foundations(`materials.server.ts` 10곳, `foundations-exhibit.unit.mjs` 7곳, `preview-recipes.mjs` 1곳)에서 발생한 Core 내부 상대경로 import 28곳을 루트 패키지 공개 service·edit 경계로 완전히 이전했다. Core 내부 모듈을 앱의 경계 예외로 등록하거나 경계 단언을 약화하지 않고, 공개 서비스 진입점(`@winterholic/design-system-static-kit/service`) 및 편집 진입점(`@winterholic/design-system-static-kit/edit`)을 통해 접근하도록 정돈했다.
+
+### 40.1 원인 분석 및 경계 회귀 해소
+
+1. **상세 및 레시피 경로**:
+   - `material-detail.mjs`: `chartPresetMaterials`, `renderChartPreset`, `createBlueprint`, `compile`, `LAYOUT_COMPONENTS`, `assembleSpecimen`, `platformEnv`, `PATTERNS`, `resetDocument`, `escapeHTML` 등 10개 내부 참조를 제거했다. `chartRows`는 이미 존재하는 공개 `listMaterials({kind: 'chart-preset'})`를 활용하고, `chartCSS`는 `resetDocument` + `compileBlueprint`로 대체하여 `createBlueprint`·`compile`을 제거했다. `layoutExport`는 서비스 함수 `assembleLayoutSpecimen`을 도입하여 `platformEnv` 의존을 캡슐화했다. `resetDocument`는 `@winterholic/design-system-static-kit/edit`에서 import하고, `escapeHTML`은 안전한 로컬 유틸로 전환했다.
+   - `preview-recipes.mjs`: `src/service/component-context.mjs`를 상대경로로 참조하던 것을 `src/service/index.mjs`에서 `assembleComponentContext`를 공식 export하고 `@winterholic/design-system-static-kit/service`로 import하도록 이전했다.
+2. **Foundations 및 단위 시험 경로**:
+   - `src/service/foundations.mjs` 신설: Foundations 및 상세 전시에 필요한 플랫폼·카탈로그 정의 인벤토리(`SPACING_MATERIALS`, `SPACING_ROLES`, `SURFACE_FACETS`, `SURFACES`, `FACET_SHADOW`, `RADIUS`, `ELEVATION`, `BACKGROUNDS`, `MOTIONS`, `MOTION_PATTERNS`, `ICON_MATERIALS`, `LAYOUTS`, `chartPresetMaterials`, `chunks`, `LAYOUT_COMPONENTS`, `PATTERNS`)를 묶어 공개 서비스 진입점으로 re-export했다.
+   - `materials.server.ts`: 10개 내부 상대경로 dynamic import를 제거하고, `@winterholic/design-system-static-kit/service`에서 정식 제공받아 단일 선택 범주만 렌더하는 계약을 유지했다.
+   - `foundations-exhibit.unit.mjs`: 7개 내부 상대경로 import를 `@winterholic/design-system-static-kit/service`로 이전했다.
+3. **서비스 계약 시험 동기화**:
+   - `tests/service-contract.test.mjs`의 callable 단언(`fns`)에 공식 추가된 `assembleComponentContext`, `assembleLayoutSpecimen`, `renderChartPreset`를 반영하여 29개 서비스 함수 일치를 단언했다.
+
+### 40.2 RED → GREEN 재현 및 검증
+
+- **초기 상태 (RED)**:
+  `npm --workspace apps/web run test:boundary` 실행 시 28곳 Core 직접 가리킴 오류로 8/9 실패 (ERR_ASSERTION).
+- **수정 후 상태 (GREEN)**:
+  `npm --workspace apps/web run test:boundary` 9/9 전수 통과 (duration ~673ms).
+- **고의 위반 재현 (RED 확인)**:
+  `preview-recipes.mjs`에 상대경로 `import '../../../../src/catalog.mjs'` 1건 주입 시 `test:boundary` 즉시 exit 1 실패(`lib/api/preview-recipes.mjs:5 Core 내부 파일을 직접 가리킨다: ../../../../src/catalog.mjs → src/catalog.mjs`)를 확인하고, 원복 후 즉시 통과(GREEN)함을 실측했다.
+
+### 40.3 명령 실행 결과
+
+```text
+$ npm --workspace apps/web run test:boundary
+✔ apps/web 소스를 찾았다 (0.32325ms)
+✔ 루트 패키지는 지정한 진입점만 import 한다 (177.857709ms)
+✔ 검사 범위가 앱 전체 소스와 CSS를 포함한다 (0.766959ms)
+✔ 상대 경로, 디렉터리 별칭, type import와 dynamic import를 같은 경계로 검사한다 (1.185917ms)
+✔ CSS의 @import와 url() 의존성을 Core 경계에 맞춰 검사한다 (0.554125ms)
+✔ Next server-only 표식과 단일 읽기 전용 QA 데이터만 외부 경계 예외다 (0.419375ms)
+✔ src/ 를 상대 경로나 패키지 내부 경로로 직접 가리키지 않는다 (99.468291ms)
+✔ 루트 package.json exports 는 허용 진입점과 일치한다 (0.25075ms)
+✔ Core 를 부르는 코드에 React·Next 가 새어 들어가지 않는다(패키지 쪽 import 방향) (200.094792ms)
+ℹ tests 9 / ℹ pass 9 / ℹ fail 0
+
+$ node --test tests/core-boundary.test.mjs tests/channel-rest.test.mjs tests/channel-mcp.test.mjs tests/service-contract.test.mjs apps/web/features/components/material-detail.unit.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs apps/web/features/materials/foundations-exhibit.unit.mjs
+ℹ tests 67 / ℹ pass 67 / ℹ fail 0
+
+$ npm run typecheck --workspace apps/web
+> tsc --noEmit (통과)
+
+$ npm run web:build
+✓ Compiled successfully in 2.1s
+✓ Generating static pages using 17 workers (962/962) in 1415ms
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5380 generated files match a fresh build byte for byte.
+```
+
+### 40.4 불변 조건 및 계약 검증
+
+- 2.1.0 고정 해시, 기본 2.4.0, `site/v1/` 계약 불변: `git diff site/v1 site/examples` diff 없음.
+- Foundations 단일 범주 서버 렌더 및 차트·레이아웃 상세 81종 미리보기/Code 바이트 일치성 유지.
+

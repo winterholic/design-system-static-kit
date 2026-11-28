@@ -1,8 +1,7 @@
 // 웹 화면과 빌드 시점 사전 생성(scripts/build-catalog-index.mjs)이 같은 방법으로 Core 문서를 만들도록 한 곳에 둔 조립 절차.
 // 화면용 코드와 사전 생성 코드가 따로 있으면 목록 그림과 상세 화면이 어긋난다(REQUEST §3.2: 수작업 구현으로 실제 컴파일 결과와 달라지지 않게 한다).
 // 여기에는 Core 서비스·edit 연산을 부르는 절차만 있다. HTML·CSS 를 직접 만들지 않는다.
-import {compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
-import {assembleComponentContext} from '../../../../src/service/component-context.mjs';
+import {assembleComponentContext, compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
 import {variantKey, variantNameOf} from './variant-keys.mjs';
 import {importBlueprint, insertNode, removeNode, resetDocument, setAppearance, updateNode} from '@winterholic/design-system-static-kit/edit';
 

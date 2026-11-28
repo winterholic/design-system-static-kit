@@ -1,16 +1,8 @@
-import {assembleComponents, compileBlueprint, getMaterial, getPlatformMaterial, listMaterials, listPlatformMaterials} from '@winterholic/design-system-static-kit/service';
-import {chartPresetMaterials} from '../../../../src/materials/chart-presets.mjs';
-import {renderChartPreset} from '../../../../src/render/chart-presets.mjs';
-import {createBlueprint} from '../../../../src/catalog.mjs';
-import {compile} from '../../../../src/compiler.mjs';
-import {LAYOUT_COMPONENTS} from '../../../../src/platform/families/layout.mjs';
-import {assembleSpecimen} from '../../../../src/platform/layouts.mjs';
-import {platformEnv} from '../../../../src/platform/compile.mjs';
-import {PATTERNS} from '../../../../src/profiles/data.mjs';
-import {resetDocument} from '../../../../src/edit/index.mjs';
-import {CONTRACT_VERSION, PLATFORM_CONTRACT_VERSION} from '@winterholic/design-system-static-kit/service';
-import {escapeHTML} from '../../../../src/escape-html.mjs';
+import {assembleComponents, assembleLayoutSpecimen, chartPresetMaterials, compileBlueprint, CONTRACT_VERSION, getMaterial, getPlatformMaterial, LAYOUT_COMPONENTS, listMaterials, listPlatformMaterials, PATTERNS, PLATFORM_CONTRACT_VERSION, renderChartPreset} from '@winterholic/design-system-static-kit/service';
+import {resetDocument} from '@winterholic/design-system-static-kit/edit';
 import {LruCache} from '../../lib/api/cache.mjs';
+
+const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 
 const CHART = 'chart-preset:', LAYOUT = 'layout:', LAYOUT_COMPONENT = 'component:', PRIMITIVE = 'layout-primitive:';
 const detailCache = new LruCache(128);
@@ -21,11 +13,12 @@ const reasonOf = result => result?.errors?.map(item => item.message).join(' ') ?
 const pretty = value => `${JSON.stringify(value, null, 2)}\n`;
 
 const chartCSS = (() => {
-  const blueprint = createBlueprint('dashboard-overview');
+  const made = resetDocument(null, {template: 'dashboard-overview'});
+  const blueprint = structuredClone(made.doc);
   blueprint.catalogVersion = '2.6.0'; blueprint.shell = 'minimal'; blueprint.pageType = 'general';
   blueprint.chrome.nav = blueprint.chrome.nav.slice(0, 2);
   blueprint.tree = {type: 'page', children: [{type: 'page-header', title: '기준', description: '기준'}, {type: 'chart', title: '기준', caption: '기준', kind: 'bar', grid: 'horizontal', unit: '건', categories: ['A', 'B'], series: [{name: '표본', values: [2, 3]}]}]};
-  return compile(blueprint).css;
+  return compileBlueprint(blueprint, {include: ['css']}).value.css;
 })();
 
 const chartRows = chartPresetMaterials.map(item => ({type: item.id, kind: 'chart-preset', label: item.label}));
@@ -131,7 +124,7 @@ function chartExport(view, selection) {
 function layoutExport(view, selection) {
   const {density = view.playground.defaults.density, mode = view.playground.defaults.mode} = selection;
   if (!['compact', 'comfortable', 'spacious'].includes(density) || !['light', 'dark'].includes(mode)) return {ok: false, reason: '레이아웃의 밀도 또는 모드 선택이 계약에 없습니다.'};
-  const assembled = assembleSpecimen(platformEnv(), view.type, {density, mode, stable: true});
+  const assembled = assembleLayoutSpecimen(view.type, {density, mode, stable: true});
   if (!assembled.ok) return {ok: false, reason: reasonOf(assembled)};
   const value = assembled.value;
   const html = standalone({title: view.label, mode, css: value.css, html: value.html});

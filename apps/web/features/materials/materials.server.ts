@@ -1,6 +1,24 @@
 import 'server-only';
 import {axisChoices, resetDocument} from '@winterholic/design-system-static-kit/edit';
-import {listCatalog, queryMaterials} from '@winterholic/design-system-static-kit/service';
+import {
+  BACKGROUNDS,
+  chartPresetMaterials,
+  chunks,
+  ELEVATION,
+  FACET_SHADOW,
+  ICON_MATERIALS,
+  LAYOUTS,
+  listCatalog,
+  MOTION_PATTERNS,
+  MOTIONS,
+  queryMaterials,
+  RADIUS,
+  renderChartPreset,
+  SPACING_MATERIALS,
+  SPACING_ROLES,
+  SURFACE_FACETS,
+  SURFACES,
+} from '@winterholic/design-system-static-kit/service';
 import {FOUNDATION_CATEGORIES, categoryRows} from './foundations-exhibit.mjs';
 import type {ColorFamily, ColorRow, ColorView, FoundationAxis, IconRow, PresetView, RampView, SeedView, TypeView} from './types';
 
@@ -200,13 +218,9 @@ export async function foundationExhibit(id: string) {
   let chartCount = 0;
 
   if (id === 'spacing' || id === 'density') {
-    const {SPACING_MATERIALS, SPACING_ROLES} = await import('../../../../src/platform/data/spacing.mjs');
     rows = [...SPACING_MATERIALS];
     if (id === 'spacing') roles = [...SPACING_ROLES];
   } else if (id === 'radius' || id === 'border' || id === 'elevation' || id === 'surface') {
-    const [{SURFACE_FACETS, SURFACES, FACET_SHADOW}, {ELEVATION, RADIUS}] = await Promise.all([
-      import('../../../../src/platform/data/surfaces.mjs'), import('../../../../src/styles/base.mjs'),
-    ]);
     facets = [...SURFACE_FACETS] as any[];
     radiusTokens = RADIUS;
     elevationTokens = ELEVATION;
@@ -225,25 +239,18 @@ export async function foundationExhibit(id: string) {
       rows = [...SURFACES];
     }
   } else if (id === 'background') {
-    const {BACKGROUNDS} = await import('../../../../src/platform/data/backgrounds.mjs');
     rows = [...BACKGROUNDS];
     const scene = colorView().scenes.light;
     backgroundTokens = Object.fromEntries(['--kit-canvas', '--kit-soft', '--kit-action', '--kit-accent', '--kit-rule', '--kit-border'].flatMap(key => scene[key] ? [[key, scene[key]]] : []));
   } else if (id === 'motion') {
-    const {MOTIONS, MOTION_PATTERNS} = await import('../../../../src/platform/data/motion.mjs');
     rows = [...MOTIONS];
     patterns = [...MOTION_PATTERNS];
   } else if (id === 'icon') {
-    const {ICON_MATERIALS} = await import('../../../../src/platform/data/icons.mjs');
     rows = [...ICON_MATERIALS];
     icons = iconRows();
   } else if (id === 'layout') {
-    const {LAYOUTS} = await import('../../../../src/platform/data/layouts.mjs');
     rows = [...LAYOUTS, ...layoutPrimitives().map(primitive => ({...primitive, id: `layout-primitive:${primitive.id}`}))];
   } else if (id === 'chart') {
-    const [{chartPresetMaterials}, {renderChartPreset}, {chunks}] = await Promise.all([
-      import('../../../../src/materials/chart-presets.mjs'), import('../../../../src/render/chart-presets.mjs'), import('../../../../src/styles/chunks.mjs'),
-    ]);
     const chartKinds = chartPresetMaterials.filter((preset, index, all) => all.findIndex(candidate => candidate.ext.chartKind === preset.ext.chartKind) === index);
     rows = chartKinds.map(preset => ({
       id: preset.ext.chartKind, label: preset.ext.chartKind, presetId: preset.id, presetLabel: preset.label, svg: renderChartPreset(preset.id),
