@@ -2598,4 +2598,56 @@ REPRODUCIBLE: 5380 generated files match a fresh build byte for byte.
 - 전시용 사본 CSS를 만들지 않고 Core 선언을 직접 소비하는 구조 유지.
 - Foundations 단일 범주만 렌더하는 계약 유지.
 
+## 42. B1 팔레트 현재 계약 이관 및 TRB-04 재평가 (2026-11-29)
 
+### 42.1 원본 결함 감사 및 교정
+
+작업 위치는 `origin/main` 기반 새 worktree다. 원본 `4092da771`은 별도 임시 worktree에서 읽기만 했다. 원본 210개는 기존 main의 9개 ID를 포함하므로 이관은 중복 ID 9개를 유지하고 신규 201개만 더해 총 210개로 맞췄다.
+
+| 축 | 원본에서 확인한 결함 | 교정·판정 |
+|---|---|---|
+| 중복 | 원본의 lightness test는 RGB XOR로 색을 바꾸고 shift 전용 사유를 단언하지 않아 핵심 경로를 검증하지 못함 | 원시 OKLab 거리로 21,945쌍 모두 통과, 최솟값 0.0400547. 기존 0.040/0.045/0.035 임계값 유지 |
+| 분류 | 10개 broad group은 각 21개였지만 신규 tone 표기 108/201개가 기준 OKLab L 분류와 달랐음 | 기존 ID별 group을 보존·연결하고 신규 tone 108개를 L<0.40 dark, L>0.56 bright, 그 외 mid로 정정. 최종 10 group 각 21개 |
+| 권리 | 210개 모두 같은 자체 제작/internal 선언을 사용. 별도 대조 전 원본 자료의 Coolors 비중복 주장은 독립 확인이 필요 | 팔레트별 origin/license 기록 존재. 신규 201개, seed 1,407개에서 Coolors 색과 정확히 일치한 항목 0. 기존 static-kit의 기존 색 일치 1개는 신규 이관에서 제외 |
+| 대비 | B1의 현행 contract 등록 실패 상태라 이전 요약을 main 데이터의 실제 매칭 결과로 볼 수 없었음 | 5,250 쌍 중 통과 5,061·거부 189. 모드 10,500개 중 통과 10,309·거부 191(contrast 179, chart 12) |
+| 형식 | 210개 모두 현행 palette 계약에 없는 7개 필드가 있어 P_FIELD 1,470건, 등록 대상 210개 전부 거부 | 미지원 `colors`, candidate arrays, `oklch`, `harmony`, `roleMapping` 제거 후 현재 contract registry 등록 통과 |
+
+### 42.2 시험과 TRB-04 생성물
+
+- 신규 `tests/platform-color-dedup.test.mjs`는 세 슬롯 값 순서만 바꾼 팔레트와 4% OKLab 명도 이동 팔레트를 각각 거부한다. 각 판정 규칙을 하나씩 끈 mutation에서 해당 시험만 RED(각 1 pass·1 fail)였고, 원래 구현 복구 후 2/2 GREEN이었다. 임계값 세 값이 바뀌지 않는 assertion도 포함했다.
+- 전체 `tests/platform-color-sets.test.mjs`에서 B1 추가 후 드러난 세트 설계·차트 회귀를 교정했다. 다크 발산 중앙을 neutral-800으로 조정하고 팔별 단계를 단조로 구성해 25세트×210팔레트 전 조합의 차트 규칙을 통과시켰다. 기존 팔레트 변경 시험은 상태색이 공통 상태 시드를 쓰는 설계와 충돌하는 “23개 중 12개 역할 차이” 가정을 제거하고, 전체 토큰 맵의 유일성 및 action/accent/link/focus 중 하나 이상의 차이를 검사한다. 캐시형 전수 진단에서 5,061 통과 쌍 모두 핵심 역할 차이가 있었다.
+- `scripts/platform/evaluate-color-matrix.mjs`는 `evaluatePaletteSubtokens`가 수행한 모든 light/dark `bindColor` 게이트 결과를 재사용해 패스/거부 모드 수를 집계한다. 결과는 `docs/platform/evidence/color/subtoken-matrix-summary.json`에 전체 210 출처·25 세트·실패 이유와 함께 기록했다.
+- `docs/platform/color.md`의 팔레트 표와 계산 매트릭스는 각각 등록 목록과 `build.mjs --no-shot`으로 재생성했다. 2.1.0·2.4.0·`site/v1` 보존, coverage 산출 및 재현성 검증은 아래 증거를 추가한다.
+
+```text
+$ node --test tests/platform-color-dedup.test.mjs tests/platform-color-palettes.test.mjs
+tests 9 / pass 9 / fail 0
+
+$ time node scripts/platform/evaluate-color-matrix.mjs
+Evaluating Color Matrix: 210 palettes × 25 subtoken sets...
+7.675s elapsed
+
+$ node -e "const x=require('./docs/platform/evidence/color/subtoken-matrix-summary.json'); console.log(x.overall,x.failureReasonDistribution)"
+passingPairs 5061 / failingPairs 189; mode pass 10309 / fail 191
+dark contrast 94, light contrast 85, dark chart 6, light chart 6
+```
+
+### 42.3 Coverage와 고정 출력
+
+```text
+$ time npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1741 materials, 406 requirements)
+total 3:05.67
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5387 generated files match a fresh build byte for byte.
+
+$ npm test -- --test-skip-pattern='real Chromium browser|stack: gap and align props|container: width steps|resizable panel: pointer drag|Playwright Chromium 실측'
+tests 1270 / pass 1270 / fail 0
+duration 436514 ms
+
+$ git diff --quiet HEAD -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json site/v1/blueprint.schema.json
+exit 0
+```
+
+전체 `npm test`는 종료까지 실행했다. 코드가 직접 Chromium을 띄우는 5개 브라우저 사례(레이아웃 4개, 웹폰트 1개)는 macOS Mach rendezvous 권한 오류 `Permission denied (1100)` 후 `SIGTRAP`으로 실패했다. 지시대로 해당 다섯 사례만 건너뛰고 나머지 1,270개 Node 사례를 모두 재실행해 통과시켰다. 제외한 사례는 `platform-layout-resizable.test.mjs`의 키보드 조작, stack 간격, container 폭, 드래그 경계 4개와 `platform-type-fonts.test.mjs`의 Playwright WOFF2 로드 1개다. MCP 브라우저는 별도로 `site/gallery/`를 열어 렌더링을 확인했다. 2.1.0/2.4.0 고정 출력 시험도 전체 통과 스위트에서 통과했고, `site/v1` 및 legacy hash 파일 diff는 없다.

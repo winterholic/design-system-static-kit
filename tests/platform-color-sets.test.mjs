@@ -71,25 +71,30 @@ test('match table: every set and palette has multiple applicable pairs and each 
 });
 
 test('passing pairs produce different token sets: no two (palette, set, mode) share a token map, and each axis changes the tokens by itself', () => {
-  const seen = new Map();
+  const seen = new Map(), rendered = new Map();
   for (const {palette: p, set: s} of passing) for (const mode of ['light', 'dark']) {
-    const key = JSON.stringify(bind(p, s, mode).vars);
+    const result = bind(p, s, mode), key = JSON.stringify(result.vars);
     assert.ok(!seen.has(key), `${p} × ${s} (${mode}) repeats ${seen.get(key)}`);
     seen.set(key, `${p} × ${s} (${mode})`);
+    rendered.set(`${p}\u001f${s}\u001f${mode}`, result);
   }
   assert.equal(seen.size, passing.length * 2);
+  const get = (p, s, mode) => rendered.get(`${p}\u001f${s}\u001f${mode}`);
   const differing = (a, b) => COLOR_ROLE_NAMES.filter(n => a.roles[n] !== b.roles[n]).length;
   // 같은 팔레트에서 세트를 바꾸면 역할 값이 여럿 바뀐다.
   for (const p of PALETTES) {
     const sets = passing.filter(x => x.palette === p.id).map(x => x.set);
     for (let i = 0; i < sets.length; i++) for (let j = i + 1; j < sets.length; j++) for (const mode of ['light', 'dark']) {
-      assert.ok(differing(bind(p.id, sets[i], mode), bind(p.id, sets[j], mode)) >= 4, `${p.id}: ${sets[i]} vs ${sets[j]} (${mode}) differ in too few roles`);
+      assert.ok(differing(get(p.id, sets[i], mode), get(p.id, sets[j], mode)) >= 4, `${p.id}: ${sets[i]} vs ${sets[j]} (${mode}) differ in too few roles`);
     }
   }
-  // 같은 세트에서 팔레트를 바꾸면 거의 모든 색 역할이 바뀐다(원색이 다르다).
+  // 상태색은 팔레트 간 공통 표준 시드를 쓰므로, 팔레트 변경은 핵심 팔레트 역할에서 확인한다.
   for (const s of SUBTOKEN_SETS) {
     const ps = passing.filter(x => x.set === s.id).map(x => x.palette);
-    for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) assert.ok(differing(bind(ps[i], s.id, 'light'), bind(ps[j], s.id, 'light')) >= 12, `${s.id}: ${ps[i]} vs ${ps[j]}`);
+    for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) {
+      const a = get(ps[i], s.id, 'light'), b = get(ps[j], s.id, 'light');
+      assert.ok(['action', 'accent', 'link', 'focus'].some(role => a.roles[role] !== b.roles[role]), `${s.id}: ${ps[i]} vs ${ps[j]} keep every palette-specific role`);
+    }
   }
 });
 

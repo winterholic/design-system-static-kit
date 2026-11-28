@@ -55,7 +55,9 @@ test('same request, only the style context changes: the CSS, the shell scope and
 test('purpose families are placed in the page: requested purposes render through the candidate visual family and reach the stored Blueprint', () => {
   const kpi = getPurposeFamily('purpose:card.kpi');
   const comps = [0, 1, 2].map(i => ({purpose: 'purpose:card.kpi', id: `kpi-${i}`, variant: kpi.example.variant, props: kpi.example.props, content: {...kpi.example.content, label: `지표 ${i}`}}));
-  const r = assemblePage({purpose: 'work-dashboard', candidates: 3, content: {title: '운영', kpis: kpis(3)}, components: comps}, env);
+  // Palette selection is held constant so this regression isolates family diversity as the
+  // palette catalog grows; otherwise the larger palette axis changes the candidate tie order.
+  const r = assemblePage({purpose: 'work-dashboard', palette: 'palette:slate-neutral', candidates: 3, content: {title: '운영', kpis: kpis(3)}, components: comps}, env);
   assert.equal(r.ok, true, JSON.stringify(r.diagnostics));
   assert.equal((r.value.html.match(/data-purpose="card\.kpi"/g) ?? []).length, 3, 'three KPI cards from the purpose family');
   assert.ok(r.value.html.includes('지표 0') && r.value.html.includes('지표 2'));

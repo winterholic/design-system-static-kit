@@ -48,6 +48,76 @@ function toLab(hex) {
 /** CIE76 색차. 범주형 차트 색이 서로 얼마나 다른지 잰다. */
 export const deltaE = (a, b) => Math.hypot(...toLab(a).map((v, i) => v - toLab(b)[i]));
 
+// 팔레트 중복 비교는 같은 색의 슬롯 순서 교체와 거의 같은 팔레트 변형을 잡는다.
+const srgbToLinear = c => c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+const hexToOklab = hex => {
+  const [r, g, b] = hex.slice(1).match(/../g).map(x => srgbToLinear(parseInt(x, 16) / 255));
+  const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+  const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+  const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+  const l_ = Math.cbrt(l), m_ = Math.cbrt(m), s_ = Math.cbrt(s);
+  return {
+    L: 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_,
+    a: 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_,
+    b: 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_,
+  };
+};
+const deltaEOk = (a, b) => {
+  const x = hexToOklab(a), y = hexToOklab(b);
+  return Math.hypot(x.L - y.L, x.a - y.a, x.b - y.b);
+};
+const oklch = hex => {
+  const {L, a, b} = hexToOklab(hex);
+  let h = Math.atan2(b, a) * 180 / Math.PI;
+  if (h < 0) h += 360;
+  return {L, C: Math.hypot(a, b), h};
+};
+
+export const DEDUPLICATION_THRESHOLDS = Object.freeze({
+  SET_DISTANCE_MIN: 0.040,
+  SLOT_DISTANCE_MIN: 0.045,
+  BRAND_ACCENT_PAIR_MIN: 0.035,
+});
+
+export function paletteDistance(p1, p2) {
+  const a = p1.seeds ?? p1, b = p2.seeds ?? p2;
+  const brandDist = deltaEOk(a.brand, b.brand);
+  const accentDist = deltaEOk(a.accent ?? a.brand, b.accent ?? b.brand);
+  const neutralDist = deltaEOk(a.neutral, b.neutral);
+  const slotDistance = brandDist * 0.45 + accentDist * 0.35 + neutralDist * 0.20;
+  const left = [a.brand, a.accent, a.neutral].filter(Boolean);
+  const right = [b.brand, b.accent, b.neutral].filter(Boolean);
+  const nearestAverage = (from, to) => from.reduce((sum, color) => sum + Math.min(...to.map(other => deltaEOk(color, other))), 0) / from.length;
+  const setDistance = (nearestAverage(left, right) + nearestAverage(right, left)) / 2;
+  const slots = ['brand', 'accent', 'neutral', 'success', 'warning', 'danger', 'info'].filter(k => a[k] && b[k]);
+  const allSlotDist = slots.reduce((sum, k) => sum + deltaEOk(a[k], b[k]), 0) / slots.length;
+  const x = oklch(a.brand), y = oklch(b.brand);
+  const hueGap = Math.min(Math.abs(x.h - y.h), 360 - Math.abs(x.h - y.h));
+  const isLightnessShift = hueGap < 10 && Math.abs(x.C - y.C) < 0.03 && Math.abs(x.L - y.L) < 0.06;
+  return {slotDistance, setDistance, allSlotDist, brandDist, accentDist, neutralDist, isLightnessShift, compositeDistance: Math.min(slotDistance, setDistance)};
+}
+
+export function checkPaletteDuplicates(palettes, thresholds = DEDUPLICATION_THRESHOLDS) {
+  const duplicatePairs = [];
+  let minDistance = Infinity;
+  let totalPairs = 0;
+  for (let i = 0; i < palettes.length; i++) for (let j = i + 1; j < palettes.length; j++) {
+    totalPairs++;
+    const p1 = palettes[i], p2 = palettes[j], distance = paletteDistance(p1, p2);
+    minDistance = Math.min(minDistance, distance.compositeDistance);
+    const permutation = distance.setDistance < thresholds.SET_DISTANCE_MIN;
+    const lightnessShift = distance.isLightnessShift && distance.brandDist < 0.05;
+    const tooClose = distance.slotDistance < thresholds.SLOT_DISTANCE_MIN;
+    const brandAccentClose = distance.brandDist < thresholds.BRAND_ACCENT_PAIR_MIN && distance.accentDist < thresholds.BRAND_ACCENT_PAIR_MIN;
+    if (permutation || lightnessShift || tooClose || brandAccentClose) duplicatePairs.push({
+      paletteA: p1.id, paletteB: p2.id,
+      reason: lightnessShift ? 'lightness-shift-variation' : permutation ? 'permutation-or-identical-colors' : tooClose ? 'too-close-in-oklab' : 'brand-accent-too-close',
+      distance,
+    });
+  }
+  return {ok: duplicatePairs.length === 0, duplicatePairs, minDistance: Number.isFinite(minDistance) ? floor4(minDistance) : null, totalPairs, thresholds};
+}
+
 /** 세트 기록의 파생 설계 필드(states·components·charts)를 하나로. 없는 부분은 DEFAULT_DESIGN(계약 0.4.0: 기록 필드가 원본). */
 export function designOf(set) {
   const st = set.states ?? {}, d = DEFAULT_DESIGN;
@@ -129,7 +199,9 @@ export const CATEGORICAL_COUNT = 6, SEQUENTIAL_STEPS = 7, DIVERGING_STEPS = 7;
 /** tone → [라이트 단계, 다크 단계]. 램프 단계에서 시작해 면 대비를 맞출 때까지 보정한다. */
 export const CHART_TONES = Object.freeze({standard: ['600', '300'], vivid: ['500', '400'], soft: ['400', '300'], deep: ['700', '400']});
 const SEQ_LIGHT = ['200', '300', '400', '500', '600', '700', '800'], SEQ_DARK = [...SEQ_LIGHT].reverse();
-const DIV_ARM = {light: ['700', '500', '300'], dark: ['300', '500', '600']}, DIV_MID = {light: '200', dark: '700'};
+const DIV_LOW_ARM = {light: ['700', '500', '300'], dark: ['300', '500', '600']};
+const DIV_HIGH_ARM = {light: ['300', '500', '700'], dark: ['500', '400', '300']};
+const DIV_MID = {light: '200', dark: '800'};
 /** 순차·발산 이웃 단계의 CIE76 색차 하한. 명암비는 어두운 쪽에서 단계 차이를 과소평가해 색차로 잰다. */
 const ADJACENT_MIN = 6;
 const stepDistance = colors => floor4(Math.min(...colors.slice(1).map((x, i) => deltaE(x, colors[i]))));
@@ -168,8 +240,8 @@ function diverging(seeds, d, mode) {
   let pair = null;
   for (const l of slotsOf(d.low)) { for (const h of slotsOf(d.high)) if (l !== h && hueGap(seeds[l], seeds[h]) >= 60) { pair = [l, h]; break; } if (pair) break; }
   if (!pair) return null;
-  const lo = colorRamp(seeds[pair[0]]), hi = colorRamp(seeds[pair[1]]), mid = colorRamp(seeds.neutral)[DIV_MID[mode]], arm = DIV_ARM[mode];
-  return {low: pair[0], high: pair[1], colors: [...arm.map(st => lo[st]), mid, ...[...arm].reverse().map(st => hi[st])]};
+  const lo = colorRamp(seeds[pair[0]]), hi = colorRamp(seeds[pair[1]]), mid = colorRamp(seeds.neutral)[DIV_MID[mode]];
+  return {low: pair[0], high: pair[1], colors: [...DIV_LOW_ARM[mode].map(st => lo[st]), mid, ...DIV_HIGH_ARM[mode].map(st => hi[st])]};
 }
 
 function deriveCharts(seeds, design, mode, roles, {contrast, raw}) {

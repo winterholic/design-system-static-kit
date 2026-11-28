@@ -477,15 +477,58 @@
       "modifiedFiles": [
         "src/platform/data/palettes.mjs",
         "tests/platform-color-palettes.test.mjs",
-        "docs/platform/color.md"
+        "docs/platform/color.md",
+        "tests/platform-pregenerate.test.mjs",
+        "tests/platform-pipeline-integration.test.mjs"
       ],
-      "completionCriteria": "10개 계열별 각 20개 총 200개 팔레트 등록, 모든 팔레트에 출처(license: internal/MIT) 명시, OKLCH 지각 거리 중복 검사 통과",
+      "completionCriteria": "기존 9개 ID를 유지하면서 201개 신규 팔레트를 추가해 총 210개, 10개 group 각 21개; 신규 팔레트별 internal 자체 제작 출처, Coolors seed 정확 일치 0, OKLab 중복 임계값 통과 및 현행 contract 등록",
       "tests": [
-        "tests/platform-color-palettes.test.mjs"
+        "tests/platform-color-palettes.test.mjs",
+        "tests/platform-color-dedup.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": "기존 Coolors 팔레트 의존 레거시 테스트와의 격리 확인 필요"
+      "status": "Verified",
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "owner": "Track G",
+          "reason": "B1 독립 팔레트 이관 결정 DEC-019 기록(CONTRACTS §6.1)"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "owner": "Track G",
+          "reason": "TRB-01/TRB-04 결과와 이 파일 교차 소유 허가 기록(CONTRACTS §6.1)"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+          "owner": "Track G",
+          "reason": "B1 현재 형식 적합성·TRB-04 재평가·coverage 증거 기록(CONTRACTS §6.1)"
+        },
+        {
+          "file": "tests/platform-pregenerate.test.mjs",
+          "owner": "Track G",
+          "reason": "공개 플랫폼 카탈로그의 200+ 권리 기록과 등록/미리보기 인덱스 일치 검사"
+        },
+        {
+          "file": "site/previews/**, site/catalog-index.json, site/catalog-chunks/**, site/search-index.json",
+          "owner": "소유자 없음(생성물)",
+          "reason": "현재 공개 플랫폼 인덱스·대표 미리보기 재생성. site/v1 및 기존 2.1.0/2.4.0 고정 출력은 불변"
+        },
+        {
+          "file": "apps/web/public/catalog-index.json, apps/web/public/previews/**",
+          "owner": "소유자 없음(생성물)",
+          "reason": "scripts/sync-static.mjs가 site의 현재 플랫폼 인덱스·미리보기를 웹 public 경로에 동기화"
+        },
+        {
+          "file": "tests/platform-pipeline-integration.test.mjs",
+          "owner": "Track A",
+          "reason": "210 팔레트 축 추가로 바뀐 후보 동률 순서를 통제하고 family-diversity 계약을 독립 검증"
+        }
+      ],
+      "createFiles": [
+        "tests/platform-color-dedup.test.mjs"
+      ]
     },
     {
       "taskId": "TASK-TRB-02",
@@ -559,20 +602,21 @@
       ],
       "modifiedFiles": [
         "src/platform/color.mjs",
-        "src/platform/index.mjs",
-        "src/service/platform-components.mjs",
         "scripts/platform/evaluate-color-matrix.mjs",
         "tests/platform-color-compat.test.mjs",
-        "tests/platform-color-user.test.mjs"
+        "tests/platform-color-user.test.mjs",
+        "docs/platform/evidence/color/subtoken-matrix-summary.json",
+        "tests/platform-pregenerate.test.mjs",
+        "tests/platform-pipeline-integration.test.mjs"
       ],
-      "completionCriteria": "모든 조합에 대한 대비 합격/불합격 및 적합도 점수 산출 완료, 차단 이유(blocked) 제공",
+      "completionCriteria": "210×25 팔레트-세트와 light/dark 전 조합을 실제 bindColor 게이트로 평가, 통과·거부·모드별 사유를 artifact에 기록; 랭킹과 blocked 이유 유지",
       "tests": [
         "tests/platform-color-compat.test.mjs",
         "tests/platform-color-user.test.mjs"
       ],
       "commit": null,
-      "status": "In Progress",
-      "unresolvedIssues": "200×25 평가는 B1(TRB-01) 병합 후 재실행",
+      "status": "Verified",
+      "unresolvedIssues": null,
       "crossTrackFiles": [
         {
           "file": "src/service/platform-components.mjs",
@@ -613,6 +657,46 @@
           "file": "docs/platform/evidence/color/sunrise-warm-4sets-dark.png",
           "owner": "Track G",
           "reason": "다크 모드 생성 미리보기 이미지 갱신"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "owner": "Track G",
+          "reason": "B1 독립 팔레트 이관 결정 DEC-019 기록(CONTRACTS §6.1)"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "owner": "Track G",
+          "reason": "TRB-01/TRB-04 결과와 이 파일 교차 소유 허가 기록(CONTRACTS §6.1)"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+          "owner": "Track G",
+          "reason": "B1 현재 형식 적합성·TRB-04 재평가·coverage 증거 기록(CONTRACTS §6.1)"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "owner": "Track G",
+          "reason": "210 팔레트 레지스트리의 Material Coverage 재생성(CONTRACTS §6.1)"
+        },
+        {
+          "file": "tests/platform-pregenerate.test.mjs",
+          "owner": "Track G",
+          "reason": "공개 플랫폼 카탈로그의 200+ 권리 기록과 등록/미리보기 인덱스 일치 검사"
+        },
+        {
+          "file": "site/previews/**, site/catalog-index.json, site/catalog-chunks/**, site/search-index.json",
+          "owner": "소유자 없음(생성물)",
+          "reason": "현재 공개 플랫폼 인덱스·대표 미리보기 재생성. site/v1 및 기존 2.1.0/2.4.0 고정 출력은 불변"
+        },
+        {
+          "file": "apps/web/public/catalog-index.json, apps/web/public/previews/**",
+          "owner": "소유자 없음(생성물)",
+          "reason": "scripts/sync-static.mjs가 site의 현재 플랫폼 인덱스·미리보기를 웹 public 경로에 동기화"
+        },
+        {
+          "file": "tests/platform-pipeline-integration.test.mjs",
+          "owner": "Track A",
+          "reason": "210 팔레트 축 추가로 바뀐 후보 동률 순서를 통제하고 family-diversity 계약을 독립 검증"
         }
       ]
     },

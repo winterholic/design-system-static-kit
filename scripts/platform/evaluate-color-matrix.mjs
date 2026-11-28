@@ -9,7 +9,7 @@ import {resolve, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {PALETTES} from '../../src/platform/data/palettes.mjs';
 import {SUBTOKEN_SETS} from '../../src/platform/data/subtoken-sets.mjs';
-import {evaluatePaletteSubtokens, bindColor} from '../../src/platform/color.mjs';
+import {evaluatePaletteSubtokens} from '../../src/platform/color.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../..');
@@ -19,6 +19,8 @@ const modes = ['light', 'dark'];
 let totalCombinations = 0;
 let passingCombinations = 0;
 let failingCombinations = 0;
+let passingPairs = 0;
+let failingPairs = 0;
 
 const paletteSummaries = [];
 const setSummaries = new Map();
@@ -43,7 +45,7 @@ for (const p of PALETTES) {
   const pEval = evaluatePaletteSubtokens(p);
   const pSummary = {
     paletteId: p.id,
-    family: p.family ?? p.id.split(':')[1]?.split('-')[0],
+    family: p.tags.find(tag => tag.startsWith('group:'))?.slice('group:'.length) ?? p.id.split(':')[1]?.split('-')[0],
     passingSets: [],
     failingSets: [],
     topRanked: pEval.ranked[0]?.id ?? null,
@@ -64,28 +66,25 @@ for (const p of PALETTES) {
       sStat.passCount++;
       sStat.scores.push(item.score);
       sStat.margins.push(item.margin);
+      passingPairs++;
     } else {
       pSummary.failingSets.push({
         id: item.id,
         reasons: item.blockedReasons,
       });
       sStat.failCount++;
+      failingPairs++;
       for (const b of item.blockedReasons) {
-        const code = b.code || 'UNKNOWN';
+        const code = `${b.mode ?? 'all'}:${b.code || 'UNKNOWN'}`;
         failureReasons.set(code, (failureReasons.get(code) || 0) + 1);
       }
     }
 
-    // 모드별 세부 카운트
-    for (const m of modes) {
-      totalCombinations++;
-      const r = bindColor(p, SUBTOKEN_SETS.find(s => s.id === item.id), m);
-      if (r.ok) {
-        passingCombinations++;
-      } else {
-        failingCombinations++;
-      }
-    }
+    // evaluatePaletteSubtokens가 이미 각 모드에서 bindColor와 대비 게이트를 실행한다.
+    const passedModes = Object.keys(item.modes).length;
+    totalCombinations += modes.length;
+    passingCombinations += passedModes;
+    failingCombinations += modes.length - passedModes;
   }
 
   paletteSummaries.push(pSummary);
@@ -118,6 +117,9 @@ const summary = {
     totalCombinationsWithModes: totalCombinations,
   },
   overall: {
+    passingPairs,
+    failingPairs,
+    totalPairs: PALETTES.length * SUBTOKEN_SETS.length,
     passingCombinations,
     failingCombinations,
     passRate: `${((passingCombinations / totalCombinations) * 100).toFixed(2)}%`,

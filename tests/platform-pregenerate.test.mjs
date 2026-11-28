@@ -132,10 +132,14 @@ test('공개 레지스트리에서 인덱스가 자동으로 만들어진다: �
   for (const row of allPlatformMaterials('purpose-family')) assert.ok(withPreview.has(`purpose-family:${row.id}`) || previews.skipped.some(s => s.kind === 'purpose-family' && s.id === row.id), row.id);
 });
 
-test('권리를 확인하지 못한 팔레트(Coolors 427종)는 공개 인덱스에 없다', () => {
+test('권리 기록을 가진 자체 팔레트 200종 이상은 공개 인덱스에 포함되고 미등록 재료는 없다', () => {
   const registered = new Set(allPlatformMaterials('palette').map(p => p.id));
-  for (const m of index.materials.filter(m => m.kind === 'palette')) assert.ok(registered.has(m.id), m.id);
-  assert.ok(index.materials.filter(m => m.kind === 'palette').length < 100);
+  const publicPalettes = index.materials.filter(m => m.kind === 'palette');
+  for (const m of publicPalettes) {
+    assert.ok(registered.has(m.id), m.id);
+    assert.ok(['internal', 'MIT'].includes(m.license), `${m.id} has an unverified license`);
+  }
+  assert.ok(publicPalettes.length >= 200, `public palettes: ${publicPalettes.length}`);
 });
 
 test('catalog-index.json 은 LightCatalogIndex 계약을 따른다(CONTRACTS §4)', () => {
