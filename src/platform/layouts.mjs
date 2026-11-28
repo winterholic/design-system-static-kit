@@ -48,6 +48,219 @@ export const layoutAxisCheck = defineCheck({
 
 export const LAYOUT_CHECKS = Object.freeze([layoutSlotFitCheck, layoutAxisCheck]);
 
+/**
+ * 24개 레이아웃의 실측 기준 표본 목록 (E3 기준 고정 매핑).
+ * 목적 패밀리가 추가되거나 알파벳 순서가 바뀌어도 브라우저 실측 증거(measurements.json) 및 layoutFingerprint가
+ * 무관한 재료 추가에 의해 흔들리지 않도록 안정화한다. 실제 레이아웃이나 기준 표본의 변경은 지문 불일치로 검출된다.
+ */
+export const LAYOUT_BASELINE_SPECIMENS = Object.freeze({
+  'layout:asymmetric-grid': [
+    {slot: 'feature', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.feature'},
+    {slot: 'items', purpose: 'purpose:card.gallery'},
+    {slot: 'items', purpose: 'purpose:card.kpi'},
+  ],
+  'layout:bento': [
+    {slot: 'head', purpose: 'purpose:button.emphasis'},
+    {slot: 'tiles', purpose: 'purpose:card.article'},
+    {slot: 'tiles', purpose: 'purpose:card.feature'},
+    {slot: 'tiles', purpose: 'purpose:card.gallery'},
+    {slot: 'tiles', purpose: 'purpose:card.kpi'},
+    {slot: 'tiles', purpose: 'purpose:card.pricing'},
+  ],
+  'layout:centered-hero': [
+    {slot: 'copy', purpose: 'purpose:button.emphasis'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+    {slot: 'proof', purpose: 'purpose:card.kpi'},
+  ],
+  'layout:commerce-grid': [
+    {slot: 'toolbar', purpose: 'purpose:button.close'},
+    {slot: 'toolbar', purpose: 'purpose:button.copy'},
+    {slot: 'filters', purpose: 'purpose:form.auth'},
+    {slot: 'filters', purpose: 'purpose:form.filter'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+    {slot: 'products', purpose: 'purpose:card.product'},
+  ],
+  'layout:dashboard-grid': [
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'kpis', purpose: 'purpose:card.kpi'},
+    {slot: 'charts', purpose: 'purpose:card.article'},
+    {slot: 'charts', purpose: 'purpose:card.feature'},
+    {slot: 'side', purpose: 'purpose:card.article'},
+    {slot: 'table', purpose: 'purpose:table.dense'},
+    {slot: 'table', purpose: 'purpose:table.dense'},
+  ],
+  'layout:documentation-layout': [
+    {slot: 'nav', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'toc', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+  ],
+  'layout:double-sidebar': [
+    {slot: 'left', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'main', purpose: 'purpose:card.article'},
+    {slot: 'main', purpose: 'purpose:card.feature'},
+    {slot: 'right', purpose: 'purpose:card.article'},
+    {slot: 'right', purpose: 'purpose:card.feature'},
+  ],
+  'layout:editorial-layout': [
+    {slot: 'kicker', purpose: 'purpose:card.status'},
+    {slot: 'headline', purpose: 'purpose:button.emphasis'},
+    {slot: 'figure', purpose: 'purpose:card.gallery'},
+    {slot: 'lede', purpose: 'purpose:card.article'},
+    {slot: 'body', purpose: 'purpose:card.article'},
+    {slot: 'body', purpose: 'purpose:card.article'},
+    {slot: 'aside', purpose: 'purpose:card.article'},
+  ],
+  'layout:equal-grid': [
+    {slot: 'head', purpose: 'purpose:button.emphasis'},
+    {slot: 'items', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.feature'},
+    {slot: 'items', purpose: 'purpose:card.gallery'},
+    {slot: 'items', purpose: 'purpose:card.kpi'},
+    {slot: 'items', purpose: 'purpose:card.pricing'},
+    {slot: 'items', purpose: 'purpose:card.product'},
+  ],
+  'layout:form-layout': [
+    {slot: 'intro', purpose: 'purpose:button.emphasis'},
+    {slot: 'fields', purpose: 'purpose:form.auth'},
+    {slot: 'fields', purpose: 'purpose:form.filter'},
+    {slot: 'fields', purpose: 'purpose:form.group'},
+    {slot: 'fields', purpose: 'purpose:form.search'},
+    {slot: 'fields', purpose: 'purpose:form.settings'},
+    {slot: 'fields', purpose: 'purpose:form.auth'},
+    {slot: 'aside', purpose: 'purpose:card.status'},
+    {slot: 'aside', purpose: 'purpose:feedback.confirm'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:kpi-strip': [
+    {slot: 'lead', purpose: 'purpose:card.feature'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+    {slot: 'metrics', purpose: 'purpose:card.kpi'},
+  ],
+  'layout:masonry': [
+    {slot: 'items', purpose: 'purpose:card.article'},
+    {slot: 'items', purpose: 'purpose:card.feature'},
+    {slot: 'items', purpose: 'purpose:card.gallery'},
+    {slot: 'items', purpose: 'purpose:card.kpi'},
+    {slot: 'items', purpose: 'purpose:card.pricing'},
+    {slot: 'items', purpose: 'purpose:card.product'},
+    {slot: 'items', purpose: 'purpose:card.profile'},
+    {slot: 'items', purpose: 'purpose:card.status'},
+  ],
+  'layout:master-detail': [
+    {slot: 'list', purpose: 'purpose:card.article'},
+    {slot: 'list', purpose: 'purpose:card.feature'},
+    {slot: 'detail', purpose: 'purpose:card.article'},
+    {slot: 'detail', purpose: 'purpose:card.feature'},
+    {slot: 'meta', purpose: 'purpose:card.article'},
+  ],
+  'layout:media-hero': [
+    {slot: 'media', purpose: 'purpose:card.gallery'},
+    {slot: 'copy', purpose: 'purpose:button.emphasis'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:mobile-stack': [
+    {slot: 'header', purpose: 'purpose:button.emphasis'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.feature'},
+    {slot: 'content', purpose: 'purpose:card.gallery'},
+    {slot: 'content', purpose: 'purpose:card.kpi'},
+    {slot: 'content', purpose: 'purpose:card.pricing'},
+    {slot: 'content', purpose: 'purpose:card.product'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:multi-step-form': [
+    {slot: 'steps', purpose: 'purpose:feedback.progress'},
+    {slot: 'panel', purpose: 'purpose:form.auth'},
+    {slot: 'panel', purpose: 'purpose:form.filter'},
+    {slot: 'summary', purpose: 'purpose:card.article'},
+    {slot: 'summary', purpose: 'purpose:card.feature'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:product-detail-layout': [
+    {slot: 'gallery', purpose: 'purpose:card.gallery'},
+    {slot: 'info', purpose: 'purpose:card.pricing'},
+    {slot: 'buy', purpose: 'purpose:button.close'},
+    {slot: 'buy', purpose: 'purpose:button.copy'},
+    {slot: 'details', purpose: 'purpose:card.article'},
+    {slot: 'details', purpose: 'purpose:card.feature'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+    {slot: 'related', purpose: 'purpose:card.product'},
+  ],
+  'layout:settings-layout': [
+    {slot: 'nav', purpose: 'purpose:navigation.bottom'},
+    {slot: 'sections', purpose: 'purpose:form.auth'},
+    {slot: 'sections', purpose: 'purpose:form.filter'},
+    {slot: 'help', purpose: 'purpose:card.article'},
+    {slot: 'help', purpose: 'purpose:card.feature'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+  ],
+  'layout:sidebar-main': [
+    {slot: 'sidebar', purpose: 'purpose:navigation.sidebar'},
+    {slot: 'main', purpose: 'purpose:card.article'},
+    {slot: 'main', purpose: 'purpose:card.feature'},
+  ],
+  'layout:single-column': [
+    {slot: 'lead', purpose: 'purpose:button.emphasis'},
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.feature'},
+    {slot: 'aside', purpose: 'purpose:card.article'},
+  ],
+  'layout:split-hero': [
+    {slot: 'copy', purpose: 'purpose:button.emphasis'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+    {slot: 'media', purpose: 'purpose:card.gallery'},
+  ],
+  'layout:sticky-action-layout': [
+    {slot: 'content', purpose: 'purpose:card.article'},
+    {slot: 'content', purpose: 'purpose:card.feature'},
+    {slot: 'actions', purpose: 'purpose:button.close'},
+    {slot: 'actions', purpose: 'purpose:button.copy'},
+    {slot: 'summary', purpose: 'purpose:card.article'},
+    {slot: 'summary', purpose: 'purpose:card.feature'},
+  ],
+  'layout:three-column': [
+    {slot: 'center', purpose: 'purpose:card.article'},
+    {slot: 'center', purpose: 'purpose:card.feature'},
+    {slot: 'left', purpose: 'purpose:card.article'},
+    {slot: 'left', purpose: 'purpose:card.feature'},
+    {slot: 'right', purpose: 'purpose:card.article'},
+    {slot: 'right', purpose: 'purpose:card.feature'},
+  ],
+  'layout:two-column': [
+    {slot: 'primary', purpose: 'purpose:card.article'},
+    {slot: 'primary', purpose: 'purpose:card.feature'},
+    {slot: 'secondary', purpose: 'purpose:card.article'},
+    {slot: 'secondary', purpose: 'purpose:card.feature'},
+  ],
+});
+
 const SLOT_ITEMS = {grid: 6, columns: 8, bento: 5};
 /** 슬롯을 채울 항목 수: 반복 흐름은 열 수가 폭마다 달라지는 값, 그 밖의 슬롯은 최소 수(여러 개 받는 슬롯은 2개)다. */
 const specimenCount = slot => Math.max(slot.min, Math.min(slot.max, SLOT_ITEMS[slot.flow?.mode] ?? (slot.max > 1 ? Math.min(slot.max, slot.min > 1 ? slot.min : 2) : 1)));
@@ -59,9 +272,24 @@ const stretch = (v, key = '') => (typeof v === 'string' ? (PROSE_KEYS.includes(k
 
 /**
  * 슬롯 계약을 모두 채우는 항목 목록: [{slot, purpose, variant, props, content}]. 선택 슬롯도 채운다.
- * 슬롯 허용 콘텐츠에 드는 목적 패밀리를 돌려 가며 쓰고, 시각 패밀리가 거부하는 항목은 건너뛴다. options: {visual, density, context, stress}
+ * 슬롯 허용 콘텐츠에 드는 목적 패밀리를 돌려 가며 쓰고, 시각 패밀리가 거부하는 항목은 건너뛴다. options: {visual, density, context, stress, stable}
+ * stable=true: 브라우저 실측 증거 경로에서 고정된 E3 기준 표본(LAYOUT_BASELINE_SPECIMENS)을 써서 무관한 새 목적 패밀리 추가에 따른 표본 변동을 막는다.
+ * stable=false: 공개 동적 표본이 필요한 곳에서 카탈로그 등록 목적 패밀리 전체를 동적으로 탐색하는 기존 동작을 보존한다.
  */
-export function layoutSpecimen(env, layout, {visual = 'family:quiet', density = layout.density.default, context = layout.contexts.find(c => c !== 'any') ?? 'general', stress = false} = {}) {
+export function layoutSpecimen(env, layout, {visual = 'family:quiet', density = layout.density.default, context = layout.contexts.find(c => c !== 'any') ?? 'general', stress = false, stable = false} = {}) {
+  if (stable && LAYOUT_BASELINE_SPECIMENS[layout.id]) {
+    const baseline = LAYOUT_BASELINE_SPECIMENS[layout.id];
+    return baseline.map(({slot, purpose}) => {
+      const f = getPurposeFamily(purpose);
+      return {
+        slot,
+        purpose,
+        variant: f.example.variant,
+        props: f.example.props,
+        content: stress && f.group !== 'button' ? stretch(f.example.content) : f.example.content,
+      };
+    });
+  }
   const items = [];
   for (const slot of layout.slots) {
     const n = specimenCount(slot);
@@ -156,7 +384,7 @@ export function assembleLayout(env, request) {
 /** 레이아웃 재료 하나의 표본 조립(전시·프로브·실측이 같은 입력을 쓴다). */
 export const assembleSpecimen = (env, layoutId, options = {}) => {
   const layout = env.registry.get(layoutId);
-  const fills = layoutSpecimen(env, layout, options);
+  const fills = layoutSpecimen(env, layout, {stable: true, ...options});
   return {fills, ...assembleLayout(env, {layout: layoutId, fills, density: options.density, mode: options.mode, visual: options.visual, context: options.context, width: options.width})};
 };
 
@@ -165,12 +393,12 @@ export const assembleSpecimen = (env, layoutId, options = {}) => {
  * 브라우저 실측 증거가 현재 레이아웃 코드의 것인지 확인하는 데 쓴다.
  */
 export function layoutFingerprint(env, layout) {
-  const out = compileLayout(layout, layoutSpecimen(env, layout).map(f => ({slot: f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
+  const out = compileLayout(layout, layoutSpecimen(env, layout, {stable: true}).map(f => ({slot: f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
   return cyrb53(out.html + out.css);
 }
 
 /** 문자열 지문(53비트, 암호용 아님). Core는 node:* 모듈을 쓰지 않으므로 해시 함수를 직접 둔다. */
-function cyrb53(text) {
+export function cyrb53(text) {
   let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
   for (let i = 0; i < text.length; i++) { const c = text.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
   h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);

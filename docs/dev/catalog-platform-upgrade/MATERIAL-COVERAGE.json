@@ -214,30 +214,30 @@
   "summary": {
     "requirements": {
       "total": 337,
-      "fulfilled": 235,
-      "missing": 102,
-      "coverageRate": 0.6973,
+      "fulfilled": 240,
+      "missing": 97,
+      "coverageRate": 0.7122,
       "byCoverage": {
-        "direct": 197,
+        "direct": 202,
         "variant": 29,
         "schema": 7,
         "part-of": 2,
-        "missing": 102
+        "missing": 97
       },
       "statusDistribution": {
-        "missing": 102,
+        "missing": 97,
         "metadata-only": 0,
         "defined": 7,
-        "renderable": 53,
-        "catalog-visible": 26,
+        "renderable": 56,
+        "catalog-visible": 27,
         "assemblable": 1,
-        "verified": 148
+        "verified": 149
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 84,
-          "direct": 85,
+          "missing": 79,
+          "direct": 90,
           "variant": 29,
           "schema": 7,
           "partOf": 2
@@ -2365,9 +2365,12 @@
       "id": "req:comp:l-04-responsive-grid",
       "section": "§6.2 L",
       "name": "Responsive Grid",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "layout:equal-grid",
+        "layout-primitive:flow"
+      ]
     },
     {
       "id": "req:comp:l-05-split",
@@ -2415,9 +2418,11 @@
       "id": "req:comp:l-09-center",
       "section": "§6.2 L",
       "name": "Center",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "layout:centered-hero"
+      ]
     },
     {
       "id": "req:comp:l-10-sidebar-layout",
@@ -2443,25 +2448,32 @@
       "id": "req:comp:l-12-sticky-region",
       "section": "§6.2 L",
       "name": "Sticky Region",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "layout:sticky-action-layout"
+      ]
     },
     {
       "id": "req:comp:l-13-scroll-area",
       "section": "§6.2 L",
       "name": "Scroll Area",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "layout:master-detail"
+      ]
     },
     {
       "id": "req:comp:l-14-resizable-panel",
       "section": "§6.2 L",
       "name": "Resizable Panel",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "component:split",
+        "layout:two-column"
+      ]
     },
     {
       "id": "req:comp:m-01-filter-toolbar",
@@ -35259,7 +35271,8 @@
       "registry": "design",
       "category": "layout-navigation",
       "requirementIds": [
-        "req:comp:l-05-split"
+        "req:comp:l-05-split",
+        "req:comp:l-14-resizable-panel"
       ],
       "status": "verified",
       "blockedBy": null,
@@ -43189,7 +43202,9 @@
       "kind": "layout-primitive",
       "registry": "design",
       "category": "layout-navigation",
-      "requirementIds": [],
+      "requirementIds": [
+        "req:comp:l-04-responsive-grid"
+      ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
       "supportedVersions": {
@@ -43522,6 +43537,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-09-center",
         "req:layout:15-centered-hero"
       ],
       "status": "renderable",
@@ -43936,6 +43952,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-04-responsive-grid",
         "req:layout:04-equal-grid"
       ],
       "status": "renderable",
@@ -44215,6 +44232,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-13-scroll-area",
         "req:layout:10-master-detail"
       ],
       "status": "renderable",
@@ -44845,6 +44863,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-12-sticky-region",
         "req:layout:22-sticky-action-layout"
       ],
       "status": "renderable",
@@ -44979,6 +44998,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-14-resizable-panel",
         "req:layout:02-two-column"
       ],
       "status": "renderable",

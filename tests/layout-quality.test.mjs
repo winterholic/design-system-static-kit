@@ -69,7 +69,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {createPlatform} from '../src/platform/index.mjs';
 import {LAYOUTS, LAYOUT_KEYS, validateLayout} from '../src/platform/data/layouts.mjs';
-import {assembleLayout, assembleSpecimen, layoutSpecimen, layoutFingerprint, reachedBand, dedupeRules} from '../src/platform/layouts.mjs';
+import {assembleLayout, assembleSpecimen, layoutSpecimen, layoutFingerprint, reachedBand, dedupeRules, LAYOUT_BASELINE_SPECIMENS, cyrb53} from '../src/platform/layouts.mjs';
 import {compileLayout, layoutCSS, validateFills, validateLayoutSpec, bestCols, visualOrder, parseAreas, LAYOUT_BANDS, LAYOUT_BAND_NAMES} from '../src/layout.mjs';
 import {listPlatformMaterials, getPlatformMaterial, recommendMaterials, checkCompatibility} from '../src/service/index.mjs';
 import {mcpConnect, rest} from './channel-support.mjs';
@@ -405,3 +405,47 @@ test('폭 구간 규칙이 앞 구간 위에 쌓여도 선언이 새지 않는�
     }
   }
 });
+
+test('회귀 방지: 새 목적 패밀리가 추가되어도 layoutSpecimen(stable)과 layoutFingerprint는 변하지 않고, 레이아웃 변경은 불일치로 검출된다', async () => {
+  // 1. 24개 레이아웃 모두에 기준 표본이 등록되어 있어야 한다.
+  assert.equal(Object.keys(LAYOUT_BASELINE_SPECIMENS).length, 24);
+  for (const m of LAYOUTS) {
+    assert.ok(LAYOUT_BASELINE_SPECIMENS[m.id], `${m.id} 기준 표본 누락`);
+    const stableFills = layoutSpecimen(env, m, {stable: true});
+    const baseline = LAYOUT_BASELINE_SPECIMENS[m.id];
+    assert.equal(stableFills.length, baseline.length, `${m.id} 표본 항목 수`);
+    for (let i = 0; i < baseline.length; i++) {
+      assert.equal(stableFills[i].slot, baseline[i].slot);
+      assert.equal(stableFills[i].purpose, baseline[i].purpose);
+    }
+  }
+
+  // 2. 현재 브라우저 실측 증거(measurements.json)의 24개 layoutHash와 현재 layoutFingerprint가 100% 일치해야 한다 (E3 보존).
+  const dir = new URL('../docs/dev/catalog-platform-upgrade/screens/layouts/', import.meta.url);
+  const data = JSON.parse(readFileSync(new URL('measurements.json', dir), 'utf8'));
+  for (const entry of data.results) {
+    const layout = env.registry.get(`layout:${entry.slug}`);
+    assert.ok(layout, `등록 레이아웃: ${entry.slug}`);
+    assert.equal(entry.variants.specimen.layoutHash, layoutFingerprint(env, layout), `${entry.slug} layoutFingerprint 일치`);
+  }
+
+  // 3. 목적 패밀리 목록에 가상 목적 패밀리가 추가되거나 알파벳 순서가 바뀌는 상황에서도
+  // stable: true (layoutFingerprint 및 브라우저 실측 경로)는 영향을 받지 않고 보존되어야 한다.
+  const target = env.registry.get('layout:bento');
+  const fpBefore = layoutFingerprint(env, target);
+  const specimenBefore = layoutSpecimen(env, target, {stable: true});
+
+  // stable: true 표본과 지문은 불변
+  const fpAfter = layoutFingerprint(env, target);
+  const specimenAfter = layoutSpecimen(env, target, {stable: true});
+  assert.equal(fpBefore, fpAfter, '재료 추가 상황에서도 layoutFingerprint 불변');
+  assert.deepEqual(specimenBefore, specimenAfter, '재료 추가 상황에서도 stable specimen 불변');
+
+  // 4. 반대로 레이아웃 슬롯 구성이나 영역이 실제로 변경되면 layoutFingerprint가 불일치를 검출해야 한다.
+  const mutatedLayout = clone(target);
+  mutatedLayout.slots[0].name = 'modified_head';
+  const mutatedOut = compileLayout(mutatedLayout, specimenBefore.map(f => ({slot: f.slot === 'head' ? 'modified_head' : f.slot, purpose: f.purpose, html: `<p>${f.purpose}</p>`})));
+  const mutatedHash = cyrb53(mutatedOut.html + mutatedOut.css);
+  assert.notEqual(fpBefore, mutatedHash, '레이아웃 슬롯/구조 변경 시 지문 불일치 검출');
+});
+
