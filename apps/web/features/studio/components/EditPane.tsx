@@ -1,14 +1,16 @@
 'use client';
-import {useRef} from 'react';
+import {lazy, Suspense, useRef} from 'react';
 import {useStudio} from '../context';
 import type {Tab} from '../types';
 import {useNarrow} from '../useNarrow';
 import {DiagnosticList} from './Banners';
-import {CheckPanel} from './CheckPanel';
-import {DesignPanel} from './DesignPanel';
-import {StructurePanel} from './StructurePanel';
 import {Button} from '@/ui';
 import styles from '../studio.module.css';
+
+// 대형 패널(디자인/검증/구조) 온디맨드 지연 로딩
+const StructurePanel = lazy(() => import('./StructurePanel').then(m => ({default: m.StructurePanel})));
+const DesignPanel = lazy(() => import('./DesignPanel').then(m => ({default: m.DesignPanel})));
+const CheckPanel = lazy(() => import('./CheckPanel').then(m => ({default: m.CheckPanel})));
 
 const TAB_LABEL: Record<Tab, string> = {structure: '구조·내용', design: '디자인', check: '검증'};
 const ORDER: Tab[] = ['structure', 'design', 'check'];
@@ -66,7 +68,9 @@ export function EditPane() {
       <OpError />
       {doc.doc ? (
         <div className={styles.panel} role="tabpanel" id={`panel-${view.tab}`} aria-labelledby={`tab-${view.tab}`} tabIndex={-1}>
-          {view.tab === 'structure' ? <StructurePanel /> : view.tab === 'design' ? <DesignPanel /> : <CheckPanel />}
+          <Suspense fallback={<div className={styles.loadingPanel}><p className={styles.muted}>패널을 불러오는 중입니다…</p></div>}>
+            {view.tab === 'structure' ? <StructurePanel /> : view.tab === 'design' ? <DesignPanel /> : <CheckPanel />}
+          </Suspense>
         </div>
       ) : null}
     </section>

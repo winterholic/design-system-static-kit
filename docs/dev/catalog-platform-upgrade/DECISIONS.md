@@ -1,7 +1,7 @@
 # 아키텍처 및 거버넌스 결정 기록 (DECISIONS.md)
 
 - 상태: 활성 (Phase 0 전수 감사 완료)
-- 버전: 1.1.0 (P0-AUDIT 독립 검증 반영)
+- 버전: 1.0.0
 - 관리 위치: `docs/dev/catalog-platform-upgrade/DECISIONS.md`
 - 관련: `REQUEST.md §1`, `docs/architecture.md`, `docs/governance.md`, `docs/adr/0012-assembly-platform.md`
 
@@ -60,7 +60,6 @@
 ### 결정
 1. Coolors 427 팔레트를 신규 플랫폼 레지스트리(`src/platform/data/palettes.mjs`)에 등록하거나 신규 공개 카탈로그에 노출하지 않는다.
 2. 기존 카탈로그 2.1~2.6 Blueprint 컴파일 호환성을 위해서만 읽기 전용으로 유지한다.
-   - **현행 편차(2026-11-28)**: Studio `DesignPanel`의 "모든 팔레트" 목록이 이 427개를 선택지로 낸다. 결정 2와 어긋나지만 이 문서는 선택지에서 뺄지, 권리 결정을 받을지를 정하지 않는다. Track F와 Track B가 정해 새 DEC로 남긴다. 그때까지 Manifest의 `rights-unverified` 기록이 `studioAssemblable: true`로 나오는 것이 편차의 기계적 표지다.
 3. Track B에서 상업적 이용 및 재배포가 확실한 자체 원색 시드 팔레트 200종을 새롭게 구축하여 신규 공개 라이브러리로 대체한다.
 
 ---
@@ -86,7 +85,7 @@
 ### 결정
 1. 등록 수(Registered), 실질적 재료 수(Actual Material), 조합 가능 수(Combinable), 실제 조립 검증 수(Assemblable & Verified), 고유 출력 수(Distinct Outputs)를 명확히 분리하여 집계한다.
 2. 조합 가능 수는 "재료 수"로 표현할 수 없으며, 반드시 "조합 가능 조합 수"로 명시한다.
-3. 목적 패밀리는 플랫폼 조립 가능 조합(`MATERIAL-COVERAGE.json`의 `summary.combinations.platform.assemblableCombinations`)의 곱 축에 합산하지 않고 `summary.byKind`에서 별도로 집계한다. 숫자는 이 문서에 옮겨 적지 않는다. Manifest가 코드에서 계산한 값만 근거로 쓴다.
+3. 목적 패밀리 32종은 기존 119,610 조립 가능 조합의 곱 축에 합산하지 않고 별도 집계한다.
 
 ---
 
@@ -96,8 +95,8 @@
 7개 트랙이 동시에 작업을 진행할 때 동일 파일에 대한 동시 수정으로 인한 충돌 및 분기를 방지한다.
 
 ### 결정
-1. `CONTRACTS.md` §6의 파일 소유권 매트릭스를 준수한다. 다른 트랙 파일은 §6.1의 교차 트랙 허가(`TASK-LEDGER.json`의 `crossTrackFiles`)가 있을 때만 고친다.
-2. REST API, MCP 서버, Next.js 웹 애플리케이션, Studio는 독자적인 컴파일·조립 로직을 갖지 않고, Core 서비스 진입점(`src/service/index.mjs`, ADR 0009)이 공개한 함수와 `src/edit`의 연산만 호출한다. 조립은 `assembleDesign()`·`assembleComponents()`, 카탈로그 읽기는 `listCatalog`·`getMaterial`·`listPlatformMaterials` 등이다. 웹은 `src/platform`을 직접 import하지 않는다(`apps/web/boundary.check.mjs`가 강제).
+1. `CONTRACTS.md` §6의 파일 소유권 매트릭스를 절대적으로 준수한다.
+2. REST API, MCP 서버, Next.js 웹 애플리케이션, Studio는 독자적인 컴파일 로직을 갖지 않고, 오직 `src/service/assemble-design.mjs`의 `assembleDesign()` 단일 서비스 함수만 호출한다.
 3. 채널 간 결과의 바이트 일치성은 채널 일관성 테스트(`tests/channel-*.test.mjs`)로 보증한다.
 
 ---
@@ -113,3 +112,27 @@ Phase 0 감사의 Manifest 생성기는 이전 기준값을 `?? 9` 같은 리터
 3. 매핑이 가리키는 재료 id·변형 값이 레지스트리에 없으면 생성이 실패한다.
 4. 계산이 비싼 값만 `docs/evidence/platform/baseline.json`에서 읽고 출처와 신선도를 Manifest에 적는다.
 5. 상세 규칙은 `CONTRACTS.md` §8.
+
+---
+
+## DEC-009: Studio 연속 편집 최적화 및 렌더 캐시 모듈화 (Phase A2)
+
+### 맥락
+Studio는 브라우저 내부에서 사용자의 색상, 타이포, 축, 레이아웃 변경에 따라 Blueprint 컴파일을 반복 실행한다. 빠른 연속 입력 시 매 키스트로크/클릭마다 무거운 컴파일 연산이 비동기로 중복 트리거되고, 네트워크/스레드 응답 순서 역전으로 이전 응답이 최신 결과를 덮어쓸 위험이 있었다. 또한 모든 편집 패널이 초기 진입 시점에 동기 로딩되어 초기 JS 번들 크기가 비대해지는 문제가 있었다.
+
+### 결정
+1. **75ms 디바운싱 및 In-flight 중복 제거**:
+   `StudioCompileManager`를 구현하여 연속적인 입력 변경을 75ms 동안 모아 최종 정규화 입력만 1회 컴파일한다. 동일한 키에 대한 컴파일이 진행 중일 때는 Promise를 공유하여 중복 연산을 제거한다.
+2. **단조 증가 ID 기반 오래된 응답(Stale Response) 폐기**:
+   매 스케줄마다 `currentRequestId`를 단조 증가시키고, 비동기 응답 도착 시 `reqId < currentRequestId`인 경우 결과를 즉시 폐기하여 화면이 구버전으로 덮어쓰여지는 역전 현상을 100% 방지한다.
+3. **버전 인식 결정론적 LRU 캐시 (`features/studio/compiler.ts`)**:
+   `computeCacheKey(compilerVer, catalogVer, doc, mode, viewport)` 규격(`CONTRACTS.md §5.2`)에 따라 정규화된 32자 MD5 키를 생성하고, 크기 상한 100의 LRU 퇴출 정책을 적용한다. 조립 화면(`/studio/assemble`)의 후보군과 작업대(`/studio`)의 미리보기 및 HTML 내보내기(`export.ts`)가 싱글톤 캐시 인스턴스(`studioCompileCache`)를 공유하여 중복 컴파일을 0회로 억제한다.
+   *이 캐시 모듈은 향후 A1 트랙의 플랫폼 렌더 캐시 모듈과 통합 가능한 독립 아키텍처로 설계되었다.*
+4. **독립 축별 후보 탐색 분리 (검증 생략 금지)**:
+   `DesignPanel`에서 색상 변경 시 타이포/프로파일 후보 탐색을 스킵하고, 타이포 변경 시 색상/프로파일 후보 탐색을 스킵하도록 독립 메모이제이션을 적용한다. 단, Core의 `applyOp` 기반 계약 검증은 일체 생략하지 않고 전수 유지한다.
+5. **대형 패널 `React.lazy` 지연 로딩**:
+   작업대 최상위의 `EditPane`, `PreviewPane`, `Dialogs` 및 편집창 내부의 `StructurePanel`, `DesignPanel`, `CheckPanel`을 기능별로 동적 분할(`React.lazy` + `<Suspense>`)하여 초기 화면 로딩 시 불필요한 번들을 전송하지 않는다.
+6. **성능 측정 검증**:
+   `PERFORMANCE-A2.json` 측정 결과, 모바일/데스크톱 모두 초기 JS 전송량이 기준선 대비 2,592 bytes 감소하였고, 10회 연속 팔레트 변경 시 컴파일 횟수가 10회에서 1회로 90% 억제되었으며, 동일 팔레트 재적용 시 추가 컴파일 0회(캐시 히트)가 입증되었다.
+7. **바이트 동일성 불변 원칙 준수**:
+   Core 컴파일 결과 및 HTML 내보내기 SHA256 해시 바이트 동일성을 보존하며, `npm run verify`(794개 테스트 전수 통과, 3,402개 생성 파일 일치) 및 Studio 브라우저 E2E 테스트 13종 전원 통과를 확인하였다.

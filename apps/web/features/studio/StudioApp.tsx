@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback, useEffect, useMemo, useReducer, useRef, useState} from 'react';
+import {lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {computeBoot} from './boot';
 import {analyzeImpact, needsImpact} from './impact';
 import {loadCatalog, type Catalog} from './catalog';
@@ -16,11 +16,14 @@ import {DEFAULT_VIEW, parseUrl, viewUrl, type UrlView} from './url';
 import type {Diagnostic, NodePath} from './types';
 import {Toolbar} from './components/Toolbar';
 import {StartScreen} from './components/StartScreen';
-import {EditPane} from './components/EditPane';
-import {PreviewPane} from './components/PreviewPane';
 import {Banners} from './components/Banners';
-import {Dialogs} from './components/Dialogs';
+import {StudioCompileManager} from './compiler';
 import styles from './studio.module.css';
+
+// 편집하지 않는 대형 패널 및 다이얼로그 지연 로딩 (초기 JS 전송량 절감)
+const EditPane = lazy(() => import('./components/EditPane').then(m => ({default: m.EditPane})));
+const PreviewPane = lazy(() => import('./components/PreviewPane').then(m => ({default: m.PreviewPane})));
+const Dialogs = lazy(() => import('./components/Dialogs').then(m => ({default: m.Dialogs})));
 
 const OWN_TOKENS_KEY = 'winterholic-static-kit.studio.own-share-tokens';
 /** 토큰의 짧은 지문(길이와 32비트 해시). 같은 토큰인지 가르는 데만 쓴다. */
@@ -122,18 +125,34 @@ export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  // ---- 미리보기 컴파일: 편집이 이어지면 마지막 문서만 컴파일한다. 색 보기는 미리보기 사본에만 적용한다(문서 불변).
+  // ---- 미리보기 컴파일: 편집이 이어지면 마지막 문서만 디바운스해 컴파일한다.
+  // 같은 정규화 입력은 캐시를 재사용해 중복 컴파일을 방지하고, 오래된 지연 응답은 무시한다.
+  const compileManagerRef = useRef<StudioCompileManager | null>(null);
+  if (!compileManagerRef.current) {
+    compileManagerRef.current = new StudioCompileManager(null, {debounceMs: 75});
+  }
+
+  useEffect(() => {
+    if (coreReady) compileManagerRef.current?.setCore(getCore());
+  }, [coreReady]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as unknown as {__studio_compile_count: number}).__studio_compile_count = compileCount;
+    }
+  }, [compileCount]);
+
   const doc = state.document.doc, scheme = state.view.scheme;
   useEffect(() => {
     if (!coreReady || !doc || state.phase !== 'ready') return;
-    const timer = setTimeout(() => {
-      const source = scheme === 'document' ? doc : {...doc, mode: scheme};
-      const r = getCore().service.compileBlueprint(source, {include: ['html']});
-      setCompileCount(n => n + 1);
-      dispatch({type: 'compiled', doc, scheme, result: r.ok ? {ok: true, html: r.value.html as string, warnings: r.warnings} : {ok: false, errors: r.errors}});
-    }, 60);
-    return () => clearTimeout(timer);
-  }, [coreReady, doc, scheme, state.phase]);
+    compileManagerRef.current?.schedule(doc, scheme, (result, meta) => {
+      if (!meta.fromCache) setCompileCount(n => n + 1);
+      dispatch({type: 'compiled', doc, scheme, result});
+    }, {device: state.view.device});
+    return () => {
+      compileManagerRef.current?.cancel();
+    };
+  }, [coreReady, doc, scheme, state.phase, state.view.device]);
 
   // ---- 저장: 문서·출처·선택이 바뀌면 잠깐 모아 쓴다. 손상된 저장값이 있으면 사용자가 정할 때까지 덮어쓰지 않는다.
   // 다른 탭이 저장한 작업이 저장소에 있으면(버려도 되는 문서가 아니면) 덮어쓰지 않고 멈춘 뒤 사용자가 고르게 한다.
@@ -327,21 +346,31 @@ export function StudioApp({assembleEnabled = false}: {assembleEnabled?: boolean}
     exportJson, exportHtml, exportRecovery, resetStorage, overwriteStorage, reloadSaved, withCore, compileCount,
   }), [state, coreReady, catalog, edit, navigate, undo, redo, closeDialog, requestAction, confirmAction, editWithImpact, confirmImpact, copyLink, jumpTo, exportJson, exportHtml, exportRecovery, resetStorage, overwriteStorage, reloadSaved, withCore, compileCount]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as unknown as {__studio_api?: StudioApi}).__studio_api = api;
+    }
+  }, [api]);
+
   const {phase, view} = state;
   return (
     <StudioContext.Provider value={api}>
-      <div className={styles.studio} data-phase={phase} data-pane={view.pane}>
+      <div className={styles.studio} data-phase={phase} data-pane={view.pane} data-compile-count={compileCount} data-testid="studio-root">
         {phase === 'loading' ? <p className={styles.loading} role="status">Studio를 여는 중입니다…</p> : (
           <>
             <Toolbar />
             <Banners />
             {phase === 'start' ? <StartScreen assembleEnabled={assembleEnabled} /> : (
-              <div className={styles.workspace} data-pane={view.pane}>
-                <EditPane />
-                <PreviewPane />
-              </div>
+              <Suspense fallback={<div className={styles.loadingPanel}><p className={styles.muted}>작업대를 불러오는 중입니다…</p></div>}>
+                <div className={styles.workspace} data-pane={view.pane}>
+                  <EditPane />
+                  <PreviewPane />
+                </div>
+              </Suspense>
             )}
-            <Dialogs />
+            <Suspense fallback={null}>
+              <Dialogs />
+            </Suspense>
           </>
         )}
       </div>

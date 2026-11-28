@@ -23,47 +23,109 @@ export function DesignPanel() {
   // 현재 조합과 충돌하는 선택은 고르기 전에 알 수 있어야 한다. 판정은 Core 연산이 하고(src/edit/applicability.mjs), 문서가 바뀔 때만 다시 계산한다.
   const slotsForChoices = useMemo(() => (core && origin ? layoutSlotsOf(core, origin.template).filter(s => s.options.length > 1) : []), [core, origin]);
   const themePalette = origin && origin.palette === null ? 'theme-default' : 'keep';
-  const choices = useMemo(() => {
+
+  // 1. 레이아웃 선택 가능성: 템플릿, 테마, 슬롯, 레이아웃에만 의존하며 색상·타이포 변경 시 불필요하게 다시 탐색하지 않는다.
+  const layoutKey = `${doc.template}:${doc.theme}:${JSON.stringify(doc.layout ?? {})}`;
+  const layoutChoicesMap = useMemo(() => {
+    if (!core) return {};
+    const res = core.edit.layoutChoices(doc, slotsForChoices);
+    return Object.fromEntries(Object.entries(res).map(([slot, list]) => [slot, new Map(list.map(c => [c.id, c]))]));
+  }, [core, layoutKey, slotsForChoices]);
+
+  // 2. 축 선택 가능성: 테마와 축 설정에만 의존하며 색상·타이포 변경 시 재탐색하지 않는다.
+  const axesKey = `${doc.theme}:${JSON.stringify(doc.axes ?? {})}`;
+  const axisChoicesMap = useMemo(() => {
+    if (!core) return {};
+    const byId = (list: Choice[]) => new Map(list.map(c => [String(c.id), c]));
+    return Object.fromEntries(Object.entries(core.edit.axisChoices(doc)).map(([axis, list]) => [axis, byId(list)]));
+  }, [core, axesKey]);
+
+  // 3. 테마 및 팔레트/모드 선택 가능성: 테마와 시작 팔레트에 의존
+  const themeAndPaletteChoices = useMemo(() => {
     if (!core) return null;
     const e = core.edit;
-    const byId = (list: Choice[]) => new Map(list.map(c => [String(c.id), c]));  // 변형의 "기본"은 id가 null이라 문자열 'null'로 찾는다
+    const byId = (list: Choice[]) => new Map(list.map(c => [String(c.id), c]));
     return {
       themes: byId(e.themeChoices(doc, {palette: themePalette})),
       variants: byId(e.themeVariantChoices(doc, {palette: themePalette})),
       palettes: byId(e.paletteChoices(doc)),
       modes: byId(e.modeChoices(doc)),
-      axes: Object.fromEntries(Object.entries(e.axisChoices(doc)).map(([axis, list]) => [axis, byId(list)])),
-      layout: Object.fromEntries(Object.entries(e.layoutChoices(doc, slotsForChoices)).map(([slot, list]) => [slot, new Map(list.map(c => [c.id, c]))])),
     };
-  }, [core, doc, themePalette, slotsForChoices]);
-  const materialData = useMemo(() => {
-    if (!core) return null;
-    const color = core.service.getColorTokens();
-    const type = core.service.getTypePresets();
-    const schema = core.service.getSchema({target: 'blueprint', fields: ['profile']});
-    if (!color.ok || !type.ok || !schema.ok) return null;
-    const profiles = schema.value.properties.profile?.enum ?? [];
-    const trials = (field: 'colorPalette' | 'typeRoles' | 'profile', values: string[]) => values.map(id => {
-      const result = core.edit.applyOp(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0', [field]: id}, upgrade: true});
-      return {id, ok: result.ok, errors: result.ok ? [] : result.errors};
-    });
-    const without = (field: 'colorPalette' | 'typeRoles' | 'profile') => {
-      const draft = {...doc, catalogVersion: '2.6.0'} as Record<string, unknown>;
-      delete draft[field];
-      const result = core.edit.applyOp(doc, 'importBlueprint', {blueprint: draft, upgrade: true});
-      return {id: '', ok: result.ok, errors: result.ok ? [] : result.errors};
-    };
+  }, [core, doc.theme, doc.template, themePalette]);
+
+  const choices = useMemo(() => {
+    if (!themeAndPaletteChoices) return null;
     return {
-      // 2.6.0 문서의 색은 항상 내부 팔레트다. "없음"은 2.6.0 이전 문서에서만 의미가 있다.
-      colors: [...(doc.catalogVersion === '2.6.0' ? [] : [without('colorPalette')]), ...trials('colorPalette', color.value.options.map(x => x.id))],
-      types: [without('typeRoles'), ...trials('typeRoles', type.value.presets.map(x => x.id))],
-      profiles: [without('profile'), ...trials('profile', profiles)],
+      ...themeAndPaletteChoices,
+      axes: axisChoicesMap,
+      layout: layoutChoicesMap,
+    };
+  }, [themeAndPaletteChoices, axisChoicesMap, layoutChoicesMap]);
+
+  // 4. 재료 메타데이터 및 후보 탐색: 색상과 타이포 변경 시 서로 독립적으로 캐시되어 불필요한 재탐색을 생략한다 (검증은 유지).
+  const colorTokenOptions = useMemo(() => (core ? core.service.getColorTokens() : null), [core]);
+  const typePresetOptions = useMemo(() => (core ? core.service.getTypePresets() : null), [core]);
+  const profileOptions = useMemo(() => (core ? core.service.getSchema({target: 'blueprint', fields: ['profile']}) : null), [core]);
+
+  // 색상 후보 검증: 타이포나 프로파일이 바뀔 때 다시 탐색하지 않음 (검증은 applyOp 로 철저히 수행)
+  const colorTrials = useMemo(() => {
+    if (!core || !colorTokenOptions?.ok) return [];
+    const without = {id: '', ok: false, errors: [] as any[]};
+    if (doc.catalogVersion !== '2.6.0') {
+      const draft = {...doc, catalogVersion: '2.6.0'} as Record<string, unknown>;
+      delete draft.colorPalette;
+      const res = core.edit.applyOp(doc, 'importBlueprint', {blueprint: draft, upgrade: true});
+      without.ok = res.ok;
+      without.errors = res.ok ? [] : res.errors;
+    }
+    const trials = colorTokenOptions.value.options.map(x => {
+      const res = core.edit.applyOp(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0', colorPalette: x.id}, upgrade: true});
+      return {id: x.id, ok: res.ok, errors: res.ok ? [] : res.errors};
+    });
+    return doc.catalogVersion === '2.6.0' ? trials : [without, ...trials];
+  }, [core, colorTokenOptions, doc.theme, doc.colorPalette, doc.catalogVersion]);
+
+  // 타이포 후보 검증: 색상이나 프로파일이 바뀔 때 다시 탐색하지 않음
+  const typeTrials = useMemo(() => {
+    if (!core || !typePresetOptions?.ok) return [];
+    const draft = {...doc, catalogVersion: '2.6.0'} as Record<string, unknown>;
+    delete draft.typeRoles;
+    const withoutRes = core.edit.applyOp(doc, 'importBlueprint', {blueprint: draft, upgrade: true});
+    const without = {id: '', ok: withoutRes.ok, errors: withoutRes.ok ? [] : withoutRes.errors};
+    const trials = typePresetOptions.value.presets.map(x => {
+      const res = core.edit.applyOp(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0', typeRoles: x.id}, upgrade: true});
+      return {id: x.id, ok: res.ok, errors: res.ok ? [] : res.errors};
+    });
+    return [without, ...trials];
+  }, [core, typePresetOptions, doc.theme, doc.typeRoles, doc.catalogVersion]);
+
+  // 프로파일 후보 검증: 색상이나 타이포가 바뀔 때 다시 탐색하지 않음
+  const profileTrials = useMemo(() => {
+    if (!core || !profileOptions?.ok) return [];
+    const profiles = profileOptions.value.properties.profile?.enum ?? [];
+    const draft = {...doc, catalogVersion: '2.6.0'} as Record<string, unknown>;
+    delete draft.profile;
+    const withoutRes = core.edit.applyOp(doc, 'importBlueprint', {blueprint: draft, upgrade: true});
+    const without = {id: '', ok: withoutRes.ok, errors: withoutRes.ok ? [] : withoutRes.errors};
+    const trials = profiles.map(id => {
+      const res = core.edit.applyOp(doc, 'importBlueprint', {blueprint: {...doc, catalogVersion: '2.6.0', profile: id}, upgrade: true});
+      return {id, ok: res.ok, errors: res.ok ? [] : res.errors};
+    });
+    return [without, ...trials];
+  }, [core, profileOptions, doc.theme, doc.profile, doc.catalogVersion]);
+
+  const materialData = useMemo(() => {
+    if (!colorTokenOptions?.ok || !typePresetOptions?.ok || !profileOptions?.ok) return null;
+    return {
+      colors: colorTrials,
+      types: typeTrials,
+      profiles: profileTrials,
       labels: {
-        colors: Object.fromEntries(color.value.options.map(x => [x.id, x.label])),
-        types: Object.fromEntries(type.value.presets.map(x => [x.id, x.label])),
+        colors: Object.fromEntries(colorTokenOptions.value.options.map(x => [x.id, x.label])),
+        types: Object.fromEntries(typePresetOptions.value.presets.map(x => [x.id, x.label])),
       },
     };
-  }, [core, doc]);
+  }, [colorTokenOptions, typePresetOptions, profileOptions, colorTrials, typeTrials, profileTrials]);
   if (!catalog || !core || !choices) return <p className={styles.muted}>카탈로그를 불러오는 중입니다…</p>;
 
   const theme = catalog.themes.find(t => t.id === doc.theme);

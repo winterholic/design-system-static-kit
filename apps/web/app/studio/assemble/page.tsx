@@ -8,7 +8,20 @@ import {assembleDesign, material, materials, platformReady, probeDesign, recomme
 import {renderSrc} from '@/features/platform/render-url';
 import {PURPOSES, purposeOf, shortId} from '@/features/platform/labels';
 import type {AssembleRequest, Candidate, Material} from '@/features/platform/types';
+import {studioCompileCache, computeCacheKey, DEFAULT_COMPILER_VERSION} from '@/features/studio/compiler';
 import styles from '@/features/platform/platform.module.css';
+
+/** 조립 결과의 Blueprint와 컴파일 HTML을 Studio 공유 캐시에 보존해 미리보기 재컴파일을 방지한다. */
+function cacheCandidates(candidates: Candidate[] = []) {
+  for (const c of candidates) {
+    const val = c.value as any;
+    if (val?.blueprint && val?.html) {
+      const bp = val.blueprint as any;
+      const key = computeCacheKey(DEFAULT_COMPILER_VERSION, bp.catalogVersion ?? '2.4.0', bp, 'document');
+      studioCompileCache.set(key, {ok: true, html: val.html, warnings: []});
+    }
+  }
+}
 
 export const metadata = {title: '조립 | Studio', description: '페이지 유형을 고르고 디자인 방향, 후보, 재료를 바꿔 가며 실행 가능한 코드로 조립합니다.'};
 type Props = {searchParams: Promise<Record<string, string | string[] | undefined>>};
@@ -155,6 +168,7 @@ function CompareStep({state, here}: StepProps) {
   const request = requestOf(state, 4)!;
   const out = assembleDesign(request);
   if (!out.ok) return <p role="alert" className="note">{out.errors.map(e => `${e.code}: ${e.message}`).join(' / ')}</p>;
+  cacheCandidates(out.value.candidates);
   const {candidates, blocked, comparison} = out.value;
   const pick = (c: Candidate) => {
     const sel = c.selection as {palette?: string; subtokenSet?: string; typeSystem?: string; families?: Record<string, string>};
@@ -194,6 +208,7 @@ function SwapStep({state, here}: StepProps) {
   const purpose = purposeOf(state.purpose)!;
   const request = requestOf(state)!;
   const out = assembleDesign(request);
+  if (out.ok) cacheCandidates(out.value.candidates);
   const anchors = [state.palette ? `palette:${state.palette}` : null, state.set ? `subtoken-set:${state.set}` : null].filter(Boolean) as string[];
   const blockedOf = (kind: string, selected: string[], extra: Record<string, unknown> = {}) => {
     const r = recommend({kind, selected, ...extra});
@@ -262,6 +277,7 @@ function ExportStep({state}: {state: AssembleState}) {
   const request = requestOf(state)!;
   const out = assembleDesign(request);
   if (!out.ok) return <p role="alert" className="note">{out.errors.map(e => e.message).join(' ')}</p>;
+  cacheCandidates(out.value.candidates);
   const top = out.value.candidates[0];
   const m = {contrast: (top.quality as {contrast?: {ok?: boolean; roles?: number; failures?: unknown[]}}).contrast};
   return (

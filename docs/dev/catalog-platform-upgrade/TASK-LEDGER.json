@@ -4,9 +4,9 @@
   "summary": {
     "totalTasks": 28,
     "byStatus": {
-      "Pending": 25,
+      "Pending": 24,
       "In Progress": 1,
-      "Implemented": 0,
+      "Implemented": 1,
       "Verified": 2,
       "Blocked": 0
     },
@@ -586,20 +586,33 @@
     {
       "taskId": "TASK-TRF-05",
       "title": "Studio 조립 인터페이스 및 재료 선택 상태 보존 공유 경로",
-      "goal": "Studio에서 모든 재료(팔레트, 세트, 타이포, 패밀리, 레이아웃)를 조립하고 상태 URL 공유 지원",
-      "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**(진입 컴포넌트는 기존 StudioApp.tsx)",
+      "goal": "Studio에서 모든 재료(팔레트, 세트, 타이포, 패밀리, 레이아웃)를 조립하고 상태 URL 공유 지원 및 연속 편집 최적화",
+      "scope": "apps/web/app/studio/page.tsx, apps/web/features/studio/**, scripts/perf/**",
       "track": "Track F",
       "dependencies": ["TASK-TRF-02", "TASK-TRF-03", "TASK-TRF-04"],
       "modifiedFiles": [
-        "apps/web/app/studio/page.tsx",
-        "apps/web/features/studio/StudioApp.tsx"
+        "apps/web/features/studio/compiler.ts",
+        "apps/web/features/studio/compiler.unit.mjs",
+        "apps/web/features/studio/StudioApp.tsx",
+        "apps/web/features/studio/export.ts",
+        "apps/web/features/studio/components/EditPane.tsx",
+        "apps/web/features/studio/components/DesignPanel.tsx",
+        "apps/web/app/studio/assemble/page.tsx",
+        "scripts/perf/measure.mjs",
+        "scripts/perf/run-a2-perf.mjs",
+        "docs/dev/catalog-platform-upgrade/PERFORMANCE-A2.json",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json"
       ],
-      "completionCriteria": "선택 재료가 컴파일 출력에 100% 반영, 공유 URL 접속 시 선택 상태 완벽 복원",
+      "completionCriteria": "Studio 연속 편집 경로에 75ms 디바운스, 동일 요청 중복 제거, 오래된 응답 무시, LRU 캐시(상한 100) 기반 재사용, 대형 패널(EditPane, PreviewPane, Dialogs, DesignPanel, StructurePanel, CheckPanel) React.lazy 지연 로딩 적용. 팔레트 10회 연속 변경 시 컴파일 1회(90% 억제) 및 재방문 컴파일 0회(캐시 히트), 초기 JS 전송량 기준선 대비 2.5KB+ 감소 입증, Core 출력 바이트 동일성 100% 보존, Studio E2E 13종 및 단위 65종 전수 통과.",
       "tests": [
-        "npm run web:test"
+        "npm run web:test",
+        "npx playwright test e2e/studio.spec.mjs",
+        "node scripts/perf/run-a2-perf.mjs",
+        "npm run verify"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null
     },
     {

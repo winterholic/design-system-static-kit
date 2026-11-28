@@ -163,6 +163,100 @@ const INTERACTION_SELECTOR = [
   'a[role="tab"]', 'button[role="tab"]', 'a[class*="segItem"]', 'a[href*="mode="]', 'a[href*="sample="]', 'a[href*="page="]', 'button[class*="button"]',
 ].map((sel) => `${sel}${ENABLED}`).join(', ');
 
+/**
+ * Studio 연속 편집 시나리오 (지시서 §3.5):
+ * 1. 템플릿(dashboard-overview) 로드 후 ready 상태 대기
+ * 2. 10회 연속 팔레트 변경(15ms 간격) 시뮬레이션
+ * 3. 75ms 디바운스로 인한 컴파일 억제 및 최신 결과 반영 검증
+ * 4. 동일/기존 팔레트 재적용 시 LRU 캐시 히트로 인한 추가 컴파일 0회 검증
+ */
+async function runStudioContinuousEditScenario(page, baseUrl) {
+  try {
+    await page.goto(`${baseUrl}/studio?template=dashboard-overview`, {waitUntil: 'networkidle', timeout: 30000});
+    await page.waitForSelector('[data-phase="ready"]', {timeout: 15000});
+    await page.waitForFunction(() => window.__studio_api !== undefined && typeof window.__studio_compile_count === 'number', {timeout: 10000});
+    await page.waitForTimeout(300);
+
+    const compileCountBefore = await page.evaluate(() => window.__studio_compile_count);
+
+    // 디자인 탭 열기 (존재 시)
+    const designTab = page.getByRole('tab', {name: '디자인'});
+    if ((await designTab.count()) > 0) {
+      await designTab.click();
+      await page.waitForTimeout(100);
+    }
+
+    // 10회 연속 팔레트 변경 (15ms 간격 - 75ms 디바운스보다 짧음)
+    const editTrace = await page.evaluate(async () => {
+      const api = window.__studio_api;
+      const catalogPalettes = (api?.catalog?.palettes || []).map((p) => p.id);
+      const testPalettes = catalogPalettes.length >= 3
+        ? catalogPalettes.slice(0, 5)
+        : ['nordic-frost', 'ocean-breeze', 'slate-minimal'];
+
+      const start = performance.now();
+      const records = [];
+      for (let i = 0; i < 10; i++) {
+        const palette = testPalettes[i % testPalettes.length];
+        const t0 = performance.now();
+        api.edit({kind: 'setPalette', palette});
+        records.push({step: i + 1, palette, timeMs: Math.round(t0 - start)});
+        if (i < 9) {
+          await new Promise((r) => setTimeout(r, 15));
+        }
+      }
+      return {durationMs: Math.round(performance.now() - start), records};
+    });
+
+    // 디바운스(75ms) + 컴파일 완료 안정화 대기
+    await page.waitForTimeout(350);
+
+    const compileCountAfter = await page.evaluate(() => window.__studio_compile_count);
+    const compilesTriggered = compileCountAfter - compileCountBefore;
+    const editsRequested = 10;
+    const compilesSuppressed = Math.max(0, editsRequested - compilesTriggered);
+
+    // 캐시 재사용 검증: 이미 컴파일된 팔레트로 재변경 시 컴파일이 추가 발생하지 않아야 함
+    const countBeforeCache = compileCountAfter;
+    const cacheStart = Date.now();
+    await page.evaluate(() => {
+      const api = window.__studio_api;
+      const testPalette = (api?.catalog?.palettes?.[0]?.id) || 'nordic-frost';
+      api.edit({kind: 'setPalette', palette: testPalette});
+    });
+    await page.waitForTimeout(200);
+    const countAfterCache = await page.evaluate(() => window.__studio_compile_count);
+    const cacheAdditionalCompiles = countAfterCache - countBeforeCache;
+    const cacheDurationMs = Date.now() - cacheStart;
+
+    return {
+      scenario: 'Studio 연속 편집 (팔레트 10회 연속 변경)',
+      template: 'dashboard-overview',
+      editsRequested,
+      intervalBetweenEditsMs: 15,
+      debounceThresholdMs: 75,
+      compileCountBefore,
+      compileCountAfter,
+      compilesTriggered,
+      compilesSuppressed,
+      suppressionRatePercent: Math.round((compilesSuppressed / editsRequested) * 100),
+      editDurationMs: editTrace.durationMs,
+      settleDelayMs: 350,
+      totalDurationMs: editTrace.durationMs + 350,
+      cacheRevisit: {
+        additionalCompiles: cacheAdditionalCompiles,
+        cacheHit: cacheAdditionalCompiles === 0,
+        durationMs: cacheDurationMs,
+      },
+    };
+  } catch (err) {
+    return {
+      scenario: 'Studio 연속 편집 (팔레트 10회 연속 변경)',
+      error: err.message,
+    };
+  }
+}
+
 async function measureSingleRun(browser, baseUrl, pageSpec, viewport, runIndex) {
   const context = await browser.newContext({
     viewport: {width: viewport.width, height: viewport.height},
@@ -350,6 +444,12 @@ async function measureSingleRun(browser, baseUrl, pageSpec, viewport, runIndex) 
   const compileBreakdown = sweepCounters ? {...sweepCounters} : null;
   const loadBreakdown = loadCounters ? {...loadCounters} : null;
 
+  // Studio 연속 편집 시나리오 (팔레트 10회 연속 변경): 디바운스, 오래된 응답 무시, 캐시 재사용 검증
+  let studioContinuousEdit = null;
+  if (pageSpec.id === 'studio') {
+    studioContinuousEdit = await runStudioContinuousEditScenario(page, baseUrl);
+  }
+
   await context.close();
 
   return {
@@ -388,6 +488,7 @@ async function measureSingleRun(browser, baseUrl, pageSpec, viewport, runIndex) 
     compileBreakdownAfterSweep: compileBreakdown,
     scrollSweep,
     loadDuration,
+    studioContinuousEdit,
   };
 }
 
@@ -534,6 +635,26 @@ async function measureEnvironment(browser, baseUrl, envName, runs, filters = {})
         sweepIframeLoads: median(rawRuns.map((r) => r.scrollSweep.iframeLoads)),
         sweepIframeLoadsDownAndUp: median(rawRuns.map((r) => r.scrollSweep.iframeLoadsDownAndUp ?? 0)),
         sweepIframesAtEnd: median(rawRuns.map((r) => r.scrollSweep.iframesAtEnd)),
+        studioContinuousEdit: rawRuns.some((r) => r.studioContinuousEdit && !r.studioContinuousEdit.error) ? {
+          scenario: rawRuns[0].studioContinuousEdit.scenario,
+          template: rawRuns[0].studioContinuousEdit.template,
+          editsRequested: 10,
+          intervalBetweenEditsMs: 15,
+          debounceThresholdMs: 75,
+          compileCountBefore: median(rawRuns.map((r) => r.studioContinuousEdit?.compileCountBefore ?? 0)),
+          compileCountAfter: median(rawRuns.map((r) => r.studioContinuousEdit?.compileCountAfter ?? 0)),
+          compilesTriggered: median(rawRuns.map((r) => r.studioContinuousEdit?.compilesTriggered ?? 0)),
+          compilesSuppressed: median(rawRuns.map((r) => r.studioContinuousEdit?.compilesSuppressed ?? 0)),
+          suppressionRatePercent: median(rawRuns.map((r) => r.studioContinuousEdit?.suppressionRatePercent ?? 0)),
+          editDurationMs: median(rawRuns.map((r) => r.studioContinuousEdit?.editDurationMs ?? 0)),
+          settleDelayMs: median(rawRuns.map((r) => r.studioContinuousEdit?.settleDelayMs ?? 0)),
+          totalDurationMs: median(rawRuns.map((r) => r.studioContinuousEdit?.totalDurationMs ?? 0)),
+          cacheRevisit: {
+            additionalCompiles: median(rawRuns.map((r) => r.studioContinuousEdit?.cacheRevisit?.additionalCompiles ?? 0)),
+            cacheHit: rawRuns.every((r) => r.studioContinuousEdit?.cacheRevisit?.cacheHit),
+            durationMs: median(rawRuns.map((r) => r.studioContinuousEdit?.cacheRevisit?.durationMs ?? 0)),
+          },
+        } : null,
       };
 
       results.push({
@@ -609,9 +730,12 @@ async function main() {
       }
     }
 
+    const isA2 = cli.outPath.includes('A2') || cli.outPath.includes('a2');
     const payload = {
-      version: '1.1.0',
-      description: 'Static Kit 최적화 전 성능 기준선 (Phase 0/1 Baseline)',
+      version: isA2 ? '1.2.0' : '1.1.0',
+      description: isA2
+        ? 'Static Kit Track F Studio 최적화 후 성능 측정 (Phase A2: 디바운스, 중복제거, 캐시, 코드분할)'
+        : 'Static Kit 최적화 전 성능 기준선 (Phase 0/1 Baseline)',
       targets: {
         lcp: '<= 2500ms',
         inp: '<= 200ms',
@@ -619,6 +743,11 @@ async function main() {
         activeIframes: '0개 (일반 카탈로그)',
         dynamicCompiles: '0회 (목록 요청 시)',
         initialCards: '<= 24개',
+        ...(isA2 ? {
+          studioContinuousEditCompiles: '<= 2회 (10회 연속 편집 시)',
+          studioCacheRevisitCompiles: '0회 (동일 입력 캐시 히트)',
+          studioJsTransfer: '< 183KB (대형 패널 지연 로딩으로 초기 JS 절감)',
+        } : {}),
       },
       notes: [
         '모든 값은 실험실 측정이다. 실사용자(RUM) 데이터가 아니다.',
@@ -629,11 +758,22 @@ async function main() {
         'compileCount 는 DSK_PERF_METRICS=1 로 띄운 서버에서만 잡힌다(Vercel 은 null).',
         'ttfb 는 Navigation Timing(requestStart→responseStart, 응답 헤더 도착)이고 serverFirstByteMs 는 본문 첫 청크까지의 시간이다. 스트리밍 배포 환경에서는 둘이 크게 다를 수 있어 서버 지연 판단에는 serverFirstByteMs 를 쓴다.',
         'coldWarm: 서버를 막 띄운 직후의 첫 요청(coldFirstByteMs)과 곧바로 이은 두 번째 요청(warmFirstByteMs)의 차이다. 서버를 새로 띄운 직후에 실행했을 때만 콜드로 읽는다. Vercel 의 cold/warm 은 유휴 후 첫 요청을 보장하지 않으므로 콜드 스타트 측정으로 쓰지 않는다.',
+        ...(isA2 ? [
+          'studioContinuousEdit: Studio 작업대(dashboard-overview)에서 10회 연속 팔레트 변경(15ms 간격) 시 75ms 디바운스로 인한 컴파일 억제 횟수 및 동일 팔레트 재적용 시 LRU 캐시 히트로 인한 추가 컴파일 0회 검증 결과다.',
+        ] : []),
       ],
       summary: {
         timestamp: new Date().toISOString(),
         localEnv: localData.environment,
         vercelEnv: vercelData ? vercelData.environment : 'unverified (미측정 또는 접근 불가)',
+        ...(isA2 ? {
+          studioOptimization: {
+            debounceMs: 75,
+            continuousEditScenario: '10회 연속 팔레트 변경 (15ms 간격)',
+            cacheRevisitCheck: '동일/이전 팔레트 재적용 시 추가 컴파일 0회 (LRU 캐시 히트)',
+            codeSplitting: 'EditPane, PreviewPane, DesignPanel, StructurePanel, CheckPanel React.lazy 지연 로딩',
+          },
+        } : {}),
       },
       environments: {
         local: localData,
