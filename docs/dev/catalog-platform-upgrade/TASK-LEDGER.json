@@ -1271,6 +1271,11 @@
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
           "ownerTrack": "Track G",
           "reason": "요청된 Material Coverage 재생성 산출물"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/screens/layouts/measurements.json",
+          "ownerTrack": "Track E",
+          "reason": "목적 패밀리 5종이 늘면서 레이아웃 표본(layoutSpecimen이 id 순으로 고르는 풀)이 바뀌어 node scripts/layouts/measure.mjs로 다시 만든 브라우저 실측(가로 스크롤 0, 쌍별 구분 유지). measurements.md·스크린샷 포함"
         }
       ]
     },
