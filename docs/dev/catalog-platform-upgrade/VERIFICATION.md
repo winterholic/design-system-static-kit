@@ -771,13 +771,13 @@ $ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context
 
 ## 13. A3 및 A1 잔여 기준 독립 재검증 (2026-11-28, `upgrade/a3-verify`)
 
-검증 대상은 최신 원격 `main`의 A3 커밋 `7f9c24fca6dd295bd672739d85ae25999fe2dde1`이다. 현재 작업 HEAD도 이 SHA에서 시작했다. 실제 구성·증거 오류를 다음과 같이 교정했다.
+검증 대상은 원격 `main`의 A3 커밋 `7f9c24fca6dd295bd672739d85ae25999fe2dde1`와 후속 `7c1bd947cdc11c30b00e938a4f19589c903f9677`이다. 두 번째 커밋을 병합한 검증 HEAD는 `a215e8409872f33637aaf0361adef1f9f5eaf96f`이며, A3 앱 파일 변경은 포함하지 않는다. 실제 구성·증거 오류를 다음과 같이 교정했다.
 
 ### 13.1 Components 실제 공개 집합과 페이지 동작
 
 `catalog-lists.spec.mjs`를 보강해 화면의 `data-total` 하나만 믿지 않고, 공개 API가 반환한 ID 집합과 모든 페이지를 비교하도록 했다. API에서 목적 패밀리 37개와 구조 부품 65개를 조회하며 `page` 구조 노드 1개는 목록 카드에서 제외한다. 따라서 현재 공개 카드 집합은 101개(과거 A3 문서의 92개/4쪽 주장은 오래된 카운트)다.
 
-운영 빌드 HTTP 응답을 공개 API와 직접 대조했다.
+병합 HEAD의 일반 운영 빌드 HTTP 응답을 공개 API와 직접 대조했다 (`2026-11-28T06:39:35Z`).
 
 ```text
 GET /api/v1/platform/materials?kind=purpose-family&limit=200&fields=id,group → 37
@@ -793,15 +793,15 @@ page=2 복원: 25–48번째 ID 동일; group=purpose:card → 공개 카드 8�
 
 ### 13.2 Studio 캐시와 측정 훅
 
-`npm --workspace apps/web run test:unit`은 80/80 통과했다. Studio 캐시 단위시험은 `./service` 공개 진입점의 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`을 읽고, 같은 버전은 컴파일 결과를 재사용하며 platform 또는 service 버전만 바꿔도 키가 달라짐을 확인한다. 기존 디바운스와 같은 요청 공유도 함께 통과했다.
+`npm --workspace apps/web run test:unit`은 80/80 통과했다. 병합 HEAD 전체 `npm run verify`는 932/932 통과, audit·docs/build 단계 완료, 생성 파일 3,801개가 fresh build와 바이트 단위로 일치했다. (Node v26.9.0; 저장소의 권장 Node 22와 달라진 환경은 별도로 기록한다.) Studio 캐시 단위시험은 `./service` 공개 진입점의 `PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`을 읽고, 같은 버전은 컴파일 결과를 재사용하며 platform 또는 service 버전만 바꿔도 키가 달라짐을 확인한다. 기존 디바운스와 같은 요청 공유도 함께 통과했다.
 
-일반 운영 빌드의 `apps/web/.next/static` 39개 파일에서는 `__studio_api`, `__studio_compile_count` 문자열을 찾지 못했다. `DSK_STUDIO_PROBE=1 npm run web:build` 별도 빌드에서는 같은 39개 중 한 청크에 두 이름이 모두 들어갔다. 그러나 브라우저에서 `window` 값을 읽는 `studio-probe.spec.mjs` 런타임 단언은 이번 환경에서 실행하지 못했다.
+병합 HEAD의 일반 `npm run web:build`는 TypeScript 검사와 정적 페이지 1,102개 생성을 통과했고, `apps/web/.next/static` 39개 파일에서 `__studio_api`, `__studio_compile_count`가 모두 0건이었다. `DSK_STUDIO_PROBE=1 npm run web:build` 별도 빌드도 같은 1,102개 정적 페이지를 생성했고, 39개 중 한 청크에서 두 이름을 모두 찾았다. 그러나 브라우저에서 `window` 값을 읽는 `studio-probe.spec.mjs` 런타임 단언은 이번 환경에서 실행하지 못했다.
 
 `npx playwright test e2e/catalog-lists.spec.mjs --reporter=line`은 Codex nested worker sandbox에서 Chromium 실행 단계가 실패했다. 관찰 오류: `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)`, 뒤이어 `SIGTRAP`; 따라서 해당 Playwright 시험의 10건은 모두 브라우저 미기동으로 실패했다. 같은 실패를 우회해 브라우저를 다시 실행하지 않았다. 브라우저 런타임 훅·스크롤 왕복 네트워크 요청은 미검증이며, 위 HTTP·번들 검사는 대체 가능한 부분만 확인한다.
 
 ### 13.3 성능 수치와 provenance 정정
 
-`PERFORMANCE-A1.json`의 측정 시각은 `2026-11-28T04:02:13Z`, `PERFORMANCE-A3.json`은 `04:55:48Z`, probe 데이터는 `04:56:57Z`다. 이 파일들은 실행 source SHA를 저장하지 않았다. A1 branch tip `29ac798d6` 커밋은 `04:31:17Z`, A3 `7f9c24fca`는 `05:34:08Z`이므로 측정 시각만으로 해당 커밋의 실행이었다고 귀속할 수 없다. JSON과 `PERF-BOTTLENECKS.md`에 누락 provenance 및 현재 재검증 범위를 추가했다.
+`PERFORMANCE-A1.json`의 측정 시각은 `2026-11-28T04:02:13Z`, `PERFORMANCE-A3.json`은 `04:55:48Z`, probe 데이터는 `04:56:57Z`다. 원 성능 기록의 측정 source SHA는 계속 미기록으로 둔다. 이번 HTTP 검증은 별도로 병합 검증 HEAD `a215e8409872f33637aaf0361adef1f9f5eaf96f`에서 수행했다. 이 파일들은 실행 source SHA를 저장하지 않았다. A1 branch tip `29ac798d6` 커밋은 `04:31:17Z`, A3 `7f9c24fca`는 `05:34:08Z`이므로 측정 시각만으로 해당 커밋의 실행이었다고 귀속할 수 없다. JSON과 `PERF-BOTTLENECKS.md`에 누락 provenance 및 현재 재검증 범위를 추가했다.
 
 과거 A3 파일에 기록된 Components LCP는 390px 140→172ms, 1280px 124→164ms다. iframe·목록 컴파일은 0으로 유지된다는 것과 LCP 증가를 별개로 기록한다. 이번 세션은 브라우저 성능 실측을 재현하지 못했고 해당 증가의 원인도 확정하지 못했다. 따라서 이 LCP 차이는 역사적 기록값이며, A3 변경의 원인·효과로 주장하지 않는다. Vercel/RUM/운영 첫 바이트는 측정하지 않았고, 운영 실측은 H 단계 소유다.
 
@@ -814,13 +814,13 @@ page=2 복원: 25–48번째 ID 동일; group=purpose:card → 공개 카드 8�
 
 ```sh
 $ git rev-parse HEAD && git branch -r --contains 7f9c24fca
-7f9c24fca6dd295bd672739d85ae25999fe2dde1
-origin/HEAD -> origin/main; origin/main
+a215e8409872f33637aaf0361adef1f9f5eaf96f
+origin/HEAD -> origin/main; origin/main (7c1bd947c 포함)
 $ npm --workspace apps/web run test:unit
 ℹ tests 80 / ℹ pass 80 / ℹ fail 0
 $ npm run verify
-ℹ tests 919 / ℹ pass 919 / ℹ fail 0
-REPRODUCIBLE: 3800 generated files match a fresh build byte for byte. (EXIT=0)
+ℹ tests 932 / ℹ pass 932 / ℹ fail 0
+REPRODUCIBLE: 3801 generated files match a fresh build byte for byte. (EXIT=0)
 $ npm run web:build
 ✓ Compiled successfully; TypeScript passed; generated static pages 1102/1102. (EXIT=0)
 $ DSK_STUDIO_PROBE=1 npm run web:build
@@ -829,4 +829,4 @@ $ git diff --exit-code c19b79c4b HEAD -- site/v1 docs/evidence/context/legacy-ha
 (exit 0, no diff)
 ```
 
-미실행: `npm run perf`의 Chromium 기반 390/1280 LCP 재측정, Playwright 목록/Studio 브라우저 시험, 브라우저 안의 window hook 값 직접 읽기. 사유는 위 Chromium sandbox 실행 오류. Vercel 성능 측정은 H 단계 소유라 수행하지 않았다.
+미실행: `npm run perf`의 Chromium 기반 390/1280 LCP 재측정, Playwright 목록/Studio 브라우저 시험, 브라우저 안의 window hook 값 직접 읽기. 390/1280 A3 전후표의 140→172ms / 124→164ms는 저장된 과거 기록일 뿐, 원 SHA가 없어 이번에 재현·대조하지 못했다. 사유는 위 Chromium sandbox 실행 오류. Vercel 성능 측정은 H 단계 소유라 수행하지 않았다.

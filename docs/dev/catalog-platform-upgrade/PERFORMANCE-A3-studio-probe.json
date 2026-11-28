@@ -648,9 +648,9 @@
     }
   },
   "measurementProvenance": {
-    "verificationAt": "2026-11-28T06:20:13Z",
+    "verificationAt": "2026-11-28T06:39:35Z",
     "verificationBranch": "upgrade/a3-verify",
-    "verificationRevision": "7f9c24fca6dd295bd672739d85ae25999fe2dde1",
+    "verificationRevision": "a215e8409872f33637aaf0361adef1f9f5eaf96f",
     "comparisonBaseline": {
       "file": "PERFORMANCE-A1.json",
       "measuredAt": "2026-11-28T04:02:13.358Z",
@@ -673,6 +673,16 @@
         ]
       },
       "runtimeWindowInspection": "미실행: Chromium browser test launch blocked in this environment."
+    },
+    "verifiedAgainstOriginMain": "7c1bd947cdc11c30b00e938a4f19589c903f9677",
+    "standardBuild": {
+      "buildCommand": "npm run web:build",
+      "staticFilesScanned": 39,
+      "hookNamesFound": {
+        "__studio_api": [],
+        "__studio_compile_count": []
+      },
+      "runtimeWindowInspection": "미실행: Playwright Chromium launch blocked in Codex nested worker sandbox."
     }
   }
 }
