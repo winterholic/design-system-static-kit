@@ -225,8 +225,8 @@
       "missing": 69,
       "coverageRate": 0.83,
       "byCoverage": {
-        "direct": 299,
-        "variant": 29,
+        "direct": 298,
+        "variant": 30,
         "schema": 7,
         "part-of": 2,
         "missing": 69
@@ -236,16 +236,16 @@
         "metadata-only": 0,
         "defined": 5,
         "renderable": 84,
-        "catalog-visible": 43,
+        "catalog-visible": 42,
         "assemblable": 1,
-        "verified": 204
+        "verified": 205
       },
       "breakdown": {
         "components": {
           "total": 207,
           "missing": 51,
-          "direct": 118,
-          "variant": 29,
+          "direct": 117,
+          "variant": 30,
           "schema": 7,
           "partOf": 2
         },
@@ -2031,7 +2031,8 @@
       ],
       "viaRecord": "component:feedback-message",
       "variant": {
-        "placement": "toast"
+        "placement": "toast",
+        "dismiss": "button"
       }
     },
     {
@@ -2046,18 +2047,23 @@
       "viaRecord": "component:feedback-message",
       "variant": {
         "placement": "toast",
-        "action": "button"
+        "action": "button",
+        "dismiss": "button"
       }
     },
     {
       "id": "req:comp:i-06-inline-error",
       "section": "§6.2 I",
       "name": "Inline Error",
-      "coverage": "direct",
-      "status": "catalog-visible",
+      "coverage": "variant",
+      "status": "verified",
       "materialIds": [
-        "purpose:feedback.error"
-      ]
+        "base-component:input-control"
+      ],
+      "viaRecord": "component:input-control",
+      "variant": {
+        "state": "error"
+      }
     },
     {
       "id": "req:comp:i-07-empty-state",
@@ -13181,6 +13187,7 @@
         "req:comp:b-04-password-input",
         "req:comp:b-05-number-input",
         "req:comp:b-07-email-input",
+        "req:comp:i-06-inline-error",
         "req:comp:n-04-quantity-selector"
       ],
       "status": "verified",
@@ -47141,7 +47148,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "e2f008d9cc3f17de",
+        "outputHash": "b7f2bc5e48c2addc",
         "duplicateOutputOf": []
       }
     },
@@ -47205,7 +47212,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "452b7e30cadd16be",
+        "outputHash": "5c3287d512d78f3a",
         "duplicateOutputOf": []
       }
     },
@@ -47421,7 +47428,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "45ec2f0d81c3a7d7",
+        "outputHash": "6e5fb176d642633d",
         "duplicateOutputOf": []
       }
     },
@@ -47836,7 +47843,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "a8cd5958efa8710e",
+        "outputHash": "e852eda39849e0d3",
         "duplicateOutputOf": []
       }
     },
@@ -47976,7 +47983,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "b2373e70c4009e50",
+        "outputHash": "cd40e6a855f7d2af",
         "duplicateOutputOf": []
       }
     },
@@ -48046,7 +48053,7 @@
           "ok": true,
           "qualityOk": true
         },
-        "outputHash": "d6afa1a08f8e51c0",
+        "outputHash": "4ab29e12e50847fb",
         "duplicateOutputOf": []
       }
     },
@@ -83818,12 +83825,10 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
-          "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "info",
+          "success",
+          "warning",
+          "error"
         ]
       },
       "catalogVisible": true,
@@ -83845,7 +83850,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -83867,7 +83873,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "14d19741bc74d9a5",
+        "outputHash": "0d7127654834bb9e",
         "duplicateOutputOf": []
       }
     },
@@ -83897,12 +83903,8 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
-          "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "determinate",
+          "indeterminate"
         ]
       },
       "catalogVisible": true,
@@ -83924,7 +83926,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -83946,7 +83949,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "9207d53f22dadc07",
+        "outputHash": "c6b9c0596feaaf6f",
         "duplicateOutputOf": []
       }
     },
@@ -84039,7 +84042,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "3121fadf06d717c9",
+        "outputHash": "c04d976f9514b43e",
         "duplicateOutputOf": []
       }
     },
@@ -84049,9 +84052,7 @@
       "kind": "purpose-family",
       "registry": "platform",
       "category": "feedback",
-      "requirementIds": [
-        "req:comp:i-06-inline-error"
-      ],
+      "requirementIds": [],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
       "supportedVersions": {
@@ -84132,7 +84133,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "dea06ff67eff02b9",
+        "outputHash": "1e3e71cc3b5b7b8e",
         "duplicateOutputOf": []
       }
     },
@@ -84162,11 +84163,6 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
-          "closed",
-          "focus",
-          "disabled",
           "loading"
         ]
       },
@@ -84189,7 +84185,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -84211,7 +84208,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "1d2321851aaa7974",
+        "outputHash": "afb2a5b0cd80b46d",
         "duplicateOutputOf": []
       }
     },
@@ -84300,7 +84297,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "a108c6f768070b9d",
+        "outputHash": "f9e0111a08d6765d",
         "duplicateOutputOf": []
       }
     },
@@ -84384,7 +84381,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "eece223ec1f13552",
+        "outputHash": "dd625033a2a6256c",
         "duplicateOutputOf": []
       }
     },
@@ -84414,12 +84411,11 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
-          "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "success",
+          "warning",
+          "error",
+          "info",
+          "neutral"
         ]
       },
       "catalogVisible": true,
@@ -84441,7 +84437,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -84463,7 +84460,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "f23368f4904ee661",
+        "outputHash": "4b12e1cd36c3f5e5",
         "duplicateOutputOf": []
       }
     },
@@ -84555,7 +84552,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "bbc8eea7e1c13c95",
+        "outputHash": "1dc32b1fb563b543",
         "duplicateOutputOf": []
       }
     },
@@ -85038,7 +85035,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderAccordion",
       "usesTokensAndCss": true,
@@ -85093,7 +85090,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderAccordion",
         "probe": {
           "method": "assembleComponents",
@@ -85125,7 +85122,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderAvatar",
       "usesTokensAndCss": true,
@@ -85172,7 +85169,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderAvatar",
         "probe": {
           "method": "assembleComponents",
@@ -85204,7 +85201,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderAvatarGroup",
       "usesTokensAndCss": true,
@@ -85251,7 +85248,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderAvatarGroup",
         "probe": {
           "method": "assembleComponents",
@@ -85283,7 +85280,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderCollapsible",
       "usesTokensAndCss": true,
@@ -85331,7 +85328,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderCollapsible",
         "probe": {
           "method": "assembleComponents",
@@ -85363,7 +85360,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderCounter",
       "usesTokensAndCss": true,
@@ -85408,7 +85405,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderCounter",
         "probe": {
           "method": "assembleComponents",
@@ -85440,7 +85437,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderKeyboardShortcut",
       "usesTokensAndCss": true,
@@ -85487,7 +85484,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderKeyboardShortcut",
         "probe": {
           "method": "assembleComponents",
@@ -85519,7 +85516,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderMetadataRow",
       "usesTokensAndCss": true,
@@ -85566,7 +85563,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderMetadataRow",
         "probe": {
           "method": "assembleComponents",
@@ -85598,7 +85595,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderNotificationIndicator",
       "usesTokensAndCss": true,
@@ -85643,7 +85640,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderNotificationIndicator",
         "probe": {
           "method": "assembleComponents",
@@ -85675,7 +85672,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderStatComparison",
       "usesTokensAndCss": true,
@@ -85722,7 +85719,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderStatComparison",
         "probe": {
           "method": "assembleComponents",
@@ -85754,7 +85751,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderStatusBadge",
       "usesTokensAndCss": true,
@@ -85803,7 +85800,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderStatusBadge",
         "probe": {
           "method": "assembleComponents",
@@ -85835,7 +85832,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderAudioPlayer",
       "usesTokensAndCss": true,
@@ -85890,7 +85887,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderAudioPlayer",
         "probe": {
           "method": "assembleComponents",
@@ -85922,7 +85919,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderCarousel",
       "usesTokensAndCss": true,
@@ -85975,7 +85972,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderCarousel",
         "probe": {
           "method": "assembleComponents",
@@ -86007,7 +86004,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderFigureCaption",
       "usesTokensAndCss": true,
@@ -86054,7 +86051,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderFigureCaption",
         "probe": {
           "method": "assembleComponents",
@@ -86086,7 +86083,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderFilePreview",
       "usesTokensAndCss": true,
@@ -86135,7 +86132,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderFilePreview",
         "probe": {
           "method": "assembleComponents",
@@ -86167,7 +86164,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderImageComparison",
       "usesTokensAndCss": true,
@@ -86214,7 +86211,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderImageComparison",
         "probe": {
           "method": "assembleComponents",
@@ -86246,7 +86243,7 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/info-media.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/info-media.mjs#renderResponsiveImage",
       "usesTokensAndCss": true,
@@ -86295,7 +86292,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/info-media.mjs",
         "renderer": "src/platform/families/info-media.mjs#renderResponsiveImage",
         "probe": {
           "method": "assembleComponents",
@@ -86395,7 +86392,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "c0a8f3db240b0df4",
+        "outputHash": "400168a01a93a1be",
         "duplicateOutputOf": []
       }
     },
@@ -86425,12 +86422,10 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
+          "open",
           "focus",
-          "disabled",
-          "loading"
+          "current"
         ]
       },
       "catalogVisible": true,
@@ -86452,7 +86447,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -86479,7 +86475,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "1b3fe1d644a25ddf",
+        "outputHash": "d4db1bd14a0b5aac",
         "duplicateOutputOf": []
       }
     },
@@ -86509,12 +86505,11 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
+          "open",
           "focus",
-          "disabled",
-          "loading"
+          "filtered",
+          "empty"
         ]
       },
       "catalogVisible": true,
@@ -86536,7 +86531,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -86558,7 +86554,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "3a6a6a8804924146",
+        "outputHash": "4d99390cad6c2f95",
         "duplicateOutputOf": []
       }
     },
@@ -86588,12 +86584,9 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "open",
+          "focus"
         ]
       },
       "catalogVisible": true,
@@ -86615,7 +86608,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -86637,7 +86631,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "ee67eda61e753866",
+        "outputHash": "56d379b6a7944194",
         "duplicateOutputOf": []
       }
     },
@@ -86667,12 +86661,9 @@
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "open",
+          "focus"
         ]
       },
       "catalogVisible": true,
@@ -86694,7 +86685,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -86721,7 +86713,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "b502c323a225ae4b",
+        "outputHash": "540063f91ded4595",
         "duplicateOutputOf": []
       }
     },
@@ -86815,7 +86807,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "f69fb314e84a1675",
+        "outputHash": "3550f431fb1b4acb",
         "duplicateOutputOf": []
       }
     },
@@ -86901,7 +86893,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "6ea2d91f608fe0ae",
+        "outputHash": "e5c4084d8007e618",
         "duplicateOutputOf": []
       }
     },
@@ -87000,7 +86992,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "e2335b798b11e00d",
+        "outputHash": "fbcdfee31ba24e4a",
         "duplicateOutputOf": []
       }
     },
@@ -87023,19 +87015,16 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/ehi.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/ehi.mjs#renderContextualHelp",
       "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
-          "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "hidden",
+          "shown",
+          "focus"
         ]
       },
       "catalogVisible": true,
@@ -87057,7 +87046,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -87070,7 +87060,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/ehi.mjs",
         "renderer": "src/platform/families/ehi.mjs#renderContextualHelp",
         "probe": {
           "method": "assembleComponents",
@@ -87079,7 +87069,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "da21010c27acd8fd",
+        "outputHash": "a81530a54e692bfb",
         "duplicateOutputOf": []
       }
     },
@@ -87102,19 +87092,16 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/ehi.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/ehi.mjs#renderDrawer",
       "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "open",
+          "focus"
         ]
       },
       "catalogVisible": true,
@@ -87136,7 +87123,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -87149,7 +87137,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/ehi.mjs",
         "renderer": "src/platform/families/ehi.mjs#renderDrawer",
         "probe": {
           "method": "assembleComponents",
@@ -87158,7 +87146,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "53cfc7d1daefd8a7",
+        "outputHash": "1af2036109c638f4",
         "duplicateOutputOf": []
       }
     },
@@ -87181,19 +87169,17 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/ehi.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/ehi.mjs#renderDropdownMenu",
       "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
+          "open",
           "focus",
-          "disabled",
-          "loading"
+          "disabled"
         ]
       },
       "catalogVisible": true,
@@ -87215,7 +87201,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -87228,7 +87215,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/ehi.mjs",
         "renderer": "src/platform/families/ehi.mjs#renderDropdownMenu",
         "probe": {
           "method": "assembleComponents",
@@ -87237,7 +87224,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "77134b4d1287bf3e",
+        "outputHash": "317377b27deb030f",
         "duplicateOutputOf": []
       }
     },
@@ -87260,19 +87247,16 @@
         "materialVersion": "1.0.0",
         "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
       },
-      "definitionPath": null,
+      "definitionPath": "src/platform/families/ehi.mjs",
       "rendererConnected": true,
       "rendererEntry": "src/platform/families/ehi.mjs#renderPopover",
       "usesTokensAndCss": true,
       "supportedVariantsAndStates": {
         "variants": {},
         "states": [
-          "default",
-          "open",
           "closed",
-          "focus",
-          "disabled",
-          "loading"
+          "open",
+          "focus"
         ]
       },
       "catalogVisible": true,
@@ -87294,7 +87278,8 @@
         "status": "implemented",
         "evidenceRefs": [],
         "invalidEvidenceRefs": [
-          "tests/platform-ehi-contract.test.mjs"
+          "tests/platform-ehi-contract.test.mjs",
+          "e2e/platform-ehi-interaction.spec.mjs"
         ],
         "liveProbe": "passed"
       },
@@ -87307,7 +87292,7 @@
         }
       ],
       "evidence": {
-        "definition": null,
+        "definition": "src/platform/families/ehi.mjs",
         "renderer": "src/platform/families/ehi.mjs#renderPopover",
         "probe": {
           "method": "assembleComponents",
@@ -87316,7 +87301,7 @@
           "visual": "family:quiet",
           "qualityOk": true
         },
-        "outputHash": "5dace89000cd752e",
+        "outputHash": "5993bff427ce93c2",
         "duplicateOutputOf": []
       }
     },

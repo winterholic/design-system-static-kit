@@ -191,7 +191,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 51.
+집계: 독립 재료 148 · 변형 37 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 51.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -314,7 +314,7 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:i-03-callout` | Callout | 독립 재료 | direct | catalog-visible | purpose:feedback.callout |
 | `req:comp:i-04-toast` | Toast | 변형 | variant | verified | base-component:feedback-message |
 | `req:comp:i-05-snackbar` | Snackbar | 변형 | variant | verified | base-component:feedback-message |
-| `req:comp:i-06-inline-error` | Inline Error | 독립 재료 | direct | catalog-visible | purpose:feedback.error |
+| `req:comp:i-06-inline-error` | Inline Error | 변형 | variant | verified | base-component:input-control |
 | `req:comp:i-07-empty-state` | Empty State | 독립 재료 | direct | verified | state-pattern:empty-illustrated, state-pattern:empty-inline, component:empty-state |
 | `req:comp:i-08-error-state` | Error State | 독립 재료 | direct | verified | state-pattern:error-panel, state-pattern:error-banner |
 | `req:comp:i-09-success-state` | Success State | 독립 재료 | direct | catalog-visible | state-pattern:success-confirmation, state-pattern:success-toast, purpose:feedback.result |

@@ -4,11 +4,10 @@
   "summary": {
     "totalTasks": 45,
     "byStatus": {
-      "Verified": 12,
-      "Implemented": 10,
+      "Verified": 15,
+      "Implemented": 8,
       "Pending": 20,
-      "In Progress": 2,
-      "Completed": 1
+      "In Progress": 2
     },
     "byTrack": {
       "Track G": 7,
@@ -1610,7 +1609,16 @@
         "tests/platform-family-purpose.test.mjs",
         "tests/platform-service-channels.test.mjs",
         "tests/layout-quality.test.mjs",
-        "e2e/platform-ehi-components.spec.mjs"
+        "e2e/platform-ehi-components.spec.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/platform/families/navigation.mjs",
+        "src/platform/families/feedback.mjs",
+        "site/src/platform/families/inventory.mjs",
+        "site/src/platform/families/navigation.mjs",
+        "site/src/platform/families/feedback.mjs",
+        "tests/platform-type-fonts.test.mjs",
+        "tests/platform-ehi-requirements.test.mjs",
+        "e2e/platform-ehi-interaction.spec.mjs"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
@@ -1621,11 +1629,13 @@
         "tests/platform-family-contract.test.mjs",
         "tests/platform-service-channels.test.mjs",
         "tests/layout-quality.test.mjs",
-        "e2e/platform-ehi-components.spec.mjs"
+        "e2e/platform-ehi-components.spec.mjs",
+        "tests/platform-ehi-requirements.test.mjs",
+        "e2e/platform-ehi-interaction.spec.mjs"
       ],
       "commit": "3d0788114",
-      "status": "Implemented",
-      "unresolvedIssues": "E/H/I 계약·Blueprint·Core/REST/MCP 검증 완료. Chromium 기반 E/H/I e2e와 전체 npm run verify는 Codex 명령 환경에서 Chromium Mach IPC bootstrap_check_in Permission denied (1100)로 검증하지 못함(전체 verify에서는 기존 L계열 리사이즈 패널 시험이 같은 환경 오류로 실패). Claude 검증 작업자가 브라우저 시험과 전체 verify를 실행해야 한다."
+      "status": "Verified",
+      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §20. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
     },
     {
       "taskId": "TASK-TRD-F",
@@ -1711,7 +1721,16 @@
         "tests/platform-family-purpose.test.mjs",
         "tests/platform-service-channels.test.mjs",
         "tests/layout-quality.test.mjs",
-        "e2e/platform-ehi-components.spec.mjs"
+        "e2e/platform-ehi-components.spec.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/platform/families/navigation.mjs",
+        "src/platform/families/feedback.mjs",
+        "site/src/platform/families/inventory.mjs",
+        "site/src/platform/families/navigation.mjs",
+        "site/src/platform/families/feedback.mjs",
+        "tests/platform-type-fonts.test.mjs",
+        "tests/platform-ehi-requirements.test.mjs",
+        "e2e/platform-ehi-interaction.spec.mjs"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
@@ -1722,11 +1741,13 @@
         "tests/platform-family-contract.test.mjs",
         "tests/platform-service-channels.test.mjs",
         "tests/layout-quality.test.mjs",
-        "e2e/platform-ehi-components.spec.mjs"
+        "e2e/platform-ehi-components.spec.mjs",
+        "tests/platform-ehi-requirements.test.mjs",
+        "e2e/platform-ehi-interaction.spec.mjs"
       ],
       "commit": "3d0788114",
-      "status": "Implemented",
-      "unresolvedIssues": "E/H/I 계약·Blueprint·Core/REST/MCP 검증 완료. Chromium 기반 E/H/I e2e와 전체 npm run verify는 Codex 명령 환경에서 Chromium Mach IPC bootstrap_check_in Permission denied (1100)로 검증하지 못함(전체 verify에서는 기존 L계열 리사이즈 패널 시험이 같은 환경 오류로 실패). Claude 검증 작업자가 브라우저 시험과 전체 verify를 실행해야 한다."
+      "status": "Verified",
+      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §20. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
     },
     {
       "taskId": "TASK-TRD-I",
@@ -1780,7 +1801,16 @@
         "tests/platform-family-purpose.test.mjs",
         "tests/platform-service-channels.test.mjs",
         "tests/layout-quality.test.mjs",
-        "e2e/platform-ehi-components.spec.mjs"
+        "e2e/platform-ehi-components.spec.mjs",
+        "src/platform/families/inventory.mjs",
+        "src/platform/families/navigation.mjs",
+        "src/platform/families/feedback.mjs",
+        "site/src/platform/families/inventory.mjs",
+        "site/src/platform/families/navigation.mjs",
+        "site/src/platform/families/feedback.mjs",
+        "tests/platform-type-fonts.test.mjs",
+        "tests/platform-ehi-requirements.test.mjs",
+        "e2e/platform-ehi-interaction.spec.mjs"
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
       "tests": [
@@ -1791,11 +1821,13 @@
         "tests/platform-family-contract.test.mjs",
         "tests/platform-service-channels.test.mjs",
         "tests/layout-quality.test.mjs",
-        "e2e/platform-ehi-components.spec.mjs"
+        "e2e/platform-ehi-components.spec.mjs",
+        "tests/platform-ehi-requirements.test.mjs",
+        "e2e/platform-ehi-interaction.spec.mjs"
       ],
       "commit": "3d0788114",
-      "status": "Implemented",
-      "unresolvedIssues": "E/H/I 계약·Blueprint·Core/REST/MCP 검증 완료. Chromium 기반 E/H/I e2e와 전체 npm run verify는 Codex 명령 환경에서 Chromium Mach IPC bootstrap_check_in Permission denied (1100)로 검증하지 못함(전체 verify에서는 기존 L계열 리사이즈 패널 시험이 같은 환경 오류로 실패). Claude 검증 작업자가 브라우저 시험과 전체 verify를 실행해야 한다."
+      "status": "Verified",
+      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §20. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
     },
     {
       "taskId": "TASK-TRD-J",

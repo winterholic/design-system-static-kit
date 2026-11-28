@@ -1114,7 +1114,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 
 검증 대상은 `origin/main`의 `3421079e0`(구현 `994b64bd9`, 미러 `2c4babd48`)이다. 구현 보고(69항목 missing 0, 재료 시험 13/13)는 맞았지만 **missing 0은 요구가 어떤 재료 이름에 연결됐다는 뜻일 뿐, 그 값이 화면에 나타난다는 뜻이 아니었다.** 코드를 읽고 브라우저로 렌더해 다음을 찾아 고쳤다. 실행 환경은 Node v26.9.0, Playwright Chromium(`PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright`)이다.
 
-### 18.1 판정: 구현이 놓친 결함
+### 19.1 판정: 구현이 놓친 결함
 
 | # | 결함 | 어떻게 드러났나 |
 |---|---|---|
@@ -1130,7 +1130,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 
 구현 보고와 달리 맞았던 것: 69항목이 REQUEST §9.3~§9.7 문장에서 생성되고(`foundations` 9·17·12·15·16), 아이콘이 `src/catalog/icons.mjs`를 바꾸지 않았으며(`git diff origin/main -- src/catalog/icons.mjs` 빈 출력), 간격 값이 4px 격자와 기존 `SPACE` 토큰을 쓴다.
 
-### 18.2 교정
+### 19.2 교정
 
 - 표면: facet 규칙을 `:is([data-surface-facet],.kit-surface[data-level][data-surface-facet])`로 올려 단계 표면 위에서도 이기게 했다. `subtle`은 테두리 없는 4px, `deep-elevation`은 `FACET_SHADOW.deep`(`ELEVATION` 표는 건드리지 않아 2.1~2.4 출력 불변)로 바꿔 17개가 모두 다른 모양이 되고 그림자 번짐이 subtle 16 < medium 32 < deep 64가 된다. facet 샘플 `renderSurfaceFacetSample`을 추가했다(이중 테두리는 form·pricing 맥락 래퍼 안에서만 열린다).
 - 모션: `modal-enter`·`drawer-enter`를 `slow`, `toast-enter`를 `base`로 올려 15개가 서로 다른 전환이 된다. `reducedMotion`은 `instant`(전환 제거)와 `fade`(opacity만 짧게, transform 제거)로 바꾸고 패턴마다 reduce 규칙을 컴파일한다(일괄 규칙보다 명시도가 높다). 등록 검사는 `fade`가 opacity를 움직이는 패턴만 허용한다.
@@ -1139,7 +1139,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 - 아이콘: `renderAreaIcon`이 viewBox를 대조하고 `data-icon-family`·`data-icon-size`를 찍으며 CSS 선택자가 family를 읽는다. `--kit-icon-align`을 `vertical-align`이 읽는다. `minSize` 16px와 그 크기에서 선 굵기 1.25px 이상 검사를 추가했다.
 - 장부: 요구에 `part`(`role:*`·`facet:*`·`pattern:*`)를 달아 요구 문장 하나가 재료의 부분 하나에 대응하게 했고, 간격·아이콘 영역에 정의 경로와 `assembleStyleMaterials` 프로브를 연결했다. 69항목 상태는 `metadata-only/defined` 25 → `renderable` 25(웹 카탈로그에 아직 없음)로 정직하게 올랐고 나머지 44는 `verified`다.
 
-### 18.3 시험과 RED
+### 19.3 시험과 RED
 
 `tests/platform-style-materials.test.mjs`에 시험 5개를 더해 18개다(기존 13). 하드코딩 기대값 대신 컴파일 결과의 성질을 본다: facet 17개 쌍별 다른 반경·테두리·그림자, 그림자 번짐 순서, 15개 전환 레시피 쌍별 차이와 정책별 reduce 규칙, 역할 토큰 9개 서로 다름·밀도 배율이 역할마다 다름·역할 토큰이 컴파일된 모든 템플릿 CSS에서 읽힘, 아이콘 viewBox·family·크기, 장부의 부분·재료 대응. 기존 시험에서 항상 참인 단언은 찾지 못했다. 약한 단언 3건을 고쳤다: (1) facet 쌍 비교가 원시 필드 `[radius,border,elevation]`만 봐서 결함 1·2를 놓쳤고 컴파일 결과 비교로 바꿨다. (2) 순위 시험의 유일한 OR 단언 `ranked.length > 0 || reasons.length > 0`을 '비어 있으면 사유가 있고 사유마다 code·id가 있다'는 함의로 바꿨다. (3) 프리셋 CSS를 `css.length > 80`으로만 보던 단언을 '자기 범위 선택자(`[data-surface=...]` 등)를 포함하고 규칙이 3개 이상'으로 바꿨다.
 
@@ -1158,7 +1158,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 | facet 명시도를 낮춤 | facet 17종(시험) + Chromium 확인(2/17) |
 | reduce 정책 규칙 제거, fade에서 transform 유지, frosted를 매끄러운 바탕으로, blur 24px | Chromium 확인 4건 모두 실패(blur 24px는 등록 단계에서 거부) |
 
-### 18.4 Chromium 렌더 확인(`screens/foundations/render-check.mjs`, 대표 재료만)
+### 19.4 Chromium 렌더 확인(`screens/foundations/render-check.mjs`, 대표 재료만)
 
 계산 스타일과 실제 `CSSTransition`을 읽고(시간 표본이 아니라 전환을 멈춰 50% 지점 값을 읽는다) 스크린샷 6장을 같은 폴더에 둔다. 출력 전문은 `render-check.out.txt`다. 요약:
 
@@ -1168,12 +1168,12 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 - 간격: 역할 9개의 실제 레이아웃 거리가 `SPACE` 토큰과 같고(compact·spacious), spacious/compact 배율이 역할마다 다르다(1.0·1.33·1.67·1.86·2.0).
 - 아이콘: 영역 4종 계산 스타일 24px·stroke 2px·`vertical-align:middle`, 작은 크기 16px, 장식은 `aria-hidden`, 이름이 있는 것은 `role="img" aria-label`.
 
-### 18.5 A3 브라우저 잔여 2건
+### 19.5 A3 브라우저 잔여 2건
 
 1. `cd apps/web && npx playwright test e2e/catalog-lists.spec.mjs`: **10개 중 9개 통과, 1개 실패.** Explore·Components·Typography 목록의 24카드 상한, iframe 0, 컴파일 0회, 정적 미리보기 디코드는 통과했다. 실패한 시험(`catalog-lists.spec.mjs:174`)은 `/components/hero`의 `h1`이 `Hero`를 포함해야 한다고 단언하지만 화면은 한국어 라벨 `히어로`를 낸다(`src/catalog/nodes.mjs`의 `label`). 단언만 `히어로`로 바꾼 임시 사본으로 같은 시험을 돌리면 통과하므로 제품 결함이 아니라 `ef1ade200`이 넣은 시험의 기대값 오류다. A3는 확인만 하는 범위라 고치지 않았다. 수정안: 단언을 `toContainText('히어로')`(또는 `/히어로|Hero/`)로 바꾼다.
 2. 운영 빌드(`npm run web:build` 후 `next start`)에서 Studio 편집 후 `typeof window.__studio_api`는 `undefined`, `__studio_compile_count`도 `undefined`, `'__studio_api' in window`는 `false`다(`e2e/studio-probe.spec.mjs` 운영 시험 2개 통과: window 훅 없음, `.next/static` 번들에 훅 문자열 없음). `DSK_STUDIO_PROBE=1` 빌드에서는 `typeof window.__studio_api`가 `object`, `__studio_compile_count`는 `number`(값 2)로 존재한다.
 
-### 18.6 불변 조건과 전체 검증
+### 19.6 불변 조건과 전체 검증
 
 - `src/catalog/icons.mjs`·`src/catalog`·`src/render`·`src/styles`·`src/spacing.mjs`·`site/v1`·`docs/evidence/context/legacy-hashes.json`: 검증 대상 `3421079e0`에서 `git diff origin/main` 빈 출력(교정 커밋도 이 경로를 건드리지 않았다). legacy 2.1.0 해시와 기본 2.4.0 출력 시험(`tests/composition.test.mjs`, `tests/platform-color-compat.test.mjs`) 22/22 통과.
 - `npm run coverage:materials:check`: `MANIFEST MATCH`(최신 main `e901afcc5` 위로 rebase한 뒤 재생성한 `MATERIAL-COVERAGE.json` 기준, 재료 1480·요구 406·missing 요구 69는 §9.3~§9.7이 아닌 구성요소 요구).
@@ -1213,3 +1213,90 @@ props가 렌더 출력에 반영되는지, 계산 스타일과 실제 레이아�
 - `npm run verify`(최신 main `898d2da21` 위 최종 트리): `npm test` `tests 1021, pass 1021, fail 0`, `audit`·`docs`·`build`·`check-generated` 통과, 마지막 줄 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`, exit 0.
 - `MATERIAL-COVERAGE.json`은 손으로 병합하지 않고 `node scripts/generate-material-coverage.mjs`로 재생성했다.
 - `src/catalog`·`src/render`·`src/styles`·`site/v1`·`legacy-hashes` 변경 없음(2.1.0 고정 해시와 기본 2.4.0 출력 시험은 위 1019개에 포함).
+---
+
+## 20. D2 §6.2 E·H·I 39항목 독립 검증 (원 커밋 `3d0788114`·`e305a7d9d`, 브랜치 `upgrade/d2-verify`, 2026-11-28)
+
+구현 작업자(codex GPT Luna)는 Chromium 권한 오류로 브라우저 시험과 전체 verify를 실행하지 못했다. 이 검증은 Claude(Sonnet 5.5)가 Chromium으로 오버레이·메뉴·내비·피드백을 직접 조작해 확인했고, 결함은 고쳤다.
+
+### 20.1 판정
+
+- 39항목(E 14·H 9·I 16)은 항목 이름의 뜻대로 렌더된다. 의미 시험 `tests/platform-ehi-requirements.test.mjs`가 항목마다 렌더 출력의 구조를 본다. 재료 매핑은 시험이 정하지 않고 MATERIAL-COVERAGE.json의 요구 레코드에서 읽는다.
+- 분류는 독립 31 · 변형 8에서 **독립 30 · 변형 9**로 바뀌었다. Inline Error의 매핑이 틀렸기 때문이다(20.2의 M-1).
+- 변형 9건은 서로, 그리고 기반과 다른 출력을 낸다. 한 가지 예외는 Underline Tabs로, 밑줄은 Tabs 기본 외형이라 기본 Tabs와 같은 출력이다. 구별되는 것은 pill·segmented와 세로 방향뿐이다. 변형 축 값으로만 구별되는 항목이며 결함으로 보지 않고 시험 주석에 적었다.
+
+### 20.2 발견 결함과 조치
+
+| # | 결함 | 조치 |
+|---|---|---|
+| D-01 | Command Menu 입력 필터가 동작하지 않았다. 런타임이 `[role=menu]` 안에서 입력을 찾았는데 입력은 `role=dialog` 패널에 있어 `null`을 질의했다. 기존 e2e `platform-ehi-components.spec.mjs`도 이 지점에서 실패했다 | 런타임 재작성. 맞는 항목이 없으면 `role=status` 문구를 쓴다 |
+| D-02 | 메뉴 패널과 안쪽 목록이 모두 `role=menu`라 menu가 중첩됐다 | 패널은 역할 없이 두고 안쪽 목록만 menu |
+| D-03 | Popover가 화면 전체 반투명 막과 가운데 정렬 대화상자로 열렸다. `aria-modal=false`라고 적고도 시작 요소를 막이 덮었다 | 시작 요소 아래에 붙는 비모달 패널. 막 없음, 포커스·스크롤 가둠 없음, 화면 가장자리에서 안쪽으로 밀리고 아래 공간이 없으면 위로 뒤집힘 |
+| D-04 | Dropdown·Command·Context 메뉴가 문서 흐름 안에서 열려 뒤 내용을 밀었다 | 겹쳐 뜨는 패널(absolute) |
+| D-05 | Contextual Help: 포커스를 벗어나면 `close()`가 시작 요소로 포커스를 되돌려 Tab으로 나갈 수 없었다. hover 미지원, tooltip 트리거에 `aria-haspopup=dialog`·`aria-expanded`가 붙었다 | focus·hover로 보이고 Escape는 포커스를 옮기지 않고 닫는다. 포인터가 설명 위로 가도 유지. `aria-describedby`만 남김 |
+| D-06 | Collapsible Sidebar 루트에 `data-ehi-root`가 없어 한 번 열면 닫을 수도, Escape로 복귀할 수도 없었다 | 루트 표시와 `data-ehi-persist`(바깥 클릭·다른 오버레이가 닫지 않음) |
+| D-07 | Navigation Drawer: 링크를 골라도 닫히지 않았고(런타임이 존재하지 않는 `[data-nav-link]`를 찾음), 스크롤 잠금이 남았다 | 모달 안 링크 선택 시 닫고 잠금을 푼다 |
+| D-08 | 바깥 클릭으로 닫을 때도 시작 요소로 포커스를 가져와 사용자가 누른 요소의 포커스를 빼앗았다. Tab이 메뉴를 닫지 않았다 | 바깥 클릭은 포커스를 누른 곳에 둔다. Tab은 메뉴를 닫고 다음 요소로 넘긴다 |
+| D-09 | 모달 포커스 가둠은 Tab 핸들러뿐이라 포커스가 밖으로 나가면 돌아오지 않았다 | `focusin` 보호를 더했다 |
+| D-10 | Loading Overlay가 `position:fixed` 전체 화면 막이라 어디에 두든 페이지 전체를 덮었다 | 영역(`aria-busy`) 안에만 겹치는 absolute 층. 가려진 내용은 `aria-hidden` |
+| D-11 | Circular Progress의 숫자가 채움색 위에 직접 놓여 대비가 무너졌다 | 숫자 뒤 표면색 원판(`::before`) |
+| D-12 | Status Indicator가 경보 상자 크기(390px에서 116px 높이)로 그려졌고 `.ehi-dot` CSS는 있는데 요소가 없었다 | 점·숨은 톤 문구·라벨을 한 `role=status` live region으로 구성. 경고는 마름모, 오류는 사각 점으로 색 외 단서 |
+| D-13 | Callout이 경보(live region)였고 상자가 이중이었다 | `role=note` 정적 문구, 이중 테두리 제거 |
+| D-14 | Navigation 링크·메뉴 높이가 36px라 44px 터치 목표 미달 | `.ehi .kit-ctl-nav-link` 44px. 구형 목적 패밀리(topbar·tabs·sidebar·confirm·error·warning·progress)는 640px 이하에서 44px |
+| D-15 | 모바일(≤640px)에서 피드백 본문이 세로 flex로 바뀌며 `flex:1 1 12ch`가 높이 기준이 되어 한 줄 문구도 98px이 됐다(기반 `feedback.mjs`) | 기반 CSS는 "기존 컨트롤 출력 바이트 동일" 시험이 고정하므로 건드리지 않고, E·H·I 패밀리 CSS(`ehi.mjs`·`feedback.mjs` 목적 패밀리)에서 바로잡았다 |
+| D-16 | 12개 목적 패밀리의 `entry.export`(`renderPopover` 등)가 모듈에 없는 이름이었고, 정의 위치 근거가 `feedback.mjs`·null로 틀렸다. 상태·상호작용 목록은 12개 모두 같은 문구(callout에도 "열기·닫기 aria-expanded")였다 | 이름 있는 함수를 export, 정의 위치를 진입점 모듈에서 읽음, 패밀리별 상태·상호작용 |
+| M-1 | Inline Error의 매핑 `purpose:feedback.error`는 화면 위 배너·대화상자의 오류 안내다. Banner·Error State와 같은 자리다 | `base-component:input-control`의 `state: error`(aria-invalid, aria-describedby로 이어진 live 문구)의 변형으로 정정. 분류표 독립 149→148, 변형 36→37 |
+| M-2 | Toast·Snackbar 변형 레코드가 `{placement:'toast'}`뿐이라 그대로 렌더하면 `FB_TOAST_STUCK`으로 거부된다 | `dismiss: 'button'`을 변형 값에 포함 |
+| T-1 | 기존 시험이 소스 문자열(`ev.key==='Escape'`)을 찾는 방식이었다 | 마크업 단언과 Chromium e2e로 교체. 계약 시험의 `data-tone="info"`(기반 feedback 렌더) 단언은 상태 표시기 구조 변경에 맞춰 같은 안전성(알 수 없는 톤이 출력에 실리지 않음)을 보는 단언으로 바꿨다 |
+| T-2 | `tests/platform-type-fonts.test.mjs` 다국어 시험이 `static-kit.local` 요청에 라우트가 없어 DNS 대기로 30초 timeout(원 저장소 `main`에서도 같은 실패) | 서체 요청을 즉시 abort하는 라우트 추가. E·H·I 범위 밖이지만 `npm run verify` 통과에 필요해 최소 변경 |
+
+### 20.3 Chromium 조작 결과 (`e2e/platform-ehi-interaction.spec.mjs`, 390px·1280px)
+
+고치기 전 같은 시험은 12건 이상 실패했고(터치 높이 36, popover 위치 572px, 메뉴 strict-mode 중복, 필터, 도움말 Tab, 원 숫자 배경), 고친 뒤 26/26 통과다(기존 `platform-ehi-components.spec.mjs` 2건 포함).
+
+- 다이얼로그·드로어: 키보드 열기, 포커스가 안으로 이동, Tab·Shift+Tab 순환 유지, `html` overflow 잠금과 휠 스크롤 불변, Escape·배경 클릭·닫기 단추로 닫힘, 포커스 복귀, 잠금 해제, 패널이 화면 안에 머묾.
+- 팝오버: 시작 요소 24px 이내 아래, 막 없음, 시작 요소가 눌림, Tab으로 나가도 열려 있음, Escape 복귀, 바깥 클릭은 포커스를 누른 곳에 둠.
+- 메뉴 3종: 방향키·Home·End·wrap, 비활성 항목 건너뜀, Tab으로 닫힘, 항목 선택 시 닫고 복귀, 뒤 내용이 밀리지 않음, 필터와 빈 결과 live region, 오른쪽 클릭과 ContextMenu 키.
+- 도움말: focus·hover로 보이고 Escape로 닫히며 Tab 후 되돌려 끌지 않음, 오른쪽 가장자리에서도 화면 안.
+- 사이드바·드로어 내비: aria-expanded, 링크 선택 시 `aria-current=page` 이동, Escape 복귀.
+- 피드백: status 영역 노드가 문구 변경 뒤에도 유지, callout은 정적 note, 진행 값과 그려진 값 일치, 로딩 오버레이는 뷰포트 80% 미만이며 페이지 나머지를 덮지 않음.
+- 가로 넘침 없음과 터치 목표 44px는 위 시험이 열린 상태에서 확인한다.
+
+### 20.4 RED/GREEN
+
+원 코드에서 위 e2e가 실패한 것이 RED다. 고친 뒤 통과가 GREEN이다. 시험을 새로 쓴 뒤 런타임 코드에 결함을 심어 시험이 잡는지 따로 확인했다.
+
+| 심은 결함 | 결과 |
+|---|---|
+| 스크롤 잠금 제거(`overflow=''`) | `html overflow`가 `''`로 실패 |
+| Tab 가둠과 `focusin` 보호를 둘 다 제거 | "Tab 1 stays in the dialog" 실패 (Tab 핸들러만 제거하면 `focusin` 보호가 막아 통과한다. 이중 방어라 시험이 한쪽 제거를 놓치는 것이 아니다) |
+| 닫을 때 포커스 복귀 제거 | 드로어·드롭다운 시험 2건 실패 |
+| 상태 표시기 `aria-live` 제거 | 접근성 시험·의미 시험·계약 시험 3건 실패 |
+| Toast 변형을 `{placement:'toast'}`로 되돌림 | 의미 시험 1건 실패 |
+
+### 20.5 남은 한계
+
+- 구형 노드(`component:breadcrumb` 링크 32px, `component:pagination` 40px)와 기반 컴포넌트의 기본 크기 축은 고정 출력 해시 때문에 건드리지 않았다. 1280px에서 구형 목적 패밀리(topbar·tabs·sidebar 링크 36px, confirm·error·warning·progress 버튼 26~32px)는 44px 미만이다. 640px 이하에서만 44px로 올렸다.
+- 기반 `base-component:feedback-message` 자체의 ≤640px 세로 본문 높이 문제(D-15)는 기반을 직접 쓰는 곳(Alert·Banner·Toast 단독)에 남는다.
+- 성공 상태 패턴(`state-pattern:success-*`)과 `error-banner`는 표 상태 슬롯에 놓이지 않아 `assembleDesign` 표 경로로는 출력에 나타나지 않는다. 해당 항목은 `purpose:feedback.result`로 확인했다.
+
+### 20.6 실행 증거
+
+```sh
+$ export PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright
+$ npx playwright test e2e/platform-ehi-interaction.spec.mjs e2e/platform-ehi-components.spec.mjs
+26 passed (22.3s)
+$ node --test tests/platform-ehi-requirements.test.mjs tests/platform-ehi-contract.test.mjs tests/platform-family-a11y.test.mjs tests/platform-family-inventory.test.mjs
+ℹ pass 120 / ℹ fail 0
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1479 materials, 406 requirements)
+$ npm run verify
+ℹ tests 1052 / ℹ pass 1052 / ℹ fail 0
+REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
+$ npm run test:browser
+374 passed, 1 failed (10.9m)   # e2e/platform-families.spec.mjs:12 media 묶음 전부(CLIP_ICON·CLIP_TEXT·OVERFLOW_X)
+```
+
+`platform-families.spec.mjs:12`의 실패는 E·H·I 변경과 무관하다. 같은 측정(`measureAll({groups: ['media']})`)이 이 커밋을 올리지 않은 `origin/main`(`898d2da21`)에서도 똑같이 media 묶음 전부를 실패시킨다. 실패는 K 계열(미디어) 소관이라 고치지 않았다. E·H·I 묶음(navigation·overlay·feedback)은 이 시험에서 통과했다.
+
+불변 확인: 위 `npm run verify`의 시험에 레거시 해시(2.1.0), 기본 2.4.0, `site/v1/catalog.json`, 기존 컨트롤 출력 바이트 동일 시험이 포함되어 통과했다. 기반 컴포넌트 CSS(`src/materials/*`)는 이 커밋에서 바뀌지 않았다(첫 시도에서 `feedback.mjs`를 고쳤다가 "기존 컨트롤 출력 바이트 동일" 시험이 실패해 되돌렸다).
