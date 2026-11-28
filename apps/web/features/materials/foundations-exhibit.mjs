@@ -17,3 +17,41 @@ export function categoryRows(category, data) {
     ? data[category]
     : [];
 }
+
+const BORDER_DECLARATIONS = Object.freeze({
+  none: '0', hairline: '1px solid var(--color-line)', standard: '1px solid var(--color-line)',
+  strong: '2px solid var(--color-fg)', double: '3px double var(--color-line)',
+});
+
+export function borderDeclaration(kind) {
+  return BORDER_DECLARATIONS[kind] ?? '0';
+}
+
+export function backgroundDecoration(css = '', blur = 0) {
+  const declarations = Object.fromEntries(css.split(';').map(part => {
+    const colon = part.indexOf(':');
+    return colon < 0 ? null : [part.slice(0, colon).trim(), part.slice(colon + 1).trim()];
+  }).filter(Boolean));
+  return {
+    '--deco-background': declarations['background-image'] ?? declarations.background ?? 'none',
+    '--deco-size': declarations['background-size'] ?? 'auto',
+    '--deco-mask': declarations['mask-image'] ?? 'none',
+    '--deco-webkit-mask': declarations['-webkit-mask-image'] ?? declarations['mask-image'] ?? 'none',
+    '--deco-opacity': declarations.opacity ?? '1',
+    '--deco-blur': blur ? `blur(${blur}px)` : 'none',
+  };
+}
+
+export function layoutPreviewGrid(item) {
+  const band = item.bands?.at(-1);
+  if (!band) return {columns: '1fr', template: '"sample"'};
+  const columns = band.columns.map(column => Array.isArray(column)
+    ? `minmax(0, min(${column[1]}rem, 100%))`
+    : `${column}fr`).join(' ');
+  const template = band.areas.split('|').map(row => `"${row.trim().split(/\s+/).map(area => area === '_' ? '.' : area).join(' ')}"`).join(' ');
+  return {columns, template};
+}
+
+export function categoryDefinitionCount(id, data) {
+  return (data.rows?.length ?? 0) + (id === 'radius' ? data.facets?.length ?? 0 : 0);
+}

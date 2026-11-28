@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type {CSSProperties} from 'react';
 import {valueFacts} from './FoundationSamples';
 import {foundationExhibit} from './materials.server';
-import {FOUNDATION_CATEGORIES} from './foundations-exhibit.mjs';
+import {backgroundDecoration, borderDeclaration, categoryDefinitionCount, FOUNDATION_CATEGORIES, layoutPreviewGrid} from './foundations-exhibit.mjs';
 import type {FoundationAxis} from './types';
 import styles from './materials.module.css';
 
@@ -12,6 +12,7 @@ const SCOPE = {
   '--kit-border': 'var(--color-line)', '--kit-shade': 'rgb(20 22 26 / 0.18)', '--kit-action': 'var(--color-accent)',
   '--kit-text': 'var(--color-fg)', '--kit-canvas': 'var(--color-bg)', '--kit-soft': 'var(--color-surface)',
   '--kit-accentSoft': 'var(--color-surface)', '--kit-surface': 'var(--color-surface)', '--kit-muted': 'var(--color-muted)',
+  '--kit-rule': 'var(--color-line)', '--kit-accent': 'var(--color-accent)',
 } as CSSProperties;
 const contexts = (values: string[]) => values.includes('any') ? '모든 맥락' : values.join(' · ');
 const detailHref = (id: string) => `/components/${encodeURIComponent(id)}`;
@@ -70,9 +71,9 @@ function Facets({data, category}: {data: Exhibit; category: 'border' | 'elevatio
   const facetShadows = data.facetShadows as Record<string, string>;
   return <ul className={styles.exhibitGrid}>{rows.map((facet: AnyRecord) => {
     const lift = elevationTable[facet.elevation];
-    const borderValues: Record<string, string> = {none: '0', hairline: '1px solid var(--kit-border)', standard: '1px solid var(--kit-rule)', strong: '2px solid var(--kit-text)', double: '3px double var(--kit-border)'};
+    const borderValues: Record<string, string> = {none: '0', hairline: borderDeclaration('hairline'), standard: borderDeclaration('standard'), strong: borderDeclaration('strong'), double: borderDeclaration('double')};
     const borderStyle: CSSProperties = category === 'border'
-      ? {border: borderValues[facet.border].replaceAll('--kit-border', 'var(--color-line)').replaceAll('--kit-rule', 'var(--color-line)').replaceAll('--kit-text', 'var(--color-fg)'), boxShadow: facetShadows[facet.elevation] ?? lift?.shadow ?? 'none'}
+      ? {border: borderValues[facet.border], boxShadow: facetShadows[facet.elevation] ?? lift?.shadow ?? 'none'}
       : {border: lift?.border ?? '1px solid var(--color-line)', boxShadow: facetShadows[facet.elevation] ?? lift?.shadow ?? 'none'};
     return <li key={facet.id} className={styles.exhibitCard}>
       <h3>{facet.id}</h3><div className={styles.facetSample} style={{...SCOPE, ...borderStyle, borderRadius: facet.radius, background: 'var(--color-bg)'}}><span>표면 예시</span></div>
@@ -101,9 +102,9 @@ function Surface({data}: {data: Exhibit}) {
 
 function Background({data}: {data: Exhibit}) {
   return <ul className={styles.exhibitGrid}>{data.rows.map((item: AnyRecord) => {
-    const deco = /(?:^|;)background:([^;]+)/.exec(item.deco.css)?.[1] ?? 'none';
+    const deco = backgroundDecoration(item.deco.css, item.deco.blur);
     return <li key={item.id} className={styles.exhibitCard}>
-      <h3>{item.label}</h3><div className={styles.backgroundSample} style={{...SCOPE, background: item.page.background, ['--deco-background' as string]: deco} as CSSProperties}><span>{item.deco.kind === 'none' ? '읽기 바탕' : item.deco.kind}</span></div>
+      <h3>{item.label}</h3><div className={styles.backgroundSample} style={{...SCOPE, ...data.backgroundTokens, ...deco, background: item.page.background} as CSSProperties}><span>{item.deco.kind === 'none' ? '읽기 바탕' : item.deco.kind}</span></div>
       <Facts title="Core 토큰 값"><code>{item.stops.map((stop: any) => Array.isArray(stop) ? `${stop[0]} ${stop[1]}% ${stop[2]}` : stop).join(' · ')}</code>{Object.entries(data.backgroundTokens).map(([key, value]) => <code key={key}>{key}: {value}</code>)}<code>{item.axes.backdrop} / {item.axes.ornament}</code></Facts>
       <p className={styles.cardMeta}>사용 조건: {contexts(item.contexts)}. 장식은 텍스트 뒤에 두고 대비를 유지합니다.</p>
     </li>;
@@ -118,7 +119,7 @@ function Motion({data}: {data: Exhibit}) {
   return <>
     <div className={styles.motionDemo} style={{'--motion-duration': `${timing}ms`, '--motion-easing': `cubic-bezier(${curve})`, '--motion-lift': first?.lift ?? '0px'} as CSSProperties}><button type="button">가리키거나 포커스해 전이 보기</button><span>prefers-reduced-motion: reduce에서는 이동·전이를 제거합니다.</span></div>
     <ul className={styles.exhibitGrid}>{data.rows.map((item: AnyRecord) => <li key={item.id} className={styles.exhibitCard}>
-      <h3>{item.label}</h3><p className={styles.cardMeta}>duration {JSON.stringify(item.duration)}ms · easing {JSON.stringify(item.easing)}</p>
+      <h3>{item.label}</h3><p className={styles.cardMeta}>duration {Object.entries(item.duration).map(([name, value]) => `${name} ${value}ms`).join(' · ')} · easing {Object.entries(item.easing as Record<string, number[]>).map(([name, value]) => `${name} cubic-bezier(${value.join(', ')})`).join(' · ')}</p>
       <div className={styles.tokenChips}>{item.transitions.map((transition: AnyRecord) => <code key={`${transition.state}-${transition.duration}`}>{transition.state}: {transition.props.join(', ')} · {transition.duration}/{transition.easing}</code>)}</div>
     </li>)}</ul>
     <h3 className={styles.subTitle}>목적별 모션 패턴 {data.patterns.length}개</h3>
@@ -142,9 +143,19 @@ function Layout({data}: {data: Exhibit}) {
   return <ul className={styles.exhibitGrid}>{data.rows.map((item: AnyRecord) => {
     const isPrimitive = item.id?.startsWith('layout-primitive:');
     const slots = item.slots ?? [];
+    const preview = isPrimitive ? null : layoutPreviewGrid(item);
+    const previewAreas = isPrimitive ? [] : [...new Set(item.bands.at(-1).areas.split(/[|\s]+/).filter((area: string) => area && area !== '_'))];
+    const primitiveStyles: Record<string, CSSProperties> = {
+      stack: {display: 'flex', flexDirection: 'column'}, cluster: {display: 'flex', flexWrap: 'wrap', alignContent: 'center'},
+      flow: {gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'}, container: {width: 'min(100%, 24rem)', marginInline: 'auto'},
+      split: {gridTemplateColumns: '3fr 2fr'}, bento: {gridTemplateAreas: '"a a b" "c d d"', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'},
+    };
+    const sampleStyle = isPrimitive ? primitiveStyles[item.id.replace('layout-primitive:', '')] : {gridTemplateColumns: preview!.columns, gridTemplateAreas: preview!.template};
     return <li key={item.id} className={styles.exhibitCard}>
-      <h3>{isPrimitive ? item.label : item.label}</h3><p className={styles.cardMeta}>{isPrimitive ? item.css : item.pattern}</p>
-      <div className={styles.layoutSample} aria-label={`${item.label} 레이아웃 실제 슬롯 예시`}>{(isPrimitive ? [item.id.replace('layout-primitive:', '')] : slots.map((slot: AnyRecord) => slot.name)).map((slot: string) => <span key={slot}>{slot}</span>)}</div>
+      <h3>{item.label}</h3><p className={styles.cardMeta}>{isPrimitive ? item.css : item.pattern}</p>
+      <div className={styles.layoutSample} aria-label={`${item.label} 레이아웃 실제 슬롯 예시`} style={sampleStyle}>
+        {(isPrimitive ? ['a', 'b', 'c', 'd'].map((area, index) => ({name: area, label: `${item.id.replace('layout-primitive:', '')} ${index + 1}`})) : slots.filter((slot: AnyRecord) => previewAreas.includes(slot.name))).map((slot: AnyRecord) => <span key={slot.name} style={isPrimitive && item.id.endsWith(':bento') ? {gridArea: slot.name} : preview && !isPrimitive ? {gridArea: slot.name} : undefined}>{slot.label ?? slot.name}</span>)}
+      </div>
       <Facts title="사용 조건">{isPrimitive ? <span>배치 원형은 `{item.id}` 계열의 구조 보조 재료입니다.</span> : <><span>컨테이너 {item.container.width} · 최소 콘텐츠 폭 {item.minContent}px</span><span>{item.contexts.join(' · ')}</span><span>밀도: {item.density.allowed.join(' · ')} (기본 {item.density.default})</span></>}</Facts>
       {!isPrimitive && <div className={styles.tokenChips}>{slots.map((slot: AnyRecord) => <code key={slot.name}>{slot.name}: {slot.accepts.slice(0, 3).join(', ')}{slot.accepts.length > 3 ? '…' : ''}</code>)}</div>}
       <Link className={styles.detailLink} href={detailHref(item.id)}>상세 렌더·토큰·구성 보기<span className="visually-hidden">: {item.label}</span></Link>
@@ -165,7 +176,7 @@ export async function FoundationCategory({id}: {id: string}) {
   const data = await foundationExhibit(category.id);
   if (!data) return null;
   return <section className={styles.exhibitSection} data-category-panel={category.id} aria-labelledby="foundation-category-title">
-    <header className={styles.exhibitHeader}><div><p className={styles.cardMeta}>Foundations · {category.label} · 정의 {category.id === 'chart' ? data.chartCount : data.rows.length}개</p><h2 id="foundation-category-title">{category.title}</h2><p>{category.summary}</p></div><p className={styles.usage}><strong>사용 조건</strong>{category.usage}</p></header>
+    <header className={styles.exhibitHeader}><div><p className={styles.cardMeta}>Foundations · {category.label} · 정의 {category.id === 'chart' ? data.chartCount : categoryDefinitionCount(category.id, data)}개</p><h2 id="foundation-category-title">{category.title}</h2><p>{category.summary}</p></div><p className={styles.usage}><strong>사용 조건</strong>{category.usage}</p></header>
     {category.id === 'spacing' && <Spacing data={data} />}
     {category.id === 'density' && <Density data={data} />}
     {category.id === 'radius' && <Radius data={data} />}

@@ -228,7 +228,7 @@ export async function foundationExhibit(id: string) {
     const {BACKGROUNDS} = await import('../../../../src/platform/data/backgrounds.mjs');
     rows = [...BACKGROUNDS];
     const scene = colorView().scenes.light;
-    backgroundTokens = Object.fromEntries(['--kit-canvas', '--kit-soft', '--kit-action', '--kit-accent'].flatMap(key => scene[key] ? [[key, scene[key]]] : []));
+    backgroundTokens = Object.fromEntries(['--kit-canvas', '--kit-soft', '--kit-action', '--kit-accent', '--kit-rule', '--kit-border'].flatMap(key => scene[key] ? [[key, scene[key]]] : []));
   } else if (id === 'motion') {
     const {MOTIONS, MOTION_PATTERNS} = await import('../../../../src/platform/data/motion.mjs');
     rows = [...MOTIONS];
@@ -249,7 +249,7 @@ export async function foundationExhibit(id: string) {
       id: preset.ext.chartKind, label: preset.ext.chartKind, presetId: preset.id, presetLabel: preset.label, svg: renderChartPreset(preset.id),
     }));
     chartCount = rows.length;
-    chartTokens = colorView().scenes.light;
+    chartTokens = {...colorView().scenes.light, '--kit-t-micro': '13px', '--kit-t-sub': '18px'};
     chartCss = chunks.chart;
   }
   return {

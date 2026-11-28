@@ -2353,7 +2353,7 @@ $ node --test apps/web/features/materials/foundations-exhibit.unit.mjs
 (§9.8 범주 순서, 선택된 범주의 데이터 격리, Core 재료 인벤토리 수량)
 
 $ node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'
-ℹ tests 1261 / ℹ pass 1261 / ℹ fail 0
+ℹ tests 1263 / ℹ pass 1263 / ℹ fail 0
 
 $ npm run typecheck --workspace apps/web
 > tsc --noEmit
@@ -2369,6 +2369,14 @@ MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 ma
 $ node scripts/check-generated.mjs
 REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
 ```
+
+### 38.3 독립 Chromium 1차 검증과 교정
+
+Claude Playwright 검증은 390px·1280px에서 주소 복원·단일 패널·터치 크기·Motion·Icon·상세 링크를 확인했고 다음 결함을 찾았다: Border 5개 중 4개가 CSS 변수 치환 오류로 `0px none`; Background 13개 중 장식 재료 8개가 Core `accent`·`rule`, `background-image`, mask, opacity 및 frosted blur를 샘플에 연결하지 않음; Chart 텍스트 기본 16px로 퍼널 값이 SVG 오른쪽에서 잘리고 `overflow:hidden`으로 Core의 visible 영역이 가려지며 데이터 표 CSS가 숨김; Layout 24개 일부가 같은 등분 슬롯 상자로 보임; Radius 개수 표기가 facets 17개를 빼고 5로 표시됨; Motion duration/easing이 JSON 텍스트로 나옴. E2E 명세는 브라우저 계산값 `0.12s`에 `ms`를 요구해 실패했다.
+
+교정: 테두리를 유효 CSS 값으로 직접 매핑, Background decoration의 shorthand/image·size·mask·opacity·blur와 Core 색 토큰을 실제 pseudo-element에 전달, 차트에 Core 소형 타이포(13px)와 visible overflow·펼칠 수 있는 데이터 표를 복구, Layout은 Core wide band의 columns/areas를 그리며 배치 원형별 구조 샘플을 분리, Radius를 22개로 세고 Motion 값을 사람 읽을 수 있는 값으로 펼쳤다. E2E에는 위 동작 회귀 단언을 추가하고 계산된 시간 단위를 반영했다.
+
+단위 시험 `node --test apps/web/features/materials/foundations-exhibit.unit.mjs`는 새 helper export가 없고 blur 보존이 빠진 상태에서 예상 실패(RED)를 확인한 뒤 구현 후 `tests 5 / pass 5 / fail 0`으로 통과했다. 새 Claude 독립 브라우저 재검증은 코드 반영 후 별도 실행 예정이므로 아직 Verified로 올리지 않는다.
 
 `apps/web/e2e/foundations-categories.spec.mjs`에는 390px·1280px URL/뒤로 가기, 단일 패널, 터치 링크 크기·가로 넘침, 11개 정의, Core 차트 SVG, Motion reduced-motion, Icon 권리, 상세 링크를 확인하는 명세를 작성했다. **Chromium 실행은 하지 않음**: 작업 지시가 Codex Chromium 재시도를 금지하고 Claude 독립 브라우저 검증을 지정했다. 따라서 실제 브라우저 동작과 픽셀 실측은 검증 대기다.
 

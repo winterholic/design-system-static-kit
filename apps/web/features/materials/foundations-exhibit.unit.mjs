@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {FOUNDATION_CATEGORIES, categoryRows} from './foundations-exhibit.mjs';
+import {FOUNDATION_CATEGORIES, backgroundDecoration, borderDeclaration, categoryDefinitionCount, categoryRows, layoutPreviewGrid} from './foundations-exhibit.mjs';
 import {SPACING_MATERIALS, SPACING_ROLES} from '../../../../src/platform/data/spacing.mjs';
 import {SURFACE_FACETS, SURFACES} from '../../../../src/platform/data/surfaces.mjs';
 import {BACKGROUNDS} from '../../../../src/platform/data/backgrounds.mjs';
@@ -34,4 +34,26 @@ test('Core source inventories cover every Foundations exhibit definition', () =>
   assert.equal(ICON_MATERIALS.length, 16);
   assert.equal(LAYOUTS.length, 24);
   assert.equal(new Set(chartPresetMaterials.map(item => item.ext.chartKind)).size, 29);
+});
+
+test('border samples use valid Core values and Background retains image, mask and opacity declarations', () => {
+  assert.equal(borderDeclaration('hairline'), '1px solid var(--color-line)');
+  assert.equal(borderDeclaration('strong'), '2px solid var(--color-fg)');
+  assert.equal(borderDeclaration('double'), '3px double var(--color-line)');
+  const decoration = backgroundDecoration('background-image:radial-gradient(red,transparent);background-size:4px 4px;mask-image:linear-gradient(black,transparent);-webkit-mask-image:linear-gradient(black,transparent);opacity:.28', 12);
+  assert.equal(decoration['--deco-background'], 'radial-gradient(red,transparent)');
+  assert.equal(decoration['--deco-size'], '4px 4px');
+  assert.equal(decoration['--deco-mask'], 'linear-gradient(black,transparent)');
+  assert.equal(decoration['--deco-opacity'], '.28');
+  assert.equal(decoration['--deco-blur'], 'blur(12px)');
+  assert.equal(backgroundDecoration('background:radial-gradient(red,transparent)')['--deco-background'], 'radial-gradient(red,transparent)');
+});
+
+test('layout samples preserve Core area matrices and radius count includes facets', () => {
+  const [single, three] = LAYOUTS.filter(item => ['layout:single-column', 'layout:three-column'].includes(item.id));
+  assert.equal(layoutPreviewGrid(single).template, '". lead ." ". content aside"');
+  assert.match(layoutPreviewGrid(single).columns, /minmax\(0, min\(44rem, 100%\)\)/);
+  assert.match(layoutPreviewGrid(three).columns, /1fr 3fr 1fr/);
+  assert.equal(layoutPreviewGrid(three).template, '"left center right"');
+  assert.equal(categoryDefinitionCount('radius', {rows: Array(5), facets: Array(17)}), 22);
 });
