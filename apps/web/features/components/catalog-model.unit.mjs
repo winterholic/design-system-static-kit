@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   CATALOG_CATEGORIES, classifyCatalogMaterial, filterCatalogMaterials,
-  readCatalogQuery, writeCatalogQuery, paginateCatalogMaterials,
+  readCatalogQuery, writeCatalogQuery, paginateCatalogMaterials, classificationLabels, KIND_LABELS,
 } from './catalog-model.mjs';
 
 const manifest = {requirements: [
@@ -44,4 +44,20 @@ test('URL query preserves category, search, and page and paginates at 24 cards',
   assert.equal(result.items.length, 24);
   assert.equal(result.items[0], 24);
   assert.equal(result.pages, 3);
+});
+
+test('chart presets land in the charts category through their §9.1 requirement, and §9.2 layout patterns do not', () => {
+  const chartManifest = {requirements: [
+    {id: 'req:chart:14-bubble', section: '§9.1', name: 'Bubble', materialIds: ['chart-preset:analytics-bubble-segments']},
+    {id: 'req:chart:15-x', section: '§9.10', name: 'Other', materialIds: []},
+  ], materials: [{id: 'chart-preset:analytics-bubble-segments', requirementIds: ['req:chart:14-bubble']}]};
+  assert.deepEqual(classifyCatalogMaterial({id: 'chart-preset:analytics-bubble-segments', kind: 'chart-preset'}, chartManifest), ['charts']);
+  assert.deepEqual(classifyCatalogMaterial({id: 'x:y', requirementIds: ['req:chart:15-x']}, chartManifest), [], '§9.10 is not §9.1');
+});
+
+test('search results always show a classification: the category when there is one, otherwise the material kind', () => {
+  assert.deepEqual(classificationLabels({kind: 'chart-preset', relatedCategories: ['charts']}), ['차트']);
+  assert.deepEqual(classificationLabels({kind: 'palette', relatedCategories: []}), ['팔레트']);
+  assert.deepEqual(classificationLabels({kind: 'brand-new-kind'}), ['brand-new-kind'], 'an unknown kind is shown as is, never blank or "준비 중"');
+  for (const kind of Object.keys(KIND_LABELS)) assert.ok(KIND_LABELS[kind].trim(), kind);
 });

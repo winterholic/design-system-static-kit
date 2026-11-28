@@ -143,14 +143,19 @@ test('catalog-index.json 은 LightCatalogIndex 계약을 따른다(CONTRACTS §4
   assert.equal(index.catalogVersion, CATALOG_VERSION);
   assert.ok(!('generatedAt' in index), '시각을 싣지 않는다(바이트 재현성)');
   assert.equal(index.contentHash, sha(JSON.stringify({categories: index.categories, materials: index.materials})));
+  // 카테고리 탭(REQUEST §8.1)은 재료의 relatedCategories로 묶고, 청크는 한 쪽(최대 24개)씩 담는다(CONTRACTS §4).
   for (const cat of index.categories) {
     const rows = cat.id === 'all' ? index.materials : index.materials.filter(m => m.relatedCategories.includes(cat.id));
-    const expectedItemCount = rows.length;
-    assert.equal(cat.itemCount, expectedItemCount, cat.id);
-    const pages = Math.max(1, Math.ceil(rows.length / 24));
-    const chunks = Array.from({length: pages}, (_, i) => json(`catalog-chunks/${cat.id}-${i + 1}.json`));
-    assert.ok(chunks.every((chunk, i) => chunk.category === cat.id && chunk.page === i + 1 && chunk.pages === pages), `${cat.id}: chunk metadata`);
-    assert.deepEqual(chunks.flatMap(chunk => chunk.materials), rows, `chunk ${cat.id}`);
+    assert.equal(cat.itemCount, rows.length, cat.id);
+    const pages = Math.max(1, Math.ceil(rows.length / 24)), merged = [];
+    for (let page = 1; page <= pages; page++) {
+      const chunk = json(`catalog-chunks/${cat.id}-${page}.json`);
+      assert.ok(chunk.materials.length <= 24, `${cat.id}-${page} has at most 24 cards`);
+      assert.deepEqual([chunk.category, chunk.page, chunk.pages, chunk.itemCount], [cat.id, page, pages, rows.length], `${cat.id}-${page} header`);
+      merged.push(...chunk.materials);
+    }
+    assert.deepEqual(merged, rows, `chunks of ${cat.id} together are exactly its rows`);
+    assert.ok(!existsSync(join(site, `catalog-chunks/${cat.id}-${pages + 1}.json`)), `${cat.id} has no extra chunk`);
   }
   for (const m of index.materials) {
     assert.ok(m.id && m.kind && m.category && m.label, m.id);

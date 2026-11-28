@@ -53,6 +53,7 @@ const key = (materialIds, request, mode, viewportWidth) =>
  *  - {kind: 'component', type, version, width}  부품 상세의 기본 렌더(version 은 재료 버전)
  *  - {kind: 'assemble', request, width}  assembleDesign 의 첫 후보
  *  - {kind: 'components', request, width}  assembleComponents
+ *  - {kind: 'material', id, version, width}  카탈로그 목록 카드의 재료 하나(차트 프리셋·레이아웃·상태 패턴·미디어 등)
  */
 export function previewKeyOf(target) {
   // width 를 생략하면 데스크톱 기본(1280). null 이면 화면 크기와 무관한 서버 캐시 키("default")다.
@@ -62,6 +63,8 @@ export function previewKeyOf(target) {
     case 'component': return key([`component:${target.type}@${target.version ?? CATALOG_VERSION}`], {kind: 'component', type: target.type}, 'default', width);
     case 'assemble': return key(platformMaterialIds(target.request), {kind: 'assemble', request: target.request}, target.request.mode ?? 'light', width);
     case 'components': return key(platformMaterialIds(target.request), {kind: 'components', request: target.request}, target.request.mode ?? 'light', width);
+    // 카탈로그 목록 카드: 재료 하나의 대표 렌더(차트 프리셋·레이아웃·상태 패턴 등). 재료 id와 버전이 키를 정한다.
+    case 'material': return key([`${target.id}@${target.version ?? CATALOG_VERSION}`], {kind: 'material', id: target.id}, 'light', width);
     default: throw new Error(`previewKeyOf: 알 수 없는 kind ${target.kind}`);
   }
 }

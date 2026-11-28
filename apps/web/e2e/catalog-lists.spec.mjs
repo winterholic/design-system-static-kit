@@ -180,3 +180,129 @@ test('Typography: 기본 보기는 정적 파일, 다크·모바일처럼 사용
   const broken = await page.locator('[data-testid="type-grid"] img').evaluateAll(imgs => imgs.filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src));
   expect(broken).toEqual([]);
 });
+
+// ---- F1 독립 검증(Chromium): 17개 탭 전체, 공개 서비스 ID 포함, 390·1280 조작 ----
+const LIST = '[data-testid="components-list"]';
+const idle = page => expect(page.locator(LIST)).not.toHaveAttribute('aria-busy', 'true');
+const noHorizontalOverflow = async (page, where) => {
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow, `${where}: 가로 넘침`).toBeLessThanOrEqual(0);
+};
+
+test('Components 17개 탭이 모두 비어 있지 않고 탭 숫자·카드·정적 미리보기가 서로 맞는다(차트 포함)', async ({page, request}) => {
+  await request.post('/api/dev/perf-counters');
+  await page.goto('/components');
+  await idle(page);
+  const tabs = await page.getByRole('tab').evaluateAll(els => els.map(el => ({id: el.id.replace('catalog-tab-', ''), badge: Number(el.querySelector('span')?.textContent)})));
+  expect(tabs).toHaveLength(17);
+  for (const tab of tabs) {
+    await page.goto(tab.id === 'all' ? '/components' : `/components?category=${tab.id}`);
+    await idle(page);
+    const total = Number(await page.getByTestId('components-count').getAttribute('data-total'));
+    expect(tab.badge, `${tab.id}: 탭 숫자가 0이다(재료가 있는 카테고리가 비어 보임)`).toBeGreaterThan(0);
+    expect(total, `${tab.id}: 탭 숫자와 목록 총수`).toBe(tab.badge);
+    const cards = await page.locator(`${LIST} li`).count();
+    expect(cards, `${tab.id}: 카드 수`).toBe(Math.min(24, total));
+    expect(await page.locator('iframe').count(), tab.id).toBe(0);
+    expect(await page.locator(`${LIST} [data-preview="dynamic"]`).count(), tab.id).toBe(0);
+    // 화면 밖 이미지는 lazy 라서 아직 요청 전이다. 즉시 요청하게 하고 디코드까지 기다려 깨진 파일을 센다.
+    const broken = await page.locator(`${LIST} img`).evaluateAll(imgs => Promise.all(imgs.map(i => { i.loading = 'eager'; return i.decode().then(() => null, () => i.src); })).then(r => r.filter(Boolean)));
+    expect(broken, `${tab.id}: 깨진 미리보기`).toEqual([]);
+    const missing = await page.locator(`${LIST} [data-preview="unavailable"]`).count();
+    expect(missing, `${tab.id}: 대표 렌더가 없는 카드는 단독 예제가 없는 구조 부품뿐이다`).toBeLessThanOrEqual(4);
+  }
+  expect(tabs.find(t => t.id === 'charts').badge).toBe(44);
+  const after = await counters(request);
+  expect(after.counters, '탭 순회 중 서버 컴파일').toMatchObject({compileBlueprint: 0, assembleDesign: 0, assembleComponents: 0, total: 0});
+});
+
+test('Components 전체 청크는 공개 서비스의 부품·목적 패밀리를 모두 담고 쪽마다 24개 이하이며 중복이 없다', async ({page, request}) => {
+  const expected = await publicComponentHrefs(request);
+  await page.goto('/components');
+  await idle(page);
+  const total = Number(await page.getByTestId('components-count').getAttribute('data-total'));
+  const seen = [];
+  for (let n = 1; n <= Math.ceil(total / 24); n++) {
+    const chunk = await (await request.get(`/catalog-chunks/all-${n}.json`)).json();
+    expect(chunk.materials.length, `all-${n}`).toBeLessThanOrEqual(24);
+    seen.push(...chunk.materials.map(m => ({id: m.id, url: m.url})));
+  }
+  expect(seen).toHaveLength(total);
+  expect(new Set(seen.map(m => m.id)).size, '전체 목록의 재료 id 중복').toBe(total);
+  const urls = new Set(seen.map(m => m.url));
+  expect(expected.filter(href => !urls.has(href)), '공개 서비스에 있지만 전체 목록에 없는 부품·목적 패밀리').toEqual([]);
+  // 모든 카드의 상세 이동이 실제 페이지로 간다
+  for (const url of urls) expect((await request.get(url)).status(), `${url} 상세 이동`).toBe(200);
+});
+
+for (const viewport of [{width: 390, height: 844}, {width: 1280, height: 800}]) {
+  test(`Components ${viewport.width}px: 검색·탭·카드·패밀리 전환·URL 복원·뒤로 가기와 가로 넘침·터치 44px`, async ({page}) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/components');
+    await idle(page);
+    await noHorizontalOverflow(page, '첫 화면');
+
+    // 터치 목표: 탭, 검색 입력·버튼, 패밀리 선택, 쪽 이동
+    const small = async () => page.evaluate(() => [...document.querySelectorAll('[role="tab"], .catalog form input, .catalog form button, .catalog form select, nav[aria-label="쪽 이동"] button')]
+      .map(el => ({name: (el.textContent || el.getAttribute('aria-label') || el.tagName).trim().slice(0, 20), h: Math.round(el.getBoundingClientRect().height)})).filter(x => x.h < 44));
+    expect(await small(), '높이 44px 미만 조작 요소').toEqual([]);
+
+    // 검색: 전체 재료를 찾고 결과에 분류를 보인다
+    await page.getByRole('searchbox', {name: '검색'}).fill('bubble');
+    await page.getByRole('button', {name: '검색', exact: true}).click();
+    await expect(page).toHaveURL(/[?&]q=bubble/);
+    await idle(page);
+    const found = page.locator(`${LIST} li`);
+    expect(await found.count()).toBeGreaterThan(0);
+    await expect(page.locator(`${LIST} li`).filter({has: page.locator('[aria-label="관련 카테고리"]', {hasText: /^차트$/})}).first().locator('[aria-label="관련 카테고리"]')).toContainText('차트');
+    const labels = await page.locator(`${LIST} [aria-label="관련 카테고리"]`).allTextContents();
+    expect(labels.every(text => text.trim() && !text.includes('준비 중')), `검색 결과마다 분류가 보인다: ${labels.slice(0, 4)}`).toBe(true);
+    await noHorizontalOverflow(page, '검색 결과');
+
+    // 탭을 고르면 검색어가 풀리고 URL에 카테고리가 남는다
+    await page.getByRole('tab', {name: /차트/}).click();
+    await expect(page).toHaveURL(/[?&]category=charts/);
+    await expect(page).not.toHaveURL(/q=/);
+    await idle(page);
+    expect(await page.locator(`${LIST} li`).count()).toBe(24);
+    await expect(page.getByRole('tab', {name: /차트/})).toHaveAttribute('aria-selected', 'true');
+    await noHorizontalOverflow(page, '차트 탭');
+
+    // 쪽 이동과 시각 패밀리 전환
+    await page.getByRole('button', {name: '다음'}).click();
+    await expect(page).toHaveURL(/[?&]page=2/);
+    await idle(page);
+    expect(await page.locator(`${LIST} li`).count()).toBe(20);
+    await page.getByRole('combobox', {name: '시각 패밀리'}).selectOption('family:elevated-material');
+    await expect(page).toHaveURL(/family=family%3Aelevated-material/);
+    await idle(page);
+    await noHorizontalOverflow(page, '패밀리 전환');
+
+    // 뒤로 가기: 패밀리 → 쪽 → 탭 → 검색 순서로 상태가 돌아온다
+    await page.goBack();
+    await expect(page).toHaveURL(/page=2/);
+    await expect(page).not.toHaveURL(/family=/);
+    await page.goBack();
+    await expect(page).toHaveURL(/category=charts/);
+    await expect(page).not.toHaveURL(/page=/);
+    await idle(page);
+    await page.goBack();
+    await expect(page).toHaveURL(/[?&]q=bubble/);
+    await expect(page.getByRole('searchbox', {name: '검색'})).toHaveValue('bubble');
+    await page.reload();
+    await idle(page);
+    await expect(page.getByRole('searchbox', {name: '검색'})).toHaveValue('bubble');
+    expect(await page.locator(`${LIST} li`).count()).toBeGreaterThan(0);
+
+    // 카드 → 상세 이동 → 뒤로 가기로 목록 상태 복원
+    await page.goto('/components?q=hero');
+    await idle(page);
+    await page.locator('a[href="/components/hero"]').first().click();
+    await expect(page.getByRole('heading', {level: 1})).toContainText('히어로');
+    await page.goBack();
+    await expect(page).toHaveURL(/q=hero/);
+    await idle(page);
+    await expect(page.locator('a[href="/components/hero"]').first()).toBeVisible();
+    await noHorizontalOverflow(page, '뒤로 가기 뒤');
+  });
+}

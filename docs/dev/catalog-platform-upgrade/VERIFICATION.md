@@ -1607,3 +1607,47 @@ exit 0
 ```
 
 baseline 재생성은 `time node scripts/platform/baseline.mjs`로 99.31초에 완료됐고, platform verified는 841/841 quality 통과다. JSON 구조 비교에서 `MATERIAL-COVERAGE.json`과 `baseline.json`은 verified 파생값·설명 외에는 기준 파일과 같았다. 210종 2회 출력 SHA도 같다. DEC-016이 기록한 기존 B1 dashboard-grid 단일 패턴 659.328초는 이번 합성 입력 측정과 구분한다.
+
+
+## 25. F1 컴포넌트 카탈로그 목록 독립 검증 및 교정 (원 커밋 `59c3cb018`·`ffd309d96`, 브랜치 `upgrade/e4-verify`, 2026-11-28)
+
+구현자는 Chromium을 실행하지 못해 새 Playwright 시험을 미실행으로 남겼다. 이번에 실제 Chromium(`PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright`)에서 돌렸다.
+
+### 25.1 F1 시험 실행
+
+`cd apps/web && npx playwright test e2e/catalog-lists.spec.mjs`: 구현 그대로 9개 모두 통과(`9 passed`). 단, F1이 이 파일에서 **기존의 강한 시험을 지웠다**: 모든 쪽의 ID 집합과 공개 서비스 대조, 쪽 이동 중 서버 컴파일 0 대조, 상세 이동(`/components/hero`) 확인, 분류·검색 URL 복원. 지운 만큼을 아래 새 시험으로 다시 채웠다. 교정 뒤 최종은 `13 passed`다(기존 9 + 새 4).
+
+### 25.2 판정: 빈 차트 탭과 인덱스 범위
+
+- **차트 탭이 비는 원인:** 분류 계산이 Manifest의 일부 계열만 본 것이 아니라, 인덱스 생성기가 차트 프리셋 44종을 아예 읽지 않았고(플랫폼 레지스트리 종류만 순회), 분류도 §6.2 구역(A~O)만 읽어 §9.1 차트 요구를 `charts`로 보내지 못했다. 차트 탭 0개. 같은 이유로 레이아웃 부품 7종(§6.2 L)과 배치 원형 6종도 빠져 있었다.
+- **438개 범위 판정: 틀렸다.** 목록 대상은 화면을 만드는 부품·패턴급 재료다. Manifest 1,480개 전체가 아니라(팔레트 436·색 토큰 257·템플릿 85·테마 54 등은 각자의 재료 페이지 소관) 부품급 종류 9가지다. 그 종류의 Manifest 재료 중 `component:page`(루트, 의도적 제외)를 뺀 57개가 인덱스에 없었다: 차트 프리셋 44, 레이아웃 부품 7, 배치 원형 6. 438 + 57 = 495가 맞는 범위이고, 이후 main의 D3 카드·데이터 패밀리 15종이 더해져 현재 **510개**다.
+- **검색은 전체 재료 대상**이라는 요구는 지켜진다(검색 색인 510개 전체). 다만 부품 카테고리에 들지 않는 재료(팔레트 등)는 결과 카드의 분류가 `분류 준비 중`으로 보였다. 검색 결과에 분류를 표시하라는 §8.1에 어긋나므로 재료 종류 이름(`팔레트`, `축 값` 등)을 분류로 보이게 했다.
+- **대표 렌더가 없는 카드:** 레이아웃 24·기반 컴포넌트 10·상태 패턴 8·미디어 6·배치 원형 일부는 `사전 생성 미리보기 없음`이었다. 모두 실제 출력으로 사전 생성했다(손으로 만든 그림 없음): 차트 `renderChartPreset`, 레이아웃 `assembleSpecimen`, 레이아웃 부품 `assembleComponents`의 `layouts` 경로, 미디어·상태 패턴은 재료 렌더러+재료 CSS, 기반 컴포넌트는 계약을 공유하는 부품의 렌더, 배치 원형은 그 원형을 쓰는 첫 패턴 템플릿의 컴파일 출력. 캐시 키는 `previewKeyOf`에 `kind: 'material'`을 더해 만들었다. 이제 미리보기가 없는 카드는 단독 예제가 없는 구조 부품 4종(`tab`·`lane`·`task`·`plan`)뿐이다.
+
+### 25.3 17개 카테고리별 카드 수(교정 후 인덱스)
+
+| 카테고리 | 수 | 카테고리 | 수 | 카테고리 | 수 |
+|---|---|---|---|---|---|
+| 전체 | 510 | 데이터 | 22 | 미디어 | 16 |
+| 버튼 | 15 | **차트** | **44(교정 전 0)** | 레이아웃 | 42(교정 전 35) |
+| 입력 | 8 | 오버레이 | 7 | 업무 패턴 | 6 |
+| 선택 | 2 | 피드백 | 25 | 커머스 | 7 |
+| 날짜·시간 | 2 | 정보 표시 | 13 | 모바일 | 2 |
+| 내비게이션 | 15 | 카드 | 23 | | |
+
+선택·날짜·시간·모바일·업무 패턴이 적은 것은 분류 오류가 아니다. §6.2 C·D·M·O 구역은 요구 중 충족된 것이 각각 8/15·2/8·5/15·2/10이고, 충족된 요구의 재료가 모두 해당 탭에 있음을 시험이 대조한다(`tests/catalog-index-scope.test.mjs`).
+
+### 25.4 390px·1280px 조작 실측
+
+두 폭에서 같은 흐름을 Chromium으로 조작했다: 검색(`bubble`, 결과 카드에 분류 `차트` 표시, 모든 결과에 분류 표시) → 차트 탭(검색어 해제, URL `category=charts`, 24개) → 다음 쪽(20개) → 시각 패밀리 전환 → 뒤로 가기 세 번(패밀리 → 쪽 → 탭 → 검색어 `bubble` 복원) → 새로고침 → `/components?q=hero`에서 카드 클릭 → 상세 `히어로` → 뒤로 가기로 검색 상태 복원. 모든 단계에서 가로 넘침 0(`scrollWidth - clientWidth ≤ 0`). 터치 목표: 탭 17개·검색 입력·검색 버튼·시각 패밀리 선택·쪽 이동 버튼 모두 높이 44px 이상(작은 요소 없음). 17개 탭을 모두 열어 탭 숫자 = 목록 총수 > 0, 카드 수 = min(24, 총수), iframe 0, 동적 미리보기 0, 깨진 이미지 0(lazy 이미지는 즉시 요청해 디코드까지 확인), 대표 렌더 없는 카드 4개 이하, 탭 순회 중 서버 컴파일 0(`/api/dev/perf-counters`)을 확인했다. 전체 목록은 공개 서비스의 부품·목적 패밀리 상세 경로를 모두 포함하고(쪽당 24개 이하, 중복 없음), 모든 카드의 상세 이동 181개가 HTTP 200이다. 상세 페이지가 없는 차트 프리셋·레이아웃류 카드의 상세 이동은 `/materials`로 간다(TASK-TRF-02 소관).
+
+### 25.5 시험과 RED
+
+추가·수정: `apps/web/e2e/catalog-lists.spec.mjs`(+4), `apps/web/features/components/catalog-model.unit.mjs`(+2, `6 pass`), `tests/catalog-index-scope.test.mjs`(신설 5개: 부품급 재료가 인덱스에서 빠지지 않음, 차트 44종, 17개 탭 비어 있지 않음과 §6.2 구역 일치, 카드 미리보기 파일이 `previews-data.json`에 기록된 실제 출력임, 범위), `tests/platform-pregenerate.test.mjs`(F1이 바꾼 청크 계약 `<카테고리>-<쪽>.json`에 맞춰 쪽당 24개 상한·헤더·초과 청크 없음을 단언하도록 갱신). 처음 쓴 범위 시험의 `1480` 하드코딩은 main이 재료를 늘려 곧 깨져 관계 단언으로 바꿨다.
+
+결함을 심어 실패를 확인했다(원복 후 통과): §9.1 분류 정규식을 바꾸면 단위 시험이 실패하고, 인덱스에서 차트 프리셋을 빼면 범위 시험 4개가 실패한다.
+
+### 25.6 전체 검증
+
+- `npm run verify`(최신 main `d69cbfa25` 위): `tests 1106, pass 1106, fail 0`, 마지막 줄 `REPRODUCIBLE: 4833 generated files match a fresh build byte for byte.`, exit 0. `MATERIAL-COVERAGE.json`은 `node scripts/generate-material-coverage.mjs`로 재생성했고 이 변경으로는 바뀌지 않았다(재료 1,495).
+- `npm run test:browser`(루트 Playwright, 최신 main `9ba7fcd79` 위 최종 트리): **411개 중 405 통과, 6 실패**. 6건은 모두 D3 카드·데이터 패밀리(`d69cbfa25`) 시험이다: `platform-card-data.spec.mjs:16`, `platform-families.spec.mjs:13`의 card 묶음(`SMALL_TEXT`), `platform-family-a11y.spec.mjs`의 `purpose:card.kpi` 키보드 순서·포커스 표시·가로 넘침 4건. 이 변경은 `src/`·루트 `e2e/`를 바꾸지 않았다. media 묶음과 commerce·EHI 시험은 그 사이 main에 들어온 다른 작업자의 교정으로 통과한다(rebase 전 측정에서는 9건이 실패했다). 카탈로그 목록 시험은 `apps/web` 쪽이라 이 명령에 들어 있지 않고 위 `13 passed`로 따로 통과했다.

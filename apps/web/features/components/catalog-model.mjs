@@ -18,6 +18,18 @@ export const CATALOG_CATEGORIES = Object.freeze([
   {id: 'mobile', label: '모바일'},
 ]);
 
+/** 부품 카테고리에 들지 않는 재료(팔레트·축 값 등)가 검색 결과에서 보일 분류 이름. 재료 종류(kind)를 그대로 사람이 읽는 말로 옮긴 것이다. */
+export const KIND_LABELS = Object.freeze({
+  palette: '팔레트', 'subtoken-set': '서브토큰 세트', 'type-system': '타이포 시스템', 'style-context': '스타일 맥락', 'axis-value': '축 값', family: '시각 패밀리',
+  icon: '아이콘 영역', background: '배경', surface: '표면', motion: '모션', spacing: '간격·밀도', media: '미디어 프리셋', 'state-pattern': '상태 패턴',
+  component: '구조 부품', 'base-component': '기반 컴포넌트', 'purpose-family': '목적 컴포넌트', layout: '레이아웃 패턴', 'layout-component': '레이아웃 부품',
+  'layout-primitive': '배치 원형', 'chart-preset': '차트 프리셋',
+});
+export const classificationLabels = material => {
+  const labels = (material.relatedCategories ?? []).map(id => CATALOG_CATEGORIES.find(item => item.id === id)?.label ?? id);
+  return labels.length ? labels : [KIND_LABELS[material.kind] ?? material.kind];
+};
+
 const SECTION_CATEGORY = Object.freeze({A: 'buttons', B: 'inputs', C: 'selection', D: 'date-time', E: 'navigation', F: 'cards', G: 'data', H: 'overlays', I: 'feedback', J: 'information', K: 'media', L: 'layouts', M: 'work-patterns', N: 'commerce', O: 'mobile'});
 const NORMALIZED_CATEGORY = Object.freeze({
   button: 'buttons', buttons: 'buttons', action: 'buttons', input: 'inputs', form: 'inputs', inputs: 'inputs',
@@ -38,6 +50,8 @@ export function classifyCatalogMaterial(material, manifest) {
     const requirement = requirementById.get(requirementId);
     const section = requirement?.section?.match(/§6\.2\s+([A-O])/i)?.[1]?.toUpperCase();
     if (section && SECTION_CATEGORY[section]) categories.add(SECTION_CATEGORY[section]);
+    // §9.1 차트 29유형은 §6.2 부품 구역이 아니라 별도 절의 요구다. 이 절을 읽지 않으면 차트 탭이 비어 보인다.
+    if (/^§9\.1(?!\d)/.test(requirement?.section ?? '')) categories.add('charts');
   }
   if (!categories.size) {
     for (const value of [material.group, material.category, material.kind]) {

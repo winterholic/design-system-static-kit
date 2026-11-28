@@ -22,6 +22,18 @@ import {PLATFORM_CASES} from '../apps/web/features/platform/cases.ts';
 import {SAMPLES} from '../apps/web/features/platform/samples.ts';
 import {caseRequest, purposeRequest, typeRequest, allPlatformMaterials} from './lib/preview-requests.mjs';
 import {CATALOG_CATEGORIES, classifyCatalogMaterial} from '../apps/web/features/components/catalog-model.mjs';
+import {createPlatform, bindColor, bindType} from '../src/platform/index.mjs';
+import {assembleSpecimen} from '../src/platform/layouts.mjs';
+import {LAYOUT_COMPONENTS} from '../src/platform/families/layout.mjs';
+import {designRegistry} from '../src/profiles/registry.mjs';
+import {PATTERNS} from '../src/profiles/data.mjs';
+import * as edit from '../src/edit/index.mjs';
+import {renderChartPreset} from '../src/render/chart-presets.mjs';
+import {createBlueprint} from '../src/catalog.mjs';
+import {compile} from '../src/compiler.mjs';
+import {spaceVars} from '../src/spacing.mjs';
+import {mediaCSS, renderMedia, MEDIA} from '../src/platform/data/media.mjs';
+import {stateCSS, renderState, STATE_PATTERNS} from '../src/platform/data/states.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const out = resolve(process.argv[2] ?? join(root, 'site'));
@@ -113,6 +125,56 @@ for (const row of allPlatformMaterials('type-system')) {
   await emit({target: {kind: 'assemble', request}, kind: 'type-system', id: row.id, title: `${row.label} ${SAMPLES.doc.label} 샘플`, html: r.value.candidates[0].value.standalone});
 }
 
+// 4b. 카탈로그 목록 카드가 쓰는 나머지 재료의 대표 렌더. 모두 실제 렌더러·조립기의 출력이고 손으로 만든 그림은 없다.
+//   chart-preset      renderChartPreset(차트 SVG + 접근성 표) + 컴파일된 카탈로그 차트 CSS
+//   layout            assembleSpecimen(슬롯을 채운 표본, 관계 그래프를 거친 조립)
+//   layout-component  assembleComponents 의 layouts 경로(Core·REST·MCP 와 같은 출력)
+//   media·state-pattern  재료 CSS + 재료 렌더러(스타일 재료 샘플과 같은 마크업)
+const platformEnv = createPlatform();
+const catalogVersionOf = id => getPlatformMaterial({id}).value?.version;
+const doc = (css, body, pad = 16) => `<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>${css}\nbody{margin:0;padding:${pad}px;background:var(--kit-canvas,#fff);color:var(--kit-text,#111)}</style></head><body>${body}</body></html>`;
+const chartCss = (() => {
+  const blueprint = createBlueprint('dashboard-overview');
+  blueprint.catalogVersion = '2.6.0'; blueprint.shell = 'minimal'; blueprint.pageType = 'general';
+  blueprint.chrome.nav = blueprint.chrome.nav.slice(0, 2);
+  blueprint.tree = {type: 'page', children: [{type: 'page-header', title: '기준', description: '기준'}, {type: 'chart', title: '기준', caption: '기준', kind: 'bar', grid: 'horizontal', unit: '건', categories: ['A', 'B'], series: [{name: '표본', values: [2, 3]}]}]};
+  return compile(blueprint).css;
+})();
+const designRows = designRegistry().list();
+const chartPresets = designRows.filter(r => r.kind === 'chart-preset');
+const layoutPrimitives = designRows.filter(r => r.kind === 'layout-primitive');
+for (const preset of chartPresets) {
+  const svg = renderChartPreset(preset.id);
+  if (typeof svg !== 'string') { skip('chart-preset', preset.id, svg?.errors?.[0]?.message ?? '차트 렌더 실패'); continue; }
+  await emit({target: {kind: 'material', id: preset.id, version: preset.version, width: 480}, kind: 'chart-preset', id: preset.id, title: `${preset.label} 차트`, html: doc(`${chartCss}\n.kit-chart{max-width:none;margin:0}`, svg), size: {width: 480, height: 470}});
+}
+for (const row of allPlatformMaterials('layout')) {
+  const r = assembleSpecimen(platformEnv, row.id);
+  if (!r.ok) { skip('layout', row.id, r.diagnostics[0]?.message ?? '표본 조립 실패'); continue; }
+  await emit({target: {kind: 'material', id: row.id, version: catalogVersionOf(row.id)}, kind: 'layout', id: row.id, title: `${row.label} 레이아웃`, html: doc(r.value.css, r.value.html, 0)});
+}
+const BASE_COMPONENTS = {context: 'dashboard', mode: 'light', density: 'comfortable', palette: 'palette:static-kit', subtokenSet: 'subtoken-set:standard', typeSystem: 'type-system:tech-erp', items: [{purpose: 'purpose:button.primary', visual: 'family:soft', content: {label: '기준 버튼'}}]};
+for (const component of LAYOUT_COMPONENTS) {
+  const request = {...BASE_COMPONENTS, layouts: [{component: component.id, props: {}}]};
+  const r = assembleComponents(request, {include: ['standalone']});
+  if (!r.ok) { skip('layout-component', component.id, errorText(r), {kind: 'components', request}); continue; }
+  await emit({target: {kind: 'components', request, width: 480}, kind: 'layout-component', id: component.id, title: `${component.label} 렌더 결과`, html: r.value.standalone, size: {width: 480, height: 360}});
+}
+// 레이아웃 원형은 그 원형을 쓰는 첫 패턴 템플릿의 실제 컴파일 출력으로 보인다(coverage 프로브와 같은 근거).
+for (const primitive of layoutPrimitives) {
+  const short = primitive.id.slice('layout-primitive:'.length);
+  if (Object.values(items).some(item => item.ids.some(id => id === `component:${short}` || id === `layout-component:component:${short}`))) continue;
+  const template = Object.values(PATTERNS).find(p => p.primitives.includes(short))?.template;
+  const made = template && edit.resetDocument(null, {template});
+  const compiled = made?.ok && compileBlueprint(made.doc, {include: ['html']});
+  if (!compiled?.ok) { skip('layout-primitive', primitive.id, template ? '템플릿 컴파일 실패' : '이 원형을 쓰는 패턴이 없습니다'); continue; }
+  await emit({target: {kind: 'material', id: primitive.id, version: primitive.version, width: 1280}, kind: 'layout-primitive', id: primitive.id, title: `${primitive.label} 배치 원형`, html: compiled.value.html});
+}
+const sampleColor = bindColor(platformEnv.registry.get('palette:static-kit'), platformEnv.registry.get('subtoken-set:standard'), 'light');
+const sampleRoot = `:root{${Object.entries({...sampleColor.vars, '--kit-shade': 'color-mix(in srgb,var(--kit-text) 14%,transparent)', ...bindType(platformEnv.registry.get('type-system:tech-erp')).vars}).map(([k, v]) => `${k}:${v}`).join(';')};${spaceVars('comfortable')}}*{box-sizing:border-box}`;
+for (const m of MEDIA) await emit({target: {kind: 'material', id: m.id, version: m.version, width: 480}, kind: 'media', id: m.id, title: `${m.label} 미디어`, html: doc(`${sampleRoot}${mediaCSS(m)}`, renderMedia(m, {title: '대표 이미지', caption: '이미지 설명'}), 24), size: {width: 480, height: 360}});
+for (const m of STATE_PATTERNS) await emit({target: {kind: 'material', id: m.id, version: m.version, width: 480}, kind: 'state-pattern', id: m.id, title: `${m.label} 상태 패턴`, html: doc(`${sampleRoot}${stateCSS(m)}`, `<div data-pattern="${m.id.slice(14)}">${renderState(m, {action: {label: '다시 시도', href: '#retry'}})}</div>`, 24), size: {width: 480, height: 360}});
+
 const sortedKeys = Object.keys(items).sort();
 await writeFile(join(previewsDir, 'previews-data.json'), JSON.stringify({
   schemaVersion: 'previews/1.0', engineVersion: ENGINE_VERSION, catalogVersion: CATALOG_VERSION,
@@ -151,7 +213,8 @@ const urlOf = (kind, d) => ({
 for (const kind of PLATFORM_KINDS) {
   for (const row of allPlatformMaterials(kind)) {
     const d = getPlatformMaterial({id: row.id}).value;
-    const key = previewOf(kind, row.id);
+    // 기반 컴포넌트는 자기가 계약을 공유하는 부품의 렌더를 그대로 보인다(같은 구현, 별도 그림을 만들지 않는다).
+    const key = previewOf(kind, row.id) ?? (kind === 'base-component' && d.contract ? previewOf('component', d.contract.replace(/^component:/, '')) : undefined);
     lightMaterials.push({
       id: row.id, kind, category: kind, label: row.label, contexts: row.contexts ?? [], tags: row.tags ?? [], previewUrl: key ? `/previews/${key}.svg` : null,
       previewUrlsByFamily: purposePreviewFamilies.get(row.id) ?? {},
@@ -164,6 +227,21 @@ for (const kind of PLATFORM_KINDS) {
     });
   }
 }
+
+// 플랫폼·카탈로그 레지스트리 밖에서 등록되는 부품급 재료: 차트 프리셋(§9.1), 레이아웃 부품(§6.2 L), 레이아웃 원형. 빠지면 해당 탭이 비어 보인다.
+const extraRow = (record, kind, fields) => {
+  // 레이아웃 원형은 같은 이름의 구조 부품 렌더가 있으면 그것을 보인다(같은 CSS 원형을 쓰는 실제 출력).
+  const key = previewOf(kind, record.id) ?? (kind === 'layout-primitive' ? previewOf('component', record.id.replace(/^layout-primitive:/, '')) ?? previewOf('layout-component', record.id.replace(/^layout-primitive:/, 'component:')) : undefined);
+  return {
+    id: record.id, kind, category: record.category ?? kind, label: record.label, contexts: record.contexts ?? ['any'], tags: record.tags ?? [],
+    previewUrl: key ? `/previews/${key}.svg` : null, previewUrlsByFamily: {}, purpose: fields.purpose,
+    relatedCategories: classifyCatalogMaterial({...record, kind}, coverage), variantsCount: fields.variantsCount ?? 0, statesCount: 0,
+    qualityStatus: record.quality?.status === 'verified' ? 'verified' : 'implemented', license: record.source?.license ?? 'internal', url: '/materials',
+  };
+};
+for (const preset of chartPresets) lightMaterials.push(extraRow(preset, 'chart-preset', {purpose: `${preset.label}: ${preset.ext.chartKind} 차트로 ${preset.ext.domain} 맥락의 데이터를 보여 줍니다.`}));
+for (const component of LAYOUT_COMPONENTS) lightMaterials.push(extraRow({id: component.id, label: component.label, tags: ['layout', component.componentType], quality: {status: 'verified'}}, 'layout-component', {purpose: `${component.label} 레이아웃 부품: 화면 영역을 배치합니다.`}));
+for (const primitive of layoutPrimitives) lightMaterials.push(extraRow(primitive, 'layout-primitive', {purpose: primitive.purpose ?? `${primitive.label} 배치 원형입니다.`}));
 
 const summaries = lightMaterials.map(({url, relatedCategories, previewUrlsByFamily, purpose, ...summary}) => ({
   ...summary, url, purpose, relatedCategories, previewUrlsByFamily,

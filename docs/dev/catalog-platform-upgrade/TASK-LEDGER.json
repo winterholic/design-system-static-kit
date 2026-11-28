@@ -1198,7 +1198,7 @@
       ],
       "commit": "59c3cb018",
       "status": "Implemented",
-      "unresolvedIssues": "apps/web/e2e/catalog-lists.spec.mjs는 Codex 명령 환경에서 browser_preflight.py가 Mach 등록 및 LaunchServices/CoreServices lookup을 blocked로 반환(exit 78)해 실행하지 않았다. 지정한 Ttakkari 브라우저로 /components 카테고리 청크·390px 탭 스크롤·전역 hero 검색·정적 패밀리 미리보기 URL·뒤로 가기 복원을 수동 확인했다. 비브라우저 경계 9/9, 앱 단위 84/84, 모델 시험 4/4, web:build, coverage MATCH, check-generated 통과.",
+      "unresolvedIssues": "apps/web/e2e/catalog-lists.spec.mjs는 Codex 명령 환경에서 browser_preflight.py가 Mach 등록 및 LaunchServices/CoreServices lookup을 blocked로 반환(exit 78)해 실행하지 않았다. 지정한 Ttakkari 브라우저로 /components 카테고리 청크·390px 탭 스크롤·전역 hero 검색·정적 패밀리 미리보기 URL·뒤로 가기 복원을 수동 확인했다. 비브라우저 경계 9/9, 앱 단위 84/84, 모델 시험 4/4, web:build, coverage MATCH, check-generated 통과. 독립 검증(VERIFICATION.md §25): 차트 탭이 0개였던 원인은 인덱스가 차트 프리셋 44종·레이아웃 부품 7종·배치 원형 6종을 읽지 않았고 §9.1 요구를 분류하지 않아서였다. 범위를 438→495개로 바로잡고 대표 렌더가 없던 레이아웃 24·기반 컴포넌트 10·상태 패턴 8·미디어 6·원형을 실제 출력으로 사전 생성했다. 상세 페이지가 없는 차트 프리셋·레이아웃류 카드의 상세 이동은 `/materials`로 가며 TASK-TRF-02 소관이다.",
       "createFiles": [
         "apps/web/features/components/CategoryTabs.tsx"
       ],
@@ -1232,6 +1232,21 @@
           "file": "site/previews/**, site/catalog-index.json, site/catalog-chunks/**, site/search-index.json",
           "owner": "소유자 없음(생성물)",
           "reason": "scripts/build.mjs와 scripts/build-catalog-index.mjs가 사전 생성하는 실제 Core 렌더 및 목록/search 인덱스 갱신. 2.1.x·2.4.x 레거시/고정 출력과 site/v1은 변경하지 않음"
+        },
+        {
+          "file": "apps/web/lib/api/preview-keys.mjs",
+          "owner": "Track A",
+          "reason": "독립 검증(VERIFICATION.md §25): 카탈로그 카드용 재료 미리보기 캐시 키 kind `material` 추가"
+        },
+        {
+          "file": "tests/platform-pregenerate.test.mjs",
+          "owner": "Track A",
+          "reason": "독립 검증: 카테고리·쪽 청크 계약(`<category>-<page>.json`)에 맞춰 인덱스 시험 갱신"
+        },
+        {
+          "file": "tests/catalog-index-scope.test.mjs",
+          "owner": "Track G",
+          "reason": "독립 검증: 목록 범위·17개 탭·미리보기 시험 신설"
         }
       ]
     },
@@ -1738,7 +1753,7 @@
       ],
       "commit": "3d0788114",
       "status": "Verified",
-      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §20. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
+      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §23. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
     },
     {
       "taskId": "TASK-TRD-F",
@@ -1960,7 +1975,7 @@
       ],
       "commit": "3d0788114",
       "status": "Verified",
-      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §20. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
+      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §23. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
     },
     {
       "taskId": "TASK-TRD-I",
@@ -2040,7 +2055,7 @@
       ],
       "commit": "3d0788114",
       "status": "Verified",
-      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §20. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
+      "unresolvedIssues": "없음. 독립 검증(D2V, upgrade/d2-verify)이 Chromium으로 오버레이·메뉴·도움말·사이드바 조작을 실행해 결함을 고쳤다. 기록은 VERIFICATION.md §23. 남은 한계: 구형 노드(breadcrumb·pagination)와 기반 컴포넌트의 기본 크기 축은 출력 해시 고정 때문에 1280px에서 44px 미만일 수 있다."
     },
     {
       "taskId": "TASK-TRD-J",

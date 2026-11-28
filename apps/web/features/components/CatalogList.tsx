@@ -3,7 +3,7 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {CATALOG_CATEGORIES, filterCatalogMaterials} from './catalog-model.mjs';
+import {CATALOG_CATEGORIES, classificationLabels, filterCatalogMaterials} from './catalog-model.mjs';
 import {CategoryTabs} from './CategoryTabs';
 import styles from './components.module.css';
 
@@ -111,7 +111,7 @@ export function CatalogList({category, q, page, family, counts, familyOptions}: 
           {rows.map(material => {
             const hasFamilyPreviews = Object.keys(material.previewUrlsByFamily ?? {}).length > 0;
             const preview = hasFamilyPreviews ? material.previewUrlsByFamily[activeFamily] : material.previewUrl;
-            const related = material.relatedCategories.map(id => CATALOG_CATEGORIES.find(item => item.id === id)?.label ?? id);
+            const related = classificationLabels(material);
             return <li className={styles.catalogCard} key={material.id}>
               <Link className={styles.catalogCardLink} href={material.url || '/materials'} prefetch={false}>
                 {preview ? <div className={styles.catalogPreview} data-preview="static"><img src={preview} alt={`${material.label} ${activeFamily} 대표 렌더`} loading="lazy" decoding="async" /></div>
@@ -120,7 +120,7 @@ export function CatalogList({category, q, page, family, counts, familyOptions}: 
                   <h3>{material.label}</h3>
                   <p className={styles.catalogPurpose}>{material.purpose}</p>
                   <p className={styles.catalogStats}>변형 {material.variantsCount} · 지원 상태 {material.statesCount} · {material.qualityStatus === 'verified' ? '검증됨' : '구현됨'}</p>
-                  <p className={styles.catalogRelated} aria-label="관련 카테고리">{related.length ? related.join(' · ') : '분류 준비 중'}</p>
+                  <p className={styles.catalogRelated} aria-label="관련 카테고리">{related.join(' · ')}</p>
                   <span className={styles.detailLink}>상세 보기 <span aria-hidden="true">→</span></span>
                 </div>
               </Link>

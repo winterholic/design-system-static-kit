@@ -157,7 +157,8 @@ interface LightMaterialSummary {
 
 - 목록 페이지에서는 `LightMaterialSummary`만 로딩하고, 상세 페이지 진입 시에만 전체 명세(`getComponentSpec` 또는 `getPlatformMaterial`)를 온디맨드로 조회한다.
 - `catalog-chunks/<category>-<page>.json`은 해당 카테고리의 한 페이지(최대 24개)만 담는다. `all-<page>.json`도 같은 상한을 적용한다. `/components`는 현재 카테고리 청크 하나만 요청하며 검색어가 있을 때만 전체 경량 `/search-index.json`을 요청한다.
-- 카테고리 청크 및 검색 인덱스의 미리보기는 실제 Core 컴파일 결과만 참조한다. `previewUrlsByFamily`는 해당 조합이 사전 생성되지 않은 경우 항목을 생략하며, 브라우저에서 목록 미리보기를 동적 컴파일하지 않는다.
+- 목록(경량 인덱스) 대상은 화면을 만드는 부품·패턴급 재료다: `component`(페이지 루트 제외)·`base-component`·`purpose-family`·`layout`·`layout-component`·`layout-primitive`·`chart-preset`·`state-pattern`·`media`. 팔레트·색 토큰·템플릿·테마·타이포 프리셋·프로파일 등은 각자의 재료 페이지가 맡으므로 Manifest 전체(1,480)가 아니다. 차트 프리셋은 §6.2 구역이 아니라 §9.1 요구로 `charts` 탭에 분류하고, 부품 카테고리에 들지 않는 재료는 검색 결과에서 재료 종류 이름을 분류로 보인다. 시험(`tests/catalog-index-scope.test.mjs`)이 이 범위의 재료가 인덱스에서 빠지지 않는지와 17개 탭이 모두 비어 있지 않은지를 본다.
+- 카테고리 청크 및 검색 인덱스의 미리보기는 실제 Core 컴파일 결과만 참조한다. `previewUrlsByFamily`는 해당 조합이 사전 생성되지 않은 경우 항목을 생략하며, 브라우저에서 목록 미리보기를 동적 컴파일하지 않는다. 차트 프리셋은 `renderChartPreset`, 레이아웃은 `assembleSpecimen`, 레이아웃 부품은 `assembleComponents`의 `layouts` 경로, 미디어·상태 패턴은 재료 렌더러와 재료 CSS의 출력을 `kind: 'material'` 캐시 키(`previewKeyOf`)로 사전 생성한다.
 
 ---
 
