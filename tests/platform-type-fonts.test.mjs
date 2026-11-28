@@ -305,6 +305,8 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
           `,
         });
 
+        // static-kit.local은 존재하지 않는 호스트다. 라우트가 없으면 DNS 해석이 길어져 load가 30초를 넘기는 환경이 있으므로 서체 요청을 즉시 실패시켜 fallback 경로를 고정한다.
+        await page.route('http://static-kit.local/**', route => route.abort());
         await page.setContent(jaHtml, {waitUntil: 'load'});
         await page.evaluate(() => document.fonts.ready);
 

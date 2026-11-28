@@ -170,11 +170,11 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 - 모든 신규 목적 패밀리는 `materials.purposes`를 통해 Blueprint 컴파일 및 왕복 검증을 통과한다.
 - Studio 선택지(`blockedBy: no-studio-choice`)는 Track F 소유이므로 카탈로그 노출(`catalog-visible`) 상태로 관리된다.
 
-### 분류 보정(독립 149 · 변형 36 · 복합 22)
+### 분류 보정(독립 148 · 변형 37 · 복합 22)
 
 분류의 원천은 `src/platform/families/inventory.mjs`이고, 아래 표는 `node docs/platform/evidence/components/build.mjs`가 이 분류와 Manifest에서 만든다. 손으로 고치지 않는다. `tests/platform-family-inventory.test.mjs`가 요구 목록, Manifest, 이 표의 일치를 본다.
 
-처음 분류(독립 151 · 변형 35 · 복합 21)에서 근거가 있는 다섯 행을 고쳤다.
+처음 분류(독립 151 · 변형 35 · 복합 21)에서 근거가 있는 다섯 행을 고쳤고, E·H·I 독립 검증(D2V)에서 한 행을 더 고쳤다.
 
 | 행 | 이전 | 현재 | 근거 |
 |---|---|---|---|
@@ -182,6 +182,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 | KPI Card | 복합 패턴 | 독립 재료 | REQUEST §6.1이 `Card Surface → KPI Card → KPI Grid → Dashboard Summary Section`으로 KPI Card를 목적 컴포넌트 한 칸으로 둔다. |
 | Dashboard KPI Grid | 독립 재료 | 복합 패턴 | 같은 예시에서 KPI Grid는 KPI Card를 묶은 패턴이다. 독립 검토가 지적했다. |
 | Bulk Action Toolbar | 변형 | 복합 패턴 | REQUEST §6.1이 `Button → Icon Button → Button Group → Bulk Action Toolbar`로 버튼을 묶은 패턴 쪽에 둔다. 현재 Manifest는 표 툴바(`purpose:table.business`)의 변형으로 충족하지만 분류는 요구 문서의 구조를 따른다. |
+| Inline Error | 독립 재료 | 변형 | 이전 매핑 `purpose:feedback.error`는 화면 위 배너·대화상자의 오류 안내라 Banner·Error State와 같은 자리다. 입력 칸 곁에 붙는 오류 문구는 `base-component:input-control`의 `state: error`(aria-invalid, aria-describedby로 이어진 live 문구)다. |
 
 경계가 모호한 나머지 행(예: Filterable Table, Collapsible Sidebar, List Item)은 바꾸지 않았다. 그 행을 구현하는 계열 작업자가 구조를 보고 정한다.
 

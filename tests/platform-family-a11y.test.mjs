@@ -175,11 +175,14 @@ const ehiCommonChecks = id => ({
   '모션 감소 설정': () => { const css = ehiCss(id); ok(/prefers-reduced-motion:reduce/.test(css) && /animation:none/.test(css), 'reduced-motion이 스피너 애니메이션을 정지'); },
 });
 const ehiKeyboard = () => d => assert.deepEqual(tabOrder(d), tabOrder(d).length ? [tabOrder(d)[0]] : [], '닫힌 메뉴에서는 호출 버튼만 Tab 정지');
+const ehiClosable = d => ok(count(d, '[data-ehi-close]') >= 1 && count(d, '[data-ehi-backdrop]') === 1, '닫기 단추와 배경 닫기 영역이 마크업에 있다(동작은 e2e/platform-ehi-interaction.spec.mjs)');
 const ehiOverlayChecks = () => ({
   '모달은 포커스를': d => { const dialog = one(d, '[role=dialog]'); ok(dialog.attrs['aria-modal'] === 'true' && count(d, '[data-focus-trap]') === 1, 'modal focus trap과 aria-modal'); },
-  'Escape와 바깥 클릭': d => ok(ehiSource.includes("ev.key==='Escape'") && ehiSource.includes("if(back&&t===back)"), 'Escape와 backdrop close가 런타임에 구현'),
+  'Escape·배경 클릭': ehiClosable,
+  '배경 스크롤을 잠근다': d => ok(count(d, '[data-focus-trap]') === 1, '스크롤 잠금은 data-focus-trap 루트가 켠다(동작은 e2e/platform-ehi-interaction.spec.mjs)'),
   'aria-expanded·aria-controls': d => { const trigger = one(d, '[data-ehi-trigger]'), id = trigger.attrs['aria-controls']; ok(trigger.attrs['aria-expanded'] === 'false' && !!id && d.byId.has(id), '닫힘 상태와 실제 panel 연결'); },
 });
+const ehiMenuChoice = d => ok(count(d, '[role=menu] > [role=menuitem][data-ehi-item]') >= 2 && count(d, '[role=menu] [role=menu]') === 0, '메뉴 항목은 하나의 menu 안에 있고 menu가 겹치지 않는다');
 const ehiSource = readFileSync(new URL('../src/platform/families/action.mjs', import.meta.url), 'utf8');
 
 
@@ -674,38 +677,38 @@ const SPEC = {
   },
   'purpose:navigation.collapsible-sidebar': {
     role: d => { one(d, 'aside'); one(d, 'nav'); }, keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:navigation.collapsible-sidebar'), '열림 상태에 aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 접힘 패널 연결'); }},
+    checks: {...ehiCommonChecks('purpose:navigation.collapsible-sidebar'), '열림 상태에 aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 접힘 패널 연결'); }, 'aria-current=page': d => ok(count(d, 'nav a[aria-current=page]') === 1, '현재 위치 항목이 하나')},
   },
   'purpose:navigation.drawer': {
     role: d => one(d, '[role=dialog]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:navigation.drawer'), ...ehiOverlayChecks()},
   },
   'purpose:navigation.command-menu': {
     role: d => { one(d, '[role=dialog]'); one(d, '[role=menu]'); }, keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:navigation.command-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 menu 연결'); }, '명령 검색': d => { const input = one(d, 'input[type=search]'); ok(accName(d, input) === '명령 검색' && count(d, '[role=menuitem]') === 2, '검색 이름과 메뉴 명령'); }},
+    checks: {...ehiCommonChecks('purpose:navigation.command-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 menu 연결'); }, '명령 검색': d => { const input = one(d, 'input[type=search]'); ok(accName(d, input) === '명령 검색' && count(d, '[role=menuitem]') === 2 && count(d, '[data-ehi-empty][role=status]') === 1, '검색 이름, 메뉴 명령, 결과 없음을 알리는 live region'); }, '항목을 고르면': ehiMenuChoice},
   },
   'purpose:navigation.context-menu': {
-    role: d => one(d, '[role=menu]'), keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:navigation.context-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 메뉴 연결'); }},
+    role: d => { one(d, '[role=menu]'); ok(count(d, '[role=menu]') === 1, 'menu 역할이 겹치지 않는다'); }, keyboard: ehiKeyboard(),
+    checks: {...ehiCommonChecks('purpose:navigation.context-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 메뉴 연결'); }, '항목을 고르면': ehiMenuChoice},
   },
   'purpose:overlay.drawer': {role: d => one(d, '[role=dialog]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:overlay.drawer'), ...ehiOverlayChecks()}},
   'purpose:overlay.popover': {
     role: d => { const dialog = one(d, '[role=dialog]'); ok(dialog.attrs['aria-modal'] === 'false' && count(d, '[data-focus-trap]') === 0, '비모달·비가둠 popover'); }, keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:overlay.popover'), '팝오버는 비모달': d => ok(one(d, '[role=dialog]').attrs['aria-modal'] === 'false', 'aria-modal=false'), 'Escape와 바깥 클릭': d => ok(ehiSource.includes("ev.key==='Escape'") && ehiSource.includes("if(back&&t===back)"), 'Escape와 backdrop close'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 panel 연결'); }},
+    checks: {...ehiCommonChecks('purpose:overlay.popover'), '팝오버는 비모달': d => ok(one(d, '[role=dialog]').attrs['aria-modal'] === 'false', 'aria-modal=false'), 'Escape·바깥 클릭': d => ok(count(d, '[data-ehi-close]') === 1 && count(d, '[data-ehi-backdrop]') === 0 && count(d, '[data-ehi-popover]') === 1, '닫기 단추가 있고 배경 막(scrim) 없이 시작 요소에 붙는 비모달 루트다(동작은 e2e/platform-ehi-interaction.spec.mjs)'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 panel 연결'); }},
   },
-  'purpose:overlay.dropdown-menu': {role: d => one(d, '[role=menu]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:overlay.dropdown-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 menu 연결'); }}},
+  'purpose:overlay.dropdown-menu': {role: d => { one(d, '[role=menu]'); ok(count(d, '[role=menu]') === 1, 'menu 역할이 겹치지 않는다'); }, keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:overlay.dropdown-menu'), 'aria-expanded·aria-controls': d => { const b = one(d, '[data-ehi-trigger]'); ok(b.attrs['aria-expanded'] === 'false' && d.byId.has(b.attrs['aria-controls']), '실제 menu 연결'); }, '항목을 고르면': ehiMenuChoice}},
   'purpose:overlay.contextual-help': {
     role: d => one(d, '[role=tooltip]'), keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:overlay.contextual-help'), 'aria-describedby': d => { const b = one(d, '[data-ehi-tooltip-trigger]'), tip = d.byId.get(b.attrs['aria-describedby']); ok(tip?.attrs.role === 'tooltip' && b.attrs['aria-expanded'] === 'false', '호출 버튼이 실제 도움말을 설명으로 가리킨다'); }},
+    checks: {...ehiCommonChecks('purpose:overlay.contextual-help'), 'aria-describedby': d => { const b = one(d, '[data-ehi-tooltip-trigger]'), tip = d.byId.get(b.attrs['aria-describedby']); ok(tip?.attrs.role === 'tooltip' && tip.attrs.hidden !== undefined && !('aria-controls' in b.attrs) && !('aria-haspopup' in b.attrs), '호출 버튼은 숨은 도움말 tooltip을 설명으로만 가리킨다(tooltip은 popup이 아니다)'); }, 'Escape로 설명만': d => ok(count(d, '[data-ehi-tooltip]') === 1 && count(d, '[data-ehi-close]') === 0, '포커스를 옮길 단추 없이 호출 버튼 하나와 설명 하나(동작은 e2e/platform-ehi-interaction.spec.mjs)')},
   },
-  'purpose:feedback.callout': {role: d => one(d, '[role=note]'), keyboard: ehiKeyboard(), checks: ehiCommonChecks('purpose:feedback.callout')},
+  'purpose:feedback.callout': {role: d => one(d, '[role=note]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:feedback.callout'), 'live region이 아니다': d => ok(count(d, '[role=status],[role=alert],[aria-live]') === 0, '정적 note: 알림 영역을 만들지 않는다'), '숨은 접두 문구': d => ok(sr(d, '.ehi-callout', /^안내/) && count(d, '.ehi-callout .kit-icon') === 1, '숨은 톤 접두와 아이콘')}},
   'purpose:feedback.circular-progress': {
     role: d => one(d, '[role=progressbar]'), keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:feedback.circular-progress'), 'progressbar 값': d => { const p = one(d, '[role=progressbar]'); ok(p.attrs['aria-valuemin'] === '0' && p.attrs['aria-valuemax'] === '100' && p.attrs['aria-valuenow'] === '40' && p.attrs.style.includes('40%'), 'drawn progress and exposed numeric value match'); }},
+    checks: {...ehiCommonChecks('purpose:feedback.circular-progress'), 'progressbar 값': d => { const p = one(d, '[role=progressbar]'); ok(p.attrs['aria-valuemin'] === '0' && p.attrs['aria-valuemax'] === '100' && p.attrs['aria-valuenow'] === '40' && /conic-gradient\(var\(--kit-action\) 40%/.test(p.attrs.style) && textOf(p).trim() === '40%', 'drawn progress, printed number and exposed numeric value match'); }, '표면 위에 놓여': () => { const css = ehiCss('purpose:feedback.circular-progress'); ok(/\.ehi-circle::before\{[^}]*background:var\(--kit-surface\)/.test(css), '숫자 뒤에 표면색 원판이 있다(채움색 위에 직접 놓이지 않는다)'); }},
   },
-  'purpose:feedback.loading-overlay': {role: d => one(d, '[role=status]'), keyboard: ehiKeyboard(), checks: ehiCommonChecks('purpose:feedback.loading-overlay')},
+  'purpose:feedback.loading-overlay': {role: d => one(d, '[role=status]'), keyboard: ehiKeyboard(), checks: {...ehiCommonChecks('purpose:feedback.loading-overlay'), 'aria-busy=true': d => { const region = one(d, '[data-ehi-loading-region]'); ok(region.attrs['aria-busy'] === 'true' && one(d, '.ehi-loading-body').attrs['aria-hidden'] === 'true', '영역은 busy이고 가려진 내용은 숨김'); }, 'role=status live region': d => ok(one(d, '[data-ehi-loading] [role=status]').attrs['aria-live'] === 'polite', '진행 문구는 polite live region'), '영역 안에만 겹친다': () => { const css = ehiCss('purpose:feedback.loading-overlay'); ok(/\.ehi-loading-layer\{position:absolute;inset:0/.test(css) && /\.ehi-loading\{position:relative/.test(css), '겹침 층은 relative 영역 안의 absolute다(fixed가 아니다)'); }}},
   'purpose:feedback.status-indicator': {
     role: d => one(d, '[role=status]'), keyboard: ehiKeyboard(),
-    checks: {...ehiCommonChecks('purpose:feedback.status-indicator'), 'aria-live': d => { const status = one(d, '[role=status]'); ok(status.attrs['aria-live'] === 'polite' && textOf(status).includes('동기화 완료'), 'live region contains the rendered state text'); }},
+    checks: {...ehiCommonChecks('purpose:feedback.status-indicator'), 'aria-live': d => { const status = one(d, '[role=status]'); ok(status.attrs['aria-live'] === 'polite' && textOf(status).includes('동기화 완료'), 'live region contains the rendered state text'); }, '점 모양': d => ok(sr(d, '.ehi-status', /^성공/) && one(d, '.ehi-dot').attrs['aria-hidden'] === 'true' && /\.ehi-status\[data-tone=warning\] \.ehi-dot\{[^}]*rotate\(45deg\)/.test(ehiCss('purpose:feedback.status-indicator')), '점은 장식, 톤 이름은 숨은 문구, 경고는 모양이 다르다')},
   },
 };
 

@@ -239,9 +239,9 @@ const COVERAGE = {
   'H/Tooltip': D('base-component:tooltip'),
   'I/Alert': D('base-component:feedback-message'),
   'I/Banner': V('base-component:feedback-message', FBM, {placement: 'banner'}),
-  'I/Toast': V('base-component:feedback-message', FBM, {placement: 'toast'}),
-  'I/Snackbar': V('base-component:feedback-message', FBM, {placement: 'toast', action: 'button'}),
-  'I/Inline Error': D('purpose:feedback.error'),
+  'I/Toast': V('base-component:feedback-message', FBM, {placement: 'toast', dismiss: 'button'}),
+  'I/Snackbar': V('base-component:feedback-message', FBM, {placement: 'toast', action: 'button', dismiss: 'button'}),
+  'I/Inline Error': V('base-component:input-control', INP, {state: 'error'}),
   'I/Callout': D('purpose:feedback.callout'),
   'I/Empty State': D('state-pattern:empty-illustrated', 'state-pattern:empty-inline', 'component:empty-state'),
   'I/Error State': D('state-pattern:error-panel', 'state-pattern:error-banner'),
@@ -518,8 +518,9 @@ function definitionOf(record, kind) {
   if (kind === 'palette') spec = DEFINITION.palette[record.source?.origin === 'internal' ? 'platform' : 'design'];
   if (kind === 'purpose-family') spec = [`src/platform/families/${record.group}.mjs`, 'purposeFamily'];
   if (kind === 'purpose-family') {
-    const file = spec[0];
-    return exists(file) ? `${file}` : null;
+    // 그룹 파일이 없으면 레코드의 렌더 진입점 모듈이 정의 위치다(E·H·I 패밀리는 ehi.mjs에 모여 있다).
+    const file = exists(spec[0]) ? spec[0] : record.entry?.module;
+    return file && exists(file) ? `${file}` : null;
   }
   if (!spec) return null;
   const [file, symbol] = spec;

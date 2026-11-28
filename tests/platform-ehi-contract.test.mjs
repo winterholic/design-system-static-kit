@@ -65,7 +65,9 @@ test('E/H/I renderer escapes hostile values and progress values are visible in t
   const unknownTone = renderPurposeFamily(env, status.id, {visual: 'family:quiet', ...status.example, id: 'status', content: {label: '상태', tone: '<script>'}});
   assert.equal(unknownTone.ok, true);
   assert.ok(unknownTone.html.includes('data-tone="neutral"'));
-  assert.ok(unknownTone.html.includes('data-tone="info"'), 'the rendered feedback base uses the safe visual fallback too');
+  assert.ok(!unknownTone.html.includes('&lt;script&gt;') && !/data-tone="(?!neutral)[^"]*<?script/.test(unknownTone.html), 'the unknown tone value is never echoed into the markup');
+  assert.deepEqual(unknownTone.bases, ['base-component:feedback-message'], 'the safe fallback still resolves the feedback base axes (tone info)');
+  assert.match(unknownTone.html, /<span class="ehi ehi-status" role="status" aria-live="polite" data-tone="neutral"><span class="ehi-dot" aria-hidden="true"><\/span><span class="kit-ctl-sr">상태: <\/span><span>상태<\/span><\/span>/, 'status indicator is one live region with a decorative dot, a hidden tone word and the label');
 });
 
 test('E/H/I purpose Blueprint compiles the real renderer, records material IDs, and emits runtime only when needed', () => {
@@ -92,5 +94,12 @@ test('E/H/I purpose Blueprint compiles the real renderer, records material IDs, 
     assert.equal(new Set(allIds).size, allIds.length, `${id}: all emitted ids stay unique across repeated instances`);
     const needsRuntime = ['purpose:overlay.popover', 'purpose:overlay.drawer', 'purpose:overlay.dropdown-menu', 'purpose:overlay.contextual-help', 'purpose:navigation.drawer', 'purpose:navigation.command-menu', 'purpose:navigation.context-menu', 'purpose:navigation.collapsible-sidebar'].includes(id);
     assert.equal(first.value.html.includes('window.__kitEhi'), needsRuntime, `${id} runtime is emitted exactly when needed`);
+  }
+});
+
+test('E/H/I every record entry names a function the module really exports', async () => {
+  for (const id of EXPECTED) {
+    const family = getPurposeFamily(id), mod = await import(`../${family.entry.module}`);
+    assert.equal(typeof mod[family.entry.export], 'function', `${id}: ${family.entry.module}#${family.entry.export} is exported`);
   }
 });
