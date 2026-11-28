@@ -2637,17 +2637,17 @@ dark contrast 94, light contrast 85, dark chart 6, light chart 6
 ```text
 $ time npm run coverage:materials:check
 MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1741 materials, 406 requirements)
-total 2:48.57
+total 3:01.12
 
 $ node scripts/check-generated.mjs
 REPRODUCIBLE: 5388 generated files match a fresh build byte for byte.
 
 $ npm test -- --test-skip-pattern='real Chromium browser|stack: gap and align props|container: width steps|resizable panel: pointer drag|Playwright Chromium 실측'
-tests 1270 / pass 1270 / fail 0
-duration 434970 ms
+tests 1271 / pass 1271 / fail 0
+duration 441397 ms
 
 $ git diff --quiet origin/main -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json site/v1/blueprint.schema.json
 exit 0
 ```
 
-전체 `npm test`는 종료까지 실행했다. 코드가 직접 Chromium을 띄우는 5개 브라우저 사례(레이아웃 4개, 웹폰트 1개)는 macOS Mach rendezvous 권한 오류 `Permission denied (1100)` 후 `SIGTRAP`으로 실패했다. 지시대로 해당 다섯 사례만 건너뛰고 나머지 1,270개 Node 사례를 모두 재실행해 통과시켰다. 제외한 사례는 `platform-layout-resizable.test.mjs`의 키보드 조작, stack 간격, container 폭, 드래그 경계 4개와 `platform-type-fonts.test.mjs`의 Playwright WOFF2 로드 1개다. MCP 브라우저는 별도로 `site/gallery/`를 열어 렌더링을 확인했다. 2.1.0/2.4.0 고정 출력 시험도 전체 통과 스위트에서 통과했고, `site/v1` 및 legacy hash 파일 diff는 없다.
+전체 `npm test`는 종료까지 실행했다. 코드가 직접 Chromium을 띄우는 5개 브라우저 사례(레이아웃 4개, 웹폰트 1개)는 macOS Mach rendezvous 권한 오류 `Permission denied (1100)` 후 `SIGTRAP`으로 실패했다. 해당 다섯 사례를 제외한 나머지 Node 사례는 이번 최신 main 기준으로 1,271/1,271 통과했다. 제외한 사례는 `platform-layout-resizable.test.mjs`의 키보드 조작, stack 간격, container 폭, 드래그 경계 4개와 `platform-type-fonts.test.mjs`의 Playwright WOFF2 로드 1개다. MCP 브라우저는 별도로 `site/gallery/`를 열어 렌더링을 확인했다. 2.1.0/2.4.0 고정 출력 시험도 전체 통과 스위트에서 통과했고, `site/v1` 및 legacy hash 파일 diff는 없다.
