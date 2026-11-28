@@ -2196,9 +2196,9 @@
         "npm run coverage:materials:check",
         "node scripts/check-generated.mjs"
       ],
-      "commit": null,
+      "commit": "898d2da21228e9e7836ec5b733153f1905052b84",
       "status": "Verified",
-      "unresolvedIssues": "없음. B1 규모 대조 시험과 반복 관계 캐시 시험 통과. coverage:materials:check에서 MANIFEST MATCH(1480 materials, 406 requirements), check-generated에서 3836개 파일 바이트 일치 확인. MATERIAL-COVERAGE.json SHA-256 e032293006550446a67d4d91d04e163edbc93dde194557d5793fac8bc8d78e30 및 baseline.json SHA-256 bd11bf74dfab1f56c6038c3d4298932043ef030c79fdc4cd9da7950e69c8aac4가 origin/main과 일치. 동일 기기 기록: 기존 1472재료 생성 6분39초, 변경 후 1472재료 생성 5분50초; 추가 7재료가 포함된 직전 main 생성 측정은 6분19초, 최신 main 1480재료 check는 6분23초.",
+      "unresolvedIssues": "없음. B1 규모 대조 시험과 반복 관계 캐시 시험 통과. 같은 부모 d43f6963에서 수정 전후 coverage:materials를 각각 실행해 1480 materials / 406 requirements 결과와 MATERIAL-COVERAGE.json SHA-256 e032293006550446a67d4d91d04e163edbc93dde194557d5793fac8bc8d78e30가 일치했고, 이 값은 부모 커밋의 파일 SHA와도 같다. baseline.json SHA-256 bd11bf74dfab1f56c6038c3d4298932043ef030c79fdc4cd9da7950e69c8aac4도 그대로다. 수정 전 11:04.31 (user 552.49s, system 15.15s), 수정 후 12:50.80 (user 540.87s, system 16.48s). wall-clock은 후자가 1:46.49 느렸고 CPU 사용 비율은 85% 대 72%였으므로 시간대 부하 영향은 배제하지 않는다. 앞서 기록된 1472개 기준 6:39 대 5:50은 같은 base 대조가 아니어서 최종 비교 근거로 쓰지 않는다. coverage:materials:check의 MANIFEST MATCH(1480 materials, 406 requirements)와 check-generated의 3836개 파일 일치는 최적화 코드로 통과 확인.",
       "crossTrackFiles": [
         {
           "file": "src/platform/relations.mjs",
