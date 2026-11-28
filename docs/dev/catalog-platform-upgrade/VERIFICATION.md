@@ -2731,3 +2731,26 @@ exit 0
 - 옛 프리셋의 컨트롤 크기 4단계 비교와 `typeRoles` 편집기 진입은 새 모델에 대응이 없어 복원하지 않았다(43.4).
 - Core 서비스 `<script>` 본문은 Next 번들에서 압축된 채 나간다.
 - 같은 시점 `materials.spec.mjs` "기초 재료" 2개(`아이콘 \d+개` 제목, 아이콘 격자)는 Foundations 전시 페이지 개편(다른 작업자) 때문에 실패한다. 타이포와 무관해 건드리지 않았다.
+
+## 44. GitHub Web 46170320858 비타이포 브라우저 회귀 7행 판정
+
+원시 로그(`/private/tmp/dsk-web-ci-46170320858.CTpiH0/web.log`, checkout `848b61df2`)의 2·3·6·7·8·11·12행만 다뤘다. 1·4·5·9·10·13행은 별도 타이포그래피 작업자 범위로 남겼다. 기존 `6aae08887` 및 `d74367fd3`의 커밋·명세와 현재 main을 대조했고, 타이포그래피 커밋 내용은 이 작업에 다시 포함하지 않았다.
+
+| CI 행 | 실패와 판정 | 처리 |
+|---:|---|---|
+| 2 | Explore 상세 spec이 첫 `/explore/` 링크를 무조건 디자인 상세로 가정했으나 `/explore/materials` 재료 입구도 같은 접두사를 쓴다. **시험의 탐색 대상 선택 오류**다. | `6aae08887`의 선택자에서 두 비상세 경로를 제외했다. 브라우저에서 사례 `/explore/saas-landing`과 `/render`가 열린다. |
+| 3 | 경로 수집기가 `download` 링크(`/platform/render?...&download=1`)를 페이지로 열어 `page.goto: Download is starting`으로 중단됐다. **레이아웃 검사기 결함**이다. | 최신 main에 다운로드 링크 제외가 이미 반영돼 있음을 확인했다. 이 규칙을 지키는 회귀 시험을 추가했다. selector를 원복한 RED에서 `tests 27, pass 26, fail 1`, 기존 selector 복구 후 GREEN `tests 27, pass 27, fail 0`이다. |
+| 6 | 예전 시험은 Foundations 기본 범주에 아이콘 전시가 있고 그 안에서 축 상세로 이동할 수 있다고 기대했다. 새 UI는 한 번에 범주 하나만 렌더하며 **축 상세 진입 경로도 없었다**. 시험의 아이콘 범주 진입 전제는 낡았고, 축 상세 링크는 제품 결함이다. | 축 상세 nav를 추가하고 테스트를 범주 선택 후 nav 링크로 이동하도록 수정한다. 아이콘 카테고리 이동과 모서리 상세 링크는 실제 Chromium으로 확인했다. |
+| 7 | 기존 시험은 범주 선택 전 화면에서 Core 아이콘 87개 전체를 찾는다. **범주별 렌더 UI에 맞지 않는 낡은 시험**이다. | Core ID 전체와 `?category=icon` 화면의 서로 다른 아이콘을 비교하고 SVG도 확인하는 방식으로 옮긴다(단언 강도 유지). 화면은 Core 87개 및 영역별 목록을 표시한다. |
+| 8 | `purpose:overlay.contextual-help`의 사전 생성 렌더는 `family:dense-enterprise`지만 이전 parity 요청은 `family:soft`만 보냈다. **시험이 서로 다른 요청을 비교**했다. | `6aae08887`의 parity 시험은 정적 키에 맞는 각 시각 패밀리 요청을 찾아 비교한다. 독립 대조 결과: `/platform/render` HTTP 200, `family:dense-enterprise`, 생성 SVG와 정적 SVG 일치(36,963 bytes). |
+| 11·12 | 가격 카드 시나리오가 옛 `li[data-purpose]`와 `다음` 링크를 기대하지만 새 목록은 상세 링크 카드와 disabled 버튼 페이지 이동을 쓴다. **두 폭에서 낡은 시험 선택자·조작 전제**다. | `6aae08887`에서 카드 href로 전수 수집하고 다음 버튼의 disabled 상태를 확인하도록 갱신했다. 실제 Chromium에서 390px·1280px 가격 카드 상세 및 390px 다음 페이지 이동을 조작했다. |
+
+### 44.1 검증 증거와 미실행 항목
+
+- 시작 상태는 HEAD `d74367fd3`(부모 `6aae08887`)와 추적 파일 6개 미커밋 변경이었다. 타이포·Foundations 관련 5개 파일(`apps/web/app/materials/typography/page.tsx`, `apps/web/e2e/w6b-scenarios.spec.mjs`, `apps/web/features/materials/FoundationCategory.tsx`, `apps/web/features/materials/materials.module.css`, `apps/web/features/platform/platform.module.css`)은 stash로 보존했다. row 3의 이미 반영된 코드 수정만 회귀 시험과 함께 이번 범위에 분리했다.
+- `npm --workspace apps/web run build`: Next.js 16.4.6 성공, 정적 페이지 962개 생성.
+- `node --test tests/layout-quality.test.mjs`: selector 원복 RED 1건, 복구 GREEN `27/27`.
+- Ttakkari Browser의 Chromium에서 로컬 `next start`를 사용해 Explore 사례 상세·렌더, Foundations 아이콘 범주·축 상세 링크, 컴포넌트 다음 페이지, 가격 카드 iframe을 390px·1280px에서 조작했다.
+- parity 대조는 `purpose:overlay.contextual-help`의 선택 요청·서비스 출력·정적 SVG를 같은 width/title 조건으로 직렬화해 수행했다.
+- Codex 로컬 브라우저 프리플라이트는 `blocked`(Mach rendezvous 등록과 CoreServices mach lookup 거부). 이에 따라 로컬 `npm --workspace apps/web run test:e2e -- ...`는 실행하지 않았으며 같은 기동을 반복하지 않는다. 운영형 Chromium 조작은 설정된 Ttakkari Browser로 수행했다. GH Web 전체 e2e는 push 뒤 실행 증거로 보완한다.
+- 최신 main rebase 및 push 후 직전 main 기준 diff·불변 파일 비교와 `git diff --check`를 기록한다.

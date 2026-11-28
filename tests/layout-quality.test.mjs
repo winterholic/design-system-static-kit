@@ -1,11 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {applyExemptions, mergeOptions, groupFindings, summarize, formatReport} from '../scripts/layout-quality/run.mjs';
+import {applyExemptions, mergeOptions, groupFindings, summarize, formatReport, discoverPaths} from '../scripts/layout-quality/run.mjs';
 import {LAYOUT_OPTIONS} from '../scripts/layout-quality/probe.mjs';
 
 // 브라우저 없이 확인하는 검사기 배선: 면제 규칙, 옵션 병합, 요약·보고 형식.
 // 브라우저 측정 자체(역할 판정·줄바꿈·잘림)는 e2e/layout-quality.spec.mjs의 픽스처가 증명한다.
 const f = (over = {}) => ({code: 'HEADING_EARLY_WRAP', severity: 'error', role: 'heading', page: 'http://x/', width: 1280, locator: '#main > h1', text: '제목', evidence: {lines: 2, linesIfUnconstrained: 1, containerWidth: 500, availableWidth: 1000, chWidth: 20, measureCh: 25}, suggestion: '폭 상한을 푼다', ...over});
+
+test('페이지 탐색은 다운로드 링크를 열지 않고 내부 페이지 링크만 추가한다', async () => {
+  const selectors = [];
+  const page = {
+    goto: async () => {},
+    $$eval: async selector => {
+      selectors.push(selector);
+      return selector.includes(':not([download])') ? ['/materials', '/platform/render?part=html'] : ['/materials', '/platform/render?part=html', '/platform/render?download=1'];
+    },
+  };
+  const paths = await discoverPaths(page, 'http://localhost', ['/']);
+  assert.deepEqual(paths, ['/', '/materials', '/platform/render?part=html']);
+  assert.deepEqual(selectors, ['a[href^="/"]:not([download])']);
+});
 
 test('면제는 사유가 없으면 거부한다', () => {
   assert.throws(() => applyExemptions([f()], [{code: 'HEADING_EARLY_WRAP'}]), /reason/);
