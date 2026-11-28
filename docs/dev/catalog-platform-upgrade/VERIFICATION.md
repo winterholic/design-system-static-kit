@@ -553,3 +553,72 @@ REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
 실행 증거(최신 rebase 후): `node scripts/platform/evaluate-color-matrix.mjs && git diff --exit-code docs/platform/evidence/color/subtoken-matrix-summary.json` → `9 palettes × 25 subtoken sets`, summary 생성, `diff` 무출력·exit 0. `npm run coverage:materials:check` → `MANIFEST MATCH ... (1347 materials, 337 requirements)`. `npm run verify` → 814/814 통과, 3,402 생성 파일 재현.
 
 남은 일: B1이 200개 팔레트를 커밋해 `origin/main`에 반영한 뒤 200×25 매트릭스와 200개 출처를 검증한다. 그때 장부·검증 기록을 갱신하고 verify를 재실행한 다음 일반 push한다. 현재 B1 워크트리 변경은 미커밋이므로 이번 브랜치에서는 TRB-04를 `In Progress`로 유지한다.
+
+## 9. TASK-TRE-02 차트 29유형 독립 검증 (원 커밋 `b18314415`·`e208de4ca`, 브랜치 `upgrade/e2-verify`, 2026-11-28)
+
+원 구현(codex GPT Luna)은 브라우저 검수를 하지 않았다. 새 맥락에서 SVG를 직접 비교하고 Chromium으로 29유형을 렌더했다. 결론: 29유형은 모두 서로 다른 실제 SVG를 낸다(이름만 다른 복제는 없다). 다만 확장 15유형은 축·범례·라벨이 그림에 없어 읽을 수 없었고, 입력 거부에 구멍이 있었다. 고친 뒤 `Verified`로 올린다.
+
+### 9.1 판정
+| 완료 기준 | 판정 |
+|---|---|
+| 1. 유형별 실제 SVG, 이름만 다른 복제 없음 | 통과. 같은 데이터를 선·면적, 도넛·파이, 누적·그룹·100% 막대, 선·다중선·계단선, 면적·누적 면적, 캔들·OHLC, 산점도·버블, 막대·가로 막대, 스파크라인·선, 히트맵·달력 히트맵에 넣어 구조 차이를 시험이 읽는다(`tests/chart-presets-distinct.test.mjs`). |
+| 2. Chromium 육안·뷰포트 | 구분은 통과, 가독성은 결함 있었음(9.2). 390px·1280px에서 문서 가로 넘침 0, figure 밖 요소 0, 크기 0 SVG 0. |
+| 3. 왜곡 방지·입력 거부가 실제 렌더 경로를 지나는가 | 기존 시험은 `validate… .length > 0 \|\| render…가 문자열이 아님`으로 어느 한쪽만 맞아도 통과했고, 오류 코드를 보지 않았다. 광고한 규칙 중 실제로 막지 않는 것이 있었다(9.2). |
+| 4. 접근성 표가 데이터와 일치 | 통과(교정 포함). 불릿의 목표값이 표에 없었다. 29유형 전부 표의 숫자가 데이터와 같은 다중집합임을 시험한다. |
+| 5. 기존 고정 출력 해시 | 변화 없음. |
+
+### 9.2 발견 결함과 조치
+| # | 결함(원 구현) | 증거 | 조치 |
+|---|---|---|---|
+| 1 | 확장 15유형(그룹·100% 막대, 다중·계단선, 누적 면적, 파이, 버블, 트리맵, 레이더, 게이지, 불릿, 박스, 조합, 달력 히트맵, 진행)에 값 축·범주 라벨·범례·값 표기가 그림에 없음. 호버 title과 접힌 표에만 값이 있음 | 렌더 스크린샷: 파이에 라벨 없음, 박스 플롯에 이름 없음, 달력 히트맵에 요일·주 없음 | `renderExtendedChart`를 다시 씀. 축 눈금·격자·범주 라벨·범례(HTML `kit-legend`)·파이 비율·트리맵 라벨·레이더 축 이름·게이지 눈금 끝 |
+| 2 | 조합 차트의 선이 자기 최댓값으로 정규화되고 보조 축이 없음 | 선 최댓값이 막대 최댓값 높이에 붙어 값 비교가 가능한 것처럼 보임 | 오른쪽 보조 축 눈금과 "(선 · 오른쪽 축)" 범례 |
+| 3 | 버블 반지름이 `3 + 1.7√크기`라 면적비가 크기비와 다름 | 크기 10:40의 면적비 ≠ 1:4 | 반지름 `16√(크기/최대)`. 면적이 크기에 비례 |
+| 4 | 불릿의 55% 회색 구간은 데이터에 없는 장식 | 코드 상수 `.55` | 제거. 0~100 눈금 추가 |
+| 5 | 증거 페이지 CSS가 2.6 확장 규칙을 싣지 않음(기준 차트가 레거시 경로) | 스크롤형 캔들·폭포가 170px로 줄어 보임, 축선·13px 글자 규칙 없음 | 기준 차트에 `grid` 옵션을 줘 `data-chart="2.6"` 경로로 이동 |
+| 6 | 검증 구멍 7건: 파이 음수(합 100), 단일 계열 형태(파이·트리맵·게이지·불릿·진행)에서 둘째 계열이 조용히 사라짐, 불릿 음수 실적, 다중·계단선의 축 최솟값·최댓값이 데이터를 자름, 누적 면적의 축 최댓값이 개별 값만 비교(합계가 잘림), 레이더 2축 이하, 선형의 중복 범주 | `renderChartPreset`이 문자열을 돌려줌 | `validateChartPresetData`에 규칙 추가. 스키마의 `ordered-categories`는 실제로 순서를 보지 않아 `unique-categories`로 바꾸고, 실제로 막던 `nonnegative`(누적 막대)·`low-le-open-close-le-high`·`totals-match-running-sum`을 광고 목록에 추가. 서로 다른 광고 규칙 23개 전부에 거부 시험이 있음 |
+| 7 | 시험이 약함: 서명 개수만 달라도 "구분됨"으로 통과, 값 반영은 `notEqual`뿐 | 비례 오류가 통과 | 시험 6개 추가(아래) |
+
+### 9.3 추가한 시험(RED/GREEN)
+`tests/chart-presets-distinct.test.mjs`에 추가: 같은 데이터 쌍의 구조 차이, 값→길이·면적·각도 비례와 눈금 고정, 접근성 표 숫자 일치, 확장 SVG의 축·범례·라벨, 광고 규칙별 거부(코드 지정), 문자열 이스케이프.
+결함을 심어 실패를 확인했다(원 코드로 되돌려 통과도 확인).
+```
+RED M1 그룹 막대 높이 ×0.9            -> 비례·구조 시험 실패
+RED M2 표에 value+1                     -> 접근성 표 시험 실패
+RED M3 단일 계열 검사 제거              -> 거부 시험 실패
+RED M4 파이 음수 허용                   -> 거부 시험 실패
+RED M5 버블 반지름 옛 식                -> 비례 시험 실패
+RED M6 계단선을 다중선으로 그림         -> 구조 시험 실패
+RED M7 선형 축 잘림 검사 제거           -> 거부 시험 실패
+RED M8 파이를 중심 없는 호로 그림       -> 비례·구조 시험 실패
+RED M9 값 축 라벨 제거                  -> 축·범례 시험 실패
+RED M10 누적 면적 축 검사를 개별 값으로 -> 거부 시험 실패
+```
+비례만 보는 시험은 균일 축소(M1)를 못 잡아서, 막대 꼭대기가 그 값의 눈금선 높이에 있는지도 단언한다.
+
+### 9.4 스크린샷
+`docs/dev/catalog-platform-upgrade/screens/charts/` 29유형 × 1280px, 390px(유형별 대표 하나). 재생성: `PLAYWRIGHT_BROWSERS_PATH=… node scripts/materials/chart-forms-browser.mjs --shots docs/dev/catalog-platform-upgrade/screens/charts`. 같은 스크립트가 유형별 SVG 스크린샷의 해시가 29개 모두 다른지, 뷰포트 넘침이 없는지를 종료 코드로 낸다.
+
+### 9.5 호환성
+`site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `c269ad506`과 diff가 없다. `renderChartPreset`의 기본 출력(2.6.0 신규 API)만 바뀌었고 2.4.0·2.5.0 출력 경로는 건드리지 않았다. 확장 형태의 SVG와 `data-*` 속성이 늘었다(`data-grid`·`data-labels`·`data-legend`·`data-density`).
+
+### 9.6 남은 한계
+- 확장 형태는 `labels`·`grid`·`legend` 옵션 중 일부만 반영한다(값 라벨은 그룹 막대·선·박스·달력, 격자는 축 있는 형태). 프리셋 예시가 값 라벨을 켜지 않아 기본 화면에는 값 숫자가 눈금으로만 보인다.
+- 트리맵은 작은 칸의 라벨을 생략하고 범례로 대신한다. 레이더 SVG는 범례와 한 줄에 놓이면 작게 보인다.
+- 네이티브 14유형(막대·선 등)의 렌더러는 이번에 바꾸지 않았다. 면적 차트 라벨이 마커와 겹치는 경우가 있다(스크린샷 `area.png`의 -4.5).
+- 다크 모드 렌더와 실기기는 확인하지 않았다.
+
+### 9.7 실행 증거
+```sh
+$ node --test tests/chart-presets.test.mjs tests/chart-presets-distinct.test.mjs tests/chart-presets-forms.test.mjs tests/platform-chart-presets.test.mjs
+ℹ pass 48 / ℹ fail 0
+$ node scripts/materials/chart-forms-browser.mjs
+390px kinds=29 docOverflow=0 distinctSvgImages=29 spills=[] zeroSized=[]
+1280px kinds=29 docOverflow=0 distinctSvgImages=29 spills=[] zeroSized=[]
+$ npm run verify                         (EXIT=0)
+ℹ tests 824 / ℹ pass 824 / ℹ fail 0
+REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1362 materials, 337 requirements)
+$ git diff c269ad506 -- site/v1 docs/evidence/context/legacy-hashes.json   (diff 없음)
+```
+미실행: `apps/web` Playwright e2e, 배포 확인, 다크 모드.

@@ -646,15 +646,20 @@
         "src/materials/chart-presets.mjs",
         "src/platform/data/charts.mjs",
         "src/render/chart-presets.mjs",
-        "tests/chart-presets.test.mjs"
+        "tests/chart-presets.test.mjs",
+        "tests/chart-presets-distinct.test.mjs",
+        "scripts/materials/chart-presets-evidence.mjs",
+        "docs/evidence/materials/chart-presets.html",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json"
       ],
       "completionCriteria": "§9.1의 29유형 각각이 그 유형으로 렌더되는 프리셋을 가진다(`ext.chartKind`가 렌더러 지원 종류여야 하며 Manifest `requirements.breakdown.charts.missing` 0). 등록된 프리셋 수가 아니라 유형 수가 기준이다. 반응형 SVG 출력 일치 확인, 접근성 요약 테이블 제공",
       "tests": [
-        "tests/chart-presets.test.mjs"
+        "tests/chart-presets.test.mjs",
+        "tests/chart-presets-distinct.test.mjs"
       ],
       "commit": "b18314415d33e18000289d5f7205383646aeca6d",
-      "status": "Implemented",
-      "unresolvedIssues": null,
+      "status": "Verified",
+      "unresolvedIssues": "원 구현(b18314415)의 결함과 조치는 VERIFICATION.md §9 참조: 확장 15유형 SVG에 축·범례·라벨이 없었고, 증거 페이지 CSS에 2.6 차트 확장 규칙이 빠져 있었고, 입력 거부 구멍 7건(파이 음수, 단일 계열 형태의 초과 계열 무시, 불릿 음수, 선형 축 잘림, 누적 면적 합계 잘림, 레이더 2축, 선형 중복 범주)과 버블 반지름 왜곡이 있었다.",
       "crossTrackFiles": [
         {
           "file": "scripts/generate-material-coverage.mjs",
@@ -681,6 +686,10 @@
           "owner": "Track E",
           "reason": "근거 페이지가 모든 형태를 컴파일러 대용 없이 실제 프리셋 SVG 렌더러로 출력"
         }
+      ],
+      "createFiles": [
+        "scripts/materials/chart-forms-browser.mjs",
+        "docs/dev/catalog-platform-upgrade/screens/charts/"
       ]
     },
     {

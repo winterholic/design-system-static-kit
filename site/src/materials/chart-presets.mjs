@@ -13,21 +13,21 @@ const noAxisKinds = ['donut', 'pie', 'sparkline', 'funnel', 'treemap', 'radar', 
 const PRESET_DATA_SCHEMAS = Object.freeze({
   'grouped-bar': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'zero-baseline']},
   'normalized-stacked-bar': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'each-category-total-100']},
-  'multi-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['ordered-categories']},
-  'step-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['ordered-categories']},
+  'multi-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['unique-categories', 'axis-covers-data']},
+  'step-line': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['unique-categories', 'axis-covers-data']},
   'stacked-area': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['nonnegative', 'zero-baseline']},
-  pie: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'total-100']},
+  pie: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['single-series', 'nonnegative', 'total-100']},
   bubble: {seriesField: 'points', categoryCount: 'none', minimumSeries: 1, valueType: '{x:number,y:number,size:number}', constraints: ['finite-coordinates', 'positive-size']},
-  treemap: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'positive-total']},
-  radar: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['shared-scale-0-100']},
-  gauge: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['domain-0-100']},
-  bullet: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['nonnegative', 'required-target-in-domain']},
+  treemap: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['single-series', 'nonnegative', 'positive-total']},
+  radar: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['at-least-three-axes', 'shared-scale-0-100']},
+  gauge: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['single-series', 'domain-0-100']},
+  bullet: {seriesField: 'values', categoryCount: 'single', minimumSeries: 1, valueType: 'finite-number', constraints: ['single-series', 'nonnegative', 'required-target-in-domain']},
   'box-plot': {seriesField: 'quartiles', categoryCount: 'series-length', minimumSeries: 1, valueType: '{min,q1,median,q3,max}', constraints: ['ordered-five-number-summary']},
   combination: {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 2, valueType: 'finite-number', constraints: ['bar-and-line-series', 'zero-baseline-for-bars']},
   'calendar-heatmap': {seriesField: 'values', categoryCount: 'weekdays', minimumSeries: 1, valueType: 'finite-number', constraints: ['complete-week-grid', 'nonnegative']},
-  'progress-chart': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['domain-0-100']},
+  'progress-chart': {seriesField: 'values', categoryCount: 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['single-series', 'domain-0-100']},
 });
-const standardDataSchema = kind => PRESET_DATA_SCHEMAS[kind] ?? ({seriesField: ['scatter', 'bubble'].includes(kind) ? 'points' : ['candlestick', 'ohlc'].includes(kind) ? 'candles' : kind === 'histogram' ? 'samples' : 'values', categoryCount: ['scatter', 'histogram'].includes(kind) ? 'none' : 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['finite-values', ...(kind === 'donut' ? ['nonnegative', 'total-100'] : []), ...(['bar', 'bars-h', 'stacked-bar', 'area', 'histogram', 'waterfall'].includes(kind) ? ['zero-baseline'] : []), ...(kind === 'heatmap' ? ['nonnegative'] : []), ...(kind === 'funnel' ? ['non-increasing-stages'] : []), ...(kind === 'sparkline' ? ['exactly-one-series'] : [])]});
+const standardDataSchema = kind => PRESET_DATA_SCHEMAS[kind] ?? ({seriesField: ['scatter', 'bubble'].includes(kind) ? 'points' : ['candlestick', 'ohlc'].includes(kind) ? 'candles' : kind === 'histogram' ? 'samples' : 'values', categoryCount: ['scatter', 'histogram'].includes(kind) ? 'none' : 'series-length', minimumSeries: 1, valueType: 'finite-number', constraints: ['finite-values', ...(kind === 'donut' ? ['nonnegative', 'total-100'] : []), ...(['bar', 'bars-h', 'stacked-bar', 'area', 'histogram', 'waterfall'].includes(kind) ? ['zero-baseline'] : []), ...(kind === 'heatmap' || kind === 'stacked-bar' ? ['nonnegative'] : []), ...(kind === 'candlestick' || kind === 'ohlc' ? ['low-le-open-close-le-high'] : []), ...(kind === 'waterfall' ? ['totals-match-running-sum'] : []), ...(kind === 'funnel' ? ['non-increasing-stages'] : []), ...(kind === 'sparkline' ? ['exactly-one-series'] : [])]});
 const distortionRules = kind => standardDataSchema(kind).constraints.map(rule => ({rule, enforcedBy: 'validateChartPresetData'}));
 const captionOf = (kind, x, y) => kind === 'donut' ? `${x} 구성 · 값은 ${y}`
   : kind === 'sparkline' ? `${x} 순 ${y} 추이 · 상세 축 표시는 생략`
