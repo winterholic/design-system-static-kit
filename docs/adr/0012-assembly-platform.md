@@ -1,6 +1,6 @@
 # ADR 0012: 재료 조립 플랫폼 계약
 
-- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0, 0.5.0(§9, 2026-11-22), 0.8.0(§9.9).
+- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0, 0.5.0(§9, 2026-11-22), 0.8.0(§9.9), 0.9.0(§9.10).
 - 날짜: 2026-11-22
 - 관련: ADR 0001, 0009, 0011; [감사 2026-11](../platform/audit-2026-11.md)
 - 번호 메모: 작업 카드는 `0010-assembly-platform.md`를 지시했다. 그러나 0010은 이미 `0010-expression-grammar-2-5.md`가 쓰고 있어 0012로 둔다.
@@ -353,3 +353,10 @@ REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemb
 | 관계 | `CLOSED_PAIRS`에 `['layout', 'purpose-family']`를 더한다. 계산 관계 `layout-slot-fit`(슬롯이 받는 패밀리인가, 맥락이 맞는가)과 `layout-axis`(폭 축이 핵심 구간까지 열리는가, 밀도가 허용 범위인가), 선언 관계 `prefers`·`avoids`(내비 셸 중복)·`forbids`(compact 밀도의 하단 고정 행동 영역, 44px 터치 칸) |
 | 조립 | `assembleLayout`(`src/platform/layouts.mjs`)은 칸을 목적 패밀리 렌더로 채우고 위 관계를 거친다. 서비스 공개 함수는 더하지 않는다: 조회는 기존 `listPlatformMaterials`·`getPlatformMaterial`·`recommendMaterials`·`checkCompatibility`가 `kind: "layout"`으로 한다 |
 | 고정 기준 | 2.1~2.6 출력과 `site/v1/catalog.json`은 바뀌지 않았다. 플랫폼 계약 0.7.0 → 0.8.0 |
+
+### 9.10 0.9.0: Foundations 재료(TASK-TRE-04 재료 부분, REQUEST §9.3~§9.7)
+
+- `spacing`과 `icon`을 플랫폼 재료 종류로 등록한다. 간격 재료는 기존 4px `SPACE` 토큰 묶음을 밀도별로 내고, 페이지 컴파일러는 선택된 밀도 재료를 읽어 CSS에 반영한다.
+- `surface`는 17개 원형을 각 재료의 facets로, `motion`은 15개 목적 패턴을 각 재료의 patterns로 둔다. 모션 property·duration·easing·delay와 reduced-motion 정책을 컴파일 CSS에 반영한다.
+- 아이콘 영역 재료는 `src/catalog/icons.mjs`를 수정하지 않고 기존 내부 원본 심볼을 참조한다. 영역별 허용 목록과 공통 viewBox·크기·선 굵기·정렬·시각 패밀리 규칙을 레지스트리에 둔다. 배경은 12종이며 frosted blur는 0~16px, 단일 `.kit-deco` 요소로 제한한다.
+- 플랫폼 계약은 0.8.0에서 0.9.0으로 오른다. Blueprint 2.1~2.6 출력과 고정 해시는 변경하지 않는다.

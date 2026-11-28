@@ -13,7 +13,26 @@ export const MOTION_STATES = Object.freeze(['hover', 'press', 'focus', 'select',
 const bez = (a, b, c, d) => [a, b, c, d];
 const use = (state, props, duration, easing) => ({state, props, duration, easing});
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:73'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
+
+/** Purpose-specific motion recipes. Components opt in by setting data-motion-pattern; no blanket page animation is applied. */
+export const MOTION_PATTERNS = Object.freeze([
+  {id: 'hover', properties: ['background-color', 'box-shadow'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'press', properties: ['transform'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'focus', properties: ['outline-color'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'expand', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'collapse', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'exit', delay: 0, reducedMotion: 'none'},
+  {id: 'fade', properties: ['opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'slide', properties: ['transform', 'opacity'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'scale', properties: ['transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'popover-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'modal-enter', properties: ['opacity', 'transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'drawer-enter', properties: ['transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'toast-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 40, reducedMotion: 'none'},
+  {id: 'loading', properties: ['opacity'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'progress', properties: ['width'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'skeleton', properties: ['background-position'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
+].map(Object.freeze));
 
 export const MOTIONS = Object.freeze([
   defineStyleMaterial({
@@ -60,7 +79,7 @@ export const MOTIONS = Object.freeze([
     ],
     keyframes: [], reuses: ['axis:motion'],
   }),
-].map(verifiedBy(EVIDENCE)));
+].map(verifiedBy(EVIDENCE)).map(m => ({...m, patterns: MOTION_PATTERNS})));
 
 const bezier = b => `cubic-bezier(${b.join(',')})`;
 const name = m => m.id.slice('motion:'.length);
@@ -83,6 +102,13 @@ export function validateMotion(m) {
     if (!Object.hasOwn(m.duration, t.duration)) err('P_MOTION_USE', `$.transitions[${i}].duration`, `duration 칸은 fast·base·slow입니다: ${t.duration}`);
     if (!Object.hasOwn(m.easing, t.easing)) err('P_MOTION_USE', `$.transitions[${i}].easing`, `easing 이름은 standard·enter·exit입니다: ${t.easing}`);
     if (!t.props?.length) err('P_MOTION_USE', `$.transitions[${i}].props`, '전이에는 움직이는 속성이 하나 이상 필요합니다');
+  });
+  if (m.patterns.length !== MOTION_PATTERNS.length || m.patterns.some((p, i) => p.id !== MOTION_PATTERNS[i].id)) err('P_MOTION_PATTERNS', '$.patterns', '15개 목적별 모션 패턴을 REQUEST 순서대로 모두 제공해야 합니다');
+  m.patterns.forEach((p, i) => {
+    if (!p.properties.length || p.properties.some(prop => !/^[a-z-]+$/.test(prop))) err('P_MOTION_PATTERN_PROPERTY', `$.patterns[${i}].properties`, 'property를 하나 이상 명시해야 합니다');
+    if (!Object.hasOwn(m.duration, p.duration) || !Object.hasOwn(m.easing, p.easing)) err('P_MOTION_PATTERN_TOKEN', `$.patterns[${i}]`, '각 패턴은 duration과 easing을 지정해야 합니다');
+    if (!Number.isInteger(p.delay) || p.delay < 0 || p.delay > 200) err('P_MOTION_PATTERN_DELAY', `$.patterns[${i}].delay`, 'delay는 0~200ms 정수입니다');
+    if (p.reducedMotion !== 'none') err('P_MOTION_PATTERN_REDUCE', `$.patterns[${i}].reducedMotion`, 'reduced-motion 정책은 none이어야 합니다');
   });
   if (!/^-?\d+px$/.test(m.lift) || !/^\d+px$/.test(m.enterY)) err('P_MOTION_LIFT', '$.lift', 'lift는 -?Npx, enterY는 Npx입니다');
   if (!m.axes.motion || !Object.hasOwn(MOTION, m.axes.motion)) err('P_MOTION_AXIS', '$.axes.motion', `기존 motion 축 값이 아닙니다: ${m.axes.motion}`);
@@ -110,6 +136,7 @@ export function motionCSS(m, {keyframes = true} = {}) {
   const sel = `[data-motion="${name(m)}"]`, d = k => `${m.duration[k]}ms`;
   const vars = `${sel}{--kit-m-fast:${d('fast')};--kit-m-base:${d('base')};--kit-m-slow:${d('slow')};--kit-m-ease:${bezier(m.easing.standard)};--kit-m-ease-enter:${bezier(m.easing.enter)};--kit-m-ease-exit:${bezier(m.easing.exit)};--kit-m-enter-y:${m.enterY};--kit-dur:${d('base')};--kit-ease:${bezier(m.easing.standard)};--kit-lift:${m.lift}}`;
   const trans = m.transitions.map(t => `${sel} [data-motion-state="${t.state}"]{transition:${t.props.map(p => `${p} var(--kit-m-${t.duration}) var(--kit-m-ease${t.easing === 'standard' ? '' : '-' + t.easing})`).join(',')}}`);
+  const patterns = m.patterns.map(p => `${sel} [data-motion-pattern="${p.id}"]{transition:${p.properties.map(prop => `${prop} var(--kit-m-${p.duration}) var(--kit-m-ease${p.easing === 'standard' ? '' : '-' + p.easing}) ${p.delay}ms`).join(',')}}`);
   const anim = m.keyframes.length ? [
     `${sel} [data-motion-state="enter"][data-entering]{animation:kit-m-enter var(--kit-m-slow) var(--kit-m-ease-enter) both}`,
     `${sel} [data-motion-state="exit"][data-leaving]{animation:kit-m-exit var(--kit-m-base) var(--kit-m-ease-exit) both}`,
@@ -117,14 +144,14 @@ export function motionCSS(m, {keyframes = true} = {}) {
     `${sel} [data-skeleton]{background-size:200% 100%;animation:kit-m-shimmer 1.4s linear infinite}`,
     `${sel} [data-spinner]{animation:kit-m-spin 900ms linear infinite}`,
   ] : [];
-  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}`;
+  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important;scroll-behavior:auto!important}}`;
   const frames = keyframes ? m.keyframes.map(k => MOTION_KEYFRAMES[k]) : [];
-  return [...frames, vars, ...trans, ...anim, reduce].join('\n');
+  return [...frames, vars, ...trans, ...patterns, ...anim, reduce].join('\n');
 }
 
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 
 /** 모션 프리셋 마크업: 상태 전이마다 그 상태를 보여 주는 칸. 움직이지 않아도 상태 이름과 모양으로 읽힌다. */
 export function renderMotionSample(m) {
-  return `<ul class="kit-motion-demo" data-motion="${name(m)}">${m.transitions.map(t => `<li data-motion-state="${t.state}"><span>${escapeHTML(t.state)}</span> <small>${escapeHTML(t.props.join(', '))} · ${m.duration[t.duration]}ms</small></li>`).join('')}</ul>`;
+  return `<ul class="kit-motion-demo" data-motion="${name(m)}">${m.patterns.map(p => `<li data-motion-pattern="${p.id}"><span>${escapeHTML(p.id)}</span> <small>${escapeHTML(p.properties.join(', '))} · ${m.duration[p.duration]}ms + ${p.delay}ms</small></li>`).join('')}${m.transitions.map(t => `<li data-motion-state="${t.state}"><span>${escapeHTML(t.state)}</span> <small>${escapeHTML(t.props.join(', '))} · ${m.duration[t.duration]}ms</small></li>`).join('')}</ul>`;
 }

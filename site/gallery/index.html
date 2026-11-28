@@ -8079,10 +8079,10 @@ __defs["platform/contract.mjs"] = function (exports, __m) {
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-const PLATFORM_CONTRACT_VERSION = '0.8.0';
+const PLATFORM_CONTRACT_VERSION = '0.9.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
-const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'purpose-family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern', 'layout']);
+const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'purpose-family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon', 'layout']);
 
 /** 색 역할. 서브토큰 세트가 이 이름마다 값을 하나씩 만든다. css는 기존 컴파일 CSS가 읽는 변수 이름이다(부품 CSS를 고치지 않고 재사용하기 위해). */
 const COLOR_ROLES = Object.freeze({
@@ -8142,6 +8142,7 @@ const COMMON_FIELDS = Object.freeze({
  *   base-component contract: 기존 컴포넌트 계약 id, render·styles: 기존 구현 모듈 진입점. 동작·구조·접근성·상태를 소유한다
  *   family         members: {base-component id: FamilyMember}, shape: {radius, elevation}, density. 시각 언어를 소유한다
  *   surface·motion·background·media·state-pattern   스타일 재료 5종(0.5.0). 반경·깊이 단계, 전이·키프레임, 페이지 바탕·장식, 아이콘·타일·사진, 상태 화면
+ *   spacing·icon   간격 밀도 토큰 묶음과 아이콘 영역별 원본 심볼 허용 목록(0.9.0)
  *   layout         pattern·purposes·container·minContent·minCol·density·slots·bands·reorders·needsBand·rules·length·nesting. 슬롯 계약과 폭 구간별 배치 표(0.8.0, src/platform/data/layouts.mjs)
  *   axis-value     axis: 스타일 축 이름, value: 그 축의 값. 페이지 축 값(셸·폭·밀도 등)이 관계(forbids)의 대상이 되게 하는 재료다(0.2.0, src/platform/axes.mjs)
  */
@@ -8160,14 +8161,16 @@ const KIND_SPECS = Object.freeze({
   layout: Object.freeze({pattern: 'string', purposes: 'array', container: 'object', minContent: 'number', minCol: 'number', density: 'object', slots: 'array', bands: 'array', reorders: 'array', needsBand: 'string', rules: 'array', length: 'object', nesting: 'object'}),
   // 스타일 재료 5종(0.5.0, 스타일 작업의 요청). axes: 이 재료가 구현하는 축 값(순위·축 금지 평가), uses: 쓰는 축 값 전부(스타일 맥락이 금지한 값을 쓰면 차단).
   // 종류별 의미 검사(반경·깊이 이름, 상태·배치 이름 등)는 data/*.mjs의 validate*가 하고 createPlatform이 등록할 때 레지스트리가 부른다.
-  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array'}),
-  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array'}),
+  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array', facets: 'array'}),
+  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array', patterns: 'array'}),
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
-/** 스타일 재료 5종. 페이지 단계가 한 요청에 하나씩(상태 패턴은 상태마다) 고른다. */
-const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern']);
+/** 스타일 재료 종류. 페이지 단계가 하나씩 고르며 상태 패턴은 상태마다 고른다. */
+const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon']);
 
 /** 축 값 재료 id. `axis-value:<축>.<값>`. 스타일 축 값은 기존 카탈로그(src/catalog/axes.mjs)의 값 이름 그대로다. */
 const axisValueId = (axis, value) => `axis-value:${axis}.${value}`;
@@ -8326,7 +8329,7 @@ const {defineStyleMaterial, verifiedBy, validateStyleMaterialShape, pairErrors} 
 
 const mix = (role, pct, base = 'transparent') => `color-mix(in srgb,var(${COLOR_ROLES[role]}) ${pct}%,${base === 'transparent' ? 'transparent' : `var(${COLOR_ROLES[base]})`})`;
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
 const BACKGROUNDS = Object.freeze([
   defineStyleMaterial({
@@ -8367,6 +8370,52 @@ const BACKGROUNDS = Object.freeze([
     stops: ['canvas', ['action', 20, 'canvas'], ['accent', 16, 'canvas']],
     pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
   }),
+  defineStyleMaterial({
+    id: 'background:radial-focus', kind: 'background', label: '방사형 포커스', contexts: ['landing', 'portfolio', 'general'], tags: ['radial', 'focused'],
+    axes: {backdrop: 'gradient', ornament: 'none'}, uses: {backdrop: ['gradient'], ornament: ['none']},
+    page: {background: `radial-gradient(ellipse at 50% 0%,${mix('soft', 100, 'canvas')} 0%,var(${COLOR_ROLES.canvas}) 72%)`},
+    deco: {kind: 'none', css: ''}, stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:mesh-field', kind: 'background', label: '겹친 메쉬 그라데이션', contexts: ['landing', 'pricing', 'portfolio', 'general'], tags: ['mesh', 'gradient'],
+    axes: {backdrop: 'gradient', ornament: 'organic'}, uses: {backdrop: ['gradient'], ornament: ['organic']},
+    page: {background: `radial-gradient(at 15% 15%,${mix('accent', 14)},transparent 42%),radial-gradient(at 82% 22%,${mix('action', 12)},transparent 38%),radial-gradient(at 55% 88%,${mix('soft', 70)},var(${COLOR_ROLES.canvas}) 58%)`},
+    deco: {kind: 'mesh', css: ''}, stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:noise-grain', kind: 'background', label: '저대비 입자 무늬', contexts: ['article', 'blog', 'docs', 'general'], tags: ['noise', 'texture', 'read'],
+    axes: {backdrop: 'plain', ornament: 'dots'}, uses: {backdrop: ['plain'], ornament: ['dots']},
+    page: {background: `var(${COLOR_ROLES.canvas})`}, deco: {kind: 'noise', css: `background-image:radial-gradient(${mix('text', 5)} 0.6px,transparent 0.8px);background-size:4px 4px;opacity:.28`},
+    stops: ['canvas'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:ornament'],
+  }),
+  defineStyleMaterial({
+    id: 'background:paper-fiber', kind: 'background', label: '종이 결', contexts: ['article', 'blog', 'docs', 'general'], tags: ['paper', 'editorial'],
+    axes: {backdrop: 'tint', ornament: 'lines'}, uses: {backdrop: ['tint'], ornament: ['lines']},
+    page: {background: `linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
+    deco: {kind: 'paper', css: `background:repeating-linear-gradient(0deg,${mix('text', 2)} 0 1px,transparent 1px 4px);opacity:.3`},
+    stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
+  }),
+  defineStyleMaterial({
+    id: 'background:frosted-pane', kind: 'background', label: '제한된 프로스트 글라스', contexts: ['dashboard', 'landing', 'general'], tags: ['frosted', 'glass'],
+    axes: {backdrop: 'tint', ornament: 'none'}, uses: {backdrop: ['tint'], ornament: ['none']},
+    page: {background: `linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
+    deco: {kind: 'frosted', blur: 12, css: `border:1px solid ${mix('text', 8)};background:${mix('canvas', 72)}`},
+    stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:layered-surface', kind: 'background', label: '겹친 표면', contexts: ['dashboard', 'data', 'settings', 'general'], tags: ['layered', 'surface'],
+    axes: {backdrop: 'tint', ornament: 'lines'}, uses: {backdrop: ['tint'], ornament: ['lines']},
+    page: {background: `linear-gradient(180deg,var(${COLOR_ROLES.surface}) 0%,var(${COLOR_ROLES.canvas}) 62%),linear-gradient(90deg,var(${COLOR_ROLES.soft}),transparent)`},
+    deco: {kind: 'layers', css: `background:linear-gradient(90deg,${mix('border', 35)},transparent 28% 72%,${mix('rule', 24)})`},
+    stops: ['surface', 'canvas'], pairs: [['text', 'surface', 7], ['muted', 'surface', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:dark-premium', kind: 'background', label: '어두운 프리미엄 면', contexts: ['dashboard', 'landing', 'pricing', 'portfolio', 'general'], tags: ['dark', 'premium'],
+    axes: {backdrop: 'gradient', ornament: 'geometric'}, uses: {backdrop: ['gradient'], ornament: ['geometric']},
+    page: {background: `radial-gradient(90% 60% at 50% 0%,${mix('action', 12)},transparent 65%),linear-gradient(160deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.surface}))`},
+    deco: {kind: 'premium', css: `background:linear-gradient(120deg,${mix('accent', 12)},transparent 38% 68%,${mix('action', 10)})`},
+    stops: ['canvas', 'surface'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
+  }),
 ].map(verifiedBy(EVIDENCE)));
 
 /** 배경 프리셋 의미 검사: 축 값이 기존 축 안이고, 장식 종류와 ornament 축이 맞고, stops가 역할 이름이거나 {mix}다. */
@@ -8376,7 +8425,8 @@ function validateBackground(m) {
   const err = (code, path, message) => out.push({code, path, message});
   if (!axes.backdrop.includes(m.axes.backdrop)) err('P_BG_AXIS', '$.axes.backdrop', `기존 backdrop 축 값이 아닙니다: ${m.axes.backdrop}`);
   if (!axes.ornament.includes(m.axes.ornament)) err('P_BG_AXIS', '$.axes.ornament', `기존 ornament 축 값이 아닙니다: ${m.axes.ornament}`);
-  if ((m.axes.ornament === 'none') !== (m.deco.kind === 'none')) err('P_BG_DECO', '$.deco.kind', 'ornament none과 장식 없음(deco.kind none)은 함께여야 합니다');
+  if (m.axes.ornament === 'none' ? !['none', 'frosted'].includes(m.deco.kind) : m.deco.kind === 'none') err('P_BG_DECO', '$.deco.kind', '장식 축과 장식 정의가 함께 맞아야 합니다(frosted blur는 예외 허용)');
+  if (m.deco.blur !== undefined && (!Number.isInteger(m.deco.blur) || m.deco.blur < 0 || m.deco.blur > 16 || m.deco.kind !== 'frosted')) err('P_BG_BLUR_LIMIT', '$.deco.blur', 'blur는 frosted material에만, 0~16px로 제한합니다');
   if (typeof m.page.background !== 'string' || !m.page.background) err('P_BG_PAGE', '$.page.background', '바탕 CSS가 필요합니다');
   if (/#[0-9a-f]{3,8}\b/i.test(m.page.background + m.deco.css)) err('P_BG_HEX', '$.page', 'hex 색을 직접 쓰지 않습니다(색 역할 변수와 color-mix만)');
   m.stops.forEach((s, i) => {
@@ -8400,7 +8450,7 @@ function stopColor(stop, roles) {
 function backgroundCSS(m) {
   const sel = `[data-bg="${name(m)}"]`;
   const rules = [`${sel}{background:${m.page.background};position:relative;isolation:isolate}`];
-  if (m.deco.kind !== 'none') rules.push(`${sel}>.kit-deco{position:absolute;inset:0;z-index:-1;pointer-events:none;${m.deco.css}}`);
+  if (m.deco.kind !== 'none') rules.push(`${sel}>.kit-deco{position:absolute;inset:0;z-index:-1;pointer-events:none;${m.deco.css}${m.deco.blur ? `;backdrop-filter:blur(${m.deco.blur}px);-webkit-backdrop-filter:blur(${m.deco.blur}px)` : ''}}`);
   rules.push(`${sel}>.kit-bg-content{padding:var(--kit-sp-inset-l)}${sel}>.kit-bg-content :is(h3,p){margin:0}${sel}>.kit-bg-content h3+p{margin-top:var(--kit-sp-near)}`);
   return rules.join('\n');
 }
@@ -8794,6 +8844,59 @@ const FAMILIES = Object.freeze([
 ]);
 
 exports.FAMILIES = FAMILIES;
+};
+__defs["platform/data/icons.mjs"] = function (exports, __m) {
+/** Area-level icon materials reference the kit's original internal icon names. */
+const {iconNames} = __m("catalog/icons.mjs");
+const {icon: renderIcon} = __m("render/icon.mjs");
+const {definePlatformMaterial} = __m("platform/contract.mjs");
+
+const GROUPS = {
+  navigation: ['home', 'menu', 'chevron-right', 'arrow-left'], action: ['plus', 'edit', 'trash', 'download'],
+  editing: ['edit', 'copy', 'link', 'check'], status: ['check-circle', 'alert-circle', 'info', 'help-circle'],
+  communication: ['mail', 'message', 'phone', 'send'], files: ['file', 'folder', 'upload', 'download'],
+  media: ['image', 'camera', 'play', 'music'], commerce: ['cart', 'bag', 'tag', 'gift'],
+  finance: ['dollar', 'credit-card', 'trending-up', 'trending-down'], analytics: ['chart', 'grid', 'filter', 'trending-up'],
+  developer: ['code', 'terminal', 'globe', 'zap'], user: ['user', 'users', 'heart', 'bookmark'],
+  settings: ['settings', 'filter', 'refresh', 'more'], calendar: ['calendar', 'clock', 'chevron-down', 'check'],
+  security: ['lock', 'unlock', 'shield', 'eye'], accessibility: ['eye', 'help-circle', 'check', 'user'],
+};
+const ICON_MATERIALS = Object.freeze(Object.entries(GROUPS).map(([area, symbols]) => definePlatformMaterial({
+  id: `icon:area-${area}`, kind: 'icon', label: `${area} icons`, area, symbols,
+  viewBox: '0 0 24 24', size: 24, strokeWidth: 2, alignment: 'optical-center', family: 'original-outline',
+  contexts: ['any'], tags: ['icon', area], uses: {iconArea: [area]}, reuses: symbols.map(name => `icon:${name}`),
+  source: {origin: 'in-repository-original', license: 'internal'},
+  quality: {status: 'verified', evidence: ['tests/platform-style-materials.test.mjs:39']},
+})));
+
+function validateIconMaterial(m) {
+  const errors = [];
+  if (!/^icon:area-[a-z-]+$/.test(m.id) || m.id !== `icon:area-${m.area}`) errors.push({code: 'P_ICON_ID', path: '$.id', message: 'icon id must match its area'});
+  if (m.viewBox !== '0 0 24 24' || m.size !== 24 || m.strokeWidth !== 2 || m.alignment !== 'optical-center' || m.family !== 'original-outline') errors.push({code: 'P_ICON_SYSTEM', path: '$', message: 'icon materials must use the shared 24px original outline system'});
+  if (m.symbols.length < 4 || m.symbols.some(name => !iconNames.includes(name))) errors.push({code: 'P_ICON_SYMBOL', path: '$.symbols', message: 'each area needs at least four existing internal icons'});
+  return errors;
+}
+
+/** Icon materials compile to scoped styling and an explicit, small per-area symbol allowlist. */
+function iconCSS(m) {
+  const sel = `[data-icon-area="${m.area}"]`;
+  const symbols = m.symbols.map(symbol => `${sel} .kit-icon.icon-symbol-${symbol}{stroke:currentColor}`).join('');
+  return `${sel}{--kit-icon-size:${m.size}px;--kit-icon-sw:${m.strokeWidth};--kit-icon-align:${m.alignment}}${sel} .kit-icon{width:var(--kit-icon-size);height:var(--kit-icon-size);vertical-align:middle}${sel} .kit-icon path{fill:none;stroke:currentColor;stroke-width:var(--kit-icon-sw);stroke-linecap:round;stroke-linejoin:round}${symbols}`;
+}
+
+/** Renders only a symbol allowed by the selected platform icon area. Informative SVGs receive a labeled wrapper; unlabeled ones stay decorative. */
+function renderAreaIcon(m, {symbol, label} = {}) {
+  if (!m.symbols.includes(symbol)) throw new RangeError(`${symbol} is not in ${m.id}`);
+  if (label !== undefined && (typeof label !== 'string' || !label.trim())) throw new RangeError('label must be non-empty when supplied');
+  const svg = renderIcon(symbol, `icon-symbol-${symbol}`);
+  if (label === undefined) return svg;
+  return `<span class="kit-icon-area" role="img" aria-label="${String(label).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]))}">${svg.replace(' aria-hidden="true"', '')}</span>`;
+}
+
+exports.ICON_MATERIALS = ICON_MATERIALS;
+exports.validateIconMaterial = validateIconMaterial;
+exports.iconCSS = iconCSS;
+exports.renderAreaIcon = renderAreaIcon;
 };
 __defs["platform/data/layouts.mjs"] = function (exports, __m) {
 /**
@@ -9207,7 +9310,7 @@ const {defineStyleMaterial, verifiedBy, validateStyleMaterialShape, pairErrors} 
 const photo = (ratio, radius, border, treatment, scrim = 0) => ({ratio, radius, border, treatment, scrim});
 const tile = (shape, fill, border = 'none') => ({shape, fill, border});
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86', 'tests/platform-style-materials.test.mjs:123'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
 const MEDIA = Object.freeze([
   defineStyleMaterial({
@@ -9338,7 +9441,26 @@ const MOTION_STATES = Object.freeze(['hover', 'press', 'focus', 'select', 'enter
 const bez = (a, b, c, d) => [a, b, c, d];
 const use = (state, props, duration, easing) => ({state, props, duration, easing});
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:73'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
+
+/** Purpose-specific motion recipes. Components opt in by setting data-motion-pattern; no blanket page animation is applied. */
+const MOTION_PATTERNS = Object.freeze([
+  {id: 'hover', properties: ['background-color', 'box-shadow'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'press', properties: ['transform'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'focus', properties: ['outline-color'], duration: 'fast', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'expand', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'collapse', properties: ['grid-template-rows', 'opacity'], duration: 'base', easing: 'exit', delay: 0, reducedMotion: 'none'},
+  {id: 'fade', properties: ['opacity'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'slide', properties: ['transform', 'opacity'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'scale', properties: ['transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'popover-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'modal-enter', properties: ['opacity', 'transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'drawer-enter', properties: ['transform'], duration: 'base', easing: 'enter', delay: 0, reducedMotion: 'none'},
+  {id: 'toast-enter', properties: ['opacity', 'transform'], duration: 'fast', easing: 'enter', delay: 40, reducedMotion: 'none'},
+  {id: 'loading', properties: ['opacity'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'progress', properties: ['width'], duration: 'base', easing: 'standard', delay: 0, reducedMotion: 'none'},
+  {id: 'skeleton', properties: ['background-position'], duration: 'slow', easing: 'standard', delay: 0, reducedMotion: 'none'},
+].map(Object.freeze));
 
 const MOTIONS = Object.freeze([
   defineStyleMaterial({
@@ -9385,7 +9507,7 @@ const MOTIONS = Object.freeze([
     ],
     keyframes: [], reuses: ['axis:motion'],
   }),
-].map(verifiedBy(EVIDENCE)));
+].map(verifiedBy(EVIDENCE)).map(m => ({...m, patterns: MOTION_PATTERNS})));
 
 const bezier = b => `cubic-bezier(${b.join(',')})`;
 const name = m => m.id.slice('motion:'.length);
@@ -9408,6 +9530,13 @@ function validateMotion(m) {
     if (!Object.hasOwn(m.duration, t.duration)) err('P_MOTION_USE', `$.transitions[${i}].duration`, `duration 칸은 fast·base·slow입니다: ${t.duration}`);
     if (!Object.hasOwn(m.easing, t.easing)) err('P_MOTION_USE', `$.transitions[${i}].easing`, `easing 이름은 standard·enter·exit입니다: ${t.easing}`);
     if (!t.props?.length) err('P_MOTION_USE', `$.transitions[${i}].props`, '전이에는 움직이는 속성이 하나 이상 필요합니다');
+  });
+  if (m.patterns.length !== MOTION_PATTERNS.length || m.patterns.some((p, i) => p.id !== MOTION_PATTERNS[i].id)) err('P_MOTION_PATTERNS', '$.patterns', '15개 목적별 모션 패턴을 REQUEST 순서대로 모두 제공해야 합니다');
+  m.patterns.forEach((p, i) => {
+    if (!p.properties.length || p.properties.some(prop => !/^[a-z-]+$/.test(prop))) err('P_MOTION_PATTERN_PROPERTY', `$.patterns[${i}].properties`, 'property를 하나 이상 명시해야 합니다');
+    if (!Object.hasOwn(m.duration, p.duration) || !Object.hasOwn(m.easing, p.easing)) err('P_MOTION_PATTERN_TOKEN', `$.patterns[${i}]`, '각 패턴은 duration과 easing을 지정해야 합니다');
+    if (!Number.isInteger(p.delay) || p.delay < 0 || p.delay > 200) err('P_MOTION_PATTERN_DELAY', `$.patterns[${i}].delay`, 'delay는 0~200ms 정수입니다');
+    if (p.reducedMotion !== 'none') err('P_MOTION_PATTERN_REDUCE', `$.patterns[${i}].reducedMotion`, 'reduced-motion 정책은 none이어야 합니다');
   });
   if (!/^-?\d+px$/.test(m.lift) || !/^\d+px$/.test(m.enterY)) err('P_MOTION_LIFT', '$.lift', 'lift는 -?Npx, enterY는 Npx입니다');
   if (!m.axes.motion || !Object.hasOwn(MOTION, m.axes.motion)) err('P_MOTION_AXIS', '$.axes.motion', `기존 motion 축 값이 아닙니다: ${m.axes.motion}`);
@@ -9435,6 +9564,7 @@ function motionCSS(m, {keyframes = true} = {}) {
   const sel = `[data-motion="${name(m)}"]`, d = k => `${m.duration[k]}ms`;
   const vars = `${sel}{--kit-m-fast:${d('fast')};--kit-m-base:${d('base')};--kit-m-slow:${d('slow')};--kit-m-ease:${bezier(m.easing.standard)};--kit-m-ease-enter:${bezier(m.easing.enter)};--kit-m-ease-exit:${bezier(m.easing.exit)};--kit-m-enter-y:${m.enterY};--kit-dur:${d('base')};--kit-ease:${bezier(m.easing.standard)};--kit-lift:${m.lift}}`;
   const trans = m.transitions.map(t => `${sel} [data-motion-state="${t.state}"]{transition:${t.props.map(p => `${p} var(--kit-m-${t.duration}) var(--kit-m-ease${t.easing === 'standard' ? '' : '-' + t.easing})`).join(',')}}`);
+  const patterns = m.patterns.map(p => `${sel} [data-motion-pattern="${p.id}"]{transition:${p.properties.map(prop => `${prop} var(--kit-m-${p.duration}) var(--kit-m-ease${p.easing === 'standard' ? '' : '-' + p.easing}) ${p.delay}ms`).join(',')}}`);
   const anim = m.keyframes.length ? [
     `${sel} [data-motion-state="enter"][data-entering]{animation:kit-m-enter var(--kit-m-slow) var(--kit-m-ease-enter) both}`,
     `${sel} [data-motion-state="exit"][data-leaving]{animation:kit-m-exit var(--kit-m-base) var(--kit-m-ease-exit) both}`,
@@ -9442,19 +9572,20 @@ function motionCSS(m, {keyframes = true} = {}) {
     `${sel} [data-skeleton]{background-size:200% 100%;animation:kit-m-shimmer 1.4s linear infinite}`,
     `${sel} [data-spinner]{animation:kit-m-spin 900ms linear infinite}`,
   ] : [];
-  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}`;
+  const reduce = `@media (prefers-reduced-motion:reduce){${sel} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important;scroll-behavior:auto!important}}`;
   const frames = keyframes ? m.keyframes.map(k => MOTION_KEYFRAMES[k]) : [];
-  return [...frames, vars, ...trans, ...anim, reduce].join('\n');
+  return [...frames, vars, ...trans, ...patterns, ...anim, reduce].join('\n');
 }
 
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 
 /** 모션 프리셋 마크업: 상태 전이마다 그 상태를 보여 주는 칸. 움직이지 않아도 상태 이름과 모양으로 읽힌다. */
 function renderMotionSample(m) {
-  return `<ul class="kit-motion-demo" data-motion="${name(m)}">${m.transitions.map(t => `<li data-motion-state="${t.state}"><span>${escapeHTML(t.state)}</span> <small>${escapeHTML(t.props.join(', '))} · ${m.duration[t.duration]}ms</small></li>`).join('')}</ul>`;
+  return `<ul class="kit-motion-demo" data-motion="${name(m)}">${m.patterns.map(p => `<li data-motion-pattern="${p.id}"><span>${escapeHTML(p.id)}</span> <small>${escapeHTML(p.properties.join(', '))} · ${m.duration[p.duration]}ms + ${p.delay}ms</small></li>`).join('')}${m.transitions.map(t => `<li data-motion-state="${t.state}"><span>${escapeHTML(t.state)}</span> <small>${escapeHTML(t.props.join(', '))} · ${m.duration[t.duration]}ms</small></li>`).join('')}</ul>`;
 }
 
 exports.MOTION_STATES = MOTION_STATES;
+exports.MOTION_PATTERNS = MOTION_PATTERNS;
 exports.MOTIONS = MOTIONS;
 exports.validateMotion = validateMotion;
 exports.MOTION_KEYFRAMES = MOTION_KEYFRAMES;
@@ -9543,6 +9674,38 @@ const PALETTES = Object.freeze([
 
 exports.PALETTES = PALETTES;
 };
+__defs["platform/data/spacing.mjs"] = function (exports, __m) {
+/** Platform spacing and density materials. All values reuse the established 4px scale. */
+const {SPACE, TOKEN} = __m("spacing.mjs");
+const {definePlatformMaterial} = __m("platform/contract.mjs");
+
+const SPACING_MATERIALS = Object.freeze(Object.entries(SPACE).map(([density, tokens]) => definePlatformMaterial({
+  id: `spacing:${density}`, kind: 'spacing', label: `${density} spacing`, density, tokens,
+  contexts: ['any'], tags: ['spacing', density], axes: {density}, uses: {density: [density]},
+  reuses: ['axis-value:density.' + density],
+  quality: {status: 'verified', evidence: ['tests/platform-style-materials.test.mjs:39']},
+})));
+
+function validateSpacing(m) {
+  const errors = [];
+  if (!Object.hasOwn(SPACE, m.density)) errors.push({code: 'P_SPACING_DENSITY', path: '$.density', message: `unknown density: ${m.density}`});
+  else for (const [key, px] of Object.entries(m.tokens)) {
+    if (!Object.hasOwn(SPACE[m.density], key) || SPACE[m.density][key] !== px || !Number.isInteger(px) || px % 4 !== 0) errors.push({code: 'P_SPACING_TOKEN', path: `$.tokens.${key}`, message: `token must match the 4px ${m.density} spacing scale`});
+  }
+  return errors;
+}
+
+/** Emits the complete spacing contract in the platform compiler output. */
+function spacingCSS(m) {
+  const name = m.id.slice('spacing:'.length);
+  const vars = Object.entries(m.tokens).map(([key, value]) => `${TOKEN[key]}:${value}px`).join(';');
+  return `[data-density="${name}"]{${vars}}`;
+}
+
+exports.SPACING_MATERIALS = SPACING_MATERIALS;
+exports.validateSpacing = validateSpacing;
+exports.spacingCSS = spacingCSS;
+};
 __defs["platform/data/states.mjs"] = function (exports, __m) {
 /**
  * 상태 패턴 프리셋(테마·기타 재료 작업 소유). empty·loading·error·success 네 상태마다 모양이 다른 완성 패턴을 2개씩 둔다.
@@ -9553,6 +9716,7 @@ __defs["platform/data/states.mjs"] = function (exports, __m) {
  * - 안쪽 여백은 간격 계약의 토큰(src/spacing.mjs)만 쓰고, 색은 색 역할 변수만 쓴다. 상태를 색으로만 알리지 않는다: 아이콘과 글이 함께 간다.
  */
 const {RADIUS} = __m("styles/base.mjs");
+const {SPACE} = __m("spacing.mjs");
 const {COLOR_ROLES} = __m("platform/contract.mjs");
 const {icon: renderIcon} = __m("render/icon.mjs");
 const {icons} = __m("catalog/icons.mjs");
@@ -9564,7 +9728,7 @@ const LAYOUTS = ['block', 'inline', 'banner', 'toast'];
 
 const state = (id, label, extra) => defineStyleMaterial({id: `state-pattern:${id}`, kind: 'state-pattern', label, uses: {}, ...extra});
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86', 'tests/platform-style-materials.test.mjs:104'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
 const STATE_PATTERNS = Object.freeze([
   state('empty-illustrated', '일러스트형 빈 화면', {
@@ -9644,23 +9808,28 @@ function stateCSS(m) {
   const box = extra => `${sel}{box-sizing:border-box;${extra}}`;
   const byPattern = {
     'empty-illustrated': box(`display:grid;justify-items:center;text-align:center;gap:var(--kit-sp-head);padding:var(--kit-sp-section-m) var(--kit-inset);background:${tone('surface')};border:1px dashed ${tone('rule')};border-radius:${r}`)
-      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:999px;background:${tone('soft')};color:${tone('link')}}${sel} .kit-state-icon .kit-icon{width:24px;height:24px}`,
+      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:999px;background:${tone('soft')};color:${tone(m.tone)}}${sel} .kit-state-icon .kit-icon{width:24px;height:24px}`,
     'empty-inline': box(`display:flex;align-items:center;flex-wrap:wrap;gap:var(--kit-sp-near);padding:var(--kit-sp-item) var(--kit-sp-inset-s);color:${tone('muted')};border-bottom:${hairline}`)
       + `${sel} .kit-state-action{min-height:0;padding:0;border:0;background:transparent;color:${tone('link')};text-decoration:underline;text-underline-offset:4px;font-weight:600}`,
     'loading-skeleton': box(`display:grid;gap:var(--kit-sp-item);padding:var(--kit-inset);background:${tone('surface')};border:${hairline};border-radius:${r}`)
       + `${sel} [data-skeleton]{display:block;height:16px;border-radius:${RADIUS.subtle}px;background:linear-gradient(90deg,${tone('soft')} 25%,${tone('sunken')} 50%,${tone('soft')} 75%)}${sel} [data-skeleton]:nth-child(2){width:80%}${sel} [data-skeleton]:nth-child(3){width:56%}`,
     'loading-spinner': box(`display:inline-flex;align-items:center;gap:var(--kit-sp-near);padding:var(--kit-sp-near) 0`)
       + `${sel} [data-spinner]{display:inline-block;width:16px;height:16px;border-radius:999px;border:2px solid ${tone('rule')};border-top-color:${tone('action')}}`,
-    'error-banner': box(`display:flex;align-items:flex-start;flex-wrap:wrap;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('dangerSoft')};border:1px solid ${tone('danger')};border-radius:${r};color:${tone('text')}`)
-      + `${sel} .kit-state-icon{color:${tone('danger')};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1 1 240px}${sel} .kit-state-body{color:${tone('text')}}${sel} .kit-state-action{min-height:0;padding:var(--kit-sp-near) var(--kit-sp-inset-s);background:transparent;color:${tone('link')};border-color:${tone('link')}}`,
-    'error-panel': box(`display:grid;gap:var(--kit-sp-head);padding:var(--kit-inset);background:${tone('surface')};border:1px solid ${tone('danger')};border-radius:${r}`)
-      + `${sel} .kit-state-icon{color:${tone('danger')};display:inline-flex}${sel} .kit-state-head{display:flex;align-items:center;gap:var(--kit-sp-near)}${sel} details{border-top:${hairline};padding-top:var(--kit-sp-near)}${sel} summary{cursor:pointer;color:${tone('link')};font-weight:600}${sel} code{display:block;margin-top:var(--kit-sp-near);padding:var(--kit-sp-near) var(--kit-sp-item);background:${tone('soft')};border-radius:${RADIUS.subtle}px;font-family:var(--kit-mono,monospace);font-size:var(--kit-t-small);color:${tone('text')};overflow-wrap:anywhere}`,
-    'success-toast': box(`display:flex;align-items:flex-start;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('surface')};border:${hairline};border-left:4px solid ${tone('success')};border-radius:${r};box-shadow:0 2px 4px var(--kit-shade),0 12px 24px -10px var(--kit-shade)`)
-      + `${sel} .kit-state-icon{color:${tone('success')};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1}${sel} .kit-state-dismiss{border:0;background:transparent;color:${tone('muted')};min-height:var(--kit-control);min-width:var(--kit-control);font:inherit;cursor:pointer}`,
-    'success-confirmation': box(`display:grid;justify-items:center;text-align:center;gap:var(--kit-sp-head);padding:var(--kit-sp-section-m) var(--kit-inset);background:${tone('surface')};border:1px solid ${tone('success')};border-radius:${r}`)
-      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;color:${tone('success')}}${sel} .kit-state-icon .kit-icon{width:40px;height:40px}`,
+    'error-banner': box(`display:flex;align-items:flex-start;flex-wrap:wrap;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('dangerSoft')};border:1px solid ${tone(m.tone)};border-radius:${r};color:${tone('text')}`)
+      + `${sel} .kit-state-icon{color:${tone(m.tone)};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1 1 240px}${sel} .kit-state-body{color:${tone('text')}}${sel} .kit-state-action{min-height:0;padding:var(--kit-sp-near) var(--kit-sp-inset-s);background:transparent;color:${tone('link')};border-color:${tone('link')}}`,
+    'error-panel': box(`display:grid;gap:var(--kit-sp-head);padding:var(--kit-inset);background:${tone('surface')};border:1px solid ${tone(m.tone)};border-radius:${r}`)
+      + `${sel} .kit-state-icon{color:${tone(m.tone)};display:inline-flex}${sel} .kit-state-head{display:flex;align-items:center;gap:var(--kit-sp-near)}${sel} details{border-top:${hairline};padding-top:var(--kit-sp-near)}${sel} summary{cursor:pointer;color:${tone('link')};font-weight:600}${sel} code{display:block;margin-top:var(--kit-sp-near);padding:var(--kit-sp-near) var(--kit-sp-item);background:${tone('soft')};border-radius:${RADIUS.subtle}px;font-family:var(--kit-mono,monospace);font-size:var(--kit-t-small);color:${tone('text')};overflow-wrap:anywhere}`,
+    'success-toast': box(`display:flex;align-items:flex-start;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('surface')};border:${hairline};border-left:4px solid ${tone(m.tone)};border-radius:${r};box-shadow:0 2px 4px var(--kit-shade),0 12px 24px -10px var(--kit-shade)`)
+      + `${sel} .kit-state-icon{color:${tone(m.tone)};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1}${sel} .kit-state-dismiss{border:0;background:transparent;color:${tone('muted')};min-height:var(--kit-control);min-width:var(--kit-control);font:inherit;cursor:pointer}`,
+    'success-confirmation': box(`display:grid;justify-items:center;text-align:center;gap:var(--kit-sp-head);padding:var(--kit-sp-section-m) var(--kit-inset);background:${tone('surface')};border:1px solid ${tone(m.tone)};border-radius:${r}`)
+      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;color:${tone(m.tone)}}${sel} .kit-state-icon .kit-icon{width:40px;height:40px}`,
   };
-  return `${byPattern[name(m)]}\n${shared}`;
+  const scale = SPACE[m.axes.density];
+  const sized = `${byPattern[name(m)]}\n${shared}`.replace(/var\(--kit-sp-(tight|near|item|head|inset-s|section-m)\)|var\(--kit-inset\)/g, token => {
+    const key = {'--kit-sp-tight': 'tight', '--kit-sp-near': 'near', '--kit-sp-item': 'item', '--kit-sp-head': 'head', '--kit-sp-inset-s': 'insetS', '--kit-sp-section-m': 'sectionM', '--kit-inset': 'inset'}[token.slice(4, -1)];
+    return `${scale[key]}px`;
+  });
+  return sized;
 }
 
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -9736,6 +9905,8 @@ const {MOTIONS, validateMotion, motionCSS, renderMotionSample} = __m("platform/d
 const {BACKGROUNDS, validateBackground, backgroundCSS, renderBackgroundSample} = __m("platform/data/backgrounds.mjs");
 const {MEDIA, validateMedia, mediaCSS, renderMedia} = __m("platform/data/media.mjs");
 const {STATE_PATTERNS, STATE_KINDS, validateStatePattern, stateCSS, renderState} = __m("platform/data/states.mjs");
+const {SPACING_MATERIALS, validateSpacing, spacingCSS} = __m("platform/data/spacing.mjs");
+const {ICON_MATERIALS, validateIconMaterial, iconCSS} = __m("platform/data/icons.mjs");
 const {createPlatformRegistry} = __m("platform/registry.mjs");
 const {STYLE_VALIDATORS, checkStyleMaterials: checkRegistered, rankStyleMaterials: rankRegistered, assembleStyleMaterials: assembleRegistered} = __m("platform/style-materials.mjs");
 
@@ -10200,8 +10371,8 @@ const STYLE_CONTEXT_DETAILS = Object.freeze(Object.fromEntries(Object.keys(theme
 // ---------------------------------------------------------------------------------------------
 // 스타일 재료(표면·모션·배경·미디어·상태 패턴)
 // ---------------------------------------------------------------------------------------------
-const STYLE_MATERIALS = Object.freeze({surface: SURFACES, motion: MOTIONS, background: BACKGROUNDS, media: MEDIA, 'state-pattern': STATE_PATTERNS});
-const VALIDATORS = {surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern};
+const STYLE_MATERIALS = Object.freeze({surface: SURFACES, motion: MOTIONS, background: BACKGROUNDS, media: MEDIA, 'state-pattern': STATE_PATTERNS, spacing: SPACING_MATERIALS, icon: ICON_MATERIALS});
+const VALIDATORS = {surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern, spacing: validateSpacing, icon: validateIconMaterial};
 const MATERIAL_BY_ID = new Map(Object.values(STYLE_MATERIALS).flat().map(m => [m.id, m]));
 const listStyleMaterials = kind => [...(STYLE_MATERIALS[kind] ?? [])];
 const styleMaterialById = id => MATERIAL_BY_ID.get(id) ?? null;
@@ -10758,15 +10929,14 @@ __defs["platform/data/surfaces.mjs"] = function (exports, __m) {
  * 값은 새로 정하지 않는다: 반경은 `RADIUS`, 깊이는 `ELEVATION`(src/styles/base.mjs의 축 값 표)에서 이름으로 읽고, 안쪽 여백은 간격 계약의 토큰(src/spacing.mjs)만 쓴다.
  * 색은 색 역할 변수(COLOR_ROLES)만 읽으므로 어떤 팔레트×서브토큰 세트에도 쓴다.
  *
- * 이 파일은 5개 스타일 재료 종류(surface·motion·background·media·state-pattern)가 함께 쓰는 정의 도우미도 둔다.
- * 계약(src/platform/contract.mjs)의 PLATFORM_KINDS에는 이 종류들이 아직 없다. 그래서 레지스트리가 아니라 이 데이터 모듈과 자체 검사로 등록하고,
- * 종류 추가는 조립 엔진 작업에 요청한다(docs/platform/style-contexts.md §요청). 공통 필드와 관계 모양은 계약의 것을 그대로 쓴다.
+ * 이 파일은 표면·모션·배경·미디어·상태·간격·아이콘 재료가 함께 쓰는 정의 도우미도 둔다.
+ * 각 의미 검사와 플랫폼 레지스트리 필드는 src/platform/contract.mjs 및 이 파일의 STYLE_MATERIAL_SPECS에 맞춘다.
  */
 const {RADIUS, ELEVATION} = __m("styles/base.mjs");
 const {COMMON_FIELDS, COLOR_ROLES, ID_PATTERN, LICENSES, QUALITY, validateEdge, definePlatformMaterial} = __m("platform/contract.mjs");
 
 /** 계약에 아직 없는 재료 종류. 순서는 문서 표 순서다. */
-const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern']);
+const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon']);
 
 /**
  * 종류별 필드(계약 KIND_SPECS와 같은 type 문법).
@@ -10774,11 +10944,13 @@ const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', '
  *   uses  재료가 쓰는 축 값 전부. 스타일 맥락이 금지한 값을 하나라도 쓰면 후보에서 뺀다(차단)
  */
 const STYLE_MATERIAL_SPECS = Object.freeze({
-  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array'}),
-  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array'}),
+  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array', facets: 'array'}),
+  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array', patterns: 'array'}),
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
 
 const TYPE_OF = v => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v);
@@ -10825,7 +10997,28 @@ const lvl = (radius, elevation, fill = 'surface') => ({radius, elevation, fill})
 
 /** 이 재료를 실패시킬 수 있는 테스트 줄을 달아 verified로 올린다(WBS 공통 규칙: 근거 없는 verified 금지). */
 const verifiedBy = evidence => m => ({...m, quality: {status: 'verified', evidence: [...evidence]}});
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86', 'tests/platform-style-materials.test.mjs:132'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
+
+/** Selectable radius/border/elevation primitives; double borders are restricted to pricing and form surfaces. */
+const SURFACE_FACETS = Object.freeze([
+  {id: 'sharp', radius: '0', border: 'none', elevation: 'flat'},
+  {id: 'subtle', radius: '4px', border: 'hairline', elevation: 'outline'},
+  {id: 'rounded', radius: '10px', border: 'standard', elevation: 'soft'},
+  {id: 'large-rounded', radius: '28px', border: 'none', elevation: 'lifted'},
+  {id: 'pill', radius: '999px', border: 'none', elevation: 'flat'},
+  {id: 'mixed-radius', radius: '18px 18px 4px 4px', border: 'standard', elevation: 'soft'},
+  {id: 'hairline-border', radius: '4px', border: 'hairline', elevation: 'flat'},
+  {id: 'standard-border', radius: '10px', border: 'standard', elevation: 'flat'},
+  {id: 'strong-border', radius: '4px', border: 'strong', elevation: 'outline'},
+  {id: 'double-border', radius: '4px', border: 'double', elevation: 'flat', contexts: ['form', 'pricing']},
+  {id: 'flat-surface', radius: '10px', border: 'none', elevation: 'flat'},
+  {id: 'subtle-elevation', radius: '10px', border: 'hairline', elevation: 'soft'},
+  {id: 'medium-elevation', radius: '10px', border: 'none', elevation: 'lifted'},
+  {id: 'deep-elevation', radius: '18px', border: 'none', elevation: 'lifted'},
+  {id: 'hard-offset', radius: '0', border: 'strong', elevation: 'hard'},
+  {id: 'glow', radius: '18px', border: 'none', elevation: 'glow'},
+  {id: 'inset', radius: '10px', border: 'hairline', elevation: 'inset'},
+].map(Object.freeze));
 
 /**
  * 표면 프리셋 5개. 서로 눈에 띄게 다르다: 단계 9칸(3단계 × 반경·깊이·채움) 중 3칸 이상 달라야 한다(시험이 쌍마다 센다).
@@ -10862,13 +11055,20 @@ const SURFACES = Object.freeze([
     levels: {base: lvl('soft', 'flat', 'soft'), raised: lvl('soft', 'flat', 'surface'), overlay: lvl('square', 'outline', 'surface')},
     pairs: [['text', 'soft', 4.5], ['text', 'surface', 4.5], ['muted', 'soft', 4.5]], reuses: ['axis:elevation', 'axis:radius'],
   }),
-].map(verifiedBy(EVIDENCE)));
+].map(verifiedBy(EVIDENCE)).map(m => ({...m, facets: SURFACE_FACETS})));
 
 /** 표면 종류의 의미 검사: 반경·깊이 이름이 값 표에 있고, uses가 단계에서 쓴 값을 모두 덮는다. */
 function validateSurface(m) {
   const out = [...validateStyleMaterialShape(m), ...pairErrors(m)];
   if (out.length) return out;
   const err = (code, path, message) => out.push({code, path, message});
+  if (m.facets.length !== SURFACE_FACETS.length || m.facets.some((f, i) => f.id !== SURFACE_FACETS[i].id)) err('P_SURFACE_FACETS', '$.facets', '17개 표면 primitive를 REQUEST 순서대로 모두 제공해야 합니다');
+  for (const [i, f] of m.facets.entries()) {
+    if (!/^(?:0|\d+px|\d+px \d+px \d+px \d+px)$/.test(f.radius)) err('P_SURFACE_FACET_RADIUS', `$.facets[${i}].radius`, 'radius는 격자 기반 px 모서리 값이어야 합니다');
+    if (!['none', 'hairline', 'standard', 'strong', 'double'].includes(f.border)) err('P_SURFACE_FACET_BORDER', `$.facets[${i}].border`, '알 수 없는 테두리 단계입니다');
+    if (!['flat', 'outline', 'soft', 'lifted', 'glow', 'hard', 'inset'].includes(f.elevation)) err('P_SURFACE_FACET_ELEVATION', `$.facets[${i}].elevation`, '알 수 없는 깊이 단계입니다');
+    if (f.border === 'double' && JSON.stringify(f.contexts) !== JSON.stringify(['form', 'pricing'])) err('P_SURFACE_DOUBLE_CONTEXT', `$.facets[${i}].contexts`, '이중 테두리는 form·pricing 맥락에만 허용합니다');
+  }
   for (const level of ['base', 'raised', 'overlay']) {
     const l = m.levels[level];
     if (!l) { err('P_SURFACE_LEVEL', `$.levels.${level}`, `단계 ${level}이 없습니다`); continue; }
@@ -10892,6 +11092,12 @@ function surfaceCSS(m) {
   });
   const hover = ELEVATION[m.levels.raised.elevation].hover;
   rules.push(`${sel} .kit-surface[data-level="raised"]:hover{box-shadow:${hover}}`);
+  const borders = {none: '0', hairline: '1px solid var(--kit-border)', standard: '1px solid var(--kit-rule)', strong: '2px solid var(--kit-text)', double: '3px double var(--kit-border)'};
+  for (const f of m.facets) {
+    const shadow = f.elevation === 'inset' ? 'inset 0 2px 6px var(--kit-shade)' : ELEVATION[f.elevation].shadow;
+    const context = f.contexts ? `:is(${f.contexts.map(c => `[data-context="${c}"]`).join(',')}) ` : '';
+    rules.push(`${context}${sel} [data-surface-facet="${f.id}"]{border-radius:${f.radius};border:${borders[f.border]};box-shadow:${shadow};padding:var(--kit-inset)}`);
+  }
   rules.push(`${sel} .kit-surface :is(h3,p){margin:0}${sel} .kit-surface h3+p{margin-top:var(--kit-sp-near)}`);
   return rules.join('\n');
 }
@@ -10910,6 +11116,7 @@ exports.defineStyleMaterial = defineStyleMaterial;
 exports.validateStyleMaterialShape = validateStyleMaterialShape;
 exports.pairErrors = pairErrors;
 exports.verifiedBy = verifiedBy;
+exports.SURFACE_FACETS = SURFACE_FACETS;
 exports.SURFACES = SURFACES;
 exports.validateSurface = validateSurface;
 exports.surfaceCSS = surfaceCSS;
@@ -16953,7 +17160,7 @@ const COUNT_CODE = c => c.code;
 
 /** 상태 화면이 놓이는 자리의 배치 요건: 표·목록·차트 자리는 block·inline, 페이지 머리 아래 안내는 banner·toast·block. */
 const STATE_LAYOUTS = Object.freeze({region: ['block', 'inline'], status: ['banner', 'toast', 'block']});
-const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media']];
+const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media'], ['spacing', 'spacing']];
 
 /**
  * selectStyleMaterials(plan, intent, env) → {selection: {surface, motion, background, media, states: [{index, kind, usage, id}]}, decisions, blocked, diagnostics}
@@ -16962,7 +17169,7 @@ const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background'
  */
 function selectStyleMaterials(plan, intent, env) {
   const diagnostics = [], decisions = [], blocked = [];
-  const selection = {surface: null, motion: null, background: null, media: null, states: []};
+  const selection = {surface: null, motion: null, background: null, media: null, spacing: null, states: []};
   const ctx = {context: plan.context, mode: plan.axes.mode, density: plan.axes.density};
   const anchors = [...(intent.styleContext ? [intent.styleContext] : []), ...pageAxisIds(plan)];
   const target = {...themes[plan.theme].defaults, ...plan.axes};
@@ -17602,7 +17809,7 @@ const {typeFit} = __m("platform/type.mjs");
 const AXIS_PREFERENCE_WEIGHT = 10;
 
 /** 스타일 재료 5종 중 축 값(axes)을 가진 재료. 패밀리의 shape와 같은 방식으로 스타일 맥락의 축 선호를 읽는다. */
-const AXES_KINDS = ['surface', 'motion', 'background', 'media', 'state-pattern'];
+const AXES_KINDS = ['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon'];
 /** 한 재료가 두 축을 구현할 때 더 크게 보이는 축의 배수. 배경은 페이지 바탕(backdrop)이 장식(ornament)보다 먼저 읽힌다. */
 const AXIS_MULTIPLIER = {backdrop: 2};
 
@@ -17976,7 +18183,7 @@ function legacyTokens(color, palette, mode) {
 const walk = (nodes, f) => nodes.forEach(n => { f(n); if (Array.isArray(n.children)) walk(n.children, f); });
 
 /** 선택한 스타일 재료의 id 목록(상태 패턴 포함, 중복 없음). */
-const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, style?.background, style?.media, ...(style?.states ?? []).map(x => x.id)].filter(Boolean))];
+const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, style?.background, style?.media, style?.spacing, ...(style?.icons ?? []), ...(style?.states ?? []).map(x => x.id)].filter(Boolean))];
 
 /** 페이지 축 값 재료 id(관계 평가용). axes는 {shell, width, density, mode, scale, backdrop, ornament, footer, icon}를 가진 객체(계획의 axes나 Blueprint)다. */
 const pageAxisIdsOf = axes => axisIds({shell: axes.shell, width: axes.width, density: axes.density, mode: axes.mode, scale: axes.scale, backdrop: axes.backdrop, ornament: axes.ornament, footer: axes.footer, icon: axes.icon});
@@ -18050,7 +18257,7 @@ function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   if (failed(diagnostics)) return stop();
   if (!['light', 'dark'].includes(b.mode)) return {...stop(), diagnostics: [diag('MATERIALS_INCOMPATIBLE', '$.mode', `플랫폼 조립은 mode light·dark만 렌더합니다(받은 값: ${b.mode})`)]};
   const sel = {styleContext: m.styleContext ?? null, palette: m.palette, subtokenSet: m.subtokenSet, typeSystem: m.typeSystem, families: {...(m.families ?? {}), ...Object.fromEntries((m.purposes ?? []).map(p => [p.id, p.visual]))}};
-  const style = {surface: m.surface ?? null, motion: m.motion ?? null, background: m.background ?? null, media: m.media ?? null, states: (m.states ?? []).map((st, index) => ({index, id: st.id}))};
+  const style = {surface: m.surface ?? null, motion: m.motion ?? null, background: m.background ?? null, media: m.media ?? null, spacing: `spacing:${b.density}`, states: (m.states ?? []).map((st, index) => ({index, id: st.id}))};
   const palette = reg.get(sel.palette), set = reg.get(sel.subtokenSet), typeSystem = reg.get(sel.typeSystem);
   const relations = evaluated ?? evaluateMaterials(env, {context: b.pageType, axes: b, selection: sel, styleIds: styleMaterialIds(style)});
   for (const v of evaluated ? [] : relations.violations) diagnostics.push(diag(v.code === 'P_CHECK_TYPE_HANGUL' ? v.code : 'MATERIALS_INCOMPATIBLE', '$.materials', `${v.from} × ${v.to}: ${v.reason}`, {relation: v.code}));
@@ -18110,7 +18317,7 @@ function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   }
   // 선택한 표면·모션·배경·미디어는 셸에 범위 속성으로 달고(배경 장식 요소 포함) 재료 CSS를 붙인다.
   const bg = style.background ? reg.get(style.background) : null;
-  const attrs = styleMaterialAttrs(style);
+  const attrs = styleMaterialAttrs(style, b.pageType);
   if (attrs) body = body.replace('<div class="kit-shell"', `<div class="kit-shell" ${attrs}`);
   if (bg && bg.deco.kind !== 'none') body = body.replace(/(<div class="kit-shell"[^>]*>)/, '$1<span class="kit-deco" aria-hidden="true"></span>');
   const tagged = tagFamilies(body, tagOrder);
@@ -18228,11 +18435,13 @@ const {validateMotion, motionCSS} = __m("platform/data/motion.mjs");
 const {validateBackground, backgroundCSS} = __m("platform/data/backgrounds.mjs");
 const {validateMedia, mediaCSS} = __m("platform/data/media.mjs");
 const {validateStatePattern, stateCSS, STATE_KINDS} = __m("platform/data/states.mjs");
+const {validateSpacing, spacingCSS} = __m("platform/data/spacing.mjs");
+const {validateIconMaterial, iconCSS} = __m("platform/data/icons.mjs");
 
 
 /** 종류별 의미 검사. createPlatformRegistry({validators})가 등록할 때 부른다. */
-const STYLE_VALIDATORS = Object.freeze({surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern});
-const SLOTS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media']];
+const STYLE_VALIDATORS = Object.freeze({surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern, spacing: validateSpacing, icon: validateIconMaterial});
+const SLOTS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media'], ['spacing', 'spacing']];
 const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
 const nameOf = m => m.id.slice(m.kind.length + 1);
 
@@ -18281,13 +18490,16 @@ function assembleStyleMaterials(registry, request) {
   const diagnostics = [], decisions = [], selection = {surface: null, motion: null, background: null, media: null, states: {}};
   const fail = () => ({ok: false, selection, decisions, diagnostics, css: null});
   if (request === null || typeof request !== 'object' || Array.isArray(request)) return {...fail(), diagnostics: [diag('P_REQUEST', '$', '요청은 객체여야 합니다')]};
-  const allowed = ['styleContext', 'context', 'surface', 'motion', 'background', 'media', 'states'];
+  const allowed = ['styleContext', 'context', 'surface', 'motion', 'background', 'media', 'spacing', 'icons', 'states'];
   for (const k of Object.keys(request)) if (!allowed.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.${k}`, `지원하지 않는 키: ${k}. 임의 CSS 경로는 없습니다`, {alternatives: allowed}));
   const sc = typeof request.styleContext === 'string' ? registry.get(request.styleContext) : null;
   if (!sc || sc.kind !== 'style-context') diagnostics.push(diag('P_ATTR_UNKNOWN', '$.styleContext', `등록되지 않은 스타일 맥락: ${request.styleContext}`, {alternatives: registry.list('style-context').map(x => x.id)}));
   if (typeof request.context !== 'string') diagnostics.push(diag('P_REQUEST_CONTEXT', '$.context', 'context(페이지 유형)가 필요합니다'));
   if (diagnostics.length) return fail();
   const states = request.states ?? {};
+  const icons = request.icons ?? [];
+  if (!Array.isArray(icons)) diagnostics.push(diag('P_REQUEST_KEY', '$.icons', 'icons는 icon material id 배열이어야 합니다'));
+  if (Array.isArray(icons) && icons.length > 1) diagnostics.push(diag('P_REQUEST_KEY', '$.icons', '한 번의 조립에는 아이콘 영역 재료를 하나만 지정합니다'));
   for (const k of Object.keys(states)) if (!STATE_KINDS.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.states.${k}`, `상태는 ${STATE_KINDS.join('·')}입니다`, {alternatives: STATE_KINDS}));
   if (diagnostics.length) return fail();
 
@@ -18309,11 +18521,16 @@ function assembleStyleMaterials(registry, request) {
     return rec.ranked[0].id;
   };
   for (const [slot, kind] of SLOTS) selection[slot] = choose(slot, kind, `$.${slot}`, request[slot]);
+  selection.icons = [];
+  for (const [i, id] of icons.entries()) {
+    const selected = choose(`icon(${i})`, 'icon', `$.icons[${i}]`, id);
+    if (selected) selection.icons.push(selected);
+  }
   for (const st of STATE_KINDS) selection.states[st] = choose(`state(${st})`, 'state-pattern', `$.states.${st}`, states[st], st);
   if (diagnostics.length) return fail();
 
   const g = id => registry.get(id);
-  const parts = [motionCSS(g(selection.motion)), surfaceCSS(g(selection.surface)), backgroundCSS(g(selection.background)), mediaCSS(g(selection.media))];
+  const parts = [motionCSS(g(selection.motion)), surfaceCSS(g(selection.surface)), backgroundCSS(g(selection.background)), mediaCSS(g(selection.media)), spacingCSS(g(selection.spacing)), ...selection.icons.map(id => iconCSS(g(id)))];
   for (const st of STATE_KINDS) parts.push(stateCSS(g(selection.states[st])));
   return {ok: true, selection, decisions, diagnostics, css: parts.join('\n')};
 }
@@ -18338,15 +18555,17 @@ function styleMaterialsCSS(registry, selection, usedStates = []) {
   if (selection.surface) parts.push(surfaceScopeCSS(g(selection.surface)));
   if (selection.background) parts.push(backgroundCSS(g(selection.background)));
   if (selection.media) parts.push(mediaCSS(g(selection.media)));
+  if (selection.spacing) parts.push(spacingCSS(g(selection.spacing)));
+  for (const id of [...new Set(selection.icons ?? [])].sort()) parts.push(iconCSS(g(id)));
   for (const id of [...new Set(usedStates)].sort()) parts.push(stateCSS(g(id)));
   return parts.join('\n');
 }
 
 /** 선택한 재료의 범위 속성. 쇼 셸(.kit-shell)에 단다. 모션·표면·배경·미디어가 각자의 이름으로 범위를 연다. */
-function styleMaterialAttrs(selection) {
+function styleMaterialAttrs(selection, context) {
   const n = id => id.slice(id.indexOf(':') + 1);
-  return [['data-surface', selection.surface], ['data-motion', selection.motion], ['data-bg', selection.background], ['data-media', selection.media]]
-    .filter(([, id]) => id).map(([k, id]) => `${k}="${n(id)}"`).join(' ');
+  return [['data-surface', selection.surface], ['data-motion', selection.motion], ['data-bg', selection.background], ['data-media', selection.media], ['data-density', selection.spacing], ...(selection.icons?.length ? [['data-icon-area', selection.icons[0].slice('icon:area-'.length)]] : []), ...(context ? [['data-context', context]] : [])]
+    .filter(([, id]) => id).map(([k, id]) => `${k}="${k === 'data-icon-area' || k === 'data-context' ? id : n(id)}"`).join(' ');
 }
 
 exports.STATE_KINDS = STATE_KINDS;

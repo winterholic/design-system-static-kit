@@ -64,7 +64,7 @@ const COUNT_CODE = c => c.code;
 
 /** 상태 화면이 놓이는 자리의 배치 요건: 표·목록·차트 자리는 block·inline, 페이지 머리 아래 안내는 banner·toast·block. */
 export const STATE_LAYOUTS = Object.freeze({region: ['block', 'inline'], status: ['banner', 'toast', 'block']});
-const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media']];
+const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media'], ['spacing', 'spacing']];
 
 /**
  * selectStyleMaterials(plan, intent, env) → {selection: {surface, motion, background, media, states: [{index, kind, usage, id}]}, decisions, blocked, diagnostics}
@@ -73,7 +73,7 @@ const STYLE_KINDS = [['surface', 'surface'], ['motion', 'motion'], ['background'
  */
 export function selectStyleMaterials(plan, intent, env) {
   const diagnostics = [], decisions = [], blocked = [];
-  const selection = {surface: null, motion: null, background: null, media: null, states: []};
+  const selection = {surface: null, motion: null, background: null, media: null, spacing: null, states: []};
   const ctx = {context: plan.context, mode: plan.axes.mode, density: plan.axes.density};
   const anchors = [...(intent.styleContext ? [intent.styleContext] : []), ...pageAxisIds(plan)];
   const target = {...themes[plan.theme].defaults, ...plan.axes};

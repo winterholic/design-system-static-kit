@@ -5,15 +5,14 @@
  * 값은 새로 정하지 않는다: 반경은 `RADIUS`, 깊이는 `ELEVATION`(src/styles/base.mjs의 축 값 표)에서 이름으로 읽고, 안쪽 여백은 간격 계약의 토큰(src/spacing.mjs)만 쓴다.
  * 색은 색 역할 변수(COLOR_ROLES)만 읽으므로 어떤 팔레트×서브토큰 세트에도 쓴다.
  *
- * 이 파일은 5개 스타일 재료 종류(surface·motion·background·media·state-pattern)가 함께 쓰는 정의 도우미도 둔다.
- * 계약(src/platform/contract.mjs)의 PLATFORM_KINDS에는 이 종류들이 아직 없다. 그래서 레지스트리가 아니라 이 데이터 모듈과 자체 검사로 등록하고,
- * 종류 추가는 조립 엔진 작업에 요청한다(docs/platform/style-contexts.md §요청). 공통 필드와 관계 모양은 계약의 것을 그대로 쓴다.
+ * 이 파일은 표면·모션·배경·미디어·상태·간격·아이콘 재료가 함께 쓰는 정의 도우미도 둔다.
+ * 각 의미 검사와 플랫폼 레지스트리 필드는 src/platform/contract.mjs 및 이 파일의 STYLE_MATERIAL_SPECS에 맞춘다.
  */
 import {RADIUS, ELEVATION} from '../../styles/base.mjs';
 import {COMMON_FIELDS, COLOR_ROLES, ID_PATTERN, LICENSES, QUALITY, validateEdge, definePlatformMaterial} from '../contract.mjs';
 
 /** 계약에 아직 없는 재료 종류. 순서는 문서 표 순서다. */
-export const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern']);
+export const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon']);
 
 /**
  * 종류별 필드(계약 KIND_SPECS와 같은 type 문법).
@@ -21,11 +20,13 @@ export const STYLE_MATERIAL_KINDS = Object.freeze(['surface', 'motion', 'backgro
  *   uses  재료가 쓰는 축 값 전부. 스타일 맥락이 금지한 값을 하나라도 쓰면 후보에서 뺀다(차단)
  */
 export const STYLE_MATERIAL_SPECS = Object.freeze({
-  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array'}),
-  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array'}),
+  surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array', facets: 'array'}),
+  motion: Object.freeze({axes: 'object', uses: 'object', duration: 'object', easing: 'object', lift: 'string', enterY: 'string', transitions: 'array', keyframes: 'array', patterns: 'array'}),
   background: Object.freeze({axes: 'object', uses: 'object', page: 'object', deco: 'object', stops: 'array', pairs: 'array'}),
   media: Object.freeze({axes: 'object', uses: 'object', icon: 'object', tile: 'object', photo: 'object', caption: 'string', pairs: 'array'}),
   'state-pattern': Object.freeze({axes: 'object', uses: 'object', state: 'string', layout: 'string', role: 'string', live: 'string', busy: 'boolean', icon: 'string', tone: 'string', parts: 'array', pairs: 'array'}),
+  spacing: Object.freeze({density: 'string', tokens: 'object', axes: 'object', uses: 'object'}),
+  icon: Object.freeze({area: 'string', symbols: 'array', viewBox: 'string', size: 'number', strokeWidth: 'number', alignment: 'string', family: 'string', uses: 'object'}),
 });
 
 const TYPE_OF = v => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v);
@@ -72,7 +73,28 @@ const lvl = (radius, elevation, fill = 'surface') => ({radius, elevation, fill})
 
 /** 이 재료를 실패시킬 수 있는 테스트 줄을 달아 verified로 올린다(WBS 공통 규칙: 근거 없는 verified 금지). */
 export const verifiedBy = evidence => m => ({...m, quality: {status: 'verified', evidence: [...evidence]}});
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86', 'tests/platform-style-materials.test.mjs:132'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
+
+/** Selectable radius/border/elevation primitives; double borders are restricted to pricing and form surfaces. */
+export const SURFACE_FACETS = Object.freeze([
+  {id: 'sharp', radius: '0', border: 'none', elevation: 'flat'},
+  {id: 'subtle', radius: '4px', border: 'hairline', elevation: 'outline'},
+  {id: 'rounded', radius: '10px', border: 'standard', elevation: 'soft'},
+  {id: 'large-rounded', radius: '28px', border: 'none', elevation: 'lifted'},
+  {id: 'pill', radius: '999px', border: 'none', elevation: 'flat'},
+  {id: 'mixed-radius', radius: '18px 18px 4px 4px', border: 'standard', elevation: 'soft'},
+  {id: 'hairline-border', radius: '4px', border: 'hairline', elevation: 'flat'},
+  {id: 'standard-border', radius: '10px', border: 'standard', elevation: 'flat'},
+  {id: 'strong-border', radius: '4px', border: 'strong', elevation: 'outline'},
+  {id: 'double-border', radius: '4px', border: 'double', elevation: 'flat', contexts: ['form', 'pricing']},
+  {id: 'flat-surface', radius: '10px', border: 'none', elevation: 'flat'},
+  {id: 'subtle-elevation', radius: '10px', border: 'hairline', elevation: 'soft'},
+  {id: 'medium-elevation', radius: '10px', border: 'none', elevation: 'lifted'},
+  {id: 'deep-elevation', radius: '18px', border: 'none', elevation: 'lifted'},
+  {id: 'hard-offset', radius: '0', border: 'strong', elevation: 'hard'},
+  {id: 'glow', radius: '18px', border: 'none', elevation: 'glow'},
+  {id: 'inset', radius: '10px', border: 'hairline', elevation: 'inset'},
+].map(Object.freeze));
 
 /**
  * 표면 프리셋 5개. 서로 눈에 띄게 다르다: 단계 9칸(3단계 × 반경·깊이·채움) 중 3칸 이상 달라야 한다(시험이 쌍마다 센다).
@@ -109,13 +131,20 @@ export const SURFACES = Object.freeze([
     levels: {base: lvl('soft', 'flat', 'soft'), raised: lvl('soft', 'flat', 'surface'), overlay: lvl('square', 'outline', 'surface')},
     pairs: [['text', 'soft', 4.5], ['text', 'surface', 4.5], ['muted', 'soft', 4.5]], reuses: ['axis:elevation', 'axis:radius'],
   }),
-].map(verifiedBy(EVIDENCE)));
+].map(verifiedBy(EVIDENCE)).map(m => ({...m, facets: SURFACE_FACETS})));
 
 /** 표면 종류의 의미 검사: 반경·깊이 이름이 값 표에 있고, uses가 단계에서 쓴 값을 모두 덮는다. */
 export function validateSurface(m) {
   const out = [...validateStyleMaterialShape(m), ...pairErrors(m)];
   if (out.length) return out;
   const err = (code, path, message) => out.push({code, path, message});
+  if (m.facets.length !== SURFACE_FACETS.length || m.facets.some((f, i) => f.id !== SURFACE_FACETS[i].id)) err('P_SURFACE_FACETS', '$.facets', '17개 표면 primitive를 REQUEST 순서대로 모두 제공해야 합니다');
+  for (const [i, f] of m.facets.entries()) {
+    if (!/^(?:0|\d+px|\d+px \d+px \d+px \d+px)$/.test(f.radius)) err('P_SURFACE_FACET_RADIUS', `$.facets[${i}].radius`, 'radius는 격자 기반 px 모서리 값이어야 합니다');
+    if (!['none', 'hairline', 'standard', 'strong', 'double'].includes(f.border)) err('P_SURFACE_FACET_BORDER', `$.facets[${i}].border`, '알 수 없는 테두리 단계입니다');
+    if (!['flat', 'outline', 'soft', 'lifted', 'glow', 'hard', 'inset'].includes(f.elevation)) err('P_SURFACE_FACET_ELEVATION', `$.facets[${i}].elevation`, '알 수 없는 깊이 단계입니다');
+    if (f.border === 'double' && JSON.stringify(f.contexts) !== JSON.stringify(['form', 'pricing'])) err('P_SURFACE_DOUBLE_CONTEXT', `$.facets[${i}].contexts`, '이중 테두리는 form·pricing 맥락에만 허용합니다');
+  }
   for (const level of ['base', 'raised', 'overlay']) {
     const l = m.levels[level];
     if (!l) { err('P_SURFACE_LEVEL', `$.levels.${level}`, `단계 ${level}이 없습니다`); continue; }
@@ -139,6 +168,12 @@ export function surfaceCSS(m) {
   });
   const hover = ELEVATION[m.levels.raised.elevation].hover;
   rules.push(`${sel} .kit-surface[data-level="raised"]:hover{box-shadow:${hover}}`);
+  const borders = {none: '0', hairline: '1px solid var(--kit-border)', standard: '1px solid var(--kit-rule)', strong: '2px solid var(--kit-text)', double: '3px double var(--kit-border)'};
+  for (const f of m.facets) {
+    const shadow = f.elevation === 'inset' ? 'inset 0 2px 6px var(--kit-shade)' : ELEVATION[f.elevation].shadow;
+    const context = f.contexts ? `:is(${f.contexts.map(c => `[data-context="${c}"]`).join(',')}) ` : '';
+    rules.push(`${context}${sel} [data-surface-facet="${f.id}"]{border-radius:${f.radius};border:${borders[f.border]};box-shadow:${shadow};padding:var(--kit-inset)}`);
+  }
   rules.push(`${sel} .kit-surface :is(h3,p){margin:0}${sel} .kit-surface h3+p{margin-top:var(--kit-sp-near)}`);
   return rules.join('\n');
 }

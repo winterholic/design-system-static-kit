@@ -13,7 +13,7 @@ import {typeFit} from './type.mjs';
 export const AXIS_PREFERENCE_WEIGHT = 10;
 
 /** 스타일 재료 5종 중 축 값(axes)을 가진 재료. 패밀리의 shape와 같은 방식으로 스타일 맥락의 축 선호를 읽는다. */
-const AXES_KINDS = ['surface', 'motion', 'background', 'media', 'state-pattern'];
+const AXES_KINDS = ['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon'];
 /** 한 재료가 두 축을 구현할 때 더 크게 보이는 축의 배수. 배경은 페이지 바탕(backdrop)이 장식(ornament)보다 먼저 읽힌다. */
 const AXIS_MULTIPLIER = {backdrop: 2};
 

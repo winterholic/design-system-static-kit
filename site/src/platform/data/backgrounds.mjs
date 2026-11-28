@@ -13,7 +13,7 @@ import {defineStyleMaterial, verifiedBy, validateStyleMaterialShape, pairErrors}
 
 const mix = (role, pct, base = 'transparent') => `color-mix(in srgb,var(${COLOR_ROLES[role]}) ${pct}%,${base === 'transparent' ? 'transparent' : `var(${COLOR_ROLES[base]})`})`;
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
 export const BACKGROUNDS = Object.freeze([
   defineStyleMaterial({
@@ -54,6 +54,52 @@ export const BACKGROUNDS = Object.freeze([
     stops: ['canvas', ['action', 20, 'canvas'], ['accent', 16, 'canvas']],
     pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
   }),
+  defineStyleMaterial({
+    id: 'background:radial-focus', kind: 'background', label: '방사형 포커스', contexts: ['landing', 'portfolio', 'general'], tags: ['radial', 'focused'],
+    axes: {backdrop: 'gradient', ornament: 'none'}, uses: {backdrop: ['gradient'], ornament: ['none']},
+    page: {background: `radial-gradient(ellipse at 50% 0%,${mix('soft', 100, 'canvas')} 0%,var(${COLOR_ROLES.canvas}) 72%)`},
+    deco: {kind: 'none', css: ''}, stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:mesh-field', kind: 'background', label: '겹친 메쉬 그라데이션', contexts: ['landing', 'pricing', 'portfolio', 'general'], tags: ['mesh', 'gradient'],
+    axes: {backdrop: 'gradient', ornament: 'organic'}, uses: {backdrop: ['gradient'], ornament: ['organic']},
+    page: {background: `radial-gradient(at 15% 15%,${mix('accent', 14)},transparent 42%),radial-gradient(at 82% 22%,${mix('action', 12)},transparent 38%),radial-gradient(at 55% 88%,${mix('soft', 70)},var(${COLOR_ROLES.canvas}) 58%)`},
+    deco: {kind: 'mesh', css: ''}, stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:noise-grain', kind: 'background', label: '저대비 입자 무늬', contexts: ['article', 'blog', 'docs', 'general'], tags: ['noise', 'texture', 'read'],
+    axes: {backdrop: 'plain', ornament: 'dots'}, uses: {backdrop: ['plain'], ornament: ['dots']},
+    page: {background: `var(${COLOR_ROLES.canvas})`}, deco: {kind: 'noise', css: `background-image:radial-gradient(${mix('text', 5)} 0.6px,transparent 0.8px);background-size:4px 4px;opacity:.28`},
+    stops: ['canvas'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:ornament'],
+  }),
+  defineStyleMaterial({
+    id: 'background:paper-fiber', kind: 'background', label: '종이 결', contexts: ['article', 'blog', 'docs', 'general'], tags: ['paper', 'editorial'],
+    axes: {backdrop: 'tint', ornament: 'lines'}, uses: {backdrop: ['tint'], ornament: ['lines']},
+    page: {background: `linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
+    deco: {kind: 'paper', css: `background:repeating-linear-gradient(0deg,${mix('text', 2)} 0 1px,transparent 1px 4px);opacity:.3`},
+    stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
+  }),
+  defineStyleMaterial({
+    id: 'background:frosted-pane', kind: 'background', label: '제한된 프로스트 글라스', contexts: ['dashboard', 'landing', 'general'], tags: ['frosted', 'glass'],
+    axes: {backdrop: 'tint', ornament: 'none'}, uses: {backdrop: ['tint'], ornament: ['none']},
+    page: {background: `linear-gradient(135deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.soft}))`},
+    deco: {kind: 'frosted', blur: 12, css: `border:1px solid ${mix('text', 8)};background:${mix('canvas', 72)}`},
+    stops: ['canvas', 'soft'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:layered-surface', kind: 'background', label: '겹친 표면', contexts: ['dashboard', 'data', 'settings', 'general'], tags: ['layered', 'surface'],
+    axes: {backdrop: 'tint', ornament: 'lines'}, uses: {backdrop: ['tint'], ornament: ['lines']},
+    page: {background: `linear-gradient(180deg,var(${COLOR_ROLES.surface}) 0%,var(${COLOR_ROLES.canvas}) 62%),linear-gradient(90deg,var(${COLOR_ROLES.soft}),transparent)`},
+    deco: {kind: 'layers', css: `background:linear-gradient(90deg,${mix('border', 35)},transparent 28% 72%,${mix('rule', 24)})`},
+    stops: ['surface', 'canvas'], pairs: [['text', 'surface', 7], ['muted', 'surface', 4.5]], reuses: ['axis:backdrop'],
+  }),
+  defineStyleMaterial({
+    id: 'background:dark-premium', kind: 'background', label: '어두운 프리미엄 면', contexts: ['dashboard', 'landing', 'pricing', 'portfolio', 'general'], tags: ['dark', 'premium'],
+    axes: {backdrop: 'gradient', ornament: 'geometric'}, uses: {backdrop: ['gradient'], ornament: ['geometric']},
+    page: {background: `radial-gradient(90% 60% at 50% 0%,${mix('action', 12)},transparent 65%),linear-gradient(160deg,var(${COLOR_ROLES.canvas}),var(${COLOR_ROLES.surface}))`},
+    deco: {kind: 'premium', css: `background:linear-gradient(120deg,${mix('accent', 12)},transparent 38% 68%,${mix('action', 10)})`},
+    stops: ['canvas', 'surface'], pairs: [['text', 'canvas', 7], ['muted', 'canvas', 4.5]], reuses: ['axis:backdrop', 'axis:ornament'],
+  }),
 ].map(verifiedBy(EVIDENCE)));
 
 /** 배경 프리셋 의미 검사: 축 값이 기존 축 안이고, 장식 종류와 ornament 축이 맞고, stops가 역할 이름이거나 {mix}다. */
@@ -63,7 +109,8 @@ export function validateBackground(m) {
   const err = (code, path, message) => out.push({code, path, message});
   if (!axes.backdrop.includes(m.axes.backdrop)) err('P_BG_AXIS', '$.axes.backdrop', `기존 backdrop 축 값이 아닙니다: ${m.axes.backdrop}`);
   if (!axes.ornament.includes(m.axes.ornament)) err('P_BG_AXIS', '$.axes.ornament', `기존 ornament 축 값이 아닙니다: ${m.axes.ornament}`);
-  if ((m.axes.ornament === 'none') !== (m.deco.kind === 'none')) err('P_BG_DECO', '$.deco.kind', 'ornament none과 장식 없음(deco.kind none)은 함께여야 합니다');
+  if (m.axes.ornament === 'none' ? !['none', 'frosted'].includes(m.deco.kind) : m.deco.kind === 'none') err('P_BG_DECO', '$.deco.kind', '장식 축과 장식 정의가 함께 맞아야 합니다(frosted blur는 예외 허용)');
+  if (m.deco.blur !== undefined && (!Number.isInteger(m.deco.blur) || m.deco.blur < 0 || m.deco.blur > 16 || m.deco.kind !== 'frosted')) err('P_BG_BLUR_LIMIT', '$.deco.blur', 'blur는 frosted material에만, 0~16px로 제한합니다');
   if (typeof m.page.background !== 'string' || !m.page.background) err('P_BG_PAGE', '$.page.background', '바탕 CSS가 필요합니다');
   if (/#[0-9a-f]{3,8}\b/i.test(m.page.background + m.deco.css)) err('P_BG_HEX', '$.page', 'hex 색을 직접 쓰지 않습니다(색 역할 변수와 color-mix만)');
   m.stops.forEach((s, i) => {
@@ -87,7 +134,7 @@ export function stopColor(stop, roles) {
 export function backgroundCSS(m) {
   const sel = `[data-bg="${name(m)}"]`;
   const rules = [`${sel}{background:${m.page.background};position:relative;isolation:isolate}`];
-  if (m.deco.kind !== 'none') rules.push(`${sel}>.kit-deco{position:absolute;inset:0;z-index:-1;pointer-events:none;${m.deco.css}}`);
+  if (m.deco.kind !== 'none') rules.push(`${sel}>.kit-deco{position:absolute;inset:0;z-index:-1;pointer-events:none;${m.deco.css}${m.deco.blur ? `;backdrop-filter:blur(${m.deco.blur}px);-webkit-backdrop-filter:blur(${m.deco.blur}px)` : ''}}`);
   rules.push(`${sel}>.kit-bg-content{padding:var(--kit-sp-inset-l)}${sel}>.kit-bg-content :is(h3,p){margin:0}${sel}>.kit-bg-content h3+p{margin-top:var(--kit-sp-near)}`);
   return rules.join('\n');
 }

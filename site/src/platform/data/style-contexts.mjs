@@ -28,6 +28,8 @@ import {MOTIONS, validateMotion, motionCSS, renderMotionSample} from './motion.m
 import {BACKGROUNDS, validateBackground, backgroundCSS, renderBackgroundSample} from './backgrounds.mjs';
 import {MEDIA, validateMedia, mediaCSS, renderMedia} from './media.mjs';
 import {STATE_PATTERNS, STATE_KINDS, validateStatePattern, stateCSS, renderState} from './states.mjs';
+import {SPACING_MATERIALS, validateSpacing, spacingCSS} from './spacing.mjs';
+import {ICON_MATERIALS, validateIconMaterial, iconCSS} from './icons.mjs';
 import {createPlatformRegistry} from '../registry.mjs';
 import {STYLE_VALIDATORS, checkStyleMaterials as checkRegistered, rankStyleMaterials as rankRegistered, assembleStyleMaterials as assembleRegistered} from '../style-materials.mjs';
 
@@ -492,8 +494,8 @@ export const STYLE_CONTEXT_DETAILS = Object.freeze(Object.fromEntries(Object.key
 // ---------------------------------------------------------------------------------------------
 // 스타일 재료(표면·모션·배경·미디어·상태 패턴)
 // ---------------------------------------------------------------------------------------------
-export const STYLE_MATERIALS = Object.freeze({surface: SURFACES, motion: MOTIONS, background: BACKGROUNDS, media: MEDIA, 'state-pattern': STATE_PATTERNS});
-const VALIDATORS = {surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern};
+export const STYLE_MATERIALS = Object.freeze({surface: SURFACES, motion: MOTIONS, background: BACKGROUNDS, media: MEDIA, 'state-pattern': STATE_PATTERNS, spacing: SPACING_MATERIALS, icon: ICON_MATERIALS});
+const VALIDATORS = {surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern, spacing: validateSpacing, icon: validateIconMaterial};
 const MATERIAL_BY_ID = new Map(Object.values(STYLE_MATERIALS).flat().map(m => [m.id, m]));
 export const listStyleMaterials = kind => [...(STYLE_MATERIALS[kind] ?? [])];
 export const styleMaterialById = id => MATERIAL_BY_ID.get(id) ?? null;
