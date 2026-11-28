@@ -17,7 +17,7 @@ import {sizeCSS} from '../materials/control-size.mjs';
 import {PLATFORM_CONTRACT_VERSION} from './contract.mjs';
 import {recommend} from './recommend.mjs';
 import {bindColor} from './color.mjs';
-import {bindType} from './type.mjs';
+import {bindType, typeRoleCSS} from './type.mjs';
 import {familyShapeVars, renderMember, contrastPairs, requiredVars} from './family.mjs';
 import {escapeHTML} from '../escape-html.mjs';
 import {axisIds, materialAxisIds} from './axes.mjs';
@@ -134,7 +134,7 @@ export function bindTokens(state, env) {
   const {selection, intent} = state, diagnostics = [...state.diagnostics];
   const color = bindColor(env.registry.get(selection.palette), env.registry.get(selection.subtokenSet), intent.mode);
   if (!color.ok) diagnostics.push(diag(color.error?.code ?? 'P_COLOR_CONTRAST', '$selection', color.error?.message ?? '대비 미달'));
-  const type = bindType(env.registry.get(selection.typeSystem), {legacyRoles: true});
+  const type = bindType(env.registry.get(selection.typeSystem), {legacyRoles: true, roles27Vars: true});
   const families = Object.fromEntries([...new Set(Object.values(selection.families))].sort().map(id => [id, familyShapeVars(env.registry.get(id))]));
   const spacing = Object.fromEntries(spaceVars(intent.density).split(';').map(d => d.split(':')));
   const shade = {'--kit-shade': 'color-mix(in srgb,var(--kit-text) 14%,transparent)'};
@@ -166,6 +166,7 @@ export function emit(state, env) {
     `/* platform ${PLATFORM_CONTRACT_VERSION}: ${selection.palette} × ${selection.subtokenSet} · ${selection.typeSystem} (${intent.mode}, ${intent.density}) */`,
     declBlock(':root', bound.root),
     `body{margin:0;background:var(--kit-canvas);color:var(--kit-text);font-family:var(--kit-font);line-height:var(--kit-line)}`,
+    typeRoleCSS(),
     ...Object.entries(bound.families).map(([id, vars]) => declBlock(`[data-family="${id.slice('family:'.length)}"]`, vars)),
     `.kit-platform{display:grid;gap:var(--kit-gap);padding:var(--kit-inset)}`,
     ...impls.map(x => x.styles),
