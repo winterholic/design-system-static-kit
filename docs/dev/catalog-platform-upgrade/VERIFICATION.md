@@ -1179,3 +1179,37 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 - `npm run coverage:materials:check`: `MANIFEST MATCH`(최신 main `e901afcc5` 위로 rebase한 뒤 재생성한 `MATERIAL-COVERAGE.json` 기준, 재료 1480·요구 406·missing 요구 69는 §9.3~§9.7이 아닌 구성요소 요구).
 - `npm run verify`(최신 main `e901afcc5` 위로 rebase한 최종 트리): `npm test` **1015개 중 1014 통과, 1 실패**. 실패는 `tests/platform-type-fonts.test.mjs` 4번 시험의 `page.setContent: Timeout 30000ms exceeded`다. 이 시험의 마지막 구간(289~299줄 근처, 일본어 fallback 표본)은 앞 구간과 달리 `page.route('http://static-kit.local/**')`를 걸지 않고 그 주소를 요청한다. 이 호스트에서는 그 이름이 풀리지만(curl `dns=0.01s`) 연결이 응답하지 않아 `load` 대기가 30초를 넘긴다. 저장소 코드 없이 Chromium에 같은 `<link>`만 넣어도 8초 타임아웃으로 재현된다. E4 변경과 무관한 C2 시험의 환경 의존 결함이고 쓰기 범위 밖이라 고치지 않았다(수정안: 마지막 구간에도 같은 라우트를 건다). 같은 시험은 교정 전 `3421079e0` 위에서도 같은 이유로 실패했다. 따라서 `npm run verify`의 `npm test` 단계는 이 1건 때문에 exit 1이다. 이후 단계는 따로 실행해 통과했다: `audit` exit 0, `docs` exit 0, `build` exit 0, `check-generated` `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`
 - 루트 브라우저 시험 `npx playwright test`(교정 직후, rebase 전): 325개 중 324 통과, 1 실패. 실패는 `e2e/platform-families.spec.mjs:12`의 `media dashboard/comfortable family:quiet light mobile: CLIP_ICON,CLIP_TEXT,CLIP_TEXT,OVERFLOW_X`를 비롯한 media 묶음 측정이다(D4 정보·미디어 패밀리의 레이아웃 품질). 교정 전 `3421079e0`을 새로 `npm ci`한 작업 트리에서 같은 측정(`measureAll({groups: ['media'], modes: ['light']})`)을 돌려도 같은 코드(`CLIP_ICON,CLIP_TEXT,CLIP_TEXT,OVERFLOW_X`)로 실패하고, 최신 main 위의 교정본에서도 동일하다. E4가 만든 실패가 아니며 D4 소관이다.
+
+## 19. 시험 결함 2건 교정, `npm run verify` 전체 통과, D5b(Stack·Container·Resizable Panel) 독립 검증 (2026-11-28, `upgrade/e4-verify`)
+
+### 19.1 시험 결함 2건(§18.5·§18.6에서 넘어온 것)
+
+1. `apps/web/e2e/catalog-lists.spec.mjs:174`: `h1`이 `Hero`를 포함해야 한다는 단언을 화면 라벨 `히어로`(`src/catalog/nodes.mjs`)에 맞췄다. 단언 삭제·완화 없음. `cd apps/web && npx playwright test e2e/catalog-lists.spec.mjs` → `10 passed`.
+2. `tests/platform-type-fonts.test.mjs` 4번 시험: 마지막 구간(일본어 fallback 표본)에 앞 구간과 같은 `static-kit.local` 라우트를 걸어 실제 WOFF2는 파일에서, 그 밖은 404로 답하게 했다. 앞 두 구간의 `route.continue()`(실제 네트워크로 나감)도 404 응답으로 바꿨다. 컨텍스트에 `static-kit.local` 밖으로 나가는 요청을 막고 기록하는 라우트를 두고 `outbound`가 빈 배열임을 단언한다(외부 호스트 연결 0). 이전에는 이 호스트에서 `load` 대기가 30초를 넘겨 실패했고, 지금은 `node --test tests/platform-type-fonts.test.mjs` → `tests 7, pass 7, fail 0`(4번 시험 1.6초).
+3. C2 잔여 실측 기록(`docs/platform/evidence/type/font-loading-evidence.json`, `status: measured`, 1280px·390px): 양성 경로에서 `work-insight`는 Pretendard GOV, `doc-essay`는 Noto Serif KR, `doc-handbook`은 Pretendard GOV와 **JetBrains Mono**가 모두 `loaded: true`다. 음성 경로(WOFF2 404)는 서체당 실패 요청이 1건(handbook은 2건), 가로 넘침 없음, CSS 시스템 스택 fallback이 유지된다. 다국어 표본(일본어·원화·코드·한자)은 두 뷰포트에서 모두 렌더되고 넘침이 없다.
+
+### 19.2 D5b 판정: 이름만 맞고 출력이 없는 유형을 의심하고 Chromium으로 실측했다
+
+props가 렌더 출력에 반영되는지, 계산 스타일과 실제 레이아웃으로 확인했다. 아래 3건이 결함이었다.
+
+| 부품 | 결함 | 실측 |
+|---|---|---|
+| Stack | `gap="gap"`이 존재하지 않는 `--kit-sp-gap`을 읽어 gap이 `normal`(0px). 선언한 4단계 중 하나가 출력에 없었다 | 간격 4종 중 `gap`만 0px(나머지 4·8·12px). 토큰은 `--kit-gap`(24px) |
+| Resizable Panel(가로) | 핸들이 8px를 차지해 두 패널 합이 100%+8px. 둘째 패널이 호스트 밖으로 7px 밀려 `overflow:hidden`에 잘림 | `scrollWidth 1006 > clientWidth 998`, 둘째 패널 오른쪽 1007 > 호스트 1000 |
+| Resizable Panel(세로) | 호스트 높이가 정해지지 않아 퍼센트 flex-basis가 동작하지 않음. `aria-valuenow`만 바뀌고 레이아웃은 그대로 | 값 30·85에도 두 패널 높이가 50·50px로 고정 |
+
+교정(`src/platform/families/layout.mjs`, Track D 소유 파일, `site/src` 미러는 빌드가 재생성): Stack `gap`을 `var(--kit-gap)`으로, 핸들을 폭 0 flex 항목으로 바꾸고 8px 막대·잡는 영역은 `::before`로 경계 위에 겹쳐 그림(두 패널 합이 정확히 100%), 세로 호스트에 `block-size:20rem`, `aria-controls`로 첫 패널을 가리킴(`id`가 있을 때). 인라인 `flex:0 0 N%` 값과 기존 키보드 시험의 단언은 바꾸지 않았다.
+
+문제 없던 것: Stack `align`(start·center·stretch 12조합), Stack 입력 검증(알 수 없는 gap·align은 `BAD_REQUEST`), Container `width` 4단계(640·1024·1280px 상한과 `full`이 페이지 폭을 채움, 가운데 정렬), 내용 이스케이프, 포인터 드래그(30%로 끌면 값과 폭이 함께 변함, 끝까지 끌어도 15·85에서 멈춤, 놓은 뒤에는 따라가지 않음), 키보드 조절, separator 접근성(`role="separator"`, 이름, `aria-valuemin/max/now`, 방향별 `aria-orientation`, `tabindex=0`, 방향이 다른 화살표는 무시), 런타임 제외(패널이 있는 페이지에만 `__kitLayout`이 들어가고 Stack·Container·Center만 있는 페이지와 `layouts`가 없는 페이지에는 없음). 참고: Container의 `standard`는 64rem(1024px)이라 Blueprint `width` 축의 standard(1080px)와 값이 다르다. 이름 충돌은 아니나 같은 값으로 맞출지는 결정하지 않았다.
+
+### 19.3 시험과 RED
+
+`tests/platform-layout-resizable.test.mjs`에 실제 Chromium 시험 4개를 더해 5개다: Stack 12조합의 실측 간격·정렬, Container 폭 4단계, 포인터 드래그·15~85% 경계·넘침 없음·세로 방향(포인터와 End 키)·separator 접근성, 런타임 제외. 비율 비교는 허용 오차 0.01이다(처음 작성 때 `±2`를 비율에 잘못 써서 세로 시험이 거짓 통과했고, 결함을 심어 보고 발견해 고쳤다).
+
+결함을 심어 실패를 확인했다(원복 후 5/5 통과): Stack gap 토큰 오타, 핸들이 다시 8px 차지, 세로 높이 미정, 포인터 clamp 제거, `aria-controls` 제거, 런타임 항상 포함, Container narrow 폭 오류. 일곱 건 모두 해당 시험이 실패했다.
+
+### 19.4 전체 검증
+
+- `npm run verify`(최신 main `898d2da21` 위 최종 트리): `npm test` `tests 1021, pass 1021, fail 0`, `audit`·`docs`·`build`·`check-generated` 통과, 마지막 줄 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`, exit 0.
+- `MATERIAL-COVERAGE.json`은 손으로 병합하지 않고 `node scripts/generate-material-coverage.mjs`로 재생성했다.
+- `src/catalog`·`src/render`·`src/styles`·`site/v1`·`legacy-hashes` 변경 없음(2.1.0 고정 해시와 기본 2.4.0 출력 시험은 위 1019개에 포함).

@@ -15441,7 +15441,7 @@ document.addEventListener('pointercancel',stopDrag);
 
 const LAYOUT_CSS = `
 .kit-layout-stack{display:flex;flex-direction:column;gap:var(--kit-sp-item);inline-size:100%;box-sizing:border-box}
-.kit-layout-stack[data-gap="tight"]{gap:var(--kit-sp-tight)}.kit-layout-stack[data-gap="near"]{gap:var(--kit-sp-near)}.kit-layout-stack[data-gap="item"]{gap:var(--kit-sp-item)}.kit-layout-stack[data-gap="gap"]{gap:var(--kit-sp-gap)}
+.kit-layout-stack[data-gap="tight"]{gap:var(--kit-sp-tight)}.kit-layout-stack[data-gap="near"]{gap:var(--kit-sp-near)}.kit-layout-stack[data-gap="item"]{gap:var(--kit-sp-item)}.kit-layout-stack[data-gap="gap"]{gap:var(--kit-gap)}
 .kit-layout-stack[data-align="start"]{align-items:flex-start}.kit-layout-stack[data-align="center"]{align-items:center}.kit-layout-stack[data-align="stretch"]{align-items:stretch}
 .kit-layout-container{inline-size:100%;margin-inline:auto;padding-inline:var(--kit-sp-item);box-sizing:border-box}
 .kit-layout-container[data-width="narrow"]{max-inline-size:40rem}.kit-layout-container[data-width="standard"]{max-inline-size:64rem}.kit-layout-container[data-width="wide"]{max-inline-size:80rem}.kit-layout-container[data-width="full"]{max-inline-size:none}
@@ -15450,12 +15450,14 @@ const LAYOUT_CSS = `
 .kit-layout-sticky-region{position:sticky;inset-block-start:0;z-index:10;inline-size:100%;background:var(--kit-surface);color:var(--kit-text);box-sizing:border-box;padding:var(--kit-sp-item);border-block-end:1px solid var(--kit-border)}
 .kit-layout-scroll-area{overflow-y:auto;max-block-size:400px;inline-size:100%;box-sizing:border-box;padding:var(--kit-sp-item);border:1px solid var(--kit-border);border-radius:var(--kit-radius)}
 .kit-layout-resizable{display:flex;inline-size:100%;min-block-size:200px;box-sizing:border-box;border:1px solid var(--kit-border);border-radius:var(--kit-radius);overflow:hidden}
-.kit-layout-resizable[data-direction="vertical"]{flex-direction:column}
+.kit-layout-resizable[data-direction="vertical"]{flex-direction:column;block-size:20rem}
 .kit-panel-first,.kit-panel-second{overflow:auto;box-sizing:border-box;padding:var(--kit-sp-item);min-inline-size:0;min-block-size:0}
-.kit-split-handle{flex:0 0 8px;background:var(--kit-border);cursor:col-resize;user-select:none;touch-action:none;outline:none;transition:background 0.15s ease}
-.kit-layout-resizable[data-direction="vertical"]>.kit-split-handle{flex:0 0 8px;cursor:row-resize}
-.kit-split-handle:hover,.kit-split-handle:focus-visible{background:var(--kit-focus)}
-.kit-split-handle:focus-visible{outline:2px solid var(--kit-focus);outline-offset:1px}
+/* 핸들은 공간을 차지하지 않는다(두 패널의 비율 합이 정확히 100%). 8px 막대와 잡는 영역은 경계 위에 겹쳐 그린다. */
+.kit-split-handle{flex:0 0 0;position:relative;z-index:1;user-select:none;touch-action:none;outline:none}
+.kit-split-handle::before{content:"";position:absolute;inset-block:0;inset-inline:-4px;background:var(--kit-border);cursor:col-resize;transition:background 0.15s ease}
+.kit-layout-resizable[data-direction="vertical"]>.kit-split-handle::before{inset-block:-4px;inset-inline:0;cursor:row-resize}
+.kit-split-handle:hover::before,.kit-split-handle:focus-visible::before{background:var(--kit-focus)}
+.kit-split-handle:focus-visible::before{outline:2px solid var(--kit-focus);outline-offset:1px}
 `;
 
 const NODE = (type, axes = {}) => ({field: 'tree', node: type, axes});
@@ -15517,8 +15519,8 @@ function renderByKind(id, p = {}) {
       const label = e(p.label ?? '패널 크기 조절');
       const orientation = dir === 'vertical' ? 'horizontal' : 'vertical';
       return `<div ${idAttr}class="kit-layout-resizable" data-component="${id}" data-direction="${dir}">` +
-        `<div class="kit-panel-first" style="flex:0 0 ${initial}%">${first}</div>` +
-        `<div class="kit-split-handle" role="separator" tabindex="0" aria-valuenow="${initial}" aria-valuemin="15" aria-valuemax="85" aria-orientation="${orientation}" data-resizable-handle aria-label="${label}"></div>` +
+        `<div class="kit-panel-first"${p.id ? ` id="${e(p.id)}-first"` : ''} style="flex:0 0 ${initial}%">${first}</div>` +
+        `<div class="kit-split-handle" role="separator" tabindex="0"${p.id ? ` aria-controls="${e(p.id)}-first"` : ''} aria-valuenow="${initial}" aria-valuemin="15" aria-valuemax="85" aria-orientation="${orientation}" data-resizable-handle aria-label="${label}"></div>` +
         `<div class="kit-panel-second" style="flex:0 0 ${100 - initial}%">${second}</div>` +
         `</div>`;
     }

@@ -161,6 +161,9 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
   try {
     for (const vp of [{width: 1280, height: 900, name: '1280px'}, {width: 390, height: 844, name: '390px'}]) {
       const context = await browser.newContext({viewport: {width: vp.width, height: vp.height}});
+      // 외부 호스트 연결 금지: 가짜 호스트(static-kit.local) 밖으로 나가는 요청은 막고 기록한다. 페이지 라우트가 먼저 처리하므로 이 라우트는 라우트가 빠진 요청만 받는다.
+      const outbound = [];
+      await context.route(url => !/^(about|data|blob):/.test(url.href) && url.hostname !== 'static-kit.local', route => { outbound.push(route.request().url()); return route.abort(); });
 
       for (const sys of candidateSystems) {
         // [A] 양성 경로 (WOFF2 로딩 성공)
@@ -181,7 +184,7 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
                 body: readFileSync(resolve(fontAssetsPath, font.file)),
               });
             }
-            return route.continue();
+            return route.fulfill({status: 404, contentType: 'text/plain', body: 'Not Found'});
           });
 
           const fontBaseUrl = 'http://static-kit.local/fonts';
@@ -238,7 +241,7 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
               failedRequests.push(url);
               return route.fulfill({status: 404, contentType: 'text/plain', body: 'Font Not Found'});
             }
-            return route.continue();
+            return route.fulfill({status: 404, contentType: 'text/plain', body: 'Not Found'});
           });
 
           const fontBaseUrl = 'http://static-kit.local/fonts';
@@ -284,6 +287,12 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
       // [C] 다국어 및 일본어 Fallback 전용 샘플 검증
       {
         const page = await context.newPage();
+        // 앞 구간과 같은 가짜 호스트 라우트. 없으면 이름만 풀리고 응답하지 않는 환경에서 load가 끝나지 않는다.
+        await page.route('http://static-kit.local/**', route => {
+          const font = Object.values(WEBFONTS).find(item => route.request().url().endsWith(item.file));
+          if (!font) return route.fulfill({status: 404, contentType: 'text/plain', body: 'Not Found'});
+          return route.fulfill({status: 200, contentType: 'font/woff2', headers: {'Access-Control-Allow-Origin': '*'}, body: readFileSync(resolve(fontAssetsPath, font.file))});
+        });
         const jaHtml = samplePage(candidateSystems[0], 'doc', {
           webfonts: true,
           fontBaseUrl: 'http://static-kit.local/fonts',
@@ -328,6 +337,7 @@ test('4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 
         await page.close();
       }
 
+      assert.deepEqual(outbound, [], `${vp.name}: 외부 호스트로 나간 요청이 없다`);
       await context.close();
     }
   } finally {

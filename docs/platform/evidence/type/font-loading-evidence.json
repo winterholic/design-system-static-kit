@@ -1,74 +1,7 @@
 {
   "schemaVersion": 2,
-  "status": "partially-measured",
-  "measurement": {
-    "timestamp": "2026-11-28",
-    "tool": "configured Ttakkari browser (Playwright), using npm run web:build production output",
-    "viewports": [
-      "1280x900",
-      "390x844"
-    ],
-    "runs": [
-      {
-        "preset": "document",
-        "webfonts": false,
-        "viewport": "1280x900",
-        "fontRequests": []
-      },
-      {
-        "preset": "document",
-        "webfonts": true,
-        "viewport": "1280x900",
-        "fontRequests": [
-          {
-            "file": "NotoSerifKR-Variable.woff2",
-            "status": "200 then 304 from browser cache"
-          }
-        ]
-      },
-      {
-        "preset": "marketing",
-        "webfonts": true,
-        "viewport": "1280x900",
-        "fontRequests": [
-          {
-            "file": "PretendardGOVVariable.woff2",
-            "status": "200"
-          }
-        ]
-      },
-      {
-        "preset": "document",
-        "webfonts": false,
-        "viewport": "390x844",
-        "fontRequests": []
-      },
-      {
-        "preset": "document",
-        "webfonts": true,
-        "viewport": "390x844",
-        "fontRequests": [
-          {
-            "file": "NotoSerifKR-Variable.woff2",
-            "status": "304 from browser cache"
-          }
-        ]
-      },
-      {
-        "preset": "marketing",
-        "webfonts": true,
-        "viewport": "390x844",
-        "fontRequests": [
-          {
-            "file": "PretendardGOVVariable.woff2",
-            "status": "304 from browser cache"
-          }
-        ]
-      }
-    ],
-    "console": "선택형 서체 실행에서 오류·경고 0건",
-    "notMeasured": "완전한 Node test matrix의 404 fallback 및 JetBrains Mono 실제 브라우저 요청"
-  },
+  "status": "measured",
+  "timestamp": "2026-11-28T09:53:15.567Z",
   "sourceFingerprint": {
     "fonts": {
       "pretendard": "b097c96ed0bec69724bd07e357e399dde2869846c3b3da839526c8076f4d66b6",
@@ -87,19 +20,212 @@
       "marketing": "d2603c03bc67801e2e5baecdb8f611d56e753daf68b44d906db6ec24b2b07296"
     }
   },
-  "lastAttempt": {
-    "timestamp": "2026-11-28T07:24:06.099Z",
-    "command": "node --test tests/platform-type-fonts.test.mjs",
-    "environment": "Codex nested worker sandbox on macOS",
-    "failedStage": "Playwright chromium.launch()",
-    "error": "Chromium SIGTRAP: bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer permission denied (1100)"
-  },
-  "supersededRecord": {
-    "timestamp": "2026-11-28T06:21:50.614Z",
-    "reason": "이전 시험은 64바이트 가짜 WOFF2를 성공 응답으로 제공하고 FontFaceSet 로드를 검증하지 않았으므로 실제 폰트 로딩 증거로 사용할 수 없음."
-  },
-  "testStatus": {
-    "command": "node --test tests/platform-type-fonts.test.mjs tests/platform-type*.test.mjs",
-    "status": "Chromium launch blocked in Codex nested worker sandbox; see lastAttempt. Configured browser measured the page selections above, but not the full test matrix."
-  }
+  "viewports": [
+    "390x844",
+    "1280x900"
+  ],
+  "positiveRuns": [
+    {
+      "system": "type-system:work-insight",
+      "viewport": "1280px",
+      "requestsCount": 1,
+      "requestedUrls": [
+        "http://static-kit.local/fonts/PretendardGOVVariable.woff2"
+      ],
+      "loadedFamilies": [
+        {
+          "family": "Pretendard GOV",
+          "loaded": true
+        }
+      ],
+      "overflowX": false,
+      "scrollHeight": 900,
+      "bytesReceived": 1753996
+    },
+    {
+      "system": "type-system:doc-essay",
+      "viewport": "1280px",
+      "requestsCount": 1,
+      "requestedUrls": [
+        "http://static-kit.local/fonts/NotoSerifKR-Variable.woff2"
+      ],
+      "loadedFamilies": [
+        {
+          "family": "Noto Serif KR",
+          "loaded": true
+        }
+      ],
+      "overflowX": false,
+      "scrollHeight": 1233,
+      "bytesReceived": 2057600
+    },
+    {
+      "system": "type-system:doc-handbook",
+      "viewport": "1280px",
+      "requestsCount": 2,
+      "requestedUrls": [
+        "http://static-kit.local/fonts/PretendardGOVVariable.woff2",
+        "http://static-kit.local/fonts/JetBrainsMono-Variable.woff2"
+      ],
+      "loadedFamilies": [
+        {
+          "family": "Pretendard GOV",
+          "loaded": true
+        },
+        {
+          "family": "JetBrains Mono",
+          "loaded": true
+        }
+      ],
+      "overflowX": false,
+      "scrollHeight": 900,
+      "bytesReceived": 1800940
+    },
+    {
+      "system": "type-system:work-insight",
+      "viewport": "390px",
+      "requestsCount": 1,
+      "requestedUrls": [
+        "http://static-kit.local/fonts/PretendardGOVVariable.woff2"
+      ],
+      "loadedFamilies": [
+        {
+          "family": "Pretendard GOV",
+          "loaded": true
+        }
+      ],
+      "overflowX": false,
+      "scrollHeight": 1027,
+      "bytesReceived": 1753996
+    },
+    {
+      "system": "type-system:doc-essay",
+      "viewport": "390px",
+      "requestsCount": 1,
+      "requestedUrls": [
+        "http://static-kit.local/fonts/NotoSerifKR-Variable.woff2"
+      ],
+      "loadedFamilies": [
+        {
+          "family": "Noto Serif KR",
+          "loaded": true
+        }
+      ],
+      "overflowX": false,
+      "scrollHeight": 1444,
+      "bytesReceived": 2057600
+    },
+    {
+      "system": "type-system:doc-handbook",
+      "viewport": "390px",
+      "requestsCount": 2,
+      "requestedUrls": [
+        "http://static-kit.local/fonts/PretendardGOVVariable.woff2",
+        "http://static-kit.local/fonts/JetBrainsMono-Variable.woff2"
+      ],
+      "loadedFamilies": [
+        {
+          "family": "Pretendard GOV",
+          "loaded": true
+        },
+        {
+          "family": "JetBrains Mono",
+          "loaded": true
+        }
+      ],
+      "overflowX": false,
+      "scrollHeight": 1093,
+      "bytesReceived": 1800940
+    }
+  ],
+  "negativeRuns": [
+    {
+      "system": "type-system:work-insight",
+      "viewport": "1280px",
+      "failedRequestsCount": 1,
+      "overflowX": false,
+      "scrollHeight": 900,
+      "fallbackStatus": "font request rejected; CSS system fallback retained",
+      "fallbackFamilies": {
+        "heading": "\"Pretendard GOV\", \"Avenir Next\", Avenir, \"Century Gothic\", Futura, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif",
+        "body": "\"Pretendard GOV\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif"
+      }
+    },
+    {
+      "system": "type-system:doc-essay",
+      "viewport": "1280px",
+      "failedRequestsCount": 1,
+      "overflowX": false,
+      "scrollHeight": 1233,
+      "fallbackStatus": "font request rejected; CSS system fallback retained",
+      "fallbackFamilies": {
+        "heading": "\"Noto Serif KR\", \"Iowan Old Style\", Palatino, \"Palatino Linotype\", \"Book Antiqua\", Georgia, AppleMyungjo, \"Noto Serif KR\", \"Noto Serif CJK KR\", \"Nanum Myeongjo\", Batang, serif",
+        "body": "\"Noto Serif KR\", \"Iowan Old Style\", Palatino, \"Palatino Linotype\", \"Book Antiqua\", Georgia, AppleMyungjo, \"Noto Serif KR\", \"Noto Serif CJK KR\", \"Nanum Myeongjo\", Batang, serif"
+      }
+    },
+    {
+      "system": "type-system:doc-handbook",
+      "viewport": "1280px",
+      "failedRequestsCount": 2,
+      "overflowX": false,
+      "scrollHeight": 900,
+      "fallbackStatus": "font request rejected; CSS system fallback retained",
+      "fallbackFamilies": {
+        "heading": "\"Pretendard GOV\", Seravek, \"Gill Sans\", Optima, Candara, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif",
+        "body": "\"Pretendard GOV\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif"
+      }
+    },
+    {
+      "system": "type-system:work-insight",
+      "viewport": "390px",
+      "failedRequestsCount": 1,
+      "overflowX": false,
+      "scrollHeight": 1027,
+      "fallbackStatus": "font request rejected; CSS system fallback retained",
+      "fallbackFamilies": {
+        "heading": "\"Pretendard GOV\", \"Avenir Next\", Avenir, \"Century Gothic\", Futura, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif",
+        "body": "\"Pretendard GOV\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif"
+      }
+    },
+    {
+      "system": "type-system:doc-essay",
+      "viewport": "390px",
+      "failedRequestsCount": 1,
+      "overflowX": false,
+      "scrollHeight": 1505,
+      "fallbackStatus": "font request rejected; CSS system fallback retained",
+      "fallbackFamilies": {
+        "heading": "\"Noto Serif KR\", \"Iowan Old Style\", Palatino, \"Palatino Linotype\", \"Book Antiqua\", Georgia, AppleMyungjo, \"Noto Serif KR\", \"Noto Serif CJK KR\", \"Nanum Myeongjo\", Batang, serif",
+        "body": "\"Noto Serif KR\", \"Iowan Old Style\", Palatino, \"Palatino Linotype\", \"Book Antiqua\", Georgia, AppleMyungjo, \"Noto Serif KR\", \"Noto Serif CJK KR\", \"Nanum Myeongjo\", Batang, serif"
+      }
+    },
+    {
+      "system": "type-system:doc-handbook",
+      "viewport": "390px",
+      "failedRequestsCount": 2,
+      "overflowX": false,
+      "scrollHeight": 1093,
+      "fallbackStatus": "font request rejected; CSS system fallback retained",
+      "fallbackFamilies": {
+        "heading": "\"Pretendard GOV\", Seravek, \"Gill Sans\", Optima, Candara, \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif",
+        "body": "\"Pretendard GOV\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Noto Sans KR\", \"Noto Sans CJK KR\", \"Malgun Gothic\", \"Nanum Gothic\", sans-serif"
+      }
+    }
+  ],
+  "multilingualRuns": [
+    {
+      "viewport": "1280px",
+      "overflowX": false,
+      "jaRendered": true,
+      "numRendered": true,
+      "codeRendered": true
+    },
+    {
+      "viewport": "390px",
+      "overflowX": false,
+      "jaRendered": true,
+      "numRendered": true,
+      "codeRendered": true
+    }
+  ]
 }

@@ -171,7 +171,7 @@ test('Components 모든 쪽의 ID 집합은 공개 서비스 전체와 같고 �
   await expect(page).toHaveURL(/[?&]q=hero/);
   await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
   await page.goto('/components/hero');
-  await expect(page.getByRole('heading', {level: 1})).toContainText('Hero');
+  await expect(page.getByRole('heading', {level: 1})).toContainText('히어로');
 
   const purposeHref = expected.find(href => href.startsWith('/components/purpose/'));
   expect(purposeHref).toBeTruthy();

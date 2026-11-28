@@ -751,6 +751,11 @@
           "file": "src/service/index.mjs",
           "owner": "Track A",
           "reason": "웹폰트 계획 및 메타데이터 공개 서비스 진입점 제공"
+        },
+        {
+          "file": "tests/platform-type-fonts.test.mjs",
+          "owner": "Track C",
+          "reason": "독립 검증(VERIFICATION.md §19): 4번 시험 마지막 구간에 가짜 호스트 라우트를 걸고 외부 호스트 요청 0을 단언해 외부 연결 의존을 없앴다"
         }
       ]
     },
@@ -2007,36 +2012,36 @@
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
           "ownerTrack": "Track G",
           "reason": "Material Coverage 재생성 산출물(렌더 출력 근거가 없는 Stack, Container, Resizable Panel은 missing)"
-      },
-      {
-        "file": "tests/platform-layout-blueprint.test.mjs",
-        "ownerTrack": "Track G",
-        "reason": "L 전체 행 출력 프로브/hash 요구와 생성 Manifest의 커버리지 회귀 검증"
-      },
-      {
-        "file": "tests/platform-layout-runtime.test.mjs",
-        "ownerTrack": "Track G",
-        "reason": "브라우저 없이 배포 런타임의 포인터 크기 조절과 min/max 제약 검증"
-      },
-      {
-        "file": "tests/platform-service-layout-channels.test.mjs",
-        "ownerTrack": "Track A",
-        "reason": "레이아웃 조립 REST/MCP 공개 채널 계약과 JSON 왕복 검증"
-      },
-      {
-        "file": "tests/platform-family-contract.test.mjs",
-        "ownerTrack": "Track G",
-        "reason": "신규 두 계약으로 바뀐 전체 등록 계약/컴포넌트 종류 수 회귀 기대값 갱신"
-      },
-      {
-        "file": "tests/platform-family-inventory.test.mjs",
-        "ownerTrack": "Track G",
-        "reason": "생성된 컴포넌트 인벤토리 문서가 Manifest의 추가 L 행과 맞는지 확인"
-      },
-      {
-        "file": "docs/platform/evidence/components/build.mjs",
-        "ownerTrack": "Track G",
-        "reason": "Track D components.md 분류표를 최신 Manifest에서 재생성하는 소스"
+        },
+        {
+          "file": "tests/platform-layout-blueprint.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "L 전체 행 출력 프로브/hash 요구와 생성 Manifest의 커버리지 회귀 검증"
+        },
+        {
+          "file": "tests/platform-layout-runtime.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "브라우저 없이 배포 런타임의 포인터 크기 조절과 min/max 제약 검증"
+        },
+        {
+          "file": "tests/platform-service-layout-channels.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "레이아웃 조립 REST/MCP 공개 채널 계약과 JSON 왕복 검증"
+        },
+        {
+          "file": "tests/platform-family-contract.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "신규 두 계약으로 바뀐 전체 등록 계약/컴포넌트 종류 수 회귀 기대값 갱신"
+        },
+        {
+          "file": "tests/platform-family-inventory.test.mjs",
+          "ownerTrack": "Track G",
+          "reason": "생성된 컴포넌트 인벤토리 문서가 Manifest의 추가 L 행과 맞는지 확인"
+        },
+        {
+          "file": "docs/platform/evidence/components/build.mjs",
+          "ownerTrack": "Track G",
+          "reason": "Track D components.md 분류표를 최신 Manifest에서 재생성하는 소스"
         }
       ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
@@ -2050,7 +2055,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "2026-11-28 D5 보완: Stack·Container·Resizable Panel 전용 직접 렌더러와 계약 props를 추가했다. 생성된 Material Coverage는 §6.2 L 14/14 direct이며 각 재료의 실제 assembleComponents 출력 프로브/hash가 있다. Core/REST/MCP 동일 출력, 입력 검증·이스케이프, JSON Blueprint 왕복 및 비브라우저 포인터·키보드 런타임 시험을 추가했다. Chromium 시험 결과는 VERIFICATION.md §18에 기록한다."
+      "unresolvedIssues": "2026-11-28 D5 보완: Stack·Container·Resizable Panel 전용 직접 렌더러와 계약 props를 추가했다. 생성된 Material Coverage는 §6.2 L 14/14 direct이며 각 재료의 실제 assembleComponents 출력 프로브/hash가 있다. Core/REST/MCP 동일 출력, 입력 검증·이스케이프, JSON Blueprint 왕복 및 비브라우저 포인터·키보드 런타임 시험을 추가했다. Chromium 시험 결과는 VERIFICATION.md §18에 기록한다. 독립 검증(VERIFICATION.md §19)에서 Chromium 실측으로 결함 3건을 찾아 고쳤다: Stack gap=\"gap\"이 정의되지 않은 `--kit-sp-gap`을 읽어 0px, Resizable Panel 핸들이 8px를 차지해 두 패널 합이 100%+8px로 둘째 패널이 넘쳐 잘림, 세로 방향은 높이가 정해지지 않아 값이 레이아웃에 반영되지 않음(aria 값만 변함)."
     },
     {
       "taskId": "TASK-TRD-M",
