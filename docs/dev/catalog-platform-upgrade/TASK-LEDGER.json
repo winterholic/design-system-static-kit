@@ -6,8 +6,8 @@
     "byStatus": {
       "Pending": 17,
       "In Progress": 1,
-      "Implemented": 4,
-      "Verified": 7,
+      "Implemented": 3,
+      "Verified": 8,
       "Blocked": 0
     },
     "byTrack": {
@@ -839,8 +839,8 @@
         "tests/layout-quality.test.mjs"
       ],
       "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "웹 카탈로그 라우트와 Studio 선택지는 없다(Manifest 상태 renderable, blockedBy not-in-web-catalog): Track F 몫이다. 레이아웃은 Blueprint 2.7.0 materials 필드나 assembleDesign 요청 키로 고르지 못한다(src/catalog은 고정 출력 영역): assembleLayout이 조립 경로이고 서비스 공개 함수는 더하지 않았다. 긴 콘텐츠 시험은 자유 문장 필드(PROSE_KEYS)만 늘린다: 숫자·가격·버튼 라벨처럼 한 줄 값의 최소 폭은 부품 계약(Track D) 몫이다. 상세는 VERIFICATION.md §11.",
+      "status": "Verified",
+      "unresolvedIssues": "계약 상승 시 2.7.0 출력 변화 범위(§10.7 기록)",
       "createFiles": [
         "src/platform/data/layouts.mjs",
         "src/platform/layouts.mjs",
