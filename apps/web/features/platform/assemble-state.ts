@@ -1,6 +1,7 @@
 // 조립 흐름의 상태 = 조립 요청의 짧은 표기. 주소(쿼리)와 요청(재료 id 접두)을 오간다. Materials·Components 의 "Studio에서 쓰기" 가 같은 표기를 쓴다.
 import type {AssembleRequest} from './types';
 import {PURPOSES} from './labels';
+import {patternOfLayout} from './material-library.mjs';
 
 export type AssembleState = {
   purpose: string | null; style: string | null; palette: string | null; set: string | null; type: string | null; family: string | null;
@@ -67,7 +68,7 @@ export function requestOf(state: AssembleState, candidates = 1): AssembleRequest
     ...(state.type ? {typeSystem: `type-system:${state.type}`} : {}),
     ...(state.family ? {families: [`family:${state.family}`]} : {}),
     ...(state.mode ? {mode: state.mode} : {}),
-    ...(state.layout ? {pattern: `layout:${state.layout}`} : {}),
+    ...(state.layout ? {pattern: patternOfLayout(state.layout)} : {}),
     ...(state.surface ? {surface: `surface:${state.surface}`} : {}), ...(state.motion ? {motion: `motion:${state.motion}`} : {}),
     ...(state.background ? {background: `background:${state.background}`} : {}), ...(state.media ? {media: `media:${state.media}`} : {}),
     ...(state.spat ? {states: {[state.spat.split('.')[0]]: `state-pattern:${state.spat.slice(state.spat.indexOf('.') + 1)}`}} : {}),

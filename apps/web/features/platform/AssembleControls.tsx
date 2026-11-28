@@ -19,9 +19,9 @@ function useNav() {
   };
 }
 
-export function SwapSelect({id, label, param, value, options, placeholder}: {id: string; label: string; param: string; value: string; options: SelectOption[]; placeholder?: string}) {
+export function SwapSelect({id, label, param, value, options, placeholder, hint}: {id: string; label: string; param: string; value: string; options: SelectOption[]; placeholder?: string; hint?: string}) {
   const nav = useNav();
-  return <Select id={id} label={label} value={value} options={options} placeholder={placeholder} onChange={v => nav.set({[param]: v || null})} />;
+  return <Select id={id} label={label} hint={hint} value={value} options={options} placeholder={placeholder} onChange={v => nav.set({[param]: v || null})} />;
 }
 
 export function BackButton() {

@@ -6,6 +6,7 @@ import {AssembleContentForm, BackButton, SwapSelect} from '@/features/platform/A
 import {STEPS, STEP_LABEL, readState, requestOf, writeState, type AssembleState, type Step} from '@/features/platform/assemble-state';
 import {assembleDesign, material, materials, platformReady, probeDesign, recommend} from '@/features/platform/platform.server';
 import {renderSrc} from '@/features/platform/render-url';
+import {LAYOUT_PAGE_PATTERN, patternOfLayout} from '@/features/platform/material-library.mjs';
 import {PURPOSES, purposeOf, shortId} from '@/features/platform/labels';
 import type {AssembleRequest, Candidate, Material} from '@/features/platform/types';
 import styles from '@/features/platform/platform.module.css';
@@ -182,10 +183,11 @@ function CompareStep({state, here}: StepProps) {
   );
 }
 
-function options(kind: string, mats: Material[], ranked: Set<string> | null, blocked: Map<string, string>, tail?: (m: Material) => string | null) {
-  void kind;
+/** 고를 수 없는 이유: 추천이 막은 것 → 맥락 밖 → Core 조립이 이 요청에서 거부한 것 순서로 붙인다. 이유가 없으면 고를 수 있다. */
+function options(mats: Material[], ranked: Set<string> | null, blocked: Map<string, string>, probe: (m: Material) => AssembleRequest, tail?: (m: Material) => string | null) {
   return mats.map(m => {
-    const reason = blocked.get(m.id) ?? (ranked && !ranked.has(m.id) ? tail?.(m) ?? '어울리는 후보에 들지 않습니다.' : null);
+    let reason = blocked.get(m.id) ?? (ranked && !ranked.has(m.id) ? tail?.(m) ?? '어울리는 후보에 들지 않습니다.' : null);
+    if (!reason) { const p = probeDesign(probe(m)); if (!p.ok) reason = p.reason; }
     return {value: shortId(m.id), label: m.label, ...(reason ? {disabled: true, reason} : {})};
   });
 }
@@ -194,6 +196,7 @@ function SwapStep({state, here}: StepProps) {
   const purpose = purposeOf(state.purpose)!;
   const request = requestOf(state)!;
   const out = assembleDesign(request);
+  const repaired = out.ok ? {state, dropped: []} : repair(state);
   const anchors = [state.palette ? `palette:${state.palette}` : null, state.set ? `subtoken-set:${state.set}` : null].filter(Boolean) as string[];
   const blockedOf = (kind: string, selected: string[], extra: Record<string, unknown> = {}) => {
     const r = recommend({kind, selected, ...extra});
@@ -210,8 +213,11 @@ function SwapStep({state, here}: StepProps) {
     return {value, label: m.label ?? value, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
   });
   const layoutOptions = materials('layout').map(m => {
-    const p = probeDesign({...request, pattern: m.id});
-    return {value: shortId(m.id), label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
+    const id = shortId(m.id);
+    // pattern 으로 조립되는 layout 은 페이지 패턴 재료(`reuses: pattern:*`)뿐이다. 나머지는 컴포넌트·프리미티브 단위라 요청 필드가 없다.
+    if (!(id in LAYOUT_PAGE_PATTERN)) return {value: id, label: m.label, disabled: true, reason: `${m.label}는 페이지 전체 패턴이 아니라 ${(((material(m.id)?.reuses as string[] | undefined) ?? []).join(', ')) || '부분 구성'} 단위라서 조립 요청의 레이아웃(pattern)으로 고를 수 없습니다.`};
+    const p = probeDesign({...request, pattern: patternOfLayout(id)});
+    return {value: id, label: m.label, ...(p.ok ? {} : {disabled: true, reason: p.reason})};
   });
   const contextOptions = materials('style-context').map(m => {
     const p = probeDesign({...request, styleContext: m.id});
@@ -237,17 +243,17 @@ function SwapStep({state, here}: StepProps) {
       <h2 className="section-title" id="swap-title">재료를 바꿔 보세요</h2>
       <div className={styles.split}>
         <div className={styles.controls} data-testid="swap-controls">
-          <SwapSelect id="s-palette" label="팔레트" param="palette" value={state.palette ?? ''} placeholder="추천에 맡김" options={options('palette', materials('palette'), null, pals.blocked)} />
-          <SwapSelect id="s-set" label="서브토큰 세트" param="set" value={state.set ?? ''} placeholder="추천에 맡김" options={options('subtoken-set', materials('subtoken-set'), null, sets.blocked)} />
-          <SwapSelect id="s-type" label="타이포 시스템" param="type" value={state.type ?? ''} placeholder="추천에 맡김" options={options('type-system', materials('type-system'), types.ranked, types.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
-          <SwapSelect id="s-family" label="컴포넌트 패밀리" param="family" value={state.family ?? ''} placeholder="추천에 맡김" options={options('family', materials('family'), null, fams.blocked)} />
+          <SwapSelect id="s-palette" label="팔레트" param="palette" value={state.palette ?? ''} placeholder="추천에 맡김" options={options(materials('palette'), null, pals.blocked, m => ({...request, palette: m.id}))} />
+          <SwapSelect id="s-set" label="서브토큰 세트" param="set" value={state.set ?? ''} placeholder="추천에 맡김" options={options(materials('subtoken-set'), null, sets.blocked, m => ({...request, subtokenSet: m.id}))} />
+          <SwapSelect id="s-type" label="타이포 시스템" param="type" value={state.type ?? ''} placeholder="추천에 맡김" options={options(materials('type-system'), types.ranked, types.blocked, m => ({...request, typeSystem: m.id}), m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-family" label="컴포넌트 패밀리" param="family" value={state.family ?? ''} placeholder="추천에 맡김" hint={state.component ? undefined : '배치된 컴포넌트에 입혀지는 재료입니다. 컴포넌트(카드)를 함께 고르면 미리보기에 반영됩니다.'} options={options(materials('family'), null, fams.blocked, m => ({...request, families: [m.id]}))} />
           <SwapSelect id="s-style-context" label="디자인 맥락" param="style" value={state.style ?? ''} placeholder="Core 추천" options={contextOptions} />
           <SwapSelect id="s-layout" label="레이아웃" param="layout" value={state.layout ?? ''} placeholder="Core 추천" options={layoutOptions} />
           <SwapSelect id="s-component" label="컴포넌트" param="component" value={state.component ?? ''} placeholder="Core 추천" options={componentOptions} />
-          <SwapSelect id="s-surface" label="표면" param="surface" value={state.surface ?? ''} placeholder="방향에 맡김" options={options('surface', materials('surface'), others.surface.ranked, others.surface.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
-          <SwapSelect id="s-motion" label="모션" param="motion" value={state.motion ?? ''} placeholder="방향에 맡김" options={options('motion', materials('motion'), others.motion.ranked, others.motion.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
-          <SwapSelect id="s-background" label="배경" param="background" value={state.background ?? ''} placeholder="방향에 맡김" options={options('background', materials('background'), others.background.ranked, others.background.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
-          <SwapSelect id="s-media" label="미디어" param="media" value={state.media ?? ''} placeholder="방향에 맡김" options={options('media', materials('media'), others.media.ranked, others.media.blocked, m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-surface" label="표면" param="surface" value={state.surface ?? ''} placeholder="방향에 맡김" options={options(materials('surface'), others.surface.ranked, others.surface.blocked, m => ({...request, surface: m.id}), m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-motion" label="모션" param="motion" value={state.motion ?? ''} placeholder="방향에 맡김" options={options(materials('motion'), others.motion.ranked, others.motion.blocked, m => ({...request, motion: m.id}), m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-background" label="배경" param="background" value={state.background ?? ''} placeholder="방향에 맡김" options={options(materials('background'), others.background.ranked, others.background.blocked, m => ({...request, background: m.id}), m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
+          <SwapSelect id="s-media" label="미디어" param="media" value={state.media ?? ''} placeholder="방향에 맡김" options={options(materials('media'), others.media.ranked, others.media.blocked, m => ({...request, media: m.id}), m => `${m.label}는 ${(m.contexts ?? []).join(', ')} 맥락용입니다.`)} />
           <SwapSelect id="s-state-pattern" label="상태 패턴" param="state" value={state.state ?? ''} placeholder="Core 추천" options={stateOptions} />
           <SwapSelect id="s-shell" label="셸" param="shell" value={state.shell ?? ''} placeholder="방향에 맡김" options={axisOptions('shell')} />
           <SwapSelect id="s-width" label="폭" param="width" value={state.width ?? ''} placeholder="방향에 맡김" options={axisOptions('width')} />
@@ -258,8 +264,8 @@ function SwapStep({state, here}: StepProps) {
         <div className={styles.stage}>
           <ul className={styles.chips} aria-label="화면 폭">{([1280, 390] as const).map(d => <li key={d}><Link href={here({device: d})} replace scroll={false} aria-current={state.device === d ? 'true' : undefined}>{d === 1280 ? '데스크톱 1280' : '모바일 390'}</Link></li>)}</ul>
           {out.ok
-            ? <div data-testid="swap-preview"><Thumb src={renderSrc(request)} title={`${purpose.label} 미리보기 ${state.device}px`} width={state.device} height={state.device === 390 ? 844 : 800} /></div>
-            : <p role="alert" className="note" data-testid="swap-error">{out.errors.map(e => `${e.code}: ${e.message}`).join(' / ')}</p>}
+            ? <div data-testid="swap-preview" data-request={JSON.stringify(request)}><Thumb src={renderSrc(request)} title={`${purpose.label} 미리보기 ${state.device}px`} width={state.device} height={state.device === 390 ? 844 : 800} /></div>
+            : <div role="alert" className="note" data-testid="swap-error"><p>{out.errors.map(e => `${e.code}: ${e.message}`).join(' / ')}</p>{repaired.dropped.length ? <p><Link href={here(repaired.state)} className={styles.chipLink} data-testid="swap-repair">충돌하는 선택({repaired.dropped.map(d => d.what).join(', ')}) 풀고 계속</Link></p> : null}</div>}
           {out.ok ? <ul className={styles.reasons} data-testid="decisions">{out.value.decisions.map(d => <li key={d.slot}>{d.slot}: {shortId(String(d.id))} ({d.source === 'intent' ? '내가 고름' : '추천'}){text(d.reasons as {reason?: string}[]).length ? ` — ${text(d.reasons as {reason?: string}[])[0]}` : ''}</li>)}</ul> : null}
           <p><Link href={here({step: 'content'})} className={styles.chipLink}>콘텐츠 수정으로</Link></p>
         </div>
@@ -278,7 +284,7 @@ function ContentStep({state}: {state: AssembleState}) {
       <div className={styles.split}>
         <div className={styles.controls}><AssembleContentForm values={state.content} /></div>
         <div className={styles.stage}>
-          {out.ok ? <div data-testid="content-preview"><Thumb src={renderSrc(request)} title={`${purpose.label} 미리보기`} /></div> : <p role="alert" className="note">{out.errors.map(e => e.message).join(' ')}</p>}
+          {out.ok ? <div data-testid="content-preview" data-request={JSON.stringify(request)}><Thumb src={renderSrc(request)} title={`${purpose.label} 미리보기`} /></div> : <p role="alert" className="note">{out.errors.map(e => e.message).join(' ')}</p>}
           <p><Link href={writeState({...state, step: 'export'})} className={styles.chipLink}>내보내기로</Link></p>
         </div>
       </div>

@@ -2,8 +2,9 @@ import test from 'node:test';
 import {register} from 'node:module';
 import assert from 'node:assert/strict';
 register('../apps/web/features/studio/node-ts-loader.mjs', import.meta.url);
-import {listPlatformMaterials} from '../src/service/index.mjs';
-import {chartNodeOf} from '../apps/web/features/platform/chart-compare.mjs';
+import {listPlatformMaterials, getPlatformMaterial, assembleDesign} from '../src/service/index.mjs';
+import {CHART_SAMPLE, withChartPreset} from '../apps/web/features/platform/chart-compare.mjs';
+import {LAYOUT_PAGE_PATTERN, patternOfLayout} from '../apps/web/features/platform/material-library.mjs';
 const {readState, requestOf, writeState, withMaterialChoice} = await import('../apps/web/features/platform/assemble-state.ts');
 
 test('studio URL keeps selected layout, component, and foundation materials and sends them to Core', () => {
@@ -19,7 +20,7 @@ test('studio URL keeps selected layout, component, and foundation materials and 
   assert.equal(state.layout, original.layout);
   assert.equal(state.component, original.component);
   assert.equal(state.state, original.state);
-  assert.equal(request.pattern, 'layout:dashboard-grid');
+  assert.equal(request.pattern, 'dashboard-grid');
   assert.deepEqual(request.states, {loading: 'state-pattern:loading-skeleton'});
   assert.equal(request.components[0].base, 'base-component:data-table');
   assert.equal(request.surface, 'surface:hairline-panel');
@@ -34,7 +35,7 @@ test('studio URL keeps selected layout, component, and foundation materials and 
   assert.equal(nextTab.layout, original.layout);
   assert.equal(nextTab.component, original.component);
   assert.equal(nextTab.state, original.state);
-  assert.equal(requestOf(nextTab).pattern, 'layout:dashboard-grid');
+  assert.equal(requestOf(nextTab).pattern, 'dashboard-grid');
 });
 
 test('an Explore comparison changes exactly one registered material axis in the Core request', () => {
@@ -43,17 +44,45 @@ test('an Explore comparison changes exactly one registered material axis in the 
   const request = requestOf(changed);
   assert.equal(request.palette, 'palette:dusk-violet');
   assert.equal(request.subtokenSet, 'subtoken-set:standard');
-  assert.equal(request.pattern, 'layout:split-hero');
+  assert.equal(request.pattern, 'split-hero');
 });
 
-test('chart preset comparison uses identical data and the material registry visualization form', () => {
-  const base = {ext: {chartKind: 'bar'}, examples: [{grid: 'horizontal', labels: 'values'}]};
-  const bar = chartNodeOf(base);
-  const line = chartNodeOf({...base, ext: {chartKind: 'line'}});
-  assert.notEqual(bar.kind, line.kind);
-  assert.deepEqual(bar.categories, line.categories);
-  assert.deepEqual(bar.series, line.series);
-  assert.equal(bar.grid, 'horizontal');
+test('a layout choice reaches Core as a page pattern that assembleDesign accepts', () => {
+  const request = requestOf(readState(new URLSearchParams('purpose=work-dashboard&layout=dashboard-grid')));
+  assert.equal(request.pattern, 'dashboard-grid');
+  const out = assembleDesign({...request, candidates: 1});
+  assert.equal(out.ok, true, JSON.stringify(out.errors));
+  assert.match(JSON.stringify(out.value.decisions), /"slot":"layout\.pattern","id":"dashboard-grid","source":"intent"/);
+  // 예전 표기(layout: 접두)는 Core 가 거부했다. 이 시험이 되돌려지면 다시 거부된다.
+  const old = assembleDesign({purpose: 'work-dashboard', candidates: 1, pattern: 'layout:dashboard-grid'});
+  assert.equal(old.ok, false);
+});
+
+test('the layout→page pattern table equals the registry (layouts that reuse pattern:*)', () => {
+  const listed = listPlatformMaterials({kind: 'layout', limit: 200}).value.items;
+  const fromRegistry = Object.fromEntries(listed.flatMap(item => {
+    const pattern = (getPlatformMaterial({id: item.id}).value.reuses ?? []).find(r => r.startsWith('pattern:'));
+    return pattern ? [[item.id.slice('layout:'.length), pattern.slice('pattern:'.length)]] : [];
+  }));
+  assert.deepEqual(LAYOUT_PAGE_PATTERN, fromRegistry);
+  assert.equal(patternOfLayout('bento'), 'bento');
+});
+
+test('chart comparison puts the identical data into two registered presets that Core assembles', () => {
+  const base = {purpose: 'work-dashboard', candidates: 1};
+  const bar = withChartPreset(base, 'chart-preset:marketing-channel-roas');
+  const line = withChartPreset(base, 'chart-preset:analytics-traffic-lines');
+  assert.notEqual(bar.content.charts[0].preset, line.content.charts[0].preset);
+  assert.deepEqual(bar.content.charts[0].categories, line.content.charts[0].categories);
+  assert.deepEqual(bar.content.charts[0].series, line.content.charts[0].series);
+  assert.deepEqual(bar.content.charts[0].series, CHART_SAMPLE.series);
+  const htmls = [bar, line].map(request => {
+    const out = assembleDesign(request);
+    assert.equal(out.ok, true, JSON.stringify(out.errors));
+    return out.value.candidates[0].value.html;
+  });
+  for (const html of htmls) assert.ok(html.includes(CHART_SAMPLE.title) && html.includes('22'), 'both charts show the same data');
+  assert.notEqual(htmls[0], htmls[1], 'the visualization differs');
 });
 
 test('platform materials fetches every registry page rather than only the default first page', () => {
