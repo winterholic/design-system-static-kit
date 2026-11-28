@@ -147,9 +147,13 @@ for (const width of [390, 1280]) {
       await card.getByRole('link').click();
       await expect(page).toHaveURL(/\/components\/purpose\/card\/pricing/);
 
-      // 시각 패밀리 4종 비교
+      // 시각 패밀리 전부 비교: 칸 수는 Core 에 등록된 시각 패밀리 수와 같아야 한다(4종 고정이 아니다). 칸마다 보이는 이름이 있어야 한다.
+      const registered = service.listPlatformMaterials({kind: 'family', limit: 200});
+      expect(registered.ok).toBe(true);
       const compare = page.getByTestId('visual-compare');
-      expect(await compare.locator('li[data-visual]').count()).toBe(4);
+      expect(registered.value.items.length).toBeGreaterThanOrEqual(12);
+      expect(await compare.locator('li[data-visual]').count()).toBe(registered.value.items.length);
+      for (const row of registered.value.items) await expect(compare.locator(`li[data-visual="${row.id.slice('family:'.length)}"] h3`)).toHaveText(row.label);
       const boldSrc = await srcOf(compare.locator('li[data-visual="bold"]'));
       const boldReq = JSON.parse(Buffer.from(new URL(boldSrc, 'http://x').searchParams.get('r'), 'base64url').toString());
       const bold = componentsOf(boldReq);

@@ -6,6 +6,7 @@
  */
 import {mkdirSync, writeFileSync} from 'node:fs';
 import {resolve} from 'node:path';
+import {availableParallelism} from 'node:os';
 import {chromium} from '@playwright/test';
 import {layoutProbe} from '../layout-quality/probe.mjs';
 import {mergeOptions, settleLayout, applyExemptions} from '../layout-quality/run.mjs';
@@ -92,31 +93,44 @@ export function judge(m) {
   return fail;
 }
 
-export async function measureAll({groups = GROUPS, modes = ['light'], shots = null, visuals = VISUALS, log = () => {}} = {}) {
-  const env = makeEnv(), browser = await chromium.launch(), results = [];
-  try {
+/** 동시에 돌리는 페이지 수. 측정은 페이지마다 독립이라 병렬화가 결과를 바꾸지 않는다(결과는 작업 순서대로 정렬한다). */
+export const defaultConcurrency = () => Math.max(1, Math.min(Number(process.env.DSK_FAMILY_WORKERS) || Math.floor(availableParallelism() / 2), 8));
+
+export async function measureAll({groups = GROUPS, modes = ['light'], shots = null, visuals = VISUALS, log = () => {}, concurrency = defaultConcurrency()} = {}) {
+  const env = makeEnv(), browser = await chromium.launch();
+  // 작업 하나 = 묶음 × 장면 × 시각 패밀리 × 모드. 페이지를 한 번 조립하고 폭 두 개를 잰다. 원래 중첩 반복의 순서를 작업 번호로 보존한다.
+  const tasks = [];
+  for (const group of groups) for (const {context, density} of groupScenarios(group)) for (const visual of visuals) for (const mode of modes) tasks.push({group, context, density, visual, mode});
+  const slots = new Array(tasks.length);
+  let next = 0;
+  async function worker() {
     const ctx = await browser.newContext({locale: 'ko-KR', deviceScaleFactor: 1});
     const page = await ctx.newPage();
-    for (const group of groups) for (const {context, density} of groupScenarios(group)) for (const visual of visuals) for (const mode of modes) {
-      const built = buildPage(env, group, visual, {mode, context, density});
-      if (!built.ok) { results.push({group, context, density, visual, mode, ok: false, reason: built.diagnostics.map(d => `${d.code}: ${d.message}`)}); log(`SKIP ${group} ${context}/${density} ${visual} ${mode}`); continue; }
-      await page.setContent(built.html, {waitUntil: 'load'});
-      for (const [name, width] of Object.entries(WIDTHS)) {
-        await page.setViewportSize({width, height: 900});
-        await settleLayout(page);
-        const opts = mergeOptions(PROBE_OPTIONS);
-        const probe = await page.evaluate(layoutProbe, opts);
-        const findings = applyExemptions(probe.findings.map(f => ({...f, width, page: `${group}-${visual}`})), EXEMPTIONS, `${group}-${visual}`);
-        const errors = findings.filter(f => f.severity === 'error' && !f.exempt);
-        const metrics = await page.evaluate(familyMetrics);
-        const fail = judge(metrics);
-        if (shots && mode === 'light') await page.screenshot({path: resolve(shots, `${group}-${visual.slice('family:'.length)}-${name}.png`), fullPage: true});
-        results.push({group, context, density, visual, mode, viewport: name, width, ok: !errors.length && !fail.length, probeErrors: errors.map(f => ({code: f.code, locator: f.locator, text: String(f.text ?? '').slice(0, 60), evidence: f.evidence})), probeCounts: probe.counts, scanned: probe.scanned, metrics, fail});
-        log(`${group} ${context}/${density} ${visual} ${mode} ${name}: ${errors.length || fail.length ? 'FAIL' : 'ok'}`);
+    try {
+      for (let i = next++; i < tasks.length; i = next++) {
+        const {group, context, density, visual, mode} = tasks[i], results = (slots[i] = []);
+        const built = buildPage(env, group, visual, {mode, context, density});
+        if (!built.ok) { results.push({group, context, density, visual, mode, ok: false, reason: built.diagnostics.map(d => `${d.code}: ${d.message}`)}); log(`SKIP ${group} ${context}/${density} ${visual} ${mode}`); continue; }
+        await page.setContent(built.html, {waitUntil: 'load'});
+        for (const [name, width] of Object.entries(WIDTHS)) {
+          await page.setViewportSize({width, height: 900});
+          await settleLayout(page);
+          const opts = mergeOptions(PROBE_OPTIONS);
+          const probe = await page.evaluate(layoutProbe, opts);
+          const findings = applyExemptions(probe.findings.map(f => ({...f, width, page: `${group}-${visual}`})), EXEMPTIONS, `${group}-${visual}`);
+          const errors = findings.filter(f => f.severity === 'error' && !f.exempt);
+          const metrics = await page.evaluate(familyMetrics);
+          const fail = judge(metrics);
+          if (shots && mode === 'light') await page.screenshot({path: resolve(shots, `${group}-${visual.slice('family:'.length)}-${name}.png`), fullPage: true});
+          results.push({group, context, density, visual, mode, viewport: name, width, ok: !errors.length && !fail.length, probeErrors: errors.map(f => ({code: f.code, locator: f.locator, text: String(f.text ?? '').slice(0, 60), evidence: f.evidence})), probeCounts: probe.counts, scanned: probe.scanned, metrics, fail});
+          log(`${group} ${context}/${density} ${visual} ${mode} ${name}: ${errors.length || fail.length ? 'FAIL' : 'ok'}`);
+        }
       }
-    }
-  } finally { await browser.close(); }
-  return results;
+    } finally { await ctx.close(); }
+  }
+  try { await Promise.all(Array.from({length: Math.max(1, Math.min(concurrency, tasks.length))}, worker)); }
+  finally { await browser.close(); }
+  return slots.flat();
 }
 
 export function summarize(results) {
