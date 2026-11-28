@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "category": "inputs",
+  "label": "입력",
+  "itemCount": 8,
+  "page": 1,
+  "pages": 1,
+  "materials": [
+    {
+      "id": "component:form",
+      "kind": "component",
+      "category": "form",
+      "label": "폼",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/7c0f4358c4b01bbbea300483c3fd7f56.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/form",
+      "purpose": "폼를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs",
+        "selection",
+        "date-time"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:select-control",
+      "kind": "component",
+      "category": "form",
+      "label": "선택 상자",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "select-control",
+        "forbidden:multiple + async",
+        "forbidden:disabled + loading",
+        "forbidden:disabled + error",
+        "unsupported:virtualized options",
+        "unsupported:tag creation",
+        "unsupported:select-all"
+      ],
+      "previewUrl": "/previews/df42609681a2c7b82315d1b6de598489.svg",
+      "variantsCount": 6,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/select-control",
+      "purpose": "선택 상자를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:button-control",
+      "kind": "component",
+      "category": "form",
+      "label": "Button",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:behavior+content",
+        "state:state",
+        "context:tone",
+        "forbidden:BTN_LOADING_NO_SLOT",
+        "forbidden:BTN_LINK_ICON_ONLY",
+        "forbidden:BTN_LINK_SHAPE",
+        "forbidden:BTN_PRESSED_ACTION",
+        "forbidden:BTN_TOGGLE_LOADING",
+        "forbidden:BTN_TOGGLE_LINK",
+        "forbidden:BTN_DISABLED_TONE",
+        "forbidden:BTN_DANGER_LINK",
+        "unsupported:split button",
+        "unsupported:button group",
+        "unsupported:anchor navigation (use link nodes)"
+      ],
+      "previewUrl": "/previews/766b12ae027715b068c0dc162aea9e2e.svg",
+      "variantsCount": 7,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/button-control",
+      "purpose": "Button를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:input-control",
+      "kind": "component",
+      "category": "form",
+      "label": "Input",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:kind+affix",
+        "state:state",
+        "forbidden:INPUT_UNDERLINE_SHAPE",
+        "forbidden:INPUT_MULTILINE_PILL",
+        "forbidden:INPUT_MULTILINE_COMPACT",
+        "forbidden:INPUT_MULTILINE_AFFIX",
+        "forbidden:INPUT_PASSWORD_READONLY",
+        "forbidden:INPUT_SEARCH_READONLY",
+        "forbidden:INPUT_SEARCH_AFFIX",
+        "unsupported:masked input",
+        "unsupported:input groups with attached buttons",
+        "unsupported:tag input"
+      ],
+      "previewUrl": "/previews/017cbb52082f045bcbb7163353a4961f.svg",
+      "variantsCount": 6,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/input-control",
+      "purpose": "Input를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "base-component:input-control",
+      "kind": "base-component",
+      "category": "base-component",
+      "label": "Input",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "Input",
+      "relatedCategories": [
+        "inputs",
+        "feedback",
+        "commerce"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "purpose:form.auth",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "인증 폼",
+      "contexts": [
+        "auth",
+        "landing",
+        "commerce",
+        "any"
+      ],
+      "tags": [
+        "form",
+        "auth",
+        "landing",
+        "commerce",
+        "any"
+      ],
+      "previewUrl": "/previews/01d9a6f45ac105f10048d714114a875b.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/auth",
+      "purpose": "로그인 또는 가입 정보를 받는다. 제목, 입력 2~3개, 오류 안내, 전체 폭 제출 버튼, 보조 링크 순서로 쌓여 가운데에 놓인다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/b5ae5acfa37df1f963d3a61d933cdee6.svg",
+        "family:corporate-formal": "/previews/d6228ff9dd70a1802eec418571bf0c42.svg",
+        "family:dense-enterprise": "/previews/bcdc01537b3612e4ca8793212f42210b.svg",
+        "family:editorial": "/previews/0677044a913a88d7372135926b55496e.svg",
+        "family:elevated-material": "/previews/e6a5d499f0e9af909de289948c692049.svg",
+        "family:expressive": "/previews/287931174d58acac717b6cb000231f04.svg",
+        "family:glass": "/previews/ff96480967b0adedb945e36d97810b9f.svg",
+        "family:luxury": "/previews/01d9a6f45ac105f10048d714114a875b.svg",
+        "family:outline-precise": "/previews/79ca6a8c395c12b343a5ef62ac7acbdd.svg",
+        "family:quiet": "/previews/ac27e299d9a50ea02650f1a5328a0199.svg",
+        "family:soft": "/previews/e3e4d7229ce90450db79f474c5aceb6f.svg",
+        "family:tonal-layered": "/previews/ac278b7a8e4914c5c8fe40466ec622da.svg"
+      }
+    },
+    {
+      "id": "purpose:form.group",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "입력 그룹",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/06cae9563af5831b5fbbd69fbf1f19c7.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/group",
+      "purpose": "입력 칸 앞이나 뒤에 단위·주소 같은 애드온 또는 제출 버튼을 한 테두리로 이어 하나의 컨트롤처럼 보인다. 도메인·금액·구독 입력에서 쓴다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/ac29f4722926fbf19dbdb9ccb6863404.svg",
+        "family:corporate-formal": "/previews/efc20158cf0f92f49faf4d7674b983c8.svg",
+        "family:dense-enterprise": "/previews/06cae9563af5831b5fbbd69fbf1f19c7.svg",
+        "family:elevated-material": "/previews/5e594bf67bf72434481b95f94efde7d4.svg",
+        "family:expressive": "/previews/6e8d7ead7b9ff8252c18c4d8485364ea.svg",
+        "family:glass": "/previews/0cf047ff7589d490bb2f20f435bbe5e9.svg",
+        "family:luxury": "/previews/cb12f71aba8bffb8f8ebffa03b6b99d4.svg",
+        "family:outline-precise": "/previews/4194190141c58f000ce024b6e82253b9.svg",
+        "family:quiet": "/previews/db6e247aa2e0be7f943ebd1bc90402e7.svg",
+        "family:soft": "/previews/3d2d583ef3de860a2cb3de5fd47688a2.svg",
+        "family:tonal-layered": "/previews/76ef84503c3509a40b2c58cefdc39aad.svg"
+      }
+    },
+    {
+      "id": "purpose:form.search",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "검색 폼",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "any"
+      ],
+      "previewUrl": "/previews/111b65378e27d2732ae5d1d10c586139.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/search",
+      "purpose": "검색어 하나(필요하면 범위 선택)를 받아 제출한다. 머리줄과 목록 위에서 쓰며 inline은 한 줄, stacked는 세로로 쌓는다.",
+      "relatedCategories": [
+        "inputs",
+        "work-patterns"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/78247addaa613b68f02a3694782e8136.svg",
+        "family:corporate-formal": "/previews/c38d7d1e412690dba9784df7c7fc2960.svg",
+        "family:dense-enterprise": "/previews/6f749419a74c77ba3dce7c426606c723.svg",
+        "family:editorial": "/previews/64007cb34dbd95a01b61b2c27126f436.svg",
+        "family:elevated-material": "/previews/833c6cbffd878c6d9452482071eb88fe.svg",
+        "family:expressive": "/previews/a1ec0db17e58d9a700d2de0e29e49438.svg",
+        "family:glass": "/previews/db835c91b6cc6f7c08467c730ea9ea44.svg",
+        "family:luxury": "/previews/2b6f78040165515419c399424eaa6c63.svg",
+        "family:outline-precise": "/previews/830156825954cb412c4eadd42836e44d.svg",
+        "family:quiet": "/previews/ce2e84831b7268794a0abc0592470495.svg",
+        "family:soft": "/previews/9650a364d4914a98990f81212e91b027.svg",
+        "family:tonal-layered": "/previews/111b65378e27d2732ae5d1d10c586139.svg"
+      }
+    }
+  ]
+}

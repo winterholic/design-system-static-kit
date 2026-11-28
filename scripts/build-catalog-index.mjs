@@ -6,7 +6,7 @@
 // 화면(HTML·CSS)은 직접 만들지 않는다. 대상 목록과 문서를 만드는 절차는 웹 화면이 쓰는 apps/web/lib/api/preview-recipes.mjs 를 그대로 쓰고,
 // 어떤 재료·변형을 만들지는 레지스트리와 카탈로그를 읽어 정한다(재료가 늘면 인덱스와 미리보기가 같이 늘어난다).
 // 전수 생성이 아니다: 대표 디자인 + 부품 기본 렌더 + 사례 + 목적 패밀리 기본 예시 + 타이포 시스템 기본 샘플(라이트·데스크톱)만 만든다.
-import {mkdir, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {resolve, join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {
@@ -21,9 +21,11 @@ import {formatDesignId, resetArgs} from '../apps/web/features/explore/id.ts';
 import {PLATFORM_CASES} from '../apps/web/features/platform/cases.ts';
 import {SAMPLES} from '../apps/web/features/platform/samples.ts';
 import {caseRequest, purposeRequest, typeRequest, allPlatformMaterials} from './lib/preview-requests.mjs';
+import {CATALOG_CATEGORIES, classifyCatalogMaterial} from '../apps/web/features/components/catalog-model.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const out = resolve(process.argv[2] ?? join(root, 'site'));
+const coverage = JSON.parse(await readFile(join(root, 'docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json'), 'utf8'));
 const sha = text => createHash('sha256').update(text).digest('hex').slice(0, 32);
 const WIDE = {width: 1280, height: 800};
 
@@ -81,14 +83,25 @@ for (const k of PLATFORM_CASES) {
   await emit({target: {kind: 'assemble', request}, kind: 'platform', id: k.id, title: `${k.title} 미리보기`, html: r.value.candidates[0].value.standalone});
 }
 
-// 4. 목적 패밀리: 웹 /components 의 PurposeSection 과 같은 요청(첫 맥락, 라이트, 기본 시각 패밀리 soft, 예시 변형·속성·콘텐츠).
+// 4. 목적 패밀리: 실제 Core 출력으로 기본 미리보기와 사용 가능한 모든 시각 패밀리 변형을 미리 만든다.
 const purposeRows = allPlatformMaterials('purpose-family');
+const visualFamilies = allPlatformMaterials('family');
+const purposePreviewFamilies = new Map();
 for (const row of purposeRows) {
   const f = getPlatformMaterial({id: row.id}).value;
-  const request = purposeRequest(f);
-  const r = assembleComponents(request, {include: ['standalone']});
-  if (!r.ok) { skip('purpose-family', f.id, errorText(r), {kind: 'components', request, width: 480}); continue; }
-  await emit({target: {kind: 'components', request, width: 480}, kind: 'purpose-family', id: f.id, title: `${f.label} 미리보기`, html: r.value.standalone, size: {width: 480, height: 360}});
+  const previews = {};
+  for (const visual of visualFamilies) {
+    const request = purposeRequest(f);
+    request.items[0].visual = visual.id;
+    const r = assembleComponents(request, {include: ['standalone']});
+    if (!r.ok) {
+      if (visual.id === 'family:soft') skip('purpose-family', f.id, errorText(r), {kind: 'components', request, width: 480});
+      continue;
+    }
+    const key = await emit({target: {kind: 'components', request, width: 480}, kind: 'purpose-family', id: f.id, title: `${f.label} ${visual.label}`, html: r.value.standalone, size: {width: 480, height: 360}});
+    previews[visual.id] = `/previews/${key}.svg`;
+  }
+  purposePreviewFamilies.set(f.id, previews);
 }
 
 // 5. 타이포그래피: 웹 TypeCompare 의 기본 보기(문서 샘플, 라이트, 1280). 다른 샘플·모드·폭은 사용자가 고를 때 컴파일한다.
@@ -117,9 +130,13 @@ const GROUP_LABEL = {
 const lightMaterials = [];
 for (const {row, material} of componentList) {
   const key = previewOf('component', row.type);
+  const id = `component:${row.type}`;
   lightMaterials.push({
-    id: `component:${row.type}`, kind: 'component', category: row.group, label: row.label,
+    id, kind: 'component', category: row.group, label: row.label,
     contexts: material?.contexts ?? ['any'], tags: material?.tags ?? [], previewUrl: key ? `/previews/${key}.svg` : null,
+    previewUrlsByFamily: {}, purpose: material?.purpose ?? material?.description ?? `${row.label}를 화면 구성에 사용합니다.`,
+    url: `/components/${row.type}`,
+    relatedCategories: classifyCatalogMaterial({...material, id, group: row.group, category: row.group, kind: 'component'}, coverage),
     variantsCount: material?.variants ? Object.keys(material.variants).length : 0,
     statesCount: material?.states?.values?.length ?? 0,
     qualityStatus: material?.quality?.status === 'verified' ? 'verified' : 'implemented',
@@ -137,6 +154,9 @@ for (const kind of PLATFORM_KINDS) {
     const key = previewOf(kind, row.id);
     lightMaterials.push({
       id: row.id, kind, category: kind, label: row.label, contexts: row.contexts ?? [], tags: row.tags ?? [], previewUrl: key ? `/previews/${key}.svg` : null,
+      previewUrlsByFamily: purposePreviewFamilies.get(row.id) ?? {},
+      purpose: d.purpose ?? d.description ?? row.label,
+      relatedCategories: classifyCatalogMaterial({...d, id: row.id, kind, group: row.group, category: d.category ?? kind}, coverage),
       variantsCount: d.variants ? Object.keys(d.variants).length : (d.example?.variant ? 1 : 0),
       statesCount: d.states?.values?.length ?? 0,
       qualityStatus: d.quality?.status === 'verified' ? 'verified' : 'implemented',
@@ -145,20 +165,30 @@ for (const kind of PLATFORM_KINDS) {
   }
 }
 
-const counts = new Map();
-for (const m of lightMaterials) counts.set(m.category, (counts.get(m.category) ?? 0) + 1);
-const categories = [...counts].map(([id, itemCount]) => ({id, label: GROUP_LABEL[id] ?? id, itemCount}));
-const summaries = lightMaterials.map(({url, ...summary}) => summary);
+const summaries = lightMaterials.map(({url, relatedCategories, previewUrlsByFamily, purpose, ...summary}) => ({
+  ...summary, url, purpose, relatedCategories, previewUrlsByFamily,
+}));
+const categories = CATALOG_CATEGORIES.map(({id, label}) => ({
+  id, label,
+  itemCount: id === 'all' ? summaries.length : summaries.filter(m => m.relatedCategories.includes(id)).length,
+}));
 // contentHash 는 본문(categories, materials)의 해시다. 시각을 싣지 않아 같은 코드면 같은 바이트가 나온다.
 const body = {categories, materials: summaries};
 await writeFile(join(out, 'catalog-index.json'), JSON.stringify({schemaVersion: 'catalog-index/1.0', catalogVersion: CATALOG_VERSION, contentHash: sha(JSON.stringify(body)), ...body}, null, 2) + '\n');
 for (const cat of categories) {
-  await writeFile(join(chunksDir, `${cat.id}.json`), JSON.stringify({
-    schemaVersion: 'catalog-index/1.0', category: cat.id, label: cat.label, itemCount: cat.itemCount, materials: summaries.filter(m => m.category === cat.id),
-  }, null, 2) + '\n');
+  const rows = cat.id === 'all' ? summaries : summaries.filter(m => m.relatedCategories.includes(cat.id));
+  const pages = Math.max(1, Math.ceil(rows.length / 24));
+  for (let page = 1; page <= pages; page++) {
+    await writeFile(join(chunksDir, `${cat.id}-${page}.json`), JSON.stringify({
+      schemaVersion: 'catalog-index/1.0', category: cat.id, label: cat.label, itemCount: cat.itemCount, page, pages,
+      materials: rows.slice((page - 1) * 24, page * 24),
+    }, null, 2) + '\n');
+  }
 }
 await writeFile(join(out, 'search-index.json'), JSON.stringify(lightMaterials.map(m => ({
-  id: m.id, label: m.label, kind: m.kind, category: m.category, tags: m.tags, previewUrl: m.previewUrl, url: m.url,
+  id: m.id, label: m.label, kind: m.kind, category: m.category, relatedCategories: m.relatedCategories,
+  contexts: m.contexts, tags: m.tags, purpose: m.purpose, variantsCount: m.variantsCount, statesCount: m.statesCount,
+  qualityStatus: m.qualityStatus, previewUrl: m.previewUrl, previewUrlsByFamily: m.previewUrlsByFamily, url: m.url,
 })), null, 2) + '\n');
 
 console.log(`Generated ${sortedKeys.length} previews (${skipped.length} skipped with reason), catalog-index.json (${lightMaterials.length} materials, ${categories.length} categories) → ${out}`);

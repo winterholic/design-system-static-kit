@@ -1,0 +1,471 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "category": "navigation",
+  "label": "내비게이션",
+  "itemCount": 15,
+  "page": 1,
+  "pages": 1,
+  "materials": [
+    {
+      "id": "component:breadcrumb",
+      "kind": "component",
+      "category": "nav",
+      "label": "브레드크럼",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/ed9e235e66291c7b865af3c38495eab5.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/breadcrumb",
+      "purpose": "브레드크럼를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:pagination",
+      "kind": "component",
+      "category": "nav",
+      "label": "페이지네이션",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/7a8db7089b66e0a9d7ce869a54714b56.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/pagination",
+      "purpose": "페이지네이션를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:stepper",
+      "kind": "component",
+      "category": "nav",
+      "label": "단계 표시",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/744e4f5d02cf7779731a70cc49d6fc04.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/stepper",
+      "purpose": "단계 표시를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:links",
+      "kind": "component",
+      "category": "nav",
+      "label": "링크 목록",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/5f55e2a2a8fbdb30af0037075ed140e6.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/links",
+      "purpose": "링크 목록를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:toc",
+      "kind": "component",
+      "category": "nav",
+      "label": "목차(자동)",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/86ab2a5692d61b689883c9c1ec025de0.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/toc",
+      "purpose": "목차(자동)를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:navigation-menu",
+      "kind": "component",
+      "category": "nav",
+      "label": "Navigation",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:orientation+overflow+submenu+icons",
+        "state:state",
+        "forbidden:NAV_UNDERLINE_SHAPE",
+        "forbidden:NAV_VERTICAL_OVERFLOW",
+        "forbidden:NAV_SCROLL_SUBMENU",
+        "forbidden:NAV_OPEN_WITHOUT_COLLAPSE",
+        "forbidden:NAV_BLOCK_SCROLL",
+        "unsupported:mega menu panels",
+        "unsupported:nested submenus deeper than one level",
+        "unsupported:breadcrumb (use component:breadcrumb)"
+      ],
+      "previewUrl": "/previews/f45fbcf6b3f8ceb40016138aaf0728b6.svg",
+      "variantsCount": 8,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/navigation-menu",
+      "purpose": "Navigation를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "base-component:navigation-menu",
+      "kind": "base-component",
+      "category": "base-component",
+      "label": "Navigation",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "Navigation",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "base-component:tabs-control",
+      "kind": "base-component",
+      "category": "base-component",
+      "label": "Tabs",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "Tabs",
+      "relatedCategories": [
+        "buttons",
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "purpose:navigation.bottom",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "모바일 하단 바",
+      "contexts": [
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "tags": [
+        "navigation",
+        "dashboard",
+        "commerce",
+        "content",
+        "listing"
+      ],
+      "previewUrl": "/previews/2a99eaf81f549715948ec6b7ae52e91c.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/bottom",
+      "purpose": "모바일 화면 맨 아래에서 주요 3~5개 구역을 아이콘 위·라벨 아래 칸으로 바꿔 누르게 한다. 엄지가 닿는 자리라 항목마다 44px 이상의 터치 칸을 갖는다.",
+      "relatedCategories": [
+        "navigation",
+        "mobile"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/ced95360b2ce985380643933d1c5c901.svg",
+        "family:corporate-formal": "/previews/93bf955c360b8845e0917f150d6f5053.svg",
+        "family:dense-enterprise": "/previews/bfa77fbf992a4194d0423283b84132c9.svg",
+        "family:elevated-material": "/previews/798de076f80a68f1e5035587eb618170.svg",
+        "family:expressive": "/previews/e6d1c064c0e45ca6e5861877a4cf9f0c.svg",
+        "family:luxury": "/previews/553f450b31a818a78dd0e71afd20a436.svg",
+        "family:outline-precise": "/previews/b618000abfe3dafa32eb255a6f3f172e.svg",
+        "family:quiet": "/previews/ac8ee608b299eeefa5135e680d2fdaa8.svg",
+        "family:soft": "/previews/2a99eaf81f549715948ec6b7ae52e91c.svg",
+        "family:tonal-layered": "/previews/41466bc63c972f39e0d0c19886097b64.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.collapsible-sidebar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Collapsible Sidebar",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/06992003fbc52a47f6428f34b194627d.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/collapsible-sidebar",
+      "purpose": "주요 내비게이션을 작은 화면에서 접고 펼치는 독립형 사이드바",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/23f011e2d83128b31f6757ba56cdf36f.svg",
+        "family:corporate-formal": "/previews/08c314e2a9c3eca0bc949fd0748aeab8.svg",
+        "family:dense-enterprise": "/previews/1659f9a2b37cf593719caf1c8bb5bec8.svg",
+        "family:editorial": "/previews/3019fb3241db54907cfe6f4ed4f58746.svg",
+        "family:elevated-material": "/previews/e857a2554bf4d90aba9e69dbec9a0b68.svg",
+        "family:expressive": "/previews/ad1e56588afe0e8346adf02415e51ba0.svg",
+        "family:glass": "/previews/eab35c42f9536c7cd8c484f7d4b15cb4.svg",
+        "family:luxury": "/previews/2f70b74243b3c0047dbff01a682ccd76.svg",
+        "family:outline-precise": "/previews/06992003fbc52a47f6428f34b194627d.svg",
+        "family:quiet": "/previews/e3e9e20e5470ff3fdf2454ef8e5ee764.svg",
+        "family:soft": "/previews/3c8d3e42541962fc2671efe714cc8d79.svg",
+        "family:tonal-layered": "/previews/6c13c5342df36db48032a7c9fc1735bb.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.command-menu",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Command Menu",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/180cdc1bb69de6e1a5d37fa90839a097.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/command-menu",
+      "purpose": "Command Menu는 항목 사이 방향키 이동과 Escape 닫기를 지원한다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/50ac68731672aa9fbbc81850ac5ccc72.svg",
+        "family:corporate-formal": "/previews/7226190d6b5de220a49fdf3b2ee7bcca.svg",
+        "family:dense-enterprise": "/previews/1b74bf253f3155a85c4324cbec0c6dbe.svg",
+        "family:editorial": "/previews/54281c9c6118e4f6214a5b1adb872db5.svg",
+        "family:elevated-material": "/previews/3721b568718bd3d0f9744769718a6406.svg",
+        "family:expressive": "/previews/2457f6e203345ac5573991c338249b69.svg",
+        "family:glass": "/previews/27ebc300883be410f4a705efcebe32b9.svg",
+        "family:luxury": "/previews/91e9faa9746b8dcbff925d3c36f38ee3.svg",
+        "family:outline-precise": "/previews/d31b752a1024d29153362e81d5a9ed3d.svg",
+        "family:quiet": "/previews/d6bb74d36a4d7bbb90f992d36e1b5ca9.svg",
+        "family:soft": "/previews/180cdc1bb69de6e1a5d37fa90839a097.svg",
+        "family:tonal-layered": "/previews/6029ea17f0b1d8fa5be9a00d23c1d3d9.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.context-menu",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Context Menu",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/047b41e5276501742435101e55f9f6c0.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/context-menu",
+      "purpose": "Context Menu는 항목 사이 방향키 이동과 Escape 닫기를 지원한다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/8d66cc4a41e15401b29bc5c847bc7b76.svg",
+        "family:corporate-formal": "/previews/bb65d948e5c111dd610435a4ac443192.svg",
+        "family:dense-enterprise": "/previews/f7bfcf9f8db31d18b2df22e2793b5428.svg",
+        "family:editorial": "/previews/ba288cb9b85dece6c6363c28a1cd052e.svg",
+        "family:elevated-material": "/previews/e0316395eec6985427dde301a27b74c0.svg",
+        "family:expressive": "/previews/b9bcf1f699577701176f2cd4153ca4bd.svg",
+        "family:glass": "/previews/bde5de2aa23097402a27fd3e6f019380.svg",
+        "family:luxury": "/previews/924e3a3094969ab658437217878b3b5a.svg",
+        "family:outline-precise": "/previews/f82794e6259441af288bab0cc3d4cffa.svg",
+        "family:quiet": "/previews/6189716f6f9a467c19f819a1097f52df.svg",
+        "family:soft": "/previews/047b41e5276501742435101e55f9f6c0.svg",
+        "family:tonal-layered": "/previews/3a24f1e315ad7c4463cdb696f688d44a.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.drawer",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Navigation Drawer",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "navigation",
+        "any"
+      ],
+      "previewUrl": "/previews/048706c223f602c2ffd2b517f06213cf.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/drawer",
+      "purpose": "Navigation Drawer는 콘텐츠를 주변 흐름 위에 표시하고 키보드로 닫을 수 있다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/048706c223f602c2ffd2b517f06213cf.svg",
+        "family:corporate-formal": "/previews/9a62d98ef2dbe8038d307277ce50fc8f.svg",
+        "family:dense-enterprise": "/previews/6f8bfbcbfbc3306ddcf243ac42ecb079.svg",
+        "family:editorial": "/previews/8a2946089abc38e11e28b37a88112de4.svg",
+        "family:elevated-material": "/previews/6ac3ef1684fa111b25f41c44796e00dd.svg",
+        "family:expressive": "/previews/14160565c559be9262995f1d5a1cef1b.svg",
+        "family:glass": "/previews/380c57b593e3f7329abf3154e1f70517.svg",
+        "family:luxury": "/previews/f782a95dfca9b21fd0e0dc2abdb744ba.svg",
+        "family:outline-precise": "/previews/2387b0c9b7bdb5edbf584eea56067919.svg",
+        "family:quiet": "/previews/a4a8bb1aa19fe221c029a8a730fa878f.svg",
+        "family:soft": "/previews/b494f4e5c8e7f4b7726c9e93fac2958c.svg",
+        "family:tonal-layered": "/previews/a575a84d81703c5d1488d0f831716d18.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.sidebar",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "사이드바",
+      "contexts": [
+        "dashboard",
+        "data",
+        "settings"
+      ],
+      "tags": [
+        "navigation",
+        "dashboard",
+        "data",
+        "settings"
+      ],
+      "previewUrl": "/previews/05e3d7bbf74842c6668b7e660b268b2f.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/sidebar",
+      "purpose": "서비스의 주요 구역을 세로 목록으로 늘어놓고 현재 위치를 보인다. 대시보드·관리 화면의 왼쪽 고정 영역에서 쓰며 640px 이하에서는 머리만 남기고 접힌다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/7f169a32f0cf4a85ce67a8ad297e545b.svg",
+        "family:corporate-formal": "/previews/1bd384b825bf922cb71e1069be2bb529.svg",
+        "family:dense-enterprise": "/previews/52373d0c86a4d1adfc383f576684d7e3.svg",
+        "family:editorial": "/previews/9ca95644eb9f04484ada1b0f7981897c.svg",
+        "family:elevated-material": "/previews/05e3d7bbf74842c6668b7e660b268b2f.svg",
+        "family:expressive": "/previews/e0ffa9b31dac407ed5b2d1117a70a0c9.svg",
+        "family:glass": "/previews/c1fa4d42c5eb3c3ce93394b345b17630.svg",
+        "family:luxury": "/previews/d7cf15e5a2b5205c83cbfee54de28455.svg",
+        "family:outline-precise": "/previews/183f89ff0436576b9ef88e406ce9dcc5.svg",
+        "family:quiet": "/previews/d07fff252f714041fa02a55f9681c777.svg",
+        "family:soft": "/previews/a4626e32c0be392db7270a06497f2231.svg",
+        "family:tonal-layered": "/previews/bd5ef0c8118b9ce334959cfc035df7ab.svg"
+      }
+    },
+    {
+      "id": "purpose:navigation.tabs",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "탭",
+      "contexts": [
+        "dashboard",
+        "data",
+        "settings",
+        "content"
+      ],
+      "tags": [
+        "navigation",
+        "dashboard",
+        "data",
+        "settings",
+        "content"
+      ],
+      "previewUrl": "/previews/107416eabee1e247fccf663ce29ed8f3.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/navigation/tabs",
+      "purpose": "같은 대상의 관점(개요·작업·파일)을 한 자리에서 바꿔 보여 준다. 패널 머리(제목·설명)와 탭별 개수 배지를 곁들여 상세 화면과 설정 화면에서 쓴다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/2157c85ea6a3d77ea57fd593b7612c64.svg",
+        "family:corporate-formal": "/previews/6834695bfd06842ba1bde3d5346a4fe5.svg",
+        "family:dense-enterprise": "/previews/107416eabee1e247fccf663ce29ed8f3.svg",
+        "family:editorial": "/previews/d6555c43518a3656a10200bc1cd7e97c.svg",
+        "family:elevated-material": "/previews/d39e78bed00fc9136fdc10de2a8b9b57.svg",
+        "family:expressive": "/previews/ec1bb0b2f30ed73eddd68ed4cfe71aa4.svg",
+        "family:glass": "/previews/a65522e2c5566ef06fa83055d57490a1.svg",
+        "family:luxury": "/previews/ee405cfe082c7939625a773e0a670431.svg",
+        "family:outline-precise": "/previews/e4d4ab3629df8ab05076b448d5c7d69e.svg",
+        "family:quiet": "/previews/fe3f0082a3c8361af4a68ea0188ad1b0.svg",
+        "family:soft": "/previews/88e18213587cbd0db863392ad05e80e2.svg",
+        "family:tonal-layered": "/previews/71c0858a479d5009eb471bba23b59fd1.svg"
+      }
+    }
+  ]
+}

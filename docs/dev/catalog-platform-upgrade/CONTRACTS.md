@@ -141,9 +141,13 @@ interface LightMaterialSummary {
   kind: string;
   category: string;
   label: string;
+  purpose: string;
+  url: string;
+  relatedCategories: string[]; // REQUEST §6.2 A~O에서 MATERIAL-COVERAGE.requirementIds로 계산
   contexts: string[];
   tags: string[];
-  previewUrl: string; // 정적 대표 미리보기 SVG/WebP 경로(위치는 §5.3)
+  previewUrl: string | null; // 정적 대표 미리보기 SVG/WebP 경로(위치는 §5.3)
+  previewUrlsByFamily: Record<string, string>; // 실제 Core 컴파일 결과를 시각 패밀리별 사전 생성
   variantsCount: number;
   statesCount: number;
   qualityStatus: "implemented" | "verified";
@@ -152,6 +156,8 @@ interface LightMaterialSummary {
 ```
 
 - 목록 페이지에서는 `LightMaterialSummary`만 로딩하고, 상세 페이지 진입 시에만 전체 명세(`getComponentSpec` 또는 `getPlatformMaterial`)를 온디맨드로 조회한다.
+- `catalog-chunks/<category>-<page>.json`은 해당 카테고리의 한 페이지(최대 24개)만 담는다. `all-<page>.json`도 같은 상한을 적용한다. `/components`는 현재 카테고리 청크 하나만 요청하며 검색어가 있을 때만 전체 경량 `/search-index.json`을 요청한다.
+- 카테고리 청크 및 검색 인덱스의 미리보기는 실제 Core 컴파일 결과만 참조한다. `previewUrlsByFamily`는 해당 조합이 사전 생성되지 않은 경우 항목을 생략하며, 브라우저에서 목록 미리보기를 동적 컴파일하지 않는다.
 
 ---
 

@@ -1,0 +1,738 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "category": "feedback",
+  "label": "피드백",
+  "itemCount": 25,
+  "page": 1,
+  "pages": 2,
+  "materials": [
+    {
+      "id": "component:notice",
+      "kind": "component",
+      "category": "feedback",
+      "label": "알림",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/17e866a9d76ea61472de09714df92112.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/notice",
+      "purpose": "알림를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:progress",
+      "kind": "component",
+      "category": "feedback",
+      "label": "진행률",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/41f6be598a596b6ed9257ad19c94eff1.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/progress",
+      "purpose": "진행률를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:empty-state",
+      "kind": "component",
+      "category": "feedback",
+      "label": "상태 화면",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/3ec02d7d1afaeb88a31c3052dea7a6aa.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/empty-state",
+      "purpose": "상태 화면를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:skeleton",
+      "kind": "component",
+      "category": "feedback",
+      "label": "스켈레톤",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/aa2a53eed98ac621ab4780e051e1d1ed.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/skeleton",
+      "purpose": "스켈레톤를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:modal-dialog",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Modal",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:MODAL_NESTED",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:role+placement+footer",
+        "state:state",
+        "forbidden:MODAL_ALERT_NO_ACTIONS",
+        "forbidden:MODAL_STATE_NO_FOOTER",
+        "forbidden:MODAL_SHEET_SIZE",
+        "unsupported:modal inside modal",
+        "unsupported:non-modal (popover) dialogs",
+        "unsupported:free-form HTML body (typed text and input slots only)",
+        "unsupported:side drawer"
+      ],
+      "previewUrl": "/previews/511070c0db7162e0170fc1fab004a1e1.svg",
+      "variantsCount": 7,
+      "statesCount": 5,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/modal-dialog",
+      "purpose": "Modal를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:tooltip",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Tooltip",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:TOOLTIP_INTERACTIVE",
+        "forbidden:TOOLTIP_DISABLED_TRIGGER",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:trigger+purpose+placement+delay",
+        "state:state",
+        "forbidden:TOOLTIP_NAME_TEXT_TRIGGER",
+        "forbidden:TOOLTIP_NAME_DELAY",
+        "unsupported:interactive content (links, buttons, forms)",
+        "unsupported:rich HTML",
+        "unsupported:tooltip on non-focusable or disabled elements",
+        "unsupported:click-to-open popover (use a dialog or disclosure)"
+      ],
+      "previewUrl": "/previews/559ae5b5d55a29d374b840447b9ea3e8.svg",
+      "variantsCount": 8,
+      "statesCount": 4,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/tooltip",
+      "purpose": "Tooltip를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:feedback-message",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Feedback",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:placement+dismiss+action+autoDismiss",
+        "state:state",
+        "context:tone",
+        "forbidden:FB_PLAIN_TOAST",
+        "forbidden:FB_BANNER_PILL",
+        "forbidden:FB_TOAST_DANGER_TIMED",
+        "forbidden:FB_TOAST_ACTION_TIMED",
+        "forbidden:FB_TOAST_STUCK",
+        "forbidden:FB_TIMED_NOT_TOAST",
+        "forbidden:FB_PENDING_DISMISS",
+        "forbidden:FB_PENDING_TONE",
+        "forbidden:FB_PENDING_TIMED",
+        "forbidden:FB_DISMISSED_UNREACHABLE",
+        "unsupported:toast queue and stacking manager",
+        "unsupported:swipe to dismiss",
+        "unsupported:progress percentage (use progress)"
+      ],
+      "previewUrl": "/previews/fcd8062ca08558dcd4c5949594e30f38.svg",
+      "variantsCount": 9,
+      "statesCount": 6,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/feedback-message",
+      "purpose": "Feedback를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "base-component:feedback-message",
+      "kind": "base-component",
+      "category": "base-component",
+      "label": "Feedback",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "Feedback",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "base-component:input-control",
+      "kind": "base-component",
+      "category": "base-component",
+      "label": "Input",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "Input",
+      "relatedCategories": [
+        "inputs",
+        "feedback",
+        "commerce"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "purpose:feedback.callout",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Callout",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/09e098fc6bb512a379cef4cdac2de814.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/callout",
+      "purpose": "본문 흐름 안에서 맥락이 필요한 안내를 정적인 문구로 전달한다. 알림 영역(live region)이 아니라 읽는 순서에 놓이는 note다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/cc9c38db712417a6800166311179e559.svg",
+        "family:corporate-formal": "/previews/14decc2e8f372b2cd3bcab72595e51b1.svg",
+        "family:dense-enterprise": "/previews/28723b4f0ea1265484e8b89bbbeedbec.svg",
+        "family:editorial": "/previews/a0d204dd43e7afa3fd081c5104f9e0df.svg",
+        "family:elevated-material": "/previews/143b9852f786c3e76ed9614d40c6fe30.svg",
+        "family:expressive": "/previews/3e36c7d0e4a1a5ed14553b7e5ccf74c2.svg",
+        "family:glass": "/previews/1239d2b4398ebcef8998f50a308f199b.svg",
+        "family:luxury": "/previews/fd464291972b3bbe5c40a8009f982660.svg",
+        "family:outline-precise": "/previews/4a53148a4ae681c017c0b31391237ddb.svg",
+        "family:quiet": "/previews/09e098fc6bb512a379cef4cdac2de814.svg",
+        "family:soft": "/previews/785dcc0326d73807f0d3da1bb8362302.svg",
+        "family:tonal-layered": "/previews/980fbc1a4fdb0a37a7c6e3d919b3e129.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.circular-progress",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Circular Progress",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/0b4e8b068aa9dde741a3220a720f06ad.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/circular-progress",
+      "purpose": "작업 진행률을 원형 표시와 접근 가능한 값으로 함께 제공한다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/178429208a5ff737a5b84754396d4d15.svg",
+        "family:corporate-formal": "/previews/be3c5dfd94badec4476f9603a87fea40.svg",
+        "family:dense-enterprise": "/previews/159e6ca9bc0e8e317e4835e410898961.svg",
+        "family:editorial": "/previews/e5455fb702dbb87f5601892ffc3c3c17.svg",
+        "family:elevated-material": "/previews/7abbbef3d09081521a59c7ae31e6f375.svg",
+        "family:expressive": "/previews/9080d083aaee17332c6dc841129e8ec2.svg",
+        "family:glass": "/previews/0b4e8b068aa9dde741a3220a720f06ad.svg",
+        "family:luxury": "/previews/f7cb93e39f077e8e12425de595113a8d.svg",
+        "family:outline-precise": "/previews/e0156d5f060cd0dcf3a91c67957745c6.svg",
+        "family:quiet": "/previews/308cd88c99a64afb7e0bdcaaf87594d4.svg",
+        "family:soft": "/previews/3c83de1bd2e6f99e55f5a5b34458e881.svg",
+        "family:tonal-layered": "/previews/f7a757d4ed5f2bcb0c1d500f6721e7f8.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.error",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "오류 안내",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/143da227bd659408d341e7b393e0538c.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/error",
+      "purpose": "실패를 원인과 다음 행동(재시도·문의)과 함께 알린다. 화면 위쪽 배너나 대화상자의 오류 상태로 낸다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/6404d8e63b43a8e88ed5f44fe40f98e2.svg",
+        "family:corporate-formal": "/previews/4a085721b9faeabec039592c51b056a5.svg",
+        "family:dense-enterprise": "/previews/3fefefda16667e8d3894856cf7257273.svg",
+        "family:editorial": "/previews/70b4d2ed1f301021aee4962fb54985df.svg",
+        "family:elevated-material": "/previews/d7c6714350e022d2c51ecc9fdc900d36.svg",
+        "family:expressive": "/previews/9baa0cf27e918db7e685cdd1454ae07b.svg",
+        "family:glass": "/previews/b593bb2e42af7152b0f5cbdbdc971f64.svg",
+        "family:luxury": "/previews/3d9cd31dbe21326ab6e7bad07941b083.svg",
+        "family:outline-precise": "/previews/143da227bd659408d341e7b393e0538c.svg",
+        "family:quiet": "/previews/fb349791cad965d7f441012488342afa.svg",
+        "family:soft": "/previews/c155c49f547bb29c44b3b7fa4a953f8f.svg",
+        "family:tonal-layered": "/previews/9f7d52c0543d1274644ac2449df5e87e.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.loading-overlay",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Loading Overlay",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/31d9cf60dc5e4c9e67f5b2c6dd39a9e8.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/loading-overlay",
+      "purpose": "한 영역 위에 진행 중 상태를 겹쳐 보이고 그 영역의 내용 조작을 막는다. 화면 전체를 덮지 않는다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/5a4184d5d2776b4331f9ede9f40894f7.svg",
+        "family:corporate-formal": "/previews/e584bda8d1b5e12953dd4d8fbe3ccb8c.svg",
+        "family:dense-enterprise": "/previews/827f7287b2c8c58c10c643090ccf4c9d.svg",
+        "family:editorial": "/previews/7885f9304530c0b4bee0f2f79e4496ee.svg",
+        "family:elevated-material": "/previews/bbb34299effff7d1f1957ca88eb60b89.svg",
+        "family:expressive": "/previews/a6ec00f196f6cc9cbba051a39b385222.svg",
+        "family:glass": "/previews/6968f41dd427704ee7c7bc6695da9fb7.svg",
+        "family:luxury": "/previews/d01dda5f54d2b470c4c47d01e456d32c.svg",
+        "family:outline-precise": "/previews/fd85fe807f59ec4e317d00e5904f134d.svg",
+        "family:quiet": "/previews/95e81f3c39c9b33b7a762425f9c3e59b.svg",
+        "family:soft": "/previews/31d9cf60dc5e4c9e67f5b2c6dd39a9e8.svg",
+        "family:tonal-layered": "/previews/3d9bde6b48ece870aa36cdf08e351def.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.progress",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "진행 안내",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/05253dc89573eed78cf169a7e8b66d5f.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/progress",
+      "purpose": "시간이 걸리는 작업(업로드, 가져오기, 배포)의 진행을 막대·단계 목록·취소와 함께 보인다. 사용자가 언제 끝나는지와 취소할 수 있는지를 안다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/5ab7e2e237c31a614c8911679bb2fc48.svg",
+        "family:corporate-formal": "/previews/853540dc27cc3397b742ccf01faec026.svg",
+        "family:dense-enterprise": "/previews/9b758579ae6a78429394eb613c0483f7.svg",
+        "family:editorial": "/previews/920c211dd4ac86e893a1af9161170786.svg",
+        "family:elevated-material": "/previews/aa48b7ceb03e653dd0328d1a44446529.svg",
+        "family:expressive": "/previews/1e2f9cb290e479dd6b5dbd8ad98ad6f1.svg",
+        "family:glass": "/previews/7e6ed8616ba0660560f8f55050b14a83.svg",
+        "family:luxury": "/previews/ea0f1d89c9903954dbedc73f5c7f9735.svg",
+        "family:outline-precise": "/previews/a123c8d2f8a8b8305a287889f41c06b6.svg",
+        "family:quiet": "/previews/a7fb6c2867293dc7731ecb436393bf49.svg",
+        "family:soft": "/previews/05253dc89573eed78cf169a7e8b66d5f.svg",
+        "family:tonal-layered": "/previews/40ee08178b045852cdd5619cdcfece5e.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.result",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "결과 안내",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/34df4b6822cc6873f5a963533018ed4a.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/result",
+      "purpose": "작업이 끝난 뒤 결과(완료, 실패, 확인 중)를 한 화면 분량으로 알리고 다음 행동을 둔다. 결제 완료, 가입 완료, 신청 접수 화면에서 쓴다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/8b86517890b062b9b8d34aa25a40a2a0.svg",
+        "family:corporate-formal": "/previews/dbec5971239e3cf340eb0d2c73a887fd.svg",
+        "family:dense-enterprise": "/previews/9d096bae2798b1d4c92f7cefce6aaa1c.svg",
+        "family:editorial": "/previews/aff7d0eaa3eacdec5bdf5ed37d3ebf47.svg",
+        "family:elevated-material": "/previews/c7dcde5e385842d8213c49694ce74f43.svg",
+        "family:expressive": "/previews/52273ad85905f0c84d4c79adaa52f105.svg",
+        "family:glass": "/previews/34df4b6822cc6873f5a963533018ed4a.svg",
+        "family:luxury": "/previews/50bdb0ff2f9cd7381a35ee24e75f9ad9.svg",
+        "family:outline-precise": "/previews/f4da221ad4efa1bcd0196b9ef1641658.svg",
+        "family:quiet": "/previews/c85f5b3f09c74a1ac187bae983be36b5.svg",
+        "family:soft": "/previews/e3f71e3ac5a46af083291ecb7ffae2e8.svg",
+        "family:tonal-layered": "/previews/7a3cb56769b86a94035e1d5e5393f54b.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.status-indicator",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "Status Indicator",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/257b0814126b09ca81ea5b92ea1b1522.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/status-indicator",
+      "purpose": "상태를 점 모양·색·텍스트를 함께 사용해 전달한다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/9337da926ff18ad2943d1cae2f31005a.svg",
+        "family:corporate-formal": "/previews/a83c7cd3d23d46e1a4cac650bd104bb9.svg",
+        "family:dense-enterprise": "/previews/d47f4ff01d871ef04c0cba33715ba366.svg",
+        "family:editorial": "/previews/e975ff6af92ebdda3f9f3d3a836d7e42.svg",
+        "family:elevated-material": "/previews/a878195e2f296a442d48c7423b5309f0.svg",
+        "family:expressive": "/previews/4a5df1a3c1b1b4628dc8d7d12f467a99.svg",
+        "family:glass": "/previews/e43c21ebe1d68fcf86ea31e727dc59b0.svg",
+        "family:luxury": "/previews/82cfe730d894bf03911b423c5c8e9aa6.svg",
+        "family:outline-precise": "/previews/f7947c971e4827f18e3fef7c7c721162.svg",
+        "family:quiet": "/previews/257b0814126b09ca81ea5b92ea1b1522.svg",
+        "family:soft": "/previews/353d39266d99b2209c86aa0b7ff6c0d0.svg",
+        "family:tonal-layered": "/previews/32a0dd36c191c2bd734169084247c795.svg"
+      }
+    },
+    {
+      "id": "purpose:feedback.warning",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "경고 안내",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "feedback",
+        "any"
+      ],
+      "previewUrl": "/previews/1651877e10408e07d8f17fe6d6bc5cf3.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/feedback/warning",
+      "purpose": "실패는 아니지만 확인이 필요한 상황(만료 임박, 용량 부족, 되돌릴 수 없는 변경 예고)을 알린다. 인라인 안내나 확인이 필요한 대화상자로 낸다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/5427ba8abd30fa455e2e6a6e0d80acea.svg",
+        "family:corporate-formal": "/previews/8c1df6c6f3aac0dcca1e5b0174d690f7.svg",
+        "family:dense-enterprise": "/previews/9288b3825b1391d4e998f0474c5f8e39.svg",
+        "family:editorial": "/previews/d6af609c7b042ceec04a4c86c0e789e0.svg",
+        "family:elevated-material": "/previews/86d700d5624da1e45a24802b20fc293c.svg",
+        "family:expressive": "/previews/7b92e2f2ad36d77ad942fbd5528424e0.svg",
+        "family:glass": "/previews/e499c32d188a11e4c69e8e3b9903f809.svg",
+        "family:luxury": "/previews/1651877e10408e07d8f17fe6d6bc5cf3.svg",
+        "family:outline-precise": "/previews/62b93432fde770d21b9ad3ac4caa3d3d.svg",
+        "family:quiet": "/previews/cab69c98c24b262ff16e04f7ac8117d2.svg",
+        "family:soft": "/previews/4656730a0bb4c28e2e8a8cec0c8a2e89.svg",
+        "family:tonal-layered": "/previews/b597060e2a36987dc01c76e8f462825e.svg"
+      }
+    },
+    {
+      "id": "state-pattern:empty-illustrated",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "일러스트형 빈 화면",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "empty",
+        "block",
+        "friendly"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "일러스트형 빈 화면",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "state-pattern:empty-inline",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "한 줄 빈 안내",
+      "contexts": [
+        "dashboard",
+        "data",
+        "listing",
+        "settings",
+        "docs",
+        "community",
+        "general",
+        "form"
+      ],
+      "tags": [
+        "empty",
+        "inline",
+        "dense"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "한 줄 빈 안내",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "state-pattern:error-banner",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "한 줄 오류 배너",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "error",
+        "banner",
+        "recoverable"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "한 줄 오류 배너",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "state-pattern:error-panel",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "세부를 펼치는 오류 패널",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "error",
+        "block",
+        "diagnosable"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "세부를 펼치는 오류 패널",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "state-pattern:loading-skeleton",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "스켈레톤 불러오기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "loading",
+        "block",
+        "layout-stable"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "스켈레톤 불러오기",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "state-pattern:loading-spinner",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "스피너와 진행 문구",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "loading",
+        "inline",
+        "short-wait"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "스피너와 진행 문구",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "state-pattern:success-confirmation",
+      "kind": "state-pattern",
+      "category": "state-pattern",
+      "label": "다음 단계를 안내하는 완료 화면",
+      "contexts": [
+        "form",
+        "commerce",
+        "settings",
+        "auth",
+        "landing",
+        "listing",
+        "general",
+        "dashboard"
+      ],
+      "tags": [
+        "success",
+        "block",
+        "next-step"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "다음 단계를 안내하는 완료 화면",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    }
+  ]
+}

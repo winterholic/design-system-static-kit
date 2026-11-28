@@ -1,0 +1,496 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "category": "cards",
+  "label": "카드",
+  "itemCount": 15,
+  "page": 1,
+  "pages": 1,
+  "materials": [
+    {
+      "id": "component:card",
+      "kind": "component",
+      "category": "content",
+      "label": "카드",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/34c7ae7b015434d14c61e15adb543d43.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/card",
+      "purpose": "카드를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:metric",
+      "kind": "component",
+      "category": "data",
+      "label": "지표",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/1e9c676e984c35753b53bb17b482c3a6.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/metric",
+      "purpose": "지표를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:quote",
+      "kind": "component",
+      "category": "content",
+      "label": "인용·후기",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/438dc92a935a6e21bb99e6a8f6ad4c4a.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/quote",
+      "purpose": "인용·후기를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "cards",
+        "media"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:team",
+      "kind": "component",
+      "category": "content",
+      "label": "팀 소개",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/0346cdd9831644db24284636bd40ba8b.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/team",
+      "purpose": "팀 소개를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:plan",
+      "kind": "component",
+      "category": "content",
+      "label": "요금제 항목",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/plan",
+      "purpose": "요금제 항목를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "base-component:card-surface",
+      "kind": "base-component",
+      "category": "base-component",
+      "label": "Card",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "content"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/materials",
+      "purpose": "Card",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "purpose:card.article",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "기사 카드",
+      "contexts": [
+        "listing",
+        "content"
+      ],
+      "tags": [
+        "card",
+        "listing",
+        "content"
+      ],
+      "previewUrl": "/previews/086698ed74dcadce883ba1ec466ae171.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/article",
+      "purpose": "글 한 편을 분류·제목·요약·작성자·읽는 시간으로 보여 준다. 읽기 목록과 홈 피드에서 제목이 먼저 읽힌다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/434c4089e578f39f667008de4c8201fa.svg",
+        "family:corporate-formal": "/previews/4664b358f47437dfaa6f5466807ee7ab.svg",
+        "family:dense-enterprise": "/previews/7e83929dc8384d7e164fdf65a968544a.svg",
+        "family:editorial": "/previews/9e955c48cb238de55af9f6af4e9388af.svg",
+        "family:elevated-material": "/previews/6d6ea667ee386013c8bade6997429a8f.svg",
+        "family:expressive": "/previews/086698ed74dcadce883ba1ec466ae171.svg",
+        "family:glass": "/previews/289e2df6d5e059ff44cb473f5a7af143.svg",
+        "family:luxury": "/previews/29a41a27c150a756f10da008e6746f86.svg",
+        "family:outline-precise": "/previews/627e91a3b3e4fda3a8209a58c5c629cb.svg",
+        "family:quiet": "/previews/61f546cbae2bc75b928d78df92e677df.svg",
+        "family:soft": "/previews/67fccb162b6ed03c388121bf437a7a4d.svg",
+        "family:tonal-layered": "/previews/4837609904301022008ea30b600d6333.svg"
+      }
+    },
+    {
+      "id": "purpose:card.feature",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "기능 소개 카드",
+      "contexts": [
+        "landing",
+        "marketing"
+      ],
+      "tags": [
+        "card",
+        "landing",
+        "marketing"
+      ],
+      "previewUrl": "/previews/09ec207e3d3c4d9a74d7fdedb53e9803.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/feature",
+      "purpose": "제품 기능 하나를 아이콘·제목·설명으로 소개한다. 랜딩 페이지의 3~4열 기능 줄에서 같은 높이로 놓인다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/09ec207e3d3c4d9a74d7fdedb53e9803.svg",
+        "family:corporate-formal": "/previews/8843075a731b5c9b729ae71b928f2e8f.svg",
+        "family:dense-enterprise": "/previews/b9e6562a6975029faea5835dd649b5ff.svg",
+        "family:editorial": "/previews/2013828fad528e73b52826549984c779.svg",
+        "family:elevated-material": "/previews/41ca4009c1c4a55202ff2bd06e0de354.svg",
+        "family:expressive": "/previews/91d105bf91997e62630bfa22ca02e69b.svg",
+        "family:glass": "/previews/1153e0e97e87dbfcd96a7e380ac12338.svg",
+        "family:luxury": "/previews/bed710aa00a93020d1c9c79b289f6ade.svg",
+        "family:outline-precise": "/previews/c9781df30670b8a2f9dcdbfd6005797c.svg",
+        "family:quiet": "/previews/277b6297357e370b08d6052265171c16.svg",
+        "family:soft": "/previews/acbd6d6ae01dc1fe659d0351e282d34e.svg",
+        "family:tonal-layered": "/previews/55bdab4af7e9551c10b0b5eeabee6bf0.svg"
+      }
+    },
+    {
+      "id": "purpose:card.gallery",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "갤러리 카드",
+      "contexts": [
+        "listing",
+        "content"
+      ],
+      "tags": [
+        "card",
+        "listing",
+        "content"
+      ],
+      "previewUrl": "/previews/0d5abe2fd3e88ed59b66e33ab9492ade.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/gallery",
+      "purpose": "이미지 묶음 한 개를 타일 격자와 제목·개수로 보여 준다. 앨범·컬렉션 목록과 이미지 선택 화면에서 쓴다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/3d885654660a5c9b0b33a115b6807046.svg",
+        "family:corporate-formal": "/previews/0d5abe2fd3e88ed59b66e33ab9492ade.svg",
+        "family:dense-enterprise": "/previews/82ab38a910cf8bb2eaedea06d55aa1de.svg",
+        "family:editorial": "/previews/8220f423561774520742b7affaf85427.svg",
+        "family:elevated-material": "/previews/b3ee2c178e90ecf1e84080ecd134946f.svg",
+        "family:expressive": "/previews/ea4650c7eb67415b4a461cc0fc1669b8.svg",
+        "family:glass": "/previews/f8eb3ae13359e23d4823bc8fd44fc013.svg",
+        "family:luxury": "/previews/c8eb35412ff3939665bd423e30d553c6.svg",
+        "family:outline-precise": "/previews/5e2d5c087271af93e7152d281839cfba.svg",
+        "family:quiet": "/previews/d097c478a1816e007173c64cfcc63c86.svg",
+        "family:soft": "/previews/afc6bdb100c08b63b8a27bbbf0355244.svg",
+        "family:tonal-layered": "/previews/2c8ff2abcfd42ec4a0908d6ec22a3688.svg"
+      }
+    },
+    {
+      "id": "purpose:card.kpi",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "KPI 카드",
+      "contexts": [
+        "dashboard",
+        "data"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data"
+      ],
+      "previewUrl": "/previews/02ce424c869391e65978edfbd8dc6258.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/kpi",
+      "purpose": "핵심 지표 하나를 값·증감·추세로 보여 준다. 대시보드 상단 지표 줄에서 같은 높이로 나란히 놓인다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/02ce424c869391e65978edfbd8dc6258.svg",
+        "family:corporate-formal": "/previews/9bdd5069d7a1fcceca2d8afad7ed1e83.svg",
+        "family:dense-enterprise": "/previews/a284ce2d1f62037d288c490ce81868be.svg",
+        "family:editorial": "/previews/48f3b86c2528a949fc07302a4e7800f6.svg",
+        "family:elevated-material": "/previews/d75ea825122fda2859facb4269841576.svg",
+        "family:expressive": "/previews/26bef60437eb31375c359934633b269b.svg",
+        "family:glass": "/previews/845fede3e83c103594ae45022a6b3404.svg",
+        "family:luxury": "/previews/b827c585120a2d4ccee01c6f373c9d51.svg",
+        "family:outline-precise": "/previews/20d1ee3717288f931553fc22b84bb90e.svg",
+        "family:quiet": "/previews/d15ee00e9656fa7d44e55490a400d5b9.svg",
+        "family:soft": "/previews/d9ef204c94cff32ae13853fa0c92b9b0.svg",
+        "family:tonal-layered": "/previews/cc20cbac7919c4e32f5764224aa8a599.svg"
+      }
+    },
+    {
+      "id": "purpose:card.pricing",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "가격 카드",
+      "contexts": [
+        "landing",
+        "marketing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "landing",
+        "marketing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/027cd4d8c598049a0ec1533abc56ac9c.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/pricing",
+      "purpose": "요금제 하나를 이름·가격·기간·포함 기능·신청 버튼으로 보여 준다. 요금제 비교 줄에서 가격과 버튼 위치가 모든 카드에서 같은 줄에 맞는다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/f441cc7f3406a6cff04bb11465f91157.svg",
+        "family:corporate-formal": "/previews/a9bc305165b1c14035c079aec791d75f.svg",
+        "family:dense-enterprise": "/previews/602b994e8e6c1fcf2492a15b4d2e0bf1.svg",
+        "family:editorial": "/previews/11d707c12b6dc6fe751e2a773723646c.svg",
+        "family:elevated-material": "/previews/6f45995aba97e34b8341fd372a33e38c.svg",
+        "family:expressive": "/previews/4bf6565d308ad6ec3478d5ebd384edce.svg",
+        "family:glass": "/previews/83a8d752062ee558881c722224461d0d.svg",
+        "family:luxury": "/previews/5bc7965bb7972c08bf95dfb1203204a1.svg",
+        "family:outline-precise": "/previews/a3a8aff3487ac2d06f9656e3f539acef.svg",
+        "family:quiet": "/previews/30036efb458f7fe3d3ffe37ed51c105e.svg",
+        "family:soft": "/previews/930da3e8007b346998ae8aab03a75bad.svg",
+        "family:tonal-layered": "/previews/027cd4d8c598049a0ec1533abc56ac9c.svg"
+      }
+    },
+    {
+      "id": "purpose:card.product",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상품 카드",
+      "contexts": [
+        "listing",
+        "commerce"
+      ],
+      "tags": [
+        "card",
+        "listing",
+        "commerce"
+      ],
+      "previewUrl": "/previews/0879e9cda531e70f3b826cf1740a0dc1.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/product",
+      "purpose": "상품 한 개를 이미지 자리·이름·가격·평점·담기 동작으로 보여 준다. 목록 격자에서 이미지 비율과 가격 줄이 맞는다.",
+      "relatedCategories": [
+        "cards",
+        "commerce"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/1f3c2f9fb099b0fe9846ffd64f04e7f0.svg",
+        "family:corporate-formal": "/previews/1d69deac4d575ecbb3671ba73d167688.svg",
+        "family:dense-enterprise": "/previews/aaaf1c8f04db09583d1eb7992c801343.svg",
+        "family:editorial": "/previews/5ca20a7f3b3fd541115513414e796e7d.svg",
+        "family:elevated-material": "/previews/72ed480210bdb8764fb59c3cfd4f16ca.svg",
+        "family:expressive": "/previews/34ede4c10e1f831ab273c836b0553fa6.svg",
+        "family:glass": "/previews/0f4ccaacc143c83c412353f716c01167.svg",
+        "family:luxury": "/previews/fbb7686cb4714a4536d2cdf72142ebe6.svg",
+        "family:outline-precise": "/previews/772eb5afdaea1c4c25b1d28bb61aab21.svg",
+        "family:quiet": "/previews/f55639e8ce0e023b015f758b6fbd0631.svg",
+        "family:soft": "/previews/6d09fb7aee5115fd2bbf9ecc1231a290.svg",
+        "family:tonal-layered": "/previews/0879e9cda531e70f3b826cf1740a0dc1.svg"
+      }
+    },
+    {
+      "id": "purpose:card.profile",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "사용자 정보 카드",
+      "contexts": [
+        "dashboard",
+        "listing",
+        "settings"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "listing",
+        "settings"
+      ],
+      "previewUrl": "/previews/14a2a6528a92e2b5177b8b110d4127f8.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/profile",
+      "purpose": "사람 한 명을 아바타·이름·역할·상태·연락 동작으로 보여 준다. 팀 목록과 상세 사이드 패널에서 쓴다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/ddff9da8af78ff35d413d780d2a285a8.svg",
+        "family:corporate-formal": "/previews/f792b6be44cb84e7831527e3a30f79ec.svg",
+        "family:dense-enterprise": "/previews/acff989a781a16d9267a01f2e492a077.svg",
+        "family:editorial": "/previews/ef8c6f4212323ef3647109a94884a741.svg",
+        "family:elevated-material": "/previews/190e64b53e2e83ae9f96442c67d26dc4.svg",
+        "family:expressive": "/previews/9180462c0a492308d6d145a8eed3f866.svg",
+        "family:glass": "/previews/b71ef59f9a858adc24f2302bd6c0459c.svg",
+        "family:luxury": "/previews/6f7a1ef07690037d00de18e06ae7dd6c.svg",
+        "family:outline-precise": "/previews/80e7bd836b72852aaa0f84b9a13bfa41.svg",
+        "family:quiet": "/previews/14a2a6528a92e2b5177b8b110d4127f8.svg",
+        "family:soft": "/previews/5fe26002ecf656d50485f0b2a1acc545.svg",
+        "family:tonal-layered": "/previews/2a144577ff75580ee94f7efe183df6fb.svg"
+      }
+    },
+    {
+      "id": "purpose:card.status",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "상태 카드",
+      "contexts": [
+        "dashboard",
+        "data"
+      ],
+      "tags": [
+        "card",
+        "dashboard",
+        "data"
+      ],
+      "previewUrl": "/previews/0b6bec202bc3ef70a170e593cfe70c2c.svg",
+      "variantsCount": 2,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/card/status",
+      "purpose": "시스템·작업·결제 같은 대상의 상태를 아이콘·상태 글자·세부 내용·시각으로 보여 준다. 상태 대시보드 격자에서 쓴다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/2458dd0514b8aad936337ae5c5665eb0.svg",
+        "family:corporate-formal": "/previews/0b6bec202bc3ef70a170e593cfe70c2c.svg",
+        "family:dense-enterprise": "/previews/f3ce9f157cc43bff5d1f76db7902b32d.svg",
+        "family:editorial": "/previews/5126eae9bbaf415025c72134495e08a9.svg",
+        "family:elevated-material": "/previews/62a0f0bc5d43b049e7e7013156ab1c44.svg",
+        "family:expressive": "/previews/252a67a09df82db014d1be4208c5291f.svg",
+        "family:glass": "/previews/e3d0b2b622e099368cdcbe1f21828bd4.svg",
+        "family:luxury": "/previews/bd0e1bd48cbbd0b77374cded27df5fe5.svg",
+        "family:outline-precise": "/previews/9a0dd45e740b5e6f7bd55f7d13462043.svg",
+        "family:quiet": "/previews/9789e7e62bb31d74b25656322bb2dbcc.svg",
+        "family:soft": "/previews/d0d6ce1c887a5cf700040b3e8df9ff59.svg",
+        "family:tonal-layered": "/previews/e403bcd7a9dd3152ba1c00816aea088a.svg"
+      }
+    },
+    {
+      "id": "purpose:form.settings",
+      "kind": "purpose-family",
+      "category": "purpose-family",
+      "label": "설정 폼",
+      "contexts": [
+        "settings",
+        "dashboard"
+      ],
+      "tags": [
+        "form",
+        "settings",
+        "dashboard"
+      ],
+      "previewUrl": "/previews/12e6f9fb5ad471b65614186c389f9564.svg",
+      "variantsCount": 1,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/purpose/form/settings",
+      "purpose": "계정·알림 같은 설정을 구역별로 나눠 바꾼다. 구역 제목·설명이 왼쪽, 컨트롤이 오른쪽에 놓이는 행으로 읽히고 맨 아래에서 저장·취소한다.",
+      "relatedCategories": [
+        "cards",
+        "work-patterns"
+      ],
+      "previewUrlsByFamily": {
+        "family:bold": "/previews/70069a62667c54c071da984688024364.svg",
+        "family:corporate-formal": "/previews/e4246cc33a1248d64fa33587dfcd9dfa.svg",
+        "family:dense-enterprise": "/previews/20d645837bfea6e38608eeae3b3bb4f2.svg",
+        "family:editorial": "/previews/12e6f9fb5ad471b65614186c389f9564.svg",
+        "family:elevated-material": "/previews/cb38347fb4bfc38505dc9d3e24ac9771.svg",
+        "family:expressive": "/previews/820fff2e69c2ceb2e8be0f6254e60701.svg",
+        "family:glass": "/previews/d7f76b5649739b8c8918d97556099f2d.svg",
+        "family:luxury": "/previews/7c6b25335f905b7ca056088abc8083f0.svg",
+        "family:outline-precise": "/previews/ee826db6fc5d1b9fcd94a8bfd24fa1d1.svg",
+        "family:quiet": "/previews/6d3121eab93003e6e3f590bb265b6d92.svg",
+        "family:soft": "/previews/3b962b6b991ea30ec00a410b0027eade.svg",
+        "family:tonal-layered": "/previews/cd5460c44cf127c0b636cb75fb0af602.svg"
+      }
+    }
+  ]
+}

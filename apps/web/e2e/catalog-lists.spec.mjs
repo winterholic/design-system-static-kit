@@ -97,109 +97,68 @@ for (const list of LISTS) {
   });
 }
 
-// REQUEST §3.4: 초기 페이지에는 일반적으로 24개 이하의 카드만 둔다(DOM 에 있는 카드 수). 대규모 목록은 쪽 나눔·탭·가상화로 나눈다.
-test('Typography 목록의 미리보기 카드는 24개 이하다', async ({page}) => {
-  await page.goto('/materials/typography');
-  expect(await page.locator('[data-preview]').count()).toBeLessThanOrEqual(24);
-});
-
-// Components 는 부품 60여 개와 목적 패밀리 32개를 쪽(24개)으로 나눠 DOM 에 만든다. 검색·분류는 숨은 카드까지 전체 목록에서 찾는다.
-test('Components 목록의 미리보기 카드는 24개 이하다', async ({page}) => {
+// REQUEST §3.4: 카테고리 청크와 검색 결과 모두 첫 화면 DOM은 24개 이하만 둔다.
+test('Components 카테고리는 17개 탭을 제공하고 선택한 카테고리 청크만 로드한다', async ({page}) => {
   await page.goto('/components');
-  expect(await page.locator('[data-preview]').count()).toBeLessThanOrEqual(24);
-  expect(await page.locator('[data-testid="components-list"] li').count(), '카드(li) 전체도 24개 이하').toBeLessThanOrEqual(24);
-  expect(await page.locator('iframe').count()).toBe(0);
-  expect(await page.locator('[hidden] li, [role="tabpanel"][hidden]').count(), '탭으로 숨긴 카드가 없다').toBe(0);
-  const total = Number(await page.getByTestId('components-count').getAttribute('data-total'));
-  expect(total, '전체 카드 수는 쪽 분량보다 많다').toBeGreaterThan(24);
-});
-
-test('Components 쪽 이동: 모든 쪽이 24개 이하이고 쪽을 모두 모으면 전체 카드와 같다(중복·누락 없음)', async ({page}) => {
-  await page.goto('/components');
-  const total = Number(await page.getByTestId('components-count').getAttribute('data-total'));
-  const seen = [];
-  for (let n = 1; n < 20; n++) {
-    const hrefs = await page.locator('[data-testid="components-list"] li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
-    expect(hrefs.length).toBeLessThanOrEqual(24);
-    seen.push(...hrefs);
-    const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('link', {name: '다음'});
-    if ((await next.getAttribute('aria-disabled')) === 'true') break;
-    await next.click();
-    await expect(page).toHaveURL(new RegExp(`page=${n + 1}`));
-  }
-  expect(seen.length).toBe(total);
-  expect(new Set(seen).size, '같은 카드가 두 쪽에 나왔다').toBe(total);
-});
-
-test('Components 모든 쪽의 ID 집합은 공개 서비스 전체와 같고 누락·중복이 없으며 주소 복원이 유지된다', async ({page, request}) => {
-  const expected = await publicComponentHrefs(request);
-  expect(new Set(expected).size, '공개 서비스 자체에 중복 ID가 있다').toBe(expected.length);
-  const seen = [];
-  await request.post('/api/dev/perf-counters');
-  await page.goto('/components');
-  for (let n = 1; n <= Math.ceil(expected.length / 24); n++) {
-    if (n > 1) {
-      const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('link', {name: '다음'});
-      await next.click();
-      await expect(page).toHaveURL(new RegExp(`[?&]page=${n}(?:&|$)`));
-    }
-    const hrefs = await page.locator('[data-testid="components-list"] li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
-    expect(hrefs.length, `쪽 ${n} 카드 수`).toBeLessThanOrEqual(24);
-    expect(await page.locator('[data-testid="components-list"] li').count(), `쪽 ${n} 전체 카드 노드 수`).toBeLessThanOrEqual(24);
-    expect(await page.locator('iframe').count(), `쪽 ${n} 목록 iframe`).toBe(0);
-    expect(await page.locator('[data-testid="components-list"] [hidden] li, [data-testid="components-list"] [role="tabpanel"][hidden]').count(), `쪽 ${n} 숨겨진 카드`).toBe(0);
-    seen.push(...hrefs);
-  }
-  expect(seen.length).toBe(expected.length);
-  expect(new Set(seen).size, '쪽 사이에 중복 카드가 있다').toBe(expected.length);
-  expect([...seen].sort(), '쪽 순회 결과와 공개 서비스 ID 집합이 다르다').toEqual([...expected].sort());
-
-  // 공유한 쪽 주소를 새로 열어도 같은 페이지의 ID 순서를 복원한다.
-  await page.goto('/components?page=2');
-  const restored = await page.locator('[data-testid="components-list"] li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
-  expect(restored).toEqual(seen.slice(24, 48));
-
-  const countersAfterPages = await counters(request);
-  expect(countersAfterPages.counters, '쪽 이동 중 동적 컴파일').toMatchObject({compileBlueprint: 0, assembleDesign: 0, assembleComponents: 0, total: 0});
+  await expect(page.locator('[data-testid="components-list"]')).not.toHaveAttribute('aria-busy', 'true');
+  expect(await page.getByRole('tab').count()).toBe(17);
+  expect(await page.locator('[data-testid="components-list"] li').count()).toBeLessThanOrEqual(24);
   expect(await page.locator('iframe').count()).toBe(0);
   expect(await page.locator('[hidden] li, [role="tabpanel"][hidden]').count()).toBe(0);
 
-  const nextPagePart = seen.slice(24).find(href => href === '/components/hero');
-  expect(nextPagePart, '다음 쪽에서 검색할 hero 상세 경로가 공개 서비스 집합에 있어야 한다').toBe('/components/hero');
-  await page.getByRole('searchbox', {name: '검색'}).fill('hero');
-  await page.getByRole('button', {name: '찾기'}).click();
-  await expect(page).toHaveURL(/[?&]q=hero/);
-  await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
-  await page.goto('/components/hero');
-  await expect(page.getByRole('heading', {level: 1})).toContainText('히어로');
-
-  const purposeHref = expected.find(href => href.startsWith('/components/purpose/'));
-  expect(purposeHref).toBeTruthy();
-  await page.goto(purposeHref);
-  await expect(page.getByRole('heading', {level: 1})).toBeVisible();
+  const chunkRequests = [];
+  page.on('request', request => { if (request.url().includes('/catalog-chunks/')) chunkRequests.push(new URL(request.url()).pathname); });
+  await page.getByRole('tab', {name: /모바일/}).click();
+  await expect(page).toHaveURL(/[?&]category=mobile/);
+  await expect(page.locator('[data-testid="components-list"]')).not.toHaveAttribute('aria-busy', 'true');
+  expect(chunkRequests).toEqual(['/catalog-chunks/mobile-1.json']);
+  expect(await page.locator('[data-testid="components-list"] li').count()).toBeLessThanOrEqual(24);
+  expect(await page.locator('[hidden] li, [role="tabpanel"][hidden]').count()).toBe(0);
 });
 
-test('Components 검색은 첫 쪽에 없는 카드도 찾고, 분류 필터와 쪽 번호가 URL 에 남는다', async ({page}) => {
-  await page.goto('/components');
-  expect(await page.locator('a[href="/components/hero"]').count(), '첫 쪽에는 hero 가 없다').toBe(0);
+test('Components 전체 검색, 카테고리, 페이지 URL이 직접 접근과 뒤로 가기에서 복원된다', async ({page}) => {
+  await page.goto('/components?category=mobile');
+  await expect(page.getByRole('tab', {name: /모바일/})).toHaveAttribute('aria-selected', 'true');
   await page.getByRole('searchbox', {name: '검색'}).fill('hero');
-  await page.getByRole('button', {name: '찾기'}).click();
-  await expect(page).toHaveURL(/[?&]q=hero/);
+  await page.getByRole('button', {name: '검색', exact: true}).click();
+  await expect(page).toHaveURL(/[?&]category=mobile.*[?&]q=hero|[?&]q=hero.*[?&]category=mobile/);
   await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
   expect(await page.locator('[data-testid="components-list"] li').count()).toBeLessThanOrEqual(24);
-  // 같은 주소로 다시 열어도(새로고침·공유 링크) 같은 결과
-  await page.goto('/components?q=hero');
-  await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
-  await expect(page.getByRole('searchbox', {name: '검색'})).toHaveValue('hero');
-  // 분류
-  await page.goto('/components?group=purpose%3Acard');
-  const cards = page.locator('[data-testid="purpose-families"] li[data-purpose]');
-  expect(await cards.count()).toBeGreaterThan(0);
-  expect(await page.locator('[data-testid="components-list"] li').count()).toBe(await cards.count());
-  // 결과가 없으면 안내와 초기화
-  await page.goto('/components?q=%EC%97%86%EB%8A%94%EB%A7%90zzzz');
-  await expect(page.getByText('조건에 맞는 컴포넌트가 없습니다.')).toBeVisible();
-  await expect(page.getByTestId('components-count')).toHaveAttribute('data-total', '0');
+  expect(await page.locator('[data-testid="components-list"] [data-preview="dynamic"]').count()).toBe(0);
+  await page.goBack();
+  await expect(page).toHaveURL(/[?&]category=mobile/);
+  await expect(page.getByRole('tab', {name: /모바일/})).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('searchbox', {name: '검색'})).toHaveValue('');
+
+  await page.goto('/components?category=all&page=2');
+  await expect(page.locator('[data-testid="components-list"] li')).toHaveCount(24);
+  await expect(page.locator('[data-testid="components-list"]')).not.toHaveAttribute('aria-busy', 'true');
+});
+
+test('Components 시각 패밀리 전환은 사전 생성된 정적 렌더를 바꾼다', async ({page}) => {
+  await page.goto('/components?category=navigation');
+  await expect(page.locator('[data-testid="components-list"]')).not.toHaveAttribute('aria-busy', 'true');
+  const image = page.locator('a[href="/components/purpose/navigation/bottom"] [data-preview="static"] img');
+  await expect(image).toBeVisible();
+  const before = await image.getAttribute('src');
+  await page.getByRole('combobox', {name: '시각 패밀리'}).selectOption('family:elevated-material');
+  await expect(page).toHaveURL(/[?&]family=family%3Aelevated-material/);
+  await expect(page.locator('[data-testid="components-list"]')).not.toHaveAttribute('aria-busy', 'true');
+  const after = await page.locator('[data-preview="static"] img').first().getAttribute('src');
+  expect(after).not.toBe(before);
+  expect(await page.locator('[data-preview="dynamic"]').count()).toBe(0);
+  expect(await page.locator('iframe').count()).toBe(0);
+});
+
+test('Components 카테고리 탭은 390px에서 가로 스크롤이 가능하다', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto('/components');
+  const dimensions = await page.locator('[aria-label="카테고리"]').evaluate(el => ({width: el.clientWidth, content: el.scrollWidth}));
+  expect(dimensions.width).toBeGreaterThan(0);
+  expect(dimensions.width).toBeLessThanOrEqual(390);
+  expect(dimensions.content).toBeGreaterThan(dimensions.width);
+  await page.getByRole('tab', {name: /모바일/}).scrollIntoViewIfNeeded();
+  await expect(page.getByRole('tab', {name: /모바일/})).toBeInViewport();
 });
 
 test('Explore 첫 화면 카드는 24개 이하이고 쪽 이동으로 나머지를 본다', async ({page}) => {

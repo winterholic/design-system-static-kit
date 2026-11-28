@@ -5,8 +5,8 @@
     "totalTasks": 45,
     "byStatus": {
       "Verified": 16,
-      "Implemented": 6,
-      "Pending": 20,
+      "Implemented": 7,
+      "Pending": 19,
       "In Progress": 2,
       "Completed": 1
     },
@@ -1164,24 +1164,75 @@
       "taskId": "TASK-TRF-01",
       "title": "컴포넌트 카탈로그 카테고리 탭 및 24개 카드 청크 로딩 UI",
       "goal": "긴 단일 페이지 스크롤 제거, 17개 카테고리 탭 도입 및 초기 24개 카드 청크 렌더링",
-      "scope": "apps/web/app/components/page.tsx, apps/web/features/components/CategoryTabs.tsx",
+      "scope": "apps/web/app/components/page.tsx, apps/web/features/components/{CategoryTabs.tsx,CatalogList.tsx,catalog-model.mjs,catalog-model.unit.mjs,components.module.css}, scripts/build-catalog-index.mjs, site/catalog-index.json, site/catalog-chunks/*.json, site/search-index.json, apps/web/e2e/catalog-lists.spec.mjs, docs/dev/catalog-platform-upgrade/{CONTRACTS.md,TASK-LEDGER.json}, site/previews/**",
       "track": "Track F",
       "dependencies": [
         "TASK-TRA-03",
         "TASK-TRD-01"
       ],
       "modifiedFiles": [
-        "apps/web/app/components/page.tsx"
+        "apps/web/app/components/page.tsx",
+        "apps/web/features/components/CategoryTabs.tsx",
+        "apps/web/features/components/CatalogList.tsx",
+        "apps/web/features/components/catalog-model.mjs",
+        "apps/web/features/components/catalog-model.unit.mjs",
+        "apps/web/features/components/components.module.css",
+        "scripts/build-catalog-index.mjs",
+        "site/catalog-index.json",
+        "site/catalog-chunks/*.json",
+        "site/search-index.json",
+        "apps/web/e2e/catalog-lists.spec.mjs",
+        "docs/dev/catalog-platform-upgrade/CONTRACTS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "site/previews/**",
+        "apps/web/features/components/catalog-index.server.ts"
       ],
-      "completionCriteria": "카테고리 탭 전환 속도 200ms 이내, 숨겨진 탭 DOM 미생성, 검색 필터 정상 연동",
+      "completionCriteria": "17개 카테고리(전체 포함)·전역 검색, 레지스트리/Manifest 자동 분류, 활성 카테고리·검색 페이지 24개 이하 카드, 정적 사전 생성 렌더·변형/상태/목적/관련 카테고리, URL 뒤로가기 복원, 모바일 접근성, 목록 iframe·컴파일 0, 생성물·coverage 일치 검증",
       "tests": [
-        "npm run web:test"
+        "apps/web/features/components/catalog-model.unit.mjs",
+        "apps/web/e2e/catalog-lists.spec.mjs",
+        "npm run web:build",
+        "npm run coverage:materials:check",
+        "node scripts/check-generated.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null,
+      "status": "Implemented",
+      "unresolvedIssues": "apps/web/e2e/catalog-lists.spec.mjs는 Codex 명령 환경에서 browser_preflight.py가 Mach 등록 및 LaunchServices/CoreServices lookup을 blocked로 반환(exit 78)해 실행하지 않았다. 지정한 Ttakkari 브라우저로 /components 카테고리 청크·390px 탭 스크롤·전역 hero 검색·정적 패밀리 미리보기 URL·뒤로 가기 복원을 수동 확인했다. 비브라우저 경계 9/9, 앱 단위 84/84, 모델 시험 4/4, web:build, coverage MATCH, check-generated 통과.",
       "createFiles": [
         "apps/web/features/components/CategoryTabs.tsx"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "scripts/build-catalog-index.mjs",
+          "owner": "Track A",
+          "reason": "Track F 카테고리 분류·전체 검색 경량 인덱스·24개 페이지별 청크 및 실제 컴파일 결과 기반 시각 패밀리 미리보기 사전 생성 연결"
+        },
+        {
+          "file": "apps/web/e2e/catalog-lists.spec.mjs",
+          "owner": "Track G",
+          "reason": "17개 탭, URL 복원, 등록 재료 검색, 24개/iframe/숨김 DOM/컴파일 성능 계약 검증"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/CONTRACTS.md",
+          "owner": "Track G",
+          "reason": "LightCatalogIndex에 관련 카테고리·목적·상세 URL·사전 생성 패밀리 미리보기와 페이지 청크 필드를 명세"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "owner": "Track G",
+          "reason": "Track F 작업의 구체 범위·교차 파일 허가·검증 상태를 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "owner": "Track G",
+          "reason": "생성기 기준으로 변경된 /components 카탈로그 표면 증거를 Manifest에 재계산"
+        },
+        {
+          "file": "site/previews/**, site/catalog-index.json, site/catalog-chunks/**, site/search-index.json",
+          "owner": "소유자 없음(생성물)",
+          "reason": "scripts/build.mjs와 scripts/build-catalog-index.mjs가 사전 생성하는 실제 Core 렌더 및 목록/search 인덱스 갱신. 2.1.x·2.4.x 레거시/고정 출력과 site/v1은 변경하지 않음"
+        }
       ]
     },
     {

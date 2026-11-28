@@ -1,0 +1,683 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "category": "all",
+  "label": "전체",
+  "itemCount": 438,
+  "page": 3,
+  "pages": 19,
+  "materials": [
+    {
+      "id": "component:menu",
+      "kind": "component",
+      "category": "content",
+      "label": "메뉴판",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/871dbe3e5ca58448103a405572958cef.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/menu",
+      "purpose": "메뉴판를 화면 구성에 사용합니다.",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:links",
+      "kind": "component",
+      "category": "nav",
+      "label": "링크 목록",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/5f55e2a2a8fbdb30af0037075ed140e6.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/links",
+      "purpose": "링크 목록를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:divider",
+      "kind": "component",
+      "category": "content",
+      "label": "구분선",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/7fb375a19e62f57e6f1ebf52434525fe.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/divider",
+      "purpose": "구분선를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "information"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:pricing",
+      "kind": "component",
+      "category": "content",
+      "label": "요금제",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/e61f8957b4f575a65f9f5f0f9cd6c35e.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/pricing",
+      "purpose": "요금제를 화면 구성에 사용합니다.",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:plan",
+      "kind": "component",
+      "category": "content",
+      "label": "요금제 항목",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/plan",
+      "purpose": "요금제 항목를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "cards"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:toc",
+      "kind": "component",
+      "category": "nav",
+      "label": "목차(자동)",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/86ab2a5692d61b689883c9c1ec025de0.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal",
+      "url": "/components/toc",
+      "purpose": "목차(자동)를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:select-control",
+      "kind": "component",
+      "category": "form",
+      "label": "선택 상자",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "form",
+        "select-control",
+        "forbidden:multiple + async",
+        "forbidden:disabled + loading",
+        "forbidden:disabled + error",
+        "unsupported:virtualized options",
+        "unsupported:tag creation",
+        "unsupported:select-all"
+      ],
+      "previewUrl": "/previews/df42609681a2c7b82315d1b6de598489.svg",
+      "variantsCount": 6,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/select-control",
+      "purpose": "선택 상자를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:data-table",
+      "kind": "component",
+      "category": "data",
+      "label": "데이터 표",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "data",
+        "data-table",
+        "layout:table-content-1",
+        "unsupported:pagination",
+        "unsupported:virtual scrolling",
+        "unsupported:column resizing",
+        "unsupported:editable cells",
+        "unsupported:server sorting"
+      ],
+      "previewUrl": "/previews/cbb66df898e37719c8be3b2d192d38d8.svg",
+      "variantsCount": 5,
+      "statesCount": 5,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/data-table",
+      "purpose": "데이터 표를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "data"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:button-control",
+      "kind": "component",
+      "category": "form",
+      "label": "Button",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:behavior+content",
+        "state:state",
+        "context:tone",
+        "forbidden:BTN_LOADING_NO_SLOT",
+        "forbidden:BTN_LINK_ICON_ONLY",
+        "forbidden:BTN_LINK_SHAPE",
+        "forbidden:BTN_PRESSED_ACTION",
+        "forbidden:BTN_TOGGLE_LOADING",
+        "forbidden:BTN_TOGGLE_LINK",
+        "forbidden:BTN_DISABLED_TONE",
+        "forbidden:BTN_DANGER_LINK",
+        "unsupported:split button",
+        "unsupported:button group",
+        "unsupported:anchor navigation (use link nodes)"
+      ],
+      "previewUrl": "/previews/766b12ae027715b068c0dc162aea9e2e.svg",
+      "variantsCount": 7,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/button-control",
+      "purpose": "Button를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:input-control",
+      "kind": "component",
+      "category": "form",
+      "label": "Input",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:kind+affix",
+        "state:state",
+        "forbidden:INPUT_UNDERLINE_SHAPE",
+        "forbidden:INPUT_MULTILINE_PILL",
+        "forbidden:INPUT_MULTILINE_COMPACT",
+        "forbidden:INPUT_MULTILINE_AFFIX",
+        "forbidden:INPUT_PASSWORD_READONLY",
+        "forbidden:INPUT_SEARCH_READONLY",
+        "forbidden:INPUT_SEARCH_AFFIX",
+        "unsupported:masked input",
+        "unsupported:input groups with attached buttons",
+        "unsupported:tag input"
+      ],
+      "previewUrl": "/previews/017cbb52082f045bcbb7163353a4961f.svg",
+      "variantsCount": 6,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/input-control",
+      "purpose": "Input를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "inputs"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:card-surface",
+      "kind": "component",
+      "category": "content",
+      "label": "Card",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:behavior+media+footer",
+        "state:state",
+        "forbidden:CARD_SELECTED_NOT_SELECTABLE",
+        "forbidden:CARD_FLAT_SELECTABLE",
+        "forbidden:CARD_FLAT_SHAPE",
+        "forbidden:CARD_NESTED_INTERACTIVE",
+        "forbidden:CARD_INERT_ACTIONS",
+        "forbidden:CARD_DISABLED_STATIC",
+        "forbidden:CARD_START_COMPACT",
+        "unsupported:drag handle",
+        "unsupported:expandable body",
+        "unsupported:image media (icon tile only)"
+      ],
+      "previewUrl": "/previews/3e6283fbaf5ac606532978664e832892.svg",
+      "variantsCount": 7,
+      "statesCount": 8,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/card-surface",
+      "purpose": "Card를 화면 구성에 사용합니다.",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:navigation-menu",
+      "kind": "component",
+      "category": "nav",
+      "label": "Navigation",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:orientation+overflow+submenu+icons",
+        "state:state",
+        "forbidden:NAV_UNDERLINE_SHAPE",
+        "forbidden:NAV_VERTICAL_OVERFLOW",
+        "forbidden:NAV_SCROLL_SUBMENU",
+        "forbidden:NAV_OPEN_WITHOUT_COLLAPSE",
+        "forbidden:NAV_BLOCK_SCROLL",
+        "unsupported:mega menu panels",
+        "unsupported:nested submenus deeper than one level",
+        "unsupported:breadcrumb (use component:breadcrumb)"
+      ],
+      "previewUrl": "/previews/f45fbcf6b3f8ceb40016138aaf0728b6.svg",
+      "variantsCount": 8,
+      "statesCount": 7,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/navigation-menu",
+      "purpose": "Navigation를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "navigation"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:modal-dialog",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Modal",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:MODAL_NESTED",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:role+placement+footer",
+        "state:state",
+        "forbidden:MODAL_ALERT_NO_ACTIONS",
+        "forbidden:MODAL_STATE_NO_FOOTER",
+        "forbidden:MODAL_SHEET_SIZE",
+        "unsupported:modal inside modal",
+        "unsupported:non-modal (popover) dialogs",
+        "unsupported:free-form HTML body (typed text and input slots only)",
+        "unsupported:side drawer"
+      ],
+      "previewUrl": "/previews/511070c0db7162e0170fc1fab004a1e1.svg",
+      "variantsCount": 7,
+      "statesCount": 5,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/modal-dialog",
+      "purpose": "Modal를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:tabs-control",
+      "kind": "component",
+      "category": "layout",
+      "label": "Tabs",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:orientation+activation+overflow+icons",
+        "state:state",
+        "forbidden:TABS_UNDERLINE_SHAPE",
+        "forbidden:TABS_SEGMENTED_VERTICAL",
+        "forbidden:TABS_SEGMENTED_SCROLL",
+        "forbidden:TABS_VERTICAL_SCROLL",
+        "unsupported:closable tabs",
+        "unsupported:draggable reordering",
+        "unsupported:lazy panel fetch (app injects aria-busy)"
+      ],
+      "previewUrl": "/previews/705f523f8ad59ca332152cbda83d3e14.svg",
+      "variantsCount": 8,
+      "statesCount": 8,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/tabs-control",
+      "purpose": "Tabs를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "layouts"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:tooltip",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Tooltip",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:TOOLTIP_INTERACTIVE",
+        "forbidden:TOOLTIP_DISABLED_TRIGGER",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:trigger+purpose+placement+delay",
+        "state:state",
+        "forbidden:TOOLTIP_NAME_TEXT_TRIGGER",
+        "forbidden:TOOLTIP_NAME_DELAY",
+        "unsupported:interactive content (links, buttons, forms)",
+        "unsupported:rich HTML",
+        "unsupported:tooltip on non-focusable or disabled elements",
+        "unsupported:click-to-open popover (use a dialog or disclosure)"
+      ],
+      "previewUrl": "/previews/559ae5b5d55a29d374b840447b9ea3e8.svg",
+      "variantsCount": 8,
+      "statesCount": 4,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/tooltip",
+      "purpose": "Tooltip를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "component:feedback-message",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Feedback",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:placement+dismiss+action+autoDismiss",
+        "state:state",
+        "context:tone",
+        "forbidden:FB_PLAIN_TOAST",
+        "forbidden:FB_BANNER_PILL",
+        "forbidden:FB_TOAST_DANGER_TIMED",
+        "forbidden:FB_TOAST_ACTION_TIMED",
+        "forbidden:FB_TOAST_STUCK",
+        "forbidden:FB_TIMED_NOT_TOAST",
+        "forbidden:FB_PENDING_DISMISS",
+        "forbidden:FB_PENDING_TONE",
+        "forbidden:FB_PENDING_TIMED",
+        "forbidden:FB_DISMISSED_UNREACHABLE",
+        "unsupported:toast queue and stacking manager",
+        "unsupported:swipe to dismiss",
+        "unsupported:progress percentage (use progress)"
+      ],
+      "previewUrl": "/previews/fcd8062ca08558dcd4c5949594e30f38.svg",
+      "variantsCount": 9,
+      "statesCount": 6,
+      "qualityStatus": "verified",
+      "license": "MIT",
+      "url": "/components/feedback-message",
+      "purpose": "Feedback를 화면 구성에 사용합니다.",
+      "relatedCategories": [
+        "feedback"
+      ],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:academic",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "아카데믹",
+      "contexts": [
+        "article",
+        "docs"
+      ],
+      "tags": [
+        "read",
+        "shell-editorial",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "아카데믹",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:atelier",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "아틀리에",
+      "contexts": [
+        "community",
+        "landing",
+        "listing"
+      ],
+      "tags": [
+        "life",
+        "shell-topbar",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "아틀리에",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:aurora",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "오로라",
+      "contexts": [
+        "landing",
+        "pricing",
+        "dashboard"
+      ],
+      "tags": [
+        "work",
+        "shell-topbar",
+        "mode-dark"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "오로라",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:bank",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "뱅크",
+      "contexts": [
+        "dashboard",
+        "data",
+        "form",
+        "settings"
+      ],
+      "tags": [
+        "institution",
+        "shell-topbar",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "뱅크",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:beauty",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "뷰티",
+      "contexts": [
+        "commerce",
+        "landing",
+        "portfolio"
+      ],
+      "tags": [
+        "life",
+        "shell-centered",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "뷰티",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:botanical",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "보태니컬",
+      "contexts": [
+        "commerce",
+        "landing",
+        "blog"
+      ],
+      "tags": [
+        "life",
+        "shell-topbar",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "보태니컬",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:brutalist",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "브루탈",
+      "contexts": [
+        "landing",
+        "portfolio",
+        "blog"
+      ],
+      "tags": [
+        "brand",
+        "shell-topbar",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "브루탈",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    },
+    {
+      "id": "style-context:cafe",
+      "kind": "style-context",
+      "category": "style-context",
+      "label": "카페",
+      "contexts": [
+        "commerce",
+        "landing",
+        "listing"
+      ],
+      "tags": [
+        "life",
+        "shell-topbar",
+        "mode-light"
+      ],
+      "previewUrl": null,
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "verified",
+      "license": "internal",
+      "url": "/materials/styles",
+      "purpose": "카페",
+      "relatedCategories": [],
+      "previewUrlsByFamily": {}
+    }
+  ]
+}
