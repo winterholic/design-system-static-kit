@@ -129,8 +129,8 @@ test('materials: listMaterials, getMaterial, the platform queries, recommend and
 test('purpose-family records are discoverable and recommendable through the service, REST and MCP', async () => {
   const listed = listPlatformMaterials({kind: 'purpose-family', limit: 100, fields: ['label', 'contexts', 'source', 'reuses']});
   assert.equal(listed.ok, true);
-  assert.equal(listed.value.total, 32);
-  assert.equal(listed.value.items.length, 32);
+  assert.equal(listed.value.total, 37);
+  assert.equal(listed.value.items.length, 37);
   assert.ok(listed.value.items.every(x => x.id.startsWith('purpose:')));
   const summary = listPlatformMaterials({kind: 'purpose-family', limit: 100});
   assert.ok(summary.value.items.every(x => x.purpose && x.group && x.bases.length));
@@ -166,7 +166,7 @@ test('purpose-family records are discoverable and recommendable through the serv
   assert.equal(json(await mcp('get_platform_material', {id})), json(detail));
   assert.equal(json(await mcp('recommend_materials', {kind: 'purpose-family', context: 'dashboard', density: 'comfortable', styleContext: 'style-context:workspace'})), json(recommendation));
   assert.equal(json(await mcp('check_compatibility', {ids: compatibilityIds})), json(compatibility));
-  assert.equal(ids.length, 32);
+  assert.equal(ids.length, 37);
 });
 
 test('user seed proposals and purpose-family assembly keep Core, REST and MCP byte-identical', async () => {

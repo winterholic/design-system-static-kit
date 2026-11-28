@@ -5,6 +5,7 @@
 import {createPlatform} from '../../src/platform/index.mjs';
 import {PURPOSE_FAMILIES, assembleFamilies, PURPOSE_GROUPS, checkPurposeCombination, getPurposeFamily} from '../../src/platform/families/index.mjs';
 import {buttonRuntime} from '../../src/materials/button.mjs';
+import {ACTION_RUNTIME} from '../../src/platform/families/action.mjs';
 import {inputRuntime} from '../../src/materials/input.mjs';
 import {cardRuntime} from '../../src/materials/card.mjs';
 import {navigationRuntime} from '../../src/materials/navigation.mjs';
@@ -44,7 +45,7 @@ export const RUNTIME_SCRIPT = `<script>${[buttonRuntime, inputRuntime, cardRunti
 const wire = (sel, fn) => document.querySelectorAll(sel).forEach(el => { try { fn(el); } catch (e) { el.dataset.wireError = e.message; } });
 wire('[data-ctl=button]', attachButton); wire('[data-ctl=input]', attachInput); wire('[data-ctl=card]', attachCard); wire('[data-ctl=navigation]', attachNavigation);
 wire('[data-ctl=tabs]', attachTabs); wire('[data-ctl=modal]', attachModal); wire('[data-ctl=feedback]', attachFeedback); wire('.kit-data-table', attachTable); wire('.kit-select', attachSelect);
-</script>`;
+</script><script>${ACTION_RUNTIME}</script>`;
 
 export function groupScenarios(group) {
   const densities = ['comfortable', 'compact', 'spacious'];

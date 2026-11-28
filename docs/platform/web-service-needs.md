@@ -15,7 +15,7 @@ W6-b 화면이 Core 서비스 진입점(`@winterholic/design-system-static-kit/s
 ## 현재 웹/Core 경계
 
 - 웹은 `@winterholic/design-system-static-kit/service` 공개 진입점의 `assembleDesign`, `assembleComponents`, `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `proposeSubtokenSets`를 사용한다. `platformReady()`는 필요한 공개 함수가 모두 있는지 확인한다.
-- Components는 `listPlatformMaterials({kind: "purpose-family", limit: 200})`와 `listPlatformMaterials({kind: "family", limit: 200})`를 분리 호출한다. 요약 레코드의 목적 패밀리 32개는 `getPlatformMaterial({id})`로 상세 조회하며, 네 시각 패밀리는 별도 비교 목록으로 표시한다.
+- Components는 `listPlatformMaterials({kind: "purpose-family", limit: 200})`와 `listPlatformMaterials({kind: "family", limit: 200})`를 분리 호출한다. 요약 레코드의 목적 패밀리 37개(2026-11-28 §6.2 A 계열 5종 추가, 이전 32개)는 `getPlatformMaterial({id})`로 상세 조회하며, 네 시각 패밀리는 별도 비교 목록으로 표시한다.
 - `assembleComponents`가 목적 패밀리의 HTML·CSS·script·manifest·standalone을 만든다. 웹의 렌더 경로는 요청을 Core에 전달하고 응답 조각을 그대로 반환한다.
 - `proposeSubtokenSets({seeds})`가 사용자 hex 후보·거부 이유·light/dark 토큰 값을 제공한다. 입력은 요청 동안만 사용한다. Materials는 Core 제안을 시각 비교하고 선택 결과를 Studio로 넘긴다.
 - `assembleDesign` 기본 응답은 선택 출력 조각을 생략할 수 있으므로 웹 어댑터는 `include`에 필요한 항목을 명시해 standalone·html·css·manifest를 요청한다.

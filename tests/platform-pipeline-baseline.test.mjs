@@ -86,7 +86,7 @@ test('the committed baseline carries the platform section, and it beats the lega
   assert.ok(pf.distinct.facePairs > legacy.distinctEffectiveFacePairs, `${pf.distinct.facePairs} face pairs vs ${legacy.distinctEffectiveFacePairs}`);
   assert.ok(pf.distinct.families >= 1);
   assert.equal(pf.registered.family, 4, 'registered.family counts visual families only');
-  assert.equal(pf.registered.purposeFamily, 32, 'purpose-family registrations are a separate count');
+  assert.equal(pf.registered.purposeFamily, 37, 'purpose-family registrations are a separate count');
   assert.equal(pf.distinct.families, 4, 'distinct.families retains its visual-family meaning');
   assert.deepEqual(pf.distinct.purposeFamilies, {
     verified: 4,

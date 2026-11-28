@@ -659,20 +659,30 @@ $ git diff c269ad506 -- site/v1 docs/evidence/context/legacy-hashes.json   (diff
 
 ### 10.5 기존 시험 변경(공개)
 - `tests/platform-pipeline-contract.test.mjs`: 계약 버전 단언 0.8.0.
-- `tests/platform-service-channels.test.mjs`: work-dashboard 채널 해시 `a729…` → `0972…`. 계약 버전을 0.7.0으로 되돌리면 기존 해시로 통과해(12/12) 차이가 `manifest.platformContract` 문자열뿐임을 확인했다.
+- `tests/platform-service-channels.test.mjs`: work-dashboard 채널 해시 `a729…` → `0972…`. 아래 §10.7 독립 재현에서 차이는 `manifest.platformContract`만이 아님을 확인했다. CSS의 계약 버전 주석과 그에 종속된 `fingerprint.output`, `manifest.platform.contract`도 바뀐다.
 
 ### 10.6 실행 증거
 ```sh
 $ node --test tests/layout-quality.test.mjs
 ℹ tests 25 / ℹ pass 25 / ℹ fail 0
 $ npm run coverage:materials:check
-MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1353 materials, 337 requirements)
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1386 materials, 337 requirements)
 $ npm run verify                       (EXIT=0)
-ℹ tests 822 / ℹ pass 822 / ℹ fail 0
+ℹ tests 841 / ℹ pass 841 / ℹ fail 0
 REPRODUCIBLE: 3404 generated files match a fresh build byte for byte.
 ```
 Manifest 레이아웃 요구: `{"total":24,"missing":0,"direct":24}`. 24종 모두 `renderable`(`blockedBy: not-in-web-catalog`), REST·MCP 조회 가능, 품질 verified(유효한 시험 참조).
 미실행: `apps/web` Playwright e2e와 typecheck(Track F 영역, 이번 변경은 `src/`·문서·스크립트). 웹 카탈로그·Studio 노출은 구현하지 않았다(Track F).
+
+### 10.7 독립 검증 재현 (2026-11-28, `upgrade/e3-verify`)
+- 기준: 검증 시작 시 `origin/main` `eb4da1408`. §9.2의 이름·순서 24개와 `layout:*` 24개가 일치한다. 컴파일러는 필수·허용 콘텐츠를 `validateFills`에서 거부 규칙으로 적용하고, 슬롯 선언 순서대로 DOM을 만들며, `flow`와 항목 수를 CSS 규칙으로 출력한다. 테스트에서 필수 누락·허용되지 않은 콘텐츠·순서·폭별 flow cap 변경을 확인했다.
+- `measurements.json`: 정상·stress 각각 24×8폭이며 48개 표본 전부 현재 `layoutFingerprint`와 일치. 기록된 전체 폭에서 문서/본문 overflow, 이탈 요소, 겹침은 0. 쌍별 최소 거리 2의 `documentation-layout` / `media-hero`는 1024px에서 내비·목차·본문 2열과 미디어→카피→액션 1열, 1440px에서 문서의 3영역 배치와 미디어 히어로의 좌우 분할로 실제 배치가 다르다. 슬롯 이름 차이만으로 거리가 생긴 쌍이 아니다.
+- `two-column.png`(768px)와 `split-hero.png`(1024px)를 열어 해당 대표 폭 배치가 기록된 표본과 맞는지 확인했다. 브라우저 재실측은 요청 지시에 따라 미실행이다. 기존 `measurements.json`의 기록을 코드 지문 및 화면 캡처와 대조했다.
+- 쌍별 지표 시험은 데이터에서 계산한 서명을 비교하고, 컴파일 출력 변경 시 fingerprint 일치 시험이 실패한다. `src/layout.mjs`의 grid cap을 임시로 고정한 RED 주입에서 3개 시험이 실패했고, 원복 후 `node --test tests/layout-quality.test.mjs` 25/25 통과.
+- 기본 work-dashboard 요청을 0.7.0/0.8.0으로 각각 실행해 JSON을 재귀 비교했다. SHA-256은 `a72907b8…` / `0972f0e2…`; 차이 경로는 각 후보의 `fingerprint.output`, `value.css`(CSS 안의 `platform 0.7.0`/`0.8.0` 주석), `value.manifest.platform.contract`, `value.manifest.platformContract`다. 이에 따라 “`manifest.platformContract` 문자열뿐”이라는 구현자 주장은 정정했다.
+- **판정(2026-11-28 사용자 확인):** 위 차이는 2.7.0 opt-in 개발 버전의 계약 상승에 따라 생기는 정상 출력이다. 고정 대상(legacy-hashes 2.1.0, 기본 2.4.0, `site/v1`)은 변하지 않았고, 확인된 결함은 구현자의 차이 주장뿐이다. §10.5와 이 절에서 이를 바로잡았으며 별도 코드 수정은 필요하지 않다.
+- 고정 출력 해시 및 `site/v1`, `legacy-hashes.json` 비교는 변경 0건; 전체 2.4.0 기본·2.1.0 legacy 검증은 `npm run verify`에서 통과했다.
+- 실행 증거: `npm run coverage:materials:check` → `MANIFEST MATCH … (1386 materials, 337 requirements)`; `node --test tests/platform-service-channels.test.mjs` → 12/12 통과; `npm run verify` → 841/841 통과, `REPRODUCIBLE: 3404 generated files match a fresh build byte for byte.`
 
 ## 11. TASK-TRA-01~03 미리보기 사전 생성·목록 iframe 제거·캐시 독립 검증 (원 커밋 `90ac06060`, 브랜치 `upgrade/a1-preview`, 2026-11-28)
 
@@ -737,20 +747,24 @@ Cache-Control: public, max-age=31536000, immutable ; cache-control: private, no-
 
 ## 12. Track C main 통합 재검증 (2026-11-28)
 
-최신 `origin/main` `29ac798d6a0d0c9133c648c333ea19b7cd5e970a`를 C1 통합 브랜치에 일반 merge했다. 충돌난 TASK-LEDGER는 main의 다른 트랙 기록을 유지하고 TRC-01/02는 Verified로 보존했다. MATERIAL-COVERAGE는 생성 스크립트로 병합 기준에서 재생성했다. 서비스 채널 시험은 2.7 구현 고정 해시 대신 같은 입력 반복 출력의 결정성을 검사한다.
+최신 `origin/main` `af22b580d010fafa67059d1453535b9884b1cfc6`를 C1 통합 브랜치에 일반 merge했다. TASK-LEDGER는 C1 두 건만 Verified로 반영하고 나머지 42개 task 기록은 최신 main과 일치시켰다. TRE-02와 TRE-03은 Verified다. MATERIAL-COVERAGE와 사전 생성 카탈로그·미리보기는 병합 후 생성기로 다시 만들었다.
 
-### 12.1 호환성과 실행 증거
+29ac 기준 첫 전체 검증에서는 예전 사전 생성 인덱스(타이포 14개)와 현재 레지스트리(41개)가 달라 실패했다. 최신 af22 병합 후 `npm run build`로 인덱스·미리보기를 갱신했고, 미리보기 바이트 일치와 레지스트리 수량 시험이 통과했다.
+
+### 12.1 실행 증거 및 호환성
 
 ```sh
-$ node --test tests/composition.test.mjs tests/typography-refine.test.mjs tests/expression-2-5.test.mjs tests/color-tokens.test.mjs tests/chart-presets.test.mjs
-ℹ tests 72 / ℹ pass 72 / ℹ fail 0
 $ npm run coverage:materials:check
-MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1389 materials, 337 requirements)
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1418 materials, 337 requirements)
+$ node --test tests/platform-type-systems-diff.test.mjs tests/platform-type-hangul.test.mjs tests/platform-type-evidence.test.mjs tests/platform-service-channels.test.mjs tests/composition.test.mjs tests/typography-refine.test.mjs tests/expression-2-5.test.mjs tests/color-tokens.test.mjs tests/chart-presets.test.mjs
+ℹ tests 99 / ℹ pass 99 / ℹ fail 0
+$ node --test tests/platform-pregenerate.test.mjs
+ℹ tests 8 / ℹ pass 8 / ℹ fail 0
 $ npm run verify
-ℹ tests 875 / ℹ pass 875 / ℹ fail 0
-REPRODUCIBLE: 3792 generated files match a fresh build byte for byte.
+ℹ tests 919 / ℹ pass 919 / ℹ fail 0
+REPRODUCIBLE: 3800 generated files match a fresh build byte for byte.
+$ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json
+(exit 0, no diff)
 ```
 
-최초 전체 검증은 A1 사전 생성 산출물이 41개 타이포 시스템 대신 14개만 담고 있어 실패했다(서비스 출력 바이트 불일치 포함). `npm run build`로 카탈로그 인덱스·미리보기를 재생성한 뒤 `node --test tests/platform-pregenerate.test.mjs`가 8/8 통과했고 최종 전체 검증도 통과했다.
-
-2.1.0은 저장된 전체 컴파일 출력이 `legacy-hashes.json`의 SHA-256과 일치한다. 2.4.0은 85개 템플릿 및 15개 수기 사례 출력이 `legacy-2-4-hashes.json`과 일치하며, 신규 Blueprint의 기본 버전은 2.4.0이다. `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 최신 main 대비 바이트 변경이 없다.
+2.1.0 저장 입력 전체의 컴파일 출력 해시는 `legacy-hashes.json`과 일치한다. 2.4.0의 85개 템플릿 및 15개 수기 사례 컴파일 해시는 고정 기준과 일치하고, 새 Blueprint의 기본 버전도 2.4.0이다.

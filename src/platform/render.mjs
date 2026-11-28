@@ -22,6 +22,7 @@ import {bindType, typeRoleCSS} from './type.mjs';
 import {familyShapeVars, contrastPairs, requiredVars} from './family.mjs';
 import {axisIds, materialAxisIds} from './axes.mjs';
 import {styleMaterialsCSS, styleMaterialAttrs} from './style-materials.mjs';
+import {actionRuntimeFor} from './families/action.mjs';
 import {renderState} from './data/states.mjs';
 import {typeErrorCode} from './pipeline.mjs';
 import {getPurposeFamily, renderPurposeFamily, VISUAL_LANGUAGES} from './families/index.mjs';
@@ -226,7 +227,7 @@ export function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   ].join('\n') + '\n' : '';
   const css = legacyCss + platformCss + '\n' + purposeCss + styleMaterialsCSS(reg, style, usedStateIds) + '\n';
   // 목적 패밀리가 쓴 기반 컴포넌트의 런타임도 낸다(트리에는 표지 노드뿐이라 쓰인 부품 type을 더해 같은 함수로 고른다).
-  const script = formRuntime + controlRuntime({...b, tree: {type: 'page', children: [...b.tree.children, ...[...usedBases].sort().map(x => ({type: x.slice('base-component:'.length)}))]}});
+  const script = formRuntime + controlRuntime({...b, tree: {type: 'page', children: [...b.tree.children, ...[...usedBases].sort().map(x => ({type: x.slice('base-component:'.length)}))]}}) + actionRuntimeFor(usedPurposes.map(p => p.id));
 
   const defined = new Set([...css.matchAll(/(--[A-Za-z0-9-]+):/g)].map(x => x[1]));
   const missing = requiredVars(css).filter(v => !defined.has(v));

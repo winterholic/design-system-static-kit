@@ -1,5 +1,5 @@
 /**
- * 목적 패밀리 32종의 접근성 계약(`a11y.role`·`a11y.keyboard`·`a11y.conditions`)을 렌더 마크업과 대조한다(재료 검증 F1).
+ * 목적 패밀리 37종의 접근성 계약(`a11y.role`·`a11y.keyboard`·`a11y.conditions`)을 렌더 마크업과 대조한다(재료 검증 F1).
  *
  * 계약 문구는 산문이라 조건마다 마크업 단언을 `SPEC`에 적는다. 이 시험은 세 가지를 본다.
  *   1 대응: 계약의 조건 문구와 `SPEC`의 키가 일대일이다. 계약이 바뀌면 단언이 없는 조건이 시험을 깨뜨린다. 마크업으로 볼 수 없는 조건(크기·대비·산문)은
@@ -106,7 +106,7 @@ const tabOrder = dom => dom.all.filter(tabbable).map(el => accName(dom, el));
 // ---------------------------------------------------------------------------------------------
 // 모든 렌더가 지켜야 하는 불변식
 // ---------------------------------------------------------------------------------------------
-const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none']);
+const ARIA_ROLES = new Set(['alert', 'alertdialog', 'article', 'banner', 'button', 'checkbox', 'combobox', 'complementary', 'dialog', 'group', 'img', 'link', 'list', 'listbox', 'listitem', 'menu', 'menuitem', 'navigation', 'option', 'progressbar', 'region', 'search', 'status', 'tab', 'tablist', 'tabpanel', 'toolbar', 'table', 'row', 'cell', 'columnheader', 'rowheader', 'grid', 'presentation', 'none']);
 const REF_ATTRS = ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-activedescendant', 'aria-owns'];
 const BOOL = new Set(['true', 'false']);
 const NEEDS_LABEL_INPUT = el => el.tag === 'input' && !['hidden', 'submit', 'button', 'reset'].includes(el.attrs.type);
@@ -310,6 +310,51 @@ const SPEC = {
     },
     extra: d => { const g = one(d, '[role=group]'); ok(g.attrs['aria-label'] === '보기 방식', '그룹 role=group + aria-label'); },
   },
+  'purpose:button.split': {
+    role: d => { one(d, '[role=group]'); one(d, 'button[aria-haspopup=menu]'); },
+    keyboard: d => assert.deepEqual(tabOrder(d), ['내보내기', '내보내기 형식 선택'], '주 버튼 → 화살표 버튼(메뉴 항목은 roving focus라 Tab 정지가 아니다)'),
+    checks: {
+      'aria-haspopup=menu와 aria-expanded': d => { const t = one(d, 'button[aria-haspopup=menu]'); ok(t.attrs['aria-expanded'] === 'false' && d.byId.get(t.attrs['aria-controls'])?.attrs.role === 'menu', '닫힌 상태의 화살표 버튼이 메뉴를 제어한다'); ok(count(d, 'button[aria-haspopup=menu]') === 1, '주 버튼은 메뉴를 열지 않는다'); },
+      '접근 가능한 이름': d => { ok(accName(d, one(d, 'button[aria-haspopup=menu]')) === '내보내기 형식 선택', '화살표 버튼 이름'); const r = render('purpose:button.split', QUIET, {content: {menuLabel: undefined}}); ok(r.ok && accName(r.dom, one(r.dom, 'button[aria-haspopup=menu]')) === '내보내기 옵션', '이름을 주지 않아도 라벨에서 정한다'); },
+      '메뉴는 role=menu': d => { const m = one(d, '[role=menu]'); ok(has(m, 'hidden') && m.attrs['aria-label'] && query(d, '[role=menuitem]', m).length === 3 && query(d, '[role=menuitem]', m).every(i => i.attrs.tabindex === '-1'), '숨겨진 메뉴와 roving 항목'); },
+    },
+  },
+  'purpose:button.menu': {
+    role: d => one(d, 'button[aria-haspopup=menu]'),
+    keyboard: d => assert.deepEqual(tabOrder(d), ['더 보기'], '트리거 하나'),
+    checks: {
+      '트리거는 aria-haspopup': d => { const t = one(d, 'button[aria-haspopup=menu]'); ok(t.attrs['aria-expanded'] === 'false' && has(d.byId.get(t.attrs['aria-controls']), 'hidden'), '닫힌 트리거는 숨은 메뉴를 제어한다'); },
+      '메뉴는 role=menu': d => { const m = one(d, '[role=menu]'); ok(m.attrs['aria-label'] === '더 보기' && query(d, '[role=menuitem]', m).length === 3, '이름 있는 메뉴와 항목 3개'); },
+      '포커스는 트리거로': OFF('browser'),
+    },
+  },
+  'purpose:button.fab': {
+    role: d => one(d, 'button'),
+    keyboard: d => assert.deepEqual(tabOrder(d), ['새 작업 추가']),
+    checks: {
+      '접근 가능한 이름': d => { ok(accName(d, one(d, 'button')) === '새 작업 추가', '아이콘만 있는 FAB의 이름'); const e = render('purpose:button.fab', QUIET, {variant: {extended: 'extended'}}); ok(e.ok && accName(e.dom, one(e.dom, 'button')) === '새 작업 추가' && count(e.dom, '.kit-ctl-label') === 1, '확장형은 보이는 라벨이 이름'); },
+      '원형 터치 영역': OFF('browser'),
+      '그림자는 장식': OFF('browser'),
+    },
+  },
+  'purpose:button.copy': {
+    role: d => one(d, 'button[data-copy-text]'),
+    keyboard: d => assert.deepEqual(tabOrder(d), ['링크 복사']),
+    checks: {
+      '복사 결과는 role=status': d => { const b = one(d, 'button[data-copy-text]'); ok(b.attrs['data-copied-label'] === '링크를 복사했습니다.' && count(d, '[role=status][aria-live=polite]') === 1, '복사 결과를 읽어 주는 status'); },
+      '접근 가능한 이름': d => { const r = render('purpose:button.copy', QUIET, {variant: {display: 'icon-only'}}); ok(r.ok && accName(r.dom, one(r.dom, 'button')) === '링크 복사', '아이콘만 있는 복사 버튼의 이름'); },
+      '복사할 값은': d => ok(!accName(d, one(d, 'button')).includes('https://'), '값은 이름에 없다(data 속성에만 있다)'),
+    },
+  },
+  'purpose:button.close': {
+    role: d => { one(d, 'button[data-action-dismiss]'); one(d, '[data-dismissible]'); },
+    keyboard: d => assert.deepEqual(tabOrder(d), ['공지 닫기']),
+    checks: {
+      '아이콘만 있으므로': d => { const b = one(d, 'button[data-action-dismiss]'); ok(accName(d, b) === '공지 닫기', '이름'); const r = render('purpose:button.close', QUIET, {content: {ariaLabel: undefined}}); ok(r.ok && accName(r.dom, one(r.dom, 'button')) === '닫기', '이름을 주지 않으면 닫기'); },
+      '닫힌 뒤': d => ok(has(one(d, '[data-dismissible]'), 'hidden') === false && /\[data-dismissible\]\[hidden\]\{display:none\}|\.pf-dismissible\[hidden\]\{display:none\}/.test(family('purpose:button.close').css), '숨김은 hidden 속성이고 CSS가 hidden을 이긴다'),
+      '터치 영역 44px': OFF('browser'),
+    },
+  },
   'purpose:navigation.sidebar': {
     role: d => { one(d, 'aside'); one(d, 'aside nav'); },
     keyboard: d => { const order = tabOrder(d); assert.deepEqual(order, ['디자인 키트', '메뉴', '개요', '프로젝트', '팀', '리포트', '설정', '도움말'], '브랜드 → 열기 → 링크'); ok(one(d, 'summary').tag === 'summary', '열기 버튼은 네이티브 summary(Enter·Space)'); },
@@ -491,8 +536,8 @@ const KEYS = family => Object.keys(SPEC[family.id].checks);
 /** 조건 문구에 키가 들어 있는가. */
 const conditionOf = (family, key) => family.a11y.conditions.filter(c => c.includes(key));
 
-test('every contract condition of the 32 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
-  assert.equal(PURPOSE_FAMILIES.length, 32);
+test('every contract condition of the 37 purpose families has exactly one SPEC entry, and every entry names a real condition', () => {
+  assert.equal(PURPOSE_FAMILIES.length, 37);
   assert.deepEqual(Object.keys(SPEC).sort(), [...PURPOSE_FAMILY_IDS].sort(), 'SPEC covers exactly the registered families');
   for (const f of PURPOSE_FAMILIES) {
     const spec = SPEC[f.id];

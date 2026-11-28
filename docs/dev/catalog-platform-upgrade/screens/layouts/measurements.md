@@ -18,19 +18,19 @@
 | double-sidebar | 0 | 0 | xs→sm→md→lg | 이동 3 · 이동 3 · 이동 3 | 4 | 1440px |
 | editorial-layout | 0 | 0 | xs→sm→md→lg | 이동 6 · 이동 6 · 이동 3 | 4 | 1440px |
 | equal-grid | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 1 · 같음 | 3 | 1024px |
-| form-layout | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 4 · 이동 4 | 4 | 1024px |
+| form-layout | 0 | 0 | xs→sm→md→lg | 이동 2 · 이동 4 · 이동 4 | 4 | 1024px |
 | kpi-strip | 0 | 0 | xs→sm→md→lg | 이동 1 · 같음 · 이동 2 | 3 | 1024px |
 | masonry | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 1 · 이동 1 | 4 | 1024px |
 | master-detail | 0 | 0 | xs→sm→md→lg | 이동 3 · 이동 3 · 이동 2 | 4 | 768px |
-| media-hero | 0 | 0 | xs→sm→md→lg | 같음 · 같음 · 이동 3 | 2 | 1024px |
-| mobile-stack | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 3 · 이동 3 | 4 | 1024px |
-| multi-step-form | 0 | 0 | xs→sm→md→lg | 같음 · 이동 3 · 이동 1 | 3 | 1024px |
+| media-hero | 0 | 0 | xs→sm→md→lg | 이동 1 · 같음 · 이동 3 | 3 | 1024px |
+| mobile-stack | 0 | 0 | xs→sm→md→lg | 이동 2 · 이동 3 · 이동 3 | 4 | 1024px |
+| multi-step-form | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 3 · 이동 1 | 4 | 1024px |
 | product-detail-layout | 0 | 0 | xs→sm→md→lg | 이동 3 · 이동 4 · 이동 4 | 4 | 1024px |
-| settings-layout | 0 | 0 | xs→sm→md→lg | 같음 · 이동 4 · 이동 4 | 3 | 1024px |
+| settings-layout | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 4 · 이동 4 | 4 | 1024px |
 | sidebar-main | 0 | 0 | xs→sm→md→lg | 이동 2 · 이동 2 · 같음 | 3 | 768px |
 | single-column | 0 | 0 | xs→sm→md→lg | 이동 3 · 이동 3 · 이동 3 | 4 | 1440px |
 | split-hero | 0 | 0 | xs→sm→md→lg | 이동 3 · 이동 3 · 이동 3 | 4 | 1024px |
-| sticky-action-layout | 0 | 0 | xs→sm→md→lg | 같음 · 이동 3 · 이동 2 | 3 | 1024px |
+| sticky-action-layout | 0 | 0 | xs→sm→md→lg | 이동 1 · 이동 3 · 이동 2 | 4 | 1024px |
 | three-column | 0 | 0 | xs→sm→md→lg | 이동 2 · 이동 3 · 이동 3 | 4 | 1024px |
 | two-column | 0 | 0 | xs→sm→md→lg | 이동 2 · 같음 · 이동 2 | 3 | 768px |
 
@@ -38,10 +38,10 @@
 
 | 레이아웃 A | 레이아웃 B | 다른 폭 |
 |---|---|---|
-| documentation-layout | media-hero | 2 (1024·1440) |
 | multi-step-form | settings-layout | 2 (1024·1440) |
-| single-column | split-hero | 2 (1024·1440) |
+| documentation-layout | media-hero | 3 (768·1024·1440) |
 | equal-grid | kpi-strip | 3 (320·768·1440) |
+| single-column | split-hero | 3 (768·1024·1440) |
 | sticky-action-layout | three-column | 3 (768·1024·1440) |
 | asymmetric-grid | bento | 4 (320·768·1024·1440) |
 | asymmetric-grid | centered-hero | 4 (320·768·1024·1440) |

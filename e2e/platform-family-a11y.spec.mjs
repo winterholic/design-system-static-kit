@@ -4,7 +4,7 @@ import {PURPOSE_FAMILIES} from '../src/platform/families/index.mjs';
 
 // 목적 패밀리 접근성 계약의 브라우저 쪽(재료 검증 F1). 마크업의 role·aria·라벨 연결은 tests/platform-family-a11y.test.mjs가 본다.
 // 이 파일은 마크업만으로 볼 수 없는 것을 본다.
-//  1) 32개 전부: 키보드 Tab 순서가 계약 순서와 같고 화면에서 읽히는 순서(위→아래, 왼쪽→오른쪽)와 같으며, 모든 Tab 정지에 포커스 표시가 있다.
+//  1) 37개 전부: 키보드 Tab 순서가 계약 순서와 같고 화면에서 읽히는 순서(위→아래, 왼쪽→오른쪽)와 같으며, 모든 Tab 정지에 포커스 표시가 있다.
 //  2) 계약에 적힌 크기 조건(터치 44px·56px·24px, 같은 줄 컨트롤 높이, 전체 폭 버튼)이 실제 레이아웃에서 지켜진다. 390·1280.
 //  3) 상호작용 패밀리의 키보드 조작과 상태 전이: 탭, 대화상자, 콤보박스, 메뉴 토글, 비밀번호 보기, 정렬, 닫기.
 // 패밀리 이름이 이 파일에 있어야 한다: 노드 시험이 "브라우저에서 본다"고 적은 조건의 확인 위치로 이 파일을 읽는다.
@@ -88,7 +88,7 @@ async function walkTab(page) {
   return {expected, seen};
 }
 
-test.describe('keyboard order of all 32 purpose families', () => {
+test.describe('keyboard order of all 37 purpose families', () => {
   for (const f of PURPOSE_FAMILIES) {
     for (const width of [1280, 390]) {
       test(`${f.id} at ${width}px: Tab visits every stop once in DOM order, in the order the eye reads, and each stop shows a focus indicator`, async ({page}) => {
@@ -473,6 +473,39 @@ test.describe('keyboard interaction and state transitions', () => {
     await expect(busy).toBeFocused();
     await expect(busy).toHaveAttribute('aria-busy', 'true');
     await expect(page.locator('[role=status]').filter({hasText: '처리 중'}).first()).toBeAttached();
+  });
+
+  test('purpose:button.split and purpose:button.menu: ArrowDown opens the menu, arrows and Home/End move, Escape closes and focus returns to the trigger', async ({page}) => {
+    for (const id of ['purpose:button.menu', 'purpose:button.split']) for (const width of [1280, 390]) {
+      await open(page, withExample(id), {width});
+      const trigger = page.locator('button[aria-haspopup=menu]');
+      await trigger.focus();
+      await page.keyboard.press('ArrowDown');
+      await expect(trigger, `${id}@${width}`).toHaveAttribute('aria-expanded', 'true');
+      const items = page.locator('[role=menuitem]');
+      await expect(items.first()).toBeFocused();
+      await page.keyboard.press('End');
+      await expect(items.last()).toBeFocused();
+      await page.keyboard.press('Home');
+      await expect(items.first()).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(trigger).toBeFocused();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.locator('[role=menu]')).toBeHidden();
+    }
+  });
+
+  test('purpose:button.fab is a 56px round target and purpose:button.close a 44px one, and the close button removes its box', async ({page}) => {
+    for (const width of [1280, 390]) {
+      await open(page, withExample('purpose:button.fab'), {width});
+      const fab = await page.locator('.pf-fab button').boundingBox();
+      expect(Math.min(fab.width, fab.height), `fab @${width}`).toBeGreaterThanOrEqual(56);
+      await open(page, withExample('purpose:button.close'), {width});
+      const close = await page.locator('button[data-action-dismiss]').boundingBox();
+      expect(Math.min(close.width, close.height), `close @${width}`).toBeGreaterThanOrEqual(44);
+      await page.locator('button[data-action-dismiss]').click();
+      await expect(page.locator('[data-dismissible]')).toBeHidden();
+    }
   });
 
   test('purpose:table.business, purpose:table.analytic and purpose:table.dense: header sort buttons work from the keyboard and aria-sort follows, one column at a time', async ({page}) => {
