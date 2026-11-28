@@ -472,3 +472,18 @@ glow 그림자는 쓰지 않았다. 밝은 모드에서 X05가 금지한다(`P_R
 - `--pf-unused-glow` 변수를 한 패밀리에 넣음 → Criterion 2b 실패(`emitted by familyShapeVars but no output CSS reads them`), 되돌리면 통과.
 - corporate-formal의 traits를 quiet 복사본으로 바꿈 → Criterion 3 실패(`only 3 differing values`), 되돌리면 통과.
 - expressive에 `glow` 사용 → `platform-color-sets` 시험이 `P_REL_FORBIDS`로 실패, `lifted`로 되돌려 통과.
+
+### 7.8 실행 증거(최신 `origin/main` `4d0f8cdbd` 위로 rebase한 뒤)
+```sh
+$ npm run verify                        (EXIT=0)
+ℹ tests 805 / ℹ pass 805 / ℹ fail 0
+REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1329 materials, 337 requirements)
+$ jq '[.requirements[]|select(.id|startswith("req:fam"))]|{total:length, verified:([.[]|select(.status=="verified")]|length)}' MATERIAL-COVERAGE.json
+{"total":12,"verified":12}
+$ node scripts/families/differentiation.mjs --min 12
+pairs=66 minDistinctProps=17 (soft×elevated-material) minCells=428
+```
+고정 출력: `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `origin/main`과 diff가 없다. `check-generated`가 재빌드 바이트 일치를 확인했다.
+미실행: `apps/web` Playwright e2e와 `typecheck`(Track F 영역, 이번 변경은 `src/`와 문서·스크립트). Vercel 배포 확인.
