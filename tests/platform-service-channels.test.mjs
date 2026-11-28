@@ -42,6 +42,19 @@ test('assemble: the service, POST /api/v1/assemble and the assemble_design tool 
   }
 });
 
+test('mobile composite patterns return byte-identical Core, REST and MCP outputs including dialog runtime', async () => {
+  const family = (await import('../src/platform/families/index.mjs')).getPurposeFamily('purpose:mobile.action-sheet');
+  const request = {context: 'dashboard', items: [{purpose: family.id, visual: 'family:quiet', variant: family.example.variant, props: family.example.props, content: family.example.content, id: 'mobile-action-sheet'}]};
+  const viaCore = assembleComponents(request);
+  assert.equal(viaCore.ok, true, JSON.stringify(viaCore.errors));
+  assert.match(viaCore.value.script, /__kitMobileDialog/);
+  const viaRest = await rest('POST', '/api/v1/platform/assemble-components', {body: request});
+  const viaMcp = await mcp('assemble_components', request);
+  assert.equal(viaRest.status, 200);
+  assert.equal(viaRest.text, json(viaCore));
+  assert.equal(json(viaMcp), json(viaCore));
+});
+
 test('assemble: the default work dashboard returns matching three-candidate results through REST and MCP', async () => {
   const request = {purpose: 'work-dashboard', content: {title: '업무 현황', kpis: [{label: '완료', value: '7'}, {label: '남음', value: '3'}, {label: '대기', value: '2'}], table: {title: '일정', columns: ['업무', '담당'], rows: [['문서', '운영']]}}};
   const viaMcp = await mcp('assemble_design', request);

@@ -5069,7 +5069,17 @@
       "tests": [],
       "commit": null,
       "status": "Pending",
-      "unresolvedIssues": null
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {"file": "src/service/platform-components.mjs", "owner": "Track A", "reason": "모바일 overlay 네이티브 dialog 여닫기 런타임을 공용 assembleComponents 출력에 연결"},
+        {"file": "src/platform/render.mjs", "owner": "Track A", "reason": "모바일 dialog 런타임을 Blueprint 컴파일 출력에도 연결"},
+        {"file": "scripts/generate-material-coverage.mjs", "owner": "Track G", "reason": "O 요구 10행의 direct·variant 매핑 근거를 레지스트리 재료에 연결"},
+        {"file": "e2e/platform-mobile-patterns.spec.mjs", "owner": "Track G", "reason": "요청된 390px·1280px 모바일 동작 E2E를 추가"},
+        {"file": "tests/platform-service-channels.test.mjs", "owner": "Track G", "reason": "모바일 패턴 서비스·REST·MCP 동등성 대조 추가"},
+        {"file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json", "owner": "Track G", "reason": "O 10행 실측 출력·상태·coverage 증거 재생성"},
+        {"file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md", "owner": "Track G", "reason": "최신 실행 결과와 브라우저 실행 한계를 기록"},
+        {"file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json", "owner": "Track G", "reason": "작업 파일·시험·상태와 교차 트랙 허가를 기록"}
+      ]
     },
     {
       "taskId": "TASK-TRG-PERF-01",

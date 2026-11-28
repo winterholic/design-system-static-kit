@@ -740,6 +740,21 @@ for (const f of PURPOSE_FAMILIES) if (!SPEC[f.id]) {
   };
 }
 
+// §6.2 O composite mobile patterns: ARIA structure is read here; native dialog and viewport geometry are measured in mobile E2E.
+for (const family of PURPOSE_FAMILIES.filter(item => item.id.startsWith('purpose:mobile.'))) {
+  const checks = Object.fromEntries(family.a11y.conditions.map(condition => [condition,
+    condition.includes('이름과 설명') ? dom => { const dialog = one(dom, 'dialog[aria-labelledby][aria-describedby]'); ok(dom.byId.has(dialog.attrs['aria-labelledby']) && dom.byId.has(dialog.attrs['aria-describedby']), 'named dialog has both linked title and description'); }
+      : condition.includes('accessible name') ? dom => { const button = one(dom, '[data-mobile-cell][aria-label]'); ok(button.attrs['aria-label'].includes(family.example.content.title) && button.attrs['aria-label'].includes(family.example.content.actionLabel), 'list button name includes row title and action'); }
+        : OFF('browser')]));
+  SPEC[family.id] = {
+    role: dom => family.id.includes('action-sheet') || family.id.includes('full-screen-dialog') || family.id.includes('filter-panel') ? one(dom, 'dialog')
+      : family.id.includes('list-cell') ? one(dom, '[data-mobile-cell]')
+        : family.id.includes('sticky-action') ? one(dom, 'aside[aria-label]') : one(dom, 'section[aria-label]'),
+    keyboard: dom => { for (const control of query(dom, 'button,input')) ok(accName(dom, control).length > 0, 'native mobile control has an accessible name'); },
+    checks,
+  };
+}
+
 // §6.2 B/C/D: markup assertions use the same family conditions; dimensions and focus rings are measured in browser e2e.
 for (const family of PURPOSE_FAMILIES.filter(item => item.id.startsWith('purpose:form.') && !['search', 'auth', 'settings', 'filter', 'group'].includes(item.id.slice('purpose:form.'.length)))) {
   SPEC[family.id] = {
