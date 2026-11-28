@@ -178,7 +178,7 @@ export const buttonLoading = definePurposeFamily({
   pairs: [['--kit-onAction', '--kit-action', 4.5, 'loading label']],
   parents: PARENTS, example: {variant: {phase: 'compare', tier: 'primary'}, props: {size: 'medium'}, content: {label: '결제하기', loadingLabel: '결제 중'}},
   render(ctx) { return renderButtonLoading(ctx); },
-  css: `.pf-actions[data-phase] .kit-ctl-button{min-inline-size:max(9em,calc(var(--kit-inset) * 2 + 6em))}.pf-actions[data-phase=compare]{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr}.pf-actions[data-phase=compare] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}`,
+  css: `.pf-actions[data-phase] .kit-ctl-button{min-inline-size:max(9em,calc(var(--kit-inset) * 2 + 6em))}.pf-actions[data-phase=compare]{display:inline-grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}.pf-actions[data-phase=compare] :is(.kit-ctl-button-host,.kit-ctl-button){width:100%}`,
 });
 export function renderButtonLoading(ctx) {
   const {content: c, variant: v} = ctx, size = sizeOf(ctx);
@@ -345,7 +345,7 @@ export function renderButtonClose(ctx) {
   const role = ctx.visual.recipe.tertiary === 'link' ? 'secondary' : 'tertiary';
   const btn = withButtonAttrs(ctx.button(role, {props: {size, state: p.state, content: 'icon-only'}, content: {icon: 'x', ariaLabel: name}}), 'data-action-dismiss');
   if (v.layout === 'standalone' || !c.message) return `<div class="pf-actions" role="group" aria-label="${e(name)}">${btn}</div>`;
-  return `<div class="pf-dismissible" data-dismissible><p>${e(c.message)}</p>${btn}</div>`;
+  return `<div class="pf-dismissible" data-dismissible><p data-layout-role="desc">${e(c.message)}</p>${btn}</div>`;
 }
 
 export const BUTTON_FAMILIES = Object.freeze([buttonPrimary, buttonSecondary, buttonEmphasis, buttonDestructive, buttonIcon, buttonLoading, buttonToggle, buttonSplit, buttonMenu, buttonFab, buttonCopy, buttonClose]);

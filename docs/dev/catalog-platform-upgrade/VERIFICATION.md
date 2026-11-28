@@ -769,6 +769,8 @@ $ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context
 
 2.1.0 저장 입력 전체의 컴파일 출력 해시는 `legacy-hashes.json`과 일치한다. 2.4.0의 85개 템플릿 및 15개 수기 사례 컴파일 해시는 고정 기준과 일치하고, 새 Blueprint의 기본 버전도 2.4.0이다.
 
+---
+
 ## 13. A3 및 A1 잔여 기준 독립 재검증 (2026-11-28, `upgrade/a3-verify`)
 
 검증 대상은 원격 `main`의 A3 커밋 `7f9c24fca6dd295bd672739d85ae25999fe2dde1`와 후속 `7c1bd947cdc11c30b00e938a4f19589c903f9677`, `382b667bea37bd23901ecefb8a96f3484d2e0531`을 포함한다. 최신 upstream을 병합한 검증 HEAD는 `e4c4baad4469d4230f463683ff94fb406cece4a4`이며, 두 후속 main 커밋은 A3 앱 페이지를 바꾸지 않았다. 실제 구성·증거 오류를 다음과 같이 교정했다.
@@ -838,3 +840,52 @@ $ git diff --exit-code c19b79c4b HEAD -- site/v1 docs/evidence/context/legacy-ha
 ```
 
 미실행: `npm run perf`의 Chromium 기반 390/1280 LCP 재측정, Playwright 목록/Studio 브라우저 시험, 브라우저 안의 window hook 값 직접 읽기. 승인된 MCP 브라우저로 페이지 상태 일부는 확인했으나 window 전역과 네트워크 왕복을 계측할 수 없었다. 390/1280 A3 전후표의 140→172ms / 124→164ms는 저장된 과거 기록일 뿐, 원 SHA가 없어 이번에 재현·대조하지 못했다. 사유는 위 Chromium sandbox 실행 오류. Vercel 성능 측정은 H 단계 소유라 수행하지 않았다.
+
+---
+
+## 14. 시각 패밀리 브라우저 E2E 전체 복구 및 검증 (2026-11-28)
+
+시각 패밀리 12종 확장(`039ec6171`) 및 C1 타이포그래피 통합 이후 발생한 브라우저 E2E 실패들을 원인부터 분석·수정하여, 최신 `origin/main` 기반에서 루트 브라우저 E2E(292개) 및 웹 E2E, 패밀리 차별화 하네스를 전수 통과시켰다.
+
+### 14.1 결함 원인 및 수정 내용
+
+1. **시간 초과 및 병렬화 최적화 (`platform-families.spec.mjs:12`)**:
+   - 패밀리 12종 확장(624개 측정 조합)으로 인해 직렬 브라우저 측정 시 600초(10분) 시간 초과 발생.
+   - `scripts/families/measure.mjs`의 `measureAll`에 작업 슬롯 기반 병렬 워커 풀(`defaultConcurrency`)을 도입하여 원래 측정 순서와 무결성을 보존하면서 전체 실행 시간을 1.6분 내외로 단축.
+2. **모바일 소제목 및 캡션/배지/카운트 `SMALL_TEXT` 해결**:
+   - C1 트랙에서 40종 타이포그래피 시스템이 머지되면서 27개 스케일에서 `sub: [15, 17]`, `caption: [11, 11]`이 적용됨.
+   - `layoutProbe`는 H2/H3 태그를 heading(하한 16px)으로, value/chip/label을 12px 하한으로 엄격하게 검증하여 수백 건의 `SMALL_TEXT` 오류 발생.
+   - `src/platform/families/card.mjs`, `feedback.mjs`, `table.mjs`, `form.mjs`, `navigation.mjs`에서 카드/폼/표/피드백 소제목 H2/H3에 `max(16px, var(--kit-t-sub))`를 보장하고, `.pf-chip`, `.pf-rating`, `.pf-badge`, `.pf-count`, `.pf-bottom .kit-ctl-nav-link`에 `max(12px, var(--kit-t-caption))`를 적용하여 어떤 타이포 시스템이 선택되더라도 레이아웃 품질 불변식을 충족하도록 수정.
+3. **로딩 버튼 compare 그리드 컬럼 비대칭 (`button.loading`)**:
+   - `family:luxury`에서 대기 버튼과 로딩 버튼의 너비가 5.1px 차이나 `대기·로딩 버튼 폭 차` 실패 발생.
+   - CSS Grid의 `grid-auto-columns: 1fr`이 기본적으로 `minmax(auto, 1fr)`로 작동하여 버튼 내부 콘텐츠 크기 차이로 트랙이 비대칭이 되던 원인을 확인하고, `grid-auto-columns: minmax(0, 1fr)`로 명시하여 두 버튼 폭이 136px로 완벽히 일치하도록 수정.
+4. **닫기 배너 설명문 `BODY_NARROW_COLUMN` 오판정 (`button.close`)**:
+   - `button.close`의 `pf-dismissible > p` 배너 알림 문구에 역할이 지정되지 않아 긴 문장이 `body`로 오판정되어 컬럼 너비 오류가 발생함. `<p data-layout-role="desc">`를 명시하여 짧은 설명문 역할을 확립.
+5. **차트 프리셋 360px 모바일 `SMALL_TEXT` (`layout-quality.spec.mjs:105`)**:
+   - `chart-presets-evidence.mjs`에서 360px 뷰포트 시 body 24px 패딩으로 인해 SVG 렌더 폭이 264px로 줄어들어 13px 글자가 9.5px(< 10px)로 축소되던 문제를 `@media(max-width:640px){body{padding:16px}}`를 적용해 280px 폭(10.1px)을 확보하여 해결.
+6. **페이지네이션 레이스 컨디션 (`e2e/combos.spec.mjs:29`)**:
+   - 다음 쪽 버튼 클릭 후 비동기 DOM 갱신 대기 없이 바로 페이지 아이디를 읽어 생기던 카운트 불일치를 `#result-line` 쪽수 텍스트 갱신 대기로 해결.
+7. **웹 시나리오 목적 패밀리 수 확장 반영 (`apps/web/e2e/w6b-scenarios.spec.mjs:141`)**:
+   - 목적 패밀리가 32종에서 37종으로 확장된 것에 맞춰 `expect(purposes.size).toBe(37)`로 업데이트.
+
+### 14.2 실행 증거
+
+```sh
+$ export PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright PW_PORT=4521
+$ npx playwright test e2e/platform-families.spec.mjs
+14 passed (1.7m)
+
+$ npx playwright test
+292 passed (12.6m)
+
+$ cd apps/web && export WEB_PORT=4612
+$ npx playwright test e2e/w6b-scenarios.spec.mjs
+9 passed (27.6s)
+
+$ node scripts/families/differentiation.mjs --min 12
+pairs=66 minDistinctProps=17 (soft×elevated-material) minCells=428 (exit 0)
+
+$ npm run verify
+ℹ tests 919 / ℹ pass 919 / ℹ fail 0
+REPRODUCIBLE: 3800 generated files match a fresh build byte for byte.
+```

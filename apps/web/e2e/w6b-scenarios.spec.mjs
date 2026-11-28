@@ -128,7 +128,7 @@ for (const width of [390, 1280]) {
     });
 
     test('시나리오 B: 컴포넌트(가격 카드) → 시각 패밀리·상태·콘텐츠 → 금지 조합 → 코드 → 페이지 조립', async ({page, request}) => {
-      // 목적 패밀리 32종은 쪽(24개)으로 나뉜다. 쪽을 넘기며 모두 모으고, 가격 카드는 검색으로 바로 찾는다.
+      // 목적 패밀리 37종은 쪽(24개)으로 나뉜다. 쪽을 넘기며 모두 모으고, 가격 카드는 검색으로 바로 찾는다.
       await page.goto('/components');
       const purposes = new Set();
       for (let n = 1; n < 10; n++) {
@@ -138,7 +138,7 @@ for (const width of [390, 1280]) {
         await next.click();
         await expect(page).toHaveURL(new RegExp(`page=${n + 1}`));
       }
-      expect(purposes.size).toBe(32);
+      expect(purposes.size).toBe(37);
       await page.goto('/components');
       await page.getByRole('searchbox', {name: '검색'}).fill('card.pricing');
       await page.getByRole('button', {name: '찾기'}).click();
