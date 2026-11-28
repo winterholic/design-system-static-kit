@@ -411,16 +411,39 @@
       ],
       "modifiedFiles": [
         "src/platform/data/type-systems.mjs",
+        "src/platform/data/type-materials.mjs",
         "tests/platform-type.test.mjs",
-        "docs/platform/typography.md"
+        "tests/platform-type-evidence.test.mjs",
+        "tests/platform-type-systems-diff.test.mjs",
+        "docs/platform/typography.md",
+        "docs/platform/evidence/type/metrics.json",
+        "docs/platform/evidence/type/fonts-macos.json",
+        "tests/platform-service-channels.test.mjs"
       ],
       "completionCriteria": "§5.2의 10개 계열(General Product, Enterprise, Finance 등)별 각 4종 총 40종 등록, 시스템별 고유 Heading/Body CSS 변수 생성 입증",
       "tests": [
         "tests/platform-type.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": null,
+      "crossTrackFiles": [
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "타이포그래피 40종 재료 커버리지 매핑 및 추적"
+        },
+        {
+          "file": "src/platform/data/style-contexts.mjs",
+          "owner": "Track E",
+          "reason": "신규 27종 시스템의 스타일 컨텍스트 추천 풀 과다 오염 방지 및 W2 14종 격리"
+        },
+        {
+          "file": "docs/platform/style-contexts.md",
+          "owner": "Track E",
+          "reason": "스타일 컨텍스트 문서 재생성"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRC-02",
@@ -440,7 +463,7 @@
         "tests/platform-type-hangul.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null,
       "createFiles": [
         "tests/platform-type-hangul.test.mjs"

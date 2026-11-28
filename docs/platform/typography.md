@@ -3,24 +3,50 @@
 플랫폼 경로(ADR 0012 §2)의 타이포 재료와 등록 시스템을 정리한다. 구현은 `src/platform/type.mjs`(결합·검사), `src/platform/data/type-materials.mjs`(서체 짝·역할 체계), `src/platform/data/type-systems.mjs`(시스템 기록·적합성)에 있다.
 표는 코드에서 생성한다(`node docs/platform/evidence/type/tables.mjs --write`). 손으로 고치면 `tests/platform-type-evidence.test.mjs`가 어긋남을 잡는다.
 
-## 1. 구조
+## 1. 구조와 통합 카탈로그 모델
 
 타이포 시스템 = **서체 짝(facePairing) × 역할 크기 체계(roleScale) × 숫자 정렬(numerals)**. 세 값은 서로 독립이고 id 문자열로 참조한다(계약의 `type-system` 필드).
+
+### 통합 카탈로그 모델 (Unified Catalog Model)
+
+과거 2.6.0 이하 엔진에서는 테마가 서체 짝을 덮어쓰거나, 역할형 프리셋이 스택을 덮어써서 실제 서체 조합이 3개로 축소되는 왜곡(감사 Q2)이 있었다. 플랫폼 경로(2.7.0)에서는 타이포그래피를 테마와 완전히 분리(decoupled from themes)하고, 다음 독립 축들로 구성된 직교 모델을 수립했다:
+
+1. **패밀리 (Family)**: 10개 핵심 제품 영역(General Product, Enterprise, Finance, Developer, Marketing, Editorial, Commerce, Mobile, Education, Experimental)별 목적 특화.
+2. **서체 짝 (Face Pairing)**: 제목·본문·UI·숫자·코드 스택의 폰트 패밀리 및 대체 서체(fallback), 선택적 OFL-1.1 웹폰트 정의.
+3. **역할 스케일 (Role Scale)**: 27개 타이포그래피 역할(Display 3, Heading 6, Body 3, Label 3, Control 3, Specialized 9)의 모바일·데스크톱 크기, 행간, 자간, 굵기 체계.
+4. **굵기 (Weight)**: 역할별 400~800 범위, 한글 세리프 상한 700, 산세리프 제목 하한 600 등 가독성 규정 준수.
+5. **행간 (Leading / Line Height)**: 본문 1.55~1.80, 제목 1.15~1.45 등 한글 타이포그래피 황금 대역(Hangul bounds).
+6. **자간 (Tracking / Letter Spacing)**: 크기가 커질수록 음수 자간(-0.02em~-0.01em), 소형 라벨은 양수 자간(+0.02em~+0.08em cap).
+7. **숫자 체계 (Numerals)**: 데이터·표·원장용 고정폭(`tabular-nums`)과 긴 글용 가변폭(`proportional-nums`), 세리프 본문에서도 라이닝 산세리프 숫자로 받침.
+8. **코드 (Code)**: `--kit-mono` 기반 고정폭 서체, 본문 대비 한 단계 절제된 크기와 1.55 이상 가독 행간.
+9. **컨트롤 (Controls)**: 버튼(`btn-lg/md/sm`), 입력폼(`input-lg/md/sm`), 셀렉트 등의 조작 인터페이스 전용 타이포 규격.
+10. **반응형 보간 (Responsive Clamp)**: 390px(모바일)에서 1280px(데스크톱) 사이를 유려하게 연결하는 `clamp(모바일px, vw, 데스크톱px)` 공식.
+11. **언어 규칙 (Language Rules)**: 한글 글리프 특성을 반영한 한도(앱 타이틀 36px 상한, 제목-소제목 3px 이상 단차, 세리프 굵기 상한 등).
 
 | 축 | id | 가진 것 | 갖지 않은 것 |
 |---|---|---|---|
 | 서체 짝 | `face-pairing:*`(또는 구형 `type-preset:*`) | 제목·본문·UI·숫자·코드 스택, 선택 웹폰트 | 크기·행간·자간 |
-| 역할 크기 체계 | `role-scale:*`(또는 구형 `type-role-preset:*`) | 역할 9개(display·heading·sub·body·small·label·caption·numeric·code)의 모바일·데스크톱 px, 굵기, 행간, 자간 | 서체 |
+| 역할 크기 체계 | `role-scale:*`(또는 구형 `type-role-preset:*`) | 역할 27개(기본 9개 + 18개 확장)의 모바일·데스크톱 px, 굵기, 행간, 자간 | 서체 |
 | 숫자 정렬 | `tabular` · `proportional` | `--kit-nums` (모두 `lining-nums`) | |
 
 - 2.6.0 컴파일은 역할형 프리셋이 서체까지 덮어써서 서체 축 선택이 사라진다(감사 Q2, 실제 서체 짝 3개). `bindType`은 서체를 서체 짝에서만, 크기·굵기·행간·자간을 역할 체계에서만 가져와 이 덮어쓰기를 하지 않는다.
 - 서체 짝과 역할 체계는 시스템 기록과 따로 **다대다**다. 한 서체 짝이 여러 시스템에, 한 시스템이 여러 스타일 맥락에 쓰일 수 있고, 어느 서체 짝이든 어느 역할 체계와도 결합을 시도한다. 한도에 걸리는 결합만 거부한다(§6).
-- `type-preset × type-role-preset` 결합은 2.6.0 값을 그대로 낸다(`type-system:tech-erp`). 그 밖의 결합은 역할 9개를 모바일(390px)·데스크톱(1280px) px로 결합하고, 두 폭 사이는 선형 보간(`clamp(모바일px, calc(…), 데스크톱px)`)이다.
+- `type-preset × type-role-preset` 결합은 2.6.0 값을 그대로 낸다(`type-system:tech-erp`). 그 밖의 결합은 역할 9개 및 27개를 모바일(390px)·데스크톱(1280px) px로 결합하고, 두 폭 사이는 선형 보간(`clamp(모바일px, calc(…), 데스크톱px)`)이다.
 - `src/typography.mjs`와 `src/materials/typography.mjs`는 읽기만 한다. 2.6.0 `typeRoles` 출력의 바이트는 `tests/platform-type.test.mjs`가 해시로 고정한다.
+
+### 27개 타이포그래피 역할 체계 (REQUEST §5.3)
+
+`resolve27Roles` 및 `TYPE_ROLE_DEFINITIONS`를 통해 정의된 27개 역할은 시각적 기능과 텍스트 처리 규칙을 완결한다:
+- **Display (3종)**: `display-hero`, `display-title`, `display-sub` — 최상위 시각적 주의 집중, `keep-all`, `strict`.
+- **Heading (6종)**: `h1` ~ `h6` — 문서 및 섹션 계층 구조화, `keep-all`, `strict`.
+- **Body (3종)**: `body-lg`, `body-md`, `body-sm` — 장문 가독성 보장, 1.55~1.80 행간, `break-all` 허용.
+- **Label (3종)**: `label-lg`, `label-md`, `label-sm` — 폼 필드, 테이블 헤더, 태그용 압축 자간/행간.
+- **Control (3종)**: `btn-lg`, `btn-md`, `btn-sm` — 액션 버튼 및 대화형 UI 요소의 단단한 굵기와 조작성.
+- **Specialized (9종)**: `kpi-stat`, `table-cell`, `table-header`, `badge`, `code-block`, `code-inline`, `quote`, `lead`, `caption` — 특수 데이터 및 서식 목적.
 
 ### 만드는 변수
 
-플랫폼 경로의 새 시스템은 엔진이 읽는 변수에 더해 역할별 변수를 낸다. `tech-erp`(구형 결합)는 예전 변수 집합 그대로다.
+플랫폼 경로의 새 시스템은 엔진이 읽는 변수에 더해 27개 역할별 CSS 변수(`--kit-type-${role}-*`)를 함께 낸다. `tech-erp`(구형 결합)는 예전 변수 집합 16개 그대로를 유지하여 역호환성을 보장한다.
 
 | 변수 | 값 |
 |---|---|
@@ -30,29 +56,71 @@
 | `--kit-lh-title` `--kit-lh-display` `--kit-lh-heading` `--kit-lh-sub` · `--kit-tr-title` `--kit-tr-display` `--kit-tr-heading` `--kit-tr-sub` `--kit-tr-label` | 행간·자간(엔진 변수) |
 | `--kit-case-label` · `--kit-nums` | 라벨 대소문자, 숫자 정렬 |
 | `--kit-code-size` · `--kit-code-lh` · `--kit-font-ui` · `--kit-font-num` | 코드 역할 크기·행간, 라벨·캡션용 서체, 숫자용 서체 (새 변수, 현재 엔진 CSS는 읽지 않는다) |
-| `--kit-type-<역할>-size` `-weight` `-leading` `-tracking` | 역할 9개의 전체 값(굵기 포함) |
+| `--kit-type-<역할>-size` `-weight` `-leading` `-tracking` | 27개 역할 전체의 크기(clamp), 굵기, 행간, 자간 |
 
-## 2. 등록한 시스템 14개
+## 2. 등록한 시스템 41개 (10개 계열 × 40+ 시스템)
 
-`type-system:tech-erp`는 구형 조합을 옮긴 기존 기록이고, 나머지 13개가 맥락별로 설계한 시스템이다. id 접두가 용도다: `work-`(업무·대시보드), `doc-`(문서·에디토리얼), `mkt-`(마케팅), `shop-`(커머스), `mobile-`(모바일). 용도마다 2개 이상이다(업무 2·문서 3·마케팅 3·커머스 2·모바일 3). **이미 낸 id는 바꾸지 않는다.** 다른 작업은 이 id를 `prefers`의 대상으로 쓴다.
+`type-system:tech-erp`는 구형 조합을 옮긴 기존 기록이고, 나머지 40개가 10개 계열(General Product, Enterprise, Finance, Developer, Marketing, Editorial, Commerce, Mobile, Education, Experimental)별로 각각 4개 이상(모바일 5개) 설계된 실질적으로 분별되는(substantially differentiated) 시스템이다. id 접두가 용도다: `work-`(업무·대시보드), `doc-`(문서·에디토리얼), `mkt-`(마케팅), `shop-`(커머스), `mobile-`(모바일). **이미 낸 id는 바꾸지 않는다.** 다른 작업은 이 id를 `prefers`의 대상으로 쓴다.
+
+### 10개 계열별 시스템 인벤토리 (재사용 vs 신규)
+
+| 계열 (Family) | 수 | 시스템 ID | 신규/재사용 | 주요 특징 및 서체 스택 |
+|---|---|---|---|---|
+| **1. General Product** | 4 | `work-product-neutral`<br>`work-product-humanist`<br>`work-product-geometric`<br>`work-product-soft` | 신규<br>신규<br>신규<br>신규 | SaaS 및 범용 웹앱의 중립적·인문주의적·기하학적·소프트 위계 체계 |
+| **2. Enterprise** | 4 | `tech-erp`<br>`work-console`<br>`work-insight`<br>`work-enterprise-formal` | 재사용<br>재사용<br>재사용<br>신규 | ERP 표·운영 콘솔(14px/1.55 고밀도)·분석 보드(KPI 44px)·공식 제도적 위계 |
+| **3. Finance** | 4 | `work-finance-numeric`<br>`work-finance-terminal`<br>`work-finance-banking`<br>`doc-finance-report` | 신규<br>신규<br>신규<br>신규 | 초정밀 숫자 원장·실시간 시세 터미널·리테일 뱅킹·임원 자산 리포트 |
+| **4. Developer** | 4 | `work-dev-console`<br>`doc-dev-docs`<br>`work-dev-product`<br>`work-dev-monitor` | 신규<br>신규<br>신규<br>신규 | 코드 중심 CLI 콘솔·API 명세 레퍼런스·클라우드 도구·시스템 경보 모니터 |
+| **5. Marketing** | 4 | `mkt-brand`<br>`mkt-launch`<br>`mkt-atelier`<br>`mkt-expressive` | 재사용<br>재사용<br>재사용<br>신규 | 히어로 72px 브랜드·제품 출시 3단 위계·아틀리에 절제미·대담한 포스터 표제 |
+| **6. Editorial** | 4 | `doc-newsroom`<br>`doc-essay`<br>`doc-magazine`<br>`doc-modern` | 재사용<br>재사용<br>신규<br>신규 | 신문 지면 촘촘한 본문·에세이 1.8 넉넉한 호흡·문화 매거진·모던 칼럼 저널 |
+| **7. Commerce** | 4 | `shop-catalog`<br>`shop-boutique`<br>`shop-luxury`<br>`shop-promo` | 재사용<br>재사용<br>신규<br>신규 | 상품 격자 카탈로그·부티크 스토리·명품 절제 세리프·긴급 특가 프로모션 |
+| **8. Mobile** | 5 | `mobile-app`<br>`mobile-feed`<br>`mobile-reader`<br>`mobile-friendly`<br>`mobile-accessible` | 재사용<br>재사용<br>재사용<br>신규<br>신규 | 터치 조작 최적화·SNS 피드 카드·모바일 장문 독서·생활형 둥근 UI·고대비 큰 글씨 접근성 |
+| **9. Education** | 4 | `doc-handbook`<br>`doc-edu-learning`<br>`doc-edu-academic`<br>`doc-edu-friendly` | 재사용<br>신규<br>신규<br>신규 | 기술 핸드북·학습 진도 코스웨어·대학 학술지 정통 세리프·인터랙티브 튜토리얼 |
+| **10. Experimental** | 4 | `mkt-exp-retro`<br>`work-exp-brutalist`<br>`work-exp-industrial`<br>`doc-exp-mixed-serif` | 신규<br>신규<br>신규<br>신규 | 초기 PC 레트로·규격 파괴 브루탈리즘·산업 유틸리티 스펙·극적 디도네 믹스드 세리프 |
 
 <!-- type-table:systems -->
 | id | 용도 | 페이지 유형 | 서체 짝 | 역할 체계 | 밀도 | 숫자 |
 | --- | --- | --- | --- | --- | --- | --- |
+| `type-system:doc-dev-docs` | document | docs, article, general | `face-pairing:grotesk-humanist` | `role-scale:dev-docs` | compact | tabular |
+| `type-system:doc-edu-academic` | document | article, docs | `face-pairing:palatino-palatino` | `role-scale:edu-academic` | comfortable | proportional |
+| `type-system:doc-edu-friendly` | document | general, community, docs | `face-pairing:slab-grotesk` | `role-scale:edu-friendly` | comfortable | tabular |
+| `type-system:doc-edu-learning` | document | docs, article, general | `face-pairing:iowan-humanist` | `role-scale:edu-learning` | comfortable | tabular |
 | `type-system:doc-essay` | document | article, blog, docs, community | `face-pairing:editorial` | `role-scale:doc-essay` | spacious | proportional |
+| `type-system:doc-exp-mixed-serif` | document | article, portfolio, landing | `face-pairing:didone-charter` | `role-scale:exp-mixed-serif` | spacious | proportional |
+| `type-system:doc-finance-report` | document | article, docs, dashboard | `face-pairing:baskerville-charter` | `role-scale:finance-report` | spacious | tabular |
 | `type-system:doc-handbook` | document | docs, article, blog, general | `face-pairing:humanist-system` | `role-scale:doc-handbook` | comfortable | tabular |
+| `type-system:doc-magazine` | document | article, blog, portfolio | `face-pairing:didone-system` | `role-scale:doc-magazine` | spacious | proportional |
+| `type-system:doc-modern` | document | article, blog, community | `face-pairing:baskerville-system` | `role-scale:doc-modern` | comfortable | proportional |
 | `type-system:doc-newsroom` | document | article, blog, listing, community | `face-pairing:newsroom` | `role-scale:doc-newsroom` | comfortable | tabular |
 | `type-system:mkt-atelier` | marketing | landing, portfolio, commerce | `face-pairing:luxe` | `role-scale:mkt-atelier` | spacious | proportional |
 | `type-system:mkt-brand` | marketing | landing, portfolio, pricing, general | `face-pairing:geometric` | `role-scale:mkt-brand` | spacious | proportional |
+| `type-system:mkt-exp-retro` | marketing | landing, portfolio, general | `face-pairing:condensed-humanist` | `role-scale:exp-retro` | comfortable | tabular |
+| `type-system:mkt-expressive` | marketing | landing, portfolio | `face-pairing:poster-grotesk` | `role-scale:mkt-expressive` | spacious | proportional |
 | `type-system:mkt-launch` | marketing | landing, pricing, auth, general | `face-pairing:grotesk` | `role-scale:mkt-launch` | comfortable | tabular |
+| `type-system:mobile-accessible` | mobile | general, article, form, settings | `face-pairing:palatino-system` | `role-scale:mobile-accessible` | spacious | tabular |
 | `type-system:mobile-app` | mobile | general, auth, form, settings, commerce, community, listing, error | `face-pairing:rounded` | `role-scale:mobile-app` | comfortable | tabular |
 | `type-system:mobile-feed` | mobile | community, listing, commerce, general, blog | `face-pairing:humanist` | `role-scale:mobile-feed` | compact | tabular |
+| `type-system:mobile-friendly` | mobile | general, community, form | `face-pairing:news-system` | `role-scale:mobile-friendly` | comfortable | tabular |
 | `type-system:mobile-reader` | mobile | article, blog, docs, community | `face-pairing:bookish` | `role-scale:mobile-reader` | spacious | proportional |
 | `type-system:shop-boutique` | commerce | commerce, portfolio, landing | `face-pairing:serif` | `role-scale:shop-boutique` | comfortable | proportional |
 | `type-system:shop-catalog` | commerce | commerce, listing, pricing | `face-pairing:condensed` | `role-scale:shop-catalog` | compact | tabular |
+| `type-system:shop-luxury` | commerce | commerce, portfolio, landing | `face-pairing:georgia-charter` | `role-scale:shop-luxury` | spacious | proportional |
+| `type-system:shop-promo` | commerce | commerce, listing, pricing | `face-pairing:poster` | `role-scale:shop-promo` | compact | tabular |
 | `type-system:tech-erp` | work | dashboard, data, listing, settings | `type-preset:tech` | `type-role-preset:erp` | compact | tabular |
 | `type-system:work-console` | work | dashboard, data, listing, settings, form | `face-pairing:grotesk-system` | `role-scale:work-console` | compact | tabular |
+| `type-system:work-dev-console` | work | dashboard, data, settings | `face-pairing:slab` | `role-scale:dev-console` | compact | tabular |
+| `type-system:work-dev-monitor` | work | dashboard, data, settings | `face-pairing:baskerville-humanist` | `role-scale:dev-monitor` | compact | tabular |
+| `type-system:work-dev-product` | work | dashboard, settings, form, general | `face-pairing:slab-humanist` | `role-scale:dev-product` | comfortable | tabular |
+| `type-system:work-enterprise-formal` | work | dashboard, data, listing, settings, form | `face-pairing:literary` | `role-scale:enterprise-formal` | compact | tabular |
+| `type-system:work-exp-brutalist` | work | portfolio, general, listing | `face-pairing:georgia-humanist` | `role-scale:exp-brutalist` | compact | tabular |
+| `type-system:work-exp-industrial` | work | dashboard, data, settings | `face-pairing:poster-humanist` | `role-scale:exp-industrial` | compact | tabular |
+| `type-system:work-finance-banking` | work | dashboard, form, listing, general | `face-pairing:georgia-system` | `role-scale:finance-banking` | comfortable | tabular |
+| `type-system:work-finance-numeric` | work | dashboard, data, listing | `face-pairing:condensed-grotesk` | `role-scale:finance-numeric` | compact | tabular |
+| `type-system:work-finance-terminal` | work | dashboard, data | `face-pairing:charter-humanist` | `role-scale:finance-terminal` | compact | tabular |
 | `type-system:work-insight` | work | dashboard, data, listing | `face-pairing:geometric-system` | `role-scale:work-insight` | comfortable | tabular |
+| `type-system:work-product-geometric` | work | dashboard, listing, pricing, general | `face-pairing:geometric-grotesk` | `role-scale:product-geometric` | comfortable | tabular |
+| `type-system:work-product-humanist` | work | general, community, blog, form | `face-pairing:humanist-geometric` | `role-scale:product-humanist` | comfortable | proportional |
+| `type-system:work-product-neutral` | work | dashboard, data, listing, form, settings, general | `face-pairing:charter-system` | `role-scale:product-neutral` | comfortable | tabular |
+| `type-system:work-product-soft` | work | general, form, community, settings | `face-pairing:rounded-system` | `role-scale:product-soft` | comfortable | proportional |
 <!-- /type-table:systems -->
 
 `페이지 유형`은 조립 때 거르는 하드 조건이다(`recommend`의 `context` 필터, 요구 시 `P_ATTR_CONTEXT`). 어느 서체 짝이든 `(제목, 본문)` 스택 쌍이 서로 다르다는 것을 테스트가 고정한다.
@@ -62,20 +130,47 @@
 <!-- type-table:sizes -->
 | 시스템 | display (px) | heading (px) | sub (px) | body (px) | small (px) | label (px) | caption (px) | numeric (px) | code (px) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `doc-dev-docs` | 36→62 | 22→28 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
+| `doc-edu-academic` | 34→60 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 22→28 | 12→13 |
+| `doc-edu-friendly` | 36→56 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
+| `doc-edu-learning` | 32→58 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
 | `doc-essay` | 34→56 | 24→32 | 19→22 | 17→19 | 14→15 | 12→13 | 12→13 | 17→19 | 14→15 |
+| `doc-exp-mixed-serif` | 28→38 | 18→22 | 15→17 | 14→15 | 12→13 | 12 | 11 | 22→28 | 12→13 |
+| `doc-finance-report` | 34→60 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 20→24 | 12→13 |
 | `doc-handbook` | 30→44 | 22→28 | 17→19 | 16→17 | 14 | 12→13 | 12 | 16→17 | 14→15 |
+| `doc-magazine` | 28→40 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
+| `doc-modern` | 28→42 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 20→24 | 12→13 |
 | `doc-newsroom` | 30→48 | 22→30 | 18→20 | 16→17 | 13→14 | 12 | 12 | 16→18 | 13→14 |
 | `mkt-atelier` | 34→60 | 24→36 | 18→22 | 16→17 | 14 | 12 | 12 | 24→36 | 13→14 |
 | `mkt-brand` | 36→72 | 26→40 | 18→22 | 17→19 | 14→15 | 12→13 | 12→13 | 28→44 | 13→14 |
+| `mkt-exp-retro` | 36→62 | 22→28 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
+| `mkt-expressive` | 26→36 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
 | `mkt-launch` | 34→56 | 24→36 | 17→20 | 16→17 | 14 | 12→13 | 12 | 32→48 | 13→14 |
+| `mobile-accessible` | 32→50 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 20→24 | 12→13 |
 | `mobile-app` | 28→36 | 22→26 | 18→19 | 17 | 15 | 13 | 12 | 24→28 | 14 |
 | `mobile-feed` | 26→32 | 20→24 | 16→17 | 15 | 13 | 12 | 12 | 18→20 | 13 |
+| `mobile-friendly` | 32→46 | 24→30 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
 | `mobile-reader` | 28→40 | 22→28 | 19→20 | 18 | 15 | 12 | 13 | 18→20 | 14 |
 | `shop-boutique` | 32→52 | 24→34 | 18→21 | 16→17 | 14 | 12 | 12 | 22→30 | 13→14 |
 | `shop-catalog` | 28→44 | 20→28 | 15→17 | 14→15 | 13 | 12 | 11→12 | 20→26 | 12→13 |
+| `shop-luxury` | 30→44 | 22→28 | 15→17 | 14 | 12 | 12 | 11 | 22→28 | 12→13 |
+| `shop-promo` | 30→52 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
 | `tech-erp` | 28→44 | 20→26 | 19 | 16→18 | 14 | 13→14 | 12→13 | 16→22 | - |
 | `work-console` | 26→32 | 18→20 | 15→16 | 14 | 13 | 12 | 11 | 16→18 | 12→13 |
+| `work-dev-console` | 36→56 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
+| `work-dev-monitor` | 26→34 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 20→26 | 12→13 |
+| `work-dev-product` | 36→70 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
+| `work-enterprise-formal` | 30→52 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
+| `work-exp-brutalist` | 36→70 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
+| `work-exp-industrial` | 26→36 | 20→26 | 15→17 | 14→15 | 12→13 | 12 | 11 | 16 | 12→13 |
+| `work-finance-banking` | 32→58 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
+| `work-finance-numeric` | 32→46 | 24→30 | 15→17 | 14 | 12 | 12 | 11 | 22→28 | 12→13 |
+| `work-finance-terminal` | 32→50 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
 | `work-insight` | 28→36 | 20→24 | 16→18 | 15 | 13→14 | 12→13 | 11→12 | 28→44 | 13→14 |
+| `work-product-geometric` | 28→42 | 20→26 | 15→17 | 14 | 12 | 12 | 11 | 18→20 | 12→13 |
+| `work-product-humanist` | 28→40 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 16 | 12→13 |
+| `work-product-neutral` | 26→34 | 18→22 | 15→17 | 14 | 12 | 12 | 11 | 18→22 | 12→13 |
+| `work-product-soft` | 30→44 | 22→28 | 15→17 | 14 | 12 | 12 | 11 | 20→24 | 12→13 |
 <!-- /type-table:sizes -->
 
 ### 2.2 위계·행간·자간 리듬
@@ -85,19 +180,46 @@
 <!-- type-table:rhythm -->
 | 시스템 | 본문 굵기/행간 | 제목 굵기 | 제목 행간 | display 행간 | display 자간(em) | heading 자간(em) | 라벨 자간(em) | 본문 대비 display | 본문 대비 숫자 | 본문 줄 수(800px, 데스크톱) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `doc-dev-docs` | 400/1.55 | 700 | 1.32 | 1.24 | -0.02 | -0.015 | 0.025 | 4.43× | 1.14× | 36.87 |
+| `doc-edu-academic` | 400/1.62 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.045 | 4.29× | 2× | 35.27 |
+| `doc-edu-friendly` | 400/1.62 | 650 | 1.32 | 1.22 | 0 | -0.01 | 0.025 | 4× | 1.43× | 35.27 |
+| `doc-edu-learning` | 400/1.62 | 650 | 1.32 | 1.22 | 0 | -0.01 | 0.015 | 4.14× | 1.14× | 35.27 |
 | `doc-essay` | 400/1.8 | 600 | 1.35 | 1.25 | -0.01 | -0.005 | 0.06 | 2.95× | 1× | 23.39 |
+| `doc-exp-mixed-serif` | 400/1.55 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.055 | 2.53× | 1.87× | 34.41 |
+| `doc-finance-report` | 400/1.55 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.045 | 4.29× | 1.71× | 36.87 |
 | `doc-handbook` | 400/1.7 | 650 | 1.3 | 1.2 | -0.02 | -0.015 | 0.03 | 2.59× | 1× | 27.68 |
+| `doc-magazine` | 400/1.62 | 650 | 1.32 | 1.24 | -0.01 | -0.01 | 0.015 | 2.86× | 1.43× | 35.27 |
+| `doc-modern` | 400/1.62 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.025 | 3× | 1.71× | 35.27 |
 | `doc-newsroom` | 400/1.6 | 700 | 1.3 | 1.2 | -0.02 | -0.01 | 0.06 | 2.82× | 1.06× | 29.41 |
 | `mkt-atelier` | 400/1.8 | 500 | 1.35 | 1.25 | 0 | 0 | 0.06 | 3.53× | 2.12× | 26.14 |
 | `mkt-brand` | 400/1.7 | 700 | 1.3 | 1.2 | -0.02 | -0.015 | 0.06 | 3.79× | 2.32× | 24.77 |
+| `mkt-exp-retro` | 400/1.62 | 700 | 1.32 | 1.24 | -0.02 | -0.015 | 0.025 | 4.43× | 1.43× | 35.27 |
+| `mkt-expressive` | 400/1.62 | 650 | 1.32 | 1.24 | -0.02 | -0.01 | 0.015 | 2.57× | 1.14× | 35.27 |
 | `mkt-launch` | 400/1.65 | 700 | 1.3 | 1.2 | -0.02 | -0.015 | 0.04 | 3.29× | 2.82× | 28.52 |
+| `mobile-accessible` | 400/1.62 | 650 | 1.32 | 1.24 | -0.02 | -0.01 | 0.025 | 3.57× | 1.71× | 35.27 |
 | `mobile-app` | 400/1.6 | 700 | 1.3 | 1.25 | -0.015 | -0.01 | 0.02 | 2.12× | 1.65× | 29.41 |
 | `mobile-feed` | 400/1.55 | 700 | 1.3 | 1.25 | -0.015 | -0.01 | 0.02 | 2.13× | 1.33× | 34.41 |
+| `mobile-friendly` | 400/1.62 | 600 | 1.32 | 1.22 | -0.01 | -0.005 | 0.015 | 3.29× | 1.14× | 35.27 |
 | `mobile-reader` | 400/1.8 | 700 | 1.35 | 1.3 | -0.015 | -0.01 | 0.04 | 2.22× | 1.11× | 24.69 |
 | `shop-boutique` | 400/1.75 | 600 | 1.35 | 1.25 | -0.01 | -0.005 | 0.06 | 3.06× | 1.76× | 26.89 |
 | `shop-catalog` | 400/1.55 | 700 | 1.3 | 1.2 | -0.01 | -0.01 | 0.02 | 2.93× | 1.73× | 34.41 |
+| `shop-luxury` | 400/1.62 | 700 | 1.32 | 1.24 | -0.02 | -0.015 | 0.015 | 3.14× | 2× | 35.27 |
+| `shop-promo` | 400/1.62 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.035 | 3.71× | 1.43× | 35.27 |
 | `work-console` | 400/1.55 | 650 | 1.3 | 1.2 | -0.02 | -0.01 | 0.02 | 2.29× | 1.29× | 36.87 |
+| `work-dev-console` | 400/1.55 | 650 | 1.32 | 1.22 | 0 | -0.01 | 0.025 | 4× | 1.14× | 36.87 |
+| `work-dev-monitor` | 400/1.62 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.015 | 2.43× | 1.86× | 35.27 |
+| `work-dev-product` | 400/1.55 | 650 | 1.32 | 1.22 | -0.02 | -0.01 | 0.015 | 5× | 1.14× | 36.87 |
+| `work-enterprise-formal` | 400/1.55 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.035 | 3.71× | 1.14× | 36.87 |
+| `work-exp-brutalist` | 400/1.62 | 650 | 1.32 | 1.22 | -0.02 | -0.01 | 0.015 | 5× | 1.43× | 35.27 |
+| `work-exp-industrial` | 400/1.55 | 650 | 1.32 | 1.24 | -0.02 | -0.01 | 0.025 | 2.4× | 1.07× | 34.41 |
+| `work-finance-banking` | 400/1.55 | 650 | 1.32 | 1.22 | 0 | -0.01 | 0.015 | 4.14× | 1.43× | 36.87 |
+| `work-finance-numeric` | 400/1.55 | 600 | 1.32 | 1.22 | -0.01 | -0.005 | 0.015 | 3.29× | 2× | 36.87 |
+| `work-finance-terminal` | 400/1.55 | 650 | 1.32 | 1.24 | -0.02 | -0.01 | 0.015 | 3.57× | 1.43× | 36.87 |
 | `work-insight` | 400/1.6 | 700 | 1.3 | 1.2 | -0.02 | -0.015 | 0.03 | 2.4× | 2.93× | 33.33 |
+| `work-product-geometric` | 400/1.55 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.025 | 3× | 1.43× | 36.87 |
+| `work-product-humanist` | 400/1.55 | 650 | 1.32 | 1.24 | -0.01 | -0.01 | 0.015 | 2.86× | 1.14× | 36.87 |
+| `work-product-neutral` | 400/1.55 | 650 | 1.32 | 1.22 | -0.015 | -0.01 | 0.015 | 2.43× | 1.57× | 36.87 |
+| `work-product-soft` | 400/1.55 | 700 | 1.32 | 1.24 | -0.02 | -0.015 | 0.015 | 3.14× | 1.71× | 36.87 |
 <!-- /type-table:rhythm -->
 
 ## 3. 서체 짝, 한글·영문·숫자 혼용 스택, 대체 서체
@@ -128,6 +250,30 @@
 | `face-pairing:grotesk-system` | grotesk / system | 본문과 같음 | 새로 만듦 | 없음 |
 | `face-pairing:geometric-system` | geometric / system | 본문과 같음 | 새로 만듦 | Pretendard Variable |
 | `face-pairing:humanist-system` | humanist / system | 본문과 같음 | 새로 만듦 | Pretendard Variable, JetBrains Mono |
+| `face-pairing:baskerville-charter` | baskerville / charter | system | 새로 만듦 | 없음 |
+| `face-pairing:baskerville-system` | baskerville / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:georgia-system` | georgia / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:charter-system` | charter / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:slab-humanist` | slab / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:condensed-grotesk` | condensed / grotesk | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:poster-grotesk` | poster / grotesk | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:rounded-system` | rounded / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:didone-system` | didone / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:news-system` | news / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:palatino-system` | palatino / system | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:geometric-grotesk` | geometric / grotesk | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:grotesk-humanist` | grotesk / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:humanist-geometric` | humanist / geometric | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:georgia-charter` | georgia / charter | system | 새로 만듦 | 없음 |
+| `face-pairing:iowan-humanist` | iowan / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:palatino-palatino` | palatino / palatino | system | 새로 만듦 | 없음 |
+| `face-pairing:slab-grotesk` | slab / grotesk | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:condensed-humanist` | condensed / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:didone-charter` | didone / charter | system | 새로 만듦 | 없음 |
+| `face-pairing:poster-humanist` | poster / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:charter-humanist` | charter / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:baskerville-humanist` | baskerville / humanist | 본문과 같음 | 새로 만듦 | 없음 |
+| `face-pairing:georgia-humanist` | georgia / humanist | 본문과 같음 | 새로 만듦 | 없음 |
 <!-- /type-table:faces -->
 
 - **혼용 스택 규칙.** 모든 스택은 라틴 서체가 먼저, 같은 계열(산세리프·세리프·고정폭)의 한글 서체가 뒤, 일반 계열(`sans-serif`·`serif`·`monospace`)이 맨 끝이다. 글리프 단위로 내려가므로 영문·숫자는 앞의 라틴 서체가, 한글은 한글 서체가 그린다. 테스트가 "라틴 서체가 첫 한글 서체보다 앞", "끝은 일반 계열"을 고정한다.
@@ -141,20 +287,47 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 <!-- type-table:fallbacks -->
 | 시스템 | 제목(macOS: 라틴 / 한글) | 본문(macOS: 라틴 / 한글) | 제목(Windows 가정) | 본문(Windows 가정) | 웹폰트 켤 때 앞에 붙는 서체 |
 | --- | --- | --- | --- | --- | --- |
+| `doc-dev-docs` | Helvetica Neue / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Arial / Malgun Gothic | Candara / Malgun Gothic | 없음 |
+| `doc-edu-academic` | Palatino / AppleMyungjo | Palatino / AppleMyungjo | Palatino Linotype / Batang | Palatino Linotype / Batang | 없음 |
+| `doc-edu-friendly` | Rockwell / AppleMyungjo | Helvetica Neue / Apple SD Gothic Neo | Rockwell / Batang | Arial / Malgun Gothic | 없음 |
+| `doc-edu-learning` | Iowan Old Style / AppleMyungjo | Seravek / Apple SD Gothic Neo | Palatino Linotype / Batang | Candara / Malgun Gothic | 없음 |
 | `doc-essay` | Iowan Old Style / AppleMyungjo | Iowan Old Style / AppleMyungjo | Palatino Linotype / Batang | Palatino Linotype / Batang | Noto Serif KR |
+| `doc-exp-mixed-serif` | Didot / AppleMyungjo | Charter / AppleMyungjo | Bodoni MT / Batang | Sitka Text / Batang | 없음 |
+| `doc-finance-report` | Baskerville / AppleMyungjo | Charter / AppleMyungjo | Hoefler Text / Batang | Sitka Text / Batang | 없음 |
 | `doc-handbook` | Seravek / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Candara / Malgun Gothic | Segoe UI / Malgun Gothic | Pretendard Variable, JetBrains Mono |
+| `doc-magazine` | Didot / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Bodoni MT / Batang | Segoe UI / Malgun Gothic | 없음 |
+| `doc-modern` | Baskerville / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Hoefler Text / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `doc-newsroom` | Times New Roman / AppleMyungjo | Times New Roman / AppleMyungjo | Times New Roman / Batang | Times New Roman / Batang | Noto Serif KR |
 | `mkt-atelier` | Didot / AppleMyungjo | Seravek / Apple SD Gothic Neo | Bodoni MT / Batang | Candara / Malgun Gothic | Noto Serif KR |
 | `mkt-brand` | Avenir Next / Apple SD Gothic Neo | Avenir Next / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Century Gothic / Malgun Gothic | Pretendard Variable |
+| `mkt-exp-retro` | Avenir Next Condensed / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Arial Narrow / Malgun Gothic | Candara / Malgun Gothic | 없음 |
+| `mkt-expressive` | Futura / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Impact / Malgun Gothic | Arial / Malgun Gothic | 없음 |
 | `mkt-launch` | Helvetica Neue / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Arial / Malgun Gothic | Arial / Malgun Gothic | Pretendard Variable |
+| `mobile-accessible` | Palatino / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Palatino Linotype / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `mobile-app` | Hiragino Maru Gothic ProN / Apple SD Gothic Neo | Hiragino Maru Gothic ProN / Apple SD Gothic Neo | Malgun Gothic / Malgun Gothic | Malgun Gothic / Malgun Gothic | 없음 |
 | `mobile-feed` | Seravek / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Candara / Malgun Gothic | Candara / Malgun Gothic | Pretendard Variable |
+| `mobile-friendly` | Times New Roman / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Times New Roman / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `mobile-reader` | Charter / AppleMyungjo | Charter / AppleMyungjo | Sitka Text / Batang | Sitka Text / Batang | Noto Serif KR |
 | `shop-boutique` | Iowan Old Style / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Palatino Linotype / Batang | Segoe UI / Malgun Gothic | Noto Serif KR |
 | `shop-catalog` | Avenir Next Condensed / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Arial Narrow / Malgun Gothic | Segoe UI / Malgun Gothic | 없음 |
+| `shop-luxury` | Georgia / AppleMyungjo | Charter / AppleMyungjo | Georgia / Batang | Sitka Text / Batang | 없음 |
+| `shop-promo` | Futura / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Impact / Malgun Gothic | Segoe UI / Malgun Gothic | 없음 |
 | `tech-erp` | SF Pro / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Segoe UI / Malgun Gothic | Segoe UI / Malgun Gothic | 없음 |
 | `work-console` | Helvetica Neue / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Arial / Malgun Gothic | Segoe UI / Malgun Gothic | 없음 |
+| `work-dev-console` | Rockwell / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Rockwell / Batang | Segoe UI / Malgun Gothic | Noto Serif KR |
+| `work-dev-monitor` | Baskerville / AppleMyungjo | Seravek / Apple SD Gothic Neo | Hoefler Text / Batang | Candara / Malgun Gothic | 없음 |
+| `work-dev-product` | Rockwell / AppleMyungjo | Seravek / Apple SD Gothic Neo | Rockwell / Batang | Candara / Malgun Gothic | 없음 |
+| `work-enterprise-formal` | Palatino / AppleMyungjo | Charter / AppleMyungjo | Palatino Linotype / Batang | Sitka Text / Batang | Noto Serif KR |
+| `work-exp-brutalist` | Georgia / AppleMyungjo | Seravek / Apple SD Gothic Neo | Georgia / Batang | Candara / Malgun Gothic | 없음 |
+| `work-exp-industrial` | Futura / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Impact / Malgun Gothic | Candara / Malgun Gothic | 없음 |
+| `work-finance-banking` | Georgia / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Georgia / Batang | Segoe UI / Malgun Gothic | 없음 |
+| `work-finance-numeric` | Avenir Next Condensed / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Arial Narrow / Malgun Gothic | Arial / Malgun Gothic | 없음 |
+| `work-finance-terminal` | Charter / AppleMyungjo | Seravek / Apple SD Gothic Neo | Sitka Text / Batang | Candara / Malgun Gothic | 없음 |
 | `work-insight` | Avenir Next / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Segoe UI / Malgun Gothic | Pretendard Variable |
+| `work-product-geometric` | Avenir Next / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Arial / Malgun Gothic | 없음 |
+| `work-product-humanist` | Seravek / Apple SD Gothic Neo | Avenir Next / Apple SD Gothic Neo | Candara / Malgun Gothic | Century Gothic / Malgun Gothic | 없음 |
+| `work-product-neutral` | Charter / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Sitka Text / Batang | Segoe UI / Malgun Gothic | 없음 |
+| `work-product-soft` | Hiragino Maru Gothic ProN / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Malgun Gothic / Malgun Gothic | Segoe UI / Malgun Gothic | 없음 |
 <!-- /type-table:fallbacks -->
 
 알려진 한계:
@@ -180,6 +353,20 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 - 서체 대체 시 줄바꿈이 달라지는 정도(`size-adjust` 보정)는 측정하지 않았다(확인 필요).
 
 ## 4. 구형 18개 이행과 통합 근거
+
+### 구형 18 / 역할형 4 / 초기 14 중복 분석 (Redundancy Analysis)
+
+1. **구형 18개 프리셋의 서체 짝 중복 (18 → 16)**:
+   - `type-preset:sans`와 `type-preset:tech`는 모두 `(system, system)` 스택으로 실질 서체 짝이 동일했음.
+   - `type-preset:grotesk`와 `type-preset:swiss` 역시 `(grotesk, grotesk)` 스택으로 실질 서체 짝이 동일했음.
+   - 따라서 18개 프리셋은 실제 16개의 유니크 서체 짝(`face-pairing:*`)으로 정돈되었으며, 비율·굵기·자간 등 리듬의 차이는 역할 체계(`role-scale:modular-*`)로 분리 흡수됨.
+2. **역할형 4개의 강결합 왜곡 및 위계 결함**:
+   - 2.6.0의 역할형 4종(`erp`, `dashboard`, `document`, `marketing`)은 서체 짝을 강제로 덮어써서 사용자가 지정한 서체 축을 무력화시켰음(감사 Q2).
+   - 특히 `erp` 프리셋은 모바일에서 heading 20px, sub 19px로 단차가 1px에 불과하여 모바일 화면에서 위계 역전 및 인지 오류를 유발(신규 플랫폼 위계 하한 3px 미달).
+   - 신규 플랫폼 경로에서는 역할 체계(`role-scale:*`)를 순수 크기/리듬 체계로 정립하여 서체 짝과 자유롭게 결합되도록 개선함.
+3. **초기 14개 시스템의 한계와 41개 확장**:
+   - 기존 14개 시스템(구형 1 + 설계 13)은 5개 기본 용도만 다루어 금융, 개발자, 교육, 실험적 도메인의 특수 요구(초고밀도 원장, 코드 블록 강조, 학술 세리프, 극단적 대비 등)를 충족하지 못했음.
+   - 이번 확충을 통해 10개 계열 × 4종(모바일 5종) 총 41개 시스템을 완성했으며, 모든 설계 시스템 쌍 간 `differingDims >= 3`을 만족하는 실질적 차별성을 확보함.
 
 구형 서체 프리셋 18개(`type-preset:*`)는 **서체 짝**(제목·본문 스택)과 **모듈러 스케일**(본문 px × 비율의 거듭제곱, 굵기 이동, 자간, 행간, 라벨 대소문자, 숫자 정렬)을 한 덩어리로 갖는다. 이 둘을 갈랐다.
 
@@ -217,13 +404,29 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 <!-- type-table:fit -->
 | 시스템 | 종류 | 조건(AND, 값은 OR) | 가중 | 이유 |
 | --- | --- | --- | --- | --- |
+| `doc-dev-docs` | prefers | context=docs/article/general · density=comfortable/compact | 35 | API 명세와 코드 블록이 강조되는 기술 문서 전문 레이아웃 |
+| `doc-dev-docs` | avoids | density=spacious | 20 | 기술 레퍼런스 특성상 적정 줄 수 유지가 필수 |
+| `doc-edu-academic` | prefers | context=article/docs · density=comfortable/spacious | 40 | 대학 학술지 및 심층 연구 보고서의 정통 세리프 위계 |
+| `doc-edu-academic` | avoids | density=compact | 30 | 정통 논문 조판을 위한 여백 필수 |
+| `doc-edu-friendly` | prefers | context=general/community/docs · density=comfortable | 35 | 퀴즈와 튜토리얼을 위한 시각적 교육 위계 |
+| `doc-edu-friendly` | avoids | density=compact | 20 | 어린이 및 초심자 교육용으로 컴팩트 조판은 부적합 |
+| `doc-edu-learning` | prefers | context=docs/article/general · density=comfortable | 40 | 학습 진도와 개념 이해를 돕는 친근한 교육 위계 |
+| `doc-edu-learning` | avoids | density=compact | 20 | 학습 집중도를 위해 글자 간격 보장 필요 |
 | `doc-essay` | prefers | context=article/blog · density=spacious/comfortable | 60 | 본문 17→19px·행간 1.8 세리프가 긴 글을 읽는 데 맞다 |
 | `doc-essay` | prefers | context=docs/community | 15 | 긴 본문 위주 화면에서 읽기 리듬이 안정적이다 |
 | `doc-essay` | avoids | density=compact | 40 | 행간 1.8은 컴팩트 밀도의 줄 수 예산을 넘는다 |
 | `doc-essay` | avoids | viewport=mobile | 10 | 본문 19px로 커지는 설계라 좁은 화면 기준 시스템(mobile-reader)이 더 맞다 |
+| `doc-exp-mixed-serif` | prefers | context=article/portfolio/landing · density=spacious | 35 | 극적 디도네 표제와 고전 세리프 본문의 실험적 결합 |
+| `doc-exp-mixed-serif` | avoids | density=compact | 35 | 실험적 세리프 대비는 넓은 캔버스에서만 온전히 구현 |
+| `doc-finance-report` | prefers | context=article/docs/dashboard · density=comfortable/spacious | 35 | 자산 관리 및 투자 제안서의 품격 있는 리포트 위계 |
+| `doc-finance-report` | avoids | density=compact | 25 | 품격 있는 보고서용 세리프라 고밀도 입력폼에는 어긋남 |
 | `doc-handbook` | prefers | context=docs · density=comfortable | 55 | 코드(14→15px)가 본문과 어울려 기술 문서의 코드 블록이 읽힌다 |
 | `doc-handbook` | prefers | context=article/blog/general | 15 | 제목 위계 4단계가 긴 문서의 구조를 드러낸다 |
 | `doc-handbook` | avoids | density=compact | 20 | 행간 1.7 본문은 컴팩트 밀도에서 줄 수를 많이 쓴다 |
+| `doc-magazine` | prefers | context=article/blog/portfolio · density=spacious/comfortable | 40 | 문화 매거진의 고대비 표제와 넉넉한 본문 호흡 |
+| `doc-magazine` | avoids | density=compact | 30 | 디도네 표제의 섬세한 세리프는 작은 크기에서 뭉개짐 |
+| `doc-modern` | prefers | context=article/blog/community · density=comfortable/spacious | 40 | 현대적 저널과 칼럼의 유려한 본문 리듬 |
+| `doc-modern` | avoids | density=compact | 25 | 현대 에디토리얼은 줄 간 여백이 살아나야 읽힘 |
 | `doc-newsroom` | prefers | context=article/blog · density=comfortable/compact | 50 | 굵은 세리프 표제와 촘촘한 본문(1.6)이 지면을 채우는 읽을거리에 맞다 |
 | `doc-newsroom` | prefers | context=listing/community | 20 | 표제와 본문의 대비로 기사 목록을 훑기 쉽다 |
 | `doc-newsroom` | avoids | density=spacious | 25 | 촘촘한 본문 리듬이 넉넉한 여백에서는 답답하게 남는다 |
@@ -236,10 +439,16 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 | `mkt-brand` | prefers | context=portfolio/pricing/general | 25 | 표제 위계가 3단계로 단순해 한 장짜리 소개에 맞다 |
 | `mkt-brand` | avoids | density=compact | 45 | 큰 표제와 컴팩트 밀도는 한 화면에 들어가는 정보를 해친다 |
 | `mkt-brand` | avoids | context=pricing | 15 | 가격표 숫자 위계는 제품 출시(mkt-launch)가 더 낫다 |
+| `mkt-exp-retro` | prefers | context=landing/portfolio/general · density=comfortable/spacious | 35 | 초기 개인용 컴퓨터의 향수를 담은 헤드라인 위계 |
+| `mkt-exp-retro` | avoids | density=compact | 25 | 레트로 슬랩 서체는 컴팩트 그리드에서 시인성 저하 |
+| `mkt-expressive` | prefers | context=landing/portfolio · density=spacious | 40 | 시선을 사로잡는 대담한 포스터 표제와 감각적인 브랜드 메시지 |
+| `mkt-expressive` | avoids | density=compact | 40 | 거대한 포스터 표제는 컴팩트 어드민에 절대 부적합 |
 | `mkt-launch` | prefers | context=landing/pricing · density=comfortable | 55 | 표제 56px·가격 48px·본문 16px 세 단으로 제품 소개와 요금표를 함께 짠다 |
 | `mkt-launch` | prefers | context=auth/general | 10 | 소제목 위계가 촘촘해 짧은 안내에도 맞다 |
 | `mkt-launch` | avoids | density=compact | 25 | 가격 숫자 48px는 컴팩트 밀도의 카드에 크다 |
 | `mkt-launch` | avoids | context=portfolio | 15 | 작품 소개에는 표제가 너무 두껍다 |
+| `mobile-accessible` | prefers | context=general/article/form/settings · density=spacious/comfortable | 40 | 큰 터치 영역과 넉넉한 행간의 고가독성 모바일 환경 |
+| `mobile-accessible` | avoids | density=compact | 35 | 접근성 보장을 위해 촘촘한 행간은 절대 금지 |
 | `mobile-app` | prefers | viewport=mobile · context=general/auth/form/settings/commerce | 50 | 본문 17px 고정, 보조 글자 15px 이상이라 손가락 조작 화면에 읽힌다 |
 | `mobile-app` | prefers | density=comfortable | 15 | 터치 목표와 본문 리듬이 같은 단위로 맞는다 |
 | `mobile-app` | avoids | viewport=desktop | 20 | 데스크톱 확대 폭이 표제 28→36px뿐이라 넓은 화면에서 위계가 약하다 |
@@ -248,6 +457,8 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 | `mobile-feed` | prefers | density=compact | 20 | 숫자 18→20px 정렬이 좋아요·가격 같은 짧은 수치에 맞다 |
 | `mobile-feed` | avoids | density=spacious | 25 | 촘촘한 본문 리듬과 넓은 여백이 어긋난다 |
 | `mobile-feed` | avoids | viewport=desktop | 15 | 데스크톱에서는 크기 확대가 거의 없어 위계가 평평하다 |
+| `mobile-friendly` | prefers | context=general/community/form · density=comfortable | 35 | 생활형 모바일 앱의 둥글고 부드러운 터치 위계 |
+| `mobile-friendly` | avoids | viewport=desktop | 20 | 모바일 터치 최적화로 데스크톱 정보 밀도는 낮음 |
 | `mobile-reader` | prefers | viewport=mobile · context=article/blog/docs | 55 | 본문 18px·행간 1.8로 휴대폰 장문이 한 줄 20자 안팎에 읽힌다 |
 | `mobile-reader` | avoids | density=compact | 35 | 행간 1.8 본문은 컴팩트 밀도와 어긋난다 |
 | `mobile-reader` | avoids | viewport=desktop | 15 | 본문이 18px로 고정이라 넓은 화면에서는 한 줄이 짧게 남는다 |
@@ -257,16 +468,46 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 | `shop-catalog` | prefers | context=commerce/listing · density=compact/comfortable | 55 | 상품명(sub)과 가격(numeric) 위계가 카드 안 정보 밀도를 맡는다 |
 | `shop-catalog` | prefers | context=pricing | 15 | 가격 숫자 정렬(tabular)이 요금 비교에 쓸 만하다 |
 | `shop-catalog` | avoids | density=spacious | 20 | 좁은 표제(condensed)는 넓은 여백의 브랜드 페이지에서 인상이 약하다 |
+| `shop-luxury` | prefers | context=commerce/portfolio/landing · density=spacious/comfortable | 40 | 명품 브랜드의 절제된 가격과 품격 있는 상품 설명 |
+| `shop-luxury` | avoids | density=compact | 35 | 명품 여백감을 위해 컴팩트 밀도는 회피 |
+| `shop-promo` | prefers | context=commerce/listing/pricing · density=compact/comfortable | 40 | 특가 할인과 긴급 혜택이 돋보이는 프로모션 위계 |
+| `shop-promo` | avoids | density=spacious | 25 | 프로모션 배너와 가격 비교의 빠른 인지가 핵심 |
 | `tech-erp` | prefers | context=dashboard/data/listing/settings · density=compact | 40 | ERP 역할 체계가 컴팩트 표·지표 화면용으로 검증돼 있다 |
 | `tech-erp` | avoids | density=spacious | 20 | 컴팩트 리듬이라 넓은 여백과 맞지 않는다 |
 | `work-console` | prefers | context=dashboard/data/listing/settings/form · density=compact | 50 | 본문 14px·행간 1.55로 표 한 화면에 가장 많은 행을 담는다 |
 | `work-console` | prefers | context=form/settings | 15 | 라벨 12px·본문 14px 단차가 폼 항목 위계를 분명히 한다 |
 | `work-console` | avoids | density=spacious | 30 | 촘촘한 본문 리듬과 넓은 여백이 어긋난다 |
 | `work-console` | avoids | viewport=mobile | 15 | 본문 14px는 손가락 조작·모바일 읽기에 작다 |
+| `work-dev-console` | prefers | context=dashboard/data/settings · density=compact | 35 | 터미널과 CLI 콘솔의 고정폭 중심 리듬으로 코드 정보 밀도 극대화 |
+| `work-dev-console` | avoids | density=spacious | 30 | 전체 고정폭 리듬은 일반 마케팅에 어울리지 않음 |
+| `work-dev-monitor` | prefers | context=dashboard/data/settings · density=compact | 35 | 모니터링 대시보드와 경보 로그를 위한 고밀도 화면 |
+| `work-dev-monitor` | avoids | density=spacious | 35 | 극단적 정보 밀도로 넓은 여백에서는 답답해 보임 |
+| `work-dev-product` | prefers | context=dashboard/settings/form/general · density=comfortable | 35 | 클라우드 콘솔 및 협업 도구의 개발자 친화적 위계 |
+| `work-dev-product` | avoids | density=spacious | 20 | 개발 도구의 실용적 밀도 요구 |
+| `work-enterprise-formal` | prefers | context=dashboard/data/listing/settings/form · density=compact/comfortable | 35 | 제도적 신뢰도와 절제된 위계의 대규모 엔터프라이즈 관리 화면 |
+| `work-enterprise-formal` | avoids | density=spacious | 25 | 엔터프라이즈 정형 격자용이라 넓은 여백과 어긋남 |
+| `work-exp-brutalist` | prefers | context=portfolio/general/listing · density=compact/comfortable | 35 | 규격화되지 않은 강한 대비와 압축된 타이포그래피 |
+| `work-exp-brutalist` | avoids | density=spacious | 25 | 브루탈리스트는 긴장감 있는 밀도를 지향 |
+| `work-exp-industrial` | prefers | context=dashboard/data/settings · density=compact | 35 | 엔지니어링 장비 매뉴얼과 기술 스펙 시트의 견고한 위계 |
+| `work-exp-industrial` | avoids | density=spacious | 30 | 산업 기기 모니터링 특성상 높은 정보 밀도 요구 |
+| `work-finance-banking` | prefers | context=dashboard/form/listing/general · density=comfortable | 35 | 이체 내역과 계좌 정보를 명확히 구분하는 직관적 리테일 뱅킹 위계 |
+| `work-finance-banking` | avoids | density=compact | 15 | 은행 계좌 내역 식별을 위한 최소 행간 필요 |
+| `work-finance-numeric` | prefers | context=dashboard/data/listing · density=compact | 35 | 수치와 테이블 중심의 고정밀 금융 거래 및 원장 위계 |
+| `work-finance-numeric` | avoids | density=spacious | 30 | 고정밀 수치 정렬 중심이라 장문 아티클에 부적합 |
+| `work-finance-terminal` | prefers | context=dashboard/data · density=compact | 35 | 실시간 시세와 다수의 호가를 담는 고밀도 금융 터미널 화면 |
+| `work-finance-terminal` | avoids | density=spacious | 35 | 터미널용 고밀도 설계라 여백 중심 화면과 맞지 않음 |
 | `work-insight` | prefers | context=dashboard/data · density=compact/comfortable | 50 | KPI 숫자 44px가 본문 15px의 3배라 지표가 먼저 읽힌다 |
 | `work-insight` | prefers | context=listing | 10 | 숫자 열 정렬(tabular)이 목록 비교에 쓸 만하다 |
 | `work-insight` | avoids | context=listing | 15 | 제목 24px 상한이라 목록 페이지 제목이 약하다 |
 | `work-insight` | avoids | density=spacious | 20 | 지표 카드의 여백이 커지면 숫자와 설명이 떨어져 읽힌다 |
+| `work-product-geometric` | prefers | context=dashboard/listing/pricing/general · density=comfortable/compact | 35 | 현대적인 SaaS와 기술 제품의 기하학적 리듬과 정돈된 위계 |
+| `work-product-geometric` | avoids | density=spacious | 15 | 컴팩트 대시보드용으로 최적화되어 넓은 에디토리얼에는 부적합 |
+| `work-product-humanist` | prefers | context=general/community/blog/form · density=comfortable | 35 | 따뜻한 인문주의 본문과 기하학 표제가 친근한 서비스 분위기 조성 |
+| `work-product-humanist` | avoids | density=compact | 20 | 휴머니스트 리듬은 좁은 표 밀도와 다소 충돌 |
+| `work-product-neutral` | prefers | context=dashboard/data/listing/form/settings/general · density=comfortable/compact | 35 | 균형 잡힌 중립적 본문과 위계로 다양한 업무용 화면에 안정적으로 적용 |
+| `work-product-neutral` | avoids | density=spacious | 15 | 중립적 정보 밀도라 극단적으로 넓은 여백에는 다소 촘촘하게 보일 수 있음 |
+| `work-product-soft` | prefers | context=general/form/community/settings · density=comfortable | 35 | 부드러운 라운드 표제와 익숙한 시스템 본문으로 편안한 조작감 제공 |
+| `work-product-soft` | avoids | density=compact | 20 | 소프트 곡선 글자는 고밀도 데이터 표에 어울리지 않음 |
 <!-- /type-table:fit -->
 
 - 읽는 함수는 `typeFit(id, {context, density, viewport})`와 `rankTypeSystems(registry, ctx)`다. 테스트가 맥락마다 1순위를 고정한다(컴팩트 데스크톱 대시보드→`work-console`, 대시보드 편안한 밀도→`work-insight`, 넓은 밀도 모바일 문서→`mobile-reader`, 랜딩→`mkt-brand`, 가격표→`mkt-launch`, 컴팩트 커머스→`shop-catalog`, 넓은 커머스→`shop-boutique`).
@@ -295,23 +536,23 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 등록한 시스템 14개는 모두 통과한다. 서체 짝 × 역할 체계를 전부 시도하면 다음처럼 걸린다.
 
 <!-- type-table:rejected -->
-- 설계 13개 체계 × 19개 서체 짝 = 247개 중 12개 거부
-- 구형 역할형 4개 체계 × 19개 서체 짝 = 76개 중 33개 거부
-- 구형 모듈러 18개 체계 × 19개 서체 짝 = 342개 중 59개 거부
+- 설계 13개 체계 × 43개 서체 짝 = 1720개 중 20개 거부
+- 구형 역할형 4개 체계 × 43개 서체 짝 = 172개 중 89개 거부
+- 구형 모듈러 18개 체계 × 43개 서체 짝 = 774개 중 155개 거부
 
 | 역할 체계 | 걸린 규칙 | 거부되는 서체 짝 | 예 | 첫 사유 |
 | --- | --- | --- | --- | --- |
-| `role-scale:mkt-atelier` | sans-weight-floor | 12/19 | `sans`, `mono` 외 | 산세리프 display 굵기 500는 바닥 600 아래라 본문보다 가늘어 보입니다 |
-| `role-scale:erp` | P_TYPE_HIERARCHY | 19/19 | `sans`, `serif` 외 | mobile: heading 20px가 sub 19px보다 3px 이상 커야 합니다 |
-| `role-scale:dashboard` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 720는 한글 세리프 굵기 상한 700를 넘습니다 |
-| `role-scale:marketing` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 750는 한글 세리프 굵기 상한 700를 넘습니다 |
-| `role-scale:modular-geometric` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
-| `role-scale:modular-grotesk` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
-| `role-scale:modular-swiss` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
-| `role-scale:modular-literary` | sans-weight-floor | 12/19 | `sans`, `mono` 외 | 산세리프 display 굵기 500는 바닥 600 아래라 본문보다 가늘어 보입니다 |
-| `role-scale:modular-luxe` | sans-weight-floor | 12/19 | `sans`, `mono` 외 | 산세리프 display 굵기 400는 바닥 600 아래라 본문보다 가늘어 보입니다 |
-| `role-scale:modular-poster` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 900는 한글 세리프 굵기 상한 700를 넘습니다 |
-| `role-scale:modular-condensed` | serif-weight | 7/19 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:mkt-atelier` | sans-weight-floor | 20/43 | `sans`, `mono` 외 | 산세리프 display 굵기 500는 바닥 600 아래라 본문보다 가늘어 보입니다 |
+| `role-scale:erp` | P_TYPE_HIERARCHY | 43/43 | `sans`, `serif` 외 | mobile: heading 20px가 sub 19px보다 3px 이상 커야 합니다 |
+| `role-scale:dashboard` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 720는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:marketing` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 750는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:modular-geometric` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:modular-grotesk` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:modular-swiss` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:modular-literary` | sans-weight-floor | 20/43 | `sans`, `mono` 외 | 산세리프 display 굵기 500는 바닥 600 아래라 본문보다 가늘어 보입니다 |
+| `role-scale:modular-luxe` | sans-weight-floor | 20/43 | `sans`, `mono` 외 | 산세리프 display 굵기 400는 바닥 600 아래라 본문보다 가늘어 보입니다 |
+| `role-scale:modular-poster` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 900는 한글 세리프 굵기 상한 700를 넘습니다 |
+| `role-scale:modular-condensed` | serif-weight | 23/43 | `serif`, `editorial` 외 | 세리프 display 굵기 800는 한글 세리프 굵기 상한 700를 넘습니다 |
 <!-- /type-table:rejected -->
 
 구형 결합(`type-preset × type-role-preset`)에도 같은 한도를 적용한다. 위계 검사는 2.6.0 값이 고정이라 구형 결합에는 적용하지 않는다.
@@ -323,20 +564,47 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 <!-- type-table:metrics -->
 | 시스템 | 문서 높이 데스크톱/모바일(px) | 대시보드 높이 데스크톱/모바일(px) | 문서 제목 줄 수 데스크톱/모바일 | 문서 첫 문단 줄 수 데스크톱/모바일 | 가로 넘침 |
 | --- | --- | --- | --- | --- | --- |
+| `doc-dev-docs` | 809 / 843 | 492 / 713 | 2 / 2 | 2 / 3 | 없음 |
+| `doc-edu-academic` | 912 / 944 | 582 / 830 | 2 / 2 | 2 / 3 | 없음 |
+| `doc-edu-friendly` | 892 / 943 | 572 / 824 | 2 / 2 | 2 / 3 | 없음 |
+| `doc-edu-learning` | 882 / 926 | 563 / 822 | 2 / 2 | 2 / 3 | 없음 |
 | `doc-essay` | 1233 / 1505 | 769 / 1208 | 2 / 2 | 2 / 5 | 없음 |
+| `doc-exp-mixed-serif` | 947 / 1113 | 707 / 1062 | 1 / 2 | 2 / 4 | 없음 |
+| `doc-finance-report` | 1038 / 1130 | 697 / 1060 | 2 / 2 | 2 / 4 | 없음 |
 | `doc-handbook` | 888 / 1093 | 607 / 937 | 1 / 2 | 2 / 4 | 없음 |
+| `doc-magazine` | 936 / 1102 | 695 / 1042 | 1 / 2 | 2 / 4 | 없음 |
+| `doc-modern` | 810 / 924 | 575 / 826 | 1 / 2 | 2 / 3 | 없음 |
 | `doc-newsroom` | 961 / 1057 | 598 / 914 | 2 / 2 | 2 / 4 | 없음 |
 | `mkt-atelier` | 1194 / 1320 | 771 / 1178 | 2 / 2 | 2 / 4 | 없음 |
 | `mkt-brand` | 1282 / 1412 | 793 / 1184 | 2 / 2 | 2 / 4 | 없음 |
+| `mkt-exp-retro` | 914 / 949 | 575 / 826 | 2 / 2 | 2 / 3 | 없음 |
+| `mkt-expressive` | 938 / 1078 | 692 / 1058 | 1 / 2 | 2 / 3 | 없음 |
 | `mkt-launch` | 1011 / 1100 | 644 / 906 | 2 / 2 | 2 / 4 | 없음 |
+| `mobile-accessible` | 1014 / 1113 | 699 / 1045 | 2 / 2 | 2 / 4 | 없음 |
 | `mobile-app` | 866 / 1101 | 610 / 990 | 1 / 2 | 2 / 4 | 없음 |
 | `mobile-feed` | 705 / 846 | 498 / 727 | 1 / 2 | 2 / 3 | 없음 |
+| `mobile-friendly` | 874 / 942 | 573 / 826 | 2 / 2 | 2 / 3 | 없음 |
 | `mobile-reader` | 1107 / 1550 | 754 / 1278 | 1 / 2 | 2 / 5 | 없음 |
 | `shop-boutique` | 1007 / 1154 | 631 / 958 | 2 / 2 | 2 / 4 | 없음 |
 | `shop-catalog` | 735 / 820 | 509 / 716 | 1 / 2 | 2 / 3 | 없음 |
+| `shop-luxury` | 1019 / 1173 | 708 / 1074 | 2 / 2 | 2 / 4 | 없음 |
+| `shop-promo` | 779 / 831 | 491 / 717 | 2 / 2 | 2 / 3 | 없음 |
 | `tech-erp` | 752 / 948 | 514 / 774 | 1 / 2 | 2 / 4 | 없음 |
 | `work-console` | 670 / 804 | 480 / 706 | 1 / 2 | 2 / 3 | 없음 |
+| `work-dev-console` | 787 / 836 | 489 / 710 | 2 / 2 | 2 / 3 | 없음 |
+| `work-dev-monitor` | 700 / 823 | 497 / 720 | 1 / 2 | 2 / 3 | 없음 |
+| `work-dev-product` | 902 / 923 | 560 / 817 | 2 / 2 | 2 / 3 | 없음 |
+| `work-enterprise-formal` | 767 / 816 | 485 / 711 | 2 / 2 | 2 / 3 | 없음 |
+| `work-exp-brutalist` | 823 / 845 | 491 / 717 | 2 / 2 | 2 / 3 | 없음 |
+| `work-exp-industrial` | 710 / 813 | 495 / 710 | 1 / 2 | 2 / 3 | 없음 |
+| `work-finance-banking` | 877 / 915 | 564 / 820 | 2 / 2 | 2 / 3 | 없음 |
+| `work-finance-numeric` | 731 / 845 | 506 / 725 | 1 / 2 | 2 / 3 | 없음 |
+| `work-finance-terminal` | 768 / 824 | 488 / 712 | 2 / 2 | 2 / 3 | 없음 |
 | `work-insight` | 844 / 1027 | 610 / 854 | 1 / 2 | 2 / 4 | 없음 |
+| `work-product-geometric` | 799 / 913 | 569 / 819 | 1 / 2 | 2 / 3 | 없음 |
+| `work-product-humanist` | 783 / 906 | 561 / 820 | 1 / 2 | 2 / 3 | 없음 |
+| `work-product-neutral` | 780 / 901 | 567 / 821 | 1 / 2 | 2 / 3 | 없음 |
+| `work-product-soft` | 810 / 923 | 575 / 824 | 1 / 2 | 2 / 3 | 없음 |
 <!-- /type-table:metrics -->
 
 ### 7.1 정성 평가

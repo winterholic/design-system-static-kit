@@ -40,7 +40,13 @@ test('information density is measurably different: the console fits the same doc
   assert.ok(new Set(Object.values(metrics).map(m => m['doc-desktop'].contentHeight)).size >= 12, 'document heights are nearly all different');
 });
 
-const NORMALIZE = {'.SF NS': 'SF Pro', 'Seravek Medium': 'Seravek'};
+const NORMALIZE = {
+  '.SF NS': 'SF Pro',
+  'Seravek Medium': 'Seravek',
+  'Avenir Next Condensed Demi Bold': 'Avenir Next Condensed',
+  'Avenir Next Demi Bold': 'Avenir Next',
+  'Avenir Next Medium': 'Avenir Next',
+};
 const norm = f => NORMALIZE[f] ?? f;
 test('the Chromium-measured macOS fonts agree with effectiveFaces for the heading, body, label, numeric and code roles', () => {
   assert.match(measured.measuredOn, /^darwin/);
