@@ -1114,7 +1114,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 
 검증 대상은 `origin/main`의 `3421079e0`(구현 `994b64bd9`, 미러 `2c4babd48`)이다. 구현 보고(69항목 missing 0, 재료 시험 13/13)는 맞았지만 **missing 0은 요구가 어떤 재료 이름에 연결됐다는 뜻일 뿐, 그 값이 화면에 나타난다는 뜻이 아니었다.** 코드를 읽고 브라우저로 렌더해 다음을 찾아 고쳤다. 실행 환경은 Node v26.9.0, Playwright Chromium(`PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright`)이다.
 
-### 19.1 판정: 구현이 놓친 결함
+### 18.1 판정: 구현이 놓친 결함
 
 | # | 결함 | 어떻게 드러났나 |
 |---|---|---|
@@ -1130,7 +1130,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 
 구현 보고와 달리 맞았던 것: 69항목이 REQUEST §9.3~§9.7 문장에서 생성되고(`foundations` 9·17·12·15·16), 아이콘이 `src/catalog/icons.mjs`를 바꾸지 않았으며(`git diff origin/main -- src/catalog/icons.mjs` 빈 출력), 간격 값이 4px 격자와 기존 `SPACE` 토큰을 쓴다.
 
-### 19.2 교정
+### 18.2 교정
 
 - 표면: facet 규칙을 `:is([data-surface-facet],.kit-surface[data-level][data-surface-facet])`로 올려 단계 표면 위에서도 이기게 했다. `subtle`은 테두리 없는 4px, `deep-elevation`은 `FACET_SHADOW.deep`(`ELEVATION` 표는 건드리지 않아 2.1~2.4 출력 불변)로 바꿔 17개가 모두 다른 모양이 되고 그림자 번짐이 subtle 16 < medium 32 < deep 64가 된다. facet 샘플 `renderSurfaceFacetSample`을 추가했다(이중 테두리는 form·pricing 맥락 래퍼 안에서만 열린다).
 - 모션: `modal-enter`·`drawer-enter`를 `slow`, `toast-enter`를 `base`로 올려 15개가 서로 다른 전환이 된다. `reducedMotion`은 `instant`(전환 제거)와 `fade`(opacity만 짧게, transform 제거)로 바꾸고 패턴마다 reduce 규칙을 컴파일한다(일괄 규칙보다 명시도가 높다). 등록 검사는 `fade`가 opacity를 움직이는 패턴만 허용한다.
@@ -1139,7 +1139,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 - 아이콘: `renderAreaIcon`이 viewBox를 대조하고 `data-icon-family`·`data-icon-size`를 찍으며 CSS 선택자가 family를 읽는다. `--kit-icon-align`을 `vertical-align`이 읽는다. `minSize` 16px와 그 크기에서 선 굵기 1.25px 이상 검사를 추가했다.
 - 장부: 요구에 `part`(`role:*`·`facet:*`·`pattern:*`)를 달아 요구 문장 하나가 재료의 부분 하나에 대응하게 했고, 간격·아이콘 영역에 정의 경로와 `assembleStyleMaterials` 프로브를 연결했다. 69항목 상태는 `metadata-only/defined` 25 → `renderable` 25(웹 카탈로그에 아직 없음)로 정직하게 올랐고 나머지 44는 `verified`다.
 
-### 19.3 시험과 RED
+### 18.3 시험과 RED
 
 `tests/platform-style-materials.test.mjs`에 시험 5개를 더해 18개다(기존 13). 하드코딩 기대값 대신 컴파일 결과의 성질을 본다: facet 17개 쌍별 다른 반경·테두리·그림자, 그림자 번짐 순서, 15개 전환 레시피 쌍별 차이와 정책별 reduce 규칙, 역할 토큰 9개 서로 다름·밀도 배율이 역할마다 다름·역할 토큰이 컴파일된 모든 템플릿 CSS에서 읽힘, 아이콘 viewBox·family·크기, 장부의 부분·재료 대응. 기존 시험에서 항상 참인 단언은 찾지 못했다. 약한 단언 3건을 고쳤다: (1) facet 쌍 비교가 원시 필드 `[radius,border,elevation]`만 봐서 결함 1·2를 놓쳤고 컴파일 결과 비교로 바꿨다. (2) 순위 시험의 유일한 OR 단언 `ranked.length > 0 || reasons.length > 0`을 '비어 있으면 사유가 있고 사유마다 code·id가 있다'는 함의로 바꿨다. (3) 프리셋 CSS를 `css.length > 80`으로만 보던 단언을 '자기 범위 선택자(`[data-surface=...]` 등)를 포함하고 규칙이 3개 이상'으로 바꿨다.
 
@@ -1158,7 +1158,7 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 | facet 명시도를 낮춤 | facet 17종(시험) + Chromium 확인(2/17) |
 | reduce 정책 규칙 제거, fade에서 transform 유지, frosted를 매끄러운 바탕으로, blur 24px | Chromium 확인 4건 모두 실패(blur 24px는 등록 단계에서 거부) |
 
-### 19.4 Chromium 렌더 확인(`screens/foundations/render-check.mjs`, 대표 재료만)
+### 18.4 Chromium 렌더 확인(`screens/foundations/render-check.mjs`, 대표 재료만)
 
 계산 스타일과 실제 `CSSTransition`을 읽고(시간 표본이 아니라 전환을 멈춰 50% 지점 값을 읽는다) 스크린샷 6장을 같은 폴더에 둔다. 출력 전문은 `render-check.out.txt`다. 요약:
 
@@ -1168,12 +1168,12 @@ TASK-TRD-L은 `Implemented`로 기록했다. 전체 §6.2 L의 생성 Manifest c
 - 간격: 역할 9개의 실제 레이아웃 거리가 `SPACE` 토큰과 같고(compact·spacious), spacious/compact 배율이 역할마다 다르다(1.0·1.33·1.67·1.86·2.0).
 - 아이콘: 영역 4종 계산 스타일 24px·stroke 2px·`vertical-align:middle`, 작은 크기 16px, 장식은 `aria-hidden`, 이름이 있는 것은 `role="img" aria-label`.
 
-### 19.5 A3 브라우저 잔여 2건
+### 18.5 A3 브라우저 잔여 2건
 
 1. `cd apps/web && npx playwright test e2e/catalog-lists.spec.mjs`: **10개 중 9개 통과, 1개 실패.** Explore·Components·Typography 목록의 24카드 상한, iframe 0, 컴파일 0회, 정적 미리보기 디코드는 통과했다. 실패한 시험(`catalog-lists.spec.mjs:174`)은 `/components/hero`의 `h1`이 `Hero`를 포함해야 한다고 단언하지만 화면은 한국어 라벨 `히어로`를 낸다(`src/catalog/nodes.mjs`의 `label`). 단언만 `히어로`로 바꾼 임시 사본으로 같은 시험을 돌리면 통과하므로 제품 결함이 아니라 `ef1ade200`이 넣은 시험의 기대값 오류다. A3는 확인만 하는 범위라 고치지 않았다. 수정안: 단언을 `toContainText('히어로')`(또는 `/히어로|Hero/`)로 바꾼다.
 2. 운영 빌드(`npm run web:build` 후 `next start`)에서 Studio 편집 후 `typeof window.__studio_api`는 `undefined`, `__studio_compile_count`도 `undefined`, `'__studio_api' in window`는 `false`다(`e2e/studio-probe.spec.mjs` 운영 시험 2개 통과: window 훅 없음, `.next/static` 번들에 훅 문자열 없음). `DSK_STUDIO_PROBE=1` 빌드에서는 `typeof window.__studio_api`가 `object`, `__studio_compile_count`는 `number`(값 2)로 존재한다.
 
-### 19.6 불변 조건과 전체 검증
+### 18.6 불변 조건과 전체 검증
 
 - `src/catalog/icons.mjs`·`src/catalog`·`src/render`·`src/styles`·`src/spacing.mjs`·`site/v1`·`docs/evidence/context/legacy-hashes.json`: 검증 대상 `3421079e0`에서 `git diff origin/main` 빈 출력(교정 커밋도 이 경로를 건드리지 않았다). legacy 2.1.0 해시와 기본 2.4.0 출력 시험(`tests/composition.test.mjs`, `tests/platform-color-compat.test.mjs`) 22/22 통과.
 - `npm run coverage:materials:check`: `MANIFEST MATCH`(최신 main `e901afcc5` 위로 rebase한 뒤 재생성한 `MATERIAL-COVERAGE.json` 기준, 재료 1480·요구 406·missing 요구 69는 §9.3~§9.7이 아닌 구성요소 요구).
@@ -1289,7 +1289,7 @@ $ npx playwright test e2e/platform-ehi-interaction.spec.mjs e2e/platform-ehi-com
 $ node --test tests/platform-ehi-requirements.test.mjs tests/platform-ehi-contract.test.mjs tests/platform-family-a11y.test.mjs tests/platform-family-inventory.test.mjs
 ℹ pass 120 / ℹ fail 0
 $ npm run coverage:materials:check
-MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1479 materials, 406 requirements)
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1480 materials, 406 requirements)
 $ npm run verify
 ℹ tests 1052 / ℹ pass 1052 / ℹ fail 0
 REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.
