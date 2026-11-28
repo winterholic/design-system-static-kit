@@ -31,7 +31,10 @@ test('every page of the list is reachable and together they cover every id exact
   const seen = new Set();
   for (let p = 1; p <= PAGES96; p++) {
     for (const id of await idsOnPage(page)) seen.add(id);
-    if (p < PAGES96) await page.locator('#pager-bottom [aria-label="다음 쪽"]').click();
+    if (p < PAGES96) {
+      await page.locator('#pager-bottom [aria-label="다음 쪽"]').click();
+      await expect(page.locator('#result-line')).toContainText((p + 1) + ' / ' + PAGES96 + '쪽');
+    }
   }
   expect(seen.size).toBe(TOTAL);
   expect([...seen].sort()).toEqual(all.map(c => c.id).sort());

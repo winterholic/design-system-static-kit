@@ -109,9 +109,15 @@ const TYPE_REQS = tableRows(slice(/^## 5\.2 /, /^## 5\.3 /)).flatMap(([group, na
 const FAMILY_REQS = tableRows(slice(/^# 7\. /, /^# 8\. /)).map(([name], i) => ({key: `fam/${name}`, section: '§7', name, reqId: `req:family:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
 const CHART_REQS = firstBullets(slice(/^## 9\.1 /, /^## 9\.2 /)).map((name, i) => ({key: `chart/${name}`, section: '§9.1', name, reqId: `req:chart:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
 const LAYOUT_REQS = firstBullets(slice(/^## 9\.2 /, /^## 9\.3 /)).map((name, i) => ({key: `lay/${name}`, section: '§9.2', name, reqId: `req:layout:${String(i + 1).padStart(2, '0')}-${slug(name)}`}));
-const ALL_REQS = [...COMPONENT_REQS, ...SUBTOKEN_REQS, ...TYPE_REQS, ...FAMILY_REQS, ...CHART_REQS, ...LAYOUT_REQS];
+const FOUNDATION_SECTIONS = [
+  ['spacing', /^## 9\.3 /, /^## 9\.4 /, '§9.3'], ['surface', /^## 9\.4 /, /^## 9\.5 /, '§9.4'],
+  ['background', /^## 9\.5 /, /^## 9\.6 /, '§9.5'], ['motion', /^## 9\.6 /, /^## 9\.7 /, '§9.6'], ['icon', /^## 9\.7 /, /^## 9\.8 /, '§9.7'],
+];
+const FOUNDATION_REQS = FOUNDATION_SECTIONS.flatMap(([kind, from, to, section]) => firstBullets(slice(from, to)).map((name, i) => ({key: `foundation/${kind}/${name}`, section, name, reqId: `req:foundation:${kind}:${String(i + 1).padStart(2, '0')}-${slug(name)}`})));
+const FOUNDATION_REQS_BY_KIND = Object.fromEntries(FOUNDATION_SECTIONS.map(([kind]) => [kind, FOUNDATION_REQS.filter(r => r.key.startsWith(`foundation/${kind}/`))]));
+const ALL_REQS = [...COMPONENT_REQS, ...SUBTOKEN_REQS, ...TYPE_REQS, ...FAMILY_REQS, ...CHART_REQS, ...LAYOUT_REQS, ...FOUNDATION_REQS];
 if (new Set(ALL_REQS.map(r => r.reqId)).size !== ALL_REQS.length) throw new Error('요구 id가 겹칩니다.');
-const REQUEST_COUNTS = {components: COMPONENT_REQS.length, subtokenSets: SUBTOKEN_REQS.length, typeSystems: TYPE_REQS.length, families: FAMILY_REQS.length, charts: CHART_REQS.length, layouts: LAYOUT_REQS.length};
+const REQUEST_COUNTS = {components: COMPONENT_REQS.length, subtokenSets: SUBTOKEN_REQS.length, typeSystems: TYPE_REQS.length, families: FAMILY_REQS.length, charts: CHART_REQS.length, layouts: LAYOUT_REQS.length, foundations: Object.fromEntries(Object.entries(FOUNDATION_REQS_BY_KIND).map(([kind, reqs]) => [kind, reqs.length]))};
 
 /** §2.1 기존 분석 기준표 */
 const BASELINE_TABLE = tableRows(slice(/^## 2\.1 /, /^## 2\.2 /)).filter(r => /^\d+$/.test(r[1] ?? '')).map(([material, n]) => ({material, previousBaseline: Number(n)}));
@@ -389,6 +395,22 @@ const COVERAGE = {
   'lay/Sticky Action Layout': D('layout:sticky-action-layout'),
   'lay/Form Layout': D('layout:form-layout'),
   'lay/Multi-step Form': D('layout:multi-step-form'),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.spacing.map(req => [req.key, D('spacing:comfortable')])),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.surface.map(req => [req.key, D('surface:hairline-panel')])),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.motion.map(req => [req.key, D('motion:calm')])),
+  'foundation/background/Solid': D('background:plain-canvas'),
+  'foundation/background/Tinted': D('background:brand-tint-dots'),
+  'foundation/background/Gradient': D('background:soft-gradient-organic'),
+  'foundation/background/Radial Gradient': D('background:radial-focus'),
+  'foundation/background/Mesh-like Gradient': D('background:mesh-field'),
+  'foundation/background/Grid Pattern': D('background:blueprint-grid-lines'),
+  'foundation/background/Dot Pattern': D('background:brand-tint-dots'),
+  'foundation/background/Noise': D('background:noise-grain'),
+  'foundation/background/Paper': D('background:paper-fiber'),
+  'foundation/background/Frosted Glass': D('background:frosted-pane'),
+  'foundation/background/Layered Surface': D('background:layered-surface'),
+  'foundation/background/Dark Premium Surface': D('background:dark-premium'),
+  ...Object.fromEntries(FOUNDATION_REQS_BY_KIND.icon.map(req => [req.key, D(`icon:area-${req.name.toLowerCase()}`)])),
 };
 for (const key of Object.keys(COVERAGE)) {
   if (!ALL_REQS.some(r => r.key === key)) throw new Error(`REQUEST.md에 없는 요구 항목을 매핑했습니다: ${key}`);
@@ -460,6 +482,7 @@ const DEFINITION = {
 };
 function definitionOf(record, kind) {
   let spec = DEFINITION[kind];
+  if (kind === 'icon' && record.source?.origin === 'in-repository-original') spec = ['src/platform/data/icons.mjs', 'ICON_MATERIALS'];
   if (kind === 'palette') spec = DEFINITION.palette[record.source?.origin === 'internal' ? 'platform' : 'design'];
   if (kind === 'purpose-family') spec = [`src/platform/families/${record.group}.mjs`, 'purposeFamily'];
   if (kind === 'purpose-family') {
@@ -1143,7 +1166,7 @@ const manifest = {
       coverageRate: Number((requirements.filter(q => q.coverage !== 'missing').length / requirements.length).toFixed(4)),
       byCoverage: Object.fromEntries(['direct', 'variant', 'schema', 'part-of', 'missing'].map(h => [h, requirements.filter(q => q.coverage === h).length])),
       statusDistribution: reqStatusDistribution,
-      breakdown: Object.fromEntries(Object.entries({components: COMPONENT_REQS, subtokenSets: SUBTOKEN_REQS, typeSystems: TYPE_REQS, families: FAMILY_REQS, charts: CHART_REQS, layouts: LAYOUT_REQS}).map(([k, reqs]) => {
+      breakdown: Object.fromEntries(Object.entries({components: COMPONENT_REQS, subtokenSets: SUBTOKEN_REQS, typeSystems: TYPE_REQS, families: FAMILY_REQS, charts: CHART_REQS, layouts: LAYOUT_REQS, ...FOUNDATION_REQS_BY_KIND}).map(([k, reqs]) => {
         const qs = requirements.filter(q => reqs.some(r => r.reqId === q.id));
         return [k, {total: qs.length, missing: qs.filter(q => q.coverage === 'missing').length, direct: qs.filter(q => q.coverage === 'direct').length, variant: qs.filter(q => q.coverage === 'variant').length, schema: qs.filter(q => q.coverage === 'schema').length, partOf: qs.filter(q => q.coverage === 'part-of').length}];
       })),

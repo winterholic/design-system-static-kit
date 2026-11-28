@@ -13,7 +13,6 @@ import styles from '@/features/platform/platform.module.css';
 
 type Props = {params: Promise<{group: string; name: string}>; searchParams: Promise<Record<string, string | string[] | undefined>>};
 const AXIS_LABEL: Record<string, string> = {layout: '배치', trend: '추세', emphasis: '강조', size: '크기', behavior: '동작', state: '상태', media: '미디어', tone: '톤', density: '밀도'};
-const VISUAL_LABEL: Record<string, string> = {quiet: '조용한', soft: '부드러운', bold: '굵은 대비', editorial: '에디토리얼'};
 
 export default async function PurposeFamilyPage({params, searchParams}: Props) {
   const {group, name} = await params;
@@ -21,6 +20,8 @@ export default async function PurposeFamilyPage({params, searchParams}: Props) {
   if (!platformReady()) return <PageShell eyebrow="Components" title="컴포넌트"><Unavailable what="컴포넌트 비교" /></PageShell>;
   const list = purposeFamilies();
   if (!list.ok) return <PageShell eyebrow="Components" title="컴포넌트"><Unavailable what="목적 패밀리" requires={'listPlatformMaterials({kind: "purpose-family"}) 목적 패밀리 기록'} /></PageShell>;
+  // 시각 패밀리 이름은 Core 재료 기록에서 읽는다. 화면에 고정 이름표를 두면 Core가 패밀리를 늘릴 때 빈 칩·빈 제목이 생긴다.
+  const VISUAL_LABEL: Record<string, string> = Object.fromEntries(list.value.visuals.map(v => [v.id, v.label]));
   const fam = list.value.items.find(f => f.id === `purpose:${group}.${name}`);
   if (!fam) notFound();
   const base = `/components/purpose/${group}/${name}`;
@@ -62,7 +63,7 @@ export default async function PurposeFamilyPage({params, searchParams}: Props) {
       <div className={styles.split}>
         <div className={styles.controls} data-testid="controls">
           <section aria-labelledby="c-visual"><h2 id="c-visual" className={styles.ctlTitle}>시각 패밀리</h2>
-            <ul className={styles.chips}>{VISUALS.map(v => chip(VISUAL_LABEL[v], here({visual: v}), cq.visual === v, visualOk[v]))}</ul></section>
+            <ul className={styles.chips}>{VISUALS.map(v => chip(VISUAL_LABEL[v] ?? v, here({visual: v}), cq.visual === v, visualOk[v]))}</ul></section>
           {Object.entries(fam.variants).map(([axis, values]) => (
             <section key={axis} aria-label={`변형 ${axis}`}><h2 className={styles.ctlTitle}>{AXIS_LABEL[axis] ?? axis}</h2>
               <ul className={styles.chips} data-axis={`v_${axis}`}>{values.map(v => chip(v, here({variant: {...cq.variant, [axis]: v}}), cq.variant[axis] === v, variantOk(axis, v)))}</ul></section>
@@ -97,7 +98,7 @@ export default async function PurposeFamilyPage({params, searchParams}: Props) {
           const ok = visualOk[v];
           return (
             <li key={v} className={styles.cell} data-visual={v}>
-              <h3>{VISUAL_LABEL[v]}</h3>
+              <h3>{VISUAL_LABEL[v] ?? v}</h3>
               {ok.ok ? <Thumb src={renderSrc(requestFor(fam, cq, v), {kind: 'components'})} title={`${fam.label} ${v}`} width={cq.device} height={cq.device === 390 ? 640 : 520} /> : <p className="note" role="status">{ok.reason}</p>}
             </li>
           );
@@ -116,7 +117,7 @@ export default async function PurposeFamilyPage({params, searchParams}: Props) {
 
       <h2 className="section-title">이 컴포넌트로 페이지 조립</h2>
       {handoffHref && handoff?.ok
-        ? <p><Link href={handoffHref} className={styles.chipLink} data-testid="to-assemble">Studio에서 페이지로 조립하기</Link> <span className={styles.meta}>선택한 시각 패밀리({VISUAL_LABEL[cq.visual]})의 카드 3개로 SaaS 랜딩을 조립합니다.</span></p>
+        ? <p><Link href={handoffHref} className={styles.chipLink} data-testid="to-assemble">Studio에서 페이지로 조립하기</Link> <span className={styles.meta}>선택한 시각 패밀리({VISUAL_LABEL[cq.visual] ?? cq.visual})의 카드 3개로 SaaS 랜딩을 조립합니다.</span></p>
         : <p className="note" data-testid="assemble-pending">{handoff && !handoff.ok ? handoff.errors.map(e => e.message).join(' ') : '이 목적 패밀리를 페이지 슬롯에 놓는 조립은 조립 서비스가 목적 패밀리를 읽게 되면 연결됩니다(서비스 대기).'}</p>}
       <p className={styles.meta}>선택한 목적 패밀리({fam.id})를 페이지 슬롯에 놓는 조립은 서비스 대기이며, 지금은 기반 컴포넌트(카드)와 시각 패밀리만 넘깁니다.</p>
       <p className={styles.meta}>맥락 {contextOf(fam)} 기준으로 판정했습니다.</p>

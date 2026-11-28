@@ -143,11 +143,14 @@ test.describe('layout conditions written in the contracts', () => {
     await open(page, withExample('purpose:navigation.sidebar'), {width: 390});
     expect((await box(page, 'aside a[href="#"]')).height, 'sidebar brand (phone)').toBeGreaterThanOrEqual(44);
     expect((await box(page, 'aside summary')).height, 'sidebar open button (phone)').toBeGreaterThanOrEqual(44);
-    await open(page, withExample('purpose:navigation.topbar'), {width: 390});
-    const tbrand = await box(page, 'header a[href="#"]'), toggle = await box(page, 'header button[aria-expanded]');
-    expect(tbrand.height, 'topbar brand').toBeGreaterThanOrEqual(44);
-    expect(toggle.height, 'topbar toggle height').toBeGreaterThanOrEqual(44);
-    expect(toggle.width, 'topbar toggle width').toBeGreaterThanOrEqual(44);
+    // 컨트롤 높이는 시각 패밀리마다 다르다(dense-enterprise 30px ~ luxury 44px). 터치 44px는 패밀리와 무관한 하한이라 12종 모두에서 본다.
+    for (const visual of VISUALS) {
+      await open(page, withExample('purpose:navigation.topbar'), {width: 390, visual});
+      const tbrand = await box(page, 'header a[href="#"]'), toggle = await box(page, 'header button[aria-expanded]');
+      expect(tbrand.height, `topbar brand ${visual}`).toBeGreaterThanOrEqual(44);
+      expect(toggle.height, `topbar toggle height ${visual}`).toBeGreaterThanOrEqual(44);
+      expect(toggle.width, `topbar toggle width ${visual}`).toBeGreaterThanOrEqual(44);
+    }
   });
 
   test('purpose:navigation.topbar menu links and action buttons share one height on a desktop row', async ({page}) => {

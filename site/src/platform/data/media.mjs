@@ -13,7 +13,7 @@ import {defineStyleMaterial, verifiedBy, validateStyleMaterialShape, pairErrors}
 const photo = (ratio, radius, border, treatment, scrim = 0) => ({ratio, radius, border, treatment, scrim});
 const tile = (shape, fill, border = 'none') => ({shape, fill, border});
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86', 'tests/platform-style-materials.test.mjs:123'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
 export const MEDIA = Object.freeze([
   defineStyleMaterial({

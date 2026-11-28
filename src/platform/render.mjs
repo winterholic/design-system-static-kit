@@ -66,7 +66,7 @@ export function legacyTokens(color, palette, mode) {
 export const walk = (nodes, f) => nodes.forEach(n => { f(n); if (Array.isArray(n.children)) walk(n.children, f); });
 
 /** 선택한 스타일 재료의 id 목록(상태 패턴 포함, 중복 없음). */
-export const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, style?.background, style?.media, ...(style?.states ?? []).map(x => x.id)].filter(Boolean))];
+export const styleMaterialIds = style => [...new Set([style?.surface, style?.motion, style?.background, style?.media, style?.spacing, ...(style?.icons ?? []), ...(style?.states ?? []).map(x => x.id)].filter(Boolean))];
 
 /** 페이지 축 값 재료 id(관계 평가용). axes는 {shell, width, density, mode, scale, backdrop, ornament, footer, icon}를 가진 객체(계획의 axes나 Blueprint)다. */
 export const pageAxisIdsOf = axes => axisIds({shell: axes.shell, width: axes.width, density: axes.density, mode: axes.mode, scale: axes.scale, backdrop: axes.backdrop, ornament: axes.ornament, footer: axes.footer, icon: axes.icon});
@@ -140,7 +140,7 @@ export function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   if (failed(diagnostics)) return stop();
   if (!['light', 'dark'].includes(b.mode)) return {...stop(), diagnostics: [diag('MATERIALS_INCOMPATIBLE', '$.mode', `플랫폼 조립은 mode light·dark만 렌더합니다(받은 값: ${b.mode})`)]};
   const sel = {styleContext: m.styleContext ?? null, palette: m.palette, subtokenSet: m.subtokenSet, typeSystem: m.typeSystem, families: {...(m.families ?? {}), ...Object.fromEntries((m.purposes ?? []).map(p => [p.id, p.visual]))}};
-  const style = {surface: m.surface ?? null, motion: m.motion ?? null, background: m.background ?? null, media: m.media ?? null, states: (m.states ?? []).map((st, index) => ({index, id: st.id}))};
+  const style = {surface: m.surface ?? null, motion: m.motion ?? null, background: m.background ?? null, media: m.media ?? null, spacing: `spacing:${b.density}`, states: (m.states ?? []).map((st, index) => ({index, id: st.id}))};
   const palette = reg.get(sel.palette), set = reg.get(sel.subtokenSet), typeSystem = reg.get(sel.typeSystem);
   const relations = evaluated ?? evaluateMaterials(env, {context: b.pageType, axes: b, selection: sel, styleIds: styleMaterialIds(style)});
   for (const v of evaluated ? [] : relations.violations) diagnostics.push(diag(v.code === 'P_CHECK_TYPE_HANGUL' ? v.code : 'MATERIALS_INCOMPATIBLE', '$.materials', `${v.from} × ${v.to}: ${v.reason}`, {relation: v.code}));
@@ -200,7 +200,7 @@ export function renderPlatformBlueprint(b, env, {evaluated = null} = {}) {
   }
   // 선택한 표면·모션·배경·미디어는 셸에 범위 속성으로 달고(배경 장식 요소 포함) 재료 CSS를 붙인다.
   const bg = style.background ? reg.get(style.background) : null;
-  const attrs = styleMaterialAttrs(style);
+  const attrs = styleMaterialAttrs(style, b.pageType);
   if (attrs) body = body.replace('<div class="kit-shell"', `<div class="kit-shell" ${attrs}`);
   if (bg && bg.deco.kind !== 'none') body = body.replace(/(<div class="kit-shell"[^>]*>)/, '$1<span class="kit-deco" aria-hidden="true"></span>');
   const tagged = tagFamilies(body, tagOrder);

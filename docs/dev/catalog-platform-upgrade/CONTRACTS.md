@@ -1,7 +1,7 @@
 # 디자인 조립 플랫폼 공통 계약 명세서 (CONTRACTS.md)
 
 - 상태: 채택 (Phase 0 전수 감사 및 기준선 수립)
-- 버전: 1.1.0 (P0-AUDIT 독립 검증 반영, 개정 내용은 §9)
+- 버전: 1.2.0 (TASK-TRE-04 §9.3~§9.7 재료 범위 반영, 개정 내용은 §9)
 - 적용 대상: Track A ~ Track G 전체 작업 트랙
 - 관련 문서: `REQUEST.md`, `AGENTS.md`, `docs/architecture.md`, `docs/governance.md`, `docs/adr/0012-assembly-platform.md`, `docs/platform/wbs.md`
 
@@ -48,7 +48,7 @@
 | 표면/배경/모션/상태 | `surface:soft-layered`, `motion:calm`, `state-pattern:empty-inline` | Track E | 부가 시각 재료 |
 
 ### 2.2 버전 관리 정책
-- **플랫폼 계약 버전**: `PLATFORM_CONTRACT_VERSION = 0.7.0`. 내부 모듈 변경 시 minor를 올리고 `docs/adr/0012-assembly-platform.md` 개정 기록에 남긴다.
+- **플랫폼 계약 버전**: `PLATFORM_CONTRACT_VERSION = 0.9.0`. 내부 모듈 변경 시 minor를 올리고 `docs/adr/0012-assembly-platform.md` 개정 기록에 남긴다.
 - **서비스 계약 버전**: `CONTRACT_VERSION = 1.3.0`. 공개 API 변경 시 semver 원칙을 적용한다.
 - **재료 버전**: 재료 기록은 semver `version` 필드를 포함한다. 기존 출력 해시를 깨뜨리는 수정은 금지되며, 수정이 필요한 경우 신규 ID 또는 새 재료 버전을 등록한다.
 
@@ -270,7 +270,7 @@ npm run coverage:materials:check   # 저장본이 현재 코드와 바이트까�
 ```
 
 ### 8.1 수치의 출처 원칙
-- 요구 목록(§4.4, §5.2, §6.2, §7, §9.1, §9.2)과 §2.1 기준표는 REQUEST.md를 읽어 온다. 생성기 안에 항목 수나 이전 기준값을 적지 않는다.
+- 요구 목록(§4.4, §5.2, §6.2, §7, §9.1~§9.7)과 §2.1 기준표는 REQUEST.md를 읽어 온다. 생성기 안에 항목 수나 이전 기준값을 적지 않는다.
 - 재료는 레지스트리에서 읽는다. 렌더·조립은 서비스 함수(`assembleDesign`, `assembleComponents`, `compileBlueprint`)와 `src/edit` 연산을 재료마다 실제로 호출해 본다.
 - 계산이 비싼 값은 `docs/evidence/platform/baseline.json`에서 읽되, 읽은 위치와 신선도 검사 결과를 `provenance.expensiveValues`에 적는다. 값마다 숫자 fallback(`?? 9` 같은 것)을 두지 않는다.
 - `comparisonTable`의 `status`는 실측값과 REQUEST.md §2.1 값의 비교로 정한다(`match` 또는 `drift`).
@@ -304,3 +304,10 @@ npm run coverage:materials:check   # 저장본이 현재 코드와 바이트까�
 |---|---|
 | 1.0.0 | Phase 0 감사 산출물(커밋 b70e2a248) |
 | 1.1.0 | P0-AUDIT 독립 검증. 고정 해시 조항에 `site/` 재생성 절차 추가, ID 예시와 `contexts`·`quality.evidence`·`source` 필드 정의를 코드에 맞춤, 인덱스 스키마의 `generatedAt` 삭제(결정론 충돌), 캐시 키의 존재하지 않는 `compilerVersion` 제거와 정규화 규칙 명시, 미리보기 위치 충돌(`site/previews`) 해소, 파일 소유권 충돌(family.mjs, chart-presets.mjs, layout.mjs 등)과 소유자 없는 영역 정리, 교차 트랙 수정 규칙(§6.1)과 이름 충돌 규칙(§6.2) 추가, 컴포넌트 인벤토리 수를 220에서 207로 정정, Manifest 계약(§8) 추가 |
+| 1.2.0 | TASK-TRE-04 재료 작업의 §9.3~§9.7 Manifest 요구 범위와 플랫폼 계약 0.9.0 간격·아이콘 재료를 명시 |
+
+## 10. TASK-TRE-04 Foundations 재료 확장
+
+- `spacing` 재료는 기존 `SPACE`의 4px 격자를 재사용하며 역할별 밀도 토큰을 컴파일 CSS에 낸다. `icon` 영역 재료는 기존 내부 원본 심볼만 허용하고 공통 24px viewBox·크기·선 굵기·정렬·시각 패밀리를 검증한다.
+- `surface`는 17개의 식별된 facets(반경·테두리·깊이)를, `motion`은 15개의 목적 패턴(property·duration·easing·delay·reduced-motion 정책)을 가진다. 값은 컴파일 CSS로 연결한다.
+- `background`는 REQUEST §9.5의 12종을 제공한다. Frosted blur는 0~16px이며 단일 `.kit-deco` 요소에 한정한다.

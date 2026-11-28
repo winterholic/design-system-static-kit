@@ -15,8 +15,8 @@ const table = extra => ({title: '작업', columns: ['작업', '담당', '상태'
 const codes = r => r.diagnostics.map(d => d.code);
 const shell = html => html.match(/<div class="kit-shell"[^>]*>/)[0];
 
-test('the five style material kinds are platform kinds, registered with their data and checked by the registry', () => {
-  assert.deepEqual(STYLE_MATERIAL_KINDS, ['surface', 'motion', 'background', 'media', 'state-pattern']);
+test('style material kinds are platform kinds, registered with their data and checked by the registry', () => {
+  assert.deepEqual(STYLE_MATERIAL_KINDS, ['surface', 'motion', 'background', 'media', 'state-pattern', 'spacing', 'icon']);
   for (const k of STYLE_MATERIAL_KINDS) {
     assert.ok(PLATFORM_KINDS.includes(k) && KIND_SPECS[k], k);
     assert.deepEqual(env.registry.list(k).map(m => m.id), STYLE_MATERIALS[k].map(m => m.id).sort(), `${k} registered one for one`);
@@ -71,11 +71,11 @@ test('selected surface, motion, background and media show up in the page: scope 
   const r = dash({}, {mode: 'dark', surface: 'surface:glow-glass', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech'});
   assert.equal(r.ok, true, JSON.stringify(r.diagnostics));
   const tag = shell(r.value.html);
-  for (const a of ['data-surface="glow-glass"', 'data-motion="snappy"', 'data-bg="blueprint-grid-lines"', 'data-media="square-tech"']) assert.ok(tag.includes(a), a);
+  for (const a of ['data-surface="glow-glass"', 'data-motion="snappy"', 'data-bg="blueprint-grid-lines"', 'data-media="square-tech"', 'data-context="dashboard"']) assert.ok(tag.includes(a), a);
   assert.ok(r.value.css.includes(surfaceScopeCSS(env.registry.get('surface:glow-glass'))), 'the surface becomes the variables the legacy parts read');
   assert.match(r.value.css, /\[data-surface="glow-glass"\]\{--kit-radius:18px;--kit-card-border:[^;]+;--kit-shadow:[^;]+;--kit-shadow-hover:/);
   assert.ok(r.value.css.includes('[data-motion="snappy"]{') && r.value.css.includes('[data-bg="blueprint-grid-lines"]{') && r.value.css.includes('[data-media="square-tech"]{'));
-  assert.deepEqual(r.value.manifest.platform.styleMaterials, {surface: 'surface:glow-glass', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech', states: []});
+  assert.deepEqual(r.value.manifest.platform.styleMaterials, {surface: 'surface:glow-glass', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech', spacing: 'spacing:comfortable', states: []});
   for (const slot of ['surface', 'motion', 'background', 'media']) assert.ok(r.decisions.some(d => d.slot === `style.${slot}` && d.source === 'intent'), slot);
   // a different surface changes the output, not only the manifest
   const other = dash({}, {mode: 'dark', surface: 'surface:soft-layered', motion: 'motion:snappy', background: 'background:blueprint-grid-lines', media: 'media:square-tech'});

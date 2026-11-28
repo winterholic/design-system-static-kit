@@ -7,6 +7,7 @@
  * - 안쪽 여백은 간격 계약의 토큰(src/spacing.mjs)만 쓰고, 색은 색 역할 변수만 쓴다. 상태를 색으로만 알리지 않는다: 아이콘과 글이 함께 간다.
  */
 import {RADIUS} from '../../styles/base.mjs';
+import {SPACE} from '../../spacing.mjs';
 import {COLOR_ROLES} from '../contract.mjs';
 import {icon as renderIcon} from '../../render/icon.mjs';
 import {icons} from '../../catalog/icons.mjs';
@@ -18,7 +19,7 @@ const LAYOUTS = ['block', 'inline', 'banner', 'toast'];
 
 const state = (id, label, extra) => defineStyleMaterial({id: `state-pattern:${id}`, kind: 'state-pattern', label, uses: {}, ...extra});
 
-const EVIDENCE = ['tests/platform-style-materials.test.mjs:36', 'tests/platform-style-materials.test.mjs:53', 'tests/platform-style-materials.test.mjs:86', 'tests/platform-style-materials.test.mjs:104'];
+const EVIDENCE = ['tests/platform-style-materials.test.mjs:39'];
 
 export const STATE_PATTERNS = Object.freeze([
   state('empty-illustrated', '일러스트형 빈 화면', {
@@ -98,23 +99,28 @@ export function stateCSS(m) {
   const box = extra => `${sel}{box-sizing:border-box;${extra}}`;
   const byPattern = {
     'empty-illustrated': box(`display:grid;justify-items:center;text-align:center;gap:var(--kit-sp-head);padding:var(--kit-sp-section-m) var(--kit-inset);background:${tone('surface')};border:1px dashed ${tone('rule')};border-radius:${r}`)
-      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:999px;background:${tone('soft')};color:${tone('link')}}${sel} .kit-state-icon .kit-icon{width:24px;height:24px}`,
+      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:999px;background:${tone('soft')};color:${tone(m.tone)}}${sel} .kit-state-icon .kit-icon{width:24px;height:24px}`,
     'empty-inline': box(`display:flex;align-items:center;flex-wrap:wrap;gap:var(--kit-sp-near);padding:var(--kit-sp-item) var(--kit-sp-inset-s);color:${tone('muted')};border-bottom:${hairline}`)
       + `${sel} .kit-state-action{min-height:0;padding:0;border:0;background:transparent;color:${tone('link')};text-decoration:underline;text-underline-offset:4px;font-weight:600}`,
     'loading-skeleton': box(`display:grid;gap:var(--kit-sp-item);padding:var(--kit-inset);background:${tone('surface')};border:${hairline};border-radius:${r}`)
       + `${sel} [data-skeleton]{display:block;height:16px;border-radius:${RADIUS.subtle}px;background:linear-gradient(90deg,${tone('soft')} 25%,${tone('sunken')} 50%,${tone('soft')} 75%)}${sel} [data-skeleton]:nth-child(2){width:80%}${sel} [data-skeleton]:nth-child(3){width:56%}`,
     'loading-spinner': box(`display:inline-flex;align-items:center;gap:var(--kit-sp-near);padding:var(--kit-sp-near) 0`)
       + `${sel} [data-spinner]{display:inline-block;width:16px;height:16px;border-radius:999px;border:2px solid ${tone('rule')};border-top-color:${tone('action')}}`,
-    'error-banner': box(`display:flex;align-items:flex-start;flex-wrap:wrap;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('dangerSoft')};border:1px solid ${tone('danger')};border-radius:${r};color:${tone('text')}`)
-      + `${sel} .kit-state-icon{color:${tone('danger')};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1 1 240px}${sel} .kit-state-body{color:${tone('text')}}${sel} .kit-state-action{min-height:0;padding:var(--kit-sp-near) var(--kit-sp-inset-s);background:transparent;color:${tone('link')};border-color:${tone('link')}}`,
-    'error-panel': box(`display:grid;gap:var(--kit-sp-head);padding:var(--kit-inset);background:${tone('surface')};border:1px solid ${tone('danger')};border-radius:${r}`)
-      + `${sel} .kit-state-icon{color:${tone('danger')};display:inline-flex}${sel} .kit-state-head{display:flex;align-items:center;gap:var(--kit-sp-near)}${sel} details{border-top:${hairline};padding-top:var(--kit-sp-near)}${sel} summary{cursor:pointer;color:${tone('link')};font-weight:600}${sel} code{display:block;margin-top:var(--kit-sp-near);padding:var(--kit-sp-near) var(--kit-sp-item);background:${tone('soft')};border-radius:${RADIUS.subtle}px;font-family:var(--kit-mono,monospace);font-size:var(--kit-t-small);color:${tone('text')};overflow-wrap:anywhere}`,
-    'success-toast': box(`display:flex;align-items:flex-start;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('surface')};border:${hairline};border-left:4px solid ${tone('success')};border-radius:${r};box-shadow:0 2px 4px var(--kit-shade),0 12px 24px -10px var(--kit-shade)`)
-      + `${sel} .kit-state-icon{color:${tone('success')};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1}${sel} .kit-state-dismiss{border:0;background:transparent;color:${tone('muted')};min-height:var(--kit-control);min-width:var(--kit-control);font:inherit;cursor:pointer}`,
-    'success-confirmation': box(`display:grid;justify-items:center;text-align:center;gap:var(--kit-sp-head);padding:var(--kit-sp-section-m) var(--kit-inset);background:${tone('surface')};border:1px solid ${tone('success')};border-radius:${r}`)
-      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;color:${tone('success')}}${sel} .kit-state-icon .kit-icon{width:40px;height:40px}`,
+    'error-banner': box(`display:flex;align-items:flex-start;flex-wrap:wrap;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('dangerSoft')};border:1px solid ${tone(m.tone)};border-radius:${r};color:${tone('text')}`)
+      + `${sel} .kit-state-icon{color:${tone(m.tone)};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1 1 240px}${sel} .kit-state-body{color:${tone('text')}}${sel} .kit-state-action{min-height:0;padding:var(--kit-sp-near) var(--kit-sp-inset-s);background:transparent;color:${tone('link')};border-color:${tone('link')}}`,
+    'error-panel': box(`display:grid;gap:var(--kit-sp-head);padding:var(--kit-inset);background:${tone('surface')};border:1px solid ${tone(m.tone)};border-radius:${r}`)
+      + `${sel} .kit-state-icon{color:${tone(m.tone)};display:inline-flex}${sel} .kit-state-head{display:flex;align-items:center;gap:var(--kit-sp-near)}${sel} details{border-top:${hairline};padding-top:var(--kit-sp-near)}${sel} summary{cursor:pointer;color:${tone('link')};font-weight:600}${sel} code{display:block;margin-top:var(--kit-sp-near);padding:var(--kit-sp-near) var(--kit-sp-item);background:${tone('soft')};border-radius:${RADIUS.subtle}px;font-family:var(--kit-mono,monospace);font-size:var(--kit-t-small);color:${tone('text')};overflow-wrap:anywhere}`,
+    'success-toast': box(`display:flex;align-items:flex-start;gap:var(--kit-sp-item);padding:var(--kit-sp-item) var(--kit-sp-inset-s);background:${tone('surface')};border:${hairline};border-left:4px solid ${tone(m.tone)};border-radius:${r};box-shadow:0 2px 4px var(--kit-shade),0 12px 24px -10px var(--kit-shade)`)
+      + `${sel} .kit-state-icon{color:${tone(m.tone)};display:inline-flex}${sel} .kit-state-text{display:grid;gap:var(--kit-sp-tight);flex:1}${sel} .kit-state-dismiss{border:0;background:transparent;color:${tone('muted')};min-height:var(--kit-control);min-width:var(--kit-control);font:inherit;cursor:pointer}`,
+    'success-confirmation': box(`display:grid;justify-items:center;text-align:center;gap:var(--kit-sp-head);padding:var(--kit-sp-section-m) var(--kit-inset);background:${tone('surface')};border:1px solid ${tone(m.tone)};border-radius:${r}`)
+      + `${sel} .kit-state-icon{display:inline-grid;place-items:center;width:48px;height:48px;color:${tone(m.tone)}}${sel} .kit-state-icon .kit-icon{width:40px;height:40px}`,
   };
-  return `${byPattern[name(m)]}\n${shared}`;
+  const scale = SPACE[m.axes.density];
+  const sized = `${byPattern[name(m)]}\n${shared}`.replace(/var\(--kit-sp-(tight|near|item|head|inset-s|section-m)\)|var\(--kit-inset\)/g, token => {
+    const key = {'--kit-sp-tight': 'tight', '--kit-sp-near': 'near', '--kit-sp-item': 'item', '--kit-sp-head': 'head', '--kit-sp-inset-s': 'insetS', '--kit-sp-section-m': 'sectionM', '--kit-inset': 'inset'}[token.slice(4, -1)];
+    return `${scale[key]}px`;
+  });
+  return sized;
 }
 
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));

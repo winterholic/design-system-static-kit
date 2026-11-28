@@ -93,15 +93,20 @@ export function generateBlocks() {
 
   const withStates = Object.entries(STYLE_MATERIALS).map(([kind, list]) => [kind, list]);
   blocks.materials = withStates.map(([kind, list]) => {
-    const head = kind === 'state-pattern' ? ['id', '이름', '상태', '배치', '알림', '부분', '쓰는 페이지 유형'] : kind === 'surface' ? ['id', '이름', '단계(반경·깊이·채움)', '쓰는 페이지 유형']
-      : kind === 'motion' ? ['id', '이름', 'duration(fast/base/slow ms)', 'easing(enter)', 'lift', '쓰는 페이지 유형'] : kind === 'background' ? ['id', '이름', '바탕 · 장식', '장식 종류', '쓰는 페이지 유형']
-      : ['id', '이름', '아이콘', '타일', '사진(비율 · 반경 · 테두리 · 톤)', '캡션', '쓰는 페이지 유형'];
+    const head = kind === 'state-pattern' ? ['id', '이름', '상태', '배치', '알림', '부분', '쓰는 페이지 유형'] : kind === 'surface' ? ['id', '이름', '단계(반경·깊이·채움)', '표면 원형', '쓰는 페이지 유형']
+      : kind === 'motion' ? ['id', '이름', 'duration(fast/base/slow ms)', 'easing(enter)', '목적 패턴', 'lift', '쓰는 페이지 유형'] : kind === 'background' ? ['id', '이름', '바탕 · 장식', '장식 종류', '쓰는 페이지 유형']
+      : kind === 'media' ? ['id', '이름', '아이콘', '타일', '사진(비율 · 반경 · 테두리 · 톤)', '캡션', '쓰는 페이지 유형']
+      : kind === 'spacing' ? ['id', '이름', '밀도', '간격 토큰', '쓰는 페이지 유형']
+      : kind === 'icon' ? ['id', '이름', '영역', '심볼', 'viewBox · 크기 · 선 굵기', '시각 패밀리', '쓰는 페이지 유형']
+      : ['id', '이름', '상태', '배치', '알림', '부분', '쓰는 페이지 유형'];
     const rows = list.map(m => {
       const ctx = m.contexts.join(', ');
-      if (kind === 'surface') return [`\`${m.id}\``, m.label, Object.entries(m.levels).map(([k, l]) => `${k}: ${l.radius}·${l.elevation}·${l.fill}`).join(' / '), ctx];
-      if (kind === 'motion') return [`\`${m.id}\``, m.label, `${m.duration.fast}/${m.duration.base}/${m.duration.slow}`, `(${m.easing.enter.join(', ')})`, m.lift, ctx];
+      if (kind === 'surface') return [`\`${m.id}\``, m.label, Object.entries(m.levels).map(([k, l]) => `${k}: ${l.radius}·${l.elevation}·${l.fill}`).join(' / '), m.facets.length, ctx];
+      if (kind === 'motion') return [`\`${m.id}\``, m.label, `${m.duration.fast}/${m.duration.base}/${m.duration.slow}`, `(${m.easing.enter.join(', ')})`, m.patterns.map(p => p.id).join(' · '), m.lift, ctx];
       if (kind === 'background') return [`\`${m.id}\``, m.label, `${m.axes.backdrop} · ${m.axes.ornament}`, m.deco.kind, ctx];
       if (kind === 'media') return [`\`${m.id}\``, m.label, m.icon.style, `${m.tile.shape}/${m.tile.fill}`, `${m.photo.ratio} · ${m.photo.radius} · ${m.photo.border} · ${m.photo.treatment}${m.photo.scrim ? ` · 스크림 ${m.photo.scrim}%` : ''}`, m.caption, ctx];
+      if (kind === 'spacing') return [`\`${m.id}\``, m.label, m.density, Object.entries(m.tokens).map(([k, v]) => `${k} ${v}px`).join(' · '), ctx];
+      if (kind === 'icon') return [`\`${m.id}\``, m.label, m.area, m.symbols.join(' · '), `${m.viewBox} · ${m.size}px · ${m.strokeWidth}`, m.family, ctx];
       return [`\`${m.id}\``, m.label, m.state, m.layout, `${m.role}`, m.parts.join('·'), ctx];
     });
     return `**${kind}** (${list.length}개)\n\n${table(head, rows)}`;

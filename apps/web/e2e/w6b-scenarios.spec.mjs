@@ -128,7 +128,7 @@ for (const width of [390, 1280]) {
     });
 
     test('시나리오 B: 컴포넌트(가격 카드) → 시각 패밀리·상태·콘텐츠 → 금지 조합 → 코드 → 페이지 조립', async ({page, request}) => {
-      // 목적 패밀리 32종은 쪽(24개)으로 나뉜다. 쪽을 넘기며 모두 모으고, 가격 카드는 검색으로 바로 찾는다.
+      // 목적 패밀리 37종은 쪽(24개)으로 나뉜다. 쪽을 넘기며 모두 모으고, 가격 카드는 검색으로 바로 찾는다.
       await page.goto('/components');
       const purposes = new Set();
       for (let n = 1; n < 10; n++) {
@@ -138,7 +138,7 @@ for (const width of [390, 1280]) {
         await next.click();
         await expect(page).toHaveURL(new RegExp(`page=${n + 1}`));
       }
-      expect(purposes.size).toBe(32);
+      expect(purposes.size).toBe(37);
       await page.goto('/components');
       await page.getByRole('searchbox', {name: '검색'}).fill('card.pricing');
       await page.getByRole('button', {name: '찾기'}).click();
@@ -147,9 +147,13 @@ for (const width of [390, 1280]) {
       await card.getByRole('link').click();
       await expect(page).toHaveURL(/\/components\/purpose\/card\/pricing/);
 
-      // 시각 패밀리 4종 비교
+      // 시각 패밀리 전부 비교: 칸 수는 Core 에 등록된 시각 패밀리 수와 같아야 한다(4종 고정이 아니다). 칸마다 보이는 이름이 있어야 한다.
+      const registered = service.listPlatformMaterials({kind: 'family', limit: 200});
+      expect(registered.ok).toBe(true);
       const compare = page.getByTestId('visual-compare');
-      expect(await compare.locator('li[data-visual]').count()).toBe(4);
+      expect(registered.value.items.length).toBeGreaterThanOrEqual(12);
+      expect(await compare.locator('li[data-visual]').count()).toBe(registered.value.items.length);
+      for (const row of registered.value.items) await expect(compare.locator(`li[data-visual="${row.id.slice('family:'.length)}"] h3`)).toHaveText(row.label);
       const boldSrc = await srcOf(compare.locator('li[data-visual="bold"]'));
       const boldReq = JSON.parse(Buffer.from(new URL(boldSrc, 'http://x').searchParams.get('r'), 'base64url').toString());
       const bold = componentsOf(boldReq);

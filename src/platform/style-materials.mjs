@@ -18,11 +18,13 @@ import {validateMotion, motionCSS} from './data/motion.mjs';
 import {validateBackground, backgroundCSS} from './data/backgrounds.mjs';
 import {validateMedia, mediaCSS} from './data/media.mjs';
 import {validateStatePattern, stateCSS, STATE_KINDS} from './data/states.mjs';
+import {validateSpacing, spacingCSS} from './data/spacing.mjs';
+import {validateIconMaterial, iconCSS} from './data/icons.mjs';
 
 export {STATE_KINDS};
 /** 종류별 의미 검사. createPlatformRegistry({validators})가 등록할 때 부른다. */
-export const STYLE_VALIDATORS = Object.freeze({surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern});
-const SLOTS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media']];
+export const STYLE_VALIDATORS = Object.freeze({surface: validateSurface, motion: validateMotion, background: validateBackground, media: validateMedia, 'state-pattern': validateStatePattern, spacing: validateSpacing, icon: validateIconMaterial});
+const SLOTS = [['surface', 'surface'], ['motion', 'motion'], ['background', 'background'], ['media', 'media'], ['spacing', 'spacing']];
 const diag = (code, path, message, extra = {}) => ({code, path, severity: 'error', message, ...extra});
 const nameOf = m => m.id.slice(m.kind.length + 1);
 
@@ -71,13 +73,16 @@ export function assembleStyleMaterials(registry, request) {
   const diagnostics = [], decisions = [], selection = {surface: null, motion: null, background: null, media: null, states: {}};
   const fail = () => ({ok: false, selection, decisions, diagnostics, css: null});
   if (request === null || typeof request !== 'object' || Array.isArray(request)) return {...fail(), diagnostics: [diag('P_REQUEST', '$', '요청은 객체여야 합니다')]};
-  const allowed = ['styleContext', 'context', 'surface', 'motion', 'background', 'media', 'states'];
+  const allowed = ['styleContext', 'context', 'surface', 'motion', 'background', 'media', 'spacing', 'icons', 'states'];
   for (const k of Object.keys(request)) if (!allowed.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.${k}`, `지원하지 않는 키: ${k}. 임의 CSS 경로는 없습니다`, {alternatives: allowed}));
   const sc = typeof request.styleContext === 'string' ? registry.get(request.styleContext) : null;
   if (!sc || sc.kind !== 'style-context') diagnostics.push(diag('P_ATTR_UNKNOWN', '$.styleContext', `등록되지 않은 스타일 맥락: ${request.styleContext}`, {alternatives: registry.list('style-context').map(x => x.id)}));
   if (typeof request.context !== 'string') diagnostics.push(diag('P_REQUEST_CONTEXT', '$.context', 'context(페이지 유형)가 필요합니다'));
   if (diagnostics.length) return fail();
   const states = request.states ?? {};
+  const icons = request.icons ?? [];
+  if (!Array.isArray(icons)) diagnostics.push(diag('P_REQUEST_KEY', '$.icons', 'icons는 icon material id 배열이어야 합니다'));
+  if (Array.isArray(icons) && icons.length > 1) diagnostics.push(diag('P_REQUEST_KEY', '$.icons', '한 번의 조립에는 아이콘 영역 재료를 하나만 지정합니다'));
   for (const k of Object.keys(states)) if (!STATE_KINDS.includes(k)) diagnostics.push(diag('P_REQUEST_KEY', `$.states.${k}`, `상태는 ${STATE_KINDS.join('·')}입니다`, {alternatives: STATE_KINDS}));
   if (diagnostics.length) return fail();
 
@@ -99,11 +104,16 @@ export function assembleStyleMaterials(registry, request) {
     return rec.ranked[0].id;
   };
   for (const [slot, kind] of SLOTS) selection[slot] = choose(slot, kind, `$.${slot}`, request[slot]);
+  selection.icons = [];
+  for (const [i, id] of icons.entries()) {
+    const selected = choose(`icon(${i})`, 'icon', `$.icons[${i}]`, id);
+    if (selected) selection.icons.push(selected);
+  }
   for (const st of STATE_KINDS) selection.states[st] = choose(`state(${st})`, 'state-pattern', `$.states.${st}`, states[st], st);
   if (diagnostics.length) return fail();
 
   const g = id => registry.get(id);
-  const parts = [motionCSS(g(selection.motion)), surfaceCSS(g(selection.surface)), backgroundCSS(g(selection.background)), mediaCSS(g(selection.media))];
+  const parts = [motionCSS(g(selection.motion)), surfaceCSS(g(selection.surface)), backgroundCSS(g(selection.background)), mediaCSS(g(selection.media)), spacingCSS(g(selection.spacing)), ...selection.icons.map(id => iconCSS(g(id)))];
   for (const st of STATE_KINDS) parts.push(stateCSS(g(selection.states[st])));
   return {ok: true, selection, decisions, diagnostics, css: parts.join('\n')};
 }
@@ -128,13 +138,15 @@ export function styleMaterialsCSS(registry, selection, usedStates = []) {
   if (selection.surface) parts.push(surfaceScopeCSS(g(selection.surface)));
   if (selection.background) parts.push(backgroundCSS(g(selection.background)));
   if (selection.media) parts.push(mediaCSS(g(selection.media)));
+  if (selection.spacing) parts.push(spacingCSS(g(selection.spacing)));
+  for (const id of [...new Set(selection.icons ?? [])].sort()) parts.push(iconCSS(g(id)));
   for (const id of [...new Set(usedStates)].sort()) parts.push(stateCSS(g(id)));
   return parts.join('\n');
 }
 
 /** 선택한 재료의 범위 속성. 쇼 셸(.kit-shell)에 단다. 모션·표면·배경·미디어가 각자의 이름으로 범위를 연다. */
-export function styleMaterialAttrs(selection) {
+export function styleMaterialAttrs(selection, context) {
   const n = id => id.slice(id.indexOf(':') + 1);
-  return [['data-surface', selection.surface], ['data-motion', selection.motion], ['data-bg', selection.background], ['data-media', selection.media]]
-    .filter(([, id]) => id).map(([k, id]) => `${k}="${n(id)}"`).join(' ');
+  return [['data-surface', selection.surface], ['data-motion', selection.motion], ['data-bg', selection.background], ['data-media', selection.media], ['data-density', selection.spacing], ...(selection.icons?.length ? [['data-icon-area', selection.icons[0].slice('icon:area-'.length)]] : []), ...(context ? [['data-context', context]] : [])]
+    .filter(([, id]) => id).map(([k, id]) => `${k}="${k === 'data-icon-area' || k === 'data-context' ? id : n(id)}"`).join(' ');
 }

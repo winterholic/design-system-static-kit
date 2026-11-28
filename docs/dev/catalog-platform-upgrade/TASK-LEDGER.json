@@ -6,8 +6,8 @@
     "byStatus": {
       "Verified": 10,
       "Implemented": 7,
-      "Pending": 26,
-      "In Progress": 1,
+      "Pending": 25,
+      "In Progress": 2,
       "Blocked": 0
     },
     "byTrack": {
@@ -1047,7 +1047,7 @@
       "taskId": "TASK-TRE-04",
       "title": "Foundations(표면, 배경, 모션, 아이콘) 재료 확충 및 전시장 개편",
       "goal": "기초 디자인 재료 전수 정의 및 Foundations 탐색 화면 구축",
-      "scope": "src/platform/data/{surfaces,motion,backgrounds,media,states}.mjs, apps/web/app/materials/foundations/page.tsx (아이콘은 2.x 카탈로그의 `src/catalog/icons.mjs`가 고정 출력 영역이므로 신규 아이콘은 플랫폼 재료 종류로 추가한다)",
+      "scope": "src/platform/data/{surfaces,motion,backgrounds,media,states,spacing,icons}.mjs, 플랫폼 계약·스타일 재료 컴파일러, 관련 시험·Manifest 생성기·문서·생성 mirror. Foundations 전시장(apps/web/app/materials/foundations/page.tsx)은 Track F 범위.",
       "track": "Track E",
       "dependencies": [
         "TASK-TRE-03"
@@ -1058,20 +1058,95 @@
         "src/platform/data/backgrounds.mjs",
         "src/platform/data/media.mjs",
         "src/platform/data/states.mjs",
-        "apps/web/app/materials/foundations/page.tsx"
+        "src/platform/data/spacing.mjs",
+        "src/platform/data/icons.mjs",
+        "src/platform/contract.mjs",
+        "src/platform/recommend.mjs",
+        "src/platform/style-materials.mjs",
+        "src/platform/data/style-contexts.mjs",
+        "src/platform/examples/minimal.mjs",
+        "src/platform/page.mjs",
+        "src/platform/render.mjs",
+        "tests/platform-style-materials.test.mjs",
+        "tests/platform-pipeline-contract.test.mjs",
+        "tests/platform-pipeline-style.test.mjs",
+        "tests/platform-service-channels.test.mjs",
+        "tests/platform-style-doc.mjs",
+        "docs/platform/style-contexts.md",
+        "docs/adr/0012-assembly-platform.md",
+        "docs/dev/catalog-platform-upgrade/CONTRACTS.md",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json"
       ],
-      "completionCriteria": "모션 reduced-motion 정책 준수, 고비용 blur 제한, Foundations 전시장 인터랙티브 확인",
+      "completionCriteria": "REQUEST §9.3~§9.7 69개 요구 missing 0; 재료 값의 컴파일 CSS 소비·쌍별 차이·reduced-motion·blur 제한 검증; Registry/관계 그래프/서비스/REST/MCP 조회 통과; legacy 2.1.0 해시와 기본 2.4.0 출력 불변. 재료 구현 완료. Foundations 전시장 페이지는 Track F.",
       "tests": [
-        "tests/platform-style-materials.test.mjs"
+        "node --test tests/platform-style-materials.test.mjs",
+        "npm run coverage:materials:check",
+        "npm run verify"
       ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null,
+      "status": "In Progress",
+      "unresolvedIssues": "재료 범위 완료: §9.3~§9.7 69개 요구 missing 0. 재료 전용 시험 13/13, coverage:materials:check MATCH, 감사·문서·빌드·생성 재현성 검증 통과. 전체 verify의 최신 main resizable-panel Chromium E2E는 Codex 샌드박스 MachPortRendezvous 권한 오류(Permission denied 1100, SIGTRAP)로 이 환경에서 미검증. Foundations 페이지는 Track F.",
       "crossTrackFiles": [
         {
           "file": "apps/web/app/materials/foundations/page.tsx",
           "owner": "Track F",
-          "reason": "Foundations 전시장 개편"
+          "reason": "Foundations 전시장 개편은 이번 범위에서 구현하지 않음"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "owner": "Track G",
+          "reason": "REQUEST §9.3~9.7 요구와 재료 소비 측정"
+        },
+        {
+          "file": "src/platform/contract.mjs",
+          "owner": "Track A",
+          "reason": "spacing·icon·surface facet·motion pattern 재료 스키마 등록"
+        },
+        {
+          "file": "src/platform/recommend.mjs",
+          "owner": "Track A",
+          "reason": "재료 종류 추천과 관계 그래프 호환 적용"
+        },
+        {
+          "file": "src/platform/style-materials.mjs",
+          "owner": "Track A",
+          "reason": "신규 재료 선택·검증 및 CSS 출력 연결"
+        },
+        {
+          "file": "src/platform/data/style-contexts.mjs",
+          "owner": "Track E",
+          "reason": "신규 재료 레지스트리 등록"
+        },
+        {
+          "file": "src/platform/examples/minimal.mjs",
+          "owner": "Track A",
+          "reason": "신규 재료 통합 레지스트리 연결"
+        },
+        {
+          "file": "src/platform/page.mjs",
+          "owner": "Track A",
+          "reason": "페이지 조립의 간격·밀도 재료 연결"
+        },
+        {
+          "file": "src/platform/render.mjs",
+          "owner": "Track A",
+          "reason": "컴파일 출력에 신규 재료 반영"
+        },
+        {
+          "file": "docs/adr/0012-assembly-platform.md",
+          "owner": "Track A",
+          "reason": "플랫폼 계약 0.9.0 개정 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/CONTRACTS.md",
+          "owner": "Track G",
+          "reason": "신규 재료와 Manifest 계약 기록"
+        },
+        {
+          "file": "tests/platform-pipeline-style.test.mjs",
+          "owner": "Track A",
+          "reason": "재료 조립 출력 검증"
         }
       ]
     },
