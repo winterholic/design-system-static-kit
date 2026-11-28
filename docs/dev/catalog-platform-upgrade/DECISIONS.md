@@ -321,3 +321,30 @@ TASK-TRD-M은 15개의 신규 `purpose:work.*` 패밀리를 `src/`에 등록한�
 | 형식 | 210개 전체가 현행 계약에 없는 7필드를 가져 P_FIELD 1,470건, 210개 모두 등록 실패 | 미지원 필드 제거 후 현재 플랫폼 레지스트리 등록 시험 통과 |
 
 원본 요청 §4의 200+·10계열·중복 금지·권리 기록·25세트 결합을 함께 만족하고, 미확인 권리 항목은 공개하지 않는다.
+
+---
+
+## DEC-020: Material Coverage Manifest 자동 검증 계약 및 Verify 신선도 게이트 연결
+
+### 맥락
+`MATERIAL-COVERAGE.json`은 1,741개 재료와 406개 요구 항목을 기계 판독 가능한 형태로 추적하는 핵심 메타데이터 계약이다. REQUEST §2.2의 17개 정보 그룹, 7개 상태 사다리, ID 고유성, 상호 참조 정합성, 실제 코드/테스트 참조 무결성을 검증하고 빌드/CI 단계에서 낡은 저장본(drift)을 자동 차단해야 한다.
+
+그러나 전체 신선도 검사기(`node scripts/generate-material-coverage.mjs --check`)는 모든 재료에 대해 서비스 호출과 라우트 분석을 전수 수행하므로 측정 결과 약 2분 39초(159.2초, CPU 1028%)가 소요되는 고비용 연산이다. 이를 단위 테스트마다 중복 실행하면 로컬 개발 피드백 루프(`npm test`)가 극도로 느려지며, CI 및 Verify에서 중복 실행 시 5분 이상의 불필요한 시간이 낭비된다.
+
+### 결정
+1. **단위 검증과 신선도 게이트의 분리**:
+   - `tests/material-coverage-manifest.test.mjs`는 `MATERIAL-COVERAGE.json`의 17개 정보 그룹 필수 필드, 7개 상태 사다리, ID 중복, 요구-재료 양방향 참조, 실제 정의 경로 및 테스트 줄 번호 범위를 약 170ms 만에 검증한다.
+   - 기존 manifest가 의도적으로 보고하는 무효 증거(`invalidEvidenceRefs`)와 미충족 요구사항(`status: "missing"`, `coverage: "missing"`)을 정상 수용하며, 격리된 negative 입력을 통해 누락 필드·알려지지 않은 상태·잘못된 참조·낡은 저장본 감지 실패를 단언한다.
+2. **Verify 파이프라인 단일 연결**:
+   - 실제 소스코드와 서비스 호출 대비 저장본 신선도 검증(`npm run coverage:materials:check`)은 단위 테스트 내부에서 반복 실행하지 않고, `package.json`의 `verify` 스크립트(`npm test && npm run coverage:materials:check && ...`)에 1회 명시적으로 배치한다.
+3. **중복 비용 방지 및 피드백 루프 보존**:
+   - `node --test` 개발 루프의 초단위 피드백을 보존하면서도, Verify/CI 단계에서 단 1회의 실효적 신선도 검사로 낡은 저장본의 유입을 100% 차단한다. 검증당 2분 39초(159초)의 불필요한 중복 실행을 제거한다.
+
+### 측정 결과 및 성능 대조
+
+| 측정 항목 | 실행 명령 | 소요 시간 / 결과 | 비고 |
+|---|---|---|---|
+| Manifest 구조 및 계약 검사 (단위) | `node --test tests/material-coverage-manifest.test.mjs` | 167ms (8개 테스트 pass) | 17개 필드, 7개 상태, ID 고유성, 코드/테스트 위치 정합성, 격리 negative 검증 |
+| 커버리지 테스트 전체 실행 | `node --test tests/material-coverage-manifest.test.mjs tests/material-coverage.test.mjs` | 1.10s (12개 테스트 pass) | 기존 coverage.test.mjs 포함 |
+| 전체 코드 대비 신선도 검증 | `npm run coverage:materials:check` | 159.20s (2분 39.2초, CPU 1028%) | 1,741개 재료 전수 서비스 호출 및 바이트 일치 확인 |
+| 중복 실행 방지 효과 | Verify 연결 전략 | 1회당 약 2분 39초 절감 | `npm test` 지연 방지 및 CI 중복 실행 배제 |

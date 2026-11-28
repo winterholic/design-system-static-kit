@@ -20,7 +20,7 @@
     "docs": "node scripts/docs.mjs",
     "build": "node scripts/build.mjs",
     "dev": "node scripts/serve.mjs",
-    "verify": "npm test && node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs",
+    "verify": "npm test && npm run coverage:materials:check && node scripts/audit.mjs && node scripts/docs.mjs && npm run build && node scripts/check-generated.mjs",
     "coverage:materials": "node scripts/generate-material-coverage.mjs",
     "coverage:materials:check": "node scripts/generate-material-coverage.mjs --check",
     "kit": "node scripts/kit.mjs",

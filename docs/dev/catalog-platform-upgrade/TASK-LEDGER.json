@@ -5,8 +5,8 @@
     "totalTasks": 52,
     "byStatus": {
       "Verified": 30,
-      "Implemented": 8,
-      "Pending": 12,
+      "Implemented": 9,
+      "Pending": 11,
       "In Progress": 1,
       "Completed": 1
     },
@@ -1649,14 +1649,17 @@
         "TASK-P0-01"
       ],
       "modifiedFiles": [
-        "package.json"
+        "package.json",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json"
       ],
       "completionCriteria": "Manifest의 17개 필드, 7개 상태값, 코드 참조(정의 경로, 테스트 참조의 파일·줄) 일치 여부 자동 단언 통과. `npm run coverage:materials:check`를 verify에 넣을지(약 30초 추가) 결정하고 DECISIONS.md에 기록",
       "tests": [
-        "tests/material-coverage-manifest.test.mjs"
+        "tests/material-coverage-manifest.test.mjs",
+        "tests/material-coverage.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null,
       "createFiles": [
         "tests/material-coverage-manifest.test.mjs"
