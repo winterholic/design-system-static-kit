@@ -121,6 +121,7 @@ export const typeView = memo((): TypeView => {
     controls: Object.entries(p.controls as Record<string, any>).map(([size, c]) => ({size, height: c.height, padX: c.padX, gap: c.gap, iconPx: c.iconPx, labelRole: c.labelRole})),
     css: data.css[p.id],
     webfontCss: data.webfontCss?.[p.id] ?? '',
+    webfontRoleCss: data.webfontRoleCss?.[p.id] ?? '',
   }));
   return {
     presets,

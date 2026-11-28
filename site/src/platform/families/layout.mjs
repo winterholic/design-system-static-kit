@@ -86,8 +86,11 @@ function renderByKind(id, p = {}) {
       return `<div ${idAttr}class="kit-layout-scroll-area" data-component="${id}"><div class="kit-layout-scroll-inner">${e(content)}</div></div>`;
     }
     case 'component:resizable-panel': {
-      const dir = p.direction === 'vertical' ? 'vertical' : 'horizontal';
-      const initial = Math.max(15, Math.min(85, Number(p.value ?? 50)));
+      if (p.direction !== undefined && !['horizontal', 'vertical'].includes(p.direction)) throw new TypeError('Resizable Panel direction must be horizontal or vertical');
+      const dir = p.direction ?? 'horizontal';
+      const value = p.value ?? 50;
+      if (typeof value !== 'number' || !Number.isFinite(value)) throw new TypeError('Resizable Panel value must be a finite number');
+      const initial = Math.max(15, Math.min(85, value));
       const first = e(p.first ?? p.left ?? '패널 1');
       const second = e(p.second ?? p.right ?? '패널 2');
       const label = e(p.label ?? '패널 크기 조절');

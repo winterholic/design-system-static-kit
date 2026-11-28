@@ -900,7 +900,7 @@ REPRODUCIBLE: 3800 generated files match a fresh build byte for byte.
 | `e2e/combos.spec.mjs`: 다음 쪽 이동 뒤 결과 줄의 현재 쪽 표시를 기다림 | 기존 전체 ID 집합·개수 단언을 그대로 두고 비동기 갱신 대기만 추가. 완화 아님. |
 | `apps/web/e2e/w6b-scenarios.spec.mjs`: 목적 패밀리 수를 32→37로 고정하고 시각 패밀리 4종 고정을 등록 수 비교로 변경 | `37`은 현재 공개 목록 53종과 불일치하는 하드코딩 결함. 시각 패밀리는 12종 하한, 전체 개수 일치 및 행별 이름 단언을 추가해 강화. 37 고정은 §14.4에서 공개 목록 비교로 교정. |
 
-세 파일을 항목별 비교한 결과 기존 단언 삭제 0, 임계값 완화 0, 표본 축소 0이다. 발견한 약화 후보는 목적 패밀리 수 37 하드코딩 하나이며 현재 값은 Core 공개 목록에서 조회한 53종이다. 이는 테스트에서 53을 새로 고정하지 않고 모든 공개 페이지를 순회한 ID 집합과 cursor 페이지를 끝까지 읽은 Core 공개 ID 집합을 정확히 비교하도록 교정한다.
+세 파일을 항목별 비교한 결과 기존 단언 삭제 0, 임계값 완화 0, 표본 축소 0이다. 발견한 약화 후보는 목적 패밀리 수 37 하드코딩 하나다. 교정 직전 대상 커밋의 Core 공개 목록은 53종이었고, 이후 최신 main의 J/K 확장까지 합쳐 현재 목록은 65종이다. 테스트는 수량을 고정하지 않고 모든 공개 페이지를 순회한 ID 집합과 cursor 페이지를 끝까지 읽은 Core 공개 ID 집합을 정확히 비교한다.
 
 모바일 타이포 보정은 패밀리 목적 CSS의 소제목만 `max(16px, var(--kit-t-sub))`, 캡션·배지·카운트 등 작은 텍스트만 `max(12px, var(--kit-t-caption))`로 하한을 둔다. 따라서 작은 sub/caption 값은 가독성 하한까지 올라가며, 그보다 큰 서체 값은 유지된다. 이는 일부 작은 타이포 값의 차이를 좁힐 수 있지만 시각 패밀리의 구조·테두리·면·간격·아이콘·모션 등 차별 축을 제거하지 않는다. loading compare는 `minmax(0, 1fr)` 두 열로 바뀌어 내용의 최소 크기가 열 폭을 비대칭으로 밀지 않게 하며, 폭 하한에는 패밀리별 `--kit-inset`을 반영한다.
 
@@ -958,3 +958,120 @@ process exited with signal=SIGTRAP
 불변 기준은 `git diff --exit-code 32c4ec610^ a30e15699 -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json` 종료 코드 0으로 확인했다. 기본 2.4.0 지정과 2.1.0 출력 보존은 위 975개 시험에서 통과했다. `npm run coverage:materials:check`만 저장 Manifest drift로 MATCH가 아니며, 재생성 파일은 허용 쓰기 범위 밖이어서 이번 교정에 포함하지 않았다.
 
 미실행: `npx playwright test`, `npx playwright test e2e/platform-families.spec.mjs`, `apps/web/e2e/w6b-scenarios.spec.mjs` 브라우저 재검증. 사유: browser preflight exit 78 (`mach-register`·`mach-lookup` denied). 별도 범위 A3의 `catalog-lists.spec` 및 운영 빌드 `window.__studio_api` 확인도 이번 작업 범위에서 실행하지 않았다.
+
+### 14.6 최신 main 재확인 및 push 판정 (2026-11-28)
+
+검토 중 `origin/main`이 `e305a7d9d`에서 `5194ed661`로 전진해 해당 커밋을 fast-forward 병합했다. 충돌한 이 문서는 §14 독립 기록과 최신 main의 §15·§16 기록을 모두 보존해 해결했다. 최신 공개 목적 패밀리 목록은 Core API에서 cursor 끝까지 읽어 65개 고유 ID임을 확인했다. 패밀리 CSS 파일은 이 upstream 구간에서 변경되지 않았다.
+
+```text
+$ node --check apps/web/e2e/w6b-scenarios.spec.mjs
+exit 0
+$ node --test tests/platform-family-a11y.test.mjs tests/platform-family-contract.test.mjs tests/platform-family-visual.test.mjs tests/platform-family-inventory.test.mjs
+ℹ tests 101 / ℹ pass 101 / ℹ fail 0
+$ node --test --test-skip-pattern='resizable panel: keyboard navigation and min/max constraints work in real Chromium browser|Playwright Chromium 실측'
+ℹ tests 1005 / ℹ pass 1005 / ℹ fail 0 / ℹ duration_ms 488690.204792
+$ npm run coverage:materials:check
+MANIFEST DRIFT: docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json 이 현재 코드와 다릅니다.
+$ git diff --exit-code 32c4ec610^ HEAD -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json
+exit 0 (legacy-hashes 및 site/v1/catalog.json 변경 없음)
+```
+
+최신 비브라우저 Node 시험은 1005개가 통과했다. 별도 101개 family/accessibility/visual 시험도 통과했다. 목적 패밀리 37 하드코딩은 공개 목록 전수 비교로 교정했고, 현재 65개에서도 고정 수량 없이 통과한다. `legacy-hashes.json`과 `site/v1/catalog.json` 불변을 두 대상 커밋의 부모부터 최종 작업 HEAD까지 대조했다. 기본 2.4.0 및 2.1.0 저장 출력 해시 시험은 위 전체 비브라우저 시험 집합에서 통과했다.
+
+coverage 검사만 최신 main에서 다시 DRIFT로 바뀌었다. `MATERIAL-COVERAGE.json`은 이번 두 커밋의 수정 파일도 아니고 허용된 작업 쓰기 범위도 아니므로 생성·수정하지 않았다. 앞선 `e305a7d9d` 기준 검사 결과는 MATCH (1472 materials, 406 requirements)였으나, 최신 `5194ed661` 기준의 현재 판정은 DRIFT다.
+
+`npm run verify`는 `a30e15699` 기준으로 실행했으며 `npm test`에서 아래 두 Chromium 시험이 Mach-port 권한 오류로 실패(exit 1)했다. 사전 점검은 exit 78, `mach-register` 및 `mach-lookup` denied였다. 이후 올바른 시험명 패턴으로 Chromium 두 시험을 제외한 전체 비브라우저 시험을 실행해 통과시켰다. 브라우저 E2E·`npm run verify` 재실행은 미실행이며, 이번 환경에서 launch 권한 오류를 관측한 뒤 브라우저를 더 시도하지 않았다. A3의 `catalog-lists.spec` 및 운영 빌드 `window.__studio_api` 확인은 카드의 명시된 범위 밖이라 미실행이다.
+
+```text
+$ npm run verify  # a30e15699 기준
+✖ resizable panel: keyboard navigation and min/max constraints work in real Chromium browser
+✖ 4. 브라우저 실측: 390px 및 1280px에서 로딩 성공(양성)과 실패 대체(음성), 다국어 fallback 검증
+FATAL: bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)
+process exited with signal=SIGTRAP
+```
+
+## 15. C2 / TASK-TRC-03 다국어 웹폰트 독립 검증 (2026-11-28, `upgrade/c2-verify`)
+
+원 커밋 `c53bbe12c`의 웹폰트 자료와 선택형 로딩을 검토했다. 기존 assets는 저장소에 없었고, evidence에는 64-byte mock WOFF2가 성공 응답으로 기록되어 있었다. 기존 “브라우저 실측” 시험은 Playwright Chromium을 실제 실행하려고 했지만 브라우저가 열리지 않아 실측을 수행하지 못했다. 테스트를 `Playwright Chromium 실측`으로 명명하고, 실제 WOFF2 파일·자연 로딩·폰트 상태를 확인하도록 고쳤다. 현 Codex nested worker 실행은 `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)` 뒤 `SIGTRAP`으로 launch 단계에서 종료됐다. 재시도는 하지 않았다.
+
+공식 릴리스 태그와 OFL-1.1 고지문을 각 업스트림 저장소에서 확인하고, 파일 해시를 기록했다. 원본 WOFF2와 함께 각 라이선스 고지 파일을 배포한다. 브라우저 시험에는 CSS face 해시, 역할 CSS 해시 및 WOFF2 해시를 source fingerprint로 기록한다. 저장된 측정은 빌드된 현재 CSS·폰트와의 지문 일치로만 연결된다.
+
+| 서체 | 고정 버전 / 공식 릴리스 | 라이선스 고지 파일 | WOFF2 SHA-256 |
+|---|---|---|---|
+| Pretendard GOV | 1.3.9 / `v1.3.9` | `PretendardGOV-OFL.txt` | `b097c96ed0bec69724bd07e357e399dde2869846c3b3da839526c8076f4d66b6` |
+| Noto Serif KR | 2.001 / `Serif2.001` | `NotoSerifKR-OFL.txt` | `5cb2160fbab99bacfc7aca467e7c2bd9581b475eba0ed86dd30e851b8df85b49` |
+| JetBrains Mono | 2.304 / `v2.304` | `JetBrainsMono-OFL.txt` | `d882f8523510ef98b797b882e89b8a84e3fa3cf31a9d4951af3a11e3e1d2a26d` |
+
+```sh
+$ node --test --test-name-pattern='모든 WOFF2|모든 공개 WOFF2|선택된 웹폰트 CSS|Materials 서비스|선택적 로딩|Core 입력 결정성|webfonts are optional|2\.6\.0 typeRoles' tests/platform-type-fonts.test.mjs tests/platform-type.test.mjs tests/platform-type-evidence.test.mjs
+ℹ tests 9 / ℹ pass 9 / ℹ fail 0
+$ node --test --test-name-pattern='2\.1\.0|2\.4\.0|legacy|catalogSnapshot' tests/composition.test.mjs tests/typography-refine.test.mjs tests/expression-2-5.test.mjs tests/service-contract.test.mjs
+ℹ tests 11 / ℹ pass 11 / ℹ fail 0
+$ shasum -a 256 apps/web/assets/fonts/*.woff2
+PretendardGOVVariable.woff2 b097c96e…66b6; NotoSerifKR-Variable.woff2 5cb2160f…5b49; JetBrainsMono-Variable.woff2 d882f852…a26d
+$ git diff --exit-code c53bbe12c^ -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json docs/evidence/typography-refine/legacy-2-2-hashes.json docs/evidence/layout-refine/legacy-2-3-hashes.json docs/evidence/variants/legacy-2-3-hashes.json
+(exit 0; 고정 산출물 변경 없음)
+$ npm run build && node scripts/check-generated.mjs
+REPRODUCIBLE: 3819 generated files match a fresh build byte for byte.
+$ npm run web:build
+✓ TypeScript passed; generated static pages 1102/1102.
+```
+
+관련 기능 시험은 결함을 넣었을 때 asset 부재와 역할 CSS 미수출에서 각각 실패(RED)했고, 파일 추가와 실제 역할 CSS 연결 후 통과(GREEN)했다. 기본 `webfonts=0`은 생성 CSS와 페이지 코드에서 웹폰트가 비어 있고, 선택 상태는 해당 페어의 unicode-range 조각만 `@font-face`로 만들며 시스템 스택을 뒤에 둔다. 페이지는 선택된 `webfontRoleCss`를 실제 역할 CSS로 적용한다. 로딩 실패 경로는 `font-display: swap`과 기존 fallback 스택을 유지한다. 미검증 폰트는 `EXCLUDED_OR_UNVERIFIED_FONTS`에 남으며 공개 파일 허용 목록에는 세 개 확인된 서체만 있다.
+
+승인된 Ttakkari browser로 정적 운영 빌드를 확인한 부분 측정: 1280x900 및 390x844에서 기본 문서는 웹폰트 요청 0건, 문서 선택은 Noto Serif KR, 마케팅 선택은 Pretendard GOV를 요청했다. 기록 상태는 `partially-measured`다. JetBrains Mono의 실제 브라우저 요청과 404 로딩 실패 전체 행렬은 미실행이다. 로컬 browser MCP 외 Chromium 재실행은 Codex nested worker sandbox의 관측된 launch 권한 오류 때문에 하지 않았다.
+
+```sh
+$ npm run coverage:materials:check MATCH
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1472 materials, 406 requirements)
+$ git diff --exit-code site/v1/catalog.json docs/evidence/context/legacy-hashes.json docs/evidence/typography-refine/legacy-2-2-hashes.json docs/evidence/layout-refine/legacy-2-3-hashes.json docs/evidence/variants/legacy-2-3-hashes.json
+(exit 0)
+$ npm run verify
+미실행: 구성에 브라우저 Chromium 시험이 포함되고 같은 환경에서 launch permission denied가 확인되어 재시도하지 않음. 아래에 명시한 구성 시험·생성 검사·빌드만 실행.
+```
+
+TASK-TRC-03은 `Implemented`로 유지한다. 브라우저 전체 매트릭스와 `npm run verify`가 아직 통과 증거를 갖지 않아 `Verified`로 올리지 않았다. 공식 태그의 권리 확인, 실제 자산 해시 및 라이선스 동봉, 부분 브라우저 계측은 위와 같이 검증했다.
+
+## 16. D5 §6.2 L 레이아웃 독립 검증 (2026-11-28, `upgrade/d5-verify`)
+
+기준 커밋 `382b667bea37bd23901ecefb8a96f3484d2e0531`을 검토하고, 최신 `origin/main`의 후속 변경을 보존해 `84ae4357a`를 재기반화했다. 구현자가 주장한 14/14 충족은 재료 이름이 아니라 실제 렌더 출력으로 다시 판정했다. Manifest는 렌더 프로브가 통과한 11개만 연결하고 `Stack`, `Container`, `Resizable Panel`은 `missing`으로 남긴다.
+
+| §6.2 L 항목 | Manifest 재료 | 독립 판정 |
+|---|---|---|
+| Stack | — | missing. `layout-primitive:stack`은 selector 설명만 있고 출력 프로브가 실패한다. |
+| Cluster | `layout-primitive:cluster` | catalog-visible, 렌더 출력 프로브 통과 |
+| Grid | `component:grid` | verified, 렌더 출력 프로브 통과 |
+| Responsive Grid | `layout:equal-grid`, `layout-primitive:flow` | catalog-visible, 두 재료 모두 렌더 프로브 통과 |
+| Split | `layout-primitive:split`, `component:split` | verified, 두 재료 모두 렌더 프로브 통과 |
+| Bento | `layout-primitive:bento`, `component:bento` | verified, 두 재료 모두 렌더 프로브 통과 |
+| Container | — | missing. `layout-primitive:container`는 selector 설명만 있고 출력 프로브가 실패한다. |
+| Section | `component:section` | verified, 렌더 출력 프로브 통과 |
+| Center | `layout:centered-hero` | renderable, 출력에 중앙 정렬 규칙이 있음 |
+| Sidebar Layout | `component:aside` | verified, 렌더 출력 프로브 통과 |
+| Master-detail Layout | `component:master-detail` | verified, 렌더 출력 프로브 통과 |
+| Sticky Region | `layout:sticky-action-layout` | renderable, 출력에 `position:sticky`와 `bottom:0`이 있음 |
+| Scroll Area | `layout:master-detail` | renderable, 출력에 최대 높이와 `overflow:auto`가 있음 |
+| Resizable Panel | — | missing. `component:split`과 `layout:two-column`은 정적 분할이라 크기 조절 계약을 충족하지 않는다. |
+
+신규 5개 `component:*` 렌더러는 §6.3~6.4 컴포넌트 계약과 출력이 일치하는지 직접 확인했다. Responsive Grid는 `items`를 반응형 셀로 출력하고, Center·Sticky Region·Scroll Area는 `content`와 `label` fallback을 소비한다. Resizable Panel은 `direction`을 `horizontal|vertical`로 제한하고 유한 숫자 `value`를 15~85로 제한해 두 패널 크기와 `aria-valuenow`에 반영한다. `first/second`와 `left/right` 별칭, label, id도 출력에서 확인했다. 모든 사용자 텍스트는 HTML escape되며, 선언됐지만 읽히지 않는 content 스키마와 props는 제거했다. 런타임은 Resizable Panel이 포함될 때만 결합한다. 중복 id와 잘못된 입력은 Core·REST·MCP 모두 같은 진단을 반환한다.
+
+E3의 네 재사용 레이아웃은 각 이름의 실제 동작으로 검증했다: equal-grid의 grid 흐름과 열 규칙, centered-hero의 중앙 정렬, sticky-action-layout의 하단 고정, master-detail의 제한 높이와 내부 스크롤이 조립 출력에 들어간다. E3 `measurements.json`의 지문 시험도 현재 코드에서 통과했다. 회귀 시험은 안정 표본에 임시 레이아웃 재료를 하나 등록해도 `layoutFingerprint`가 그대로이고, 실제 슬롯/레이아웃 변경은 지문을 바꾸는지 확인한다.
+
+`tests/platform-layout-blueprint.test.mjs`는 14개 Manifest 행을 전수 순회해 모든 covered 재료에 대해 실행된 성공 프로브와 출력 hash를 요구한다. 기존 OR 기대식은 제거했고, 고정 출력 문자열을 재검증 근거로 쓰지 않는다. 직접 렌더러 props, escape, 런타임 포함 조건, 범위 오류, 서비스 채널 입력 일치도 확인했다. 잘못된 값·미사용 props·Manifest 재료·정적 레이아웃 런타임에 결함을 주입한 RED 시험들은 실패했고 수정 후 통과했다. 런타임 간격을 5%에서 10%로 임시 변경했을 때도 `45` 기대값 대신 `40`이 출력되어 1건 실패한 뒤 원복 후 2/2 통과했다.
+
+로컬 Chromium은 Codex nested worker sandbox의 IPC preflight가 `blocked`(Mach register/lookup denied, errno 0)로 끝나 `tests/platform-layout-resizable.test.mjs`는 미실행했다. 설정된 browser MCP에서는 패널 둘과 접근 가능한 separator를 확인하고 방향키 동작을 보냈으나, 그 화면에서 변경된 ARIA 값을 직접 읽었다고 주장하지 않는다. 런타임 스크립트 자체는 Node 이벤트 하네스로 경계 clamp, 두 방향 키, ARIA/flex 갱신, 이벤트 발행, 단일 리스너를 검사했다.
+
+### 16.1 실행 증거와 남은 확인
+
+```sh
+$ node --test tests/platform-layout-blueprint.test.mjs tests/platform-service-layout-channels.test.mjs tests/layout-quality.test.mjs tests/platform-family-contract.test.mjs tests/platform-family-inventory.test.mjs tests/platform-layout-runtime.test.mjs
+ℹ tests 58 / ℹ pass 58 / ℹ fail 0
+$ node --test tests/layout-quality.test.mjs
+ℹ tests 26 / ℹ pass 26 / ℹ fail 0
+$ node --test tests/platform-layout-runtime.test.mjs
+ℹ tests 2 / ℹ pass 2 / ℹ fail 0 (5% step restored after RED)
+```
+
+`npm ci`는 이 worktree의 실제 `node_modules`에 설치했다(Node 26.9.0, 저장소 권장 Node 22와 엔진 차이 경고). `npm run coverage:materials:check`와 `npm run coverage:materials`는 전수 생성 중 Codex command 실행에서 각각 종료 코드 143으로 끝났고 출력이 없어 MATCH/DRIFT 판정은 미확인이다. 최신 main의 나머지 Manifest 자료는 보존하고, D5의 세 missing 행과 요구 요약 수치는 직접 갱신했다. 따라서 이 수치 편집은 독립 산술 대조만 통과했으며 생성기 바이트 일치까지 검증한 것은 아니다.
+
+`npm run verify`는 `npm test` 단계에서 종료 코드 1이었다. Resizable Panel 브라우저 시험과 `platform-type-fonts.test.mjs`의 Chromium 시작 로그에서 `bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer: Permission denied (1100)` 다음 `SIGTRAP`이 관측됐다. 따라서 verify 후속 단계는 자동으로 실행되지 않았다. 같은 revision에서 분리 실행한 `node scripts/audit.mjs`, `node scripts/docs.mjs`, `npm run build`, `node scripts/check-generated.mjs`는 각각 종료 코드 0이며 마지막 출력은 `REPRODUCIBLE: 3836 generated files match a fresh build byte for byte.`다. 브라우저 시험은 IPC 차단으로 미실행이다.

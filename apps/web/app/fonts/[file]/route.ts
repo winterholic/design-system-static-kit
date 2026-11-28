@@ -1,31 +1,14 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {queryMaterials} from '@winterholic/design-system-static-kit/service';
 import {existsSync, readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {join} from 'node:path';
 
-const LOCAL_FONT_SEARCH_PATHS = [
-  '/Users/winterholic/personal/inbox/external-drive-2026-09/F-kimdaeseon/아리아리/개발/아리아리 수정용/20250514/ariari-backend/src/main/resources/static/fonts',
-];
-
-/** 최소 유효 WOFF2 서브셋 바이너리 (wOF2 시그니처 0x77 0x4f 0x46 0x32 포함) */
-function createMinimalWoff2Buffer(): Uint8Array {
-  const header = Buffer.alloc(48);
-  header.write('wOF2', 0, 4, 'ascii'); // magic
-  header.writeUInt32BE(0x00010000, 4); // flavor (TrueType)
-  header.writeUInt32BE(64, 8); // length
-  header.writeUInt16BE(0, 12); // numTables
-  header.writeUInt16BE(0, 14); // reserved
-  header.writeUInt32BE(0, 16); // totalSfntSize
-  header.writeUInt32BE(16, 20); // totalCompressedSize
-  header.writeUInt16BE(1, 24); // majorVersion
-  header.writeUInt16BE(0, 26); // minorVersion
-  header.writeUInt32BE(0, 28); // metaOffset
-  header.writeUInt32BE(0, 32); // metaLength
-  header.writeUInt32BE(0, 36); // metaOrigLength
-  header.writeUInt32BE(0, 40); // privOffset
-  header.writeUInt32BE(0, 44); // privLength
-  return new Uint8Array(Buffer.concat([header, Buffer.alloc(16)]));
-}
+const FONT_ASSET_PATHS: Record<string, string[]> = {
+  'PretendardGOVVariable.woff2': [join(process.cwd(), 'apps/web/public/fonts/PretendardGOVVariable.woff2'), join(process.cwd(), 'public/fonts/PretendardGOVVariable.woff2')],
+  'NotoSerifKR-Variable.woff2': [join(process.cwd(), 'apps/web/public/fonts/NotoSerifKR-Variable.woff2'), join(process.cwd(), 'public/fonts/NotoSerifKR-Variable.woff2')],
+  'JetBrainsMono-Variable.woff2': [join(process.cwd(), 'apps/web/public/fonts/JetBrainsMono-Variable.woff2'), join(process.cwd(), 'public/fonts/JetBrainsMono-Variable.woff2')],
+};
 
 export async function GET(
   request: NextRequest,
@@ -53,23 +36,21 @@ export async function GET(
     return new NextResponse('Not Found', {status: 404});
   }
 
-  // 로컬에 실제 WOFF2 파일이 있는지 확인
-  let fontBuffer: Uint8Array | null = null;
-  for (const base of LOCAL_FONT_SEARCH_PATHS) {
-    const candidate = join(base, file);
-    if (existsSync(candidate)) {
-      try {
-        fontBuffer = new Uint8Array(readFileSync(candidate));
-        break;
-      } catch {}
-    }
+  // 앱과 함께 배포되는 저장소 자산만 서빙한다. 누락·손상된 파일을 성공 응답으로 위장하지 않는다.
+  const candidate = FONT_ASSET_PATHS[file]?.find(existsSync);
+  if (!candidate) return new NextResponse('Not Found', {status: 404});
+  let fontBuffer: Buffer;
+  try {
+    fontBuffer = readFileSync(candidate);
+  } catch {
+    return new NextResponse('Font asset unavailable', {status: 404});
+  }
+  const digest = createHash('sha256').update(fontBuffer).digest('hex');
+  if (fontBuffer.subarray(0, 4).toString('ascii') !== 'wOF2' || digest !== allowed.sha256) {
+    return new NextResponse('Font asset integrity check failed', {status: 500});
   }
 
-  if (!fontBuffer) {
-    fontBuffer = createMinimalWoff2Buffer();
-  }
-
-  return new NextResponse(fontBuffer as unknown as BodyInit, {
+  return new NextResponse(new Uint8Array(fontBuffer) as unknown as BodyInit, {
     status: 200,
     headers: {
       'Content-Type': 'font/woff2',

@@ -42,6 +42,8 @@ export default async function TypographyPage({searchParams}: Props) {
   const template = view.studioTemplates[preset.id];
 
   const webfontStyle = webfontsActive ? (preset.webfontCss ?? view.webfontCss?.[preset.id] ?? '') : '';
+  const webfontRoleStyle = webfontsActive ? (preset.webfontRoleCss ?? view.webfontRoleCss?.[preset.id] ?? '') : '';
+  const selectedWebfonts = Object.values(view.webfonts ?? {}).filter(font => webfontStyle.includes(font.family));
 
   return (
     <PageShell eyebrow="Materials · 타이포그래피" title="역할로 나눈 글자 스타일" lead="프리셋마다 디스플레이부터 코드까지 일곱 역할의 크기와 굵기, 행간, 자간이 정해져 있습니다. 한글과 영문, 숫자가 섞인 문구로 줄바꿈까지 시험합니다.">
@@ -49,6 +51,7 @@ export default async function TypographyPage({searchParams}: Props) {
       {platformReady() ? <TypeCompare query={compareQuery} /> : null}
       <style>{preset.css}</style>
       {webfontStyle ? <style>{webfontStyle}</style> : null}
+      {webfontRoleStyle ? <style>{webfontRoleStyle}</style> : null}
 
       <nav className={styles.presetNav} aria-label="프리셋">
         {view.presets.map(p => {
@@ -81,7 +84,7 @@ export default async function TypographyPage({searchParams}: Props) {
 
       {webfontsActive ? (
         <div style={{padding: '8px 14px', borderRadius: '8px', background: 'var(--kit-bg-subtle, #f8f9fa)', border: '1px solid var(--kit-border, #e5e7eb)', fontSize: '0.8rem', margin: 'var(--space-2) 0 var(--space-4)'}}>
-          <strong>선택된 웹폰트:</strong> Pretendard GOV (OFL-1.1), JetBrains Mono (OFL-1.1) [woff2 서브셋] · <span style={{color: '#666'}}>유니코드 범위에 해당하는 글리프만 요청</span>
+          <strong>선택된 웹폰트:</strong> {selectedWebfonts.map(font => `${font.family} (OFL-1.1)`).join(', ') || '없음'} [woff2 서브셋] · <span style={{color: '#666'}}>유니코드 범위에 해당하는 글리프만 요청</span>
         </div>
       ) : null}
 

@@ -1,143 +1,105 @@
 {
-  "timestamp": "2026-11-28T06:21:50.614Z",
-  "viewports": [
-    "390x844",
-    "1280x900"
-  ],
-  "positiveRuns": [
-    {
-      "system": "type-system:work-insight",
-      "viewport": "1280px",
-      "requestsCount": 1,
-      "requestedUrls": [
-        "http://static-kit.local/fonts/PretendardVariable.woff2"
-      ],
-      "overflowX": false,
-      "scrollHeight": 900,
-      "bytesReceived": 64
+  "schemaVersion": 2,
+  "status": "partially-measured",
+  "measurement": {
+    "timestamp": "2026-11-28",
+    "tool": "configured Ttakkari browser (Playwright), using npm run web:build production output",
+    "viewports": [
+      "1280x900",
+      "390x844"
+    ],
+    "runs": [
+      {
+        "preset": "document",
+        "webfonts": false,
+        "viewport": "1280x900",
+        "fontRequests": []
+      },
+      {
+        "preset": "document",
+        "webfonts": true,
+        "viewport": "1280x900",
+        "fontRequests": [
+          {
+            "file": "NotoSerifKR-Variable.woff2",
+            "status": "200 then 304 from browser cache"
+          }
+        ]
+      },
+      {
+        "preset": "marketing",
+        "webfonts": true,
+        "viewport": "1280x900",
+        "fontRequests": [
+          {
+            "file": "PretendardGOVVariable.woff2",
+            "status": "200"
+          }
+        ]
+      },
+      {
+        "preset": "document",
+        "webfonts": false,
+        "viewport": "390x844",
+        "fontRequests": []
+      },
+      {
+        "preset": "document",
+        "webfonts": true,
+        "viewport": "390x844",
+        "fontRequests": [
+          {
+            "file": "NotoSerifKR-Variable.woff2",
+            "status": "304 from browser cache"
+          }
+        ]
+      },
+      {
+        "preset": "marketing",
+        "webfonts": true,
+        "viewport": "390x844",
+        "fontRequests": [
+          {
+            "file": "PretendardGOVVariable.woff2",
+            "status": "304 from browser cache"
+          }
+        ]
+      }
+    ],
+    "console": "선택형 서체 실행에서 오류·경고 0건",
+    "notMeasured": "완전한 Node test matrix의 404 fallback 및 JetBrains Mono 실제 브라우저 요청"
+  },
+  "sourceFingerprint": {
+    "fonts": {
+      "pretendard": "b097c96ed0bec69724bd07e357e399dde2869846c3b3da839526c8076f4d66b6",
+      "notoSerifKr": "5cb2160fbab99bacfc7aca467e7c2bd9581b475eba0ed86dd30e851b8df85b49",
+      "jetbrainsMono": "d882f8523510ef98b797b882e89b8a84e3fa3cf31a9d4951af3a11e3e1d2a26d"
     },
-    {
-      "system": "type-system:doc-essay",
-      "viewport": "1280px",
-      "requestsCount": 1,
-      "requestedUrls": [
-        "http://static-kit.local/fonts/NotoSerifKR-Variable.woff2"
-      ],
-      "overflowX": false,
-      "scrollHeight": 1233,
-      "bytesReceived": 64
+    "cssFaces": {
+      "face-pairing:geometric-system": "d12ec2d4738eec1e21699f2024fee0324fee868e753b1b99198c44f35de7b08a",
+      "face-pairing:editorial": "5d6a911d3d7eca6f0f2cf79373883323285aed90f76f09b7f4af1af4e3e033e0",
+      "face-pairing:humanist-system": "19fa8fb3b07ff3769fa65a1c693256fb8990ff4925aef95d48888581f3d80a27"
     },
-    {
-      "system": "type-system:doc-handbook",
-      "viewport": "1280px",
-      "requestsCount": 2,
-      "requestedUrls": [
-        "http://static-kit.local/fonts/PretendardVariable.woff2",
-        "http://static-kit.local/fonts/JetBrainsMono-Variable.woff2"
-      ],
-      "overflowX": false,
-      "scrollHeight": 900,
-      "bytesReceived": 128
-    },
-    {
-      "system": "type-system:work-insight",
-      "viewport": "390px",
-      "requestsCount": 1,
-      "requestedUrls": [
-        "http://static-kit.local/fonts/PretendardVariable.woff2"
-      ],
-      "overflowX": false,
-      "scrollHeight": 1027,
-      "bytesReceived": 64
-    },
-    {
-      "system": "type-system:doc-essay",
-      "viewport": "390px",
-      "requestsCount": 1,
-      "requestedUrls": [
-        "http://static-kit.local/fonts/NotoSerifKR-Variable.woff2"
-      ],
-      "overflowX": false,
-      "scrollHeight": 1505,
-      "bytesReceived": 64
-    },
-    {
-      "system": "type-system:doc-handbook",
-      "viewport": "390px",
-      "requestsCount": 2,
-      "requestedUrls": [
-        "http://static-kit.local/fonts/PretendardVariable.woff2",
-        "http://static-kit.local/fonts/JetBrainsMono-Variable.woff2"
-      ],
-      "overflowX": false,
-      "scrollHeight": 1093,
-      "bytesReceived": 128
+    "materialRoleCss": {
+      "erp": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "dashboard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "document": "8503a2f78008ad4617e6bac28d2dcb40bc881542f3632cdf48536aaa1b83e6af",
+      "marketing": "d2603c03bc67801e2e5baecdb8f611d56e753daf68b44d906db6ec24b2b07296"
     }
-  ],
-  "negativeRuns": [
-    {
-      "system": "type-system:work-insight",
-      "viewport": "1280px",
-      "failedRequestsCount": 1,
-      "overflowX": false,
-      "scrollHeight": 900,
-      "fallbackStatus": "rendered-via-system-stack"
-    },
-    {
-      "system": "type-system:doc-essay",
-      "viewport": "1280px",
-      "failedRequestsCount": 1,
-      "overflowX": false,
-      "scrollHeight": 1233,
-      "fallbackStatus": "rendered-via-system-stack"
-    },
-    {
-      "system": "type-system:doc-handbook",
-      "viewport": "1280px",
-      "failedRequestsCount": 2,
-      "overflowX": false,
-      "scrollHeight": 900,
-      "fallbackStatus": "rendered-via-system-stack"
-    },
-    {
-      "system": "type-system:work-insight",
-      "viewport": "390px",
-      "failedRequestsCount": 1,
-      "overflowX": false,
-      "scrollHeight": 1027,
-      "fallbackStatus": "rendered-via-system-stack"
-    },
-    {
-      "system": "type-system:doc-essay",
-      "viewport": "390px",
-      "failedRequestsCount": 1,
-      "overflowX": false,
-      "scrollHeight": 1505,
-      "fallbackStatus": "rendered-via-system-stack"
-    },
-    {
-      "system": "type-system:doc-handbook",
-      "viewport": "390px",
-      "failedRequestsCount": 2,
-      "overflowX": false,
-      "scrollHeight": 1093,
-      "fallbackStatus": "rendered-via-system-stack"
-    }
-  ],
-  "multilingualRuns": [
-    {
-      "viewport": "1280px",
-      "overflowX": false,
-      "jaRendered": true,
-      "numRendered": true,
-      "codeRendered": true
-    },
-    {
-      "viewport": "390px",
-      "overflowX": false,
-      "jaRendered": true,
-      "numRendered": true,
-      "codeRendered": true
-    }
-  ]
+  },
+  "lastAttempt": {
+    "timestamp": "2026-11-28T07:24:06.099Z",
+    "command": "node --test tests/platform-type-fonts.test.mjs",
+    "environment": "Codex nested worker sandbox on macOS",
+    "failedStage": "Playwright chromium.launch()",
+    "error": "Chromium SIGTRAP: bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer permission denied (1100)"
+  },
+  "supersededRecord": {
+    "timestamp": "2026-11-28T06:21:50.614Z",
+    "reason": "이전 시험은 64바이트 가짜 WOFF2를 성공 응답으로 제공하고 FontFaceSet 로드를 검증하지 않았으므로 실제 폰트 로딩 증거로 사용할 수 없음."
+  },
+  "testStatus": {
+    "command": "node --test tests/platform-type-fonts.test.mjs tests/platform-type*.test.mjs",
+    "status": "Chromium launch blocked in Codex nested worker sandbox; see lastAttempt. Configured browser measured the page selections above, but not the full test matrix."
+  }
 }

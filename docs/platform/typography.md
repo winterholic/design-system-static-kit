@@ -236,9 +236,9 @@
 | `face-pairing:mono` | mono / system | 본문과 같음 | `mono` | 없음 |
 | `face-pairing:editorial` | iowan / iowan | system | `editorial` | Noto Serif KR |
 | `face-pairing:rounded` | rounded / rounded | 본문과 같음 | `rounded` | 없음 |
-| `face-pairing:geometric` | geometric / geometric | 본문과 같음 | `geometric` | Pretendard Variable |
-| `face-pairing:humanist` | humanist / humanist | 본문과 같음 | `humanist` | Pretendard Variable |
-| `face-pairing:grotesk` | grotesk / grotesk | 본문과 같음 | `grotesk`, `swiss` | Pretendard Variable |
+| `face-pairing:geometric` | geometric / geometric | 본문과 같음 | `geometric` | Pretendard GOV |
+| `face-pairing:humanist` | humanist / humanist | 본문과 같음 | `humanist` | Pretendard GOV |
+| `face-pairing:grotesk` | grotesk / grotesk | 본문과 같음 | `grotesk`, `swiss` | Pretendard GOV |
 | `face-pairing:newsroom` | news / news | system | `newsroom` | Noto Serif KR |
 | `face-pairing:literary` | palatino / charter | system | `literary` | Noto Serif KR |
 | `face-pairing:luxe` | didone / humanist | 본문과 같음 | `luxe` | Noto Serif KR |
@@ -248,8 +248,8 @@
 | `face-pairing:terminal` | mono / mono | 본문과 같음 | `terminal` | 없음 |
 | `face-pairing:condensed` | condensed / system | 본문과 같음 | `condensed` | 없음 |
 | `face-pairing:grotesk-system` | grotesk / system | 본문과 같음 | 새로 만듦 | 없음 |
-| `face-pairing:geometric-system` | geometric / system | 본문과 같음 | 새로 만듦 | Pretendard Variable |
-| `face-pairing:humanist-system` | humanist / system | 본문과 같음 | 새로 만듦 | Pretendard Variable, JetBrains Mono |
+| `face-pairing:geometric-system` | geometric / system | 본문과 같음 | 새로 만듦 | Pretendard GOV |
+| `face-pairing:humanist-system` | humanist / system | 본문과 같음 | 새로 만듦 | Pretendard GOV, JetBrains Mono |
 | `face-pairing:baskerville-charter` | baskerville / charter | system | 새로 만듦 | 없음 |
 | `face-pairing:baskerville-system` | baskerville / system | 본문과 같음 | 새로 만듦 | 없음 |
 | `face-pairing:georgia-system` | georgia / system | 본문과 같음 | 새로 만듦 | 없음 |
@@ -294,18 +294,18 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 | `doc-essay` | Iowan Old Style / AppleMyungjo | Iowan Old Style / AppleMyungjo | Palatino Linotype / Batang | Palatino Linotype / Batang | Noto Serif KR |
 | `doc-exp-mixed-serif` | Didot / AppleMyungjo | Charter / AppleMyungjo | Bodoni MT / Batang | Sitka Text / Batang | 없음 |
 | `doc-finance-report` | Baskerville / AppleMyungjo | Charter / AppleMyungjo | Hoefler Text / Batang | Sitka Text / Batang | 없음 |
-| `doc-handbook` | Seravek / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Candara / Malgun Gothic | Segoe UI / Malgun Gothic | Pretendard Variable, JetBrains Mono |
+| `doc-handbook` | Seravek / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Candara / Malgun Gothic | Segoe UI / Malgun Gothic | Pretendard GOV, JetBrains Mono |
 | `doc-magazine` | Didot / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Bodoni MT / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `doc-modern` | Baskerville / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Hoefler Text / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `doc-newsroom` | Times New Roman / AppleMyungjo | Times New Roman / AppleMyungjo | Times New Roman / Batang | Times New Roman / Batang | Noto Serif KR |
 | `mkt-atelier` | Didot / AppleMyungjo | Seravek / Apple SD Gothic Neo | Bodoni MT / Batang | Candara / Malgun Gothic | Noto Serif KR |
-| `mkt-brand` | Avenir Next / Apple SD Gothic Neo | Avenir Next / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Century Gothic / Malgun Gothic | Pretendard Variable |
+| `mkt-brand` | Avenir Next / Apple SD Gothic Neo | Avenir Next / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Century Gothic / Malgun Gothic | Pretendard GOV |
 | `mkt-exp-retro` | Avenir Next Condensed / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Arial Narrow / Malgun Gothic | Candara / Malgun Gothic | 없음 |
 | `mkt-expressive` | Futura / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Impact / Malgun Gothic | Arial / Malgun Gothic | 없음 |
-| `mkt-launch` | Helvetica Neue / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Arial / Malgun Gothic | Arial / Malgun Gothic | Pretendard Variable |
+| `mkt-launch` | Helvetica Neue / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Arial / Malgun Gothic | Arial / Malgun Gothic | Pretendard GOV |
 | `mobile-accessible` | Palatino / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Palatino Linotype / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `mobile-app` | Hiragino Maru Gothic ProN / Apple SD Gothic Neo | Hiragino Maru Gothic ProN / Apple SD Gothic Neo | Malgun Gothic / Malgun Gothic | Malgun Gothic / Malgun Gothic | 없음 |
-| `mobile-feed` | Seravek / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Candara / Malgun Gothic | Candara / Malgun Gothic | Pretendard Variable |
+| `mobile-feed` | Seravek / Apple SD Gothic Neo | Seravek / Apple SD Gothic Neo | Candara / Malgun Gothic | Candara / Malgun Gothic | Pretendard GOV |
 | `mobile-friendly` | Times New Roman / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Times New Roman / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `mobile-reader` | Charter / AppleMyungjo | Charter / AppleMyungjo | Sitka Text / Batang | Sitka Text / Batang | Noto Serif KR |
 | `shop-boutique` | Iowan Old Style / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Palatino Linotype / Batang | Segoe UI / Malgun Gothic | Noto Serif KR |
@@ -323,7 +323,7 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 | `work-finance-banking` | Georgia / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Georgia / Batang | Segoe UI / Malgun Gothic | 없음 |
 | `work-finance-numeric` | Avenir Next Condensed / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Arial Narrow / Malgun Gothic | Arial / Malgun Gothic | 없음 |
 | `work-finance-terminal` | Charter / AppleMyungjo | Seravek / Apple SD Gothic Neo | Sitka Text / Batang | Candara / Malgun Gothic | 없음 |
-| `work-insight` | Avenir Next / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Segoe UI / Malgun Gothic | Pretendard Variable |
+| `work-insight` | Avenir Next / Apple SD Gothic Neo | SF Pro / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Segoe UI / Malgun Gothic | Pretendard GOV |
 | `work-product-geometric` | Avenir Next / Apple SD Gothic Neo | Helvetica Neue / Apple SD Gothic Neo | Century Gothic / Malgun Gothic | Arial / Malgun Gothic | 없음 |
 | `work-product-humanist` | Seravek / Apple SD Gothic Neo | Avenir Next / Apple SD Gothic Neo | Candara / Malgun Gothic | Century Gothic / Malgun Gothic | 없음 |
 | `work-product-neutral` | Charter / AppleMyungjo | SF Pro / Apple SD Gothic Neo | Sitka Text / Batang | Segoe UI / Malgun Gothic | 없음 |
@@ -344,12 +344,13 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 #### 1. 권리 검증 및 고정된 WOFF2 메타데이터
 
 모든 사용 WOFF2 파일은 버전이 고정된 공식 업스트림에서 제공되며, SIL Open Font License 1.1(OFL-1.1)에 따라 웹 임베딩 및 소프트웨어 번들 재배포 권리가 확인되었다. 라이선스 고지문 보존 및 폰트 파일 단독 판매 금지 요건을 준수한다.
+원본 자산은 `apps/web/assets/fonts/`에 두고 빌드 때 `apps/web/public/fonts/`로 복사한다. 각 WOFF2와 함께 `PretendardGOV-OFL.txt`, `NotoSerifKR-OFL.txt`, `JetBrainsMono-OFL.txt`를 배포한다. 각 파일은 해당 업스트림 버전의 라이선스 원문이다. 시험은 파일 시그니처·SHA-256·고지 파일 존재와 OFL-1.1 문구를 직접 검사한다.
 
 | 서체 (ID) | 버전 | 계열 | 덮는 글자 (Unicode Range) | 라이선스 | 공식 출처 | 배포 파일 | SHA-256 해시 |
 |---|---|---|---|---|---|---|---|
-| **Pretendard Variable** (`pretendard`) | 1.3.9 | 산세리프 | 라틴·한글 자모/음절<br>`U+0020-007E,U+00A0-00FF,U+1100-11FF,U+3130-318F,U+AC00-D7A3` | OFL-1.1 | https://github.com/orioncactus/pretendard | `PretendardVariable.woff2` | `9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4` |
-| **Noto Serif KR** (`notoSerifKr`) | 2.001 | 세리프 | 한글 자모 및 완성형 음절만<br>`U+1100-11FF,U+3130-318F,U+AC00-D7A3` | OFL-1.1 | https://github.com/notofonts/noto-cjk | `NotoSerifKR-Variable.woff2` | `b4a11f26e2e50d75a6c3f56e9c1d6fa54b383416d8a39d885a5360980c65538e` |
-| **JetBrains Mono** (`jetbrainsMono`) | 2.304 | 고정폭 | 라틴·코드·숫자·통화·기호<br>`U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215` | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono | `JetBrainsMono-Variable.woff2` | `e865fbe428415ef405f6e6fa1abfefec9747683b58957864aa9a7ca3332152a4` |
+| **Pretendard GOV** (`pretendard`) | 1.3.9 (`v1.3.9`) | 산세리프 | 라틴·한글 자모/음절<br>`U+0020-007E,U+00A0-00FF,U+1100-11FF,U+3130-318F,U+AC00-D7A3` | OFL-1.1 | https://github.com/orioncactus/pretendard/releases/tag/v1.3.9 | `PretendardGOVVariable.woff2` | `b097c96ed0bec69724bd07e357e399dde2869846c3b3da839526c8076f4d66b6` |
+| **Noto Serif KR** (`notoSerifKr`) | 2.001 (`Serif2.001`) | 세리프 | 한글 자모 및 완성형 음절만<br>`U+1100-11FF,U+3130-318F,U+AC00-D7A3` | OFL-1.1 | https://github.com/notofonts/noto-cjk/releases/tag/Serif2.001 | `NotoSerifKR-Variable.woff2` | `5cb2160fbab99bacfc7aca467e7c2bd9581b475eba0ed86dd30e851b8df85b49` |
+| **JetBrains Mono** (`jetbrainsMono`) | 2.304 (`v2.304`) | 고정폭 | 라틴·코드·숫자·통화·기호<br>`U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215` | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.304 | `JetBrainsMono-Variable.woff2` | `d882f8523510ef98b797b882e89b8a84e3fa3cf31a9d4951af3a11e3e1d2a26d` |
 
 #### 2. 서브셋 생성 재현 절차 (Reproducible Subset Procedures)
 
@@ -357,21 +358,21 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 
 1. **Pretendard Variable (한영 통합 서브셋)**:
    ```bash
-   pyftsubset PretendardVariable.ttf \
+   pyftsubset PretendardGOVVariable.ttf \
      --unicodes="U+0020-007E,U+00A0-00FF,U+1100-11FF,U+3130-318F,U+AC00-D7A3" \
-     --flavor=woff2 --layout-features="*" --output-file=PretendardVariable.woff2
+     --flavor=woff2 --layout-features="*" --output-file=PretendardGOVVariable.woff2
    ```
 2. **Noto Serif KR (한글 전용 서브셋)**:
    라틴 글리프를 의도적으로 제외하여 시스템 세리프(Iowan, Charter, Georgia)의 미려한 올드스타일/디도네 표제를 보존하고 한글 음절만 경량화하여 결합한다.
    ```bash
-   pyftsubset NotoSerifKR[wght].ttf \
+   pyftsubset NotoSerifKR-VF.ttf \
      --unicodes="U+1100-11FF,U+3130-318F,U+AC00-D7A3" \
      --flavor=woff2 --layout-features="*" --output-file=NotoSerifKR-Variable.woff2
    ```
 3. **JetBrains Mono (코드/숫자/기호 서브셋)**:
    ```bash
    pyftsubset JetBrainsMono[wght].ttf \
-     --unicodes="U+0000-00FF,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215" \
+     --unicodes="U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215" \
      --flavor=woff2 --layout-features="*" --output-file=JetBrainsMono-Variable.woff2
    ```
 
