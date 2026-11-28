@@ -554,30 +554,203 @@ REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
 
 남은 일: B1이 200개 팔레트를 커밋해 `origin/main`에 반영한 뒤 200×25 매트릭스와 200개 출처를 검증한다. 그때 장부·검증 기록을 갱신하고 verify를 재실행한 다음 일반 push한다. 현재 B1 워크트리 변경은 미커밋이므로 이번 브랜치에서는 TRB-04를 `In Progress`로 유지한다.
 
-## 9. Track C 타이포 시스템 독립 검증 (2026-11-28)
+## 9. TASK-TRE-02 차트 29유형 독립 검증 (원 커밋 `b18314415`·`e208de4ca`, 브랜치 `upgrade/e2-verify`, 2026-11-28)
 
-검증 대상은 원 C1 `330098c21`을 당시 main에서 최신 `origin/main` `e208de4ca5a358889859d089d2ad1cb65ed1c076` 위로 rebase한 `d7dfbfa113bf1f23a246a6773c96bb8676938149`와 역할 렌더링 교정 `25a568d97e820520dd54f7585ba58552522baef4`이다.
+원 구현(codex GPT Luna)은 브라우저 검수를 하지 않았다. 새 맥락에서 SVG를 직접 비교하고 Chromium으로 29유형을 렌더했다. 결론: 29유형은 모두 서로 다른 실제 SVG를 낸다(이름만 다른 복제는 없다). 다만 확장 15유형은 축·범례·라벨이 그림에 없어 읽을 수 없었고, 입력 거부에 구멍이 있었다. 고친 뒤 `Verified`로 올린다.
 
-### 9.1 판정 및 교정
+### 9.1 판정
+| 완료 기준 | 판정 |
+|---|---|
+| 1. 유형별 실제 SVG, 이름만 다른 복제 없음 | 통과. 같은 데이터를 선·면적, 도넛·파이, 누적·그룹·100% 막대, 선·다중선·계단선, 면적·누적 면적, 캔들·OHLC, 산점도·버블, 막대·가로 막대, 스파크라인·선, 히트맵·달력 히트맵에 넣어 구조 차이를 시험이 읽는다(`tests/chart-presets-distinct.test.mjs`). |
+| 2. Chromium 육안·뷰포트 | 구분은 통과, 가독성은 결함 있었음(9.2). 390px·1280px에서 문서 가로 넘침 0, figure 밖 요소 0, 크기 0 SVG 0. |
+| 3. 왜곡 방지·입력 거부가 실제 렌더 경로를 지나는가 | 기존 시험은 `validate… .length > 0 \|\| render…가 문자열이 아님`으로 어느 한쪽만 맞아도 통과했고, 오류 코드를 보지 않았다. 광고한 규칙 중 실제로 막지 않는 것이 있었다(9.2). |
+| 4. 접근성 표가 데이터와 일치 | 통과(교정 포함). 불릿의 목표값이 표에 없었다. 29유형 전부 표의 숫자가 데이터와 같은 다중집합임을 시험한다. |
+| 5. 기존 고정 출력 해시 | 변화 없음. |
 
-- **기존 바이트 호환성: 통과.** `git diff c239a0fbc 330098c21 -- tests site/v1 '*legacy*' '*hash*'`에서는 `tests/platform-service-channels.test.mjs`의 해시 단언 변경만 확인했다. 이는 2.7 조립 출력 해시였고 2.x 기존 출력 해시는 아니었다. 해당 하드코딩 단언은 기대 해시를 교체해 통과시키지 않고, 같은 요청을 반복 조립한 결과의 JSON 바이트가 재현되는지 검사하도록 바꿨다. `site/v1/catalog.json` 및 `docs/evidence/context/legacy-hashes.json`은 최신 main 대비 그대로다.
-- **타이포 시스템: 통과.** 41종이 §5.2의 10계열에 각 4종 이상 포함되고 기존 ID 14개가 보존된다. 실제 프로필(폰트 스택, 데스크톱·모바일 크기, 굵기, 행간, 자간) 계산상 완전 중복은 0건이며, 가장 가까운 쌍도 17개 역할 속성이 다르다.
-- **역할 소비: 원 구현 실패 후 교정.** 원 구현의 27개 역할은 선언만 있고 컴파일 CSS에서 소비되지 않았다. `display-xl`부터 27개 전 역할이 조립 및 Blueprint 컴파일 출력에 규칙과 속성으로 나타나는 검사를 추가했다. 최초 실행은 `display-xl` 누락에서 실패(RED)했고, `typeRoleCSS`/`typeRoleVars`와 pipeline/render 연결 수정 뒤 통과(GREEN)했다.
-- **시험 품질: 통과.** 시험은 출력 CSS와 전체 유효 프로필을 검사하며 고정 구현 해시를 기대하지 않는다. 한글 줄바꿈 시험은 역할 값을 변이해 실제 위반 검출을 확인했다.
-- **폰트 권리: 통과(재배포 없음).** 새 공개 카탈로그에 폰트 파일을 추가하지 않았다. 사용 가능한 폰트 메타데이터에는 OFL-1.1 권리 필드와 원 출처 URL이 기록되어 있으며, 번들 폰트 재배포는 없다.
-- **장부/소유권: 통과.** 최초 충돌 처리에서 TRB-02/03/04 기록이 이전 값으로 되돌아간 점을 최신 main의 원본 레코드로 복원했다. 최종 장부는 TRC-01/02 외 모든 task 레코드가 최신 main과 일치한다. TRC-02는 역할 렌더 수정으로 변경한 Track A 소유 `pipeline.mjs`, `render.mjs`와 사유를 §6.1 교차 트랙 기록에 포함한다.
-- **장부 및 매니페스트: 통과.** TRC-01/02를 Verified로 기록했다. 최신 main 기준 매니페스트를 생성 스크립트로 재생성했다.
+### 9.2 발견 결함과 조치
+| # | 결함(원 구현) | 증거 | 조치 |
+|---|---|---|---|
+| 1 | 확장 15유형(그룹·100% 막대, 다중·계단선, 누적 면적, 파이, 버블, 트리맵, 레이더, 게이지, 불릿, 박스, 조합, 달력 히트맵, 진행)에 값 축·범주 라벨·범례·값 표기가 그림에 없음. 호버 title과 접힌 표에만 값이 있음 | 렌더 스크린샷: 파이에 라벨 없음, 박스 플롯에 이름 없음, 달력 히트맵에 요일·주 없음 | `renderExtendedChart`를 다시 씀. 축 눈금·격자·범주 라벨·범례(HTML `kit-legend`)·파이 비율·트리맵 라벨·레이더 축 이름·게이지 눈금 끝 |
+| 2 | 조합 차트의 선이 자기 최댓값으로 정규화되고 보조 축이 없음 | 선 최댓값이 막대 최댓값 높이에 붙어 값 비교가 가능한 것처럼 보임 | 오른쪽 보조 축 눈금과 "(선 · 오른쪽 축)" 범례 |
+| 3 | 버블 반지름이 `3 + 1.7√크기`라 면적비가 크기비와 다름 | 크기 10:40의 면적비 ≠ 1:4 | 반지름 `16√(크기/최대)`. 면적이 크기에 비례 |
+| 4 | 불릿의 55% 회색 구간은 데이터에 없는 장식 | 코드 상수 `.55` | 제거. 0~100 눈금 추가 |
+| 5 | 증거 페이지 CSS가 2.6 확장 규칙을 싣지 않음(기준 차트가 레거시 경로) | 스크롤형 캔들·폭포가 170px로 줄어 보임, 축선·13px 글자 규칙 없음 | 기준 차트에 `grid` 옵션을 줘 `data-chart="2.6"` 경로로 이동 |
+| 6 | 검증 구멍 7건: 파이 음수(합 100), 단일 계열 형태(파이·트리맵·게이지·불릿·진행)에서 둘째 계열이 조용히 사라짐, 불릿 음수 실적, 다중·계단선의 축 최솟값·최댓값이 데이터를 자름, 누적 면적의 축 최댓값이 개별 값만 비교(합계가 잘림), 레이더 2축 이하, 선형의 중복 범주 | `renderChartPreset`이 문자열을 돌려줌 | `validateChartPresetData`에 규칙 추가. 스키마의 `ordered-categories`는 실제로 순서를 보지 않아 `unique-categories`로 바꾸고, 실제로 막던 `nonnegative`(누적 막대)·`low-le-open-close-le-high`·`totals-match-running-sum`을 광고 목록에 추가. 서로 다른 광고 규칙 23개 전부에 거부 시험이 있음 |
+| 7 | 시험이 약함: 서명 개수만 달라도 "구분됨"으로 통과, 값 반영은 `notEqual`뿐 | 비례 오류가 통과 | 시험 6개 추가(아래) |
 
-### 9.2 실행 증거
+### 9.3 추가한 시험(RED/GREEN)
+`tests/chart-presets-distinct.test.mjs`에 추가: 같은 데이터 쌍의 구조 차이, 값→길이·면적·각도 비례와 눈금 고정, 접근성 표 숫자 일치, 확장 SVG의 축·범례·라벨, 광고 규칙별 거부(코드 지정), 문자열 이스케이프.
+결함을 심어 실패를 확인했다(원 코드로 되돌려 통과도 확인).
+```
+RED M1 그룹 막대 높이 ×0.9            -> 비례·구조 시험 실패
+RED M2 표에 value+1                     -> 접근성 표 시험 실패
+RED M3 단일 계열 검사 제거              -> 거부 시험 실패
+RED M4 파이 음수 허용                   -> 거부 시험 실패
+RED M5 버블 반지름 옛 식                -> 비례 시험 실패
+RED M6 계단선을 다중선으로 그림         -> 구조 시험 실패
+RED M7 선형 축 잘림 검사 제거           -> 거부 시험 실패
+RED M8 파이를 중심 없는 호로 그림       -> 비례·구조 시험 실패
+RED M9 값 축 라벨 제거                  -> 축·범례 시험 실패
+RED M10 누적 면적 축 검사를 개별 값으로 -> 거부 시험 실패
+```
+비례만 보는 시험은 균일 축소(M1)를 못 잡아서, 막대 꼭대기가 그 값의 눈금선 높이에 있는지도 단언한다.
+
+### 9.4 스크린샷
+`docs/dev/catalog-platform-upgrade/screens/charts/` 29유형 × 1280px, 390px(유형별 대표 하나). 재생성: `PLAYWRIGHT_BROWSERS_PATH=… node scripts/materials/chart-forms-browser.mjs --shots docs/dev/catalog-platform-upgrade/screens/charts`. 같은 스크립트가 유형별 SVG 스크린샷의 해시가 29개 모두 다른지, 뷰포트 넘침이 없는지를 종료 코드로 낸다.
+
+### 9.5 호환성
+`site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `c269ad506`과 diff가 없다. `renderChartPreset`의 기본 출력(2.6.0 신규 API)만 바뀌었고 2.4.0·2.5.0 출력 경로는 건드리지 않았다. 확장 형태의 SVG와 `data-*` 속성이 늘었다(`data-grid`·`data-labels`·`data-legend`·`data-density`).
+
+### 9.6 남은 한계
+- 확장 형태는 `labels`·`grid`·`legend` 옵션 중 일부만 반영한다(값 라벨은 그룹 막대·선·박스·달력, 격자는 축 있는 형태). 프리셋 예시가 값 라벨을 켜지 않아 기본 화면에는 값 숫자가 눈금으로만 보인다.
+- 트리맵은 작은 칸의 라벨을 생략하고 범례로 대신한다. 레이더 SVG는 범례와 한 줄에 놓이면 작게 보인다.
+- 네이티브 14유형(막대·선 등)의 렌더러는 이번에 바꾸지 않았다. 면적 차트 라벨이 마커와 겹치는 경우가 있다(스크린샷 `area.png`의 -4.5).
+- 다크 모드 렌더와 실기기는 확인하지 않았다.
+
+### 9.7 실행 증거
+```sh
+$ node --test tests/chart-presets.test.mjs tests/chart-presets-distinct.test.mjs tests/chart-presets-forms.test.mjs tests/platform-chart-presets.test.mjs
+ℹ pass 48 / ℹ fail 0
+$ node scripts/materials/chart-forms-browser.mjs
+390px kinds=29 docOverflow=0 distinctSvgImages=29 spills=[] zeroSized=[]
+1280px kinds=29 docOverflow=0 distinctSvgImages=29 spills=[] zeroSized=[]
+$ npm run verify                         (EXIT=0)
+ℹ tests 824 / ℹ pass 824 / ℹ fail 0
+REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1362 materials, 337 requirements)
+$ git diff c269ad506 -- site/v1 docs/evidence/context/legacy-hashes.json   (diff 없음)
+```
+미실행: `apps/web` Playwright e2e, 배포 확인, 다크 모드.
+
+## 10. TASK-TRE-03 레이아웃 패턴 24종 (브랜치 `upgrade/e3-layouts`)
+
+### 10.1 구현 범위
+- 재료: `layout:*` 24종(`src/platform/data/layouts.mjs`, 플랫폼 계약 0.7.0 → 0.8.0). REQUEST §9.2의 이름·순서와 1:1이다.
+- 슬롯 계약: 슬롯마다 필수 여부, 허용 콘텐츠(`group:`·`purpose:`·`layout:`), 항목 수, 선언 순서(= DOM 순서), 흐름(grid·columns·row·bento), 길이 대응(wrap·scroll-x·cap), sticky를 가진다. §9.2의 9개 정의 항목(슬롯, 부모 컨테이너, 최소 콘텐츠 폭, 반응형 변화, 열 수·배치 규칙, 밀도, 콘텐츠 길이, 중첩, 적용 목적)은 모든 레이아웃이 가진다.
+- 폭별 재배치: 컨테이너 쿼리 구간 xs 0·sm 560·md 880·lg 1180px마다 트랙과 영역 표를 따로 적는다. 숨기는 슬롯은 허용하지 않는다(등록 검사 `P_LAYOUT_AREAS`).
+- 컴파일: `compileLayout`(`src/layout.mjs`)은 계약 위반을 거부한다. 조립: `assembleLayout`(`src/platform/layouts.mjs`)이 칸을 목적 패밀리 렌더로 채우고 관계 그래프(`layout-slot-fit`, `layout-axis`, `forbids`, `avoids`)를 거친다.
+- 조회: `listPlatformMaterials({kind:'layout'})`·`getPlatformMaterial`·`recommendMaterials`·`checkCompatibility`와 같은 REST·MCP. 서비스 공개 함수는 더하지 않았다.
+- 기존 출력: `src/layout.mjs`는 함수와 export를 더했을 뿐 기존 흐름·벤토 출력은 그대로다(BENTO 표 2개에 `export`만 붙임). `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 `git diff` 변화 없음.
+
+### 10.2 구현 중 시험과 실측이 잡은 결함(수정함)
+1. `band.pull`(media-hero의 겹침)을 데이터에 선언만 하고 렌더가 쓰지 않았다: 첫 실측에서 media-hero의 겹침이 0이었다. 구현하고 "선언한 값이 렌더에 쓰인다" 시험이 `margin-top:-` 을 요구한다.
+2. 좁은 구간의 `sticky`가 넓은 구간으로 새서(구간 규칙은 앞 구간 위에 쌓인다) 설정 화면의 저장 영역이 본문을 덮었다. 스크린샷에서 발견했다. 구간마다 앞 구간 값을 되돌림 값으로 다시 적고, 규칙을 순서대로 적용해 얻은 `position`·`align-self`를 선언과 견주는 시험과, 브라우저가 계산한 `position`을 폭마다 견주는 실측 시험을 더했다.
+3. 행 흐름의 `caps` 크기가 출력에 닿지 않았다(2나 3이나 같음): `row`는 1(세로)과 2(가로)만 허용하도록 줄였다. 처음에는 폭을 1/cap으로 나누려 했으나 버튼 묶음이 슬롯보다 넓어 768px에서 넘쳤다(`overflow-wrap:anywhere`가 최소 폭 계산을 0으로 만든다).
+4. 표본 항목 5개에서 `bestCols(5, 2)`는 고아를 피해 1열을 고른다: commerce-grid가 한 열로 보였다. 표본을 6개로 바꿨다(알고리즘은 의도대로).
+5. 쌍별 비교에서 equal-grid와 kpi-strip이 폭 1개에서만 달랐다: kpi-strip의 열 상한을 2·3·5·6으로 바꿔 구분했다.
+6. 긴 콘텐츠 시험이 숫자·가격·아이콘 이름까지 늘려 부품 내부(한 줄 값)가 넘쳤다. 자유 문장 필드(`PROSE_KEYS`)만 늘리도록 좁혔다. 한 줄 값의 최소 폭은 부품 계약(Track D) 몫이다. 이 한계는 숨기지 않는다.
+
+### 10.3 브라우저 실측(`node scripts/layouts/measure.mjs`, Chromium)
+- 24종 × 8개 폭(320·360·480·640·768·1024·1280·1440) × 표본 2종(정상, 긴 문장): 문서 가로 스크롤 최대 0px, 스크롤 영역 밖으로 나간 요소 0개. 주 폭 4개(320·768·1024·1440)의 슬롯·항목 사각형을 `screens/layouts/measurements.json`에 기록했다.
+- 폭별 재배치: 열·행 순위와 폭 비율로 만든 서명이라 단순 축소는 같은 서명이다. 24종 모두 인접 주 폭 사이에 슬롯이 자리를 옮기는 구간이 있고 서로 다른 배치가 2개 이상이다(요약 표는 `measurements.md`). media-hero는 sm→md에서 순위가 같고(겹침이 시작) lg에서 바뀐다: 서로 다른 배치 2개로 가장 적다.
+- 쌍별 구분: 276쌍 모두 서명이 다른 주 폭이 2개 이상(최소 2). 이름 없는 서명이므로 이름만 다른 같은 배치는 0이다.
+- sticky: 320px에서 아래에 붙는 슬롯은 자연 위치가 접힌 선(900px) 아래여도 화면 아래에 붙어 보인다(`pinnedBottom`).
+- 스크린샷은 레이아웃마다 한 장이다(핵심 배치 구간에 처음 들어가는 뷰포트: xs 320·sm 768·md 1024·lg 1440). 전수 이미지는 만들지 않았다.
+- 증거의 신선도: 시험이 실측 JSON의 `layoutHash`(칸 내용을 자리표시 조각으로 바꿔 컴파일한 레이아웃 출력의 지문)를 현재 값과 비교한다. 레이아웃 코드·재료가 바뀌었는데 실측을 다시 하지 않으면 실패한다. 다른 트랙의 색·부품 변경에는 흔들리지 않는다(처음에는 페이지 전체 해시를 썼다가 B1·B2 병합으로 깨져 이 지문으로 바꿨다).
+
+### 10.4 RED/GREEN
+| 코드를 이렇게 망가뜨리면 | 실패한 시험 | 되돌리면 |
+|---|---|---|
+| sticky 되돌림 값 제거 | `폭 구간 규칙이 앞 구간 위에 쌓여도…` (`layout:settings-layout.actions md: position`) | 통과 |
+| `pull` 선언을 렌더에서 무시 | `선언한 값이 렌더에 실제로 쓰인다…` (`layout:media-hero: pull`) | 통과 |
+| 슬롯 허용 콘텐츠 검사 제거 | `슬롯 계약이 거부한다…` (`charts는 카드만`) | 통과 |
+| 폭 축 계산 관계를 항상 통과 | `관계 그래프…` | 통과 |
+
+### 10.5 기존 시험 변경(공개)
+- `tests/platform-pipeline-contract.test.mjs`: 계약 버전 단언 0.8.0.
+- `tests/platform-service-channels.test.mjs`: work-dashboard 채널 해시 `a729…` → `0972…`. 계약 버전을 0.7.0으로 되돌리면 기존 해시로 통과해(12/12) 차이가 `manifest.platformContract` 문자열뿐임을 확인했다.
+
+### 10.6 실행 증거
+```sh
+$ node --test tests/layout-quality.test.mjs
+ℹ tests 25 / ℹ pass 25 / ℹ fail 0
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1353 materials, 337 requirements)
+$ npm run verify                       (EXIT=0)
+ℹ tests 822 / ℹ pass 822 / ℹ fail 0
+REPRODUCIBLE: 3404 generated files match a fresh build byte for byte.
+```
+Manifest 레이아웃 요구: `{"total":24,"missing":0,"direct":24}`. 24종 모두 `renderable`(`blockedBy: not-in-web-catalog`), REST·MCP 조회 가능, 품질 verified(유효한 시험 참조).
+미실행: `apps/web` Playwright e2e와 typecheck(Track F 영역, 이번 변경은 `src/`·문서·스크립트). 웹 카탈로그·Studio 노출은 구현하지 않았다(Track F).
+
+## 11. TASK-TRA-01~03 미리보기 사전 생성·목록 iframe 제거·캐시 독립 검증 (원 커밋 `90ac06060`, 브랜치 `upgrade/a1-preview`, 2026-11-28)
+
+원 구현(Gemini Flash)은 보고가 진행 중으로 끝났고 push 하지 못했다. 이 절은 다른 맥락에서 코드와 실측으로 다시 확인한 결과다. 원 커밋 위에 수정 커밋 두 개를 쌓아 최신 `origin/main`(`039ec6171`)에 rebase 했다.
+
+### 11.1 판정 요약
+- iframe 제거, 컴파일 0회, 정적 미리보기, 캐시 헤더 분리는 **수정 후** 달성됐다. 원 커밋 그대로는 달성되지 않았다(11.2).
+- 미해결: Components 목록의 카드 수(92개), 초기 전송량·DOM 노드 수 증가, 청크 소비자 없음(11.5). 그래서 TASK-TRA-02 만 Verified, TRA-01·03 은 Implemented 로 둔다.
+
+### 11.2 발견 결함과 조치
+1. **미리보기 SVG 가 `<img>` 로 열리지 않았다.** 생성기가 완성 HTML 문서를 SVG 에 그대로 넣어 XML 오류였다. `xmllint --noout site/previews/explore/about-team.svg` → `StartTag: invalid element name <!doctype html>`, 플랫폼 사례는 `Specification mandates value for attribute data-flow`. `90ac06060` 의 SVG 126개를 `xmllint` 로 검사하면 109개가 오류였다(Explore 85/85, 플랫폼 사례 5/6, 목적 패밀리 19/31, 타이포 0/4). Explore 목록 전체가 깨진 이미지였다. → Core 문서를 XHTML 로 직렬화하는 변환기(`apps/web/lib/api/preview-svg.mjs`)로 교체. 357개 모두 XML 검사 통과, Chromium 과 WebKit 에서 같은 문서의 직접 렌더와 `<img>` 렌더가 같은 화면이다(WebKit 은 바이트 동일).
+2. **부품 미리보기가 0개였다**(`site/previews/components/` 비어 있음). 생성기가 `compileBlueprint(doc, {include: ['html', 'css', 'standalone']})` 를 불렀는데 `standalone` 은 이 함수의 허용 이름이 아니라서 48개 전부가 `include는 허용된 이름의 배열이어야 합니다.` 로 거부됐고, 생성기는 실패를 `continue` 로 삼켰다. 게다가 웹 `/components/<type>/render` 와 다른 절차(다른 노드 제거 없음, 2.6.0 승격 없음)를 따로 구현해 있어서 컴파일이 됐더라도 상세 화면과 다른 그림이었다. → 웹과 같은 절차를 한 모듈(`preview-recipes.mjs`)로 옮겨 웹 화면과 생성기가 함께 쓴다. 60개 생성, 예제 없는 4개는 목록 카드가 텍스트 카드다.
+3. **Explore 의 테마 변형 디자인은 미리보기 파일이 없었다.** 웹 목록은 256개 디자인(`agency-home~theme_swiss` 등)인데 생성기는 템플릿 기본 85개만 만들었다. → 웹과 같은 `curatedDesignRefs()` 로 256개.
+4. **타이포그래피가 다크·샘플·폭 선택을 무시하고 같은 그림을 보였다.** 비교 샘플 본문도 복사본이 달랐다(`DOC_SAMPLE` 축약). → 화면이 자기 요청의 캐시 키를 만들어 사전 생성 목록에 있을 때만 정적 파일을 쓰고, 아니면 선택 시점에 컴파일한다(iframe 아님).
+5. **생성기에 하드코딩이 있었다**: `COMPILER_VERSION='2.0.0'`, `CATALOG_VERSION='2.6.0'`, 사례 6건 복사본, 샘플 복사본. 인덱스는 `generatedAt` 을 싣고(CONTRACTS §4 위반) 부품과 목적 패밀리 2종만 담았다(레지스트리는 13종). → 버전은 코드 상수, 사례·샘플·designId 는 웹의 TS 파일을 직접 읽고, 인덱스는 레지스트리 전 종류에서 만들며 `contentHash` 를 싣는다.
+6. **캐시 키가 CONTRACTS §5.2 와 달랐다.** 버전 기본값 하드코딩(`2.0.0`, `2.6.0`), 문자열 trim(계약은 trim 금지), 재료 정렬 없음. 시험(`canonicalize ... trims strings`)이 그 오류를 고정하고 있었다. → 규격 그대로 다시 구현하고 시험은 문서의 식을 독립적으로 다시 써서 비교한다. 서비스가 `PLATFORM_CONTRACT_VERSION` 을 읽기 전용으로 내보낸다.
+7. **렌더 라우트가 `custom` 이 없으면 모든 요청에 `public, max-age=31536000, immutable` 을 냈다.** `custom` 을 보내는 곳이 없어 Studio 입력과 사용자 콘텐츠까지 공개 CDN 에 1년 캐시될 수 있었고, 엔진이 바뀌어도 같은 주소가 낡은 결과를 냈다. → 렌더 라우트는 `private, no-cache` + ETag/304. 고정 미리보기는 이름이 캐시 키인 정적 파일이라서만 immutable.
+8. **서버 캐시에 바이트 상한이 없었다**(항목 1,000개 × 수백 KB). 렌더 주소의 임의 문자열이 버전 조회 메모를 키울 수 있었다. → 개수+바이트(96MB) 상한 LRU, 메모도 상한.
+9. **`probeDesign` 이 목록 요청에서 컴파일했다**(Explore 사례 카드마다, Typography 선택마다. 기준선의 초기 컴파일은 Explore 8~12회, Typography 4회). → 사전 생성 때 조립해 본 요청은 결과(가능/거부 사유)를 목록에서 재사용한다. 거부된 조합 카드는 오류 문서를 요청하지 않고 사유를 보인다.
+10. `sync-static.mjs` 가 복사 실패를 `catch {}` 로 삼켰다(미리보기가 빠진 채 배포될 수 있다). → 실패하면 멈춘다.
+11. **`TASK-LEDGER.json` 이 낡은 기반으로 통째로 덮여 있었다**(v1.1.0 → v1.0.0, 다른 작업의 항목 삭제). → 최신 main 의 장부를 그대로 두고 TRA-01~03 항목만 고쳤다.
+12. `PERF-BOTTLENECKS.md` §5 의 수치(전송량 50~83% 절감 등)에 근거가 없었다(11.1). → 실측으로 다시 썼다.
+13. iframe 에 의존한 기존 e2e(`shell`, `w6a-shell-studio`, `w6b-scenarios`)는 구조가 바뀐 부분만 이미지 기준으로 다시 세웠다. 근거는 같거나 강해졌다: 카드의 그림이 지금 서버가 Core 로 컴파일한 문서와 바이트까지 같다. 단언을 지우거나 느슨하게 하지 않았다.
+
+### 11.3 완료 기준 판정
+| # | 기준 | 판정 | 근거 |
+|---|---|---|---|
+| 1 | 사전 생성이 Core 출력에서 나옴, 바이트 일치, 대표만 | 충족 | `tests/platform-pregenerate.test.mjs`(서비스 진입점을 직접 호출해 SVG 바이트 비교, 원본 HTML 해시), `apps/web/e2e/previews-parity.spec.mjs`(운영 서버의 렌더 라우트 출력과 비교). 357개 중 Explore 256·부품 60·패밀리 31·사례 6·타이포 4. 타이포는 시스템당 기본 보기 1개만. 손으로 SVG 한 군데를 고치면 시험이 실패한다(RED). |
+| 2 | 캐시 키 §5.2, 고정 immutable, 사용자 입력 비공개, 무제한 Map 없음 | 충족 | `tests/platform-cache.test.mjs`(식 독립 재현, 버전 필수, 상한, 모듈 수준 Map 금지). `curl -sI` 고정: `Cache-Control: public, max-age=31536000, immutable`, 사용자 입력: `cache-control: private, no-cache` + `etag`, 같은 입력 재요청 304. |
+| 3 | 운영 빌드 실측: iframe 0, 컴파일 0, 스크롤 왕복 재컴파일 0, 초기 카드 24 이하, 숨긴 탭 없음 | **부분** | iframe·컴파일·재요청·숨긴 탭은 충족(`catalog-lists.spec.mjs`, `PERFORMANCE-A1.json`). 카드 수는 Explore(주 목록 24)와 Typography(1)만 충족, **Components 는 92개로 미충족**(11.5). 목록에 `componentView` 상세 변형 컴파일 없음(컴파일 카운터 0). |
+| 4 | 기존 URL·기존 브라우저 시험 유지 | 부분 | 루트 `npm run test:browser`: 272 통과·2 실패, 웹 e2e: 아래 11.4. 실패는 이 작업과 무관한 패밀리 변경에서 온 것(11.5). `e2e/catalog.spec.mjs` 는 저장소와 git 이력에 없다(기록의 실패 흔적은 찾지 못함). |
+| 5 | 레지스트리 추가 시 인덱스·미리보기 자동 생성 | 충족 | 인덱스는 `PLATFORM_KINDS` 13종과 부품 카탈로그를 읽어 만들고(종류별 수가 레지스트리와 같음을 시험), 미리보기 대상은 레지스트리·카탈로그에서 정한다. 권리 미확인 팔레트는 인덱스에 없다. 하드코딩된 재료 목록 없음. |
+| 6 | crossTrackFiles, Verified/Implemented, VERIFICATION 절 | 충족 | `TASK-LEDGER.json` TRA-01~03, 이 절. |
+| 7 | `npm run verify` 통과, 최신 main rebase, push | 11.4 | |
+
+### 11.4 실행 증거
+```sh
+$ npm run verify                       # rebase 뒤, 마지막 커밋 포함
+ℹ tests 865 / ℹ pass 865 / ℹ fail 0
+REPRODUCIBLE: 3784 generated files match a fresh build byte for byte.
+$ npm --workspace apps/web run typecheck / test:boundary / test:docs
+tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
+$ npm run perf -- --url http://127.0.0.1:4291 --out docs/dev/catalog-platform-upgrade/PERFORMANCE-A1.json
+Explore/Components/Typography: iframe 0, 컴파일 0(초기·스윕 후), 스윕 iframe 로드 0   (PERF-BOTTLENECKS.md §5 표)
+$ curl -sI /previews/<키>.svg ; curl -sI '/platform/render?r=…'
+Cache-Control: public, max-age=31536000, immutable ; cache-control: private, no-cache + etag
+```
+- RED/GREEN: ① 미리보기 SVG 한 곳을 손으로 고치면 `tests/platform-pregenerate.test.mjs` 실패, 원복하면 통과. ② SVG 끝에 `<!doctype html>` 을 붙이면 XML 검사 실패. ③ 모듈 수준 `new Map()` 을 넣으면 `platform-cache.test.mjs` 실패. ④ `caseRequest` 의 후보 수를 바꾸면 `platform-preview-parity.test.mjs` 실패. ⑤ `Thumb` 이 항상 iframe 을 쓰게 바꾸고 렌더 라우트를 `public, immutable` 로 바꾸어 빌드하면 `catalog-lists.spec.mjs` 4건과 Cache-Control 시험이 실패하고, 원복해 다시 빌드하면 모두 통과.
+- 웹 e2e 전체(`WEB_REUSE=1 npx playwright test`): 238 통과, 4 실패. 4건은 모두 11.5 의 4번(패밀리 12종 이후 `VISUAL_LABEL` 4종): `a11y.spec` 목적 패밀리 상세 390·1280, `w6b-scenarios` 시나리오 B 390·1280. 이 브랜치의 변경과 무관하다. `catalog-lists.spec` 의 "알려진 미충족" 1건은 의도한 실패(`test.fail`)로 통과 처리된다.
+- 루트 `npm run test:browser`(`PW_PORT=4292`): 272 통과, 2 실패(`platform-families.spec.mjs:12` 600초 시간 초과, `platform-family-a11y.spec.mjs:140` topbar 토글 36px). 둘 다 이 브랜치 변경과 무관한 패밀리 쪽 실패다(11.5 의 4번).
+
+### 11.5 남은 문제
+1. **Components 목록 카드 92개**(REQUEST §3.4 의 24개 원칙 미충족). 기존 시험(w6b 시나리오 B 등)이 `/components` 한 화면에 목적 패밀리 32개 전부를 전제하고, Components 웹 카탈로그 개편은 Track F 의 일이다. `catalog-lists.spec.mjs` 에 "알려진 미충족"으로 남겨(`test.fail`) 고쳐지면 알려 준다. 브라우저의 지연 로딩 덕분에 초기에 불러오는 미리보기는 25개다.
+2. **초기 전송량·DOM 노드 증가**(PERF-BOTTLENECKS.md §5.2). 압축되는 서빙에서의 값은 측정하지 못했다(`확인 필요`).
+3. **카테고리 청크(`site/catalog-chunks/*.json`) 소비자가 웹에 없다.** 생성과 정합성은 시험하지만 "탭 전환 시 필요한 청크만 로딩"은 아직 아니다. 이 때문에 TRA-03 은 Implemented 다.
+4. **이 작업과 무관한 최신 main 의 실패**(원인 위치만 기록, 고치지 않았다):
+   - `e2e/platform-family-a11y.spec.mjs:140` topbar 토글 높이 36px < 44px. 깨끗한 `origin/main`(`039ec6171`) 워크트리에서도 같은 값으로 실패했다.
+   - `e2e/platform-families.spec.mjs:12` 600초 시간 초과(패밀리 12종 × 모드 × 폭 전수 측정). 같은 조건의 `origin/main` 에서는 실행하지 않았다(`미실행`).
+   - `apps/web/e2e/a11y.spec.mjs` 목적 패밀리 상세 2건, `w6b-scenarios` 시나리오 B 2건: 패밀리가 12종이 되었는데 `apps/web/app/components/purpose/[group]/[name]/page.tsx` 의 `VISUAL_LABEL` 이 4종만 있어 새 8종의 칩 라벨이 비고(link-name 위반), 시험은 4종을 기대한다. 이 파일은 이 브랜치가 건드리지 않았다. 최신 main 에서 웹 빌드로 실행해 확인하지는 못했다(워크트리 빌드 불가, 코드 근거).
+5. 사전 생성기가 웹의 TS 파일을 Node 의 TS 제거로 읽는다: Node 22.18 이상 필요(`확인 필요`: 그 아래 버전).
+6. Vercel 운영 측정은 하지 않았다.
+
+## 12. Track C main 통합 재검증 (2026-11-28)
+
+최신 `origin/main` `29ac798d6a0d0c9133c648c333ea19b7cd5e970a`를 C1 통합 브랜치에 일반 merge했다. 충돌난 TASK-LEDGER는 main의 다른 트랙 기록을 유지하고 TRC-01/02는 Verified로 보존했다. MATERIAL-COVERAGE는 생성 스크립트로 병합 기준에서 재생성했다. 서비스 채널 시험은 2.7 구현 고정 해시 대신 같은 입력 반복 출력의 결정성을 검사한다.
+
+### 12.1 호환성과 실행 증거
 
 ```sh
-$ node --test tests/platform-type-systems-diff.test.mjs tests/platform-type-hangul.test.mjs tests/platform-type-evidence.test.mjs tests/platform-service-channels.test.mjs
-ℹ tests 27 / ℹ pass 27 / ℹ fail 0
+$ node --test tests/composition.test.mjs tests/typography-refine.test.mjs tests/expression-2-5.test.mjs tests/color-tokens.test.mjs tests/chart-presets.test.mjs
+ℹ tests 72 / ℹ pass 72 / ℹ fail 0
 $ npm run coverage:materials:check
 MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1389 materials, 337 requirements)
 $ npm run verify
-ℹ tests 828 / ℹ pass 828 / ℹ fail 0
-REPRODUCIBLE: 3402 generated files match a fresh build byte for byte.
+ℹ tests 875 / ℹ pass 875 / ℹ fail 0
+REPRODUCIBLE: 3792 generated files match a fresh build byte for byte.
 ```
 
-미실행: 브라우저 추가 UI 검증 및 Vercel 배포 확인. 코드·컴파일 출력 검증과 기존 증거 이미지는 정적·전체 검증에서 확인했다.
+최초 전체 검증은 A1 사전 생성 산출물이 41개 타이포 시스템 대신 14개만 담고 있어 실패했다(서비스 출력 바이트 불일치 포함). `npm run build`로 카탈로그 인덱스·미리보기를 재생성한 뒤 `node --test tests/platform-pregenerate.test.mjs`가 8/8 통과했고 최종 전체 검증도 통과했다.
+
+2.1.0은 저장된 전체 컴파일 출력이 `legacy-hashes.json`의 SHA-256과 일치한다. 2.4.0은 85개 템플릿 및 15개 수기 사례 출력이 `legacy-2-4-hashes.json`과 일치하며, 신규 Blueprint의 기본 버전은 2.4.0이다. `site/v1/catalog.json`과 `docs/evidence/context/legacy-hashes.json`은 최신 main 대비 바이트 변경이 없다.

@@ -1,6 +1,6 @@
 # ADR 0012: 재료 조립 플랫폼 계약
 
-- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0, 0.5.0(§9, 2026-11-22).
+- 상태: 채택(계약과 스켈레톤). 구현은 [wbs.md](../platform/wbs.md)의 병렬 작업이 이어 받는다. 개정: 0.2.0, 0.3.0, 0.4.0, 0.5.0(§9, 2026-11-22), 0.8.0(§9.9).
 - 날짜: 2026-11-22
 - 관련: ADR 0001, 0009, 0011; [감사 2026-11](../platform/audit-2026-11.md)
 - 번호 메모: 작업 카드는 `0010-assembly-platform.md`를 지시했다. 그러나 0010은 이미 `0010-expression-grammar-2-5.md`가 쓰고 있어 0012로 둔다.
@@ -343,3 +343,13 @@ REST·MCP 대응(상세는 OpenAPI `/api/v1/openapi.json`): `POST /api/v1/assemb
 | 서비스 계약 | `listPlatformMaterials`, `getPlatformMaterial`, `recommendMaterials`, `checkCompatibility`에 `purpose-family` kind를 추가한다. 서비스 계약 1.2.0 → 1.3.0, 플랫폼 계약 0.6.0 → 0.7.0 |
 | X01 | `purpose:navigation.bottom`이 `density=compact`일 때 `X01:` 이유가 있는 조건부 `forbids` 관계를 낸다. 추천·호환성에서 같은 금지 결과를 확인한다. 페이지 축의 구형 X01 검사는 그대로 둔다 |
 | 권리·고정 기준 | Coolors 재료는 계속 등록하지 않는다. 2.6.0 이하 Blueprint 출력과 `site/v1/catalog.json` 스냅샷은 이 변경 범위 밖이며 바이트 고정 검증을 유지한다 |
+
+### 9.9 0.8.0: 레이아웃 재료 `layout`(TASK-TRE-03, REQUEST §9.2)
+
+| 항목 | 결정과 결과 |
+|---|---|
+| 종류 | `layout`(id `layout:<이름>`)을 `PLATFORM_KINDS`에 더한다. 필드: `pattern`·`purposes`·`container`·`minContent`·`minCol`·`density`·`slots`·`bands`·`reorders`·`needsBand`·`rules`·`length`·`nesting`. 24종을 `src/platform/data/layouts.mjs`가 등록하고 의미 검사(`validateLayout`)가 슬롯·폭 구간·최소 폭·읽기 순서 선언을 본다 |
+| 컴파일 | `compileLayout`(`src/layout.mjs`)은 슬롯 계약을 어기면 거부한다. 폭 구간은 컨테이너 쿼리(xs 0·sm 560·md 880·lg 1180px)이고 구간마다 트랙·영역 표를 따로 가진다. 기존 흐름·벤토 출력은 바뀌지 않는다 |
+| 관계 | `CLOSED_PAIRS`에 `['layout', 'purpose-family']`를 더한다. 계산 관계 `layout-slot-fit`(슬롯이 받는 패밀리인가, 맥락이 맞는가)과 `layout-axis`(폭 축이 핵심 구간까지 열리는가, 밀도가 허용 범위인가), 선언 관계 `prefers`·`avoids`(내비 셸 중복)·`forbids`(compact 밀도의 하단 고정 행동 영역, 44px 터치 칸) |
+| 조립 | `assembleLayout`(`src/platform/layouts.mjs`)은 칸을 목적 패밀리 렌더로 채우고 위 관계를 거친다. 서비스 공개 함수는 더하지 않는다: 조회는 기존 `listPlatformMaterials`·`getPlatformMaterial`·`recommendMaterials`·`checkCompatibility`가 `kind: "layout"`으로 한다 |
+| 고정 기준 | 2.1~2.6 출력과 `site/v1/catalog.json`은 바뀌지 않았다. 플랫폼 계약 0.7.0 → 0.8.0 |

@@ -25,6 +25,7 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 
 import {createPlatform, PURPOSES, PLATFORM_CONTRACT_VERSION, baseIsPlaceable} from '../src/platform/index.mjs';
+import {assembleSpecimen} from '../src/platform/layouts.mjs';
 import {designRegistry} from '../src/profiles/registry.mjs';
 import {PROFILES, PATTERNS} from '../src/profiles/data.mjs';
 import {assemble as assembleProfile} from '../src/profiles/assemble.mjs';
@@ -330,25 +331,31 @@ const COVERAGE = {
   'chart/Combination Chart': CHART('combination', 2),
   'chart/Calendar Heatmap': CHART('calendar-heatmap'),
   'chart/Progress Chart': CHART('progress-chart'),
-  'lay/Single Column': D('layout-primitive:flow'),
-  'lay/Two Column': D('layout-primitive:split'),
-  'lay/Three Column': V('component:grid', 'component:grid', {columns: 'three'}),
-  'lay/Equal Grid': D('component:grid'),
-  'lay/Masonry': V('component:gallery', 'component:gallery', {layout: 'masonry'}),
-  'lay/Bento': D('layout-primitive:bento'),
-  'lay/Sidebar Main': D('component:aside'),
-  'lay/Master-detail': D('component:master-detail'),
-  'lay/Dashboard Grid': D('pattern:dashboard-grid'),
-  'lay/Editorial Layout': D('pattern:editorial-article'),
-  'lay/Split Hero': V('component:hero', 'component:hero', {variant: 'split'}),
-  'lay/Centered Hero': V('component:hero', 'component:hero', {variant: 'centered'}),
-  'lay/Media Hero': V('component:hero', 'component:hero', {variant: 'cover'}),
-  'lay/Product Detail Layout': D('pattern:commerce-detail'),
-  'lay/Commerce Grid': D('pattern:commerce-listing'),
-  'lay/Settings Layout': D('pattern:admin-settings'),
-  'lay/Documentation Layout': D('pattern:docs-reference'),
-  'lay/Mobile Stack': D('layout-primitive:stack'),
-  'lay/Form Layout': D('component:form'),
+  // §9.2 레이아웃 24종: 각 항목이 자기 `layout:*` 재료로 직접 구현된다(src/platform/data/layouts.mjs). 구형 component:grid·hero 변형 등은 L/ 항목이 그대로 맵한다.
+  'lay/Single Column': D('layout:single-column'),
+  'lay/Two Column': D('layout:two-column'),
+  'lay/Three Column': D('layout:three-column'),
+  'lay/Equal Grid': D('layout:equal-grid'),
+  'lay/Asymmetric Grid': D('layout:asymmetric-grid'),
+  'lay/Masonry': D('layout:masonry'),
+  'lay/Bento': D('layout:bento'),
+  'lay/Sidebar Main': D('layout:sidebar-main'),
+  'lay/Double Sidebar': D('layout:double-sidebar'),
+  'lay/Master-detail': D('layout:master-detail'),
+  'lay/Dashboard Grid': D('layout:dashboard-grid'),
+  'lay/KPI Strip': D('layout:kpi-strip'),
+  'lay/Editorial Layout': D('layout:editorial-layout'),
+  'lay/Split Hero': D('layout:split-hero'),
+  'lay/Centered Hero': D('layout:centered-hero'),
+  'lay/Media Hero': D('layout:media-hero'),
+  'lay/Product Detail Layout': D('layout:product-detail-layout'),
+  'lay/Commerce Grid': D('layout:commerce-grid'),
+  'lay/Settings Layout': D('layout:settings-layout'),
+  'lay/Documentation Layout': D('layout:documentation-layout'),
+  'lay/Mobile Stack': D('layout:mobile-stack'),
+  'lay/Sticky Action Layout': D('layout:sticky-action-layout'),
+  'lay/Form Layout': D('layout:form-layout'),
+  'lay/Multi-step Form': D('layout:multi-step-form'),
 };
 for (const key of Object.keys(COVERAGE)) {
   if (!ALL_REQS.some(r => r.key === key)) throw new Error(`REQUEST.md에 없는 요구 항목을 매핑했습니다: ${key}`);
@@ -402,6 +409,7 @@ const DEFINITION = {
   media: ['src/platform/data/media.mjs', 'MEDIA'],
   'state-pattern': ['src/platform/data/states.mjs', 'STATE_PATTERNS'],
   'axis-value': ['src/platform/axes.mjs', 'axisIds'],
+  layout: ['src/platform/data/layouts.mjs', 'LAYOUTS'],
   'chart-preset': ['src/materials/chart-presets.mjs', 'chartPresetMaterials'],
   icon: ['src/catalog/icons.mjs', 'icons'],
   template: ['src/catalog/templates.mjs', 'templates'],
@@ -621,6 +629,16 @@ function assembleProbe(rec, kind) {
 }
 const AXIS_FIELDS = ['shell', 'typography', 'density', 'radius', 'control', 'elevation', 'motion', 'icon', 'ornament', 'backdrop', 'width', 'scale', 'weight', 'footer', 'mode'];
 
+/** 레이아웃: 슬롯 계약을 모두 채운 표본(실제 목적 패밀리 렌더)을 assembleLayout으로 조립한다. 관계 그래프(layout × 목적 패밀리 × 밀도)를 거친 결과만 렌더로 센다. */
+function layoutProbe(rec) {
+  const r = assembleSpecimen(platformEnv, rec.id);
+  if (!r.ok) return {method: 'assembleLayout(specimen)', ran: true, ok: false, reason: r.diagnostics[0]?.message ?? 'assembleLayout 실패'};
+  const manifest = JSON.stringify(r.value.manifest);
+  // 배치가 출력에 실제로 반영됐는가: 컴파일 CSS에 이 레이아웃의 선택자와 모든 폭 구간의 영역 표가 있어야 한다.
+  const effective = r.value.css.includes(`.kit-lay[data-layout="${rec.id.slice('layout:'.length)}"]`) && rec.bands.every(b => r.value.css.includes('grid-template-areas'));
+  return {method: 'assembleLayout(specimen)', ran: true, ok: true, noEffect: !effective, qualityOk: r.diagnostics.length === 0, blueprintHasId: false, manifestHasId: manifest.includes(rec.id), htmlBytes: r.value.html.length, cssBytes: r.value.css.length, outputHash: sha(r.value.html + r.value.css)};
+}
+
 /** 목적 패밀리: 웹 상세 화면과 같은 방식으로 assembleComponents를 부른다. */
 function purposeProbe(rec) {
   const context = rec.contexts[0] === 'any' ? 'general' : rec.contexts[0];
@@ -776,6 +794,7 @@ function probeOf(entity) {
       const p = contract ? componentProbe(contract.record) : {method: 'compileBlueprint', ran: false, ok: false, reason: '계약 기록 없음'};
       return {...p, method: `${p.method} via ${record.contract}`, placeable: baseIsPlaceable(record.id)};
     }
+    if (kind === 'layout') return layoutProbe(record);
     return assembleProbe(record, kind);
   }
   return legacyProbe(record, kind);

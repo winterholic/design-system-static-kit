@@ -174,8 +174,8 @@ export const OPERATIONS = [
     call: args => getMaterial(args),
   },
   {
-    id: 'listPlatformMaterials', method: 'GET', path: '/api/v1/platform/materials', summary: '플랫폼 재료 목록(팔레트·세트·서체·패밀리·스타일 재료)',
-    description: '조립 플랫폼이 쓰는 재료입니다. kind는 style-context, palette, subtoken-set, type-system, base-component, family(시각), purpose-family(목적), axis-value, surface, motion, background, media, state-pattern.',
+    id: 'listPlatformMaterials', method: 'GET', path: '/api/v1/platform/materials', summary: '플랫폼 재료 목록(팔레트·세트·서체·패밀리·스타일 재료·레이아웃)',
+    description: '조립 플랫폼이 쓰는 재료입니다. kind는 style-context, palette, subtoken-set, type-system, base-component, family(시각), purpose-family(목적), axis-value, surface, motion, background, media, state-pattern, layout(레이아웃 패턴 24종: 슬롯 계약과 폭 구간별 배치).',
     parameters: [...['kind', 'context', 'tag', 'query'].map(name => ({name, in: 'query', schema: {type: 'string'}})), ...pick('fields', 'limit', 'cursor')],
     parse: ({url}) => ({args: queryToArgs(url).args}),
     call: args => listPlatformMaterials(args),

@@ -3,12 +3,13 @@ import {Suspense} from 'react';
 import {PageShell} from '@/shell/PageShell';
 import {ExploreControls, type Options} from '@/features/explore/ExploreControls';
 import {Thumb} from '@/features/explore/Thumb';
+import {designTarget} from '@/features/explore/previews.server';
 import {curatedDesigns, type Design} from '@/features/explore/designs.server';
 import {filterRows, paginate, readQuery, writeQuery} from '@/features/explore/list-query';
 import styles from '@/features/explore/list.module.css';
 import {ButtonLink} from '@/ui';
 import {PLATFORM_CASES} from '@/features/platform/cases';
-import {assembleDesign, material, platformReady} from '@/features/platform/platform.server';
+import {material, platformReady, probeDesign} from '@/features/platform/platform.server';
 import {renderSrc} from '@/features/platform/render-url';
 import {readState, requestOf, writeState, type AssembleState} from '@/features/platform/assemble-state';
 import {purposeOf, shortId} from '@/features/platform/labels';
@@ -60,8 +61,8 @@ export default async function ExplorePage({searchParams}: Props) {
           <ul className={styles.grid}>
             {featured.map(d => (
               <li key={d.id} className={styles.card}>
-                <Link href={`/explore/${d.id}`} className={styles.link}>
-                  <Thumb src={`/explore/${d.id}/render`} title={`${d.label} (${d.themeName}) 미리보기`} />
+                <Link href={`/explore/${d.id}`} className={styles.link} prefetch={false}>
+                  <Thumb src={`/explore/${d.id}/render`} preview={designTarget(d)} title={`${d.label} (${d.themeName}) 미리보기`} />
                   <h3 className={styles.title}>{d.themeName}{d.variantLabel ? ` · ${d.variantLabel}` : ''}</h3>
                   <Recipe d={d} modeLabel={modeLabel} />
                 </Link>
@@ -78,8 +79,8 @@ export default async function ExplorePage({searchParams}: Props) {
         <ul className={styles.grid} aria-labelledby="explore-all">
           {view.items.map(d => (
             <li key={d.id} className={styles.card}>
-              <Link href={`/explore/${d.id}`} className={styles.link}>
-                <Thumb src={`/explore/${d.id}/render`} title={`${d.label} (${d.themeName}) 미리보기`} />
+              <Link href={`/explore/${d.id}`} className={styles.link} prefetch={false}>
+                <Thumb src={`/explore/${d.id}/render`} preview={designTarget(d)} title={`${d.label} (${d.themeName}) 미리보기`} />
                 <h3 className={styles.title}>{d.label}</h3>
                 <p className={styles.meta}>{d.pageTypeLabel} · {d.styleLabel}</p>
                 <Recipe d={d} modeLabel={modeLabel} />
@@ -96,9 +97,9 @@ export default async function ExplorePage({searchParams}: Props) {
       )}
       {view.pages > 1 ? (
         <nav className={styles.pager} aria-label="쪽 이동">
-          <Link href={href(view.page - 1)} aria-disabled={view.page === 1} tabIndex={view.page === 1 ? -1 : undefined} rel="prev">이전</Link>
+          <Link href={href(view.page - 1)} aria-disabled={view.page === 1} tabIndex={view.page === 1 ? -1 : undefined} rel="prev" prefetch={false}>이전</Link>
           <span>{view.page} / {view.pages}</span>
-          <Link href={href(view.page + 1)} aria-disabled={view.page === view.pages} tabIndex={view.page === view.pages ? -1 : undefined} rel="next">다음</Link>
+          <Link href={href(view.page + 1)} aria-disabled={view.page === view.pages} tabIndex={view.page === view.pages ? -1 : undefined} rel="next" prefetch={false}>다음</Link>
         </nav>
       ) : null}
       <p className={styles.aside}>
@@ -118,12 +119,12 @@ function PlatformCases() {
         {PLATFORM_CASES.map(k => {
           const state: AssembleState = readState(new URLSearchParams(writeState({...k.state, step: 'swap'}).split('?')[1]));
           const request = requestOf(state);
-          if (!request || !assembleDesign({...request, candidates: 1}).ok) return null;
+          if (!request || !probeDesign(request).ok) return null;
           const names = [k.state.palette && `palette:${k.state.palette}`, k.state.set && `subtoken-set:${k.state.set}`, k.state.type && `type-system:${k.state.type}`, k.state.family && `family:${k.state.family}`].filter(Boolean) as string[];
           return (
             <li key={k.id} className={styles.card} data-case={k.id}>
-              <Link href={writeState({...k.state, step: 'swap'})} className={styles.link}>
-                <Thumb src={renderSrc(request)} title={`${k.title} 미리보기`} />
+              <Link href={writeState({...k.state, step: 'swap'})} className={styles.link} prefetch={false}>
+                <Thumb src={renderSrc(request)} preview={{kind: 'assemble', request}} title={`${k.title} 미리보기`} />
                 <h3 className={styles.title}>{k.title}</h3>
                 <p className={styles.meta}>{purposeOf(k.state.purpose)?.label} · {names.map(id => material(id)?.label ?? shortId(id)).join(' · ')}</p>
               </Link>

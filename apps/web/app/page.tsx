@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import {HashRedirect} from './HashRedirect';
 import {Thumb} from '@/features/explore/Thumb';
+import {designTarget} from '@/features/explore/previews.server';
 import type {Design} from '@/features/explore/designs.server';
 import {homeData} from '@/features/home/home.server';
 import styles from '@/features/home/home.module.css';
@@ -11,7 +12,7 @@ const caption = (d: Design) => `${d.label} · ${d.themeName}${d.variantLabel ? `
 function Shot({design, className = styles.shot, capClass = styles.cap}: {design: Design; className?: string; capClass?: string}) {
   return (
     <Link href={`/explore/${design.id}`} className={className}>
-      <Thumb src={`/explore/${design.id}/render`} title={`${design.template} 템플릿의 컴파일 결과: ${caption(design)}`} />
+      <Thumb src={`/explore/${design.id}/render`} preview={designTarget(design)} title={`${design.template} 템플릿의 컴파일 결과: ${caption(design)}`} />
       <span className={capClass}>{caption(design)}</span>
     </Link>
   );

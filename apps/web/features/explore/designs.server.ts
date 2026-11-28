@@ -1,14 +1,11 @@
 import 'server-only';
-import {catalogSnapshot, compileBlueprint, listCatalog} from '@winterholic/design-system-static-kit/service';
-import {resetDocument, setAppearance} from '@winterholic/design-system-static-kit/edit';
+import {catalogSnapshot, compileBlueprint} from '@winterholic/design-system-static-kit/service';
 import {formatDesignId, resetArgs, type DesignRef} from './id';
 import {recordCompile} from '@/features/perf/counter.server';
+import {buildDesignDocument, catalogRows, curatedDesignRefs} from '@/lib/api/preview-recipes.mjs';
 
 // Explore 가 보여 주는 "대표 디자인" 목록과 그 Blueprint·HTML 을 만드는 서버 전용 모듈.
 // Blueprint 는 직접 만들지 않고 ./edit 의 resetDocument·setAppearance 로만 만든다(Studio 와 같은 경로).
-
-/** 템플릿마다 기본 디자인 하나에, 컨셉 look 에서 고른 테마 조합을 최대 이만큼 더한다. */
-const THEMED_PER_TEMPLATE = 2;
 
 export type Design = DesignRef & {
   id: string;
@@ -31,27 +28,9 @@ export type Design = DesignRef & {
   curationLabel: string | null;
 };
 
-type Rows = Record<string, any>[];
-type Page = {ok: boolean; value: {items: Rows; nextCursor: string | null}};
-/** listCatalog 는 한 번에 200개까지라서 팔레트(400여 개)는 cursor 를 따라 이어 받는다. */
-const rows = (kind: string, fields: string[]): Rows => {
-  const out: Rows = [];
-  for (let cursor: string | undefined; ;) {
-    const r = listCatalog({kind, fields, limit: 200, ...(cursor ? {cursor} : {})} as never) as Page;
-    if (!r.ok) throw new Error(`listCatalog(${kind}) 실패`);
-    out.push(...r.value.items);
-    if (!r.value.nextCursor) return out;
-    cursor = r.value.nextCursor;
-  }
-};
+const rows = catalogRows;
 
-export function buildDocument(ref: DesignRef) {
-  const made = resetDocument(null, resetArgs(ref) as never);
-  if (!made.ok) return {ok: false as const, errors: made.errors};
-  if (!ref.mode) return {ok: true as const, doc: made.doc};
-  const moded = setAppearance(made.doc, {mode: ref.mode});
-  return moded.ok ? {ok: true as const, doc: moded.doc} : {ok: false as const, errors: moded.errors};
-}
+export const buildDocument = (ref: DesignRef) => buildDesignDocument(ref, resetArgs as never) as {ok: true; doc: unknown} | {ok: false; errors: {message: string}[]};
 
 /** 문서와 HTML. 실패하면 던진다(대표 목록은 모두 컴파일되는 것만 담는다: e2e 가 전체를 확인한다). */
 export function renderDesign(ref: DesignRef) {
@@ -79,35 +58,7 @@ export function curatedDesigns(): Design[] {
   const palettes = Object.fromEntries(rows('palettes', ['id', 'name', 'colors', 'brand']).map(p => [p.id, p]));
   const concepts = rows('concepts', ['id', 'label', 'templates', 'looks']);
 
-  const refs: {ref: DesignRef; concept: string | null; curationLabel: string | null}[] = [];
-  for (const t of templates) {
-    refs.push({ref: {template: t.id}, concept: null, curationLabel: null});
-    const mine = concepts.filter(c => c.templates.includes(t.id));
-    const taken = new Set<string>([`${t.theme}|`]);
-    let added = 0;
-    // 컨셉을 돌아가며 한 look 씩 고른다. 한 컨셉만 쓰면 비슷한 테마가 몰린다.
-    for (let round = 0; added < THEMED_PER_TEMPLATE; round++) {
-      let progressed = false;
-      for (const c of mine) {
-        const look = c.looks[round];
-        if (!look) continue;
-        progressed = true;
-        const key = `${look.theme}|${look.themeVariant ?? ''}`;
-        if (taken.has(key) || added >= THEMED_PER_TEMPLATE) continue;
-        taken.add(key); added++;
-        refs.push({ref: {template: t.id, theme: look.theme, ...(look.themeVariant ? {variant: look.themeVariant} : {})}, concept: c.label, curationLabel: null});
-      }
-      if (!progressed) break;
-    }
-    if (t.id === 'saas-landing') {
-      // 전체 조합을 전개하지 않는다. Studio 왕복에서 지원 슬롯·다른 팔레트·모드가 함께 보이는 한 건만 고정한다.
-      refs.push({
-        ref: {template: 'saas-landing', palette: 'pearl', mode: 'dark', layout: {hero: 'product'}},
-        concept: null,
-        curationLabel: '복합 대표 디자인',
-      });
-    }
-  }
+  const refs = curatedDesignRefs() as {ref: DesignRef; concept: string | null; curationLabel: string | null}[];
 
   const byTemplate = Object.fromEntries(templates.map(t => [t.id, t]));
   cache = refs.map(({ref, concept, curationLabel}) => {

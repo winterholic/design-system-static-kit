@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "catalog-index/1.0",
+  "category": "feedback",
+  "label": "상태·피드백",
+  "itemCount": 7,
+  "materials": [
+    {
+      "id": "component:notice",
+      "kind": "component",
+      "category": "feedback",
+      "label": "알림",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/bce6884b0703ecd08d603cf3ae2fc1a4.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:progress",
+      "kind": "component",
+      "category": "feedback",
+      "label": "진행률",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/f5492e65427de2d959e52ce664c7a914.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:empty-state",
+      "kind": "component",
+      "category": "feedback",
+      "label": "상태 화면",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/9f61f5923ecb7a1d0d00cfdd28cb4b11.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:skeleton",
+      "kind": "component",
+      "category": "feedback",
+      "label": "스켈레톤",
+      "contexts": [
+        "any"
+      ],
+      "tags": [],
+      "previewUrl": "/previews/fc7c35ae369af51cc19caab2e4c66206.svg",
+      "variantsCount": 0,
+      "statesCount": 0,
+      "qualityStatus": "implemented",
+      "license": "internal"
+    },
+    {
+      "id": "component:modal-dialog",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Modal",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:MODAL_NESTED",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:role+placement+footer",
+        "state:state",
+        "forbidden:MODAL_ALERT_NO_ACTIONS",
+        "forbidden:MODAL_STATE_NO_FOOTER",
+        "forbidden:MODAL_SHEET_SIZE",
+        "unsupported:modal inside modal",
+        "unsupported:non-modal (popover) dialogs",
+        "unsupported:free-form HTML body (typed text and input slots only)",
+        "unsupported:side drawer"
+      ],
+      "previewUrl": "/previews/a5f22c7a2570b6102b4af06462745ea9.svg",
+      "variantsCount": 7,
+      "statesCount": 5,
+      "qualityStatus": "verified",
+      "license": "MIT"
+    },
+    {
+      "id": "component:tooltip",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Tooltip",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "forbidden:TOOLTIP_INTERACTIVE",
+        "forbidden:TOOLTIP_DISABLED_TRIGGER",
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:trigger+purpose+placement+delay",
+        "state:state",
+        "forbidden:TOOLTIP_NAME_TEXT_TRIGGER",
+        "forbidden:TOOLTIP_NAME_DELAY",
+        "unsupported:interactive content (links, buttons, forms)",
+        "unsupported:rich HTML",
+        "unsupported:tooltip on non-focusable or disabled elements",
+        "unsupported:click-to-open popover (use a dialog or disclosure)"
+      ],
+      "previewUrl": "/previews/ba00bd8efd127bf59f83cda344515185.svg",
+      "variantsCount": 8,
+      "statesCount": 4,
+      "qualityStatus": "verified",
+      "license": "MIT"
+    },
+    {
+      "id": "component:feedback-message",
+      "kind": "component",
+      "category": "feedback",
+      "label": "Feedback",
+      "contexts": [
+        "any"
+      ],
+      "tags": [
+        "appearance:appearance",
+        "shape:shape",
+        "size:size",
+        "function:placement+dismiss+action+autoDismiss",
+        "state:state",
+        "context:tone",
+        "forbidden:FB_PLAIN_TOAST",
+        "forbidden:FB_BANNER_PILL",
+        "forbidden:FB_TOAST_DANGER_TIMED",
+        "forbidden:FB_TOAST_ACTION_TIMED",
+        "forbidden:FB_TOAST_STUCK",
+        "forbidden:FB_TIMED_NOT_TOAST",
+        "forbidden:FB_PENDING_DISMISS",
+        "forbidden:FB_PENDING_TONE",
+        "forbidden:FB_PENDING_TIMED",
+        "forbidden:FB_DISMISSED_UNREACHABLE",
+        "unsupported:toast queue and stacking manager",
+        "unsupported:swipe to dismiss",
+        "unsupported:progress percentage (use progress)"
+      ],
+      "previewUrl": "/previews/28e77f697db9ef24d47d5c93df325da9.svg",
+      "variantsCount": 9,
+      "statesCount": 6,
+      "qualityStatus": "verified",
+      "license": "MIT"
+    }
+  ]
+}

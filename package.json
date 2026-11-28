@@ -31,6 +31,8 @@
     "web:dev": "npm --workspace apps/web run dev",
     "web:test": "npm --workspace apps/web run test:boundary && npm --workspace apps/web run test:unit && npm --workspace apps/web run test:e2e",
     "layout:check": "node scripts/layout-quality/run.mjs",
+    "layouts:measure": "node scripts/layouts/measure.mjs",
+    "layouts:doc": "node scripts/layouts/doc.mjs --write",
     "test:layout": "node --test tests/layout-quality.test.mjs && playwright test e2e/layout-quality.spec.mjs",
     "perf": "node scripts/perf/measure.mjs"
   },

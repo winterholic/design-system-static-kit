@@ -43,10 +43,12 @@ await writeFile(join(out, '.nojekyll'), '');
     ['scripts/test-lab/generate.mjs', '--out', lab],
     ['scripts/test-lab/check.mjs', '--out', lab],
     ['scripts/test-lab/index.mjs', '--out', lab],
+    // 웹의 순수 TS 데이터(사례·샘플·designId)를 그대로 읽으므로 Node 의 TS 제거 기능이 필요하다(22.18+). apps/web/package.json 에 type 이 없어 나는 경고는 끈다.
+    ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', 'scripts/build-catalog-index.mjs', out],
   ];
   for (const s of steps) {
     const r = spawnSync(process.execPath, s, {cwd: root, encoding: 'utf8'});
-    if (r.status !== 0) { console.error(r.stdout?.slice(-2000)); console.error(r.stderr?.slice(-2000)); throw new Error('test-lab build failed: ' + s[0]); }
+    if (r.status !== 0) { console.error(r.stdout?.slice(-2000)); console.error(r.stderr?.slice(-2000)); throw new Error('build step failed: ' + s[0]); }
   }
 }
 console.log(`BUILT static workbench, gallery, schema/catalog API, ${templateList.length} template examples, ${Object.keys(themes).length} theme showcases, test-lab → ${out}`);

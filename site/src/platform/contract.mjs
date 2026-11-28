@@ -10,10 +10,10 @@
  * 필드를 바꾸면 PLATFORM_CONTRACT_VERSION을 올리고 ADR 0012를 개정한다.
  */
 
-export const PLATFORM_CONTRACT_VERSION = '0.7.0';
+export const PLATFORM_CONTRACT_VERSION = '0.8.0';
 
 /** 플랫폼 재료 종류. 순서는 조립 파이프라인이 고르는 순서다. */
-export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'purpose-family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern']);
+export const PLATFORM_KINDS = Object.freeze(['style-context', 'palette', 'subtoken-set', 'type-system', 'base-component', 'family', 'purpose-family', 'axis-value', 'surface', 'motion', 'background', 'media', 'state-pattern', 'layout']);
 
 /** 색 역할. 서브토큰 세트가 이 이름마다 값을 하나씩 만든다. css는 기존 컴파일 CSS가 읽는 변수 이름이다(부품 CSS를 고치지 않고 재사용하기 위해). */
 export const COLOR_ROLES = Object.freeze({
@@ -48,7 +48,7 @@ export const EDGE_TYPES = Object.freeze({
 /** 관계 조건에 쓸 수 있는 키. 조건은 모두 AND이고 값 목록은 OR이다. */
 export const EDGE_CONDITION_KEYS = Object.freeze(['mode', 'context', 'density']);
 /** 닫힌 종류 쌍: 이 쌍은 compatible 관계(선언 또는 계산)가 있어야만 함께 조립한다. 나머지 쌍은 forbids가 없으면 열려 있다. */
-export const CLOSED_PAIRS = Object.freeze([['family', 'base-component'], ['purpose-family', 'base-component'], ['purpose-family', 'family']]);
+export const CLOSED_PAIRS = Object.freeze([['family', 'base-component'], ['purpose-family', 'base-component'], ['purpose-family', 'family'], ['layout', 'purpose-family']]);
 
 export const LICENSES = Object.freeze(['internal', 'MIT']);
 export const QUALITY = Object.freeze(['draft', 'implemented', 'verified']);
@@ -73,6 +73,7 @@ export const COMMON_FIELDS = Object.freeze({
  *   base-component contract: 기존 컴포넌트 계약 id, render·styles: 기존 구현 모듈 진입점. 동작·구조·접근성·상태를 소유한다
  *   family         members: {base-component id: FamilyMember}, shape: {radius, elevation}, density. 시각 언어를 소유한다
  *   surface·motion·background·media·state-pattern   스타일 재료 5종(0.5.0). 반경·깊이 단계, 전이·키프레임, 페이지 바탕·장식, 아이콘·타일·사진, 상태 화면
+ *   layout         pattern·purposes·container·minContent·minCol·density·slots·bands·reorders·needsBand·rules·length·nesting. 슬롯 계약과 폭 구간별 배치 표(0.8.0, src/platform/data/layouts.mjs)
  *   axis-value     axis: 스타일 축 이름, value: 그 축의 값. 페이지 축 값(셸·폭·밀도 등)이 관계(forbids)의 대상이 되게 하는 재료다(0.2.0, src/platform/axes.mjs)
  */
 export const KIND_SPECS = Object.freeze({
@@ -86,6 +87,8 @@ export const KIND_SPECS = Object.freeze({
   family: Object.freeze({members: 'object', shape: 'object', density: 'string', states: 'array'}),
   'purpose-family': Object.freeze({group: 'string', purpose: 'string', bases: 'array', entry: 'object', variants: 'object', props: 'object', defaults: 'object', content: 'object', forbidden: 'array', needs: 'object', states: 'array', interactions: 'array', responsive: 'object', a11y: 'object', pairs: 'array', parents: 'array', children: 'array', example: 'object', verification: 'object', visual: 'object', css: 'string', sharedCss: 'string'}),
   'axis-value': Object.freeze({axis: 'string', value: 'string'}),
+  // 레이아웃 패턴(0.8.0, REQUEST §9.2). slots: 슬롯 계약(이름·필수·허용 콘텐츠·항목 수·흐름·길이 대응), bands: xs·sm·md·lg 폭 구간별 트랙과 영역 표. 컴파일은 src/layout.mjs compileLayout.
+  layout: Object.freeze({pattern: 'string', purposes: 'array', container: 'object', minContent: 'number', minCol: 'number', density: 'object', slots: 'array', bands: 'array', reorders: 'array', needsBand: 'string', rules: 'array', length: 'object', nesting: 'object'}),
   // 스타일 재료 5종(0.5.0, 스타일 작업의 요청). axes: 이 재료가 구현하는 축 값(순위·축 금지 평가), uses: 쓰는 축 값 전부(스타일 맥락이 금지한 값을 쓰면 차단).
   // 종류별 의미 검사(반경·깊이 이름, 상태·배치 이름 등)는 data/*.mjs의 validate*가 하고 createPlatform이 등록할 때 레지스트리가 부른다.
   surface: Object.freeze({axes: 'object', uses: 'object', levels: 'object', pairs: 'array'}),

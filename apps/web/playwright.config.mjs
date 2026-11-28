@@ -12,6 +12,7 @@ export default defineConfig({
   retries: 0,
   reporter: [['list']],
   use: {baseURL: `http://127.0.0.1:${port}`, viewport: {width: 1280, height: 800}, trace: 'retain-on-failure'},
-  webServer: {command: `npm run start -- -p ${port}`, url: `http://127.0.0.1:${port}`, reuseExistingServer: process.env.WEB_REUSE === '1'},
+  // DSK_PERF_METRICS=1: 서버 컴파일 횟수 계측(/api/dev/perf-counters). catalog-lists.spec.mjs 가 읽는다. 끈 서버와 동작은 같다.
+  webServer: {command: `npm run start -- -p ${port}`, env: {DSK_PERF_METRICS: '1'}, url: `http://127.0.0.1:${port}`, reuseExistingServer: process.env.WEB_REUSE === '1'},
   projects: [{name: 'chromium', use: {browserName: 'chromium'}}],
 });

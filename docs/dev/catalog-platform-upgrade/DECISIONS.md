@@ -130,3 +130,22 @@ Studio는 브라우저 안에서 Blueprint를 컴파일한다. REQUEST §3.5는 
 6. **후보 탐색 재사용은 검증을 생략하지 않는다**: 원 구현은 후보 시험을 `theme/colorPalette/catalogVersion` 같은 일부 필드로만 메모했고 존재하지 않는 `doc.axes`·`doc.layout`·`doc.template`을 키로 써서 판정이 낡았다. Core로 확인한 결과 `profile`이 바뀌면 색·타입 후보 판정이, `mode`·스타일 축(typography 포함)이 바뀌면 프로파일 후보 판정이, `colorPalette`가 바뀌면 타입·프로파일 후보와 선택 가능성 판정이 실제로 바뀐다. 그래서 판정 묶음마다 "읽지 않음이 확인된 필드"만 키에서 빼고(`EXPLORATION_IGNORED`) 나머지가 모두 같을 때만 이전 판정을 쓴다. 레거시 `palette`(색 변경)는 모든 판정에, `typeRoles`(타이포 변경)는 선택 가능성·색·프로파일 판정에 영향이 없다. 이 전제는 `compiler.unit.mjs`가 실제 Core로 전수 비교하며, 읽는 필드가 늘면 그 시험이 먼저 깨진다.
 7. **지연 로딩**: `EditPane`·`PreviewPane`·`Dialogs`·세 패널은 별도 청크다(`next build` 산출물로 확인). 시작 화면에서만 JS가 줄고(약 -2.5KB), 문서를 열면 청크 수가 늘어 총량은 오히려 늘어난다(`PERFORMANCE-A2.json`). 지연 로딩만 적용하면 디자인 탭 첫 열림이 약 120ms에서 약 400ms로 늘어 INP 목표(200ms)를 넘으므로, 작업대가 열린 뒤 유휴 시 나머지 패널 청크를 미리 받는다.
 8. **측정 주장 정정**: 원 기록의 "10회 연속 편집 시 10회→1회"는 이 커밋의 이득이 아니다(원래 코드도 60ms 디바운스로 1회). 같은 스크립트로 전후 코드를 번갈아 잰 값은 `PERFORMANCE-A2.json`의 `abComparison`이다. 원 기록의 "2,592B 감소"는 다른 커밋의 기준선과 비교한 값이고, 같은 조건 전후 값은 -2,476B다. 원 기록의 "32자 MD5 키" 서술은 코드(Node는 SHA-256, 브라우저는 비암호학적 해시)와 맞지 않아 바로잡았다.
+
+---
+
+## DEC-010: 사전 생성 미리보기의 위치, 파일 이름, 형식 (TASK-TRA-01~03 독립 검증)
+
+### 맥락
+CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(git 에 넣지 않는 웹 빌드 산출물)로 정했고, 위치를 바꾸려면 TASK-TRA-02 에서 정해 이 문서에 적으라고 했다. 최초 구현(`90ac06060`)은 `site/previews/<종류>/<id>.svg` 로 만들었고 다음 결함이 있었다: SVG 가 XML 로 읽히지 않아 `<img>` 로 열리지 않았고(doctype, 빈 요소, 값 없는 속성), 부품 미리보기가 0개였으며, Explore 의 테마 변형 디자인은 파일 이름이 맞지 않았고, 타이포그래피는 다크·샘플·폭 선택을 무시하고 같은 그림을 보였고, 이름이 캐시 키가 아니라서 immutable 헤더를 줄 수 없었다.
+
+### 결정
+1. **위치는 `site/previews/` 로 한다.** `site/` 는 추적되는 생성물이고 `scripts/build.mjs` 가 `scripts/build-catalog-index.mjs` 를 부르므로 `check-generated` 의 파일 집합 검사를 지킨다. 웹은 `sync-static` 으로 `apps/web/public/previews/` 에 복사해 서빙한다(복사본은 git 에 없다). 이 절이 §5.3 의 위치 규정을 대체한다.
+2. **파일 이름은 §5.2 의 캐시 키(32자 hex)다.** `/previews/<키>.svg`. 이름이 입력의 해시라서 `Cache-Control: public, max-age=31536000, immutable` 이 안전하다(`apps/web/next.config.mjs`). 키 입력은 엔진 버전(`PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION`, 서비스가 `PLATFORM_CONTRACT_VERSION` 을 읽기 전용으로 내보낸다), 카탈로그 버전, 고른 재료의 `id@version`, 정규화한 요청(문자열을 trim 하지 않는다), 모드, 화면 폭이다. 하나라도 바뀌면 이름이 바뀐다.
+3. **화면은 자기가 그릴 요청의 키를 만들어 `previews-data.json` 에 있을 때만 정적 파일을 쓴다.** 요청이 다르면 키가 달라 다른 요청의 그림이 나올 수 없다. 없으면 `/platform/render?...&part=svg` 가 선택 시점에 컴파일하고(서버 LRU), 사전 생성 때 Core 가 거부한 조합이면 컴파일하지 않고 이유를 보인다.
+4. **형식은 SVG(foreignObject) 이고 안쪽은 Core 가 만든 완성 HTML 문서를 XHTML 로 직렬화한 것이다**(`apps/web/lib/api/preview-svg.mjs`). 요소·속성·CSS 는 그대로이고 doctype·script·meta·title 만 뺀다. 같은 변환기를 사전 생성과 렌더 라우트가 쓴다. 변환이 어려운 입력은 던진다. Chromium 과 WebKit 에서 같은 문서의 직접 렌더와 `<img>` 렌더가 같은 화면임을 확인했다(WebKit 은 바이트 동일).
+5. **대상은 대표만이다.** Explore 대표 디자인(템플릿 기본 + 컨셉 테마 조합, 웹 목록과 같은 함수), 부품 기본 렌더, 플랫폼 사례, 목적 패밀리 기본 예시, 타이포 시스템의 기본 보기(문서 샘플·라이트·1280). 사용자가 고르는 샘플·모드·폭과 Studio 입력은 선택 시 컴파일한다. 대상 목록과 문서를 만드는 절차는 웹 화면이 쓰는 코드(`apps/web/lib/api/preview-recipes.mjs`)를 그대로 쓰고, 어떤 재료를 만들지는 레지스트리와 카탈로그를 읽어 정한다.
+6. **`/platform/render` 는 공개 캐시를 허용하지 않는다.** `Cache-Control: private, no-cache` + ETag(같은 키 규격), 같은 입력의 재요청은 304 로 컴파일하지 않는다. 사용자 콘텐츠가 든 결과를 CDN 에 두지 않는다(REQUEST §3.3).
+7. 서버 캐시는 항목 수(1,000)와 바이트(조립 결과 96MB) 상한이 있는 LRU 다. 상한 없는 모듈 수준 Map 은 `tests/platform-cache.test.mjs` 가 막는다.
+8. 사전 생성기는 웹의 순수 TS 데이터 세 파일(`id.ts`, `cases.ts`, `samples.ts`)을 Node 의 TS 제거로 직접 읽는다. Node 22.18 이상이 필요하다(로컬 26.9 에서 확인, 그 아래 버전은 확인하지 않았다 `확인 필요`).
+9. Studio 의 컴파일 결과 캐시(DEC-009)는 엔진 버전으로 `compileBlueprint/<CONTRACT_VERSION>` 만 쓴다. DEC-009 3항이 "platform 계약 버전을 공개 진입점에 노출할지는 Track A가 정한다"고 남겼으므로, 이 결정으로 `PLATFORM_CONTRACT_VERSION` 을 `src/service/index.mjs` 가 읽기 전용 상수로 내보낸다(채널 출력은 바뀌지 않는다). Studio 키가 이를 쓸지는 Track F 가 정한다.
+10. **초기 전송량 목표는 새로 만들지 않는다.** TASK-TRA-03 은 목표를 `PERFORMANCE-BASELINE.json` 측정값 기준으로 DECISIONS 에 적으라고 했지만 REQUEST §3.6 에는 KB 수치가 없고, 측정은 로컬 `next start`(정적 파일 비압축)뿐이라 압축 서빙 기준값이 없다. 이번에는 기준선 대비 실측만 `PERF-BOTTLENECKS.md` §5 에 적고(Explore 초기 전송량은 늘었다), 목표 수치는 압축되는 서빙(Vercel)에서 측정한 뒤 정한다.

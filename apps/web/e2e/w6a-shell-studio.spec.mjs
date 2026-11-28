@@ -2,6 +2,7 @@
 // 모든 시험은 Chromium 에서 돈다. 화면 폭 390과 1280 에서 같은 동작을 본다.
 import {expect, test} from '@playwright/test';
 import {pick} from './helpers/select.mjs';
+import {toPreviewSvg} from '../lib/api/preview-svg.mjs';
 
 const STORAGE_KEY = 'winterholic-static-kit.studio.v1';
 const saved = page => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), STORAGE_KEY);
@@ -43,18 +44,24 @@ for (const width of [390, 1280]) {
       const shots = page.locator('main a[href^="/explore/"]');
       expect(await shots.count()).toBeGreaterThanOrEqual(10);
       await page.getByRole('heading', {name: '완성된 디자인 예시'}).scrollIntoViewIfNeeded();
-      const frames = page.locator('main iframe');
-      await expect.poll(() => frames.count()).toBeGreaterThan(1);
-      for (const src of await frames.evaluateAll(f => f.map(x => x.getAttribute('src')))) {
-        expect(src).toMatch(/^\/explore\/[^/]+\/render$/);
+      // 목록·카드의 예시는 iframe 이 아니라 빌드 시점에 Core 출력으로 만든 정적 SVG 이미지다(CONTRACTS §5.1).
+      expect(await page.locator('iframe').count()).toBe(0);
+      const imgs = page.locator('main [data-preview] img');
+      await expect.poll(() => imgs.count()).toBeGreaterThan(1);
+      for (const src of await imgs.evaluateAll(f => f.map(x => x.getAttribute('src')))) {
+        expect(src).toMatch(/^\/previews\/[0-9a-f]{32}\.svg$/);
         expect(src).not.toContain('/examples/');
       }
-      // 같은 주소를 서버가 다시 컴파일해 돌려준다(Core 결과). 첫 화면의 iframe 안에서 컴파일된 문서가 열린다.
-      const hero = page.locator('main iframe').first();
-      await expect(page.frameLocator('main iframe').first().locator('html')).toHaveAttribute('data-theme', /light|dark|auto/);
-      const res = await request.get(await hero.getAttribute('src'));
+      // 카드의 그림 = 같은 디자인의 render 주소가 지금 Core 로 컴파일해 돌려주는 문서를 직렬화한 것(바이트 동일). 하드코딩된 산출물이 아니다.
+      const card = shots.first();
+      const designId = (await card.getAttribute('href')).replace('/explore/', '');
+      const staticSvg = await (await request.get(await card.locator('img').first().getAttribute('src'))).text();
+      const res = await request.get(`/explore/${designId}/render`);
       expect(res.status()).toBe(200);
-      expect(await res.text()).toContain('<html');
+      const html = await res.text();
+      expect(html).toContain('<html');
+      const noLabel = svg => svg.replace(/ aria-label="[^"]*"/, ''); // 접근성 이름은 목록 데이터가 정한다. 문서 본문만 비교한다.
+      expect(noLabel(staticSvg)).toBe(noLabel(toPreviewSvg(html)));
     });
 
     test('스타일 묶음 칩은 Explore 필터로 이어진다', async ({page}) => {

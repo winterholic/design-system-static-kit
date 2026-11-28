@@ -23,7 +23,7 @@ export function renderChartEvidence() {
   blueprint.shell = 'minimal';
   blueprint.pageType = 'general';
   blueprint.chrome.nav = blueprint.chrome.nav.slice(0, 2);
-  blueprint.tree = {type: 'page', children: [{type: 'page-header', title: '차트 프리셋', description: '각 도형은 등록된 chart-preset SVG 렌더러가 데이터와 접근성 표를 함께 출력합니다.'}, {type: 'chart', title: '스타일 추출용 기준 차트', caption: '생성된 카탈로그 CSS', kind: 'bar', unit: '건', categories: ['A', 'B'], series: [{name: '표본', values: [2, 3]}]}]};
+  blueprint.tree = {type: 'page', children: [{type: 'page-header', title: '차트 프리셋', description: '각 도형은 등록된 chart-preset SVG 렌더러가 데이터와 접근성 표를 함께 출력합니다.'}, {type: 'chart', title: '스타일 추출용 기준 차트', caption: '생성된 카탈로그 CSS', kind: 'bar', grid: 'horizontal', unit: '건', categories: ['A', 'B'], series: [{name: '표본', values: [2, 3]}]}]};
   const css = compile(blueprint).css;
   const sections = DOMAINS.map(([domain, title]) => {
     const presets = chartPresetMaterials.filter(material => material.ext.domain === domain);

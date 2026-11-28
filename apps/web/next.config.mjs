@@ -44,6 +44,8 @@ export default {
     ];
     return [
       {source: '/:path*', headers: secure},
+      // 사전 생성 미리보기는 파일 이름이 캐시 키(엔진·카탈로그 버전, 재료, 요청, 모드, 폭의 해시)라서 내용이 바뀌면 주소가 바뀐다. 그래서 영구 캐시가 안전하다(CONTRACTS §5.3).
+      {source: '/previews/:key([0-9a-f]{32}).svg', headers: [{key: 'Cache-Control', value: 'public, max-age=31536000, immutable'}]},
       {source: '/test-lab/:path*', headers: noindex},
       {source: '/dev/:path*', headers: noindex},
     ];

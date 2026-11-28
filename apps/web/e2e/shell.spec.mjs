@@ -148,13 +148,18 @@ test.describe('/#catalog 호환', () => {
   });
 });
 
-test('홈의 미리보기는 컴파일된 예제(iframe)를 불러온다', async ({page}) => {
+test('홈의 미리보기는 사전 생성된 컴파일 결과(정적 SVG 이미지)를 불러온다', async ({page, request}) => {
   await page.goto('/');
-  // 홈에는 같은 템플릿의 미리보기가 둘 이상 있으므로 첫 번째(즉시 로드)만 본다.
-  const frame = page.frameLocator('iframe[title*="saas-landing"]').first();
-  await expect(page.locator('iframe[title*="saas-landing"]').first()).toHaveAttribute('tabindex', '-1');
-  await expect(frame.locator('body')).not.toBeEmpty();
-  await expect(frame.locator('html')).toHaveAttribute('data-theme', /light|dark|auto/);
+  // 목록·카드의 미리보기는 iframe 이 아니라 빌드 시점에 Core 출력으로 만든 정적 파일이다(CONTRACTS §5.1).
+  expect(await page.locator('iframe').count()).toBe(0);
+  // 홈에는 같은 템플릿의 미리보기가 둘 이상 있으므로 첫 번째만 본다.
+  const img = page.locator('img[alt*="saas-landing"]').first();
+  await expect(img).toHaveAttribute('src', /^\/previews\/[0-9a-f]{32}\.svg$/);
+  await img.scrollIntoViewIfNeeded();
+  await expect.poll(() => img.evaluate(el => el.complete && el.naturalWidth)).toBeGreaterThan(0);
+  // 그림의 원본은 컴파일된 문서다(색 모드가 선언된 html 요소를 담는다).
+  const svg = await (await request.get(await img.getAttribute('src'))).text();
+  expect(svg).toMatch(/<html[^>]* data-theme="(light|dark|auto)"/);
 });
 
 test('건너뛰기 링크는 포커스하면 보이고 Enter로 main을 포커스한다', async ({page}) => {
