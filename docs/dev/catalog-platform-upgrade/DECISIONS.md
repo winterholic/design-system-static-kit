@@ -113,3 +113,16 @@ Phase 0 감사의 Manifest 생성기는 이전 기준값을 `?? 9` 같은 리터
 3. 매핑이 가리키는 재료 id·변형 값이 레지스트리에 없으면 생성이 실패한다.
 4. 계산이 비싼 값만 `docs/evidence/platform/baseline.json`에서 읽고 출처와 신선도를 Manifest에 적는다.
 5. 상세 규칙은 `CONTRACTS.md` §8.
+
+---
+
+## DEC-009: 컴포넌트 공통 계약과 계열 등록
+
+### 맥락
+§6.2의 207개 요구를 여러 계열 작업자가 병렬로 다루므로 같은 필드·계층·검증 기준과 별도 재료/변형/복합 분류가 필요하다.
+
+### 결정
+1. Track D 계약 스키마와 전체 등록 검증은 `src/platform/families/contracts.mjs`에서 제공하며, 기존 기반 10개·목적 32개와 A 계열 정의를 동일 계약 필드로 정규화한다. 지원하지 않는 값에는 이유를 적는다.
+2. 각 후속 계열은 `src/platform/families/<family>.mjs`와 전용 테스트를 독립 작성한다. 계열 배열을 `families/index.mjs`에 등록하는 일은 통합자가 한 번에 처리해 병렬 충돌을 줄인다.
+3. 색상·외형·크기·밀도 값은 새 종류로 세지 않고 `componentType` 단위로 집계한다. §6.2 요구 행 분류는 독립 재료·변형·복합 패턴 세 가지로 고정한다.
+4. A 계열의 Core 조립·REST·MCP 입력 경로는 기존 `assembleComponents` 단일 진입점을 재사용한다. Blueprint 지원은 실제 컴파일 round-trip이 검증된 경우에만 연결 완료로 센다.
