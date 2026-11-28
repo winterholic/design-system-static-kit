@@ -149,3 +149,14 @@ CONTRACTS §5.3 은 미리보기를 `apps/web/public/previews/<CacheKey>.svg`(gi
 8. 사전 생성기는 웹의 순수 TS 데이터 세 파일(`id.ts`, `cases.ts`, `samples.ts`)을 Node 의 TS 제거로 직접 읽는다. Node 22.18 이상이 필요하다(로컬 26.9 에서 확인, 그 아래 버전은 확인하지 않았다 `확인 필요`).
 9. Studio 의 컴파일 결과 캐시(DEC-009)는 엔진 버전으로 `compileBlueprint/<CONTRACT_VERSION>` 만 쓴다. DEC-009 3항이 "platform 계약 버전을 공개 진입점에 노출할지는 Track A가 정한다"고 남겼으므로, 이 결정으로 `PLATFORM_CONTRACT_VERSION` 을 `src/service/index.mjs` 가 읽기 전용 상수로 내보낸다(채널 출력은 바뀌지 않는다). Studio 키가 이를 쓸지는 Track F 가 정한다.
 10. **초기 전송량 목표는 새로 만들지 않는다.** TASK-TRA-03 은 목표를 `PERFORMANCE-BASELINE.json` 측정값 기준으로 DECISIONS 에 적으라고 했지만 REQUEST §3.6 에는 KB 수치가 없고, 측정은 로컬 `next start`(정적 파일 비압축)뿐이라 압축 서빙 기준값이 없다. 이번에는 기준선 대비 실측만 `PERF-BOTTLENECKS.md` §5 에 적고(Explore 초기 전송량은 늘었다), 목표 수치는 압축되는 서빙(Vercel)에서 측정한 뒤 정한다.
+
+## DEC-010: 컴포넌트 공통 계약과 계열 등록
+
+### 맥락
+§6.2의 207개 요구를 여러 계열 작업자가 병렬로 다루므로 같은 필드·계층·검증 기준과 별도 재료/변형/복합 분류가 필요하다.
+
+### 결정
+1. Track D 계약 스키마와 전체 등록 검증은 `src/platform/families/contracts.mjs`에서 제공하며, 기존 기반 10개·목적 32개와 A 계열 정의를 동일 계약 필드로 정규화한다. 지원하지 않는 값에는 이유를 적는다.
+2. 각 후속 계열은 `src/platform/families/<family>.mjs`와 전용 테스트를 독립 작성한다. 계열 배열을 `families/index.mjs`에 등록하는 일은 통합자가 한 번에 처리해 병렬 충돌을 줄인다.
+3. 색상·외형·크기·밀도 값은 새 종류로 세지 않고 `componentType` 단위로 집계한다. §6.2 요구 행 분류는 독립 재료·변형·복합 패턴 세 가지로 고정한다.
+4. A 계열의 Core 조립·REST·MCP 입력 경로는 기존 `assembleComponents` 단일 진입점을 재사용한다. Blueprint 지원은 실제 컴파일 round-trip이 검증된 경우에만 연결 완료로 센다.

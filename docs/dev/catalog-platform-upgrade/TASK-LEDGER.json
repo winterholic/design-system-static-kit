@@ -1,11 +1,11 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "updatedAt": "2026-11-28",
   "summary": {
-    "totalTasks": 29,
+    "totalTasks": 44,
     "byStatus": {
-      "Pending": 17,
-      "In Progress": 1,
+      "Pending": 31,
+      "In Progress": 2,
       "Implemented": 3,
       "Verified": 8,
       "Blocked": 0
@@ -14,7 +14,7 @@
       "Track A": 4,
       "Track B": 4,
       "Track C": 3,
-      "Track D": 3,
+      "Track D": 18,
       "Track E": 4,
       "Track F": 5,
       "Track G": 6
@@ -827,7 +827,9 @@
       "goal": "단순 축소가 아닌 화면 폭별 의미 있는 재배치를 지원하는 24종 레이아웃 재료 확보",
       "scope": "src/layout.mjs, tests/layout-quality.test.mjs, 레이아웃 재료 데이터(src/platform/data/layouts.mjs)와 관계·조립(src/platform/layouts.mjs), 브라우저 실측 스크립트(scripts/layouts/), 문서·스크린샷",
       "track": "Track E",
-      "dependencies": ["TASK-TRE-01"],
+      "dependencies": [
+        "TASK-TRE-01"
+      ],
       "modifiedFiles": [
         "src/layout.mjs",
         "tests/layout-quality.test.mjs",
@@ -1140,6 +1142,299 @@
           "reason": "apps/web/app/api/**는 Track A 소유다(CONTRACTS.md §6)"
         }
       ]
+    },
+    {
+      "taskId": "TASK-TRD-A",
+      "title": "공통 계약 기준과 버튼·액션 12항목 구현",
+      "goal": "계층 스키마·검증기·207항목 분류 및 A 계열의 렌더/조립/REST/MCP/Blueprint/export 연결",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-P0-01"
+      ],
+      "modifiedFiles": [
+        "src/platform/families/contracts.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/index.mjs",
+        "src/service/platform-components.mjs",
+        "apps/web/lib/api/operations.mjs",
+        "apps/web/lib/api/mcp.mjs",
+        "docs/platform/components.md",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-service-action-components.test.mjs",
+        "e2e/platform-action-components.spec.mjs"
+      ],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-service-action-components.test.mjs",
+        "e2e/platform-action-components.spec.mjs"
+      ],
+      "commit": null,
+      "status": "In Progress",
+      "unresolvedIssues": "Manifest 기준 A는 7/12 항목만 기존 레지스트리 경로로 충족되고 5개가 missing. 새 actions 조립 경로는 list/get 재료 질의 및 Blueprint compile round-trip에 등록되지 않았다. Chromium E2E는 Playwright launch에서 MachPortRendezvousServer permission denied로 실행되지 않았다.",
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/index.mjs",
+          "ownerTrack": "Track A",
+          "reason": "§6.3 컴포넌트 계약 스키마·검증기와 액션 렌더러를 공개 플랫폼 진입점에서 노출"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "ownerTrack": "Track A",
+          "reason": "§6.2 A 액션을 Core assembleComponents 및 standalone 산출물에 연결"
+        },
+        {
+          "file": "apps/web/lib/api/operations.mjs",
+          "ownerTrack": "Track A",
+          "reason": "REST/OpenAPI의 assembleComponents actions 입력 스키마 연결"
+        },
+        {
+          "file": "apps/web/lib/api/mcp.mjs",
+          "ownerTrack": "Track A",
+          "reason": "MCP assemble_components actions 입력 스키마 연결"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "요청대로 계열 A~O 작업으로 분할하고 A 진행 상태를 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "ownerTrack": "Track G",
+          "reason": "공통 계약·계열 파일 등록 정책 결정 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "요청된 Material Coverage 재생성 산출물"
+        }
+      ]
+    },
+    {
+      "taskId": "TASK-TRD-B",
+      "title": "텍스트 입력 14항목",
+      "goal": "입력 계약과 렌더/조립 경로",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-C",
+      "title": "선택 컨트롤 15항목",
+      "goal": "선택 계약과 렌더/조립 경로",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-D",
+      "title": "날짜 및 시간 8항목",
+      "goal": "날짜/시간 계약과 렌더/조립 경로",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-E",
+      "title": "내비게이션 14항목",
+      "goal": "내비게이션 계약과 렌더/조립 경로",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-F",
+      "title": "카드 22항목",
+      "goal": "카드 목적 컴포넌트 계약과 렌더/조립 경로",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-G",
+      "title": "데이터 표시 19항목",
+      "goal": "데이터 표시와 업무 복합 패턴 계약",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-H",
+      "title": "오버레이 9항목",
+      "goal": "오버레이 계약과 동작",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-I",
+      "title": "피드백 및 상태 16항목",
+      "goal": "상태·피드백 계약과 전이",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-J",
+      "title": "정보 표시 15항목",
+      "goal": "정보 재료와 조립 경로",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-K",
+      "title": "미디어 및 콘텐츠 12항목",
+      "goal": "미디어/콘텐츠 재료 계약",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-L",
+      "title": "레이아웃 14항목",
+      "goal": "레이아웃 primitive·복합 레이아웃 계약",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-M",
+      "title": "업무 시스템 패턴 15항목",
+      "goal": "업무용 composite 패턴",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-N",
+      "title": "커머스 패턴 11항목",
+      "goal": "커머스 composite 패턴",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
+    },
+    {
+      "taskId": "TASK-TRD-O",
+      "title": "모바일 패턴 10항목",
+      "goal": "모바일 composite 패턴과 safe-area 전략",
+      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "track": "Track D",
+      "dependencies": [
+        "TASK-TRD-A"
+      ],
+      "modifiedFiles": [],
+      "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
+      "tests": [],
+      "commit": null,
+      "status": "Pending",
+      "unresolvedIssues": null
     }
   ]
 }

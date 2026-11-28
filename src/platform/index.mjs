@@ -17,4 +17,5 @@ export {createPlatform, MINIMAL_REQUEST, PLATFORM_CHECKS} from './examples/minim
 export {checkStyleMaterials, rankStyleMaterials, assembleStyleMaterials, styleMaterialsCSS, styleMaterialAttrs, surfaceScopeCSS, STYLE_VALIDATORS, STATE_KINDS} from './style-materials.mjs';
 export {PURPOSE_FAMILY_IDS, PURPOSE_FAMILIES, PURPOSE_FIELDS, VISUAL_LANGUAGES, VISUAL_KEYS, getPurposeFamily, listPurposeFamilies, validatePurposeFamilies, renderPurposeFamily, assembleFamilies, combinationMatrix, validatePurposeFamily, checkPurposeCombination} from './families/index.mjs';
 export {ICON_CSS} from './families/kit.mjs';
+export {COMPONENT_LAYERS, COMPONENT_CONTRACT_FIELDS, COMPONENT_CONTRACTS, ALL_COMPONENT_CONTRACTS, defineComponentContract, validateComponentContracts, countDistinctComponentTypes, ACTION_COMPONENTS, ACTION_COMPONENT_BY_ID, renderActionComponent, ACTION_COMPONENT_CSS} from './families/contracts.mjs';
 export {PURPOSE_CHECKS, purposeFamilyVisualCheck, purposeFamilyBaseCheck} from './examples/minimal.mjs';
