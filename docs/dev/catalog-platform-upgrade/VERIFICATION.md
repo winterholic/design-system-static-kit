@@ -2264,3 +2264,48 @@ node RED: D-05·D-06 단언과 D-04·D-07 단언이 원래 소스에서 `✖` 2�
 - 아이콘 영역 필드, 확장 차트 형태 15개의 조립은 Core 계약 확장이 필요하다.
 - D1 폼 Tab 순서와 D7 업무 패턴 셀 토큰 브라우저 실패는 다른 작업자의 몫이라 건드리지 않았다. F3 변경과 겹치지 않는다.
 - `boundary.check.mjs`의 기존 실패 1건과 `w6b-scenarios` 시나리오 B 기존 실패 2건은 F3 범위 밖이다.
+
+## 37. TASK-TRF-07 차트·레이아웃 81종 상세 독립 브라우저 검증 및 교정 (원 커밋 `a6a111f27`, 기준 `53e866c5d`, 2026-11-29)
+
+구현 기록은 Chromium 시작 실패(Mach IPC 1100)로 새 E2E를 실행하지 못했다. 이번에는 `browser_preflight.py`가 `permissions_allowed`를 낸 명령 환경에서 운영 빌드(`next start`, `WEB_PORT=4342`)를 Playwright Chromium으로 390px·1280px 조작했다. 이 세션에는 Ttakkari 브라우저 MCP 도구가 붙어 있지 않아 같은 Playwright를 썼다.
+
+### 37.1 구현 그대로의 시험과 관측
+
+- 구현자의 새 시험(`component-detail-tabs.spec.mjs` "차트·레이아웃 재료는 종류별 탭만 보이고 기본 미리보기와 Code HTML이 같다")은 실행하자 통과했다.
+- 목록 카드 클릭 진입: 차트 프리셋 2(`erp-quarterly-revenue`, `analytics-cohort-scatter`), 레이아웃 2(`bento`, `centered-hero`), 레이아웃 부품 2(`component:stack`, `component:resizable-panel`), 배치 원형 2(`cluster`, `flow`)를 검색 결과 카드(`a[href="/components/<id>"]`) 클릭으로 열었다. 8개 모두 미리보기 요소 13개 이상·svg 또는 텍스트 있음, 미리보기 안 가로 넘침 0. 스크린샷으로 stack(표본 버튼·두 항목), resizable-panel(패널 1·2)이 비어 있지 않음을 확인했다.
+
+### 37.2 발견한 결함과 교정
+
+| # | 증상(재현) | 원인 | 교정 | 회귀 시험(RED→GREEN) |
+|---|---|---|---|---|
+| 1 | 390px에서 **Code 탭이 문서를 346px 넘침**(button-control·hero 등 모든 부품 공통, F2 이래) | `.detailPanel` grid의 자식이 코드 블록의 최소 내용 폭(736px)으로 늘어남 | `grid-template-columns: minmax(0, 1fr)`, `.block`에 `min-width: 0; width: 100%` | E2E "390px에서 Code 탭의 긴 코드 블록은 문서를 넘치지 않고…": 수정 전 `Received 346`, 수정 후 통과 |
+| 2 | 레이아웃 24개 중 20개가 받지 않는 밀도(예: bento의 compact)를 고를 수 있고 선택 뒤에야 `layout:bento는 compact 밀도를 받지 않습니다(허용: comfortable·spacious)` | 상세 모델이 밀도 옵션을 전부 `ok: true`로 만듦 | 재료의 `density.allowed`로 옵션을 비활성화하고 Core와 같은 사유를 `title`로 보임 | 단위 시험(수정 전 실패) + E2E "레이아웃 Playground는 받지 않는 밀도를…" |
+| 3 | donut 차트(`marketing-channel-share`)는 Playground의 밀도 축이 어떤 값도 출력을 바꾸지 못함(compact·spacious는 Core 거부, comfortable은 기본값). 요구 "어떤 축도 출력을 바꾸지 않으면 결함" | 모든 차트에 밀도 축을 고정으로 염 | Core가 렌더하는 밀도가 2개 이상일 때만 축·Playground 탭을 연다 | 단위 시험 "chart presets expose the density axis only when…"(수정 전 실패) + E2E 탭 집합에 donut 추가 |
+| 4 | **배치 원형 6개**의 Accessibility 탭이 `등록된 규칙이 없습니다`·`등록된 역할 설명이 없습니다`·`등록된 키보드 계약이 없습니다`뿐(데이터 없는 탭이 노출됨) | 탭을 종류별로 고정 | 접근성 규칙·역할·키보드 중 하나라도 있을 때만 연다(6개 모두 비어 Overview·Code만) | 단위 시험 "exposed tabs carry real data…"(수정 전 실패) |
+| 5 | 레이아웃 부품 `stack`·`container`·`resizable-panel`의 Composition 탭이 `허용 자식 · 0~0개`와 `관련 목적 컴포넌트 component:stack component:stack`(자기 자신 2번)뿐 | 관계를 `[materialId, blueprint 노드]`로 만들 때 둘이 자기 자신이라 중복 | 자기 자신 제외·중복 제거 뒤 관계가 없으면 탭을 열지 않음(나머지 4개는 `layout:equal-grid` 등 실제 관계로 유지) | 같은 단위 시험 + 탭 집합 E2E |
+| 6 | 레이아웃의 슬롯(`head (0–1)`, `tiles (3–6)`)이 `관련 목적 컴포넌트`에, `허용 자식`이 `0~4개`(타입 수)로 표시되고 `필요한 슬롯`은 `필요 슬롯 없음` | 슬롯을 `related` 필드로 보내고 자식 범위를 타입 개수로 계산 | 슬롯은 `필요한 슬롯`, 자식 범위는 슬롯 min·max 합(bento 3~7개) | 같은 단위 시험 |
+
+탭 집합 변경에 따라 구현자의 기대 `component:stack = [Overview, Code, Composition]`, `layout-primitive:stack = [Overview, Code, Accessibility]`를 단위·E2E 양쪽에서 위 데이터 기준(`[Overview, Code]`)으로 바꿨다. 낮춘 것이 아니라 빈 탭 비노출 요구로 더 엄격해진 것이다. 대신 `component:responsive-grid`(Composition 유지)와 donut·배치 원형의 숨김 단언을 추가했다.
+
+### 37.3 완료 기준 실측
+
+- **렌더·넘침(81개 전수, 390·1280, 탭마다):** 162번 방문(81×2)에서 페이지 가로 넘침 0, `tabpanel` 항상 1개, Overview·Playground iframe 정확히 1개, Code 코드 블록 4개, 미리보기 요소 8개 미만 또는 높이 40px 미만 0건, 미리보기 안 가로 넘침 0, Tokens·Accessibility·Composition의 거의 빈 탭 0, 접근성 전부 placeholder 0 → `visited 162 problems 0`(수정 전에는 Code 넘침과 빈 탭이 검출됐다).
+- **Playground 축:** chart 2개의 밀도 compact, layout 2개의 밀도·모드 변경마다 iframe HTML 바이트와 미리보기 PNG 해시가 달라졌고 `data-density`·패딩·배경(`rgb(235,234,232)`→`rgb(29,27,23)`)·`data-theme`가 바뀐다. 전수: 차트 44개 × 허용 밀도와 레이아웃 24개 × 밀도 × 모드의 렌더 233조합 모두 서로 다른 바이트이고 받지 않는 값은 404와 사유다. 어떤 축도 출력을 바꾸지 못하는 재료는 donut 1개였고 위 3번으로 교정했다.
+- **Preview = Code = /export:** 8개 재료 × 2폭 = 16회 모두 미리보기 iframe 응답 HTML이 Code의 `index.html`과 바이트 일치, Code 4블록이 페이지가 보낸 `/export` 응답 4파일과 일치, 독립 재호출도 일치, 복사 4버튼 클립보드 일치.
+- **URL·뒤로·앞으로(16회):** 직접 열기(`?tab=playground&density=spacious&mode=dark`)가 선택을 복원하고, 탭 이동 → 뒤로 → 뒤로가 Playground 선택(밀도·모드)을 유지하며 앞으로가 Code를 복원했다(Playground가 없는 재료는 Overview).
+
+### 37.4 명령 실행 결과(기준 `53e866c5d` 위)
+
+```text
+$ WEB_REUSE=1 WEB_PORT=4342 npm --workspace apps/web run test:e2e -- component-detail-tabs.spec.mjs explore-components-home.spec.mjs components-studio-roundtrip.spec.mjs
+19 passed, 1 failed     # 실패 1개: explore-components-home.spec.mjs:31(/explore 첫 카드가 /explore/materials), 상세와 무관해 §34.5에 기록
+$ node --test tests/platform-component-context.test.mjs apps/web/features/components/{detail-model,detail-export,material-detail}.unit.mjs
+ℹ tests 15 / pass 15 / fail 0
+$ npm --workspace apps/web run test:unit   # tests 98 / pass 98
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
+```
+
+`git diff 53e866c5d..HEAD`는 `apps/web/**`와 문서만 바꾼다. `site/`, `src/catalog`, `src/compiler.mjs`, `docs/evidence/context/legacy-hashes.json`은 변경 0(2.1.0 고정 해시·기본 2.4.0·`site/v1` 불변).

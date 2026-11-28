@@ -6214,7 +6214,8 @@
         "site/search-index.json",
         "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
         "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
-        "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
+        "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+        "apps/web/features/components/components.module.css"
       ],
       "completionCriteria": "81개 상세 HTTP 200 및 카드 URL 상세 경로, 데이터 기반 탭·Playground 축, 네 종류별 Preview/Code HTML 바이트 동일성 단위시험, 전체 비브라우저 node:test·web:build·coverage MATCH·check-generated 통과, TASK-LEDGER 기록, origin/main 반영",
       "tests": [
@@ -6228,7 +6229,7 @@
       ],
       "commit": "a6a111f27",
       "status": "Verified",
-      "unresolvedIssues": "앱 브라우저 E2E spec은 실행하지 않았다(작업 카드의 Chromium 제약). 테스트 필터를 점검하다 positive --test-name-pattern으로 Chromium 하위 테스트 5개를 선택해 실행했으나 모두 launch 전 Mach IPC bootstrap_check_in Permission denied (1100)로 실패했다. 이후 해당 브라우저 경로 시도를 중단했다. 전체 node:test는 --test-skip-pattern으로 아래 다섯 테스트를 제외해 1202/1202 통과했다: `resizable panel: keyboard navigation and min/max constraints work in real Chromium browser`; `stack: gap and align props change the real layout, including the gap step`; `container: width steps cap the real width, full does not, and content is escaped`; `resizable panel: pointer drag, 15–85% bounds, no overflow, vertical direction, separator accessibility`; `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`. 새 apps/web/e2e/component-detail-tabs.spec.mjs에는 네 종류 탭 노출과 Preview/Code 바이트 동일성 확인을 작성했고 Claude 브라우저 검증 대기.",
+      "unresolvedIssues": "독립 브라우저 검증 완료(VERIFICATION.md §37, 기준 53e866c5d). 구현자의 새 E2E는 실행 시 통과했다. 목록 카드 클릭 8종·81개 전수 390/1280 점검에서 결함 6건(390px Code 탭 문서 넘침, 레이아웃의 받지 않는 밀도가 선택 가능, donut의 출력을 바꾸지 못하는 밀도 축, 데이터 없는 배치 원형 Accessibility 탭, 자기 참조뿐인 레이아웃 부품 Composition 탭, 슬롯이 관련 컴포넌트로 표시)을 단위·E2E 회귀 시험 RED→GREEN으로 교정했다. 탭 집합 변경에 따라 component:stack·layout-primitive:stack 기대 탭을 빈 탭 비노출 기준으로 바꿨다. 이전 기록의 Chromium 미실행 사유는 해소됐다.",
       "crossTrackFiles": [
         {
           "file": "scripts/build-catalog-index.mjs",
