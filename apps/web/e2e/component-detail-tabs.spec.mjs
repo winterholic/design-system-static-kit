@@ -82,9 +82,11 @@ test('시각 패밀리 선택은 실제 출력을 바꾸고 Code 는 같은 선�
 test('차트·레이아웃 재료는 종류별 탭만 보이고 기본 미리보기와 Code HTML 이 같다', async ({page, request}) => {
   const samples = [
     {id: 'chart-preset:erp-quarterly-revenue', hidden: ['States', 'Sizes', 'Composition'], shown: ['Overview', 'Playground', 'Tokens', 'Code', 'Accessibility']},
+    {id: 'chart-preset:marketing-channel-share', hidden: ['States', 'Sizes', 'Composition', 'Playground'], shown: ['Overview', 'Tokens', 'Code', 'Accessibility']},
     {id: 'layout:bento', hidden: ['Variants', 'States', 'Sizes', 'Tokens', 'Accessibility'], shown: ['Overview', 'Playground', 'Code', 'Composition']},
-    {id: 'component:stack', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens', 'Accessibility'], shown: ['Overview', 'Code', 'Composition']},
-    {id: 'layout-primitive:stack', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens'], shown: ['Overview', 'Code', 'Accessibility']},
+    {id: 'component:stack', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens', 'Accessibility', 'Composition'], shown: ['Overview', 'Code']},
+    {id: 'component:responsive-grid', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens', 'Accessibility'], shown: ['Overview', 'Code', 'Composition']},
+    {id: 'layout-primitive:stack', hidden: ['Variants', 'States', 'Sizes', 'Playground', 'Tokens', 'Accessibility', 'Composition'], shown: ['Overview', 'Code']},
   ];
   for (const sample of samples) {
     const route = `/components/${sample.id}`;
@@ -125,4 +127,32 @@ test('360px 에서도 9개 탭이 모두 화면 안에 보인다', async ({page}
   await expect(tabs).toHaveCount(9);
   const rights = await tabs.evaluateAll(buttons => buttons.map(button => Math.round(button.getBoundingClientRect().right)));
   for (const right of rights) expect(right).toBeLessThanOrEqual(360);
+});
+
+test('390px 에서 Code 탭의 긴 코드 블록은 문서를 넘치지 않고 블록 안에서 스크롤된다', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 800});
+  for (const id of ['button-control', 'chart-preset:erp-quarterly-revenue', 'layout:bento']) {
+    await page.goto(`/components/${id}?tab=code`);
+    await expect(page.getByText('Blueprint · blueprint.json')).toBeVisible();
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(over, id).toBeLessThanOrEqual(0);
+    const pre = page.locator('pre[aria-label]').first();
+    expect(await pre.evaluate(el => el.scrollWidth > el.clientWidth), id).toBe(true);
+  }
+});
+
+test('레이아웃 Playground 는 받지 않는 밀도를 고르기 전에 비활성화하고 받는 값은 출력을 바꾼다', async ({page, request}) => {
+  await page.goto('/components/layout:bento?tab=playground');
+  const compact = page.getByLabel('밀도').locator('option[value="compact"]');
+  await expect(compact).toHaveJSProperty('disabled', true);
+  await expect(compact).toHaveAttribute('title', /layout:bento는 compact 밀도를 받지 않습니다\(허용: comfortable·spacious\)/);
+  const query = density => `density=${density}&mode=light`;
+  const base = await (await request.get(`/components/layout:bento/render?${query('comfortable')}`)).text();
+  const spacious = await (await request.get(`/components/layout:bento/render?${query('spacious')}`)).text();
+  expect(spacious).not.toBe(base);
+  const rejected = await request.get(`/components/layout:bento/render?${query('compact')}`);
+  expect(rejected.status()).toBe(404);
+  expect(await rejected.text()).toContain('compact 밀도를 받지 않습니다');
+  await page.getByLabel('밀도').selectOption('spacious');
+  await expect(page.locator('iframe[title="layout:bento 컴파일 미리보기"]')).toHaveAttribute('src', /density=spacious/);
 });

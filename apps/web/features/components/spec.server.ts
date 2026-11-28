@@ -97,7 +97,7 @@ export type ComponentView = {
   related: {type: string; label: string}[];
   playground: import('./playground.server').PlaygroundContract;
   playgroundAxes?: string[];
-  detail?: {kind: string; tabs: string[]; axes: string[]; composition?: {children: string[]; related: string[]}; tokens?: string[]; defaults?: Record<string, string>};
+  detail?: {kind: string; tabs: string[]; axes: string[]; composition?: {children: string[]; related: string[]; slots?: string[]; childMin?: number; childMax?: number}; tokens?: string[]; defaults?: Record<string, string>};
 };
 
 type RawView = Omit<ComponentView, 'variants' | 'limitations' | 'playground'> & {variantIds: string[]};

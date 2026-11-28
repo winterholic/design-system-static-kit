@@ -17,7 +17,7 @@
 .detailTab { flex: 0 0 auto; min-height: var(--tap-min); padding: 0 var(--space-3); border: 1px solid transparent; border-radius: var(--radius); background: transparent; color: var(--color-muted); font: inherit; cursor: pointer; }
 .detailTab[aria-selected='true'] { border-color: var(--color-line); background: var(--color-surface); color: var(--color-text); font-weight: var(--weight-strong); }
 .detailTab:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-.detailPanel { display: grid; gap: var(--space-4); padding-top: var(--space-5); min-width: 0; }
+.detailPanel { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); padding-top: var(--space-5); min-width: 0; }
 .head h1 { margin: 0 0 var(--space-2); }
 .sub { margin: 0 0 var(--space-5); color: var(--color-muted); }
 .variants { margin-bottom: var(--space-3); }
@@ -47,7 +47,7 @@
 .ctx dd { margin: 0; }
 .table td code { white-space: nowrap; }
 .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
-.block { max-width: 720px; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.block { width: 100%; min-width: 0; max-width: 720px; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
 .pre { width: 100%; margin: 0; padding: var(--space-4); max-height: 360px; overflow: auto; background: var(--color-surface); border-radius: var(--radius); font-size: var(--text-sm); line-height: 1.5; }
 
 .bar { display: grid; grid-template-columns: 1fr; gap: var(--space-3); align-items: end; margin-bottom: var(--space-5); }

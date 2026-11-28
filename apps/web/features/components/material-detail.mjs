@@ -40,6 +40,11 @@ const rowById = new Map(rows.map(row => [row.type, row]));
 
 export function catalogDetailRows() { return rows.map(row => ({...row})); }
 
+// 레이아웃은 허용 밀도가 재료마다 다르다. 받지 않는 값은 고르기 전에 비활성화하고 Core와 같은 사유를 보인다.
+const densityOption = (row, value, allowed) => allowed && !allowed.includes(value)
+  ? {value, label: value, ok: false, reason: `${row.type}는 ${value} 밀도를 받지 않습니다(허용: ${allowed.join('·')})`}
+  : {value, label: value, ok: true};
+
 const baseView = (row, material, detail) => {
   const completeMaterial = {
     ...material, defaults: material?.defaults ?? {}, variants: material?.variants ?? {}, states: material?.states ?? {values: [], transitions: []},
@@ -48,14 +53,14 @@ const baseView = (row, material, detail) => {
   };
   return ({
   type: row.type, label: row.label, group: row.kind, groupLabel: ({'chart-preset': '차트', layout: '레이아웃', 'layout-component': '레이아웃 부품', 'layout-primitive': '배치 원형'})[row.kind],
-  fields: [], children: detail.composition?.children ? {allowed: detail.composition.children, min: 0, max: detail.composition.children.length} : null,
+  fields: [], children: detail.composition?.children?.length ? {allowed: detail.composition.children, min: detail.composition.childMin ?? 0, max: detail.composition.childMax ?? detail.composition.children.length} : null,
   parents: [], pageTypes: {requiredBy: [], forbiddenIn: []}, example: detail.example ?? null,
   variants: detail.variants ?? [], variantGroups: detail.variantGroups ?? [], material: completeMaterial, detail: {...detail, kind: row.kind},
   related: (detail.composition?.related ?? []).map(type => ({type, label: type})),
   playgroundAxes: detail.axes ?? [], playground: {
     base: null,
     defaults: {palette: 'palette:static-kit', subtokenSet: 'subtoken-set:standard', visualFamily: 'family:soft', typeSystem: 'type-system:mkt-launch', density: detail.defaults?.density ?? 'comfortable', mode: detail.defaults?.mode ?? 'light'},
-    axes: {palette: [], subtokenSet: [], visualFamily: [], typeSystem: [], density: ['compact', 'comfortable', 'spacious'].map(value => ({value, label: value, ok: true})), mode: ['light', 'dark'].map(value => ({value, label: value, ok: true}))},
+    axes: {palette: [], subtokenSet: [], visualFamily: [], typeSystem: [], density: ['compact', 'comfortable', 'spacious'].map(value => densityOption(row, value, detail.densityAllowed)), mode: ['light', 'dark'].map(value => ({value, label: value, ok: true}))},
   }, limitations: [],
 });
 };
@@ -66,8 +71,10 @@ function detailData(row) {
   let view = null;
   if (row.kind === 'chart-preset') {
     const material = unpack(getMaterial({id: row.type}));
+    // 밀도 옵션은 차트 종류마다 받는 값이 다르다(donut 은 어느 값도 받지 않는다). Core 가 렌더하는 밀도만 축으로 연다.
+    const densities = material ? ['compact', 'comfortable', 'spacious'].filter(value => typeof renderChartPreset(row.type, {...material.examples?.[0], density: value}) === 'string') : [];
     if (material) view = baseView(row, material, {
-      tabs: ['overview', 'playground', 'tokens', 'code', 'accessibility'], axes: ['density'],
+      tabs: ['overview', ...(densities.length > 1 ? ['playground'] : []), 'tokens', 'code', 'accessibility'], axes: densities.length > 1 ? ['density'] : [], densityAllowed: densities,
       defaults: {density: material.examples?.[0]?.density ?? 'comfortable'},
       example: material.examples?.[0] ?? null,
       tokens: material.tokens ?? [],
@@ -75,20 +82,26 @@ function detailData(row) {
   } else if (row.kind === 'layout') {
     const material = unpack(getPlatformMaterial({id: row.type}));
     if (material) view = baseView(row, material, {
-      tabs: ['overview', 'playground', 'code', 'composition'], axes: ['density', 'mode'],
+      tabs: ['overview', 'playground', 'code', 'composition'], axes: ['density', 'mode'], densityAllowed: material.density?.allowed,
       defaults: {density: material.density?.default ?? 'comfortable', mode: 'light'},
       example: {layout: row.type}, tokens: material.tokens ?? [],
-      composition: {children: material.slots?.flatMap(slot => slot.accepts ?? []) ?? [], related: material.slots?.map(slot => `${slot.name} (${slot.min}–${slot.max})`) ?? []},
+      composition: {
+        children: [...new Set(material.slots?.flatMap(slot => slot.accepts ?? []) ?? [])],
+        childMin: material.slots?.reduce((sum, slot) => sum + slot.min, 0), childMax: material.slots?.reduce((sum, slot) => sum + slot.max, 0),
+        slots: material.slots?.map(slot => `${slot.name} (${slot.min}–${slot.max})`) ?? [], related: [],
+      },
     });
   } else if (row.kind === 'layout-component') {
     const component = LAYOUT_COMPONENTS.find(item => item.id === row.type);
+    // 자기 자신만 가리키는 관계는 조합 정보가 아니다. 다른 재료나 노드를 가리킬 때만 Composition 탭을 연다.
+    const related = [...new Set([component?.materialId, component?.blueprint?.component ?? component?.blueprint?.node ?? component?.blueprint?.kind].filter(Boolean))].filter(id => id !== row.type);
     if (component) view = baseView(row, {id: row.type, kind: row.kind, category: 'layout', version: component.version, since: '1.0.0', contexts: ['dashboard'], quality: {status: 'verified'}, preset: false, defaults: {}, variants: {}, states: {values: [], transitions: []}, responsive: {strategy: 'responsive'}, tokens: [], tags: ['layout'], a11y: {}, structure: {}, validation: {}, purposeContracts: [], blueprint: component.blueprint}, {
-      tabs: ['overview', 'code', ...(component.blueprint ? ['composition'] : [])], axes: [], example: component.blueprint,
-      tokens: [], composition: component.blueprint ? {children: [], related: [component.materialId, component.blueprint.component ?? component.blueprint.node ?? component.blueprint.kind].filter(Boolean)} : null,
+      tabs: ['overview', 'code', ...(related.length ? ['composition'] : [])], axes: [], example: component.blueprint,
+      tokens: [], composition: related.length ? {children: [], related} : null,
     });
   } else if (row.kind === 'layout-primitive') {
     const material = unpack(getMaterial({id: row.type}));
-    if (material) view = baseView(row, material, {tabs: ['overview', 'code', 'accessibility'], axes: [], example: material.blueprint ?? null, tokens: material.tokens ?? []});
+    if (material) view = baseView(row, material, {tabs: ['overview', 'code', ...(material.a11y?.rules?.length || material.a11y?.role || material.a11y?.keyboard ? ['accessibility'] : [])], axes: [], example: material.blueprint ?? null, tokens: material.tokens ?? []});
   }
   detailCache.set(cacheKey, view);
   return view;
