@@ -1654,15 +1654,15 @@ baseline 재생성은 `time node scripts/platform/baseline.mjs`로 99.31초에 �
 
 ## 26. D7 §6.2 M 업무 패턴 구현 (2026-11-28)
 
-### 23.1 구현 범위
+### 26.1 구현 범위
 
 - `TASK-TRD-M`의 15개 요구행 각각을 전용 `purpose:work.*` 복합 재료로 등록했다. 필터/검색 도구 모음, 일괄 작업 도구 모음, 데이터 요약/KPI, 승인 패널, 감사 로그, 권한 표, 상태 관리, 설정 폼, 검색 결과, 사용자 관리 표, 작업 목록, 워크플로 단계, 댓글 스레드를 포함한다.
 - 합성 렌더러는 기존 등록 부품을 조합하고 선언된 props를 마크업/CSS에 반영한다. 값 검증·HTML 이스케이프, 금지 URL 및 잘못된 권한 값 거부, 중복 ID 방지, 목적별 런타임 포함을 추가했다. REST·MCP는 동일한 Core assemble 경로를 사용하며 독립 시험에서 세 채널 출력과 질의가 일치한다.
 - 모든 항목은 실제 Core 출력 프로브를 통과했다. 커버리지 행은 direct 15, missing 0, schema-only 0이며 `outputHash`, prop 변화 및 invalid-input 거부 근거를 보유한다.
 - `e2e/platform-work-patterns.spec.mjs`에 390px/1280px 반응형과 검색·작업 완료 상호작용 시험을 작성했다. 요청된 비브라우저 런타임 하네스는 검색 필터와 완료 집계를 실행해 확인한다.
-- 사이트 생성물은 DEC-017에 따라 빌드로 갱신하고, 기준선의 등록 수와 조립 측정은 DEC-017에 따라 다시 생성했다. `site/v1/catalog.json` 및 legacy 해시 입력은 변경하지 않았다.
+- 사이트 생성물은 DEC-017에 따라 빌드로 갱신하고, 기준선의 등록 수와 조립 측정은 DEC-018에 따라 다시 생성했다. `site/v1/catalog.json` 및 legacy 해시 입력은 변경하지 않았다.
 
-### 23.2 검증 증거
+### 26.2 검증 증거
 
 ```text
 $ node --test --test-name-pattern='선언 prop' tests/platform-work-patterns-blueprint.test.mjs
@@ -1689,10 +1689,12 @@ BUILT static workbench, gallery, schema/catalog API, 85 template examples, 54 th
 REPRODUCIBLE: 5014 generated files match a fresh build byte for byte.
 
 $ node --test --test-skip-pattern='resizable panel: keyboard navigation|stack: gap and align props|container: width steps|resizable panel: pointer drag|4\\. Playwright Chromium 실측'
-ℹ tests 1117 / ℹ pass 1117 / ℹ fail 0 / ℹ cancelled 0
+ℹ tests 1126 / ℹ pass 1126 / ℹ fail 0 / ℹ cancelled 0
 
 $ node docs/platform/evidence/components/build.mjs --check
 components.md 분류표가 최신입니다.
+$ node --test tests/composition.test.mjs tests/materials-registry.test.mjs tests/expression-2-5.test.mjs
+ℹ tests 51 / ℹ pass 51 / ℹ fail 0
 $ git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json
 exit 0
 ```
