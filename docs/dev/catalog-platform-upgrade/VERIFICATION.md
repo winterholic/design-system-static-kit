@@ -2370,7 +2370,7 @@ $ node scripts/check-generated.mjs
 REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
 ```
 
-### 38.3 독립 Chromium 1차 검증과 교정
+### 39.3 독립 Chromium 1차 검증과 교정
 
 Claude Playwright 검증은 390px·1280px에서 주소 복원·단일 패널·터치 크기·Motion·Icon·상세 링크를 확인했고 다음 결함을 찾았다: Border 5개 중 4개가 CSS 변수 치환 오류로 `0px none`; Background 13개 중 장식 재료 8개가 Core `accent`·`rule`, `background-image`, mask, opacity 및 frosted blur를 샘플에 연결하지 않음; Chart 텍스트 기본 16px로 퍼널 값이 SVG 오른쪽에서 잘리고 `overflow:hidden`으로 Core의 visible 영역이 가려지며 데이터 표 CSS가 숨김; Layout 24개 일부가 같은 등분 슬롯 상자로 보임; Radius 개수 표기가 facets 17개를 빼고 5로 표시됨; Motion duration/easing이 JSON 텍스트로 나옴. E2E 명세는 브라우저 계산값 `0.12s`에 `ms`를 요구해 실패했다.
 
