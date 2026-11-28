@@ -20,7 +20,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run verify
         env:
-          FONT_LOADING_EVIDENCE_PATH: test-results/font-loading-evidence.json
+          FONT_LOADING_EVIDENCE_PATH: ${{ runner.temp }}/ci-evidence/font-loading-evidence.json
       - run: git diff --exit-code -- site docs
       - run: npm run test:browser
       - uses: actions/upload-artifact@v4
@@ -30,4 +30,5 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            ${{ runner.temp }}/ci-evidence/font-loading-evidence.json
           retention-days: 14
