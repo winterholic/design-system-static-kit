@@ -2710,7 +2710,19 @@ exit 0
 
 ### 43.5 최종 검증
 
-(rebase 뒤 최신 main 위에서 실행한 결과로 채운다.)
+`origin/main` `b550586e6`에 rebase한 뒤 교정 커밋 위에서 실행했다.
+
+| 명령 | 결과 |
+|---|---|
+| `npm run typecheck --workspace apps/web` | 오류 없음 |
+| `node --test tests/platform-type-presentation.test.mjs tests/platform-material-selection.test.mjs` | `tests 13, pass 13, fail 0` |
+| `WEB_PORT=<빈 포트> npm --workspace apps/web run test:e2e -- typography-catalog.spec.mjs materials.spec.mjs catalog-lists.spec.mjs material-explorer-studio.spec.mjs --repeat-each=2` | 타이포·F3·catalog-lists 전부 통과, 실패는 `materials.spec.mjs` "기초 재료" 2개(Foundations 개편, 42.6) |
+| `... test:e2e -- layout-quality.spec.mjs typography-catalog.spec.mjs` | `typography-catalog` 30개 통과. 공개 페이지 전수(385쪽)의 미면제 발견 13건은 모두 `/materials/foundations`의 `CELL_TOKEN_BREAK`(다른 작업자 영역). 타이포 페이지 발견 0 |
+| `npm run verify` | exit 0. `tests 1279, pass 1279, fail 0, skipped 0`, 마지막 줄 `REPRODUCIBLE: 5381 generated files match a fresh build byte for byte.` |
+| `npm run coverage:materials:check` | `MANIFEST MATCH ... (1540 materials, 406 requirements)` |
+| `node scripts/check-generated.mjs` | `REPRODUCIBLE: 5381 generated files match a fresh build byte for byte.` |
+
+`git diff b550586e6 HEAD -- src site/v1 src/catalog src/compiler.mjs docs/evidence/context/legacy-hashes.json`는 `src/service/platform-materials.mjs`(Specimen 웹폰트 선택 인자) 하나뿐이다. 2.1.0 고정 해시, 기본 2.4.0, `site/v1`은 바뀌지 않았다. `site/src/service/platform-materials.mjs`는 같은 파일의 생성 사본이다.
 
 ### 43.6 남은 한계·범위 밖 발견
 
