@@ -2331,3 +2331,45 @@ REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
 - `npm run coverage:materials:check`: `MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)`.
 - `node scripts/check-generated.mjs`: `REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.`
 - Chromium E2E 명세는 `apps/web/e2e/typography-catalog.spec.mjs`에 390px·1280px 카탈로그·상세·비교·뒤로/앞으로 상태 검증을 작성했다. 하지 않음: 이 Codex 세션에서는 사용자 요청에 따라 Chromium 실행을 생략했으며, Claude 독립 검증이 남아 있다.
+
+## 39. TASK-TRF-08 Foundations 11개 하위 카테고리 전시 페이지 (기준 `9df203a55` (rebase 후), 2026-11-29)
+
+`/materials/foundations?category=<id>`에서 선택 범주만 서버 렌더한다. 범주 링크는 URL에 선택을 담아 브라우저 뒤로 가기가 이전 선택을 복원한다. 11개 범주 링크는 항상 보이지만 숨긴 범주의 콘텐츠 패널은 DOM에 넣지 않는다. 카테고리 데이터는 Core 소스의 재료 수량 상한(Spacing 3, surface 5, background 13, motion 4+패턴 15, icon 영역 16, layout 24+원형 6, chart 형태 29)을 유지하고 무제한 캐시를 두지 않는다.
+
+### 39.1 범주 정의·예시·토큰·사용 조건
+
+- **Spacing·Density**: Core `SPACING_ROLES` 9개 역할과 Compact·Comfortable·Spacious 3개 밀도별 토큰을 모두 표시한다. 간격 표본은 역할 토큰의 실제 px 값을 사용한다.
+- **Radius·Border·Elevation**: Core 반경 축과 표면 패싯 17개, 테두리 5종, 깊이 8종을 전시한다. 샘플의 반경·테두리·그림자는 Core의 반경·깊이 표 및 패싯 정의에서 읽는다.
+- **Surface·Background**: 표면 5개 재료의 base·raised·overlay 값과 배경 13개 재료의 Core 색 역할·장식 정의를 보여 준다.
+- **Motion**: Core 모션 4종과 목적 패턴 15종의 속성·duration·easing·delay·reducedMotion을 표로 낸다. hover/focus 동작이 있고 `prefers-reduced-motion: reduce`에서는 변형과 전이를 제거한다.
+- **Icon**: 16개 영역의 Core 허용 아이콘과 실제 내부 SVG 경로를 전시한다. 재료의 출처·라이선스(in-repository-original / internal), viewBox·stroke·정렬·최소 크기 및 의미/장식 아이콘 사용 조건을 표시한다.
+- **Layout·Chart**: Core 레이아웃 24종·배치 원형 6종과 Chart SVG 지원 형태 29종의 예시를 보이고, 각각 TASK-TRF-07 상세 경로로 연결한다. 차트는 Core 렌더러 CSS와 Core 라이트 색 토큰으로 표시한다.
+
+### 39.2 시험 및 빌드
+
+```text
+$ node --test apps/web/features/materials/foundations-exhibit.unit.mjs
+ℹ tests 3 / ℹ pass 3 / ℹ fail 0
+(§9.8 범주 순서, 선택된 범주의 데이터 격리, Core 재료 인벤토리 수량)
+
+$ node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'
+ℹ tests 1261 / ℹ pass 1261 / ℹ fail 0
+
+$ npm run typecheck --workspace apps/web
+> tsc --noEmit
+(통과)
+
+$ npm run web:build
+✓ Compiled successfully; ✓ Generating static pages (962/962)
+ƒ /materials/foundations (URL category query로 서버 렌더)
+
+$ npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1540 materials, 406 requirements)
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 5379 generated files match a fresh build byte for byte.
+```
+
+`apps/web/e2e/foundations-categories.spec.mjs`에는 390px·1280px URL/뒤로 가기, 단일 패널, 터치 링크 크기·가로 넘침, 11개 정의, Core 차트 SVG, Motion reduced-motion, Icon 권리, 상세 링크를 확인하는 명세를 작성했다. **Chromium 실행은 하지 않음**: 작업 지시가 Codex Chromium 재시도를 금지하고 Claude 독립 브라우저 검증을 지정했다. 따라서 실제 브라우저 동작과 픽셀 실측은 검증 대기다.
+
+새 Track F 항목 `TASK-TRF-08`을 장부에 추가했다. 내비게이션 공통 컴포넌트는 수정하지 않았다. `git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json`은 rebase 후 최신 origin/main 기준으로 불변 파일 비교와 push 직전 diff stat을 다시 수행한다.

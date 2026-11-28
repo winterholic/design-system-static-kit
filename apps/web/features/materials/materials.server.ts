@@ -1,6 +1,7 @@
 import 'server-only';
 import {axisChoices, resetDocument} from '@winterholic/design-system-static-kit/edit';
 import {listCatalog, queryMaterials} from '@winterholic/design-system-static-kit/service';
+import {FOUNDATION_CATEGORIES, categoryRows} from './foundations-exhibit.mjs';
 import type {ColorFamily, ColorRow, ColorView, FoundationAxis, IconRow, PresetView, RampView, SeedView, TypeView} from './types';
 
 // Materials 화면이 읽는 값은 모두 Core(재료 레지스트리·색 토큰·타이포그래피 재료)에서 ./service의 queryMaterials로 읽는다. 이 파일은 화면 모양으로 옮길 뿐 값을 정하지 않는다.
@@ -179,6 +180,85 @@ export const iconRows = memo((): IconRow[] => {
 });
 
 export const layoutPrimitives = memo(() => (foundations().layoutPrimitives as {id: string; label: string; css: string}[]).map(m => ({id: m.id.replace('layout-primitive:', ''), label: m.label, css: m.css})));
+
+/** Selected-category imports split server data/code and cap rendered rows to that category only. */
+export async function foundationExhibit(id: string) {
+  if (!FOUNDATION_CATEGORIES.some(category => category.id === id)) return null;
+  let rows: any[] = [];
+  let roles: any[] = [];
+  let facets: any[] = [];
+  let radius: FoundationAxis | undefined;
+  let elevation: FoundationAxis | undefined;
+  let radiusTokens: Record<string, number> = {};
+  let elevationTokens: Record<string, any> = {};
+  let facetShadows: Record<string, string> = {};
+  let patterns: any[] = [];
+  let icons: IconRow[] = [];
+  let chartTokens: Record<string, string> = {};
+  let backgroundTokens: Record<string, string> = {};
+  let chartCss = '';
+  let chartCount = 0;
+
+  if (id === 'spacing' || id === 'density') {
+    const {SPACING_MATERIALS, SPACING_ROLES} = await import('../../../../src/platform/data/spacing.mjs');
+    rows = [...SPACING_MATERIALS];
+    if (id === 'spacing') roles = [...SPACING_ROLES];
+  } else if (id === 'radius' || id === 'border' || id === 'elevation' || id === 'surface') {
+    const [{SURFACE_FACETS, SURFACES, FACET_SHADOW}, {ELEVATION, RADIUS}] = await Promise.all([
+      import('../../../../src/platform/data/surfaces.mjs'), import('../../../../src/styles/base.mjs'),
+    ]);
+    facets = [...SURFACE_FACETS] as any[];
+    radiusTokens = RADIUS;
+    elevationTokens = ELEVATION;
+    facetShadows = FACET_SHADOW;
+    if (id === 'radius') {
+      rows = foundationAxes().find(axis => axis.axis === 'radius')?.values ?? [];
+      radius = foundationAxes().find(axis => axis.axis === 'radius');
+      elevation = foundationAxes().find(axis => axis.axis === 'elevation');
+    } else if (id === 'border') {
+      rows = [...new Set(facets.map(facet => facet.border))].map(border => ({id: border, border, ...facets.find(facet => facet.border === border)}));
+      elevation = foundationAxes().find(axis => axis.axis === 'elevation');
+    } else if (id === 'elevation') {
+      rows = [...new Set(facets.map(facet => facet.elevation))].map(elevation => ({id: elevation, elevation, ...facets.find(facet => facet.elevation === elevation)}));
+      elevation = foundationAxes().find(axis => axis.axis === 'elevation');
+    } else {
+      rows = [...SURFACES];
+    }
+  } else if (id === 'background') {
+    const {BACKGROUNDS} = await import('../../../../src/platform/data/backgrounds.mjs');
+    rows = [...BACKGROUNDS];
+    const scene = colorView().scenes.light;
+    backgroundTokens = Object.fromEntries(['--kit-canvas', '--kit-soft', '--kit-action', '--kit-accent'].flatMap(key => scene[key] ? [[key, scene[key]]] : []));
+  } else if (id === 'motion') {
+    const {MOTIONS, MOTION_PATTERNS} = await import('../../../../src/platform/data/motion.mjs');
+    rows = [...MOTIONS];
+    patterns = [...MOTION_PATTERNS];
+  } else if (id === 'icon') {
+    const {ICON_MATERIALS} = await import('../../../../src/platform/data/icons.mjs');
+    rows = [...ICON_MATERIALS];
+    icons = iconRows();
+  } else if (id === 'layout') {
+    const {LAYOUTS} = await import('../../../../src/platform/data/layouts.mjs');
+    rows = [...LAYOUTS, ...layoutPrimitives().map(primitive => ({...primitive, id: `layout-primitive:${primitive.id}`}))];
+  } else if (id === 'chart') {
+    const [{chartPresetMaterials}, {renderChartPreset}, {chunks}] = await Promise.all([
+      import('../../../../src/materials/chart-presets.mjs'), import('../../../../src/render/chart-presets.mjs'), import('../../../../src/styles/chunks.mjs'),
+    ]);
+    const chartKinds = chartPresetMaterials.filter((preset, index, all) => all.findIndex(candidate => candidate.ext.chartKind === preset.ext.chartKind) === index);
+    rows = chartKinds.map(preset => ({
+      id: preset.ext.chartKind, label: preset.ext.chartKind, presetId: preset.id, presetLabel: preset.label, svg: renderChartPreset(preset.id),
+    }));
+    chartCount = rows.length;
+    chartTokens = colorView().scenes.light;
+    chartCss = chunks.chart;
+  }
+  return {
+    id,
+    rows: categoryRows(id, {[id]: rows}),
+    roles, facets, radius, elevation, radiusTokens, elevationTokens, facetShadows, patterns, icons,
+    chartCount, chartTokens, chartCss, backgroundTokens,
+  };
+}
 
 /** 페이지 유형의 첫 템플릿 id. 타이포그래피 프리셋을 어울리는 화면에서 열어 보게 한다. */
 function templateFor(pageType: string): string | null {
