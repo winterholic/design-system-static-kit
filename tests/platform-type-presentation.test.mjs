@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assembleComponents, assembleDesign, getPlatformMaterial, getTypographySpecimen, listPlatformMaterials} from '../src/service/index.mjs';
 import {SCENARIOS} from '../apps/web/features/platform/type-scenarios.mjs';
+import {typeRequest} from '../scripts/lib/preview-requests.mjs';
 
 test('typography specimen data comes from the selected Core type system and exposes its 27 computed roles', () => {
   const catalog = listPlatformMaterials({kind: 'type-system', limit: 100});
@@ -25,6 +26,12 @@ test('typography specimen lookup rejects IDs outside the type-system registry', 
   assert.equal(result.ok, false);
   assert.equal(result.errors[0].code, 'TYPE_SPECIMEN_KIND');
   assert.equal(getTypographySpecimen({id: 'type-system:doc-essay', compile: true}).errors[0].code, 'BAD_REQUEST');
+});
+
+test('the document comparison scenario matches the content used for its pre-generated previews', () => {
+  const generated = typeRequest('type-system:doc-essay');
+  assert.equal(SCENARIOS.editorial.purpose, generated.purpose);
+  assert.deepEqual(SCENARIOS.editorial.content, generated.content);
 });
 
 test('type system button, filter input, and table specimen are the Core standalone export', () => {
