@@ -1203,9 +1203,10 @@ const combinations = {
   platform: {
     assemblableCombinations: livePlatform.assemblable.assemblable, attemptedCombinations: livePlatform.assemblable.attempted,
     verifiedAssemblies: livePlatform.verified.verified, attemptedAssemblies: livePlatform.verified.attempted, distinctVerifiedOutputs: livePlatform.verified.distinctOutputs,
+    verifiedSampling: livePlatform.verified.sampling,
     distinctColorTokenSets: livePlatform.distinct.colorTokenSets, distinctFacePairs: livePlatform.distinct.facePairs, distinctVisualFamilies: livePlatform.distinct.families,
     verifiedPurposeFamiliesInPages: livePlatform.distinct.purposeFamilies.verified,
-    method: 'scripts/platform/platform-baseline.mjs platformSection() 직접 호출(렌더 없이 관계 평가, 대표 페이지는 assemblePage로 조립·품질 검사)',
+    method: 'scripts/platform/platform-baseline.mjs platformSection() 직접 호출. verified 재료 조합은 색 결합·전체 관계 평가 통과 후보의 결정론적 greedy all-pairs 표본을 실제 assemblePage 조립·품질 검사하고, 레이아웃 축은 전수 조립한다. verifiedSampling.byPattern에 원래 재료 시도 수와 표본 크기를 기록한다.',
   },
   legacyTemplates: {
     attemptedCombinations: legacyAttempted, assembledCombinations: platformBaseline.combinations.assembled, compiledCombinations: platformBaseline.combinations.compiled, distinctCompiledOutputs: platformBaseline.combinations.distinctCompiledOutputs,

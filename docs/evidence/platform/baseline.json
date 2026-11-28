@@ -371,7 +371,7 @@
             "widths": 2,
             "densities": 3
           },
-          "verified": 1138
+          "verified": 100
         },
         "dashboard-grid": {
           "purpose": "work-dashboard",
@@ -381,7 +381,7 @@
             "widths": 3,
             "densities": 3
           },
-          "verified": 27476
+          "verified": 195
         },
         "docs-reference": {
           "purpose": "editorial-docs",
@@ -391,7 +391,7 @@
             "widths": 2,
             "densities": 3
           },
-          "verified": 1170
+          "verified": 90
         },
         "editorial-article": {
           "purpose": "editorial-docs",
@@ -401,7 +401,7 @@
             "widths": 2,
             "densities": 3
           },
-          "verified": 1968
+          "verified": 132
         },
         "erp-workspace": {
           "purpose": "work-dashboard",
@@ -411,7 +411,7 @@
             "widths": 2,
             "densities": 3
           },
-          "verified": 15768
+          "verified": 144
         },
         "marketing-landing": {
           "purpose": "saas-landing",
@@ -421,17 +421,72 @@
             "widths": 2,
             "densities": 3
           },
-          "verified": 20498
+          "verified": 180
         }
       },
       "note": "(패턴 × 셸 × 폭 × 밀도 × 모드) × (팔레트 × 세트 × 타이포 × 시각 패밀리) 중 관계·색·서체 평가를 통과한 수. 렌더하지 않고 계산한다"
     },
     "verified": {
-      "attempted": 68018,
-      "verified": 68018,
-      "distinctOutputs": 68013,
+      "attempted": 841,
+      "verified": 841,
+      "distinctOutputs": 841,
       "failures": {},
-      "note": "실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)"
+      "sampling": {
+        "strategy": "deterministic-greedy-all-pairs",
+        "factors": [
+          "mode",
+          "palette",
+          "subtokenSet",
+          "typeSystem",
+          "family"
+        ],
+        "byPattern": {
+          "dashboard-grid": {
+            "originalMaterialCombinations": 27440,
+            "feasibleMaterialCombinations": 27440,
+            "sampledMaterialCombinations": 159,
+            "coveredAllowedPairs": 807,
+            "layoutCombinations": 36
+          },
+          "erp-workspace": {
+            "originalMaterialCombinations": 15750,
+            "feasibleMaterialCombinations": 15750,
+            "sampledMaterialCombinations": 126,
+            "coveredAllowedPairs": 635,
+            "layoutCombinations": 18
+          },
+          "marketing-landing": {
+            "originalMaterialCombinations": 20480,
+            "feasibleMaterialCombinations": 20480,
+            "sampledMaterialCombinations": 162,
+            "coveredAllowedPairs": 744,
+            "layoutCombinations": 18
+          },
+          "editorial-article": {
+            "originalMaterialCombinations": 1944,
+            "feasibleMaterialCombinations": 1944,
+            "sampledMaterialCombinations": 108,
+            "coveredAllowedPairs": 389,
+            "layoutCombinations": 24
+          },
+          "docs-reference": {
+            "originalMaterialCombinations": 1152,
+            "feasibleMaterialCombinations": 1152,
+            "sampledMaterialCombinations": 72,
+            "coveredAllowedPairs": 285,
+            "layoutCombinations": 18
+          },
+          "commerce-listing": {
+            "originalMaterialCombinations": 1120,
+            "feasibleMaterialCombinations": 1120,
+            "sampledMaterialCombinations": 82,
+            "coveredAllowedPairs": 284,
+            "layoutCombinations": 18
+          }
+        },
+        "note": "허용 쌍은 색 결합과 전체 관계 평가를 통과한 material tuple에서 산출한다. 표본 전체를 실제 조립·품질 검사한다. 레이아웃 축 조립은 전수 유지한다."
+      },
+      "note": "실제 assemblePage로 결정론적 all-pairs 표본과 레이아웃 축 조합을 조립해 품질 검사한 요청 수"
     },
     "distinct": {
       "colorTokenSets": {
@@ -581,8 +636,8 @@
         ]
       },
       "verifiedColorTokenSets": {
-        "light": 224,
-        "dark": 221
+        "light": 76,
+        "dark": 218
       },
       "verifiedFacePairs": 38,
       "verifiedFamilies": 12,

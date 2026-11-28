@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createPlatform} from '../../src/platform/index.mjs';
 import {assemblePage} from '../../src/platform/page.mjs';
 import {createRelationGraph, defineCheck} from '../../src/platform/relations.mjs';
-import {assembleVerifiedPage, countAttemptedCombinations, createRelationEvaluator, mergePlatformSections} from './platform-baseline.mjs';
+import {assembleVerifiedPage, buildAllPairsCoveringSample, countAttemptedCombinations, createRelationEvaluator, mergePlatformSections, VERIFIED_FACTORS} from './platform-baseline.mjs';
 
 test('prepared material assembly matches assemblePage output and quality', () => {
   const env = createPlatform(), request = {
@@ -32,7 +32,11 @@ test('parallel platform sections merge counters by sum and fingerprints by set u
       note: 'same',
     },
     colorGateFailures: {P_COLOR_CONTRAST: 1},
-    __mergeDetails: {attemptedByPattern: {p: 10}, assemblableByPattern: {p: 8}, outputs, lightColors: colors, darkColors: [], faces, families, purposes, styleOutputs},
+    __mergeDetails: {
+      attemptedByPattern: {p: 10}, assemblableByPattern: {p: 8},
+      samplingByPattern: {p: {originalMaterialCombinations: 20, feasibleMaterialCombinations: 8, sampledMaterialCombinations: 4, coveredAllowedPairs: 16, layoutCombinations: 1}},
+      outputs, lightColors: colors, darkColors: [], faces, families, purposes, styleOutputs,
+    },
   });
   const merged = mergePlatformSections([
     make(['o1', 'o2'], ['c1'], ['f1'], ['v1'], ['p1'], ['s1']),
@@ -43,6 +47,7 @@ test('parallel platform sections merge counters by sum and fingerprints by set u
   assert.equal(merged.verified.attempted, 4);
   assert.equal(merged.verified.verified, 4);
   assert.equal(merged.verified.distinctOutputs, 3);
+  assert.deepEqual(merged.verified.sampling.byPattern.p, {originalMaterialCombinations: 20, feasibleMaterialCombinations: 8, sampledMaterialCombinations: 4, coveredAllowedPairs: 16, layoutCombinations: 2});
   assert.deepEqual(merged.distinct.verifiedColorTokenSets, {light: 2, dark: 0});
   assert.equal(merged.distinct.verifiedFacePairs, 2);
   assert.equal(merged.distinct.verifiedFamilies, 2);
@@ -120,4 +125,36 @@ test('relation check cache retains the repeated B1 palette-set pair working set'
   for (const palette of palettes) for (const set of sets) graph.runChecks(palette.id, set.id, {mode: 'light'});
   assert.equal(firstPassCalls, palettes.length * sets.length);
   assert.equal(calls, firstPassCalls);
+});
+
+test('verified sample deterministically covers every feasible value and pair', () => {
+  const candidates = [];
+  for (const mode of ['dark', 'light']) for (const palette of ['palette:a', 'palette:b', 'palette:c']) {
+    for (const subtokenSet of ['set:a', 'set:b']) for (const typeSystem of ['type:a', 'type:b']) for (const family of ['family:a', 'family:b']) {
+      if (palette === 'palette:c' && subtokenSet === 'set:b') continue;
+      if (mode === 'dark' && typeSystem === 'type:b' && family === 'family:a') continue;
+      candidates.push({mode, palette, subtokenSet, typeSystem, family});
+    }
+  }
+  const coverage = rows => {
+    const values = Object.fromEntries(VERIFIED_FACTORS.map(factor => [factor, new Set()]));
+    const pairs = new Set();
+    for (const row of rows) {
+      for (let i = 0; i < VERIFIED_FACTORS.length; i++) {
+        const left = VERIFIED_FACTORS[i]; values[left].add(row[left]);
+        for (let j = i + 1; j < VERIFIED_FACTORS.length; j++) {
+          const right = VERIFIED_FACTORS[j];
+          pairs.add(JSON.stringify([left, row[left], right, row[right]]));
+        }
+      }
+    }
+    return {values: Object.fromEntries(Object.entries(values).map(([key, set]) => [key, [...set].sort()])), pairs};
+  };
+  const first = buildAllPairsCoveringSample(candidates);
+  const second = buildAllPairsCoveringSample(candidates);
+  assert.deepEqual(first, second);
+  assert.ok(first.rows.length < candidates.length);
+  assert.deepEqual(coverage(first.rows).values, coverage(candidates).values);
+  assert.deepEqual(coverage(first.rows).pairs, coverage(candidates).pairs);
+  assert.notDeepEqual(coverage(first.rows.slice(1)).pairs, coverage(candidates).pairs);
 });

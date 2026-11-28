@@ -24,9 +24,107 @@ import {fileURLToPath} from 'node:url';
 const hash = v => createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex').slice(0, 16);
 const sortObj = o => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 const MODES = ['light', 'dark'];
+export const VERIFIED_FACTORS = Object.freeze(['mode', 'palette', 'subtokenSet', 'typeSystem', 'family']);
 
 export function countAttemptedCombinations({modes, shells, widths, densities, palettes, sets, types, families}) {
   return modes * shells * widths * densities * palettes * sets * types * families;
+}
+
+/** Deterministic greedy set cover over already-allowed complete material tuples. */
+export function buildAllPairsCoveringSample(candidateRows, factors = VERIFIED_FACTORS) {
+  const valueKey = value => JSON.stringify(value);
+  const tupleKey = row => JSON.stringify(factors.map(factor => row[factor] ?? null));
+  const rows = [...new Map(candidateRows.map(row => [tupleKey(row), Object.fromEntries(factors.map(factor => [factor, row[factor] ?? null]))])).entries()]
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([, row]) => row);
+  if (!rows.length) return {rows: [], candidateCount: 0, pairCount: 0};
+
+  const pairsFor = row => {
+    const pairs = [];
+    for (let i = 0; i < factors.length; i++) for (let j = i + 1; j < factors.length; j++) {
+      pairs.push(JSON.stringify([factors[i], valueKey(row[factors[i]]), factors[j], valueKey(row[factors[j]])]));
+    }
+    return pairs;
+  };
+  const rowPairs = new Array(rows.length), rowsByPair = new Map(), pairUniverse = new Set();
+  const valueUniverse = new Map(factors.map(factor => [factor, new Set()]));
+  for (let index = 0; index < rows.length; index++) {
+    const row = rows[index], pairs = pairsFor(row);
+    rowPairs[index] = pairs;
+    for (const factor of factors) valueUniverse.get(factor).add(valueKey(row[factor]));
+    for (const pair of pairs) {
+      pairUniverse.add(pair);
+      if (!rowsByPair.has(pair)) rowsByPair.set(pair, []);
+      rowsByPair.get(pair).push(index);
+    }
+  }
+
+  const scores = rowPairs.map(pairs => pairs.length), selected = new Uint8Array(rows.length), heap = [];
+  const before = (a, b) => a.score > b.score || (a.score === b.score && a.index < b.index);
+  const push = entry => {
+    let index = heap.length; heap.push(entry);
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (before(heap[parent], entry)) break;
+      heap[index] = heap[parent]; index = parent;
+    }
+    heap[index] = entry;
+  };
+  const pop = () => {
+    const first = heap[0], last = heap.pop();
+    if (heap.length) {
+      let index = 0;
+      while (true) {
+        const left = index * 2 + 1, right = left + 1;
+        if (left >= heap.length) break;
+        let child = right < heap.length && before(heap[right], heap[left]) ? right : left;
+        if (before(last, heap[child])) break;
+        heap[index] = heap[child]; index = child;
+      }
+      heap[index] = last;
+    }
+    return first;
+  };
+  for (let index = 0; index < rows.length; index++) push({index, score: scores[index]});
+
+  const covered = new Set(), selectedIndexes = [];
+  while (covered.size < pairUniverse.size) {
+    let choice;
+    while (heap.length) {
+      const entry = pop();
+      if (!selected[entry.index] && entry.score === scores[entry.index]) { choice = entry.index; break; }
+    }
+    if (choice === undefined) throw new Error('all-pairs greedy cover could not cover every feasible pair');
+    selected[choice] = 1; selectedIndexes.push(choice);
+    for (const pair of rowPairs[choice]) {
+      if (covered.has(pair)) continue;
+      covered.add(pair);
+      for (const index of rowsByPair.get(pair)) {
+        if (selected[index]) continue;
+        scores[index]--;
+        push({index, score: scores[index]});
+      }
+    }
+  }
+
+  // Drop any row whose pairs are all covered by other selected rows. This keeps every
+  // returned row necessary, so deleting one is a meaningful coverage regression.
+  const selectedPairCounts = new Map();
+  for (const index of selectedIndexes) for (const pair of rowPairs[index]) selectedPairCounts.set(pair, (selectedPairCounts.get(pair) ?? 0) + 1);
+  const minimalIndexes = [...selectedIndexes];
+  for (let position = minimalIndexes.length - 1; position >= 0; position--) {
+    const index = minimalIndexes[position];
+    if (!rowPairs[index].every(pair => selectedPairCounts.get(pair) > 1)) continue;
+    minimalIndexes.splice(position, 1);
+    for (const pair of rowPairs[index]) selectedPairCounts.set(pair, selectedPairCounts.get(pair) - 1);
+  }
+
+  const sample = minimalIndexes.map(index => rows[index]);
+  const samplePairs = new Set(sample.flatMap(pairsFor));
+  const sampleValues = new Map(factors.map(factor => [factor, new Set(sample.map(row => valueKey(row[factor])))]));
+  if (samplePairs.size !== pairUniverse.size || [...pairUniverse].some(pair => !samplePairs.has(pair))) throw new Error('all-pairs greedy cover omitted a feasible value pair');
+  for (const factor of factors) if ([...valueUniverse.get(factor)].some(value => !sampleValues.get(factor).has(value))) throw new Error(`all-pairs greedy cover omitted a ${factor} value`);
+  return {rows: sample, candidateCount: rows.length, pairCount: pairUniverse.size};
 }
 
 /**
@@ -84,6 +182,43 @@ export const REPRESENTATIVE = Object.freeze({
 /** 패밀리 구성원을 쓰는 패턴만 패밀리 축을 곱한다(요청 컴포넌트가 있거나 랜딩의 기능 카드가 자동 승격되는 경우). */
 const patternsOf = only => Object.entries(REPRESENTATIVE).filter(([pattern]) => !only || only.includes(pattern)).map(([pattern, r]) => ({pattern, components: [], ...r, usesFamily: Boolean(r.components?.length) || r.purpose === 'saas-landing'}));
 
+/** Prepare each all-pairs plan once before pattern/shard workers repeat assemblable counting. */
+function prepareVerifiedSamplingPlans(env, only = null) {
+  const reg = env.registry, list = kind => reg.list(kind);
+  const palettes = list('palette'), sets = list('subtoken-set'), types = list('type-system'), families = list('family');
+  const colorOk = new Map(), typeOk = new Map();
+  for (const palette of palettes) for (const set of sets) for (const mode of MODES) colorOk.set(`${palette.id}|${set.id}|${mode}`, bindColor(palette, set, mode).ok);
+  for (const type of types) typeOk.set(type.id, bindType(type).ok);
+  const relationOk = createRelationEvaluator(env.graph, reg), base = 'base-component:card-surface';
+  const familiesFor = context => families.filter(family => family.contexts.includes('any') || family.contexts.includes(context));
+  const plans = {};
+  for (const {pattern, usesFamily} of patternsOf(only)) {
+    const context = layoutAxes(pattern).pageType;
+    const openTypes = types.filter(type => (type.contexts.includes('any') || type.contexts.includes(context)) && typeOk.get(type.id));
+    const fs = usesFamily ? familiesFor(context).filter(family => family.members[base]) : [];
+    const familyChoices = fs.length ? fs : [null];
+    const candidateRows = [];
+    let originalMaterialCombinations = 0;
+    for (const mode of MODES) for (const palette of palettes) for (const set of sets) {
+      if (!(set.contexts.includes('any') || set.contexts.includes(context)) || !colorOk.get(`${palette.id}|${set.id}|${mode}`)) continue;
+      for (const type of openTypes) for (const family of familyChoices) {
+        originalMaterialCombinations++;
+        const ids = [palette.id, set.id, type.id, ...(family ? [family.id, base] : [])];
+        if (relationOk(ids, {context, mode})) candidateRows.push({mode, palette: palette.id, subtokenSet: set.id, typeSystem: type.id, family: family?.id ?? null});
+      }
+    }
+    const sample = buildAllPairsCoveringSample(candidateRows);
+    plans[pattern] = {
+      originalMaterialCombinations,
+      feasibleMaterialCombinations: sample.candidateCount,
+      sampledMaterialCombinations: sample.rows.length,
+      coveredAllowedPairs: sample.pairCount,
+      rows: sample.rows,
+    };
+  }
+  return plans;
+}
+
 /** Pattern workers repeat whole-pattern relation counts; merge those once and combine verified fingerprints exactly. */
 export function mergePlatformSections(sections) {
   if (!sections.length) throw new Error('mergePlatformSections requires at least one section');
@@ -99,6 +234,18 @@ export function mergePlatformSections(sections) {
   }));
   out.verified.attempted = sections.reduce((sum, section) => sum + section.verified.attempted, 0);
   out.verified.verified = sections.reduce((sum, section) => sum + section.verified.verified, 0);
+  out.verified.sampling = {
+    strategy: 'deterministic-greedy-all-pairs',
+    factors: VERIFIED_FACTORS,
+    byPattern: Object.fromEntries(patternKeys.map(pattern => {
+      const entries = details.map(item => item.samplingByPattern?.[pattern]).filter(Boolean);
+      if (!entries.length) throw new Error(`parallel platform section is missing sampling metadata for ${pattern}`);
+      const invariant = ['originalMaterialCombinations', 'feasibleMaterialCombinations', 'sampledMaterialCombinations', 'coveredAllowedPairs'];
+      for (const key of invariant) if (entries.some(entry => entry[key] !== entries[0][key])) throw new Error(`parallel platform sampling metadata disagrees for ${pattern}.${key}`);
+      return [pattern, {...entries[0], layoutCombinations: entries.reduce((sum, entry) => sum + entry.layoutCombinations, 0)}];
+    })),
+    note: '모든 값 쌍은 색 결합과 전체 관계 평가를 통과한 material tuple에서 정의한다. 표본 전부를 실제 조립·품질 검사한다. 레이아웃 축은 기존대로 정확히 펼친다.',
+  };
   const union = key => [...new Set(details.flatMap(item => item[key]))];
   out.verified.distinctOutputs = union('outputs').length;
   out.verified.failures = Object.fromEntries([...new Set(sections.flatMap(section => Object.keys(section.verified.failures)))].sort().map(code => [code, sections.reduce((sum, section) => sum + (section.verified.failures[code] ?? 0), 0)]));
@@ -130,7 +277,8 @@ function runPlatformWorker(workerData) {
 export async function platformSectionParallel({maxWorkers = Math.min(availableParallelism() * 4, 48), shardsPerPattern = 12} = {}) {
   if (!Number.isInteger(maxWorkers) || maxWorkers < 1 || !Number.isInteger(shardsPerPattern) || shardsPerPattern < 1) throw new Error('parallel platform section requires positive integer worker and shard counts');
   const patterns = Object.keys(REPRESENTATIVE);
-  const jobs = patterns.flatMap(pattern => Array.from({length: shardsPerPattern}, (_, index) => ({pattern, verifiedShard: {index, count: shardsPerPattern}, includeMergeDetails: true})));
+  const verifiedSamplePlans = prepareVerifiedSamplingPlans(createPlatform());
+  const jobs = patterns.flatMap(pattern => Array.from({length: shardsPerPattern}, (_, index) => ({pattern, verifiedShard: {index, count: shardsPerPattern}, verifiedSamplePlan: verifiedSamplePlans[pattern], includeMergeDetails: true})));
   const results = new Array(jobs.length);
   let next = 0;
   const workerLoop = async () => {
@@ -199,7 +347,7 @@ export function assembleVerifiedPage(request, env, preparedCache = new Map()) {
 }
 
 /** env와 only(패턴 id 목록)는 시험용이다. 기준선은 기본값(등록된 전체 재료, 모든 대표 패턴)으로 잰다. */
-export function platformSection({env = createPlatform(), only = null, verifiedShard = null, includeMergeDetails = false} = {}) {
+export function platformSection({env = createPlatform(), only = null, verifiedShard = null, verifiedSamplePlanByPattern = null, includeMergeDetails = false} = {}) {
   const reg = env.registry;
   const list = k => reg.list(k);
   const palettes = list('palette'), sets = list('subtoken-set'), types = list('type-system'), families = list('family'), purposeFamilies = list('purpose-family'), contexts = list('style-context');
@@ -217,7 +365,7 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
   // ---- 실제 조립 가능 조합(렌더 없이) ----
   const base = 'base-component:card-surface';
   const familiesFor = ctx => families.filter(f => f.contexts.includes('any') || f.contexts.includes(ctx));
-  const perPattern = {}, attemptedByPattern = {}, assemblableByPattern = {};
+  const perPattern = {}, attemptedByPattern = {}, assemblableByPattern = {}, verifiedSamplingByPattern = {};
   let assemblable = 0, attempted = 0;
   const layoutRelOk = new Map();
   const relationOk = createRelationEvaluator(env.graph, reg);
@@ -238,12 +386,18 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
       modes: MODES.length, shells: L.shells.length, widths: L.widths.length, densities: L.densities.length,
       palettes: palettes.length, sets: openSets.length, types: openTypes.length, families: famChoices.length,
     });
+    const feasibleMaterialRows = verifiedSamplePlanByPattern ? null : [];
+    let originalMaterialCombinations = 0;
     for (const mode of MODES) {
       const tuples = [];
       for (const p of palettes) for (const s of sets) if ((s.contexts.includes('any') || s.contexts.includes(ctx)) && colorOk.get(`${p.id}|${s.id}|${mode}`)) for (const t of ts) for (const f of famChoices) {
+        originalMaterialCombinations++;
         // 관계 평가: 재료 사이(금지·계산 관계)는 레이아웃과 무관하다
         const ids = [p.id, s.id, t.id, ...(f ? [f.id, base] : [])];
-        if (relationOk(ids, {context: ctx, mode})) tuples.push({t, f});
+        if (relationOk(ids, {context: ctx, mode})) {
+          tuples.push({t, f});
+          feasibleMaterialRows?.push({mode, palette: p.id, subtokenSet: s.id, typeSystem: t.id, family: f?.id ?? null});
+        }
       }
       for (const shell of L.shells) for (const width of L.widths) for (const density of L.densities) {
         const a = {shell, width, density, mode};
@@ -254,6 +408,17 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
     attemptedByPattern[pattern] = tried;
     assemblableByPattern[pattern] = n;
     assemblable += n; attempted += tried;
+    const suppliedPlan = verifiedSamplePlanByPattern?.[pattern];
+    const generated = suppliedPlan ? null : buildAllPairsCoveringSample(feasibleMaterialRows);
+    const sample = suppliedPlan ?? {
+      originalMaterialCombinations,
+      feasibleMaterialCombinations: generated.candidateCount,
+      sampledMaterialCombinations: generated.rows.length,
+      coveredAllowedPairs: generated.pairCount,
+      rows: generated.rows,
+    };
+    if (sample.originalMaterialCombinations !== originalMaterialCombinations) throw new Error(`verified sample plan differs from exhaustive attempt count for ${pattern}`);
+    verifiedSamplingByPattern[pattern] = {...sample, layoutCombinations: 0};
   }
 
   // ---- 검증된 조합: 실제 조립 ----
@@ -273,24 +438,28 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
     return r;
   };
   const verifiedPerPattern = {};
+  let layoutAttemptedByPattern = {};
   const shardIndex = verifiedShard?.index ?? 0, shardCount = verifiedShard?.count ?? 1;
   for (const {pattern, purpose, content, components, usesFamily} of patternsOf(only)) {
     const L = layoutAxes(pattern), ctx = L.pageType;
-    const ts = types.filter(t => (t.contexts.includes('any') || t.contexts.includes(ctx)) && typeOk.get(t.id));
-    const fs = usesFamily ? familiesFor(ctx).filter(f => f.members[base]) : [];
     let vp = 0;
     const before = verified;
-    let materialOrdinal = 0;
-    for (const mode of MODES) for (const p of palettes) for (const s of sets) for (const t of ts) for (const f of (fs.length ? fs : [null])) {
-      if (!(s.contexts.includes('any') || s.contexts.includes(ctx)) || !colorOk.get(`${p.id}|${s.id}|${mode}`)) continue;
-      if (materialOrdinal++ % shardCount !== shardIndex) continue;
-      run({purpose, pattern, mode, palette: p.id, subtokenSet: s.id, typeSystem: t.id, ...(f ? {families: [f.id]} : {}), candidates: 1, components, content}, 'materials');
+    const sampleRows = verifiedSamplingByPattern[pattern].rows;
+    for (let index = 0; index < sampleRows.length; index++) {
+      if (index % shardCount !== shardIndex) continue;
+      const row = sampleRows[index];
+      run({purpose, pattern, mode: row.mode, palette: row.palette, subtokenSet: row.subtokenSet, typeSystem: row.typeSystem, ...(row.family ? {families: [row.family]} : {}), candidates: 1, components, content}, 'materials');
     }
     // 레이아웃 축: 1순위 재료 조합으로 셸·폭·밀도를 펼친다
     if (shardIndex === 0) {
       const top = assemblePage({purpose, pattern, components, content, candidates: 1}, env);
-      if (top.ok) for (const shell of L.shells) for (const width of L.widths) for (const density of L.densities) run({purpose, pattern, shell, width, density, ...selectionRequest(top.candidates[0].selection), candidates: 1, components, content}, 'layout');
+      if (top.ok) for (const shell of L.shells) for (const width of L.widths) for (const density of L.densities) {
+        layoutAttemptedByPattern[pattern] = (layoutAttemptedByPattern[pattern] ?? 0) + 1;
+        run({purpose, pattern, shell, width, density, ...selectionRequest(top.candidates[0].selection), candidates: 1, components, content}, 'layout');
+      }
     }
+    verifiedSamplingByPattern[pattern].layoutCombinations = layoutAttemptedByPattern[pattern] ?? 0;
+    delete verifiedSamplingByPattern[pattern].rows;
     vp = verified - before;
     verifiedPerPattern[pattern] = vp;
   }
@@ -340,7 +509,21 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
   const result = {
     contractVersion: PLATFORM_CONTRACT_VERSION, registered,
     assemblable: {attempted, assemblable, perPattern: sortObj(perPattern), note: '(패턴 × 셸 × 폭 × 밀도 × 모드) × (팔레트 × 세트 × 타이포 × 시각 패밀리) 중 관계·색·서체 평가를 통과한 수. 렌더하지 않고 계산한다'},
-    verified: {attempted: verifyAttempted, verified, distinctOutputs: outputs.size, failures: sortObj(failures), note: '실제 assemblePage로 조립해 품질 검사를 통과한 요청 수(재료 조합 × 모드 × 패턴, 그리고 레이아웃 축 펼침)'},
+    verified: {
+      attempted: verifyAttempted, verified, distinctOutputs: outputs.size, failures: sortObj(failures),
+      sampling: {
+        strategy: 'deterministic-greedy-all-pairs', factors: VERIFIED_FACTORS,
+        byPattern: Object.fromEntries(Object.entries(verifiedSamplingByPattern).map(([pattern, info]) => [pattern, {
+          originalMaterialCombinations: info.originalMaterialCombinations,
+          feasibleMaterialCombinations: info.feasibleMaterialCombinations,
+          sampledMaterialCombinations: info.sampledMaterialCombinations,
+          coveredAllowedPairs: info.coveredAllowedPairs,
+          layoutCombinations: info.layoutCombinations,
+        }])),
+        note: '허용 쌍은 색 결합과 전체 관계 평가를 통과한 material tuple에서 산출한다. 표본 전체를 실제 조립·품질 검사한다. 레이아웃 축 조립은 전수 유지한다.',
+      },
+      note: '실제 assemblePage로 결정론적 all-pairs 표본과 레이아웃 축 조합을 조립해 품질 검사한 요청 수',
+    },
     distinct: {
       colorTokenSets: {light: colorSets.light.size, dark: colorSets.dark.size}, facePairs: facePairs.size, families: families.length,
       styleMaterials: {...styleStats, distinctOutputs: styleOutputs.size},
@@ -351,7 +534,7 @@ export function platformSection({env = createPlatform(), only = null, verifiedSh
     colorGateFailures: sortObj(colorFailures),
   };
   if (includeMergeDetails) result.__mergeDetails = {
-    attemptedByPattern, assemblableByPattern,
+    attemptedByPattern, assemblableByPattern, samplingByPattern: verifiedSamplingByPattern,
     outputs: [...outputs], lightColors: [...verifiedColor.light], darkColors: [...verifiedColor.dark], faces: [...verifiedFaces], families: [...verifiedFamilies], purposes: [...verifiedPurposeFamilies], styleOutputs: [...styleOutputs],
   };
   return result;

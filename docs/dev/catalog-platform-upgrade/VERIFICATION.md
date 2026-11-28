@@ -1551,3 +1551,59 @@ $ export PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwrigh
 $ npx playwright test e2e/platform-families.spec.mjs
 18 passed (2.2m)    # 기존 14건 + 추가 4건
 ```
+
+---
+
+## 24. 검증 조립의 all-pairs 표본 및 210 팔레트 성능 (2026-11-28)
+
+### 24.1 구현과 커버 보장
+
+- `platform-baseline.mjs`는 색 결합과 전체 관계 검사를 통과한 완전한 material tuple에서 결정론적 greedy all-pairs 표본을 만든다. 표본은 모든 허용 factor 값 쌍과 각 후보 값을 포함한다. 선택한 모든 tuple은 기존 `assemblePage()`와 `quality.ok`를 그대로 실행한다.
+- `assemblable`의 렌더 없는 전수 수와 계산식은 유지한다. `attempted`는 실제 표본·레이아웃 조립 호출 수, `verified`는 그중 품질 검사 통과 수다. 레이아웃 축 조립과 스타일 재료 구간은 전수 경로다.
+- `node --test scripts/platform/platform-baseline-perf.test.mjs`에서 인위적으로 표본 첫 행을 제거하면 테스트가 실패했다(47개 허용 쌍 중 하나 누락: `palette:a × set:a`). 원본 assertion 복구 후 5/5 통과했다.
+
+### 24.2 210종 입력 측정
+
+4092da771의 B1 palette 소스는 이전 main 형식과 호환되지 않아 사용하지 않았다. 대신 main schema의 실제 palette 객체 9개에 고유 ID를 가진 결정론적 palette 201개를 추가한 임시 worktree를 사용했다(등록 210개; 임시 입력만 변경, push하지 않음). 값의 seed는 기존 palette에서 복제했으므로 이 결과는 210개 규모 성능 측정이지 B1의 색상별 호환성 검증은 아니다.
+
+| 패턴 | 전수 허용 조합 | 조립 표본 | 허용 쌍 | 전수/표본 |
+|---|---:|---:|---:|---:|
+| commerce-listing | 26,138 | 1,890 | 4,103 | 13.83× |
+| dashboard-grid | 640,360 | 2,940 | 8,244 | 217.81× |
+| docs-reference | 26,880 | 1,680 | 4,104 | 16.00× |
+| editorial-article | 45,360 | 2,520 | 5,213 | 18.00× |
+| erp-workspace | 367,542 | 2,940 | 7,067 | 125.01× |
+| marketing-landing | 477,952 | 3,780 | 7,980 | 126.44× |
+| **합계** | **1,584,232** | **15,750** | **36,711** | **100.59×** |
+
+```text
+$ time npm run coverage:materials   # 임시 210 palette worktree, 실행 1
+Materials: 1696, Requirements: 406, Missing requirements: 54
+1836.75s user, 16.05s system, 5:04.24 elapsed
+
+$ time npm run coverage:materials   # 같은 입력, 실행 2
+Materials: 1696, Requirements: 406, Missing requirements: 54
+2100.67s user, 14.73s system, 3:22.94 elapsed
+$ shasum -a 256 docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+88959891810ae5512853075ca2954b99835b80d13e0836f76b81e2009661136f  docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json
+# 두 실행 전후 SHA 파일 diff exit 0
+```
+
+### 24.3 main 일치와 범위 보존
+
+```text
+$ time npm run coverage:materials:check
+MANIFEST MATCH docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json (1495 materials, 406 requirements)
+35.055s elapsed
+
+$ node --test scripts/platform/platform-baseline-perf.test.mjs
+tests 5 / pass 5 / fail 0
+
+$ node scripts/check-generated.mjs
+REPRODUCIBLE: 4738 generated files match a fresh build byte for byte.
+
+$ git diff --exit-code origin/main -- docs/evidence/context/legacy-hashes.json site/v1/catalog.json
+exit 0
+```
+
+baseline 재생성은 `time node scripts/platform/baseline.mjs`로 99.31초에 완료됐고, platform verified는 841/841 quality 통과다. JSON 구조 비교에서 `MATERIAL-COVERAGE.json`과 `baseline.json`은 verified 파생값·설명 외에는 기준 파일과 같았다. 210종 2회 출력 SHA도 같다. DEC-016이 기록한 기존 B1 dashboard-grid 단일 패턴 659.328초는 이번 합성 입력 측정과 구분한다.
