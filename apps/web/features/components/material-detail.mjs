@@ -65,7 +65,7 @@ function detailData(row) {
   if (row.kind === 'chart-preset') {
     const material = unpack(getMaterial({id: row.type}));
     // 밀도 옵션은 차트 종류마다 받는 값이 다르다(donut 은 어느 값도 받지 않는다). Core 가 렌더하는 밀도만 축으로 연다.
-    const densities = material ? ['compact', 'comfortable', 'spacious'].filter(value => typeof renderChartPreset(row.type, {...material.examples?.[0], density: value}) === 'string') : [];
+    const densities = material ? ['compact', 'comfortable', 'spacious'].filter(value => renderChartPreset(row.type, {...material.examples?.[0], density: value}).ok) : [];
     if (material) view = baseView(row, material, {
       tabs: ['overview', ...(densities.length > 1 ? ['playground'] : []), 'tokens', 'code', 'accessibility'], axes: densities.length > 1 ? ['density'] : [], densityAllowed: densities,
       defaults: {density: material.examples?.[0]?.density ?? 'comfortable'},
@@ -114,8 +114,8 @@ function chartExport(view, selection) {
   const density = selection.density ?? view.playground.defaults.density;
   if (!['compact', 'comfortable', 'spacious'].includes(density)) return {ok: false, reason: `지원하지 않는 차트 밀도입니다: ${density}`};
   const chart = renderChartPreset(view.type, {...view.example, density});
-  if (typeof chart !== 'string') return {ok: false, reason: chart.errors?.map(item => item.message).join(' ') ?? '차트 재료를 검증하지 못했습니다.'};
-  const html = standalone({title: view.label, mode: 'light', css: `${chartCSS}\n.kit-chart{max-width:none;margin:0}`, html: chart});
+  if (!chart.ok) return {ok: false, reason: chart.errors?.map(item => item.message).join(' ') ?? '차트 재료를 검증하지 못했습니다.'};
+  const html = standalone({title: view.label, mode: 'light', css: `${chartCSS}\n.kit-chart{max-width:none;margin:0}`, html: chart.value.html});
   const blueprint = {schema: 'dsk-chart-preset/1', preset: view.type, density, data: {...view.example, density}};
   const files = {'index.html': html, 'tokens.css': `${chartCSS}\n.kit-chart{max-width:none;margin:0}\n`, 'tokens.json': pretty({tokens: view.detail.tokens}), 'blueprint.json': pretty(blueprint)};
   return {ok: true, files, previewHtml: html, mode: 'platform'};
@@ -128,7 +128,7 @@ function layoutExport(view, selection) {
   if (!assembled.ok) return {ok: false, reason: reasonOf(assembled)};
   const value = assembled.value;
   const html = standalone({title: view.label, mode, css: value.css, html: value.html});
-  const blueprint = {schema: 'dsk-layout-specimen/1', layout: view.type, density, mode, fills: assembled.fills};
+  const blueprint = {schema: 'dsk-layout-specimen/1', layout: view.type, density, mode, fills: value.fills ?? assembled.fills};
   const files = {'index.html': html, 'tokens.css': `${value.css}\n`, 'tokens.json': pretty(value.tokens), 'blueprint.json': pretty(blueprint)};
   return {ok: true, files, previewHtml: html, manifest: value.manifest, mode: 'platform'};
 }

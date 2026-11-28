@@ -21,7 +21,7 @@ export {listEditOps, applyEdit} from './edit.mjs';
 export {listPlatformMaterials, getPlatformMaterial, getTypographySpecimen, recommendMaterials, checkCompatibility, assembleLayoutSpecimen} from './platform-materials.mjs';
 export {proposeSubtokenSets, assembleComponents} from './platform-components.mjs';
 export {assembleComponentContext} from './component-context.mjs';
-export {renderChartPreset} from '../render/chart-presets.mjs';
+export {renderChartPreset} from './charts.mjs';
 export * from './foundations.mjs';
 export {CONTRACT_VERSION} from './envelope.mjs';
 // 미리보기 캐시 키(CONTRACTS §5.2)가 엔진 버전을 "플랫폼 계약/서비스 계약"으로 만들 수 있도록 읽기 전용 상수만 내보낸다.

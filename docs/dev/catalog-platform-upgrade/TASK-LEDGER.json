@@ -6390,8 +6390,8 @@
     {
       "taskId": "TASK-TRG-05",
       "title": "웹 apps/web의 Core 내부 직접 의존 해소 및 공개 서비스 경계 회귀 복구",
-      "goal": "F2b 상세와 F5 Foundations 등 웹의 Core 내부 직접 의존 28곳을 기존 공개 service·edit 경계로 옮겨 Track G 통합의 경계 회귀를 해소한다.",
-      "scope": "apps/web/lib/api/preview-recipes.mjs, apps/web/features/components/material-detail.mjs, apps/web/features/materials/materials.server.ts, apps/web/features/materials/foundations-exhibit.unit.mjs, src/service/index.mjs, src/service/foundations.mjs, src/service/platform-materials.mjs, tests/service-contract.test.mjs",
+      "goal": "F2b 상세와 F5 Foundations 등 웹의 Core 내부 직접 의존 28곳을 기존 공개 service·edit 경계로 옮겨 Track G 통합의 경계 회귀를 해소하고, 신규 서비스 함수 봉투 계약 및 공유 인벤토리 불변성(결정론)을 완벽히 보장한다.",
+      "scope": "apps/web/lib/api/preview-recipes.mjs, apps/web/features/components/material-detail.mjs, apps/web/features/materials/materials.server.ts, apps/web/features/materials/foundations-exhibit.unit.mjs, src/service/index.mjs, src/service/foundations.mjs, src/service/platform-materials.mjs, src/service/charts.mjs, tests/service-contract.test.mjs",
       "track": "Track G",
       "dependencies": [
         "TASK-TRF-08"
@@ -6404,14 +6404,16 @@
         "src/service/index.mjs",
         "src/service/platform-materials.mjs",
         "src/service/foundations.mjs",
+        "src/service/charts.mjs",
         "site/src/service/index.mjs",
         "site/src/service/platform-materials.mjs",
         "site/src/service/foundations.mjs",
+        "site/src/service/charts.mjs",
         "tests/service-contract.test.mjs",
         "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
         "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
       ],
-      "completionCriteria": "apps/web의 Core 내부 파일 상대경로 import 28곳 전수 제거, test:boundary 9/9 통과, 위반 재도입 시 boundary 실패 RED→GREEN 입증, core-boundary·channel-rest·channel-mcp·service-contract 및 F2b·F5 단위시험 통과, web typecheck/build 성공, coverage MATCH, check-generated REPRODUCIBLE 통과, 고정 해시 및 site/v1 불변, 최신 origin/main rebase 후 push",
+      "completionCriteria": "apps/web의 Core 내부 파일 상대경로 import 28곳 전수 제거, assembleLayoutSpecimen·renderChartPreset의 표준 결과 봉투 및 입력 방어 RED→GREEN 검증, foundations 인벤토리 deepFreeze 불변성 검증, test:boundary 9/9 통과, core-boundary·channel-rest·channel-mcp·service-contract 및 F2b·F5 단위시험 통과, web typecheck/build 성공, coverage MATCH, check-generated REPRODUCIBLE 통과, 고정 해시 및 site/v1 불변, 최신 origin/main rebase 후 push",
       "tests": [
         "npm --workspace apps/web run test:boundary",
         "node --test tests/core-boundary.test.mjs tests/channel-rest.test.mjs tests/channel-mcp.test.mjs tests/service-contract.test.mjs apps/web/features/components/material-detail.unit.mjs apps/web/features/components/detail-model.unit.mjs apps/web/features/components/detail-export.unit.mjs apps/web/features/materials/foundations-exhibit.unit.mjs",
@@ -6420,7 +6422,7 @@
         "npm run coverage:materials:check",
         "node scripts/check-generated.mjs"
       ],
-      "commit": "a98c4b280",
+      "commit": "909b64e73",
       "status": "Verified",
       "unresolvedIssues": "",
       "crossTrackFiles": [
@@ -6438,6 +6440,11 @@
           "file": "src/service/foundations.mjs",
           "ownerTrack": "Track A",
           "reason": "Foundations 전시 및 상세용 플랫폼·카탈로그 정의 인벤토리 묶음 신설"
+        },
+        {
+          "file": "src/service/charts.mjs",
+          "ownerTrack": "Track A",
+          "reason": "renderChartPreset를 Core 표준 결과 봉투 및 진단으로 포장하여 서비스로 제공"
         },
         {
           "file": "tests/service-contract.test.mjs",

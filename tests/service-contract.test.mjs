@@ -224,3 +224,78 @@ test('compat: the catalog counts the service reports match the catalog', () => {
   assert.equal(listCatalog({kind: 'axisBans'}).value.total, axisBans.length);
   assert.equal(listCatalog({kind: 'rules'}).value.total, rules.length);
 });
+
+test('assembleLayoutSpecimen returns standard envelope and defends against hostile or invalid inputs', () => {
+  const res = service.assembleLayoutSpecimen('layout:single-column', {density: 'comfortable', mode: 'light'});
+  envelope(res);
+  assert.equal(res.ok, true);
+  assert.ok(typeof res.value.html === 'string');
+  assert.ok(typeof res.value.css === 'string');
+  assert.ok(Array.isArray(res.value.fills));
+
+  const badId = service.assembleLayoutSpecimen('layout:non-existent');
+  envelope(badId);
+  assert.equal(badId.ok, false);
+  assert.equal(badId.errors[0].code, 'UNKNOWN_LAYOUT');
+
+  for (const input of [null, undefined, 123, '', {}, []]) {
+    const hostile = service.assembleLayoutSpecimen(input);
+    envelope(hostile);
+    assert.equal(hostile.ok, false);
+  }
+
+  const badOpts = service.assembleLayoutSpecimen('layout:single-column', {density: 'invalid-density'});
+  envelope(badOpts);
+  assert.equal(badOpts.ok, false);
+});
+
+test('renderChartPreset returns standard envelope and defends against hostile or invalid inputs', async () => {
+  const res = service.renderChartPreset('chart-preset:erp-quarterly-revenue');
+  envelope(res);
+  assert.equal(res.ok, true);
+  assert.ok(typeof res.value.html === 'string');
+  assert.match(res.value.html, /<figure class="kit-chart"/);
+
+  const badId = service.renderChartPreset('chart-preset:non-existent');
+  envelope(badId);
+  assert.equal(badId.ok, false);
+  assert.equal(badId.errors[0].code, 'UNKNOWN_CHART_PRESET');
+
+  for (const input of [null, undefined, 123, '', {}, []]) {
+    const hostile = service.renderChartPreset(input);
+    envelope(hostile);
+    assert.equal(hostile.ok, false);
+  }
+
+  const badData = service.renderChartPreset('chart-preset:erp-quarterly-revenue', {series: 'not-an-array'});
+  envelope(badData);
+  assert.equal(badData.ok, false);
+
+  const {renderChartPreset: coreRenderChartPreset} = await import('../src/render/chart-presets.mjs');
+  const raw = coreRenderChartPreset('chart-preset:erp-quarterly-revenue');
+  assert.equal(typeof raw, 'string');
+});
+
+test('exposed shared inventories are deeply frozen so public consumers cannot mutate core state or compile results', () => {
+  const bp = createBlueprint('saas-landing');
+  const initialCss = compileBlueprint(bp).value.css;
+
+  assert.throws(() => {
+    service.RADIUS.soft = 999;
+  }, /Cannot (?:assign to read only property|set property|add property)/);
+
+  assert.throws(() => {
+    service.BACKGROUNDS[0].page.background = 'MUTATED';
+  }, /Cannot (?:assign to read only property|set property|add property)/);
+
+  assert.throws(() => {
+    service.chartPresetMaterials[0].label = 'MUTATED';
+  }, /Cannot (?:assign to read only property|set property|add property)/);
+
+  assert.throws(() => {
+    service.LAYOUTS[0].bands[0].areas = 'MUTATED';
+  }, /Cannot (?:assign to read only property|set property|add property)/);
+
+  const afterCss = compileBlueprint(bp).value.css;
+  assert.equal(afterCss, initialCss, 'compilation output is strictly deterministic and unmutated');
+});

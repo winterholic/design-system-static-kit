@@ -251,10 +251,13 @@ export async function foundationExhibit(id: string) {
   } else if (id === 'layout') {
     rows = [...LAYOUTS, ...layoutPrimitives().map(primitive => ({...primitive, id: `layout-primitive:${primitive.id}`}))];
   } else if (id === 'chart') {
-    const chartKinds = chartPresetMaterials.filter((preset, index, all) => all.findIndex(candidate => candidate.ext.chartKind === preset.ext.chartKind) === index);
-    rows = chartKinds.map(preset => ({
-      id: preset.ext.chartKind, label: preset.ext.chartKind, presetId: preset.id, presetLabel: preset.label, svg: renderChartPreset(preset.id),
-    }));
+    const chartKinds = (chartPresetMaterials as any[]).filter((preset: any, index: number, all: any[]) => all.findIndex((candidate: any) => candidate.ext.chartKind === preset.ext.chartKind) === index);
+    rows = chartKinds.map((preset: any) => {
+      const res = renderChartPreset(preset.id);
+      return {
+        id: preset.ext.chartKind, label: preset.ext.chartKind, presetId: preset.id, presetLabel: preset.label, svg: res.ok ? res.value.html : '',
+      };
+    });
     chartCount = rows.length;
     chartTokens = {...colorView().scenes.light, '--kit-t-micro': '13px', '--kit-t-sub': '18px'};
     chartCss = chunks.chart;

@@ -12,7 +12,7 @@
 import {PLATFORM_KINDS} from '../platform/contract.mjs';
 import {recommend} from '../platform/recommend.mjs';
 import {platformEnv} from '../platform/compile.mjs';
-import {assembleSpecimen} from '../platform/layouts.mjs';
+import {assembleSpecimen, layoutSpecimen, assembleLayout} from '../platform/layouts.mjs';
 import {bindType} from '../platform/type.mjs';
 import {FACE_PAIRINGS, ROLE_SCALES, resolveRoleScale} from '../platform/data/type-materials.mjs';
 import {MATERIAL_TYPE_PRESETS} from '../materials/typography.mjs';
@@ -151,6 +151,33 @@ export function checkCompatibility(q) {
 
 /** 레이아웃 재료 하나의 표본 조립(apps/web 컴포넌트 상세 내보내기 등이 호출). */
 export function assembleLayoutSpecimen(layoutId, options = {}) {
-  return assembleSpecimen(platformEnv(), layoutId, options);
+  return guard(() => {
+    if (typeof layoutId !== 'string' || !layoutId) {
+      return fail([badRequest('$args.layoutId', 'layoutId는 비어 있지 않은 문자열이어야 합니다.', 'listPlatformMaterials({kind: "layout"})로 id를 조회하세요.')]);
+    }
+    if (options !== undefined && options !== null && !isPlain(options)) {
+      return fail([badRequest('$args.options', 'options는 객체여야 합니다.')]);
+    }
+    const opts = options ?? {};
+    const badKey = checkKeys(opts, ['density', 'mode', 'visual', 'context', 'width', 'stable', 'fills'], '$args.options');
+    if (badKey) return fail([badKey]);
+    if (opts.density !== undefined && !DENSITIES.includes(opts.density)) {
+      return fail([badRequest('$args.options.density', `density는 ${list(DENSITIES)} 중 하나입니다.`)]);
+    }
+    if (opts.mode !== undefined && !MODES.includes(opts.mode)) {
+      return fail([badRequest('$args.options.mode', `mode는 ${list(MODES)} 중 하나입니다.`)]);
+    }
+    const env = platformEnv();
+    const layout = env.registry.get(layoutId);
+    if (!layout || layout.kind !== 'layout') {
+      return fail([diagnostic('UNKNOWN_LAYOUT', '$args.layoutId', `등록되지 않은 레이아웃 재료: ${layoutId}`, 'listPlatformMaterials({kind: "layout"})로 id를 조회하세요.')]);
+    }
+    const fills = layoutSpecimen(env, layout, {stable: true, ...opts});
+    const assembled = assembleLayout(env, {layout: layoutId, fills, density: opts.density, mode: opts.mode, visual: opts.visual, context: opts.context, width: opts.width});
+    if (!assembled.ok) {
+      return fail(assembled.diagnostics?.length ? assembled.diagnostics.map(d => diagnostic(d.code, '$args', d.message)) : [diagnostic('LAYOUT_ASSEMBLY_FAILED', '$args', '레이아웃 조립에 실패했습니다.')]);
+    }
+    return ok(jsonClone({fills, ...assembled.value}));
+  });
 }
 

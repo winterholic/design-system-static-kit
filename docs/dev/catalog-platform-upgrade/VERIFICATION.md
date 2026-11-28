@@ -2463,6 +2463,26 @@ REPRODUCIBLE: 5380 generated files match a fresh build byte for byte.
 - 2.1.0 고정 해시, 기본 2.4.0, `site/v1/` 계약 불변: `git diff site/v1 site/examples` diff 없음.
 - Foundations 단일 범주 서버 렌더 및 차트·레이아웃 상세 81종 미리보기/Code 바이트 일치성 유지.
 
+### 40.5 신규 서비스 함수 봉투 계약 및 공유 인벤토리 불변성 보장 (결정론 강화)
+
+웹 공개 서비스 경계로 승격된 신규 함수(`assembleLayoutSpecimen`, `renderChartPreset`)가 ADR 0009 서비스 결과 봉투 표준 및 결정론을 엄격히 준수하도록 보강했다.
+
+1. **신규 서비스 함수 표준 봉투 및 적대적 입력 방어**:
+   - `assembleLayoutSpecimen`: `layoutId` 타입·존재 유무, `options`의 `isPlain` 객체 검사, `DENSITIES`·`MODES` 범위 및 알 수 없는 키(`checkKeys`) 검증을 거쳐 `guard`를 통해 표준 봉투 `{ok: true, value: {fills, html, css, tokens, manifest}, ...}` 또는 `{ok: false, errors: [...]}`를 반환하도록 포장했다.
+   - `renderChartPreset`: Core 내부 렌더러 `renderChartPreset`를 감싸는 서비스 모듈 `src/service/charts.mjs`를 신설하여 표준 봉투 `{ok: true, value: {html}, ...}` 또는 `{ok: false, errors: [...]}`를 반환하도록 이전했다. 내부 Core 렌더 함수(`src/render/chart-presets.mjs`)의 기존 호출 계약(직접 문자열 반환)은 손상 없이 보존했다.
+   - 적대적 입력(null, undefined, 원시값, 순환 참조 등)에 던지지 않고 구조화된 진단을 반환하도록 방어를 완성했다.
+2. **공유 인벤토리 깊은 동결 (deepFreeze)**:
+   - `src/service/foundations.mjs`가 공개 노출하는 모든 인벤토리(`SPACING_MATERIALS`, `SPACING_ROLES`, `SURFACE_FACETS`, `SURFACES`, `FACET_SHADOW`, `RADIUS`, `ELEVATION`, `BACKGROUNDS`, `MOTIONS`, `MOTION_PATTERNS`, `ICON_MATERIALS`, `LAYOUTS`, `chartPresetMaterials`, `chunks`, `LAYOUT_COMPONENTS`, `PATTERNS`)에 재귀적 `deepFreeze`를 적용했다.
+   - 공개 소비자가 `RADIUS.soft = 999`나 `BACKGROUNDS[0].page = ...` 등을 변조하려 해도 TypeError가 발생하며, Blueprint 컴파일 결과(`compileBlueprint`)의 결정론이 100% 보존됨을 테스트로 입증했다.
+3. **웹 호출자 봉투 연결 및 F2b 81종 상세 일치**:
+   - `apps/web/features/materials/materials.server.ts`: `renderChartPreset`의 봉투 결과(`res.ok ? res.value.html : ''`)를 소비하도록 연결.
+   - `apps/web/features/components/material-detail.mjs`: `chartExport` 및 density 지원 여부에서 `chart.ok`, `chart.value.html`을 소비하고, `layoutExport`에서 `value.fills`를 바인딩하도록 연결.
+   - F2b 상세 81종 단위 시험(`material-detail.unit.mjs` 6/6), Foundations 단위 시험(`foundations-exhibit.unit.mjs` 5/5), 상세 모델/내보내기 시험(`detail-model.unit.mjs`, `detail-export.unit.mjs` 6/6) 전수 통과 확인.
+4. **RED → GREEN 재현 증거**:
+   - 수정 전: `tests/service-contract.test.mjs`의 `assembleLayoutSpecimen`, `renderChartPreset`의 봉투 단언(`envelope()`) 미충족으로 실패(`ERR_ASSERTION: undefined != '2.4.0'`), 공유 인벤토리 `assert.throws` 미발생으로 실패 (3 failed).
+   - 수정 후: 20/20 전수 통과 (GREEN).
+   - Core/채널/경계/웹 단위 64/64 통과, 웹 typecheck 통과, `check-generated.mjs` 5,381개 파일 바이트 일치 통과.
+
 ## 41. F5 Foundations 배경 미리보기 Core 장식 스타일(크기·테두리) 정밀 일치 및 회귀 방지 (TASK-TRF-09)
 
 F5 Foundations 배경 미리보기에서 Core 출력과 어긋나던 두 가지 속성(`brand-tint-dots`의 24px 24px 장식 크기 및 `frosted-pane`의 Core 1px solid 테두리)을 수정하고, 기존 11종 배경의 고유 속성 및 mask·opacity·blur를 완벽히 유지하도록 개선했다. 단위 및 E2E 명세에 회귀 방지 단언을 추가하여 무결성을 보장했다.
