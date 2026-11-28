@@ -1910,7 +1910,7 @@
       ],
       "commit": "5fad98940",
       "status": "Completed",
-      "unresolvedIssues": "원 구현 7c1bd947c에서 N 전용 Blueprint 시험 7종·단독 렌더 4종뿐인데 Verified로 승격됐던 기록을 철회했다. 재검증은 11/11 exact material query, legacy Blueprint 경로, assembleComponents render/export, 변경 입력, 잘못된 입력 거부 및 Core/REST/MCP 출력·진단 일치를 확인했고 Manifest 11행을 모두 live probe 근거로 재생성했다. N 집중 테스트 34/34, coverage:materials:check, audit, docs, build, check-generated는 통과했다. 전체 npm run verify는 N과 무관한 upstream tests/platform-layout-resizable.test.mjs 및 tests/platform-type-fonts.test.mjs 브라우저 테스트가 Codex sandbox Chromium bootstrap_check_in MachPortRendezvousServer 권한 거부(1100)/SIGTRAP으로 실패해 exit 1이며, 전체 테스트 983개 중 981개 통과했다. 로컬 브라우저는 사용하지 않았고 MCP 브라우저에서 N 390/1280px 상호작용을 확인했다. Studio 선택 및 assembleDesign 전체 페이지 연결은 Track F/G의 후속 범위다.",
+      "unresolvedIssues": "원 구현 7c1bd947c에서 N 전용 Blueprint 시험 7종·단독 렌더 4종뿐인데 Verified로 승격됐던 기록을 철회했다. 최신 origin/main 3421079e0까지 병합한 뒤 11/11 exact material query, legacy Blueprint 경로, assembleComponents render/export, 입력 변화, 잘못된 입력 거부 및 Core/REST/MCP 출력·진단 일치를 확인하고 Manifest 11행을 live probe 근거로 재생성했다. 최신 Manifest 1,460 materials/406 requirements에서 N 11행 모두 verified; coverage:materials:check 일치. N 집중 테스트 34/34, audit, docs, build, check-generated 통과했다. 최신 merge 기준 전체 npm run verify는 985개 중 983개 통과, N과 무관한 upstream tests/platform-layout-resizable.test.mjs 및 tests/platform-type-fonts.test.mjs 브라우저 테스트 2건이 Codex sandbox Chromium bootstrap_check_in MachPortRendezvousServer 권한 거부(1100)/SIGTRAP으로 실패해 exit 1이다. 로컬 브라우저는 사용하지 않았고 MCP 브라우저에서 N 390/1280px 상호작용을 확인했다. Studio 선택 및 assembleDesign 전체 페이지 연결은 Track F/G의 후속 범위다.",
       "createFiles": [
         "src/platform/families/commerce.mjs",
         "tests/platform-commerce-blueprint.test.mjs",
