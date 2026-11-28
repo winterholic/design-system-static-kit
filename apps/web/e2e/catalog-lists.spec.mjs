@@ -11,6 +11,27 @@ const LISTS = [
 
 const counters = async request => (await (await request.get('/api/dev/perf-counters')).json());
 
+// 같은 배포의 공개 서비스 API에서 목록 전체의 기대 ID 집합을 만든다. 화면의 data-total 값만 믿으면
+// 페이지와 총수가 함께 누락된 회귀를 통과시킬 수 있다.
+async function publicComponentHrefs(request) {
+  const [partsResponse, purposesResponse] = await Promise.all([
+    request.get('/api/v1/catalog?kind=components&catalogVersion=2.6.0&limit=200&fields=type,label,group'),
+    request.get('/api/v1/platform/materials?kind=purpose-family&limit=200&fields=id,group'),
+  ]);
+  expect(partsResponse.ok()).toBe(true);
+  expect(purposesResponse.ok()).toBe(true);
+  const [parts, purposes] = await Promise.all([partsResponse.json(), purposesResponse.json()]);
+  expect(parts.ok).toBe(true);
+  expect(purposes.ok).toBe(true);
+  return [
+    ...parts.value.items.filter(item => item.type !== 'page').map(item => `/components/${item.type}`),
+    ...purposes.value.items.map(item => {
+      const [group, name] = item.id.slice('purpose:'.length).split('.');
+      return `/components/purpose/${group}/${name}`;
+    }),
+  ];
+}
+
 async function sweep(page) {
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   const positions = [];
@@ -108,6 +129,54 @@ test('Components 쪽 이동: 모든 쪽이 24개 이하이고 쪽을 모두 모�
   }
   expect(seen.length).toBe(total);
   expect(new Set(seen).size, '같은 카드가 두 쪽에 나왔다').toBe(total);
+});
+
+test('Components 모든 쪽의 ID 집합은 공개 서비스 전체와 같고 누락·중복이 없으며 주소 복원이 유지된다', async ({page, request}) => {
+  const expected = await publicComponentHrefs(request);
+  expect(new Set(expected).size, '공개 서비스 자체에 중복 ID가 있다').toBe(expected.length);
+  const seen = [];
+  await request.post('/api/dev/perf-counters');
+  await page.goto('/components');
+  for (let n = 1; n <= Math.ceil(expected.length / 24); n++) {
+    if (n > 1) {
+      const next = page.getByRole('navigation', {name: '쪽 이동'}).getByRole('link', {name: '다음'});
+      await next.click();
+      await expect(page).toHaveURL(new RegExp(`[?&]page=${n}(?:&|$)`));
+    }
+    const hrefs = await page.locator('[data-testid="components-list"] li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
+    expect(hrefs.length, `쪽 ${n} 카드 수`).toBeLessThanOrEqual(24);
+    expect(await page.locator('[data-testid="components-list"] li').count(), `쪽 ${n} 전체 카드 노드 수`).toBeLessThanOrEqual(24);
+    expect(await page.locator('iframe').count(), `쪽 ${n} 목록 iframe`).toBe(0);
+    expect(await page.locator('[data-testid="components-list"] [hidden] li, [data-testid="components-list"] [role="tabpanel"][hidden]').count(), `쪽 ${n} 숨겨진 카드`).toBe(0);
+    seen.push(...hrefs);
+  }
+  expect(seen.length).toBe(expected.length);
+  expect(new Set(seen).size, '쪽 사이에 중복 카드가 있다').toBe(expected.length);
+  expect([...seen].sort(), '쪽 순회 결과와 공개 서비스 ID 집합이 다르다').toEqual([...expected].sort());
+
+  // 공유한 쪽 주소를 새로 열어도 같은 페이지의 ID 순서를 복원한다.
+  await page.goto('/components?page=2');
+  const restored = await page.locator('[data-testid="components-list"] li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
+  expect(restored).toEqual(seen.slice(24, 48));
+
+  const countersAfterPages = await counters(request);
+  expect(countersAfterPages.counters, '쪽 이동 중 동적 컴파일').toMatchObject({compileBlueprint: 0, assembleDesign: 0, assembleComponents: 0, total: 0});
+  expect(await page.locator('iframe').count()).toBe(0);
+  expect(await page.locator('[hidden] li, [role="tabpanel"][hidden]').count()).toBe(0);
+
+  const nextPagePart = seen.slice(24).find(href => href === '/components/hero');
+  expect(nextPagePart, '다음 쪽에서 검색할 hero 상세 경로가 공개 서비스 집합에 있어야 한다').toBe('/components/hero');
+  await page.getByRole('searchbox', {name: '검색'}).fill('hero');
+  await page.getByRole('button', {name: '찾기'}).click();
+  await expect(page).toHaveURL(/[?&]q=hero/);
+  await expect(page.locator('a[href="/components/hero"]')).toBeVisible();
+  await page.goto('/components/hero');
+  await expect(page.getByRole('heading', {level: 1})).toContainText('Hero');
+
+  const purposeHref = expected.find(href => href.startsWith('/components/purpose/'));
+  expect(purposeHref).toBeTruthy();
+  await page.goto(purposeHref);
+  await expect(page.getByRole('heading', {level: 1})).toBeVisible();
 });
 
 test('Components 검색은 첫 쪽에 없는 카드도 찾고, 분류 필터와 쪽 번호가 URL 에 남는다', async ({page}) => {

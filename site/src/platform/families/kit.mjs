@@ -17,7 +17,7 @@ import {varsOf} from '../../materials/control-kit.mjs';
 import {VISUAL_KEYS, VISUAL_LANGUAGES, visualMismatch, FAMILY_SCOPE_CSS} from './visual.mjs';
 
 export const e = escapeHTML;
-export const PURPOSE_GROUPS = Object.freeze(['card', 'button', 'navigation', 'form', 'table', 'feedback']);
+export const PURPOSE_GROUPS = Object.freeze(['card', 'button', 'navigation', 'form', 'table', 'feedback', 'info', 'media']);
 export const PURPOSE_ID = /^purpose:([a-z]+)\.([a-z][a-z0-9-]*)$/;
 
 /** 필수 필드와 모양. 이 목록이 "패밀리가 반드시 갖는 정보"다(ADR 0012 §4의 확장). */

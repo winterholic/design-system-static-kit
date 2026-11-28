@@ -16,7 +16,7 @@
       "total": 337
     },
     "registries": {
-      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:37 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8 layout:24",
+      "platform": "style-context:54 palette:436 subtoken-set:25 type-system:41 base-component:10 family:12 purpose-family:53 axis-value:79 surface:5 motion:4 background:5 media:6 state-pattern:8 layout:24",
       "design": "axis:15 chart-preset:44 color-token:257 component:65 icon:87 layout-primitive:6 page-type:16 palette:436 pattern:11 profile:7 recipe:3 template:85 theme:54 type-preset:18 type-role-preset:4"
     },
     "liveProbes": "service.assembleDesign / assembleComponents / compileBlueprint / getMaterial / getPlatformMaterial 와 src/edit 연산을 재료마다 실제로 호출한 결과",
@@ -28,7 +28,7 @@
           "apps/web/features/components/spec.server.ts"
         ],
         "proven": true,
-        "materials": 101
+        "materials": 117
       },
       "web:/components/[componentId]": {
         "role": "detail",
@@ -44,7 +44,7 @@
           "apps/web/app/components/purpose/[group]/[name]/page.tsx"
         ],
         "proven": true,
-        "materials": 37
+        "materials": 53
       },
       "web:/materials/palettes": {
         "role": "catalog",
@@ -189,7 +189,7 @@
           "apps/web/features/platform/assemble-state.ts"
         ],
         "proven": true,
-        "materials": 9
+        "materials": 21
       }
     },
     "channelProof": {
@@ -214,30 +214,30 @@
   "summary": {
     "requirements": {
       "total": 337,
-      "fulfilled": 235,
-      "missing": 102,
-      "coverageRate": 0.6973,
+      "fulfilled": 256,
+      "missing": 81,
+      "coverageRate": 0.7596,
       "byCoverage": {
-        "direct": 197,
+        "direct": 218,
         "variant": 29,
         "schema": 7,
         "part-of": 2,
-        "missing": 102
+        "missing": 81
       },
       "statusDistribution": {
-        "missing": 102,
+        "missing": 81,
         "metadata-only": 0,
         "defined": 7,
-        "renderable": 53,
-        "catalog-visible": 26,
+        "renderable": 56,
+        "catalog-visible": 31,
         "assemblable": 1,
-        "verified": 148
+        "verified": 161
       },
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 84,
-          "direct": 85,
+          "missing": 63,
+          "direct": 106,
           "variant": 29,
           "schema": 7,
           "partOf": 2
@@ -303,18 +303,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1418,
+      "totalRecords": 1434,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 427,
         "defined": 26,
         "renderable": 124,
-        "catalog-visible": 382,
+        "catalog-visible": 386,
         "assemblable": 4,
-        "verified": 455
+        "verified": 467
       },
       "registeredByRegistry": {
-        "platform": 319,
+        "platform": 335,
         "design": 1099
       }
     },
@@ -490,13 +490,13 @@
         }
       },
       "purpose-family": {
-        "registered": 37,
-        "actualMaterial": 37,
-        "assemblableVerified": 8,
-        "distinctOutputs": 37,
+        "registered": 53,
+        "actualMaterial": 53,
+        "assemblableVerified": 20,
+        "distinctOutputs": 53,
         "byStatus": {
-          "catalog-visible": 29,
-          "verified": 8
+          "catalog-visible": 33,
+          "verified": 20
         }
       },
       "recipe": {
@@ -671,8 +671,8 @@
       {
         "material": "목적별 컴포넌트",
         "previousBaseline": 32,
-        "currentMeasured": 37,
-        "delta": 5,
+        "currentMeasured": 53,
+        "delta": 21,
         "status": "drift",
         "measuredBy": "live registry count"
       },
@@ -2086,9 +2086,11 @@
       "id": "req:comp:j-02-status-badge",
       "section": "§6.2 J",
       "name": "Status Badge",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:info.status-badge"
+      ]
     },
     {
       "id": "req:comp:j-03-chip",
@@ -2132,33 +2134,41 @@
       "id": "req:comp:j-06-avatar",
       "section": "§6.2 J",
       "name": "Avatar",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:info.avatar"
+      ]
     },
     {
       "id": "req:comp:j-07-avatar-group",
       "section": "§6.2 J",
       "name": "Avatar Group",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:info.avatar-group"
+      ]
     },
     {
       "id": "req:comp:j-08-accordion",
       "section": "§6.2 J",
       "name": "Accordion",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:info.accordion"
+      ]
     },
     {
       "id": "req:comp:j-09-collapsible",
       "section": "§6.2 J",
       "name": "Collapsible",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:info.collapsible"
+      ]
     },
     {
       "id": "req:comp:j-10-divider",
@@ -2174,41 +2184,51 @@
       "id": "req:comp:j-11-counter",
       "section": "§6.2 J",
       "name": "Counter",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:info.counter"
+      ]
     },
     {
       "id": "req:comp:j-12-notification-indicator",
       "section": "§6.2 J",
       "name": "Notification Indicator",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "purpose:info.notification-indicator"
+      ]
     },
     {
       "id": "req:comp:j-13-keyboard-shortcut",
       "section": "§6.2 J",
       "name": "Keyboard Shortcut",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:info.keyboard-shortcut"
+      ]
     },
     {
       "id": "req:comp:j-14-metadata-row",
       "section": "§6.2 J",
       "name": "Metadata Row",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:info.metadata-row"
+      ]
     },
     {
       "id": "req:comp:j-15-stat-comparison",
       "section": "§6.2 J",
       "name": "Stat Comparison",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:info.stat-comparison"
+      ]
     },
     {
       "id": "req:comp:k-01-image",
@@ -2228,9 +2248,11 @@
       "id": "req:comp:k-02-responsive-image",
       "section": "§6.2 K",
       "name": "Responsive Image",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:media.responsive-image"
+      ]
     },
     {
       "id": "req:comp:k-03-media-frame",
@@ -2261,9 +2283,11 @@
       "id": "req:comp:k-05-carousel",
       "section": "§6.2 K",
       "name": "Carousel",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:media.carousel"
+      ]
     },
     {
       "id": "req:comp:k-06-video-frame",
@@ -2283,33 +2307,41 @@
       "id": "req:comp:k-07-audio-player-ui",
       "section": "§6.2 K",
       "name": "Audio Player UI",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:media.audio-player"
+      ]
     },
     {
       "id": "req:comp:k-08-file-preview",
       "section": "§6.2 K",
       "name": "File Preview",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:media.file-preview"
+      ]
     },
     {
       "id": "req:comp:k-09-image-comparison",
       "section": "§6.2 K",
       "name": "Image Comparison",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:media.image-comparison"
+      ]
     },
     {
       "id": "req:comp:k-10-figure-and-caption",
       "section": "§6.2 K",
       "name": "Figure and Caption",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "purpose:media.figure-caption"
+      ]
     },
     {
       "id": "req:comp:k-11-quote",
@@ -2365,9 +2397,12 @@
       "id": "req:comp:l-04-responsive-grid",
       "section": "§6.2 L",
       "name": "Responsive Grid",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "catalog-visible",
+      "materialIds": [
+        "layout:equal-grid",
+        "layout-primitive:flow"
+      ]
     },
     {
       "id": "req:comp:l-05-split",
@@ -2415,9 +2450,11 @@
       "id": "req:comp:l-09-center",
       "section": "§6.2 L",
       "name": "Center",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "layout:centered-hero"
+      ]
     },
     {
       "id": "req:comp:l-10-sidebar-layout",
@@ -2443,25 +2480,32 @@
       "id": "req:comp:l-12-sticky-region",
       "section": "§6.2 L",
       "name": "Sticky Region",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "layout:sticky-action-layout"
+      ]
     },
     {
       "id": "req:comp:l-13-scroll-area",
       "section": "§6.2 L",
       "name": "Scroll Area",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "layout:master-detail"
+      ]
     },
     {
       "id": "req:comp:l-14-resizable-panel",
       "section": "§6.2 L",
       "name": "Resizable Panel",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "verified",
+      "materialIds": [
+        "component:split",
+        "layout:two-column"
+      ]
     },
     {
       "id": "req:comp:m-01-filter-toolbar",
@@ -35259,7 +35303,8 @@
       "registry": "design",
       "category": "layout-navigation",
       "requirementIds": [
-        "req:comp:l-05-split"
+        "req:comp:l-05-split",
+        "req:comp:l-14-resizable-panel"
       ],
       "status": "verified",
       "blockedBy": null,
@@ -43189,7 +43234,9 @@
       "kind": "layout-primitive",
       "registry": "design",
       "category": "layout-navigation",
-      "requirementIds": [],
+      "requirementIds": [
+        "req:comp:l-04-responsive-grid"
+      ],
       "status": "catalog-visible",
       "blockedBy": "no-studio-choice",
       "supportedVersions": {
@@ -43522,6 +43569,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-09-center",
         "req:layout:15-centered-hero"
       ],
       "status": "renderable",
@@ -43936,6 +43984,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-04-responsive-grid",
         "req:layout:04-equal-grid"
       ],
       "status": "renderable",
@@ -44215,6 +44264,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-13-scroll-area",
         "req:layout:10-master-detail"
       ],
       "status": "renderable",
@@ -44845,6 +44895,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-12-sticky-region",
         "req:layout:22-sticky-action-layout"
       ],
       "status": "renderable",
@@ -44979,6 +45030,7 @@
       "registry": "platform",
       "category": null,
       "requirementIds": [
+        "req:comp:l-14-resizable-panel",
         "req:layout:02-two-column"
       ],
       "status": "renderable",
@@ -81357,6 +81409,1295 @@
           "qualityOk": true
         },
         "outputHash": "2ab1baf41b759572",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.accordion",
+      "name": "아코디언",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-08-accordion"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderAccordion",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "stack",
+            "separated"
+          ]
+        },
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderAccordion",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "8138f1733c37cb43",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.avatar",
+      "name": "아바타",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-06-avatar"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderAvatar",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "shape": [
+            "circle",
+            "square"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderAvatar",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "dd8c6afad836a642",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.avatar-group",
+      "name": "아바타 그룹",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-07-avatar-group"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderAvatarGroup",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "spacing": [
+            "tight",
+            "normal"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderAvatarGroup",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "9635e7866cdee6e5",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.collapsible",
+      "name": "접기/펼치기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-09-collapsible"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderCollapsible",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "card"
+          ]
+        },
+        "states": [
+          "default",
+          "open",
+          "closed",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderCollapsible",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "7b98e5954b081c7d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.counter",
+      "name": "카운터",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-11-counter"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderCounter",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "variant": [
+            "pill",
+            "circle"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderCounter",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "caf42906fb765766",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.keyboard-shortcut",
+      "name": "키보드 단축키",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-13-keyboard-shortcut"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderKeyboardShortcut",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "style": [
+            "outline",
+            "solid"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderKeyboardShortcut",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "a1c7a05cd5d9d0ac",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.metadata-row",
+      "name": "메타데이터 행",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-14-metadata-row"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderMetadataRow",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "inline",
+            "stacked"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderMetadataRow",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "2f18d5c8a4a93654",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.notification-indicator",
+      "name": "알림 표시기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-12-notification-indicator"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderNotificationIndicator",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "style": [
+            "dot",
+            "pulse"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderNotificationIndicator",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6c18263d62e57514",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.stat-comparison",
+      "name": "수치 비교",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-15-stat-comparison"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderStatComparison",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderStatComparison",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "9af2417342eb637a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:info.status-badge",
+      "name": "상태 배지",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "info",
+      "requirementIds": [
+        "req:comp:j-02-status-badge"
+      ],
+      "status": "catalog-visible",
+      "blockedBy": "no-studio-choice",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderStatusBadge",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "tone": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        },
+        "states": [
+          "default",
+          "hover"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:feedback-message",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderStatusBadge",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "0b77394e8bf8bb76",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:media.audio-player",
+      "name": "오디오 플레이어",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "media",
+      "requirementIds": [
+        "req:comp:k-07-audio-player-ui"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderAudioPlayer",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "compact",
+            "full"
+          ]
+        },
+        "states": [
+          "default",
+          "playing",
+          "paused",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderAudioPlayer",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "6c16c3923d7f862a",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:media.carousel",
+      "name": "캐러셀",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "media",
+      "requirementIds": [
+        "req:comp:k-05-carousel"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderCarousel",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "single",
+            "cards"
+          ]
+        },
+        "states": [
+          "default",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        },
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:button-control",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderCarousel",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "27c81e2f184ffd81",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:media.figure-caption",
+      "name": "그림과 캡션",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "media",
+      "requirementIds": [
+        "req:comp:k-10-figure-and-caption"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderFigureCaption",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "placement": [
+            "bottom",
+            "top"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderFigureCaption",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "c5e36cac3c32b10b",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:media.file-preview",
+      "name": "파일 미리보기",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "media",
+      "requirementIds": [
+        "req:comp:k-08-file-preview"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderFilePreview",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "layout": [
+            "card",
+            "row"
+          ]
+        },
+        "states": [
+          "default",
+          "hover",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderFilePreview",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "8a9d59c580f76ac8",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:media.image-comparison",
+      "name": "이미지 비교",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "media",
+      "requirementIds": [
+        "req:comp:k-09-image-comparison"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderImageComparison",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "orientation": [
+            "horizontal"
+          ]
+        },
+        "states": [
+          "default",
+          "focus"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderImageComparison",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "d17afd03a3ba1c80",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "purpose:media.responsive-image",
+      "name": "반응형 이미지",
+      "kind": "purpose-family",
+      "registry": "platform",
+      "category": "media",
+      "requirementIds": [
+        "req:comp:k-02-responsive-image"
+      ],
+      "status": "verified",
+      "blockedBy": null,
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": null,
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/info-media.mjs#renderResponsiveImage",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {
+          "aspectRatio": [
+            "16:9",
+            "4:3",
+            "1:1",
+            "21:9"
+          ]
+        },
+        "states": [
+          "default"
+        ]
+      },
+      "catalogVisible": true,
+      "catalogSurfaces": [
+        "web:/components",
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "detailPageExists": true,
+      "detailSurfaces": [
+        "web:/components/purpose/[group]/[name]"
+      ],
+      "studioAssemblable": true,
+      "studioSurfaces": [
+        "web:/studio/assemble#component-handoff"
+      ],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "implemented",
+        "evidenceRefs": [],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": [
+        {
+          "relationType": "reuses",
+          "targetId": "base-component:card-surface",
+          "source": "record.reuses"
+        }
+      ],
+      "evidence": {
+        "definition": null,
+        "renderer": "src/platform/families/info-media.mjs#renderResponsiveImage",
+        "probe": {
+          "method": "assembleComponents",
+          "ran": true,
+          "ok": true,
+          "visual": "family:quiet",
+          "qualityOk": true
+        },
+        "outputHash": "8d8232232a29eebb",
         "duplicateOutputOf": []
       }
     },

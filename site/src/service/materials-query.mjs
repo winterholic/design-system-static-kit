@@ -10,6 +10,8 @@
  */
 import {catalogRegistry, MATERIAL_TYPE_PRESETS, MULTILINGUAL_TYPE_CORPUS, CONTROL_SIZES, renderMaterialTypeCSS} from '../materials/index.mjs';
 import {STATIC_COLOR_PALETTE, resolveColorTokens, colorTokenUsage} from '../color-tokens.mjs';
+import {webfontCSS} from '../platform/type.mjs';
+import {WEBFONTS, LEGACY_FACE_OF} from '../platform/data/type-materials.mjs';
 import {ok, fail, guard, checkKeys, badRequest, isPlain, jsonClone} from './envelope.mjs';
 
 export const MATERIAL_VIEWS = Object.freeze(['color', 'typography', 'foundations']);
@@ -37,6 +39,13 @@ const VIEWS = {
       corpus: MULTILINGUAL_TYPE_CORPUS,
       controlSizes: Object.keys(CONTROL_SIZES),
       css: Object.fromEntries(Object.keys(MATERIAL_TYPE_PRESETS).map(id => [id, renderMaterialTypeCSS(id)])),
+      webfonts: WEBFONTS,
+      webfontCss: Object.fromEntries(
+        Object.keys(MATERIAL_TYPE_PRESETS).map(id => {
+          const face = LEGACY_FACE_OF[MATERIAL_TYPE_PRESETS[id]?.engine] ?? 'face-pairing:sans';
+          return [id, webfontCSS(face, {baseUrl: '/fonts'})];
+        })
+      ),
     };
   },
   foundations() {

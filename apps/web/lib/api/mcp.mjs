@@ -111,8 +111,8 @@ export const TOOLS = [
   },
   {
     name: 'assemble_components', title: '목적 패밀리 조립·독립 시연', run: 'assembleComponents',
-    description: '등록 목적 패밀리와 시각 패밀리, 선택된 A 계열 액션 컴포넌트, N 계열 커머스 컴포넌트를 Core 조립기로 렌더해 html·css·script·manifest·standalone을 돌려준다. seeds는 요청 안에서만 쓴다.',
-    input: loose({context: z.string().optional(), mode: z.string().optional(), density: z.string().optional(), styleContext: z.string().optional(), palette: z.string().optional(), subtokenSet: z.string().optional(), typeSystem: z.string().optional(), seeds: z.array(z.unknown()).optional(), items: z.array(anyObject).optional(), actions: z.array(anyObject).max(12).optional(), commerce: z.array(anyObject).max(11).optional(), catalogVersion}),
+    description: '등록 목적 패밀리와 시각 패밀리, 선택된 A 계열 액션 컴포넌트, L 계열 레이아웃 컴포넌트, N 계열 커머스 컴포넌트를 Core 조립기로 렌더해 html·css·script·manifest·standalone을 돌려준다. seeds는 요청 안에서만 쓴다.',
+    input: loose({context: z.string().optional(), mode: z.string().optional(), density: z.string().optional(), styleContext: z.string().optional(), palette: z.string().optional(), subtokenSet: z.string().optional(), typeSystem: z.string().optional(), seeds: z.array(z.unknown()).optional(), items: z.array(anyObject).optional(), actions: z.array(anyObject).max(12).optional(), layouts: z.array(anyObject).max(12).optional(), commerce: z.array(anyObject).max(11).optional(), catalogVersion}),
     output: envelopeOf(anyObject), cost: COST.assemble,
   },
   {

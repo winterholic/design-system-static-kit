@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "description": "Static Kit 최적화 전 성능 기준선 (Phase 0/1 Baseline)",
+  "description": "Components 목록·Studio 기본 빌드 A3 재측정 기록",
   "targets": {
     "lcp": "<= 2500ms",
     "inp": "<= 200ms",
@@ -1378,5 +1378,60 @@
         "counters": true
       }
     }
+  },
+  "measurementProvenance": {
+    "verificationAt": "2026-11-28T06:52:47Z",
+    "verificationBranch": "upgrade/a3-verify",
+    "verificationRevision": "e4c4baad4469d4230f463683ff94fb406cece4a",
+    "comparisonBaseline": {
+      "file": "PERFORMANCE-A1.json",
+      "measuredAt": "2026-11-28T04:02:13.358Z",
+      "sourceRevision": null,
+      "sourceRevisionStatus": "미기록. 측정 시각이 현재 A1 branch tip 29ac798d6(04:31:17Z)보다 앞서 있어 그 SHA로 귀속하지 않음."
+    },
+    "recordedMeasurementSourceRevision": null,
+    "recordedMeasurementRevisionStatus": "미기록. 이 성능 파일의 측정 시각이 7f9c24fca 커밋(05:34:08Z) 전이므로 해당 SHA에서 측정했다고 소급 귀속하지 않음.",
+    "reproduceStatus": "브라우저 실측 미재현. 현재 Codex nested worker sandbox에서 npx playwright test e2e/catalog-lists.spec.mjs --reporter=line 실행 시 Chromium bootstrap_check_in 권한 오류(KERN_SUCCESS / Permission denied 1100, SIGTRAP). 대체 브라우저 실행은 시도하지 않음.",
+    "vercelStatus": "미측정. 운영 Vercel 실측은 H 단계 소유.",
+    "httpRevalidation": {
+      "method": "next production server + HTTP/API; browser performance metrics not inferred",
+      "listPath": "/components",
+      "publicComponents": {
+        "purposeFamilyCount": 37,
+        "componentCatalogCount": 65,
+        "excludedPageNode": 1,
+        "expectedCardIds": 101
+      },
+      "pagination": {
+        "pageSize": 24,
+        "pageCounts": [
+          24,
+          24,
+          24,
+          24,
+          5
+        ],
+        "publicIdSetExact": true,
+        "duplicates": 0,
+        "missing": 0,
+        "hiddenCards": 0,
+        "iframes": 0
+      },
+      "queryBehavior": {
+        "search": "q=hero → /components/hero",
+        "detailStatus": 200,
+        "group": "purpose:card → 8 public cards",
+        "pageRestore": "page=2 restores expected ID sequence"
+      },
+      "compileCountersAfterListQueries": {
+        "compileBlueprint": 0,
+        "assembleDesign": 0,
+        "assembleComponents": 0,
+        "total": 0
+      },
+      "verifiedAt": "2026-11-28T06:51:50Z",
+      "verificationRevision": "e4c4baad4469d4230f463683ff94fb406cece4a"
+    },
+    "verifiedAgainstOriginMain": "382b667bea37bd23901ecefb8a96f3484d2e0531"
   }
 }

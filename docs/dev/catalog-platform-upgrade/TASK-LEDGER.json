@@ -5,9 +5,10 @@
     "totalTasks": 44,
     "byStatus": {
       "Verified": 10,
-      "Implemented": 4,
-      "Pending": 29,
-      "In Progress": 1
+      "Implemented": 7,
+      "Pending": 26,
+      "In Progress": 1,
+      "Blocked": 0
     },
     "byTrack": {
       "Track G": 6,
@@ -110,7 +111,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "독립 검증(VERIFICATION.md §11)에서 iframe 0개·컴파일 0회·스크롤 왕복 재요청 0회는 충족했다. A3(DEC-013): Components 목록을 쪽(24개)·검색·분류로 나눠 DOM 카드를 24개 이하로 줄였고(92→24, DOM 노드 757→247 / 760→250) catalog-lists.spec.mjs 의 test.fail 을 일반 시험으로 바꿨다. 기존 시험 중 한 화면 전체를 전제한 단언(explore-components-home 2건, w6b 시나리오 B 앞부분)은 검색·쪽 이동으로 같은 항목을 확인하도록 고쳤다. 남은 한계: ① DOM 노드는 Explore 에서 기준선(504→538)보다 늘어 \"DOM 요소 수 대폭 감소\"는 Components 에서만 달성 ② Components 가 동적 라우트가 되어 LCP 가 140→172ms(390)로 늘었고 Vercel 서버 첫 바이트는 측정하지 못했다(PERF-BOTTLENECKS §6.2). 원 구현의 SVG 는 126개 중 109개가 <img> 로 열리지 않았고 부품 미리보기가 0개였다(A1 에서 수정함). 상태는 GPT 독립 검증 전이라 Implemented 로 둔다.",
+      "unresolvedIssues": "A3 독립 HTTP 재검증(검증 HEAD e4c4baad, origin/main 382b667be): 최신 공개 API의 101개 카드 ID가 페이지별 24/24/24/24/5와 정확히 일치하고 누락·중복이 없으며 목록 iframe·숨김 카드·서버 컴파일은 0이다. ttakkari_browser에서 101개/1–24, page=2에서 25–48을 확인했고 q=hero는 해당 상세 경로를 보여줬다. purpose:card, page=2 복원 및 두 상세 경로도 HTTP 200이다. Implemented 유지: A1의 Explore DOM 노드 504→538은 “DOM 요소 수 대폭 감소”를 충족하지 않고 이번 Chromium e2e/스크롤 왕복은 sandbox에서 미실행이다. 과거 A3 92개/4쪽은 현재 101개/5쪽으로 정정했다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/explore/Thumb.tsx",
@@ -190,7 +191,7 @@
         {
           "file": "apps/web/e2e/catalog-lists.spec.mjs",
           "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
-          "reason": "A3: Components test.fail 을 일반 시험으로 전환, 쪽 이동·검색·분류 시험 추가"
+          "reason": "A3: Components의 24개 상한·쪽 이동·URL 검색/분류·빈 결과에 더해 공개 API ID 집합 전체와 페이지 순회 결과를 비교해 누락/중복도 실패하도록 보강"
         },
         {
           "file": "apps/web/package.json",
@@ -297,7 +298,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "독립 검증(VERIFICATION.md §11)에서 생성·바이트 일치·자동 생성은 충족했다. 미충족: ① 초기 전송량은 줄지 않고 늘었다(로컬 next start 가 정적 파일을 압축하지 않음. 평균 원본 52.4KB, gzip 11.8KB) ② site/catalog-chunks 의 소비자가 웹에 없어 \"탭 전환 시 필요한 청크만 로딩\"은 아직 아니다. 원 구현은 부품 미리보기 0개, Explore 테마 변형 미생성, 인덱스에 generatedAt, 하드코딩 사례 복사본이 있었다(수정함).",
+      "unresolvedIssues": "최신 검증 HEAD e4c4baad(원격 main 382b667be 포함)에서 root 생성물 재현성은 단독으로 통과했고 `/components` 전체 ID 집합은 공개 API와 일치한다. TASK-TRA-03은 계속 Implemented: 생성된 catalog-chunks를 웹에서 실제로 선택 로드하는 소비자가 없고 초기 전송량 감소는 입증되지 않았다(과거 측정 source revision 미기록). Vercel 전송량 측정은 H 단계 소유.",
       "createFiles": [
         "scripts/lib/preview-requests.mjs",
         "apps/web/lib/api/preview-recipes.mjs",
@@ -375,7 +376,7 @@
       ],
       "commit": null,
       "status": "Implemented",
-      "unresolvedIssues": "VERIFICATION.md §6.5. (a) 조립(/studio/assemble)은 서버 컴포넌트라 브라우저 캐시와 공유되지 않아 '조립 결과와 미리보기 결과의 공유'는 미리보기와 내보내기 사이로 한정된다(남음). A3(DEC-013)에서 해소: (b) 캐시 키의 engineVersion 을 CONTRACTS §5.2 의 PLATFORM_CONTRACT_VERSION/CONTRACT_VERSION 으로 바꿨고(공개 진입점 ./service 상수) 계약 버전이 바뀌면 키가 바뀌는 시험을 compiler.unit.mjs 에 뒀다. (c) window.__studio_api·__studio_compile_count 는 DSK_STUDIO_PROBE=1 빌드에만 들어가고 운영 빌드 번들에는 없다(e2e/studio-probe.spec.mjs). (a) 때문에 Verified 로 올리지 않는다.",
+      "unresolvedIssues": "최신 검증 HEAD e4c4baad에서 웹 단위 80/80(공개 service 계약 버전 변경 시 cache miss, 동일 버전 재사용·디바운스·in-flight dedupe 포함), 일반 빌드 정적 번들 39개에서 probe hook 문자열 0, DSK_STUDIO_PROBE=1 빌드 39개 중 1개에서 두 훅 이름을 확인했다. approved ttakkari_browser는 목록 URL·화면을 확인했으나 window hook 값은 직접 읽지 못했다. 전체 npm run verify의 유일한 실패는 원격 main의 resizable-panel Chromium test가 Codex nested worker sandbox 권한 오류로 브라우저를 띄우지 못한 환경 문제다. 조립 결과 공유 한계는 남고 A3 성능 JSON의 source SHA도 미기록이므로 Verified로 올리지 않는다.",
       "crossTrackFiles": [
         {
           "file": "apps/web/features/studio/StudioApp.tsx",
@@ -436,6 +437,31 @@
           "file": "scripts/perf/measure.mjs",
           "owner": "Track G (CONTRACTS §6 표에 없는 파일: G가 소유자를 정한다)",
           "reason": "A3: 훅이 없는 운영 빌드에서는 Studio 편집 시나리오를 이유와 함께 건너뜀"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/PERF-BOTTLENECKS.md",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/VERIFICATION.md",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/PERFORMANCE-A3.json",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/PERFORMANCE-A3-studio-probe.json",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "reason": "A3 독립 재검증 증거·판정 보정. CONTRACTS §6.1 파일 단위 교차 수정 기록",
+          "owner": "Track G"
         }
       ]
     },
@@ -677,32 +703,52 @@
       "taskId": "TASK-TRC-03",
       "title": "다국어 폰트 전략 및 WOFF2 서브셋 로딩 체계 수립",
       "goal": "한글, 영문, 일본어, 숫자, 코드 가독성을 보장하고 오픈 라이선스 웹폰트 서브셋 로딩 구현",
-      "scope": "apps/web/app/layout.tsx, apps/web/features/materials/types.ts",
+      "scope": "src/platform/data/type-materials.mjs, src/platform/type.mjs, src/service/index.mjs, apps/web/app/materials/typography/page.tsx, apps/web/features/materials/types.ts, apps/web/app/fonts/[file]/route.ts, docs/platform/typography.md",
       "track": "Track C",
       "dependencies": [
         "TASK-TRC-02"
       ],
       "modifiedFiles": [
-        "apps/web/app/layout.tsx",
-        "apps/web/features/materials/types.ts"
+        "src/platform/data/type-materials.mjs",
+        "src/platform/type.mjs",
+        "src/service/index.mjs",
+        "apps/web/app/materials/typography/page.tsx",
+        "apps/web/features/materials/types.ts",
+        "apps/web/app/fonts/[file]/route.ts",
+        "docs/platform/typography.md",
+        "docs/platform/evidence/type/samples.mjs",
+        "docs/platform/evidence/type/font-loading-evidence.json",
+        "tests/platform-type-fonts.test.mjs"
       ],
       "completionCriteria": "전체 웹폰트 일괄 다운로드 방지, WOFF2 서브셋 및 시스템 fallback 안전망 확보",
       "tests": [
-        "tests/platform-type.test.mjs"
+        "tests/platform-type.test.mjs",
+        "tests/platform-type-fonts.test.mjs",
+        "tests/platform-type-evidence.test.mjs"
       ],
       "commit": null,
-      "status": "Pending",
+      "status": "Implemented",
       "unresolvedIssues": null,
       "crossTrackFiles": [
         {
-          "file": "apps/web/app/layout.tsx",
+          "file": "apps/web/app/materials/typography/page.tsx",
           "owner": "Track F",
-          "reason": "웹폰트 로딩 전략의 적용 지점"
+          "reason": "기존 타이포 진입점의 선택형 웹폰트 주입 및 다국어 fallback 문구 연결"
         },
         {
           "file": "apps/web/features/materials/types.ts",
           "owner": "Track F",
-          "reason": "서체 메타 타입"
+          "reason": "웹폰트 메타데이터 및 로딩 플랜 타입 확장"
+        },
+        {
+          "file": "apps/web/app/fonts/[file]/route.ts",
+          "owner": "Track F",
+          "reason": "WOFF2 정적 서브셋 서빙 및 실패 모의 엔드포인트"
+        },
+        {
+          "file": "src/service/index.mjs",
+          "owner": "Track A",
+          "reason": "웹폰트 계획 및 메타데이터 공개 서비스 진입점 제공"
         }
       ]
     },
@@ -1342,33 +1388,33 @@
         },
         {
           "file": "scripts/generate-material-coverage.mjs",
-          "ownerTrack": "Track G",
-          "reason": "COVERAGE에 A 5항목(Split·Menu·FAB·Copy·Close)을 등록 재료에 대응시킴"
+          "reason": "COVERAGE에 A 5항목(Split·Menu·FAB·Copy·Close)을 등록 재료에 대응시킴",
+          "owner": "Track G"
         },
         {
           "file": "e2e/platform-action-components.spec.mjs",
-          "ownerTrack": "Track G",
-          "reason": "실제 Chromium에서 통과하도록 다시 씀(aria-disabled 클릭 대기 교착 수정, 메뉴·복사·닫기·단일 선택·터치 영역·Blueprint 컴파일 페이지 추가)"
+          "reason": "실제 Chromium에서 통과하도록 다시 씀(aria-disabled 클릭 대기 교착 수정, 메뉴·복사·닫기·단일 선택·터치 영역·Blueprint 컴파일 페이지 추가)",
+          "owner": "Track G"
         },
         {
           "file": "e2e/platform-family-a11y.spec.mjs",
-          "ownerTrack": "Track G",
-          "reason": "목적 패밀리 37종 순회와 split·menu·fab·close의 브라우저 확인 추가"
+          "reason": "목적 패밀리 37종 순회와 split·menu·fab·close의 브라우저 확인 추가",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
-          "ownerTrack": "Track G",
-          "reason": "요청대로 계열 A~O 작업으로 분할하고 A 진행 상태를 기록"
+          "reason": "요청대로 계열 A~O 작업으로 분할하고 A 진행 상태를 기록",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
-          "ownerTrack": "Track G",
-          "reason": "공통 계약·계열 파일 등록 정책과 A 계열 등록 방식 결정 기록"
+          "reason": "공통 계약·계열 파일 등록 정책과 A 계열 등록 방식 결정 기록",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
-          "ownerTrack": "Track G",
-          "reason": "요청된 Material Coverage 재생성 산출물"
+          "reason": "요청된 Material Coverage 재생성 산출물",
+          "owner": "Track G"
         },
         {
           "file": "docs/dev/catalog-platform-upgrade/screens/layouts/measurements.json",
@@ -1509,48 +1555,228 @@
       "taskId": "TASK-TRD-J",
       "title": "정보 표시 15항목",
       "goal": "정보 재료와 조립 경로",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "scope": "src/platform/families/info-media.mjs, src/platform/families/action.mjs, src/platform/families/index.mjs, src/platform/families/contracts.mjs, scripts/generate-material-coverage.mjs, docs/platform/components.md, tests/platform-info-media-*.test.mjs",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/kit.mjs",
+        "src/platform/families/info-media.mjs",
+        "src/platform/families/action.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/components.md",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": "J 15/15 항목 모두 missing·schema-only 0 달성. 기존 재료 5종 매핑, 신규 목적 패밀리 10종(status-badge, avatar, avatar-group, accordion, collapsible, counter, notification-indicator, keyboard-shortcut, metadata-row, stat-comparison) 구현 완료. accordion 및 collapsible은 INFO_MEDIA_RUNTIME을 통해 키보드(Enter/Space) 및 WAI-ARIA 상태 전이 지원. Studio 선택지는 Track F 소유이므로 catalog-visible, blockedBy: no-studio-choice 상태.",
+      "crossTrackFiles": [
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "등록 목적 패밀리 개수 37 → 53(J 10종, K 6종 추가)"
+        },
+        {
+          "file": "tests/platform-pipeline-baseline.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "기준선의 목적 패밀리 등록량 37 → 53"
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track A",
+          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 37 → 53)"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 목적 패밀리 매핑 연결"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "TASK-TRD-J/K 상태 Implemented 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "ownerTrack": "Track G",
+          "reason": "DEC-013 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Material Coverage 재생성 산출물"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-K",
       "title": "미디어 및 콘텐츠 12항목",
       "goal": "미디어/콘텐츠 재료 계약",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "scope": "src/platform/families/info-media.mjs, src/platform/families/action.mjs, src/platform/families/index.mjs, src/platform/families/contracts.mjs, scripts/generate-material-coverage.mjs, docs/platform/components.md, tests/platform-info-media-*.test.mjs",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/kit.mjs",
+        "src/platform/families/info-media.mjs",
+        "src/platform/families/action.mjs",
+        "src/platform/families/index.mjs",
+        "src/platform/families/contracts.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/components.md",
+        "docs/platform/evidence/components/build.mjs",
+        "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+        "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-info-media-contract.test.mjs",
+        "tests/platform-info-media-blueprint.test.mjs",
+        "tests/platform-info-media-channels.test.mjs",
+        "tests/platform-info-media-interactive.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
-      "unresolvedIssues": null
+      "status": "Implemented",
+      "unresolvedIssues": "K 12/12 항목 모두 missing·schema-only 0 달성. 기존 재료 6종 매핑, 신규 목적 패밀리 6종(responsive-image, carousel, audio-player, file-preview, image-comparison, figure-caption) 구현 완료. carousel 및 image-comparison은 INFO_MEDIA_RUNTIME을 통해 키보드(ArrowLeft/ArrowRight) 및 WAI-ARIA 상태 전이 지원. E4 소유 Foundations 미디어 축과 충돌 없이 공통 계약 연결. Studio 선택지는 Track F 소유이므로 catalog-visible, blockedBy: no-studio-choice 상태.",
+      "crossTrackFiles": [
+        {
+          "file": "tests/platform-service-channels.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "등록 목적 패밀리 개수 37 → 53(J 10종, K 6종 추가)"
+        },
+        {
+          "file": "tests/platform-pipeline-baseline.test.mjs",
+          "ownerTrack": "Track A",
+          "reason": "기준선의 목적 패밀리 등록량 37 → 53"
+        },
+        {
+          "file": "docs/evidence/platform/baseline.json",
+          "ownerTrack": "Track A",
+          "reason": "node scripts/platform/baseline.mjs로 다시 만든 산출물(purposeFamily 37 → 53)"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 목적 패밀리 매핑 연결"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
+          "ownerTrack": "Track G",
+          "reason": "TASK-TRD-J/K 상태 Implemented 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/DECISIONS.md",
+          "ownerTrack": "Track G",
+          "reason": "DEC-013 기록"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Material Coverage 재생성 산출물"
+        }
+      ]
     },
     {
       "taskId": "TASK-TRD-L",
       "title": "레이아웃 14항목",
-      "goal": "레이아웃 primitive·복합 레이아웃 계약",
-      "scope": "src/platform/families/<family>.mjs, tests/platform-family-*.test.mjs, docs/platform/components.md",
+      "goal": "레이아웃 primitive·복합 레이아웃 계약 및 E3 연결",
+      "scope": "src/platform/families/layout.mjs, src/platform/families/contracts.mjs, src/platform/layouts.mjs, src/service/platform-components.mjs, apps/web/lib/api/**, tests/platform-layout-*.test.mjs, tests/platform-service-layout-channels.test.mjs, docs/platform/components.md",
       "track": "Track D",
       "dependencies": [
         "TASK-TRD-A"
       ],
-      "modifiedFiles": [],
+      "modifiedFiles": [
+        "src/platform/families/layout.mjs",
+        "src/platform/families/contracts.mjs",
+        "src/service/platform-components.mjs",
+        "apps/web/lib/api/operations.mjs",
+        "apps/web/lib/api/mcp.mjs",
+        "src/platform/layouts.mjs",
+        "scripts/layouts/measure.mjs",
+        "scripts/generate-material-coverage.mjs",
+        "docs/platform/components.md",
+        "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+        "tests/layout-quality.test.mjs",
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-layout-blueprint.test.mjs",
+        "tests/platform-layout-resizable.test.mjs",
+        "tests/platform-service-layout-channels.test.mjs"
+      ],
+      "crossTrackFiles": [
+        {
+          "file": "src/platform/layouts.mjs",
+          "ownerTrack": "Track E",
+          "reason": "목적 패밀리 추가 시 레이아웃 표본 변동(9d4706794 회귀)을 막기 위해 24개 레이아웃 기준 표본(LAYOUT_BASELINE_SPECIMENS) 및 stable 옵션 도입"
+        },
+        {
+          "file": "scripts/layouts/measure.mjs",
+          "ownerTrack": "Track E",
+          "reason": "레이아웃 브라우저 실측 시 stable: true 적용"
+        },
+        {
+          "file": "tests/layout-quality.test.mjs",
+          "ownerTrack": "Track E",
+          "reason": "stable 표본 불변성 및 레이아웃 슬롯 변경 시 불일치 검출 회귀 시험 추가"
+        },
+        {
+          "file": "src/service/platform-components.mjs",
+          "ownerTrack": "Track A",
+          "reason": "assembleComponents에 layouts 입력 및 런타임/CSS 결합 지원"
+        },
+        {
+          "file": "apps/web/lib/api/operations.mjs",
+          "ownerTrack": "Track A",
+          "reason": "REST OpenAPI assembleComponents layouts 입력 스키마 연결"
+        },
+        {
+          "file": "apps/web/lib/api/mcp.mjs",
+          "ownerTrack": "Track A",
+          "reason": "MCP assemble_components layouts 입력 스키마 연결"
+        },
+        {
+          "file": "scripts/generate-material-coverage.mjs",
+          "ownerTrack": "Track G",
+          "reason": "COVERAGE에 §6.2 L 5항목(Responsive Grid, Center, Sticky Region, Scroll Area, Resizable Panel) 등록 재료 매핑"
+        },
+        {
+          "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
+          "ownerTrack": "Track G",
+          "reason": "Material Coverage 재생성 산출물(L 계열 14/14 충족, missing 0)"
+        }
+      ],
       "completionCriteria": "분류한 요구 항목의 contract, 실제 renderer, service 조립/export 연결, 접근성·반응형 검증과 Material Coverage 증거를 모두 갖춘다. 변형은 독립 종류로 중복 집계하지 않는다.",
-      "tests": [],
+      "tests": [
+        "tests/platform-family-contract.test.mjs",
+        "tests/platform-layout-blueprint.test.mjs",
+        "tests/platform-layout-resizable.test.mjs",
+        "tests/platform-service-layout-channels.test.mjs",
+        "tests/layout-quality.test.mjs"
+      ],
       "commit": null,
-      "status": "Pending",
+      "status": "Completed",
       "unresolvedIssues": null
     },
     {

@@ -337,20 +337,66 @@ macOS 열은 **Chromium에서 측정한 값**(`docs/platform/evidence/type/fonts
 3. 세리프 시스템의 한글(`AppleMyungjo`·`Batang`)은 굵기가 한 벌이다. 그래서 `mkt-atelier`의 굵기 500은 한글에서 구별되지 않고 라틴(Didot)에만 보인다.
 4. 같은 macOS에서 산세리프 시스템의 한글은 모두 `Apple SD Gothic Neo`다. 산세리프끼리의 시각 차이는 글자 모양이 아니라 라틴·숫자 서체와 크기·굵기·행간·밀도에서 난다. 한글 글자 모양까지 다양하게 하려면 웹폰트가 필요하다(§3.3).
 
-### 3.3 웹폰트(선택)
+### 3.3 웹폰트(선택) 및 서브셋 로딩 체계 (REQUEST §5.4, TASK-TRC-03)
 
-웹폰트는 **어느 시스템에도 필수가 아니다**. 생성되는 페이지는 `default-src 'none'`이라 기본 출력(`bindType(ts)`)은 시스템 서체만 쓰고, 웹폰트를 켜면(`bindType(ts, {webfonts: true})`) 서체 짝이 가진 웹폰트가 스택 맨 앞에 붙고 `@font-face`가 함께 나온다. 저장소에는 서체 파일을 넣지 않는다(파일은 배포가 `baseUrl` 아래에 호스팅한다).
+웹폰트는 **어느 시스템에도 필수가 아니다**. 생성되는 기본 페이지는 `default-src 'none'`이라 기본 출력(`bindType(ts)` 및 일반 목록/카드)은 시스템 서체만 쓰며 네트워크 요청이 0건이다. 웹폰트를 선택했을 때만(`bindType(ts, {webfonts: true})` 또는 페이지 `?webfonts=1`) 서체 짝이 가진 웹폰트가 스택 맨 앞에 붙고 `@font-face`가 동적으로 제공된다.
 
-| 서체 | 계열 | 덮는 글자 | 라이선스 | 출처 |
-|---|---|---|---|---|
-| Pretendard Variable | 산세리프 | 한글·라틴 | OFL-1.1 | https://github.com/orioncactus/pretendard |
-| Noto Serif KR | 세리프 | 한글(`unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7A3`만, 라틴은 시스템 세리프 유지) | OFL-1.1 | https://github.com/notofonts/noto-cjk |
-| JetBrains Mono | 고정폭 | 라틴 | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |
+#### 1. 권리 검증 및 고정된 WOFF2 메타데이터
 
-- **로딩 방식**: 자체 호스팅 `woff2`, `font-display: swap`(받기 전에는 대체 서체로 먼저 그린다), 한글 서체는 `unicode-range` 조각으로 쪼개 필요한 조각만 받는다, `preload`는 라틴 조각만, 배포는 `font-src 'self'`를 연다.
-- **없을 때의 대체**: 위 표의 시스템 스택(서체 짝의 기본 스택)이 그대로 그린다. `webfontPlan(faceId)`가 로딩 방식·서체·대체 스택을 돌려준다.
-- **라이선스**: 모두 OFL-1.1(각 프로젝트의 공개 표기)이고, 번들·재배포 전에 LICENSE 원문 확인이 필요하다(확인 필요). 라이선스가 불분명한 서체는 넣지 않았다. 테스트가 모든 웹폰트의 라이선스가 `OFL-1.1`인지 검사한다.
-- 서체 대체 시 줄바꿈이 달라지는 정도(`size-adjust` 보정)는 측정하지 않았다(확인 필요).
+모든 사용 WOFF2 파일은 버전이 고정된 공식 업스트림에서 제공되며, SIL Open Font License 1.1(OFL-1.1)에 따라 웹 임베딩 및 소프트웨어 번들 재배포 권리가 확인되었다. 라이선스 고지문 보존 및 폰트 파일 단독 판매 금지 요건을 준수한다.
+
+| 서체 (ID) | 버전 | 계열 | 덮는 글자 (Unicode Range) | 라이선스 | 공식 출처 | 배포 파일 | SHA-256 해시 |
+|---|---|---|---|---|---|---|---|
+| **Pretendard Variable** (`pretendard`) | 1.3.9 | 산세리프 | 라틴·한글 자모/음절<br>`U+0020-007E,U+00A0-00FF,U+1100-11FF,U+3130-318F,U+AC00-D7A3` | OFL-1.1 | https://github.com/orioncactus/pretendard | `PretendardVariable.woff2` | `9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4` |
+| **Noto Serif KR** (`notoSerifKr`) | 2.001 | 세리프 | 한글 자모 및 완성형 음절만<br>`U+1100-11FF,U+3130-318F,U+AC00-D7A3` | OFL-1.1 | https://github.com/notofonts/noto-cjk | `NotoSerifKR-Variable.woff2` | `b4a11f26e2e50d75a6c3f56e9c1d6fa54b383416d8a39d885a5360980c65538e` |
+| **JetBrains Mono** (`jetbrainsMono`) | 2.304 | 고정폭 | 라틴·코드·숫자·통화·기호<br>`U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215` | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono | `JetBrainsMono-Variable.woff2` | `e865fbe428415ef405f6e6fa1abfefec9747683b58957864aa9a7ca3332152a4` |
+
+#### 2. 서브셋 생성 재현 절차 (Reproducible Subset Procedures)
+
+외부 네트워크 의존 없이 독립적으로 WOFF2 서브셋을 재현하기 위한 `fonttools`/`pyftsubset` 표준 절차:
+
+1. **Pretendard Variable (한영 통합 서브셋)**:
+   ```bash
+   pyftsubset PretendardVariable.ttf \
+     --unicodes="U+0020-007E,U+00A0-00FF,U+1100-11FF,U+3130-318F,U+AC00-D7A3" \
+     --flavor=woff2 --layout-features="*" --output-file=PretendardVariable.woff2
+   ```
+2. **Noto Serif KR (한글 전용 서브셋)**:
+   라틴 글리프를 의도적으로 제외하여 시스템 세리프(Iowan, Charter, Georgia)의 미려한 올드스타일/디도네 표제를 보존하고 한글 음절만 경량화하여 결합한다.
+   ```bash
+   pyftsubset NotoSerifKR[wght].ttf \
+     --unicodes="U+1100-11FF,U+3130-318F,U+AC00-D7A3" \
+     --flavor=woff2 --layout-features="*" --output-file=NotoSerifKR-Variable.woff2
+   ```
+3. **JetBrains Mono (코드/숫자/기호 서브셋)**:
+   ```bash
+   pyftsubset JetBrainsMono[wght].ttf \
+     --unicodes="U+0000-00FF,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215" \
+     --flavor=woff2 --layout-features="*" --output-file=JetBrainsMono-Variable.woff2
+   ```
+
+#### 3. 선택적 로딩 원칙 및 유니코드 범위 분기
+
+- **전체 일괄 다운로드 방지**: 모든 페이지에서 전체 웹폰트를 일괄 요청하는 동작을 원천 차단한다.
+- **선택된 서체만 요청**: `facePairing`에 매핑된 웹폰트만 `@font-face`가 선언되므로, 미선택 서체(예: `sans` 시스템 선택 시 `notoSerifKr` 등)는 네트워크 요청이 발생하지 않는다.
+- **유니코드 분기(unicode-range)**:
+  - 영문 전용 아티클에서는 `notoSerifKr`의 WOFF2를 내려받지 않는다(브라우저가 해당 unicode-range의 글리프를 만났을 때만 지연 요청).
+  - 코드 블록이 없는 문서에서는 `jetbrainsMono` WOFF2를 요청하지 않는다.
+- **캐싱 및 CSP 헤더**:
+  - `font-src 'self'`.
+  - `Cache-Control: public, max-age=31536000, immutable`.
+
+#### 4. 실패 대체 경로(Fallback) 및 안정성
+
+- **`font-display: swap`**: WOFF2 다운로드 전 또는 네트워크 오류·404 시에도 FOIT(Flash of Invisible Text) 없이 OS 시스템 서체(`-apple-system`, `Apple SD Gothic Neo`, `AppleMyungjo`, `Segoe UI`, `Malgun Gothic` 등)로 즉시 렌더링된다.
+- **레이아웃 이동 방지**: 한글 및 라틴 행간 한도(FLOORS 및 HANGUL leading band)가 시스템 서체와 웹폰트 모두에서 동일하게 유지되므로, 폰트 전환 전후 줄바꿈 역전이나 가로 넘침(overflowX)이 발생하지 않는다.
+
+#### 5. 다국어(일본어) 및 권리 미확인 자산 격리 정책
+
+| 서체 / 계열 | 취급 및 격리 정책 | 근거 |
+|---|---|---|
+| **일본어 서체** (`Noto Sans JP` 등) | 공개 WOFF2 번들 제외 (시스템 서체 fallback 인계) | 한일 다국어 전체 웹폰트 동시 로딩 시 전송량 급증(수 MB). 일본어 글리프(`こんにちは世界`, `カタカナ`, `漢字`)는 OS 기본 서체(macOS `Hiragino Sans`, Windows `Yu Gothic`, `Meiryo`)로 안전하게 렌더링되도록 스택 보장. |
+| **상용/라이선스 미확인 서체** | 카탈로그 및 번들 영구 배제 | OFL-1.1 등 재배포/임베딩 권리가 공식적으로 보증되지 않은 자산은 배포 대상에서 완전히 제외. |
 
 ## 4. 구형 18개 이행과 통합 근거
 

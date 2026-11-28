@@ -238,3 +238,26 @@ REQUEST §6.2 N의 커머스 패턴 11종(Product Grid, Product Detail Summary, 
 
 - N 단독 기능의 실제 조립 경로는 `assembleComponents({commerce})`다. Studio 선택과 `assembleDesign`의 페이지 슬롯 배치는 미완료이며 이번 범위에서 선행 구현하지 않는다.
 
+---
+
+## DEC-015: J(정보 표시 15항목) 및 K(미디어·콘텐츠 12항목) 공통 컴포넌트 계약과 목적 패밀리 등록
+
+### 맥락
+REQUEST §6.2의 J 정보 표시(15항목)와 K 미디어 및 콘텐츠(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011)을 따르며, 기존 시스템에 이미 렌더러가 구현되어 있는 항목(Badge, Chip, Filter Chip, Tag, Divider, Image, Media Frame, Gallery, Video Frame, Quote, Rich Text Content 등 총 11종)과 고유한 구조·동작이 필요한 신규 목적 패밀리 16종(J 10종, K 6종)으로 분류된다. E4 소유의 Foundations 미디어 축(`media:*`), 아이콘, CSS 토큰 정의 및 2.1.0/2.4.0 기존 고정 해시를 건드리지 않고 공통 계약을 체결해야 한다.
+
+### 결정
+1. **신규 목적 패밀리 16종 등록**:
+   - J 정보 표시 10종: `purpose:info.status-badge`, `purpose:info.avatar`, `purpose:info.avatar-group`, `purpose:info.accordion`, `purpose:info.collapsible`, `purpose:info.counter`, `purpose:info.notification-indicator`, `purpose:info.keyboard-shortcut`, `purpose:info.metadata-row`, `purpose:info.stat-comparison`.
+   - K 미디어/콘텐츠 6종: `purpose:media.responsive-image`, `purpose:media.carousel`, `purpose:media.audio-player`, `purpose:media.file-preview`, `purpose:media.image-comparison`, `purpose:media.figure-caption`.
+   - 플랫폼 목적 패밀리 등록량이 37종에서 53종으로 확장되었다.
+2. **기존 구현 재사용 및 중복 금지**:
+   - 기존 구현이 존재하는 J 5항목(Badge, Chip, Filter Chip, Tag, Divider)과 K 6항목(Image, Media Frame, Gallery, Video Frame, Quote, Rich Text Content)은 기존 `base-component` 및 `purpose:*`를 매핑하고 불필요한 중복 재료를 생성하지 않는다.
+3. **인터랙티브 런타임 및 접근성**:
+   - 상태 전이와 상호작용이 필요한 4개 컴포넌트(`accordion`, `collapsible`, `carousel`, `image-comparison`)는 `INFO_MEDIA_RUNTIME`과 `INFO_MEDIA_RUNTIME_IDS`를 통해 `actionRuntimeFor`에 연결된다.
+   - 키보드 내비게이션(Enter/Space 토글, ArrowRight/ArrowLeft 캐러셀 슬라이드 및 비교 슬라이더 조절)과 ARIA 표준(`aria-expanded`, `aria-controls`, `aria-roledescription`, `aria-valuenow`, `role="region"`, `role="group"`)을 준수한다.
+   - 사용하지 않는 페이지 출력에서는 런타임 JS가 주입되지 않아 무거운 부하를 초래하지 않는다.
+4. **카탈로그 노출 및 Studio 선택 제약**:
+   - 16개 신규 목적 패밀리는 레지스트리 질의 및 카탈로그 탐색에 노출(`catalog-visible`)되나, Studio UI 선택지는 Track F 소유이므로 `blockedBy: no-studio-choice`를 명시한다.
+5. **불변 조건 및 결정론적 컴파일 보존**:
+   - 기존 Blueprint 2.1.0 고정 해시, 2.4.0 기본 출력, `site/v1/catalog.json` 컴파일 계약을 100% 보존하며, 결정론적 조립 원칙(DEC-001)과 서비스 단일 진입점 원칙(DEC-007)을 준수한다.
+

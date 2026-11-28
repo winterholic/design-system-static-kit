@@ -200,11 +200,11 @@
 
 ## 6. Track A3(Components 쪽 나눔·Studio 캐시 키·측정 훅) 전후 실측
 
-A1 검증(§5)과 A2 검증(`VERIFICATION.md` §6)이 남긴 세 가지를 닫는다. 측정 원본은 `PERFORMANCE-A3.json`(운영 빌드), `PERFORMANCE-A3-studio-probe.json`(Studio 편집 시나리오만, 측정 빌드)이다. 둘 다 `local-prod`(`next build` 후 `DSK_PERF_METRICS=1 next start -p 4291`, `npm run perf -- --url http://127.0.0.1:4291 --pages explore,components,studio`, 3회 중앙값)이고 RUM 이 아니다. 전은 `PERFORMANCE-A1.json`, 후는 이번 값이다. Vercel 운영은 측정하지 않았다.
+A1 검증(§5)과 A2 검증(`VERIFICATION.md` §6)이 남긴 세 가지를 A3에서 다뤘다. 측정 원본은 `PERFORMANCE-A3.json`(운영 빌드), `PERFORMANCE-A3-studio-probe.json`(Studio 편집 시나리오만, 측정 빌드)이다. 원 기록은 `local-prod`(`next build` 후 `DSK_PERF_METRICS=1 next start -p 4291`, `npm run perf -- --url http://127.0.0.1:4291 --pages explore,components,studio`, 3회 중앙값)이고 RUM 이 아니다. 그러나 A1·A3 JSON 모두 측정 대상 소스 SHA를 기록하지 않았고 측정 시각이 해당 branch tip commit보다 앞서므로, 표는 과거 기록의 수치 대조일 뿐 정확한 revision 간 비교로 귀속하지 않는다. 이번 독립 재검증은 현재 HEAD `7f9c24fca6dd295bd672739d85ae25999fe2dde1`의 HTTP·서비스 API로 목록 정합성, iframe, 컴파일 수를 확인했으나 브라우저 LCP를 다시 재지 못했다(`VERIFICATION.md` §13). Vercel 운영은 측정하지 않았다.
 
 ### 6.1 변경
 
-1. **Components 목록 쪽 나눔**: `/components` 는 목적 패밀리 32 + 구조 부품 60 = 92개를 한 쪽 24개씩 서버에서 잘라 그린다(4쪽). 쪽 밖 카드는 DOM 에 만들지 않고 탭으로 숨기지도 않는다. 주소는 그대로 `/components`이고 `?page=N`, `?q=검색어`, `?group=<kind>:<분류>` 가 붙는다. 검색·분류는 쪽을 자르기 전에 92개 전체에서 걸러서 첫 쪽에 없는 카드도 찾는다(`features/components/list-query.ts`). 검색 상자는 JS 없이 동작하는 GET 폼이다. 상세 주소(`/components/<type>`, `/components/purpose/<group>/<id>`)는 바뀌지 않았다.
+1. **Components 목록 쪽 나눔**: 현재 공개 서비스 API는 목적 패밀리 37개와 `catalogVersion=2.6.0` 구조 부품 65개를 내며, 페이지 노드 1개를 제외한 실제 카드 ID는 101개다. `/components` 는 이를 한 쪽 24개씩 5쪽으로 서버에서 자른다. 쪽 밖 카드는 DOM 에 만들지 않고 탭으로 숨기지도 않는다. 주소는 그대로 `/components`이고 `?page=N`, `?q=검색어`, `?group=<kind>:<분류>` 가 붙는다. 검색·분류는 쪽을 자르기 전에 전체 목록에서 걸러서 첫 쪽 밖의 카드도 찾는다(`features/components/list-query.ts`). 검색 상자는 JS 없이 동작하는 GET 폼이다. 상세 주소(`/components/<type>`, `/components/purpose/<group>/<id>`)는 바뀌지 않았다. 이전 A3 기록의 `32+60=92`, 4쪽은 현재 공개 서비스 집합과 맞지 않아 바로잡았다.
 2. **Studio 캐시 키 엔진 버전**: `compileBlueprint/<CONTRACT_VERSION>` → `<PLATFORM_CONTRACT_VERSION>/<CONTRACT_VERSION>`(CONTRACTS §5.2 와 같은 형식, 현재 `0.8.0/1.3.0`). 값은 A1 이 `./service` 공개 진입점에 열어 둔 읽기 전용 상수이고 웹이 `src/platform` 을 import 하지 않는다. 상수를 읽지 못하면 `unknown/unknown` 이라 정상 버전의 키와 섞이지 않는다.
 3. **측정 훅 운영 빌드 제거**: `window.__studio_api`, `window.__studio_compile_count` 는 `DSK_STUDIO_PROBE=1` 로 빌드한 번들에만 들어간다(`features/studio/probe.ts`, `next.config.mjs` 가 값을 `'0'`/`'1'` 로 박는다). 운영 빌드는 `.next/static` 에 이 문자열이 없다. 측정 스크립트는 훅이 없으면 Studio 편집 시나리오만 이유와 함께 건너뛴다.
 
@@ -221,10 +221,10 @@ Studio 편집 시나리오를 재려면 측정 빌드가 필요하다: `DSK_STUD
 | Studio | 390 | 0→0 | 0→0 | 0→0 | 0→0 | 93→93 | 209→209 | 164→160 | 0→0 |
 | Studio | 1280 | 0→0 | 0→0 | 0→0 | 0→0 | 98→97 | 236→223 | 164→164 | 0→0 |
 
-- Components 첫 쪽의 DOM 카드(`[data-preview]`)는 24개이고 초기 로딩 미리보기는 23개다(`catalog-lists.spec.mjs` 출력). 쪽 2~4 도 24개 이하다(같은 시험이 쪽을 모두 넘기며 확인).
-- Components LCP 는 140→172(390), 124→164(1280)로 늘었다. 목표(2.5초)의 7% 이하이지만 늘어난 값이다. 원인은 조사하지 않았다(`확인 필요`). 이 라우트가 `searchParams` 때문에 정적(`○`)에서 동적(`ƒ`)이 된 영향일 수 있고, 로컬 서버 첫 바이트는 4ms 였다. Vercel 에서의 서버 첫 바이트는 측정하지 못했다.
+- 과거 A3 기록에서는 Components 첫 쪽 DOM 카드(`[data-preview]`)가 24개, 초기 로딩 미리보기 23개였다. 이번 HTTP 검증에서 공개 서비스 전체 101개 ID가 24·24·24·24·5개로 모두 순회됐고 중복·누락이 없었다. 모든 쪽의 HTML 에 카드 DOM 24개 이하, iframe 0, 숨김 카드 0, 목록 요청 컴파일 0이었다.
+- 과거 A3 기록의 Components LCP 는 140→172ms(390), 124→164ms(1280)로 적혀 있다. 이번에는 브라우저 성능 실측을 재현하지 못했고 A1/A3 원본에 측정 소스 SHA도 없다. 따라서 +32/+40ms는 기록된 값의 차이로만 보존하고 A3 변경의 영향이나 원인으로 귀속하지 않는다. Vercel 서버 첫 바이트도 측정하지 않았다.
 - Explore·Studio 의 페이지 지표는 이 변경이 건드리지 않았고 차이는 잡음 범위다.
-- **iframe 0, 동적 컴파일 0 유지**: 위 표와 `catalog-lists.spec.mjs` 에서 확인했다. 스크롤 왕복 재요청 0회와 서버 컴파일 0회도 같은 시험이 통과한다.
+- **iframe 0, 동적 컴파일 0 유지**: 위 표는 원 기록이다. 독립 HTTP 검증은 전체 5쪽·검색·분류 요청에서 iframe 0과 `compileBlueprint/assembleDesign/assembleComponents/total = 0`을 확인했다. 브라우저 스크롤 왕복 네트워크 재요청 0회는 이번 환경에서 재실행하지 못해 과거 기록에 한정한다.
 
 ### 6.3 Studio 편집 시나리오(측정 빌드, 390 / 1280)
 

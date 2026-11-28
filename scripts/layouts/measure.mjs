@@ -98,7 +98,7 @@ export async function run({out = null, shots = true} = {}) {
   for (const layout of layouts) {
     const entry = {id: layout.id, slug: layout.id.slice('layout:'.length), needsBand: layout.needsBand, variants: {}};
     for (const stress of [false, true]) {
-      const fills = layoutSpecimen(env, layout, {stress});
+      const fills = layoutSpecimen(env, layout, {stress, stable: true});
       const r = assembleLayout(env, {layout: layout.id, fills});
       const name = stress ? 'stress' : 'specimen';
       if (!r.ok) { entry.variants[name] = {ok: false, diagnostics: r.diagnostics.map(d => `${d.code}: ${d.message}`)}; continue; }
