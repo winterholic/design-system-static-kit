@@ -4,8 +4,8 @@
   "summary": {
     "totalTasks": 50,
     "byStatus": {
-      "Verified": 24,
-      "Implemented": 10,
+      "Verified": 25,
+      "Implemented": 9,
       "Pending": 13,
       "In Progress": 2,
       "Completed": 1
@@ -6351,7 +6351,7 @@
         "docs/dev/catalog-platform-upgrade/TASK-LEDGER.json",
         "docs/dev/catalog-platform-upgrade/VERIFICATION.md"
       ],
-      "completionCriteria": "11개 범주 각각 전체 정의·Core 시각 예시·토큰·사용 조건, Motion 실동작과 reduced-motion, Icon 권리, Layout·Chart 상세 이동, URL 복원과 단일 선택 렌더·상한 있는 데이터, 390px·1280px E2E 명세, Chromium 제외 Node 전체·web typecheck/build·coverage MATCH·generated REPRODUCIBLE, 기존 버전 불변, 최신 origin/main rebase와 diff stat 후 main push.",
+      "completionCriteria": "11개 범주 각각 전체 정의·Core 시각 예시·토큰·사용 조건, Motion 실동작과 reduced-motion, Icon 권리, Layout·Chart 상세 이동, URL 복원과 단일 선택 렌더·상한 있는 데이터, 390px·1280px E2E 명세, Chromium 제외 Node 전체·web typecheck/build·coverage MATCH·generated REPRODUCIBLE, 기존 버전 불변, 최신 origin/main rebase와 diff stat 후 main push. 독립 Claude Chromium E2E 8/8 및 390px·1280px Core 시각 실측 통과(VERIFICATION.md §39.5).",
       "tests": [
         "node --test --test-skip-pattern='real Chromium browser|real layout|width steps cap|pointer drag|Playwright Chromium 실측'",
         "npm run typecheck --workspace apps/web",
@@ -6361,9 +6361,9 @@
         "apps/web/e2e/foundations-categories.spec.mjs (390px, 1280px; Chromium dependent)",
         "npm --workspace apps/web run start -- --hostname 127.0.0.1 --port 4391; Node fetch smoke for all 11 category URLs"
       ],
-      "commit": null,
-      "status": "Implemented",
-      "unresolvedIssues": "Claude 독립 Chromium 2차 검증에서 확인된 frosted backdrop-filter 적용, Layout 폭별 Core bands/라벨 폭, CSS Modules 기반 E2E 선택자를 교정했다(VERIFICATION.md §39.4). 수정 commit ab319cd46 기준 최종 독립 E2E 재검증 대기 중이므로 완료 판정은 보류한다.",
+      "commit": "fb14894da",
+      "status": "Verified",
+      "unresolvedIssues": "",
       "crossTrackFiles": [
         {
           "file": "apps/web/app/materials/foundations/page.tsx",

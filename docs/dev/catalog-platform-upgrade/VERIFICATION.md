@@ -2386,8 +2386,17 @@ Claude가 `be0ce1c85` 아카이브 빌드를 Playwright 1.64.1 / Chromium 156.0.
 - CSS 압축 결과 `-webkit-backdrop-filter`만 남아 Chromium 표준 `backdrop-filter` 계산값이 `none`이었다. 접두 선언을 제거하고 표준 `backdrop-filter`만 남겼다.
 - 데스크톱 wide band를 작은 카드 안에서 그려 390px와 1280px에서 layout 샘플의 일부 라벨이 좁은 칸에 갇혔다. 카드 목록을 전폭 단일 열로 만들고 Core `bands[0..3]`를 390·560·880·1180px 기준으로 반응형 전환한다. xs/sm/md/lg에서 각 24개 area matrix가 서로 구별되는 시험값을 확인했다.
 
-새 수정은 `ab319cd46`이며, 다시 Claude 독립 브라우저 검증을 요청했다. 최종 E2E 통과와 frosted 계산 스타일을 확인하기 전까지 상태는 Implemented로 둔다.
+`ab319cd46`에서 한 번 더 측정하자 Layout xs band가 모든 뷰포트에서 고정되어 Core wide band 적용이 11/24로 어긋나고, E2E blur 단언이 요소 본체를 보는 문제를 확인했다. `fb14894da`에서 직접 grid style을 CSS 변수로 옮겨 media query만 xs/sm/md/lg를 선택하게 했고, E2E가 390·1280px의 계산 area를 Core xs/lg 데이터와 직접 비교하도록 했다. blur 단언도 `::before`의 computed style을 읽도록 수정했다.
 
-`apps/web/e2e/foundations-categories.spec.mjs`에는 390px·1280px URL/뒤로 가기, 단일 패널, 터치 링크 크기·가로 넘침, 11개 정의, Core 차트 SVG, Motion reduced-motion, Icon 권리, 상세 링크를 확인하는 명세를 작성했다. **Chromium 실행은 하지 않음**: 작업 지시가 Codex Chromium 재시도를 금지하고 Claude 독립 브라우저 검증을 지정했다. 따라서 실제 브라우저 동작과 픽셀 실측은 검증 대기다.
+### 39.5 독립 Chromium 최종 검증
+
+Claude는 `fb14894da4cc804fac2ec1d2ced113ba0cd1c8b9` 아카이브 빌드를 Playwright 1.64.1·Chromium 156.0.8078.4에서 실행했다. `apps/web/e2e/foundations-categories.spec.mjs` 원본은 `Running 8 tests using 1 worker` → `8 passed (4.1s)`로 390px·1280px 모두 통과했다.
+
+- Layout: xs·sm·md·lg Core band area matrix가 각 24/24, wide의 Three Column이 세 열로 배치되고 label clipping·28px 미만 자식·가로 넘침 0. 1280px 열 너비 예: Single Column 142/704/142px, Three Column 198/593/198px.
+- Background: 13개 모두 Core page/deco 토큰과 일치, CSS 변수 미해석 0, frosted `::before` blur 12px.
+- Border 5종: Core 값과 5/5 일치. Chart SVG 29/29, 글자 잘림 0, 펼칠 수 있는 데이터 표 29개 모두 표시. Motion 실전이·reduced-motion·URL 뒤로/앞으로·44px 터치·Icon 16영역의 권리 문구·Layout 30 및 Chart 29 상세 링크도 통과.
+- 미검증: Safari·Firefox, 실기기, axe 대비 검사, 스크린 리더. 이 작업의 완료 항목인 Chromium 검증 범위에는 포함하지 않았다.
+
+`apps/web/e2e/foundations-categories.spec.mjs`에는 390px·1280px URL/뒤로 가기, 단일 패널, 터치 링크 크기·가로 넘침, 11개 정의, Core 차트 SVG, Motion reduced-motion, Icon 권리, 상세 링크를 확인하는 명세를 작성했다. Codex에서는 Chromium을 실행하지 않았고 지정된 Claude 독립 검증에서 8/8 통과했다(§39.5).
 
 새 Track F 항목 `TASK-TRF-08`을 장부에 추가했다. 내비게이션 공통 컴포넌트는 수정하지 않았다. `git diff --exit-code origin/main -- site/v1/catalog.json docs/evidence/context/legacy-hashes.json`은 rebase 후 최신 origin/main 기준으로 불변 파일 비교와 push 직전 diff stat을 다시 수행한다.
