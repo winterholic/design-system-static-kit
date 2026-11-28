@@ -1,4 +1,4 @@
-// §6.2 L 5항목의 Blueprint 왕복과 재료 질의. Blueprint를 입력으로 컴파일하면 Core가 낸 마크업이
+// §6.2 L 컴포넌트의 Blueprint 왕복과 재료 질의. Blueprint를 입력으로 컴파일하면 Core가 낸 마크업이
 // 그대로 나오고, 같은 입력은 같은 바이트이며, 재료 질의가 같은 재료를 돌려준다.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
@@ -62,14 +62,16 @@ const LAYOUT_CASES = {
   },
 };
 
-test('L components: 5 layout components are registered with proper contracts and match specifications', () => {
-  assert.equal(LAYOUT_COMPONENTS.length, 5);
+test('L components: layout components are registered with proper contracts and match specifications', () => {
+  assert.equal(LAYOUT_COMPONENTS.length, 7);
   const ids = LAYOUT_COMPONENTS.map(c => c.id).sort();
   assert.deepEqual(ids, [
     'component:center',
+    'component:container',
     'component:resizable-panel',
     'component:responsive-grid',
     'component:scroll-area',
+    'component:stack',
     'component:sticky-region',
   ]);
 
@@ -83,7 +85,7 @@ test('L components: 5 layout components are registered with proper contracts and
 });
 
 test('L nodes: layout parts compile from a Blueprint and the same Blueprint gives the same bytes (determinism)', () => {
-  for (const item of LAYOUT_COMPONENTS) {
+  for (const item of LAYOUT_COMPONENTS.filter(item => item.blueprint.field === 'tree')) {
     const {node, since, expect} = LAYOUT_CASES[item.id];
     assert.equal(item.blueprint.node, node.type, `${item.id}: the contract names the node type it uses`);
     const doc = nodeDoc(node, since);
@@ -96,6 +98,11 @@ test('L nodes: layout parts compile from a Blueprint and the same Blueprint give
 
 test('L registry query: layout materials are queried consistently via listPlatformMaterials and getPlatformMaterial/getMaterial', () => {
   for (const item of LAYOUT_COMPONENTS) {
+    if (item.blueprint.field === 'layouts') {
+      assert.equal(LAYOUT_COMPONENT_BY_ID.has(item.id), true, `${item.id} is registered in the platform layout renderer`);
+      assert.equal(item.materialId, item.id, `${item.id} names its own direct-render material`);
+      continue;
+    }
     const res = item.materialId.startsWith('layout:')
       ? getPlatformMaterial({id: item.materialId})
       : getMaterial({id: item.materialId});
@@ -107,12 +114,21 @@ test('L registry query: layout materials are queried consistently via listPlatfo
   assert.equal(layoutList.value.total, 24);
 });
 
+test('the legacy Split Blueprint stays static while Resizable Panel is a separate layouts Blueprint component', () => {
+  const item = LAYOUT_COMPONENT_BY_ID.get('component:resizable-panel');
+  assert.deepEqual(item.blueprint, {field: 'layouts', component: 'component:resizable-panel'});
+  assert.equal(item.materialId, 'component:resizable-panel');
+  const legacy = compile(nodeDoc(LAYOUT_CASES['component:resizable-panel'].node, '2.4.0'));
+  assert.match(legacy.html, /class="kit-split"/);
+  assert.doesNotMatch(legacy.html, /data-resizable-handle/);
+});
+
 test('§6.2 L: every covered row has a material with a passing rendered-output probe', () => {
   const manifest = JSON.parse(readFileSync(new URL('../docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json', import.meta.url), 'utf8'));
   const materials = new Map(manifest.materials.map(material => [material.id, material]));
   const rows = manifest.requirements.filter(row => row.section === '§6.2 L');
   assert.equal(rows.length, 14, 'REQUEST §6.2 L has 14 rows');
-  assert.deepEqual(rows.filter(row => row.coverage === 'missing').map(row => row.name).sort(), ['Container', 'Resizable Panel', 'Stack'], 'only rows without a semantically matching material remain missing');
+  assert.deepEqual(rows.filter(row => row.coverage === 'missing').map(row => row.name), [], 'all 14 layout requirements have live material evidence');
   for (const row of rows) {
     if (row.coverage === 'missing') {
       assert.deepEqual(row.materialIds, [], `${row.name}: missing rows do not claim a material`);
@@ -126,6 +142,9 @@ test('§6.2 L: every covered row has a material with a passing rendered-output p
       assert.equal(material.evidence?.probe?.ok, true, `${row.name}: ${id} rendered into output`);
       assert.ok(material.evidence?.outputHash, `${row.name}: ${id} has output evidence`);
     }
+  }
+  for (const id of ['component:stack', 'component:container', 'component:resizable-panel']) {
+    assert.equal(materials.get(id)?.blueprintExpressible, true, `${id} can be represented in a layouts Blueprint`);
   }
 });
 
@@ -147,6 +166,8 @@ test('the four reused E3 layout mappings render their named layout behavior', ()
 test('L renderers consume declared values, escape user content, and include runtime only for resizable panels', () => {
   const contracts = new Map(ALL_COMPONENT_CONTRACTS.map(contract => [contract.id, contract]));
   const declaredProps = {
+    'component:stack': ['align', 'gap', 'items'],
+    'component:container': ['content', 'label', 'width'],
     'component:responsive-grid': ['items'],
     'component:center': ['content', 'label'],
     'component:sticky-region': ['content', 'label'],
@@ -158,6 +179,8 @@ test('L renderers consume declared values, escape user content, and include runt
     assert.deepEqual(Object.keys(contracts.get(id).content), [], `${id} does not declare a separate content object the renderer never reads`);
   }
   const cases = [
+    ['component:stack', {gap: 'gap', align: 'center', items: ['<b>one</b>', '<i>two</i>']}, ['data-component="component:stack"', 'data-gap="gap"', 'data-align="center"', '&lt;b&gt;one&lt;/b&gt;', '&lt;i&gt;two&lt;/i&gt;']],
+    ['component:container', {width: 'narrow', content: '<b>container</b>'}, ['data-component="component:container"', 'data-width="narrow"', '&lt;b&gt;container&lt;/b&gt;']],
     ['component:responsive-grid', {items: ['<b>grid</b>']}, ['data-component="component:responsive-grid"', '&lt;b&gt;grid&lt;/b&gt;']],
     ['component:center', {content: '<b>center</b>'}, ['data-component="component:center"', '&lt;b&gt;center&lt;/b&gt;']],
     ['component:sticky-region', {content: '<b>sticky</b>'}, ['data-component="component:sticky-region"', '&lt;b&gt;sticky&lt;/b&gt;']],
@@ -179,4 +202,6 @@ test('L renderers consume declared values, escape user content, and include runt
   assert.match(layoutRuntimeFor(['component:resizable-panel']), /kit-panel-resize/);
   assert.throws(() => renderLayoutComponent('component:resizable-panel', {value: 'not-a-number'}), /finite number/i);
   assert.throws(() => renderLayoutComponent('component:resizable-panel', {direction: 'diagonal'}), /direction.*horizontal.*vertical/i);
+  assert.throws(() => renderLayoutComponent('component:stack', {gap: 'huge'}), /gap/i);
+  assert.throws(() => renderLayoutComponent('component:container', {width: 'viewport'}), /width/i);
 });

@@ -4,6 +4,7 @@ import {test, before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {assembleComponents, listPlatformMaterials, getPlatformMaterial} from '../src/service/index.mjs';
+import {LAYOUT_COMPONENT_BY_ID} from '../src/platform/families/contracts.mjs';
 import {mcpConnect, rest} from './channel-support.mjs';
 
 let client;
@@ -22,7 +23,9 @@ const BASE = {
   items: [{purpose: 'purpose:button.primary', visual: 'family:soft', content: {label: '계속'}}],
 };
 const ALL_LAYOUTS = [
+  'stack',
   'responsive-grid',
+  'container',
   'center',
   'sticky-region',
   'scroll-area',
@@ -38,9 +41,28 @@ const PROPS = {
   second: '우측 패널',
   items: [{content: '항목 1'}, {content: '항목 2'}],
 };
-const REQUEST = {...BASE, layouts: ALL_LAYOUTS.map(component => ({component, props: PROPS}))};
+const layoutProps = component => component === 'component:stack' ? {gap: 'near', align: 'center', items: ['Stack 1', 'Stack 2']}
+  : component === 'component:container' ? {width: 'narrow', content: 'Container content'}
+    : component === 'component:resizable-panel' ? {direction: 'horizontal', value: 40, first: '좌측 패널', second: '우측 패널', label: '크기 조절'} : PROPS;
+const REQUEST = {...BASE, layouts: ALL_LAYOUTS.map(component => ({component, props: layoutProps(component)}))};
 
-test('layouts: Core, POST /api/v1/platform/assemble-components and assemble_components tool return identical bytes for all 5 L components', async () => {
+test('layout Blueprint JSON round-trip preserves all three new L components and deterministic output', () => {
+  const blueprint = {schema: 'platform-layout-blueprint/1', layouts: ['component:stack', 'component:container', 'component:resizable-panel'].map(component => ({component, props: layoutProps(component)}))};
+  const restored = JSON.parse(JSON.stringify(blueprint));
+  for (const component of restored.layouts) {
+    const contract = LAYOUT_COMPONENT_BY_ID.get(component.component);
+    assert.deepEqual(contract.blueprint, {field: 'layouts', component: component.component});
+    assert.equal(contract.materialId, component.component);
+  }
+  const request = {...BASE, layouts: restored.layouts};
+  const first = assembleComponents(request), second = assembleComponents({...BASE, layouts: JSON.parse(JSON.stringify(restored.layouts))});
+  assert.equal(first.ok, true, json(first.errors));
+  assert.deepEqual(second, first, 'round-tripped layout Blueprint yields the same full export');
+  assert.deepEqual(first.value.manifest.layoutItems.map(item => item.component), blueprint.layouts.map(item => item.component));
+  assert.ok(first.value.html.includes('data-gap="near"') && first.value.html.includes('data-width="narrow"') && first.value.html.includes('data-resizable-handle'));
+});
+
+test('layouts: Core, REST and MCP return identical bytes for all 7 registered L components', async () => {
   const core = assembleComponents(REQUEST);
   assert.equal(core.ok, true, json(core.errors));
   const viaRest = await rest('POST', '/api/v1/platform/assemble-components', {body: REQUEST});
@@ -51,12 +73,15 @@ test('layouts: Core, POST /api/v1/platform/assemble-components and assemble_comp
   for (const id of ALL_LAYOUTS) {
     assert.ok(core.value.html.includes(`data-component="${id}"`), `${id} reaches output through every channel`);
   }
-  assert.equal(core.value.manifest.layoutItems.length, 5);
+  assert.equal(core.value.manifest.layoutItems.length, 7);
+  assert.ok(core.value.html.includes('data-gap="near"'), 'Stack props reach the output');
+  assert.ok(core.value.html.includes('data-width="narrow"'), 'Container props reach the output');
+  assert.ok(core.value.html.includes('aria-valuenow="40"'), 'Resizable Panel props reach the output');
   assert.ok(core.value.script.includes('window.__kitLayout'), 'resizable panel adds the interaction runtime');
   assert.ok(core.value.standalone.includes(core.value.script), 'standalone export carries the script');
   const withoutLayouts = assembleComponents(BASE);
   assert.equal(withoutLayouts.value.script.includes('window.__kitLayout'), false, 'outputs without a resizable panel omit its runtime');
-  const staticLayout = assembleComponents({...BASE, layouts: [{component: 'component:center', props: {label: '가운데'}}]});
+  const staticLayout = assembleComponents({...BASE, layouts: [{component: 'component:stack', props: {items: ['한 칸']}}]});
   assert.equal(staticLayout.value.script.includes('window.__kitLayout'), false, 'static layout components omit the resize runtime');
 });
 
@@ -78,6 +103,8 @@ test('layouts: input the service rejects yields the same diagnostic everywhere (
     {...BASE, layouts: [{component: 'component:unknown-layout', props: {label: 'x'}}]},
     {...BASE, layouts: [{component: 'component:center', props: {id: 'same'}}, {component: 'component:center', props: {id: 'same'}}]},
     {...BASE, layouts: [{component: 'component:resizable-panel', props: {value: 'not-a-number'}}]},
+    {...BASE, layouts: [{component: 'component:stack', props: {gap: 'huge'}}]},
+    {...BASE, layouts: [{component: 'component:container', props: {width: 'viewport'}}]},
   ];
   for (const request of cases) {
     const core = assembleComponents(request);

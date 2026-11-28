@@ -91,24 +91,26 @@ B~O 계열 작업자는 아래 A 구현을 그대로 따른다. 항목마다 등
 - 런타임(`ACTION_RUNTIME`)은 문서 단위 위임 핸들러 한 벌이다. 메뉴(ArrowDown·방향키·Home·End·Escape, 닫을 때 트리거로 포커스 복귀), 복사(성공·실패 문구는 `role=status`), 닫기(`data-dismissible` 숨김), 단일 선택(`data-action-segmented`)을 맡는다. 이 재료를 쓴 출력에만 붙는다(`actionRuntimeFor`). 쓰지 않은 출력의 바이트는 바뀌지 않는다.
 - 메뉴 버튼과 분할 버튼은 항목(`items`, 2~8개)이 필수다. 항목이 없으면 빈 팝업을 그리지 않고 요청 오류(`BAD_REQUEST`) 또는 컴파일 진단으로 거부한다.
 - FAB의 화면 모서리 고정과 safe-area는 컴포넌트가 아니라 페이지 배치가 정한다(`unsupported.position`에 이유를 적었다).
-- 같은 컴포넌트를 독립 시연 계약(`component:*`)과 목적 패밀리 계약이 모두 설명하므로 계약에 `componentType`을 두고 `countDistinctComponentTypes`가 한 종류로 센다. 등록 계약 75개는 56종이다.
+- 같은 컴포넌트를 독립 시연 계약(`component:*`)과 목적 패밀리 계약이 모두 설명하므로 계약에 `componentType`을 두고 `countDistinctComponentTypes`가 한 종류로 센다. 등록 계약은 105개, 구별되는 종류는 86종이다.
 
 ## L 계열(레이아웃) 기준 구현
 
-신규 L 부품 5종은 `assembleComponents({layouts})`의 실제 렌더 경로와 component contract를 가진다. Blueprint 표의 노드는 해당 부품을 대체하지 않는 기존 부품 연결이다. 특히 `split` 노드는 정적 분할만 그리므로 리사이즈 핸들과 키보드 동작은 `component:resizable-panel`의 직접 렌더 경로에서 제공한다.
+신규 L 부품 7종은 `assembleComponents({layouts})`의 실제 렌더 경로와 component contract를 가진다. 기존 트리 Blueprint 노드는 해당 부품을 대체하지 않는 레거시 연결이다. Stack·Container·Resizable Panel은 직렬화 가능한 `layouts` Blueprint 항목으로 왕복한다. 특히 `split` 트리 노드는 정적 분할만 그리므로 크기 조절은 직접 렌더 경로에서 제공한다.
 
 | 요구 | 현재 재료 또는 직접 렌더 contract | Blueprint 연결 | 독립 시연 `layouts` |
 |---|---|---|---|
+| Stack | `component:stack` | `layouts` 항목 (`gap`, `align`, `items`) | `component:stack` |
 | Responsive Grid | `layout:equal-grid`, `layout-primitive:flow` | 트리 노드 `grid` | `component:responsive-grid` |
+| Container | `component:container` | `layouts` 항목 (`width`, `content`) | `component:container` |
 | Center | `layout:centered-hero` | 노드 `hero`, `variant: centered` | `component:center` |
 | Sticky Region | `layout:sticky-action-layout` | 트리 노드 `actions` | `component:sticky-region` |
 | Scroll Area | `layout:master-detail` | 트리 노드 `master-detail` | `component:scroll-area` |
-| Resizable Panel | component contract `component:resizable-panel` (Manifest 재료 없음) | `split` 노드는 정적 분할 호환만 제공 | `component:resizable-panel` |
+| Resizable Panel | `component:resizable-panel` | `layouts` 항목 (`direction`, `value`, `first`, `second`) | `component:resizable-panel` |
 
 - Responsive Grid, Center, Sticky Region, Scroll Area는 E3의 동등 레이아웃 출력으로 의미를 확인한다. 재료별 출력은 각각 균등 격자 흐름, 가운데 정렬, 아래 고정 동작, 높이 제한 스크롤이다.
-- Resizable Panel은 `role="separator"` 분할 핸들과 키보드 조작(`ArrowLeft`/`ArrowRight`/`ArrowUp`/`ArrowDown` 5% 조절, `Home` 15%, `End` 85%) 및 min/max 클램프 제약 런타임(`window.__kitLayout`)을 포함하며 `kit-panel-resize` 이벤트를 발생시킨다.
-- 현재 Manifest에서 실제 출력 근거가 없는 요구는 Stack, Container, Resizable Panel이다. 앞의 둘은 원시 요소 선택자 설명만 있고 compiled output probe가 실패했다. Resizable Panel은 기존 `component:split`과 `layout:two-column`이 정적 분할이라 리사이즈 기능을 충족하지 않는다. 따라서 이 세 행은 missing으로 둔다. 독립 시연의 다섯 신규 렌더러 상태와 Manifest의 기존 재료 충족 상태는 별개다.
-- Track F·G Studio 및 조립 제약: 기존 Studio 조립기(`assembleDesign`)의 페이지 슬롯은 허용된 부품 유형만 받는다. 신규 다섯 렌더러는 `assembleComponents`의 `layouts` 옵션으로 실제 렌더된다. Blueprint 호환 노드는 기존 기본 부품의 출력을 유지한다.
+- Stack은 세로 흐름과 지정 간격·정렬을, Container는 좁은 폭·표준·넓은 폭·전체 폭 제약을 실제 CSS 출력에 반영한다.
+- Resizable Panel은 `role="separator"` 핸들로 포인터와 키보드에서 크기를 바꾼다. 15~85% 범위를 지키고 `aria-valuenow` 및 패널 flex 폭을 함께 갱신하며 `kit-panel-resize` 이벤트를 발생시킨다. 런타임은 Resizable Panel을 요청한 조립 출력에만 들어간다.
+- Track F·G Studio 및 조립 제약: 기존 Studio 조립기(`assembleDesign`)의 페이지 슬롯은 허용된 부품 유형만 받는다. 신규 일곱 렌더러는 `assembleComponents`의 `layouts` 옵션으로 실제 렌더된다. Blueprint JSON 왕복 시험은 Stack·Container·Resizable Panel 입력과 결정론적 출력이 보존되는지 확인한다.
 
 ## N 계열(커머스 패턴) 기준 구현
 
@@ -188,7 +190,7 @@ J(15항목)와 K(12항목)는 플랫폼 공통 컴포넌트 계약(DEC-011, DEC-
 direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외형·동작 변형, part-of는 상위 패턴 안의 일부로 표현한다. 복합 구조가 명확한 업무·커머스·모바일 항목은 coverage가 아직 missing이어도 복합 패턴으로 분류했다. 미구현 상태는 그대로 보존했다. coverage와 상태는 Manifest가 있는 그대로다(A 계열은 12/12가 missing이 아니다. 상태가 `catalog-visible`인 항목은 Studio 선택지가 없어 `verified`로 오르지 못한 것이고, `blockedBy: no-studio-choice`다).
 
 <!-- inventory-table:begin -->
-집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 54.
+집계: 독립 재료 149 · 변형 36 · 복합 패턴 22 = 207개 요구행. 현재 Manifest missing: 51.
 
 | 요구 ID | 이름 | 분류 | 현재 coverage | 상태 | 기존 재료 ID |
 |---|---|---|---|---|---|
@@ -349,20 +351,20 @@ direct는 기반/목적 재료로 바로 충족, variant는 같은 재료의 외
 | `req:comp:k-10-figure-and-caption` | Figure and Caption | 복합 패턴 | direct | verified | purpose:media.figure-caption |
 | `req:comp:k-11-quote` | Quote | 독립 재료 | direct | verified | component:quote |
 | `req:comp:k-12-rich-text-content` | Rich Text Content | 독립 재료 | direct | verified | component:prose |
-| `req:comp:l-01-stack` | Stack | 독립 재료 | missing | missing | — |
+| `req:comp:l-01-stack` | Stack | 독립 재료 | direct | renderable | component:stack |
 | `req:comp:l-02-cluster` | Cluster | 독립 재료 | direct | catalog-visible | layout-primitive:cluster |
 | `req:comp:l-03-grid` | Grid | 독립 재료 | direct | verified | component:grid |
 | `req:comp:l-04-responsive-grid` | Responsive Grid | 독립 재료 | direct | catalog-visible | layout:equal-grid, layout-primitive:flow |
 | `req:comp:l-05-split` | Split | 독립 재료 | direct | verified | layout-primitive:split, component:split |
 | `req:comp:l-06-bento` | Bento | 복합 패턴 | direct | verified | layout-primitive:bento, component:bento |
-| `req:comp:l-07-container` | Container | 독립 재료 | missing | missing | — |
+| `req:comp:l-07-container` | Container | 독립 재료 | direct | renderable | component:container |
 | `req:comp:l-08-section` | Section | 독립 재료 | direct | verified | component:section |
 | `req:comp:l-09-center` | Center | 독립 재료 | direct | renderable | layout:centered-hero |
 | `req:comp:l-10-sidebar-layout` | Sidebar Layout | 복합 패턴 | direct | verified | component:aside |
 | `req:comp:l-11-master-detail-layout` | Master-detail Layout | 복합 패턴 | direct | verified | component:master-detail |
 | `req:comp:l-12-sticky-region` | Sticky Region | 복합 패턴 | direct | renderable | layout:sticky-action-layout |
 | `req:comp:l-13-scroll-area` | Scroll Area | 복합 패턴 | direct | renderable | layout:master-detail |
-| `req:comp:l-14-resizable-panel` | Resizable Panel | 복합 패턴 | missing | missing | — |
+| `req:comp:l-14-resizable-panel` | Resizable Panel | 복합 패턴 | direct | renderable | component:resizable-panel |
 | `req:comp:m-01-filter-toolbar` | Filter Toolbar | 독립 재료 | direct | catalog-visible | purpose:form.filter |
 | `req:comp:m-02-search-toolbar` | Search Toolbar | 독립 재료 | direct | verified | component:filter-bar, purpose:form.search |
 | `req:comp:m-03-bulk-action-toolbar` | Bulk Action Toolbar | 복합 패턴 | variant | catalog-visible | purpose:table.business |

@@ -37,6 +37,7 @@ import * as service from '../src/service/index.mjs';
 import * as edit from '../src/edit/index.mjs';
 import {platformSection} from './platform/platform-baseline.mjs';
 import {renderChartPreset} from '../src/render/chart-presets.mjs';
+import {LAYOUT_COMPONENTS} from '../src/platform/families/contracts.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = 'docs/dev/catalog-platform-upgrade';
@@ -67,6 +68,17 @@ for (const kind of platformEnv.registry.kinds()) {
 for (const record of desRegistry.list()) {
   if (entities.has(record.id)) throw new Error(`재료 id가 두 레지스트리에 있습니다: ${record.id}`);
   entities.set(record.id, {record, registry: 'design', kind: record.kind});
+}
+// LAYOUT_COMPONENTS are first-class materials accepted by the Core/REST/MCP component assembly path.
+// They do not belong to the legacy catalog registry, so represent them explicitly here for output-based coverage.
+for (const component of LAYOUT_COMPONENTS) {
+  if (entities.has(component.id)) throw new Error(`재료 id가 두 레지스트리에 있습니다: ${component.id}`);
+  entities.set(component.id, {registry: 'platform', kind: 'layout-component', record: {
+    id: component.id, label: component.label, version: component.version, contexts: ['any'], tags: ['layout', component.componentType], blueprint: component.blueprint,
+    quality: {status: 'verified', evidence: ['tests/platform-layout-blueprint.test.mjs:149', 'tests/platform-service-layout-channels.test.mjs:48']},
+    source: {license: 'internal'}, render: {module: 'src/platform/families/layout.mjs', export: 'renderLayoutComponent'},
+    responsive: {strategy: 'fluid'}, a11y: {role: component.id === 'component:resizable-panel' ? 'separator' : 'region'}, reuses: [],
+  }});
 }
 const ofKind = kind => [...entities.values()].filter(e => e.kind === kind).map(e => e.record);
 const kindCount = kind => ofKind(kind).length;
@@ -262,20 +274,20 @@ const COVERAGE = {
   'K/Figure and Caption': D('purpose:media.figure-caption'),
   'K/Quote': D('component:quote'),
   'K/Rich Text Content': D('component:prose'),
-  // Stack has no output selector in any compiled pattern template; keep it missing until an actual renderer is added.
+  'L/Stack': D('component:stack'),
   'L/Cluster': D('layout-primitive:cluster'),
   'L/Grid': D('component:grid'),
   'L/Responsive Grid': D('layout:equal-grid', 'layout-primitive:flow'),
   'L/Split': D('layout-primitive:split', 'component:split'),
   'L/Bento': D('layout-primitive:bento', 'component:bento'),
-  // Container is only a selector note today and is absent from actual compiled output.
+  'L/Container': D('component:container'),
   'L/Section': D('component:section'),
   'L/Center': D('layout:centered-hero'),
   'L/Sidebar Layout': D('component:aside'),
   'L/Master-detail Layout': D('component:master-detail'),
   'L/Sticky Region': D('layout:sticky-action-layout'),
   'L/Scroll Area': D('layout:master-detail'),
-  // Both candidate materials render static splits; neither exposes the Resizable Panel separator/runtime.
+  'L/Resizable Panel': D('component:resizable-panel'),
   'M/Filter Toolbar': D('purpose:form.filter'),
   'M/Search Toolbar': D('component:filter-bar', 'purpose:form.search'),
   'M/Bulk Action Toolbar': V('purpose:table.business', 'purpose:table.business', {toolbar: 'bulk'}),
@@ -487,6 +499,7 @@ const DEFINITION = {
   'type-preset': ['src/typography.mjs', 'typeVars'],
   'type-role-preset': ['src/materials/typography.mjs', 'renderMaterialTypeCSS'],
   'layout-primitive': ['src/layout.mjs', 'layoutContractCSS'],
+  'layout-component': ['src/platform/families/layout.mjs', 'LAYOUT_COMPONENTS'],
   'page-type': ['src/catalog/pagetypes.mjs', 'pageTypes'],
   recipe: ['src/catalog/recipes.mjs', 'recipes'],
   pattern: ['src/profiles/data.mjs', 'PATTERNS'],
@@ -720,6 +733,19 @@ function purposeProbe(rec) {
   return {method: 'assembleComponents', ran: true, ok: false, reason: last};
 }
 
+/** Direct layout component: the same renderer and service export used by Core, REST and MCP. */
+function layoutComponentProbe(rec) {
+  const props = rec.id === 'component:stack' ? {gap: 'near', align: 'center', items: ['출력 프로브 A', '출력 프로브 B']}
+    : rec.id === 'component:container' ? {width: 'narrow', content: '출력 프로브 컨테이너'}
+      : rec.id === 'component:resizable-panel' ? {direction: 'horizontal', value: 40, first: '출력 프로브 왼쪽', second: '출력 프로브 오른쪽'} : {};
+  const r = service.assembleComponents({context: 'dashboard', mode: 'light', items: [{purpose: 'purpose:button.primary', visual: 'family:soft', content: {label: '계속'}}], layouts: [{component: rec.id, props}]});
+  if (!ok(r)) return {method: 'assembleComponents(layouts)', ran: true, ok: false, reason: r.errors?.[0]?.message ?? 'assembleComponents 실패'};
+  const html = r.value.html, css = r.value.css, manifest = JSON.stringify(r.value.manifest);
+  const materialOutput = html.includes(`data-component="${rec.id}"`) && (rec.id !== 'component:resizable-panel' || html.includes('data-resizable-handle'));
+  return {method: 'assembleComponents(layouts)', ran: true, ok: materialOutput, qualityOk: materialOutput, htmlBytes: html.length, cssBytes: css.length,
+    ...(materialOutput ? {outputHash: sha(html + css)} : {reason: '선택한 컴포넌트가 실제 출력에 없다'}), blueprintHasId: rec.blueprint?.field === 'layouts', manifestHasId: manifest.includes(rec.id)};
+}
+
 // 구형 부품·차트·템플릿 등: 웹 /components/[componentId] 와 Studio가 쓰는 edit 연산·compileBlueprint로 실제 컴파일한다.
 const BASE_DOC = {template: 'about-team', theme: 'workspace'};
 const compileHtml = doc => { const r = service.compileBlueprint(doc, {include: ['html', 'css']}); return ok(r) ? r.value : null; };
@@ -863,6 +889,7 @@ function probeOf(entity) {
       return {...p, method: `${p.method} via ${record.contract}`, placeable: baseIsPlaceable(record.id)};
     }
     if (kind === 'layout') return layoutProbe(record);
+    if (kind === 'layout-component') return layoutComponentProbe(record);
     return assembleProbe(record, kind);
   }
   return legacyProbe(record, kind);
@@ -949,7 +976,7 @@ for (const [id, entity] of [...entities.entries()].sort(([a], [b]) => (a < b ? -
   if (record.render?.module) rendererEntry = `${record.render.module}#${record.render.export}`;
   if (kind === 'purpose-family' && record.entry) rendererEntry = `${record.entry.module}#${record.entry.export}`;
   const channel = registry === 'platform' ? service.getPlatformMaterial({id}) : service.getMaterial({id});
-  const restAndMcpAvailable = ok(channel) && (registry === 'platform' ? channelProof.platform : channelProof.design);
+  const restAndMcpAvailable = kind === 'layout-component' ? channelProof.components : ok(channel) && (registry === 'platform' ? channelProof.platform : channelProof.design);
   const defPath = definitionOf(record, kind);
   // 목적·시각 패밀리의 states는 배열이고(Array.prototype.values 함수와 구분해야 한다), 카탈로그 재료의 states는 {values, transitions}다.
   const states = Array.isArray(record.states) ? record.states : Array.isArray(record.states?.values) ? record.states.values : [];

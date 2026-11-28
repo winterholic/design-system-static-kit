@@ -221,21 +221,21 @@
   "summary": {
     "requirements": {
       "total": 406,
-      "fulfilled": 334,
-      "missing": 72,
-      "coverageRate": 0.8227,
+      "fulfilled": 337,
+      "missing": 69,
+      "coverageRate": 0.83,
       "byCoverage": {
-        "direct": 296,
+        "direct": 299,
         "variant": 29,
         "schema": 7,
         "part-of": 2,
-        "missing": 72
+        "missing": 69
       },
       "statusDistribution": {
-        "missing": 72,
+        "missing": 69,
         "metadata-only": 9,
         "defined": 21,
-        "renderable": 56,
+        "renderable": 59,
         "catalog-visible": 43,
         "assemblable": 1,
         "verified": 204
@@ -243,8 +243,8 @@
       "breakdown": {
         "components": {
           "total": 207,
-          "missing": 54,
-          "direct": 115,
+          "missing": 51,
+          "direct": 118,
           "variant": 29,
           "schema": 7,
           "partOf": 2
@@ -362,18 +362,18 @@
       }
     },
     "materials": {
-      "totalRecords": 1472,
+      "totalRecords": 1479,
       "statusDistribution": {
         "missing": 0,
         "metadata-only": 430,
         "defined": 42,
-        "renderable": 124,
+        "renderable": 131,
         "catalog-visible": 398,
         "assemblable": 4,
         "verified": 474
       },
       "registeredByRegistry": {
-        "platform": 373,
+        "platform": 380,
         "design": 1099
       }
     },
@@ -474,6 +474,15 @@
         "distinctOutputs": 24,
         "byStatus": {
           "renderable": 24
+        }
+      },
+      "layout-component": {
+        "registered": 7,
+        "actualMaterial": 7,
+        "assemblableVerified": 0,
+        "distinctOutputs": 7,
+        "byStatus": {
+          "renderable": 7
         }
       },
       "layout-primitive": {
@@ -2460,9 +2469,11 @@
       "id": "req:comp:l-01-stack",
       "section": "§6.2 L",
       "name": "Stack",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "component:stack"
+      ]
     },
     {
       "id": "req:comp:l-02-cluster",
@@ -2521,9 +2532,11 @@
       "id": "req:comp:l-07-container",
       "section": "§6.2 L",
       "name": "Container",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "component:container"
+      ]
     },
     {
       "id": "req:comp:l-08-section",
@@ -2589,9 +2602,11 @@
       "id": "req:comp:l-14-resizable-panel",
       "section": "§6.2 L",
       "name": "Resizable Panel",
-      "coverage": "missing",
-      "status": "missing",
-      "materialIds": []
+      "coverage": "direct",
+      "status": "renderable",
+      "materialIds": [
+        "component:resizable-panel"
+      ]
     },
     {
       "id": "req:comp:m-01-filter-toolbar",
@@ -33192,6 +33207,65 @@
       }
     },
     {
+      "id": "component:center",
+      "name": "Center",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "d4b151c253b41a2d",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "component:chart",
       "name": "차트",
       "kind": "component",
@@ -33415,6 +33489,67 @@
           "qualityOk": true
         },
         "outputHash": "8d2e1a6d482cbbae",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "component:container",
+      "name": "Container",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:comp:l-07-container"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "c394aa803ef0db71",
         "duplicateOutputOf": []
       }
     },
@@ -36421,6 +36556,126 @@
       }
     },
     {
+      "id": "component:resizable-panel",
+      "name": "Resizable Panel",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:comp:l-14-resizable-panel"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "700567984cf40dad",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "component:responsive-grid",
+      "name": "Responsive Grid",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "04145c24597b2cec",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "component:reviews",
       "name": "리뷰",
       "kind": "component",
@@ -36488,6 +36743,65 @@
           "qualityOk": true
         },
         "outputHash": "f0844e0d976413e0",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "component:scroll-area",
+      "name": "Scroll Area",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "abe494d2e2bf2bd6",
         "duplicateOutputOf": []
       }
     },
@@ -36848,6 +37162,67 @@
       }
     },
     {
+      "id": "component:stack",
+      "name": "Stack",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [
+        "req:comp:l-01-stack"
+      ],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "9b4bd0d1b6e40452",
+        "duplicateOutputOf": []
+      }
+    },
+    {
       "id": "component:stepper",
       "name": "단계 표시",
       "kind": "component",
@@ -36993,6 +37368,65 @@
           "qualityOk": true
         },
         "outputHash": "e59f1e4c2dd37e80",
+        "duplicateOutputOf": []
+      }
+    },
+    {
+      "id": "component:sticky-region",
+      "name": "Sticky Region",
+      "kind": "layout-component",
+      "registry": "platform",
+      "category": null,
+      "requirementIds": [],
+      "status": "renderable",
+      "blockedBy": "not-in-web-catalog",
+      "supportedVersions": {
+        "supported": [
+          "2.7.0"
+        ],
+        "introducedIn": null,
+        "materialVersion": "1.0.0",
+        "note": "플랫폼 조립(Blueprint 2.7.0 materials opt-in)에서만 선택된다"
+      },
+      "definitionPath": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+      "rendererConnected": true,
+      "rendererEntry": "src/platform/families/layout.mjs#renderLayoutComponent",
+      "usesTokensAndCss": true,
+      "supportedVariantsAndStates": {
+        "variants": {},
+        "states": []
+      },
+      "catalogVisible": false,
+      "catalogSurfaces": [],
+      "detailPageExists": false,
+      "detailSurfaces": [],
+      "studioAssemblable": false,
+      "studioSurfaces": [],
+      "restAndMcpAvailable": true,
+      "blueprintExpressible": true,
+      "exportReflected": true,
+      "a11yAndResponsiveTested": true,
+      "qualityVerdict": {
+        "status": "verified",
+        "evidenceRefs": [
+          "tests/platform-layout-blueprint.test.mjs:149",
+          "tests/platform-service-layout-channels.test.mjs:48"
+        ],
+        "invalidEvidenceRefs": [],
+        "liveProbe": "passed"
+      },
+      "rightsAndLicense": "internal",
+      "legacyDuplicateRelation": null,
+      "evidence": {
+        "definition": "src/platform/families/layout.mjs#LAYOUT_COMPONENTS",
+        "renderer": "src/platform/families/layout.mjs#renderLayoutComponent",
+        "probe": {
+          "method": "assembleComponents(layouts)",
+          "ran": true,
+          "ok": true,
+          "qualityOk": true
+        },
+        "outputHash": "534e12af1f5d8d72",
         "duplicateOutputOf": []
       }
     },
