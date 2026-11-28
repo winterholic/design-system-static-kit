@@ -2162,6 +2162,16 @@
           "file": "docs/dev/catalog-platform-upgrade/MATERIAL-COVERAGE.json",
           "ownerTrack": "Track G",
           "reason": "Material Coverage 재생성 산출물"
+        },
+        {
+          "file": "e2e/platform-commerce-components.spec.mjs",
+          "ownerTrack": "Track D (N 계열)",
+          "reason": "독립 검증(D4 media 브라우저 복구, VERIFICATION.md §22): D6 이후 Cart Item이 가격을 component:price-display로 그려 독립 가격 표시와 합쳐 2개가 되는데 기대값이 1이라 test:browser가 실패했다. 기대 수를 2로 고치고 Cart Item 안의 가격 표시 1개를 따로 단언한다"
+        },
+        {
+          "file": "e2e/platform-families.spec.mjs",
+          "ownerTrack": "Track D",
+          "reason": "media 묶음 복구 시험(캐러셀 스크롤 영역·스와이프 카운터, 반응형 이미지 캡션) 추가"
         }
       ]
     },

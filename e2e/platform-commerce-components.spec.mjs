@@ -37,7 +37,8 @@ test.describe('standalone `commerce` output', () => {
       await expect(page.locator('[data-component="component:quantity-selector"]')).toHaveCount(2); // 독립 조절기 + Cart Item 내 조절기
       await expect(page.locator('[data-component="component:cart-item"]')).toHaveCount(1);
       await expect(page.locator('[data-component="component:product-variant-selector"]')).toHaveCount(1);
-      await expect(page.locator('[data-component="component:price-display"]')).toHaveCount(1);
+      await expect(page.locator('[data-component="component:price-display"]')).toHaveCount(2); // 독립 가격 표시 + Cart Item 내 가격 표시(D6 이후 Cart Item이 자기 가격을 이 컴포넌트로 그린다)
+      await expect(page.locator('[data-component="component:cart-item"] [data-component="component:price-display"]')).toHaveCount(1);
       await expect(page.locator('[data-component="component:discount-display"]')).toHaveCount(1);
       await expect(page.locator('[data-component="component:order-status"]')).toHaveCount(1);
 

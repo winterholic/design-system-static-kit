@@ -1504,3 +1504,50 @@ Chromium을 시작하지 못한 시험 이름:
 - `4. Playwright Chromium 실측: 390px·1280px에서 실제 WOFF2 로드와 404 fallback, 다국어 글리프를 확인한다`
 
 고정 출력 확인은 기존 legacy-hashes·catalogVersion 시험과 함께 실행한 호환성 테스트 및 `site/v1/catalog.json` 바이트 비교에서 보존됐다. 브라우저 오류는 Codex/macOS `exec_command`에서 관찰된 Mach IPC 시작 거부로, 해당 브라우저 시험은 검증하지 못했다.
+그 뒤 E/H/I 통합 최신 main에서 `npm run verify`는 1,052/1,052 통과했고 3,836 생성 파일 재현성도 통과했다(§20.6). 이 결과가 앞선 worktree에서 기록한 Chromium 시작 실패 2건을 대체한다. 별도 `npm run test:browser`는 374 통과·1 실패였고, 유일한 실패는 §20.6에 기록한 기존 `e2e/platform-families.spec.mjs:12` 미디어 측정이다. D4와 무관해 변경하지 않았다.
+
+---
+
+## 23. media(K) 묶음 브라우저 시험 복구 (`e2e/platform-families.spec.mjs:12`, 2026-11-28)
+
+엔진: Claude Sonnet 5.5. D4(Flash 구현, `e7c4058a3`)의 K 묶음이 `npm run test:browser`의 마지막 실패였다. 브라우저를 띄울 수 있는 이 작업자가 원인부터 잡았다.
+
+### 23.1 원인 (재료·규칙까지)
+
+`measureAll({groups: ['media']})`는 media 묶음의 모든 장면·시각 패밀리·모드·폭(마지막 실패 목록 146줄)에서 같은 세 가지를 냈다. 하나는 시각 패밀리 때문에 생기는 것이 아니라 CSS 규칙 두 곳이 원인이다.
+
+| 코드 | 재료 | 규칙 | 원인 |
+|---|---|---|---|
+| `CLIP_ICON`(2번째 슬라이드 `<img>`), `CLIP_TEXT`(트랙의 "제품 1제품 2"), `OVERFLOW_X`(2번째 슬라이드가 문서 폭 밖) | `purpose:media.carousel` | `.pf-carousel-track{overflow-x:hidden}` | 슬라이드가 `grid-auto-columns:100%`로 가로로 이어지는데 트랙이 스크롤 영역이 아니라 잘라내는 상자였다. 화면 밖 슬라이드가 잘림·넘침으로 측정됐다. 사용자는 단추로만 넘길 수 있었고 손가락 스와이프는 안 됐다 |
+| `CLIP_TEXT`(`div.pf-responsive-image`, "멋진 풍경", 20px) | `purpose:media.responsive-image` | `.pf-responsive-image{overflow:hidden}` + `aspect-ratio` 상자 안의 `<p class="pf-image-caption">` | 캡션이 비율 상자 안에 있어서, 이미지가 상자를 채운 뒤 캡션이 상자 밖으로 밀려 잘렸다 |
+
+### 23.2 교정 (`src/platform/families/info-media.mjs`)
+
+- 캐러셀 트랙을 실제 스크롤 영역으로: `overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none`(막대만 숨김), `data-layout-scroll tabindex="0"`, `:focus-visible` 링. `tabindex=0`은 Chromium이 포커스할 대상이 없는 스크롤 영역을 이미 키보드 정지점으로 만들어, 접근성 순서 시험이 "DOM에 없는 정지점"으로 보았기 때문에 명시했다. 스크롤 이벤트로 `data-current-index`와 `n / m` 카운터를 맞춰 스와이프도 단추와 같은 상태가 된다.
+- 반응형 이미지: `<figure class="pf-responsive-figure"><div class="pf-responsive-image">…<img></div><figcaption class="pf-image-caption">`. 캡션이 비율 상자 밖에 놓인다(`.pf-responsive-image` 클래스와 비율 속성은 그대로).
+- 시험 임계값·면제·표본은 건드리지 않았다. `PROBE_OPTIONS`, `EXEMPTIONS`, `judge`는 그대로다.
+
+### 23.3 시험
+
+`e2e/platform-families.spec.mjs`에 4건 추가(390px·1280px): 트랙 `overflow-x`가 `auto`이고 스크롤 너비가 넓음, 다음·이전 단추와 `scrollTo`(스와이프)가 모두 카운터를 따라감, 숨은 슬라이드가 문서를 넓히지 않음, 캡션이 비율 상자 아래에 있고 상자 밖 요소임.
+
+RED(결함을 다시 심음):
+
+| 심은 결함 | 결과 |
+|---|---|
+| 트랙을 `overflow-x:hidden`으로 되돌림 | `measureAll`이 `CLIP_ICON`·`CLIP_TEXT`를 다시 냄, 새 시험 "off-screen slides are scrolled, not clipped" 실패 |
+| 캡션을 비율 상자 안으로 되돌림 | `measureAll`이 `CLIP_TEXT`(20px)를 다시 냄, 새 시험 "caption starts below the image box" 실패 |
+
+원래대로 되돌린 뒤 같은 측정은 0건이다.
+
+### 23.4 함께 고친 시험 한 건 (다른 트랙)
+
+`e2e/platform-commerce-components.spec.mjs:22`는 이 작업과 무관하게 `origin/main`(`51f3ff022`)에서 실패했다. D6 이후 Cart Item이 가격을 `component:price-display`로 그려 독립 가격 표시와 합해 2개인데 기대가 1이었다. 기대 수를 2로 고치고 Cart Item 안의 1개를 따로 단언했다. `TASK-TRD-K.crossTrackFiles`에 소유 트랙과 사유를 적었다(CONTRACTS §6.1).
+
+### 23.5 실행 증거
+
+```sh
+$ export PLAYWRIGHT_BROWSERS_PATH=/Users/winterholic/Library/Caches/ms-playwright
+$ npx playwright test e2e/platform-families.spec.mjs
+18 passed (2.2m)    # 기존 14건 + 추가 4건
+```
