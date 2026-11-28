@@ -711,7 +711,7 @@ Manifest 레이아웃 요구: `{"total":24,"missing":0,"direct":24}`. 24종 모�
 ### 11.4 실행 증거
 ```sh
 $ npm run verify                       # rebase 뒤, 마지막 커밋 포함
-ℹ tests 829 / ℹ pass 829 / ℹ fail 0
+ℹ tests 848 / ℹ pass 848 / ℹ fail 0
 REPRODUCIBLE: 3782 generated files match a fresh build byte for byte.
 $ npm --workspace apps/web run typecheck / test:boundary / test:docs
 tsc --noEmit (오류 없음) / pass 9 fail 0 / pass 4 fail 0
